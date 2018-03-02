@@ -1,4 +1,5 @@
-@(user: model.User, toolMainObject: controllers.exes.AToolMain, exercise: model.CompleteEx[_ <: model.Exercise], renderedRest: Html, isCreation: Boolean)
+@import model.toolMains.AToolMain
+@(user: model.User, toolMainObject: AToolMain, exercise: model.CompleteEx[_ <: model.Exercise], renderedRest: Html, isCreation: Boolean)
 
     @scripts = {
         <style>

@@ -51,18 +51,18 @@ function updatePassword(theUrl) {
 function onPwChangeSuccess(response) {
     let changePwDiv = $('#changePwDiv');
     if (response.changed) {
-        changePwDiv.html('<div class="alert alert-success">Ihr Passwort wurde erfolgreich ge&auml;ndert.</div>');
+        changePwDiv.html('<div class="alert alert-success">Ihr Passwort wurde erfolgreich geändert.</div>');
         $('#old_pw').val('');
         $('#new_pw1').val('');
         $('#new_pw2').val('');
     } else {
-        changePwDiv.html(`<div class="alert alert-danger">Es gab einen Fehler beim &Auml;ndern ihres Passwortes: ${response.reason}</div>`);
+        changePwDiv.html(`<div class="alert alert-danger">Es gab einen Fehler beim ändern ihres Passwortes: ${response.reason}</div>`);
     }
     $('#btn_pwChange').prop('disabled', false);
 }
 
 function onPwChangeError(jqXHR) {
     console.log(jqXHR.responseText);
-    $('#changePwDiv').html('<div class="alert alert-success">Ihr Passwort konnte nicht ge&auml;ndert werden!</div>');
+    $('#changePwDiv').html('<div class="alert alert-success">Ihr Passwort konnte nicht geändert werden!</div>');
     $('#btn_pwChange').prop('disabled', false);
 }

@@ -200,7 +200,7 @@ public class RWExcel {
   }
 
   /**
-   * Write a excel file which contains an overview of the achieved points per
+   * Write a excel file which contains an naryOverview of the achieved points per
    * tree and overall achieved points. Also the state of TreeNodes is displayed
    * (correct, partially correct, wrong and missing).
    *

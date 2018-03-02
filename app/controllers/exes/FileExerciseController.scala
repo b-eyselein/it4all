@@ -4,6 +4,7 @@ import controllers.Secured
 import javax.inject.{Inject, Singleton}
 import model.core._
 import model.spread.SpreadConsts
+import model.toolMains.ToolList
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
 
@@ -18,7 +19,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
 
   def exercise(tool: String, id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getFileToolMainOption(tool) match {
+      ToolList.getFileToolMainOption(tool) match {
         case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
         case Some(toolMain) => toolMain.renderExerciseById(user, id, fileExtension) map {
           case Some(r) => Ok(r)
@@ -29,7 +30,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
 
   def uploadSolution(tool: String, id: Int, fileExtension: String): EssentialAction = futureWithUser(parse.multipartFormData) { user =>
     implicit request =>
-      SingleExerciseController.getFileToolMainOption(tool) match {
+      ToolList.getFileToolMainOption(tool) match {
         case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
         case Some(toolMain) => request.body.file(SpreadConsts.FILE_NAME) match {
           case None       => Future(BadRequest("There has been an error uploading your file!"))
@@ -43,7 +44,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
 
   def downloadTemplate(tool: String, id: Int, fileExtension: String): EssentialAction = futureWithUser { _ =>
     implicit request =>
-      SingleExerciseController.getFileToolMainOption(tool) match {
+      ToolList.getFileToolMainOption(tool) match {
         case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
         case Some(toolMain) => toolMain.futureCompleteExById(id) map {
           case Some(exercise) => Ok.sendFile(exercise.templateFilePath(toolMain, fileExtension).toFile)
@@ -54,7 +55,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
 
   def downloadCorrected(tool: String, id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getFileToolMainOption(tool) match {
+      ToolList.getFileToolMainOption(tool) match {
         case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
         case Some(toolMain) => toolMain.futureCompleteExById(id) map {
           case Some(exercise) =>

@@ -1,31 +1,43 @@
 @(completeEx: model.uml.UmlCompleteEx)
 
-<td>
-    <p>Klassenwahltext</p>
-    <p>@completeEx.ex.classSelText </p>
-</td>
-<td>
-    <p>Diagrammzeichnentext</p>
-    <p>@completeEx.ex.diagDrawText</p>
-</td>
+<div class="row">
+    <div class="col-md-6">
+
+    </div>
+
+    <div class="col-md-6">
+        <h2>Mappings</h2>
+        <ul>
+            @for(mapping <- completeEx.mappings) {
+                <li>@mapping.key &rarr;
+                    @mapping.value</li>
+            }
+        </ul>
+
+        <h2>Ignoriert</h2>
+        <ul>
+        @for(toIgnore <- completeEx.ex.splitToIgnore) {
+            <li>@toIgnore</li>
+        }
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <p>Klassenwahltext</p>
+        <div class="well pre-scrollable">@completeEx.ex.classSelText</div>
+    </div>
+
+    <div class="col-md-6">
+        <p>Diagrammzeichnentext</p>
+        <div class="well pre-scrollable">@completeEx.ex.diagDrawText</div>
+    </div>
+</div>
+
 <td>
     <p>Lösung</p>
     <p>@completeEx.classes</p>
     <p>@completeEx.associations</p>
     <p>@completeEx.implementations</p>
-</td>
-<td>
-    <ul>
-    @for(mapping <- completeEx.mappings) {
-        <li>@mapping.key &rarr;
-            @mapping.value</li>
-    }
-    </ul>
-</td>
-<td>
-    <ul>
-    @for(toIgnore <- completeEx.ex.splitToIgnore) {
-        <li>@toIgnore</li>
-    }
-    </ul>
 </td>

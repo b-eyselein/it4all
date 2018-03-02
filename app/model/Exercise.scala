@@ -2,9 +2,9 @@ package model
 
 import java.nio.file.Path
 
-import controllers.exes.{AToolMain, MyWrapper, Wrappable}
 import model.Enums.ExerciseState
-import model.core.{ExPart, FileUtils}
+import model.core.{ExPart, FileUtils, MyWrapper, Wrappable}
+import model.toolMains.AToolMain
 import play.twirl.api.Html
 
 trait HasBaseValues {

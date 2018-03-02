@@ -43,8 +43,9 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], classes: Se
   }
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {
-    case (ClassSelection | DiagramDrawing) => true
-    case _                                 => false
+    case (ClassSelection) => true
+    case DiagramDrawing   => false // TODO: Currently deactivated...
+    case _                => false
   }
 
   def allAttributes: Seq[UmlClassAttribute] = classes flatMap (_.attributes) groupBy (attr => (attr.name, attr.umlType)) map (_._2.head) toSeq

@@ -1,5 +1,6 @@
+@import model.toolMains.CollectionToolMain
 @(user: model.User, collection: model.CompleteCollectionWrapper, exes: Seq[model.CompleteEx[_ <: model.Exercise]],
-        toolMainObject: controllers.exes.AExCollectionToolMain, currentSite: Int, numOfSites: Int)
+        toolMainObject: CollectionToolMain, currentSite: Int, numOfSites: Int)
 
 
 @main("Collection", Some(user)) {

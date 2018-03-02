@@ -380,16 +380,12 @@ jsText: >
   mit der ID 'result' auf das Ergebnis setzen
 htmlTasks:
 - id: 1
-  text: Erstellen Sie ein Zahlen-Eingabefeld mit der ID 'number'
+  text: Erstellen Sie ein Zahlen-Eingabefeld mit der ID 'number'. Bei Änderung des Feldes (onchange) soll die Funktion 'fakultaet()' aufgerufen werden.
   xpathQuery: /html/body//input[@id='number']
   attributes:
   - {key: type, value: number}
-- id: 2
-  text: Bei Änderung des Feldes (onchange) soll die Funktion 'fakultaet()' aufgerufen werden.
-  xpathQuery: /html/body//input[@id='number']
-  attributes:
   - {key: onchange, value: fakultaet()}
-- id: 3
+- id: 2
   text: Erstellen Sie einen Span mit der ID 'result', in dem das Ergebnis der Berechnung stehen soll. Zu Anfang soll dieser leer sein.
   xpathQuery: /html/body//span[@id='result']
 jsTasks:

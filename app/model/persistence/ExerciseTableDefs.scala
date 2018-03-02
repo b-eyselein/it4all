@@ -1,6 +1,6 @@
 package model.persistence
 
-import controllers.exes.SingleExerciseController.STEP
+import model.toolMains.ToolList.STEP
 import model.core.ExPart
 import model.{CompleteEx, Exercise, Solution}
 import play.api.db.slick.HasDatabaseConfigProvider

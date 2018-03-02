@@ -1,6 +1,6 @@
 package model.bool
 
-import model.essentials._
+import model.nary._
 import org.junit.Test
 import org.scalatest.Assertions._
 

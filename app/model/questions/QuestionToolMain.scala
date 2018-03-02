@@ -1,9 +1,9 @@
 package model.questions
 
-import controllers.exes.AExCollectionToolMain
 import javax.inject.{Inject, Singleton}
 import model._
 import model.questions.QuestionEnums.QuestionType
+import model.toolMains.CollectionToolMain
 import model.yaml.MyYamlFormat
 import play.api.libs.json.JsValue
 import play.api.mvc._
@@ -14,7 +14,7 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Try}
 
 @Singleton
-class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implicit ec: ExecutionContext) extends AExCollectionToolMain("question") with JsonFormat {
+class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("question") with JsonFormat {
 
   // Abstract types
 

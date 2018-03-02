@@ -1,7 +1,7 @@
 package model
 
-import controllers.exes.{MyWrapper, Wrappable}
 import model.Enums.ExerciseState
+import model.core.{MyWrapper, Wrappable}
 
 
 trait ExerciseCollection[ExType <: Exercise, CompExType <: CompleteEx[ExType]] extends HasBaseValues
@@ -32,9 +32,8 @@ trait CompleteCollection extends Wrappable with HasBaseValues {
   override def text: String = coll.text
 
   override def state: ExerciseState = coll.state
-  
-}
 
+}
 
 abstract class CompleteCollectionWrapper extends MyWrapper {
 

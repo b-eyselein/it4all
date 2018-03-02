@@ -1,4 +1,5 @@
-@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult, toolMainObject: controllers.exes.AExCollectionToolMain)
+@import model.toolMains.CollectionToolMain
+@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult, toolMainObject: CollectionToolMain)
 
 
 @collWrappers = @{
@@ -13,7 +14,7 @@
         </div>
 
         <a href="@controllers.exes.routes.CollectionController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
-            Zur&uuml;ck zur Administratorseite</a>
+            Zurück zur Administratorseite</a>
 
         <hr>
 

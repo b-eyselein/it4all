@@ -79,7 +79,7 @@ case class ExecutionResult(success: SuccessType, evaluated: String, completeTest
   override def render: String = if (success == ERROR) {
     s"""<div class="col-md-6">
        |  <div class="alert alert-$getBSClass">
-       |    <p>Es gab einen Fehler bei der Ausf&uuml;hrung ihres Codes:</p>
+       |    <p>Es gab einen Fehler bei der Ausführung ihres Codes:</p>
        |    <pre>$renderResult</pre>
        |    $printConsoleOut
        |  </div>

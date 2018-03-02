@@ -1,9 +1,9 @@
 package model.questions
 
-import controllers.exes.MyWrapper
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
+import model.core.MyWrapper
 import model.persistence.ExerciseCollectionTableDefs
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}

@@ -1,0 +1,69 @@
+@(user: model.User, question: model.bool.FilloutQuestion)
+
+    @variables = @{
+        question.variables.toList.sortBy(_.variable)
+    }
+
+    @scripts = {
+        @* Javascript Routes *@
+        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+        <script src="@routes.Assets.versioned("javascripts/bool/boolFillout.js")"></script>
+    }
+
+    @main("Wertetabelle", Some(user), scripts) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Ausfüllen einer Wertetabelle</h1>
+            </div>
+
+            <h2 class="text-center">
+                <code>@model.bool.BoolConsts.LerVariable
+                    = <span id="@model.bool.BoolConsts.FormulaName" data-formula="@question.formula.asString">@Html(question.formula.asHtml)</span></code>
+            </h2>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3">
+
+                    <input hidden id="toolType" value="@model.bool.BoolToolMain.urlPart" title="hidden">
+                    <input hidden id="exerciseType" value="@question.exPart.urlName" title="hidden">
+                    <input hidden id="solVar" value="@model.bool.BoolConsts.SolVariable" title="hidden">
+
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                @for(v <- variables) {
+                                    <th class="text-center">@v</th>
+                                }
+                                <th class="text-center" id="lerVar">@model.bool.BoolConsts.LerVariable</th>
+                            </tr>
+                        </thead>
+                        <tbody id="valueTableBody">
+                        @for(assignment <- question.assignments) {
+                            <tr id="@assignment.identifier">
+                                @for(variable <- variables) {
+                                    <td class="text-center" data-variable="@variable" data-value="@assignment(variable)">@assignment.asChar(variable)</td>
+                                }
+                            <td>
+
+                                <button type="button" onclick="changeValue(this)" class="form-control">0</button>
+                            </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button id="testBtn" class="btn btn-primary">Testen</button>
+                        </div>
+                        <a class="btn btn-default" href="@controllers.exes.routes.RandomExerciseController.newExercise(model.bool.BoolToolMain.urlPart, question.exPart.urlName)">
+                            Nächste Aufgabe</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }

@@ -1,6 +1,6 @@
 package model.bool
 
-import model.essentials.{BoolAssignment, CreationQuestion, ScalaNode, Variable}
+import model.bool.{BoolAssignment, CreationQuestion, ScalaNode, Variable}
 import org.junit.Test
 
 import scala.language.implicitConversions

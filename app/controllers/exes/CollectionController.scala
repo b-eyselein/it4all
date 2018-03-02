@@ -7,6 +7,7 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.core.CoreConsts._
 import model.core._
+import model.toolMains.{CollectionToolMain, ToolList}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
 import play.twirl.api.Html
@@ -26,7 +27,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminIndex(tool: String): EssentialAction = futureWithAdmin { user =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) => toolMain.statistics map (stats => Ok(views.html.admin.collectionAdminMain(user, stats, toolMain)))
       }
@@ -34,7 +35,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminImportCollections(tool: String): EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           readAll(toolMain.resourcesFolder / (toolMain.urlPart + ".yaml")) match {
@@ -47,7 +48,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminExportCollections(tool: String): EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           toolMain.yamlString map (content => Ok(views.html.admin.export.render(admin, content, toolMain)))
@@ -56,7 +57,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           val file = Files.createTempFile(s"export_${toolMain.urlPart}", ".yaml")
@@ -71,7 +72,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminChangeCollectionState(tool: String, id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           //      import play.api.data.Forms._
@@ -91,7 +92,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminCollectionsList(tool: String): EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           toolMain.futureCompleteColls map (colls => Ok(views.html.admin.collectionList(admin, Seq.empty /* colls map toolMain.wrap*/ , toolMain)))
@@ -100,7 +101,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminEditCollectionForm(tool: String, id: Int): EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           toolMain.futureCompleteCollById(id) map (maybeColl => Ok(collEditForm(admin, toolMain, None /*maybeColl map (toolMain.wrap(_)*/)))
@@ -109,7 +110,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminEditCollection(tool: String, id: Int): EssentialAction = withAdmin { _ =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None    => BadRequest(s"There is no tool with name >>$tool<<")
         case Some(_) =>
           // FIXME: implement: editing of collection!
@@ -119,7 +120,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminNewCollectionForm(tool: String): EssentialAction = withAdmin { admin =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => BadRequest(s"There is no tool with name >>$tool<<")
         case Some(toolMain) => Ok(collEditForm(admin, toolMain, None))
       }
@@ -127,7 +128,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def adminCreateCollection(tool: String): EssentialAction = withAdmin { _ =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None    => BadRequest(s"There is no tool with name >>$tool<<")
         case Some(_) =>
           // FIXME: implement: creation of collection!
@@ -135,12 +136,12 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
       }
   }
 
-  private def collEditForm(admin: User, toolMain: AExCollectionToolMain, collection: Option[_ <: CompleteCollectionWrapper]): Html =
+  private def collEditForm(admin: User, toolMain: CollectionToolMain, collection: Option[_ <: CompleteCollectionWrapper]): Html =
     views.html.admin.collectionEditForm(admin, toolMain, collection, new Html("") /*adminRenderEditRest(collection)*/)
 
   def adminDeleteCollection(tool: String, id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None    => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(_) =>
           Future(BadRequest("TODO!"))
@@ -157,7 +158,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def collectionList(tool: String, page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           toolMain.futureCompleteColls map {
@@ -171,7 +172,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def collection(tool: String, id: Int, page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           toolMain.futureCompleteCollById(id) map {
@@ -188,7 +189,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def exercise(tool: String, collId: Int, id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           (toolMain.futureCollById(collId) zip toolMain.futureCompleteExById(collId, id) zip toolMain.numOfExesInColl(collId)) map {
@@ -202,7 +203,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def correct(tool: String, collId: Int, id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           toolMain.correctAbstract(user, collId, id, isLive = false) map {
@@ -218,7 +219,7 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def correctLive(tool: String, collId: Int, id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getExCollToolMainOption(tool) match {
+      ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           toolMain.correctAbstract(user, collId, id, isLive = true) map {

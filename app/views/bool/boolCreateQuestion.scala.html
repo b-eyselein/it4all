@@ -1,0 +1,98 @@
+@(user: model.User, question: model.bool.CreationQuestion)
+
+@exPart = @{
+    model.bool.FormulaCreation
+}
+
+@variables = @{
+    question.variables ++ Option(model.bool.BoolConsts.SolVariable)
+}
+
+@varSize = @{
+    12 / 3
+}
+
+@scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+    <script>
+            const solVar = '@model.bool.BoolConsts.SolVariable';
+    </script>
+    <script type="text/javascript" src="@controllers.routes.Assets.versioned("javascripts/bool/boolCreation.js")"></script>
+}
+
+@main("Formel erstellen", Some(user), scripts) {
+
+    @core.helperTemplates.modal("Bearbeitunginformationen", "infoModal", "lg") {
+        @views.html.bool.boolCreateInfo.render()
+    }
+
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Erstellen einer Booleschen Funktion
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#infoModal"><span class="glyphicon glyphicon-question-sign"></span></button>
+            </h1>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            @for(variable <- variables) {
+                                <th class="text-center">@variable</th>
+                            }
+                            <th class="text-center" id="learnerFormula">@model.bool.BoolConsts.SolVariable &#39;</th>
+                        </tr>
+                    </thead>
+                    <tbody id="valueTableBody">
+                    @for(assignment <- question.solutions) {
+                        <tr>
+                            @for(variable <- variables) {
+                                <td class="text-center" data-variable="@variable" data-value="@assignment(variable)">@assignment.asChar(variable)</td>
+                            }
+                        <td class="text-center" id="@assignment.identifier">--</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <input hidden id="toolType" value="@model.bool.BoolToolMain.urlPart" title="hidden">
+        <input hidden id="exerciseType" value="@question.exPart.urlName" title="hidden">
+        <input hidden id="solVar" value="@model.bool.BoolConsts.SolVariable" title="hidden">
+
+        <div class="row">
+            <div class="form-group">
+                <label class="control-label col-xs-1" for="@model.bool.BoolConsts.LearnerSol">@model.bool.BoolConsts.SolVariable
+                    = </label>
+                <div class="col-xs-11">
+                    <input class="form-control" name="@model.bool.BoolConsts.LearnerSol" id="@model.bool.BoolConsts.LearnerSol" placeholder="Ihre Lösung"
+                    autocomplete="off" required>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="btn-group btn-group-justified">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" id="testBtn">Prüfen</button>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-success" id="correctBtn">Zeige Musterlösung</button>
+            </div>
+            <div class="btn-group">
+                <a href="@controllers.exes.routes.RandomExerciseController.newExercise(model.bool.BoolToolMain.urlPart, exPart.urlName)" class="btn btn-default">
+                    Nächste Aufgabe</a>
+            </div>
+        </div>
+
+        <div id="messageDiv"></div>
+
+    </div>
+}

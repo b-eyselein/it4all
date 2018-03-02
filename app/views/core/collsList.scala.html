@@ -1,9 +1,10 @@
-@(user: model.User, collections: Seq[model.CompleteCollectionWrapper], rest: Html, toolObject: controllers.exes.AExCollectionToolMain, pages: Int)
+@import model.toolMains.CollectionToolMain
+@(user: model.User, collections: Seq[model.CompleteCollectionWrapper], rest: Html, toolObject: CollectionToolMain, pages: Int)
 
 @main(toolObject.toolname, Some(user)) {
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+            <h1 class="page-title">übersicht über verfügbare Aufgaben</h1>
         </div>
 
         @if(collections.isEmpty) {

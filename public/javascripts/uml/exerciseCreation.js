@@ -53,15 +53,15 @@ function onCheckSolutionSuccess(response) {
     switch (response) {
         case 'ok':
             solutionvalidDiv.attr('class', 'alert alert-success');
-            solutionvalidDiv.html('<span class="glyphicon glyphicon-ok"></span> L&ouml;sung entspricht dem JSON-Schema.');
+            solutionvalidDiv.html('<span class="glyphicon glyphicon-ok"></span> Lösung entspricht dem JSON-Schema.');
             break;
         case 'error':
             solutionvalidDiv.attr('class', 'alert alert-danger');
-            solutionvalidDiv.html('<span class="glyphicon glyphicon-remove"></span> Ihr Dokument enth&auml;lt einen Fehler!');
+            solutionvalidDiv.html('<span class="glyphicon glyphicon-remove"></span> Ihr Dokument enthält einen Fehler!');
             break;
         default:
             solutionvalidDiv.attr('class', 'alert alert-danger');
-            solutionvalidDiv.html('<span class="glyphicon glyphicon-remove"></span> Ihr Dokument enth&auml;lt folgende Fehler:<pre>'
+            solutionvalidDiv.html('<span class="glyphicon glyphicon-remove"></span> Ihr Dokument enthält folgende Fehler:<pre>'
                 + response + '</pre>');
             break;
     }

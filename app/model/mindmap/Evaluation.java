@@ -92,7 +92,7 @@ public class Evaluation {
    * the meta file are needed. The template defines the look of the altered
    * solution/input files. This method also creates three new files. Two of them
    * are altered versions of the input/solution mindmaps and the third is an
-   * overview of the evaluation results. The input and solution mindmaps must be
+   * naryOverview of the evaluation results. The input and solution mindmaps must be
    * XML or XMMAP. It is critical that the chosen parser type and the template
    * fit together.
    *
@@ -104,7 +104,7 @@ public class Evaluation {
    * @param solution
    *          the path to the mindmap which represents the perfect solution
    * @param result
-   *          the path where the result overview will be generated
+   *          the path where the result naryOverview will be generated
    * @param alteredSolution
    *          the path where the altered solution will be generated
    * @param alteredInput

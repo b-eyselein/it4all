@@ -1,4 +1,5 @@
-@(user: model.User, statistics: Html, toolMainObject: controllers.exes.AToolMain)
+@import model.toolMains.AToolMain
+@(user: model.User, statistics: Html, toolMainObject: AToolMain)
 
 @title = @{
     "Administrator " + toolMainObject.toolname

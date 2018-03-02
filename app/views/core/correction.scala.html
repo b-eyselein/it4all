@@ -1,10 +1,11 @@
-@(result: model.core.CompleteResult[_], resultAsHtml: Html, user: model.User, toolMainObject: controllers.exes.AToolMain)
+@import model.toolMains.AToolMain
+@(result: model.core.CompleteResult[_], resultAsHtml: Html, user: model.User, toolMainObject: AToolMain)
 
 @main(toolMainObject.toolname.toUpperCase(), Some(user)) {
     <div class="container">
 
         <div class="alert alert-success">
-            Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen nun weitere <a href="@controllers.exes.routes.ExerciseController.index(toolMainObject.urlPart)">
+            Ihre Lösung wurde gespeichert. Sie können nun weitere <a href="@controllers.exes.routes.ExerciseController.index(toolMainObject.urlPart)">
             Aufgaben bearbeiten.</a>
         </div>
 
@@ -12,7 +13,7 @@
 
         <div class="row row-eq-height">
             <div class="col-md-6">
-                <h2>Ihre L&ouml;sung</h2>
+                <h2>Ihre Lösung</h2>
                 @result.renderLearnerSolution
             </div>
 

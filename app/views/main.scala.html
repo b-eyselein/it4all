@@ -4,6 +4,8 @@
 <html lang="de">
 
     <head>
+        <meta charset="utf-8">
+
         <title>it4all: @title</title>
 
             <!-- JQuery, Bootstrap (CSS und JS) -->
@@ -34,20 +36,27 @@
                         <li class="dropdown active">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Aufgabenbereiche <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                @for(idPartTool <- controllers.exes.SingleExerciseController.IdPartExToolMains) {
-                                    <li><a href="@controllers.exes.routes.ExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname</a></li>
+
+                                @for(idPartTool <- model.toolMains.ToolList.RandomExToolMains) {
+                                    <li><a href="@controllers.exes.routes.RandomExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge()</a></li>
                                 }
 
-                            <li class="divider"></li>
+                                <li class="divider"></li>
 
-                                @for(fileTool <- controllers.exes.SingleExerciseController.FileExToolMains) {
-                                    <li><a href="@controllers.exes.routes.FileExerciseController.index(fileTool.urlPart)">@fileTool.toolname</a></li>
+                                @for(idPartTool <- model.toolMains.ToolList.IdPartExToolMains) {
+                                    <li><a href="@controllers.exes.routes.ExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge()</a></li>
                                 }
 
-                            <li class="divider"></li>
+                                <li class="divider"></li>
 
-                                @for(collTool <- controllers.exes.SingleExerciseController.ExCollectionToolMains) {
-                                    <li><a href="@controllers.exes.routes.CollectionController.index(collTool.urlPart)">@collTool.toolname</a></li>
+                                @for(fileTool <- model.toolMains.ToolList.FileExToolMains) {
+                                    <li><a href="@controllers.exes.routes.FileExerciseController.index(fileTool.urlPart)">@fileTool.toolname @fileTool.toolState.badge()</a></li>
+                                }
+
+                                <li class="divider"></li>
+
+                                @for(collTool <- model.toolMains.ToolList.ExCollectionToolMains) {
+                                    <li><a href="@controllers.exes.routes.CollectionController.index(collTool.urlPart)">@collTool.toolname @collTool.toolState.badge()</a></li>
                                 }
                             </ul>
                         </li>
@@ -64,19 +73,19 @@
                                         Administrator <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        @for(idPartTool <- controllers.exes.SingleExerciseController.IdPartExToolMains) {
+                                        @for(idPartTool <- model.toolMains.ToolList.IdPartExToolMains) {
                                             <li><a href="@controllers.exes.routes.ExerciseController.adminIndex(idPartTool.urlPart)">@idPartTool.toolname</a></li>
                                         }
 
                                         <li class="divider"></li>
 
-                                        @for(fileTool <- controllers.exes.SingleExerciseController.FileExToolMains) {
+                                        @for(fileTool <- model.toolMains.ToolList.FileExToolMains) {
                                             <li><a href="@controllers.exes.routes.FileExerciseController.adminIndex(fileTool.urlPart)">@fileTool.toolname</a></li>
                                         }
 
                                         <li class="divider"></li>
 
-                                        @for(collTool <- controllers.exes.SingleExerciseController.ExCollectionToolMains) {
+                                        @for(collTool <- model.toolMains.ToolList.ExCollectionToolMains) {
                                             <li><a href="@controllers.exes.routes.CollectionController.adminIndex(collTool.urlPart)">@collTool.toolname</a></li>
                                         }
 

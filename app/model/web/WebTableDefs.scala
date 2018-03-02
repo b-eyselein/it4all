@@ -34,6 +34,7 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
   override def hasPart(partType: WebExPart): Boolean = partType match {
     case HtmlPart => htmlTasks.nonEmpty
     case JsPart   => jsTasks.nonEmpty
+    case PHPPart  => false // TODO: PHP ex Part is currently deactivated (==> not yet implemented!)
   }
 
   def maxPoints(part: WebExPart): Double = part match {

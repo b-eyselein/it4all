@@ -17,7 +17,7 @@ function checkAndCreateRuleInputs(variables) {
                 `<div class="form-group">
                    <label class="control-label col-sm-2" for="rule_${v}">${v} = </label>
                    <div class="col-sm-10">
-                     <input class="form-control" id="rule_${v}" name="rule[${v}]" data-variable="${v}" onchange="updateVars()" required placeholder="Ersetzung f&uuml;r ${v}">
+                     <input class="form-control" id="rule_${v}" name="rule[${v}]" data-variable="${v}" onchange="updateVars()" required placeholder="Ersetzung für ${v}">
                    </div>
                  </div>`);
         } else {

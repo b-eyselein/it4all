@@ -1,4 +1,5 @@
-@(user: model.User, exported: String, toolMainObject: controllers.exes.AToolMain)
+@import model.toolMains.AToolMain
+@(user: model.User, exported: String, toolMainObject: AToolMain)
 
 @main("Export", Some(user)) {
     <div class="container">

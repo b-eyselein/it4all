@@ -2,9 +2,9 @@ package model.spread
 
 import java.nio.file.Path
 
-import controllers.exes.AFileExerciseToolMain
 import javax.inject._
 import model.spread.SpreadToolMain._
+import model.toolMains.FileExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, User}
 import play.twirl.api.Html
@@ -20,7 +20,7 @@ object SpreadToolMain {
 }
 
 @Singleton
-class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec: ExecutionContext) extends AFileExerciseToolMain("spread") {
+class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec: ExecutionContext) extends FileExerciseToolMain("spread") {
 
   // Abstract types
 

@@ -2,9 +2,10 @@ package model.web
 
 import java.nio.file.Path
 
-import controllers.exes.AExerciseToolMain
 import javax.inject._
+import model.Enums.ToolState
 import model.core._
+import model.toolMains.AExerciseToolMain
 import model.web.WebConsts._
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
@@ -40,6 +41,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Other members
 
   override val toolname: String = "Web"
+
+  override val toolState: ToolState = ToolState.LIVE
 
   override val consts: Consts = WebConsts
 

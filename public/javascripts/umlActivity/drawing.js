@@ -314,7 +314,7 @@ $(document).ready(function () {
     }
 
     graph.on('change', function () {
-        $('#generationAlerts').html(`<div class="alert alert-warning">Ihr Diagramm hat sich ge&auml;ndert. Bitte generieren Sie ihren Code neu!</div>`);
+        $('#generationAlerts').html(`<div class="alert alert-warning">Ihr Diagramm hat sich geändert. Bitte generieren Sie ihren Code neu!</div>`);
         $('#mainGeneration').removeClass('btn-default').addClass('btn-primary');
         // $('#preCode').html('');
     });

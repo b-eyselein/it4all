@@ -18,146 +18,98 @@ mappings:
 - {key: Patienten, value: Patient}
 - {key: Namen, value: Name}
 - {key: Medikamente, value: Medikament}
-
 ignoreWords: ['Ein', 'Jede']
 
-solution:
-  classes:
-  - classType: ABSTRACT
-    name: Person
-    attributes:
-    - {name: id, type: String}
-    - {name: name, type: String}
-    
-  - classType: CLASS
-    name: Doktor
-    methods: 
-    - {name: verschreiben(Patient), type: void}
+classes:
+- classType: ABSTRACT
+  name: Person
+  attributes:
+  - {name: id, type: String}
+  - {name: name, type: String}
 
-  - classType: CLASS
-    name: Rezept
-    attributes:
-    - {name: id, type: String}
-    
-  - classType: CLASS
-    name: Patient
-    methods:
-    - {name: entlassen(Station), type: void}
-    - {name: aufnehmen(Station), type: void}
+- classType: CLASS
+  name: Doktor
+  methods:
+  - {name: verschreiben(Patient), type: void}
 
-  - classType: CLASS
-    name: Krankenschwester
+- classType: CLASS
+  name: Rezept
+  attributes:
+  - {name: id, type: String}
 
-  - classType: CLASS
-    name: Station
-    attributes:
-    - {name: nummer, type: Int}
-    
-  - classType: CLASS
-    name: Medikament
-    attributes:
-    - {name: id, type: String}
-    - {name: name, type: String}
-    
-  - classType: CLASS
-    name: Krankenhaus
+- classType: CLASS
+  name: Patient
+  methods:
+  - {name: entlassen(Station), type: void}
+  - {name: aufnehmen(Station), type: void}
 
-  implementations:
-  - {subClass: Patient, superClass: Person}
-  - {subClass: Doktor, superClass: Person}
-  - {subClass: Krankenschwester, superClass: Person}
-    
-  associations:
-  - assocType: ASSOCIATION
-    firstEnd: Doktor
-    firstMult: SINGLE
-    secondEnd: Rezept
-    secondMult: UNBOUND
-      
-  - assocType: ASSOCIATION
-    firstEnd: Doktor
-    firstMult: SINGLE
-    secondEnd: Patient
-    secondMult: UNBOUND
-    
-  - assocType: ASSOCIATION
-    firstEnd: Station
-    firstMult: SINGLE
-    secondEnd: Patient
-    secondMult: UNBOUND
+- classType: CLASS
+  name: Krankenschwester
 
-  - assocType: ASSOCIATION
-    firstEnd: Station
-    firstMult: SINGLE
-    secondEnd: Krankenschwester
-    secondMult: UNBOUND
+- classType: CLASS
+  name: Station
+  attributes:
+  - {name: nummer, type: Int}
 
-  - assocType: ASSOCIATION
-    firstEnd: Station
-    firstMult: SINGLE
-    secondEnd: Doktor
-    secondMult: UNBOUND
+- classType: CLASS
+  name: Medikament
+  attributes:
+  - {name: id, type: String}
+  - {name: name, type: String}
 
-  - assocType: ASSOCIATION
-    firstEnd: Patient
-    firstMult: SINGLE
-    secondEnd: Rezept
-    secondMult: UNBOUND
+- classType: CLASS
+  name: Krankenhaus
 
-  - assocType: ASSOCIATION
-    firstEnd: Rezept
-    firstMult: SINGLE
-    secondEnd: Medikament
-    secondMult: UNBOUND
+implementations:
+- {subClass: Patient, superClass: Person}
+- {subClass: Doktor, superClass: Person}
+- {subClass: Krankenschwester, superClass: Person}
 
-  - assocType: COMPOSITION
-    firstEnd: Krankenhaus
-    firstMult: SINGLE
-    secondEnd: Station
-    secondMult: UNBOUND
----
-id: 2
-title: Gärtner
-author: bje40dc
-text: >
-      Sie sollen für den Gärtner ihres Vertrauens ein Programm zur Verwaltung der Produktion erstellen. In diesem
-      soll jede Pflanze, die in einem der Gewächshäuser wächst, registriert werden. Jede Pflanze hat einen Typ,
-      der die genaue Spezies angibt. Bei jeder Spezie soll die Möglichkeit gegeben sein, diese zu gießen.
-      Dieser Typ wird durch einen einzigartigen Code spezifiziert. Außerdem wird der lateinische und deutsche Name
-      des Typs gespeichert. Für jede Pflanze soll außerdem die Nummer des Gewächshauses und die Position (als Reihe
-      und Spalte, da die Gewächshäuser jeweils in Koordinaten eingeteilt sind) gespeichert werden. Pflanzentypen werden
-      in folgende Untertypen unterschieden: Bäume, Blumen und Nutzpflanzen. Für Bäume wird die durchschnittliche
-      Höhe gespeichert, ob sie immergrün sind und der Gärtner soll in regelmäßigen Abständen den Baum stutzen
-      kontrollieren. Für Blumen die Blütenfarbe vermerkt werden. Bei Nutzpflanzen wird der Beginn und das Ende der
-      Erntezeit gespeichert und zwischen Obst und Gemüse unterschieden. Für Obst soll ersichtlich sein, ob ein Kern
-      enthalten ist, für Gemüse, ob es zweijährig ist. Bei Blumen und Nutzpflanzen soll außerdem ein Hinweis gespeichert
-      werden, wann die Pflanzen gegossen werden sollen.
-status: CREATED
+associations:
+- assocType: ASSOCIATION
+  firstEnd: Doktor
+  firstMult: SINGLE
+  secondEnd: Rezept
+  secondMult: UNBOUND
 
-mappings:
-- {key: Vertrauens, value: Vertrauen}
-- {key: Gewächshäuser, value: Gewächshaus}
-- {key: Typs, value: Typ}
-- {key: Koordinaten, value: Koordinate}
-- {key: Pflanzentypen, value: Pflanzentyp}
-- {key: Untertypen, value: Untertyp}
-- {key: Bäume, value: Baum}
-- {key: Blumen, value: Blume}
-- {key: Nutzpflanzen, value: Nutzpflanze}
-- {key: Blütenfarben, value: Blützenfarbe}
-- {key: Pflanzen, value: Pflanze}
+- assocType: ASSOCIATION
+  firstEnd: Doktor
+  firstMult: SINGLE
+  secondEnd: Patient
+  secondMult: UNBOUND
 
-ignoreWords: ['Sie', 'Jede', 'In', 'Dieser', 'Außerdem', 'Für', 'Bei']
+- assocType: ASSOCIATION
+  firstEnd: Station
+  firstMult: SINGLE
+  secondEnd: Patient
+  secondMult: UNBOUND
 
-solution:
-  classes:
-  - classType: ABSTRACT
-    name: Pflanze
+- assocType: ASSOCIATION
+  firstEnd: Station
+  firstMult: SINGLE
+  secondEnd: Krankenschwester
+  secondMult: UNBOUND
 
-  - classType: ABSTRACT
-    name: Baum
+- assocType: ASSOCIATION
+  firstEnd: Station
+  firstMult: SINGLE
+  secondEnd: Doktor
+  secondMult: UNBOUND
 
-  implementations:
-  - {subClass: Baum, superClass: Pflanze}
+- assocType: ASSOCIATION
+  firstEnd: Patient
+  firstMult: SINGLE
+  secondEnd: Rezept
+  secondMult: UNBOUND
 
-  associations: []
+- assocType: ASSOCIATION
+  firstEnd: Rezept
+  firstMult: SINGLE
+  secondEnd: Medikament
+  secondMult: UNBOUND
+
+- assocType: COMPOSITION
+  firstEnd: Krankenhaus
+  firstMult: SINGLE
+  secondEnd: Station
+  secondMult: UNBOUND

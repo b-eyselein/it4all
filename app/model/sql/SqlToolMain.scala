@@ -1,12 +1,13 @@
 package model.sql
 
-import controllers.exes.AExCollectionToolMain
 import javax.inject._
+import model.Enums.ToolState
 import model._
 import model.core._
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.SqlExerciseType._
 import model.sql.SqlToolMain._
+import model.toolMains.CollectionToolMain
 import model.yaml.MyYamlFormat
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
@@ -33,7 +34,7 @@ object SqlToolMain {
 }
 
 @Singleton
-class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: ExecutionContext) extends AExCollectionToolMain("sql") with JsonFormat {
+class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("sql") with JsonFormat {
 
   // Abstract types
 
@@ -58,6 +59,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override val toolname              : String = "Sql"
   override val collectionSingularName: String = "Szenario"
   override val collectionPluralName  : String = "Szenarien"
+
+  override val toolState: ToolState = ToolState.LIVE
 
   override val consts: Consts = SqlConsts
 

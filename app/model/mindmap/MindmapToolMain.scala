@@ -2,9 +2,9 @@ package model.mindmap
 
 import java.nio.file.Path
 
-import controllers.exes.AFileExerciseToolMain
 import javax.inject._
 import model.core._
+import model.toolMains.FileExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, User}
 import play.twirl.api.Html
@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext
 import scala.util.Try
 
 @Singleton
-class MindmapToolMain @Inject()(override val tables: MindmapTableDefs)(implicit ec: ExecutionContext) extends AFileExerciseToolMain("mindmap") {
+class MindmapToolMain @Inject()(override val tables: MindmapTableDefs)(implicit ec: ExecutionContext) extends FileExerciseToolMain("mindmap") {
 
   // Abstract types
 

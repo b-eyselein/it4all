@@ -1,4 +1,4 @@
-package model.essentials
+package model.nary
 
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.{assertNotNull, assertThat}

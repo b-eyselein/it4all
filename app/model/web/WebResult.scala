@@ -23,7 +23,7 @@ case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, p
     val solSaved: String = if (solutionSaved)
       div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Ihre Lösung wurde gespeichert.").toString
     else
-      div(cls := "alert alert-danger")(span(cls := "glyphicon glyphicon-remove"), " Ihre L&ouml;sung konnte nicht gespeichert werden!").toString
+      div(cls := "alert alert-danger")(span(cls := "glyphicon glyphicon-remove"), " Ihre Lösung konnte nicht gespeichert werden!").toString
 
     val resultsRender: String = results match {
       case Nil   => div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), "Es wurden keine Fehler gefunden.").toString

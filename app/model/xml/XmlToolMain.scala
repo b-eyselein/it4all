@@ -3,9 +3,10 @@ package model.xml
 import java.nio.file._
 
 import controllers.ExerciseOptions
-import controllers.exes.AExerciseToolMain
 import javax.inject._
+import model.Enums.ToolState
 import model.core._
+import model.toolMains.AExerciseToolMain
 import model.xml.XmlConsts._
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, User}
@@ -41,6 +42,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Other members
 
   override val toolname: String = "Xml"
+
+  override val toolState: ToolState = ToolState.LIVE
 
   override val consts: Consts = XmlConsts
 

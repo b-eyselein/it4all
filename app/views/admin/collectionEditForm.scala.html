@@ -1,4 +1,5 @@
-@(user: model.User, toolMainObject: controllers.exes.AExCollectionToolMain, maybeCollWrapper: Option[model.CompleteCollectionWrapper], renderedRest: Html)
+@import model.toolMains.CollectionToolMain
+@(user: model.User, toolMainObject: CollectionToolMain, maybeCollWrapper: Option[model.CompleteCollectionWrapper], renderedRest: Html)
 
 @isCreation = @{
     maybeCollWrapper.isEmpty

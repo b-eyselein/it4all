@@ -405,7 +405,7 @@ function convertJsonToProgrammCode(json_graph, language, parentId) {
             break;
         default:
             selectedLanguageBuilderType = Python;
-            log.push('Body f&uuml;r Sprache konnte nicht ermittelt werden: Nutze Python...');
+            log.push('Body für Sprache konnte nicht ermittelt werden: Nutze Python...');
     }
 
     const programContent /* string[] */ = buildProgramm(json_graph, selectedLanguageBuilderType);

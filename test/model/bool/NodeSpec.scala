@@ -1,7 +1,7 @@
 package model.bool
 
 import model.bool.NodeSpec._
-import model.essentials._
+import model.nary._
 import org.scalatest._
 
 import scala.language.implicitConversions

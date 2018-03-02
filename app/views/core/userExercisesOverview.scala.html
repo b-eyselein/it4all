@@ -1,9 +1,11 @@
-@(user: model.User, dataForUserExesOverview: controllers.exes.UserExOverviewContent, toolObject: controllers.exes.ASingleExerciseToolMain, currentPage: Int)
+@import model.toolMains.ASingleExerciseToolMain
+@import model.toolMains.UserExOverviewContent
+@(user: model.User, dataForUserExesOverview: UserExOverviewContent, toolObject: ASingleExerciseToolMain, currentPage: Int)
 
     @main(toolObject.toolname, Some(user)) {
         <div class="container">
             <div class="page-header">
-                <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+                <h1 class="page-title">übersicht über verfügbare Aufgaben</h1>
             </div>
 
             @if(dataForUserExesOverview.exesAndRoutes.isEmpty) {

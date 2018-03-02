@@ -5,6 +5,7 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.core._
 import model.programming.{NewProgYamlProtocol, ProgLanguage}
+import model.toolMains.ToolList
 import model.web.{HtmlPart, WebConsts, WebSolution, WebToolMain}
 import model.xml.{XmlCompleteResult, XmlCorrector}
 import play.api.db.slick.DatabaseConfigProvider
@@ -27,7 +28,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def exercise(tool: String, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getIdPartToolMainOption(tool) match {
+      ToolList.getIdPartToolMainOption(tool) match {
         case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
         case Some(toolMain) => toolMain.renderExerciseById(user, id, partStr) map {
           case Some(r) => Ok(r)
@@ -39,7 +40,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   // FIXME: part in url!
   def correct(tool: String, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      SingleExerciseController.getIdPartToolMainOption(tool) match {
+      ToolList.getIdPartToolMainOption(tool) match {
         case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
         case Some(toolMain) => toolMain.correctAbstract(user, id, partStr, isLive = false) map {
           case Failure(error)  => BadRequest(toolMain.onSubmitCorrectionError(user, error))
@@ -55,7 +56,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def correctLive(tool: String, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request => {
-      SingleExerciseController.getIdPartToolMainOption(tool) match {
+      ToolList.getIdPartToolMainOption(tool) match {
         case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
         case Some(toolMain) => toolMain.correctAbstract(user, id, partStr, isLive = true) map {
           case Failure(error)  => BadRequest(toolMain.onLiveCorrectionError(error))
@@ -73,7 +74,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   def progNewTest: EssentialAction = withAdmin { admin =>
     implicit request => {
       val tool = "prog"
-      SingleExerciseController.getIdPartToolMainOption(tool) match {
+      ToolList.getIdPartToolMainOption(tool) match {
         case None           => BadRequest(s"Tool >>$tool<< not found!")
         case Some(toolMain) => NewProgYamlProtocol.testRead(toolMain.exerciseResourcesFolder) match {
           case Success((fileContent, classTest)) => Ok(testNewFormat.render(admin, fileContent, classTest))
@@ -104,7 +105,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def webSolution(username: String, id: Int, partUrlName: String): Action[AnyContent] = Action.async { implicit request =>
     val tool = "web"
-    SingleExerciseController.getIdPartToolMainOption(tool) match {
+    ToolList.getIdPartToolMainOption(tool) match {
       case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
       case Some(toolMain) => tables.userByName(username) flatMap {
         case None       => Future(BadRequest("No such solution!"))

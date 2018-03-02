@@ -1,13 +1,14 @@
-@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], toolObject: controllers.exes.AExCollectionToolMain)
+@import model.toolMains.CollectionToolMain
+@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], toolObject: CollectionToolMain)
 
 @main("Aufgabenübersicht", Some(user)) {
     <div class="container">
         <div class="page-header">
-            <h1>Verf&uuml;gbare Aufgaben</h1>
+            <h1>Verfügbare Aufgaben</h1>
         </div>
 
         <a href="@controllers.exes.routes.CollectionController.adminIndex(toolObject.urlPart)" class="btn btn-primary btn-block">
-            Zur&uuml;ck zur Administratorseite</a>
+            Zurück zur Administratorseite</a>
 
         <hr>
 
@@ -48,7 +49,7 @@
                         <a class="btn btn-default" title="Aufgabe @collection.coll.id bearbeiten" id="edit_@collection.coll.id" href="@@toolObject.editExerciseFormRoute(collection.id)">
                             <span class="glyphicon glyphicon-wrench"></span>
                         </a>
-                        <button class="btn btn-default" title="Aufgabe @collection.coll.id l&ouml;schen" id="del_@collection.coll.id" onclick="deleteExercise()">
+                        <button class="btn btn-default" title="Aufgabe @collection.coll.id löschen" id="del_@collection.coll.id" onclick="deleteExercise()">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>

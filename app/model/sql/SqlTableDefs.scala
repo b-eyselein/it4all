@@ -1,9 +1,9 @@
 package model.sql
 
-import controllers.exes.MyWrapper
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
+import model.core.MyWrapper
 import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
@@ -74,7 +74,7 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
        |  <div class="col-sm-2">${tags map (_.title) mkString ", "}</div>
        |</div>
        |<div class="row">
-       |  <div class="col-sm-12"><b>Musterl&ouml;sungen:</b></div>
+       |  <div class="col-sm-12"><b>Musterlösungen:</b></div>
        |</div>
        |${samples map (sample => s"<pre>${sample.sample}</pre>") mkString}""".stripMargin)
 

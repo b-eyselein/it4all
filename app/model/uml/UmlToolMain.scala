@@ -1,15 +1,15 @@
 package model.uml
 
-import controllers.exes.AExerciseToolMain
 import javax.inject._
+import model.Enums.ToolState
 import model.core._
+import model.toolMains.AExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.twirl.api.Html
 import scalatags.Text.all._
-import views.html.uml._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -37,6 +37,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Other members
 
   override val toolname: String = "Uml"
+
+  override val toolState: ToolState = ToolState.LIVE
 
   override val consts: Consts = UmlConsts
 
@@ -71,10 +73,10 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart): Future[Html] = Future {
     part match {
-      case ClassSelection     => classSelection.render(user, exercise.ex)
-      case DiagramDrawing     => diagdrawing.render(user, exercise, getsHelp = false)
-      case DiagramDrawingHelp => diagdrawing.render(user, exercise, getsHelp = true)
-      case MemberAllocation   => allocation.render(user, exercise)
+      case ClassSelection     => views.html.uml.classSelection(user, exercise.ex)
+      case DiagramDrawing     => views.html.uml.diagdrawing(user, exercise, getsHelp = false)
+      case DiagramDrawingHelp => views.html.uml.diagdrawing(user, exercise, getsHelp = true)
+      case MemberAllocation   => views.html.uml.allocation(user, exercise)
     }
   }
 

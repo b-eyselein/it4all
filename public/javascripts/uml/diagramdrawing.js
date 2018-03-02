@@ -122,7 +122,7 @@ function memberInputs(memberName, memberType = '', isAttr = true) {
       ${UmlTypes.map(umlType => `<option ${umlType === memberType ? 'selected' : ''}>${umlType}</option>`).join("")}
     </select>
     <span class="input-group-addon"></span>
-    <button class="form-control btn-warning" title="L&ouml;schen" onclick="deleteMember(this)"><span class="glyphicon glyphicon-remove"></span></button>
+    <button class="form-control btn-warning" title="Löschen" onclick="deleteMember(this)"><span class="glyphicon glyphicon-remove"></span></button>
   </div>
 </div>`.trim();
 }

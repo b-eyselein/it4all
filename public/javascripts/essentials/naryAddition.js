@@ -1,14 +1,4 @@
-function readValues() {
-    return {
-        summand1: $('#firstSummand').val(),
-        summand2: $('#secondSummand').val(),
-        base: $('#base').data('base'),
-        solution: $('#solution').val().split('').reverse().join('')
-    };
-}
-
 /**
- *
  * @param {{correct: boolean}} response
  */
 function onAjaxSuccess(response) {
@@ -20,18 +10,29 @@ function onAjaxSuccess(response) {
     }
 }
 
-/**
- * @param {string} theUrl
- */
-function testSol(theUrl) {
+function testSol() {
+    let toolType = $('#toolType').val(), exerciseType = $('#exerciseType').val();
+
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
+    let url = jsRoutes.controllers.exes.RandomExerciseController.correctLive(toolType, exerciseType).url;
+
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
-        url: theUrl,
-        data: JSON.stringify(readValues()),
+        url,
+        data: JSON.stringify({
+            summand1: $('#firstSummand').val(),
+            summand2: $('#secondSummand').val(),
+            base: $('#base').data('base'),
+            solution: $('#solution').val().split('').reverse().join('')
+        }),
         async: true,
         success: onAjaxSuccess
     });
 }
+
+$(document).ready(function () {
+    $('#testBtn').click(testSol);
+});
 

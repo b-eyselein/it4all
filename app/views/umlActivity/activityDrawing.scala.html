@@ -1,4 +1,5 @@
-@(user: model.User, completeEx: model.programming.ProgCompleteEx, toolObject: controllers.exes.AExerciseToolMain)
+@import model.toolMains.AExerciseToolMain
+@(user: model.User, completeEx: model.programming.ProgCompleteEx, toolObject: AExerciseToolMain)
 
 @solutionVar = @{
     "solution"
@@ -59,7 +60,7 @@
     <div id="fullsc" class="container-fluid">
 
         <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a data-toggle="tab" href="#drawingTab">Zeichenfl&auml;che</a></li>
+            <li class="active"><a data-toggle="tab" href="#drawingTab">Zeichenfläche</a></li>
             <li><a data-toggle="tab" id="resultTabToggle" href="#resultTab">Generierter Code &amp; Resultate</a> </li>
         </ul>
 
@@ -145,7 +146,7 @@
 
                         <div class="form-group">
                             <button class="btn btn-info btn-block" data-toggle="collapse" data-target="#configSection">
-                                Ansicht &amp; Zeichenfl&auml;che</button>
+                                Ansicht &amp; Zeichenfläche</button>
                         </div>
 
                         <section id="configSection" class="collapse">
@@ -163,12 +164,12 @@
                                 </div>
                             </div>
 
-                            <h4 class="text-center">Zeichenfl&auml;che</h4>
+                            <h4 class="text-center">Zeichenfläche</h4>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="input-group">
                                         <button class="form-control" id="paperplus">+</button>
-                                        <span class="input-group-addon">Gr&ouml;&szlig;e</span>
+                                        <span class="input-group-addon">Größe</span>
                                         <button class="form-control" id="paperminus">-</button>
                                     </div>
                                 </div>

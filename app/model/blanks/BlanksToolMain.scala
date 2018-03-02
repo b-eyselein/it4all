@@ -1,8 +1,8 @@
 package model.blanks
 
-import controllers.exes.AExerciseToolMain
 import javax.inject._
 import model.blanks.BlanksExParts.BlanksExPart
+import model.toolMains.AExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
 import play.api.libs.json

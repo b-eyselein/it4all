@@ -1,13 +1,3 @@
-function readValues() {
-    return {
-        invertedAbs: $('#invertedAbs').val(),
-        binaryAbs: $('#binaryAbs').val(),
-        value: parseInt($('#value').val()),
-        solution: $('#solution').val()
-    }
-}
-
-
 function colorParent(parent, correct) {
     if (correct) {
         parent.removeClass('has-error').addClass('has-success');
@@ -26,18 +16,29 @@ function onAjaxSuccess(response) {
     colorParent($('#solution').parent(), response.correct);
 }
 
-/**
- * @param {string} theUrl
- */
-function testSol(theUrl) {
+function testSol() {
+    let toolType = $('#toolType').val(), exerciseType = $('#exerciseType').val();
+
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
+    let url = jsRoutes.controllers.exes.RandomExerciseController.correctLive(toolType, exerciseType).url;
+
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
-        url: theUrl,
-        data: JSON.stringify(readValues()),
+        url,
+        data: JSON.stringify({
+            invertedAbs: $('#invertedAbs').val(),
+            binaryAbs: $('#binaryAbs').val(),
+            value: parseInt($('#value').val()),
+            solution: $('#solution').val()
+        }),
         async: true,
         success: onAjaxSuccess
     });
 }
+
+$(document).ready(function () {
+    $('#testBtn').click(testSol);
+});
 

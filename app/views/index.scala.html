@@ -1,3 +1,7 @@
+@import model.toolMains.CollectionToolMain
+@import model.toolMains.FileExerciseToolMain
+@import model.toolMains.AExerciseToolMain
+@import model.toolMains.RandomExerciseToolMain
 @(user: model.User, isDev: Boolean)
 
 @main("HTML-Test", Some(user)) {
@@ -18,32 +22,40 @@
 
         <hr>
 
-        <h2>Verf&uuml;gbare Aufgabentypen</h2>
-        @for(tools <- controllers.exes.SingleExerciseController.ToolMains.grouped(3)) {
+        <h2>Verfügbare Aufgabentypen</h2>
+
+        @for(tools <- model.toolMains.ToolList.AllToolMains.grouped(3)) {
             <div class="row">
-            @for(tool <- tools) {
+            @for(tool <- tools.filter(t => isDev || (t.toolState == model.Enums.ToolState.LIVE))) {
                 <div class="col-md-4">
                 @tool match {
-                    case a: controllers.exes.AExerciseToolMain => {
+                    case a: AExerciseToolMain => {
                         <a class="btn btn-default btn-block" href="@controllers.exes.routes.ExerciseController.index(a.urlPart)">
-                            <span class="text-capitalize">@a.toolname</span>
+                            <span>@a.toolname @a.toolState.badge</span>
                         </a>
                     }
-                    case b: controllers.exes.AExCollectionToolMain => {
+                    case b: CollectionToolMain => {
                         <a class="btn btn-default btn-block" href="@controllers.exes.routes.CollectionController.index(b.urlPart)">
-                            <span class="text-capitalize">@b.toolname</span>
+                            <span>@b.toolname @b.toolState.badge</span>
                         </a>
                     }
-                    case c: controllers.exes.AFileExerciseToolMain => {
+                    case c: FileExerciseToolMain => {
                         <a class="btn btn-default btn-block" href="@controllers.exes.routes.FileExerciseController.index(c.urlPart)">
-                            <span class="text-capitalize">@c.toolname</span>
+                            <span>@c.toolname @c.toolState.badge</span>
+                        </a>
+                    }
+                    case d: RandomExerciseToolMain => {
+                        <a class="btn btn-default btn-block" href="@controllers.exes.routes.RandomExerciseController.index(d.urlPart)">
+                            <span>@d.toolname @d.toolState.badge</span>
                         </a>
                     }
                 }
                 </div>
             }
             </div>
-                &nbsp;
+
+            @* space between rows... *@
+            &nbsp;
         }
 
     </div>

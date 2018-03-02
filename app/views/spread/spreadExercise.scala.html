@@ -13,12 +13,12 @@
         <h2>Download der Musterdatei</h2>
 
         <a href="@controllers.exes.routes.FileExerciseController.downloadTemplate("spread", exercise.id, fileType._1)" class="btn btn-default btn-block">
-            Musterdatei f&uuml;r @fileType._2 herunterladen</a>
+            Musterdatei für @fileType._2 herunterladen</a>
 
 
         <hr>
 
-        <h2>Upload ihrer L&ouml;sung</h2>
+        <h2>Upload ihrer Lösung</h2>
 
         <form class="form-horizontal" action="@controllers.exes.routes.FileExerciseController.uploadSolution("spread", exercise.id, fileType._1)"
         method="post" enctype="multipart/form-data">
@@ -30,7 +30,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-success btn-block">L&ouml;sung abgeben</button>
+            <button class="btn btn-success btn-block">Lösung abgeben</button>
 
         </form>
     </div>

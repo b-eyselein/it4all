@@ -21,25 +21,10 @@ PUT           /users/changeRole/:user                                    control
 GET           /lti                                                       controllers.LTIController.honeypot
 POST          /lti                                                       controllers.LTIController.honeypot
 
-# Essentials - Nary, Boolean, Ebnf?
-GET           /essentials                                                controllers.randomExes.EssentialsController.index
-
-GET           /essentials/nary/conv                                      controllers.randomExes.NaryController.newNaryConversionQuestion(fromBase: String ?= "RANDOM", toBase: String ?= "RANDOM")
-PUT           /essentials/nary/conv                                      controllers.randomExes.NaryController.checkNaryConversionSolution
-
-GET           /essentials/nary/add                                       controllers.randomExes.NaryController.newNaryAdditionQuestion(base: String ?= "RANDOM")
-PUT           /essentials/nary/add                                       controllers.randomExes.NaryController.checkNaryAdditionSolution
-
-GET           /essentials/nary/twocomp                                   controllers.randomExes.NaryController.newNaryTwoComplementQuestion(verbose: Boolean ?= true)
-PUT           /essentials/nary/twocomp                                   controllers.randomExes.NaryController.checkNaryTwoComplementSolutionLive
-
-GET           /essentials/bool/fillout                                   controllers.randomExes.BoolController.newBoolFilloutQuestion(opsAsSymbols: Boolean ?= false)
-PUT           /essentials/bool/fillout                                   controllers.randomExes.BoolController.checkBoolFilloutSolution
-
-GET           /essentials/bool/creation                                  controllers.randomExes.BoolController.newBoolCreationQuestion
-PUT           /essentials/bool/creation                                  controllers.randomExes.BoolController.checkBoolCreationSolution
-# Essentials - End
-
+# Random tools
+GET           /random/:toolType                                          controllers.exes.RandomExerciseController.index(toolType: String)
+GET           /random/:toolType/:exPart                                  controllers.exes.RandomExerciseController.newExercise(toolType: String, exPart: String)
+PUT           /random/:toolType/:exPart                                  controllers.exes.RandomExerciseController.correctLive(toolType: String, exPart: String)
 
 # File tools
 GET           /fileTools/:toolType/admin                                 controllers.exes.FileExerciseController.adminIndex(toolType: String)
