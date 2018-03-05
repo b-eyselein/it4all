@@ -4,7 +4,7 @@
     @* Javascript Routes *@
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 
-@core.editorScripts.render("html", 30, 50)
+@core.editorScripts.render("html", 40, 50)
 
     <script src="@routes.Assets.versioned("javascripts/web/webExercise.js")"></script>
 
@@ -29,19 +29,21 @@
         <input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">
         <input hidden type="text" id="exercisePart" value="@part.urlName" title="hidden">
 
-        <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a data-toggle="tab" href="#exAndEditTab">Aufgabenstellung und Editor</a></li>
-            <li><a data-toggle="tab" href="#previewTab" onclick="updatePreviewNew()">Live-Vorschau</a></li>
-        </ul>
+        <div class="row">
+            <div class="col-sm-6">@core.editor(oldSolution)</div>
 
 
-        <div class="tab-content">
+            <div class="col-sm-6">
 
-            <div id="exAndEditTab" class="tab-pane fade in active">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h2>Aufgabenstellung</h2>
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active"><a data-toggle="tab" href="#exAndEditTab">Aufgabenstellung</a></li>
+                    <li><a data-toggle="tab" href="#previewTab" onclick="updatePreviewNew()">Live-Vorschau</a></li>
+                    <li><a data-toggle="tab" href="#correctionTab" id="correctionTabBtn">Korrektur</a></li>
+                </ul>
 
+
+                <div class="tab-content">
+                    <div id="exAndEditTab" class="tab-pane fade in active">
                         <hr>
 
                         <p class="text-justify">@exercise.ex.text</p>
@@ -74,37 +76,29 @@
                                 </ol>
                             </div>
                         } else {
-                            <p>Es gibt insgesamt 4 Testfälle.</p>
+                            <p>Es gibt insgesamt @tasks.size Testfälle.</p>
                         }
                     </div>
 
-                    <div class="col-sm-6">
-                        <h2>Editor</h2>
-
+                    <div id="previewTab" class="tab-pane fade">
                         <hr>
 
-                        @core.editor(oldSolution)
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="http://localhost:9080/@user.username/@exercise.ex.id/test.html" id="preview"></iframe>
+                        </div>
                     </div>
-                </div>
 
-                <hr>
+                    <div id="correctionTab" class="tab-pane fade">
+                        <hr>
 
-                <div id="correction"></div>
-
-            </div>
-
-            <div id="previewTab" class="tab-pane fade">
-
-                <div class="container">
-                    <h2>Live-Vorschau</h2>
-
-                    <div class="embed-responsive embed-responsive-16by9">
-                        <iframe class="embed-responsive-item" src="http://localhost:9080/@user.username/@exercise.ex.id/test.html" id="preview"></iframe>
+                        <div id="correction">
+                            <div class="alert alert-warning">Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
+                        </div>
                     </div>
                 </div>
 
             </div>
-
         </div>
+
     </div>
 }

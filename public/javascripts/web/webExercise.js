@@ -201,6 +201,7 @@ function onWebCorrectionSuccess(corr) {
     }
 
     $('#correction').html(html);
+    $('#correctionTabBtn').click();
     $('#testButton').prop('disabled', false);
 }
 
@@ -208,8 +209,6 @@ function onWebCorrectionSuccess(corr) {
  * @param jqXHR {{responseText: string, responseJSON: string}}
  */
 function onWebCorrectionError(jqXHR) {
-    console.error(jqXHR.responseJSON);
-
     $('#testButton').prop('disabled', false);
 
     $('#correction').html(`
@@ -258,10 +257,8 @@ function updatePreviewNew() {
         data: unescapeHTML(editor.getValue()),
         async: true,
         success: function (response) {
-            console.log(response);
-            // Refresh iFrame
-            console.log("Refreshing iframe...");
             $('#preview').attr('src', function (i, val) {
+                // Refresh iFrame
                 return val;
             });
         },
@@ -269,13 +266,4 @@ function updatePreviewNew() {
             console.error(jqXHR);
         }
     });
-}
-
-function updatePreview() {
-    // const toWrite = unescapeHTML(editor.getValue());
-    //
-    // const theIFrame = document.getElementById('preview').contentWindow.document;
-    // theIFrame.open();
-    // theIFrame.write(toWrite);
-    // theIFrame.close();
 }

@@ -195,10 +195,6 @@ function testSqlSol() {
     });
 }
 
-function updatePreview() {
-    // Do nothing...
-}
-
 $(document).ready(function () {
     $('#testButton').click(testSqlSol);
 });

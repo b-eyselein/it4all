@@ -63,10 +63,6 @@ function testSol() {
 
 }
 
-function updatePreview() {
-    // Do nothing
-}
-
 $(document).ready(function () {
     $('#testBtn').click(testSol);
 });

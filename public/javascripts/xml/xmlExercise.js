@@ -61,10 +61,6 @@ function testSol() {
     });
 }
 
-function updatePreview() {
-    // Do nothing...
-}
-
 $(document).ready(function () {
     $('#testButton').click(testSol);
 });
