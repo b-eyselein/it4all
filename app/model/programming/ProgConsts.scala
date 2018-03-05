@@ -8,14 +8,15 @@ object ProgConsts extends Consts {
 
   val FunctionName = "functionName"
 
-  val INPUTCOUNT_NAME = "inputCount"
-  val INPUT_NAME      = "input"
-  val INPUTS_NAME     = "inputs"
-  val InputTypesName  = "inputTypes"
+  val ImplementationName = "implementation"
+  val INPUTCOUNT_NAME    = "inputCount"
+  val INPUT_NAME         = "input"
+  val INPUTS_NAME        = "inputs"
+  val InputTypesName     = "inputTypes"
 
   val LANGUAGE_NAME = "language"
 
-  val OUTPUT_NAME = "output"
+  val OUTPUT_NAME    = "output"
   val OutputTypeName = "outputType"
 
   val SAMPLE_NAME          = "sample"

@@ -3,6 +3,7 @@ package model.spread
 import java.nio.file.Path
 
 import javax.inject._
+import model.Enums.ToolState
 import model.spread.SpreadToolMain._
 import model.toolMains.FileExerciseToolMain
 import model.yaml.MyYamlFormat
@@ -37,6 +38,8 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
   // Other members
 
   override val toolname: String = "Spread"
+
+  override val toolState: ToolState = ToolState.LIVE
 
   override val consts: Consts = SpreadConsts
 

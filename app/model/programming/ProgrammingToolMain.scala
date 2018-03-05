@@ -19,7 +19,7 @@ import scala.util.{Success, Try}
 
 object ProgrammingToolMain {
 
-  private val ProgExOptions = ExerciseOptions("Programmierung", ProgLanguage.STANDARD_LANG.aceName, 15, 30, updatePrev = false)
+  private val ProgExOptions = ExerciseOptions(ProgLanguage.STANDARD_LANG.aceName, 15, 30)
 
   val STD_TEST_DATA_COUNT = 2
 
@@ -75,8 +75,8 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
       case Implementation =>
         jsValue.asObj flatMap { jsObj =>
           for {
-            language <- jsObj.enumField("languague", str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
-            implementation <- jsObj.stringField("implementation")
+            language <- jsObj.enumField(LANGUAGE_NAME, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
+            implementation <- jsObj.stringField(ImplementationName)
           } yield ImplementationSolution(user.username, id, language, implementation)
         }
 
@@ -102,9 +102,8 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
-    // FIXME: remove null!
-    ProgExercise(id, title = "", author = "", text = "", state, functionName = "", outputType = null),
-    inputTypes = Seq.empty, sampleSolution = null, sampleTestData = Seq.empty
+    ProgExercise(id, title = "", author = "", text = "", state, functionName = "", outputType = ProgDataTypes.STRING),
+    inputTypes = Seq.empty, sampleSolution = ProgSampleSolution(id, PYTHON_3, ""), sampleTestData = Seq.empty
   )
 
   // Yaml
@@ -139,16 +138,15 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
           case Some(tds: TestDataSolution) => tds.completeCommitedTestData
           case _                           => Seq.empty
         }
-
         views.html.programming.testDataCreation(user, exercise, oldTestData, this)
 
       case Implementation =>
         val declaration: String = oldSolution map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
-
         views.html.core.exercise2Rows.render(user, this, ProgExOptions, exercise, exRest, exScript, declaration, Implementation)
 
-
-      case ActivityDiagram => views.html.umlActivity.activityDrawing.render(user, exercise, this)
+      case ActivityDiagram =>
+        // FIXME: use old soluton!
+        views.html.umlActivity.activityDrawing.render(user, exercise, this)
     }
   }
 

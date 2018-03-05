@@ -102,10 +102,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override def renderEditRest(exercise: XmlExercise): Html = views.html.xml.editXmlExRest(exercise)
 
-  //  override def renderExesListRest: Html = new Html(a(cls := "btn btn-primary btn-block", href := routes.XmlController.xmlPlayground().url)("Xml-Playground").toString() + "<hr>")
-
-  val exOptions = ExerciseOptions("Xml", "xml", 15, 30, updatePrev = false)
-
   override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart): Future[Html] = futureReadOldSolution(user, exercise.ex.id, part) map {
     maybeOldSolution =>
       val template = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
@@ -117,7 +113,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
         case GrammarCreationXmlPart  => Html(div(cls := "well")(exercise.grammarDescription).toString)
       }
 
-      views.html.core.exercise2Rows(user, this, exOptions, exercise.ex, exRest, exScript, template, part)
+      views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, exScript, template, part)
   }
 
   // Result handlers
