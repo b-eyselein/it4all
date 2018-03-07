@@ -1,0 +1,27 @@
+@(user: model.User, courses: Seq[model.Course])
+
+@main("Meine Kurse", Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Meine Kurse</h1>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kurs-Id</th>
+                    <th>Kursname</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(course <- courses) {
+                    <tr>
+                        <td>@course.id</td>
+                        <td>@course.courseName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+}

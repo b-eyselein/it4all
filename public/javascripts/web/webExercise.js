@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('#testButton').click(testSol);
+    $('#testBtn').click(testSol);
 });
 
 /**
@@ -202,14 +202,14 @@ function onWebCorrectionSuccess(corr) {
 
     $('#correction').html(html);
     $('#correctionTabBtn').click();
-    $('#testButton').prop('disabled', false);
+    $('#testBtn').prop('disabled', false);
 }
 
 /**
  * @param jqXHR {{responseText: string, responseJSON: string}}
  */
 function onWebCorrectionError(jqXHR) {
-    $('#testButton').prop('disabled', false);
+    $('#testBtn').prop('disabled', false);
 
     $('#correction').html(`
 <div class="alert alert-danger">Es gab einen Fehler bei der Korrekur:

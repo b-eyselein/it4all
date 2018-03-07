@@ -1,22 +1,26 @@
-@import model.toolMains.AToolMain
-@(user: model.User, completeExercises: Seq[model.CompleteExWrapper], toolMainObject: AToolMain)
-@* FIXME: convert all routes to js routes! *@
-@main("Aufgabenübersicht", Some(user)) {
+@(user: model.User, completeExercises: Seq[model.CompleteExWrapper], toolMainObject: model.toolMains.AToolMain)
+
+@scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
+}
+
+@main("Aufgabenübersicht", Some(user), scripts) {
     <div class="container">
         <div class="page-header">
             <h1>Verfügbare Aufgaben</h1>
         </div>
 
-        @* @toolMainObject.adminIndexRoute *@
         <a href="@controllers.exes.routes.ExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
+        <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
+
         <hr>
 
-        <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
-
-        <div id="messages"></div>
-
+        @* FIXME: convert all routes (if possible!) to js routes! *@
         <table class="table">
             <thead>
                 <tr>

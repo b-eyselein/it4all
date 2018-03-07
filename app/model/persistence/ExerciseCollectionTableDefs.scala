@@ -12,21 +12,27 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
 
   import profile.api._
 
-  override type ExTableDef <: ExerciseInCollectionTable[Ex]
+  // Abstract types
 
-  type CollTableDef <: HasBaseValuesTable[Coll]
+  override protected type ExTableDef <: ExerciseInCollectionTable[Ex]
 
-  type SolTableDef <: CollectionExSolutionsTable[SolType]
+  protected type CollTableDef <: HasBaseValuesTable[Coll]
 
-  val collTable: TableQuery[CollTableDef]
+  protected type SolTableDef <: CollectionExSolutionsTable[SolType]
 
-  val solTable: TableQuery[SolTableDef]
+  // Abstract members
+
+  protected val collTable: TableQuery[CollTableDef]
+
+  protected val solTable: TableQuery[SolTableDef]
 
   // Numbers
 
   def futureNumOfCollections: Future[Int] = db.run(collTable.length.result)
 
   def futureNumOfExesInColl(collId: Int): Future[Int] = db.run(exTable.filter(_.collectionId === collId).length.result)
+
+  def futureHighestCollectionId(implicit ec: ExecutionContext): Future[Int] = db.run(collTable.map(_.id).max.result) map (_ getOrElse (-1))
 
   // Reading
 

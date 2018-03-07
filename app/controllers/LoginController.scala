@@ -2,39 +2,42 @@ package controllers
 
 import com.github.t3hnar.bcrypt._
 import javax.inject._
+import model.FormMappings._
 import model.core.CoreConsts._
 import model.core.Repository
+import model.{FormMappings, User}
 import play.api.data.Form
-import play.api.data.Forms._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
-import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-case class UserCredentials(name: String, pw: String)
-
 class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
                                (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
 
-  case class StrForm(str: String)
-
-  def singleStrForm(str: String) = Form(mapping(str -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
-
-  val userCredForm = Form(tuple(NAME_NAME -> nonEmptyText, PW_NAME -> nonEmptyText))
-
   def registerForm = Action { implicit request => Ok(views.html.register.render()) }
 
   def register: Action[AnyContent] = Action.async { implicit request =>
-    userCredForm.bindFromRequest.fold(
-      _ => Future(BadRequest("There has been an error in your form...")),
-      credentials => repo.saveUser(credentials._1, credentials._2) map (_ => Ok(views.html.registered.render(credentials._1))) recover {
+
+    val onError: Form[UserCredForm] => Future[Result] = { formWithErrors =>
+      Future(BadRequest("There has been an error in your form..."))
+    }
+
+    val onRead: UserCredForm => Future[Result] = { credentials =>
+      val newUser = User(credentials.username, credentials.password.bcrypt)
+      repo.saveUser(newUser) map {
+        _ => Ok(views.html.registered.render(credentials.username))
+      } recover {
         // TODO: Fehlermeldung
         case e => BadRequest("Error while inserting into db..." + e.getMessage)
-      })
+      }
+    }
+
+    userCredForm.bindFromRequest.fold(onError, onRead)
   }
 
   /**
@@ -45,21 +48,37 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     * @return {{userexists: Boolean, username: String (from form)}}
     */
   def checkUserName: Action[AnyContent] = Action.async { implicit request =>
-    singleStrForm(NAME_NAME).bindFromRequest.fold(
-      _ => Future(BadRequest("")),
-      usernameForm => repo.userByName(usernameForm.str) map (res => Ok(Json.obj("userexists" -> res.isDefined, "username" -> usernameForm.str)))
-    )
+    val onError: Form[String] => Future[Result] = { formWithErrors =>
+      Future(BadRequest(""))
+    }
+
+    val onRead: String => Future[Result] = { userName =>
+      repo.userByName(userName) map (res => Ok(Json.obj("userexists" -> res.isDefined, "username" -> userName)))
+    }
+
+    singleStrForm(nameName).bindFromRequest.fold(onError, onRead)
   }
 
 
   def authenticate: Action[AnyContent] = Action.async { implicit request =>
-    userCredForm.bindFromRequest.fold(_ => Future(Redirect(controllers.routes.LoginController.login())),
-      credentials => repo.userByName(credentials._1) map {
+
+    val onError: Form[UserCredForm] => Future[Result] = { formWithErrors =>
+      Future(BadRequest(views.html.login(formWithErrors)))
+    }
+
+    val onRead: UserCredForm => Future[Result] = { credentials =>
+      repo.userByName(credentials.username) map {
         case None       => Redirect(controllers.routes.LoginController.register())
         case Some(user) =>
-          if (credentials._2 isBcrypted user.pwHash) Redirect(controllers.routes.Application.index()).withSession(SESSION_ID_FIELD -> user.username)
-          else Redirect(controllers.routes.LoginController.login())
-      })
+          val pwOkay = credentials.password isBcrypted user.pwHash
+          if (pwOkay)
+            Redirect(controllers.routes.Application.index()).withSession(SESSION_ID_FIELD -> user.username)
+          else
+            Ok(views.html.login(FormMappings.userCredForm.fill(credentials)))
+      }
+    }
+
+    userCredForm.bindFromRequest.fold(onError, onRead)
   }
 
   def fromWuecampus(userName: String, courseId: Int, courseName: String): Action[AnyContent] = Action.async {
@@ -83,7 +102,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
   }
 
-  def login = Action { implicit request => Ok(views.html.login()) }
+  def login = Action { implicit request => Ok(views.html.login(FormMappings.userCredForm)) }
 
   def logout = Action { implicit request => Redirect(routes.LoginController.login()).withNewSession }
 

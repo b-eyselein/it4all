@@ -109,4 +109,9 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
     }
   }
 
+  // Helper methods
+
+  override def instantiateCollection(id: Int, state: Enums.ExerciseState): CompleteQuiz = CompleteQuiz(
+    Quiz(id, title = "", author = "", text = "", state, theme = ""), exercises = Seq.empty)
+
 }

@@ -1,1 +1,48 @@
 @(completeEx: model.rose.RoseCompleteEx)
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Schlüssel</th>
+                    <th>Wert</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td>@completeEx.ex.id</td>
+                </tr>
+                <tr>
+                    <th>Titel</th>
+                    <td>@completeEx.ex.title</td>
+                </tr>
+                <tr>
+                    <th>Autor</th>
+                    <td>@completeEx.ex.author</td>
+                </tr>
+                <tr>
+                    <th>Text</th>
+                    <td>@completeEx.ex.text</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>@completeEx.ex.state</td>
+                </tr>
+                <tr>
+                    <th>Feldbreite x -höhe</th>
+                    <td>@completeEx.ex.fieldWidth x @completeEx.ex.fieldHeight</td>
+                </tr>
+                <tr>
+                    <th>Multiplayer?</th>
+                    <td>@if(completeEx.ex.isMultiplayer) {Ja} else {Nein}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-6">
+
+    </div>
+</div>

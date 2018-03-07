@@ -71,12 +71,12 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   case class UmlMappingYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlMapping] {
 
     override def write(mapping: UmlMapping): YamlValue = YamlObj(
-      KEY_NAME -> mapping.key,
+      keyName -> mapping.key,
       VALUE_NAME -> mapping.value
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlMapping] = for {
-      key <- yamlObject.stringField(KEY_NAME)
+      key <- yamlObject.stringField(keyName)
       value <- yamlObject.stringField(VALUE_NAME)
     } yield UmlMapping(exerciseId, key, value)
 
@@ -86,15 +86,15 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override def write(completeClazz: UmlCompleteClass): YamlValue = YamlObj(
       CLASSTYPE_NAME -> completeClazz.clazz.classType.name,
-      NAME_NAME -> completeClazz.clazz.className,
-      ATTRS_NAME -> YamlArr(completeClazz.attributes map UmlClassAttributeYamlFormat(exerciseId, completeClazz.clazz.className).write),
+      nameName -> completeClazz.clazz.className,
+      attrsName -> YamlArr(completeClazz.attributes map UmlClassAttributeYamlFormat(exerciseId, completeClazz.clazz.className).write),
       METHODS_NAME -> YamlArr(completeClazz.methods map UmlClassMethodYamlFormat(exerciseId, completeClazz.clazz.className).write)
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlCompleteClass] = for {
-      className <- yamlObject.stringField(NAME_NAME)
+      className <- yamlObject.stringField(nameName)
       classType <- yamlObject.enumField(CLASSTYPE_NAME, UmlClassType.valueOf)
-      attributTries <- yamlObject.optArrayField(ATTRS_NAME, UmlClassAttributeYamlFormat(exerciseId, className).read)
+      attributTries <- yamlObject.optArrayField(attrsName, UmlClassAttributeYamlFormat(exerciseId, className).read)
       methodTries <- yamlObject.optArrayField(METHODS_NAME, UmlClassMethodYamlFormat(exerciseId, className).read)
     } yield {
       for (attributeFailure <- attributTries._2)
@@ -111,20 +111,20 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
   case class UmlClassAttributeYamlFormat(exerciseId: Int, className: String) extends MyYamlObjectFormat[UmlClassAttribute] {
 
-    override def write(attr: UmlClassAttribute): YamlValue = YamlObj(NAME_NAME -> attr.name, TYPE_NAME -> attr.umlType)
+    override def write(attr: UmlClassAttribute): YamlValue = YamlObj(nameName -> attr.name, TYPE_NAME -> attr.umlType)
 
     override def readObject(yamlObject: YamlObject): Try[UmlClassAttribute] = for {
-      name <- yamlObject.stringField(NAME_NAME)
+      name <- yamlObject.stringField(nameName)
       attrtype <- yamlObject.stringField(TYPE_NAME)
     } yield UmlClassAttribute(exerciseId, className, name, attrtype)
   }
 
   case class UmlClassMethodYamlFormat(exerciseId: Int, className: String) extends MyYamlObjectFormat[UmlClassMethod] {
 
-    override def write(method: UmlClassMethod): YamlValue = YamlObj(NAME_NAME -> method.name, TYPE_NAME -> method.umlType)
+    override def write(method: UmlClassMethod): YamlValue = YamlObj(nameName -> method.name, TYPE_NAME -> method.umlType)
 
     override def readObject(yamlObject: YamlObject): Try[UmlClassMethod] = for {
-      name <- yamlObject.stringField(NAME_NAME)
+      name <- yamlObject.stringField(nameName)
       methodType <- yamlObject.stringField(TYPE_NAME)
     } yield UmlClassMethod(exerciseId, className, name, methodType)
   }
@@ -138,12 +138,12 @@ object UmlExYamlProtocol extends MyYamlProtocol {
         YamlString(FIRST_MULT_NAME) -> assoc.firstMult.representant,
         YamlString(SECOND_END_NAME) -> assoc.secondEnd,
         YamlString(SECOND_MULT_NAME) -> assoc.secondMult.representant
-      ) ++ (assoc.assocName map (ac => YamlString(NAME_NAME) -> YamlString(ac)))
+      ) ++ (assoc.assocName map (ac => YamlString(nameName) -> YamlString(ac)))
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlAssociation] = for {
       assocType <- yamlObject.enumField(ASSOCTYPE_NAME, UmlAssociationType.valueOf)
-      assocName <- yamlObject.optStringField(NAME_NAME)
+      assocName <- yamlObject.optStringField(nameName)
       firstEnd <- yamlObject.stringField(FIRST_END_NAME)
       firstMult <- yamlObject.enumField(FIRST_MULT_NAME, UmlMultiplicity.valueOf)
       secondEnd <- yamlObject.stringField(SECOND_END_NAME)

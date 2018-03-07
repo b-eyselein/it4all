@@ -130,21 +130,21 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   // Table types
 
-  override type ExTableDef = QuestionsTable
+  override protected type ExTableDef = QuestionsTable
 
-  override type CollTableDef = QuizzesTable
+  override protected type CollTableDef = QuizzesTable
 
-  override type SolTableDef = QuestionSolutionsTable
+  override protected type SolTableDef = QuestionSolutionsTable
 
   // Table queries
 
-  override val exTable = TableQuery[QuestionsTable]
+  override protected val exTable = TableQuery[QuestionsTable]
 
-  override val collTable = TableQuery[QuizzesTable]
+  override protected val collTable = TableQuery[QuizzesTable]
 
-  override val solTable = TableQuery[QuestionSolutionsTable]
+  override protected val solTable = TableQuery[QuestionSolutionsTable]
 
-  val answers = TableQuery[AnswersTable]
+  private val answers = TableQuery[AnswersTable]
 
   // Reading
 
@@ -233,7 +233,7 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   class AnswersTable(tag: Tag) extends Table[Answer](tag, "question_answers") {
 
-    def id = column[Int](ID_NAME)
+    def id = column[Int](idName)
 
     def questionId = column[Int]("question_id")
 

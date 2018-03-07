@@ -114,21 +114,21 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table types
 
-  override type ExTableDef = SqlExercisesTable
+  override protected type ExTableDef = SqlExercisesTable
 
-  override type CollTableDef = SqlScenarioesTable
+  override protected type CollTableDef = SqlScenarioesTable
 
-  override type SolTableDef = SqlSolutionsTable
+  override protected type SolTableDef = SqlSolutionsTable
 
   // Table queries
 
-  override val exTable = TableQuery[SqlExercisesTable]
+  override protected val exTable = TableQuery[SqlExercisesTable]
 
-  override val collTable = TableQuery[SqlScenarioesTable]
+  override protected val collTable = TableQuery[SqlScenarioesTable]
 
-  override val solTable = TableQuery[SqlSolutionsTable]
+  override protected val solTable = TableQuery[SqlSolutionsTable]
 
-  val sqlSamples = TableQuery[SqlSampleTable]
+  private val sqlSamples = TableQuery[SqlSampleTable]
 
   // Reading
 
@@ -197,7 +197,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class SqlSampleTable(tag: Tag) extends Table[SqlSample](tag, "sql_samples") {
 
-    def id = column[Int](ID_NAME)
+    def id = column[Int](idName)
 
     def exerciseId = column[Int]("exercise_id")
 

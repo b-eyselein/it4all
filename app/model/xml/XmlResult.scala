@@ -3,11 +3,9 @@ package model.xml
 import model.Enums.SuccessType
 import model.core.{CompleteResult, EvaluationResult}
 import model.xml.XmlEnums.XmlErrorType
-import org.xml.sax.{ErrorHandler, SAXParseException}
+import org.xml.sax.SAXParseException
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.twirl.api.{Html, HtmlFormat}
-
-import scala.collection.mutable.ListBuffer
 import scalatags.Text.all._
 
 case class XmlCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[XmlError]) extends CompleteResult[XmlError] {

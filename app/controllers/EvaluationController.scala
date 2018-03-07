@@ -12,7 +12,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class EvaluationController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
+class EvaluationController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)
                                     (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 

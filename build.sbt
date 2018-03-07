@@ -31,6 +31,8 @@ libraryDependencies ++= Seq(
   // FIXME: remove again!
   "com.lihaoyi" %% "scalatags" % "0.6.7",
 
+  ws,
+
   // core
   // TODO: Remove both again?
   "com.github.fge" % "json-schema-validator" % "2.2.6",

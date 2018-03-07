@@ -2,31 +2,32 @@ package model
 
 trait Consts {
 
-  val ADMIN_FOLDER = "admin"
-  val ANSWERS_NAME = "answers"
-  val ATTRS_NAME   = "attributes"
-  val AUTHOR_NAME  = "author"
+  val adminFolder = "admin"
+  val answersName = "answers"
+  val attrsName   = "attributes"
+  val authorName  = "author"
 
 
-  val Correct   = "correct"
-  val ErrorName = "error"
+  val Correct = "correct"
 
-  val EXERCISES_NAME   = "exercises"
+  val errorName        = "error"
+  val exercisesName    = "exercises"
   val ExerciseTypeName = "exerciseType"
 
-  val FORM_VALUE = "learnerSolution"
+  val learnerSolutionName = "learnerSolution"
 
-  val ID_NAME = "id"
+  val idName = "id"
 
-  val KEY_NAME = "key"
+  val keyName = "key"
 
-  val MAX_POINTS = "maxPoints"
+  val maxPointsName = "maxPoints"
 
-  val NAME_NAME = "name"
+  val nameName = "name"
 
-  val PW_NAME  = "passwort"
-  val PW2_NAME = "passwort_wieder"
+  val pwName  = "passwort"
+  val pw2Name = "passwort_wieder"
 
+  val RoleName = "role"
 
   val SAMPLE_SUB_DIRECTORY    = "samples"
   val STATE_NAME              = "status"

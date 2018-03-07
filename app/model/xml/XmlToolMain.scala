@@ -4,12 +4,15 @@ import java.nio.file._
 
 import controllers.ExerciseOptions
 import javax.inject._
-import model.Enums.ToolState
+import model.Enums.{ExerciseState, ToolState}
 import model.core._
 import model.toolMains.AExerciseToolMain
 import model.xml.XmlConsts._
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, User}
+import play.api.data.Forms._
+import play.api.data.format.Formatter
+import play.api.data.{Form, FormError}
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.Html
@@ -49,6 +52,31 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[XmlExPart] = XmlExParts.values
 
+  implicit object ExerciseStateFormatter extends Formatter[ExerciseState] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], ExerciseState] = data.get(key) match {
+      case None           => Left(Seq(FormError(key, "No value found!")))
+      case Some(valueStr) => ExerciseState.byString(valueStr) match {
+        case Some(state) => Right(state)
+        case None        => Left(Seq(FormError(key, s"Value '$valueStr' is no legal value!")))
+      }
+    }
+
+    override def unbind(key: String, value: ExerciseState): Map[String, String] = Map(key -> value.name)
+
+  }
+
+  override implicit val compExForm: Form[XmlExercise] = Form(mapping(
+    "id" -> number,
+    "title" -> nonEmptyText,
+    "author" -> nonEmptyText,
+    "text" -> nonEmptyText,
+    "status" -> of[ExerciseState],
+    "grammarDescription" -> nonEmptyText,
+    "sampleGrammar" -> nonEmptyText,
+    "rootNode" -> nonEmptyText
+  )(XmlExercise.apply)(XmlExercise.unapply))
+
   // DB
 
   override def futureSaveSolution(sol: XmlSolution): Future[Boolean] = tables.saveXmlSolution(sol)
@@ -59,8 +87,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Reading solution from requests, saving
 
   override def readSolutionFromPostRequest(user: User, id: Int, part: XmlExPart)(implicit request: Request[AnyContent]): Option[XmlSolution] =
-    SolutionFormHelper.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution)) map { sol => XmlSolution(user.username, id, part, sol)
-    }
+    SolutionFormHelper.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution)) map { sol => XmlSolution(user.username, id, part, sol) }
 
   override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: XmlExPart): Option[XmlSolution] =
     jsValue.asStr map (XmlSolution(user.username, id, part, _))
@@ -100,7 +127,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderEditRest(exercise: XmlExercise): Html = views.html.xml.editXmlExRest(exercise)
+  override def renderExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean): Html = views.html.xml.editXmlExercise(user, this, newEx, isCreation)
+
+  override def renderEditRest(exercise: XmlExercise): Html = Html("") //views.html.xml.editXmlExercise(exercise)
 
   override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart): Future[Html] = futureReadOldSolution(user, exercise.ex.id, part) map {
     maybeOldSolution =>

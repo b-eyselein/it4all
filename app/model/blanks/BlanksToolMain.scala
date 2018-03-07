@@ -5,6 +5,7 @@ import model.blanks.BlanksExParts.BlanksExPart
 import model.toolMains.AExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
+import play.api.data.Form
 import play.api.libs.json
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
@@ -40,6 +41,13 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
   override val consts: Consts = BlanksConsts
 
   override val exParts: Seq[BlanksExPart] = BlanksExParts.values
+
+  override implicit val compExForm: Form[BlanksCompleteExercise] = null
+  //    Form(
+  //    mapping(
+  //
+  //    )
+  //  )
 
   // Reading solution from requests
 

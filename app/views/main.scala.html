@@ -100,12 +100,13 @@
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
                                     @user.username <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
+                                    <li><a href="@routes.UserController.myCourses">Meine Kurse</a></li>
+
                                     <li><a href="@routes.UserController.preferences">Präferenzen</a></li>
+
                                     <li class="divider"></li>
-                                    <li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span>
-                                        Logout
-                                    </a>
-                                    </li>
+
+                                    <li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                                 </ul>
                             </li>
                         }

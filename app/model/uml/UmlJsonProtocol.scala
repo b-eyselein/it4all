@@ -17,16 +17,16 @@ object UmlJsonProtocol extends JsonFormat {
 
   private def readClassFromJson(jsValue: JsValue): Option[UmlCompleteClass] = jsValue.asObj flatMap { jsObj =>
     for {
-      classname <- jsObj.stringField(NAME_NAME)
+      classname <- jsObj.stringField(nameName)
       classType = jsObj.stringField(CLASSTYPE_NAME) flatMap UmlClassType.byString getOrElse UmlClassType.CLASS
-      attributes <- jsObj.arrayField(ATTRS_NAME, readMemberFromJson(_, UmlClassAttribute))
+      attributes <- jsObj.arrayField(attrsName, readMemberFromJson(_, UmlClassAttribute))
       methods <- jsObj.arrayField(METHODS_NAME, readMemberFromJson(_, UmlClassMethod))
     } yield UmlCompleteClass(UmlClass(-1, classname, classType), attributes, methods)
   }
 
   private def readMemberFromJson[M <: UmlClassMember](jsValue: JsValue, inst: (Int, String, String, String) => M): Option[M] = jsValue.asObj flatMap { jsObj =>
     for {
-      name <- jsObj.stringField(NAME_NAME)
+      name <- jsObj.stringField(nameName)
       returns <- jsObj.stringField(TYPE_NAME)
     } yield inst(-1, "", name, returns)
   }

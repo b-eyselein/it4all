@@ -1,12 +1,10 @@
 package controllers
 
-import javax.inject._
-
 import com.github.t3hnar.bcrypt._
+import javax.inject._
 import model.Enums.ShowHideAggregate
+import model.FormMappings._
 import model.core.Repository
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
@@ -14,17 +12,18 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
+class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)
                               (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
-  def index: EssentialAction = withUser { user => implicit request => Ok(views.html.user.render("User", user)) }
 
-  def preferences: EssentialAction = withUser { user => implicit request => Ok(views.html.preferences.render("Präferenzen", user)) }
+  def index: EssentialAction = withUser { user => implicit request => Ok(views.html.user("User", user)) }
 
-  private val saveOptionsForm = Form("posTests" -> nonEmptyText)
+  def preferences: EssentialAction = withUser { user => implicit request => Ok(views.html.preferences("Präferenzen", user)) }
 
-  private val pwChangeForm = Form(tuple("oldpw" -> nonEmptyText, "newpw1" -> nonEmptyText, "newpw2" -> nonEmptyText))
+  def myCourses: EssentialAction = futureWithUser { user =>
+    implicit request => repository.coursesForUser(user) map (courses => Ok(views.html.myCourses(user, courses)))
+  }
 
   def saveShowHideAgg: EssentialAction = futureWithUser { user =>
     implicit request =>
@@ -32,7 +31,7 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
         str => ShowHideAggregate.byString(str) match {
           case None         => Future(BadRequest("TODO!"))
           case Some(newVal) =>
-            tables.updateShowHideAggregate(user, newVal) map {
+            repository.updateShowHideAggregate(user, newVal) map {
               case 1 => Ok(Json.obj("todo" -> newVal.toString))
               case _ => BadRequest("TODO!")
             }
@@ -44,7 +43,7 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
       pwChangeForm.bindFromRequest().fold(_ => Future(BadRequest("Es gab einen Fehler beim Einlesen ihrer Daten!")),
         pwChangeData =>
           if (pwChangeData._1.isBcrypted(user.pwHash) && pwChangeData._2 == pwChangeData._3) {
-            tables.updateUserPassword(user, pwChangeData._2) map {
+            repository.updateUserPassword(user, pwChangeData._2) map {
               case 1 => Ok(Json.obj("changed" -> true, "reason" -> ""))
               case _ => Ok(Json.obj("changed" -> false, "reason" -> "Ihr Passwort konnte nicht gespeichert werden. Waren eventuell die Daten falsch?"))
             }

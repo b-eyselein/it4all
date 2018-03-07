@@ -60,7 +60,7 @@
                                 </button>
                             </div>
                             <div class="btn-group">
-                                <button class="btn btn-success" id="testButton">Lösung testen</button>
+                                <button class="btn btn-success" id="testBtn">Lösung testen</button>
                             </div>
                             <a class="btn btn-default" href="@controllers.exes.routes.ExerciseController.index("web")">Bearbeitung beenden</a>
                         </div>
@@ -84,7 +84,7 @@
                         <hr>
 
                         <div class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item" src="http://localhost:9080/@user.username/@exercise.ex.id/test.html" id="preview"></iframe>
+                            <iframe class="embed-responsive-item" src="@controllers.exes.routes.ExerciseController.webSolution(exercise.ex.id, part.urlName)" id="preview"></iframe>
                         </div>
                     </div>
 

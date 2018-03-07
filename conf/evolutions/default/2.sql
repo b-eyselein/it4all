@@ -105,6 +105,8 @@ DELETE IGNORE FROM blanks_exercises;
 
 # General
 
+DELETE IGNORE FROM users_in_courses;
+
 DELETE IGNORE FROM courses;
 
 DELETE IGNORE FROM users;

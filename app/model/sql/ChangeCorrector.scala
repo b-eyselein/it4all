@@ -5,7 +5,10 @@ import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.expression.operators.relational.{ExpressionList, MultiExpressionList}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
+import net.sf.jsqlparser.statement.delete.Delete
+import net.sf.jsqlparser.statement.insert.Insert
 import net.sf.jsqlparser.statement.select.SubSelect
+import net.sf.jsqlparser.statement.update.Update
 
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
@@ -18,7 +21,6 @@ abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryTy
 
 object InsertCorrector extends ChangeCorrector("INSERT") {
 
-  import net.sf.jsqlparser.statement.insert.Insert
 
   override type Q = Insert
 
@@ -46,7 +48,6 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
 object DeleteCorrector extends ChangeCorrector("DELETE") {
 
-  import net.sf.jsqlparser.statement.delete.Delete
 
   override type Q = Delete
 
@@ -63,7 +64,6 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
 
 object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
-  import net.sf.jsqlparser.statement.update.Update
 
   override type Q = Update
 

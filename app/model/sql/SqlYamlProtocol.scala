@@ -17,7 +17,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[SqlCompleteScenario] = for {
       shortName <- yamlObject.stringField(SHORTNAME_NAME)
-      exercises <- yamlObject.arrayField(EXERCISES_NAME, SqlExYamlFormat(baseValues._1).read)
+      exercises <- yamlObject.arrayField(exercisesName, SqlExYamlFormat(baseValues._1).read)
     } yield {
       for (exFailure <- exercises._2)
       // FIXME: return...
@@ -28,7 +28,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
     override protected def writeRest(completeEx: SqlCompleteScenario): Map[YamlValue, YamlValue] = Map(
       YamlString(SHORTNAME_NAME) -> YamlString(completeEx.coll.shortName),
-      YamlString(EXERCISES_NAME) -> YamlArr(completeEx.exercises map SqlExYamlFormat(completeEx.coll.id).write)
+      YamlString(exercisesName) -> YamlArr(completeEx.exercises map SqlExYamlFormat(completeEx.coll.id).write)
     )
   }
 
@@ -68,12 +68,12 @@ object SqlYamlProtocol extends MyYamlProtocol {
   case class SqlSampleYamlFormat(scenarioId: Int, exerciseId: Int) extends MyYamlObjectFormat[SqlSample] {
 
     override def readObject(yamlObject: YamlObject): Try[SqlSample] = for {
-      id <- yamlObject.intField(ID_NAME)
+      id <- yamlObject.intField(idName)
       sample <- yamlObject.stringField("sample")
     } yield SqlSample(id, exerciseId, scenarioId, sample)
 
     override def write(obj: SqlSample): YamlValue = YamlObj(
-      ID_NAME -> obj.id,
+      idName -> obj.id,
       "sample" -> obj.sample
     )
 

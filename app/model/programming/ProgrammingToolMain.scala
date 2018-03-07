@@ -8,6 +8,7 @@ import model.programming.ProgrammingToolMain._
 import model.toolMains.AExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, JsonFormat, User}
+import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -56,6 +57,8 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override val exParts: Seq[ProgExPart] = ProgExParts.values
 
+  override implicit val compExForm: Form[ProgCompleteEx] = null
+
   // Reading solution from requests
 
   override def futureSaveSolution(sol: ProgSolution): Future[Boolean] = tables.futureSaveSolution(sol)
@@ -72,30 +75,29 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
         val maybeCompleteCommitedTestData: Option[Seq[CompleteCommitedTestData]] = jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user)))
         maybeCompleteCommitedTestData map (completeCommitedTestData => TestDataSolution(user.username, id, language, completeCommitedTestData))
 
-      case Implementation =>
-        jsValue.asObj flatMap { jsObj =>
-          for {
-            language <- jsObj.enumField(LANGUAGE_NAME, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
-            implementation <- jsObj.stringField(ImplementationName)
-          } yield ImplementationSolution(user.username, id, language, implementation)
-        }
+      case Implementation => jsValue.asObj flatMap { jsObj =>
+        for {
+          language <- jsObj.enumField(LanguageName, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
+          implementation <- jsObj.stringField(ImplementationName)
+        } yield ImplementationSolution(user.username, id, language, implementation)
+      }
 
       case ActivityDiagram => jsValue.asStr map (str => ActivityDiagramSolution(user.username, id, language, str))
     }
   }
 
   private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CompleteCommitedTestData] = for {
-    testId <- tdJsObj.intField(ID_NAME)
+    testId <- tdJsObj.intField(idName)
     inputs <- readInputs(tdJsObj, testId, user)
     output <- tdJsObj.stringField(OUTPUT_NAME)
   } yield CompleteCommitedTestData(CommitedTestData(testId, id, user.username, output, ExerciseState.RESERVED), inputs)
 
 
-  private def readInputs(tdJsObj: JsObject, testId: Int, user: User) = tdJsObj.arrayField(INPUTS_NAME, _.asObj flatMap {
+  private def readInputs(tdJsObj: JsObject, testId: Int, user: User) = tdJsObj.arrayField(InputsName, _.asObj flatMap {
     inpJsObj =>
       for {
-        id <- inpJsObj.intField(ID_NAME)
-        input <- inpJsObj.stringField(INPUT_NAME)
+        id <- inpJsObj.intField(idName)
+        input <- inpJsObj.stringField(InputName)
       } yield CommitedTestDataInput(id, testId, id, input, user.username)
   })
 
@@ -142,7 +144,10 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
       case Implementation =>
         val declaration: String = oldSolution map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
-        views.html.core.exercise2Rows.render(user, this, ProgExOptions, exercise, exRest, exScript, declaration, Implementation)
+
+        val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
+
+        views.html.core.exercise2Rows(user, this, ProgExOptions, exercise, exRest, exScript, declaration, Implementation)
 
       case ActivityDiagram =>
         // FIXME: use old soluton!
@@ -152,7 +157,6 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override def renderEditRest(exercise: ProgCompleteEx): Html = ???
 
-  private def exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
 
   private val exRest: Html = Html(
     s"""<div class="input-group">
@@ -164,8 +168,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, result: ProgCompleteResult): Html =
-    views.html.core.correction.render(result, result.render, user, this)
+  override def onSubmitCorrectionResult(user: User, result: ProgCompleteResult): Html = views.html.core.correction(result, result.render, user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 

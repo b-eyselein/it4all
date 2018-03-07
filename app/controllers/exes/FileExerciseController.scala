@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val tables: Repository)
+class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)
                                       (implicit ec: ExecutionContext) extends SingleExerciseController(cc, dbcp) with Secured with FileUtils {
 
   // Routes

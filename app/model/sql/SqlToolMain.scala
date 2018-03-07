@@ -84,7 +84,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Read solution
 
   override def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SqlSolution] =
-    request.body.asJson flatMap (_.asObj) flatMap (jsObj => jsObj.stringField(FORM_VALUE)) map (str => SqlSolution(user.username, collId, id, str))
+    request.body.asJson flatMap (_.asObj) flatMap (jsObj => jsObj.stringField(learnerSolutionName)) map (str => SqlSolution(user.username, collId, id, str))
 
   override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SqlSolution] =
     SolutionFormHelper.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(SqlSolution(user.username, collId, id, sol.learnerSolution)))
@@ -145,5 +145,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     case res: SqlResult           => res.toJson
     case SqlParseFailed(_, error) => Json.obj("msg" -> error.getMessage)
   }
+
+  // Helper methods
+
+  override def instantiateCollection(id: Int, state: Enums.ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
+    SqlScenario(id, title = "", author = "", text = "", state, shortName = ""), exercises = Seq.empty)
 
 }

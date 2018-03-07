@@ -12,7 +12,7 @@ trait Secured {
 
   val actionBuilder: ActionBuilder[Request, AnyContent] = controllerComponents.actionBuilder
 
-  protected val tables: TableDefs
+  protected val repository: TableDefs
 
   private def username(request: RequestHeader): Option[String] = request.session.get(SESSION_ID_FIELD)
 
@@ -31,7 +31,7 @@ trait Secured {
 
   def withUser(f: User => Request[AnyContent] => Result)(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request => {
-      tables.userByName(username) map {
+      repository.userByName(username) map {
         case Some(user) => f(user)(request)
         case None       => onUnauthorized(request)
       }
@@ -40,7 +40,7 @@ trait Secured {
 
   def futureWithUser(f: User => Request[AnyContent] => Future[Result])(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request =>
-      tables.userByName(username) flatMap {
+      repository.userByName(username) flatMap {
         case Some(user) => f(user)(request)
         case None       => futureOnUnauthorized(request)
       }
@@ -49,7 +49,7 @@ trait Secured {
 
   def futureWithUser[A](bodyParser: BodyParser[A])(f: User => Request[A] => Future[Result])(implicit ec: ExecutionContext): EssentialAction = withAuth(bodyParser) { username =>
     implicit request =>
-      tables.userByName(username) flatMap {
+      repository.userByName(username) flatMap {
         case Some(user) => f(user)(request)
         case None       => futureOnUnauthorized(request)
       }
@@ -57,7 +57,7 @@ trait Secured {
 
   def withAdmin(f: User => Request[AnyContent] => Result)(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request =>
-      tables.userByName(username) map {
+      repository.userByName(username) map {
         case Some(user) =>
           if (user.isAdmin) f(user)(request)
           else onUnauthorized(request)
@@ -68,7 +68,7 @@ trait Secured {
 
   def futureWithAdmin(f: User => Request[AnyContent] => Future[Result])(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request =>
-      tables.userByName(username) flatMap {
+      repository.userByName(username) flatMap {
         case Some(user) =>
           if (user.isAdmin) f(user)(request)
           else futureOnUnauthorized(request)

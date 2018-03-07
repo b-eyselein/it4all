@@ -8,8 +8,22 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS courses (
-  id          INT PRIMARY KEY  AUTO_INCREMENT,
-  course_name VARCHAR(50)
+  id          VARCHAR(30) PRIMARY KEY,
+  course_name VARCHAR(100)
+);
+
+CREATE TABLE IF NOT EXISTS users_in_courses (
+  username  VARCHAR(30),
+  course_id VARCHAR(30),
+  role      ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
+
+  PRIMARY KEY (username, course_id),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (course_id) REFERENCES courses (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 # Blanks
@@ -136,7 +150,7 @@ CREATE TABLE IF NOT EXISTS prog_commited_testdata_input (
 CREATE TABLE IF NOT EXISTS prog_solutions (
   username    VARCHAR(50),
   exercise_id INT,
-  part        VARCHAR(10),
+  part        VARCHAR(15),
   language    VARCHAR(20),
   solution    TEXT,
 
@@ -195,13 +209,15 @@ CREATE TABLE IF NOT EXISTS question_answers (
 # Rose
 
 CREATE TABLE IF NOT EXISTS rose_exercises (
-  id       INT PRIMARY KEY,
-  title    VARCHAR(50),
-  author   VARCHAR(50),
-  ex_text  TEXT,
-  ex_state ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id           INT PRIMARY KEY,
+  title        VARCHAR(50),
+  author       VARCHAR(50),
+  ex_text      TEXT,
+  ex_state     ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  is_mp    BOOLEAN
+  field_width  INT,
+  field_height INT,
+  is_mp        BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS rose_inputs (
@@ -616,6 +632,8 @@ DROP TABLE IF EXISTS blanks_samples;
 DROP TABLE IF EXISTS blanks_exercises;
 
 # General
+
+DROP TABLE IF EXISTS users_in_courses;
 
 DROP TABLE IF EXISTS courses;
 

@@ -57,14 +57,14 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override def write(htmlCompTask: HtmlCompleteTask): YamlValue = {
       val yamlAttrs: Option[(YamlString, YamlArray)] = htmlCompTask.attributes match {
         case Nil   => None
-        case attrs => Some(YamlString(ATTRS_NAME) -> YamlArr(attrs map TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId).write))
+        case attrs => Some(YamlString(attrsName) -> YamlArr(attrs map TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId).write))
       }
 
       val tcOpt: Option[(YamlValue, YamlValue)] = htmlCompTask.task.textContent map (tc => YamlString(TEXT_CONTENT_NAME) -> YamlString(tc))
 
       new YamlObject(
         Map[YamlValue, YamlValue](
-          YamlString(ID_NAME) -> htmlCompTask.task.id,
+          YamlString(idName) -> htmlCompTask.task.id,
           YamlString(TEXT_NAME) -> htmlCompTask.task.text,
           YamlString(XPATH_NAME) -> htmlCompTask.task.xpathQuery
         ) ++ tcOpt ++ yamlAttrs
@@ -72,11 +72,11 @@ object WebExYamlProtocol extends MyYamlProtocol {
     }
 
     override def readObject(yamlObject: YamlObject): Try[HtmlCompleteTask] = for {
-      taskId <- yamlObject.intField(ID_NAME)
+      taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(TEXT_NAME)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
       textContent <- yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)
-      attributeTries <- yamlObject.optArrayField(ATTRS_NAME, TaskAttributeYamlFormat(taskId, exerciseId).read)
+      attributeTries <- yamlObject.optArrayField(attrsName, TaskAttributeYamlFormat(taskId, exerciseId).read)
     } yield {
       for (attributeFailure <- attributeTries._2)
       // FIXME: return...
@@ -89,11 +89,11 @@ object WebExYamlProtocol extends MyYamlProtocol {
   case class TaskAttributeYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlObjectFormat[Attribute] {
 
     override def readObject(yamlObject: YamlObject): Try[Attribute] = for {
-      key <- yamlObject.stringField(KEY_NAME)
+      key <- yamlObject.stringField(keyName)
       value <- yamlObject.stringField(VALUE_NAME)
     } yield Attribute(key, taskId, exerciseId, value)
 
-    override def write(attr: Attribute): YamlValue = YamlObj(KEY_NAME -> attr.key, VALUE_NAME -> attr.value)
+    override def write(attr: Attribute): YamlValue = YamlObj(keyName -> attr.key, VALUE_NAME -> attr.value)
 
   }
 
@@ -103,7 +103,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       val yamlConds = YamlArr(jsTask.conditions map JsConditionYamlFormat(jsTask.task.id, jsTask.task.exerciseId).write)
 
       YamlObj(
-        ID_NAME -> jsTask.task.id,
+        idName -> jsTask.task.id,
         TEXT_NAME -> jsTask.task.text,
         XPATH_NAME -> jsTask.task.xpathQuery,
         ACTION_TYPE_NAME -> jsTask.task.actionType.name,
@@ -113,7 +113,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
     }
 
     override def readObject(yamlObject: YamlObject): Try[JsCompleteTask] = for {
-      taskId <- yamlObject.intField(ID_NAME)
+      taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(TEXT_NAME)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
       actionType <- yamlObject.enumField(ACTION_TYPE_NAME, JsActionType.valueOf)
@@ -132,14 +132,14 @@ object WebExYamlProtocol extends MyYamlProtocol {
   case class JsConditionYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlObjectFormat[JsCondition] {
 
     override def readObject(yamlObject: YamlObject): Try[JsCondition] = for {
-      id <- yamlObject.intField(ID_NAME)
+      id <- yamlObject.intField(idName)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
       isPrecondition <- yamlObject.boolField(IS_PRECOND_NAME)
       awaitedValue <- yamlObject.forgivingStringField(AWAITED_VALUE_NAME)
     } yield JsCondition(id, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue)
 
     override def write(jsCond: JsCondition): YamlValue = YamlObj(
-      ID_NAME -> jsCond.id,
+      idName -> jsCond.id,
       XPATH_NAME -> jsCond.xpathQuery,
       IS_PRECOND_NAME -> jsCond.isPrecondition,
       AWAITED_VALUE_NAME -> jsCond.awaitedValue

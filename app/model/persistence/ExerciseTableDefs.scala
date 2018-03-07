@@ -1,8 +1,10 @@
 package model.persistence
 
+import model.Enums.ExerciseState
 import model.core.ExPart
 import model.toolMains.ToolList.STEP
 import model.{CompleteEx, Exercise, PartSolution, Solution}
+import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -13,9 +15,11 @@ trait ExerciseWithSolTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType
 
   import profile.api._
 
-  type SolTableDef <: SolutionsTable[SolType]
+  // Abstract types and members
 
-  val solTable: TableQuery[SolTableDef]
+  protected type SolTableDef <: SolutionsTable[SolType]
+
+  protected val solTable: TableQuery[SolTableDef]
 
   // Queries
 
@@ -23,7 +27,11 @@ trait ExerciseWithSolTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType
     db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId).result.headOption)
 
   def futureSaveSolution(sol: SolType)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(solTable insertOrUpdate sol) map (_ => true) recover { case _: Exception => false }
+    db.run(solTable insertOrUpdate sol) map (_ => true) recover {
+      case e: Exception =>
+        Logger.error("Could not save solution", e)
+        false
+    }
 
   // Abstract table definitions
 
@@ -50,12 +58,11 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
   import profile.api._
 
-  override type SolTableDef <: PartSolutionsTable[SolType]
-
+  override protected type SolTableDef <: PartSolutionsTable[SolType]
 
   // Implicit column types
 
-  implicit val partTypeColumnType: BaseColumnType[PartType]
+  protected implicit val partTypeColumnType: BaseColumnType[PartType]
 
   // Queries
 
@@ -77,9 +84,9 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends TableD
 
   import profile.api._
 
-  type ExTableDef <: HasBaseValuesTable[Ex]
+  protected type ExTableDef <: HasBaseValuesTable[Ex]
 
-  val exTable: TableQuery[ExTableDef]
+  protected val exTable: TableQuery[ExTableDef]
 
   // Numbers
 
@@ -89,10 +96,11 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends TableD
 
   def futureCompleteExes(implicit ec: ExecutionContext): Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
 
-  def futureCompleteExesForPage(page: Int)(implicit ec: ExecutionContext): Future[Seq[CompEx]] = db.run(exTable.result) flatMap { allExes =>
-    val (sliceStart, sliceEnd) = (Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size))
-    Future.sequence(allExes slice(sliceStart, sliceEnd) map completeExForEx)
-  }
+  def futureCompleteExesForPage(page: Int)(implicit ec: ExecutionContext): Future[Seq[CompEx]] =
+    db.run(exTable.filter(_.state === ExerciseState.APPROVED).result) flatMap { allExes =>
+      val (sliceStart, sliceEnd) = (Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size))
+      Future.sequence(allExes slice(sliceStart, sliceEnd) map completeExForEx)
+    }
 
   def futureCompleteExById(id: Int)(implicit ec: ExecutionContext): Future[Option[CompEx]] = db.run(exTable.filter(_.id === id).result.headOption) flatMap {
     case Some(ex) => completeExForEx(ex) map Some.apply
@@ -110,6 +118,15 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends TableD
   }
 
   protected def saveExerciseRest(compEx: CompEx)(implicit ec: ExecutionContext): Future[Boolean]
+
+  // Update
+
+  def updateExerciseState(id: Int, newState: ExerciseState)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run((for {ex <- exTable if ex.id === id} yield ex.state).update(newState)) map (_ => true) recover {
+      case e: Throwable =>
+        Logger.error(s"Could not update state of exercise $id", e)
+        false
+    }
 
   // Deletion
 

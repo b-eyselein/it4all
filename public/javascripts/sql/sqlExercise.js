@@ -133,7 +133,7 @@ function renderExecution(execution) {
  * @param {object} response.execution
  */
 function onSqlCorrectionSuccess(response) {
-    $('#testButton').prop('disabled', false);
+    $('#testBtn').prop('disabled', false);
 
     let newHtml = '';
 
@@ -158,7 +158,7 @@ function onSqlCorrectionSuccess(response) {
  * @param {string} jqXHR.responseJSON.msg
  */
 function onSqlCorrectionError(jqXHR) {
-    $('#testButton').prop('disabled', false);
+    $('#testBtn').prop('disabled', false);
 
     $('#newCorrectionDiv').html(`
 <div class="panel panel-danger">
@@ -181,7 +181,7 @@ function testSqlSol() {
         return;
     }
 
-    $('#testButton').prop('disabled', true);
+    $('#testBtn').prop('disabled', true);
 
     $.ajax({
         type: 'PUT',
@@ -196,5 +196,5 @@ function testSqlSol() {
 }
 
 $(document).ready(function () {
-    $('#testButton').click(testSqlSol);
+    $('#testBtn').click(testSqlSol);
 });

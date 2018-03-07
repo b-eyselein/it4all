@@ -1,9 +1,4 @@
-@import model.toolMains.CollectionToolMain
-@(user: model.User, toolMainObject: CollectionToolMain, maybeCollWrapper: Option[model.CompleteCollectionWrapper], renderedRest: Html)
-
-@isCreation = @{
-    maybeCollWrapper.isEmpty
-}
+@(user: model.User, toolMainObject: model.toolMains.CollectionToolMain, collWrapper: model.CompleteCollectionWrapper, isCreation: Boolean, renderedRest: Html)
 
 @main(s"${toolMainObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", Some(user)) {
     <div class="container">
@@ -11,26 +6,21 @@
             <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolMainObject.toolname-Aufgabe</h1>
         </div>
 
-        <form class="form" method="post" role="form" action="@{
-            maybeCollWrapper match {
-                case Some(exercise) => controllers.exes.routes.CollectionController.adminEditCollection(toolMainObject.urlPart, exercise.coll.coll.id)
-                case None => controllers.exes.routes.CollectionController.adminCreateCollection(toolMainObject.urlPart)
-            }
-        }">
+        <form class="form" method="post" role="form" action="@controllers.exes.routes.CollectionController.adminEditCollection(toolMainObject.urlPart, collWrapper.coll.coll.id)">
 
             <fieldset>
                 <legend>Standardangaben</legend>
 
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="@model.core.CoreConsts.ID_NAME">ID:</label>
-                        <input type="number" class="form-control from-control-static" name="@model.core.CoreConsts.ID_NAME"
-                        id="@model.core.CoreConsts.ID_NAME" required @Html(maybeCollWrapper map (cw => s"""value="${cw.coll.coll.id}" readonly""") getOrElse "")>
+                        <label for="@model.core.CoreConsts.idName">ID:</label>
+                        <input type="number" class="form-control from-control-static" name="@model.core.CoreConsts.idName"
+                        id="@model.core.CoreConsts.idName" required value="@collWrapper.coll.coll.id">
                     </div>
                     <div class="col-sm-6">
-                        <label for="@model.core.CoreConsts.AUTHOR_NAME">Autor:</label>
-                        <input class="form-control" name="@model.core.CoreConsts.AUTHOR_NAME" id="@model.core.CoreConsts.AUTHOR_NAME" required
-                            @Html(maybeCollWrapper map (cw => s"""value="${cw.coll.coll.author}" """) getOrElse s"""value="${user.username}" title="Dieser Wert kann nicht geändert werden." readonly""")>
+                        <label for="@model.core.CoreConsts.authorName">Autor:</label>
+                        <input class="form-control" name="@model.core.CoreConsts.authorName" id="@model.core.CoreConsts.authorName" required
+                        value="@collWrapper.coll.coll.author" title="Dieser Wert kann nicht geändert werden." readonly>
                     </div>
                 </div>
 
@@ -38,14 +28,14 @@
                     <div class="col-sm-6">
                         <label for="@model.core.CoreConsts.TITLE_NAME">Titel:</label>
                         <input class="form-control" name="@model.core.CoreConsts.TITLE_NAME" id="@model.core.CoreConsts.TITLE_NAME" required
-                            @Html(maybeCollWrapper.map(cw => s"""value="${cw.coll.coll.title}"""").getOrElse(""))>
+                        value="@collWrapper.coll.coll.title">
                     </div>
                     <div class="col-sm-6">
                         <label for="@model.core.CoreConsts.STATE_NAME">Status:</label>
                         <div >
                             <select class="form-control" name="@model.core.CoreConsts.STATE_NAME" id="@model.core.CoreConsts.STATE_NAME" required>
                             @for(state <- model.Enums.ExerciseState.values) {
-                                <option @state.isSelected(maybeCollWrapper.map(_.coll.coll.state).getOrElse(model.Enums.ExerciseState.CREATED))>@state </option>
+                                <option @state.isSelected(collWrapper.coll.coll.state)>@state </option>
                             }
                             </select>
                         </div>
@@ -54,8 +44,7 @@
 
                 <div class="form-group">
                     <label for="@model.core.CoreConsts.TEXT_NAME">Text:</label>
-                    <textarea class="form-control" rows="5" name="@model.core.CoreConsts.TEXT_NAME" id="@model.core.CoreConsts.TEXT_NAME"
-                    required>@maybeCollWrapper.map(_.coll.coll.text).getOrElse("")</textarea>
+                    <textarea class="form-control" rows="5" name="@model.core.CoreConsts.TEXT_NAME" id="@model.core.CoreConsts.TEXT_NAME" required>@collWrapper.coll.coll.text</textarea>
                 </div>
 
             </fieldset>

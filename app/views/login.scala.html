@@ -1,4 +1,17 @@
-@(message: String = "")
+@(form: Form[model.FormMappings.UserCredForm])
+
+    @formHasErrors = @{
+       form.errors.nonEmpty
+    }
+
+    @input(inpType: String, label: String, nameAttr: String, placeholder: String) = {
+        <div class="form-group@{if(formHasErrors) " has-error" else ""}">
+            <label class="control-label col-sm-3" for="@nameAttr">@label:</label>
+            <div class="col-sm-9">
+                <input type="@inpType" class="form-control" id="@nameAttr" name="@nameAttr" placeholder="@placeholder" required>
+            </div>
+        </div>
+    }
 
     @main("Login", None) {
         <div class="container">
@@ -9,22 +22,16 @@
 
             @helper.form(routes.LoginController.authenticate, 'role -> "form", 'class -> "form-horizontal") {
 
-                <div class="form-group has-feedback">
-                    <label class="control-label col-sm-3" for="@model.core.CoreConsts.NAME_NAME">Nutzername:</label>
-                    <div class="col-sm-9">
-                        <input class="form-control" id="@model.core.CoreConsts.NAME_NAME" name="@model.core.CoreConsts.NAME_NAME" placeholder="s-Nummer" required>
-                        <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@model.core.CoreConsts.NAME_NAME"></span>
-                        <p class="help-block">
-                            Da it4all keinen Zugriff auf das Login-System der Universität Würburg hat, müssen Sie Sich erst
-                            <a href="@routes.LoginController.register" tabindex="-1">registrieren</a>.</p>
-                    </div>
-                </div>
+                @input("text", "Nutzername", model.core.CoreConsts.nameName, "s-Nummer")
 
-                <div class="form-group has-feedback">
-                    <label class="control-label col-sm-3" for="@model.core.CoreConsts.PW_NAME">Passwort:</label>
-                    <div class="col-sm-9">
-                        <input class="form-control" type="password" name="@model.core.CoreConsts.PW_NAME" id="@model.core.CoreConsts.PW_NAME" placeholder="Passwort" required>
-                        <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@model.core.CoreConsts.NAME_NAME">@message</span>
+                @input("password", "Passwort", model.core.CoreConsts.pwName, "Passwort")
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <p class="help-block">Da it4all keinen Zugriff auf das Login-System der Universität Würburg hat, müssen Sie Sich erst
+                            <a href="@routes.LoginController.register" tabindex="-1">registrieren</a>.</p>
                     </div>
                 </div>
 

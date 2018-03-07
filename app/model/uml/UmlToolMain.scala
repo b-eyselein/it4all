@@ -6,6 +6,7 @@ import model.core._
 import model.toolMains.AExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
+import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.twirl.api.Html
@@ -43,6 +44,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override val consts: Consts = UmlConsts
 
   override val exParts: Seq[UmlExPart] = UmlExParts.values
+
+  override implicit val compExForm: Form[UmlCompleteEx] = null
 
   // Reading solution
 

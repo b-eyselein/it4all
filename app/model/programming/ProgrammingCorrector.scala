@@ -136,6 +136,8 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
   private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[CompleteTestData], targetDir: Path) = readDataFromJson(jsObj) map {
     case (id, successType, funcName, result, inputs) =>
 
+      println(inputs)
+
       val evaluated = funcName + "(" + inputs.sortBy(_._1).map(_._2).mkString(", ") + ")"
 
       val consoleOutput: Option[String] = readAll(targetDir / s"output$id.txt") map Some.apply getOrElse None
@@ -149,16 +151,19 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
   }
 
   private def readDataFromJson(jsObj: JsObject): Option[(Int, SuccessType, String, String, Seq[(String, String)])] = for {
-    id <- jsObj.intField(ID_NAME)
+    id <- jsObj.intField(idName)
     success <- jsObj.enumField("success", str => Try(SuccessType.valueOf(str)) getOrElse SuccessType.NONE)
     functionName <- jsObj.stringField("functionName")
     result <- jsObj.forgivingStringField("result")
-    inputs <- jsObj.arrayField(INPUTS_NAME, _.asObj flatMap readInputsFromJson)
+    inputs <- jsObj.arrayField(InputsName, _.asObj flatMap readInputsFromJson)
   } yield (id, success, functionName, result, inputs)
 
-  private def readInputsFromJson(inputJsObj: JsObject): Option[(String, String)] = for {
+  private def readInputsFromJson(inputJsObj: JsObject): Option[(String, String)] ={
+    println(inputJsObj)
+    for {
     maybeVariable <- inputJsObj.stringField("variable")
     maybeValue <- inputJsObj.forgivingStringField("value")
   } yield (maybeVariable, maybeValue)
+  }
 
 }

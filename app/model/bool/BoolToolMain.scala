@@ -44,7 +44,7 @@ object BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
     }
 
     request.body.asJson flatMap correctionFunction match {
-      case None         => Json.obj(ErrorName -> "TODO!")
+      case None         => Json.obj(errorName -> "TODO!")
       case Some(result) => result.toJson
     }
   }

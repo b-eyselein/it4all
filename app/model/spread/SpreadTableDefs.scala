@@ -43,15 +43,19 @@ class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   import profile.api._
 
+  // Abstract types and members
+
+  override protected type ExTableDef = SpreadExerciseTable
+
+  override protected val exTable = TableQuery[SpreadExerciseTable]
+
+  // Queries
+
   override def completeExForEx(ex: SpreadExercise)(implicit ec: ExecutionContext): Future[SpreadExercise] = Future(ex)
 
   override def saveExerciseRest(compEx: SpreadExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
 
-  val spreadExercises = TableQuery[SpreadExerciseTable]
-
-  override type ExTableDef = SpreadExerciseTable
-
-  override val exTable = spreadExercises
+  // Tables
 
   class SpreadExerciseTable(tag: Tag) extends HasBaseValuesTable[SpreadExercise](tag, "spread_exercises") {
 

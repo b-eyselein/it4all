@@ -27,7 +27,8 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
   override def ex: XmlExercise = this
 
-  override def preview: Html = views.html.xml.xmlPreview.render(this)
+  // FIXME: remove ==> move to toolMain?
+  override def preview: Html = views.html.xml.xmlPreview(this)
 
   override def hasPart(partType: XmlExPart): Boolean = partType match {
     case DocumentCreationXmlPart => true
@@ -65,17 +66,17 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Abstract types
 
-  override type ExTableDef = XmlExercisesTable
+  override protected type ExTableDef = XmlExercisesTable
 
-  override type SolTableDef = XmlSolutionsTable
+  override protected type SolTableDef = XmlSolutionsTable
 
-  override val solTable = TableQuery[XmlSolutionsTable]
+  override protected val solTable = TableQuery[XmlSolutionsTable]
 
-  override val exTable = TableQuery[XmlExercisesTable]
+  override protected val exTable = TableQuery[XmlExercisesTable]
 
   // Column Types
 
-  override implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
+  override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
     MappedColumnType.base[XmlExPart, String](_.urlName, str => XmlExParts.values.find(_.urlName == str) getOrElse DocumentCreationXmlPart)
 
   // Reading

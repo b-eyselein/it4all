@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 
 
 @Singleton
-class RandomExerciseController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
+class RandomExerciseController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)
                                         (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 

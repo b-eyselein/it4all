@@ -160,7 +160,7 @@
                     <hr>
 
                     <form method="post" onsubmit="return prepareFormForSubmitting();" action="@controllers.exes.routes.ExerciseController.correct("uml", exercise.ex.id, part = curPart.urlName) ">
-                        <input title="hidden" type="hidden" hidden name="@model.uml.UmlConsts.FORM_VALUE" id="@model.uml.UmlConsts.FORM_VALUE">
+                        <input title="hidden" type="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
                         <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
                     </form>
 

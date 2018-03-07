@@ -29,30 +29,36 @@ object RoseCorrector extends FileUtils {
 
     val solutionFileName = s"solution.${language.fileEnding}"
     val actionsFileName = "actions.json"
+    val optionsFileName = "options.json"
 
     val solutionFilePath = solutionTargetDir / solutionFileName
     val actionFilePath = solutionTargetDir / actionsFileName
+    val optionsFilePath = solutionTargetDir / optionsFileName
+
 
     val fileWriteTries: Try[(Path, Path)] = for {
-      solFileTry <- write(solutionFilePath, buildSolutionFileContent(exercise, learnerSolution))
+      // FIXME: write exercise options file...
+      solFileTry <- write(solutionFilePath, buildSolutionFileContent(exercise, learnerSolution, language))
       actionFileTry <- createEmptyFile(actionFilePath)
+      optionsFiletry <- write(optionsFilePath, buildOptionFileContent(exercise))
     } yield (solFileTry, actionFileTry)
 
     val dockerBinds: Seq[DockerBind] = Seq(
       new DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir + "/" + solutionFileName),
-      new DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir + "/" + actionsFileName)
+      new DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir + "/" + actionsFileName),
+      new DockerBind(optionsFilePath, DockerConnector.DefaultWorkingDir + "/" + optionsFileName)
     )
 
     val entryPoint = Seq("python3", "sp_main.py")
 
     fileWriteTries match {
       case Failure(e) =>
-        Logger.error("Some files could not be written:", e)
+        Logger.error("Some files could not be whttp://localhost:63342/api/file/?file=/home/bjorn/workspace/it4all/app/model/rose/RoseExYamlProtocol.scala&line=29ritten:", e)
         Future(RoseEvalFailed)
       case Success(_) =>
 
         futureImageExists flatMap { _ =>
-          DockerConnector.runContainer(Image, entryPoint, dockerBinds)
+          DockerConnector.runContainer(Image, entryPoint, dockerBinds, deleteContainerAfterRun = false)
         } map {
           // Error while waiting for container
           case RunContainerTimeOut => RoseTimeOutResult
@@ -69,8 +75,23 @@ object RoseCorrector extends FileUtils {
     }
   }
 
-  private def buildSolutionFileContent(exercise: RoseCompleteEx, learnerSolution: String) =
-    exercise.imports + (NewLine * 3) + learnerSolution + (NewLine * 3) + exercise.buildSampleSolution + (NewLine * 3)
+  private def buildSolutionFileContent(exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage): String =
+    exercise.imports + (NewLine * 3) + learnerSolution + (NewLine * 3) + exercise.buildSampleSolution(language) + (NewLine * 3)
 
+  private def buildOptionFileContent(exercise: RoseCompleteEx): String =
+    """|{
+       |  "start": {
+       |    "x": 0,
+       |    "y": 0
+       |  },
+       |  "field": {
+       |    "width": 8,
+       |    "height": 10
+       |  },
+       |  "run_options": [
+       |    7,
+       |    3
+       |  ]
+       |}""".stripMargin
 
 }

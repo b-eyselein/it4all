@@ -113,17 +113,17 @@ object MyYamlProtocol {
 abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
   protected def writeBaseValues(hasBaseValues: HasBaseValues): Map[YamlValue, YamlValue] = Map(
-    YamlString(ID_NAME) -> hasBaseValues.id,
+    YamlString(idName) -> hasBaseValues.id,
     YamlString(TITLE_NAME) -> hasBaseValues.title,
-    YamlString(AUTHOR_NAME) -> hasBaseValues.author,
+    YamlString(authorName) -> hasBaseValues.author,
     YamlString(TEXT_NAME) -> hasBaseValues.text,
     YamlString(STATE_NAME) -> hasBaseValues.state.name
   )
 
   protected def readBaseValues(yamlObject: YamlObject): Try[(Int, String, String, String, ExerciseState)] = for {
-    id <- yamlObject.intField(ID_NAME)
+    id <- yamlObject.intField(idName)
     title <- yamlObject.stringField(TITLE_NAME)
-    author <- yamlObject.stringField(AUTHOR_NAME)
+    author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(TEXT_NAME)
     state = yamlObject.enumField(STATE_NAME, ExerciseState.valueOf) getOrElse ExerciseState.CREATED
   } yield (id, title, author, text, state)

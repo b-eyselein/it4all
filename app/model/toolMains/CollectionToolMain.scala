@@ -1,5 +1,6 @@
 package model.toolMains
 
+import model.Enums.ExerciseState
 import model._
 import model.core._
 import model.persistence.ExerciseCollectionTableDefs
@@ -39,7 +40,13 @@ abstract class CollectionToolMain(urlPart: String) extends FixedExToolMain(urlPa
 
   override type Tables <: ExerciseCollectionTableDefs[ExType, CompExType, CollType, CompCollType, SolType]
 
+  // Numbers
+
   def numOfExesInColl(id: Int): Future[Int] = tables.futureNumOfExesInColl(id)
+
+  def futureHighestCollectionId(implicit ec: ExecutionContext): Future[Int] = tables.futureHighestCollectionId
+
+  // Reading
 
   def futureCollById(id: Int): Future[Option[CollType]] = tables.futureCollById(id)
 
@@ -99,6 +106,13 @@ abstract class CollectionToolMain(urlPart: String) extends FixedExToolMain(urlPa
 
   def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int): Future[Html]
 
+  def adminRenderEditRest(exercise: Option[CompCollType]): Html
+
+  def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean): Html =
+    views.html.admin.collectionEditForm(user, this, collection.wrapped.asInstanceOf[CompleteCollectionWrapper], isCreation, new Html("") /*adminRenderEditRest(collection)*/)
+
+  // Result handlers
+
   def onSubmitCorrectionResult(user: User, result: CompResult): Html
 
   def onSubmitCorrectionError(user: User, error: Throwable): Html
@@ -107,21 +121,13 @@ abstract class CollectionToolMain(urlPart: String) extends FixedExToolMain(urlPa
 
   def onLiveCorrectionError(error: Throwable): JsValue
 
-  def adminRenderEditRest(exercise: Option[CompCollType]): Html
-
-  //FIXME: ugly hack because of type params...
-  override def renderEditForm(id: Int, admin: User)(implicit ec: ExecutionContext): Future[Html] = ???
-
-  //    futureCompleteCollById(id) map {
-  //    ex => views.html.admin.exerciseEditForm(admin, this, ex, renderEditRest(ex))
-  //  }
-
-
   // Helper methods for admin
 
   // TODO: scalarStyle = Folded if fixed...
   override def yamlString(implicit ec: ExecutionContext): Future[String] = futureCompleteColls map {
     exes => "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   }
+
+  def instantiateCollection(id: Int, state: ExerciseState): CompCollType
 
 }

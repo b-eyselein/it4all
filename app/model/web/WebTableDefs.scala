@@ -143,15 +143,15 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Abstract types
 
-  override type ExTableDef = WebExercisesTable
+  override protected type ExTableDef = WebExercisesTable
 
-  override type SolTableDef = WebSolutionsTable
+  override protected type SolTableDef = WebSolutionsTable
 
   // Table queries
 
-  override val exTable = TableQuery[WebExercisesTable]
+  override protected val exTable = TableQuery[WebExercisesTable]
 
-  override val solTable = TableQuery[WebSolutionsTable]
+  override protected val solTable = TableQuery[WebSolutionsTable]
 
   val htmlTasks = TableQuery[HtmlTasksTable]
 
@@ -201,7 +201,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   implicit val ActionTypeColumnType: BaseColumnType[JsActionType] =
     MappedColumnType.base[JsActionType, String](_.name, str => JsActionType.byString(str) getOrElse JsActionType.CLICK)
 
-  override implicit val partTypeColumnType: BaseColumnType[WebExPart] =
+  override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =
     MappedColumnType.base[WebExPart, String](_.urlName, str => WebExParts.values.find(_.urlName == str) getOrElse HtmlPart)
 
   // Table definitions

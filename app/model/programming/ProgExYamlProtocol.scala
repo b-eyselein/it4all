@@ -49,12 +49,12 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   case class ProgSampleSolutionYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
-      language <- yamlObject.enumField(LANGUAGE_NAME, ProgLanguage.valueOf) map (_ getOrElse PYTHON_3)
+      language <- yamlObject.enumField(LanguageName, ProgLanguage.valueOf) map (_ getOrElse PYTHON_3)
       sample <- yamlObject.stringField(SAMPLE_NAME)
     } yield ProgSampleSolution(exerciseId, language, sample)
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
-      LANGUAGE_NAME -> pss.language.name,
+      LanguageName -> pss.language.name,
       SAMPLE_NAME -> pss.solution
     )
 
@@ -63,9 +63,9 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   case class ProgCompleteSampleTestdataYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[CompleteSampleTestData] {
 
     override def readObject(yamlObject: YamlObject): Try[CompleteSampleTestData] = for {
-      id <- yamlObject.intField(ID_NAME)
+      id <- yamlObject.intField(idName)
       output <- yamlObject.forgivingStringField(OUTPUT_NAME)
-      inputTries <- yamlObject.arrayField(INPUTS_NAME, TestDataInputYamlFormat(id, exerciseId).read)
+      inputTries <- yamlObject.arrayField(InputsName, TestDataInputYamlFormat(id, exerciseId).read)
     } yield {
       for (inputFailure <- inputTries._2)
       // FIXME: return...
@@ -75,9 +75,9 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(cstd: CompleteSampleTestData): YamlValue = YamlObj(
-      ID_NAME -> cstd.testData.id,
+      idName -> cstd.testData.id,
       OUTPUT_NAME -> cstd.testData.output,
-      INPUTS_NAME -> YamlArr(cstd.inputs map TestDataInputYamlFormat(cstd.testData.id, cstd.testData.exerciseId).write)
+      InputsName -> YamlArr(cstd.inputs map TestDataInputYamlFormat(cstd.testData.id, cstd.testData.exerciseId).write)
     )
 
   }
@@ -85,8 +85,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   case class TestDataInputYamlFormat(testId: Int, exerciseId: Int) extends MyYamlObjectFormat[SampleTestDataInput] {
 
     override def readObject(yamlObject: YamlObject): Try[SampleTestDataInput] = for {
-      id <- yamlObject.intField(ID_NAME)
-      newInput: String <- yamlObject.someField(INPUT_NAME) map {
+      id <- yamlObject.intField(idName)
+      newInput: String <- yamlObject.someField(InputName) map {
         case YamlArray(values) => values map (v => v.forgivingStr) mkString ", "
         case other             => other.forgivingStr
       }
@@ -94,7 +94,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       SampleTestDataInput(id, testId, exerciseId, newInput)
     }
 
-    override def write(stdi: SampleTestDataInput): YamlValue = YamlObj(ID_NAME -> stdi.id, INPUT_NAME -> stdi.input)
+    override def write(stdi: SampleTestDataInput): YamlValue = YamlObj(idName -> stdi.id, InputName -> stdi.input)
 
   }
 

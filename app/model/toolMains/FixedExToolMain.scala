@@ -1,9 +1,10 @@
 package model.toolMains
 
+import model.Enums.ExerciseState
 import model.core.{CommonUtils, ReadAndSaveResult, ReadAndSaveSuccess, Wrappable}
 import model.persistence.ExerciseTableDefs
 import model.yaml.MyYamlFormat
-import model.{CompleteEx, Exercise, User}
+import model.{CompleteEx, Exercise}
 import net.jcazevedo.moultingyaml._
 import play.twirl.api.Html
 
@@ -46,18 +47,16 @@ abstract class FixedExToolMain(urlPart: String) extends AToolMain(urlPart) {
 
   def futureCompleteExes(implicit ec: ExecutionContext): Future[Seq[CompExType]] = tables.futureCompleteExes
 
-  def futureCompleteExesForPage(page: Int)(implicit ec: ExecutionContext): Future[Seq[CompExType]] = tables.futureCompleteExesForPage(page)
-
   def futureSaveRead(exercises: Seq[ReadType])(implicit ec: ExecutionContext): Future[Seq[(ReadType, Boolean)]]
 
   def delete(id: Int)(implicit ec: ExecutionContext): Future[Int] = tables.deleteExercise(id)
 
   def statistics(implicit ec: ExecutionContext): Future[Html] = futureNumOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
+  def updateExerciseState(id: Int, newState: ExerciseState)(implicit ec: ExecutionContext): Future[Boolean] = tables.updateExerciseState(id, newState)
+
   // Views
 
   def renderEditRest(exercise: CompExType): Html
-
-  def renderEditForm(id: Int, admin: User)(implicit ec: ExecutionContext): Future[Html]
 
 }

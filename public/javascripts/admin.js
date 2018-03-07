@@ -28,20 +28,27 @@ function updateStateChangeButton(id) {
     $('#scb_' + id).prop('disabled', select.val() === select.data('val'));
 }
 
+/**
+ *
+ * @param response
+ */
 function onChangeStateSuccess(response) {
     $('#scb_' + response.id).prop('disabled', true);
     $('#state_' + response.id).data('val', response.newState);
 }
 
-function changeState(id) {
-    let url = '';
-    return;
-    // $.ajax({
-    //     type: 'PUT',
-    //     url: theUrl,
-    //     data: {
-    //         state: $('#state_' + id).val()
-    //     },
-    //     success: onChangeStateSuccess
-    // });
+function changeState(exerciseId) {
+    let toolType = $('#toolType').val();
+
+    // noinspection JSUnresolvedVariable, JSUnresolvedFunction
+    let url = jsRoutes.controllers.exes.ExerciseController.adminChangeExState(toolType, exerciseId).url;
+
+    $.ajax({
+        type: 'PUT',
+        url,
+        data: {
+            state: $('#state_' + exerciseId).val()
+        },
+        success: onChangeStateSuccess
+    });
 }

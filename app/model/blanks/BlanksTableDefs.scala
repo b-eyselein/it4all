@@ -59,13 +59,13 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   // Abstract types
 
-  override type ExTableDef = BlanksExercisesTable
+  override protected type ExTableDef = BlanksExercisesTable
 
-  override type SolTableDef = BlanksSolutionsTable
+  override protected type SolTableDef = BlanksSolutionsTable
 
-  override val exTable = TableQuery[BlanksExercisesTable]
+  override protected val exTable = TableQuery[BlanksExercisesTable]
 
-  override val solTable = TableQuery[BlanksSolutionsTable]
+  override protected val solTable = TableQuery[BlanksSolutionsTable]
 
   val blanksSamples = TableQuery[BlanksSampleAnswersTable]
 
@@ -83,7 +83,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   implicit val givenAnswerColumnType: BaseColumnType[Seq[BlanksAnswer]] =
     MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
 
-  override implicit val partTypeColumnType: BaseColumnType[BlanksExPart] =
+  override protected implicit val partTypeColumnType: BaseColumnType[BlanksExPart] =
     MappedColumnType.base[BlanksExPart, String](_.urlName, str => BlanksExParts.values.find(_.urlName == str) getOrElse BlankExSinglePart)
 
   // Table defs

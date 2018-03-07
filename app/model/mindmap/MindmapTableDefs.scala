@@ -44,11 +44,13 @@ class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigP
 
   import profile.api._
 
-  val mindmapExercises = TableQuery[MindmapExercisesTable]
+  // Abstract types and members
 
-  override type ExTableDef = MindmapExercisesTable
+  override protected type ExTableDef = MindmapExercisesTable
 
-  override val exTable = mindmapExercises
+  override protected val exTable = TableQuery[MindmapExercisesTable]
+
+  // Queries
 
   override def completeExForEx(ex: MindmapExercise)(implicit ec: ExecutionContext): Future[MindmapExercise] = Future(ex)
 

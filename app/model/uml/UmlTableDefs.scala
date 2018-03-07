@@ -116,15 +116,15 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Abstract types
 
-  override type ExTableDef = UmlExercisesTable
+  override protected type ExTableDef = UmlExercisesTable
 
-  override type SolTableDef = UmlSolutionsTable
+  override protected type SolTableDef = UmlSolutionsTable
 
   // Table Queries
 
-  override val exTable = TableQuery[UmlExercisesTable]
+  override protected val exTable = TableQuery[UmlExercisesTable]
 
-  override val solTable = TableQuery[UmlSolutionsTable]
+  override protected val solTable = TableQuery[UmlSolutionsTable]
 
   val umlMappings = TableQuery[UmlMappingsTable]
 
@@ -187,7 +187,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   implicit val UmlMultiplicityColumnType: BaseColumnType[UmlMultiplicity] =
     MappedColumnType.base[UmlMultiplicity, String](_.name, str => UmlMultiplicity.byString(str) getOrElse UmlMultiplicity.UNBOUND)
 
-  override implicit val partTypeColumnType: BaseColumnType[UmlExPart] =
+  override protected implicit val partTypeColumnType: BaseColumnType[UmlExPart] =
     MappedColumnType.base[UmlExPart, String](_.urlName, str => UmlExParts.values.find(_.urlName == str) getOrElse ClassSelection)
 
 

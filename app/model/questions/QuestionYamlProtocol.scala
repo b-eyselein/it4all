@@ -17,7 +17,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[CompleteQuiz] = for {
       theme <- yamlObject.stringField(ThemeName)
-      questionTries <- yamlObject.arrayField(EXERCISES_NAME, QuestionYamlFormat(baseValues._1).read)
+      questionTries <- yamlObject.arrayField(exercisesName, QuestionYamlFormat(baseValues._1).read)
     } yield {
       for (questionFailure <- questionTries._2)
       // FIXME: return...
@@ -28,7 +28,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
     override protected def writeRest(completeEx: CompleteQuiz): Map[YamlValue, YamlValue] = Map(
       YamlString(ThemeName) -> completeEx.coll.theme,
-      YamlString(EXERCISES_NAME) -> YamlArr(completeEx.exercises map QuestionYamlFormat(completeEx.coll.id).write)
+      YamlString(exercisesName) -> YamlArr(completeEx.exercises map QuestionYamlFormat(completeEx.coll.id).write)
     )
   }
 
@@ -36,8 +36,8 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[CompleteQuestion] = for {
       questionType <- yamlObject.enumField(ExerciseTypeName, QuestionType.valueOf)
-      maxPoints <- yamlObject.intField(MAX_POINTS)
-      answerTries <- yamlObject.arrayField(ANSWERS_NAME, QuestionAnswerYamlFormat(quizId, baseValues._1).read)
+      maxPoints <- yamlObject.intField(maxPointsName)
+      answerTries <- yamlObject.arrayField(answersName, QuestionAnswerYamlFormat(quizId, baseValues._1).read)
     } yield {
       for (answerFailure <- answerTries._2)
       // FIXME: return...
@@ -48,8 +48,8 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
     override protected def writeRest(completeEx: CompleteQuestion): Map[YamlValue, YamlValue] = Map(
       YamlString(ExerciseTypeName) -> completeEx.ex.questionType.name,
-      YamlString(MAX_POINTS) -> completeEx.ex.maxPoints,
-      YamlString(ANSWERS_NAME) -> YamlArr(completeEx.answers map QuestionAnswerYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
+      YamlString(maxPointsName) -> completeEx.ex.maxPoints,
+      YamlString(answersName) -> YamlArr(completeEx.answers map QuestionAnswerYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
     )
 
   }
@@ -57,7 +57,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
   case class QuestionAnswerYamlFormat(quizId: Int, questionId: Int) extends MyYamlObjectFormat[Answer] {
 
     override def readObject(yamlObject: YamlObject): Try[Answer] = for {
-      id <- yamlObject.intField(ID_NAME)
+      id <- yamlObject.intField(idName)
       text <- yamlObject.stringField(TEXT_NAME)
       correctness <- yamlObject.enumField(CorrectnessName, Correctness.valueOf)
       maybeExplanation <- yamlObject.optStringField("explanation")

@@ -62,5 +62,5 @@ function testSol() {
 }
 
 $(document).ready(function () {
-    $('#testButton').click(testSol);
+    $('#testBtn').click(testSol);
 });

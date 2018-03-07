@@ -4,7 +4,8 @@ import model.Enums.ExerciseState
 import model.core.ExPart
 import model.{SingleCompleteEx, User}
 import net.jcazevedo.moultingyaml.Auto
-import play.api.mvc.Call
+import play.api.data.Form
+import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -23,8 +24,11 @@ abstract class ASingleExerciseToolMain(urlPart: String) extends FixedExToolMain(
 
   val exParts: Seq[PartType]
 
+  implicit val compExForm: Form[CompExType]
 
   // DB
+
+  def futureUpdateExercise(exercise: CompExType)(implicit ec: ExecutionContext): Future[Boolean] = tables.saveCompleteEx(exercise)
 
   def futureCompleteExById(id: Int)(implicit ec: ExecutionContext): Future[Option[CompExType]] = tables.futureCompleteExById(id)
 
@@ -67,21 +71,22 @@ abstract class ASingleExerciseToolMain(urlPart: String) extends FixedExToolMain(
     exes => "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   }
 
+  def readEditFromForm(implicit request: Request[AnyContent]): Form[CompExType] = compExForm.bindFromRequest()
+
   // Views
 
-  //FIXME: ugly hack because of type params...
-  def renderEditForm(id: Int, admin: User)(implicit ec: ExecutionContext): Future[Html] = futureCompleteExById(id) map {
-    case Some(ex) => views.html.admin.exerciseEditForm(admin, this, ex, renderEditRest(ex), isCreation = false)
-    case None     => ???
-  }
+  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
+    views.html.admin.exerciseEditForm(user, this, newEx, renderEditRest(newEx), isCreation = true)
+
+  def previewExercise(user: User, newEx: CompExType): Html =
+    views.html.admin.singleExercisePreview(user, newEx, this)
+
 
   // Routes
 
   def exerciseRoutes(exercise: CompExType): Seq[(PartType, Call)] = exParts flatMap {
     exPart: PartType =>
-      // FIXME: check if
-      // - exercise has such a part
-      // - user can solve this part!
+      // FIXME: check if user can solve this part!
 
       if (exercise.hasPart(exPart)) {
 

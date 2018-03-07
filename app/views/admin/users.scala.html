@@ -1,54 +1,51 @@
 @(user: model.User, users: Seq[model.User])
 
-@scripts = {
-    <script src="@routes.Assets.versioned("javascripts/users/users.js")"></script>
-}
+    @scripts = {
+        @* Javascript Routes *@
+        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 
-@main("Nutzerübersicht", Some(user), scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Nutzerübersicht</h1>
+        <script src="@routes.Assets.versioned("javascripts/users/users.js")"></script>
+    }
+
+    @main("Nutzerübersicht", Some(user), scripts) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Nutzerübersicht</h1>
+            </div>
+
+            <div id="reply"></div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Jetzige Rolle</th>
+                        <th>Neue Rolle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @for(user <- users) {
+                    <tr>
+                        <td>@user.username</td>
+                        <td>@user.stdRole</td>
+                        <td>
+                            <div class="input-group">
+                                <select class="form-control" onchange="onUpdateRoleSelect(this)" id="sel_@user.username" data-username="@user.username"
+                                data-stdrole="@user.stdRole" title="">
+                                @for(role <- model.Enums.Role.values) {
+                                    <option @role.isSelected(user.stdRole)>@role </option>
+                                }
+                                </select>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" disabled id="btn_@user.username" onclick="saveRole(this)" data-username="@user.username">
+                                        <span class="glyphicon glyphicon-upload"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
-
-        <div id="reply"></div>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Rolle (ändern)</th>
-                    <th>Kurse</th>
-                </tr>
-            </thead>
-            <tbody>
-            @for(user <- users) {
-                <tr>
-                    <td>@user.username</td>
-                    <td>
-                        <div class="input-group">
-                            <select class="form-control" onchange="updateBtn('@user.username')" id="sel_@user.username" data-stdrole="@user.stdRole">
-                            @for(role <- model.Enums.Role.values) {
-                                <option @role.isSelected(user.stdRole)>@role </option>
-                            }
-                            </select>
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" disabled id="btn_@user.username"
-                                onclick="saveRole('@user.username', '@routes.AdminController.changeRole(user.username)')">
-                                    <span class="glyphicon glyphicon-upload"></span>
-                                </button>
-                            </span>
-                        </div>
-                    </td>
-                    <td>
-                        <ul>
-                            @*for(course <- user.getCourses()) {
-                            <li>@course.name</li>
-                            }*@
-                        </ul>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-}
+    }

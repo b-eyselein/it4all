@@ -7,6 +7,7 @@ import model.core._
 import model.toolMains.FileExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, User}
+import play.api.data.Form
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
@@ -36,6 +37,8 @@ class MindmapToolMain @Inject()(override val tables: MindmapTableDefs)(implicit 
   override val fileTypes: Map[String, String] = Map.empty
 
   override val exParts: Seq[PartType] = MindmapExParts.values
+
+  override implicit val compExForm: Form[MindmapExercise] = null
 
   // Yaml
 

@@ -7,11 +7,9 @@ import play.api.libs.json.{JsString, JsValue, Json}
 import play.twirl.api.Html
 import scalatags.Text.all._
 
-case class RoseCompleteResult(learnerSolution: String, result: RoseEvalResult) extends CompleteResult[RoseEvalResult] {
+case class RoseCompleteResult(solutionSaved: Boolean, learnerSolution: String, result: RoseEvalResult) extends CompleteResult[RoseEvalResult] {
 
   override type SolType = String
-
-  override val solutionSaved = false
 
   override def results: Seq[RoseEvalResult] = Seq(result)
 

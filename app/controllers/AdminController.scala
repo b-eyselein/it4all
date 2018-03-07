@@ -1,53 +1,65 @@
 package controllers
 
 import javax.inject._
-
+import model.Enums.Role
+import model.FormMappings
+import model.FormMappings.UpdateRoleForm
 import model.core.Repository
 import model.feedback.FeedbackResult
+import play.api.Logger
+import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
+import play.api.libs.json.Json
+import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction, Result}
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
+class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)
                                (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
-  def changeRole(username: String): EssentialAction = withAdmin { _ =>
+  def changeRole: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      //      if (user.stdRole != Role.SUPERADMIN)
-      //        Forbidden("You do not have sufficient privileges to change roles!")
-      //      else {
-      //        val newrole = singleStrForm("newrole").get.str
-      //
-      //        Option(User.finder.byId(username)) match {
-      //          case None => BadRequest("TODO!")
-      //          case Some(userToChange) =>
-      //            userToChange.stdRole = Role.valueOf(newrole)
-      //            userToChange.save()
-      //
-      //            Ok(Json.obj("user" -> userToChange.toString, "newRole" -> newrole))
-      //        }
-      //      }
-      Ok("TODO!")
+
+      val onFormError: Form[UpdateRoleForm] => Future[Result] = { formWithErrors =>
+
+        for (formError <- formWithErrors.errors)
+          Logger.error(formError.message)
+
+        Future(BadRequest("TODO!"))
+      }
+
+      val onFromValue: UpdateRoleForm => Future[Result] = { updateRoleForm =>
+        repository.updateUserRole(updateRoleForm.username, updateRoleForm.newRole) map { roleChanged =>
+          if (roleChanged) Ok(Json.obj("name" -> updateRoleForm.username, "stdRole" -> updateRoleForm.newRole.name))
+          else BadRequest("TODO!")
+        }
+      }
+
+      if (admin.stdRole != Role.RoleSuperAdmin)
+        Future(Forbidden("You do not have sufficient privileges to change roles!"))
+      else
+        FormMappings.updateRoleForm.bindFromRequest().fold(onFormError, onFromValue)
   }
 
   def evaluation: EssentialAction = withAdmin { user =>
     implicit request =>
+      // FIXME: implement...
       val results: Seq[FeedbackResult] = Seq.empty // FeedbackResult.evaluate(Feedback.finder.all.asScala.toList)
-      Ok(views.html.evaluation.stats.render(user, results))
+      Ok(views.html.evaluation.stats(user, results))
   }
 
   def index: EssentialAction = futureWithAdmin { user =>
     implicit request =>
-      tables.numOfUsers.zip(tables.numOfCourses).map { case (numUsers, numCourses) => Ok(views.html.admin.adminMainPage.render(user, numUsers, numCourses)) }
+      for {
+        numOfUsers <- repository.numOfUsers
+        numOfCourses <- repository.numOfCourses
+      } yield Ok(views.html.admin.adminMainPage(user, numOfUsers, numOfCourses))
   }
 
   def users: EssentialAction = futureWithAdmin { user =>
-    implicit request =>
-      tables.allUsers.map(users => Ok(views.html.admin.users.render(user, users)))
-
+    implicit request => repository.allUsers.map(allUsers => Ok(views.html.admin.users(user, allUsers)))
   }
 
 }

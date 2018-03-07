@@ -1,34 +1,51 @@
-function updateBtn(username) {
-    const sel = $('#sel' + username);
-    $('#btn' + username).prop('disabled', sel.val() === sel.data('stdrol'));
+function onUpdateRoleSelect(selectElem) {
+    const select = $(selectElem);
+    $('#btn_' + select.data('username')).prop('disabled', select.val() === select.data('stdrole'));
 }
 
 function onError(jqXHR) {
-    $('#repl').append('<div class="alert alert-danger alert-dismissable"><a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
-        + '<strong>' + jqXHR.responseText + '</strong></div>');
+    console.log(jqXHR.responseText);
+    $('#repl').append(`
+<div class="alert alert-danger alert-dismissable">
+    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong>${jqXHR.responseText}</strong>
+</div>`.trim());
 }
 
 /**
- * @param {{name: string, stdRole: string}} changedUser
- * @param oldRole: string
+ * @param {object} response
+ * @param {string} response.name
+ * @param {string} response.stdRole
  */
-function updateRoles(changedUser, oldRole) {
-    $('#sel' + changedUser.name).data('stdrole', changedUser.stdRole);
-    $('#btn' + changedUser.name).prop('disabled', true);
-    $('#repl').append('<div class="alert alert-success alert-dismissable"><a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
-        + '<strong>' + changedUser.name + '</strong> hat jetzt die neue Rolle <strong>' + changedUser.stdRole + '</strong> statt' + oldRole + '</div>');
+function updateRoles(response) {
+    console.log(JSON.stringify(response, null, 2));
+    const select = $('#sel_' + response.name);
+    const oldRole = select.data('stdrole');
+
+    select.data('stdrole', response.stdRole);
+    $('#btn_' + response.name).prop('disabled', true);
+
+    $('#reply').append(`
+<div class="alert alert-success alert-dismissable">
+    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong>${response.name}</strong> hat jetzt die neue Rolle <strong>${response.stdRole}</strong> statt ${oldRole}
+</div>`.trim());
 }
 
-function saveRole(username, roleChangeUrl) {
-    const sel = $('#sel' + username);
+function saveRole(button) {
+    const username = $(button).data('username');
+
+    // noinspection JSUnresolvedVariable, JSUnresolvedFunction
+    let url = jsRoutes.controllers.AdminController.changeRole().url;
+
     $.ajax({
         type: 'PUT',
-        url: roleChangeUrl,
+        url,
         data: {
-            username: username,
-            newrole: sel.val()
+            name: username,
+            role: $('#sel_' + username).val()
         },
-        success: updateRoles(_, sel.data('stdrole')),
+        success: updateRoles,
         error: onError
     });
 }

@@ -53,7 +53,7 @@
 
             <form action="@controllers.exes.routes.ExerciseController.correct("uml", exercise.id, part = model.uml.ClassSelection.urlName)"
             method="post" onsubmit="return prepareFormForSubmitting();">
-                <input type="hidden" class="form-control" name="@model.uml.UmlConsts.FORM_VALUE" id="@model.uml.UmlConsts.FORM_VALUE" required>
+                <input type="hidden" class="form-control" name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName" required>
                 <button class="btn btn-primary btn-block">@btnText</button>
             </form>
 

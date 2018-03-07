@@ -10,10 +10,15 @@ object Models {
 
 
 case class User(username: String, pwHash: String, stdRole: Role = Role.RoleUser, todo: ShowHideAggregate = ShowHideAggregate.SHOW) {
+
   val isAdmin: Boolean = stdRole ne Role.RoleUser
+
 }
 
-case class Course(id: Int, courseName: String)
+case class Course(id: String, courseName: String)
+
+case class UserInCourse(username: String, courseId: String, role: Role = Role.RoleUser)
+
 
 object TippHelper {
 

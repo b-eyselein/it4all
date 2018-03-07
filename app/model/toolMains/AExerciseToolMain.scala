@@ -4,7 +4,7 @@ import java.nio.file.{Files, Path}
 
 import model.core._
 import model.persistence.SingleExerciseTableDefs
-import model.{JsonFormat, PartSolution, Solution, User}
+import model.{JsonFormat, PartSolution, User}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -88,10 +88,8 @@ abstract class AExerciseToolMain(urlPart: String) extends ASingleExerciseToolMai
   def readSolutionFromPostRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
 
   def readSolutionFromPutRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] =
-    request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
-      jsObj.field("solution") flatMap {
-        case (solution) => readSolutionForPartFromJson(user, id, solution, part)
-      }
+    request.body.asJson flatMap (_.asObj) flatMap {
+      _.field("solution") flatMap (solution => readSolutionForPartFromJson(user, id, solution, part))
     }
 
   def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: PartType): Option[SolType]

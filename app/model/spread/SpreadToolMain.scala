@@ -8,6 +8,7 @@ import model.spread.SpreadToolMain._
 import model.toolMains.FileExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, User}
+import play.api.data.Form
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
@@ -46,6 +47,8 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
   override val fileTypes: Map[String, String] = Map("xlsx" -> "MS Excel", "ods" -> "OpenOffice")
 
   override val exParts: Seq[SpreadExPart] = SpreadExParts.values
+
+  override implicit val compExForm: Form[SpreadExercise] = null
 
   // Yaml
 

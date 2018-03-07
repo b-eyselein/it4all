@@ -10,13 +10,21 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository, env: Environment)(implicit ec: ExecutionContext)
+class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository, env: Environment)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   def index: EssentialAction = withUser { user => implicit request => Ok(views.html.index(user, env.isDev)) }
 
   def javascriptRoutes = Action { implicit request =>
     Ok(JavaScriptReverseRouter("jsRoutes")(
+
+      // User and Course Administration routes
+      routes.javascript.AdminController.changeRole,
+
+      // Exercise Administration routes
+      exes.routes.javascript.ExerciseController.adminChangeExState,
+
+      // Correction routes
       exes.routes.javascript.RandomExerciseController.correctLive,
       exes.routes.javascript.ExerciseController.correctLive,
       exes.routes.javascript.CollectionController.correctLive,

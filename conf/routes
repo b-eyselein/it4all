@@ -7,7 +7,11 @@ GET           /                                                          control
 
 # User
 GET           /user                                                      controllers.UserController.index
+
+GET           /myCourses                                                 controllers.UserController.myCourses
+
 GET           /preferences                                               controllers.UserController.preferences
+
 PUT           /preferences/updateOptions                                 controllers.UserController.saveShowHideAgg
 PUT           /preferences/updatePassword                                controllers.UserController.saveNewPassword
 
@@ -15,7 +19,7 @@ PUT           /preferences/updatePassword                                control
 GET           /admin                                                     controllers.AdminController.index
 
 GET           /users                                                     controllers.AdminController.users
-PUT           /users/changeRole/:user                                    controllers.AdminController.changeRole(user: String)
+PUT           /users/changeRole                                          controllers.AdminController.changeRole
 
 # LTI Test
 GET           /lti                                                       controllers.LTIController.honeypot
@@ -58,51 +62,25 @@ GET           /fileTools/:toolType/corrected/:id/:part                   control
 # Collection Tools
 GET           /collectionTools/:toolType/admin                           controllers.exes.CollectionController.adminIndex(toolType: String)
 
-GET           /collectionTools/:toolType/admin/quizzes                   controllers.exes.CollectionController.adminCollectionsList(toolType: String)
-GET           /collectionTools/:toolType/admin/newQuizForm               controllers.exes.CollectionController.adminNewCollectionForm(toolType: String)
-POST          /collectionTools/:toolType/admin/quizzes                   controllers.exes.CollectionController.adminCreateCollection(toolType: String)
-PUT           /collectionTools/:toolType/admin/quizzes                   controllers.exes.CollectionController.adminCreateCollection(toolType: String)
+GET           /collectionTools/:toolType/admin/collections               controllers.exes.CollectionController.adminCollectionsList(toolType: String)
+
+GET           /collectionTools/:toolType/admin/newCollectionForm         controllers.exes.CollectionController.adminNewCollectionForm(toolType: String)
 
 GET           /collectionTools/:toolType/admin/import                    controllers.exes.CollectionController.adminImportCollections(toolType: String)
 GET           /collectionTools/:toolType/admin/export                    controllers.exes.CollectionController.adminExportCollections(toolType: String)
 GET           /collectionTools/:toolType/admin/exportAsFile              controllers.exes.CollectionController.adminExportCollectionsAsFile(toolType: String)
 
-GET           /collectionTools/:toolType/admin/quizzes/:id               controllers.exes.CollectionController.adminEditCollectionForm(toolType: String, id: Int)
-PUT           /collectionTools/:toolType/admin/quizzes/:id               controllers.exes.CollectionController.adminEditCollection(toolType: String, id: Int)
-POST          /collectionTools/:toolType/admin/quizzes/:id               controllers.exes.CollectionController.adminEditCollection(toolType: String, id: Int)
-DELETE        /collectionTools/:toolType/admin/quizzes/:id               controllers.exes.CollectionController.adminDeleteCollection(toolType: String, id: Int)
-
-#GET           /collectionTools/:toolType/freetext/grade                    controllers.exes.CollectionController.gradeFreetextAnswers(toolType: String)
-#GET           /collectionTools/:toolType/freetext/grade/:id/:user          controllers.exes.CollectionController.gradeFreetextAnswer(toolType: String, id: Int, user: String)
-
-#GET           /collectionTools/:toolType/notAssigned                       controllers.exes.CollectionController.notAssignedQuestions(toolType: String)
-#GET           /collectionTools/:toolType/assign                            controllers.exes.CollectionController.assignQuestionsForm(toolType: String)
-#POST          /collectionTools/:toolType/assign                            controllers.exes.CollectionController.assignQuestions(toolType: String)
-
-#GET           /collectionTools/:toolType/assign/:id                        controllers.exes.CollectionController.assignQuestionsSingleForm(toolType: String, id: Int)
+GET           /collectionTools/:toolType/admin/collections/:id           controllers.exes.CollectionController.adminEditCollectionForm(toolType: String, id: Int)
+PUT           /collectionTools/:toolType/admin/collections/:id           controllers.exes.CollectionController.adminEditCollection(toolType: String, id: Int)
+POST          /collectionTools/:toolType/admin/collections/:id           controllers.exes.CollectionController.adminEditCollection(toolType: String, id: Int)
+DELETE        /collectionTools/:toolType/admin/collections/:id           controllers.exes.CollectionController.adminDeleteCollection(toolType: String, id: Int)
 
 PUT           /collectionTools/:toolType/admin/exercise/:id/state        controllers.exes.CollectionController.adminChangeCollectionState(toolType: String, id: Int)
 
 GET           /collectionTools/:toolType/                                controllers.exes.CollectionController.index(toolType: String)
-GET           /collectionTools/:toolType/quizzes                         controllers.exes.CollectionController.collectionList(toolType: String, page: Int ?= 1)
+GET           /collectionTools/:toolType/collections                     controllers.exes.CollectionController.collectionList(toolType: String, page: Int ?= 1)
 
-GET           /collectionTools/:toolType/quizzes/:collId                 controllers.exes.CollectionController.collection(toolType: String, collId: Int, page: Int ?= 1)
-
-#GET           /collectionTools/:toolType/new/:isFreetext                   controllers.exes.CollectionController.newQuestionForm(isFreetext: Boolean)
-#POST          /collectionTools/:toolType/new/:isFreetext                   controllers.exes.CollectionController.newQuestion(isFreetext: Boolean)
-
-#GET           /collectionTools/:toolType/edit/:id                          controllers.exes.CollectionController.editQuestionForm(id: Int)
-#POST          /collectionTools/:toolType/edit/:id                          controllers.exes.CollectionController.editQuestion(id: Int)
-
-
-
-#GET          /collectionTools/:toolType/quizzes/export                  controllers.exes.CollectionController.exportExerciseCollections
-#GET          /collectionTools/:toolType/quizzes/import                  controllers.exes.CollectionController.importExerciseCollections
-#POST          /collectionTools/:toolType/quizzes/upload                  controllers.exes.CollectionController.uploadFile
-
-#GET           /collectionTools/:toolType/newQuizForm                     controllers.exes.CollectionController.newExerciseCollectionForm
-
-#GET           /collectionTools/:toolType/start/:collId                     controllers.exes.CollectionController.quizStart(collId: Int)
+GET           /collectionTools/:toolType/collections/:collId             controllers.exes.CollectionController.collection(toolType: String, collId: Int, page: Int ?= 1)
 GET           /collectionTools/:toolType/:collId/:exId                   controllers.exes.CollectionController.exercise(toolType: String, collId: Int, exId: Int)
 PUT           /collectionTools/:toolType/:collId/:exId                   controllers.exes.CollectionController.correctLive(toolType: String, collId: Int, exId: Int)
 POST          /collectionTools/:toolType/:collId/:exId                   controllers.exes.CollectionController.correct(toolType: String, collId: Int, exId: Int)
@@ -115,13 +93,14 @@ GET           /tools/:toolType/admin/export                              control
 GET           /tools/:toolType/admin/exportFile                          controllers.exes.ExerciseController.adminExportExercisesAsFile(toolType: String)
 
 GET           /tools/:toolType/admin/exerciseList                        controllers.exes.ExerciseController.adminExerciseList(toolType: String)
+
 GET           /tools/:toolType/admin/newExForm                           controllers.exes.ExerciseController.adminNewExerciseForm(toolType: String)
-PUT           /tools/:toolType/admin/exerciseList                        controllers.exes.ExerciseController.adminCreateExercise(toolType: String)
-POST          /tools/:toolType/admin/exerciseList                        controllers.exes.ExerciseController.adminCreateExercise(toolType: String)
 
 GET           /tools/:toolType/admin/exerciseList/:id                    controllers.exes.ExerciseController.adminEditExerciseForm(toolType: String, id: Int)
+
 PUT           /tools/:toolType/admin/exerciseList/:id                    controllers.exes.ExerciseController.adminEditExercise(toolType: String, id: Int)
 POST          /tools/:toolType/admin/exerciseList/:id                    controllers.exes.ExerciseController.adminEditExercise(toolType: String, id: Int)
+
 DELETE        /tools/:toolType/admin/exerciseList/:id                    controllers.exes.ExerciseController.adminDeleteExercise(toolType: String, id: Int)
 
 PUT           /tools/:toolType/admin/exercise/:id/state                  controllers.exes.ExerciseController.adminChangeExState(toolType: String, id: Int)
@@ -136,7 +115,7 @@ POST          /tools/:toolType/:id/:part                                 control
 
 # Other routes
 GET           /prog/declaration                                          controllers.exes.ExerciseController.progGetDeclaration(lang: String)
-GET           /web/solution/:id/:username/:part                          controllers.exes.ExerciseController.webSolution(username: String, id: Int, part: String)
+GET           /web/solution/:id/:part                                    controllers.exes.ExerciseController.webSolution(id: Int, part: String)
 PUT           /web/solution/:id/:part                                    controllers.exes.ExerciseController.updateWebSolution(id: Int, part: String)
 
 # Courses

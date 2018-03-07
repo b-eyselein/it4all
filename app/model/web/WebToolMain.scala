@@ -10,6 +10,7 @@ import model.web.WebConsts._
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.Html
@@ -47,6 +48,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override val consts: Consts = WebConsts
 
   override val exParts: Seq[WebExPart] = WebExParts.values
+
+  override implicit val compExForm: Form[WebCompleteEx] = null
 
   // DB
 

@@ -211,15 +211,15 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Abstract types
 
-  override type ExTableDef = ProgExercisesTable
+  override protected type ExTableDef = ProgExercisesTable
 
-  override type SolTableDef = ProgSolutionTable
+  override protected type SolTableDef = ProgSolutionTable
 
   // Table Queries
 
-  override val exTable = TableQuery[ProgExercisesTable]
+  override protected val exTable = TableQuery[ProgExercisesTable]
 
-  override val solTable = TableQuery[ProgSolutionTable]
+  override protected val solTable = TableQuery[ProgSolutionTable]
 
   val inputTypesQuery = TableQuery[InputTypesTable]
 
@@ -268,7 +268,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   implicit val ProgDataTypesColumnType: BaseColumnType[ProgDataType] =
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
-  override implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
+  override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
     MappedColumnType.base[ProgExPart, String](_.urlName, str => ProgExParts.values.find(_.urlName == str) getOrElse Implementation)
 
   // Tables
@@ -289,7 +289,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   class InputTypesTable(tag: Tag) extends Table[InputType](tag, "prog_input_types") {
 
-    def id = column[Int](ID_NAME)
+    def id = column[Int](idName)
 
     def exerciseId = column[Int]("exercise_id")
 

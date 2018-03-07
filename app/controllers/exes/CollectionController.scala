@@ -4,11 +4,17 @@ import java.nio.file.Files
 
 import controllers.Secured
 import javax.inject.{Inject, Singleton}
+import model.Enums.ExerciseState
 import model._
 import model.core.CoreConsts._
 import model.core._
-import model.toolMains.{CollectionToolMain, ToolList}
+import model.toolMains.ToolList
+import play.api.Logger
+import play.api.data.Forms.{of, single}
+import play.api.data.format.Formatter
+import play.api.data.{Form, FormError}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.libs.json.Json
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -17,11 +23,26 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)(implicit ec: ExecutionContext)
+class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
+  // Helpers
 
-  def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.username} - ${Json.toJson(eventToLog)}""")
+  private implicit object ExerciseStateFormatter extends Formatter[ExerciseState] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], ExerciseState] = data.get(key) match {
+      case None           => Left(Seq(FormError(key, "No value found!")))
+      case Some(valueStr) => ExerciseState.byString(valueStr) match {
+        case Some(state) => Right(state)
+        case None        => Left(Seq(FormError(key, s"Value '$valueStr' is no legal value!")))
+      }
+    }
+
+    override def unbind(key: String, value: ExerciseState): Map[String, String] = Map(key -> value.name)
+
+  }
+
+  val stateForm: Form[ExerciseState] = Form(single("state" -> of[ExerciseState]))
 
   // Admin
 
@@ -61,33 +82,35 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
           val file = Files.createTempFile(s"export_${toolMain.urlPart}", ".yaml")
-          toolMain.futureCompleteColls map (exes => {
 
-            toolMain.yamlString map (content => write(file, content))
-
+          toolMain.yamlString map (content => write(file, content)) map { _ =>
             Ok.sendPath(file, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => Files.delete(file))
-          })
+          }
       }
   }
 
   def adminChangeCollectionState(tool: String, id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
-      ToolList.getExCollToolMainOption(tool) match {
-        case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
-        case Some(toolMain) =>
-          //      import play.api.data.Forms._
-          //      case class StrForm(str: String)
-          //      val form = Form(mapping("state" -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
-          //
-          //      val newState: ExerciseState = Try(ExerciseState.valueOf(form.bindFromRequest.get.str)) getOrElse ExerciseState.RESERVED
-          //
-          //      val updateAction = (for {coll <- tq if coll.id === id} yield coll.state).update(newState)
-          //      db.run(updateAction).map {
-          //        case 1 => Ok(Json.obj("id" -> id, "newState" -> newState.name))
-          //        case _ => BadRequest(Json.obj("message" -> "No such file exists..."))
-          //      }
-          Future(BadRequest("Not yet implemented: changing the state of a collection"))
+
+      val onFormError: Form[ExerciseState] => Future[Result] = { formWithErrors =>
+
+        for (formError <- formWithErrors.errors)
+          Logger.error(s"Form error while changinge state of exercise $id: ${formError.message}")
+
+        Future(BadRequest("There has been an error!"))
       }
+
+      val onFormRead: ExerciseState => Future[Result] = { newState =>
+        ToolList.getExCollToolMainOption(tool) match {
+          case None           => Future(BadRequest(s"There is no such tool >>$tool<<"))
+          case Some(toolMain) => toolMain.updateExerciseState(id, newState) map {
+            case true  => Ok(Json.obj("id" -> id, "newState" -> newState.name))
+            case false => BadRequest(Json.obj("message" -> "Could not update exercise!"))
+          }
+        }
+      }
+
+      stateForm.bindFromRequest().fold(onFormError, onFormRead)
   }
 
   def adminCollectionsList(tool: String): EssentialAction = futureWithAdmin { admin =>
@@ -95,7 +118,19 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
       ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
         case Some(toolMain) =>
-          toolMain.futureCompleteColls map (colls => Ok(views.html.admin.collectionList(admin, Seq.empty /* colls map toolMain.wrap*/ , toolMain)))
+          // FIXME: get rid of cast...
+          toolMain.futureCompleteColls map (colls => Ok(views.html.admin.collectionList(admin, colls.map(_.wrapped).asInstanceOf[Seq[CompleteCollectionWrapper]], toolMain)))
+      }
+  }
+
+  def adminNewCollectionForm(tool: String): EssentialAction = futureWithAdmin { admin =>
+    implicit request =>
+      ToolList.getExCollToolMainOption(tool) match {
+        case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
+        case Some(toolMain) => toolMain.futureHighestCollectionId map { id =>
+          val collection = toolMain.instantiateCollection(id + 1, ExerciseState.RESERVED)
+          Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = true))
+        }
       }
   }
 
@@ -103,8 +138,10 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
     implicit request =>
       ToolList.getExCollToolMainOption(tool) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$tool<<"))
-        case Some(toolMain) =>
-          toolMain.futureCompleteCollById(id) map (maybeColl => Ok(collEditForm(admin, toolMain, None /*maybeColl map (toolMain.wrap(_)*/)))
+        case Some(toolMain) => toolMain.futureCompleteCollById(id) map { maybeCollection =>
+          val collection = maybeCollection getOrElse toolMain.instantiateCollection(id, ExerciseState.RESERVED)
+          Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false))
+        }
       }
   }
 
@@ -118,14 +155,6 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
       }
   }
 
-  def adminNewCollectionForm(tool: String): EssentialAction = withAdmin { admin =>
-    implicit request =>
-      ToolList.getExCollToolMainOption(tool) match {
-        case None           => BadRequest(s"There is no tool with name >>$tool<<")
-        case Some(toolMain) => Ok(collEditForm(admin, toolMain, None))
-      }
-  }
-
   def adminCreateCollection(tool: String): EssentialAction = withAdmin { _ =>
     implicit request =>
       ToolList.getExCollToolMainOption(tool) match {
@@ -135,9 +164,6 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
           Ok("TODO: Creating new collection...!")
       }
   }
-
-  private def collEditForm(admin: User, toolMain: CollectionToolMain, collection: Option[_ <: CompleteCollectionWrapper]): Html =
-    views.html.admin.collectionEditForm(admin, toolMain, collection, new Html("") /*adminRenderEditRest(collection)*/)
 
   def adminDeleteCollection(tool: String, id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
@@ -184,8 +210,6 @@ class CollectionController @Inject()(cc: ControllerComponents, val dbConfigProvi
           }
       }
   }
-
-  // User
 
   def exercise(tool: String, collId: Int, id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
