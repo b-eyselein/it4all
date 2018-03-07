@@ -1,4 +1,4 @@
-image: docker pull gafiatulin/alpine-sbt
+image: gafiatulin/alpine-sbt
 
 stages:
 - test
