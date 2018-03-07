@@ -37,7 +37,7 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Aufgabenbereiche <span class="caret"></span></a>
                             <ul class="dropdown-menu">
 
-                                @for(idPartTool <- model.toolMains.ToolList.RandomExToolMains) {
+                                @for(idPartTool <- model.toolMains.ToolList.RandomExToolMains.filter(_.toolState == model.Enums.ToolState.LIVE)) {
                                     <li><a href="@controllers.exes.routes.RandomExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge()</a></li>
                                 }
 

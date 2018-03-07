@@ -1,8 +1,4 @@
-@import model.toolMains.CollectionToolMain
-@import model.toolMains.FileExerciseToolMain
-@import model.toolMains.AExerciseToolMain
-@import model.toolMains.RandomExerciseToolMain
-@(user: model.User, isDev: Boolean)
+@(user: model.User)
 
 @main("HTML-Test", Some(user)) {
     <div class="container">
@@ -26,25 +22,25 @@
 
         @for(tools <- model.toolMains.ToolList.AllToolMains.grouped(3)) {
             <div class="row">
-            @for(tool <- tools.filter(t => isDev || (t.toolState == model.Enums.ToolState.LIVE))) {
+            @for(tool <- tools) {
                 <div class="col-md-4">
                 @tool match {
-                    case a: AExerciseToolMain => {
+                    case a: model.toolMains.AExerciseToolMain => {
                         <a class="btn btn-default btn-block" href="@controllers.exes.routes.ExerciseController.index(a.urlPart)">
                             <span>@a.toolname @a.toolState.badge</span>
                         </a>
                     }
-                    case b: CollectionToolMain => {
+                    case b: model.toolMains.CollectionToolMain => {
                         <a class="btn btn-default btn-block" href="@controllers.exes.routes.CollectionController.index(b.urlPart)">
                             <span>@b.toolname @b.toolState.badge</span>
                         </a>
                     }
-                    case c: FileExerciseToolMain => {
+                    case c: model.toolMains.FileExerciseToolMain => {
                         <a class="btn btn-default btn-block" href="@controllers.exes.routes.FileExerciseController.index(c.urlPart)">
                             <span>@c.toolname @c.toolState.badge</span>
                         </a>
                     }
-                    case d: RandomExerciseToolMain => {
+                    case d: model.toolMains.RandomExerciseToolMain => {
                         <a class="btn btn-default btn-block" href="@controllers.exes.routes.RandomExerciseController.index(d.urlPart)">
                             <span>@d.toolname @d.toolState.badge</span>
                         </a>
@@ -53,9 +49,8 @@
                 </div>
             }
             </div>
-
             @* space between rows... *@
-            &nbsp;
+                &nbsp;
         }
 
     </div>
