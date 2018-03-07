@@ -1,4 +1,4 @@
-#image: beyselein/play-dockerfile
+image: docker pull gafiatulin/alpine-sbt
 
 stages:
 - test
