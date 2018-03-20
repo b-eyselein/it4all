@@ -2,7 +2,7 @@ package model.programming
 
 import controllers.ExerciseOptions
 import javax.inject._
-import model.Enums.ExerciseState
+import model.Enums.{ExerciseState, ToolState}
 import model.programming.ProgConsts._
 import model.programming.ProgrammingToolMain._
 import model.toolMains.AExerciseToolMain
@@ -53,10 +53,13 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override val toolname: String = "Programmierung"
 
+  override val toolState: ToolState = ToolState.BETA
+
   override val consts: Consts = ProgConsts
 
   override val exParts: Seq[ProgExPart] = ProgExParts.values
 
+  // TODO: create Form mapping ...
   override implicit val compExForm: Form[ProgCompleteEx] = null
 
   // Reading solution from requests

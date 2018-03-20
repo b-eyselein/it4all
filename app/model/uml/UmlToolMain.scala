@@ -45,6 +45,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[UmlExPart] = UmlExParts.values
 
+  // TODO: create Form mapping ...
   override implicit val compExForm: Form[UmlCompleteEx] = null
 
   // Reading solution

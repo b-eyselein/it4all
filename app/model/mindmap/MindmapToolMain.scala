@@ -38,6 +38,7 @@ class MindmapToolMain @Inject()(override val tables: MindmapTableDefs)(implicit 
 
   override val exParts: Seq[PartType] = MindmapExParts.values
 
+  // TODO: create Form mapping ...
   override implicit val compExForm: Form[MindmapExercise] = null
 
   // Yaml
