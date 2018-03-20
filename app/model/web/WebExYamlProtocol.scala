@@ -65,7 +65,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       new YamlObject(
         Map[YamlValue, YamlValue](
           YamlString(idName) -> htmlCompTask.task.id,
-          YamlString(TEXT_NAME) -> htmlCompTask.task.text,
+          YamlString(textName) -> htmlCompTask.task.text,
           YamlString(XPATH_NAME) -> htmlCompTask.task.xpathQuery
         ) ++ tcOpt ++ yamlAttrs
       )
@@ -73,7 +73,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[HtmlCompleteTask] = for {
       taskId <- yamlObject.intField(idName)
-      text <- yamlObject.stringField(TEXT_NAME)
+      text <- yamlObject.stringField(textName)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
       textContent <- yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)
       attributeTries <- yamlObject.optArrayField(attrsName, TaskAttributeYamlFormat(taskId, exerciseId).read)
@@ -104,7 +104,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
       YamlObj(
         idName -> jsTask.task.id,
-        TEXT_NAME -> jsTask.task.text,
+        textName -> jsTask.task.text,
         XPATH_NAME -> jsTask.task.xpathQuery,
         ACTION_TYPE_NAME -> jsTask.task.actionType.name,
         KEYS_TO_SEND_NAME -> jsTask.task.keysToSend.map(YamlString).getOrElse(YamlNull),
@@ -114,7 +114,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[JsCompleteTask] = for {
       taskId <- yamlObject.intField(idName)
-      text <- yamlObject.stringField(TEXT_NAME)
+      text <- yamlObject.stringField(textName)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
       actionType <- yamlObject.enumField(ACTION_TYPE_NAME, JsActionType.valueOf)
       keysToSend <- yamlObject.optForgivingStringField(KEYS_TO_SEND_NAME)

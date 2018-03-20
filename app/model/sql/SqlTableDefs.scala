@@ -7,6 +7,7 @@ import model.core.MyWrapper
 import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
+import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -64,19 +65,7 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
 
   override def tags: Seq[SqlExTag] = (ex.tags split TagJoinChar).toSeq flatMap SqlExTag.byString
 
-  override def exType: String = ex.exerciseType.name
-
-  override def preview: Html = new Html(
-    s"""<div class="row">
-       |  <div class="col-sm-2"><b>Typ:</b></div>
-       |  <div class="col-sm-4">${ex.exerciseType}</div>
-       |  <div class="col-sm-2"><b>Tags:</b></div>
-       |  <div class="col-sm-2">${tags map (_.title) mkString ", "}</div>
-       |</div>
-       |<div class="row">
-       |  <div class="col-sm-12"><b>Musterlösungen:</b></div>
-       |</div>
-       |${samples map (sample => s"<pre>${sample.sample}</pre>") mkString}""".stripMargin)
+  override def preview: Html = views.html.sql.sqlExPreview(this)
 
   override def wrapped: CompleteExWrapper = new SqlCompleteExWrapper(this)
 
@@ -144,7 +133,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   def saveSolution(sol: SqlSolution)(implicit ec: ExecutionContext): Future[Boolean] = db.run(solTable insertOrUpdate sol) map (_ => true) recover { case _: Throwable => false }
 
-  override def saveExerciseRest(compEx: SqlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = ???
+  override def saveExerciseRest(compEx: SqlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+    saveSeq[SqlSample](compEx.samples, saveSqlSample)
 
   override def saveCompleteColl(completeScenario: SqlCompleteScenario)(implicit ec: ExecutionContext): Future[Boolean] =
     db.run(collTable insertOrUpdate completeScenario.coll) flatMap (_ => saveSeq(completeScenario.exercises, saveSqlCompleteEx))
@@ -153,7 +143,10 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     db.run(exTable insertOrUpdate completeEx.ex) flatMap { _ => saveSeq(completeEx.samples, saveSqlSample) }
 
   private def saveSqlSample(sample: SqlSample)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(sqlSamples insertOrUpdate sample) map (_ => true) recover { case _: Throwable => false }
+    db.run(sqlSamples insertOrUpdate sample) map (_ => true) recover { case e: Throwable =>
+      Logger.error("Could not save sql sample!", e)
+      false
+    }
 
   // Column types
 
@@ -181,9 +174,9 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def exerciseType = column[SqlExerciseType]("exercise_type")
 
-    def hint = column[String](HINT_NAME)
+    def hint = column[String](hintName)
 
-    def tags = column[String](TAGS_NAME)
+    def tags = column[String](tagsName)
 
 
     def pk = primaryKey("pk", (id, collectionId))

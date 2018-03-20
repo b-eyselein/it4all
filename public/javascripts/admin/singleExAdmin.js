@@ -1,3 +1,7 @@
+/**
+ *
+ * @param result
+ */
 function updateAfterDelete(result) {
     let tr = $('#tr1_' + result.id);
     tr.addClass('danger');
@@ -13,14 +17,18 @@ function updateAfterDelete(result) {
     editButton.attr('title', 'Diese Aufgabe wurde bereits gelöscht!');
 }
 
-function deleteExercise() {
-    let url = '';
-    return;
-    // $.ajax({
-    //     type: 'DELETE',
-    //     url,
-    //     success: updateAfterDelete
-    // });
+function deleteExercise(exerciseId) {
+    let toolType = $('#toolType').val();
+
+    // noinspection JSUnresolvedVariable, JSUnresolvedFunction
+    let url = jsRoutes.controllers.ExerciseController.adminDeleteExercise(toolType, exerciseId).url;
+
+    console.log(url);
+    $.ajax({
+        type: 'DELETE',
+        url,
+        success: updateAfterDelete
+    });
 }
 
 function updateStateChangeButton(id) {
@@ -29,8 +37,9 @@ function updateStateChangeButton(id) {
 }
 
 /**
- *
  * @param response
+ * @param {int} response.id
+ * @param {string} response.newState
  */
 function onChangeStateSuccess(response) {
     $('#scb_' + response.id).prop('disabled', true);
@@ -41,7 +50,7 @@ function changeState(exerciseId) {
     let toolType = $('#toolType').val();
 
     // noinspection JSUnresolvedVariable, JSUnresolvedFunction
-    let url = jsRoutes.controllers.exes.ExerciseController.adminChangeExState(toolType, exerciseId).url;
+    let url = jsRoutes.controllers.ExerciseController.adminChangeExState(toolType, exerciseId).url;
 
     $.ajax({
         type: 'PUT',

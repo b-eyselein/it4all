@@ -1,11 +1,10 @@
-package controllers.exes
+package controllers
 
-import controllers.Secured
 import javax.inject.{Inject, Singleton}
 import model._
 import model.core._
 import model.programming.{NewProgYamlProtocol, ProgLanguage, ProgrammingToolMain}
-import model.toolMains.ToolList
+import model.toolMains.{AExerciseToolMain, ToolList}
 import model.web.{HtmlPart, WebSolution, WebToolMain}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.ws._
@@ -18,52 +17,53 @@ import scala.util.{Failure, Success}
 @Singleton
 class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository, ws: WSClient,
                                    progToolMain: ProgrammingToolMain, webToolMain: WebToolMain)
-                                  (implicit ec: ExecutionContext) extends SingleExerciseController(cc, dbcp) with Secured with JsonFormat {
+                                  (implicit ec: ExecutionContext) extends ASingleExerciseController(cc, dbcp) with Secured with JsonFormat {
 
   // Abstract types
 
   type SolType <: Solution
 
+  override type ToolMainType = AExerciseToolMain
+
+  override protected def getToolMain(toolType: String): Option[AExerciseToolMain] = ToolList.getExerciseToolMainOption(toolType)
+
   // Generic Routes
 
-  def exercise(tool: String, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
+  def exercise(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      ToolList.getIdPartToolMainOption(tool) match {
-        case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
-        case Some(toolMain) => toolMain.renderExerciseById(user, id, partStr) map {
-          case Some(r) => Ok(r)
-          case None    => NotFound(s"There is no such exercise with id '$id'")
-        }
+
+      val maybeExAndMaybeOldSolution: Future[(Option[(toolMain.CompExType, toolMain.PartType)], Option[toolMain.SolType])] = for {
+        exercise <- toolMain.futureCompleteExById(id)
+        part <- Future(toolMain.partTypeFromUrl(partStr))
+        oldSolution <- toolMain.futureOldSolution(user, id, partStr)
+      } yield ((exercise zip part).headOption, oldSolution)
+
+      maybeExAndMaybeOldSolution map {
+        case (None, _)                             => NotFound
+        case (Some((exercise, part)), oldSolution) => Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
       }
   }
 
   // FIXME: part in url!
-  def correct(tool: String, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
+  def correct(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      ToolList.getIdPartToolMainOption(tool) match {
-        case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
-        case Some(toolMain) => toolMain.correctAbstract(user, id, partStr, isLive = false) map {
-          case Failure(error)  => BadRequest(toolMain.onSubmitCorrectionError(user, error))
-          case Success(result) =>
-            result match {
-              case Right(jsValue) => Ok(jsValue)
-              case Left(html)     => Ok(html)
-            }
-        }
-      }
-
-  }
-
-  def correctLive(tool: String, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
-    implicit request => {
-      ToolList.getIdPartToolMainOption(tool) match {
-        case None           => Future(BadRequest(s"Tool >>$tool<< not found!"))
-        case Some(toolMain) => toolMain.correctAbstract(user, id, partStr, isLive = true) map {
-          case Failure(error)  => BadRequest(toolMain.onLiveCorrectionError(error))
-          case Success(result) => result match {
+      toolMain.correctAbstract(user, id, partStr, isLive = false) map {
+        case Failure(error)  => BadRequest(toolMain.onSubmitCorrectionError(user, error))
+        case Success(result) =>
+          result match {
             case Right(jsValue) => Ok(jsValue)
             case Left(html)     => Ok(html)
           }
+      }
+  }
+
+  def correctLive(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request => {
+      toolMain.correctAbstract(user, id, partStr, isLive = true) map {
+        case Failure(error)  => BadRequest(toolMain.onLiveCorrectionError(error))
+        case Success(result) => result match {
+          case Right(jsValue) => Ok(jsValue)
+          case Left(html)     => Ok(html)
         }
       }
     }
@@ -80,13 +80,13 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
     }
   }
 
-  def progGetDeclaration(lang: String): EssentialAction = withUser {
-    _ => implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
+  def progGetDeclaration(lang: String): EssentialAction = withUser { _ =>
+    implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
   }
 
   def webSolution(id: Int, part: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      ws.url(s"http://localhost:9080/${user.username}/$id/test.html").get() map { wsRequest =>
+      ws.url(webToolMain.getSolutionUrl(user, id, part)).get() map { wsRequest =>
         Ok(wsRequest.body).as("text/html")
       }
   }

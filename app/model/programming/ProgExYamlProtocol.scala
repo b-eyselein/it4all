@@ -8,7 +8,7 @@ import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
 import scala.language.implicitConversions
-import scala.util.{Failure, Try}
+import scala.util.Try
 
 object ProgExYamlProtocol extends MyYamlProtocol {
 
@@ -18,7 +18,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       functionName <- yamlObject.stringField(FunctionName)
       outputType <- yamlObject.enumField(OutputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
-      inputTypeNames: (Seq[String], Seq[Failure[String]]) <- yamlObject.arrayField(InputTypesName, _.asStr)
+      inputTypes <- yamlObject.arrayField(InputTypesName, ProgInpuptTypeYamlFormat(baseValues._1).read)
 
       sampleSolution <- yamlObject.someField(SAMPLE_SOL_NAME) flatMap ProgSampleSolutionYamlFormat(baseValues._1).read
       sampleTestDataTries <- yamlObject.arrayField(SAMPLE_TESTDATA_NAME, ProgCompleteSampleTestdataYamlFormat(baseValues._1).read)
@@ -27,15 +27,11 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read sample test data", sampleTdFailure.exception)
 
-      for (inputTypeFailure <- inputTypeNames._2)
+      for (inputTypeFailure <- inputTypes._2)
       // FIXME: ...
         Logger.error("Could not read input type name ", inputTypeFailure.exception)
 
-      val inputTypes: Seq[InputType] = inputTypeNames._1.zipWithIndex.map {
-        case (str, index) => InputType(index, baseValues._1, ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
-      }
-
-      ProgCompleteEx(new ProgExercise(baseValues, functionName, outputType), inputTypes, sampleSolution, sampleTestDataTries._1)
+      ProgCompleteEx(new ProgExercise(baseValues, functionName, outputType), inputTypes._1, sampleSolution, sampleTestDataTries._1)
     }
 
     override protected def writeRest(completeEx: ProgCompleteEx): Map[YamlValue, YamlValue] = Map(
@@ -44,6 +40,18 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       YamlString(SAMPLE_SOL_NAME) -> ProgSampleSolutionYamlFormat(completeEx.ex.id).write(completeEx.sampleSolution),
       YamlString(SAMPLE_TESTDATA_NAME) -> YamlArr(completeEx.sampleTestData map ProgCompleteSampleTestdataYamlFormat(completeEx.ex.id).write)
     )
+  }
+
+  case class ProgInpuptTypeYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[ProgInput] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[ProgInput] = for {
+      id <- yamlObject.intField(idName)
+      inputName <- yamlObject.stringField(nameName)
+      inputType <- yamlObject.enumField(InputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+    } yield ProgInput(id, exerciseId, inputName, inputType)
+
+    override def write(obj: ProgInput): YamlValue = ???
+
   }
 
   case class ProgSampleSolutionYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[ProgSampleSolution] {

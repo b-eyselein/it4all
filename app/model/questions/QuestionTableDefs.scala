@@ -74,8 +74,6 @@ case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends Complete
 
   def userHasAnswered(username: String) = false
 
-  override def exType: String = ex.questionType.name
-
   override def preview: Html = new Html(
     s"""<p><b>Antworten:</b></p>
        |<div class="row">${answers map previewAnswer mkString}</div>""".stripMargin)

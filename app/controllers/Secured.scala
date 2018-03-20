@@ -8,25 +8,23 @@ import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 trait Secured {
-  self: BaseController =>
-
-  val actionBuilder: ActionBuilder[Request, AnyContent] = controllerComponents.actionBuilder
+  self: AbstractController =>
 
   protected val repository: TableDefs
 
   private def username(request: RequestHeader): Option[String] = request.session.get(SESSION_ID_FIELD)
 
-  private def onUnauthorized(request: RequestHeader): Result = Redirect(controllers.routes.LoginController.login())
+  private def onUnauthorized(request: RequestHeader): Result = Redirect(controllers.routes.LoginController.login()).withNewSession
 
   private def futureOnUnauthorized(request: RequestHeader)(implicit ec: ExecutionContext): Future[Result] =
-    Future(Redirect(controllers.routes.LoginController.login()))
+    Future(onUnauthorized(request))
 
 
   private def withAuth(f: => String => Request[AnyContent] => Future[Result]): EssentialAction =
-    Security.Authenticated(username, onUnauthorized)(user => actionBuilder.async(request => f(user)(request)))
+    Security.Authenticated(username, onUnauthorized)(user => controllerComponents.actionBuilder.async(request => f(user)(request)))
 
   private def withAuth[A](bodyParser: BodyParser[A])(f: => String => Request[A] => Future[Result]): EssentialAction =
-    Security.Authenticated(username, onUnauthorized)(user => actionBuilder.async(bodyParser)(request => f(user)(request)))
+    Security.Authenticated(username, onUnauthorized)(user => controllerComponents.actionBuilder.async(bodyParser)(request => f(user)(request)))
 
 
   def withUser(f: User => Request[AnyContent] => Result)(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>

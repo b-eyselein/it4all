@@ -89,7 +89,7 @@ function mainGeneration() {
 
     // if no errors found and code is set in HTML
     if (!(isCodeGenerated && log.length === 0)) {
-        document.getElementById('sendToServer').className = 'form-control';
+        document.getElementById('testButton').className = 'form-control';
         document.getElementById('mainGeneration').className = 'form-control btn-primary';
     }
 
@@ -423,7 +423,7 @@ function convertJsonToProgrammCode(json_graph, language, parentId) {
 
         $('#preCode').html(wrap);
 
-        let submitButton = $('#sendToServer');
+        let submitButton = $('#testButton');
         submitButton.removeClass('btn-default').addClass('btn-primary').prop('disabled', false);
         submitButton.prop('title', '');
         document.getElementById('mainGeneration').className = 'form-control';

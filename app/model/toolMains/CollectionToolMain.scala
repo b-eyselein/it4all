@@ -5,6 +5,7 @@ import model._
 import model.core._
 import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml.Auto
+import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -12,7 +13,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class CollectionToolMain(urlPart: String) extends FixedExToolMain(urlPart) {
+abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext) extends FixedExToolMain(urlPart) {
 
   // Abstract types
 
@@ -30,41 +31,61 @@ abstract class CollectionToolMain(urlPart: String) extends FixedExToolMain(urlPa
 
   override type ReadType = CompCollType
 
+  override type Tables <: ExerciseCollectionTableDefs[ExType, CompExType, CollType, CompCollType, SolType]
+
   // Other members
 
   val collectionSingularName: String
 
   val collectionPluralName: String
 
-  // Database queries
+  protected def compExTypeForm(collId: Int): Form[CompExType]
 
-  override type Tables <: ExerciseCollectionTableDefs[ExType, CompExType, CollType, CompCollType, SolType]
+  // Database queries
 
   // Numbers
 
   def numOfExesInColl(id: Int): Future[Int] = tables.futureNumOfExesInColl(id)
 
-  def futureHighestCollectionId(implicit ec: ExecutionContext): Future[Int] = tables.futureHighestCollectionId
+  def futureHighestCollectionId: Future[Int] = tables.futureHighestCollectionId
+
+  def futureHighestIdInCollection(collId: Int): Future[Int] = tables.futureHighestIdInCollection(collId)
 
   // Reading
 
   def futureCollById(id: Int): Future[Option[CollType]] = tables.futureCollById(id)
 
-  def futureCompleteColls(implicit ec: ExecutionContext): Future[Seq[CompCollType]] = tables.futureCompleteColls
+  def futureCompleteColls: Future[Seq[CompCollType]] = tables.futureCompleteColls
 
-  def futureCompleteCollById(id: Int)(implicit ec: ExecutionContext): Future[Option[CompCollType]] = tables.futureCompleteCollById(id)
+  def futureCompleteCollById(id: Int): Future[Option[CompCollType]] = tables.futureCompleteCollById(id)
 
-  def futureCompleteExById(collId: Int, id: Int)(implicit ec: ExecutionContext): Future[Option[CompExType]] = tables.futureCompleteExById(collId, id)
+  def futureCompleteExById(collId: Int, id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(collId, id)
 
-  def futureMaybeOldSolution(username: String, collId: Int, id: Int): Future[Option[SolType]] = tables.futureMaybeOldSolution(username, collId, id)
+  def futureCompleteExesInColl(collId: Int): Future[Seq[CompExType]] = tables.futureCompleteExesInColl(collId)
 
-  override def futureSaveRead(exercises: Seq[CompCollType])(implicit ec: ExecutionContext): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
+  // Saving
+
+  override def futureSaveRead(exercises: Seq[CompCollType]): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
     ex => tables.saveCompleteColl(ex) map (saveRes => (ex, saveRes))
   })
 
-  def saveReadCollection(read: Seq[CompCollType])(implicit ec: ExecutionContext): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteColl)
+  def saveReadCollection(read: Seq[CompCollType]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteColl)
 
-  protected def saveSolution(solution: SolType)(implicit ec: ExecutionContext): Future[Boolean]
+  def futureSaveExercise(exercise: CompExType): Future[Boolean] = tables.saveCompleteEx(exercise)
+
+  protected def saveSolution(solution: SolType): Future[Boolean]
+
+  // Update
+
+  def updateExerciseState(collId: Int, exId: Int, newState: ExerciseState): Future[Boolean] = tables.updateExerciseState(collId, exId, newState)
+
+  def updateCollectionState(collId: Int, newState: ExerciseState): Future[Boolean] = tables.updateCollectionState(collId, newState)
+
+  // Deletion
+
+  def futureDeleteCollection(collId: Int): Future[Boolean] = tables.futureDeleteCollection(collId)
+
+  def futureDeleteExercise(collId: Int, exId: Int): Future[Boolean] = tables.futureDeleteExercise(collId, exId)
 
   // Correction
 
@@ -92,7 +113,9 @@ abstract class CollectionToolMain(urlPart: String) extends FixedExToolMain(urlPa
 
   protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: CompExType): Future[Try[CompResult]]
 
-  // Reading solution from Request
+  // Reading from requests
+
+  def readExerciseFromForm(collId: Int)(implicit request: Request[AnyContent]): Form[CompExType] = compExTypeForm(collId).bindFromRequest()
 
   private def readSolution(user: User, collId: Int, id: Int, isLive: Boolean)(implicit request: Request[AnyContent]) =
     if (isLive) readSolutionFromPutRequest(user, collId: Int, id)
@@ -111,6 +134,9 @@ abstract class CollectionToolMain(urlPart: String) extends FixedExToolMain(urlPa
   def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean): Html =
     views.html.admin.collectionEditForm(user, this, collection.wrapped.asInstanceOf[CompleteCollectionWrapper], isCreation, new Html("") /*adminRenderEditRest(collection)*/)
 
+  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
+    views.html.admin.exerciseEditForm(user, this, newEx, renderEditRest(newEx), isCreation = true)
+
   // Result handlers
 
   def onSubmitCorrectionResult(user: User, result: CompResult): Html
@@ -124,10 +150,12 @@ abstract class CollectionToolMain(urlPart: String) extends FixedExToolMain(urlPa
   // Helper methods for admin
 
   // TODO: scalarStyle = Folded if fixed...
-  override def yamlString(implicit ec: ExecutionContext): Future[String] = futureCompleteColls map {
+  override def yamlString: Future[String] = futureCompleteColls map {
     exes => "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   }
 
   def instantiateCollection(id: Int, state: ExerciseState): CompCollType
+
+  def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
 
 }

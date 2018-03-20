@@ -28,7 +28,6 @@ object YamlArr {
 
 object MyYamlProtocol {
 
-
   implicit def string2YamlString(str: String): YamlString = YamlString(str)
 
   implicit def int2YamlNumber(num: Int): YamlNumber = YamlNumber(num)
@@ -114,18 +113,18 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
   protected def writeBaseValues(hasBaseValues: HasBaseValues): Map[YamlValue, YamlValue] = Map(
     YamlString(idName) -> hasBaseValues.id,
-    YamlString(TITLE_NAME) -> hasBaseValues.title,
+    YamlString(titleName) -> hasBaseValues.title,
     YamlString(authorName) -> hasBaseValues.author,
-    YamlString(TEXT_NAME) -> hasBaseValues.text,
-    YamlString(STATE_NAME) -> hasBaseValues.state.name
+    YamlString(textName) -> hasBaseValues.text,
+    YamlString(stateName) -> hasBaseValues.state.name
   )
 
   protected def readBaseValues(yamlObject: YamlObject): Try[(Int, String, String, String, ExerciseState)] = for {
     id <- yamlObject.intField(idName)
-    title <- yamlObject.stringField(TITLE_NAME)
+    title <- yamlObject.stringField(titleName)
     author <- yamlObject.stringField(authorName)
-    text <- yamlObject.stringField(TEXT_NAME)
-    state = yamlObject.enumField(STATE_NAME, ExerciseState.valueOf) getOrElse ExerciseState.CREATED
+    text <- yamlObject.stringField(textName)
+    state = yamlObject.enumField(stateName, ExerciseState.valueOf) getOrElse ExerciseState.CREATED
   } yield (id, title, author, text, state)
 
   abstract class HasBaseValuesYamlFormat[E <: HasBaseValues] extends MyYamlObjectFormat[E] {

@@ -12,7 +12,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class AExerciseToolMain(urlPart: String) extends ASingleExerciseToolMain(urlPart) with JsonFormat {
+abstract class AExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends ASingleExerciseToolMain(urlPart) with JsonFormat {
 
   // Abstract types
 
@@ -22,10 +22,6 @@ abstract class AExerciseToolMain(urlPart: String) extends ASingleExerciseToolMai
 
   override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, PartType]
 
-  // DB
-
-  def futureReadOldSolution(user: User, exerciseId: Int, part: PartType): Future[Option[SolType]] = tables.futureOldSolution(user.username, exerciseId)
-
   // Methods
 
   def checkAndCreateSolDir(username: String, exercise: CompExType): Try[Path] =
@@ -33,7 +29,7 @@ abstract class AExerciseToolMain(urlPart: String) extends ASingleExerciseToolMai
 
   def futureSaveSolution(sol: SolType): Future[Boolean]
 
-  def readOldSolution(user: User, exerciseId: Int, partString: String)(implicit ec: ExecutionContext): Future[Option[SolType]] = partTypeFromUrl(partString) match {
+  def futureOldSolution(user: User, exerciseId: Int, partString: String)(implicit ec: ExecutionContext): Future[Option[SolType]] = partTypeFromUrl(partString) match {
     case None       => Future(None)
     case Some(part) => tables.futureOldSolution(user.username, exerciseId, part)
   }
@@ -98,13 +94,6 @@ abstract class AExerciseToolMain(urlPart: String) extends ASingleExerciseToolMai
 
   // Views
 
-  def renderExerciseById(user: User, id: Int, partStr: String)(implicit ec: ExecutionContext): Future[Option[Html]] = futureCompleteExById(id) map {
-    maybeCompleteEx => (maybeCompleteEx zip partTypeFromUrl(partStr)).headOption
-  } flatMap {
-    case None                   => Future(None)
-    case Some((exercise, part)) => renderExercise(user, exercise, part) map Some.apply
-  }
-
-  def renderExercise(user: User, exercise: CompExType, maybePart: PartType): Future[Html]
+  def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
 
 }

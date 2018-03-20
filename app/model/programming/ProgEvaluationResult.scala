@@ -116,7 +116,7 @@ case class ExecutionResult(success: SuccessType, evaluated: String, completeTest
 
   override def toJson: JsValue = Json.obj(
     idName -> completeTestData.testData.id,
-    Correct -> JsBoolean(success == SuccessType.COMPLETE),
+    correct -> JsBoolean(success == SuccessType.COMPLETE),
     EvaluatedName -> evaluated,
     AwaitedName -> completeTestData.testData.output,
     GottenName -> result

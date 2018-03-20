@@ -9,7 +9,7 @@ text: >
   Patienten ein Rezept mit einer eindeutigen Id verschreiben, das ein oder mehrere Medikamente beinhalten kann.
   Ein Medikament hat eine eindeutige Id und einen Namen. Ein Patient wiederum kann in einer Station aufgenommen bzw.
   entlassen werden.
-status: CREATED
+status: APPROVED
 
 mappings:
 - {key: Stationen, value: Station}

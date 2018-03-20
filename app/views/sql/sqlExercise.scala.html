@@ -28,7 +28,7 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary" id="testBtn">Lösung testen</button>
                     </div>
-                    <a class="btn btn-default" href="@controllers.exes.routes.CollectionController.collection("sql", scenario.id)">
+                    <a class="btn btn-default" href="@routes.CollectionController.collection("sql", scenario.id)">
                         Bearbeitung beenden</a>
                 </div>
 
@@ -69,7 +69,7 @@
 
         <hr>
 
-        @core.helperTemplates.bsPager(exercise.ex.id, numOfExes, id => controllers.exes.routes.CollectionController.exercise("sql", scenario.id, id))
+        @core.helperTemplates.bsPager(exercise.ex.id, numOfExes, id => routes.CollectionController.exercise("sql", scenario.id, id))
 
     </div>
 

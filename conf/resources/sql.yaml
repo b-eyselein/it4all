@@ -4,7 +4,7 @@ id: 1
 title: Angestellte
 author: bje40dc
 text: Dieses Szenario beschreibt die Datenbank einer kleinen Firma.
-status: ACCEPTED
+status: APPROVED
 shortName: employee
 scriptFile: employee.sql
 
@@ -14,6 +14,7 @@ exercises:
   author: bje40dc
   text: Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'
   exerciseType: SELECT
+  status: APPROVED
   samples: 
   - id: 1
     sample: |
@@ -29,6 +30,7 @@ exercises:
   author: bje40dc
   text: Welche Angestelltennummer (id) hat Max Becker?
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -42,6 +44,7 @@ exercises:
   author: bje40dc
   text: Welche Emailadresse hat Max Becker für die Arbeit?
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -70,6 +73,7 @@ exercises:
   author: bje40dc
   text: Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -83,6 +87,7 @@ exercises:
   author: bje40dc
   text: Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -97,6 +102,7 @@ exercises:
   author: bje40dc
   text: Erstellen Sie das CREATE TABLE-Skript für die Tabelle employee!
   exerciseType: CREATE
+  status: CREATED
   samples:
   - id: 1
     sample: |
@@ -114,6 +120,7 @@ exercises:
   author: bje40dc
   text: Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!
   exerciseType: UPDATE
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -126,6 +133,7 @@ exercises:
   author: bje40dc
   text: Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.
   exerciseType: DELETE
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -139,6 +147,7 @@ exercises:
     Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 und soll als 
     OID 9 und als Nutzernamen tina_sattler bekommen.
   exerciseType: INSERT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -153,7 +162,7 @@ id: 2
 title: Amazon
 author: bje40dc
 text: ""
-status: ACCEPTED
+status: APPROVED
 shortName: amazon
 scriptFile: amazon.sql
 exercises:
@@ -162,6 +171,7 @@ exercises:
   author: bje40dc
   text: Geben Sie alle Spalten der Autorentabelle aus!
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -177,6 +187,7 @@ exercises:
   author: bje40dc
   text: Geben Sie die Nachnamen aller Autoren aus!
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -188,6 +199,7 @@ exercises:
   author: bje40dc
   text: Geben Sie die Namen aller Verlage aus!
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -199,6 +211,7 @@ exercises:
   author: bje40dc
   text: Geben Sie die Vor- und Nachnamen aller Kunden aus!
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -210,6 +223,7 @@ exercises:
   author: bje40dc
   text: Geben Sie für jedes Buch jeweils den Titel das Erscheinungsjahr und die ISBN aus!
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -221,6 +235,7 @@ exercises:
   author: bje40dc
   text: Bestimmen Sie den Titel des Buches mit der ISBN '978-3551354051' (ohne Anführungszeichen).
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -233,6 +248,7 @@ exercises:
   author: bje40dc
   text: Bestimmen Sie den Preis des Buches mit der ISBN '978-3551354068' (ohne Anführungszeichen).
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -245,6 +261,7 @@ exercises:
   author: bje40dc
   text: Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -257,6 +274,7 @@ exercises:
   author: bje40dc
   text: Bestimmen Sie die ID des Autoren des Buches 'Der kleine Prinz' (ohne Anführungszeichen).
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -269,6 +287,7 @@ exercises:
   author: bje40dc
   text: Bestimmen Sie den Namen des Verlages der unter der Telefonnummer '+49 2402 / 806341' erreichbar ist.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -281,6 +300,7 @@ exercises:
   author: bje40dc
   text: Ordnen Sie allen Büchern ihre jeweiligen Autoren zu. Geben Sie jeweils den Titel des Buches und den Nachnamen des Autoren aus!
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -294,6 +314,7 @@ exercises:
   author: bje40dc
   text: Bestimmen Sie Titel und Preis aller Bücher die im Carlsen-Verlag erschienen sind.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -315,6 +336,7 @@ exercises:
   author: bje40dc
   text: Bestimmen Sie Titel und ISBN sämtlicher Bücher der Autorin 'Rowling' (ohne Anführungszeichen).
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -335,6 +357,7 @@ exercises:
   author: bje40dc
   text: Zeigen Sie die Werte aller Ratings an die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben hat.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -349,6 +372,7 @@ exercises:
   author: bje40dc
   text: Wie lautet der Nachname des Kunden der die Bestellung mit der ID 5 aufgegeben hat?
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -363,6 +387,7 @@ exercises:
   author: bje40dc
   text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de' enden.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -372,10 +397,11 @@ exercises:
   hint: Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.
 
 - id: 17
-  title: TODO!
+  title: Billige Bücher
   author: bje40dc
-  text: Geben Sie die Titel aller Bücher aus die weniger als 1000 € kosten.
+  text: Geben Sie die Titel aller Bücher aus die weniger als 10,00 € kosten.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -389,6 +415,7 @@ exercises:
   author: bje40dc
   text: Geben die die IDs aller Bücher aus die sich Kunden wünschen. Achten Sie darauf dass eine ID nur einmal vorkommt.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -400,6 +427,7 @@ exercises:
   author: bje40dc
   text: Wählen Sie alle Einträge zu Kunden aus die im Jahr 1981 Geburtstag haben.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -413,6 +441,7 @@ exercises:
   author: bje40dc
   text: Geben Sie die Titel aller Bücher aus die einen Bestand von weniger als 20.000 Exemplaren oder einen Preis über 14€ haben.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -432,6 +461,7 @@ exercises:
   author: bje40dc
   text: Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -452,6 +482,7 @@ exercises:
   author: bje40dc
   text: Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'? Nennen Sie die Spalte 'Durchschnitt'.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -472,6 +503,7 @@ exercises:
   author: bje40dc
   text: Wie hoch ist der Gesamtbestand an Harry Potter-Büchern? Nennen Sie die Spalte 'Gesamtbestand'.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -487,6 +519,7 @@ exercises:
     Geben Sie jeweils die schlechteste und beste Bewertung des Buches 'Harry Potter und der Halbblutprinz' aus. Nennen Sie
     die Spalten jeweils 'Schlechteste' und 'Beste'.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -507,6 +540,7 @@ exercises:
   author: bje40dc
   text: Wie hoch ist der durchschnittliche Bestand aller Bücher? Nennen Sie die Spalte 'Durchschnitt'
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -519,6 +553,7 @@ exercises:
   author: bje40dc
   text: Wie lauten die Nachnamen der Kunden die sich das Buch 'Harry Potter und der Orden des Phönix' wünschen?
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -541,6 +576,7 @@ exercises:
   author: bje40dc
   text: Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -557,6 +593,7 @@ exercises:
   author: bje40dc
   text: Zeigen sie Titel und Autor-ID der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis abwärts.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -573,6 +610,7 @@ exercises:
     Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten. Geben Sie für diese
     Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -588,6 +626,7 @@ exercises:
   author: bje40dc
   text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de ' oder mit 'gmail.com ' enden.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -603,6 +642,7 @@ exercises:
     Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis über 10€ liegt. Ordnen Sie die
     Einträge nach Erscheinungsjahr abwärts.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -621,6 +661,7 @@ exercises:
     Berechnen Sie die Anzahl der bestellten Bücher (Tabelle order_positions) die zum Zeitpunkt des Kaufes weniger als
     fünf Euro gekostet haben. Geben Sie das Ergebnis unter dem Spaltenname 'Anzahl' aus.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -639,6 +680,7 @@ exercises:
     Erfassen Sie die ID aller Autoren und den kumulierten Bestand ihrer Bücher. Ordnen Sie die Einträge nach kumulierten
     Bestand abwärts. Benennen Sie die Spalte des kumulierten Bestandes 'stock_sum' (ohne Anführungszeichen).
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -654,6 +696,7 @@ exercises:
   author: bje40dc
   text: Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen Nachnamen und das Geburtsdatum aus.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |
@@ -667,6 +710,7 @@ exercises:
   author: bje40dc
   text: Geben Sie den Vornamen Nachnamen und Geburtstag des jüngsten Kunden aus.
   exerciseType: SELECT
+  status: APPROVED
   samples:
   - id: 1
     sample: |

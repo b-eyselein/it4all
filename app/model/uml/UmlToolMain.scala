@@ -51,11 +51,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override def futureSaveSolution(sol: UmlSolution): Future[Boolean] = ???
 
-  override def futureReadOldSolution(user: User, exerciseId: Int, part: UmlExPart): Future[Option[UmlSolution]] = ???
-
   override def readSolutionFromPostRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlSolution] = {
     SolutionFormHelper.stringSolForm.bindFromRequest.fold(_ => None,
-      sol => UmlJsonProtocol.readUmlSolutionFromJson(user.username, id, part, Json.parse(sol.learnerSolution))
+      sol => UmlSolutionJsonFormat.readUmlSolutionFromJson(user.username, id, part, Json.parse(sol.learnerSolution))
     )
   }
 
@@ -74,13 +72,11 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart): Future[Html] = Future {
-    part match {
-      case ClassSelection     => views.html.uml.classSelection(user, exercise.ex)
-      case DiagramDrawing     => views.html.uml.diagdrawing(user, exercise, getsHelp = false)
-      case DiagramDrawingHelp => views.html.uml.diagdrawing(user, exercise, getsHelp = true)
-      case MemberAllocation   => views.html.uml.allocation(user, exercise)
-    }
+  override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution]): Html = part match {
+    case ClassSelection     => views.html.uml.classSelection(user, exercise.ex)
+    case DiagramDrawing     => views.html.uml.diagdrawing(user, exercise, getsHelp = false)
+    case DiagramDrawingHelp => views.html.uml.diagdrawing(user, exercise, getsHelp = true)
+    case MemberAllocation   => views.html.uml.allocation(user, exercise)
   }
 
   private def renderResult(corResult: UmlResult): Html = {
@@ -89,9 +85,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
     val nextPartLink: String = corResult.nextPart match {
       case Some(np) =>
-        a(href := controllers.exes.routes.ExerciseController.exercise("uml", corResult.exercise.ex.id, np.urlName).url, cls := "btn btn-primary btn-block")("Zum nächsten Aufgabenteil").toString
+        a(href := controllers.routes.ExerciseController.exercise("uml", corResult.exercise.ex.id, np.urlName).url, cls := "btn btn-primary btn-block")("Zum nächsten Aufgabenteil").toString
       case None     =>
-        a(href := controllers.exes.routes.ExerciseController.index("uml").url, cls := "btn btn-primary btn-block")("Zurück zur Startseite").toString
+        a(href := controllers.routes.ExerciseController.index("uml").url, cls := "btn btn-primary btn-block")("Zurück zur Startseite").toString
     }
 
     Html(resultsRender + "<hr>" + nextPartLink)
@@ -117,10 +113,10 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override def onSubmitCorrectionResult(user: User, result: UmlResult): Html = views.html.core.correction.render(result, renderResult(result), user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = error match {
-    case NoSuchExerciseException(_)   => Html(error.getMessage)
-    case NoSuchPartException(partStr) => Html(error.getMessage)
-    case SolutionTransferException    => Html(error.getMessage)
-    case err                          => views.html.core.correctionError.render(user, OtherCorrectionException(err))
+    case NoSuchExerciseException(_) => Html(error.getMessage)
+    case NoSuchPartException(_)     => Html(error.getMessage)
+    case SolutionTransferException  => Html(error.getMessage)
+    case err                        => views.html.core.correctionError.render(user, OtherCorrectionException(err))
   }
 
   override def onLiveCorrectionResult(result: UmlResult): JsValue = ??? // Ok(renderResult(result))

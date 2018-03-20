@@ -4,7 +4,7 @@ author: bje40dc
 text: |
   Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!
 id: 1
-status: ACCEPTED
+status: APPROVED
 title: Listen in Html
 htmlTasks:
 - id: 1
@@ -52,7 +52,7 @@ htmlTasks:
 author: bje40dc
 text: Erstellen Sie eine Tabelle in Html!
 id: 2
-status: ACCEPTED
+status: APPROVED
 title: Tabellen in Html
 htmlTasks:
 - id: 1
@@ -116,7 +116,7 @@ author: bje40dc
 id: 3
 title: Hyperlinks und Bilder in HTML
 text: Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.
-status: ACCEPTED
+status: APPROVED
 htmlTasks:
 - id: 1
   text: >
@@ -154,7 +154,7 @@ author: bje40dc
 id: 4
 title: Login-Formular
 text: Erstellen Sie ein Login-Formular in HTML
-status: ACCEPTED
+status: APPROVED
 htmlTasks:
 - id: 1
   text: |
@@ -202,7 +202,7 @@ author: bje40dc
 id: 5
 title: Audio in HTML 5
 text: Erstellen Sie ein Audio-Element in Html5!
-status: ACCEPTED
+status: APPROVED
 htmlTasks:
 - id: 1
   text: Erstellen Sie eine passende h1-Überschrift die 'Deutsche Nationalhymne' enthält.
@@ -227,7 +227,7 @@ id: 6
 title: Klickzähler
 author: bje40dc
 text: Erstellen Sie einen Zähler der die Klicks auf einen Button zählt!
-status: ACCEPTED
+status: APPROVED
 htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
 jsText: >
   Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
@@ -307,7 +307,7 @@ title: Verzweigungen und Strings
 author: alg81dm
 text: Erstellen Sie ein Anmeldeformular, das eine einfache Passwort-Qualitätsprüfung durchführt.
 htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
-status: ACCEPTED
+status: APPROVED
 jsText: >
   Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen wird. Sie
   soll den Inhalt (value) des Passwortfeldes auslesen und verschiedene Tests durchführen. Bei fehlgeschlagenen Tests
@@ -373,7 +373,7 @@ title: Schleifen
 author: alg81dm
 text: Erstellen Sie ein einfaches Formular zur Berechnung der Fakultät einer Zahl n (alle Zahlen von 1 bis n multipliziert).
 htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
-status: ACCEPTED
+status: APPROVED
 jsText: >
   Implementieren Sie nun die Funktion <code>fakultaet()</code>, die bei Änderung des Felds aufgerufen wird. Sie soll
   den Inhalt (value) des Eingabefeldes auslesen, die Fakultät davon berechnen und den Inhalt (textContent) des Elements

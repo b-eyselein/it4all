@@ -6,7 +6,6 @@ import javax.inject._
 import model.Enums.ToolState
 import model.core._
 import model.toolMains.AExerciseToolMain
-import model.web.WebConsts._
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -14,7 +13,6 @@ import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.Html
-import views.html.web._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -60,8 +58,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     tables.futureSaveSolution(sol) map (_ && fileWritten)
   }
 
-  override def futureReadOldSolution(user: User, exerciseId: Int, part: WebExPart): Future[Option[WebSolution]] = tables.futureOldSolution(user.username, exerciseId)
-
   // Reading solution from request
 
   override def readSolutionFromPostRequest(user: User, id: Int, part: WebExPart)(implicit request: Request[AnyContent]): Option[WebSolution] =
@@ -83,12 +79,11 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart): Future[Html] =
-    futureReadOldSolution(user, exercise.ex.id, part) map (_ map (_.solution) getOrElse STANDARD_HTML) map {
-      maybeOldSolution => webExercise.render(user, exercise, part, getTasks(exercise, part), maybeOldSolution)
-    }
+  override def renderExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean): Html =
+    views.html.web.editWebExercise(user, this, newEx, isCreation)
 
-  //  override def renderExesListRest = new Html(a(cls := "btn btn-primary btn-block", href := routes.WebController.webPlayground().url)("Web-Playground").toString + "<hr>")
+  def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution]): Html =
+    views.html.web.webExercise(user, exercise, part, getTasks(exercise, part), maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML)
 
   override def renderEditRest(exercise: WebCompleteEx): Html = views.html.web.editWebExRest(exercise)
 
@@ -99,7 +94,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     val futureSolutionSaved = futureSaveSolution(learnerSolution)
 
     val driver = new HtmlUnitDriver(true)
-    driver.get(s"http://localhost:9080/${user.username}/${exercise.ex.id}/test.html")
+    driver.get(getSolutionUrl(user, exercise.ex.id, learnerSolution.part.urlName))
 
     val results = Try(getTasks(exercise, learnerSolution.part) map (task => WebCorrector.evaluateWebTask(task, driver)))
 
@@ -117,6 +112,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override def onLiveCorrectionResult(result: WebCompleteResult): JsValue = result.toJson
 
   // Other helper methods
+
+  def getSolutionUrl(user: User, exerciseId: Int, part: String) = s"http://localhost:9080/${user.username}/$exerciseId/test.html"
 
   private def getTasks(exercise: WebCompleteEx, part: WebExPart): Seq[WebCompleteTask] = part match {
     case HtmlPart => exercise.htmlTasks

@@ -3,7 +3,7 @@ package model.spread
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
-import model.persistence.ExerciseTableDefs
+import model.persistence.{ExerciseTableDefs, FileExesTableDefs}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 
@@ -39,7 +39,7 @@ case class SpreadExercise(override val id: Int, override val title: String, over
 }
 
 class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] with ExerciseTableDefs[SpreadExercise, SpreadExercise] {
+  extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] with FileExesTableDefs[SpreadExercise, SpreadExercise] {
 
   import profile.api._
 

@@ -7,12 +7,11 @@ trait Consts {
   val attrsName   = "attributes"
   val authorName  = "author"
 
-
-  val Correct = "correct"
+  val correct = "correct"
 
   val errorName        = "error"
   val exercisesName    = "exercises"
-  val ExerciseTypeName = "exerciseType"
+  val exerciseTypeName = "exerciseType"
 
   val learnerSolutionName = "learnerSolution"
 
@@ -30,17 +29,25 @@ trait Consts {
   val RoleName = "role"
 
   val SAMPLE_SUB_DIRECTORY    = "samples"
-  val STATE_NAME              = "status"
+  val stateName               = "status"
   val STEP                    = 10
   val SOLUTIONS_SUB_DIRECTORY = "solutions"
 
   val TagJoinChar            = "#"
   val TEMPLATE_SUB_DIRECTORY = "templates"
   val TEST_COUNT_NAME        = "testCount"
-  val TEXT_NAME              = "text"
-  val TITLE_NAME             = "title"
+  val textName               = "text"
+  val titleName              = "title"
 
   val VALUE_NAME = "value"
   val VARS_NAME  = "vars"
+
+}
+
+trait CollectionConsts extends Consts {
+
+  val collIdName = "collId"
+
+  def arrayName(subName: String)(count: Option[Int]): String = subName + "[" + count.getOrElse("") + "]"
 
 }

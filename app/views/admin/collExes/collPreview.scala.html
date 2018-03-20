@@ -1,5 +1,4 @@
-@import model.toolMains.CollectionToolMain
-@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult, toolMainObject: CollectionToolMain)
+@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult, toolMainObject: model.toolMains.CollectionToolMain)
 
 
 @collWrappers = @{
@@ -13,7 +12,7 @@
             <h1>Erstellte Aufgabensammlungen</h1>
         </div>
 
-        <a href="@controllers.exes.routes.CollectionController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@routes.CollectionController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <hr>
@@ -41,16 +40,6 @@
                 @for(exercise <- exerciseTuple) {
                     <div class="col-sm-6">
                         <h3>@exercise.ex.title</h3>
-                        <div class="row">
-                            <div class="col-md-2"><b>Text:</b></div>
-                            <div class="col-md-10">@exercise.ex..text</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-2"><b>ID:</b></div>
-                            <div class="col-sm-4">@exercise.ex..id</div>
-                            <div class="col-sm-2"><b>Autor:</b></div>
-                            <div class="col-sm-4">@exercise.ex..author</div>
-                        </div>
                         @exercise.preview
                     </div>
                 }

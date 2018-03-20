@@ -5,11 +5,13 @@ import model.Enums.ToolState
 import model._
 import model.core._
 import model.sql.SqlConsts._
+import model.sql.SqlEnums.SqlExerciseType
 import model.sql.SqlEnums.SqlExerciseType._
 import model.sql.SqlToolMain._
 import model.toolMains.CollectionToolMain
 import model.yaml.MyYamlFormat
 import play.api.Logger
+import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.twirl.api.Html
@@ -70,7 +72,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // db
 
-  override def futureSaveRead(exercises: Seq[CompCollType])(implicit ec: ExecutionContext): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
+  override def futureSaveRead(exercises: Seq[CompCollType]): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
     compColl =>
       val scriptFilePath = exerciseResourcesFolder / s"${compColl.coll.shortName}.sql"
 
@@ -79,15 +81,17 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
       tables.saveCompleteColl(compColl) map (saveRes => (compColl, saveRes))
   })
 
-  override protected def saveSolution(solution: SqlSolution)(implicit ec: ExecutionContext): Future[Boolean] = tables.saveSolution(solution)
+  override protected def saveSolution(solution: SqlSolution): Future[Boolean] = tables.saveSolution(solution)
 
-  // Read solution
+  // Read from requests
 
   override def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SqlSolution] =
     request.body.asJson flatMap (_.asObj) flatMap (jsObj => jsObj.stringField(learnerSolutionName)) map (str => SqlSolution(user.username, collId, id, str))
 
   override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SqlSolution] =
     SolutionFormHelper.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(SqlSolution(user.username, collId, id, sol.learnerSolution)))
+
+  override protected def compExTypeForm(collId: Int): Form[SqlCompleteEx] = SqlFormMappings.sqlCompleteExForm(collId)
 
   // Views
 
@@ -99,14 +103,18 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
        |  </div>
        |</div>""".stripMargin)
 
-  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int): Future[Html] = {
-    val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
+  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int): Future[Html] =
+    tables.futureMaybeOldSolution(user.username, sqlScenario.id, exercise.ex.id) map (_ map (_.solution) getOrElse "") map { oldOrDefSol =>
 
-    val futureOldOrDefSol: Future[String] = futureMaybeOldSolution(user.username, sqlScenario.id, exercise.ex.id) map (_ map (_.solution) getOrElse "")
+      val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
-    futureOldOrDefSol map (oldOrDefSol => views.html.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes))
-  }
+      views.html.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes)
+    }
 
+  override def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
+    views.html.sql.editSqlExercise(user, newEx, this, isCreation)
+
+  // FIXME: remove this method...
   override def renderEditRest(exercise: SqlCompleteEx): Html = ???
 
   // Correction
@@ -150,5 +158,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override def instantiateCollection(id: Int, state: Enums.ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
     SqlScenario(id, title = "", author = "", text = "", state, shortName = ""), exercises = Seq.empty)
+
+  override def instantiateExercise(collId: Int, id: Int, state: Enums.ExerciseState): SqlCompleteEx = SqlCompleteEx(
+    SqlExercise(id, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT, collectionId = collId, tags = "", hint = None), samples = Seq.empty)
 
 }

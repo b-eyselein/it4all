@@ -1,20 +1,26 @@
-@import model.toolMains.CollectionToolMain
-@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], toolObject: CollectionToolMain)
+@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], toolObject: model.toolMains.CollectionToolMain)
 
-@main("Aufgabenübersicht", Some(user)) {
+@scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/admin/collExAdmin.js")"></script>
+}
+
+@main("Aufgabenübersicht", Some(user), scripts) {
     <div class="container">
         <div class="page-header">
-            <h1>Verfügbare Aufgaben</h1>
+            <h1>Verfügbare @toolObject.collectionPluralName</h1>
         </div>
 
-        <a href="@controllers.exes.routes.CollectionController.adminIndex(toolObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@routes.CollectionController.adminIndex(toolObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <hr>
 
-        <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
-
         <div id="messages"></div>
+
+        <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
 
         <table class="table">
             <thead>
@@ -24,6 +30,7 @@
                     <th>Aktionen</th>
                     <th>Titel</th>
                     <th>Autor</th>
+                    <th>Aufgaben</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,15 +53,19 @@
                         </div>
                     </td>
                     <td>
-                        <a class="btn btn-default" title="Aufgabe @collection.coll.id bearbeiten" id="edit_@collection.coll.id" href="@@toolObject.editExerciseFormRoute(collection.id)">
-                            <span class="glyphicon glyphicon-wrench"></span>
+                        <a class="btn btn-default" title="Aufgabe @collection.coll.id bearbeiten" id="edit_@collection.coll.id"
+                        href="@routes.CollectionController.adminEditCollectionForm(toolObject.urlPart, collection.id)"><span class="glyphicon glyphicon-wrench"></span>
                         </a>
-                        <button class="btn btn-default" title="Aufgabe @collection.coll.id löschen" id="del_@collection.coll.id" onclick="deleteExercise()">
+                        <button class="btn btn-default" title="Aufgabe @collection.coll.id löschen" id="del_@collection.coll.id" onclick="deleteCollection(@collection.coll.id)">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>
                     <td>@collection.coll.title</td>
                     <td>@collection.coll.author</td>
+                    <td>
+                        <a href="@routes.CollectionController.adminExercisesInCollection(toolObject.urlPart, collection.coll.id)"
+                        class="btn btn-primary btn-block">Zu den Aufgaben</a>
+                    </td>
                 </tr>
             }
             </tbody>

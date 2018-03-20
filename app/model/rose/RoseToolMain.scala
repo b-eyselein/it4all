@@ -47,9 +47,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // DB
 
-  override def futureSaveSolution(sol: RoseSolution): Future[Boolean] = tables.saveSolution(sol)
-
-  override def futureReadOldSolution(user: User, exerciseId: Int, part: RoseExPart): Future[Option[RoseSolution]] = ???
+  override def futureSaveSolution(sol: RoseSolution): Future[Boolean] = tables.futureSaveSolution(sol)
 
   override def readSolutionFromPostRequest(user: User, id: Int, part: RoseExPart)(implicit request: Request[AnyContent]): Option[RoseSolution] = ???
 
@@ -70,11 +68,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Views
 
-  override def renderExercise(user: User, exercise: RoseCompleteEx, maybePart: RoseExPart): Future[Html] =
-    tables.loadSolution(user.username, exercise.ex.id) map { maybeOldSolution =>
-      val oldSolution = maybeOldSolution getOrElse exercise.declaration(forUser = true)
-      views.html.rose.roseExercise(user, exercise, oldSolution)
-    }
+  override def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart, maybeOldSolution: Option[RoseSolution]): Html =
+    views.html.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true))
 
   override def renderEditRest(exercise: RoseCompleteEx): Html = ???
 

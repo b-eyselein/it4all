@@ -20,7 +20,7 @@ function testSol() {
     let toolType = $('#toolType').val(), exerciseType = $('#exerciseType').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.RandomExerciseController.correctLive(toolType, exerciseType).url;
+    let url = jsRoutes.controllers.RandomExerciseController.correctLive(toolType, exerciseType).url;
 
     $.ajax({
         type: 'PUT',

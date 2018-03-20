@@ -10,9 +10,8 @@ import model.toolMains.AExerciseToolMain
 import model.xml.XmlConsts._
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, User}
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.format.Formatter
-import play.api.data.{Form, FormError}
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.Html
@@ -52,20 +51,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[XmlExPart] = XmlExParts.values
 
-  implicit object ExerciseStateFormatter extends Formatter[ExerciseState] {
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], ExerciseState] = data.get(key) match {
-      case None           => Left(Seq(FormError(key, "No value found!")))
-      case Some(valueStr) => ExerciseState.byString(valueStr) match {
-        case Some(state) => Right(state)
-        case None        => Left(Seq(FormError(key, s"Value '$valueStr' is no legal value!")))
-      }
-    }
-
-    override def unbind(key: String, value: ExerciseState): Map[String, String] = Map(key -> value.name)
-
-  }
-
   override implicit val compExForm: Form[XmlExercise] = Form(mapping(
     "id" -> number,
     "title" -> nonEmptyText,
@@ -79,10 +64,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // DB
 
-  override def futureSaveSolution(sol: XmlSolution): Future[Boolean] = tables.saveXmlSolution(sol)
-
-  override def futureReadOldSolution(user: User, exerciseId: Int, part: XmlExPart): Future[Option[XmlSolution]] =
-    tables.readXmlSolution(user.username, exerciseId, part)
+  override def futureSaveSolution(sol: XmlSolution): Future[Boolean] = tables.futureSaveSolution(sol)
 
   // Reading solution from requests, saving
 
@@ -127,22 +109,20 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean): Html = views.html.xml.editXmlExercise(user, this, newEx, isCreation)
+  override def renderExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean): Html =
+    views.html.xml.editXmlExercise(user, this, newEx, isCreation)
 
-  override def renderEditRest(exercise: XmlExercise): Html = Html("") //views.html.xml.editXmlExercise(exercise)
+  override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
+    val template = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
 
-  override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart): Future[Html] = futureReadOldSolution(user, exercise.ex.id, part) map {
-    maybeOldSolution =>
-      val template = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
+    val exScript: Html = Html(script(src := controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url).toString)
 
-      val exScript: Html = Html(script(src := controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url).toString)
+    val exRest = part match {
+      case DocumentCreationXmlPart => Html(pre(exercise.sampleGrammar).toString)
+      case GrammarCreationXmlPart  => Html(div(cls := "well")(exercise.grammarDescription).toString)
+    }
 
-      val exRest = part match {
-        case DocumentCreationXmlPart => Html(pre(exercise.sampleGrammar).toString)
-        case GrammarCreationXmlPart  => Html(div(cls := "well")(exercise.grammarDescription).toString)
-      }
-
-      views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, exScript, template, part)
+    views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, exScript, template, part)
   }
 
   // Result handlers

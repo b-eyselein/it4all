@@ -26,17 +26,22 @@ class ProgCompleteExWrapper(val compEx: ProgCompleteEx) extends CompleteExWrappe
 
 // Classes for user
 
-case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[InputType], sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData])
+case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData])
   extends PartsCompleteEx[ProgExercise, ProgExPart] {
 
   // FIXME: only one solution?
 
   override def preview: Html = views.html.programming.progPreview(this)
 
-
   val inputCount: Int = inputTypes.size
 
-  override def hasPart(partType: ProgExPart): Boolean = true
+  override def hasPart(partType: ProgExPart): Boolean = partType match {
+    case Implementation   => true
+    case ActivityDiagram  => true
+    case TestdataCreation =>
+      // TODO: Creation of test data is currently disabled
+      false
+  }
 
   override def wrapped: CompleteExWrapper = new ProgCompleteExWrapper(this)
 
@@ -77,7 +82,7 @@ case class ProgExercise(id: Int, title: String, author: String, text: String, st
 
 }
 
-case class InputType(id: Int, exerciseId: Int, inputType: ProgDataType)
+case class ProgInput(id: Int, exerciseId: Int, inputName: String, inputType: ProgDataType)
 
 case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
 
@@ -235,17 +240,20 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Queries
 
-  def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = db.run(sampleSolForEx(ex) zip inputTypesForEx(ex) zip completeTestDataForEx(ex)) map {
-    case ((sampleSol, inputTypes), ctds) =>
+  def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] =
+    for {
+      samples <- db.run(sampleSolForEx(ex))
+      inputTypes <- db.run(inputTypesForEx(ex))
+      testData <- db.run(completeTestDataForEx(ex))
+    } yield {
+      val completeSampleTestData: Seq[CompleteSampleTestData] = testData groupBy (_._1) mapValues (_ map (_._2)) map (ctd => CompleteSampleTestData(ctd._1, ctd._2.flatten)) toSeq
 
-      val completeSampleTestData: Seq[CompleteSampleTestData] = ctds groupBy (_._1) mapValues (_ map (_._2)) map (ctd => CompleteSampleTestData(ctd._1, ctd._2.flatten)) toSeq
-
-      ProgCompleteEx(ex, inputTypes, sampleSol, completeSampleTestData)
-  }
+      ProgCompleteEx(ex, inputTypes, samples, completeSampleTestData)
+    }
 
   override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
     (db.run(sampleSolutions += compEx.sampleSolution) map (_ => true) zip
-      saveSeq[InputType](compEx.inputTypes, i => db.run(inputTypesQuery += i)) zip
+      saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i)) zip
       saveSeq[CompleteSampleTestData](compEx.sampleTestData, saveSampleTestdata)) map (f => f._1._1 && f._1._2 && f._2)
 
   private def saveSampleTestdata(sampleData: CompleteSampleTestData)(implicit ec: ExecutionContext): Future[Boolean] =
@@ -287,11 +295,13 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class InputTypesTable(tag: Tag) extends Table[InputType](tag, "prog_input_types") {
+  class InputTypesTable(tag: Tag) extends Table[ProgInput](tag, "prog_input_types") {
 
     def id = column[Int](idName)
 
     def exerciseId = column[Int]("exercise_id")
+
+    def inputName = column[String]("input_name")
 
     def inputType = column[ProgDataType]("input_type")
 
@@ -301,7 +311,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (id, exerciseId, inputType) <> (InputType.tupled, InputType.unapply)
+    def * = (id, exerciseId, inputName, inputType) <> (ProgInput.tupled, ProgInput.unapply)
 
   }
 

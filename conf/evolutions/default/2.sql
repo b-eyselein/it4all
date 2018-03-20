@@ -1,7 +1,8 @@
 # --- !Ups
 
 INSERT INTO users (username, pw_hash, std_role, todo) VALUES
-  ('bje40dc', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG', 'RoleSuperAdmin', 'AGGR'),
+  ('s319286', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG', 'RoleUser', 'AGGR'),
+  ('bje40dc', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG', 'RoleAdmin', 'AGGR'),
   ('developer', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG', 'RoleSuperAdmin', 'AGGR')
 ON DUPLICATE KEY UPDATE std_role = VALUES(std_role);
 
@@ -28,6 +29,8 @@ DELETE IGNORE FROM html_tasks;
 DELETE IGNORE FROM web_exercises;
 
 # Uml
+
+DELETE IGNORE FROM uml_solutions;
 
 DELETE IGNORE FROM uml_sol_assocs;
 

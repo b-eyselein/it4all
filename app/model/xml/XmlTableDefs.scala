@@ -27,7 +27,7 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
   override def ex: XmlExercise = this
 
-  // FIXME: remove ==> move to toolMain?
+  // TODO: remove ==> move to toolMain?
   override def preview: Html = views.html.xml.xmlPreview(this)
 
   override def hasPart(partType: XmlExPart): Boolean = partType match {
@@ -83,15 +83,9 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override def completeExForEx(ex: XmlExercise)(implicit ec: ExecutionContext): Future[XmlExercise] = Future(ex)
 
-  def readXmlSolution(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlSolution]] =
-    db.run(solTable.filter(sol => sol.exerciseId === exerciseId && sol.username === username).result.headOption)
-
   // Saving
 
   override def saveExerciseRest(compEx: XmlExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
-
-  def saveXmlSolution(solution: XmlSolution)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(solTable insertOrUpdate solution) map (_ => true) recover { case _: Exception => false }
 
   // Actual table defs
 

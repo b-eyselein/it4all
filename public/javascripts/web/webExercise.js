@@ -222,7 +222,7 @@ function testSol() {
     let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.ExerciseController.correctLive("web", exerciseId, exercisePart).url;
+    let url = jsRoutes.controllers.ExerciseController.correctLive("web", exerciseId, exercisePart).url;
 
     $.ajax({
         type: 'PUT',
@@ -247,7 +247,7 @@ function updatePreviewNew() {
     let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.ExerciseController.updateWebSolution(exerciseId, exercisePart).url;
+    let url = jsRoutes.controllers.ExerciseController.updateWebSolution(exerciseId, exercisePart).url;
 
     $.ajax({
         type: 'PUT',

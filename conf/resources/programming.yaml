@@ -6,11 +6,11 @@ author: bje40dc
 text: >
   Implementieren Sie die folgende Funktion <code>ggt(a, b)</code> die den größten gemeinsamen Teiler
   zweier Zahlen berechnet!
-status: CREATED
+status: APPROVED
 functionName: ggt
 inputTypes:
-- {name: a, type: int}
-- {name: b, type: int}
+- {id: 1, name: a, type: int}
+- {id: 2, name: b, type: int}
 outputType: int
 
 sampleSolution:
@@ -59,10 +59,10 @@ author: bje40dc
 text: >
   Berechnen Sie den Durchschnittswert aller Elemente als Gleitkommazahl in der übergebenen Liste von (Ganz-)Zahlen!
   Bei einer leeren Liste soll der String 'Fehler' ausgegeben werden.
-status: CREATED
+status: APPROVED
 functionName: average
 inputTypes:
-- {name: myList, type: list<int>}
+- {id: 1, name: myList, type: list<int>}
 outputType: float
 
 sampleSolution:
@@ -90,10 +90,10 @@ author: bje40dc
 text: >
   Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden.
   Ignorieren Sie dabei Groß- und Kleinschreibung.
-status: CREATED
+status: APPROVED
 functionName: longestString
 inputTypes:
-- {name: myList, type: list<string>}
+- {id: 1, name: myList, type: list<string>}
 outputType: string
 
 sampleSolution:
@@ -127,10 +127,10 @@ author: bje40dc
 text: >
   Erstellen Sie ein Aktivitätsdiagramm, der prüft ob der übergebene String ein Palindrom darstellt! Ein leerer String ist für diese Aufgabe auch ein Palindrom.
   Ihr Programm soll Groß- und Kleinschreibung ignorieren, d. h. 'a' == 'A'.
-status: CREATED
+status: APPROVED
 functionName: palindrom
 inputTypes:
-- {name: word, type: string}
+- {id: 1, name: word, type: string}
 outputType: boolean
 sampleSolution:
   language: PYTHON_3

@@ -21,16 +21,22 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
       routes.javascript.AdminController.changeRole,
 
       // Exercise Administration routes
-      exes.routes.javascript.ExerciseController.adminChangeExState,
+      routes.javascript.ExerciseController.adminDeleteExercise,
+      routes.javascript.ExerciseController.adminChangeExState,
+
+      routes.javascript.CollectionController.adminDeleteCollection,
+      routes.javascript.CollectionController.deleteExerciseInCollection,
+      routes.javascript.CollectionController.adminChangeCollectionState,
 
       // Correction routes
-      exes.routes.javascript.RandomExerciseController.correctLive,
-      exes.routes.javascript.ExerciseController.correctLive,
-      exes.routes.javascript.CollectionController.correctLive,
+      routes.javascript.RandomExerciseController.correctLive,
+      routes.javascript.ExerciseController.correctLive,
+      routes.javascript.CollectionController.correctLive,
 
       // Special routes
-      exes.routes.javascript.ExerciseController.updateWebSolution
-    )).as("text/javascript")
+      routes.javascript.ExerciseController.updateWebSolution
+    )
+    ).as("text/javascript")
   }
 
 }

@@ -1,7 +1,7 @@
 @(user: model.User, compEx: model.CompleteEx[_ <: model.Exercise], toolMainObject: model.toolMains.AToolMain)
 
 @scripts = {
-    <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/admin/singleExAdmin.js")"></script>
 }
 
 @main("Erstellte Aufgaben", Some(user), scripts) {
@@ -10,7 +10,7 @@
             <h1>Erstellte Aufgaben:</h1>
         </div>
 
-        <a href="@controllers.exes.routes.ExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@routes.ExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <hr>

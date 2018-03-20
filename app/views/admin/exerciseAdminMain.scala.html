@@ -22,27 +22,27 @@
 
         <section id="administration">
             <h2>Verwaltung der @toolMainObject.pluralName</h2>
-            <a class="btn btn-default btn-block" href="@controllers.exes.routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)">
+            <a class="btn btn-default btn-block" href="@routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)">
                 Übersicht über alle Aufgaben</a>
 
                 &nbsp;
 
-            <a class="btn btn-default btn-block" href="@controllers.exes.routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)">
+            <a class="btn btn-default btn-block" href="@routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)">
                 Neue Aufgabe erstellen</a>
 
                 &nbsp;
 
             <div class="btn-group btn-group-justified">
-                <a class="btn btn-default" href="@controllers.exes.routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)">
+                <a class="btn btn-default" href="@routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)">
                     Aufgaben als YAML exportieren</a>
-                <a class="btn btn-default" href="@controllers.exes.routes.ExerciseController.adminImportExercises(toolMainObject.urlPart)">
+                <a class="btn btn-default" href="@routes.ExerciseController.adminImportExercises(toolMainObject.urlPart)">
                     Aufgaben aus YAML importieren</a>
             </div>
         </section>
 
         <hr>
 
-        <a class="btn btn-primary btn-block" href="@controllers.exes.routes.ExerciseController.index(toolMainObject.urlPart)">Zu den Aufgaben</a>
+        <a class="btn btn-primary btn-block" href="@routes.ExerciseController.index(toolMainObject.urlPart)">Zu den Aufgaben</a>
 
     </div>
 }

@@ -29,7 +29,7 @@
 
 @url = @{
     // FIXME: part...
-    controllers.exes.routes.ExerciseController.correctLive("prog", exercise.ex.id, part = "TODO!")
+    routes.ExerciseController.correctLive("prog", exercise.ex.id, part = "TODO!")
 }
 
 @main("Programmierung: Defintion von Testdaten", Some(user), scripts) {
@@ -125,7 +125,7 @@
                     <div class="btn-group">
                         <button id="testBtn" class="btn btn-primary">Testdaten validieren & speichern</button>
                     </div>
-                    <a class="btn btn-default" href="@controllers.exes.routes.ExerciseController.index(toolMainObject.urlPart)">Bearbeitung beenden</a>
+                    <a class="btn btn-default" href="@routes.ExerciseController.index(toolMainObject.urlPart)">Bearbeitung beenden</a>
                 </div>
 
             </div>

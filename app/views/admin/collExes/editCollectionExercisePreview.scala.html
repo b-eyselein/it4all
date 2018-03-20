@@ -1,0 +1,21 @@
+@(user: model.User, newExercise: model.CompleteEx[_ <: model.Exercise], toolMainObject: model.toolMains.AToolMain)
+
+
+@main("Erstellte Aufgaben", Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Erstellte Aufgaben:</h1>
+        </div>
+
+        <a href="@routes.CollectionController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+            Zurück zur Administratorseite</a>
+
+        <hr>
+
+
+        <h2>Aufgabe: &quot;@newExercise.ex.title&quot;</h2>
+
+        @newExercise.preview
+
+    </div>
+}

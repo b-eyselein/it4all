@@ -48,7 +48,7 @@
                 <hr>
                 }
 
-            @core.helperTemplates.bsPager(currentPage, dataForUserExesOverview.pages, index => controllers.exes.routes.ExerciseController.exerciseList(toolObject.urlPart, index))
+            @core.helperTemplates.bsPager(currentPage, dataForUserExesOverview.pages, index => routes.ExerciseController.exerciseList(toolObject.urlPart, index))
 
         }
     </div>

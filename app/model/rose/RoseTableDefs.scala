@@ -124,12 +124,6 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     samplesSaved <- saveSeq[RoseSampleSolution](compEx.sampleSolution, rss => db.run(roseSamples insertOrUpdate rss))
   } yield inputsSaved && samplesSaved
 
-  def saveSolution(solution: RoseSolution)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(roseSolutions insertOrUpdate solution) map (_ => true) recover { case _ => false }
-
-  def loadSolution(username: String, exerciseId: Int): Future[Option[String]] =
-    db.run(roseSolutions.filter(sol => sol.username === username && sol.exerciseId === exerciseId).map(_.solution).result.headOption)
-
   // Implicit column types
 
   implicit val ProgLanguageColumnType: BaseColumnType[ProgLanguage] =

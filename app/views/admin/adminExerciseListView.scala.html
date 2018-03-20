@@ -4,7 +4,7 @@
     @* Javascript Routes *@
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 
-    <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/admin/singleExAdmin.js")"></script>
 }
 
 @main("Aufgabenübersicht", Some(user), scripts) {
@@ -13,7 +13,7 @@
             <h1>Verfügbare Aufgaben</h1>
         </div>
 
-        <a href="@controllers.exes.routes.ExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@routes.ExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
@@ -52,10 +52,10 @@
                     </td>
                     <td>
                         <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id"
-                        href="@controllers.exes.routes.ExerciseController.adminEditExerciseForm(toolMainObject.urlPart, exercise.id)">
+                        href="@routes.ExerciseController.adminEditExerciseForm(toolMainObject.urlPart, exercise.id)">
                             <span class="glyphicon glyphicon-wrench"></span>
                         </a>
-                        <button class="btn btn-default disabled" disabled title="Aufgabe @exercise.id löschen" id="del_@exercise.id" onclick="deleteExercise()">
+                        <button class="btn btn-default" title="Aufgabe @exercise.id löschen" id="del_@exercise.id" onclick="deleteExercise(@exercise.id)">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>

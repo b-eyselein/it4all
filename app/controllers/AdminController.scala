@@ -15,8 +15,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)
-                               (implicit ec: ExecutionContext)
+class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   def changeRole: EssentialAction = futureWithAdmin { admin =>
@@ -58,8 +57,12 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       } yield Ok(views.html.admin.adminMainPage(user, numOfUsers, numOfCourses))
   }
 
-  def users: EssentialAction = futureWithAdmin { user =>
-    implicit request => repository.allUsers.map(allUsers => Ok(views.html.admin.users(user, allUsers)))
+  def users: EssentialAction = futureWithAdmin { admin =>
+    implicit request => repository.allUsers map (allUsers => Ok(views.html.admin.users(admin, allUsers)))
+  }
+
+  def courses: EssentialAction = futureWithAdmin { admin =>
+    implicit request => repository.allCourses map (allCourses => Ok(views.html.admin.courses(admin, allCourses)))
   }
 
 }

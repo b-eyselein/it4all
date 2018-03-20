@@ -4,7 +4,7 @@ id: 1
 title: Party
 author: bje40dc
 text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
-status: ACCEPTED
+status: APPROVED
 
 grammarDescription: >
   In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von Gästen [gast] (mindestens ein Gast war
@@ -27,7 +27,7 @@ id: 2
 title: Vorlesung
 author: bje40dc
 text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
-status: ACCEPTED
+status: APPROVED
 
 grammarDescription: >
   TODO!
@@ -47,7 +47,7 @@ id: 3
 title: Krankenhaus
 author: bje40dc
 text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
-status: ACCEPTED
+status: APPROVED
 
 grammarDescription: >
   TODO!
@@ -67,7 +67,7 @@ id: 4
 title: Frühstück
 author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
-status: ACCEPTED
+status: APPROVED
 
 grammarDescription: >
   TODO!
@@ -84,7 +84,7 @@ id: 5
 title: Bibliothek
 author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
-status: ACCEPTED
+status: APPROVED
 
 grammarDescription: >
   TODO!

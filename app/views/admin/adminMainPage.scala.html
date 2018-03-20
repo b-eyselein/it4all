@@ -11,7 +11,7 @@
             <ul>
                 <li>Es sind momentan @numUsers <a href="@routes.AdminController.users()">Nutzer</a>
                     registriert</li>
-                <li>Es existieren @numCourses Kurse</li>
+                <li>Es existieren @numCourses <a href="@routes.AdminController.courses()">Kurse</a></li>
             </ul>
         </section>
 
@@ -19,11 +19,7 @@
 
         <section id="administration">
             <h2>Verwaltung der Kurse</h2>
-            <a class="btn btn-primary btn-block" href="@routes.CourseAdminController.newCourseForm()">
-                Neuen Kurs erstellen</a>
-            @*for(course <- model.Course.finder.all()) {
-            <a class="btn btn-default btn-block" href="@routes.CourseAdminController.course(course.id)">@course.name</a>
-            }*@
+            <a class="btn btn-primary btn-block" href="@routes.CourseAdminController.newCourseForm()">Neuen Kurs erstellen</a>
         </section>
     </div>
 }

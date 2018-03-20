@@ -1,7 +1,6 @@
 package model.programming
 
 import model.Enums.Selectable
-import model.programming.ProgLanguage._
 
 import scala.language.postfixOps
 
@@ -34,7 +33,7 @@ trait ProgLanguage extends Selectable[ProgLanguage] {
 
   def buildToEvaluate(exercise: ProgCompleteEx): String
 
-  def buildParameters(inputTypes: Seq[InputType]): String
+  def buildParameters(inputTypes: Seq[ProgInput]): String
 
 }
 
@@ -58,9 +57,7 @@ object PYTHON_3 extends ProgLanguage {
 
   override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionName + "(" + buildParameters(exercise.inputTypes) + ")"
 
-  override def buildParameters(inputsTypes: Seq[InputType]): String = inputsTypes.sortBy(_.id).zipWithIndex.map {
-    case (inputType, index) => (index + PointOfA).toChar
-  } mkString ", "
+  override def buildParameters(inputsTypes: Seq[ProgInput]): String = inputsTypes sortBy (_.id) map (_.inputName) mkString ", "
 
 }
 

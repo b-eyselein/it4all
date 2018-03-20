@@ -30,7 +30,7 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
   val FilePermissions: java.util.Set[PosixFilePermission] = PosixFilePermissions.fromString("rwxrwxrwx")
 
-  private def dumpTestDataToJson(exercise: ProgExercise, inputTypes: Seq[InputType], testData: Seq[CompleteTestData]): JsValue = {
+  private def dumpTestDataToJson(exercise: ProgExercise, inputTypes: Seq[ProgInput], testData: Seq[CompleteTestData]): JsValue = {
     val sortedInputTypes = inputTypes sortBy (_.id)
 
     val testdata: JsValue = JsArray(testData sortBy (_.testData.id) map { td =>
@@ -136,8 +136,6 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
   private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[CompleteTestData], targetDir: Path) = readDataFromJson(jsObj) map {
     case (id, successType, funcName, result, inputs) =>
 
-      println(inputs)
-
       val evaluated = funcName + "(" + inputs.sortBy(_._1).map(_._2).mkString(", ") + ")"
 
       val consoleOutput: Option[String] = readAll(targetDir / s"output$id.txt") map Some.apply getOrElse None
@@ -158,12 +156,10 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
     inputs <- jsObj.arrayField(InputsName, _.asObj flatMap readInputsFromJson)
   } yield (id, success, functionName, result, inputs)
 
-  private def readInputsFromJson(inputJsObj: JsObject): Option[(String, String)] ={
-    println(inputJsObj)
-    for {
+  private def readInputsFromJson(inputJsObj: JsObject): Option[(String, String)] = for {
     maybeVariable <- inputJsObj.stringField("variable")
     maybeValue <- inputJsObj.forgivingStringField("value")
   } yield (maybeVariable, maybeValue)
-  }
+
 
 }

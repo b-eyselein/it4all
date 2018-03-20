@@ -55,7 +55,7 @@
             <hr>
 
             @* FIXME: part... *@
-            <form action="@controllers.exes.routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)"
+            <form action="@routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)"
             method="post" onsubmit="return prepareFormForSubmitting();">
                 <input type="text" title="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
                 <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>

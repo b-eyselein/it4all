@@ -1,6 +1,5 @@
 package model.toolMains
 
-import model.Enums.ExerciseState
 import model.core.{CommonUtils, ReadAndSaveResult, ReadAndSaveSuccess, Wrappable}
 import model.persistence.ExerciseTableDefs
 import model.yaml.MyYamlFormat
@@ -11,7 +10,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-abstract class FixedExToolMain(urlPart: String) extends AToolMain(urlPart) {
+abstract class FixedExToolMain(urlPart: String)(implicit ec: ExecutionContext) extends AToolMain(urlPart) {
 
   // Abstract types
 
@@ -27,7 +26,7 @@ abstract class FixedExToolMain(urlPart: String) extends AToolMain(urlPart) {
 
   val yamlFormat: MyYamlFormat[ReadType]
 
-  def readAndSave(yamlFileContent: String)(implicit ec: ExecutionContext): Future[ReadAndSaveResult] = {
+  def readAndSave(yamlFileContent: String): Future[ReadAndSaveResult] = {
     val readTries: Seq[Try[ReadType]] = yamlFileContent.parseYamls map (yamlValue => yamlFormat.read(yamlValue))
 
     val (successes, failures) = CommonUtils.splitTries(readTries)
@@ -37,26 +36,22 @@ abstract class FixedExToolMain(urlPart: String) extends AToolMain(urlPart) {
     }
   }
 
-  def yamlString(implicit ec: ExecutionContext): Future[String]
+  def yamlString: Future[String]
 
   // DB Operations
 
   val tables: Tables
 
-  def futureNumOfExes(implicit ec: ExecutionContext): Future[Int] = tables.futureNumOfExes
+  def futureNumOfExes: Future[Int] = tables.futureNumOfExes
 
-  def futureCompleteExes(implicit ec: ExecutionContext): Future[Seq[CompExType]] = tables.futureCompleteExes
+  def futureCompleteExes: Future[Seq[CompExType]] = tables.futureCompleteExes
 
-  def futureSaveRead(exercises: Seq[ReadType])(implicit ec: ExecutionContext): Future[Seq[(ReadType, Boolean)]]
+  def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]
 
-  def delete(id: Int)(implicit ec: ExecutionContext): Future[Int] = tables.deleteExercise(id)
-
-  def statistics(implicit ec: ExecutionContext): Future[Html] = futureNumOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
-
-  def updateExerciseState(id: Int, newState: ExerciseState)(implicit ec: ExecutionContext): Future[Boolean] = tables.updateExerciseState(id, newState)
+  def statistics: Future[Html] = futureNumOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
   // Views
 
-  def renderEditRest(exercise: CompExType): Html
+  def renderEditRest(exercise: CompExType): Html = Html("")
 
 }

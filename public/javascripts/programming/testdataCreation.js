@@ -52,7 +52,7 @@ function testSol() {
     let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
+    let url = jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
 
     let testDataRows = $('#testDataBody').find('tr');
 

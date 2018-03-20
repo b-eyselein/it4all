@@ -70,7 +70,7 @@ function testSol() {
     let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.ExerciseController.correctLive('programming', exerciseId, exercisePart).url;
+    let url = jsRoutes.controllers.ExerciseController.correctLive('programming', exerciseId, exercisePart).url;
 
     $('#correction').html('');
 

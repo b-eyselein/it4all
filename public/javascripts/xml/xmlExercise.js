@@ -47,7 +47,7 @@ function onXmlCorrectionError(jqXHR) {
 function testSol() {
     let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.ExerciseController.correctLive('xml', exerciseId, exercisePart).url;
+    let url = jsRoutes.controllers.ExerciseController.correctLive('xml', exerciseId, exercisePart).url;
 
     $.ajax({
         type: 'PUT',

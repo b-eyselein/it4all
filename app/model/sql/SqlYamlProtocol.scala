@@ -36,9 +36,10 @@ object SqlYamlProtocol extends MyYamlProtocol {
   case class SqlExYamlFormat(scenarioId: Int) extends HasBaseValuesYamlFormat[SqlCompleteEx] {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[SqlCompleteEx] = for {
-      exerciseType <- yamlObject.enumField(ExerciseTypeName, SqlExerciseType.valueOf)
-      tagTries <- yamlObject.optArrayField(TAGS_NAME, _.asStringEnum(SqlExTag.byString(_).getOrElse(SqlExTag.SQL_JOIN)))
-      hint <- yamlObject.optStringField(HINT_NAME)
+      exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.valueOf)
+      tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExTag.byString(_) getOrElse SqlExTag.SQL_JOIN))
+      state <- yamlObject.enumField(stateName, ExerciseState.byString(_) getOrElse ExerciseState.CREATED)
+      hint <- yamlObject.optStringField(hintName)
       sampleTries <- yamlObject.arrayField("samples", SqlSampleYamlFormat(scenarioId, baseValues._1).read)
     } yield {
       for (tagFailures <- tagTries._2)
@@ -49,17 +50,17 @@ object SqlYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read sql sample", sampleFailure.exception)
 
-      SqlCompleteEx(new SqlExercise(baseValues, scenarioId, exerciseType, tagTries._1.mkString(TagJoinChar), hint), sampleTries._1)
+      SqlCompleteEx(new SqlExercise(baseValues, scenarioId, exerciseType, tagTries._1 mkString TagJoinChar, hint), sampleTries._1)
     }
 
     override protected def writeRest(completeEx: SqlCompleteEx): Map[YamlValue, YamlValue] = Map(
-      YamlString(ExerciseTypeName) -> YamlString(completeEx.ex.exerciseType.name),
+      YamlString(exerciseTypeName) -> YamlString(completeEx.ex.exerciseType.name),
       YamlString("samples") -> YamlArr(completeEx.samples map SqlSampleYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
-    ) ++ completeEx.ex.hint.map(h => YamlString(HINT_NAME) -> YamlString(h)) ++ writeTags(completeEx)
+    ) ++ completeEx.ex.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(completeEx)
 
     private def writeTags(completeEx: SqlCompleteEx): Option[(YamlValue, YamlValue)] = completeEx.tags match {
       case Nil  => None
-      case tags => Some(YamlString(TAGS_NAME) -> YamlArr(tags map (t => YamlString(t.name))))
+      case tags => Some(YamlString(tagsName) -> YamlArr(tags map (t => YamlString(t.name))))
     }
 
   }

@@ -38,7 +38,7 @@ function testSol() {
     let exerciseId = $('#exerciseId').val(), exercisePart = "robot_sim";
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.ExerciseController.correctLive("rose", exerciseId, exercisePart).url;
+    let url = jsRoutes.controllers.ExerciseController.correctLive("rose", exerciseId, exercisePart).url;
 
     $('#testBtn').prop('disabled', true);
 

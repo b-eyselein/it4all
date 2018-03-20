@@ -5,7 +5,7 @@ import model.uml.UmlConsts._
 import model.uml.UmlEnums.{UmlAssociationType, UmlClassType, UmlMultiplicity}
 import play.api.libs.json.JsValue
 
-object UmlJsonProtocol extends JsonFormat {
+object UmlSolutionJsonFormat extends JsonFormat {
 
   def readUmlSolutionFromJson(username: String, exerciseId: Int, part: UmlExPart, jsValue: JsValue): Option[UmlSolution] = jsValue.asObj flatMap { jsObj =>
     for {

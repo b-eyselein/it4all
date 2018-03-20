@@ -1,5 +1,4 @@
-@import model.toolMains.CollectionToolMain
-@(user: model.User, statistics: Html, toolMainObject: CollectionToolMain)
+@(user: model.User, statistics: Html, toolMainObject: model.toolMains.CollectionToolMain)
 
 @title = @{
     "Administrator " + toolMainObject.toolname
@@ -23,24 +22,27 @@
         <section id="administration">
             <h2>Verwaltung der @toolMainObject.pluralName</h2>
 
-            @* @toolMainObject.adminExesListRoute *@
-            <a class="btn btn-default btn-block" href="@controllers.exes.routes.CollectionController.adminCollectionsList(toolMainObject.urlPart)">
+            <a class="btn btn-default btn-block" href="@routes.CollectionController.adminCollectionsList(toolMainObject.urlPart)">
                 Übersicht über alle @toolMainObject.collectionPluralName</a>
 
                 &nbsp;
 
-            @* @toolMainObject.newExFormRoute *@
-            <a class="btn btn-default btn-block" href="@controllers.exes.routes.CollectionController.adminNewCollectionForm(toolMainObject.urlPart)">
+            <a class="btn btn-default btn-block" href="@routes.CollectionController.adminNewCollectionForm(toolMainObject.urlPart)">
                 Neues @toolMainObject.collectionSingularName erstellen</a>
 
                 &nbsp;
 
             <div class="btn-group btn-group-justified">
-                <a class="btn btn-default" href="@controllers.exes.routes.CollectionController.adminExportCollections(toolMainObject.urlPart)">
+                <a class="btn btn-default" href="@routes.CollectionController.adminExportCollections(toolMainObject.urlPart)">
                     @toolMainObject.collectionPluralName als YAML exportieren</a>
-                <a class="btn btn-default" href="@controllers.exes.routes.CollectionController.adminImportCollections(toolMainObject.urlPart)">
+                <a class="btn btn-default" href="@routes.CollectionController.adminImportCollections(toolMainObject.urlPart)">
                     @toolMainObject.collectionPluralName aus YAML importieren</a>
             </div>
         </section>
+
+        <hr>
+
+        <a class="btn btn-primary btn-block" href="@routes.CollectionController.index(toolMainObject.urlPart)">Zu den @toolMainObject.collectionPluralName</a>
+
     </div>
 }

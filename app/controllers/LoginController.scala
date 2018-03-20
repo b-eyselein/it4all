@@ -23,7 +23,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
   def register: Action[AnyContent] = Action.async { implicit request =>
 
-    val onError: Form[UserCredForm] => Future[Result] = { formWithErrors =>
+    val onError: Form[UserCredForm] => Future[Result] = { _ =>
       Future(BadRequest("There has been an error in your form..."))
     }
 
@@ -48,8 +48,8 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     * @return {{userexists: Boolean, username: String (from form)}}
     */
   def checkUserName: Action[AnyContent] = Action.async { implicit request =>
-    val onError: Form[String] => Future[Result] = { formWithErrors =>
-      Future(BadRequest(""))
+    val onError: Form[String] => Future[Result] = { _ =>
+      Future(BadRequest("TODO!"))
     }
 
     val onRead: String => Future[Result] = { userName =>
@@ -58,7 +58,6 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
     singleStrForm(nameName).bindFromRequest.fold(onError, onRead)
   }
-
 
   def authenticate: Action[AnyContent] = Action.async { implicit request =>
 

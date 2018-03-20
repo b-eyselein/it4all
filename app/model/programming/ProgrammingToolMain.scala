@@ -63,8 +63,6 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override def futureSaveSolution(sol: ProgSolution): Future[Boolean] = tables.futureSaveSolution(sol)
 
-  override def futureReadOldSolution(user: User, exerciseId: Int, part: ProgExPart): Future[Option[ProgSolution]] = tables.futureOldSolution(user.username, exerciseId, part)
-
   override def readSolutionFromPostRequest(user: User, id: Int, part: ProgExPart)(implicit request: Request[AnyContent]): Option[ProgSolution] = None
 
   override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgExPart): Option[ProgSolution] = {
@@ -93,12 +91,11 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   } yield CompleteCommitedTestData(CommitedTestData(testId, id, user.username, output, ExerciseState.RESERVED), inputs)
 
 
-  private def readInputs(tdJsObj: JsObject, testId: Int, user: User) = tdJsObj.arrayField(InputsName, _.asObj flatMap {
-    inpJsObj =>
-      for {
-        id <- inpJsObj.intField(idName)
-        input <- inpJsObj.stringField(InputName)
-      } yield CommitedTestDataInput(id, testId, id, input, user.username)
+  private def readInputs(tdJsObj: JsObject, testId: Int, user: User) = tdJsObj.arrayField(InputsName, _.asObj flatMap { inpJsObj =>
+    for {
+      id <- inpJsObj.intField(idName)
+      input <- inpJsObj.stringField(InputName)
+    } yield CommitedTestDataInput(id, testId, id, input, user.username)
   })
 
   // Other helper methods
@@ -133,35 +130,32 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   // Views
 
-  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart): Future[Html] = tables.futureOldSolution(user.username, exercise.ex.id, part) map { oldSolution =>
-    part match {
-      case TestdataCreation =>
-        val oldTestData: Seq[CompleteCommitedTestData] = oldSolution match {
-          case Some(tds: TestDataSolution) => tds.completeCommitedTestData
-          case _                           => Seq.empty
-        }
-        views.html.programming.testDataCreation(user, exercise, oldTestData, this)
+  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart, maybeOldSolution: Option[ProgSolution]): Html = part match {
+    case TestdataCreation =>
+      val oldTestData: Seq[CompleteCommitedTestData] = maybeOldSolution match {
+        case Some(tds: TestDataSolution) => tds.completeCommitedTestData
+        case _                           => Seq.empty
+      }
+      views.html.programming.testDataCreation(user, exercise, oldTestData, this)
 
-      case Implementation =>
-        val declaration: String = oldSolution map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
+    case Implementation =>
+      val declaration: String = maybeOldSolution map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
 
-        val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
+      val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
 
-        views.html.core.exercise2Rows(user, this, ProgExOptions, exercise, exRest, exScript, declaration, Implementation)
+      views.html.core.exercise2Rows(user, this, ProgExOptions, exercise, exRest, exScript, declaration, Implementation)
 
-      case ActivityDiagram =>
-        // FIXME: use old soluton!
-        views.html.umlActivity.activityDrawing.render(user, exercise, this)
-    }
+    case ActivityDiagram =>
+      // FIXME: use old soluton!
+      views.html.umlActivity.activityDrawing.render(user, exercise, this)
   }
 
   override def renderEditRest(exercise: ProgCompleteEx): Html = ???
 
-
   private val exRest: Html = Html(
     s"""<div class="input-group">
        |  <span class="input-group-addon">Sprache</span>
-       |  <select class="form-control" id="langSelect" onchange="changeProgLanguage('${controllers.exes.routes.ExerciseController.progGetDeclaration("")}');">
+       |  <select class="form-control" id="langSelect" onchange="changeProgLanguage('${controllers.routes.ExerciseController.progGetDeclaration("")}');">
        |    ${ProgLanguage.values map (lang => s"""<option value="${lang.name}" ${lang.isSelected(ProgLanguage.STANDARD_LANG)}>${lang.languageName} </option>)""") mkString "\n"}
        |  </select>
        |</div>""".stripMargin)

@@ -173,7 +173,7 @@ function onSqlCorrectionError(jqXHR) {
 function testSqlSol() {
     let collId = $('#collId').val(), exerciseId = $('#exerciseId').val();
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.CollectionController.correctLive('sql', collId, exerciseId).url;
+    let url = jsRoutes.controllers.CollectionController.correctLive('sql', collId, exerciseId).url;
 
     let learnerSolution = editor.getValue();
     if (learnerSolution === "") {

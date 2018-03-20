@@ -71,8 +71,6 @@ trait CompleteEx[E <: Exercise] extends Wrappable with HasBaseValues {
 
   def tags: Seq[ExTag] = Seq.empty
 
-  def exType: String = ""
-
   override def wrapped: CompleteExWrapper
 
   override def id: Int = ex.id
@@ -113,9 +111,7 @@ trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteE
 
 }
 
-trait CompleteExInColl[Ex <: Exercise] extends CompleteEx[Ex] {
-
-}
+trait CompleteExInColl[Ex <: Exercise] extends CompleteEx[Ex]
 
 abstract class CompleteExWrapper extends MyWrapper {
 

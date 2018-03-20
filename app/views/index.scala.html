@@ -26,22 +26,22 @@
                 <div class="col-md-4">
                 @tool match {
                     case a: model.toolMains.AExerciseToolMain => {
-                        <a class="btn btn-default btn-block" href="@controllers.exes.routes.ExerciseController.index(a.urlPart)">
+                        <a class="btn btn-default btn-block" href="@routes.ExerciseController.index(a.urlPart)">
                             <span>@a.toolname @a.toolState.badge</span>
                         </a>
                     }
                     case b: model.toolMains.CollectionToolMain => {
-                        <a class="btn btn-default btn-block" href="@controllers.exes.routes.CollectionController.index(b.urlPart)">
+                        <a class="btn btn-default btn-block" href="@routes.CollectionController.index(b.urlPart)">
                             <span>@b.toolname @b.toolState.badge</span>
                         </a>
                     }
                     case c: model.toolMains.FileExerciseToolMain => {
-                        <a class="btn btn-default btn-block" href="@controllers.exes.routes.FileExerciseController.index(c.urlPart)">
+                        <a class="btn btn-default btn-block" href="@routes.FileExerciseController.index(c.urlPart)">
                             <span>@c.toolname @c.toolState.badge</span>
                         </a>
                     }
                     case d: model.toolMains.RandomExerciseToolMain => {
-                        <a class="btn btn-default btn-block" href="@controllers.exes.routes.RandomExerciseController.index(d.urlPart)">
+                        <a class="btn btn-default btn-block" href="@routes.RandomExerciseController.index(d.urlPart)">
                             <span>@d.toolname @d.toolState.badge</span>
                         </a>
                     }

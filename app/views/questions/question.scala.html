@@ -14,7 +14,7 @@
         </div>
 
         @* FIXME: move to jsRoutes! *@
-        <form class="form-horizontal" action="javascript:testSol('@exes.routes.CollectionController.correct("question", quiz.id, question.ex.id)')">
+        <form class="form-horizontal" action="javascript:testSol('@routes.CollectionController.correct("question", quiz.id, question.ex.id)')">
 
             <div id="answerDiv">
             @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.CHOICE) {
@@ -40,7 +40,7 @@
 
             <hr>
 
-            @core.helperTemplates.bsPager(question.ex.id, numOfExes, id => exes.routes.CollectionController.exercise("question", quiz.id, id))
+            @core.helperTemplates.bsPager(question.ex.id, numOfExes, id => routes.CollectionController.exercise("question", quiz.id, id))
 
         </form>
     </div>

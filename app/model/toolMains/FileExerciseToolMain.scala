@@ -11,7 +11,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-abstract class FileExerciseToolMain(urlPart: String) extends ASingleExerciseToolMain(urlPart) with FileUtils {
+abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends ASingleExerciseToolMain(urlPart) with FileUtils {
 
   // Abstract types
 
@@ -19,7 +19,7 @@ abstract class FileExerciseToolMain(urlPart: String) extends ASingleExerciseTool
 
   // DB
 
-  override def futureSaveRead(exercises: Seq[ReadType])(implicit ec: ExecutionContext): Future[Seq[(ReadType, Boolean)]] = Future.sequence(exercises map {
+  override def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(exercises map {
     ex =>
       // FIXME: check files...
       checkFiles(ex)
@@ -34,14 +34,9 @@ abstract class FileExerciseToolMain(urlPart: String) extends ASingleExerciseTool
 
   def renderExercise(user: User, exercise: CompExType, fileEnding: String): Html
 
-  def renderExerciseById(user: User, id: Int, fileEnding: String)(implicit ec: ExecutionContext): Future[Option[Html]] = futureCompleteExById(id) map {
-    case Some(exercise) => Some(renderExercise(user, exercise, fileEnding))
-    case None           => None
-  }
-
   def renderResult(user: User, correctionResult: R, exercise: CompExType, fileExtension: String): Html
 
-  def correctAndRender(user: User, id: Int, file: FilePart[TemporaryFile], fileExtension: String)(implicit ec: ExecutionContext): Future[Try[Html]] =
+  def correctAndRender(user: User, id: Int, file: FilePart[TemporaryFile], fileExtension: String): Future[Try[Html]] =
     futureCompleteExById(id) map {
       case None         => Failure(NoSuchExerciseException(id))
       case Some(compEx) =>

@@ -1,5 +1,4 @@
-@import model.toolMains.AExerciseToolMain
-@(user: model.User, completeEx: model.programming.ProgCompleteEx, toolObject: AExerciseToolMain)
+@(user: model.User, completeEx: model.programming.ProgCompleteEx, toolObject: model.toolMains.AExerciseToolMain)
 
 @solutionVar = @{
     "solution"
@@ -13,6 +12,9 @@
 }
 
 @scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
 @core.helperTemplates.fullScreenScripts.render()
 
     <script src="@routes.Assets.versioned("lib/autosize/dist/autosize.js")"></script>
@@ -219,18 +221,23 @@
                         <h2>Generierter Code</h2>
 
                         <pre id="preCode"></pre>
-                        @* FIXME: convert to jsRoutes! *@
-                        <form action="javascript:testSol('@@toolObject.correctLiveRoute(completeEx.id)', '@model.programming.ActivityDiagram.urlName')">
-                            <button id="sendToServer" title="Generieren Sie zuerst den Code!" disabled class="btn btn-default btn-block">
-                                Aufgabe verifizieren</button>
-                        </form>
+
+                        <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
+                        <input hidden type="number" id="exerciseId" value="@completeEx.id" title="hidden">
+                        <input hidden id="exercisePart" value="@model.programming.ActivityDiagram.urlName" title="hidden">
+
+                        <button id="testButton" title="Generieren Sie zuerst den Code!" disabled class="btn btn-default btn-block">
+                            Aufgabe verifizieren</button>
+
+
                     </div>
 
                     <div class="col-md-6">
                         <h2>Resultate</h2>
+
                         <div id="resultDiv" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <div id="result"></div>
+                                <div id="correction"></div>
                             </div>
                         </div>
                     </div>

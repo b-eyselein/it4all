@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS prog_exercises (
 CREATE TABLE IF NOT EXISTS prog_input_types (
   id          INT,
   exercise_id INT,
+  input_name  VARCHAR(20),
   input_type  VARCHAR(20),
 
   PRIMARY KEY (id, exercise_id),
@@ -154,7 +155,7 @@ CREATE TABLE IF NOT EXISTS prog_solutions (
   language    VARCHAR(20),
   solution    TEXT,
 
-  PRIMARY KEY (username, exercise_id),
+  PRIMARY KEY (username, exercise_id, part),
   FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -249,7 +250,7 @@ CREATE TABLE IF NOT EXISTS rose_solutions (
   part        VARCHAR(10),
   solution    TEXT,
 
-  PRIMARY KEY (username, exercise_id),
+  PRIMARY KEY (username, exercise_id, part),
   FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -415,6 +416,21 @@ CREATE TABLE IF NOT EXISTS uml_sol_assocs (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS uml_solutions (
+  exercise_id   INT,
+  username      VARCHAR(30),
+  part          VARCHAR(30),
+  solution_json TEXT,
+
+  PRIMARY KEY (username, exercise_id, part),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Web
 
 CREATE TABLE IF NOT EXISTS web_exercises (
@@ -493,7 +509,7 @@ CREATE TABLE IF NOT EXISTS web_solutions (
   part        VARCHAR(10),
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, username),
+  PRIMARY KEY (exercise_id, username, part),
   FOREIGN KEY (exercise_id) REFERENCES web_exercises (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -524,7 +540,7 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
   part        VARCHAR(10),
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, username),
+  PRIMARY KEY (exercise_id, username, part),
   FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -556,6 +572,8 @@ DROP TABLE IF EXISTS html_tasks;
 DROP TABLE IF EXISTS web_exercises;
 
 # Uml
+
+DROP TABLE IF EXISTS uml_solutions;
 
 DROP TABLE IF EXISTS uml_sol_assocs;
 

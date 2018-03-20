@@ -341,17 +341,25 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class UmlSolutionsTable(tag: Tag) extends PartSolutionsTable[UmlSolution](tag, "uml_solutions") {
 
-    def classes = column[Seq[UmlCompleteClass]]("classes")
+    def solutionJson = column[String]("solution_json")
 
-    def assocs = column[Seq[UmlAssociation]]("assocs")
+    // FIXME: use json!
 
-    def impls = column[Seq[UmlImplementation]]("impls")
+    //    def classes = column[Seq[UmlCompleteClass]]("classes")
+
+    //    def assocs = column[Seq[UmlAssociation]]("assocs")
+
+    //    def impls = column[Seq[UmlImplementation]]("impls")
 
 
     override def pk = primaryKey("pk", (username, exerciseId, part))
 
 
-    override def * = (username, exerciseId, part, classes, assocs, impls) <> (UmlSolution.tupled, UmlSolution.unapply)
+    override def * = (username, exerciseId, part, solutionJson) <> (tupled, unapply)
+
+    private def tupled(vals: (String, Int, UmlExPart, String)) = UmlSolution(vals._1, vals._2, vals._3, Seq.empty, Seq.empty, Seq.empty)
+
+    private def unapply(solution: UmlSolution) = Some(solution.username, solution.exerciseId, solution.part, solution.toString)
 
   }
 

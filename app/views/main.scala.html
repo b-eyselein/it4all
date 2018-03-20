@@ -38,25 +38,25 @@
                             <ul class="dropdown-menu">
 
                                 @for(idPartTool <- model.toolMains.ToolList.RandomExToolMains.filter(_.toolState == model.Enums.ToolState.LIVE)) {
-                                    <li><a href="@controllers.exes.routes.RandomExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge()</a></li>
+                                    <li><a href="@routes.RandomExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge()</a></li>
                                 }
 
                                 <li class="divider"></li>
 
-                                @for(idPartTool <- model.toolMains.ToolList.IdPartExToolMains) {
-                                    <li><a href="@controllers.exes.routes.ExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge()</a></li>
+                                @for(idPartTool <- model.toolMains.ToolList.ExerciseToolMains) {
+                                    <li><a href="@routes.ExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge()</a></li>
                                 }
 
                                 <li class="divider"></li>
 
                                 @for(fileTool <- model.toolMains.ToolList.FileExToolMains) {
-                                    <li><a href="@controllers.exes.routes.FileExerciseController.index(fileTool.urlPart)">@fileTool.toolname @fileTool.toolState.badge()</a></li>
+                                    <li><a href="@routes.FileExerciseController.index(fileTool.urlPart)">@fileTool.toolname @fileTool.toolState.badge()</a></li>
                                 }
 
                                 <li class="divider"></li>
 
                                 @for(collTool <- model.toolMains.ToolList.ExCollectionToolMains) {
-                                    <li><a href="@controllers.exes.routes.CollectionController.index(collTool.urlPart)">@collTool.toolname @collTool.toolState.badge()</a></li>
+                                    <li><a href="@routes.CollectionController.index(collTool.urlPart)">@collTool.toolname @collTool.toolState.badge()</a></li>
                                 }
                             </ul>
                         </li>
@@ -73,20 +73,20 @@
                                         Administrator <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        @for(idPartTool <- model.toolMains.ToolList.IdPartExToolMains) {
-                                            <li><a href="@controllers.exes.routes.ExerciseController.adminIndex(idPartTool.urlPart)">@idPartTool.toolname</a></li>
+                                        @for(idPartTool <- model.toolMains.ToolList.ExerciseToolMains) {
+                                            <li><a href="@routes.ExerciseController.adminIndex(idPartTool.urlPart)">@idPartTool.toolname</a></li>
                                         }
 
                                         <li class="divider"></li>
 
                                         @for(fileTool <- model.toolMains.ToolList.FileExToolMains) {
-                                            <li><a href="@controllers.exes.routes.FileExerciseController.adminIndex(fileTool.urlPart)">@fileTool.toolname</a></li>
+                                            <li><a href="@routes.FileExerciseController.adminIndex(fileTool.urlPart)">@fileTool.toolname</a></li>
                                         }
 
                                         <li class="divider"></li>
 
                                         @for(collTool <- model.toolMains.ToolList.ExCollectionToolMains) {
-                                            <li><a href="@controllers.exes.routes.CollectionController.adminIndex(collTool.urlPart)">@collTool.toolname</a></li>
+                                            <li><a href="@routes.CollectionController.adminIndex(collTool.urlPart)">@collTool.toolname</a></li>
                                         }
 
                                         <li class="divider"></li>

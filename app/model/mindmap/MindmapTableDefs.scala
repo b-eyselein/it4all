@@ -3,7 +3,7 @@ package model.mindmap
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
-import model.persistence.ExerciseTableDefs
+import model.persistence.FileExesTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -40,7 +40,7 @@ case class MindmapExercise(override val id: Int, override val title: String, ove
 }
 
 class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[MindmapExercise, MindmapExercise] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with FileExesTableDefs[MindmapExercise, MindmapExercise] {
 
   import profile.api._
 

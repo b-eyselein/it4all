@@ -1,7 +1,7 @@
 @(user: model.User)
 
     @newExUrl(part: model.nary.NaryExPart) = @{
-        controllers.exes.routes.RandomExerciseController.newExercise(model.nary.NaryToolMain.urlPart, part.urlName)
+        routes.RandomExerciseController.newExercise(model.nary.NaryToolMain.urlPart, part.urlName)
     }
 
     @scripts = {

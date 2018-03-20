@@ -53,8 +53,6 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override def futureSaveSolution(sol: BlanksSolution): Future[Boolean] = ???
 
-  override def futureReadOldSolution(user: User, exerciseId: Int, part: BlanksExPart): Future[Option[BlanksSolution]] = ???
-
   override def readSolutionFromPostRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] = None
 
   override def readSolutionFromPutRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] =
@@ -83,7 +81,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Views
 
-  override def renderExercise(user: User, exercise: BlanksCompleteExercise, maybePart: BlanksExPart): Future[Html] = Future(views.html.blanks.blanksExercise(user, exercise))
+  override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart, oldSolution: Option[BlanksSolution]): Html = views.html.blanks.blanksExercise(user, exercise)
 
   private def renderResult(correctionResult: BlanksCompleteResult): Html = Html(correctionResult.result.describe) // ???
 

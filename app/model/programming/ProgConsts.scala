@@ -15,6 +15,7 @@ object ProgConsts extends Consts {
   val ImplementationName = "implementation"
   val InputName          = "input"
   val InputsName         = "inputs"
+  val InputTypeName      = "type"
   val InputTypesName     = "inputTypes"
 
   val LanguageName = "language"

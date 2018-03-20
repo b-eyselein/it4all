@@ -5,6 +5,7 @@ import model._
 import model.questions.QuestionEnums.QuestionType
 import model.toolMains.CollectionToolMain
 import model.yaml.MyYamlFormat
+import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.Html
@@ -44,11 +45,9 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   // DB
 
-  override protected def saveSolution(solution: QuestionSolution)(implicit ec: ExecutionContext): Future[Boolean] = ???
+  override protected def saveSolution(solution: QuestionSolution): Future[Boolean] = ???
 
-  override def futureMaybeOldSolution(username: String, collId: Int, id: Int): Future[Option[QuestionSolution]] = ???
-
-  // Reading solution from request
+  // Reading from requests
 
   override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[QuestionSolution] =
     request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
@@ -61,6 +60,8 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
     }
 
   override def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[QuestionSolution] = ???
+
+  override protected def compExTypeForm(collId: Int): Form[CompleteQuestion] = ???
 
   // Yaml
 
@@ -113,5 +114,8 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   override def instantiateCollection(id: Int, state: Enums.ExerciseState): CompleteQuiz = CompleteQuiz(
     Quiz(id, title = "", author = "", text = "", state, theme = ""), exercises = Seq.empty)
+
+  override def instantiateExercise(collId: Int, id: Int, state: Enums.ExerciseState): CompleteQuestion = CompleteQuestion(
+    Question(id, title = "", author = "", text = "", state, collId, QuestionType.FREETEXT, -1), answers = Seq.empty)
 
 }

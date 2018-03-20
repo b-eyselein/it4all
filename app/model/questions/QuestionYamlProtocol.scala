@@ -35,7 +35,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
   case class QuestionYamlFormat(quizId: Int) extends HasBaseValuesYamlFormat[CompleteQuestion] {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[CompleteQuestion] = for {
-      questionType <- yamlObject.enumField(ExerciseTypeName, QuestionType.valueOf)
+      questionType <- yamlObject.enumField(exerciseTypeName, QuestionType.valueOf)
       maxPoints <- yamlObject.intField(maxPointsName)
       answerTries <- yamlObject.arrayField(answersName, QuestionAnswerYamlFormat(quizId, baseValues._1).read)
     } yield {
@@ -47,7 +47,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
     }
 
     override protected def writeRest(completeEx: CompleteQuestion): Map[YamlValue, YamlValue] = Map(
-      YamlString(ExerciseTypeName) -> completeEx.ex.questionType.name,
+      YamlString(exerciseTypeName) -> completeEx.ex.questionType.name,
       YamlString(maxPointsName) -> completeEx.ex.maxPoints,
       YamlString(answersName) -> YamlArr(completeEx.answers map QuestionAnswerYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
     )
@@ -58,14 +58,14 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[Answer] = for {
       id <- yamlObject.intField(idName)
-      text <- yamlObject.stringField(TEXT_NAME)
+      text <- yamlObject.stringField(textName)
       correctness <- yamlObject.enumField(CorrectnessName, Correctness.valueOf)
       maybeExplanation <- yamlObject.optStringField("explanation")
     } yield Answer(id, questionId, quizId, text, correctness, maybeExplanation)
 
     override def write(obj: Answer): YamlValue = {
       val values: Map[YamlValue, YamlValue] = Map(
-        YamlString(TEXT_NAME) -> obj.text,
+        YamlString(textName) -> obj.text,
         YamlString(CorrectnessName) -> obj.correctness.name
       )
 

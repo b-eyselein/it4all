@@ -37,7 +37,7 @@ function testSol() {
     let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.ExerciseController.correctLive("blanks", exerciseId, exercisePart).url;
+    let url = jsRoutes.controllers.ExerciseController.correctLive("blanks", exerciseId, exercisePart).url;
 
     let answers = $('input').map((index, elem) => {
         return {id: index + 1, value: elem.value};

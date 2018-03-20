@@ -1,0 +1,37 @@
+@(user: model.User, collections: Seq[model.CompleteCollectionWrapper], toolObject: model.toolMains.CollectionToolMain, curPage: Int, pages: Int)
+
+    @main(toolObject.toolname, Some(user)) {
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Übersicht über verfügbare Aufgaben</h1>
+            </div>
+
+            @if(collections.isEmpty) {
+                <div class="alert alert-danger">Es existieren bisher keine Aufgaben in dieser Kategorie. Wenden Sie Sich bitte an den Administrator.</div>
+            } else {
+                <div class="row">
+                    <div class="col-sm-2"><h4>Id</h4></div>
+                    <div class="col-sm-4"><h4>Titel</h4></div>
+                    <div class="col-sm-6"><h4>Link(s)</h4></div>
+                </div>
+
+                <hr>
+
+                @for(collection <- collections) {
+                    <div class="row">
+                        <div class="col-sm-2">@collection.coll.coll.id</div>
+                        <div class="col-sm-4">@collection.coll.coll.title</div>
+                        <div class="col-sm-6">
+                            <div class="btn-group btn-group-justified">
+                                <a href="@routes.CollectionController.collection(toolObject.urlPart, collection.coll.coll.id)" class="btn btn-primary">Zur Sammlung</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    }
+
+                @core.helperTemplates.bsPager.render(curPage, pages, i => routes.CollectionController.collectionList(toolObject.urlPart, i))
+            }
+        </div>
+    }

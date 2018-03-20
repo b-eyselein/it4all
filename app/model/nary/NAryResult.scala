@@ -1,7 +1,7 @@
 package model.nary
 
 import model.nary.NAryNumber._
-import model.nary.NaryConsts.{BinaryAbs, Correct, InvertedAbs}
+import model.nary.NaryConsts.{BinaryAbs, correct, InvertedAbs}
 import model.nary.NumberBase._
 import play.api.libs.json.{JsValue, Json}
 
@@ -16,14 +16,14 @@ sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSoluti
 case class NAryAddResult(base: NumberBase, firstSummand: NAryNumber, secondSummand: NAryNumber, learnerSol: NAryNumber)
   extends NAryResult(firstSummand + secondSummand, learnerSol) {
 
-  override def toJson: JsValue = Json.obj(Correct -> solutionCorrect)
+  override def toJson: JsValue = Json.obj(correct -> solutionCorrect)
 
 }
 
 case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberBase, targetBase: NumberBase, learnerSol: NAryNumber)
   extends NAryResult(new NAryNumber(startingValue.decimalValue, targetBase), learnerSol) {
 
-  override def toJson: JsValue = Json.obj(Correct -> solutionCorrect)
+  override def toJson: JsValue = Json.obj(correct -> solutionCorrect)
 
 }
 
@@ -40,6 +40,6 @@ case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, maybeBinaryAbs:
 
   private def invertDigits(binaryInt: String): String = binaryInt.replace("0", "a").replace("1", "0").replace("a", "1")
 
-  override def toJson: JsValue = Json.obj(Correct -> solutionCorrect, "verbose" -> verbose, BinaryAbs -> binaryAbsCorrect, InvertedAbs -> invertedAbsCorrect)
+  override def toJson: JsValue = Json.obj(correct -> solutionCorrect, "verbose" -> verbose, BinaryAbs -> binaryAbsCorrect, InvertedAbs -> invertedAbsCorrect)
 
 }
