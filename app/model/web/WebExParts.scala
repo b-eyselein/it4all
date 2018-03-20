@@ -15,6 +15,6 @@ case object PHPPart extends WebExPart("PHP-Teil", "php")
 
 object WebExParts extends ExParts[WebExPart] {
 
-  val values = Seq(HtmlPart, JsPart)
+  val values = Seq(HtmlPart, JsPart, PHPPart)
 
 }

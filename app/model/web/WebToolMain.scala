@@ -4,7 +4,6 @@ import java.nio.file.Path
 
 import javax.inject._
 import model.Enums.ToolState
-import model.core._
 import model.toolMains.AExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
@@ -53,7 +52,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // DB
 
   override def futureSaveSolution(sol: WebSolution): Future[Boolean] = {
-    val target: Path = solutionDirForExercise(sol.username, sol.exerciseId) / "test.html"
+    val fileEnding = sol.part match {
+      case PHPPart => "php"
+      case _       => "html"
+    }
+
+    val target: Path = solutionDirForExercise(sol.username, sol.exerciseId) / ("test." + fileEnding)
     val fileWritten = write(target, sol.solution).isSuccess
 
     tables.futureSaveSolution(sol) map (_ && fileWritten)
@@ -61,8 +65,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from request
 
-  override def readSolutionFromPostRequest(user: User, id: Int, part: WebExPart)(implicit request: Request[AnyContent]): Option[WebSolution] =
-    SolutionFormHelper.stringSolForm.bindFromRequest().fold(_ => None, _ => ??? /*Some(sol.learnerSolution)*/)
+  override def readSolutionFromPostRequest(user: User, id: Int, part: WebExPart)(implicit request: Request[AnyContent]): Option[WebSolution] = None
 
   override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: WebExPart): Option[WebSolution] =
     jsValue.asStr map (sol => WebSolution(user.username, id, part, sol))
@@ -70,7 +73,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: Enums.ExerciseState): WebCompleteEx = WebCompleteEx(
-    WebExercise(id, title = "", author = "", text = "", state, htmlText = None, hasHtmlPart = false, jsText = None, hasJsPart = false),
+    WebExercise(id, title = "", author = "", text = "", state, htmlText = None, jsText = None, phpText = None),
     htmlTasks = Seq.empty, jsTasks = Seq.empty
   )
 
@@ -95,7 +98,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     val futureSolutionSaved = futureSaveSolution(learnerSolution)
 
     val driver = new HtmlUnitDriver(true)
-    driver.get(getSolutionUrl(user, exercise.ex.id, learnerSolution.part.urlName))
+    driver.get(getSolutionUrl(user, exercise.ex.id, learnerSolution.part))
 
     val results = Try(getTasks(exercise, learnerSolution.part) map (task => WebCorrector.evaluateWebTask(task, driver)))
 
@@ -114,11 +117,15 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  def getSolutionUrl(user: User, exerciseId: Int, part: String) = s"http://localhost:9080/${user.username}/$exerciseId/test.html"
+  def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String = part match {
+    case PHPPart => s"http://localhost:9080/${user.username}/$exerciseId/test.php"
+    case _       => s"http://localhost:9080/${user.username}/$exerciseId/test.html"
+  }
 
   private def getTasks(exercise: WebCompleteEx, part: WebExPart): Seq[WebCompleteTask] = part match {
     case HtmlPart => exercise.htmlTasks
     case JsPart   => exercise.jsTasks
+    case PHPPart  => exercise.phpTasks
   }
 
 }

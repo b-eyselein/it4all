@@ -434,16 +434,15 @@ CREATE TABLE IF NOT EXISTS uml_solutions (
 # Web
 
 CREATE TABLE IF NOT EXISTS web_exercises (
-  id            INT PRIMARY KEY,
-  title         VARCHAR(50),
-  author        VARCHAR(50),
-  ex_text       TEXT,
-  ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id        INT PRIMARY KEY,
+  title     VARCHAR(50),
+  author    VARCHAR(50),
+  ex_text   TEXT,
+  ex_state  ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  html_text     TEXT,
-  has_html_part BOOLEAN,
-  js_text       TEXT,
-  has_js_part   BOOLEAN
+  html_text TEXT,
+  js_text   TEXT,
+  php_text  TEXT
 );
 
 CREATE TABLE IF NOT EXISTS html_tasks (

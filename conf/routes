@@ -122,8 +122,9 @@ POST          /tools/:toolType/:id/:part                               controlle
 
 # Other routes
 GET           /prog/declaration                                        controllers.ExerciseController.progGetDeclaration(lang: String)
-GET           /web/solution/:id/:part                                  controllers.ExerciseController.webSolution(id: Int, part: String)
-PUT           /web/solution/:id/:part                                  controllers.ExerciseController.updateWebSolution(id: Int, part: String)
+GET           /tools/web/playground                                    controllers.ExerciseController.webPlayground
+GET           /tools/web/solution/:id/:part                            controllers.ExerciseController.webSolution(id: Int, part: String)
+PUT           /tools/web/solution/:id/:part                            controllers.ExerciseController.updateWebSolution(id: Int, part: String)
 
 # Courses
 GET           /courses/new                                             controllers.CourseAdminController.newCourseForm

@@ -25,21 +25,23 @@ class WebCompleteExWrapper(override val compEx: WebCompleteEx) extends CompleteE
 
 // Classes for use
 
-case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask]) extends PartsCompleteEx[WebExercise, WebExPart] {
+case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask], phpTasks: Seq[PHPCompleteTask] = Seq.empty)
+  extends PartsCompleteEx[WebExercise, WebExPart] {
 
   override def preview: Html = views.html.web.webPreview(this)
 
-  override def tags: Seq[WebExTag] = Seq(new WebExTag(HtmlPart.partName, ex.hasHtmlPart), new WebExTag(JsPart.partName, ex.hasJsPart))
+  override def tags: Seq[WebExTag] = WebExParts.values map (part => new WebExTag(part.partName, hasPart(part)))
 
   override def hasPart(partType: WebExPart): Boolean = partType match {
     case HtmlPart => htmlTasks.nonEmpty
     case JsPart   => jsTasks.nonEmpty
-    case PHPPart  => false // TODO: PHP ex Part is currently deactivated (==> not yet implemented!)
+    case PHPPart  => phpTasks.nonEmpty
   }
 
   def maxPoints(part: WebExPart): Double = part match {
     case HtmlPart => htmlTasks.map(_.maxPoints).sum
     case JsPart   => jsTasks.map(_.maxPoints).sum
+    case PHPPart  => phpTasks.map(_.maxPoints).sum
   }
 
   override def wrapped: CompleteExWrapper = new WebCompleteExWrapper(this)
@@ -62,6 +64,10 @@ case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) extends We
   override def maxPoints: Double = 1 + conditions.size
 }
 
+case class PHPCompleteTask(task: PHPTask) extends WebCompleteTask {
+  override def maxPoints: Double = -1
+}
+
 class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
   override def cssClass: String = if (hasExes) "label label-primary" else "label label-default"
@@ -76,10 +82,10 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
 
 case class WebExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
-                       htmlText: Option[String], hasHtmlPart: Boolean, jsText: Option[String], hasJsPart: Boolean) extends Exercise {
+                       htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise {
 
-  def this(baseValues: (Int, String, String, String, ExerciseState), htmlText: Option[String], hasHtmlPart: Boolean, jsText: Option[String], hasJsPart: Boolean) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, htmlText, hasHtmlPart, jsText, hasJsPart)
+  def this(baseValues: (Int, String, String, String, ExerciseState), htmlText: Option[String], jsText: Option[String], phpText: Option[String]) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, htmlText, jsText, phpText)
 
 }
 
@@ -128,6 +134,8 @@ case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String
 
 }
 
+case class PHPTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, textContent: Option[String]) extends WebTask
+
 case class WebSolution(username: String, exerciseId: Int, part: WebExPart, solution: String) extends PartSolution {
 
   override type PartType = WebExPart
@@ -166,27 +174,34 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   lazy val webSolutions = TableQuery[WebSolutionsTable]
 
-  override def completeExForEx(ex: WebExercise)(implicit ec: ExecutionContext): Future[WebCompleteEx] = db.run(htmlTasksAction(ex.id) zip jsTasksAction(ex.id)) map { tasks =>
-    val htmlTasks = tasks._1 groupBy (_._1) mapValues (_ map (_._2)) map (ct => HtmlCompleteTask(ct._1, ct._2.flatten)) toSeq
-    val jsTasks = tasks._2 groupBy (_._1) mapValues (_ map (_._2)) map (ct => JsCompleteTask(ct._1, ct._2.flatten)) toSeq
+  override def completeExForEx(ex: WebExercise)(implicit ec: ExecutionContext): Future[WebCompleteEx] = for {
+    htmlTasks: Seq[HtmlCompleteTask] <- htmlTasksForExercise(ex.id)
+    jsTasks: Seq[JsCompleteTask] <- jsTasksForExercise(ex.id)
+  } yield WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
 
-    WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
+  private def htmlTasksForExercise(exId: Int): Future[Seq[HtmlCompleteTask]] = db.run(htmlTasks.filter(_.exerciseId === exId).result) flatMap { htmlTs: Seq[HtmlTask] =>
+    Future.sequence(htmlTs map { htmlTask =>
+      db.run(attributes.filter(att => att.exerciseId === exId && att.taskId === htmlTask.id).result) map {
+        atts => HtmlCompleteTask(htmlTask, atts)
+      }
+    })
   }
 
-  private def htmlTasksAction(exId: Int) = htmlTasks.joinLeft(attributes)
-    .on { case (ht, att) => ht.id === att.taskId && ht.exerciseId === att.exerciseId }
-    .filter(_._1.exerciseId === exId)
-    .result
+  private def jsTasksForExercise(exId: Int): Future[Seq[JsCompleteTask]] = db.run(jsTasks.filter(_.exerciseId === exId).result) flatMap { jsTs: Seq[JsTask] =>
+    Future.sequence(jsTs map { jsTask =>
+      db.run(conditions.filter(cond => cond.exerciseId === exId && cond.taskId === jsTask.id).result) map {
+        conds => JsCompleteTask(jsTask, conds)
+      }
+    })
+  }
 
-  private def jsTasksAction(exId: Int) = jsTasks.joinLeft(conditions)
-    .on { case (ht, con) => ht.id === con.taskId && ht.exerciseId === con.exerciseId }
-    .filter(_._1.exerciseId === exId)
-    .result
 
   // Saving
 
-  override def saveExerciseRest(compEx: WebCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
-    (saveSeq[HtmlCompleteTask](compEx.htmlTasks, saveHtmlTask) zip saveSeq[JsCompleteTask](compEx.jsTasks, saveJsTask)) map (future => future._1 && future._2)
+  override def saveExerciseRest(compEx: WebCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
+    htmlTasksSaved <- saveSeq[HtmlCompleteTask](compEx.htmlTasks, saveHtmlTask)
+    jsTasksSaved <- saveSeq[JsCompleteTask](compEx.jsTasks, saveJsTask)
+  } yield htmlTasksSaved && jsTasksSaved
 
   private def saveHtmlTask(htmlTask: HtmlCompleteTask): Future[Boolean] = db.run(htmlTasks += htmlTask.task) flatMap { _ =>
     saveSeq[Attribute](htmlTask.attributes, a => db.run(attributes += a))
@@ -210,17 +225,15 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def htmlText = column[String]("html_text")
 
-    def hasHtmlPart = column[Boolean]("has_html_part")
-
     def jsText = column[String]("js_text")
 
-    def hasJsPart = column[Boolean]("has_js_part")
+    def phpText = column[String]("php_text")
 
 
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, htmlText.?, hasHtmlPart, jsText.?, hasJsPart) <> (WebExercise.tupled, WebExercise.unapply)
+    override def * = (id, title, author, text, state, htmlText.?, jsText.?, phpText.?) <> (WebExercise.tupled, WebExercise.unapply)
 
   }
 

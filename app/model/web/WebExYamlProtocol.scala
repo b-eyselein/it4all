@@ -18,8 +18,11 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[WebCompleteEx] = for {
       htmlText <- yamlObject.optStringField(HTML_TEXT_NAME)
       jsText <- yamlObject.optStringField(JS_TEXT_NAME)
+      phpText <- yamlObject.optStringField(PHP_TEXT_NAME)
+
       htmlTaskTries <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(baseValues._1).read)
       jsTaskTries <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(baseValues._1).read)
+      phpTasksTries <- yamlObject.optArrayField(PHP_TASKS_NAME, PhpCompleteTaskYamlFormat(baseValues._1).read)
     } yield {
       for (htmlTaskFailure <- htmlTaskTries._2)
       // FIXME: return...
@@ -29,7 +32,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read js task", jsTaskFailure.exception)
 
-      WebCompleteEx(new WebExercise(baseValues, htmlText, htmlTaskTries._1.nonEmpty, jsText, jsTaskTries._1.nonEmpty), htmlTaskTries._1, jsTaskTries._1)
+      WebCompleteEx(new WebExercise(baseValues, htmlText, jsText, phpText), htmlTaskTries._1, jsTaskTries._1)
     }
 
     override protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {
@@ -144,6 +147,14 @@ object WebExYamlProtocol extends MyYamlProtocol {
       IS_PRECOND_NAME -> jsCond.isPrecondition,
       AWAITED_VALUE_NAME -> jsCond.awaitedValue
     )
+
+  }
+
+  case class PhpCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[PHPCompleteTask] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[PHPCompleteTask] = ???
+
+    override def write(obj: PHPCompleteTask): YamlValue = ???
 
   }
 

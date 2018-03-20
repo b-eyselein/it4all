@@ -32,15 +32,22 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   def exercise(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
-      val maybeExAndMaybeOldSolution: Future[(Option[(toolMain.CompExType, toolMain.PartType)], Option[toolMain.SolType])] = for {
+      val maybeExAndMaybeOldSolution: Future[(Option[toolMain.CompExType], Option[toolMain.PartType], Option[toolMain.SolType])] = for {
         exercise <- toolMain.futureCompleteExById(id)
         part <- Future(toolMain.partTypeFromUrl(partStr))
         oldSolution <- toolMain.futureOldSolution(user, id, partStr)
-      } yield ((exercise zip part).headOption, oldSolution)
+      } yield (exercise, part, oldSolution)
 
       maybeExAndMaybeOldSolution map {
-        case (None, _)                             => NotFound
-        case (Some((exercise, part)), oldSolution) => Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
+        case (None, _, _)                             => NotFound(s"Es gibt keine Aufgabe $id")
+        case (Some(exercise), maybePart, oldSolution) => maybePart match {
+          case None       => BadRequest(s"Es gibt keinen Aufgabenteil '$partStr'")
+          case Some(part) =>
+            //            if (exercise.hasPart(part))
+            Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
+          //            else
+          // BadRequest(s"Diese Aufgabe hat keinen Teil '${part.urlName}'")
+        }
       }
   }
 
@@ -84,10 +91,11 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
     implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
   }
 
-  def webSolution(id: Int, part: String): EssentialAction = futureWithUser { user =>
+  def webSolution(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      ws.url(webToolMain.getSolutionUrl(user, id, part)).get() map { wsRequest =>
-        Ok(wsRequest.body).as("text/html")
+      webToolMain.partTypeFromUrl(partStr) match {
+        case None       => Future(BadRequest(s"There is no such part $partStr"))
+        case Some(part) => ws.url(webToolMain.getSolutionUrl(user, id, part)).get() map (wsRequest => Ok(wsRequest.body).as("text/html"))
       }
   }
 

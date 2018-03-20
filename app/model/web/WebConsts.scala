@@ -19,6 +19,10 @@ object WebConsts extends Consts {
 
   val KEYS_TO_SEND_NAME = "keysToSend"
 
+  val PHP_TASKS_NAME = "phpTasks"
+  val PHP_TEXT_NAME  = "phpText"
+
+
   val TEXT_CONTENT_NAME = "textContent"
 
   val XPATH_NAME = "xpathQuery"
