@@ -24,7 +24,7 @@ function displayMatch(matched) {
         <div class="col-sm-4">Nutzer: <code>${matched.userArg}</code></div>
         <div class="col-sm-4">Muster: <code>${matched.sampleArg}</code></div>
     </div>
-</div>`
+</div>`;
 }
 
 /**
@@ -41,8 +41,9 @@ function displayMatch(matched) {
  * @return {string}
  */
 function renderMatchingResult(matchObj, matchName) {
-    if (matchObj.success)
+    if (matchObj.success) {
         return `<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span> Der Vergleich der ${matchName} war erfolgreich.</div>`;
+    }
 
     return `
 <div class="panel panel-danger">
@@ -141,11 +142,13 @@ function onSqlCorrectionSuccess(response) {
     newHtml += renderMatchingResult(response.tables, "Tabellen");
     newHtml += renderMatchingResult(response.wheres, "Bedingungen");
 
-    if (response.groupBy != null)
+    if (response.groupBy != null) {
         newHtml += renderMatchingResult(response.groupBy, "Group Bys");
+    }
 
-    if (response.orderBy != null)
+    if (response.orderBy != null) {
         newHtml += renderMatchingResult(response.orderBy, "Order Bys");
+    }
 
     newHtml += renderExecution(response.execution);
 
