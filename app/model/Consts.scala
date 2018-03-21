@@ -8,10 +8,12 @@ trait Consts {
   val authorName  = "author"
 
   val correct = "correct"
+val correctnessName = "correctness"
 
   val errorName        = "error"
   val exercisesName    = "exercises"
   val exerciseTypeName = "exerciseType"
+  val explanationName = "explanation"
 
   val learnerSolutionName = "learnerSolution"
 
@@ -39,8 +41,8 @@ trait Consts {
   val textName               = "text"
   val titleName              = "title"
 
-  val VALUE_NAME = "value"
-  val VARS_NAME  = "vars"
+  val valueName = "value"
+  val VARS_NAME = "vars"
 
 }
 

@@ -120,7 +120,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
   def adminEditExercise(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
 
-      def onFormError: Form[toolMain.CompExType] => Future[Result] = { formWithError =>
+      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
 
         for (formError <- formWithError.errors)
           Logger.error(formError.key + " :: " + formError.message)
@@ -128,7 +128,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
         Future(BadRequest("Your form has has errors!"))
       }
 
-      def onFormSuccess: toolMain.CompExType => Future[Result] = { compEx =>
+      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
         //FIXME: save ex
         toolMain.futureUpdateExercise(compEx) map { _ =>
           Ok(views.html.admin.singleExercisePreview(admin, compEx, toolMain))

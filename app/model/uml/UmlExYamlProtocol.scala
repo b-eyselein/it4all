@@ -72,12 +72,12 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override def write(mapping: UmlMapping): YamlValue = YamlObj(
       keyName -> mapping.key,
-      VALUE_NAME -> mapping.value
+      valueName -> mapping.value
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlMapping] = for {
       key <- yamlObject.stringField(keyName)
-      value <- yamlObject.stringField(VALUE_NAME)
+      value <- yamlObject.stringField(valueName)
     } yield UmlMapping(exerciseId, key, value)
 
   }

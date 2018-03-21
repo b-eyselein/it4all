@@ -60,7 +60,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   override val exParts: Seq[ProgExPart] = ProgExParts.values
 
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[ProgCompleteEx] = null
+  override implicit val compExForm: Form[ProgExercise] = null
 
   // Reading solution from requests
 

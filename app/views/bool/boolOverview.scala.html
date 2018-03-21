@@ -1,4 +1,4 @@
-@(user: model.User)
+@(user: model.User, toolMain: model.bool.BoolToolMain)
 
     @main("Zahlensysteme", Some(user)) {
         <div class="container">
@@ -8,13 +8,13 @@
 
                 <!-- Fill out truth tabels -->
             <div class="form-group">
-                <a href="@routes.RandomExerciseController.newExercise(model.bool.BoolToolMain.urlPart, model.bool.TableFillout.urlName)"
+                <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, model.bool.TableFillout.urlName)"
                 class="btn btn-primary btn-block">Wahrheitstabellen ausfüllen</a>
             </div>
 
                 <!-- Creation of a bool formula -->
             <div class="form-group">
-                <a href="@routes.RandomExerciseController.newExercise(model.bool.BoolToolMain.urlPart, model.bool.FormulaCreation.urlName)"
+                <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, model.bool.FormulaCreation.urlName)"
                 class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
             </div>
 

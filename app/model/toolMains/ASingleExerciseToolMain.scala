@@ -27,11 +27,11 @@ abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionCo
 
   val exParts: Seq[PartType]
 
-  implicit val compExForm: Form[CompExType]
+  implicit val compExForm: Form[ExType]
 
   // DB
 
-  def futureUpdateExercise(exercise: CompExType): Future[Boolean] = tables.saveCompleteEx(exercise)
+  def futureUpdateExercise(exercise: ExType): Future[Boolean] = tables.futureUpdateExercise(exercise)
 
   def futureCompleteExById(id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(id)
 
@@ -78,7 +78,7 @@ abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionCo
     exes => "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   }
 
-  def readEditFromForm(implicit request: Request[AnyContent]): Form[CompExType] = compExForm.bindFromRequest()
+  def readEditFromForm(implicit request: Request[AnyContent]): Form[ExType] = compExForm.bindFromRequest()
 
   // Views
 

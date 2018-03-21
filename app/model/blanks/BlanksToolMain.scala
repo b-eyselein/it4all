@@ -1,6 +1,7 @@
 package model.blanks
 
 import javax.inject._
+import model.blanks.BlanksConsts._
 import model.blanks.BlanksExParts.BlanksExPart
 import model.toolMains.AExerciseToolMain
 import model.yaml.MyYamlFormat
@@ -43,7 +44,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
   override val exParts: Seq[BlanksExPart] = BlanksExParts.values
 
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[BlanksCompleteExercise] = null
+  override implicit val compExForm: Form[BlanksExercise] = null
   //    Form(
   //    mapping(
   //
@@ -59,8 +60,8 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
   override def readSolutionFromPutRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] =
     request.body.asJson flatMap (_.asArray(_.asObj flatMap { jsObj =>
       for {
-        id <- jsObj.intField("id")
-        answer <- jsObj.stringField("value")
+        id <- jsObj.intField(idName)
+        answer <- jsObj.stringField(valueName)
       } yield BlanksAnswer(id, -1, answer)
     })) map (answers => BlanksSolution(user.username, id, part, answers))
 
@@ -104,9 +105,9 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = json.JsArray(
     result.result.allMatches map (m => Json.obj(
-      "id" -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
-      "correctness" -> m.matchType.name,
-      "explanation" -> m.explanation))
+      idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
+      correctnessName -> m.matchType.name,
+      explanationName -> m.explanation))
   )
 
 }

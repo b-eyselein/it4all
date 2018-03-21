@@ -1,5 +1,6 @@
 package model.bool
 
+import javax.inject.Singleton
 import model.Enums.ToolState
 import model.bool.BoolConsts._
 import model.bool.BooleanQuestion._
@@ -12,7 +13,8 @@ import play.twirl.api.Html
 
 import scala.language.implicitConversions
 
-object BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
+@Singleton
+class BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
 
   // Abstract types
 
@@ -33,9 +35,13 @@ object BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
   // Views
 
   override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]]): Html = exType match {
-    case FormulaCreation => views.html.bool.boolCreateQuestion(user, generateNewCreationQuestion)
-    case TableFillout    => views.html.bool.boolFilloutQuestion(user, generateNewFilloutQuestion)
+    case FormulaCreation => views.html.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
+    case TableFillout    => views.html.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
   }
+
+  override def index(user: User): Html = views.html.bool.boolOverview(user, this)
+
+  // Handlers
 
   override def checkSolution(user: User, exPart: BoolExPart, request: Request[AnyContent]): JsValue = {
     val correctionFunction: JsValue => Option[BooleanQuestionResult] = exPart match {
@@ -48,8 +54,6 @@ object BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
       case Some(result) => result.toJson
     }
   }
-
-  override def index(user: User): Html = views.html.bool.boolOverview(user)
 
   // Reading functions
 

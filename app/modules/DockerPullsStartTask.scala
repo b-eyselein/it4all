@@ -9,7 +9,7 @@ object DockerPullsStartTask {
 
   val imagesToPull: Seq[String] = Seq("python:3", "beyselein/rose:latest")
 
-  imagesToPull.filterNot(DockerConnector.imageExists).foreach(image => {
+  def pullImages(): Unit = imagesToPull.filterNot(DockerConnector.imageExists).foreach(image => {
     Logger.warn(s"Pulling docker image $image")
     DockerConnector.pullImage(image) map {
       case true  => Logger.warn(s"Image $image was pulled successfully.")

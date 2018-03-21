@@ -1,4 +1,4 @@
-@(user: model.User, question: model.bool.FilloutQuestion)
+@(user: model.User, question: model.bool.FilloutQuestion, toolMain: model.bool.BoolToolMain)
 
     @variables = @{
         question.variables.toList.sortBy(_.variable)
@@ -27,7 +27,7 @@
             <div class="row">
                 <div class="col-sm-6 col-sm-offset-3">
 
-                    <input hidden id="toolType" value="@model.bool.BoolToolMain.urlPart" title="hidden">
+                    <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
                     <input hidden id="exerciseType" value="@question.exPart.urlName" title="hidden">
                     <input hidden id="solVar" value="@model.bool.BoolConsts.SolVariable" title="hidden">
 
@@ -59,7 +59,7 @@
                         <div class="btn-group">
                             <button id="testBtn" class="btn btn-primary">Testen</button>
                         </div>
-                        <a class="btn btn-default" href="@routes.RandomExerciseController.newExercise(model.bool.BoolToolMain.urlPart, question.exPart.urlName)">
+                        <a class="btn btn-default" href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, question.exPart.urlName)">
                             Nächste Aufgabe</a>
                     </div>
                 </div>

@@ -1,8 +1,4 @@
-@(user: model.User, firstSummand: model.nary.NAryNumber, secondSummand: model.nary.NAryNumber, base: model.nary.NumberBase, requestedBase: String)
-
-    @toolMainObject = @{
-        model.nary.NaryToolMain
-    }
+@(user: model.User, firstSummand: model.nary.NAryNumber, secondSummand: model.nary.NAryNumber, base: model.nary.NumberBase, requestedBase: String, toolMain: model.nary.NaryToolMain)
 
     @exPart = @{
         model.nary.NaryAdditionExPart
@@ -28,7 +24,7 @@
             <div class="row">
                 <div class="col-sm-6 col-sm-offset-3">
 
-                    <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
+                    <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
                     <input hidden id="exerciseType" value="@exPart.urlName" title="hidden">
 
                     <p><em class="text-info">
@@ -71,7 +67,7 @@
                             <button id="testBtn" class="btn btn-primary">Testen</button>
                         </div>
                         <div class="btn-group">
-                            <a href="@routes.RandomExerciseController.newExercise(toolMainObject.urlPart, exPart.urlName)?base=@requestedBase"
+                            <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)?base=@requestedBase"
                             class="btn btn-default">Nächste Aufgabe</a>
                         </div>
                     </div>

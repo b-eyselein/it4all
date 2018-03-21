@@ -1,5 +1,6 @@
 package model.nary
 
+import javax.inject.Singleton
 import model.Enums.ToolState
 import model.core.EvaluationResult
 import model.nary.NAryNumber.{parseNaryNumber, parseTwoComplement}
@@ -13,7 +14,8 @@ import play.twirl.api.Html
 import scala.language.implicitConversions
 import scala.util.Try
 
-object NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
+@Singleton
+class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
 
   // Abstract types
 
@@ -43,7 +45,7 @@ object NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
         val sum = generator.nextInt(255) + 1
         val firstSummand = generator.nextInt(sum)
 
-        views.html.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr)
+        views.html.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr, this)
 
       case NaryConversionExPart =>
 
@@ -68,17 +70,17 @@ object NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
             (fromBase, toBase)
         }
 
-        views.html.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr)
+        views.html.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr, this)
 
 
       case TwoComplementExPart =>
         val verbose = options.getOrElse("verbose", Seq("false")).mkString == "true"
-        views.html.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose)
+        views.html.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
 
     }
   }
 
-  override def index(user: User): Html = views.html.nary.naryOverview(user)
+  override def index(user: User): Html = views.html.nary.naryOverview(user, this)
 
   // Helper functions
 
@@ -117,14 +119,14 @@ object NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
     for {
       startingNumBase <- jsObj.stringField(StartingNumBase) flatMap numbaseFromString
       targetNumBase <- jsObj.stringField(TargetNumBase) flatMap numbaseFromString
-      startingValue <- jsObj.stringField(VALUE_NAME) flatMap (parseNaryNumber(_, startingNumBase))
+      startingValue <- jsObj.stringField(valueName) flatMap (parseNaryNumber(_, startingNumBase))
       learnerSol <- jsObj.stringField(LearnerSol) flatMap (parseNaryNumber(_, targetNumBase))
     } yield NAryConvResult(startingValue, startingNumBase, targetNumBase, learnerSol)
   }
 
   private def readTwoCompSolutionFromJson(jsValue: JsValue): Option[TwoCompResult] = jsValue.asObj flatMap { jsObj =>
     for {
-      value <- jsObj.intField(VALUE_NAME)
+      value <- jsObj.intField(valueName)
       solution <- jsObj.stringField(LearnerSol) flatMap parseTwoComplement
     } yield TwoCompResult(value, solution, jsObj.stringField(BinaryAbs), jsObj.stringField(InvertedAbs))
   }

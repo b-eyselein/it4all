@@ -47,7 +47,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override val exParts: Seq[WebExPart] = WebExParts.values
 
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[WebCompleteEx] = null
+  override implicit val compExForm: Form[WebExercise] = null
 
   // DB
 

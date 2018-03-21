@@ -44,7 +44,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override val exParts: Seq[RoseExPart] = RoseExParts.values
 
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[RoseCompleteEx] = null
+  override implicit val compExForm: Form[RoseExercise] = null
 
   // DB
 

@@ -93,10 +93,10 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[Attribute] = for {
       key <- yamlObject.stringField(keyName)
-      value <- yamlObject.stringField(VALUE_NAME)
+      value <- yamlObject.stringField(valueName)
     } yield Attribute(key, taskId, exerciseId, value)
 
-    override def write(attr: Attribute): YamlValue = YamlObj(keyName -> attr.key, VALUE_NAME -> attr.value)
+    override def write(attr: Attribute): YamlValue = YamlObj(keyName -> attr.key, valueName -> attr.value)
 
   }
 

@@ -50,4 +50,10 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends TableD
 
   protected def saveExerciseRest(compEx: CompEx)(implicit ec: ExecutionContext): Future[Boolean]
 
+  // Update
+
+  def futureUpdateExercise(ex: Ex)(implicit ec: ExecutionContext): Future[Boolean] = db.run(exTable insertOrUpdate ex) map (_ => true) recover { case e: Throwable =>
+    Logger.error(s"Could not update exercise ${ex.id}", e)
+    false
+  }
 }
