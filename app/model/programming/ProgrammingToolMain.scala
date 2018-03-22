@@ -105,7 +105,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
     ProgExercise(id, title = "", author = "", text = "", state, functionName = "", outputType = ProgDataTypes.STRING),
-    inputTypes = Seq.empty, sampleSolution = ProgSampleSolution(id, PYTHON_3, ""), sampleTestData = Seq.empty
+    inputTypes = Seq.empty, sampleSolutions = Seq.empty, sampleTestData = Seq.empty
   )
 
   // Yaml

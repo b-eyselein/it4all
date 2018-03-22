@@ -1,3 +1,4 @@
+
 %YAML 1.2
 ---
 id: 1
@@ -13,8 +14,8 @@ inputTypes:
 - {id: 2, name: b, type: int}
 outputType: int
 
-sampleSolution:
-  language: PYTHON_3
+sampleSolutions:
+- language: PYTHON_3
   sample: |
     def ggt(a, b):
       while b != 0:
@@ -65,8 +66,8 @@ inputTypes:
 - {id: 1, name: myList, type: list<int>}
 outputType: float
 
-sampleSolution:
-  language: PYTHON
+sampleSolutions:
+- language: PYTHON
   sample: |
     def average(myList):
       return sum(list) / float(len(list))
@@ -96,8 +97,8 @@ inputTypes:
 - {id: 1, name: myList, type: list<string>}
 outputType: string
 
-sampleSolution:
-  language: PYTHON
+sampleSolutions:
+- language: PYTHON
   sample: |
     def longestString(myList):
       longest = a[0]
@@ -132,8 +133,8 @@ functionName: palindrom
 inputTypes:
 - {id: 1, name: word, type: string}
 outputType: boolean
-sampleSolution:
-  language: PYTHON_3
+sampleSolutions:
+- language: PYTHON_3
   sample: |
     def isPalindrome(word):
       for i in range(len(word) // 2):

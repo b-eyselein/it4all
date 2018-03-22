@@ -59,7 +59,8 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
     val language = ProgLanguage.STANDARD_LANG
 
-    val script = exercise.sampleSolution.solution
+    // FIXME: get matching sample solution...
+    val script = exercise.sampleSolutions.head.solution
 
     correct(exercise, language, solutionTargetDir, script, solution.completeCommitedTestData, exerciseResourcesFolder) map (res => ProgValidationCompleteResult.apply(solSaved, res))
   }

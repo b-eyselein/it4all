@@ -52,12 +52,12 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[RoseSampleSolution] = for {
       language <- yamlObject.enumField(LanguageName, ProgLanguage.valueOf(_).get)
-      sample <- yamlObject.stringField(SAMPLE_NAME)
+      sample <- yamlObject.stringField(sampleName)
     } yield RoseSampleSolution(exerciseId, language, sample)
 
     override def write(pss: RoseSampleSolution): YamlValue = YamlObj(
       LanguageName -> pss.language.name,
-      SAMPLE_NAME -> pss.solution
+      sampleName -> pss.solution
     )
 
   }

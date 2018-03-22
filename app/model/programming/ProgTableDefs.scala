@@ -26,21 +26,18 @@ class ProgCompleteExWrapper(val compEx: ProgCompleteEx) extends CompleteExWrappe
 
 // Classes for user
 
-case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData])
+case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution], sampleTestData: Seq[CompleteSampleTestData])
   extends PartsCompleteEx[ProgExercise, ProgExPart] {
-
-  // FIXME: only one solution?
 
   override def preview: Html = views.html.programming.progPreview(this)
 
   val inputCount: Int = inputTypes.size
 
   override def hasPart(partType: ProgExPart): Boolean = partType match {
-    case Implementation   => true
-    case ActivityDiagram  => true
-    case TestdataCreation =>
-      // TODO: Creation of test data is currently disabled
-      false
+    case Implementation  => true
+    case ActivityDiagram => true
+    // TODO: Creation of test data is currently disabled
+    case TestdataCreation => false
   }
 
   override def wrapped: CompleteExWrapper = new ProgCompleteExWrapper(this)
@@ -240,10 +237,10 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Queries
 
-  def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] =
+  override def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] =
     for {
-      samples <- db.run(sampleSolForEx(ex))
-      inputTypes <- db.run(inputTypesForEx(ex))
+      samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result)
+      inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result)
       testData <- db.run(completeTestDataForEx(ex))
     } yield {
       val completeSampleTestData: Seq[CompleteSampleTestData] = testData groupBy (_._1) mapValues (_ map (_._2)) map (ctd => CompleteSampleTestData(ctd._1, ctd._2.flatten)) toSeq
@@ -251,17 +248,14 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
       ProgCompleteEx(ex, inputTypes, samples, completeSampleTestData)
     }
 
-  override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
-    (db.run(sampleSolutions += compEx.sampleSolution) map (_ => true) zip
-      saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i)) zip
-      saveSeq[CompleteSampleTestData](compEx.sampleTestData, saveSampleTestdata)) map (f => f._1._1 && f._1._2 && f._2)
+  override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
+    samplesSaved <- saveSeq[ProgSampleSolution](compEx.sampleSolutions, sampSol => db.run(sampleSolutions += sampSol))
+    inputTypesSaved <- saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i))
+    sampleTestDataSaved <- saveSeq[CompleteSampleTestData](compEx.sampleTestData, saveSampleTestdata)
+  } yield samplesSaved && inputTypesSaved && sampleTestDataSaved
 
   private def saveSampleTestdata(sampleData: CompleteSampleTestData)(implicit ec: ExecutionContext): Future[Boolean] =
     db.run(sampleTestData += sampleData.testData) flatMap { _ => saveSeq[SampleTestDataInput](sampleData.inputs, i => db.run(sampleTestDataInputs += i)) }
-
-  private def inputTypesForEx(ex: ProgExercise) = inputTypesQuery.filter(_.exerciseId === ex.id).result
-
-  private def sampleSolForEx(ex: ProgExercise) = sampleSolutions.filter(_.exerciseId === ex.id).result.head
 
   private def completeTestDataForEx(ex: ProgExercise)(implicit ec: ExecutionContext) = sampleTestData.joinLeft(sampleTestDataInputs)
     .on { case (td, tdi) => td.exerciseId === tdi.exerciseId && td.id === tdi.testId }
@@ -411,8 +405,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def * = (id, testId, exerciseId, input, username) <> (CommitedTestDataInput.tupled, CommitedTestDataInput.unapply)
 
   }
-
-  // Solutions of users
 
   class ProgSolutionTable(tag: Tag) extends PartSolutionsTable[ProgSolution](tag, "prog_solutions") {
 

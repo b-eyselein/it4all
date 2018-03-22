@@ -20,25 +20,29 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
       inputTypes <- yamlObject.arrayField(InputTypesName, ProgInpuptTypeYamlFormat(baseValues._1).read)
 
-      sampleSolution <- yamlObject.someField(SAMPLE_SOL_NAME) flatMap ProgSampleSolutionYamlFormat(baseValues._1).read
-      sampleTestDataTries <- yamlObject.arrayField(SAMPLE_TESTDATA_NAME, ProgCompleteSampleTestdataYamlFormat(baseValues._1).read)
+      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(baseValues._1).read)
+      sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgCompleteSampleTestdataYamlFormat(baseValues._1).read)
     } yield {
       for (sampleTdFailure <- sampleTestDataTries._2)
       // FIXME: return...
         Logger.error("Could not read sample test data", sampleTdFailure.exception)
 
       for (inputTypeFailure <- inputTypes._2)
-      // FIXME: ...
+      // FIXME: return ...
         Logger.error("Could not read input type name ", inputTypeFailure.exception)
 
-      ProgCompleteEx(new ProgExercise(baseValues, functionName, outputType), inputTypes._1, sampleSolution, sampleTestDataTries._1)
+      for (sampleSolutionFailure <- sampleSolutions._2)
+      // FIXME: return ...
+        Logger.error("Could not read programming sample solution", sampleSolutionFailure.exception)
+
+      ProgCompleteEx(new ProgExercise(baseValues, functionName, outputType), inputTypes._1, sampleSolutions._1, sampleTestDataTries._1)
     }
 
     override protected def writeRest(completeEx: ProgCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(FunctionName) -> completeEx.ex.functionName,
       YamlString(InputTypesName) -> YamlArr(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName))),
-      YamlString(SAMPLE_SOL_NAME) -> ProgSampleSolutionYamlFormat(completeEx.ex.id).write(completeEx.sampleSolution),
-      YamlString(SAMPLE_TESTDATA_NAME) -> YamlArr(completeEx.sampleTestData map ProgCompleteSampleTestdataYamlFormat(completeEx.ex.id).write)
+      YamlString(sampleSolutionsName) -> YamlArr(completeEx.sampleSolutions map ProgSampleSolutionYamlFormat(completeEx.ex.id).write),
+      YamlString(sampleTestDataName) -> YamlArr(completeEx.sampleTestData map ProgCompleteSampleTestdataYamlFormat(completeEx.ex.id).write)
     )
   }
 
@@ -58,12 +62,12 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       language <- yamlObject.enumField(LanguageName, ProgLanguage.valueOf) map (_ getOrElse PYTHON_3)
-      sample <- yamlObject.stringField(SAMPLE_NAME)
+      sample <- yamlObject.stringField(sampleName)
     } yield ProgSampleSolution(exerciseId, language, sample)
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
       LanguageName -> pss.language.name,
-      SAMPLE_NAME -> pss.solution
+      sampleName -> pss.solution
     )
 
   }

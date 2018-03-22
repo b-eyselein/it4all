@@ -23,8 +23,8 @@ object ProgConsts extends Consts {
   val OUTPUT_NAME    = "output"
   val OutputTypeName = "outputType"
 
-  val SAMPLE_NAME          = "sample"
-  val SAMPLE_SOL_NAME      = "sampleSolution"
-  val SAMPLE_TESTDATA_NAME = "sampleTestData"
+  val sampleName          = "sample"
+  val sampleSolutionsName = "sampleSolutions"
+  val sampleTestDataName  = "sampleTestData"
 
 }
