@@ -24,16 +24,6 @@ object EvaluationResult {
 
   def allResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.nonEmpty && results.forall(_.isSuccessful)
 
-  def concatCodeElements(elements: List[String]): String = elements match {
-    case Nil => "--"
-    case els => els.map(el => s"<code>$el</code>").mkString
-  }
-
-  def concatListElements(elements: List[String]): Text.TypedTag[String] = elements match {
-    case Nil => ul()
-    case els => ul(els map (li(_)))
-  }
-
   def asMsg(successType: SuccessType, msg: String): Text.TypedTag[String] = p(span(cls := successType.glyphicon), " " + msg)
 
   def asMsg(success: Boolean, msg: String): Text.TypedTag[String] = p(

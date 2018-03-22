@@ -2,7 +2,6 @@ package model.spread
 
 import java.nio.file.{Path, Paths}
 
-import model.core.CommonUtils.RicherTry
 import model.spread.ODFCorrector._
 import model.spread.SpreadUtils._
 import org.hamcrest.CoreMatchers.equalTo
@@ -40,20 +39,28 @@ class ODFCorrectorTest {
       closeDocument(document)
   }
 
-  @Test def testCompareCellFormulas(): Unit = loadDocument(schullandheimMuster).zip(loadDocument(schullandheimTeilLoesung)) match {
-    case Failure(e)                 => Assert.fail(e.getMessage)
-    case Success((muster, teilLsg)) =>
+  @Test def testCompareCellFormulas(): Unit = {
 
-      compareCellFormulas(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)) shouldBe(true, formulaCorrect)
+    val filesTries = for {
+      muster <- loadDocument(schullandheimMuster)
+      teilLsg <- loadDocument(schullandheimTeilLoesung)
+    } yield (muster, teilLsg)
 
-      // Wert in Muster null, Compare leer
-      compareCellFormulas(getCell(muster, 3, 3, 9), getCell(teilLsg, 3, 3, 9)) shouldBe(true, noFormulaRequired)
+    filesTries match {
+      case Failure(e)                 => Assert.fail(e.getMessage)
+      case Success((muster, teilLsg)) =>
 
-      // Wert in Muster, Compare leer
-      compareCellFormulas(getCell(muster, 3, 5, 16), getCell(teilLsg, 3, 5, 16)) shouldBe(false, formulaMissing)
+        compareCellFormulas(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)) shouldBe(true, formulaCorrect)
 
-      // Wert in Muster, Compare leer
-      compareCellFormulas(getCell(muster, 3, 5, 19), getCell(teilLsg, 3, 5, 19)) shouldBe(false, "Formel falsch. Die Bereiche [D20] fehlen.")
+        // Wert in Muster null, Compare leer
+        compareCellFormulas(getCell(muster, 3, 3, 9), getCell(teilLsg, 3, 3, 9)) shouldBe(true, noFormulaRequired)
+
+        // Wert in Muster, Compare leer
+        compareCellFormulas(getCell(muster, 3, 5, 16), getCell(teilLsg, 3, 5, 16)) shouldBe(false, formulaMissing)
+
+        // Wert in Muster, Compare leer
+        compareCellFormulas(getCell(muster, 3, 5, 19), getCell(teilLsg, 3, 5, 19)) shouldBe(false, "Formel falsch. Die Bereiche [D20] fehlen.")
+    }
   }
 
   @Test def testCompareCellValues() {
@@ -73,20 +80,27 @@ class ODFCorrectorTest {
 
   }
 
-  @Test def testCompareNumberOfChartsInDocument(): Unit = loadDocument(schullandheimMuster).zip(loadDocument(schullandheimTeilLoesung)) match {
-    case Failure(e)                  => Assert.fail(e.getMessage)
-    case Success((muster, solution)) =>
-      //    assertThat(compareNumberOfChartsInDocument(muster, muster),
-      //        equalTo(StringConsts.COMMENT_CHART_NUM_CORRECT))
+  @Test def testCompareNumberOfChartsInDocument(): Unit = {
+    val fileTries = for {
+      muster <- loadDocument(schullandheimMuster)
+      solution <- loadDocument(schullandheimTeilLoesung)
+    } yield (muster, solution)
 
-      //    assertThat(compareNumberOfChartsInDocument(solution, muster),
-      //        equalTo(String.format(StringConsts.COMMENT_CHART_NUM_INCORRECT_VAR, 2, 0)))
+    fileTries match {
+      case Failure(e)                  => Assert.fail(e.getMessage)
+      case Success((muster, solution)) =>
+        //    assertThat(compareNumberOfChartsInDocument(muster, muster),
+        //        equalTo(StringConsts.COMMENT_CHART_NUM_CORRECT))
 
-      //    assertThat(compareNumberOfChartsInDocument(solution, solution),
-      //        equalTo(StringConsts.COMMENT_CHART_FALSE))
+        //    assertThat(compareNumberOfChartsInDocument(solution, muster),
+        //        equalTo(String.format(StringConsts.COMMENT_CHART_NUM_INCORRECT_VAR, 2, 0)))
 
-      muster.close()
-      solution.close()
+        //    assertThat(compareNumberOfChartsInDocument(solution, solution),
+        //        equalTo(StringConsts.COMMENT_CHART_FALSE))
+
+        muster.close()
+        solution.close()
+    }
   }
 
   @Test def testCompareSheet() {

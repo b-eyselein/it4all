@@ -1,6 +1,5 @@
 package model.sql
 
-import model.core.CommonUtils.RicherTry
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
@@ -12,13 +11,13 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  type AliasMap = Map[String, String]
-
   def correct(database: SqlExecutionDAO, learnerSolution: String, sampleSolution: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult = {
-    val userStatement: Try[Q] = parseStatement(learnerSolution) flatMap checkStatement
-    val sampleStatement: Try[Q] = parseStatement(sampleSolution.sample) flatMap checkStatement
+    val statementParseTries = for {
+      userStatement <- parseStatement(learnerSolution) flatMap checkStatement
+      sampleStatement <- parseStatement(sampleSolution.sample) flatMap checkStatement
+    } yield (userStatement, sampleStatement)
 
-    userStatement zip sampleStatement match {
+    statementParseTries match {
       case Success((userQ, sampleQ)) => correctQueries(learnerSolution, database, exercise, scenario, userQ, sampleQ)
       case Failure(error)            => SqlParseFailed(learnerSolution, error)
     }
@@ -41,10 +40,10 @@ abstract class QueryCorrector(val queryType: String) {
     SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison)
   }
 
-  def compareColumns(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap): ColumnMatchingResult =
+  def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): ColumnMatchingResult =
     ColumnMatcher.doMatch(getColumnWrappers(userQ), getColumnWrappers(sampleQ))
 
-  def compareWhereClauses(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap): BinaryExpressionMatchingResult =
+  def compareWhereClauses(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): BinaryExpressionMatchingResult =
     new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
   def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {

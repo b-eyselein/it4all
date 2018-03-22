@@ -2,7 +2,6 @@ package model.spread
 
 import java.nio.file.{Files, Path, Paths}
 
-import model.core.CommonUtils.RicherTry
 import model.spread.SpreadConsts._
 import model.spread.SpreadUtils._
 import model.spread.XLSXCorrector._
@@ -21,10 +20,10 @@ object XLSXCorrectorTest {
 
   val stdDoc: Path = Paths.get(testDir.toString, "standard.xlsx")
 
-  val testMuster: Path = Paths.get(testDir.toString, "schullandheim", "Aufgabe_Schullandheim_Muster.xlsx")
+  val testMuster  : Path = Paths.get(testDir.toString, "schullandheim", "Aufgabe_Schullandheim_Muster.xlsx")
   val testSolution: Path = Paths.get(testDir.toString, "schullandheim", "Aufgabe_Schullandheim.xlsx")
 
-  val testMusterCopy: Path = Paths.get(testDir.toString, "schullandheim", "testMusterCopy.xlsx")
+  val testMusterCopy  : Path = Paths.get(testDir.toString, "schullandheim", "testMusterCopy.xlsx")
   val testSolutionCopy: Path = Paths.get(testDir.toString, "schullandheim", "testSolutionCopy.xlsx")
 
   @BeforeClass
@@ -47,7 +46,7 @@ class XLSXCorrectorTest {
 
   @Test
   def testCloseDocument(): Unit = loadDocument(testMusterCopy) match {
-    case Failure(e) => Assert.fail(failureLoad(testMusterCopy, e))
+    case Failure(e)        => Assert.fail(failureLoad(testMusterCopy, e))
     case Success(document) => closeDocument(document)
   }
 
@@ -55,52 +54,73 @@ class XLSXCorrectorTest {
     workbook.getSheetAt(sheetIndex).getRow(rowIndex).getCell(cellIndex).asInstanceOf[XSSFCell]
 
   @Test
-  def testCompareCellFormulas(): Unit = loadDocument(testMusterCopy).zip(loadDocument(testSolution)) match {
-    case Failure(e) => Assert.fail(failureLoad(null, e))
-    case Success((muster, teilLsg)) =>
-      compareCellFormulas(getCell(muster, 2, 15, 7), getCell(teilLsg, 2, 15, 7)) shouldBe(true, formulaCorrect)
+  def testCompareCellFormulas(): Unit = {
+    val fileTries = for {
+      muster <- loadDocument(testMusterCopy)
+      teilLsg <- loadDocument(testSolution)
+    } yield (muster, teilLsg)
 
-      // Kein Formel in Muster, Compare leer
-      compareCellFormulas(getCell(muster, 3, 16, 1), getCell(teilLsg, 3, 16, 1)) shouldBe(false, noFormulaRequired)
+    fileTries match {
+      case Failure(e)                 => Assert.fail(failureLoad(null, e))
+      case Success((muster, teilLsg)) =>
+        compareCellFormulas(getCell(muster, 2, 15, 7), getCell(teilLsg, 2, 15, 7)) shouldBe(true, formulaCorrect)
 
-      // Wert in Muster, Compare leer
-      compareCellFormulas(getCell(muster, 3, 16, 5), getCell(teilLsg, 3, 16, 5)) shouldBe(false, formulaMissing)
+        // Kein Formel in Muster, Compare leer
+        compareCellFormulas(getCell(muster, 3, 16, 1), getCell(teilLsg, 3, 16, 1)) shouldBe(false, noFormulaRequired)
 
-      // Wert in Muster, Compare leer
-      compareCellFormulas(getCell(muster, 3, 19, 5), getCell(teilLsg, 3, 19, 5)) shouldBe(false, "Formel falsch. Die Bereiche [D20] fehlen.")
+        // Wert in Muster, Compare leer
+        compareCellFormulas(getCell(muster, 3, 16, 5), getCell(teilLsg, 3, 16, 5)) shouldBe(false, formulaMissing)
+
+        // Wert in Muster, Compare leer
+        compareCellFormulas(getCell(muster, 3, 19, 5), getCell(teilLsg, 3, 19, 5)) shouldBe(false, "Formel falsch. Die Bereiche [D20] fehlen.")
+    }
   }
 
   @Test
-  def testCompareCellValues(): Unit = loadDocument(testMusterCopy).zip(loadDocument(testSolution)) match {
-    case Failure(e) => Assert.fail(failureLoad(null, e))
-    case Success((muster, teilLsg)) =>
+  def testCompareCellValues(): Unit = {
+    val fileTries = for {
+      muster <- loadDocument(testMusterCopy)
+      solution <- loadDocument(testSolution)
+    } yield (muster, solution)
 
-      compareCellValues(getCell(muster, 2, 15, 7), getCell(teilLsg, 2, 15, 7)) shouldBe(true, COMMENT_VALUE_CORRECT)
+    fileTries match {
+      case Failure(e)                 => Assert.fail(failureLoad(null, e))
+      case Success((muster, teilLsg)) =>
 
-      // Wert in Muster, Compare leer
-      compareCellValues(getCell(muster, 3, 16, 5), getCell(teilLsg, 3, 16, 5)) shouldBe(false, COMMENT_VALUE_MISSING)
+        compareCellValues(getCell(muster, 2, 15, 7), getCell(teilLsg, 2, 15, 7)) shouldBe(true, COMMENT_VALUE_CORRECT)
 
-      // Wert in Muster, Compare falsch
-      // TODO: Zahl schoener formatieren... 12.142857142857142
-      compareCellValues(getCell(muster, 3, 19, 5), getCell(teilLsg, 3, 19, 5)) shouldBe(false, "Wert falsch. Erwartet wurde '12.142857142857142'.")
+        // Wert in Muster, Compare leer
+        compareCellValues(getCell(muster, 3, 16, 5), getCell(teilLsg, 3, 16, 5)) shouldBe(false, COMMENT_VALUE_MISSING)
+
+        // Wert in Muster, Compare falsch
+        // TODO: Zahl schoener formatieren... 12.142857142857142
+        compareCellValues(getCell(muster, 3, 19, 5), getCell(teilLsg, 3, 19, 5)) shouldBe(false, "Wert falsch. Erwartet wurde '12.142857142857142'.")
+    }
   }
 
   @Test
-  def testCompareChartsInSheet(): Unit = loadDocument(testMusterCopy).zip(loadDocument(testSolution)) match {
-    case Failure(e) => Assert.fail(failureLoad(null, e))
-    case Success((muster, teilLsg)) =>
-      compareChartsInSheet(muster.getSheetAt(0), muster.getSheetAt(0)) shouldBe(false, COMMENT_CHART_FALSE)
+  def testCompareChartsInSheet(): Unit = {
+    val fileTries = for {
+      muster <- loadDocument(testMusterCopy)
+      solution <- loadDocument(testSolution)
+    } yield (muster, solution)
 
-      compareChartsInSheet(teilLsg.getSheetAt(0), muster.getSheetAt(2)) shouldBe(false, "Falsche Anzahl Diagramme im Dokument (Erwartet: 2, Gefunden: 0).")
+    fileTries match {
+      case Failure(e)                 => Assert.fail(failureLoad(null, e))
+      case Success((muster, teilLsg)) =>
+        compareChartsInSheet(muster.getSheetAt(0), muster.getSheetAt(0)) shouldBe(false, COMMENT_CHART_FALSE)
 
-      compareChartsInSheet(muster.getSheetAt(2), muster.getSheetAt(2)) shouldBe(true, COMMENT_CHART_CORRECT)
-    // TODO: Implement!
-    // Assert.fail("Still things to implement!")
+        compareChartsInSheet(teilLsg.getSheetAt(0), muster.getSheetAt(2)) shouldBe(false, "Falsche Anzahl Diagramme im Dokument (Erwartet: 2, Gefunden: 0).")
+
+        compareChartsInSheet(muster.getSheetAt(2), muster.getSheetAt(2)) shouldBe(true, COMMENT_CHART_CORRECT)
+      // TODO: Implement!
+      // Assert.fail("Still things to implement!")
+    }
   }
 
   @Test
   def testCompareNumberOfChartsInDocument(): Unit = loadDocument(stdDoc) match {
-    case Failure(e) => Assert.fail(failureLoad(stdDoc, e))
+    case Failure(e)        => Assert.fail(failureLoad(stdDoc, e))
     case Success(document) => compareNumberOfChartsInDocument(document, document) shouldBe(true, "")
   }
 
@@ -112,12 +132,12 @@ class XLSXCorrectorTest {
 
   @Test
   def testGetCellByPosition(): Unit = loadDocument(testMusterCopy) match {
-    case Failure(e) => Assert.fail(failureLoad(testMusterCopy, e))
+    case Failure(e)      => Assert.fail(failureLoad(testMusterCopy, e))
     case Success(muster) =>
       val musterSheet: Sheet = getSheetByIndex(muster, 0)
 
       getCellByPosition(musterSheet, 0, 0) match {
-        case None => Assert.fail("TODO!")
+        case None       => Assert.fail("TODO!")
         case Some(cell) => cell.toString shouldBe "Verwalten und Auswerten von Daten"
       }
 
@@ -125,14 +145,14 @@ class XLSXCorrectorTest {
 
       val musterSheet4: Sheet = getSheetByIndex(muster, 4)
       getCellByPosition(musterSheet4, 15, 10) match {
-        case None => Assert.fail("")
+        case None       => Assert.fail("")
         case Some(cell) => cell.toString shouldBe "5% Rabatt auf den Gesamtpreis"
       }
   }
 
   @Test
   def testGetColoredRange(): Unit = loadDocument(testMusterCopy) match {
-    case Failure(e) => Assert.fail(failureLoad(testMusterCopy, e))
+    case Failure(e)      => Assert.fail(failureLoad(testMusterCopy, e))
     case Success(muster) =>
       assertTrue(getColoredRange(muster.getSheetAt(1)).isEmpty)
 
@@ -156,14 +176,14 @@ class XLSXCorrectorTest {
   @Test
   def testGetSheetByIndex(): Unit = {
     loadDocument(stdDoc) match {
-      case Failure(e) => Assert.fail(failureLoad(stdDoc, e))
+      case Failure(e)        => Assert.fail(failureLoad(stdDoc, e))
       case Success(document) =>
         assertNotNull("Standarddokument konnte nicht geladen werden!", document)
         assertNotNull(getSheetByIndex(document, 0))
     }
 
     loadDocument(testMusterCopy) match {
-      case Failure(e) => Assert.fail(failureLoad(testMusterCopy, e))
+      case Failure(e)      => Assert.fail(failureLoad(testMusterCopy, e))
       case Success(muster) =>
         val musterSheet1: Sheet = getSheetByIndex(muster, 0)
         assertNotNull(musterSheet1)
@@ -178,20 +198,20 @@ class XLSXCorrectorTest {
   @Test
   def testGetSheetCount(): Unit = {
     loadDocument(stdDoc) match {
-      case Failure(e) => Assert.fail(failureLoad(stdDoc, e))
+      case Failure(e)        => Assert.fail(failureLoad(stdDoc, e))
       case Success(document) =>
         assertNotNull("Standarddokument konnte nicht geladen werden!", document)
         getSheetCount(document) shouldBe 1
     }
 
     loadDocument(testMusterCopy) match {
-      case Failure(e) => Assert.fail(failureLoad(testMusterCopy, e))
+      case Failure(e)        => Assert.fail(failureLoad(testMusterCopy, e))
       case Success(document) =>
         getSheetCount(document) shouldBe 8
     }
 
     loadDocument(testSolutionCopy) match {
-      case Failure(e) => Assert.fail(failureLoad(testSolutionCopy, e))
+      case Failure(e)        => Assert.fail(failureLoad(testSolutionCopy, e))
       case Success(document) =>
         getSheetCount(document) shouldBe 8
     }
@@ -213,7 +233,7 @@ class XLSXCorrectorTest {
 
   @Test
   def testSetCellComment(): Unit = loadDocument(stdDoc) match {
-    case Failure(e) => Assert.fail(failureLoad(stdDoc, e))
+    case Failure(e)        => Assert.fail(failureLoad(stdDoc, e))
     case Success(document) =>
       val (message, message2) = ("Dies ist eine Testnachricht!", "Dies ist eine zweite  Testnachricht!")
 
