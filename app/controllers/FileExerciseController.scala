@@ -1,11 +1,13 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import model.User
 import model.core._
 import model.spread.SpreadConsts
 import model.toolMains.{FileExerciseToolMain, ToolList}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
+import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -62,5 +64,9 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
         case None           => BadRequest("There is no such exercise!")
       }
   }
+
+  // Views
+  override protected def adminIndexView(admin: User, stats: Html, toolMain: FileExerciseToolMain): Html =
+    views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, toolMain)
 
 }

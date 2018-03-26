@@ -1,0 +1,19 @@
+id: 2
+title: Vorlesung
+author: bje40dc
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+status: APPROVED
+
+grammarDescription: >
+  TODO!
+sampleGrammar: |
+  <!ELEMENT lecture (lecturer+, date+, student+)>
+  <!ELEMENT lecturer (name)>
+  <!ATTLIST lecturer title CDATA #REQUIRED>
+  <!ELEMENT date (hours)>
+  <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun) #REQUIRED>
+  <!ELEMENT student (name)>
+  <!ATTLIST student matrikel CDATA #REQUIRED>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT hours (#PCDATA)>
+rootNode: lecture

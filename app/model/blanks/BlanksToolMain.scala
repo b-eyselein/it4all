@@ -3,7 +3,7 @@ package model.blanks
 import javax.inject._
 import model.blanks.BlanksConsts._
 import model.blanks.BlanksExParts.BlanksExPart
-import model.toolMains.AExerciseToolMain
+import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
 import play.api.data.Form
@@ -17,7 +17,7 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 
 @Singleton
-class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: ExecutionContext) extends AExerciseToolMain("blanks") with JsonFormat {
+class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("blanks") with JsonFormat {
 
   // Abstract types
 

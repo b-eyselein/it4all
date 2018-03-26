@@ -32,16 +32,15 @@ object SqlYamlProtocol extends MyYamlProtocol {
     )
   }
 
-
   case class SqlExYamlFormat(scenarioId: Int) extends HasBaseValuesYamlFormat[SqlCompleteEx] {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[SqlCompleteEx] = for {
       exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.valueOf)
       tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExTag.byString(_) getOrElse SqlExTag.SQL_JOIN))
-      state <- yamlObject.enumField(stateName, ExerciseState.byString(_) getOrElse ExerciseState.CREATED)
-      hint <- yamlObject.optStringField(hintName)
       sampleTries <- yamlObject.arrayField("samples", SqlSampleYamlFormat(scenarioId, baseValues._1).read)
     } yield {
+      val hint = yamlObject.optStringField(hintName) map (_ getOrElse "")
+
       for (tagFailures <- tagTries._2)
       // FIXME: return...
         Logger.error("Could not read sql tag", tagFailures.exception)

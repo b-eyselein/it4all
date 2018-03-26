@@ -1,0 +1,19 @@
+id: 3
+title: Krankenhaus
+author: bje40dc
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+status: APPROVED
+
+grammarDescription: >
+  TODO!
+sampleGrammar: |
+  <!ELEMENT krankenhaus (arzt+)>
+  <!ELEMENT arzt (name, termin+)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT termin (datum, uhrzeit, patient, beschreibung?)>
+  <!ATTLIST termin art (untersuchung | behandlung | operation) #REQUIRED>
+  <!ELEMENT datum (#PCDATA)>
+  <!ELEMENT uhrzeit (#PCDATA)>
+  <!ELEMENT patient (#PCDATA)>
+  <!ELEMENT beschreibung (#PCDATA)>
+rootNode: krankenhaus

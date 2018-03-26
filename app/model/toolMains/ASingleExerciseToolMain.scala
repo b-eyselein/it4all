@@ -1,7 +1,7 @@
 package model.toolMains
 
 import model.Enums.ExerciseState
-import model.core.{ExPart, ExerciseFormMappings}
+import model.core.{ExPart, ExerciseFormMappings, ReadAndSaveResult}
 import model.persistence.IdExerciseTableDefs
 import model.{SingleCompleteEx, User}
 import net.jcazevedo.moultingyaml.Auto
@@ -85,6 +85,8 @@ abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionCo
   def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
     views.html.admin.exerciseEditForm(user, this, newEx, renderEditRest(newEx), isCreation = true)
 
+  def adminExerciseList(admin: User, exes: Seq[CompExType]): Html
+
   // Routes
 
   def exerciseRoutes(exercise: CompExType): Seq[(PartType, Call)] = exParts flatMap {
@@ -95,7 +97,7 @@ abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionCo
 
         this match {
           case _: FileExerciseToolMain => Some((exPart, controllers.routes.FileExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName)))
-          case _: AExerciseToolMain    => Some((exPart, controllers.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName)))
+          case _: IdExerciseToolMain   => Some((exPart, controllers.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName)))
         }
 
       } else None

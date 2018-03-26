@@ -1,9 +1,9 @@
-@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult, toolMainObject: model.toolMains.CollectionToolMain)
+@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: model.CompleteCollection], toolMainObject: model.toolMains.CollectionToolMain)
 
 
 @collWrappers = @{
     // FIXME: remove cast ...
-    readAndSaveResult.successes.map(_.ex.asInstanceOf[model.CompleteCollectionWrapper])
+    readAndSaveResult.successes.map(_.ex)
 }
 
 @main("Import: " + toolMainObject.collectionSingularName, Some(user)) {
@@ -18,23 +18,23 @@
         <hr>
 
         @for(collWrapper <- collWrappers) {
-            <h2>@toolMainObject.collectionSingularName: &quot;@collWrapper.coll.coll.title&quot;</h2>
+            <h2>@toolMainObject.collectionSingularName: &quot;@collWrapper.coll.title&quot;</h2>
 
             <div class="row">
-                <div class="col-sm-2"><b>ID</b>: @collWrapper.coll.coll.id</div>
-                <div class="col-sm-4"><b>Autor</b>: @collWrapper.coll.coll.author</div>
-                <div class="col-sm-2"><b># Aufgaben</b>: @collWrapper.coll.exercises.size</div>
-                <div class="col-sm-4"><b>Status</b>: @collWrapper.coll.coll.state</div>
+                <div class="col-sm-2"><b>ID</b>: @collWrapper.coll.id</div>
+                <div class="col-sm-4"><b>Autor</b>: @collWrapper.coll.author</div>
+                <div class="col-sm-2"><b># Aufgaben</b>: @collWrapper.exercises.size</div>
+                <div class="col-sm-4"><b>Status</b>: @collWrapper.coll.state</div>
             </div>
 
             <div class="row">
                 <div class="col-sm-2"><b>Text:</b></div>
-                <div class="col-sm-10">@collWrapper.coll.coll.text</div>
+                <div class="col-sm-10">@collWrapper.coll.text</div>
             </div>
 
-            @collWrapper.coll.renderRest
+            @collWrapper.renderRest
 
-            @for(exerciseTuple <- collWrapper.coll.exercises.grouped(2)) {
+            @for(exerciseTuple <- collWrapper.exercises.grouped(2)) {
                 <hr>
                 <div class="row">
                 @for(exercise <- exerciseTuple) {

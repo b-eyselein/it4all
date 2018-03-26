@@ -3,6 +3,7 @@ package controllers
 import java.nio.file.Files
 
 import model.Enums.ExerciseState
+import model.User
 import model.toolMains.ASingleExerciseToolMain
 import play.api.Logger
 import play.api.data.Form
@@ -10,10 +11,10 @@ import play.api.data.Forms.{of, single}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
 import play.api.mvc._
+import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: DatabaseConfigProvider)(implicit ec: ExecutionContext)
   extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] {
@@ -27,28 +28,9 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
   // Admin
 
   def adminIndex(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.statistics map (stats => Ok(views.html.admin.exerciseAdminMain(admin, stats, toolMain)))
+    implicit request => toolMain.statistics map (stats => Ok(adminIndexView(admin, stats, toolMain)))
   }
 
-  def adminImportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request =>
-
-      readAll(toolMain.resourcesFolder / (toolMain.urlPart + ".yaml")) match {
-        case Failure(e) =>
-          Logger.error("Import " + toolMain.urlPart + "-Aufgaben:", e)
-          Future(BadRequest("Es gab einen Fehler beim Import der Datei: " + e.getMessage))
-
-        case Success(yamlFileContent) =>
-          toolMain.readAndSave(yamlFileContent.mkString) map { readAndSaveResult =>
-
-            for (failure <- readAndSaveResult.failures) {
-              Logger.error("There has been an error reading a yaml object: ", failure.exception)
-            }
-
-            Ok(views.html.admin.exercisePreview(admin, readAndSaveResult, toolMain))
-          }
-      }
-  }
 
   def adminExportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request => toolMain.yamlString map (yaml => Ok(views.html.admin.export(admin, yaml, toolMain)))
@@ -87,10 +69,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
   }
 
   def adminExerciseList(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureCompleteExes map {
-        exes => Ok(views.html.admin.adminExerciseListView(admin, exes map (_.wrapped), toolMain))
-      }
+    implicit request => toolMain.futureCompleteExes map (exes => Ok(toolMain.adminExerciseList(admin, exes)))
   }
 
   def adminDeleteExercise(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, toolMain) =>
@@ -141,6 +120,10 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
   def adminCreateExercise(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, _) =>
     implicit request => ???
   }
+
+  // Admin views
+
+  protected def adminIndexView(admin: User, stats: Html, toolMain: ToolMainType): Html
 
   // User
 

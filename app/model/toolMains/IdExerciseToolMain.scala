@@ -12,7 +12,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class AExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends ASingleExerciseToolMain(urlPart) with JsonFormat {
+abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends ASingleExerciseToolMain(urlPart) with JsonFormat {
 
   // Abstract types
 
@@ -95,5 +95,11 @@ abstract class AExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext)
   // Views
 
   def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
+
+  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
+    views.html.admin.idExes.idExercisePreview(user, read, this)
+
+  override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
+    views.html.admin.idExes.idExerciseAdminListView(admin, exes map (_.wrapped), this)
 
 }

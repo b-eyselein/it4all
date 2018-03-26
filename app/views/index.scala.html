@@ -25,7 +25,7 @@
             @for(tool <- tools) {
                 <div class="col-md-4">
                 @tool match {
-                    case a: model.toolMains.AExerciseToolMain => {
+                    case a: model.toolMains.IdExerciseToolMain => {
                         <a class="btn btn-default btn-block" href="@routes.ExerciseController.index(a.urlPart)">
                             <span>@a.toolname @a.toolState.badge</span>
                         </a>

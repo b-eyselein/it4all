@@ -1,5 +1,4 @@
-@import model.toolMains.AToolMain
-@(user: model.User, statistics: Html, toolMainObject: AToolMain)
+@(user: model.User, statistics: Html, toolMainObject: model.toolMains.AToolMain)
 
 @title = @{
     "Administrator " + toolMainObject.toolname
@@ -35,14 +34,15 @@
             <div class="btn-group btn-group-justified">
                 <a class="btn btn-default" href="@routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)">
                     Aufgaben als YAML exportieren</a>
-                <a class="btn btn-default" href="@routes.ExerciseController.adminImportExercises(toolMainObject.urlPart)">
+                <a class="btn btn-default" href="@routes.ExerciseController.adminImportToRead(toolMainObject.urlPart)">
                     Aufgaben aus YAML importieren</a>
             </div>
         </section>
 
         <hr>
 
-        <a class="btn btn-primary btn-block" href="@routes.ExerciseController.index(toolMainObject.urlPart)">Zu den Aufgaben</a>
+        <a class="btn btn-primary btn-block" href="@routes.ExerciseController.index(toolMainObject.urlPart)">
+            Zu den Aufgaben</a>
 
     </div>
 }

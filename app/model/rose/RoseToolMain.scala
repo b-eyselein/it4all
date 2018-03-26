@@ -3,7 +3,7 @@ package model.rose
 import javax.inject.{Inject, Singleton}
 import model.Enums.ToolState
 import model.programming.ProgLanguage
-import model.toolMains.AExerciseToolMain
+import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
 import play.api.data.Form
@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
-class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext) extends AExerciseToolMain("rose") with JsonFormat {
+class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("rose") with JsonFormat {
 
   // Abstract types
 

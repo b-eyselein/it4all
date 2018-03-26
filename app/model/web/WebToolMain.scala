@@ -4,7 +4,7 @@ import java.nio.file.Path
 
 import javax.inject._
 import model.Enums.ToolState
-import model.toolMains.AExerciseToolMain
+import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -18,7 +18,7 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends AExerciseToolMain("web") with JsonFormat {
+class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("web") with JsonFormat {
 
   // Result types
 

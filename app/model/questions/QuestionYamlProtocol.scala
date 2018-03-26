@@ -60,8 +60,12 @@ object QuestionYamlProtocol extends MyYamlProtocol {
       id <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
       correctness <- yamlObject.enumField(CorrectnessName, Correctness.valueOf)
-      maybeExplanation <- yamlObject.optStringField("explanation")
-    } yield Answer(id, questionId, quizId, text, correctness, maybeExplanation)
+    } yield {
+
+      val maybeExplanation = yamlObject.optStringField("explanation") map (_ getOrElse "")
+
+      Answer(id, questionId, quizId, text, correctness, maybeExplanation)
+    }
 
     override def write(obj: Answer): YamlValue = {
       val values: Map[YamlValue, YamlValue] = Map(

@@ -1,0 +1,34 @@
+id: 2
+title: Durchschnitt
+author: bje40dc
+text: >
+  Berechnen Sie den Durchschnittswert aller Elemente als Gleitkommazahl in der übergebenen Liste von (Ganz-)Zahlen!
+  Bei einer leeren Liste soll der String 'Fehler' ausgegeben werden.
+status: APPROVED
+functionName: average
+inputTypes:
+- {id: 1, name: my_list, type: list<int>}
+outputType: float
+
+sampleSolutions:
+- language: PYTHON
+  sample: |
+    def average(my_list):
+        length = len(my_list)
+        if length == 0:
+            return "Fehler"
+        else:
+            return sum(my_list) / length
+sampleTestData:
+- id: 1
+  inputs:
+  - {id: 1, input: []}
+  output: Fehler
+- id: 2
+  inputs:
+  - {id: 1, input: [1]}
+  output: 1.
+- id: 3
+  inputs:
+  - {id: 1, input: [3, 5, 7]}
+  output: 5.

@@ -1,0 +1,16 @@
+id: 4
+title: Frühstück
+author: bje40dc
+text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
+status: APPROVED
+
+grammarDescription: >
+  TODO!
+sampleGrammar: |
+  <!ELEMENT breakfast (food+)>
+  <!ELEMENT food (name, price, description, calories)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT price (#PCDATA)>
+  <!ELEMENT desciption (#PCDATA)>
+  <!ELEMENT calories (#PCDATA)>
+rootNode: breakfast

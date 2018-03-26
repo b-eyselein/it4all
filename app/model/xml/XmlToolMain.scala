@@ -6,7 +6,7 @@ import controllers.ExerciseOptions
 import javax.inject._
 import model.Enums.{ExerciseState, ToolState}
 import model.core._
-import model.toolMains.AExerciseToolMain
+import model.toolMains.IdExerciseToolMain
 import model.xml.XmlConsts._
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, User}
@@ -23,7 +23,7 @@ import scala.util.{Failure, Try}
 
 
 @Singleton
-class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext) extends AExerciseToolMain("xml") with FileUtils {
+class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("xml") with FileUtils {
 
   // Result types
 

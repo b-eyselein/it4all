@@ -1,0 +1,22 @@
+id: 1
+title: Party
+author: bje40dc
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+status: APPROVED
+
+grammarDescription: >
+  In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von Gästen [gast] (mindestens ein Gast war
+  anwesend). Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast
+  hat mindestens ein Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.
+sampleGrammar: |
+  <!ELEMENT party (gast+)>
+  <!ATTLIST party datum CDATA #REQUIRED>
+  <!ELEMENT gast (vorname, nachname, getraenk+)>
+  <!ELEMENT vorname (#PCDATA)>
+  <!ELEMENT nachname (#PCDATA)>
+  <!ELEMENT getraenk (#PCDATA)>
+  <!ATTLIST gast
+    ledig (true | false) #REQUIRED
+    nuechtern (true | false) #REQUIRED
+  >
+rootNode: party

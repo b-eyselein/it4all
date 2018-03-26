@@ -84,9 +84,6 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 case class WebExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
                        htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise {
 
-  def this(baseValues: (Int, String, String, String, ExerciseState), htmlText: Option[String], jsText: Option[String], phpText: Option[String]) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, htmlText, jsText, phpText)
-
 }
 
 trait WebTask {

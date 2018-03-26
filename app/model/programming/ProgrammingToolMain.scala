@@ -5,7 +5,7 @@ import javax.inject._
 import model.Enums.{ExerciseState, ToolState}
 import model.programming.ProgConsts._
 import model.programming.ProgrammingToolMain._
-import model.toolMains.AExerciseToolMain
+import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, JsonFormat, User}
 import play.api.data.Form
@@ -31,7 +31,7 @@ object ProgrammingToolMain {
 }
 
 @Singleton
-class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext) extends AExerciseToolMain("programming") with JsonFormat {
+class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("programming") with JsonFormat {
 
   // Abstract types
 

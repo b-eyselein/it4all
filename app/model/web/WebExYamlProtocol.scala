@@ -13,17 +13,28 @@ import scala.util.Try
 
 object WebExYamlProtocol extends MyYamlProtocol {
 
-  implicit object WebExYamlFormat extends HasBaseValuesYamlFormat[WebCompleteEx] {
+  implicit object WebExYamlFormat extends MyYamlObjectFormat[WebCompleteEx] {
 
-    override def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[WebCompleteEx] = for {
-      htmlText <- yamlObject.optStringField(HTML_TEXT_NAME)
-      jsText <- yamlObject.optStringField(JS_TEXT_NAME)
-      phpText <- yamlObject.optStringField(PHP_TEXT_NAME)
+    override protected def readObject(yamlObject: YamlObject): Try[WebCompleteEx] = yamlObject.optForgivingStringField("extern") match {
+      case None           => readRest(yamlObject)
+      case Some(fileName) => readExtern(fileName)
+    }
 
-      htmlTaskTries <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(baseValues._1).read)
-      jsTaskTries <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(baseValues._1).read)
-      phpTasksTries <- yamlObject.optArrayField(PHP_TASKS_NAME, PhpCompleteTaskYamlFormat(baseValues._1).read)
+    def readRest(yamlObject: YamlObject): Try[WebCompleteEx] = for {
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state <- yamlObject.enumField(stateName, ExerciseState.byString(_) getOrElse ExerciseState.CREATED)
+
+      htmlTaskTries <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(id).read)
+      jsTaskTries <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(id).read)
+      phpTasksTries <- yamlObject.optArrayField(PHP_TASKS_NAME, PhpCompleteTaskYamlFormat(id).read)
     } yield {
+      val htmlText = yamlObject.optStringField(HTML_TEXT_NAME) map (_ getOrElse "")
+      val jsText = yamlObject.optStringField(JS_TEXT_NAME) map (_ getOrElse "")
+      val phpText = yamlObject.optStringField(PHP_TEXT_NAME) map (_ getOrElse "")
+
       for (htmlTaskFailure <- htmlTaskTries._2)
       // FIXME: return...
         Logger.error("Could not read html task", htmlTaskFailure.exception)
@@ -32,10 +43,22 @@ object WebExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read js task", jsTaskFailure.exception)
 
-      WebCompleteEx(new WebExercise(baseValues, htmlText, jsText, phpText), htmlTaskTries._1, jsTaskTries._1)
+      for (phpTaskFailure <- phpTasksTries._2)
+      // FIXME: return...
+        Logger.error("Could not read php task", phpTaskFailure.exception)
+
+      WebCompleteEx(
+        WebExercise(id, title, author, text, state, htmlText, jsText, phpText),
+        htmlTaskTries._1, jsTaskTries._1, phpTasksTries._1
+      )
     }
 
-    override protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {
+    def readExtern(fileName: String): Try[WebCompleteEx] = {
+      println(fileName)
+      ???
+    }
+
+    protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {
 
       val htmlTasks: Option[(YamlValue, YamlValue)] = completeEx.htmlTasks match {
         case Nil                        => None
@@ -53,6 +76,9 @@ object WebExYamlProtocol extends MyYamlProtocol {
         htmlTasks ++ jsTasks
 
     }
+
+
+    override def write(obj: WebCompleteEx): YamlValue = ???
   }
 
   case class HtmlCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[HtmlCompleteTask] {
@@ -78,9 +104,11 @@ object WebExYamlProtocol extends MyYamlProtocol {
       taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
-      textContent <- yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)
       attributeTries <- yamlObject.optArrayField(attrsName, TaskAttributeYamlFormat(taskId, exerciseId).read)
     } yield {
+
+      val textContent: Option[String] = yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)
+
       for (attributeFailure <- attributeTries._2)
       // FIXME: return...
         Logger.error("Could not read html attribute", attributeFailure.exception)
@@ -120,9 +148,10 @@ object WebExYamlProtocol extends MyYamlProtocol {
       text <- yamlObject.stringField(textName)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
       actionType <- yamlObject.enumField(ACTION_TYPE_NAME, JsActionType.valueOf)
-      keysToSend <- yamlObject.optForgivingStringField(KEYS_TO_SEND_NAME)
       conditionTries <- yamlObject.arrayField(CONDITIONS_NAME, JsConditionYamlFormat(taskId, exerciseId).read)
     } yield {
+      val keysToSend = yamlObject.optForgivingStringField(KEYS_TO_SEND_NAME)
+
       for (conditionFailure <- conditionTries._2)
       // FIXME: return...
         Logger.error("Could not read js condition", conditionFailure.exception)

@@ -35,7 +35,7 @@ PUT           /random/:toolType/:exPart                                controlle
 # File tools
 GET           /fileTools/:toolType/admin                               controllers.FileExerciseController.adminIndex(toolType: String)
 
-GET           /fileTools/:toolType/admin/import                        controllers.FileExerciseController.adminImportExercises(toolType: String)
+GET           /fileTools/:toolType/admin/import                        controllers.FileExerciseController.adminImportToRead(toolType: String)
 GET           /fileTools/:toolType/admin/export                        controllers.FileExerciseController.adminExportExercises(toolType: String)
 GET           /fileTools/:toolType/admin/exportFile                    controllers.FileExerciseController.adminExportExercisesAsFile(toolType: String)
 
@@ -66,7 +66,7 @@ GET           /colTools/:toolType/admin                                controlle
 
 GET           /colTools/:toolType/admin/collections                    controllers.CollectionController.adminCollectionsList(toolType: String)
 
-GET           /colTools/:toolType/admin/import                         controllers.CollectionController.adminImportCollections(toolType: String)
+GET           /colTools/:toolType/admin/import                         controllers.CollectionController.adminImportToRead(toolType: String)
 GET           /colTools/:toolType/admin/export                         controllers.CollectionController.adminExportCollections(toolType: String)
 GET           /colTools/:toolType/admin/exportAsFile                   controllers.CollectionController.adminExportCollectionsAsFile(toolType: String)
 
@@ -95,7 +95,7 @@ DELETE        /colTools/:toolType/:collId/:exId                        controlle
 # Normal exercises
 GET           /tools/:toolType/admin                                   controllers.ExerciseController.adminIndex(toolType: String)
 
-GET           /tools/:toolType/admin/import                            controllers.ExerciseController.adminImportExercises(toolType: String)
+GET           /tools/:toolType/admin/import                            controllers.ExerciseController.adminImportToRead(toolType: String)
 GET           /tools/:toolType/admin/export                            controllers.ExerciseController.adminExportExercises(toolType: String)
 GET           /tools/:toolType/admin/exportFile                        controllers.ExerciseController.adminExportExercisesAsFile(toolType: String)
 

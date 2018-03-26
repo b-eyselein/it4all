@@ -16,14 +16,14 @@ object ToolList {
 
   val FileExToolMains: mutable.ListBuffer[FileExerciseToolMain] = mutable.ListBuffer.empty
 
-  val ExerciseToolMains: mutable.ListBuffer[AExerciseToolMain] = mutable.ListBuffer.empty
+  val ExerciseToolMains: mutable.ListBuffer[IdExerciseToolMain] = mutable.ListBuffer.empty
 
   val ExCollectionToolMains: mutable.ListBuffer[CollectionToolMain] = mutable.ListBuffer.empty
 
   def addTool(tool: AToolMain): Unit = tool match {
     case w: RandomExerciseToolMain => RandomExToolMains += w
     case x: FileExerciseToolMain   => FileExToolMains += x
-    case y: AExerciseToolMain      => ExerciseToolMains += y
+    case y: IdExerciseToolMain     => ExerciseToolMains += y
     case z: CollectionToolMain     => ExCollectionToolMains += z
   }
 
@@ -31,7 +31,7 @@ object ToolList {
     FileExToolMains.find(_.urlPart == urlPart)
   }
 
-  def getExerciseToolMainOption(urlPart: String): Option[AExerciseToolMain] = ExerciseToolMains.find(_.urlPart == urlPart)
+  def getExerciseToolMainOption(urlPart: String): Option[IdExerciseToolMain] = ExerciseToolMains.find(_.urlPart == urlPart)
 
   def getExCollToolMainOption(urlPart: String): Option[CollectionToolMain] = ExCollectionToolMains.find(_.urlPart == urlPart)
 

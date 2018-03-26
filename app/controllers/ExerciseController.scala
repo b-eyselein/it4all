@@ -4,11 +4,12 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.core._
 import model.programming.{NewProgYamlProtocol, ProgLanguage, ProgrammingToolMain}
-import model.toolMains.{AExerciseToolMain, ToolList}
+import model.toolMains.{IdExerciseToolMain, ToolList}
 import model.web.{HtmlPart, WebSolution, WebToolMain}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.ws._
 import play.api.mvc._
+import play.twirl.api.Html
 import views.html.programming.testNewFormat
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -23,9 +24,9 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   type SolType <: Solution
 
-  override type ToolMainType = AExerciseToolMain
+  override type ToolMainType = IdExerciseToolMain
 
-  override protected def getToolMain(toolType: String): Option[AExerciseToolMain] = ToolList.getExerciseToolMainOption(toolType)
+  override protected def getToolMain(toolType: String): Option[IdExerciseToolMain] = ToolList.getExerciseToolMainOption(toolType)
 
   // Generic Routes
 
@@ -75,6 +76,11 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
     }
   }
+
+  // Views
+
+  override protected def adminIndexView(admin: User, stats: Html, toolMain: IdExerciseToolMain): Html =
+    views.html.admin.idExes.idExerciseAdminMain(admin, stats, toolMain)
 
   // Other routes
 

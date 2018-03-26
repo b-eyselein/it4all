@@ -132,10 +132,13 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
 
   def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean): Html =
-    views.html.admin.collectionEditForm(user, this, collection.wrapped.asInstanceOf[CompleteCollectionWrapper], isCreation, new Html("") /*adminRenderEditRest(collection)*/)
+    views.html.admin.collExes.collectionEditForm(user, this, collection.wrapped.asInstanceOf[CompleteCollectionWrapper], isCreation, new Html("") /*adminRenderEditRest(collection)*/)
 
   def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
     views.html.admin.exerciseEditForm(user, this, newEx, renderEditRest(newEx), isCreation = true)
+
+  override def previewExercise(user: User, read: ReadAndSaveResult[CompCollType]): Html =
+    views.html.admin.collExes.collPreview(user, read, this)
 
   // Result handlers
 

@@ -17,7 +17,7 @@ import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
@@ -39,16 +39,6 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def adminIndex(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request => toolMain.statistics map (stats => Ok(views.html.admin.collExes.collectionAdminMain(admin, stats, toolMain)))
-  }
-
-  def adminImportCollections(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
-    implicit request =>
-      readAll(toolMain.resourcesFolder / (toolMain.urlPart + ".yaml")) match {
-        case Failure(error)       => Future(BadRequest(error.toString))
-        case Success(fileContent) => toolMain.readAndSave(fileContent) map {
-          readAndSaveResult => Ok(views.html.admin.collExes.collPreview(admin, readAndSaveResult, toolMain))
-        }
-      }
   }
 
   def adminExportCollections(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>

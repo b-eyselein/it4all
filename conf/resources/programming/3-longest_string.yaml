@@ -1,0 +1,36 @@
+id: 3
+title: Längste Zeichenkette
+author: bje40dc
+text: >
+  Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden.
+  Ignorieren Sie dabei Groß- und Kleinschreibung.
+status: APPROVED
+functionName: longestString
+inputTypes:
+- {id: 1, name: myList, type: list<string>}
+outputType: string
+
+sampleSolutions:
+- language: PYTHON
+  sample: |
+    def longestString(myList):
+      longest = a[0]
+
+      for string in a:
+        if len(string) > len(longest):
+          longest = string
+
+      return longest
+sampleTestData:
+- id: 1
+  inputs:
+  - {id: 1, input: []}
+  output: ""
+- id: 2
+  inputs:
+  - {id: 1, input: ["0"]}
+  output: "0"
+- id: 3
+  inputs:
+  - {id: 1, input: ["1", "11", "111"]}
+  output: "111"

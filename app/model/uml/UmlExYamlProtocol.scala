@@ -143,12 +143,15 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[UmlAssociation] = for {
       assocType <- yamlObject.enumField(ASSOCTYPE_NAME, UmlAssociationType.valueOf)
-      assocName <- yamlObject.optStringField(nameName)
       firstEnd <- yamlObject.stringField(FIRST_END_NAME)
       firstMult <- yamlObject.enumField(FIRST_MULT_NAME, UmlMultiplicity.valueOf)
       secondEnd <- yamlObject.stringField(SECOND_END_NAME)
       secondMult <- yamlObject.enumField(SECOND_MULT_NAME, UmlMultiplicity.valueOf)
-    } yield UmlAssociation(exerciseId, assocType, assocName, firstEnd, firstMult, secondEnd, secondMult)
+    } yield {
+      val assocName = yamlObject.optStringField(nameName) map (_ getOrElse "")
+
+      UmlAssociation(exerciseId, assocType, assocName, firstEnd, firstMult, secondEnd, secondMult)
+    }
   }
 
   case class UmlImplYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlImplementation] {
