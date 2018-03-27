@@ -1,0 +1,33 @@
+id: 1
+title: Zeichnen eines Rechtecks
+author: bje40dc
+text: >
+  Zeichen Sie ein Rechteck mit der übergebenen Breite und Höhe! Benutzen Sie dazu die API des Roboters
+  und zum "Zeichnen" die Markierungsfunktions des Roboters! Ihr Roboter startet im Feld (0, 0).
+status: CREATED
+
+fieldWidth: 8
+fieldHeight: 10
+isMultiplayer: false
+
+inputTypes:
+- {id: 1, name: width, type: int}
+- {id: 2, name: height, type: int}
+
+sampleSolutions:
+- language: PYTHON_3
+  sample: |
+    for h in range(height - 1):
+      self.mark()
+      self.go_up()
+    for w in range(width - 1):
+      self.mark()
+      self.go_right()
+
+    for h in range(height - 1):
+      self.mark()
+      self.go_down()
+
+    for w in range(width - 1):
+      self.mark()
+      self.go_left()
