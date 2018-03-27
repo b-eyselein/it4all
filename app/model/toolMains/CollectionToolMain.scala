@@ -5,8 +5,9 @@ import model._
 import model.core._
 import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml.Auto
+import play.api.Logger
 import play.api.data.Form
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
@@ -132,7 +133,7 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
 
   def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean): Html =
-    views.html.admin.collExes.collectionEditForm(user, this, collection.wrapped.asInstanceOf[CompleteCollectionWrapper], isCreation, new Html("") /*adminRenderEditRest(collection)*/)
+    views.html.admin.collExes.collectionEditForm(user, this, collection, isCreation, new Html("") /*adminRenderEditRest(collection)*/)
 
   def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
     views.html.admin.exerciseEditForm(user, this, newEx, renderEditRest(newEx), isCreation = true)
@@ -148,7 +149,10 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def onLiveCorrectionResult(result: CompResult): JsValue
 
-  def onLiveCorrectionError(error: Throwable): JsValue
+  def onLiveCorrectionError(error: Throwable): JsValue = {
+    Logger.error("There has been a correction error", error)
+    Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
+  }
 
   // Helper methods for admin
 

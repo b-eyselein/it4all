@@ -49,7 +49,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read sql sample", sampleFailure.exception)
 
-      SqlCompleteEx(new SqlExercise(baseValues, scenarioId, exerciseType, tagTries._1 mkString TagJoinChar, hint), sampleTries._1)
+      SqlCompleteEx(new SqlExercise(baseValues, scenarioId, exerciseType, tagTries._1 mkString tagJoinChar, hint), sampleTries._1)
     }
 
     override protected def writeRest(completeEx: SqlCompleteEx): Map[YamlValue, YamlValue] = Map(

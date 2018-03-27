@@ -1,4 +1,4 @@
-@(user: model.User, collections: Seq[model.CompleteCollectionWrapper], toolObject: model.toolMains.CollectionToolMain, curPage: Int, pages: Int)
+@(user: model.User, collections: Seq[model.CompleteCollection], toolObject: model.toolMains.CollectionToolMain, curPage: Int, pages: Int)
 
     @main(toolObject.toolname, Some(user)) {
         <div class="container">
@@ -19,11 +19,11 @@
 
                 @for(collection <- collections) {
                     <div class="row">
-                        <div class="col-sm-2">@collection.coll.coll.id</div>
-                        <div class="col-sm-4">@collection.coll.coll.title</div>
+                        <div class="col-sm-2">@collection.coll.id</div>
+                        <div class="col-sm-4">@collection.coll.title</div>
                         <div class="col-sm-6">
                             <div class="btn-group btn-group-justified">
-                                <a href="@routes.CollectionController.collection(toolObject.urlPart, collection.coll.coll.id)" class="btn btn-primary">Zur Sammlung</a>
+                                <a href="@routes.CollectionController.collection(toolObject.urlPart, collection.coll.id)" class="btn btn-primary">Zur Sammlung</a>
                             </div>
                         </div>
                     </div>

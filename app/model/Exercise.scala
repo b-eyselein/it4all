@@ -3,7 +3,7 @@ package model
 import java.nio.file.Path
 
 import model.Enums.ExerciseState
-import model.core.{ExPart, FileUtils, MyWrapper, Wrappable}
+import model.core.{ExPart, FileUtils}
 import model.toolMains.AToolMain
 import play.twirl.api.Html
 
@@ -63,7 +63,7 @@ trait ExInColl extends Exercise {
 
 }
 
-trait CompleteEx[E <: Exercise] extends Wrappable with HasBaseValues {
+trait CompleteEx[E <: Exercise] extends HasBaseValues {
 
   def ex: E
 
@@ -71,7 +71,6 @@ trait CompleteEx[E <: Exercise] extends Wrappable with HasBaseValues {
 
   def tags: Seq[ExTag] = Seq.empty
 
-  override def wrapped: CompleteExWrapper
 
   override def id: Int = ex.id
 
@@ -112,15 +111,3 @@ trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteE
 }
 
 trait CompleteExInColl[Ex <: Exercise] extends CompleteEx[Ex]
-
-abstract class CompleteExWrapper extends MyWrapper {
-
-  type Ex <: Exercise
-
-  type CompEx <: CompleteEx[Ex]
-
-  val compEx: CompEx
-
-  override def wrappedObj: Wrappable = compEx
-
-}

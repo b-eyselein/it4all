@@ -3,21 +3,11 @@ package model.spread
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
-import model.persistence.{ExerciseTableDefs, FileExesTableDefs}
+import model.persistence.FileExesTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-
-// Wrapper classes
-
-class SpreadCompleteExWrapper(override val compEx: SpreadExercise) extends CompleteExWrapper {
-
-  override type Ex = SpreadExercise
-
-  override type CompEx = SpreadExercise
-
-}
 
 // Classes for use
 
@@ -31,8 +21,6 @@ case class SpreadExercise(override val id: Int, override val title: String, over
   override def ex: SpreadExercise = this
 
   override def preview: Html = views.html.spread.spreadPreview.render(this)
-
-  override def wrapped: CompleteExWrapper = new SpreadCompleteExWrapper(this)
 
   override def hasPart(partType: SpreadExPart): Boolean = true
 

@@ -5,7 +5,7 @@ text: >
   Berechnen Sie den Durchschnittswert aller Elemente als Gleitkommazahl in der übergebenen Liste von (Ganz-)Zahlen!
   Bei einer leeren Liste soll der String 'Fehler' ausgegeben werden.
 status: APPROVED
-functionName: average
+functionname: average
 inputTypes:
 - {id: 1, name: my_list, type: list<int>}
 outputType: float

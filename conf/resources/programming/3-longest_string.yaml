@@ -5,7 +5,7 @@ text: >
   Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden.
   Ignorieren Sie dabei Groß- und Kleinschreibung.
 status: APPROVED
-functionName: longest_string
+functionname: longest_string
 inputTypes:
 - {id: 1, name: my_list, type: list<string>}
 outputType: string

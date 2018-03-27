@@ -143,12 +143,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
       Html("Es gab einen Fehler bei der Korrektur!")
   }
 
-  override def onLiveCorrectionError(error: Throwable): JsValue = {
-    Logger.error("There has been a correction error", error)
-    Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
-  }
-
-
   override def onLiveCorrectionResult(result: SqlCorrResult): JsValue = result match {
     case res: SqlResult           => res.toJson
     case SqlParseFailed(_, error) => Json.obj("msg" -> error.getMessage)

@@ -6,6 +6,7 @@ import model.core._
 import model.programming.{ProgLanguage, ProgrammingToolMain}
 import model.toolMains.{IdExerciseToolMain, ToolList}
 import model.web.{HtmlPart, WebSolution, WebToolMain}
+import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.ws._
 import play.api.mvc._
@@ -67,7 +68,9 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   def correctLive(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request => {
       toolMain.correctAbstract(user, id, partStr, isLive = true) map {
-        case Failure(error)  => BadRequest(toolMain.onLiveCorrectionError(error))
+        case Failure(error)  =>
+          Logger.error("There has been an internal correction error:", error)
+          BadRequest(toolMain.onLiveCorrectionError(error))
         case Success(result) => result match {
           case Right(jsValue) => Ok(jsValue)
           case Left(html)     => Ok(html)

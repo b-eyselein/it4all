@@ -67,6 +67,6 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
     views.html.admin.fileExes.fileExercisePreview(user, read, this)
 
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
-    views.html.admin.fileExes.fileExerciseAdminListView(admin, exes map (_.wrapped), this)
+    views.html.admin.fileExes.fileExerciseAdminListView(admin, exes, this)
 
 }

@@ -1,4 +1,4 @@
-@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], toolObject: model.toolMains.CollectionToolMain)
+@(user: model.User, collWrappers: Seq[model.CompleteCollection], toolObject: model.toolMains.CollectionToolMain)
 
 @scripts = {
     @* Javascript Routes *@
@@ -35,35 +35,35 @@
             </thead>
             <tbody>
             @for(collection <- collWrappers.map(_.coll)) {
-                <tr id="tr1_@collection.coll.id">
-                    <td>@collection.coll.id</td>
+                <tr id="tr1_@collection.id">
+                    <td>@collection.id</td>
                     <td>
                         <div class="input-group">
-                            <select onchange="updateStateChangeButton(@collection.coll.id)" name="state_@collection.coll.id" class="form-control" id="state_@collection.coll.id"
-                            title="Status der Aufgabe" data-val="@collection.coll.state">
+                            <select onchange="updateStateChangeButton(@collection.id)" name="state_@collection.id" class="form-control" id="state_@collection.id"
+                            title="Status der Aufgabe" data-val="@collection.state">
                             @for(exState <- model.Enums.ExerciseState.values) {
-                                <option @exState.isSelected(collection.coll.state)>@exState </option>
+                                <option @exState.isSelected(collection.state)>@exState </option>
                             }
                             </select>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@collection.coll.id" onclick="changeState(@collection.coll.id)" disabled>
+                                <button class="btn btn-default" id="scb_@collection.id" onclick="changeState(@collection.id)" disabled>
                                     <span class="glyphicon glyphicon-upload"></span>
                                 </button>
                             </span>
                         </div>
                     </td>
                     <td>
-                        <a class="btn btn-default" title="Aufgabe @collection.coll.id bearbeiten" id="edit_@collection.coll.id"
+                        <a class="btn btn-default" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
                         href="@routes.CollectionController.adminEditCollectionForm(toolObject.urlPart, collection.id)"><span class="glyphicon glyphicon-wrench"></span>
                         </a>
-                        <button class="btn btn-default" title="Aufgabe @collection.coll.id löschen" id="del_@collection.coll.id" onclick="deleteCollection(@collection.coll.id)">
+                        <button class="btn btn-default" title="Aufgabe @collection.id löschen" id="del_@collection.id" onclick="deleteCollection(@collection.id)">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>
-                    <td>@collection.coll.title</td>
-                    <td>@collection.coll.author</td>
+                    <td>@collection.title</td>
+                    <td>@collection.author</td>
                     <td>
-                        <a href="@routes.CollectionController.adminExercisesInCollection(toolObject.urlPart, collection.coll.id)"
+                        <a href="@routes.CollectionController.adminExercisesInCollection(toolObject.urlPart, collection.id)"
                         class="btn btn-primary btn-block">Zu den Aufgaben</a>
                     </td>
                 </tr>

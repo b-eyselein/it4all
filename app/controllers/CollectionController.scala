@@ -4,7 +4,6 @@ import java.nio.file.Files
 
 import javax.inject.{Inject, Singleton}
 import model.Enums.ExerciseState
-import model._
 import model.core.CoreConsts._
 import model.core._
 import model.toolMains.{CollectionToolMain, ToolList}
@@ -17,7 +16,7 @@ import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
@@ -31,9 +30,9 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   private val stateForm: Form[ExerciseState] = Form(single("state" -> of[ExerciseState]))
 
-  private def takeSlice[T](collection: Seq[T], page: Int): Seq[T] = collection slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, collection.size))
+  private def takeSlice[T](collection: Seq[T], page: Int): Seq[T] = collection slice(Math.max(0, (page - 1) * stdStep), Math.min(page * stdStep, collection.size))
 
-  private def numOfPages(completeSize: Int) = (completeSize / STEP) + 2
+  private def numOfPages(completeSize: Int) = (completeSize / stdStep) + 2
 
   // Admin
 
@@ -74,11 +73,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   }
 
   def adminCollectionsList(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureCompleteColls map { allColls =>
-        // FIXME: get rid of cast...
-        Ok(views.html.admin.collExes.adminCollectionList(admin, allColls.map(_.wrapped).asInstanceOf[Seq[CompleteCollectionWrapper]], toolMain))
-      }
+    implicit request => toolMain.futureCompleteColls map (allColls => Ok(views.html.admin.collExes.adminCollectionList(admin, allColls, toolMain)))
   }
 
   def adminNewCollectionForm(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
@@ -137,10 +132,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       toolMain.futureCompleteColls map { allColls =>
         val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
 
-        // FIXME: remove cast ...
-        val collsToDisplay = takeSlice(filteredColls, page) map (_.wrapped.asInstanceOf[CompleteCollectionWrapper])
-
-        Ok(views.html.core.userCollectionsOverview(user, collsToDisplay, toolMain, page, filteredColls.size / STEP + 1))
+        Ok(views.html.core.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
       }
   }
 
@@ -187,7 +179,9 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def correctLive(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.correctAbstract(user, collId, id, isLive = true) map {
-        case Failure(error)  => BadRequest(toolMain.onLiveCorrectionError(error))
+        case Failure(error)  =>
+          Logger.error("There has been an internal correction error:", error)
+          BadRequest(toolMain.onLiveCorrectionError(error))
         case Success(result) => result match {
           case Right(jsValue) => Ok(jsValue)
           case Left(html)     => Ok(html)

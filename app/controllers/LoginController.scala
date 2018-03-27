@@ -53,7 +53,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     }
 
     val onRead: String => Future[Result] = { userName =>
-      repo.userByName(userName) map (res => Ok(Json.obj("userexists" -> res.isDefined, "username" -> userName)))
+      repo.userByName(userName) map (res => Ok(Json.obj("userexists" -> res.isDefined, usernameName -> userName)))
     }
 
     singleStrForm(nameName).bindFromRequest.fold(onError, onRead)

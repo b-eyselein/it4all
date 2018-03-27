@@ -37,7 +37,7 @@ object FormMappings {
   val updateRoleForm: Form[UpdateRoleForm] = Form(
     mapping(
       nameName -> nonEmptyText,
-      RoleName -> of[Role]
+      roleName -> of[Role]
     )(UpdateRoleForm.apply)(UpdateRoleForm.unapply)
   )
 

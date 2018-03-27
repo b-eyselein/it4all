@@ -10,16 +10,6 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-// Wrapper classes
-
-class MindmapCompleteExWrapper(override val compEx: MindmapExercise) extends CompleteExWrapper {
-
-  override type Ex = MindmapExercise
-
-  override type CompEx = MindmapExercise
-
-}
-
 // Classes for use
 
 case class MindmapExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState)
@@ -32,8 +22,6 @@ case class MindmapExercise(override val id: Int, override val title: String, ove
   override def templateFilename: String = ???
 
   override def sampleFilename: String = ???
-
-  override def wrapped: CompleteExWrapper = ???
 
   override def hasPart(partType: MindmapExPart): Boolean = true
 

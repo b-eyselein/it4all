@@ -101,6 +101,6 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
     views.html.admin.idExes.idExercisePreview(user, read, this)
 
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
-    views.html.admin.idExes.idExerciseAdminListView(admin, exes map (_.wrapped), this)
+    views.html.admin.idExes.idExerciseAdminListView(admin, exes, this)
 
 }

@@ -21,7 +21,7 @@ abstract class FixedExToolMain(urlPart: String)(implicit ec: ExecutionContext) e
 
   type CompExType <: CompleteEx[ExType]
 
-  type ReadType <: Wrappable
+  type ReadType
 
   type Tables <: ExerciseTableDefs[ExType, CompExType]
 

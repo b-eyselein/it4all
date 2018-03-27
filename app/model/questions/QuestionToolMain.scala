@@ -89,8 +89,6 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   override def onSubmitCorrectionResult(user: User, result: QuestionResult): Html = ???
 
-  override def onLiveCorrectionError(error: Throwable): JsValue = ???
-
   override def onLiveCorrectionResult(result: QuestionResult): JsValue = result.forJson
 
   // Correction

@@ -1,4 +1,4 @@
-@(user: model.User, completeExercises: Seq[model.CompleteExWrapper], toolMainObject: model.toolMains.AToolMain)
+@(user: model.User, completeExercises: Seq[model.CompleteEx[_ <: model.Exercise]], toolMainObject: model.toolMains.AToolMain)
 
 @scripts = {
     @* Javascript Routes *@
@@ -32,7 +32,7 @@
                 </tr>
             </thead>
             <tbody>
-            @for(exercise <- completeExercises.map(_.compEx.ex)) {
+            @for(exercise <- completeExercises.map(_.ex)) {
                 <tr id="tr1_@exercise.id">
                     <td>@exercise.id</td>
                     <td>

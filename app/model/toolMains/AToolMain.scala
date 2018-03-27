@@ -37,11 +37,11 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   lazy val exerciseRootDir: Path = Paths.get(rootDir, urlPart)
 
-  def sampleDirForExercise(id: Int): Path = exerciseRootDir / SAMPLE_SUB_DIRECTORY / String.valueOf(id)
+  def sampleDirForExercise(id: Int): Path = exerciseRootDir / sampleSubDir / String.valueOf(id)
 
-  def templateDirForExercise(id: Int): Path = exerciseRootDir / TEMPLATE_SUB_DIRECTORY / String.valueOf(id)
+  def templateDirForExercise(id: Int): Path = exerciseRootDir / templateSubDir / String.valueOf(id)
 
-  def solutionDirForExercise(username: String, id: Int): Path = exerciseRootDir / SOLUTIONS_SUB_DIRECTORY / username / String.valueOf(id)
+  def solutionDirForExercise(username: String, id: Int): Path = exerciseRootDir / solutionsSubDir / username / String.valueOf(id)
 
 
 }

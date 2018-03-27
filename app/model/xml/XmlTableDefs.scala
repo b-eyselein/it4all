@@ -10,14 +10,6 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class XmlCompleteExWrapper(val compEx: XmlExercise) extends CompleteExWrapper {
-
-  override type Ex = XmlExercise
-
-  override type CompEx = XmlExercise
-
-}
-
 case class XmlExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
                        grammarDescription: String, sampleGrammar: String, rootNode: String)
   extends Exercise with PartsCompleteEx[XmlExercise, XmlExPart] {
@@ -46,8 +38,6 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
     case Some(DocumentCreationXmlPart) => "Erstellen Sie ein XML-Dokument zu folgender Grammatik:"
     case Some(GrammarCreationXmlPart)  => "Erstellen Sie eine DTD zu folgender Beschreibung. Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen."
   }
-
-  override def wrapped: CompleteExWrapper = new XmlCompleteExWrapper(this)
 
 }
 

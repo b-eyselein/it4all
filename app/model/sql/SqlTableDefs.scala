@@ -3,7 +3,6 @@ package model.sql
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
-import model.core.MyWrapper
 import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
@@ -16,27 +15,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.Try
 
-// Wrapper classes
-
-class SqlCompleteExWrapper(override val compEx: SqlCompleteEx) extends CompleteExWrapper {
-
-  override type Ex = SqlExercise
-
-  override type CompEx = SqlCompleteEx
-
-}
-
-class SqlScenarioWrapper(override val coll: SqlCompleteScenario) extends CompleteCollectionWrapper {
-
-  override type Ex = SqlExercise
-
-  override type CompEx = SqlCompleteEx
-
-  override type Coll = SqlScenario
-
-  override type CompColl = SqlCompleteScenario
-
-}
 
 // Classes for use
 
@@ -58,16 +36,13 @@ case class SqlCompleteScenario(override val coll: SqlScenario, override val exer
        |  <div class="col-md-4">${coll.shortName}</div>
        |</div>""".stripMargin)
 
-  override def wrapped: MyWrapper = new SqlScenarioWrapper(this)
 }
 
 case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteExInColl[SqlExercise] {
 
-  override def tags: Seq[SqlExTag] = (ex.tags split TagJoinChar).toSeq flatMap SqlExTag.byString
+  override def tags: Seq[SqlExTag] = (ex.tags split tagJoinChar).toSeq flatMap SqlExTag.byString
 
   override def preview: Html = views.html.sql.sqlExPreview(this)
-
-  override def wrapped: CompleteExWrapper = new SqlCompleteExWrapper(this)
 
 }
 

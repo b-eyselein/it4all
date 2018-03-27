@@ -13,16 +13,6 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-// Wrapper classes
-
-class WebCompleteExWrapper(override val compEx: WebCompleteEx) extends CompleteExWrapper {
-
-  override type Ex = WebExercise
-
-  override type CompEx = WebCompleteEx
-
-}
-
 // Classes for use
 
 case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask], phpTasks: Seq[PHPCompleteTask] = Seq.empty)
@@ -43,8 +33,6 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
     case JsPart   => jsTasks.map(_.maxPoints).sum
     case PHPPart  => phpTasks.map(_.maxPoints).sum
   }
-
-  override def wrapped: CompleteExWrapper = new WebCompleteExWrapper(this)
 
 }
 

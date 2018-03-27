@@ -3,7 +3,6 @@ package model.questions
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
-import model.core.MyWrapper
 import model.persistence.ExerciseCollectionTableDefs
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
@@ -19,28 +18,6 @@ object QuestionHelper {
   val MIN_ANSWERS = 2
   val STD_ANSWERS = 4
   val MAX_ANSWERS = 8
-
-}
-
-// Wrapper classes
-
-class CompleteQuestionWrapper(override val compEx: CompleteQuestion) extends CompleteExWrapper {
-
-  override type Ex = Question
-
-  override type CompEx = CompleteQuestion
-
-}
-
-class CompleteQuizWrapper(override val coll: CompleteQuiz) extends CompleteCollectionWrapper {
-
-  override type Ex = Question
-
-  override type CompEx = CompleteQuestion
-
-  override type Coll = Quiz
-
-  override type CompColl = CompleteQuiz
 
 }
 
@@ -61,7 +38,6 @@ case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends Co
     case None               => exercises
   }
 
-  override def wrapped: MyWrapper = new CompleteQuizWrapper(this)
 }
 
 case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends CompleteExInColl[Question] {
@@ -81,8 +57,6 @@ case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends Complete
   private def previewAnswer(answer: Answer): String =
     s"""<div class="col-md-2">${answer.correctness.name}</div>
        |<div class="col-md-10">${answer.text} </div>""".stripMargin
-
-  override def wrapped: CompleteExWrapper = new CompleteQuestionWrapper(this)
 
 }
 

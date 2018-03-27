@@ -5,7 +5,7 @@ text: >
   Implementieren Sie die folgende Funktion <code>ggt(a, b)</code> die den größten gemeinsamen Teiler
   zweier Zahlen berechnet!
 status: APPROVED
-functionName: ggt
+functionname: ggt
 inputTypes:
 - {id: 1, name: a, type: int}
 - {id: 2, name: b, type: int}

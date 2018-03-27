@@ -55,7 +55,7 @@ abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionCo
     val ret: Future[UserExOverviewContent] = for {
       numOfExes <- tables.futureNumOfExes
       exes <- tables.futureCompleteExesForPage(page)
-      exesAndRoutes: Seq[ExAndRoute] = exes map (ex => ExAndRoute(ex.wrapped, exerciseRoutes(ex)))
+      exesAndRoutes: Seq[ExAndRoute] = exes map (ex => ExAndRoute(ex, exerciseRoutes(ex)))
     } yield UserExOverviewContent(numOfExes, exesAndRoutes)
 
     ret

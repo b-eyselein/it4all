@@ -7,13 +7,13 @@ trait Consts {
   val attrsName   = "attributes"
   val authorName  = "author"
 
-  val correct = "correct"
-val correctnessName = "correctness"
+  val correct         = "correct"
+  val correctnessName = "correctness"
 
   val errorName        = "error"
   val exercisesName    = "exercises"
   val exerciseTypeName = "exerciseType"
-  val explanationName = "explanation"
+  val explanationName  = "explanation"
 
   val learnerSolutionName = "learnerSolution"
 
@@ -28,21 +28,22 @@ val correctnessName = "correctness"
   val pwName  = "passwort"
   val pw2Name = "passwort_wieder"
 
-  val RoleName = "role"
+  val roleName = "role"
 
-  val SAMPLE_SUB_DIRECTORY    = "samples"
-  val stateName               = "status"
-  val STEP                    = 10
-  val SOLUTIONS_SUB_DIRECTORY = "solutions"
+  val sampleSubDir    = "samples"
+  val stateName       = "status"
+  val stdStep         = 10
+  val solutionsSubDir = "solutions"
+  val successName     = "success"
 
-  val TagJoinChar            = "#"
-  val TEMPLATE_SUB_DIRECTORY = "templates"
-  val TEST_COUNT_NAME        = "testCount"
-  val textName               = "text"
-  val titleName              = "title"
+  val tagJoinChar    = "#"
+  val templateSubDir = "templates"
+  val textName       = "text"
+  val titleName      = "title"
+
+  val usernameName =  "username"
 
   val valueName = "value"
-  val VARS_NAME = "vars"
 
 }
 

@@ -5,7 +5,7 @@ text: >
   Erstellen Sie ein Aktivitätsdiagramm, der prüft ob der übergebene String ein Palindrom darstellt! Ein leerer String ist für diese Aufgabe auch ein Palindrom.
   Ihr Programm soll Groß- und Kleinschreibung ignorieren, d. h. 'a' == 'A'.
 status: APPROVED
-functionName: is_palindrome
+functionname: is_palindrome
 inputTypes:
 - {id: 1, name: word, type: string}
 outputType: boolean

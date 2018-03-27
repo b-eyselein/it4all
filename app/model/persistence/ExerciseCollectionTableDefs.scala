@@ -103,7 +103,6 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
         false
     }
 
-
   // Deletion
 
   def futureDeleteExercise(collId: Int, id: Int)(implicit ec: ExecutionContext): Future[Boolean] =
@@ -125,7 +124,6 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
     def collectionId = column[Int]("collection_id")
 
   }
-
 
   abstract class CollectionExSolutionsTable[S <: Solution](tag: Tag, name: String) extends Table[S](tag, name) {
 

@@ -11,16 +11,6 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-// Wrapper classes
-
-class BlanksCompleteExWrapper(override val compEx: BlanksCompleteExercise) extends CompleteExWrapper {
-
-  override type Ex = BlanksExercise
-
-  override type CompEx = BlanksCompleteExercise
-
-}
-
 // Classes for user
 
 case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]) extends PartsCompleteEx[BlanksExercise, BlanksExPart] {
@@ -28,8 +18,6 @@ case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]
   override def preview: Html = views.html.blanks.blanksPreview(this)
 
   override def hasPart(partType: BlanksExPart): Boolean = true
-
-  override def wrapped: CompleteExWrapper = new BlanksCompleteExWrapper(this)
 
 }
 
