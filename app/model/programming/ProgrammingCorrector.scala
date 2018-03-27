@@ -4,99 +4,59 @@ import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
 import java.nio.file.{Files, Path}
 
 import com.github.dockerjava.api.model.AccessMode
-import model.core.FileUtils
-import model.docker.DockerConnector.MaxRuntime
 import model.docker._
-import model.{JsonFormat, User}
-import play.api.Logger
 import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Try}
 
-object ProgrammingCorrector extends FileUtils with JsonFormat {
+object ProgrammingCorrector extends model.core.FileUtils {
 
-  val ScriptName = "script.py"
+  private val ScriptName     = "script.py"
+  private val TestDataFile   = "testconfig.json"
+  private val resultFileName = "result.json"
 
-  val ImplementationsFolder = "implementation"
+  private val filePermissions: java.util.Set[PosixFilePermission] = PosixFilePermissions.fromString("rwxrwxrwx")
 
-  val ValidationFolder = "validation"
+  def correct(exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, solutionSaved: Boolean, completeTestData: Seq[CompleteTestData],
+              solutionTargetDir: Path, exerciseResourcesFolder: Path)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {
 
-  val TestDataFile = "testconfig.json"
+    val testDataFileContent = Json.prettyPrint(TestDataJsonFormat.dumpTestDataToJson(exercise, completeTestData))
 
-  val resultFileName = "result.json"
+    writeAndCopyFiles(language.fileEnding, implementation, testDataFileContent, solutionTargetDir, exerciseResourcesFolder) map { _ =>
 
-  val FilePermissions: java.util.Set[PosixFilePermission] = PosixFilePermissions.fromString("rwxrwxrwx")
+      // FIXME: what if image does not exist?
+      val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(
+        imageName = language.dockerImageName,
+        entryPoint = Seq("timeout", DockerConnector.maxRuntimeInSeconds, DockerConnector.DefaultWorkingDir + "/script." + language.fileEnding),
+        dockerBinds = Seq(new DockerBind(solutionTargetDir, DockerConnector.DefaultWorkingDir, AccessMode.rw))
+      )
 
+      val futureResults: Future[Try[Seq[ProgEvalResult]]] = containerResult map {
 
-  def validateTestdata(user: User, exercise: ProgCompleteEx, implementation: String, solSaved: Boolean, language: ProgLanguage,
-                       testData: Seq[CompleteTestData], solutionTargetDir: Path, exerciseResourcesFolder: Path)
-                      (implicit ec: ExecutionContext): Future[ProgValidationCompleteResult] = {
+        case RunContainerSuccess => ResultsFileJsonFormat.readResultFile(solutionTargetDir, resultFileName, completeTestData)
 
-    correct(exercise, language, solutionTargetDir, implementation, testData, exerciseResourcesFolder) map {
-      res => ProgValidationCompleteResult(implementation, solSaved, res)
+        case failure: RunContainerFailure => Failure(failure)
+
+      }
+
+      futureResults map { resultTry: Try[Seq[ProgEvalResult]] =>
+        resultTry map (results => ProgCompleteResult(implementation, solutionSaved, results))
+      }
     }
 
   }
 
-  def correctImplementation(user: User, exercise: ProgCompleteEx, implementation: String, solSaved: Boolean, language: ProgLanguage,
-                            testData: Seq[CompleteTestData], solutionTargetDir: Path, exerciseResourcesFolder: Path)
-                           (implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
+  private def writeAndCopyFiles(fileEnding: String, impl: String, testDataFileContent: String, solTargetDir: Path, exerciseResFolder: Path) = for {
 
-    correct(exercise, language, solutionTargetDir, implementation, testData, exerciseResourcesFolder) map {
-      res => ProgImplementationCompleteResult(implementation, solSaved, res)
-    }
+    solutionWrite: Path <- write(solTargetDir / s"solution.$fileEnding", impl)
 
-  }
+    testDataWrite: Path <- write(solTargetDir / TestDataFile, testDataFileContent)
 
+    scriptCopy: Path <- copy(exerciseResFolder / ScriptName, solTargetDir / ScriptName)
 
-  private def correct(exercise: ProgCompleteEx, language: ProgLanguage, targetDir: Path, script: String, completeTestData: Seq[CompleteTestData], exerciseResourcesFolder: Path)
-                     (implicit ec: ExecutionContext): Future[Seq[ProgEvalResult]] = {
+    permissionChange: Path <- Try(Files.setPosixFilePermissions(solTargetDir / ScriptName, filePermissions))
 
-    val scriptTargetPath = targetDir / ScriptName
-
-    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName))
-
-    val workingDir = DockerConnector.DefaultWorkingDir
-
-    val fileTries: Try[(Path, Path, Path, Path)] = for {
-      solutionWrite: Path <- write(targetDir / s"solution.${language.fileEnding}", script)
-
-      testDataWrite: Path <- write(targetDir / TestDataFile, Json.prettyPrint(TestDataJsonFormat.dumpTestDataToJson(exercise.ex, exercise.inputTypes, completeTestData)))
-
-      scriptCopy: Path <- copy(exerciseResourcesFolder / ScriptName, scriptTargetPath)
-
-      permissionChange: Path <- Try(Files.setPosixFilePermissions(scriptTargetPath, FilePermissions))
-    } yield (solutionWrite, testDataWrite, scriptCopy, permissionChange)
-
-    fileTries match {
-      case Failure(error) =>
-        Logger.error("There has been an error writing a file: ", error)
-        Future(Seq.empty)
-      case Success(_)     =>
-        // Check if image exists
-        futureImageExists flatMap {
-          _ =>
-            DockerConnector.runContainer(
-              imageName = language.dockerImageName,
-              entryPoint = Seq("timeout", MaxRuntime + "s", s"$workingDir/script." + language.fileEnding),
-              dockerBinds = Seq(new DockerBind(targetDir, workingDir, AccessMode.rw))
-            )
-        } map {
-          // Error while waiting for container
-          case exc: RunContainerException =>
-            Logger.error("Error while running container:", exc.error)
-            Seq(ProgEvalFailed)
-
-          case RunContainerTimeOut => Seq(TimeOut)
-
-          // Error while running script with status code other than 0 or 124 (from timeout!)
-          case RunContainerError(_, msg) => Seq(SyntaxError(reason = msg))
-
-          case RunContainerSuccess => ResultsFileJsonFormat.readResultFile(targetDir, resultFileName, completeTestData)
-        }
-    }
-  }
-
+  } yield (solutionWrite, testDataWrite, scriptCopy, permissionChange)
 
 }

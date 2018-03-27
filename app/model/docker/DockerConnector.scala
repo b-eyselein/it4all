@@ -3,13 +3,12 @@ package model.docker
 import java.util.concurrent.TimeUnit
 
 import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.model.{Bind, Frame, Image}
+import com.github.dockerjava.api.model.{Bind, Frame}
 import com.github.dockerjava.core.DockerClientBuilder
 import com.github.dockerjava.core.command.{LogContainerResultCallback, PullImageResultCallback, WaitContainerResultCallback}
 import play.api.Logger
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
@@ -26,7 +25,7 @@ class LogContainerCallback extends LogContainerResultCallback {
 
 object DockerConnector {
 
-  val MaxRuntime = 2
+  val maxRuntimeInSeconds = "2s"
 
   val MaxWaitTimeInSeconds = 3
 
@@ -39,9 +38,8 @@ object DockerConnector {
   private val DockerClient: DockerClient = DockerClientBuilder.getInstance.build
 
   def imageExists(imageName: String): Boolean = {
-    val images: mutable.Seq[Image] = DockerClient.listImagesCmd.exec.asScala
-
-    images map (_.getRepoTags) filter (_ != null) exists (_ contains imageName)
+    // FIXME: run in future?
+    DockerClient.listImagesCmd.exec.asScala map (_.getRepoTags) filter (_ != null) exists (_ contains imageName)
   }
 
   def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Boolean] =
@@ -86,7 +84,7 @@ object DockerConnector {
 
                 val result: RunContainerResult = statusCode match {
                   case SuccessStatusCode => RunContainerSuccess
-                  case TimeOutStatusCode => RunContainerTimeOut
+                  case TimeOutStatusCode => RunContainerTimeOut(MaxWaitTimeInSeconds)
                   case _                 => RunContainerError(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
                 }
 

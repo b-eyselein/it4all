@@ -61,7 +61,7 @@ object RoseCorrector extends FileUtils {
           DockerConnector.runContainer(Image, entryPoint, dockerBinds, deleteContainerAfterRun = false)
         } map {
           // Error while waiting for container
-          case RunContainerTimeOut => RoseTimeOutResult
+          case RunContainerTimeOut(_) => RoseTimeOutResult
 
           // Error while running script with status code other than 0 or 124 (from timeout!)
           case RunContainerError(_, msg) => RoseSyntaxErrorResult(msg)

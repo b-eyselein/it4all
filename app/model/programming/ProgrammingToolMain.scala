@@ -16,7 +16,7 @@ import play.twirl.api.Html
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future, duration}
 import scala.language.implicitConversions
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 
 object ProgrammingToolMain {
 
@@ -117,17 +117,20 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx): Future[Try[ProgCompleteResult]] = futureSaveSolution(sol) flatMap { solutionSaved =>
 
     val (language, implementation, testData) = sol match {
-      case tds: TestDataSolution =>
-        val implementation = exercise.sampleSolutions.head.solution
-        (ProgLanguage.STANDARD_LANG, implementation, tds.completeCommitedTestData)
-
-      case is@(_: ImplementationSolution | _: ActivityDiagramSolution) => (sol.language, is.solution, exercise.sampleTestData)
+      case tds: TestDataSolution                                       =>
+        (ProgLanguage.STANDARD_LANG, exercise.sampleSolutions.head.solution, tds.completeCommitedTestData)
+      case is@(_: ImplementationSolution | _: ActivityDiagramSolution) =>
+        (sol.language, is.solution, exercise.sampleTestData)
     }
 
-    ProgrammingCorrector.correctImplementation(user, exercise, implementation, solutionSaved, language, testData,
+    val correctionResult: Try[Future[Try[ProgCompleteResult]]] = ProgrammingCorrector.correct(exercise, language, implementation, solutionSaved, testData,
       solutionTargetDir = solutionDirForExercise(user.username, exercise.ex.id), exerciseResourcesFolder)
 
-  } map (x => Success(x))
+    correctionResult match {
+      case Success(futureRes) => futureRes
+      case Failure(error)     => Future(Failure(error))
+    }
+  }
 
   // Views
 
@@ -163,7 +166,8 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, result: ProgCompleteResult): Html = views.html.core.correction(result, result.render, user, this)
+  override def onSubmitCorrectionResult(user: User, result: ProgCompleteResult): Html =
+    views.html.core.correction(result, result.render, user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 

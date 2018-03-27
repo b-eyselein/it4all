@@ -5,14 +5,14 @@ import play.api.libs.json.{JsArray, JsString, JsValue, Json}
 
 object TestDataJsonFormat {
 
-  def dumpTestDataToJson(exercise: ProgExercise, inputTypes: Seq[ProgInput], testData: Seq[CompleteTestData]): JsValue = {
-    val sortedInputTypes: Seq[ProgInput] = inputTypes sortBy (_.id)
+  def dumpTestDataToJson(exercise: ProgCompleteEx, testData: Seq[CompleteTestData]): JsValue = {
+    val sortedInputTypes: Seq[ProgInput] = exercise.inputTypes sortBy (_.id)
 
     Json.obj(
-      "functionname" -> JsString(exercise.functionName),
+      "functionname" -> JsString(exercise.ex.functionName),
       "variableTypes" -> JsArray(sortedInputTypes map (_.inputType.typeName) map JsString),
-      "outputType" -> exercise.outputType.typeName,
-      "testdata" -> dumpTestData(testData, sortedInputTypes, exercise.outputType)
+      "outputType" -> exercise.ex.outputType.typeName,
+      "testdata" -> dumpTestData(testData, sortedInputTypes, exercise.ex.outputType)
     )
   }
 

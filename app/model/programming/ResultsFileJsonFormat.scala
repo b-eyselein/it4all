@@ -6,22 +6,23 @@ import model.Enums.SuccessType
 import model.JsonFormat
 import model.core.FileUtils
 import model.programming.ProgConsts.{InputsName, idName}
-import play.api.Logger
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 object ResultsFileJsonFormat extends JsonFormat with FileUtils {
 
-  def readResultFile(targetDir: Path, resultFileName: String, completeTestData: Seq[CompleteTestData]): Seq[ExecutionResult] = readAll(targetDir / resultFileName) match {
-    case Failure(error) =>
-      Logger.error("TODO: catch error", error)
-      throw new Exception("TODO: Fehler behandeln!")
+  def readResultFile(targetDir: Path, resultFileName: String, completeTestData: Seq[CompleteTestData]): Try[Seq[ExecutionResult]] =
+    readAll(targetDir / resultFileName) map { resultFileContent =>
 
-    case Success(resultFileContent) =>
-      val jsonResult = Json.parse(resultFileContent)
-      jsonResult.asArray(_.asObj flatMap (matchDataWithJson(_, completeTestData, targetDir))) getOrElse Seq.empty
-  }
+      // FIXME: refactor...
+
+      val res: Option[Seq[ExecutionResult]] = Json.parse(resultFileContent).asArray {
+        jsValue: JsValue => jsValue.asObj flatMap (matchDataWithJson(_, completeTestData, targetDir))
+      }
+
+      res getOrElse Seq.empty
+    }
 
   private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[CompleteTestData], targetDir: Path) = readDataFromJson(jsObj) map {
     case (id, successType, funcName, result, inputs) =>

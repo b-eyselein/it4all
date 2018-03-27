@@ -9,7 +9,7 @@ import play.twirl.api.{Html, HtmlFormat}
 
 // Types of complete results
 
-sealed trait ProgCompleteResult extends CompleteResult[ProgEvalResult] {
+case class ProgCompleteResult(implementation: String, solutionSaved: Boolean, results: Seq[ProgEvalResult]) extends CompleteResult[ProgEvalResult] {
 
   override type SolType = String
 
@@ -26,13 +26,7 @@ sealed trait ProgCompleteResult extends CompleteResult[ProgEvalResult] {
     "results" -> results.map(_.toJson)
   )
 
-}
-
-case class ProgImplementationCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[ProgEvalResult]) extends ProgCompleteResult
-
-case class ProgValidationCompleteResult(sampleSolution: String, solutionSaved: Boolean, results: Seq[ProgEvalResult]) extends ProgCompleteResult {
-
-  override def learnerSolution: String = ""
+  override def learnerSolution: String = implementation
 
 }
 
