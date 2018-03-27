@@ -4,11 +4,9 @@ import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
 import java.nio.file.{Files, Path}
 
 import com.github.dockerjava.api.model.AccessMode
-import model.Enums.SuccessType
 import model.core.FileUtils
 import model.docker.DockerConnector.MaxRuntime
 import model.docker._
-import model.programming.ProgConsts._
 import model.{JsonFormat, User}
 import play.api.Logger
 import play.api.libs.json._
@@ -26,51 +24,27 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
   val TestDataFile = "testconfig.json"
 
-  val ResultFileName = "result.json"
+  val resultFileName = "result.json"
 
   val FilePermissions: java.util.Set[PosixFilePermission] = PosixFilePermissions.fromString("rwxrwxrwx")
 
-  private def dumpTestDataToJson(exercise: ProgExercise, inputTypes: Seq[ProgInput], testData: Seq[CompleteTestData]): JsValue = {
-    val sortedInputTypes = inputTypes sortBy (_.id)
 
-    val testdata: JsValue = JsArray(testData sortBy (_.testData.id) map { td =>
-
-      val inputs: Seq[JsValue] = td.inputs zip sortedInputTypes map {
-        case (sampleTestData, dataType) => dataType.inputType.toJson(sampleTestData.input)
-      }
-
-      Json.obj(
-        "id" -> td.testData.id,
-        "inputs" -> JsArray(inputs),
-        "awaited" -> exercise.outputType.toJson(td.testData.output)
-      )
-    })
-
-    Json.obj(
-      "functionname" -> JsString(exercise.functionName),
-      "variableTypes" -> JsArray(sortedInputTypes map (_.inputType.typeName) map JsString),
-      "outputType" -> exercise.outputType.typeName,
-      "testdata" -> testdata
-    )
-  }
-
-  def validateTestdata(user: User, exercise: ProgCompleteEx, solution: TestDataSolution, solSaved: Boolean, solutionTargetDir: Path, exerciseResourcesFolder: Path)
+  def validateTestdata(user: User, exercise: ProgCompleteEx, implementation: String, solSaved: Boolean, language: ProgLanguage,
+                       testData: Seq[CompleteTestData], solutionTargetDir: Path, exerciseResourcesFolder: Path)
                       (implicit ec: ExecutionContext): Future[ProgValidationCompleteResult] = {
 
-    val language = ProgLanguage.STANDARD_LANG
+    correct(exercise, language, solutionTargetDir, implementation, testData, exerciseResourcesFolder) map {
+      res => ProgValidationCompleteResult(implementation, solSaved, res)
+    }
 
-    // FIXME: get matching sample solution...
-    val script = exercise.sampleSolutions.head.solution
-
-    correct(exercise, language, solutionTargetDir, script, solution.completeCommitedTestData, exerciseResourcesFolder) map (res => ProgValidationCompleteResult.apply(solSaved, res))
   }
 
-
-  def correctImplementation(user: User, exercise: ProgCompleteEx, learnerSolution: String, solSaved: Boolean, language: ProgLanguage, solutionTargetDir: Path, exerciseResourcesFolder: Path)
+  def correctImplementation(user: User, exercise: ProgCompleteEx, implementation: String, solSaved: Boolean, language: ProgLanguage,
+                            testData: Seq[CompleteTestData], solutionTargetDir: Path, exerciseResourcesFolder: Path)
                            (implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
 
-    correct(exercise, language, solutionTargetDir, learnerSolution, exercise.sampleTestData, exerciseResourcesFolder) map {
-      res => ProgImplementationCompleteResult(learnerSolution, solSaved, res)
+    correct(exercise, language, solutionTargetDir, implementation, testData, exerciseResourcesFolder) map {
+      res => ProgImplementationCompleteResult(implementation, solSaved, res)
     }
 
   }
@@ -88,9 +62,9 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
     val fileTries: Try[(Path, Path, Path, Path)] = for {
       solutionWrite: Path <- write(targetDir / s"solution.${language.fileEnding}", script)
 
-      testDataWrite: Path <- write(targetDir / TestDataFile, Json.prettyPrint(dumpTestDataToJson(exercise.ex, exercise.inputTypes, completeTestData)))
+      testDataWrite: Path <- write(targetDir / TestDataFile, Json.prettyPrint(TestDataJsonFormat.dumpTestDataToJson(exercise.ex, exercise.inputTypes, completeTestData)))
 
-      scriptCopy: Path <- copy(/*ProgToolObject.exerciseResourcesFolder */ exerciseResourcesFolder / ScriptName, scriptTargetPath)
+      scriptCopy: Path <- copy(exerciseResourcesFolder / ScriptName, scriptTargetPath)
 
       permissionChange: Path <- Try(Files.setPosixFilePermissions(scriptTargetPath, FilePermissions))
     } yield (solutionWrite, testDataWrite, scriptCopy, permissionChange)
@@ -119,48 +93,10 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
           // Error while running script with status code other than 0 or 124 (from timeout!)
           case RunContainerError(_, msg) => Seq(SyntaxError(reason = msg))
 
-          case RunContainerSuccess => readResultFile(targetDir, completeTestData)
+          case RunContainerSuccess => ResultsFileJsonFormat.readResultFile(targetDir, resultFileName, completeTestData)
         }
     }
   }
-
-  private def readResultFile(targetDir: Path, completeTestData: Seq[CompleteTestData]) = readAll(targetDir / ResultFileName) match {
-    case Failure(error) =>
-      Logger.error("TODO: catch error", error)
-      throw new Exception("TODO: Fehler behandeln!")
-
-    case Success(resultFileContent) =>
-      val jsonResult = Json.parse(resultFileContent)
-      jsonResult.asArray(_.asObj flatMap (matchDataWithJson(_, completeTestData, targetDir))) getOrElse Seq.empty
-  }
-
-  private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[CompleteTestData], targetDir: Path) = readDataFromJson(jsObj) map {
-    case (id, successType, funcName, result, inputs) =>
-
-      val evaluated = funcName + "(" + inputs.sortBy(_._1).map(_._2).mkString(", ") + ")"
-
-      val consoleOutput: Option[String] = readAll(targetDir / s"output$id.txt") map Some.apply getOrElse None
-
-      val testData: CompleteTestData = completeTestData find (_.testData.id == id) match {
-        case None    => throw new Exception("FEHLER!")
-        case Some(x) => x
-      }
-
-      ExecutionResult(successType, evaluated, testData, result, consoleOutput)
-  }
-
-  private def readDataFromJson(jsObj: JsObject): Option[(Int, SuccessType, String, String, Seq[(String, String)])] = for {
-    id <- jsObj.intField(idName)
-    success <- jsObj.enumField("success", str => Try(SuccessType.valueOf(str)) getOrElse SuccessType.NONE)
-    functionName <- jsObj.stringField("functionName")
-    result <- jsObj.forgivingStringField("result")
-    inputs <- jsObj.arrayField(InputsName, _.asObj flatMap readInputsFromJson)
-  } yield (id, success, functionName, result, inputs)
-
-  private def readInputsFromJson(inputJsObj: JsObject): Option[(String, String)] = for {
-    maybeVariable <- inputJsObj.stringField("variable")
-    maybeValue <- inputJsObj.forgivingStringField("value")
-  } yield (maybeVariable, maybeValue)
 
 
 }

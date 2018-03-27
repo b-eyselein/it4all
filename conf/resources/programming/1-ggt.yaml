@@ -10,9 +10,12 @@ inputTypes:
 - {id: 1, name: a, type: int}
 - {id: 2, name: b, type: int}
 outputType: int
-
 sampleSolutions:
 - language: PYTHON_3
+  base: |
+    def ggt(a, b):
+      # {1}
+      pass
   sample: |
     def ggt(a, b):
       while b != 0:
@@ -20,31 +23,37 @@ sampleSolutions:
         a = b
         b = h
       return a
+  testMain: |
+    # noinspection PyUnresolvedReferences
+    from solution import ggt
+
+    def convert_input(input_json):
+        return input_json
+
+    def test(numbers, awaited_output):
+        gotten_output = ggt(numbers[0], numbers[1])
+        return gotten_output, gotten_output == awaited_output
 sampleTestData:
 - id: 1
   inputs:
   - {id: 1, input: 12}
   - {id: 2, input: 4}
   output: 4
-
 - id: 2
   inputs:
   - {id: 1, input: 3}
   - {id: 2, input: 7}
   output: 1
-
 - id: 3
   inputs:
   - {id: 1, input: 64}
   - {id: 2, input: 46}
   output: 2
-
 - id: 4
   inputs:
   - {id: 1, input: 777}
   - {id: 2, input: 11}
   output: 11
-
 - id: 5
   inputs:
   - {id: 1, input: 15}

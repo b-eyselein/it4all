@@ -16,7 +16,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[ProgCompleteEx] = for {
       functionName <- yamlObject.stringField(FunctionName)
-      outputType <- yamlObject.enumField(OutputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+      outputType <- yamlObject.enumField(outputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
       inputTypes <- yamlObject.arrayField(InputTypesName, ProgInpuptTypeYamlFormat(baseValues._1).read)
 
@@ -62,8 +62,10 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       language <- yamlObject.enumField(LanguageName, ProgLanguage.valueOf) map (_ getOrElse PYTHON_3)
+      base <- yamlObject.stringField(baseName)
       sample <- yamlObject.stringField(sampleName)
-    } yield ProgSampleSolution(exerciseId, language, sample)
+      testMain <- yamlObject.stringField(testMainName)
+    } yield ProgSampleSolution(exerciseId, language, base, sample, testMain)
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
       LanguageName -> pss.language.name,
@@ -76,7 +78,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[CompleteSampleTestData] = for {
       id <- yamlObject.intField(idName)
-      output <- yamlObject.forgivingStringField(OUTPUT_NAME)
+      output <- yamlObject.forgivingStringField(outputName)
       inputTries <- yamlObject.arrayField(InputsName, TestDataInputYamlFormat(id, exerciseId).read)
     } yield {
       for (inputFailure <- inputTries._2)
@@ -88,7 +90,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def write(cstd: CompleteSampleTestData): YamlValue = YamlObj(
       idName -> cstd.testData.id,
-      OUTPUT_NAME -> cstd.testData.output,
+      outputName -> cstd.testData.output,
       InputsName -> YamlArr(cstd.inputs map TestDataInputYamlFormat(cstd.testData.id, cstd.testData.exerciseId).write)
     )
 

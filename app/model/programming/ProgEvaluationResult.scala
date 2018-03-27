@@ -30,7 +30,7 @@ sealed trait ProgCompleteResult extends CompleteResult[ProgEvalResult] {
 
 case class ProgImplementationCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[ProgEvalResult]) extends ProgCompleteResult
 
-case class ProgValidationCompleteResult(solutionSaved: Boolean, results: Seq[ProgEvalResult]) extends ProgCompleteResult {
+case class ProgValidationCompleteResult(sampleSolution: String, solutionSaved: Boolean, results: Seq[ProgEvalResult]) extends ProgCompleteResult {
 
   override def learnerSolution: String = ""
 
@@ -117,9 +117,9 @@ case class ExecutionResult(success: SuccessType, evaluated: String, completeTest
   override def toJson: JsValue = Json.obj(
     idName -> completeTestData.testData.id,
     correct -> JsBoolean(success == SuccessType.COMPLETE),
-    EvaluatedName -> evaluated,
-    AwaitedName -> completeTestData.testData.output,
-    GottenName -> result
+    evaluatedName -> evaluated,
+    awaitedName -> completeTestData.testData.output,
+    gottenName -> result
   )
 
 }

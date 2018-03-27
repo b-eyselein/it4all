@@ -88,7 +88,9 @@ CREATE TABLE IF NOT EXISTS prog_input_types (
 CREATE TABLE IF NOT EXISTS prog_samples (
   exercise_id INT,
   language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
+  base        TEXT,
   solution    TEXT,
+  test_main   TEXT,
 
   PRIMARY KEY (exercise_id, language),
   FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)

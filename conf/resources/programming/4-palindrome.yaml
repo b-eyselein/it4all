@@ -5,18 +5,32 @@ text: >
   Erstellen Sie ein Aktivitätsdiagramm, der prüft ob der übergebene String ein Palindrom darstellt! Ein leerer String ist für diese Aufgabe auch ein Palindrom.
   Ihr Programm soll Groß- und Kleinschreibung ignorieren, d. h. 'a' == 'A'.
 status: APPROVED
-functionName: palindrom
+functionName: is_palindrome
 inputTypes:
 - {id: 1, name: word, type: string}
 outputType: boolean
 sampleSolutions:
 - language: PYTHON_3
+  base: |
+    def is_palindrome(word):
+      # {1}
+      pass
   sample: |
-    def isPalindrome(word):
+    def is_palindrome(word):
       for i in range(len(word) // 2):
         if word[i] != word[-i-1]:
           return False
       return True
+  testMain: |
+    # noinspection PyUnresolvedReferences
+    from solution import average
+
+    def convert_input(input_json):
+        return input_json
+
+    def test(my_list, awaited_output):
+        gotten_output = average(my_list)
+        return gotten_output, gotten_output == awaited_output
 sampleTestData:
 - id: 1
   inputs:

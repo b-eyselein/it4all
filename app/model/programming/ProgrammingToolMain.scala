@@ -90,7 +90,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CompleteCommitedTestData] = for {
     testId <- tdJsObj.intField(idName)
     inputs <- readInputs(tdJsObj, testId, user)
-    output <- tdJsObj.stringField(OUTPUT_NAME)
+    output <- tdJsObj.stringField(outputName)
   } yield CompleteCommitedTestData(CommitedTestData(testId, id, user.username, output, ExerciseState.RESERVED), inputs)
 
 
@@ -115,19 +115,28 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   // Correction
 
   override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx): Future[Try[ProgCompleteResult]] = futureSaveSolution(sol) flatMap { solutionSaved =>
-    sol match {
+    val (language, implementation, testData) = sol match {
       case tds: TestDataSolution =>
-        ProgrammingCorrector.validateTestdata(user, exercise, tds, solutionSaved,
-          solutionTargetDir = solutionDirForExercise(user.username, exercise.ex.id), exerciseResourcesFolder)
+        val language = ProgLanguage.STANDARD_LANG
+        val implementation = exercise.sampleSolutions.head.solution
+        val testData = tds.completeCommitedTestData
+        (language, implementation, testData)
 
       case is: ImplementationSolution =>
-        ProgrammingCorrector.correctImplementation(user, exercise, is.solution, solutionSaved, sol.language,
-          solutionTargetDir = solutionDirForExercise(user.username, exercise.ex.id), exerciseResourcesFolder)
+        val language = sol.language
+        val implementation = is.solution
+        val testData = exercise.sampleTestData
+        (language, implementation, testData)
 
       case ads: ActivityDiagramSolution =>
-        ProgrammingCorrector.correctImplementation(user, exercise, ads.solution, solutionSaved, sol.language,
-          solutionTargetDir = solutionDirForExercise(user.username, exercise.ex.id), exerciseResourcesFolder)
+        val language = sol.language
+        val implementation = ads.solution
+        val testData = exercise.sampleTestData
+        (language, implementation, testData)
     }
+
+    ProgrammingCorrector.correctImplementation(user, exercise, implementation, solutionSaved, language, testData,
+      solutionTargetDir = solutionDirForExercise(user.username, exercise.ex.id), exerciseResourcesFolder)
 
   } map (x => Success(x))
 

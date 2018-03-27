@@ -81,7 +81,7 @@ case class ProgExercise(id: Int, title: String, author: String, text: String, st
 
 case class ProgInput(id: Int, exerciseId: Int, inputName: String, inputType: ProgDataType)
 
-case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
+case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, base: String, solution: String, testMain: String)
 
 sealed trait TestData {
 
@@ -315,7 +315,11 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def language = column[ProgLanguage]("language")
 
+    def base = column[String]("base")
+
     def solution = column[String]("solution")
+
+    def testMain = column[String]("test_main")
 
 
     def pk = primaryKey("pk", (exerciseId, language))
@@ -323,7 +327,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (exerciseId, language, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
+    def * = (exerciseId, language, base, solution, testMain) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
 
   }
 

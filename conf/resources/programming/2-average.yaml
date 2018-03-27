@@ -9,16 +9,29 @@ functionName: average
 inputTypes:
 - {id: 1, name: my_list, type: list<int>}
 outputType: float
-
 sampleSolutions:
 - language: PYTHON
+  base: |
+    def average(my_list):
+      # {1}
+      pass
   sample: |
     def average(my_list):
-        length = len(my_list)
-        if length == 0:
-            return "Fehler"
-        else:
-            return sum(my_list) / length
+      length = len(my_list)
+      if length == 0:
+          return "Fehler"
+      else:
+          return sum(my_list) / length
+  testMain: |
+    # noinspection PyUnresolvedReferences
+    from solution import average
+
+    def convert_input(input_json):
+        return input_json
+
+    def test(my_list, awaited_output):
+        gotten_output = average(my_list)
+        return gotten_output, gotten_output == awaited_output
 sampleTestData:
 - id: 1
   inputs:

@@ -3,14 +3,13 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model._
 import model.core._
-import model.programming.{NewProgYamlProtocol, ProgLanguage, ProgrammingToolMain}
+import model.programming.{ProgLanguage, ProgrammingToolMain}
 import model.toolMains.{IdExerciseToolMain, ToolList}
 import model.web.{HtmlPart, WebSolution, WebToolMain}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.ws._
 import play.api.mvc._
 import play.twirl.api.Html
-import views.html.programming.testNewFormat
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -83,15 +82,6 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
     views.html.admin.idExes.idExerciseAdminMain(admin, stats, toolMain)
 
   // Other routes
-
-  def progNewTest: EssentialAction = withAdmin { admin =>
-    implicit request => {
-      NewProgYamlProtocol.testRead(progToolMain.exerciseResourcesFolder) match {
-        case Success((fileContent, classTest)) => Ok(testNewFormat.render(admin, fileContent, classTest))
-        case Failure(error)                    => BadRequest("There has been an error: " + error.getMessage)
-      }
-    }
-  }
 
   def progGetDeclaration(lang: String): EssentialAction = withUser { _ =>
     implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
