@@ -56,6 +56,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def correctAbstract(user: User, id: Int, partStr: String, isLive: Boolean)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[Either[Html, JsValue]]] =
     partTypeFromUrl(partStr) match {
+      // FIXME: change return type of function!
       case None       => Future(Failure(NoSuchPartException(partStr)))
       case Some(part) => readSolution(user, id, part, isLive) match {
         case None => Future(Failure(SolutionTransferException))

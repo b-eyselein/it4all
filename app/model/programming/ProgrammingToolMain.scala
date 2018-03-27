@@ -115,24 +115,13 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   // Correction
 
   override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx): Future[Try[ProgCompleteResult]] = futureSaveSolution(sol) flatMap { solutionSaved =>
+
     val (language, implementation, testData) = sol match {
       case tds: TestDataSolution =>
-        val language = ProgLanguage.STANDARD_LANG
         val implementation = exercise.sampleSolutions.head.solution
-        val testData = tds.completeCommitedTestData
-        (language, implementation, testData)
+        (ProgLanguage.STANDARD_LANG, implementation, tds.completeCommitedTestData)
 
-      case is: ImplementationSolution =>
-        val language = sol.language
-        val implementation = is.solution
-        val testData = exercise.sampleTestData
-        (language, implementation, testData)
-
-      case ads: ActivityDiagramSolution =>
-        val language = sol.language
-        val implementation = ads.solution
-        val testData = exercise.sampleTestData
-        (language, implementation, testData)
+      case is@(_: ImplementationSolution | _: ActivityDiagramSolution) => (sol.language, is.solution, exercise.sampleTestData)
     }
 
     ProgrammingCorrector.correctImplementation(user, exercise, implementation, solutionSaved, language, testData,
