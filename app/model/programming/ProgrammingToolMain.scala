@@ -41,7 +41,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override type Tables = ProgTableDefs
 
-  override type PartType = ProgExPart
+  override type PartType = ProgrammingExPart
 
   override type SolType = ProgSolution
 
@@ -57,18 +57,22 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override val consts: Consts = ProgConsts
 
-  override val exParts: Seq[ProgExPart] = ProgExParts.values
+  override val exParts: Seq[ProgrammingExPart] = ProgrammingExParts.values
 
   // TODO: create Form mapping ...
   override implicit val compExForm: Form[ProgExercise] = null
+
+  private val implExtractorRegex = "# \\{12?\\}([\\S\\s]*)# \\{12?\\}".r
+
+  private val actDiagExtractorRegex = "# \\{1?2\\}([\\S\\s]*)# \\{1?2\\}".r
 
   // Reading solution from requests
 
   override def futureSaveSolution(sol: ProgSolution): Future[Boolean] = tables.futureSaveSolution(sol)
 
-  override def readSolutionFromPostRequest(user: User, id: Int, part: ProgExPart)(implicit request: Request[AnyContent]): Option[ProgSolution] = None
+  override def readSolutionFromPostRequest(user: User, id: Int, part: ProgrammingExPart)(implicit request: Request[AnyContent]): Option[ProgSolution] = None
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgExPart): Option[ProgSolution] = {
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgrammingExPart): Option[ProgSolution] = {
     val language = PYTHON_3
 
     part match {
@@ -78,8 +82,8 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
       case Implementation => jsValue.asObj flatMap { jsObj =>
         for {
-          language <- jsObj.enumField(LanguageName, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
-          implementation <- jsObj.stringField(ImplementationName)
+          language <- jsObj.enumField(languageName, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
+          implementation <- jsObj.stringField(implementationName)
         } yield ImplementationSolution(user.username, id, language, implementation)
       }
 
@@ -89,22 +93,20 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CompleteCommitedTestData] = for {
     testId <- tdJsObj.intField(idName)
-    inputs <- readInputs(tdJsObj, testId, user)
+    inputs <- tdJsObj.arrayField(inputName, inpJsValue => inpJsValue.asObj flatMap (inpJsObj => readInput(inpJsObj, testId, user)))
     output <- tdJsObj.stringField(outputName)
   } yield CompleteCommitedTestData(CommitedTestData(testId, id, user.username, output, ExerciseState.RESERVED), inputs)
 
 
-  private def readInputs(tdJsObj: JsObject, testId: Int, user: User) = tdJsObj.arrayField(InputsName, _.asObj flatMap { inpJsObj =>
-    for {
-      id <- inpJsObj.intField(idName)
-      input <- inpJsObj.stringField(InputName)
-    } yield CommitedTestDataInput(id, testId, id, input, user.username)
-  })
+  private def readInput(inpJsObj: JsObject, testId: Int, user: User): Option[CommitedTestDataInput] = for {
+    id <- inpJsObj.intField(idName)
+    input <- inpJsObj.stringField(inputName)
+  } yield CommitedTestDataInput(id, testId, id, input, user.username)
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
-    ProgExercise(id, title = "", author = "", text = "", state, functionName = "", outputType = ProgDataTypes.STRING),
+    ProgExercise(id, title = "", author = "", text = "", state, folderIdentifier = "", base = "", maybeClassName = None, functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING),
     inputTypes = Seq.empty, sampleSolutions = Seq.empty, sampleTestData = Seq.empty
   )
 
@@ -117,14 +119,23 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx): Future[Try[ProgCompleteResult]] = futureSaveSolution(sol) flatMap { solutionSaved =>
 
     val (language, implementation, testData) = sol match {
-      case tds: TestDataSolution                                       =>
-        (ProgLanguage.STANDARD_LANG, exercise.sampleSolutions.head.solution, tds.completeCommitedTestData)
-      case is@(_: ImplementationSolution | _: ActivityDiagramSolution) =>
-        (sol.language, is.solution, exercise.sampleTestData)
+      case tds: TestDataSolution => (ProgLanguage.STANDARD_LANG, exercise.sampleSolutions.head.solution, tds.completeCommitedTestData)
+
+      case is: ImplementationSolution => (sol.language, implExtractorRegex.replaceFirstIn(exercise.ex.base, is.solution), exercise.sampleTestData)
+
+      case ads: ActivityDiagramSolution =>
+
+        val base = actDiagExtractorRegex.findFirstIn(exercise.ex.base) getOrElse ""
+
+        val solution = actDiagExtractorRegex.replaceFirstIn(exercise.ex.base, exercise.addIndent(ads.solution))
+
+        println(solution)
+
+        (sol.language, solution, exercise.sampleTestData)
     }
 
-    val correctionResult: Try[Future[Try[ProgCompleteResult]]] = ProgrammingCorrector.correct(exercise, language, implementation, solutionSaved, testData,
-      solutionTargetDir = solutionDirForExercise(user.username, exercise.ex.id), exerciseResourcesFolder)
+    val correctionResult: Try[Future[Try[ProgCompleteResult]]] =
+      ProgrammingCorrector.correct(user, exercise, language, implementation, solutionSaved, testData, this)
 
     correctionResult match {
       case Success(futureRes) => futureRes
@@ -134,7 +145,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   // Views
 
-  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart, maybeOldSolution: Option[ProgSolution]): Html = part match {
+  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgrammingExPart, maybeOldSolution: Option[ProgSolution]): Html = part match {
     case TestdataCreation =>
       val oldTestData: Seq[CompleteCommitedTestData] = maybeOldSolution match {
         case Some(tds: TestDataSolution) => tds.completeCommitedTestData
@@ -143,26 +154,23 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
       views.html.programming.testDataCreation(user, exercise, oldTestData, this)
 
     case Implementation =>
-      val declaration: String = maybeOldSolution map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
+      val declaration: String = maybeOldSolution map (_.solution) getOrElse {
+        implExtractorRegex.findFirstMatchIn(exercise.ex.base) map (_.group(1).trim()) getOrElse exercise.ex.base
+        // FIXME: remove comments like '# {2}'!
+      }
 
       val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
+
+      val exRest: Html = views.html.programming.progExerciseRest(exercise)
 
       views.html.core.exercise2Rows(user, this, ProgExOptions, exercise, exRest, exScript, declaration, Implementation)
 
     case ActivityDiagram =>
-      // FIXME: use old soluton!
+      // TODO: use old soluton!
       views.html.umlActivity.activityDrawing.render(user, exercise, this)
   }
 
   override def renderEditRest(exercise: ProgCompleteEx): Html = ???
-
-  private val exRest: Html = Html(
-    s"""<div class="input-group">
-       |  <span class="input-group-addon">Sprache</span>
-       |  <select class="form-control" id="langSelect" onchange="changeProgLanguage('${controllers.routes.ExerciseController.progGetDeclaration("")}');">
-       |    ${ProgLanguage.values map (lang => s"""<option value="${lang.name}" ${lang.isSelected(ProgLanguage.STANDARD_LANG)}>${lang.languageName} </option>)""") mkString "\n"}
-       |  </select>
-       |</div>""".stripMargin)
 
   // Handlers for results
 

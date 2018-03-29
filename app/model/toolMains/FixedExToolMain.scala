@@ -1,6 +1,6 @@
 package model.toolMains
 
-import java.nio.file.{Files, Path}
+import java.nio.file.Path
 
 import model.core._
 import model.persistence.ExerciseTableDefs
@@ -9,9 +9,8 @@ import model.{CompleteEx, Exercise, User}
 import net.jcazevedo.moultingyaml._
 import play.twirl.api.Html
 
-import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 abstract class FixedExToolMain(urlPart: String)(implicit ec: ExecutionContext) extends AToolMain(urlPart) {
 
@@ -43,15 +42,18 @@ abstract class FixedExToolMain(urlPart: String)(implicit ec: ExecutionContext) e
 
   def yamlString: Future[String]
 
-  def readImports: Seq[Try[ReadType]] = Files.newDirectoryStream(exerciseResourcesFolder).asScala
-    .map(_.toAbsolutePath)
-    .filter(_.getFileName.toString endsWith ".yaml")
-    .map { filePath: Path =>
-      readAll(filePath) flatMap { yamlFileContent: String =>
-        val yamlValue: YamlValue = yamlFileContent.parseYaml
-        yamlFormat.read(yamlValue)
-      }
-    }.toSeq
+  def readImports: Seq[Try[ReadType]] = subDirectoriesOf(exerciseResourcesFolder) map { subDirectory =>
+    val filesToRead = filesInDirectory(subDirectory) sortBy (_.getFileName)
+
+    filesToRead find (_.getFileName.toString endsWith ".yaml") match {
+      case None                 => Failure(new Exception(s"There is no yaml file in folder ${subDirectory.toString}"))
+      case Some(filePath: Path) =>
+        readAll(filePath) flatMap { yamlFileContent: String =>
+          val yamlValue: YamlValue = yamlFileContent.parseYaml
+          yamlFormat.read(yamlValue)
+        }
+    }
+  }
 
   // DB Operations
 

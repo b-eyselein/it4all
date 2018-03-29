@@ -5,7 +5,9 @@ text: >
   Implementieren Sie die folgende Funktion <code>ggt(a, b)</code> die den größten gemeinsamen Teiler
   zweier Zahlen berechnet!
 status: APPROVED
+identifier: ggt
 functionname: ggt
+indentLevel: 0
 inputTypes:
 - {id: 1, name: a, type: int}
 - {id: 2, name: b, type: int}
@@ -14,8 +16,7 @@ sampleSolutions:
 - language: PYTHON_3
   base: |
     def ggt(a, b):
-      # {1}
-      pass
+      return 0
   sample: |
     def ggt(a, b):
       while b != 0:
@@ -23,16 +24,6 @@ sampleSolutions:
         a = b
         b = h
       return a
-  testMain: |
-    # noinspection PyUnresolvedReferences
-    from solution import ggt
-
-    def convert_input(input_json):
-        return input_json
-
-    def test(numbers, awaited_output):
-        gotten_output = ggt(numbers[0], numbers[1])
-        return gotten_output, gotten_output == awaited_output
 sampleTestData:
 - id: 1
   inputs:

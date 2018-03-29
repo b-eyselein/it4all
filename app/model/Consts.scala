@@ -12,6 +12,7 @@ trait Consts {
 
   val errorName        = "error"
   val exercisesName    = "exercises"
+  val exerciseIdName   = "exerciseId"
   val exerciseTypeName = "exerciseType"
   val explanationName  = "explanation"
 
@@ -41,7 +42,7 @@ trait Consts {
   val textName       = "text"
   val titleName      = "title"
 
-  val usernameName =  "username"
+  val usernameName = "username"
 
   val valueName = "value"
 

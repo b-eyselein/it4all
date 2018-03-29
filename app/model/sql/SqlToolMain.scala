@@ -98,8 +98,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override def adminRenderEditRest(collOpt: Option[SqlCompleteScenario]): Html = new Html(
     s"""<div class="form-group row">
        |  <div class="col-sm-12">
-       |    <label for="${SqlConsts.SHORTNAME_NAME}">Name der DB:</label>
-       |    <input class="form-control" name="${SqlConsts.SHORTNAME_NAME}" id="${SqlConsts.SHORTNAME_NAME}" required ${collOpt map (coll => s"""value="${coll.coll.shortName}"""") getOrElse ""})>
+       |    <label for="${SqlConsts.shortNameName}">Name der DB:</label>
+       |    <input class="form-control" name="${SqlConsts.shortNameName}" id="${SqlConsts.shortNameName}" required ${collOpt map (coll => s"""value="${coll.coll.shortName}"""") getOrElse ""})>
        |  </div>
        |</div>""".stripMargin)
 

@@ -32,7 +32,7 @@ object ProgDataTypes {
 
   sealed abstract class GenericProgDataType extends ProgDataType
 
-  case object VOID extends NonGenericProgDataType("void", str => JsString("void"), _ => "void")
+  case object VOID extends NonGenericProgDataType("void", _ => JsString("void"), _ => "void")
 
   case object INTEGER extends NonGenericProgDataType("int", str => JsNumber(string2IntBigDecimal(str)), _ => "0")
 

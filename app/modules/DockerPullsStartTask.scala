@@ -7,7 +7,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object DockerPullsStartTask {
 
-  val imagesToPull: Seq[String] = Seq("python:3", "beyselein/rose:latest")
+  val imagesToPull: Seq[String] = Seq(
+    "beyselein/rose:latest",
+    "beyselein/python_prog_tester:latest"
+  )
 
   def pullImages(): Unit = imagesToPull.filterNot(DockerConnector.imageExists).foreach(image => {
     Logger.warn(s"Pulling docker image $image")

@@ -12,22 +12,17 @@ object ProgLanguage {
 
   def valueOf(str: String): Option[ProgLanguage] = values find (_.name == str)
 
-  val COMMA = ", "
-
-  def buildToEvaluate(functionName: String, inputs: Seq[String]): String = functionName + "(" + (inputs mkString COMMA) + ")"
-
-  val PointOfA = 97
+  def buildToEvaluate(functionname: String, inputs: Seq[String]): String = functionname + "(" + (inputs mkString ", ") + ")"
 
 }
 
 trait ProgLanguage extends Selectable[ProgLanguage] {
 
-  val name           : String
-  val languageName   : String
-  val aceName        : String
-  val dockerImageName: String
-  val fileEnding     : String
-  val declaration    : String
+  val name        : String
+  val languageName: String
+  val aceName     : String
+  val fileEnding  : String
+  val declaration : String
 
   def buildFunction(exercise: ProgCompleteEx): String
 
@@ -39,11 +34,10 @@ trait ProgLanguage extends Selectable[ProgLanguage] {
 
 object PYTHON_3 extends ProgLanguage {
 
-  override val name           : String = "PYTHON_3"
-  override val languageName   : String = "Python 3"
-  override val aceName        : String = "python"
-  override val dockerImageName: String = "python:3"
-  override val fileEnding     : String = "py"
+  override val name        : String = "PYTHON_3"
+  override val languageName: String = "Python 3"
+  override val aceName     : String = "python"
+  override val fileEnding  : String = "py"
 
   override val declaration: String =
     """if __name__ == '__main__':
@@ -51,11 +45,11 @@ object PYTHON_3 extends ProgLanguage {
       |  n = int(input())""".stripMargin
 
   override def buildFunction(exercise: ProgCompleteEx): String = {
-    s"""def ${exercise.ex.functionName}(${buildParameters(exercise.inputTypes)}):
+    s"""def ${exercise.ex.functionname}(${buildParameters(exercise.inputTypes)}):
        |  return 0""".stripMargin
   }
 
-  override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionName + "(" + buildParameters(exercise.inputTypes) + ")"
+  override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionname + "(" + buildParameters(exercise.inputTypes) + ")"
 
   override def buildParameters(inputsTypes: Seq[ProgInput]): String = inputsTypes sortBy (_.id) map (_.inputName) mkString ", "
 

@@ -66,7 +66,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   }
 
   def correctLive(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request => {
+    implicit request =>
       toolMain.correctAbstract(user, id, partStr, isLive = true) map {
         case Failure(error)  =>
           Logger.error("There has been an internal correction error:", error)
@@ -76,7 +76,6 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
           case Left(html)     => Ok(html)
         }
       }
-    }
   }
 
   // Views

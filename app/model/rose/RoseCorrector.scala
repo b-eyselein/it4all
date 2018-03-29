@@ -36,29 +36,29 @@ object RoseCorrector extends FileUtils {
     val optionsFilePath = solutionTargetDir / optionsFileName
 
 
-    val fileWriteTries: Try[(Path, Path)] = for {
+    val fileWriteTries: Try[(Path, Path, Path)] = for {
       // FIXME: write exercise options file...
       solFileTry <- write(solutionFilePath, buildSolutionFileContent(exercise, learnerSolution, language))
       actionFileTry <- createEmptyFile(actionFilePath)
-      optionsFiletry <- write(optionsFilePath, buildOptionFileContent(exercise))
-    } yield (solFileTry, actionFileTry)
+      optionsFileTry <- write(optionsFilePath, buildOptionFileContent(exercise))
+    } yield (solFileTry, actionFileTry, optionsFileTry)
 
     val dockerBinds: Seq[DockerBind] = Seq(
-      new DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir + "/" + solutionFileName),
-      new DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir + "/" + actionsFileName),
-      new DockerBind(optionsFilePath, DockerConnector.DefaultWorkingDir + "/" + optionsFileName)
+      DockerBindUtils.mountFileTo(solutionFilePath, DockerConnector.DefaultWorkingDir + "/" + solutionFileName),
+      DockerBindUtils.mountFileTo(actionFilePath, DockerConnector.DefaultWorkingDir + "/" + actionsFileName),
+      DockerBindUtils.mountFileTo(optionsFilePath, DockerConnector.DefaultWorkingDir + "/" + optionsFileName)
     )
 
     val entryPoint = Seq("python3", "sp_main.py")
 
     fileWriteTries match {
       case Failure(e) =>
-        Logger.error("Some files could not be whttp://localhost:63342/api/file/?file=/home/bjorn/workspace/it4all/app/model/rose/RoseExYamlProtocol.scala&line=29ritten:", e)
+        Logger.error("Some files could not be written:", e)
         Future(RoseEvalFailed)
       case Success(_) =>
 
         futureImageExists flatMap { _ =>
-          DockerConnector.runContainer(Image, entryPoint, dockerBinds, deleteContainerAfterRun = false)
+          DockerConnector.runContainer(Image, Some(entryPoint), dockerBinds, deleteContainerAfterRun = false)
         } map {
           // Error while waiting for container
           case RunContainerTimeOut(_) => RoseTimeOutResult

@@ -38,20 +38,33 @@ function contentIsEmpty(content) {
 class PythonBuilder extends AbstractLanguageBuilder {
 
     constructor() {
-        super(2);
+        super(4);
     }
 
     /**
-     * @param {string} functionName
-     * @param {string} methodParameters
-     * @param {string} returnType
-     * @param {string} returnVariable
+     * @param {object} exerciseParameters
+     * @param {string} exerciseParameters.methodDeclaration
+     * @param {string} exerciseParameters.methodName
+     * @param {string} exerciseParameters.methodParameters
+     * @param {object} exerciseParameters.output
+     * @param {string} exerciseParameters.output.outputType
+     * @param {string} exerciseParameters.output.output
+     *
      * @param {string[]} content
      *
      * @returns {string}
      */
-    get_core(functionName, methodParameters, returnType, returnVariable, content) {
-        let definition = 'def ' + functionName + '(' + methodParameters + '):';
+    get_core(exerciseParameters, content) {
+        // FIXME: base...
+
+        let definition = exerciseParameters.methodDeclaration;
+
+        let functionName = exerciseParameters.methodName;
+        let methodParameters = exerciseParameters.methodParameters;
+        // let returnType = exerciseParameters.output.outputType;
+        // let returnVariable = exerciseParameters.output.output;
+
+        // let definition = 'def ' + functionName + '(' + methodParameters + '):';
         let contentToAdd = contentIsEmpty(content) ? '  ' : this.addIdentation(content);
         // let retStatement = ' '.repeat(this.standardIndent) + 'return ' + returnVariable;
 
@@ -129,16 +142,24 @@ class JavaBuilder extends AbstractLanguageBuilder {
         super(4);
     }
 
-    /**
-     * @param {string} functionName
-     * @param {string} methodParameters
-     * @param {string} returnType
-     * @param {string} returnVariable
-     * @param {string[]} content
-     *
-     * @returns {string}
-     */
-    get_core(functionName, methodParameters, returnType, returnVariable, content) {
+
+    /*
+    * @param {object} exerciseParameters
+    * @param {string} exerciseParameters.methodName
+    * @param {string} exerciseParameters.methodParameters
+    * @param {object} exerciseParameters.output
+    * @param {string} exerciseParameters.output.outputType
+    * @param {string} exerciseParameters.output.output
+    * @param {string[]} content
+    *
+    * @returns {string}
+    */
+    get_core(exerciseParameters, content) {
+        let functionName = exerciseParameters.methodName;
+        let methodParameters = exerciseParameters.methodParameters;
+        let returnType = exerciseParameters.output.outputType;
+        let returnVariable = exerciseParameters.output.output;
+
         let definition = 'public ' + returnType + ' ' + functionName + '(' + methodParameters + ') {';
 
         let contentToAdd = contentIsEmpty(content) ? ' '.repeat(this.standardIndent) : this.addIdentation(content);

@@ -137,10 +137,7 @@ $(document).ready(function () {
 
     //SET start- and endNode
     function preparePaper() {
-
-        const functionDeclaration = EXERCISE_PARAMETERS.methodName + '(' + EXERCISE_PARAMETERS.methodParameters + ')';
-
-        let start = createStartCircle('start', 'startId', 10, 10, functionDeclaration);
+        let start = createStartCircle('start', 'startId', 10, 10, EXERCISE_PARAMETERS.methodDisplay);
         let end = createEndCircle('end', 'endId', paperJQ.width() - 100, paperJQ.height() - 100, EXERCISE_PARAMETERS.output.outputType + ' ' + EXERCISE_PARAMETERS.output.output);
 
         let actionNodeStart = createActionInput(150, 100);

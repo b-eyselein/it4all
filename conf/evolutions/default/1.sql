@@ -69,7 +69,11 @@ CREATE TABLE IF NOT EXISTS prog_exercises (
   ex_text       TEXT,
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
+  identifier    VARCHAR(30),
+  base          TEXT,
+  class_name    VARCHAR(30),
   function_name VARCHAR(30),
+  indent_level  INT,
   output_type   VARCHAR(30)
 );
 
@@ -90,7 +94,6 @@ CREATE TABLE IF NOT EXISTS prog_samples (
   language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
   base        TEXT,
   solution    TEXT,
-  test_main   TEXT,
 
   PRIMARY KEY (exercise_id, language),
   FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)

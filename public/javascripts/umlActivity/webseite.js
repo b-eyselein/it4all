@@ -4,20 +4,18 @@
 */
 let loaded_graph;
 
-
 /**
  *
  * @param result
  * @param {int} result.id
  * @param {boolean} result.correct
- * @param {string} result.evaluated
  * @param {string} result.awaited
  * @param {string} result.gotten
  */
 function renderProgResult(result) {
     return `
 <div class="panel panel-${result.correct ? 'success' : 'danger'}">
-    <div class="panel-heading">${result.id}. Test von <code>${result.evaluated}</code> war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
+    <div class="panel-heading">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
     <div class="panel-body">
         <p>Erwartet: <code>${result.awaited.length === 0 ? '""' : result.awaited}</code></p>
         <p>Bekommen: <code>${result.gotten.length === 0 ? '""' : result.gotten}</code></p>

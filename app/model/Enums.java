@@ -6,7 +6,7 @@ import scala.Some;
 
 public abstract class Enums {
 
-    public interface Selectable<T extends Selectable<T>> {
+    public static interface Selectable<T extends Selectable<T>> {
 
         default String isSelected(T that) {
             return this == that ? "selected" : "";

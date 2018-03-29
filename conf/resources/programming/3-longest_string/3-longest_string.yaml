@@ -5,16 +5,17 @@ text: >
   Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden.
   Ignorieren Sie dabei Groß- und Kleinschreibung.
 status: APPROVED
+identifier: longest_string
 functionname: longest_string
+indentLevel: 0
 inputTypes:
 - {id: 1, name: my_list, type: list<string>}
 outputType: string
 sampleSolutions:
-- language: PYTHON
+- language: PYTHON_3
   base: |
     def longest_string(my_list):
-      # {1}
-      pass
+      return ''
   sample: |
     def longest_string(my_list):
       longest = a[0]
@@ -24,16 +25,6 @@ sampleSolutions:
           longest = string
 
       return longest
-  testMain: |
-    # noinspection PyUnresolvedReferences
-    from solution import average
-
-    def convert_input(input_json):
-        return input_json
-
-    def test(my_list, awaited_output):
-        gotten_output = average(my_list)
-        return gotten_output, gotten_output == awaited_output
 sampleTestData:
 - id: 1
   inputs:

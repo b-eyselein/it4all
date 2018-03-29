@@ -13,16 +13,6 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-// Wrapper classes
-
-class RoseCompleteExWrapper(override val compEx: RoseCompleteEx) extends CompleteExWrapper {
-
-  override type Ex = RoseExercise
-
-  override type CompEx = RoseCompleteEx
-
-}
-
 // Classes for use
 
 case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampleSolution: Seq[RoseSampleSolution]) extends PartsCompleteEx[RoseExercise, RoseExPart] {
@@ -64,8 +54,6 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
     declaration(false) + NewLine + sampleSol.split(NewLine).map(" " * 4 + _).mkString(NewLine)
   }
 
-  override def wrapped: CompleteExWrapper = new RoseCompleteExWrapper(this)
-
 }
 
 // Case classes for tables
@@ -89,7 +77,7 @@ case class RoseSolution(username: String, exerciseId: Int, part: RoseExPart, sol
 
 // Tables
 
-class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RoseExercise, RoseCompleteEx, RoseSolution, RoseExPart] {
 
   import profile.api._

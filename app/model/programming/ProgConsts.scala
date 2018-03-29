@@ -8,27 +8,37 @@ object ProgConsts extends Consts {
 
   val baseName = "base"
 
+  val classNameName = "className"
+
   val evaluatedName = "evaluated"
 
-  val FunctionName = "functionName"
+  val functionNameName = "functionname"
 
   val gottenName = "gotten"
 
-  val ImplementationName = "implementation"
-  val InputName          = "input"
-  val InputsName         = "inputs"
-  val InputTypeName      = "type"
-  val InputTypesName     = "inputTypes"
+  val identifierName     = "identifier"
+  val implementationName = "implementation"
+  val indentLevelName    = "indentLevel"
+  val inputName          = "input"
+  val inputsName         = "inputs"
+  val inputTypeName      = "type"
+  val inputTypesName     = "inputTypes"
 
-  val LanguageName = "language"
+  val languageName = "language"
 
   val outputName     = "output"
   val outputTypeName = "outputType"
 
+  val resultName = "result"
+
   val sampleName          = "sample"
   val sampleSolutionsName = "sampleSolutions"
   val sampleTestDataName  = "sampleTestData"
+  val stdoutName          = "stdout"
 
+  val testIdName   = "testId"
   val testMainName = "testMain"
+
+  val variableName = "variable"
 
 }

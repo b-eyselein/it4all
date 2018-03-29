@@ -36,6 +36,8 @@
     <script>
             // Parameters for Task
             const EXERCISE_PARAMETERS = {
+                methodDisplay: '@Html(completeEx.activityDiagramDisplay)',
+                methodDeclaration: '@Html(completeEx.activityDiagramDeclaration)',
                 methodName: '@completeEx.ex.functionname',
                 methodParameters: '@Html( model.programming.ProgLanguage.STANDARD_LANG.buildParameters(completeEx.inputTypes))',
                 output: {
@@ -112,6 +114,7 @@
 
                             <div id="generationAlerts"></div>
 
+                            @views.html.programming.progExerciseRest(completeEx)
 
                             <div class="form-group">
                                 <button type="button" class="btn btn-default btn-block" onclick="toggleFullscreen()">

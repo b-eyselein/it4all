@@ -72,8 +72,8 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
   override def adminRenderEditRest(collOpt: Option[CompleteQuiz]): Html = new Html(
     s"""<div class="form-group row">
        |  <div class="col-sm-12">
-       |    <label for="${QuestionConsts.ThemeName}">Thema:</label>
-       |    <input class="form-control" name="${QuestionConsts.ThemeName}" id="${QuestionConsts.ThemeName}" required ${collOpt map (coll => s"""value="${coll.coll.theme}"""") getOrElse ""})>
+       |    <label for="${QuestionConsts.themeName}">Thema:</label>
+       |    <input class="form-control" name="${QuestionConsts.themeName}" id="${QuestionConsts.themeName}" required ${collOpt map (coll => s"""value="${coll.coll.theme}"""") getOrElse ""})>
        |  </div>
        |</div>""".stripMargin)
 

@@ -13,11 +13,12 @@ object SqlConsts extends CollectionConsts {
 
   val NewLine = "\n"
 
+  val sampleName  = "sample"
   val samplesName = "samples"
 
   def samplesArrayName(count: Int = -1): String = arrayName(samplesName)(if (count > 0) Some(count) else None)
 
-  val SHORTNAME_NAME   = "shortName"
+  val shortNameName    = "shortName"
   val SELECT_ALL_DUMMY = "SELECT * FROM "
   val SHOW_ALL_TABLES  = "SHOW TABLES"
 

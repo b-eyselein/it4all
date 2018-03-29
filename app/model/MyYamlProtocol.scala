@@ -89,9 +89,9 @@ object MyYamlProtocol {
 
     def forgivingStringField(fieldName: String): Try[String] = someField(fieldName) map (_.forgivingStr)
 
-    def optStringField(fieldName: String): Option[Try[String]] = someField(fieldName) match {
-      case Failure(_)     => None
-      case Success(field) => Some(field.asStr)
+    def optStringField(fieldName: String): Try[Option[String]] = someField(fieldName) match {
+      case Failure(_)     => Success(None)
+      case Success(field) => field.asStr map Some.apply
     }
 
     def optForgivingStringField(fieldName: String): Option[String] = optField(fieldName, _.forgivingStr)

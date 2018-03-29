@@ -1,9 +1,8 @@
 package model.programming
 
-import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
-import java.nio.file.{Files, Path}
+import java.nio.file.Path
 
-import com.github.dockerjava.api.model.AccessMode
+import model.User
 import model.docker._
 import play.api.libs.json._
 
@@ -12,29 +11,35 @@ import scala.util.{Failure, Try}
 
 object ProgrammingCorrector extends model.core.FileUtils {
 
-  private val ScriptName     = "script.py"
-  private val TestDataFile   = "testconfig.json"
-  private val resultFileName = "result.json"
+  private val resultFileName   = "result.json"
+  private val testDataFileName = "testdata.json"
 
-  private val filePermissions: java.util.Set[PosixFilePermission] = PosixFilePermissions.fromString("rwxrwxrwx")
+  private def solutionFileName(fileEnding: String): String = "solution." + fileEnding
 
-  def correct(exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, solutionSaved: Boolean, completeTestData: Seq[CompleteTestData],
-              solutionTargetDir: Path, exerciseResourcesFolder: Path)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {
+  private def testMainFileName(fileEnding: String): String = "test_main." + fileEnding
 
+  private val dockerImageName = "beyselein/python_prog_tester"
+
+  def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, solutionSaved: Boolean, completeTestData: Seq[CompleteTestData],
+              toolMain: ProgrammingToolMain)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {
+
+    val exerciseResourcesFolder = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.ex.folderIdentifier)
+    val solutionTargetDir = toolMain.solutionDirForExercise(user.username, exercise.ex.id)
     val testDataFileContent = Json.prettyPrint(TestDataJsonFormat.dumpTestDataToJson(exercise, completeTestData))
 
-    writeAndCopyFiles(language.fileEnding, implementation, testDataFileContent, solutionTargetDir, exerciseResourcesFolder) map { _ =>
+    writeAndCopyFiles(solutionTargetDir, language.fileEnding, implementation, testDataFileContent) map { _ =>
 
       // FIXME: what if image does not exist?
       val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(
-        imageName = language.dockerImageName,
-        entryPoint = Seq("timeout", DockerConnector.maxRuntimeInSeconds, DockerConnector.DefaultWorkingDir + "/script." + language.fileEnding),
-        dockerBinds = Seq(new DockerBind(solutionTargetDir, DockerConnector.DefaultWorkingDir, AccessMode.rw))
+        imageName = dockerImageName,
+        maybeEntryPoint = None,
+        dockerBinds = mountFiles(exerciseResourcesFolder, solutionTargetDir, fileEnding = "py")
+//        , deleteContainerAfterRun = false
       )
 
       val futureResults: Future[Try[Seq[ProgEvalResult]]] = containerResult map {
 
-        case RunContainerSuccess => ResultsFileJsonFormat.readResultFile(solutionTargetDir, resultFileName, completeTestData)
+        case RunContainerSuccess => ResultsFileJsonFormat.readResultFile(solutionTargetDir / resultFileName, completeTestData)
 
         case failure: RunContainerFailure => Failure(failure)
 
@@ -47,16 +52,30 @@ object ProgrammingCorrector extends model.core.FileUtils {
 
   }
 
-  private def writeAndCopyFiles(fileEnding: String, impl: String, testDataFileContent: String, solTargetDir: Path, exerciseResFolder: Path) = for {
+  private def writeAndCopyFiles(solTargetDir: Path, fileEnding: String, impl: String, testDataFileContent: String) = for {
 
-    solutionWrite: Path <- write(solTargetDir / s"solution.$fileEnding", impl)
+    // FIXME: evaluate files!
 
-    testDataWrite: Path <- write(solTargetDir / TestDataFile, testDataFileContent)
+    solutionWrite: Path <- write(solTargetDir / solutionFileName(fileEnding), impl)
 
-    scriptCopy: Path <- copy(exerciseResFolder / ScriptName, solTargetDir / ScriptName)
+    testDataWrite: Path <- write(solTargetDir / testDataFileName, testDataFileContent)
 
-    permissionChange: Path <- Try(Files.setPosixFilePermissions(solTargetDir / ScriptName, filePermissions))
+    resultFileCreate: Path <- createEmptyFile(solTargetDir / resultFileName)
 
-  } yield (solutionWrite, testDataWrite, scriptCopy, permissionChange)
+  } yield (solutionWrite, testDataWrite, resultFileCreate)
 
+  private def mountFiles(exResFolder: Path, solTargetDir: Path, fileEnding: String): Seq[DockerBind] = {
+
+    // FIXME: update with files in exerciseResourcesFolder!
+    val testMainMount = DockerBindUtils.mountFileByName(exResFolder, DockerConnector.DefaultWorkingDir, testMainFileName(fileEnding))
+
+    val solutionMount = DockerBindUtils.mountFileByName(solTargetDir, DockerConnector.DefaultWorkingDir, solutionFileName(fileEnding))
+
+    val testDataMount = DockerBindUtils.mountFileByName(solTargetDir, DockerConnector.DefaultWorkingDir, testDataFileName)
+
+    val resultFileMount = DockerBindUtils.mountFileByName(solTargetDir, DockerConnector.DefaultWorkingDir, resultFileName)
+
+    Seq(testMainMount, solutionMount, testDataMount, resultFileMount)
+
+  }
 }

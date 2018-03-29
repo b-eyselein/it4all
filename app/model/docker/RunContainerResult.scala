@@ -6,15 +6,16 @@ sealed trait RunContainerResult
 
 case object RunContainerSuccess extends RunContainerResult
 
-sealed trait RunContainerFailure extends Exception with RunContainerResult
+sealed abstract class RunContainerFailure(msg: String, cause: Throwable) extends Exception(msg, cause) with RunContainerResult
+
 
 // Failure types
 
-case class RunContainerTimeOut(waitTime: Int) extends RunContainerFailure
+case class RunContainerTimeOut(waitTime: Int) extends RunContainerFailure("", null)
 
-case class RunContainerError(statusCode: Int, logs: String) extends RunContainerFailure
+case class RunContainerError(statusCode: Int, logs: String) extends RunContainerFailure(logs, null)
 
-sealed trait RunContainerException extends RunContainerFailure {
+sealed abstract class RunContainerException(msg: String) extends RunContainerFailure(msg, null) {
 
   val error: Throwable
 
@@ -22,9 +23,9 @@ sealed trait RunContainerException extends RunContainerFailure {
 
 // Exceptions
 
-case class WaitContainerException(error: Throwable) extends RunContainerException
+case class WaitContainerException(error: Throwable) extends RunContainerException(error.getMessage)
 
-case class CreateContainerException(error: Throwable) extends RunContainerException
+case class CreateContainerException(error: Throwable) extends RunContainerException(error.getMessage)
 
-case class StartContainerException(error: Throwable) extends RunContainerException
+case class StartContainerException(error: Throwable) extends RunContainerException(error.getMessage)
 

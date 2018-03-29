@@ -5,52 +5,50 @@ import java.nio.file.Path
 import model.Enums.SuccessType
 import model.JsonFormat
 import model.core.FileUtils
-import model.programming.ProgConsts.{InputsName, idName}
+import model.programming.ProgConsts._
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.util.Try
 
 object ResultsFileJsonFormat extends JsonFormat with FileUtils {
 
-  def readResultFile(targetDir: Path, resultFileName: String, completeTestData: Seq[CompleteTestData]): Try[Seq[ExecutionResult]] =
-    readAll(targetDir / resultFileName) map { resultFileContent =>
+  def readResultFile(targetFile: Path, completeTestData: Seq[CompleteTestData]): Try[Seq[ExecutionResult]] = readAll(targetFile) map { resultFileContent =>
 
-      // FIXME: refactor...
+    // FIXME: refactor...
 
-      val res: Option[Seq[ExecutionResult]] = Json.parse(resultFileContent).asArray {
-        jsValue: JsValue => jsValue.asObj flatMap (matchDataWithJson(_, completeTestData, targetDir))
-      }
-
-      res getOrElse Seq.empty
+    val res: Option[Seq[ExecutionResult]] = Json.parse(resultFileContent).asArray {
+      jsValue: JsValue =>
+        jsValue.asObj flatMap {
+          jsObj => matchDataWithJson(jsObj, completeTestData)
+        }
     }
 
-  private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[CompleteTestData], targetDir: Path) = readDataFromJson(jsObj) map {
-    case (id, successType, funcName, result, inputs) =>
+    res getOrElse Seq.empty
+  }
 
-      val evaluated = funcName + "(" + inputs.sortBy(_._1).map(_._2).mkString(", ") + ")"
-
-      val consoleOutput: Option[String] = readAll(targetDir / s"output$id.txt") map Some.apply getOrElse None
+  private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[CompleteTestData]): Option[ExecutionResult] = readDataFromJson(jsObj) map {
+    case (id, successType, consoleOutput, gotten) =>
 
       val testData: CompleteTestData = completeTestData find (_.testData.id == id) match {
         case None    => throw new Exception("FEHLER!")
         case Some(x) => x
       }
 
-      ExecutionResult(successType, evaluated, testData, result, consoleOutput)
+      val maybeConsoleOutput = if (consoleOutput.isEmpty) None else Some(consoleOutput)
+
+      ExecutionResult(successType, testData, gotten, maybeConsoleOutput)
   }
 
-  private def readDataFromJson(jsObj: JsObject): Option[(Int, SuccessType, String, String, Seq[(String, String)])] = for {
+  private def readDataFromJson(jsObj: JsObject): Option[(Int, SuccessType, String, String)] = for {
+
     id <- jsObj.intField(idName)
-    success <- jsObj.enumField("success", str => Try(SuccessType.valueOf(str)) getOrElse SuccessType.NONE)
-    functionName <- jsObj.stringField("functionName")
-    result <- jsObj.forgivingStringField("result")
-    inputs <- jsObj.arrayField(InputsName, _.asObj flatMap readInputsFromJson)
-  } yield (id, success, functionName, result, inputs)
 
-  private def readInputsFromJson(inputJsObj: JsObject): Option[(String, String)] = for {
-    maybeVariable <- inputJsObj.stringField("variable")
-    maybeValue <- inputJsObj.forgivingStringField("value")
-  } yield (maybeVariable, maybeValue)
+    success <- jsObj.enumField(successName, str => Try(SuccessType.valueOf(str)) getOrElse SuccessType.NONE)
 
+    consoleOutput <- jsObj.stringField(stdoutName)
+
+    gotten <- jsObj.forgivingStringField(gottenName)
+
+  } yield (id, success, consoleOutput, gotten)
 
 }

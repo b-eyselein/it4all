@@ -1,0 +1,18 @@
+@(exercise: model.programming.ProgCompleteEx)
+
+@core.helperTemplates.modal("TODO", "definitionRest", "lg") {
+    <pre>@exercise.ex.base</pre>
+}
+
+<div class="form-group">
+    <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#definitionRest">Rest der Definition</button>
+</div>
+
+<div class="input-group">
+    <span class="input-group-addon">Sprache</span>
+    <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
+    @for(lang <- model.programming.ProgLanguage.values) {
+        <option value="@lang.name" @lang.isSelected(model.programming.ProgLanguage.STANDARD_LANG)>@lang.languageName</option>
+    }
+    </select>
+</div>

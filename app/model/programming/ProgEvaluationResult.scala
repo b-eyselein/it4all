@@ -50,38 +50,7 @@ case object ProgEvalFailed extends ProgEvalResult {
 
 }
 
-case class SyntaxError(reason: String) extends ProgEvalResult {
-
-  override def success: SuccessType = SuccessType.NONE
-
-  override def render: String =
-    s"""<div class="col-md-12">
-       |  <div class="alert alert-$getBSClass">
-       |    <p>Ihr Code hat einen Syntaxfehler:<p>
-       |    <pre>$reason</pre>
-       |  </div>
-       |</div>""".stripMargin
-
-  override def toJson: JsValue = Json.obj("type" -> "syntaxerror", "reason" -> reason)
-
-}
-
-case object TimeOut extends ProgEvalResult {
-
-  override def success: SuccessType = SuccessType.ERROR
-
-  override def render: String =
-    s"""<div class="col-md-12">
-       |  <div class="alert alert-$getBSClass">
-       |    <p>Es gab ein Timeout ihres Codes. Haben Sie eventuell eine Endlosschleife programmiert?</p>
-       |  </div>
-       |</div>""".stripMargin
-
-  override def toJson: JsValue = Json.obj("msg" -> "Es gab einen Timeout bei der Korrektur!")
-
-}
-
-case class ExecutionResult(success: SuccessType, evaluated: String, completeTestData: CompleteTestData, result: String, consoleOutput: Option[String]) extends ProgEvalResult {
+case class ExecutionResult(success: SuccessType, completeTestData: CompleteTestData, result: String, consoleOutput: Option[String]) extends ProgEvalResult {
 
   // FIXME: outputType beachten ?!?
 
@@ -100,7 +69,7 @@ case class ExecutionResult(success: SuccessType, evaluated: String, completeTest
   } else {
     s"""<div class="col-md-6">
        |  <div class="alert alert-$getBSClass">
-       |    <p>Test von <code>$evaluated</code> war ${if (isSuccessful) "" else "nicht"} erfolgreich.<p>
+       |    <p>Test ${completeTestData.testData.id} war ${if (isSuccessful) "" else "nicht"} erfolgreich.<p>
        |    <p>Erwartet: <code>${completeTestData.testData.output}</code></p>
        |    <p>Bekommen: <code>$renderResult</code></p>
        |    $printConsoleOut
@@ -111,7 +80,6 @@ case class ExecutionResult(success: SuccessType, evaluated: String, completeTest
   override def toJson: JsValue = Json.obj(
     idName -> completeTestData.testData.id,
     correct -> JsBoolean(success == SuccessType.COMPLETE),
-    evaluatedName -> evaluated,
     awaitedName -> completeTestData.testData.output,
     gottenName -> result
   )

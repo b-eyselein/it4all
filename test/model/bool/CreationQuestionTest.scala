@@ -1,6 +1,5 @@
 package model.bool
 
-import model.bool.{BoolAssignment, CreationQuestion, ScalaNode, Variable}
 import org.junit.Test
 
 import scala.language.implicitConversions

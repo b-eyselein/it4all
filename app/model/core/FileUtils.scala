@@ -15,6 +15,10 @@ trait FileUtils {
 
   }
 
+  def filesInDirectory(directoryPath: Path): Seq[Path] = Files.newDirectoryStream(directoryPath).asScala.toList
+
+  def subDirectoriesOf(directoryPath: Path): Seq[Path] = filesInDirectory(directoryPath).filter(_.toFile.isDirectory)
+
   def createEmptyFile(filePath: Path): Try[Path] = Try {
     if (!filePath.toFile.exists()) Files.createFile(filePath)
     else filePath

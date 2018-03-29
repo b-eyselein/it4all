@@ -13,16 +13,6 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-// Wrapper classes
-
-class UmlCompleteExWrapper(override val compEx: UmlCompleteEx) extends CompleteExWrapper {
-
-  override type Ex = UmlExercise
-
-  override type CompEx = UmlCompleteEx
-
-}
-
 // Classes for use
 
 case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], classes: Seq[UmlCompleteClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation])
@@ -52,8 +42,6 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], classes: Se
 
   def allMethods: Seq[UmlClassMethod] = classes flatMap (_.methods) groupBy (method => (method.name, method.umlType)) map (_._2.head) toSeq
 
-  override def wrapped: CompleteExWrapper = new UmlCompleteExWrapper(this)
-
 }
 
 
@@ -70,7 +58,7 @@ case class UmlExercise(id: Int, title: String, author: String, text: String, sta
   def this(baseValues: (Int, String, String, String, ExerciseState), classSelText: String, diagDrawText: String, toIgnore: String) =
     this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, classSelText, diagDrawText, toIgnore)
 
-  def splitToIgnore: Seq[String] = toIgnore split TagJoinChar
+  def splitToIgnore: Seq[String] = toIgnore split tagJoinChar
 
 }
 
@@ -109,7 +97,7 @@ case class UmlAssociation(exerciseId: Int, assocType: UmlAssociationType, assocN
 
 // Tables
 
-class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlExercise, UmlCompleteEx, UmlSolution, UmlExPart] {
 
   import profile.api._
@@ -148,7 +136,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   private def mappingsAction(id: Int) = umlMappings filter (_.exerciseId === id) result
 
-  private def completeClasses(ex: UmlExercise, classes: Seq[UmlClass])(implicit ec: ExecutionContext): Future[Seq[UmlCompleteClass]] = Future.sequence(classes map { clazz =>
+  private def completeClasses(ex: UmlExercise, classes: Seq[UmlClass]): Future[Seq[UmlCompleteClass]] = Future.sequence(classes map { clazz =>
     db.run(attrsAction(ex.id, clazz.className) zip methodsAction(ex.id, clazz.className)) map { case (attrs, methods) => UmlCompleteClass(clazz, attrs, methods) }
   })
 
@@ -171,7 +159,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     impl <- saveSeq[UmlImplementation](compEx.implementations, i => db.run(umlImplementations += i))
   } yield mappings && classes && assocs && impl
 
-  private def saveClass(umlCompleteClass: UmlCompleteClass)(implicit ec: ExecutionContext): Future[Boolean] = db.run(umlClasses += umlCompleteClass.clazz) flatMap { _ =>
+  private def saveClass(umlCompleteClass: UmlCompleteClass): Future[Boolean] = db.run(umlClasses += umlCompleteClass.clazz) flatMap { _ =>
     saveSeq[UmlClassAttribute](umlCompleteClass.attributes, a => db.run(umlClassAttributes += a)) zip
       saveSeq[UmlClassMethod](umlCompleteClass.methods, m => db.run(umlClassMethods += m))
   } map (t => t._1 && t._2)

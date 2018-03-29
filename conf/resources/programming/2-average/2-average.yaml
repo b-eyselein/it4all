@@ -3,18 +3,19 @@ title: Durchschnitt
 author: bje40dc
 text: >
   Berechnen Sie den Durchschnittswert aller Elemente als Gleitkommazahl in der übergebenen Liste von (Ganz-)Zahlen!
-  Bei einer leeren Liste soll der String 'Fehler' ausgegeben werden.
+  Bei einer leeren Liste soll '0' zurückgegeben werden.
 status: APPROVED
+identifier: average
 functionname: average
+indentLevel: 0
 inputTypes:
 - {id: 1, name: my_list, type: list<int>}
 outputType: float
 sampleSolutions:
-- language: PYTHON
+- language: PYTHON_3
   base: |
     def average(my_list):
-      # {1}
-      pass
+      return 0
   sample: |
     def average(my_list):
       length = len(my_list)
@@ -22,21 +23,11 @@ sampleSolutions:
           return "Fehler"
       else:
           return sum(my_list) / length
-  testMain: |
-    # noinspection PyUnresolvedReferences
-    from solution import average
-
-    def convert_input(input_json):
-        return input_json
-
-    def test(my_list, awaited_output):
-        gotten_output = average(my_list)
-        return gotten_output, gotten_output == awaited_output
 sampleTestData:
 - id: 1
   inputs:
   - {id: 1, input: []}
-  output: Fehler
+  output: 0.
 - id: 2
   inputs:
   - {id: 1, input: [1]}

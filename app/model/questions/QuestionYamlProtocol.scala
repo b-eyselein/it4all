@@ -16,7 +16,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
   implicit object QuizYamlFormat extends HasBaseValuesYamlFormat[CompleteQuiz] {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[CompleteQuiz] = for {
-      theme <- yamlObject.stringField(ThemeName)
+      theme <- yamlObject.stringField(themeName)
       questionTries <- yamlObject.arrayField(exercisesName, QuestionYamlFormat(baseValues._1).read)
     } yield {
       for (questionFailure <- questionTries._2)
@@ -27,7 +27,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
     }
 
     override protected def writeRest(completeEx: CompleteQuiz): Map[YamlValue, YamlValue] = Map(
-      YamlString(ThemeName) -> completeEx.coll.theme,
+      YamlString(themeName) -> completeEx.coll.theme,
       YamlString(exercisesName) -> YamlArr(completeEx.exercises map QuestionYamlFormat(completeEx.coll.id).write)
     )
   }
@@ -59,10 +59,10 @@ object QuestionYamlProtocol extends MyYamlProtocol {
     override def readObject(yamlObject: YamlObject): Try[Answer] = for {
       id <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
-      correctness <- yamlObject.enumField(CorrectnessName, Correctness.valueOf)
+      correctness <- yamlObject.enumField(correctnessName, Correctness.valueOf)
+      maybeExplanation <- yamlObject.optStringField(explanationName)
     } yield {
 
-      val maybeExplanation = yamlObject.optStringField("explanation") map (_ getOrElse "")
 
       Answer(id, questionId, quizId, text, correctness, maybeExplanation)
     }
@@ -70,7 +70,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
     override def write(obj: Answer): YamlValue = {
       val values: Map[YamlValue, YamlValue] = Map(
         YamlString(textName) -> obj.text,
-        YamlString(CorrectnessName) -> obj.correctness.name
+        YamlString(correctnessName) -> obj.correctness.name
       )
 
       new YamlObject(values ++ obj.explanation.map(e => YamlString("explanation") -> YamlString(e)))

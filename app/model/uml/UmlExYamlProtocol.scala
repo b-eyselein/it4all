@@ -52,7 +52,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       val textParser = new UmlExTextParser(baseValues._4, mappingsForTextParser, ignoreWords)
 
       UmlCompleteEx(
-        new UmlExercise(baseValues, textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString TagJoinChar),
+        new UmlExercise(baseValues, textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString tagJoinChar),
         mappings, classes._1, associations._1, implementations._1
       )
     }
@@ -107,6 +107,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
       UmlCompleteClass(UmlClass(exerciseId, className, classType), attributTries._1, methodTries._1)
     }
+
   }
 
   case class UmlClassAttributeYamlFormat(exerciseId: Int, className: String) extends MyYamlObjectFormat[UmlClassAttribute] {
@@ -117,6 +118,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       name <- yamlObject.stringField(nameName)
       attrtype <- yamlObject.stringField(TYPE_NAME)
     } yield UmlClassAttribute(exerciseId, className, name, attrtype)
+
   }
 
   case class UmlClassMethodYamlFormat(exerciseId: Int, className: String) extends MyYamlObjectFormat[UmlClassMethod] {
@@ -127,6 +129,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       name <- yamlObject.stringField(nameName)
       methodType <- yamlObject.stringField(TYPE_NAME)
     } yield UmlClassMethod(exerciseId, className, name, methodType)
+
   }
 
   case class UmlAssocYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlAssociation] {
@@ -143,15 +146,13 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[UmlAssociation] = for {
       assocType <- yamlObject.enumField(ASSOCTYPE_NAME, UmlAssociationType.valueOf)
+      assocName <- yamlObject.optStringField(nameName)
       firstEnd <- yamlObject.stringField(FIRST_END_NAME)
       firstMult <- yamlObject.enumField(FIRST_MULT_NAME, UmlMultiplicity.valueOf)
       secondEnd <- yamlObject.stringField(SECOND_END_NAME)
       secondMult <- yamlObject.enumField(SECOND_MULT_NAME, UmlMultiplicity.valueOf)
-    } yield {
-      val assocName = yamlObject.optStringField(nameName) map (_ getOrElse "")
+    } yield UmlAssociation(exerciseId, assocType, assocName, firstEnd, firstMult, secondEnd, secondMult)
 
-      UmlAssociation(exerciseId, assocType, assocName, firstEnd, firstMult, secondEnd, secondMult)
-    }
   }
 
   case class UmlImplYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlImplementation] {
@@ -165,6 +166,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       subClass <- yamlObject.stringField(SUBCLASS_NAME)
       superClass <- yamlObject.stringField(SUPERCLASS_NAME)
     } yield UmlImplementation(exerciseId, subClass, superClass)
+
   }
 
 }

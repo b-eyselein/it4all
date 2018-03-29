@@ -40,7 +40,7 @@ case class BlanksSolution(username: String, exerciseId: Int, part: BlanksExPart,
 
 // Table definitions
 
-class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[BlanksExercise, BlanksCompleteExercise, BlanksSolution, BlanksExPart] {
 
   import profile.api._
@@ -64,7 +64,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   // Reading
 
-  private def samplesForExercise(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[Seq[BlanksAnswer]] = db.run(blanksSamples.filter(_.exerciseId === ex.id).result)
+  private def samplesForExercise(ex: BlanksExercise): Future[Seq[BlanksAnswer]] = db.run(blanksSamples.filter(_.exerciseId === ex.id).result)
 
   // Column types
 

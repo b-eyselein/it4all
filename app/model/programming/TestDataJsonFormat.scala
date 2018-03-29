@@ -1,32 +1,23 @@
 package model.programming
 
+import model.programming.ProgConsts._
 import model.programming.ProgDataTypes.ProgDataType
-import play.api.libs.json.{JsArray, JsString, JsValue, Json}
+import play.api.libs.json._
 
 object TestDataJsonFormat {
 
-  def dumpTestDataToJson(exercise: ProgCompleteEx, testData: Seq[CompleteTestData]): JsValue = {
-    val sortedInputTypes: Seq[ProgInput] = exercise.inputTypes sortBy (_.id)
+  def dumpTestDataToJson(exercise: ProgCompleteEx, testData: Seq[CompleteTestData]): JsValue = Json.obj(
+    functionNameName -> JsString(exercise.ex.functionname),
+    "testdata" -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.ex.outputType)
+  )
 
-    Json.obj(
-      "functionname" -> JsString(exercise.ex.functionName),
-      "variableTypes" -> JsArray(sortedInputTypes map (_.inputType.typeName) map JsString),
-      "outputType" -> exercise.ex.outputType.typeName,
-      "testdata" -> dumpTestData(testData, sortedInputTypes, exercise.ex.outputType)
-    )
-  }
-
-  private def dumpTestData(testData: Seq[CompleteTestData], sortedInputTypes: Seq[ProgInput], outputType: ProgDataType) =
+  // FIXME: how to display input? ==> with variable name!!
+  private def dumpTestData(testData: Seq[CompleteTestData], sortedInputs: Seq[ProgInput], outputType: ProgDataType) =
     JsArray(testData sortBy (_.testData.id) map { td =>
-
-      val inputs: Seq[JsValue] = td.inputs zip sortedInputTypes map {
-        case (sampleTestData, dataType) => dataType.inputType.toJson(sampleTestData.input)
-      }
-
       Json.obj(
-        "id" -> td.testData.id,
-        "inputs" -> JsArray(inputs),
-        "awaited" -> outputType.toJson(td.testData.output)
+        idName -> td.testData.id,
+        inputName -> td.inputs.sortBy(_.id).map(sampleTestData => Json.parse(sampleTestData.input)),
+        outputName -> outputType.toJson(td.testData.output)
       )
     })
 

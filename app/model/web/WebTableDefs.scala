@@ -70,9 +70,7 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
 
 case class WebExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
-                       htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise {
-
-}
+                       htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
 
 trait WebTask {
   val id        : Int

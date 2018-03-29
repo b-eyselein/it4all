@@ -256,7 +256,7 @@ function updatePreviewNew() {
         url,
         data: unescapeHTML(editor.getValue()),
         async: true,
-        success: function (response) {
+        success: function () {
             $('#preview').attr('src', function (i, val) {
                 // Refresh iFrame
                 return val;

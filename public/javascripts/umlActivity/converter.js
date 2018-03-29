@@ -410,8 +410,15 @@ function convertJsonToProgrammCode(json_graph, language, parentId) {
 
     const programContent /* string[] */ = buildProgramm(json_graph, selectedLanguageBuilderType);
 
-    let wrap = selectedLanguageBuilderType.get_core(EXERCISE_PARAMETERS.methodName, EXERCISE_PARAMETERS.methodParameters,
-        EXERCISE_PARAMETERS.output.outputType, EXERCISE_PARAMETERS.output.output, programContent);
+    console.warn(JSON.stringify(programContent, null, 2));
+
+    console.warn(EXERCISE_PARAMETERS.methodDeclaration);
+
+    // FIXME: get_core!
+
+    let wrap = selectedLanguageBuilderType.get_core(EXERCISE_PARAMETERS, programContent);
+
+    console.warn(wrap);
 
     if (graph.getCell(parentId).getEmbeddedCells().length > 0) {
         fillContentInElement(parentId, programContent);

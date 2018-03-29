@@ -27,13 +27,15 @@ object WebExYamlProtocol extends MyYamlProtocol {
       text <- yamlObject.stringField(textName)
       state <- yamlObject.enumField(stateName, ExerciseState.byString(_) getOrElse ExerciseState.CREATED)
 
+
+      htmlText <- yamlObject.optStringField(HTML_TEXT_NAME)
+      jsText <- yamlObject.optStringField(JS_TEXT_NAME)
+      phpText <- yamlObject.optStringField(PHP_TEXT_NAME)
+
       htmlTaskTries <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(id).read)
       jsTaskTries <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(id).read)
       phpTasksTries <- yamlObject.optArrayField(PHP_TASKS_NAME, PhpCompleteTaskYamlFormat(id).read)
     } yield {
-      val htmlText = yamlObject.optStringField(HTML_TEXT_NAME) map (_ getOrElse "")
-      val jsText = yamlObject.optStringField(JS_TEXT_NAME) map (_ getOrElse "")
-      val phpText = yamlObject.optStringField(PHP_TEXT_NAME) map (_ getOrElse "")
 
       for (htmlTaskFailure <- htmlTaskTries._2)
       // FIXME: return...

@@ -95,7 +95,7 @@ case class QuestionSolution(username: String, collectionId: Int, exerciseId: Int
 
 // Table Definitions
 
-class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[Question, CompleteQuestion, Quiz, CompleteQuiz, QuestionSolution] {
 
   import profile.api._
@@ -127,24 +127,24 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
   override def completeCollForColl(coll: Quiz)(implicit ec: ExecutionContext): Future[CompleteQuiz] =
     questionsForQuiz(coll.id) map (qs => CompleteQuiz(coll, qs))
 
-  def completeQuizzes(implicit ec: ExecutionContext): Future[Seq[CompleteQuiz]] = db.run(collTable.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq.empty)) }
+  def completeQuizzes: Future[Seq[CompleteQuiz]] = db.run(collTable.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq.empty)) }
 
-  def completeQuiz(id: Int)(implicit ec: ExecutionContext): Future[Option[CompleteQuiz]] = db.run(collTable.filter(_.id === id).result.headOption) flatMap {
+  def completeQuiz(id: Int): Future[Option[CompleteQuiz]] = db.run(collTable.filter(_.id === id).result.headOption) flatMap {
     case None       => Future(None)
     case Some(quiz) => questionsForQuiz(id) map (questions => Some(CompleteQuiz(quiz, questions)))
   }
 
-  private def questionsForQuiz(quizId: Int)(implicit ec: ExecutionContext): Future[Seq[CompleteQuestion]] = db.run(exTable.filter(_.collectionId === quizId).result) flatMap {
+  private def questionsForQuiz(quizId: Int): Future[Seq[CompleteQuestion]] = db.run(exTable.filter(_.collectionId === quizId).result) flatMap {
     questionSeq => Future.sequence(questionSeq map (question => answersForQuestion(quizId, question.id) map (answers => CompleteQuestion(question, answers))))
   }
 
-  def completeQuestion(quizId: Int, questionId: Int)(implicit ec: ExecutionContext): Future[Option[CompleteQuestion]] =
+  def completeQuestion(quizId: Int, questionId: Int): Future[Option[CompleteQuestion]] =
     db.run(exTable.filter(q => q.collectionId === quizId && q.id === questionId).result.headOption) flatMap {
       case None           => Future(None)
       case Some(question) => answersForQuestion(quizId, questionId) map (answers => Some(CompleteQuestion(question, answers)))
     }
 
-  private def answersForQuestion(quizId: Int, questionId: Int)(implicit ec: ExecutionContext): Future[Seq[Answer]] =
+  private def answersForQuestion(quizId: Int, questionId: Int): Future[Seq[Answer]] =
     db.run(answers.filter(ans => ans.quizId === quizId && ans.questionId === questionId).result)
 
   // Saving
@@ -153,11 +153,11 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
     _ => Future.sequence(compQuiz.exercises map saveQuestion) map (_.forall(identity))
   } recover { case _: Throwable => false }
 
-  private def saveQuestion(compQuestion: CompleteQuestion)(implicit ec: ExecutionContext): Future[Boolean] = db.run(exTable insertOrUpdate compQuestion.ex) flatMap {
+  private def saveQuestion(compQuestion: CompleteQuestion): Future[Boolean] = db.run(exTable insertOrUpdate compQuestion.ex) flatMap {
     _ => Future.sequence(compQuestion.answers map saveAnswer) map (_.forall(identity))
   } recover { case _: Throwable => false }
 
-  private def saveAnswer(answer: Answer)(implicit ec: ExecutionContext): Future[Boolean] =
+  private def saveAnswer(answer: Answer): Future[Boolean] =
     db.run(answers insertOrUpdate answer) map (_ => true) recover { case _: Throwable => false }
 
   override def saveExerciseRest(compEx: CompleteQuestion)(implicit ec: ExecutionContext): Future[Boolean] = ???
@@ -177,7 +177,7 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   class QuizzesTable(tag: Tag) extends HasBaseValuesTable[Quiz](tag, "quizzes") {
 
-    def theme = column[String](ThemeName)
+    def theme = column[String](themeName)
 
 
     def pk = primaryKey("pk", id)

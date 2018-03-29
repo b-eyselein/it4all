@@ -71,7 +71,7 @@ case class SqlSolution(username: String, collectionId: Int, exerciseId: Int, sol
 
 // Table Definitions
 
-class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, SqlSolution] {
 
   import profile.api._
@@ -101,12 +101,12 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override def completeCollForColl(coll: SqlScenario)(implicit ec: ExecutionContext): Future[SqlCompleteScenario] =
     db.run(exTable.filter(_.collectionId === coll.id).result) flatMap (exes => Future.sequence(exes map completeExForEx)) map (exes => SqlCompleteScenario(coll, exes))
 
-  private def samplesForEx(collId: Int, exId: Int)(implicit ec: ExecutionContext): Future[Seq[SqlSample]] =
+  private def samplesForEx(collId: Int, exId: Int): Future[Seq[SqlSample]] =
     db.run(sqlSamples filter (table => table.exerciseId === exId && table.scenarioId === collId) result)
 
   // Saving
 
-  def saveSolution(sol: SqlSolution)(implicit ec: ExecutionContext): Future[Boolean] = db.run(solTable insertOrUpdate sol) map (_ => true) recover { case _: Throwable => false }
+  def saveSolution(sol: SqlSolution): Future[Boolean] = db.run(solTable insertOrUpdate sol) map (_ => true) recover { case _: Throwable => false }
 
   override def saveExerciseRest(compEx: SqlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
     saveSeq[SqlSample](compEx.samples, saveSqlSample)
@@ -114,10 +114,10 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override def saveCompleteColl(completeScenario: SqlCompleteScenario)(implicit ec: ExecutionContext): Future[Boolean] =
     db.run(collTable insertOrUpdate completeScenario.coll) flatMap (_ => saveSeq(completeScenario.exercises, saveSqlCompleteEx))
 
-  private def saveSqlCompleteEx(completeEx: SqlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+  private def saveSqlCompleteEx(completeEx: SqlCompleteEx): Future[Boolean] =
     db.run(exTable insertOrUpdate completeEx.ex) flatMap { _ => saveSeq(completeEx.samples, saveSqlSample) }
 
-  private def saveSqlSample(sample: SqlSample)(implicit ec: ExecutionContext): Future[Boolean] =
+  private def saveSqlSample(sample: SqlSample): Future[Boolean] =
     db.run(sqlSamples insertOrUpdate sample) map (_ => true) recover { case e: Throwable =>
       Logger.error("Could not save sql sample!", e)
       false
@@ -135,7 +135,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class SqlScenarioesTable(tag: Tag) extends HasBaseValuesTable[SqlScenario](tag, "sql_scenarioes") {
 
-    def shortName = column[String](SHORTNAME_NAME)
+    def shortName = column[String](shortNameName)
 
 
     def pk = primaryKey("pk", id)
