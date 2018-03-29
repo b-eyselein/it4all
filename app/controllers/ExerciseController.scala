@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model._
 import model.core._
-import model.programming.{ProgLanguage, ProgrammingToolMain}
+import model.programming.ProgrammingToolMain
 import model.toolMains.{IdExerciseToolMain, ToolList}
 import model.web.{HtmlPart, WebSolution, WebToolMain}
 import play.api.Logger
@@ -85,8 +85,12 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Other routes
 
-  def progGetDeclaration(lang: String): EssentialAction = withUser { _ =>
-    implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
+  def progClassDiagram(id: Int): EssentialAction = futureWithUser { user =>
+    implicit request =>
+      progToolMain.futureCompleteExById(id) map {
+        case None           => BadRequest
+        case Some(exercise) => Ok(views.js.programming.classDiagram.render(exercise)).as("text/javascript")
+      }
   }
 
   def webSolution(id: Int, partStr: String): EssentialAction = futureWithUser { user =>

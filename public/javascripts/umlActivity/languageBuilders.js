@@ -44,31 +44,14 @@ class PythonBuilder extends AbstractLanguageBuilder {
     /**
      * @param {object} exerciseParameters
      * @param {string} exerciseParameters.methodDeclaration
-     * @param {string} exerciseParameters.methodName
-     * @param {string} exerciseParameters.methodParameters
-     * @param {object} exerciseParameters.output
-     * @param {string} exerciseParameters.output.outputType
-     * @param {string} exerciseParameters.output.output
      *
      * @param {string[]} content
      *
      * @returns {string}
      */
     get_core(exerciseParameters, content) {
-        // FIXME: base...
-
-        let definition = exerciseParameters.methodDeclaration;
-
-        let functionName = exerciseParameters.methodName;
-        let methodParameters = exerciseParameters.methodParameters;
-        // let returnType = exerciseParameters.output.outputType;
-        // let returnVariable = exerciseParameters.output.output;
-
-        // let definition = 'def ' + functionName + '(' + methodParameters + '):';
         let contentToAdd = contentIsEmpty(content) ? '  ' : this.addIdentation(content);
-        // let retStatement = ' '.repeat(this.standardIndent) + 'return ' + returnVariable;
-
-        return [definition, ...contentToAdd].join('\n');
+        return [exerciseParameters.methodDeclaration, ...contentToAdd].join('\n');
     }
 
     /**
@@ -155,6 +138,9 @@ class JavaBuilder extends AbstractLanguageBuilder {
     * @returns {string}
     */
     get_core(exerciseParameters, content) {
+        // let contentToAdd = contentIsEmpty(content) ? '  ' : this.addIdentation(content);
+        // return [exerciseParameters.methodDeclaration, ...contentToAdd].join('\n');
+
         let functionName = exerciseParameters.methodName;
         let methodParameters = exerciseParameters.methodParameters;
         let returnType = exerciseParameters.output.outputType;

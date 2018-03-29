@@ -1,4 +1,4 @@
-@(user: model.User, completeEx: model.programming.ProgCompleteEx, toolObject: model.toolMains.IdExerciseToolMain)
+@(user: model.User, completeEx: model.programming.ProgCompleteEx, language: model.programming.ProgLanguage, toolObject: model.toolMains.IdExerciseToolMain)
 
 @solutionVar = @{
     "solution"
@@ -25,8 +25,9 @@
     <script src="@routes.Assets.versioned("javascripts/umlActivity/languageBuilders.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/converter.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/webseite.js")"></script>
-    <script src="@routes.Assets.versioned("javascripts/umlActivity/classdiagram.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/umlActivityTests.js")"></script>
+
+    <script src="@routes.ExerciseController.progClassDiagram(completeEx.id)"></script>
 
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/webseite.css")">
@@ -36,10 +37,10 @@
     <script>
             // Parameters for Task
             const EXERCISE_PARAMETERS = {
-                methodDisplay: '@Html(completeEx.activityDiagramDisplay)',
-                methodDeclaration: '@Html(completeEx.activityDiagramDeclaration)',
+                methodDisplay: '@Html(language.activityDiagramDisplay(completeEx))',
+                methodDeclaration: '@Html(language.activityDiagramDeclaration(completeEx))',
                 methodName: '@completeEx.ex.functionname',
-                methodParameters: '@Html( model.programming.ProgLanguage.STANDARD_LANG.buildParameters(completeEx.inputTypes))',
+                methodParameters: '@Html( model.programming.ProgLanguage.STANDARD_LANG.buildParams(completeEx))',
                 output: {
                     outputType: '@completeEx.ex.outputType.typeName',
                     output: '@solutionVar',
@@ -130,11 +131,11 @@
                                         </button>
                                     </div>
                                     @* FIXME: class diagram deactivated until further notice... *@
-                                    @*<div class="btn-group">*@
-                                    @*<button type="button" class="btn btn-default" data-toggle="modal" data-target="#classDiagModal">*@
-                                    @*Klassendiagramm*@
-                                    @*</button>*@
-                                    @*</div>*@
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#classDiagModal">
+                                            Klassendiagramm
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </section>

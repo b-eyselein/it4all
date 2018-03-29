@@ -86,8 +86,7 @@ case class UmlClassMethod(exerciseId: Int, className: String, name: String, umlT
 case class UmlImplementation(exerciseId: Int, subClass: String, superClass: String)
 
 case class UmlAssociation(exerciseId: Int, assocType: UmlAssociationType, assocName: Option[String],
-                          firstEnd: String, firstMult: UmlMultiplicity,
-                          secondEnd: String, secondMult: UmlMultiplicity) {
+                          firstEnd: String, firstMult: UmlMultiplicity, secondEnd: String, secondMult: UmlMultiplicity) {
 
   def displayMult(turn: Boolean = false): String =
     if (turn) secondMult.representant + " : " + firstMult.representant
@@ -128,27 +127,22 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Reading
 
-  override def completeExForEx(ex: UmlExercise)(implicit ec: ExecutionContext): Future[UmlCompleteEx] =
-    db.run(mappingsAction(ex.id) zip classesAction(ex.id) zip associationsAction(ex.id) zip implementationsAction(ex.id)) flatMap {
-      case (((mappings, classes), assocs), impls) =>
-        completeClasses(ex, classes) map { compClasses => UmlCompleteEx(ex, mappings, compClasses, assocs, impls) }
-    }
+  override def completeExForEx(ex: UmlExercise)(implicit ec: ExecutionContext): Future[UmlCompleteEx] = for {
+    classes <- completeClassesForEx(ex)
+    mappings <- db.run(umlMappings filter (_.exerciseId === ex.id) result)
+    assocs <- db.run(umlAssociations filter (_.exerciseId === ex.id) result)
+    impls <- db.run(umlImplementations filter (_.exerciseId === ex.id) result)
+  } yield UmlCompleteEx(ex, mappings, classes, assocs, impls)
 
-  private def mappingsAction(id: Int) = umlMappings filter (_.exerciseId === id) result
 
-  private def completeClasses(ex: UmlExercise, classes: Seq[UmlClass]): Future[Seq[UmlCompleteClass]] = Future.sequence(classes map { clazz =>
-    db.run(attrsAction(ex.id, clazz.className) zip methodsAction(ex.id, clazz.className)) map { case (attrs, methods) => UmlCompleteClass(clazz, attrs, methods) }
-  })
-
-  private def classesAction(id: Int) = umlClasses filter (_.exerciseId === id) result
-
-  private def attrsAction(id: Int, className: String) = umlClassAttributes filter (attr => attr.exerciseId === id && attr.className === className) result
-
-  private def methodsAction(id: Int, className: String) = umlClassMethods filter (method => method.exerciseId === id && method.className === className) result
-
-  private def associationsAction(id: Int) = umlAssociations filter (_.exerciseId === id) result
-
-  private def implementationsAction(id: Int) = umlImplementations filter (_.exerciseId === id) result
+  private def completeClassesForEx(ex: UmlExercise): Future[Seq[UmlCompleteClass]] = db.run(umlClasses filter (_.exerciseId === ex.id) result) flatMap { classesSeq =>
+    Future.sequence(classesSeq map { clazz =>
+      for {
+        attrs <- db.run(umlClassAttributes filter (attr => attr.exerciseId === ex.id && attr.className === clazz.className) result)
+        methods <- db.run(umlClassMethods filter (method => method.exerciseId === ex.id && method.className === clazz.className) result)
+      } yield UmlCompleteClass(clazz, attrs, methods)
+    })
+  }
 
   // Saving
 
@@ -159,10 +153,11 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     impl <- saveSeq[UmlImplementation](compEx.implementations, i => db.run(umlImplementations += i))
   } yield mappings && classes && assocs && impl
 
-  private def saveClass(umlCompleteClass: UmlCompleteClass): Future[Boolean] = db.run(umlClasses += umlCompleteClass.clazz) flatMap { _ =>
-    saveSeq[UmlClassAttribute](umlCompleteClass.attributes, a => db.run(umlClassAttributes += a)) zip
-      saveSeq[UmlClassMethod](umlCompleteClass.methods, m => db.run(umlClassMethods += m))
-  } map (t => t._1 && t._2)
+  private def saveClass(umlCompleteClass: UmlCompleteClass): Future[Boolean] = for {
+    classSaved <- db.run(umlClasses += umlCompleteClass.clazz) map (_ => true) recover { case _: Throwable => false }
+    attrsSaved <- saveSeq[UmlClassAttribute](umlCompleteClass.attributes, a => db.run(umlClassAttributes += a))
+    methodsSaved <- saveSeq[UmlClassMethod](umlCompleteClass.methods, m => db.run(umlClassMethods += m))
+  } yield classSaved && attrsSaved && methodsSaved
 
   // Implicit column types
 
@@ -178,15 +173,6 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected implicit val partTypeColumnType: BaseColumnType[UmlExPart] =
     MappedColumnType.base[UmlExPart, String](_.urlName, str => UmlExParts.values.find(_.urlName == str) getOrElse ClassSelection)
 
-
-  implicit val umlCompleteClassesColumnType: BaseColumnType[Seq[UmlCompleteClass]] =
-    MappedColumnType.base[Seq[UmlCompleteClass], String](_.mkString, _ => ???)
-
-  implicit val umlAssociationsColumnType: BaseColumnType[Seq[UmlAssociation]] =
-    MappedColumnType.base[Seq[UmlAssociation], String](_.mkString, _ => ???)
-
-  implicit val umlImplementationsColumnType: BaseColumnType[Seq[UmlImplementation]] =
-    MappedColumnType.base[Seq[UmlImplementation], String](_.mkString, _ => ???)
 
   // Table definitions
 
@@ -344,6 +330,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
 
     override def * = (username, exerciseId, part, solutionJson) <> (tupled, unapply)
+
 
     private def tupled(vals: (String, Int, UmlExPart, String)) = UmlSolution(vals._1, vals._2, vals._3, Seq.empty, Seq.empty, Seq.empty)
 

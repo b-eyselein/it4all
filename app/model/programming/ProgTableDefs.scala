@@ -31,23 +31,9 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSo
     case TestdataCreation => false
   }
 
-  def activityDiagramDisplay: String = ex.maybeClassName match {
-    case Some(clazz) => clazz + "::" + ex.functionname + buildParams(isStatic = false)
-    case None        => ex.functionname + buildParams(isStatic = true)
-  }
-
-  def activityDiagramDeclaration: String = "def " + ex.functionname + buildParams(isStatic = ex.maybeClassName.isEmpty)
-
-  // FIXME: implement!
-  private def buildParams(isStatic: Boolean): String = {
-    val inputs = inputTypes map (it => it.inputName)
-
-    val allInputs: Seq[String] = if (isStatic) inputs else "self" +: inputs
-
-    "(" + (allInputs mkString ", ") + "):"
-  }
-
   def addIndent(solution: String): String = solution.split("\n").map(str => " " * (4 * ex.indentLevel) + str).mkString("\n")
+
+  def classDiagram = "TODO!"
 
 }
 
@@ -79,10 +65,7 @@ case class CompleteCommitedTestData(testData: CommitedTestData, inputs: Seq[Comm
 // Case classes for tables
 
 case class ProgExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, folderIdentifier: String, base: String,
-                        maybeClassName: Option[String], functionname: String, indentLevel: Int, outputType: ProgDataType) extends Exercise {
-
-
-}
+                        maybeClassName: Option[String], functionname: String, indentLevel: Int, outputType: ProgDataType) extends Exercise
 
 
 case class ProgInput(id: Int, exerciseId: Int, inputName: String, inputType: ProgDataType)

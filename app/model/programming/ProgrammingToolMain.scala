@@ -119,23 +119,18 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx): Future[Try[ProgCompleteResult]] = futureSaveSolution(sol) flatMap { solutionSaved =>
 
     val (language, implementation, testData) = sol match {
-      case tds: TestDataSolution => (ProgLanguage.STANDARD_LANG, exercise.sampleSolutions.head.solution, tds.completeCommitedTestData)
+      case tds: TestDataSolution =>
+        (ProgLanguage.STANDARD_LANG, exercise.sampleSolutions.head.solution, tds.completeCommitedTestData)
 
-      case is: ImplementationSolution => (sol.language, implExtractorRegex.replaceFirstIn(exercise.ex.base, is.solution), exercise.sampleTestData)
+      case is: ImplementationSolution =>
+        (sol.language, implExtractorRegex.replaceFirstIn(exercise.ex.base, is.solution), exercise.sampleTestData)
 
       case ads: ActivityDiagramSolution =>
-
-        val base = actDiagExtractorRegex.findFirstIn(exercise.ex.base) getOrElse ""
-
-        val solution = actDiagExtractorRegex.replaceFirstIn(exercise.ex.base, exercise.addIndent(ads.solution))
-
-        println(solution)
-
-        (sol.language, solution, exercise.sampleTestData)
+        (sol.language, actDiagExtractorRegex.replaceFirstIn(exercise.ex.base, exercise.addIndent(ads.solution)), exercise.sampleTestData)
     }
 
     val correctionResult: Try[Future[Try[ProgCompleteResult]]] =
-      ProgrammingCorrector.correct(user, exercise, language, implementation, solutionSaved, testData, this)
+      ProgrammingCorrector.correct(user, exercise, language, implementation, solutionSaved, testData, toolMain = this)
 
     correctionResult match {
       case Success(futureRes) => futureRes
@@ -159,7 +154,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
         // FIXME: remove comments like '# {2}'!
       }
 
-      val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
+      val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned(file = "javascripts/programming/progExercise.js")}"></script>""")
 
       val exRest: Html = views.html.programming.progExerciseRest(exercise)
 
@@ -167,7 +162,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
     case ActivityDiagram =>
       // TODO: use old soluton!
-      views.html.umlActivity.activityDrawing.render(user, exercise, this)
+      views.html.umlActivity.activityDrawing.render(user, exercise, language = ProgLanguage.STANDARD_LANG, toolObject = this)
   }
 
   override def renderEditRest(exercise: ProgCompleteEx): Html = ???

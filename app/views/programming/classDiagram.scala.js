@@ -1,3 +1,7 @@
+@(exercise: model.programming.ProgCompleteEx)
+
+console.error('@exercise.classDiagram');
+
 const targetModal = 'classDiagModal';
 
 $(document).ready(function () {
