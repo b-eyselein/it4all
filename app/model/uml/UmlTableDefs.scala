@@ -42,12 +42,11 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
     case _                => false
   }
 
-  def allAttributes: Seq[UmlClassDiagClassAttribute] = solution.classes flatMap (_.attributes) groupBy (attr => (attr.name, attr.memberType)) map (_._2.head) toSeq
+  val allAttributes: Seq[UmlClassDiagClassAttribute] = allDistinctMembers(_.attributes)
 
-  def allMethods: Seq[UmlClassDiagClassMethod] = solution.classes flatMap (_.methods) groupBy (method => (method.name, method.memberType)) map (_._2.head) toSeq
+  val allMethods: Seq[UmlClassDiagClassMethod] = allDistinctMembers(_.methods)
 
-  private def allDistinctMembers[M <: UmlClassDiagClassMember](members: UmlClassDiagClass => Seq[M]): Seq[M] =
-    solution.classes flatMap members distinct
+  private def allDistinctMembers[M <: UmlClassDiagClassMember](members: UmlClassDiagClass => Seq[M]): Seq[M] = solution.classes flatMap members distinct
 
 }
 
