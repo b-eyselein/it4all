@@ -5,13 +5,14 @@ import model.core.ExPart
 
 sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart
 
-case object ClassSelection extends UmlExPart("Klassenwahl", "class_selection")
 
-case object DiagramDrawingHelp extends UmlExPart("Zeichnen des Diagramms", "diagram_drawing_help")
+case object ClassSelection extends UmlExPart(partName = "Klassenwahl", urlName = "class_selection")
 
-case object DiagramDrawing extends UmlExPart("Zeichnen des Diagramms", "diagram_drawing")
+case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagram_drawing_help")
 
-case object MemberAllocation extends UmlExPart("Zuordnung der Member", "member_allocation")
+case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagram_drawing")
+
+case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", urlName = "member_allocation")
 
 
 object UmlExParts {

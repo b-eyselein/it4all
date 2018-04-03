@@ -2,8 +2,6 @@ package model.uml
 
 import model.Consts
 
-import scala.util.matching.Regex
-
 object UmlConsts extends Consts {
 
   // Numbers
@@ -11,15 +9,6 @@ object UmlConsts extends Consts {
   val OFFSET        = 100
   val GapHorizontal = 250
   val GapVertival   = 200
-
-  // Text parsing
-
-  val CapWordsRegex: Regex = """[A-Z][a-zäöüß]*""".r
-
-  val CssClassName = "non-marked"
-
-  val ClassSelectionFunction = "onclick=\"select(this)\""
-  val DiagramDrawingFunction = "draggable=\"true\" ondragstart=\"drag(event)\""
 
   // Strings
 
