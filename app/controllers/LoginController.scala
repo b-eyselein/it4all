@@ -71,7 +71,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
         case Some(user) =>
           val pwOkay = credentials.password isBcrypted user.pwHash
           if (pwOkay)
-            Redirect(controllers.routes.Application.index()).withSession(SESSION_ID_FIELD -> user.username)
+            Redirect(controllers.routes.Application.index()).withSession(sessionIdField -> user.username)
           else
             Ok(views.html.login(FormMappings.userCredForm.fill(credentials)))
       }

@@ -93,18 +93,13 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override def correctEx(user: User, learnerSolution: WebSolution, exercise: WebCompleteEx): Future[Try[WebCompleteResult]] = {
-
-    val futureSolutionSaved = futureSaveSolution(learnerSolution)
-
+  override def correctEx(user: User, learnerSolution: WebSolution, exercise: WebCompleteEx, solutionSaved: Boolean): Future[Try[WebCompleteResult]] = Future {
     val driver = new HtmlUnitDriver(true)
     driver.get(getSolutionUrl(user, exercise.ex.id, learnerSolution.part))
 
     val results = Try(getTasks(exercise, learnerSolution.part) map (task => WebCorrector.evaluateWebTask(task, driver)))
 
-    futureSolutionSaved map { solutionSaved =>
-      results map (WebCompleteResult(learnerSolution.solution, exercise, learnerSolution.part, solutionSaved, _))
-    }
+    results map (WebCompleteResult(learnerSolution.solution, exercise, learnerSolution.part, solutionSaved, _))
   }
 
   // Handlers for results

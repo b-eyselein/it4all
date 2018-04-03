@@ -8,7 +8,6 @@ text: >
   Ein Medikament hat eine eindeutige Id und einen Namen. Ein Patient wiederum kann in einer Station aufgenommen bzw.
   entlassen werden.
 status: APPROVED
-
 mappings:
 - {key: Stationen, value: Station}
 - {key: Doktoren, value: Doktor}
@@ -17,97 +16,97 @@ mappings:
 - {key: Namen, value: Name}
 - {key: Medikamente, value: Medikament}
 ignoreWords: ['Ein', 'Jede']
+solution:
+  classes:
+  - classType: ABSTRACT
+    name: Person
+    attributes:
+    - {name: id, type: String}
+    - {name: name, type: String}
 
-classes:
-- classType: ABSTRACT
-  name: Person
-  attributes:
-  - {name: id, type: String}
-  - {name: name, type: String}
+  - classType: CLASS
+    name: Doktor
+    methods:
+    - {name: verschreiben(Patient), type: void}
 
-- classType: CLASS
-  name: Doktor
-  methods:
-  - {name: verschreiben(Patient), type: void}
+  - classType: CLASS
+    name: Rezept
+    attributes:
+    - {name: id, type: String}
 
-- classType: CLASS
-  name: Rezept
-  attributes:
-  - {name: id, type: String}
+  - classType: CLASS
+    name: Patient
+    methods:
+    - {name: entlassen(Station), type: void}
+    - {name: aufnehmen(Station), type: void}
 
-- classType: CLASS
-  name: Patient
-  methods:
-  - {name: entlassen(Station), type: void}
-  - {name: aufnehmen(Station), type: void}
+  - classType: CLASS
+    name: Krankenschwester
 
-- classType: CLASS
-  name: Krankenschwester
+  - classType: CLASS
+    name: Station
+    attributes:
+    - {name: nummer, type: Int}
 
-- classType: CLASS
-  name: Station
-  attributes:
-  - {name: nummer, type: Int}
+  - classType: CLASS
+    name: Medikament
+    attributes:
+    - {name: id, type: String}
+    - {name: name, type: String}
 
-- classType: CLASS
-  name: Medikament
-  attributes:
-  - {name: id, type: String}
-  - {name: name, type: String}
+  - classType: CLASS
+    name: Krankenhaus
 
-- classType: CLASS
-  name: Krankenhaus
+  implementations:
+  - {subClass: Patient, superClass: Person}
+  - {subClass: Doktor, superClass: Person}
+  - {subClass: Krankenschwester, superClass: Person}
 
-implementations:
-- {subClass: Patient, superClass: Person}
-- {subClass: Doktor, superClass: Person}
-- {subClass: Krankenschwester, superClass: Person}
+  associations:
+  - assocType: ASSOCIATION
+    firstEnd: Doktor
+    firstMult: SINGLE
+    secondEnd: Rezept
+    secondMult: UNBOUND
 
-associations:
-- assocType: ASSOCIATION
-  firstEnd: Doktor
-  firstMult: SINGLE
-  secondEnd: Rezept
-  secondMult: UNBOUND
+  - assocType: ASSOCIATION
+    firstEnd: Doktor
+    firstMult: SINGLE
+    secondEnd: Patient
+    secondMult: UNBOUND
 
-- assocType: ASSOCIATION
-  firstEnd: Doktor
-  firstMult: SINGLE
-  secondEnd: Patient
-  secondMult: UNBOUND
+  - assocType: ASSOCIATION
+    firstEnd: Station
+    firstMult: SINGLE
+    secondEnd: Patient
+    secondMult: UNBOUND
 
-- assocType: ASSOCIATION
-  firstEnd: Station
-  firstMult: SINGLE
-  secondEnd: Patient
-  secondMult: UNBOUND
+  - assocType: ASSOCIATION
+    firstEnd: Station
+    firstMult: SINGLE
+    secondEnd: Krankenschwester
+    secondMult: UNBOUND
 
-- assocType: ASSOCIATION
-  firstEnd: Station
-  firstMult: SINGLE
-  secondEnd: Krankenschwester
-  secondMult: UNBOUND
+  - assocType: ASSOCIATION
+    firstEnd: Station
+    firstMult: SINGLE
+    secondEnd: Doktor
+    secondMult: UNBOUND
 
-- assocType: ASSOCIATION
-  firstEnd: Station
-  firstMult: SINGLE
-  secondEnd: Doktor
-  secondMult: UNBOUND
+  - assocType: ASSOCIATION
+    firstEnd: Patient
+    firstMult: SINGLE
+    secondEnd: Rezept
+    secondMult: UNBOUND
 
-- assocType: ASSOCIATION
-  firstEnd: Patient
-  firstMult: SINGLE
-  secondEnd: Rezept
-  secondMult: UNBOUND
+  - assocType: ASSOCIATION
+    firstEnd: Rezept
+    firstMult: SINGLE
+    secondEnd: Medikament
+    secondMult: UNBOUND
 
-- assocType: ASSOCIATION
-  firstEnd: Rezept
-  firstMult: SINGLE
-  secondEnd: Medikament
-  secondMult: UNBOUND
-
-- assocType: COMPOSITION
-  firstEnd: Krankenhaus
-  firstMult: SINGLE
-  secondEnd: Station
-  secondMult: UNBOUND
+  - assocType: COMPOSITION
+    firstEnd: Krankenhaus
+    firstMult: SINGLE
+    secondEnd: Station
+    secondMult: UNBOUND

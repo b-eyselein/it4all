@@ -32,7 +32,7 @@ class LTIController @Inject()(cc: ControllerComponents, tables: Repository)(impl
 
 
         futureUserAndCourse map {
-          case (user, _, _) => Redirect(routes.Application.index()).withNewSession.withSession(CoreConsts.SESSION_ID_FIELD -> user.username)
+          case (user, _, _) => Redirect(routes.Application.index()).withNewSession.withSession(CoreConsts.sessionIdField -> user.username)
         }
 
     }

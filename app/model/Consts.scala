@@ -2,10 +2,10 @@ package model
 
 trait Consts {
 
-  val adminFolder = "admin"
-  val answersName = "answers"
-  val attrsName   = "attributes"
-  val authorName  = "author"
+  val adminFolder    = "admin"
+  val answersName    = "answers"
+  val attributesName = "attributes"
+  val authorName     = "author"
 
   val correct         = "correct"
   val correctnessName = "correctness"
@@ -34,6 +34,7 @@ trait Consts {
   val sampleSubDir    = "samples"
   val stateName       = "status"
   val stdStep         = 10
+  val solutionName    = "solution"
   val solutionsSubDir = "solutions"
   val successName     = "success"
 
@@ -41,6 +42,7 @@ trait Consts {
   val templateSubDir = "templates"
   val textName       = "text"
   val titleName      = "title"
+  val typeName       = "type"
 
   val usernameName = "username"
 

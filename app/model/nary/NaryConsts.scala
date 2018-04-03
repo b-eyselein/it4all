@@ -14,8 +14,6 @@ object NaryConsts extends EssentialsConsts {
 
   val InvertedAbs = "invertedAbs"
 
-
-  val LearnerSol = "solution"
   val RandomName = "RANDOM"
 
   val SecondSummand   = "summand2"

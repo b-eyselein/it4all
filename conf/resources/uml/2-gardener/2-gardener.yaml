@@ -15,7 +15,6 @@ text: >
       enthalten ist, für Gemüse, ob es zweijährig ist. Bei Blumen und Nutzpflanzen soll außerdem ein Hinweis gespeichert
       werden, wann die Pflanzen gegossen werden sollen.
 status: CREATED
-
 mappings:
 - {key: Vertrauens, value: Vertrauen}
 - {key: Gewächshäuser, value: Gewächshaus}
@@ -28,17 +27,13 @@ mappings:
 - {key: Nutzpflanzen, value: Nutzpflanze}
 - {key: Blütenfarben, value: Blützenfarbe}
 - {key: Pflanzen, value: Pflanze}
-
 ignoreWords: ['Sie', 'Jede', 'In', 'Dieser', 'Außerdem', 'Für', 'Bei']
-
-classes:
-- classType: ABSTRACT
-  name: Pflanze
-
-- classType: ABSTRACT
-  name: Baum
-
-implementations:
-- {subClass: Baum, superClass: Pflanze}
-
-associations: []
+solution:
+  classes:
+  - classType: ABSTRACT
+    name: Pflanze
+  - classType: ABSTRACT
+    name: Baum
+  implementations:
+  - {subClass: Baum, superClass: Pflanze}
+  associations: []

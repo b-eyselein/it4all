@@ -344,6 +344,7 @@ CREATE TABLE IF NOT EXISTS uml_exercises (
   ex_text        TEXT,
   ex_state       ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
+  solution_json  TEXT,
   class_sel_text TEXT,
   diag_draw_text TEXT,
   to_ignore      TEXT
@@ -355,67 +356,6 @@ CREATE TABLE IF NOT EXISTS uml_mappings (
   mapping_value VARCHAR(50),
 
   PRIMARY KEY (exercise_id, mapping_key),
-  FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS uml_sol_classes (
-  exercise_id INT,
-  class_name  VARCHAR(50),
-  class_type  ENUM ('CLASS', 'INTERFACE', 'ABSTRACT') DEFAULT 'CLASS',
-
-  PRIMARY KEY (exercise_id, class_name),
-  FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS uml_sol_classes_attrs (
-  exercise_id INT,
-  class_name  VARCHAR(50),
-  attr_name   VARCHAR(50),
-  attr_type   VARCHAR(50),
-
-  PRIMARY KEY (exercise_id, class_name, attr_name),
-  FOREIGN KEY (exercise_id, class_name) REFERENCES uml_sol_classes (exercise_id, class_name)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS uml_sol_classes_methods (
-  exercise_id INT,
-  class_name  VARCHAR(50),
-  method_name VARCHAR(50),
-  return_type VARCHAR(50),
-
-  PRIMARY KEY (exercise_id, class_name, method_name),
-  FOREIGN KEY (exercise_id, class_name) REFERENCES uml_sol_classes (exercise_id, class_name)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS uml_sol_impls (
-  exercise_id INT,
-  sub_class   VARCHAR(50),
-  super_class VARCHAR(50),
-
-  PRIMARY KEY (exercise_id, sub_class, super_class),
-  FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS uml_sol_assocs (
-  exercise_id INT,
-  assoc_type  ENUM ('ASSOCIATION', 'AGGREGATION', 'COMPOSITION') DEFAULT 'ASSOCIATION',
-  assoc_name  VARCHAR(50),
-  first_end   VARCHAR(50),
-  first_mult  ENUM ('SINGLE', 'UNBOUND'),
-  second_end  VARCHAR(50),
-  second_mult ENUM ('SINGLE', 'UNBOUND'),
-
-  PRIMARY KEY (exercise_id, first_end, second_end),
   FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
@@ -578,16 +518,6 @@ DROP TABLE IF EXISTS web_exercises;
 # Uml
 
 DROP TABLE IF EXISTS uml_solutions;
-
-DROP TABLE IF EXISTS uml_sol_assocs;
-
-DROP TABLE IF EXISTS uml_sol_impls;
-
-DROP TABLE IF EXISTS uml_sol_classes_methods;
-
-DROP TABLE IF EXISTS uml_sol_classes_attrs;
-
-DROP TABLE IF EXISTS uml_sol_classes;
 
 DROP TABLE IF EXISTS uml_mappings;
 

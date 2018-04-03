@@ -88,7 +88,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override def write(htmlCompTask: HtmlCompleteTask): YamlValue = {
       val yamlAttrs: Option[(YamlString, YamlArray)] = htmlCompTask.attributes match {
         case Nil   => None
-        case attrs => Some(YamlString(attrsName) -> YamlArr(attrs map TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId).write))
+        case attrs => Some(YamlString(attributesName) -> YamlArr(attrs map TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId).write))
       }
 
       val tcOpt: Option[(YamlValue, YamlValue)] = htmlCompTask.task.textContent map (tc => YamlString(TEXT_CONTENT_NAME) -> YamlString(tc))
@@ -106,7 +106,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
-      attributeTries <- yamlObject.optArrayField(attrsName, TaskAttributeYamlFormat(taskId, exerciseId).read)
+      attributeTries <- yamlObject.optArrayField(attributesName, TaskAttributeYamlFormat(taskId, exerciseId).read)
     } yield {
 
       val textContent: Option[String] = yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)

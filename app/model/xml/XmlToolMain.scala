@@ -62,10 +62,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     "rootNode" -> nonEmptyText
   )(XmlExercise.apply)(XmlExercise.unapply))
 
-  // DB
-
-  override def futureSaveSolution(sol: XmlSolution): Future[Boolean] = tables.futureSaveSolution(sol)
-
   // Reading solution from requests, saving
 
   override def readSolutionFromPostRequest(user: User, id: Int, part: XmlExPart)(implicit request: Request[AnyContent]): Option[XmlSolution] =
@@ -85,8 +81,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise): Future[Try[XmlCompleteResult]] = futureSaveSolution(solution) map { solSaved =>
-    solution.part match {
+  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise, solutionSaved: Boolean): Future[Try[XmlCompleteResult]] =
+    Future(solution.part match {
       case DocumentCreationXmlPart =>
         checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
 
@@ -97,15 +93,14 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
           grammarAndXmlTries map { case (grammar, xml) =>
             val correctionResult = XmlCorrector.correct(xml, grammar)
-            XmlCompleteResult(solution.solution, solSaved, correctionResult)
+            XmlCompleteResult(solution.solution, solutionSaved, correctionResult)
           }
         })
 
       case GrammarCreationXmlPart =>
         XmlCorrector.correctDTD(solution.solution, completeEx)
         Failure(new Exception("Not implemented yet: correction of grammar..."))
-    }
-  }
+    })
 
   // Views
 

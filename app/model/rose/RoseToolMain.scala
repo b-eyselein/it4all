@@ -48,8 +48,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // DB
 
-  override def futureSaveSolution(sol: RoseSolution): Future[Boolean] = tables.futureSaveSolution(sol)
-
   override def readSolutionFromPostRequest(user: User, id: Int, part: RoseExPart)(implicit request: Request[AnyContent]): Option[RoseSolution] = ???
 
   override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: RoseExPart): Option[RoseSolution] = jsValue.asObj flatMap { jsObj =>
@@ -76,11 +74,10 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Correction
 
-  override protected def correctEx(user: User, sol: RoseSolution, exercise: RoseCompleteEx): Future[Try[RoseCompleteResult]] = {
+  override protected def correctEx(user: User, sol: RoseSolution, exercise: RoseCompleteEx, solutionSaved: Boolean): Future[Try[RoseCompleteResult]] = {
     val solDir = solutionDirForExercise(user.username, exercise.ex.id)
 
     for {
-      solutionSaved <- futureSaveSolution(sol)
       result <- RoseCorrector.correct(user, exercise, sol.solution, ProgLanguage.STANDARD_LANG, exerciseResourcesFolder, solDir)
     } yield Try(RoseCompleteResult(solutionSaved, sol.solution, result))
   }

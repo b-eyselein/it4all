@@ -9,22 +9,22 @@ import scala.language.postfixOps
 
 // Classes
 
-case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlCompleteClass, UmlClassMatch, UmlClassMatchingResult] {
+case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClassDiagClass, UmlClassMatch, UmlClassMatchingResult] {
 
-  override def canMatch: (UmlCompleteClass, UmlCompleteClass) => Boolean = _.clazz.className == _.clazz.className
+  override def canMatch: (UmlClassDiagClass, UmlClassDiagClass) => Boolean = _.className == _.className
 
-  override def matchInstantiation: (Option[UmlCompleteClass], Option[UmlCompleteClass]) => UmlClassMatch = UmlClassMatch(_, _, compareAttrsAndMethods)
+  override def matchInstantiation: (Option[UmlClassDiagClass], Option[UmlClassDiagClass]) => UmlClassMatch = UmlClassMatch(_, _, compareAttrsAndMethods)
 
   override def resultInstantiation: Seq[UmlClassMatch] => UmlClassMatchingResult = UmlClassMatchingResult
 
 }
 
-case class UmlClassMatch(userArg: Option[UmlCompleteClass], sampleArg: Option[UmlCompleteClass], compAM: Boolean) extends Match[UmlCompleteClass] {
+case class UmlClassMatch(userArg: Option[UmlClassDiagClass], sampleArg: Option[UmlClassDiagClass], compAM: Boolean) extends Match[UmlClassDiagClass] {
 
   var attributesResult: UmlAttributeMatchingResult = _
   var methodsResult   : UmlMethodMatchingResult    = _
 
-  override def analyze(c1: UmlCompleteClass, c2: UmlCompleteClass): MatchType = if (!compAM) SUCCESSFUL_MATCH else {
+  override def analyze(c1: UmlClassDiagClass, c2: UmlClassDiagClass): MatchType = if (!compAM) SUCCESSFUL_MATCH else {
     attributesResult = UmlAttributeMatcher.doMatch(c1.attributes, c2.attributes)
     methodsResult = UmlMethodsMatcher.doMatch(c1.methods, c2.methods)
 
@@ -41,9 +41,9 @@ case class UmlClassMatch(userArg: Option[UmlCompleteClass], sampleArg: Option[Um
     case _                            => super.explanation
   }
 
-  override protected def descArg(arg: UmlCompleteClass): String = arg.clazz.className
+  override protected def descArg(arg: UmlClassDiagClass): String = arg.className
 
-  private def explainMemberMatches(matches: Seq[Match[_ <: UmlClassMember]]): String = matches filter (!_.isSuccessful) match {
+  private def explainMemberMatches(matches: Seq[Match[_ <: UmlClassDiagClassMember]]): String = matches filter (!_.isSuccessful) match {
     case Nil => ""
     case ms  => ms map (aMatch => aMatch.matchType match {
       case ONLY_SAMPLE => aMatch.sampleArg map (_.render.asCode + " fehlte!") getOrElse "FEHLER!"
@@ -54,7 +54,7 @@ case class UmlClassMatch(userArg: Option[UmlCompleteClass], sampleArg: Option[Um
 
 }
 
-case class UmlClassMatchingResult(allMatches: Seq[UmlClassMatch]) extends MatchingResult[UmlCompleteClass, UmlClassMatch] {
+case class UmlClassMatchingResult(allMatches: Seq[UmlClassMatch]) extends MatchingResult[UmlClassDiagClass, UmlClassMatch] {
 
   override val matchName: String = "Klassen"
 
@@ -62,23 +62,24 @@ case class UmlClassMatchingResult(allMatches: Seq[UmlClassMatch]) extends Matchi
 
 // Uml class attributes
 
-object UmlAttributeMatcher extends Matcher[UmlClassAttribute, UmlAttributeMatch, UmlAttributeMatchingResult] {
+object UmlAttributeMatcher extends Matcher[UmlClassDiagClassAttribute, UmlAttributeMatch, UmlAttributeMatchingResult] {
 
-  override def canMatch: (UmlClassAttribute, UmlClassAttribute) => Boolean = (ca1, ca2) => ca1.name == ca2.name && ca1.umlType == ca2.umlType
+  override def canMatch: (UmlClassDiagClassAttribute, UmlClassDiagClassAttribute) => Boolean =
+    (ca1, ca2) => ca1.name == ca2.name && ca1.memberType == ca2.memberType
 
-  override def matchInstantiation: (Option[UmlClassAttribute], Option[UmlClassAttribute]) => UmlAttributeMatch = UmlAttributeMatch
+  override def matchInstantiation: (Option[UmlClassDiagClassAttribute], Option[UmlClassDiagClassAttribute]) => UmlAttributeMatch = UmlAttributeMatch
 
   override def resultInstantiation: Seq[UmlAttributeMatch] => UmlAttributeMatchingResult = UmlAttributeMatchingResult
 
 }
 
-case class UmlAttributeMatch(userArg: Option[UmlClassAttribute], sampleArg: Option[UmlClassAttribute]) extends Match[UmlClassAttribute] {
+case class UmlAttributeMatch(userArg: Option[UmlClassDiagClassAttribute], sampleArg: Option[UmlClassDiagClassAttribute]) extends Match[UmlClassDiagClassAttribute] {
 
-  override def analyze(arg1: UmlClassAttribute, arg2: UmlClassAttribute): MatchType = super.analyze(arg1, arg2)
+  override def analyze(arg1: UmlClassDiagClassAttribute, arg2: UmlClassDiagClassAttribute): MatchType = super.analyze(arg1, arg2)
 
 }
 
-case class UmlAttributeMatchingResult(allMatches: Seq[UmlAttributeMatch]) extends MatchingResult[UmlClassAttribute, UmlAttributeMatch] {
+case class UmlAttributeMatchingResult(allMatches: Seq[UmlAttributeMatch]) extends MatchingResult[UmlClassDiagClassAttribute, UmlAttributeMatch] {
 
   override val matchName: String = "Attribute"
 
@@ -86,23 +87,24 @@ case class UmlAttributeMatchingResult(allMatches: Seq[UmlAttributeMatch]) extend
 
 // Uml class methods
 
-object UmlMethodsMatcher extends Matcher[UmlClassMethod, UmlMethodMatch, UmlMethodMatchingResult] {
+object UmlMethodsMatcher extends Matcher[UmlClassDiagClassMethod, UmlMethodMatch, UmlMethodMatchingResult] {
 
-  override def canMatch: (UmlClassMethod, UmlClassMethod) => Boolean = (m1, m2) => m1.name == m2.name && m1.umlType == m2.umlType
+  override def canMatch: (UmlClassDiagClassMethod, UmlClassDiagClassMethod) => Boolean =
+    (m1, m2) => m1.name == m2.name && m1.memberType == m2.memberType
 
-  override def matchInstantiation: (Option[UmlClassMethod], Option[UmlClassMethod]) => UmlMethodMatch = UmlMethodMatch
+  override def matchInstantiation: (Option[UmlClassDiagClassMethod], Option[UmlClassDiagClassMethod]) => UmlMethodMatch = UmlMethodMatch
 
   override def resultInstantiation: Seq[UmlMethodMatch] => UmlMethodMatchingResult = UmlMethodMatchingResult
 
 }
 
-case class UmlMethodMatch(userArg: Option[UmlClassMethod], sampleArg: Option[UmlClassMethod]) extends Match[UmlClassMethod] {
+case class UmlMethodMatch(userArg: Option[UmlClassDiagClassMethod], sampleArg: Option[UmlClassDiagClassMethod]) extends Match[UmlClassDiagClassMethod] {
 
-  override def analyze(arg1: UmlClassMethod, arg2: UmlClassMethod): MatchType = super.analyze(arg1, arg2)
+  override def analyze(arg1: UmlClassDiagClassMethod, arg2: UmlClassDiagClassMethod): MatchType = super.analyze(arg1, arg2)
 
 }
 
-case class UmlMethodMatchingResult(allMatches: Seq[UmlMethodMatch]) extends MatchingResult[UmlClassMethod, UmlMethodMatch] {
+case class UmlMethodMatchingResult(allMatches: Seq[UmlMethodMatch]) extends MatchingResult[UmlClassDiagClassMethod, UmlMethodMatch] {
 
   override val matchName: String = "Methode"
 

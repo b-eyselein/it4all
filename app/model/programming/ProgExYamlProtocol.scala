@@ -63,7 +63,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     override protected def readObject(yamlObject: YamlObject): Try[ProgInput] = for {
       id <- yamlObject.intField(idName)
       inputName <- yamlObject.stringField(nameName)
-      inputType <- yamlObject.enumField(inputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+      inputType <- yamlObject.enumField(typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
     } yield ProgInput(id, exerciseId, inputName, inputType)
 
     override def write(obj: ProgInput): YamlValue = ???

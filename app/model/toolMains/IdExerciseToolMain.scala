@@ -2,6 +2,7 @@ package model.toolMains
 
 import java.nio.file.{Files, Path}
 
+import model.core.CoreConsts.solutionName
 import model.core._
 import model.persistence.SingleExerciseTableDefs
 import model.{JsonFormat, PartSolution, User}
@@ -27,7 +28,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   def checkAndCreateSolDir(username: String, exercise: CompExType): Try[Path] =
     Try(Files.createDirectories(solutionDirForExercise(username, exercise.ex.id)))
 
-  def futureSaveSolution(sol: SolType): Future[Boolean]
+  def futureSaveSolution(sol: SolType): Future[Boolean] = tables.futureSaveSolution(sol)
 
   def futureOldSolution(user: User, exerciseId: Int, partString: String)(implicit ec: ExecutionContext): Future[Option[SolType]] = partTypeFromUrl(partString) match {
     case None       => Future(None)
@@ -54,29 +55,30 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   // Correction
 
+  // FIXME: change return type of function!
   def correctAbstract(user: User, id: Int, partStr: String, isLive: Boolean)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[Either[Html, JsValue]]] =
     partTypeFromUrl(partStr) match {
-      // FIXME: change return type of function!
       case None       => Future(Failure(NoSuchPartException(partStr)))
       case Some(part) => readSolution(user, id, part, isLive) match {
-        case None => Future(Failure(SolutionTransferException))
-
-        case Some(solution) =>
-          futureCompleteExById(id) flatMap {
-            case None => Future(Failure(NoSuchExerciseException(id)))
-
-            case Some(exercise) =>
-              val futureResultTry: Future[Try[CompResult]] = correctEx(user, solution, exercise)
-
-              futureResultTry map {
-                case Success(res)   =>
-                  if (isLive) Success(Right(onLiveCorrectionResult(res)))
-                  else Success(Left(onSubmitCorrectionResult(user, res)))
-                case Failure(error) => Failure(error)
-              }
-          }
+        case None           => Future(Failure(SolutionTransferException))
+        case Some(solution) => onSolution(user, solution, id, isLive)
       }
     }
+
+
+  private def onSolution(user: model.User, solution: SolType, id: Int, isLive: Boolean): Future[Try[Either[Html, JsValue]]] = futureCompleteExById(id) flatMap {
+    case None => Future(Failure(NoSuchExerciseException(id)))
+
+    case Some(exercise) => futureSaveSolution(solution) flatMap { solutionSaved =>
+      correctEx(user, solution, exercise, solutionSaved) map {
+        case Success(res)   =>
+          // FIXME: change return type of function!
+          if (isLive) Success(Right(onLiveCorrectionResult(res)))
+          else Success(Left(onSubmitCorrectionResult(user, res)))
+        case Failure(error) => Failure(error)
+      }
+    }
+  }
 
 
   private def readSolution(user: User, id: Int, part: PartType, isLive: Boolean)(implicit request: Request[AnyContent]): Option[SolType] =
@@ -86,12 +88,12 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def readSolutionFromPutRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap (_.asObj) flatMap {
-      _.field("solution") flatMap (solution => readSolutionForPartFromJson(user, id, solution, part))
+      _.field(solutionName) flatMap (solution => readSolutionForPartFromJson(user, id, solution, part))
     }
 
   def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: PartType): Option[SolType]
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompExType): Future[Try[CompResult]]
+  protected def correctEx(user: User, sol: SolType, exercise: CompExType, solutionSaved: Boolean): Future[Try[CompResult]]
 
   // Views
 

@@ -40,8 +40,8 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[RoseInputType] = for {
       id <- yamlObject.intField(idName)
-      name <- yamlObject.stringField("name")
-      inputType <- yamlObject.enumField("type", str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+      name <- yamlObject.stringField(nameName)
+      inputType <- yamlObject.enumField(typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
     } yield RoseInputType(id, exerciseId, name, inputType)
 
     override def write(obj: RoseInputType): YamlValue = ???

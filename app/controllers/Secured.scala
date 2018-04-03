@@ -1,7 +1,7 @@
 package controllers
 
 import model.User
-import model.core.CoreConsts.SESSION_ID_FIELD
+import model.core.CoreConsts.sessionIdField
 import model.persistence.TableDefs
 import play.api.mvc._
 
@@ -12,7 +12,7 @@ trait Secured {
 
   protected val repository: TableDefs
 
-  private def username(request: RequestHeader): Option[String] = request.session.get(SESSION_ID_FIELD)
+  private def username(request: RequestHeader): Option[String] = request.session.get(sessionIdField)
 
   private def onUnauthorized(request: RequestHeader): Result = Redirect(controllers.routes.LoginController.login()).withNewSession
 

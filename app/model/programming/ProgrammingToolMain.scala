@@ -68,8 +68,6 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   // Reading solution from requests
 
-  override def futureSaveSolution(sol: ProgSolution): Future[Boolean] = tables.futureSaveSolution(sol)
-
   override def readSolutionFromPostRequest(user: User, id: Int, part: ProgrammingExPart)(implicit request: Request[AnyContent]): Option[ProgSolution] = None
 
   override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgrammingExPart): Option[ProgSolution] = {
@@ -116,7 +114,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   // Correction
 
-  override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx): Future[Try[ProgCompleteResult]] = futureSaveSolution(sol) flatMap { solutionSaved =>
+  override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx, solutionSaved: Boolean): Future[Try[ProgCompleteResult]] = {
 
     val (language, implementation, testData) = sol match {
       case tds: TestDataSolution =>

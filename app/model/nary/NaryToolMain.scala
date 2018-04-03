@@ -111,7 +111,7 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
       base <- jsObj.stringField(BaseName) flatMap numbaseFromString
       summand1 <- jsObj.stringField(FirstSummand) flatMap (parseNaryNumber(_, base))
       summand2 <- jsObj.stringField(SecondSummand) flatMap (parseNaryNumber(_, base))
-      solutionNary <- jsObj.stringField(LearnerSol) flatMap (parseNaryNumber(_, base))
+      solutionNary <- jsObj.stringField(solutionName) flatMap (parseNaryNumber(_, base))
     } yield NAryAddResult(base, summand1, summand2, solutionNary)
   }
 
@@ -120,14 +120,14 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
       startingNumBase <- jsObj.stringField(StartingNumBase) flatMap numbaseFromString
       targetNumBase <- jsObj.stringField(TargetNumBase) flatMap numbaseFromString
       startingValue <- jsObj.stringField(valueName) flatMap (parseNaryNumber(_, startingNumBase))
-      learnerSol <- jsObj.stringField(LearnerSol) flatMap (parseNaryNumber(_, targetNumBase))
+      learnerSol <- jsObj.stringField(solutionName) flatMap (parseNaryNumber(_, targetNumBase))
     } yield NAryConvResult(startingValue, startingNumBase, targetNumBase, learnerSol)
   }
 
   private def readTwoCompSolutionFromJson(jsValue: JsValue): Option[TwoCompResult] = jsValue.asObj flatMap { jsObj =>
     for {
       value <- jsObj.intField(valueName)
-      solution <- jsObj.stringField(LearnerSol) flatMap parseTwoComplement
+      solution <- jsObj.stringField(solutionName) flatMap parseTwoComplement
     } yield TwoCompResult(value, solution, jsObj.stringField(BinaryAbs), jsObj.stringField(InvertedAbs))
   }
 

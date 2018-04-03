@@ -53,8 +53,6 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Reading solution from requests
 
-  override def futureSaveSolution(sol: BlanksSolution): Future[Boolean] = ???
-
   override def readSolutionFromPostRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] = None
 
   override def readSolutionFromPutRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] =
@@ -78,7 +76,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Correction
 
-  override protected def correctEx(user: User, sol: BlanksSolution, exercise: BlanksCompleteExercise): Future[Try[BlanksCompleteResult]] =
+  override protected def correctEx(user: User, sol: BlanksSolution, exercise: BlanksCompleteExercise, solutionSaved: Boolean): Future[Try[BlanksCompleteResult]] =
     Future(Try(BlanksCompleteResult(sol.answers, BlanksCorrector.doMatch(sol.answers, exercise.samples))))
 
   // Views

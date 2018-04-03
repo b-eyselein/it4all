@@ -1,65 +1,65 @@
 @(user: model.User, exercise: model.uml.UmlCompleteEx)
 
-    @scripts = {
-        <script src="@controllers.routes.Assets.versioned("javascripts/uml/allocation.js")"></script>
+@scripts = {
+    <script src="@controllers.routes.Assets.versioned("javascripts/uml/allocation.js")"></script>
+}
+
+@main("UML", Some(user), scripts) {
+    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
+            <!-- FIXME: formulate hints for allocation of attributes and methods -->
+        TODO...
     }
+    <div class="container">
+        <div class="page-header">
+            <h1>Zuordnung der Attribute und Methoden <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintModal">&#65311;</button></h1>
+        </div>
 
-    @main("UML", Some(user), scripts) {
-        @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
-                <!-- FIXME: formulate hints for allocation of attributes and methods -->
-            TODO...
-        }
-        <div class="container">
-            <div class="page-header">
-                <h1>Zuordnung der Attribute und Methoden <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintModal">&#65311;</button></h1>
-            </div>
+        <h3>Aufgabentext</h3>
 
-            <h3>Aufgabentext</h3>
+        <div class="well">@exercise.ex.text</div>
 
-            <div class="well">@exercise.ex.text</div>
+        <hr>
 
-            <hr>
+        @for(clazzQuadruple <- exercise.ex.solution.classes grouped 4) {
+            <div class="row">
+            @for(completeClass <- clazzQuadruple) {
+                <div class="col-md-3">
 
-            @for(clazzQuadruple <- exercise.classes grouped 4) {
-                <div class="row">
-                @for(completeClass <- clazzQuadruple) {
-                    <div class="col-md-3">
-
-                        <div class="panel panel-default" data-clazz="@completeClass.clazz.className">
-                            <div class="panel-heading">@completeClass.clazz.className</div>
-                            <div class="panel-body">
-                                @for(attr <- exercise.allAttributes) {
-                                    <div class="checkbox">
-                                        <label><input type="checkbox" data-class="@completeClass.clazz.className" data-membertype="attribute"
-                                        data-name="@attr.name" data-type="@attr.umlType"> @attr.render
-                                        </label>
-                                    </div>
-                                }
-                            <hr>
-                                @for(method <- exercise.allMethods) {
-                                    <div class="checkbox">
-                                        <label><input type="checkbox" data-class="@completeClass.clazz.className" data-membertype="method"
-                                        data-name="@method.name" data-type="@method.umlType"> @method.render
-                                        </label>
-                                    </div>
-                                }
-                            </div>
+                    <div class="panel panel-default" data-clazz="@completeClass.className">
+                        <div class="panel-heading">@completeClass.className</div>
+                        <div class="panel-body">
+                            @for(attr <- exercise.allAttributes) {
+                                <div class="checkbox">
+                                    <label><input type="checkbox" data-class="@completeClass.className" data-membertype="attribute"
+                                    data-name="@attr.name" data-type="@attr.memberType"> @attr.render
+                                    </label>
+                                </div>
+                            }
+                        <hr>
+                            @for(method <- exercise.allMethods) {
+                                <div class="checkbox">
+                                    <label><input type="checkbox" data-class="@completeClass.className" data-membertype="method"
+                                    data-name="@method.name" data-type="@method.memberType"> @method.render
+                                    </label>
+                                </div>
+                            }
                         </div>
-
                     </div>
-                }
 
                 </div>
             }
 
-            <hr>
+            </div>
+        }
 
-            @* FIXME: part... *@
-            <form action="@routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)"
-            method="post" onsubmit="return prepareFormForSubmitting();">
-                <input type="text" title="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
-                <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
-            </form>
+        <hr>
 
-        </div>
-    }
+        @* FIXME: part... *@
+        <form action="@routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)"
+        method="post" onsubmit="return prepareFormForSubmitting();">
+            <input type="text" title="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
+            <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
+        </form>
+
+    </div>
+}

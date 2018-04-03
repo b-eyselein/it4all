@@ -23,27 +23,25 @@ object UmlConsts extends Consts {
 
   // Strings
 
-  val ASSOCS_NAME    = "associations"
-  val ASSOCNAME_NAME = "assocName"
-  val ASSOCTYPE_NAME = "assocType"
+  val associationsName    = "associations"
+  val associationNameName = "assocName"
+  val associationTypeName = "assocType"
 
-  val CLASSES_NAME   = "classes"
-  val CLASSTYPE_NAME = "classType"
+  val classesName   = "classes"
+  val classTypeName = "classType"
 
-  val FIRST_END_NAME  = "firstEnd"
-  val FIRST_MULT_NAME = "firstMult"
+  val firstEndName  = "firstEnd"
+  val firstMultName = "firstMult"
 
-  val IMPLS_NAME        = "implementations"
-  val IGNORE_WORDS_NAME = "ignoreWords"
+  val implementationsName = "implementations"
+  val ignoreWordsName     = "ignoreWords"
 
-  val MAPPINGS_NAME = "mappings"
-  val METHODS_NAME  = "methods"
+  val mappingsName = "mappings"
+  val methodsName  = "methods"
 
-  val SECOND_END_NAME  = "secondEnd"
-  val SECOND_MULT_NAME = "secondMult"
-  val SOLUTION_NAME    = "solution"
-  val SUBCLASS_NAME    = "subClass"
-  val SUPERCLASS_NAME  = "superClass"
+  val secondEndName  = "secondEnd"
+  val secondMultName = "secondMult"
+  val subclassName   = "subClass"
+  val superclassName = "superClass"
 
-  val TYPE_NAME = "type"
 }

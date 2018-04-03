@@ -31,18 +31,18 @@
 
     <h3>Klassen</h3>
     <div class="form-horizontal">
-    @for(clazz <- exercise.classes) {
+    @for(clazz <- exercise.ex.solution.classes) {
         <div class="form-group">
             <label class="control-label col-md-1">Name:</label>
             <div class="col-md-5">
-                <input class="form-control" value="@clazz.clazz.className">
+                <input class="form-control" value="@clazz.className">
             </div>
             <label class="control-label col-md-1">Typ:</label>
             <div class="col-md-5">
                 <select class="form-control">
                 @for(classType <- model.uml.UmlEnums.UmlClassType.values) {
                     <option @{
-                        if(classType == clazz.clazz.classType) "selected" else ""
+                        if(classType == clazz.classType) "selected" else ""
                     }>@classType</option>
                 }
                 </select>
@@ -58,7 +58,7 @@
                         <div class="input-group">
                             <input class="form-control" value="@attribute.name">
                             <span class="input-group-addon">:</span>
-                            <input class="form-control" value="@attribute.umlType">
+                            <input class="form-control" value="@attribute.memberType">
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                         <div class="input-group">
                             <input class="form-control" value="@method.name">
                             <span class="input-group-addon">:</span>
-                            <input class="form-control" value="@method.umlType">
+                            <input class="form-control" value="@method.memberType">
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
     </div>
 
     <h3>Vererbungen</h3>
-    @for(implementationTuple <- exercise.implementations.grouped(2)) {
+    @for(implementationTuple <- exercise.ex.solution.implementations grouped 2) {
         <div class="row">
         @for(implementation <- implementationTuple) {
             <div class="col-md-6">
@@ -101,7 +101,7 @@
     }
 
     <h3>Assoziationen</h3>
-    @for(association <- exercise.associations) {
+    @for(association <- exercise.ex.solution.associations) {
         <div class="form-group">
             <div class="row">
                 <div class="col-md-2">

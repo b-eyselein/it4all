@@ -21,7 +21,6 @@ object ProgConsts extends Consts {
   val indentLevelName    = "indentLevel"
   val inputName          = "input"
   val inputsName         = "inputs"
-  val inputTypeName      = "type"
   val inputTypesName     = "inputTypes"
 
   val languageName = "language"
