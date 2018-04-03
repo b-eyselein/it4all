@@ -172,7 +172,7 @@ case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
   override type C = SelectItem
 
   override def hasAlias: Boolean = col match {
-    case sei: SelectExpressionItem => sei.getAlias != null
+    case sei: SelectExpressionItem => Option(sei.getAlias).isDefined
     case _                         => false
   }
 

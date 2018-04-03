@@ -248,10 +248,10 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Implicit column types
 
-  implicit val ProgLanguageColumnType: BaseColumnType[ProgLanguage] =
+  private implicit val progLanguageColumnType: BaseColumnType[ProgLanguage] =
     MappedColumnType.base[ProgLanguage, String](_.name, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
 
-  implicit val ProgDataTypesColumnType: BaseColumnType[ProgDataType] =
+  private implicit val progDataTypesColumnType: BaseColumnType[ProgDataType] =
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
   override protected implicit val partTypeColumnType: BaseColumnType[ProgrammingExPart] =

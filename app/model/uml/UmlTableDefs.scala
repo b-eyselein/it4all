@@ -46,6 +46,9 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
 
   def allMethods: Seq[UmlClassDiagClassMethod] = solution.classes flatMap (_.methods) groupBy (method => (method.name, method.memberType)) map (_._2.head) toSeq
 
+  private def allDistinctMembers[M <: UmlClassDiagClassMember](members: UmlClassDiagClass => Seq[M]): Seq[M] =
+    solution.classes flatMap members distinct
+
 }
 
 

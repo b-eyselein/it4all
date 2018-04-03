@@ -20,13 +20,13 @@ import scala.util.{Failure, Success, Try}
 
 object ProgrammingToolMain {
 
-  private val ProgExOptions = ExerciseOptions(ProgLanguage.STANDARD_LANG.aceName, 15, 30)
+  private val progExOptions = ExerciseOptions(ProgLanguage.STANDARD_LANG.aceName, 15, 30)
 
-  val STD_TEST_DATA_COUNT = 2
+  val standardTestCount = 2
 
-  val MaxWaitTimeInSeconds = 5
+  val maxWaitTimeInSeconds = 5
 
-  val MaxDuration = Duration(MaxWaitTimeInSeconds, duration.SECONDS)
+  val maxDuration = Duration(maxWaitTimeInSeconds, duration.SECONDS)
 
 }
 
@@ -156,7 +156,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
       val exRest: Html = views.html.programming.progExerciseRest(exercise)
 
-      views.html.core.exercise2Rows(user, this, ProgExOptions, exercise, exRest, exScript, declaration, Implementation)
+      views.html.core.exercise2Rows(user, this, progExOptions, exercise, exRest, exScript, declaration, Implementation)
 
     case ActivityDiagram =>
       // TODO: use old soluton!
