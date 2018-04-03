@@ -78,7 +78,10 @@ object MyYamlProtocol {
       case None        => Failure(new NoSuchFieldException(fieldName))
     }
 
-    private def optField[T](fieldName: String, f: YamlValue => T): Option[T] = yamlObject.fields get fieldName map f
+    def optField[T](fieldName: String, f: YamlValue => Try[T]): Try[Option[T]] = yamlObject.fields get fieldName match {
+      case None            => Success(None)
+      case Some(yamlValue) => f(yamlValue) map Some.apply
+    }
 
 
     def boolField(fieldName: String): Try[Boolean] = someField(fieldName) flatMap (_.asBool)
@@ -93,8 +96,6 @@ object MyYamlProtocol {
       case Failure(_)     => Success(None)
       case Success(field) => field.asStr map Some.apply
     }
-
-    def optForgivingStringField(fieldName: String): Option[String] = optField(fieldName, _.forgivingStr)
 
     def arrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = someField(fieldName) flatMap (_.asArray(mapping))
 

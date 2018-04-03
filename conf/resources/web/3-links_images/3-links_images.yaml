@@ -32,6 +32,6 @@ htmlTasks:
   attributes:
   - {key: src, value: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg'}
   - {key: alt, value: Ford Mustang}
-  - {key: width, value: '250'}
-  - {key: height, value: '188'}
+  - {key: CLASS_WIDTH, value: '250'}
+  - {key: CLASS_HEIGHT, value: '188'}
   - {key: class, value: img-rounded}

@@ -5,11 +5,12 @@ import model.core.{ExPart, ExParts}
 
 sealed abstract class ProgrammingExPart(val partName: String, val urlName: String) extends ExPart
 
-case object TestdataCreation extends ProgrammingExPart("Erstellen der Testdaten", "testdata")
 
-case object Implementation extends ProgrammingExPart("Implementierung", "implementation")
+case object TestdataCreation extends ProgrammingExPart(partName = "Erstellen der Testdaten", urlName = "testdata")
 
-case object ActivityDiagram extends ProgrammingExPart("Als Aktivitätsdiagramm", "activity")
+case object Implementation extends ProgrammingExPart(partName = "Implementierung", urlName = "implementation")
+
+case object ActivityDiagram extends ProgrammingExPart(partName = "Als Aktivitätsdiagramm", urlName = "activity")
 
 
 object ProgrammingExParts extends ExParts[ProgrammingExPart] {

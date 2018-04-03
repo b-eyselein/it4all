@@ -72,6 +72,8 @@ DELETE IGNORE FROM quizzes;
 
 DELETE IGNORE FROM prog_solutions;
 
+DELETE IGNORE FROM prog_uml_cd_parts;
+
 DELETE IGNORE FROM prog_commited_testdata_input;
 
 DELETE IGNORE FROM prog_sample_testdata_input;

@@ -23,9 +23,9 @@ object WebConsts extends Consts {
   val PHP_TEXT_NAME  = "phpText"
 
 
-  val TEXT_CONTENT_NAME = "textContent"
+  val textContentName = "textContent"
 
-  val XPATH_NAME = "xpathQuery"
+  val xpathQueryName = "xpathQuery"
 
   val STANDARD_HTML: String =
     """<!doctype html>

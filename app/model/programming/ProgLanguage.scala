@@ -36,9 +36,9 @@ case object PYTHON_3 extends ProgLanguage {
   override val aceName     : String = "python"
   override val fileEnding  : String = "py"
 
-  override def activityDiagramDisplay(exercise: ProgCompleteEx): String = exercise.ex.maybeClassName match {
-    case Some(clazz) => clazz + "::" + exercise.ex.functionname + buildParams(exercise)
-    case None        => exercise.ex.functionname + buildParams(exercise)
+  override def activityDiagramDisplay(exercise: ProgCompleteEx): String = exercise.maybeClassDiagramPart match {
+    case Some(classDiagPart: UmlClassDiagPart) => classDiagPart.className + "::" + exercise.ex.functionname + buildParams(exercise)
+    case None                                  => exercise.ex.functionname + buildParams(exercise)
   }
 
   override def activityDiagramDeclaration(exercise: ProgCompleteEx): String = "def " + exercise.ex.functionname + buildParams(exercise)
@@ -46,7 +46,7 @@ case object PYTHON_3 extends ProgLanguage {
   override def buildParams(exercise: ProgCompleteEx): String = {
     val inputs = exercise.inputTypes map (it => it.inputName)
 
-    val allInputs: Seq[String] = if (exercise.ex.maybeClassName.isEmpty) inputs else "self" +: inputs
+    val allInputs: Seq[String] = if (exercise.maybeClassDiagramPart.isEmpty) inputs else "self" +: inputs
 
     "(" + (allInputs mkString ", ") + "):"
   }

@@ -9,15 +9,15 @@ import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
 import scala.language.{implicitConversions, postfixOps}
-import scala.util.Try
+import scala.util.{Success, Try}
 
 object WebExYamlProtocol extends MyYamlProtocol {
 
   implicit object WebExYamlFormat extends MyYamlObjectFormat[WebCompleteEx] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[WebCompleteEx] = yamlObject.optForgivingStringField("extern") match {
-      case None           => readRest(yamlObject)
-      case Some(fileName) => readExtern(fileName)
+    override protected def readObject(yamlObject: YamlObject): Try[WebCompleteEx] = yamlObject.optField("extern", str => Success(str.forgivingStr)) match {
+      case Success(Some(fileName)) => readExtern(fileName)
+      case _                       => readRest(yamlObject)
     }
 
     def readRest(yamlObject: YamlObject): Try[WebCompleteEx] = for {
@@ -91,13 +91,13 @@ object WebExYamlProtocol extends MyYamlProtocol {
         case attrs => Some(YamlString(attributesName) -> YamlArr(attrs map TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId).write))
       }
 
-      val tcOpt: Option[(YamlValue, YamlValue)] = htmlCompTask.task.textContent map (tc => YamlString(TEXT_CONTENT_NAME) -> YamlString(tc))
+      val tcOpt: Option[(YamlValue, YamlValue)] = htmlCompTask.task.textContent map (tc => YamlString(textContentName) -> YamlString(tc))
 
       new YamlObject(
         Map[YamlValue, YamlValue](
           YamlString(idName) -> htmlCompTask.task.id,
           YamlString(textName) -> htmlCompTask.task.text,
-          YamlString(XPATH_NAME) -> htmlCompTask.task.xpathQuery
+          YamlString(xpathQueryName) -> htmlCompTask.task.xpathQuery
         ) ++ tcOpt ++ yamlAttrs
       )
     }
@@ -105,11 +105,11 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override def readObject(yamlObject: YamlObject): Try[HtmlCompleteTask] = for {
       taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
-      xpathQuery <- yamlObject.stringField(XPATH_NAME)
+      xpathQuery <- yamlObject.stringField(xpathQueryName)
+      textContent <- yamlObject.optField(textContentName, str => Success(str.forgivingStr))
       attributeTries <- yamlObject.optArrayField(attributesName, TaskAttributeYamlFormat(taskId, exerciseId).read)
     } yield {
 
-      val textContent: Option[String] = yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)
 
       for (attributeFailure <- attributeTries._2)
       // FIXME: return...
@@ -138,7 +138,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       YamlObj(
         idName -> jsTask.task.id,
         textName -> jsTask.task.text,
-        XPATH_NAME -> jsTask.task.xpathQuery,
+        xpathQueryName -> jsTask.task.xpathQuery,
         ACTION_TYPE_NAME -> jsTask.task.actionType.name,
         KEYS_TO_SEND_NAME -> jsTask.task.keysToSend.map(YamlString).getOrElse(YamlNull),
         CONDITIONS_NAME -> yamlConds
@@ -148,11 +148,11 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override def readObject(yamlObject: YamlObject): Try[JsCompleteTask] = for {
       taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
-      xpathQuery <- yamlObject.stringField(XPATH_NAME)
+      xpathQuery <- yamlObject.stringField(xpathQueryName)
       actionType <- yamlObject.enumField(ACTION_TYPE_NAME, JsActionType.valueOf)
+      keysToSend <- yamlObject.optField(KEYS_TO_SEND_NAME, str => Success(str.forgivingStr))
       conditionTries <- yamlObject.arrayField(CONDITIONS_NAME, JsConditionYamlFormat(taskId, exerciseId).read)
     } yield {
-      val keysToSend = yamlObject.optForgivingStringField(KEYS_TO_SEND_NAME)
 
       for (conditionFailure <- conditionTries._2)
       // FIXME: return...
@@ -167,14 +167,14 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[JsCondition] = for {
       id <- yamlObject.intField(idName)
-      xpathQuery <- yamlObject.stringField(XPATH_NAME)
+      xpathQuery <- yamlObject.stringField(xpathQueryName)
       isPrecondition <- yamlObject.boolField(IS_PRECOND_NAME)
       awaitedValue <- yamlObject.forgivingStringField(AWAITED_VALUE_NAME)
     } yield JsCondition(id, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue)
 
     override def write(jsCond: JsCondition): YamlValue = YamlObj(
       idName -> jsCond.id,
-      XPATH_NAME -> jsCond.xpathQuery,
+      xpathQueryName -> jsCond.xpathQuery,
       IS_PRECOND_NAME -> jsCond.isPrecondition,
       AWAITED_VALUE_NAME -> jsCond.awaitedValue
     )

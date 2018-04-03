@@ -90,7 +90,11 @@ trait TableDefs {
   // Abstract queries
 
   protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any])(implicit ec: ExecutionContext): Future[Boolean] = Future.sequence(seqToSave map {
-    toSave => save(toSave) map (_ => true) recover { case _: Exception => false }
+    toSave =>
+      save(toSave) map (_ => true) recover { case e: Exception =>
+        Logger.error("Could not perform save option", e)
+        false
+      }
   }) map (_ forall identity)
 
 
@@ -117,7 +121,7 @@ trait TableDefs {
 
     def todo = column[ShowHideAggregate]("todo")
 
-    def * = (username, pwHash, role, todo) <> (User.tupled, User.unapply)
+    override def * = (username, pwHash, role, todo) <> (User.tupled, User.unapply)
 
   }
 
@@ -127,7 +131,7 @@ trait TableDefs {
 
     def courseName = column[String]("course_name")
 
-    def * = (id, courseName) <> (Course.tupled, Course.unapply)
+    override def * = (id, courseName) <> (Course.tupled, Course.unapply)
 
   }
 
@@ -149,7 +153,7 @@ trait TableDefs {
     def courseFk = foreignKey("course_fk", courseId, courses)(_.id)
 
 
-    def * = (username, courseId, role) <> (UserInCourse.tupled, UserInCourse.unapply)
+    override def * = (username, courseId, role) <> (UserInCourse.tupled, UserInCourse.unapply)
 
   }
 
@@ -159,7 +163,7 @@ trait TableDefs {
 
     def str = column[String]("str")
 
-    def * = (id, str) <> (Tipp.tupled, Tipp.unapply)
+    override def * = (id, str) <> (Tipp.tupled, Tipp.unapply)
 
   }
 

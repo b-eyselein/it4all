@@ -153,6 +153,16 @@ CREATE TABLE IF NOT EXISTS prog_commited_testdata_input (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
+  exercise_id   INT PRIMARY KEY,
+  class_name    VARCHAR(30),
+  class_diagram TEXT,
+
+  FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS prog_solutions (
   username    VARCHAR(50),
   exercise_id INT,
@@ -558,6 +568,8 @@ DROP TABLE IF EXISTS quizzes;
 # Programming
 
 DROP TABLE IF EXISTS prog_solutions;
+
+DROP TABLE IF EXISTS prog_uml_cd_parts;
 
 DROP TABLE IF EXISTS prog_commited_testdata_input;
 

@@ -1,9 +1,11 @@
 package model.persistence
 
 import model.core.ExPart
+import model.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
 import model.{CompleteEx, Exercise, PartSolution, Solution}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,6 +52,22 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
     def userFk = foreignKey("user_fk", username, users)(_.username)
 
+  }
+
+  // For programming and uml!
+
+  protected implicit val umlClassDiagramColumnType: BaseColumnType[UmlClassDiagram] = {
+
+    val write = (ucd: UmlClassDiagram) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(ucd).toString
+
+    val read = (str: String) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
+      case JsSuccess(ucd, _) => ucd
+      case JsError(errors)   =>
+        errors.foreach(error => Logger.error("There has been an error loading a uml class diagram from json" + error))
+        UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty)
+    }
+
+    MappedColumnType.base[UmlClassDiagram, String](write, read)
   }
 
 }

@@ -6,6 +6,7 @@ import model._
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
+import model.uml.UmlClassDiagram
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import play.twirl.api.Html
@@ -14,9 +15,10 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-// Classes for user
+// Classes for use
 
-case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution], sampleTestData: Seq[CompleteSampleTestData])
+case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
+                          sampleTestData: Seq[CompleteSampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
   extends PartsCompleteEx[ProgExercise, ProgrammingExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
@@ -31,9 +33,7 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSo
     case TestdataCreation => false
   }
 
-  def addIndent(solution: String): String = solution.split("\n").map(str => " " * (4 * ex.indentLevel) + str).mkString("\n")
-
-  def classDiagram = "TODO!"
+  def addIndent(solution: String): String = solution split "\n" map (str => " " * (4 * ex.indentLevel) + str) mkString "\n"
 
 }
 
@@ -65,7 +65,7 @@ case class CompleteCommitedTestData(testData: CommitedTestData, inputs: Seq[Comm
 // Case classes for tables
 
 case class ProgExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, folderIdentifier: String, base: String,
-                        maybeClassName: Option[String], functionname: String, indentLevel: Int, outputType: ProgDataType) extends Exercise
+                        functionname: String, indentLevel: Int, outputType: ProgDataType) extends Exercise
 
 
 case class ProgInput(id: Int, exerciseId: Int, inputName: String, inputType: ProgDataType)
@@ -103,6 +103,8 @@ case class CommitedTestDataInput(id: Int, testId: Int, exerciseId: Int, input: S
   )
 
 }
+
+case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram: UmlClassDiagram)
 
 // Solution types
 
@@ -219,19 +221,23 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val commitedTestDataInput = TableQuery[CommitedTestdataInputTable]
 
+  val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
+
   // Queries
 
   override def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = for {
     samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result)
     completeSampleTestData <- completeTestDataForEx(ex)
-  } yield ProgCompleteEx(ex, inputTypes, samples, completeSampleTestData)
+    maybeClassDiagramPart <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption)
+  } yield ProgCompleteEx(ex, inputTypes, samples, completeSampleTestData, maybeClassDiagramPart)
 
   override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
     samplesSaved <- saveSeq[ProgSampleSolution](compEx.sampleSolutions, sampSol => db.run(sampleSolutions += sampSol))
     inputTypesSaved <- saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i))
     sampleTestDataSaved <- saveSeq[CompleteSampleTestData](compEx.sampleTestData, saveSampleTestdata)
-  } yield samplesSaved && inputTypesSaved && sampleTestDataSaved
+    classDiagPartSaved <- saveSeq[UmlClassDiagPart](compEx.maybeClassDiagramPart.toSeq, i => db.run(umlClassDiagParts += i))
+  } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && classDiagPartSaved
 
   private def saveSampleTestdata(sampleData: CompleteSampleTestData): Future[Boolean] =
     db.run(sampleTestData += sampleData.testData) flatMap { _ => saveSeq[SampleTestDataInput](sampleData.inputs, i => db.run(sampleTestDataInputs += i)) }
@@ -265,8 +271,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def base = column[String]("base")
 
-    def className = column[String]("class_name")
-
     def functionname = column[String]("function_name")
 
     def indentLevel = column[Int]("indent_level")
@@ -277,7 +281,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", id)
 
 
-    def * = (id, title, author, text, state, folderIdentifier, base, className.?, functionname, indentLevel, outputType) <> (ProgExercise.tupled, ProgExercise.unapply)
+    override def * = (id, title, author, text, state, folderIdentifier, base, functionname, indentLevel, outputType) <> (ProgExercise.tupled, ProgExercise.unapply)
 
   }
 
@@ -297,7 +301,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (id, exerciseId, inputName, inputType) <> (ProgInput.tupled, ProgInput.unapply)
+    override def * = (id, exerciseId, inputName, inputType) <> (ProgInput.tupled, ProgInput.unapply)
 
   }
 
@@ -317,7 +321,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (exerciseId, language, base, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
+    override def * = (exerciseId, language, base, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
 
   }
 
@@ -341,7 +345,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", (id, exerciseId))
 
 
-    def * = (id, exerciseId, output) <> (SampleTestData.tupled, SampleTestData.unapply)
+    override def * = (id, exerciseId, output) <> (SampleTestData.tupled, SampleTestData.unapply)
 
   }
 
@@ -357,7 +361,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def userFk = foreignKey("user_fk", username, users)(_.username)
 
 
-    def * = (id, exerciseId, username, output, state) <> (CommitedTestData.tupled, CommitedTestData.unapply)
+    override def * = (id, exerciseId, username, output, state) <> (CommitedTestData.tupled, CommitedTestData.unapply)
 
   }
 
@@ -382,7 +386,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def sampleTestDataFk = foreignKey("sample_testdata_fk", (testId, exerciseId), sampleTestData)(sampleTD => (sampleTD.id, sampleTD.exerciseId))
 
 
-    def * = (id, testId, exerciseId, input) <> (SampleTestDataInput.tupled, SampleTestDataInput.unapply)
+    override def * = (id, testId, exerciseId, input) <> (SampleTestDataInput.tupled, SampleTestDataInput.unapply)
 
   }
 
@@ -396,7 +400,20 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def commitedTestdataFk = foreignKey("commited_testdata_fk", (testId, exerciseId, username), commitedTestData)(commitedTD => (commitedTD.id, commitedTD.exerciseId, commitedTD.username))
 
 
-    def * = (id, testId, exerciseId, input, username) <> (CommitedTestDataInput.tupled, CommitedTestDataInput.unapply)
+    override def * = (id, testId, exerciseId, input, username) <> (CommitedTestDataInput.tupled, CommitedTestDataInput.unapply)
+
+  }
+
+  class UmlClassDiagPartsTable(tag: Tag) extends Table[UmlClassDiagPart](tag, "prog_uml_cd_parts") {
+
+    def exerciseId = column[Int]("exercise_id", O.PrimaryKey)
+
+    def className = column[String]("class_name")
+
+    def classDiagram = column[UmlClassDiagram]("class_diagram")
+
+
+    override def * = (exerciseId, className, classDiagram) <> (UmlClassDiagPart.tupled, UmlClassDiagPart.unapply)
 
   }
 
@@ -407,7 +424,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def solution = column[String]("solution")
 
 
-    def * = (username, exerciseId, part, language, solution) <> (ProgSolution.tupled, ProgSolution.unapply)
+    override def * = (username, exerciseId, part, language, solution) <> (ProgSolution.tupled, ProgSolution.unapply)
 
   }
 

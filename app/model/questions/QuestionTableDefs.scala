@@ -183,7 +183,7 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
     def pk = primaryKey("pk", id)
 
 
-    def * = (id, title, author, text, state, theme) <> (Quiz.tupled, Quiz.unapply)
+    override def * = (id, title, author, text, state, theme) <> (Quiz.tupled, Quiz.unapply)
 
   }
 
@@ -199,7 +199,7 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
     def quizFk = foreignKey("quiz_fk", collectionId, collTable)(_.id)
 
 
-    def * = (id, title, author, text, state, collectionId, questionType, maxPoints) <> (Question.tupled, Question.unapply)
+    override def * = (id, title, author, text, state, collectionId, questionType, maxPoints) <> (Question.tupled, Question.unapply)
 
   }
 
@@ -223,7 +223,7 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
     def questionFk = foreignKey("question_fk", (questionId, quizId), exTable)(question => (question.id, question.collectionId))
 
 
-    def * = (id, questionId, quizId, ansText, correctness, explanation.?) <> (Answer.tupled, Answer.unapply)
+    override def * = (id, questionId, quizId, ansText, correctness, explanation.?) <> (Answer.tupled, Answer.unapply)
 
   }
 
@@ -231,7 +231,7 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
     def givenAnswers = column[Seq[GivenAnswer]]("todo")
 
-    def * = (username, collectionId, exerciseId, givenAnswers) <> (QuestionSolution.tupled, QuestionSolution.unapply)
+    override def * = (username, collectionId, exerciseId, givenAnswers) <> (QuestionSolution.tupled, QuestionSolution.unapply)
 
   }
 

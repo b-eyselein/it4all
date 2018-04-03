@@ -117,7 +117,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
       case GrammarCreationXmlPart  => Html(div(cls := "well")(exercise.grammarDescription).toString)
     }
 
-    views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, exScript, template, part)
+    views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, template, part, exScript)
   }
 
   // Result handlers

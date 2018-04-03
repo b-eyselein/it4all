@@ -51,7 +51,7 @@ class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
     def templateFilename = column[String]("template_filename")
 
-    def * = (id, title, author, text, state, sampleFilename, templateFilename) <> (SpreadExercise.tupled, SpreadExercise.unapply)
+    override def * = (id, title, author, text, state, sampleFilename, templateFilename) <> (SpreadExercise.tupled, SpreadExercise.unapply)
 
   }
 

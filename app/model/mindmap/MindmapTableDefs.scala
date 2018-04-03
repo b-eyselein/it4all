@@ -48,7 +48,7 @@ class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigP
 
   class MindmapExercisesTable(tag: Tag) extends HasBaseValuesTable[MindmapExercise](tag, "mindmap_exercises") {
 
-    def * = (id, title, author, text, state) <> (MindmapExercise.tupled, MindmapExercise.unapply)
+    override def * = (id, title, author, text, state) <> (MindmapExercise.tupled, MindmapExercise.unapply)
 
   }
 

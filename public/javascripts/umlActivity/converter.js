@@ -481,15 +481,15 @@ function fillContentInElement(parentId, result) {
 
     for (let i = 0; i < parentView.$box['0'].children.length; i++) {
         if (parentView.$box['0'].children[i].nodeName === 'TEXTAREA') {
-            parentView.$box['0'].children[i].style.height = textareaHeight + 'px';
+            parentView.$box['0'].children[i].style.CLASS_HEIGHT = textareaHeight + 'px';
             refreshElement(connectedCell);
         }
         if (parentView.$box['0'].children[i].nodeName === 'DIV') {
             for (let j = 0; j < parentView.$attributes.length; j++) {
                 // console.log(parentView.$attributes[j].nodeName);
                 if (parentView.$attributes[j].nodeName === 'TEXTAREA') {
-                    // var oldTextAreaHeight = parentView.$attributes[j].style.height;
-                    parentView.$attributes[j].style.height = textareaHeight + 'px';
+                    // var oldTextAreaHeight = parentView.$attributes[j].style.CLASS_HEIGHT;
+                    parentView.$attributes[j].style.CLASS_HEIGHT = textareaHeight + 'px';
                     refreshElement(connectedCell);
                 }
 

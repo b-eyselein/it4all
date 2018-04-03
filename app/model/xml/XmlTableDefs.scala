@@ -88,7 +88,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def sampleGrammar = column[String]("sample_grammar")
 
 
-    def * = (id, title, author, text, state, grammarDescription, sampleGrammar, rootNode) <> (XmlExercise.tupled, XmlExercise.unapply)
+    override def * = (id, title, author, text, state, grammarDescription, sampleGrammar, rootNode) <> (XmlExercise.tupled, XmlExercise.unapply)
 
   }
 
@@ -100,7 +100,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     override def pk = primaryKey("pk", (exerciseId, username, part))
 
 
-    def * = (username, exerciseId, part, solution) <> (XmlSolution.tupled, XmlSolution.unapply)
+    override def * = (username, exerciseId, part, solution) <> (XmlSolution.tupled, XmlSolution.unapply)
 
   }
 

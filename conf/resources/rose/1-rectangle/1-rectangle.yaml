@@ -11,8 +11,8 @@ fieldHeight: 10
 isMultiplayer: false
 
 inputTypes:
-- {id: 1, name: width, type: int}
-- {id: 2, name: height, type: int}
+- {id: 1, name: CLASS_WIDTH, type: int}
+- {id: 2, name: CLASS_HEIGHT, type: int}
 
 sampleSolutions:
 - language: PYTHON_3

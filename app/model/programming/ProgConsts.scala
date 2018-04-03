@@ -8,7 +8,9 @@ object ProgConsts extends Consts {
 
   val baseName = "base"
 
-  val classNameName = "className"
+  val classNameName        = "className"
+  val classDiagramName     = "classDiagram"
+  val classDiagramPartName = "classDiagramPart"
 
   val evaluatedName = "evaluated"
 

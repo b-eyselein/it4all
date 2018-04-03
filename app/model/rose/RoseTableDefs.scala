@@ -137,7 +137,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", id)
 
 
-    def * = (id, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer) <> (RoseExercise.tupled, RoseExercise.unapply)
+    override def * = (id, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer) <> (RoseExercise.tupled, RoseExercise.unapply)
 
   }
 
@@ -157,7 +157,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (id, exerciseId, name, inputType) <> (RoseInputType.tupled, RoseInputType.unapply)
+    override def * = (id, exerciseId, name, inputType) <> (RoseInputType.tupled, RoseInputType.unapply)
 
   }
 
@@ -175,7 +175,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (exerciseId, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
+    override def * = (exerciseId, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
 
   }
 
@@ -187,7 +187,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def solution = column[String]("solution")
 
 
-    def * = (username, exerciseId, part, solution) <> (RoseSolution.tupled, RoseSolution.unapply)
+    override def * = (username, exerciseId, part, solution) <> (RoseSolution.tupled, RoseSolution.unapply)
 
   }
 

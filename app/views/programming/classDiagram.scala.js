@@ -1,6 +1,6 @@
 @(exercise: model.programming.ProgCompleteEx)
 
-console.error('@exercise.classDiagram');
+console.error('@exercise.maybeClassDiagramPart');
 
 const targetModal = 'classDiagModal';
 
@@ -169,7 +169,7 @@ $(document).ready(function () {
                         const lines = _.isArray(rect.text) ? rect.text : [rect.text];
                         const rectHeight = lines.length * 20 + 20;
                         attrs['.textar-class' + rect.type + '-text'].text = lines.join('\n');
-                        attrs['.textar-class' + rect.type + '-rect'].height = rectHeight;
+                        attrs['.textar-class' + rect.type + '-rect'].CLASS_HEIGHT = rectHeight;
                         attrs['.textar-class' + rect.type + '-rect'].transform = 'translate(0,' + offsetY + ')';
                         offsetY += rectHeight;
                     });

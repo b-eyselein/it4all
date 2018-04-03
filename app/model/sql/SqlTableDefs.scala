@@ -141,7 +141,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    def * = (id, title, author, text, state, shortName) <> (SqlScenario.tupled, SqlScenario.unapply)
+    override def * = (id, title, author, text, state, shortName) <> (SqlScenario.tupled, SqlScenario.unapply)
 
   }
 
@@ -159,7 +159,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def scenarioFk = foreignKey("scenario_fk", collectionId, collTable)(_.id)
 
 
-    def * = (id, title, author, text, state, collectionId, exerciseType, tags, hint.?) <> (SqlExercise.tupled, SqlExercise.unapply)
+    override def * = (id, title, author, text, state, collectionId, exerciseType, tags, hint.?) <> (SqlExercise.tupled, SqlExercise.unapply)
 
   }
 
@@ -179,7 +179,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def exerciseFk = foreignKey("exercise_fk", (exerciseId, scenarioId), exTable)(exes => (exes.id, exes.collectionId))
 
 
-    def * = (id, exerciseId, scenarioId, sample) <> (SqlSample.tupled, SqlSample.unapply)
+    override def * = (id, exerciseId, scenarioId, sample) <> (SqlSample.tupled, SqlSample.unapply)
 
   }
 
@@ -188,7 +188,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution = column[String]("solution")
 
 
-    def * = (username, collectionId, exerciseId, solution) <> (SqlSolution.tupled, SqlSolution.unapply)
+    override def * = (username, collectionId, exerciseId, solution) <> (SqlSolution.tupled, SqlSolution.unapply)
 
   }
 

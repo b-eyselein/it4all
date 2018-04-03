@@ -7,7 +7,7 @@ import model.programming.ProgConsts._
 import model.programming.ProgrammingToolMain._
 import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
-import model.{Consts, JsonFormat, User}
+import model.{Consts, User}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
@@ -31,7 +31,7 @@ object ProgrammingToolMain {
 }
 
 @Singleton
-class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("programming") with JsonFormat {
+class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain(urlPart = "programming") {
 
   // Abstract types
 
@@ -104,8 +104,8 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
-    ProgExercise(id, title = "", author = "", text = "", state, folderIdentifier = "", base = "", maybeClassName = None, functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING),
-    inputTypes = Seq.empty, sampleSolutions = Seq.empty, sampleTestData = Seq.empty
+    ProgExercise(id, title = "", author = "", text = "", state, folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING),
+    inputTypes = Seq.empty, sampleSolutions = Seq.empty, sampleTestData = Seq.empty, maybeClassDiagramPart = None
   )
 
   // Yaml
@@ -152,11 +152,9 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
         // FIXME: remove comments like '# {2}'!
       }
 
-      val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned(file = "javascripts/programming/progExercise.js")}"></script>""")
-
       val exRest: Html = views.html.programming.progExerciseRest(exercise)
 
-      views.html.core.exercise2Rows(user, this, progExOptions, exercise, exRest, exScript, declaration, Implementation)
+      views.html.core.exercise2Rows(user, this, progExOptions, exercise, exRest, declaration, Implementation, exScripts(exercise.maybeClassDiagramPart.isDefined))
 
     case ActivityDiagram =>
       // TODO: use old soluton!
@@ -164,6 +162,19 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   }
 
   override def renderEditRest(exercise: ProgCompleteEx): Html = ???
+
+  private def exScripts(hasClassDiagPart: Boolean): Html = {
+
+    val mainScript = s"""<script src="${controllers.routes.Assets.versioned(file = "javascripts/programming/progExercise.js")}"></script>"""
+
+    val jointJsScript = if (hasClassDiagPart)
+      s"""<script src="${controllers.routes.Assets.versioned(file = "lib/lodash/lodash.js")}"></script>
+         |<script src="${controllers.routes.Assets.versioned(file = "lib/backbonejs/backbone.js")}"></script>
+         |<script src="${controllers.routes.Assets.versioned(file = "lib/jointjs/dist/joint.js")}"></script>
+         |<script src="${controllers.routes.Assets.versioned(file = "javascripts/programming/classDiagram.js")}"></script>""".stripMargin else ""
+
+    Html(mainScript + "\n" + jointJsScript)
+  }
 
   // Handlers for results
 

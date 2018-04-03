@@ -106,20 +106,6 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected implicit val partTypeColumnType: BaseColumnType[UmlExPart] =
     MappedColumnType.base[UmlExPart, String](_.urlName, str => UmlExParts.values.find(_.urlName == str) getOrElse ClassSelection)
 
-  protected implicit val ucdColumnType: BaseColumnType[UmlClassDiagram] = {
-
-    val write = (ucd: UmlClassDiagram) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(ucd).toString
-
-    val read = (str: String) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
-      case JsSuccess(ucd, _) => ucd
-      case JsError(errors)   =>
-        errors.foreach(error => Logger.error("There has been an error loading a uml class diagram from json" + error))
-        UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty)
-    }
-
-    MappedColumnType.base[UmlClassDiagram, String](write, read)
-  }
-
   // Table definitions
 
   class UmlExercisesTable(tag: Tag) extends HasBaseValuesTable[UmlExercise](tag, "uml_exercises") {
@@ -136,7 +122,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    def * = (id, title, author, text, state, solutionAsJson, classSelText, diagDrawText, toIgnore) <> (UmlExercise.tupled, UmlExercise.unapply)
+    override def * = (id, title, author, text, state, solutionAsJson, classSelText, diagDrawText, toIgnore) <> (UmlExercise.tupled, UmlExercise.unapply)
 
   }
 
@@ -154,7 +140,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (exerciseId, mappingKey, mappingValue) <> (UmlMapping.tupled, UmlMapping.unapply)
+    override def * = (exerciseId, mappingKey, mappingValue) <> (UmlMapping.tupled, UmlMapping.unapply)
 
   }
 

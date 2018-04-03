@@ -86,7 +86,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     def pk = primaryKey("pk", id)
 
 
-    def * = (id, title, author, text, state, rawBlanksText, blanksText) <> (BlanksExercise.tupled, BlanksExercise.unapply)
+    override def * = (id, title, author, text, state, rawBlanksText, blanksText) <> (BlanksExercise.tupled, BlanksExercise.unapply)
 
   }
 
@@ -104,7 +104,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (id, exerciseId, sample) <> (BlanksAnswer.tupled, BlanksAnswer.unapply)
+    override def * = (id, exerciseId, sample) <> (BlanksAnswer.tupled, BlanksAnswer.unapply)
 
   }
 
