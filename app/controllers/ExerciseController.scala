@@ -89,7 +89,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
     implicit request =>
       progToolMain.futureCompleteExById(id) map {
         case None           => BadRequest
-        case Some(exercise) => Ok(views.js.programming.classDiagram.render(exercise)).as("text/javascript")
+        case Some(exercise) => Ok(exercise.maybeClassDiagramPart.map(_.printToJavascript).getOrElse("")).as("text/javascript")
       }
   }
 

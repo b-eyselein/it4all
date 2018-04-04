@@ -130,6 +130,7 @@ function textAreaAdjust(o) {
 
 // JOINTJS
 $(document).ready(function () {
+
     let paperJQ = $('#paper');
 
     autosize(document.querySelectorAll('textarea'));
@@ -150,7 +151,6 @@ $(document).ready(function () {
         graph.addCells([end, start, actionNodeStart, actionNodeEnd]);
         connectNodes(start.id, actionNodeStart.id, "in", "in");
         connectNodes(actionNodeEnd.id, end.id, "out", "in");
-        console.log(graph.getElements());
         parentChildNodes.push({'parentId': 'Startknoten-startId', 'startId': 'Startknoten-startId', 'endId': 'Endknoten-endId', 'endName': 'end'});
     }
 

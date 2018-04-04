@@ -85,8 +85,8 @@ object RoseCorrector extends FileUtils {
        |    "y": 0
        |  },
        |  "field": {
-       |    "CLASS_WIDTH": 8,
-       |    "CLASS_HEIGHT": 10
+       |    "width": 8,
+       |    "height": 10
        |  },
        |  "run_options": [
        |    7,

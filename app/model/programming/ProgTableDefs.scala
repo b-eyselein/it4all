@@ -104,7 +104,6 @@ case class CommitedTestDataInput(id: Int, testId: Int, exerciseId: Int, input: S
 
 }
 
-case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram: UmlClassDiagram)
 
 // Solution types
 

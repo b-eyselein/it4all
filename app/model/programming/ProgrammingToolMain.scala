@@ -95,7 +95,6 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
     output <- tdJsObj.stringField(outputName)
   } yield CompleteCommitedTestData(CommitedTestData(testId, id, user.username, output, ExerciseState.RESERVED), inputs)
 
-
   private def readInput(inpJsObj: JsObject, testId: Int, user: User): Option[CommitedTestDataInput] = for {
     id <- inpJsObj.intField(idName)
     input <- inpJsObj.stringField(inputName)
@@ -152,9 +151,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
         // FIXME: remove comments like '# {2}'!
       }
 
-      val exRest: Html = views.html.programming.progExerciseRest(exercise)
-
-      views.html.core.exercise2Rows(user, this, progExOptions, exercise, exRest, declaration, Implementation, exScripts(exercise.maybeClassDiagramPart.isDefined))
+      views.html.programming.progExercise(user, this, progExOptions, exercise, declaration, Implementation)
 
     case ActivityDiagram =>
       // TODO: use old soluton!
@@ -163,18 +160,6 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override def renderEditRest(exercise: ProgCompleteEx): Html = ???
 
-  private def exScripts(hasClassDiagPart: Boolean): Html = {
-
-    val mainScript = s"""<script src="${controllers.routes.Assets.versioned(file = "javascripts/programming/progExercise.js")}"></script>"""
-
-    val jointJsScript = if (hasClassDiagPart)
-      s"""<script src="${controllers.routes.Assets.versioned(file = "lib/lodash/lodash.js")}"></script>
-         |<script src="${controllers.routes.Assets.versioned(file = "lib/backbonejs/backbone.js")}"></script>
-         |<script src="${controllers.routes.Assets.versioned(file = "lib/jointjs/dist/joint.js")}"></script>
-         |<script src="${controllers.routes.Assets.versioned(file = "javascripts/programming/classDiagram.js")}"></script>""".stripMargin else ""
-
-    Html(mainScript + "\n" + jointJsScript)
-  }
 
   // Handlers for results
 

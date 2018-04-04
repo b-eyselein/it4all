@@ -1,0 +1,81 @@
+@(user: model.User, toolMainObject: model.toolMains.AToolMain, exerciseOptions: ExerciseOptions, exercise: model.programming.ProgCompleteEx,
+        oldSolution: String, part: model.core.ExPart)
+
+@scriptsBefore = {
+    <script src="@controllers.routes.Assets.versioned("lib/lodash/lodash.js")"></script>
+    <script src="@controllers.routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
+    <script src="@controllers.routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
+}
+
+@scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+@core.editorScripts.render(exerciseOptions.aceMode, exerciseOptions.minLines, exerciseOptions.maxLines)
+
+    <script src="@controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")"></script>
+
+@if(exercise.maybeClassDiagramPart.isDefined) {
+    <script src="@controllers.routes.ExerciseController.progClassDiagram(exercise.id)"></script>
+    <script src="@controllers.routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>
+    <link rel="stylesheet" href="@controllers.routes.Assets.versioned("lib/jointjs/dist/joint.css")"/>
+}
+
+@core.helperTemplates.fullScreenScripts.render()
+
+}
+
+@main(toolMainObject.toolname, Some(user), scripts, scriptsBefore) {
+    <div class="container" id="fullsc">
+
+        <input hidden value="@exercise.ex.id" name="exerciseId" id="exerciseId" title="hidden" type="number">
+        <input hidden value="@part.urlName" name="exercisePart" id="exercisePart" title="hidden">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Aufgabenstellung</h2>
+
+                <hr>
+
+                <div class="well">@Html(exercise.text)</div>
+
+                @views.html.programming.progExerciseRest(exercise)
+
+            </div>
+
+            <div class="col-md-6">
+                <h2>Editor</h2>
+
+                <hr>
+
+                @core.editor(oldSolution)
+
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
+                        Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" id="testBtn">Lösung testen</button>
+                </div>
+                <a class="btn btn-default" href="@routes.ExerciseController.index(toolMainObject.urlPart)">
+                    Bearbeitung beenden</a>
+            </div>
+        </div>
+
+        <hr>
+
+        <section id="correctionDiv">
+            <h2>Korrektur</h2>
+            <div id="correction"></div>
+        </section>
+
+    </div>
+}

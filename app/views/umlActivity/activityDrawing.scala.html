@@ -27,8 +27,9 @@
     <script src="@routes.Assets.versioned("javascripts/umlActivity/webseite.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/umlActivityTests.js")"></script>
 
-    <script src="@routes.ExerciseController.progClassDiagram(completeEx.id)"></script>
-
+    <script src="@controllers.routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></script>
+    <script src="@controllers.routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>
+    @*<script src="@routes.ExerciseController.progClassDiagram(completeEx.id)"></script>*@
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/webseite.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/activity.css")">
@@ -51,13 +52,13 @@
 
 }
 
-@main("UML", Some(user), scripts, scriptsBefore) {
+@main("Uml Aktivitätsdiagramm", Some(user), scripts, scriptsBefore) {
 
     @core.helperTemplates.modal("Bedienungsanleitung", "instructionsModal", "lg") {
         @umlActivity.activityInstructions.render()
     }
 
-    @core.helperTemplates.modal("Klassendiagramm", "classDiagModal", "lg") {
+    @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
         <div id="classdiagram"></div>
     }
 
@@ -97,25 +98,24 @@
 
                     <div class="col-md-4" id="rightblock">
 
-                        <section>
-                            <h3>Konvertierung in Code</h3>
+                        <section id="exerciseText">
+                            <h3 class="text-center">Aufgabenstellung</h3>
 
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <select title="Programmiersprache" class="form-control" id="selectedLanguage">
-                                    @for(lang <- model.programming.ProgLanguage.values) {
-                                        <option value="@lang.aceName">@lang.languageName</option>
-                                    }
-                                    </select>
-                                    <span class="input-group-addon">-Code</span>
-                                    <button id="mainGeneration" class="form-control btn-primary" onclick="mainGeneration()">
-                                        generieren</button>
-                                </div>
-                            </div>
+                            <div class="well">@Html(completeEx.ex.text)</div>
+                        </section>
+
+                        <hr>
+
+                        @views.html.programming.progExerciseRest(completeEx)
+
+                        <section>
 
                             <div id="generationAlerts"></div>
 
-                            @views.html.programming.progExerciseRest(completeEx)
+                            <div class="form-group">
+                                <button id="mainGeneration" class="form-control btn-primary" onclick="mainGeneration()">
+                                    generieren</button>
+                            </div>
 
                             <div class="form-group">
                                 <button type="button" class="btn btn-default btn-block" onclick="toggleFullscreen()">
@@ -124,28 +124,10 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="btn-group btn-group-justified">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#instructionsModal">
-                                            Bearbeitungshinweise
-                                        </button>
-                                    </div>
-                                    @* FIXME: class diagram deactivated until further notice... *@
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#classDiagModal">
-                                            Klassendiagramm
-                                        </button>
-                                    </div>
-                                </div>
+                                <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#instructionsModal">
+                                    Bearbeitungshinweise
+                                </button>
                             </div>
-                        </section>
-
-                        <hr>
-
-                        <section>
-                            <h3 class="text-center">Aufgabenstellung</h3>
-
-                            <div class="well">@Html(completeEx.ex.text)</div>
                         </section>
 
                         <hr>

@@ -1,40 +1,42 @@
 @(exercise: model.programming.ProgCompleteEx)
 
-@core.helperTemplates.modal("TODO", "definitionRest", "lg") {
-    <pre>@exercise.ex.base</pre>
-}
-
-@exercise.maybeClassDiagramPart match {
-    case None => {}
-    case Some(classDiagPart) => {
-        @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
-            @* FIXME: Display class diagram with joint.js *@
-            <div id="classdiagram"></div>
-        }
+    @core.helperTemplates.modal("TODO", "definitionRest", "lg") {
+        <pre>@exercise.ex.base</pre>
     }
-}
 
-<div class="form-group">
-    <div class="btn-group btn-group-justified">
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#definitionRest">Rest der Definition</button>
-        </div>
-        @exercise.maybeClassDiagramPart match {
-            case None => {}
-            case Some(classDiagPart) => {
-                <div class="btn-group">
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
-                </div>
+    @exercise.maybeClassDiagramPart match {
+        case None => {}
+        case Some(classDiagPart) => {
+            @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
+                @* FIXME: Display class diagram with joint.js *@
+                <div id="classdiagram"></div>
             }
         }
-    </div>
-</div>
-
-<div class="input-group">
-    <span class="input-group-addon">Sprache</span>
-    <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
-    @for(lang <- model.programming.ProgLanguage.values) {
-        <option value="@lang.name" @lang.isSelected(model.programming.ProgLanguage.STANDARD_LANG)>@lang.languageName</option>
     }
-    </select>
-</div>
+
+    <div class="form-group">
+        <div class="btn-group btn-group-justified">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#definitionRest">Rest der Definition</button>
+            </div>
+            @exercise.maybeClassDiagramPart match {
+                case None => {}
+                case Some(classDiagPart) => {
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon">Sprache</span>
+            <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
+            @for(lang <- model.programming.ProgLanguage.values) {
+                <option value="@lang.name" @lang.isSelected(model.programming.ProgLanguage.STANDARD_LANG)>@lang.languageName</option>
+            }
+            </select>
+        </div>
+    </div>

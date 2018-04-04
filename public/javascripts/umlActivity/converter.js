@@ -191,7 +191,7 @@ function generateCodeForElement(parentId, startId, endId, allElements) {
             cnr++;
         }
 
-        let selected_language = $('#selectedLanguage').val();
+        let selected_language = $('#langSelect').val();
 
         convertJsonToProgrammCode(json_completeGraph, selected_language, parentId);
 
@@ -396,11 +396,12 @@ function getDataFromElement(el) {
 function convertJsonToProgrammCode(json_graph, language, parentId) {
 
     let selectedLanguageBuilderType;
+
     switch (language) {
-        case 'java':
+        case 'JAVA_8':
             selectedLanguageBuilderType = Java;
             break;
-        case 'python':
+        case 'PYTHON_3':
             selectedLanguageBuilderType = Python;
             break;
         default:

@@ -2,7 +2,7 @@ id: 5
 title: Krankenhaus
 author: bje40dc
 text: >
-  TODO!
+  Berechnen Sie das Durchschnittsalter aller Patienten auf allen Stationen im Krankenhaus. Falls kein Patient vorhanden ist, soll -1 zurückgegeben werden.
 status: APPROVED
 identifier: hospital
 functionname: durchschnitt_alter_patienten
