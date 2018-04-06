@@ -63,18 +63,18 @@ CREATE TABLE IF NOT EXISTS mindmap_exercises (
 # Programming
 
 CREATE TABLE IF NOT EXISTS prog_exercises (
-  id            INT PRIMARY KEY,
-  title         VARCHAR(50),
-  author        VARCHAR(50),
-  ex_text       TEXT,
-  ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id             INT PRIMARY KEY,
+  title          VARCHAR(50),
+  author         VARCHAR(50),
+  ex_text        TEXT,
+  ex_state       ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  identifier    VARCHAR(30),
-  base          TEXT,
-  class_name    VARCHAR(30),
-  function_name VARCHAR(30),
-  indent_level  INT,
-  output_type   VARCHAR(30)
+  identifier     VARCHAR(30),
+  base           TEXT,
+  function_name  VARCHAR(30),
+  indent_level   INT,
+  output_type    VARCHAR(30),
+  base_data_json TEXT
 );
 
 CREATE TABLE IF NOT EXISTS prog_input_types (
@@ -104,6 +104,7 @@ CREATE TABLE IF NOT EXISTS prog_samples (
 CREATE TABLE IF NOT EXISTS prog_sample_testdata (
   id          INT,
   exercise_id INT,
+  input_json  TEXT,
   output      VARCHAR(50),
 
   PRIMARY KEY (id, exercise_id),
@@ -115,7 +116,9 @@ CREATE TABLE IF NOT EXISTS prog_sample_testdata (
 CREATE TABLE IF NOT EXISTS prog_commited_testdata (
   id          INT,
   exercise_id INT,
-  input       VARCHAR(50),
+  input_json  TEXT,
+  output      VARCHAR(50),
+
   username    VARCHAR(50),
   state       ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
@@ -128,30 +131,30 @@ CREATE TABLE IF NOT EXISTS prog_commited_testdata (
     ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS prog_sample_testdata_input (
-  id          INT,
-  test_id     INT,
-  exercise_id INT,
-  input       VARCHAR(50),
+# CREATE TABLE IF NOT EXISTS prog_sample_testdata_input (
+#   id          INT,
+#   test_id     INT,
+#   exercise_id INT,
+#   input       VARCHAR(50),
+#
+#   PRIMARY KEY (id, test_id, exercise_id),
+#   FOREIGN KEY (test_id, exercise_id) REFERENCES prog_sample_testdata (id, exercise_id)
+#     ON UPDATE CASCADE
+#     ON DELETE CASCADE
+# );
 
-  PRIMARY KEY (id, test_id, exercise_id),
-  FOREIGN KEY (test_id, exercise_id) REFERENCES prog_sample_testdata (id, exercise_id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS prog_commited_testdata_input (
-  id          INT,
-  test_id     INT,
-  exercise_id INT,
-  input       VARCHAR(50),
-  username    VARCHAR(50),
-
-  PRIMARY KEY (username, id, test_id, exercise_id),
-  FOREIGN KEY (test_id, exercise_id, username) REFERENCES prog_commited_testdata (id, exercise_id, username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
+# CREATE TABLE IF NOT EXISTS prog_commited_testdata_input (
+#   id          INT,
+#   test_id     INT,
+#   exercise_id INT,
+#   input       VARCHAR(50),
+#   username    VARCHAR(50),
+#
+#   PRIMARY KEY (username, id, test_id, exercise_id),
+#   FOREIGN KEY (test_id, exercise_id, username) REFERENCES prog_commited_testdata (id, exercise_id, username)
+#     ON UPDATE CASCADE
+#     ON DELETE CASCADE
+# );
 
 CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
   exercise_id   INT PRIMARY KEY,
@@ -570,10 +573,6 @@ DROP TABLE IF EXISTS quizzes;
 DROP TABLE IF EXISTS prog_solutions;
 
 DROP TABLE IF EXISTS prog_uml_cd_parts;
-
-DROP TABLE IF EXISTS prog_commited_testdata_input;
-
-DROP TABLE IF EXISTS prog_sample_testdata_input;
 
 DROP TABLE IF EXISTS prog_commited_testdata;
 

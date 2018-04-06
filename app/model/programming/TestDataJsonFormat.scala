@@ -6,18 +6,20 @@ import play.api.libs.json._
 
 object TestDataJsonFormat {
 
-  def dumpTestDataToJson(exercise: ProgCompleteEx, testData: Seq[CompleteTestData]): JsValue = Json.obj(
-    functionNameName -> JsString(exercise.ex.functionname),
-    "testdata" -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.ex.outputType)
+  def dumpTestDataToJson(exercise: ProgCompleteEx, testData: Seq[TestData]): JsValue = JsObject(
+    Seq(
+      functionNameName -> JsString(exercise.ex.functionname),
+      testdataName -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.ex.outputType)
+    ) ++ exercise.ex.baseData.map(x => baseDataName -> x)
   )
 
   // FIXME: how to display input? ==> with variable name!!
-  private def dumpTestData(testData: Seq[CompleteTestData], sortedInputs: Seq[ProgInput], outputType: ProgDataType) =
-    JsArray(testData sortBy (_.testData.id) map { td =>
+  private def dumpTestData(testData: Seq[TestData], sortedInputs: Seq[ProgInput], outputType: ProgDataType): JsValue =
+    JsArray(testData sortBy (_.id) map { td =>
       Json.obj(
-        idName -> td.testData.id,
-        inputName -> td.inputs.sortBy(_.id).map(sampleTestData => Json.parse(sampleTestData.input)),
-        outputName -> outputType.toJson(td.testData.output)
+        idName -> td.id,
+        inputName -> td.inputAsJson,
+        outputName -> outputType.toJson(td.output)
       )
     })
 

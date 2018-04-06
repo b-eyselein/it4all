@@ -1,94 +1,90 @@
 @(completeEx: model.programming.ProgCompleteEx)
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-4"><b>ID:</b></div>
-            <div class="col-md-8">@completeEx.ex.id</div>
-        </div>
+<section>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Standarddaten</h3>
 
-        <div class="row">
-            <div class="col-md-4"><b>Titel:</b></div>
-            <div class="col-md-8">@completeEx.ex.title</div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4"><b>Autor:</b></div>
-            <div class="col-md-8">@completeEx.ex.author</div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4"><b>Text:</b></div>
-            <div class="col-md-8">@Html(completeEx.ex.text)</div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4"><b>Status:</b></div>
-            <div class="col-md-8">@completeEx.ex.state</div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4"><b>Name der Fkt.:</b></div>
-            <div class="col-md-8">@completeEx.ex.functionname</div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4"><b># Inputs:</b></div>
-            <div class="col-md-8">@completeEx.inputCount</div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4"><b>OutputType:</b></div>
-            <div class="col-md-8">@completeEx.ex.outputType</div>
-        </div>
-
-        <hr>
-
-        <p><b>Musterlösungen</b></p>
-        @for(sampleSol <- completeEx.sampleSolutions) {
             <div class="row">
-                <div class="col-md-4"><b>Sprache:</b></div>
-                <div class="col-md-8">@sampleSol.language.name</div>
+                <div class="col-md-4"><b>ID:</b></div>
+                <div class="col-md-8">@completeEx.ex.id</div>
             </div>
-
             <div class="row">
-                <div class="col-md-4"><b>Lösung:</b></div>
-                <div class="col-md-8"><pre>@sampleSol.solution</pre></div>
+                <div class="col-md-4"><b>Titel:</b></div>
+                <div class="col-md-8">@completeEx.ex.title</div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"><b>Autor:</b></div>
+                <div class="col-md-8">@completeEx.ex.author</div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"><b>Status:</b></div>
+                <div class="col-md-8">@completeEx.ex.state</div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"><b>Name der Fkt.:</b></div>
+                <div class="col-md-8">@completeEx.ex.functionname</div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"><b>Signatur:</b></div>
+                <div class="col-md-8"><code>(@completeEx.inputTypes.map(_.inputType.typeName).mkString(", ")) &rarr;
+                    @completeEx.ex.outputType.typeName </code>
+                </div>
+            </div>
+        </div>
+
+        @completeEx.ex.baseData.map { baseData =>
+            <div class="col-md-6">
+                <h3>Basisdaten</h3>
+                <pre>@baseData</pre>
             </div>
         }
     </div>
 
-    <div class="col-md-6">
-        <p><b>Mustertestdaten</b></p>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    @for(index <- 0 until completeEx.inputCount) {
-                        <th>Inp. @index</th>
-                    }
-                    <th>Out</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Typ</td>
-                    @for(inputType <- completeEx.inputTypes) {
-                        <td>@inputType.inputType.typeName</td>
-                    }
-                    <td>@completeEx.ex.outputType.typeName</td>
-                </tr>
-
-                @for(td <- completeEx.sampleTestData) {
-                    <tr>
-                        <td>@td.testData.id</td>
-                        @for(input <- td.inputs) {
-                            <td>@input.input</td>
-                        }
-                        <td>@td.testData.output</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="row">
+        <div class="col-md-2"><b>Text:</b></div>
+        <div class="col-md-10">@Html(completeEx.ex.text)</div>
     </div>
-</div>
+
+
+</section>
+
+<hr>
+
+<section>
+    <h3>Musterlösungen</h3>
+
+    @for(sampleSolTriple <- completeEx.sampleSolutions grouped 2) {
+        <div class="row">
+        @for(sampleSol <- sampleSolTriple) {
+            <div class="col-md-6">
+                <h4>@sampleSol.language.name</h4>
+                <pre>@sampleSol.solution</pre>
+            </div>
+        }
+        </div>
+    }
+</section>
+
+<hr>
+
+<section>
+    <h3>Mustertestdaten</h3>
+
+    @for(sampleTestDataTriple <- completeEx.sampleTestData grouped 3) {
+        <div class="row">
+        @for(sampleTestData <- sampleTestDataTriple) {
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-3">Input (Json):</div>
+                    <div class="col-md-9"> <pre>@sampleTestData.inputAsJson</pre></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Output:</div>
+                    <div class="col-md-9"><code>@sampleTestData.output</code></div>
+                </div>
+            </div>
+        }
+        </div>
+    }
+</section>

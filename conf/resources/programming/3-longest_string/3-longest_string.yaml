@@ -11,6 +11,7 @@ indentLevel: 0
 inputTypes:
 - {id: 1, name: my_list, type: list<string>}
 outputType: string
+
 sampleSolutions:
 - language: PYTHON_3
   base: |
@@ -25,16 +26,14 @@ sampleSolutions:
           longest = string
 
       return longest
+
 sampleTestData:
 - id: 1
-  inputs:
-  - {id: 1, input: []}
+  inputs: []
   output: ""
 - id: 2
-  inputs:
-  - {id: 1, input: ["0"]}
+  inputs: ["0"]
   output: "0"
 - id: 3
-  inputs:
-  - {id: 1, input: ["1", "11", "111"]}
+  inputs: ["1", "11", "111"]
   output: "111"

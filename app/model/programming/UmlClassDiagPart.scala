@@ -29,7 +29,7 @@ case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram:
 
   }
 
-  private def displayClasses(classes: Seq[UmlClassDiagClass], toupling: Int): String =
+  private def displayClasses(classes: Seq[UmlClassDiagClass], toupling: Int): String = if(classes.isEmpty) "" else
     classes.grouped(toupling).zipWithIndex map { case (classQuad, rowIndex) =>
       classQuad.zipWithIndex map { case (clazz, index) =>
         // FIXME: position!

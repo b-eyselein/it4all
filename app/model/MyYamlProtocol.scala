@@ -5,7 +5,8 @@ import model.MyYamlProtocol._
 import model.core.CommonUtils
 import model.core.CoreConsts._
 import model.yaml.MyYamlFormat
-import net.jcazevedo.moultingyaml._
+import net.jcazevedo.moultingyaml.{YamlNull, _}
+import play.api.libs.json._
 
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Success, Try}
@@ -83,7 +84,6 @@ object MyYamlProtocol {
       case Some(yamlValue) => f(yamlValue) map Some.apply
     }
 
-
     def boolField(fieldName: String): Try[Boolean] = someField(fieldName) flatMap (_.asBool)
 
     def intField(fieldName: String): Try[Int] = someField(fieldName) flatMap (_.asInt)
@@ -106,6 +106,23 @@ object MyYamlProtocol {
 
     def enumField[T](fieldName: String, valueOf: String => T): Try[T] = stringField(fieldName) map valueOf
 
+    def jsonField(fieldName: String): Try[JsValue] = someField(fieldName) map mapToJson
+
+    def optJsonField(fieldName: String): Try[Option[JsValue]] = optField(fieldName, yamlValue => Try(mapToJson(yamlValue)))
+
+    def mapToJson(yamlValue: YamlValue): JsValue = yamlValue match {
+      case YamlArray(arrayValues) => JsArray(arrayValues map mapToJson)
+      case YamlObject(yamlFields) => JsObject(yamlFields map {
+        case (key, value) => key.forgivingStr -> mapToJson(value)
+      })
+      case YamlString(str)        => JsString(str)
+      case YamlBoolean(bool)      => JsBoolean(bool)
+      case YamlNull               => JsNull
+      case YamlNumber(bigDecimal) => JsNumber(bigDecimal)
+
+      // TODO: other yamlValues such as YamlPosInf, YamlNegInf, ...
+      //      case other => other.toString
+    }
   }
 
 }

@@ -50,7 +50,7 @@ case object ProgEvalFailed extends ProgEvalResult {
 
 }
 
-case class ExecutionResult(success: SuccessType, completeTestData: CompleteTestData, result: String, consoleOutput: Option[String]) extends ProgEvalResult {
+case class ExecutionResult(success: SuccessType, completeTestData: TestData, result: String, consoleOutput: Option[String]) extends ProgEvalResult {
 
   // FIXME: outputType beachten ?!?
 
@@ -69,8 +69,8 @@ case class ExecutionResult(success: SuccessType, completeTestData: CompleteTestD
   } else {
     s"""<div class="col-md-6">
        |  <div class="alert alert-$getBSClass">
-       |    <p>Test ${completeTestData.testData.id} war ${if (isSuccessful) "" else "nicht"} erfolgreich.<p>
-       |    <p>Erwartet: <code>${completeTestData.testData.output}</code></p>
+       |    <p>Test ${completeTestData.id} war ${if (isSuccessful) "" else "nicht"} erfolgreich.<p>
+       |    <p>Erwartet: <code>${completeTestData.output}</code></p>
        |    <p>Bekommen: <code>$renderResult</code></p>
        |    $printConsoleOut
        |  </div>
@@ -78,9 +78,9 @@ case class ExecutionResult(success: SuccessType, completeTestData: CompleteTestD
   }
 
   override def toJson: JsValue = Json.obj(
-    idName -> completeTestData.testData.id,
+    idName -> completeTestData.id,
     correct -> JsBoolean(success == SuccessType.COMPLETE),
-    awaitedName -> completeTestData.testData.output,
+    awaitedName -> completeTestData.output,
     gottenName -> result
   )
 

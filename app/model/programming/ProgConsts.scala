@@ -6,7 +6,8 @@ object ProgConsts extends Consts {
 
   val awaitedName = "awaited"
 
-  val baseName = "base"
+  val baseDataName = "baseData"
+  val baseName     = "base"
 
   val classNameName        = "className"
   val classDiagramName     = "classDiagram"
@@ -38,6 +39,7 @@ object ProgConsts extends Consts {
   val stdoutName          = "stdout"
 
   val testIdName   = "testId"
+  val testdataName = "testdata"
   val testMainName = "testMain"
 
   val variableName = "variable"

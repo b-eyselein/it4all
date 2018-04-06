@@ -8,7 +8,7 @@ import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
 import model.uml.UmlClassDiagram
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
@@ -18,7 +18,7 @@ import scala.language.{implicitConversions, postfixOps}
 // Classes for use
 
 case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
-                          sampleTestData: Seq[CompleteSampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
+                          sampleTestData: Seq[SampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
   extends PartsCompleteEx[ProgExercise, ProgrammingExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
@@ -37,35 +37,10 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSo
 
 }
 
-sealed trait CompleteTestData {
-
-  val testData: TestData
-
-  val inputs: Seq[TestDataInput]
-
-  def write: String = (inputs map (_.input)) mkString " "
-
-}
-
-case class CompleteSampleTestData(testData: SampleTestData, inputs: Seq[SampleTestDataInput]) extends CompleteTestData
-
-case class CompleteCommitedTestData(testData: CommitedTestData, inputs: Seq[CommitedTestDataInput]) extends CompleteTestData {
-
-  def toJson: JsObject = Json.obj(
-    idName -> testData.id,
-    exerciseIdName -> testData.exerciseId,
-    usernameName -> testData.username,
-    outputName -> testData.output,
-    stateName -> testData.state.name,
-    inputsName -> JsArray(inputs map (_.toJson))
-  )
-
-}
-
 // Case classes for tables
 
 case class ProgExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, folderIdentifier: String, base: String,
-                        functionname: String, indentLevel: Int, outputType: ProgDataType) extends Exercise
+                        functionname: String, indentLevel: Int, outputType: ProgDataType, baseData: Option[JsValue]) extends Exercise
 
 
 case class ProgInput(id: Int, exerciseId: Int, inputName: String, inputType: ProgDataType)
@@ -74,9 +49,10 @@ case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, base: Str
 
 sealed trait TestData {
 
-  val id        : Int
-  val exerciseId: Int
-  val output    : String
+  val id         : Int
+  val exerciseId : Int
+  val inputAsJson: JsValue
+  val output     : String
 
 }
 
@@ -89,52 +65,36 @@ trait TestDataInput {
 
 }
 
-case class SampleTestData(id: Int, exerciseId: Int, output: String) extends TestData
+case class SampleTestData(id: Int, exerciseId: Int, inputAsJson: JsValue, output: String) extends TestData
 
-case class CommitedTestData(id: Int, exerciseId: Int, username: String, output: String, state: ExerciseState) extends TestData
-
-
-case class SampleTestDataInput(id: Int, testId: Int, exerciseId: Int, input: String) extends TestDataInput
-
-case class CommitedTestDataInput(id: Int, testId: Int, exerciseId: Int, input: String, username: String) extends TestDataInput {
+case class CommitedTestData(id: Int, exerciseId: Int, inputAsJson: JsValue, output: String, username: String, state: ExerciseState) extends TestData {
 
   def toJson: JsObject = Json.obj(
-    idName -> id, testIdName -> testId, exerciseIdName -> exerciseId, inputName -> input, usernameName -> username
+    idName -> id,
+    exerciseIdName -> exerciseId,
+    usernameName -> username,
+    outputName -> output,
+    stateName -> state.name,
+    inputsName -> inputAsJson
   )
 
 }
-
 
 // Solution types
 
 object TestDataSolution extends JsonFormat {
 
-  private def readTestData(jsObject: JsObject): Option[CommitedTestData] = for {
-    id <- jsObject.intField(idName)
-    exerciseId <- jsObject.intField(exerciseIdName)
-    username <- jsObject.stringField(usernameName)
-    output <- jsObject.stringField(outputName)
-    state <- jsObject.enumField(stateName, ExerciseState.valueOf)
-  } yield CommitedTestData(id, exerciseId, username, output, state)
-
-  private def readInput(jsValue: JsValue): Option[CommitedTestDataInput] = jsValue.asObj flatMap { jsObj =>
-    for {
-      id <- jsObj.intField(idName)
-      testId <- jsObj.intField(testIdName)
-      exerciseId <- jsObj.intField(exerciseIdName)
-      input <- jsObj.stringField(inputName)
-      username <- jsObj.stringField(usernameName)
-    } yield CommitedTestDataInput(id, testId, exerciseId, input, username)
-
-  }
-
-  def readTestDataFromJson(jsonStr: String): Seq[CompleteCommitedTestData] = Json.parse(jsonStr).asArray { jsValue =>
+  def readTestDataFromJson(jsonStr: String): Seq[CommitedTestData] = Json.parse(jsonStr).asArray { jsValue =>
 
     for {
-      jsObj <- jsValue.asObj
-      testData <- readTestData(jsObj)
-      inputs <- jsObj.arrayField(inputsName, readInput)
-    } yield CompleteCommitedTestData(testData, inputs)
+      jsObject <- jsValue.asObj
+      id <- jsObject.intField(idName)
+      exerciseId <- jsObject.intField(exerciseIdName)
+      output <- jsObject.stringField(outputName)
+      inputAsJson <- jsObject.value get "TODO!"
+      username <- jsObject.stringField(usernameName)
+      state <- jsObject.enumField(stateName, ExerciseState.valueOf)
+    } yield CommitedTestData(id, exerciseId, inputAsJson, output, username, state)
 
   } getOrElse Seq.empty
 
@@ -175,11 +135,11 @@ case class ImplementationSolution(username: String, exerciseId: Int, language: P
 
 }
 
-case class TestDataSolution(username: String, exerciseId: Int, language: ProgLanguage, completeCommitedTestData: Seq[CompleteCommitedTestData]) extends ProgSolution {
+case class TestDataSolution(username: String, exerciseId: Int, language: ProgLanguage, commitedTestData: Seq[CommitedTestData]) extends ProgSolution {
 
   override val part: ProgrammingExPart = TestdataCreation
 
-  override def solution: String = "[" + completeCommitedTestData.map(_.toJson).mkString(",") + "]"
+  override def solution: String = "[" + commitedTestData.map(_.toJson).mkString(",") + "]"
 
 }
 
@@ -214,11 +174,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val sampleTestData = TableQuery[SampleTestDataTable]
 
-  val sampleTestDataInputs = TableQuery[SampleTestDataInputsTable]
-
   val commitedTestData = TableQuery[CommitedTestDataTable]
-
-  val commitedTestDataInput = TableQuery[CommitedTestdataInputTable]
 
   val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
 
@@ -227,31 +183,21 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = for {
     samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result)
-    completeSampleTestData <- completeTestDataForEx(ex)
+    sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result)
     maybeClassDiagramPart <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption)
-  } yield ProgCompleteEx(ex, inputTypes, samples, completeSampleTestData, maybeClassDiagramPart)
+  } yield ProgCompleteEx(ex, inputTypes, samples, sampleTestData, maybeClassDiagramPart)
 
   override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
-    samplesSaved <- saveSeq[ProgSampleSolution](compEx.sampleSolutions, sampSol => db.run(sampleSolutions += sampSol))
+    samplesSaved <- saveSeq[ProgSampleSolution](compEx.sampleSolutions, i => db.run(sampleSolutions += i))
     inputTypesSaved <- saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i))
-    sampleTestDataSaved <- saveSeq[CompleteSampleTestData](compEx.sampleTestData, saveSampleTestdata)
+    sampleTestDataSaved <- saveSeq[SampleTestData](compEx.sampleTestData, i => db.run(sampleTestData += i))
     classDiagPartSaved <- saveSeq[UmlClassDiagPart](compEx.maybeClassDiagramPart.toSeq, i => db.run(umlClassDiagParts += i))
   } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && classDiagPartSaved
 
-  private def saveSampleTestdata(sampleData: CompleteSampleTestData): Future[Boolean] =
-    db.run(sampleTestData += sampleData.testData) flatMap { _ => saveSeq[SampleTestDataInput](sampleData.inputs, i => db.run(sampleTestDataInputs += i)) }
-
-  private def completeTestDataForEx(ex: ProgExercise): Future[Seq[CompleteSampleTestData]] =
-    db.run(sampleTestData.filter(_.exerciseId === ex.id).result) flatMap { sampleTDSeq: Seq[SampleTestData] =>
-      Future.sequence(sampleTDSeq map sampleTestDataInputsForSampleTestData)
-    }
-
-  private def sampleTestDataInputsForSampleTestData(sampleTD: SampleTestData): Future[CompleteSampleTestData] =
-    db.run(sampleTestDataInputs.filter(tdi => tdi.exerciseId === sampleTD.exerciseId && tdi.testId === sampleTD.id).result) map {
-      sampleTDInputs => CompleteSampleTestData(sampleTD, sampleTDInputs)
-    }
 
   // Implicit column types
+
+  private implicit val jsonColumnType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](_.toString, Json.parse)
 
   private implicit val progLanguageColumnType: BaseColumnType[ProgLanguage] =
     MappedColumnType.base[ProgLanguage, String](_.name, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
@@ -276,11 +222,13 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def outputType = column[ProgDataType]("output_type")
 
+    def baseDataAsJson = column[JsValue]("base_data_json")
+
 
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, folderIdentifier, base, functionname, indentLevel, outputType) <> (ProgExercise.tupled, ProgExercise.unapply)
+    override def * = (id, title, author, text, state, folderIdentifier, base, functionname, indentLevel, outputType, baseDataAsJson.?) <> (ProgExercise.tupled, ProgExercise.unapply)
 
   }
 
@@ -332,6 +280,8 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def exerciseId = column[Int]("exercise_id")
 
+    def inputAsJson = column[JsValue]("input_json")
+
     def output = column[String]("output")
 
 
@@ -344,7 +294,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", (id, exerciseId))
 
 
-    override def * = (id, exerciseId, output) <> (SampleTestData.tupled, SampleTestData.unapply)
+    override def * = (id, exerciseId, inputAsJson, output) <> (SampleTestData.tupled, SampleTestData.unapply)
 
   }
 
@@ -360,48 +310,11 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def userFk = foreignKey("user_fk", username, users)(_.username)
 
 
-    override def * = (id, exerciseId, username, output, state) <> (CommitedTestData.tupled, CommitedTestData.unapply)
+    override def * = (id, exerciseId, inputAsJson, output, username, state) <> (CommitedTestData.tupled, CommitedTestData.unapply)
 
   }
 
   // Inputs for test data
-
-  abstract class TestdataInputTable[I <: TestDataInput](tag: Tag, name: String) extends Table[I](tag, name) {
-
-    def id = column[Int]("id")
-
-    def testId = column[Int]("test_id")
-
-    def exerciseId = column[Int]("exercise_id")
-
-    def input = column[String]("input")
-
-  }
-
-  class SampleTestDataInputsTable(tag: Tag) extends TestdataInputTable[SampleTestDataInput](tag, "prog_sample_testdata_input") {
-
-    def pk = primaryKey("pk", (id, testId, exerciseId))
-
-    def sampleTestDataFk = foreignKey("sample_testdata_fk", (testId, exerciseId), sampleTestData)(sampleTD => (sampleTD.id, sampleTD.exerciseId))
-
-
-    override def * = (id, testId, exerciseId, input) <> (SampleTestDataInput.tupled, SampleTestDataInput.unapply)
-
-  }
-
-  class CommitedTestdataInputTable(tag: Tag) extends TestdataInputTable[CommitedTestDataInput](tag, "prog_commited_testdata_input") {
-
-    def username = column[String]("username")
-
-
-    def pk = primaryKey("pk", (username, id, testId, exerciseId))
-
-    def commitedTestdataFk = foreignKey("commited_testdata_fk", (testId, exerciseId, username), commitedTestData)(commitedTD => (commitedTD.id, commitedTD.exerciseId, commitedTD.username))
-
-
-    override def * = (id, testId, exerciseId, input, username) <> (CommitedTestDataInput.tupled, CommitedTestDataInput.unapply)
-
-  }
 
   class UmlClassDiagPartsTable(tag: Tag) extends Table[UmlClassDiagPart](tag, "prog_uml_cd_parts") {
 

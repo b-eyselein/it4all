@@ -1,8 +1,14 @@
 # noinspection PyUnresolvedReferences
 from solution import is_palindrome
 
-def convert_input(input_json):
-    return input_json[0]
+
+def convert_base_data(json_base_data):
+    return None
+
+
+def convert_test_input(base_data, input_json):
+    return input_json
+
 
 def test(my_list, awaited_output):
     gotten_output = is_palindrome(my_list)

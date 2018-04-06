@@ -75,8 +75,8 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
     part match {
       case TestdataCreation =>
-        val maybeCompleteCommitedTestData: Option[Seq[CompleteCommitedTestData]] = jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user)))
-        maybeCompleteCommitedTestData map (completeCommitedTestData => TestDataSolution(user.username, id, language, completeCommitedTestData))
+        val maybeCompleteCommitedTestData: Option[Seq[CommitedTestData]] = jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user)))
+        maybeCompleteCommitedTestData map (commitedTestData => TestDataSolution(user.username, id, language, commitedTestData))
 
       case Implementation => jsValue.asObj flatMap { jsObj =>
         for {
@@ -89,16 +89,11 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
     }
   }
 
-  private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CompleteCommitedTestData] = for {
+  private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CommitedTestData] = for {
     testId <- tdJsObj.intField(idName)
-    inputs <- tdJsObj.arrayField(inputName, inpJsValue => inpJsValue.asObj flatMap (inpJsObj => readInput(inpJsObj, testId, user)))
+    inputAsJson <- tdJsObj.field(inputName)
     output <- tdJsObj.stringField(outputName)
-  } yield CompleteCommitedTestData(CommitedTestData(testId, id, user.username, output, ExerciseState.RESERVED), inputs)
-
-  private def readInput(inpJsObj: JsObject, testId: Int, user: User): Option[CommitedTestDataInput] = for {
-    id <- inpJsObj.intField(idName)
-    input <- inpJsObj.stringField(inputName)
-  } yield CommitedTestDataInput(id, testId, id, input, user.username)
+  } yield CommitedTestData(testId, id, inputAsJson, output, user.username, ExerciseState.RESERVED)
 
   // Other helper methods
 
@@ -117,7 +112,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
     val (language, implementation, testData) = sol match {
       case tds: TestDataSolution =>
-        (ProgLanguage.STANDARD_LANG, exercise.sampleSolutions.head.solution, tds.completeCommitedTestData)
+        (ProgLanguage.STANDARD_LANG, exercise.sampleSolutions.head.solution, tds.commitedTestData)
 
       case is: ImplementationSolution =>
         (sol.language, implExtractorRegex.replaceFirstIn(exercise.ex.base, is.solution), exercise.sampleTestData)
@@ -139,8 +134,8 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgrammingExPart, maybeOldSolution: Option[ProgSolution]): Html = part match {
     case TestdataCreation =>
-      val oldTestData: Seq[CompleteCommitedTestData] = maybeOldSolution match {
-        case Some(tds: TestDataSolution) => tds.completeCommitedTestData
+      val oldTestData: Seq[CommitedTestData] = maybeOldSolution match {
+        case Some(tds: TestDataSolution) => tds.commitedTestData
         case _                           => Seq.empty
       }
       views.html.programming.testDataCreation(user, exercise, oldTestData, this)

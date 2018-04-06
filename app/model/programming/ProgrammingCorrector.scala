@@ -20,7 +20,7 @@ object ProgrammingCorrector extends model.core.FileUtils {
 
   private val dockerImageName = "beyselein/python_prog_tester"
 
-  def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, solutionSaved: Boolean, completeTestData: Seq[CompleteTestData],
+  def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, solutionSaved: Boolean, completeTestData: Seq[TestData],
               toolMain: ProgrammingToolMain)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {
 
     val exerciseResourcesFolder = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.ex.folderIdentifier)
@@ -34,7 +34,7 @@ object ProgrammingCorrector extends model.core.FileUtils {
         imageName = dockerImageName,
         maybeEntryPoint = None,
         dockerBinds = mountFiles(exerciseResourcesFolder, solutionTargetDir, fileEnding = "py")
-//        , deleteContainerAfterRun = false
+        , deleteContainerAfterRun = false
       )
 
       val futureResults: Future[Try[Seq[ProgEvalResult]]] = containerResult map {

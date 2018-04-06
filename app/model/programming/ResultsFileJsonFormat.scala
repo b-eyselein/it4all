@@ -12,7 +12,7 @@ import scala.util.Try
 
 object ResultsFileJsonFormat extends JsonFormat with FileUtils {
 
-  def readResultFile(targetFile: Path, completeTestData: Seq[CompleteTestData]): Try[Seq[ExecutionResult]] = readAll(targetFile) map { resultFileContent =>
+  def readResultFile(targetFile: Path, completeTestData: Seq[TestData]): Try[Seq[ExecutionResult]] = readAll(targetFile) map { resultFileContent =>
 
     // FIXME: refactor...
 
@@ -26,10 +26,10 @@ object ResultsFileJsonFormat extends JsonFormat with FileUtils {
     res getOrElse Seq.empty
   }
 
-  private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[CompleteTestData]): Option[ExecutionResult] = readDataFromJson(jsObj) map {
+  private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[TestData]): Option[ExecutionResult] = readDataFromJson(jsObj) map {
     case (id, successType, consoleOutput, gotten) =>
 
-      val testData: CompleteTestData = completeTestData find (_.testData.id == id) match {
+      val testData: TestData = completeTestData find (_.id == id) match {
         case None    => throw new Exception("FEHLER!")
         case Some(x) => x
       }

@@ -1,4 +1,4 @@
-@(user: model.User, exercise: model.programming.ProgCompleteEx, oldData: Seq[model.programming.CompleteCommitedTestData], toolMainObject: model.programming.ProgrammingToolMain)
+@(user: model.User, exercise: model.programming.ProgCompleteEx, oldData: Seq[model.programming.CommitedTestData], toolMainObject: model.programming.ProgrammingToolMain)
 
 @stdTestSize = @{
     model.programming.ProgrammingToolMain.standardTestCount
@@ -78,21 +78,12 @@
 
                     <tbody id="testDataBody">
                         @for(old <- oldData) {
-                            <tr id="tr_@old.testData.id" data-testid="@old.testData.id">
-                                <td>@old.testData.id</td>
-                                @for((input, inputCount) <- old.inputs.zipWithIndex) {
-                                    <td>
-                                        <input class="form-control" value="@input.input" name="inp_@{
-                                            inputCount
-                                        }_@old.testData.id"
-                                        id="inp_@{
-                                            inputCount
-                                        }_@old.testData.id" placeholder="Test @old.testData.id, Input @inputCount">
-                                    </td>
-                                }
+                            <tr id="tr_@old.id" data-testid="@old.id">
+                                <td>@old.id</td>
+                                <textarea>@old.inputAsJson</textarea>
                                 <td>
-                                    <input class="form-control" value="@old.testData.output" name="outp_@old.testData.id" id="outp_@old.testData.id"
-                                    placeholder="@testOutputPlaceholder(old.testData.id)">
+                                    <input class="form-control" value="@old.output" name="outp_@old.id" id="outp_@old.id"
+                                    placeholder="@testOutputPlaceholder(old.id)">
 
                                 </td>
                             </tr>

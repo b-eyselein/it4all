@@ -2,11 +2,15 @@
 from solution import ggt
 
 
-def convert_input(input_json):
-    return input_json[0], input_json[1]
+def convert_base_data(json_base_data):
+    return None
 
 
-def test(numbers, awaited_output):
-    gotten_output = ggt(numbers[0], numbers[1])
+def convert_test_input(base_data, input_json):
+    return input_json
+
+
+def test(base_data, test_input, awaited_output):
+    gotten_output = ggt(test_input[0], test_input[1])
 
     return gotten_output, gotten_output == awaited_output

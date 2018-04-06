@@ -11,6 +11,7 @@ indentLevel: 0
 inputTypes:
 - {id: 1, name: word, type: string}
 outputType: boolean
+
 sampleSolutions:
 - language: PYTHON_3
   base: |
@@ -20,28 +21,23 @@ sampleSolutions:
     def is_palindrome(word):
       lower = word.lower()
       return lower == lower[::-1]
+
 sampleTestData:
 - id: 1
-  inputs:
-  - {id: 1, input: "anna"}
+  inputs: "anna"
   output: true
 - id: 2
-  inputs:
-  - {id: 1, input: "ananas"}
+  inputs: "ananas"
   output: false
 - id: 3
-  inputs:
-  - {id: 1, input: ""}
+  inputs: ""
   output: true
 - id: 4
-  inputs:
-  - {id: 1, input: "qwertzuiiuztrewq"}
+  inputs: "qwertzuiiuztrewq"
   output: true
 - id: 5
-  inputs:
-  - {id: 1, input: "qwertzuiyiuztrewq"}
+  inputs: "qwertzuiyiuztrewq"
   output: true
 - id: 6
-  inputs:
-  - {id: 1, input: "Tacocat"}
+  inputs: "Tacocat"
   output: true

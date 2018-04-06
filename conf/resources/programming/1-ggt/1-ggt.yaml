@@ -12,6 +12,7 @@ inputTypes:
 - {id: 1, name: a, type: int}
 - {id: 2, name: b, type: int}
 outputType: int
+
 sampleSolutions:
 - language: PYTHON_3
   base: |
@@ -24,29 +25,20 @@ sampleSolutions:
         a = b
         b = h
       return a
+
 sampleTestData:
 - id: 1
-  inputs:
-  - {id: 1, input: 12}
-  - {id: 2, input: 4}
+  inputs: [12, 4]
   output: 4
 - id: 2
-  inputs:
-  - {id: 1, input: 3}
-  - {id: 2, input: 7}
+  inputs: [3, 7]
   output: 1
 - id: 3
-  inputs:
-  - {id: 1, input: 64}
-  - {id: 2, input: 46}
+  inputs: [64, 46]
   output: 2
 - id: 4
-  inputs:
-  - {id: 1, input: 777}
-  - {id: 2, input: 11}
+  inputs: [777, 11]
   output: 11
 - id: 5
-  inputs:
-  - {id: 1, input: 15}
-  - {id: 2, input: 25}
+  inputs: [15, 25]
   output: 5
