@@ -13,10 +13,3 @@ build:
     stage: build
     script:
     - sbt dist
-
-cache:
-    key: "$CI_BUILD_REF_NAME"
-    untracked: true
-    paths:
-    - ~/.ivy2/*
-    - ~/.sbt/*
