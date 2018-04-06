@@ -98,7 +98,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
-    ProgExercise(id, title = "", author = "", text = "", state, folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING),
+    ProgExercise(id, title = "", author = "", text = "", state, folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
     inputTypes = Seq.empty, sampleSolutions = Seq.empty, sampleTestData = Seq.empty, maybeClassDiagramPart = None
   )
 
