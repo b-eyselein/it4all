@@ -1,0 +1,53 @@
+@(user: model.User, correctionResult: model.uml.UmlCompleteResult, toolMain: model.uml.UmlToolMain)
+
+@title = @{
+    "Korrektur: Auswahl der Klassen"
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
+        </div>
+
+        @correctionResult.classResult match {
+            case None => {
+                <div class="alert alert-danger">Es gab einen Fehler bei der Klausur!</div>
+            }
+            case Some(classMatchingResult) => {
+                @for(classMatchingResTuple <- classMatchingResult.allMatches.grouped(2)) {
+                    <div class="row">
+
+                    @for(classMatchingRes <- classMatchingResTuple) {
+                        <div class="col-md-6">
+                            <div class="alert alert-@classMatchingRes.matchType.bsClass">
+                            @(classMatchingRes.userArg, classMatchingRes.sampleArg) match {
+                                case (Some(userArg), Some(sampleArg)) => {
+                                    <span class="@classMatchingRes.matchType.glyphicon"></span> Die Modellierung der Klasse <code>@userArg.className</code>
+                                    ist korrekt. Sie ist auch in der Musterlösung vorhanden.
+                                }
+                                case (None, Some(sampleArg)) => {
+                                    <span class="@classMatchingRes.matchType.glyphicon"></span> Die Modellierung der Klasse <code>@sampleArg.className</code>
+                                    fehlt.
+                                    Sie ist in der Musterlösung vorhanden.
+                                }
+                                case (Some(userArg), None) => {
+                                    <span class="@classMatchingRes.matchType.glyphicon"></span> Die Modellierung der Klasse <code>@userArg.className</code> ist falsch.
+                                    Sie ist in der Musterlösung nicht vorhanden.
+                                }
+                            }
+                            </div>
+                        </div>
+                    }
+
+                    </div>
+                }
+            }
+        }
+            <hr>
+
+            <a class="btn btn-block btn-primary" href="@routes.ExerciseController.exercise(toolMain.urlPart, correctionResult.exercise.id, model.uml.DiagramDrawingHelp.urlName)">
+    Zum nächsten Aufgabenteil</a>
+
+    </div>
+}

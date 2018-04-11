@@ -5,9 +5,11 @@ import model._
 import model.core._
 import model.programming.ProgrammingToolMain
 import model.toolMains.{IdExerciseToolMain, ToolList}
+import model.uml._
 import model.web.{HtmlPart, WebSolution, WebToolMain}
 import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -17,7 +19,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository, ws: WSClient,
-                                   progToolMain: ProgrammingToolMain, webToolMain: WebToolMain)
+                                   progToolMain: ProgrammingToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)
                                   (implicit ec: ExecutionContext) extends ASingleExerciseController(cc, dbcp) with Secured with JsonFormat {
 
   // Abstract types
@@ -85,7 +87,27 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Other routes
 
-  def progClassDiagram(id: Int): EssentialAction = futureWithUser { user =>
+  def umlClassDiag(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
+    implicit request =>
+      val futureClassDiagram: Future[UmlClassDiagram] = umlToolMain.futureOldSolution(user, id, partStr) flatMap {
+        case Some(solution) => Future(solution.classDiagram)
+        case None           => umlToolMain.partTypeFromUrl(partStr) match {
+          case None       => Future(UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty))
+          case Some(part) => umlToolMain.futureCompleteExById(id) map {
+            case Some(exercise: UmlCompleteEx) => exercise.getDefaultClassDiagForPart(part)
+            case None                          =>
+              Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
+              UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty)
+          }
+        }
+      }
+
+      futureClassDiagram map { classDiagram =>
+        Ok("let defaultSol = " + Json.prettyPrint(UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(classDiagram))).as("text/javascript")
+      }
+  }
+
+  def progClassDiagram(id: Int): EssentialAction = futureWithUser { _ =>
     implicit request =>
       progToolMain.futureCompleteExById(id) map {
         case None           => BadRequest

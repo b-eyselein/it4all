@@ -32,8 +32,12 @@ solution:
   classes:
   - classType: ABSTRACT
     name: Pflanze
+    pos_x: 1
+    pos_y: 1
   - classType: ABSTRACT
     name: Baum
+    pos_x: 1
+    pos_y: 2
   implementations:
   - {subClass: Baum, superClass: Pflanze}
   associations: []

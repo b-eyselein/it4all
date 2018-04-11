@@ -52,13 +52,19 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
       }
 
       val onFormRead: ((String, String, String)) => Future[Result] = { pwChangeData =>
-        if (pwChangeData._1.isBcrypted(user.pwHash) && pwChangeData._2 == pwChangeData._3) {
-          repository.updateUserPassword(user, pwChangeData._2) map {
-            case 1 => Ok(Json.obj("changed" -> true, "reason" -> ""))
-            case _ => Ok(Json.obj("changed" -> false, "reason" -> "Ihr Passwort konnte nicht gespeichert werden. Waren eventuell die Daten falsch?"))
-          }
+
+        repository.pwHashForUser(user.username) flatMap {
+          case None         => Future(BadRequest("Could not change password!"))
+          case Some(pwHash) =>
+
+            if (pwChangeData._1.isBcrypted(pwHash.pwHash) && pwChangeData._2 == pwChangeData._3) {
+              repository.updateUserPassword(user, pwChangeData._2) map {
+                case 1 => Ok(Json.obj("changed" -> true, "reason" -> ""))
+                case _ => Ok(Json.obj("changed" -> false, "reason" -> "Ihr Passwort konnte nicht gespeichert werden. Waren eventuell die Daten falsch?"))
+              }
+            }
+            else Future(Ok(Json.obj("changed" -> false, "reason" -> "Ihr Passwort konnte nicht gespeichert werden.")))
         }
-        else Future(Ok(Json.obj("changed" -> false, "reason" -> "Ihr Passwort konnte nicht gespeichert werden.")))
       }
 
       pwChangeForm.bindFromRequest().fold(onFormError, onFormRead)

@@ -5,9 +5,7 @@ import model.Enums.ExerciseState
 import model._
 import model.persistence.SingleExerciseTableDefs
 import model.uml.UmlConsts._
-import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
@@ -21,20 +19,17 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
 
   override def preview: Html = views.html.uml.umlPreview(this)
 
-  private val solution: UmlClassDiagram = ex.solution
-
-  def getClassesForDiagDrawingHelp: String = {
-    val solution = ex.solution
-    val sqrt = Math.round(Math.sqrt(solution.classes.size))
-
-    solution.classes.zipWithIndex.map { case (clazz, index) =>
-      s"""{
-         |  name: "${clazz.className}",
-         |  classType: "${clazz.classType.toString.toUpperCase}", attributes: [], methods: [],
-         |  position: { x: ${(index / sqrt) * GapHorizontal + OFFSET}, y: ${(index % sqrt) * GapVertival + OFFSET} }
-         |}""".stripMargin
-    } mkString ","
+  def titleForPart(part: UmlExPart): String = part match {
+    case ClassSelection     => "Auswahl der Klassen"
+    case DiagramDrawing     => "Freies Zeichnen"
+    case DiagramDrawingHelp => "Modellierung der Beziehungen"
+    case MemberAllocation   => "Zuordnung der Member"
   }
+
+  def textForPart(part: UmlExPart): Html = Html(part match {
+    case DiagramDrawing => ex.diagDrawText
+    case _              => ex.text
+  })
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {
     case (ClassSelection) => true
@@ -42,11 +37,25 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
     case _                => false
   }
 
-  val allAttributes: Seq[UmlClassDiagClassAttribute] = allDistinctMembers(_.attributes)
+  def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
+    val assocs: Seq[UmlClassDiagAssociation] = Seq.empty
+    val impls: Seq[UmlClassDiagImplementation] = Seq.empty
 
-  val allMethods: Seq[UmlClassDiagClassMethod] = allDistinctMembers(_.methods)
+    val classes: Seq[UmlClassDiagClass] = part match {
+      case DiagramDrawingHelp => ex.solution.classes.map {
+        oldClass => UmlClassDiagClass(oldClass.classType, oldClass.className, attributes = Seq.empty, methods = Seq.empty, position = oldClass.position)
+      }
+      case _                  => Seq.empty
+    }
 
-  private def allDistinctMembers[M <: UmlClassDiagClassMember](members: UmlClassDiagClass => Seq[M]): Seq[M] = solution.classes flatMap members distinct
+    UmlClassDiagram(classes, assocs, impls)
+  }
+
+  val allAttributes: Seq[String] = allDistinctMembers(_.attributes)
+
+  val allMethods: Seq[String] = allDistinctMembers(_.methods)
+
+  private def allDistinctMembers(members: UmlClassDiagClass => Seq[String]): Seq[String] = ex.solution.classes flatMap members distinct
 
 }
 
@@ -60,6 +69,7 @@ case class UmlExercise(id: Int, title: String, author: String, text: String, sta
 
 }
 
+// FIXME: save ignore words and mappings as json!?!
 case class UmlMapping(exerciseId: Int, key: String, value: String)
 
 case class UmlSolution(username: String, exerciseId: Int, part: UmlExPart, classDiagram: UmlClassDiagram) extends PartSolution {

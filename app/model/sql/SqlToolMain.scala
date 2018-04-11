@@ -10,12 +10,10 @@ import model.sql.SqlEnums.SqlExerciseType._
 import model.sql.SqlToolMain._
 import model.toolMains.CollectionToolMain
 import model.yaml.MyYamlFormat
-import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.twirl.api.Html
-import views.html.sql._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -135,13 +133,15 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ??? // FIXME: implement...
 
-  override def onSubmitCorrectionResult(user: User, result: SqlCorrResult): Html = result match {
-    case res: SqlResult           => views.html.core.correction(result, sqlResult(res), user, this)
-    case SqlParseFailed(_, error) =>
-      //       FIXME: implement...
-      Logger.error("There has been a sql correction error", error)
-      Html("Es gab einen Fehler bei der Korrektur!")
-  }
+  override def onSubmitCorrectionResult(user: User, result: SqlCorrResult): Html = ???
+
+  //    result match {
+  //    case res: SqlResult           => views.html.core.correction(result, views.html.sql.sqlResult(res), user, this)
+  //    case SqlParseFailed(_, error) =>
+  // //           FIXME: implement...
+  //      Logger.error("There has been a sql correction error", error)
+  //      Html("Es gab einen Fehler bei der Korrektur!")
+  //  }
 
   override def onLiveCorrectionResult(result: SqlCorrResult): JsValue = result match {
     case res: SqlResult           => res.toJson

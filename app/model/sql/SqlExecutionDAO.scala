@@ -26,8 +26,11 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
     user = "it4all", password = "sT8aV#k7", driver = "com.mysql.cj.jdbc.Driver")
 
 
-  def executeQueries(scenario: SqlScenario, exercise: SqlCompleteEx, userStatement: Statement, sampleStatement: Statement): SqlExecutionResult =
-    SqlExecutionResult(executeQuery(scenario.shortName, userStatement), executeQuery(scenario.shortName, sampleStatement))
+  def executeQueries(scenario: SqlScenario, exercise: SqlCompleteEx, userStatement: Statement, sampleStatement: Statement): SqlExecutionResult = {
+    val userExecutionResult: Try[SqlQueryResult] = executeQuery(scenario.shortName, userStatement)
+    val sampleExecutionResult: Try[SqlQueryResult] = executeQuery(scenario.shortName, sampleStatement)
+    SqlExecutionResult(userExecutionResult, sampleExecutionResult)
+  }
 
   protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult]
 

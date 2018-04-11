@@ -121,6 +121,7 @@ PUT           /tools/:toolType/solve/:id/:part                         controlle
 POST          /tools/:toolType/solve/:id/:part                         controllers.ExerciseController.correct(toolType: String, id: Int, part: String)
 
 # Other routes
+GET           /tools/uml/classDiagram/:id/:part                        controllers.ExerciseController.umlClassDiag(id: Int, part: String)
 GET           /tools/programming/classDiagram/:id                      controllers.ExerciseController.progClassDiagram(id: Int)
 GET           /tools/web/playground                                    controllers.ExerciseController.webPlayground
 GET           /tools/web/solution/:id/:part                            controllers.ExerciseController.webSolution(id: Int, part: String)

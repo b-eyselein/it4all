@@ -1,76 +1,80 @@
 /**
- * @param {object} matched
- * @param {string} matched.success
- * @param {string} matched.userArg
- * @param {string} matched.sampleArg
- */
-function displayMatch(matched) {
-    let divClass, spanClass;
-    if (matched.success === 'SUCCESSFUL_MATCH') {
-        divClass = 'success';
-        spanClass = 'ok';
-    } else if (matched.success === 'PARTIAL_MATCH') {
-        divClass = 'warning';
-        spanClass = 'question-sign';
-    } else {
-        divClass = 'danger';
-        spanClass = 'remove';
-    }
-
-    return `
-<div class="alert alert-${divClass}">
-    <div class="row">
-        <div class="col-sm-2"><span class="glyphicon glyphicon-${spanClass}"></span></div>
-        <div class="col-sm-4">Nutzer: <code>${matched.userArg}</code></div>
-        <div class="col-sm-4">Muster: <code>${matched.sampleArg}</code></div>
-    </div>
-</div>`;
-}
-
-/**
- * @param {object} matchObj
- * @param {boolean} matchObj.success
  *
- * @param {object[]} matchObj.matched
- *
- * @param {string[]} matchObj.only_user
- * @param {string[]} matchObj.only_sample
- *
- * @param {string} matchName
+ * @param {object} matchingRes
+ * @param {string} matchingRes.success
+ * @param {string[]} matchingRes.explanations
+ * @param {function} explanationFunc
  *
  * @return {string}
  */
-function renderMatchingResult(matchObj, matchName) {
-    if (matchObj.success) {
-        return `<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span> Der Vergleich der ${matchName} war erfolgreich.</div>`;
+function displayMatchResult(matchingRes, explanationFunc) {
+    let alertClass, glyphicon;
+
+    switch (matchingRes.success) {
+        case 'SUCCESSFUL_MATCH':
+            alertClass = 'success';
+            glyphicon = 'ok';
+            break;
+        case 'PARTIAL_MATCH':
+            alertClass = 'warning';
+            glyphicon = 'question-sign';
+            break;
+        case 'UNSUCCESSFUL_MATCH':
+            alertClass = 'danger';
+            glyphicon = 'remove';
+            break;
+        case 'ONLY_USER':
+            alertClass = 'danger';
+            glyphicon = 'remove';
+            break;
+        case 'ONLY_SAMPLE':
+            alertClass = 'danger';
+            glyphicon = 'remove';
+            break;
+        default:
+            alertClass = 'info';
+            glyphicon = 'remove';
     }
 
+    let mainExplanation = explanationFunc(matchingRes);
+
     return `
-<div class="panel panel-danger">
-    <div class="panel-heading"><b>Der Vergleich der ${matchName} war nicht komplett korrekt:</b></div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-6">
-                <p><b>(Teils) passende ${matchName}:</b></p>
-                ${matchObj.matched.map(displayMatch).join('\n')}
-            </div>
-            
-            <div class="col-md-3">
-                <p><b>Falsche ${matchName}:</b></p>
-                ${matchObj.only_user.map((c) => `<div class="alert alert-danger"><span class="glyphicon glyphicon-remove"></span> <code>${c}</code></div>`).join('\n')}
-            </div>
-            
-            <div class="col-md-3">
-                <p><b>Fehlende ${matchName}:</b></p>
-                ${matchObj.only_sample.map((c) => `<div class="alert alert-warning"><span class="glyphicon glyphicon-question-sign"></span> <code>${c}</code></div>`).join('\n')}
-            </div>
-        </div>
+<div class="col-md-6">
+    <div class="alert alert-${alertClass}">
+        <p><span class="glyphicon glyphicon-${glyphicon}"></span> ${mainExplanation}</p>
     </div>
 </div>`.trim();
 }
 
 /**
- * @param {{colNames: string[], content: Array.<Array.<{content: string, different: boolean}>>}} table
+ * @param {object} matchObj
+ * @param {boolean} matchObj.success
+ * @param {object[]} matchObj.matches
+ * @param {string} matchName
+ * @param {function} explanationFunc
+ * @return {string}
+ */
+function renderMatchingResult(matchObj, matchName, explanationFunc) {
+    if (matchObj.success) {
+        return `
+<div class="alert alert-success">
+    <span class="glyphicon glyphicon-ok"></span> Der Vergleich der ${matchName} war erfolgreich.
+</div>`.trim();
+    } else {
+        return `
+<div class="panel panel-danger">
+    <div class="panel-heading"><b>Der Vergleich der ${matchName} war nicht komplett korrekt:</b></div>
+    <div class="panel-body">
+        ${matchObj.matches.map(s => displayMatchResult(s, explanationFunc)).join('\n')}
+    </div>
+</div>`.trim();
+    }
+}
+
+/**
+ * @param {object} table
+ * @param {string[]} table.colNames
+ * @param {Array.<Array.<{content: string, different: boolean}>>} table.content
  */
 function renderTable(table) {
     let rendered = `
@@ -96,14 +100,27 @@ function renderTable(table) {
 }
 
 /**
- * @param {object} execution
- * @param {string} execution.success
- * @param {{colNames: string[], content: Array.<Array.<{content: string, different: boolean}>>}} execution.user
- * @param {{colNames: string[], content: Array.<Array.<{content: string, different: boolean}>>}} execution.sample
+ * @param {object} execResult
  *
  * @return {string}
  */
-function renderExecution(execution) {
+function renderExecutionResult(execResult) {
+    if (execResult == null) {
+        return `<div class="alert alert-danger">Es gab einen Fehler beim Ausführen Ihrer Lösung!</div>`;
+    } else {
+        return renderTable(execResult);
+    }
+}
+
+/**
+ * @param {object} executionResults
+ * @param {string} executionResults.success
+ * @param {object} executionResults.userResult
+ * @param {object} executionResults.sampleResult
+ *
+ * @return {string}
+ */
+function renderExecution(executionResults) {
     return `
 <div class="panel panel-default">
     <div class="panel-heading">Vergleich der Ergebnistabellen</div>
@@ -111,16 +128,44 @@ function renderExecution(execution) {
         <div class="row">
             <div class="col-md-6">
                 <p><b>Nutzer</b></p>
-                ${execution.user != null ? renderTable(execution.user) : `<div class="alert alert-danger">Es gab einen Fehler beim Ausführen Ihrer Lösung!</div>`}
+                ${renderExecutionResult(executionResults.userResult)}
             </div>
             <div class="col-md-6">
                 <p><b>Muster</b></p>
-                ${execution.sample != null ? renderTable(execution.sample) : `<div class="alert alert-danger">Es gab einen Fehler beim Ausführen der Musterlösung!</div>`}
+                ${renderExecutionResult(executionResults.sampleResult)}
             </div>
         </div>
     </div>
 </div>`.trim();
 }
+
+/**
+ * @param {object} aMatch
+ * @param {string} aMatch.success
+ * @param {string|null} aMatch.userArg
+ * @param {string|null} aMatch.sampleArg
+ * @param {string[]} aMatch.explanations
+ *
+ * @param {string} matchName
+ *
+ * @return {string}
+ */
+function explainMatch(aMatch, matchName) {
+    switch (aMatch.success) {
+        case 'SUCCESSFUL_MATCH':
+            return `Die Angabe ${matchName} <code>${aMatch.userArg}</code> war richtig.`;
+        case 'PARTIAL_MATCH':
+        case 'UNSUCCESSFUL_MATCH':
+            return `Die Angabe ${matchName} <code>${aMatch.userArg}</code> war nicht komplett richtig. Erwartet wurde <code>${aMatch.sampleArg}</code>.`;
+        case 'ONLY_SAMPLE':
+            return `Die Angabe ${matchName} <code>${aMatch.sampleArg}</code> fehlt!`;
+        case 'ONLY_USER':
+            return `Die Angabe ${matchName} <code>${aMatch.userArg}</code> ist falsch!`;
+        default:
+            return 'Es gab einen Fehler!';
+    }
+}
+
 
 /**
  * @param {object} response
@@ -130,27 +175,28 @@ function renderExecution(execution) {
  * @param {object} response.wheres
  * @param {object} response.groupBy
  * @param {object} response.orderBy
- *
- * @param {object} response.execution
+ * @param {object} response.executionResults
  */
 function onSqlCorrectionSuccess(response) {
+    console.warn(JSON.stringify(response, null, 2));
+
     $('#testBtn').prop('disabled', false);
 
     let newHtml = '';
 
-    newHtml += renderMatchingResult(response.columns, "Spalten");
-    newHtml += renderMatchingResult(response.tables, "Tabellen");
-    newHtml += renderMatchingResult(response.wheres, "Bedingungen");
+    newHtml += renderMatchingResult(response.columns, "Spalten", m => explainMatch(m, "der Spalte"));
+    newHtml += renderMatchingResult(response.tables, "Tabellen", m => explainMatch(m, "der Tabelle"));
+    newHtml += renderMatchingResult(response.wheres, "Bedingungen", m => explainMatch(m, "der Bedingung"));
 
     if (response.groupBy != null) {
-        newHtml += renderMatchingResult(response.groupBy, "Group Bys");
+        newHtml += renderMatchingResult(response.groupBy, "Group Bys", m => explainMatch(m, "des Group By-Statement"));
     }
 
     if (response.orderBy != null) {
-        newHtml += renderMatchingResult(response.orderBy, "Order Bys");
+        newHtml += renderMatchingResult(response.orderBy, "Order Bys", m => explainMatch(m, "des Order By-Statement"));
     }
 
-    newHtml += renderExecution(response.execution);
+    newHtml += renderExecution(response.executionResults);
 
     $('#newCorrectionDiv').html(newHtml);
 }

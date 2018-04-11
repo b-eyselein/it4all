@@ -6,6 +6,8 @@ import model.core.EvaluationResult._
 import model.core.matching.{Match, MatchingResult}
 import model.core.{CompleteResult, EvaluationResult}
 import model.uml.UmlCompleteResult._
+import model.uml.matcher._
+import play.api.libs.json._
 import play.twirl.api.Html
 
 import scala.language.postfixOps
@@ -19,36 +21,42 @@ object UmlCompleteResult {
 
 }
 
-abstract sealed class UmlCompleteResult(val exercise: UmlCompleteEx, val learnerSolution: UmlClassDiagram, val solutionSaved: Boolean,
-                                        compareClasses: Boolean, compareClassesExtended: Boolean, assocs: Boolean, impls: Boolean)
+case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassDiagram, solutionSaved: Boolean, part: UmlExPart)
   extends CompleteResult[EvaluationResult] {
 
   override type SolType = UmlClassDiagram
 
   override val success: Enums.SuccessType = NONE
 
-  override def results: Seq[EvaluationResult] = Seq.empty ++ classResult ++ associationResult ++ implementationResult
+  override def results: Seq[MatchingResult[_, _ <: Match[_]]] = Seq.empty ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
 
-  // FIXME: part!
-  val musterSolution: UmlClassDiagram = exercise.ex.solution
+  private val musterSolution: UmlClassDiagram = exercise.ex.solution
 
-  protected val classResult: Option[MatchingResult[UmlClassDiagClass, UmlClassMatch]] =
-    if (compareClasses) Some(UmlClassMatcher(compareClassesExtended).doMatch(learnerSolution.classes, musterSolution.classes))
-    else None
+  val classResult: Option[UmlClassMatchingResult] = part match {
+    case DiagramDrawingHelp => None
+    case ClassSelection     => Some(UmlClassMatcher(false).doMatch(learnerSolution.classes, musterSolution.classes))
+    case _                  => Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
+  }
 
-  protected val associationResult: Option[MatchingResult[UmlClassDiagAssociation, UCD_AssociationMatch]] =
-    if (assocs) Some(UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations))
-    else None
+  val assocAndImplResult: Option[(UmlAssociationMatchingResult, UmlImplementationMatchingResult)] = part match {
+    case (DiagramDrawingHelp | DiagramDrawing) =>
+      val assocRes = UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations)
+      val implRes = UmlImplementationMatcher.doMatch(learnerSolution.implementations, musterSolution.implementations)
+      Some((assocRes, implRes))
+    case _                                     => None
+  }
 
-  protected val implementationResult: Option[MatchingResult[UmlClassDiagImplementation, UmlImplementationMatch]] =
-    if (impls) Some(UmlImplementationMatcher.doMatch(learnerSolution.implementations, musterSolution.implementations))
-    else None
+  def nextPart: Option[UmlExPart] = part match {
+    case DiagramDrawing => None
 
-  def notEmptyMatchingResults: Seq[MatchingResult[_, _ <: Match[_]]] = Seq(classResult, associationResult, implementationResult) flatten
+    case ClassSelection     => Some(DiagramDrawingHelp)
+    case DiagramDrawingHelp => Some(MemberAllocation)
+    case MemberAllocation   => None
+  }
 
-  val nextPart: Option[UmlExPart]
+  override def renderLearnerSolution: Html = Html(displayClasses + displayAssocsAndImpls)
 
-  protected def displayAssocsAndImpls: String =
+  private def displayAssocsAndImpls: String =
     s"""<h4>Ihre Vererbungsbeziehungen:</h4>
        |<ul>
        |  ${learnerSolution.implementations map (describeImplementation(_) asListElem) mkString}
@@ -58,57 +66,25 @@ abstract sealed class UmlCompleteResult(val exercise: UmlCompleteEx, val learner
        |  ${learnerSolution.associations map (describeAssociation(_) asListElem) mkString}
        |</ul>""".stripMargin
 
-  protected def displayClasses: String = "<h4>Ihre Klassen:</h4>" + (learnerSolution.classes map { clazz =>
+  private def displayClasses: String = "<h4>Ihre Klassen:</h4>" + (learnerSolution.classes map { clazz =>
     s"""<p>${clazz.className}</p>
        |<ul>
        |  ${displayMembers(clazz.allMembers)}
        |</ul>""".stripMargin
   } mkString)
 
-  private def displayMembers(members: Seq[UmlClassDiagClassMember]): String = members map (m => "<li>" + m.name + ": " + m.memberType + "</li>") match {
+  private def displayMembers(members: Seq[String]): String = members map (m => "<li>" + m + "</li>") match {
     case Nil => "<li>--</li>"
     case ms  => ms mkString
   }
 
-}
-
-class ClassSelectionResult(completeExercise: UmlCompleteEx, learnerSolution: UmlClassDiagram, solSaved: Boolean)
-  extends UmlCompleteResult(completeExercise, learnerSolution, solSaved: Boolean, compareClasses = true, compareClassesExtended = false, assocs = false, impls = false) {
-
-  override def renderLearnerSolution: Html = new Html(
-    s"""<h4>Ihre Klassen:</h4>
-       |<ul>
-       |  ${classResult map (_.allMatches flatMap (_.userArg map (_.className asListElem)) mkString) getOrElse ""}
-       |</ul>""".stripMargin)
-
-  override val nextPart: Option[UmlExPart] = Some(DiagramDrawingHelp)
-
-}
-
-class DiagramDrawingHelpResult(completeExercise: UmlCompleteEx, learnserSolution: UmlClassDiagram, solSaved: Boolean)
-  extends UmlCompleteResult(completeExercise, learnserSolution, solSaved: Boolean, compareClasses = false, compareClassesExtended = true, assocs = true, impls = true) {
-
-  // FIXME: implement renderLearnerSolution!
-  override def renderLearnerSolution: Html = new Html(displayAssocsAndImpls)
-
-  override val nextPart: Option[UmlExPart] = Some(MemberAllocation)
-
-}
-
-class DiagramDrawingResult(completeExercise: UmlCompleteEx, learnserSolution: UmlClassDiagram, solSaved: Boolean)
-  extends UmlCompleteResult(completeExercise, learnserSolution, solSaved: Boolean, compareClasses = true, compareClassesExtended = true, assocs = true, impls = true) {
-
-  override def renderLearnerSolution: Html = new Html(displayClasses + displayAssocsAndImpls)
-
-  override val nextPart: Option[UmlExPart] = None
-
-}
-
-class AllocationResult(completeExercise: UmlCompleteEx, learnserSolution: UmlClassDiagram, solSaved: Boolean)
-  extends UmlCompleteResult(completeExercise, learnserSolution, solSaved: Boolean, compareClasses = true, compareClassesExtended = true, assocs = false, impls = false) {
-
-  override def renderLearnerSolution: Html = new Html(displayClasses)
-
-  override val nextPart: Option[UmlExPart] = None
+  def toJson: JsValue = Json.obj(
+    "classResult" -> classResult.map(_.toJson),
+    "assocAndImplResult" -> assocAndImplResult.map {
+      case (assocRes, implRes) => Json.obj(
+        "assocResult" -> assocRes.toJson,
+        "implResult" -> implRes.toJson)
+    },
+  )
 
 }

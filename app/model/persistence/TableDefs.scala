@@ -20,6 +20,8 @@ trait TableDefs {
 
   val users = TableQuery[UsersTable]
 
+  val pwHashes = TableQuery[PwHashesTable]
+
   val courses = TableQuery[CoursesTable]
 
   val usersInCourses = TableQuery[UsersInCoursesTable]
@@ -37,14 +39,14 @@ trait TableDefs {
 
   def allUsers: Future[Seq[User]] = db.run(users.result)
 
-  def userByName(username: String): Future[Option[User]] = db.run(users.findBy(_.username).apply(username).result.headOption)
+  def userByName(username: String): Future[Option[User]] = db.run(users.filter(_.username === username).result.headOption)
+
+  def pwHashForUser(username: String): Future[Option[PwHash]] = db.run(pwHashes.filter(_.username === username).result.headOption)
 
 
   def allCourses: Future[Seq[Course]] = db.run(courses.result)
 
-
-  def courseById(courseId: String)(implicit ec: ExecutionContext): Future[Option[Course]] =
-    db.run(courses.filter(_.id === courseId).result.headOption)
+  def courseById(courseId: String)(implicit ec: ExecutionContext): Future[Option[Course]] = db.run(courses.filter(_.id === courseId).result.headOption)
 
 
   def coursesForUser(user: User)(implicit ec: ExecutionContext): Future[Seq[Course]] = db.run(courses.join(usersInCourses).on {
@@ -68,11 +70,21 @@ trait TableDefs {
     db.run(users filter (_.username === user.username) map (_.todo) update newPref)
 
   def updateUserPassword(user: User, newPW: String): Future[Int] =
-    db.run(users filter (_.username === user.username) map (_.pwHash) update newPW.bcrypt)
+    db.run(pwHashes filter (_.username === user.username) map (_.pwHash) update newPW.bcrypt)
 
   // Insert
 
-  def saveUser(user: User)(implicit ec: ExecutionContext): Future[Boolean] = db.run(users += user) map (_ => true) recover { case _: Throwable => false }
+  def saveUser(user: User)(implicit ec: ExecutionContext): Future[Boolean] = db.run(users += user) map (_ => true) recover {
+    case e: Throwable =>
+      Logger.error(s"Could not save user $user", e)
+      false
+  }
+
+  def savePwHash(pwHash: PwHash)(implicit ec: ExecutionContext): Future[Boolean] = db.run(pwHashes += pwHash) map (_ => true) recover {
+    case e: Throwable =>
+      Logger.error(s"Could not save pwHash $pwHash", e)
+      false
+  }
 
   def saveCourse(course: Course)(implicit ec: ExecutionContext): Future[Boolean] = db.run(courses += course) map (_ => true) recover {
     case e: Throwable =>
@@ -113,15 +125,42 @@ trait TableDefs {
 
   class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 
+    def userType = column[Int]("user_type")
+
     def username = column[String]("username", O.PrimaryKey)
 
-    def pwHash = column[String]("pw_hash")
+    //    def pwHash = column[String]("pw_hash")
 
     def role = column[Role]("std_role")
 
     def todo = column[ShowHideAggregate]("todo")
 
-    override def * = (username, pwHash, role, todo) <> (User.tupled, User.unapply)
+
+    override def * = (userType, username, role, todo) <> (tupled, unapplied)
+
+    def tupled(values: (Int, String, Role, ShowHideAggregate)): User = values._1 match {
+      case 1 => LtiUser(values._2, values._3, values._4)
+      case _ => RegisteredUser(values._2, values._3, values._4)
+    }
+
+    def unapplied(user: User): Option[(Int, String, Role, ShowHideAggregate)] = user match {
+      case LtiUser(username, role, showHideAggregate)        => Some(1, username, role, showHideAggregate)
+      case RegisteredUser(username, role, showHideAggregate) => Some(0, username, role, showHideAggregate)
+    }
+
+  }
+
+  class PwHashesTable(tag: Tag) extends Table[PwHash](tag, "pw_hashes") {
+
+    def username = column[String]("username", O.PrimaryKey)
+
+    def pwHash = column[String]("pw_hash")
+
+
+    def userFk = foreignKey("user_fk", username, users)(_.username)
+
+
+    def * = (username, pwHash) <> (PwHash.tupled, PwHash.unapply)
 
   }
 
@@ -130,6 +169,7 @@ trait TableDefs {
     def id = column[String](idName, O.PrimaryKey)
 
     def courseName = column[String]("course_name")
+
 
     override def * = (id, courseName) <> (Course.tupled, Course.unapply)
 

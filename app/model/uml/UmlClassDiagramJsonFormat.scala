@@ -5,6 +5,7 @@ import model.uml.UmlEnums.{UmlAssociationType, UmlClassType, UmlMultiplicity}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+//noinspection ConvertibleToMethodValue
 object UmlClassDiagramJsonFormat {
 
   implicit val enumWrites: Writes[Enum[_]] = (e: Enum[_]) => JsString(e.name)
@@ -34,13 +35,13 @@ object UmlClassDiagramJsonFormat {
 
 
   private implicit val umlImplementationReads: Reads[UmlClassDiagImplementation] = (
-    (__ \ subclassName).read[String] and
-      (__ \ superclassName).read[String]
-    ) (UmlClassDiagImplementation.apply _)
+    (__ \ subClassName).read[String] and
+      (__ \ superClassName).read[String]
+    ) (UmlClassDiagImplementation.apply(_, _))
 
   private implicit val umlImplementationWrites: Writes[UmlClassDiagImplementation] = (
-    (__ \ subclassName).write[String] and
-      (__ \ superclassName).write[String]
+    (__ \ subClassName).write[String] and
+      (__ \ superClassName).write[String]
     ) (unlift(UmlClassDiagImplementation.unapply))
 
 
@@ -51,7 +52,7 @@ object UmlClassDiagramJsonFormat {
       (__ \ firstMultName).read[UmlMultiplicity] and
       (__ \ secondEndName).read[String] and
       (__ \ secondMultName).read[UmlMultiplicity]
-    ) (UmlClassDiagAssociation.apply _)
+    ) (UmlClassDiagAssociation.apply(_, _, _, _, _, _))
 
   private implicit val umlAssociationWrites: Writes[UmlClassDiagAssociation] = (
     (__ \ associationTypeName).write[UmlAssociationType] and
@@ -63,40 +64,31 @@ object UmlClassDiagramJsonFormat {
     ) (unlift(UmlClassDiagAssociation.unapply))
 
 
-  private implicit val umlMethodReads: Reads[UmlClassDiagClassMethod] = (
-    (__ \ nameName).read[String] and
-      (__ \ typeName).read[String]
-    ) (UmlClassDiagClassMethod.apply _)
+  private implicit val positionReads: Reads[Position] = (
+    (__ \ "x").read[Int] and
+      (__ \ "y").read[Int]
+    ) (Position.apply(_, _))
 
-  private implicit val umlMethodWrites: Writes[UmlClassDiagClassMethod] = (
-    (__ \ nameName).write[String] and
-      (__ \ typeName).write[String]
-    ) (unlift(UmlClassDiagClassMethod.unapply))
-
-
-  private implicit val umlAttributeReads: Reads[UmlClassDiagClassAttribute] = (
-    (__ \ nameName).read[String] and
-      (__ \ typeName).read[String]
-    ) (UmlClassDiagClassAttribute.apply _)
-
-  private implicit val umlAttributeWrites: Writes[UmlClassDiagClassAttribute] = (
-    (__ \ nameName).write[String] and
-      (__ \ typeName).write[String]
-    ) (unlift(UmlClassDiagClassAttribute.unapply))
+  private implicit val positionWrites: Writes[Position] = (
+    (__ \ "x").write[Int] and
+      (__ \ "y").write[Int]
+    ) (unlift(Position.unapply))
 
 
   private implicit val umlClassReads: Reads[UmlClassDiagClass] = (
     (__ \ classTypeName).readWithDefault[UmlClassType](UmlClassType.CLASS) and
       (__ \ nameName).read[String] and
-      (__ \ attributesName).readWithDefault[Seq[UmlClassDiagClassAttribute]](Seq.empty) and
-      (__ \ methodsName).readWithDefault[Seq[UmlClassDiagClassMethod]](Seq.empty)
-    ) (UmlClassDiagClass.apply _)
+      (__ \ attributesName).readWithDefault[Seq[String]](Seq.empty) and
+      (__ \ methodsName).readWithDefault[Seq[String]](Seq.empty) and
+      (__ \ positionName).readNullable[Position]
+    ) (UmlClassDiagClass.apply(_, _, _, _, _))
 
   private implicit val umlClassWrites: Writes[UmlClassDiagClass] = (
     (__ \ classTypeName).write[UmlClassType] and
       (__ \ nameName).write[String] and
-      (__ \ attributesName).write[Seq[UmlClassDiagClassAttribute]] and
-      (__ \ methodsName).write[Seq[UmlClassDiagClassMethod]]
+      (__ \ attributesName).write[Seq[String]] and
+      (__ \ methodsName).write[Seq[String]] and
+      (__ \ positionName).writeNullable[Position]
     ) (unlift(UmlClassDiagClass.unapply))
 
 
@@ -104,7 +96,7 @@ object UmlClassDiagramJsonFormat {
     (__ \ classesName).read[Seq[UmlClassDiagClass]] and
       (__ \ associationsName).read[Seq[UmlClassDiagAssociation]] and
       (__ \ implementationsName).read[Seq[UmlClassDiagImplementation]]
-    ) (UmlClassDiagram.apply _)
+    ) (UmlClassDiagram.apply(_, _, _))
 
 
   private implicit val umlSolutionWrites: Writes[UmlClassDiagram] = (

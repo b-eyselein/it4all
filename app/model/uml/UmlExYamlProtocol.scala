@@ -98,17 +98,17 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     override def write(completeClazz: UmlClassDiagClass): YamlValue = YamlObj(
       classTypeName -> completeClazz.classType.name,
       nameName -> completeClazz.className,
-      attributesName -> YamlArr(completeClazz.attributes map UmlClassAttributeYamlFormat.write),
-      methodsName -> YamlArr(completeClazz.methods map UmlClassMethodYamlFormat.write)
+      attributesName -> YamlArr(completeClazz.attributes map YamlString),
+      methodsName -> YamlArr(completeClazz.methods map YamlString)
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlClassDiagClass] = for {
       className <- yamlObject.stringField(nameName)
       classType <- yamlObject.enumField(classTypeName, UmlClassType.valueOf)
-      attributTries <- yamlObject.optArrayField(attributesName, UmlClassAttributeYamlFormat.read)
-      methodTries <- yamlObject.optArrayField(methodsName, UmlClassMethodYamlFormat.read)
+      attributeTries <- yamlObject.optArrayField(attributesName, _.asStr)
+      methodTries <- yamlObject.optArrayField(methodsName, _.asStr)
     } yield {
-      for (attributeFailure <- attributTries._2)
+      for (attributeFailure <- attributeTries._2)
       // FIXME: return...
         Logger.error("Could not read uml class attribute", attributeFailure.exception)
 
@@ -116,30 +116,8 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read uml class method", methodFailure.exception)
 
-      UmlClassDiagClass(classType, className, attributTries._1, methodTries._1)
+      UmlClassDiagClass(classType, className, attributeTries._1, methodTries._1, None)
     }
-
-  }
-
-  private object UmlClassAttributeYamlFormat extends MyYamlObjectFormat[UmlClassDiagClassAttribute] {
-
-    override def write(attr: UmlClassDiagClassAttribute): YamlValue = YamlObj(nameName -> attr.name, typeName -> attr.memberType)
-
-    override def readObject(yamlObject: YamlObject): Try[UmlClassDiagClassAttribute] = for {
-      name <- yamlObject.stringField(nameName)
-      attrtype <- yamlObject.stringField(typeName)
-    } yield UmlClassDiagClassAttribute(name, attrtype)
-
-  }
-
-  private object UmlClassMethodYamlFormat extends MyYamlObjectFormat[UmlClassDiagClassMethod] {
-
-    override def write(method: UmlClassDiagClassMethod): YamlValue = YamlObj(nameName -> method.name, typeName -> method.memberType)
-
-    override def readObject(yamlObject: YamlObject): Try[UmlClassDiagClassMethod] = for {
-      name <- yamlObject.stringField(nameName)
-      methodType <- yamlObject.stringField(typeName)
-    } yield UmlClassDiagClassMethod(name, methodType)
 
   }
 
@@ -167,13 +145,13 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   private object UmlImplYamlFormat extends MyYamlObjectFormat[UmlClassDiagImplementation] {
 
     override def write(impl: UmlClassDiagImplementation): YamlValue = YamlObj(
-      subclassName -> impl.subClass,
-      superclassName -> impl.superClass
+      subClassName -> impl.subClass,
+      superClassName -> impl.superClass
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlClassDiagImplementation] = for {
-      subClass <- yamlObject.stringField(subclassName)
-      superClass <- yamlObject.stringField(superclassName)
+      subClass <- yamlObject.stringField(subClassName)
+      superClass <- yamlObject.stringField(superClassName)
     } yield UmlClassDiagImplementation(subClass, superClass)
 
   }

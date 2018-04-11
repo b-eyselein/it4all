@@ -15,6 +15,7 @@ trait Consts {
   val exerciseIdName   = "exerciseId"
   val exerciseTypeName = "exerciseType"
   val explanationName  = "explanation"
+  val explanationsName = "explanations"
 
   val learnerSolutionName = "learnerSolution"
 
@@ -22,6 +23,7 @@ trait Consts {
 
   val keyName = "key"
 
+  val matchesName   = "matches"
   val maxPointsName = "maxPoints"
 
   val nameName = "name"
@@ -31,6 +33,7 @@ trait Consts {
 
   val roleName = "role"
 
+  val sampleArgName   = "sampleArg"
   val sampleSubDir    = "samples"
   val stateName       = "status"
   val stdStep         = 10
@@ -44,6 +47,7 @@ trait Consts {
   val titleName      = "title"
   val typeName       = "type"
 
+  val userArgName  = "userArg"
   val usernameName = "username"
 
   val valueName = "value"

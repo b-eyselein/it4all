@@ -105,7 +105,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
     result.result.allMatches map (m => Json.obj(
       idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
       correctnessName -> m.matchType.name,
-      explanationName -> m.explanation))
+      explanationName -> m.explanations))
   )
 
 }

@@ -3,23 +3,12 @@ package model.uml
 import model.uml.UmlEnums._
 
 
-trait UmlClassDiagClassMember {
-
-  val name      : String
-  val memberType: String
-
-  def render: String = name + ": " + memberType
-
-}
-
-case class UmlClassDiagClassAttribute(name: String, memberType: String) extends UmlClassDiagClassMember
-
-case class UmlClassDiagClassMethod(name: String, memberType: String) extends UmlClassDiagClassMember
+case class Position(xCoord: Int, yCoord: Int)
 
 
-case class UmlClassDiagClass(classType: UmlClassType, className: String, attributes: Seq[UmlClassDiagClassAttribute], methods: Seq[UmlClassDiagClassMethod]) {
+case class UmlClassDiagClass(classType: UmlClassType, className: String, attributes: Seq[String], methods: Seq[String], position: Option[Position]) {
 
-  def allMembers: Seq[UmlClassDiagClassMember] = attributes ++ methods
+  def allMembers: Seq[String] = attributes ++ methods
 
 }
 

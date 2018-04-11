@@ -1,10 +1,16 @@
 # --- !Ups
 
-INSERT INTO users (username, pw_hash, std_role, todo) VALUES
-  ('s319286', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG', 'RoleUser', 'AGGR'),
-  ('bje40dc', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG', 'RoleAdmin', 'AGGR'),
-  ('developer', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG', 'RoleSuperAdmin', 'AGGR')
+INSERT INTO users (user_type, username, std_role, todo) VALUES
+  (0, 's319286', 'RoleUser', 'AGGR'),
+  (0, 'bje40dc', 'RoleAdmin', 'AGGR'),
+  (0, 'developer', 'RoleSuperAdmin', 'AGGR')
 ON DUPLICATE KEY UPDATE std_role = VALUES(std_role);
+
+INSERT INTO pw_hashes (username, pw_hash) VALUES
+  ('s319286', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG'),
+  ('bje40dc', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG'),
+  ('developer', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG')
+ON DUPLICATE KEY UPDATE pw_hash = VALUES(pw_hash);
 
 # --- !Downs
 
@@ -99,6 +105,8 @@ DELETE IGNORE FROM blanks_exercises;
 DELETE IGNORE FROM users_in_courses;
 
 DELETE IGNORE FROM courses;
+
+DELETE IGNORE FROM pw_hashes;
 
 DELETE IGNORE FROM users;
 

@@ -1,5 +1,6 @@
 package model.sql
 
+import model.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
@@ -32,7 +33,7 @@ abstract class QueryCorrector(val queryType: String) {
 
     val whereComparison = compareWhereClauses(userQ, userTAliases, sampleQ, sampleTAliases)
 
-    val executionResult = database.executeQueries(scenario, exercise, userQ, sampleQ)
+    val executionResult: SqlExecutionResult = database.executeQueries(scenario, exercise, userQ, sampleQ)
 
     val groupByComparison = compareGroupByElements(userQ, sampleQ)
     val orderByComparison = compareOrderByElements(userQ, sampleQ)

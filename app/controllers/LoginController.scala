@@ -5,7 +5,7 @@ import javax.inject._
 import model.FormMappings._
 import model.core.CoreConsts._
 import model.core.Repository
-import model.{FormMappings, User}
+import model.{FormMappings, PwHash, RegisteredUser, User}
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
@@ -15,8 +15,7 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
-                               (implicit ec: ExecutionContext)
+class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
 
   def registerForm = Action { implicit request => Ok(views.html.register.render()) }
@@ -28,12 +27,15 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     }
 
     val onRead: UserCredForm => Future[Result] = { credentials =>
-      val newUser = User(credentials.username, credentials.password.bcrypt)
-      repo.saveUser(newUser) map {
-        _ => Ok(views.html.registered.render(credentials.username))
-      } recover {
-        // TODO: Fehlermeldung
-        case e => BadRequest("Error while inserting into db..." + e.getMessage)
+      val newUser = RegisteredUser(credentials.username)
+      val pwHash = PwHash(credentials.username, credentials.password.bcrypt)
+
+      repo.saveUser(newUser) flatMap {
+        case false => Future(BadRequest("Could not save user!"))
+        case true  =>
+          repo.savePwHash(pwHash) map {
+            _ => Ok(views.html.registered.render(credentials.username))
+          }
       }
     }
 
@@ -66,14 +68,21 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     }
 
     val onRead: UserCredForm => Future[Result] = { credentials =>
-      repo.userByName(credentials.username) map {
-        case None       => Redirect(controllers.routes.LoginController.register())
-        case Some(user) =>
-          val pwOkay = credentials.password isBcrypted user.pwHash
-          if (pwOkay)
+
+      val futureUserAndPwHash: Future[(Option[User], Option[PwHash])] = for {
+        user <- repo.userByName(credentials.username)
+        pwHash <- repo.pwHashForUser(credentials.username)
+      } yield (user, pwHash)
+
+      futureUserAndPwHash map {
+        case (None, _)                  => Redirect(controllers.routes.LoginController.register())
+        case (Some(user), None)         => BadRequest("Cannot change password!")
+        case (Some(user), Some(pwHash)) =>
+          if (credentials.password isBcrypted pwHash.pwHash) {
             Redirect(controllers.routes.Application.index()).withSession(sessionIdField -> user.username)
-          else
+          } else {
             Ok(views.html.login(FormMappings.userCredForm.fill(credentials)))
+          }
       }
     }
 

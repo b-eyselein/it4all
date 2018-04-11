@@ -29,7 +29,7 @@ case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram:
 
   }
 
-  private def displayClasses(classes: Seq[UmlClassDiagClass], toupling: Int): String = if(classes.isEmpty) "" else
+  private def displayClasses(classes: Seq[UmlClassDiagClass], toupling: Int): String = if (classes.isEmpty) "" else
     classes.grouped(toupling).zipWithIndex map { case (classQuad, rowIndex) =>
       classQuad.zipWithIndex map { case (clazz, index) =>
         // FIXME: position!
@@ -45,8 +45,7 @@ case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram:
       } mkString ",\n"
     } mkString ",\n"
 
-  private def displayMembers(clazz: UmlClassDiagClass, member: UmlClassDiagClass => Seq[UmlClassDiagClassMember]): String =
-    member(clazz) map (m => s"'${m.name}: ${m.memberType}'") mkString ","
+  private def displayMembers(clazz: UmlClassDiagClass, member: UmlClassDiagClass => Seq[String]): String = member(clazz) mkString ","
 
   private def displayImplementations(implementations: Seq[UmlClassDiagImplementation]): String = implementations map { impl =>
     s"""{

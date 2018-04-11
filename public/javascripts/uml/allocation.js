@@ -10,15 +10,13 @@ function prepareFormForSubmitting() {
         classes.push({
             name: className,
             attributes: attrCheckboxes.map((index, elem) => {
-                return (elem.checked) ? {name: elem.dataset.name, type: elem.dataset.type} : null;
+                return (elem.checked) ? elem.dataset.value : null;
             }).get(),
             methods: methodCheckboxes.map((index, elem) => {
-                return (elem.checked) ? {name: elem.dataset.name, type: elem.dataset.type} : null;
+                return (elem.checked) ? elem.dataset.value : null;
             }).get()
         });
     });
-
-    console.log(JSON.stringify(classes, null, 2));
 
     $('#learnerSolution').val(JSON.stringify({
         classes,

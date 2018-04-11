@@ -1,10 +1,19 @@
 # --- !Ups
 
 CREATE TABLE IF NOT EXISTS users (
+  user_type INT,
+  username  VARCHAR(30) PRIMARY KEY,
+  std_role  ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
+  todo      ENUM ('SHOW', 'HIDE', 'AGGR')                    DEFAULT 'SHOW'
+);
+
+CREATE TABLE IF NOT EXISTS pw_hashes (
   username VARCHAR(30) PRIMARY KEY,
   pw_hash  VARCHAR(60),
-  std_role ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
-  todo     ENUM ('SHOW', 'HIDE', 'AGGR')                    DEFAULT 'SHOW'
+
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS courses (
@@ -599,6 +608,8 @@ DROP TABLE IF EXISTS blanks_exercises;
 DROP TABLE IF EXISTS users_in_courses;
 
 DROP TABLE IF EXISTS courses;
+
+DROP TABLE IF EXISTS pw_hashes;
 
 DROP TABLE IF EXISTS users;
 

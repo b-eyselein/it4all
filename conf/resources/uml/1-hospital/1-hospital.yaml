@@ -21,24 +21,24 @@ solution:
   - classType: ABSTRACT
     name: Person
     attributes:
-    - {name: id, type: String}
-    - {name: name, type: String}
+    - "id: int"
+    - "name: String"
 
   - classType: CLASS
     name: Doktor
     methods:
-    - {name: verschreiben(Patient), type: void}
+    - "verschreiben(Patient): void"
 
   - classType: CLASS
     name: Rezept
     attributes:
-    - {name: id, type: String}
+    - "id: int"
 
   - classType: CLASS
     name: Patient
     methods:
-    - {name: entlassen(Station), type: void}
-    - {name: aufnehmen(Station), type: void}
+    - "entlassen(Station): void"
+    - "aufnehmen(Station): void"
 
   - classType: CLASS
     name: Krankenschwester
@@ -46,13 +46,13 @@ solution:
   - classType: CLASS
     name: Station
     attributes:
-    - {name: nummer, type: Int}
+    - "nummer: int"
 
   - classType: CLASS
     name: Medikament
     attributes:
-    - {name: id, type: String}
-    - {name: name, type: String}
+    - "id: int"
+    - "name: String"
 
   - classType: CLASS
     name: Krankenhaus

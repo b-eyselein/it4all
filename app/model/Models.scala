@@ -9,11 +9,22 @@ object Models {
 }
 
 
-case class User(username: String, pwHash: String, stdRole: Role = Role.RoleUser, todo: ShowHideAggregate = ShowHideAggregate.SHOW) {
+sealed trait User {
 
-  val isAdmin: Boolean = stdRole ne Role.RoleUser
+  val username         : String
+  val stdRole          : Role
+  val showHideAggregate: ShowHideAggregate
+
+  def isAdmin: Boolean = stdRole ne Role.RoleUser
 
 }
+
+case class LtiUser(username: String, stdRole: Role = Role.RoleUser, showHideAggregate: ShowHideAggregate = ShowHideAggregate.SHOW) extends User
+
+case class RegisteredUser(username: String, stdRole: Role = Role.RoleUser, showHideAggregate: ShowHideAggregate = ShowHideAggregate.SHOW) extends User
+
+case class PwHash(username: String, pwHash: String)
+
 
 case class Course(id: String, courseName: String)
 

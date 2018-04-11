@@ -28,9 +28,11 @@ object UmlConsts extends Consts {
   val mappingsName = "mappings"
   val methodsName  = "methods"
 
+  val positionName = "position"
+
   val secondEndName  = "secondEnd"
   val secondMultName = "secondMult"
-  val subclassName   = "subClass"
-  val superclassName = "superClass"
+  val subClassName   = "subClass"
+  val superClassName = "superClass"
 
 }

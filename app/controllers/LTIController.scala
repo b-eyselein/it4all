@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 import model.core.{CoreConsts, Repository}
 import model.lti.BasicLtiLaunchRequest
-import model.{Course, User, UserInCourse}
+import model.{Course, LtiUser, User, UserInCourse}
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +41,7 @@ class LTIController @Inject()(cc: ControllerComponents, tables: Repository)(impl
   private def getOrCreateUser(username: String): Future[User] = tables.userByName(username) flatMap {
     case Some(u) => Future(u)
     case None    =>
-      val newUser = User(username, "")
+      val newUser = LtiUser(username)
       val userSaved = tables.saveUser(newUser)
       userSaved.map(_ => newUser)
   }

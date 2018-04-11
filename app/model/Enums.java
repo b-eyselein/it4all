@@ -112,19 +112,21 @@ public abstract class Enums {
 
     public enum MatchType implements Selectable<MatchType> {
 
-        FAILURE("warning-sign"),
+        FAILURE("warning-sign", "danger"),
 
-        SUCCESSFUL_MATCH("ok"),
-        PARTIAL_MATCH("question-sign"),
-        UNSUCCESSFUL_MATCH("exclamation-sign"),
+        SUCCESSFUL_MATCH("ok", "success"),
+        PARTIAL_MATCH("question-sign", "warning"),
+        UNSUCCESSFUL_MATCH("exclamation-sign", "danger"),
 
-        ONLY_USER("remove"),
-        ONLY_SAMPLE("minus");
+        ONLY_USER("remove", "danger"),
+        ONLY_SAMPLE("minus", "danger");
 
         public final String glyphicon;
+        public final String bsClass;
 
-        MatchType(String glyphiconEnd) {
-            glyphicon = "glyphicon glyphicon-" + glyphiconEnd;
+        MatchType(String glyphiconEnd, String bsClass) {
+            this.glyphicon = "glyphicon glyphicon-" + glyphiconEnd;
+            this.bsClass = bsClass;
         }
 
         public static Option<MatchType> byString(String str) {

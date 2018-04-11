@@ -1,9 +1,7 @@
 package model.sql
 
-import java.sql.Connection
-
-import model.core.CommonUtils.using
 import model.sql.ColumnWrapper.wrapColumn
+import model.sql.matcher.{GroupByMatcher, OrderByMatcher}
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
@@ -17,9 +15,6 @@ import scala.util.{Failure, Success, Try}
 object SelectCorrector extends QueryCorrector("SELECT") {
 
   override type Q = net.sf.jsqlparser.statement.select.Select
-
-  def executeStatement(select: String, conn: Connection): Try[SqlQueryResult] =
-    using(conn.createStatement)(statement => new SqlQueryResult(statement.executeQuery(select)))
 
   def getColumns(select: Q): Seq[SelectItem] = select.getSelectBody match {
     case ps: PlainSelect => ps.getSelectItems.asScala

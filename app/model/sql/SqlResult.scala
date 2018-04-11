@@ -3,7 +3,9 @@ package model.sql
 import model.Enums.SuccessType
 import model.core.matching.{Match, MatchingResult}
 import model.core.{CompleteResult, EvaluationResult}
-import play.api.libs.json.{JsNull, JsObject, JsValue, Json}
+import model.sql.SqlConsts._
+import model.sql.matcher._
+import play.api.libs.json._
 import play.twirl.api.Html
 
 import scala.util.{Failure, Success, Try}
@@ -48,13 +50,13 @@ case class SqlResult(learnerSolution: String, columnComparison: ColumnMatchingRe
   def notEmptyMatchingResults: Seq[MatchingResult[_, _ <: Match[_]]] = matchingResults filter (_.allMatches.nonEmpty)
 
   def toJson: JsValue = Json.obj(
-    "columns" -> columnComparison.toJson,
-    "tables" -> tableComparison.toJson,
+    columnsName -> columnComparison.toJson,
+    tablesName -> tableComparison.toJson,
     "wheres" -> whereComparison.toJson,
     "groupBy" -> groupByComparison.map(_.toJson),
     "orderBy" -> orderByComparison.map(_.toJson),
 
-    "execution" -> executionResult.toJson
+    executionName -> executionResult.toJson
   )
 
 }
@@ -77,11 +79,17 @@ case class SqlExecutionResult(userResultTry: Try[SqlQueryResult], sampleResultTr
     case (Failure(_), Failure(_)) => SuccessType.ERROR
   }
 
+
   def toJson: JsObject = {
-    val userTable = userResultTry.map(_.toJson) getOrElse JsNull
+    val userTable: (String, JsValue) = userResultTry match {
+      case Success(result) => userResultName -> result.toJson
+      case Failure(error)  => userErrorName -> JsString(error.toString)
+    }
     val sampleTable: JsValue = sampleResultTry.map(_.toJson) getOrElse JsNull
 
-    Json.obj("user" -> userTable, "sample" -> sampleTable)
+    JsObject
+
+    JsObject(Seq(userTable, sampleResultName -> sampleTable))
   }
 
 }

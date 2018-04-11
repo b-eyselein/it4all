@@ -11,7 +11,6 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-import scalatags.Text.all._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -69,13 +68,19 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     SolutionFormHelper.stringSolForm.bindFromRequest.fold(onFormError, onRead)
   }
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = ???
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = {
+    UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
+      case JsSuccess(classDiag, _) => Some(UmlSolution(user.username, id, part, classDiag))
+      case JsError(errors)         =>
+        errors.foreach(error => Logger.error("Json Error: " + error._1 + " --> " + error._2))
+        None
+    }
+  }
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: Enums.ExerciseState): UmlCompleteEx = UmlCompleteEx(
-    UmlExercise(id, title = "", author = "", text = "", state, solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty),
-      classSelText = "", diagDrawText = "", toIgnore = ""),
+    UmlExercise(id, title = "", author = "", text = "", state, solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), classSelText = "", diagDrawText = "", toIgnore = ""),
     mappings = Seq.empty
   )
 
@@ -87,44 +92,48 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution]): Html = part match {
     case ClassSelection     => views.html.uml.classSelection(user, exercise.ex)
-    case DiagramDrawing     => views.html.uml.diagdrawing(user, exercise, getsHelp = false)
-    case DiagramDrawingHelp => views.html.uml.diagdrawing(user, exercise, getsHelp = true)
-    case MemberAllocation   => views.html.uml.allocation(user, exercise)
+    case DiagramDrawing     => views.html.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
+    case DiagramDrawingHelp => views.html.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
+    case MemberAllocation   => views.html.uml.memberAllocation(user, exercise)
   }
 
-  private def renderResult(corResult: UmlCompleteResult): Html = {
-
-    val resultsRender: String = corResult.notEmptyMatchingResults map (_.describe) mkString "\n"
-
-    val nextPartLink: String = corResult.nextPart match {
-      case Some(np) =>
-        a(href := controllers.routes.ExerciseController.exercise(this.urlPart, corResult.exercise.ex.id, np.urlName).url, cls := "btn btn-primary btn-block")("Zum nächsten Aufgabenteil").toString
-      case None     =>
-        a(href := controllers.routes.ExerciseController.index(this.urlPart).url, cls := "btn btn-primary btn-block")("Zurück zur Startseite").toString
-    }
-
-    Html(resultsRender + "<hr>" + nextPartLink)
-  }
+  //  private def renderResult(user: User, corResult: UmlCompleteResult): Html = {
+  //
+  //    val resultsRender: String = corResult.results map (_.describe) mkString "\n"
+  //
+  //    val nextPartLink: String = corResult.nextPart match {
+  //      case Some(np) => s"""<a href="${controllers.routes.ExerciseController.exercise(this.urlPart, corResult.exercise.ex.id, np.urlName).url}" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>"""
+  //      case None     => s"""<a href=${controllers.routes.ExerciseController.index(this.urlPart).url}" class="btn btn-primary btn-block">Zurück zur Startseite</a>"""
+  //    }
+  //
+  //    Html(resultsRender + "<hr>" + nextPartLink)
+  //  }
 
   override def renderEditRest(exercise: UmlCompleteEx): Html = views.html.uml.editUmlExRest(exercise)
 
   // Correction
 
   override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx, solutionSaved: Boolean): Future[Try[UmlCompleteResult]] =
-    Future(UmlCorrector.correct(exercise, sol, solutionSaved))
+    Future(Try(new UmlCompleteResult(exercise, sol.classDiagram, solutionSaved, sol.part)))
 
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, result: UmlCompleteResult): Html =
-    views.html.core.correction.render(result, renderResult(result), user, toolMainObject = this)
+  override def onSubmitCorrectionResult(user: User, result: UmlCompleteResult): Html = result.part match {
+    case ClassSelection   => views.html.uml.classSelectionResult(user, result, this)
+    case MemberAllocation => views.html.uml.memberAllocationResult(user, result, this)
+    case _                => ??? // Correction is only live!
+  }
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = error match {
     case NoSuchExerciseException(_) => Html(error.getMessage)
     case NoSuchPartException(_)     => Html(error.getMessage)
     case SolutionTransferException  => Html(error.getMessage)
-    case err                        => views.html.core.correctionError.render(user, OtherCorrectionException(err))
+    case err                        =>
+      Logger.error("Error while submit correction: " + err)
+      err.printStackTrace()
+      views.html.core.correctionError(user, OtherCorrectionException(err))
   }
 
-  override def onLiveCorrectionResult(result: UmlCompleteResult): JsValue = ??? // Ok(renderResult(result))
+  override def onLiveCorrectionResult(result: UmlCompleteResult): JsValue = result.toJson
 
 }

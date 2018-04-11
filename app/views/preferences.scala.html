@@ -15,9 +15,9 @@
                 <label class="control-label col-sm-3" for="posTests">Bestandene Tests</label>
                 <div class="col-sm-9">
                     <div class="input-group">
-                        <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.todo">
+                        <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.showHideAggregate">
                         @for(todo <- model.Enums.ShowHideAggregate.values) {
-                            <option value="@todo" @todo.isSelected(user.todo)>@todo.german </option>
+                            <option value="@todo" @todo.isSelected(user.showHideAggregate)>@todo.german </option>
                         }
                         </select>
 

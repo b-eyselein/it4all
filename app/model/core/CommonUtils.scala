@@ -1,5 +1,7 @@
 package model.core
 
+import play.api.Logger
+
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
@@ -10,7 +12,11 @@ object CommonUtils {
   } catch {
     case e: Exception => Failure(e)
   } finally {
-    if (resource != null) resource.close()
+    try {
+      if (resource != null) resource.close()
+    } catch {
+      case e: Exception => Logger.error("There has been an error: ", e)
+    }
   }
 
   def splitTries[A](tries: Seq[Try[A]]): (List[A], List[Failure[A]]) = {

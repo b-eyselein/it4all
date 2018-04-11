@@ -5,13 +5,9 @@
 }
 
 @main("UML", Some(user), scripts) {
-    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
-            <!-- FIXME: formulate hints for allocation of attributes and methods -->
-        TODO...
-    }
     <div class="container">
         <div class="page-header">
-            <h1>Zuordnung der Attribute und Methoden <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintModal">&#65311;</button></h1>
+            <h1>Zuordnung der Attribute und Methoden</h1>
         </div>
 
         <h3>Aufgabentext</h3>
@@ -27,19 +23,23 @@
 
                     <div class="panel panel-default" data-clazz="@completeClass.className">
                         <div class="panel-heading">@completeClass.className</div>
+
                         <div class="panel-body">
+
                             @for(attr <- exercise.allAttributes) {
                                 <div class="checkbox">
                                     <label><input type="checkbox" data-class="@completeClass.className" data-membertype="attribute"
-                                    data-name="@attr.name" data-type="@attr.memberType"> @attr.render
+                                    data-value="@attr"> @attr
                                     </label>
                                 </div>
                             }
+
                         <hr>
+
                             @for(method <- exercise.allMethods) {
                                 <div class="checkbox">
                                     <label><input type="checkbox" data-class="@completeClass.className" data-membertype="method"
-                                    data-name="@method.name" data-type="@method.memberType"> @method.render
+                                    data-vlaue="@method"> @method
                                     </label>
                                 </div>
                             }
