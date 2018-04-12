@@ -3,14 +3,12 @@ package model.core
 import model.Enums.SuccessType
 import model.core.EvaluationResult._
 import play.twirl.api.Html
-import scalatags.Text
-import scalatags.Text.all._
 
 object EvaluationResult {
 
   implicit class PimpedHtmlString(string: String) {
 
-    def asCode: Text.TypedTag[String] = code(string)
+    def asCode: String = "<code>" + string + "</code>"
 
     def asListElem: String = s"<li>$string</li>"
 
@@ -24,12 +22,9 @@ object EvaluationResult {
 
   def allResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.nonEmpty && results.forall(_.isSuccessful)
 
-  def asMsg(successType: SuccessType, msg: String): Text.TypedTag[String] = p(span(cls := successType.glyphicon), " " + msg)
+  def asMsg(successType: SuccessType, msg: String): String = s"""<p><span class="${successType.glyphicon}></span> $msg"""
 
-  def asMsg(success: Boolean, msg: String): Text.TypedTag[String] = p(
-    span(cls := "glyphicon glyphicon-" + (if (success) "ok" else "remove")),
-    " " + msg
-  )
+  def asMsg(success: Boolean, msg: String): String = s"""<p><span class="glyphicon glyphicon-${if (success) "ok" else "remove"}"></span> $msg</p>"""
 
 }
 
@@ -60,6 +55,14 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
   def renderLearnerSolution: Html
 
   override def success: SuccessType = SuccessType.ofBool(allResultsSuccessful(results))
+
+  protected def solSavedRender: String = {
+    val (bsClass, glyphicon) = if (solutionSaved) ("success", "ok") else ("danger", "remove")
+
+    val text = if (solutionSaved) "Ihre Lösung wurde gespeichert." else "Ihre Lösung konnte nicht gespeichert werden!"
+
+    s"""<div class="alert alert-$bsClass"><span class="glyphicon glyphicon-$glyphicon"></span> $text</div>"""
+  }
 
 }
 

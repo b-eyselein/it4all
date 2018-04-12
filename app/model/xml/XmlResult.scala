@@ -6,22 +6,21 @@ import model.xml.XmlEnums.XmlErrorType
 import org.xml.sax.SAXParseException
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.twirl.api.{Html, HtmlFormat}
-import scalatags.Text.all._
 
 case class XmlCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[XmlError]) extends CompleteResult[XmlError] {
 
   override type SolType = String
 
-  override def renderLearnerSolution: Html = new Html(pre(HtmlFormat.escape(learnerSolution).toString).toString)
+  override def renderLearnerSolution: Html = new Html("<pre>" + HtmlFormat.escape(learnerSolution).toString + "</pre>")
 
   def render: Html = {
     val solSaved: String = if (solutionSaved)
-      div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Ihre Lösung wurde gespeichert.").toString
+      s"""<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span> Ihre Lösung wurde gespeichert.</div>"""
     else
-      div(cls := "alert alert-danger")(span(cls := "glyphicon glyphicon-remove"), " Ihre Lösung konnte nicht gespeichert werden!").toString
+      s"""<div class="alert alert-danger"><span class="glyphicon glyphicon-remove"></span> Ihre Lösung konnte nicht gespeichert werden!</div>"""
 
     val resultsRender: String = results match {
-      case Nil => div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Es wurden keine Fehler gefunden.").toString
+      case Nil => s"""<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span> Es wurden keine Fehler gefunden.</div>"""
       case res => res map (_.render) mkString "\n"
     }
 
@@ -41,7 +40,7 @@ abstract sealed class XmlError(val errorType: XmlErrorType, val errorMessage: St
 
   val lineStr: String = if (line != -1) s" in Zeile $line" else ""
 
-  def render: String = div(cls := s"alert alert-$getBSClass")(strong(errorType.german + lineStr + ":"), errorMessage).toString
+  def render: String = s"""<div class="alert alert-$getBSClass"><strong>${errorType.german} $lineStr:</strong> $errorMessage</div>"""
 
   def toJson: JsObject = Json.obj("errorType" -> errorType.name, "errorMessage" -> errorMessage, "line" -> line, "success" -> success.name)
 

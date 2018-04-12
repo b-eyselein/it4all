@@ -6,6 +6,7 @@ trait Consts {
   val answersName    = "answers"
   val attributesName = "attributes"
   val authorName     = "author"
+  val awaitedName    = "awaited"
 
   val correct         = "correct"
   val correctnessName = "correctness"
@@ -16,6 +17,8 @@ trait Consts {
   val exerciseTypeName = "exerciseType"
   val explanationName  = "explanation"
   val explanationsName = "explanations"
+
+  val gottenName = "gotten"
 
   val learnerSolutionName = "learnerSolution"
 
@@ -28,18 +31,20 @@ trait Consts {
 
   val nameName = "name"
 
-  val pwName  = "passwort"
-  val pw2Name = "passwort_wieder"
+  val pointsName = "points"
+  val pwName     = "passwort"
+  val pw2Name    = "passwort_wieder"
 
   val roleName = "role"
 
-  val sampleArgName   = "sampleArg"
-  val sampleSubDir    = "samples"
-  val stateName       = "status"
-  val stdStep         = 10
-  val solutionName    = "solution"
-  val solutionsSubDir = "solutions"
-  val successName     = "success"
+  val sampleArgName     = "sampleArg"
+  val sampleSubDir      = "samples"
+  val stateName         = "status"
+  val stdStep           = 10
+  val solutionName      = "solution"
+  val solutionSavedName = "solutionSaved"
+  val solutionsSubDir   = "solutions"
+  val successName       = "success"
 
   val tagJoinChar    = "#"
   val templateSubDir = "templates"

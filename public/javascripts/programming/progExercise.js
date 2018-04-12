@@ -5,7 +5,7 @@ function onChangeLanguageSuccess(response) {
 
 function changeProgLanguage() {
     // @controllers.routes.ExerciseController.progGetDeclaration("")
-    
+
     let url = '';
 
     $.ajax({
@@ -17,21 +17,39 @@ function changeProgLanguage() {
     });
 }
 
+function printValue(value) {
+    if (value == null) {
+        return 'null';
+    } else if (value.length === 0) {
+        return '""';
+    } else {
+        return value;
+    }
+}
+
 /**
- *
- * @param result
+ * @param {object} result
  * @param {int} result.id
  * @param {boolean} result.correct
+ * @param {object} result.input
  * @param {string} result.awaited
  * @param {string} result.gotten
+ * @param {string} result.consoleOutput
  */
 function renderProgResult(result) {
+    let consoleOut = '';
+    if (result.consoleOutput !== null) {
+        consoleOut = '<p>Konsolenausgabe: <pre>' + result.consoleOutput + '</pre></p>';
+    }
+
     return `
 <div class="panel panel-${result.correct ? 'success' : 'danger'}">
     <div class="panel-heading">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
     <div class="panel-body">
-        <p>Erwartet: <code>${result.awaited.length === 0 ? '""' : result.awaited}</code></p>
-        <p>Bekommen: <code>${result.gotten.length === 0 ? '""' : result.gotten}</code></p>
+        <p>Eingabe: <pre>${result.input.toString()}</pre></p>
+        <p>Erwartet: <code>${printValue(result.awaited)}</code></p>
+        <p>Bekommen: <code>${printValue(result.gotten)}</code></p>
+        ${consoleOut}
     </div>
 </div>`.trim();
 }
@@ -42,10 +60,9 @@ function renderProgResult(result) {
  * @param {object[]} response.results
  */
 function onProgCorrectionSuccess(response) {
-    console.log(JSON.stringify(response, null, 2));
+    console.warn(JSON.stringify(response, null, 2));
 
     let html = `<div class="alert alert-${response.solutionSaved ? 'success' : 'danger'}">Ihre Lösung wurde ${response.solutionSaved ? '' : ' nicht'} gespeichert.</div>`;
-
 
     for (let i = 0; i < response.results.length; i = i + 3) {
         let firstResult = response.results[i] || null;

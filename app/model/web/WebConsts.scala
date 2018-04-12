@@ -4,24 +4,29 @@ import model.Consts
 
 object WebConsts extends Consts {
 
-  val ACTION_TYPE_NAME   = "actiontype"
-  val AWAITED_VALUE_NAME = "awaitedValue"
+  val actionTypeName = "actiontype"
 
-  val CONDITIONS_NAME = "conditions"
+  val conditionsName = "conditions"
 
-  val HTML_TASKS_NAME = "htmlTasks"
-  val HTML_TEXT_NAME  = "htmlText"
+  val descriptionName = "description"
+
+  val foundName = "found"
+
+  val htmlResultsName = "htmlResults"
+  val htmlTasksName   = "htmlTasks"
+  val htmlTextName    = "htmlText"
 
   val IS_PRECOND_NAME = "isPrecondition"
 
-  val JS_TASKS_NAME = "jsTasks"
-  val JS_TEXT_NAME  = "jsText"
+  val jsResultsName = "jsResults"
+  val jsTasksName   = "jsTasks"
+  val jsTextName    = "jsText"
 
   val KEYS_TO_SEND_NAME = "keysToSend"
 
-  val PHP_TASKS_NAME = "phpTasks"
-  val PHP_TEXT_NAME  = "phpText"
-
+  val partName     = "part"
+  val phpTasksName = "phpTasks"
+  val phpTextName  = "phpText"
 
   val textContentName = "textContent"
 

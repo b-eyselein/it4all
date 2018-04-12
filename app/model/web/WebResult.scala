@@ -4,50 +4,47 @@ import model.Enums.SuccessType
 import model.Enums.SuccessType._
 import model.core.EvaluationResult._
 import model.core.{CompleteResult, EvaluationResult}
+import model.web.WebConsts._
 import org.openqa.selenium.WebElement
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.twirl.api.Html
 
 import scala.language.postfixOps
-import scalatags.Text
-import scalatags.Text.all._
 
 case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, solutionSaved: Boolean, results: Seq[WebResult]) extends CompleteResult[WebResult] {
 
   override type SolType = String
 
-  override def renderLearnerSolution: Html = Html(pre(learnerSolution).toString)
+  override def renderLearnerSolution: Html = Html("<pre>" + learnerSolution + "</pre>")
 
   def render: Html = {
     // FIXME: convert to template...
-    val solSaved: String = if (solutionSaved)
-      div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Ihre Lösung wurde gespeichert.").toString
-    else
-      div(cls := "alert alert-danger")(span(cls := "glyphicon glyphicon-remove"), " Ihre Lösung konnte nicht gespeichert werden!").toString
 
     val resultsRender: String = results match {
-      case Nil   => div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), "Es wurden keine Fehler gefunden.").toString
+      case Nil   => s"""<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span> Es wurden keine Fehler gefunden.</div>"""
       case reses => reses map (res => {
-        div(cls := s"alert alert-${res.getBSClass}")(
-          p(data("toggle") := "collapse", href := "#task" + res.task.task.id)(res.task.task.id + ". " + res.task.task.text),
-          div(id := "task" + res.task.task.id, cls := ("collapse " + (if (res.isSuccessful) "" else "in")))(
-            hr,
-            RawFrag(res.render)
+        s"""<div class="alert alert-${res.getBSClass}">
+           |  <p data-toggle="collapse" href="#task${res.task.task.id}">${res.task.task.id}. ${res.task.task.text}</p>
+           |  <div id="task${res.task.task.id}" cls="collapse ${if (res.isSuccessful) "" else "in"}</div>
+           |
+           |  <hr>
+           |  ${res.render}
           )
-        ).toString
+        )""".stripMargin
       }) mkString "\n"
     }
 
-    Html(solSaved + resultsRender)
+    Html(solSavedRender + resultsRender)
   }
 
   def toJson: JsValue = Json.obj(
-    "solutionSaved" -> solutionSaved,
-    "part" -> part.urlName,
-    "points" -> results.map(_.points).sum, "maxPoints" -> exercise.maxPoints(part),
-    "success" -> results.forall(_.isSuccessful),
-    "htmlResults" -> results.filter(_.isInstanceOf[ElementResult]).map(_.toJson),
-    "jsResults" -> results.filter(_.isInstanceOf[JsWebResult]).map(_.toJson)
+    solutionSavedName -> solutionSaved,
+    partName -> part.urlName,
+    pointsName -> results.map(_.points).sum,
+    maxPointsName -> exercise.maxPoints(part),
+    successName -> results.forall(_.isSuccessful),
+    htmlResultsName -> results.filter(_.isInstanceOf[ElementResult]).map(_.toJson),
+    jsResultsName -> results.filter(_.isInstanceOf[JsWebResult]).map(_.toJson)
   )
 
 }
@@ -106,7 +103,7 @@ abstract class TextResult(name: String, val foundContent: String, val awaitedCon
   else if (foundContent contains awaitedContent) COMPLETE
   else PARTIALLY
 
-  def render: Text.TypedTag[String] = asMsg(success, success match {
+  def render: String = asMsg(success, success match {
     case COMPLETE  => s"$name hat den gesuchten Wert."
     case PARTIALLY => s"$name hat nicht den gesuchten Wert '$awaitedContent' sondern '$foundContent'!"
     case NONE      => s"$name konnte nicht gefunden werden!"
@@ -120,10 +117,11 @@ abstract class TextResult(name: String, val foundContent: String, val awaitedCon
 case class TextContentResult(f: String, a: String) extends TextResult("Der Textinhalt", f, a) {
 
   def toJson: JsObject = Json.obj(
-    "success" -> isSuccessful,
-    "points" -> points, "maxPoints" -> 1,
-    "awaited" -> awaitedContent,
-    "found" -> foundContent
+    successName -> isSuccessful,
+    pointsName -> points,
+    maxPointsName -> 1,
+    awaitedName -> awaitedContent,
+    foundName -> foundContent
   )
 
   val points: Double = if (isSuccessful) 1 else 0
@@ -133,11 +131,12 @@ case class TextContentResult(f: String, a: String) extends TextResult("Der Texti
 case class AttributeResult(attribute: Attribute, foundValue: Option[String]) extends TextResult(s"Das Attribut '${attribute.key}'", foundValue getOrElse "", attribute.value) {
 
   def toJson: JsObject = Json.obj(
-    "success" -> isSuccessful,
-    "points" -> points, "maxPoints" -> 1,
+    successName -> isSuccessful,
+    pointsName -> points,
+    maxPointsName -> 1,
     "attrName" -> attribute.key,
-    "awaited" -> awaitedContent,
-    "found" -> foundContent
+    awaitedName -> awaitedContent,
+    foundName -> foundContent
   )
 
   val points: Double = if (isSuccessful) 1d else foundValue map (_ => 0.5) getOrElse 0d
@@ -156,9 +155,10 @@ case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResult], a
     (postResults map (_.render) mkString "\n")
 
   override def toJson: JsObject = Json.obj(
-    "id" -> task.task.id,
-    "points" -> points, "maxPoints" -> task.maxPoints,
-    "success" -> (preResults.forall(_.isSuccessful) && actionPerformed && postResults.forall(_.isSuccessful)),
+    idName -> task.task.id,
+    pointsName -> points,
+    maxPointsName -> task.maxPoints,
+    successName -> (preResults.forall(_.isSuccessful) && actionPerformed && postResults.forall(_.isSuccessful)),
     "preResults" -> preResults.map(_.toJson),
     "actionDescription" -> task.task.actionDescription,
     "actionPerformed" -> actionPerformed,
@@ -173,7 +173,7 @@ case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResult], a
 
 case class ConditionResult(override val success: SuccessType, condition: JsCondition, gottenValue: String) extends EvaluationResult {
 
-  def render: Text.TypedTag[String] = asMsg(success,
+  def render: String = asMsg(success,
     s"""${if (condition.isPrecondition) "Vor" else "Nach"}bedingung konnte ${if (isSuccessful) "" else "nicht"} verifiziert werden.</p>
        |  <p>${condition.description}</p>
        |  ${if (isSuccessful) "" else s"<p>Element hatte aber folgenden Wert: $gottenValue</p>"}""".stripMargin)
@@ -181,11 +181,12 @@ case class ConditionResult(override val success: SuccessType, condition: JsCondi
   def points: Double = if (isSuccessful) 1 else 0
 
   def toJson: JsObject = Json.obj(
-    "points" -> points, "maxPoints" -> condition.maxPoints,
-    "success" -> isSuccessful,
-    "description" -> condition.description,
-    "awaited" -> condition.awaitedValue,
-    "gotten" -> gottenValue
+    pointsName -> points,
+    maxPointsName -> condition.maxPoints,
+    successName -> isSuccessful,
+    descriptionName -> condition.description,
+    awaitedName -> condition.awaitedValue,
+    gottenName -> gottenValue
   )
 
 }

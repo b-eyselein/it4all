@@ -28,7 +28,7 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='result']
     isPrecondition: false
-    awaitedValue: 1
+    awaited: 1
 - id: 2
   text: Fakultät von 3 muss 6 sein
   actiontype: FILLOUT
@@ -38,7 +38,7 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='result']
     isPrecondition: false
-    awaitedValue: 6
+    awaited: 6
 - id: 3
   text: Fakultät von 6 muss 720 sein
   actiontype: FILLOUT
@@ -48,7 +48,7 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='result']
     isPrecondition: false
-    awaitedValue: 720
+    awaited: 720
 - id: 4
   text: Fakultät von 10 muss 3628800 sein
   actiontype: FILLOUT
@@ -58,4 +58,4 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='result']
     isPrecondition: false
-    awaitedValue: 3628800
+    awaited: 3628800

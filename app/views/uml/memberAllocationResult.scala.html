@@ -5,11 +5,22 @@
 }
 
 @main(title, Some(user)) {
-<div class="container">
-    <div class="page-header">
-        <h1>@title</h1>
-    </div>
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
+        </div>
 
-    todo!
-</div>
+        @result.classResult match {
+            case None => {
+                <div class="alert alert-danger">Es gab einen Fehler bei der Korrektur!</div>
+            }
+            case Some(classRes) => {
+                @for(classMatch <- classRes.allMatches) {
+                    @classMatch
+                }
+            }
+        }
+
+        todo!
+    </div>
 }

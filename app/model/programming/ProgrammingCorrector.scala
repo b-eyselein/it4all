@@ -30,14 +30,11 @@ object ProgrammingCorrector extends model.core.FileUtils {
     writeAndCopyFiles(solutionTargetDir, language.fileEnding, implementation, testDataFileContent) map { _ =>
 
       // FIXME: what if image does not exist?
-      val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(
-        imageName = dockerImageName,
-        maybeEntryPoint = None,
-        dockerBinds = mountFiles(exerciseResourcesFolder, solutionTargetDir, fileEnding = "py")
-        , deleteContainerAfterRun = false
+      val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(dockerImageName,
+        dockerBinds = mountProgrammingFiles(exerciseResourcesFolder, solutionTargetDir, fileEnding = "py") //, deleteContainerAfterRun = false
       )
 
-      val futureResults: Future[Try[Seq[ProgEvalResult]]] = containerResult map {
+      val futureResults = containerResult map {
 
         case RunContainerSuccess => ResultsFileJsonFormat.readResultFile(solutionTargetDir / resultFileName, completeTestData)
 
@@ -45,14 +42,14 @@ object ProgrammingCorrector extends model.core.FileUtils {
 
       }
 
-      futureResults map { resultTry: Try[Seq[ProgEvalResult]] =>
+      futureResults map { resultTry =>
         resultTry map (results => ProgCompleteResult(implementation, solutionSaved, results))
       }
     }
 
   }
 
-  private def writeAndCopyFiles(solTargetDir: Path, fileEnding: String, impl: String, testDataFileContent: String) = for {
+  private def writeAndCopyFiles(solTargetDir: Path, fileEnding: String, impl: String, testDataFileContent: String): Try[(Path, Path, Path)] = for {
 
     // FIXME: evaluate files!
 
@@ -64,7 +61,7 @@ object ProgrammingCorrector extends model.core.FileUtils {
 
   } yield (solutionWrite, testDataWrite, resultFileCreate)
 
-  private def mountFiles(exResFolder: Path, solTargetDir: Path, fileEnding: String): Seq[DockerBind] = {
+  private def mountProgrammingFiles(exResFolder: Path, solTargetDir: Path, fileEnding: String): Seq[DockerBind] = {
 
     // FIXME: update with files in exerciseResourcesFolder!
     val testMainMount = DockerBindUtils.mountFileByName(exResFolder, DockerConnector.DefaultWorkingDir, testMainFileName(fileEnding))

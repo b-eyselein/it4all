@@ -5,7 +5,6 @@ import model.Enums.SuccessType
 import model.core.{CompleteResult, EvaluationResult}
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.twirl.api.Html
-import scalatags.Text.all._
 
 case class RoseCompleteResult(solutionSaved: Boolean, learnerSolution: String, result: RoseEvalResult) extends CompleteResult[RoseEvalResult] {
 
@@ -13,7 +12,7 @@ case class RoseCompleteResult(solutionSaved: Boolean, learnerSolution: String, r
 
   override def results: Seq[RoseEvalResult] = Seq(result)
 
-  override def renderLearnerSolution: Html = new Html(pre(learnerSolution).toString)
+  override def renderLearnerSolution: Html = new Html("<pre>" + learnerSolution + "</pre>")
 
   def render: JsValue = result match {
     case rer: RoseExecutionResult => Json.parse(rer.result)

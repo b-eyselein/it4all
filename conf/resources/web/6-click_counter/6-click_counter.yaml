@@ -30,11 +30,11 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: true
-    awaitedValue: 0
+    awaited: 0
   - id: 2
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
-    awaitedValue: 1
+    awaited: 1
 - id: 2
   text: Test 2
   xpathQuery: /html/body//button
@@ -43,12 +43,12 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: true
-    awaitedValue: 1
+    awaited: 1
 
   - id: 2
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
-    awaitedValue: 2
+    awaited: 2
 - id: 3
   text: Test 3
   xpathQuery: /html/body//button
@@ -57,12 +57,12 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: true
-    awaitedValue: 2
+    awaited: 2
 
   - id: 2
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
-    awaitedValue: 3
+    awaited: 3
 - id: 4
   text: Test 4
   xpathQuery: /html/body//button
@@ -71,8 +71,8 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: true
-    awaitedValue: 3
+    awaited: 3
   - id: 2
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
-    awaitedValue: 4
+    awaited: 4

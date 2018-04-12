@@ -17,34 +17,28 @@ resolvers ++= Seq(
 )
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
-  "org.mockito" % "mockito-core" % "2.15.0",
+  "org.mockito" % "mockito-core" % "2.18.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
 
   "mysql" % "mysql-connector-java" % "8.0.8-dmr",
 
   // Dependency injection
   guice,
-  "net.codingwell" %% "scala-guice" % "4.1.1",
+  "net.codingwell" %% "scala-guice" % "4.2.0",
 
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
-
-  // FIXME: remove again!
-  "com.lihaoyi" %% "scalatags" % "0.6.7",
 
   ws,
 
   // core
-  // TODO: Remove both again?
-  "com.github.fge" % "json-schema-validator" % "2.2.6",
-  "com.kjetland" %% "mbknor-jackson-jsonschema" % "1.0.28",
-
   "com.typesafe.play" %% "play-slick" % "3.0.3",
   evolutions,
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
 
   // Js-Libraries
   "org.webjars" % "ace" % "1.2.8",
-  "org.webjars" % "jquery" % "3.2.1",
+  "org.webjars" % "jquery" % "3.3.1",
+  // FIXME: update to version 4.0
   "org.webjars" % "bootstrap" % "3.3.7-1",
 
   "org.webjars.npm" % "jointjs" % "2.0.1",
@@ -59,8 +53,8 @@ libraryDependencies ++= Seq(
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
 
   // Selenium and HtmlUnitDriver for Web+Js
-  "org.seleniumhq.selenium" % "selenium-java" % "3.9.1",
-  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.29.2",
+  "org.seleniumhq.selenium" % "selenium-java" % "3.11.0",
+  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.30.0",
 
   // MyBatis and JSqlParser for SQL
   //  "org.mybatis" % "mybatis" % "3.4.5",

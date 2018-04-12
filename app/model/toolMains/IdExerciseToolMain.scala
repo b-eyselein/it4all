@@ -6,6 +6,7 @@ import model.core.CoreConsts.solutionName
 import model.core._
 import model.persistence.SingleExerciseTableDefs
 import model.{JsonFormat, PartSolution, User}
+import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -44,6 +45,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   def onLiveCorrectionResult(result: CompResult): JsValue
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
+    Logger.error("There has been an correction error: ", error)
     val msg: String = error match {
       case NoSuchExerciseException(notExistingId) => s"Es gibt keine Aufgabe mit der ID '$notExistingId'!"
       case SolutionTransferException              => "Es gab einen Fehler bei der Übertragung ihrer Lösung!"

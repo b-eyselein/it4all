@@ -10,6 +10,6 @@ def convert_test_input(base_data, input_json):
     return input_json
 
 
-def test(my_list, awaited_output):
+def test(base_data, my_list, awaited_output):
     gotten_output = longest_string(my_list)
     return gotten_output, gotten_output == awaited_output

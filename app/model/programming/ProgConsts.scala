@@ -4,20 +4,17 @@ import model.Consts
 
 object ProgConsts extends Consts {
 
-  val awaitedName = "awaited"
-
   val baseDataName = "baseData"
   val baseName     = "base"
 
   val classNameName        = "className"
   val classDiagramName     = "classDiagram"
   val classDiagramPartName = "classDiagramPart"
+  val consoleOutputName    = "consoleOutput"
 
   val evaluatedName = "evaluated"
 
   val functionNameName = "functionname"
-
-  val gottenName = "gotten"
 
   val identifierName     = "identifier"
   val implementationName = "implementation"

@@ -14,8 +14,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.JsValue
 import play.api.mvc._
-import play.twirl.api.Html
-import scalatags.Text.all._
+import play.twirl.api.{Html, HtmlFormat}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -110,11 +109,11 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
     val template = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
 
-    val exScript: Html = Html(script(src := controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url).toString)
+    val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url}"></script>""")
 
     val exRest = part match {
-      case DocumentCreationXmlPart => Html(pre(exercise.sampleGrammar).toString)
-      case GrammarCreationXmlPart  => Html(div(cls := "well")(exercise.grammarDescription).toString)
+      case DocumentCreationXmlPart => Html(s"""<pre>${HtmlFormat.escape(exercise.sampleGrammar)}</pre>""")
+      case GrammarCreationXmlPart  => Html(s"""<div class="well">${exercise.grammarDescription}</div>""")
     }
 
     views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, template, part, exScript)

@@ -26,12 +26,9 @@ class LogContainerCallback extends LogContainerResultCallback {
 
 object DockerConnector {
 
-  val maxRuntimeInSeconds = 2
-
   val MaxWaitTimeInSeconds = 3
 
   val SuccessStatusCode = 0
-
   val TimeOutStatusCode = 124
 
   val DefaultWorkingDir: Path = Paths.get("/data")
@@ -74,7 +71,7 @@ object DockerConnector {
 
   private def deleteContainer(container: String): Try[Unit] = Try(DockerClient.removeContainerCmd(container).exec)
 
-  def runContainer(imageName: String, maybeEntryPoint: Option[Seq[String]], dockerBinds: Seq[DockerBind] = Seq.empty, workingDir: Path = DefaultWorkingDir,
+  def runContainer(imageName: String, maybeEntryPoint: Option[Seq[String]] = None, dockerBinds: Seq[DockerBind] = Seq.empty, workingDir: Path = DefaultWorkingDir,
                    maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds, deleteContainerAfterRun: Boolean = true)
                   (implicit ec: ExecutionContext): Future[RunContainerResult] = Future {
 

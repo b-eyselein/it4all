@@ -42,7 +42,7 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='errors']
     isPrecondition: false
-    awaitedValue: Zu kurz
+    awaited: Zu kurz
 - id: 2
   text: Wenn das Passwort 'passwort' enthält, setze den Fehlertext auf 'Zu einfach'
   xpathQuery: /html/body//input[@id='password']
@@ -52,7 +52,7 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='errors']
     isPrecondition: false
-    awaitedValue: Zu einfach
+    awaited: Zu einfach
 - id: 3
   text: Für alle anderen Passwörter soll das Fehlerfeld geleert (auf '' gesetzt) werden
   actiontype: FILLOUT
@@ -62,4 +62,4 @@ jsTasks:
   - id: 1
     xpathQuery: /html/body//span[@id='errors']
     isPrecondition: false
-    awaitedValue: ''
+    awaited: ''
