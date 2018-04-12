@@ -83,8 +83,6 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart, oldSolution: Option[BlanksSolution]): Html = views.html.blanks.blanksExercise(user, exercise)
 
-  private def renderResult(correctionResult: BlanksCompleteResult): Html = Html(correctionResult.result.describe) // ???
-
   override def renderEditRest(exercise: BlanksCompleteExercise): Html = new Html(
     s"""<div class="form-group">
        |  <label class="control-label" for="blankstext">Lückentext:</label>

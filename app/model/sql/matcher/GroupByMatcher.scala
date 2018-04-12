@@ -35,8 +35,4 @@ object GroupByMatcher extends Matcher[Expression, GroupByMatch, GroupByMatchingR
 
 }
 
-case class GroupByMatchingResult(allMatches: Seq[GroupByMatch]) extends MatchingResult[Expression, GroupByMatch] {
-
-  override val matchName: String = "Group By-Elemente"
-
-}
+case class GroupByMatchingResult(allMatches: Seq[GroupByMatch]) extends MatchingResult[Expression, GroupByMatch]

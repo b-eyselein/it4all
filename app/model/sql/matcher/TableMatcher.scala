@@ -2,7 +2,7 @@ package model.sql.matcher
 
 import model.core.matching.{Match, Matcher, MatchingResult}
 import net.sf.jsqlparser.schema.Table
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json.{JsString, JsValue}
 
 case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) extends Match[Table] {
 
@@ -22,8 +22,4 @@ object TableMatcher extends Matcher[Table, TableMatch, TableMatchingResult] {
 
 }
 
-case class TableMatchingResult(allMatches: Seq[TableMatch]) extends MatchingResult[Table, TableMatch] {
-
-  override val matchName: String = "Tabellen"
-
-}
+case class TableMatchingResult(allMatches: Seq[TableMatch]) extends MatchingResult[Table, TableMatch]

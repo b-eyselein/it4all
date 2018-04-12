@@ -4,7 +4,7 @@ import model.Enums.MatchType
 import model.Enums.MatchType.SUCCESSFUL_MATCH
 import model.core.matching.{Match, Matcher, MatchingResult}
 import net.sf.jsqlparser.statement.select.OrderByElement
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json.{JsString, JsValue}
 
 case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement] {
 
@@ -26,8 +26,4 @@ object OrderByMatcher extends Matcher[OrderByElement, OrderByMatch, OrderByMatch
 
 }
 
-case class OrderByMatchingResult(allMatches: Seq[OrderByMatch]) extends MatchingResult[OrderByElement, OrderByMatch] {
-
-  override val matchName: String = "Order By-Elemente"
-
-}
+case class OrderByMatchingResult(allMatches: Seq[OrderByMatch]) extends MatchingResult[OrderByElement, OrderByMatch]

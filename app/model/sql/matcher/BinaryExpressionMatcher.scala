@@ -2,10 +2,9 @@ package model.sql.matcher
 
 import model.Enums.MatchType
 import model.core.matching.{Match, Matcher, MatchingResult}
-import model.sql.SqlConsts.CONDITIONS_NAME
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json.{JsString, JsValue}
 
 case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
 
@@ -58,8 +57,4 @@ class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases:
 }
 
 
-case class BinaryExpressionMatchingResult(allMatches: Seq[BinaryExpressionMatch]) extends MatchingResult[BinaryExpression, BinaryExpressionMatch] {
-
-  override val matchName: String = CONDITIONS_NAME
-
-}
+case class BinaryExpressionMatchingResult(allMatches: Seq[BinaryExpressionMatch]) extends MatchingResult[BinaryExpression, BinaryExpressionMatch]

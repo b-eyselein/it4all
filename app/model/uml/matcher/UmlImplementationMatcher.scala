@@ -43,9 +43,4 @@ object UmlImplementationMatcher extends Matcher[UmlClassDiagImplementation, UmlI
 }
 
 
-case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatch]) extends MatchingResult[UmlClassDiagImplementation, UmlImplementationMatch] {
-
-  override val matchName: String = "Vererbungsbeziehungen"
-
-}
-
+case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatch]) extends MatchingResult[UmlClassDiagImplementation, UmlImplementationMatch]

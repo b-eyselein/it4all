@@ -44,8 +44,4 @@ object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch, ColumnMatchingR
 
 }
 
-case class ColumnMatchingResult(allMatches: Seq[ColumnMatch]) extends MatchingResult[ColumnWrapper, ColumnMatch] {
-
-  override val matchName: String = "Spalten"
-
-}
+case class ColumnMatchingResult(allMatches: Seq[ColumnMatch]) extends MatchingResult[ColumnWrapper, ColumnMatch]

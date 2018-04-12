@@ -22,17 +22,4 @@ object UmlAssociationMatcher extends Matcher[UmlClassDiagAssociation, UmlAssocia
 }
 
 
-case class UmlAssociationMatchingResult(allMatches: Seq[UmlAssociationMatch]) extends MatchingResult[UmlClassDiagAssociation, UmlAssociationMatch] {
-
-  override val matchName: String = "Assoziationen"
-
-  //  override protected def descArg(arg: UmlClassDiagAssociation): String = describeAssociation(arg)
-
-  //  override protected def descArgForJson(arg: UmlClassDiagAssociation): JsValue = Json.obj(
-  //    "assocType" -> arg.assocType.name, "assocName" -> arg.assocName,
-  //    "firstEnd" -> arg.firstEnd, "firstMult" -> arg.firstMult.representant,
-  //    "secondEnd" -> arg.secondEnd, "secondMult" -> arg.secondMult.representant
-  //  )
-
-
-}
+case class UmlAssociationMatchingResult(allMatches: Seq[UmlAssociationMatch]) extends MatchingResult[UmlClassDiagAssociation, UmlAssociationMatch]

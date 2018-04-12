@@ -27,8 +27,4 @@ object BlanksCorrector extends Matcher[BlanksAnswer, BlanksAnswerMatch, BlanksAn
   override protected def resultInstantiation: Seq[BlanksAnswerMatch] => BlanksAnswerMatchingResult = BlanksAnswerMatchingResult
 }
 
-case class BlanksAnswerMatchingResult(allMatches: Seq[BlanksAnswerMatch]) extends MatchingResult[BlanksAnswer, BlanksAnswerMatch] {
-
-  override val matchName: String = "gegebene Antworten"
-
-}
+case class BlanksAnswerMatchingResult(allMatches: Seq[BlanksAnswerMatch]) extends MatchingResult[BlanksAnswer, BlanksAnswerMatch]

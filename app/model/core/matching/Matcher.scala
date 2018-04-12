@@ -5,14 +5,11 @@ import model.Enums.MatchType._
 import model.Enums.SuccessType._
 import model.core.CoreConsts._
 import model.core.EvaluationResult
-import model.core.EvaluationResult.PimpedHtmlString
 import play.api.libs.json.{JsObject, Json}
 
 import scala.language.postfixOps
 
 trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
-
-  val matchName: String
 
   def allMatches: Seq[M]
 
@@ -29,55 +26,6 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
     successName -> allMatches.forall(_.isSuccessful),
     matchesName -> allMatches.map(_.toJson)
   )
-
-  // FIXME: use scalatags for results...
-
-  def describe: String = success match {
-    case COMPLETE => s"""<span class="glyphicon glyphicon-ok"></span> Die Korrektur der $matchName war erfolgreich.""" asDivWithClass "alert alert-success"
-
-    case (PARTIALLY | NONE) =>
-      val groupedMatches = allMatches groupBy (_.matchType)
-
-      val message =
-        s"""<h4><span class="${success.glyphicon}"></span> Die Korrektur der $matchName ergab folgendes Ergebnis:</h4>""" +
-          (groupedMatches get SUCCESSFUL_MATCH map describeCorrectMatches getOrElse "") +
-          (groupedMatches get PARTIAL_MATCH map describePartialMatches getOrElse "") +
-          (groupedMatches get UNSUCCESSFUL_MATCH map describeUnsuccessfulMatches getOrElse "") +
-          (groupedMatches get ONLY_SAMPLE map describeOnlySampleMatches getOrElse "") +
-          (groupedMatches get ONLY_USER map describeOnlyUserMatches getOrElse "")
-
-      message asDiv
-
-    case ERROR => s"""<span class="glyphicon glyphicon-ok"></span> Es gab einen Fehler bei der Korrektur der $matchName!""" asDiv
-  }
-
-  protected def describeCorrectMatches(colMatches: Seq[M]): String = colMatches match {
-    case Nil => ""
-    case ms  => describeMatches(s"Folgende $matchName waren korrekt:", ms, "alert alert-success")(isCorrect = true)
-  }
-
-  protected def describePartialMatches(colMatches: Seq[M]): String = colMatches match {
-    case Nil => ""
-    case ms  => describeMatches(s"Bei folgenden $matchName war die Korrektur nicht komplett erfolgreich:", ms, "alert alert-warning")
-  }
-
-  protected def describeUnsuccessfulMatches(colMatches: Seq[M]): String = colMatches match {
-    case Nil => ""
-    case ms  => describeMatches(s"Bei folgenden $matchName war die Korrektur nicht erfolgreich:", ms, "alert alert-danger")
-  }
-
-  protected def describeOnlySampleMatches(matches: Seq[M]): String = matches match {
-    case Nil => ""
-    case ms  => describeMatches(s"Folgende $matchName fehlen:", ms, "alert alert-danger", userArg = false)
-  }
-
-  protected def describeOnlyUserMatches(matches: Seq[M]): String = matches match {
-    case Nil => ""
-    case ms  => describeMatches(s"Folgende $matchName waren falsch:", ms, "alert alert-danger")
-  }
-
-  protected def describeMatches(message: String, matches: Seq[M], cssClass: String, userArg: Boolean = true)(implicit isCorrect: Boolean = false): String =
-    (message + "<ul>" + (matches map (m => (if (userArg) m.descUserArgWithReason else m.descSampleArgWithReason) asListElem) mkString) + "<ul>") asDivWithClass cssClass
 
 }
 
