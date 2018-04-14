@@ -1,0 +1,41 @@
+id: 3
+title: Tutorial Konto
+author: bje40dc
+text: >
+  Ein Kunde hat die Möglichkeit mehrere Bankkonten zu besitzen und hat eine Namen.
+  Zudem kann der Kunde sich den Gesamtguthaben aller Bankkonten anzeigen lassen.
+  Ein Bankkonto hat eine id und der Kunde kann sich das entsprechende Saldo anzeigen lassen.
+  Weiterhin kann der Kunde Geld auf ein Bankkonto einzahlen.
+status: APPROVED
+
+mappings:
+- {key: Bankkonten, value: Bankkonto}
+- {key: Kunden, value: Kunde}
+
+ignoreWords: ["Ein", "Zudem", "Weiterhin"]
+
+solution:
+  classes:
+  - classType: CLASS
+    name: Bankkonto
+    attributes:
+    - "id: int"
+    methods:
+    - "saldo(): Int"
+    - "einzahlen(Int): void"
+
+  - classType: CLASS
+    name: Kunde
+    attributes:
+    - "name: String"
+    methods:
+    - "gesamtguthaben(): Int"
+
+  associations:
+  - assocType: ASSOCIATION
+    firstEnd: Kunde
+    firstMult: SINGLE
+    secondEnd: Bankkonto
+    secondMult: UNBOUND
+
+  implementations: []

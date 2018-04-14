@@ -32,9 +32,8 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
   })
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {
-    case (ClassSelection) => true
-    case DiagramDrawing   => false // TODO: Currently deactivated...
-    case _                => false
+    case (ClassSelection | DiagramDrawing) => true // TODO: Currently deactivated...
+    case _                                 => false
   }
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {

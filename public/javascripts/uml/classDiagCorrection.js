@@ -55,6 +55,7 @@ class Association {
 function displayClassResult(classResult) {
     // TODO: implement...
     console.warn("Displaying class result...");
+    return 'TODO: Class result...';
 }
 
 /**
@@ -97,22 +98,10 @@ function displayMatchResult(matchingRes, explanationFunc) {
 
     let mainExplanation = explanationFunc(matchingRes);
 
-    let subExplanations = '';
-    if (matchingRes.explanations.length > 0) {
-        subExplanations += '<ul>';
-        for (let expl of matchingRes.explanations) {
-            subExplanations += '<li>' + expl + '</li>';
-        }
-        subExplanations += '</ul>';
-    }
+    let subExplanations = matchingRes.explanations.join(" ");
 
     return `
-<div class="col-md-6">
-    <div class="alert alert-${alertClass}">
-        <p><span class="glyphicon glyphicon-${glyphicon}"></span> ${mainExplanation}</p>
-        ${subExplanations}
-    </div>
-</div>`.trim();
+<p class="text-${alertClass}"><span class="glyphicon glyphicon-${glyphicon}"></span> ${mainExplanation} ${subExplanations}</p>`.trim();
 }
 
 /**
@@ -200,21 +189,17 @@ function displayMatchingResultList(matchingResultList, name, explainFunc) {
     console.warn(JSON.stringify(matchingResultList, null, 2));
     if (matchingResultList.success) {
         return `
-<div class="col-md-6">
-    <div class="alert alert-success">
-        <span class="glyphicon glyphicon-ok"></span> Der Vergleich der ${name} war erfolgreich.
-    </div>
+<div class="alert alert-success">
+    <span class="glyphicon glyphicon-ok"></span> Die ${name} waren korrekt.
 </div>`.trim();
     } else {
         return `
-<div class="col-md-6">
-    <div class="panel panel-danger">
-        <div class="panel-heading">
-            <h4 class="panel-title">Der Vergleich der  ${name} war nicht erfolgreich:</h4>
-        </div>
-        <div class="panel-body">
-        ${matchingResultList.matches.map(s => displayMatchResult(s, explainFunc)).join('\n')}
-        </div>
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h4 class="panel-title">Bewertung ${name}:</h4>
+    </div>
+    <div class="panel-body">
+    ${matchingResultList.matches.map(s => displayMatchResult(s, explainFunc)).join('\n')}
     </div>
 </div>`.trim();
     }
@@ -239,8 +224,8 @@ function onUmlClassDiagCorrectionSuccess(response) {
     }
 
     if (response.assocAndImplResult != null) {
-        html += displayMatchingResultList(response.assocAndImplResult.implResult, 'Implementierungsbezeihungen', explainImplResult);
-        html += displayMatchingResultList(response.assocAndImplResult.assocResult, 'Assoziationen', explainAssocResult);
+        html += displayMatchingResultList(response.assocAndImplResult.implResult, 'der Vererbungsbeziehungen', explainImplResult);
+        html += displayMatchingResultList(response.assocAndImplResult.assocResult, 'der Assoziationen', explainAssocResult);
     }
 
     $('#resultDiv').html(html);

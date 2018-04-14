@@ -4,7 +4,7 @@ import model.Enums.MatchType
 import model.Enums.MatchType.{ONLY_SAMPLE, ONLY_USER, SUCCESSFUL_MATCH, UNSUCCESSFUL_MATCH}
 import model.core.matching.{Match, Matcher, MatchingResult}
 import model.uml.UmlClassDiagClass
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsString, JsValue}
 
 import scala.language.postfixOps
 
@@ -40,7 +40,8 @@ case class UmlClassMatch(userArg: Option[UmlClassDiagClass], sampleArg: Option[U
     }) mkString
   }
 
-  override protected def descArgForJson(arg: UmlClassDiagClass): JsValue = ???
+  // FIXME: check if correct!
+  override protected def descArgForJson(arg: UmlClassDiagClass): JsValue = JsString(arg.className) //???
 
 }
 
