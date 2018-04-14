@@ -1,4 +1,4 @@
-@(user: model.User, correctionResult: model.uml.UmlCompleteResult, toolMain: model.uml.UmlToolMain)
+@(user: model.User, exerciseId: Int, createdClasses : Seq[model.uml.UmlClassDiagClass], classMatchingResult: model.uml.matcher.UmlClassMatchingResult, toolMain: model.uml.UmlToolMain)
 
 @title = @{
     "Korrektur: Auswahl der Klassen"
@@ -10,44 +10,41 @@
             <h1>@title</h1>
         </div>
 
-        @correctionResult.classResult match {
-            case None => {
-                <div class="alert alert-danger">Es gab einen Fehler bei der Klausur!</div>
-            }
-            case Some(classMatchingResult) => {
-                @for(classMatchingResTuple <- classMatchingResult.allMatches.grouped(2)) {
-                    <div class="row">
 
-                    @for(classMatchingRes <- classMatchingResTuple) {
-                        <div class="col-md-6">
-                            <div class="alert alert-@classMatchingRes.matchType.bsClass">
-                            @(classMatchingRes.userArg, classMatchingRes.sampleArg) match {
-                                case (Some(userArg), Some(sampleArg)) => {
-                                    <span class="@classMatchingRes.matchType.glyphicon"></span> Die Modellierung der Klasse <code>@userArg.className</code>
-                                    ist korrekt. Sie ist auch in der Musterlösung vorhanden.
-                                }
-                                case (None, Some(sampleArg)) => {
-                                    <span class="@classMatchingRes.matchType.glyphicon"></span> Die Modellierung der Klasse <code>@sampleArg.className</code>
-                                    fehlt.
-                                    Sie ist in der Musterlösung vorhanden.
-                                }
-                                case (Some(userArg), None) => {
-                                    <span class="@classMatchingRes.matchType.glyphicon"></span> Die Modellierung der Klasse <code>@userArg.className</code> ist falsch.
-                                    Sie ist in der Musterlösung nicht vorhanden.
-                                }
-                            }
-                            </div>
-                        </div>
-                    }
-
-                    </div>
+        <div class="row">
+            <div class="col-md-4 text-right">
+                <h2>Erstellte Klassen</h2>
+                @for(umlClass <- createdClasses) {
+                    <p>@umlClass.className</p>
                 }
+            </div>
+            <div class="col-md-8">
+                <h2>Ergebnis</h2>
+            @for(classMatchingRes <- classMatchingResult.allMatches) {
+                <p class="text text-@classMatchingRes.matchType.bsClass">
+                @(classMatchingRes.userArg, classMatchingRes.sampleArg) match {
+                    case (Some(userArg), Some(sampleArg)) => {
+                        <span class="@classMatchingRes.matchType.glyphicon"></span>
+                        Die Modellierung der Klasse <code>@userArg.className</code> ist korrekt.
+                    }
+                    case (None, Some(sampleArg)) => {
+                        <span class="@classMatchingRes.matchType.glyphicon"></span>
+                        Die Modellierung der Klasse <code>@sampleArg.className</code> fehlt.
+                    }
+                    case (Some(userArg), None) => {
+                        <span class="@classMatchingRes.matchType.glyphicon"></span>
+                        Die Modellierung der Klasse <code>@userArg.className</code> ist falsch.
+                    }
+                }
+                </p>
             }
-        }
-            <hr>
+            </div>
+        </div>
 
-            <a class="btn btn-block btn-primary" href="@routes.ExerciseController.exercise(toolMain.urlPart, correctionResult.exercise.id, model.uml.DiagramDrawingHelp.urlName)">
-    Zum nächsten Aufgabenteil</a>
+        <hr>
+
+        <a class="btn btn-block btn-primary" href="@routes.ExerciseController.exercise(toolMain.urlPart, exerciseId, model.uml.DiagramDrawingHelp.urlName)">
+            Zum nächsten Aufgabenteil</a>
 
     </div>
 }

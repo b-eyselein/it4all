@@ -119,7 +119,11 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Handlers for results
 
   override def onSubmitCorrectionResult(user: User, result: UmlCompleteResult): Html = result.part match {
-    case ClassSelection   => views.html.uml.classSelectionResult(user, result, this)
+    case ClassSelection   => result.classResult match {
+      case Some(classRes) =>
+        views.html.uml.classSelectionResult(user, result.exercise.id, result.learnerSolution.classes, classRes, this)
+      case None           => Html("Es gab einen Fehler bei der Korrektur!")
+    }
     case MemberAllocation => views.html.uml.memberAllocationResult(user, result, this)
     case _                => ??? // Correction is only live!
   }
