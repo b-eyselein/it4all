@@ -20,6 +20,7 @@ solution:
     name: Kunde
     attributes:
     - {name: "name", type: "String"}
+    - {name: "kundennummer", type: "int"}
     methods:
     - {name: "gesamtGuthaben()", type: "double"}
   - classType: ABSTRACT

@@ -265,7 +265,7 @@ function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
 
     return `
 <p class="text-${alertClass}">
-    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Vererbungsbeziegung von <code>${subClass}</code> nach <code>${superClass}</code> ${successExplanation}
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Vererbungsbeziehung von <code>${subClass}</code> nach <code>${superClass}</code> ${successExplanation}
 </p>
 <ul>
     ${subExplanations}
