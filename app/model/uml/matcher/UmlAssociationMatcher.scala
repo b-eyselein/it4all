@@ -1,7 +1,35 @@
 package model.uml.matcher
 
-import model.core.matching.{Matcher, MatchingResult}
+import model.Enums.MatchType
+import model.Enums.MatchType.{SUCCESSFUL_MATCH, UNSUCCESSFUL_MATCH}
+import model.core.matching.{Match, Matcher, MatchingResult}
 import model.uml.UmlAssociation
+import model.uml.UmlConsts._
+import play.api.libs.json.{JsValue, Json}
+
+case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match[UmlAssociation] {
+
+  var endsParallel       : Boolean = _
+  var assocTypeEqual     : Boolean = _
+  var multiplicitiesEqual: Boolean = _
+
+  override def analyze(assoc1: UmlAssociation, assoc2: UmlAssociation): MatchType = {
+    assocTypeEqual = assoc1.assocType == assoc2.assocType
+    endsParallel = UmlAssociationMatcher.endsParallelEqual(assoc1, assoc2)
+
+    multiplicitiesEqual = if (endsParallel) assoc1.firstMult == assoc2.firstMult && assoc1.secondMult == assoc2.secondMult
+    else assoc1.firstMult == assoc2.secondMult && assoc1.secondMult == assoc2.firstMult
+
+    if (assocTypeEqual && multiplicitiesEqual) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
+  }
+
+  def displayMults(arg: UmlAssociation, turn: Boolean): String = arg.displayMult(turn)
+
+  override protected def descArgForJson(arg: UmlAssociation): JsValue = Json.obj(
+    associationTypeName -> arg.assocType.germanName, firstEndName -> arg.firstEnd, secondEndName -> arg.secondEnd, firstMultName -> arg.firstMult.representant, secondMultName -> arg.secondMult.representant
+  )
+
+}
 
 
 object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch, UmlAssociationMatchingResult] {

@@ -23,7 +23,7 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
       COMPLETE
 
   def toJson: JsObject = Json.obj(
-    successName -> allMatches.forall(_.isSuccessful),
+    successName -> allMatches.forall(_.matchType == SUCCESSFUL_MATCH),
     matchesName -> allMatches.map(_.toJson)
   )
 

@@ -3,7 +3,6 @@ package model.core.matching
 import model.Enums.MatchType
 import model.Enums.MatchType._
 import model.core.CoreConsts._
-import model.core.EvaluationResult.PimpedHtmlString
 import play.api.libs.json.{JsValue, Json}
 
 trait Match[T] {
@@ -33,13 +32,7 @@ trait Match[T] {
     case _                                    => Seq("FEHLER!")
   }
 
-  lazy val isSuccessful: Boolean = matchType == SUCCESSFUL_MATCH
-
   def analyze(arg1: T, arg2: T): MatchType = SUCCESSFUL_MATCH
-
-  def descUserArgWithReason(implicit isCorrect: Boolean): String = userArg map (descArg(_).asCode + (if (isCorrect) "" else ": " + explanations)) getOrElse ""
-
-  def descSampleArgWithReason(implicit isCorrect: Boolean): String = sampleArg map (descArg(_).asCode + ": " + explanations) getOrElse ""
 
   protected def descArg(arg: T): String = arg.toString
 

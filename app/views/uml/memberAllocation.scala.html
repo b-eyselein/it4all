@@ -28,8 +28,8 @@
 
                             @for(attr <- exercise.allAttributes) {
                                 <div class="checkbox">
-                                    <label><input type="checkbox" data-class="@completeClass.className" data-membertype="attribute"
-                                    data-value="@attr"> @attr
+                                    <label><input type="checkbox" data-type="@attr.memberType" data-value="@attr.memberName">
+                                        @attr.memberName: @attr.memberType
                                     </label>
                                 </div>
                             }
@@ -38,8 +38,8 @@
 
                             @for(method <- exercise.allMethods) {
                                 <div class="checkbox">
-                                    <label><input type="checkbox" data-class="@completeClass.className" data-membertype="method"
-                                    data-vlaue="@method"> @method
+                                    <label><input type="checkbox" data-type="@method.memberType" data-vlaue="@method.memberType">
+                                        @method.memberName: @method.memberType
                                     </label>
                                 </div>
                             }

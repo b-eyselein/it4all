@@ -1,3 +1,14 @@
+function readMemberElement(elem) {
+    if (elem.checked) {
+        return {
+            name: $(elem).data('name'),
+            type: $(elem).data('type')
+        };
+    } else {
+        return null;
+    }
+}
+
 function prepareFormForSubmitting() {
     let classes = [];
 
@@ -9,12 +20,8 @@ function prepareFormForSubmitting() {
 
         classes.push({
             name: className,
-            attributes: attrCheckboxes.map((index, elem) => {
-                return (elem.checked) ? elem.dataset.value : null;
-            }).get(),
-            methods: methodCheckboxes.map((index, elem) => {
-                return (elem.checked) ? elem.dataset.value : null;
-            }).get()
+            attributes: attrCheckboxes.map((index, elem) => readMemberElement(elem)).get(),
+            methods: methodCheckboxes.map((index, elem) => readMemberElement(elem)).get()
         });
     });
 

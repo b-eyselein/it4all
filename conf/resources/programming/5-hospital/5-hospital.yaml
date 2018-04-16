@@ -62,23 +62,24 @@ classDiagramPart:
     - classType: ABSTRACT
       name: Person
       attributes:
-      - "id: String"
-      - "name: String"
+      - {name: "id", type: "String"}
+      - {name: "name", type: "String"}
+
     - classType: CLASS
       name: Doktor
       methods:
-      - "verschreiben(Patient): void"
+      - {name: "verschreiben(Patient)", type: "void"}
 
     - classType: CLASS
       name: Rezept
       attributes:
-      - "id: String"
+      - {name: "id", type: "String"}
 
     - classType: CLASS
       name: Patient
       methods:
-      - "entlassen(Station): void"
-      - "aufnehmen(Station): void"
+      - {name: "entlassen(Station)", type: "void"}
+      - {name: "aufnehmen(Station)", type: "void"}
 
     - classType: CLASS
       name: Krankenschwester
@@ -86,13 +87,13 @@ classDiagramPart:
     - classType: CLASS
       name: Station
       attributes:
-      - "nummer: Int"
+      - {name: "nummer", type: "int"}
 
     - classType: CLASS
       name: Medikament
       attributes:
-      - "id: String"
-      - "name: String"
+      - {name: "id", type: "String"}
+      - {name: "name", type: "String"}
 
     - classType: CLASS
       name: Krankenhaus

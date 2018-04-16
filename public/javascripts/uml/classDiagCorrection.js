@@ -134,7 +134,7 @@ function displayMemberResult(memberResult, memberType) {
         }).join('\n');
 
         return `
-<p class="text text-danger">Die ${memberType} waren nicht korrekt:</p>
+<p class="text-danger">Die ${memberType} waren nicht korrekt:</p>
 <ul>
     ${memberMatches}
 </ul>`.trim();
@@ -157,15 +157,17 @@ function displayMemberResult(memberResult, memberType) {
 function explainClassResult(classResult, alertClass, glyphicon, successExplanation) {
     // TODO: implement...
 
-    // if (classResult.success !== 'SUCCESSFUL_MATCH')
-    //     console.warn(JSON.stringify(classResult, null, 2));
-
     let className = classResult.userArg != null ? classResult.userArg.className : classResult.sampleArg.className;
 
     if (classResult.success === 'SUCCESSFUL_MATCH') {
         return `
 <p class="text-${alertClass}">
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> war korrekt.
+</p>`.trim();
+    } else if (classResult.userArg === null) {
+        return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> konnte nicht gefunden werden!
 </p>`.trim();
     } else {
         return `
@@ -194,14 +196,47 @@ function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation)
     let firstEnd = assocRes.userArg != null ? assocRes.userArg.firstEnd : assocRes.sampleArg.firstEnd;
     let secondEnd = assocRes.userArg != null ? assocRes.userArg.secondEnd : assocRes.sampleArg.secondEnd;
 
-    let subExplanations = assocRes.explanations.map((mr) => `<li class="text text-${alertClass}">${mr}</li>`);
+
+    let explanations = [];
+    if (assocRes.success === 'UNSUCCESSFUL_MATCH' || assocRes.success === 'PARTIAL_MATCH') {
+        let userArg = assocRes.userArg, sampleArg = assocRes.sampleArg;
+
+
+        // Type of association
+        if (userArg.assocType !== sampleArg.assocType) {
+            explanations.push(`Der Typ der Assozation <code>${userArg.assocType}</code> war nicht korrekt. Erwartet wurde <code>${sampleArg.assocType}</code>!`);
+        } else {
+            explanations.push('Der Typ der Assozation war korrekt.');
+        }
+
+        // Cardinalities
+        let endsParallel = userArg.firstEnd === sampleArg.firstEnd, gottenCardinalities = userArg.firstMult + ": " + userArg.secondMult;
+        let cardinalitiesEqual, correctCardinalities;
+
+        if (endsParallel) {
+            console.info("Ends parallel");
+            cardinalitiesEqual = userArg.firstMult === sampleArg.firstMult && userArg.secondMult === sampleArg.secondMult;
+            correctCardinalities = sampleArg.firstMult + ": " + sampleArg.secondMult;
+        } else {
+            console.info("Ends crossed");
+            cardinalitiesEqual = userArg.firstMult === sampleArg.secondMult && userArg.secondMult === sampleArg.firstMult;
+            correctCardinalities = sampleArg.secondMult + ": " + sampleArg.firstMult;
+        }
+
+        if (cardinalitiesEqual) {
+            explanations.push('Die Kardinalitäten der Assoziation waren korrekt.');
+        } else {
+            explanations.push(`Die Kardinalitätan der Assoziation <code>${gottenCardinalities}</code> war nicht korrekt. Erwartet wurde <code>${correctCardinalities}</code>!`);
+        }
+
+    }
 
     return `
 <p class="text-${alertClass}">
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Assoziation von <code>${firstEnd}</code> nach <code>${secondEnd}</code> ${successExplanation}
 </p>
 <ul>
-    ${subExplanations}
+    ${explanations.map((e) => `<li>${e}</li>`).join('\n')}
 </ul>`.trim();
 }
 
@@ -220,7 +255,13 @@ function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
     let subClass = implRes.userArg != null ? implRes.userArg.subClass : implRes.sampleArg.subClass;
     let superClass = implRes.userArg != null ? implRes.userArg.superClass : implRes.sampleArg.superClass;
 
-    let subExplanations = implRes.explanations.map((mr) => `<li class="text text-${alertClass}">${mr}</li>`);
+    let subExplanations = '';
+    if (implRes.success === 'UNSUCCESSFUL_MATCH' || implRes.success === 'PARTIAL_MATCH') {
+        subExplanations = `
+<ul>
+    <li>Die Vererbungsrichtung ist falsch.</li>
+</ul>`.trim();
+    }
 
     return `
 <p class="text-${alertClass}">
@@ -234,7 +275,6 @@ function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
 /**
  * @param {object} matchingRes
  * @param {string} matchingRes.success
- * @param {string[]} matchingRes.explanations
  * @param {function} explanationFunc
  *
  * @return {string}
@@ -261,12 +301,12 @@ function displayMatchResult(matchingRes, explanationFunc) {
         case 'ONLY_USER':
             alertClass = 'danger';
             glyphicon = 'remove';
-            successExplanation = 'ist falsch:';
+            successExplanation = 'ist falsch!';
             break;
         case 'ONLY_SAMPLE':
             alertClass = 'danger';
             glyphicon = 'remove';
-            successExplanation = 'fehlt:';
+            successExplanation = 'fehlt!';
             break;
         default:
             alertClass = 'info';

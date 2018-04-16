@@ -2,7 +2,7 @@ package model.uml.matcher
 
 import model.Enums.MatchType
 import model.Enums.MatchType.{SUCCESSFUL_MATCH, UNSUCCESSFUL_MATCH}
-import model.core.CoreConsts.{explanationsName, sampleArgName, successName, userArgName}
+import model.core.CoreConsts.{sampleArgName, successName, userArgName}
 import model.core.matching.{Match, Matcher, MatchingResult}
 import model.uml.UmlClass
 import model.uml.UmlConsts._
@@ -14,8 +14,8 @@ case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass],
 
   val memberResults: Option[(UmlClassMemberMatchingResult, UmlClassMemberMatchingResult)] = if (compAM) {
 
-    val attributeResult = UmlClassMemberMatcher.doMatch(c1.attributes, c2.attributes)
-    val methodResult = UmlClassMemberMatcher.doMatch(c1.methods, c2.methods)
+    val attributeResult = UmlClassMemberMatcher.doMatch(userArg.map(_.attributes).getOrElse(Seq.empty), sampleArg.map(_.attributes).getOrElse(Seq.empty))
+    val methodResult = UmlClassMemberMatcher.doMatch(userArg.map(_.methods).getOrElse(Seq.empty), sampleArg.map(_.methods).getOrElse(Seq.empty))
 
     Some((attributeResult, methodResult))
   } else None
@@ -37,7 +37,6 @@ case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass],
     successName -> matchType.name,
     userArgName -> (userArg map descArgForJson),
     sampleArgName -> (sampleArg map descArgForJson),
-    explanationsName -> explanations,
     attributesResultName -> attributesResult.map(_.toJson),
     methodsResultName -> methodsResult.map(_.toJson)
   )

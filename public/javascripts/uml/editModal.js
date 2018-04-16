@@ -16,7 +16,6 @@ function discardClassEdits() {
 }
 
 function discardCardinalityEdits() {
-    cardinalityEditModal.find('.modal-body').html('');
     cardinalityEditModal.modal('hide');
 }
 
