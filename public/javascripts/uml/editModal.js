@@ -1,3 +1,15 @@
+/**
+ * @class UmlClassMember
+ * @property {string} name
+ * @property {string} type
+ */
+class UmlClassMember {
+    constructor(memberGroup) {
+        this.name = $(memberGroup).find('input').val();
+        this.type = $(memberGroup).find('select').val();
+    }
+}
+
 function discardClassEdits() {
     classEditModal.find('.modal-body').html('');
     classEditModal.modal('hide');
@@ -34,8 +46,9 @@ function memberInputs(memberName, memberType = '', isAttr = true) {
 function htmlForClassEdit(cellView) {
     let classType = cellView.model.attributes.type;
     let className = cellView.model.attributes.name;
-    let currentAttrs = cellView.model.attributes.attributes;
-    let currentMethods = cellView.model.attributes.methods;
+
+    let attrInput = cellView.model.attributes.attributesObject.map((attr) => memberInputs(attr.name, attr.type)).join('\n');
+    let memberInput = cellView.model.attributes.methodsObject.map((method) => memberInputs(method.name, method.type)).join('\n');
 
     return `
 <div class="panel panel-default">
@@ -53,14 +66,14 @@ function htmlForClassEdit(cellView) {
  </div>
  <div class="panel-body">
    <div id="editAttrsDiv">
-     ${currentAttrs.map(attr => memberInputs(attr.name, attr.type)).join('\n')}
+     ${attrInput}
      <button class="btn btn-primary" id="editAttrsPlusBtn" onclick="addMember(this, true)">
        <span class="glyphicon glyphicon-plus"></span> Attribut hinzufügen
      </button>
    </div>
    <hr>
    <div id="editMethodsDiv">
-     ${currentMethods.map(met => memberInputs(met.name, met.type)).join('\n')}
+     ${memberInput}
      <button class="btn btn-primary" id="editMethodsPlusBtn" onclick="addMember(this, false)">
        <span class="glyphicon glyphicon-plus"></span> Methode hinzufügen
      </button>
@@ -80,91 +93,39 @@ function htmlForClassEdit(cellView) {
 
 // noinspection JSUnusedGlobalSymbols
 function updateClass(elementId) {
-    console.log('Updating class...');
     let element = graph.getCell(elementId);
 
     // FIXME: update class (--> element...)
-    console.warn('TODO: change type ' + element.attributes.type);
     element.attr('.uml-class-name-text/text', $('#editClassName').val());
 
-    let attrs = $('#editAttrsDiv').find('.input-group').map((index, attrGroup) => {
-        return {
-            name: $(attrGroup).find('input').val(),
-            type: $(attrGroup).find('select').val()
-        };
-    }).get();
-    element.attributes.attributes = attrs;
+    let attrs = $('#editAttrsDiv').find('.input-group').map((index, attrGroup) => new UmlClassMember(attrGroup)).get();
+
+    element.prop('attributesObject', attrs);
+    element.prop('attributes.attributes', attrs.map((a) => a.name + ": " + a.type).join('\n'));
     element.attr('.uml-class-attrs-text/text', attrs.map((a) => a.name + ': ' + a.type).join('\n'));
 
-    // FIXME: method parameters?
-    let mets = $('#editMethodsDiv').find('.input-group').map((index, metGroup) => {
-        return {
-            name: $(metGroup).find('input').val(),
-            type: $(metGroup).find('select').val()
-        }
-    }).get();
+    let methods = $('#editMethodsDiv').find('.input-group').map((index, metGroup) => new UmlClassMember(metGroup)).get();
 
-    element.attributes.methods = mets;
-    element.attr('.uml-class-methods-text/text', mets.map(m => m.name + ': ' + m.type).join('\n'));
+    element.prop('methodsObject', methods);
+    element.prop('attributes.methods', methods.map((m) => m.name + ": " + m.type).join('\n'));
+    element.attr('.uml-class-methods-text/text', methods.map(m => m.name + ': ' + m.type).join('\n'));
 
     discardClassEdits();
 }
 
 
 function htmlForCardinalityEdit(linkId, source, sourceMult, target, targetMult) {
-    return `
-<div class="row">
-    <div class="col-md-3">
-        <div class="panel panel-default">
-            <div class="panel-heading">${source}</div>
-            <div class="panel-body"><hr></div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-3 text-center">
-                <select class="form-control" id="sourceMult">
-                    <option${sourceMult === '1' ? ' selected' : ''}>1</option>
-                    <option${sourceMult === '*' ? ' selected' : ''}>*</option>
-                </select>
-            </div>
-                
-            <div class="col-md-6"></div>
-                    
-            <div class="col-md-3">
-                <select class="form-control" id="targetMult">
-                    <option${targetMult === '1' ? ' selected' : ''}>1</option>
-                    <option${targetMult === '*' ? ' selected' : ''}>*</option>
-                </select>
-            </div>
-        </div>
-    
-        <hr style="border-color: black;">
-    </div>
-    
-    <div class="col-md-3">
-        <div class="panel panel-default">
-            <div class="panel-heading">${target}</div>
-            <div class="panel-body"><hr></div>
-        </div>
-    </div>
-</div>
+    $('#sourceClass').text(source);
+    $('#sourceMult').val(sourceMult);
 
-<hr>
+    $('#targetClass').text(target);
+    $('#targetMult').val(targetMult);
 
-<div class="btn-group btn-group-justified">
-    <div class="btn-group">
-        <button type="reset" class="btn btn-default" onclick="discardCardinalityEdits()">Änderungen verwerfen</button>
-    </div>
-    <div class="btn-group">
-        <button class="btn btn-primary" onclick="updateCardinality('${linkId}')">Änderungen übernehmen</button>
-    </div>
-</div>`.trim();
+    $('#linkId').data('id', linkId);
 }
 
-function updateCardinality(linkId) {
-    let link = graph.getCell(linkId);
+function updateCardinality() {
+    let link = graph.getCell($('#linkId').data('id'));
 
     link.prop(['labels', 0, 'attrs', 'text', 'text'], $('#sourceMult').val());
     link.prop(['labels', 1, 'attrs', 'text', 'text'], $('#targetMult').val());

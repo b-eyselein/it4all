@@ -11,7 +11,7 @@ let sel = 'POINTER';
 
 let classEditModal, cardinalityEditModal;
 
-const UmlTypes = ['String', 'Int', 'Double', 'Char', 'Boolean'];
+const UmlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
 
 const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
 const ASSOC_TYPES = ['ASSOCIATION', 'AGGREGATION', 'COMPOSITION', 'IMPLEMENTATION'];
@@ -20,9 +20,15 @@ function addUmlClass(clazz) {
     let content = {
         position: clazz.position,
         size: {width: STD_CLASS_SIZE, height: STD_CLASS_SIZE},
+
         name: clazz.name.replace(/ /g, '_'),
-        attributes: clazz.attributes,
-        methods: clazz.methods,
+
+        attributes: clazz.attributes.map((a) => a.name + ": " + a.type).join('\n'),
+        attributesObject: clazz.attributes,
+
+        methods: clazz.methods.map((m) => m.name + ": " + m.type).join('\n'),
+        methodsObject: clazz.methods,
+
         attrs: {
             '.uml-class-name-rect': {fill: COLOR_WHITE},
             '.uml-class-attrs-rect, .uml-class-methods-rect': {fill: COLOR_WHITE},
@@ -72,9 +78,6 @@ function blankOnPointerDown(evt, x, y) {
 }
 
 function askCardinality(linkId, source, sourceMult, target, targetMult) {
-    // FIXME: other possibility...
-
-    // TODO: Changing class type, name, attributes or methods!?!
     let bodyEditModalJQ = cardinalityEditModal.find('.modal-body');
 
     bodyEditModalJQ.html(htmlForCardinalityEdit(linkId, source, sourceMult, target, targetMult));
@@ -94,10 +97,10 @@ function linkOnClick(linkView) {
     let sourceMult = linkView.model.attributes.labels[0].attrs.text.text;
     let targetMult = linkView.model.attributes.labels[1].attrs.text.text;
 
-    askCardinality(linkView.id, source.attributes.name, sourceMult, target.attributes.name, targetMult);
+    askCardinality(linkView.model.id, source.attributes.name, sourceMult, target.attributes.name, targetMult);
 }
 
-function cellOnLeftClick(cellView, evt, x, y) {
+function cellOnLeftClick(cellView, evt) {
 
     switch (cellView.model.attributes.type) {
         case 'uml.Implementation':
@@ -210,26 +213,6 @@ function selectButton(button) {
     button.className = 'btn btn-primary';
 
     sel = button.dataset.conntype.trim();
-}
-
-
-function getClassNameFromCellId(id) {
-    return graph.getCell(id).attributes.name;
-}
-
-function getTypeName(type) {
-    switch (type) {
-        case 'uml.Association':
-            return 'ASSOCIATION';
-        case 'uml.Aggregation':
-            return 'AGGREGATION';
-        case 'uml.Composition':
-            return 'COMPOSITION';
-        case 'uml.Implementation':
-            return 'IMPLEMENTATION';
-        default:
-            return 'ERROR!';
-    }
 }
 
 function addImplementation(sourceId, targetId) {
@@ -374,7 +357,7 @@ $(document).ready(function () {
         el: paperJQ,
         width: paperWidth,
         height: 700, // paperJQ.height(),
-        gridSize: 1,
+        gridSize: 10,
         model: graph
     });
 

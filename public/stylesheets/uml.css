@@ -13,5 +13,9 @@
 }
 
 #paper {
+    border: 1px solid grey;
+}
+
+.assocLine {
     border: 1px solid black;
 }

@@ -12,11 +12,13 @@ object UmlConsts extends Consts {
 
   // Strings
 
-  val associationsName    = "associations"
-  val associationNameName = "assocName"
-  val associationTypeName = "assocType"
+  val associationsName     = "associations"
+  val associationNameName  = "assocName"
+  val associationTypeName  = "assocType"
+  val attributesResultName = "attributesResult"
 
   val classesName   = "classes"
+  val classNameName = "className"
   val classTypeName = "classType"
 
   val firstEndName  = "firstEnd"
@@ -25,8 +27,9 @@ object UmlConsts extends Consts {
   val implementationsName = "implementations"
   val ignoreWordsName     = "ignoreWords"
 
-  val mappingsName = "mappings"
-  val methodsName  = "methods"
+  val mappingsName      = "mappings"
+  val methodsName       = "methods"
+  val methodsResultName = "methodsResult"
 
   val positionName = "position"
 

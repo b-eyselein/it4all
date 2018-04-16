@@ -3,18 +3,18 @@ package model.uml.matcher
 import model.Enums.MatchType
 import model.Enums.MatchType.{ONLY_SAMPLE, ONLY_USER, SUCCESSFUL_MATCH, UNSUCCESSFUL_MATCH}
 import model.core.matching.Match
-import model.uml.UmlClassDiagAssociation
+import model.uml.UmlAssociation
 import model.uml.UmlConsts._
 import play.api.libs.json.{JsValue, Json}
 
 
-case class UmlAssociationMatch(userArg: Option[UmlClassDiagAssociation], sampleArg: Option[UmlClassDiagAssociation]) extends Match[UmlClassDiagAssociation] {
+case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match[UmlAssociation] {
 
   var endsParallel       : Boolean = _
   var assocTypeEqual     : Boolean = _
   var multiplicitiesEqual: Boolean = _
 
-  override def analyze(assoc1: UmlClassDiagAssociation, assoc2: UmlClassDiagAssociation): MatchType = {
+  override def analyze(assoc1: UmlAssociation, assoc2: UmlAssociation): MatchType = {
     assocTypeEqual = assoc1.assocType == assoc2.assocType
     endsParallel = UmlAssociationMatcher.endsParallelEqual(assoc1, assoc2)
 
@@ -24,7 +24,7 @@ case class UmlAssociationMatch(userArg: Option[UmlClassDiagAssociation], sampleA
     if (assocTypeEqual && multiplicitiesEqual) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
   }
 
-  def displayMults(arg: UmlClassDiagAssociation, turn: Boolean): String = arg.displayMult(turn)
+  def displayMults(arg: UmlAssociation, turn: Boolean): String = arg.displayMult(turn)
 
   override def explanations: Seq[String] = matchType match {
     case ONLY_SAMPLE => Seq("Die Assoziationsbeziehung wurde nicht erstellt, war aber in der Musterlösung vorhanden.")
@@ -44,7 +44,7 @@ case class UmlAssociationMatch(userArg: Option[UmlClassDiagAssociation], sampleA
     case _ => super.explanations
   }
 
-  override protected def descArgForJson(arg: UmlClassDiagAssociation): JsValue = Json.obj(
+  override protected def descArgForJson(arg: UmlAssociation): JsValue = Json.obj(
     firstEndName -> arg.firstEnd, secondEndName -> arg.secondEnd, firstMultName -> arg.firstMult.representant, secondMultName -> arg.secondMult.representant
   )
 

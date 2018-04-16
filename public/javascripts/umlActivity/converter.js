@@ -102,6 +102,14 @@ function mainGeneration() {
     $('#resultDiv').collapse('hide');
 }
 
+function unique(list) {
+    const res = [];
+    $.each(list, function(i, e) {
+        if ($.inArray(e, res) === -1) res.push(e);
+    });
+    return res;
+}
+
 //MAIN Function
 function generateCodeForElement(parentId, startId, endId, allElements) {
     let generationAlertsJq = $('#generationAlerts');
@@ -200,6 +208,7 @@ function generateCodeForElement(parentId, startId, endId, allElements) {
         );
 
     } else {
+        log = unique(log);
         generationAlertsJq.html(
             '<div class="alert alert-danger">Die Generierung des Codes war nicht erfolgreich. Es traten folgende Fehler auf:<ul>'
             + (log.map((str) => '<li>' + str + '</li>').join('\n')) + '</ul>')

@@ -14,9 +14,9 @@ import scala.language.postfixOps
 
 object UmlCompleteResult {
 
-  def describeImplementation(impl: UmlClassDiagImplementation): String = s"${impl.subClass}  &rarr;  ${impl.superClass}"
+  def describeImplementation(impl: UmlImplementation): String = s"${impl.subClass}  &rarr;  ${impl.superClass}"
 
-  def describeAssociation(assoc: UmlClassDiagAssociation): String =
+  def describeAssociation(assoc: UmlAssociation): String =
     s"${assoc.assocType.germanName}: ${assoc.firstEnd} &harr; ${assoc.secondEnd} (${assoc.displayMult(turn = false)})"
 
 }
@@ -69,7 +69,7 @@ case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassD
   private def displayClasses: String = "<h4>Ihre Klassen:</h4>" + (learnerSolution.classes map { clazz =>
     s"""<p>${clazz.className}</p>
        |<ul>
-       |  ${displayMembers(clazz.allMembers)}
+       |  ${displayMembers(clazz.allMembers.map(m => m.memberName + ": " + m.memberType))}
        |</ul>""".stripMargin
   } mkString)
 

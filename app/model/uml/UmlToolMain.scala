@@ -55,7 +55,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     val onFormError: Form[StringSolutionFormHelper] => Option[UmlSolution] = _ => None
 
     val onRead: StringSolutionFormHelper => Option[UmlSolution] = { sol =>
-
       UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(sol.learnerSolution)) match {
         case JsSuccess(ucd, _) => Some(UmlSolution(user.username, id, part, ucd))
 
@@ -69,6 +68,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   }
 
   override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = {
+    println(Json.prettyPrint(jsValue))
+
     UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
       case JsSuccess(classDiag, _) => Some(UmlSolution(user.username, id, part, classDiag))
       case JsError(errors)         =>

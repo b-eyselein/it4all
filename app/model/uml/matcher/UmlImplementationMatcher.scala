@@ -3,14 +3,14 @@ package model.uml.matcher
 import model.Enums.MatchType
 import model.Enums.MatchType._
 import model.core.matching._
-import model.uml.UmlClassDiagImplementation
+import model.uml.UmlImplementation
 import model.uml.UmlCompleteResult.describeImplementation
 import model.uml.UmlConsts._
 import play.api.libs.json.{JsValue, Json}
 
-case class UmlImplementationMatch(userArg: Option[UmlClassDiagImplementation], sampleArg: Option[UmlClassDiagImplementation]) extends Match[UmlClassDiagImplementation] {
+case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
 
-  override def analyze(i1: UmlClassDiagImplementation, i2: UmlClassDiagImplementation): MatchType =
+  override def analyze(i1: UmlImplementation, i2: UmlImplementation): MatchType =
     if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) SUCCESSFUL_MATCH else PARTIAL_MATCH
 
   override def explanations: Seq[String] = matchType match {
@@ -21,26 +21,26 @@ case class UmlImplementationMatch(userArg: Option[UmlClassDiagImplementation], s
     case FAILURE                              => Seq("Es gab einen internen Fehler bei der Korrektur der Vererbungsbeziehungen!")
   }
 
-  override def descArg(arg: UmlClassDiagImplementation): String = describeImplementation(arg)
+  override def descArg(arg: UmlImplementation): String = describeImplementation(arg)
 
-  override protected def descArgForJson(arg: UmlClassDiagImplementation): JsValue = Json.obj(
+  override protected def descArgForJson(arg: UmlImplementation): JsValue = Json.obj(
     subClassName -> arg.subClass, superClassName -> arg.superClass
   )
 
 }
 
 
-object UmlImplementationMatcher extends Matcher[UmlClassDiagImplementation, UmlImplementationMatch, UmlImplementationMatchingResult] {
+object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch, UmlImplementationMatchingResult] {
 
-  override protected def canMatch: (UmlClassDiagImplementation, UmlClassDiagImplementation) => Boolean = (i1, i2) =>
+  override protected def canMatch: (UmlImplementation, UmlImplementation) => Boolean = (i1, i2) =>
     (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)
 
 
-  override protected def matchInstantiation: (Option[UmlClassDiagImplementation], Option[UmlClassDiagImplementation]) => UmlImplementationMatch = UmlImplementationMatch
+  override protected def matchInstantiation: (Option[UmlImplementation], Option[UmlImplementation]) => UmlImplementationMatch = UmlImplementationMatch
 
 
   override protected def resultInstantiation: Seq[UmlImplementationMatch] => UmlImplementationMatchingResult = UmlImplementationMatchingResult
 }
 
 
-case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatch]) extends MatchingResult[UmlClassDiagImplementation, UmlImplementationMatch]
+case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatch]) extends MatchingResult[UmlImplementation, UmlImplementationMatch]

@@ -50,10 +50,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
   case class UmlMappingYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlMapping] {
 
-    override def write(mapping: UmlMapping): YamlValue = YamlObj(
-      keyName -> mapping.key,
-      valueName -> mapping.value
-    )
+    override def write(mapping: UmlMapping): YamlValue = YamlObj(keyName -> mapping.key, valueName -> mapping.value)
 
     override def readObject(yamlObject: YamlObject): Try[UmlMapping] = for {
       key <- yamlObject.stringField(keyName)
@@ -65,7 +62,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   implicit object UmlSolutionYamlFormat extends MyYamlObjectFormat[UmlClassDiagram] {
 
     override protected def readObject(yamlObject: YamlObject): Try[UmlClassDiagram] = for {
-      classes: (Seq[UmlClassDiagClass], Seq[Failure[UmlClassDiagClass]]) <- yamlObject.arrayField(classesName, UmlCompleteClassYamlFormat.read)
+      classes: (Seq[UmlClass], Seq[Failure[UmlClass]]) <- yamlObject.arrayField(classesName, UmlCompleteClassYamlFormat.read)
       associations <- yamlObject.arrayField(associationsName, UmlAssocYamlFormat.read)
       implementations <- yamlObject.arrayField(implementationsName, UmlImplYamlFormat.read)
     } yield {
@@ -93,20 +90,20 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  private object UmlCompleteClassYamlFormat extends MyYamlObjectFormat[UmlClassDiagClass] {
+  private object UmlCompleteClassYamlFormat extends MyYamlObjectFormat[UmlClass] {
 
-    override def write(completeClazz: UmlClassDiagClass): YamlValue = YamlObj(
+    override def write(completeClazz: UmlClass): YamlValue = YamlObj(
       classTypeName -> completeClazz.classType.name,
       nameName -> completeClazz.className,
-      attributesName -> YamlArr(completeClazz.attributes map YamlString),
-      methodsName -> YamlArr(completeClazz.methods map YamlString)
+      attributesName -> YamlArr(completeClazz.attributes map UmlClassMemberYamlFormat.write),
+      methodsName -> YamlArr(completeClazz.methods map UmlClassMemberYamlFormat.write)
     )
 
-    override def readObject(yamlObject: YamlObject): Try[UmlClassDiagClass] = for {
+    override def readObject(yamlObject: YamlObject): Try[UmlClass] = for {
       className <- yamlObject.stringField(nameName)
       classType <- yamlObject.enumField(classTypeName, UmlClassType.valueOf)
-      attributeTries <- yamlObject.optArrayField(attributesName, _.asStr)
-      methodTries <- yamlObject.optArrayField(methodsName, _.asStr)
+      attributeTries <- yamlObject.optArrayField(attributesName, UmlClassMemberYamlFormat.read)
+      methodTries <- yamlObject.optArrayField(methodsName, UmlClassMemberYamlFormat.read)
     } yield {
       for (attributeFailure <- attributeTries._2)
       // FIXME: return...
@@ -116,14 +113,25 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read uml class method", methodFailure.exception)
 
-      UmlClassDiagClass(classType, className, attributeTries._1, methodTries._1, None)
+      UmlClass(classType, className, attributeTries._1, methodTries._1, None)
     }
 
   }
 
-  private object UmlAssocYamlFormat extends MyYamlObjectFormat[UmlClassDiagAssociation] {
+  private object UmlClassMemberYamlFormat extends MyYamlObjectFormat[UmlClassMember] {
 
-    override def write(assoc: UmlClassDiagAssociation): YamlValue = YamlObj(
+    override protected def readObject(yamlObject: YamlObject): Try[UmlClassMember] = for {
+      memberName <- yamlObject.stringField(nameName)
+      memberType <- yamlObject.stringField(typeName)
+    } yield UmlClassMember(memberName, memberType)
+
+    override def write(obj: UmlClassMember): YamlValue = ???
+
+  }
+
+  private object UmlAssocYamlFormat extends MyYamlObjectFormat[UmlAssociation] {
+
+    override def write(assoc: UmlAssociation): YamlValue = YamlObj(
       associationTypeName -> assoc.assocType.name,
       firstEndName -> assoc.firstEnd,
       firstMultName -> assoc.firstMult.name,
@@ -131,28 +139,28 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       secondMultName -> assoc.secondMult.name
     )
 
-    override def readObject(yamlObject: YamlObject): Try[UmlClassDiagAssociation] = for {
+    override def readObject(yamlObject: YamlObject): Try[UmlAssociation] = for {
       assocType <- yamlObject.enumField(associationTypeName, UmlAssociationType.valueOf)
       maybeAssocName <- yamlObject.optStringField(nameName)
       firstEnd <- yamlObject.stringField(firstEndName)
       firstMult <- yamlObject.enumField(firstMultName, UmlMultiplicity.valueOf)
       secondEnd <- yamlObject.stringField(secondEndName)
       secondMult <- yamlObject.enumField(secondMultName, UmlMultiplicity.valueOf)
-    } yield UmlClassDiagAssociation(assocType, maybeAssocName, firstEnd, firstMult, secondEnd, secondMult)
+    } yield UmlAssociation(assocType, maybeAssocName, firstEnd, firstMult, secondEnd, secondMult)
 
   }
 
-  private object UmlImplYamlFormat extends MyYamlObjectFormat[UmlClassDiagImplementation] {
+  private object UmlImplYamlFormat extends MyYamlObjectFormat[UmlImplementation] {
 
-    override def write(impl: UmlClassDiagImplementation): YamlValue = YamlObj(
+    override def write(impl: UmlImplementation): YamlValue = YamlObj(
       subClassName -> impl.subClass,
       superClassName -> impl.superClass
     )
 
-    override def readObject(yamlObject: YamlObject): Try[UmlClassDiagImplementation] = for {
+    override def readObject(yamlObject: YamlObject): Try[UmlImplementation] = for {
       subClass <- yamlObject.stringField(subClassName)
       superClass <- yamlObject.stringField(superClassName)
-    } yield UmlClassDiagImplementation(subClass, superClass)
+    } yield UmlImplementation(subClass, superClass)
 
   }
 

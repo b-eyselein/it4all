@@ -1,0 +1,83 @@
+{
+  "classes": [
+    {
+      "classType": "CLASS",
+      "name": "Kunde",
+      "attributes": [],
+      "methods": [],
+      "position": {
+        "x": 144,
+        "y": 142
+      }
+    },
+    {
+      "classType": "CLASS",
+      "name": "Konto",
+      "attributes": [
+        {
+          "name": "kontonummer",
+          "type": "String"
+        }
+      ],
+      "methods": [],
+      "position": {
+        "x": 463,
+        "y": 67
+      }
+    },
+    {
+      "classType": "CLASS",
+      "name": "Sparkonto",
+      "attributes": [],
+      "methods": [],
+      "position": {
+        "x": 628,
+        "y": 381
+      }
+    },
+    {
+      "classType": "CLASS",
+      "name": "Girokonto",
+      "attributes": [],
+      "methods": [],
+      "position": {
+        "x": 190,
+        "y": 430
+      }
+    },
+    {
+      "classType": "CLASS",
+      "name": "Kreditkonto",
+      "attributes": [],
+      "methods": [],
+      "position": {
+        "x": 443,
+        "y": 404
+      }
+    }
+  ],
+  "associations": [
+    {
+      "assocType": "ASSOCIATION",
+      "assocName": "",
+      "firstEnd": "Kunde",
+      "firstMult": "SINGLE",
+      "secondEnd": "Konto",
+      "secondMult": "UNBOUND"
+    }
+  ],
+  "implementations": [
+    {
+      "subClass": "Kreditkonto",
+      "superClass": "Konto"
+    },
+    {
+      "subClass": "Sparkonto",
+      "superClass": "Konto"
+    },
+    {
+      "subClass": "Girokonto",
+      "superClass": "Konto"
+    }
+  ]
+}

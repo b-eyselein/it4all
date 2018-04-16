@@ -14,16 +14,65 @@ class Match {
 }
 
 /**
+ * @class UmlClass
+ * @private
+ * @property {string} name
+ * @property {string} classType
+ * @property {string[]} attributes
+ * @property {string[]} methods
+ * @property {object} position
+ * @property {int} position.x
+ * @property {int} position.y
+ */
+class UmlClass {
+    /**
+     * @param {object} cell
+     * @param {UmlClassMember} cell.attributes.attributes
+     * @param {UmlClassMember} cell.attributes.methods
+     */
+    constructor(cell) {
+        this.name = cell.attributes.name;
+        this.classType = cell.attributes.type;
+        this.attributes = cell.attributes.attributesObject;
+        this.methods = cell.attributes.methodsObject;
+        this.position = cell.attributes.position;
+    }
+}
+
+function getClassNameFromCellId(id) {
+    return graph.getCell(id).attributes.name;
+}
+
+/**
  * @class Implementation
  * @private
  * @property {string} subClass
  * @property {string} superClass
  */
 class Implementation {
-    constructor(subClass, superClass) {
-        this.subClass = subClass;
-        this.superClass = superClass;
+    constructor(conn) {
+        this.subClass = getClassNameFromCellId(conn.attributes.source.id);
+        this.superClass = getClassNameFromCellId(conn.attributes.target.id);
     }
+}
+
+function getTypeName(type) {
+    switch (type) {
+        case 'uml.Association':
+            return 'ASSOCIATION';
+        case 'uml.Aggregation':
+            return 'AGGREGATION';
+        case 'uml.Composition':
+            return 'COMPOSITION';
+        case 'uml.Implementation':
+            return 'IMPLEMENTATION';
+        default:
+            return 'ERROR!';
+    }
+}
+
+function getMultiplicity(label) {
+    return label.attrs.text.text === '1' ? 'SINGLE' : 'UNBOUND';
 }
 
 /**
@@ -37,29 +86,152 @@ class Implementation {
  * @property {string} secondMult
  */
 class Association {
-    constructor(assocType, assocName, firstEnd, firstMult, secondEnd, secondMult) {
-        this.assocType = assocType;
-        this.assocName = assocName;
-        this.firstEnd = firstEnd;
-        this.firstMult = firstMult;
-        this.secondEnd = secondEnd;
-        this.secondMult = secondMult;
+    constructor(conn) {
+        this.assocType = getTypeName(conn.attributes.type);
+        this.assocName = '';        // TODO: name of association!?!
+        this.firstEnd = getClassNameFromCellId(conn.attributes.source.id);
+        this.firstMult = getMultiplicity(conn.attributes.labels[0]);
+        this.secondEnd = getClassNameFromCellId(conn.attributes.target.id);
+        this.secondMult = getMultiplicity(conn.attributes.labels[1]);
+    }
+}
+
+/**
+ * @param {object} memberResult
+ * @param {boolean} memberResult.success
+ * @param {string} memberResult.matches
+ * @param {string} memberType
+ * @return {string}
+ */
+function displayMemberResult(memberResult, memberType) {
+    if (memberResult.success) {
+        return `<p class="text text-success">Die ${memberType} waren korrekt.</p>`
+    } else {
+        let memberMatches = memberResult.matches.map((memberMatch) => {
+            console.warn(JSON.stringify(memberMatch));
+
+            let explanation, textClass;
+
+            switch (memberMatch.success) {
+                case 'SUCCESSFUL_MATCH':
+                    textClass = 'success';
+                    explanation = `Das Attribut / die Methode <code>${memberMatch.userArg.name}: ${memberMatch.userArg.type}</code> ist korrekt.`;
+                    break;
+                case 'ONLY_SAMPLE':
+                    textClass = 'danger';
+                    explanation = `Das Attribut / die Methode <code>${memberMatch.sampleArg.name}: ${memberMatch.sampleArg.type}</code> fehlt!`;
+                    break;
+                case 'ONLY_USER':
+                    textClass = 'danger';
+                    explanation = `Das Attribut / die Methode <code>${memberMatch.userArg.name}: ${memberMatch.userArg.type}</code> ist falsch!`;
+                    break;
+                default:
+                    console.error("TODO: " + memberMatch.success);
+                    break;
+            }
+
+            return `<li><span class="text text-${textClass}">${explanation}</li>`;
+        }).join('\n');
+
+        return `
+<p class="text text-danger">Die ${memberType} waren nicht korrekt:</p>
+<ul>
+    ${memberMatches}
+</ul>`.trim();
     }
 }
 
 /**
  * @param {object} classResult
+ * @param {string} classResult.success
+ * @param {{className: string, classType: string} | null} classResult.userArg
+ * @param {{className: string, classType: string} | null} classResult.sampleArg
+ * @param {object[]} classResult.attributesResult
+ * @param {object[]} classResult.methodsResult
+ * @param {string} alertClass
+ * @param {string} glyphicon
+ * @param {string} successExplanation
  *
- * @return string
+ * @return {string}
  */
-function displayClassResult(classResult) {
+function explainClassResult(classResult, alertClass, glyphicon, successExplanation) {
     // TODO: implement...
-    console.warn("Displaying class result...");
-    return 'TODO: Class result...';
+
+    // if (classResult.success !== 'SUCCESSFUL_MATCH')
+    //     console.warn(JSON.stringify(classResult, null, 2));
+
+    let className = classResult.userArg != null ? classResult.userArg.className : classResult.sampleArg.className;
+
+    if (classResult.success === 'SUCCESSFUL_MATCH') {
+        return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> war korrekt.
+</p>`.trim();
+    } else {
+        return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> ${successExplanation}
+</p>
+<ul>
+    <li>${displayMemberResult(classResult.attributesResult, 'Attribute')}</li>
+    <li>${displayMemberResult(classResult.methodsResult, 'Methoden')}</li>
+</ul>`.trim();
+    }
 }
 
 /**
+ * @param {object} assocRes
+ * @param {string} assocRes.success
+ * @param {Association} assocRes.userArg
+ * @param {Association} assocRes.sampleArg
+ * @param {string} alertClass
+ * @param {string} glyphicon
+ * @param {string} successExplanation
  *
+ * @return {string}
+ */
+function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation) {
+    let firstEnd = assocRes.userArg != null ? assocRes.userArg.firstEnd : assocRes.sampleArg.firstEnd;
+    let secondEnd = assocRes.userArg != null ? assocRes.userArg.secondEnd : assocRes.sampleArg.secondEnd;
+
+    let subExplanations = assocRes.explanations.map((mr) => `<li class="text text-${alertClass}">${mr}</li>`);
+
+    return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Assoziation von <code>${firstEnd}</code> nach <code>${secondEnd}</code> ${successExplanation}
+</p>
+<ul>
+    ${subExplanations}
+</ul>`.trim();
+}
+
+/**
+ * @param {object} implRes
+ * @param {string} implRes.success
+ * @param {Implementation} implRes.userArg
+ * @param {Implementation} implRes.sampleArg
+ * @param {string} alertClass
+ * @param {string} glyphicon
+ * @param {string} successExplanation
+ *
+ * @return {string}
+ */
+function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
+    let subClass = implRes.userArg != null ? implRes.userArg.subClass : implRes.sampleArg.subClass;
+    let superClass = implRes.userArg != null ? implRes.userArg.superClass : implRes.sampleArg.superClass;
+
+    let subExplanations = implRes.explanations.map((mr) => `<li class="text text-${alertClass}">${mr}</li>`);
+
+    return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Vererbungsbeziegung von <code>${subClass}</code> nach <code>${superClass}</code> ${successExplanation}
+</p>
+<ul>
+    ${subExplanations}
+</ul>`.trim();
+}
+
+/**
  * @param {object} matchingRes
  * @param {string} matchingRes.success
  * @param {string[]} matchingRes.explanations
@@ -68,112 +240,41 @@ function displayClassResult(classResult) {
  * @return {string}
  */
 function displayMatchResult(matchingRes, explanationFunc) {
-    let alertClass, glyphicon;
+    let alertClass, glyphicon, successExplanation;
 
     switch (matchingRes.success) {
         case 'SUCCESSFUL_MATCH':
             alertClass = 'success';
             glyphicon = 'ok';
+            successExplanation = 'war korrekt.';
             break;
         case 'PARTIAL_MATCH':
             alertClass = 'warning';
             glyphicon = 'question-sign';
+            successExplanation = 'war nicht korrekt:';
             break;
         case 'UNSUCCESSFUL_MATCH':
             alertClass = 'danger';
             glyphicon = 'remove';
+            successExplanation = 'war nicht korrekt:';
             break;
         case 'ONLY_USER':
             alertClass = 'danger';
             glyphicon = 'remove';
+            successExplanation = 'ist falsch:';
             break;
         case 'ONLY_SAMPLE':
             alertClass = 'danger';
             glyphicon = 'remove';
+            successExplanation = 'fehlt:';
             break;
         default:
             alertClass = 'info';
             glyphicon = 'remove';
-    }
-
-    let mainExplanation = explanationFunc(matchingRes);
-
-    let subExplanations = matchingRes.explanations.join(" ");
-
-    return `
-<p class="text-${alertClass}"><span class="glyphicon glyphicon-${glyphicon}"></span> ${mainExplanation} ${subExplanations}</p>`.trim();
-}
-
-/**
- * @param {object} assocRes
- * @param {string} assocRes.success
- * @param {Association} assocRes.userArg
- * @param {Association} assocRes.sampleArg
- *
- * @return {string}
- */
-function explainAssocResult(assocRes) {
-    let successExplanation;
-
-    switch (assocRes.success) {
-        case 'SUCCESSFUL_MATCH':
-            successExplanation = 'war korrekt.';
-            break;
-        case 'PARTIAL_MATCH' :
-        case 'UNSUCCESSFUL_MATCH':
-            successExplanation = 'war nicht korrekt:';
-            break;
-        case 'ONLY_USER':
-            successExplanation = 'ist falsch:';
-            break;
-        case 'ONLY_SAMPLE':
-            successExplanation = 'fehlt:';
-            break;
-        default:
-            successExplanation = 'Es gab einen internen Fehler!';
-    }
-
-    let firstEnd = assocRes.userArg != null ? assocRes.userArg.firstEnd : assocRes.sampleArg.firstEnd;
-    let secondEnd = assocRes.userArg != null ? assocRes.userArg.secondEnd : assocRes.sampleArg.secondEnd;
-
-    return 'Die Assoziation von <code>' + firstEnd + '</code> nach <code>' + secondEnd + '</code>' + successExplanation;
-}
-
-/**
- * @param {object} implRes
- * @param {string} implRes.success
- * @param {string} implRes.explanations
- * @param {Implementation} implRes.userArg
- * @param {Implementation} implRes.sampleArg
- *
- * @return {string}
- */
-function explainImplResult(implRes) {
-    let successExplanation;
-
-    switch (implRes.success) {
-        case  'SUCCESSFUL_MATCH':
-            successExplanation = 'war korrekt.';
-            break;
-        case 'PARTIAL_MATCH':
-        case 'UNSUCCESSFUL_MATCH':
-            successExplanation = 'war nicht korrekt:';
-            break;
-        case 'ONLY_USER':
-            successExplanation = 'ist falsch:';
-            break;
-        case  'ONLY_SAMPLE':
-            successExplanation = 'fehlt:';
-            break;
-        default:
             successExplanation = '';
-            break;
     }
 
-    let subClass = implRes.userArg != null ? implRes.userArg.subClass : implRes.sampleArg.subClass;
-    let superClass = implRes.userArg != null ? implRes.userArg.superClass : implRes.sampleArg.superClass;
-
-    return 'Die Vererbungsbeziegung von <code>' + subClass + '</code> nach <code>' + superClass + '</code>' + successExplanation;
+    return explanationFunc(matchingRes, alertClass, glyphicon, successExplanation);
 }
 
 /**
@@ -186,25 +287,20 @@ function explainImplResult(implRes) {
  * @return string
  */
 function displayMatchingResultList(matchingResultList, name, explainFunc) {
-    console.warn(JSON.stringify(matchingResultList, null, 2));
     if (matchingResultList.success) {
         return `
 <div class="alert alert-success">
     <span class="glyphicon glyphicon-ok"></span> Die ${name} waren korrekt.
 </div>`.trim();
     } else {
+        let matchingResults = matchingResultList.matches.map(mr => displayMatchResult(mr, explainFunc)).join('\n');
+
         return `
 <div class="panel panel-danger">
-    <div class="panel-heading">
-        <h4 class="panel-title">Bewertung ${name}:</h4>
-    </div>
-    <div class="panel-body">
-    ${matchingResultList.matches.map(s => displayMatchResult(s, explainFunc)).join('\n')}
-    </div>
+    <div class="panel-heading"><h4 class="panel-title">Bewertung der ${name}:</h4></div>
+    <div class="panel-body">${matchingResults}</div>
 </div>`.trim();
     }
-
-
 }
 
 /**
@@ -215,23 +311,20 @@ function displayMatchingResultList(matchingResultList, name, explainFunc) {
  * @param {object} response.assocAndImplResult.implResult
  */
 function onUmlClassDiagCorrectionSuccess(response) {
-    // console.log(JSON.stringify(response, null, 2));
-
     let html = '';
 
     if (response.classResult != null) {
-        html += displayClassResult(response.classResult);
+        html += displayMatchingResultList(response.classResult, "Klassen", explainClassResult);
     }
 
     if (response.assocAndImplResult != null) {
-        html += displayMatchingResultList(response.assocAndImplResult.implResult, 'der Vererbungsbeziehungen', explainImplResult);
-        html += displayMatchingResultList(response.assocAndImplResult.assocResult, 'der Assoziationen', explainAssocResult);
+        html += displayMatchingResultList(response.assocAndImplResult.implResult, 'Vererbungsbeziehungen', explainImplResult);
+        html += displayMatchingResultList(response.assocAndImplResult.assocResult, 'Assoziationen', explainAssocResult);
     }
 
     $('#resultDiv').html(html);
 
     $('#testButton').prop('disabled', false);
-    $('#resultTabToggle').click();
 }
 
 function onUmlClassDiagCorrectionError(jqXHR) {
@@ -239,52 +332,6 @@ function onUmlClassDiagCorrectionError(jqXHR) {
 
     $('#testButton').prop('disabled', false);
 }
-
-
-function getMultiplicity(label) {
-    return label.attrs.text.text === '1' ? 'SINGLE' : 'UNBOUND';
-}
-
-/**
- * @return {{classes: object[], associations: object[], implementations: object[]}}
- */
-function extractParametersAsJson() {
-    return {
-        classes: graph.getCells().filter(cell => cell.attributes.name !== undefined)
-            .map(function (cell) {
-                return {
-                    name: cell.attributes.name,
-                    classType: cell.attributes.type,
-                    methods: cell.attributes.methods,
-                    attributes: cell.attributes.attributes,
-                    position: cell.attributes.position
-                };
-            }),
-
-        associations: graph.getLinks().filter(conn => conn.attributes.type !== 'uml.Implementation')
-            .map(function (conn) {
-                return {
-                    assocType: getTypeName(conn.attributes.type),
-                    assocName: '',
-
-                    firstEnd: getClassNameFromCellId(conn.attributes.source.id),
-                    firstMult: getMultiplicity(conn.attributes.labels[0]),
-
-                    secondEnd: getClassNameFromCellId(conn.attributes.target.id),
-                    secondMult: getMultiplicity(conn.attributes.labels[1])
-                };
-            }),
-
-        implementations: graph.getLinks().filter(conn => conn.attributes.type === 'uml.Implementation')
-            .map(function (conn) {
-                return {
-                    subClass: getClassNameFromCellId(conn.attributes.source.id),
-                    superClass: getClassNameFromCellId(conn.attributes.target.id)
-                };
-            })
-    };
-}
-
 
 function testSol() {
     let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
@@ -294,11 +341,15 @@ function testSol() {
 
     $('#testButton').prop('disabled', true);
 
-    let solution = extractParametersAsJson();
+    let solution = {
+        classes: graph.getCells().filter((cell) => cell.attributes.name !== undefined).map((cell) => new UmlClass(cell)),
+        associations: graph.getLinks().filter((conn) => conn.attributes.type !== 'uml.Implementation').map((conn) => new Association(conn)),
+        implementations: graph.getLinks().filter((conn) => conn.attributes.type === 'uml.Implementation').map((conn) => new Implementation(conn))
+    };
 
     $.ajax({
         type: 'PUT',
-        // dataType: 'json', // return type
+        dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url,
         data: JSON.stringify({exercisePart, solution}),

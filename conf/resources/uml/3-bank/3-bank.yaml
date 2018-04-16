@@ -2,40 +2,45 @@ id: 3
 title: Tutorial Konto
 author: bje40dc
 text: >
-  Ein Kunde hat die Möglichkeit mehrere Bankkonten zu besitzen und hat eine Namen.
-  Zudem kann der Kunde sich den Gesamtguthaben aller Bankkonten anzeigen lassen.
-  Ein Bankkonto hat eine id und der Kunde kann sich das entsprechende Saldo anzeigen lassen.
-  Weiterhin kann der Kunde Geld auf ein Bankkonto einzahlen.
+  Eine Bank verwaltet die Konten ihrer Kunden. Jedes Konto wird durch die Kontonummer identifiziert und speichert das momentane Saldo sowie die
+  Vertragsdauer (in Jahren). Diese Konten können entweder ein Girokonto, ein Sparkonto oder ein Kreditkonto sein. Für jeden Typ von Konto gilt ein anderer
+  Zinssatz: Für ein Girokonto gibt es keine Zinsen, für ein Sparkonto 1 Prozent und für ein Kreditkonto 3 Prozent. Die Kunden der Bank werden durch
+  ihre Kundennummer identifiziert. Es soll außerdem jeweils der komplette Name gespeichert werden. Jeder Kunde kann mehrere Konten zu besitzen
+  und hat die Möglichkeit, sich das Gesamtsaldo aller Konten anzeigen zu lassen und Geld auf ein Konto einzuzahlen.
 status: APPROVED
-
 mappings:
-- {key: Bankkonten, value: Bankkonto}
+- {key: Konten, value: Konto}
 - {key: Kunden, value: Kunde}
-
-ignoreWords: ["Ein", "Zudem", "Weiterhin"]
-
+- {key: Jahren, value: Jahr}
+- {key: Zinsen, value: Zins}
+ignoreWords: ["Eine", "Jedes", "Diese", "Für", "Jeder", "Es", "Zudem", "Die"]
 solution:
   classes:
   - classType: CLASS
-    name: Bankkonto
-    attributes:
-    - "id: int"
-    methods:
-    - "saldo(): Int"
-    - "einzahlen(Int): void"
-
-  - classType: CLASS
     name: Kunde
     attributes:
-    - "name: String"
+    - {name: "name", type: "String"}
     methods:
-    - "gesamtguthaben(): Int"
-
+    - {name: "gesamtGuthaben()", type: "double"}
+  - classType: ABSTRACT
+    name: Konto
+    attributes:
+    - {name: "kontonummer", type: "int"}
+    - {name: "vertragsdauerInJahren", type: "int"}
+    - {name: "zinssatz", type: "double"}
+    - {name: "saldo", type: "double"}
+    methods:
+    - {name: "einzahlen(betrag: double)", type: "void"}
+  - {classType: CLASS, name: Sparkonto}
+  - {classType: CLASS, name: Girokonto}
+  - {classType: CLASS, name: Kreditkonto}
   associations:
   - assocType: ASSOCIATION
     firstEnd: Kunde
     firstMult: SINGLE
-    secondEnd: Bankkonto
+    secondEnd: Konto
     secondMult: UNBOUND
-
-  implementations: []
+  implementations:
+  - {subClass: Girokonto, superClass: Konto}
+  - {subClass: Sparkonto, superClass: Konto}
+  - {subClass: Kreditkonto, superClass: Konto}

@@ -37,12 +37,12 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
   }
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
-    val assocs: Seq[UmlClassDiagAssociation] = Seq.empty
-    val impls: Seq[UmlClassDiagImplementation] = Seq.empty
+    val assocs: Seq[UmlAssociation] = Seq.empty
+    val impls: Seq[UmlImplementation] = Seq.empty
 
-    val classes: Seq[UmlClassDiagClass] = part match {
+    val classes: Seq[UmlClass] = part match {
       case DiagramDrawingHelp => ex.solution.classes.map {
-        oldClass => UmlClassDiagClass(oldClass.classType, oldClass.className, attributes = Seq.empty, methods = Seq.empty, position = oldClass.position)
+        oldClass => UmlClass(oldClass.classType, oldClass.className, attributes = Seq.empty, methods = Seq.empty, position = oldClass.position)
       }
       case _                  => Seq.empty
     }
@@ -50,11 +50,11 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
     UmlClassDiagram(classes, assocs, impls)
   }
 
-  val allAttributes: Seq[String] = allDistinctMembers(_.attributes)
+  val allAttributes: Seq[UmlClassMember] = allDistinctMembers(_.attributes)
 
-  val allMethods: Seq[String] = allDistinctMembers(_.methods)
+  val allMethods: Seq[UmlClassMember] = allDistinctMembers(_.methods)
 
-  private def allDistinctMembers(members: UmlClassDiagClass => Seq[String]): Seq[String] = ex.solution.classes flatMap members distinct
+  private def allDistinctMembers(members: UmlClass => Seq[UmlClassMember]): Seq[UmlClassMember] = ex.solution.classes flatMap members distinct
 
 }
 

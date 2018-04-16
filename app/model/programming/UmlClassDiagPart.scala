@@ -29,7 +29,7 @@ case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram:
 
   }
 
-  private def displayClasses(classes: Seq[UmlClassDiagClass], toupling: Int): String = if (classes.isEmpty) "" else
+  private def displayClasses(classes: Seq[UmlClass], toupling: Int): String = if (classes.isEmpty) "" else
     classes.grouped(toupling).zipWithIndex map { case (classQuad, rowIndex) =>
       classQuad.zipWithIndex map { case (clazz, index) =>
         // FIXME: position!
@@ -39,22 +39,22 @@ case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram:
            |    size: {width: CLASS_WIDTH, height: CLASS_HEIGHT},
            |    name: '${clazz.className}',
            |    classType: 'CLASS',
-           |    attributes: [${displayMembers(clazz, _.attributes)}],
-           |    methods: [${displayMembers(clazz, _.methods)}]
+           |    attributes: [${displayMembers(clazz, _.attributes.map(a => a.memberName + ": " + a.memberType))}],
+           |    methods: [${displayMembers(clazz, _.methods.map(m => m.memberName + ": " + m.memberType))}]
            |}"""
       } mkString ",\n"
     } mkString ",\n"
 
-  private def displayMembers(clazz: UmlClassDiagClass, member: UmlClassDiagClass => Seq[String]): String = member(clazz) mkString ","
+  private def displayMembers(clazz: UmlClass, member: UmlClass => Seq[String]): String = member(clazz) mkString ","
 
-  private def displayImplementations(implementations: Seq[UmlClassDiagImplementation]): String = implementations map { impl =>
+  private def displayImplementations(implementations: Seq[UmlImplementation]): String = implementations map { impl =>
     s"""{
        |  sourceId: "${impl.subClass}", targetId: "${impl.superClass}",
        |  type: "Implementation", sourceMultiplicity: "", targetMultiplicity: "",
        |}""".stripMargin
   } mkString ",\n"
 
-  private def displayAssociations(associations: Seq[UmlClassDiagAssociation]): String = associations map { assoc =>
+  private def displayAssociations(associations: Seq[UmlAssociation]): String = associations map { assoc =>
     s"""{
        |  sourceId: "${assoc.firstEnd}", targetId: "${assoc.secondEnd}",
        |  type: "${assoc.assocType.name}", sourceMultiplicity: "${assoc.firstMult.representant}", targetMultiplicity: "${assoc.secondMult.representant}",
