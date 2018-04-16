@@ -29,7 +29,7 @@ object XmlCorrector {
   private val DocBuilderFactory = DocumentBuilderFactory.newInstance
   DocBuilderFactory.setValidating(true)
 
-  def correct(xml: Path, grammar: Path): Seq[XmlError] = {
+  def correctAgainstMentionedDTD(xml: Path): Seq[XmlError] = {
     val errorHandler = new CorrectionErrorHandler
 
     try {

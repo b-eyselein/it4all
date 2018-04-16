@@ -91,7 +91,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
           } yield (grammar, xml)
 
           grammarAndXmlTries map { case (grammar, xml) =>
-            val correctionResult = XmlCorrector.correct(xml, grammar)
+            val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml)
             XmlCompleteResult(solution.solution, solutionSaved, correctionResult)
           }
         })
