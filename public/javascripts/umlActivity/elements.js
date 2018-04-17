@@ -9,17 +9,19 @@ const IF_ELSE_HEIGHT = 180;
 
 const START_END_SIZE = 50;
 
+const ACTION_INPUT_TEMPLATE = `
+<div class="action-element">
+    <button class="delete">x</button>
+    <textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="actionElementContent"></textarea>
+</div>`.trim();
+
 function createActionInput(xCoord, yCoord) {
     return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: ACTION_HEIGHT},
         name: 'actionInput',
         cleanname: 'Aktionsknoten',
-        template:
-            `<div class="action-element">
-               <button class="delete">x</button>
-               <textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="actionElementContent"></textarea>
-             </div>`,
+        template: ACTION_INPUT_TEMPLATE,
         actionElementContent: '',
         ports: {
             groups: {
@@ -39,6 +41,17 @@ function createActionInput(xCoord, yCoord) {
         }
     });
 }
+
+const ACTION_SELECT_TEMPALTE = `
+<div class="action-element">
+    <button class="delete">x</button>
+    <select data-attribute="actionElementContent">
+        <option></option>
+        <option>getNutzlast()</option>
+        <option>getContent()</option>
+        <option>Example()</option>
+    </select>
+</div>`.trim();
 
 function createActionSelect(xCoord, yCoord) {
     return new joint.shapes.html.Element({
@@ -46,16 +59,7 @@ function createActionSelect(xCoord, yCoord) {
         size: {width: ACTION_WIDTH, height: ACTION_HEIGHT},
         name: 'actionSelect',
         cleanname: 'Aktionsknoten',
-        template:
-            `<div class="action-element">
-               <button class="delete">x</button>
-               <select data-attribute="actionElementContent">
-                 <option></option>
-                 <option>getNutzlast()</option>
-                 <option>getContent()</option>
-                 <option>Example()</option>
-               </select>
-             </div>`,
+        template: ACTION_SELECT_TEMPALTE,
         actionElementContent: '',
         ports: {
             groups: {
@@ -76,23 +80,25 @@ function createActionSelect(xCoord, yCoord) {
     });
 }
 
+const ACTION_DECLARE_TEMPLATE = `
+<div class="actionDeclare">
+    <button class="delete">x</button>
+    <select data-attribute="varContent1">
+        <option></option>
+        <option>String</option>
+        <option>Double</option>
+        <option>Boolean</option>
+    </select>
+    <input placeholder="Var" class="smallInput" data-attribute="varContent2" type="text">
+    <span> = </span>
+    <input placeholder="Anweisung" class="normalInput" data-attribute="varContent3" type="text">
+</div>`.trim();
+
 function createActionDeclare(xCoord, yCoord) {
     return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: ACTION_HEIGHT},
-        template:
-            `<div class="actionDeclare">
-               <button class="delete">x</button>
-               <select data-attribute="varContent1">
-                 <option></option>
-                 <option>String</option>
-                 <option>Double</option>
-                 <option>Boolean</option>
-               </select>
-               <input placeholder="Var" class="smallInput" data-attribute="varContent2" type="text"/></input>
-               <span> = </span>
-               <input placeholder="Anweisung" class="normalInput" data-attribute="varContent3" type="text"/></input>
-            </div>`,
+        template: ACTION_DECLARE_TEMPLATE,
         varContent1: '',
         varContent2: '',
         varContent3: '',
@@ -128,21 +134,23 @@ function createActionDeclare(xCoord, yCoord) {
     });
 }
 
+const FOR_LOOP_TEMPLATE = `
+<div class="for_element">
+    <button class="delete">x</button>
+    <div class="dashed-bot">
+        <span> for </span>
+        <input placeholder="Element" data-attribute="efor" type="text">
+        <span> in </span>
+        <input placeholder="Collection" data-attribute="collectionName" type="text">
+    </div>
+    <textarea onkeyup="textAreaAdjust(this)" disabled  placeholder="Anweisungen" data-attribute="area"></textarea>
+</div>`.trim();
+
 function createForLoop(xCoord, yCoord) {
     let forElement = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: FOR_LOOP_HEIGHT},
-        template:
-            `<div class="for_element">
-               <button class="delete">x</button>
-               <div class="dashed-bot">
-                 <span> for </span>
-                 <input placeholder="Element" data-attribute="efor" type="text"/></input>
-                 <span> in </span>
-                 <input placeholder="Collection" data-attribute="collectionName"  type="text"/></input>
-               </div>
-               <textarea onkeyup="textAreaAdjust(this)" disabled  placeholder="Anweisungen" data-attribute="area"></textarea>
-            </div>`,
+        template: FOR_LOOP_TEMPLATE,
         efor: '',
         collectionName: '',
         area: '',
@@ -186,23 +194,27 @@ function createForLoop(xCoord, yCoord) {
     return forElement;
 }
 
+const IF_THEN_TEMPLATE = `
+<div class="wd_element">
+    <button class="delete">x</button>
+            
+    <div class="dashed-bot">
+        <span> if </span>
+        <input placeholder="Bedingung" data-attribute="eif" type="text"/></input>
+    </div>
+
+    <span>then</span>
+    
+    </br>
+    
+    <textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="ethen"></textarea>
+</div>`.trim();
+
 function createIfThen(xCoord, yCoord) {
     let ifThenElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: WHILE_LOOP_HEIGHT},
-        template:
-            `<div class="wd_element">
-               <button class="delete">x</button>
-            
-               <div class="dashed-bot">
-                 <span> if </span>
-                 <input placeholder="Bedingung" data-attribute="eif" type="text"/></input>
-               </div>
-               
-               <span>then</span>
-               </br>
-               <textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="ethen"></textarea>
-            </div>`,
+        template: IF_THEN_TEMPLATE,
         eif: '',
         ethen: '',
         name: 'ifThen',
@@ -237,27 +249,31 @@ function createIfThen(xCoord, yCoord) {
 
 }
 
+const IF_ELSE_TEMPLATE = `
+<div class="if_element">
+    <button class="delete">x</button>
+
+    <div class="dashed-bot">
+        <span> if </span>
+        <input placeholder="Bedingung" data-attribute="eif" type="text"/></input>
+    </div>
+    
+    <div class="dashed-bot">
+        <span>then</span>
+        <textarea onkeyup="textAreaAdjust(this)" disabled placeholder="Anweisungen" data-attribute="ethen"></textarea>
+    </div>
+
+    <div>
+        <span>else</span>
+        <textarea onkeyup="textAreaAdjust(this)" disabled placeholder="Anweisungen" data-attribute="eelse"></textarea>
+    </div>
+</div>`.trim();
+
 function createIfElse(xCoord, yCoord) {
     let ifElseElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: IF_ELSE_HEIGHT},
-        template:
-            `<div class="if_element">
-               <button class="delete">x</button>
-               
-               <div class="dashed-bot">
-                 <span> if </span>
-                 <input placeholder="Bedingung" data-attribute="eif" type="text"/></input>
-               </div>
-               <div class="dashed-bot">
-                 <span>then</span>
-                 <textarea onkeyup="textAreaAdjust(this)" disabled placeholder="Anweisungen" data-attribute="ethen"></textarea>
-               </div>
-               <div>
-                 <span>else</span>
-                 <textarea onkeyup="textAreaAdjust(this)" disabled placeholder="Anweisungen" data-attribute="eelse"></textarea>
-               </div>
-            </div>`,
+        template: IF_ELSE_TEMPLATE,
         eif: '',
         ethen: '',
         eelse: '',
@@ -299,20 +315,24 @@ function createIfElse(xCoord, yCoord) {
 
 }
 
+const DO_WHILE_TEMPLATE = `
+<div class="wd_element">
+    <button class="delete">x</button>
+
+    <span>do</span>
+    <textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen"  data-attribute="edo"></textarea>
+
+    <div class="dashed-top">
+        <span> while </span>
+        <input placeholder="Bedingung" data-attribute="ewhile" type="text"/></input>
+    </div>
+</div>`.trim();
+
 function createDoWhile(xCoord, yCoord) {
     let doWhileElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: WHILE_LOOP_HEIGHT},
-        template:
-            `<div class="wd_element">
-               <button class="delete">x</button>
-               <span>do</span>
-               <textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen"  data-attribute="edo"></textarea>
-               <div class="dashed-top">
-                 <span> while </span>
-                 <input placeholder="Bedingung" data-attribute="ewhile" type="text"/></input>
-               </div>
-            </div>`,
+        template: DO_WHILE_TEMPLATE,
         ewhile: '',
         edo: '',
         name: 'doWhile',
@@ -345,23 +365,27 @@ function createDoWhile(xCoord, yCoord) {
     return doWhileElem;
 }
 
+const WHILE_DO_TEMPLATE = `
+<div class="wd_element">
+    <button class="delete">x</button>
+            
+    <div class="dashed-bot">
+        <span> while </span>
+        <input placeholder="Bedingung" data-attribute="ewhile" type="text"/></input>
+    </div>
+
+    <span>do</span>
+    
+    </br>
+    
+    <textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="edo"></textarea>
+</div>`;
+
 function createWhileDo(xCoord, yCoord) {
     let whileDoElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: WHILE_LOOP_HEIGHT},
-        template:
-            `<div class="wd_element">
-               <button class="delete">x</button>
-            
-               <div class="dashed-bot">
-                 <span> while </span>
-                 <input placeholder="Bedingung" data-attribute="ewhile" type="text"/></input>
-               </div>
-               
-               <span>do</span>
-               </br>
-               <textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="edo"></textarea>
-            </div>`,
+        template: WHILE_DO_TEMPLATE,
         ewhile: '',
         edo: '',
         name: 'whileDo',
@@ -396,14 +420,16 @@ function createWhileDo(xCoord, yCoord) {
 
 }
 
+const EDIT_TEMPLATE = `
+<div class="edit_element">
+    <button class="delete">x</button>
+</div>`;
+
 function createEdit(xCoord, yCoord) {
     let edit = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: 170, height: WHILE_LOOP_HEIGHT},
-        template:
-            `<div class="edit_element">
-               <button class="delete">x</button>
-             </div>`,
+        template: EDIT_TEMPLATE,
         name: 'edit',
         cleanname: 'Externer Knoten',
         ports: {
@@ -445,6 +471,15 @@ function createEdit(xCoord, yCoord) {
     return edit;
 }
 
+const END_CIRCLE_TEMPLATE = `
+<div class="circle1">
+    <div class="circle2">
+        <div class="circle3">
+            <label class="endlabelpos" data-attribute="label"></label>
+        </div>
+    </div>
+</div>`;
+
 function createEndCircle(endName, endId, endXCoord, endYCoord, labelText) {
     return new joint.shapes.html.Element({
         position: {x: endXCoord, y: endYCoord},
@@ -452,14 +487,7 @@ function createEndCircle(endName, endId, endXCoord, endYCoord, labelText) {
         id: 'Endknoten-' + endId,
         name: endName,
         cleanname: 'Endknoten',
-        template:
-            `<div class="circle1">
-               <div class="circle2">
-                 <div class="circle3">
-                   <label class="endlabelpos" data-attribute="label"></label>
-                 </div>
-               </div>
-             </div>`,
+        template: END_CIRCLE_TEMPLATE,
         label: labelText,
         ports: {
             groups: {
@@ -475,6 +503,11 @@ function createEndCircle(endName, endId, endXCoord, endYCoord, labelText) {
     });
 }
 
+const START_CIRCLE_TEMPLATE = `
+<div class="circle1">
+    <label class="startlabelpos" data-attribute="label"></label>
+</div>`;
+
 function createStartCircle(startName, startId, startXCoord, startYCoord, labelText) {
     return new joint.shapes.html.Element({
         position: {x: startXCoord, y: startYCoord},
@@ -482,10 +515,7 @@ function createStartCircle(startName, startId, startXCoord, startYCoord, labelTe
         id: 'Startknoten-' + startId,
         name: startName,
         cleanname: 'Startknoten',
-        template:
-            `<div class="circle1">
-               <label class="startlabelpos" data-attribute="label"></label>
-            </div>`,
+        template: START_CIRCLE_TEMPLATE,
         label: labelText,
         ports: {
             groups: {

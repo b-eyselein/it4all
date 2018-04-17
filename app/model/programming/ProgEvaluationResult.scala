@@ -49,7 +49,7 @@ case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaite
     inputName -> input,
     awaitedName -> awaited,
     gottenName -> result,
-    consoleOutputName -> consoleOutput
+    consoleOutputName -> consoleOutput.map(co => if (co.isEmpty) None else consoleOutput)
   )
 
 }

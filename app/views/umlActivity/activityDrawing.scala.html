@@ -14,17 +14,18 @@
 @core.helperTemplates.fullScreenScripts.render()
 
     <script src="@routes.Assets.versioned("lib/autosize/dist/autosize.js")"></script>
-    <script src="@routes.Assets.versioned("lib/filesaver/FileSaver.js")"></script>
 
     <script src="@routes.Assets.versioned("javascripts/umlActivity/elements.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/drawing.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/languageBuilders.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/converter.js")"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/programming/progCorrectionHandler.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/webseite.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/umlActivityTests.js")"></script>
 
-    <script src="@controllers.routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></script>
-    <script src="@controllers.routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>
+    <script src="@routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></script>
+    <script src="@routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/webseite.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/activity.css")">
@@ -147,31 +148,6 @@
                 </div>
             </section>
 
-            <hr>
-
-            <div class="form-group">
-                <button class="btn btn-info btn-block" data-toggle="collapse" data-target="#importExportSection">
-                    Import / Export</button>
-            </div>
-
-
-            <section id="importExportSection" class="collapse">
-                <div class="form-group">
-                    <input class="btn btn-block btn-default" type="file" id="file">
-                </div>
-                <div class="form-group">
-                    <div class="btn-group btn-group-justified">
-                        <div class="btn-group">
-                            <button class="btn btn-default" onclick="saveGraphAsTxt()">
-                                Exportieren</button>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-default" id="graph_import">Importieren</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
         </div>
     </div>
 }
@@ -194,13 +170,8 @@
         </div>
 
         <div class="col-md-6">
-            <h2>Resultate</h2>
-
-            <div id="resultDiv" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div id="correction"></div>
-                </div>
-            </div>
+            <h2>Korrektur</h2>
+            <div id="correction"></div>
         </div>
     </div>
 }

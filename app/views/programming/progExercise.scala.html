@@ -2,9 +2,9 @@
         oldSolution: String, part: model.core.ExPart)
 
 @scriptsBefore = {
-    <script src="@controllers.routes.Assets.versioned("lib/lodash/lodash.js")"></script>
-    <script src="@controllers.routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
-    <script src="@controllers.routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
+    <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
+    <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
+    <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
 }
 
 @scripts = {
@@ -13,12 +13,13 @@
 
 @core.editorScripts.render(exerciseOptions.aceMode, exerciseOptions.minLines, exerciseOptions.maxLines)
 
-    <script src="@controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/programming/progCorrectionHandler.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/programming/progExercise.js")"></script>
 
 @if(exercise.maybeClassDiagramPart.isDefined) {
-    <script src="@controllers.routes.ExerciseController.progClassDiagram(exercise.id)"></script>
-    <script src="@controllers.routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>
-    <link rel="stylesheet" href="@controllers.routes.Assets.versioned("lib/jointjs/dist/joint.css")"/>
+    <script src="@routes.ExerciseController.progClassDiagram(exercise.id)"></script>
+    <script src="@routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")"/>
 }
 
 @core.helperTemplates.fullScreenScripts.render()

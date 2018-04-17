@@ -33,7 +33,7 @@ object ResultsFileJsonFormat extends FileUtils {
       (__ \ "test_input").read[JsValue] and
       (__ \ "awaited").read[JsValue] and
       (__ \ "gotten").read[JsValue] and
-      (__ \ "output").readNullable[String]
+      (__ \ "stdout").readNullable[String]
     ) (ExecutionResult.apply(_, _, _, _, _, _))
 
   val resultsFileJsonReads: Reads[ResultFileContent] = (
