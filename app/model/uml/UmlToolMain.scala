@@ -67,15 +67,11 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     SolutionFormHelper.stringSolForm.bindFromRequest.fold(onFormError, onRead)
   }
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = {
-    println(Json.prettyPrint(jsValue))
-
-    UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
-      case JsSuccess(classDiag, _) => Some(UmlSolution(user.username, id, part, classDiag))
-      case JsError(errors)         =>
-        errors.foreach(error => Logger.error("Json Error: " + error._1 + " --> " + error._2))
-        None
-    }
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
+    case JsSuccess(classDiag, _) => Some(UmlSolution(user.username, id, part, classDiag))
+    case JsError(errors)         =>
+      errors.foreach(error => Logger.error("Json Error: " + error._1 + " --> " + error._2))
+      None
   }
 
   // Other helper methods
