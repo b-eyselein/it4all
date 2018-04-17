@@ -39,8 +39,8 @@ case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram:
            |    size: {width: CLASS_WIDTH, height: CLASS_HEIGHT},
            |    name: '${clazz.className}',
            |    classType: 'CLASS',
-           |    attributes: [${displayMembers(clazz, _.attributes.map(a => a.memberName + ": " + a.memberType))}],
-           |    methods: [${displayMembers(clazz, _.methods.map(m => m.memberName + ": " + m.memberType))}]
+           |    attributes: [${displayMembers(clazz, _.attributes.map(a => "'" + a.memberName + ": " + a.memberType + "'"))}],
+           |    methods: [${displayMembers(clazz, _.methods.map(m => "'" + m.memberName + ": " + m.memberType + "'"))}]
            |}"""
       } mkString ",\n"
     } mkString ",\n"
