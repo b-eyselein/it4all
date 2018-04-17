@@ -45,6 +45,7 @@ case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaite
 
   override def toJson: JsValue = Json.obj(
     idName -> id,
+    successTypeName -> success.name,
     correct -> JsBoolean(success == SuccessType.COMPLETE),
     inputName -> input,
     awaitedName -> awaited,

@@ -611,7 +611,6 @@ $(document).ready(function () {
                 if (list_addEditNodesByCreateName.includes(selElement)) {
                     createElement("elementEdit", x + 350, y);
                     connectNodes(connectProperties.sourceId, connectProperties.targetId, connectProperties.sourcePort, connectProperties.targetPort);
-                    console.log(graph.getCell(connectProperties.sourceId));
                     if (selElement === "elementIf") {
                         createElement("elementEdit", x + 350, y + 150);
                         connectNodes(connectProperties.sourceId, connectProperties.targetId, connectProperties.sourcePort2, connectProperties.targetPort);

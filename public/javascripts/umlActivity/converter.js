@@ -104,7 +104,7 @@ function mainGeneration() {
 
 function unique(list) {
     const res = [];
-    $.each(list, function(i, e) {
+    $.each(list, function (i, e) {
         if ($.inArray(e, res) === -1) res.push(e);
     });
     return res;
@@ -420,15 +420,9 @@ function convertJsonToProgrammCode(json_graph, language, parentId) {
 
     const programContent /* string[] */ = buildProgramm(json_graph, selectedLanguageBuilderType);
 
-    console.warn(JSON.stringify(programContent, null, 2));
-
-    console.warn(EXERCISE_PARAMETERS.methodDeclaration);
-
     // FIXME: get_core!
 
     let wrap = selectedLanguageBuilderType.get_core(EXERCISE_PARAMETERS, programContent);
-
-    console.warn(wrap);
 
     if (graph.getCell(parentId).getEmbeddedCells().length > 0) {
         fillContentInElement(parentId, programContent);

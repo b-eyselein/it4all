@@ -13,6 +13,7 @@ function printValue(value) {
 /**
  * @param {object} result
  * @param {int} result.id
+ * @param {string} result.successType
  * @param {boolean} result.correct
  * @param {object} result.input
  * @param {string} result.awaited
@@ -25,13 +26,22 @@ function renderProgResult(result) {
         consoleOut = '<p>Konsolenausgabe: <pre>' + result.consoleOutput + '</pre></p>';
     }
 
+    let gottenResult;
+    switch (result.successType ) {
+        case  "ERROR":
+            gottenResult = `<p>Fehlerausgabe: <pre>${result.gotten}</pre></p>`;
+    break;
+        default:
+            gottenResult = `<p>Bekommen: <code>printValue(result.gotten)</code></p>`;
+    }
+
     return `
 <div class="panel panel-${result.correct ? 'success' : 'danger'}">
     <div class="panel-heading">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
     <div class="panel-body">
         <p>Eingabe: <pre>${printValue(result.input)}</pre></p>
         <p>Erwartet: <code>${printValue(result.awaited)}</code></p>
-        <p>Bekommen: <code>${printValue(result.gotten)}</code></p>
+        ${gottenResult}
         ${consoleOut}
     </div>
 </div>`.trim();
@@ -59,8 +69,10 @@ function onProgCorrectionSuccess(response) {
 
     }
     $('#correction').html(html);
+    $('#testButton').prop('disabled', false);
 }
 
 function onProgCorrectionError(jqXHR) {
     console.error(jqXHR.responseText);
+    $('#testButton').prop('disabled', false);
 }

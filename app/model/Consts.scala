@@ -41,6 +41,7 @@ trait Consts {
   val sampleSubDir      = "samples"
   val stateName         = "status"
   val stdStep           = 10
+  val successTypeName   = "successType"
   val solutionName      = "solution"
   val solutionSavedName = "solutionSaved"
   val solutionsSubDir   = "solutions"
