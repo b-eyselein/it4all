@@ -2,14 +2,14 @@ package model.persistence
 
 import com.github.t3hnar.bcrypt._
 import model.Enums.{ExerciseState, Role, ShowHideAggregate}
+import model._
 import model.core.CoreConsts._
-import model.{HasBaseValues, _}
+//import model._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-
 
 trait TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>

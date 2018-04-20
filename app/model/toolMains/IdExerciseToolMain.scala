@@ -8,7 +8,7 @@ import model.persistence.SingleExerciseTableDefs
 import model.{JsonFormat, PartSolution, User}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -106,5 +106,9 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
     views.html.admin.idExes.idExerciseAdminListView(admin, exes, this)
+
+  // Calls
+
+  override def indexCall: Call = controllers.routes.ExerciseController.index(this.urlPart)
 
 }

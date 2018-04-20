@@ -3,7 +3,7 @@ package model.toolMains
 import model.User
 import model.core.ExPart
 import play.api.libs.json.JsValue
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html
 
 abstract class RandomExerciseToolMain(urlPart: String) extends AToolMain(urlPart) {
@@ -27,5 +27,9 @@ abstract class RandomExerciseToolMain(urlPart: String) extends AToolMain(urlPart
   // Correction
 
   def checkSolution(user: User, exPart: PartType, request: Request[AnyContent]): JsValue
+
+  // Calls
+
+  override def indexCall: Call = controllers.routes.RandomExerciseController.index(this.urlPart)
 
 }

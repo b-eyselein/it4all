@@ -6,6 +6,7 @@ import model.Enums.ToolState
 import model._
 import model.core.CoreConsts._
 import model.core._
+import play.api.mvc.Call
 
 abstract class AToolMain(val urlPart: String) extends FileUtils {
 
@@ -43,5 +44,6 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   def solutionDirForExercise(username: String, id: Int): Path = exerciseRootDir / solutionsSubDir / username / String.valueOf(id)
 
+  def indexCall: Call
 
 }

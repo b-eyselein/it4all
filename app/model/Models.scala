@@ -4,15 +4,10 @@ import model.Enums.{Role, ShowHideAggregate}
 
 import scala.util.Random
 
-object Models {
-
-}
-
-
 sealed trait User {
 
-  val username         : String
-  val stdRole          : Role
+  val username: String
+  val stdRole: Role
   val showHideAggregate: ShowHideAggregate
 
   def isAdmin: Boolean = stdRole ne Role.RoleUser

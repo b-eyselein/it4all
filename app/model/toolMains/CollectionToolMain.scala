@@ -8,7 +8,7 @@ import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -164,5 +164,9 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
   def instantiateCollection(id: Int, state: ExerciseState): CompCollType
 
   def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
+
+  // Calls
+
+  override def indexCall: Call = controllers.routes.CollectionController.index(this.urlPart)
 
 }
