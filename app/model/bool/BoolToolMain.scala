@@ -6,7 +6,7 @@ import model.bool.BoolConsts._
 import model.bool.BooleanQuestion._
 import model.core.EvaluationResult
 import model.toolMains.RandomExerciseToolMain
-import model.{Consts, JsonFormat, User}
+import model._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -31,6 +31,8 @@ class BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
   override val consts: Consts = BoolConsts
 
   override val exParts: Seq[PartType] = BoolExParts.values
+
+  override val learningPaths: Seq[CompleteLearningPath] = Seq(BoolLearningPath)
 
   // Views
 

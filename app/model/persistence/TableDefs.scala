@@ -2,9 +2,8 @@ package model.persistence
 
 import com.github.t3hnar.bcrypt._
 import model.Enums.{ExerciseState, Role, ShowHideAggregate}
-import model._
+import model.{LearningPathSection, _}
 import model.core.CoreConsts._
-//import model._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -22,9 +21,16 @@ trait TableDefs {
 
   val pwHashes = TableQuery[PwHashesTable]
 
+
   val courses = TableQuery[CoursesTable]
 
   val usersInCourses = TableQuery[UsersInCoursesTable]
+
+
+  val learningPaths = TableQuery[LearningPathsTable]
+
+  val learningPathSections = TableQuery[LearningPathSectionsTable]
+
 
   val tipps = TableQuery[TippsTable]
 
@@ -123,13 +129,13 @@ trait TableDefs {
 
   // Tables
 
+  // Users
+
   class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 
     def userType = column[Int]("user_type")
 
     def username = column[String]("username", O.PrimaryKey)
-
-    //    def pwHash = column[String]("pw_hash")
 
     def role = column[Role]("std_role")
 
@@ -164,6 +170,8 @@ trait TableDefs {
 
   }
 
+  // Courses
+
   class CoursesTable(tag: Tag) extends Table[Course](tag, "courses") {
 
     def id = column[String](idName, O.PrimaryKey)
@@ -174,8 +182,6 @@ trait TableDefs {
     override def * = (id, courseName) <> (Course.tupled, Course.unapply)
 
   }
-
-  //  case class UserInCourse(username: String, courseId: String, role: Role = Role.RoleUser)
 
   class UsersInCoursesTable(tag: Tag) extends Table[UserInCourse](tag, "users_in_courses") {
 
@@ -196,6 +202,43 @@ trait TableDefs {
     override def * = (username, courseId, role) <> (UserInCourse.tupled, UserInCourse.unapply)
 
   }
+
+  // Learning paths
+
+  class LearningPathsTable(tag: Tag) extends Table[LearningPathBase](tag, "learning_paths") {
+
+    def id = column[Int](idName, O.PrimaryKey)
+
+    def title = column[String](titleName)
+
+
+    def * = (id, title) <> (LearningPathBase.tupled, LearningPathBase.unapply)
+
+  }
+
+  class LearningPathSectionsTable(tag: Tag) extends Table[LearningPathSection](tag, "learning_path_sections") {
+
+    def id = column[Int](idName)
+
+    def pathId = column[Int]("path_id")
+
+    def sectionType = column[Boolean]("section_type")
+
+    def title = column[String](titleName)
+
+    def text = column[String](textName)
+
+
+    def pk = primaryKey("pk", (id, pathId))
+
+    def pathFk = foreignKey("path_fk", pathId, learningPaths)(_.id)
+
+
+    def * = (id, pathId, sectionType, title, text) <> (LearningPathSection.tupled, LearningPathSection.unapply)
+
+  }
+
+  // Tipps
 
   class TippsTable(tag: Tag) extends Table[Tipp](tag, "tipps") {
 

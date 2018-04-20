@@ -29,6 +29,9 @@ POST          /lti                                                     controlle
 
 # Random tools
 GET           /random/:toolType                                        controllers.RandomExerciseController.index(toolType: String)
+
+GET           /random/:toolType/learningPath/:id                       controllers.RandomExerciseController.learningPath(toolType: String, id: Int)
+
 GET           /random/:toolType/:exPart                                controllers.RandomExerciseController.newExercise(toolType: String, exPart: String)
 PUT           /random/:toolType/:exPart                                controllers.RandomExerciseController.correctLive(toolType: String, exPart: String)
 

@@ -1,7 +1,9 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import model.bool.{BoolLearningPath, BoolToolMain}
 import model.core.Repository
+import model.nary.NaryToolMain
 import model.toolMains.{RandomExerciseToolMain, ToolList}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{ControllerComponents, EssentialAction}
@@ -39,6 +41,14 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
       toolMain.exTypeFromUrl(exType) match {
         case None         => BadRequest(s"There is no exercise part >>$exType<<")
         case Some(exPart) => Ok(toolMain.checkSolution(user, exPart, request))
+      }
+  }
+
+  def learningPath(toolType: String, id: Int): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      toolMain match {
+        case _: BoolToolMain => Ok(views.html.bool.boolLearningPath(user, BoolLearningPath))
+        case _: NaryToolMain => Ok("TODO!")
       }
   }
 

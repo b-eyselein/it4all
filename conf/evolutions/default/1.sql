@@ -35,6 +35,13 @@ CREATE TABLE IF NOT EXISTS users_in_courses (
     ON DELETE CASCADE
 );
 
+# Learning paths
+
+CREATE TABLE IF NOT EXISTS learning_paths (
+  id INT PRIMARY KEY ,
+  title VARCHAR(50)
+)
+
 # Blanks
 
 CREATE TABLE IF NOT EXISTS blanks_exercises (

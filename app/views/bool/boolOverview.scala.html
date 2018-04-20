@@ -1,10 +1,22 @@
 @(user: model.User, toolMain: model.bool.BoolToolMain)
 
-    @main("Zahlensysteme", Some(user)) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Boolesche Algebra</h1>
-            </div>
+@main("Zahlensysteme", Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Boolesche Algebra</h1>
+        </div>
+
+        <section>
+            <h2>Lernpfade</h2>
+
+            @for(learningPath <- toolMain.learningPaths) {
+                <a href="@routes.RandomExerciseController.learningPath(toolMain.urlPart, learningPath.learningPath.id)"
+                class="btn btn-primary btn-block">Lernpfad @learningPath.learningPath.title</a>
+            }
+        </section>
+
+        <section>
+            <h2>Übungsaufgaben</h2>
 
                 <!-- Fill out truth tabels -->
             <div class="form-group">
@@ -17,6 +29,7 @@
                 <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, model.bool.FormulaCreation.urlName)"
                 class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
             </div>
+        </section>
 
-        </div>
-    }
+    </div>
+}
