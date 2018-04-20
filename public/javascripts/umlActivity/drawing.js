@@ -17,7 +17,12 @@ let parentChildNodes; // Array with all subgraphs (startid,endid,..)
 const list_externPorts = ['extern', 'extern-eelse', 'extern-ethen'];
 const list_addEditNodesByCreateName = ["elementFor", "elementDoWhile", "elementWhileDo", "elementIf", "elementIfThen"];
 
-let connectProperties = {sourceId: "sourceId", targetId: "targetId", sourcePort: "sourcePort", targetPort: "targetPort"};
+let connectProperties = {
+    sourceId: "sourceId",
+    targetId: "targetId",
+    sourcePort: "sourcePort",
+    targetPort: "targetPort"
+};
 
 //force refresh by function
 function refreshDia() {
@@ -74,6 +79,10 @@ function clearSelElement() {
 
 // Constructor Elements
 function createElement(elementName, xCoord, yCoord) {
+    let position = {
+        position: {x: xCoord, y: yCoord}
+    };
+
     let elementToAdd;
     switch (elementName) {
         case 'elementActionInput':
@@ -112,9 +121,24 @@ function createElement(elementName, xCoord, yCoord) {
             elementToAdd = createEdit(xCoord, yCoord);
             break;
 
+        case 'uml.ForLoop':
+            elementToAdd = new joint.shapes.uml.ForLoop(position);
+            break;
+
+        case 'uml.WhileLoop':
+            console.log(elementName);
+            try {
+                elementToAdd = new joint.shapes.uml.WhileLoop(position);
+            } catch (err) {
+                console.error(err);
+            }
+
+            console.warn(elementToAdd);
+            break;
+
         default:
             // No action taken...
-            // console.log('Element nicht gefunden');
+            console.log('Could not create element ' + elementName);
             break;
     }
     if (MousePosElementName === 'edit') {
@@ -151,7 +175,12 @@ $(document).ready(function () {
         graph.addCells([end, start, actionNodeStart, actionNodeEnd]);
         connectNodes(start.id, actionNodeStart.id, "in", "in");
         connectNodes(actionNodeEnd.id, end.id, "out", "in");
-        parentChildNodes.push({'parentId': 'Startknoten-startId', 'startId': 'Startknoten-startId', 'endId': 'Endknoten-endId', 'endName': 'end'});
+        parentChildNodes.push({
+            'parentId': 'Startknoten-startId',
+            'startId': 'Startknoten-startId',
+            'endId': 'Endknoten-endId',
+            'endName': 'end'
+        });
     }
 
     //Basics
@@ -634,6 +663,10 @@ $(document).ready(function () {
     });
 
     paper.on('cell:pointerclick', function (cellView, evt, x, y) {
+        if (cellView.model.attributes.type === 'uml.ForLoop') {
+            cellView.handleLeftClick(evt, x, y);
+        }
+
         if (cellView.model.attributes.name === 'edit' && selElement !== '') {
             connectProperties = []; // reset properties from older ones
             createElement(selElement, x, y);
@@ -649,6 +682,10 @@ $(document).ready(function () {
 
             clearSelElement();
         }
+    });
+
+    paper.on('cell:contextmenu', function (cellView, evt, x, y) {
+        cellView.handleRightClick(evt, x, y);
     });
 
     preparePaper(); // set start and endnode

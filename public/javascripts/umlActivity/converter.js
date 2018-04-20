@@ -600,6 +600,11 @@ function readDataFromLanguage(graphelement, selectedLangBuilder) {
             console.log(graphelement);
             return [];
 
+        case 'uml.ForLoop':
+            // FIXME: ForLoop
+            let element = graph.getCell(graphelement);
+            return selectedLangBuilder.get_efor(element.attributes.variable, element.attributes.collection, element.attributes.loopContent);
+
         default:
             console.error('Es konnte Daten aus dem Graphelement nicht lesen: ' + graphelement.name);
             return [];
