@@ -1,65 +1,65 @@
 @(user: model.User, exercise: model.uml.UmlCompleteEx)
 
-@scripts = {
-    <script src="@controllers.routes.Assets.versioned("javascripts/uml/allocation.js")"></script>
-}
+    @scripts = {
+        <script src="@controllers.routes.Assets.versioned("javascripts/uml/allocation.js")"></script>
+    }
 
-@main("UML", Some(user), scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Zuordnung der Attribute und Methoden</h1>
+    @memberInput(className: String, returnType: String, memberName: String, memberType: String) = {
+        <div class="checkbox">
+            <label><input type="checkbox" data-class="@className" data-membertype="@memberType" data-type="@returnType" data-value="@memberName">
+                @memberName: @memberType
+            </label>
         </div>
+    }
 
-        <h3>Aufgabentext</h3>
+    @main("UML", Some(user), scripts) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Zuordnung der Attribute und Methoden</h1>
+            </div>
 
-        <div class="well">@exercise.ex.text</div>
+            <h3>Aufgabentext</h3>
 
-        <hr>
+            <div class="well">@exercise.ex.text</div>
 
-        @for(clazzQuadruple <- exercise.ex.solution.classes grouped 4) {
-            <div class="row">
-            @for(completeClass <- clazzQuadruple) {
-                <div class="col-md-3">
+            <hr>
 
-                    <div class="panel panel-default" data-clazz="@completeClass.className">
-                        <div class="panel-heading">@completeClass.className</div>
+            @for(clazzQuadruple <- exercise.ex.solution.classes grouped 4) {
+                <div class="row">
+                @for(completeClass <- clazzQuadruple) {
+                    <div class="col-md-3">
 
-                        <div class="panel-body">
+                        <div class="panel panel-default" data-clazz="@completeClass.className">
+                            <div class="panel-heading">@completeClass.className</div>
 
-                            @for(attr <- exercise.allAttributes) {
-                                <div class="checkbox">
-                                    <label><input type="checkbox" data-type="@attr.memberType" data-value="@attr.memberName">
-                                        @attr.memberName: @attr.memberType
-                                    </label>
-                                </div>
-                            }
+                            <div class="panel-body">
 
-                        <hr>
+                                @for(attr <- exercise.allAttributes) {
+                                    @memberInput(completeClass.className, attr.memberType, attr.memberName, "attribute")
+                                }
+
+                            <hr>
 
                             @for(method <- exercise.allMethods) {
-                                <div class="checkbox">
-                                    <label><input type="checkbox" data-type="@method.memberType" data-vlaue="@method.memberType">
-                                        @method.memberName: @method.memberType
-                                    </label>
-                                </div>
+                                @memberInput(completeClass.className, method.memberType, method.memberName, "method")
                             }
+                            </div>
                         </div>
+
                     </div>
+                }
 
                 </div>
             }
 
-            </div>
-        }
+            <hr>
 
-        <hr>
+            @* FIXME: part... *@
+            <form action="@routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)"
+            method="post" onsubmit="return prepareFormForSubmitting();">
+                <input type="text" title="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
+                <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
+            </form>
 
-        @* FIXME: part... *@
-        <form action="@routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)"
-        method="post" onsubmit="return prepareFormForSubmitting();">
-            <input type="text" title="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
-            <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
-        </form>
-
-    </div>
-}
+        </div>
+    }
