@@ -2,6 +2,7 @@ package model.questions
 
 import javax.inject.{Inject, Singleton}
 import model._
+import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.QuestionType
 import model.toolMains.CollectionToolMain
 import model.yaml.MyYamlFormat
@@ -51,7 +52,7 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[QuestionSolution] =
     request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
-      val maybeGivenAnswers: Option[Seq[IdGivenAnswer]] = jsObj.stringField("questionType") flatMap QuestionType.byString flatMap {
+      val maybeGivenAnswers: Option[Seq[IdGivenAnswer]] = jsObj.stringField(questionTypeName) flatMap QuestionType.byString flatMap {
         case QuestionType.CHOICE   => jsObj.arrayField("chosen", jsValue => Some(IdGivenAnswer(jsValue.asInt getOrElse -1)))
         case QuestionType.FREETEXT => ??? // Some(Seq.empty)
       }

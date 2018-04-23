@@ -6,6 +6,7 @@ import model.Enums.ToolState
 import model._
 import model.core.CoreConsts._
 import model.core._
+import model.learningPath.LearningPathTableDefs
 import play.api.mvc.Call
 
 abstract class AToolMain(val urlPart: String) extends FileUtils {
@@ -14,11 +15,15 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   type R <: EvaluationResult
 
+  type Tables <: LearningPathTableDefs
+
   // Save this ToolMain
 
   ToolList.addTool(this)
 
   // Other members
+
+  val tables: Tables
 
   val toolname: String
 
@@ -29,10 +34,6 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
   val toolState: ToolState = ToolState.ALPHA
 
   val pluralName: String = "Aufgaben"
-
-  // Learning paths for this module
-
-  val learningPaths: Seq[CompleteLearningPath] = Seq.empty
 
   // Folders
 

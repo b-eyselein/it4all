@@ -127,7 +127,7 @@ case class WebSolution(username: String, exerciseId: Int, part: WebExPart, solut
 
 // Tables
 
-class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[WebExercise, WebCompleteEx, WebSolution, WebExPart] {
 
   import profile.api._
@@ -157,7 +157,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   lazy val webSolutions = TableQuery[WebSolutionsTable]
 
-  override def completeExForEx(ex: WebExercise)(implicit ec: ExecutionContext): Future[WebCompleteEx] = for {
+  override def completeExForEx(ex: WebExercise): Future[WebCompleteEx] = for {
     htmlTasks: Seq[HtmlCompleteTask] <- htmlTasksForExercise(ex.id)
     jsTasks: Seq[JsCompleteTask] <- jsTasksForExercise(ex.id)
   } yield WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
@@ -181,7 +181,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Saving
 
-  override def saveExerciseRest(compEx: WebCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
+  override def saveExerciseRest(compEx: WebCompleteEx): Future[Boolean] = for {
     htmlTasksSaved <- saveSeq[HtmlCompleteTask](compEx.htmlTasks, saveHtmlTask)
     jsTasksSaved <- saveSeq[JsCompleteTask](compEx.jsTasks, saveJsTask)
   } yield htmlTasksSaved && jsTasksSaved

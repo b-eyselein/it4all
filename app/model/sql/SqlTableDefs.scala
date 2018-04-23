@@ -71,7 +71,7 @@ case class SqlSolution(username: String, collectionId: Int, exerciseId: Int, sol
 
 // Table Definitions
 
-class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, SqlSolution] {
 
   import profile.api._
@@ -96,9 +96,9 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Reading
 
-  override def completeExForEx(ex: SqlExercise)(implicit ec: ExecutionContext): Future[SqlCompleteEx] = samplesForEx(ex.collectionId, ex.id) map (samples => SqlCompleteEx(ex, samples))
+  override def completeExForEx(ex: SqlExercise): Future[SqlCompleteEx] = samplesForEx(ex.collectionId, ex.id) map (samples => SqlCompleteEx(ex, samples))
 
-  override def completeCollForColl(coll: SqlScenario)(implicit ec: ExecutionContext): Future[SqlCompleteScenario] =
+  override def completeCollForColl(coll: SqlScenario): Future[SqlCompleteScenario] =
     db.run(exTable.filter(_.collectionId === coll.id).result) flatMap (exes => Future.sequence(exes map completeExForEx)) map (exes => SqlCompleteScenario(coll, exes))
 
   private def samplesForEx(collId: Int, exId: Int): Future[Seq[SqlSample]] =
@@ -108,10 +108,10 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   def saveSolution(sol: SqlSolution): Future[Boolean] = db.run(solTable insertOrUpdate sol) map (_ => true) recover { case _: Throwable => false }
 
-  override def saveExerciseRest(compEx: SqlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+  override def saveExerciseRest(compEx: SqlCompleteEx): Future[Boolean] =
     saveSeq[SqlSample](compEx.samples, saveSqlSample)
 
-  override def saveCompleteColl(completeScenario: SqlCompleteScenario)(implicit ec: ExecutionContext): Future[Boolean] =
+  override def saveCompleteColl(completeScenario: SqlCompleteScenario): Future[Boolean] =
     db.run(collTable insertOrUpdate completeScenario.coll) flatMap (_ => saveSeq(completeScenario.exercises, saveSqlCompleteEx))
 
   private def saveSqlCompleteEx(completeEx: SqlCompleteEx): Future[Boolean] =

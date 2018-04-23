@@ -108,6 +108,8 @@ object MyYamlProtocol {
 
     def enumField[T](fieldName: String, valueOf: String => T): Try[T] = stringField(fieldName) map valueOf
 
+    def enumFieldOption[T](fieldName: String, valueOf: String => Option[T]): Try[Option[T]] = stringField(fieldName) map valueOf
+
     def jsonField(fieldName: String): Try[JsValue] = someField(fieldName) map mapToJson
 
     def optJsonField(fieldName: String): Try[Option[JsValue]] = optField(fieldName, yamlValue => Try(mapToJson(yamlValue)))

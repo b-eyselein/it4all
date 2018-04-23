@@ -6,7 +6,7 @@ import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait IdExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends ExerciseTableDefs[Ex, CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
@@ -15,12 +15,11 @@ trait IdExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Exer
 
   // Numbers
 
-  def futureHighestExerciseId(implicit ec: ExecutionContext): Future[Int] = db.run(exTable.map(_.id).max.result) map (_ getOrElse (-1))
+  def futureHighestExerciseId: Future[Int] = db.run(exTable.map(_.id).max.result) map (_ getOrElse (-1))
 
   // Update
 
-  // Update
-  def updateExerciseState(id: Int, newState: ExerciseState)(implicit ec: ExecutionContext): Future[Boolean] = db.run((for {
+  def updateExerciseState(id: Int, newState: ExerciseState): Future[Boolean] = db.run((for {
     ex <- exTable if ex.id === id
   } yield ex.state).update(newState)) map (_ => true) recover {
     case e: Throwable =>

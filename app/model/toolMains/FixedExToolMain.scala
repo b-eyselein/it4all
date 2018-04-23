@@ -22,7 +22,7 @@ abstract class FixedExToolMain(urlPart: String)(implicit ec: ExecutionContext) e
 
   type ReadType
 
-  type Tables <: ExerciseTableDefs[ExType, CompExType]
+  override type Tables <: ExerciseTableDefs[ExType, CompExType]
 
   // Reading Yaml
 
@@ -56,8 +56,6 @@ abstract class FixedExToolMain(urlPart: String)(implicit ec: ExecutionContext) e
   }
 
   // DB Operations
-
-  val tables: Tables
 
   def futureNumOfExes: Future[Int] = tables.futureNumOfExes
 

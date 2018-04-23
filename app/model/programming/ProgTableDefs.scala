@@ -151,7 +151,7 @@ case class ActivityDiagramSolution(username: String, exerciseId: Int, language: 
 
 // Table Definitions
 
-class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, ProgrammingExPart] {
 
   import profile.api._
@@ -180,14 +180,14 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Queries
 
-  override def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = for {
+  override def completeExForEx(ex: ProgExercise): Future[ProgCompleteEx] = for {
     samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result)
     sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result)
     maybeClassDiagramPart <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption)
   } yield ProgCompleteEx(ex, inputTypes, samples, sampleTestData, maybeClassDiagramPart)
 
-  override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
+  override def saveExerciseRest(compEx: ProgCompleteEx): Future[Boolean] = for {
     samplesSaved <- saveSeq[ProgSampleSolution](compEx.sampleSolutions, i => db.run(sampleSolutions += i))
     inputTypesSaved <- saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i))
     sampleTestDataSaved <- saveSeq[SampleTestData](compEx.sampleTestData, i => db.run(sampleTestData += i))

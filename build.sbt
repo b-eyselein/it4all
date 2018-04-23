@@ -22,7 +22,10 @@ libraryDependencies ++= Seq(
 
   "mysql" % "mysql-connector-java" % "8.0.8-dmr",
 
-  // Dependency injection
+  // Better enums for scala
+  "com.beachape" %% "enumeratum" % "1.5.13",
+
+    // Dependency injection
   guice,
   "net.codingwell" %% "scala-guice" % "4.2.0",
 

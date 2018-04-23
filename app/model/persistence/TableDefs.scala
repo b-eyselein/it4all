@@ -2,8 +2,9 @@ package model.persistence
 
 import com.github.t3hnar.bcrypt._
 import model.Enums.{ExerciseState, Role, ShowHideAggregate}
-import model.{LearningPathSection, _}
+import model._
 import model.core.CoreConsts._
+import model.learningPath._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -14,6 +15,8 @@ trait TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
+
+  implicit val executionContext: ExecutionContext
 
   // Table queries
 
@@ -26,12 +29,6 @@ trait TableDefs {
 
   val usersInCourses = TableQuery[UsersInCoursesTable]
 
-
-  val learningPaths = TableQuery[LearningPathsTable]
-
-  val learningPathSections = TableQuery[LearningPathSectionsTable]
-
-
   val tipps = TableQuery[TippsTable]
 
   // Numbers
@@ -39,7 +36,6 @@ trait TableDefs {
   def numOfUsers: Future[Int] = db.run(users.size.result)
 
   def numOfCourses: Future[Int] = db.run(courses.size.result)
-
 
   // Reading
 
@@ -52,21 +48,22 @@ trait TableDefs {
 
   def allCourses: Future[Seq[Course]] = db.run(courses.result)
 
-  def courseById(courseId: String)(implicit ec: ExecutionContext): Future[Option[Course]] = db.run(courses.filter(_.id === courseId).result.headOption)
+  def courseById(courseId: String): Future[Option[Course]] = db.run(courses.filter(_.id === courseId).result.headOption)
 
 
-  def coursesForUser(user: User)(implicit ec: ExecutionContext): Future[Seq[Course]] = db.run(courses.join(usersInCourses).on {
+  def coursesForUser(user: User): Future[Seq[Course]] = db.run(courses.join(usersInCourses).on {
     case (course, userInCourse) => course.id === userInCourse.courseId
   }.filter {
     case (_, userInCourse) => userInCourse.username === user.username
   }.map(_._1).result)
 
-  def userInCourse(user: User, course: Course)(implicit ec: ExecutionContext): Future[Option[UserInCourse]] =
+  def userInCourse(user: User, course: Course): Future[Option[UserInCourse]] =
     db.run(usersInCourses.filter(uInC => uInC.username === user.username && uInC.courseId === course.id).result.headOption)
+
 
   // Update
 
-  def updateUserRole(userToChangeName: String, newRole: Role)(implicit ec: ExecutionContext): Future[Boolean] =
+  def updateUserRole(userToChangeName: String, newRole: Role): Future[Boolean] =
     db.run(users.filter(_.username === userToChangeName).map(_.role).update(newRole)) map (_ => true) recover { case e: Throwable =>
       Logger.error(s"Could not update std role of user $userToChangeName to ${newRole.name}", e)
       false
@@ -80,25 +77,25 @@ trait TableDefs {
 
   // Insert
 
-  def saveUser(user: User)(implicit ec: ExecutionContext): Future[Boolean] = db.run(users += user) map (_ => true) recover {
+  def saveUser(user: User): Future[Boolean] = db.run(users += user) map (_ => true) recover {
     case e: Throwable =>
       Logger.error(s"Could not save user $user", e)
       false
   }
 
-  def savePwHash(pwHash: PwHash)(implicit ec: ExecutionContext): Future[Boolean] = db.run(pwHashes += pwHash) map (_ => true) recover {
+  def savePwHash(pwHash: PwHash): Future[Boolean] = db.run(pwHashes += pwHash) map (_ => true) recover {
     case e: Throwable =>
       Logger.error(s"Could not save pwHash $pwHash", e)
       false
   }
 
-  def saveCourse(course: Course)(implicit ec: ExecutionContext): Future[Boolean] = db.run(courses += course) map (_ => true) recover {
+  def saveCourse(course: Course): Future[Boolean] = db.run(courses += course) map (_ => true) recover {
     case e: Throwable =>
       Logger.error("Could not save course", e)
       false
   }
 
-  def addUserToCourse(userInCourse: UserInCourse)(implicit ec: ExecutionContext): Future[Boolean] =
+  def addUserToCourse(userInCourse: UserInCourse): Future[Boolean] =
     db.run(usersInCourses += userInCourse) map (_ => true) recover {
       case e: Throwable =>
         Logger.error("Could not add user to course", e)
@@ -107,7 +104,7 @@ trait TableDefs {
 
   // Abstract queries
 
-  protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any])(implicit ec: ExecutionContext): Future[Boolean] = Future.sequence(seqToSave map {
+  protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any]): Future[Boolean] = Future.sequence(seqToSave map {
     toSave =>
       save(toSave) map (_ => true) recover { case e: Exception =>
         Logger.error("Could not perform save option", e)
@@ -115,6 +112,11 @@ trait TableDefs {
       }
   }) map (_ forall identity)
 
+  protected def saveSingle(performSave: => Future[Any]): Future[Boolean] = performSave map (_ => true) recover {
+    case e: Throwable =>
+      Logger.error("Could not perform save option", e)
+      false
+  }
 
   // Column types
 
@@ -126,6 +128,9 @@ trait TableDefs {
 
   implicit val exercisetypeColumnType: BaseColumnType[ExerciseState] =
     MappedColumnType.base[ExerciseState, String](_.name, str => ExerciseState.byString(str) getOrElse ExerciseState.CREATED)
+
+  implicit val learningPathSectionTypeColumnType: BaseColumnType[LearningPathSectionType] =
+    MappedColumnType.base[LearningPathSectionType, String](_.entryName, str => LearningPathSectionType.withNameOption(str) getOrElse LearningPathSectionType.TextSectionType)
 
   // Tables
 
@@ -200,41 +205,6 @@ trait TableDefs {
 
 
     override def * = (username, courseId, role) <> (UserInCourse.tupled, UserInCourse.unapply)
-
-  }
-
-  // Learning paths
-
-  class LearningPathsTable(tag: Tag) extends Table[LearningPathBase](tag, "learning_paths") {
-
-    def id = column[Int](idName, O.PrimaryKey)
-
-    def title = column[String](titleName)
-
-
-    def * = (id, title) <> (LearningPathBase.tupled, LearningPathBase.unapply)
-
-  }
-
-  class LearningPathSectionsTable(tag: Tag) extends Table[LearningPathSection](tag, "learning_path_sections") {
-
-    def id = column[Int](idName)
-
-    def pathId = column[Int]("path_id")
-
-    def sectionType = column[Boolean]("section_type")
-
-    def title = column[String](titleName)
-
-    def text = column[String](textName)
-
-
-    def pk = primaryKey("pk", (id, pathId))
-
-    def pathFk = foreignKey("path_fk", pathId, learningPaths)(_.id)
-
-
-    def * = (id, pathId, sectionType, title, text) <> (LearningPathSection.tupled, LearningPathSection.unapply)
 
   }
 

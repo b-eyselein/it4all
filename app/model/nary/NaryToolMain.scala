@@ -1,8 +1,9 @@
 package model.nary
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 import model.Enums.ToolState
 import model.core.EvaluationResult
+import model.learningPath.LearningPath
 import model.nary.NAryNumber.{parseNaryNumber, parseTwoComplement}
 import model.nary.NaryConsts._
 import model.toolMains.RandomExerciseToolMain
@@ -15,13 +16,15 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
+class NaryToolMain @Inject()(val tables: NaryTableDefs) extends RandomExerciseToolMain("nary") with JsonFormat {
 
   // Abstract types
 
   override type PartType = NaryExPart
 
   override type R = EvaluationResult
+
+  override type Tables = NaryTableDefs
 
   // Other members
 
@@ -34,6 +37,9 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
   override val exParts: Seq[NaryExPart] = NaryExParts.values
 
   // Views
+
+  override def index(user: User, learningPathBases: Seq[LearningPath]): Html =
+    views.html.nary.naryOverview(user, this, learningPathBases)
 
   override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]]): Html = {
     exPart match {
@@ -80,8 +86,6 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
     }
   }
 
-  override def index(user: User): Html = views.html.nary.naryOverview(user, this)
-
   // Helper functions
 
   private def randNumberBase(notBaseOrdinal: Int): NumberBase = {
@@ -105,6 +109,8 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
       case Some(solution) => solution.toJson
     }
   }
+
+  // Reading functions
 
   private def readAddSolutionFromJson(jsValue: JsValue): Option[NAryAddResult] = jsValue.asObj flatMap { jsObj =>
     for {
@@ -132,5 +138,7 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
   }
 
   private def numbaseFromString(str: String): Option[NumberBase] = Try(Some(NumberBase.valueOf(str))) getOrElse None
+
+  override def readLearningPaths: Seq[LearningPath] = ???
 
 }

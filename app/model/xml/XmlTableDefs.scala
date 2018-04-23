@@ -8,7 +8,7 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 case class XmlExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
                        grammarDescription: String, sampleGrammar: String, rootNode: String)
@@ -49,7 +49,7 @@ case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solut
 
 // Table defs
 
-class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: _root_.scala.concurrent.ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlExercise, XmlSolution, XmlExPart] {
 
   import profile.api._
@@ -71,11 +71,11 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Reading
 
-  override def completeExForEx(ex: XmlExercise)(implicit ec: ExecutionContext): Future[XmlExercise] = Future(ex)
+  override def completeExForEx(ex: XmlExercise): Future[XmlExercise] = Future(ex)
 
   // Saving
 
-  override def saveExerciseRest(compEx: XmlExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
+  override def saveExerciseRest(compEx: XmlExercise): Future[Boolean] = Future(true)
 
   // Actual table defs
 

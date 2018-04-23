@@ -1,26 +1,33 @@
 package model.bool
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 import model.Enums.ToolState
+import model._
 import model.bool.BoolConsts._
 import model.bool.BooleanQuestion._
 import model.core.EvaluationResult
+import model.learningPath.{LearningPath, LearningPathYamlProtocol}
 import model.toolMains.RandomExerciseToolMain
-import model._
+import net.jcazevedo.moultingyaml._
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
+import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
+import scala.util.{Failure, Success}
 
 @Singleton
-class BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
+class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("bool") with JsonFormat {
 
   // Abstract types
 
   override type PartType = BoolExPart
 
   override type R = EvaluationResult
+
+  override type Tables = BoolTableDefs
 
   // Other members
 
@@ -32,16 +39,15 @@ class BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
 
   override val exParts: Seq[PartType] = BoolExParts.values
 
-  override val learningPaths: Seq[CompleteLearningPath] = Seq(BoolLearningPath)
-
   // Views
+
+  override def index(user: User, learningPathBases: Seq[LearningPath]): Html =
+    views.html.bool.boolOverview(user, this, learningPathBases)
 
   override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]]): Html = exType match {
     case FormulaCreation => views.html.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
     case TableFillout    => views.html.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
   }
-
-  override def index(user: User): Html = views.html.bool.boolOverview(user, this)
 
   // Handlers
 
@@ -76,6 +82,17 @@ class BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
       question <- jsObj.arrayField(AssignmentsName, _.asObj flatMap readAssignmentsObject) map CreationQuestion
       withSol <- jsObj.boolField("withSol")
     } yield CreationQuestionResult(learnerFormula, question, withSol)
+  }
+
+  override def readLearningPaths: Seq[LearningPath] = readAll(exerciseResourcesFolder / "learningPath.yaml") match {
+    case Failure(error)       => Seq.empty
+    case Success(fileContent) =>
+      LearningPathYamlProtocol.LearningPathYamlFormat.read(fileContent.parseYaml) match {
+        case Failure(error) =>
+          Logger.error("Fehler: ", error)
+          Seq.empty
+        case Success(read)  => Seq(read)
+      }
   }
 
 }

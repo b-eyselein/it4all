@@ -79,7 +79,7 @@ case class UmlSolution(username: String, exerciseId: Int, part: UmlExPart, class
 
 // Tables
 
-class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlExercise, UmlCompleteEx, UmlSolution, UmlExPart] {
 
   import profile.api._
@@ -100,14 +100,14 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Reading
 
-  override def completeExForEx(ex: UmlExercise)(implicit ec: ExecutionContext): Future[UmlCompleteEx] = for {
+  override def completeExForEx(ex: UmlExercise): Future[UmlCompleteEx] = for {
     mappings <- db.run(umlMappings filter (_.exerciseId === ex.id) result)
   } yield UmlCompleteEx(ex, mappings)
 
 
   // Saving
 
-  override protected def saveExerciseRest(compEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+  override protected def saveExerciseRest(compEx: UmlCompleteEx): Future[Boolean] =
     saveSeq[UmlMapping](compEx.mappings, m => db.run(umlMappings += m))
 
   // Implicit column types
