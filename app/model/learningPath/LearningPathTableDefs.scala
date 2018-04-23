@@ -79,8 +79,8 @@ trait LearningPathTableDefs extends TableDefs {
     private implicit val lPQuestionJsonFormat: Format[LPQuestion] = LPQuestionJsonFormat.lpQuestionJsonFormat
 
     private def tupled(values: (Int, Int, LearningPathSectionType, String, String)): LearningPathSection = values._3 match {
-      case TextSectionType     => TextSection(values._1, values._2, values._3, values._4, values._5)
-      case QuestionSectionType => QuestionSection(values._1, values._2, values._3, values._4, readQuestionsFromJson(values._5))
+      case TextSectionType     => TextSection(values._1, values._2, values._4, values._5)
+      case QuestionSectionType => QuestionSection(values._1, values._2, values._4, readQuestionsFromJson(values._5))
     }
 
     private def readQuestionsFromJson(string: String): Seq[LPQuestion] = Json.fromJson[Seq[LPQuestion]](Json.parse(string)) match {
@@ -91,8 +91,8 @@ trait LearningPathTableDefs extends TableDefs {
     }
 
     private def unapplied(lps: LearningPathSection): Option[(Int, Int, LearningPathSectionType, String, String)] = lps match {
-      case TextSection(id, pathId, sectionType, title, text)          => Some(id, pathId, sectionType, title, text)
-      case QuestionSection(id, pathId, sectionType, title, questions) => Some((id, pathId, sectionType, title, Json.toJson(questions).toString))
+      case TextSection(id, pathId, title, text)          => Some((id, pathId, TextSectionType, title, text))
+      case QuestionSection(id, pathId, title, questions) => Some((id, pathId, QuestionSectionType, title, Json.toJson(questions).toString))
     }
 
   }

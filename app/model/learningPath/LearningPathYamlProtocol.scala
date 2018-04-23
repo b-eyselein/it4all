@@ -39,16 +39,16 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
 
       section: LearningPathSection <- sectionType match {
-        case QuestionSectionType => readQuestionSection(yamlObject, id, sectionType, title)
-        case TextSectionType     => readTextSection(yamlObject, id, sectionType, title)
+        case QuestionSectionType => readQuestionSection(yamlObject, id, title)
+        case TextSectionType     => readTextSection(yamlObject, id, title)
       }
     } yield section
 
-    private def readTextSection(yamlObject: YamlObject, id: Int, sectionType: LearningPathSectionType, title: String): Try[TextSection] = for {
+    private def readTextSection(yamlObject: YamlObject, id: Int, title: String): Try[TextSection] = for {
       content: String <- yamlObject.stringField(contentName)
-    } yield TextSection(id, pathId, sectionType, title, content)
+    } yield TextSection(id, pathId, title, content)
 
-    private def readQuestionSection(yamlObject: YamlObject, id: Int, sectionType: LearningPathSectionType, title: String): Try[QuestionSection] = for {
+    private def readQuestionSection(yamlObject: YamlObject, id: Int, title: String): Try[QuestionSection] = for {
       questions <- yamlObject.arrayField(questionsName, readLPQuestions)
     } yield {
 
@@ -56,7 +56,7 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
         Logger.error("Error: ", failure.exception)
       }
 
-      QuestionSection(id, pathId, sectionType, title, questions._1)
+      QuestionSection(id, pathId, title, questions._1)
     }
 
     private def readLPQuestions(yamlValue: YamlValue): Try[LPQuestion] = for {
