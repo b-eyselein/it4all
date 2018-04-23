@@ -70,12 +70,6 @@ solution:
     secondMult: UNBOUND
 
   - assocType: ASSOCIATION
-    firstEnd: Doktor
-    firstMult: SINGLE
-    secondEnd: Patient
-    secondMult: UNBOUND
-
-  - assocType: ASSOCIATION
     firstEnd: Station
     firstMult: SINGLE
     secondEnd: Patient
