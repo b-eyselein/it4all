@@ -32,7 +32,7 @@ function renderProgResult(result) {
             gottenResult = `<p>Fehlerausgabe: <pre>${result.gotten}</pre></p>`;
     break;
         default:
-            gottenResult = `<p>Bekommen: <code>printValue(result.gotten)</code></p>`;
+            gottenResult = `<p>Bekommen: <code>${printValue(result.gotten)}</code></p>`;
     }
 
     return `

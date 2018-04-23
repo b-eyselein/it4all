@@ -163,7 +163,7 @@ function cellOnLeftClick(cellView, evt) {
             let source = cellView.model.attributes.name, target = chosenCellView.model.attributes.name;
             let sourceMult = '*', targetMult = '*';
 
-            let newId = addAssociation(chosenCellView.model.id, cellView.model.id, sel, targetMult, sourceMult);
+            let newId = addAssociation(chosenCellView.model.id, cellView.model.id, sel, sourceMult, targetMult);
 
             askCardinality(newId, source, sourceMult, target, targetMult);
 

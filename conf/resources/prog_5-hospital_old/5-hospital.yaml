@@ -59,14 +59,30 @@ classDiagramPart:
   className: Krankenhaus
   classDiagram:
     classes:
-    - classType: CLASS
-      name: Patient
+    - classType: ABSTRACT
+      name: Person
       attributes:
       - {name: "id", type: "String"}
       - {name: "name", type: "String"}
+
+    - classType: CLASS
+      name: Doktor
+      methods:
+      - {name: "verschreiben(Patient)", type: "void"}
+
+    - classType: CLASS
+      name: Rezept
+      attributes:
+      - {name: "id", type: "String"}
+
+    - classType: CLASS
+      name: Patient
       methods:
       - {name: "entlassen(Station)", type: "void"}
       - {name: "aufnehmen(Station)", type: "void"}
+
+    - classType: CLASS
+      name: Krankenschwester
 
     - classType: CLASS
       name: Station
@@ -74,15 +90,60 @@ classDiagramPart:
       - {name: "nummer", type: "int"}
 
     - classType: CLASS
+      name: Medikament
+      attributes:
+      - {name: "id", type: "String"}
+      - {name: "name", type: "String"}
+
+    - classType: CLASS
       name: Krankenhaus
 
-    implementations: []
+    implementations:
+    - {subClass: Patient, superClass: Person}
+    - {subClass: Doktor, superClass: Person}
+    - {subClass: Krankenschwester, superClass: Person}
 
     associations:
+    - assocType: ASSOCIATION
+      firstEnd: Doktor
+      firstMult: SINGLE
+      secondEnd: Rezept
+      secondMult: UNBOUND
+
+    - assocType: ASSOCIATION
+      firstEnd: Doktor
+      firstMult: SINGLE
+      secondEnd: Patient
+      secondMult: UNBOUND
+
     - assocType: ASSOCIATION
       firstEnd: Station
       firstMult: SINGLE
       secondEnd: Patient
+      secondMult: UNBOUND
+
+    - assocType: ASSOCIATION
+      firstEnd: Station
+      firstMult: SINGLE
+      secondEnd: Krankenschwester
+      secondMult: UNBOUND
+
+    - assocType: ASSOCIATION
+      firstEnd: Station
+      firstMult: SINGLE
+      secondEnd: Doktor
+      secondMult: UNBOUND
+
+    - assocType: ASSOCIATION
+      firstEnd: Patient
+      firstMult: SINGLE
+      secondEnd: Rezept
+      secondMult: UNBOUND
+
+    - assocType: ASSOCIATION
+      firstEnd: Rezept
+      firstMult: SINGLE
+      secondEnd: Medikament
       secondMult: UNBOUND
 
     - assocType: COMPOSITION

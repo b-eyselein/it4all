@@ -13,8 +13,8 @@ def convert_test_input(base_data, input_json):
 
     # Instantiate all stations
     for (stations_index, alter_liste_station) in enumerate(input_json):
-        patients_on_station = [Patient('', '', patient_alter) for patient_alter in alter_liste_station]
-        stations.append(Station(stations_index, patienten=patients_on_station))
+        patients_on_station = [Patient('', '', patient_alter, []) for patient_alter in alter_liste_station]
+        stations.append(Station(stations_index, doktoren=[], krankenschwestern=[], patienten=patients_on_station))
 
     # Instantiate hospital, return
     return Krankenhaus(stations)
