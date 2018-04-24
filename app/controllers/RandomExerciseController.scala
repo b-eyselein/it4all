@@ -43,21 +43,4 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
       }
   }
 
-  def readLearningPaths(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      val readLearningPaths: Seq[LearningPath] = toolMain.readLearningPaths
-
-      repository.saveLearningPaths(readLearningPaths) map {
-        _ => Ok(views.html.admin.learningPathRead(user, readLearningPaths))
-      }
-  }
-
-  def learningPath(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      toolMain.futureLearningPathById(id) map {
-        case None     => BadRequest("No such learning path!")
-        case Some(lp) => Ok(views.html.learningPath(user, lp))
-      }
-  }
-
 }

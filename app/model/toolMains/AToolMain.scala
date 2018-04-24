@@ -6,8 +6,13 @@ import model.Enums.ToolState
 import model._
 import model.core.CoreConsts._
 import model.core._
-import model.learningPath.LearningPathTableDefs
+import model.learningPath.{LearningPath, LearningPathTableDefs, LearningPathYamlProtocol}
+import net.jcazevedo.moultingyaml._
+import play.api.Logger
 import play.api.mvc.Call
+
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 abstract class AToolMain(val urlPart: String) extends FileUtils {
 
@@ -34,6 +39,25 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
   val toolState: ToolState = ToolState.ALPHA
 
   val pluralName: String = "Aufgaben"
+
+  def readLearningPaths: Seq[LearningPath] = readAll(exerciseResourcesFolder / "learningPath.yaml") match {
+    case Failure(error)       => Seq.empty
+    case Success(fileContent) =>
+      LearningPathYamlProtocol.LearningPathYamlFormat.read(fileContent.parseYaml) match {
+        case Failure(error) =>
+          Logger.error("Fehler: ", error)
+          Seq.empty
+        case Success(read)  => Seq(read)
+      }
+  }
+
+  // DB
+
+  def futureLearningPaths: Future[Seq[LearningPath]] = tables.futureLearningPaths
+
+  def futureLearningPathById(id: Int): Future[Option[LearningPath]] = tables.futureLearningPathById(id)
+
+  def futureSaveLearningPaths(readLearningPaths: Seq[LearningPath]): Future[Boolean] = tables.futureSaveLearningPaths(readLearningPaths)
 
   // Folders
 

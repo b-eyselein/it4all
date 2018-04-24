@@ -21,14 +21,6 @@ abstract class RandomExerciseToolMain(urlPart: String) extends AToolMain(urlPart
 
   def exTypeFromUrl(exType: String): Option[PartType] = exParts.find(_.urlName == exType)
 
-  def readLearningPaths: Seq[LearningPath]
-
-  // DB
-
-  def futureLearningPaths: Future[Seq[LearningPath]] = tables.futureLearningPaths
-
-  def futureLearningPathById(id: Int): Future[Option[LearningPath]] = tables.futureLearningPathById(id)
-
   // Views
 
   def newExercise(user: User, exPart: PartType, option: Map[String, Seq[String]]): Html

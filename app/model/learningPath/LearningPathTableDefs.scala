@@ -23,7 +23,12 @@ trait LearningPathTableDefs extends TableDefs {
 
   // Queries
 
-  def futureLearningPaths: Future[Seq[LearningPath]] = Future(Seq.empty) // db.run(learningPaths.result)
+  def futureLearningPaths: Future[Seq[LearningPath]] = for {
+    pathBases <- db.run(learningPaths.result)
+    paths <- Future.sequence(pathBases map { case (id, title) =>
+      futureSectionsForPath(id) map (sections => LearningPath(id, title, sections))
+    })
+  } yield paths
 
   def futureLearningPathById(pathId: Int): Future[Option[LearningPath]] = for {
     maybeLpBase <- db.run(learningPaths.filter(_.id === pathId).result.headOption)
@@ -33,7 +38,7 @@ trait LearningPathTableDefs extends TableDefs {
   private def futureSectionsForPath(pathId: Int): Future[Seq[LearningPathSection]] =
     db.run(learningPathSections.filter(_.pathId === pathId).result)
 
-  def saveLearningPaths(learningPathsToSave: Seq[LearningPath]): Future[Boolean] = Future.sequence(learningPathsToSave map { lp =>
+  def futureSaveLearningPaths(learningPathsToSave: Seq[LearningPath]): Future[Boolean] = Future.sequence(learningPathsToSave map { lp =>
     for {
       // Delete old entry first
       _ <- db.run(learningPaths.filter(_.id === lp.id).delete)

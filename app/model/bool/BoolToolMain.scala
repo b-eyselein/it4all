@@ -6,17 +6,13 @@ import model._
 import model.bool.BoolConsts._
 import model.bool.BooleanQuestion._
 import model.core.EvaluationResult
-import model.learningPath.{LearningPath, LearningPathYamlProtocol}
+import model.learningPath.LearningPath
 import model.toolMains.RandomExerciseToolMain
-import net.jcazevedo.moultingyaml._
-import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
-import scala.language.implicitConversions
-import scala.util.{Failure, Success}
 
 @Singleton
 class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("bool") with JsonFormat {
@@ -82,17 +78,6 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
       question <- jsObj.arrayField(AssignmentsName, _.asObj flatMap readAssignmentsObject) map CreationQuestion
       withSol <- jsObj.boolField("withSol")
     } yield CreationQuestionResult(learnerFormula, question, withSol)
-  }
-
-  override def readLearningPaths: Seq[LearningPath] = readAll(exerciseResourcesFolder / "learningPath.yaml") match {
-    case Failure(error)       => Seq.empty
-    case Success(fileContent) =>
-      LearningPathYamlProtocol.LearningPathYamlFormat.read(fileContent.parseYaml) match {
-        case Failure(error) =>
-          Logger.error("Fehler: ", error)
-          Seq.empty
-        case Success(read)  => Seq(read)
-      }
   }
 
 }

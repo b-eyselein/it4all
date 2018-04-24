@@ -2,6 +2,7 @@ package controllers
 
 import model.User
 import model.core.{ExerciseFormMappings, FileUtils}
+import model.learningPath.LearningPath
 import model.toolMains.AToolMain
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
@@ -51,5 +52,21 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
       }
   }
 
+  def readLearningPaths(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      val readLearningPaths: Seq[LearningPath] = toolMain.readLearningPaths
+
+      toolMain.futureSaveLearningPaths(readLearningPaths) map {
+        _ => Ok(views.html.admin.learningPathRead(user, readLearningPaths))
+      }
+  }
+
+  def learningPath(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      toolMain.futureLearningPathById(id) map {
+        case None     => BadRequest("No such learning path!")
+        case Some(lp) => Ok(views.html.learningPath(user, lp, toolMain))
+      }
+  }
 
 }

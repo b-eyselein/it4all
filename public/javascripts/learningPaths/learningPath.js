@@ -3,10 +3,10 @@ let currentPart = 1;
 let maxPart;
 
 function nextPart() {
-    if (currentPart <= maxPart) {
-        currentPart++;
-        $('#sec_' + currentPart).prop('hidden', false);
-    } else {
+    currentPart++;
+    $('#sec_' + currentPart).prop('hidden', false);
+
+    if (currentPart >= maxPart) {
         $('#nextPartButton').prop('disabled', true);
     }
 }

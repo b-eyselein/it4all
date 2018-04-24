@@ -139,6 +139,4 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs) extends RandomExerciseTo
 
   private def numbaseFromString(str: String): Option[NumberBase] = Try(Some(NumberBase.valueOf(str))) getOrElse None
 
-  override def readLearningPaths: Seq[LearningPath] = ???
-
 }
