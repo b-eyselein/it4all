@@ -1,0 +1,30 @@
+@(user: model.User, learningPaths: Seq[model.learningPath.LearningPath])
+
+@main("Lernpfad eingelesen", Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Eingelesene Lernpfade</h1>
+        </div>
+
+        @for(learningPath <- learningPaths) {
+            <p>Titel: @learningPath.title</p>
+
+            @for(section <- learningPath.sections) {
+                <p>ID: @section.id</p>
+                <p>Titel: @section.title</p>
+
+                @section match {
+                    case ts: model.learningPath.TextSection => {
+                        <pre>@ts.text</pre>
+                    }
+                    case qs: model.learningPath.QuestionSection => {
+                        <pre>@qs.questions.map(_.toString).mkString("\n")</pre>
+                    }
+                }
+
+                <hr>
+                }
+
+        }
+    </div>
+}

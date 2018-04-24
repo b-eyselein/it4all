@@ -8,6 +8,7 @@ trait Consts {
   val authorName     = "author"
   val awaitedName    = "awaited"
 
+  val contentName     = "content"
   val correct         = "correct"
   val correctnessName = "correctness"
 
@@ -34,6 +35,9 @@ trait Consts {
   val pointsName = "points"
   val pwName     = "passwort"
   val pw2Name    = "passwort_wieder"
+
+  val questionsName    = "questions"
+  val questionTypeName = "questionType"
 
   val roleName = "role"
 

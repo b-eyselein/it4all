@@ -6,6 +6,8 @@ import model.Enums.ToolState
 import model._
 import model.core.CoreConsts._
 import model.core._
+import model.learningPath.LearningPathTableDefs
+import play.api.mvc.Call
 
 abstract class AToolMain(val urlPart: String) extends FileUtils {
 
@@ -13,11 +15,15 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   type R <: EvaluationResult
 
+  type Tables <: LearningPathTableDefs
+
   // Save this ToolMain
 
   ToolList.addTool(this)
 
   // Other members
+
+  val tables: Tables
 
   val toolname: String
 
@@ -29,19 +35,20 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   val pluralName: String = "Aufgaben"
 
-  val rootDir: String = "data"
+  // Folders
 
-  val resourcesFolder: Path = Paths.get("conf", "resources")
+  private val rootDir: String = "data"
+
+  private val resourcesFolder: Path = Paths.get("conf", "resources")
 
   lazy val exerciseResourcesFolder: Path = resourcesFolder / urlPart
 
-  lazy val exerciseRootDir: Path = Paths.get(rootDir, urlPart)
-
-  def sampleDirForExercise(id: Int): Path = exerciseRootDir / sampleSubDir / String.valueOf(id)
-
-  def templateDirForExercise(id: Int): Path = exerciseRootDir / templateSubDir / String.valueOf(id)
+  protected lazy val exerciseRootDir: Path = Paths.get(rootDir, urlPart)
 
   def solutionDirForExercise(username: String, id: Int): Path = exerciseRootDir / solutionsSubDir / username / String.valueOf(id)
 
+  // Calls
+
+  def indexCall: Call
 
 }

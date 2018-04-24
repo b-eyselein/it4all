@@ -2,25 +2,28 @@ package model.persistence
 
 import com.github.t3hnar.bcrypt._
 import model.Enums.{ExerciseState, Role, ShowHideAggregate}
+import model._
 import model.core.CoreConsts._
-import model.{HasBaseValues, _}
+import model.learningPath._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 trait TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
+
+  implicit val executionContext: ExecutionContext
 
   // Table queries
 
   val users = TableQuery[UsersTable]
 
   val pwHashes = TableQuery[PwHashesTable]
+
 
   val courses = TableQuery[CoursesTable]
 
@@ -34,7 +37,6 @@ trait TableDefs {
 
   def numOfCourses: Future[Int] = db.run(courses.size.result)
 
-
   // Reading
 
   def allUsers: Future[Seq[User]] = db.run(users.result)
@@ -46,21 +48,22 @@ trait TableDefs {
 
   def allCourses: Future[Seq[Course]] = db.run(courses.result)
 
-  def courseById(courseId: String)(implicit ec: ExecutionContext): Future[Option[Course]] = db.run(courses.filter(_.id === courseId).result.headOption)
+  def courseById(courseId: String): Future[Option[Course]] = db.run(courses.filter(_.id === courseId).result.headOption)
 
 
-  def coursesForUser(user: User)(implicit ec: ExecutionContext): Future[Seq[Course]] = db.run(courses.join(usersInCourses).on {
+  def coursesForUser(user: User): Future[Seq[Course]] = db.run(courses.join(usersInCourses).on {
     case (course, userInCourse) => course.id === userInCourse.courseId
   }.filter {
     case (_, userInCourse) => userInCourse.username === user.username
   }.map(_._1).result)
 
-  def userInCourse(user: User, course: Course)(implicit ec: ExecutionContext): Future[Option[UserInCourse]] =
+  def userInCourse(user: User, course: Course): Future[Option[UserInCourse]] =
     db.run(usersInCourses.filter(uInC => uInC.username === user.username && uInC.courseId === course.id).result.headOption)
+
 
   // Update
 
-  def updateUserRole(userToChangeName: String, newRole: Role)(implicit ec: ExecutionContext): Future[Boolean] =
+  def updateUserRole(userToChangeName: String, newRole: Role): Future[Boolean] =
     db.run(users.filter(_.username === userToChangeName).map(_.role).update(newRole)) map (_ => true) recover { case e: Throwable =>
       Logger.error(s"Could not update std role of user $userToChangeName to ${newRole.name}", e)
       false
@@ -74,25 +77,25 @@ trait TableDefs {
 
   // Insert
 
-  def saveUser(user: User)(implicit ec: ExecutionContext): Future[Boolean] = db.run(users += user) map (_ => true) recover {
+  def saveUser(user: User): Future[Boolean] = db.run(users += user) map (_ => true) recover {
     case e: Throwable =>
       Logger.error(s"Could not save user $user", e)
       false
   }
 
-  def savePwHash(pwHash: PwHash)(implicit ec: ExecutionContext): Future[Boolean] = db.run(pwHashes += pwHash) map (_ => true) recover {
+  def savePwHash(pwHash: PwHash): Future[Boolean] = db.run(pwHashes += pwHash) map (_ => true) recover {
     case e: Throwable =>
       Logger.error(s"Could not save pwHash $pwHash", e)
       false
   }
 
-  def saveCourse(course: Course)(implicit ec: ExecutionContext): Future[Boolean] = db.run(courses += course) map (_ => true) recover {
+  def saveCourse(course: Course): Future[Boolean] = db.run(courses += course) map (_ => true) recover {
     case e: Throwable =>
       Logger.error("Could not save course", e)
       false
   }
 
-  def addUserToCourse(userInCourse: UserInCourse)(implicit ec: ExecutionContext): Future[Boolean] =
+  def addUserToCourse(userInCourse: UserInCourse): Future[Boolean] =
     db.run(usersInCourses += userInCourse) map (_ => true) recover {
       case e: Throwable =>
         Logger.error("Could not add user to course", e)
@@ -101,7 +104,7 @@ trait TableDefs {
 
   // Abstract queries
 
-  protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any])(implicit ec: ExecutionContext): Future[Boolean] = Future.sequence(seqToSave map {
+  protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any]): Future[Boolean] = Future.sequence(seqToSave map {
     toSave =>
       save(toSave) map (_ => true) recover { case e: Exception =>
         Logger.error("Could not perform save option", e)
@@ -109,6 +112,11 @@ trait TableDefs {
       }
   }) map (_ forall identity)
 
+  protected def saveSingle(performSave: => Future[Any]): Future[Boolean] = performSave map (_ => true) recover {
+    case e: Throwable =>
+      Logger.error("Could not perform save option", e)
+      false
+  }
 
   // Column types
 
@@ -121,15 +129,18 @@ trait TableDefs {
   implicit val exercisetypeColumnType: BaseColumnType[ExerciseState] =
     MappedColumnType.base[ExerciseState, String](_.name, str => ExerciseState.byString(str) getOrElse ExerciseState.CREATED)
 
+  implicit val learningPathSectionTypeColumnType: BaseColumnType[LearningPathSectionType] =
+    MappedColumnType.base[LearningPathSectionType, String](_.entryName, str => LearningPathSectionType.withNameOption(str) getOrElse LearningPathSectionType.TextSectionType)
+
   // Tables
+
+  // Users
 
   class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 
     def userType = column[Int]("user_type")
 
     def username = column[String]("username", O.PrimaryKey)
-
-    //    def pwHash = column[String]("pw_hash")
 
     def role = column[Role]("std_role")
 
@@ -164,6 +175,8 @@ trait TableDefs {
 
   }
 
+  // Courses
+
   class CoursesTable(tag: Tag) extends Table[Course](tag, "courses") {
 
     def id = column[String](idName, O.PrimaryKey)
@@ -174,8 +187,6 @@ trait TableDefs {
     override def * = (id, courseName) <> (Course.tupled, Course.unapply)
 
   }
-
-  //  case class UserInCourse(username: String, courseId: String, role: Role = Role.RoleUser)
 
   class UsersInCoursesTable(tag: Tag) extends Table[UserInCourse](tag, "users_in_courses") {
 
@@ -196,6 +207,8 @@ trait TableDefs {
     override def * = (username, courseId, role) <> (UserInCourse.tupled, UserInCourse.unapply)
 
   }
+
+  // Tipps
 
   class TippsTable(tag: Tag) extends Table[Tipp](tag, "tipps") {
 

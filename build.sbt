@@ -4,11 +4,13 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.5"
 
 scalacOptions ++= Seq("-feature")
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
+  .settings(packageName in Universal := s"${name.value}")
+
 
 // Resolver for JFrog Uni Wue
 resolvers ++= Seq(
@@ -21,6 +23,9 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
 
   "mysql" % "mysql-connector-java" % "8.0.8-dmr",
+
+  // Better enums for scala
+  "com.beachape" %% "enumeratum" % "1.5.13",
 
   // Dependency injection
   guice,

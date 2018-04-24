@@ -35,6 +35,26 @@ CREATE TABLE IF NOT EXISTS users_in_courses (
     ON DELETE CASCADE
 );
 
+# Learning paths
+
+CREATE TABLE IF NOT EXISTS learning_paths (
+  id    INT PRIMARY KEY,
+  title VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS learning_path_sections (
+  id           INT,
+  path_id      INT,
+  section_type VARCHAR(30),
+  title        VARCHAR(60),
+  content      TEXT,
+
+  PRIMARY KEY (id, path_id),
+  FOREIGN KEY (path_id) REFERENCES learning_paths (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Blanks
 
 CREATE TABLE IF NOT EXISTS blanks_exercises (
@@ -604,6 +624,10 @@ DROP TABLE IF EXISTS blanks_samples;
 DROP TABLE IF EXISTS blanks_exercises;
 
 # General
+
+DROP TABLE IF EXISTS learning_path_sections;
+
+DROP TABLE IF EXISTS learning_paths;
 
 DROP TABLE IF EXISTS users_in_courses;
 

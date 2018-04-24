@@ -5,6 +5,8 @@ import java.nio.file.Path
 import model.core.{FileUtils, NoSuchExerciseException, ReadAndSaveResult}
 import model.{FileCompleteEx, User}
 import play.api.libs.Files.TemporaryFile
+import model.core.CoreConsts._
+import play.api.mvc.Call
 import play.api.mvc.MultipartFormData.FilePart
 import play.twirl.api.Html
 
@@ -31,6 +33,14 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
   // Other members
 
   val fileTypes: Map[String, String]
+
+  // Paths
+
+  def sampleDirForExercise(id: Int): Path = exerciseRootDir / sampleSubDir / String.valueOf(id)
+
+  def templateDirForExercise(id: Int): Path = exerciseRootDir / templateSubDir / String.valueOf(id)
+
+  // Views
 
   def renderExercise(user: User, exercise: CompExType, fileEnding: String): Html
 
@@ -68,5 +78,9 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
 
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
     views.html.admin.fileExes.fileExerciseAdminListView(admin, exes, this)
+
+  // Calls
+
+  override def indexCall: Call = controllers.routes.FileExerciseController.index(this.urlPart)
 
 }

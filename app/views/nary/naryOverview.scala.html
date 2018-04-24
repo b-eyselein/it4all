@@ -1,4 +1,4 @@
-@(user: model.User, toolMain: model.nary.NaryToolMain)
+@(user: model.User, toolMain: model.nary.NaryToolMain, learningPathBases: Seq[model.learningPath.LearningPath])
 
     @newExUrl(part: model.nary.NaryExPart) = @{
         routes.RandomExerciseController.newExercise(toolMain.urlPart, part.urlName)
@@ -6,20 +6,20 @@
 
     @scripts = {
         <script>
-            $(document).ready(function () {
-                $('#convButton').click(function () {
-                    window.location = '@newExUrl(model.nary.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
-                });
+                $(document).ready(function () {
+                    $('#convButton').click(function () {
+                        window.location = '@newExUrl(model.nary.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
+                    });
 
-                $('#addButton').click(function () {
-                    window.location = '@newExUrl(model.nary.NaryAdditionExPart)?base=' + $('#addBase').val();
-                });
+                    $('#addButton').click(function () {
+                        window.location = '@newExUrl(model.nary.NaryAdditionExPart)?base=' + $('#addBase').val();
+                    });
 
-                $('#twoCompButton').click(function () {
-                    window.location = '@newExUrl(model.nary.TwoComplementExPart)?verbose=' + $('#twoComp').val();
+                    $('#twoCompButton').click(function () {
+                        window.location = '@newExUrl(model.nary.TwoComplementExPart)?verbose=' + $('#twoComp').val();
+                    });
                 });
-            });
-    </script>
+        </script>
     }
 
     @main("Zahlensysteme", Some(user), scripts) {

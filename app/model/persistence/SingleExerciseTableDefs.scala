@@ -8,7 +8,7 @@ import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType <: PartSolution, PartType <: ExPart] extends IdExerciseTableDefs[Ex, CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
@@ -28,7 +28,7 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
   def futureOldSolution(username: String, exerciseId: Int, part: PartType): Future[Option[SolType]] =
     db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId && sol.part === part).result.headOption)
 
-  def futureSaveSolution(sol: SolType)(implicit ec: ExecutionContext): Future[Boolean] =
+  def futureSaveSolution(sol: SolType): Future[Boolean] =
     db.run(solTable insertOrUpdate sol) map (_ => true) recover {
       case e: Exception =>
         Logger.error("Could not save solution", e)

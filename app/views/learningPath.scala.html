@@ -1,0 +1,60 @@
+@(user: model.User, learningPath: model.learningPath.LearningPath)
+
+@title = @{
+    "Lernpfad: " + learningPath.title
+}
+
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/learningPaths/learningPath.js")"></script>
+}
+
+@displaySection(section: model.learningPath.LearningPathSection, hidden: String = "hidden") = {
+    <section id="sec_@section.id" @hidden>
+        <h2>@section.title</h2>
+
+        @section match {
+            case ts: model.learningPath.TextSection => {
+                @Html(ts.text)
+            }
+            case qs: model.learningPath.QuestionSection => {
+                @for(qTriple <- qs.questions grouped 4) {
+                    <div class="row">
+                    @for(q <- qTriple) {
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <button class="form-control" onclick="correctTrueFalse(this)" data-value="false">Falsch</button>
+                                    <span class="input-group-addon"><code data-solution="@q.solution">@Html(q.questionText)</code></span>
+                                    <button class="form-control" onclick="correctTrueFalse(this)" data-value="true">Wahr</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    </div>
+                }
+            }
+        }
+
+
+        <hr>
+
+    </section>
+
+}
+
+@main(title, Some(user), scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
+        </div>
+
+        @displaySection(learningPath.sections.head, hidden = "")
+
+        @for(section <- learningPath.sections.tail sortBy (_.id)) {
+            @displaySection(section)
+        }
+
+        <button class="btn btn-primary btn-block" id="nextPartButton" onclick="nextPart()">Nächster Teil</button>
+
+    </div>
+}

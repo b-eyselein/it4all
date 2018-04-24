@@ -4,10 +4,7 @@ import model.Enums.{Role, ShowHideAggregate}
 
 import scala.util.Random
 
-object Models {
-
-}
-
+// Users
 
 sealed trait User {
 
@@ -25,11 +22,13 @@ case class RegisteredUser(username: String, stdRole: Role = Role.RoleUser, showH
 
 case class PwHash(username: String, pwHash: String)
 
+// Courses
 
 case class Course(id: String, courseName: String)
 
 case class UserInCourse(username: String, courseId: String, role: Role = Role.RoleUser)
 
+// Tipps
 
 object TippHelper {
 

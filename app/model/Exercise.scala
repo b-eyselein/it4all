@@ -102,12 +102,6 @@ trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteE
 
   def sampleFilename: String
 
-  def templateFilePath(toolMain: AToolMain, fileEnding: String): Path = toolMain.templateDirForExercise(ex.id) / (templateFilename + "." + fileEnding)
-
-  def sampleFilePath(toolMain: AToolMain, fileEnding: String): Path = toolMain.sampleDirForExercise(ex.id) / (sampleFilename + "." + fileEnding)
-
-  def available(toolMain: AToolMain, fileEnding: String): Boolean = templateFilePath(toolMain, fileEnding).toFile.exists && sampleFilePath(toolMain, fileEnding).toFile.exists
-
 }
 
 trait CompleteExInColl[Ex <: Exercise] extends CompleteEx[Ex]

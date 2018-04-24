@@ -100,7 +100,8 @@ object DockerConnector {
                     RunContainerError(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
                 }
 
-                if (deleteContainerAfterRun) {
+                if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
+                  // Do not delete failed containers for now
                   val containerDeleted = deleteContainer(containerId)
                   if (containerDeleted.isFailure)
                     Logger.error("Could not delete container!")

@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
+import model.learningPath.LearningPath
 import model.toolMains.{RandomExerciseToolMain, ToolList}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{ControllerComponents, EssentialAction}
@@ -22,8 +23,8 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
 
   // Routes
 
-  def index(toolType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request => Ok(toolMain.index(user))
+  def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request => toolMain.futureLearningPaths map (paths => Ok(toolMain.index(user, paths)))
   }
 
   def newExercise(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
@@ -39,6 +40,23 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
       toolMain.exTypeFromUrl(exType) match {
         case None         => BadRequest(s"There is no exercise part >>$exType<<")
         case Some(exPart) => Ok(toolMain.checkSolution(user, exPart, request))
+      }
+  }
+
+  def readLearningPaths(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      val readLearningPaths: Seq[LearningPath] = toolMain.readLearningPaths
+
+      repository.saveLearningPaths(readLearningPaths) map {
+        _ => Ok(views.html.admin.learningPathRead(user, readLearningPaths))
+      }
+  }
+
+  def learningPath(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      toolMain.futureLearningPathById(id) map {
+        case None     => BadRequest("No such learning path!")
+        case Some(lp) => Ok(views.html.learningPath(user, lp))
       }
   }
 

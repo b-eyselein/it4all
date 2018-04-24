@@ -27,7 +27,7 @@ case class MindmapExercise(override val id: Int, override val title: String, ove
 
 }
 
-class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with FileExesTableDefs[MindmapExercise, MindmapExercise] {
 
   import profile.api._
@@ -40,9 +40,9 @@ class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigP
 
   // Queries
 
-  override def completeExForEx(ex: MindmapExercise)(implicit ec: ExecutionContext): Future[MindmapExercise] = Future(ex)
+  override def completeExForEx(ex: MindmapExercise): Future[MindmapExercise] = Future(ex)
 
-  override def saveExerciseRest(compEx: MindmapExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
+  override def saveExerciseRest(compEx: MindmapExercise): Future[Boolean] = Future(true)
 
   // Table Defs
 

@@ -40,7 +40,7 @@ case class BlanksSolution(username: String, exerciseId: Int, part: BlanksExPart,
 
 // Table definitions
 
-class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[BlanksExercise, BlanksCompleteExercise, BlanksSolution, BlanksExPart] {
 
   import profile.api._
@@ -57,10 +57,9 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   val blanksSamples = TableQuery[BlanksSampleAnswersTable]
 
-  override def completeExForEx(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[BlanksCompleteExercise] =
-    samplesForExercise(ex) map (samples => BlanksCompleteExercise(ex, samples))
+  override def completeExForEx(ex: BlanksExercise): Future[BlanksCompleteExercise] = samplesForExercise(ex) map (samples => BlanksCompleteExercise(ex, samples))
 
-  override protected def saveExerciseRest(compEx: BlanksCompleteExercise)(implicit ec: ExecutionContext): Future[Boolean] = saveSeq[BlanksAnswer](compEx.samples, a => db.run(blanksSamples += a))
+  override protected def saveExerciseRest(compEx: BlanksCompleteExercise): Future[Boolean] = saveSeq[BlanksAnswer](compEx.samples, a => db.run(blanksSamples += a))
 
   // Reading
 
