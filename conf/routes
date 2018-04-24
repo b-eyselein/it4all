@@ -147,7 +147,7 @@ GET           /:toolType/index                                         controlle
 GET           /:toolType/learningPaths/read                            controllers.MainExerciseController.readLearningPaths(toolType: String)
 GET           /:toolType/learningPaths/:id                             controllers.MainExerciseController.learningPath(toolType: String, id: Int)
 
-GET           /:toolType/adminIndex                                    controllers.MainExerciseController.adminIndex(toolType: String)
+GET           /:toolType/admin/index                                    controllers.MainExerciseController.adminIndex(toolType: String)
 
 # Evaluation
 GET           /eval                                                    controllers.EvaluationController.index

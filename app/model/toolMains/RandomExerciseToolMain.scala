@@ -24,7 +24,7 @@ abstract class RandomExerciseToolMain(urlPart: String)(implicit ec: ExecutionCon
 
   def newExercise(user: User, exPart: PartType, option: Map[String, Seq[String]]): Html
 
-  override def adminIndexView(admin: User): Future[Html] = Future(new Html("TODO!"))
+  override def adminIndexView(admin: User): Future[Html] = Future(views.html.admin.randomExes.randomExerciseAdminIndex(admin, statistics = Html(""), this))
 
   // Correction
 

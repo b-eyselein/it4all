@@ -101,7 +101,9 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   override def index(user: User, learningPaths: Seq[LearningPath]): Html =
     views.html.idExercises.idExerciseIndex(user, learningPaths, this)
 
-  def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
+  override def adminIndexView(admin: User): Future[Html] = statistics map { stats =>
+    views.html.admin.idExes.idExerciseAdminIndex(admin, stats, this)
+  }
 
   override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
     views.html.admin.idExes.idExercisePreview(user, read, this)
@@ -109,9 +111,8 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
     views.html.admin.idExes.idExerciseAdminListView(admin, exes, this)
 
-  override def adminIndexView(admin: User): Future[Html] = statistics map { stats =>
-    views.html.admin.idExes.idExerciseAdminMain(admin, stats, this)
-  }
+
+  def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
 
   // Calls
 

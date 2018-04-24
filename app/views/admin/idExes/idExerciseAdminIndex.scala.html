@@ -21,12 +21,12 @@
             <h2>Verwaltung der @toolMainObject.pluralName</h2>
 
             <div class="form-group">
-                <a class="btn btn-default btn-block" href="@routes.FileExerciseController.adminExerciseList(toolMainObject.urlPart)">
+                <a class="btn btn-default btn-block" href="@routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)">
                     Übersicht über alle Aufgaben</a>
             </div>
 
             <div class="form-group">
-                <a class="btn btn-default btn-block" href="@routes.FileExerciseController.adminNewExerciseForm(toolMainObject.urlPart)">
+                <a class="btn btn-default btn-block" href="@routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)">
                     Neue Aufgabe erstellen</a>
             </div>
 
@@ -37,13 +37,14 @@
 
             <div class="form-group">
                 <div class="btn-group btn-group-justified">
-                    <a class="btn btn-default" href="@routes.FileExerciseController.adminExportExercises(toolMainObject.urlPart)">
+                    <a class="btn btn-default" href="@routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)">
                         Aufgaben als YAML exportieren</a>
-                    <a class="btn btn-default" href="@routes.FileExerciseController.adminImportToRead(toolMainObject.urlPart)">
+                    <a class="btn btn-default" href="@routes.ExerciseController.adminImportToRead(toolMainObject.urlPart)">
                         Aufgaben aus YAML importieren</a>
                 </div>
             </div>
         </section>
+
 
         <hr>
 
