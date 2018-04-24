@@ -36,10 +36,6 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Admin
 
-  def adminIndex(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
-    implicit request => toolMain.statistics map (stats => Ok(views.html.admin.collExes.collectionAdminMain(admin, stats, toolMain)))
-  }
-
   def adminExportCollections(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request => toolMain.yamlString map (content => Ok(views.html.admin.export.render(admin, content, toolMain)))
   }
@@ -125,7 +121,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // User
 
-//  def index(tool: String): EssentialAction = collectionList(tool, page = 1)
+  //  def index(tool: String): EssentialAction = collectionList(tool, page = 1)
 
   def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>

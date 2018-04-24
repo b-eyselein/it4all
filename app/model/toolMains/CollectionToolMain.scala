@@ -133,7 +133,7 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
     views.html.collectionExercises.collectionExerciseIndex(user, learningPaths, this)
 
   override def adminIndexView(admin: User): Future[Html] = statistics map {
-    stats => views.html.admin.collExes.collectionAdminMain(admin, stats, this)
+    stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this)
   }
 
   def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int): Future[Html]

@@ -12,9 +12,7 @@
 
         <section id="statistics">
             <h2>Statistiken</h2>
-            <ul>
-            @statistics
-            </ul>
+            <ul>@statistics</ul>
         </section>
 
         <hr>
@@ -42,7 +40,8 @@
 
         <hr>
 
-        <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">Zu den @toolMainObject.collectionPluralName</a>
+        <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
+            Zu den @toolMainObject.collectionPluralName</a>
 
     </div>
 }

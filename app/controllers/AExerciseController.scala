@@ -2,7 +2,6 @@ package controllers
 
 import model.User
 import model.core.{ExerciseFormMappings, FileUtils}
-import model.learningPath.LearningPath
 import model.toolMains.AToolMain
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._

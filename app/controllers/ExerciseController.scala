@@ -80,11 +80,6 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
-  // Views
-
-  override protected def adminIndexView(admin: User, stats: Html, toolMain: IdExerciseToolMain): Html =
-    views.html.admin.idExes.idExerciseAdminMain(admin, stats, toolMain)
-
   // Other routes
 
   def umlClassDiag(id: Int, partStr: String): EssentialAction = futureWithUser { user =>

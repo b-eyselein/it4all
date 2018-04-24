@@ -27,10 +27,6 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
 
   // Admin
 
-  def adminIndex(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.statistics map (stats => Ok(adminIndexView(admin, stats, toolMain)))
-  }
-
   def adminExportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request => toolMain.yamlString map (yaml => Ok(views.html.admin.export(admin, yaml, toolMain)))
   }
@@ -120,13 +116,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
     implicit request => ???
   }
 
-  // Admin views
-
-  protected def adminIndexView(admin: User, stats: Html, toolMain: ToolMainType): Html
-
-  // User
-
-//  def index(toolType: String): EssentialAction = exerciseList(toolType, page = 1)
+  // Views
 
   def exerciseList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>

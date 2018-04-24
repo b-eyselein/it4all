@@ -66,9 +66,4 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
       }
   }
 
-  // Views
-
-  override protected def adminIndexView(admin: User, stats: Html, toolMain: FileExerciseToolMain): Html =
-    views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, toolMain)
-
 }
