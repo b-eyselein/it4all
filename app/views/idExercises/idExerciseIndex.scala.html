@@ -15,7 +15,7 @@
                 <h2>Lernpfade</h2>
 
                 @for(learningPath <- learningPaths) {
-                    <a href="@routes.ExerciseController.learningPath(toolMain.urlPart, learningPath.id)"
+                    <a href="@routes.MainExerciseController.learningPath(toolMain.urlPart, learningPath.id)"
                     class="btn btn-primary btn-block">Lernpfad @learningPath.title</a>
                 }
             </section>

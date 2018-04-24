@@ -132,6 +132,10 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
   override def index(user: User, learningPaths: Seq[LearningPath]): Html =
     views.html.collectionExercises.collectionExerciseIndex(user, learningPaths, this)
 
+  override def adminIndexView(admin: User): Future[Html] = statistics map {
+    stats => views.html.admin.collExes.collectionAdminMain(admin, stats, this)
+  }
+
   def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int): Future[Html]
 
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
@@ -171,6 +175,6 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.CollectionController.index(this.urlPart)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
 
 }

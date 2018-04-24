@@ -29,7 +29,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
     implicit request =>
       toolMain.futureCompleteExById(id) map {
         case Some(exercise) => Ok(toolMain.renderExercise(user, exercise, fileExtension))
-        case None           => Redirect(routes.FileExerciseController.index(toolMain.urlPart))
+        case None           => Redirect(routes.MainExerciseController.index(toolMain.urlPart))
       }
   }
 
@@ -52,7 +52,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
     implicit request =>
       toolMain.futureCompleteExById(id) map {
         case Some(exercise) => Ok.sendFile((toolMain.templateDirForExercise(exercise.id) / (exercise.templateFilename + "." + fileExtension)).toFile)
-        case None           => Redirect(routes.FileExerciseController.index(toolMain.urlPart))
+        case None           => Redirect(routes.MainExerciseController.index(toolMain.urlPart))
       }
   }
 

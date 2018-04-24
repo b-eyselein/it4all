@@ -10,6 +10,24 @@
             <h1>@title</h1>
         </div>
 
-        todo...
+        @if(learningPaths.nonEmpty) {
+            <section>
+                <h2>Lernpfade</h2>
+
+                @for(learningPath <- learningPaths) {
+                    <a href="@routes.MainExerciseController.learningPath(toolMain.urlPart, learningPath.id)"
+                    class="btn btn-primary btn-block">Lernpfad @learningPath.title</a>
+                }
+            </section>
+
+
+            <hr>
+        }
+
+        <div class="form-group">
+            <a class="btn btn-primary btn-block" href="@routes.CollectionController.collectionList(toolMain.urlPart)">
+                Zu den Übungsaufgabensammlungen</a>
+        </div>
+
     </div>
 }

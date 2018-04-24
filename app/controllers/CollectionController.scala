@@ -139,7 +139,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def collection(toolType: String, id: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCompleteCollById(id) map {
-        case None       => Redirect(controllers.routes.CollectionController.index(toolMain.urlPart))
+        case None       => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
         case Some(coll) =>
           val exercises = coll.exercises.filter(_.state == ExerciseState.APPROVED)
 

@@ -46,6 +46,10 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
   override def index(user: User, learningPaths: Seq[LearningPath]): Html =
     views.html.fileExercises.fileExerciseIndex(user, learningPaths, this)
 
+  override def adminIndexView(admin: User): Future[Html] = statistics map {
+    stats => views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, this)
+  }
+
   override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
     views.html.admin.fileExes.fileExercisePreview(user, read, this)
 
@@ -84,6 +88,6 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.FileExerciseController.index(this.urlPart)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
 
 }

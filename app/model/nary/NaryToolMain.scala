@@ -12,11 +12,12 @@ import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
+import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class NaryToolMain @Inject()(val tables: NaryTableDefs) extends RandomExerciseToolMain("nary") with JsonFormat {
+class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("nary") with JsonFormat {
 
   // Abstract types
 

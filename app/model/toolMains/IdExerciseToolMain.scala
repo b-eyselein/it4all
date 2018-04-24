@@ -109,8 +109,12 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
     views.html.admin.idExes.idExerciseAdminListView(admin, exes, this)
 
+  override def adminIndexView(admin: User): Future[Html] = statistics map { stats =>
+    views.html.admin.idExes.idExerciseAdminMain(admin, stats, this)
+  }
+
   // Calls
 
-  override def indexCall: Call = controllers.routes.ExerciseController.index(this.urlPart)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
 
 }
