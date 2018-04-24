@@ -4,11 +4,13 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.5"
 
 scalacOptions ++= Seq("-feature")
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
+  .settings(packageName in Universal := s"${name.value}")
+
 
 // Resolver for JFrog Uni Wue
 resolvers ++= Seq(
@@ -25,7 +27,7 @@ libraryDependencies ++= Seq(
   // Better enums for scala
   "com.beachape" %% "enumeratum" % "1.5.13",
 
-    // Dependency injection
+  // Dependency injection
   guice,
   "net.codingwell" %% "scala-guice" % "4.2.0",
 
