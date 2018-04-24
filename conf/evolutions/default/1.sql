@@ -38,19 +38,23 @@ CREATE TABLE IF NOT EXISTS users_in_courses (
 # Learning paths
 
 CREATE TABLE IF NOT EXISTS learning_paths (
-  id    INT PRIMARY KEY,
-  title VARCHAR(50)
+  tool_url VARCHAR(10),
+  id    INT,
+  title VARCHAR(50),
+
+  PRIMARY KEY(tool_url, id)
 );
 
 CREATE TABLE IF NOT EXISTS learning_path_sections (
   id           INT,
+  tool_url VARCHAR(10),
   path_id      INT,
   section_type VARCHAR(30),
   title        VARCHAR(60),
   content      TEXT,
 
-  PRIMARY KEY (id, path_id),
-  FOREIGN KEY (path_id) REFERENCES learning_paths (id)
+  PRIMARY KEY (id, tool_url, path_id),
+  FOREIGN KEY (tool_url, path_id) REFERENCES learning_paths (tool_url, id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );

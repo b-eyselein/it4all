@@ -63,7 +63,7 @@
 
         @for(table <- tables) {
             @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
-                @views.html.sql.resultTable.render(table)
+                @views.html.collectionExercises.sql.resultTable.render(table)
             }
         }
 

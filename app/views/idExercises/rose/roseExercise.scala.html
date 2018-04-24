@@ -1,0 +1,129 @@
+@(user: model.User, exercise: model.rose.RoseCompleteEx, oldSolution: String)
+
+    @scripts = {
+        @* Javascript Routes *@
+        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+    @core.editorScripts.render("python", 20, 40)
+
+        <script src="@routes.Assets.versioned("javascripts/rose/roseExercise.js")"></script>
+
+            <!-- Scripts for simulation! -->
+        <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
+        <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
+        <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
+
+        <script src="@routes.Assets.versioned("javascripts/rose/coordinates.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/rose/simulatorElements.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/rose/simulator.js")"></script>
+    }
+
+    @main("Rose Test", Some(user), scripts) {
+
+        @core.helperTemplates.modal("API des Roboters", "robot_api", "lg") {
+            @views.html.idExercises.rose.roseAPI.render()
+        }
+
+        <div class="container" id="fullsc">
+
+            <input type="number" hidden id="exerciseId" value="@exercise.ex.id" title="hidden">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Aufgabenstellung</h2>
+
+                    <hr>
+
+                    <div class="well">@exercise.ex.text</div>
+
+                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#robot_api">
+                        Roboter API</button>
+
+                    <hr>
+
+                    <button type="button" class="btn btn-primary btn-block" id="testBtn">Lösung testen</button>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <h2>Editor</h2>
+
+                    <hr>
+
+                        <!-- Start Editor -->
+                    <div class="form-group">
+                        <div class="input-group">
+
+                            <button type="button" class="form-control" onclick="changeFontSize(-2);">
+                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                            </button>
+
+                            <span class="input-group-addon">Schriftgröße: <span id="fontSize">16</span> px</span>
+
+                            <button type="button" class="form-control" onclick="changeFontSize(+2);">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div id="editor" class="form-control">@oldSolution</div>
+                        <!-- End Editor -->
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div id="correction"></div>
+
+            <div class="row">
+
+                <div class="col-md-2">
+
+                    <div class="form-group">
+                        <div class="btn-group btn-group-justified">
+                            <div class="btn-group">
+                                <button type="button" class="form-control btn-default" onclick="stepBack()" id="stepBackBtn" disabled >&lt;</button>
+                            </div>
+                            <div class="btn-group">
+
+                                <button type="button" class="form-control btn-default" onclick="stepOn()" id="stepOnBtn">&gt;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary btn-block" onclick="play()" id="playBtn" disabled>
+                            Play</button>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default btn-block" onclick="pause()" id="pauseBtn" disabled>
+                            Pause</button>
+                    </div>
+
+
+                    <div class="well">Schritt: <span id="stepSpan">0</span></div>
+                </div>
+
+                <div class="col-md-10">
+
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <h2>Lernerroboter</h2>
+                            <div id="userField"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <h2>Musterroboter</h2>
+                            <div id="sampleField"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    }

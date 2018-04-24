@@ -19,7 +19,8 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
 
   val NewLine = "\n"
 
-  override def preview: Html = views.html.rose.rosePreview.render(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.idExercises.rose.rosePreview.render(this)
 
   override def hasPart(partType: RoseExPart): Boolean = true
 

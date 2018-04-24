@@ -15,7 +15,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]) extends PartsCompleteEx[BlanksExercise, BlanksExPart] {
 
-  override def preview: Html = views.html.blanks.blanksPreview(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.idExercises.blanks.blanksPreview(this)
 
   override def hasPart(partType: BlanksExPart): Boolean = true
 
@@ -51,23 +52,26 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   override protected type SolTableDef = BlanksSolutionsTable
 
-  override protected val exTable = TableQuery[BlanksExercisesTable]
+  // Table queries
 
+  override protected val exTable  = TableQuery[BlanksExercisesTable]
   override protected val solTable = TableQuery[BlanksSolutionsTable]
 
-  val blanksSamples = TableQuery[BlanksSampleAnswersTable]
+  private val blanksSamples = TableQuery[BlanksSampleAnswersTable]
+
+  //Reading
 
   override def completeExForEx(ex: BlanksExercise): Future[BlanksCompleteExercise] = samplesForExercise(ex) map (samples => BlanksCompleteExercise(ex, samples))
 
-  override protected def saveExerciseRest(compEx: BlanksCompleteExercise): Future[Boolean] = saveSeq[BlanksAnswer](compEx.samples, a => db.run(blanksSamples += a))
-
-  // Reading
-
   private def samplesForExercise(ex: BlanksExercise): Future[Seq[BlanksAnswer]] = db.run(blanksSamples.filter(_.exerciseId === ex.id).result)
+
+  // Saving
+
+  override protected def saveExerciseRest(compEx: BlanksCompleteExercise): Future[Boolean] = saveSeq[BlanksAnswer](compEx.samples, a => db.run(blanksSamples += a))
 
   // Column types
 
-  implicit val givenAnswerColumnType: BaseColumnType[Seq[BlanksAnswer]] =
+  private implicit val givenAnswerColumnType: BaseColumnType[Seq[BlanksAnswer]] =
     MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
 
   override protected implicit val partTypeColumnType: BaseColumnType[BlanksExPart] =
@@ -89,7 +93,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   }
 
-  class BlanksSampleAnswersTable(tag: Tag) extends Table[BlanksAnswer](tag, "blanks_samples") {
+  private class BlanksSampleAnswersTable(tag: Tag) extends Table[BlanksAnswer](tag, "blanks_samples") {
 
     def id = column[Int]("id")
 
@@ -116,5 +120,3 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   }
 
 }
-
-

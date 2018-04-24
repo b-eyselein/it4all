@@ -38,11 +38,11 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
   // Views
 
   override def index(user: User, learningPathBases: Seq[LearningPath]): Html =
-    views.html.bool.boolOverview(user, this, learningPathBases)
+    views.html.randomExercises.bool.boolOverview(user, this, learningPathBases)
 
   override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]]): Html = exType match {
-    case FormulaCreation => views.html.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
-    case TableFillout    => views.html.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
+    case FormulaCreation => views.html.randomExercises.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
+    case TableFillout    => views.html.randomExercises.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
   }
 
   // Handlers

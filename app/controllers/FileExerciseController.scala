@@ -3,6 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model.User
 import model.core._
+import model.learningPath.LearningPath
 import model.spread.SpreadConsts
 import model.toolMains.{FileExerciseToolMain, ToolList}
 import play.api.db.slick.DatabaseConfigProvider
@@ -66,6 +67,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
   }
 
   // Views
+
   override protected def adminIndexView(admin: User, stats: Html, toolMain: FileExerciseToolMain): Html =
     views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, toolMain)
 

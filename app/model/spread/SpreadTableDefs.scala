@@ -20,7 +20,8 @@ case class SpreadExercise(override val id: Int, override val title: String, over
 
   override def ex: SpreadExercise = this
 
-  override def preview: Html = views.html.spread.spreadPreview.render(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.fileExercises.spread.spreadPreview.render(this)
 
   override def hasPart(partType: SpreadExPart): Boolean = true
 

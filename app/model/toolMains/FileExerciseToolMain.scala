@@ -6,6 +6,7 @@ import model.core.{FileUtils, NoSuchExerciseException, ReadAndSaveResult}
 import model.{FileCompleteEx, User}
 import play.api.libs.Files.TemporaryFile
 import model.core.CoreConsts._
+import model.learningPath.LearningPath
 import play.api.mvc.Call
 import play.api.mvc.MultipartFormData.FilePart
 import play.twirl.api.Html
@@ -42,6 +43,15 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
 
   // Views
 
+  override def index(user: User, learningPaths: Seq[LearningPath]): Html =
+    views.html.fileExercises.fileExerciseIndex(user, learningPaths, this)
+
+  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
+    views.html.admin.fileExes.fileExercisePreview(user, read, this)
+
+  override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
+    views.html.admin.fileExes.fileExerciseAdminListView(admin, exes, this)
+
   def renderExercise(user: User, exercise: CompExType, fileEnding: String): Html
 
   def renderResult(user: User, correctionResult: R, exercise: CompExType, fileExtension: String): Html
@@ -68,16 +78,9 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
         }
     }
 
+  // Correction
 
   protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): R
-
-  // Views
-
-  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
-    views.html.admin.fileExes.fileExercisePreview(user, read, this)
-
-  override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
-    views.html.admin.fileExes.fileExerciseAdminListView(admin, exes, this)
 
   // Calls
 

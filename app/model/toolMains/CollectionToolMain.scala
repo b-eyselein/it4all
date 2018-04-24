@@ -3,6 +3,7 @@ package model.toolMains
 import model.Enums.ExerciseState
 import model._
 import model.core._
+import model.learningPath.LearningPath
 import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
@@ -127,6 +128,9 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
   def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
 
   // Views
+
+  override def index(user: User, learningPaths: Seq[LearningPath]): Html =
+    views.html.collectionExercises.collectionExerciseIndex(user, learningPaths, this)
 
   def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int): Future[Html]
 

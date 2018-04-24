@@ -19,8 +19,8 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
   override def ex: XmlExercise = this
 
-  // TODO: remove ==> move to toolMain?
-  override def preview: Html = views.html.xml.xmlPreview(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.idExercises.xml.xmlPreview(this)
 
   override def hasPart(partType: XmlExPart): Boolean = partType match {
     case DocumentCreationXmlPart => true
@@ -61,8 +61,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected type SolTableDef = XmlSolutionsTable
 
   override protected val solTable = TableQuery[XmlSolutionsTable]
-
-  override protected val exTable = TableQuery[XmlExercisesTable]
+  override protected val exTable  = TableQuery[XmlExercisesTable]
 
   // Column Types
 
@@ -103,6 +102,5 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     override def * = (username, exerciseId, part, solution) <> (XmlSolution.tupled, XmlSolution.unapply)
 
   }
-
 
 }

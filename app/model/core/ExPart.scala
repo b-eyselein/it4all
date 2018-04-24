@@ -8,6 +8,8 @@ trait ExParts[Part <: ExPart] {
 
 trait ExPart {
 
+  // FIXME: use enumeratum=!=
+
   def urlName: String
 
   def partName: String

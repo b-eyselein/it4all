@@ -84,6 +84,10 @@ GET           /colTools/:toolType/admin/:collId                        controlle
 PUT           /colTools/:toolType/admin/exercise/:id/state             controllers.CollectionController.adminChangeCollectionState(toolType: String, id: Int)
 
 GET           /colTools/:toolType/                                     controllers.CollectionController.index(toolType: String)
+
+GET           /colTools/:toolType/learningPaths/read                   controllers.CollectionController.readLearningPaths(toolType: String)
+GET           /colTools/:toolType/learningPaths/:id                    controllers.CollectionController.learningPath(toolType: String, id: Int)
+
 GET           /colTools/:toolType/collections                          controllers.CollectionController.collectionList(toolType: String, page: Int ?= 1)
 
 GET           /colTools/:toolType/collections/:collId                  controllers.CollectionController.collection(toolType: String, collId: Int, page: Int ?= 1)
@@ -118,7 +122,12 @@ PUT           /tools/:toolType/admin/exercise/:id/state                controlle
 
 
 GET           /tools/:toolType/                                        controllers.ExerciseController.index(toolType: String)
+
+GET           /tools/:toolType/learningPaths/read                      controllers.ExerciseController.readLearningPaths(toolType: String)
+GET           /tools/:toolType/learningPaths/:id                       controllers.ExerciseController.learningPath(toolType: String, id: Int)
+
 GET           /tools/:toolType/exercises                               controllers.ExerciseController.exerciseList(toolType: String, page: Int ?= 1)
+
 
 GET           /tools/:toolType/solve/:id/:part                         controllers.ExerciseController.exercise(toolType: String, id: Int, part: String)
 PUT           /tools/:toolType/solve/:id/:part                         controllers.ExerciseController.correctLive(toolType: String, id: Int, part: String)

@@ -42,7 +42,8 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
 
   override def tags: Seq[SqlExTag] = (ex.tags split tagJoinChar).toSeq flatMap SqlExTag.byString
 
-  override def preview: Html = views.html.sql.sqlExPreview(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.collectionExercises.sql.sqlExPreview(this)
 
 }
 

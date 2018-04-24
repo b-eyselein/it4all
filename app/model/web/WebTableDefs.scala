@@ -18,7 +18,8 @@ import scala.language.postfixOps
 case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask], phpTasks: Seq[PHPCompleteTask] = Seq.empty)
   extends PartsCompleteEx[WebExercise, WebExPart] {
 
-  override def preview: Html = views.html.web.webPreview(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.idExercises.web.webPreview(this)
 
   override def tags: Seq[WebExTag] = WebExParts.values map (part => new WebExTag(part.partName, hasPart(part)))
 
@@ -140,17 +141,13 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table queries
 
-  override protected val exTable = TableQuery[WebExercisesTable]
-
+  override protected val exTable  = TableQuery[WebExercisesTable]
   override protected val solTable = TableQuery[WebSolutionsTable]
 
-  val htmlTasks = TableQuery[HtmlTasksTable]
-
-  val attributes = TableQuery[AttributesTable]
-
-  val jsTasks = TableQuery[JsTasksTable]
-
-  val conditions = TableQuery[ConditionsTable]
+  private val htmlTasks  = TableQuery[HtmlTasksTable]
+  private val attributes = TableQuery[AttributesTable]
+  private val jsTasks    = TableQuery[JsTasksTable]
+  private val conditions = TableQuery[ConditionsTable]
 
 
   // Dependent query tables
@@ -158,8 +155,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   lazy val webSolutions = TableQuery[WebSolutionsTable]
 
   override def completeExForEx(ex: WebExercise): Future[WebCompleteEx] = for {
-    htmlTasks: Seq[HtmlCompleteTask] <- htmlTasksForExercise(ex.id)
-    jsTasks: Seq[JsCompleteTask] <- jsTasksForExercise(ex.id)
+    htmlTasks <- htmlTasksForExercise(ex.id)
+    jsTasks <- jsTasksForExercise(ex.id)
   } yield WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
 
   private def htmlTasksForExercise(exId: Int): Future[Seq[HtmlCompleteTask]] = db.run(htmlTasks.filter(_.exerciseId === exId).result) flatMap { htmlTs: Seq[HtmlTask] =>
@@ -196,7 +193,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Implicit column types
 
-  implicit val ActionTypeColumnType: BaseColumnType[JsActionType] =
+  private implicit val ActionTypeColumnType: BaseColumnType[JsActionType] =
     MappedColumnType.base[JsActionType, String](_.name, str => JsActionType.byString(str) getOrElse JsActionType.CLICK)
 
   override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =

@@ -23,10 +23,6 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
 
   // Routes
 
-  def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request => toolMain.futureLearningPaths map (paths => Ok(toolMain.index(user, paths)))
-  }
-
   def newExercise(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.exTypeFromUrl(exType) match {

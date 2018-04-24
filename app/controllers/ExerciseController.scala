@@ -138,8 +138,8 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
-  def webPlayground: EssentialAction = withUser { user => implicit request => Ok(views.html.web.webPlayground(user)) }
+  def webPlayground: EssentialAction = withUser { user => implicit request => Ok(views.html.idExercises.web.webPlayground(user)) }
 
-  def xmlPlayground: EssentialAction = withUser { user => implicit request => Ok(views.html.xml.xmlPlayground(user)) }
+  def xmlPlayground: EssentialAction = withUser { user => implicit request => Ok(views.html.idExercises.xml.xmlPlayground(user)) }
 
 }

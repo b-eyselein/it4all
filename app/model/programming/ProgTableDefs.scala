@@ -22,7 +22,7 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSo
   extends PartsCompleteEx[ProgExercise, ProgrammingExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
-    views.html.programming.progPreview(this)
+    views.html.idExercises.programming.progPreview(this)
 
   val inputCount: Int = inputTypes.size
 
@@ -164,19 +164,14 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Table Queries
 
-  override protected val exTable = TableQuery[ProgExercisesTable]
-
+  override protected val exTable  = TableQuery[ProgExercisesTable]
   override protected val solTable = TableQuery[ProgSolutionTable]
 
-  val inputTypesQuery = TableQuery[InputTypesTable]
-
-  val sampleSolutions = TableQuery[ProgSampleSolutionsTable]
-
-  val sampleTestData = TableQuery[SampleTestDataTable]
-
-  val commitedTestData = TableQuery[CommitedTestDataTable]
-
-  val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
+  private val inputTypesQuery   = TableQuery[InputTypesTable]
+  private val sampleSolutions   = TableQuery[ProgSampleSolutionsTable]
+  private val sampleTestData    = TableQuery[SampleTestDataTable]
+  private val commitedTestData  = TableQuery[CommitedTestDataTable]
+  private val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
 
   // Queries
 

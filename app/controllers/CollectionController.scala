@@ -125,7 +125,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // User
 
-  def index(tool: String): EssentialAction = collectionList(tool, page = 1)
+//  def index(tool: String): EssentialAction = collectionList(tool, page = 1)
 
   def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>

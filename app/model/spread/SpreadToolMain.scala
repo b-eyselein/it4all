@@ -77,10 +77,10 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
   // Views
 
   override def renderExercise(user: User, exercise: SpreadExercise, part: String): Html =
-    views.html.spread.spreadExercise(user, exercise.ex, (part, fileTypes(part)))
+    views.html.fileExercises.spread.spreadExercise(user, exercise.ex, (part, fileTypes(part)))
 
   override def renderResult(user: User, correctionResult: SpreadSheetCorrectionResult, exercise: SpreadExercise, fileExtension: String): Html =
-    views.html.spread.spreadCorrectionResult(user, correctionResult, exercise, fileExtension)
+    views.html.fileExercises.spread.spreadCorrectionResult(user, correctionResult, exercise, fileExtension)
 
   override def renderEditRest(exercise: SpreadExercise): Html = ???
 

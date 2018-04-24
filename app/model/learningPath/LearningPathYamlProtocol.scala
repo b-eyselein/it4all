@@ -11,12 +11,12 @@ import scala.util.Try
 
 object LearningPathYamlProtocol extends MyYamlProtocol {
 
-  object LearningPathYamlFormat extends MyYamlObjectFormat[LearningPath] {
+  case class LearningPathYamlFormat(toolUrl: String) extends MyYamlObjectFormat[LearningPath] {
 
     override protected def readObject(yamlObject: YamlObject): Try[LearningPath] = for {
       id <- yamlObject.intField(idName)
       title <- yamlObject.stringField(titleName)
-      sections <- yamlObject.arrayField("sections", LearningPathSectionYamlFormat(id).read)
+      sections <- yamlObject.arrayField("sections", LearningPathSectionYamlFormat(toolUrl, id).read)
     } yield {
 
       for (sectionError <- sections._2) {
@@ -24,14 +24,14 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
         Logger.error(sectionError.toString)
       }
 
-      LearningPath(id, title, sections._1)
+      LearningPath(toolUrl, id, title, sections._1)
     }
 
     override def write(obj: LearningPath): YamlValue = ???
 
   }
 
-  case class LearningPathSectionYamlFormat(pathId: Int) extends MyYamlObjectFormat[LearningPathSection] {
+  case class LearningPathSectionYamlFormat(toolUrl: String, pathId: Int) extends MyYamlObjectFormat[LearningPathSection] {
 
     override protected def readObject(yamlObject: YamlObject): Try[LearningPathSection] = for {
       id: Int <- yamlObject.intField(idName)
@@ -46,7 +46,7 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
 
     private def readTextSection(yamlObject: YamlObject, id: Int, title: String): Try[TextSection] = for {
       content: String <- yamlObject.stringField(contentName)
-    } yield TextSection(id, pathId, title, content)
+    } yield TextSection(id, toolUrl, pathId, title, content)
 
     private def readQuestionSection(yamlObject: YamlObject, id: Int, title: String): Try[QuestionSection] = for {
       questions <- yamlObject.arrayField(questionsName, readLPQuestions)
@@ -56,7 +56,7 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
         Logger.error("Error: ", failure.exception)
       }
 
-      QuestionSection(id, pathId, title, questions._1)
+      QuestionSection(id, toolUrl, pathId, title, questions._1)
     }
 
     private def readLPQuestions(yamlValue: YamlValue): Try[LPQuestion] = for {

@@ -106,11 +106,11 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
       val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
-      views.html.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes)
+      views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes)
     }
 
   override def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
-    views.html.sql.editSqlExercise(user, newEx, this, isCreation)
+    views.html.collectionExercises.sql.editSqlExercise(user, newEx, this, isCreation)
 
   // FIXME: remove this method...
   override def renderEditRest(exercise: SqlCompleteEx): Html = ???

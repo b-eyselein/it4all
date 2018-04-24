@@ -8,6 +8,4 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.ExecutionContext
 
 class NaryTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with LearningPathTableDefs {
-
-}
+  extends HasDatabaseConfigProvider[JdbcProfile] with LearningPathTableDefs

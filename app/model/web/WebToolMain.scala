@@ -84,12 +84,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Views
 
   override def renderExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean): Html =
-    views.html.web.editWebExercise(user, this, newEx, isCreation)
+    views.html.idExercises.web.editWebExercise(user, this, newEx, isCreation)
 
   def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution]): Html =
-    views.html.web.webExercise(user, exercise, part, getTasks(exercise, part), maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML)
+    views.html.idExercises.web.webExercise(user, exercise, part, getTasks(exercise, part), maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML)
 
-  override def renderEditRest(exercise: WebCompleteEx): Html = views.html.web.editWebExRest(exercise)
+  override def renderEditRest(exercise: WebCompleteEx): Html = views.html.idExercises.web.editWebExRest(exercise)
 
   // Correction
 

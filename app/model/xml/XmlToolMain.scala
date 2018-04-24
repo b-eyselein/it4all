@@ -104,7 +104,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Views
 
   override def renderExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean): Html =
-    views.html.xml.editXmlExercise(user, this, newEx, isCreation)
+    views.html.idExercises.xml.editXmlExercise(user, this, newEx, isCreation)
 
   override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
     val template = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
@@ -121,7 +121,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Result handlers
 
-  override def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Html = views.html.core.correction.render(result, result.render, user, this)
+  override def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Html =
+    views.html.core.correction.render(result, result.render, user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 

@@ -7,9 +7,11 @@ import model._
 import model.core.CoreConsts._
 import model.core._
 import model.learningPath.{LearningPath, LearningPathTableDefs, LearningPathYamlProtocol}
+import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.mvc.Call
+import play.twirl.api.Html
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -40,22 +42,28 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   val pluralName: String = "Aufgaben"
 
+  private val learningPathsYamlFormat: MyYamlFormat[LearningPath] = LearningPathYamlProtocol.LearningPathYamlFormat(urlPart)
+
+  // Helper methods
+
   def readLearningPaths: Seq[LearningPath] = readAll(exerciseResourcesFolder / "learningPath.yaml") match {
-    case Failure(error)       => Seq.empty
+    case Failure(error)       =>
+      Logger.error(s"Error while reading learning paths for tool $urlPart", error)
+      Seq.empty
     case Success(fileContent) =>
-      LearningPathYamlProtocol.LearningPathYamlFormat.read(fileContent.parseYaml) match {
+      learningPathsYamlFormat.read(fileContent.parseYaml) match {
+        case Success(read)  => Seq(read)
         case Failure(error) =>
           Logger.error("Fehler: ", error)
           Seq.empty
-        case Success(read)  => Seq(read)
       }
   }
 
   // DB
 
-  def futureLearningPaths: Future[Seq[LearningPath]] = tables.futureLearningPaths
+  def futureLearningPaths: Future[Seq[LearningPath]] = tables.futureLearningPaths(urlPart)
 
-  def futureLearningPathById(id: Int): Future[Option[LearningPath]] = tables.futureLearningPathById(id)
+  def futureLearningPathById(id: Int): Future[Option[LearningPath]] = tables.futureLearningPathById(urlPart, id)
 
   def futureSaveLearningPaths(readLearningPaths: Seq[LearningPath]): Future[Boolean] = tables.futureSaveLearningPaths(readLearningPaths)
 
@@ -70,6 +78,10 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
   protected lazy val exerciseRootDir: Path = Paths.get(rootDir, urlPart)
 
   def solutionDirForExercise(username: String, id: Int): Path = exerciseRootDir / solutionsSubDir / username / String.valueOf(id)
+
+  // Views
+
+  def index(user: User, learningPaths: Seq[LearningPath]): Html
 
   // Calls
 

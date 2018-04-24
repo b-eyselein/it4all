@@ -4,6 +4,7 @@ import java.nio.file.{Files, Path}
 
 import model.core.CoreConsts.solutionName
 import model.core._
+import model.learningPath.LearningPath
 import model.persistence.SingleExerciseTableDefs
 import model.{JsonFormat, PartSolution, User}
 import play.api.Logger
@@ -67,7 +68,6 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
       }
     }
 
-
   private def onSolution(user: model.User, solution: SolType, id: Int, isLive: Boolean): Future[Try[Either[Html, JsValue]]] = futureCompleteExById(id) flatMap {
     case None => Future(Failure(NoSuchExerciseException(id)))
 
@@ -81,7 +81,6 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
       }
     }
   }
-
 
   private def readSolution(user: User, id: Int, part: PartType, isLive: Boolean)(implicit request: Request[AnyContent]): Option[SolType] =
     if (isLive) readSolutionFromPutRequest(user, id, part) else readSolutionFromPostRequest(user, id, part)
@@ -98,6 +97,9 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   protected def correctEx(user: User, sol: SolType, exercise: CompExType, solutionSaved: Boolean): Future[Try[CompResult]]
 
   // Views
+
+  override def index(user: User, learningPaths: Seq[LearningPath]): Html =
+    views.html.idExercises.idExerciseIndex(user, learningPaths, this)
 
   def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
 

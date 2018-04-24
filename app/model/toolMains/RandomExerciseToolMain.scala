@@ -7,8 +7,6 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html
 
-import scala.concurrent.Future
-
 abstract class RandomExerciseToolMain(urlPart: String) extends AToolMain(urlPart) {
 
   // Abstract types
@@ -24,8 +22,6 @@ abstract class RandomExerciseToolMain(urlPart: String) extends AToolMain(urlPart
   // Views
 
   def newExercise(user: User, exPart: PartType, option: Map[String, Seq[String]]): Html
-
-  def index(user: User, learningPathBase: Seq[LearningPath]): Html
 
   // Correction
 

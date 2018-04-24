@@ -58,7 +58,8 @@ class MindmapToolMain @Inject()(override val tables: MindmapTableDefs)(implicit 
 
   override def renderExercise(user: User, exercise: MindmapExercise, part: String): Html = ???
 
-  override def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html = views.html.mindmap.mindmapcorrect.render(user)
+  override def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html =
+    views.html.fileExercises.mindmap.mindmapcorrect.render(user)
 
   override def renderEditRest(exercise: MindmapExercise): Html = ???
 

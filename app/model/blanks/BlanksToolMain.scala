@@ -7,7 +7,6 @@ import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, Enums, JsonFormat, User}
 import play.api.data.Form
-import play.api.libs.json
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -81,7 +80,8 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Views
 
-  override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart, oldSolution: Option[BlanksSolution]): Html = views.html.blanks.blanksExercise(user, exercise)
+  override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart, oldSolution: Option[BlanksSolution]): Html =
+    views.html.idExercises.blanks.blanksExercise(user, exercise)
 
   override def renderEditRest(exercise: BlanksCompleteExercise): Html = new Html(
     s"""<div class="form-group">
@@ -99,7 +99,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = json.JsArray(
+  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = JsArray(
     result.result.allMatches map (m => Json.obj(
       idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
       correctnessName -> m.matchType.name,

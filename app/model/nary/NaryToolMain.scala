@@ -39,51 +39,49 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs) extends RandomExerciseTo
   // Views
 
   override def index(user: User, learningPathBases: Seq[LearningPath]): Html =
-    views.html.nary.naryOverview(user, this, learningPathBases)
+    views.html.randomExercises.nary.naryOverview(user, this, learningPathBases)
 
-  override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]]): Html = {
-    exPart match {
-      case NaryAdditionExPart =>
+  override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]]): Html = exPart match {
+    case NaryAdditionExPart =>
 
-        val requestedBaseStr: String = options.getOrElse("base", Seq("RANDOM")).mkString
-        val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values()(generator.nextInt(3))
+      val requestedBaseStr: String = options.getOrElse("base", Seq("RANDOM")).mkString
+      val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values()(generator.nextInt(3))
 
-        val sum = generator.nextInt(255) + 1
-        val firstSummand = generator.nextInt(sum)
+      val sum = generator.nextInt(255) + 1
+      val firstSummand = generator.nextInt(sum)
 
-        views.html.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr, this)
+      views.html.randomExercises.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr, this)
 
-      case NaryConversionExPart =>
+    case NaryConversionExPart =>
 
-        val fromBaseStr = options.getOrElse("fromBase", Seq("RANDOM")).mkString
-        val toBaseStr = options.getOrElse("toBase", Seq("RANDOM")).mkString
+      val fromBaseStr = options.getOrElse("fromBase", Seq("RANDOM")).mkString
+      val toBaseStr = options.getOrElse("toBase", Seq("RANDOM")).mkString
 
-        val (fromBase, toBase): (NumberBase, NumberBase) = fromBaseStr match {
-          case RandomName  => toBaseStr match {
-            case RandomName =>
-              val fromBase = randNumberBase(-1)
-              (fromBase, randNumberBase(fromBase.ordinal))
-            case _          =>
-              val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
-              (randNumberBase(toBase.ordinal), toBase)
-          }
-          case fromBaseReq =>
-            val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.BINARY
-            val toBase = toBaseStr match {
-              case RandomName => randNumberBase(fromBase.ordinal)
-              case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
-            }
-            (fromBase, toBase)
+      val (fromBase, toBase): (NumberBase, NumberBase) = fromBaseStr match {
+        case RandomName  => toBaseStr match {
+          case RandomName =>
+            val fromBase = randNumberBase(-1)
+            (fromBase, randNumberBase(fromBase.ordinal))
+          case _          =>
+            val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
+            (randNumberBase(toBase.ordinal), toBase)
         }
+        case fromBaseReq =>
+          val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.BINARY
+          val toBase = toBaseStr match {
+            case RandomName => randNumberBase(fromBase.ordinal)
+            case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
+          }
+          (fromBase, toBase)
+      }
 
-        views.html.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr, this)
+      views.html.randomExercises.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr, this)
 
 
-      case TwoComplementExPart =>
-        val verbose = options.getOrElse("verbose", Seq("false")).mkString == "true"
-        views.html.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
+    case TwoComplementExPart =>
+      val verbose = options.getOrElse("verbose", Seq("false")).mkString == "true"
+      views.html.randomExercises.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
 
-    }
   }
 
   // Helper functions

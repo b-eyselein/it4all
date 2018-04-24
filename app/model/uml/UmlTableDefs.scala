@@ -17,7 +17,8 @@ import scala.language.{implicitConversions, postfixOps}
 case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
   extends PartsCompleteEx[UmlExercise, UmlExPart] {
 
-  override def preview: Html = views.html.uml.umlPreview(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.idExercises.uml.umlPreview(this)
 
   def titleForPart(part: UmlExPart): String = part match {
     case ClassSelection     => "Auswahl der Klassen"
@@ -32,8 +33,8 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
   })
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {
-    case (ClassSelection | DiagramDrawing) => true // TODO: Currently deactivated...
-    case _                                 => false
+    case ClassSelection | DiagramDrawing => true // TODO: Currently deactivated...
+    case _                               => false
   }
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
@@ -92,11 +93,10 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table Queries
 
-  override protected val exTable = TableQuery[UmlExercisesTable]
-
+  override protected val exTable  = TableQuery[UmlExercisesTable]
   override protected val solTable = TableQuery[UmlSolutionsTable]
 
-  val umlMappings = TableQuery[UmlMappingsTable]
+  private val umlMappings = TableQuery[UmlMappingsTable]
 
   // Reading
 

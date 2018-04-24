@@ -7,8 +7,5 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-
 class BoolTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with LearningPathTableDefs {
-
-}
+  extends HasDatabaseConfigProvider[JdbcProfile] with LearningPathTableDefs

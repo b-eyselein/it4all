@@ -83,7 +83,7 @@
 
             <hr>
 
-            @views.html.programming.progExerciseRest(completeEx)
+            @views.html.idExercises.programming.progExerciseRest(completeEx)
 
             <section>
 
@@ -179,7 +179,7 @@
 @main("Uml Aktivitätsdiagramm", Some(user), scripts, scriptsBefore) {
 
     @core.helperTemplates.modal("Bedienungsanleitung", "instructionsModal", "lg") {
-        @umlActivity.activityInstructions.render()
+        @views.html.idExercises.umlActivity.activityInstructions.render()
     }
 
     @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {

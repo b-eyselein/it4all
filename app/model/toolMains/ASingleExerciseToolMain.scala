@@ -2,6 +2,7 @@ package model.toolMains
 
 import model.Enums.ExerciseState
 import model.core.{ExPart, ExerciseFormMappings, ReadAndSaveResult}
+import model.learningPath.LearningPath
 import model.persistence.IdExerciseTableDefs
 import model.{SingleCompleteEx, User}
 import net.jcazevedo.moultingyaml.Auto
