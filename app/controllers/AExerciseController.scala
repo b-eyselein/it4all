@@ -37,7 +37,7 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
     implicit request =>
       toolMain.futureLearningPathById(id) map {
         case None     => BadRequest("No such learning path!")
-        case Some(lp) => Ok(views.html.learningPath(user, lp, toolMain))
+        case Some(lp) => Ok(views.html.learningPath.learningPath(user, lp, toolMain))
       }
   }
 

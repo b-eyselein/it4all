@@ -1,0 +1,55 @@
+@(user: model.User, learningPath: model.learningPath.LearningPath, toolMainObject: model.toolMains.AToolMain)
+
+    @title = @{
+        "Lernpfad: " + learningPath.title
+    }
+
+    @scripts = {
+        <script src="@routes.Assets.versioned("javascripts/learningPaths/learningPath.js")"></script>
+    }
+
+    @displaySection(section: model.learningPath.LearningPathSection, hidden: String = "hidden") = {
+
+    @section match {
+        case ts: model.learningPath.TextSection => {
+            <section id="sec_@section.id" @hidden>
+                <h2>@section.title</h2>
+
+                @Html(ts.text)
+                <hr>
+
+            </section>
+
+        }
+
+        case qs: model.learningPath.QuestionSection => {
+            @views.html.learningPath.QuestionSection(qs, hidden)
+        }
+    }
+
+    }
+
+    @main(title, Some(user), scripts) {
+        <div class="container">
+            <div class="page-header">
+                <h1>@title</h1>
+            </div>
+
+            @displaySection(learningPath.sections.head, hidden = "")
+
+            @for(section <- learningPath.sections.tail sortBy (_.id)) {
+                @displaySection(section)
+            }
+
+            <div class="form-group">
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-block" id="nextPartButton" onclick="nextPart()">
+                            Nächster Teil</button>
+                    </div>
+                    <a class="btn btn-default" href="@toolMainObject.indexCall">Lernpfad beenden</a>
+                </div>
+            </div>
+
+        </div>
+    }

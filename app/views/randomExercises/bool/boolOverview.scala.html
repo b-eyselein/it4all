@@ -12,7 +12,7 @@
 
                 @for(learningPath <- learningPaths) {
                     <a href="@routes.RandomExerciseController.learningPath(toolMain.urlPart, learningPath.id)"
-                    class="btn btn-primary btn-block">Lernpfad @learningPath.title</a>
+                    class="btn btn-primary btn-block">Lernpfad: @learningPath.title</a>
                 }
             </section>
 
