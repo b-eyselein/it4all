@@ -15,6 +15,7 @@ mappings:
 - {key: Patienten, value: Patient}
 - {key: Namen, value: Name}
 - {key: Medikamente, value: Medikament}
+- {key: Rezepten, value: Rezept}
 ignoreWords: ['Ein', 'Jede']
 solution:
   classes:
@@ -56,6 +57,7 @@ solution:
 
   - classType: CLASS
     name: Krankenhaus
+    - {name: "name", type: "String"}
 
   implementations:
   - {subClass: Patient, superClass: Person}

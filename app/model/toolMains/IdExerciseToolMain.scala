@@ -4,6 +4,7 @@ import java.nio.file.{Files, Path}
 
 import model.core.CoreConsts.solutionName
 import model.core._
+import model.core.result.CompleteResult
 import model.learningPath.LearningPath
 import model.persistence.SingleExerciseTableDefs
 import model.{JsonFormat, PartSolution, User}

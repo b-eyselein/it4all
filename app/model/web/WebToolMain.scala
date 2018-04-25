@@ -3,10 +3,9 @@ package model.web
 import java.nio.file.Path
 
 import javax.inject._
-import model.Enums.ToolState
-import model.toolMains.IdExerciseToolMain
+import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, JsonFormat, User}
+import model.{Consts, ExerciseState, JsonFormat, User}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Form
 import play.api.libs.json.JsValue
@@ -72,7 +71,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): WebCompleteEx = WebCompleteEx(
+  override def instantiateExercise(id: Int, state: ExerciseState): WebCompleteEx = WebCompleteEx(
     WebExercise(id, title = "", author = "", text = "", state, htmlText = None, jsText = None, phpText = None),
     htmlTasks = Seq.empty, jsTasks = Seq.empty
   )

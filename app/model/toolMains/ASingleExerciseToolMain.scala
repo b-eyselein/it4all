@@ -1,6 +1,6 @@
 package model.toolMains
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.core.{ExPart, ExerciseFormMappings, ReadAndSaveResult}
 import model.learningPath.LearningPath
 import model.persistence.IdExerciseTableDefs

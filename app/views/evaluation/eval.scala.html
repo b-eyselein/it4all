@@ -21,11 +21,13 @@
                         <div class="col-md-8">
                             <div class="row">
 
-                            @for(mark <- model.enums.Marks.values) {
+                            @for(mark <- model.enums.Mark.values) {
                                 <div class="col-md-2">
                                     <label for="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase">
                                         <input type="radio" name="@evaledAspect.toString.toLowerCase" id="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase"
-                                        value="@mark.toString.toLowerCase" @mark.isChecked(toEvaluate.getMarkForAspect(evaledAspect))> @mark.display(evaledAspect)
+                                        value="@mark.toString.toLowerCase" @{
+                                            if(mark == toEvaluate.getMarkForAspect(evaledAspect)) "checked" else ""
+                                        }> @mark.display(evaledAspect)
                                     </label>
                                 </div>
                             }

@@ -1,10 +1,8 @@
 package model.core.matching
 
-import model.Enums
-import model.Enums.MatchType._
-import model.Enums.SuccessType._
+import model.core.result.SuccessType._
 import model.core.CoreConsts._
-import model.core.EvaluationResult
+import model.core.result.{EvaluationResult, SuccessType}
 import play.api.libs.json.{JsObject, Json}
 
 import scala.language.postfixOps
@@ -14,16 +12,16 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
   def allMatches: Seq[M]
 
   // FIXME: is it possible to use ... match { case ...} ?!?
-  override def success: Enums.SuccessType =
-    if ((allMatches exists (_.matchType == ONLY_USER)) || (allMatches exists (_.matchType == ONLY_SAMPLE)))
+  override def success: SuccessType =
+    if ((allMatches exists (_.matchType == MatchType.ONLY_USER)) || (allMatches exists (_.matchType == MatchType.ONLY_SAMPLE)))
       NONE
-    else if (allMatches exists (_.matchType == UNSUCCESSFUL_MATCH))
+    else if (allMatches exists (_.matchType == MatchType.UNSUCCESSFUL_MATCH))
       PARTIALLY
     else
       COMPLETE
 
   def toJson: JsObject = Json.obj(
-    successName -> allMatches.forall(_.matchType == SUCCESSFUL_MATCH),
+    successName -> allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH),
     matchesName -> allMatches.map(_.toJson)
   )
 

@@ -1,38 +1,24 @@
 package model.uml
 
 import model.uml.UmlConsts._
-import model.uml.UmlEnums.{UmlAssociationType, UmlClassType, UmlMultiplicity}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 //noinspection ConvertibleToMethodValue
 object UmlClassDiagramJsonFormat {
 
-  implicit val enumWrites: Writes[Enum[_]] = (e: Enum[_]) => JsString(e.name)
-
-  def enumReads[T <: Enum[T]](mkEnum: String => Option[T]): Reads[T] = {
-    case JsString(s) => mkEnum(s) match {
-      case Some(enumVal) => JsSuccess(enumVal)
-      case None          => JsError("Not a valid enum value: " + s)
-    }
-    case v           => JsError("Can't convert to enum: " + v)
-  }
-
-  private implicit val umlClassTypeReads: Reads[UmlClassType] = enumReads(str => {
-    if (str startsWith "uml.") {
-      str match {
-        case "uml.Abstract"  => Some(UmlClassType.ABSTRACT)
-        case "uml.Class"     => Some(UmlClassType.CLASS)
-        case "uml.Interface" => Some(UmlClassType.INTERFACE)
-        case _               => None
+  private implicit val umlClassTypeReads: Reads[UmlClassType] = {
+    case JsString(str) => str match {
+      case "uml.Abstract"  => JsSuccess(UmlClassType.ABSTRACT)
+      case "uml.Interface" => JsSuccess(UmlClassType.INTERFACE)
+      case "uml.Class"     => JsSuccess(UmlClassType.CLASS)
+      case _               => UmlClassType.withNameInsensitiveOption(str) match {
+        case Some(ct) => JsSuccess(ct)
+        case None     => JsError("No such value: " + str)
       }
-    } else UmlClassType.byString(str)
-  })
-
-  private implicit val umlMultiplicityReads: Reads[UmlMultiplicity] = enumReads(UmlMultiplicity.byString)
-
-  private implicit val umlAssociationTypeReads: Reads[UmlAssociationType] = enumReads(UmlAssociationType.byString)
-
+    }
+    case _             => JsError("Needs to be a string!")
+  }
 
   private implicit val umlImplementationReads: Reads[UmlImplementation] = (
     (__ \ subClassName).read[String] and

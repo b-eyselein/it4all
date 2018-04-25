@@ -1,6 +1,6 @@
 package model.rose
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
 import model.programming.{ProgDataTypes, ProgLanguage}

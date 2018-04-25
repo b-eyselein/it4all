@@ -1,8 +1,7 @@
 package model.programming
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
-import model._
+import model.{ExerciseState, _}
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
@@ -74,7 +73,7 @@ case class CommitedTestData(id: Int, exerciseId: Int, inputAsJson: JsValue, outp
     exerciseIdName -> exerciseId,
     usernameName -> username,
     outputName -> output,
-    stateName -> state.name,
+    stateName -> state.entryName,
     inputsName -> inputAsJson
   )
 
@@ -93,7 +92,7 @@ object TestDataSolution extends JsonFormat {
       output <- jsObject.stringField(outputName)
       inputAsJson <- jsObject.value get "TODO!"
       username <- jsObject.stringField(usernameName)
-      state <- jsObject.enumField(stateName, ExerciseState.valueOf)
+      state <- jsObject.enumField(stateName, ExerciseState.withNameInsensitive)
     } yield CommitedTestData(id, exerciseId, inputAsJson, output, username, state)
 
   } getOrElse Seq.empty

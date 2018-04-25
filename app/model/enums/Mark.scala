@@ -8,11 +8,9 @@ sealed abstract class Mark(val value: Int) extends EnumEntry {
 
   def display(evaluatedAspect: EvaluatedAspect): String
 
-  def isChecked(that: Mark): String = if (this == that) "checked" else ""
-
 }
 
-object Marks extends Enum[Mark] {
+object Mark extends Enum[Mark] {
 
   val values: IndexedSeq[Mark] = findValues
 

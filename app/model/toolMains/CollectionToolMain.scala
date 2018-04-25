@@ -1,8 +1,9 @@
 package model.toolMains
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.core._
+import model.core.result.CompleteResult
 import model.learningPath.LearningPath
 import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml.Auto

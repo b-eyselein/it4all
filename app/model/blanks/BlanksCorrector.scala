@@ -1,7 +1,7 @@
 package model.blanks
 
-import model.core.CompleteResult
 import model.core.matching.{Matcher, MatchingResult}
+import model.core.result.CompleteResult
 import play.twirl.api.Html
 
 case class BlanksCompleteResult(learnerSolution: Seq[BlanksAnswer], result: BlanksAnswerMatchingResult) extends CompleteResult[BlanksAnswerMatchingResult] {

@@ -2,10 +2,12 @@ package model.toolMains
 
 import java.nio.file.{Path, Paths}
 
-import model.Enums.ToolState
 import model._
 import model.core.CoreConsts._
-import model.core._
+import model.core.FileUtils
+import enumeratum.{Enum, EnumEntry}
+import model.Role.RoleUser
+import model.core.result.EvaluationResult
 import model.learningPath.{LearningPath, LearningPathTableDefs, LearningPathYamlProtocol}
 import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
@@ -13,8 +15,29 @@ import play.api.Logger
 import play.api.mvc.Call
 import play.twirl.api.Html
 
+import scala.collection.immutable
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+
+sealed abstract class ToolState(val german: String, val greek: String, requiredRole: Role) extends EnumEntry {
+
+  def badge: Html = Html(s"<sup>$greek</sup>")
+
+}
+
+object ToolState extends Enum[ToolState] {
+
+  val values: immutable.IndexedSeq[ToolState] = findValues
+
+  case object LIVE extends ToolState("Verfügbare Tools", "", RoleUser) {
+    override def badge: Html = new Html("")
+  }
+
+  case object ALPHA extends ToolState("Tools in Alpha-Status", "&alpha;", Role.RoleAdmin)
+
+  case object BETA extends ToolState("Tools in Beta-Status", "&beta;", Role.RoleAdmin)
+
+}
 
 abstract class AToolMain(val urlPart: String) extends FileUtils {
 

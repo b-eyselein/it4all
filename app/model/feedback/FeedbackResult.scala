@@ -3,7 +3,7 @@ package model.feedback
 import model.enums.EvaluatedAspect
 import model.enums.EvaluatedAspects._
 import model.enums.Mark
-import model.enums.Marks.NO_MARK
+import model.enums.Mark.NO_MARK
 
 case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 
@@ -39,7 +39,7 @@ case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 object FeedbackResult {
 
   def avg(feedback: Map[Mark, Int]): Int = {
-    val marksWithoutNoMark: Map[Mark, Int] = feedback.filter(_._1 != NO_MARK)
+    val marksWithoutNoMark: Map[Mark, Int] = feedback.filter(_._1 != Mark.NO_MARK)
     if (marksWithoutNoMark.isEmpty) 0
     else marksWithoutNoMark.map { case (f, m) => f.value * m }.toSeq.sum / marksWithoutNoMark.size
   }

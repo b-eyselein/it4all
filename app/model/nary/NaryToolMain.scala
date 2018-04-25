@@ -1,12 +1,11 @@
 package model.nary
 
 import javax.inject.{Inject, Singleton}
-import model.Enums.ToolState
-import model.core.EvaluationResult
+import model.core.result.EvaluationResult
 import model.learningPath.LearningPath
 import model.nary.NAryNumber.{parseNaryNumber, parseTwoComplement}
 import model.nary.NaryConsts._
-import model.toolMains.RandomExerciseToolMain
+import model.toolMains.{RandomExerciseToolMain, ToolState}
 import model.{Consts, JsonFormat, User}
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
@@ -46,7 +45,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
     case NaryAdditionExPart =>
 
       val requestedBaseStr: String = options.getOrElse("base", Seq("RANDOM")).mkString
-      val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values()(generator.nextInt(3))
+      val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values(generator.nextInt(3))
 
       val sum = generator.nextInt(255) + 1
       val firstSummand = generator.nextInt(sum)
@@ -62,15 +61,15 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
         case RandomName  => toBaseStr match {
           case RandomName =>
             val fromBase = randNumberBase(-1)
-            (fromBase, randNumberBase(fromBase.ordinal))
+            (fromBase, randNumberBase(NumberBase.indexOf(fromBase)))
           case _          =>
             val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
-            (randNumberBase(toBase.ordinal), toBase)
+            (randNumberBase(NumberBase.indexOf(toBase)), toBase)
         }
         case fromBaseReq =>
           val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.BINARY
           val toBase = toBaseStr match {
-            case RandomName => randNumberBase(fromBase.ordinal)
+            case RandomName => randNumberBase(NumberBase.indexOf(fromBase))
             case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
           }
           (fromBase, toBase)
@@ -91,7 +90,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
     var res = generator.nextInt(4)
     while (notBaseOrdinal == res)
       res = generator.nextInt(4)
-    NumberBase.values()(res)
+    NumberBase.values(res)
   }
 
   // Correction
@@ -136,6 +135,6 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
     } yield TwoCompResult(value, solution, jsObj.stringField(BinaryAbs), jsObj.stringField(InvertedAbs))
   }
 
-  private def numbaseFromString(str: String): Option[NumberBase] = Try(Some(NumberBase.valueOf(str))) getOrElse None
+  private def numbaseFromString(str: String): Option[NumberBase] = NumberBase.withNameInsensitiveOption(str)
 
 }

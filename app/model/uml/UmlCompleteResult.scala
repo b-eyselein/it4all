@@ -1,10 +1,8 @@
 package model.uml
 
-import model.Enums
-import model.Enums.SuccessType.NONE
-import model.core.EvaluationResult._
 import model.core.matching.{Match, MatchingResult}
-import model.core.{CompleteResult, EvaluationResult}
+import model.core.result.EvaluationResult._
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.uml.UmlCompleteResult._
 import model.uml.matcher._
 import play.api.libs.json._
@@ -17,7 +15,7 @@ object UmlCompleteResult {
   def describeImplementation(impl: UmlImplementation): String = s"${impl.subClass}  &rarr;  ${impl.superClass}"
 
   def describeAssociation(assoc: UmlAssociation): String =
-    s"${assoc.assocType.germanName}: ${assoc.firstEnd} &harr; ${assoc.secondEnd} (${assoc.displayMult(turn = false)})"
+    s"${assoc.assocType.german}: ${assoc.firstEnd} &harr; ${assoc.secondEnd} (${assoc.displayMult(turn = false)})"
 
 }
 
@@ -26,7 +24,7 @@ case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassD
 
   override type SolType = UmlClassDiagram
 
-  override val success: Enums.SuccessType = NONE
+  override val success: SuccessType = SuccessType.NONE
 
   override def results: Seq[MatchingResult[_, _ <: Match[_]]] = Seq.empty ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
 
@@ -39,11 +37,11 @@ case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassD
   }
 
   val assocAndImplResult: Option[(UmlAssociationMatchingResult, UmlImplementationMatchingResult)] = part match {
-    case (DiagramDrawingHelp | DiagramDrawing) =>
+    case DiagramDrawingHelp | DiagramDrawing =>
       val assocRes = UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations)
       val implRes = UmlImplementationMatcher.doMatch(learnerSolution.implementations, musterSolution.implementations)
       Some((assocRes, implRes))
-    case _                                     => None
+    case _                                   => None
   }
 
   def nextPart: Option[UmlExPart] = part match {

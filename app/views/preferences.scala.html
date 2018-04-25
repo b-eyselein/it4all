@@ -1,85 +1,87 @@
 @(title: String, user: model.User)
 
-@scripts = {
-    <script src="@routes.Assets.versioned("javascripts/preferences.js")"></script>
-}
+    @scripts = {
+        <script src="@routes.Assets.versioned("javascripts/preferences.js")"></script>
+    }
 
-@main(title, Some(user), scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Präferenzen</h1>
-        </div>
+    @main(title, Some(user), scripts) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Präferenzen</h1>
+            </div>
 
-        <form class="form-horizontal" action="javascript:updateShowHideAgg('@controllers.routes.UserController.saveShowHideAgg')">
-            <div class="form-group">
-                <label class="control-label col-sm-3" for="posTests">Bestandene Tests</label>
-                <div class="col-sm-9">
-                    <div class="input-group">
-                        <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.showHideAggregate">
-                        @for(todo <- model.Enums.ShowHideAggregate.values) {
-                            <option value="@todo" @todo.isSelected(user.showHideAggregate)>@todo.german </option>
-                        }
-                        </select>
+            <form class="form-horizontal" action="javascript:updateShowHideAgg('@controllers.routes.UserController.saveShowHideAgg')">
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="posTests">Bestandene Tests</label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.showHideAggregate">
+                            @for(todo <- model.ShowHideAggregate.values) {
+                                <option value="@todo" @{
+                                    if(todo == user.showHideAggregate) "selected" else ""
+                                }>@todo.german </option>
+                            }
+                            </select>
 
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" id="btn_posTests" disabled>Speichern...</button>
-                        </span>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" id="btn_posTests" disabled>Speichern...</button>
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
 
-        <div id="changeShowHideAggDiv"></div>
+            <div id="changeShowHideAggDiv"></div>
 
-        <hr>
+            <hr>
 
-        <form class="form-horizontal" action="javascript:updatePassword('@controllers.routes.UserController.saveNewPassword')">
-            <h2>Passwort ändern</h2>
+            <form class="form-horizontal" action="javascript:updatePassword('@controllers.routes.UserController.saveNewPassword')">
+                <h2>Passwort ändern</h2>
 
-            <div class="form-group">
-                <label class="control-label col-sm-3" for="old_pw">Altes Passwort:</label>
-                <div class="col-sm-9">
-                    <input type="password" class="form-control" id="old_pw" name="old_pw" placeholder="Ihr altes Passwort" required>
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="old_pw">Altes Passwort:</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="old_pw" name="old_pw" placeholder="Ihr altes Passwort" required>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label class="control-label col-sm-3" for="new_pw1">Neues Passwort:</label>
-                <div class="col-sm-9">
-                    <input type="password" class="form-control" id="new_pw1" name="new_pw1" placeholder="Ihr neues Passwort" required>
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="new_pw1">Neues Passwort:</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="new_pw1" name="new_pw1" placeholder="Ihr neues Passwort" required>
+                    </div>
                 </div>
-            </div>
 
 
-            <div class="form-group">
-                <label class="control-label col-sm-3" for="new_pw2">Passwort wiederholen:</label>
-                <div class="col-sm-9">
-                    <input type="password" class="form-control" id="new_pw2" name="new_pw2" placeholder="Ihr neues Passwort" required>
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="new_pw2">Passwort wiederholen:</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="new_pw2" name="new_pw2" placeholder="Ihr neues Passwort" required>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="col-sm-offset-3 col-sm-9">
-                    <button class="btn btn-default" id="btn_pwChange">Passwort aktualisieren</button>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button class="btn btn-default" id="btn_pwChange">Passwort aktualisieren</button>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
 
-        <div id="changePwDiv"></div>
+            <div id="changePwDiv"></div>
 
-        <hr>
+            <hr>
 
-        <form class="form-horizontal">
-            <h2>Layout Webaufgaben</h2>
+            <form class="form-horizontal">
+                <h2>Layout Webaufgaben</h2>
 
-            <div class="radio">
-                <label><input type="radio" name="optradio">Dreispaltig</label>
-            </div>
-            <div class="radio">
-                <label><input type="radio" name="optradio">Zweispaltig</label>
-            </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio">Dreispaltig</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio">Zweispaltig</label>
+                </div>
 
-        </form>
+            </form>
 
-    </div>
-}
+        </div>
+    }

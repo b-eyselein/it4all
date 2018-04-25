@@ -1,7 +1,6 @@
 package model.sql.matcher
 
-import model.Enums.MatchType
-import model.core.matching.{Match, Matcher, MatchingResult}
+import model.core.matching.{Match, MatchType, Matcher, MatchingResult}
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}

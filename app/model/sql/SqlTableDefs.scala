@@ -1,7 +1,7 @@
 package model.sql
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._

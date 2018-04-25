@@ -1,8 +1,8 @@
 package model.sql
 
-import model.Enums.SuccessType
+import model.core.result.SuccessType
 import model.core.matching.{Match, MatchingResult}
-import model.core.{CompleteResult, EvaluationResult}
+import model.core.result.{CompleteResult, EvaluationResult}
 import model.sql.SqlConsts._
 import model.sql.matcher._
 import play.api.libs.json._

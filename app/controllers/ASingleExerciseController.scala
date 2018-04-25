@@ -2,8 +2,7 @@ package controllers
 
 import java.nio.file.Files
 
-import model.Enums.ExerciseState
-import model.User
+import model.ExerciseState
 import model.toolMains.ASingleExerciseToolMain
 import play.api.Logger
 import play.api.data.Form
@@ -11,7 +10,6 @@ import play.api.data.Forms.{of, single}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,7 +53,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
 
       def onFormRead(toolMain: ASingleExerciseToolMain): ExerciseState => Future[Result] = { newState =>
         toolMain.updateExerciseState(id, newState) map {
-          case true  => Ok(Json.obj("id" -> id, "newState" -> newState.name))
+          case true  => Ok(Json.obj("id" -> id, "newState" -> newState.entryName))
           case false => BadRequest(Json.obj("message" -> "Could not update exercise!"))
         }
       }

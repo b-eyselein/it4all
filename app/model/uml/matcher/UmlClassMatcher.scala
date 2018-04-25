@@ -1,9 +1,7 @@
 package model.uml.matcher
 
-import model.Enums.MatchType
-import model.Enums.MatchType.{SUCCESSFUL_MATCH, UNSUCCESSFUL_MATCH}
 import model.core.CoreConsts.{sampleArgName, successName, userArgName}
-import model.core.matching.{Match, Matcher, MatchingResult}
+import model.core.matching.{Match, MatchType, Matcher, MatchingResult}
 import model.uml.UmlClass
 import model.uml.UmlConsts._
 import play.api.libs.json.{JsValue, Json}
@@ -23,18 +21,18 @@ case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass],
   val attributesResult: Option[UmlClassMemberMatchingResult] = memberResults.map(_._1)
   val methodsResult   : Option[UmlClassMemberMatchingResult] = memberResults.map(_._2)
 
-  override def analyze(c1: UmlClass, c2: UmlClass): MatchType = if (!compAM) SUCCESSFUL_MATCH else {
+  override def analyze(c1: UmlClass, c2: UmlClass): MatchType = if (!compAM) MatchType.SUCCESSFUL_MATCH else {
     val attrResult = UmlClassMemberMatcher.doMatch(c1.attributes, c2.attributes)
     val methResult = UmlClassMemberMatcher.doMatch(c1.methods, c2.methods)
 
-    if (attrResult.isSuccessful && methResult.isSuccessful) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
+    if (attrResult.isSuccessful && methResult.isSuccessful) MatchType.SUCCESSFUL_MATCH else MatchType.UNSUCCESSFUL_MATCH
   }
 
   // FIXME: check if correct!
-  override protected def descArgForJson(arg: UmlClass): JsValue = Json.obj(classNameName -> arg.className, classTypeName -> arg.classType.name)
+  override protected def descArgForJson(arg: UmlClass): JsValue = Json.obj(classNameName -> arg.className, classTypeName -> arg.classType.entryName)
 
   override def toJson: JsValue = Json.obj(
-    successName -> matchType.name,
+    successName -> matchType.entryName,
     userArgName -> (userArg map descArgForJson),
     sampleArgName -> (sampleArg map descArgForJson),
     attributesResultName -> attributesResult.map(_.toJson),

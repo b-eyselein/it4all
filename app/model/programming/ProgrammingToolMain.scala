@@ -2,12 +2,11 @@ package model.programming
 
 import controllers.ExerciseOptions
 import javax.inject._
-import model.Enums.{ExerciseState, ToolState}
 import model.programming.ProgConsts._
 import model.programming.ProgrammingToolMain._
-import model.toolMains.IdExerciseToolMain
+import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, User}
+import model.{Consts, ExerciseState, User}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._

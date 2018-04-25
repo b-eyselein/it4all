@@ -57,7 +57,7 @@ case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram:
   private def displayAssociations(associations: Seq[UmlAssociation]): String = associations map { assoc =>
     s"""{
        |  sourceId: "${assoc.firstEnd}", targetId: "${assoc.secondEnd}",
-       |  type: "${assoc.assocType.name}", sourceMultiplicity: "${assoc.firstMult.representant}", targetMultiplicity: "${assoc.secondMult.representant}",
+       |  type: "${assoc.assocType.entryName}", sourceMultiplicity: "${assoc.firstMult.representant}", targetMultiplicity: "${assoc.secondMult.representant}",
        |}""".stripMargin
   } mkString ",\n"
 

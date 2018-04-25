@@ -4,12 +4,11 @@ import java.nio.file._
 
 import controllers.ExerciseOptions
 import javax.inject._
-import model.Enums.{ExerciseState, ToolState}
 import model.core._
-import model.toolMains.IdExerciseToolMain
+import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.xml.XmlConsts._
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, User}
+import model.{Consts, ExerciseState, User}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.JsValue
@@ -19,7 +18,6 @@ import play.twirl.api.{Html, HtmlFormat}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
-
 
 @Singleton
 class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("xml") with FileUtils {
@@ -71,7 +69,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): XmlExercise =
+  override def instantiateExercise(id: Int, state: ExerciseState): XmlExercise =
     XmlExercise(id, title = "", author = "", text = "", state, grammarDescription = "", sampleGrammar = "", rootNode = "")
 
   // Yaml

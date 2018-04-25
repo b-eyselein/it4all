@@ -1,7 +1,7 @@
 package model.feedback
 
 import model.enums.EvaluatedAspects._
-import model.enums.Marks.NO_MARK
+import model.enums.Mark.NO_MARK
 import model.enums._
 import play.api.data.Forms._
 import play.api.data.format.Formatter
@@ -13,7 +13,7 @@ case class FeedbackFormHelper(username: String, toolUrlPart: String) {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Mark] = data.get(key) match {
       case None           => Left(Seq(FormError(key, "No value found!")))
-      case Some(valueStr) => Marks.withNameInsensitiveOption(valueStr) match {
+      case Some(valueStr) => Mark.withNameInsensitiveOption(valueStr) match {
         case Some(state) => Right(state)
         case None        => Left(Seq(FormError(key, s"Value '$valueStr' is no legal value!")))
       }

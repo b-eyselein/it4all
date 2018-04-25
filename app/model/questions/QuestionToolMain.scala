@@ -111,10 +111,10 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   // Helper methods
 
-  override def instantiateCollection(id: Int, state: Enums.ExerciseState): CompleteQuiz = CompleteQuiz(
+  override def instantiateCollection(id: Int, state: ExerciseState): CompleteQuiz = CompleteQuiz(
     Quiz(id, title = "", author = "", text = "", state, theme = ""), exercises = Seq.empty)
 
-  override def instantiateExercise(collId: Int, id: Int, state: Enums.ExerciseState): CompleteQuestion = CompleteQuestion(
+  override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompleteQuestion = CompleteQuestion(
     Question(id, title = "", author = "", text = "", state, collId, QuestionType.FREETEXT, -1), answers = Seq.empty)
 
 }

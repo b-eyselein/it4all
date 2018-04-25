@@ -3,11 +3,10 @@ package model.spread
 import java.nio.file.Path
 
 import javax.inject._
-import model.Enums.ToolState
 import model.spread.SpreadToolMain._
-import model.toolMains.FileExerciseToolMain
+import model.toolMains.{FileExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, User}
+import model.{Consts, ExerciseState, User}
 import play.api.data.Form
 import play.twirl.api.Html
 
@@ -71,7 +70,7 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): SpreadExercise =
+  override def instantiateExercise(id: Int, state: ExerciseState): SpreadExercise =
     SpreadExercise(id, title = "", author = "", text = "", state, sampleFilename = "", templateFilename = "")
 
   // Views

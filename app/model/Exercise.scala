@@ -1,11 +1,28 @@
 package model
 
-import java.nio.file.Path
-
-import model.Enums.ExerciseState
+import enumeratum.{Enum, EnumEntry}
 import model.core.{ExPart, FileUtils}
-import model.toolMains.AToolMain
 import play.twirl.api.Html
+
+import scala.collection.immutable.IndexedSeq
+
+sealed trait ExerciseState extends EnumEntry
+
+
+object ExerciseState extends Enum[ExerciseState] {
+
+  val values: IndexedSeq[ExerciseState] = findValues
+
+  case object RESERVED extends ExerciseState
+
+  case object CREATED extends ExerciseState
+
+  case object ACCEPTED extends ExerciseState
+
+  case object APPROVED extends ExerciseState
+
+}
+
 
 trait HasBaseValues {
 

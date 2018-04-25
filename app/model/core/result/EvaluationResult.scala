@@ -1,8 +1,7 @@
-package model.core
+package model.core.result
 
-import model.Enums.SuccessType
-import model.core.EvaluationResult._
 import play.twirl.api.Html
+
 
 object EvaluationResult {
 
@@ -54,7 +53,7 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
   def renderLearnerSolution: Html
 
-  override def success: SuccessType = SuccessType.ofBool(allResultsSuccessful(results))
+  override def success: SuccessType = SuccessType.ofBool(EvaluationResult.allResultsSuccessful(results))
 
   protected def solSavedRender: String = {
     val (bsClass, glyphicon) = if (solutionSaved) ("success", "ok") else ("danger", "remove")
@@ -65,4 +64,3 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
   }
 
 }
-

@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject._
-import model.Enums.Role
+import model.Role
 import model.FormMappings
 import model.FormMappings.UpdateRoleForm
 import model.core.Repository
@@ -32,7 +32,7 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
       val onFromValue: UpdateRoleForm => Future[Result] = { updateRoleForm =>
         repository.updateUserRole(updateRoleForm.username, updateRoleForm.newRole) map { roleChanged =>
-          if (roleChanged) Ok(Json.obj("name" -> updateRoleForm.username, "stdRole" -> updateRoleForm.newRole.name))
+          if (roleChanged) Ok(Json.obj("name" -> updateRoleForm.username, "stdRole" -> updateRoleForm.newRole.entryName))
           else BadRequest("TODO!")
         }
       }

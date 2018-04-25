@@ -1,6 +1,6 @@
 package model.sql
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.core.ExerciseFormMappings
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.SqlExerciseType

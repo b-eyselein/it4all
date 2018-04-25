@@ -1,6 +1,48 @@
 package model.uml
 
-import model.uml.UmlEnums._
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
+
+import scala.collection.immutable.IndexedSeq
+
+sealed abstract class UmlClassType(val german: String) extends EnumEntry
+
+object UmlClassType extends Enum[UmlClassType] with PlayJsonEnum[UmlClassType] {
+
+  val values: IndexedSeq[UmlClassType] = findValues
+
+  case object CLASS extends UmlClassType("Klasse")
+
+  case object INTERFACE extends UmlClassType("Interface")
+
+  case object ABSTRACT extends UmlClassType("Abstrakte Klasse")
+
+}
+
+sealed abstract class UmlMultiplicity(val representant: String) extends EnumEntry
+
+object UmlMultiplicity extends Enum[UmlMultiplicity] with PlayJsonEnum[UmlMultiplicity] {
+
+  val values: IndexedSeq[UmlMultiplicity] = findValues
+
+  case object SINGLE extends UmlMultiplicity("1")
+
+  case object UNBOUND extends UmlMultiplicity("*")
+
+}
+
+sealed abstract class UmlAssociationType(val german: String) extends EnumEntry
+
+object UmlAssociationType extends Enum[UmlAssociationType] with PlayJsonEnum[UmlAssociationType] {
+
+  val values: IndexedSeq[UmlAssociationType] = findValues
+
+  case object ASSOCIATION extends UmlAssociationType("Assoziation")
+
+  case object AGGREGATION extends UmlAssociationType("Aggregation")
+
+  case object COMPOSITION extends UmlAssociationType("Komposition")
+
+}
 
 
 case class Position(xCoord: Int, yCoord: Int)

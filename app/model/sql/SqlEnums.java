@@ -1,6 +1,5 @@
 package model.sql;
 
-import model.Enums.Selectable;
 import model.ExTag;
 import scala.Option;
 import scala.Some;
@@ -8,7 +7,9 @@ import scala.Some;
 
 public abstract class SqlEnums {
 
-    public enum SqlExerciseType implements Selectable<SqlExerciseType> {
+    // FIXME: use enumeratum!
+
+    public enum SqlExerciseType {
         SELECT, CREATE, UPDATE, INSERT, DELETE;
 
 
@@ -22,7 +23,7 @@ public abstract class SqlEnums {
         }
     }
 
-    public enum SqlExTag implements ExTag, Selectable<SqlExTag> {
+    public enum SqlExTag implements ExTag {
         SQL_JOIN("J", "Join"),
         SQL_DOUBLE_JOIN("2J", "Zweifacher Join"),
         SQL_TRIPLE_JOIN("3J", "Dreifacher Join"),

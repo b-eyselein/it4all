@@ -1,14 +1,14 @@
 package model.sql
 
 import javax.inject._
-import model.Enums.ToolState
 import model._
-import model.core._
+import model.core.result.EvaluationResult
+import model.core.{Levenshtein, SolutionFormHelper}
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.SqlExerciseType
 import model.sql.SqlEnums.SqlExerciseType._
 import model.sql.SqlToolMain._
-import model.toolMains.CollectionToolMain
+import model.toolMains.{CollectionToolMain, ToolState}
 import model.yaml.MyYamlFormat
 import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
@@ -150,10 +150,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Helper methods
 
-  override def instantiateCollection(id: Int, state: Enums.ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
+  override def instantiateCollection(id: Int, state: ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
     SqlScenario(id, title = "", author = "", text = "", state, shortName = ""), exercises = Seq.empty)
 
-  override def instantiateExercise(collId: Int, id: Int, state: Enums.ExerciseState): SqlCompleteEx = SqlCompleteEx(
+  override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): SqlCompleteEx = SqlCompleteEx(
     SqlExercise(id, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT, collectionId = collId, tags = "", hint = None), samples = Seq.empty)
 
 }

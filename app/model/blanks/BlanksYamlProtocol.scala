@@ -1,6 +1,6 @@
 package model.blanks
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.MyYamlProtocol
 import model.MyYamlProtocol._
 import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}

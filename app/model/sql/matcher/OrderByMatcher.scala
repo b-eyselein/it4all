@@ -1,14 +1,12 @@
 package model.sql.matcher
 
-import model.Enums.MatchType
-import model.Enums.MatchType.SUCCESSFUL_MATCH
-import model.core.matching.{Match, Matcher, MatchingResult}
+import model.core.matching.{Match, MatchType, Matcher, MatchingResult}
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json.{JsString, JsValue}
 
 case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement] {
 
-  override def analyze(ua: OrderByElement, sa: OrderByElement): MatchType = SUCCESSFUL_MATCH
+  override def analyze(ua: OrderByElement, sa: OrderByElement): MatchType = MatchType.SUCCESSFUL_MATCH
 
   override protected def descArgForJson(arg: OrderByElement): JsValue = JsString(arg.toString)
 

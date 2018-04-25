@@ -1,6 +1,5 @@
 package model.web;
 
-import model.Enums.Selectable;
 import scala.Option;
 import scala.Some;
 
@@ -8,7 +7,7 @@ public abstract class WebEnums {
 
     // FIXME: Use enumeratum!
 
-    public enum JsActionType implements Selectable<JsActionType> {
+    public enum JsActionType {
 
         CLICK, FILLOUT;
 

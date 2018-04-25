@@ -1,7 +1,8 @@
 package model.programming
 
-import model.Enums.SuccessType
-import model.core.{CompleteResult, EvaluationResult}
+import model.core.result.SuccessType
+import model.core.result.EvaluationResult
+import model.core.result.CompleteResult
 import model.programming.ProgConsts._
 import play.api.libs.json.{JsBoolean, JsString, JsValue, Json}
 import play.twirl.api.Html
@@ -45,7 +46,7 @@ case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaite
 
   override def toJson: JsValue = Json.obj(
     idName -> id,
-    successTypeName -> success.name,
+    successTypeName -> success.entryName,
     correct -> JsBoolean(success == SuccessType.COMPLETE),
     inputName -> input,
     awaitedName -> awaited,

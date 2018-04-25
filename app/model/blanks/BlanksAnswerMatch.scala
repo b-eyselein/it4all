@@ -1,8 +1,7 @@
 package model.blanks
 
-import model.Enums.MatchType
 import model.core.Levenshtein.levenshteinDistance
-import model.core.matching.Match
+import model.core.matching.{Match, MatchType}
 import play.api.libs.json.JsValue
 
 

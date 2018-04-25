@@ -1,9 +1,7 @@
 package model.web
 
-import model.Enums.SuccessType
-import model.Enums.SuccessType._
-import model.core.EvaluationResult._
-import model.core.{CompleteResult, EvaluationResult}
+import model.core.result.EvaluationResult._
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.web.WebConsts._
 import org.openqa.selenium.WebElement
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -67,18 +65,18 @@ case class ElementResult(task: WebCompleteTask, foundElement: Option[WebElement]
   extends WebResult {
 
   override val success: SuccessType = foundElement match {
-    case None    => NONE
+    case None    => SuccessType.NONE
     case Some(_) =>
-      if (notAllResultsSuccessful(attributeResults)) PARTIALLY
+      if (notAllResultsSuccessful(attributeResults)) SuccessType.PARTIALLY
       else textContentResult match {
-        case None             => COMPLETE
-        case Some(textResult) => if (textResult.isSuccessful) COMPLETE else PARTIALLY
+        case None             => SuccessType.COMPLETE
+        case Some(textResult) => if (textResult.isSuccessful) SuccessType.COMPLETE else SuccessType.PARTIALLY
       }
   }
 
   override def render: String = foundElement match {
     case None    => asMsg(success = false, "Element konnte nicht gefunden werden!").toString
-    case Some(_) => asMsg(COMPLETE, "Element wurde gefunden.").toString + (textContentResult map (_.render) getOrElse "") + (attributeResults.map(_.render) mkString "\n")
+    case Some(_) => asMsg(SuccessType.COMPLETE, "Element wurde gefunden.").toString + (textContentResult map (_.render) getOrElse "") + (attributeResults.map(_.render) mkString "\n")
   }
 
   override def toJson: JsObject = Json.obj(
@@ -99,15 +97,15 @@ case class ElementResult(task: WebCompleteTask, foundElement: Option[WebElement]
 
 abstract class TextResult(name: String, val foundContent: String, val awaitedContent: String) extends EvaluationResult {
 
-  override val success: SuccessType = if (foundContent == null) NONE
-  else if (foundContent contains awaitedContent) COMPLETE
-  else PARTIALLY
+  override val success: SuccessType = if (foundContent == null) SuccessType.NONE
+  else if (foundContent contains awaitedContent) SuccessType.COMPLETE
+  else SuccessType.PARTIALLY
 
   def render: String = asMsg(success, success match {
-    case COMPLETE  => s"$name hat den gesuchten Wert."
-    case PARTIALLY => s"$name hat nicht den gesuchten Wert '$awaitedContent' sondern '$foundContent'!"
-    case NONE      => s"$name konnte nicht gefunden werden!"
-    case ERROR     => s"$name konnte aufgrund eines Fehler nicht ueberprueft werden."
+    case SuccessType.COMPLETE  => s"$name hat den gesuchten Wert."
+    case SuccessType.PARTIALLY => s"$name hat nicht den gesuchten Wert '$awaitedContent' sondern '$foundContent'!"
+    case SuccessType.NONE      => s"$name konnte nicht gefunden werden!"
+    case SuccessType.ERROR     => s"$name konnte aufgrund eines Fehler nicht ueberprueft werden."
   })
 
   def toJson: JsObject

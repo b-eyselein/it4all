@@ -1,24 +1,22 @@
 package model.uml.matcher
 
-import model.Enums.MatchType
-import model.Enums.MatchType._
 import model.core.matching._
-import model.uml.UmlImplementation
 import model.uml.UmlCompleteResult.describeImplementation
 import model.uml.UmlConsts._
+import model.uml.UmlImplementation
 import play.api.libs.json.{JsValue, Json}
 
 case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
 
   override def analyze(i1: UmlImplementation, i2: UmlImplementation): MatchType =
-    if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) SUCCESSFUL_MATCH else PARTIAL_MATCH
+    if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH
 
   override def explanations: Seq[String] = matchType match {
-    case SUCCESSFUL_MATCH                     => Seq.empty
-    case (UNSUCCESSFUL_MATCH | PARTIAL_MATCH) => Seq("Vererbungsrichtung falsch.")
-    case ONLY_SAMPLE                          => Seq("Vererbungsbeziehung nicht erstellt.")
-    case ONLY_USER                            => Seq("Vererbengsbeziehung ist falsch.")
-    case FAILURE                              => Seq("Es gab einen internen Fehler bei der Korrektur der Vererbungsbeziehungen!")
+    case MatchType.SUCCESSFUL_MATCH                             => Seq.empty
+    case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq("Vererbungsrichtung falsch.")
+    case MatchType.ONLY_SAMPLE                                  => Seq("Vererbungsbeziehung nicht erstellt.")
+    case MatchType.ONLY_USER                                    => Seq("Vererbengsbeziehung ist falsch.")
+    case MatchType.FAILURE                                      => Seq("Es gab einen internen Fehler bei der Korrektur der Vererbungsbeziehungen!")
   }
 
   override def descArg(arg: UmlImplementation): String = describeImplementation(arg)

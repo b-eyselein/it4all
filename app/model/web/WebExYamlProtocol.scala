@@ -1,6 +1,6 @@
 package model.web
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.MyYamlProtocol._
 import model.web.WebConsts._
 import model.web.WebEnums._
@@ -25,7 +25,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(stateName, ExerciseState.byString(_) getOrElse ExerciseState.CREATED)
+      state <- yamlObject.enumField(stateName, ExerciseState.withNameInsensitiveOption(_) getOrElse ExerciseState.CREATED)
 
 
       htmlText <- yamlObject.optStringField(htmlTextName)

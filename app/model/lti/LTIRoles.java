@@ -2,6 +2,8 @@ package model.lti;
 
 public abstract class LTIRoles {
 
+    // FIXME: use enumeratum!
+
     public enum SystemRole {
 
         SysAdmin("urn:lti:sysrole:ims/lis/SysAdmin"),

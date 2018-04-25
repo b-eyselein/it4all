@@ -1,6 +1,6 @@
 package model.xml
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.MyYamlProtocol
 import model.MyYamlProtocol._
 import model.xml.XmlConsts._

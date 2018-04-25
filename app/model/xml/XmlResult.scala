@@ -1,7 +1,6 @@
 package model.xml
 
-import model.Enums.SuccessType
-import model.core.{CompleteResult, EvaluationResult}
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.xml.XmlEnums.XmlErrorType
 import org.xml.sax.SAXParseException
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -42,7 +41,7 @@ abstract sealed class XmlError(val errorType: XmlErrorType, val errorMessage: St
 
   def render: String = s"""<div class="alert alert-$getBSClass"><strong>${errorType.german} $lineStr:</strong> $errorMessage</div>"""
 
-  def toJson: JsObject = Json.obj("errorType" -> errorType.name, "errorMessage" -> errorMessage, "line" -> line, "success" -> success.name)
+  def toJson: JsObject = Json.obj("errorType" -> errorType.name, "errorMessage" -> errorMessage, "line" -> line, "success" -> success.entryName)
 
 }
 

@@ -1,90 +1,90 @@
 @(user: model.User, toolMain: model.nary.NaryToolMain, learningPathBases: Seq[model.learningPath.LearningPath])
 
-@newExUrl(part: model.nary.NaryExPart) = @{
-    routes.RandomExerciseController.newExercise(toolMain.urlPart, part.urlName)
-}
+    @newExUrl(part: model.nary.NaryExPart) = @{
+        routes.RandomExerciseController.newExercise(toolMain.urlPart, part.urlName)
+    }
 
-@scripts = {
-    <script>
-            $(document).ready(function () {
-                $('#convButton').click(function () {
-                    window.location = '@newExUrl(model.nary.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
+    @scripts = {
+        <script>
+                $(document).ready(function () {
+                    $('#convButton').click(function () {
+                        window.location = '@newExUrl(model.nary.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
+                    });
+
+                    $('#addButton').click(function () {
+                        window.location = '@newExUrl(model.nary.NaryAdditionExPart)?base=' + $('#addBase').val();
+                    });
+
+                    $('#twoCompButton').click(function () {
+                        window.location = '@newExUrl(model.nary.TwoComplementExPart)?verbose=' + $('#twoComp').val();
+                    });
                 });
+        </script>
+    }
 
-                $('#addButton').click(function () {
-                    window.location = '@newExUrl(model.nary.NaryAdditionExPart)?base=' + $('#addBase').val();
-                });
-
-                $('#twoCompButton').click(function () {
-                    window.location = '@newExUrl(model.nary.TwoComplementExPart)?verbose=' + $('#twoComp').val();
-                });
-            });
-    </script>
-}
-
-@main("Zahlensysteme", Some(user), scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Zahlensysteme</h1>
-        </div>
-
-            <!-- Conversion -->
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon">Umwandlung von</span>
-                <select title="Startsystem Umwandlung" class="form-control" id="convFromBase">
-                    <option value="RANDOM">Zufälligem System</option>
-                    @for(base <- model.nary.NumberBase.values) {
-                        <option value="@base.name">@base.systemName</option>
-                    }
-                </select>
-                <span class="input-group-addon">nach</span>
-                <select title="Zielsystem Umwandlung" class="form-control" id="convToBase">
-                    <option value="RANDOM">Zufälligem System</option>
-                    @for(base <- model.nary.NumberBase.values) {
-                        <option value="@base.name">@base.systemName</option>
-                    }
-                </select>
-                <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
-                <button class="form-control btn-primary" id="convButton">Go! </button>
+    @main("Zahlensysteme", Some(user), scripts) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Zahlensysteme</h1>
             </div>
-        </div>
 
-            <!-- Addition -->
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon">Addition in</span>
-                <select title="System Addition" class="form-control" id="addBase">
-                    <option value="RANDOM">Zufälligem System</option>
-                    @for(base <- model.nary.NumberBase.values) {
-                        <option value="@base.name">@base.systemName</option>
-                    }
-                </select>
-                <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
-                <button class="form-control btn-primary" id="addButton">Go! </button>
+                <!-- Conversion -->
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Umwandlung von</span>
+                    <select title="Startsystem Umwandlung" class="form-control" id="convFromBase">
+                        <option value="RANDOM">Zufälligem System</option>
+                        @for(base <- model.nary.NumberBase.values) {
+                            <option value="@base.entryName">@base.systemName</option>
+                        }
+                    </select>
+                    <span class="input-group-addon">nach</span>
+                    <select title="Zielsystem Umwandlung" class="form-control" id="convToBase">
+                        <option value="RANDOM">Zufälligem System</option>
+                        @for(base <- model.nary.NumberBase.values) {
+                            <option value="@base.entryName">@base.systemName</option>
+                        }
+                    </select>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                    <button class="form-control btn-primary" id="convButton">Go! </button>
+                </div>
             </div>
-        </div>
 
-            <!-- Zweierkomplement -->
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon">Umwandlung in das Zweierkomplement </span>
-                <select title="Zweierkomplement" class="form-control" id="twoComp">
-                    <option value="true">mit Zwischenschritten</option>
-                    <option value="false">ohne Zwischenschritte</option>
-                </select>
-                <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
-                <button class="form-control btn-primary" id="twoCompButton">Go! </button>
+                <!-- Addition -->
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Addition in</span>
+                    <select title="System Addition" class="form-control" id="addBase">
+                        <option value="RANDOM">Zufälligem System</option>
+                        @for(base <- model.nary.NumberBase.values) {
+                            <option value="@base.entryName">@base.systemName</option>
+                        }
+                    </select>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                    <button class="form-control btn-primary" id="addButton">Go! </button>
+                </div>
             </div>
+
+                <!-- Zweierkomplement -->
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Umwandlung in das Zweierkomplement </span>
+                    <select title="Zweierkomplement" class="form-control" id="twoComp">
+                        <option value="true">mit Zwischenschritten</option>
+                        <option value="false">ohne Zwischenschritte</option>
+                    </select>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                    <button class="form-control btn-primary" id="twoCompButton">Go! </button>
+                </div>
+            </div>
+
+
+            <hr>
+
+            <div class="form-group">
+                <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.evaluate(toolMain.urlPart)">
+                    Dieses Tool evaluieren</a>
+            </div>
+
         </div>
-
-
-        <hr>
-
-        <div class="form-group">
-            <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.evaluate(toolMain.urlPart)">
-                Dieses Tool evaluieren</a>
-        </div>
-
-    </div>
-}
+    }

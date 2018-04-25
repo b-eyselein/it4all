@@ -1,6 +1,6 @@
 package model.persistence
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.{CompleteEx, Exercise}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider

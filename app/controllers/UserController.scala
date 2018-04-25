@@ -2,8 +2,8 @@ package controllers
 
 import com.github.t3hnar.bcrypt._
 import javax.inject._
-import model.Enums.ShowHideAggregate
 import model.FormMappings._
+import model.ShowHideAggregate
 import model.core.Repository
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -32,7 +32,7 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
       }
 
       val onRead: String => Future[Result] = { str =>
-        ShowHideAggregate.byString(str) match {
+        ShowHideAggregate.withNameInsensitiveOption(str) match {
           case None         => Future(BadRequest("TODO!"))
           case Some(newVal) =>
             repository.updateShowHideAggregate(user, newVal) map {
@@ -51,7 +51,7 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
         Future(BadRequest("Es gab einen Fehler beim Einlesen ihrer Daten!"))
       }
 
-      val onFormRead: ((String, String, String)) => Future[Result] = { pwChangeData =>
+      val onFormRead = { pwChangeData: (String, String, String) =>
 
         repository.pwHashForUser(user.username) flatMap {
           case None         => Future(BadRequest("Could not change password!"))

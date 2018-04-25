@@ -1,4 +1,5 @@
-@(result: model.core.CompleteResult[_], resultAsHtml: Html, user: model.User, toolMainObject: model.toolMains.AToolMain)
+@import model.core.result.CompleteResult
+@(result: CompleteResult[_], resultAsHtml: Html, user: model.User, toolMainObject: model.toolMains.AToolMain)
 
 @main(toolMainObject.toolname.toUpperCase(), Some(user)) {
     <div class="container">

@@ -1,13 +1,12 @@
 package model.bool
 
 import javax.inject.{Inject, Singleton}
-import model.Enums.ToolState
 import model._
 import model.bool.BoolConsts._
 import model.bool.BooleanQuestion._
-import model.core.EvaluationResult
+import model.core.result.EvaluationResult
 import model.learningPath.LearningPath
-import model.toolMains.RandomExerciseToolMain
+import model.toolMains.{RandomExerciseToolMain, ToolState}
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html

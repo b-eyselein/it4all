@@ -1,11 +1,9 @@
 package model.persistence
 
 import com.github.t3hnar.bcrypt._
-import model.Enums.{ExerciseState, Role, ShowHideAggregate}
 import model._
 import model.core.CoreConsts._
-import model.enums.Marks.NO_MARK
-import model.enums.{Mark, Marks}
+import model.enums.Mark
 import model.feedback.{Feedback, FeedbackTableHelper}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -74,7 +72,7 @@ trait TableDefs {
 
   def updateUserRole(userToChangeName: String, newRole: Role): Future[Boolean] =
     db.run(users.filter(_.username === userToChangeName).map(_.role).update(newRole)) map (_ => true) recover { case e: Throwable =>
-      Logger.error(s"Could not update std role of user $userToChangeName to ${newRole.name}", e)
+      Logger.error(s"Could not update std role of user $userToChangeName to ${newRole.entryName}", e)
       false
     }
 
@@ -132,16 +130,16 @@ trait TableDefs {
   // Column types
 
   private implicit val roleColumnType: BaseColumnType[Role] =
-    MappedColumnType.base[Role, String](_.name, str => Role.byString(str) getOrElse Role.RoleUser)
+    MappedColumnType.base[Role, String](_.entryName, str => Role.withNameInsensitiveOption(str) getOrElse Role.RoleUser)
 
   private implicit val showhideaggrColumnType: BaseColumnType[ShowHideAggregate] =
-    MappedColumnType.base[ShowHideAggregate, String](_.name, str => ShowHideAggregate.byString(str) getOrElse ShowHideAggregate.SHOW)
+    MappedColumnType.base[ShowHideAggregate, String](_.entryName, str => ShowHideAggregate.withNameInsensitiveOption(str) getOrElse ShowHideAggregate.SHOW)
 
   protected implicit val exercisetypeColumnType: BaseColumnType[ExerciseState] =
-    MappedColumnType.base[ExerciseState, String](_.name, str => ExerciseState.byString(str) getOrElse ExerciseState.CREATED)
+    MappedColumnType.base[ExerciseState, String](_.entryName, str => ExerciseState.withNameInsensitiveOption(str) getOrElse ExerciseState.CREATED)
 
   private implicit val markColumnType: BaseColumnType[Mark] =
-    MappedColumnType.base[Mark, String](_.entryName, str => Marks.withNameInsensitiveOption(str) getOrElse NO_MARK)
+    MappedColumnType.base[Mark, String](_.entryName, str => Mark.withNameInsensitiveOption(str) getOrElse Mark.NO_MARK)
 
   // Tables
 

@@ -1,8 +1,6 @@
 package model.sql.matcher
 
-import model.Enums.MatchType
-import model.Enums.MatchType._
-import model.core.matching.{Match, Matcher, MatchingResult}
+import model.core.matching.{Match, MatchType, Matcher, MatchingResult}
 import model.sql.ColumnWrapper
 import play.api.libs.json.{JsString, JsValue}
 
@@ -15,7 +13,7 @@ case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnW
 
   val restMatched: Boolean = false
 
-  val colNamesMatched: Boolean = matchType == SUCCESSFUL_MATCH || matchType == UNSUCCESSFUL_MATCH
+  val colNamesMatched: Boolean = matchType == MatchType.SUCCESSFUL_MATCH || matchType == MatchType.UNSUCCESSFUL_MATCH
 
   val firstColName: String = userArg map (_.getColName) getOrElse ""
 

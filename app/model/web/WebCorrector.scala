@@ -1,7 +1,6 @@
 package model.web
 
-import model.Enums.SuccessType
-import model.Enums.SuccessType._
+import model.core.result.SuccessType
 import org.openqa.selenium.{By, SearchContext, WebElement}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -41,7 +40,7 @@ object WebCorrector {
   }
 
   private def testCondition(condition: JsCondition, searchContext: SearchContext): ConditionResult = Try(searchContext findElement By.xpath(condition.xpathQuery)) match {
-    case Failure(_)       => ConditionResult(NONE, condition, null)
+    case Failure(_)       => ConditionResult(SuccessType.NONE, condition, null)
     case Success(element) =>
       val gottenValue = element.getText
       ConditionResult(SuccessType.ofBool(gottenValue == condition.awaitedValue), condition, gottenValue)

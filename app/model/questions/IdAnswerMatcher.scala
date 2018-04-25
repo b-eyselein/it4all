@@ -1,7 +1,6 @@
 package model.questions
 
-import model.Enums
-import model.core.{CompleteResult, EvaluationResult}
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.questions.QuestionEnums.Correctness
 import play.api.libs.json._
 import play.twirl.api.Html
@@ -19,6 +18,7 @@ case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: Complet
   override val results: Seq[IdAnswerMatch] = IdAnswerMatcher.doMatch(learnerSolution, question.answers)
 
   def forJson: JsValue = JsArray(results map { r =>
+    // FIXME: update option!
     JsObject(Seq("id" -> JsNumber(r.id), "chosen" -> JsBoolean(r.userArg.isDefined), "correct" -> JsBoolean(r.isCorrect)) ++ r.sampleArg.flatMap(_.explanation).map(expl => "explanation" -> JsString(expl)))
   })
 
@@ -62,7 +62,7 @@ case class IdAnswerMatch(userArg: Option[IdGivenAnswer], sampleArg: Option[Answe
     case _                                              => Correctness.WRONG
   }
 
-  override def success: Enums.SuccessType = ???
+  override def success: SuccessType = ???
 
   def isCorrect: Boolean = correctness != Correctness.WRONG
 

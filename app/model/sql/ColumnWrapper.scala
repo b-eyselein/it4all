@@ -1,7 +1,6 @@
 package model.sql
 
-import model.Enums.MatchType
-import model.Enums.MatchType.{SUCCESSFUL_MATCH, UNSUCCESSFUL_MATCH}
+import model.core.matching.MatchType
 import net.sf.jsqlparser.expression.Alias
 import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.create.table.{ColDataType, ColumnDefinition}
@@ -61,7 +60,7 @@ case class ChangeColumnWrapper(col: Column) extends ColumnWrapper {
 
   override def toString: String = col.toString
 
-  def matchOther(that: ChangeColumnWrapper): MatchType = SUCCESSFUL_MATCH
+  def matchOther(that: ChangeColumnWrapper): MatchType = MatchType.SUCCESSFUL_MATCH
 
 }
 
@@ -100,7 +99,7 @@ case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
 
     // FIXME: length of datatype? i. e. VARCHAR**(20)**
 
-    if (typesOk) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
+    if (typesOk) MatchType.SUCCESSFUL_MATCH else MatchType.UNSUCCESSFUL_MATCH
   }
 
   def compareDataTypes(userType: ColDataType, sampleType: ColDataType): Boolean = {
@@ -159,17 +158,17 @@ case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
   }
 
   override def getRest: String = col match {
-    case (_: AllColumns) | (_: AllTableColumns) => ""
-    case (set: SelectExpressionItem)            => Option(set.getAlias) map (_.toString) getOrElse ""
+    case _: AllColumns | _: AllTableColumns => ""
+    case set: SelectExpressionItem          => Option(set.getAlias) map (_.toString) getOrElse ""
   }
 
   def matchOther(that: SelectColumnWrapper): MatchType = (this.col, that.col) match {
-    case (_: AllColumns, _: AllColumns) | (_: AllTableColumns, _: AllTableColumns) => SUCCESSFUL_MATCH
+    case (_: AllColumns, _: AllColumns) | (_: AllTableColumns, _: AllTableColumns) => MatchType.SUCCESSFUL_MATCH
 
     case (selExpr1: SelectExpressionItem, selExpr2: SelectExpressionItem) =>
-      if (compareAliases(Option(selExpr1.getAlias), Option(selExpr2.getAlias))) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
+      if (compareAliases(Option(selExpr1.getAlias), Option(selExpr2.getAlias))) MatchType.SUCCESSFUL_MATCH else MatchType.UNSUCCESSFUL_MATCH
 
-    case _ => UNSUCCESSFUL_MATCH
+    case _ => MatchType.UNSUCCESSFUL_MATCH
   }
 
   override def toString: String = col toString

@@ -2,7 +2,7 @@ package model.programming
 
 import java.nio.file.Path
 
-import model.Enums.SuccessType
+import model.core.result.SuccessType
 import model.core.FileUtils
 import play.api.Logger
 import play.api.libs.functional.syntax._
@@ -14,18 +14,6 @@ case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], 
 
 //noinspection ConvertibleToMethodValue
 object ResultsFileJsonFormat extends FileUtils {
-
-  implicit val enumWrites: Writes[Enum[_]] = (e: Enum[_]) => JsString(e.name)
-
-  def enumReads[T <: Enum[T]](mkEnum: String => Option[T]): Reads[T] = {
-    case JsString(s) => mkEnum(s) match {
-      case Some(enumVal) => JsSuccess(enumVal)
-      case None          => JsError("Not a valid enum value: " + s)
-    }
-    case v           => JsError("Can't convert to enum: " + v)
-  }
-
-  implicit val successTypeReads: Reads[SuccessType] = enumReads(SuccessType.byString)
 
   private implicit val executionResultJsonReads: Reads[ExecutionResult] = (
     (__ \ "success").read[SuccessType] and

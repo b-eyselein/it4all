@@ -1,6 +1,5 @@
 package model
 
-import model.Enums.ExerciseState
 import model.MyYamlProtocol._
 import model.core.CommonUtils
 import model.core.CoreConsts._
@@ -138,7 +137,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     YamlString(titleName) -> hasBaseValues.title,
     YamlString(authorName) -> hasBaseValues.author,
     YamlString(textName) -> hasBaseValues.text,
-    YamlString(stateName) -> hasBaseValues.state.name
+    YamlString(stateName) -> hasBaseValues.state.entryName
   )
 
   protected def readBaseValues(yamlObject: YamlObject): Try[(Int, String, String, String, ExerciseState)] = for {
@@ -146,7 +145,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     title <- yamlObject.stringField(titleName)
     author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(textName)
-    state = yamlObject.enumField(stateName, ExerciseState.valueOf) getOrElse ExerciseState.CREATED
+    state: ExerciseState <- yamlObject.enumField(stateName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
   } yield (id, title, author, text, state)
 
   abstract class HasBaseValuesYamlFormat[E <: HasBaseValues] extends MyYamlObjectFormat[E] {

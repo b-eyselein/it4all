@@ -1,7 +1,7 @@
 package model.blanks
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.blanks.BlanksExParts.{BlankExSinglePart, BlanksExPart}
 import model.persistence.SingleExerciseTableDefs

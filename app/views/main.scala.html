@@ -38,8 +38,8 @@
                                 Aufgabenbereiche <span class="caret"></span></a>
 
                             <ul class="dropdown-menu">
-                            @for(idPartTool <- model.toolMains.ToolList.AllToolMains.filter(_.toolState == model.Enums.ToolState.LIVE)) {
-                                <li><a href="@routes.MainExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge()</a></li>
+                            @for(idPartTool <- model.toolMains.ToolList.AllToolMains.filter(_.toolState == model.toolMains.ToolState.LIVE)) {
+                                <li><a href="@routes.MainExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge</a></li>
                             }
                             </ul>
                         </li>

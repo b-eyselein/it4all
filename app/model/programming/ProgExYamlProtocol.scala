@@ -2,7 +2,7 @@ package model.programming
 
 import java.nio.file.Paths
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.MyYamlProtocol._
 import model.core.FileUtils
 import model.programming.ProgConsts._

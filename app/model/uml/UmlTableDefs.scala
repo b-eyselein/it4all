@@ -1,7 +1,7 @@
 package model.uml
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.persistence.SingleExerciseTableDefs
 import model.uml.UmlConsts._

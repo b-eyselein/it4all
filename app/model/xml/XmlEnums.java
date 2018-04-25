@@ -1,12 +1,11 @@
 package model.xml;
 
-import model.Enums.Selectable;
 import scala.Option;
 import scala.Some;
 
 public abstract class XmlEnums {
 
-    public enum XmlErrorType implements Selectable<XmlErrorType> {
+    public enum XmlErrorType  {
         FATAL("Fataler Fehler"),
         ERROR("Fehler"),
         WARNING("Warnung"),

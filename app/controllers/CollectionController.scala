@@ -3,7 +3,7 @@ package controllers
 import java.nio.file.Files
 
 import javax.inject.{Inject, Singleton}
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.toolMains.{CollectionToolMain, ToolList}
@@ -60,7 +60,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
       def onFormRead(toolMain: CollectionToolMain): ExerciseState => Future[Result] = { newState =>
         toolMain.updateCollectionState(id, newState) map {
-          case true  => Ok(Json.obj("id" -> id, "newState" -> newState.name))
+          case true  => Ok(Json.obj("id" -> id, "newState" -> newState.entryName))
           case false => BadRequest(Json.obj("message" -> "Could not update exercise!"))
         }
       }
