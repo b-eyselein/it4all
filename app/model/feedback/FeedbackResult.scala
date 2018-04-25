@@ -1,27 +1,37 @@
 package model.feedback
 
-import model.Enums.{EvaluatedAspect, Mark}
+import model.enums.EvaluatedAspect
+import model.enums.EvaluatedAspects._
+import model.enums.Mark
+import model.enums.Marks.NO_MARK
 
-case class FeedbackResult(tool: EvaluatedTool, allFeedback: List[Feedback]) {
+case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 
-  val feedbackSense: Map[Mark, Int] = allFeedback.map(_.sense).groupBy(identity).mapValues(_.size)
+  // FIXME: refactor!
 
-  val feedbackUsage: Map[Mark, Int] = allFeedback.map(_.used).groupBy(identity).mapValues(_.size)
+  private val feedbackSense: Map[Mark, Int] = allFeedback.map(_.sense).groupBy(identity).mapValues(_.size)
 
-  val feedbackUsability: Map[Mark, Int] = allFeedback.map(_.usability).groupBy(identity).mapValues(_.size)
 
-  val feedbackFeedback: Map[Mark, Int] = allFeedback.map(_.feedback).groupBy(identity).mapValues(_.size)
+  private val feedbackUsage: Map[Mark, Int] = allFeedback.map(_.used).groupBy(identity).mapValues(_.size)
 
-  val feedbackFairness: Map[Mark, Int] = allFeedback.map(_.fairness).groupBy(identity).mapValues(_.size)
 
-  val allComments: List[String] = allFeedback.map(_.comment).filter(!_.isEmpty)
+  private val feedbackUsability: Map[Mark, Int] = allFeedback.map(_.usability).groupBy(identity).mapValues(_.size)
+
+
+  private val feedbackFeedback: Map[Mark, Int] = allFeedback.map(_.feedback).groupBy(identity).mapValues(_.size)
+
+
+  private val feedbackFairness: Map[Mark, Int] = allFeedback.map(_.fairness).groupBy(identity).mapValues(_.size)
+
+
+  val allComments: Seq[String] = allFeedback.map(_.comment).filter(!_.isEmpty)
 
   def get(evaledAspect: EvaluatedAspect): Map[Mark, Int] = evaledAspect match {
-    case EvaluatedAspect.SENSE                => feedbackSense
-    case EvaluatedAspect.USED                 => feedbackUsage
-    case EvaluatedAspect.USABILITY            => feedbackUsability
-    case EvaluatedAspect.STYLE_OF_FEEDBACK    => feedbackFeedback
-    case EvaluatedAspect.FAIRNESS_OF_FEEDBACK => feedbackFairness
+    case SENSE                => feedbackSense
+    case USED                 => feedbackUsage
+    case USABILITY            => feedbackUsability
+    case STYLE_OF_FEEDBACK    => feedbackFeedback
+    case FAIRNESS_OF_FEEDBACK => feedbackFairness
   }
 
 }
@@ -29,12 +39,9 @@ case class FeedbackResult(tool: EvaluatedTool, allFeedback: List[Feedback]) {
 object FeedbackResult {
 
   def avg(feedback: Map[Mark, Int]): Int = {
-    val marksWithoutNoMark = feedback.filter(_._1 != Mark.NO_MARK)
+    val marksWithoutNoMark: Map[Mark, Int] = feedback.filter(_._1 != NO_MARK)
     if (marksWithoutNoMark.isEmpty) 0
-    else marksWithoutNoMark.map { case (f, m) => f.value * m }.toList.sum / marksWithoutNoMark.size
+    else marksWithoutNoMark.map { case (f, m) => f.value * m }.toSeq.sum / marksWithoutNoMark.size
   }
-
-  def evaluate(allFeedback: List[Feedback]): List[FeedbackResult] =
-    allFeedback.groupBy(_.tool).map { case (t, f) => new FeedbackResult(t, f) }.toList
 
 }

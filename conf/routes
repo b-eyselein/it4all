@@ -147,12 +147,13 @@ GET           /:toolType/index                                         controlle
 GET           /:toolType/learningPaths/read                            controllers.MainExerciseController.readLearningPaths(toolType: String)
 GET           /:toolType/learningPaths/:id                             controllers.MainExerciseController.learningPath(toolType: String, id: Int)
 
-GET           /:toolType/admin/index                                    controllers.MainExerciseController.adminIndex(toolType: String)
+GET           /:toolType/evaluate                                      controllers.MainExerciseController.evaluate(toolType: String)
+POST          /:toolType/submitEvaluation                              controllers.MainExerciseController.submitEvaluation(toolType: String)
+
+GET           /:toolType/admin/index                                   controllers.MainExerciseController.adminIndex(toolType: String)
 
 # Evaluation
-GET           /eval                                                    controllers.EvaluationController.index
-POST          /eval                                                    controllers.EvaluationController.submit
-GET           /eval/stats                                              controllers.AdminController.evaluation
+GET           /eval/stats                                              controllers.AdminController.evaluationResults
 
 # Javascript routes
 GET           /javascriptRoutes                                        controllers.Application.javascriptRoutes

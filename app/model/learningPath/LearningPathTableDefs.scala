@@ -48,6 +48,11 @@ trait LearningPathTableDefs extends TableDefs {
     } yield sectionsSaved
   }) map (_ forall identity)
 
+  // Column types
+
+  private implicit val learningPathSectionTypeColumnType: BaseColumnType[LearningPathSectionType] =
+    MappedColumnType.base[LearningPathSectionType, String](_.entryName, str => LearningPathSectionType.withNameOption(str) getOrElse LearningPathSectionType.TextSectionType)
+
   // Learning paths
 
   class LearningPathsTable(tag: Tag) extends Table[(String, Int, String)](tag, "learning_paths") {

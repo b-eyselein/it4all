@@ -35,6 +35,24 @@ CREATE TABLE IF NOT EXISTS users_in_courses (
     ON DELETE CASCADE
 );
 
+# Feedback
+
+CREATE TABLE IF NOT EXISTS feedback (
+  username VARCHAR(30),
+  tool_url VARCHAR(30),
+  sense VARCHAR(10),
+  used VARCHAR(10),
+  usability VARCHAR(10),
+  feedback VARCHAR(10),
+  fairness VARCHAR(10),
+  comment TEXT,
+
+  PRIMARY KEY (username, tool_url),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Learning paths
 
 CREATE TABLE IF NOT EXISTS learning_paths (

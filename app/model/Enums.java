@@ -6,6 +6,8 @@ import scala.Some;
 
 public abstract class Enums {
 
+    // FIXME: ==> enumeratum.Enum!
+
     public static interface Selectable<T extends Selectable<T>> {
 
         default String isSelected(T that) {
@@ -139,7 +141,6 @@ public abstract class Enums {
         }
     }
 
-
     public enum SuccessType implements Selectable<SuccessType> {
 
         ERROR(0, "danger", "glyphicon glyphicon-remove"),
@@ -162,79 +163,6 @@ public abstract class Enums {
         }
 
         public static Option<SuccessType> byString(String str) {
-            try {
-                return new Some<>(valueOf(str));
-            } catch (Exception e) {
-                // ==> None!
-                return Option.apply(null);
-            }
-        }
-    }
-
-    public enum Mark implements Selectable<Mark> {
-
-        VERY_GOOD(1), GOOD(2), NEUTRAL(3), BAD(4), VERY_BAD(5), NO_MARK(-1);
-
-        public final int value;
-
-        Mark(int theMark) {
-            value = theMark;
-        }
-
-        public String display(EvaluatedAspect evaledAspect) {
-            switch (this) {
-                case VERY_GOOD:
-                    return "Sehr " + evaledAspect.positive.toLowerCase();
-                case GOOD:
-                    return evaledAspect.positive;
-                case NEUTRAL:
-                    return evaledAspect.neutral;
-                case BAD:
-                    return evaledAspect.negative;
-                case VERY_BAD:
-                    return "Sehr " + evaledAspect.negative.toLowerCase();
-                case NO_MARK:
-                default:
-                    return "Keine Angabe";
-            }
-        }
-
-
-        public static Option<Mark> byString(String str) {
-            try {
-                return new Some<>(valueOf(str));
-            } catch (Exception e) {
-                // ==> None!
-                return Option.apply(null);
-            }
-        }
-    }
-
-    public enum EvaluatedAspect implements Selectable<EvaluatedAspect> {
-
-        USED("Wie oft haben Sie dieses Tool genutzt?", "Oft", "Manchmal", "Selten"),
-
-        SENSE("Finden Sie dieses Tool sinnvoll?", "Sinnvoll", "Neutral", "Sinnlos"),
-
-        USABILITY("Wie bewerten Sie die allgemeine Bedienbarkeit dieses Tools?", "Gut", "Neutral", "Schlecht"),
-
-        STYLE_OF_FEEDBACK("Wie bewerten Sie die Gestaltung des Feedbacks dieses Tools?", "Gut", "Neutral", "Schlecht"),
-
-        FAIRNESS_OF_FEEDBACK("Wie bewerten Sie die Fairness der Evaluation dieses Tools?", "Fair", "Neutral", "Unfair");
-
-        public final String question;
-        public final String positive;
-        public final String neutral;
-        public final String negative;
-
-        EvaluatedAspect(String theQuestion, String thePositive, String theNeutral, String theNegative) {
-            question = theQuestion;
-            positive = thePositive;
-            neutral = theNeutral;
-            negative = theNegative;
-        }
-
-        public static Option<EvaluatedAspect> byString(String str) {
             try {
                 return new Some<>(valueOf(str));
             } catch (Exception e) {

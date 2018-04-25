@@ -4,7 +4,9 @@ import com.github.t3hnar.bcrypt._
 import model.Enums.{ExerciseState, Role, ShowHideAggregate}
 import model._
 import model.core.CoreConsts._
-import model.learningPath._
+import model.enums.Marks.NO_MARK
+import model.enums.{Mark, Marks}
+import model.feedback.{Feedback, FeedbackTableHelper}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -30,6 +32,9 @@ trait TableDefs {
   val usersInCourses = TableQuery[UsersInCoursesTable]
 
   val tipps = TableQuery[TippsTable]
+
+
+  val feedbacks = TableQuery[FeedbackTable]
 
   // Numbers
 
@@ -60,6 +65,10 @@ trait TableDefs {
   def userInCourse(user: User, course: Course): Future[Option[UserInCourse]] =
     db.run(usersInCourses.filter(uInC => uInC.username === user.username && uInC.courseId === course.id).result.headOption)
 
+  def futureMaybeFeedback(user: User, toolUrlPart: String): Future[Option[Feedback]] =
+    db.run(feedbacks.filter(fb => fb.username === user.username && fb.toolUrlPart === toolUrlPart).result.headOption)
+
+  def futureEvaluationResultsForTools: Future[Seq[Feedback]] = db.run(feedbacks.result)
 
   // Update
 
@@ -102,6 +111,8 @@ trait TableDefs {
         false
     }
 
+  def saveFeedback(feedback: Feedback): Future[Boolean] = saveSingle(db.run(feedbacks insertOrUpdate feedback))
+
   // Abstract queries
 
   protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any]): Future[Boolean] = Future.sequence(seqToSave map {
@@ -120,17 +131,17 @@ trait TableDefs {
 
   // Column types
 
-  implicit val roleColumnType: BaseColumnType[Role] =
+  private implicit val roleColumnType: BaseColumnType[Role] =
     MappedColumnType.base[Role, String](_.name, str => Role.byString(str) getOrElse Role.RoleUser)
 
-  implicit val showhideaggrColumnType: BaseColumnType[ShowHideAggregate] =
+  private implicit val showhideaggrColumnType: BaseColumnType[ShowHideAggregate] =
     MappedColumnType.base[ShowHideAggregate, String](_.name, str => ShowHideAggregate.byString(str) getOrElse ShowHideAggregate.SHOW)
 
-  implicit val exercisetypeColumnType: BaseColumnType[ExerciseState] =
+  protected implicit val exercisetypeColumnType: BaseColumnType[ExerciseState] =
     MappedColumnType.base[ExerciseState, String](_.name, str => ExerciseState.byString(str) getOrElse ExerciseState.CREATED)
 
-  implicit val learningPathSectionTypeColumnType: BaseColumnType[LearningPathSectionType] =
-    MappedColumnType.base[LearningPathSectionType, String](_.entryName, str => LearningPathSectionType.withNameOption(str) getOrElse LearningPathSectionType.TextSectionType)
+  private implicit val markColumnType: BaseColumnType[Mark] =
+    MappedColumnType.base[Mark, String](_.entryName, str => Marks.withNameInsensitiveOption(str) getOrElse NO_MARK)
 
   // Tables
 
@@ -219,6 +230,38 @@ trait TableDefs {
     override def * = (id, str) <> (Tipp.tupled, Tipp.unapply)
 
   }
+
+  // Feedback
+
+  class FeedbackTable(tag: Tag) extends Table[Feedback](tag, "feedback") {
+
+    def username = column[String](usernameName)
+
+    def toolUrlPart = column[String]("tool_url")
+
+    def sense = column[Mark]("sense")
+
+    def used = column[Mark]("used")
+
+    def usability = column[Mark]("usability")
+
+    def feedback = column[Mark]("feedback")
+
+    def fairness = column[Mark]("fairness")
+
+    def comment = column[String]("comment")
+
+
+    def pk = primaryKey("pk", (username, toolUrlPart))
+
+    def userFk = foreignKey("user_fk", username, users)(_.username)
+
+
+    override def * = (username, toolUrlPart, sense, used, usability, feedback, fairness, comment) <> (FeedbackTableHelper.fromTableTupled, FeedbackTableHelper.forTableUnapplied)
+
+  }
+
+  // Base table for exercises and exerciseCollections
 
   abstract class HasBaseValuesTable[E <: HasBaseValues](tag: Tag, name: String) extends Table[E](tag, name) {
 

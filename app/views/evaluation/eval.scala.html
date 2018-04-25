@@ -1,44 +1,55 @@
-@(user: model.User, toEvaluate: Seq[model.feedback.Feedback])
+@(user: model.User, toEvaluate: model.feedback.Feedback, toolMain: model.toolMains.AToolMain)
 
-    @main("Evaluation", Some(user)) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Evaluation der Tools</h1>
+@title = @{
+    s"""Evaluation des Tools "${toolMain.toolname}""""
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
+        </div>
+
+        <form action="@routes.MainExerciseController.submitEvaluation(toolMain.urlPart)" method="post" class="form">
+
+            @for(evaledAspect <- model.enums.EvaluatedAspects.values) {
+                <div class="form-group">
+
+                    <div class="row">
+                        <label class="col-md-4">@evaledAspect.question</label>
+
+                        <div class="col-md-8">
+                            <div class="row">
+
+                            @for(mark <- model.enums.Marks.values) {
+                                <div class="col-md-2">
+                                    <label for="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase">
+                                        <input type="radio" name="@evaledAspect.toString.toLowerCase" id="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase"
+                                        value="@mark.toString.toLowerCase" @mark.isChecked(toEvaluate.getMarkForAspect(evaledAspect))> @mark.display(evaledAspect)
+                                    </label>
+                                </div>
+                            }
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+            <div class="form-group">
+                <label for="comment">Verbesserungsvorschläge:</label>
+                <textarea class="form-control" rows="5" name="comment" id="comment" placeholder="Verbesserungsvorschläge">@toEvaluate.comment</textarea>
+                <p class="text-info">Bitte beschränken Sie Sich auf 250 Zeichen.</p>
             </div>
 
-            <form action="@controllers.routes.EvaluationController.submit" method="post" class="form">
-                @for(feedback <- toEvaluate; evaledTool = feedback.tool.toString.toLowerCase) {
-                    <fieldset>
-                        <legend>Evaluation der @feedback.tool-Korrektur</legend>
+            <hr>
 
-                        @for(evaledAspect <- model.Enums.EvaluatedAspect.values) {
-                            <div class="form-group">
-                                <label>@evaledAspect.question</label>
-                                <div class="row">
-                                @for(mark <- model.Enums.Mark.values) {
-                                    <div class="col-sm-2">
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="@evaledAspect.toString.toLowerCase-@evaledTool"
-                                                value="@mark.toString.toLowerCase" @mark.isChecked(feedback.get(evaledAspect))>
-                                                @mark.display(evaledAspect)
-                                            </label>
-                                        </div>
-                                    </div>
-                                }
-                                </div>
-                            </div>
-                        }
-
-                        <div class="form-group">
-                            <label for="comment-@evaledTool">Verbesserungsvorschläge:</label>
-                            <textarea class="form-control" rows="5" name="comment-@evaledTool" id="comment-@evaledTool"
-                            placeholder="Verbesserungsvorschläge">@feedback.comment</textarea>
-                            <p>Bitte beschränken Sie Sich auf 250 Zeichen.</p>
-                        </div>
-                    </fieldset>
-                }
+            <div class="form-group">
                 <button type="submit" class="btn btn-primary btn-block">Evaluation absenden</button>
-            </form>
-        </div>
-    }
+            </div>
+
+        </form>
+    </div>
+}

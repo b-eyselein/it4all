@@ -2,11 +2,11 @@ id: 1
 title: Krankenhaus
 author: bje40dc
 text: >
-  Ein Krankenhaus besteht aus Stationen mit einer eindeutigen Nummer. Jede Station hat einen oder mehrere Doktoren,
-  Krankenschwestern und Patienten. Jede Person hat jeweils eine eindeutige Id und einen Namen. Ein Doktor kann dem
-  Patienten ein Rezept mit einer eindeutigen Id verschreiben, das ein oder mehrere Medikamente beinhalten kann.
-  Ein Medikament hat eine eindeutige Id und einen Namen. Ein Patient wiederum kann in einer Station aufgenommen bzw.
-  entlassen werden.
+  Ein Krankenhaus hat einen Namen und besteht aus Stationen mit einer eindeutigen Nummer. Jede Station hat einen oder
+  mehrere Doktoren, Krankenschwestern und Patienten. Jede Person hat jeweils eine eindeutige Id und einen Namen.
+  Ein Doktor kann dem Patienten ein Rezept mit einer eindeutigen Id verschreiben, das ein oder mehrere Medikamente
+  beinhalten kann. Ein Medikament hat eine eindeutige Id und einen Namen und kann Patienten auf verschiedenen Rezepten
+  verschrieben werden. Ein Patient wiederum kann in einer Station aufgenommen bzw. entlassen werden.
 status: APPROVED
 mappings:
 - {key: Stationen, value: Station}
@@ -95,7 +95,7 @@ solution:
 
   - assocType: ASSOCIATION
     firstEnd: Rezept
-    firstMult: SINGLE
+    firstMult: UNBOUND
     secondEnd: Medikament
     secondMult: UNBOUND
 
