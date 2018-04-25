@@ -25,7 +25,7 @@ sealed abstract class NumberBase(val base: Int, val baseName: String, val mark: 
 
 object NumberBase extends Enum[NumberBase] {
 
-  val values: immutable.IndexedSeq[NumberBase] = findValues
+  override val values: immutable.IndexedSeq[NumberBase] = findValues
 
   case object BINARY extends NumberBase(2, "Binär", "0b", "0-1", "0-1")
 

@@ -64,21 +64,21 @@
                             <label for="@model.sql.SqlConsts.exerciseTypeName">Typ:</label>
                             <select class="form-control" name="@model.sql.SqlConsts.exerciseTypeName" id="@model.sql.SqlConsts.exerciseTypeName" required>
                                 <option value="">Bitte wählen...</option>
-                                @for(sqlExType <- model.sql.SqlEnums.SqlExerciseType.values) {
+                                @for(sqlExType <- model.sql.SqlExerciseType.values) {
                                     <option @{
                                         if(sqlExType == exercise.ex.exerciseType) "selected" else ""
-                                    }>@sqlExType.name</option>
+                                    }>@sqlExType.entryName</option>
                                 }
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label>Tags:</label>
-                            @for(exTagTriple <- model.sql.SqlEnums.SqlExTag.values.grouped(3)) {
+                            @for(exTagTriple <- model.sql.SqlExTag.values.grouped(3)) {
                                 <div class="row">
                                 @for(exTag <- exTagTriple) {
                                     <div class="col-sm-4">
-                                        <label><input type="checkbox" name="@model.sql.SqlConsts.tagsArrayName" value="@exTag.name"> @exTag.title</label>
+                                        <label><input type="checkbox" name="@model.sql.SqlConsts.tagsArrayName" value="@exTag.entryName"> @exTag.title</label>
                                     </div>
                                 }
                                 </div>

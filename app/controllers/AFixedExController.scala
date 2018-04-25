@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Try}
 
 abstract class AFixedExController(cc: ControllerComponents, dbcp: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends AExerciseController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils with ExerciseFormMappings {
+  extends AExerciseController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   override protected type ToolMainType <: FixedExToolMain
 

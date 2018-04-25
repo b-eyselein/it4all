@@ -1,7 +1,7 @@
 package model.toolMains
 
 import model.ExerciseState
-import model.core.{ExPart, ExerciseFormMappings, ReadAndSaveResult}
+import model.core.{ExPart, ReadAndSaveResult}
 import model.learningPath.LearningPath
 import model.persistence.IdExerciseTableDefs
 import model.{SingleCompleteEx, User}
@@ -12,7 +12,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends FixedExToolMain(urlPart) with ExerciseFormMappings {
+abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends FixedExToolMain(urlPart) {
 
   // Abstract Types
 

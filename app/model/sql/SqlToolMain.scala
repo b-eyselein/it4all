@@ -5,8 +5,6 @@ import model._
 import model.core.result.EvaluationResult
 import model.core.{Levenshtein, SolutionFormHelper}
 import model.sql.SqlConsts._
-import model.sql.SqlEnums.SqlExerciseType
-import model.sql.SqlEnums.SqlExerciseType._
 import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.yaml.MyYamlFormat
@@ -21,15 +19,17 @@ import scala.util.{Failure, Try}
 
 object SqlToolMain {
 
-  val daos = Map(
-    SELECT -> SelectDAO, CREATE -> CreateDAO, UPDATE -> ChangeDAO, INSERT -> ChangeDAO, DELETE -> ChangeDAO
-  )
-
-  val correctors = Map(
-    CREATE -> CreateCorrector, DELETE -> DeleteCorrector, INSERT -> InsertCorrector, SELECT -> SelectCorrector, UPDATE -> UpdateCorrector
+  val correctorsAndDaos: Map[SqlExerciseType, (QueryCorrector, SqlExecutionDAO)] = Map(
+    SqlExerciseType.SELECT -> (SelectCorrector, SelectDAO),
+    SqlExerciseType.CREATE -> (CreateCorrector, CreateDAO),
+    SqlExerciseType.UPDATE -> (UpdateCorrector, ChangeDAO),
+    SqlExerciseType.INSERT -> (InsertCorrector, ChangeDAO),
+    SqlExerciseType.DELETE -> (DeleteCorrector, ChangeDAO)
   )
 
   def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = samples.minBy(samp => Levenshtein.levenshteinDistance(samp.sample, userSt))
+
+  def allDaos: Seq[SqlExecutionDAO] = correctorsAndDaos.values.map(_._2).toSet.toSeq
 
 }
 
@@ -74,7 +74,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     compColl =>
       val scriptFilePath = exerciseResourcesFolder / s"${compColl.coll.shortName}.sql"
 
-      daos.values.toList.distinct foreach (_.executeSetup(compColl.coll.shortName, scriptFilePath))
+      allDaos.foreach(_.executeSetup(compColl.coll.shortName, scriptFilePath))
 
       tables.saveCompleteColl(compColl) map (saveRes => (compColl, saveRes))
   })
@@ -119,7 +119,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override protected def correctEx(user: User, learnerSolution: SqlSolution, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Future[Try[SqlCorrResult]] =
     saveSolution(learnerSolution) map { _ =>
-      (correctors.get(exercise.ex.exerciseType) zip daos.get(exercise.ex.exerciseType)).headOption match {
+
+      correctorsAndDaos.get(exercise.ex.exerciseType) match {
         case None                   => Failure(new Exception("There is no corrector or sql dao for " + exercise.ex.exerciseType))
         case Some((corrector, dao)) =>
           // FIXME: parse queries here!?!

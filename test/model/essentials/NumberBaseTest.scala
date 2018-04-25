@@ -57,14 +57,14 @@ class NumberBaseTest {
 
   @Test
   def testValueOf() {
-    assert(NumberBase.valueOf("BINARY") == BINARY)
-    assert(NumberBase.valueOf("OCTAL") == OCTAL)
-    assert(NumberBase.valueOf("DECIMAL") == DECIMAL)
-    assert(NumberBase.valueOf("HEXADECIMAL") == HEXADECIMAL)
+    assert(NumberBase.withNameInsensitive("BINARY") == BINARY)
+    assert(NumberBase.withNameInsensitive("OCTAL") == OCTAL)
+    assert(NumberBase.withNameInsensitive("DECIMAL") == DECIMAL)
+    assert(NumberBase.withNameInsensitive("HEXADECIMAL") == HEXADECIMAL)
   }
 
   @Test(expected = classOf[IllegalArgumentException])
   def testValueOfWrongValue() {
-    NumberBase.valueOf("TERNARY")
+    NumberBase.withNameInsensitive("TERNARY")
   }
 }

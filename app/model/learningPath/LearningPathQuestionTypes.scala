@@ -11,7 +11,7 @@ sealed trait LearningPathQuestionTypes extends EnumEntry
 
 object LearningPathQuestionTypes extends Enum[LearningPathQuestionTypes] {
 
-  val values: IndexedSeq[LearningPathQuestionTypes] = findValues
+  override val values: IndexedSeq[LearningPathQuestionTypes] = findValues
 
   case object BooleanQuestionType extends LearningPathQuestionTypes {
 

@@ -8,7 +8,7 @@ sealed abstract class UmlClassType(val german: String) extends EnumEntry
 
 object UmlClassType extends Enum[UmlClassType] with PlayJsonEnum[UmlClassType] {
 
-  val values: IndexedSeq[UmlClassType] = findValues
+  override val values: IndexedSeq[UmlClassType] = findValues
 
   case object CLASS extends UmlClassType("Klasse")
 
@@ -22,7 +22,7 @@ sealed abstract class UmlMultiplicity(val representant: String) extends EnumEntr
 
 object UmlMultiplicity extends Enum[UmlMultiplicity] with PlayJsonEnum[UmlMultiplicity] {
 
-  val values: IndexedSeq[UmlMultiplicity] = findValues
+  override val values: IndexedSeq[UmlMultiplicity] = findValues
 
   case object SINGLE extends UmlMultiplicity("1")
 
@@ -34,7 +34,7 @@ sealed abstract class UmlAssociationType(val german: String) extends EnumEntry
 
 object UmlAssociationType extends Enum[UmlAssociationType] with PlayJsonEnum[UmlAssociationType] {
 
-  val values: IndexedSeq[UmlAssociationType] = findValues
+  override val values: IndexedSeq[UmlAssociationType] = findValues
 
   case object ASSOCIATION extends UmlAssociationType("Assoziation")
 

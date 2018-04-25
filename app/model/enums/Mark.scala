@@ -1,6 +1,6 @@
 package model.enums
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -10,9 +10,9 @@ sealed abstract class Mark(val value: Int) extends EnumEntry {
 
 }
 
-object Mark extends Enum[Mark] {
+object Mark extends PlayEnum[Mark] {
 
-  val values: IndexedSeq[Mark] = findValues
+  override val values: IndexedSeq[Mark] = findValues
 
   case object VERY_GOOD extends Mark(1) {
     override def display(evaluatedAspect: EvaluatedAspect): String = "Sehr " + evaluatedAspect.positive.toLowerCase

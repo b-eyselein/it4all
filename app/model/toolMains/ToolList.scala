@@ -1,6 +1,6 @@
 package model.toolMains
 
-import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 object ToolList {
 
@@ -8,17 +8,17 @@ object ToolList {
 
   // FIXME: refactor!
 
-  def FixedExToolMains: mutable.ListBuffer[FixedExToolMain] = FileExToolMains ++ ExerciseToolMains ++ ExCollectionToolMains
+  def FixedExToolMains: ListBuffer[FixedExToolMain] = FileExToolMains ++ ExerciseToolMains ++ ExCollectionToolMains
 
-  def AllToolMains: mutable.ListBuffer[AToolMain] = RandomExToolMains ++ FileExToolMains ++ ExerciseToolMains ++ ExCollectionToolMains
+  def AllToolMains: ListBuffer[AToolMain] = RandomExToolMains ++ FileExToolMains ++ ExerciseToolMains ++ ExCollectionToolMains
 
-  val RandomExToolMains: mutable.ListBuffer[RandomExerciseToolMain] = mutable.ListBuffer.empty
+  val RandomExToolMains: ListBuffer[RandomExerciseToolMain] = ListBuffer.empty
 
-  val FileExToolMains: mutable.ListBuffer[FileExerciseToolMain] = mutable.ListBuffer.empty
+  val FileExToolMains: ListBuffer[FileExerciseToolMain] = ListBuffer.empty
 
-  val ExerciseToolMains: mutable.ListBuffer[IdExerciseToolMain] = mutable.ListBuffer.empty
+  val ExerciseToolMains: ListBuffer[IdExerciseToolMain] = ListBuffer.empty
 
-  val ExCollectionToolMains: mutable.ListBuffer[CollectionToolMain] = mutable.ListBuffer.empty
+  val ExCollectionToolMains: ListBuffer[CollectionToolMain] = ListBuffer.empty
 
   def addTool(tool: AToolMain): Unit = tool match {
     case w: RandomExerciseToolMain => RandomExToolMains += w

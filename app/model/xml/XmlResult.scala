@@ -1,10 +1,27 @@
 package model.xml
 
+import enumeratum.{Enum, EnumEntry}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
-import model.xml.XmlEnums.XmlErrorType
 import org.xml.sax.SAXParseException
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.twirl.api.{Html, HtmlFormat}
+
+import scala.collection.immutable.IndexedSeq
+
+sealed abstract class XmlErrorType(val german: String) extends EnumEntry
+
+object XmlErrorType extends Enum[XmlErrorType] {
+
+  val values: IndexedSeq[XmlErrorType] = findValues
+
+  case object FATAL extends XmlErrorType("Fataler Fehler")
+
+  case object ERROR extends XmlErrorType("Fehler")
+
+  case object WARNING extends XmlErrorType("Warnung")
+
+}
+
 
 case class XmlCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[XmlError]) extends CompleteResult[XmlError] {
 
@@ -41,7 +58,7 @@ abstract sealed class XmlError(val errorType: XmlErrorType, val errorMessage: St
 
   def render: String = s"""<div class="alert alert-$getBSClass"><strong>${errorType.german} $lineStr:</strong> $errorMessage</div>"""
 
-  def toJson: JsObject = Json.obj("errorType" -> errorType.name, "errorMessage" -> errorMessage, "line" -> line, "success" -> success.entryName)
+  def toJson: JsObject = Json.obj("errorType" -> errorType.entryName, "errorMessage" -> errorMessage, "line" -> line, "success" -> success.entryName)
 
 }
 
@@ -50,6 +67,3 @@ case class FatalXmlError(e: SAXParseException) extends XmlError(XmlErrorType.FAT
 case class ErrorXmlError(e: SAXParseException) extends XmlError(XmlErrorType.ERROR, e.getMessage, e.getLineNumber, SuccessType.NONE)
 
 case class WarningXmlError(e: SAXParseException) extends XmlError(XmlErrorType.WARNING, e.getMessage, e.getLineNumber, SuccessType.PARTIALLY)
-
-case class FailureXmlError(msg: String, error: Throwable = null) extends XmlError(XmlErrorType.FAILURE, msg, -1, SuccessType.NONE)
-

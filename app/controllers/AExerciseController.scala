@@ -1,7 +1,6 @@
 package controllers
 
 import model.User
-import model.core.{ExerciseFormMappings, FileUtils}
 import model.toolMains.AToolMain
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
@@ -11,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils with ExerciseFormMappings {
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured  {
 
   protected type ToolMainType <: AToolMain
 

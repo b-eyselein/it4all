@@ -27,7 +27,7 @@ sealed abstract class ToolState(val german: String, val greek: String, requiredR
 
 object ToolState extends Enum[ToolState] {
 
-  val values: immutable.IndexedSeq[ToolState] = findValues
+  override val values: immutable.IndexedSeq[ToolState] = findValues
 
   case object LIVE extends ToolState("Verfügbare Tools", "", RoleUser) {
     override def badge: Html = new Html("")

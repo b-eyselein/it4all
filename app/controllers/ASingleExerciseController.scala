@@ -3,6 +3,7 @@ package controllers
 import java.nio.file.Files
 
 import model.ExerciseState
+import model.core.FileUtils
 import model.toolMains.ASingleExerciseToolMain
 import play.api.Logger
 import play.api.data.Form
@@ -15,13 +16,13 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] {
+  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with FileUtils {
 
   override type ToolMainType <: ASingleExerciseToolMain
 
   // Helpers
 
-  private val stateForm: Form[ExerciseState] = Form(single("state" -> of[ExerciseState]))
+  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   // Admin
 

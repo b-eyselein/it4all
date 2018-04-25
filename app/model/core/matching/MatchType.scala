@@ -10,7 +10,7 @@ sealed abstract class MatchType(val glyphicon: String, val bsClass: String) exte
 
 object MatchType extends Enum[MatchType] {
 
-  val values: IndexedSeq[MatchType] = findValues
+  override val values: IndexedSeq[MatchType] = findValues
 
   case object FAILURE extends MatchType("warning-sign", "danger")
 

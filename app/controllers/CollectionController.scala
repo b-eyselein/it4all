@@ -20,7 +20,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils with ExerciseFormMappings {
+  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils  {
 
   override type ToolMainType = CollectionToolMain
 
@@ -28,7 +28,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Helpers
 
-  private val stateForm: Form[ExerciseState] = Form(single("state" -> of[ExerciseState]))
+  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   private def takeSlice[T](collection: Seq[T], page: Int): Seq[T] = collection slice(Math.max(0, (page - 1) * stdStep), Math.min(page * stdStep, collection.size))
 

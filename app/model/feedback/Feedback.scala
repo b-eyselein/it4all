@@ -25,11 +25,11 @@ case class FeedbackFormHelper(username: String, toolUrlPart: String) {
 
   val feedbackFormMapping = Form(
     mapping(
-      "sense" -> of[Mark],
-      "used" -> of[Mark],
-      "usability" -> of[Mark],
-      "style_of_feedback" -> of[Mark],
-      "fairness_of_feedback" -> of[Mark],
+      "sense" -> Mark.formField,
+      "used" -> Mark.formField,
+      "usability" -> Mark.formField,
+      "style_of_feedback" -> Mark.formField,
+      "fairness_of_feedback" -> Mark.formField,
       "comment" -> text
     )(fromFormApplied)(forFormUnapplied)
   )

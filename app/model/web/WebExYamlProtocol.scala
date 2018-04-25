@@ -3,7 +3,6 @@ package model.web
 import model.ExerciseState
 import model.MyYamlProtocol._
 import model.web.WebConsts._
-import model.web.WebEnums._
 import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
@@ -139,7 +138,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
         idName -> jsTask.task.id,
         textName -> jsTask.task.text,
         xpathQueryName -> jsTask.task.xpathQuery,
-        actionTypeName -> jsTask.task.actionType.name,
+        actionTypeName -> jsTask.task.actionType.entryName,
         KEYS_TO_SEND_NAME -> jsTask.task.keysToSend.map(YamlString).getOrElse(YamlNull),
         conditionsName -> yamlConds
       )
@@ -149,7 +148,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
       xpathQuery <- yamlObject.stringField(xpathQueryName)
-      actionType <- yamlObject.enumField(actionTypeName, JsActionType.valueOf)
+      actionType <- yamlObject.enumField(actionTypeName, JsActionType.withNameInsensitiveOption) map (_ getOrElse JsActionType.CLICK)
       keysToSend <- yamlObject.optField(KEYS_TO_SEND_NAME, str => Success(str.forgivingStr))
       conditionTries <- yamlObject.arrayField(conditionsName, JsConditionYamlFormat(taskId, exerciseId).read)
     } yield {

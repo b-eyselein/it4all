@@ -10,7 +10,7 @@ sealed trait LearningPathSectionType extends EnumEntry
 
 object LearningPathSectionType extends Enum[LearningPathSectionType] {
 
-  val values: IndexedSeq[LearningPathSectionType] = findValues
+  override val values: IndexedSeq[LearningPathSectionType] = findValues
 
   case object QuestionSectionType extends LearningPathSectionType {
 

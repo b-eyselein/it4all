@@ -9,7 +9,7 @@ sealed trait Role extends EnumEntry
 
 object Role extends Enum[Role] {
 
-  val values: IndexedSeq[Role] = findValues
+  override val values: IndexedSeq[Role] = findValues
 
   case object RoleUser extends Role
 
@@ -23,7 +23,7 @@ sealed abstract class ShowHideAggregate(val german: String) extends EnumEntry
 
 object ShowHideAggregate extends Enum[ShowHideAggregate] {
 
-  val values: IndexedSeq[ShowHideAggregate] = findValues
+  override val values: IndexedSeq[ShowHideAggregate] = findValues
 
   case object SHOW extends ShowHideAggregate("Einblenden")
 

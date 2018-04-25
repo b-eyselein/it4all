@@ -53,7 +53,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     "title" -> nonEmptyText,
     "author" -> nonEmptyText,
     "text" -> nonEmptyText,
-    "status" -> of[ExerciseState],
+    "status" -> ExerciseState.formField,
     "grammarDescription" -> nonEmptyText,
     "sampleGrammar" -> nonEmptyText,
     "rootNode" -> nonEmptyText

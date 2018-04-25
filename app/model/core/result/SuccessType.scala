@@ -10,7 +10,7 @@ sealed abstract class SuccessType(val points: Int, val color: String, val glyphi
 
 object SuccessType extends Enum[SuccessType] with PlayJsonEnum[SuccessType] {
 
-  val values: IndexedSeq[SuccessType] = findValues
+  override val values: IndexedSeq[SuccessType] = findValues
 
   case object ERROR extends SuccessType(0, "danger", "glyphicon glyphicon-remove")
 

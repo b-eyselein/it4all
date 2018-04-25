@@ -1,6 +1,6 @@
 package model
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{Enum, EnumEntry, PlayEnum}
 import model.core.{ExPart, FileUtils}
 import play.twirl.api.Html
 
@@ -9,9 +9,9 @@ import scala.collection.immutable.IndexedSeq
 sealed trait ExerciseState extends EnumEntry
 
 
-object ExerciseState extends Enum[ExerciseState] {
+object ExerciseState extends PlayEnum[ExerciseState] {
 
-  val values: IndexedSeq[ExerciseState] = findValues
+  override val values: IndexedSeq[ExerciseState] = findValues
 
   case object RESERVED extends ExerciseState
 
