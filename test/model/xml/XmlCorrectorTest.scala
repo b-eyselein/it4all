@@ -3,7 +3,6 @@ package model.xml
 import java.nio.file.Paths
 
 import model.core.FileUtils
-import model.xml.XmlEnums.XmlErrorType
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.scalatest.Matchers._
@@ -48,19 +47,6 @@ class XmlCorrectorTest extends FileUtils {
   }
 
   @Test
-  def testMissingAttributeXmlDtd() {
-    // val file = Paths.get(basePath, "partyMissingAttribute.xml")
-    //
-    // Seq<XmlError> out = XmlCorrector.correct(readFile(file), "",
-    // XmlExType.XML_DTD)
-    //
-    // assertErrorNum(out.size, 1)
-    // assertError(out.head, 7, XmlErrorType.ERROR,
-    // "Attribute \"name\" is required and must be specified for element type
-    // \"gast\".")
-  }
-
-  @Test
   def testNoRootXmlDtd() {
     val out = XmlCorrector.correctAgainstMentionedDTD(basePath / "partyNoRoot.xml")
 
@@ -68,34 +54,6 @@ class XmlCorrectorTest extends FileUtils {
     testXmlError(out.head, 3, XmlErrorType.ERROR, """Document root element "gast", must match DOCTYPE root "party".""")
     testXmlError(out(1), 8, XmlErrorType.FATAL, "The markup in the document following the root element must be well-formed.")
   }
-
-  @Test
-  def testWrongAttributeDtdXml() {
-    // val referenceFile = Paths.get(basePath, "partyNoDate.xml")
-    //
-    // Seq<XmlError> out = XmlCorrector.correct(readFile(referenceFile),
-    // "",
-    // XmlExType.DTD_XML)
-    //
-    // assertErrorNum(out.size, 1)
-    // assertError(out.head, 10, XmlErrorType.ERROR, "Attribute \"datum\" must
-    // be declared for element type \"party\".")
-  }
-
-  @Test
-  def testWrongTagXmlDtd() {
-    // val file = Paths.get(basePath, "partyWrongTag.xml")
-    //
-    // Seq<XmlError> out = XmlCorrector.correct(readFile(file), "",
-    // XmlExType.XML_DTD)
-    //
-    // assertErrorNum(out.size, 2)
-    // assertError(out.head, 2, XmlErrorType.ERROR, "Element type \"guest\"
-    // must be declared.")
-    // assertError(out(1), 13, XmlErrorType.ERROR, "The content of element
-    // type \"party\" must match \"(gast)*\".")
-  }
-
 
   @Test
   def testXmlNoElement() {

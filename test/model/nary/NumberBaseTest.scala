@@ -63,7 +63,7 @@ class NumberBaseTest {
     assert(NumberBase.withNameInsensitive("HEXADECIMAL") == HEXADECIMAL)
   }
 
-  @Test(expected = classOf[IllegalArgumentException])
+  @Test(expected = classOf[NoSuchElementException])
   def testValueOfWrongValue() {
     NumberBase.withNameInsensitive("TERNARY")
   }
