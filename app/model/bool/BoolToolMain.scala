@@ -26,6 +26,8 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   // Other members
 
+  override val hasPlayground: Boolean = true
+
   override val toolname: String = "Boolesche Algebra"
 
   override val toolState: ToolState = ToolState.LIVE
@@ -43,6 +45,8 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
     case FormulaCreation => views.html.randomExercises.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
     case TableFillout    => views.html.randomExercises.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
   }
+
+  override def playground(user: User): Html = views.html.randomExercises.bool.boolDrawing(user)
 
   // Handlers
 

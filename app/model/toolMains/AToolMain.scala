@@ -59,7 +59,8 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   val consts: Consts
 
-  val hasTags: Boolean = false
+  val hasTags      : Boolean = false
+  val hasPlayground: Boolean = false
 
   val toolState: ToolState = ToolState.ALPHA
 
@@ -107,6 +108,8 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
   def index(user: User, learningPaths: Seq[LearningPath]): Html
 
   def adminIndexView(admin: User): Future[Html]
+
+  def playground(user: User): Html = Html("")
 
   // Calls
 

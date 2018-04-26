@@ -39,4 +39,8 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
       }
   }
 
+  def boolPlayground: EssentialAction = withUser { user =>
+    implicit request => Ok(views.html.randomExercises.bool.boolDrawing(user))
+  }
+
 }

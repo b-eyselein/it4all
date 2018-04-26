@@ -37,6 +37,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other members
 
+  override val hasPlayground: Boolean = true
+
   override val toolname: String = "Web"
 
   override val toolState: ToolState = ToolState.LIVE
@@ -89,6 +91,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     views.html.idExercises.web.webExercise(user, exercise, part, getTasks(exercise, part), maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML)
 
   override def renderEditRest(exercise: WebCompleteEx): Html = views.html.idExercises.web.editWebExRest(exercise)
+
+  override def playground(user: User): Html = views.html.idExercises.web.webPlayground(user)
 
   // Correction
 

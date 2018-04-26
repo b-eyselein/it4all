@@ -40,6 +40,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Other members
 
+  override val hasPlayground = true
+
   override val toolname: String = "Xml"
 
   override val toolState: ToolState = ToolState.LIVE
@@ -116,6 +118,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
     views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, template, part, exScript)
   }
+
+  override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
 
   // Result handlers
 
