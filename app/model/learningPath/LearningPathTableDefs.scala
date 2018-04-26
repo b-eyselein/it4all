@@ -42,7 +42,7 @@ trait LearningPathTableDefs extends TableDefs {
   def futureSaveLearningPaths(learningPathsToSave: Seq[LearningPath]): Future[Boolean] = Future.sequence(learningPathsToSave map { lp =>
     for {
       // Delete old entry first
-      _ <- db.run(learningPaths.filter(_.id === lp.id).delete)
+      _ <- db.run(learningPaths.filter(x => x.id === lp.id && x.toolUrl === lp.toolUrl).delete)
       _ <- db.run(learningPaths += (lp.toolUrl, lp.id, lp.title))
       sectionsSaved <- saveSeq[LearningPathSection](lp.sections, lps => db.run(learningPathSections += lps))
     } yield sectionsSaved

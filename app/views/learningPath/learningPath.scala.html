@@ -35,9 +35,7 @@
                 <h1>@title</h1>
             </div>
 
-            @displaySection(learningPath.sections.head, hidden = "")
-
-            @for(section <- learningPath.sections.tail sortBy (_.id)) {
+            @for(section <- learningPath.sections sortBy (_.id)) {
                 @displaySection(section)
             }
 

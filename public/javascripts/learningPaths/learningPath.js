@@ -1,4 +1,4 @@
-let currentPart = 1;
+let currentPart = 0;
 
 let maxPart;
 
@@ -31,4 +31,5 @@ function correctTrueFalse(button) {
 
 $(document).ready(function () {
     maxPart = $('section[id^="sec_"]').length;
+    nextPart();
 });
