@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.18.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
 
-  "mysql" % "mysql-connector-java" % "8.0.11",
+  "mysql" % "mysql-connector-java" % "6.0.6",
 
   // Better enums for scala
   "com.beachape" %% "enumeratum-play" % "1.5.14",

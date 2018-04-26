@@ -22,7 +22,7 @@ class XmlCorrectorTest extends FileUtils {
   private def assertErrorNum(errorNum: Int, expectedErrors: Int): Unit = errorNum shouldBe expectedErrors
 
   @Test
-  def testClosingTagMissingXmlDtd() {
+  def testClosingTagMissingXmlDtd(): Unit = {
     val out = XmlCorrector.correctAgainstMentionedDTD(basePath / "partyNoClosingTag.xml")
 
     assertNotNull(out)
@@ -31,7 +31,7 @@ class XmlCorrectorTest extends FileUtils {
   }
 
   @Test
-  def testCorrectDTDAgainstXML() {
+  def testCorrectDTDAgainstXML(): Unit = {
     val out = XmlCorrector.correctAgainstMentionedDTD(basePath / "party.xml")
 
     assertNotNull(out)
@@ -39,7 +39,7 @@ class XmlCorrectorTest extends FileUtils {
   }
 
   @Test
-  def testCorrectXMLAgainstDTD() {
+  def testCorrectXMLAgainstDTD(): Unit = {
     val out = XmlCorrector.correctAgainstMentionedDTD(basePath / "party.xml")
 
     assertNotNull(out)
@@ -47,7 +47,7 @@ class XmlCorrectorTest extends FileUtils {
   }
 
   @Test
-  def testNoRootXmlDtd() {
+  def testNoRootXmlDtd(): Unit = {
     val out = XmlCorrector.correctAgainstMentionedDTD(basePath / "partyNoRoot.xml")
 
     assertErrorNum(out.size, 2)
@@ -56,7 +56,7 @@ class XmlCorrectorTest extends FileUtils {
   }
 
   @Test
-  def testXmlNoElement() {
+  def testXmlNoElement(): Unit = {
     val out = XmlCorrector.correctAgainstMentionedDTD(basePath / "xmlNoElement.xml")
 
     assertErrorNum(out.size, 1)
