@@ -38,8 +38,8 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   // Views
 
-  override def index(user: User, learningPathBases: Seq[LearningPath]): Html =
-    views.html.randomExercises.nary.naryOverview(user, this, learningPathBases)
+  override def exercisesOverviewForIndex: Html =
+    views.html.randomExercises.nary.naryOverview(this)
 
   override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]]): Html = exPart match {
     case NaryAdditionExPart =>

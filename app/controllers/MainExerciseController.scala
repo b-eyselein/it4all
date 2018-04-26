@@ -20,8 +20,12 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
   override protected def getToolMain(toolType: String): Option[AToolMain] = ToolList.AllToolMains.find(_.urlPart == toolType)
 
   def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request => toolMain.futureLearningPaths map (paths => Ok(toolMain.index(user, paths)))
+    implicit request => toolMain.futureLearningPaths map (paths => Ok(views.html.exercises.exerciseIndex(user, toolMain, paths)))
   }
+
+//  def exercisesOverview(toolType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
+//    implicit request => Ok(toolMain.exercisesOverview(user))
+//  }
 
   // Evaluation
 

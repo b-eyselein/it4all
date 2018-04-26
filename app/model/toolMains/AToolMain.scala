@@ -105,7 +105,7 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   // Views
 
-  def index(user: User, learningPaths: Seq[LearningPath]): Html
+  def exercisesOverviewForIndex: Html
 
   def adminIndexView(admin: User): Future[Html]
 

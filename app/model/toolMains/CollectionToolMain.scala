@@ -130,8 +130,10 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   // Views
 
-  override def index(user: User, learningPaths: Seq[LearningPath]): Html =
-    views.html.collectionExercises.collectionExerciseIndex(user, learningPaths, this)
+  override def exercisesOverviewForIndex: Html = Html(
+    s"""<div class="form-group">
+       |  <a class="btn btn-primary btn-block" href="${controllers.routes.CollectionController.collectionList(urlPart)}">Zu den Übungsaufgabensammlungen</a>
+       |</div>""".stripMargin)
 
   override def adminIndexView(admin: User): Future[Html] = statistics map {
     stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this)

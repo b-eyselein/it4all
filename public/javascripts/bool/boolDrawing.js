@@ -1,4 +1,5 @@
 const graph = new joint.dia.Graph;
+const STD_ZOOM_LEVEL = 1.4;
 
 let paper;
 
@@ -7,13 +8,45 @@ let dragY;	// Postion within div : Y
 
 let sel_elementname; // used for select element and click on paper to generate Element
 
-let zoom_level = 1.4;
-
 const SIGNALS = {
     'a': 1, 'b': 1, 'c': 1, 'd': 1
 };
 
-//Define MousePos
+const CONSTRUCTORS = {
+    elementAND: {
+        func: joint.shapes.logic.And, svg: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/AND_IEC.svg'
+    },
+    elementNAND: {
+        func: joint.shapes.logic.Nand, svg: 'https://upload.wikimedia.org/wikipedia/commons/d/d8/NAND_IEC.svg'
+    },
+    elementOR: {
+        func: joint.shapes.logic.Or, svg: 'https://upload.wikimedia.org/wikipedia/commons/4/42/OR_IEC.svg'
+    },
+    elementNOR: {
+        func: joint.shapes.logic.Nor, svg: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/NOR_IEC.svg'
+    },
+    elementXOR: {
+        func: joint.shapes.logic.Xor, svg: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/XOR_IEC.svg'
+    },
+    elementXNOR: {
+        func: joint.shapes.logic.Xnor, svg: 'https://upload.wikimedia.org/wikipedia/commons/5/56/XNOR_IEC.svg'
+    },
+    elementNOT: {
+        func: joint.shapes.logic.Not, svg: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/NOT_IEC.svg'
+    }
+};
+
+const MODIFICATORS = {
+    'logic.Output': {neededInputs: 1, isNegated: false, infixOperator: ''},
+    'logic.Not': {neededInputs: 1, isNegated: true, infixOperator: ''},
+    'logic.And': {neededInputs: 2, isNegated: false, infixOperator: '&and;'},
+    'logic.Nand': {neededInputs: 2, isNegated: true, infixOperator: '&and;'},
+    'logic.Or': {neededInputs: 2, isNegated: false, infixOperator: '&or;'},
+    'logic.Nor': {neededInputs: 2, isNegated: true, infixOperator: '&or;'},
+    'logic.Xor': {neededInputs: 2, isNegated: false, infixOperator: '&oplus;'},
+    'logic.Xnor': {neededInputs: 2, isNegated: true, infixOperator: '&oplus;'},
+};
+
 document.addEventListener("dragover", function (e) {
     e = e || window.event;
     const offset = $('#paper').offset();
@@ -44,60 +77,19 @@ function drop(ev) {
 // --> paper.on click --> sel_elementname
 function setName(button) {
     sel_elementname = button.name;
+    unmarkAllElementButtons();
     $(button).removeClass('btn-default').addClass('btn-primary');
 }
 
-// Constructor Elements
-function createElement(elementName, xCoord, yCoord) {
-    let elementToAdd;
-    let position = {position: {x: xCoord, y: yCoord}};
-
-    switch (elementName) {
-        case 'elementAND':
-            elementToAdd = new joint.shapes.logic.And(position);
-            elementToAdd.attr('image/xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/0/0f/AND_IEC.svg');
-            break;
-
-        case 'elementNAND':
-            elementToAdd = new joint.shapes.logic.Nand(position);
-            elementToAdd.attr('image/xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/d/d8/NAND_IEC.svg');
-            break;
-
-        case 'elementOR':
-            elementToAdd = new joint.shapes.logic.Or(position);
-            elementToAdd.attr('image/xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/4/42/OR_IEC.svg');
-            break;
-
-        case 'elementNOR':
-            elementToAdd = new joint.shapes.logic.Nor(position);
-            elementToAdd.attr('image/xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/6/6d/NOR_IEC.svg');
-            break;
-
-        case 'elementXOR':
-            elementToAdd = new joint.shapes.logic.Xor(position);
-            elementToAdd.attr('image/xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/4/4e/XOR_IEC.svg');
-            break;
-
-        case 'elementXNOR':
-            elementToAdd = new joint.shapes.logic.Xnor(position);
-            elementToAdd.attr('image/xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/5/56/XNOR_IEC.svg');
-            break;
-
-        case 'elementNOT':
-            elementToAdd = new joint.shapes.logic.Not(position);
-            elementToAdd.attr('image/xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/e/ef/NOT_IEC.svg');
-            break;
-
-        case 'elementREP':
-            elementToAdd = new joint.shapes.logic.Repeater(position);
-            elementToAdd.attr('image/xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/a/a7/Buffer_IEC.svg');
-            break;
-
-        default:
-            console.log('Element ' + elementName + ' not found');
-    }
-
+function unmarkAllElementButtons() {
     $('#creationButtonsDiv').find('button').removeClass('btn-primary').addClass('btn-default');
+}
+
+function createElement(elementName, xCoord, yCoord) {
+    let elementToAdd = new CONSTRUCTORS[elementName].func({position: {x: xCoord, y: yCoord}});
+    elementToAdd.attr('image/xlink:href', CONSTRUCTORS[elementName].svg); //'https://upload.wikimedia.org/wikipedia/commons/0/0f/AND_IEC.svg');
+
+    unmarkAllElementButtons();
     sel_elementname = "";
 
     graph.addCell(elementToAdd);
@@ -132,7 +124,7 @@ function preparePaper() {
         graph.addCell(newGate);
     }
 
-    paper.scale(zoom_level, zoom_level);
+    paper.scale(STD_ZOOM_LEVEL, STD_ZOOM_LEVEL);
 
 }
 
@@ -164,7 +156,8 @@ function initializeSignals() {
 }
 
 /**
- * generating formula for given gate recursively
+ * generating formula for given gate recursively, starting from outputs
+ *
  * @return {{formula: string, success: boolean}}
  */
 function getOutputFormula(gate) {
@@ -172,80 +165,34 @@ function getOutputFormula(gate) {
         return {success: true, formula: gate.attr('logicSymbol')};
     }
 
-    let neededInputs = -1, isNegated = false, infixOperator = '';
-    switch (gate.attributes.type) {
-        case 'logic.Output':
-            neededInputs = 1;
-            break;
-
-        case 'logic.Not':
-            neededInputs = 1;
-            isNegated = true;
-            break;
-
-        case 'logic.And':
-            neededInputs = 2;
-            infixOperator = '&and;';
-            break;
-
-        case 'logic.Nand':
-            neededInputs = 2;
-            isNegated = true;
-            infixOperator = '&and;';
-            break;
-
-
-        case 'logic.Or':
-            neededInputs = 2;
-            infixOperator = '&or;';
-            break;
-
-
-        case 'logic.Nor':
-            neededInputs = 2;
-            isNegated = true;
-            infixOperator = '&or;';
-            break;
-
-
-        case 'logic.Xor':
-            neededInputs = 2;
-            infixOperator = '&oplus;';
-            break;
-
-        case 'logic.Xnor':
-            neededInputs = 2;
-            isNegated = true;
-            infixOperator = '&oplus';
-            break;
-    }
+    let modificator = MODIFICATORS[gate.attributes.type];
 
     let formula = '', success;
 
     const ingoingWires = graph.getConnectedLinks(gate, {inbound: true});
 
-    if (neededInputs !== ingoingWires.length) {
+    if (modificator.neededInputs !== ingoingWires.length) {
         paper.findViewByModel(gate.id).highlight();
         return {formula: '', success: false}
     }
 
-    if (neededInputs === 1) {
+    if (modificator.neededInputs === 1) {
         let sourceInput = getOutputFormula(graph.getCell(ingoingWires[0].prop('source').id));
         success = sourceInput.success;
         if (success) {
-            formula = (isNegated ? '&not; ' : '') + sourceInput.formula;
+            formula = (modificator.isNegated ? '&not; ' : '') + sourceInput.formula;
         }
-    } else if (neededInputs === 2) {
+    } else if (modificator.neededInputs === 2) {
         let firstInput = getOutputFormula(graph.getCell(ingoingWires[0].prop('source').id));
         let secondInput = getOutputFormula(graph.getCell(ingoingWires[1].prop('source').id));
 
         success = firstInput.success && secondInput.success;
         if (success) {
-            formula = (isNegated ? '&not;' : '') + (firstInput.formula + ' ' + infixOperator + ' ' + secondInput.formula);
+            formula = (modificator.isNegated ? '&not;' : '') + (firstInput.formula + ' ' + modificator.infixOperator + ' ' + secondInput.formula);
         }
     }
 
-    return {success, formula}
+    return {success, formula};
 }
 
 $(document).ready(function () {

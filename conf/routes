@@ -119,7 +119,6 @@ POST          /tools/:toolType/solve/:id/:part                         controlle
 # Other routes
 GET           /tools/uml/classDiagram/:id/:part/cd.js                  controllers.ExerciseController.umlClassDiag(id: Int, part: String)
 GET           /tools/programming/classDiagram/:id/cd.js                controllers.ExerciseController.progClassDiagram(id: Int)
-#GET           /tools/web/playground                                    controllers.ExerciseController.webPlayground
 GET           /tools/web/solution/:id/:part                            controllers.ExerciseController.webSolution(id: Int, part: String)
 PUT           /tools/web/solution/:id/:part                            controllers.ExerciseController.updateWebSolution(id: Int, part: String)
 
@@ -147,7 +146,6 @@ GET           /:toolType/index                                         controlle
 
 GET           /:toolType/learningPaths/read                            controllers.MainExerciseController.readLearningPaths(toolType: String)
 GET           /:toolType/learningPaths/:id                             controllers.MainExerciseController.learningPath(toolType: String, id: Int)
-
 
 GET           /:toolType/playground                                    controllers.MainExerciseController.playground(toolType: String)
 

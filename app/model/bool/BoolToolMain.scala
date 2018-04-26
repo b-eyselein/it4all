@@ -5,7 +5,6 @@ import model._
 import model.bool.BoolConsts._
 import model.bool.BooleanQuestion._
 import model.core.result.EvaluationResult
-import model.learningPath.LearningPath
 import model.toolMains.{RandomExerciseToolMain, ToolState}
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
@@ -38,8 +37,13 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   // Views
 
-  override def index(user: User, learningPathBases: Seq[LearningPath]): Html =
-    views.html.randomExercises.bool.boolOverview(user, this, learningPathBases)
+  override def exercisesOverviewForIndex: Html = Html(
+    s"""<div class="form-group">
+       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, TableFillout.urlName)}" class="btn btn-primary btn-block">Wahrheitstabellen ausfüllen</a>
+       |</div>
+       |<div class="form-group">
+       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, FormulaCreation.urlName)}" class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
+       |</div>""".stripMargin)
 
   override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]]): Html = exType match {
     case FormulaCreation => views.html.randomExercises.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
