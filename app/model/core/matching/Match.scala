@@ -15,12 +15,6 @@ trait Match[T] {
     case (Some(ua), Some(sa)) => analyze(ua, sa)
   }
 
-  def getBSClass: String = matchType match {
-    case MatchType.SUCCESSFUL_MATCH => "success"
-    case MatchType.PARTIAL_MATCH    => "warning"
-    case _                          => "danger"
-  }
-
   def explanations: Seq[String] = matchType match {
     case MatchType.FAILURE                                      => Seq("Es ist ein Fehler aufgetreten.")
     case MatchType.ONLY_USER                                    => Seq("Angabe ist falsch!")
@@ -30,7 +24,7 @@ trait Match[T] {
     case _                                                      => Seq("FEHLER!")
   }
 
-  def analyze(arg1: T, arg2: T): MatchType = MatchType.SUCCESSFUL_MATCH
+  protected def analyze(arg1: T, arg2: T): MatchType = MatchType.SUCCESSFUL_MATCH
 
   protected def descArg(arg: T): String = arg.toString
 

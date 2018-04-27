@@ -7,6 +7,10 @@
     <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
 }
 
+@title = @{
+    exercise.titleForPart(curPart)
+}
+
 @scripts = {
     @* Javascript Routes *@
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
@@ -28,7 +32,8 @@
     </script>
 }
 
-@main("UML-Test", Some(user), scripts, scriptsBefore) {
+
+@main(title, Some(user), scripts, scriptsBefore) {
 
         <!-- Modal for editing of classes -->
     @core.helperTemplates.modal("Bearbeitung Klasse", "classEditModal", "lg") {
@@ -96,12 +101,9 @@
 
     <div class="container-fluid" id="fullsc">
         <div class="row">
+
             <div class="col-md-6" id="paperDiv">
-
-                <div class="well text-justify">@exercise.textForPart(curPart)</div>
-
-                <section id="buttonsDiv">
-
+                <div class="form-group" id="buttonsDiv">
                     <div class="btn-group">
                         <button class="btn btn-default" data-conntype="CLASS" onclick="selectButton(this);" id="classButton"
                             @if(getsHelp) {
@@ -153,11 +155,13 @@
                     </div>
 
                     <div class="btn-group">
-                        <button class="btn btn-default" data-conntype="POINTER" onclick="selectButton(this);" title="Maus">
+                        <button class="btn btn-default" data-conntype="POINTER" onclick="selectButton(this);" title="Maus" @{
+                            if(getsHelp) "disabled" else ""
+                        } >
                             @*<span class="glyphicon glyphicon-screenshot"></span>*@Attribute und Methoden
                         </button>
                     </div>
-                </section>
+                </div>
 
                 <div id="sizepaper">
                     <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
@@ -166,8 +170,6 @@
 
 
             <div class="col-md-6">
-                <h2>@exercise.titleForPart(curPart)</h2>
-
                 <div class="form-group">
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group">
@@ -189,11 +191,13 @@
                 <input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">
                 <input hidden id="exercisePart" value="@curPart.urlName" title="hidden">
 
-                <h2>Resultate</h2>
-
-                <div id="resultDiv"></div>
+                <div class="well text-justify">@exercise.textForPart(curPart)</div>
 
                 <hr>
+
+                <div id="editDiv"></div>
+
+                <div id="resultDiv"></div>
 
                 <div class="form-group">
                 @curPart match {

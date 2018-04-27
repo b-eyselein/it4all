@@ -32,7 +32,7 @@ case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Optio
 }
 
 
-object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch, UmlAssociationMatchingResult] {
+object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch] {
 
   private def endsCrossedEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean = (assoc1.firstEnd == assoc2.secondEnd) && (assoc1.secondEnd == assoc2.firstEnd)
 
@@ -41,13 +41,6 @@ object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch
 
   override protected def canMatch: (UmlAssociation, UmlAssociation) => Boolean = (assoc1, assoc2) => endsParallelEqual(assoc1, assoc2) || endsCrossedEqual(assoc1, assoc2)
 
-
   override protected def matchInstantiation: (Option[UmlAssociation], Option[UmlAssociation]) => UmlAssociationMatch = UmlAssociationMatch
 
-
-  override protected def resultInstantiation: Seq[UmlAssociationMatch] => UmlAssociationMatchingResult = UmlAssociationMatchingResult
-
 }
-
-
-case class UmlAssociationMatchingResult(allMatches: Seq[UmlAssociationMatch]) extends MatchingResult[UmlAssociation, UmlAssociationMatch]

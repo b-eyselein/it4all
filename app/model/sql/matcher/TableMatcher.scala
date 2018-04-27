@@ -1,6 +1,6 @@
 package model.sql.matcher
 
-import model.core.matching.{Match, Matcher, MatchingResult}
+import model.core.matching.{Match, Matcher}
 import net.sf.jsqlparser.schema.Table
 import play.api.libs.json.{JsString, JsValue}
 
@@ -10,16 +10,11 @@ case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) extends 
 
 }
 
-object TableMatcher extends Matcher[Table, TableMatch, TableMatchingResult] {
+object TableMatcher extends Matcher[Table, TableMatch] {
 
   override protected def canMatch: (Table, Table) => Boolean = _.getName == _.getName
 
 
   override protected def matchInstantiation: (Option[Table], Option[Table]) => TableMatch = TableMatch
 
-
-  override protected def resultInstantiation: Seq[TableMatch] => TableMatchingResult = TableMatchingResult
-
 }
-
-case class TableMatchingResult(allMatches: Seq[TableMatch]) extends MatchingResult[Table, TableMatch]

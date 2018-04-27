@@ -3,6 +3,7 @@ package model.blanks
 import javax.inject._
 import model.blanks.BlanksConsts._
 import model.blanks.BlanksExParts.BlanksExPart
+import model.core.matching.MatchingResult
 import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, JsonFormat, User}
@@ -30,7 +31,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override type SolType = BlanksSolution
 
-  override type R = BlanksAnswerMatchingResult
+  override type R = MatchingResult[BlanksAnswer, BlanksAnswerMatch]
 
   override type CompResult = BlanksCompleteResult
 
@@ -99,12 +100,14 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = JsArray(
-    result.result.allMatches map (m => Json.obj(
-      idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
-      correctnessName -> m.matchType.entryName,
-      explanationName -> m.explanations))
-  )
+  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue =
+
+  //    JsArray(
+  //    result.result.allMatches map (m => Json.obj(
+  //      idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
+  //      correctnessName -> m.matchType.entryName,
+  //      explanationName -> m.explanations))
+  //  )
 
 }
 

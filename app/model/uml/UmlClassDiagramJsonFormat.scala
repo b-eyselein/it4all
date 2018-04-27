@@ -7,7 +7,7 @@ import play.api.libs.json._
 //noinspection ConvertibleToMethodValue
 object UmlClassDiagramJsonFormat {
 
-  private implicit val umlClassTypeReads: Reads[UmlClassType] = {
+  private val umlClassTypeReads: Reads[UmlClassType] = {
     case JsString(str) => str match {
       case "uml.Abstract"  => JsSuccess(UmlClassType.ABSTRACT)
       case "uml.Interface" => JsSuccess(UmlClassType.INTERFACE)
@@ -16,6 +16,14 @@ object UmlClassDiagramJsonFormat {
         case Some(ct) => JsSuccess(ct)
         case None     => JsError("No such value: " + str)
       }
+    }
+    case _             => JsError("Needs to be a string!")
+  }
+
+  private val umlVisibilityReads: Reads[UmlVisibility] = {
+    case JsString(str) => UmlVisibility.withNameInsensitiveOption(str) match {
+      case Some(vis) => JsSuccess(vis)
+      case None      => JsError("No such value " + str)
     }
     case _             => JsError("Needs to be a string!")
   }
@@ -61,30 +69,44 @@ object UmlClassDiagramJsonFormat {
     ) (unlift(Position.unapply))
 
 
-  private implicit val umlClassMemberReads: Reads[UmlClassMember] = (
-    (__ \ "name").read[String] and
+  private implicit val umlAttributeReads: Reads[UmlAttribute] = (
+    (__ \ "visibility").read[UmlVisibility](umlVisibilityReads) and
+      (__ \ "name").read[String] and
       (__ \ "type").read[String]
-    ) (UmlClassMember.apply(_, _))
+    ) (UmlAttribute.apply(_, _, _))
 
-  private implicit val umlClassMemberWrites: Writes[UmlClassMember] = (
-    (__ \ "name").write[String] and
+  private implicit val umlAttributeWrites: Writes[UmlAttribute] = (
+    (__ \ "visibility").write[UmlVisibility] and
+      (__ \ "name").write[String] and
       (__ \ "type").write[String]
-    ) (unlift(UmlClassMember.unapply))
+    ) (unlift(UmlAttribute.unapply))
+
+  private implicit val umlMethodReads: Reads[UmlMethod] = (
+    (__ \ "visibility").read[UmlVisibility](umlVisibilityReads) and
+      (__ \ "name").read[String] and
+      (__ \ "type").read[String]
+    ) (UmlMethod.apply(_, _, _))
+
+  private implicit val umlMethodWrites: Writes[UmlMethod] = (
+    (__ \ "visibility").write[UmlVisibility] and
+      (__ \ "name").write[String] and
+      (__ \ "type").write[String]
+    ) (unlift(UmlMethod.unapply))
 
 
   private implicit val umlClassReads: Reads[UmlClass] = (
-    (__ \ classTypeName).readWithDefault[UmlClassType](UmlClassType.CLASS) and
+    (__ \ classTypeName).readWithDefault[UmlClassType](UmlClassType.CLASS)(umlClassTypeReads) and
       (__ \ nameName).read[String] and
-      (__ \ attributesName).readWithDefault[Seq[UmlClassMember]](Seq.empty) and
-      (__ \ methodsName).readWithDefault[Seq[UmlClassMember]](Seq.empty) and
+      (__ \ attributesName).readWithDefault[Seq[UmlAttribute]](Seq.empty) and
+      (__ \ methodsName).readWithDefault[Seq[UmlMethod]](Seq.empty) and
       (__ \ positionName).readNullable[Position]
     ) (UmlClass.apply(_, _, _, _, _))
 
   private implicit val umlClassWrites: Writes[UmlClass] = (
     (__ \ classTypeName).write[UmlClassType] and
       (__ \ nameName).write[String] and
-      (__ \ attributesName).write[Seq[UmlClassMember]] and
-      (__ \ methodsName).write[Seq[UmlClassMember]] and
+      (__ \ attributesName).write[Seq[UmlAttribute]] and
+      (__ \ methodsName).write[Seq[UmlMethod]] and
       (__ \ positionName).writeNullable[Position]
     ) (unlift(UmlClass.unapply))
 

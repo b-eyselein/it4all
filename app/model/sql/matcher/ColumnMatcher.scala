@@ -1,6 +1,6 @@
 package model.sql.matcher
 
-import model.core.matching.{Match, MatchType, Matcher, MatchingResult}
+import model.core.matching.{Match, MatchType, Matcher}
 import model.sql.ColumnWrapper
 import play.api.libs.json.{JsString, JsValue}
 
@@ -30,16 +30,11 @@ case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnW
 }
 
 
-object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch, ColumnMatchingResult] {
+object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch] {
 
   override protected def canMatch: (ColumnWrapper, ColumnWrapper) => Boolean = _ canMatch _
 
 
   override protected def matchInstantiation: (Option[ColumnWrapper], Option[ColumnWrapper]) => ColumnMatch = ColumnMatch
 
-
-  override protected def resultInstantiation: Seq[ColumnMatch] => ColumnMatchingResult = ColumnMatchingResult
-
 }
-
-case class ColumnMatchingResult(allMatches: Seq[ColumnMatch]) extends MatchingResult[ColumnWrapper, ColumnMatch]

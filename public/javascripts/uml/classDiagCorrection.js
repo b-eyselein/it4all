@@ -18,24 +18,32 @@ class Match {
  * @private
  * @property {string} name
  * @property {string} classType
- * @property {string[]} attributes
- * @property {string[]} methods
+ * @property {UmlClassAttribute[]} attributes
+ * @property {UmlClassMethod[]} methods
  * @property {object} position
  * @property {int} position.x
  * @property {int} position.y
  */
 class UmlClass {
+
     /**
-     * @param {object} cell
-     * @param {UmlClassMember} cell.attributes.attributes
-     * @param {UmlClassMember} cell.attributes.methods
+     * @param {string} name
+     * @param {string} type
+     * @param {UmlClassAttribute[]} attributes
+     * @param {UmlClassMethod[]} methods
+     * @param {Position} position
      */
-    constructor(cell) {
-        this.name = cell.attributes.name;
-        this.classType = cell.attributes.type;
-        this.attributes = cell.attributes.attributesObject;
-        this.methods = cell.attributes.methodsObject;
-        this.position = cell.attributes.position;
+    constructor(name, type, attributes, methods, position) {
+        this.name = name;
+        this.classType = type;
+        this.attributes = attributes;
+        this.methods = methods;
+        this.position = position;
+    }
+
+    static fromCell(cell) {
+        let cas = cell.attributes;
+        return new UmlClass(cas.name, cas.type, cas.attributesObject, cas.methodsObject, cas.position);
     }
 }
 
@@ -210,7 +218,8 @@ function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation)
         }
 
         // Cardinalities
-        let endsParallel = userArg.firstEnd === sampleArg.firstEnd, gottenCardinalities = userArg.firstMult + ": " + userArg.secondMult;
+        let endsParallel = userArg.firstEnd === sampleArg.firstEnd,
+            gottenCardinalities = userArg.firstMult + ": " + userArg.secondMult;
         let cardinalitiesEqual, correctCardinalities;
 
         if (endsParallel) {
@@ -351,7 +360,7 @@ function displayMatchingResultList(matchingResultList, name, explainFunc) {
  * @param {object} response.assocAndImplResult.implResult
  */
 function onUmlClassDiagCorrectionSuccess(response) {
-    let html = '';
+    let html = `<h2 class="text-center">Resultate</h2>`;
 
     if (response.classResult != null) {
         html += displayMatchingResultList(response.classResult, "Klassen", explainClassResult);
@@ -382,10 +391,12 @@ function testSol() {
     $('#testButton').prop('disabled', true);
 
     let solution = {
-        classes: graph.getCells().filter((cell) => cell.attributes.name !== undefined).map((cell) => new UmlClass(cell)),
+        classes: graph.getCells().filter((cell) => cell.attributes.name !== undefined).map(UmlClass.fromCell),
         associations: graph.getLinks().filter((conn) => conn.attributes.type !== 'uml.Implementation').map((conn) => new Association(conn)),
         implementations: graph.getLinks().filter((conn) => conn.attributes.type === 'uml.Implementation').map((conn) => new Implementation(conn))
     };
+
+    console.warn(JSON.stringify(solution, null, 2));
 
     $.ajax({
         type: 'PUT',

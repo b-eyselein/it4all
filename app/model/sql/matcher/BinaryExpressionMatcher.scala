@@ -1,6 +1,6 @@
 package model.sql.matcher
 
-import model.core.matching.{Match, MatchType, Matcher, MatchingResult}
+import model.core.matching.{Match, MatchType, Matcher}
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
@@ -25,7 +25,7 @@ case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: O
 
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
-  extends Matcher[BinaryExpression, BinaryExpressionMatch, BinaryExpressionMatchingResult] {
+  extends Matcher[BinaryExpression, BinaryExpressionMatch] {
 
   private def getColToCompare(expression: BinaryExpression): Column = (expression.getLeftExpression, expression.getRightExpression) match {
     case (left: Column, right: Column) => if (left.toString < right.toString) left else right
@@ -50,10 +50,4 @@ class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases:
 
   override protected def matchInstantiation: (Option[BinaryExpression], Option[BinaryExpression]) => BinaryExpressionMatch = BinaryExpressionMatch
 
-
-  override protected def resultInstantiation: Seq[BinaryExpressionMatch] => BinaryExpressionMatchingResult = BinaryExpressionMatchingResult
-
 }
-
-
-case class BinaryExpressionMatchingResult(allMatches: Seq[BinaryExpressionMatch]) extends MatchingResult[BinaryExpression, BinaryExpressionMatch]

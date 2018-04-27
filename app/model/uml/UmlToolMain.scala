@@ -54,7 +54,10 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override def readSolutionFromPostRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlSolution] = {
 
-    val onFormError: Form[StringSolutionFormHelper] => Option[UmlSolution] = _ => None
+    val onFormError: Form[StringSolutionFormHelper] => Option[UmlSolution] = { formWithErrors =>
+      formWithErrors.errors.foreach(error => Logger.error("Form Error: " + error))
+      None
+    }
 
     val onRead: StringSolutionFormHelper => Option[UmlSolution] = { sol =>
       Json.fromJson[UmlClassDiagram](Json.parse(sol.learnerSolution)) match {

@@ -8,8 +8,8 @@
     member.memberName + ": " + member.memberType
 }
 
-@describeClassMemberMatch(memberMatch: model.uml.matcher.UmlClassMemberMatch, name: String) = {
-    <li class="text-@memberMatch.getBSClass">
+@describeClassMemberMatch(memberMatch: model.uml.matcher.UmlClassMemberMatch[_ <: model.uml.UmlClassMember], name: String) = {
+    <li class="text-@memberMatch.matchType.bsClass">
     @memberMatch.matchType match {
         case model.core.matching.MatchType.SUCCESSFUL_MATCH => {
             Die Angabe @name <code>@memberMatch.userArg.map(describeMember).getOrElse("FEHLER!")</code> ist korrekt.
@@ -48,7 +48,7 @@
                     <div class="row">
                     @for(classMatch <- classMatchTuple) {
                         <div class="col-md-6">
-                            <div class="panel panel-@classMatch.getBSClass">
+                            <div class="panel panel-@classMatch.matchType.bsClass">
                                 <div class="panel-heading">@classMatch.userArg.map(_.className)</div>
                                 <div class="panel-body">
                                     <ul>

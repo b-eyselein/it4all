@@ -1,5 +1,7 @@
-const STD_CLASS_SIZE = 150;
-const PADDING = 50;
+const STD_CLASS_HEIGHT = 160;
+const STD_CLASS_WIDTH = 200;
+
+const PADDING = 40;
 
 const COLOR_WHITE = '#ffffff';
 
@@ -7,19 +9,22 @@ let chosenCellView = null;
 
 const graph = new joint.dia.Graph();
 
-let sel = 'POINTER';
+let paper;
 
-let classEditModal, cardinalityEditModal;
+let sel = 'POINTER';
 
 const UmlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
 
 const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
 const ASSOC_TYPES = ['ASSOCIATION', 'AGGREGATION', 'COMPOSITION', 'IMPLEMENTATION'];
 
+/**
+ * @param {UmlClass} clazz
+ */
 function addUmlClass(clazz) {
     let content = {
         position: clazz.position,
-        size: {width: STD_CLASS_SIZE, height: STD_CLASS_SIZE},
+        size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
 
         name: clazz.name.replace(/ /g, '_'),
 
@@ -120,15 +125,9 @@ function cellOnLeftClick(cellView, evt) {
     }
 
     if (sel === 'POINTER') {
-        if (getsHelp) return;
-
-        // TODO: Changing class type, name, attributes or methods!?!
-        let bodyEditModalJQ = classEditModal.find('.modal-body');
-
-        bodyEditModalJQ.html(htmlForClassEdit(cellView));
-
-        classEditModal.modal('show');
-
+        if (!getsHelp) {
+            editClass(cellView);
+        }
     } else if ('IMPLEMENTATION' === sel) {
         // FIXME: do not select arrows or other things, only classes!
         cellView.highlight();
@@ -314,6 +313,27 @@ function loadAssociation(associationToLoad) {
     }
 }
 
+function loadClasses(classesToLoad) {
+    let sqrt = Math.ceil(Math.sqrt(classesToLoad.length));
+
+
+    const size = STD_CLASS_WIDTH + PADDING;
+
+    for (let i = 0; i < classesToLoad.length; i++) {
+        const classToLoad = classesToLoad[i];
+
+
+        if (!classToLoad.hasOwnProperty('position')) {
+            classToLoad.position = {
+                x: size * (i % sqrt) + PADDING,
+                y: size * Math.floor(i / sqrt) + PADDING
+            };
+        }
+
+        addUmlClass(classToLoad);
+    }
+}
+
 /**
  * @param {object} solution
  * @param {object[]} solution.classes
@@ -324,19 +344,7 @@ function loadAssociation(associationToLoad) {
  */
 function loadSolution(solution, paperWidth, paperHeight) {
 
-    let sqrt = Math.ceil(Math.sqrt(solution.classes.length));
-    for (let i = 0; i < solution.classes.length; i++) {
-        let classToLoad = solution.classes[i];
-
-        if (!classToLoad.hasOwnProperty('position')) {
-            classToLoad.position = {
-                x: 200 * (i % sqrt) + PADDING,
-                y: 200 * Math.floor(i / sqrt) + PADDING
-            };
-        }
-
-        addUmlClass(classToLoad);
-    }
+    loadClasses(solution.classes);
 
     for (let assoc of solution.associations) {
         loadAssociation(assoc);
@@ -353,11 +361,12 @@ $(document).ready(function () {
     let paperWidth = paperJQ.width(), paperHeight = 700;
 
     // Init Graph and Paper
-    let paper = new joint.dia.Paper({
+    paper = new joint.dia.Paper({
         el: paperJQ,
         width: paperWidth,
         height: 700, // paperJQ.height(),
-        gridSize: 10,
+        gridSize: 20,
+        drawGrid: 'dot',
         model: graph
     });
 
@@ -379,8 +388,6 @@ $(document).ready(function () {
     // noinspection JSUnresolvedVariable
     loadSolution(defaultSol, paperWidth, paperHeight);
 
-    classEditModal = $('#classEditModal');
-    classEditModal.modal({show: false});
 
     cardinalityEditModal = $('#cardinalityEditModal');
     cardinalityEditModal.modal({show: false});

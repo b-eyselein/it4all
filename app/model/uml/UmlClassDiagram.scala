@@ -4,6 +4,24 @@ import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 
 import scala.collection.immutable.IndexedSeq
 
+
+sealed abstract class UmlVisibility(val representant: String) extends EnumEntry
+
+object UmlVisibility extends Enum[UmlVisibility] with PlayJsonEnum[UmlVisibility] {
+
+  override val values: IndexedSeq[UmlVisibility] = findValues
+
+  case object PUBLIC extends UmlVisibility("+")
+
+  case object PACKAGE extends UmlVisibility("~")
+
+  case object PROTECTED extends UmlVisibility("#")
+
+  case object PRIVATE extends UmlVisibility("-")
+
+}
+
+
 sealed abstract class UmlClassType(val german: String) extends EnumEntry
 
 object UmlClassType extends Enum[UmlClassType] with PlayJsonEnum[UmlClassType] {
@@ -18,6 +36,7 @@ object UmlClassType extends Enum[UmlClassType] with PlayJsonEnum[UmlClassType] {
 
 }
 
+
 sealed abstract class UmlMultiplicity(val representant: String) extends EnumEntry
 
 object UmlMultiplicity extends Enum[UmlMultiplicity] with PlayJsonEnum[UmlMultiplicity] {
@@ -29,6 +48,7 @@ object UmlMultiplicity extends Enum[UmlMultiplicity] with PlayJsonEnum[UmlMultip
   case object UNBOUND extends UmlMultiplicity("*")
 
 }
+
 
 sealed abstract class UmlAssociationType(val german: String) extends EnumEntry
 
@@ -48,10 +68,20 @@ object UmlAssociationType extends Enum[UmlAssociationType] with PlayJsonEnum[Uml
 case class Position(xCoord: Int, yCoord: Int)
 
 
-case class UmlClassMember(memberName: String, memberType: String)
+sealed trait UmlClassMember {
+
+  val visibility: UmlVisibility
+  val memberName: String
+  val memberType: String
+
+}
+
+case class UmlAttribute(visibility: UmlVisibility, memberName: String, memberType: String, isStatic: Boolean, isDerived: Boolean, isAbstract: Boolean) extends UmlClassMember
+
+case class UmlMethod(visibility: UmlVisibility, memberName: String, memberType: String) extends UmlClassMember
 
 
-case class UmlClass(classType: UmlClassType, className: String, attributes: Seq[UmlClassMember], methods: Seq[UmlClassMember], position: Option[Position]) {
+case class UmlClass(classType: UmlClassType, className: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod], position: Option[Position]) {
 
   def allMembers: Seq[UmlClassMember] = attributes ++ methods
 

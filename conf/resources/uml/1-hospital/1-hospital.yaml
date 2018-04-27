@@ -16,30 +16,30 @@ mappings:
 - {key: Namen, value: Name}
 - {key: Medikamente, value: Medikament}
 - {key: Rezepten, value: Rezept}
-ignoreWords: ['Ein', 'Jede']
+ignoreWords: [Ein, Jede]
 solution:
   classes:
   - classType: ABSTRACT
     name: Person
     attributes:
-    - {name: "id", type: "int"}
-    - {name: "name", type: "String"}
+    - {visibility: public, name: id, type: int}
+    - {visibility: public, name: name, type: String}
 
   - classType: CLASS
     name: Doktor
     methods:
-    - {name: "verschreiben(Patient)", type: "void"}
+    - {visibility: public, name: verschreiben(Patient), type: void}
 
   - classType: CLASS
     name: Rezept
     attributes:
-    - {name: "id", type: "int"}
+    - {visibility: public, name: id, type: int}
 
   - classType: CLASS
     name: Patient
     methods:
-    - {name: "entlassen(Station)", type: "void"}
-    - {name: "aufnehmen(Station)", type: "void"}
+    - {visibility: public, name: entlassen(Station), type: void}
+    - {visibility: public, name: aufnehmen(Station), type: void}
 
   - classType: CLASS
     name: Krankenschwester
@@ -47,17 +47,18 @@ solution:
   - classType: CLASS
     name: Station
     attributes:
-    - {name: "nummer", type: "int"}
+    - {visibility: public, name: nummer, type: int}
 
   - classType: CLASS
     name: Medikament
     attributes:
-    - {name: "id", type: "int"}
-    - {name: "name", type: "String"}
+    - {visibility: public, name: id, type: int}
+    - {visibility: public, visibility: public, name: name, type: String}
 
   - classType: CLASS
     name: Krankenhaus
-    - {name: "name", type: "String"}
+    attributes:
+    - {visibility: public, name: name, type: String}
 
   implementations:
   - {subClass: Patient, superClass: Person}

@@ -28,7 +28,7 @@ case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg:
 }
 
 
-object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch, UmlImplementationMatchingResult] {
+object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch] {
 
   override protected def canMatch: (UmlImplementation, UmlImplementation) => Boolean = (i1, i2) =>
     (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)
@@ -36,9 +36,4 @@ object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementa
 
   override protected def matchInstantiation: (Option[UmlImplementation], Option[UmlImplementation]) => UmlImplementationMatch = UmlImplementationMatch
 
-
-  override protected def resultInstantiation: Seq[UmlImplementationMatch] => UmlImplementationMatchingResult = UmlImplementationMatchingResult
 }
-
-
-case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatch]) extends MatchingResult[UmlImplementation, UmlImplementationMatch]
