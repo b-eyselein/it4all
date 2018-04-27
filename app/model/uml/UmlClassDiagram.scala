@@ -74,11 +74,14 @@ sealed trait UmlClassMember {
   val memberName: String
   val memberType: String
 
+  val isStatic  : Boolean
+  val isAbstract: Boolean
+
 }
 
 case class UmlAttribute(visibility: UmlVisibility, memberName: String, memberType: String, isStatic: Boolean, isDerived: Boolean, isAbstract: Boolean) extends UmlClassMember
 
-case class UmlMethod(visibility: UmlVisibility, memberName: String, memberType: String) extends UmlClassMember
+case class UmlMethod(visibility: UmlVisibility, memberName: String, memberType: String, parameters: String, isStatic: Boolean, isAbstract: Boolean) extends UmlClassMember
 
 
 case class UmlClass(classType: UmlClassType, className: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod], position: Option[Position]) {

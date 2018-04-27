@@ -85,6 +85,11 @@ object MyYamlProtocol {
 
     def boolField(fieldName: String): Try[Boolean] = someField(fieldName) flatMap (_.asBool)
 
+    def optBoolField(fieldName: String): Try[Option[Boolean]] = yamlObject.fields get fieldName match {
+      case None        => Success(None)
+      case Some(field) => field.asBool map Some.apply
+    }
+
     def intField(fieldName: String): Try[Int] = someField(fieldName) flatMap (_.asInt)
 
     def stringField(fieldName: String): Try[String] = someField(fieldName) flatMap (_.asStr)

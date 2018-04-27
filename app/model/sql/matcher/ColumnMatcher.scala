@@ -1,6 +1,6 @@
 package model.sql.matcher
 
-import model.core.matching.{Match, MatchType, Matcher}
+import model.core.matching._
 import model.sql.ColumnWrapper
 import play.api.libs.json.{JsString, JsValue}
 
@@ -8,6 +8,8 @@ import scala.language.postfixOps
 
 
 case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match[ColumnWrapper] {
+
+  override type MatchAnalysisResult = GenericAnalysisResult
 
   val hasAlias: Boolean = (userArg exists (_.hasAlias)) || (sampleArg exists (_.hasAlias))
 
@@ -23,7 +25,7 @@ case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnW
 
   val secondRest: String = sampleArg map (_.getRest) getOrElse ""
 
-  override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): MatchType = userArg doMatch sampleArg
+  override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): GenericAnalysisResult = GenericAnalysisResult(userArg doMatch sampleArg)
 
   override protected def descArgForJson(arg: ColumnWrapper): JsValue = JsString(arg.toString)
 

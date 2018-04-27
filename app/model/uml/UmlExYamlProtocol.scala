@@ -123,7 +123,10 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       visibility <- yamlObject.enumField(visibilityName, UmlVisibility.withNameInsensitiveOption) map (_ getOrElse UmlVisibility.PUBLIC)
       memberName <- yamlObject.stringField(nameName)
       memberType <- yamlObject.stringField(typeName)
-    } yield UmlAttribute(visibility, memberName, memberType)
+      isAbstract <- yamlObject.optBoolField("isAbstract") map (_ getOrElse false)
+      isDerived <- yamlObject.optBoolField("isDerived") map (_ getOrElse false)
+      isStatic <- yamlObject.optBoolField("isStatic") map (_ getOrElse false)
+    } yield UmlAttribute(visibility, memberName, memberType, isStatic, isDerived, isAbstract)
 
     override def write(obj: UmlAttribute): YamlValue = ???
 
@@ -135,7 +138,10 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       visibility <- yamlObject.enumField(visibilityName, UmlVisibility.withNameInsensitiveOption) map (_ getOrElse UmlVisibility.PUBLIC)
       memberName <- yamlObject.stringField(nameName)
       memberType <- yamlObject.stringField(typeName)
-    } yield UmlMethod(visibility, memberName, memberType)
+      parameters <- yamlObject.stringField("parameters")
+      isAbstract <- yamlObject.optBoolField("isAbstract") map (_ getOrElse false)
+      isStatic <- yamlObject.optBoolField("isStatic") map (_ getOrElse false)
+    } yield UmlMethod(visibility, memberName, memberType, parameters, isAbstract, isStatic)
 
     override def write(obj: UmlMethod): YamlValue = ???
 

@@ -18,20 +18,52 @@ const UmlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
 const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
 const ASSOC_TYPES = ['ASSOCIATION', 'AGGREGATION', 'COMPOSITION', 'IMPLEMENTATION'];
 
+function visibilityReprFromValue(value) {
+    switch (value) {
+        case 'PUBLIC':
+            return '+';
+        case 'PRIVATE':
+            return '-';
+        case 'PROTECTED':
+            return '#';
+        case 'PACKAGE':
+        default:
+            return '~';
+    }
+}
+
 /**
- * @param {UmlClass} clazz
+ * @param {object} clazz
+ * @param {string} clazz.classType
+ * @param {string} clazz.name
+ * @param {object[]} clazz.attributes
+ * @param {string} clazz.attributes.visibility
+ * @param {string} clazz.attributes.name
+ * @param {string} clazz.attributes.type
+ * @param {string} clazz.attributes.isStatic
+ * @param {string} clazz.attributes.isDerived
+ * @param {string} clazz.attributes.isAbstract
+ * @param {object} clazz.methods
+ * @param {{x: int, y: int}} clazz.position
  */
 function addUmlClass(clazz) {
+
     let content = {
         position: clazz.position,
         size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
 
         name: clazz.name.replace(/ /g, '_'),
 
-        attributes: clazz.attributes.map((a) => a.name + ": " + a.type).join('\n'),
+        attributes: clazz.attributes.map((a) => {
+            let visibilityRepr = visibilityReprFromValue(a.visibility);
+            return UmlClassAttribute.buildStringFrom(visibilityRepr, a.isAbstract, a.isStatic, a.isDerived, a.name, a.type)
+        }).join('\n'),
         attributesObject: clazz.attributes,
 
-        methods: clazz.methods.map((m) => m.name + ": " + m.type).join('\n'),
+        methods: clazz.methods.map((m) => {
+            let visibilityRepr = visibilityReprFromValue(m.visibility);
+            return UmlClassMethod.buildStringFrom(visibilityRepr, m.isAbstract, m.isStatic, m.name, m.parameters, m.type)
+        }).join('\n'),
         methodsObject: clazz.methods,
 
         attrs: {
@@ -165,7 +197,6 @@ function cellOnLeftClick(cellView, evt) {
             let newId = addAssociation(chosenCellView.model.id, cellView.model.id, sel, sourceMult, targetMult);
 
             askCardinality(newId, source, sourceMult, target, targetMult);
-
 
             chosenCellView.unhighlight();
             cellView.unhighlight();
@@ -313,6 +344,15 @@ function loadAssociation(associationToLoad) {
     }
 }
 
+/**
+ * @param {object[]} classesToLoad
+ * @param {string} classesToLoad.classType
+ * @param {string} classesToLoad.name
+ * @param {object} classesToLoad.attributes
+ * @param {object} classesToLoad.methods
+ * @param {{x: int, y: int} | null} classesToLoad.position
+ *
+ */
 function loadClasses(classesToLoad) {
     let sqrt = Math.ceil(Math.sqrt(classesToLoad.length));
 

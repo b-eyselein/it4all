@@ -105,44 +105,188 @@ class Association {
 }
 
 /**
- * @param {object} memberResult
- * @param {boolean} memberResult.success
- * @param {string} memberResult.matches
- * @param {string} memberType
- * @return {string}
+ *
+ * @param {object} umlAttributeMatch
+ *
+ * @param {string} umlAttributeMatch.success
+ *
+ * @param {object} umlAttributeMatch.analysisResult
+ * @param {string} umlAttributeMatch.analysisResult.success
+ *
+ * @param {boolean} umlAttributeMatch.analysisResult.visibilityCorrect
+ * @param {string} umlAttributeMatch.analysisResult.correctVisibility
+ *
+ * @param {boolean} umlAttributeMatch.analysisResult.typeCorrect
+ * @param {string} umlAttributeMatch.analysisResult.correctType
+ *
+ * @param {boolean} umlAttributeMatch.analysisResult.staticCorrect
+ * @param {boolean} umlAttributeMatch.analysisResult.correctStatic
+ *
+ * @param {boolean} umlAttributeMatch.analysisResult.derivedCorrect
+ * @param {boolean} umlAttributeMatch.analysisResult.correctDerived
+ *
+ * @param {boolean} umlAttributeMatch.analysisResult.abstractCorrect
+ * @param {boolean} umlAttributeMatch.analysisResult.correctAbstract
+ *
+ * @param {UmlClassAttribute | null} umlAttributeMatch.userArg
+ * @param {UmlClassAttribute | null} umlAttributeMatch.sampleArg
  */
-function displayMemberResult(memberResult, memberType) {
-    if (memberResult.success) {
-        return `<p class="text text-success">Die ${memberType} waren korrekt.</p>`
-    } else {
-        let memberMatches = memberResult.matches.map((memberMatch) => {
-            console.warn(JSON.stringify(memberMatch));
+function displayUmlAttributeMatch(umlAttributeMatch) {
+    let explanation, textClass;
 
-            let explanation, textClass;
+    switch (umlAttributeMatch.success) {
+        case 'SUCCESSFUL_MATCH':
+            textClass = 'success';
+            explanation = `Das Attribut <code>${umlAttributeMatch.userArg.name}</code> ist korrekt.`;
+            break;
+        case 'PARTIAL_MATCH':
+        case 'UNSUCCESSFUL_MATCH':
+            textClass = 'warning';
 
-            switch (memberMatch.success) {
-                case 'SUCCESSFUL_MATCH':
-                    textClass = 'success';
-                    explanation = `Das Attribut / die Methode <code>${memberMatch.userArg.name}: ${memberMatch.userArg.type}</code> ist korrekt.`;
-                    break;
-                case 'ONLY_SAMPLE':
-                    textClass = 'danger';
-                    explanation = `Das Attribut / die Methode <code>${memberMatch.sampleArg.name}: ${memberMatch.sampleArg.type}</code> fehlt!`;
-                    break;
-                case 'ONLY_USER':
-                    textClass = 'danger';
-                    explanation = `Das Attribut / die Methode <code>${memberMatch.userArg.name}: ${memberMatch.userArg.type}</code> ist falsch!`;
-                    break;
-                default:
-                    console.error("TODO: " + memberMatch.success);
-                    break;
+            let explanations = [];
+
+            if (!umlAttributeMatch.analysisResult.visibilityCorrect) {
+                explanations.push('Die Sichtbarkeit des Attributs war falsch.');
+            }
+            if (!umlAttributeMatch.analysisResult.abstractCorrect) {
+                explanations.push('Das Attribut sollte ' + (umlAttributeMatch.analysisResult.correctAbstract ? '' : 'nicht ') + 'abstrakt sein.');
+            }
+            if (!umlAttributeMatch.analysisResult.typeCorrect) {
+                explanations.push('Das Attribut hat den falschen Typ.');
+            }
+            if (!umlAttributeMatch.analysisResult.staticCorrect) {
+                explanations.push('Das Attribut sollte ' + (umlAttributeMatch.analysisResult.correctStatic ? '' : 'nicht ') + 'statisch sein.');
+            }
+            if (!umlAttributeMatch.analysisResult.derivedCorrect) {
+                explanations.push('Das Attribut sollte ' + (umlAttributeMatch.analysisResult.correctDerived ? '' : 'nicht ') + 'abgeleitet sein.');
             }
 
-            return `<li><span class="text text-${textClass}">${explanation}</li>`;
-        }).join('\n');
+            explanation = explanations.join(' ');
+            break;
+        case 'ONLY_SAMPLE':
+            textClass = 'danger';
+            explanation = `Das Attribut <code>${umlAttributeMatch.sampleArg.name}</code> fehlt!`;
+            break;
+        case 'ONLY_USER':
+            textClass = 'danger';
+            explanation = `Das Attribut <code>${umlAttributeMatch.userArg.name}: ${umlAttributeMatch.userArg.type}</code> ist falsch!`;
+            break;
+    }
+
+    // return `<li>${displayUmlAttributeMatch(umlAttributeMatch)}</li>`;
+
+    return `<li><span class="text text-${textClass}">${explanation}</li>`;
+}
+
+/**
+ * @param {object} memberResult
+ * @param {boolean} memberResult.success
+ * @param {object[]} memberResult.matches
+ *
+ * @return {string}
+ */
+function displayAttributeMatchingResult(memberResult) {
+    if (memberResult.success) {
+        return `<p class="text text-success">Die Attribute waren korrekt.</p>`
+    } else {
+        return `
+<p class="text-danger">Die Attribute waren nicht korrekt:</p>
+<ul>
+    ${memberResult.matches.map(displayUmlAttributeMatch).join('\n')}
+</ul>`.trim();
+    }
+}
+
+/**
+ *
+ * @param {object} umlMethodMatch
+ *
+ * @param {string} umlMethodMatch.success
+ *
+ * @param {object} umlMethodMatch.analysisResult
+ * @param {string} umlMethodMatch.analysisResult.success
+ *
+ * @param {boolean} umlMethodMatch.analysisResult.visibilityCorrect
+ * @param {string} umlMethodMatch.analysisResult.correctVisibility
+ *
+ * @param {boolean} umlMethodMatch.analysisResult.typeCorrect
+ * @param {string} umlMethodMatch.analysisResult.correctType
+ *
+ * @param {boolean} umlMethodMatch.anaysisResult.parametersCorrect
+ * @param {string} umlMethodMatch.analysisResult.correctParameters
+ *
+ * @param {boolean} umlMethodMatch.analysisResult.staticCorrect
+ * @param {boolean} umlMethodMatch.analysisResult.correctStatic
+ *
+ * @param {boolean} umlMethodMatch.analysisResult.abstractCorrect
+ * @param {boolean} umlMethodMatch.analysisResult.correctAbstract
+ *
+ * @param {UmlClassMethod | null} umlMethodMatch.userArg
+ * @param {UmlClassMethod | null} umlMethodMatch.sampleArg
+ */
+function displayUmlMethodMatch(umlMethodMatch) {
+
+    console.warn(JSON.stringify(umlMethodMatch, null, 2));
+
+    let explanation, textClass;
+
+    switch (umlMethodMatch.success) {
+        case 'SUCCESSFUL_MATCH':
+            textClass = 'success';
+            explanation = `Die Methode <code>${umlMethodMatch.userArg.name}</code> ist korrekt.`;
+            break;
+        case 'PARTIAL_MATCH':
+        case 'UNSUCCESSFUL_MATCH':
+            textClass = 'warning';
+
+            let explanations = [];
+
+            if (!umlMethodMatch.analysisResult.visibilityCorrect) {
+                explanations.push('Die Sichtbarkeit der Methode war falsch.');
+            }
+            if (!umlMethodMatch.analysisResult.abstractCorrect) {
+                explanations.push('Die Methode sollte ' + (umlMethodMatch.analysisResult.correctAbstract ? '' : 'nicht ') + 'abstrakt sein.');
+            }
+            if (!umlMethodMatch.analysisResult.typeCorrect) {
+                explanations.push('Die Methode hat den falschen Typ.');
+            }
+            if (!umlMethodMatch.analysisResult.staticCorrect) {
+                explanations.push('Die Methode sollte ' + (umlMethodMatch.analysisResult.correctStatic ? '' : 'nicht ') + 'statisch sein.');
+            }
+            if(!umlMethodMatch.analysisResult.parametersCorrect) {
+                explanations.push(`Die Parameter der Methode sollten <code>${umlMethodMatch.analysisResult.correctParameters}</code> lauten.`);
+            }
+
+            explanation = explanations.join(' ');
+            break;
+        case 'ONLY_SAMPLE':
+            textClass = 'danger';
+            explanation = `Die Methode <code>${umlMethodMatch.sampleArg.name}</code> fehlt!`;
+            break;
+        case 'ONLY_USER':
+            textClass = 'danger';
+            explanation = `Die Methode <code>${umlMethodMatch.userArg.name}: ${umlMethodMatch.userArg.type}</code> ist falsch!`;
+            break;
+    }
+
+    return `<li><span class="text text-${textClass}">${explanation}</li>`;
+}
+
+/**
+ * @param {object} memberResult
+ * @param {boolean} memberResult.success
+ * @param {object[]} memberResult.matches
+ *
+ * @return {string}
+ */
+function displayMethodMatchingResult(memberResult) {
+    if (memberResult.success) {
+        return `<p class="text text-success">Die Methoden waren korrekt.</p>`
+    } else {
+        let memberMatches = memberResult.matches.map(displayUmlMethodMatch).join('\n');
 
         return `
-<p class="text-danger">Die ${memberType} waren nicht korrekt:</p>
+<p class="text-danger">Die Methoden waren nicht korrekt:</p>
 <ul>
     ${memberMatches}
 </ul>`.trim();
@@ -152,10 +296,12 @@ function displayMemberResult(memberResult, memberType) {
 /**
  * @param {object} classResult
  * @param {string} classResult.success
+ * @param {object} classResult.analysisResult
+ * @param {object} classResult.analysisResult.attributesResult
+ * @param {object} classResult.analysisResult.methodsResult
  * @param {{className: string, classType: string} | null} classResult.userArg
  * @param {{className: string, classType: string} | null} classResult.sampleArg
- * @param {object[]} classResult.attributesResult
- * @param {object[]} classResult.methodsResult
+ *
  * @param {string} alertClass
  * @param {string} glyphicon
  * @param {string} successExplanation
@@ -163,8 +309,6 @@ function displayMemberResult(memberResult, memberType) {
  * @return {string}
  */
 function explainClassResult(classResult, alertClass, glyphicon, successExplanation) {
-    // TODO: implement...
-
     let className = classResult.userArg != null ? classResult.userArg.className : classResult.sampleArg.className;
 
     if (classResult.success === 'SUCCESSFUL_MATCH') {
@@ -183,8 +327,8 @@ function explainClassResult(classResult, alertClass, glyphicon, successExplanati
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> ${successExplanation}
 </p>
 <ul>
-    <li>${displayMemberResult(classResult.attributesResult, 'Attribute')}</li>
-    <li>${displayMemberResult(classResult.methodsResult, 'Methoden')}</li>
+    <li>${displayAttributeMatchingResult(classResult.analysisResult.attributesResult, 'Attribute')}</li>
+    <li>${displayMethodMatchingResult(classResult.analysisResult.methodsResult, 'Methoden')}</li>
 </ul>`.trim();
     }
 }
@@ -223,11 +367,9 @@ function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation)
         let cardinalitiesEqual, correctCardinalities;
 
         if (endsParallel) {
-            console.info("Ends parallel");
             cardinalitiesEqual = userArg.firstMult === sampleArg.firstMult && userArg.secondMult === sampleArg.secondMult;
             correctCardinalities = sampleArg.firstMult + ": " + sampleArg.secondMult;
         } else {
-            console.info("Ends crossed");
             cardinalitiesEqual = userArg.firstMult === sampleArg.secondMult && userArg.secondMult === sampleArg.firstMult;
             correctCardinalities = sampleArg.secondMult + ": " + sampleArg.firstMult;
         }
@@ -377,7 +519,6 @@ function onUmlClassDiagCorrectionSuccess(response) {
 }
 
 function onUmlClassDiagCorrectionError(jqXHR) {
-    console.log(jqXHR);
 
     $('#testButton').prop('disabled', false);
 }
@@ -395,8 +536,6 @@ function testSol() {
         associations: graph.getLinks().filter((conn) => conn.attributes.type !== 'uml.Implementation').map((conn) => new Association(conn)),
         implementations: graph.getLinks().filter((conn) => conn.attributes.type === 'uml.Implementation').map((conn) => new Implementation(conn))
     };
-
-    console.warn(JSON.stringify(solution, null, 2));
 
     $.ajax({
         type: 'PUT',

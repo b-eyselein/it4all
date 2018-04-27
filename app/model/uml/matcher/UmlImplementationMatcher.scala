@@ -8,8 +8,10 @@ import play.api.libs.json.{JsValue, Json}
 
 case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
 
-  override def analyze(i1: UmlImplementation, i2: UmlImplementation): MatchType =
-    if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH
+  override type MatchAnalysisResult = GenericAnalysisResult
+
+  override def analyze(i1: UmlImplementation, i2: UmlImplementation): GenericAnalysisResult =
+    GenericAnalysisResult(if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH)
 
   override def explanations: Seq[String] = matchType match {
     case MatchType.SUCCESSFUL_MATCH                             => Seq.empty

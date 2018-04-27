@@ -1,6 +1,6 @@
 package model.sql.matcher
 
-import model.core.matching.{Match, MatchType, Matcher}
+import model.core.matching._
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
@@ -8,7 +8,9 @@ import play.api.libs.json.{JsString, JsValue}
 
 case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match[Expression] {
 
-  override def analyze(ua: Expression, sa: Expression): MatchType = MatchType.SUCCESSFUL_MATCH
+  override type MatchAnalysisResult = GenericAnalysisResult
+
+  override def analyze(ua: Expression, sa: Expression): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
 
   override protected def descArgForJson(arg: Expression): JsValue = JsString(arg.toString)
 

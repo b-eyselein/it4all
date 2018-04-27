@@ -72,25 +72,37 @@ object UmlClassDiagramJsonFormat {
   private implicit val umlAttributeReads: Reads[UmlAttribute] = (
     (__ \ "visibility").read[UmlVisibility](umlVisibilityReads) and
       (__ \ "name").read[String] and
-      (__ \ "type").read[String]
-    ) (UmlAttribute.apply(_, _, _))
+      (__ \ "type").read[String] and
+      (__ \ "isStatic").readWithDefault[Boolean](false) and
+      (__ \ "isDerived").readWithDefault[Boolean](false) and
+      (__ \ "isAbstract").readWithDefault[Boolean](false)
+    ) (UmlAttribute.apply(_, _, _, _, _, _))
 
   private implicit val umlAttributeWrites: Writes[UmlAttribute] = (
     (__ \ "visibility").write[UmlVisibility] and
       (__ \ "name").write[String] and
-      (__ \ "type").write[String]
+      (__ \ "type").write[String] and
+      (__ \ "isStatic").write[Boolean] and
+      (__ \ "isDerived").write[Boolean] and
+      (__ \ "isAbstract").write[Boolean]
     ) (unlift(UmlAttribute.unapply))
 
   private implicit val umlMethodReads: Reads[UmlMethod] = (
     (__ \ "visibility").read[UmlVisibility](umlVisibilityReads) and
       (__ \ "name").read[String] and
-      (__ \ "type").read[String]
-    ) (UmlMethod.apply(_, _, _))
+      (__ \ "type").read[String] and
+      (__ \ "parameters").read[String] and
+      (__ \ "isStatic").readWithDefault[Boolean](false) and
+      (__ \ "isAbstract").readWithDefault[Boolean](false)
+    ) (UmlMethod.apply(_, _, _, _, _, _))
 
   private implicit val umlMethodWrites: Writes[UmlMethod] = (
     (__ \ "visibility").write[UmlVisibility] and
       (__ \ "name").write[String] and
-      (__ \ "type").write[String]
+      (__ \ "type").write[String] and
+      (__ \ "parameters").write[String] and
+      (__ \ "isStatic").write[Boolean] and
+      (__ \ "isAbstract").write[Boolean]
     ) (unlift(UmlMethod.unapply))
 
 

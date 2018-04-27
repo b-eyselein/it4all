@@ -100,7 +100,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue =
+  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = ???
 
   //    JsArray(
   //    result.result.allMatches map (m => Json.obj(

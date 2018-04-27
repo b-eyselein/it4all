@@ -28,7 +28,7 @@ solution:
   - classType: CLASS
     name: Doktor
     methods:
-    - {visibility: public, name: verschreiben(Patient), type: void}
+    - {visibility: public, name: verschreiben, parameters: Patient, type: void}
 
   - classType: CLASS
     name: Rezept
@@ -38,8 +38,8 @@ solution:
   - classType: CLASS
     name: Patient
     methods:
-    - {visibility: public, name: entlassen(Station), type: void}
-    - {visibility: public, name: aufnehmen(Station), type: void}
+    - {visibility: public, name: entlassen, parameters: Station, type: void}
+    - {visibility: public, name: aufnehmen, parameters: Station, type: void}
 
   - classType: CLASS
     name: Krankenschwester

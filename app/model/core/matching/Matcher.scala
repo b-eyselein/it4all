@@ -11,9 +11,9 @@ case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends Evaluati
 
   // FIXME: is it possible to use ... match { case ...} ?!?
   override def success: SuccessType =
-    if ((allMatches exists (_.matchType == MatchType.ONLY_USER)) || (allMatches exists (_.matchType == MatchType.ONLY_SAMPLE)))
+    if (allMatches exists (m => m.matchType == MatchType.ONLY_USER || m.matchType == MatchType.ONLY_SAMPLE))
       NONE
-    else if (allMatches exists (_.matchType == MatchType.UNSUCCESSFUL_MATCH))
+    else if (allMatches exists (m => m.matchType == MatchType.UNSUCCESSFUL_MATCH || m.matchType == MatchType.PARTIAL_MATCH))
       PARTIALLY
     else
       COMPLETE

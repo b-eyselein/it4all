@@ -1,11 +1,13 @@
-const VISIBILITIES = ['+', '-', '#', '~'];
+const VISIBILITIES = {
+    PUBLIC: '+',
+    PRIVATE: '-',
+    PROTECTED: '#',
+    PACKAGE: '~'
+};
 
-let editModal, classEditModal, cardinalityEditModal;
+let editModal, cardinalityEditModal;
 
 $(document).ready(function () {
-    classEditModal = $('#classEditModal');
-    classEditModal.modal({show: false});
-
     editModal = $('#editDiv');
 });
 
@@ -89,36 +91,79 @@ class UmlClassAttribute extends UmlClassMember {
         return new UmlClassAttribute(base.visibilityRepr, base.name, base.type, modifiers['static'], modifiers['derived'], modifiers['abstract']);
     }
 
-    buildString() {
+    static buildStringFrom(visibilityRepl, isAbstract, isStatic, isDerived, name, type) {
         let modifier = [];
 
-        if (this.isAbstract)
+        if (isAbstract)
             modifier.push('a');
 
-        if (this.isStatic)
+        if (isStatic)
             modifier.push('s');
 
-        if (this.isDerived)
+        if (isDerived)
             modifier.push('d');
 
-        return this.visibilityRepr + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + this.name + ': ' + this.type;
+        return visibilityRepl + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + name + ': ' + type;
+    }
+
+    buildString() {
+        return UmlClassAttribute.buildStringFrom(this.visibilityRepr, this.isAbstract, this.isStatic, this.isDerived, this.name, this.type);
     }
 }
 
+/**
+ * @class UmlClassMember
+ *
+ * @property {string} visibilityRepr
+ * @property {string} visibility
+ * @property {string} name
+ * @property {string} parameters
+ * @property {string} type
+ * @property {boolean} isStatic
+ * @property {boolean} isAbstract
+ */
 class UmlClassMethod extends UmlClassMember {
-    constructor(memberGroup) {
-        super(memberGroup);
+
+    constructor(visibilityRepr, name, parameters, type, isStatic, isAbstract) {
+        super(visibilityRepr, name, type);
+        this.isStatic = isStatic;
+        this.isAbstract = isAbstract;
+        this.parameters = parameters;
+    }
+
+    static fromHtml(memberGroup) {
+        let base = super.fromHtml(memberGroup);
+
+        let modifiers = {};
+        $('.dropdown-menu').find('input').each((index, elem) => {
+            modifiers[elem.value] = elem.checked;
+        });
+
+        console.log(modifiers);
+
+        let parameters = $(memberGroup).find('input[data-for="parameters"]').val();
+
+        return new UmlClassMethod(base.visibilityRepr, base.name, parameters, base.type, modifiers['static'], modifiers['abstract']);
+    }
+
+    static buildStringFrom(visibilityRepl, isAbstract, isStatic, name, parameters, type) {
+        let modifier = [];
+
+        if (isAbstract)
+            modifier.push('a');
+
+        if (isStatic)
+            modifier.push('s');
+
+        return visibilityRepl + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + name + '(' + parameters + '): ' + type;
     }
 
     buildString() {
-        return this.visibilityRepr + this.name + ': ' + this.type;
+        return UmlClassMethod.buildStringFrom(this.visibilityRepr, this.isAbstract, this.isStatic, this.name, this.parameters, this.type);
     }
 }
 
 function discardClassEdits() {
-    classEditModal.find('.modal-body').html('');
-    classEditModal.modal('hide');
-
     editModal.html('');
 }
 
@@ -127,7 +172,7 @@ function discardCardinalityEdits() {
 }
 
 function addMember(button, isAttr) {
-    $(button).before(isAttr ? attributeInputLine(new UmlClassAttribute('', '', false, false, false)) : methodInputLine('', ''));
+    $(button).before(isAttr ? attributeInputLine(new UmlClassAttribute('', '', '', false, false, false)) : methodInputLine(new UmlClassMethod('', '', '', false)));
 }
 
 function deleteMember(button) {
@@ -157,7 +202,6 @@ $('.dropdown-menu a').on('click', function (event) {
 
     $(event.target).blur();
 
-    // console.log(options);
     return false;
 });
 
@@ -166,11 +210,13 @@ $('.dropdown-menu a').on('click', function (event) {
  * @returns {string}
  */
 function attributeInputLine(umlAttribute) {
+    let visibilityOptions = Object.keys(VISIBILITIES).map((v) => `<option ${umlAttribute.visibility === v ? 'selected' : ''}>${VISIBILITIES[v]}</option>`).join('');
+
     return `
 <div class="form-group">
     <div class="input-group">
         <select class="form-control" data-for="visibility">
-            ${VISIBILITIES.map((v) => `<option ${''}>${v}</option>`).join('')}
+            ${visibilityOptions}
         </select>
         
         <span class="input-group-addon"></span>
@@ -199,26 +245,40 @@ function attributeInputLine(umlAttribute) {
 </div>`.trim();
 }
 
-function methodInputLine(memberName, memberType = '') {
+/**
+ * @param {UmlClassMethod} umlMethod
+ * @returns {string}
+ */
+function methodInputLine(umlMethod) {
+    let visibilityOptions = Object.keys(VISIBILITIES).map((v) => `<option ${umlMethod.visibility === v ? 'selected' : ''}>${VISIBILITIES[v]}</option>`).join('');
+
     return `
 <div class="form-group">
     <div class="input-group">
         <select class="form-control" data-for="visibility">
-            ${VISIBILITIES.map((v) => `<option ${''}>${v}</option>`).join('')}
+            ${visibilityOptions}
         </select>
         
         <span class="input-group-addon"></span>
         
-        <input class="form-control" placeholder="Methodenname" data-for="name" value="${memberName}" required>
+        <button type="button" class="form-control dropdown-toggle" data-toggle="dropdown">Modifier <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            <li><a data-value="static" tabIndex="-1"><label><input type="checkbox" value="static" ${umlMethod.isStatic ? "checked" : ""}> Klassenmethode</label></a></li>
+            <li><a data-value="abstract" tabIndex="-1"><label><input type="checkbox" value="abstract" ${umlMethod.isAbstract ? "checked" : ""}> Abstrakt</label></a></li>
+        </ul>
+        
+        <span class="input-group-addon"></span>
+        
+        <input class="form-control" placeholder="Methodenname" data-for="name" value="${umlMethod.name}" required>
         
         <span class="input-group-addon">(</span>
         
-        <input class="form-control" placeholder="Parameter" value="${''}" required>
+        <input class="form-control" placeholder="Parameter" data-for="parameters" value="${umlMethod.parameters}" required>
         
         <span class="input-group-addon">)</span>
         
         <select class="form-control" data-for="type">
-            ${UmlTypes.map(umlType => `<option ${umlType === memberType ? 'selected' : ''}>${umlType}</option>`).join("")}
+            ${UmlTypes.map(umlType => `<option ${umlType === umlMethod.type ? 'selected' : ''}>${umlType}</option>`).join("")}
         </select>
         
         <span class="input-group-addon">:</span>
@@ -233,7 +293,7 @@ function htmlForClassEdit(cellView) {
     let className = cellView.model.attributes.name;
 
     let attrInput = cellView.model.attributes.attributesObject.map(attributeInputLine).join('\n');
-    let memberInput = cellView.model.attributes.methodsObject.map((method) => methodInputLine(method.name, method.type)).join('\n');
+    let memberInput = cellView.model.attributes.methodsObject.map(methodInputLine).join('\n');
 
     return `
 <h3 class="text-center">Klasse bearbeiten</h3>
@@ -302,7 +362,7 @@ function updateClass(elementId) {
     element.prop('attributes.attributes', attrs.map((a) => a.buildString()).join('\n'));
     element.attr('.uml-class-attrs-text/text', attrs.map((a) => a.buildString()).join('\n'));
 
-    let methods = $('#editMethodsDiv').find('.form-group').map((index, metGroup) => new UmlClassMethod(metGroup, false)).get();
+    let methods = $('#editMethodsDiv').find('.form-group').map((index, metGroup) => UmlClassMethod.fromHtml(metGroup)).get();
 
     element.prop('methodsObject', methods);
     element.prop('attributes.methods', methods.map((m) => m.buildString()).join('\n'));
