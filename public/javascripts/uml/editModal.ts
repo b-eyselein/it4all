@@ -1,57 +1,81 @@
 let editDiv, cardinalityEditModal;
+
 $(document).ready(function () {
     editDiv = $('#editDiv');
 });
+
 function editClass(cellView) {
     editDiv.html(htmlForClassEdit(cellView));
 }
+
 function editLink(cellView) {
     let cellModel = cellView.model;
+
     let assocType = 'ASSOCIATION';
-    let sourceId = cellModel.get('source').id;
-    let targetId = cellModel.get('target').id;
+
+    let sourceId: string = cellModel.get('source').id;
+    let targetId: string = cellModel.get('target').id;
+
     let source = graph.getCell(sourceId);
     let target = graph.getCell(targetId);
-    let sourceMult = cellModel.attributes.labels[0].attrs.text.text;
-    let targetMult = cellModel.attributes.labels[1].attrs.text.text;
+
+    let sourceMult: string = cellModel.attributes.labels[0].attrs.text.text;
+    let targetMult: string = cellModel.attributes.labels[1].attrs.text.text;
+
     editDiv.html(htmlForCardinalityEdit(cellModel.id, assocType, source.get('name'), sourceMult, target.get('name'), targetMult));
 }
+
 function discardEdits() {
     editDiv.html('');
 }
+
 function addMember(button, isAttr) {
-    let toInsert = '';
+    let toInsert: string = '';
     if (isAttr) {
         toInsert = attributeInputLine(new UmlClassAttribute('', '', '', false, false, false));
-    }
-    else {
+    } else {
         toInsert = methodInputLine(new UmlClassMethod('', '', '', '', false, false));
     }
     $(button).before(toInsert);
 }
+
 function deleteMember(button) {
     $(button).parent().parent().remove();
 }
+
 let options = [];
+
 $('.dropdown-menu a').on('click', function (event) {
-    let $target = $(event.currentTarget), val = $target.attr('data-value'), $inp = $target.find('input'), idx;
+
+    let $target = $(event.currentTarget),
+        val = $target.attr('data-value'),
+        $inp = $target.find('input'),
+        idx;
+
     if ((idx = options.indexOf(val)) > -1) {
         options.splice(idx, 1);
         setTimeout(function () {
-            $inp.prop('checked', false);
+            $inp.prop('checked', false)
         }, 0);
-    }
-    else {
+    } else {
         options.push(val);
         setTimeout(function () {
-            $inp.prop('checked', true);
+            $inp.prop('checked', true)
         }, 0);
     }
+
     $(event.target).blur();
+
     return false;
 });
+
+/**
+ * @param {UmlClassAttribute} umlAttribute
+ * @returns {string}
+ */
 function attributeInputLine(umlAttribute) {
     let visibilityOptions = Object.keys(VISIBILITIES).map((v) => `<option ${umlAttribute.visibility === v ? 'selected' : ''}>${VISIBILITIES[v]}</option>`).join('');
+
     return `
 <div class="form-group">
     <div class="input-group">
@@ -82,8 +106,14 @@ function attributeInputLine(umlAttribute) {
     </div>
 </div>`.trim();
 }
+
+/**
+ * @param {UmlClassMethod} umlMethod
+ * @returns {string}
+ */
 function methodInputLine(umlMethod) {
     let visibilityOptions = Object.keys(VISIBILITIES).map((v) => `<option ${umlMethod.visibility === v ? 'selected' : ''}>${VISIBILITIES[v]}</option>`).join('');
+
     return `
 <div class="form-group">
     <div class="input-group">
@@ -117,12 +147,16 @@ function methodInputLine(umlMethod) {
     </div>
 </div>`.trim();
 }
+
 function htmlForClassEdit(cellView) {
     let classType = cellView.model.get('classType');
+
     let className = cellView.model.get('name');
     let attrInput = cellView.model.get('attributes').map(attributeInputLine).join('\n');
     let memberInput = cellView.model.get('methods').map(methodInputLine).join('\n');
+
     const classTypeSelectors = Object.keys(CLASS_TYPES).map((ct) => `<option value="${ct}" ${classType === ct ? 'selected' : ''}>&lt;&lt;${ct.toLocaleLowerCase()}&gt;&gt;</option>`);
+
     return `
 <h3 class="text-center">Klasse bearbeiten</h3>
 <div class="panel panel-default">
@@ -172,13 +206,16 @@ function htmlForClassEdit(cellView) {
 
 <hr>`.trim();
 }
-function cardinalityOptions(current) {
-    return Object.keys(CARDINALITIES).map((c) => `<option value="${CARDINALITIES[c]}" ${CARDINALITIES[c] === current ? 'selected' : ''}>${CARDINALITIES[c]}</option>`).join('\n');
+
+function cardinalityOptions(current: string): string {
+    return Object.keys(CARDINALITIES).map((c) => `<option value="${CARDINALITIES[c]}" ${CARDINALITIES[c] === current ? 'selected' : ''}>${CARDINALITIES[c]}</option>`).join('\n')
 }
-function htmlForCardinalityEdit(linkId, assocType, source, sourceMult, target, targetMult) {
+
+function htmlForCardinalityEdit(linkId, assocType, source, sourceMult, target, targetMult): string {
     let sourceMultOptions = cardinalityOptions(sourceMult);
     let assocTypeOptions = Object.keys(ASSOC_TYPES).map((c) => `<option value="${ASSOC_TYPES[c]}" ${c === assocType ? 'selected' : ''}>${ASSOC_TYPES[c]}</option>`).join('\n');
     let targetMultOptions = cardinalityOptions(targetMult);
+
     return `
 <div class="row">
     <div class="col-md-3">
@@ -229,20 +266,28 @@ function htmlForCardinalityEdit(linkId, assocType, source, sourceMult, target, t
 
 <hr>`.trim();
 }
+
+// noinspection JSUnusedGlobalSymbols
 function updateClass(elementId) {
     let element = graph.getCell(elementId);
+
     let attrs = $('#editAttrsDiv').find('.form-group').map((index, attrGroup) => UmlClassAttribute.fromHtml(attrGroup)).get();
     let methods = $('#editMethodsDiv').find('.form-group').map((index, metGroup) => UmlClassMethod.fromHtml(metGroup)).get();
+
     element.prop('classType', $('#classTypeSelect').val());
     element.prop('name', $('#editClassName').val());
     element.prop('attributes', attrs);
     element.prop('methods', methods);
+
     discardEdits();
 }
+
+
 function updateCardinality() {
     let link = graph.getCell($('#linkId').data('id'));
+
     link.prop(['labels', 0, 'attrs', 'text', 'text'], $('#sourceMult').val());
     link.prop(['labels', 1, 'attrs', 'text', 'text'], $('#targetMult').val());
+
     discardEdits();
 }
-//# sourceMappingURL=editModal.js.map

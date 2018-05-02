@@ -1,5 +1,72 @@
-function displayUmlAttributeMatch(umlAttributeMatch) {
+interface AnalysisResult {
+    success: string
+}
+
+interface Match<T, AR> {
+    success: string
+    analysisResult: AR
+    userArg: T
+    sampleArg: T
+}
+
+interface UmlAttributeAnalysisResult extends AnalysisResult {
+    visibilityCorrect: boolean
+
+    abstractCorrect: boolean
+    correctAbstract: boolean
+
+    typeCorrect: boolean
+    correctType: string
+
+    staticCorrect: boolean
+    correctStatic: string
+
+    derivedCorrect: boolean
+    correctDerived: boolean
+}
+
+interface UmlClassAttributeMatch extends Match<UmlClassAttribute, UmlAttributeAnalysisResult> {
+}
+
+interface UmlClassMethodAnalysisResult extends AnalysisResult {
+    visibilityCorrect: boolean
+    correctVisibility: string
+
+    abstractCorrect: boolean
+    correctAbstract: boolean
+
+    typeCorrect: boolean
+    correctType: string
+
+    staticCorrect: boolean
+    correctStatic: string
+
+    parametersCorrect: boolean
+    correctParameters: string
+}
+
+interface UmlClassMethodMatch extends Match<UmlClassMethod, UmlClassMethodAnalysisResult> {
+}
+
+interface UmlClassAnalysisResult extends AnalysisResult {
+    classTypeCorrect: boolean
+    correctClassType: string
+
+    attributesResult: UmlClassAttributeMatch[]
+    methodsResult: UmlClassMethodMatch[]
+}
+
+interface MatchUmlClass {
+    name: string
+    classType: string
+}
+
+interface UmlClassMatch extends Match<MatchUmlClass, UmlClassAnalysisResult> {
+}
+
+function displayUmlAttributeMatch(umlAttributeMatch: UmlClassAttributeMatch) {
     let explanation, textClass;
+
     switch (umlAttributeMatch.success) {
         case 'SUCCESSFUL_MATCH':
             textClass = 'success';
@@ -8,7 +75,9 @@ function displayUmlAttributeMatch(umlAttributeMatch) {
         case 'PARTIAL_MATCH':
         case 'UNSUCCESSFUL_MATCH':
             textClass = 'warning';
+
             let explanations = [];
+
             if (!umlAttributeMatch.analysisResult.visibilityCorrect) {
                 explanations.push('Die Sichtbarkeit des Attributs war falsch.');
             }
@@ -24,6 +93,7 @@ function displayUmlAttributeMatch(umlAttributeMatch) {
             if (!umlAttributeMatch.analysisResult.derivedCorrect) {
                 explanations.push('Das Attribut sollte ' + (umlAttributeMatch.analysisResult.correctDerived ? '' : 'nicht ') + 'abgeleitet sein.');
             }
+
             explanation = explanations.join(' ');
             break;
         case 'ONLY_SAMPLE':
@@ -35,13 +105,23 @@ function displayUmlAttributeMatch(umlAttributeMatch) {
             explanation = `Das Attribut <code>${umlAttributeMatch.userArg.name}: ${umlAttributeMatch.userArg.type}</code> ist falsch!`;
             break;
     }
+
+    // return `<li>${displayUmlAttributeMatch(umlAttributeMatch)}</li>`;
+
     return `<li><span class="text text-${textClass}">${explanation}</li>`;
 }
+
+/**
+ * @param {object} memberResult
+ * @param {boolean} memberResult.success
+ * @param {object[]} memberResult.matches
+ *
+ * @return {string}
+ */
 function displayAttributeMatchingResult(memberResult) {
     if (memberResult.success) {
-        return `<p class="text text-success">Die Attribute waren korrekt.</p>`;
-    }
-    else {
+        return `<p class="text text-success">Die Attribute waren korrekt.</p>`
+    } else {
         return `
 <p class="text-danger">Die Attribute waren nicht korrekt:</p>
 <ul>
@@ -49,8 +129,11 @@ function displayAttributeMatchingResult(memberResult) {
 </ul>`.trim();
     }
 }
-function displayUmlMethodMatch(umlMethodMatch) {
+
+
+function displayUmlMethodMatch(umlMethodMatch: UmlClassMethodMatch) {
     let explanation, textClass;
+
     switch (umlMethodMatch.success) {
         case 'SUCCESSFUL_MATCH':
             textClass = 'success';
@@ -59,7 +142,9 @@ function displayUmlMethodMatch(umlMethodMatch) {
         case 'PARTIAL_MATCH':
         case 'UNSUCCESSFUL_MATCH':
             textClass = 'warning';
+
             let explanations = [];
+
             if (!umlMethodMatch.analysisResult.visibilityCorrect) {
                 explanations.push('Die Sichtbarkeit der Methode war falsch.');
             }
@@ -75,6 +160,7 @@ function displayUmlMethodMatch(umlMethodMatch) {
             if (!umlMethodMatch.analysisResult.parametersCorrect) {
                 explanations.push(`Die Parameter der Methode sollten <code>${umlMethodMatch.analysisResult.correctParameters}</code> lauten.`);
             }
+
             explanation = explanations.join(' ');
             break;
         case 'ONLY_SAMPLE':
@@ -86,13 +172,21 @@ function displayUmlMethodMatch(umlMethodMatch) {
             explanation = `Die Methode <code>${umlMethodMatch.userArg.name}: ${umlMethodMatch.userArg.type}</code> ist falsch!`;
             break;
     }
+
     return `<li><span class="text text-${textClass}">${explanation}</li>`;
 }
+
+/**
+ * @param {object} memberResult
+ * @param {boolean} memberResult.success
+ * @param {object[]} memberResult.matches
+ *
+ * @return {string}
+ */
 function displayMethodMatchingResult(memberResult) {
     if (memberResult.success) {
-        return `<p class="text text-success">Die Methoden waren korrekt.</p>`;
-    }
-    else {
+        return `<p class="text text-success">Die Methoden waren korrekt.</p>`
+    } else {
         return `
 <p class="text-danger">Die Methoden waren nicht korrekt:</p>
 <ul>
@@ -100,28 +194,29 @@ function displayMethodMatchingResult(memberResult) {
 </ul>`.trim();
     }
 }
-function explainClassResult(classResult, alertClass, glyphicon, successExplanation) {
+
+function explainClassResult(classResult: UmlClassMatch, alertClass, glyphicon, successExplanation) {
     let className = classResult.userArg != null ? classResult.userArg.name : classResult.sampleArg.name;
+
     if (classResult.success === 'SUCCESSFUL_MATCH') {
         return `
 <p class="text-${alertClass}">
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> war korrekt.
 </p>`.trim();
-    }
-    else if (classResult.userArg === null) {
+    } else if (classResult.userArg === null) {
         return `
 <p class="text-${alertClass}">
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> konnte nicht gefunden werden!
 </p>`.trim();
-    }
-    else {
-        let explanationClassType = '';
+    } else {
+        let explanationClassType: string = '';
+
         if (classResult.analysisResult.classTypeCorrect) {
             explanationClassType = `<p class="text-success">Der Typ der Klasse ist korrekt.</p>`;
-        }
-        else {
+        } else {
             explanationClassType = `<p class="text-warning">Der Typ der Klasse <code>${className}</code> ist falsch. Erwartet wurde <code>${classResult.analysisResult.correctClassType}</code>.</p>`;
         }
+
         return `
 <p class="text-${alertClass}">
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> ${successExplanation}
@@ -133,35 +228,56 @@ function explainClassResult(classResult, alertClass, glyphicon, successExplanati
 </ul>`.trim();
     }
 }
+
+/**
+ * @param {object} assocRes
+ * @param {string} assocRes.success
+ * @param {UmlAssociation} assocRes.userArg
+ * @param {UmlAssociation} assocRes.sampleArg
+ * @param {string} alertClass
+ * @param {string} glyphicon
+ * @param {string} successExplanation
+ *
+ * @return {string}
+ */
 function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation) {
     let firstEnd = assocRes.userArg != null ? assocRes.userArg.firstEnd : assocRes.sampleArg.firstEnd;
     let secondEnd = assocRes.userArg != null ? assocRes.userArg.secondEnd : assocRes.sampleArg.secondEnd;
+
+
     let explanations = [];
     if (assocRes.success === 'UNSUCCESSFUL_MATCH' || assocRes.success === 'PARTIAL_MATCH') {
         let userArg = assocRes.userArg, sampleArg = assocRes.sampleArg;
+
+
+        // Type of association
         if (userArg.assocType !== sampleArg.assocType) {
             explanations.push(`<p class="text-warning">Der Typ der Assozation <code>${userArg.assocType}</code> war nicht korrekt. Erwartet wurde <code>${sampleArg.assocType}</code>!</p>`);
-        }
-        else {
+        } else {
             explanations.push('<p class="text-success">Der Typ der Assozation war korrekt.</p>');
         }
-        let endsParallel = userArg.firstEnd === sampleArg.firstEnd, gottenCardinalities = userArg.firstMult + ": " + userArg.secondMult;
+
+        // Cardinalities
+        let endsParallel = userArg.firstEnd === sampleArg.firstEnd,
+            gottenCardinalities = userArg.firstMult + ": " + userArg.secondMult;
         let cardinalitiesEqual, correctCardinalities;
+
         if (endsParallel) {
             cardinalitiesEqual = userArg.firstMult === sampleArg.firstMult && userArg.secondMult === sampleArg.secondMult;
             correctCardinalities = sampleArg.firstMult + ": " + sampleArg.secondMult;
-        }
-        else {
+        } else {
             cardinalitiesEqual = userArg.firstMult === sampleArg.secondMult && userArg.secondMult === sampleArg.firstMult;
             correctCardinalities = sampleArg.secondMult + ": " + sampleArg.firstMult;
         }
+
         if (cardinalitiesEqual) {
             explanations.push(`<p class="text-success">Die Kardinalitäten der Assoziation waren korrekt.</p>`);
-        }
-        else {
+        } else {
             explanations.push(`<p class="text-danger">Die Kardinalitätan der Assoziation <code>${gottenCardinalities}</code> war nicht korrekt. Erwartet wurde <code>${correctCardinalities}</code>!</p>`);
         }
+
     }
+
     return `
 <p class="text-${alertClass}">
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Assoziation von <code>${firstEnd}</code> nach <code>${secondEnd}</code> ${successExplanation}
@@ -170,9 +286,22 @@ function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation)
     ${explanations.map((e) => `<li>${e}</li>`).join('\n')}
 </ul>`.trim();
 }
+
+/**
+ * @param {object} implRes
+ * @param {string} implRes.success
+ * @param {UmlImplementation} implRes.userArg
+ * @param {UmlImplementation} implRes.sampleArg
+ * @param {string} alertClass
+ * @param {string} glyphicon
+ * @param {string} successExplanation
+ *
+ * @return {string}
+ */
 function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
     let subClass = implRes.userArg != null ? implRes.userArg.subClass : implRes.sampleArg.subClass;
     let superClass = implRes.userArg != null ? implRes.userArg.superClass : implRes.sampleArg.superClass;
+
     let subExplanations = '';
     if (implRes.success === 'UNSUCCESSFUL_MATCH' || implRes.success === 'PARTIAL_MATCH') {
         subExplanations = `
@@ -180,6 +309,7 @@ function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
     <li>Die Vererbungsrichtung ist falsch.</li>
 </ul>`.trim();
     }
+
     return `
 <p class="text-${alertClass}">
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Vererbungsbeziehung von <code>${subClass}</code> nach <code>${superClass}</code> ${successExplanation}
@@ -188,8 +318,17 @@ function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
     ${subExplanations}
 </ul>`.trim();
 }
+
+/**
+ * @param {object} matchingRes
+ * @param {string} matchingRes.success
+ * @param {function} explanationFunc
+ *
+ * @return {string}
+ */
 function displayMatchResult(matchingRes, explanationFunc) {
     let alertClass, glyphicon, successExplanation;
+
     switch (matchingRes.success) {
         case 'SUCCESSFUL_MATCH':
             alertClass = 'success';
@@ -221,17 +360,28 @@ function displayMatchResult(matchingRes, explanationFunc) {
             glyphicon = 'remove';
             successExplanation = '';
     }
+
     return explanationFunc(matchingRes, alertClass, glyphicon, successExplanation);
 }
+
+/**
+ * @param {object} matchingResultList
+ * @param {boolean} matchingResultList.success
+ * @param {Match[]} matchingResultList.matches
+ * @param {string} name
+ * @param {function} explainFunc
+ *
+ * @return string
+ */
 function displayMatchingResultList(matchingResultList, name, explainFunc) {
     if (matchingResultList.success) {
         return `
 <div class="alert alert-success">
     <span class="glyphicon glyphicon-ok"></span> Die ${name} waren korrekt.
 </div>`.trim();
-    }
-    else {
+    } else {
         let matchingResults = matchingResultList.matches.map(mr => displayMatchResult(mr, explainFunc)).join('\n');
+
         return `
 <div class="panel panel-danger">
     <div class="panel-heading"><h4 class="panel-title">Bewertung der ${name}:</h4></div>
@@ -239,43 +389,62 @@ function displayMatchingResultList(matchingResultList, name, explainFunc) {
 </div>`.trim();
     }
 }
+
+/**
+ * @param {object} response
+ * @param {object | null} response.classResult
+ * @param {object | null} response.assocAndImplResult
+ * @param {object} response.assocAndImplResult.assocResult
+ * @param {object} response.assocAndImplResult.implResult
+ */
 function onUmlClassDiagCorrectionSuccess(response) {
     let html = `<h2 class="text-center">Resultate</h2>`;
+
     if (response.classResult != null) {
         html += displayMatchingResultList(response.classResult, "Klassen", explainClassResult);
     }
+
     if (response.assocAndImplResult != null) {
         html += displayMatchingResultList(response.assocAndImplResult.implResult, 'Vererbungsbeziehungen', explainImplResult);
         html += displayMatchingResultList(response.assocAndImplResult.assocResult, 'Assoziationen', explainAssocResult);
     }
+
     $('#resultDiv').html(html);
+
     $('#testButton').prop('disabled', false);
 }
+
 function onUmlClassDiagCorrectionError(jqXHR) {
     console.error(jqXHR.responseJSON);
     $('#testButton').prop('disabled', false);
 }
+
 function testSol() {
     let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
+
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
     let url = jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
+
     $('#testButton').prop('disabled', true);
+
     let solution = {
         classes: graph.getCells().filter((cell) => cell.attributes.name !== undefined).map((cell) => cell.getAsUmlClass()),
         associations: graph.getLinks().filter((conn) => conn.attributes.type !== 'uml.Implementation').map((conn) => UmlAssociation.fromConnection(conn)),
         implementations: graph.getLinks().filter((conn) => conn.attributes.type === 'uml.Implementation').map((conn) => UmlImplementation.fromConnection(conn))
     };
+
     $.ajax({
         type: 'PUT',
-        dataType: 'json',
-        contentType: 'application/json',
+        dataType: 'json', // return type
+        contentType: 'application/json', // type of message to server
         url,
-        data: JSON.stringify({ exercisePart, solution }),
+        data: JSON.stringify({exercisePart, solution}),
         async: true,
         success: onUmlClassDiagCorrectionSuccess,
         error: onUmlClassDiagCorrectionError
     });
 }
+
 $(document).ready(function () {
     $('#testButton').click(testSol);
 });
-//# sourceMappingURL=classDiagCorrection.js.map

@@ -9,12 +9,12 @@ object UmlClassDiagramJsonFormat {
 
   private val umlClassTypeReads: Reads[UmlClassType] = {
     case JsString(str) => str match {
-      case "uml.Abstract"  => JsSuccess(UmlClassType.ABSTRACT)
-      case "uml.Interface" => JsSuccess(UmlClassType.INTERFACE)
-      case "uml.Class"     => JsSuccess(UmlClassType.CLASS)
-      case _               => UmlClassType.withNameInsensitiveOption(str) match {
+      case "uml.Abstract"                  => JsSuccess(UmlClassType.ABSTRACT)
+      case "uml.Interface"                 => JsSuccess(UmlClassType.INTERFACE)
+      case "uml.Class" | "customUml.Class" => JsSuccess(UmlClassType.CLASS)
+      case _                               => UmlClassType.withNameInsensitiveOption(str) match {
         case Some(ct) => JsSuccess(ct)
-        case None     => JsError("No such value: " + str)
+        case None     => JsError("No such value: >>" + str + "<<")
       }
     }
     case _             => JsError("Needs to be a string!")
