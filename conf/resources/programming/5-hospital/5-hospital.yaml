@@ -62,16 +62,16 @@ classDiagramPart:
     - classType: CLASS
       name: Patient
       attributes:
-      - {name: "id", type: "String"}
-      - {name: "name", type: "String"}
+      - {visibility: public, name: id, type: String}
+      - {visibility: public, name: name, type: String}
       methods:
-      - {name: "entlassen(Station)", type: "void"}
-      - {name: "aufnehmen(Station)", type: "void"}
+      - {visibility: public, name: entlassen, parameters: Station, type: void}
+      - {visibility: public, name: aufnehmen, parameters: Station, type: void}
 
     - classType: CLASS
       name: Station
       attributes:
-      - {name: "nummer", type: "int"}
+      - {visibility: public, name: nummer, type: int}
 
     - classType: CLASS
       name: Krankenhaus
