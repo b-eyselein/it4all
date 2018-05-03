@@ -1,7 +1,7 @@
 const STD_PADDING = 10;
 const fontSize = 15;
 joint.shapes.customUml = {};
-joint.shapes.basic.Generic.define('customUml.Class', {
+joint.shapes.basic.Generic.define('customUml.CustomClass', {
     attrs: {
         rect: { 'width': 200, stroke: 'black', strokeWidth: 2 },
         text: { fill: 'black', fontSize, fontFamily: 'Times New Roman' },
@@ -9,17 +9,13 @@ joint.shapes.basic.Generic.define('customUml.Class', {
         '.uml-class-attrs-rect': {},
         '.uml-class-methods-rect': {},
         '.uml-class-name-text': {
-            ref: '.uml-class-name-rect',
-            refY: .5,
-            refX: .5,
-            textAnchor: 'middle',
-            yAlignment: 'middle',
-            fontWeight: 'bold',
+            ref: '.uml-class-name-rect', refY: .5, refX: .5,
+            textAnchor: 'middle', yAlignment: 'middle', fontWeight: 'bold',
         },
         '.uml-class-attrs-text': { ref: '.uml-class-attrs-rect', refY: STD_PADDING, refX: STD_PADDING, },
         '.uml-class-methods-text': { ref: '.uml-class-methods-rect', refY: STD_PADDING, refX: STD_PADDING, }
     },
-    name: [],
+    className: [],
     classType: '',
     attributes: [],
     methods: []
@@ -32,7 +28,7 @@ joint.shapes.basic.Generic.define('customUml.Class', {
   <text class="uml-class-name-text"/><text class="uml-class-attrs-text"/><text class="uml-class-methods-text"/>
 </g>`.trim(),
     initialize() {
-        this.on('change:name change:classType change:attributes change:methods', function () {
+        this.on('change:className change:classType change:attributes change:methods', function () {
             this.updateRectangles();
             this.trigger('uml-update');
         }, this);
@@ -51,11 +47,11 @@ joint.shapes.basic.Generic.define('customUml.Class', {
         }
     },
     getAsUmlClass() {
-        return new UmlClass(this.get('name'), this.get('classType'), this.get('attributes'), this.get('methods'), this.get('position'));
+        return new UmlClass(this.get('className'), this.get('classType'), this.get('attributes'), this.get('methods'), this.get('position'));
     },
     getClassRectText() {
         let classType = this.getClassTypeRepresentant();
-        let className = this.get('name');
+        let className = this.get('className');
         if (classType.length > 0) {
             return [classType, className];
         }
@@ -90,7 +86,7 @@ joint.shapes.basic.Generic.define('customUml.Class', {
         this.resize(200, offsetY);
     }
 });
-joint.shapes.customUml.ClassView = joint.dia.ElementView.extend({}, {
+joint.shapes.customUml.CustomClassView = joint.dia.ElementView.extend({}, {
     initialize: function () {
         joint.dia.ElementView.prototype.initialize.apply(this, arguments);
         this.listenTo(this.model, 'uml-update', function () {

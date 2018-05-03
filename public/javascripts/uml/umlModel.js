@@ -141,7 +141,7 @@ class UmlClassAttribute extends UmlClassMember {
     }
 }
 function getClassNameFromCellId(id) {
-    return graph.getCell(id).attributes.name;
+    return graph.getCell(id).get('className');
 }
 function getTypeName(type) {
     switch (type) {

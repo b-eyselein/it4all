@@ -260,10 +260,11 @@ function testSol() {
     let url = jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
     $('#testButton').prop('disabled', true);
     let solution = {
-        classes: graph.getCells().filter((cell) => cell.attributes.name !== undefined).map((cell) => cell.getAsUmlClass()),
-        associations: graph.getLinks().filter((conn) => conn.attributes.type !== 'uml.Implementation').map((conn) => UmlAssociation.fromConnection(conn)),
-        implementations: graph.getLinks().filter((conn) => conn.attributes.type === 'uml.Implementation').map((conn) => UmlImplementation.fromConnection(conn))
+        classes: graph.getCells().filter((cell) => cell.get('type') === 'customUml.CustomClass').map((cell) => cell.getAsUmlClass()),
+        associations: graph.getLinks().filter((conn) => conn.get('type') !== 'uml.Implementation').map((conn) => UmlAssociation.fromConnection(conn)),
+        implementations: graph.getLinks().filter((conn) => conn.get('type') === 'uml.Implementation').map((conn) => UmlImplementation.fromConnection(conn))
     };
+    console.warn(JSON.stringify(solution, null, 2));
     $.ajax({
         type: 'PUT',
         dataType: 'json',

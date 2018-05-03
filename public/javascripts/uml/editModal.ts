@@ -1,5 +1,7 @@
 let editDiv, cardinalityEditModal;
 
+const UmlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
+
 $(document).ready(function () {
     editDiv = $('#editDiv');
 });
@@ -22,7 +24,7 @@ function editLink(cellView) {
     let sourceMult: string = cellModel.attributes.labels[0].attrs.text.text;
     let targetMult: string = cellModel.attributes.labels[1].attrs.text.text;
 
-    editDiv.html(htmlForCardinalityEdit(cellModel.id, assocType, source.get('name'), sourceMult, target.get('name'), targetMult));
+    editDiv.html(htmlForCardinalityEdit(cellModel.id, assocType, source.get('className'), sourceMult, target.get('className'), targetMult));
 }
 
 function discardEdits() {
@@ -149,13 +151,12 @@ function methodInputLine(umlMethod) {
 }
 
 function htmlForClassEdit(cellView) {
-    let classType = cellView.model.get('classType');
+    let umlClass: UmlClass = cellView.model.getAsUmlClass();
 
-    let className = cellView.model.get('name');
-    let attrInput = cellView.model.get('attributes').map(attributeInputLine).join('\n');
-    let memberInput = cellView.model.get('methods').map(methodInputLine).join('\n');
+    let attrInput = umlClass.attributes.map(attributeInputLine).join('\n');
+    let memberInput = umlClass.methods.map(methodInputLine).join('\n');
 
-    const classTypeSelectors = Object.keys(CLASS_TYPES).map((ct) => `<option value="${ct}" ${classType === ct ? 'selected' : ''}>&lt;&lt;${ct.toLocaleLowerCase()}&gt;&gt;</option>`);
+    const classTypeSelectors = Object.keys(CLASS_TYPES).map((ct) => `<option value="${ct}" ${umlClass.classType === ct ? 'selected' : ''}>&lt;&lt;${ct.toLocaleLowerCase()}&gt;&gt;</option>`);
 
     return `
 <h3 class="text-center">Klasse bearbeiten</h3>
@@ -169,7 +170,7 @@ function htmlForClassEdit(cellView) {
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <input value="${className}" id="editClassName" class="form-control text-center" placeholder="Name der Klasse">
+                    <input value="${umlClass.name}" id="editClassName" class="form-control text-center" placeholder="Name der Klasse">
                 </div>
             </div>
         </div>
@@ -269,13 +270,13 @@ function htmlForCardinalityEdit(linkId, assocType, source, sourceMult, target, t
 
 // noinspection JSUnusedGlobalSymbols
 function updateClass(elementId) {
-    let element = graph.getCell(elementId);
+    let element = graph.getCell(elementId) as joint.shapes.customUml.CustomClass;
 
     let attrs = $('#editAttrsDiv').find('.form-group').map((index, attrGroup) => UmlClassAttribute.fromHtml(attrGroup)).get();
     let methods = $('#editMethodsDiv').find('.form-group').map((index, metGroup) => UmlClassMethod.fromHtml(metGroup)).get();
 
     element.prop('classType', $('#classTypeSelect').val());
-    element.prop('name', $('#editClassName').val());
+    element.prop('className', $('#editClassName').val());
     element.prop('attributes', attrs);
     element.prop('methods', methods);
 

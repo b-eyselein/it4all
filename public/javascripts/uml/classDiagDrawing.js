@@ -5,25 +5,23 @@ let chosenCellView = null;
 const graph = new joint.dia.Graph();
 let paper;
 let sel = 'POINTER';
-const UmlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
+const SIMPLE_CLASS_PREFIX = 'Klasse_';
 function addUmlClass(clazz) {
     let content = {
         position: clazz.position,
         size: { width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT },
-        name: clazz.name.replace(/ /g, '_'),
+        className: clazz.name.replace(/ /g, '_'),
         classType: clazz.classType,
         attributes: clazz.attributes.map(UmlClassAttribute.fromAttributeToLoad),
         methods: clazz.methods.map(UmlClassMethod.fromMethodToLoad),
     };
-    graph.addCell(new joint.shapes.customUml.Class(content));
+    graph.addCell(new joint.shapes.customUml.CustomClass(content));
 }
 function newClass(posX, posY) {
-    let className = prompt('Wie soll die (abstrakte) Klasse / das Interface heißen?');
-    if (!className || className.length === 0) {
-        return;
-    }
+    let allClassNames = graph.getCells().filter((c) => c.get('type') === 'customUml.Class').map((cell) => cell.get('name'));
+    let simpleNameInts = allClassNames.filter((cn) => cn.startsWith(SIMPLE_CLASS_PREFIX)).map((cn) => parseInt(cn.substring(SIMPLE_CLASS_PREFIX.length)));
     addUmlClass({
-        name: className,
+        name: SIMPLE_CLASS_PREFIX + (Math.max(...simpleNameInts, 0) + 1),
         classType: sel,
         attributes: [], methods: [],
         position: { x: posX, y: posY }
@@ -74,7 +72,7 @@ function cellOnLeftClick(cellView, evt) {
         case 'uml.Abstract':
         case 'uml.Interfact':
             break;
-        case 'customUml.Class':
+        case 'customUml.CustomClass':
             break;
         default:
             console.warn(cellView.model.attributes.type);
@@ -184,8 +182,8 @@ function addAssociation(sourceId, targetId, linkType, sourceMult, targetMult) {
 function loadImplementation(implementationToLoad) {
     let subClass = implementationToLoad.subClass, superClass = implementationToLoad.superClass;
     let subClassId = null, superClassId = null;
-    for (let cell of graph.getCells()) {
-        let cellClassName = cell.attributes.name;
+    for (let cell of graph.getCells().filter((cell) => cell.get('type') === 'customUml.CustomClass')) {
+        let cellClassName = cell.get('className');
         if (cellClassName === subClass) {
             subClassId = cell.id;
         }
@@ -200,8 +198,8 @@ function loadImplementation(implementationToLoad) {
 function loadAssociation(associationToLoad) {
     let firstEnd = associationToLoad.firstEnd, secondEnd = associationToLoad.secondEnd;
     let firstEndId = null, secondEndId = null;
-    for (let cell of graph.getCells()) {
-        let cellClassName = cell.attributes.name;
+    for (let cell of graph.getCells().filter((cell) => cell.get('type') === 'customUml.CustomClass')) {
+        let cellClassName = cell.get('className');
         if (cellClassName === firstEnd) {
             firstEndId = cell.id;
         }
