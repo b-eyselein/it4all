@@ -117,20 +117,3 @@ joint.shapes.customUml.CustomClassView = joint.dia.ElementView.extend({}, {
         });
     }
 });
-
-joint.dia.Link.define('customUml.Implementation', {
-    attrs: {
-        '.marker-target': {d: 'M 20 0 L 0 10 L 20 20 z', fill: 'white'},
-        '.connection': {strokeDasharray: '3,3'}
-    }
-});
-
-joint.dia.Link.define('customUml.Aggregation', {
-    attrs: {'.marker-target': {d: 'M 40 10 L 20 20 L 0 10 L 20 0 z', fill: 'white'}}
-});
-
-joint.dia.Link.define('customUml.Composition', {
-    attrs: {'.marker-target': {d: 'M 40 10 L 20 20 L 0 10 L 20 0 z', fill: 'black'}}
-});
-
-joint.dia.Link.define('customUml.Association');

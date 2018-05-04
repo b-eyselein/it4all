@@ -13,11 +13,6 @@ let sel = 'POINTER';
 
 const SIMPLE_CLASS_PREFIX = 'Klasse_';
 
-interface MyPosition {
-    x: number,
-    y: number
-}
-
 interface MemberToLoad {
     visibility: string,
     name: string,

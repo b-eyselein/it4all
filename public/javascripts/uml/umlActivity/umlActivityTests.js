@@ -83,7 +83,7 @@ function test_TypeAgainstValue() {
     for (let i = 0; i < currentVariables.length; i++) {
         switch (currentVariables[i].found[0].type) {
             case "String":
-                if (!(pattTypeString.test(currentVariables[i].found[0].value) | pattTypeString.test(currentVariables[i].lastValue))) {
+                if (!(pattTypeString.test(currentVariables[i].found[0].value) || pattTypeString.test(currentVariables[i].lastValue))) {
                     highlightedCells.push(currentVariables[i].found[0].id);
                     log.push("Die Variable " + currentVariables[i].variable + " wurde als " + currentVariables[i].found[0].type + " erkannt und mit Wert " + currentVariables[i].found[0].value + " initialisiert.");
                     log.push("Die Variable " + currentVariables[i].variable + " wurde zuletzt mit dem Wert " + currentVariables[i].lastValue + " erkannt.");
@@ -91,14 +91,14 @@ function test_TypeAgainstValue() {
                 break;
             case "Boolean":
                 console.log("pattDouble with " + currentVariables[i].lastValue + " :" + pattTypeBoolean.test(pattTypeBoolean.test(currentVariables[i].lastValue)));
-                if (!(pattTypeBoolean.test(currentVariables[i].found[0].value) | pattTypeBoolean.test(currentVariables[i].lastValue))) {
+                if (!(pattTypeBoolean.test(currentVariables[i].found[0].value) || pattTypeBoolean.test(currentVariables[i].lastValue))) {
                     highlightedCells.push(currentVariables[i].found[0].id);
                     log.push("Die Variable " + currentVariables[i].variable + " wurde als " + currentVariables[i].found[0].type + " erkannt und mit Wert " + currentVariables[i].found[0].value + " initialisiert.");
                     log.push("Die Variable " + currentVariables[i].variable + " wurde zuletzt mit dem Wert " + currentVariables[i].lastValue + " erkannt.");
                 }
                 break;
             case "Double":
-                if (!(pattTypeDouble.test(currentVariables[i].found[0].value) | pattTypeBoolean.test(currentVariables[i].lastValue))) {
+                if (!(pattTypeDouble.test(currentVariables[i].found[0].value) || pattTypeBoolean.test(currentVariables[i].lastValue))) {
                     highlightedCells.push(currentVariables[i].found[0].id);
                     log.push("Die Variable " + currentVariables[i].variable + " wurde als " + currentVariables[i].found[0].type + " erkannt und mit Wert " + currentVariables[i].found[0].value + " initialisiert.");
                     log.push("Die Variable " + currentVariables[i].variable + " wurde zuletzt mit dem Wert " + currentVariables[i].lastValue + " erkannt.");
@@ -128,7 +128,7 @@ function test_elementsMustHaveInputs(graphToTest, startId, endId) {
                     highlightedCells.push(elementToTest.attributes.id);
                 }
                 break;
-            case "forLoop":
+            case "ForLoopText":
                 if (!(amountOfEditNodes(elementToTest) > 0)) {
                     if (getDataFromElement((elementToTest.attributes)).content.area.toString() === "") {
                         log.push("Das Element " + elementToTest.attributes.cleanname + " enth\u00e4lt keine Anweisungen");
@@ -206,7 +206,7 @@ function test_isExternPortConnectedWithEditNode(allElements) {
         switch (allElements[i].attributes.name) {
             case "whileDo":
             case "doWhile":
-            case "forLoop":
+            case "ForLoopText":
             case "ifThen":
                 if (graph.getConnectedLinks(allElements[i], { outbound: true }).length > 0) {
                     const targetId = getPortByName(graph.getConnectedLinks(allElements[i]), "extern");

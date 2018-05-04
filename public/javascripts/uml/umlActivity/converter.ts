@@ -41,12 +41,9 @@ interface ContentReadResult {
     logs: string[]
 }
 
-function readContentsFromGraph(languageBuilder: AbstractLanguageBuilder): ContentReadResult {
+function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: joint.dia.Cell, endNode: joint.dia.Cell): ContentReadResult {
     let contents: string[] = [];
     let logs: string[] = [];
-
-    let startNode = graph.getCell('Startknoten-startId');
-    let endNode = graph.getCell('Endknoten-endId');
 
     let currentElement = startNode;
 
@@ -62,7 +59,7 @@ function readContentsFromGraph(languageBuilder: AbstractLanguageBuilder): Conten
         // TODO: read content from element!
         if (model instanceof joint.shapes.uml.ActionInput) {
             contents.push(...model.getContent());
-        } else if (model instanceof joint.shapes.uml.ForLoop) {
+        } else if (model instanceof joint.shapes.uml.ForLoopText) {
             let loopHeader = model.getLoopHeader();
             let loopContent: string[] = languageBuilder.addIdentation(model.get('loopContent'));
             contents.push(...[loopHeader, ...loopContent]);
@@ -72,7 +69,7 @@ function readContentsFromGraph(languageBuilder: AbstractLanguageBuilder): Conten
         switch (elementType) {
             case 'uml.ActionInput':
                 break;
-            case 'uml.ForLoop':
+            case 'uml.ForLoopText':
                 break;
             case 'html.Element':
                 console.info(cellView);
@@ -105,6 +102,13 @@ function readContentsFromGraph(languageBuilder: AbstractLanguageBuilder): Conten
         contents,
         logs
     };
+}
+
+function readContentsFromGraph(languageBuilder: AbstractLanguageBuilder): ContentReadResult {
+    let startNode = graph.getCell('Startknoten-startId');
+    let endNode = graph.getCell('Endknoten-endId');
+
+    return readContentFromTo(languageBuilder, startNode, endNode);
 }
 
 function newGenerate() {

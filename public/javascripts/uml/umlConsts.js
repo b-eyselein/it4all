@@ -3,10 +3,14 @@ const GRID_SIZE = 20;
 const DEF_GRID = 'dot';
 const STD_PADDING = 10;
 const STD_ELEMENT_WIDTH = 200;
-const START_END_SIZE = 50;
+const START_END_SIZE = 40;
 const fontSize = 15;
 const strokeWidth = 2;
 const MIN_HEIGHT = fontSize + 2 * STD_PADDING;
+const STD_TEXT_ELEMENT_EVENTS = {
+    'click': 'onLeftClick',
+    'contextmenu': 'onRightClick'
+};
 function calcRectHeight(lines) {
     return Math.max((lines.length * fontSize) + (2 * STD_PADDING), MIN_HEIGHT);
 }

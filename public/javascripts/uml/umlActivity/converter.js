@@ -15,11 +15,9 @@ const isExternPortConnectedWithEditNode = true;
 const MultipleDeclarations = false;
 const DeclarationAgainstProgress = false;
 const TypeAgainstValue = false;
-function readContentsFromGraph(languageBuilder) {
+function readContentFromTo(languageBuilder, startNode, endNode) {
     let contents = [];
     let logs = [];
-    let startNode = graph.getCell('Startknoten-startId');
-    let endNode = graph.getCell('Endknoten-endId');
     let currentElement = startNode;
     let step = 0;
     let success = true;
@@ -30,7 +28,7 @@ function readContentsFromGraph(languageBuilder) {
         if (model instanceof joint.shapes.uml.ActionInput) {
             contents.push(...model.getContent());
         }
-        else if (model instanceof joint.shapes.uml.ForLoop) {
+        else if (model instanceof joint.shapes.uml.ForLoopText) {
             let loopHeader = model.getLoopHeader();
             let loopContent = languageBuilder.addIdentation(model.get('loopContent'));
             contents.push(...[loopHeader, ...loopContent]);
@@ -39,7 +37,7 @@ function readContentsFromGraph(languageBuilder) {
         switch (elementType) {
             case 'uml.ActionInput':
                 break;
-            case 'uml.ForLoop':
+            case 'uml.ForLoopText':
                 break;
             case 'html.Element':
                 console.info(cellView);
@@ -70,6 +68,11 @@ function readContentsFromGraph(languageBuilder) {
         contents,
         logs
     };
+}
+function readContentsFromGraph(languageBuilder) {
+    let startNode = graph.getCell('Startknoten-startId');
+    let endNode = graph.getCell('Endknoten-endId');
+    return readContentFromTo(languageBuilder, startNode, endNode);
 }
 function newGenerate() {
     let languageBuilder = getLangBuilder($('#langSelect').val());

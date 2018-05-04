@@ -84,7 +84,7 @@
                         Bearbeitungshinweise
                     </button>
 
-                    <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementActionInput">@*Einfacher *@Aktionen</a>
+                    <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementActionInput">@*Einfacher *@Aktion</a>
                     @*<button onclick="setSelElement(this);" name="elementActionSelect">Auswahlaktionsknoten</button>*@
                     @*<button onclick="setSelElement(this);" name="elementActionSelect">Deklarationsaktionsknoten</button>*@
 
@@ -97,7 +97,8 @@
 
                         <ul class="dropdown-menu" role="menu">
                             <li><a onclick="setSelElement(this);" data-elemname="elementFor">For-Each (Ext)</a></li>
-                            <li><a onclick="setSelElement(this);" data-elemname="uml.ForLoop">For-Each (Text)</a></li>
+                            <li><a onclick="setSelElement(this);" data-elemname="uml.ForLoopEmbed">For-Each (Embed)</a></li>
+                            <li><a onclick="setSelElement(this);" data-elemname="uml.ForLoopText">For-Each (Text)</a></li>
 
                             <li><a onclick="setSelElement(this);" data-elemname="elementWhileDo">While-Do (Ext)</a></li>
                             <li><a onclick="setSelElement(this);" data-elemname="uml.WhileLoop">While-Do (Text)</a></li>
@@ -218,9 +219,11 @@
                         }
                         </select>
                         <span class="input-group-addon">-Code</span>
-                        <button id="mainGeneration" class="form-control btn-primary" onclick="mainGeneration()">generieren</button>
+                        <button id="mainGeneration" class="form-control btn-primary" onclick="mainGeneration()">
+                            generieren</button>
                         <span class="input-group-addon"></span>
-                        <button id="newGenerationButton" class="form-control btn-info" onclick="newGenerate()">generate!</button>
+                        <button id="newGenerationButton" class="form-control btn-info" onclick="newGenerate()">
+                            generate!</button>
                     </div>
                 </div>
 
@@ -282,10 +285,10 @@
                     <div class="panel-footer">
                         <div class="btn-group btn-group-justified">
                             <div class="btn-group">
-                                <button type="button" class="form-control" onclick="resetForLoop()">Zurücksetzen</button>
+                                <button type="button" class="form-control" onclick="resetForLoopText()">Zurücksetzen</button>
                             </div>
                             <div class="btn-group">
-                                <button id="forLoopButton" class="form-control btn-primary" onclick="updateForLoop(this)" data-cellId="--">
+                                <button id="forLoopButton" class="form-control btn-primary" onclick="updateForLoopText(this)" data-cellId="--">
                                     Änderungen annehmen</button>
                             </div>
                         </div>

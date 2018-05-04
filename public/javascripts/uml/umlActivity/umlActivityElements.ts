@@ -1,7 +1,5 @@
 const EXTERN_PORT_WIDTH = 250; // all except if-then-else
 
-const ACTION_HEIGHT = calcRectHeight(['']);
-
 const FOR_LOOP_HEIGHT = 100;
 const WHILE_LOOP_HEIGHT = 120;
 const IF_ELSE_HEIGHT = 180;
@@ -18,15 +16,120 @@ const OUT_PORT = {
     attrs: {circle: {fill: 'transparent', stroke: COLORS.ForestGreen, strokeWidth: 1, r: 10, magnet: true}}
 };
 
-joint.shapes.basic.Generic.define('uml.ForLoop', {
+const STD_PORTS = {
+    groups: {in: IN_PORT, out: OUT_PORT},
+    items: [
+        {id: 'in', group: 'in', args: {x: STD_ELEMENT_WIDTH / 2}},
+        {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2}}
+    ]
+};
+
+// Markups
+
+const FOR_LOOP_TEXT_MARKUP: string = `
+<g class="rotatable">
+    <g class="scalable">
+        <rect class="for-header-rect"/><rect class="for-body-rect"/><rect class="for-separator-rect"/><rect class="for-complete-rect"/>
+    </g>
+    <text class="for-body-text"/><text class="for-header-text"/>
+</g>`.trim();
+
+const WHILE_LOOP_TEXT_MARKUP: string = `
+<g class="rotatable">
+    <g class="scalable">
+        <rect class="whileDo-header-rect"/><rect class="whileDo-body-rect"/><rect class="whileDo-separator-rect"/><rect class="whileDo-complete-rect"/>
+    </g>
+    <text class="whileDo-body-text"/><text class="whileDo-header-text"/>
+</g>`.trim();
+
+// Element definitions
+
+const stateCircleTransform = 'translate(' + (START_END_SIZE / 2) + ', ' + (START_END_SIZE / 2) + ')';
+
+joint.shapes.basic.Generic.define('uml.CustomStartState', {
+    size: {width: START_END_SIZE, height: START_END_SIZE},
+
+    attrs: {
+        circle: {
+            transform: stateCircleTransform, r: START_END_SIZE / 2,
+            fill: COLORS.Black, stroke: COLORS.Black, strokeWidth,
+        }
+    },
+
+    ports: {
+        groups: {
+            out: {
+                attrs: {circle: {fill: 'transparent', stroke: COLORS.ForestGreen, r: START_END_SIZE / 4, magnet: true}}
+            }
+        },
+        items: [{id: 'out', group: 'out', args: {x: START_END_SIZE / 2}}]
+    },
+}, {
+    markup: `<g class="rotatable"><g class="scalable"><circle/></g></g>`
+});
+
+joint.shapes.uml.CustomStartStateView = joint.dia.ElementView.extend({
+    initialize() {
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.model, 'uml-update', function () {
+            this.update();
+            this.resize();
+        });
+    }
+});
+
+function createStartState(x: number, y: number): joint.shapes.uml.CustomStartState {
+    return new joint.shapes.uml.CustomStartState({position: {x, y}});
+}
+
+
+joint.shapes.basic.Generic.define('uml.CustomEndState', {
+    size: {width: START_END_SIZE, height: START_END_SIZE},
+
+    attrs: {
+        'circle.outer': {
+            transform: stateCircleTransform, r: START_END_SIZE / 2,
+            fill: COLORS.White, stroke: COLORS.Black
+        },
+        'circle.inner': {transform: stateCircleTransform, r: START_END_SIZE / 3, fill: COLORS.Black}
+    },
+
+    ports: {
+        groups: {
+            in: {
+                attrs: {circle: {fill: 'transparent', stroke: COLORS.RoyalBlue, r: START_END_SIZE / 4, magnet: true}}
+            }
+        },
+        items: [{id: 'in', group: 'in', args: {x: START_END_SIZE / 2}}]
+    },
+}, {
+    markup: '<g class="rotatable"><g class="scalable"><circle class="outer"/><circle class="inner"/></g></g>'
+});
+
+joint.shapes.uml.CustomEndStateView = joint.dia.ElementView.extend({
+    initialize() {
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.model, 'uml-update', function () {
+            this.update();
+            this.resize();
+        });
+    }
+});
+
+function createEndState(x: number, y: number): joint.shapes.uml.CustomEndstate {
+    return new joint.shapes.uml.CustomEndState({position: {x, y}});
+}
+
+joint.shapes.basic.Generic.define('uml.ForLoopText', {
     size: {width: STD_ELEMENT_WIDTH, height: STD_FOR_LOOP_HEIGHT},
 
     attrs: {
         rect: {width: STD_ELEMENT_WIDTH},
         '.for-complete-rect': {
-            height: STD_FOR_LOOP_HEIGHT,
-            stroke: COLORS.Black, strokeWidth, strokeDasharray: '5,5',
-            rx: 5, ry: 5, fill: 'none'
+            height: STD_FOR_LOOP_HEIGHT, rx: 5, ry: 5, fill: 'none',
+            stroke: COLORS.Black, strokeWidth, strokeDasharray: '5,5'
         },
         '.for-header-rect': {height: MIN_HEIGHT},
         '.for-separator-rect': {
@@ -43,26 +146,11 @@ joint.shapes.basic.Generic.define('uml.ForLoop', {
         '.for-body-text': {ref: '.for-body-rect'}
     },
 
-    ports: {
-        groups: {in: IN_PORT, out: OUT_PORT},
-        items: [
-            {id: 'in', group: 'in', args: {x: STD_ELEMENT_WIDTH / 2}},
-            {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2}}
-        ]
-    },
+    ports: STD_PORTS,
 
-    variable: 'x',
-    collection: '[ ]',
-    loopContent: ['pass'],
+    variable: 'x', collection: '[ ]', loopContent: ['pass'],
 }, {
-
-    markup: `
-<g class="rotatable">
-    <g class="scalable">
-        <rect class="for-header-rect"/><rect class="for-body-rect"/><rect class="for-separator-rect"/><rect class="for-complete-rect"/>
-    </g>
-    <text class="for-body-text"/><text class="for-header-text"/>
-</g>`.trim(),
+    markup: FOR_LOOP_TEXT_MARKUP,
 
     initialize(): void {
         this.on('change:variable change:collection change:loopContent', function () {
@@ -98,35 +186,28 @@ joint.shapes.basic.Generic.define('uml.ForLoop', {
     }
 });
 
-function updateForLoop(button: HTMLButtonElement) {
+function updateForLoopText(button: HTMLButtonElement) {
     const model = graph.getCell($(button).data('cellId'));
 
     model.prop('variable', $('#forLoopVariableInput').val());
     model.prop('collection', $('#forLoopCollectionInput').val());
     model.prop('loopContent', $('#forLoopContent').val().split('\n'));
 
-    resetForLoop();
+    resetForLoopText();
 }
 
 
-function resetForLoop(): void {
+function resetForLoopText(): void {
     $('#forLoopButton').data('cellId', '');
     $('#forLoopContent').val('');
     $('#forLoopEditSection').prop('hidden', true);
 }
 
+joint.shapes.uml.ForLoopTextView = joint.dia.ElementView.extend({
+    events: STD_TEXT_ELEMENT_EVENTS,
 
-joint.shapes.uml.ForLoopView = joint.dia.ElementView.extend({
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
-
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    },
-
-    handleLeftClick() {
+    onLeftClick(event) {
+        event.preventDefault();
         $('#forLoopVariableInput').val(this.model.get('variable'));
         $('#forLoopCollectionInput').val(this.model.get('collection'));
         $('#forLoopContent').val(this.model.get('loopContent'));
@@ -134,44 +215,211 @@ joint.shapes.uml.ForLoopView = joint.dia.ElementView.extend({
         $('#forLoopEditSection').prop('hidden', false);
     },
 
-    handleRightClick() {
+    onRightClick(event) {
+        event.preventDefault();
         if (confirm('Löschen?'))
             this.remove();
+    },
+
+    initialize() {
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.model, 'uml-update', function () {
+            this.update();
+            this.resize();
+        });
     }
 });
+
+joint.shapes.basic.Generic.define('uml.ForLoopEmbed', {
+    size: {width: STD_ELEMENT_WIDTH, height: STD_FOR_LOOP_HEIGHT},
+
+    attrs: {
+        rect: {width: STD_ELEMENT_WIDTH},
+        '.for-complete-rect': {
+            height: STD_FOR_LOOP_HEIGHT, rx: 5, ry: 5, fill: 'none',
+            stroke: COLORS.Black, strokeWidth, strokeDasharray: '5,5'
+        },
+        '.for-header-rect': {height: MIN_HEIGHT},
+        '.for-separator-rect': {
+            height: 1, transform: 'translate(0,' + (MIN_HEIGHT + 2) + ')',
+            stroke: COLORS.Black, strokeWidth: 1
+        },
+        '.for-body-rect': {
+            height: STD_FOR_LOOP_HEIGHT - MIN_HEIGHT, transform: 'translate(0,' + (MIN_HEIGHT + 4) + ')'
+        },
+
+        text: {fill: COLORS.Black, fontSize, refY: STD_PADDING, refX: STD_PADDING},
+        '.for-header-text': {ref: '.for-header-rect'},
+        '.for-body-text': {ref: '.for-body-rect'}
+    },
+
+    ports: STD_PORTS,
+
+    isResized: false, variable: 'x', collection: '[ ]', loopContent: []
+}, {
+    markup: FOR_LOOP_TEXT_MARKUP,
+
+    initialize(): void {
+        this.on('change:variable change:collection change:loopContent', function () {
+            this.updateRectangles();
+            this.trigger('uml-update');
+        }, this);
+
+        this.updateRectangles();
+
+        joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
+    },
+
+    handleClick() {
+        let ownPosition: { x: number, y: number } = this.position();
+        let isResized: boolean = this.get('isResized');
+
+        if (selElement === '') {
+            this.resizeForEmbedding(ownPosition, isResized);
+        } else {
+            let positionObject = {
+                position: {x: ownPosition.x + 50, y: ownPosition.y + 50}
+            };
+
+            createElements(selElement, positionObject, this);
+        }
+    },
+
+    resizeForEmbedding(ownPosition: { x: number, y: number }, isResized: boolean) {
+        if (isResized) {
+            // FIXME: generate code!
+            let languageBuilder = getLangBuilder($('#langSelect').val());
+            let embeddedCells = this.getEmbeddedCells();
+
+            let startNode = embeddedCells.filter((cell) => {
+                return cell instanceof joint.shapes.uml.CustomStartState;
+            })[0];
+
+            let endNode = embeddedCells.filter((cell) => {
+                return cell instanceof joint.shapes.uml.CustomEndState;
+            })[0];
+
+            let code = readContentFromTo(languageBuilder, startNode, endNode);
+
+            console.warn(code);
+
+            for (let c of embeddedCells) {
+                this.unembed(c);
+                c.remove();
+            }
+        } else {
+            console.warn(ownPosition.x + " :: " + ownPosition.y);
+
+            const attrs = this.get('attrs');
+
+            let newWidth: number = 2 * STD_ELEMENT_WIDTH;
+
+            let loopContent: string[] = this.get('loopContent');
+            let loopRectHeight = 300;
+
+            attrs['.for-body-text'].text = loopContent.join('\n');
+            attrs['.for-body-rect'].height = loopRectHeight;
+
+            attrs['.for-complete-rect'].height = loopRectHeight + MIN_HEIGHT + 4;
+
+            // FIXME: add start and end node..
+            let startNode = createStartState(ownPosition.x + 10, ownPosition.y + 10 + MIN_HEIGHT);
+            let endNode = createEndState(ownPosition.x + 100, ownPosition.y + 100);
+
+            this.embed(startNode);
+            this.embed(endNode);
+
+            graph.addCell(startNode);
+            graph.addCell(endNode);
+
+            this.resize(newWidth, loopRectHeight + MIN_HEIGHT + 4);
+            this.trigger('uml-update');
+            this.set('isResized', true);
+
+            console.warn(this.get('isResized'));
+        }
+    },
+
+    getLoopHeader(): string {
+        const variable = this.get('variable') || '___';
+        const collection = this.get('collection') || '___';
+        return `for ${variable} in ${collection}:`;
+    },
+
+    updateRectangles(): void {
+        const attrs = this.get('attrs');
+
+        attrs['.for-header-text'].text = this.getLoopHeader();
+
+        let loopContent: string[] = this.get('loopContent');
+        let loopRectHeight = calcRectHeight(loopContent);
+
+        attrs['.for-body-text'].text = loopContent.join('\n');
+        attrs['.for-body-rect'].height = loopRectHeight;
+
+        attrs['.for-complete-rect'].height = loopRectHeight + MIN_HEIGHT + 4;
+
+        this.resize(STD_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
+    }
+});
+
+joint.shapes.uml.ForLoopEmbedView = joint.dia.ElementView.extend({
+    events: STD_TEXT_ELEMENT_EVENTS,
+
+    onLeftClick(event) {
+        event.preventDefault();
+        this.model.handleClick();
+    },
+
+    onRightClick(event) {
+        event.preventDefault();
+        if (confirm('Löschen?'))
+            this.remove();
+    },
+
+    initialize() {
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.model, 'uml-update', function () {
+            this.update();
+            this.resize();
+        });
+    }
+});
+
 
 joint.shapes.basic.Generic.define('uml.WhileLoop', {
     size: {width: STD_ELEMENT_WIDTH, height: STD_FOR_LOOP_HEIGHT},
 
     attrs: {
-        rect: {width: STD_ELEMENT_WIDTH, stroke: COLORS.Black, strokeWidth},
-        '.while-header-rect': {},
-        '.while-body-rect': {fill: COLORS.LightGrey, transform: 'translate(0, 50)'},
+        rect: {width: STD_ELEMENT_WIDTH},
+        '.whileDo-complete-rect': {
+            height: STD_FOR_LOOP_HEIGHT, rx: 5, ry: 5, fill: 'none',
+            stroke: COLORS.Black, strokeWidth, strokeDasharray: '5,5'
+        },
+        '.whileDo-header-rect': {height: MIN_HEIGHT},
+        '.whileDo-separator-rect': {
+            height: 1, transform: 'translate(0,' + (MIN_HEIGHT + 2) + ')',
+            stroke: COLORS.Black, strokeWidth: 1
+        },
+        '.whileDo-body-rect': {
+            height: STD_FOR_LOOP_HEIGHT - MIN_HEIGHT, transform: 'translate(0,' + (MIN_HEIGHT + 4) + ')',
+            fill: COLORS.Gainsboro
+        },
 
-        text: {fill: COLORS.Black, fontSize, refY: 7, refX: 5},
-        '.while-header-text': {ref: '.while-header-rect',},
-        '.while-body-text': {ref: '.while-body-rect'}
+        text: {fill: COLORS.Black, fontSize, refY: STD_PADDING, refX: STD_PADDING},
+        '.whileDo-header-text': {ref: '.whileDo-header-rect'},
+        '.whileDo-body-text': {ref: '.whileDo-body-rect'}
     },
 
-    ports: {
-        groups: {in: IN_PORT, out: OUT_PORT},
-        items: [
-            {id: 'in', group: 'in', args: {x: STD_ELEMENT_WIDTH / 2}},
-            {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2}}
-        ]
-    },
+    ports: STD_PORTS,
 
-    condition: '',
+    condition: 'false',
     loopContent: [],
 }, {
 
-    markup: `
-<g class="rotatable">
-    <g class="scalable">
-        <rect class="while-header-rect"/><rect class="while-body-rect"/>
-    </g>
-    <text class="while-header-text"/><text class="while-body-text"/>
-</g>`.trim(),
+    markup: WHILE_LOOP_TEXT_MARKUP,
 
     initialize() {
 
@@ -192,39 +440,25 @@ joint.shapes.basic.Generic.define('uml.WhileLoop', {
     updateRectangles() {
         const attrs = this.get('attrs');
 
-        const rects = [
-            {type: 'header', text: this.getLoopHeader(), maxHeight: 30, minHeight: 30},
-            {type: 'body', text: this.get('loopContent'), minHeight: 70, maxHeight: 270}
-        ];
+        attrs['.whileDo-header-text'].text = this.getLoopHeader();
 
-        let offSetY = 0;
+        let loopContent: string[] = this.get('loopContent');
+        let loopRectHeight = calcRectHeight(loopContent);
 
-        rects.forEach(function (rect) {
-            const lines = Array.isArray(rect.text) ? rect.text : [rect.text];
-            const rectHeight = calcRectHeight(lines);
+        attrs['.whileDo-body-text'].text = loopContent.join('\n');
+        attrs['.whileDo-body-rect'].height = loopRectHeight;
 
-            attrs['.while-' + rect.type + '-text'].text = lines.join('\n');
-            attrs['.while-' + rect.type + '-rect'].height = rectHeight;
-            attrs['.while-' + rect.type + '-rect'].transform = 'translate(0, ' + offSetY + ')';
+        attrs['.whileDo-complete-rect'].height = loopRectHeight + MIN_HEIGHT + 4;
 
-            offSetY += rectHeight;
-        });
-
-        this.resize(STD_ELEMENT_WIDTH, offSetY);
+        this.resize(STD_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
     }
 });
 
 joint.shapes.uml.WhileLoopView = joint.dia.ElementView.extend({
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+    events: STD_TEXT_ELEMENT_EVENTS,
 
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    },
-
-    handleLeftClick() {
+    onLeftClick(event) {
+        event.preventDefault();
         $('#conditionInput').val(this.model.attributes.condition);
         $('#forLoopContent').val(this.model.attributes.loopContent);
         $('#loopCellId').val(this.model.id);
@@ -232,13 +466,24 @@ joint.shapes.uml.WhileLoopView = joint.dia.ElementView.extend({
         $('#loopEditModal').modal('show');
     },
 
-    handleRightClick() {
-        this.remove();
+    onRightClick(event) {
+        event.preventDefault();
+        if (confirm('Löschen?'))
+            this.remove();
+    },
+
+    initialize() {
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.model, 'uml-update', function () {
+            this.update();
+            this.resize();
+        });
     }
 });
 
 joint.shapes.basic.Generic.define('uml.ActionInput', {
-    size: {width: STD_ELEMENT_WIDTH, height: ACTION_HEIGHT},
+    size: {width: STD_ELEMENT_WIDTH, height: MIN_HEIGHT},
 
     attrs: {
         rect: {width: STD_ELEMENT_WIDTH, stroke: COLORS.Black, strokeWidth, rx: 5, ry: 5},
@@ -329,6 +574,21 @@ function updateActionInput(button: HTMLButtonElement): void {
 }
 
 joint.shapes.uml.ActionInputView = joint.dia.ElementView.extend({
+    events: STD_TEXT_ELEMENT_EVENTS,
+
+    onLeftClick(event) {
+        event.preventDefault();
+        $('#actionInputContent').val(this.model.get('content'));
+        $('#actionInputButton').data('cellId', this.model.id);
+        $('#actionInputEditSection').prop('hidden', false);
+    },
+
+    onRightClick(event) {
+        event.preventDefault();
+        if (confirm('Löschen?'))
+            this.remove();
+    },
+
     initialize() {
         joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 
@@ -336,16 +596,6 @@ joint.shapes.uml.ActionInputView = joint.dia.ElementView.extend({
             this.update();
             this.resize();
         });
-    },
-
-    handleLeftClick() {
-        $('#actionInputContent').val(this.model.get('content'));
-        $('#actionInputButton').data('cellId', this.model.id);
-        $('#actionInputEditSection').prop('hidden', false);
-    },
-
-    handleRightClick() {
-        this.remove();
     }
 });
 
@@ -360,10 +610,10 @@ const ACTION_SELECT_TEMPALTE = `
     </select>
 </div>`.trim();
 
-function createActionSelect(xCoord, yCoord) {
+function createActionSelect(xCoord, yCoord): joint.shapes.html.Element {
     return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
-        size: {width: STD_ELEMENT_WIDTH, height: ACTION_HEIGHT},
+        size: {width: STD_ELEMENT_WIDTH, height: MIN_HEIGHT},
         name: 'actionSelect',
         cleanname: 'Aktionsknoten',
         template: ACTION_SELECT_TEMPALTE,
@@ -397,7 +647,7 @@ function createActionSelect(xCoord, yCoord) {
             },
             items: [
                 {id: 'in', group: 'in', args: {x: STD_ELEMENT_WIDTH / 2, y: 0}},
-                {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2, y: ACTION_HEIGHT}}
+                {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2, y: MIN_HEIGHT}}
             ]
         }
     });
@@ -420,7 +670,7 @@ const ACTION_DECLARE_TEMPLATE = `
 function createActionDeclare(xCoord, yCoord) {
     return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
-        size: {width: STD_ELEMENT_WIDTH, height: ACTION_HEIGHT},
+        size: {width: STD_ELEMENT_WIDTH, height: MIN_HEIGHT},
         template: ACTION_DECLARE_TEMPLATE,
         varContent1: '',
         varContent2: '',
@@ -467,7 +717,7 @@ function createActionDeclare(xCoord, yCoord) {
             },
             items: [
                 {id: 'in', group: 'in', args: {x: STD_ELEMENT_WIDTH / 2, y: 0}},
-                {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2, y: ACTION_HEIGHT}}
+                {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2, y: MIN_HEIGHT}}
             ]
         }
     });
@@ -485,8 +735,8 @@ const FOR_LOOP_TEMPLATE = `
     <textarea onkeyup="textAreaAdjust(this)" disabled  placeholder="Anweisungen" data-attribute="area"></textarea>
 </div>`.trim();
 
-function createForLoop(xCoord, yCoord) {
-    let forElement = new joint.shapes.html.Element({
+function createForLoop(xCoord, yCoord): joint.shapes.html.Element {
+    return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: STD_ELEMENT_WIDTH, height: FOR_LOOP_HEIGHT},
         template: FOR_LOOP_TEMPLATE,
@@ -498,7 +748,7 @@ function createForLoop(xCoord, yCoord) {
         ports: {
             groups: {
                 'in': {
-                    position: 'absolute',
+                    position: 'top',
                     label: {
                         // label layout definition:
                         position: {
@@ -512,23 +762,15 @@ function createForLoop(xCoord, yCoord) {
                     },
                     attrs: {
                         circle: {
-                            fill: 'transparent',
-                            stroke: COLORS.RoyalBlue,
-                            strokeWidth: 1,
-                            r: 10,
-                            magnet: true
+                            fill: 'transparent', stroke: COLORS.RoyalBlue, strokeWidth: 1, r: 10, magnet: true
                         }
                     }
                 },
                 'out': {
-                    position: 'absolute',
+                    position: 'bottom',
                     attrs: {
                         circle: {
-                            fill: 'transparent',
-                            stroke: COLORS.ForestGreen,
-                            strokeWidth: 1,
-                            r: 10,
-                            magnet: true
+                            fill: 'transparent', stroke: COLORS.ForestGreen, strokeWidth: 1, r: 10, magnet: true
                         }
                     }
                 },
@@ -538,15 +780,11 @@ function createForLoop(xCoord, yCoord) {
                 }
             },
             items: [
-                {id: 'in', group: 'in', args: {x: STD_ELEMENT_WIDTH / 2, y: 0}},
+                {id: 'in', group: 'in', args: {x: STD_ELEMENT_WIDTH / 2}},
                 {id: 'extern', group: 'extern', args: {x: EXTERN_PORT_WIDTH, y: 55}},
-                {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2, y: FOR_LOOP_HEIGHT}}]
+                {id: 'out', group: 'out', args: {x: STD_ELEMENT_WIDTH / 2}}]
         }
     });
-    connectProperties.sourceId = forElement.id;
-    connectProperties.sourcePort = "extern";
-
-    return forElement;
 }
 
 const IF_THEN_TEMPLATE = `
@@ -566,7 +804,7 @@ const IF_THEN_TEMPLATE = `
 </div>`.trim();
 
 function createIfThen(xCoord, yCoord) {
-    let ifThenElem = new joint.shapes.html.Element({
+    return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: STD_ELEMENT_WIDTH, height: WHILE_LOOP_HEIGHT},
         template: IF_THEN_TEMPLATE,
@@ -613,11 +851,6 @@ function createIfThen(xCoord, yCoord) {
         }
     });
 
-    connectProperties.sourceId = ifThenElem.id;
-    connectProperties.sourcePort = "extern";
-
-    return ifThenElem;
-
 }
 
 const IF_ELSE_TEMPLATE = `
@@ -640,8 +873,8 @@ const IF_ELSE_TEMPLATE = `
     </div>
 </div>`.trim();
 
-function createIfElse(xCoord, yCoord) {
-    let ifElseElem = new joint.shapes.html.Element({
+function createIfElse(xCoord, yCoord): joint.shapes.html.Element {
+    return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: STD_ELEMENT_WIDTH, height: IF_ELSE_HEIGHT},
         template: IF_ELSE_TEMPLATE,
@@ -694,12 +927,6 @@ function createIfElse(xCoord, yCoord) {
         }
     });
 
-    connectProperties.sourceId = ifElseElem.id;
-    connectProperties.sourcePort = "extern-ethen";
-    connectProperties.sourcePort2 = "extern-eelse";
-
-    return ifElseElem;
-
 }
 
 const DO_WHILE_TEMPLATE = `
@@ -716,7 +943,7 @@ const DO_WHILE_TEMPLATE = `
 </div>`.trim();
 
 function createDoWhile(xCoord, yCoord) {
-    let doWhileElem = new joint.shapes.html.Element({
+    return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: STD_ELEMENT_WIDTH, height: WHILE_LOOP_HEIGHT},
         template: DO_WHILE_TEMPLATE,
@@ -761,11 +988,6 @@ function createDoWhile(xCoord, yCoord) {
                 {id: 'extern', group: 'extern', args: {x: EXTERN_PORT_WIDTH, y: WHILE_LOOP_HEIGHT / 2}}]
         }
     });
-
-    connectProperties.sourceId = doWhileElem.id;
-    connectProperties.sourcePort = "extern";
-
-    return doWhileElem;
 }
 
 const WHILE_DO_TEMPLATE = `
@@ -785,7 +1007,7 @@ const WHILE_DO_TEMPLATE = `
 </div>`;
 
 function createWhileDo(xCoord, yCoord) {
-    let whileDoElem = new joint.shapes.html.Element({
+    return new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: STD_ELEMENT_WIDTH, height: WHILE_LOOP_HEIGHT},
         template: WHILE_DO_TEMPLATE,
@@ -831,12 +1053,6 @@ function createWhileDo(xCoord, yCoord) {
             ]
         }
     });
-
-    connectProperties.sourceId = whileDoElem.id;
-    connectProperties.sourcePort = "extern";
-
-    return whileDoElem;
-
 }
 
 const EDIT_TEMPLATE = `
@@ -861,13 +1077,13 @@ function createEdit(xCoord, yCoord) {
                 }
             },
             items: [
-                {id: 'extern', group: 'extern', args: {x: -10, y: 60}}
+                {id: 'extern', group: 'extern', args: {x: 0, y: 60}}
             ]
         }
     });
 
-    const start = createStartCircle('Externer Startknoten', edit.id, xCoord, yCoord, 'Start');
-    const end = createEndCircle('Externer Endknoten', edit.id, xCoord + 118, yCoord + 68, 'Ende');
+    const start = createStartState(xCoord + STD_PADDING, yCoord + STD_PADDING);
+    const end = createEndState(xCoord + 118, yCoord + 68);
 
     graph.addCell(edit);
 
@@ -881,87 +1097,8 @@ function createEdit(xCoord, yCoord) {
     graph.addCell(end);
 
     parentChildNodes.push({'parentId': edit.id, 'startId': start.id, 'endId': end.id, 'endName': end.name});
-    parentChildNodes.push({"parentId": edit.id, "startId": start.id, "endId": end.id, "endName": end.name});
-
-    connectProperties.targetId = edit.id;
-    connectProperties.targetPort = "extern";
+    // parentChildNodes.push({"parentId": edit.id, "startId": start.id, "endId": end.id, "endName": end.name});
 
     // Add edit twice --> bug...
     return edit;
-}
-
-const END_CIRCLE_TEMPLATE = `
-<div class="circle1">
-    <div class="circle2">
-        <div class="circle3">
-            <label class="endlabelpos" data-attribute="label"></label>
-        </div>
-    </div>
-</div>`;
-
-function createEndCircle(endName: string, endId: string, endXCoord: number, endYCoord: number, labelText: string) {
-    return new joint.shapes.html.Element({
-        position: {x: endXCoord, y: endYCoord},
-        size: {width: START_END_SIZE, height: START_END_SIZE},
-        id: 'Endknoten-' + endId,
-        name: endName,
-        cleanname: 'Endknoten',
-        template: END_CIRCLE_TEMPLATE,
-        label: labelText,
-        ports: {
-            groups: {
-                'in': {
-                    position: 'absolute',
-                    attrs: {
-                        circle: {
-                            fill: 'transparent',
-                            stroke: COLORS.RoyalBlue,
-                            strokeWidth: 1,
-                            r: 22,
-                            magnet: true
-                        }
-                    }
-                },
-            },
-            items: [
-                {id: 'in', group: 'in', args: {x: START_END_SIZE / 2, y: START_END_SIZE / 2}}
-            ]
-        }
-    });
-}
-
-const START_CIRCLE_TEMPLATE = `
-<div class="circle1">
-    <label class="startlabelpos" data-attribute="label"></label>
-</div>`;
-
-function createStartCircle(startName: string, startId: string, startXCoord: number, startYCoord: number, labelText: string) {
-    return new joint.shapes.html.Element({
-        position: {x: startXCoord, y: startYCoord},
-        size: {width: START_END_SIZE, height: START_END_SIZE},
-        id: 'Startknoten-' + startId,
-        name: startName,
-        cleanname: 'Startknoten',
-        template: START_CIRCLE_TEMPLATE,
-        label: labelText,
-        ports: {
-            groups: {
-                'out': {
-                    position: 'absolute',
-                    attrs: {
-                        circle: {
-                            fill: 'transparent',
-                            stroke: COLORS.RoyalBlue,
-                            strokeWidth: 1,
-                            r: START_END_SIZE / 2,
-                            magnet: true
-                        }
-                    }
-                },
-            },
-            items: [
-                {id: 'out', group: 'out', args: {x: START_END_SIZE / 2, y: START_END_SIZE / 2}}
-            ]
-        }
-    });
 }
