@@ -1,7 +1,7 @@
 package model.uml
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.persistence.SingleExerciseTableDefs
 import model.uml.UmlConsts._
@@ -17,7 +17,8 @@ import scala.language.{implicitConversions, postfixOps}
 case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
   extends PartsCompleteEx[UmlExercise, UmlExPart] {
 
-  override def preview: Html = views.html.uml.umlPreview(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.idExercises.uml.umlPreview(this)
 
   def titleForPart(part: UmlExPart): String = part match {
     case ClassSelection     => "Auswahl der Klassen"
@@ -32,8 +33,8 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
   })
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {
-    case (ClassSelection | DiagramDrawing) => true // TODO: Currently deactivated...
-    case _                                 => false
+    case ClassSelection | DiagramDrawing => true // TODO: Currently deactivated...
+    case _                               => false
   }
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
@@ -79,7 +80,7 @@ case class UmlSolution(username: String, exerciseId: Int, part: UmlExPart, class
 
 // Tables
 
-class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlExercise, UmlCompleteEx, UmlSolution, UmlExPart] {
 
   import profile.api._
@@ -92,22 +93,21 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table Queries
 
-  override protected val exTable = TableQuery[UmlExercisesTable]
-
+  override protected val exTable  = TableQuery[UmlExercisesTable]
   override protected val solTable = TableQuery[UmlSolutionsTable]
 
-  val umlMappings = TableQuery[UmlMappingsTable]
+  private val umlMappings = TableQuery[UmlMappingsTable]
 
   // Reading
 
-  override def completeExForEx(ex: UmlExercise)(implicit ec: ExecutionContext): Future[UmlCompleteEx] = for {
+  override def completeExForEx(ex: UmlExercise): Future[UmlCompleteEx] = for {
     mappings <- db.run(umlMappings filter (_.exerciseId === ex.id) result)
   } yield UmlCompleteEx(ex, mappings)
 
 
   // Saving
 
-  override protected def saveExerciseRest(compEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+  override protected def saveExerciseRest(compEx: UmlCompleteEx): Future[Boolean] =
     saveSeq[UmlMapping](compEx.mappings, m => db.run(umlMappings += m))
 
   // Implicit column types

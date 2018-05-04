@@ -1,11 +1,28 @@
 package model
 
-import java.nio.file.Path
-
-import model.Enums.ExerciseState
+import enumeratum.{Enum, EnumEntry, PlayEnum}
 import model.core.{ExPart, FileUtils}
-import model.toolMains.AToolMain
 import play.twirl.api.Html
+
+import scala.collection.immutable.IndexedSeq
+
+sealed trait ExerciseState extends EnumEntry
+
+
+object ExerciseState extends PlayEnum[ExerciseState] {
+
+  override val values: IndexedSeq[ExerciseState] = findValues
+
+  case object RESERVED extends ExerciseState
+
+  case object CREATED extends ExerciseState
+
+  case object ACCEPTED extends ExerciseState
+
+  case object APPROVED extends ExerciseState
+
+}
+
 
 trait HasBaseValues {
 
@@ -101,12 +118,6 @@ trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteE
   def templateFilename: String
 
   def sampleFilename: String
-
-  def templateFilePath(toolMain: AToolMain, fileEnding: String): Path = toolMain.templateDirForExercise(ex.id) / (templateFilename + "." + fileEnding)
-
-  def sampleFilePath(toolMain: AToolMain, fileEnding: String): Path = toolMain.sampleDirForExercise(ex.id) / (sampleFilename + "." + fileEnding)
-
-  def available(toolMain: AToolMain, fileEnding: String): Boolean = templateFilePath(toolMain, fileEnding).toFile.exists && sampleFilePath(toolMain, fileEnding).toFile.exists
 
 }
 

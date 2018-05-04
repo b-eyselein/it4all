@@ -40,9 +40,9 @@
                         <label for="@model.core.CoreConsts.stateName">Status:</label>
                         <div >
                             <select class="form-control" name="@model.core.CoreConsts.stateName" id="@model.core.CoreConsts.stateName" required>
-                            @for(state <- model.Enums.ExerciseState.values) {
+                            @for(state <- model.ExerciseState.values) {
                                 <option @{
-                                    state.isSelected(exercise.ex.state)
+                                    if(state == exercise.ex.state) "selected" else ""
                                 }>@state</option>
                             }
                             </select>

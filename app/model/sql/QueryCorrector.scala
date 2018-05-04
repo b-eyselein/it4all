@@ -1,10 +1,12 @@
 package model.sql
 
+import model.core.matching.MatchingResult
 import model.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
+import net.sf.jsqlparser.statement.select.OrderByElement
 
 import scala.util.{Failure, Success, Try}
 
@@ -41,10 +43,10 @@ abstract class QueryCorrector(val queryType: String) {
     SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison)
   }
 
-  def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): ColumnMatchingResult =
+  def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnWrapper, ColumnMatch] =
     ColumnMatcher.doMatch(getColumnWrappers(userQ), getColumnWrappers(sampleQ))
 
-  def compareWhereClauses(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): BinaryExpressionMatchingResult =
+  def compareWhereClauses(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[BinaryExpression, BinaryExpressionMatch] =
     new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
   def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
@@ -52,7 +54,7 @@ abstract class QueryCorrector(val queryType: String) {
     case Some(expression) => new ExpressionExtractor(expression).extracted
   }
 
-  def compareTables(userQ: Q, sampleQ: Q): TableMatchingResult = TableMatcher.doMatch(getTables(userQ), getTables(sampleQ))
+  def compareTables(userQ: Q, sampleQ: Q): MatchingResult[Table, TableMatch] = TableMatcher.doMatch(getTables(userQ), getTables(sampleQ))
 
   def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(q => Option(q.getAlias).isDefined).map(t => t.getAlias.getName -> t.getName).toMap
 
@@ -63,9 +65,9 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected def getWhere(query: Q): Option[Expression]
 
-  protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[GroupByMatchingResult] = None
+  protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]] = None
 
-  protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[OrderByMatchingResult] = None
+  protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, OrderByMatch]] = None
 
   // Parsing
 

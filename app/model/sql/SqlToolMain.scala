@@ -1,14 +1,12 @@
 package model.sql
 
 import javax.inject._
-import model.Enums.ToolState
 import model._
-import model.core._
+import model.core.result.EvaluationResult
+import model.core.{Levenshtein, SolutionFormHelper}
 import model.sql.SqlConsts._
-import model.sql.SqlEnums.SqlExerciseType
-import model.sql.SqlEnums.SqlExerciseType._
 import model.sql.SqlToolMain._
-import model.toolMains.CollectionToolMain
+import model.toolMains.{CollectionToolMain, ToolState}
 import model.yaml.MyYamlFormat
 import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
@@ -21,15 +19,17 @@ import scala.util.{Failure, Try}
 
 object SqlToolMain {
 
-  val daos = Map(
-    SELECT -> SelectDAO, CREATE -> CreateDAO, UPDATE -> ChangeDAO, INSERT -> ChangeDAO, DELETE -> ChangeDAO
-  )
-
-  val correctors = Map(
-    CREATE -> CreateCorrector, DELETE -> DeleteCorrector, INSERT -> InsertCorrector, SELECT -> SelectCorrector, UPDATE -> UpdateCorrector
+  val correctorsAndDaos: Map[SqlExerciseType, (QueryCorrector, SqlExecutionDAO)] = Map(
+    SqlExerciseType.SELECT -> (SelectCorrector, SelectDAO),
+    SqlExerciseType.CREATE -> (CreateCorrector, CreateDAO),
+    SqlExerciseType.UPDATE -> (UpdateCorrector, ChangeDAO),
+    SqlExerciseType.INSERT -> (InsertCorrector, ChangeDAO),
+    SqlExerciseType.DELETE -> (DeleteCorrector, ChangeDAO)
   )
 
   def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = samples.minBy(samp => Levenshtein.levenshteinDistance(samp.sample, userSt))
+
+  def allDaos: Seq[SqlExecutionDAO] = correctorsAndDaos.values.map(_._2).toSet.toSeq
 
 }
 
@@ -74,7 +74,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     compColl =>
       val scriptFilePath = exerciseResourcesFolder / s"${compColl.coll.shortName}.sql"
 
-      daos.values.toList.distinct foreach (_.executeSetup(compColl.coll.shortName, scriptFilePath))
+      allDaos.foreach(_.executeSetup(compColl.coll.shortName, scriptFilePath))
 
       tables.saveCompleteColl(compColl) map (saveRes => (compColl, saveRes))
   })
@@ -106,11 +106,11 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
       val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
-      views.html.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes)
+      views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes)
     }
 
   override def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
-    views.html.sql.editSqlExercise(user, newEx, this, isCreation)
+    views.html.collectionExercises.sql.editSqlExercise(user, newEx, this, isCreation)
 
   // FIXME: remove this method...
   override def renderEditRest(exercise: SqlCompleteEx): Html = ???
@@ -119,7 +119,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override protected def correctEx(user: User, learnerSolution: SqlSolution, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Future[Try[SqlCorrResult]] =
     saveSolution(learnerSolution) map { _ =>
-      (correctors.get(exercise.ex.exerciseType) zip daos.get(exercise.ex.exerciseType)).headOption match {
+
+      correctorsAndDaos.get(exercise.ex.exerciseType) match {
         case None                   => Failure(new Exception("There is no corrector or sql dao for " + exercise.ex.exerciseType))
         case Some((corrector, dao)) =>
           // FIXME: parse queries here!?!
@@ -150,10 +151,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Helper methods
 
-  override def instantiateCollection(id: Int, state: Enums.ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
+  override def instantiateCollection(id: Int, state: ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
     SqlScenario(id, title = "", author = "", text = "", state, shortName = ""), exercises = Seq.empty)
 
-  override def instantiateExercise(collId: Int, id: Int, state: Enums.ExerciseState): SqlCompleteEx = SqlCompleteEx(
+  override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): SqlCompleteEx = SqlCompleteEx(
     SqlExercise(id, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT, collectionId = collId, tags = "", hint = None), samples = Seq.empty)
 
 }

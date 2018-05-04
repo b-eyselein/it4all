@@ -80,11 +80,6 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
-  // Views
-
-  override protected def adminIndexView(admin: User, stats: Html, toolMain: IdExerciseToolMain): Html =
-    views.html.admin.idExes.idExerciseAdminMain(admin, stats, toolMain)
-
   // Other routes
 
   def umlClassDiag(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
@@ -137,9 +132,5 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
           }
       }
   }
-
-  def webPlayground: EssentialAction = withUser { user => implicit request => Ok(views.html.web.webPlayground(user)) }
-
-  def xmlPlayground: EssentialAction = withUser { user => implicit request => Ok(views.html.xml.xmlPlayground(user)) }
 
 }

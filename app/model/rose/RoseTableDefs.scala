@@ -1,7 +1,7 @@
 package model.rose
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgDataTypes.ProgDataType
@@ -19,7 +19,8 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
 
   val NewLine = "\n"
 
-  override def preview: Html = views.html.rose.rosePreview.render(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.idExercises.rose.rosePreview.render(this)
 
   override def hasPart(partType: RoseExPart): Boolean = true
 
@@ -77,7 +78,7 @@ case class RoseSolution(username: String, exerciseId: Int, part: RoseExPart, sol
 
 // Tables
 
-class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RoseExercise, RoseCompleteEx, RoseSolution, RoseExPart] {
 
   import profile.api._
@@ -102,12 +103,12 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Queries
 
-  override protected def completeExForEx(ex: RoseExercise)(implicit ec: ExecutionContext): Future[RoseCompleteEx] = for {
+  override protected def completeExForEx(ex: RoseExercise): Future[RoseCompleteEx] = for {
     inputTypes <- db.run(roseInputs.filter(_.exerciseId === ex.id).result)
     samples <- db.run(roseSamples.filter(_.exerciseId === ex.id).result)
   } yield RoseCompleteEx(ex, inputTypes, samples)
 
-  override protected def saveExerciseRest(compEx: RoseCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
+  override protected def saveExerciseRest(compEx: RoseCompleteEx): Future[Boolean] = for {
     inputsSaved <- saveSeq[RoseInputType](compEx.inputType, it => db.run(roseInputs insertOrUpdate it))
     samplesSaved <- saveSeq[RoseSampleSolution](compEx.sampleSolution, rss => db.run(roseSamples insertOrUpdate rss))
   } yield inputsSaved && samplesSaved

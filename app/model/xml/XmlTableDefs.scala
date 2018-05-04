@@ -1,14 +1,14 @@
 package model.xml
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 case class XmlExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
                        grammarDescription: String, sampleGrammar: String, rootNode: String)
@@ -19,8 +19,8 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
   override def ex: XmlExercise = this
 
-  // TODO: remove ==> move to toolMain?
-  override def preview: Html = views.html.xml.xmlPreview(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.idExercises.xml.xmlPreview(this)
 
   override def hasPart(partType: XmlExPart): Boolean = partType match {
     case DocumentCreationXmlPart => true
@@ -49,7 +49,7 @@ case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solut
 
 // Table defs
 
-class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: _root_.scala.concurrent.ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlExercise, XmlSolution, XmlExPart] {
 
   import profile.api._
@@ -61,8 +61,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected type SolTableDef = XmlSolutionsTable
 
   override protected val solTable = TableQuery[XmlSolutionsTable]
-
-  override protected val exTable = TableQuery[XmlExercisesTable]
+  override protected val exTable  = TableQuery[XmlExercisesTable]
 
   // Column Types
 
@@ -71,11 +70,11 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Reading
 
-  override def completeExForEx(ex: XmlExercise)(implicit ec: ExecutionContext): Future[XmlExercise] = Future(ex)
+  override def completeExForEx(ex: XmlExercise): Future[XmlExercise] = Future(ex)
 
   // Saving
 
-  override def saveExerciseRest(compEx: XmlExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
+  override def saveExerciseRest(compEx: XmlExercise): Future[Boolean] = Future(true)
 
   // Actual table defs
 
@@ -103,6 +102,5 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     override def * = (username, exerciseId, part, solution) <> (XmlSolution.tupled, XmlSolution.unapply)
 
   }
-
 
 }

@@ -1,6 +1,6 @@
 @(user: model.User)
 
-@main("HTML-Test", Some(user)) {
+@main("Startseite", Some(user)) {
     <div class="container">
 
         <section>
@@ -21,37 +21,20 @@
         <h2>Verfügbare Aufgabentypen</h2>
 
         @for(tools <- model.toolMains.ToolList.AllToolMains.grouped(3)) {
-            <div class="row">
-            @for(tool <- tools) {
-                <div class="col-md-4">
-                @tool match {
-                    case a: model.toolMains.IdExerciseToolMain => {
-                        <a class="btn btn-default btn-block" href="@routes.ExerciseController.index(a.urlPart)">
-                            <span>@a.toolname @a.toolState.badge</span>
+            <div class="form-group">
+                <div class="row">
+                @for(tool <- tools) {
+                    <div class="col-md-4">
+                        <a class="btn btn-default btn-block" href="@tool.indexCall">
+                            <span>@tool.toolname @tool.toolState.badge</span>
                         </a>
-                    }
-                    case b: model.toolMains.CollectionToolMain => {
-                        <a class="btn btn-default btn-block" href="@routes.CollectionController.index(b.urlPart)">
-                            <span>@b.toolname @b.toolState.badge</span>
-                        </a>
-                    }
-                    case c: model.toolMains.FileExerciseToolMain => {
-                        <a class="btn btn-default btn-block" href="@routes.FileExerciseController.index(c.urlPart)">
-                            <span>@c.toolname @c.toolState.badge</span>
-                        </a>
-                    }
-                    case d: model.toolMains.RandomExerciseToolMain => {
-                        <a class="btn btn-default btn-block" href="@routes.RandomExerciseController.index(d.urlPart)">
-                            <span>@d.toolname @d.toolState.badge</span>
-                        </a>
-                    }
+                    </div>
                 }
                 </div>
-            }
             </div>
-            @* space between rows... *@
-                &nbsp;
         }
+
+        <hr>
 
     </div>
 }

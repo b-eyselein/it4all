@@ -1,14 +1,16 @@
 package model.sql.matcher
 
-import model.Enums.MatchType
-import model.core.matching.{Match, Matcher, MatchingResult}
+import model.core.matching._
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
+
 case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
 
-  override def analyze(a1: BinaryExpression, a2: BinaryExpression): MatchType = {
+  override type MatchAnalysisResult = GenericAnalysisResult
+
+  override def analyze(a1: BinaryExpression, a2: BinaryExpression): GenericAnalysisResult = {
 
     val (a1Left, a1Right) = (a1.getLeftExpression.toString, a1.getRightExpression.toString)
     val (a2Left, a2Right) = (a2.getLeftExpression.toString, a2.getRightExpression.toString)
@@ -16,8 +18,10 @@ case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: O
     val parallelEqual = (a1Left == a2Left) && (a1Right == a2Right)
     val crossedEqual = (a1Left == a2Right) && (a1Right == a2Left)
 
-    if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
+    val matchType = if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
     else MatchType.UNSUCCESSFUL_MATCH
+
+    GenericAnalysisResult(matchType)
   }
 
   override protected def descArgForJson(arg: BinaryExpression): JsValue = JsString(arg.toString)
@@ -26,7 +30,7 @@ case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: O
 
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
-  extends Matcher[BinaryExpression, BinaryExpressionMatch, BinaryExpressionMatchingResult] {
+  extends Matcher[BinaryExpression, BinaryExpressionMatch] {
 
   private def getColToCompare(expression: BinaryExpression): Column = (expression.getLeftExpression, expression.getRightExpression) match {
     case (left: Column, right: Column) => if (left.toString < right.toString) left else right
@@ -51,10 +55,4 @@ class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases:
 
   override protected def matchInstantiation: (Option[BinaryExpression], Option[BinaryExpression]) => BinaryExpressionMatch = BinaryExpressionMatch
 
-
-  override protected def resultInstantiation: Seq[BinaryExpressionMatch] => BinaryExpressionMatchingResult = BinaryExpressionMatchingResult
-
 }
-
-
-case class BinaryExpressionMatchingResult(allMatches: Seq[BinaryExpressionMatch]) extends MatchingResult[BinaryExpression, BinaryExpressionMatch]

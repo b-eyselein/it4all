@@ -1,12 +1,11 @@
 package model.questions;
 
-import model.Enums.Selectable;
 import scala.Option;
 import scala.Some;
 
 public class QuestionEnums {
 
-    public enum Correctness implements Selectable<Correctness> {
+    public enum Correctness {
 
         CORRECT("Korrekt", "glyphicon glyphicon-ok-sign", "success"),
         OPTIONAL("Optional", "glyphicon glyphicon-question-sign", "warning"),

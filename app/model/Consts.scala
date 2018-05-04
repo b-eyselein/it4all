@@ -2,12 +2,14 @@ package model
 
 trait Consts {
 
-  val adminFolder    = "admin"
-  val answersName    = "answers"
-  val attributesName = "attributes"
-  val authorName     = "author"
-  val awaitedName    = "awaited"
+  val adminFolder        = "admin"
+  val analysisResultName = "analysisResult"
+  val answersName        = "answers"
+  val attributesName     = "attributes"
+  val authorName         = "author"
+  val awaitedName        = "awaited"
 
+  val contentName     = "content"
   val correct         = "correct"
   val correctnessName = "correctness"
 
@@ -34,6 +36,9 @@ trait Consts {
   val pointsName = "points"
   val pwName     = "passwort"
   val pw2Name    = "passwort_wieder"
+
+  val questionsName    = "questions"
+  val questionTypeName = "questionType"
 
   val roleName = "role"
 

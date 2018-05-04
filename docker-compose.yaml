@@ -16,7 +16,7 @@ services:
         - ./data/web/solutions/:/var/www/html/
 
     dbit4all:
-        image:        mysql
+        image:        mysql:5.7
         restart:      always
         ports:
         - 3106:3306
@@ -27,7 +27,7 @@ services:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     
     sqlselect:
-        image:        mysql
+        image:        mysql:5.7
         restart:      always
         ports:
         - 3107:3306
@@ -38,7 +38,7 @@ services:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     
     sqlchange:
-        image:        mysql
+        image:        mysql:5.7
         restart:      always
         ports:
         - 3108:3306
@@ -49,7 +49,7 @@ services:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
 
     sqlcreate:
-        image:        mysql
+        image:        mysql:5.7
         restart:      always
         ports:
         - 3109:3306

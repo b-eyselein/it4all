@@ -1,0 +1,54 @@
+@(user: model.User, statistics: Html, toolMainObject: model.toolMains.CollectionToolMain)
+
+@title = @{
+    "Administrator " + toolMainObject.toolname
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
+        </div>
+
+        <section id="statistics">
+            <h2>Statistiken</h2>
+            <ul>@statistics</ul>
+        </section>
+
+        <hr>
+
+        <section id="administration">
+            <h2>Verwaltung der @toolMainObject.pluralName</h2>
+
+            <div class="form-group">
+                <a class="btn btn-default btn-block" href="@routes.CollectionController.adminCollectionsList(toolMainObject.urlPart)">
+                    Übersicht über alle @toolMainObject.collectionPluralName</a>
+            </div>
+
+            <div class="form-group">
+                <a class="btn btn-default btn-block" href="@routes.CollectionController.adminNewCollectionForm(toolMainObject.urlPart)">
+                    Neues @toolMainObject.collectionSingularName erstellen</a>
+            </div>
+
+            <div class="form-group">
+                <a class="btn btn-default btn-block" href="@routes.MainExerciseController.readLearningPaths(toolMainObject.urlPart)">
+                    Lernpfade einlesen</a>
+            </div>
+
+            <div class="form-group">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-default" href="@routes.CollectionController.adminExportCollections(toolMainObject.urlPart)">
+                        @toolMainObject.collectionPluralName als YAML exportieren</a>
+                    <a class="btn btn-default" href="@routes.CollectionController.adminImportToRead(toolMainObject.urlPart)">
+                        @toolMainObject.collectionPluralName aus YAML importieren</a>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
+            Zu den @toolMainObject.collectionPluralName</a>
+
+    </div>
+}

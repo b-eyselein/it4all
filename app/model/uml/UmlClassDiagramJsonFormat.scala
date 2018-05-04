@@ -1,38 +1,32 @@
 package model.uml
 
 import model.uml.UmlConsts._
-import model.uml.UmlEnums.{UmlAssociationType, UmlClassType, UmlMultiplicity}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 //noinspection ConvertibleToMethodValue
 object UmlClassDiagramJsonFormat {
 
-  implicit val enumWrites: Writes[Enum[_]] = (e: Enum[_]) => JsString(e.name)
-
-  def enumReads[T <: Enum[T]](mkEnum: String => Option[T]): Reads[T] = {
-    case JsString(s) => mkEnum(s) match {
-      case Some(enumVal) => JsSuccess(enumVal)
-      case None          => JsError("Not a valid enum value: " + s)
+  private val umlClassTypeReads: Reads[UmlClassType] = {
+    case JsString(str) => str match {
+      case "uml.Abstract"                  => JsSuccess(UmlClassType.ABSTRACT)
+      case "uml.Interface"                 => JsSuccess(UmlClassType.INTERFACE)
+      case "uml.Class" | "customUml.Class" => JsSuccess(UmlClassType.CLASS)
+      case _                               => UmlClassType.withNameInsensitiveOption(str) match {
+        case Some(ct) => JsSuccess(ct)
+        case None     => JsError("No such value: >>" + str + "<<")
+      }
     }
-    case v           => JsError("Can't convert to enum: " + v)
+    case _             => JsError("Needs to be a string!")
   }
 
-  private implicit val umlClassTypeReads: Reads[UmlClassType] = enumReads(str => {
-    if (str startsWith "uml.") {
-      str match {
-        case "uml.Abstract"  => Some(UmlClassType.ABSTRACT)
-        case "uml.Class"     => Some(UmlClassType.CLASS)
-        case "uml.Interface" => Some(UmlClassType.INTERFACE)
-        case _               => None
-      }
-    } else UmlClassType.byString(str)
-  })
-
-  private implicit val umlMultiplicityReads: Reads[UmlMultiplicity] = enumReads(UmlMultiplicity.byString)
-
-  private implicit val umlAssociationTypeReads: Reads[UmlAssociationType] = enumReads(UmlAssociationType.byString)
-
+  private val umlVisibilityReads: Reads[UmlVisibility] = {
+    case JsString(str) => UmlVisibility.withNameInsensitiveOption(str) match {
+      case Some(vis) => JsSuccess(vis)
+      case None      => JsError("No such value " + str)
+    }
+    case _             => JsError("Needs to be a string!")
+  }
 
   private implicit val umlImplementationReads: Reads[UmlImplementation] = (
     (__ \ subClassName).read[String] and
@@ -75,30 +69,56 @@ object UmlClassDiagramJsonFormat {
     ) (unlift(Position.unapply))
 
 
-  private implicit val umlClassMemberReads: Reads[UmlClassMember] = (
-    (__ \ "name").read[String] and
-      (__ \ "type").read[String]
-    ) (UmlClassMember.apply(_, _))
+  private implicit val umlAttributeReads: Reads[UmlAttribute] = (
+    (__ \ "visibility").read[UmlVisibility](umlVisibilityReads) and
+      (__ \ "name").read[String] and
+      (__ \ "type").read[String] and
+      (__ \ "isStatic").readWithDefault[Boolean](false) and
+      (__ \ "isDerived").readWithDefault[Boolean](false) and
+      (__ \ "isAbstract").readWithDefault[Boolean](false)
+    ) (UmlAttribute.apply(_, _, _, _, _, _))
 
-  private implicit val umlClassMemberWrites: Writes[UmlClassMember] = (
-    (__ \ "name").write[String] and
-      (__ \ "type").write[String]
-    ) (unlift(UmlClassMember.unapply))
+  private implicit val umlAttributeWrites: Writes[UmlAttribute] = (
+    (__ \ "visibility").write[UmlVisibility] and
+      (__ \ "name").write[String] and
+      (__ \ "type").write[String] and
+      (__ \ "isStatic").write[Boolean] and
+      (__ \ "isDerived").write[Boolean] and
+      (__ \ "isAbstract").write[Boolean]
+    ) (unlift(UmlAttribute.unapply))
+
+  private implicit val umlMethodReads: Reads[UmlMethod] = (
+    (__ \ "visibility").read[UmlVisibility](umlVisibilityReads) and
+      (__ \ "name").read[String] and
+      (__ \ "type").read[String] and
+      (__ \ "parameters").read[String] and
+      (__ \ "isStatic").readWithDefault[Boolean](false) and
+      (__ \ "isAbstract").readWithDefault[Boolean](false)
+    ) (UmlMethod.apply(_, _, _, _, _, _))
+
+  private implicit val umlMethodWrites: Writes[UmlMethod] = (
+    (__ \ "visibility").write[UmlVisibility] and
+      (__ \ "name").write[String] and
+      (__ \ "type").write[String] and
+      (__ \ "parameters").write[String] and
+      (__ \ "isStatic").write[Boolean] and
+      (__ \ "isAbstract").write[Boolean]
+    ) (unlift(UmlMethod.unapply))
 
 
   private implicit val umlClassReads: Reads[UmlClass] = (
-    (__ \ classTypeName).readWithDefault[UmlClassType](UmlClassType.CLASS) and
+    (__ \ classTypeName).readWithDefault[UmlClassType](UmlClassType.CLASS)(umlClassTypeReads) and
       (__ \ nameName).read[String] and
-      (__ \ attributesName).readWithDefault[Seq[UmlClassMember]](Seq.empty) and
-      (__ \ methodsName).readWithDefault[Seq[UmlClassMember]](Seq.empty) and
+      (__ \ attributesName).readWithDefault[Seq[UmlAttribute]](Seq.empty) and
+      (__ \ methodsName).readWithDefault[Seq[UmlMethod]](Seq.empty) and
       (__ \ positionName).readNullable[Position]
     ) (UmlClass.apply(_, _, _, _, _))
 
   private implicit val umlClassWrites: Writes[UmlClass] = (
     (__ \ classTypeName).write[UmlClassType] and
       (__ \ nameName).write[String] and
-      (__ \ attributesName).write[Seq[UmlClassMember]] and
-      (__ \ methodsName).write[Seq[UmlClassMember]] and
+      (__ \ attributesName).write[Seq[UmlAttribute]] and
+      (__ \ methodsName).write[Seq[UmlMethod]] and
       (__ \ positionName).writeNullable[Position]
     ) (unlift(UmlClass.unapply))
 

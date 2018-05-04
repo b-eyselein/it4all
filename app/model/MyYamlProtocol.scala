@@ -1,6 +1,5 @@
 package model
 
-import model.Enums.ExerciseState
 import model.MyYamlProtocol._
 import model.core.CommonUtils
 import model.core.CoreConsts._
@@ -86,6 +85,11 @@ object MyYamlProtocol {
 
     def boolField(fieldName: String): Try[Boolean] = someField(fieldName) flatMap (_.asBool)
 
+    def optBoolField(fieldName: String): Try[Option[Boolean]] = yamlObject.fields get fieldName match {
+      case None        => Success(None)
+      case Some(field) => field.asBool map Some.apply
+    }
+
     def intField(fieldName: String): Try[Int] = someField(fieldName) flatMap (_.asInt)
 
     def stringField(fieldName: String): Try[String] = someField(fieldName) flatMap (_.asStr)
@@ -107,6 +111,8 @@ object MyYamlProtocol {
     }
 
     def enumField[T](fieldName: String, valueOf: String => T): Try[T] = stringField(fieldName) map valueOf
+
+    def enumFieldOption[T](fieldName: String, valueOf: String => Option[T]): Try[Option[T]] = stringField(fieldName) map valueOf
 
     def jsonField(fieldName: String): Try[JsValue] = someField(fieldName) map mapToJson
 
@@ -136,7 +142,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     YamlString(titleName) -> hasBaseValues.title,
     YamlString(authorName) -> hasBaseValues.author,
     YamlString(textName) -> hasBaseValues.text,
-    YamlString(stateName) -> hasBaseValues.state.name
+    YamlString(stateName) -> hasBaseValues.state.entryName
   )
 
   protected def readBaseValues(yamlObject: YamlObject): Try[(Int, String, String, String, ExerciseState)] = for {
@@ -144,7 +150,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     title <- yamlObject.stringField(titleName)
     author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(textName)
-    state = yamlObject.enumField(stateName, ExerciseState.valueOf) getOrElse ExerciseState.CREATED
+    state: ExerciseState <- yamlObject.enumField(stateName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
   } yield (id, title, author, text, state)
 
   abstract class HasBaseValuesYamlFormat[E <: HasBaseValues] extends MyYamlObjectFormat[E] {

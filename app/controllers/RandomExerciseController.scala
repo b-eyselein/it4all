@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
+import model.learningPath.LearningPath
 import model.toolMains.{RandomExerciseToolMain, ToolList}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{ControllerComponents, EssentialAction}
@@ -22,10 +23,6 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
 
   // Routes
 
-  def index(toolType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request => Ok(toolMain.index(user))
-  }
-
   def newExercise(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.exTypeFromUrl(exType) match {
@@ -40,6 +37,10 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
         case None         => BadRequest(s"There is no exercise part >>$exType<<")
         case Some(exPart) => Ok(toolMain.checkSolution(user, exPart, request))
       }
+  }
+
+  def boolPlayground: EssentialAction = withUser { user =>
+    implicit request => Ok(views.html.randomExercises.bool.boolDrawing(user))
   }
 
 }

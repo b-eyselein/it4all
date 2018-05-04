@@ -1,9 +1,9 @@
 package model.bool
 
-import model.Enums.SuccessType
+import model.core.result.SuccessType
 import model.bool.BoolAssignment.{disjunktiveNormalForm, konjunktiveNormalForm}
 import model.bool.BoolConsts.{LerVariable, SolVariable}
-import model.core.EvaluationResult
+import model.core.result.EvaluationResult
 import play.api.libs.json._
 
 import scala.language.postfixOps

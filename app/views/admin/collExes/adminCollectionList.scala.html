@@ -13,7 +13,7 @@
             <h1>Verfügbare @toolObject.collectionPluralName</h1>
         </div>
 
-        <a href="@routes.CollectionController.adminIndex(toolObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@routes.MainExerciseController.adminIndex(toolObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <hr>
@@ -41,8 +41,10 @@
                         <div class="input-group">
                             <select onchange="updateStateChangeButton(@collection.id)" name="state_@collection.id" class="form-control" id="state_@collection.id"
                             title="Status der Aufgabe" data-val="@collection.state">
-                            @for(exState <- model.Enums.ExerciseState.values) {
-                                <option @exState.isSelected(collection.state)>@exState </option>
+                            @for(exState <- model.ExerciseState.values) {
+                                <option @{
+                                    if(exState == collection.state) "selected" else ""
+                                }>@exState </option>
                             }
                             </select>
                             <span class="input-group-btn">

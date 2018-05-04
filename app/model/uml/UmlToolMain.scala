@@ -1,11 +1,11 @@
 package model.uml
 
 import javax.inject._
-import model.Enums.ToolState
 import model.core._
-import model.toolMains.IdExerciseToolMain
+import model.core.result.EvaluationResult
+import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, JsonFormat, User}
+import model.{Consts, ExerciseState, JsonFormat, User}
 import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json._
@@ -50,18 +50,24 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution
 
+  private implicit val umlSolutionJsonFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlSolutionJsonFormat
+
   override def readSolutionFromPostRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlSolution] = {
 
-    val onFormError: Form[StringSolutionFormHelper] => Option[UmlSolution] = _ => None
+    val onFormError: Form[StringSolutionFormHelper] => Option[UmlSolution] = { formWithErrors =>
+      formWithErrors.errors.foreach(error => Logger.error("Form Error: " + error))
+      None
+    }
 
     val onRead: StringSolutionFormHelper => Option[UmlSolution] = { sol =>
-      UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(sol.learnerSolution)) match {
+      Json.fromJson[UmlClassDiagram](Json.parse(sol.learnerSolution)) match {
         case JsSuccess(ucd, _) => Some(UmlSolution(user.username, id, part, ucd))
 
         case JsError(errors) =>
           errors.foreach(error => Logger.error("Json Error: " + error))
           None
       }
+
     }
 
     SolutionFormHelper.stringSolForm.bindFromRequest.fold(onFormError, onRead)
@@ -76,7 +82,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): UmlCompleteEx = UmlCompleteEx(
+  override def instantiateExercise(id: Int, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
     UmlExercise(id, title = "", author = "", text = "", state, solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), classSelText = "", diagDrawText = "", toIgnore = ""),
     mappings = Seq.empty
   )
@@ -88,25 +94,13 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Views
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution]): Html = part match {
-    case ClassSelection     => views.html.uml.classSelection(user, exercise.ex)
-    case DiagramDrawing     => views.html.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
-    case DiagramDrawingHelp => views.html.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
-    case MemberAllocation   => views.html.uml.memberAllocation(user, exercise)
+    case ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise.ex)
+    case DiagramDrawing     => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
+    case DiagramDrawingHelp => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
+    case MemberAllocation   => views.html.idExercises.uml.memberAllocation(user, exercise)
   }
 
-  //  private def renderResult(user: User, corResult: UmlCompleteResult): Html = {
-  //
-  //    val resultsRender: String = corResult.results map (_.describe) mkString "\n"
-  //
-  //    val nextPartLink: String = corResult.nextPart match {
-  //      case Some(np) => s"""<a href="${controllers.routes.ExerciseController.exercise(this.urlPart, corResult.exercise.ex.id, np.urlName).url}" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>"""
-  //      case None     => s"""<a href=${controllers.routes.ExerciseController.index(this.urlPart).url}" class="btn btn-primary btn-block">Zurück zur Startseite</a>"""
-  //    }
-  //
-  //    Html(resultsRender + "<hr>" + nextPartLink)
-  //  }
-
-  override def renderEditRest(exercise: UmlCompleteEx): Html = views.html.uml.editUmlExRest(exercise)
+  override def renderEditRest(exercise: UmlCompleteEx): Html = views.html.idExercises.uml.editUmlExRest(exercise)
 
   // Correction
 
@@ -118,10 +112,10 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override def onSubmitCorrectionResult(user: User, result: UmlCompleteResult): Html = result.part match {
     case ClassSelection   => result.classResult match {
       case Some(classRes) =>
-        views.html.uml.classSelectionResult(user, result.exercise.id, result.learnerSolution.classes, classRes, this)
+        views.html.idExercises.uml.classSelectionResult(user, result.exercise.id, result.learnerSolution.classes, classRes, this)
       case None           => Html("Es gab einen Fehler bei der Korrektur!")
     }
-    case MemberAllocation => views.html.uml.memberAllocationResult(user, result, this)
+    case MemberAllocation => views.html.idExercises.uml.memberAllocationResult(user, result, this)
     case _                => ??? // Correction is only live!
   }
 

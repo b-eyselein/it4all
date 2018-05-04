@@ -27,6 +27,10 @@ button:hover {
 
 }
 
+textarea {
+    resize: vertical;
+}
+
 /* Edit start end */
 
 .startlabelpos {
@@ -38,8 +42,8 @@ button:hover {
 
 .endlabelpos {
     position: absolute;
-    /*left: 0;*/
-    right: 60px;
+    right: 100px;
+    width: 150px;
     /*top: -35px;*/
 }
 

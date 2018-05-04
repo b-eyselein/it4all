@@ -2,12 +2,11 @@ package model.programming
 
 import controllers.ExerciseOptions
 import javax.inject._
-import model.Enums.{ExerciseState, ToolState}
 import model.programming.ProgConsts._
 import model.programming.ProgrammingToolMain._
-import model.toolMains.IdExerciseToolMain
+import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, User}
+import model.{Consts, ExerciseState, User}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
@@ -138,7 +137,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
         case Some(tds: TestDataSolution) => tds.commitedTestData
         case _                           => Seq.empty
       }
-      views.html.programming.testDataCreation(user, exercise, oldTestData, this)
+      views.html.idExercises.programming.testDataCreation(user, exercise, oldTestData, this)
 
     case Implementation =>
       val declaration: String = maybeOldSolution map (_.solution) getOrElse {
@@ -146,11 +145,11 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
         // FIXME: remove comments like '# {2}'!
       }
 
-      views.html.programming.progExercise(user, this, progExOptions, exercise, declaration, Implementation)
+      views.html.idExercises.programming.progExercise(user, this, progExOptions, exercise, declaration, Implementation)
 
     case ActivityDiagram =>
       // TODO: use old soluton!
-      views.html.umlActivity.activityDrawing.render(user, exercise, language = ProgLanguage.STANDARD_LANG, toolObject = this)
+      views.html.idExercises.umlActivity.activityDrawing.render(user, exercise, language = ProgLanguage.STANDARD_LANG, toolObject = this)
   }
 
   override def renderEditRest(exercise: ProgCompleteEx): Html = ???

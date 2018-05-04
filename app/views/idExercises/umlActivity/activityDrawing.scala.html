@@ -1,0 +1,318 @@
+@(user: model.User, completeEx: model.programming.ProgCompleteEx, language: model.programming.ProgLanguage, toolObject: model.toolMains.IdExerciseToolMain)
+
+@scriptsBefore = {
+    <!-- Important: Order of Scripts -->
+    <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
+    <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
+    <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
+}
+
+@scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+@core.helperTemplates.fullScreenScripts.render()
+
+    <script src="@routes.Assets.versioned("lib/autosize/dist/autosize.js")"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/programming/progCorrectionHandler.js")"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/uml/umlConsts.js")"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/umlADHtmlElement.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/umlActivityElements.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/umlActivityDrawing.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/languageBuilders.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/converter.js")"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/activityCorrection.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/umlActivityTests.js")"></script>
+
+    <script src="@routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></script>
+    <script src="@routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/activity.css")">
+
+        <!--suppress JSUnusedLocalSymbols -->
+    <script>
+            // Parameters for Task
+            const EXERCISE_PARAMETERS = {
+                methodDisplay: '@Html(language.activityDiagramDisplay(completeEx))',
+                methodDeclaration: '@Html(language.activityDiagramDeclaration(completeEx))',
+                methodName: '@completeEx.ex.functionname',
+                methodParameters: '@Html( model.programming.ProgLanguage.STANDARD_LANG.buildParams(completeEx))',
+                output: {
+                    outputType: '@completeEx.ex.outputType.typeName',
+                    output: 'solution',
+                    defaultValue: '@Html(completeEx.ex.outputType.defaultValue( model.programming.ProgLanguage.STANDARD_LANG))'
+                }
+            };
+    </script>
+
+}
+
+@main("Uml Aktivitätsdiagramm", Some(user), scripts, scriptsBefore) {
+
+    @core.helperTemplates.modal("Bedienungsanleitung", "instructionsModal", "lg") {
+        @views.html.idExercises.umlActivity.activityInstructions.render()
+    }
+
+    @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
+        <div id="classdiagram"></div>
+    }
+
+    @core.helperTemplates.modal("TODO", "definitionRest", "lg") {
+        <pre>@completeEx.ex.base</pre>
+    }
+
+    @completeEx.maybeClassDiagramPart match {
+        case None => {}
+        case Some(classDiagPart) => {
+            @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
+                <div id="classdiagram"></div>
+            }
+        }
+    }
+
+    <div class="container-fluid" id="fullsc">
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#instructionsModal">
+                        Bearbeitungshinweise
+                    </button>
+
+                    <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementActionInput">@*Einfacher *@Aktionen</a>
+                    @*<button onclick="setSelElement(this);" name="elementActionSelect">Auswahlaktionsknoten</button>*@
+                    @*<button onclick="setSelElement(this);" name="elementActionSelect">Deklarationsaktionsknoten</button>*@
+
+                    <div class="btn-group">
+                        <button class="btn btn-default" data-elemname="elementFor" onclick="setSelElement(this);" id="loopButton">
+                            <span id="loopSpan">Schleifen</span>
+                        </button>
+
+                        <button class="btn btn-default" data-toggle="dropdown"><span class="caret"></span></button>
+
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a onclick="setSelElement(this);" data-elemname="elementFor">For-Each (Ext)</a></li>
+                            <li><a onclick="setSelElement(this);" data-elemname="uml.ForLoop">For-Each (Text)</a></li>
+
+                            <li><a onclick="setSelElement(this);" data-elemname="elementWhileDo">While-Do (Ext)</a></li>
+                            <li><a onclick="setSelElement(this);" data-elemname="uml.WhileLoop">While-Do (Text)</a></li>
+
+                            <li><a onclick="setSelElement(this);" data-elemname="elementDoWhile">Do-While</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-default" id="branchButton">
+                            <span id="branchSpan">Verzweigungen</span>
+                        </button>
+
+                        <button class="btn btn-default" data-toggle="dropdown"><span class="caret"></span></button>
+
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a onclick="setSelElement(this);" data-elemname="elementIfThen">If-Then</a></li>
+                            <li><a onclick="setSelElement(this);" data-elemname="elementIf">If-Else</a></li>
+                        </ul>
+                    </div>
+
+                    <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementEdit">
+                        Bearbeitungsknoten</a>
+
+                    <button type="button" class="btn" onclick="toggleFullscreen()">
+                        Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
+                    </button>
+                </div>
+
+                <div id="leftblock">
+                    <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="well text-justify">@completeEx.text</div>
+
+                <div class="form-group">
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#definitionRest">
+                                Rest der Definition</button>
+                        </div>
+                        @completeEx.maybeClassDiagramPart match {
+                            case None => {}
+                            case Some(classDiagPart) => {
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#configSection">Ansicht &amp; Zeichenfläche</a>
+                            </h4>
+                        </div>
+
+                        <div id="configSection" class="panel-collapse collapse">
+                            <div class="panel-body">
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h4 class="text-center">Ansicht</h4>
+
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <button class="form-control" id="otop">&#8593;</button>
+                                                <button class="form-control" id="obot">&#8595;</button>
+                                                <span class="input-group-addon">
+                                                    <button class="btn btn-default" id="viewreset">Reset</button>
+                                                </span>
+                                                <button class="form-control" id="oleft">&#8592;</button>
+                                                <button class="form-control" id="oright">&#8594;</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <h4 class="text-center">Zeichenfläche</h4>
+
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <button class="form-control" id="paperplus">+</button>
+                                                <span class="input-group-addon">Größe</span>
+                                                <button class="form-control" id="paperminus">-</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <button class="form-control" id="zoomplus">+</button>
+                                                <span class="input-group-addon">Zoom</span>
+                                                <button class="form-control" id="zoomminus">-</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
+                        @for(lang <- model.programming.ProgLanguage.values) {
+                            <option value="@lang.name" @{
+                                if(lang == model.programming.ProgLanguage.STANDARD_LANG) "selected" else ""
+                            }>@lang.languageName</option>
+                        }
+                        </select>
+                        <span class="input-group-addon">-Code</span>
+                        <button id="mainGeneration" class="form-control btn-primary" onclick="mainGeneration()">generieren</button>
+                        <span class="input-group-addon"></span>
+                        <button id="newGenerationButton" class="form-control btn-info" onclick="newGenerate()">generate!</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button id="testButton" title="Generieren Sie zuerst den Code!" disabled class="btn btn-default btn-block">
+                                Aufgabe verifizieren</button>
+                        </div>
+                        <a class="btn btn-default" href="@routes.MainExerciseController.index(toolObject.urlPart)">
+                            Bearbeitung beenden</a>
+                    </div>
+                </div>
+
+
+                <div class="panel panel-default" id="actionInputEditSection" hidden>
+                    <div class="panel-heading">
+                        <span class="text-center">Aktionsknoten bearbeiten</span>
+                    </div>
+
+                    <div class="panel-body">
+                        <textarea rows="5" class="form-control" id="actionInputContent" title="todo..."></textarea>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="btn-group btn-group-justified">
+                            <div class="btn-group">
+                                <button type="button" class="form-control" onclick="resetActionInput()">Zurücksetzen</button>
+                            </div>
+                            <div class="btn-group">
+                                <button id="actionInputButton" class="form-control btn-primary" onclick="updateActionInput(this)" data-cellId="--">
+                                    Änderungen annehmen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="panel panel-default" id="forLoopEditSection" hidden>
+                    <div class="panel-heading text-center">Schleife bearbeiten</div>
+
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">for</span>
+                                <input class="form-control" id="forLoopVariableInput" placeholder="Name der Iterationsvariable">
+                                <span class="input-group-addon">in</span>
+                                <input class="form-control" id="forLoopCollectionInput" placeholder="Element der Iteration">
+                                <span class="input-group-addon">do</span>
+                            </div>
+                        </div>
+
+                        <input hidden id="loopCellId" value="" title="hidden">
+                        <textarea class="form-control" style="resize: vertical" rows="5" id="forLoopContent" placeholder="Inhalt der Schleife"></textarea>
+
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="btn-group btn-group-justified">
+                            <div class="btn-group">
+                                <button type="button" class="form-control" onclick="resetForLoop()">Zurücksetzen</button>
+                            </div>
+                            <div class="btn-group">
+                                <button id="forLoopButton" class="form-control btn-primary" onclick="updateForLoop(this)" data-cellId="--">
+                                    Änderungen annehmen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="generationAlerts"></div>
+
+                <section id="generatedCodeSection" hidden>
+                    <h2>Generierter Code</h2>
+
+                    <pre id="preCode"></pre>
+
+                    <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
+                    <input hidden type="number" id="exerciseId" value="@completeEx.id" title="hidden">
+                    <input hidden id="exercisePart" value="@model.programming.ActivityDiagram.urlName" title="hidden">
+
+                    <hr>
+                </section>
+
+                <section id="correctionSection" hidden>
+                    <h2>Korrektur</h2>
+                    <div id="correction"></div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+}

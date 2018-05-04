@@ -35,6 +35,48 @@ CREATE TABLE IF NOT EXISTS users_in_courses (
     ON DELETE CASCADE
 );
 
+# Feedback
+
+CREATE TABLE IF NOT EXISTS feedback (
+  username VARCHAR(30),
+  tool_url VARCHAR(30),
+  sense VARCHAR(10),
+  used VARCHAR(10),
+  usability VARCHAR(10),
+  feedback VARCHAR(10),
+  fairness VARCHAR(10),
+  comment TEXT,
+
+  PRIMARY KEY (username, tool_url),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+# Learning paths
+
+CREATE TABLE IF NOT EXISTS learning_paths (
+  tool_url VARCHAR(10),
+  id    INT,
+  title VARCHAR(50),
+
+  PRIMARY KEY(tool_url, id)
+);
+
+CREATE TABLE IF NOT EXISTS learning_path_sections (
+  id           INT,
+  tool_url VARCHAR(10),
+  path_id      INT,
+  section_type VARCHAR(30),
+  title        VARCHAR(60),
+  content      TEXT,
+
+  PRIMARY KEY (id, tool_url, path_id),
+  FOREIGN KEY (tool_url, path_id) REFERENCES learning_paths (tool_url, id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Blanks
 
 CREATE TABLE IF NOT EXISTS blanks_exercises (
@@ -604,6 +646,10 @@ DROP TABLE IF EXISTS blanks_samples;
 DROP TABLE IF EXISTS blanks_exercises;
 
 # General
+
+DROP TABLE IF EXISTS learning_path_sections;
+
+DROP TABLE IF EXISTS learning_paths;
 
 DROP TABLE IF EXISTS users_in_courses;
 

@@ -3,10 +3,10 @@ package model.mindmap
 import java.nio.file.Path
 
 import javax.inject._
-import model.core._
+import model.core.result.EvaluationResult
 import model.toolMains.FileExerciseToolMain
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, User}
+import model.{Consts, ExerciseState, User}
 import play.api.data.Form
 import play.twirl.api.Html
 
@@ -51,14 +51,15 @@ class MindmapToolMain @Inject()(override val tables: MindmapTableDefs)(implicit 
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): MindmapExercise =
+  override def instantiateExercise(id: Int, state: ExerciseState): MindmapExercise =
     MindmapExercise(id, title = "", author = "", text = "", state)
 
   // Views
 
   override def renderExercise(user: User, exercise: MindmapExercise, part: String): Html = ???
 
-  override def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html = views.html.mindmap.mindmapcorrect.render(user)
+  override def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html =
+    views.html.fileExercises.mindmap.mindmapcorrect.render(user)
 
   override def renderEditRest(exercise: MindmapExercise): Html = ???
 

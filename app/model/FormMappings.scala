@@ -1,6 +1,5 @@
 package model
 
-import model.Enums.Role
 import model.core.CoreConsts._
 import play.api.data.Forms._
 import play.api.data.format.Formatter
@@ -20,13 +19,13 @@ object FormMappings {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Role] = data.get(key) match {
       case None        => Left(Seq(FormError(key, s"No value for $key was provided!")))
-      case Some(value) => Role.byString(value) match {
+      case Some(value) => Role.withNameInsensitiveOption(value) match {
         case None       => Left(Seq(FormError(key, s"The value $value is no legal value for a role!")))
         case Some(role) => Right(role)
       }
     }
 
-    override def unbind(key: String, value: Role): Map[String, String] = Map(key -> value.name)
+    override def unbind(key: String, value: Role): Map[String, String] = Map(key -> value.entryName)
 
   }
 

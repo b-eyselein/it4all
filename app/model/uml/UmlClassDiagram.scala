@@ -1,15 +1,90 @@
 package model.uml
 
-import model.uml.UmlEnums._
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
+
+import scala.collection.immutable.IndexedSeq
+
+
+sealed abstract class UmlVisibility(val representant: String) extends EnumEntry
+
+object UmlVisibility extends Enum[UmlVisibility] with PlayJsonEnum[UmlVisibility] {
+
+  override val values: IndexedSeq[UmlVisibility] = findValues
+
+  case object PUBLIC extends UmlVisibility("+")
+
+  case object PACKAGE extends UmlVisibility("~")
+
+  case object PROTECTED extends UmlVisibility("#")
+
+  case object PRIVATE extends UmlVisibility("-")
+
+}
+
+
+sealed abstract class UmlClassType(val german: String) extends EnumEntry
+
+object UmlClassType extends Enum[UmlClassType] with PlayJsonEnum[UmlClassType] {
+
+  override val values: IndexedSeq[UmlClassType] = findValues
+
+  case object CLASS extends UmlClassType("Klasse")
+
+  case object INTERFACE extends UmlClassType("Interface")
+
+  case object ABSTRACT extends UmlClassType("Abstrakte Klasse")
+
+}
+
+
+sealed abstract class UmlMultiplicity(val representant: String) extends EnumEntry
+
+object UmlMultiplicity extends Enum[UmlMultiplicity] with PlayJsonEnum[UmlMultiplicity] {
+
+  override val values: IndexedSeq[UmlMultiplicity] = findValues
+
+  case object SINGLE extends UmlMultiplicity("1")
+
+  case object UNBOUND extends UmlMultiplicity("*")
+
+}
+
+
+sealed abstract class UmlAssociationType(val german: String) extends EnumEntry
+
+object UmlAssociationType extends Enum[UmlAssociationType] with PlayJsonEnum[UmlAssociationType] {
+
+  override val values: IndexedSeq[UmlAssociationType] = findValues
+
+  case object ASSOCIATION extends UmlAssociationType("Assoziation")
+
+  case object AGGREGATION extends UmlAssociationType("Aggregation")
+
+  case object COMPOSITION extends UmlAssociationType("Komposition")
+
+}
 
 
 case class Position(xCoord: Int, yCoord: Int)
 
 
-case class UmlClassMember(memberName: String, memberType: String)
+sealed trait UmlClassMember {
+
+  val visibility: UmlVisibility
+  val memberName: String
+  val memberType: String
+
+  val isStatic  : Boolean
+  val isAbstract: Boolean
+
+}
+
+case class UmlAttribute(visibility: UmlVisibility, memberName: String, memberType: String, isStatic: Boolean, isDerived: Boolean, isAbstract: Boolean) extends UmlClassMember
+
+case class UmlMethod(visibility: UmlVisibility, memberName: String, memberType: String, parameters: String, isStatic: Boolean, isAbstract: Boolean) extends UmlClassMember
 
 
-case class UmlClass(classType: UmlClassType, className: String, attributes: Seq[UmlClassMember], methods: Seq[UmlClassMember], position: Option[Position]) {
+case class UmlClass(classType: UmlClassType, className: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod], position: Option[Position]) {
 
   def allMembers: Seq[UmlClassMember] = attributes ++ methods
 

@@ -1,8 +1,7 @@
 package model.programming
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
-import model._
+import model.{ExerciseState, _}
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
@@ -22,7 +21,7 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSo
   extends PartsCompleteEx[ProgExercise, ProgrammingExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
-    views.html.programming.progPreview(this)
+    views.html.idExercises.programming.progPreview(this)
 
   val inputCount: Int = inputTypes.size
 
@@ -74,7 +73,7 @@ case class CommitedTestData(id: Int, exerciseId: Int, inputAsJson: JsValue, outp
     exerciseIdName -> exerciseId,
     usernameName -> username,
     outputName -> output,
-    stateName -> state.name,
+    stateName -> state.entryName,
     inputsName -> inputAsJson
   )
 
@@ -93,7 +92,7 @@ object TestDataSolution extends JsonFormat {
       output <- jsObject.stringField(outputName)
       inputAsJson <- jsObject.value get "TODO!"
       username <- jsObject.stringField(usernameName)
-      state <- jsObject.enumField(stateName, ExerciseState.valueOf)
+      state <- jsObject.enumField(stateName, ExerciseState.withNameInsensitive)
     } yield CommitedTestData(id, exerciseId, inputAsJson, output, username, state)
 
   } getOrElse Seq.empty
@@ -151,7 +150,7 @@ case class ActivityDiagramSolution(username: String, exerciseId: Int, language: 
 
 // Table Definitions
 
-class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, ProgrammingExPart] {
 
   import profile.api._
@@ -164,30 +163,25 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Table Queries
 
-  override protected val exTable = TableQuery[ProgExercisesTable]
-
+  override protected val exTable  = TableQuery[ProgExercisesTable]
   override protected val solTable = TableQuery[ProgSolutionTable]
 
-  val inputTypesQuery = TableQuery[InputTypesTable]
-
-  val sampleSolutions = TableQuery[ProgSampleSolutionsTable]
-
-  val sampleTestData = TableQuery[SampleTestDataTable]
-
-  val commitedTestData = TableQuery[CommitedTestDataTable]
-
-  val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
+  private val inputTypesQuery   = TableQuery[InputTypesTable]
+  private val sampleSolutions   = TableQuery[ProgSampleSolutionsTable]
+  private val sampleTestData    = TableQuery[SampleTestDataTable]
+  private val commitedTestData  = TableQuery[CommitedTestDataTable]
+  private val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
 
   // Queries
 
-  override def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = for {
+  override def completeExForEx(ex: ProgExercise): Future[ProgCompleteEx] = for {
     samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result)
     sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result)
     maybeClassDiagramPart <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption)
   } yield ProgCompleteEx(ex, inputTypes, samples, sampleTestData, maybeClassDiagramPart)
 
-  override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
+  override def saveExerciseRest(compEx: ProgCompleteEx): Future[Boolean] = for {
     samplesSaved <- saveSeq[ProgSampleSolution](compEx.sampleSolutions, i => db.run(sampleSolutions += i))
     inputTypesSaved <- saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i))
     sampleTestDataSaved <- saveSeq[SampleTestData](compEx.sampleTestData, i => db.run(sampleTestData += i))

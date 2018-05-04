@@ -1,0 +1,54 @@
+@(user: model.User, exerciseId: Int, createdClasses: Seq[model.uml.UmlClass], classMatchingResult: model.core.matching.MatchingResult[model.uml.UmlClass, model.uml.matcher.UmlClassMatch],
+        toolMain: model.uml.UmlToolMain)
+
+@title = @{
+    "Korrektur: Auswahl der Klassen"
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-4 text-right">
+                <h2>Gewählt</h2>
+            </div>
+            <div class="col-sm-8">
+                <h2>Ergebnis</h2>
+            </div>
+        </div>
+
+        @for(classMatchingRes <- classMatchingResult.allMatches) {
+            <div class="row">
+                <div class="col-sm-4 text-right">@classMatchingRes.userArg.map(_.className).getOrElse("")</div>
+                <div class="col-sm-8">
+                    <p class="text text-@classMatchingRes.matchType.bsClass">
+                    @(classMatchingRes.userArg, classMatchingRes.sampleArg) match {
+                        case (Some(userArg), Some(sampleArg)) => {
+                            <span class="@classMatchingRes.matchType.glyphicon"></span>
+                            Die Modellierung der Klasse <code>@userArg.className</code> ist korrekt.
+                        }
+                        case (None, Some(sampleArg)) => {
+                            <span class="@classMatchingRes.matchType.glyphicon"></span>
+                            Die Modellierung der Klasse <code>@sampleArg.className</code> fehlt.
+                        }
+                        case (Some(userArg), None) => {
+                            <span class="@classMatchingRes.matchType.glyphicon"></span>
+                            Die Modellierung der Klasse <code>@userArg.className</code> ist falsch.
+                        }
+                    }
+                    </p>
+                </div>
+            </div>
+        }
+
+        <hr>
+
+        <a class="btn btn-block btn-primary" href="@routes.ExerciseController.exercise(toolMain.urlPart, exerciseId, model.uml.DiagramDrawingHelp.urlName)">
+            Zum nächsten Aufgabenteil</a>
+
+    </div>
+}

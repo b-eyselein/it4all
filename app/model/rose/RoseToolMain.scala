@@ -1,11 +1,11 @@
 package model.rose
 
+
 import javax.inject.{Inject, Singleton}
-import model.Enums.ToolState
 import model.programming.ProgLanguage
-import model.toolMains.IdExerciseToolMain
+import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, JsonFormat, User}
+import model.{Consts, ExerciseState, JsonFormat, User}
 import play.api.data.Form
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc._
@@ -56,7 +56,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): RoseCompleteEx = RoseCompleteEx(
+  override def instantiateExercise(id: Int, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
     RoseExercise(id, title = "", author = "", text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
     inputType = Seq.empty, sampleSolution = null
   )
@@ -68,7 +68,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   // Views
 
   override def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart, maybeOldSolution: Option[RoseSolution]): Html =
-    views.html.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true))
+    views.html.idExercises.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true))
 
   override def renderEditRest(exercise: RoseCompleteEx): Html = ???
 

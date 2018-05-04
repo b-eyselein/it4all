@@ -13,7 +13,7 @@
             <h1>Verfügbare Aufgaben</h1>
         </div>
 
-        <a href="@routes.FileExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
@@ -39,8 +39,10 @@
                         <div class="input-group">
                             <select title="Status ändern" onchange="updateStateChangeButton(@exercise.id)" name="state_@exercise.id"
                             class="form-control" id="state_@exercise.id" data-val="@exercise.state">
-                            @for(exState <- model.Enums.ExerciseState.values) {
-                                <option @exState.isSelected(exercise.state)>@exState </option>
+                            @for(exState <- model.ExerciseState.values) {
+                                <option @{
+                                    if(exState == exercise.state) "selected" else ""
+                                }>@exState </option>
                             }
                             </select>
                             <span class="input-group-btn">

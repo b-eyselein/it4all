@@ -2,8 +2,8 @@ package controllers
 
 import java.nio.file.Files
 
-import model.Enums.ExerciseState
-import model.User
+import model.ExerciseState
+import model.core.FileUtils
 import model.toolMains.ASingleExerciseToolMain
 import play.api.Logger
 import play.api.data.Form
@@ -11,26 +11,20 @@ import play.api.data.Forms.{of, single}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] {
+  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with FileUtils {
 
   override type ToolMainType <: ASingleExerciseToolMain
 
   // Helpers
 
-  private val stateForm: Form[ExerciseState] = Form(single("state" -> of[ExerciseState]))
+  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   // Admin
-
-  def adminIndex(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.statistics map (stats => Ok(adminIndexView(admin, stats, toolMain)))
-  }
-
 
   def adminExportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request => toolMain.yamlString map (yaml => Ok(views.html.admin.export(admin, yaml, toolMain)))
@@ -60,7 +54,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
 
       def onFormRead(toolMain: ASingleExerciseToolMain): ExerciseState => Future[Result] = { newState =>
         toolMain.updateExerciseState(id, newState) map {
-          case true  => Ok(Json.obj("id" -> id, "newState" -> newState.name))
+          case true  => Ok(Json.obj("id" -> id, "newState" -> newState.entryName))
           case false => BadRequest(Json.obj("message" -> "Could not update exercise!"))
         }
       }
@@ -121,13 +115,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
     implicit request => ???
   }
 
-  // Admin views
-
-  protected def adminIndexView(admin: User, stats: Html, toolMain: ToolMainType): Html
-
-  // User
-
-  def index(toolType: String): EssentialAction = exerciseList(toolType, page = 1)
+  // Views
 
   def exerciseList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>

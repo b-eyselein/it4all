@@ -59,91 +59,30 @@ classDiagramPart:
   className: Krankenhaus
   classDiagram:
     classes:
-    - classType: ABSTRACT
-      name: Person
-      attributes:
-      - {name: "id", type: "String"}
-      - {name: "name", type: "String"}
-
-    - classType: CLASS
-      name: Doktor
-      methods:
-      - {name: "verschreiben(Patient)", type: "void"}
-
-    - classType: CLASS
-      name: Rezept
-      attributes:
-      - {name: "id", type: "String"}
-
     - classType: CLASS
       name: Patient
+      attributes:
+      - {visibility: public, name: id, type: String}
+      - {visibility: public, name: name, type: String}
       methods:
-      - {name: "entlassen(Station)", type: "void"}
-      - {name: "aufnehmen(Station)", type: "void"}
-
-    - classType: CLASS
-      name: Krankenschwester
+      - {visibility: public, name: entlassen, parameters: Station, type: void}
+      - {visibility: public, name: aufnehmen, parameters: Station, type: void}
 
     - classType: CLASS
       name: Station
       attributes:
-      - {name: "nummer", type: "int"}
-
-    - classType: CLASS
-      name: Medikament
-      attributes:
-      - {name: "id", type: "String"}
-      - {name: "name", type: "String"}
+      - {visibility: public, name: nummer, type: int}
 
     - classType: CLASS
       name: Krankenhaus
 
-    implementations:
-    - {subClass: Patient, superClass: Person}
-    - {subClass: Doktor, superClass: Person}
-    - {subClass: Krankenschwester, superClass: Person}
+    implementations: []
 
     associations:
     - assocType: ASSOCIATION
-      firstEnd: Doktor
-      firstMult: SINGLE
-      secondEnd: Rezept
-      secondMult: UNBOUND
-
-    - assocType: ASSOCIATION
-      firstEnd: Doktor
-      firstMult: SINGLE
-      secondEnd: Patient
-      secondMult: UNBOUND
-
-    - assocType: ASSOCIATION
       firstEnd: Station
       firstMult: SINGLE
       secondEnd: Patient
-      secondMult: UNBOUND
-
-    - assocType: ASSOCIATION
-      firstEnd: Station
-      firstMult: SINGLE
-      secondEnd: Krankenschwester
-      secondMult: UNBOUND
-
-    - assocType: ASSOCIATION
-      firstEnd: Station
-      firstMult: SINGLE
-      secondEnd: Doktor
-      secondMult: UNBOUND
-
-    - assocType: ASSOCIATION
-      firstEnd: Patient
-      firstMult: SINGLE
-      secondEnd: Rezept
-      secondMult: UNBOUND
-
-    - assocType: ASSOCIATION
-      firstEnd: Rezept
-      firstMult: SINGLE
-      secondEnd: Medikament
       secondMult: UNBOUND
 
     - assocType: COMPOSITION

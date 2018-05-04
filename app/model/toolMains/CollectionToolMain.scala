@@ -1,14 +1,16 @@
 package model.toolMains
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.core._
+import model.core.result.CompleteResult
+import model.learningPath.LearningPath
 import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -128,6 +130,15 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   // Views
 
+  override def exercisesOverviewForIndex: Html = Html(
+    s"""<div class="form-group">
+       |  <a class="btn btn-primary btn-block" href="${controllers.routes.CollectionController.collectionList(urlPart)}">Zu den Übungsaufgabensammlungen</a>
+       |</div>""".stripMargin)
+
+  override def adminIndexView(admin: User): Future[Html] = statistics map {
+    stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this)
+  }
+
   def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int): Future[Html]
 
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
@@ -164,5 +175,9 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
   def instantiateCollection(id: Int, state: ExerciseState): CompCollType
 
   def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
+
+  // Calls
+
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
 
 }

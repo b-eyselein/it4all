@@ -4,11 +4,13 @@ import java.nio.file.{Files, Path}
 
 import model.core.CoreConsts.solutionName
 import model.core._
+import model.core.result.CompleteResult
+import model.learningPath.LearningPath
 import model.persistence.SingleExerciseTableDefs
 import model.{JsonFormat, PartSolution, User}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,7 +69,6 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
       }
     }
 
-
   private def onSolution(user: model.User, solution: SolType, id: Int, isLive: Boolean): Future[Try[Either[Html, JsValue]]] = futureCompleteExById(id) flatMap {
     case None => Future(Failure(NoSuchExerciseException(id)))
 
@@ -82,29 +83,42 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
     }
   }
 
-
   private def readSolution(user: User, id: Int, part: PartType, isLive: Boolean)(implicit request: Request[AnyContent]): Option[SolType] =
     if (isLive) readSolutionFromPutRequest(user, id, part) else readSolutionFromPostRequest(user, id, part)
 
-  def readSolutionFromPostRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolutionFromPostRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
 
-  def readSolutionFromPutRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] =
+  protected def readSolutionFromPutRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap (_.asObj) flatMap {
       _.field(solutionName) flatMap (solution => readSolutionForPartFromJson(user, id, solution, part))
     }
 
-  def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: PartType): Option[SolType]
+  protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: PartType): Option[SolType]
 
   protected def correctEx(user: User, sol: SolType, exercise: CompExType, solutionSaved: Boolean): Future[Try[CompResult]]
 
   // Views
 
-  def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
+  override def exercisesOverviewForIndex: Html = Html(
+    s"""<div class="form-group">
+       |  <a class="btn btn-primary btn-block" href="${controllers.routes.ExerciseController.exerciseList(urlPart)}">Zu den Übungsaufgaben</a>
+       |</div>""".stripMargin)
+
+  override def adminIndexView(admin: User): Future[Html] = statistics map { stats =>
+    views.html.admin.idExes.idExerciseAdminIndex(admin, stats, this)
+  }
 
   override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
     views.html.admin.idExes.idExercisePreview(user, read, this)
 
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
     views.html.admin.idExes.idExerciseAdminListView(admin, exes, this)
+
+
+  def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
+
+  // Calls
+
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
 
 }

@@ -4,12 +4,11 @@ import java.nio.file._
 
 import controllers.ExerciseOptions
 import javax.inject._
-import model.Enums.{ExerciseState, ToolState}
 import model.core._
-import model.toolMains.IdExerciseToolMain
+import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.xml.XmlConsts._
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, User}
+import model.{Consts, ExerciseState, User}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.JsValue
@@ -19,7 +18,6 @@ import play.twirl.api.{Html, HtmlFormat}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
-
 
 @Singleton
 class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("xml") with FileUtils {
@@ -42,6 +40,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Other members
 
+  override val hasPlayground = true
+
   override val toolname: String = "Xml"
 
   override val toolState: ToolState = ToolState.LIVE
@@ -55,7 +55,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     "title" -> nonEmptyText,
     "author" -> nonEmptyText,
     "text" -> nonEmptyText,
-    "status" -> of[ExerciseState],
+    "status" -> ExerciseState.formField,
     "grammarDescription" -> nonEmptyText,
     "sampleGrammar" -> nonEmptyText,
     "rootNode" -> nonEmptyText
@@ -71,7 +71,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): XmlExercise =
+  override def instantiateExercise(id: Int, state: ExerciseState): XmlExercise =
     XmlExercise(id, title = "", author = "", text = "", state, grammarDescription = "", sampleGrammar = "", rootNode = "")
 
   // Yaml
@@ -104,7 +104,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Views
 
   override def renderExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean): Html =
-    views.html.xml.editXmlExercise(user, this, newEx, isCreation)
+    views.html.idExercises.xml.editXmlExercise(user, this, newEx, isCreation)
 
   override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
     val template = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
@@ -119,9 +119,12 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, template, part, exScript)
   }
 
+  override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
+
   // Result handlers
 
-  override def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Html = views.html.core.correction.render(result, result.render, user, this)
+  override def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Html =
+    views.html.core.correction.render(result, result.render, user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 

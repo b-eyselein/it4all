@@ -1,70 +1,72 @@
 @(user: model.User, collectionId: Int, completeExercises: Seq[model.CompleteExInColl[_ <: model.Exercise]], toolMainObject: model.toolMains.CollectionToolMain)
 
-    @scripts = {
-        @* Javascript Routes *@
-        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+@scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 
-        <script src="@routes.Assets.versioned("javascripts/admin/collExAdmin.js")"></script>
-    }
+    <script src="@routes.Assets.versioned("javascripts/admin/collExAdmin.js")"></script>
+}
 
-    @main("Aufgabenübersicht", Some(user), scripts) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Verfügbare Aufgaben</h1>
-            </div>
-
-            <a href="@routes.CollectionController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
-                Zurück zur Administratorseite</a>
-
-            <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
-
-            <hr>
-
-            @* FIXME: convert all routes (if possible!) to js routes! *@
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Status</th>
-                        <th>Aktionen</th>
-                        <th>Titel</th>
-                        <th>Autor</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @for(exercise <- completeExercises.map(_.ex)) {
-                    <tr id="tr1_@exercise.id">
-                        <td>@exercise.id</td>
-                        <td>
-                            <div class="input-group">
-                                <select title="Status ändern" onchange="updateStateChangeButton(@exercise.id)" name="state_@exercise.id"
-                                class="form-control" id="state_@exercise.id" data-val="@exercise.state">
-                                @for(exState <- model.Enums.ExerciseState.values) {
-                                    <option @exState.isSelected(exercise.state)>@exState </option>
-                                }
-                                </select>
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState(@exercise.id)" disabled>
-                                        <span class="glyphicon glyphicon-upload"></span>
-                                    </button>
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id"
-                            href="@routes.CollectionController.editExerciseForm(toolMainObject.urlPart, collectionId, exercise.id)">
-                                <span class="glyphicon glyphicon-wrench"></span>
-                            </a>
-                            <button class="btn btn-default" title="Aufgabe @exercise.id löschen" id="del_@exercise.id" onclick="deleteExerciseInCollection(@collectionId, @exercise.id)">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </button>
-                        </td>
-                        <td>@exercise.title</td>
-                        <td>@exercise.author</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-
+@main("Aufgabenübersicht", Some(user), scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Verfügbare Aufgaben</h1>
         </div>
-    }
+
+        <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+            Zurück zur Administratorseite</a>
+
+        <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
+
+        <hr>
+
+        @* FIXME: convert all routes (if possible!) to js routes! *@
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Aktionen</th>
+                    <th>Titel</th>
+                    <th>Autor</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(exercise <- completeExercises.map(_.ex)) {
+                <tr id="tr1_@exercise.id">
+                    <td>@exercise.id</td>
+                    <td>
+                        <div class="input-group">
+                            <select title="Status ändern" onchange="updateStateChangeButton(@exercise.id)" name="state_@exercise.id"
+                            class="form-control" id="state_@exercise.id" data-val="@exercise.state">
+                            @for(exState <- model.ExerciseState.values) {
+                                <option @{
+                                    if(exState == exercise.state) "selected" else ""
+                                }>@exState </option>
+                            }
+                            </select>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState(@exercise.id)" disabled>
+                                    <span class="glyphicon glyphicon-upload"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id"
+                        href="@routes.CollectionController.editExerciseForm(toolMainObject.urlPart, collectionId, exercise.id)">
+                            <span class="glyphicon glyphicon-wrench"></span>
+                        </a>
+                        <button class="btn btn-default" title="Aufgabe @exercise.id löschen" id="del_@exercise.id" onclick="deleteExerciseInCollection(@collectionId, @exercise.id)
+                        <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </td>
+                    <td>@exercise.title</td>
+                    <td>@exercise.author</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+    </div>
+}

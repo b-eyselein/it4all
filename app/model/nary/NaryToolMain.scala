@@ -1,27 +1,30 @@
 package model.nary
 
-import javax.inject.Singleton
-import model.Enums.ToolState
-import model.core.EvaluationResult
+import javax.inject.{Inject, Singleton}
+import model.core.result.EvaluationResult
+import model.learningPath.LearningPath
 import model.nary.NAryNumber.{parseNaryNumber, parseTwoComplement}
 import model.nary.NaryConsts._
-import model.toolMains.RandomExerciseToolMain
+import model.toolMains.{RandomExerciseToolMain, ToolState}
 import model.{Consts, JsonFormat, User}
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
+import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
+class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("nary") with JsonFormat {
 
   // Abstract types
 
   override type PartType = NaryExPart
 
   override type R = EvaluationResult
+
+  override type Tables = NaryTableDefs
 
   // Other members
 
@@ -35,52 +38,51 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
 
   // Views
 
-  override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]]): Html = {
-    exPart match {
-      case NaryAdditionExPart =>
+  override def exercisesOverviewForIndex: Html =
+    views.html.randomExercises.nary.naryOverview(this)
 
-        val requestedBaseStr: String = options.getOrElse("base", Seq("RANDOM")).mkString
-        val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values()(generator.nextInt(3))
+  override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]]): Html = exPart match {
+    case NaryAdditionExPart =>
 
-        val sum = generator.nextInt(255) + 1
-        val firstSummand = generator.nextInt(sum)
+      val requestedBaseStr: String = options.getOrElse("base", Seq("RANDOM")).mkString
+      val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values(generator.nextInt(3))
 
-        views.html.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr, this)
+      val sum = generator.nextInt(255) + 1
+      val firstSummand = generator.nextInt(sum)
 
-      case NaryConversionExPart =>
+      views.html.randomExercises.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr, this)
 
-        val fromBaseStr = options.getOrElse("fromBase", Seq("RANDOM")).mkString
-        val toBaseStr = options.getOrElse("toBase", Seq("RANDOM")).mkString
+    case NaryConversionExPart =>
 
-        val (fromBase, toBase): (NumberBase, NumberBase) = fromBaseStr match {
-          case RandomName  => toBaseStr match {
-            case RandomName =>
-              val fromBase = randNumberBase(-1)
-              (fromBase, randNumberBase(fromBase.ordinal))
-            case _          =>
-              val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
-              (randNumberBase(toBase.ordinal), toBase)
-          }
-          case fromBaseReq =>
-            val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.BINARY
-            val toBase = toBaseStr match {
-              case RandomName => randNumberBase(fromBase.ordinal)
-              case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
-            }
-            (fromBase, toBase)
+      val fromBaseStr = options.getOrElse("fromBase", Seq("RANDOM")).mkString
+      val toBaseStr = options.getOrElse("toBase", Seq("RANDOM")).mkString
+
+      val (fromBase, toBase): (NumberBase, NumberBase) = fromBaseStr match {
+        case RandomName  => toBaseStr match {
+          case RandomName =>
+            val fromBase = randNumberBase(-1)
+            (fromBase, randNumberBase(NumberBase.indexOf(fromBase)))
+          case _          =>
+            val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
+            (randNumberBase(NumberBase.indexOf(toBase)), toBase)
         }
+        case fromBaseReq =>
+          val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.BINARY
+          val toBase = toBaseStr match {
+            case RandomName => randNumberBase(NumberBase.indexOf(fromBase))
+            case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
+          }
+          (fromBase, toBase)
+      }
 
-        views.html.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr, this)
+      views.html.randomExercises.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr, this)
 
 
-      case TwoComplementExPart =>
-        val verbose = options.getOrElse("verbose", Seq("false")).mkString == "true"
-        views.html.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
+    case TwoComplementExPart =>
+      val verbose = options.getOrElse("verbose", Seq("false")).mkString == "true"
+      views.html.randomExercises.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
 
-    }
   }
-
-  override def index(user: User): Html = views.html.nary.naryOverview(user, this)
 
   // Helper functions
 
@@ -88,7 +90,7 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
     var res = generator.nextInt(4)
     while (notBaseOrdinal == res)
       res = generator.nextInt(4)
-    NumberBase.values()(res)
+    NumberBase.values(res)
   }
 
   // Correction
@@ -105,6 +107,8 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
       case Some(solution) => solution.toJson
     }
   }
+
+  // Reading functions
 
   private def readAddSolutionFromJson(jsValue: JsValue): Option[NAryAddResult] = jsValue.asObj flatMap { jsObj =>
     for {
@@ -131,6 +135,6 @@ class NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
     } yield TwoCompResult(value, solution, jsObj.stringField(BinaryAbs), jsObj.stringField(InvertedAbs))
   }
 
-  private def numbaseFromString(str: String): Option[NumberBase] = Try(Some(NumberBase.valueOf(str))) getOrElse None
+  private def numbaseFromString(str: String): Option[NumberBase] = NumberBase.withNameInsensitiveOption(str)
 
 }

@@ -1,6 +1,6 @@
 package model.spread
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.MyYamlProtocol
 import model.MyYamlProtocol._
 import model.spread.SpreadConsts._

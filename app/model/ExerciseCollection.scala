@@ -1,7 +1,5 @@
 package model
 
-import model.Enums.ExerciseState
-
 
 trait ExerciseCollection[ExType <: Exercise, CompExType <: CompleteEx[ExType]] extends HasBaseValues
 

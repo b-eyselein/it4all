@@ -2,8 +2,7 @@ package model.spread
 
 import java.nio.file.Path
 
-import model.Enums.SuccessType
-import model.core.EvaluationResult
+import model.core.result.{EvaluationResult, SuccessType}
 import model.spread.SpreadConsts._
 
 import scala.collection.mutable.ListBuffer

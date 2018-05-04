@@ -38,4 +38,6 @@ object UmlConsts extends Consts {
   val subClassName   = "subClass"
   val superClassName = "superClass"
 
+  val visibilityName = "visibility"
+
 }

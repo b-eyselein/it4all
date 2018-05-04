@@ -28,13 +28,12 @@ GET           /lti                                                     controlle
 POST          /lti                                                     controllers.LTIController.honeypot
 
 # Random tools
-GET           /random/:toolType                                        controllers.RandomExerciseController.index(toolType: String)
+
 GET           /random/:toolType/:exPart                                controllers.RandomExerciseController.newExercise(toolType: String, exPart: String)
 PUT           /random/:toolType/:exPart                                controllers.RandomExerciseController.correctLive(toolType: String, exPart: String)
 
-# File tools
-GET           /fileTools/:toolType/admin                               controllers.FileExerciseController.adminIndex(toolType: String)
 
+# File tools
 GET           /fileTools/:toolType/admin/import                        controllers.FileExerciseController.adminImportToRead(toolType: String)
 GET           /fileTools/:toolType/admin/export                        controllers.FileExerciseController.adminExportExercises(toolType: String)
 GET           /fileTools/:toolType/admin/exportFile                    controllers.FileExerciseController.adminExportExercisesAsFile(toolType: String)
@@ -51,8 +50,7 @@ DELETE        /fileTools/:toolType/admin/exerciseList/:id              controlle
 
 PUT           /fileTools/:toolType/admin/exercise/:id/state            controllers.FileExerciseController.adminChangeExState(toolType: String, id: Int)
 
-# User
-GET           /fileTools/:toolType/                                    controllers.FileExerciseController.index(toolType: String)
+
 GET           /fileTools/:toolType/exercises                           controllers.FileExerciseController.exerciseList(toolType: String, page: Int ?= 1)
 
 GET           /fileTools/:toolType/templates/:id/:fileExtension        controllers.FileExerciseController.downloadTemplate(toolType: String, id: Int, fileExtension: String)
@@ -62,7 +60,6 @@ POST          /fileTools/:toolType/:id/:fileExtension                  controlle
 GET           /fileTools/:toolType/corrected/:id/:part                 controllers.FileExerciseController.downloadCorrected(toolType: String, id: Int, part: String)
 
 # Collection Tools
-GET           /colTools/:toolType/admin                                controllers.CollectionController.adminIndex(toolType: String)
 
 GET           /colTools/:toolType/admin/collections                    controllers.CollectionController.adminCollectionsList(toolType: String)
 
@@ -79,7 +76,7 @@ GET           /colTools/:toolType/admin/:collId                        controlle
 
 PUT           /colTools/:toolType/admin/exercise/:id/state             controllers.CollectionController.adminChangeCollectionState(toolType: String, id: Int)
 
-GET           /colTools/:toolType/                                     controllers.CollectionController.index(toolType: String)
+
 GET           /colTools/:toolType/collections                          controllers.CollectionController.collectionList(toolType: String, page: Int ?= 1)
 
 GET           /colTools/:toolType/collections/:collId                  controllers.CollectionController.collection(toolType: String, collId: Int, page: Int ?= 1)
@@ -93,7 +90,6 @@ POST          /colTools/:toolType/:collId/:exId                        controlle
 DELETE        /colTools/:toolType/:collId/:exId                        controllers.CollectionController.deleteExerciseInCollection(toolType: String, collId: Int, exId: Int)
 
 # Normal exercises
-GET           /tools/:toolType/admin                                   controllers.ExerciseController.adminIndex(toolType: String)
 
 GET           /tools/:toolType/admin/import                            controllers.ExerciseController.adminImportToRead(toolType: String)
 GET           /tools/:toolType/admin/export                            controllers.ExerciseController.adminExportExercises(toolType: String)
@@ -113,8 +109,8 @@ DELETE        /tools/:toolType/admin/exerciseList/:id                  controlle
 PUT           /tools/:toolType/admin/exercise/:id/state                controllers.ExerciseController.adminChangeExState(toolType: String, id: Int)
 
 
-GET           /tools/:toolType/                                        controllers.ExerciseController.index(toolType: String)
 GET           /tools/:toolType/exercises                               controllers.ExerciseController.exerciseList(toolType: String, page: Int ?= 1)
+
 
 GET           /tools/:toolType/solve/:id/:part                         controllers.ExerciseController.exercise(toolType: String, id: Int, part: String)
 PUT           /tools/:toolType/solve/:id/:part                         controllers.ExerciseController.correctLive(toolType: String, id: Int, part: String)
@@ -123,7 +119,6 @@ POST          /tools/:toolType/solve/:id/:part                         controlle
 # Other routes
 GET           /tools/uml/classDiagram/:id/:part/cd.js                  controllers.ExerciseController.umlClassDiag(id: Int, part: String)
 GET           /tools/programming/classDiagram/:id/cd.js                controllers.ExerciseController.progClassDiagram(id: Int)
-GET           /tools/web/playground                                    controllers.ExerciseController.webPlayground
 GET           /tools/web/solution/:id/:part                            controllers.ExerciseController.webSolution(id: Int, part: String)
 PUT           /tools/web/solution/:id/:part                            controllers.ExerciseController.updateWebSolution(id: Int, part: String)
 
@@ -146,10 +141,21 @@ POST          /authenticate                                            controlle
 GET           /logout                                                  controllers.LoginController.logout
 GET           /direct                                                  controllers.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
 
+# Unified routes
+GET           /:toolType/index                                         controllers.MainExerciseController.index(toolType: String)
+
+GET           /:toolType/learningPaths/read                            controllers.MainExerciseController.readLearningPaths(toolType: String)
+GET           /:toolType/learningPaths/:id                             controllers.MainExerciseController.learningPath(toolType: String, id: Int)
+
+GET           /:toolType/playground                                    controllers.MainExerciseController.playground(toolType: String)
+
+GET           /:toolType/evaluate                                      controllers.MainExerciseController.evaluate(toolType: String)
+POST          /:toolType/submitEvaluation                              controllers.MainExerciseController.submitEvaluation(toolType: String)
+
+GET           /:toolType/admin/index                                   controllers.MainExerciseController.adminIndex(toolType: String)
+
 # Evaluation
-GET           /eval                                                    controllers.EvaluationController.index
-POST          /eval                                                    controllers.EvaluationController.submit
-GET           /eval/stats                                              controllers.AdminController.evaluation
+GET           /eval/stats                                              controllers.AdminController.evaluationResults
 
 # Javascript routes
 GET           /javascriptRoutes                                        controllers.Application.javascriptRoutes

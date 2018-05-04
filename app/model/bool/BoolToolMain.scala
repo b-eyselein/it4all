@@ -1,20 +1,19 @@
 package model.bool
 
-import javax.inject.Singleton
-import model.Enums.ToolState
+import javax.inject.{Inject, Singleton}
+import model._
 import model.bool.BoolConsts._
 import model.bool.BooleanQuestion._
-import model.core.EvaluationResult
-import model.toolMains.RandomExerciseToolMain
-import model.{Consts, JsonFormat, User}
+import model.core.result.EvaluationResult
+import model.toolMains.{RandomExerciseToolMain, ToolState}
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
-import scala.language.implicitConversions
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
+class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("bool") with JsonFormat {
 
   // Abstract types
 
@@ -22,7 +21,11 @@ class BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
 
   override type R = EvaluationResult
 
+  override type Tables = BoolTableDefs
+
   // Other members
+
+  override val hasPlayground: Boolean = true
 
   override val toolname: String = "Boolesche Algebra"
 
@@ -34,12 +37,20 @@ class BoolToolMain extends RandomExerciseToolMain("bool") with JsonFormat {
 
   // Views
 
+  override def exercisesOverviewForIndex: Html = Html(
+    s"""<div class="form-group">
+       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, TableFillout.urlName)}" class="btn btn-primary btn-block">Wahrheitstabellen ausfüllen</a>
+       |</div>
+       |<div class="form-group">
+       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, FormulaCreation.urlName)}" class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
+       |</div>""".stripMargin)
+
   override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]]): Html = exType match {
-    case FormulaCreation => views.html.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
-    case TableFillout    => views.html.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
+    case FormulaCreation => views.html.randomExercises.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
+    case TableFillout    => views.html.randomExercises.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
   }
 
-  override def index(user: User): Html = views.html.bool.boolOverview(user, this)
+  override def playground(user: User): Html = views.html.randomExercises.bool.boolDrawing(user)
 
   // Handlers
 

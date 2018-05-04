@@ -3,11 +3,11 @@ package model.blanks
 import javax.inject._
 import model.blanks.BlanksConsts._
 import model.blanks.BlanksExParts.BlanksExPart
+import model.core.matching.MatchingResult
 import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, JsonFormat, User}
+import model.{Consts, ExerciseState, JsonFormat, User}
 import play.api.data.Form
-import play.api.libs.json
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -31,7 +31,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override type SolType = BlanksSolution
 
-  override type R = BlanksAnswerMatchingResult
+  override type R = MatchingResult[BlanksAnswer, BlanksAnswerMatch]
 
   override type CompResult = BlanksCompleteResult
 
@@ -67,7 +67,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): BlanksCompleteExercise =
+  override def instantiateExercise(id: Int, state: ExerciseState): BlanksCompleteExercise =
     BlanksCompleteExercise(BlanksExercise(id, title = "", author = "", text = "", state, rawBlanksText = "", blanksText = ""), samples = Seq.empty)
 
   // Yaml
@@ -81,7 +81,8 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Views
 
-  override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart, oldSolution: Option[BlanksSolution]): Html = views.html.blanks.blanksExercise(user, exercise)
+  override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart, oldSolution: Option[BlanksSolution]): Html =
+    views.html.idExercises.blanks.blanksExercise(user, exercise)
 
   override def renderEditRest(exercise: BlanksCompleteExercise): Html = new Html(
     s"""<div class="form-group">
@@ -99,12 +100,14 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = json.JsArray(
-    result.result.allMatches map (m => Json.obj(
-      idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
-      correctnessName -> m.matchType.name,
-      explanationName -> m.explanations))
-  )
+  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = ???
+
+  //    JsArray(
+  //    result.result.allMatches map (m => Json.obj(
+  //      idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
+  //      correctnessName -> m.matchType.entryName,
+  //      explanationName -> m.explanations))
+  //  )
 
 }
 

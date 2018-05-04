@@ -1,7 +1,6 @@
 package controllers
 
 import model.User
-import model.core.{ExerciseFormMappings, FileUtils}
 import model.toolMains.AToolMain
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
@@ -11,11 +10,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils with ExerciseFormMappings {
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured  {
 
   protected type ToolMainType <: AToolMain
 
   protected def getToolMain(toolType: String): Option[ToolMainType]
+
+  // Helper methods
 
   private def onNoSuchTool(toolType: String): Result = BadRequest(s"There is no such tool with name $toolType")
 
@@ -50,6 +51,5 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
         case Some(toolMain) => f(user, toolMain)(request)
       }
   }
-
 
 }

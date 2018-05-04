@@ -1,6 +1,5 @@
 package model.programming
 
-import model.Enums.Selectable
 
 object ProgLanguage {
 
@@ -14,7 +13,7 @@ object ProgLanguage {
 
 }
 
-trait ProgLanguage extends Selectable[ProgLanguage] {
+trait ProgLanguage  {
 
   val name        : String
   val languageName: String

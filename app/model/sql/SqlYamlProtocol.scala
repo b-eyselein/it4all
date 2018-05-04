@@ -1,9 +1,8 @@
 package model.sql
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.MyYamlProtocol._
 import model.sql.SqlConsts._
-import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
 import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
@@ -35,8 +34,8 @@ object SqlYamlProtocol extends MyYamlProtocol {
   case class SqlExYamlFormat(scenarioId: Int) extends HasBaseValuesYamlFormat[SqlCompleteEx] {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[SqlCompleteEx] = for {
-      exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.valueOf)
-      tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExTag.byString(_) getOrElse SqlExTag.SQL_JOIN))
+      exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.withNameInsensitiveOption) map (_ getOrElse SqlExerciseType.SELECT)
+      tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExTag.withNameInsensitiveOption(_) getOrElse SqlExTag.SQL_JOIN))
 
       hint <- yamlObject.optStringField(hintName)
 
@@ -55,13 +54,13 @@ object SqlYamlProtocol extends MyYamlProtocol {
     }
 
     override protected def writeRest(completeEx: SqlCompleteEx): Map[YamlValue, YamlValue] = Map(
-      YamlString(exerciseTypeName) -> YamlString(completeEx.ex.exerciseType.name),
+      YamlString(exerciseTypeName) -> YamlString(completeEx.ex.exerciseType.entryName),
       YamlString(samplesName) -> YamlArr(completeEx.samples map SqlSampleYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
     ) ++ completeEx.ex.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(completeEx)
 
     private def writeTags(completeEx: SqlCompleteEx): Option[(YamlValue, YamlValue)] = completeEx.tags match {
       case Nil  => None
-      case tags => Some(YamlString(tagsName) -> YamlArr(tags map (t => YamlString(t.name))))
+      case tags => Some(YamlString(tagsName) -> YamlArr(tags map (t => YamlString(t.entryName))))
     }
 
   }

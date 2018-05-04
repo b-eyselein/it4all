@@ -6,5 +6,5 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class Repository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+class Repository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with model.persistence.TableDefs

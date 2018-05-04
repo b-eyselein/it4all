@@ -1,28 +1,11 @@
 package model.sql
 
-import model.Enums.ExerciseState
-import model.core.ExerciseFormMappings
+import model.ExerciseState
 import model.sql.SqlConsts._
-import model.sql.SqlEnums.SqlExerciseType
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.format.Formatter
-import play.api.data.{Form, FormError}
 
-object SqlFormMappings extends ExerciseFormMappings {
-
-  private implicit object SqlExerciseTypeFormatter extends Formatter[SqlExerciseType] {
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SqlExerciseType] = data.get(key) match {
-      case None        => Left(Seq(FormError(key, s"There is no key $key in this form!")))
-      case Some(value) => SqlExerciseType.byString(value) match {
-        case None                  => Left(Seq(FormError(key, s"The value $value is no legal value for an SqlExerciseType")))
-        case Some(sqlExerciseType) => Right(sqlExerciseType)
-      }
-    }
-
-    override def unbind(key: String, value: SqlExerciseType): Map[String, String] = Map(key -> value.name)
-
-  }
+object SqlFormMappings {
 
   def sqlCompleteExForm(collId: Int): Form[SqlCompleteEx] = Form(
     mapping(
@@ -30,9 +13,9 @@ object SqlFormMappings extends ExerciseFormMappings {
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,
       textName -> nonEmptyText,
-      stateName -> of[ExerciseState],
+      stateName -> ExerciseState.formField,
       collIdName -> number,
-      exerciseTypeName -> of[SqlExerciseType],
+      exerciseTypeName -> SqlExerciseType.formField,
       tagsName -> seq(text),
       hintName -> optional(text),
       samplesName -> seq(text)

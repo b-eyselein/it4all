@@ -1,13 +1,39 @@
 package model
 
-import model.Enums.{Role, ShowHideAggregate}
+import enumeratum.{Enum, EnumEntry}
 
+import scala.collection.immutable.IndexedSeq
 import scala.util.Random
 
-object Models {
+sealed trait Role extends EnumEntry
+
+object Role extends Enum[Role] {
+
+  override val values: IndexedSeq[Role] = findValues
+
+  case object RoleUser extends Role
+
+  case object RoleAdmin extends Role
+
+  case object RoleSuperAdmin extends Role
 
 }
 
+sealed abstract class ShowHideAggregate(val german: String) extends EnumEntry
+
+object ShowHideAggregate extends Enum[ShowHideAggregate] {
+
+  override val values: IndexedSeq[ShowHideAggregate] = findValues
+
+  case object SHOW extends ShowHideAggregate("Einblenden")
+
+  case object HIDE extends ShowHideAggregate("Ausblenden")
+
+  case object Aggregate extends ShowHideAggregate("Zusammenfassen")
+
+}
+
+// Users
 
 sealed trait User {
 
@@ -25,11 +51,13 @@ case class RegisteredUser(username: String, stdRole: Role = Role.RoleUser, showH
 
 case class PwHash(username: String, pwHash: String)
 
+// Courses
 
 case class Course(id: String, courseName: String)
 
 case class UserInCourse(username: String, courseId: String, role: Role = Role.RoleUser)
 
+// Tipps
 
 object TippHelper {
 

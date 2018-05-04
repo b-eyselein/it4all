@@ -1,12 +1,12 @@
 package model.persistence
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection, SolType <: CollectionExSolution]
   extends ExerciseTableDefs[Ex, CompEx] {
@@ -33,7 +33,7 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
   def futureOldSolution(username: String, exerciseId: Int): Future[Option[SolType]] =
     db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId).result.headOption)
 
-  def futureSaveSolution(sol: SolType)(implicit ec: ExecutionContext): Future[Boolean] =
+  def futureSaveSolution(sol: SolType): Future[Boolean] =
     db.run(solTable insertOrUpdate sol) map (_ => true) recover {
       case e: Exception =>
         Logger.error("Could not save solution", e)
@@ -46,9 +46,9 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
 
   def futureNumOfExesInColl(collId: Int): Future[Int] = db.run(exTable.filter(_.collectionId === collId).length.result)
 
-  def futureHighestCollectionId(implicit ec: ExecutionContext): Future[Int] = db.run(collTable.map(_.id).max.result) map (_ getOrElse (-1))
+  def futureHighestCollectionId: Future[Int] = db.run(collTable.map(_.id).max.result) map (_ getOrElse (-1))
 
-  def futureHighestIdInCollection(collId: Int)(implicit ec: ExecutionContext): Future[Int] =
+  def futureHighestIdInCollection(collId: Int): Future[Int] =
     db.run(exTable.filter(_.collectionId === collId).map(_.id).max.result) map (_ getOrElse (-1))
 
   // Reading
@@ -57,19 +57,19 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
 
   def futureCollById(id: Int): Future[Option[Coll]] = db.run(collTable.filter(_.id === id).result.headOption)
 
-  def futureCompleteColls(implicit ec: ExecutionContext): Future[Seq[CompColl]] = futureColls flatMap (colls => Future.sequence(colls map completeCollForColl))
+  def futureCompleteColls: Future[Seq[CompColl]] = futureColls flatMap (colls => Future.sequence(colls map completeCollForColl))
 
-  def futureCompleteCollById(id: Int)(implicit ec: ExecutionContext): Future[Option[CompColl]] = futureCollById(id) flatMap {
+  def futureCompleteCollById(id: Int): Future[Option[CompColl]] = futureCollById(id) flatMap {
     case Some(coll) => completeCollForColl(coll) map Some.apply
     case None       => Future(None)
   }
 
-  protected def completeCollForColl(coll: Coll)(implicit ec: ExecutionContext): Future[CompColl]
+  protected def completeCollForColl(coll: Coll): Future[CompColl]
 
-  def futureCompleteExesInColl(collId: Int)(implicit ec: ExecutionContext): Future[Seq[CompEx]] =
+  def futureCompleteExesInColl(collId: Int): Future[Seq[CompEx]] =
     db.run(exTable.filter(_.collectionId === collId).result) flatMap (futureExes => Future.sequence(futureExes map completeExForEx))
 
-  def futureCompleteExById(collId: Int, id: Int)(implicit ec: ExecutionContext): Future[Option[CompEx]] =
+  def futureCompleteExById(collId: Int, id: Int): Future[Option[CompEx]] =
     db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).result.headOption) flatMap {
       case Some(ex) => completeExForEx(ex) map Some.apply
       case None     => Future(None)
@@ -81,20 +81,19 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
 
   // Saving
 
-  def saveCompleteColl(compColl: CompColl)(implicit ec: ExecutionContext): Future[Boolean]
+  def saveCompleteColl(compColl: CompColl): Future[Boolean]
 
   // Update
 
-  def updateCollectionState(collId: Int, newState: ExerciseState)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run((for {
-      coll <- collTable if coll.id === collId
-    } yield coll.state).update(newState)) map (_ => true) recover {
-      case e: Throwable =>
-        Logger.error(s"Could not update collection $collId")
-        false
-    }
+  def updateCollectionState(collId: Int, newState: ExerciseState): Future[Boolean] = db.run((for {
+    coll <- collTable if coll.id === collId
+  } yield coll.state).update(newState)) map (_ => true) recover {
+    case e: Throwable =>
+      Logger.error(s"Could not update collection $collId")
+      false
+  }
 
-  def updateExerciseState(collId: Int, exId: Int, newState: ExerciseState)(implicit ec: ExecutionContext): Future[Boolean] =
+  def updateExerciseState(collId: Int, exId: Int, newState: ExerciseState): Future[Boolean] =
     db.run((for {
       ex <- exTable if ex.id === exId && ex.collectionId === collId
     } yield ex.state).update(newState)) map (_ => true) recover {
@@ -105,17 +104,15 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
 
   // Deletion
 
-  def futureDeleteExercise(collId: Int, id: Int)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).delete) map (_ => true) recover { case e: Throwable =>
-      Logger.error(s"Could not delete exercise $id in collection $collId", e)
-      false
-    }
+  def futureDeleteExercise(collId: Int, id: Int): Future[Boolean] = db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).delete) map (_ => true) recover { case e: Throwable =>
+    Logger.error(s"Could not delete exercise $id in collection $collId", e)
+    false
+  }
 
-  def futureDeleteCollection(collId: Int)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(collTable.filter(_.id === collId).delete) map (_ => true) recover { case e: Throwable =>
-      Logger.error(s"Could not delete collection $collId", e)
-      false
-    }
+  def futureDeleteCollection(collId: Int): Future[Boolean] = db.run(collTable.filter(_.id === collId).delete) map (_ => true) recover { case e: Throwable =>
+    Logger.error(s"Could not delete collection $collId", e)
+    false
+  }
 
   // Abstract table definitions
 

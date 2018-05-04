@@ -1,0 +1,76 @@
+@(user: model.User, exercise: model.sql.SqlCompleteEx, oldOrDefSol: String, tables: Seq[model.sql.SqlQueryResult], scenario: model.sql.SqlScenario, numOfExes: Int)
+
+@scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+@core.editorScripts.render("sql", 10, 15)
+
+    <script src="@routes.Assets.versioned("javascripts/sql/sqlExercise.js")"></script>
+}
+
+@main("SQL", Some(user), scripts) {
+    <div class="container">
+        <h1>Aufgabe &quot;@exercise.ex.title&quot;</h1>
+
+        <input type="number" hidden id="collId" value="@scenario.id" title="hidden">
+        <input type="number" hidden id="exerciseId" value="@exercise.ex.id" title="hidden">
+
+        <div class="row">
+            <div class="col-md-6">
+
+                <p>@exercise.ex.text</p>
+                @if(exercise.ex.hint.nonEmpty) {
+                    <p><i>Hinweis:</i> @exercise.ex.hint</p>
+                }
+
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" id="testBtn">Lösung testen</button>
+                    </div>
+                    <a class="btn btn-default" href="@routes.CollectionController.collection("sql", scenario.id)">
+                        Bearbeitung beenden</a>
+                </div>
+
+            </div>
+            <div class="col-md-6">@core.editor(oldOrDefSol)</div>
+        </div>
+
+        <hr>
+
+        <div id="newCorrectionDiv"></div>
+
+        <hr>
+
+        <h2>Datenbankschema &amp; Tabelleninhalte</h2>
+
+        <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#databaseSchema">
+            Datenbankschema</button>
+
+        <hr>
+
+        <div class="btn-group btn-group-justified">
+        @for(table <- tables) {
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#@table.tableName">@table.tableName</button>
+            </div>
+        }
+        </div>
+
+        @core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
+            <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
+        }
+
+        @for(table <- tables) {
+            @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
+                @views.html.collectionExercises.sql.resultTable.render(table)
+            }
+        }
+
+        <hr>
+
+        @core.helperTemplates.bsPager(exercise.ex.id, numOfExes, id => routes.CollectionController.exercise("sql", scenario.id, id))
+
+    </div>
+
+}

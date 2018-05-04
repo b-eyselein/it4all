@@ -1,6 +1,6 @@
 package model.questions
 
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.MyYamlProtocol._
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}

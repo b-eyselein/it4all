@@ -3,6 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model.User
 import model.core._
+import model.learningPath.LearningPath
 import model.spread.SpreadConsts
 import model.toolMains.{FileExerciseToolMain, ToolList}
 import play.api.db.slick.DatabaseConfigProvider
@@ -28,7 +29,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
     implicit request =>
       toolMain.futureCompleteExById(id) map {
         case Some(exercise) => Ok(toolMain.renderExercise(user, exercise, fileExtension))
-        case None           => Redirect(routes.FileExerciseController.index(toolMain.urlPart))
+        case None           => Redirect(routes.MainExerciseController.index(toolMain.urlPart))
       }
   }
 
@@ -50,8 +51,8 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
   def downloadTemplate(toolType: String, id: Int, fileExtension: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
       toolMain.futureCompleteExById(id) map {
-        case Some(exercise) => Ok.sendFile(exercise.templateFilePath(toolMain, fileExtension).toFile)
-        case None           => Redirect(routes.FileExerciseController.index(toolMain.urlPart))
+        case Some(exercise) => Ok.sendFile((toolMain.templateDirForExercise(exercise.id) / (exercise.templateFilename + "." + fileExtension)).toFile)
+        case None           => Redirect(routes.MainExerciseController.index(toolMain.urlPart))
       }
   }
 
@@ -64,9 +65,5 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
         case None           => BadRequest("There is no such exercise!")
       }
   }
-
-  // Views
-  override protected def adminIndexView(admin: User, stats: Html, toolMain: FileExerciseToolMain): Html =
-    views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, toolMain)
 
 }

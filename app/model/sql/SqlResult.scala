@@ -1,10 +1,13 @@
 package model.sql
 
-import model.Enums.SuccessType
+import model.core.result.SuccessType
 import model.core.matching.{Match, MatchingResult}
-import model.core.{CompleteResult, EvaluationResult}
+import model.core.result.{CompleteResult, EvaluationResult}
 import model.sql.SqlConsts._
 import model.sql.matcher._
+import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
+import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json._
 import play.twirl.api.Html
 
@@ -37,9 +40,9 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
 }
 
-case class SqlResult(learnerSolution: String, columnComparison: ColumnMatchingResult, tableComparison: TableMatchingResult,
-                     whereComparison: BinaryExpressionMatchingResult, executionResult: SqlExecutionResult,
-                     groupByComparison: Option[GroupByMatchingResult], orderByComparison: Option[OrderByMatchingResult])
+case class SqlResult(learnerSolution: String, columnComparison: MatchingResult[ColumnWrapper, ColumnMatch], tableComparison: MatchingResult[Table, TableMatch],
+                     whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch], executionResult: SqlExecutionResult,
+                     groupByComparison: Option[MatchingResult[Expression, GroupByMatch]], orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
   extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison

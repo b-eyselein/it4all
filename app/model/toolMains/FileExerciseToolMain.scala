@@ -5,6 +5,9 @@ import java.nio.file.Path
 import model.core.{FileUtils, NoSuchExerciseException, ReadAndSaveResult}
 import model.{FileCompleteEx, User}
 import play.api.libs.Files.TemporaryFile
+import model.core.CoreConsts._
+import model.learningPath.LearningPath
+import play.api.mvc.Call
 import play.api.mvc.MultipartFormData.FilePart
 import play.twirl.api.Html
 
@@ -32,6 +35,29 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
 
   val fileTypes: Map[String, String]
 
+  // Paths
+
+  def sampleDirForExercise(id: Int): Path = exerciseRootDir / sampleSubDir / String.valueOf(id)
+
+  def templateDirForExercise(id: Int): Path = exerciseRootDir / templateSubDir / String.valueOf(id)
+
+  // Views
+
+  override def exercisesOverviewForIndex: Html = Html(
+    s"""<div class="form-group">
+       |  <a class="btn btn-primary btn-block" href="${controllers.routes.FileExerciseController.exerciseList(urlPart)}">Zu den Übungsaufgaben</a>
+       |</div>""".stripMargin)
+
+  override def adminIndexView(admin: User): Future[Html] = statistics map {
+    stats => views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, this)
+  }
+
+  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
+    views.html.admin.fileExes.fileExercisePreview(user, read, this)
+
+  override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
+    views.html.admin.fileExes.fileExerciseAdminListView(admin, exes, this)
+
   def renderExercise(user: User, exercise: CompExType, fileEnding: String): Html
 
   def renderResult(user: User, correctionResult: R, exercise: CompExType, fileExtension: String): Html
@@ -58,15 +84,12 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
         }
     }
 
+  // Correction
 
   protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): R
 
-  // Views
+  // Calls
 
-  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
-    views.html.admin.fileExes.fileExercisePreview(user, read, this)
-
-  override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
-    views.html.admin.fileExes.fileExerciseAdminListView(admin, exes, this)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
 
 }

@@ -1,43 +1,37 @@
 package model.core.matching
 
-import model.Enums
-import model.Enums.MatchType._
-import model.Enums.SuccessType._
+import model.core.result.SuccessType._
 import model.core.CoreConsts._
-import model.core.EvaluationResult
+import model.core.result.{EvaluationResult, SuccessType}
 import play.api.libs.json.{JsObject, Json}
 
 import scala.language.postfixOps
 
-trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
-
-  def allMatches: Seq[M]
+case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends EvaluationResult {
 
   // FIXME: is it possible to use ... match { case ...} ?!?
-  override def success: Enums.SuccessType =
-    if ((allMatches exists (_.matchType == ONLY_USER)) || (allMatches exists (_.matchType == ONLY_SAMPLE)))
+  override def success: SuccessType =
+    if (allMatches exists (m => m.matchType == MatchType.ONLY_USER || m.matchType == MatchType.ONLY_SAMPLE))
       NONE
-    else if (allMatches exists (_.matchType == UNSUCCESSFUL_MATCH))
+    else if (allMatches exists (m => m.matchType == MatchType.UNSUCCESSFUL_MATCH || m.matchType == MatchType.PARTIAL_MATCH))
       PARTIALLY
     else
       COMPLETE
 
   def toJson: JsObject = Json.obj(
-    successName -> allMatches.forall(_.matchType == SUCCESSFUL_MATCH),
+    successName -> allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH),
     matchesName -> allMatches.map(_.toJson)
   )
 
 }
 
-trait Matcher[T, M <: Match[T], R <: MatchingResult[T, M]] {
+trait Matcher[T, M <: Match[T]] {
 
   protected def canMatch: (T, T) => Boolean
 
   protected def matchInstantiation: (Option[T], Option[T]) => M
 
-  protected def resultInstantiation: Seq[M] => R
-
-  def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): R = {
+  def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): MatchingResult[T, M] = {
 
     def findMatchInSecondCollection(firstHead: T, secondCollection: List[T]): (M, List[T]) = {
 
@@ -56,10 +50,10 @@ trait Matcher[T, M <: Match[T], R <: MatchingResult[T, M]] {
     }
 
     @annotation.tailrec
-    def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): R = firstCollection match {
+    def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[T, M] = firstCollection match {
       case Nil =>
         val missing = secondCollection map (s => matchInstantiation(None, Some(s)))
-        resultInstantiation(matches ++ missing)
+        MatchingResult[T, M](matches ++ missing)
 
       case firstHead :: firstTail =>
         val (foundMatch, notMatchedInSecond) = findMatchInSecondCollection(firstHead, secondCollection)

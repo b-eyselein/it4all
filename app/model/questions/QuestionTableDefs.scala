@@ -1,7 +1,7 @@
 package model.questions
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.persistence.ExerciseCollectionTableDefs
 import model.questions.QuestionConsts._
@@ -95,7 +95,7 @@ case class QuestionSolution(username: String, collectionId: Int, exerciseId: Int
 
 // Table Definitions
 
-class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[Question, CompleteQuestion, Quiz, CompleteQuiz, QuestionSolution] {
 
   import profile.api._
@@ -121,10 +121,10 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
   // Reading
 
 
-  override def completeExForEx(ex: Question)(implicit ec: ExecutionContext): Future[CompleteQuestion] =
+  override def completeExForEx(ex: Question): Future[CompleteQuestion] =
     answersForQuestion(ex.collectionId, ex.id) map (answers => CompleteQuestion(ex, answers))
 
-  override def completeCollForColl(coll: Quiz)(implicit ec: ExecutionContext): Future[CompleteQuiz] =
+  override def completeCollForColl(coll: Quiz): Future[CompleteQuiz] =
     questionsForQuiz(coll.id) map (qs => CompleteQuiz(coll, qs))
 
   def completeQuizzes: Future[Seq[CompleteQuiz]] = db.run(collTable.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq.empty)) }
@@ -149,7 +149,7 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   // Saving
 
-  override def saveCompleteColl(compQuiz: CompleteQuiz)(implicit ec: ExecutionContext): Future[Boolean] = db.run(collTable insertOrUpdate compQuiz.coll) flatMap {
+  override def saveCompleteColl(compQuiz: CompleteQuiz): Future[Boolean] = db.run(collTable insertOrUpdate compQuiz.coll) flatMap {
     _ => Future.sequence(compQuiz.exercises map saveQuestion) map (_.forall(identity))
   } recover { case _: Throwable => false }
 
@@ -160,7 +160,7 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
   private def saveAnswer(answer: Answer): Future[Boolean] =
     db.run(answers insertOrUpdate answer) map (_ => true) recover { case _: Throwable => false }
 
-  override def saveExerciseRest(compEx: CompleteQuestion)(implicit ec: ExecutionContext): Future[Boolean] = ???
+  override def saveExerciseRest(compEx: CompleteQuestion): Future[Boolean] = ???
 
   // Column types
 

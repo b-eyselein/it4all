@@ -3,11 +3,10 @@ package model.spread
 import java.nio.file.Path
 
 import javax.inject._
-import model.Enums.ToolState
 import model.spread.SpreadToolMain._
-import model.toolMains.FileExerciseToolMain
+import model.toolMains.{FileExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, User}
+import model.{Consts, ExerciseState, User}
 import play.api.data.Form
 import play.twirl.api.Html
 
@@ -71,16 +70,16 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): SpreadExercise =
+  override def instantiateExercise(id: Int, state: ExerciseState): SpreadExercise =
     SpreadExercise(id, title = "", author = "", text = "", state, sampleFilename = "", templateFilename = "")
 
   // Views
 
   override def renderExercise(user: User, exercise: SpreadExercise, part: String): Html =
-    views.html.spread.spreadExercise(user, exercise.ex, (part, fileTypes(part)))
+    views.html.fileExercises.spread.spreadExercise(user, exercise.ex, (part, fileTypes(part)))
 
   override def renderResult(user: User, correctionResult: SpreadSheetCorrectionResult, exercise: SpreadExercise, fileExtension: String): Html =
-    views.html.spread.spreadCorrectionResult(user, correctionResult, exercise, fileExtension)
+    views.html.fileExercises.spread.spreadCorrectionResult(user, correctionResult, exercise, fileExtension)
 
   override def renderEditRest(exercise: SpreadExercise): Html = ???
 

@@ -1,8 +1,6 @@
 package model.rose
 
-import model.Enums
-import model.Enums.SuccessType
-import model.core.{CompleteResult, EvaluationResult}
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.twirl.api.Html
 
@@ -26,7 +24,7 @@ sealed trait RoseEvalResult extends EvaluationResult
 
 case object RoseTimeOutResult extends RoseEvalResult {
 
-  override def success: Enums.SuccessType = SuccessType.ERROR
+  override def success: SuccessType = SuccessType.ERROR
 
 }
 

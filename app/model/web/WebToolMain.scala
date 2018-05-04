@@ -3,10 +3,9 @@ package model.web
 import java.nio.file.Path
 
 import javax.inject._
-import model.Enums.ToolState
-import model.toolMains.IdExerciseToolMain
+import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, Enums, JsonFormat, User}
+import model.{Consts, ExerciseState, JsonFormat, User}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Form
 import play.api.libs.json.JsValue
@@ -37,6 +36,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override type CompResult = WebCompleteResult
 
   // Other members
+
+  override val hasPlayground: Boolean = true
 
   override val toolname: String = "Web"
 
@@ -72,7 +73,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: Enums.ExerciseState): WebCompleteEx = WebCompleteEx(
+  override def instantiateExercise(id: Int, state: ExerciseState): WebCompleteEx = WebCompleteEx(
     WebExercise(id, title = "", author = "", text = "", state, htmlText = None, jsText = None, phpText = None),
     htmlTasks = Seq.empty, jsTasks = Seq.empty
   )
@@ -84,12 +85,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Views
 
   override def renderExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean): Html =
-    views.html.web.editWebExercise(user, this, newEx, isCreation)
+    views.html.idExercises.web.editWebExercise(user, this, newEx, isCreation)
 
   def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution]): Html =
-    views.html.web.webExercise(user, exercise, part, getTasks(exercise, part), maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML)
+    views.html.idExercises.web.webExercise(user, exercise, part, getTasks(exercise, part), maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML)
 
-  override def renderEditRest(exercise: WebCompleteEx): Html = views.html.web.editWebExRest(exercise)
+  override def renderEditRest(exercise: WebCompleteEx): Html = views.html.idExercises.web.editWebExRest(exercise)
+
+  override def playground(user: User): Html = views.html.idExercises.web.webPlayground(user)
 
   // Correction
 

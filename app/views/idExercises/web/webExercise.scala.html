@@ -1,0 +1,104 @@
+@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, tasks: Seq[model.web.WebCompleteTask], oldSolution: String)
+
+@scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
+@core.editorScripts.render("php", 40, 50)
+
+    <script src="@routes.Assets.versioned("javascripts/web/webExercise.js")"></script>
+
+
+    <style>
+            .pre-scrollable {
+                max-CLASS_HEIGHT: 500px;
+                overflow-y: scroll;
+            }
+
+            #preview {
+                border: 1px solid black;
+            }
+    </style>
+
+@core.helperTemplates.fullScreenScripts.render()
+}
+
+@main("Web", Some(user), scripts) {
+    <div class="container-fluid" id="fullsc">
+
+        <input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">
+        <input hidden type="text" id="exercisePart" value="@part.urlName" title="hidden">
+
+        <div class="row">
+            <div class="col-sm-6">@core.editor(oldSolution)</div>
+
+
+            <div class="col-sm-6">
+
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active"><a data-toggle="tab" href="#exAndEditTab">Aufgabenstellung</a></li>
+                    <li><a data-toggle="tab" href="#previewTab" onclick="updatePreviewNew()">Live-Vorschau</a></li>
+                    <li><a data-toggle="tab" href="#correctionTab" id="correctionTabBtn">Korrektur</a></li>
+                </ul>
+
+
+                <div class="tab-content">
+                    <div id="exAndEditTab" class="tab-pane fade in active">
+                        <hr>
+
+                        <p class="text-justify">@exercise.ex.text</p>
+                        @if(part == model.web.HtmlPart) {
+                            <p>@Html(exercise.ex.htmlText getOrElse "")</p>
+                        } else {
+                            <p>@Html(exercise.ex.jsText getOrElse "")</p>
+                        }
+
+                        <div class="btn-group btn-group-justified">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
+                                    Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
+                                </button>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-success" id="testBtn">Lösung testen</button>
+                            </div>
+                            <a class="btn btn-default" href="@routes.MainExerciseController.index("web")">Bearbeitung beenden</a>
+                        </div>
+
+                        <hr>
+
+                        @if(part == model.web.HtmlPart) {
+                            <div class="pre-scrollable">
+                                <ol>
+                                @for(task <- tasks.sortBy(_.task.id)) {
+                                    <li><p id="text_@task.task.id">@task.task.text</p></li>
+                                }
+                                </ol>
+                            </div>
+                        } else {
+                            <p>Es gibt insgesamt @tasks.size Testfälle.</p>
+                        }
+                    </div>
+
+                    <div id="previewTab" class="tab-pane fade">
+                        <hr>
+
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="@routes.ExerciseController.webSolution(exercise.ex.id, part.urlName)" id="preview"></iframe>
+                        </div>
+                    </div>
+
+                    <div id="correctionTab" class="tab-pane fade">
+                        <hr>
+
+                        <div id="correction">
+                            <div class="alert alert-warning">Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+}

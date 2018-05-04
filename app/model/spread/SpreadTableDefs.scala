@@ -1,7 +1,7 @@
 package model.spread
 
 import javax.inject.Inject
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model._
 import model.persistence.FileExesTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -20,13 +20,14 @@ case class SpreadExercise(override val id: Int, override val title: String, over
 
   override def ex: SpreadExercise = this
 
-  override def preview: Html = views.html.spread.spreadPreview.render(this)
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.fileExercises.spread.spreadPreview.render(this)
 
   override def hasPart(partType: SpreadExPart): Boolean = true
 
 }
 
-class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] with FileExesTableDefs[SpreadExercise, SpreadExercise] {
 
   import profile.api._
@@ -39,9 +40,9 @@ class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   // Queries
 
-  override def completeExForEx(ex: SpreadExercise)(implicit ec: ExecutionContext): Future[SpreadExercise] = Future(ex)
+  override def completeExForEx(ex: SpreadExercise): Future[SpreadExercise] = Future(ex)
 
-  override def saveExerciseRest(compEx: SpreadExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
+  override def saveExerciseRest(compEx: SpreadExercise): Future[Boolean] = Future(true)
 
   // Tables
 

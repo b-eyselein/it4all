@@ -4,23 +4,52 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.5"
 
 scalacOptions ++= Seq("-feature")
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
+  .settings(packageName in Universal := s"${name.value}")
+
 
 // Resolver for JFrog Uni Wue
 resolvers ++= Seq(
   "Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-release",
   "Snapshot Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-snapshot/"
 )
+
+val webJarDependencies = Seq(
+  // Js-Libraries
+  "org.webjars" % "ace" % "1.2.8",
+
+  "org.webjars" % "jquery" % "3.3.1",
+  "org.webjars" % "bootstrap" % "3.3.7-1",
+  // FIXME: update to version 4.0
+
+  "org.webjars.npm" % "jointjs" % "2.0.1",
+
+  // Js-Libs for Uml
+  "org.webjars" % "lodash" % "3.10.1",
+  "org.webjars" % "backbonejs" % "1.3.3",
+
+  "org.webjars.npm" % "autosize" % "4.0.0",
+  "org.webjars.bower" % "filesaver" % "1.3.3",
+
+)
+
+libraryDependencies ++= webJarDependencies
+
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.18.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
 
-  "mysql" % "mysql-connector-java" % "8.0.8-dmr",
+  "mysql" % "mysql-connector-java" % "6.0.6",
+
+  // Better enums for scala
+  "com.beachape" %% "enumeratum-play" % "1.5.14",
+  "com.beachape" %% "enumeratum-play-json" % "1.5.14",
+
 
   // Dependency injection
   guice,
@@ -34,21 +63,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.3",
   evolutions,
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
-
-  // Js-Libraries
-  "org.webjars" % "ace" % "1.2.8",
-  "org.webjars" % "jquery" % "3.3.1",
-  // FIXME: update to version 4.0
-  "org.webjars" % "bootstrap" % "3.3.7-1",
-
-  "org.webjars.npm" % "jointjs" % "2.0.1",
-
-  // Js-Libs for Uml
-  "org.webjars" % "lodash" % "3.10.1",
-  "org.webjars" % "backbonejs" % "1.3.3",
-
-  "org.webjars.npm" % "autosize" % "4.0.0",
-  "org.webjars.bower" % "filesaver" % "1.3.3",
 
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
 
@@ -86,7 +100,6 @@ libraryDependencies ++= Seq(
 
   // DTD Parser
   "de.uni-wuerzburg.is" % "scala_dtd_2.12" % "0.2.0-SNAPSHOT"
-
 )
 
 // Injected for non-static Routes

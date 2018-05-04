@@ -3,7 +3,7 @@ package controllers
 import java.nio.file.Files
 
 import javax.inject.{Inject, Singleton}
-import model.Enums.ExerciseState
+import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.toolMains.{CollectionToolMain, ToolList}
@@ -20,7 +20,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils with ExerciseFormMappings {
+  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils  {
 
   override type ToolMainType = CollectionToolMain
 
@@ -28,17 +28,13 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Helpers
 
-  private val stateForm: Form[ExerciseState] = Form(single("state" -> of[ExerciseState]))
+  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   private def takeSlice[T](collection: Seq[T], page: Int): Seq[T] = collection slice(Math.max(0, (page - 1) * stdStep), Math.min(page * stdStep, collection.size))
 
   private def numOfPages(completeSize: Int) = (completeSize / stdStep) + 2
 
   // Admin
-
-  def adminIndex(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
-    implicit request => toolMain.statistics map (stats => Ok(views.html.admin.collExes.collectionAdminMain(admin, stats, toolMain)))
-  }
 
   def adminExportCollections(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request => toolMain.yamlString map (content => Ok(views.html.admin.export.render(admin, content, toolMain)))
@@ -64,7 +60,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
       def onFormRead(toolMain: CollectionToolMain): ExerciseState => Future[Result] = { newState =>
         toolMain.updateCollectionState(id, newState) map {
-          case true  => Ok(Json.obj("id" -> id, "newState" -> newState.name))
+          case true  => Ok(Json.obj("id" -> id, "newState" -> newState.entryName))
           case false => BadRequest(Json.obj("message" -> "Could not update exercise!"))
         }
       }
@@ -125,7 +121,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // User
 
-  def index(tool: String): EssentialAction = collectionList(tool, page = 1)
+  //  def index(tool: String): EssentialAction = collectionList(tool, page = 1)
 
   def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
@@ -139,7 +135,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def collection(toolType: String, id: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCompleteCollById(id) map {
-        case None       => Redirect(controllers.routes.CollectionController.index(toolMain.urlPart))
+        case None       => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
         case Some(coll) =>
           val exercises = coll.exercises.filter(_.state == ExerciseState.APPROVED)
 
