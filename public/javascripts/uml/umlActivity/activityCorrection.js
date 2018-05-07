@@ -1,4 +1,4 @@
-function testSol() {
+function activityCorrection() {
     let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
     let url = jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
     $('#testButton').prop('disabled', true);
@@ -17,6 +17,6 @@ function testSol() {
     });
 }
 $(document).ready(function () {
-    $('#testButton').click(testSol);
+    $('#testButton').click(activityCorrection);
 });
 //# sourceMappingURL=activityCorrection.js.map

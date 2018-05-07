@@ -1,4 +1,4 @@
-function testSol() {
+function activityCorrection(): void {
     let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
@@ -24,5 +24,5 @@ function testSol() {
 }
 
 $(document).ready(function () {
-    $('#testButton').click(testSol);
+    $('#testButton').click(activityCorrection);
 });
