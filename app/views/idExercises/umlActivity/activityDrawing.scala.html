@@ -277,7 +277,6 @@
                         </div>
 
                         <input hidden id="loopCellId" value="" title="hidden">
-                        @*<textarea class="form-control" style="resize: vertical" rows="5" id="forLoopContent" placeholder="Inhalt der Schleife"></textarea>*@
                         <div id="forLoopEditor"></div>
                     </div>
 
@@ -299,7 +298,9 @@
                 <section id="generatedCodeSection" hidden>
                     <h2>Generierter Code</h2>
 
-                    <pre id="preCode"></pre>
+                    <div id="generationMsgSection"></div>
+
+                    <pre id="preCode" hidden></pre>
 
                     <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
                     <input hidden type="number" id="exerciseId" value="@completeEx.id" title="hidden">

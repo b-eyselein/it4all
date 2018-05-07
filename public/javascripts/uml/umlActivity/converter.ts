@@ -44,6 +44,8 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
         switch (elementType) {
             case 'uml.ActionInput':
             case 'uml.ForLoopText':
+            case 'uml.CustomStartState':
+            case 'uml.CustomEndState':
                 break;
             case 'html.Element':
                 console.info(cellView);
@@ -71,42 +73,46 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
         step++;
     }
 
-    return {
-        success,
-        contents,
-        logs
-    };
+    return {success, contents, logs};
 }
 
-function newGenerate() {
+function newGenerate(): void {
     let languageBuilder = getLangBuilder($('#langSelect').val());
+
+    let codeSection = $('#preCode');
+    let messageSection = $('#generationMsgSection');
+    let correctButton = $('#testButton');
+    let correctionSection = $('#correctionSection');
+
+    codeSection.html('');
+    messageSection.html('');
 
     let readResult = readContentFromTo(languageBuilder, mainStartNode, mainEndNode);
 
+    $('#generatedCodeSection').prop('hidden', false);
 
     if (readResult.success) {
         let script = languageBuilder.getCore(EXERCISE_PARAMETERS, readResult.contents);
-        console.info(script);
 
-        $('#generatedCodeSection').prop('hidden', false);
-        $('#preCode').html(script);
+        codeSection.html(script);
+        codeSection.prop('hidden', false);
+
+        messageSection.prop('hidden', true);
+
+        correctButton.prop('disabled', false);
+        correctButton.removeClass('btn-default').addClass('btn-primary');
+
+        correctionSection.prop('hidden', false);
     } else {
-        console.error(readResult.logs.join('\n'));
-    }
-}
+        codeSection.prop('hidden', true);
 
+        messageSection.html(`<div class="alert alert-danger">${readResult.logs.join('\n')}</div>`);
+        messageSection.prop('hidden', false);
 
-/**
- * @param {object[]} allElements
- * @param {string[]} cellsToHighLight
- */
-function updateHighlight(allElements, cellsToHighLight) {
-    for (let i = 0; i < allElements.length; i++) {
-        if (cellsToHighLight.includes(allElements[i].id)) {
-            allElements[i].findView(paper).highlight();
-        } else {
-            allElements[i].findView(paper).unhighlight();
-        }
+        correctButton.prop('disabled', true);
+        correctButton.removeClass('btn-primary').addClass('btn-default');
+
+        correctionSection.prop('hidden', true);
     }
 }
 
