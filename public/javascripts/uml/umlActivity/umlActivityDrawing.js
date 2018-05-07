@@ -1,5 +1,9 @@
 const graph = new joint.dia.Graph;
 let paper;
+let actionInputEditor;
+let forLoopEditor;
+let mainStartNode;
+let mainEndNode;
 let dragX;
 let dragY;
 let selElement;
@@ -188,7 +192,6 @@ function rebuildGraph() {
     parentChildNodes = JSON.parse(localStorage.getItem('parentChildNodes'));
     reSetSelection();
     refreshDia();
-    updateHighlight(graph.getElements(), highlightedCells);
 }
 function reSetSelection() {
     const allElements = graph.getElements();
@@ -235,25 +238,35 @@ function forbidInputTextarea(eventName, cell) {
     catch (e) {
     }
 }
+function initAceEditor(elementId) {
+    $('#' + elementId).css({ 'fontSize': 16 + 'px' });
+    let newEditor = ace.edit(elementId);
+    newEditor.setTheme('ace/theme/eclipse');
+    newEditor.getSession().setMode('ace/mode/python');
+    newEditor.getSession().setTabSize(2);
+    newEditor.getSession().setUseSoftTabs(true);
+    newEditor.getSession().setUseWrapMode(true);
+    newEditor.setOptions({ minLines: 5, maxLines: 10 });
+    return newEditor;
+}
 $(document).ready(function () {
+    actionInputEditor = initAceEditor('actionInputEditor');
+    forLoopEditor = initAceEditor('forLoopEditor');
     let paperJQ = $('#paper');
     autosize(document.querySelectorAll('textarea'));
     parentChildNodes = [];
     function preparePaper() {
-        let start = createStartState(GRID_SIZE, GRID_SIZE);
-        let end = createEndState(paperJQ.width() - (START_END_SIZE + GRID_SIZE), paperJQ.height() - (START_END_SIZE + GRID_SIZE));
+        mainStartNode = createStartState(GRID_SIZE, GRID_SIZE);
+        mainEndNode = createEndState(paperJQ.width() - (START_END_SIZE + GRID_SIZE), paperJQ.height() - (START_END_SIZE + GRID_SIZE));
         let actionNodeStart = new joint.shapes.uml.ActionInput({
-            position: { x: 100, y: 100 },
-            content: 'solution = ' + EXERCISE_PARAMETERS.output.defaultValue
+            position: { x: 100, y: 100 }, content: 'solution = ' + EXERCISE_PARAMETERS.output.defaultValue
         });
         let actionNodeEnd = new joint.shapes.uml.ActionInput({
-            position: {
-                x: paperJQ.width() - 300, y: paperJQ.height() - 150
-            }, content: 'return solution'
+            position: { x: paperJQ.width() - 300, y: paperJQ.height() - 150 }, content: 'return solution'
         });
-        graph.addCells([end, start, actionNodeStart, actionNodeEnd]);
-        connectNodes({ sourceId: start.id, targetId: actionNodeStart.id, sourcePort: "out", targetPort: "in" });
-        connectNodes({ sourceId: actionNodeEnd.id, targetId: end.id, sourcePort: "out", targetPort: "in" });
+        graph.addCells([mainStartNode, mainEndNode, actionNodeStart, actionNodeEnd]);
+        connectNodes({ sourceId: mainStartNode.id, targetId: actionNodeStart.id, sourcePort: "out", targetPort: "in" });
+        connectNodes({ sourceId: actionNodeEnd.id, targetId: mainEndNode.id, sourcePort: "out", targetPort: "in" });
         parentChildNodes.push({
             parentId: 'Startknoten-startId', startId: 'Startknoten-startId', endId: 'Endknoten-endId', endName: 'end'
         });

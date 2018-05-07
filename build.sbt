@@ -20,7 +20,7 @@ resolvers ++= Seq(
 
 val webJarDependencies = Seq(
   // Js-Libraries
-  "org.webjars" % "ace" % "1.2.8",
+  "org.webjars.npm" % "ace-builds" % "1.3.3",
 
   "org.webjars" % "jquery" % "3.3.1",
   "org.webjars" % "bootstrap" % "3.3.7-1",

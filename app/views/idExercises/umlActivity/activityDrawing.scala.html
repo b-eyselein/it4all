@@ -19,6 +19,8 @@
 
     <script src="@routes.Assets.versioned("javascripts/uml/umlConsts.js")"></script>
 
+    <script src="@routes.Assets.versioned("lib/ace-builds/src/ace.js")"></script>
+
     <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/umlADHtmlElement.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/umlActivityElements.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/umlActivityDrawing.js")"></script>
@@ -26,7 +28,6 @@
     <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/converter.js")"></script>
 
     <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/activityCorrection.js")"></script>
-    <script src="@routes.Assets.versioned("javascripts/uml/umlActivity/umlActivityTests.js")"></script>
 
     <script src="@routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></script>
     <script src="@routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>
@@ -97,7 +98,8 @@
 
                         <ul class="dropdown-menu" role="menu">
                             <li><a onclick="setSelElement(this);" data-elemname="elementFor">For-Each (Ext)</a></li>
-                            <li><a onclick="setSelElement(this);" data-elemname="uml.ForLoopEmbed">For-Each (Embed)</a></li>
+                            <li><a onclick="setSelElement(this);" data-elemname="uml.ForLoopEmbed">
+                                For-Each (Embed)</a></li>
                             <li><a onclick="setSelElement(this);" data-elemname="uml.ForLoopText">For-Each (Text)</a></li>
 
                             <li><a onclick="setSelElement(this);" data-elemname="elementWhileDo">While-Do (Ext)</a></li>
@@ -219,9 +221,6 @@
                         }
                         </select>
                         <span class="input-group-addon">-Code</span>
-                        <button id="mainGeneration" class="form-control btn-primary" onclick="mainGeneration()">
-                            generieren</button>
-                        <span class="input-group-addon"></span>
                         <button id="newGenerationButton" class="form-control btn-info" onclick="newGenerate()">
                             generate!</button>
                     </div>
@@ -245,7 +244,7 @@
                     </div>
 
                     <div class="panel-body">
-                        <textarea rows="5" class="form-control" id="actionInputContent" title="todo..."></textarea>
+                        <div id="actionInputEditor"></div>
                     </div>
 
                     <div class="panel-footer">
@@ -278,8 +277,8 @@
                         </div>
 
                         <input hidden id="loopCellId" value="" title="hidden">
-                        <textarea class="form-control" style="resize: vertical" rows="5" id="forLoopContent" placeholder="Inhalt der Schleife"></textarea>
-
+                        @*<textarea class="form-control" style="resize: vertical" rows="5" id="forLoopContent" placeholder="Inhalt der Schleife"></textarea>*@
+                        <div id="forLoopEditor"></div>
                     </div>
 
                     <div class="panel-footer">

@@ -145,13 +145,6 @@ joint.shapes.basic.Generic.define('uml.ForLoopText', {
         this.resize(STD_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
     }
 });
-function updateForLoopText(button) {
-    const model = graph.getCell($(button).data('cellId'));
-    model.prop('variable', $('#forLoopVariableInput').val());
-    model.prop('collection', $('#forLoopCollectionInput').val());
-    model.prop('loopContent', $('#forLoopContent').val().split('\n'));
-    resetForLoopText();
-}
 function resetForLoopText() {
     $('#forLoopButton').data('cellId', '');
     $('#forLoopContent').val('');
@@ -163,7 +156,8 @@ joint.shapes.uml.ForLoopTextView = joint.dia.ElementView.extend({
         event.preventDefault();
         $('#forLoopVariableInput').val(this.model.get('variable'));
         $('#forLoopCollectionInput').val(this.model.get('collection'));
-        $('#forLoopContent').val(this.model.get('loopContent'));
+        forLoopEditor.setValue(this.model.get('loopContent').join('\n'));
+        forLoopEditor.clearSelection();
         $('#forLoopButton').data('cellId', this.model.id);
         $('#forLoopEditSection').prop('hidden', false);
     },
@@ -180,6 +174,13 @@ joint.shapes.uml.ForLoopTextView = joint.dia.ElementView.extend({
         });
     }
 });
+function updateForLoopText(button) {
+    const model = graph.getCell($(button).data('cellId'));
+    model.prop('variable', $('#forLoopVariableInput').val());
+    model.prop('collection', $('#forLoopCollectionInput').val());
+    model.prop('loopContent', forLoopEditor.getValue().split('\n'));
+    resetForLoopText();
+}
 joint.shapes.basic.Generic.define('uml.ForLoopEmbed', {
     size: { width: STD_ELEMENT_WIDTH, height: STD_FOR_LOOP_HEIGHT },
     attrs: {
@@ -435,13 +436,15 @@ function resetActionInput() {
     $('#actionInputEditSection').prop('hidden', true);
 }
 function updateActionInput(button) {
-    graph.getCell($(button).data('cellId')).set('content', $('#actionInputContent').val());
+    graph.getCell($(button).data('cellId')).set('content', actionInputEditor.getValue());
     resetActionInput();
 }
 joint.shapes.uml.ActionInputView = joint.dia.ElementView.extend({
     events: STD_TEXT_ELEMENT_EVENTS,
     onLeftClick(event) {
         event.preventDefault();
+        actionInputEditor.setValue(this.model.get('content'));
+        actionInputEditor.clearSelection();
         $('#actionInputContent').val(this.model.get('content'));
         $('#actionInputButton').data('cellId', this.model.id);
         $('#actionInputEditSection').prop('hidden', false);
