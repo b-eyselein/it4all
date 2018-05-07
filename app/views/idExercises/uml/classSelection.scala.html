@@ -1,61 +1,61 @@
 @(user: model.User, exercise: model.uml.UmlExercise)
 
-    @btnText = @{
-        "Klassen verifizieren"
+@btnText = @{
+    "Klassen verifizieren"
+}
+
+@scripts = {
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+    <script src="@routes.Assets.versioned("javascripts/uml/umlClass/classSelection.js")"></script>
+}
+
+@main("UML", Some(user), scripts) {
+        <!-- Modal for hints -->
+    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
+        <ul>
+            <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext auswählen.</li>
+            <li>Sie können nur Nomen auswählen.</li>
+            <li>Es werden alle Vorkommen gewählter Klassen markiert, um eine Doppelauswahl zu verhindern.</li>
+            <li>Durch erneutes Anklicken einer Klasse - unabhängig von der Position - können Sie eine Klasse wieder abwählen.</li>
+            <li>Auf der rechten Seite wird Ihnen eine Liste Ihrer gewählten Klassen angezeigt.</li>
+            <li>Wenn Sie alle Klassen ausgewählt haben, können Sie Ihre Wahl mit dem Link "@btnText" korrigieren lassen und zum nächsten Schritt gelangen.</li>
+        </ul>
     }
 
-    @scripts = {
-        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
-        <script src="@routes.Assets.versioned("javascripts/uml/classSelection.js")"></script>
-    }
-
-    @main("UML", Some(user), scripts) {
-            <!-- Modal for hints -->
-        @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
-            <ul>
-                <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext auswählen.</li>
-                <li>Sie können nur Nomen auswählen.</li>
-                <li>Es werden alle Vorkommen gewählter Klassen markiert, um eine Doppelauswahl zu verhindern.</li>
-                <li>Durch erneutes Anklicken einer Klasse - unabhängig von der Position - können Sie eine Klasse wieder abwählen.</li>
-                <li>Auf der rechten Seite wird Ihnen eine Liste Ihrer gewählten Klassen angezeigt.</li>
-                <li>Wenn Sie alle Klassen ausgewählt haben, können Sie Ihre Wahl mit dem Link "@btnText" korrigieren lassen und zum nächsten Schritt gelangen.</li>
-            </ul>
-        }
-
-        <div class="container">
-            <div class="page-header">
-                <h1>Auswahl der Klassen <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintModal">&#65311;</button></h1>
-            </div>
-
-            <div class="row">
-                <div class="col-md-8">
-                    <h2>Aufgabentext</h2>
-
-                    <hr>
-
-                    <div class="well text-justify" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
-                    @Html(exercise.classSelText)
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <h2>Gewählte Klassen</h2>
-
-                    <hr>
-
-                    <ul id="classesList">
-                        <li>--</li>
-                    </ul>
-                </div>
-            </div>
-
-            <hr>
-
-            <form action="@routes.ExerciseController.correct("uml", exercise.id, part = model.uml.ClassSelection.urlName)"
-            method="post" onsubmit="return prepareFormForSubmitting();">
-                <input type="hidden" class="form-control" name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName" required>
-                <button class="btn btn-primary btn-block">@btnText</button>
-            </form>
-
+    <div class="container">
+        <div class="page-header">
+            <h1>Auswahl der Klassen <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintModal">&#65311;</button></h1>
         </div>
-    }
+
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Aufgabentext</h2>
+
+                <hr>
+
+                <div class="well text-justify" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+                @Html(exercise.classSelText)
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <h2>Gewählte Klassen</h2>
+
+                <hr>
+
+                <ul id="classesList">
+                    <li>--</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <form action="@routes.ExerciseController.correct("uml", exercise.id, part = model.uml.ClassSelection.urlName)"
+        method="post" onsubmit="return prepareFormForSubmitting();">
+            <input type="hidden" class="form-control" name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName" required>
+            <button class="btn btn-primary btn-block">@btnText</button>
+        </form>
+
+    </div>
+}
