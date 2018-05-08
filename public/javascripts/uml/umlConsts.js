@@ -3,6 +3,7 @@ const GRID_SIZE = 20;
 const DEF_GRID = 'dot';
 const STD_PADDING = 10;
 const STD_ELEMENT_WIDTH = 200;
+const STD_ACTIVITY_ELEMENT_WIDTH = 300;
 const START_END_SIZE = 40;
 const fontSize = 15;
 const strokeWidth = 2;

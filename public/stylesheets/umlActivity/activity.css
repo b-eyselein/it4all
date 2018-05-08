@@ -98,7 +98,7 @@ textarea {
 }
 
 .for_element input {
-    width: 100px;
+    /*width: 100px;*/
     pointer-events: auto;
     border: 0;
     text-align: center;
@@ -112,7 +112,7 @@ textarea {
     margin-left: auto;
     margin-right: auto;
     overflow: hidden;
-    width: 240px;
+    /*width: 240px;*/
 }
 
 /* edit modal */
@@ -373,7 +373,7 @@ textarea {
 
 .dashed-bot {
     border-bottom-style: dashed;
-    width: 250px;
+    /*width: 250px;*/
     font-family: "Times New Roman", Times, serif;
 }
 

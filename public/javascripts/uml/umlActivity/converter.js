@@ -12,9 +12,28 @@ function readContentFromTo(languageBuilder, startNode, endNode) {
             contents.push(...model.getContent());
         }
         else if (model instanceof joint.shapes.uml.ForLoopText) {
-            let loopHeader = model.getLoopHeader();
-            let loopContent = languageBuilder.addIdentation(model.get('loopContent'));
-            contents.push(...[loopHeader, ...loopContent]);
+            if (model.isOkay()) {
+                let variable = model.getVariable();
+                let collection = model.getCollection();
+                let loopContent = languageBuilder.addIdentation(model.getLoopContent());
+                contents.push(...languageBuilder.getFor(variable, collection, loopContent));
+            }
+            else {
+                success = false;
+                logs.push('For-Schleife hat keine Variable oder Collection!');
+                return { success, contents, logs };
+            }
+        }
+        else if (model instanceof joint.shapes.uml.IfElseText) {
+            if (model.isOkay()) {
+                let elseContent = model.getElseContent();
+                contents.push(...languageBuilder.getIfElse(model.getCondition(), model.getIfContent(), elseContent));
+            }
+            else {
+                success = false;
+                logs.push('If-Else-Verzweigung hat keine Bedingung!');
+                return { success, contents, logs };
+            }
         }
         let elementType = model.get('type');
         switch (elementType) {
@@ -22,6 +41,7 @@ function readContentFromTo(languageBuilder, startNode, endNode) {
             case 'uml.ForLoopText':
             case 'uml.CustomStartState':
             case 'uml.CustomEndState':
+            case 'uml.IfElseText':
                 break;
             case 'html.Element':
                 console.info(cellView);
@@ -67,6 +87,7 @@ function newGenerate() {
         correctButton.prop('disabled', false);
         correctButton.removeClass('btn-default').addClass('btn-primary');
         correctionSection.prop('hidden', false);
+        $('#generationAlerts').html('');
     }
     else {
         codeSection.prop('hidden', true);

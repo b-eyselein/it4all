@@ -2,8 +2,7 @@
 const graph = new joint.dia.Graph;
 let paper;
 
-let actionInputEditor: Ace.Editor;
-let forLoopEditor: Ace.Editor;
+let actionInputEditor: Ace.Editor, forLoopEditor: Ace.Editor, ifEditor: Ace.Editor, elseEditor: Ace.Editor;
 
 let mainStartNode: joint.shapes.uml.CustomStartNode;
 let mainEndNode: joint.shapes.uml.CustomEndNode;
@@ -69,22 +68,20 @@ document.addEventListener('dragover', function (e) {
     dragY = e.pageY - offset.top;
 }, false);
 
-const notSelectedElemButtonClass = 'btn-warning';
+const notSelectedElemButtonClass = 'btn-default';
 const selectedElemButtonClass = 'btn-primary';
 
-// --> paper.on click --> selElement
 function setSelElement(anchor) {
     let anchorJQ = $(anchor);
 
     let elemToSelect = anchorJQ.data('elemname');
+    anchorJQ.parent().find('a').removeClass(selectedElemButtonClass).addClass(notSelectedElemButtonClass);
 
     if (selElement === elemToSelect) {
-        // Element was already selected
         clearSelElement();
     } else {
-        anchorJQ.siblings().removeClass(selectedElemButtonClass).addClass(notSelectedElemButtonClass);
-        anchorJQ.removeClass(notSelectedElemButtonClass).addClass(selectedElemButtonClass);
         selElement = elemToSelect;
+        anchorJQ.removeClass(notSelectedElemButtonClass).addClass(selectedElemButtonClass);
     }
 }
 
@@ -105,7 +102,11 @@ function createElementsAndConnections(elementName: string, position: PositionObj
 
     switch (elementName) {
         case 'elementActionInput':
-            elementsToAdd.push(new joint.shapes.uml.ActionInput(position));
+            try {
+                elementsToAdd.push(new joint.shapes.uml.ActionInput(position));
+            } catch (err) {
+                console.error(err);
+            }
             break;
 
         case 'elementActionSelect':
@@ -194,6 +195,11 @@ function createElementsAndConnections(elementName: string, position: PositionObj
 
         case 'uml.WhileLoop':
             elementsToAdd.push(new joint.shapes.uml.WhileLoop(position));
+            break;
+
+
+        case 'uml.IfElseText':
+            elementsToAdd.push(new joint.shapes.uml.IfElseText(position));
             break;
 
         default:
@@ -327,9 +333,11 @@ function forbidInputTextarea(eventName, cell) {
 }
 
 function initAceEditor(elementId): Ace.Editor {
-    $('#' + elementId).css({'fontSize': 16 + 'px'});
+    let element: HTMLElement = document.getElementById(elementId);
 
-    let newEditor = ace.edit(elementId);
+    element.style.fontSize = '16px';
+
+    let newEditor = ace.edit(element);
 
     newEditor.setTheme('ace/theme/eclipse');
 
@@ -350,6 +358,8 @@ $(document).ready(function () {
 
     actionInputEditor = initAceEditor('actionInputEditor');
     forLoopEditor = initAceEditor('forLoopEditor');
+    ifEditor = initAceEditor('ifEditor');
+    elseEditor = initAceEditor('elseEditor');
 
     let paperJQ = $('#paper');
 
@@ -361,23 +371,36 @@ $(document).ready(function () {
         mainEndNode = createEndState(paperJQ.width() - (START_END_SIZE + GRID_SIZE),
             paperJQ.height() - (START_END_SIZE + GRID_SIZE));
 
-        let actionNodeStart = new joint.shapes.uml.ActionInput({
-            position: {x: 100, y: 100}, content: 'solution = ' + EXERCISE_PARAMETERS.output.defaultValue
-        });
+        try {
+            let actionNodeStart = new joint.shapes.uml.ActionInput({
+                position: {x: 100, y: 100}, content: 'solution = ' + EXERCISE_PARAMETERS.output.defaultValue
+            });
 
-        let actionNodeEnd = new joint.shapes.uml.ActionInput({
-            position: {x: paperJQ.width() - 300, y: paperJQ.height() - 150}, content: 'return solution'
-        });
+            let actionNodeEnd = new joint.shapes.uml.ActionInput({
+                position: {x: paperJQ.width() - 300, y: paperJQ.height() - 150}, content: 'return solution'
+            });
 
 
-        graph.addCells([mainStartNode, mainEndNode, actionNodeStart, actionNodeEnd]);
+            graph.addCells([mainStartNode, mainEndNode, actionNodeStart, actionNodeEnd]);
 
-        connectNodes({sourceId: mainStartNode.id, targetId: actionNodeStart.id, sourcePort: "out", targetPort: "in"});
-        connectNodes({sourceId: actionNodeEnd.id, targetId: mainEndNode.id, sourcePort: "out", targetPort: "in"});
+            connectNodes({
+                sourceId: mainStartNode.id,
+                targetId: actionNodeStart.id,
+                sourcePort: "out",
+                targetPort: "in"
+            });
+            connectNodes({sourceId: actionNodeEnd.id, targetId: mainEndNode.id, sourcePort: "out", targetPort: "in"});
 
-        parentChildNodes.push({
-            parentId: 'Startknoten-startId', startId: 'Startknoten-startId', endId: 'Endknoten-endId', endName: 'end'
-        });
+            parentChildNodes.push({
+                parentId: 'Startknoten-startId',
+                startId: 'Startknoten-startId',
+                endId: 'Endknoten-endId',
+                endName: 'end'
+            });
+        } catch (err) {
+            console.error(err);
+        }
+
     }
 
     //Basics
