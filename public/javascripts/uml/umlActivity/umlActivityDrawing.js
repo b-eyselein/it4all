@@ -51,110 +51,126 @@ function clearSelElement() {
     $('#buttonsDiv').find('a').removeClass(selectedElemButtonClass).addClass(notSelectedElemButtonClass);
     selElement = '';
 }
-function createElementsAndConnections(elementName, position) {
-    let elementsToAdd = [];
-    let connectionsToCreate = [];
-    switch (elementName) {
-        case 'elementActionInput':
-            try {
-                elementsToAdd.push(new joint.shapes.uml.ActionInput(position));
+function createElementsAndConnections(elementName, position, embedInto) {
+    if (elementName === 'uml.Edit') {
+        let editElement = new joint.shapes.uml.Edit(position);
+        if (embedInto) {
+            embedInto.embed(editElement);
+        }
+        graph.addCell(editElement);
+        let editStartState = new joint.shapes.uml.CustomStartState({
+            position: { x: position.position.x, y: position.position.y }
+        });
+        let editEndState = new joint.shapes.uml.CustomEndState({
+            position: {
+                x: position.position.x + EDIT_WIDTH - START_END_SIZE,
+                y: position.position.y + EDIT_HEIGHT - START_END_SIZE
             }
-            catch (err) {
-                console.error(err);
-            }
-            break;
-        case 'elementActionSelect':
-            elementsToAdd.push(createActionSelect(position.position.x, position.position.y));
-            break;
-        case 'elementActionDeclare':
-            elementsToAdd.push(createActionDeclare(position.position.x, position.position.y));
-            break;
-        case 'elementFor':
-            let forElement = createForLoop(position.position.x, position.position.y);
-            let forEditElement = createEdit(position.position.x + 350, position.position.y);
-            elementsToAdd.push(forElement, forEditElement);
-            connectionsToCreate.push({
-                sourceId: forElement.id, sourcePort: 'extern',
-                targetId: forEditElement.id, targetPort: 'extern'
-            });
-            break;
-        case 'elementDoWhile':
-            let doWhile = createDoWhile(position.position.x, position.position.y);
-            let doWhileEditElement = createEdit(position.position.x + 350, position.position.y);
-            elementsToAdd.push([doWhile, doWhileEditElement]);
-            connectionsToCreate.push({
-                sourceId: doWhile.id, sourcePort: 'extern',
-                targetId: doWhileEditElement.id, targetPort: 'extern'
-            });
-            break;
-        case 'elementWhileDo':
-            let whileDoElement = createWhileDo(position.position.x, position.position.y);
-            let whileDoEditElement = createEdit(position.position.x + 350, position.position.y);
-            elementsToAdd.push([whileDoElement, whileDoEditElement]);
-            connectionsToCreate.push({
-                sourceId: whileDoElement, sourcePort: 'extern',
-                targetId: whileDoEditElement, targetPort: 'extern'
-            });
-            break;
-        case 'elementIfThen':
-            let ifThenElement = createIfThen(position.position.x, position.position.y);
-            let ifThenEditElement = createEdit(position.position.x + 350, position.position.y);
-            elementsToAdd.push([ifThenElement, ifThenEditElement]);
-            connectionsToCreate.push({
-                sourceId: ifThenElement, sourcePort: 'extern',
-                targetId: ifThenEditElement, targetPort: 'extern'
-            });
-            break;
-        case 'elementIf':
-            let ifElseElement = createIfElse(position.position.x, position.position.y);
-            let ifEditElement = createEdit(position.position.x + 350, position.position.y);
-            let elseEditElement = createEdit(position.position.x + 350, position.position.y + 150);
-            elementsToAdd.push([ifElseElement, ifEditElement, elseEditElement]);
-            connectionsToCreate.push({
-                sourceId: ifElseElement, sourcePort: 'extern-ethen',
-                targetId: ifEditElement, targetPort: 'extern'
-            }, {
-                sourceId: ifElseElement.id, sourcePort: 'extern-eelse',
-                targetId: elseEditElement.id, targetPort: 'extern'
-            });
-            break;
-        case 'elementEdit':
-            elementsToAdd.push(createEdit(position.position.x, position.position.y));
-            break;
-        case 'uml.ForLoopText':
-            elementsToAdd.push(new joint.shapes.uml.ForLoopText(position));
-            break;
-        case 'uml.ForLoopEmbed':
-            elementsToAdd.push(new joint.shapes.uml.ForLoopEmbed(position));
-            break;
-        case 'uml.WhileLoop':
-            elementsToAdd.push(new joint.shapes.uml.WhileLoop(position));
-            break;
-        case 'uml.IfElseText':
-            elementsToAdd.push(new joint.shapes.uml.IfElseText(position));
-            break;
-        default:
-            console.log('Could not create element ' + elementName);
-            break;
+        });
+        editElement.embed(editStartState);
+        editElement.embed(editEndState);
+        graph.addCells(editStartState, editEndState);
     }
-    return { elementsToAdd, connectionsToCreate };
-}
-function createElements(elementName, positionObject, embedInto) {
-    let elementsAndConnections = createElementsAndConnections(elementName, positionObject);
-    if (embedInto) {
-        for (let elToAdd of elementsAndConnections.elementsToAdd) {
-            embedInto.embed(elToAdd);
+    else {
+        let elementsToAdd = [];
+        let connectionsToCreate = [];
+        switch (elementName) {
+            case 'elementActionInput':
+                try {
+                    elementsToAdd.push(new joint.shapes.uml.ActionInput(position));
+                }
+                catch (err) {
+                    console.error(err);
+                }
+                break;
+            case 'elementActionSelect':
+                elementsToAdd.push(createActionSelect(position.position.x, position.position.y));
+                break;
+            case 'elementActionDeclare':
+                elementsToAdd.push(createActionDeclare(position.position.x, position.position.y));
+                break;
+            case 'elementFor':
+                let forElement = createForLoop(position.position.x, position.position.y);
+                let forEditElement = createEdit(position.position.x + 350, position.position.y);
+                elementsToAdd.push(forElement, forEditElement);
+                connectionsToCreate.push({
+                    sourceId: forElement.id, sourcePort: 'extern',
+                    targetId: forEditElement.id, targetPort: 'extern'
+                });
+                break;
+            case 'elementDoWhile':
+                let doWhile = createDoWhile(position.position.x, position.position.y);
+                let doWhileEditElement = createEdit(position.position.x + 350, position.position.y);
+                elementsToAdd.push([doWhile, doWhileEditElement]);
+                connectionsToCreate.push({
+                    sourceId: doWhile.id, sourcePort: 'extern',
+                    targetId: doWhileEditElement.id, targetPort: 'extern'
+                });
+                break;
+            case 'elementWhileDo':
+                let whileDoElement = createWhileDo(position.position.x, position.position.y);
+                let whileDoEditElement = createEdit(position.position.x + 350, position.position.y);
+                elementsToAdd.push([whileDoElement, whileDoEditElement]);
+                connectionsToCreate.push({
+                    sourceId: whileDoElement, sourcePort: 'extern',
+                    targetId: whileDoEditElement, targetPort: 'extern'
+                });
+                break;
+            case 'elementIfThen':
+                let ifThenElement = createIfThen(position.position.x, position.position.y);
+                let ifThenEditElement = createEdit(position.position.x + 350, position.position.y);
+                elementsToAdd.push(ifThenElement, ifThenEditElement);
+                connectionsToCreate.push({
+                    sourceId: ifThenElement, sourcePort: 'extern',
+                    targetId: ifThenEditElement, targetPort: 'extern'
+                });
+                break;
+            case 'elementIf':
+                let ifElseElement = createIfElse(position.position.x, position.position.y);
+                let ifEditElement = createEdit(position.position.x + 350, position.position.y);
+                let elseEditElement = createEdit(position.position.x + 350, position.position.y + 150);
+                elementsToAdd.push([ifElseElement, ifEditElement, elseEditElement]);
+                connectionsToCreate.push({
+                    sourceId: ifElseElement, sourcePort: 'extern-ethen',
+                    targetId: ifEditElement, targetPort: 'extern'
+                }, {
+                    sourceId: ifElseElement.id, sourcePort: 'extern-eelse',
+                    targetId: elseEditElement.id, targetPort: 'extern'
+                });
+                break;
+            case 'elementEdit':
+                elementsToAdd.push(createEdit(position.position.x, position.position.y));
+                break;
+            case 'uml.ForLoopText':
+                elementsToAdd.push(new joint.shapes.uml.ForLoopText(position));
+                break;
+            case 'uml.ForLoopEmbed':
+                elementsToAdd.push(new joint.shapes.uml.ForLoopEmbed(position));
+                break;
+            case 'uml.WhileLoop':
+                elementsToAdd.push(new joint.shapes.uml.WhileLoop(position));
+                break;
+            case 'uml.IfElseText':
+                elementsToAdd.push(new joint.shapes.uml.IfElseText(position));
+                break;
+            default:
+                console.log('Could not create element ' + elementName);
+                break;
+        }
+        if (embedInto) {
+            for (let elToAdd of elementsToAdd) {
+                embedInto.embed(elToAdd);
+            }
+        }
+        graph.addCells(elementsToAdd);
+        for (let connToCreate of connectionsToCreate) {
+            connectNodes(connToCreate);
         }
     }
-    graph.addCells(elementsAndConnections.elementsToAdd);
-    for (let connToCreate of elementsAndConnections.connectionsToCreate) {
-        connectNodes(connToCreate);
-    }
-    clearSelElement();
 }
-function textAreaAdjust(o) {
-    o.style.height = '1px';
-    o.style.height = (25 + o.scrollHeight) + 'px';
+function createElements(elementName, positionObject, embedInto) {
+    createElementsAndConnections(elementName, positionObject, embedInto);
+    clearSelElement();
 }
 function connectNodes(connectProperties) {
     graph.addCell(new joint.shapes.devs.Link({
@@ -448,10 +464,4 @@ $(document).ready(function () {
     });
     preparePaper();
 });
-function refreshElement(el) {
-    const x = el.get('position').x;
-    const y = el.get('position').y;
-    el.set('position', { x: x + 1, y: y + 1 });
-    el.set('position', { x: x, y: y });
-}
 //# sourceMappingURL=umlActivityDrawing.js.map

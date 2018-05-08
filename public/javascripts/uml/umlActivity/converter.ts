@@ -44,7 +44,7 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
             } else {
                 success = false;
                 logs.push('For-Schleife hat keine Variable oder Collection!');
-                return {success, contents, logs}
+                return {success, contents, logs};
             }
         } else if (model instanceof joint.shapes.uml.IfElseText) {
             if (model.isOkay()) {
@@ -53,8 +53,13 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
             } else {
                 success = false;
                 logs.push('If-Else-Verzweigung hat keine Bedingung!');
-                return {success, contents, logs}
+                return {success, contents, logs};
             }
+        } else if (model instanceof joint.shapes.uml.Edit) {
+            // FIXME: ERROR!
+            success = false;
+            logs.push('Edit-Elemente können nicht so benutzt werden!');
+            return {success, contents, logs};
         }
 
         let elementType = model.get('type');
@@ -73,7 +78,7 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
                 break;
         }
 
-        let allOutboundLinks: joint.dia.Link[] = graph.getConnectedLinks(currentElement, {outbound: true});
+        let allOutboundLinks: joint.dia.Link[] = graph.getConnectedLinks(currentElement, {outbound: true}).filter((l) => l.get('source').port === 'out');
 
         if (allOutboundLinks.length === 0) {
             logs.push('Element hat keinen Nachfolger!');

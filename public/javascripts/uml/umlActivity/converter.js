@@ -35,6 +35,11 @@ function readContentFromTo(languageBuilder, startNode, endNode) {
                 return { success, contents, logs };
             }
         }
+        else if (model instanceof joint.shapes.uml.Edit) {
+            success = false;
+            logs.push('Edit-Elemente können nicht so benutzt werden!');
+            return { success, contents, logs };
+        }
         let elementType = model.get('type');
         switch (elementType) {
             case 'uml.ActionInput':
@@ -50,7 +55,7 @@ function readContentFromTo(languageBuilder, startNode, endNode) {
                 console.error(elementType);
                 break;
         }
-        let allOutboundLinks = graph.getConnectedLinks(currentElement, { outbound: true });
+        let allOutboundLinks = graph.getConnectedLinks(currentElement, { outbound: true }).filter((l) => l.get('source').port === 'out');
         if (allOutboundLinks.length === 0) {
             logs.push('Element hat keinen Nachfolger!');
             success = false;

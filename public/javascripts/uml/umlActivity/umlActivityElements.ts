@@ -2,7 +2,6 @@ const EXTERN_PORT_WIDTH = 250; // all except if-then-else
 
 const FOR_LOOP_HEIGHT = 150;
 const WHILE_LOOP_HEIGHT = 120;
-const IF_ELSE_HEIGHT = 180;
 
 const STD_FOR_LOOP_HEIGHT = 100;
 
@@ -184,7 +183,7 @@ joint.shapes.basic.Generic.define('uml.ForLoopText', {
         return this.get('variable');
     },
 
-    getCollection() : string {
+    getCollection(): string {
         return this.get('collection');
     },
 
@@ -285,7 +284,33 @@ joint.shapes.basic.Generic.define('uml.ForLoopEmbed', {
         '.for-body-text': {ref: '.for-body-rect'}
     },
 
-    ports: STD_PORTS,
+    ports: {
+        groups: {
+            in: {
+                position: 'top',
+                attrs: {circle: {fill: 'transparent', stroke: COLORS.RoyalBlue, strokeWidth: 1, r: 10, magnet: true}}
+            },
+            externout: {
+                position: 'absolute',
+                attrs: {circle: {fill: 'transparent', stroke: COLORS.IndianRed, strokeWidth: 1, r: 10, magnet: true}}
+            },
+            externin: {
+                position: 'absolute',
+                attrs: {circle: {fill: 'transparent', stroke: COLORS.YellowGreen, strokeWidth: 1, r: 10, magnet: true}}
+            },
+            out: {
+                position: 'bottom',
+                attrs: {circle: {fill: 'transparent', stroke: COLORS.ForestGreen, strokeWidth: 1, r: 10, magnet: true}}
+            },
+
+        },
+        items: [
+            {id: 'in', group: 'in', args: {x: STD_ACTIVITY_ELEMENT_WIDTH / 2}},
+            {id: 'externout', group: 'externout', args: {x: STD_ACTIVITY_ELEMENT_WIDTH, y: STD_FOR_LOOP_HEIGHT / 3}},
+            {id: 'externin', group: 'externin', args: {x: STD_ACTIVITY_ELEMENT_WIDTH, y: 2 * STD_FOR_LOOP_HEIGHT / 3}},
+            {id: 'out', group: 'out', args: {x: STD_ACTIVITY_ELEMENT_WIDTH / 2}}
+        ]
+    },
 
     isResized: false, variable: 'x', collection: '[ ]', loopContent: []
 }, {
@@ -303,73 +328,73 @@ joint.shapes.basic.Generic.define('uml.ForLoopEmbed', {
     },
 
     handleClick() {
-        let ownPosition: { x: number, y: number } = this.position();
-        let isResized: boolean = this.get('isResized');
-
-        if (selElement === '') {
-            this.resizeForEmbedding(ownPosition, isResized);
-        } else {
-            let positionObject = {
-                position: {x: ownPosition.x + 50, y: ownPosition.y + 50}
-            };
-
-            createElements(selElement, positionObject, this);
-        }
+        // let ownPosition: { x: number, y: number } = this.position();
+        // let isResized: boolean = this.get('isResized');
+        //
+        // if (selElement === '') {
+        //     this.resizeForEmbedding(ownPosition, isResized);
+        // } else {
+        //     let positionObject = {
+        //         position: {x: ownPosition.x + 50, y: ownPosition.y + 50}
+        //     };
+        //
+        //     createElements(selElement, positionObject, this);
+        // }
     },
 
     resizeForEmbedding(ownPosition: { x: number, y: number }, isResized: boolean) {
-        if (isResized) {
-            // FIXME: generate code!
-            let languageBuilder = getLangBuilder($('#langSelect').val());
-            let embeddedCells = this.getEmbeddedCells();
-
-            let startNode = embeddedCells.filter((cell) => {
-                return cell instanceof joint.shapes.uml.CustomStartState;
-            })[0];
-
-            let endNode = embeddedCells.filter((cell) => {
-                return cell instanceof joint.shapes.uml.CustomEndState;
-            })[0];
-
-            let code = readContentFromTo(languageBuilder, startNode, endNode);
-
-            console.warn(code);
-
-            // for (let c of embeddedCells) {
-            //     this.unembed(c);
-            //     c.remove();
-            // }
-        } else {
-            console.warn(ownPosition.x + " :: " + ownPosition.y);
-
-            const attrs = this.get('attrs');
-
-            let newWidth: number = 2 * STD_ACTIVITY_ELEMENT_WIDTH;
-
-            let loopContent: string[] = this.get('loopContent');
-            let loopRectHeight = 300;
-
-            attrs['.for-body-text'].text = loopContent.join('\n');
-            attrs['.for-body-rect'].height = loopRectHeight;
-
-            attrs['.for-complete-rect'].height = loopRectHeight + MIN_HEIGHT + 4;
-
-            // FIXME: add start and end node..
-            let startNode = createStartState(ownPosition.x + 10, ownPosition.y + 10 + MIN_HEIGHT);
-            let endNode = createEndState(ownPosition.x + 100, ownPosition.y + 100);
-
-            this.embed(startNode);
-            this.embed(endNode);
-
-            graph.addCell(startNode);
-            graph.addCell(endNode);
-
-            this.resize(newWidth, loopRectHeight + MIN_HEIGHT + 4);
-            this.trigger('uml-update');
-            this.set('isResized', true);
-
-            console.warn(this.get('isResized'));
-        }
+        // if (isResized) {
+        // // FIXME: generate code!
+        // let languageBuilder = getLangBuilder($('#langSelect').val());
+        // let embeddedCells = this.getEmbeddedCells();
+        //
+        // let startNode = embeddedCells.filter((cell) => {
+        //     return cell instanceof joint.shapes.uml.CustomStartState;
+        // })[0];
+        //
+        // let endNode = embeddedCells.filter((cell) => {
+        //     return cell instanceof joint.shapes.uml.CustomEndState;
+        // })[0];
+        //
+        // let code = readContentFromTo(languageBuilder, startNode, endNode);
+        //
+        // console.warn(code);
+        //
+        // // for (let c of embeddedCells) {
+        // //    this.unembed(c);
+        // //    c.remove();
+        // //}
+        // } else {
+        //     console.warn(ownPosition.x + " :: " + ownPosition.y);
+        //
+        //     const attrs = this.get('attrs');
+        //
+        //     let newWidth: number = 2 * STD_ACTIVITY_ELEMENT_WIDTH;
+        //
+        //     let loopContent: string[] = this.get('loopContent');
+        //     let loopRectHeight = 300;
+        //
+        //     attrs['.for-body-text'].text = loopContent.join('\n');
+        //     attrs['.for-body-rect'].height = loopRectHeight;
+        //
+        //     attrs['.for-complete-rect'].height = loopRectHeight + MIN_HEIGHT + 4;
+        //
+        // //  FIXME: add start and end node..
+        // let startNode = createStartState(ownPosition.x + 10, ownPosition.y + 10 + MIN_HEIGHT);
+        // let endNode = createEndState(ownPosition.x + 100, ownPosition.y + 100);
+        //
+        // this.embed(startNode);
+        // this.embed(endNode);
+        //
+        // graph.addCell(startNode);
+        // graph.addCell(endNode);
+        //
+        // this.resize(newWidth, loopRectHeight + MIN_HEIGHT + 4);
+        // this.trigger('uml-update');
+        // this.set('isResized', true);
+        //
+        // console.warn(this.get('isResized'));
+        // }
     },
 
     getLoopHeader(): string {
@@ -391,7 +416,7 @@ joint.shapes.basic.Generic.define('uml.ForLoopEmbed', {
 
         attrs['.for-complete-rect'].height = loopRectHeight + MIN_HEIGHT + 4;
 
-        this.resize(STD_ACTIVITY_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
+        // this.resize(STD_ACTIVITY_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
     }
 });
 
@@ -860,7 +885,6 @@ function updateIfElseText(button: HTMLButtonElement) {
 
 // Other elements!
 
-
 const FOR_LOOP_WIDTH = 400;
 
 const FOR_LOOP_TEMPLATE = `
@@ -930,159 +954,8 @@ joint.shapes.html.NewForLoop = joint.shapes.html.Element.extend({
     }, joint.shapes.html.Element.prototype.defaults)
 });
 
-joint.shapes.html.NewForLoopView = joint.shapes.html.ElementView.extend({
-
-    init: function () {
-        console.warn("Initiating for loop view...");
-        this.listenTo(this.model, 'change', this.updateBox);
-    }
-
-});
-
 function createForLoop(xCoord, yCoord): joint.shapes.html.Element {
     return new joint.shapes.html.NewForLoop({position: {x: xCoord, y: yCoord}});
-}
-
-const IF_THEN_TEMPLATE = `
-<div class="wd_element">
-    <button class="delete">x</button>
-            
-    <div class="dashed-bot">
-        <span> if </span>
-        <input placeholder="Bedingung" data-attribute="eif" type="text"/></input>
-    </div>
-
-    <span>then</span>
-    
-    </br>
-    
-    <textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="ethen"></textarea>
-</div>`.trim();
-
-function createIfThen(xCoord, yCoord) {
-    return new joint.shapes.html.Element({
-        position: {x: xCoord, y: yCoord},
-        size: {width: STD_ACTIVITY_ELEMENT_WIDTH, height: WHILE_LOOP_HEIGHT},
-        template: IF_THEN_TEMPLATE,
-        eif: '',
-        ethen: '',
-        name: 'ifThen',
-        cleanname: 'If-Then-Knoten',
-        ports: {
-            groups: {
-                'in': {
-                    position: 'absolute',
-                    attrs: {
-                        circle: {
-                            fill: 'transparent',
-                            stroke: COLORS.RoyalBlue,
-                            strokeWidth: 1,
-                            r: 10,
-                            magnet: true
-                        }
-                    }
-                },
-                'out': {
-                    position: 'absolute',
-                    attrs: {
-                        circle: {
-                            fill: 'transparent',
-                            stroke: COLORS.ForestGreen,
-                            strokeWidth: 1,
-                            r: 10,
-                            magnet: true
-                        }
-                    }
-                },
-                'extern': {
-                    position: 'absolute',
-                    attrs: {circle: {fill: 'transparent', stroke: COLORS.Black, strokeWidth: 1, r: 10, magnet: true}}
-                }
-            },
-            items: [
-                {id: 'in', group: 'in', args: {x: STD_ACTIVITY_ELEMENT_WIDTH / 2, y: 0}},
-                {id: 'out', group: 'out', args: {x: STD_ACTIVITY_ELEMENT_WIDTH / 2, y: WHILE_LOOP_HEIGHT}},
-                {id: 'extern', group: 'extern', args: {x: EXTERN_PORT_WIDTH, y: WHILE_LOOP_HEIGHT / 2}}
-            ]
-        }
-    });
-
-}
-
-const IF_ELSE_TEMPLATE = `
-<div class="if_element">
-    <button class="delete">x</button>
-
-    <div class="dashed-bot">
-        <span> if </span>
-        <input placeholder="Bedingung" data-attribute="eif" type="text"/></input>
-    </div>
-    
-    <div class="dashed-bot">
-        <span>then</span>
-        <textarea onkeyup="textAreaAdjust(this)" disabled placeholder="Anweisungen" data-attribute="ethen"></textarea>
-    </div>
-
-    <div>
-        <span>else</span>
-        <textarea onkeyup="textAreaAdjust(this)" disabled placeholder="Anweisungen" data-attribute="eelse"></textarea>
-    </div>
-</div>`.trim();
-
-function createIfElse(xCoord, yCoord): joint.shapes.html.Element {
-    return new joint.shapes.html.Element({
-        position: {x: xCoord, y: yCoord},
-        size: {width: STD_ACTIVITY_ELEMENT_WIDTH, height: IF_ELSE_HEIGHT},
-        template: IF_ELSE_TEMPLATE,
-        eif: '',
-        ethen: '',
-        eelse: '',
-        name: 'if',
-        cleanname: 'Bedingungsknoten',
-        ports: {
-            groups: {
-                'in': {
-                    position: 'absolute',
-                    attrs: {
-                        circle: {
-                            fill: 'transparent',
-                            stroke: COLORS.RoyalBlue,
-                            strokeWidth: 1,
-                            r: 10,
-                            magnet: true
-                        }
-                    }
-                },
-                'out': {
-                    position: 'absolute',
-                    attrs: {
-                        circle: {
-                            fill: 'transparent',
-                            stroke: COLORS.ForestGreen,
-                            strokeWidth: 1,
-                            r: 10,
-                            magnet: true
-                        }
-                    }
-                },
-                'extern-ethen': {
-                    position: 'absolute',
-                    attrs: {circle: {fill: 'transparent', stroke: COLORS.Black, strokeWidth: 1, r: 10, magnet: true}}
-                },
-                'extern-eelse': {
-                    position: 'absolute',
-                    attrs: {circle: {fill: 'transparent', stroke: COLORS.Black, strokeWidth: 1, r: 10, magnet: true}}
-                }
-            },
-            items: [
-                {id: 'in', group: 'in', args: {x: STD_ACTIVITY_ELEMENT_WIDTH / 2, y: 0}},
-                {id: 'out', group: 'out', args: {x: STD_ACTIVITY_ELEMENT_WIDTH / 2, y: IF_ELSE_HEIGHT}},
-                {id: 'extern-ethen', group: 'extern-ethen', args: {x: EXTERN_PORT_WIDTH, y: 75}},
-                {id: 'extern-eelse', group: 'extern-eelse', args: {x: EXTERN_PORT_WIDTH, y: STD_ACTIVITY_ELEMENT_WIDTH / 2}}
-            ]
-        }
-    });
-
 }
 
 const DO_WHILE_TEMPLATE = `
@@ -1211,6 +1084,92 @@ function createWhileDo(xCoord, yCoord) {
     });
 }
 
+// Edit element
+
+const EDIT_WIDTH = 320;
+const EDIT_HEIGHT = 200;
+
+joint.shapes.basic.Generic.define('uml.Edit', {
+    size: {width: EDIT_WIDTH, height: EDIT_HEIGHT},
+
+    attrs: {
+        rect: {width: STD_ACTIVITY_ELEMENT_WIDTH},
+
+        '.edit-complete-rect': {
+            height: EDIT_HEIGHT, rx: 5, ry: 5,
+            stroke: COLORS.Black, strokeWidth, strokeDasharray: '5,5'
+        },
+    },
+    ports: {
+        groups: {
+            in: {
+                position: 'top',
+                attrs: {circle: {fill: 'transparent', stroke: COLORS.IndianRed, strokeWidth: 1, r: 10, magnet: true}}
+            },
+            out: {
+                position: 'bottom',
+                attrs: {circle: {fill: 'transparent', stroke: COLORS.YellowGreen, strokeWidth: 1, r: 10, magnet: true}}
+            }
+        },
+        items: [
+            {id: 'in', group: 'in', args: {x: 0, y: EDIT_HEIGHT / 3}},
+            {id: 'out', group: 'out', args: {x: 0, y: 2 * EDIT_HEIGHT / 3}}
+        ]
+    }
+}, {
+    markup: `
+<g class="rotatable">
+    <g class="scalable">
+        <rect class="edit-complete-rect"/>
+    </g>
+</g>`.trim(),
+
+    initialize(): void {
+        this.on('', function () {
+            this.trigger('uml-update');
+        }, this);
+
+        joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
+    },
+
+});
+
+
+joint.shapes.uml.EditView = joint.dia.ElementView.extend({
+    events: STD_TEXT_ELEMENT_EVENTS,
+
+    onLeftClick(event) {
+        event.preventDefault();
+        if (selElement !== '') {
+            console.warn(event);
+            let position = {position: {x: event.offsetX, y: event.offsetY}};
+            console.warn(position);
+            createElements(selElement, position, this.model);
+        }
+    },
+
+    onRightClick(event) {
+        event.preventDefault();
+        if (confirm('Löschen?')) {
+            for (let embedded of this.model.getEmbeddedCells()) {
+                this.model.unembed(embedded);
+                embedded.remove();
+            }
+            this.remove();
+        }
+    },
+
+    initialize() {
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.model, 'uml-update', function () {
+            this.update();
+            this.resize();
+        });
+    }
+});
+
+
 const EDIT_TEMPLATE = `
 <div class="edit_element">
     <button class="delete">x</button>
@@ -1225,23 +1184,30 @@ function createEdit(xCoord, yCoord) {
         cleanname: 'Externer Knoten',
         ports: {
             groups: {
-                'extern': {
+                'extern-in': {
                     position: 'absolute',
                     attrs: {
                         circle: {fill: 'transparent', stroke: COLORS.RoyalBlue, strokeWidth: 1, r: 10, magnet: true}
                     }
+                },
+                'extern-out': {
+                    position: 'abolute',
+                    attrs: {
+                        circle: {fill: 'transparent', stroke: COLORS.ForestGreen, strokeWidth: 1, r: 10, magnet: true}
+                    }
                 }
             },
             items: [
-                {id: 'extern', group: 'extern', args: {x: 0, y: 60}}
+                {id: 'extern-in', group: 'extern-in', args: {x: 0, y: WHILE_LOOP_HEIGHT / 3}},
+                {id: 'extern-out', group: 'extern-out', args: {x: 0, y: 2 * WHILE_LOOP_HEIGHT / 3}}
             ]
         }
     });
 
+    graph.addCell(edit);
+
     const start = createStartState(xCoord + STD_PADDING, yCoord + STD_PADDING);
     const end = createEndState(xCoord + 118, yCoord + 68);
-
-    graph.addCell(edit);
 
     edit.embed(start);
     edit.embed(end);
@@ -1253,7 +1219,6 @@ function createEdit(xCoord, yCoord) {
     graph.addCell(end);
 
     parentChildNodes.push({'parentId': edit.id, 'startId': start.id, 'endId': end.id, 'endName': end.name});
-    // parentChildNodes.push({"parentId": edit.id, "startId": start.id, "endId": end.id, "endName": end.name});
 
     // Add edit twice --> bug...
     return edit;
