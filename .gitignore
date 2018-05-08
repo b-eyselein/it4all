@@ -10,6 +10,9 @@ tmp
 dist
 .history
 
+# Js mapping files
+**/*.js.map
+
 # Ignore saved files
 data/
 
