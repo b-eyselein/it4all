@@ -15,33 +15,12 @@
                 '@routes.Assets.versioned("app/uml/umlClass/classDiagDrawing.js")'
             ];
             for (let toImport of imports) {
-                try {
-                    SystemJS.import(toImport).then(function (m) {
-                        // console.log(m);
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
+                SystemJS.import(toImport).then(function (m) {
+                    // console.log(m);
+                });
             }
     </script>
 
-    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
-    @* Javascript Routes *@
-    @*<script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>*@
-
-    @* @core.helperTemplates.fullScreenScripts.render() *@
-
-    @*<script src="@routes.ExerciseController.umlClassDiag(exercise.id, curPart.urlName)"></script>*@
-
-    @*<script src="@routes.Assets.versioned("javascripts/uml/umlConsts.js")"></script>*@
-
-    @*<script src="@routes.Assets.versioned("javascripts/uml/umlClass/umlModel.js")"></script>*@
-    @*<script src="@routes.Assets.versioned("javascripts/uml/umlClass/classDiagElements.js")"></script>*@
-
-    @*<script src="@routes.Assets.versioned("javascripts/uml/umlClass/editModal.js")"></script>*@
-
-    @*<script src="@routes.Assets.versioned("javascripts/uml/umlClass/classDiagDrawing.js")"></script>*@
-    @*<script src="@routes.Assets.versioned("javascripts/uml/umlClass/classDiagCorrection.js")"></script>*@
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
 
@@ -66,43 +45,23 @@
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#hintModal">
                         Bearbeitungshinweise</button>
 
-                    <div class="btn-group">
-                        <button class="btn btn-default" data-conntype="CLASS" onclick="selectButton(this);" id="classButton"
-                            @if(getsHelp) {
-                                @Html("""disabled title="Es wurden bereits alle Klassen erstellt!" """)
-                            }>
-
-                            <span class="glyphicon glyphicon-menu-hamburger"></span>
-                            <span id="classType">Klasse</span>
-                        </button>
-
-                        <button class="btn btn-default" data-toggle="dropdown" @if(getsHelp) {
+                    <button class="btn btn-default" data-conntype="CLASS" id="classButton"
+                        @if(getsHelp) {
                             @Html("""disabled title="Es wurden bereits alle Klassen erstellt!" """)
-                        }>
-                            <span class="caret"></span>
-                        </button>
+                        }><span class="glyphicon glyphicon-menu-hamburger"></span> Klasse
+                    </button>
 
-                        <ul class="dropdown-menu" role="menu">
-                        @for(classType <- model.uml.UmlClassType.values) {
-                            <li>
-                                <a data-conntype="@classType.entryName " onclick="selectClassType(this);">@classType.german </a>
-                            </li>
-                        }
-                        </ul>
-                    </div>
+                    <button class="btn btn-default" data-conntype="IMPLEMENTATION" >
+                        <span class="glyphicon glyphicon-arrow-up"></span> Vererbung
+                    </button>
 
                     <div class="btn-group">
-                        <button class="btn btn-default" data-conntype="IMPLEMENTATION" onclick="selectButton(this);">
-                            <span class="glyphicon glyphicon-arrow-up"></span> Vererbung
-                        </button>
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="btn btn-default" data-conntype="ASSOCIATION" onclick="selectButton(this);" id="assocButton">
+                        <button class="btn btn-default" data-conntype="ASSOCIATION" id="assocButton">
                             <span class="glyphicon glyphicon-resize-horizontal"></span>
                             <span id="assocType">
                                 Assoziation</span>
                         </button>
+
                         <button class="btn btn-default" data-toggle="dropdown">
                             <span class="caret"></span>
                         </button>
@@ -110,15 +69,15 @@
                         <ul class="dropdown-menu" role="menu">
                         @for(assocType <- model.uml.UmlAssociationType.values) {
                             <li>
-                                <a data-conntype="@assocType.entryName " onclick="selectAssocType(this);">@assocType.german </a>
+                                <a data-conntype="@assocType.entryName">@assocType.german</a>
                             </li>
                         }
                         </ul>
                     </div>
 
-                    <button class="btn btn-default" data-conntype="POINTER" onclick="selectButton(this);" title="Maus" @{
+                    <button class="btn btn-default" data-conntype="POINTER" title="Maus" @{
                         if(getsHelp) "disabled" else ""
-                    } >
+                    }>
                         @*<span class="glyphicon glyphicon-screenshot"></span>*@Attribute und Methoden
                     </button>
 

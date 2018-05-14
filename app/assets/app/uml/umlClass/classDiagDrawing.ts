@@ -1,11 +1,10 @@
 import * as $ from 'jquery';
-import * as dagre from 'dagre';
 import * as joint from 'jointjs';
 
 import {DEF_GRID, GRID_SIZE, MyPosition, PAPER_HEIGHT} from "../umlConsts";
 import {UmlClassAttribute, UmlClassMethod, visibilityReprFromValue} from "../umlInterfaces";
 
-import {CustomClass} from "./classDiagElements";
+import {CustomClass, MyJointClass} from "./classDiagElements";
 import {editClass, editLink} from "./editModal";
 
 export {classDiagGraph, paper, MethodToLoad, AttributeToLoad};
@@ -74,11 +73,11 @@ function addUmlClass(clazz: ClassToLoad) {
     };
 
     // FIXME: other content...
-    new CustomClass().position(clazz.position.x, clazz.position.y).size(STD_CLASS_WIDTH, STD_CLASS_HEIGHT).addTo(classDiagGraph);
-    // graph.addCell(new CustomClass(content));
+    let toAdd = new MyJointClass(content);//.position(clazz.position.x, clazz.position.y).size(STD_CLASS_WIDTH, STD_CLASS_HEIGHT).addTo(classDiagGraph);
+    classDiagGraph.addCell(toAdd);
 }
 
-function newClass(posX, posY) {
+function newClass(posX: number, posY: number): void {
     let allClassNames: string[] = classDiagGraph.getCells().filter((c) => c.get('type') === 'customUml.Class').map((cell) => cell.get('name'));
     let simpleNameInts: number[] = allClassNames.filter((cn: string) => cn.startsWith(SIMPLE_CLASS_PREFIX)).map((cn) => parseInt(cn.substring(SIMPLE_CLASS_PREFIX.length)));
 
@@ -205,7 +204,7 @@ function cellOnLeftClick(cellView, evt) {
     }
 }
 
-function unMarkButtons() {
+function unMarkButtons(): void {
     $('#buttonsDiv').find('button').removeClass('btn-primary').addClass('btn-default');
 }
 
@@ -221,7 +220,7 @@ function selectClassType(button) {
     $('#classType').text(button.textContent);
 }
 
-function selectAssocType(button) {
+function selectAssocType(button: HTMLAnchorElement) {
     unMarkButtons();
 
     let assocButton = document.getElementById('assocButton');
@@ -240,7 +239,7 @@ function selectButton(button) {
     sel = button.dataset.conntype.trim();
 }
 
-function addImplementation(sourceId, targetId) {
+function addImplementation(sourceId: string, targetId: string) {
     classDiagGraph.addCell(new joint.shapes.uml.Implementation({source: {id: sourceId}, target: {id: targetId}}));
 }
 
@@ -372,7 +371,23 @@ function loadSolution(solution, paperWidth, paperHeight) {
     }
 }
 
-$(document).ready(function () {
+function addHandlersToButtons() {
+    $('button[data-conntype]').each((index, element: HTMLElement) => {
+        $(element).on('click', () => {
+            selectButton(element);
+        })
+    });
+
+    $('a[data-conntype]').each((index, element: HTMLAnchorElement) => {
+        $(element).on('click', () => {
+            selectAssocType(element);
+        })
+    })
+}
+
+$(() => {
+    addHandlersToButtons();
+
     let paperJQ = $('#paper');
 
     let paperWidth = paperJQ.width(), paperHeight = 700;

@@ -319,7 +319,7 @@ function umlClassMethodFromHtml(memberGroup): UmlClassMethod {
 
 // noinspection JSUnusedGlobalSymbols
 function updateClass(elementId) {
-    let element = classDiagGraph.getCell(elementId) as CustomClass;
+    let element = classDiagGraph.getCell(elementId) ;//as CustomClass;
 
     let attrs = $('#editAttrsDiv').find('.form-group').map((index, attrGroup) => umlClassAttributeFromHtml(attrGroup)).get();
     let methods = $('#editMethodsDiv').find('.form-group').map((index, metGroup) => umlClassMethodFromHtml(metGroup)).get();
