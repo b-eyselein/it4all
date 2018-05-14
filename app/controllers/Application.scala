@@ -14,6 +14,8 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
 
   def index: EssentialAction = withUser { user => implicit request => Ok(views.html.index(user)) }
 
+  def systemJsTest: EssentialAction = withUser { user => implicit request => Ok(views.html.systemjstest(user)) }
+
   def javascriptRoutes = Action { implicit request =>
     Ok(JavaScriptReverseRouter("jsRoutes")(
 

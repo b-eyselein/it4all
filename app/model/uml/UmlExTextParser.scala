@@ -9,22 +9,21 @@ class UmlExTextParser(rawText: String, val mappings: Map[String, String], val to
 
   private val capWordsRegex: Regex   = """[A-Z][a-zäöüß]*""".r
   private val cssClassName : String  = "non-marked"
-  private val classSelectionFunction = "onclick=\"select(this)\""
   private val diagramDrawingFunction = "draggable=\"true\" ondragstart=\"drag(event)\""
 
   val capitalizedWords  : Set[String] = capWordsRegex findAllIn rawText toSet
   val simpleReplacements: Set[String] = capitalizedWords filter (k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))
 
-  def replaceWithMappingSpan(text: String, key: String, value: String, function: String): String = {
+  def replaceWithMappingSpan(text: String, key: String, value: String, function: Option[String]): String = {
     val matcher = Pattern.compile(key + "\\b").matcher(text)
-    matcher.replaceAll( s"""<span class="$cssClassName" $function data-baseform="$value">$key</span>""")
+    matcher.replaceAll( s"""<span class="$cssClassName" ${function.getOrElse("")} data-baseform="$value">$key</span>""")
   }
 
-  def parseTextForClassSel: String = parseText(classSelectionFunction)
+  def parseTextForClassSel: String = parseText(None)
 
-  def parseTextForDiagDrawing: String = parseText(diagramDrawingFunction)
+  def parseTextForDiagDrawing: String = parseText(Some(diagramDrawingFunction))
 
-  private def parseText(function: String): String = {
+  private def parseText(function: Option[String]): String = {
     var newText = rawText
 
     for (simpleRep <- simpleReplacements)

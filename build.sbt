@@ -8,36 +8,42 @@ scalaVersion := "2.12.5"
 
 scalacOptions ++= Seq("-feature")
 
+updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true)
+
+JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
+
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
   .settings(packageName in Universal := s"${name.value}")
-
 
 // Resolver for JFrog Uni Wue
 resolvers ++= Seq(
   "Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-release",
-  "Snapshot Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-snapshot/"
+  "Snapshot Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-snapshot/",
+
+  Resolver.bintrayRepo("webjars", "maven")
 )
 
 val webJarDependencies = Seq(
-  // Js-Libraries
-  "org.webjars.npm" % "ace-builds" % "1.3.3",
-
-  "org.webjars" % "jquery" % "3.3.1",
   "org.webjars" % "bootstrap" % "3.3.7-1",
   // FIXME: update to version 4.0
 
-  "org.webjars.npm" % "jointjs" % "2.0.1",
-
-  // Js-Libs for Uml
-  "org.webjars" % "lodash" % "3.10.1",
-  "org.webjars" % "backbonejs" % "1.3.3",
-
   "org.webjars.npm" % "autosize" % "4.0.0",
   "org.webjars.bower" % "filesaver" % "1.3.3",
-
 )
 
 libraryDependencies ++= webJarDependencies
+
+resolveFromWebjarsNodeModulesDir := true
+
+lazy val copy_node_modules = taskKey[Unit]("Copys the node_module to the test target dir")
+
+copy_node_modules := {
+  val node_modules = new File("node_modules")
+  val target = new File("target/web/public/main/lib/")
+  IO.copyDirectory(node_modules, target, overwrite = true, preserveLastModified = true)
+}
+
+addCommandAlias("get_npm_deps", ";web-assets:jseNpmNodeModules;copy_node_modules")
 
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
@@ -49,7 +55,6 @@ libraryDependencies ++= Seq(
   // Better enums for scala
   "com.beachape" %% "enumeratum-play" % "1.5.14",
   "com.beachape" %% "enumeratum-play-json" % "1.5.14",
-
 
   // Dependency injection
   guice,

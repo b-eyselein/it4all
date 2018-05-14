@@ -13,6 +13,9 @@ dist
 # Js mapping files
 **/*.js.map
 
+# Node modules
+node_modules/
+
 # Ignore saved files
 data/
 

@@ -5,20 +5,27 @@
 }
 
 @scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>
+            let toImport = '@routes.Assets.versioned("app/uml/umlClass/classSelection.js")';
+            System.import(toImport);
+    </script>
+
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
-    <script src="@routes.Assets.versioned("javascripts/uml/umlClass/classSelection.js")"></script>
 }
 
 @main("UML", Some(user), scripts) {
         <!-- Modal for hints -->
-    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
+    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal", "-lg") {
         <ul>
             <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext auswählen.</li>
             <li>Sie können nur Nomen auswählen.</li>
             <li>Es werden alle Vorkommen gewählter Klassen markiert, um eine Doppelauswahl zu verhindern.</li>
             <li>Durch erneutes Anklicken einer Klasse - unabhängig von der Position - können Sie eine Klasse wieder abwählen.</li>
             <li>Auf der rechten Seite wird Ihnen eine Liste Ihrer gewählten Klassen angezeigt.</li>
-            <li>Wenn Sie alle Klassen ausgewählt haben, können Sie Ihre Wahl mit dem Link "@btnText" korrigieren lassen und zum nächsten Schritt gelangen.</li>
+            <li>Wenn Sie alle Klassen ausgewählt haben, können Sie Ihre Wahl mit dem Link &quot;@btnText&quot; korrigieren lassen und zum nächsten Schritt gelangen.</li>
         </ul>
     }
 
@@ -51,8 +58,8 @@
 
         <hr>
 
-        <form action="@routes.ExerciseController.correct("uml", exercise.id, part = model.uml.ClassSelection.urlName)"
-        method="post" onsubmit="return prepareFormForSubmitting();">
+        @*onsubmit="return prepareFormForSubmitting();"*@
+        <form action="@routes.ExerciseController.correct("uml", exercise.id, part = model.uml.ClassSelection.urlName)" method="post" >
             <input type="hidden" class="form-control" name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName" required>
             <button class="btn btn-primary btn-block">@btnText</button>
         </form>

@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "amd",
+    "moduleResolution": "node",
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "mapRoot": "/assets",
+    "sourceRoot": "/assets",
+    "rootDirs": [
+      "app/assets",
+      "test/assets"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*",
+        "node-modules/*"
+      ]
+    },
+    "typeRoots": [
+      "node-modules/@types"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "project/target",
+    "target"
+  ]
+}

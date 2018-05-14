@@ -157,6 +157,8 @@ GET           /:toolType/admin/index                                   controlle
 # Evaluation
 GET           /eval/stats                                              controllers.AdminController.evaluationResults
 
+GET           /systemjs                                                controllers.Application.systemJsTest
+
 # Javascript routes
 GET           /javascriptRoutes                                        controllers.Application.javascriptRoutes
 
