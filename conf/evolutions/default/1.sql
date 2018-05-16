@@ -38,14 +38,14 @@ CREATE TABLE IF NOT EXISTS users_in_courses (
 # Feedback
 
 CREATE TABLE IF NOT EXISTS feedback (
-  username VARCHAR(30),
-  tool_url VARCHAR(30),
-  sense VARCHAR(10),
-  used VARCHAR(10),
+  username  VARCHAR(30),
+  tool_url  VARCHAR(30),
+  sense     VARCHAR(10),
+  used      VARCHAR(10),
   usability VARCHAR(10),
-  feedback VARCHAR(10),
-  fairness VARCHAR(10),
-  comment TEXT,
+  feedback  VARCHAR(10),
+  fairness  VARCHAR(10),
+  comment   TEXT,
 
   PRIMARY KEY (username, tool_url),
   FOREIGN KEY (username) REFERENCES users (username)
@@ -57,15 +57,15 @@ CREATE TABLE IF NOT EXISTS feedback (
 
 CREATE TABLE IF NOT EXISTS learning_paths (
   tool_url VARCHAR(10),
-  id    INT,
-  title VARCHAR(50),
+  id       INT,
+  title    VARCHAR(50),
 
-  PRIMARY KEY(tool_url, id)
+  PRIMARY KEY (tool_url, id)
 );
 
 CREATE TABLE IF NOT EXISTS learning_path_sections (
   id           INT,
-  tool_url VARCHAR(10),
+  tool_url     VARCHAR(10),
   path_id      INT,
   section_type VARCHAR(30),
   title        VARCHAR(60),
@@ -402,16 +402,15 @@ CREATE TABLE IF NOT EXISTS sql_solutions (
 # Uml
 
 CREATE TABLE IF NOT EXISTS uml_exercises (
-  id             INT PRIMARY KEY,
-  title          VARCHAR(50),
-  author         VARCHAR(50),
-  ex_text        TEXT,
-  ex_state       ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id            INT PRIMARY KEY,
+  title         VARCHAR(50),
+  author        VARCHAR(50),
+  ex_text       TEXT,
+  ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  solution_json  TEXT,
-  class_sel_text TEXT,
-  diag_draw_text TEXT,
-  to_ignore      TEXT
+  solution_json TEXT,
+  marked_text   TEXT,
+  to_ignore     TEXT
 );
 
 CREATE TABLE IF NOT EXISTS uml_mappings (

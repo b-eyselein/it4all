@@ -5,7 +5,6 @@ export {
     COLORS,
     calcRectHeight,
     MIN_HEIGHT,
-    MyPosition,
     STD_ELEMENT_WIDTH,
     fontSize,
     DEF_GRID,
@@ -38,11 +37,6 @@ const STD_TEXT_ELEMENT_EVENTS = {
 
 function calcRectHeight(lines: string[]): number {
     return Math.max((lines.length * fontSize) + (2 * STD_PADDING), MIN_HEIGHT);
-}
-
-interface MyPosition {
-    x: number,
-    y: number
 }
 
 enum COLORS {

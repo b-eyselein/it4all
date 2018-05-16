@@ -1,11 +1,14 @@
 import * as joint from 'jointjs';
 
 import {calcRectHeight, COLORS, fontSize, STD_ELEMENT_WIDTH, STD_PADDING} from "../umlConsts";
-import {UmlClass, UmlClassAttribute, UmlClassMethod} from "../umlInterfaces";
+import {CLASS_TYPES, UmlClass, UmlClassAttribute, UmlClassMethod} from "../umlInterfaces";
 
 import * as _ from "lodash";
+import {editClass} from "./classDiagEdit";
 
-export {MyJointClass}
+export {MyJointClass, MyJointClassView, STD_CLASS_WIDTH, STD_CLASS_HEIGHT}
+
+const STD_CLASS_HEIGHT = 160, STD_CLASS_WIDTH = 200;
 
 const CLASS_MARKUP = `
 <g class="rotatable">
@@ -15,6 +18,33 @@ const CLASS_MARKUP = `
   <text class="uml-class-name-text"/><text class="uml-class-attrs-text"/><text class="uml-class-methods-text"/>
 </g>`.trim();
 
+function buildMethodString(cm: UmlClassMethod): string {
+    let modifier = [];
+
+    if (cm.isAbstract)
+        modifier.push('a');
+
+    if (cm.isStatic)
+        modifier.push('s');
+
+    return cm.visibility + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + cm.name + '(' + cm.parameters + '): ' + cm.type;
+}
+
+function buildAttributeString(ca: UmlClassAttribute): string {
+    let modifier = [];
+
+    if (ca.isAbstract)
+        modifier.push('a');
+
+    if (ca.isStatic)
+        modifier.push('s');
+
+    if (ca.isDerived)
+        modifier.push('d');
+
+    return ca.visibility + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + ca.name + ': ' + ca.type;
+}
+
 class MyJointClass extends joint.shapes.basic.Generic {
 
     constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
@@ -23,7 +53,8 @@ class MyJointClass extends joint.shapes.basic.Generic {
     }
 
     initialize() {
-        this.on('change:name change:attributes change:methods', function () {
+        this.on('change:classType change:className change:attributes change:methods', function () {
+            // noinspection JSPotentiallyInvalidUsageOfClassThis
             this.updateRectangles();
             this.trigger('uml-update');
         }, this);
@@ -34,13 +65,12 @@ class MyJointClass extends joint.shapes.basic.Generic {
     }
 
     updateRectangles() {
-
         const attrs = this.get('attrs');
 
         const rects = [
-            {type: 'name', text: this.get('className')},
-            {type: 'attrs', text: this.get('attributes')},
-            {type: 'methods', text: this.get('methods')}
+            {type: 'name', text: this.getClassRectText()},
+            {type: 'attrs', text: this.getAttributesAsStrings()},
+            {type: 'methods', text: this.getMethodsAsStrings()}
         ];
 
         let offsetY = 0;
@@ -56,12 +86,14 @@ class MyJointClass extends joint.shapes.basic.Generic {
 
             offsetY += rectHeight;
         });
+
+        this.resize(STD_CLASS_WIDTH, offsetY);
     }
 
     defaults() {
         return _.defaultsDeep({
             type: 'MyJointClass',
-            size: {width: 300, height: 300},
+            size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
             attrs: {
                 rect: {width: STD_ELEMENT_WIDTH, stroke: COLORS.Black, strokeWidth: 2},
                 text: {fill: COLORS.Black, fontSize, fontFamily: 'Times New Roman'},
@@ -79,49 +111,103 @@ class MyJointClass extends joint.shapes.basic.Generic {
                 '.uml-class-methods-text': {ref: '.uml-class-methods-rect', refY: STD_PADDING, refX: STD_PADDING,}
             },
 
-            className: <string[]> [],
-            classType: <string>  '',
+
+            className: <string> '',
+            classType: '',
             attributes: <UmlClassAttribute[]> [],
             methods: <UmlClassMethod[]> []
         }, joint.shapes.basic.Generic.prototype.defaults);
     }
 
+    getClassType(): string {
+        return this.get('classType');
+    }
 
-    getClassTypeRepresentant(): string {
-        switch (this.get('classType')) {
-            case 'ABSTRACT':
-                return '<<abstract>>';
-            case 'INTERFACE':
-                return '<<interface>>';
-            case 'CLASS':
-            default:
-                return '';
+    setClassType(classType: string): void {
+        if (CLASS_TYPES.indexOf(classType) >= 0) {
+            this.prop('classType', classType);
+        } else {
+            console.error(">>" + classType + "<< is no legal value for a class type!");
         }
+    }
+
+    getClassName(): string {
+        return this.get('className');
+    }
+
+    setClassName(className: string) {
+        this.set('className', className);
     }
 
     getAsUmlClass(): UmlClass {
-        return new UmlClass(this.get('className'), this.get('classType'), this.get('attributes'), this.get('methods'), this.get('position'));
+        return {
+            name: this.getClassName(),
+            classType: this.getClassType(),
+            attributes: this.getAttributes(),
+            methods: this.getMethods(),
+            position: this.get('position')
+        };
     }
 
     getClassRectText(): string[] {
-        let classType = this.getClassTypeRepresentant();
-        let className = this.get('className');
+        let className = this.getClassName();
 
-        if (classType.length > 0) {
-            return [classType, className]
-        } else {
-            return [className];
+        switch (this.getClassType()) {
+            case 'ABSTRACT':
+                return ['<<abstract>>', className];
+            case 'INTERFACE':
+                return ['<<interface>>', className];
+            case 'CLASS':
+            default:
+                return [className];
         }
     }
 
-    getAttributes(): string[] {
+
+    getAttributesAsStrings(): string[] {
         let attributes: UmlClassAttribute[] = this.get('attributes');
-        return attributes.map((a) => a.buildString())
+        return attributes.map(buildAttributeString);
     }
 
-    getMethods(): string[] {
+    getAttributes(): UmlClassAttribute[] {
+        return this.get('attributes');
+    }
+
+    setAttributes(attributes: UmlClassAttribute[]): void {
+        this.set('attributes', attributes);
+    }
+
+
+    getMethods(): UmlClassMethod[] {
+        return this.get('methods');
+    }
+
+    getMethodsAsStrings(): string[] {
         let methods: UmlClassMethod[] = this.get('methods');
-        return methods.map((m) => m.buildString());
+        return methods.map(buildMethodString);
+    }
+
+    setMethods(methods: UmlClassMethod[]): void {
+        this.set('methods', methods);
+    }
+
+}
+
+class MyJointClassView extends joint.dia.ElementView {
+
+    constructor(opt?: joint.dia.CellView.Options<joint.dia.Element>) {
+        super(opt);
+
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.model, 'uml-update', function () {
+            this.update();
+            this.resize();
+        });
+    }
+
+    pointerdblclick() {
+        editClass(this.model as MyJointClass);
     }
 
 }

@@ -7,11 +7,15 @@
         paths: {
             // paths serve as alias
             'npm:': '/assets/lib/'
+            // , 'ace': 'lib/ace'
         },
         // map tells the System loader where to look for things
         map: {
             // our app is within the app folder
             'app': '/assets/app',
+
+            'ace': 'npm:ace/lib/ace/ace.js',
+    'monaco-editor':'npm:monaco-editor/min/'
 
             'graphlib': 'npm:graphlib/dist/graphlib.js',
             'jquery': 'npm:jquery/jquery.js',
@@ -27,6 +31,14 @@
         packages: {
             app: {
                 defaultExtension: 'js'
+            },
+            '/assets/lib': {
+                defaultExtension: 'js'
+            }
+        },
+        meta: {
+            '/assets/lib/ace-builds/src/ace.js': {
+                format: 'cjs'
             }
         }
     });

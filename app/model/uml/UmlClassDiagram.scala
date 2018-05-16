@@ -7,7 +7,7 @@ import scala.collection.immutable.IndexedSeq
 
 sealed abstract class UmlVisibility(val representant: String) extends EnumEntry
 
-object UmlVisibility extends Enum[UmlVisibility] with PlayJsonEnum[UmlVisibility] {
+object UmlVisibility extends Enum[UmlVisibility] /* with PlayJsonEnum[UmlVisibility] */{
 
   override val values: IndexedSeq[UmlVisibility] = findValues
 

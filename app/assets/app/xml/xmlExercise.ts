@@ -1,3 +1,9 @@
+import * as $ from 'jquery';
+// import {Ace} from 'ace';
+import {initEditor} from "../editorHelpers";
+
+let editor;
+
 /**
  * @param {object} response
  * @param {boolean} response.solSaved
@@ -8,7 +14,7 @@
  * @param {int} response.results.line
  * @param {string} response.results.success
  */
-function onXmlDocumentCorrectionSuccess(response) {
+function onXmlDocumentCorrectionSuccess(response): void {
     let html = '';
 
     if (response.solSaved) {
@@ -30,7 +36,7 @@ function onXmlDocumentCorrectionSuccess(response) {
 }
 
 
-function onXmlGrammarCorrectionSuccess(response) {
+function onXmlGrammarCorrectionSuccess(response): void {
     console.log(response);
 }
 
@@ -39,15 +45,15 @@ function onXmlGrammarCorrectionSuccess(response) {
  * @param {object} jqXHR.responseJSON
  * @param {string} jqXHR.responseJSON.msg
  */
-function onXmlCorrectionError(jqXHR) {
+function onXmlCorrectionError(jqXHR): void {
     $('#correctionDiv').html(`<div class="alert alert-danger">${jqXHR.responseJSON.msg}</div>`);
 }
 
 
-function testSol() {
+function testSol(): void {
     let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.ExerciseController.correctLive('xml', exerciseId, exercisePart).url;
+    let url = '';//jsRoutes.controllers.ExerciseController.correctLive('xml', exerciseId, exercisePart).url;
 
     $.ajax({
         type: 'PUT',
@@ -61,6 +67,7 @@ function testSol() {
     });
 }
 
-$(document).ready(function () {
-    $('#testBtn').click(testSol);
+$(() => {
+    editor = initEditor('xml'); //, 15, 30);
+    $('#testBtn').on('click', testSol);
 });

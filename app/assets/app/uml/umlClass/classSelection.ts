@@ -3,8 +3,10 @@ import {CLASS_TYPES, UmlAssociation, UmlClass, UmlImplementation, UmlSolution} f
 
 let chosenClasses: string[] = [];
 
-function readClass(className): UmlClass {
-    return new UmlClass(className, CLASS_TYPES.CLASS, [], []);
+function readClass(name): UmlClass {
+    return {
+        name, classType: CLASS_TYPES.CLASS, attributes: [], methods: []
+    };
 }
 
 function prepareFormForSubmitting(): void {
@@ -43,10 +45,10 @@ function select(span: Element): void {
     }
 }
 
-$(document).ready(() => {
+$(() => {
     $('span.non-marked').each((index: number, span: Element) => {
-        $(span).click(() => select(span))
+        $(span).on('click', () => select(span))
     });
 
-    $('form').submit(prepareFormForSubmitting);
+    $('form').on('submit', prepareFormForSubmitting);
 });

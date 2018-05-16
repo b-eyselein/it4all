@@ -1,8 +1,10 @@
 import * as $ from 'jquery';
 
-import {UmlAssociation, UmlClassAttribute, UmlClassMethod, UmlImplementation} from "../umlInterfaces";
+import {UmlAssociation, UmlClassAttribute, UmlClassMethod, UmlImplementation, UmlSolution} from "../umlInterfaces";
 import {classDiagGraph} from "./classDiagDrawing";
-import {CustomClass} from "./classDiagElements";
+import {MyJointClass} from "./classDiagElements";
+
+export {testSol};
 
 interface AnalysisResult {
     success: string
@@ -304,7 +306,7 @@ function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation)
  *
  * @return {string}
  */
-function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
+function explainImplResult(implRes, alertClass, glyphicon, successExplanation): string {
     let subClass = implRes.userArg != null ? implRes.userArg.subClass : implRes.sampleArg.subClass;
     let superClass = implRes.userArg != null ? implRes.userArg.superClass : implRes.sampleArg.superClass;
 
@@ -332,7 +334,7 @@ function explainImplResult(implRes, alertClass, glyphicon, successExplanation) {
  *
  * @return {string}
  */
-function displayMatchResult(matchingRes, explanationFunc) {
+function displayMatchResult(matchingRes, explanationFunc): string {
     let alertClass, glyphicon, successExplanation;
 
     switch (matchingRes.success) {
@@ -379,7 +381,7 @@ function displayMatchResult(matchingRes, explanationFunc) {
  *
  * @return string
  */
-function displayMatchingResultList(matchingResultList, name, explainFunc) {
+function displayMatchingResultList(matchingResultList, name, explainFunc): string {
     if (matchingResultList.success) {
         return `
 <div class="alert alert-success">
@@ -403,7 +405,7 @@ function displayMatchingResultList(matchingResultList, name, explainFunc) {
  * @param {object} response.assocAndImplResult.assocResult
  * @param {object} response.assocAndImplResult.implResult
  */
-function onUmlClassDiagCorrectionSuccess(response) {
+function onUmlClassDiagCorrectionSuccess(response): void {
     let html = `<h2 class="text-center">Resultate</h2>`;
 
     if (response.classResult != null) {
@@ -420,14 +422,14 @@ function onUmlClassDiagCorrectionSuccess(response) {
     $('#testButton').prop('disabled', false);
 }
 
-function onUmlClassDiagCorrectionError(jqXHR) {
+function onUmlClassDiagCorrectionError(jqXHR): void {
     console.error(jqXHR.responseJSON);
     $('#testButton').prop('disabled', false);
 }
 
 
-function getClassNameFromCellId(id) {
-    return (classDiagGraph.getCell(id) as CustomClass).get('className');
+function getClassNameFromCellId(id): string {
+    return (classDiagGraph.getCell(id) as MyJointClass).getClassName();
 }
 
 function getTypeName(type: string): string {
@@ -450,51 +452,44 @@ function getMultiplicity(label): "SINGLE" | "UNBOUND" {
 }
 
 function umlImplfromConnection(conn): UmlImplementation {
-    return {
-        subClass: getClassNameFromCellId(conn.attributes.source.id),
-        superClass: getClassNameFromCellId(conn.attributes.target.id)
-    }
+    return {subClass: getClassNameFromCellId(conn.attributes.source.id), superClass: getClassNameFromCellId(conn.attributes.target.id)}
 }
 
 function umlAssocfromConnection(conn): UmlAssociation {
     return {
-        assocType: getTypeName(conn.attributes.type),
-        assocName: '',        // TODO: name of association!?!
-        firstEnd: getClassNameFromCellId(conn.attributes.source.id),
-        firstMult: getMultiplicity(conn.attributes.labels[0]),
-        secondEnd: getClassNameFromCellId(conn.attributes.target.id),
-        secondMult: getMultiplicity(conn.attributes.labels[1])
+        assocType: getTypeName(conn.attributes.type), assocName: '',        // TODO: name of association!?!
+        firstEnd: getClassNameFromCellId(conn.attributes.source.id), firstMult: getMultiplicity(conn.attributes.labels[0]),
+        secondEnd: getClassNameFromCellId(conn.attributes.target.id), secondMult: getMultiplicity(conn.attributes.labels[1])
     };
 }
 
 function testSol(): void {
-    let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
+    let clickedButton = $('#testButton');
 
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = ''; // FIXME: jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
+    let url = clickedButton.data('url');
 
-    $('#testButton').prop('disabled', true);
+    clickedButton.prop('disabled', true);
 
-    let solution = {
-        classes: classDiagGraph.getCells().filter((cell) => cell.get('type') === 'customUml.CustomClass').map((cell: CustomClass) => cell.getAsUmlClass()),
-        associations: classDiagGraph.getLinks().filter((conn) => conn.get('type') !== 'uml.Implementation').map((conn) => umlAssocfromConnection(conn)),
-        implementations: classDiagGraph.getLinks().filter((conn) => conn.get('type') === 'uml.Implementation').map((conn) => umlImplfromConnection(conn))
+    let solution: UmlSolution = {
+        classes: classDiagGraph.getCells()
+            .filter((cell) => cell instanceof MyJointClass)
+            .map((cell: MyJointClass) => cell.getAsUmlClass()),
+        associations: classDiagGraph.getLinks()
+            .filter((conn) => conn.get('type') !== 'uml.Implementation')
+            .map((conn) => umlAssocfromConnection(conn)),
+        implementations: classDiagGraph.getLinks()
+            .filter((conn) => conn.get('type') === 'uml.Implementation')
+            .map((conn) => umlImplfromConnection(conn))
     };
-
-    console.warn(JSON.stringify(solution, null, 2));
 
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url,
-        data: JSON.stringify({exercisePart, solution}),
+        data: JSON.stringify(solution),
         async: true,
         success: onUmlClassDiagCorrectionSuccess,
         error: onUmlClassDiagCorrectionError
     });
 }
-
-$(document).ready(function () {
-    $('#testButton').click(testSol);
-});

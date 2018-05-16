@@ -116,7 +116,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
       case GrammarCreationXmlPart  => Html(s"""<div class="well">${exercise.grammarDescription}</div>""")
     }
 
-    views.html.core.exercise2Rows(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, template, part, exScript)
+    views.html.idExercises.xml.xmlExercise(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, template, part, exScript)
   }
 
   override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)

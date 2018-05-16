@@ -20,13 +20,16 @@ object UmlClassDiagramJsonFormat {
     case _             => JsError("Needs to be a string!")
   }
 
-  private val umlVisibilityReads: Reads[UmlVisibility] = {
-    case JsString(str) => UmlVisibility.withNameInsensitiveOption(str) match {
-      case Some(vis) => JsSuccess(vis)
-      case None      => JsError("No such value " + str)
-    }
-    case _             => JsError("Needs to be a string!")
+  private implicit val umlVisibilityReads: Reads[UmlVisibility] = {
+    case JsString(vis) =>
+      UmlVisibility.values.find(_.representant == vis) match {
+        case Some(visibility) => JsSuccess(visibility)
+        case None             => JsError("No such value: >>" + vis + "<<")
+      }
+    case _             => JsError("Must be a string!")
   }
+
+  private implicit val umlVisibilityWrites: Writes[UmlVisibility] = umlVis => JsString(umlVis.representant)
 
   private implicit val umlImplementationReads: Reads[UmlImplementation] = (
     (__ \ subClassName).read[String] and
@@ -79,7 +82,7 @@ object UmlClassDiagramJsonFormat {
     ) (UmlAttribute.apply(_, _, _, _, _, _))
 
   private implicit val umlAttributeWrites: Writes[UmlAttribute] = (
-    (__ \ "visibility").write[UmlVisibility] and
+    (__ \ "visibility").write[UmlVisibility](umlVisibilityWrites) and
       (__ \ "name").write[String] and
       (__ \ "type").write[String] and
       (__ \ "isStatic").write[Boolean] and
@@ -97,7 +100,7 @@ object UmlClassDiagramJsonFormat {
     ) (UmlMethod.apply(_, _, _, _, _, _))
 
   private implicit val umlMethodWrites: Writes[UmlMethod] = (
-    (__ \ "visibility").write[UmlVisibility] and
+    (__ \ "visibility").write[UmlVisibility](umlVisibilityWrites) and
       (__ \ "name").write[String] and
       (__ \ "type").write[String] and
       (__ \ "parameters").write[String] and

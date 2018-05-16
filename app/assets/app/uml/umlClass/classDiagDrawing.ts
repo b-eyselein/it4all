@@ -1,89 +1,52 @@
 import * as $ from 'jquery';
 import * as joint from 'jointjs';
 
-import {DEF_GRID, GRID_SIZE, MyPosition, PAPER_HEIGHT} from "../umlConsts";
-import {UmlClassAttribute, UmlClassMethod, visibilityReprFromValue} from "../umlInterfaces";
+import {DEF_GRID, GRID_SIZE, PAPER_HEIGHT} from "../umlConsts";
+import {UmlAssociation, UmlClass, UmlClassAttribute, UmlClassMethod, UmlImplementation, UmlSolution} from "../umlInterfaces";
 
-import {CustomClass, MyJointClass} from "./classDiagElements";
-import {editClass, editLink} from "./editModal";
+import {MyJointClass, MyJointClassView, STD_CLASS_HEIGHT, STD_CLASS_WIDTH} from "./classDiagElements";
+import {editLink} from "./classDiagEdit";
+import {testSol} from "./classDiagCorrection";
 
-export {classDiagGraph, paper, MethodToLoad, AttributeToLoad};
-
-const STD_CLASS_HEIGHT = 160;
-const STD_CLASS_WIDTH = 200;
+export {classDiagGraph, classDiagPaper};
 
 const PADDING = 40;
 
 let chosenCellView = null;
 
 const classDiagGraph = new joint.dia.Graph();
-
-let paper;
+let classDiagPaper;
 
 let sel = 'POINTER';
 
 const SIMPLE_CLASS_PREFIX = 'Klasse_';
 
-interface MemberToLoad {
-    visibility: string,
-    name: string,
-    type: string,
-    isStatic: boolean,
-    isAbstract: boolean
-}
-
-interface AttributeToLoad extends MemberToLoad {
-    isDerived: boolean
-}
-
-interface MethodToLoad extends MemberToLoad {
-    parameters: string
-}
-
-interface ClassToLoad {
-    classType: string,
-    name: string,
-    attributes: AttributeToLoad[],
-    methods: MethodToLoad[],
-    position?: MyPosition
-}
-
-function fromMethodToLoad(mtl: MethodToLoad): UmlClassMethod {
-    return new UmlClassMethod(visibilityReprFromValue(mtl.visibility), mtl.name, mtl.parameters, mtl.type, mtl.isStatic, mtl.isAbstract);
-}
-
-function fromAttributeToLoad(atl: AttributeToLoad): UmlClassAttribute {
-    return new UmlClassAttribute(visibilityReprFromValue(atl.visibility), atl.name, atl.type, atl.isStatic, atl.isDerived, atl.isDerived);
-}
-
-function addUmlClass(clazz: ClassToLoad) {
-
-    let content = {
-        position: clazz.position,
+function addUmlClass(umlClass: UmlClass): void {
+    classDiagGraph.addCell(new MyJointClass({
+        position: umlClass.position,
 
         size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
 
-        className: clazz.name.replace(/ /g, '_'),
+        className: umlClass.name.replace(/ /g, '_'),
 
-        classType: clazz.classType,
+        classType: umlClass.classType,
 
-        attributes: <UmlClassAttribute[]> clazz.attributes.map(fromAttributeToLoad),
+        attributes: <UmlClassAttribute[]> umlClass.attributes,
 
-        methods: <UmlClassMethod[]> clazz.methods.map(fromMethodToLoad),
-    };
-
-    // FIXME: other content...
-    let toAdd = new MyJointClass(content);//.position(clazz.position.x, clazz.position.y).size(STD_CLASS_WIDTH, STD_CLASS_HEIGHT).addTo(classDiagGraph);
-    classDiagGraph.addCell(toAdd);
+        methods: <UmlClassMethod[]> umlClass.methods,
+    }));
 }
 
 function newClass(posX: number, posY: number): void {
-    let allClassNames: string[] = classDiagGraph.getCells().filter((c) => c.get('type') === 'customUml.Class').map((cell) => cell.get('name'));
-    let simpleNameInts: number[] = allClassNames.filter((cn: string) => cn.startsWith(SIMPLE_CLASS_PREFIX)).map((cn) => parseInt(cn.substring(SIMPLE_CLASS_PREFIX.length)));
+    let simpleNameInts: number[] = classDiagGraph.getCells()
+        .filter((c) => c instanceof MyJointClass)
+        .map((cell: MyJointClass) => cell.getClassName())
+        .filter((cn: string) => cn.startsWith(SIMPLE_CLASS_PREFIX))
+        .map((str) => parseInt(str.substring(SIMPLE_CLASS_PREFIX.length)));
 
     addUmlClass({
         name: SIMPLE_CLASS_PREFIX + (Math.max(...simpleNameInts, 0) + 1),
-        classType: sel,
+        classType: sel.toUpperCase(),
         attributes: [], methods: [],
         position: {x: posX, y: posY}
     });
@@ -101,34 +64,14 @@ function blankOnPointerDown(evt, x, y) {
     }
 }
 
-function allowDrop(ev) {
-    ev.preventDefault();
-}
 
+function cellOnLeftClick(cellView: joint.dia.CellView, evt) {
 
-function drag(ev) {
-    let className = ev.target.innerHTML;
-    if (ev.target.getAttribute('data-baseform') !== null) {
-        className = ev.target.getAttribute('data-baseform');
-    }
-    ev.dataTransfer.setData('text', className);
-}
+    console.warn('pointer click...');
 
+    let model = cellView.model;
 
-function drop(ev) {
-    ev.preventDefault();
-    addUmlClass({
-        name: ev.dataTransfer.getData('text'),
-        classType: 'CLASS',
-        attributes: [],
-        methods: [],
-        position: {x: ev.x, y: ev.y}
-    });
-}
-
-function cellOnLeftClick(cellView, evt) {
-
-    switch (cellView.model.attributes.type) {
+    switch (model.attributes.type) {
         case 'uml.Implementation':
             evt.stopPropagation();
             return;
@@ -141,18 +84,15 @@ function cellOnLeftClick(cellView, evt) {
         case 'uml.Abstract':
         case 'uml.Interfact':
             break;
-        case 'customUml.CustomClass':
-            // FIXME: use? cellView.model.onLeftClick();
+        case 'MyJointClass':
+            // FIXME: use? model.onLeftClick();
             break;
         default:
-            console.warn(cellView.model.attributes.type);
+            console.warn(model.attributes.type);
     }
 
     if (sel === 'POINTER') {
-        // FIXME:
-        // if (!getsHelp) {
-        editClass(cellView);
-        // }
+        // Class editing -> MyJointClassView::pointerdblclick
     } else if ('IMPLEMENTATION' === sel) {
         // FIXME: do not select arrows or other things, only classes!
         cellView.highlight();
@@ -160,12 +100,12 @@ function cellOnLeftClick(cellView, evt) {
         if (chosenCellView === null) {
             chosenCellView = cellView;
 
-        } else if (chosenCellView.model.id === cellView.model.id) {
+        } else if (chosenCellView.model.id === model.id) {
             cellView.unhighlight();
             chosenCellView = null;
 
         } else {
-            addImplementation(chosenCellView.model.id, cellView.model.id);
+            addImplementation(chosenCellView.model.id, model.id as string);
 
             chosenCellView.unhighlight();
             cellView.unhighlight();
@@ -179,12 +119,12 @@ function cellOnLeftClick(cellView, evt) {
         if (chosenCellView === null) {
             chosenCellView = cellView;
 
-        } else if (chosenCellView.model.id === cellView.model.id) {
+        } else if (chosenCellView.model.id === model.id) {
             cellView.unhighlight();
             chosenCellView = null;
 
         } else {
-            let newLink = addAssociation(chosenCellView.model.id, cellView.model.id, sel, '*', '*');
+            let newLink: joint.dia.LinkView = addAssociation(chosenCellView.model.id, model.id as string, sel, '*', '*');
 
             console.warn(newLink);
 
@@ -198,7 +138,7 @@ function cellOnLeftClick(cellView, evt) {
             chosenCellView = null;
         }
     } else if (sel === 'CLASS') {
-        alert('Sie können keine Klassen innerhalb von Klassen erstellen!');
+        // alert('Sie können keine Klassen innerhalb von Klassen erstellen!');
     } else {
         console.error('TODO: ' + sel);
     }
@@ -206,18 +146,6 @@ function cellOnLeftClick(cellView, evt) {
 
 function unMarkButtons(): void {
     $('#buttonsDiv').find('button').removeClass('btn-primary').addClass('btn-default');
-}
-
-function selectClassType(button) {
-    unMarkButtons();
-
-    let classButton = document.getElementById('classButton');
-    classButton.className = 'btn btn-primary';
-    classButton.dataset.conntype = button.dataset.conntype;
-
-    sel = button.dataset.conntype.trim();
-
-    $('#classType').text(button.textContent);
 }
 
 function selectAssocType(button: HTMLAnchorElement) {
@@ -243,7 +171,7 @@ function addImplementation(sourceId: string, targetId: string) {
     classDiagGraph.addCell(new joint.shapes.uml.Implementation({source: {id: sourceId}, target: {id: targetId}}));
 }
 
-function addAssociation(sourceId: string, targetId: string, linkType: string, sourceMult: string, targetMult: string): joint.dia.Link {
+function addAssociation(sourceId: string, targetId: string, linkType: string, sourceMult: string, targetMult: string): joint.dia.LinkView {
     let members = {
         source: {id: sourceId},
         target: {id: targetId},
@@ -272,52 +200,43 @@ function addAssociation(sourceId: string, targetId: string, linkType: string, so
     }
 
     classDiagGraph.addCell(cellToAdd);
-    return paper.findViewByModel(cellToAdd.id);
+    return classDiagPaper.findViewByModel(cellToAdd.id);
 }
 
-
-/**
- * @param {object} implementationToLoad
- * @param {string} implementationToLoad.subClass
- * @param {string} implementationToLoad.superClass
- */
-function loadImplementation(implementationToLoad) {
+function loadImplementation(implementationToLoad: UmlImplementation): void {
     let subClass = implementationToLoad.subClass, superClass = implementationToLoad.superClass;
     let subClassId = null, superClassId = null;
 
-    for (let cell of classDiagGraph.getCells().filter((cell) => cell.get('type') === 'customUml.CustomClass')) {
-        let cellClassName = cell.get('className');
-        if (cellClassName === subClass) {
-            subClassId = cell.id;
-        } else if (cellClassName === superClass) {
-            superClassId = cell.id;
+    for (let cell of classDiagGraph.getCells()) {
+        if (cell instanceof MyJointClass) {
+            let cellClassName = cell.getClassName();
+            if (cellClassName === subClass) {
+                subClassId = cell.id;
+            } else if (cellClassName === superClass) {
+                superClassId = cell.id;
+            }
         }
     }
 
     if (subClassId !== null && superClassId !== null) {
         addImplementation(subClassId, superClassId);
+    } else {
+        console.error('Could not find subClass or superClass for implenentation!')
     }
 }
 
-/**
- * @param {object} associationToLoad
- * @param {string} associationToLoad.assocType
- * @param {string} associationToLoad.assocName
- * @param {string} associationToLoad.firstEnd
- * @param {string} associationToLoad.firstMult
- * @param {string} associationToLoad.secondEnd
- * @param {string} associationToLoad.secondMult
- */
-function loadAssociation(associationToLoad) {
+function loadAssociation(associationToLoad: UmlAssociation): void {
     let firstEnd = associationToLoad.firstEnd, secondEnd = associationToLoad.secondEnd;
     let firstEndId = null, secondEndId = null;
 
-    for (let cell of classDiagGraph.getCells().filter((cell) => cell.get('type') === 'customUml.CustomClass')) {
-        let cellClassName = cell.get('className');
-        if (cellClassName === firstEnd) {
-            firstEndId = cell.id;
-        } else if (cellClassName === secondEnd) {
-            secondEndId = cell.id;
+    for (let cell of classDiagGraph.getCells()) {
+        if (cell instanceof MyJointClass) {
+            let cellClassName = cell.getClassName();
+            if (cellClassName === firstEnd) {
+                firstEndId = cell.id;
+            } else if (cellClassName === secondEnd) {
+                secondEndId = cell.id;
+            }
         }
     }
 
@@ -326,17 +245,18 @@ function loadAssociation(associationToLoad) {
 
     if (firstEndId !== null && secondEndId !== null) {
         addAssociation(firstEndId, secondEndId, associationToLoad.assocType, firstMult, secondMult);
+    } else {
+        console.error('Could not find ends for association!');
     }
 }
 
-function loadClasses(classesToLoad: ClassToLoad[]) {
+function loadClasses(classesToLoad: UmlClass[]): void {
     let sqrt = Math.ceil(Math.sqrt(classesToLoad.length));
-
 
     const size = STD_CLASS_WIDTH + PADDING;
 
     for (let i = 0; i < classesToLoad.length; i++) {
-        const classToLoad: ClassToLoad = classesToLoad[i];
+        const classToLoad = classesToLoad[i];
 
 
         if (!classToLoad.hasOwnProperty('position')) {
@@ -350,28 +270,37 @@ function loadClasses(classesToLoad: ClassToLoad[]) {
     }
 }
 
-/**
- * @param {object} solution
- * @param {object[]} solution.classes
- * @param {object[]} solution.associations
- * @param {object[]} solution.implementations
- * @param paperWidth
- * @param paperHeight
- */
-function loadSolution(solution, paperWidth, paperHeight) {
+function onSolutionLoadSuccess(response: UmlSolution): void {
+    loadClasses(response.classes);
 
-    loadClasses(solution.classes);
 
-    for (let assoc of solution.associations) {
+    console.warn(JSON.stringify(response.associations, null, 2));
+    for (let assoc of response.associations) {
         loadAssociation(assoc);
     }
 
-    for (let impl of solution.implementations) {
+    console.warn(JSON.stringify(response.implementations, null, 2));
+    for (let impl of response.implementations) {
         loadImplementation(impl);
     }
 }
 
-function addHandlersToButtons() {
+function onSolutionLoadError(jqXHR): void {
+    console.error(jqXHR);
+}
+
+function loadSolution(url: string) {
+    $.ajax({
+        type: 'GET',
+        dataType: 'json', // return type
+        url,
+        async: true,
+        success: onSolutionLoadSuccess,
+        error: onSolutionLoadError
+    });
+}
+
+function addHandlersToButtons(): void {
     $('button[data-conntype]').each((index, element: HTMLElement) => {
         $(element).on('click', () => {
             selectButton(element);
@@ -385,46 +314,93 @@ function addHandlersToButtons() {
     })
 }
 
+function onDragStart(ev: DragEvent) {
+    let target = ev.target as HTMLSpanElement;
+
+    let className = (target as HTMLSpanElement).innerHTML;
+
+    if (target.getAttribute('data-baseform') !== null) {
+        className = target.getAttribute('data-baseform');
+    }
+
+    ev.dataTransfer.setData('text', className);
+}
+
+
+function drop(jqEvent) {
+    jqEvent.preventDefault();
+
+    let event = jqEvent.originalEvent;
+
+    addUmlClass({
+        name: event.dataTransfer.getData('text'), classType: 'CLASS', attributes: [], methods: [], position: {x: event.x, y: event.y}
+    });
+}
+
+
+function addDrag(paperJQ: JQuery): void {
+    let classSpans = $('.non-marked');
+
+    classSpans.prop('draggable', true);
+    classSpans.each((index, element: HTMLSpanElement) => {
+        element.addEventListener('dragstart', onDragStart);
+    });
+
+    paperJQ.on('dragover', (event) => event.preventDefault());
+    paperJQ.on('drop', drop);
+}
+
 $(() => {
+    let paperJQ = $('#classDiagPaper');
+
     addHandlersToButtons();
 
-    let paperJQ = $('#paper');
-
-    let paperWidth = paperJQ.width(), paperHeight = 700;
+    addDrag(paperJQ);
 
     // Init Graph and Paper
-    paper = new joint.dia.Paper({
-        el: paperJQ,
-        model: classDiagGraph,
+    classDiagPaper = new joint.dia.Paper({
+        el: paperJQ, model: classDiagGraph,
 
-        width: paperWidth,
-        height: PAPER_HEIGHT, // paperJQ.height(),
+        width: paperJQ.width(), height: PAPER_HEIGHT,
 
-        gridSize: GRID_SIZE,
-        drawGrid: {name: DEF_GRID}
+        gridSize: GRID_SIZE, drawGrid: {name: DEF_GRID},
+
+        elementView: (element) => {
+            if (element instanceof MyJointClass) {
+                return MyJointClassView;
+            } else {
+                return joint.dia.Paper.prototype.options.elementView.apply(this, element);
+            }
+        }
     });
 
     // Set callback for click on cells and blank paper
-    paper.on('cell:pointerclick', cellOnLeftClick);
-
-    paper.on('cell:contextmenu', function (elementView, evt) {
-        evt.stopPropagation();
-
-        // FIXME:
-        // if (getsHelp && elementView.model.attributes.type === 'uml.Class') {
-        //     alert('Sie können keine Klassen löschen!');
-        // } else if (confirm('Wollen Sie dieses Objekt wirklich löschen?')) {
-        elementView.model.remove();
-        // }
-    });
-
-    paper.on('blank:pointerdown', blankOnPointerDown);
-
-    // noinspection JSUnresolvedVariable
-    // FIXME: load defaultSol with ajax!
-    // loadSolution(defaultSol, paperWidth, paperHeight);
+    classDiagPaper.on('cell:pointerclick', cellOnLeftClick);
 
 
-    // cardinalityEditModal = $('#cardinalityEditModal');
-    // cardinalityEditModal.modal({show: false});
+    // paper.on('cell:pointerdown', (cellView, evt) => {
+    //     console.warn('pointer down...');
+    //     evt.stopPropagation();
+    // });
+
+    // paper.on('cell:contextmenu', (elementView, evt) => {
+    //     if (elementView instanceof MyJointClassView) {
+    //  // Do nothing...
+    // } else {
+    //     evt.stopPropagation();
+    //
+    //  // FIXME:
+    // if (getsHelp && elementView.model.attributes.type === 'uml.Class') {
+    //     alert('Sie können keine Klassen löschen!');
+    // } else if (confirm('Wollen Sie dieses Objekt wirklich löschen?')) {
+    // elementView.model.remove();
+    // }
+    // }
+    // });
+
+    classDiagPaper.on('blank:pointerdown', blankOnPointerDown);
+
+    loadSolution(paperJQ.data('url'));
+
+    $('#testButton').on('click', testSol);
 });

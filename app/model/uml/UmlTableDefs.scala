@@ -1,10 +1,9 @@
 package model.uml
 
 import javax.inject.Inject
-import model.ExerciseState
-import model._
 import model.persistence.SingleExerciseTableDefs
 import model.uml.UmlConsts._
+import model.{ExerciseState, _}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -28,8 +27,8 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
   }
 
   def textForPart(part: UmlExPart): Html = Html(part match {
-    case DiagramDrawing => ex.diagDrawText
-    case _              => ex.text
+    case ClassSelection | DiagramDrawing => ex.markedText
+    case _                               => ex.text
   })
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {
@@ -62,7 +61,7 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
 
 // Table classes
 
-case class UmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, solution: UmlClassDiagram, classSelText: String, diagDrawText: String, toIgnore: String)
+case class UmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, solution: UmlClassDiagram, markedText: String, toIgnore: String)
   extends Exercise {
 
   def splitToIgnore: Seq[String] = toIgnore split tagJoinChar
@@ -121,9 +120,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def solutionAsJson = column[UmlClassDiagram]("solution_json")
 
-    def classSelText = column[String]("class_sel_text")
-
-    def diagDrawText = column[String]("diag_draw_text")
+    def markedText = column[String]("marked_text")
 
     def toIgnore = column[String]("to_ignore")
 
@@ -131,7 +128,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, solutionAsJson, classSelText, diagDrawText, toIgnore) <> (UmlExercise.tupled, UmlExercise.unapply)
+    override def * = (id, title, author, text, state, solutionAsJson, markedText, toIgnore) <> (UmlExercise.tupled, UmlExercise.unapply)
 
   }
 

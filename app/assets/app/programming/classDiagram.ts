@@ -45,7 +45,7 @@ function createClass(class_attributes) {
     }
 }
 
-$(document).ready(function () {
+$(() => {
 
     $('#classDiagramModal').on('shown.bs.modal', function () {
 

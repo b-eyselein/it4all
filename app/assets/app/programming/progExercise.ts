@@ -1,3 +1,12 @@
+import * as $ from 'jquery';
+import {initEditor} from '../editorHelpers';
+
+import {Ace} from 'ace';
+
+import {onProgCorrectionError, onProgCorrectionSuccess} from "./progCorrectionHandler";
+
+let editor: Ace.Editor;
+
 function onChangeLanguageSuccess(response) {
     $('#language').val(response.language);
     editor.setValue(response, 1000000);
@@ -17,11 +26,11 @@ function changeProgLanguage() {
     });
 }
 
-function testSol() {
+function testSol(): void {
     let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.ExerciseController.correctLive('programming', exerciseId, exercisePart).url;
+    let url = ''; // jsRoutes.controllers.ExerciseController.correctLive('programming', exerciseId, exercisePart).url;
 
     $('#correction').html('');
 
@@ -44,6 +53,7 @@ function testSol() {
 
 }
 
-$(document).ready(function () {
-    $('#testBtn').click(testSol);
+$(() => {
+    editor = initEditor('python', 15, 30);
+    $('#testBtn').on('click', testSol);
 });

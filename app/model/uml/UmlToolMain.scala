@@ -50,7 +50,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution
 
-  private implicit val umlSolutionJsonFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlSolutionJsonFormat
 
   override def readSolutionFromPostRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlSolution] = {
 
@@ -60,7 +59,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     }
 
     val onRead: StringSolutionFormHelper => Option[UmlSolution] = { sol =>
-      Json.fromJson[UmlClassDiagram](Json.parse(sol.learnerSolution)) match {
+      Json.fromJson[UmlClassDiagram](Json.parse(sol.learnerSolution))(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
         case JsSuccess(ucd, _) => Some(UmlSolution(user.username, id, part, ucd))
 
         case JsError(errors) =>
@@ -73,17 +72,30 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     SolutionFormHelper.stringSolForm.bindFromRequest.fold(onFormError, onRead)
   }
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
-    case JsSuccess(classDiag, _) => Some(UmlSolution(user.username, id, part, classDiag))
-    case JsError(errors)         =>
-      errors.foreach(error => Logger.error("Json Error: " + error._1 + " --> " + error._2))
-      None
-  }
+  override def readSolutionFromPutRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlSolution] =
+    request.body.asJson flatMap { jsValue =>
+      Json.fromJson[UmlClassDiagram](jsValue)(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
+        case JsSuccess(ucd, _) =>
+          Some(UmlSolution(user.username, id, part, ucd))
+        case JsError(errors)   =>
+          errors.foreach(error => Logger.error("Json Error: " + error))
+          None
+      }
+    }
+
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = None
+
+  //    UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
+  //      case JsSuccess(classDiag, _) => Some(UmlSolution(user.username, id, part, classDiag))
+  //      case JsError(errors)         =>
+  //        errors.foreach(error => Logger.error("Json Error: " + error._1 + " --> " + error._2))
+  //        None
+  //    }
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
-    UmlExercise(id, title = "", author = "", text = "", state, solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), classSelText = "", diagDrawText = "", toIgnore = ""),
+    UmlExercise(id, title = "", author = "", text = "", state, solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), markedText = "", toIgnore = ""),
     mappings = Seq.empty
   )
 

@@ -7,30 +7,25 @@ import scala.util.matching.Regex
 
 class UmlExTextParser(rawText: String, val mappings: Map[String, String], val toIgnore: Seq[String]) {
 
-  private val capWordsRegex: Regex   = """[A-Z][a-zäöüß]*""".r
-  private val cssClassName : String  = "non-marked"
-  private val diagramDrawingFunction = "draggable=\"true\" ondragstart=\"drag(event)\""
+  private val capWordsRegex: Regex  = """[A-Z][a-zäöüß]*""".r
+  private val cssClassName : String = "non-marked"
 
-  val capitalizedWords  : Set[String] = capWordsRegex findAllIn rawText toSet
-  val simpleReplacements: Set[String] = capitalizedWords filter (k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))
+  private val capitalizedWords  : Set[String] = capWordsRegex findAllIn rawText toSet
+  private val simpleReplacements: Set[String] = capitalizedWords filter (k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))
 
-  def replaceWithMappingSpan(text: String, key: String, value: String, function: Option[String]): String = {
+  private def replaceWithMappingSpan(text: String, key: String, value: String): String = {
     val matcher = Pattern.compile(key + "\\b").matcher(text)
-    matcher.replaceAll( s"""<span class="$cssClassName" ${function.getOrElse("")} data-baseform="$value">$key</span>""")
+    matcher.replaceAll( s"""<span class="$cssClassName" data-baseform="$value">$key</span>""")
   }
 
-  def parseTextForClassSel: String = parseText(None)
-
-  def parseTextForDiagDrawing: String = parseText(Some(diagramDrawingFunction))
-
-  private def parseText(function: Option[String]): String = {
+  def parseText: String = {
     var newText = rawText
 
     for (simpleRep <- simpleReplacements)
-      newText = replaceWithMappingSpan(newText, simpleRep, simpleRep, function)
+      newText = replaceWithMappingSpan(newText, simpleRep, simpleRep)
 
     for ((k, v) <- mappings)
-      newText = replaceWithMappingSpan(newText, k, v, function)
+      newText = replaceWithMappingSpan(newText, k, v)
 
     newText
   }

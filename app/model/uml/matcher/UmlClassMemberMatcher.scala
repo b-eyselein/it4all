@@ -3,7 +3,7 @@ package model.uml.matcher
 import model.core.matching._
 import model.uml.UmlConsts._
 import model.uml.{UmlAttribute, UmlClassMember, UmlMethod, UmlVisibility}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsString, JsValue, Json}
 
 
 sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match[Mem]
@@ -28,7 +28,7 @@ case class UmlAttributeAnalysisResult(matchType: MatchType,
 
   override def toJson: JsValue = Json.obj(
     successName -> matchType.entryName,
-    "visibilityCorrect" -> visibilityComparison, "correctVisibility" -> correctVisibility,
+    "visibilityCorrect" -> visibilityComparison, "correctVisibility" -> correctVisibility.representant,
     "typeCorrect" -> typeComparison, "correctType" -> correctType,
     "staticCorrect" -> staticCorrect, "correctStatic" -> correctStatic,
     "derivedCorrect" -> derivedCorrect, "correctDerived" -> correctDerived,
@@ -101,7 +101,7 @@ case class UmlMethodAnalysisResult(matchType: MatchType,
 
   override def toJson: JsValue = Json.obj(
     successName -> matchType.entryName,
-    "visibilityCorrect" -> visibilityComparison, "correctVisibility" -> correctVisibility,
+    "visibilityCorrect" -> visibilityComparison, "correctVisibility" -> correctVisibility.representant,
     "typeCorrect" -> typeComparison, "correctType" -> correctType,
     "staticCorrect" -> staticCorrect, "correctStatic" -> correctStatic,
     "parametersCorrect" -> parameterComparison, "correctParameters" -> correctParameters,

@@ -1,9 +1,8 @@
 package model.uml
 
-import model.ExerciseState
 import model.MyYamlProtocol._
 import model.uml.UmlConsts._
-import model.{MyYamlProtocol, YamlArr, YamlObj}
+import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -36,7 +35,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
       UmlCompleteEx(
         UmlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, classDiagram,
-          textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString tagJoinChar),
+          textParser.parseText, ignoreWords mkString tagJoinChar),
         mappings
       )
     }
