@@ -17,19 +17,21 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "systemjs": "^0.21.3",
-    "monaco-editor": "0.13.1",
+    "@types/codemirror": "0.0.56",
     "bootstrap": "3.3.7",
-    "jquery": "^3.3.1",
+    "codemirror": "^5.37.0",
+    "graphlib": "^2.1.5",
     "jointjs": "^2.1.2",
+    "jquery": "^3.3.1",
     "lodash": "^4.17.10",
-    "graphlib": "^2.1.5"
+    "systemjs": "^0.21.3"
   },
   "devDependencies": {
     "@types/systemjs": "^0.20.6",
     "@types/jquery": "^3.3.1",
     "@types/lodash": "^4.14.108",
     "@types/backbone": "^1.3.42",
-    "@types/graphlib": "^2.1.4"
+    "@types/graphlib": "^2.1.4",
+    "@types/bootstrap": "3.3.33"
   }
 }

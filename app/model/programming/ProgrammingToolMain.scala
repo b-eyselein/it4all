@@ -1,9 +1,7 @@
 package model.programming
 
-import controllers.ExerciseOptions
 import javax.inject._
 import model.programming.ProgConsts._
-import model.programming.ProgrammingToolMain._
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, User}
@@ -18,8 +16,6 @@ import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 
 object ProgrammingToolMain {
-
-  private val progExOptions = ExerciseOptions(ProgLanguage.STANDARD_LANG.aceName, 15, 30)
 
   val standardTestCount = 2
 
@@ -145,7 +141,7 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
         // FIXME: remove comments like '# {2}'!
       }
 
-      views.html.idExercises.programming.progExercise(user, this, progExOptions, exercise, declaration, Implementation)
+      views.html.idExercises.programming.progExercise(user, this, exercise, declaration, Implementation)
 
     case ActivityDiagram =>
       // TODO: use old soluton!

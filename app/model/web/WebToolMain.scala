@@ -88,11 +88,13 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     views.html.idExercises.web.editWebExercise(user, this, newEx, isCreation)
 
   def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution]): Html =
-    views.html.idExercises.web.webExercise(user, exercise, part, getTasks(exercise, part), maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML)
+    views.html.idExercises.web.webExercise(user, exercise, part, maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML, this)
 
-  override def renderEditRest(exercise: WebCompleteEx): Html = views.html.idExercises.web.editWebExRest(exercise)
+  override def renderEditRest(exercise: WebCompleteEx): Html =
+    views.html.idExercises.web.editWebExRest(exercise)
 
-  override def playground(user: User): Html = views.html.idExercises.web.webPlayground(user)
+  override def playground(user: User): Html =
+    views.html.idExercises.web.webPlayground(user)
 
   // Correction
 
@@ -100,14 +102,15 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     val driver = new HtmlUnitDriver(true)
     driver.get(getSolutionUrl(user, exercise.ex.id, learnerSolution.part))
 
-    val results = Try(getTasks(exercise, learnerSolution.part) map (task => WebCorrector.evaluateWebTask(task, driver)))
+    val results = Try(exercise.tasksForPart(learnerSolution.part) map (task => WebCorrector.evaluateWebTask(task, driver)))
 
     results map (WebCompleteResult(learnerSolution.solution, exercise, learnerSolution.part, solutionSaved, _))
   }
 
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Html = views.html.core.correction(result, result.render, user, this)
+  override def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Html =
+    views.html.core.correction(result, result.render, user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
@@ -118,12 +121,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String = part match {
     case PHPPart => s"http://localhost:9080/${user.username}/$exerciseId/test.php"
     case _       => s"http://localhost:9080/${user.username}/$exerciseId/test.html"
-  }
-
-  private def getTasks(exercise: WebCompleteEx, part: WebExPart): Seq[WebCompleteTask] = part match {
-    case HtmlPart => exercise.htmlTasks
-    case JsPart   => exercise.jsTasks
-    case PHPPart  => exercise.phpTasks
   }
 
 }

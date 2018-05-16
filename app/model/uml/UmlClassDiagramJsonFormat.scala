@@ -139,7 +139,6 @@ object UmlClassDiagramJsonFormat {
       (__ \ implementationsName).write[Seq[UmlImplementation]]
     ) (unlift(UmlClassDiagram.unapply))
 
-  val umlSolutionJsonFormat = Format(umlSolutionReads, umlSolutionWrites)
-
+  val umlSolutionJsonFormat: Format[UmlClassDiagram] = Format(umlSolutionReads, umlSolutionWrites)
 
 }

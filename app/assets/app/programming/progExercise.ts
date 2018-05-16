@@ -1,15 +1,15 @@
 import * as $ from 'jquery';
 import {initEditor} from '../editorHelpers';
-
-import {Ace} from 'ace';
+import * as CodeMirror from 'codemirror';
+import 'codemirror/mode/python/python';
 
 import {onProgCorrectionError, onProgCorrectionSuccess} from "./progCorrectionHandler";
 
-let editor: Ace.Editor;
+let editor: CodeMirror.Editor;
 
 function onChangeLanguageSuccess(response) {
     $('#language').val(response.language);
-    editor.setValue(response, 1000000);
+    // editor.setValue(response, 1000000);
 }
 
 function changeProgLanguage() {
@@ -27,19 +27,15 @@ function changeProgLanguage() {
 }
 
 function testSol(): void {
-    let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
-
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = ''; // jsRoutes.controllers.ExerciseController.correctLive('programming', exerciseId, exercisePart).url;
-
+    let testButton = $('#testBtn');
     $('#correction').html('');
-
+    testButton.prop('disabled', true);
 
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url,
+        url: testButton.data('url'),
         data: JSON.stringify({
             solution: {
                 language: $('#langSelect').val(),
@@ -50,10 +46,9 @@ function testSol(): void {
         success: onProgCorrectionSuccess,
         error: onProgCorrectionError
     });
-
 }
 
 $(() => {
-    editor = initEditor('python', 15, 30);
+    editor = initEditor('python');
     $('#testBtn').on('click', testSol);
 });

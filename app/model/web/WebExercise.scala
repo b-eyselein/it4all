@@ -8,7 +8,6 @@ import enumeratum.Enum
 
 import scala.collection.immutable.IndexedSeq
 
-
 sealed trait JsActionType extends EnumEntry
 
 object JsActionType extends Enum[JsActionType] {
@@ -41,6 +40,12 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
     case HtmlPart => htmlTasks.map(_.maxPoints).sum
     case JsPart   => jsTasks.map(_.maxPoints).sum
     case PHPPart  => phpTasks.map(_.maxPoints).sum
+  }
+
+  def tasksForPart(part: WebExPart): Seq[WebCompleteTask] = part match {
+    case HtmlPart => htmlTasks
+    case JsPart   => jsTasks
+    case PHPPart  => phpTasks
   }
 
 }

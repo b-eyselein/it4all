@@ -1,15 +1,72 @@
-$(document).ready(function () {
-    $('#testBtn').click(testSol);
+import * as $ from 'jquery';
+import * as CodeMirror from 'codemirror';
+import {initEditor} from "../editorHelpers";
+import 'codemirror/mode/htmlmixed/htmlmixed';
+
+let editor: CodeMirror.Editor;
+
+$(() => {
+    editor = initEditor('htmlmixed');
+    $('#previewTabBtn').on('click', updatePreviewNew);
+    $('#testBtn').on('click', testSol);
 });
 
-/**
- * @param {object} textContent
- * @param {boolean} textContent.success
- * @param {string} textContent.awaited
- * @param {string | null} textContent.found
- * @return {string}
- */
-function renderTextResult(textContent) {
+interface WebCompleteResult {
+    solutionSaved: boolean
+    part: string
+    success: string
+    points: number
+    maxPoints: number
+    htmlResults: HtmlResult[]
+    jsResults: JsResult[]
+}
+
+interface WebResult {
+    id: number
+    points: number
+    maxPoints: number
+    success: boolean
+
+}
+
+interface HtmlResult extends WebResult {
+    elementFound: boolean
+    textContent: TextResult | null
+    attributeResults: AttributeResult[]
+}
+
+interface TextResult {
+    success: boolean
+    awaited: string
+    found: string | null
+}
+
+interface AttributeResult {
+    success: boolean
+    attrName: string
+    awaited: string
+    found: string | null
+}
+
+
+interface JsResult extends WebResult {
+    preResults: ConditionResult[]
+    actionDescription: string
+    actionPerformed: boolean
+    postResults: ConditionResult[]
+}
+
+
+interface ConditionResult {
+    points: number
+    maxPoints: number
+    success: boolean
+    description: string
+    awaited: string
+    gotten: string
+}
+
+function renderTextResult(textContent: TextResult): string {
     if (textContent.success) {
         return `<p><span class="glyphicon glyphicon-ok"></span> Das Element hat den richtigen Textinhalt.</p>`
     } else {
@@ -23,15 +80,8 @@ function renderTextResult(textContent) {
     }
 }
 
-/**
- * @param {object} attrResult
- * @param {boolean} attrResult.success
- * @param {string} attrResult.attrName
- * @param {string} attrResult.awaited
- * @param {string | null} attrResult.found
- * @return {string}
- */
-function renderAttrResult(attrResult) {
+
+function renderAttrResult(attrResult: AttributeResult): string {
     if (attrResult.success) {
         return `<p><span class="glyphicon glyphicon-ok"></span> Das Attribut &quot;${attrResult.attrName}&quot; hat den richtigen Wert.</p>`
     } else {
@@ -45,19 +95,9 @@ function renderAttrResult(attrResult) {
     }
 }
 
-/**
- * @param {object} result
- * @param {int} result.id
- * @param {int} result.points
- * @param {int} result.maxPoints
- * @param {success} result.success
- * @param {boolean} result.elementFound
- * @param {object | null} result.textContent
- * @param {object[]} result.attributeResults
- * @return {string}
- */
-function renderHtmlResult(result) {
-    let subHtml = `<div class="alert alert-${result.success ? 'success' : 'danger'}">`;
+
+function renderHtmlResult(result: HtmlResult): string {
+    let subHtml: string = `<div class="alert alert-${result.success ? 'success' : 'danger'}">`;
 
     subHtml += `<b>Teilaufgabe ${result.id}</b>: ${$('#text_' + result.id).text()} (${ result.points} / ${result.maxPoints} Punkte)<hr>`;
 
@@ -79,18 +119,8 @@ function renderHtmlResult(result) {
     return subHtml;
 }
 
-/**
- * @param {object} condRes
- * @param {int} condRes.points
- * @param {int} condRes.maxPoints
- * @param {boolean} condRes.success
- * @param {string} condRes.description
- * @param {string} condRes.awaited
- * @param {string} condRes.gotten
- *
- * @return {string}
- */
-function renderConditionResult(condRes) {
+
+function renderConditionResult(condRes: ConditionResult): string {
     if (condRes.success) {
         return `<p><span class="glyphicon glyphicon-ok"></span> ${condRes.description}&quot;</p>`
     } else {
@@ -104,21 +134,8 @@ function renderConditionResult(condRes) {
     }
 }
 
-/**
- * @param {object} result
- * @param {int} result.id
- * @param {int} result.points
- * @param {int} result.maxPoints
- * @param {boolean} result.success
- * @param {object[]} result.preResults
- * @param {string} result.actionDescription
- * @param {boolean} result.actionPerformed
- * @param {object[]} result.postResults
- *
- * @return {string}
- */
-function renderJsResult(result) {
-    let subHtml = `<div class="alert alert-${result.success ? 'success' : 'danger'}">`;
+function renderJsResult(result: JsResult): string {
+    let subHtml: string = `<div class="alert alert-${result.success ? 'success' : 'danger'}">`;
 
     subHtml += `<b>Test ${result.id}:</b> (${ result.points} / ${result.maxPoints} Punkte)<hr>`;
 
@@ -140,12 +157,7 @@ function renderJsResult(result) {
     return subHtml;
 }
 
-/**
- * @param {object[]} results
- * @param {function} renderFunc
- * @return {string}
- */
-function renderResults(results, renderFunc) {
+function renderResults(results: WebResult[], renderFunc: (WebResult) => string) {
     let html = '';
 
     for (let i = 0; i < results.length; i = i + 3) {
@@ -162,19 +174,9 @@ function renderResults(results, renderFunc) {
     return html;
 }
 
-/**
- *
- * @param {object} corr
- * @param {boolean} corr.solutionSaved
- * @param {string} corr.part
- * @param {success} corr.success
- * @param {int} corr.points
- * @param {int} corr.maxPoints
- * @param {object[]} corr.htmlResults
- * @param {object[]} corr.jsResults
- */
-function onWebCorrectionSuccess(corr) {
-    let html = '';
+
+function onWebCorrectionSuccess(corr: WebCompleteResult): void {
+    let html: string = '';
 
     if (corr.solutionSaved) {
         html += `<div class="alert alert-success">Ihre Lösung wurde gespeichert.</div>`;
@@ -201,14 +203,11 @@ function onWebCorrectionSuccess(corr) {
     }
 
     $('#correction').html(html);
-    $('#correctionTabBtn').click();
+    $('#correctionTabBtn').trigger('click');
     $('#testBtn').prop('disabled', false);
 }
 
-/**
- * @param jqXHR {{responseText: string, responseJSON: string}}
- */
-function onWebCorrectionError(jqXHR) {
+function onWebCorrectionError(jqXHR): void {
     $('#testBtn').prop('disabled', false);
 
     $('#correction').html(`
@@ -219,16 +218,14 @@ function onWebCorrectionError(jqXHR) {
 }
 
 function testSol() {
-    let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
-
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.ExerciseController.correctLive("web", exerciseId, exercisePart).url;
+    let testButton = $('#testBtn');
+    testButton.prop('disabled', true);
 
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url,
+        url: testButton.data('url'),
         data: JSON.stringify({solution: editor.getValue()}),
         async: true,
         success: onWebCorrectionSuccess,
@@ -236,24 +233,15 @@ function testSol() {
     });
 }
 
-/**
- * @param {string} escapedHTML
- */
-function unescapeHTML(escapedHTML) {
+function unescapeHTML(escapedHTML: string): string {
     return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 }
 
-function updatePreviewNew() {
-    let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
-
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.ExerciseController.updateWebSolution(exerciseId, exercisePart).url;
-
+function updatePreviewNew(): void {
     $.ajax({
         type: 'PUT',
-        //     dataType: 'json', // return type
         contentType: 'text/plain', // type of message to server, "pure" html
-        url,
+        url: $('#previewTabBtn').data('url'),
         data: unescapeHTML(editor.getValue()),
         async: true,
         success: function () {

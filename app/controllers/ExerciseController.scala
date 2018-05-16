@@ -9,7 +9,7 @@ import model.uml._
 import model.web.{HtmlPart, WebSolution, WebToolMain}
 import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws._
 import play.api.mvc._
 
@@ -105,7 +105,12 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
     implicit request =>
       progToolMain.futureCompleteExById(id) map {
         case None           => BadRequest
-        case Some(exercise) => Ok(exercise.maybeClassDiagramPart.map(_.printToJavascript).getOrElse("")).as("text/javascript")
+        case Some(exercise) =>
+          val jsValue = exercise.maybeClassDiagramPart match {
+            case Some(cd) => Json.toJson(cd.umlClassDiagram)(UmlClassDiagramJsonFormat.umlSolutionJsonFormat)
+            case None     => JsObject.empty
+          }
+          Ok(jsValue) //.as("text/javascript")
       }
   }
 

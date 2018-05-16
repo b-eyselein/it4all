@@ -1,3 +1,5 @@
+import * as $ from 'jquery';
+
 /**
  *
  * @param result
@@ -41,7 +43,7 @@ function updateStateChangeButton(id) {
  * @param {int} response.id
  * @param {string} response.newState
  */
-function onChangeStateSuccess(response) {
+function onChangeStateSuccess(response): void {
     $('#scb_' + response.id).prop('disabled', true);
     $('#state_' + response.id).data('val', response.newState);
 }

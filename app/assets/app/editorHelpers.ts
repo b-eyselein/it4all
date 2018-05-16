@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
-import * as monaco from 'monaco-editor';
 // import {Ace, edit} from 'ace';
+import * as CodeMirror from 'codemirror';
 
 export {initEditor};
 
@@ -15,31 +15,16 @@ function changeFontSize(value: number): void {
     fontSizeElement.text(fontSize);
 }
 
-function initEditor(language) {
-    const domElement = document.getElementById('editor');
-    let editor: monaco.editor.IStandaloneCodeEditor = monaco.editor.create(domElement, {
-        language,
-        value: 'test'
-    });
-    return editor;
-}
+function initEditor(language): CodeMirror.Editor {
+    let textArea = document.getElementById('myTextArea');
 
-// function initEditor(language: string, minLines: number, maxLines: number): Ace.Editor {
-//
-//     setFontSize(16);
-//
-//     let newEditor: Ace.Editor = edit('editor');
-//
-//     newEditor.setTheme('ace/theme/eclipse');
-//
-//     newEditor.getSession().setMode('ace/mode/' + language);
-//
-//     newEditor.getSession().setTabSize(2);
-//
-//     newEditor.getSession().setUseSoftTabs(true);
-//     newEditor.getSession().setUseWrapMode(true);
-//
-//     newEditor.setOptions({minLines, maxLines});
-//
-//     return newEditor;
-// }
+    if (textArea instanceof HTMLTextAreaElement) {
+        return CodeMirror.fromTextArea(textArea, {
+            mode: {name: language},
+            lineNumbers: true,
+            value: '<xml></xml>'
+        });
+    } else {
+        console.warn(textArea);
+    }
+}

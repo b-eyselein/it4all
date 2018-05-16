@@ -73,10 +73,10 @@ function onProgCorrectionSuccess(response) {
 
     }
     $('#correction').html(html);
-    $('#testButton').prop('disabled', false);
+    $('#testBtn').prop('disabled', false);
 }
 
 function onProgCorrectionError(jqXHR) {
     console.error(jqXHR.responseText);
-    $('#testButton').prop('disabled', false);
+    $('#testBtn').prop('disabled', false);
 }

@@ -1,11 +1,18 @@
-import * as $ from "jquery";
-import * as joint from "jointjs";
+import * as $ from 'jquery';
+import * as joint from 'jointjs';
+
+import 'bootstrap';
+
+import {UmlClass, UmlImplementation, UmlAssociation, UmlSolution} from '../uml/umlInterfaces';
 
 const GRAPH_WIDTH = 700, GRAPH_HEIGHT = 700;
 
 const classDiagGraph = new joint.dia.Graph();
 
 let notGenerated = true;
+
+let classDiag: UmlSolution;
+let classDiagLoaded: boolean = false;
 
 function createConnection(connection) {
     const input = {
@@ -46,20 +53,43 @@ function createClass(class_attributes) {
 }
 
 $(() => {
+    let classDiagDiv = $('#classdiagram');
 
-    $('#classDiagramModal').on('shown.bs.modal', function () {
+    let classDiagramModal = $('#classDiagramModal');
+
+    $.ajax({
+        method: 'GET',
+        url: classDiagDiv.data('url'),
+        dataType: 'json',
+        success: (response: UmlSolution) => {
+            classDiag = response;
+            classDiagLoaded = true;
+        },
+        error: (jqXHR) => {
+            console.error(jqXHR.responseText);
+        }
+    });
+
+    classDiagramModal.on('shown.bs.modal', () => {
 
         if (notGenerated) {
-            let selector = $('#classdiagram');
+
+            if (!classDiagLoaded) {
+                console.warn("Klassendiagramm ist noch nicht geladen!");
+                return;
+            }
+            console.warn(classDiag);
+            console.warn('Generating class Diag...');
 
             new joint.dia.Paper({
-                el: selector,
-                width: selector.width(), height: GRAPH_HEIGHT,
+                el: classDiagDiv,
+                width: classDiagDiv.width(), height: GRAPH_HEIGHT,
                 drawGrid: {name: 'dot'},
                 gridSize: 10,
                 model: classDiagGraph,
                 // setLinkVertices: true
             });
+
 
             // for (let clazzInput of classDiagClasses) {
             //     classDiagGraph.addCell(createClass(clazzInput));
@@ -75,7 +105,6 @@ $(() => {
 
             notGenerated = false;
         }
-
     });
 
 });

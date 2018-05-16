@@ -14,8 +14,9 @@
             // our app is within the app folder
             'app': '/assets/app',
 
-            'ace': 'npm:ace/lib/ace/ace.js',
-    'monaco-editor':'npm:monaco-editor/min/'
+            'bootstrap': 'npm:bootstrap/dist/js/bootstrap.js',
+
+            'codemirror': 'npm:codemirror',
 
             'graphlib': 'npm:graphlib/dist/graphlib.js',
             'jquery': 'npm:jquery/jquery.js',
@@ -34,6 +35,9 @@
             },
             '/assets/lib': {
                 defaultExtension: 'js'
+            },
+            codemirror: {
+                main: 'lib/codemirror.js'
             }
         },
         meta: {
