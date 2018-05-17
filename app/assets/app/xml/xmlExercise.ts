@@ -1,11 +1,12 @@
 import * as $ from 'jquery';
 
+import * as CodeMirror from 'codemirror';
 import {initEditor} from "../editorHelpers";
 
-import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/xml/xml';
 
 let editor: CodeMirror.Editor;
+let testBtn: JQuery;
 
 interface XmlError {
     errorType: 'WARNING' | 'ERROR' | 'FATAL',
@@ -21,6 +22,8 @@ interface XmlDocumentCorrectionResponse {
 }
 
 function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse): void {
+    testBtn.prop('disabled', false);
+
     let html: string = '';
 
     if (response.solSaved) {
@@ -43,15 +46,20 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
 
 
 function onXmlGrammarCorrectionSuccess(response): void {
+    testBtn.prop('disabled', false);
     console.log(response);
 }
 
 function onXmlCorrectionError(jqXHR): void {
+    testBtn.prop('disabled', false);
+
     $('#correctionDiv').html(`<div class="alert alert-danger">${jqXHR.responseJSON.msg}</div>`);
 }
 
 
 function testSol(): void {
+    testBtn.prop('disabled', true);
+
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
@@ -66,5 +74,6 @@ function testSol(): void {
 
 $(() => {
     editor = initEditor('xml');
-    $('#testBtn').on('click', testSol);
+    testBtn = $('#testBtn');
+    testBtn.on('click', testSol);
 });
