@@ -1,77 +1,80 @@
 @(user: model.User, startingNumber: model.nary.NAryNumber, toNB: model.nary.NumberBase, reqFromBase: String, reqToBase: String, toolMain: model.nary.NaryToolMain)
 
-@exPart = @{
-    model.nary.NaryConversionExPart
-}
+    @exPart = @{
+        model.nary.NaryConversionExPart
+    }
 
-@title = @{
-    "Zahlenumwandlung"
-}
+    @title = @{
+        "Zahlenumwandlung"
+    }
 
-@scripts = {
-    @* Javascript Routes *@
-    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    @scripts = {
+        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script src="@controllers.routes.Assets.versioned("javascripts/essentials/naryConversion.js")"></script>
-}
+        <script>
+                SystemJS.import('@routes.Assets.versioned("app/nary/naryConversion.js")');
+        </script>
+    }
 
-@main(title, Some(user), scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>@title
-                vom <span id="@model.nary.NaryConsts.StartingNumBase" data-base="@startingNumber.base">@startingNumber.base.systemName</span>
-                in das <span id="@model.nary.NaryConsts.TargetNumBase" data-base="@toNB">@toNB.systemName</span></h1>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-6 col-sm-offset-3">
-
-                <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
-                <input hidden id="exerciseType" value="@exPart.urlName" title="hidden">
-
-                <p><em class="text-info">
-                    Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em></p>
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <input value="@startingNumber" title="Vorgegebene Zahl" readonly class="form-control text-right"
-                        name="@model.nary.NaryConsts.valueName" id="@model.nary.NaryConsts.valueName">
-                        <span class="input-group-addon">@startingNumber.base.dispBase</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <span class="input-group-addon">--></span>
-                        <input pattern="@toNB.htmlPattern" autocomplete="off" autofocus class="form-control text-right"
-                        name="@model.nary.NaryConsts.solutionName" id="@model.nary.NaryConsts.solutionName"
-                        placeholder="Ihre Lösung" required>
-                        <span class="input-group-addon">@toNB.dispBase</span>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button id="testBtn" class="btn btn-primary">Testen</button>
-                    </div>
-                    <div class="btn-group">
-                        <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)?fromBase=@reqFromBase&toBase=@reqToBase"
-                        class="btn btn-default">Nächste Aufgabe</a>
-                    </div>
-                </div>
-
+    @main(title, Some(user), scripts) {
+        <div class="container">
+            <div class="page-header">
+                <h1>@title
+                    vom <span id="@model.nary.NaryConsts.StartingNumBase" data-base="@startingNumber.base">@startingNumber.base.systemName</span>
+                    in das <span id="@model.nary.NaryConsts.TargetNumBase" data-base="@toNB">@toNB.systemName</span></h1>
             </div>
+
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3">
+
+                    <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
+                    <input hidden id="exerciseType" value="@exPart.urlName" title="hidden">
+
+                    <p><em class="text-info">
+                        Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em></p>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input value="@startingNumber" title="Vorgegebene Zahl" readonly class="form-control text-right"
+                            name="@model.nary.NaryConsts.valueName" id="@model.nary.NaryConsts.valueName">
+                            <span class="input-group-addon">@startingNumber.base.dispBase</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">--></span>
+                            <input pattern="@toNB.htmlPattern" autocomplete="off" autofocus class="form-control text-right"
+                            name="@model.nary.NaryConsts.solutionName" id="@model.nary.NaryConsts.solutionName"
+                            placeholder="Ihre Lösung" required>
+                            <span class="input-group-addon">@toNB.dispBase</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button id="testBtn" class="btn btn-primary" data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, exPart.urlName)">
+                                Testen</button>
+                        </div>
+                        <div class="btn-group">
+                            <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)?fromBase=@reqFromBase&toBase=@reqToBase"
+                            class="btn btn-default">Nächste Aufgabe</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Platz für Notizen</h3>
+
+            <em class="text-info">Notizen werden für die Korrektur nicht beachtet.</em>
+
+            <textarea title="Platz für Notizen" placeholder="Platz für Notizen" style="resize: none;" class="form-control" rows="10"></textarea>
+
         </div>
-
-        <hr>
-
-        <h3>Platz für Notizen</h3>
-
-        <em class="text-info">Notizen werden für die Korrektur nicht beachtet.</em>
-
-        <textarea title="Platz für Notizen" placeholder="Platz für Notizen" style="resize: none;" class="form-control" rows="10"></textarea>
-
-    </div>
-}
+    }

@@ -1,109 +1,111 @@
 @(user: model.User, startingNumber: model.nary.NAryNumber, verbose: Boolean, toolMain: model.nary.NaryToolMain)
 
-    @exPart = @{
-        model.nary.TwoComplementExPart
-    }
+@exPart = @{
+    model.nary.TwoComplementExPart
+}
 
-    @title = @{
-        "Zweierkomplement"
-    }
+@title = @{
+    "Zweierkomplement"
+}
 
-    @scripts = {
-        @* Javascript Routes *@
-        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-        <script src="@routes.Assets.versioned("javascripts/essentials/twoComp.js")"></script>
-    }
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/nary/twoComp.js")');
+    </script>
+}
 
-    @main(title, Some(user), scripts) {
-        <div class="container">
-            <div class="page-header">
-                <h1>@title von @startingNumber</h1>
-            </div>
+@main(title, Some(user), scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title von @startingNumber</h1>
+        </div>
 
-            <div class="row">
-                <div class="col-sm-6 col-sm-offset-3">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
 
-                    <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
-                    <input hidden id="exerciseType" value="@exPart.urlName" title="hidden">
+                <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
+                <input hidden id="exerciseType" value="@exPart.urlName" title="hidden">
 
-                    <p><em class="text-info">
-                        Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em></p>
+                <p><em class="text-info">
+                    Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em></p>
 
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input value="@startingNumber" type="number" title="Vorgegebene Zahl" readonly class="form-control text-right"
-                            name="@model.nary.NaryConsts.valueName" id="@model.nary.NaryConsts.valueName">
-                            <span class="input-group-addon">@startingNumber.base.dispBase</span>
-                        </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input value="@startingNumber" type="number" title="Vorgegebene Zahl" readonly class="form-control text-right"
+                        name="@model.nary.NaryConsts.valueName" id="@model.nary.NaryConsts.valueName">
+                        <span class="input-group-addon">@startingNumber.base.dispBase</span>
                     </div>
+                </div>
 
-                    @if(verbose) {
-                        <fieldset>
-                            <legend>Binärdarstellung von @Math.abs(startingNumber.decimalValue)</legend>
-
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <span class="input-group-addon">--></span>
-                                    <input pattern="@model.nary.NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                                    class="form-control text-right" name="@model.nary.NaryConsts.BinaryAbs"
-                                    id="@model.nary.NaryConsts.BinaryAbs" placeholder="Ihre Lösung" required>
-                                    <span class="input-group-addon"><sub>2</sub></span>
-                                </div>
-                            </div>
-                        </fieldset>
-
-                        <fieldset>
-                            <legend>Invertierung aller Bits</legend>
-
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <span class="input-group-addon">--></span>
-                                    <input pattern="@model.nary.NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                                    class="form-control text-right" name="@model.nary.NaryConsts.InvertedAbs"
-                                    id="@model.nary.NaryConsts.InvertedAbs" placeholder="Ihre Lösung" required>
-                                    <span class="input-group-addon"><sub>2</sub></span>
-                                </div>
-                            </div>
-                        </fieldset>
-                    }
-
+                @if(verbose) {
                     <fieldset>
-                        <legend>Zweierkomplement</legend>
+                        <legend>Binärdarstellung von @Math.abs(startingNumber.decimalValue)</legend>
 
                         <div class="form-group">
                             <div class="input-group">
                                 <span class="input-group-addon">--></span>
                                 <input pattern="@model.nary.NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                                class="form-control text-right" name="@model.nary.NaryConsts.solutionName"
-                                id="@model.nary.NaryConsts.solutionName" placeholder="Ihre Lösung" required>
+                                class="form-control text-right" name="@model.nary.NaryConsts.BinaryAbs"
+                                id="@model.nary.NaryConsts.BinaryAbs" placeholder="Ihre Lösung" required>
                                 <span class="input-group-addon"><sub>2</sub></span>
                             </div>
                         </div>
                     </fieldset>
 
-                    <hr>
+                    <fieldset>
+                        <legend>Invertierung aller Bits</legend>
 
-                    <div class="btn-group btn-group-justified">
-                        <div class="btn-group">
-                            <button id="testBtn" class="btn btn-primary">Testen</button>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">--></span>
+                                <input pattern="@model.nary.NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
+                                class="form-control text-right" name="@model.nary.NaryConsts.InvertedAbs"
+                                id="@model.nary.NaryConsts.InvertedAbs" placeholder="Ihre Lösung" required>
+                                <span class="input-group-addon"><sub>2</sub></span>
+                            </div>
                         </div>
-                        <div class="btn-group">
-                            <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)?verbose=@verbose"
-                            class="btn btn-default">Nächste Aufgabe</a>
+                    </fieldset>
+                }
+
+                <fieldset>
+                    <legend>Zweierkomplement</legend>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">--></span>
+                            <input pattern="@model.nary.NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
+                            class="form-control text-right" name="@model.nary.NaryConsts.solutionName"
+                            id="@model.nary.NaryConsts.solutionName" placeholder="Ihre Lösung" required>
+                            <span class="input-group-addon"><sub>2</sub></span>
                         </div>
                     </div>
+                </fieldset>
 
+                <hr>
+
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <button id="testBtn" class="btn btn-primary">Testen</button>
+                    </div>
+                    <div class="btn-group">
+                        <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)?verbose=@verbose"
+                        class="btn btn-default">Nächste Aufgabe</a>
+                    </div>
                 </div>
+
             </div>
-
-            <hr>
-
-            <h3>Platz für Notizen</h3>
-
-            <em class="text-info">Notizen werden für die Korrektur nicht beachtet.</em>
-
-            <textarea title="Platz für Notizen" placeholder="Platz für Notizen" style="resize: none;" class="form-control" rows="10"></textarea>
-
         </div>
-    }
+
+        <hr>
+
+        <h3>Platz für Notizen</h3>
+
+        <em class="text-info">Notizen werden für die Korrektur nicht beachtet.</em>
+
+        <textarea title="Platz für Notizen" placeholder="Platz für Notizen" style="resize: none;" class="form-control" rows="10"></textarea>
+
+    </div>
+}

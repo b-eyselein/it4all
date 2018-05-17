@@ -75,16 +75,15 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
   private def readFillOutQuestionResultFromJson(json: JsValue): Option[FilloutQuestionResult] = json.asObj flatMap { jsObj =>
     for {
       formula <- jsObj.stringField(FormulaName) flatMap BoolNodeParser.parseBoolFormula
-      assignments <- jsObj.arrayField(AssignmentsName, _.asObj flatMap readAssignmentsObject)
+      assignments <- jsObj.arrayField(assignmentsName, _.asObj flatMap readAssignmentsObject)
     } yield FilloutQuestionResult(formula, assignments map (as => as + (SolVariable -> formula(as))))
   }
 
   private def readCreationQuestionResultFromJson(jsValue: JsValue): Option[CreationQuestionResult] = jsValue.asObj flatMap { jsObj =>
     for {
       learnerFormula <- jsObj.stringField(LearnerSol) flatMap BoolNodeParser.parseBoolFormula
-      question <- jsObj.arrayField(AssignmentsName, _.asObj flatMap readAssignmentsObject) map CreationQuestion
-      withSol <- jsObj.boolField("withSol")
-    } yield CreationQuestionResult(learnerFormula, question, withSol)
+      question <- jsObj.arrayField(assignmentsName, _.asObj flatMap readAssignmentsObject) map CreationQuestion
+    } yield CreationQuestionResult(learnerFormula, question)
   }
 
 }

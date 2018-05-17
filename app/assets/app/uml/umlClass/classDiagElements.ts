@@ -52,7 +52,7 @@ class MyJointClass extends joint.shapes.basic.Generic {
         this.set('markup', CLASS_MARKUP);
     }
 
-    initialize() {
+    initialize(): void {
         this.on('change:classType change:className change:attributes change:methods', function () {
             // noinspection JSPotentiallyInvalidUsageOfClassThis
             this.updateRectangles();

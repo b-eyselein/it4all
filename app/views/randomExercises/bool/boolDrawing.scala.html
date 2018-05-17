@@ -2,16 +2,21 @@
 
 @scriptsBefore = {
     <!-- Important: Order of Scripts -->
-    <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
-    <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
-    <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
+    @*<script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>*@
+    @*<script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>*@
+    @*<script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>*@
 }
 
 @scripts = {
-@core.helperTemplates.fullScreenScripts.render()
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script src="@routes.Assets.versioned("javascripts/bool/boolDrawing.js")"></script>
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/bool/boolDrawing.js")');
+    </script>
+    @* @core.helperTemplates.fullScreenScripts.render() *@
 
+    @*<script src="@routes.Assets.versioned("javascripts/bool/boolDrawing.js")"></script>*@
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bool/boolDrawing.css")">
 
@@ -32,37 +37,30 @@
                 <div class="form-group" id="creationButtonsDiv">
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementAND" draggable="true" ondragstart="drag(event)">
-                                AND</button>
+                            <button class="btn btn-default" name="elementAND">AND</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementOR" draggable="true" ondragstart="drag(event)">
-                                OR</button>
+                            <button class="btn btn-default" name="elementOR">OR</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementNOT" draggable="true" ondragstart="drag(event)">
-                                NOT</button>
+                            <button class="btn btn-default" name="elementNOT">NOT</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementNAND" draggable="true" ondragstart="drag(event)">
-                                NAND</button>
+                            <button class="btn btn-default" name="elementNAND">NAND</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementXOR" draggable="true" ondragstart="drag(event)">
-                                XOR</button>
+                            <button class="btn btn-default" name="elementXOR">XOR</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementXNOR" draggable="true" ondragstart="drag(event)">
-                                XNOR</button>
+                            <button class="btn btn-default" name="elementXNOR">XNOR</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementNOR" draggable="true" ondragstart="drag(event)">
-                                NOR</button>
+                            <button class="btn btn-default" name="elementNOR">NOR</button>
                         </div>
                     </div>
                 </div>
 
-                <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
+                <div id="paper"></div>
             </div>
 
             <div class="col-md-4">

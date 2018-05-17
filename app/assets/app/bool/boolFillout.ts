@@ -1,10 +1,21 @@
-function readValues() {
+import * as $ from 'jquery';
+
+interface BoolAssignment {
+//TODO...
+}
+
+interface BoolFilloutSolution {
+    formula: string
+    assignments: BoolAssignment[]
+}
+
+function readValues(): BoolFilloutSolution {
     let lerVar = $('#lerVar').text();
 
-    let assignments = [];
+    let assignments: BoolAssignment[] = [];
 
     // FIXME: map instead of each
-    $('#valueTableBody').find('tr').each(function (index, row) {
+    $('#valueTableBody').find('tr').each((index: number, row: HTMLElement) => {
         let partAssignments = {};
 
 
@@ -17,13 +28,15 @@ function readValues() {
         assignments.push(partAssignments)
     });
 
+    console.warn(JSON.stringify(assignments, null, 2));
+
     return {
         formula: $('#formula').data('formula'),
         assignments
     };
 }
 
-function changeValue(button) {
+function changeValue(button: HTMLButtonElement): void {
     let buttonJQ = $(button);
     let newValue = (parseInt(buttonJQ.text()) + 1) % 2;
 
@@ -35,9 +48,15 @@ function changeValue(button) {
     }
 }
 
-function onAjaxError(jqXHR) {
+function onAjaxError(jqXHR): void {
     console.error(jqXHR.responseText);
     $('#testBtn').prop('disabled', false);
+}
+
+interface BoolFilloutResult {
+    id: string
+    learner: boolean
+    sample: boolean
 }
 
 /**
@@ -45,14 +64,14 @@ function onAjaxError(jqXHR) {
  * @param {string} rows.id
  * @param {object.<String, boolean>} rows.assignments
  */
-function onAjaxSuccess(rows) {
-    let lerVar = $('#lerVar').text();
-    let solVar = $('#solVar').val();
+function onAjaxSuccess(rows: BoolFilloutResult[]): void {
+    let lerVar = $('#lerVar').text() as string;
+    let solVar = $('#solVar').val() as string;
 
     for (let row of rows) {
         let elem = $('#' + row.id);
 
-        if (row.assignments[lerVar] === row.assignments[solVar]) {
+        if (row.learner === row.sample) {
             elem.removeClass('danger').addClass('success');
         } else {
             elem.removeClass('success').addClass('danger');
@@ -62,19 +81,15 @@ function onAjaxSuccess(rows) {
     $('#testBtn').prop('disabled', false);
 }
 
-function testSol() {
-    let toolType = $('#toolType').val(), exerciseType = $('#exerciseType').val();
-
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.RandomExerciseController.correctLive(toolType, exerciseType).url;
-
-    $('#testBtn').prop('disabled', true);
+function testSol(): void {
+    let testBtn = $('#testBtn');
+    testBtn.prop('disabled', true);
 
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
-        url,
+        url: testBtn.data('url'),
         data: JSON.stringify(readValues()),
         async: true,
         success: onAjaxSuccess,
@@ -82,6 +97,8 @@ function testSol() {
     });
 }
 
-$(document).ready(function () {
-    $('#testBtn').click(testSol);
+$(() => {
+    $('#valueTableBody').find('button').on('click', (event) => changeValue(event.target as HTMLButtonElement));
+
+    $('#testBtn').on('click', testSol);
 });

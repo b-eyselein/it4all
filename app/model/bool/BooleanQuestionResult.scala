@@ -1,9 +1,8 @@
 package model.bool
 
-import model.core.result.SuccessType
 import model.bool.BoolAssignment.{disjunktiveNormalForm, konjunktiveNormalForm}
-import model.bool.BoolConsts.{LerVariable, SolVariable}
-import model.core.result.EvaluationResult
+import model.bool.BoolConsts.{LerVariable, SolVariable, _}
+import model.core.result.{EvaluationResult, SuccessType}
 import play.api.libs.json._
 
 import scala.language.postfixOps
@@ -20,27 +19,23 @@ sealed trait BooleanQuestionResult extends EvaluationResult {
 
 }
 
-case class CreationQuestionResult(learnerSolution: ScalaNode, question: CreationQuestion, withSol: Boolean) extends BooleanQuestionResult {
+case class CreationQuestionResult(learnerSolution: ScalaNode, question: CreationQuestion) extends BooleanQuestionResult {
 
   override val isCorrect: Boolean = question.solutions forall (as => as(SolVariable) == learnerSolution(as))
 
   override val assignments: Seq[BoolAssignment] = question.solutions
 
   private def assignmentMapping(assignment: BoolAssignment): JsValue = Json.obj(
-    "id" -> assignment.identifier,
+    idName -> assignment.identifier,
     "learnerVal" -> learnerSolution(assignment),
-    "correct" -> (assignment(SolVariable) == learnerSolution(assignment))
+    correctName -> (assignment(SolVariable) == learnerSolution(assignment))
   )
 
-  override def toJson: JsValue = if (withSol) {
-    Json.obj(
-      "assignments" -> JsArray(assignments map assignmentMapping),
-      "knf" -> disjunktiveNormalForm(assignments).asString,
-      "dnf" -> konjunktiveNormalForm(assignments).asString
-    )
-  } else {
-    Json.obj("assignments" -> JsArray(assignments map assignmentMapping))
-  }
+  override def toJson: JsValue = Json.obj(
+    assignmentsName -> JsArray(assignments map assignmentMapping),
+    "knf" -> disjunktiveNormalForm(assignments).asString,
+    "dnf" -> konjunktiveNormalForm(assignments).asString
+  )
 }
 
 case class FilloutQuestionResult(formula: ScalaNode, assignments: Seq[BoolAssignment]) extends BooleanQuestionResult {
@@ -51,10 +46,9 @@ case class FilloutQuestionResult(formula: ScalaNode, assignments: Seq[BoolAssign
 
   override def toJson: JsValue = JsArray(assignments map { a =>
     Json.obj(
-      "id" -> a.identifier,
-      "assignments" -> JsObject(a.assignments.map {
-        case (variable, bool) => variable.asString -> JsBoolean(bool)
-      }.toSeq)
+      idName -> a.identifier,
+      "learner" -> JsBoolean(a.assignments.getOrElse(LerVariable, false)),
+      "sample" -> JsBoolean(a.assignments.getOrElse(SolVariable, false))
     )
   })
 

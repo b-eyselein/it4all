@@ -13,13 +13,12 @@
 }
 
 @scripts = {
-    @* Javascript Routes *@
-    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
     <script>
-            const solVar = '@model.bool.BoolConsts.SolVariable';
+            SystemJS.import('@routes.Assets.versioned("app/bool/boolCreation.js")');
     </script>
-    <script type="text/javascript" src="@controllers.routes.Assets.versioned("javascripts/bool/boolCreation.js")"></script>
 }
 
 @main("Formel erstellen", Some(user), scripts) {
@@ -81,10 +80,11 @@
 
         <div class="btn-group btn-group-justified">
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" id="testBtn">Prüfen</button>
+                <button type="button" class="btn btn-primary" id="testBtn" data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, model.bool.FormulaCreation.urlName)">
+                    Prüfen</button>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-success" id="correctBtn">Zeige Musterlösung</button>
+                <button type="button" class="btn btn-success" id="sampleSolBtn">Zeige Musterlösung</button>
             </div>
             <div class="btn-group">
                 <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)" class="btn btn-default">

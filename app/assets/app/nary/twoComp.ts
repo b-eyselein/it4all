@@ -1,4 +1,14 @@
-function colorParent(parent, correct) {
+import * as $ from 'jquery';
+
+let testBtn: JQuery;
+
+interface TwoCompResult {
+    correct: boolean
+    invertedAbs: boolean
+    binaryAbs: boolean
+}
+
+function colorParent(parent: JQuery, correct: boolean): void {
     if (correct) {
         parent.removeClass('has-error').addClass('has-success');
     } else {
@@ -6,31 +16,25 @@ function colorParent(parent, correct) {
     }
 }
 
-/**
- *
- * @param {{correct: boolean, verbose: boolean, binaryAbs: boolean, invertedAbs: boolean}} response
- */
-function onAjaxSuccess(response) {
+function onAjaxSuccess(response: TwoCompResult): void {
+    console.warn(JSON.stringify(response, null, 2));
     colorParent($('#binaryAbs').parent(), response.binaryAbs);
     colorParent($('#invertedAbs').parent(), response.invertedAbs);
     colorParent($('#solution').parent(), response.correct);
 }
 
-function testSol() {
-    let toolType = $('#toolType').val(), exerciseType = $('#exerciseType').val();
-
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.RandomExerciseController.correctLive(toolType, exerciseType).url;
+function testSol(): void {
+    testBtn.prop('disabled', true);
 
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
-        url,
+        url: testBtn.data('url'),
         data: JSON.stringify({
             invertedAbs: $('#invertedAbs').val(),
             binaryAbs: $('#binaryAbs').val(),
-            value: parseInt($('#value').val()),
+            value: parseInt($('#value').val() as string),
             solution: $('#solution').val()
         }),
         async: true,
@@ -38,7 +42,8 @@ function testSol() {
     });
 }
 
-$(document).ready(function () {
-    $('#testBtn').click(testSol);
+$(() => {
+    testBtn = $('#testBtn');
+    testBtn.on('click', testSol);
 });
 

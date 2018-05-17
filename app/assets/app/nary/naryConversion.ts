@@ -1,7 +1,14 @@
-/**
- * @param {{correct: boolean}} response
- */
-function onAjaxSuccess(response) {
+import * as $ from 'jquery';
+
+let testBtn: JQuery;
+
+interface NaryConversionResult {
+    correct: boolean
+}
+
+function onAjaxSuccess(response: NaryConversionResult) {
+    testBtn.prop('disabled', false);
+
     let solInputParent = $('#solution').parent();
     if (response.correct) {
         solInputParent.removeClass('has-error').addClass('has-success');
@@ -10,17 +17,18 @@ function onAjaxSuccess(response) {
     }
 }
 
-function testSol() {
-    let toolType = $('#toolType').val(), exerciseType = $('#exerciseType').val();
+function onNaryConversionError(jqXHR): void {
+    testBtn.prop('disabled', false);
+    console.error(jqXHR);
+}
 
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.RandomExerciseController.correctLive(toolType, exerciseType).url;
-
+function testSol(): void {
+    testBtn.prop('disabled', true);
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
-        url,
+        url: testBtn.data('url'),
         data: JSON.stringify({
             startingNB: $('#startingNB').data('base'),
             targetNB: $('#targetNB').data('base'),
@@ -28,10 +36,12 @@ function testSol() {
             solution: $('#solution').val()
         }),
         async: true,
-        success: onAjaxSuccess
+        success: onAjaxSuccess,
+        error: onNaryConversionError
     });
 }
 
-$(document).ready(function () {
-    $('#testBtn').click(testSol);
+$(() => {
+    testBtn = $('#testBtn');
+    testBtn.on('click', testSol);
 });

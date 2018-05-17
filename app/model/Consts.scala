@@ -10,7 +10,7 @@ trait Consts {
   val awaitedName        = "awaited"
 
   val contentName     = "content"
-  val correct         = "correct"
+  val correctName     = "correct"
   val correctnessName = "correctness"
 
   val errorName        = "error"
