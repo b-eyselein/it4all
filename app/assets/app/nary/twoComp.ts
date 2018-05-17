@@ -17,7 +17,6 @@ function colorParent(parent: JQuery, correct: boolean): void {
 }
 
 function onAjaxSuccess(response: TwoCompResult): void {
-    console.warn(JSON.stringify(response, null, 2));
     colorParent($('#binaryAbs').parent(), response.binaryAbs);
     colorParent($('#invertedAbs').parent(), response.invertedAbs);
     colorParent($('#solution').parent(), response.correct);
