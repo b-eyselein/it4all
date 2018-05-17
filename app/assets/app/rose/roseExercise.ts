@@ -1,11 +1,22 @@
-/**
- * @param {object} completeResult
- * @param {string} completeResult.resultType
- * @param {object} completeResult.result
- * @param {boolean} completeResult.result.correct
- */
-function onRoseCorrectionSuccess(completeResult) {
-    $('#testBtn').prop('disabled', false);
+import * as $ from 'jquery';
+import * as CodeMirror from 'codemirror';
+import {CompleteRunResult, instantiateAll} from "./simulator";
+import {initEditor} from "../editorHelpers";
+
+import 'codemirror/mode/python/python';
+
+let testBtn: JQuery;
+let editor: CodeMirror.Editor;
+
+
+interface RoseCompleteResult {
+    resultType: string
+    cause: string
+    result: CompleteRunResult
+}
+
+function onRoseCorrectionSuccess(completeResult: RoseCompleteResult): void {
+    testBtn.prop('disabled', false);
 
     let correctionDiv = $('#correction');
 
@@ -15,8 +26,7 @@ function onRoseCorrectionSuccess(completeResult) {
             break;
         case 'success':
             let runResult = completeResult.result;
-            let correct = runResult.correct;
-            if (correct) {
+            if (runResult.correct) {
                 correctionDiv.html(`<div class="alert alert-success">Ihre Lösung war korrekt.</div>`)
             } else {
                 correctionDiv.html(`<div class="alert alert-danger">Ihre Lösung war nicht korrekt!</div>`)
@@ -24,23 +34,18 @@ function onRoseCorrectionSuccess(completeResult) {
             instantiateAll(runResult);
             break;
         default:
-            console.error('Unknown runresult type: ' + completeResult.type);
+            console.error('Unknown runresult type: ' + completeResult.resultType);
             break;
     }
 }
 
-function onRoseCorrectionError(jqXHR) {
+function onRoseCorrectionError(jqXHR): void {
     console.error(jqXHR.responseText);
-    $('#testBtn').prop('disabled', false);
+    testBtn.prop('disabled', false);
 }
 
-function testSol() {
-    let exerciseId = $('#exerciseId').val(), exercisePart = "robot_sim";
-
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.ExerciseController.correctLive("rose", exerciseId, exercisePart).url;
-
-    $('#testBtn').prop('disabled', true);
+function testSol(): void {
+    testBtn.prop('disabled', true);
 
     let dataToSend = {
         part: "",
@@ -54,7 +59,7 @@ function testSol() {
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url,
+        url: testBtn.data('url'),
         data: JSON.stringify(dataToSend),
         async: true,
         success: onRoseCorrectionSuccess,
@@ -63,6 +68,9 @@ function testSol() {
 
 }
 
-$(document).ready(function () {
-    $('#testBtn').click(testSol);
+$(() => {
+    editor = initEditor('python');
+
+    testBtn = $('#testBtn');
+    testBtn.on('click', testSol);
 });
