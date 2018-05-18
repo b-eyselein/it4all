@@ -6,7 +6,7 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 let editor: CodeMirror.Editor;
 
 $(() => {
-    editor = initEditor('htmlmixed');
+    editor = initEditor('htmlmixed', 'htmlEditor');
     $('#previewTabBtn').on('click', updatePreviewNew);
     $('#testBtn').on('click', testSol);
 });

@@ -1,9 +1,6 @@
 import * as joint from 'jointjs';
 import * as _ from 'lodash';
 import 'bootstrap';
-
-//FIXME: type!
-
 import {
     createElements,
     editActionInput,
@@ -24,10 +21,11 @@ import {
     START_END_SIZE,
     STD_ACTIVITY_ELEMENT_WIDTH,
     STD_PADDING,
-    STD_TEXT_ELEMENT_EVENTS,
     strokeWidth
 } from '../umlConsts';
 import {HtmlElement} from "./umlADHtmlElement";
+
+//FIXME: type!
 
 
 export {
@@ -658,8 +656,8 @@ class WhileLoop extends joint.shapes.basic.Generic {
     }
 }
 
-const WhileLoopView = joint.dia.ElementView.extend({
-    events: STD_TEXT_ELEMENT_EVENTS,
+class WhileLoopView extends joint.dia.ElementView {
+    // events: STD_TEXT_ELEMENT_EVENTS,
 
     onLeftClick(event) {
         event.preventDefault();
@@ -668,13 +666,13 @@ const WhileLoopView = joint.dia.ElementView.extend({
         $('#loopCellId').val(this.model.id);
 
         $('#loopEditModal').modal('show');
-    },
+    }
 
     onRightClick(event) {
         event.preventDefault();
         if (confirm('Löschen?'))
             this.remove();
-    },
+    }
 
     initialize() {
         joint.dia.ElementView.prototype.initialize.apply(this, arguments);
@@ -684,7 +682,7 @@ const WhileLoopView = joint.dia.ElementView.extend({
             this.resize();
         });
     }
-});
+}
 
 class ActionInput extends joint.shapes.basic.Generic {
 
@@ -1071,6 +1069,7 @@ const FOR_LOOP_TEMPLATE = `
 </div>`.trim();
 
 class NewForLoop extends HtmlElement {
+
     defaults() {
         return _.defaultsDeep({
             size: {width: FOR_LOOP_WIDTH, height: FOR_LOOP_HEIGHT},
@@ -1275,6 +1274,11 @@ class Edit extends joint.shapes.basic.Generic {
     </g>
 </g>`.trim();
 
+    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
+        super(attributes, options);
+        this.set('markup', Edit.MARKUP);
+    }
+
     defaults() {
         return _.defaultsDeep({
             type: 'uml.Edit',
@@ -1284,7 +1288,7 @@ class Edit extends joint.shapes.basic.Generic {
                 rect: {width: STD_ACTIVITY_ELEMENT_WIDTH},
 
                 '.edit-complete-rect': {
-                    height: EDIT_HEIGHT, rx: 5, ry: 5,
+                    height: EDIT_HEIGHT, rx: 5, ry: 5, fill: COLORS.White,
                     stroke: COLORS.Black, strokeWidth, strokeDasharray: '5,5'
                 },
             },

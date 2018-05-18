@@ -221,7 +221,7 @@ function testSqlSol(): void {
 }
 
 $(() => {
-    editor = initEditor('text/x-mysql');
+    editor = initEditor('text/x-mysql', 'sqlEditor');
 
     testBtn = $('#testBtn');
     testBtn.on('click', testSqlSol);

@@ -73,7 +73,7 @@ function testSol(): void {
 }
 
 $(() => {
-    editor = initEditor('xml');
+    editor = initEditor('xml', 'xmlEditor');
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
 });
