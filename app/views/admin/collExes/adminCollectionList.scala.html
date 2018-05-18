@@ -1,10 +1,12 @@
 @(user: model.User, collWrappers: Seq[model.CompleteCollection], toolObject: model.toolMains.CollectionToolMain)
 
 @scripts = {
-    @* Javascript Routes *@
-    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script src="@routes.Assets.versioned("javascripts/admin/collExAdmin.js")"></script>
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/admin/collExAdmin.js")');
+    </script>
 }
 
 @main("Aufgabenübersicht", Some(user), scripts) {
@@ -39,8 +41,7 @@
                     <td>@collection.id</td>
                     <td>
                         <div class="input-group">
-                            <select onchange="updateStateChangeButton(@collection.id)" name="state_@collection.id" class="form-control" id="state_@collection.id"
-                            title="Status der Aufgabe" data-val="@collection.state">
+                            <select class="form-control" id="state_@collection.id" title="Status der Aufgabe" data-val="@collection.state" data-id="@collection.id">
                             @for(exState <- model.ExerciseState.values) {
                                 <option @{
                                     if(exState == collection.state) "selected" else ""
@@ -48,7 +49,8 @@
                             }
                             </select>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@collection.id" onclick="changeState(@collection.id)" disabled>
+                                <button class="btn btn-default" id="scb_@collection.id" disabled data-id="@collection.id"
+                                data-url="@routes.CollectionController.adminChangeCollectionState(toolObject.urlPart, collection.id)">
                                     <span class="glyphicon glyphicon-upload"></span>
                                 </button>
                             </span>
@@ -56,9 +58,12 @@
                     </td>
                     <td>
                         <a class="btn btn-default" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
-                        href="@routes.CollectionController.adminEditCollectionForm(toolObject.urlPart, collection.id)"><span class="glyphicon glyphicon-wrench"></span>
+                        href="@routes.CollectionController.adminEditCollectionForm(toolObject.urlPart, collection.id)">
+                            <span class="glyphicon glyphicon-wrench"></span>
                         </a>
-                        <button class="btn btn-default" title="Aufgabe @collection.id löschen" id="del_@collection.id" onclick="deleteCollection(@collection.id)">
+
+                        <button class="btn btn-danger" title="Aufgabe @collection.id löschen" id="del_@collection.id"
+                        data-url="@routes.CollectionController.adminDeleteCollection(toolObject.urlPart, collection.id)">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>

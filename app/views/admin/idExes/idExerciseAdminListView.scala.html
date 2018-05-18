@@ -1,10 +1,12 @@
 @(user: model.User, completeExercises: Seq[model.CompleteEx[_ <: model.Exercise]], toolMainObject: model.toolMains.AToolMain)
 
 @scripts = {
-    @* Javascript Routes *@
-    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script src="@routes.Assets.versioned("javascripts/admin/singleExAdmin.js")"></script>
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/admin/singleExAdmin.js")');
+    </script>
 }
 
 @main("Aufgabenübersicht", Some(user), scripts) {
@@ -20,7 +22,6 @@
 
         <hr>
 
-        @* FIXME: convert all routes (if possible!) to js routes! *@
         <table class="table">
             <thead>
                 <tr>
@@ -37,16 +38,16 @@
                     <td>@exercise.id</td>
                     <td>
                         <div class="input-group">
-                            <select title="Status ändern" onchange="updateStateChangeButton(@exercise.id)" name="state_@exercise.id"
-                            class="form-control" id="state_@exercise.id" data-val="@exercise.state">
+                            <select title="Status ändern" class="form-control" id="state_@exercise.id" data-val="@exercise.state" data-id="@exercise.id">
                             @for(exState <- model.ExerciseState.values) {
                                 <option @{
                                     if(exState == exercise.state) "selected" else ""
-                                }>@exState </option>
+                                }>@exState</option>
                             }
                             </select>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState(@exercise.id)" disabled>
+                                <button class="btn btn-default" id="scb_@exercise.id" data-id="@exercise.id" disabled
+                                data-url="@routes.ExerciseController.adminChangeExState(toolMainObject.urlPart, exercise.id)">
                                     <span class="glyphicon glyphicon-upload"></span>
                                 </button>
                             </span>
@@ -57,7 +58,9 @@
                         href="@routes.ExerciseController.adminEditExerciseForm(toolMainObject.urlPart, exercise.id)">
                             <span class="glyphicon glyphicon-wrench"></span>
                         </a>
-                        <button class="btn btn-default" title="Aufgabe @exercise.id löschen" id="del_@exercise.id" onclick="deleteExercise(@exercise.id)">
+
+                        <button class="btn btn-danger" title="Aufgabe @exercise.id löschen" id="del_@exercise.id"
+                        data-url="@routes.ExerciseController.adminDeleteExercise(toolMainObject.urlPart, exercise.id)">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>

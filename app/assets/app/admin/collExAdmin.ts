@@ -1,16 +1,20 @@
 import * as $ from 'jquery';
 
-interface ExerciseDeleteResult {
+interface CollectionDeleteResult {
     id: number
 }
 
-function updateAfterDelete(result: ExerciseDeleteResult): void {
+function onDeleteCollSuccess(result: CollectionDeleteResult): void {
     $('#tr1_' + result.id).addClass('danger').attr('title', 'Diese Aufgabe wurde erfolgreich gelöscht.');
     $('#del_' + result.id).prop('disabled', true).attr('title', 'Diese Aufgabe wurde bereits gelöscht!');
     $('#edit_' + result.id).addClass('disabled').removeAttr('href').attr('title', 'Diese Aufgabe wurde bereits gelöscht!');
 }
 
-function deleteExercise(element: HTMLElement): void {
+function onDeleteCollError(jqXHR): void {
+    console.error(jqXHR);
+}
+
+function deleteCollOrExercise(element: HTMLElement): void {
     let jButton: JQuery;
 
     if (element instanceof HTMLButtonElement) {
@@ -25,23 +29,28 @@ function deleteExercise(element: HTMLElement): void {
     $.ajax({
         type: 'DELETE',
         url: jButton.data('url'),
-        success: updateAfterDelete
+        success: onDeleteCollSuccess,
+        error: onDeleteCollError
     });
 }
 
 function updateStateChangeButton(select: HTMLSelectElement): void {
-    let jQSelect = $(select);
-    $('#scb_' + jQSelect.data('id')).prop('disabled', jQSelect.val() === jQSelect.data('val'));
+    let jSelect = $(select);
+    $('#scb_' + jSelect.data('id')).prop('disabled', jSelect.val() === jSelect.data('val'));
 }
 
-interface StateChangeSuccess {
+interface CollectionStateChangeResult {
     id: number
     newState: string
 }
 
-function onChangeStateSuccess(response: StateChangeSuccess): void {
+function onChangeStateSuccess(response: CollectionStateChangeResult): void {
     $('#scb_' + response.id).prop('disabled', true);
     $('#state_' + response.id).data('val', response.newState);
+}
+
+function onChangeStateError(jqXHR): void {
+    console.error(jqXHR);
 }
 
 function changeState(element: HTMLElement): void {
@@ -60,12 +69,13 @@ function changeState(element: HTMLElement): void {
         type: 'PUT',
         url: jButton.data('url'),
         data: {state: $('#state_' + jButton.data('id')).val()},
-        success: onChangeStateSuccess
+        success: onChangeStateSuccess,
+        error: onChangeStateError
     });
 }
 
 $(() => {
     $('select').on('click', event => updateStateChangeButton(event.target as HTMLSelectElement));
     $('button.btn-default').on('click', event => changeState(event.target as HTMLElement));
-    $('button.btn-danger').on('click', event => deleteExercise(event.target as HTMLElement));
+    $('button.btn-danger').on('click', event => deleteCollOrExercise(event.target as HTMLElement));
 });

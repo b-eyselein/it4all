@@ -30,6 +30,7 @@ trait Consts {
 
   val matchesName   = "matches"
   val maxPointsName = "maxPoints"
+  val messageName   = "message"
 
   val nameName = "name"
 
