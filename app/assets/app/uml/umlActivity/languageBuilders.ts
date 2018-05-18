@@ -1,4 +1,4 @@
-import {ExerciseParameters} from "./converter";
+import {ExerciseParameters} from "../umlInterfaces";
 
 export {AbstractLanguageBuilder, Java, Python}
 
@@ -6,10 +6,12 @@ function contentIsEmpty(content: string[]): boolean {
     return content.length === 0 || (content.length === 1 && content[0].trim().length === 0);
 }
 
-
 abstract class AbstractLanguageBuilder {
 
-    constructor(public standardIndent: number) {
+    protected standardIndent: number;
+
+    protected constructor(standardIndent: number) {
+        this.standardIndent = standardIndent;
     }
 
     abstract getCore(exerciseParameters: ExerciseParameters, content: string[]): string;
@@ -41,7 +43,7 @@ class PythonBuilder extends AbstractLanguageBuilder {
         super(4);
     }
 
-    getCore(exerciseParameters, content: string[]): string {
+    getCore(exerciseParameters: ExerciseParameters, content: string[]): string {
         let contentToAdd = contentIsEmpty(content) ? '  ' : this.addIdentation(content);
         return [exerciseParameters.methodDeclaration, ...contentToAdd].join('\n');
     }
@@ -77,14 +79,11 @@ class PythonBuilder extends AbstractLanguageBuilder {
 
 }
 
-
-//java contents
 class JavaBuilder extends AbstractLanguageBuilder {
 
     constructor() {
         super(4);
     }
-
 
     /*
     * @param {object} exerciseParameters
@@ -97,7 +96,7 @@ class JavaBuilder extends AbstractLanguageBuilder {
     *
     * @returns {string}
     */
-    get_core(exerciseParameters, content) {
+    get_core(exerciseParameters: ExerciseParameters, content) {
         // let contentToAdd = contentIsEmpty(content) ? '  ' : this.addIdentation(content);
         // return [exerciseParameters.methodDeclaration, ...contentToAdd].join('\n');
 
@@ -150,7 +149,7 @@ class JavaBuilder extends AbstractLanguageBuilder {
         return " ".repeat(deep) + "while(" + econdition + "){\n" + content + "\n" + " ".repeat(deep) + "}\n";
     }
 
-    getCore(exerciseParameters, content: string[]): string {
+    getCore(exerciseParameters: ExerciseParameters, content: string[]): string {
         return "";
     }
 

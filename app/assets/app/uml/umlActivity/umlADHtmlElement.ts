@@ -1,38 +1,55 @@
-joint.shapes.html = {};
+import * as joint from 'jointjs';
+import {V} from 'jointjs';
+import * as _ from 'lodash';
+import {COLORS} from "../umlConsts";
 
-joint.shapes.html.Element = joint.shapes.basic.Generic.extend({
-    markup: '<rect/>',
-    defaults: _.defaultsDeep({
-        type: 'html.Element',
-        attrs: {
-            rect: {
-                'ref-width': '100%',
-                'ref-height': '100%',
-                'stroke': 'dashed'
-            },
-            '.': {magnet: false}  // Force Port selection
-        }
-    }, joint.shapes.basic.Generic.prototype.defaults)
-});
+export {HtmlElement, HtmlElementView}
+
+class HtmlElement extends joint.shapes.basic.Generic {
+
+    private static MARKUP: '<rect/>';
+
+    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
+        super(attributes, options);
+        this.set('markup', HtmlElement.MARKUP);
+    }
+
+    defaults() {
+        return _.defaultsDeep({
+            type: 'html.Element',
+            attrs: {
+                rect: {
+                    fill: COLORS.White, refWidth: '100%', refHeight: '100%', stroke: 'dashed'
+                },
+                '.': {magnet: false}  // Force Port selection
+            }
+        }, joint.shapes.basic.Generic.prototype.defaults)
+    }
+}
 
 // Create a custom view for that element that displays an HTML div above it.
-joint.shapes.html.ElementView = joint.dia.ElementView.extend({
+class HtmlElementView extends joint.dia.ElementView {
 
-    init: function () {
+    $box;
+    $attributes;
+    paper;
+    removeBox;
+
+    init() {
         this.listenTo(this.model, 'change', this.updateBox);
-    },
+    }
 
-    onBoxChange: function (evt) {
+    onBoxChange(evt) {
         const input = evt.target;
         const attribute = input.dataset.attribute;
         if (attribute) {
             this.model.set(attribute, input.value);
         }
-    },
+    }
 
-    onRender: function () {
+    onRender() {
         if (this.$box) this.$box.remove();
-        const boxMarkup = joint.util.template(this.model.get('template'))();
+        const boxMarkup = joint.util.template(this.model.get('template') as string)('');
         const $box = this.$box = $(boxMarkup);
         this.$attributes = $box.find('[data-attribute]');
         // React on all box changes. e.g. input change
@@ -43,9 +60,9 @@ joint.shapes.html.ElementView = joint.dia.ElementView.extend({
         $box.appendTo(this.paper.el);
         this.updateBox();
         return this;
-    },
+    }
 
-    updateBox: function () {
+    updateBox() {
         // Set the position and the size of the box so that it covers the JointJS element (taking the paper transformations into account).
         const bbox = this.getBBox({useModelGeometry: true});
         const scale = V(this.paper.viewport).scale();
@@ -59,9 +76,9 @@ joint.shapes.html.ElementView = joint.dia.ElementView.extend({
         });
         changeSize(this.model, this.$box, bbox);
         this.updateAttributes();
-    },
+    }
 
-    updateAttributes: function () {
+    updateAttributes() {
         const model = this.model;
         this.$attributes.each(function () {
             const value = model.get(this.dataset.attribute);
@@ -77,16 +94,16 @@ joint.shapes.html.ElementView = joint.dia.ElementView.extend({
                     break;
             }
         });
-    },
+    }
 
-    onRemove: function () {
+    onRemove() {
         this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
         this.model.on('remove', this.removeBox, this);
         this.$box.remove();
-        removeIdFromArray(this.model.id);
-        removeIdFromArray(this.model.id);
+        // removeIdFromArray(this.model.id);
+        // removeIdFromArray(this.model.id);
     }
-});
+}
 
 function changeSize(model, box, bbox) {
     switch (model.attributes.name) {

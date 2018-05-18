@@ -53,9 +53,6 @@ function onShowSampleSolSuccess(response: string): void {
 
     $('#sampleSolDiv').prop('hidden', false);
     $('#sampleSolPre').html(response);
-
-    // console.warn(JSON.stringify(response, null, 2));
-
 }
 
 function onShowSampleSolError(jqXHR): void {
@@ -75,7 +72,7 @@ function showSampleSol(): void {
 }
 
 $(() => {
-    editor = initEditor('python');
+    editor = initEditor('python', 'myTextArea');
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
 

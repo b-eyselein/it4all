@@ -1,5 +1,4 @@
 import * as $ from 'jquery';
-// import {Ace, edit} from 'ace';
 import * as CodeMirror from 'codemirror';
 
 export {initEditor};
@@ -15,8 +14,8 @@ function changeFontSize(value: number): void {
     fontSizeElement.text(fontSize);
 }
 
-function initEditor(language): CodeMirror.Editor {
-    let textArea = document.getElementById('myTextArea');
+function initEditor(language: string, elementId: string): CodeMirror.Editor {
+    let textArea = document.getElementById(elementId);
 
     if (textArea instanceof HTMLTextAreaElement) {
         return CodeMirror.fromTextArea(textArea, {

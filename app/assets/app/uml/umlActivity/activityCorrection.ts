@@ -1,13 +1,14 @@
 import * as $ from 'jquery';
 import {onProgCorrectionError, onProgCorrectionSuccess} from "../../programming/progCorrectionHandler";
 
+let testBtn: JQuery;
+
 function activityCorrection(): void {
-    let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
+    let exercisePart = $('#exercisePart').val();
 
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = ''; // FIXME: jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
+    console.warn('Correcting...');
 
-    $('#testButton').prop('disabled', true);
+    testBtn.prop('disabled', true);
 
     let dataToSend = {
         exercisePart,
@@ -18,7 +19,7 @@ function activityCorrection(): void {
         type: 'PUT',
         // dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url,
+        url: testBtn.data('url'),
         data: JSON.stringify(dataToSend),
         async: true,
         success: onProgCorrectionSuccess,
@@ -26,6 +27,7 @@ function activityCorrection(): void {
     });
 }
 
-$(document).ready(function () {
-    $('#testButton').click(activityCorrection);
+$(() => {
+    testBtn = $('#testBtn');
+    testBtn.on('click', activityCorrection);
 });

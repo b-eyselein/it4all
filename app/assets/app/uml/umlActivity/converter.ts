@@ -1,22 +1,12 @@
 import * as $ from 'jquery';
 import * as joint from 'jointjs';
 
-import {mainEndNode, mainStartNode, graph, paper} from "./umlActivityDrawing";
+import {mainEndNode, mainStartNode, umlActivityGraph, umlActivityPaper} from "./umlActivityDrawing";
 import {AbstractLanguageBuilder, Java, Python} from "./languageBuilders";
+import {ActionInput, Edit, ForLoopText, IfElseText} from "./umlActivityElements";
+import {ExerciseParameters} from "../umlInterfaces";
 
-export {ExerciseParameters}
-
-interface ExerciseParameters {
-    methodDisplay: string,
-    methodDeclaration: string,
-    methodName: string,
-    methodParameters: string,
-    output: {
-        outputType: string,
-        output: string,
-        defaultValue: string
-    }
-}
+export {newGenerate};
 
 interface ContentReadResult {
     success: boolean,
@@ -34,15 +24,15 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
     let success = true;
     while (currentElement.id !== endNode.id && success && step < 100) {
 
-        let cellView: joint.dia.CellView = currentElement.findView(paper);
+        let cellView: joint.dia.CellView = currentElement.findView(umlActivityPaper);
         let model = cellView.model;
 
         cellView.highlight();
 
         // TODO: read content from element!
-        if (model instanceof joint.shapes.uml.ActionInput) {
+        if (model instanceof ActionInput) {
             contents.push(...model.getContent());
-        } else if (model instanceof joint.shapes.uml.ForLoopText) {
+        } else if (model instanceof ForLoopText) {
             if (model.isOkay()) {
                 let variable = model.getVariable();
                 let collection = model.getCollection();
@@ -54,7 +44,7 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
                 logs.push('For-Schleife hat keine Variable oder Collection!');
                 return {success, contents, logs};
             }
-        } else if (model instanceof joint.shapes.uml.IfElseText) {
+        } else if (model instanceof IfElseText) {
             if (model.isOkay()) {
                 let elseContent = model.getElseContent();
                 contents.push(...languageBuilder.getIfElse(model.getCondition(), model.getIfContent(), elseContent));
@@ -63,7 +53,7 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
                 logs.push('If-Else-Verzweigung hat keine Bedingung!');
                 return {success, contents, logs};
             }
-        } else if (model instanceof joint.shapes.uml.Edit) {
+        } else if (model instanceof Edit) {
             // FIXME: ERROR!
             success = false;
             logs.push('Edit-Elemente können nicht so benutzt werden!');
@@ -86,7 +76,7 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
                 break;
         }
 
-        let allOutboundLinks: joint.dia.Link[] = graph.getConnectedLinks(currentElement, {outbound: true}).filter((l) => l.get('source').port === 'out');
+        let allOutboundLinks: joint.dia.Link[] = umlActivityGraph.getConnectedLinks(currentElement, {outbound: true}).filter((l) => l.get('source').port === 'out');
 
         if (allOutboundLinks.length === 0) {
             logs.push('Element hat keinen Nachfolger!');
@@ -97,7 +87,7 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
             success = false;
             break;
         } else {
-            currentElement = graph.getCell(allOutboundLinks[0].prop('target').id);
+            currentElement = umlActivityGraph.getCell(allOutboundLinks[0].prop('target').id);
             cellView.unhighlight();
         }
 
@@ -107,12 +97,12 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
     return {success, contents, logs};
 }
 
-function newGenerate(): void {
+function newGenerate(exerciseParameters: ExerciseParameters): void {
     let languageBuilder = getLangBuilder($('#langSelect').val() as string);
 
     let codeSection = $('#preCode');
     let messageSection = $('#generationMsgSection');
-    let correctButton = $('#testButton');
+    let correctButton = $('#testBtn');
     let correctionSection = $('#correctionSection');
 
     codeSection.html('');
@@ -123,7 +113,7 @@ function newGenerate(): void {
     $('#generatedCodeSection').prop('hidden', false);
 
     if (readResult.success) {
-        let script = languageBuilder.getCore(EXERCISE_PARAMETERS, readResult.contents);
+        let script = languageBuilder.getCore(exerciseParameters, readResult.contents);
 
         codeSection.html(script);
         codeSection.prop('hidden', false);

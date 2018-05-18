@@ -6,6 +6,7 @@
     <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
 
     <script>
             const imports = [
@@ -47,7 +48,6 @@
         case None => {}
         case Some(classDiagPart) => {
             @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
-                @* FIXME: Display class diagram with joint.js *@
                 <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(exercise.id)"></div>
             }
         }

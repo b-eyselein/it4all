@@ -2,7 +2,7 @@ import * as $ from 'jquery';
 
 export {onProgCorrectionError, onProgCorrectionSuccess};
 
-function printValue(value) {
+function printValue(value: any): string {
     if (value == null) {
         return 'null';
     } else if (typeof value === 'string') {
@@ -14,17 +14,18 @@ function printValue(value) {
     }
 }
 
-/**
- * @param {object} result
- * @param {int} result.id
- * @param {string} result.successType
- * @param {boolean} result.correct
- * @param {object} result.input
- * @param {string} result.awaited
- * @param {string} result.gotten
- * @param {string} result.consoleOutput
- */
-function renderProgResult(result) {
+
+interface ProgSingleResult {
+    id: number
+    successType: string
+    correct: boolean
+    input: object
+    awaited: string
+    gotten: string
+    consoleOutput: string | null
+}
+
+function renderProgResult(result: ProgSingleResult): string {
     let consoleOut = '';
     if (result.consoleOutput !== null) {
         consoleOut = '<p>Konsolenausgabe: <pre>' + result.consoleOutput + '</pre></p>';
@@ -51,12 +52,15 @@ function renderProgResult(result) {
 </div>`.trim();
 }
 
-/**
- * @param {object} response
- * @param {boolean} response.solutionSaved
- * @param {object[]} response.results
- */
-function onProgCorrectionSuccess(response): void {
+
+interface ProgCorrectionResult {
+    solutionSaved: boolean
+    results: ProgSingleResult[]
+}
+
+function onProgCorrectionSuccess(response: ProgCorrectionResult): void {
+    console.warn(JSON.stringify(response, null, 2));
+
     $('#correctionDiv').prop('hidden', false);
 
     let html = `<div class="alert alert-${response.solutionSaved ? 'success' : 'danger'}">Ihre Lösung wurde ${response.solutionSaved ? '' : ' nicht'} gespeichert.</div>`;
@@ -78,7 +82,7 @@ function onProgCorrectionSuccess(response): void {
     $('#testBtn').prop('disabled', false);
 }
 
-function onProgCorrectionError(jqXHR) {
+function onProgCorrectionError(jqXHR): void {
     console.error(jqXHR.responseText);
     $('#testBtn').prop('disabled', false);
 }

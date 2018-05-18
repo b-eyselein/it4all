@@ -86,7 +86,7 @@ classDiagramPart:
       secondMult: UNBOUND
 
     - assocType: COMPOSITION
-      firstEnd: Krankenhaus
-      firstMult: SINGLE
-      secondEnd: Station
-      secondMult: UNBOUND
+      firstEnd: Station
+      firstMult: UNBOUND
+      secondEnd: Krankenhaus
+      secondMult: SINGLE

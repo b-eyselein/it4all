@@ -1,7 +1,14 @@
 import * as joint from 'jointjs';
 
 import {calcRectHeight, COLORS, fontSize, STD_ELEMENT_WIDTH, STD_PADDING} from "../umlConsts";
-import {CLASS_TYPES, UmlClass, UmlClassAttribute, UmlClassMethod} from "../umlInterfaces";
+import {
+    buildAttributeString,
+    buildMethodString,
+    CLASS_TYPES,
+    UmlClass,
+    UmlClassAttribute,
+    UmlClassMethod
+} from "../umlInterfaces";
 
 import * as _ from "lodash";
 import {editClass} from "./classDiagEdit";
@@ -18,32 +25,6 @@ const CLASS_MARKUP = `
   <text class="uml-class-name-text"/><text class="uml-class-attrs-text"/><text class="uml-class-methods-text"/>
 </g>`.trim();
 
-function buildMethodString(cm: UmlClassMethod): string {
-    let modifier = [];
-
-    if (cm.isAbstract)
-        modifier.push('a');
-
-    if (cm.isStatic)
-        modifier.push('s');
-
-    return cm.visibility + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + cm.name + '(' + cm.parameters + '): ' + cm.type;
-}
-
-function buildAttributeString(ca: UmlClassAttribute): string {
-    let modifier = [];
-
-    if (ca.isAbstract)
-        modifier.push('a');
-
-    if (ca.isStatic)
-        modifier.push('s');
-
-    if (ca.isDerived)
-        modifier.push('d');
-
-    return ca.visibility + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + ca.name + ': ' + ca.type;
-}
 
 class MyJointClass extends joint.shapes.basic.Generic {
 

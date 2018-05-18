@@ -1,6 +1,7 @@
 import * as joint from 'jointjs';
 import * as _ from 'lodash';
 import {FIELD_SIZE_CELLS, optimalCellSize} from "./simulator";
+import {COLORS} from "../uml/umlConsts";
 
 export {Robot, RobotCell, MyPosition, SimulatorCoordinates, SimulatorThings}
 
@@ -9,7 +10,7 @@ class Robot extends joint.shapes.basic.Circle {
         return _.defaultsDeep({
             type: 'robot.Cell',
             attrs: {
-                circle: {fill: '#00bb00'}
+                circle: {fill: COLORS.Green}
             }
         }, joint.shapes.basic.Circle.prototype.defaults);
     }
@@ -20,7 +21,7 @@ class RobotCell extends joint.shapes.basic.Rect {
         return _.defaultsDeep({
             type: 'robot.Cell',
             attrs: {
-                rect: {stroke: '#000000', strokeWidth: 2}
+                rect: {stroke: COLORS.Black, strokeWidth: 2}
             }
         }, joint.shapes.basic.Rect.prototype.defaults);
     }
