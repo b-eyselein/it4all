@@ -1,8 +1,10 @@
+import * as $ from 'jquery';
+
 let currentPart: number = 0;
 
-let maxPart;
+let maxPart: number;
 
-function nextPart() {
+function nextPart(): void {
     currentPart++;
     $('#sec_' + currentPart).prop('hidden', false);
 
@@ -11,8 +13,7 @@ function nextPart() {
     }
 }
 
-// noinspection JSUnusedGlobalSymbols
-function correctTrueFalse(button) {
+function correctTrueFalse(button: HTMLButtonElement): void {
     let clickedButton = $(button);
     let clickedValue = clickedButton.data('value');
 
@@ -29,7 +30,12 @@ function correctTrueFalse(button) {
     }
 }
 
-$(document).ready(function () {
+$(() => {
     maxPart = $('section[id^="sec_"]').length;
+
+    $('#nextPartButton').on('click', nextPart);
+
+    $('.questionSection').find('button').on('click', event => correctTrueFalse(event.target as HTMLButtonElement));
+
     nextPart();
 });

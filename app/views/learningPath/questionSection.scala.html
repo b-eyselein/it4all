@@ -1,6 +1,6 @@
 @(section: model.learningPath.QuestionSection, hidden: String)
 
-<section id="sec_@section.id" @hidden>
+<section class="questionSection" id="sec_@section.id" @hidden>
     <h2>@section.title</h2>
 
     @for(qTriple <- section.questions grouped 4) {
@@ -9,9 +9,9 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <div class="input-group">
-                        <button class="form-control" onclick="correctTrueFalse(this)" data-value="false">Falsch</button>
+                        <button class="form-control" data-value="false">Falsch</button>
                         <span class="input-group-addon"><code data-solution="@q.solution">@Html(q.questionText)</code></span>
-                        <button class="form-control" onclick="correctTrueFalse(this)" data-value="true">Wahr</button>
+                        <button class="form-control" data-value="true">Wahr</button>
                     </div>
                 </div>
             </div>
