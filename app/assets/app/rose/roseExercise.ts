@@ -69,7 +69,7 @@ function testSol(): void {
 }
 
 $(() => {
-    editor = initEditor('python');
+    editor = initEditor('python', 'roseEditor');
 
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
