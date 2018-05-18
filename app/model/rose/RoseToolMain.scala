@@ -82,6 +82,13 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     } yield Try(RoseCompleteResult(solutionSaved, sol.solution, result))
   }
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: RoseExPart): Future[String] = part match {
+    case RoseSingleExPart => futureCompleteExById(id) map {
+      case Some(exercise) => exercise.sampleSolution.head.solution
+      case None           => ""
+    }
+  }
+
   // Result handlers
 
   override def onSubmitCorrectionResult(user: User, result: RoseCompleteResult): Html = ??? // Ok(views.html.rose.roseTestSolution.render(user))

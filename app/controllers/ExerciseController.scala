@@ -79,6 +79,16 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
+  def sampleSolution(toolType: String, id: Int, partStr: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, toolMain) =>
+    implicit request =>
+      toolMain.partTypeFromUrl(partStr) match {
+        case Some(part) => toolMain.futureSampleSolutionForExerciseAndPart(id, part) map {
+          sol => Ok(sol)
+        }
+        case None       => Future(BadRequest(s"No such part $partStr"))
+      }
+  }
+
   // Other routes
 
   def umlClassDiag(id: Int, partStr: String): EssentialAction = futureWithUser { user =>

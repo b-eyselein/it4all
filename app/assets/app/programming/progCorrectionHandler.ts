@@ -56,7 +56,9 @@ function renderProgResult(result) {
  * @param {boolean} response.solutionSaved
  * @param {object[]} response.results
  */
-function onProgCorrectionSuccess(response) {
+function onProgCorrectionSuccess(response): void {
+    $('#correctionDiv').prop('hidden', false);
+
     let html = `<div class="alert alert-${response.solutionSaved ? 'success' : 'danger'}">Ihre Lösung wurde ${response.solutionSaved ? '' : ' nicht'} gespeichert.</div>`;
 
     for (let i = 0; i < response.results.length; i = i + 3) {

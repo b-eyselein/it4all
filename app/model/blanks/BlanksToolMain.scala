@@ -79,6 +79,8 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
   override protected def correctEx(user: User, sol: BlanksSolution, exercise: BlanksCompleteExercise, solutionSaved: Boolean): Future[Try[BlanksCompleteResult]] =
     Future(Try(BlanksCompleteResult(sol.answers, BlanksCorrector.doMatch(sol.answers, exercise.samples))))
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, partStr: BlanksExPart): Future[String] = ???
+
   // Views
 
   override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart, oldSolution: Option[BlanksSolution]): Html =

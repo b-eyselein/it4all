@@ -6,6 +6,7 @@ import 'codemirror/mode/python/python';
 import {onProgCorrectionError, onProgCorrectionSuccess} from "./progCorrectionHandler";
 
 let editor: CodeMirror.Editor;
+let testBtn: JQuery, sampleSolBtn: JQuery;
 
 function onChangeLanguageSuccess(response) {
     $('#language').val(response.language);
@@ -27,15 +28,14 @@ function changeProgLanguage() {
 }
 
 function testSol(): void {
-    let testButton = $('#testBtn');
     $('#correction').html('');
-    testButton.prop('disabled', true);
+    testBtn.prop('disabled', true);
 
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url: testButton.data('url'),
+        url: testBtn.data('url'),
         data: JSON.stringify({
             solution: {
                 language: $('#langSelect').val(),
@@ -48,7 +48,37 @@ function testSol(): void {
     });
 }
 
+function onShowSampleSolSuccess(response: string): void {
+    sampleSolBtn.prop('disabled', false);
+
+    $('#sampleSolDiv').prop('hidden', false);
+    $('#sampleSolPre').html(response);
+
+    // console.warn(JSON.stringify(response, null, 2));
+
+}
+
+function onShowSampleSolError(jqXHR): void {
+    sampleSolBtn.prop('disabled', false);
+    console.error(jqXHR);
+}
+
+function showSampleSol(): void {
+    sampleSolBtn.prop('disabled', true);
+    $.ajax({
+        type: 'GET',
+        url: sampleSolBtn.data('url'),
+        async: true,
+        success: onShowSampleSolSuccess,
+        error: onShowSampleSolError
+    });
+}
+
 $(() => {
     editor = initEditor('python');
-    $('#testBtn').on('click', testSol);
+    testBtn = $('#testBtn');
+    testBtn.on('click', testSol);
+
+    sampleSolBtn = $('#sampleSolBtn');
+    sampleSolBtn.on('click', showSampleSol);
 });

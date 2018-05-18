@@ -119,6 +119,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx, solutionSaved: Boolean): Future[Try[UmlCompleteResult]] =
     Future(Try(new UmlCompleteResult(exercise, sol.classDiagram, solutionSaved, sol.part)))
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: UmlExPart): Future[String] = ???
+
   // Handlers for results
 
   override def onSubmitCorrectionResult(user: User, result: UmlCompleteResult): Html = result.part match {

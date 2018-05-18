@@ -3,7 +3,7 @@ import * as joint from 'jointjs';
 
 import 'bootstrap';
 
-import {UmlClass, UmlImplementation, UmlAssociation, UmlSolution} from '../uml/umlInterfaces';
+import {UmlSolution} from '../uml/umlInterfaces';
 
 const GRAPH_WIDTH = 700, GRAPH_HEIGHT = 700;
 
@@ -52,59 +52,69 @@ function createClass(class_attributes) {
     }
 }
 
-$(() => {
-    let classDiagDiv = $('#classdiagram');
+function onLoadClassDiagramSuccess(response: UmlSolution): void {
+    classDiag = response;
+    classDiagLoaded = true;
+}
 
-    let classDiagramModal = $('#classDiagramModal');
+function onLoadClassDiagramError(jqXHR): void {
+    console.error(jqXHR.responseText);
+}
+
+function loadClassDiagram(url: string): void {
+    console.warn(url);
 
     $.ajax({
         method: 'GET',
-        url: classDiagDiv.data('url'),
+        url,
         dataType: 'json',
-        success: (response: UmlSolution) => {
-            classDiag = response;
-            classDiagLoaded = true;
-        },
-        error: (jqXHR) => {
-            console.error(jqXHR.responseText);
-        }
+        success: onLoadClassDiagramSuccess,
+        error: onLoadClassDiagramError
     });
+}
 
-    classDiagramModal.on('shown.bs.modal', () => {
+$(() => {
+    let classDiagDiv = $('#classdiagram');
 
-        if (notGenerated) {
+    if (classDiagDiv.length === 1) {
+        loadClassDiagram(classDiagDiv.data('url'));
 
-            if (!classDiagLoaded) {
-                console.warn("Klassendiagramm ist noch nicht geladen!");
-                return;
+        $('#classDiagramModal').on('shown.bs.modal', () => {
+
+            if (notGenerated) {
+
+                if (!classDiagLoaded) {
+                    console.warn("Klassendiagramm ist noch nicht geladen!");
+                    return;
+                }
+                console.warn(classDiag);
+                console.warn('Generating class Diag...');
+
+                new joint.dia.Paper({
+                    el: classDiagDiv,
+                    width: classDiagDiv.width(), height: GRAPH_HEIGHT,
+                    drawGrid: {name: 'dot'},
+                    gridSize: 10,
+                    model: classDiagGraph,
+                    // setLinkVertices: true
+                });
+
+
+                // for (let clazzInput of classDiagClasses) {
+                //     classDiagGraph.addCell(createClass(clazzInput));
+                // }
+
+                // for (let associationInput of classDiagAssociations) {
+                //     classDiagGraph.addCell(createConnection(associationInput));
+                // }
+
+                // for (let implementationInput of classDiagImplementations) {
+                //     classDiagGraph.addCell(createConnection(implementationInput));
+                // }
+
+                notGenerated = false;
             }
-            console.warn(classDiag);
-            console.warn('Generating class Diag...');
-
-            new joint.dia.Paper({
-                el: classDiagDiv,
-                width: classDiagDiv.width(), height: GRAPH_HEIGHT,
-                drawGrid: {name: 'dot'},
-                gridSize: 10,
-                model: classDiagGraph,
-                // setLinkVertices: true
-            });
-
-
-            // for (let clazzInput of classDiagClasses) {
-            //     classDiagGraph.addCell(createClass(clazzInput));
-            // }
-
-            // for (let associationInput of classDiagAssociations) {
-            //     classDiagGraph.addCell(createConnection(associationInput));
-            // }
-
-            // for (let implementationInput of classDiagImplementations) {
-            //     classDiagGraph.addCell(createConnection(implementationInput));
-            // }
-
-            notGenerated = false;
-        }
-    });
+        });
+    }
 
 });

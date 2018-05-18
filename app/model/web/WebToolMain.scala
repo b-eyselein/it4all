@@ -107,6 +107,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     results map (WebCompleteResult(learnerSolution.solution, exercise, learnerSolution.part, solutionSaved, _))
   }
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: WebExPart): Future[String] = ???
+
   // Handlers for results
 
   override def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Html =

@@ -125,6 +125,15 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
     }
   }
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: ProgrammingExPart): Future[String] = part match {
+    case Implementation =>
+      futureCompleteExById(id) map {
+        case Some(exercise) => exercise.sampleSolutions.headOption.map(_.solution).getOrElse("No sample solution!")
+        case None           => "No such exercise!"
+      }
+    case _              => Future("TODO!")
+  }
+
   // Views
 
   override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgrammingExPart, maybeOldSolution: Option[ProgSolution]): Html = part match {

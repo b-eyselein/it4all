@@ -101,6 +101,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
         Failure(new Exception("Not implemented yet: correction of grammar..."))
     })
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: XmlExPart): Future[String] = ???
+
   // Views
 
   override def renderExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean): Html =

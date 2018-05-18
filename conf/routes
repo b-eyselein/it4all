@@ -119,6 +119,8 @@ GET           /tools/:toolType/solve/:id/:part                              cont
 PUT           /tools/:toolType/solve/:id/:part                              controllers.ExerciseController.correctLive(toolType: String, id: Int, part: String)
 POST          /tools/:toolType/solve/:id/:part                              controllers.ExerciseController.correct(toolType: String, id: Int, part: String)
 
+GET           /tools/:toolType/:id/:part/solution                           controllers.ExerciseController.sampleSolution(toolType: String, id: Int, part: String)
+
 # Other routes
 GET           /tools/uml/classDiagram/:id/:part/cd.js                       controllers.ExerciseController.umlClassDiag(id: Int, part: String)
 GET           /tools/programming/classDiagram/:id/cd.js                     controllers.ExerciseController.progClassDiagram(id: Int)

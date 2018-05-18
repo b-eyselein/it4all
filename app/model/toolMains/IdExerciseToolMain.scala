@@ -5,7 +5,6 @@ import java.nio.file.{Files, Path}
 import model.core.CoreConsts.solutionName
 import model.core._
 import model.core.result.CompleteResult
-import model.learningPath.LearningPath
 import model.persistence.SingleExerciseTableDefs
 import model.{JsonFormat, PartSolution, User}
 import play.api.Logger
@@ -68,6 +67,8 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
         case Some(solution) => onSolution(user, solution, id, isLive)
       }
     }
+
+  def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[String]
 
   private def onSolution(user: model.User, solution: SolType, id: Int, isLive: Boolean): Future[Try[Either[Html, JsValue]]] = futureCompleteExById(id) flatMap {
     case None => Future(Failure(NoSuchExerciseException(id)))
