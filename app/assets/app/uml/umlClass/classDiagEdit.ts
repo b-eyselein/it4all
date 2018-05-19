@@ -16,8 +16,17 @@ interface ClassMemberAttrs {
     type: string;
 }
 
-function deleteMember(event: JQuery.Event): void {
-    $(event.target as HTMLElement).parent().parent().remove();
+function deleteMember(element: HTMLElement): void {
+    let jButton: JQuery;
+    if (element instanceof HTMLButtonElement) {
+        jButton = $(element);
+    } else if (element instanceof HTMLSpanElement) {
+        jButton = $(element).parent();
+    } else {
+        console.error('Wrong element clicked!');
+        return;
+    }
+    jButton.parent().parent().remove();
 }
 
 let options = [];
@@ -295,12 +304,12 @@ function updateCardinality(): void {
 
 function addAttributes(umlAttributes: UmlClassAttribute[], startIndex: number): void {
     $('#editAttrsPlusBtn').before(umlAttributes.map((a, i) => attributeInputLine(a, startIndex + i)).join('\n'));
-    $('.glyphicon-remove').parent().on('click', (event) => deleteMember(event));
+    $('.glyphicon-remove').parent().on('click', (event) => deleteMember(event.target as HTMLElement));
 }
 
 function addMethods(umlMethods: UmlClassMethod[], startIndex: number): void {
     $('#editMethodsPlusBtn').before(umlMethods.map((m, i) => methodInputLine(m, startIndex + i)).join('\n'));
-    $('.glyphicon-remove').parent().on('click', (event) => deleteMember(event));
+    $('.glyphicon-remove').parent().on('click', (event) => deleteMember(event.target as HTMLElement));
 }
 
 $(() => {
