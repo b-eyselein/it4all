@@ -4,6 +4,9 @@ import * as CodeMirror from 'codemirror';
 import {initEditor} from "../editorHelpers";
 
 import 'codemirror/mode/xml/xml';
+import 'codemirror/mode/dtd/dtd';
+import {renderXmlGrammarCorrectionSuccess} from "./xmlGrammarCorrection";
+import {CorrectionResult} from "../matches";
 
 let editor: CodeMirror.Editor;
 let testBtn: JQuery;
@@ -15,9 +18,7 @@ interface XmlError {
     success: string
 }
 
-interface XmlDocumentCorrectionResponse {
-    solSaved: boolean,
-    success: boolean,
+interface XmlDocumentCorrectionResponse extends CorrectionResult<XmlError> {
     results: XmlError[]
 }
 
@@ -26,7 +27,7 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
 
     let html: string = '';
 
-    if (response.solSaved) {
+    if (response.solutionSaved) {
         html += `<div class="alert alert-success">Ihre Lösung wurde gespeichert.</div>`;
     } else {
         html += `<div class="alert alert-danger">Ihre Lösung konnte nicht gespeichert werden!</div>`;
@@ -47,7 +48,8 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
 
 function onXmlGrammarCorrectionSuccess(response): void {
     testBtn.prop('disabled', false);
-    console.log(response);
+    const html = renderXmlGrammarCorrectionSuccess(response);
+    $('#correction').html(html);
 }
 
 function onXmlCorrectionError(jqXHR): void {
@@ -60,6 +62,8 @@ function onXmlCorrectionError(jqXHR): void {
 function testSol(): void {
     testBtn.prop('disabled', true);
 
+    const isDocumentPart: boolean = $('#exercisePart').val() === 'document';
+
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
@@ -67,13 +71,22 @@ function testSol(): void {
         url: $('#testBtn').data('url'),
         data: JSON.stringify({solution: editor.getValue()}),
         async: true,
-        success: ($('#exercisePart').val() === 'document') ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
+        success: isDocumentPart ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
         error: onXmlCorrectionError
     });
 }
 
 $(() => {
-    editor = initEditor('xml', 'xmlEditor');
+    let language: string;
+
+    if ($('#exercisePart').val() === 'grammar') {
+        language = 'application/xml-dtd';
+    } else {
+        language = 'xml';
+    }
+
+    editor = initEditor(language, 'xmlEditor');
+
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
 });

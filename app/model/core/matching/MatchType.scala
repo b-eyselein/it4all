@@ -12,8 +12,6 @@ object MatchType extends Enum[MatchType] {
 
   override val values: IndexedSeq[MatchType] = findValues
 
-  case object FAILURE extends MatchType("warning-sign", "danger")
-
   case object SUCCESSFUL_MATCH extends MatchType("ok", "success")
 
   case object PARTIAL_MATCH extends MatchType("question-sign", "warning")

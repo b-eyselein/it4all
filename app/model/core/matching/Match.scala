@@ -1,6 +1,7 @@
 package model.core.matching
 
 import model.core.CoreConsts._
+import model.core.JsonWriteable
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 trait AnalysisResult {
@@ -17,7 +18,7 @@ case class GenericAnalysisResult(matchType: MatchType) extends AnalysisResult {
 
 }
 
-trait Match[T] {
+trait Match[T] extends JsonWriteable {
 
   type MatchAnalysisResult <: AnalysisResult
 
@@ -38,7 +39,6 @@ trait Match[T] {
   }
 
   def explanations: Seq[String] = matchType match {
-    case MatchType.FAILURE                                      => Seq("Es ist ein Fehler aufgetreten.")
     case MatchType.ONLY_USER                                    => Seq("Angabe ist falsch!")
     case MatchType.ONLY_SAMPLE                                  => Seq("Angabe fehlt!")
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq(s"Fehler beim Abgleich. Erwartet wurde ${sampleArg map descArg getOrElse ""}")
@@ -52,8 +52,8 @@ trait Match[T] {
 
   protected def descArgForJson(arg: T): JsValue
 
-  def toJson: JsValue = Json.obj(
-    successName -> matchType.entryName,
+  override def toJson: JsValue = Json.obj(
+    matchTypeName -> matchType.entryName,
     analysisResultName -> analysisResult.map(_.toJson),
     userArgName -> (userArg map descArgForJson),
     sampleArgName -> (sampleArg map descArgForJson),

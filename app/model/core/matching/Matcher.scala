@@ -1,13 +1,14 @@
 package model.core.matching
 
-import model.core.result.SuccessType._
 import model.core.CoreConsts._
+import model.core.JsonWriteable
+import model.core.result.SuccessType._
 import model.core.result.{EvaluationResult, SuccessType}
 import play.api.libs.json.{JsObject, Json}
 
 import scala.language.postfixOps
 
-case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends EvaluationResult {
+case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends EvaluationResult with JsonWriteable {
 
   // FIXME: is it possible to use ... match { case ...} ?!?
   override def success: SuccessType =
@@ -18,7 +19,7 @@ case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends Evaluati
     else
       COMPLETE
 
-  def toJson: JsObject = Json.obj(
+  override def toJson: JsObject = Json.obj(
     successName -> allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH),
     matchesName -> allMatches.map(_.toJson)
   )

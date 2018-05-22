@@ -5,19 +5,20 @@ import java.nio.file._
 import controllers.ExerciseOptions
 import javax.inject._
 import model.core._
+import model.core.matching.MatchingResult
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.xml.XmlConsts._
+import model.xml.dtd.ElementLine
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, User}
 import play.api.data.Form
-import play.api.data.Forms._
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.{Html, HtmlFormat}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.{Failure, Try}
+import scala.util.Try
 
 @Singleton
 class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("xml") with FileUtils {
@@ -34,7 +35,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override type SolType = XmlSolution
 
-  override type R = XmlError
+  override type R = XmlEvaluationResult
 
   override type CompResult = XmlCompleteResult
 
@@ -50,16 +51,17 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[XmlExPart] = XmlExParts.values
 
-  override implicit val compExForm: Form[XmlExercise] = Form(mapping(
-    "id" -> number,
-    "title" -> nonEmptyText,
-    "author" -> nonEmptyText,
-    "text" -> nonEmptyText,
-    "status" -> ExerciseState.formField,
-    "grammarDescription" -> nonEmptyText,
-    "sampleGrammar" -> nonEmptyText,
-    "rootNode" -> nonEmptyText
-  )(XmlExercise.apply)(XmlExercise.unapply))
+  override implicit val compExForm: Form[XmlExercise] = null
+  //    Form(mapping(
+  //    "id" -> number,
+  //    "title" -> nonEmptyText,
+  //    "author" -> nonEmptyText,
+  //    "text" -> nonEmptyText,
+  //    "status" -> ExerciseState.formField,
+  //    "grammarDescription" -> nonEmptyText,
+  //    "sampleGrammar" -> nonEmptyText,
+  //    "rootNode" -> nonEmptyText
+  //  )(XmlExercise.apply)(XmlExercise.unapply))
 
   // Reading solution from requests, saving
 
@@ -72,7 +74,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): XmlExercise =
-    XmlExercise(id, title = "", author = "", text = "", state, grammarDescription = "", sampleGrammar = "", rootNode = "")
+    XmlExercise(id, title = "", author = "", text = "", state, grammarDescription = "", sampleGrammar = null, rootNode = "")
 
   // Yaml
 
@@ -80,25 +82,26 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise, solutionSaved: Boolean): Future[Try[XmlCompleteResult]] =
+  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise, solutionSaved: Boolean): Future[Try[CompResult]] =
     Future(solution.part match {
       case DocumentCreationXmlPart =>
         checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
 
           val grammarAndXmlTries: Try[(Path, Path)] = for {
-            grammar <- write(dir, completeEx.rootNode + ".dtd", completeEx.sampleGrammar)
+            grammar <- write(dir, completeEx.rootNode + ".dtd", completeEx.sampleGrammar.asString)
             xml <- write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, solution.solution)
           } yield (grammar, xml)
 
           grammarAndXmlTries map { case (grammar, xml) =>
             val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml)
-            XmlCompleteResult(solution.solution, solutionSaved, correctionResult)
+            XmlDocumentCompleteResult(solution.solution, solutionSaved, correctionResult)
           }
         })
 
       case GrammarCreationXmlPart =>
-        XmlCorrector.correctDTD(solution.solution, completeEx)
-        Failure(new Exception("Not implemented yet: correction of grammar..."))
+        val results: Try[MatchingResult[ElementLine, ElementLineMatch]] = XmlCorrector.correctDTD(solution.solution, completeEx)
+
+        results map (matches => XmlGrammarCompleteResult(solution.solution, solutionSaved, matches))
     })
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: XmlExPart): Future[String] = ???
@@ -114,7 +117,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url}"></script>""")
 
     val exRest = part match {
-      case DocumentCreationXmlPart => Html(s"""<pre>${HtmlFormat.escape(exercise.sampleGrammar)}</pre>""")
+      case DocumentCreationXmlPart => Html(s"""<pre>${HtmlFormat.escape(exercise.sampleGrammar.asString)}</pre>""")
       case GrammarCreationXmlPart  => Html(s"""<div class="well">${exercise.grammarDescription}</div>""")
     }
 
@@ -125,11 +128,11 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Result handlers
 
-  override def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Html =
+  override def onSubmitCorrectionResult(user: User, result: CompResult): Html =
     views.html.core.correction.render(result, result.render, user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: XmlCompleteResult): JsValue = result.toJson
+  override def onLiveCorrectionResult(result: CompResult): JsValue = result.toJson
 
 }

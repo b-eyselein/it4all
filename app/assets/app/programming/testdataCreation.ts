@@ -1,4 +1,8 @@
+import * as $ from 'jquery';
+
 // Some helper functions...
+
+const INPUT_COUNT = 5;
 
 // Real functions
 
@@ -52,14 +56,14 @@ function testSol() {
     let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
+    let url = ''; // FIXME: jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
 
     let testDataRows = $('#testDataBody').find('tr');
 
     testDataRows.removeClass('success danger');
 
     let dataToSend = {
-        solution: testDataRows.map((index, elem) => {
+        solution: testDataRows.map((index, elem: HTMLInputElement) => {
             return {
                 id: $(elem).data('testid'),
                 inputs: $(elem).find('input').filter((i, e) => e.name.startsWith('inp')).map((inputIndex, e) => {
@@ -83,6 +87,6 @@ function testSol() {
 }
 
 
-$(document).ready(function () {
-    $('#testBtn').click(testSol);
+$(() => {
+    $('#testBtn').on('click', testSol);
 });

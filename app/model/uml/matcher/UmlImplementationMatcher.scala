@@ -18,7 +18,6 @@ case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg:
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq("Vererbungsrichtung falsch.")
     case MatchType.ONLY_SAMPLE                                  => Seq("Vererbungsbeziehung nicht erstellt.")
     case MatchType.ONLY_USER                                    => Seq("Vererbengsbeziehung ist falsch.")
-    case MatchType.FAILURE                                      => Seq("Es gab einen internen Fehler bei der Korrektur der Vererbungsbeziehungen!")
   }
 
   override def descArg(arg: UmlImplementation): String = describeImplementation(arg)

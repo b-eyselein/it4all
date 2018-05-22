@@ -12,8 +12,7 @@ updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
-  .settings(packageName in Universal := s"${name.value}")
+lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(packageName in Universal := s"${name.value}")
 
 // Resolver for JFrog Uni Wue
 resolvers ++= Seq(
@@ -104,7 +103,8 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
 
   // DTD Parser
-  "de.uni-wuerzburg.is" % "scala_dtd_2.12" % "0.2.0-SNAPSHOT"
+  //  "de.uni-wuerzburg.is" % "scala_dtd_2.12" % "0.3.0-SNAPSHOT"
+  "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.0"
 )
 
 // Injected for non-static Routes

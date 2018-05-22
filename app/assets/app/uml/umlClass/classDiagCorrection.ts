@@ -3,19 +3,9 @@ import * as $ from 'jquery';
 import {UmlAssociation, UmlClassAttribute, UmlClassMethod, UmlImplementation, UmlSolution} from "../umlInterfaces";
 import {classDiagGraph} from "./classDiagDrawing";
 import {MyJointClass} from "./classDiagElements";
+import {AnalysisResult, Match} from "../../matches";
 
 export {testSol};
-
-interface AnalysisResult {
-    success: string
-}
-
-interface Match<T, AR> {
-    success: string
-    analysisResult: AR
-    userArg: T
-    sampleArg: T
-}
 
 interface UmlAttributeAnalysisResult extends AnalysisResult {
     visibilityCorrect: boolean
@@ -452,14 +442,20 @@ function getMultiplicity(label): "SINGLE" | "UNBOUND" {
 }
 
 function umlImplfromConnection(conn): UmlImplementation {
-    return {subClass: getClassNameFromCellId(conn.attributes.source.id), superClass: getClassNameFromCellId(conn.attributes.target.id)}
+    return {
+        subClass: getClassNameFromCellId(conn.attributes.source.id),
+        superClass: getClassNameFromCellId(conn.attributes.target.id)
+    }
 }
 
 function umlAssocfromConnection(conn): UmlAssociation {
     return {
-        assocType: getTypeName(conn.attributes.type), assocName: '',        // TODO: name of association!?!
-        firstEnd: getClassNameFromCellId(conn.attributes.source.id), firstMult: getMultiplicity(conn.attributes.labels[0]),
-        secondEnd: getClassNameFromCellId(conn.attributes.target.id), secondMult: getMultiplicity(conn.attributes.labels[1])
+        assocType: getTypeName(conn.attributes.type),
+        assocName: '',        // TODO: name of association!?!
+        firstEnd: getClassNameFromCellId(conn.attributes.source.id),
+        firstMult: getMultiplicity(conn.attributes.labels[0]),
+        secondEnd: getClassNameFromCellId(conn.attributes.target.id),
+        secondMult: getMultiplicity(conn.attributes.labels[1])
     };
 }
 

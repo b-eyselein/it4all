@@ -2,12 +2,13 @@ package model.xml
 
 import java.nio.file.Path
 
-import dtdparser.{DTDLine, DTDParser}
 import javax.xml.parsers.DocumentBuilderFactory
+import model.core.matching.MatchingResult
+import model.xml.dtd.{DocTypeDefParser, ElementLine}
 import org.xml.sax.{ErrorHandler, SAXParseException}
 
 import scala.collection.mutable.ListBuffer
-import scala.language.implicitConversions
+import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 import scala.xml.SAXException
 
@@ -16,11 +17,11 @@ class CorrectionErrorHandler extends ErrorHandler {
 
   val errors: ListBuffer[XmlError] = ListBuffer.empty
 
-  override def error(exception: SAXParseException): Unit = errors += ErrorXmlError(exception)
+  override def error(exception: SAXParseException): Unit = errors += new XmlError(XmlErrorType.ERROR, exception)
 
-  override def fatalError(exception: SAXParseException): Unit = errors += FatalXmlError(exception)
+  override def fatalError(exception: SAXParseException): Unit = errors += new XmlError(XmlErrorType.FATAL, exception)
 
-  override def warning(exception: SAXParseException): Unit = errors += WarningXmlError(exception)
+  override def warning(exception: SAXParseException): Unit = errors += new XmlError(XmlErrorType.WARNING, exception)
 
 }
 
@@ -37,21 +38,14 @@ object XmlCorrector {
       builder.setErrorHandler(errorHandler)
       builder.parse(xml.toFile)
     } catch {
-      case e: SAXException => // Ignore...
+      case _: SAXException => // Ignore...
     }
 
     errorHandler.errors
   }
 
-  def correctDTD(dtd: String, exercise: XmlExercise): Seq[Any] = {
-    // FIXME: implement!
-    val parsedLines: Seq[Try[DTDLine]] = DTDParser.parseDTD(dtd)
-
-    println("Grammar file content: " + exercise.sampleGrammar)
-
-    println(parsedLines)
-
-    Seq.empty
+  def correctDTD(dtd: String, exercise: XmlExercise): Try[MatchingResult[ElementLine, ElementLineMatch]] = DocTypeDefParser.parseDTD(dtd) map {
+    userGrammar => DocTypeDefMatcher.doMatch(userGrammar.asElementLines, exercise.sampleGrammar.asElementLines)
   }
 
 }

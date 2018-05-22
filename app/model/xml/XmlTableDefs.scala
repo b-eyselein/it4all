@@ -1,21 +1,21 @@
 package model.xml
 
 import javax.inject.Inject
-import model.ExerciseState
-import model._
 import model.persistence.SingleExerciseTableDefs
+import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
+import model.{ExerciseState, _}
+import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
+// FIXME: save sampleGrammar as DocTypeDef!
 case class XmlExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
-                       grammarDescription: String, sampleGrammar: String, rootNode: String)
+                       grammarDescription: String, sampleGrammar: DocTypeDef, rootNode: String)
   extends Exercise with PartsCompleteEx[XmlExercise, XmlExPart] {
-
-  def this(baseValues: (Int, String, String, String, ExerciseState), grammarDescription: String, sampleGrammar: String, rootNode: String) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, grammarDescription, sampleGrammar, rootNode)
 
   override def ex: XmlExercise = this
 
@@ -68,6 +68,16 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
     MappedColumnType.base[XmlExPart, String](_.urlName, str => XmlExParts.values.find(_.urlName == str) getOrElse DocumentCreationXmlPart)
 
+  private implicit val docTypeDefColumnType: BaseColumnType[DocTypeDef] =
+    MappedColumnType.base[DocTypeDef, String](_.asString, str => {
+      DocTypeDefParser.parseDTD(str) match {
+        case Success(grammar) => grammar
+        case Failure(error)   =>
+          Logger.error("Error while reading xml dtd from db: ", error)
+          DocTypeDef(Seq.empty)
+      }
+    })
+
   // Reading
 
   override def completeExForEx(ex: XmlExercise): Future[XmlExercise] = Future(ex)
@@ -84,7 +94,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def grammarDescription = column[String]("grammar_description")
 
-    def sampleGrammar = column[String]("sample_grammar")
+    def sampleGrammar = column[DocTypeDef]("sample_grammar")
 
 
     override def * = (id, title, author, text, state, grammarDescription, sampleGrammar, rootNode) <> (XmlExercise.tupled, XmlExercise.unapply)

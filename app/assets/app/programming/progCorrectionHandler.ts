@@ -1,4 +1,5 @@
 import * as $ from 'jquery';
+import {CorrectionResult} from "../matches";
 
 export {onProgCorrectionError, onProgCorrectionSuccess};
 
@@ -53,9 +54,7 @@ function renderProgResult(result: ProgSingleResult): string {
 }
 
 
-interface ProgCorrectionResult {
-    solutionSaved: boolean
-    results: ProgSingleResult[]
+interface ProgCorrectionResult extends CorrectionResult<ProgSingleResult> {
 }
 
 function onProgCorrectionSuccess(response: ProgCorrectionResult): void {

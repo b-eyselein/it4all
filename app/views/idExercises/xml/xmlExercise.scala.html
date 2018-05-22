@@ -1,5 +1,5 @@
 @(user: model.User, toolMainObject: model.xml.XmlToolMain, exerciseOptions: ExerciseOptions, exercise: model.xml.XmlExercise,
-        exRest: Html, oldSolution: String, part: model.core.ExPart, exScripts: Html, exScriptsBefore: Html = Html(""))
+        exRest: Html, oldSolution: String, part: model.core.ExPart, exScripts: Html)
 
     @scripts = {
         <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -21,7 +21,7 @@
         @* FIXME: @core.helperTemplates.fullScreenScripts.render() *@
     }
 
-    @main(toolMainObject.toolname, Some(user), scripts, exScriptsBefore) {
+    @main(toolMainObject.toolname, Some(user), scripts) {
         <div class="container" id="fullsc">
 
             <input hidden value="@exercise.ex.id" name="exerciseId" id="exerciseId" title="hidden" type="number">
