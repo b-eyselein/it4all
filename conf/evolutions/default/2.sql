@@ -16,6 +16,8 @@ ON DUPLICATE KEY UPDATE pw_hash = VALUES(pw_hash);
 
 # Xml
 
+DELETE IGNORE FROM xml_results;
+
 DELETE IGNORE FROM xml_solutions;
 
 DELETE IGNORE FROM xml_exercises;

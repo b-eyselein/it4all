@@ -19,6 +19,8 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
   protected val solTable: TableQuery[SolTableDef]
 
+  protected type PartResultType <: ResultForPart[PartType]
+
   // Implicit column types
 
   protected implicit val partTypeColumnType: BaseColumnType[PartType]
@@ -37,7 +39,17 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
   def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: PartType): Future[Boolean] = Future(true)
 
+  protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: PartType): Future[Option[PartResultType]] = Future(None)
+
+  //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
+
   def futureSaveResult(username: String, exerciseId: Int, part: PartType, points: Double, maxPoints: Double): Future[Boolean] = Future(false)
+
+  //    db.run(resultsForPartsTable insertOrUpdate WebResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
+  //      case e: Throwable =>
+  //        Logger.error("Error while updating result: ", e)
+  //        false
+  //    }
 
   // Abstract table definitions
 
@@ -74,6 +86,8 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
     def pk = primaryKey("pk", (username, exerciseId, part))
 
     def userFk = foreignKey("user_fk", username, users)(_.username)
+
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
   }
 

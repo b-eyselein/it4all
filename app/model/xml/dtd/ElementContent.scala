@@ -7,7 +7,7 @@ sealed trait ElementContent {
 // Fixed content types
 
 abstract class StaticElementContent(name: String) extends ElementContent {
-  override def asString(needsParentheses: Boolean): String = if (needsParentheses) "(" + name + ")" else name
+  override def asString(needsParentheses: Boolean): String = "(" + name + ")"
 }
 
 case object PCData extends StaticElementContent("#PCDATA")

@@ -572,9 +572,27 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS xml_results (
+  username    VARCHAR(60),
+  exercise_id INT,
+  part        VARCHAR(10),
+  points      INT,
+  max_points  INT,
+
+  PRIMARY KEY (username, exercise_id, part),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # --- !Downs
 
 # Xml
+
+DROP TABLE IF EXISTS xml_results;
 
 DROP TABLE IF EXISTS xml_solutions;
 

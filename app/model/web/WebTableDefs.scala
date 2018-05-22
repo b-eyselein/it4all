@@ -20,6 +20,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected type SolTableDef = WebSolutionsTable
 
+  override protected type PartResultType = WebResultForPart
+
   // Table queries
 
   override protected val exTable  = TableQuery[WebExercisesTable]
@@ -38,7 +40,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Other queries
 
-  private def futureResultForUserExAndPart(username: String, exerciseId: Int, part: WebExPart): Future[Option[WebResultForPart]] =
+  override protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: WebExPart): Future[Option[WebResultForPart]] =
     db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
   override def futureSaveResult(username: String, exerciseId: Int, part: WebExPart, points: Double, maxPoints: Double): Future[Boolean] =
@@ -53,7 +55,6 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     case JsPart   => futureResultForUserExAndPart(username, exerciseId, HtmlPart).map(_.exists(r => r.points == r.maxPoints))
     case PHPPart  => Future(false)
   }
-
 
 
   override def completeExForEx(ex: WebExercise): Future[WebCompleteEx] = for {
@@ -209,9 +210,6 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   }
 
   class WebResultsForPartsTable(tag: Tag) extends ResultsForPartsTable[WebResultForPart](tag, "web_results") {
-
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
-
 
     def * = (username, exerciseId, part, points, maxPoints) <> (WebResultForPart.tupled, WebResultForPart.unapply)
 

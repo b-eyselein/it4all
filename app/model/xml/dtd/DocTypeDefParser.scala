@@ -1,6 +1,7 @@
 package model.xml.dtd
 
 import model.core.CommonUtils
+import play.api.Logger
 
 import scala.language.postfixOps
 import scala.util.Try
@@ -122,9 +123,12 @@ object DocTypeDefParser extends JavaTokenParsers {
     val (parseSuccesses, parseFails) = CommonUtils.splitTriesNew(parseLinesTries)
 
     parseFails match {
-      case Nil          => scala.util.Success(DocTypeDef(parseSuccesses))
-      case head :: Nil  => scala.util.Failure(head.exception)
-      case head :: tail => scala.util.Failure(new Exception("TODO: collect errors..."))
+      case Nil    => scala.util.Success(DocTypeDef(parseSuccesses))
+      case errors =>
+        errors.foreach(e => Logger.error("Failure while reading dtd from db: " + e.exception.getMessage))
+        println("--------------------------------------------")
+
+        scala.util.Failure(new Exception("TODO: collect errors..."))
     }
 
   }

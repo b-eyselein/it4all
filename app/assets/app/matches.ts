@@ -15,4 +15,7 @@ interface CorrectionResult<R> {
     solutionSaved: boolean
     success: boolean
     results: R[]
+
+    points: number
+    maxPoints: number
 }

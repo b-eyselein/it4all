@@ -61,7 +61,7 @@ case class AttributeDefinition(attributeName: String, attributeType: AttributeTy
 
 case class ElementDefinition(elementName: String, content: ElementContent) extends DocTypeDefLine {
 
-  def contentAsString: String = content.asString(false)
+  def contentAsString: String = content.asString(true)
 
   override def asString: String = s"<!ELEMENT $elementName $contentAsString>"
 
