@@ -2,11 +2,10 @@ package model.toolMains
 
 import java.nio.file.Path
 
+import model.core.CoreConsts._
 import model.core.{FileUtils, NoSuchExerciseException, ReadAndSaveResult}
 import model.{FileCompleteEx, User}
 import play.api.libs.Files.TemporaryFile
-import model.core.CoreConsts._
-import model.learningPath.LearningPath
 import play.api.mvc.Call
 import play.api.mvc.MultipartFormData.FilePart
 import play.twirl.api.Html
@@ -91,5 +90,14 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
   // Calls
 
   override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
+
+  override def exerciseRoutesForUser(user: User, exercise: CompExType): Future[Seq[CallForExPart]] = Future {
+    exParts flatMap {
+      exPart: PartType =>
+        if (exercise.hasPart(exPart)) Some(CallForExPart(exPart, controllers.routes.FileExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName), enabled = true))
+        else None
+    }
+  }
+
 
 }

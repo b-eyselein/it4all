@@ -162,12 +162,12 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, result: ProgCompleteResult): Html = ???
+  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: ProgCompleteResult): Html = ???
 
   //    views.html.core.correction(result, result.render, user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: ProgCompleteResult): JsValue = result.toJson
+  override def onLiveCorrectionResult(pointsSaved: Boolean, result: ProgCompleteResult): JsValue = result.toJson
 
 }

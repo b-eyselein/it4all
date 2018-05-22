@@ -21,7 +21,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   type CompResult <: CompleteResult[R]
 
-  type SolType <: PartSolution
+  type SolType <: PartSolution[PartType]
 
   override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, PartType]
 
@@ -32,18 +32,17 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def futureSaveSolution(sol: SolType): Future[Boolean] = tables.futureSaveSolution(sol)
 
-  def futureOldSolution(user: User, exerciseId: Int, partString: String)(implicit ec: ExecutionContext): Future[Option[SolType]] = partTypeFromUrl(partString) match {
-    case None       => Future(None)
-    case Some(part) => tables.futureOldSolution(user.username, exerciseId, part)
-  }
+  def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: PartType)(implicit ec: ExecutionContext): Future[Option[SolType]] =
+    tables.futureOldSolution(user.username, exerciseId, part)
+
 
   // Result handling
 
-  def onSubmitCorrectionResult(user: User, result: CompResult): Html
+  def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: CompResult): Html
 
   def onSubmitCorrectionError(user: User, error: Throwable): Html
 
-  def onLiveCorrectionResult(result: CompResult): JsValue
+  def onLiveCorrectionResult(pointsSaved: Boolean, result: CompResult): JsValue
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
     Logger.error("There has been an correction error: ", error)
@@ -72,14 +71,17 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   private def onSolution(user: model.User, solution: SolType, id: Int, isLive: Boolean): Future[Try[Either[Html, JsValue]]] = futureCompleteExById(id) flatMap {
     case None => Future(Failure(NoSuchExerciseException(id)))
+    // FIXME: change return type of function!
 
     case Some(exercise) => futureSaveSolution(solution) flatMap { solutionSaved =>
-      correctEx(user, solution, exercise, solutionSaved) map {
+      correctEx(user, solution, exercise, solutionSaved) flatMap {
         case Success(res)   =>
-          // FIXME: change return type of function!
-          if (isLive) Success(Right(onLiveCorrectionResult(res)))
-          else Success(Left(onSubmitCorrectionResult(user, res)))
-        case Failure(error) => Failure(error)
+          // FIXME: save result...
+          tables.futureSaveResult(user.username, exercise.id, solution.part, res.points, res.maxPoints) map { pointsSaved =>
+            if (isLive) Success(Right(onLiveCorrectionResult(pointsSaved, res)))
+            else Success(Left(onSubmitCorrectionResult(user, pointsSaved, res)))
+          }
+        case Failure(error) => Future(Failure(error))
       }
     }
   }
@@ -120,5 +122,18 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   // Calls
 
   override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
+
+  def exerciseRoutesForUser(user: User, exercise: CompExType): Future[Seq[CallForExPart]] = Future.sequence(exParts map {
+    exPart: PartType =>
+      // FIXME: check if user can solve this part!
+
+      if (exercise.hasPart(exPart)) {
+        tables.futureUserCanSolvePartOfExercise(user.username, exercise.id, exPart) map {
+          enabled => Some(CallForExPart(exPart, controllers.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName), enabled))
+        }
+
+
+      } else Future(None)
+  }).map(_.flatten)
 
 }

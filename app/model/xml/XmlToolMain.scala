@@ -128,11 +128,11 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Result handlers
 
-  override def onSubmitCorrectionResult(user: User, result: CompResult): Html =
+  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: CompResult): Html =
     views.html.core.correction.render(result, result.render, user, this)
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: CompResult): JsValue = result.toJson
+  override def onLiveCorrectionResult(pointsSaved: Boolean, result: CompResult): JsValue = result.toJson
 
 }

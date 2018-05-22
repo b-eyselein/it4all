@@ -123,7 +123,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, result: UmlCompleteResult): Html = result.part match {
+  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: UmlCompleteResult): Html = result.part match {
     case ClassSelection   => result.classResult match {
       case Some(classRes) =>
         views.html.idExercises.uml.classSelectionResult(user, result.exercise.id, result.learnerSolution.classes, classRes, this)
@@ -143,6 +143,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
       views.html.core.correctionError(user, OtherCorrectionException(err))
   }
 
-  override def onLiveCorrectionResult(result: UmlCompleteResult): JsValue = result.toJson
+  override def onLiveCorrectionResult(pointsSaved: Boolean, result: UmlCompleteResult): JsValue = result.toJson
 
 }

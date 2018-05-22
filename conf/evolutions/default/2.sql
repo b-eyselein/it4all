@@ -22,6 +22,8 @@ DELETE IGNORE FROM xml_exercises;
 
 # Web
 
+DELETE IGNORE FROM web_results;
+
 DELETE IGNORE FROM web_solutions;
 
 DELETE IGNORE FROM js_conditions;

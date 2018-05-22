@@ -1,8 +1,7 @@
 package model.rose
 
 import javax.inject.Inject
-import model.ExerciseState
-import model._
+import model.{ExerciseState, _}
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgDataTypes.ProgDataType
 import model.programming.{ProgDataTypes, ProgLanguage}
@@ -70,11 +69,8 @@ case class RoseInputType(id: Int, exerciseId: Int, name: String, inputType: Prog
 
 case class RoseSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
 
-case class RoseSolution(username: String, exerciseId: Int, part: RoseExPart, solution: String) extends PartSolution {
+case class RoseSolution(username: String, exerciseId: Int, part: RoseExPart, solution: String) extends PartSolution[RoseExPart]
 
-  override type PartType = RoseExPart
-
-}
 
 // Tables
 

@@ -91,11 +91,11 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Result handlers
 
-  override def onSubmitCorrectionResult(user: User, result: RoseCompleteResult): Html = ??? // Ok(views.html.rose.roseTestSolution.render(user))
+  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: RoseCompleteResult): Html = ??? // Ok(views.html.rose.roseTestSolution.render(user))
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: RoseCompleteResult): JsValue = {
+  override def onLiveCorrectionResult(pointsSaved: Boolean, result: RoseCompleteResult): JsValue = {
     val (resultType, resultJson): (String, JsValue) = result.result match {
       case rer: RoseExecutionResult    => ("success", Json.parse(rer.result))
       case rser: RoseSyntaxErrorResult => ("syntaxError", JsString(rser.cause))

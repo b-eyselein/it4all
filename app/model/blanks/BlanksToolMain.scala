@@ -98,11 +98,11 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   private def renderSample(sample: BlanksAnswer): String = s"<li>${sample.id} &rarr; ${sample.solution}</li>"
 
-  override def onSubmitCorrectionResult(user: User, result: BlanksCompleteResult): Html = ???
+  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: BlanksCompleteResult): Html = ???
 
   override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = ???
+  override def onLiveCorrectionResult(pointsSaved: Boolean, result: BlanksCompleteResult): JsValue = ???
 
   //    JsArray(
   //    result.result.allMatches map (m => Json.obj(

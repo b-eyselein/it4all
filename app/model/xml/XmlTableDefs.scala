@@ -41,11 +41,8 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
 }
 
-case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String) extends PartSolution {
+case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String) extends PartSolution[XmlExPart]
 
-  override type PartType = XmlExPart
-
-}
 
 // Table defs
 

@@ -71,11 +71,8 @@ case class UmlExercise(id: Int, title: String, author: String, text: String, sta
 // FIXME: save ignore words and mappings as json!?!
 case class UmlMapping(exerciseId: Int, key: String, value: String)
 
-case class UmlSolution(username: String, exerciseId: Int, part: UmlExPart, classDiagram: UmlClassDiagram) extends PartSolution {
+case class UmlSolution(username: String, exerciseId: Int, part: UmlExPart, classDiagram: UmlClassDiagram) extends PartSolution[UmlExPart]
 
-  override type PartType = UmlExPart
-
-}
 
 // Tables
 

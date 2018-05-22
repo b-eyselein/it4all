@@ -39,7 +39,12 @@
                     <div class="col-sm-6">
                         <div class="btn-group btn-group-justified">
                         @for(exRoute <- exAndRoute.routes) {
-                            <a href="@exRoute._2" class="btn btn-primary">@exRoute._1.partName</a>
+                            <a @if(exRoute.enabled) {
+                                href="@exRoute.call"
+                            } else {
+                                disabled="disabled" title="Vorbedingungen nicht erfüllt!"
+                            } class="btn btn-primary"
+                            >@exRoute.exPart.partName</a>
                         }
                         </div>
                     </div>

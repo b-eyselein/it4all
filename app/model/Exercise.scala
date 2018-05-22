@@ -1,6 +1,6 @@
 package model
 
-import enumeratum.{Enum, EnumEntry, PlayEnum}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.core.{ExPart, FileUtils}
 import play.twirl.api.Html
 
@@ -46,9 +46,7 @@ trait Solution {
 
 }
 
-trait PartSolution extends Solution {
-
-  type PartType <: ExPart
+trait PartSolution[PartType <: ExPart] extends Solution {
 
   val part: PartType
 
@@ -104,6 +102,16 @@ trait CompleteEx[E <: Exercise] extends HasBaseValues {
 trait SingleCompleteEx[Ex <: Exercise, PartType <: ExPart] extends CompleteEx[Ex] {
 
   def hasPart(partType: PartType): Boolean
+
+}
+
+trait ResultForPart[PartType <: ExPart] {
+
+  val username  : String
+  val exerciseId: Int
+  val part      : PartType
+  val points    : Double
+  val maxPoints : Double
 
 }
 

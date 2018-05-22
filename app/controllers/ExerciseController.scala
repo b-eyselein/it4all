@@ -33,23 +33,16 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def exercise(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-
-      val maybeExAndMaybeOldSolution: Future[(Option[toolMain.CompExType], Option[toolMain.PartType], Option[toolMain.SolType])] = for {
-        exercise <- toolMain.futureCompleteExById(id)
-        part <- Future(toolMain.partTypeFromUrl(partStr))
-        oldSolution <- toolMain.futureOldSolution(user, id, partStr)
-      } yield (exercise, part, oldSolution)
-
-      maybeExAndMaybeOldSolution map {
-        case (None, _, _)                             => NotFound(s"Es gibt keine Aufgabe $id")
-        case (Some(exercise), maybePart, oldSolution) => maybePart match {
-          case None       => BadRequest(s"Es gibt keinen Aufgabenteil '$partStr'")
-          case Some(part) =>
-            //            if (exercise.hasPart(part))
-            Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
-          //            else
-          // BadRequest(s"Diese Aufgabe hat keinen Teil '${part.urlName}'")
-        }
+      toolMain.partTypeFromUrl(partStr) match {
+        case None       => Future(NotFound(s"Es gibt keine Aufgabenteil $id"))
+        case Some(part) =>
+          toolMain.futureCompleteExById(id) flatMap {
+            case None           => Future(NotFound(s"Es gibt keine Aufgabe $id"))
+            case Some(exercise) =>
+              toolMain.futureOldOrDefaultSolution(user, id, part) map {
+                oldSolution => Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
+              }
+          }
       }
   }
 
@@ -93,17 +86,19 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def umlClassDiag(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      val futureClassDiagram: Future[UmlClassDiagram] = umlToolMain.futureOldSolution(user, id, partStr) flatMap {
-        case Some(solution) => Future(solution.classDiagram)
-        case None           => umlToolMain.partTypeFromUrl(partStr) match {
-          case None       => Future(UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty))
-          case Some(part) => umlToolMain.futureCompleteExById(id) map {
-            case Some(exercise: UmlCompleteEx) => exercise.getDefaultClassDiagForPart(part)
-            case None                          =>
-              Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
-              UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty)
+      val futureClassDiagram: Future[UmlClassDiagram] = umlToolMain.partTypeFromUrl(partStr) match {
+        case None       => Future(UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty))
+        case Some(part) =>
+          umlToolMain.futureOldOrDefaultSolution(user, id, part) flatMap {
+            case Some(solution) => Future(solution.classDiagram)
+            case None           =>
+              umlToolMain.futureCompleteExById(id) map {
+                case Some(exercise: UmlCompleteEx) => exercise.getDefaultClassDiagForPart(part)
+                case None                          =>
+                  Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
+                  UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty)
+              }
           }
-        }
       }
 
       futureClassDiagram map { classDiagram =>

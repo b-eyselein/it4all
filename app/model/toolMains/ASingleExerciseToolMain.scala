@@ -1,13 +1,11 @@
 package model.toolMains
 
-import model.ExerciseState
-import model.core.{ExPart, ReadAndSaveResult}
-import model.learningPath.LearningPath
+import model.core.ExPart
 import model.persistence.IdExerciseTableDefs
-import model.{SingleCompleteEx, User}
+import model.{ExerciseState, SingleCompleteEx, User}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.data.Form
-import play.api.mvc.{AnyContent, Call, Request}
+import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,17 +48,11 @@ abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionCo
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
-  def dataForUserExesOverview(page: Int): Future[UserExOverviewContent] = {
-    // FIXME: check needed values, implement!
-
-    val ret: Future[UserExOverviewContent] = for {
-      numOfExes <- tables.futureNumOfExes
-      exes <- tables.futureCompleteExesForPage(page)
-      exesAndRoutes: Seq[ExAndRoute] = exes map (ex => ExAndRoute(ex, exerciseRoutes(ex)))
-    } yield UserExOverviewContent(numOfExes, exesAndRoutes)
-
-    ret
-  }
+  def dataForUserExesOverview(user: User, page: Int): Future[UserExOverviewContent] = for {
+    numOfExes <- tables.futureNumOfExes
+    exes <- tables.futureCompleteExesForPage(page)
+    exesAndRoutes <- Future.sequence(exes map (ex => exerciseRoutesForUser(user, ex) map (rs => ExAndRoute(ex, rs))))
+  } yield UserExOverviewContent(numOfExes, exesAndRoutes)
 
   // Helper methods for admin
 
@@ -90,18 +82,6 @@ abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionCo
 
   // Routes
 
-  def exerciseRoutes(exercise: CompExType): Seq[(PartType, Call)] = exParts flatMap {
-    exPart: PartType =>
-      // FIXME: check if user can solve this part!
-
-      if (exercise.hasPart(exPart)) {
-
-        this match {
-          case _: FileExerciseToolMain => Some((exPart, controllers.routes.FileExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName)))
-          case _: IdExerciseToolMain   => Some((exPart, controllers.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName)))
-        }
-
-      } else None
-  }
+  def exerciseRoutesForUser(user: User, exercise: CompExType): Future[Seq[CallForExPart]]
 
 }

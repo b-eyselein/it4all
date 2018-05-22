@@ -2,6 +2,7 @@ package model.web
 
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
+import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -29,10 +30,31 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private val jsTasks    = TableQuery[JsTasksTable]
   private val conditions = TableQuery[ConditionsTable]
 
+  private val resultsForPartsTable = TableQuery[WebResultsForPartsTable]
 
   // Dependent query tables
 
   lazy val webSolutions = TableQuery[WebSolutionsTable]
+
+  // Other queries
+
+  private def futureResultForUserExAndPart(username: String, exerciseId: Int, part: WebExPart): Future[Option[WebResultForPart]] =
+    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
+
+  override def futureSaveResult(username: String, exerciseId: Int, part: WebExPart, points: Double, maxPoints: Double): Future[Boolean] =
+    db.run(resultsForPartsTable insertOrUpdate WebResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
+      case e: Throwable =>
+        Logger.error("Error while updating result: ", e)
+        false
+    }
+
+  override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: WebExPart): Future[Boolean] = part match {
+    case HtmlPart => Future(true)
+    case JsPart   => futureResultForUserExAndPart(username, exerciseId, HtmlPart).map(_.exists(r => r.points == r.maxPoints))
+    case PHPPart  => Future(false)
+  }
+
+
 
   override def completeExForEx(ex: WebExercise): Future[WebCompleteEx] = for {
     htmlTasks <- htmlTasksForExercise(ex.id)
@@ -183,6 +205,15 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
 
     override def * = (username, exerciseId, part, solution) <> (WebSolution.tupled, WebSolution.unapply)
+
+  }
+
+  class WebResultsForPartsTable(tag: Tag) extends ResultsForPartsTable[WebResultForPart](tag, "web_results") {
+
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+
+
+    def * = (username, exerciseId, part, points, maxPoints) <> (WebResultForPart.tupled, WebResultForPart.unapply)
 
   }
 
