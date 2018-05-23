@@ -1,41 +1,40 @@
 import * as $ from 'jquery';
 
-// Some helper functions...
+let testBtn: JQuery, moreTestDataBtn: JQuery, testDataBody: JQuery, msgDiv: JQuery;
+let inputCount: number;
 
-const INPUT_COUNT = 5;
-
-// Real functions
-
-function moreTestData() {
-    let testDataBody = $('#testDataBody');
-
-    let newTestId = testDataBody.find('tr').length;
+function moreTestData(): void {
+    const newTestId = testDataBody.find('tr').length;
 
     let inputs = '';
-    for (let ic = 0; ic < INPUT_COUNT; ic++) {
+    for (let ic = 0; ic < inputCount; ic++) {
         inputs += `<td><input class="form-control" name="inp_${ic}_${newTestId}" id="inp_${ic}_${newTestId}" placeholder="Test ${newTestId + 1}, Input ${ic + 1}"></td>`;
     }
 
     testDataBody.append(
-        `<tr id="tr_${newTestId}" data-testid="${newTestId}">
-           <td>${newTestId}</td>
-           ${inputs}
-           <td><input class="form-control" name="outp_${newTestId}" id="outp_${newTestId}" placeholder="Test ${newTestId + 1}, Output"></td>
-         </tr>`);
+        `
+<tr id="tr_${newTestId}" data-testid="${newTestId}">
+    <td>${newTestId}</td>
+    ${inputs}
+    <td><input class="form-control" name="outp_${newTestId}" id="outp_${newTestId}" placeholder="Test ${newTestId + 1}, Output"></td>
+</tr>`.trim());
 }
 
-/**
- *
- * @param {object} response
- * @param {boolean} response.solutionSaved
- * @param {object[]} response.results
- * @param {number} response.results.id
- * @param {boolean} response.results.correct
- */
-function onValidateTDSuccess(response) {
-    console.log(JSON.stringify(response, null, 2));
+interface TestDataResult {
+    id: number
+    correct: boolean
+}
 
-    let msgDiv = $('#messageDiv');
+interface TestdataCreationResult {
+    solutionSaved: boolean
+    results: TestDataResult[]
+}
+
+function onValidateTDSuccess(response: TestdataCreationResult): void {
+    testBtn.prop('disabled', false);
+
+    console.warn(JSON.stringify(response, null, 2));
+
     if (response.solutionSaved) {
         msgDiv.html(`<hr><div class="alert alert-success">Ihre Testdaten wurden gespeichert.</div>`);
     } else {
@@ -43,50 +42,82 @@ function onValidateTDSuccess(response) {
     }
 
     for (let data of response.results) {
-        let row = document.getElementById('tr_' + data.id);
-        row.className = data.correct ? 'success' : 'danger';
+        let jTableRow = $('#tr_' + data.id);
+        if (data.correct) {
+            jTableRow.removeClass('danger').addClass('success');
+        } else {
+
+            jTableRow.removeClass('success').addClass('danger');
+        }
     }
 }
 
-function onValidateTDError(jqXHR) {
+function onValidateTDError(jqXHR): void {
+    testBtn.prop('disabled', false);
     console.error(jqXHR.responseText);
 }
 
-function testSol() {
-    let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
+interface TestDataInput {
+    id: number,
+    input: string
+}
 
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = ''; // FIXME: jsRoutes.controllers.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
+interface TestData {
+    id: number
+    inputs: TestDataInput[]
+    output: string
+}
 
-    let testDataRows = $('#testDataBody').find('tr');
+function testSol(): void {
+    testBtn.prop('disabled', true);
 
-    testDataRows.removeClass('success danger');
+    let solution: TestData[] = [];
 
-    let dataToSend = {
-        solution: testDataRows.map((index, elem: HTMLInputElement) => {
-            return {
-                id: $(elem).data('testid'),
-                inputs: $(elem).find('input').filter((i, e) => e.name.startsWith('inp')).map((inputIndex, e) => {
-                    return {id: inputIndex, input: e.value}
-                }).get(),
-                output: $(elem).find('input').filter((i, e) => e.name.startsWith('outp')).val()
+    testDataBody.find('tr')
+        .removeClass('success danger warning')
+        .each((index, elem: HTMLTableRowElement) => {
+            const id: number = $(elem).data('testid');
+
+            const inputs: TestDataInput[] = [];
+            $(elem).find('input').filter((i, e: HTMLInputElement) => e.name.startsWith('inp'))
+                .each((id, e: HTMLInputElement) => {
+                    inputs.push({id, input: e.value});
+                });
+
+            const output: string = $(elem).find('input')
+                .filter((i, e: HTMLInputElement) => e.name.startsWith('outp')).val() as string;
+
+            if (output.length === 0) {
+                $(elem).addClass('warning');
+                $(elem).attr('title', 'Output ist leer, Zeile wird ignoriert!');
+            } else {
+                solution.push({id, inputs, output});
             }
-        }).get()
-    };
+        });
+
+    console.warn(JSON.stringify(solution, null, 2));
 
     $.ajax({
         type: 'PUT',
         // dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url,
-        data: JSON.stringify(dataToSend),
+        url: testBtn.data('url'),
+        data: JSON.stringify({solution}),
         async: true,
         success: onValidateTDSuccess,
         error: onValidateTDError
     });
 }
 
-
 $(() => {
-    $('#testBtn').on('click', testSol);
+    inputCount = $('#inputCount').val() as number;
+
+    msgDiv = $('#messageDiv');
+    testDataBody = $('#testDataBody');
+
+    testBtn = $('#testBtn');
+    testBtn.on('click', testSol);
+
+    moreTestDataBtn = $('#moreTestDataBtn');
+    moreTestDataBtn.on('click', moreTestData);
 });

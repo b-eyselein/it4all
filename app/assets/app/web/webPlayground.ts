@@ -4,7 +4,7 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
 $(() => {
-    let editor = initEditor('htmlmixed');
+    let editor = initEditor('htmlmixed', 'webEditor');
     editor.on('change', (cm: CodeMirror.Editor) => {
         let preview: HTMLIFrameElement = document.getElementById('preview') as HTMLIFrameElement;
         preview.contentDocument.open();

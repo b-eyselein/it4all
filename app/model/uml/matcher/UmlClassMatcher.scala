@@ -29,8 +29,6 @@ case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass],
   def analyze(c1: UmlClass, c2: UmlClass): UmlClassMatchAnalysisResult = {
     val classTypeCorrect = c1.classType == c2.classType
 
-    println(compAM)
-
     if (compAM) {
       val attributesResult: MatchingResult[UmlAttribute, UmlAttributeMatch] = UmlAttributeMatcher.doMatch(c1.attributes, c2.attributes)
       val methodsResult = UmlMethodMatcher.doMatch(c1.methods, c2.methods)

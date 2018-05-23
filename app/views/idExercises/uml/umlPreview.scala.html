@@ -1,23 +1,35 @@
 @(completeEx: model.uml.UmlCompleteEx)
 
+
 <div class="row">
     <div class="col-md-6">
-
+        <table class="table">
+            <tr>
+                <th>ID</th>
+                <td>@completeEx.id</td>
+            </tr>
+            <tr>
+                <th>Autor</th>
+                <td>@completeEx.ex.author</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>@completeEx.ex.state</td>
+            </tr>
+            <tr>
+                <th>Ignoriert</th>
+                <td>@Html(completeEx.ex.splitToIgnore.map(i => "<code>" + i + "</code>").mkString(", "))</td>
+            </tr>
+        </table>
     </div>
+
 
     <div class="col-md-6">
         <h2>Mappings</h2>
         <ul>
-            @for(mapping <- completeEx.mappings) {
-                <li>@mapping.key &rarr;
-                    @mapping.value</li>
-            }
-        </ul>
-
-        <h2>Ignoriert</h2>
-        <ul>
-        @for(toIgnore <- completeEx.ex.splitToIgnore) {
-            <li>@toIgnore</li>
+        @for(mapping <- completeEx.mappings) {
+            <li>@mapping.key &rarr;
+                @mapping.value</li>
         }
         </ul>
     </div>

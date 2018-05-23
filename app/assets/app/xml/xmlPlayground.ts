@@ -6,5 +6,5 @@ import 'codemirror/mode/xml/xml';
 let editor: CodeMirror.Editor;
 
 $(() => {
-    editor = initEditor('xml');
+    editor = initEditor('xml', 'xmlEditor');
 });
