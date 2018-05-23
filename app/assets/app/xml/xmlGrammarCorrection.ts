@@ -62,8 +62,6 @@ function renderElementMatch(em: XmlElementMatch): string {
 }
 
 function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult): string {
-    console.log(JSON.stringify(response, null, 2));
-
     let html: string = '';
 
     if (response.solutionSaved) {
@@ -73,7 +71,7 @@ function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult)
     }
 
     if (response.success) {
-        html += `<span class="text-success">Die Korrektur war komplett erfolgreich.</span>`;
+        html += `<span class="text-success"> Die Korrektur war komplett erfolgreich.</span>`;
     } else {
         html += response.results.map(renderElementMatch).join('\n');
     }

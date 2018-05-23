@@ -28,9 +28,9 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
     let html: string = '';
 
     if (response.solutionSaved) {
-        html += `<div class="alert alert-success">Ihre Lösung wurde gespeichert.</div>`;
+        html += `<div class="alert alert-success">Ihre Lösung wurde gespeichert. </div>`;
     } else {
-        html += `<div class="alert alert-danger">Ihre Lösung konnte nicht gespeichert werden!</div>`;
+        html += `<div class="alert alert-danger">Ihre Lösung konnte nicht gespeichert werden! </div>`;
     }
 
     if (response.success) {
@@ -77,13 +77,7 @@ function testSol(): void {
 }
 
 $(() => {
-    let language: string;
-
-    if ($('#exercisePart').val() === 'grammar') {
-        language = 'application/xml-dtd';
-    } else {
-        language = 'xml';
-    }
+    const language: string = ($('#exercisePart').val() === 'grammar') ? 'application/xml-dtd' : 'xml';
 
     editor = initEditor(language, 'xmlEditor');
 

@@ -64,9 +64,9 @@ trait ExTag {
 
   def cssClass = "label label-primary"
 
-  def buttonContent: String = toString
+  def buttonContent: String
 
-  def title: String = toString
+  def title: String
 
 }
 

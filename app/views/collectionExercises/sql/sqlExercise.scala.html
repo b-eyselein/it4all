@@ -13,7 +13,6 @@
     <style>
             .CodeMirror {
                 border: 1px solid lightgrey;
-                /*font-family: Arial, monospace;*/
                 font-size: 14px;
                 height: 150px;
             }
@@ -21,68 +20,87 @@
 }
 
 @main("SQL", Some(user), scripts) {
-    <div class="container">
-        <h1>Aufgabe &quot;@exercise.ex.title&quot;</h1>
+    <div class="container-fluid">
 
         <input type="number" hidden id="collId" value="@scenario.id" title="hidden">
         <input type="number" hidden id="exerciseId" value="@exercise.ex.id" title="hidden">
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-sm-3">
+                <section>
+                    <h2 class="text-center">Info</h2>
 
-                <p>@exercise.ex.text</p>
-                @if(exercise.ex.hint.nonEmpty) {
-                    <p><i>Hinweis:</i> @exercise.ex.hint</p>
-                }
-
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary" id="testBtn">Lösung testen</button>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#databaseSchema">
+                            Datenbankschema</button>
                     </div>
-                    <a class="btn btn-default" href="@routes.CollectionController.collection("sql", scenario.id)">
-                        Bearbeitung beenden</a>
+
+                    @for(tableTuple <- tables grouped 2) {
+                        <div class="form-group">
+                            <div class="row">
+                            @for(table <- tableTuple) {
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#@table.tableName">@table.tableName</button>
+                                </div>
+                            }
+                            </div>
+                        </div>
+                    }
+
+                    @core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
+                        <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
+                        }
+
+                    @for(table <- tables) {
+                        @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
+                            @views.html.collectionExercises.sql.resultTable.render(table)
+                        }
+                    }
+                </section>
+            </div>
+
+            <div class="col-sm-4">
+                <h2 class="text-center">Aufgabe &quot;@exercise.ex.title&quot;</h2>
+
+                <div class="well">
+                    <p>@exercise.ex.text</p>
+                    @exercise.ex.hint match {
+                        case Some(hint) => {
+                            <p><i>Hinweis:</i>
+                                @hint</p>
+                        }
+                        case None => {}
+                    }
                 </div>
 
-            </div>
-            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success" id="testBtn">Lösung testen</button>
+                        </div>
+                        <a class="btn btn-default" href="@routes.CollectionController.collection("sql", scenario.id)">
+                            Bearbeitung beenden</a>
+                    </div>
+                </div>
+
                 <textarea id="sqlEditor" title="Editor">@oldOrDefSol</textarea>
+
             </div>
+
+            <div class="col-sm-5">
+                <h2 class="text-center">Korrektur</h2>
+
+                <div id="correctionDiv" hidden>
+                    <div id="correction"></div>
+
+                </div>
+            </div>
+
         </div>
 
         <hr>
 
-        <div id="newCorrectionDiv"></div>
-
-        <hr>
-
-        <h2>Datenbankschema &amp; Tabelleninhalte</h2>
-
-        <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#databaseSchema">
-            Datenbankschema</button>
-
-        <hr>
-
-        <div class="btn-group btn-group-justified">
-        @for(table <- tables) {
-            <div class="btn-group">
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#@table.tableName">@table.tableName</button>
-            </div>
-        }
-        </div>
-
-        @core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
-            <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
-        }
-
-        @for(table <- tables) {
-            @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
-                @views.html.collectionExercises.sql.resultTable.render(table)
-            }
-        }
-
-        <hr>
-
-        @core.helperTemplates.bsPager(exercise.ex.id, numOfExes, id => routes.CollectionController.exercise("sql", scenario.id, id))
+        <div id="executionResultsDiv"></div>
 
     </div>
 

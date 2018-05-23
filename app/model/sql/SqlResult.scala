@@ -1,8 +1,7 @@
 package model.sql
 
-import model.core.result.SuccessType
 import model.core.matching.{Match, MatchingResult}
-import model.core.result.{CompleteResult, EvaluationResult}
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.sql.SqlConsts._
 import model.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
@@ -34,13 +33,11 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
   override type SolType = String
 
-  override val solutionSaved = false
-
   override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
 
 }
 
-case class SqlResult(learnerSolution: String, columnComparison: MatchingResult[ColumnWrapper, ColumnMatch], tableComparison: MatchingResult[Table, TableMatch],
+case class SqlResult(solutionSaved: Boolean, learnerSolution: String, columnComparison: MatchingResult[ColumnWrapper, ColumnMatch], tableComparison: MatchingResult[Table, TableMatch],
                      whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch], executionResult: SqlExecutionResult,
                      groupByComparison: Option[MatchingResult[Expression, GroupByMatch]], orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
   extends SqlCorrResult {
@@ -53,6 +50,7 @@ case class SqlResult(learnerSolution: String, columnComparison: MatchingResult[C
   def notEmptyMatchingResults: Seq[MatchingResult[_, _ <: Match[_]]] = matchingResults filter (_.allMatches.nonEmpty)
 
   def toJson: JsValue = Json.obj(
+    solutionSavedName -> solutionSaved,
     columnsName -> columnComparison.toJson,
     tablesName -> tableComparison.toJson,
     "wheres" -> whereComparison.toJson,
@@ -64,7 +62,7 @@ case class SqlResult(learnerSolution: String, columnComparison: MatchingResult[C
 
 }
 
-case class SqlParseFailed(learnerSolution: String, error: Throwable) extends SqlCorrResult {
+case class SqlParseFailed(solutionSaved: Boolean, learnerSolution: String, error: Throwable) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq.empty
 

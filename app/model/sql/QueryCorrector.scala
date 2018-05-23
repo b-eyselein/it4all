@@ -14,19 +14,19 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, sampleSolution: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult = {
+  def correct(solutionSaved: Boolean, database: SqlExecutionDAO, learnerSolution: String, sampleSolution: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult = {
     val statementParseTries = for {
       userStatement <- parseStatement(learnerSolution) flatMap checkStatement
       sampleStatement <- parseStatement(sampleSolution.sample) flatMap checkStatement
     } yield (userStatement, sampleStatement)
 
     statementParseTries match {
-      case Success((userQ, sampleQ)) => correctQueries(learnerSolution, database, exercise, scenario, userQ, sampleQ)
-      case Failure(error)            => SqlParseFailed(learnerSolution, error)
+      case Success((userQ, sampleQ)) => correctQueries(solutionSaved, learnerSolution, database, exercise, scenario, userQ, sampleQ)
+      case Failure(error)            => SqlParseFailed(solutionSaved, learnerSolution, error)
     }
   }
 
-  private def correctQueries(learnerSolution: String, database: SqlExecutionDAO, exercise: SqlCompleteEx, scenario: SqlScenario, userQ: Q, sampleQ: Q) = {
+  private def correctQueries(solutionSaved: Boolean, learnerSolution: String, database: SqlExecutionDAO, exercise: SqlCompleteEx, scenario: SqlScenario, userQ: Q, sampleQ: Q) = {
     val (userTAliases, sampleTAliases) = (resolveAliases(userQ), resolveAliases(sampleQ))
 
     val tableComparison = compareTables(userQ, sampleQ)
@@ -40,7 +40,7 @@ abstract class QueryCorrector(val queryType: String) {
     val groupByComparison = compareGroupByElements(userQ, sampleQ)
     val orderByComparison = compareOrderByElements(userQ, sampleQ)
 
-    SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison)
+    SqlResult(solutionSaved, learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison)
   }
 
   def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnWrapper, ColumnMatch] =

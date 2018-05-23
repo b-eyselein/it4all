@@ -1,7 +1,12 @@
-export {AnalysisResult, CorrectionResult, Match};
+export {AnalysisResult, CorrectionResult, MatchingResult, Match};
 
 interface AnalysisResult {
     success: string
+}
+
+interface MatchingResult<T, AR> {
+    success: boolean
+    matches: Match<T, AR>[]
 }
 
 interface Match<T, AR> {
