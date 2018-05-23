@@ -101,8 +101,9 @@
                 <div class="form-group">
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group">
-                            <button type="button" id="testButton" class="btn btn-primary"
-                            data-url="@routes.ExerciseController.correctLive(toolObject.urlPart, exercise.id, curPart.urlName)">Aufgabe verifizieren</button>
+                            <button type="button" id="testBtn" class="btn btn-primary"
+                            data-url="@routes.ExerciseController.correctLive(toolObject.urlPart, exercise.id, curPart.urlName)">
+                                Aufgabe verifizieren</button>
                         </div>
                         @curPart match {
                             case model.uml.DiagramDrawingHelp => {
@@ -237,7 +238,10 @@
 
                 <div id="editDiv"></div>
 
-                <div id="resultDiv"></div>
+                <div id="resultDiv" hidden>
+                    <h2 class="text-center">Resultate</h2>
+                    <div id="results"></div>
+                </div>
 
             </div>
         </div>

@@ -1,21 +1,24 @@
-interface Class {
-    name: string,
-    attributes: ClassMember[],
-    methods: ClassMember[]
+import * as $ from 'jquery';
+import {UmlClassAttribute, UmlClassMethod, UmlSolution} from "../umlInterfaces";
+
+function readAttributeElement(elem: HTMLInputElement): UmlClassAttribute {
+    if (elem.checked) {
+        const jElement = $(elem);
+        return {
+            visibility: jElement.data('visibility'), name: jElement.data('value'), type: jElement.data('type'),
+            isDerived: false, isAbstract: false, isStatic: false
+        };
+    } else {
+        return null;
+    }
 }
 
-interface ClassMember {
-    visibility: string,
-    name: string
-    type: string
-}
 
-function readMemberElement(elem: HTMLInputElement): ClassMember {
+function readMemberElement(elem: HTMLInputElement): UmlClassMethod {
     if (elem.checked) {
         return {
-            visibility: 'public',
-            name: elem.dataset['value'],
-            type: elem.dataset['type']
+            visibility: 'public', name: elem.dataset['value'], type: elem.dataset['type'],
+            parameters: '', isAbstract: false, isStatic: false
         };
     } else {
         return null;
@@ -24,28 +27,36 @@ function readMemberElement(elem: HTMLInputElement): ClassMember {
 
 function readAllocation(): boolean {
     try {
-        let classPanels: Element[] = Array.from(document.getElementsByClassName('panel panel-default'));
+        let solution: UmlSolution = {
+            classes: [], associations: [], implementations: []
+        };
 
-        let classes: Class[] = classPanels.map((elem: HTMLElement) => {
-            let name = elem.dataset['clazz'];
+        $('.panel.panel-default').map((index: number, elem: Element) => {
+            if (elem instanceof HTMLDivElement) {
 
-            let attrCheckBoxes: HTMLInputElement[] = Array.from(elem.querySelector('section.attributeList').getElementsByTagName('input') as HTMLInputElement[]);
-            let attributes: ClassMember[] = attrCheckBoxes.map((elem) => readMemberElement(elem)).filter((c) => c != null);
+                let attrCheckBoxes: HTMLInputElement[] = Array.from(elem.querySelector('section.attributeList').getElementsByTagName('input')) as HTMLInputElement[];
+                let attributes: UmlClassAttribute[] = attrCheckBoxes.map(readAttributeElement).filter((c) => c != null);
 
-            let methodCheckBoxes: HTMLInputElement[] = Array.from(elem.querySelector('section.methodList').getElementsByTagName('input') as HTMLInputElement[]);
-            let methods: ClassMember[] = methodCheckBoxes.map((elem) => readMemberElement(elem)).filter((c) => c != null);
+                let methodCheckBoxes: HTMLInputElement[] = Array.from(elem.querySelector('section.methodList').getElementsByTagName('input')) as HTMLInputElement[];
+                let methods: UmlClassMethod[] = methodCheckBoxes.map(readMemberElement).filter((c) => c != null);
 
-            return {name, attributes, methods};
+                solution.classes.push({classType: 'CLASS', name: $(elem).data('classname'), attributes, methods});
+            } else {
+                console.error('Class panel is no div!');
+            }
         });
 
-        (document.getElementById('learnerSolution') as HTMLInputElement).value = JSON.stringify({
-            classes,
-            associations: [],
-            implementations: []
-        });
+        console.warn(JSON.stringify(solution, null, 2));
+
+        $('#learnerSolution').val(JSON.stringify(solution));
+
         return true;
     } catch (err) {
         console.error(err);
         return false;
     }
 }
+
+$(() => {
+    $('#allocationForm').on('submit', readAllocation);
+});

@@ -1,11 +1,26 @@
 import * as $ from 'jquery';
 
-import {UmlAssociation, UmlClassAttribute, UmlClassMethod, UmlImplementation, UmlSolution} from "../umlInterfaces";
-import {classDiagGraph} from "./classDiagDrawing";
+import {
+    UmlAssociation,
+    UmlClass,
+    UmlClassAttribute,
+    UmlClassMethod,
+    UmlImplementation,
+    UmlSolution
+} from "../umlInterfaces";
+import {classDiagGraph, classDiagTestBtn} from "./classDiagDrawing";
 import {MyJointClass} from "./classDiagElements";
-import {AnalysisResult, Match} from "../../matches";
+import {AnalysisResult, Match, MatchingResult} from "../../matches";
 
 export {testSol};
+
+interface UmlClassDiagCorrectionResult {
+    classResult: MatchingResult<UmlClass, UmlClassAnalysisResult> | null
+    assocAndImplResult: {
+        assocResult: MatchingResult<UmlAssociation, AnalysisResult>
+        implResult: MatchingResult<UmlImplementation, AnalysisResult>
+    } | null
+}
 
 interface UmlAttributeAnalysisResult extends AnalysisResult {
     visibilityCorrect: boolean
@@ -50,8 +65,8 @@ interface UmlClassAnalysisResult extends AnalysisResult {
     classTypeCorrect: boolean
     correctClassType: string
 
-    attributesResult: UmlClassAttributeMatch[]
-    methodsResult: UmlClassMethodMatch[]
+    attributesResult: MatchingResult<UmlClassAttribute, UmlAttributeAnalysisResult>
+    methodsResult: MatchingResult<UmlClassMethod, UmlClassMethodAnalysisResult>
 }
 
 interface MatchUmlClass {
@@ -62,10 +77,10 @@ interface MatchUmlClass {
 interface UmlClassMatch extends Match<MatchUmlClass, UmlClassAnalysisResult> {
 }
 
-function displayUmlAttributeMatch(umlAttributeMatch: UmlClassAttributeMatch) {
+function displayUmlAttributeMatch(umlAttributeMatch: UmlClassAttributeMatch): string {
     let explanation, textClass;
 
-    switch (umlAttributeMatch.success) {
+    switch (umlAttributeMatch.matchType) {
         case 'SUCCESSFUL_MATCH':
             textClass = 'success';
             explanation = `Das Attribut <code>${umlAttributeMatch.userArg.name}</code> ist korrekt.`;
@@ -104,24 +119,15 @@ function displayUmlAttributeMatch(umlAttributeMatch: UmlClassAttributeMatch) {
             break;
     }
 
-    // return `<li>${displayUmlAttributeMatch(umlAttributeMatch)}</li>`;
-
     return `<li><span class="text text-${textClass}">${explanation}</li>`;
 }
 
-/**
- * @param {object} memberResult
- * @param {boolean} memberResult.success
- * @param {object[]} memberResult.matches
- *
- * @return {string}
- */
-function displayAttributeMatchingResult(memberResult) {
+function displayAttributeMatchingResult(memberResult: MatchingResult<UmlClassAttribute, UmlAttributeAnalysisResult>) {
     if (memberResult.success) {
-        return `<p class="text text-success">Die Attribute waren korrekt.</p>`
+        return `<span class="text text-success">Die Attribute waren korrekt.</span>`
     } else {
         return `
-<p class="text-danger">Die Attribute waren nicht korrekt:</p>
+<span class="text-danger">Die Attribute waren nicht korrekt:</span>
 <ul>
     ${memberResult.matches.map(displayUmlAttributeMatch).join('\n')}
 </ul>`.trim();
@@ -132,7 +138,7 @@ function displayAttributeMatchingResult(memberResult) {
 function displayUmlMethodMatch(umlMethodMatch: UmlClassMethodMatch) {
     let explanation, textClass;
 
-    switch (umlMethodMatch.success) {
+    switch (umlMethodMatch.matchType) {
         case 'SUCCESSFUL_MATCH':
             textClass = 'success';
             explanation = `Die Methode <code>${umlMethodMatch.userArg.name}</code> ist korrekt.`;
@@ -174,29 +180,22 @@ function displayUmlMethodMatch(umlMethodMatch: UmlClassMethodMatch) {
     return `<li><span class="text text-${textClass}">${explanation}</li>`;
 }
 
-/**
- * @param {object} memberResult
- * @param {boolean} memberResult.success
- * @param {object[]} memberResult.matches
- *
- * @return {string}
- */
-function displayMethodMatchingResult(memberResult) {
+function displayMethodMatchingResult(memberResult: MatchingResult<any, any>) {
     if (memberResult.success) {
-        return `<p class="text text-success">Die Methoden waren korrekt.</p>`
+        return `<span class="text text-success">Die Methoden waren korrekt.</span>`
     } else {
         return `
-<p class="text-danger">Die Methoden waren nicht korrekt:</p>
+<span class="text-danger">Die Methoden waren nicht korrekt:</span>
 <ul>
     ${memberResult.matches.map(displayUmlMethodMatch).join('\n')}
 </ul>`.trim();
     }
 }
 
-function explainClassResult(classResult: UmlClassMatch, alertClass, glyphicon, successExplanation) {
+function explainClassResult(classResult: UmlClassMatch, alertClass, glyphicon, successExplanation): string {
     let className = classResult.userArg != null ? classResult.userArg.name : classResult.sampleArg.name;
 
-    if (classResult.success === 'SUCCESSFUL_MATCH') {
+    if (classResult.matchType === 'SUCCESSFUL_MATCH') {
         return `
 <p class="text-${alertClass}">
     <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> war korrekt.
@@ -285,23 +284,12 @@ function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation)
 </ul>`.trim();
 }
 
-/**
- * @param {object} implRes
- * @param {string} implRes.success
- * @param {UmlImplementation} implRes.userArg
- * @param {UmlImplementation} implRes.sampleArg
- * @param {string} alertClass
- * @param {string} glyphicon
- * @param {string} successExplanation
- *
- * @return {string}
- */
-function explainImplResult(implRes, alertClass, glyphicon, successExplanation): string {
+function explainImplResult(implRes: Match<UmlImplementation, AnalysisResult>, alertClass: string, glyphicon: string, successExplanation: string): string {
     let subClass = implRes.userArg != null ? implRes.userArg.subClass : implRes.sampleArg.subClass;
     let superClass = implRes.userArg != null ? implRes.userArg.superClass : implRes.sampleArg.superClass;
 
     let subExplanations = '';
-    if (implRes.success === 'UNSUCCESSFUL_MATCH' || implRes.success === 'PARTIAL_MATCH') {
+    if (implRes.matchType === 'UNSUCCESSFUL_MATCH' || implRes.matchType === 'PARTIAL_MATCH') {
         subExplanations = `
 <ul>
     <li>Die Vererbungsrichtung ist falsch.</li>
@@ -324,10 +312,10 @@ function explainImplResult(implRes, alertClass, glyphicon, successExplanation): 
  *
  * @return {string}
  */
-function displayMatchResult(matchingRes, explanationFunc): string {
+function displayMatchResult(matchingRes: Match<any, any>, explanationFunc: (m: Match<any, any>, a: string, g: string, s: string) => string): string {
     let alertClass, glyphicon, successExplanation;
 
-    switch (matchingRes.success) {
+    switch (matchingRes.matchType) {
         case 'SUCCESSFUL_MATCH':
             alertClass = 'success';
             glyphicon = 'ok';
@@ -362,16 +350,7 @@ function displayMatchResult(matchingRes, explanationFunc): string {
     return explanationFunc(matchingRes, alertClass, glyphicon, successExplanation);
 }
 
-/**
- * @param {object} matchingResultList
- * @param {boolean} matchingResultList.success
- * @param {Match[]} matchingResultList.matches
- * @param {string} name
- * @param {function} explainFunc
- *
- * @return string
- */
-function displayMatchingResultList(matchingResultList, name, explainFunc): string {
+function displayMatchingResultList(matchingResultList: MatchingResult<any, any>, name: string, explainFunc: (m: Match<any, any>, a: string, g: string, s: string) => string): string {
     if (matchingResultList.success) {
         return `
 <div class="alert alert-success">
@@ -388,16 +367,12 @@ function displayMatchingResultList(matchingResultList, name, explainFunc): strin
     }
 }
 
-/**
- * @param {object} response
- * @param {object | null} response.classResult
- * @param {object | null} response.assocAndImplResult
- * @param {object} response.assocAndImplResult.assocResult
- * @param {object} response.assocAndImplResult.implResult
- */
-function onUmlClassDiagCorrectionSuccess(response): void {
-    let html = `<h2 class="text-center">Resultate</h2>`;
 
+function onUmlClassDiagCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
+    classDiagTestBtn.prop('disabled', false);
+    $('#resultDiv').prop('hidden', false);
+
+    let html: string = '';
     if (response.classResult != null) {
         html += displayMatchingResultList(response.classResult, "Klassen", explainClassResult);
     }
@@ -407,18 +382,16 @@ function onUmlClassDiagCorrectionSuccess(response): void {
         html += displayMatchingResultList(response.assocAndImplResult.assocResult, 'Assoziationen', explainAssocResult);
     }
 
-    $('#resultDiv').html(html);
-
-    $('#testButton').prop('disabled', false);
+    $('#results').html(html);
 }
 
 function onUmlClassDiagCorrectionError(jqXHR): void {
+    classDiagTestBtn.prop('disabled', false);
     console.error(jqXHR.responseJSON);
-    $('#testButton').prop('disabled', false);
 }
 
 
-function getClassNameFromCellId(id): string {
+function getClassNameFromCellId(id: string): string {
     return (classDiagGraph.getCell(id) as MyJointClass).getClassName();
 }
 
@@ -441,14 +414,14 @@ function getMultiplicity(label): "SINGLE" | "UNBOUND" {
     return label.attrs.text.text === '1' ? 'SINGLE' : 'UNBOUND';
 }
 
-function umlImplfromConnection(conn): UmlImplementation {
+function umlImplfromConnection(conn: joint.dia.Link): UmlImplementation {
     return {
         subClass: getClassNameFromCellId(conn.attributes.source.id),
         superClass: getClassNameFromCellId(conn.attributes.target.id)
     }
 }
 
-function umlAssocfromConnection(conn): UmlAssociation {
+function umlAssocfromConnection(conn: joint.dia.Link): UmlAssociation {
     return {
         assocType: getTypeName(conn.attributes.type),
         assocName: '',        // TODO: name of association!?!
@@ -460,19 +433,22 @@ function umlAssocfromConnection(conn): UmlAssociation {
 }
 
 function testSol(): void {
-    let clickedButton = $('#testButton');
-
-    let url = clickedButton.data('url');
-
-    clickedButton.prop('disabled', true);
+    classDiagTestBtn.prop('disabled', true);
 
     let solution: UmlSolution = {
         classes: classDiagGraph.getCells()
-            .filter((cell) => cell instanceof MyJointClass)
-            .map((cell: MyJointClass) => cell.getAsUmlClass()),
+            .map((cell) => {
+                if (cell instanceof MyJointClass) {
+                    return cell.getAsUmlClass();
+                } else {
+                    return null;
+                }
+            }).filter(c => c != null),
+
         associations: classDiagGraph.getLinks()
             .filter((conn) => conn.get('type') !== 'uml.Implementation')
             .map((conn) => umlAssocfromConnection(conn)),
+
         implementations: classDiagGraph.getLinks()
             .filter((conn) => conn.get('type') === 'uml.Implementation')
             .map((conn) => umlImplfromConnection(conn))
@@ -482,7 +458,7 @@ function testSol(): void {
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url,
+        url: classDiagTestBtn.data('url'),
         data: JSON.stringify(solution),
         async: true,
         success: onUmlClassDiagCorrectionSuccess,

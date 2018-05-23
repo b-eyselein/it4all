@@ -50,11 +50,11 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
     UmlClassDiagram(classes, assocs, impls)
   }
 
-  val allAttributes: Seq[UmlClassMember] = allDistinctMembers(_.attributes)
+  val allAttributes: Seq[UmlAttribute] = allDistinctMembers(_.attributes)
 
-  val allMethods: Seq[UmlClassMember] = allDistinctMembers(_.methods)
+  val allMethods: Seq[UmlMethod] = allDistinctMembers(_.methods)
 
-  private def allDistinctMembers(members: UmlClass => Seq[UmlClassMember]): Seq[UmlClassMember] = ex.solution.classes flatMap members distinct
+  private def allDistinctMembers[M <: UmlClassMember](members: UmlClass => Seq[M]): Seq[M] = ex.solution.classes flatMap members distinct
 
 }
 

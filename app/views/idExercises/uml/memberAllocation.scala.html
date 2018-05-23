@@ -1,70 +1,92 @@
 @(user: model.User, exercise: model.uml.UmlCompleteEx)
 
 @scripts = {
-    <script src="@controllers.routes.Assets.versioned("javascripts/uml/umlClass/allocation.js")"></script>
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/uml/umlClass/allocation.js")');
+    </script>
 }
 
-@memberInput(className: String, returnType: String, memberName: String, memberType: String) = {
+
+@attributeInput(attr: model.uml.UmlAttribute) = {
     <div class="checkbox">
-        <label><input type="checkbox" data-membertype="@memberType" data-type="@returnType" data-value="@memberName">
-            @memberName: @memberType
+        <label><input type="checkbox" data-type="@attr.memberType" data-value="@attr.memberName">
+            @attr.visibility.representant @attr.memberName: @attr.memberType
         </label>
     </div>
 }
 
-@main("UML", Some(user), scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Zuordnung der Attribute und Methoden</h1>
-        </div>
 
-        <h3>Aufgabentext</h3>
+@methodInput(met: model.uml.UmlMethod) = {
+    <div class="checkbox">
+        <label><input type="checkbox" data-visibility="@met.visibility.representant" data-type="@met.memberType" data-value="@met.memberName">
+            @met.visibility.representant @met.memberName (@met.parameters): @met.memberType
+        </label>
+    </div>
+}
 
-        <div class="well">@exercise.ex.text</div>
+@title = @{
+    "Zuordnung der Attribute und Methoden"
+}
 
-        <hr>
+@main(title, Some(user), scripts) {
+    <div class="container-fluid">
 
-        @for(clazzQuadruple <- exercise.ex.solution.classes grouped 4) {
-            <div class="row">
-            @for(completeClass <- clazzQuadruple) {
-                <div class="col-md-3">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="page-header">
+                    <h2>@title</h2>
+                </div>
 
-                    <div class="panel panel-default" data-clazz="@completeClass.className">
-                        <div class="panel-heading">@completeClass.className</div>
+                <div class="well">@exercise.ex.text</div>
 
-                        <div class="panel-body">
+                <hr>
 
-                            <section class="attributeList">
-                            @for(attr <- exercise.allAttributes) {
-                                @memberInput(completeClass.className, attr.memberType, attr.memberName, "attribute")
-                            }
-                            </section>
+                <form method="post" id="allocationForm" action="@routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)">
+                    <input type="text" title="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
+                    <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
+                </form>
 
-                            <hr>
+            </div>
 
-                            <section class="methodList">
-                            @for(method <- exercise.allMethods) {
-                                @memberInput(completeClass.className, method.memberType, method.memberName, "method")
-                            }
-                            </section>
+            <div class="col-md-8">
+            @for(clazzQuadruple <- exercise.ex.solution.classes grouped 4) {
+                <div class="row">
+                @for(completeClass <- clazzQuadruple) {
+                    <div class="col-md-3">
 
+                        <div class="panel panel-default" data-classname="@completeClass.className">
+                            <div class="panel-heading">@completeClass.className</div>
+
+                            <div class="panel-body">
+
+                                <section class="attributeList">
+                                @for(attr <- exercise.allAttributes) {
+                                    @attributeInput(attr)
+                                }
+                                </section>
+
+                                <hr>
+
+                                <section class="methodList">
+                                @for(method <- exercise.allMethods) {
+                                    @methodInput(method)
+                                }
+                                </section>
+
+                            </div>
                         </div>
+
                     </div>
+                }
 
                 </div>
             }
 
             </div>
-        }
-
-        <hr>
-
-        @* FIXME: part... *@
-        <form action="@routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)"
-        method="post" onsubmit="return readAllocation();">
-            <input type="text" title="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
-            <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
-        </form>
+        </div>
 
     </div>
 }

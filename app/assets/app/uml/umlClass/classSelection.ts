@@ -1,22 +1,16 @@
 import * as $ from 'jquery';
-import {CLASS_TYPES, UmlAssociation, UmlClass, UmlImplementation, UmlSolution} from '../umlInterfaces';
+import {UmlClass} from '../umlInterfaces';
 
 let chosenClasses: string[] = [];
 
 function readClass(name): UmlClass {
-    return {
-        name, classType: CLASS_TYPES.CLASS, attributes: [], methods: []
-    };
+    return {name, classType: 'CLASS', attributes: [], methods: []};
 }
 
 function prepareFormForSubmitting(): void {
-    let solutionToSend: UmlSolution = {
-        classes: chosenClasses.map(readClass),
-        associations: <UmlAssociation[]> [],
-        implementations: <UmlImplementation[]> []
-    };
-
-    $('#learnerSolution').val(JSON.stringify(solutionToSend));
+    $('#learnerSolution').val(JSON.stringify({
+        classes: chosenClasses.map(readClass), associations: [], implementations: []
+    }));
 }
 
 function asList(array: string[]): string {

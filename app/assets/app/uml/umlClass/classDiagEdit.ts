@@ -184,7 +184,7 @@ function classMemberFromHtml(memberGroup): ClassMemberAttrs {
     }
 }
 
-function umlClassAttributeFromHtml(memberGroup: HTMLElement): UmlClassAttribute {
+function umlClassAttributeFromHtml(memberGroup: HTMLElement): UmlClassAttribute | null {
     let base: ClassMemberAttrs = classMemberFromHtml(memberGroup);
 
     let modifiers = {};
@@ -192,19 +192,21 @@ function umlClassAttributeFromHtml(memberGroup: HTMLElement): UmlClassAttribute 
         modifiers[elem.value] = elem.checked
     });
 
-    console.warn(modifiers);
-
-    return {
-        visibility: base.visibility,
-        name: base.name,
-        type: base.type,
-        isStatic: modifiers['static'],
-        isDerived: modifiers['derived'],
-        isAbstract: modifiers['abstract']
-    };
+    if (base.name.length === 0) {
+        return null;
+    } else {
+        return {
+            visibility: base.visibility,
+            name: base.name,
+            type: base.type,
+            isStatic: modifiers['static'],
+            isDerived: modifiers['derived'],
+            isAbstract: modifiers['abstract']
+        };
+    }
 }
 
-function umlClassMethodFromHtml(memberGroup: HTMLElement): UmlClassMethod {
+function umlClassMethodFromHtml(memberGroup: HTMLElement): UmlClassMethod | null {
     let base: ClassMemberAttrs = classMemberFromHtml(memberGroup);
 
     let modifiers = {};
@@ -214,14 +216,18 @@ function umlClassMethodFromHtml(memberGroup: HTMLElement): UmlClassMethod {
 
     let parameters = $(memberGroup).find('input[data-for="parameters"]').val() as string;
 
-    return {
-        visibility: base.visibility,
-        name: base.name,
-        parameters: parameters,
-        type: base.type,
-        isStatic: modifiers['static'],
-        isAbstract: modifiers['abstract']
-    };
+    if (base.name.length === 0 || parameters.length === 0) {
+        return null;
+    } else {
+        return {
+            visibility: base.visibility,
+            name: base.name,
+            parameters: parameters,
+            type: base.type,
+            isStatic: modifiers['static'],
+            isAbstract: modifiers['abstract']
+        };
+    }
 }
 
 function editClass(model: MyJointClass): void {
@@ -251,16 +257,23 @@ function updateClass(button: HTMLButtonElement): void {
         element.setClassName($('#editClassName').val() as string);
 
         let attrs: UmlClassAttribute[] = [];
-        $('#editAttrsDiv').find('.form-group').each((index, attrGroup) => {
-            attrs.push(umlClassAttributeFromHtml(attrGroup))
+        $('#editAttrsDiv').find('.form-group').each((index, attrGroup: HTMLElement) => {
+            const readAttr = umlClassAttributeFromHtml(attrGroup);
+            if (readAttr != null) {
+                attrs.push(readAttr);
+            }
         });
         element.setAttributes(attrs);
 
         let methods: UmlClassMethod[] = [];
-        $('#editMethodsDiv').find('.form-group').each((index, metGroup) => {
-            methods.push(umlClassMethodFromHtml(metGroup))
+        $('#editMethodsDiv').find('.form-group').each((index, metGroup: HTMLElement) => {
+            const readMethod = umlClassMethodFromHtml(metGroup);
+            if (readMethod != null) {
+                methods.push(readMethod);
+            }
         });
         element.setMethods(methods);
+
     } else {
         console.error("Has there been an error?");
     }
@@ -320,20 +333,17 @@ $(() => {
     let editAttrsPlusBtn = $('#editAttrsPlusBtn');
     editAttrsPlusBtn.on('click', () => {
         let index = editAttrsPlusBtn.parent().find('.form-group').length;
-        console.warn(index);
-        addAttributes([
-            {visibility: '', name: '', type: '', isStatic: false, isAbstract: false, isDerived: false}
-        ], index);
+        addAttributes([{
+            visibility: '', name: '', type: '',
+            isStatic: false, isAbstract: false, isDerived: false
+        }], index);
     });
 
 
     let editMethodsPlusBtn = $('#editMethodsPlusBtn');
     editMethodsPlusBtn.on('click', () => {
         let index = editMethodsPlusBtn.parent().find('.form-group').length;
-        console.warn(index);
-        addMethods([
-            {visibility: '', name: '', parameters: '', type: '', isAbstract: false, isStatic: false}
-        ], index);
+        addMethods([{visibility: '', name: '', parameters: '', type: '', isAbstract: false, isStatic: false}], index);
     });
 
     $('#classEditReset').on('click', discardClassEdits);

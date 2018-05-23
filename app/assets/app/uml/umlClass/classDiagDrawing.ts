@@ -2,17 +2,26 @@ import * as $ from 'jquery';
 import * as joint from 'jointjs';
 
 import {DEF_GRID, GRID_SIZE, PAPER_HEIGHT} from "../umlConsts";
-import {UmlAssociation, UmlClass, UmlClassAttribute, UmlClassMethod, UmlImplementation, UmlSolution} from "../umlInterfaces";
+import {
+    UmlAssociation,
+    UmlClass,
+    UmlClassAttribute,
+    UmlClassMethod,
+    UmlImplementation,
+    UmlSolution
+} from "../umlInterfaces";
 
 import {MyJointClass, MyJointClassView, STD_CLASS_HEIGHT, STD_CLASS_WIDTH} from "./classDiagElements";
 import {editLink} from "./classDiagEdit";
 import {testSol} from "./classDiagCorrection";
 
-export {classDiagGraph, classDiagPaper};
+export {classDiagGraph, classDiagPaper, classDiagTestBtn};
 
 const PADDING = 40;
 
 let chosenCellView = null;
+
+let classDiagTestBtn;
 
 const classDiagGraph = new joint.dia.Graph();
 let classDiagPaper;
@@ -52,12 +61,15 @@ function newClass(posX: number, posY: number): void {
     });
 }
 
-function blankOnPointerDown(evt, x, y) {
+function blankOnPointerDown(evt: Event, x: number, y: number) {
     switch (sel) {
         case 'CLASS':
         case 'ABSTRACT':
         case 'INTERFACE':
             newClass(x, y);
+            break;
+        case 'POINTER':
+            // Ignore...
             break;
         default :
             console.info(sel);
@@ -91,9 +103,11 @@ function cellOnLeftClick(cellView: joint.dia.CellView, evt) {
             console.warn(model.attributes.type);
     }
 
-    if (sel === 'POINTER') {
-        // Class editing -> MyJointClassView::pointerdblclick
-    } else if ('IMPLEMENTATION' === sel) {
+    // if (sel === 'POINTER') {
+    // Class editing -> MyJointClassView::pointerdblclick
+    // }
+
+    if ('IMPLEMENTATION' === sel) {
         // FIXME: do not select arrows or other things, only classes!
         cellView.highlight();
 
@@ -137,7 +151,7 @@ function cellOnLeftClick(cellView: joint.dia.CellView, evt) {
 
             chosenCellView = null;
         }
-    } else if (sel === 'CLASS') {
+    } else if (sel === 'CLASS' || sel === 'POINTER') {
         // alert('Sie können keine Klassen innerhalb von Klassen erstellen!');
     } else {
         console.error('TODO: ' + sel);
@@ -148,7 +162,7 @@ function unMarkButtons(): void {
     $('#buttonsDiv').find('button').removeClass('btn-primary').addClass('btn-default');
 }
 
-function selectAssocType(button: HTMLAnchorElement) {
+function selectAssocType(button: HTMLAnchorElement): void {
     unMarkButtons();
 
     let assocButton = document.getElementById('assocButton');
@@ -159,12 +173,17 @@ function selectAssocType(button: HTMLAnchorElement) {
     $('#assocType').text(button.textContent);
 }
 
-function selectButton(button) {
+function selectButton(button: HTMLElement): void {
+    const buttonType = $(button).data('conntype').trim();
+
     unMarkButtons();
 
-    button.className = 'btn btn-primary';
-
-    sel = button.dataset.conntype.trim();
+    if (buttonType === sel) {
+        sel = 'POINTER';
+    } else {
+        sel = buttonType;
+        button.className = 'btn btn-primary';
+    }
 }
 
 function addImplementation(sourceId: string, targetId: string) {
@@ -273,13 +292,10 @@ function loadClasses(classesToLoad: UmlClass[]): void {
 function onSolutionLoadSuccess(response: UmlSolution): void {
     loadClasses(response.classes);
 
-
-    console.warn(JSON.stringify(response.associations, null, 2));
     for (let assoc of response.associations) {
         loadAssociation(assoc);
     }
 
-    console.warn(JSON.stringify(response.implementations, null, 2));
     for (let impl of response.implementations) {
         loadImplementation(impl);
     }
@@ -333,7 +349,11 @@ function drop(jqEvent) {
     let event = jqEvent.originalEvent;
 
     addUmlClass({
-        name: event.dataTransfer.getData('text'), classType: 'CLASS', attributes: [], methods: [], position: {x: event.x, y: event.y}
+        name: event.dataTransfer.getData('text'),
+        classType: 'CLASS',
+        attributes: [],
+        methods: [],
+        position: {x: event.x, y: event.y}
     });
 }
 
@@ -376,6 +396,7 @@ $(() => {
 
     // Set callback for click on cells and blank paper
     classDiagPaper.on('cell:pointerclick', cellOnLeftClick);
+    classDiagPaper.on('blank:pointerdown', blankOnPointerDown);
 
 
     // paper.on('cell:pointerdown', (cellView, evt) => {
@@ -398,9 +419,9 @@ $(() => {
     // }
     // });
 
-    classDiagPaper.on('blank:pointerdown', blankOnPointerDown);
 
     loadSolution(paperJQ.data('url'));
 
-    $('#testButton').on('click', testSol);
+    classDiagTestBtn = $('#testBtn');
+    classDiagTestBtn.on('click', testSol);
 });

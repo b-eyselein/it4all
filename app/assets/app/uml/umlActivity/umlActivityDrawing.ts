@@ -83,6 +83,8 @@ interface PositionObject {
 }
 
 document.addEventListener('dragover', function (e: DragEvent) {
+// FIXME: --> classDiagDrawing!
+
     let offset;
 
     if ($('#editDiagramModal').hasClass('in')) {

@@ -129,7 +129,13 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
         views.html.idExercises.uml.classSelectionResult(user, result.exercise.id, result.learnerSolution.classes, classRes, this)
       case None           => Html("Es gab einen Fehler bei der Korrektur!")
     }
-    case MemberAllocation => views.html.idExercises.uml.memberAllocationResult(user, result, this)
+    case MemberAllocation =>
+
+      println(result.learnerSolution)
+
+      result.classResult foreach { classRes => classRes.allMatches.map(_.attributesResult) foreach println }
+
+      views.html.idExercises.uml.memberAllocationResult(user, result, this)
     case _                => ??? // Correction is only live!
   }
 
