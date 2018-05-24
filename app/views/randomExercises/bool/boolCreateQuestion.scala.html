@@ -21,7 +21,11 @@
     </script>
 }
 
-@main("Formel erstellen", Some(user), scripts) {
+@title = @{
+    "Erstellen einer Booleschen Funktion"
+}
+
+@main(title, Some(user), scripts) {
 
     @core.helperTemplates.modal("Bearbeitunginformationen", "infoModal", "lg") {
         @views.html.randomExercises.bool.boolCreateInfo.render()
@@ -29,16 +33,12 @@
 
 
     <div class="container">
-        <div class="page-header">
-            <h1>Erstellen einer Booleschen Funktion
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#infoModal"><span class="glyphicon glyphicon-question-sign"></span></button>
-            </h1>
-        </div>
-
 
         <div class="row">
-            <div class="col-sm-6 col-sm-offset-3">
-                <table class="table table-responsive">
+            <div class="col-sm-3"></div>
+
+            <div class="col-sm-6">
+                <table class="table">
                     <thead>
                         <tr>
                             @for(variable <- variables) {
@@ -59,37 +59,31 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="col-sm-3"></div>
         </div>
 
-        <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
-        <input hidden id="exerciseType" value="@question.exPart.urlName" title="hidden">
-        <input hidden id="solVar" value="@model.bool.BoolConsts.SolVariable" title="hidden">
-
-        <div class="row">
-            <div class="form-group">
-                <label class="control-label col-xs-1" for="@model.bool.BoolConsts.LearnerSol">@model.bool.BoolConsts.SolVariable
-                    = </label>
-                <div class="col-xs-11">
-                    <input class="form-control" name="@model.bool.BoolConsts.LearnerSol" id="@model.bool.BoolConsts.LearnerSol" placeholder="Ihre Lösung"
-                    autocomplete="off" required>
-                </div>
+        <div class="form-group row">
+            <label class="col-form-label col-sm-1" for="@model.bool.BoolConsts.LearnerSol">
+                @model.bool.BoolConsts.SolVariable = </label>
+            <div class="col-sm-11">
+                <input class="form-control" name="@model.bool.BoolConsts.LearnerSol" id="@model.bool.BoolConsts.LearnerSol" placeholder="Ihre Lösung"
+                autocomplete="off" required>
             </div>
         </div>
 
-        <hr>
+        <div class="btn-group d-flex">
+            <button class="btn btn-info w-100" data-toggle="modal" data-target="#infoModal">
+                <span class="octicon octicon-info"></span>
+            </button>
 
-        <div class="btn-group btn-group-justified">
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary" id="testBtn" data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, model.bool.FormulaCreation.urlName)">
-                    Prüfen</button>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-success" id="sampleSolBtn">Zeige Musterlösung</button>
-            </div>
-            <div class="btn-group">
-                <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)" class="btn btn-default">
-                    Nächste Aufgabe</a>
-            </div>
+            <button data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, model.bool.FormulaCreation.urlName)"
+            class="btn btn-primary w-100" id="testBtn">Prüfen</button>
+
+            <button class="btn btn-success w-100" id="sampleSolBtn">Zeige Musterlösung</button>
+
+            <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)" class="btn btn-secondary  w-100">
+                Nächste Aufgabe</a>
         </div>
 
         <div id="messageDiv"></div>

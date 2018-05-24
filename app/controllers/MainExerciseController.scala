@@ -61,7 +61,7 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
       val readLearningPaths: Seq[LearningPath] = toolMain.readLearningPaths
 
       toolMain.futureSaveLearningPaths(readLearningPaths) map {
-        _ => Ok(views.html.admin.learningPathRead(user, readLearningPaths))
+        _ => Ok(views.html.admin.learningPathRead(user, readLearningPaths, toolMain))
       }
   }
 

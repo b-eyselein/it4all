@@ -1,19 +1,18 @@
 import * as $ from 'jquery';
 
-let testBtn: JQuery;
+let testBtn: JQuery, solutionInput: JQuery;
 
 interface NaryConversionResult {
     correct: boolean
 }
 
-function onAjaxSuccess(response: NaryConversionResult) {
+function onNaryConversionSuccess(response: NaryConversionResult): void {
     testBtn.prop('disabled', false);
 
-    let solInputParent = $('#solution').parent();
     if (response.correct) {
-        solInputParent.removeClass('has-error').addClass('has-success');
+        solutionInput.removeClass('is-invalid').addClass('is-valid');
     } else {
-        solInputParent.removeClass('has-success').addClass('has-error');
+        solutionInput.removeClass('is-valid').addClass('is-invalid');
     }
 }
 
@@ -33,10 +32,10 @@ function testSol(): void {
             startingNB: $('#startingNB').data('base'),
             targetNB: $('#targetNB').data('base'),
             value: $('#value').val(),
-            solution: $('#solution').val()
+            solution: solutionInput.val()
         }),
         async: true,
-        success: onAjaxSuccess,
+        success: onNaryConversionSuccess,
         error: onNaryConversionError
     });
 }
@@ -44,4 +43,6 @@ function testSol(): void {
 $(() => {
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
+
+    solutionInput = $('#solution');
 });

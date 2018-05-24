@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 
-let testBtn: JQuery;
+let testBtn: JQuery, binaryAbs: JQuery, invertedAbs: JQuery, solution: JQuery;
 
 interface TwoCompResult {
     correct: boolean
@@ -8,18 +8,22 @@ interface TwoCompResult {
     binaryAbs: boolean
 }
 
-function colorParent(parent: JQuery, correct: boolean): void {
+function colorElement(element: JQuery, correct: boolean): void {
+    testBtn.prop('disabled', false);
+
     if (correct) {
-        parent.removeClass('has-error').addClass('has-success');
+        element.removeClass('is-invalid').addClass('is-valid');
     } else {
-        parent.removeClass('has-success').addClass('has-error');
+        element.removeClass('is-valid').addClass('is-invalid');
     }
 }
 
 function onAjaxSuccess(response: TwoCompResult): void {
-    colorParent($('#binaryAbs').parent(), response.binaryAbs);
-    colorParent($('#invertedAbs').parent(), response.invertedAbs);
-    colorParent($('#solution').parent(), response.correct);
+    testBtn.prop('disabled', false);
+
+    colorElement(binaryAbs, response.binaryAbs);
+    colorElement(invertedAbs, response.invertedAbs);
+    colorElement(solution, response.correct);
 }
 
 function testSol(): void {
@@ -31,10 +35,10 @@ function testSol(): void {
         contentType: 'application/json',
         url: testBtn.data('url'),
         data: JSON.stringify({
-            invertedAbs: $('#invertedAbs').val(),
-            binaryAbs: $('#binaryAbs').val(),
+            invertedAbs: invertedAbs.val(),
+            binaryAbs: binaryAbs.val(),
             value: parseInt($('#value').val() as string),
-            solution: $('#solution').val()
+            solution: solution.val()
         }),
         async: true,
         success: onAjaxSuccess
@@ -42,6 +46,10 @@ function testSol(): void {
 }
 
 $(() => {
+    binaryAbs = $('#binaryAbs');
+    invertedAbs = $('#invertedAbs');
+    solution = $('#solution');
+
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
 });

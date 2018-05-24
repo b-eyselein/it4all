@@ -1,4 +1,4 @@
-@(title: String, maybeUser: Option[model.User], scripts: Html = Html(""), scriptsBefore: Html = Html(""))(content: Html)
+@(title: String, maybeUser: Option[model.User], scripts: Html = Html(""))(content: Html)
 <!DOCTYPE html>
 
 <html lang="de">
@@ -9,97 +9,94 @@
         <title>it4all: @title</title>
 
             <!-- JQuery, Bootstrap (CSS und JS) -->
-        <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
 
-        @scriptsBefore
+        <link rel="stylesheet" href="@routes.Assets.versioned("lib/bootstrap/dist/css/bootstrap.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("lib/octicons/build/font/octicons.css")">
 
-        <link rel="stylesheet" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")">
-        <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.min.js")"></script>
+        <script src="@routes.Assets.versioned("lib/jquery/dist/jquery.js")"></script>
+        <script src="@routes.Assets.versioned("lib/popper.js/umd/popper.js")"></script>
+        <script src="@routes.Assets.versioned("lib/bootstrap/dist/js/bootstrap.js")"></script>
 
         @scripts
     </head>
 
     <body>
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="@routes.Application.index">it4all<sup>BETA</sup></a>
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
 
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                Aufgabenbereiche <span class="caret"></span></a>
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center">
+            <a class="navbar-brand" href="@routes.Application.index">it4all<sup>BETA</sup></a>
+
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">
+                        Aufgabenbereiche <span class="caret"></span>
+                    </a>
+
+                    <div class="dropdown-menu">
+                    @for(idPartTool <- model.toolMains.ToolList.AllToolMains.filter(_.toolState != model.toolMains.ToolState.ALPHA)) {
+                        <a class="dropdown-item" href="@routes.MainExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge</a>
+                    }
+                    </div>
+                </li>
+
+            </ul>
+
+            <span class="navbar-text"><strong>@title</strong></span>
+
+            <ul class="navbar-nav ml-auto">
+            @maybeUser match {
+                case Some(user) => {
+
+                    @if(user.isAdmin) {
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">
+                                <span class="octicon octicon-mark-github"></span> Administrator <span class="caret"></span>
+                            </a>
 
                             <ul class="dropdown-menu">
-                            @for(idPartTool <- model.toolMains.ToolList.AllToolMains.filter(_.toolState != model.toolMains.ToolState.ALPHA)) {
-                                <li><a href="@routes.MainExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge</a></li>
-                            }
+                                @for(tool <- model.toolMains.ToolList.AllToolMains) {
+                                    <a class="dropdown-item" href="@routes.MainExerciseController.adminIndex(tool.urlPart)">@tool.toolname</a>
+                                }
+
+                                <a class="dropdown-item" href="@routes.AdminController.index">Allgemein</a>
                             </ul>
                         </li>
-
-                        <p class="navbar-text"><strong>@title</strong></p>
-                    </ul>
-
-
-
-
-                    <ul class="nav navbar-nav navbar-right">
-                    @maybeUser match {
-                        case Some(user) => {
-                            @if(user.isAdmin) {
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="">
-                                        <span class="glyphicon glyphicon-cog"></span>
-                                        Administrator <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        @for(tool <- model.toolMains.ToolList.AllToolMains) {
-                                            <li><a href="@routes.MainExerciseController.adminIndex(tool.urlPart)">@tool.toolname</a></li>
-                                        }
-
-                                        <li class="divider"></li>
-
-
-                                        <li><a href="@routes.AdminController.index">Allgemein</a></li>
-                                    </ul>
-                                </li>
-                            }
-                            <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
-                                    @user.username <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="@routes.UserController.myCourses">Meine Kurse</a></li>
-
-                                    <li><a href="@routes.UserController.preferences">Präferenzen</a></li>
-
-                                    <li class="divider"></li>
-
-                                    <li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span>
-                                        Logout</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        }
-                        case None => {
-                            <li>
-                                <a href="@routes.LoginController.login"><span class="glyphicon glyphicon-log-in"> Login</span> </a>
-                            </li>
-                            <li>
-                                <a href="@routes.LoginController.register"><span class="glyphicon glyphicon-new-window"> Registrieren</span> </a>
-                            </li>
-                        }
                     }
-                    </ul>
-                </div>
-            </div>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">
+                            <span class="octicon octicon-mortar-board"></span>
+                            @user.username <span class="caret"></span>
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <a class="dropdown-item" href="@routes.UserController.myCourses">Meine Kurse</a>
+
+                            <a class="dropdown-item" href="@routes.UserController.preferences">Präferenzen</a>
+
+                            <a class="dropdown-item" href="@routes.LoginController.logout">
+                                <span class="glyphicon glyphicon-log-out"></span> Logout
+                            </a>
+                        </ul>
+                    </li>
+                }
+
+                case None => {
+                    <li class="nav-item">
+                        <a class="nav-link" href="@routes.LoginController.login"><span class="glyphicon glyphicon-log-in"> Login</span> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@routes.LoginController.register"><span class="glyphicon glyphicon-new-window"> Registrieren</span> </a>
+                    </li>
+                }
+            }
+            </ul>
         </nav>
+        <br>
+
+
         @content
+
     </body>
 </html>

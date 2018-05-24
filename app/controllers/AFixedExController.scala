@@ -8,20 +8,18 @@ import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Try}
+import scala.util.Failure
 
 abstract class AFixedExController(cc: ControllerComponents, dbcp: DatabaseConfigProvider)(implicit ec: ExecutionContext)
   extends AExerciseController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   override protected type ToolMainType <: FixedExToolMain
 
-  def adminImportToRead(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain: FixedExToolMain) =>
+  def adminImportToRead(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
       // FIXME: refactor!!!!!!!!!
 
-      val readTries: Seq[Try[toolMain.ReadType]] = toolMain.readImports
-
-      val (readSuccesses: Seq[toolMain.ReadType], readFailures: Seq[Failure[toolMain.ReadType]]) = CommonUtils.splitTries(readTries)
+      val (readSuccesses: Seq[toolMain.ReadType], readFailures: Seq[Failure[toolMain.ReadType]]) = CommonUtils.splitTries(toolMain.readImports)
 
       toolMain.futureSaveRead(readSuccesses) map { saveResults: Seq[(toolMain.ReadType, Boolean)] =>
         val readAndSaveResult = ReadAndSaveResult(saveResults map (sr => new ReadAndSaveSuccess[toolMain.ReadType](sr._1, sr._2)), readFailures)

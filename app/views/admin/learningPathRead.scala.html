@@ -1,17 +1,21 @@
-@(user: model.User, learningPaths: Seq[model.learningPath.LearningPath])
+@(user: model.User, learningPaths: Seq[model.learningPath.LearningPath], toolMain: model.toolMains.AToolMain)
 
-@main("Lernpfad eingelesen", Some(user)) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Eingelesene Lernpfade</h1>
-        </div>
+    @title = @{
+        "Lernpfade eingelesen"
+    }
+
+    @main(title, Some(user)) {
+        <div class="container">
+
+            <div class="form-group">
+                <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.adminIndex(toolMain.urlPart)">Zurück zur Administratorseite</a>
+            </div>
 
         @for(learningPath <- learningPaths) {
             <p>Titel: @learningPath.title</p>
 
             @for(section <- learningPath.sections) {
-                <p>ID: @section.id</p>
-                <p>Titel: @section.title</p>
+                <p>ID: @section.id, Titel: @section.title</p>
 
                 @section match {
                     case ts: model.learningPath.TextSection => {
@@ -26,5 +30,5 @@
                 }
 
         }
-    </div>
-}
+        </div>
+    }

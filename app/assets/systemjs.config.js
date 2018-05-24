@@ -7,7 +7,6 @@
         paths: {
             // paths serve as alias
             'npm:': '/assets/lib/'
-            // , 'ace': 'lib/ace'
         },
         // map tells the System loader where to look for things
         map: {
@@ -19,7 +18,7 @@
             'codemirror': 'npm:codemirror',
 
             'graphlib': 'npm:graphlib/dist/graphlib.js',
-            'jquery': 'npm:jquery/jquery.js',
+            'jquery': 'npm:jquery/dist/jquery.js',
             'backbone': 'npm:backbone/backbone.js',
 
             'lodash': 'npm:lodash/lodash.js',

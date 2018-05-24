@@ -20,7 +20,7 @@
       ]
     },
     "typeRoots": [
-      "node-modules/@types"
+      "target/web/node-modules/main/webjars/@types"
     ]
   },
   "exclude": [

@@ -13,27 +13,25 @@
     </script>
 }
 
-@main("Wertetabelle", Some(user), scripts) {
+@title = @{
+    "Ausfüllen einer Wertetabelle"
+}
+
+@main(title, Some(user), scripts) {
     <div class="container">
-        <div class="page-header">
-            <h1>Ausfüllen einer Wertetabelle</h1>
-        </div>
 
         <h2 class="text-center">
             <code>@model.bool.BoolConsts.LerVariable
                 = <span id="@model.bool.BoolConsts.FormulaName" data-formula="@question.formula.asString">@Html(question.formula.asHtml)</span></code>
         </h2>
 
-        <hr>
+        <br>
 
         <div class="row">
-            <div class="col-sm-6 col-sm-offset-3">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
 
-                <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
-                <input hidden id="exerciseType" value="@question.exPart.urlName" title="hidden">
-                <input hidden id="solVar" value="@model.bool.BoolConsts.SolVariable" title="hidden">
-
-                <table class="table table-responsive">
+                <table class="table">
                     <thead>
                         <tr>
                             @for(v <- variables) {
@@ -45,27 +43,28 @@
                     <tbody id="valueTableBody">
                     @for(assignment <- question.assignments) {
                         <tr id="@assignment.identifier">
+
                             @for(variable <- variables) {
                                 <td class="text-center" data-variable="@variable" data-value="@assignment(variable)">@assignment.asChar(variable)</td>
                             }
-                        <td>
 
+                        <td>
                             <button type="button" class="form-control">0</button>
                         </td>
+
                         </tr>
                     }
                     </tbody>
                 </table>
 
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button id="testBtn" class="btn btn-primary" data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, model.bool.TableFillout.urlName)">
-                            Testen</button>
-                    </div>
-                    <a class="btn btn-default" href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, question.exPart.urlName)">
+                <div class="btn-group d-flex">
+                    <button id="testBtn" class="btn btn-primary w-100" data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, model.bool.TableFillout.urlName)">
+                        Testen</button>
+                    <a class="btn btn-secondary w-100" href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, question.exPart.urlName)">
                         Nächste Aufgabe</a>
                 </div>
             </div>
+            <div class="col-sm-3"></div>
         </div>
 
     </div>

@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 
-let testBtn: JQuery;
+let testBtn: JQuery, solutionInput: JQuery;
 
 interface NaryAdditionResult {
     correct: boolean
@@ -9,11 +9,10 @@ interface NaryAdditionResult {
 function onNaryAdditionSuccess(response: NaryAdditionResult): void {
     testBtn.prop('disabled', false);
 
-    let solInputParent = $('#solution').parent();
     if (response.correct) {
-        solInputParent.removeClass('has-error').addClass('has-success');
+        solutionInput.removeClass('is-invalid').addClass('is-valid');
     } else {
-        solInputParent.removeClass('has-success').addClass('has-error');
+        solutionInput.removeClass('is-valid').addClass('is-invalid');
     }
 }
 
@@ -33,7 +32,7 @@ function testSol(): void {
             summand1: $('#firstSummand').val(),
             summand2: $('#secondSummand').val(),
             base: $('#base').data('base'),
-            solution: ($('#solution').val() as string).split('').reverse().join('')
+            solution: (solutionInput.val() as string).split('').reverse().join('')
         }),
         async: true,
         success: onNaryAdditionSuccess,
@@ -44,5 +43,7 @@ function testSol(): void {
 $(() => {
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
+
+    solutionInput = $('#solution');
 });
 

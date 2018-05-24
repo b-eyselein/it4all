@@ -1,48 +1,46 @@
 @(form: Form[model.FormMappings.UserCredForm])
 
-    @formHasErrors = @{
-       form.errors.nonEmpty
-    }
+@formHasErrors = @{
+    form.errors.nonEmpty
+}
 
-    @input(inpType: String, label: String, nameAttr: String, placeholder: String) = {
-        <div class="form-group@{if(formHasErrors) " has-error" else ""}">
-            <label class="control-label col-sm-3" for="@nameAttr">@label:</label>
-            <div class="col-sm-9">
-                <input type="@inpType" class="form-control" id="@nameAttr" name="@nameAttr" placeholder="@placeholder" required>
-            </div>
-        </div>
-    }
+@main("Login", None) {
+    <div class="container">
 
-    @main("Login", None) {
-        <div class="container">
+        <form action="@routes.LoginController.authenticate" role="form" class="form-horizontal" method="post">
+            <h1>Einloggen</h1>
 
-            <div class="page-header">
-                <h1>Einloggen</h1>
+            <div class="form-group row">
+                <label class="col-form-label col-sm-3" for="@model.core.CoreConsts.nameName">Nutzername:</label>
+                <div class="col-sm-9">
+                    <input class="form-control" id="@model.core.CoreConsts.nameName" name="@model.core.CoreConsts.nameName" placeholder="Nutzername" required>
+                </div>
             </div>
 
-            @helper.form(routes.LoginController.authenticate, 'role -> "form", 'class -> "form-horizontal") {
-
-                @input("text", "Nutzername", model.core.CoreConsts.nameName, "s-Nummer")
-
-                @input("password", "Passwort", model.core.CoreConsts.pwName, "Passwort")
-
-                <hr>
-
-                <div class="row">
-                    <div class="col-sm-offset-3 col-sm-9">
-                        <p class="help-block">Da it4all keinen Zugriff auf das Login-System der Universität Würburg hat, müssen Sie Sich erst
-                            <a href="@routes.LoginController.register" tabindex="-1">registrieren</a>.</p>
-                    </div>
+            <div class="form-group row">
+                <label class="col-form-label col-sm-3" for="@model.core.CoreConsts.pwName">Passwort:</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" id="@model.core.CoreConsts.pwName" name="@model.core.CoreConsts.pwName" placeholder="Passwort" required>
                 </div>
+            </div>
 
-                <hr>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-9">
-                        <button type="submit" class="form-control">Einloggen</button>
-                    </div>
+            <div class="form-group row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-9">
+                    <span class="help-block text-info">
+                        Da it4all keinen Zugriff auf das Login-System der Universität Würburg hat, müssen Sie Sich erst
+                        <a href="@routes.LoginController.register" tabindex="-1">registrieren</a>.
+                    </span>
                 </div>
-            }
+            </div>
 
-        </div>
-    }
+            <div class="form-group row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-9">
+                    <button type="submit" class="btn btn-secondary">Einloggen</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+}
