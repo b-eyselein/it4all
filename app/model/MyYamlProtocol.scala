@@ -120,9 +120,12 @@ object MyYamlProtocol {
 
     def mapToJson(yamlValue: YamlValue): JsValue = yamlValue match {
       case YamlArray(arrayValues) => JsArray(arrayValues map mapToJson)
+      case YamlSet(content)       => JsArray(content.toSeq map mapToJson)
+
       case YamlObject(yamlFields) => JsObject(yamlFields map {
         case (key, value) => key.forgivingStr -> mapToJson(value)
       })
+
       case YamlString(str)        => JsString(str)
       case YamlBoolean(bool)      => JsBoolean(bool)
       case YamlNull               => JsNull
