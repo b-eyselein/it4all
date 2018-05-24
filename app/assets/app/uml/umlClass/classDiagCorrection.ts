@@ -122,7 +122,7 @@ function displayUmlAttributeMatch(umlAttributeMatch: UmlClassAttributeMatch): st
     return `<li><span class="text text-${textClass}">${explanation}</li>`;
 }
 
-function displayAttributeMatchingResult(memberResult: MatchingResult<UmlClassAttribute, UmlAttributeAnalysisResult>) {
+function displayAttributeMatchingResult(memberResult: MatchingResult<UmlClassAttribute, UmlAttributeAnalysisResult>): string {
     if (memberResult.success) {
         return `<span class="text text-success">Die Attribute waren korrekt.</span>`
     } else {
@@ -135,7 +135,7 @@ function displayAttributeMatchingResult(memberResult: MatchingResult<UmlClassAtt
 }
 
 
-function displayUmlMethodMatch(umlMethodMatch: UmlClassMethodMatch) {
+function displayUmlMethodMatch(umlMethodMatch: UmlClassMethodMatch): string {
     let explanation, textClass;
 
     switch (umlMethodMatch.matchType) {
@@ -180,7 +180,7 @@ function displayUmlMethodMatch(umlMethodMatch: UmlClassMethodMatch) {
     return `<li><span class="text text-${textClass}">${explanation}</li>`;
 }
 
-function displayMethodMatchingResult(memberResult: MatchingResult<any, any>) {
+function displayMethodMatchingResult(memberResult: MatchingResult<any, any>): string {
     if (memberResult.success) {
         return `<span class="text text-success">Die Methoden waren korrekt.</span>`
     } else {
@@ -226,24 +226,12 @@ function explainClassResult(classResult: UmlClassMatch, alertClass, glyphicon, s
     }
 }
 
-/**
- * @param {object} assocRes
- * @param {string} assocRes.success
- * @param {UmlAssociation} assocRes.userArg
- * @param {UmlAssociation} assocRes.sampleArg
- * @param {string} alertClass
- * @param {string} glyphicon
- * @param {string} successExplanation
- *
- * @return {string}
- */
-function explainAssocResult(assocRes, alertClass, glyphicon, successExplanation) {
+function explainAssocResult(assocRes: Match<UmlAssociation, AnalysisResult>, alertClass: string, glyphicon: string, successExplanation: string): string {
     let firstEnd = assocRes.userArg != null ? assocRes.userArg.firstEnd : assocRes.sampleArg.firstEnd;
     let secondEnd = assocRes.userArg != null ? assocRes.userArg.secondEnd : assocRes.sampleArg.secondEnd;
 
-
     let explanations = [];
-    if (assocRes.success === 'UNSUCCESSFUL_MATCH' || assocRes.success === 'PARTIAL_MATCH') {
+    if (assocRes.matchType === 'UNSUCCESSFUL_MATCH' || assocRes.matchType === 'PARTIAL_MATCH') {
         let userArg = assocRes.userArg, sampleArg = assocRes.sampleArg;
 
 
@@ -305,13 +293,6 @@ function explainImplResult(implRes: Match<UmlImplementation, AnalysisResult>, al
 </ul>`.trim();
 }
 
-/**
- * @param {object} matchingRes
- * @param {string} matchingRes.success
- * @param {function} explanationFunc
- *
- * @return {string}
- */
 function displayMatchResult(matchingRes: Match<any, any>, explanationFunc: (m: Match<any, any>, a: string, g: string, s: string) => string): string {
     let alertClass, glyphicon, successExplanation;
 
@@ -367,7 +348,6 @@ function displayMatchingResultList(matchingResultList: MatchingResult<any, any>,
     }
 }
 
-
 function onUmlClassDiagCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
     classDiagTestBtn.prop('disabled', false);
     $('#resultDiv').prop('hidden', false);
@@ -389,7 +369,6 @@ function onUmlClassDiagCorrectionError(jqXHR): void {
     classDiagTestBtn.prop('disabled', false);
     console.error(jqXHR.responseJSON);
 }
-
 
 function getClassNameFromCellId(id: string): string {
     return (classDiagGraph.getCell(id) as MyJointClass).getClassName();

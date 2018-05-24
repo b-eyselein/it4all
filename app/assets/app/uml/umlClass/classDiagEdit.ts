@@ -1,12 +1,14 @@
 import * as $ from 'jquery';
 
-import {ASSOC_TYPES, CARDINALITIES, UmlClassAttribute, UmlClassMethod, VISIBILITIES} from "../umlInterfaces";
+import {UmlClassAttribute, UmlClassMethod, VISIBILITIES} from "../umlInterfaces";
 import {MyJointClass} from "./classDiagElements";
 import {classDiagGraph} from "./classDiagDrawing";
 
 export {editClass, editLink};
 
-let editDiv, classEditDiv, linkEditDiv;
+let classEditDiv: JQuery, linkEditDiv: JQuery;
+
+let classEditSubmit: JQuery, linkEditSubmit: JQuery;
 
 const UmlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
 
@@ -116,66 +118,6 @@ function methodInputLine(umlMethod: UmlClassMethod, index: number): string {
 </div>`.trim();
 }
 
-function cardinalityOptions(current: string): string {
-    return Object.keys(CARDINALITIES).map((c) => `<option value="${CARDINALITIES[c]}" ${CARDINALITIES[c] === current ? 'selected' : ''}>${CARDINALITIES[c]}</option>`).join('\n')
-}
-
-function htmlForCardinalityEdit(linkId, assocType, source, sourceMult, target, targetMult): string {
-    let sourceMultOptions = cardinalityOptions(sourceMult);
-    let assocTypeOptions = Object.keys(ASSOC_TYPES).map((c) => `<option value="${ASSOC_TYPES[c]}" ${c === assocType ? 'selected' : ''}>${ASSOC_TYPES[c]}</option>`).join('\n');
-    let targetMultOptions = cardinalityOptions(targetMult);
-
-    return `
-<div class="row">
-    <div class="col-md-3">
-        <div class="panel panel-default">
-            <div class="panel-heading" id="sourceClass">${source}</div>
-            <div class="panel-body"><hr></div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-3 text-center">
-                <select class="form-control" id="sourceMult" title="empty">${sourceMultOptions}</select>
-            </div>
-
-            <div class="col-md-6">
-                <!-- FIXME: use! -->
-                <!--<select class="form-control" id="assocType" title="empty">${assocTypeOptions}</select>-->
-            </div>
-
-            <div class="col-md-3">
-                <select class="form-control" id="targetMult" title="empty">${targetMultOptions}</select>
-            </div>
-        </div>
-
-        <hr class="assocLine" id="linkId" data-id="${linkId}">
-    </div>
-
-    <div class="col-md-3">
-        <div class="panel panel-default">
-            <div class="panel-heading" id="targetClass">${target}</div>
-            <div class="panel-body"><hr></div>
-        </div>
-    </div>
-</div>
-
-<hr>
-
-<div class="btn-group btn-group-justified">
-    <div class="btn-group">
-        <button type="reset" class="btn btn-default" onclick="discardLinkEdits()">
-            Änderungen verwerfen</button>
-    </div>
-    <div class="btn-group">
-        <button class="btn btn-primary" onclick="updateCardinality()">Änderungen übernehmen</button>
-    </div>
-</div>
-
-<hr>`.trim();
-}
-
 function classMemberFromHtml(memberGroup): ClassMemberAttrs {
     return {
         visibility: $(memberGroup).find('select[data-for="visibility"]').val() as string,
@@ -231,6 +173,7 @@ function umlClassMethodFromHtml(memberGroup: HTMLElement): UmlClassMethod | null
 }
 
 function editClass(model: MyJointClass): void {
+    // Clear current edit...
     discardClassEdits();
 
     classEditDiv.prop('hidden', false);
@@ -249,8 +192,8 @@ function discardClassEdits(): void {
     $('#editMethodsDiv').find('.form-group').remove();
 }
 
-function updateClass(button: HTMLButtonElement): void {
-    let element = classDiagGraph.getCell($(button).data('id'));
+function updateClass(): void {
+    let element = classDiagGraph.getCell(classEditSubmit.data('id'));
 
     if (element instanceof MyJointClass) {
         element.setClassType($('#classTypeSelect').val() as string);
@@ -282,35 +225,41 @@ function updateClass(button: HTMLButtonElement): void {
 }
 
 function editLink(cellView: joint.dia.CellView): void {
+    discardLinkEdits();
+
     let cellModel = cellView.model;
 
     let assocType = 'ASSOCIATION';
 
-    let sourceId: string = cellModel.get('source').id;
-    let targetId: string = cellModel.get('target').id;
+    let source: joint.dia.Cell = classDiagGraph.getCell(cellModel.get('source').id);
+    let target: joint.dia.Cell = classDiagGraph.getCell(cellModel.get('target').id);
 
-    let source = classDiagGraph.getCell(sourceId);
-    let target = classDiagGraph.getCell(targetId);
+    let sourceMult: string = cellModel.prop('labels/0/attrs/text/text');
+    let targetMult: string = cellModel.prop('labels/1/attrs/text/text');
 
-    let sourceMult: string = cellModel.attributes.labels[0].attrs.text.text;
-    let targetMult: string = cellModel.attributes.labels[1].attrs.text.text;
 
     linkEditDiv.prop('hidden', false);
 
-    editDiv.html(htmlForCardinalityEdit(cellModel.id, assocType, source.get('className'), sourceMult, target.get('className'), targetMult));
+    linkEditSubmit.data('id', cellModel.id);
+
+    if (source instanceof MyJointClass && target instanceof MyJointClass) {
+        $('#sourceClass').text(source.getClassName());
+        $('#targetClass').text(target.getClassName());
+    }
+
+    $('#sourceMult').val(sourceMult);
+    $('#targetMult').val(targetMult);
 }
 
-function discardLinkEdits() {
-
+function discardLinkEdits(): void {
     linkEditDiv.prop('hidden', true);
-    editDiv.html('');
 }
 
-function updateCardinality(): void {
-    let link: joint.dia.Cell = classDiagGraph.getCell($('#linkId').data('id'));
+function updateLink(): void {
+    const link: joint.dia.Link = classDiagGraph.getCell(linkEditSubmit.data('id')) as joint.dia.Link;
 
-    link.prop(['labels/0/attrs/text/text'], $('#sourceMult').val());
-    link.prop(['labels/1/attrs/text/text'], $('#targetMult').val());
+    link.prop('labels/0/attrs/text/text', $('#sourceMult').val());
+    link.prop('labels/1/attrs/text/text', $('#targetMult').val());
 
     discardLinkEdits();
 }
@@ -326,9 +275,11 @@ function addMethods(umlMethods: UmlClassMethod[], startIndex: number): void {
 }
 
 $(() => {
-    editDiv = $('#editDiv');
     classEditDiv = $('#classEditDiv');
     linkEditDiv = $('#linkEditDiv');
+
+    classEditSubmit = $('#classEditSubmit');
+    linkEditSubmit = $('#linkEditSubmit');
 
     let editAttrsPlusBtn = $('#editAttrsPlusBtn');
     editAttrsPlusBtn.on('click', () => {
@@ -346,6 +297,10 @@ $(() => {
         addMethods([{visibility: '', name: '', parameters: '', type: '', isAbstract: false, isStatic: false}], index);
     });
 
+
     $('#classEditReset').on('click', discardClassEdits);
-    $('#classEditSubmit').on('click', (event: JQuery.Event) => updateClass(event.target as HTMLButtonElement));
+    classEditSubmit.on('click', updateClass);
+
+    $('#linkEditReset').on('click', discardLinkEdits);
+    linkEditSubmit.on('click', updateLink);
 });

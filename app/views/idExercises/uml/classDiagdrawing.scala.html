@@ -225,18 +225,16 @@
 
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group">
-                            <button type="reset" class="btn btn-default" onclick="discardLinkEdits()">
+                            <button type="reset" class="btn btn-default" id="linkEditReset">
                                 Änderungen verwerfen</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-primary" onclick="updateCardinality()">Änderungen übernehmen</button>
+                            <button class="btn btn-primary" id="linkEditSubmit">Änderungen übernehmen</button>
                         </div>
                     </div>
 
                     <hr>
                 </div>
-
-                <div id="editDiv"></div>
 
                 <div id="resultDiv" hidden>
                     <h2 class="text-center">Resultate</h2>

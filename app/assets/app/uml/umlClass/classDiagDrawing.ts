@@ -26,7 +26,8 @@ let classDiagTestBtn;
 const classDiagGraph = new joint.dia.Graph();
 let classDiagPaper;
 
-let sel = 'POINTER';
+
+let sel: 'POINTER' | 'CLASS' | 'ABSTRACT' | 'INTERFACE' | 'IMPLEMENTATION' | 'ASSOCIATION' | 'AGGREGATION' | 'COMPOSITION' = 'POINTER';
 
 const SIMPLE_CLASS_PREFIX = 'Klasse_';
 
@@ -144,8 +145,6 @@ function cellOnLeftClick(cellView: joint.dia.CellView, evt) {
 
             editLink(newLink);
 
-            // htmlForCardinalityEdit(newId, '', source, sourceMult, target, targetMult);
-
             chosenCellView.unhighlight();
             cellView.unhighlight();
 
@@ -169,7 +168,7 @@ function selectAssocType(button: HTMLAnchorElement): void {
     assocButton.className = 'btn btn-primary';
     assocButton.dataset.conntype = button.dataset.conntype;
 
-    sel = button.dataset.conntype.trim();
+    sel = button.dataset.conntype.trim() as ('POINTER' | 'CLASS' | 'ABSTRACT' | 'INTERFACE' | 'IMPLEMENTATION' | 'ASSOCIATION' | 'AGGREGATION' | 'COMPOSITION');
     $('#assocType').text(button.textContent);
 }
 
@@ -186,7 +185,7 @@ function selectButton(button: HTMLElement): void {
     }
 }
 
-function addImplementation(sourceId: string, targetId: string) {
+function addImplementation(sourceId: string, targetId: string): void {
     classDiagGraph.addCell(new joint.shapes.uml.Implementation({source: {id: sourceId}, target: {id: targetId}}));
 }
 
@@ -291,26 +290,18 @@ function loadClasses(classesToLoad: UmlClass[]): void {
 
 function onSolutionLoadSuccess(response: UmlSolution): void {
     loadClasses(response.classes);
-
-    for (let assoc of response.associations) {
-        loadAssociation(assoc);
-    }
-
-    for (let impl of response.implementations) {
-        loadImplementation(impl);
-    }
+    response.associations.forEach(loadAssociation);
+    response.implementations.forEach(loadImplementation);
 }
 
 function onSolutionLoadError(jqXHR): void {
-    console.error(jqXHR);
+    alert(jqXHR);
 }
 
-function loadSolution(url: string) {
+function loadSolution(url: string): void {
     $.ajax({
-        type: 'GET',
-        dataType: 'json', // return type
-        url,
-        async: true,
+        type: 'GET', dataType: 'json',
+        url, async: true,
         success: onSolutionLoadSuccess,
         error: onSolutionLoadError
     });
@@ -330,23 +321,24 @@ function addHandlersToButtons(): void {
     })
 }
 
-function onDragStart(ev: DragEvent) {
-    let target = ev.target as HTMLSpanElement;
+function onDragStart(ev: DragEvent): void {
+    let jTarget = $(ev.target);
 
-    let className = (target as HTMLSpanElement).innerHTML;
+    let className = jTarget.text();
+    const baseName: string = jTarget.data('baseform');
 
-    if (target.getAttribute('data-baseform') !== null) {
-        className = target.getAttribute('data-baseform');
+    if (baseName !== null && baseName.length > 0) {
+        className = baseName;
     }
 
     ev.dataTransfer.setData('text', className);
 }
 
 
-function drop(jqEvent) {
+function drop(jqEvent: JQuery.Event): void {
     jqEvent.preventDefault();
 
-    let event = jqEvent.originalEvent;
+    let event = jqEvent.originalEvent as DragEvent;
 
     addUmlClass({
         name: event.dataTransfer.getData('text'),
@@ -380,11 +372,8 @@ $(() => {
     // Init Graph and Paper
     classDiagPaper = new joint.dia.Paper({
         el: paperJQ, model: classDiagGraph,
-
         width: paperJQ.width(), height: PAPER_HEIGHT,
-
         gridSize: GRID_SIZE, drawGrid: {name: DEF_GRID},
-
         elementView: (element) => {
             if (element instanceof MyJointClass) {
                 return MyJointClassView;
@@ -397,28 +386,6 @@ $(() => {
     // Set callback for click on cells and blank paper
     classDiagPaper.on('cell:pointerclick', cellOnLeftClick);
     classDiagPaper.on('blank:pointerdown', blankOnPointerDown);
-
-
-    // paper.on('cell:pointerdown', (cellView, evt) => {
-    //     console.warn('pointer down...');
-    //     evt.stopPropagation();
-    // });
-
-    // paper.on('cell:contextmenu', (elementView, evt) => {
-    //     if (elementView instanceof MyJointClassView) {
-    //  // Do nothing...
-    // } else {
-    //     evt.stopPropagation();
-    //
-    //  // FIXME:
-    // if (getsHelp && elementView.model.attributes.type === 'uml.Class') {
-    //     alert('Sie können keine Klassen löschen!');
-    // } else if (confirm('Wollen Sie dieses Objekt wirklich löschen?')) {
-    // elementView.model.remove();
-    // }
-    // }
-    // });
-
 
     loadSolution(paperJQ.data('url'));
 

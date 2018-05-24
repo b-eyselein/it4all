@@ -45,7 +45,7 @@ class MyJointClass extends joint.shapes.basic.Generic {
         joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
     }
 
-    updateRectangles() {
+    updateRectangles(): void {
         const attrs = this.get('attrs');
 
         const rects = [
@@ -116,7 +116,7 @@ class MyJointClass extends joint.shapes.basic.Generic {
         return this.get('className');
     }
 
-    setClassName(className: string) {
+    setClassName(className: string): void {
         this.set('className', className);
     }
 
@@ -187,7 +187,7 @@ class MyJointClassView extends joint.dia.ElementView {
         });
     }
 
-    pointerdblclick() {
+    pointerdblclick(): void {
         editClass(this.model as MyJointClass);
     }
 
