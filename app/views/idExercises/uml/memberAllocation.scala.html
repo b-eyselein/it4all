@@ -12,7 +12,7 @@
 
 @attributeInput(attr: model.uml.UmlAttribute) = {
     <div class="checkbox">
-        <label><input type="checkbox" data-type="@attr.memberType" data-value="@attr.memberName">
+        <label><input type="checkbox" data-visibility="@attr.visibility.representant" data-type="@attr.memberType" data-value="@attr.memberName">
             @attr.visibility.representant @attr.memberName: @attr.memberType
         </label>
     </div>
@@ -36,31 +36,32 @@
 
         <div class="row">
             <div class="col-sm-4">
-                <div class="page-header">
-                    <h2>@title</h2>
+                <h2 class="text-center">@title</h2>
+
+                <div class="card">
+                    <div class="card-body">@exercise.ex.text</div>
                 </div>
 
-                <div class="well">@exercise.ex.text</div>
+                <br>
 
-                <hr>
-
-                <form method="post" id="allocationForm" action="@routes.ExerciseController.correct("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)">
-                    <input type="text" title="hidden" hidden name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName">
-                    <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
-                </form>
+                <div class="form-group">
+                    <button data-url="@routes.ExerciseController.correctLive("uml", exercise.ex.id, part = model.uml.MemberAllocation.urlName)"
+                    class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
+                </div>
 
             </div>
 
             <div class="col-md-8">
+
             @for(clazzQuadruple <- exercise.ex.solution.classes grouped 4) {
                 <div class="row">
                 @for(completeClass <- clazzQuadruple) {
                     <div class="col-md-3">
 
-                        <div class="panel panel-default" data-classname="@completeClass.className">
-                            <div class="panel-heading">@completeClass.className</div>
+                        <div class="card" data-classname="@completeClass.className" data-classtype="@completeClass.classType.entryName">
+                            <div class="card-header">@completeClass.className</div>
 
-                            <div class="panel-body">
+                            <div class="card-body">
 
                                 <section class="attributeList">
                                 @for(attr <- exercise.allAttributes) {
@@ -81,9 +82,10 @@
 
                     </div>
                 }
-
                 </div>
-            }
+
+                <hr>
+                }
 
             </div>
         </div>

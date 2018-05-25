@@ -1,17 +1,18 @@
 @(user: model.User, users: Seq[model.User])
 
 @scripts = {
-    @* Javascript Routes *@
-    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 
-    <script src="@routes.Assets.versioned("javascripts/users/users.js")"></script>
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/users/userOverview.js")');
+    </script>
 }
 
 @main("Nutzerübersicht", Some(user), scripts) {
     <div class="container">
-        <div class="page-header">
-            <h1>Nutzerübersicht</h1>
-        </div>
+        <h1 class="text-center">Nutzerübersicht</h1>
 
         <div id="reply"></div>
 
@@ -19,30 +20,28 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Jetzige Rolle</th>
-                    <th>Neue Rolle</th>
+                    <th>Rolle</th>
                 </tr>
             </thead>
             <tbody>
             @for(user <- users) {
                 <tr>
                     <td>@user.username</td>
-                    <td>@user.stdRole</td>
                     <td>
                         <div class="input-group">
-                            <select class="form-control" onchange="onUpdateRoleSelect(this)" id="sel_@user.username" data-username="@user.username"
-                            data-stdrole="@user.stdRole" title="">
+                            <select class="form-control" id="sel_@user.username" data-username="@user.username" data-stdrole="@user.stdRole" title="Rolle">
                             @for(role <- model.Role.values) {
                                 <option @{
                                     if(role == user.stdRole) "selected" else ""
                                 }>@role </option>
                             }
                             </select>
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" disabled id="btn_@user.username" onclick="saveRole(this)" data-username="@user.username">
-                                    <span class="glyphicon glyphicon-upload"></span>
+                            <div class="input-group-append">
+                                <button data-url="@routes.AdminController.changeRole" class="btn btn-info" disabled
+                                id="btn_@user.username" data-username="@user.username">
+                                    <span class="octicon octicon-cloud-upload"></span>
                                 </button>
-                            </span>
+                            </div>
                         </div>
                     </td>
                 </tr>

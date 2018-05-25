@@ -38,9 +38,17 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   // Result handling
 
-  def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: CompResult): Html
+  def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: CompResult): Html = ???
 
-  def onSubmitCorrectionError(user: User, error: Throwable): Html
+  def onSubmitCorrectionError(user: User, error: Throwable): Html = error match {
+    case NoSuchExerciseException(_) => Html(error.getMessage)
+    case NoSuchPartException(_)     => Html(error.getMessage)
+    case SolutionTransferException  => Html(error.getMessage)
+    case err                        =>
+      Logger.error("Error while submit correction: " + err)
+      err.printStackTrace()
+      views.html.core.correctionError(user, OtherCorrectionException(err))
+  }
 
   def onLiveCorrectionResult(pointsSaved: Boolean, result: CompResult): JsValue
 

@@ -68,7 +68,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   // Views
 
   override def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart, maybeOldSolution: Option[RoseSolution]): Html =
-    views.html.idExercises.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true))
+    views.html.idExercises.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true), this)
 
   override def renderEditRest(exercise: RoseCompleteEx): Html = ???
 
@@ -90,10 +90,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   }
 
   // Result handlers
-
-  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: RoseCompleteResult): Html = ??? // Ok(views.html.rose.roseTestSolution.render(user))
-
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
   override def onLiveCorrectionResult(pointsSaved: Boolean, result: RoseCompleteResult): JsValue = {
     val (resultType, resultJson): (String, JsValue) = result.result match {

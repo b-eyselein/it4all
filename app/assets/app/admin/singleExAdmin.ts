@@ -66,6 +66,6 @@ function changeState(element: HTMLElement): void {
 
 $(() => {
     $('select').on('click', event => updateStateChangeButton(event.target as HTMLSelectElement));
-    $('button.btn-default').on('click', event => changeState(event.target as HTMLElement));
+    $('button.btn-info').on('click', event => changeState(event.target as HTMLElement));
     $('button.btn-danger').on('click', event => deleteExercise(event.target as HTMLElement));
 });

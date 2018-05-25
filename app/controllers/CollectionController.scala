@@ -110,16 +110,14 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def adminEditCollection(tool: String, id: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (_, _) =>
     implicit request =>
       // FIXME: implement: editing of collection!
-      //      Future(Ok("TODO: Editing collection...!"))
-      ???
+      Future(Ok("TODO: Editing collection...!"))
   }
 
 
   def adminCreateCollection(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (_, _) =>
     implicit request =>
       // FIXME: implement: creation of collection!
-      //      Future(Ok("TODO: Creating new collection...!"))
-      ???
+      Future(Ok("TODO: Creating new collection...!"))
   }
 
   def adminDeleteCollection(tool: String, id: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (_, toolMain) =>
@@ -148,14 +146,12 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // User
 
-  //  def index(tool: String): EssentialAction = collectionList(tool, page = 1)
-
   def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCompleteColls map { allColls =>
         val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
 
-        Ok(views.html.core.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
+        Ok(views.html.exercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
       }
   }
 
@@ -167,7 +163,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
           val exercises = coll.exercises.filter(_.state == ExerciseState.APPROVED)
 
           // FIXME: remove cast ...
-          Ok(views.html.core.collection(user, coll, takeSlice(exercises, page), toolMain, page, numOfPages(exercises.size)))
+          Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, takeSlice(exercises, page), toolMain, page, numOfPages(exercises.size)))
       }
   }
 

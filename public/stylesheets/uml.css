@@ -1,17 +1,3 @@
-.non-marked {
-    color: black;
-}
-
-.marked {
-    color: blue;
-}
-
-.attrs-div, .methods-div {
-    width: 100%;
-    height: 50px;
-    border: 1px solid black;
-}
-
 #classDiagPaper {
     border: 1px solid grey;
 }

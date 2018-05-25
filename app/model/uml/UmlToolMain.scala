@@ -106,7 +106,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Views
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution]): Html = part match {
-    case ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise.ex)
+    case ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise.ex, this)
     case DiagramDrawing     => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
     case DiagramDrawingHelp => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
     case MemberAllocation   => views.html.idExercises.uml.memberAllocation(user, exercise)
@@ -124,11 +124,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Handlers for results
 
   override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: UmlCompleteResult): Html = result.part match {
-    case ClassSelection   => result.classResult match {
-      case Some(classRes) =>
-        views.html.idExercises.uml.classSelectionResult(user, result.exercise.id, result.learnerSolution.classes, classRes, this)
-      case None           => Html("Es gab einen Fehler bei der Korrektur!")
-    }
     case MemberAllocation =>
 
       println(result.learnerSolution)
@@ -137,16 +132,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
       views.html.idExercises.uml.memberAllocationResult(user, result, this)
     case _                => ??? // Correction is only live!
-  }
-
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = error match {
-    case NoSuchExerciseException(_) => Html(error.getMessage)
-    case NoSuchPartException(_)     => Html(error.getMessage)
-    case SolutionTransferException  => Html(error.getMessage)
-    case err                        =>
-      Logger.error("Error while submit correction: " + err)
-      err.printStackTrace()
-      views.html.core.correctionError(user, OtherCorrectionException(err))
   }
 
   override def onLiveCorrectionResult(pointsSaved: Boolean, result: UmlCompleteResult): JsValue = result.toJson

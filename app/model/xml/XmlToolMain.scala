@@ -2,7 +2,6 @@ package model.xml
 
 import java.nio.file._
 
-import controllers.ExerciseOptions
 import javax.inject._
 import model.core._
 import model.core.matching.MatchingResult
@@ -14,7 +13,7 @@ import model.{Consts, ExerciseState, User}
 import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.api.mvc._
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -112,26 +111,14 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     views.html.idExercises.xml.editXmlExercise(user, this, newEx, isCreation)
 
   override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
-    val template = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
+    val oldSolutionOrTemplate = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
 
-    val exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url}"></script>""")
-
-    val exRest = part match {
-      case DocumentCreationXmlPart => Html(s"""<pre>${HtmlFormat.escape(exercise.sampleGrammar.asString)}</pre>""")
-      case GrammarCreationXmlPart  => Html(s"""<div class="well">${exercise.grammarDescription}</div>""")
-    }
-
-    views.html.idExercises.xml.xmlExercise(user, this, ExerciseOptions("xml", 15, 30), exercise.ex, exRest, template, part, exScript)
+    views.html.idExercises.xml.xmlExercise(user, this, exercise.ex, oldSolutionOrTemplate, part)
   }
 
   override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
 
   // Result handlers
-
-  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: CompResult): Html =
-    views.html.core.correction.render(result, result.render, user, this)
-
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
   override def onLiveCorrectionResult(pointsSaved: Boolean, result: CompResult): JsValue = result.toJson
 

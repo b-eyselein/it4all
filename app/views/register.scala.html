@@ -1,18 +1,22 @@
 @()
 
 @scripts = {
-    <script src="@routes.Assets.versioned("javascripts/users/register.js")"></script>
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/users/register.js")');
+    </script>
 }
 
 @main("Registrierung", None, scripts) {
     <div class="container">
-        <div class="page-header">
-            <h1>Registrierung</h1>
-        </div>
+        <h1 class="text-center">Registrierung</h1>
 
-        <form action="@routes.LoginController.register" role="form" class="form-horizontal" onsubmit="return testFields();" method="post">
-            <div class="form-group has-feedback">
-                <label class="control-label col-sm-3" for="@model.core.CoreConsts.nameName">Nutzername:</label>
+        <form action="@routes.LoginController.register" role="form" class="form-horizontal" method="post">
+
+            <div class="form-group row has-feedback">
+                <label class="col-form-label col-sm-3" for="@model.core.CoreConsts.nameName">Nutzername:</label>
                 <div class="col-sm-9">
                     <input class="form-control" id="@model.core.CoreConsts.nameName" name="@model.core.CoreConsts.nameName" data-taken="false" placeholder="s-Nummer" required
                     onchange="checkUserName('@controllers.routes.LoginController.checkUserName()')">
@@ -22,8 +26,8 @@
                 </div>
             </div>
 
-            <div class="form-group has-feedback">
-                <label class="control-label col-sm-3" for="@model.core.CoreConsts.pwName">Passwort:</label>
+            <div class="form-group row has-feedback">
+                <label class="col-form-label col-sm-3" for="@model.core.CoreConsts.pwName">Passwort:</label>
                 <div class="col-sm-9">
                     <input type="password" class="form-control" id="@model.core.CoreConsts.pwName" name="@model.core.CoreConsts.pwName" placeholder="Gewünschtes Passwort"
                     onchange="checkPws()" required>
@@ -34,8 +38,8 @@
 
             </div>
 
-            <div class="form-group has-feedback">
-                <label class="control-label col-sm-3" for="@model.core.CoreConsts.pw2Name">Passwort wiederholen:</label>
+            <div class="form-group row has-feedback">
+                <label class="col-form-label col-sm-3" for="@model.core.CoreConsts.pw2Name">Passwort wiederholen:</label>
                 <div class="col-sm-9">
                     <input type="password" class="form-control" id="@model.core.CoreConsts.pw2Name" name="@model.core.CoreConsts.pw2Name" placeholder="Passwort wiederholen"
                     onchange="checkSecondPw()" required>
@@ -47,11 +51,13 @@
 
             <hr>
 
-            <div class="form-group">
-                <div class="col-sm-offset-3 col-sm-9">
-                    <button type="submit" class="form-control">Registrierung vornehmen</button>
+            <div class="form-group row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-9">
+                    <button type="submit" class="btn btn-primary btn-block">Registrieren</button>
                 </div>
             </div>
+
         </form>
     </div>
 }

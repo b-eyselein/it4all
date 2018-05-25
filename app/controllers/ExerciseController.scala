@@ -46,19 +46,6 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
-  // FIXME: part in url!
-  def correct(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      toolMain.correctAbstract(user, id, partStr, isLive = false) map {
-        case Failure(error)  => BadRequest(toolMain.onSubmitCorrectionError(user, error))
-        case Success(result) =>
-          result match {
-            case Right(jsValue) => Ok(jsValue)
-            case Left(html)     => Ok(html)
-          }
-      }
-  }
-
   def correctLive(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.correctAbstract(user, id, partStr, isLive = true) map {

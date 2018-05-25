@@ -1,5 +1,4 @@
-@(user: model.User, toolMainObject: model.xml.XmlToolMain, exerciseOptions: ExerciseOptions, exercise: model.xml.XmlExercise,
-        exRest: Html, oldSolution: String, part: model.core.ExPart, exScripts: Html)
+@(user: model.User, toolMainObject: model.xml.XmlToolMain, exercise: model.xml.XmlExercise, oldSolution: String, part: model.core.ExPart)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -33,16 +32,25 @@
 
                 <p><b>@Html(exercise.textForPart(part.urlName))</b></p>
 
-                @exRest
+                <div class="card">
+                    <div class="card-body">
+                    @part match {
+                        case model.xml.DocumentCreationXmlPart => {
+                            <pre>@play.twirl.api.HtmlFormat.escape(exercise.sampleGrammar.asString)</pre>
+                        }
+                        case model.xml.GrammarCreationXmlPart => {
+                            @exercise.grammarDescription
+                        }
+                    }
+                    </div>
+                </div>
 
                 <div class="form-group">
-                    <div class="btn-group btn-group-justified">
-                        <div class="btn-group">
-                            <button class="btn btn-success" id="testBtn" data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)">
-                                Lösung testen</button>
-                        </div>
-                        <a class="btn btn-default" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
-                            Bearbeitung beenden</a>
+                    <div class="btn-group d-flex">
+                        <button id="testBtn" data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)"
+                        class="btn btn-success w-100">Lösung testen</button>
+                        <a href="@routes.MainExerciseController.index(toolMainObject.urlPart)"
+                        class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
                 </div>
             </div>

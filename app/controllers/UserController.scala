@@ -16,9 +16,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
-  def index: EssentialAction = withUser { user => implicit request => Ok(views.html.user("User", user)) }
-
-  def preferences: EssentialAction = withUser { user => implicit request => Ok(views.html.preferences("Präferenzen", user)) }
+  def preferences: EssentialAction = withUser { user => implicit request => Ok(views.html.preferences(user)) }
 
   def myCourses: EssentialAction = futureWithUser { user =>
     implicit request => repository.coursesForUser(user) map (courses => Ok(views.html.myCourses(user, courses)))
@@ -27,16 +25,14 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
   def saveShowHideAgg: EssentialAction = futureWithUser { user =>
     implicit request =>
 
-      val onFormError: Form[String] => Future[Result] = { _ =>
-        Future(BadRequest("TODO"))
-      }
+      val onFormError: Form[String] => Future[Result] = { _ => Future(BadRequest("TODO")) }
 
       val onRead: String => Future[Result] = { str =>
         ShowHideAggregate.withNameInsensitiveOption(str) match {
-          case None         => Future(BadRequest("TODO!"))
+          case None         => Future(BadRequest(s"No such value $str!"))
           case Some(newVal) =>
             repository.updateShowHideAggregate(user, newVal) map {
-              case 1 => Ok(Json.obj("todo" -> newVal.toString))
+              case 1 => Ok(Json.obj("showHideAgg" -> newVal.toString))
               case _ => BadRequest("TODO!")
             }
         }
@@ -47,6 +43,8 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
 
   def saveNewPassword: EssentialAction = futureWithAdmin { user =>
     implicit request =>
+      println(request)
+
       val onFormError: Form[(String, String, String)] => Future[Result] = { _ =>
         Future(BadRequest("Es gab einen Fehler beim Einlesen ihrer Daten!"))
       }

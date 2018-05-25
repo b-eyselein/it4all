@@ -7,12 +7,10 @@
 
     @main(title, Some(user)) {
         <div class="container">
-            <div class="page-header">
-                <h1>@title</h1>
-            </div>
+            <h1 class="text-center">@title</h1>
 
             <a href="@routes.CollectionController.newExerciseForm(toolMainObject.urlPart, collection.coll.id)"
-            class="btn btn-block btn-info">Neue Aufgabe erstellen</a>
+            class="btn btn-info btn-block">Neue Aufgabe erstellen</a>
 
             <hr>
 
@@ -31,7 +29,7 @@
                     }</div>
                     <div class="col-md-1">
                         <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, collection.coll.id, ex.ex.id)"
-                        class="btn btn-default btn-block">@ex.ex.id</a></div>
+                        class="btn btn-secondary btn-block">@ex.ex.id</a></div>
                     <div class="col-md-9">@ex.ex.text</div>
                 </div>
 

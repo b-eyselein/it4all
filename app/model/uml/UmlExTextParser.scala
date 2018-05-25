@@ -8,7 +8,7 @@ import scala.util.matching.Regex
 class UmlExTextParser(rawText: String, val mappings: Map[String, String], val toIgnore: Seq[String]) {
 
   private val capWordsRegex: Regex  = """[A-Z][a-zäöüß]*""".r
-  private val cssClassName : String = "non-marked"
+  private val cssClassName : String = "text-muted"
 
   private val capitalizedWords  : Set[String] = capWordsRegex findAllIn rawText toSet
   private val simpleReplacements: Set[String] = capitalizedWords filter (k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))

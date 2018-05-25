@@ -9,16 +9,16 @@
     </script>
 }
 
-@main("Aufgabenübersicht", Some(user), scripts) {
+@title = @{
+    toolObject.collectionPluralName + "übersicht " + toolObject.toolname
+}
+
+@main(title, Some(user), scripts) {
     <div class="container">
-        <div class="page-header">
-            <h1>Verfügbare @toolObject.collectionPluralName</h1>
-        </div>
+        <h1 class="text-center">@title</h1>
 
         <a href="@routes.MainExerciseController.adminIndex(toolObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
-
-        <hr>
 
         <div id="messages"></div>
 
@@ -48,23 +48,23 @@
                                 }>@exState </option>
                             }
                             </select>
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@collection.id" disabled data-id="@collection.id"
+                            <div class="input-group-append">
+                                <button class="btn btn-info" id="scb_@collection.id" disabled data-id="@collection.id"
                                 data-url="@routes.CollectionController.adminChangeCollectionState(toolObject.urlPart, collection.id)">
-                                    <span class="glyphicon glyphicon-upload"></span>
+                                    <span class="octicon octicon-cloud-upload"></span>
                                 </button>
-                            </span>
+                            </div>
                         </div>
                     </td>
                     <td>
-                        <a class="btn btn-default" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
+                        <a class="btn btn-secondary" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
                         href="@routes.CollectionController.adminEditCollectionForm(toolObject.urlPart, collection.id)">
-                            <span class="glyphicon glyphicon-wrench"></span>
+                            <span class="octicon octicon-pencil"></span>
                         </a>
 
                         <button class="btn btn-danger" title="Aufgabe @collection.id löschen" id="del_@collection.id"
                         data-url="@routes.CollectionController.adminDeleteCollection(toolObject.urlPart, collection.id)">
-                            <span class="glyphicon glyphicon-remove"></span>
+                            <span class="octicon octicon-x"></span>
                         </button>
                     </td>
                     <td>@collection.title</td>

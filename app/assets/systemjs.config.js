@@ -14,6 +14,7 @@
             'app': '/assets/app',
 
             'bootstrap': 'npm:bootstrap/dist/js/bootstrap.js',
+            'popper.js': 'npm:popper.js/umd/popper.js',
 
             'codemirror': 'npm:codemirror',
 
@@ -37,11 +38,6 @@
             },
             codemirror: {
                 main: 'lib/codemirror.js'
-            }
-        },
-        meta: {
-            '/assets/lib/ace-builds/src/ace.js': {
-                format: 'cjs'
             }
         }
     });

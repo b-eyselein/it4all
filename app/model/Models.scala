@@ -29,7 +29,7 @@ object ShowHideAggregate extends Enum[ShowHideAggregate] {
 
   case object HIDE extends ShowHideAggregate("Ausblenden")
 
-  case object Aggregate extends ShowHideAggregate("Zusammenfassen")
+  case object AGGREGATE extends ShowHideAggregate("Zusammenfassen")
 
 }
 

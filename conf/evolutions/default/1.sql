@@ -1,10 +1,10 @@
 # --- !Ups
 
 CREATE TABLE IF NOT EXISTS users (
-  user_type INT,
-  username  VARCHAR(30) PRIMARY KEY,
-  std_role  ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
-  todo      ENUM ('SHOW', 'HIDE', 'AGGR')                    DEFAULT 'SHOW'
+  user_type   INT,
+  username    VARCHAR(30) PRIMARY KEY,
+  std_role    ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
+  showHideAgg ENUM ('SHOW', 'HIDE', 'AGGREGATE')               DEFAULT 'SHOW'
 );
 
 CREATE TABLE IF NOT EXISTS pw_hashes (
@@ -181,31 +181,6 @@ CREATE TABLE IF NOT EXISTS prog_commited_testdata (
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
-
-# CREATE TABLE IF NOT EXISTS prog_sample_testdata_input (
-#   id          INT,
-#   test_id     INT,
-#   exercise_id INT,
-#   input       VARCHAR(50),
-#
-#   PRIMARY KEY (id, test_id, exercise_id),
-#   FOREIGN KEY (test_id, exercise_id) REFERENCES prog_sample_testdata (id, exercise_id)
-#     ON UPDATE CASCADE
-#     ON DELETE CASCADE
-# );
-
-# CREATE TABLE IF NOT EXISTS prog_commited_testdata_input (
-#   id          INT,
-#   test_id     INT,
-#   exercise_id INT,
-#   input       VARCHAR(50),
-#   username    VARCHAR(50),
-#
-#   PRIMARY KEY (username, id, test_id, exercise_id),
-#   FOREIGN KEY (test_id, exercise_id, username) REFERENCES prog_commited_testdata (id, exercise_id, username)
-#     ON UPDATE CASCADE
-#     ON DELETE CASCADE
-# );
 
 CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
   exercise_id   INT PRIMARY KEY,
@@ -550,7 +525,7 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
   ex_text             TEXT,
   ex_state            ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_XSD',
+  exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_DTD',
   grammar_description TEXT,
   sample_grammar      TEXT,
   root_node           VARCHAR(30),
@@ -685,6 +660,8 @@ DROP TABLE IF EXISTS blanks_exercises;
 DROP TABLE IF EXISTS learning_path_sections;
 
 DROP TABLE IF EXISTS learning_paths;
+
+DROP TABLE IF EXISTS feedback;
 
 DROP TABLE IF EXISTS users_in_courses;
 

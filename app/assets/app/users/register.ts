@@ -1,8 +1,12 @@
-let pw1, pw2;
+import * as $ from 'jquery';
 
-$(document).ready(function () {
+let pw1: JQuery, pw2: JQuery;
+
+$(() => {
     pw1 = $('#passwort');
     pw2 = $('#passwort_wieder');
+
+    $('form').on('submit', testFields);
 });
 
 function feedbackAndSpans(obj, name, success) {
@@ -12,7 +16,7 @@ function feedbackAndSpans(obj, name, success) {
 }
 
 function checkPws() {
-    const firstPwOk = pw1.val().length >= 8;
+    const firstPwOk = (pw1.val() as string).length >= 8;
     feedbackAndSpans(pw1, 'passwort', firstPwOk);
     return firstPwOk && checkSecondPw();
 }
@@ -42,10 +46,10 @@ function checkUserName(checkUrl) {
     $.ajax({
         url: checkUrl,
         method: 'PUT',
-        data: nameVal + '=' + $('#' + nameVal).val(),
+        data: 'name=' + $('#name').val(),
         success: nameUrl,
-        error: function (jsxhr) {
-            console.log(jsxhr)
+        error: function (jqXHR): void {
+            console.log(jqXHR)
         }
     });
 }

@@ -121,11 +121,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: WebCompleteResult): Html =
-    views.html.core.correction(result, result.render, user, this)
-
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
-
   override def onLiveCorrectionResult(pointsSaved: Boolean, result: WebCompleteResult): JsValue = result.toJson(pointsSaved)
 
   // Other helper methods

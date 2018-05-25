@@ -106,19 +106,15 @@ function renderExecutionResult(executionTable: ExecutionTable): string {
 
 function renderExecution(executionResults: ExecutionResultsObject): string {
     return `
-<div class="panel panel-default">
-    <div class="panel-heading">Vergleich der Ergebnistabellen</div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-6">
-                <p><b>Nutzer</b></p>
-                ${renderExecutionResult(executionResults.userResult)}
-            </div>
-            <div class="col-sm-6">
-                <p><b>Muster</b></p>
-                ${renderExecutionResult(executionResults.sampleResult)}
-            </div>
-        </div>
+<h3 class="text-center">Vergleich der Ergebnistabellen</h3>
+<div class="row">
+    <div class="col-sm-6">
+        <h4 class="text-center">Nutzer</h4>
+        ${renderExecutionResult(executionResults.userResult)}
+    </div>
+    <div class="col-sm-6">
+        <h4 class="text-center">Muster</h4>
+        ${renderExecutionResult(executionResults.sampleResult)}
     </div>
 </div>`.trim();
 }

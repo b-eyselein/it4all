@@ -9,33 +9,30 @@
     </script>
 }
 
-@main("Aufgabenübersicht", Some(user), scripts) {
+@title = @{
+    "Aufgabenübersicht " + toolMainObject.toolname
+}
+
+@main(title, Some(user), scripts) {
     <div class="container">
-        <div class="page-header">
-            <h1>Verfügbare Aufgaben</h1>
-        </div>
+        <h1 class="text-center">@title</h1>
 
         <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
 
-        <hr>
-
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Status</th>
-                    <th>Aktionen</th>
-                    <th>Titel</th>
-                    <th>Autor</th>
+                    <th>ID</th><th>Status</th><th>Aktionen</th><th>Titel</th><th>Autor</th>
                 </tr>
             </thead>
             <tbody>
             @for(exercise <- completeExercises.map(_.ex)) {
                 <tr id="tr1_@exercise.id">
                     <td>@exercise.id</td>
+
                     <td>
                         <div class="input-group">
                             <select title="Status ändern" class="form-control" id="state_@exercise.id" data-val="@exercise.state" data-id="@exercise.id">
@@ -45,23 +42,24 @@
                                 }>@exState</option>
                             }
                             </select>
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@exercise.id" data-id="@exercise.id" disabled
+                            <div class="input-group-append">
+                                <button class="btn btn-info" id="scb_@exercise.id" data-id="@exercise.id" disabled
                                 data-url="@routes.ExerciseController.adminChangeExState(toolMainObject.urlPart, exercise.id)">
-                                    <span class="glyphicon glyphicon-upload"></span>
+                                    <span class="octicon octicon-cloud-upload"></span>
                                 </button>
-                            </span>
+                            </div>
                         </div>
                     </td>
+
                     <td>
-                        <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id"
+                        <a class="btn btn-secondary" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id"
                         href="@routes.ExerciseController.adminEditExerciseForm(toolMainObject.urlPart, exercise.id)">
-                            <span class="glyphicon glyphicon-wrench"></span>
+                            <span class="octicon octicon-pencil"></span>
                         </a>
 
                         <button class="btn btn-danger" title="Aufgabe @exercise.id löschen" id="del_@exercise.id"
                         data-url="@routes.ExerciseController.adminDeleteExercise(toolMainObject.urlPart, exercise.id)">
-                            <span class="glyphicon glyphicon-remove"></span>
+                            <span class="octicon octicon-x"></span>
                         </button>
                     </td>
                     <td>@exercise.title</td>

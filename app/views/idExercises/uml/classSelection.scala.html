@@ -1,4 +1,4 @@
-@(user: model.User, exercise: model.uml.UmlExercise)
+@(user: model.User, exercise: model.uml.UmlExercise, toolMainObject: model.uml.UmlToolMain)
 
 @btnText = @{
     "Klassen verifizieren"
@@ -17,7 +17,7 @@
 
 @main("UML", Some(user), scripts) {
         <!-- Modal for hints -->
-    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal", "-lg") {
+    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal", "lg") {
         <ul>
             <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext auswählen.</li>
             <li>Sie können nur Nomen auswählen.</li>
@@ -29,9 +29,7 @@
     }
 
     <div class="container">
-        <div class="page-header">
-            <h1>Auswahl der Klassen <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintModal">&#65311;</button></h1>
-        </div>
+        <h1 class="text-center">Auswahl der Klassen</h1>
 
         <div class="row">
             <div class="col-md-8">
@@ -39,8 +37,10 @@
 
                 <hr>
 
-                <div class="well text-justify" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
-                @Html(exercise.markedText)
+                <div class="card">
+                    <div class="card-body text-justify" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+                    @Html(exercise.markedText)
+                    </div>
                 </div>
             </div>
 
@@ -57,11 +57,24 @@
 
         <hr>
 
-        @*onsubmit="return prepareFormForSubmitting();"*@
-        <form action="@routes.ExerciseController.correct("uml", exercise.id, part = model.uml.ClassSelection.urlName)" method="post" >
-            <input type="hidden" class="form-control" name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName" required>
-            <button class="btn btn-primary btn-block">@btnText</button>
-        </form>
+        <input type="hidden" class="form-control" name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName" required>
+
+        <div class="btn-group d-flex">
+            <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#hintModal">
+                <span class="octicon octicon-info"></span>
+            </button>
+            <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, model.uml.ClassSelection.urlName)"
+            class="btn btn-primary w-100" id="testBtn">@btnText</button>
+            <a href="@routes.ExerciseController.exercise(toolMainObject.urlPart, exercise.id, model.uml.DiagramDrawingHelp.urlName)"
+            class="btn btn-secondary w-100">Zum nächsten Aufgabenteil</a>
+        </div>
+
+        <hr>
+
+        <div id="correctionDiv" hidden>
+            <h2>Korrektur</h2>
+            <div id="correction"></div>
+        </div>
 
     </div>
 }

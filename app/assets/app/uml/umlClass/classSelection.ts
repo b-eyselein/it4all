@@ -1,16 +1,46 @@
 import * as $ from 'jquery';
-import {UmlClass} from '../umlInterfaces';
+import {UmlClass, UmlSolution} from '../umlInterfaces';
+import {displayMatchingResultList, UmlClassDiagCorrectionResult, UmlClassMatch} from "./classDiagCorrection";
 
 let chosenClasses: string[] = [];
 
-function readClass(name): UmlClass {
-    return {name, classType: 'CLASS', attributes: [], methods: []};
+let testBtn: JQuery, correctionDiv: JQuery, correction: JQuery, classesList: JQuery;
+
+const notChosenClass = 'text-muted', chosenClass = 'text-primary';
+
+function explainClassResult(classResult: UmlClassMatch, alertClass: string, glyphicon: string): string {
+    let className = classResult.userArg != null ? classResult.userArg.name : classResult.sampleArg.name;
+
+    switch (classResult.matchType) {
+
+        case 'SUCCESSFUL_MATCH':
+            return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> war korrekt.
+</p>`.trim();
+
+        case 'ONLY_USER':
+            return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> ist falsch!
+</p>`.trim();
+
+        case 'ONLY_SAMPLE':
+            return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> konnte nicht gefunden werden!
+</p>`.trim();
+
+        default:
+            return `
+<p class="text-${alertClass}">
+    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> ...
+</p>`.trim();
+    }
 }
 
-function prepareFormForSubmitting(): void {
-    $('#learnerSolution').val(JSON.stringify({
-        classes: chosenClasses.map(readClass), associations: [], implementations: []
-    }));
+function readClass(name): UmlClass {
+    return {name, classType: 'CLASS', attributes: [], methods: []};
 }
 
 function asList(array: string[]): string {
@@ -26,23 +56,59 @@ function select(span: Element): void {
         chosenClasses.splice(chosenClasses.indexOf(baseform), 1);
     }
 
-    $('#classesList').html(asList(chosenClasses));
+    classesList.html(asList(chosenClasses));
 
-    let otherSpans: HTMLElement[] = $('#exercisetext').find('span').get() as HTMLElement[];
-
-    for (let otherSpan of otherSpans) {
-        if (chosenClasses.indexOf(otherSpan.dataset.baseform) < 0) {
-            otherSpan.className = 'non-marked';
+    $('#exercisetext').find('span').each((index, element: HTMLElement) => {
+        const jElement = $(element);
+        if (chosenClasses.indexOf(jElement.data('baseform')) > -1) {
+            jElement.removeClass(notChosenClass).addClass(chosenClass);
         } else {
-            otherSpan.className = 'marked bg-info';
+            jElement.removeClass(chosenClass).addClass(notChosenClass);
         }
-    }
+    });
+}
+
+function onClassSelectionCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
+    testBtn.prop('disabled', false);
+
+    correctionDiv.prop('hidden', false);
+    correction.html(displayMatchingResultList(response.classResult, "Klassen", explainClassResult));
+}
+
+function onClassSelectionCorrectionError(jqXHR): void {
+    testBtn.prop('disabled', false);
+    console.error(jqXHR);
+}
+
+function testSol(): void {
+    testBtn.prop('disabled', true);
+
+    let solution: UmlSolution = {
+        classes: chosenClasses.map(readClass), associations: [], implementations: []
+    };
+
+    $.ajax({
+        type: 'PUT',
+        dataType: 'json', // return type
+        contentType: 'application/json', // type of message to server
+        url: $('#testBtn').data('url'),
+        data: JSON.stringify(solution),
+        async: true,
+        success: onClassSelectionCorrectionSuccess,
+        error: onClassSelectionCorrectionError
+    });
 }
 
 $(() => {
-    $('span.non-marked').each((index: number, span: Element) => {
+    testBtn = $('#testBtn');
+    testBtn.on('click', testSol);
+
+    $('span.' + notChosenClass).each((index: number, span: Element) => {
         $(span).on('click', () => select(span))
     });
 
-    $('form').on('submit', prepareFormForSubmitting);
+    classesList = $('#classesList');
+
+    correction = $('#correction');
+    correctionDiv = $('#correctionDiv');
 });

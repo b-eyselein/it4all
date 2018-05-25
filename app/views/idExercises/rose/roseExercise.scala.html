@@ -1,4 +1,4 @@
-@(user: model.User, exercise: model.rose.RoseCompleteEx, oldSolution: String)
+@(user: model.User, exercise: model.rose.RoseCompleteEx, oldSolution: String, toolMainObject: model.rose.RoseToolMain)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -33,16 +33,19 @@
             <div class="col-md-6">
                 <h2>Aufgabenstellung</h2>
 
-                <div class="well">@exercise.ex.text</div>
+                <div class="card">
+                    <div class="card-body">@exercise.ex.text</div>
+                </div>
 
+                <hr>
 
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#robot_api">
+                <div class="form-group">
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-info w-100" data-toggle="modal" data-target="#robot_api">
                             Roboter API</button>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary" id="testBtn">Lösung testen</button>
+                        <button class="btn btn-primary w-100" id="testBtn">Lösung testen</button>
+                        <a class="btn btn-secondary w-100" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
+                            Bearbeitung beenden</a>
                     </div>
                 </div>
 
@@ -63,22 +66,11 @@
         <div id="fieldDiv" hidden>
 
             <div class="form-group">
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button type="button" class="form-control btn-default" id="stepBackBtn" disabled>&lt;</button>
-                    </div>
-
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary btn-block" id="playBtn" disabled>Play</button>
-                    </div>
-
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default btn-block" id="pauseBtn" disabled>Pause</button>
-                    </div>
-
-                    <div class="btn-group">
-                        <button type="button" class="form-control btn-default" id="stepOnBtn" disabled>&gt;</button>
-                    </div>
+                <div class="btn-group d-flex">
+                    <button class="btn w-100" id="stepBackBtn" disabled>&lt;</button>
+                    <button class="btn btn-primary w-100" id="playBtn" disabled>Play</button>
+                    <button class="btn btn-secondary w-100" id="pauseBtn" disabled>Pause</button>
+                    <button class="btn w-100" id="stepOnBtn" disabled>&gt;</button>
                 </div>
             </div>
 

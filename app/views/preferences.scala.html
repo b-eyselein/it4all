@@ -1,87 +1,91 @@
-@(title: String, user: model.User)
+@(user: model.User)
 
-    @scripts = {
-        <script src="@routes.Assets.versioned("javascripts/preferences.js")"></script>
-    }
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    @main(title, Some(user), scripts) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Präferenzen</h1>
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/preferences.js")');
+    </script>
+}
+
+@title = @{
+    "Präferenzen"
+}
+
+@main(title, Some(user), scripts) {
+    <div class="container">
+        <h1 class="text-center">@title</h1>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-3" for="updateShowHideAggSelect">Bestandene Tests</label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <select class="form-control" id="updateShowHideAggSelect" data-std="@user.showHideAggregate">
+                    @for(todo <- model.ShowHideAggregate.values) {
+                        <option value="@todo" @{
+                            if(todo == user.showHideAggregate) "selected" else ""
+                        }>@todo.german</option>
+                    }
+                    </select>
+
+                    <div class="input-group-append">
+                        <button data-url="@routes.UserController.saveShowHideAgg"
+                        class="btn btn-secondary" id="updateShowHideAggBtn" disabled>Speichern...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Passwort ändern</h2>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-3" for="old_pw">Altes Passwort:</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" id="old_pw" name="old_pw" placeholder="Ihr altes Passwort" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-3" for="new_pw1">Neues Passwort:</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" id="new_pw1" name="new_pw1" placeholder="Ihr neues Passwort" required>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-3" for="new_pw2">Passwort wiederholen:</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" id="new_pw2" name="new_pw2" placeholder="Ihr neues Passwort" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-9">
+                <button data-url="@routes.UserController.saveNewPassword"
+                class="btn btn-default" id="pwChangeBtn">Passwort aktualisieren</button>
+            </div>
+        </div>
+
+        <div id="changePwDiv"></div>
+
+        <hr>
+
+        <form class="form-horizontal">
+            <h2>Layout Webaufgaben</h2>
+
+            <div class="radio">
+                <label><input type="radio" name="optradio">Dreispaltig</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="optradio">Zweispaltig</label>
             </div>
 
-            <form class="form-horizontal" action="javascript:updateShowHideAgg('@controllers.routes.UserController.saveShowHideAgg')">
-                <div class="form-group">
-                    <label class="control-label col-sm-3" for="posTests">Bestandene Tests</label>
-                    <div class="col-sm-9">
-                        <div class="input-group">
-                            <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.showHideAggregate">
-                            @for(todo <- model.ShowHideAggregate.values) {
-                                <option value="@todo" @{
-                                    if(todo == user.showHideAggregate) "selected" else ""
-                                }>@todo.german </option>
-                            }
-                            </select>
+        </form>
 
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" id="btn_posTests" disabled>Speichern...</button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-            <div id="changeShowHideAggDiv"></div>
-
-            <hr>
-
-            <form class="form-horizontal" action="javascript:updatePassword('@controllers.routes.UserController.saveNewPassword')">
-                <h2>Passwort ändern</h2>
-
-                <div class="form-group">
-                    <label class="control-label col-sm-3" for="old_pw">Altes Passwort:</label>
-                    <div class="col-sm-9">
-                        <input type="password" class="form-control" id="old_pw" name="old_pw" placeholder="Ihr altes Passwort" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-sm-3" for="new_pw1">Neues Passwort:</label>
-                    <div class="col-sm-9">
-                        <input type="password" class="form-control" id="new_pw1" name="new_pw1" placeholder="Ihr neues Passwort" required>
-                    </div>
-                </div>
-
-
-                <div class="form-group">
-                    <label class="control-label col-sm-3" for="new_pw2">Passwort wiederholen:</label>
-                    <div class="col-sm-9">
-                        <input type="password" class="form-control" id="new_pw2" name="new_pw2" placeholder="Ihr neues Passwort" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-9">
-                        <button class="btn btn-default" id="btn_pwChange">Passwort aktualisieren</button>
-                    </div>
-                </div>
-            </form>
-
-            <div id="changePwDiv"></div>
-
-            <hr>
-
-            <form class="form-horizontal">
-                <h2>Layout Webaufgaben</h2>
-
-                <div class="radio">
-                    <label><input type="radio" name="optradio">Dreispaltig</label>
-                </div>
-                <div class="radio">
-                    <label><input type="radio" name="optradio">Zweispaltig</label>
-                </div>
-
-            </form>
-
-        </div>
-    }
+    </div>
+}

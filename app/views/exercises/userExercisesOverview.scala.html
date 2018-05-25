@@ -37,13 +37,13 @@
                         <div class="col-sm-4">@exAndRoute.ex.ex.title</div>
                     }
                     <div class="col-sm-6">
-                        <div class="btn-group btn-group-justified">
+                        <div class="btn-group d-flex">
                         @for(exRoute <- exAndRoute.routes) {
                             <a @if(exRoute.enabled) {
                                 href="@exRoute.call"
                             } else {
-                                disabled="disabled" title="Vorbedingungen nicht erfüllt!"
-                            } class="btn btn-primary"
+                                disabled title="Vorbedingungen nicht erfüllt!"
+                            } class="btn btn-outline-primary w-100"
                             >@exRoute.exPart.partName</a>
                         }
                         </div>

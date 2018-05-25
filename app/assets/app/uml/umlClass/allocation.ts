@@ -1,11 +1,14 @@
 import * as $ from 'jquery';
 import {UmlClassAttribute, UmlClassMethod, UmlSolution} from "../umlInterfaces";
+import {UmlClassDiagCorrectionResult} from "./classDiagCorrection";
 
-function readAttributeElement(elem: HTMLInputElement): UmlClassAttribute {
+let testBtn: JQuery;
+
+function readAttributeElement(elem: HTMLInputElement): UmlClassAttribute | null {
     if (elem.checked) {
         const jElement = $(elem);
         return {
-            visibility: jElement.data('visibility'), name: jElement.data('value'), type: jElement.data('type'),
+            visibility: jElement.data('visibility'),name: jElement.data('value'), type: jElement.data('type'),
             isDerived: false, isAbstract: false, isStatic: false
         };
     } else {
@@ -14,7 +17,7 @@ function readAttributeElement(elem: HTMLInputElement): UmlClassAttribute {
 }
 
 
-function readMemberElement(elem: HTMLInputElement): UmlClassMethod {
+function readMethodElement(elem: HTMLInputElement): UmlClassMethod | null {
     if (elem.checked) {
         return {
             visibility: 'public', name: elem.dataset['value'], type: elem.dataset['type'],
@@ -25,38 +28,71 @@ function readMemberElement(elem: HTMLInputElement): UmlClassMethod {
     }
 }
 
-function readAllocation(): boolean {
+function readAllocation(): UmlSolution {
+    let solution: UmlSolution = {
+        classes: [], associations: [], implementations: []
+    };
+
     try {
-        let solution: UmlSolution = {
-            classes: [], associations: [], implementations: []
-        };
+        $('.card[data-classname]').map((index: number, elem: HTMLElement) => {
+            const jElement: JQuery = $(elem);
 
-        $('.panel.panel-default').map((index: number, elem: Element) => {
-            if (elem instanceof HTMLDivElement) {
+            let attributes: UmlClassAttribute[] = [];
+            jElement.find('section.attributeList').find('input').each((index, element: HTMLInputElement) => {
+                const readAttribute: UmlClassAttribute | null = readAttributeElement(element);
+                if (readAttribute != null) {
+                    attributes.push(readAttribute);
+                }
+            });
 
-                let attrCheckBoxes: HTMLInputElement[] = Array.from(elem.querySelector('section.attributeList').getElementsByTagName('input')) as HTMLInputElement[];
-                let attributes: UmlClassAttribute[] = attrCheckBoxes.map(readAttributeElement).filter((c) => c != null);
+            let methods: UmlClassMethod[] = [];
+            jElement.find('section.methodList').find('input').each((index, element: HTMLInputElement) => {
+                const readMethod: UmlClassMethod | null = readMethodElement(element);
+                if (readMethod != null) {
+                    methods.push(readMethod);
+                }
+            });
 
-                let methodCheckBoxes: HTMLInputElement[] = Array.from(elem.querySelector('section.methodList').getElementsByTagName('input')) as HTMLInputElement[];
-                let methods: UmlClassMethod[] = methodCheckBoxes.map(readMemberElement).filter((c) => c != null);
-
-                solution.classes.push({classType: 'CLASS', name: $(elem).data('classname'), attributes, methods});
-            } else {
-                console.error('Class panel is no div!');
-            }
+            solution.classes.push({classType: jElement.data('classtype'), name: jElement.data('classname'), attributes, methods});
         });
-
-        console.warn(JSON.stringify(solution, null, 2));
-
-        $('#learnerSolution').val(JSON.stringify(solution));
-
-        return true;
     } catch (err) {
         console.error(err);
-        return false;
     }
+
+    return solution;
+}
+
+function onMemberAllocationCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
+    testBtn.prop('disabled', false);
+
+    console.warn(JSON.stringify(response, null, 2));
+}
+
+function onMemberAllocationCorrectionError(jqXHR): void {
+    testBtn.prop('disabled', false);
+    console.error(jqXHR);
+}
+
+function testSol() {
+    testBtn.prop('disabled', true);
+
+    let solution: UmlSolution = readAllocation();
+
+    $.ajax({
+        type: 'PUT',
+        dataType: 'json', // return type
+        contentType: 'application/json', // type of message to server
+        url: $('#testBtn').data('url'),
+        data: JSON.stringify(solution),
+        async: true,
+        success: onMemberAllocationCorrectionSuccess,
+        error: onMemberAllocationCorrectionError
+    });
 }
 
 $(() => {
+    testBtn = $('#testBtn');
+    testBtn.on('click', testSol);
+
     $('#allocationForm').on('submit', readAllocation);
 });

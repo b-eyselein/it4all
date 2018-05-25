@@ -7,7 +7,8 @@
             </div>
 
             @if(collections.isEmpty) {
-                <div class="alert alert-danger">Es existieren bisher keine Aufgaben in dieser Kategorie. Wenden Sie Sich bitte an den Administrator.</div>
+                <div class="alert alert-danger">
+                    Es existieren bisher keine Aufgaben in dieser Kategorie. Wenden Sie Sich bitte an den Administrator.</div>
             } else {
                 <div class="row">
                     <div class="col-sm-2"><h4>Id</h4></div>
@@ -22,9 +23,7 @@
                         <div class="col-sm-2">@collection.coll.id</div>
                         <div class="col-sm-4">@collection.coll.title</div>
                         <div class="col-sm-6">
-                            <div class="btn-group btn-group-justified">
-                                <a href="@routes.CollectionController.collection(toolObject.urlPart, collection.coll.id)" class="btn btn-primary">Zur Sammlung</a>
-                            </div>
+                            <a href="@routes.CollectionController.collection(toolObject.urlPart, collection.coll.id)" class="btn btn-primary btn-block">Zur Sammlung</a>
                         </div>
                     </div>
 
