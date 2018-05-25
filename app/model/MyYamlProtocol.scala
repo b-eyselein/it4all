@@ -85,6 +85,11 @@ object MyYamlProtocol {
 
     def boolField(fieldName: String): Try[Boolean] = someField(fieldName) flatMap (_.asBool)
 
+    def optBoolField(fieldName: String): Try[Option[Boolean]] = yamlObject.fields get fieldName match {
+      case None        => Success(None)
+      case Some(field) => field.asBool map Some.apply
+    }
+
     def intField(fieldName: String): Try[Int] = someField(fieldName) flatMap (_.asInt)
 
     def stringField(fieldName: String): Try[String] = someField(fieldName) flatMap (_.asStr)
@@ -115,9 +120,12 @@ object MyYamlProtocol {
 
     def mapToJson(yamlValue: YamlValue): JsValue = yamlValue match {
       case YamlArray(arrayValues) => JsArray(arrayValues map mapToJson)
+      case YamlSet(content)       => JsArray(content.toSeq map mapToJson)
+
       case YamlObject(yamlFields) => JsObject(yamlFields map {
         case (key, value) => key.forgivingStr -> mapToJson(value)
       })
+
       case YamlString(str)        => JsString(str)
       case YamlBoolean(bool)      => JsBoolean(bool)
       case YamlNull               => JsNull

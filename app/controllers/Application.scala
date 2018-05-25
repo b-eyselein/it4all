@@ -35,8 +35,7 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
 
       // Special routes
       routes.javascript.ExerciseController.updateWebSolution
-    )
-    ).as("text/javascript")
+    )).as("text/javascript")
   }
 
 }

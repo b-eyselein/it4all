@@ -13,25 +13,25 @@ mappings:
 - {key: Kunden, value: Kunde}
 - {key: Jahren, value: Jahr}
 - {key: Zinsen, value: Zins}
-ignoreWords: ["Eine", "Jedes", "Diese", "Für", "Jeder", "Es", "Zudem", "Die"]
+ignoreWords: [Eine, Jedes, Diese, Für, Jeder, Es, Zudem, Die]
 solution:
   classes:
   - classType: CLASS
     name: Kunde
     attributes:
-    - {name: "name", type: "String"}
-    - {name: "kundennummer", type: "int"}
+    - {visibility: public, name: name, type: String}
+    - {visibility: public, name: kundennummer, type: int}
     methods:
-    - {name: "gesamtGuthaben()", type: "double"}
+    - {visibility: public, name: gesamtGuthaben, parameters: '', type: double}
   - classType: ABSTRACT
     name: Konto
     attributes:
-    - {name: "kontonummer", type: "int"}
-    - {name: "vertragsdauerInJahren", type: "int"}
-    - {name: "zinssatz", type: "double"}
-    - {name: "saldo", type: "double"}
+    - {visibility: public, name: kontonummer, type: int}
+    - {visibility: public, name: vertragsdauerInJahren, type: int}
+    - {visibility: public, name: zinssatz, type: double}
+    - {visibility: public, name: saldo, type: double}
     methods:
-    - {name: "einzahlen(betrag: double)", type: "void"}
+    - {visibility: public, name: einzahlen, parameters: double, type: void}
   - {classType: CLASS, name: Sparkonto}
   - {classType: CLASS, name: Girokonto}
   - {classType: CLASS, name: Kreditkonto}

@@ -68,7 +68,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   // Views
 
   override def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart, maybeOldSolution: Option[RoseSolution]): Html =
-    views.html.idExercises.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true))
+    views.html.idExercises.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true), this)
 
   override def renderEditRest(exercise: RoseCompleteEx): Html = ???
 
@@ -82,13 +82,16 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     } yield Try(RoseCompleteResult(solutionSaved, sol.solution, result))
   }
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: RoseExPart): Future[String] = part match {
+    case RoseSingleExPart => futureCompleteExById(id) map {
+      case Some(exercise) => exercise.sampleSolution.head.solution
+      case None           => ""
+    }
+  }
+
   // Result handlers
 
-  override def onSubmitCorrectionResult(user: User, result: RoseCompleteResult): Html = ??? // Ok(views.html.rose.roseTestSolution.render(user))
-
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
-
-  override def onLiveCorrectionResult(result: RoseCompleteResult): JsValue = {
+  override def onLiveCorrectionResult(pointsSaved: Boolean, result: RoseCompleteResult): JsValue = {
     val (resultType, resultJson): (String, JsValue) = result.result match {
       case rer: RoseExecutionResult    => ("success", Json.parse(rer.result))
       case rser: RoseSyntaxErrorResult => ("syntaxError", JsString(rser.cause))

@@ -119,8 +119,8 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
 
   def exerciseList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.dataForUserExesOverview(page) map {
-        dataForUserExesOverview => Ok(views.html.core.userExercisesOverview(user, dataForUserExesOverview, toolMain, page))
+      toolMain.dataForUserExesOverview(user, page) map {
+        dataForUserExesOverview => Ok(views.html.exercises.userExercisesOverview(user, dataForUserExesOverview, toolMain, page))
       }
   }
 

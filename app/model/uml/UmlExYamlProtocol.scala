@@ -1,9 +1,8 @@
 package model.uml
 
-import model.ExerciseState
 import model.MyYamlProtocol._
 import model.uml.UmlConsts._
-import model.{MyYamlProtocol, YamlArr, YamlObj}
+import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -36,7 +35,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
       UmlCompleteEx(
         UmlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, classDiagram,
-          textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString tagJoinChar),
+          textParser.parseText, ignoreWords mkString tagJoinChar),
         mappings
       )
     }
@@ -94,15 +93,15 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     override def write(completeClazz: UmlClass): YamlValue = YamlObj(
       classTypeName -> completeClazz.classType.entryName,
       nameName -> completeClazz.className,
-      attributesName -> YamlArr(completeClazz.attributes map UmlClassMemberYamlFormat.write),
-      methodsName -> YamlArr(completeClazz.methods map UmlClassMemberYamlFormat.write)
+      attributesName -> YamlArr(completeClazz.attributes map UmlAttributeYamlFormat.write),
+      methodsName -> YamlArr(completeClazz.methods map UmlMethodYamlFormat.write)
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlClass] = for {
       className <- yamlObject.stringField(nameName)
       classType <- yamlObject.enumField(classTypeName, UmlClassType.withNameInsensitiveOption) map (_ getOrElse UmlClassType.CLASS)
-      attributeTries <- yamlObject.optArrayField(attributesName, UmlClassMemberYamlFormat.read)
-      methodTries <- yamlObject.optArrayField(methodsName, UmlClassMemberYamlFormat.read)
+      attributeTries <- yamlObject.optArrayField(attributesName, UmlAttributeYamlFormat.read)
+      methodTries <- yamlObject.optArrayField(methodsName, UmlMethodYamlFormat.read)
     } yield {
       for (attributeFailure <- attributeTries._2)
       // FIXME: return...
@@ -117,14 +116,33 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  private object UmlClassMemberYamlFormat extends MyYamlObjectFormat[UmlClassMember] {
+  private object UmlAttributeYamlFormat extends MyYamlObjectFormat[UmlAttribute] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[UmlClassMember] = for {
+    override protected def readObject(yamlObject: YamlObject): Try[UmlAttribute] = for {
+      visibility <- yamlObject.enumField(visibilityName, UmlVisibility.withNameInsensitiveOption) map (_ getOrElse UmlVisibility.PUBLIC)
       memberName <- yamlObject.stringField(nameName)
       memberType <- yamlObject.stringField(typeName)
-    } yield UmlClassMember(memberName, memberType)
+      isAbstract <- yamlObject.optBoolField("isAbstract") map (_ getOrElse false)
+      isDerived <- yamlObject.optBoolField("isDerived") map (_ getOrElse false)
+      isStatic <- yamlObject.optBoolField("isStatic") map (_ getOrElse false)
+    } yield UmlAttribute(visibility, memberName, memberType, isStatic, isDerived, isAbstract)
 
-    override def write(obj: UmlClassMember): YamlValue = ???
+    override def write(obj: UmlAttribute): YamlValue = ???
+
+  }
+
+  private object UmlMethodYamlFormat extends MyYamlObjectFormat[UmlMethod] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[UmlMethod] = for {
+      visibility <- yamlObject.enumField(visibilityName, UmlVisibility.withNameInsensitiveOption) map (_ getOrElse UmlVisibility.PUBLIC)
+      memberName <- yamlObject.stringField(nameName)
+      memberType <- yamlObject.stringField(typeName)
+      parameters <- yamlObject.stringField("parameters")
+      isAbstract <- yamlObject.optBoolField("isAbstract") map (_ getOrElse false)
+      isStatic <- yamlObject.optBoolField("isStatic") map (_ getOrElse false)
+    } yield UmlMethod(visibility, memberName, memberType, parameters, isAbstract, isStatic)
+
+    override def write(obj: UmlMethod): YamlValue = ???
 
   }
 

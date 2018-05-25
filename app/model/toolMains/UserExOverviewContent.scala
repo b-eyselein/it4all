@@ -10,4 +10,6 @@ case class UserExOverviewContent(numOfExes: Int, exesAndRoutes: Seq[ExAndRoute])
 
 }
 
-case class ExAndRoute(ex: CompleteEx[_ <: Exercise], routes: Seq[(ExPart, Call)])
+case class CallForExPart(exPart: ExPart, call: Call, enabled: Boolean)
+
+case class ExAndRoute(ex: CompleteEx[_ <: Exercise], routes: Seq[CallForExPart])

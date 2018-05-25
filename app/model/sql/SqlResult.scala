@@ -1,10 +1,12 @@
 package model.sql
 
-import model.core.result.SuccessType
 import model.core.matching.{Match, MatchingResult}
-import model.core.result.{CompleteResult, EvaluationResult}
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.sql.SqlConsts._
 import model.sql.matcher._
+import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
+import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json._
 import play.twirl.api.Html
 
@@ -31,15 +33,13 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
   override type SolType = String
 
-  override val solutionSaved = false
-
   override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
 
 }
 
-case class SqlResult(learnerSolution: String, columnComparison: ColumnMatchingResult, tableComparison: TableMatchingResult,
-                     whereComparison: BinaryExpressionMatchingResult, executionResult: SqlExecutionResult,
-                     groupByComparison: Option[GroupByMatchingResult], orderByComparison: Option[OrderByMatchingResult])
+case class SqlResult(solutionSaved: Boolean, learnerSolution: String, columnComparison: MatchingResult[ColumnWrapper, ColumnMatch], tableComparison: MatchingResult[Table, TableMatch],
+                     whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch], executionResult: SqlExecutionResult,
+                     groupByComparison: Option[MatchingResult[Expression, GroupByMatch]], orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
   extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison
@@ -50,6 +50,7 @@ case class SqlResult(learnerSolution: String, columnComparison: ColumnMatchingRe
   def notEmptyMatchingResults: Seq[MatchingResult[_, _ <: Match[_]]] = matchingResults filter (_.allMatches.nonEmpty)
 
   def toJson: JsValue = Json.obj(
+    solutionSavedName -> solutionSaved,
     columnsName -> columnComparison.toJson,
     tablesName -> tableComparison.toJson,
     "wheres" -> whereComparison.toJson,
@@ -61,7 +62,7 @@ case class SqlResult(learnerSolution: String, columnComparison: ColumnMatchingRe
 
 }
 
-case class SqlParseFailed(learnerSolution: String, error: Throwable) extends SqlCorrResult {
+case class SqlParseFailed(solutionSaved: Boolean, learnerSolution: String, error: Throwable) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq.empty
 

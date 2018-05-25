@@ -1,9 +1,8 @@
 package controllers
 
 import javax.inject._
-import model.Role
-import model.FormMappings
 import model.FormMappings.UpdateRoleForm
+import model.{FormMappings, Role}
 import model.core.Repository
 import model.feedback.{Feedback, FeedbackResult}
 import play.api.Logger
@@ -37,10 +36,8 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
         }
       }
 
-      if (admin.stdRole != Role.RoleSuperAdmin)
-        Future(Forbidden("You do not have sufficient privileges to change roles!"))
-      else
-        FormMappings.updateRoleForm.bindFromRequest().fold(onFormError, onFromValue)
+      if (admin.stdRole != Role.RoleSuperAdmin) Future(Forbidden("You do not have sufficient privileges to change roles!"))
+      else FormMappings.updateRoleForm.bindFromRequest().fold(onFormError, onFromValue)
   }
 
   def evaluationResults: EssentialAction = futureWithAdmin { user =>
@@ -64,11 +61,11 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
   }
 
   def users: EssentialAction = futureWithAdmin { admin =>
-    implicit request => repository.allUsers map (allUsers => Ok(views.html.admin.users(admin, allUsers)))
+    implicit request => repository.allUsers map (allUsers => Ok(views.html.admin.userOverview(admin, allUsers)))
   }
 
   def courses: EssentialAction = futureWithAdmin { admin =>
-    implicit request => repository.allCourses map (allCourses => Ok(views.html.admin.courses(admin, allCourses)))
+    implicit request => repository.allCourses map (allCourses => Ok(views.html.admin.coursesOverview(admin, allCourses)))
   }
 
 }

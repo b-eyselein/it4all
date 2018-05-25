@@ -5,7 +5,7 @@ import model.ExTag
 
 import scala.collection.immutable.IndexedSeq
 
-sealed abstract class SqlExTag(buttonContent: String, title: String) extends ExTag with EnumEntry
+sealed abstract class SqlExTag(val buttonContent: String, val title: String) extends ExTag with EnumEntry
 
 
 object SqlExTag extends Enum[SqlExTag] {

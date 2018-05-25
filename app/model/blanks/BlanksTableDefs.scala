@@ -1,8 +1,7 @@
 package model.blanks
 
 import javax.inject.Inject
-import model.ExerciseState
-import model._
+import model.{ExerciseState, _}
 import model.blanks.BlanksExParts.{BlankExSinglePart, BlanksExPart}
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -33,11 +32,8 @@ case class BlanksExercise(override val id: Int, override val title: String, over
 
 case class BlanksAnswer(id: Int, exerciseId: Int, solution: String)
 
-case class BlanksSolution(username: String, exerciseId: Int, part: BlanksExPart, answers: Seq[BlanksAnswer]) extends PartSolution {
+case class BlanksSolution(username: String, exerciseId: Int, part: BlanksExPart, answers: Seq[BlanksAnswer]) extends PartSolution[BlanksExPart]
 
-  override type PartType = BlanksExPart
-
-}
 
 // Table definitions
 

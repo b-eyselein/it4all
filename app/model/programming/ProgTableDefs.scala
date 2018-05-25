@@ -1,11 +1,11 @@
 package model.programming
 
 import javax.inject.Inject
-import model.{ExerciseState, _}
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
 import model.uml.UmlClassDiagram
+import model.{ExerciseState, _}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.twirl.api.Html
@@ -118,9 +118,7 @@ object ProgSolution {
 
 }
 
-sealed trait ProgSolution extends PartSolution {
-
-  override type PartType = ProgrammingExPart
+sealed trait ProgSolution extends PartSolution[ProgrammingExPart] {
 
   val language: ProgLanguage
 

@@ -1,10 +1,12 @@
 @(user: model.User, numUsers: Int, numCourses: Int)
 
-    @main("it4all: Administrator", Some(user)) {
+    @title = @{
+        "Administrator"
+    }
+
+    @main(title, Some(user)) {
         <div class="container">
-            <div class="page-header">
-                <h1>Administrator</h1>
-            </div>
+            <h1 class="text-center">@title</h1>
 
             <section id="statistics">
                 <h2>Statistiken</h2>
@@ -20,7 +22,7 @@
             <section>
                 <h2>Evaluation der Tools</h2>
 
-                <a class="btn btn-default btn-block" href="@routes.AdminController.evaluationResults">
+                <a class="btn btn-secondary btn-block" href="@routes.AdminController.evaluationResults">
                     Zur Auswertung der Evaluation</a>
             </section>
 
@@ -29,7 +31,7 @@
             <section id="administration">
                 <h2>Verwaltung der Kurse</h2>
 
-                <a class="btn btn-primary btn-block" href="@routes.CourseAdminController.newCourseForm">
+                <a class="btn btn-success btn-block" href="@routes.CourseAdminController.newCourseForm">
                     Neuen Kurs erstellen</a>
             </section>
         </div>

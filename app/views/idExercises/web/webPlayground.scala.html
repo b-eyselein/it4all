@@ -1,51 +1,46 @@
 @(user: model.User)
 
-    @scripts = {
-    @core.editorScripts("html", 30, 50)
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-        <script src="@routes.Assets.versioned("javascripts/web/webExercise.js")"></script>
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
 
-        <style>
-                #live {
-                    border: 1px solid black
-                }
-        </style>
-    }
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/web/webPlayground.js")');
+    </script>
 
-    @main("Web-Playground", Some(user), scripts) {
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <h2>Editor</h2>
+    <style>
+            .CodeMirror {
+                border: 1px solid lightgrey;
+                font-size: 14px;
+                height: auto;
+            }
 
-                        <!-- Start Editor -->
-                    <div class="form-group">
-                        <div class="input-group">
+            #live {
+                border: 1px solid black
+            }
+    </style>
+    @* FIXME: @core.helperTemplates.fullScreenScripts.render() *@
+}
 
-                            <button type="button" class="form-control" onclick="changeFontsize(-2);">
-                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                            </button>
+@main("Web-Playground", Some(user), scripts) {
+    <div class="container">
+        <div class="row">
 
-                            <span class="input-group-addon">Schriftgröße: <span id="fontsize">16</span> px</span>
+            <div class="col-sm-6">
+                <h2>Editor</h2>
+                <textarea id="webEditor">@model.web.WebConsts.STANDARD_HTML_PLAYGROUND</textarea>
+            </div>
 
-                            <button type="button" class="form-control" onclick="changeFontsize(+2);">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </button>
-                        </div>
-                    </div>
+            <div class="col-sm-6">
+                <h2>Vorschau</h2>
 
-
-                    <div id="editor" class="form-control">@model.web.WebConsts.STANDARD_HTML_PLAYGROUND</div>
-                        <!-- End Editor -->
-                </div>
-
-                <div class="col-sm-6">
-                    <h2>Vorschau</h2>
-
-                    <div class="embed-responsive embed-responsive-4by3" id="live">
-                        <iframe class="embed-responsive-item" src="about:blank" id="preview"></iframe>
-                    </div>
+                <div class="embed-responsive embed-responsive-4by3" id="live">
+                    @* TODO: not implemented yet... *@
+                    <iframe class="embed-responsive-item" src="about:blank" id="preview"></iframe>
                 </div>
             </div>
         </div>
-    }
+    </div>
+}

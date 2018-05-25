@@ -5,7 +5,6 @@ import java.nio.file.{Files, Path}
 import model.core.CoreConsts.solutionName
 import model.core._
 import model.core.result.CompleteResult
-import model.learningPath.LearningPath
 import model.persistence.SingleExerciseTableDefs
 import model.{JsonFormat, PartSolution, User}
 import play.api.Logger
@@ -22,7 +21,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   type CompResult <: CompleteResult[R]
 
-  type SolType <: PartSolution
+  type SolType <: PartSolution[PartType]
 
   override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, PartType]
 
@@ -33,18 +32,25 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def futureSaveSolution(sol: SolType): Future[Boolean] = tables.futureSaveSolution(sol)
 
-  def futureOldSolution(user: User, exerciseId: Int, partString: String)(implicit ec: ExecutionContext): Future[Option[SolType]] = partTypeFromUrl(partString) match {
-    case None       => Future(None)
-    case Some(part) => tables.futureOldSolution(user.username, exerciseId, part)
-  }
+  def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: PartType)(implicit ec: ExecutionContext): Future[Option[SolType]] =
+    tables.futureOldSolution(user.username, exerciseId, part)
+
 
   // Result handling
 
-  def onSubmitCorrectionResult(user: User, result: CompResult): Html
+  def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: CompResult): Html = ???
 
-  def onSubmitCorrectionError(user: User, error: Throwable): Html
+  def onSubmitCorrectionError(user: User, error: Throwable): Html = error match {
+    case NoSuchExerciseException(_) => Html(error.getMessage)
+    case NoSuchPartException(_)     => Html(error.getMessage)
+    case SolutionTransferException  => Html(error.getMessage)
+    case err                        =>
+      Logger.error("Error while submit correction: " + err)
+      err.printStackTrace()
+      views.html.core.correctionError(user, OtherCorrectionException(err))
+  }
 
-  def onLiveCorrectionResult(result: CompResult): JsValue
+  def onLiveCorrectionResult(pointsSaved: Boolean, result: CompResult): JsValue
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
     Logger.error("There has been an correction error: ", error)
@@ -69,16 +75,21 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
       }
     }
 
+  def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[String]
+
   private def onSolution(user: model.User, solution: SolType, id: Int, isLive: Boolean): Future[Try[Either[Html, JsValue]]] = futureCompleteExById(id) flatMap {
     case None => Future(Failure(NoSuchExerciseException(id)))
+    // FIXME: change return type of function!
 
     case Some(exercise) => futureSaveSolution(solution) flatMap { solutionSaved =>
-      correctEx(user, solution, exercise, solutionSaved) map {
+      correctEx(user, solution, exercise, solutionSaved) flatMap {
         case Success(res)   =>
-          // FIXME: change return type of function!
-          if (isLive) Success(Right(onLiveCorrectionResult(res)))
-          else Success(Left(onSubmitCorrectionResult(user, res)))
-        case Failure(error) => Failure(error)
+          // FIXME: save result...
+          tables.futureSaveResult(user.username, exercise.id, solution.part, res.points, res.maxPoints) map { pointsSaved =>
+            if (isLive) Success(Right(onLiveCorrectionResult(pointsSaved, res)))
+            else Success(Left(onSubmitCorrectionResult(user, pointsSaved, res)))
+          }
+        case Failure(error) => Future(Failure(error))
       }
     }
   }
@@ -86,14 +97,14 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   private def readSolution(user: User, id: Int, part: PartType, isLive: Boolean)(implicit request: Request[AnyContent]): Option[SolType] =
     if (isLive) readSolutionFromPutRequest(user, id, part) else readSolutionFromPostRequest(user, id, part)
 
-  def readSolutionFromPostRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolutionFromPostRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
 
-  def readSolutionFromPutRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] =
+  protected def readSolutionFromPutRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap (_.asObj) flatMap {
       _.field(solutionName) flatMap (solution => readSolutionForPartFromJson(user, id, solution, part))
     }
 
-  def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: PartType): Option[SolType]
+  protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: PartType): Option[SolType]
 
   protected def correctEx(user: User, sol: SolType, exercise: CompExType, solutionSaved: Boolean): Future[Try[CompResult]]
 
@@ -114,11 +125,23 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
     views.html.admin.idExes.idExerciseAdminListView(admin, exes, this)
 
-
   def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
 
   // Calls
 
   override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
+
+  def exerciseRoutesForUser(user: User, exercise: CompExType): Future[Seq[CallForExPart]] = Future.sequence(exParts map {
+    exPart: PartType =>
+      // FIXME: check if user can solve this part!
+
+      if (exercise.hasPart(exPart)) {
+        tables.futureUserCanSolvePartOfExercise(user.username, exercise.id, exPart) map {
+          enabled => Some(CallForExPart(exPart, controllers.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName), enabled))
+        }
+
+
+      } else Future(None)
+  }).map(_.flatten)
 
 }

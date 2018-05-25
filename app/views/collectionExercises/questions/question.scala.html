@@ -14,7 +14,7 @@
         </div>
 
         @* FIXME: move to jsRoutes! *@
-        <form class="form-horizontal" action="javascript:testSol('@routes.CollectionController.correct("question", quiz.id, question.ex.id)')">
+        <form class="form-horizontal" action="javascript:testSol('@routes.CollectionController.correctLive("question", quiz.id, question.ex.id)')">
 
             <div id="answerDiv">
             @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.CHOICE) {

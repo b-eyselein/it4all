@@ -23,9 +23,9 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
     implicit request => toolMain.futureLearningPaths map (paths => Ok(views.html.exercises.exerciseIndex(user, toolMain, paths)))
   }
 
-//  def exercisesOverview(toolType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
-//    implicit request => Ok(toolMain.exercisesOverview(user))
-//  }
+  //  def exercisesOverview(toolType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
+  //    implicit request => Ok(toolMain.exercisesOverview(user))
+  //  }
 
   // Evaluation
 
@@ -61,7 +61,7 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
       val readLearningPaths: Seq[LearningPath] = toolMain.readLearningPaths
 
       toolMain.futureSaveLearningPaths(readLearningPaths) map {
-        _ => Ok(views.html.admin.learningPathRead(user, readLearningPaths))
+        _ => Ok(views.html.admin.learningPathRead(user, readLearningPaths, toolMain))
       }
   }
 

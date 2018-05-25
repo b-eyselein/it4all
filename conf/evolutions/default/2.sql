@@ -1,9 +1,9 @@
 # --- !Ups
 
-INSERT INTO users (user_type, username, std_role, todo) VALUES
-  (0, 's319286', 'RoleUser', 'AGGR'),
-  (0, 'bje40dc', 'RoleAdmin', 'AGGR'),
-  (0, 'developer', 'RoleSuperAdmin', 'AGGR')
+INSERT INTO users (user_type, username, std_role, showHideAgg) VALUES
+  (0, 's319286', 'RoleUser', 'AGGREGATE'),
+  (0, 'bje40dc', 'RoleAdmin', 'AGGREGATE'),
+  (0, 'developer', 'RoleSuperAdmin', 'AGGREGATE')
 ON DUPLICATE KEY UPDATE std_role = VALUES(std_role);
 
 INSERT INTO pw_hashes (username, pw_hash) VALUES
@@ -16,11 +16,15 @@ ON DUPLICATE KEY UPDATE pw_hash = VALUES(pw_hash);
 
 # Xml
 
+DELETE IGNORE FROM xml_results;
+
 DELETE IGNORE FROM xml_solutions;
 
 DELETE IGNORE FROM xml_exercises;
 
 # Web
+
+DELETE IGNORE FROM web_results;
 
 DELETE IGNORE FROM web_solutions;
 
@@ -42,10 +46,6 @@ DELETE IGNORE FROM uml_mappings;
 
 DELETE IGNORE FROM uml_exercises;
 
-# Spread
-
-DELETE IGNORE FROM spread_exercises;
-
 # Sql
 
 DELETE IGNORE FROM sql_solutions;
@@ -56,6 +56,10 @@ DELETE IGNORE FROM sql_exercises;
 
 DELETE IGNORE FROM sql_scenarioes;
 
+
+# Spread
+
+DELETE IGNORE FROM spread_exercises;
 # Rose
 
 DELETE IGNORE FROM rose_solutions;
@@ -105,6 +109,8 @@ DELETE IGNORE FROM blanks_exercises;
 DELETE IGNORE FROM learning_path_sections;
 
 DELETE IGNORE FROM learning_paths;
+
+DELETE IGNORE FROM feedback;
 
 DELETE IGNORE FROM users_in_courses;
 

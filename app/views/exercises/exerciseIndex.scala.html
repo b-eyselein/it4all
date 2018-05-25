@@ -6,9 +6,6 @@
 
 @main(title, Some(user)) {
     <div class="container">
-        <div class="page-header">
-            <h1>@title</h1>
-        </div>
 
         @if(learningPaths.nonEmpty) {
             <section>
@@ -16,7 +13,7 @@
 
                 @for(learningPath <- learningPaths) {
                     <a href="@routes.MainExerciseController.learningPath(toolMain.urlPart, learningPath.id)"
-                    class="btn btn-default btn-block">Lernpfad: @learningPath.title</a>
+                    class="btn btn-secondary btn-block">Lernpfad: @learningPath.title</a>
                 }
             </section>
 
@@ -36,7 +33,7 @@
                 <h2>Playground</h2>
 
                 <div class="form-group">
-                    <a class="btn btn-default btn-block" href="@routes.MainExerciseController.playground(toolMain.urlPart)">
+                    <a class="btn btn-secondary btn-block" href="@routes.MainExerciseController.playground(toolMain.urlPart)">
                         Playground für dieses Tool</a>
                 </div>
             </section>
@@ -48,7 +45,7 @@
             <h2>Evaluation</h2>
 
             <div class="form-group">
-                <a class="btn btn-default btn-block" href="@routes.MainExerciseController.evaluate(toolMain.urlPart)">
+                <a class="btn btn-success btn-block" href="@routes.MainExerciseController.evaluate(toolMain.urlPart)">
                     Dieses Tool evaluieren</a>
             </div>
         </section>

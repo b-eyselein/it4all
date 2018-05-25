@@ -1,0 +1,60 @@
+@(user: model.User, dataForUserExesOverview: model.toolMains.UserExOverviewContent, toolObject: model.toolMains.ASingleExerciseToolMain, currentPage: Int)
+
+@main(toolObject.toolname, Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Übersicht über verfügbare Aufgaben</h1>
+        </div>
+
+        @if(dataForUserExesOverview.exesAndRoutes.isEmpty) {
+            <div class="alert alert-danger">
+                Es existieren bisher keine Aufgaben in der Kategorie @toolObject.toolname.
+                Wenden Sie Sich bitte an den Administrator.</div>
+        } else {
+            <div class="row">
+                <div class="col-sm-2"><h4>Id</h4></div>
+                @if(toolObject.hasTags) {
+                    <div class="col-sm-2"><h4>Tags</h4></div>
+                    <div class="col-sm-3"><h4>Tags</h4></div>
+                } else {
+                    <div class="col-sm-4"><h4>Titel</h4></div>
+                }
+                <div class="col-sm-6"><h4>Link(s)</h4></div>
+
+            </div>
+
+            <hr>
+
+            @for(exAndRoute <- dataForUserExesOverview.exesAndRoutes) {
+                <div class="row">
+                    <div class="col-sm-2">@exAndRoute.ex.id</div>
+                    @if(toolObject.hasTags) {
+                        <div class="col-sm-2">@for(tag <- exAndRoute.ex.tags) {
+                            @tag.render
+                        }</div>
+                        <div class="col-sm-3">@exAndRoute.ex.ex.title</div>
+                    } else {
+                        <div class="col-sm-4">@exAndRoute.ex.ex.title</div>
+                    }
+                    <div class="col-sm-6">
+                        <div class="btn-group d-flex">
+                        @for(exRoute <- exAndRoute.routes) {
+                            <a @if(exRoute.enabled) {
+                                href="@exRoute.call"
+                            } else {
+                                disabled title="Vorbedingungen nicht erfüllt!"
+                            } class="btn btn-outline-primary w-100"
+                            >@exRoute.exPart.partName</a>
+                        }
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                }
+
+            @core.helperTemplates.bsPager(currentPage, dataForUserExesOverview.pages, index => routes.ExerciseController.exerciseList(toolObject.urlPart, index))
+
+        }
+    </div>
+}

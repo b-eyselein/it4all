@@ -1,14 +1,12 @@
 @(username: String)
 
-    @main("Nutzer registriert", None) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Registrierung erfolgreich</h1>
-            </div>
+@main("Nutzer registriert", None) {
+    <div class="container">
+        <h1 class="text-center">Registrierung erfolgreich</h1>
 
-            <div class="alert alert-info">Sie haben sich erfolgreich mit dem Namen <strong>@username</strong>
-                registriert. Sie können Sich nun <a href="@routes.LoginController.login" class="alert-link">
-                    einloggen</a>
-                .</div>
-        </div>
-    }
+        <div class="alert alert-info">Sie haben sich erfolgreich mit dem Namen <strong>@username</strong>
+            registriert. Sie können Sich nun <a href="@routes.LoginController.login" class="alert-link">
+                einloggen</a>
+            .</div>
+    </div>
+}

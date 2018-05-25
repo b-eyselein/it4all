@@ -40,7 +40,7 @@ abstract class SpreadCorrector[D, S, C, F, ColorType](val green: ColorType, val 
           else {
             if (compareCharts) {
               val (_, chartCompMessage) = compareNumberOfChartsInDocument(compareDocument, sampleDocument)
-              // write message in Cell A0 on first Sheet
+              // write message in RobotCell A0 on first Sheet
               getCellByPosition(getSheetByIndex(compareDocument, 0), 0, 0) match {
                 case None       => Unit
                 case Some(cell) => setCellComment(cell, chartCompMessage)

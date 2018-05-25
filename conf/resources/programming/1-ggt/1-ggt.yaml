@@ -37,8 +37,8 @@ sampleTestData:
   inputs: [64, 46]
   output: 2
 - id: 4
-  inputs: [777, 11]
-  output: 11
+  inputs: [777, 111]
+  output: 111
 - id: 5
   inputs: [15, 25]
   output: 5

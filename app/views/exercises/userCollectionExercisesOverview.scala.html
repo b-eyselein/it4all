@@ -1,0 +1,44 @@
+@(user: model.User, collection: model.CompleteCollection, exes: Seq[model.CompleteEx[_ <: model.Exercise]],
+        toolMainObject: model.toolMains.CollectionToolMain, currentSite: Int, numOfSites: Int)
+
+    @title = @{
+        s"""${toolMainObject.collectionSingularName} "${collection.coll.title}""""
+    }
+
+    @main(title, Some(user)) {
+        <div class="container">
+            <h1 class="text-center">@title</h1>
+
+            <a href="@routes.CollectionController.newExerciseForm(toolMainObject.urlPart, collection.coll.id)"
+            class="btn btn-info btn-block">Neue Aufgabe erstellen</a>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-md-1">Tags</div>
+                <div class="col-md-1">Link</div>
+                <div class="col-md-9">Text</div>
+            </div>
+
+            <hr>
+
+            @for(ex <- exes) {
+                <div class="row">
+                    <div class="col-md-1">@for(tag <- ex.tags) {
+                        @tag.render
+                    }</div>
+                    <div class="col-md-1">
+                        <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, collection.coll.id, ex.ex.id)"
+                        class="btn btn-secondary btn-block">@ex.ex.id</a></div>
+                    <div class="col-md-9">@ex.ex.text</div>
+                </div>
+
+                <br>
+                }
+
+
+            @core.helperTemplates.bsPager.render(currentSite, numOfSites,
+                index => routes.CollectionController.collection(toolMainObject.urlPart, collection.coll.id, index))
+
+        </div>
+    }

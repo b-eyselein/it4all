@@ -1,22 +1,24 @@
 @(user: model.User, collWrappers: Seq[model.CompleteCollection], toolObject: model.toolMains.CollectionToolMain)
 
 @scripts = {
-    @* Javascript Routes *@
-    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script src="@routes.Assets.versioned("javascripts/admin/collExAdmin.js")"></script>
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/admin/collExAdmin.js")');
+    </script>
 }
 
-@main("Aufgabenübersicht", Some(user), scripts) {
+@title = @{
+    toolObject.collectionPluralName + "übersicht " + toolObject.toolname
+}
+
+@main(title, Some(user), scripts) {
     <div class="container">
-        <div class="page-header">
-            <h1>Verfügbare @toolObject.collectionPluralName</h1>
-        </div>
+        <h1 class="text-center">@title</h1>
 
         <a href="@routes.MainExerciseController.adminIndex(toolObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
-
-        <hr>
 
         <div id="messages"></div>
 
@@ -39,27 +41,30 @@
                     <td>@collection.id</td>
                     <td>
                         <div class="input-group">
-                            <select onchange="updateStateChangeButton(@collection.id)" name="state_@collection.id" class="form-control" id="state_@collection.id"
-                            title="Status der Aufgabe" data-val="@collection.state">
+                            <select class="form-control" id="state_@collection.id" title="Status der Aufgabe" data-val="@collection.state" data-id="@collection.id">
                             @for(exState <- model.ExerciseState.values) {
                                 <option @{
                                     if(exState == collection.state) "selected" else ""
                                 }>@exState </option>
                             }
                             </select>
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@collection.id" onclick="changeState(@collection.id)" disabled>
-                                    <span class="glyphicon glyphicon-upload"></span>
+                            <div class="input-group-append">
+                                <button class="btn btn-info" id="scb_@collection.id" disabled data-id="@collection.id"
+                                data-url="@routes.CollectionController.adminChangeCollectionState(toolObject.urlPart, collection.id)">
+                                    <span class="octicon octicon-cloud-upload"></span>
                                 </button>
-                            </span>
+                            </div>
                         </div>
                     </td>
                     <td>
-                        <a class="btn btn-default" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
-                        href="@routes.CollectionController.adminEditCollectionForm(toolObject.urlPart, collection.id)"><span class="glyphicon glyphicon-wrench"></span>
+                        <a class="btn btn-secondary" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
+                        href="@routes.CollectionController.adminEditCollectionForm(toolObject.urlPart, collection.id)">
+                            <span class="octicon octicon-pencil"></span>
                         </a>
-                        <button class="btn btn-default" title="Aufgabe @collection.id löschen" id="del_@collection.id" onclick="deleteCollection(@collection.id)">
-                            <span class="glyphicon glyphicon-remove"></span>
+
+                        <button class="btn btn-danger" title="Aufgabe @collection.id löschen" id="del_@collection.id"
+                        data-url="@routes.CollectionController.adminDeleteCollection(toolObject.urlPart, collection.id)">
+                            <span class="octicon octicon-x"></span>
                         </button>
                     </td>
                     <td>@collection.title</td>

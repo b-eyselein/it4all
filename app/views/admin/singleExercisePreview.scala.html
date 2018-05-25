@@ -1,24 +1,20 @@
 @(user: model.User, exercise: model.Exercise, toolMainObject: model.toolMains.AToolMain)
 
-    @scripts = {
-        <script src="@routes.Assets.versioned("javascripts/admin/singleExAdmin.js")"></script>
-    }
-
-    @main("Erstellte Aufgaben", Some(user), scripts) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Erstellte Aufgaben:</h1>
-            </div>
-
-            <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
-                Zurück zur Administratorseite</a>
-
-            <hr>
-
-
-            <h2 data-toggle="collapse" data-target="#collapse_@exercise.id">Aufgabe: &quot;@exercise.title&quot;</h2>
-
-            <div id="collapse_@exercise.id" class="collapse in">@@exercise.preview</div>
-
+@main("Erstellte Aufgaben", Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Erstellte Aufgaben:</h1>
         </div>
-    }
+
+        <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+            Zurück zur Administratorseite</a>
+
+        <hr>
+
+
+        <h2 data-toggle="collapse" data-target="#collapse_@exercise.id">Aufgabe: &quot;@exercise.title&quot;</h2>
+
+        <div id="collapse_@exercise.id" class="collapse in">@@exercise.preview</div>
+
+    </div>
+}

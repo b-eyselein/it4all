@@ -35,15 +35,21 @@ case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, p
     Html(solSavedRender + resultsRender)
   }
 
-  def toJson: JsValue = Json.obj(
+  def toJson(pointsSaved: Boolean): JsValue = Json.obj(
     solutionSavedName -> solutionSaved,
     partName -> part.urlName,
-    pointsName -> results.map(_.points).sum,
-    maxPointsName -> exercise.maxPoints(part),
     successName -> results.forall(_.isSuccessful),
+
+    pointsName -> points,
+    maxPointsName -> maxPoints,
+
     htmlResultsName -> results.filter(_.isInstanceOf[ElementResult]).map(_.toJson),
     jsResultsName -> results.filter(_.isInstanceOf[JsWebResult]).map(_.toJson)
   )
+
+  override def points: Double = results.map(_.points).sum
+
+  override def maxPoints: Double = exercise.maxPoints(part)
 
 }
 

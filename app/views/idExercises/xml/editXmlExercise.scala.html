@@ -85,7 +85,7 @@
                     <div class="form-group">
                         <label for="@model.xml.XmlConsts.SampleGrammarName">Mustergrammaik</label>
                         <textarea class="form-control" name="@model.xml.XmlConsts.SampleGrammarName" id="@model.xml.XmlConsts.SampleGrammarName" rows="15"
-                        placeholder="<!ELEMENT root ...>" required>@Html(exercise.sampleGrammar)</textarea>
+                        placeholder="<!ELEMENT root ...>" required>@Html(exercise.sampleGrammar.asString)</textarea>
                     </div>
                 </div>
             </div>

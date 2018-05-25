@@ -64,6 +64,16 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     tables.futureSaveSolution(sol) map (_ && fileWritten)
   }
 
+  override def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: WebExPart)(implicit ec: ExecutionContext): Future[Option[SolType]] =
+    super.futureOldOrDefaultSolution(user, exerciseId, part) flatMap {
+      case Some(solution) => Future(Some(solution))
+      case None           =>
+        part match {
+          case JsPart => super.futureOldOrDefaultSolution(user, exerciseId, HtmlPart)
+          case _      => Future(None)
+        }
+    }
+
   // Reading solution from request
 
   override def readSolutionFromPostRequest(user: User, id: Int, part: WebExPart)(implicit request: Request[AnyContent]): Option[WebSolution] = None
@@ -88,11 +98,13 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     views.html.idExercises.web.editWebExercise(user, this, newEx, isCreation)
 
   def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution]): Html =
-    views.html.idExercises.web.webExercise(user, exercise, part, getTasks(exercise, part), maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML)
+    views.html.idExercises.web.webExercise(user, exercise, part, maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML, this)
 
-  override def renderEditRest(exercise: WebCompleteEx): Html = views.html.idExercises.web.editWebExRest(exercise)
+  override def renderEditRest(exercise: WebCompleteEx): Html =
+    views.html.idExercises.web.editWebExRest(exercise)
 
-  override def playground(user: User): Html = views.html.idExercises.web.webPlayground(user)
+  override def playground(user: User): Html =
+    views.html.idExercises.web.webPlayground(user)
 
   // Correction
 
@@ -100,30 +112,22 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     val driver = new HtmlUnitDriver(true)
     driver.get(getSolutionUrl(user, exercise.ex.id, learnerSolution.part))
 
-    val results = Try(getTasks(exercise, learnerSolution.part) map (task => WebCorrector.evaluateWebTask(task, driver)))
+    val results = Try(exercise.tasksForPart(learnerSolution.part) map (task => WebCorrector.evaluateWebTask(task, driver)))
 
     results map (WebCompleteResult(learnerSolution.solution, exercise, learnerSolution.part, solutionSaved, _))
   }
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: WebExPart): Future[String] = ???
+
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Html = views.html.core.correction(result, result.render, user, this)
-
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
-
-  override def onLiveCorrectionResult(result: WebCompleteResult): JsValue = result.toJson
+  override def onLiveCorrectionResult(pointsSaved: Boolean, result: WebCompleteResult): JsValue = result.toJson(pointsSaved)
 
   // Other helper methods
 
   def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String = part match {
     case PHPPart => s"http://localhost:9080/${user.username}/$exerciseId/test.php"
     case _       => s"http://localhost:9080/${user.username}/$exerciseId/test.html"
-  }
-
-  private def getTasks(exercise: WebCompleteEx, part: WebExPart): Seq[WebCompleteTask] = part match {
-    case HtmlPart => exercise.htmlTasks
-    case JsPart   => exercise.jsTasks
-    case PHPPart  => exercise.phpTasks
   }
 
 }

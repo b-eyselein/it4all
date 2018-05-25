@@ -77,7 +77,7 @@ trait TableDefs {
     }
 
   def updateShowHideAggregate(user: User, newPref: ShowHideAggregate): Future[Int] =
-    db.run(users filter (_.username === user.username) map (_.todo) update newPref)
+    db.run(users filter (_.username === user.username) map (_.showHideAgg) update newPref)
 
   def updateUserPassword(user: User, newPW: String): Future[Int] =
     db.run(pwHashes filter (_.username === user.username) map (_.pwHash) update newPW.bcrypt)
@@ -153,10 +153,10 @@ trait TableDefs {
 
     def role = column[Role]("std_role")
 
-    def todo = column[ShowHideAggregate]("todo")
+    def showHideAgg = column[ShowHideAggregate]("showHideAgg")
 
 
-    override def * = (userType, username, role, todo) <> (tupled, unapplied)
+    override def * = (userType, username, role, showHideAgg) <> (tupled, unapplied)
 
     def tupled(values: (Int, String, Role, ShowHideAggregate)): User = values._1 match {
       case 1 => LtiUser(values._2, values._3, values._4)

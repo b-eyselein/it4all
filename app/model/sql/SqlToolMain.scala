@@ -118,7 +118,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Correction
 
   override protected def correctEx(user: User, learnerSolution: SqlSolution, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Future[Try[SqlCorrResult]] =
-    saveSolution(learnerSolution) map { _ =>
+    saveSolution(learnerSolution) map { solutionSaved =>
 
       correctorsAndDaos.get(exercise.ex.exerciseType) match {
         case None                   => Failure(new Exception("There is no corrector or sql dao for " + exercise.ex.exerciseType))
@@ -126,7 +126,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
           // FIXME: parse queries here!?!
 
           val sample = findBestFittingSample(learnerSolution.solution, exercise.samples.toList)
-          Try(corrector.correct(dao, learnerSolution.solution, sample, exercise, sqlScenario))
+          Try(corrector.correct(solutionSaved, dao, learnerSolution.solution, sample, exercise, sqlScenario))
       }
     }
 
@@ -145,8 +145,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   //  }
 
   override def onLiveCorrectionResult(result: SqlCorrResult): JsValue = result match {
-    case res: SqlResult           => res.toJson
-    case SqlParseFailed(_, error) => Json.obj("msg" -> error.getMessage)
+    case res: SqlResult              => res.toJson
+    case SqlParseFailed(_, _, error) => Json.obj("msg" -> error.getMessage)
   }
 
   // Helper methods

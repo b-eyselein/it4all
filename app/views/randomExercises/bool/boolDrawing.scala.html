@@ -1,17 +1,13 @@
 @(user: model.User)
 
-@scriptsBefore = {
-    <!-- Important: Order of Scripts -->
-    <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
-    <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
-    <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
-}
-
 @scripts = {
-@core.helperTemplates.fullScreenScripts.render()
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script src="@routes.Assets.versioned("javascripts/bool/boolDrawing.js")"></script>
-
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/bool/boolDrawing.js")');
+    </script>
+    @* @core.helperTemplates.fullScreenScripts.render() *@
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bool/boolDrawing.css")">
 
@@ -23,65 +19,45 @@
     </noscript>
 }
 
-@main("Boolesche Algebra: Gatter", Some(user), scripts, scriptsBefore) {
+@title = @{
+    "Boolesche Gatter"
+}
+
+@main(title, Some(user), scripts) {
     <div class="container-fluid" id="fullsc">
 
         <div class="row">
             <div class="col-md-8" id="leftblock">
 
                 <div class="form-group" id="creationButtonsDiv">
-                    <div class="btn-group btn-group-justified">
-                        <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementAND" draggable="true" ondragstart="drag(event)">
-                                AND</button>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementOR" draggable="true" ondragstart="drag(event)">
-                                OR</button>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementNOT" draggable="true" ondragstart="drag(event)">
-                                NOT</button>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementNAND" draggable="true" ondragstart="drag(event)">
-                                NAND</button>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementXOR" draggable="true" ondragstart="drag(event)">
-                                XOR</button>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementXNOR" draggable="true" ondragstart="drag(event)">
-                                XNOR</button>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-default" onclick="setName(this);" name="elementNOR" draggable="true" ondragstart="drag(event)">
-                                NOR</button>
-                        </div>
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-outline-secondary w-100" name="elementAND">AND</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementOR">OR</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementNOT">NOT</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementNAND">NAND</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementXOR">XOR</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementXNOR">XNOR</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementNOR">NOR</button>
                     </div>
                 </div>
 
-                <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
+                <div id="paper"></div>
             </div>
 
-            <div class="col-md-4" id="rightblock">
+            <div class="col-md-4">
 
-                <h2>Boolesche Gatter </h2>
-                <p>Diese Applikation erm&ouml;glicht das Zeichnen von booleschen Formeln als Gatterstrukturen.</p>
+                <h2>@title</h2>
+                <p class="text-justify">Diese Applikation erm&ouml;glicht das Zeichnen von booleschen Formeln als Gatterstrukturen.</p>
 
-                <hr>
-
-                <h4>Zeichenfl&auml;che</h4>
-
-                <div class="form-group">
-                    <button type="button" class="btn btn-default btn-block" onclick="toggleFullscreen()">
-                        Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span></button>
-                </div>
+                @*<div class="form-group">*@
+                @* FIXME: fullscreen... *@
+                @*<button type="button" class="btn btn-block" onclick="toggleFullscreen()">*@
+                @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span></button>*@
+                @*</div>*@
 
                 <hr>
 
-                <h3>Ergebnis</h3>
+                <h3 class="text-center">Ergebnis</h3>
 
                 <div class="form-group">
                     <button class="btn btn-block btn-primary" id="generateFormula">Formel generieren</button>

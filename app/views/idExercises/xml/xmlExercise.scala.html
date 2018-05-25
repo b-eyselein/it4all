@@ -1,0 +1,75 @@
+@(user: model.User, toolMainObject: model.xml.XmlToolMain, exercise: model.xml.XmlExercise, oldSolution: String, part: model.core.ExPart)
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
+
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/xml/xmlExercise.js")');
+    </script>
+
+    <style>
+            .CodeMirror {
+                border: 1px solid lightgrey;
+                font-size: 14px;
+            }
+    </style>
+}
+
+@main(toolMainObject.toolname, Some(user), scripts) {
+    <div class="container" id="fullsc">
+
+        <input hidden value="@exercise.ex.id" name="exerciseId" id="exerciseId" title="hidden" type="number">
+        <input hidden value="@part.urlName" name="exercisePart" id="exercisePart" title="hidden">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Aufgabenstellung</h2>
+
+                <hr>
+
+                <p><b>@Html(exercise.textForPart(part.urlName))</b></p>
+
+                <div class="card">
+                    <div class="card-body">
+                    @part match {
+                        case model.xml.DocumentCreationXmlPart => {
+                            <pre>@play.twirl.api.HtmlFormat.escape(exercise.sampleGrammar.asString)</pre>
+                        }
+                        case model.xml.GrammarCreationXmlPart => {
+                            @exercise.grammarDescription
+                        }
+                    }
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="btn-group d-flex">
+                        <button id="testBtn" data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)"
+                        class="btn btn-success w-100">Lösung testen</button>
+                        <a href="@routes.MainExerciseController.index(toolMainObject.urlPart)"
+                        class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h2>Editor</h2>
+
+                <hr>
+
+                <textarea id="xmlEditor" title="Editor">@oldSolution</textarea>
+            </div>
+        </div>
+
+        <hr>
+
+        <section id="correctionDiv">
+            <h2>Korrektur</h2>
+            <div id="correction"></div>
+        </section>
+
+    </div>
+}

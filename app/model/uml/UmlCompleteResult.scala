@@ -30,13 +30,13 @@ case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassD
 
   private val musterSolution: UmlClassDiagram = exercise.ex.solution
 
-  val classResult: Option[UmlClassMatchingResult] = part match {
-    case DiagramDrawingHelp => None
-    case ClassSelection     => Some(UmlClassMatcher(false).doMatch(learnerSolution.classes, musterSolution.classes))
-    case _                  => Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
+  val classResult: Option[MatchingResult[UmlClass, UmlClassMatch]] = part match {
+    case DiagramDrawingHelp                => None
+    case ClassSelection                    => Some(UmlClassMatcher(false).doMatch(learnerSolution.classes, musterSolution.classes))
+    case DiagramDrawing | MemberAllocation => Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
   }
 
-  val assocAndImplResult: Option[(UmlAssociationMatchingResult, UmlImplementationMatchingResult)] = part match {
+  val assocAndImplResult: Option[(MatchingResult[UmlAssociation, UmlAssociationMatch], MatchingResult[UmlImplementation, UmlImplementationMatch])] = part match {
     case DiagramDrawingHelp | DiagramDrawing =>
       val assocRes = UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations)
       val implRes = UmlImplementationMatcher.doMatch(learnerSolution.implementations, musterSolution.implementations)

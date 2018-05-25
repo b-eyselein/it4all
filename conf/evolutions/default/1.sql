@@ -1,10 +1,10 @@
 # --- !Ups
 
 CREATE TABLE IF NOT EXISTS users (
-  user_type INT,
-  username  VARCHAR(30) PRIMARY KEY,
-  std_role  ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
-  todo      ENUM ('SHOW', 'HIDE', 'AGGR')                    DEFAULT 'SHOW'
+  user_type   INT,
+  username    VARCHAR(30) PRIMARY KEY,
+  std_role    ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
+  showHideAgg ENUM ('SHOW', 'HIDE', 'AGGREGATE')               DEFAULT 'SHOW'
 );
 
 CREATE TABLE IF NOT EXISTS pw_hashes (
@@ -38,14 +38,14 @@ CREATE TABLE IF NOT EXISTS users_in_courses (
 # Feedback
 
 CREATE TABLE IF NOT EXISTS feedback (
-  username VARCHAR(30),
-  tool_url VARCHAR(30),
-  sense VARCHAR(10),
-  used VARCHAR(10),
+  username  VARCHAR(30),
+  tool_url  VARCHAR(30),
+  sense     VARCHAR(10),
+  used      VARCHAR(10),
   usability VARCHAR(10),
-  feedback VARCHAR(10),
-  fairness VARCHAR(10),
-  comment TEXT,
+  feedback  VARCHAR(10),
+  fairness  VARCHAR(10),
+  comment   TEXT,
 
   PRIMARY KEY (username, tool_url),
   FOREIGN KEY (username) REFERENCES users (username)
@@ -57,15 +57,15 @@ CREATE TABLE IF NOT EXISTS feedback (
 
 CREATE TABLE IF NOT EXISTS learning_paths (
   tool_url VARCHAR(10),
-  id    INT,
-  title VARCHAR(50),
+  id       INT,
+  title    VARCHAR(50),
 
-  PRIMARY KEY(tool_url, id)
+  PRIMARY KEY (tool_url, id)
 );
 
 CREATE TABLE IF NOT EXISTS learning_path_sections (
   id           INT,
-  tool_url VARCHAR(10),
+  tool_url     VARCHAR(10),
   path_id      INT,
   section_type VARCHAR(30),
   title        VARCHAR(60),
@@ -181,31 +181,6 @@ CREATE TABLE IF NOT EXISTS prog_commited_testdata (
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
-
-# CREATE TABLE IF NOT EXISTS prog_sample_testdata_input (
-#   id          INT,
-#   test_id     INT,
-#   exercise_id INT,
-#   input       VARCHAR(50),
-#
-#   PRIMARY KEY (id, test_id, exercise_id),
-#   FOREIGN KEY (test_id, exercise_id) REFERENCES prog_sample_testdata (id, exercise_id)
-#     ON UPDATE CASCADE
-#     ON DELETE CASCADE
-# );
-
-# CREATE TABLE IF NOT EXISTS prog_commited_testdata_input (
-#   id          INT,
-#   test_id     INT,
-#   exercise_id INT,
-#   input       VARCHAR(50),
-#   username    VARCHAR(50),
-#
-#   PRIMARY KEY (username, id, test_id, exercise_id),
-#   FOREIGN KEY (test_id, exercise_id, username) REFERENCES prog_commited_testdata (id, exercise_id, username)
-#     ON UPDATE CASCADE
-#     ON DELETE CASCADE
-# );
 
 CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
   exercise_id   INT PRIMARY KEY,
@@ -402,16 +377,15 @@ CREATE TABLE IF NOT EXISTS sql_solutions (
 # Uml
 
 CREATE TABLE IF NOT EXISTS uml_exercises (
-  id             INT PRIMARY KEY,
-  title          VARCHAR(50),
-  author         VARCHAR(50),
-  ex_text        TEXT,
-  ex_state       ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id            INT PRIMARY KEY,
+  title         VARCHAR(50),
+  author        VARCHAR(50),
+  ex_text       TEXT,
+  ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  solution_json  TEXT,
-  class_sel_text TEXT,
-  diag_draw_text TEXT,
-  to_ignore      TEXT
+  solution_json TEXT,
+  marked_text   TEXT,
+  to_ignore     TEXT
 );
 
 CREATE TABLE IF NOT EXISTS uml_mappings (
@@ -526,6 +500,22 @@ CREATE TABLE IF NOT EXISTS web_solutions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS web_results (
+  username    VARCHAR(60),
+  exercise_id INT,
+  part        VARCHAR(10),
+  points      INT,
+  max_points  INT,
+
+  PRIMARY KEY (username, exercise_id, part),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES web_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Xml
 
 CREATE TABLE IF NOT EXISTS xml_exercises (
@@ -535,7 +525,7 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
   ex_text             TEXT,
   ex_state            ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_XSD',
+  exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_DTD',
   grammar_description TEXT,
   sample_grammar      TEXT,
   root_node           VARCHAR(30),
@@ -557,15 +547,35 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS xml_results (
+  username    VARCHAR(60),
+  exercise_id INT,
+  part        VARCHAR(10),
+  points      INT,
+  max_points  INT,
+
+  PRIMARY KEY (username, exercise_id, part),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # --- !Downs
 
 # Xml
+
+DROP TABLE IF EXISTS xml_results;
 
 DROP TABLE IF EXISTS xml_solutions;
 
 DROP TABLE IF EXISTS xml_exercises;
 
 # Web
+
+DROP TABLE IF EXISTS web_results;
 
 DROP TABLE IF EXISTS web_solutions;
 
@@ -650,6 +660,8 @@ DROP TABLE IF EXISTS blanks_exercises;
 DROP TABLE IF EXISTS learning_path_sections;
 
 DROP TABLE IF EXISTS learning_paths;
+
+DROP TABLE IF EXISTS feedback;
 
 DROP TABLE IF EXISTS users_in_courses;
 

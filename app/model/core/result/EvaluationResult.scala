@@ -45,6 +45,10 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
   type SolType
 
+  def points: Double = -1d
+
+  def maxPoints: Double = -1d
+
   def learnerSolution: SolType
 
   def solutionSaved: Boolean

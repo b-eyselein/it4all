@@ -1,26 +1,32 @@
-@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, tasks: Seq[model.web.WebCompleteTask], oldSolution: String)
+@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, oldSolution: String, toolMainObject: model.web.WebToolMain)
+
+@tasks = @{
+    exercise.tasksForPart(part)
+}
 
 @scripts = {
-    @* Javascript Routes *@
-    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-@core.editorScripts.render("php", 40, 50)
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
 
-    <script src="@routes.Assets.versioned("javascripts/web/webExercise.js")"></script>
-
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/web/webExercise.js")');
+    </script>
 
     <style>
-            .pre-scrollable {
-                max-CLASS_HEIGHT: 500px;
-                overflow-y: scroll;
+            .CodeMirror {
+                border: 1px solid lightgrey;
+                font-size: 14px;
+                height: 700px;
             }
 
             #preview {
-                border: 1px solid black;
+                border: 1px solid lightgrey;
             }
-    </style>
 
-@core.helperTemplates.fullScreenScripts.render()
+    </style>
+    @* FIXME: @core.helperTemplates.fullScreenScripts.render() *@
 }
 
 @main("Web", Some(user), scripts) {
@@ -30,69 +36,73 @@
         <input hidden type="text" id="exercisePart" value="@part.urlName" title="hidden">
 
         <div class="row">
-            <div class="col-sm-6">@core.editor(oldSolution)</div>
+            <div class="col-sm-6">
+                <textarea id="htmlEditor" title="Editor">@oldSolution</textarea>
+            </div>
 
 
             <div class="col-sm-6">
 
                 <ul class="nav nav-tabs nav-justified">
-                    <li class="active"><a data-toggle="tab" href="#exAndEditTab">Aufgabenstellung</a></li>
-                    <li><a data-toggle="tab" href="#previewTab" onclick="updatePreviewNew()">Live-Vorschau</a></li>
-                    <li><a data-toggle="tab" href="#correctionTab" id="correctionTabBtn">Korrektur</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#exAndEditTab">Aufgabenstellung</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-url="@routes.ExerciseController.updateWebSolution(exercise.id, part.urlName)"
+                        data-toggle="tab" href="#previewTab" id="previewTabBtn">Live-Vorschau</a>
+                    </li>
                 </ul>
 
 
                 <div class="tab-content">
-                    <div id="exAndEditTab" class="tab-pane fade in active">
-                        <hr>
 
-                        <p class="text-justify">@exercise.ex.text</p>
-                        @if(part == model.web.HtmlPart) {
-                            <p>@Html(exercise.ex.htmlText getOrElse "")</p>
-                        } else {
-                            <p>@Html(exercise.ex.jsText getOrElse "")</p>
-                        }
+                    <div id="exAndEditTab" class="tab-pane container active">
 
-                        <div class="btn-group btn-group-justified">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
-                                    Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
-                                </button>
+                        <div class="card">
+                            <div class="card-body text-justify">
+                                <p>@exercise.ex.text</p>
+
+                                @if(part == model.web.HtmlPart) {
+                                    <p>@Html(exercise.ex.htmlText getOrElse "")</p>
+                                    <ol>
+                                    @for(task <- exercise.tasksForPart(part).sortBy(_.task.id)) {
+                                        <li><p id="text_@task.task.id">@task.task.text</p></li>
+                                    }
+                                    </ol>
+                                } else {
+                                    <p>@Html(exercise.ex.jsText getOrElse "")</p>
+                                    <p>Es gibt insgesamt @tasks.size Testfälle.</p>
+                                }
                             </div>
-                            <div class="btn-group">
-                                <button class="btn btn-success" id="testBtn">Lösung testen</button>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="btn-group d-flex">
+                                @*<button type="button" class="btn w-100" onclick="toggleFullscreen()">*@
+                                @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>*@
+                                @*</button>*@
+                                <button class="btn btn-success w-100" id="testBtn" data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)">
+                                    Lösung testen</button>
+                                <a class="btn btn-secondary  w-100" href="@routes.MainExerciseController.index("web")">
+                                    Bearbeitung beenden</a>
                             </div>
-                            <a class="btn btn-default" href="@routes.MainExerciseController.index("web")">Bearbeitung beenden</a>
                         </div>
 
                         <hr>
 
-                        @if(part == model.web.HtmlPart) {
-                            <div class="pre-scrollable">
-                                <ol>
-                                @for(task <- tasks.sortBy(_.task.id)) {
-                                    <li><p id="text_@task.task.id">@task.task.text</p></li>
-                                }
-                                </ol>
+                        <div id="correctionDiv" hidden>
+                            <h2>Korrektur</h2>
+                            <div id="correction">
+                                <div class="alert alert-warning">
+                                    Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
                             </div>
-                        } else {
-                            <p>Es gibt insgesamt @tasks.size Testfälle.</p>
-                        }
+                        </div>
                     </div>
 
-                    <div id="previewTab" class="tab-pane fade">
-                        <hr>
-
+                    <div id="previewTab" class="tab-pane container fade">
+                        <div class="alert alert-warning" id="previewChangedDiv">Ihre Lösung hat sich geändert.</div>
                         <div class="embed-responsive embed-responsive-16by9">
                             <iframe class="embed-responsive-item" src="@routes.ExerciseController.webSolution(exercise.ex.id, part.urlName)" id="preview"></iframe>
-                        </div>
-                    </div>
-
-                    <div id="correctionTab" class="tab-pane fade">
-                        <hr>
-
-                        <div id="correction">
-                            <div class="alert alert-warning">Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
                         </div>
                     </div>
                 </div>

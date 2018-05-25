@@ -5,7 +5,12 @@
     }
 
     @scripts = {
-        <script src="@routes.Assets.versioned("javascripts/learningPaths/learningPath.js")"></script>
+        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+        <script>
+                SystemJS.import('@routes.Assets.versioned("app/learningPaths/learningPath.js")');
+        </script>
     }
 
     @displaySection(section: model.learningPath.LearningPathSection, hidden: String = "hidden") = {
@@ -31,21 +36,15 @@
 
     @main(title, Some(user), scripts) {
         <div class="container">
-            <div class="page-header">
-                <h1>@title</h1>
-            </div>
 
             @for(section <- learningPath.sections sortBy (_.id)) {
                 @displaySection(section)
             }
 
             <div class="form-group">
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button class="btn btn-primary btn-block" id="nextPartButton" onclick="nextPart()">
-                            Nächster Teil</button>
-                    </div>
-                    <a class="btn btn-default" href="@toolMainObject.indexCall">Lernpfad beenden</a>
+                <div class="btn-group d-flex">
+                    <button class="btn btn-primary  w-100" id="nextPartButton">Nächster Teil</button>
+                    <a class="btn btn-default w-100" href="@toolMainObject.indexCall">Lernpfad beenden</a>
                 </div>
             </div>
 

@@ -50,14 +50,16 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution
 
-  private implicit val umlSolutionJsonFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlSolutionJsonFormat
 
   override def readSolutionFromPostRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlSolution] = {
 
-    val onFormError: Form[StringSolutionFormHelper] => Option[UmlSolution] = _ => None
+    val onFormError: Form[StringSolutionFormHelper] => Option[UmlSolution] = { formWithErrors =>
+      formWithErrors.errors.foreach(error => Logger.error("Form Error: " + error))
+      None
+    }
 
     val onRead: StringSolutionFormHelper => Option[UmlSolution] = { sol =>
-      Json.fromJson[UmlClassDiagram](Json.parse(sol.learnerSolution)) match {
+      Json.fromJson[UmlClassDiagram](Json.parse(sol.learnerSolution))(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
         case JsSuccess(ucd, _) => Some(UmlSolution(user.username, id, part, ucd))
 
         case JsError(errors) =>
@@ -70,17 +72,30 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     SolutionFormHelper.stringSolForm.bindFromRequest.fold(onFormError, onRead)
   }
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
-    case JsSuccess(classDiag, _) => Some(UmlSolution(user.username, id, part, classDiag))
-    case JsError(errors)         =>
-      errors.foreach(error => Logger.error("Json Error: " + error._1 + " --> " + error._2))
-      None
-  }
+  override def readSolutionFromPutRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlSolution] =
+    request.body.asJson flatMap { jsValue =>
+      Json.fromJson[UmlClassDiagram](jsValue)(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
+        case JsSuccess(ucd, _) =>
+          Some(UmlSolution(user.username, id, part, ucd))
+        case JsError(errors)   =>
+          errors.foreach(error => Logger.error("Json Error: " + error))
+          None
+      }
+    }
+
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = None
+
+  //    UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
+  //      case JsSuccess(classDiag, _) => Some(UmlSolution(user.username, id, part, classDiag))
+  //      case JsError(errors)         =>
+  //        errors.foreach(error => Logger.error("Json Error: " + error._1 + " --> " + error._2))
+  //        None
+  //    }
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
-    UmlExercise(id, title = "", author = "", text = "", state, solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), classSelText = "", diagDrawText = "", toIgnore = ""),
+    UmlExercise(id, title = "", author = "", text = "", state, solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), markedText = "", toIgnore = ""),
     mappings = Seq.empty
   )
 
@@ -91,7 +106,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Views
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution]): Html = part match {
-    case ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise.ex)
+    case ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise.ex, this)
     case DiagramDrawing     => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
     case DiagramDrawingHelp => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
     case MemberAllocation   => views.html.idExercises.uml.memberAllocation(user, exercise)
@@ -104,28 +119,21 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx, solutionSaved: Boolean): Future[Try[UmlCompleteResult]] =
     Future(Try(new UmlCompleteResult(exercise, sol.classDiagram, solutionSaved, sol.part)))
 
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: UmlExPart): Future[String] = ???
+
   // Handlers for results
 
-  override def onSubmitCorrectionResult(user: User, result: UmlCompleteResult): Html = result.part match {
-    case ClassSelection   => result.classResult match {
-      case Some(classRes) =>
-        views.html.idExercises.uml.classSelectionResult(user, result.exercise.id, result.learnerSolution.classes, classRes, this)
-      case None           => Html("Es gab einen Fehler bei der Korrektur!")
-    }
-    case MemberAllocation => views.html.idExercises.uml.memberAllocationResult(user, result, this)
+  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: UmlCompleteResult): Html = result.part match {
+    case MemberAllocation =>
+
+      println(result.learnerSolution)
+
+      result.classResult foreach { classRes => classRes.allMatches.map(_.attributesResult) foreach println }
+
+      views.html.idExercises.uml.memberAllocationResult(user, result, this)
     case _                => ??? // Correction is only live!
   }
 
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = error match {
-    case NoSuchExerciseException(_) => Html(error.getMessage)
-    case NoSuchPartException(_)     => Html(error.getMessage)
-    case SolutionTransferException  => Html(error.getMessage)
-    case err                        =>
-      Logger.error("Error while submit correction: " + err)
-      err.printStackTrace()
-      views.html.core.correctionError(user, OtherCorrectionException(err))
-  }
-
-  override def onLiveCorrectionResult(result: UmlCompleteResult): JsValue = result.toJson
+  override def onLiveCorrectionResult(pointsSaved: Boolean, result: UmlCompleteResult): JsValue = result.toJson
 
 }

@@ -1,13 +1,11 @@
 package model.web
 
+import enumeratum.{Enum, EnumEntry}
 import model._
 import org.openqa.selenium.{By, SearchContext}
 import play.twirl.api.Html
-import enumeratum.EnumEntry
-import enumeratum.Enum
 
 import scala.collection.immutable.IndexedSeq
-
 
 sealed trait JsActionType extends EnumEntry
 
@@ -41,6 +39,12 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
     case HtmlPart => htmlTasks.map(_.maxPoints).sum
     case JsPart   => jsTasks.map(_.maxPoints).sum
     case PHPPart  => phpTasks.map(_.maxPoints).sum
+  }
+
+  def tasksForPart(part: WebExPart): Seq[WebCompleteTask] = part match {
+    case HtmlPart => htmlTasks
+    case JsPart   => jsTasks
+    case PHPPart  => phpTasks
   }
 
 }
@@ -77,6 +81,8 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
 // Database classes
 
+case class WebResultForPart(username: String, exerciseId: Int, part: WebExPart, points: Double, maxPoints: Double) extends ResultForPart[WebExPart] {
+}
 
 case class WebExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
                        htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
@@ -112,7 +118,7 @@ case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, ac
   }
 
   def actionDescription: String = actionType match {
-    case JsActionType.CLICK   => s"Klicke auf Element mit XPath Query $xpathQuery"
+    case JsActionType.CLICK   => s"Klicke auf Element mit XPath Query <code>$xpathQuery</code>"
     case JsActionType.FILLOUT => s"Sende Keys '${keysToSend getOrElse ""}' an Element mit XPath Query $xpathQuery"
   }
 
@@ -120,7 +126,7 @@ case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, ac
 
 case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String, isPrecondition: Boolean, awaitedValue: String) {
 
-  def description = s"Element mit XPath '$xpathQuery' sollte den Inhalt '$awaitedValue' haben"
+  def description = s"""Element mit XPath <code>$xpathQuery</code> sollte den Inhalt <code>$awaitedValue</code> haben"""
 
   def maxPoints: Double = 1
 
@@ -128,8 +134,4 @@ case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String
 
 case class PHPTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, textContent: Option[String]) extends WebTask
 
-case class WebSolution(username: String, exerciseId: Int, part: WebExPart, solution: String) extends PartSolution {
-
-  override type PartType = WebExPart
-
-}
+case class WebSolution(username: String, exerciseId: Int, part: WebExPart, solution: String) extends PartSolution[WebExPart]

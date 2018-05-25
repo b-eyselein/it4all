@@ -8,15 +8,16 @@ import play.api.libs.json.{JsValue, Json}
 
 case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
 
-  override def analyze(i1: UmlImplementation, i2: UmlImplementation): MatchType =
-    if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH
+  override type MatchAnalysisResult = GenericAnalysisResult
+
+  override def analyze(i1: UmlImplementation, i2: UmlImplementation): GenericAnalysisResult =
+    GenericAnalysisResult(if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH)
 
   override def explanations: Seq[String] = matchType match {
     case MatchType.SUCCESSFUL_MATCH                             => Seq.empty
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq("Vererbungsrichtung falsch.")
     case MatchType.ONLY_SAMPLE                                  => Seq("Vererbungsbeziehung nicht erstellt.")
     case MatchType.ONLY_USER                                    => Seq("Vererbengsbeziehung ist falsch.")
-    case MatchType.FAILURE                                      => Seq("Es gab einen internen Fehler bei der Korrektur der Vererbungsbeziehungen!")
   }
 
   override def descArg(arg: UmlImplementation): String = describeImplementation(arg)
@@ -28,7 +29,7 @@ case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg:
 }
 
 
-object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch, UmlImplementationMatchingResult] {
+object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch] {
 
   override protected def canMatch: (UmlImplementation, UmlImplementation) => Boolean = (i1, i2) =>
     (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)
@@ -36,9 +37,4 @@ object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementa
 
   override protected def matchInstantiation: (Option[UmlImplementation], Option[UmlImplementation]) => UmlImplementationMatch = UmlImplementationMatch
 
-
-  override protected def resultInstantiation: Seq[UmlImplementationMatch] => UmlImplementationMatchingResult = UmlImplementationMatchingResult
 }
-
-
-case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatch]) extends MatchingResult[UmlImplementation, UmlImplementationMatch]

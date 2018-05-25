@@ -1,31 +1,30 @@
 package model.xml
 
 import javax.inject.Inject
-import model.ExerciseState
-import model._
 import model.persistence.SingleExerciseTableDefs
+import model.web.{WebExPart, WebResultForPart}
+import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
+import model.{ExerciseState, _}
+import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
+
+case class XmlResultForPart(username: String, exerciseId: Int, part: XmlExPart, points: Double, maxPoints: Double) extends ResultForPart[XmlExPart]
 
 case class XmlExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
-                       grammarDescription: String, sampleGrammar: String, rootNode: String)
+                       grammarDescription: String, sampleGrammar: DocTypeDef, rootNode: String)
   extends Exercise with PartsCompleteEx[XmlExercise, XmlExPart] {
-
-  def this(baseValues: (Int, String, String, String, ExerciseState), grammarDescription: String, sampleGrammar: String, rootNode: String) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, grammarDescription, sampleGrammar, rootNode)
 
   override def ex: XmlExercise = this
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.xml.xmlPreview(this)
 
-  override def hasPart(partType: XmlExPart): Boolean = partType match {
-    case DocumentCreationXmlPart => true
-    case GrammarCreationXmlPart  => false
-  }
+  override def hasPart(partType: XmlExPart): Boolean = true
 
   def getTemplate(part: XmlExPart): String = part match {
     case DocumentCreationXmlPart => s"""<?xml version="1.0" encoding="UTF-8"?>
@@ -41,11 +40,8 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
 }
 
-case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String) extends PartSolution {
+case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String) extends PartSolution[XmlExPart]
 
-  override type PartType = XmlExPart
-
-}
 
 // Table defs
 
@@ -60,19 +56,48 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected type SolTableDef = XmlSolutionsTable
 
+  override protected type PartResultType = XmlResultForPart
+
   override protected val solTable = TableQuery[XmlSolutionsTable]
   override protected val exTable  = TableQuery[XmlExercisesTable]
+
+  val resultsForPartsTable = TableQuery[XmlResultsTable]
 
   // Column Types
 
   override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
     MappedColumnType.base[XmlExPart, String](_.urlName, str => XmlExParts.values.find(_.urlName == str) getOrElse DocumentCreationXmlPart)
 
+  private implicit val docTypeDefColumnType: BaseColumnType[DocTypeDef] =
+    MappedColumnType.base[DocTypeDef, String](_.asString, str => {
+      DocTypeDefParser.parseDTD(str) match {
+        case Success(grammar) => grammar
+        case Failure(error)   =>
+          Logger.error("Error while reading xml dtd from db: ", error)
+          DocTypeDef(Seq.empty)
+      }
+    })
+
   // Reading
+
+  override protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlResultForPart]] =
+    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
   override def completeExForEx(ex: XmlExercise): Future[XmlExercise] = Future(ex)
 
+  override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: XmlExPart): Future[Boolean] = part match {
+    case GrammarCreationXmlPart  => Future(true)
+    case DocumentCreationXmlPart => futureResultForUserExAndPart(username, exerciseId, GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
+  }
+
   // Saving
+
+  override def futureSaveResult(username: String, exerciseId: Int, part: XmlExPart, points: Double, maxPoints: Double): Future[Boolean] =
+    db.run(resultsForPartsTable insertOrUpdate XmlResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
+      case e: Throwable =>
+        Logger.error("Error while updating result: ", e)
+        false
+    }
 
   override def saveExerciseRest(compEx: XmlExercise): Future[Boolean] = Future(true)
 
@@ -84,7 +109,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def grammarDescription = column[String]("grammar_description")
 
-    def sampleGrammar = column[String]("sample_grammar")
+    def sampleGrammar = column[DocTypeDef]("sample_grammar")
 
 
     override def * = (id, title, author, text, state, grammarDescription, sampleGrammar, rootNode) <> (XmlExercise.tupled, XmlExercise.unapply)
@@ -100,6 +125,12 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
 
     override def * = (username, exerciseId, part, solution) <> (XmlSolution.tupled, XmlSolution.unapply)
+
+  }
+
+  class XmlResultsTable(tag: Tag) extends ResultsForPartsTable[XmlResultForPart](tag, "xml_results") {
+
+    def * = (username, exerciseId, part, points, maxPoints) <> (XmlResultForPart.tupled, XmlResultForPart.unapply)
 
   }
 

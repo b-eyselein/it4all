@@ -31,7 +31,7 @@ object FormMappings {
 
   // Mappings
 
-  val saveOptionsForm: Form[String] = Form("posTests" -> nonEmptyText)
+  val saveOptionsForm: Form[String] = Form("showHideAgg" -> nonEmptyText)
 
   val updateRoleForm: Form[UpdateRoleForm] = Form(
     mapping(

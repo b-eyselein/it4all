@@ -1,49 +1,44 @@
 @(getsHelp: Boolean)
 
 <!-- FIXME: update both types of hints with currect way... -->
-@if(getsHelp) {
-    <p>Vervollständigen Sie das vorliegende UML-Klassendiagramm weiter, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
-    <ul>
-        <li>Wählen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.</li>
-        <li>Anschließend klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.</li>
-        <li>Im folgendem Popup-Fenster sollen Sie nun die Multiplizitäten zwischen den Klassen angeben.</li>
-        <li>Um bereits erstellte Beziehungen zu löschen, hovern Sie mit der Maus über ihr und klicken auf das erscheinende rote Kreuz.</li>
-        <li>Nachdem Sie die Beziehungen, die Sie modellieren wollen, erstellt haben, können Sie die Ausgabe mittels Buttons verifizieren.</li>
-    </ul>
-} else {
-    <p>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen, inklusive Methoden und Attributen, modellieren.</p>
-    <ul>
-        <li>
-            <b>Klassen erzeugen:</b>
-            Mittels Drag-and-Drop können Sie Wörter aus dem Aufgabentext in die rechts liegende Zeichenfläche ziehen um Klassen zu erzeugen.
-            Alternativ können Sie auch
-        </li>
-        <li>
-            <b>Klassen verschieben:</b>
-            Mittels gedrückter Maustaste können Sie die jeweilige Klasse verschieben.
-        </li>
-        <li>
-            <b>Klassen löschen:</b>
-            Klicken Sie auf den Button "Klasse löschen" und anschließend auf die Klasse. Sämtliche Beziehungen werden ebenfalls entfernt.
-        </li>
-        <li>
-            <b>Hinzufügen von Methoden / Attributen:</b>
-            Klicken Sie auf den Button "Methode hinzufügen" bzw. "Attribut hinzufügen" und anschließend auf die Klasse.
-            Mittels Pop-up können Sie den gewünschten Wert eintragen und mit "OK" bestätigen.
-        </li>
-        <li>
-            <b>Entfernen von Methoden / Attributen:</b>
-            Klicken Sie auf den Button "Methode entfernen" bzw. "Attribut entfernen" und anschließend auf die Klasse.
-            Mittels Pop-up können Sie die Stelle angeben, welche entfernt werden soll.(Beispiel:
-            Der Eintrag 2 löscht den zweiten Eintrag in der entsprechenden Aufzählung)
-        </li>
-        <li>
-            <b>Beziehungen zwischen Klassen erstellen:</b>
-            Wählen Sie zuerst die Art der Beziehung (z.B. Standard), durch das Aktivieren des jeweiligen Buttons aus.
-            Anschließend klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
-            Im folgendem Popup-Fenster sollen Sie nun die Multiplizitäten zwischen den Klassen angeben.
-            Um bereits erstellte Beziehungen zu löschen, hovern Sie mit der Maus über die Verbindung und klicken auf das erscheinende rote Kreuz.
-            Nachdem Sie alle Beziehungen modelliert haben, können Sie die Ausgabe mittels Buttons verifizieren.
-        </li>
-    </ul>
-}
+    @if(getsHelp) {
+        <p>Vervollständigen Sie das vorliegende UML-Klassendiagramm weiter, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
+        <ul>
+            <li>Wählen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.</li>
+            <li>Anschließend klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.</li>
+            <li>Im folgendem Popup-Fenster sollen Sie nun die Multiplizitäten zwischen den Klassen angeben.</li>
+            <li>Um bereits erstellte Beziehungen zu löschen, hovern Sie mit der Maus über ihr und klicken auf das erscheinende rote Kreuz.</li>
+            <li>Nachdem Sie die Beziehungen, die Sie modellieren wollen, erstellt haben, können Sie die Ausgabe mittels Buttons verifizieren.</li>
+        </ul>
+    } else {
+        <p>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Klassen, inklusive Methoden und Attributen, und die
+            Beziehungen zwischen den Klassen, modellieren.</p>
+        <ul>
+            <li>
+                <b>Klassen erzeugen:</b>
+                Mittels Drag-and-Drop können Sie Wörter aus dem Aufgabentext in die Zeichenfläche ziehen,
+                um Klassen zu erzeugen. Alternativ können Sie Klassen auch über den Button &quot;Klasse&quot; erstellen.
+            </li>
+            <li>
+                <b>Klassen verschieben:</b>
+                Mittels gedrückter Maustaste können Sie die jeweilige Klasse verschieben.
+            </li>
+            <li>
+                <b>Elemente löschen:</b>
+                Durch einen Rechtsklick können Elemente gelöscht werden.
+            </li>
+            <li>
+                <b>Bearbeiten einer Klasse (inkl. Attribute und Methoden):</b>
+                Durch einen Doppelklick auf eine Klasse öffnet sich das Bearbeitungsfenster für die jeweilige Klasse.
+                Dort können Sie den Typ und den Namen der Klasse ändern sowie Attribute und Methoden hinzufügen.
+            </li>
+            <li>
+                <b>Beziehungen zwischen Klassen erstellen:</b>
+                Wählen Sie zuerst die Art der Beziehung (z.B. Standard), durch das Aktivieren des jeweiligen Buttons aus.
+                Anschließend klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
+                Im folgendem Popup-Fenster sollen Sie nun die Multiplizitäten zwischen den Klassen angeben.
+                Um bereits erstellte Beziehungen zu löschen, hovern Sie mit der Maus über die Verbindung und klicken auf das erscheinende rote Kreuz.
+                Nachdem Sie alle Beziehungen modelliert haben, können Sie die Ausgabe mittels Buttons verifizieren.
+            </li>
+        </ul>
+    }
