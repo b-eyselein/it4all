@@ -13,8 +13,6 @@ case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: Complet
 
   override val solutionSaved = false
 
-  override def renderLearnerSolution: Html = ???
-
   override val results: Seq[IdAnswerMatch] = IdAnswerMatcher.doMatch(learnerSolution, question.answers)
 
   def forJson: JsValue = JsArray(results map { r =>

@@ -19,13 +19,13 @@
 }
 
 @main(toolMainObject.toolname, Some(user), scripts) {
-    <div class="container" id="fullsc">
+    <div class="container-fluid" id="fullsc">
 
         <input hidden value="@exercise.ex.id" name="exerciseId" id="exerciseId" title="hidden" type="number">
         <input hidden value="@part.urlName" name="exercisePart" id="exercisePart" title="hidden">
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-sm-4">
                 <h2>Aufgabenstellung</h2>
 
                 <hr>
@@ -33,43 +33,46 @@
                 <p><b>@Html(exercise.textForPart(part.urlName))</b></p>
 
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body bg-light">
                     @part match {
                         case model.xml.DocumentCreationXmlPart => {
                             <pre>@play.twirl.api.HtmlFormat.escape(exercise.sampleGrammar.asString)</pre>
                         }
                         case model.xml.GrammarCreationXmlPart => {
-                            @exercise.grammarDescription
+                            <p class="text-justify">@exercise.grammarDescription</p>
                         }
                     }
                     </div>
                 </div>
 
+                <br>
+
                 <div class="form-group">
                     <div class="btn-group d-flex">
                         <button id="testBtn" data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)"
                         class="btn btn-success w-100">Lösung testen</button>
-                        <a href="@routes.MainExerciseController.index(toolMainObject.urlPart)"
-                        class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                        <a href="@routes.MainExerciseController.index(toolMainObject.urlPart)" class="btn btn-secondary w-100">
+                            Bearbeitung beenden</a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-sm-4">
                 <h2>Editor</h2>
 
                 <hr>
 
                 <textarea id="xmlEditor" title="Editor">@oldSolution</textarea>
             </div>
+
+            <div class="col-sm-4">
+                <h2>Korrektur</h2>
+
+                <hr>
+
+                <div id="correction"></div>
+            </div>
         </div>
-
-        <hr>
-
-        <section id="correctionDiv">
-            <h2>Korrektur</h2>
-            <div id="correction"></div>
-        </section>
 
     </div>
 }

@@ -37,7 +37,7 @@ sealed abstract class DocTypeDefLine {
 
 }
 
-case class ElementLine(elementName: String, elementDefinition: ElementDefinition, attributeDefinition: Seq[AttributeList])
+case class ElementLine(elementName: String, elementDefinition: ElementDefinition, attributeLists: Seq[AttributeList])
 
 case class AttributeList(elementName: String, attributeDefinitions: Seq[AttributeDefinition]) extends DocTypeDefLine {
 

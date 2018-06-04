@@ -1,8 +1,8 @@
 package model.uml.matcher
 
 import model.core.matching._
-import model.uml.{UmlAssociation, UmlAssociationType}
 import model.uml.UmlConsts._
+import model.uml.{UmlAssociation, UmlAssociationType}
 import play.api.libs.json.{JsValue, Json}
 
 case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel: Boolean,
@@ -17,9 +17,9 @@ case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel: Bool
 
 }
 
-case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match[UmlAssociation] {
+case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match[UmlAssociation, UmlAssociationAnalysisResult] {
 
-  override type MatchAnalysisResult = UmlAssociationAnalysisResult
+  //  override type MatchAnalysisResult = UmlAssociationAnalysisResult
 
   override def analyze(assoc1: UmlAssociation, assoc2: UmlAssociation): UmlAssociationAnalysisResult = {
     val endsParallel = UmlAssociationMatcher.endsParallelEqual(assoc1, assoc2)
@@ -48,7 +48,7 @@ case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Optio
 }
 
 
-object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch] {
+object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch] {
 
   private def endsCrossedEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean = (assoc1.firstEnd == assoc2.secondEnd) && (assoc1.secondEnd == assoc2.firstEnd)
 

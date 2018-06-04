@@ -16,7 +16,7 @@
     "paths": {
       "*": [
         "*",
-        "node-modules/*"
+        "target/web/node-modules/main/webjars/*"
       ]
     },
     "typeRoots": [

@@ -6,8 +6,6 @@ let testBtn: JQuery;
 function activityCorrection(): void {
     let exercisePart = $('#exercisePart').val();
 
-    console.warn('Correcting...');
-
     testBtn.prop('disabled', true);
 
     let dataToSend = {

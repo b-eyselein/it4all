@@ -1,12 +1,13 @@
 import * as $ from 'jquery';
 
 import * as CodeMirror from 'codemirror';
-import {initEditor} from "../editorHelpers";
-
 import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/dtd/dtd';
-import {renderXmlGrammarCorrectionSuccess} from "./xmlGrammarCorrection";
+import {initEditor} from "../editorHelpers";
+
 import {CorrectionResult} from "../matches";
+
+import {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult} from "./xmlGrammarCorrection";
 
 let editor: CodeMirror.Editor;
 let testBtn: JQuery;
@@ -46,7 +47,7 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
 }
 
 
-function onXmlGrammarCorrectionSuccess(response): void {
+function onXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult): void {
     testBtn.prop('disabled', false);
     const html = renderXmlGrammarCorrectionSuccess(response);
     $('#correction').html(html);

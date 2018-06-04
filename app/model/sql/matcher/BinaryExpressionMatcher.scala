@@ -6,9 +6,9 @@ import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
 
-case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
+case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression, GenericAnalysisResult] {
 
-  override type MatchAnalysisResult = GenericAnalysisResult
+  //  override type MatchAnalysisResult = GenericAnalysisResult
 
   override def analyze(a1: BinaryExpression, a2: BinaryExpression): GenericAnalysisResult = {
 
@@ -30,7 +30,7 @@ case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: O
 
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
-  extends Matcher[BinaryExpression, BinaryExpressionMatch] {
+  extends Matcher[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch] {
 
   private def getColToCompare(expression: BinaryExpression): Column = (expression.getLeftExpression, expression.getRightExpression) match {
     case (left: Column, right: Column) => if (left.toString < right.toString) left else right

@@ -1,6 +1,6 @@
 import {AnalysisResult, CorrectionResult, Match} from "../matches";
 
-export {renderXmlGrammarCorrectionSuccess}
+export {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult}
 
 interface XmlElementAnalysisResult extends AnalysisResult {
     contentCorrect: boolean
@@ -64,16 +64,19 @@ function renderElementMatch(em: XmlElementMatch): string {
 function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult): string {
     let html: string = '';
 
+    console.warn(response.points + " :: " + response.maxPoints);
+
     if (response.solutionSaved) {
-        html += `<span class="text-success">Ihre Lösung wurde gespeichert.</span>`;
+        html += `<p class="text-success">Ihre Lösung wurde gespeichert.</p>`;
     } else {
-        html += `<span class="text-danger">Ihre Lösung konnte nicht gespeichert werden!</span>`;
+        html += `<p class="text-danger">Ihre Lösung konnte nicht gespeichert werden!</p>`;
     }
 
     if (response.success) {
-        html += `<span class="text-success"> Die Korrektur war komplett erfolgreich.</span>`;
+        html += `<p class="text-success">Die Korrektur war komplett erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
     } else {
-        html += response.results.map(renderElementMatch).join('\n');
+        html += `<p class="text-danger">Die Korrektur war nicht erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p><hr>`
+            + response.results.map(renderElementMatch).join('\n');
     }
 
     return html;

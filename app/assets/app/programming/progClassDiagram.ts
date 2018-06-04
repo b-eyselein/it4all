@@ -1,6 +1,5 @@
 import * as $ from 'jquery';
 import * as joint from 'jointjs';
-import 'bootstrap';
 
 import {
     buildAttributeString,

@@ -13,8 +13,6 @@ case class ProgCompleteResult(implementation: String, solutionSaved: Boolean, re
 
   override type SolType = String
 
-  override val renderLearnerSolution: Html = Html(s"<pre>$learnerSolution</pre>")
-
   def toJson: JsValue = Json.obj(
     "solutionSaved" -> solutionSaved,
     "results" -> results.map(_.toJson)

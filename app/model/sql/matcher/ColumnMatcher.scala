@@ -7,9 +7,9 @@ import play.api.libs.json.{JsString, JsValue}
 import scala.language.postfixOps
 
 
-case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match[ColumnWrapper] {
+case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match[ColumnWrapper, GenericAnalysisResult] {
 
-  override type MatchAnalysisResult = GenericAnalysisResult
+  //  override type MatchAnalysisResult = GenericAnalysisResult
 
   val hasAlias: Boolean = (userArg exists (_.hasAlias)) || (sampleArg exists (_.hasAlias))
 
@@ -32,7 +32,7 @@ case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnW
 }
 
 
-object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch] {
+object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, ColumnMatch] {
 
   override protected def canMatch: (ColumnWrapper, ColumnWrapper) => Boolean = _ canMatch _
 

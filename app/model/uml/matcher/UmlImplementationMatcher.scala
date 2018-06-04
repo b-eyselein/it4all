@@ -6,9 +6,9 @@ import model.uml.UmlConsts._
 import model.uml.UmlImplementation
 import play.api.libs.json.{JsValue, Json}
 
-case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
+case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation, GenericAnalysisResult] {
 
-  override type MatchAnalysisResult = GenericAnalysisResult
+  //  override type MatchAnalysisResult = GenericAnalysisResult
 
   override def analyze(i1: UmlImplementation, i2: UmlImplementation): GenericAnalysisResult =
     GenericAnalysisResult(if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH)
@@ -29,7 +29,7 @@ case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg:
 }
 
 
-object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch] {
+object UmlImplementationMatcher extends Matcher[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch] {
 
   override protected def canMatch: (UmlImplementation, UmlImplementation) => Boolean = (i1, i2) =>
     (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)

@@ -1,16 +1,5 @@
-import * as joint from 'jointjs';
 import * as _ from 'lodash';
-import 'bootstrap';
-import {
-    createElements,
-    editActionInput,
-    elseEditor,
-    forLoopEditor,
-    ifEditor,
-    parentChildNodes,
-    selElement,
-    umlActivityGraph
-} from './umlActivityDrawing';
+import * as joint from 'jointjs';
 
 
 import {
@@ -23,22 +12,26 @@ import {
     STD_PADDING,
     strokeWidth
 } from '../umlConsts';
+
 import {HtmlElement} from "./umlADHtmlElement";
+
+import {createElements, parentChildNodes, selElement, umlActivityGraph} from './umlActivityDrawing';
+import {editActionInput, editForLoopText, editIfElseText, editWhileLoop} from "./umlActivityEdit";
 
 //FIXME: type!
 
-
 export {
-    StartState, StartStateView, createStartState,
-    EndState, EndStateView, createEndState,
+    MyGenericElement, MyElementView, MyEditableElement,
+    StartState, createStartState,
+    EndState, createEndState,
     ForLoopText, ForLoopTextView,
     ActionInput, ActionInputView,
     ForLoopEmbed, ForLoopEmbedView,
-    WhileLoop, WhileLoopView,
+    WhileLoopText, WhileLoopView,
     IfElseText, IfElseTextView,
     Edit, EditView,
     EDIT_HEIGHT, EDIT_WIDTH,
-    createElements, createDoWhile, createEdit, createForLoop, createWhileDo
+    createDoWhile, createEdit, createForLoop, createWhileDo
 }
 
 const EXTERN_PORT_WIDTH = 250; // all except if-then-else
@@ -76,29 +69,112 @@ const FOR_LOOP_TEXT_MARKUP: string = `
     <text class="for-body-text"/><text class="for-header-text"/>
 </g>`.trim();
 
-const WHILE_LOOP_TEXT_MARKUP: string = `
-<g class="rotatable">
-    <g class="scalable">
-        <rect class="whileDo-header-rect"/><rect class="whileDo-body-rect"/><rect class="whileDo-separator-rect"/><rect class="whileDo-complete-rect"/>
-    </g>
-    <text class="whileDo-body-text"/><text class="whileDo-header-text"/>
-</g>`.trim();
+interface DefaultsObject {
+    type: string,
+    size: { width: number, height: number },
+    attrs: object,
+    ports: object,
+
+    [x: string]: any
+}
+
+abstract class MyGenericElement extends joint.shapes.basic.Generic {
+
+    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
+        super(attributes, options);
+        this.set('markup', this.getMarkUp());
+    }
+
+    defaults() {
+        return _.defaultsDeep(this.getDefaultsObject(), joint.shapes.basic.Generic.prototype.defaults);
+    }
+
+    abstract getDefaultsObject(): DefaultsObject;
+
+    abstract getType(): string;
+
+    abstract getMarkUp(): string;
+
+}
+
+class MyElementView extends joint.dia.ElementView {
+
+    initialize() {
+        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.model, 'uml-update', function () {
+            this.update();
+            this.resize();
+        });
+    }
+
+    contextmenu(event: JQuery.Event): void {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+}
+
+interface ElementCheckResult {
+    isOkay: boolean
+    reasons: string[]
+}
+
+abstract class MyEditableElement extends MyGenericElement {
+
+    // abstract getContent(): string [];
+
+    abstract isOkay(): ElementCheckResult;
+
+    abstract watchedProperties(): string[];
+
+    abstract updateRectangles(): void;
+
+    initialize(): void {
+        const onChangeOf = this.watchedProperties().map(p => 'change:' + p).join(' ');
+        this.on(onChangeOf, function () {
+            this.updateRectangles();
+            this.trigger('uml-update');
+        }, this);
+
+        this.updateRectangles();
+
+        joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
+    }
+
+}
+
+abstract class EditableElementView extends MyElementView {
+
+    abstract editSelf(event: JQuery.Event, x: number, y: number);
+
+    pointerdblclick(event: JQuery.Event, x: number, y: number) {
+        this.editSelf(event, x, y);
+    }
+
+}
 
 // Element definitions
 
 const stateCircleTransform = 'translate(' + (START_END_SIZE / 2) + ', ' + (START_END_SIZE / 2) + ')';
 
-class StartState extends joint.shapes.basic.Generic {
+class StartState extends MyGenericElement {
 
     private static MARKUP = `<g class="rotatable"><g class="scalable"><circle/></g></g>`;
 
-    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
-        super(attributes, options);
-        this.set('markup', StartState.MARKUP);
+    private static TYPE = 'uml.NewStartState';
+
+    getMarkUp(): string {
+        return StartState.MARKUP;
     }
 
-    defaults() {
-        return _.defaultsDeep({
+    getType(): string {
+        return StartState.TYPE;
+    }
+
+    getDefaultsObject(): DefaultsObject {
+        return {
+            type: StartState.TYPE,
             size: {width: START_END_SIZE, height: START_END_SIZE},
 
             attrs: {circle: {transform: stateCircleTransform, r: START_END_SIZE / 2, fill: COLORS.Black}},
@@ -116,40 +192,32 @@ class StartState extends joint.shapes.basic.Generic {
                 },
                 items: [{id: 'out', group: 'out', args: {x: START_END_SIZE / 2}}]
             }
-
-        }, joint.shapes.basic.Generic.prototype.defaults);
+        };
     }
 
 }
 
-class StartStateView extends joint.dia.ElementView {
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
-
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    }
-}
-
-function createStartState(x: number, y: number): joint.dia.Element {
+function createStartState(x: number, y: number): StartState {
     return new StartState().position(x, y);
 }
 
 
-class EndState extends joint.shapes.basic.Generic {
+class EndState extends MyGenericElement {
 
-    private static MARKUP = '<g class="rotatable"><g class="scalable"><circle class="outer"/><circle class="inner"/></g></g>'
+    private static MARKUP = '<g class="rotatable"><g class="scalable"><circle class="outer"/><circle class="inner"/></g></g>';
+    private static TYPE = 'uml.NewEndState';
 
-    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
-        super(attributes, options);
-        this.set('markup', EndState.MARKUP);
+    getMarkUp(): string {
+        return EndState.MARKUP;
     }
 
-    defaults() {
-        return _.defaultsDeep({
-            type: 'EndState',
+    getType(): string {
+        return EndState.TYPE;
+    }
+
+    getDefaultsObject(): DefaultsObject {
+        return {
+            type: EndState.TYPE,
             size: {width: START_END_SIZE, height: START_END_SIZE},
 
             attrs: {
@@ -165,50 +233,72 @@ class EndState extends joint.shapes.basic.Generic {
                     in: {
                         attrs: {
                             circle: {
-                                fill: 'transparent',
-                                stroke: COLORS.RoyalBlue,
-                                r: START_END_SIZE / 4,
-                                magnet: true
+                                fill: 'transparent', stroke: COLORS.RoyalBlue, r: START_END_SIZE / 4, magnet: true
                             }
                         }
                     }
                 },
                 items: [{id: 'in', group: 'in', args: {x: START_END_SIZE / 2}}]
             }
-        }, joint.shapes.basic.Generic.prototype.defaults);
+        };
     }
 
 }
 
-class EndStateView extends joint.dia.ElementView {
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    }
-}
-
-function createEndState(x: number, y: number): joint.dia.Element {
+function createEndState(x: number, y: number): EndState {
     return new EndState().position(x, y);
+}
+
+// Loops
+
+interface LoopDefaultsObject extends DefaultsObject {
+
+    ports: any,
+
+    loopContent: string[]
+
+}
+
+abstract class LoopElement extends MyEditableElement {
+
+    abstract getLoopHeader(): string;
+
+    abstract getDefaultsObject(): LoopDefaultsObject;
+
+    getLoopContent(): string[] {
+        return this.get('loopContent');
+    }
+
+    setLoopContent(loopContent: string[]): void {
+        this.set('loopContent', loopContent);
+    }
+
 }
 
 // For loop - text
 
-class ForLoopText extends joint.shapes.basic.Generic {
+class ForLoopText extends LoopElement {
 
-    private static MARKUP = FOR_LOOP_TEXT_MARKUP;
+    private static MARKUP: string = FOR_LOOP_TEXT_MARKUP;
+    private static TYPE: string = 'uml.ForLoopText';
 
-    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
-        super(attributes, options);
-        this.set('markup', ForLoopText.MARKUP);
+    getMarkUp(): string {
+        return ForLoopText.MARKUP;
     }
 
-    defaults() {
-        return _.defaultsDeep({
-            type: 'uml.ForLoopText',
+    getType(): string {
+        return ForLoopText.TYPE;
+    }
+
+    watchedProperties(): string[] {
+        return ['variable', 'collection', 'loopContent'];
+    }
+
+    getDefaultsObject(): LoopDefaultsObject {
+        return {
+            type: ForLoopText.TYPE,
+
             size: {width: STD_ACTIVITY_ELEMENT_WIDTH, height: STD_FOR_LOOP_HEIGHT},
 
             attrs: {
@@ -234,20 +324,8 @@ class ForLoopText extends joint.shapes.basic.Generic {
 
             ports: STD_PORTS,
 
-            variable: '', collection: '', loopContent: [],
-        }, joint.shapes.basic.Generic.prototype.defaults);
-    }
-
-
-    initialize(): void {
-        this.on('change:variable change:collection change:loopContent', function () {
-            this.updateRectangles();
-            this.trigger('uml-update');
-        }, this);
-
-        this.updateRectangles();
-
-        joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
+            variable: '', collection: '', loopContent: []
+        };
     }
 
     getLoopHeader(): string {
@@ -260,22 +338,38 @@ class ForLoopText extends joint.shapes.basic.Generic {
         return `for ${variable} in ${collection}:`;
     }
 
-    isOkay() {
-        return (this.get('variable') !== 0) && (this.get('collection').length !== 0);
+    isOkay(): ElementCheckResult {
+        let isOkay = true, reasons = [];
+
+        if (this.getVariable().length === 0) {
+            isOkay = false;
+            reasons.push('Konnte keine Variable finden!');
+        }
+
+        if (this.getCollection().length === 0) {
+            isOkay = false;
+            reasons.push('Konnte keine Collection finden!');
+        }
+
+        return {isOkay, reasons};
     }
 
     getVariable(): string {
         return this.get('variable');
     }
 
+    setVariable(variable: string): void {
+        this.set('variable', variable);
+    }
+
     getCollection(): string {
         return this.get('collection');
     }
 
-    getLoopContent(): string[] {
-        const currentContent: string[] = this.get('loopContent');
-        return (currentContent.length === 0) ? ['pass'] : currentContent;
+    setCollection(collection: string): void {
+        this.set('collection', collection);
     }
+
 
     updateRectangles(): void {
         const attrs = this.get('attrs');
@@ -292,27 +386,132 @@ class ForLoopText extends joint.shapes.basic.Generic {
 
         this.resize(STD_ACTIVITY_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
     }
+
+
 }
 
-function resetForLoopText(): void {
-    $('#forLoopButton').data('cellId', '');
-    $('#forLoopContent').val('');
-    $('#forLoopEditSection').prop('hidden', true);
-}
+class WhileLoopText extends LoopElement {
 
-class ForLoopTextView extends joint.dia.ElementView {
-    // events: STD_TEXT_ELEMENT_EVENTS,
+    private static MARKUP = `<g class="rotatable">
+    <g class="scalable">
+        <rect class="whileDo-header-rect"/><rect class="whileDo-body-rect"/><rect class="whileDo-separator-rect"/><rect class="whileDo-complete-rect"/>
+    </g>
+    <text class="whileDo-body-text"/><text class="whileDo-header-text"/>
+</g>`.trim();
+    private static TYPE = 'uml.WhileLoopText';
 
-    onLeftClick(event) {
-        event.preventDefault();
-        $('#forLoopVariableInput').val(this.model.get('variable'));
-        $('#forLoopCollectionInput').val(this.model.get('collection'));
-
-        forLoopEditor.setValue(this.model.get('loopContent').join('\n'));
-
-        $('#forLoopButton').data('cellId', this.model.id);
-        $('#forLoopEditSection').prop('hidden', false);
+    getMarkUp(): string {
+        return WhileLoopText.MARKUP;
     }
+
+    getType(): string {
+        return WhileLoopText.TYPE;
+    }
+
+    getDefaultsObject(): LoopDefaultsObject {
+        return {
+            type: WhileLoopText.TYPE,
+            size: {width: STD_ACTIVITY_ELEMENT_WIDTH, height: STD_FOR_LOOP_HEIGHT},
+
+            attrs: {
+                rect: {width: STD_ACTIVITY_ELEMENT_WIDTH},
+                '.whileDo-complete-rect': {
+                    height: STD_FOR_LOOP_HEIGHT, rx: 5, ry: 5, fill: 'none',
+                    stroke: COLORS.Black, strokeWidth, strokeDasharray: '5,5'
+                },
+                '.whileDo-header-rect': {height: MIN_HEIGHT},
+                '.whileDo-separator-rect': {
+                    height: 1, transform: 'translate(0,' + (MIN_HEIGHT + 2) + ')',
+                    stroke: COLORS.Black, strokeWidth: 1
+                },
+                '.whileDo-body-rect': {
+                    height: STD_FOR_LOOP_HEIGHT - MIN_HEIGHT, transform: 'translate(0,' + (MIN_HEIGHT + 4) + ')',
+                    fill: COLORS.Gainsboro
+                },
+
+                text: {fill: COLORS.Black, fontSize, refY: STD_PADDING, refX: STD_PADDING},
+                '.whileDo-header-text': {ref: '.whileDo-header-rect'},
+                '.whileDo-body-text': {ref: '.whileDo-body-rect'}
+            },
+
+            ports: STD_PORTS,
+
+            condition: '', loopContent: []
+        };
+    }
+
+    watchedProperties(): string[] {
+        return ['condition', 'loopContent'];
+    }
+
+    isOkay(): ElementCheckResult {
+        let isOkay = true, reasons: string[] = [];
+
+        if (this.getCondition().length === 0) {
+            isOkay = false;
+            reasons.push('Bedinung ist leer!');
+        }
+
+        if (this.getLoopContent().filter((l) => l.length > 0).length === 0) {
+            isOkay = false;
+            reasons.push('Schleife ist leer!');
+        }
+
+        return {isOkay, reasons};
+    }
+
+    getCondition(): string {
+        return this.get('condition');
+    }
+
+    setCondition(condition: string): void {
+        this.set('condition', condition);
+    }
+
+    getLoopHeader(): string {
+        const currentCondition = this.getCondition();
+        return `while ${currentCondition.length === 0 ? '___' : currentCondition}:`;
+    }
+
+    updateRectangles(): void {
+        const attrs = this.get('attrs');
+
+        attrs['.whileDo-header-text'].text = this.getLoopHeader();
+
+        let loopContent: string[] = this.get('loopContent');
+        let loopRectHeight = calcRectHeight(loopContent);
+
+        attrs['.whileDo-body-text'].text = loopContent.join('\n');
+        attrs['.whileDo-body-rect'].height = loopRectHeight;
+
+        attrs['.whileDo-complete-rect'].height = loopRectHeight + MIN_HEIGHT + 4;
+
+        this.resize(STD_ACTIVITY_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
+    }
+
+
+}
+
+class ForLoopTextView extends EditableElementView {
+
+    editSelf(event: JQuery.Event, x: number, y: number) {
+        if (this.model instanceof ForLoopText) {
+            editForLoopText(this.model);
+        } else {
+            console.error('Model of a view has a wrong class!');
+        }
+    }
+
+    onRightClick(event: JQuery.Event): void {
+        event.preventDefault();
+        if (confirm('Löschen?'))
+            this.remove();
+    }
+
+}
+
+class WhileLoopView extends EditableElementView {
+    // events: STD_TEXT_ELEMENT_EVENTS,
 
     onRightClick(event) {
         event.preventDefault();
@@ -320,41 +519,36 @@ class ForLoopTextView extends joint.dia.ElementView {
             this.remove();
     }
 
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
-
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
+    editSelf(event: JQuery.Event, x: number, y: number) {
+        if (this.model instanceof WhileLoopText) {
+            editWhileLoop(this.model);
+        } else {
+            console.error('Model for a view had the wrong type!');
+        }
     }
+
 }
 
-function updateForLoopText(button: HTMLButtonElement) {
-    const model = umlActivityGraph.getCell($(button).data('cellId'));
-
-    model.prop('variable', $('#forLoopVariableInput').val());
-    model.prop('collection', $('#forLoopCollectionInput').val());
-
-    let loopContent = forLoopEditor.getValue().split('\n').filter((l) => l.trim().length !== 0);
-
-    model.prop('loopContent', loopContent);
-
-    resetForLoopText();
-}
-
-class ForLoopEmbed extends joint.shapes.basic.Generic {
+class ForLoopEmbed extends LoopElement {
 
     private static MARKUP = FOR_LOOP_TEXT_MARKUP;
+    private static TYPE = 'uml.ForLoopEmbed';
 
-    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
-        super(attributes, options);
-        this.set('markup', ForLoopEmbed.MARKUP);
+    getMarkUp(): string {
+        return ForLoopEmbed.MARKUP;
     }
 
-    defaults() {
-        return _.defaultsDeep({
-            type: 'uml.ForLoopEmbed',
+    getType(): string {
+        return ForLoopEmbed.TYPE;
+    }
+
+    watchedProperties(): string [] {
+        return ['variable', 'collection', 'loopContent'];
+    }
+
+    getDefaultsObject(): LoopDefaultsObject {
+        return {
+            type: ForLoopEmbed.TYPE,
             size: {width: STD_ACTIVITY_ELEMENT_WIDTH, height: STD_FOR_LOOP_HEIGHT},
 
             attrs: {
@@ -383,11 +577,7 @@ class ForLoopEmbed extends joint.shapes.basic.Generic {
                         position: 'top',
                         attrs: {
                             circle: {
-                                fill: 'transparent',
-                                stroke: COLORS.RoyalBlue,
-                                strokeWidth: 1,
-                                r: 10,
-                                magnet: true
+                                fill: 'transparent', stroke: COLORS.RoyalBlue, strokeWidth: 1, r: 10, magnet: true
                             }
                         }
                     },
@@ -395,11 +585,7 @@ class ForLoopEmbed extends joint.shapes.basic.Generic {
                         position: 'absolute',
                         attrs: {
                             circle: {
-                                fill: 'transparent',
-                                stroke: COLORS.IndianRed,
-                                strokeWidth: 1,
-                                r: 10,
-                                magnet: true
+                                fill: 'transparent', stroke: COLORS.IndianRed, strokeWidth: 1, r: 10, magnet: true
                             }
                         }
                     },
@@ -407,11 +593,7 @@ class ForLoopEmbed extends joint.shapes.basic.Generic {
                         position: 'absolute',
                         attrs: {
                             circle: {
-                                fill: 'transparent',
-                                stroke: COLORS.YellowGreen,
-                                strokeWidth: 1,
-                                r: 10,
-                                magnet: true
+                                fill: 'transparent', stroke: COLORS.YellowGreen, strokeWidth: 1, r: 10, magnet: true
                             }
                         }
                     },
@@ -419,11 +601,7 @@ class ForLoopEmbed extends joint.shapes.basic.Generic {
                         position: 'bottom',
                         attrs: {
                             circle: {
-                                fill: 'transparent',
-                                stroke: COLORS.ForestGreen,
-                                strokeWidth: 1,
-                                r: 10,
-                                magnet: true
+                                fill: 'transparent', stroke: COLORS.ForestGreen, strokeWidth: 1, r: 10, magnet: true
                             }
                         }
                     },
@@ -432,13 +610,11 @@ class ForLoopEmbed extends joint.shapes.basic.Generic {
                 items: [
                     {id: 'in', group: 'in', args: {x: STD_ACTIVITY_ELEMENT_WIDTH / 2}},
                     {
-                        id: 'externout',
-                        group: 'externout',
+                        id: 'externout', group: 'externout',
                         args: {x: STD_ACTIVITY_ELEMENT_WIDTH, y: STD_FOR_LOOP_HEIGHT / 3}
                     },
                     {
-                        id: 'externin',
-                        group: 'externin',
+                        id: 'externin', group: 'externin',
                         args: {x: STD_ACTIVITY_ELEMENT_WIDTH, y: 2 * STD_FOR_LOOP_HEIGHT / 3}
                     },
                     {id: 'out', group: 'out', args: {x: STD_ACTIVITY_ELEMENT_WIDTH / 2}}
@@ -446,21 +622,8 @@ class ForLoopEmbed extends joint.shapes.basic.Generic {
             },
 
             isResized: false, variable: 'x', collection: '[ ]', loopContent: []
-        }, joint.shapes.basic.Generic.prototype.defaults);
+        }
     }
-
-
-    initialize(): void {
-        this.on('change:variable change:collection change:loopContent', function () {
-            this.updateRectangles();
-            this.trigger('uml-update');
-        }, this);
-
-        this.updateRectangles();
-
-        joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
-    }
-
 
     handleClick() {
         // let ownPosition: { x: number, y: number } = this.position();
@@ -553,9 +716,20 @@ class ForLoopEmbed extends joint.shapes.basic.Generic {
 
         // this.resize(STD_ACTIVITY_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
     }
+
+    getLoopContent(): string[] {
+        return undefined;
+    }
+
+    isOkay(): ElementCheckResult {
+        return {
+            isOkay: false,
+            reasons: ['TODO!']
+        };
+    }
 }
 
-class ForLoopEmbedView extends joint.dia.ElementView {
+class ForLoopEmbedView extends MyElementView {
     // events: STD_TEXT_ELEMENT_EVENTS,
 
     onLeftClick(event) {
@@ -569,122 +743,10 @@ class ForLoopEmbedView extends joint.dia.ElementView {
             this.remove();
     }
 
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
-
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    }
 }
 
 
-class WhileLoop extends joint.shapes.basic.Generic {
-
-    private static MARKUP = WHILE_LOOP_TEXT_MARKUP;
-
-    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
-        super(attributes, options);
-        this.set('markup', WhileLoop.MARKUP);
-    }
-
-    defaults() {
-        return _.defaultsDeep({
-            type: 'uml.WhileLoop',
-            size: {width: STD_ACTIVITY_ELEMENT_WIDTH, height: STD_FOR_LOOP_HEIGHT},
-
-            attrs: {
-                rect: {width: STD_ACTIVITY_ELEMENT_WIDTH},
-                '.whileDo-complete-rect': {
-                    height: STD_FOR_LOOP_HEIGHT, rx: 5, ry: 5, fill: 'none',
-                    stroke: COLORS.Black, strokeWidth, strokeDasharray: '5,5'
-                },
-                '.whileDo-header-rect': {height: MIN_HEIGHT},
-                '.whileDo-separator-rect': {
-                    height: 1, transform: 'translate(0,' + (MIN_HEIGHT + 2) + ')',
-                    stroke: COLORS.Black, strokeWidth: 1
-                },
-                '.whileDo-body-rect': {
-                    height: STD_FOR_LOOP_HEIGHT - MIN_HEIGHT, transform: 'translate(0,' + (MIN_HEIGHT + 4) + ')',
-                    fill: COLORS.Gainsboro
-                },
-
-                text: {fill: COLORS.Black, fontSize, refY: STD_PADDING, refX: STD_PADDING},
-                '.whileDo-header-text': {ref: '.whileDo-header-rect'},
-                '.whileDo-body-text': {ref: '.whileDo-body-rect'}
-            },
-
-            ports: STD_PORTS,
-
-            condition: 'false',
-            loopContent: [],
-        })
-    }
-
-
-    initialize() {
-
-        this.on('change:condition change:loopContent', function () {
-            this.updateRectangles();
-            this.trigger('uml-update');
-        }, this);
-
-        this.updateRectangles();
-
-        joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
-    }
-
-    getLoopHeader() {
-        return `while ${this.get('condition')}:`;
-    }
-
-    updateRectangles() {
-        const attrs = this.get('attrs');
-
-        attrs['.whileDo-header-text'].text = this.getLoopHeader();
-
-        let loopContent: string[] = this.get('loopContent');
-        let loopRectHeight = calcRectHeight(loopContent);
-
-        attrs['.whileDo-body-text'].text = loopContent.join('\n');
-        attrs['.whileDo-body-rect'].height = loopRectHeight;
-
-        attrs['.whileDo-complete-rect'].height = loopRectHeight + MIN_HEIGHT + 4;
-
-        this.resize(STD_ACTIVITY_ELEMENT_WIDTH, loopRectHeight + MIN_HEIGHT + 4);
-    }
-}
-
-class WhileLoopView extends joint.dia.ElementView {
-    // events: STD_TEXT_ELEMENT_EVENTS,
-
-    onLeftClick(event) {
-        event.preventDefault();
-        $('#conditionInput').val(this.model.attributes.condition);
-        $('#forLoopContent').val(this.model.attributes.loopContent);
-        $('#loopCellId').val(this.model.id);
-
-        $('#loopEditModal').modal('show');
-    }
-
-    onRightClick(event) {
-        event.preventDefault();
-        if (confirm('Löschen?'))
-            this.remove();
-    }
-
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
-
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    }
-}
-
-class ActionInput extends joint.shapes.basic.Generic {
+class ActionInput extends MyEditableElement {
 
     private static MARKUP = `
 <g class="rotatable">
@@ -693,15 +755,34 @@ class ActionInput extends joint.shapes.basic.Generic {
     </g>
     <text class="action-input-text"/>
 </g>`.trim();
+    private static TYPE: string = 'uml.ActionInput';
 
-    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
-        super(attributes, options);
-        this.set('markup', ActionInput.MARKUP);
+    getMarkUp(): string {
+        return ActionInput.MARKUP;
     }
 
-    defaults() {
-        return _.defaultsDeep({
-            type: 'uml.ActionInput',
+    getType(): string {
+        return ActionInput.TYPE;
+    }
+
+    watchedProperties(): string[] {
+        return ['content'];
+    }
+
+    isOkay(): ElementCheckResult {
+        let isOkay = true, reasons = [];
+
+        if (this.getContent().filter((l) => l.trim().length > 0).length === 0) {
+            isOkay = false;
+            reasons.push('Aktionsknoten ist leer!');
+        }
+
+        return {isOkay, reasons};
+    }
+
+    getDefaultsObject(): DefaultsObject {
+        return {
+            type: ActionInput.TYPE,
             size: {width: STD_ACTIVITY_ELEMENT_WIDTH, height: MIN_HEIGHT},
 
             attrs: {
@@ -721,8 +802,7 @@ class ActionInput extends joint.shapes.basic.Generic {
                         position: 'top',
                         attrs: {
                             circle: {
-                                fill: 'transparent', stroke: COLORS.RoyalBlue,
-                                strokeWidth: 1, r: 10, magnet: true
+                                fill: 'transparent', stroke: COLORS.RoyalBlue, strokeWidth: 1, r: 10, magnet: true
                             }
                         }
                     },
@@ -730,8 +810,7 @@ class ActionInput extends joint.shapes.basic.Generic {
                         position: 'bottom',
                         attrs: {
                             circle: {
-                                fill: 'transparent', stroke: COLORS.ForestGreen,
-                                strokeWidth: 1, r: 10, magnet: true
+                                fill: 'transparent', stroke: COLORS.ForestGreen, strokeWidth: 1, r: 10, magnet: true
                             }
                         }
                     }
@@ -743,23 +822,17 @@ class ActionInput extends joint.shapes.basic.Generic {
             },
 
             // Attributes
-            content: <string> '',
-        })
-    }
-
-    initialize() {
-        this.on('change:content', function () {
-            this.updateRectangles();
-            this.trigger('uml-update');
-        }, this);
-
-        this.updateRectangles();
-
-        joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
+            content: [],
+        };
     }
 
     getContent(): string[] {
-        return this.get('content').split('\n');
+        return this.get('content');
+    }
+
+    setContent(content: string[]): this {
+        this.set('content', content);
+        return this;
     }
 
     updateRectangles() {
@@ -787,7 +860,7 @@ class ActionInput extends joint.shapes.basic.Generic {
 }
 
 
-class ActionInputView extends joint.dia.ElementView {
+class ActionInputView extends MyElementView {
     // events: STD_TEXT_ELEMENT_EVENTS,
 
     pointerdblclick() {
@@ -805,14 +878,6 @@ class ActionInputView extends joint.dia.ElementView {
             this.remove();
     }
 
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
-
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    }
 }
 
 
@@ -843,19 +908,26 @@ const IF_ELSE_TEXT_MARKUP: string = `
     <text class="else-body-text"/>
 </g>`.trim();
 
-class IfElseText extends joint.shapes.basic.Generic {
+class IfElseText extends MyEditableElement {
 
     private static MARKUP = IF_ELSE_TEXT_MARKUP;
+    private static TYPE: string = 'uml.IfElseText';
 
-    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
-        super(attributes, options);
-        this.set('markup', IfElseText.MARKUP);
+    getMarkUp(): string {
+        return IfElseText.MARKUP;
     }
 
-    defaults() {
-        return _.defaultsDeep({
-            type: 'uml.IfElseText',
+    getType(): string {
+        return IfElseText.TYPE;
+    }
 
+    watchedProperties(): string [] {
+        return ['condition', 'ifContent', 'elseContent'];
+    }
+
+    getDefaultsObject(): DefaultsObject {
+        return {
+            type: IfElseText.TYPE,
             size: {width: STD_ACTIVITY_ELEMENT_WIDTH, height: NEW_IF_ELSE_HEIGHT},
 
             attrs: {
@@ -900,22 +972,15 @@ class IfElseText extends joint.shapes.basic.Generic {
             ports: STD_PORTS,
 
             condition: '', ifContent: [], elseContent: []
-        })
-    }
-
-    initialize(): void {
-        this.on('change:condition change:ifContent change:elseContent', function () {
-            this.updateRectangles();
-            this.trigger('uml-update');
-        }, this);
-
-        this.updateRectangles();
-
-        joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
+        };
     }
 
     getCondition(): string {
         return this.get('condition');
+    }
+
+    setCondition(condition: string): void {
+        this.set('condition', condition);
     }
 
     getIfHeaderContent(): string[] {
@@ -925,13 +990,33 @@ class IfElseText extends joint.shapes.basic.Generic {
         return [`if ${condition}:`];
     }
 
-    isOkay(): boolean {
-        return this.get('condition').length !== 0;
+    isOkay(): ElementCheckResult {
+        let isOkay = true, reasons = [];
+
+        if (this.getCondition().length === 0) {
+            isOkay = false;
+            reasons.push('Bedingung ist leer!');
+        }
+
+        if (this.getIfContent().filter((l) => l.length > 0).length === 0) {
+            isOkay = false;
+            reasons.push('If-Content ist leer!');
+        }
+
+        return {isOkay, reasons};
     }
 
     getIfContent(): string[] {
+        return this.get('ifContent');
+    }
+
+    getIfTextContent(): string[] {
         const currentContent: string[] = this.get('ifContent');
         return (currentContent.length === 0) ? ['pass'] : currentContent;
+    }
+
+    setIfContent(ifContent: string[]): void {
+        this.set('ifContent', ifContent);
     }
 
     getElseTextContent(): string[] {
@@ -943,6 +1028,10 @@ class IfElseText extends joint.shapes.basic.Generic {
         return this.get('elseContent');
     }
 
+    setElseContent(elseContent: string[]): void {
+        this.set('elseContent', elseContent);
+    }
+
     updateRectangles(): void {
         const attrs = this.get('attrs');
 
@@ -951,7 +1040,7 @@ class IfElseText extends joint.shapes.basic.Generic {
         let ifHeaderContent: string[] = this.getIfHeaderContent();
         let ifHeaderHeight = calcRectHeight(ifHeaderContent);
 
-        let ifContent: string[] = this.getIfContent();
+        let ifContent: string[] = this.getIfTextContent();
         let ifRectHeight = calcRectHeight(ifContent);
 
         let elseHeaderContent: string[] = ['else:'];
@@ -996,26 +1085,18 @@ class IfElseText extends joint.shapes.basic.Generic {
 
         this.resize(STD_ACTIVITY_ELEMENT_WIDTH, offSetY);
     }
+
 }
 
-function resetIfElseText(): void {
-    $('#ifElseButton').data('cellId', '');
-    $('#ifElseContent').val('');
-    $('#ifElseEditSection').prop('hidden', true);
-}
-
-class IfElseTextView extends joint.dia.ElementView {
+class IfElseTextView extends EditableElementView {
     // events: STD_TEXT_ELEMENT_EVENTS,
 
-    onLeftClick(event) {
-        event.preventDefault();
-        $('#ifElseConditionInput').val(this.model.get('condition'));
-
-        ifEditor.setValue(this.model.get('ifContent').join('\n'));
-        elseEditor.setValue(this.model.get('elseContent').join('\n'));
-
-        $('#ifElseButton').data('cellId', this.model.id);
-        $('#ifElseEditSection').prop('hidden', false);
+    editSelf(event: JQuery.Event, x: number, y: number) {
+        if (this.model instanceof IfElseText) {
+            editIfElseText(this.model);
+        } else {
+            console.error('The model for a view had a wrong class!');
+        }
     }
 
     onRightClick(event) {
@@ -1024,29 +1105,8 @@ class IfElseTextView extends joint.dia.ElementView {
             this.remove();
     }
 
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
-
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    }
 }
 
-function updateIfElseText(button: HTMLButtonElement) {
-    const model = umlActivityGraph.getCell($(button).data('cellId'));
-
-    model.prop('condition', $('#ifElseConditionInput').val());
-
-    let ifContent = ifEditor.getValue().split('\n').filter((l) => l.trim().length !== 0);
-    let elseContent = elseEditor.getValue().split('\n').filter((l) => l.trim().length !== 0);
-
-    model.prop('ifContent', ifContent);
-    model.prop('elseContent', elseContent);
-
-    resetIfElseText();
-}
 
 // Other elements!
 
@@ -1070,9 +1130,11 @@ const FOR_LOOP_TEMPLATE = `
 
 class NewForLoop extends HtmlElement {
 
-    defaults() {
-        return _.defaultsDeep({
+    static getDefaultsObject(): DefaultsObject {
+        return {
+            type: 'NewHtmlForLoop',
             size: {width: FOR_LOOP_WIDTH, height: FOR_LOOP_HEIGHT},
+            attrs: {},
             template: FOR_LOOP_TEMPLATE,
             efor: '',
             collectionName: '',
@@ -1127,7 +1189,11 @@ class NewForLoop extends HtmlElement {
                     {id: 'extern', group: 'extern', args: {x: FOR_LOOP_WIDTH, y: 55}},
                     {id: 'out', group: 'out', args: {x: FOR_LOOP_WIDTH / 2}}]
             }
-        }, HtmlElement.prototype.defaults)
+        }
+    }
+
+    defaults() {
+        return _.defaultsDeep(NewForLoop.getDefaultsObject(), HtmlElement.prototype.defaults)
     }
 }
 
@@ -1266,22 +1332,26 @@ function createWhileDo(xCoord, yCoord) {
 const EDIT_WIDTH = 320;
 const EDIT_HEIGHT = 200;
 
-class Edit extends joint.shapes.basic.Generic {
+class Edit extends MyGenericElement {
 
     private static MARKUP = `<g class="rotatable">
     <g class="scalable">
         <rect class="edit-complete-rect"/>
     </g>
 </g>`.trim();
+    private static TYPE: string = 'uml.Edit';
 
-    constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
-        super(attributes, options);
-        this.set('markup', Edit.MARKUP);
+    getMarkUp(): string {
+        return Edit.MARKUP;
     }
 
-    defaults() {
-        return _.defaultsDeep({
-            type: 'uml.Edit',
+    getType(): string {
+        return Edit.TYPE;
+    }
+
+    getDefaultsObject(): DefaultsObject {
+        return {
+            type: Edit.TYPE,
             size: {width: EDIT_WIDTH, height: EDIT_HEIGHT},
 
             attrs: {
@@ -1318,29 +1388,23 @@ class Edit extends joint.shapes.basic.Generic {
                     {id: 'out', group: 'out', args: {x: 0, y: 2 * EDIT_HEIGHT / 3}}
                 ]
             }
-        })
+        };
     }
 
     initialize(): void {
-        this.on('', function () {
-            this.trigger('uml-update');
-        }, this);
-
         joint.shapes.basic.Generic.prototype.initialize.apply(this, arguments);
     }
 
 }
 
 
-class EditView extends joint.dia.ElementView {
+class EditView extends MyElementView {
     // events: STD_TEXT_ELEMENT_EVENTS,
 
     onLeftClick(event) {
         event.preventDefault();
         if (selElement !== '') {
-            console.warn(event);
             let position = {position: {x: event.offsetX, y: event.offsetY}};
-            console.warn(position);
             createElements(selElement, position, this.model);
         }
     }
@@ -1356,14 +1420,6 @@ class EditView extends joint.dia.ElementView {
         }
     }
 
-    initialize() {
-        joint.dia.ElementView.prototype.initialize.apply(this, arguments);
-
-        this.listenTo(this.model, 'uml-update', function () {
-            this.update();
-            this.resize();
-        });
-    }
 }
 
 

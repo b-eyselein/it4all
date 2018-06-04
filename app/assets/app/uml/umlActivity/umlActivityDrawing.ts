@@ -2,8 +2,9 @@
 import * as  $ from 'jquery';
 import * as joint from 'jointjs';
 import * as _ from 'lodash';
-import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/python/python';
+
+import 'backbone';
 
 import {DEF_GRID, GRID_SIZE, PAPER_HEIGHT, START_END_SIZE} from "../umlConsts";
 import {
@@ -18,42 +19,39 @@ import {
     Edit,
     EDIT_HEIGHT,
     EDIT_WIDTH,
+    EditView,
     EndState,
     ForLoopEmbed,
     ForLoopEmbedView,
     ForLoopText,
     ForLoopTextView,
     IfElseText,
+    IfElseTextView,
+    MyElementView,
     StartState,
-    WhileLoop,
+    WhileLoopText,
     WhileLoopView
 } from "./umlActivityElements";
-import {initEditor} from "../../editorHelpers";
 import {HtmlElement} from "./umlADHtmlElement";
 
 export {
     umlActivityPaper, umlActivityGraph,
     mainStartNode, mainEndNode,
-    forLoopEditor, elseEditor, ifEditor,
     selElement, createElements,
-    parentChildNodes, editActionInput
+    parentChildNodes
 }
 
 const notSelectedElemButtonClass = 'btn-default';
 const selectedElemButtonClass = 'btn-primary';
 
 const umlActivityGraph = new joint.dia.Graph();
-let umlActivityPaper;
+let umlActivityPaper: joint.dia.Paper;
 
-let actionInputEditor: CodeMirror.Editor, forLoopEditor: CodeMirror.Editor, ifEditor: CodeMirror.Editor,
-    elseEditor: CodeMirror.Editor;
 
-let mainStartNode: joint.dia.Element; // CustomStartNode;
-let mainEndNode: joint.dia.Element; //CustomEndNode;
+let mainStartNode: StartState;
+let mainEndNode: EndState;
 
-//Basics both
-let dragX; // Postion within div : X
-let dragY;	// Postion within div : Y
+let dragX: number, dragY: number;
 
 // used for select element and click on paper to generate Element
 let selElement;
@@ -61,6 +59,10 @@ let selElement;
 //vars
 let MousePosElementName;
 let MousePosElementID;
+
+// Buttons
+
+// TODO:
 
 interface ParentChildNodes {
     parentId: string,
@@ -82,23 +84,16 @@ interface PositionObject {
     position: { x: number, y: number }
 }
 
-document.addEventListener('dragover', function (e: DragEvent) {
+document.addEventListener('dragover', (e: DragEvent) => {
 // FIXME: --> classDiagDrawing!
-
-    let offset;
-
-    if ($('#editDiagramModal').hasClass('in')) {
-        offset = $('#activitydiagram').offset();
-    } else {
-        offset = $('#paper').offset();
-    }
+    const offset = $('#umlActivityPaper').offset();
 
     dragX = e.pageX - offset.left;
     dragY = e.pageY - offset.top;
 }, false);
 
 
-function setSelElement(anchor: HTMLAnchorElement): void {
+function setSelElement(anchor: HTMLElement): void {
     let jAnchor = $(anchor);
 
     let elemToSelect = jAnchor.data('elemname');
@@ -112,33 +107,6 @@ function setSelElement(anchor: HTMLAnchorElement): void {
     }
 }
 
-
-function resetActionInput(): void {
-    $('#actionInputButton').data('cellId', '');
-    $('#actionInputContent').val('');
-    $('#actionInputEditSection').prop('hidden', true);
-}
-
-function updateActionInput(event: JQuery.Event): void {
-    umlActivityGraph.getCell($(event.target).data('cellId')).set('content', actionInputEditor.getValue());
-    resetActionInput();
-}
-
-function editActionInput(actionInput: ActionInput) {
-    const actionInputButton = $('#actionInputButton');
-    actionInputButton.data('cellId', actionInput.id);
-    actionInputButton.on('click', updateActionInput);
-
-    $('#actionInputEditSection').prop('hidden', false);
-
-    if (actionInputEditor == null) {
-        actionInputEditor = initEditor('python', 'actionInputEditor');
-    }
-
-    actionInputEditor.setValue(actionInput.getContent().join('\n'));
-    actionInputEditor.focus();
-
-}
 
 function clearSelElement(): void {
     $('#buttonsDiv').find('a').removeClass(selectedElemButtonClass).addClass(notSelectedElemButtonClass);
@@ -237,8 +205,8 @@ function createElementsAndConnections(elementName: string, position: PositionObj
                 elementsToAdd.push(new ForLoopEmbed(position));
                 break;
 
-            case 'uml.WhileLoop':
-                elementsToAdd.push(new WhileLoop(position));
+            case 'uml.WhileLoopText':
+                elementsToAdd.push(new WhileLoopText(position));
                 break;
 
             case 'uml.IfElseText':
@@ -289,69 +257,130 @@ function connectNodes(connectProperties: ConnectProperties): void {
     }));
 }
 
-function initButtons(): void {
-    $('#buttonsDiv').find('a').on('click', event => setSelElement(event.target as HTMLAnchorElement));
+
+function initElementButtons(): void {
+    let jButtons = $('#buttonsDiv').find('a');
+
+    jButtons.on('click', (event: JQuery.Event) => setSelElement(event.target as HTMLElement));
+
+    jButtons.prop('draggable', true);
+    jButtons.each((index, element: HTMLElement) => {
+        element.addEventListener('dragstart', (event: DragEvent) => {
+            event.dataTransfer.setData('text', $(event.target).data('elemname'));
+        });
+    });
+
+
+}
+
+
+function initPaperEvents(jPaper: JQuery): void {
+    jPaper.on('dragover', (event: JQuery.Event) => event.preventDefault());
+    jPaper.on('drop', (event: JQuery.Event) => {
+        event.preventDefault();
+
+        createElements((event.originalEvent as DragEvent).dataTransfer.getData('text'), {
+            position: {
+                x: dragX,
+                y: dragY
+            }
+        });
+    });
+}
+
+function getViewForElement(element: joint.dia.Element): typeof joint.dia.ElementView {
+
+    if (element instanceof ActionInput) {
+        return ActionInputView;
+    }
+
+    if (element instanceof WhileLoopText) {
+        return WhileLoopView;
+    }
+
+    if (element instanceof ForLoopEmbed) {
+        return ForLoopEmbedView;
+    }
+
+    if (element instanceof ForLoopText) {
+        return ForLoopTextView;
+    }
+
+    if (element instanceof EndState) {
+        return MyElementView;
+    }
+
+    if (element instanceof StartState) {
+        return MyElementView;
+    }
+
+    if (element instanceof IfElseText) {
+        return IfElseTextView;
+    }
+
+    if (element instanceof Edit) {
+        return EditView;
+    }
+
+    //TODO: other...
+    return joint.dia.ElementView;
+
 }
 
 $(() => {
-    // actionInputEditor = initEditor('python', 'actionInputEditor');
-    forLoopEditor = initEditor('python', 'forLoopEditor');
-    ifEditor = initEditor('python', 'ifEditor');
-    elseEditor = initEditor('python', 'elseEditor');
+    let jPaper = $('#umlActivityPaper');
 
-    initButtons();
+    initElementButtons();
 
-    let paperJQ = $('#umlActivityPaper');
+    initPaperEvents(jPaper);
 
     parentChildNodes = [];
 
     function preparePaper() {
         mainStartNode = createStartState(GRID_SIZE, GRID_SIZE);
-        mainEndNode = createEndState(paperJQ.width() - (START_END_SIZE + GRID_SIZE),
-            paperJQ.height() - (START_END_SIZE + GRID_SIZE));
+        mainEndNode = createEndState(jPaper.width() - (START_END_SIZE + GRID_SIZE),
+            jPaper.height() - (START_END_SIZE + GRID_SIZE));
 
-        try {
-            let actionNodeStart = new ActionInput({
-                position: {x: 100, y: 100}, content: 'solution = ' + $('#defaultSolution').val() // EXERCISE_PARAMETERS.output.defaultValue
-            });
+        // try {
+        let actionNodeStart = new ActionInput()
+            .position(100, 100)
+            .setContent(['solution = ' + $('#defaultSolution').val()]); // EXERCISE_PARAMETERS.output.defaultValue
 
-            let actionNodeEnd = new ActionInput({
-                position: {x: paperJQ.width() - 300, y: paperJQ.height() - 150}, content: 'return solution'
-            });
+        let actionNodeEnd = new ActionInput()
+            .position(jPaper.width() - 300, jPaper.height() - 150)
+            .setContent(['return solution']);
 
+        umlActivityGraph.addCell(mainStartNode);
+        umlActivityGraph.addCell(mainEndNode);
+        umlActivityGraph.addCell(actionNodeStart);
+        umlActivityGraph.addCell(actionNodeEnd);
+        // umlActivityGraph.addCells([mainStartNode, mainEndNode, actionNodeStart, actionNodeEnd]);
 
-            umlActivityGraph.addCells([mainStartNode, mainEndNode, actionNodeStart, actionNodeEnd]);
+        connectNodes({
+            sourceId: mainStartNode.id as string, sourcePort: "out",
+            targetId: actionNodeStart.id as string, targetPort: "in"
+        });
 
-            connectNodes({
-                sourceId: mainStartNode.id as string,
-                targetId: actionNodeStart.id as string,
-                sourcePort: "out",
-                targetPort: "in"
-            });
-            connectNodes({
-                sourceId: actionNodeEnd.id  as string,
-                targetId: mainEndNode.id  as string,
-                sourcePort: "out",
-                targetPort: "in"
-            });
+        connectNodes({
+            sourceId: actionNodeEnd.id  as string, sourcePort: "out",
+            targetId: mainEndNode.id  as string, targetPort: "in"
+        });
 
-            parentChildNodes.push({
-                parentId: 'Startknoten-startId',
-                startId: 'Startknoten-startId',
-                endId: 'Endknoten-endId',
-                endName: 'end'
-            });
-        } catch (err) {
-            console.error(err);
-        }
+        parentChildNodes.push({
+            parentId: 'Startknoten-startId', endName: 'end',
+            startId: 'Startknoten-startId', endId: 'Endknoten-endId'
+        });
+        // } catch (err) {
+        //     console.error(err);
+        // }
 
     }
 
     //Basics
     umlActivityPaper = new joint.dia.Paper({
-        el: paperJQ, model: umlActivityGraph,
+        el: jPaper, model: umlActivityGraph,
 
-        width: paperJQ.width(), height: PAPER_HEIGHT,
+        width: jPaper.width(), height: PAPER_HEIGHT,
 
         gridSize: GRID_SIZE, drawGrid: {name: DEF_GRID},
 
@@ -363,23 +392,11 @@ $(() => {
 
         snapLinks: {radius: 25}, linkPinning: false,
 
-        elementView: (element: joint.dia.Element) => {
-            if (element instanceof ActionInput) {
-                return ActionInputView;
-            } else if (element instanceof WhileLoop) {
-                return WhileLoopView;
-            } else if (element instanceof ForLoopEmbed) {
-                return ForLoopEmbedView;
-            } else if (element instanceof ForLoopText) {
-                return ForLoopTextView;
-                //TODO: other...
-            } else {
-                return joint.dia.ElementView;
-            }
-        }
+        elementView: getViewForElement,
+        preventContextMenu: true
     });
 
-    let ph = paperJQ.height(); // maximal decreasing to loaded size of paper
+    let ph = jPaper.height(); // maximal decreasing to loaded size of paper
 
     let currentZoom = 1.0;
     let currentOrigin = 0;
@@ -454,7 +471,7 @@ $(() => {
     $('#viewreset').on('click', () => {
         umlActivityPaper.scale(1.0, 1.0);
         umlActivityPaper.setOrigin(0, 0);
-        umlActivityPaper.setDimensions(paperJQ.width(), paperJQ.height());
+        umlActivityPaper.setDimensions(jPaper.width(), jPaper.height());
         // rebuildGraph();
     });
 
@@ -546,6 +563,12 @@ $(() => {
     });
 
     // paper events
+
+    umlActivityPaper.on('contextmenu', function (event: JQuery.Event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+    });
 
     umlActivityPaper.on('blank:pointerclick', function (evt, x, y) {
         if (selElement !== '') {

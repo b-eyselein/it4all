@@ -3,6 +3,11 @@ html, body {
     padding: 0;
 }
 
+
+.CodeMirror {
+    border: 1px solid slategrey;
+}
+
 #umlActivityPaper {
     border: 1px solid slategrey;
 }

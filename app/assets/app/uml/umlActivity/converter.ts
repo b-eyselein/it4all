@@ -3,7 +3,7 @@ import * as joint from 'jointjs';
 
 import {mainEndNode, mainStartNode, umlActivityGraph, umlActivityPaper} from "./umlActivityDrawing";
 import {AbstractLanguageBuilder, Java, Python} from "./languageBuilders";
-import {ActionInput, Edit, ForLoopText, IfElseText} from "./umlActivityElements";
+import {MyEditableElement, MyGenericElement} from "./umlActivityElements";
 import {ExerciseParameters} from "../umlInterfaces";
 
 export {newGenerate};
@@ -25,55 +25,20 @@ function readContentFromTo(languageBuilder: AbstractLanguageBuilder, startNode: 
     while (currentElement.id !== endNode.id && success && step < 100) {
 
         let cellView: joint.dia.CellView = currentElement.findView(umlActivityPaper);
-        let model = cellView.model;
+        let model: MyGenericElement = cellView.model as MyGenericElement;
 
         cellView.highlight();
 
-        // TODO: read content from element!
-        if (model instanceof ActionInput) {
-            contents.push(...model.getContent());
-        } else if (model instanceof ForLoopText) {
-            if (model.isOkay()) {
-                let variable = model.getVariable();
-                let collection = model.getCollection();
-                let loopContent: string[] = languageBuilder.addIdentation(model.getLoopContent());
+        if (model instanceof MyEditableElement) {
+            const elementCheckResult = model.isOkay();
 
-                contents.push(...languageBuilder.getFor(variable, collection, loopContent));
+            if (elementCheckResult.isOkay) {
+                contents.push(...languageBuilder.getContent(model));
             } else {
+                logs.push(...elementCheckResult.reasons);
                 success = false;
-                logs.push('For-Schleife hat keine Variable oder Collection!');
-                return {success, contents, logs};
+                break;
             }
-        } else if (model instanceof IfElseText) {
-            if (model.isOkay()) {
-                let elseContent = model.getElseContent();
-                contents.push(...languageBuilder.getIfElse(model.getCondition(), model.getIfContent(), elseContent));
-            } else {
-                success = false;
-                logs.push('If-Else-Verzweigung hat keine Bedingung!');
-                return {success, contents, logs};
-            }
-        } else if (model instanceof Edit) {
-            // FIXME: ERROR!
-            success = false;
-            logs.push('Edit-Elemente können nicht so benutzt werden!');
-            return {success, contents, logs};
-        }
-
-        let elementType = model.get('type');
-        switch (elementType) {
-            case 'uml.ActionInput':
-            case 'uml.ForLoopText':
-            case 'uml.CustomStartState':
-            case 'uml.CustomEndState':
-            case 'uml.IfElseText':
-                break;
-            case 'html.Element':
-                console.info(cellView);
-                break;
-            default:
-                console.error(elementType);
-                break;
         }
 
         let allOutboundLinks: joint.dia.Link[] = umlActivityGraph.getConnectedLinks(currentElement, {outbound: true}).filter((l) => l.get('source').port === 'out');

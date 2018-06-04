@@ -4,9 +4,9 @@ import model.core.matching._
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json.{JsString, JsValue}
 
-case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement] {
+case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement, GenericAnalysisResult] {
 
-  override type MatchAnalysisResult = GenericAnalysisResult
+  //  override type MatchAnalysisResult = GenericAnalysisResult
 
   override def analyze(ua: OrderByElement, sa: OrderByElement): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
 
@@ -14,7 +14,7 @@ case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[Order
 
 }
 
-object OrderByMatcher extends Matcher[OrderByElement, OrderByMatch] {
+object OrderByMatcher extends Matcher[OrderByElement, GenericAnalysisResult, OrderByMatch] {
 
   override protected def canMatch: (OrderByElement, OrderByElement) => Boolean = _.getExpression.toString == _.getExpression.toString
 

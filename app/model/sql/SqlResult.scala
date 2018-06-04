@@ -1,6 +1,6 @@
 package model.sql
 
-import model.core.matching.{Match, MatchingResult}
+import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.sql.SqlConsts._
 import model.sql.matcher._
@@ -8,7 +8,6 @@ import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json._
-import play.twirl.api.Html
 
 import scala.util.{Failure, Success, Try}
 
@@ -33,21 +32,18 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
   override type SolType = String
 
-  override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
-
 }
 
-case class SqlResult(solutionSaved: Boolean, learnerSolution: String, columnComparison: MatchingResult[ColumnWrapper, ColumnMatch], tableComparison: MatchingResult[Table, TableMatch],
-                     whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch], executionResult: SqlExecutionResult,
-                     groupByComparison: Option[MatchingResult[Expression, GroupByMatch]], orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
+case class SqlResult(solutionSaved: Boolean, learnerSolution: String,
+                     columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
+                     tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
+                     whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
+                     executionResult: SqlExecutionResult,
+                     groupByComparison: Option[MatchingResult[Expression, GenericAnalysisResult, GroupByMatch]],
+                     orderByComparison: Option[MatchingResult[OrderByElement, GenericAnalysisResult, OrderByMatch]])
   extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison
-
-  private def matchingResults: Seq[MatchingResult[_, _ <: Match[_]]] =
-    Seq(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison
-
-  def notEmptyMatchingResults: Seq[MatchingResult[_, _ <: Match[_]]] = matchingResults filter (_.allMatches.nonEmpty)
 
   def toJson: JsValue = Json.obj(
     solutionSavedName -> solutionSaved,

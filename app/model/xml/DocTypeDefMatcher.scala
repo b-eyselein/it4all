@@ -6,6 +6,8 @@ import model.xml.XmlConsts._
 import model.xml.dtd.ElementLine
 import play.api.libs.json.{JsValue, Json}
 
+import scala.language.postfixOps
+
 case class ElementLineAnalysisResult(matchType: MatchType,
                                      contentCorrect: Boolean, correctContent: String,
                                      attributesCorrect: Boolean, correctAttributes: String) extends AnalysisResult {
@@ -16,17 +18,22 @@ case class ElementLineAnalysisResult(matchType: MatchType,
     "attributesCorrect" -> attributesCorrect, "correctAttributes" -> correctAttributes
   )
 
+  def points: Double = Seq(contentCorrect, attributesCorrect).map {
+    case false => 0
+    case true  => 1
+  } sum
+
 }
 
-case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[ElementLine]) extends Match[ElementLine] with XmlEvaluationResult {
+case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[ElementLine]) extends Match[ElementLine, ElementLineAnalysisResult] with XmlEvaluationResult {
 
-  override type MatchAnalysisResult = ElementLineAnalysisResult
+  //  override type MatchAnalysisResult = ElementLineAnalysisResult
 
   override protected def analyze(arg1: ElementLine, arg2: ElementLine): ElementLineAnalysisResult = {
     val contentCorrect = arg1.elementDefinition.contentAsString == arg2.elementDefinition.contentAsString
 
-    val arg1Def = arg1.attributeDefinition.headOption.map(_.asString)
-    val arg2Def = arg2.attributeDefinition.headOption.map(_.asString)
+    val arg1Def = arg1.attributeLists.headOption.map(_.asString)
+    val arg2Def = arg2.attributeLists.headOption.map(_.asString)
     val attributesCorrect = arg1Def == arg2Def
 
     val matchType = if (contentCorrect) {
@@ -49,7 +56,7 @@ case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[Elem
 
 }
 
-object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineMatch] {
+object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult, ElementLineMatch] {
 
   override protected def canMatch: (ElementLine, ElementLine) => Boolean = _.elementName == _.elementName
 
