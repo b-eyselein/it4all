@@ -29,14 +29,18 @@ object BoolTableRow {
 
   def fromAssignments(assignments: Seq[BoolAssignment]): BoolTableRow = new BoolTableRow(assignments.map(a => (a.variable, a.value)).toMap)
 
-  def generateAllAssignments(variables: Seq[Variable]): Seq[BoolTableRow] = variables.sorted.toList match {
-    // TODO: eventually tail recursive?
-    case Nil          => List.empty
-    case head :: Nil  => List(BoolTableRow(head -> false), BoolTableRow(head -> true))
-    case head :: tail =>
-      val falseAssignments, trueAssignments = generateAllAssignments(tail)
-      (falseAssignments map (_ + (head -> false))) ++ (trueAssignments map (_ + (head -> true)))
+  def generateAllAssignments(variables: Seq[Variable]): Seq[BoolTableRow] = {
 
+    @annotation.tailrec
+    def go(variables: List[Variable], tableRows: Seq[BoolTableRow]): Seq[BoolTableRow] = variables match {
+      case Nil          => tableRows
+      case head :: tail => tableRows match {
+        case Seq() => go(tail, Seq(BoolTableRow(head -> false), BoolTableRow(head -> true)))
+        case _     => go(tail, tableRows.map(_ + (head -> false)) ++ tableRows.map(_ + (head -> true)))
+      }
+    }
+
+    go(variables.sorted.toList, Seq.empty)
   }
 
   def getNF(assignments: Seq[BoolTableRow], takePos: Boolean, innerF: (ScalaNode, ScalaNode) => ScalaNode, outerF: (ScalaNode, ScalaNode) => ScalaNode): ScalaNode =
