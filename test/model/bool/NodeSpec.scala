@@ -20,10 +20,10 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec {
 
 
   val (ff, ft, tf, tt) = (
-                           BoolAssignment(a -> false, b -> false),
-                           BoolAssignment(a -> false, b -> true),
-                           BoolAssignment(a -> true, b -> false),
-                           BoolAssignment(a -> true, b -> true)
+                           BoolTableRow(a -> false, b -> false),
+                           BoolTableRow(a -> false, b -> true),
+                           BoolTableRow(a -> true, b -> false),
+                           BoolTableRow(a -> true, b -> true)
                          )
 
   def testEvaluate(expected: Array[Boolean]) {
@@ -42,7 +42,7 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec {
     assert(nodeUnderTest.getAsString(true) == expectedTrue)
   }
 
-  def evaluate(nodeUnderTest: ScalaNode, assignment: BoolAssignment, expected: Boolean): Assertion = assert(nodeUnderTest(assignment) == expected)
+  def evaluate(nodeUnderTest: ScalaNode, assignment: BoolTableRow, expected: Boolean): Assertion = assert(nodeUnderTest(assignment) == expected)
 
 }
 

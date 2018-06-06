@@ -1,14 +1,11 @@
 import * as $ from 'jquery';
 
+import {BoolSolution, readBoolSolution} from "./boolBase";
+
 let dnf: string = '';
 let knf: string = '';
 
 let testBtn: JQuery, sampleSolBtn: JQuery, valueTableBody: JQuery;
-
-interface BoolCreateSolution {
-    solution: string
-    assignments: object[]
-}
 
 interface AssignmentSolution {
     id: string
@@ -17,39 +14,21 @@ interface AssignmentSolution {
 }
 
 interface BoolCreateResult {
-    assignments: AssignmentSolution[]
+    isSuccessful: boolean
+}
 
+interface BoolCreationSuccess extends BoolCreateResult {
+    assignments: AssignmentSolution[]
     knf: string
     dnf: string
 }
 
-
-function readValues(): BoolCreateSolution {
-    let solution: string = $('#solution').val() as string;
-
-    if (solution == null || solution.length === 0) {
-        return null;
-    }
-
-    let assignments = [];
-
-    valueTableBody.find('tr').each((index: number, row: HTMLElement) => {
-        let partAssignments = {};
-
-        $(row).find('[data-variable]').each(function (index, cell) {
-            partAssignments[cell.dataset.variable] = cell.dataset.value === 'true'
-        });
-
-        assignments.push(partAssignments);
-    });
-
-    return {solution, assignments};
+interface BoolCreationError extends BoolCreateResult {
+    formula: string
+    error: string
 }
 
-
-function onBoolCreationSuccess(response: BoolCreateResult): void {
-    testBtn.prop('disabled', false);
-
+function renderBoolCreationSuccess(response: BoolCreationSuccess): void {
     knf = response.knf;
     dnf = response.dnf;
 
@@ -62,26 +41,45 @@ function onBoolCreationSuccess(response: BoolCreateResult): void {
             elem.removeClass('table-success').addClass('table-danger');
         }
     }
+}
+
+function renderBoolCreationError(response: BoolCreationError): void {
+    $('#messageDiv').html(`
+<hr>
+
+<div class="alert alert-danger">
+    <p>Es gab einen Fehler in ihrer Formel:</p>
+    <pre>${response.formula}</pre>
+    <pre>${response.error}</pre>
+</div>`.trim());
+}
+
+function onBoolCreationSuccess(response: BoolCreateResult): void {
+    testBtn.prop('disabled', false);
+
+    if (response.isSuccessful) {
+        renderBoolCreationSuccess(response as BoolCreationSuccess);
+    } else {
+        renderBoolCreationError(response as BoolCreationError);
+    }
 
 }
 
-function onBoolCreationError(jqXHR) {
+function onBoolCreationError(jqXHR): void {
     testBtn.prop('disabled', false);
     console.error(jqXHR.responseText);
 }
 
 function testSol(): void {
+    const solution: BoolSolution = readBoolSolution(valueTableBody, false);
 
-    let solution = readValues();
-
-    if (solution == null) {
+    if (solution.formula == null || solution.formula.length === 0) {
         alert('Sie können keine leere Formel abgeben!');
         return;
     }
 
+    $('#messageDiv').html('');
     testBtn.prop('disabled', true);
-
-    console.warn(JSON.stringify(solution, null, 2));
 
     $.ajax({
         type: 'PUT',

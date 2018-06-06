@@ -1,6 +1,6 @@
 package model.bool
 
-import model.bool.BoolAssignment.{disjunktiveNormalForm, konjunktiveNormalForm}
+import model.bool.BoolTableRow.{disjunktiveNormalForm, konjunktiveNormalForm}
 import model.bool.BoolConsts.{LerVariable, SolVariable, _}
 import model.core.result.{EvaluationResult, SuccessType}
 import play.api.libs.json._
@@ -11,45 +11,81 @@ sealed trait BooleanQuestionResult extends EvaluationResult {
 
   def isCorrect: Boolean
 
-  val assignments: Seq[BoolAssignment]
+  val assignments: Seq[BoolTableRow]
 
-  override val success: SuccessType = SuccessType.ofBool(isCorrect)
+  def toJson: JsValue = JsObject(
+    Seq("isSuccessful" -> JsBoolean(success != SuccessType.ERROR)) ++ restJson
+  )
 
-  def toJson: JsValue
+  def restJson: Seq[(String, JsValue)]
 
 }
 
-case class CreationQuestionResult(learnerSolution: ScalaNode, question: CreationQuestion) extends BooleanQuestionResult {
+sealed trait CreationQuestionResult extends BooleanQuestionResult
+
+case class CreationQuestionError(formula: String, errorMsg: String) extends CreationQuestionResult {
+
+  override def success: SuccessType = SuccessType.ERROR
+
+  override def isCorrect: Boolean = false
+
+  override val assignments: Seq[BoolTableRow] = Seq.empty
+
+  override def restJson: Seq[(String, JsValue)] = Seq(
+    formulaName -> JsString(formula),
+    errorName -> JsString(errorMsg)
+  )
+
+}
+
+case class CreationQuestionSuccess(learnerSolution: ScalaNode, question: CreationQuestion) extends CreationQuestionResult {
 
   override val isCorrect: Boolean = question.solutions forall (as => as(SolVariable) == learnerSolution(as))
 
-  override val assignments: Seq[BoolAssignment] = question.solutions
+  override def success: SuccessType = SuccessType.ofBool(isCorrect)
 
-  private def assignmentMapping(assignment: BoolAssignment): JsValue = Json.obj(
+  override val assignments: Seq[BoolTableRow] = question.solutions
+
+  private def assignmentMapping(assignment: BoolTableRow): JsValue = Json.obj(
     idName -> assignment.identifier,
     "learnerVal" -> learnerSolution(assignment),
     correctName -> (assignment(SolVariable) == learnerSolution(assignment))
   )
 
-  override def toJson: JsValue = Json.obj(
+  override def restJson: Seq[(String, JsValue)] = Seq(
     assignmentsName -> JsArray(assignments map assignmentMapping),
-    "knf" -> disjunktiveNormalForm(assignments).asString,
-    "dnf" -> konjunktiveNormalForm(assignments).asString
+    "knf" -> JsString(disjunktiveNormalForm(assignments).asString),
+    "dnf" -> JsString(konjunktiveNormalForm(assignments).asString)
   )
 }
 
-case class FilloutQuestionResult(formula: ScalaNode, assignments: Seq[BoolAssignment]) extends BooleanQuestionResult {
+sealed trait FilloutQuestionResult extends BooleanQuestionResult
+
+case class FilloutQuestionError(formula: String, errorMsg: String) extends FilloutQuestionResult {
+
+  override def success: SuccessType = SuccessType.ERROR
+
+  override def isCorrect: Boolean = false
+
+  override def restJson: Seq[(String, JsValue)] = ???
+
+  override val assignments: Seq[BoolTableRow] = Seq.empty
+}
+
+case class FilloutQuestionSuccess(formula: ScalaNode, assignments: Seq[BoolTableRow]) extends FilloutQuestionResult {
 
   override val isCorrect: Boolean = assignments forall (as => as.isSet(LerVariable) && as(LerVariable) == as(SolVariable))
 
+  override def success: SuccessType = SuccessType.ofBool(isCorrect)
+
   val variables: Seq[Variable] = formula.usedVariables toSeq
 
-  override def toJson: JsValue = JsArray(assignments map { a =>
+  override def restJson: Seq[(String, JsValue)] = Seq(assignmentsName -> JsArray(assignments map { a =>
     Json.obj(
       idName -> a.identifier,
       "learner" -> JsBoolean(a.assignments.getOrElse(LerVariable, false)),
       "sample" -> JsBoolean(a.assignments.getOrElse(SolVariable, false))
     )
-  })
+  }))
 
 }

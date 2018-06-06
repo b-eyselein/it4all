@@ -34,7 +34,7 @@ trait JsonFormat {
       case _                    => None
     }
 
-    def asMap[A, B](keyType: (String => A), valueType: (JsValue => Option[B])): Option[Map[A, B]] = asObj map {
+    def asMap[A, B](keyType: String => A, valueType: JsValue => Option[B]): Option[Map[A, B]] = asObj map {
       jsMap: JsObject => jsMap.value flatMap { jsObj => valueType(jsObj._2) map (value => (keyType(jsObj._1), value)) } toMap
     }
 

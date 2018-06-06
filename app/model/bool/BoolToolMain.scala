@@ -6,14 +6,16 @@ import model.bool.BoolConsts._
 import model.bool.BooleanQuestion._
 import model.core.result.EvaluationResult
 import model.toolMains.{RandomExerciseToolMain, ToolState}
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success, Try}
 
 @Singleton
-class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("bool") with JsonFormat {
+class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("bool") {
 
   // Abstract types
 
@@ -54,36 +56,30 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   // Handlers
 
-  override def checkSolution(user: User, exPart: BoolExPart, request: Request[AnyContent]): JsValue = {
-    val correctionFunction: JsValue => Option[BooleanQuestionResult] = exPart match {
-      case TableFillout    => readFillOutQuestionResultFromJson
-      case FormulaCreation => readCreationQuestionResultFromJson
-    }
-
-    request.body.asJson flatMap correctionFunction match {
-      case None         => Json.obj(errorName -> "TODO!")
-      case Some(result) => result.toJson
+  override def checkSolution(user: User, exPart: BoolExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
+    case None          => Json.obj(errorName -> "There has been an error in your request!")
+    case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue) match {
+      case JsSuccess(boolSolution, _) => correctPart(exPart, boolSolution).toJson
+      case JsError(errors)            =>
+        errors.foreach(e => Logger.error("Json Error: " + e.toString))
+        Json.obj(errorName -> "There has been an error in your json!")
     }
   }
 
-  // Reading functions
+  private def correctPart(exPart: BoolExPart, boolSolution: BoolSolution): BooleanQuestionResult = {
+    val formulaParseTry: Try[ScalaNode] = BoolNodeParser.parseBoolFormula(boolSolution.formula)
 
-  private def readAssignmentsObject(jsObject: JsObject): Option[BoolAssignment] = jsObject.asMap(_.apply(0), _.asBool) map {
-    mapping => mapping map (strAndVal => (Variable(strAndVal._1), strAndVal._2))
-  } map BoolAssignment.apply
+    exPart match {
+      case TableFillout => formulaParseTry match {
+        case Failure(_)       => FilloutQuestionError(boolSolution.formula, "There has been an internal error!")
+        case Success(formula) => FilloutQuestionSuccess(formula, boolSolution.assignments map (as => as + (SolVariable -> formula(as))))
+      }
 
-  private def readFillOutQuestionResultFromJson(json: JsValue): Option[FilloutQuestionResult] = json.asObj flatMap { jsObj =>
-    for {
-      formula <- jsObj.stringField(FormulaName) flatMap BoolNodeParser.parseBoolFormula
-      assignments <- jsObj.arrayField(assignmentsName, _.asObj flatMap readAssignmentsObject)
-    } yield FilloutQuestionResult(formula, assignments map (as => as + (SolVariable -> formula(as))))
-  }
-
-  private def readCreationQuestionResultFromJson(jsValue: JsValue): Option[CreationQuestionResult] = jsValue.asObj flatMap { jsObj =>
-    for {
-      learnerFormula <- jsObj.stringField(LearnerSol) flatMap BoolNodeParser.parseBoolFormula
-      question <- jsObj.arrayField(assignmentsName, _.asObj flatMap readAssignmentsObject) map CreationQuestion
-    } yield CreationQuestionResult(learnerFormula, question)
+      case FormulaCreation => formulaParseTry match {
+        case Failure(error)   => CreationQuestionError(boolSolution.formula, error.getMessage)
+        case Success(formula) => CreationQuestionSuccess(formula, CreationQuestion(boolSolution.assignments))
+      }
+    }
   }
 
 }

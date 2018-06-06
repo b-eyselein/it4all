@@ -1,6 +1,6 @@
 package model.bool
 
-import model.bool.BoolAssignment.generateAllAssignments
+import model.bool.BoolTableRow.generateAllAssignments
 import model.bool.BoolConsts._
 
 import scala.language.postfixOps
@@ -66,7 +66,7 @@ sealed trait BooleanQuestion {
 
 }
 
-case class CreationQuestion(solutions: Seq[BoolAssignment]) extends BooleanQuestion {
+case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQuestion {
 
   override val variables: Set[Variable] = solutions.headOption map (_.variables.toList.reverse.toSet) getOrElse Set.empty
 
@@ -78,7 +78,7 @@ case class CreationQuestion(solutions: Seq[BoolAssignment]) extends BooleanQuest
 
 case class FilloutQuestion(formula: ScalaNode) extends BooleanQuestion {
 
-  val assignments: Seq[BoolAssignment] = generateAllAssignments(formula.usedVariables toSeq)
+  val assignments: Seq[BoolTableRow] = generateAllAssignments(formula.usedVariables toSeq)
 
   override val variables: Set[Variable] = formula.usedVariables
 
