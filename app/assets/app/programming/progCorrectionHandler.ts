@@ -42,9 +42,9 @@ function renderProgResult(result: ProgSingleResult): string {
     }
 
     return `
-<div class="panel panel-${result.correct ? 'success' : 'danger'}">
-    <div class="panel-heading">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
-    <div class="panel-body">
+<div class="card">
+    <div class="card-header bg-${result.correct ? 'success' : 'danger'}">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
+    <div class="card-body">
         <p>Eingabe: <pre>${printValue(result.input)}</pre></p>
         <p>Erwartet: <code>${printValue(result.awaited)}</code></p>
         ${gottenResult}
@@ -58,8 +58,6 @@ interface ProgCorrectionResult extends CorrectionResult<ProgSingleResult> {
 }
 
 function onProgCorrectionSuccess(response: ProgCorrectionResult): void {
-    console.warn(JSON.stringify(response, null, 2));
-
     $('#correctionDiv').prop('hidden', false);
 
     let html = `<div class="alert alert-${response.solutionSaved ? 'success' : 'danger'}">Ihre Lösung wurde ${response.solutionSaved ? '' : ' nicht'} gespeichert.</div>`;
@@ -74,7 +72,9 @@ function onProgCorrectionSuccess(response: ProgCorrectionResult): void {
     <div class="col-md-4">${firstResult != null ? renderProgResult(firstResult) : ''}</div>
     <div class="col-md-4">${secondResult != null ? renderProgResult(secondResult) : '' }</div>
     <div class="col-md-4">${thirdNextResult != null ? renderProgResult(thirdNextResult) : ''}</div>
-</div>`.trim();
+</div>
+
+<hr>`.trim();
 
     }
     $('#correction').html(html);

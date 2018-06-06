@@ -30,7 +30,7 @@
                     <hr>
                     }
 
-                @core.helperTemplates.bsPager.render(curPage, pages, i => routes.CollectionController.collectionList(toolObject.urlPart, i))
+                @core.helperTemplates.bsPager(curPage, i => routes.CollectionController.collectionList(toolObject.urlPart, i), collections.size)
             }
         </div>
     }

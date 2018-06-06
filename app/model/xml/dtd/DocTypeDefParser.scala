@@ -23,6 +23,8 @@ object DocTypeDefParser extends JavaTokenParsers {
 
   // Elements
 
+  // FIXME: parse comments in dtd with <!-- ... -->
+
   private[dtd] def elementDefinition: Parser[ElementDefinition] = "<!ELEMENT" ~ anyName ~ "(" ~ sequenceContent ~ ")" ~ opt(unaryOperator) ~ ">" ^^ {
     case _ ~ elemName ~ _ ~ content ~ _ ~ repOper ~ _ => repOper match {
       case Some(operator) => ElementDefinition(elemName, instUnaryContent(operator, content))

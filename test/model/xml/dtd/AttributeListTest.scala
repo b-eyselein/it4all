@@ -15,7 +15,7 @@ class AttributeListTest extends FlatSpec {
       assert(attlist.attributeDefinitions.lengthCompare(1) == 0)
       assert(attlist.attributeDefinitions.head == attrDef)
 
-      assert(attlist.toString == s"<!ATTLIST $elementName ${attrDef.toString}>")
+      assert(attlist.asString == s"<!ATTLIST $elementName ${attrDef.asString}>")
 
       assert(AttributeList.unapply(attlist).contains((elementName, Seq(attrDef))))
     }
@@ -35,10 +35,10 @@ class AttributeListTest extends FlatSpec {
       assert(attList.attributeDefinitions.lengthCompare(2) == 0)
       assert(attList.attributeDefinitions == attrDefs)
 
-      assert(attList.toString ==
+      assert(attList.asString ==
         s"""<!ATTLIST $elementName
-           |    ${attrDef1.toString}
-           |    ${attrDef2.toString}
+           |    ${attrDef1.asString}
+           |    ${attrDef2.asString}
            |>""".stripMargin)
 
       assert(AttributeList.unapply(attList).contains((elementName, attrDefs)))
@@ -57,7 +57,7 @@ class AttributeDefinitionTest extends FlatSpec {
       assert(definition.attributeType == attrType)
       assert(definition.attributeSpecification == attrSpec)
 
-      assert(definition.toString == attrName + " " + attrType.toString + " " + attrSpec.toString)
+      assert(definition.asString == attrName + " " + attrType.toString + " " + attrSpec.toString)
 
       assert(AttributeDefinition.unapply(definition).contains((attrName, attrType, attrSpec)))
     }

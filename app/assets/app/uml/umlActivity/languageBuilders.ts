@@ -1,4 +1,5 @@
 import {ExerciseParameters} from "../umlInterfaces";
+import {ActionInput, Edit, ForLoopText, IfElseText, MyGenericElement, WhileLoopText} from "./umlActivityElements";
 
 export {AbstractLanguageBuilder, Java, Python}
 
@@ -14,17 +15,46 @@ abstract class AbstractLanguageBuilder {
         this.standardIndent = standardIndent;
     }
 
+    getContent(cell: MyGenericElement): string[] {
+        // TODO: read content from element!
+        if (cell instanceof ActionInput) {
+
+            return cell.getContent();
+
+        } else if (cell instanceof ForLoopText) {
+
+            return this.getFor(cell.getVariable(), cell.getCollection(), this.addIdentation(cell.getLoopContent()));
+
+        } else if (cell instanceof IfElseText) {
+
+            return this.getIfElse(cell.getCondition(), cell.getIfContent(), cell.getElseContent());
+
+        } else if (cell instanceof WhileLoopText) {
+
+            return this.getWhileDo(cell.getCondition(), cell.getLoopContent());
+
+        } else if (cell instanceof Edit) {
+
+            return [];
+
+        } else {
+
+            return [];
+
+        }
+    }
+
     abstract getCore(exerciseParameters: ExerciseParameters, content: string[]): string;
 
-    abstract getIfElse(condition: string, contentThen: string[], contentElse: string[]): string[];
+    protected abstract getIfElse(condition: string, contentThen: string[], contentElse: string[]): string[];
 
-    abstract getIfThen(condition: string, content: string[]): string[];
+    protected abstract getIfThen(condition: string, content: string[]): string[];
 
-    abstract getFor(variable: string, collection: string, content: string[]): string[];
+    protected abstract getFor(variable: string, collection: string, content: string[]): string[];
 
-    abstract getDoWhile(condition: string, content: string[]): string[];
+    protected abstract getDoWhile(condition: string, content: string[]): string[];
 
-    abstract getWhileDo(condition: string, content: string[]): string[];
+    protected abstract getWhileDo(condition: string, content: string[]): string[];
 
     addIdentation(stringList: string[]): string[] {
         if (Array.isArray(stringList)) {

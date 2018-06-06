@@ -1,5 +1,6 @@
 package model.bool
 
+import scala.util.Try
 import scala.util.parsing.combinator.JavaTokenParsers
 
 object BoolNodeParser extends JavaTokenParsers {
@@ -38,10 +39,8 @@ object BoolNodeParser extends JavaTokenParsers {
 
   private lazy val boolVariable: Parser[Variable] = "[a-zA-Z]".r ^^ (str => Variable(str.charAt(0).toLower))
 
-  def parseBoolFormula(toParse: String): Option[ScalaNode] = parseAll(boolExpression, toParse) match {
-    case Success(result, _)    => Some(result)
-    case NoSuccess(msg, input) => throw new IllegalArgumentException(msg + " :: " + input)
-    case Error(_, _)           => null
-    case Failure(_, _)         => null
+  def parseBoolFormula(toParse: String): Try[ScalaNode] = parseAll(boolExpression, toParse) match {
+    case Success(result, _)    => scala.util.Success(result)
+    case NoSuccess(msg, input) => scala.util.Failure(new IllegalArgumentException(msg))
   }
 }

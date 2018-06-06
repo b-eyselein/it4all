@@ -4,10 +4,9 @@ import java.nio.file._
 
 import javax.inject._
 import model.core._
-import model.core.matching.MatchingResult
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.xml.XmlConsts._
-import model.xml.dtd.ElementLine
+import model.xml.dtd.DocTypeDefParser
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, User}
 import play.api.data.Form
@@ -83,24 +82,22 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise, solutionSaved: Boolean): Future[Try[CompResult]] =
     Future(solution.part match {
-      case DocumentCreationXmlPart =>
-        checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
+      case DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
 
-          val grammarAndXmlTries: Try[(Path, Path)] = for {
-            grammar <- write(dir, completeEx.rootNode + ".dtd", completeEx.sampleGrammar.asString)
-            xml <- write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, solution.solution)
-          } yield (grammar, xml)
+        val grammarAndXmlTries: Try[(Path, Path)] = for {
+          grammar <- write(dir, completeEx.rootNode + ".dtd", completeEx.sampleGrammar.asString)
+          xml <- write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, solution.solution)
+        } yield (grammar, xml)
 
-          grammarAndXmlTries map { case (grammar, xml) =>
-            val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml)
-            XmlDocumentCompleteResult(solution.solution, solutionSaved, correctionResult)
-          }
-        })
+        grammarAndXmlTries map { case (grammar, xml) =>
+          val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml)
+          XmlDocumentCompleteResult(solution.solution, solutionSaved, correctionResult)
+        }
+      })
 
-      case GrammarCreationXmlPart =>
-        val results: Try[MatchingResult[ElementLine, ElementLineMatch]] = XmlCorrector.correctDTD(solution.solution, completeEx)
-
-        results map (matches => XmlGrammarCompleteResult(solution.solution, solutionSaved, matches))
+      case GrammarCreationXmlPart => DocTypeDefParser.parseDTD(solution.solution) map { userGrammar =>
+        XmlGrammarCompleteResult(userGrammar, solutionSaved, completeEx)
+      }
     })
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: XmlExPart): Future[String] = ???

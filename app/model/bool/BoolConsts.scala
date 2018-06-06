@@ -7,8 +7,9 @@ object BoolConsts extends EssentialsConsts {
   // Boolean
 
   val assignmentsName = "assignments"
-  val FormulaName     = "formula"
+  val formulaName     = "formula"
   val LearnerSol      = "solution"
+  val tableRowsName   = "tableRows"
   val variableName    = "variable"
 
   val SolVariable: Variable = Variable('z')

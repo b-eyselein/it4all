@@ -4,12 +4,11 @@ import java.nio.file.Path
 
 import javax.xml.parsers.DocumentBuilderFactory
 import model.core.matching.MatchingResult
-import model.xml.dtd.{DocTypeDefParser, ElementLine}
+import model.xml.dtd.{DocTypeDef, ElementLine}
 import org.xml.sax.{ErrorHandler, SAXParseException}
 
 import scala.collection.mutable.ListBuffer
 import scala.language.{implicitConversions, postfixOps}
-import scala.util.Try
 import scala.xml.SAXException
 
 
@@ -44,8 +43,8 @@ object XmlCorrector {
     errorHandler.errors
   }
 
-  def correctDTD(dtd: String, exercise: XmlExercise): Try[MatchingResult[ElementLine, ElementLineMatch]] = DocTypeDefParser.parseDTD(dtd) map {
-    userGrammar => DocTypeDefMatcher.doMatch(userGrammar.asElementLines, exercise.sampleGrammar.asElementLines)
-  }
+  def correctDTD(userGrammar: DocTypeDef, sampleGrammar: DocTypeDef): MatchingResult[ElementLine, ElementLineAnalysisResult, ElementLineMatch] =
+    DocTypeDefMatcher.doMatch(userGrammar.asElementLines, sampleGrammar.asElementLines)
+
 
 }

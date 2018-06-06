@@ -22,8 +22,11 @@ object XmlErrorType extends Enum[XmlErrorType] {
 }
 
 
-case class XmlDocumentCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[XmlError]) extends XmlCompleteResult
+case class XmlDocumentCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[XmlError]) extends XmlCompleteResult {
 
+  override type SolType = String
+
+}
 
 class XmlError(val errorType: XmlErrorType, e: SAXParseException) extends XmlEvaluationResult {
 

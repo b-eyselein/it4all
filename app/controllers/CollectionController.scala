@@ -161,25 +161,26 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None       => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
         case Some(coll) =>
           val exercises = coll.exercises.filter(_.state == ExerciseState.APPROVED)
-
-          // FIXME: remove cast ...
-          Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, takeSlice(exercises, page), toolMain, page, numOfPages(exercises.size)))
+          Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, takeSlice(exercises, page), toolMain, page, exercises.size))
       }
   }
 
   def exercise(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
-      val values: Future[(Option[(toolMain.CollType, toolMain.CompExType)], Int)] = for {
-        collection <- toolMain.futureCollById(collId)
-        compEx <- toolMain.futureCompleteExById(collId, id)
-        numOfExes <- toolMain.numOfExesInColl(collId)
-      } yield ((collection zip compEx).headOption, numOfExes)
+      toolMain.futureCollById(collId) flatMap {
+        case None             => Future(BadRequest(s"There is no collection with id $collId!"))
+        case Some(collection) =>
 
+          val values: Future[(Option[toolMain.CompExType], Int)] = for {
+            compEx <- toolMain.futureCompleteExById(collId, id)
+            numOfExes <- toolMain.numOfExesInColl(collId)
+          } yield (compEx, numOfExes)
 
-      values flatMap {
-        case (None, _)                     => Future(BadRequest(s"There is no collection with id $collId!"))
-        case (Some((coll, ex)), numOfExes) => toolMain.renderExercise(user, coll, ex, numOfExes) map (f => Ok(f))
+          values flatMap {
+            case (None, _)             => Future(BadRequest(s"There is no exercise with id $id in collection $collId!"))
+            case (Some(ex), numOfExes) => toolMain.renderExercise(user, collection, ex, numOfExes) map (f => Ok(f))
+          }
       }
   }
 

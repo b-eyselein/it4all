@@ -3,10 +3,10 @@ package model.uml.matcher
 import model.core.matching._
 import model.uml.UmlConsts._
 import model.uml.{UmlAttribute, UmlClassMember, UmlMethod, UmlVisibility}
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 
 
-sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match[Mem]
+sealed trait UmlClassMemberMatch[Mem <: UmlClassMember, AR <: UmlClassMemberAnalysisResult] extends Match[Mem, AR]
 
 sealed trait UmlClassMemberAnalysisResult extends AnalysisResult {
 
@@ -37,9 +37,9 @@ case class UmlAttributeAnalysisResult(matchType: MatchType,
 
 }
 
-case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[UmlAttribute]) extends UmlClassMemberMatch[UmlAttribute] {
+case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[UmlAttribute]) extends UmlClassMemberMatch[UmlAttribute, UmlAttributeAnalysisResult] {
 
-  override type MatchAnalysisResult = UmlAttributeAnalysisResult
+  //  override type MatchAnalysisResult = UmlAttributeAnalysisResult
 
   override def analyze(arg1: UmlAttribute, arg2: UmlAttribute): UmlAttributeAnalysisResult = {
 
@@ -82,7 +82,7 @@ case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[Um
 
 }
 
-object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeMatch] {
+object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisResult, UmlAttributeMatch] {
 
   override protected def canMatch: (UmlAttribute, UmlAttribute) => Boolean = _.memberName == _.memberName
 
@@ -110,9 +110,9 @@ case class UmlMethodAnalysisResult(matchType: MatchType,
 
 }
 
-case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMethod]) extends UmlClassMemberMatch[UmlMethod] {
+case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMethod]) extends UmlClassMemberMatch[UmlMethod, UmlMethodAnalysisResult] {
 
-  override type MatchAnalysisResult = UmlMethodAnalysisResult
+  //  override type MatchAnalysisResult = UmlMethodAnalysisResult
 
   override protected def descArgForJson(arg: UmlMethod): JsValue = Json.obj(nameName -> arg.memberName, typeName -> arg.memberType)
 
@@ -150,7 +150,7 @@ case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMetho
 
 }
 
-object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodMatch] {
+object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlMethodMatch] {
 
   override protected def canMatch: (UmlMethod, UmlMethod) => Boolean = _.memberName == _.memberName
 

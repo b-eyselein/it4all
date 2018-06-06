@@ -1,22 +1,20 @@
 package model.blanks
 
-import model.core.matching.{Matcher, MatchingResult}
+import model.core.matching.{GenericAnalysisResult, Matcher, MatchingResult}
 import model.core.result.CompleteResult
-import play.twirl.api.Html
 
-case class BlanksCompleteResult(learnerSolution: Seq[BlanksAnswer], result: MatchingResult[BlanksAnswer, BlanksAnswerMatch]) extends CompleteResult[MatchingResult[BlanksAnswer, BlanksAnswerMatch]] {
+case class BlanksCompleteResult(learnerSolution: Seq[BlanksAnswer], result: MatchingResult[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch])
+  extends CompleteResult[MatchingResult[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch]] {
 
   override type SolType = Seq[BlanksAnswer]
 
   override val solutionSaved = false
 
-  override def results: Seq[MatchingResult[BlanksAnswer, BlanksAnswerMatch]] = Seq(result)
-
-  override def renderLearnerSolution: Html = ???
+  override def results: Seq[MatchingResult[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch]] = Seq(result)
 
 }
 
-object BlanksCorrector extends Matcher[BlanksAnswer, BlanksAnswerMatch] {
+object BlanksCorrector extends Matcher[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch] {
 
   override protected def canMatch: (BlanksAnswer, BlanksAnswer) => Boolean = _.id == _.id
 

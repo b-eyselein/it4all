@@ -1,7 +1,5 @@
 package model.core.result
 
-import play.twirl.api.Html
-
 
 object EvaluationResult {
 
@@ -35,8 +33,6 @@ trait EvaluationResult {
 
   def getGlyphicon: String = success.glyphicon
 
-  def getPoints: Int = success.points
-
   def isSuccessful: Boolean = success == SuccessType.COMPLETE
 
 }
@@ -54,8 +50,6 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
   def solutionSaved: Boolean
 
   def results: Seq[E]
-
-  def renderLearnerSolution: Html
 
   override def success: SuccessType = SuccessType.ofBool(EvaluationResult.allResultsSuccessful(results))
 

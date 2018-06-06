@@ -3,7 +3,7 @@ package model.blanks
 import javax.inject._
 import model.blanks.BlanksConsts._
 import model.blanks.BlanksExParts.BlanksExPart
-import model.core.matching.MatchingResult
+import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, JsonFormat, User}
@@ -31,7 +31,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override type SolType = BlanksSolution
 
-  override type R = MatchingResult[BlanksAnswer, BlanksAnswerMatch]
+  override type R = MatchingResult[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch]
 
   override type CompResult = BlanksCompleteResult
 

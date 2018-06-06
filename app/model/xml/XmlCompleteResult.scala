@@ -4,7 +4,7 @@ import model.core.JsonWriteable
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.xml.XmlConsts._
 import play.api.libs.json.{JsValue, Json}
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 
 trait XmlEvaluationResult extends EvaluationResult with JsonWriteable {
 
@@ -13,14 +13,6 @@ trait XmlEvaluationResult extends EvaluationResult with JsonWriteable {
 }
 
 trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult] {
-
-  override type SolType = String
-
-  val learnerSolution: String
-  val solutionSaved  : Boolean
-  val results        : Seq[XmlEvaluationResult]
-
-  override def renderLearnerSolution: Html = new Html("<pre>" + HtmlFormat.escape(learnerSolution).toString + "</pre>")
 
   def render: Html = {
     val solSaved: String = if (solutionSaved)
@@ -39,6 +31,8 @@ trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult] {
   def toJson: JsValue = Json.obj(
     solutionSavedName -> solutionSaved,
     successName -> isSuccessful,
+    pointsName -> points,
+    maxPointsName -> maxPoints,
     "results" -> results.map(_.toJson)
   )
 

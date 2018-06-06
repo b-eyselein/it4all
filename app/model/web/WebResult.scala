@@ -13,8 +13,6 @@ case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, p
 
   override type SolType = String
 
-  override def renderLearnerSolution: Html = Html("<pre>" + learnerSolution + "</pre>")
-
   def render: Html = {
     // FIXME: convert to template...
 

@@ -5,9 +5,9 @@ import model.core.matching.{GenericAnalysisResult, Match, MatchType}
 import play.api.libs.json.JsValue
 
 
-case class BlanksAnswerMatch(userArg: Option[BlanksAnswer], sampleArg: Option[BlanksAnswer]) extends Match[BlanksAnswer] {
+case class BlanksAnswerMatch(userArg: Option[BlanksAnswer], sampleArg: Option[BlanksAnswer]) extends Match[BlanksAnswer, GenericAnalysisResult] {
 
-  override type MatchAnalysisResult = GenericAnalysisResult
+//  override type MatchAnalysisResult = GenericAnalysisResult
 
   override def analyze(arg1: BlanksAnswer, arg2: BlanksAnswer): GenericAnalysisResult = {
     val maxPartialDist = Math.max(Math.min(arg1.solution.length, arg2.solution.length) / 10, 1)

@@ -357,7 +357,7 @@ function drop(jqEvent: JQuery.Event): void {
 
 
 function addDrag(paperJQ: JQuery): void {
-    let classSpans = $('.non-marked');
+    let classSpans = $('.text-muted');
 
     classSpans.prop('draggable', true);
     classSpans.each((index, element: HTMLSpanElement) => {

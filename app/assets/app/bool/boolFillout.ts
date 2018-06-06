@@ -1,41 +1,18 @@
 import * as $ from 'jquery';
 
+import {readBoolSolution} from "./boolBase";
+
 let valueTableBody: JQuery, testBtn: JQuery;
 
-interface BoolAssignment {
-//TODO...
-}
-
-interface BoolFilloutSolution {
-    formula: string
-    assignments: BoolAssignment[]
-}
-
 interface BoolFilloutResult {
+    isSuccessful: boolean
+    assignments: BoolFilloutRow[]
+}
+
+interface BoolFilloutRow {
     id: string
     learner: boolean
     sample: boolean
-}
-
-function readValues(): BoolFilloutSolution {
-    let lerVar = $('#lerVar').text();
-
-    let assignments: BoolAssignment[] = [];
-
-    // FIXME: map instead of each
-    valueTableBody.find('tr').each((index: number, row: HTMLElement) => {
-        let partAssignments = {};
-
-        // FIXME: map instead of each
-        $(row).find('.text-center').each(function (index, cell) {
-            partAssignments[cell.dataset.variable] = (cell.dataset.value === 'true')
-        });
-
-        partAssignments[lerVar] = $(row).find('button').text() === '1';
-        assignments.push(partAssignments)
-    });
-
-    return {formula: $('#formula').data('formula'), assignments};
 }
 
 function changeValue(button: HTMLButtonElement): void {
@@ -44,19 +21,21 @@ function changeValue(button: HTMLButtonElement): void {
 
     jButton.text(newValue);
     if (newValue === 0) {
-        jButton.removeClass('btn-primary').addClass('btn-default');
+        jButton.removeClass('btn-primary');
     } else {
-        jButton.removeClass('btn-default').addClass('btn-primary');
+        jButton.addClass('btn-primary');
     }
 }
 
-function onAjaxError(jqXHR): void {
-    console.error(jqXHR.responseText);
+function onFilloutCorrectionError(jqXHR): void {
     testBtn.prop('disabled', false);
+    console.error(jqXHR.responseText);
 }
 
-function onAjaxSuccess(rows: BoolFilloutResult[]): void {
-    for (let row of rows) {
+function onFilloutCorrectionSuccess(respone: BoolFilloutResult): void {
+    testBtn.prop('disabled', false);
+
+    for (let row of respone.assignments) {
         let elem = $('#' + row.id);
 
         if (row.learner === row.sample) {
@@ -65,22 +44,22 @@ function onAjaxSuccess(rows: BoolFilloutResult[]): void {
             elem.removeClass('table-success').addClass('table-danger');
         }
     }
-
-    testBtn.prop('disabled', false);
 }
 
 function testSol(): void {
     testBtn.prop('disabled', true);
+
+    const solution = readBoolSolution(valueTableBody, true);
 
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
         url: testBtn.data('url'),
-        data: JSON.stringify(readValues()),
+        data: JSON.stringify(solution),
         async: true,
-        success: onAjaxSuccess,
-        error: onAjaxError
+        success: onFilloutCorrectionSuccess,
+        error: onFilloutCorrectionError
     });
 }
 

@@ -18,14 +18,14 @@ case class GenericAnalysisResult(matchType: MatchType) extends AnalysisResult {
 
 }
 
-trait Match[T] extends JsonWriteable {
+trait Match[T, AR <: AnalysisResult] extends JsonWriteable {
 
-  type MatchAnalysisResult <: AnalysisResult
+  //  type MatchAnalysisResult <: AnalysisResult
 
   val userArg  : Option[T]
   val sampleArg: Option[T]
 
-  val analysisResult: Option[MatchAnalysisResult] = (userArg, sampleArg) match {
+  val analysisResult: Option[AR] = (userArg, sampleArg) match {
     case (Some(ua), Some(sa)) => Some(analyze(ua, sa))
     case _                    => None
   }
@@ -46,7 +46,7 @@ trait Match[T] extends JsonWriteable {
     case _                                                      => Seq("FEHLER!")
   }
 
-  protected def analyze(arg1: T, arg2: T): MatchAnalysisResult
+  protected def analyze(arg1: T, arg2: T): AR
 
   protected def descArg(arg: T): String = arg.toString
 

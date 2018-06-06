@@ -1,12 +1,11 @@
 package model.uml
 
-import model.core.matching.{Match, MatchingResult}
+import model.core.matching.{GenericAnalysisResult, Match, MatchingResult}
 import model.core.result.EvaluationResult._
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.uml.UmlCompleteResult._
 import model.uml.matcher._
 import play.api.libs.json._
-import play.twirl.api.Html
 
 import scala.language.postfixOps
 
@@ -26,17 +25,18 @@ case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassD
 
   override val success: SuccessType = SuccessType.NONE
 
-  override def results: Seq[MatchingResult[_, _ <: Match[_]]] = Seq.empty ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
+  override def results: Seq[MatchingResult[_, _, _ <: Match[_, _]]] = Seq.empty ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
 
   private val musterSolution: UmlClassDiagram = exercise.ex.solution
 
-  val classResult: Option[MatchingResult[UmlClass, UmlClassMatch]] = part match {
+  val classResult: Option[MatchingResult[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch]] = part match {
     case DiagramDrawingHelp                => None
     case ClassSelection                    => Some(UmlClassMatcher(false).doMatch(learnerSolution.classes, musterSolution.classes))
     case DiagramDrawing | MemberAllocation => Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
   }
 
-  val assocAndImplResult: Option[(MatchingResult[UmlAssociation, UmlAssociationMatch], MatchingResult[UmlImplementation, UmlImplementationMatch])] = part match {
+  val assocAndImplResult: Option[(MatchingResult[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch],
+    MatchingResult[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch])] = part match {
     case DiagramDrawingHelp | DiagramDrawing =>
       val assocRes = UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations)
       val implRes = UmlImplementationMatcher.doMatch(learnerSolution.implementations, musterSolution.implementations)
@@ -51,8 +51,6 @@ case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassD
     case DiagramDrawingHelp => Some(MemberAllocation)
     case MemberAllocation   => None
   }
-
-  override def renderLearnerSolution: Html = Html(displayClasses + displayAssocsAndImpls)
 
   private def displayAssocsAndImpls: String =
     s"""<h4>Ihre Vererbungsbeziehungen:</h4>

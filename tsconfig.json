@@ -16,7 +16,7 @@
     "paths": {
       "*": [
         "*",
-        "node-modules/*"
+        "target/web/node-modules/main/webjars/*"
       ]
     },
     "typeRoots": [
@@ -24,7 +24,6 @@
     ]
   },
   "exclude": [
-    "node_modules",
     "project/target",
     "target"
   ]

@@ -30,10 +30,6 @@
             SystemJS.import('@routes.Assets.versioned("app/uml/umlActivity/activityCorrection.js")');
     </script>
 
-        <!--suppress JSUnusedLocalSymbols -->
-    <script>
-
-    </script>
 }
 
 @main("Uml Aktivitätsdiagramm", Some(user), scripts) {
@@ -43,7 +39,11 @@
     }
 
     @core.helperTemplates.modal("TODO", "definitionRest", "lg") {
-        <pre>@completeEx.ex.base</pre>
+        <div class="card bg-light">
+            <div class="card-body">
+                <pre>@completeEx.ex.base.split("\n").zipWithIndex.map(si => (si._2 + 1).toString + "\t" + si._1).mkString("\n")</pre>
+            </div>
+        </div>
     }
 
     @completeEx.maybeClassDiagramPart match {
@@ -62,126 +62,123 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group" id="buttonsDiv">
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#instructionsModal">
+                    <button class="btn btn-info" data-toggle="modal" data-target="#instructionsModal">
                         Bearbeitungshinweise
                     </button>
 
-                    <a class="btn btn-default" data-elemname="elementActionInput">@*Einfacher *@Aktion</a>
+                    <a class="btn btn-outline-secondary" data-elemname="elementActionInput">@*Einfacher *@Aktion</a>
                     @*<button name="elementActionSelect">Auswahlaktionsknoten</button>*@
                     @*<button name="elementActionSelect">Deklarationsaktionsknoten</button>*@
 
                     <div class="btn-group">
-                        <button class="btn btn-default" data-elemname="elementFor" id="loopButton">
-                            <span id="loopSpan">Schleifen</span>
-                        </button>
+                        <button class="btn btn-outline-secondary" data-elemname="elementFor" id="loopButton">Schleifen</button>
 
-                        <button class="btn btn-default" data-toggle="dropdown"><span class="caret"></span></button>
+                        <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a data-elemname="elementFor">For-Each (Ext)</a></li>
-                            <li><a data-elemname="uml.ForLoopEmbed">For-Each (Emb)</a></li>
-                            <li><a data-elemname="uml.ForLoopText">For-Each (Text)</a></li>
+                        <div class="dropdown-menu">
+                            @*<a class="dropdown-item" data-elemname="elementFor">For-Each (Ext)</a>*@
+                            @*<a class="dropdown-item" data-elemname="uml.ForLoopEmbed">For-Each (Emb)</a>*@
+                            <a class="dropdown-item" data-elemname="uml.ForLoopText">For-Each (Text)</a>
 
-                            <li><a data-elemname="elementWhileDo">While-Do (Ext)</a></li>
-                            <li><a data-elemname="uml.WhileLoop">While-Do (Text)</a></li>
+                            @*<a class="dropdown-item" data-elemname="elementWhileDo">While-Do (Ext)</a>*@
+                            <a class="dropdown-item" data-elemname="uml.WhileLoopText">While-Do (Text)</a>
 
-                            <li><a data-elemname="elementDoWhile">Do-While</a></li>
-                        </ul>
+                            @*<a class="dropdown-item" data-elemname="elementDoWhile">Do-While</a>*@
+                        </div>
                     </div>
 
-                    <a class="btn btn-default" data-elemname="uml.IfElseText">If-Else</a>
+                    <a class="btn btn-outline-secondary" data-elemname="uml.IfElseText">If-Else</a>
 
-                    <a class="btn btn-default" data-elemname="elementEdit">
-                        Bearbeitungsknoten</a>
+                    @*<a class="btn btn-outline-secondary" data-elemname="elementEdit">*@
+                        @*Bearbeitungsknoten</a>*@
 
-                    <a class="btn btn-default" data-elemname="uml.Edit">
-                        Bearbeitungsknoten 2</a>
+                    @*<a class="btn btn-outline-secondary" data-elemname="uml.Edit">*@
+                        @*Bearbeitungsknoten 2</a>*@
 
-                    <button type="button" class="btn" onclick="toggleFullscreen()">
-                        Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
-                    </button>
+                    @*<button class="btn btn-outline-secondary" onclick="toggleFullscreen()">*@
+                    @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>*@
+                    @*</button>*@
                 </div>
 
                 <div id="leftblock">
-                    <div ondrop="drop(event)" ondragover="allowDrop(event)" id="umlActivityPaper"></div>
+                    <div id="umlActivityPaper"></div>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="well text-justify">@completeEx.text</div>
+
+                <div class="card">
+                    <div class="card-body text-justify">@completeEx.text</div>
+                </div>
+
+                <hr>
 
                 <div class="form-group">
-                    <div class="btn-group btn-group-justified">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#definitionRest">
-                                Rest der Definition</button>
-                        </div>
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-info w-100" data-toggle="modal" data-target="#definitionRest">
+                            Rest der Definition</button>
                         @completeEx.maybeClassDiagramPart match {
                             case None => {}
                             case Some(classDiagPart) => {
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
-                                </div>
+                                <button class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
                             }
                         }
                     </div>
                 </div>
 
 
-                <div class="panel-group">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" href="#configSection">Ansicht &amp; Zeichenfläche</a>
-                            </h4>
-                        </div>
+                <div class="card card-default">
+                    <div class="card-header text-center">
+                        <a data-toggle="collapse" href="#configSection">Ansicht &amp; Zeichenfläche</a>
+                    </div>
 
-                        <div id="configSection" class="panel-collapse collapse">
-                            <div class="panel-body">
+                    <div id="configSection" class="card-collapse collapse">
+                        <div class="card-body">
 
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <h4 class="text-center">Ansicht</h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h4 class="text-center">Ansicht</h4>
 
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <button class="form-control" id="otop">&#8593;</button>
-                                                <button class="form-control" id="obot">&#8595;</button>
-                                                <span class="input-group-addon">
-                                                    <button class="btn btn-default" id="viewreset">Reset</button>
-                                                </span>
-                                                <button class="form-control" id="oleft">&#8592;</button>
-                                                <button class="form-control" id="oright">&#8594;</button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="col-sm-6">
-                                        <h4 class="text-center">Zeichenfläche</h4>
-
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <button class="form-control" id="paperplus">+</button>
-                                                <span class="input-group-addon">Größe</span>
-                                                <button class="form-control" id="paperminus">-</button>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <button class="form-control" id="zoomplus">+</button>
-                                                <span class="input-group-addon">Zoom</span>
-                                                <button class="form-control" id="zoomminus">-</button>
-                                            </div>
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <button class="form-control" id="otop">&#8593;</button>
+                                            <button class="form-control" id="obot">&#8595;</button>
+                                            <span class="input-group-addon">
+                                                <button class="btn btn-secondary" id="viewreset">Reset</button>
+                                            </span>
+                                            <button class="form-control" id="oleft">&#8592;</button>
+                                            <button class="form-control" id="oright">&#8594;</button>
                                         </div>
                                     </div>
 
                                 </div>
+
+                                <div class="col-sm-6">
+                                    <h4 class="text-center">Zeichenfläche</h4>
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <button class="form-control" id="paperplus">+</button>
+                                            <span class="input-group-addon">Größe</span>
+                                            <button class="form-control" id="paperminus">-</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <button class="form-control" id="zoomplus">+</button>
+                                            <span class="input-group-addon">Zoom</span>
+                                            <button class="form-control" id="zoomminus">-</button>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <hr>
 
                 <div class="form-group">
                     <div class="row">
@@ -195,114 +192,135 @@
                                     }>@lang.languageName</option>
                                 }
                                 </select>
-                                <span class="input-group-addon">-Code</span>
-                                <button id="newGenerationButton" class="form-control btn-info">generieren</button>
+                                <div class="input-group-append">
+                                    <button id="newGenerationButton" class="btn btn-info">-Code generieren</button>
+                                </div>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <button id="testBtn" title="Generieren Sie zuerst den Code!" disabled class="btn btn-default btn-block">
+                            <button id="testBtn" title="Generieren Sie zuerst den Code!" disabled class="btn btn-success btn-block">
                                 Aufgabe verifizieren</button>
                         </div>
                         <div class="col-md-4">
-                            <a class="btn btn-default btn-block" href="@routes.MainExerciseController.index(toolObject.urlPart)">
+                            <a class="btn btn-secondary btn-block" href="@routes.MainExerciseController.index(toolObject.urlPart)">
                                 Bearbeitung beenden</a>
                         </div>
 
                     </div>
                 </div>
 
-                <div class="panel panel-default" id="actionInputEditSection" hidden>
-                    <div class="panel-heading">
+                <div class="card card-default" id="actionInputEditSection" hidden>
+                    <div class="card-header">
                         <span class="text-center">Aktionsknoten bearbeiten</span>
                     </div>
 
-                    <div class="panel-body">
-                        <textarea id="actionInputEditor"></textarea>
+                    <div class="card-body">
+                        <textarea id="actionInputEditor" title="Editor..."></textarea>
                     </div>
 
-                    <div class="panel-footer">
-                        <div class="btn-group btn-group-justified">
-                            <div class="btn-group">
-                                <button type="button" class="form-control" onclick="resetActionInput()">Zurücksetzen</button>
-                            </div>
-                            <div class="btn-group">
-                                <button id="actionInputButton" class="form-control btn-primary" data-cellId="--">
-                                    Änderungen annehmen</button>
-                            </div>
+                    <div class="card-footer">
+                        <div class="btn-group d-flex">
+                            <button class="btn btn-danger w-100" id="actionInputResetBtn">Zurücksetzen</button>
+                            <button class="btn btn-primary w-100" id="actionInputButton" data-cellId="--">
+                                Änderungen annehmen</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel panel-default" id="forLoopEditSection" hidden>
-                    <div class="panel-heading text-center">Schleife bearbeiten</div>
+                <div class="card card-default" id="forLoopEditSection" hidden>
+                    <div class="card-header text-center">For-Schleife bearbeiten</div>
 
-                    <div class="panel-body">
+                    <div class="card-body">
 
                         <div class="form-group">
                             <div class="input-group">
-                                <span class="input-group-addon">for</span>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">for</span>
+                                </div>
                                 <input class="form-control" id="forLoopVariableInput" placeholder="Name der Iterationsvariable">
-                                <span class="input-group-addon">in</span>
+                                <span class="input-group-text">in</span>
                                 <input class="form-control" id="forLoopCollectionInput" placeholder="Element der Iteration">
-                                <span class="input-group-addon">do</span>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">do:</span>
+                                </div>
                             </div>
                         </div>
 
-                        <input hidden id="loopCellId" value="" title="hidden">
-                        <textarea id="forLoopEditor"></textarea>
+                        <textarea id="forLoopTextEditor" title="Editor..."></textarea>
                     </div>
 
-                    <div class="panel-footer">
-                        <div class="btn-group btn-group-justified">
-                            <div class="btn-group">
-                                <button type="button" class="form-control" onclick="resetForLoopText()">Zurücksetzen</button>
-                            </div>
-                            <div class="btn-group">
-                                <button id="forLoopButton" class="form-control btn-primary" onclick="updateForLoopText(this)" data-cellId="--">
-                                    Änderungen annehmen</button>
-                            </div>
+                    <div class="card-footer">
+                        <div class="btn-group d-flex">
+                            <button id="forLoopTextResetBtn" class="btn btn-danger w-100">Zurücksetzen</button>
+                            <button id="forLoopTextSubmitBtn" class="btn btn-primary w-100" data-cellId="--">
+                                Änderungen annehmen</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel panel-default" id="ifElseEditSection" hidden>
-                    <div class="panel-heading text-center">Schleife bearbeiten</div>
+                <div class="card card-default" id="whileTextEditSection" hidden>
+                    <div class="card-header text-center">While-Schleife bearbeiten</div>
 
-                    <div class="panel-body">
+                    <div class="card-body">
 
                         <div class="form-group">
                             <div class="input-group">
-                                <span class="input-group-addon">if</span>
-                                <input class="form-control" id="ifElseConditionInput" placeholder="Bedingung">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">while</span>
+                                </div>
+                                <input class="form-control" id="whileTextConditionInput" placeholder="Bedingung der Iteration">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">do:</span>
+                                </div>
                             </div>
                         </div>
 
-                        <input hidden id="loopCellId" value="" title="hidden">
+                        <textarea id="whileLoopTextEditor" title="Editor..."></textarea>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="btn-group d-flex">
+                            <button id="whileTextResetBtn" class="btn btn-danger w-100">Zurücksetzen</button>
+                            <button id="whileTextSubmitBtn" class="btn btn-primary w-100" data-cellId="--">
+                                Änderungen annehmen</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-default" id="ifElseTextEditSection" hidden>
+                    <div class="card-header text-center">Schleife bearbeiten</div>
+
+                    <div class="card-body">
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">if</span>
+                                </div>
+                                <input class="form-control" id="ifElseTextConditionInput" placeholder="Bedingung">
+                            </div>
+                        </div>
 
                         <div class="row">
                             <div class="col-sm-6">
                                 <span><b>then:</b></span>
-                                <textarea id="ifEditor"></textarea>
+                                <textarea id="ifTextEditor" title="Editor..."></textarea>
                             </div>
                             <div class="col-sm-6">
                                 <span class="text-center"><b>else:</b></span>
-                                <textarea id="elseEditor"></textarea>
+                                <textarea id="elseTextEditor" title="Editor..."></textarea>
                             </div>
                         </div>
 
 
                     </div>
 
-                    <div class="panel-footer">
-                        <div class="btn-group btn-group-justified">
-                            <div class="btn-group">
-                                <button type="button" class="form-control" onclick="resetIfElseText()">Zurücksetzen</button>
-                            </div>
-                            <div class="btn-group">
-                                <button id="ifElseButton" class="form-control btn-primary" onclick="updateIfElseText(this)" data-cellId="--">
-                                    Änderungen annehmen</button>
-                            </div>
+                    <div class="card-footer">
+                        <div class="btn-group d-flex">
+                            <button id="ifElseTextResetBtn" class="btn btn-danger w-100">Zurücksetzen</button>
+                            <button id="ifElseTextSubmitBtn" class="btn btn-primary w-100" data-cellId="--">
+                                Änderungen annehmen</button>
                         </div>
                     </div>
                 </div>
@@ -315,7 +333,11 @@
 
                     <div id="generationMsgSection"></div>
 
-                    <pre id="preCode" hidden></pre>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <pre id="preCode" hidden></pre>
+                        </div>
+                    </div>
 
                     <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
                     <input hidden type="number" id="exerciseId" value="@completeEx.id" title="hidden">
