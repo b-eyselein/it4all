@@ -7,8 +7,7 @@ stages:
 test:
     stage: test
     script:
-    - npm install
-    - sbt ;get_npm_deps;test
+    - sbt test
 
 build:
     stage: build
