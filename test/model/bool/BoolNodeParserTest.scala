@@ -1,8 +1,9 @@
 package model.bool
 
-import model.nary._
 import org.junit.Test
 import org.scalatest.Assertions._
+
+import scala.util.{Failure, Success}
 
 class BoolNodeParserTest {
 
@@ -10,8 +11,8 @@ class BoolNodeParserTest {
 
   def testParse(expected: ScalaNode, representations: String*): Unit = for (toParse <- representations) {
     BoolNodeParser.parseBoolFormula(toParse) match {
-      case Some(parsed) => assert(parsed == expected, s"""expected that parsing "$toParse" is equal to $expected""")
-      case None         => fail(s"""expected that parsing of "$toParse" succeeds!""")
+      case Success(parsed) => assert(parsed == expected, s"""expected that parsing "$toParse" is equal to $expected""")
+      case Failure(error)  => fail(s"""expected that parsing of "$toParse" succeeds, but got error $error!""")
     }
   }
 
@@ -43,9 +44,11 @@ class BoolNodeParserTest {
 
     testParse(a impl b, "a impl b", "(a impl b)")
 
-    assertThrows[IllegalArgumentException] {
-      testParse(a, "a test b")
+    BoolNodeParser.parseBoolFormula("a test b") match {
+      case Success(formula) => fail("Parsing of 'a test b' should fail, but succeeded with " + formula.toString)
+      case _                => Unit
     }
+
   }
 
   @Test

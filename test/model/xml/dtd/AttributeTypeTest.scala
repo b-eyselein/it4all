@@ -21,7 +21,7 @@ class AttributeTypeTest extends FlatSpec {
     val attrType = EnumAttributeType(enumValues)
 
     assert(attrType.values == enumValues)
-    assert(attrType.toString == "(" + enumValues.mkString(", ") + ")")
+    assert(attrType.toString == "(" + enumValues.mkString(" | ") + ")")
 
     assert(EnumAttributeType.unapply(attrType).contains(enumValues))
   }

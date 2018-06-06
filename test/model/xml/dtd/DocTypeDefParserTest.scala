@@ -74,7 +74,7 @@ class DocTypeDefParserTest extends FlatSpec with FileUtils {
     testParseError(DocTypeDefParser.cDataAttrType, "ID")
   }
   it should "parse an enum type for an attribute" in {
-    testParse(DocTypeDefParser.enumAttrType, "(test1, test2, test3)", EnumAttributeType(Seq("test1", "test2", "test3")))
+    testParse(DocTypeDefParser.enumAttrType, "(test1 | test2 | test3)", EnumAttributeType(Seq("test1", "test2", "test3")))
     testParseError(DocTypeDefParser.enumAttrType, "ID")
   }
 
@@ -82,7 +82,7 @@ class DocTypeDefParserTest extends FlatSpec with FileUtils {
     testParse(DocTypeDefParser.attributeType, "ID", IDAttributeType)
     testParse(DocTypeDefParser.attributeType, "IDREF", IDRefAttributeType)
     testParse(DocTypeDefParser.attributeType, "CDATA", CDataAttributeType)
-    testParse(DocTypeDefParser.attributeType, "(test1, test2, test3)", EnumAttributeType(Seq("test1", "test2", "test3")))
+    testParse(DocTypeDefParser.attributeType, "(test1 | test2 | test3)", EnumAttributeType(Seq("test1", "test2", "test3")))
   }
 
   it should "parse a dtd" in {
