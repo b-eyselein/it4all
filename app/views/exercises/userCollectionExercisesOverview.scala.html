@@ -1,5 +1,5 @@
 @(user: model.User, collection: model.CompleteCollection, exes: Seq[model.CompleteEx[_ <: model.Exercise]],
-        toolMainObject: model.toolMains.CollectionToolMain, currentSite: Int, numOfSites: Int)
+        toolMainObject: model.toolMains.CollectionToolMain, currentSite: Int, numOfExercises: Int)
 
     @title = @{
         s"""${toolMainObject.collectionSingularName} "${collection.coll.title}""""
@@ -37,8 +37,7 @@
                 }
 
 
-            @core.helperTemplates.bsPager.render(currentSite, numOfSites,
-                index => routes.CollectionController.collection(toolMainObject.urlPart, collection.coll.id, index))
+            @core.helperTemplates.bsPager(currentSite, index => routes.CollectionController.collection(toolMainObject.urlPart, collection.coll.id, index), numOfExercises, step = 10)
 
         </div>
     }

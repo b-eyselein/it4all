@@ -161,9 +161,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None       => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
         case Some(coll) =>
           val exercises = coll.exercises.filter(_.state == ExerciseState.APPROVED)
-
-          // FIXME: remove cast ...
-          Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, takeSlice(exercises, page), toolMain, page, numOfPages(exercises.size)))
+          Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, takeSlice(exercises, page), toolMain, page, exercises.size))
       }
   }
 
