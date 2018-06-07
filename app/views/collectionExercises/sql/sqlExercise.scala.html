@@ -21,6 +21,16 @@
 }
 
 @main("SQL", Some(user), scripts) {
+    @core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
+        <img class="img-fluid" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
+    }
+
+    @for(table <- tables) {
+        @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
+            @views.html.collectionExercises.sql.resultTable.render(table)
+        }
+    }
+
     <div class="container-fluid">
 
         <input type="number" hidden id="collId" value="@scenario.id" title="hidden">
@@ -48,15 +58,6 @@
                         </div>
                     }
 
-                    @core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
-                        <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
-                        }
-
-                    @for(table <- tables) {
-                        @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
-                            @views.html.collectionExercises.sql.resultTable.render(table)
-                        }
-                    }
                 </section>
             </div>
 
