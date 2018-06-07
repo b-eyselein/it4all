@@ -4,7 +4,7 @@ import scala.collection.mutable.ListBuffer
 
 object ToolList {
 
-  val STEP = 5
+  val STEP = 10
 
   // FIXME: refactor!
 
