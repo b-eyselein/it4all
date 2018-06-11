@@ -19,6 +19,11 @@ trait Secured {
   private def futureOnUnauthorized(request: RequestHeader)(implicit ec: ExecutionContext): Future[Result] =
     Future(onUnauthorized(request))
 
+  private def onInsufficientPrivileges(request: RequestHeader): Result = Redirect(routes.Application.index())
+
+  private def futureOnInsufficientPrivileges(request: RequestHeader)(implicit ec: ExecutionContext): Future[Result] =
+    Future(onInsufficientPrivileges(request))
+
 
   private def withAuth(f: => String => Request[AnyContent] => Future[Result]): EssentialAction =
     Security.Authenticated(username, onUnauthorized)(user => controllerComponents.actionBuilder.async(request => f(user)(request)))
@@ -58,7 +63,7 @@ trait Secured {
       repository.userByName(username) map {
         case Some(user) =>
           if (user.isAdmin) f(user)(request)
-          else onUnauthorized(request)
+          else onInsufficientPrivileges(request)
         case None       => onUnauthorized(request)
       }
 
@@ -69,7 +74,7 @@ trait Secured {
       repository.userByName(username) flatMap {
         case Some(user) =>
           if (user.isAdmin) f(user)(request)
-          else futureOnUnauthorized(request)
+          else futureOnInsufficientPrivileges(request)
         case None       => futureOnUnauthorized(request)
       }
 
