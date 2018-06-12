@@ -74,7 +74,6 @@ libraryDependencies ++= Seq(
 
   // core
   "com.typesafe.play" %% "play-slick" % "3.0.3",
-  evolutions,
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
 
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",

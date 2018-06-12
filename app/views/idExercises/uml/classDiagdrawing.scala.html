@@ -1,239 +1,234 @@
 @(user: model.User, exercise: model.uml.UmlCompleteEx, curPart: model.uml.UmlExPart, getsHelp: Boolean, toolObject: model.uml.UmlToolMain)
 
-    @title = @{
-        exercise.titleForPart(curPart)
+@title = @{
+    exercise.titleForPart(curPart)
+}
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>
+            let imports = [
+                '@routes.Assets.versioned("lib/graphlib/dist/graphlib.js")',
+                '@routes.Assets.versioned("lib/dagre/dist/dagre.js")',
+                '@routes.Assets.versioned("app/uml/umlClass/classDiagDrawing.js")'
+            ];
+            for (let toImport of imports) {
+                SystemJS.import(toImport);
+            }
+    </script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+
+        <!--suppress JSUnusedLocalSymbols -->
+    <script>
+            let exports = {};
+            let getsHelp = @{getsHelp};
+    </script>
+}
+
+@main(title, Some(user), scripts) {
+
+    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal", "lg") {
+        @views.html.idExercises.uml.classDiagDrawingExplanation.render(getsHelp)
     }
 
-    @scripts = {
-        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+    <div class="container-fluid" id="fullsc">
+        <div class="row">
 
-        <script>
-                let imports = [
-                    '@routes.Assets.versioned("lib/graphlib/dist/graphlib.js")',
-                    '@routes.Assets.versioned("lib/dagre/dist/dagre.js")',
-                    '@routes.Assets.versioned("app/uml/umlClass/classDiagDrawing.js")'
-                ];
-                for (let toImport of imports) {
-                    SystemJS.import(toImport);
-                }
-        </script>
+            <div class="col-md-6" id="paperDiv">
 
-        <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
-        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+                <div class="form-group" id="buttonsDiv">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#hintModal">
+                        Bearbeitungshinweise</button>
 
-            <!--suppress JSUnusedLocalSymbols -->
-        <script>
-                let exports = {};
-                let getsHelp = @{getsHelp};
-        </script>
-    }
+                    <button class="btn btn-secondary" data-conntype="CLASS" id="classButton"
+                        @if(getsHelp) {
+                            @Html("""disabled title="Es wurden bereits alle Klassen erstellt!" """)
+                        }><span class="octicon octicon-three-bars"></span> Klasse
+                    </button>
 
-    @main(title, Some(user), scripts) {
+                    <button class="btn btn-secondary" data-conntype="IMPLEMENTATION" >
+                        <span class="octicon octicon-arrow-up"></span> Vererbung
+                    </button>
 
-        @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal", "lg") {
-            @views.html.idExercises.uml.classDiagDrawingExplanation.render(getsHelp)
-        }
-
-        <div class="container-fluid" id="fullsc">
-            <div class="row">
-
-                <div class="col-md-6" id="paperDiv">
-
-                    <div class="form-group" id="buttonsDiv">
-                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#hintModal">
-                            Bearbeitungshinweise</button>
-
-                        <button class="btn btn-secondary" data-conntype="CLASS" id="classButton"
-                            @if(getsHelp) {
-                                @Html("""disabled title="Es wurden bereits alle Klassen erstellt!" """)
-                            }><span class="octicon octicon-three-bars"></span> Klasse
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" data-conntype="ASSOCIATION" id="assocButton">
+                            <span id="assocType">Assoziation</span>
                         </button>
 
-                        <button class="btn btn-secondary" data-conntype="IMPLEMENTATION" >
-                            <span class="octicon octicon-arrow-up"></span> Vererbung
+                        <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">
                         </button>
 
-                        <div class="btn-group">
-                            <button class="btn btn-secondary" data-conntype="ASSOCIATION" id="assocButton">
-                                <span id="assocType">Assoziation</span>
-                            </button>
-
-                            <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">
-                            </button>
-
-                            <div class="dropdown-menu">
-                            @for(assocType <- model.uml.UmlAssociationType.values) {
-                                <a class="dropdown-item" data-conntype="@assocType.entryName">@assocType.german</a>
-                            }
-                            </div>
+                        <div class="dropdown-menu">
+                        @for(assocType <- model.uml.UmlAssociationType.values) {
+                            <a class="dropdown-item" data-conntype="@assocType.entryName">@assocType.german</a>
+                        }
                         </div>
-
-                        <button class="btn btn-secondary" data-conntype="POINTER" title="Maus" @{
-                            if(getsHelp) "disabled" else ""
-                        }>Attribute und Methoden</button>
-
-                        @*<button type="button" class="btn btn-light" onclick="toggleFullscreen()">*@
-                            @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span></button>*@
                     </div>
 
-                    <div id="sizepaper">
-                        <div id="classDiagPaper" data-url="@routes.ExerciseController.umlClassDiag(exercise.id, curPart.urlName)"></div>
+                    <button class="btn btn-secondary" data-conntype="POINTER" title="Maus" @{
+                        if(getsHelp) "disabled" else ""
+                    }>Attribute und Methoden</button>
+
+                    @*<button type="button" class="btn btn-light" onclick="toggleFullscreen()">*@
+                    @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span></button>*@
+                </div>
+
+                <div id="sizepaper">
+                    <div id="classDiagPaper" data-url="@routes.ExerciseController.umlClassDiag(exercise.id, curPart.urlName)"></div>
+                </div>
+            </div>
+
+
+            <div class="col-md-6">
+
+                <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
+                <input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">
+                <input hidden id="exercisePart" value="@curPart.urlName" title="hidden">
+
+                <div class="card">
+                    <div class="card-body text-justify">@exercise.textForPart(curPart)</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="btn-group d-flex">
+                        <button data-url="@routes.ExerciseController.correctLive(toolObject.urlPart, exercise.id, curPart.urlName)"
+                        id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>
+                        @curPart match {
+                            case model.uml.DiagramDrawingHelp => {
+                                <a href="@routes.ExerciseController.exercise(toolObject.urlPart, exercise.ex.id, model.uml.MemberAllocation.urlName)"
+                                class="btn btn-secondary w-100">Nächster Aufgabenteil</a>
+                            }
+                            case _ => {
+                                <a href="@routes.MainExerciseController.index(toolObject.urlPart)"
+                                class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                            }
+                        }
                     </div>
                 </div>
 
+                <hr>
 
-                <div class="col-md-6">
+                <div id="classEditDiv" hidden>
+                    <h3 class="text-center">Klasse bearbeiten</h3>
 
-                    <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
-                    <input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">
-                    <input hidden id="exercisePart" value="@curPart.urlName" title="hidden">
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <div class="row" id="classEditRow">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <select class="form-control text-center" id="classTypeSelect" title="hidden...">
+                                        @for(classType <- model.uml.UmlClassType.values) {
+                                            <option value="@classType">@classType.german</option>
+                                        }
+                                        </select>
 
-                    <div class="card">
-                        <div class="card-body text-justify">@exercise.textForPart(curPart)</div>
-                    </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <input id="editClassName" class="form-control text-center" placeholder="Name der Klasse">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="editAttrsDiv">
+                                <button class="btn btn-primary" id="editAttrsPlusBtn">
+                                    <span class="glyphicon glyphicon-plus"></span> Attribut hinzufügen
+                                </button>
+                            </div>
 
-                    <div class="form-group">
-                        <div class="btn-group d-flex">
-                            <button data-url="@routes.ExerciseController.correctLive(toolObject.urlPart, exercise.id, curPart.urlName)"
-                            id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>
-                            @curPart match {
-                                case model.uml.DiagramDrawingHelp => {
-                                    <a href="@routes.ExerciseController.exercise(toolObject.urlPart, exercise.ex.id, model.uml.MemberAllocation.urlName)"
-                                    class="btn btn-secondary w-100">Nächster Aufgabenteil</a>
-                                }
-                                case _ => {
-                                    <a href="@routes.MainExerciseController.index(toolObject.urlPart)"
-                                    class="btn btn-secondary w-100">Bearbeitung beenden</a>
-                                }
-                            }
+                            <hr>
+
+                            <div id="editMethodsDiv">
+                                <button class="btn btn-primary" id="editMethodsPlusBtn">
+                                    <span class="glyphicon glyphicon-plus"></span> Methode hinzufügen
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <hr>
 
-                    <div id="classEditDiv" hidden>
-                        <h3 class="text-center">Klasse bearbeiten</h3>
-
-                        <div class="panel panel-secondary">
-                            <div class="panel-heading">
-                                <div class="row" id="classEditRow">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <select class="form-control text-center" id="classTypeSelect" title="hidden...">
-                                            @for(classType <- model.uml.UmlClassType.values) {
-                                                <option value="@classType">@classType.german</option>
-                                            }
-                                            </select>
-
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <input id="editClassName" class="form-control text-center" placeholder="Name der Klasse">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel-body">
-                                <div id="editAttrsDiv">
-                                    <button class="btn btn-primary" id="editAttrsPlusBtn">
-                                        <span class="glyphicon glyphicon-plus"></span> Attribut hinzufügen
-                                    </button>
-                                </div>
-
-                                <hr>
-
-                                <div id="editMethodsDiv">
-                                    <button class="btn btn-primary" id="editMethodsPlusBtn">
-                                        <span class="glyphicon glyphicon-plus"></span> Methode hinzufügen
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button type="reset" id="classEditReset" class="btn btn-secondary">
+                                Änderungen verwerfen</button>
                         </div>
-
-                        <hr>
-
-                        <div class="btn-group btn-group-justified">
-                            <div class="btn-group">
-                                <button type="reset" id="classEditReset" class="btn btn-secondary">
-                                    Änderungen verwerfen</button>
-                            </div>
-                            <div class="btn-group">
-                                <button class="btn btn-primary" data-id="" id="classEditSubmit">Klasse aktualisieren</button>
-                            </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" data-id="" id="classEditSubmit">Klasse aktualisieren</button>
                         </div>
-
-                        <hr>
                     </div>
 
-                    <div id="linkEditDiv" hidden>
-                        <h3 class="text-center">Assoziation bearbeiten</h3>
-
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="panel panel-secondary">
-                                    <div class="panel-heading text-center" id="sourceClass">Source</div>
-                                    <div class="panel-body"><hr></div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="row">
-                                    <div class="col-md-3 text-center">
-                                        <select class="form-control" id="sourceMult" title="empty">
-                                        @for(cardinality <- model.uml.UmlMultiplicity.values) {
-                                            <option>@cardinality.representant</option>
-                                        }
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                            <!-- FIXME: Typ der Assoziation? -->
-                                            <!--<select class="form-control" id="assocType" title="empty">${assocTypeOptions}</select>-->
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <select class="form-control" id="targetMult" title="empty">
-                                        @for(cardinality <- model.uml.UmlMultiplicity.values) {
-                                            <option>@cardinality.representant</option>
-                                        }
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <hr class="assocLine" id="linkId" data-id="${linkId}">
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="panel panel-secondary">
-                                    <div class="panel-heading text-center" id="targetClass">Target</div>
-                                    <div class="panel-body"><hr></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <div class="btn-group btn-group-justified">
-                            <div class="btn-group">
-                                <button type="reset" class="btn btn-secondary" id="linkEditReset">
-                                    Änderungen verwerfen</button>
-                            </div>
-                            <div class="btn-group">
-                                <button class="btn btn-primary" id="linkEditSubmit">Änderungen übernehmen</button>
-                            </div>
-                        </div>
-
-                        <hr>
-                    </div>
-
-                    <div id="resultDiv" hidden>
-                        <h2 class="text-center">Resultate</h2>
-                        <div id="results"></div>
-                    </div>
-
+                    <hr>
                 </div>
+
+                <div id="linkEditDiv" hidden>
+                    <h3 class="text-center">Assoziation bearbeiten</h3>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header text-center" id="sourceClass">Source</div>
+                                <div class="card-body"><hr></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    <select class="form-control" id="sourceMult" title="empty">
+                                    @for(cardinality <- model.uml.UmlMultiplicity.values) {
+                                        <option>@cardinality.representant</option>
+                                    }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                        <!-- FIXME: Typ der Assoziation? -->
+                                        <!--<select class="form-control" id="assocType" title="empty">${assocTypeOptions}</select>-->
+                                </div>
+
+                                <div class="col-md-3">
+                                    <select class="form-control" id="targetMult" title="empty">
+                                    @for(cardinality <- model.uml.UmlMultiplicity.values) {
+                                        <option>@cardinality.representant</option>
+                                    }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="assocLine" id="linkId" data-id="${linkId}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header text-center" id="targetClass">Target</div>
+                                <div class="card-body"><hr></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-secondary w-100" id="linkEditReset">Änderungen verwerfen</button>
+                        <button class="btn btn-primary w-100" id="linkEditSubmit">Änderungen übernehmen</button>
+                    </div>
+
+                    <hr>
+                </div>
+
+                <div id="resultDiv" hidden>
+                    <h2 class="text-center">Resultate</h2>
+                    <div id="results"></div>
+                </div>
+
             </div>
         </div>
-    }
+    </div>
+}
