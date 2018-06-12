@@ -57,7 +57,11 @@ $('.dropdown-menu a').on('click', function (event) {
     return false;
 });
 
-function attributeInputLine(umlAttribute: UmlClassAttribute, index: number): string {
+function changeAttr(button: HTMLButtonElement): void {
+    console.warn(button);
+}
+
+function attributeInputLine(umlAttribute: UmlClassAttribute): string {
     let visibilityOptions = VISIBILITIES.map((v) => `<option ${umlAttribute.visibility === v ? 'selected' : ''}>${v}</option>`).join('');
 
     return `
@@ -65,28 +69,26 @@ function attributeInputLine(umlAttribute: UmlClassAttribute, index: number): str
     <div class="input-group">
         <select class="form-control" data-for="visibility">${visibilityOptions}</select>
         
-        <span class="input-group-addon">
-            <label title="Statisch / Klassenattribut" style="font-weight: normal;" for="att_static_${index}"><input type="checkbox" id="att_static_${index}"> s</label>
-            <label title="Abstrakt" style="font-weight: normal;" for="att_abstract_${index}"><input type="checkbox" id="att_abstract_${index}"> a</label>
-            <label title="Abgeleitet (derived)" style="font-weight: normal;" for="att_derived_${index}"><input type="checkbox" id="att_derived_${index}"> d</label>
+        <span class="modifierDiv">
+            <button class="btn attrModifierBtn${umlAttribute.isStatic ? " btn-primary" : ""}" title="Statisch / Klassenattribut">s</button>
+            <button class="btn attrModifierBtn${umlAttribute.isAbstract ? " btn-primary" : ""}" title="Abstrakt">a</button>
+            <button class="btn attrModifierBtn${umlAttribute.isDerived ? " btn-primary" : ""}" title="Abgeleitet">d</button>
         </span>
-
+        
         <input class="form-control" placeholder="Attributname" data-for="name" value="${umlAttribute.name}" required>
         
-        <span class="input-group-addon">:</span>
+        <span class="input-group-text">:</span>
         
         <select class="form-control" data-for="type">
             ${UmlTypes.map(umlType => `<option ${umlType === umlAttribute.type ? 'selected' : ''}>${umlType}</option>`).join('')}
         </select>
         
-        <span class="input-group-addon"></span>
-        
-        <button class="form-control btn-danger" title="Löschen"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-danger" title="Löschen"><span class="octicon octicon-x"></span></button>
     </div>
 </div>`.trim();
 }
 
-function methodInputLine(umlMethod: UmlClassMethod, index: number): string {
+function methodInputLine(umlMethod: UmlClassMethod): string {
     let visibilityOptions = VISIBILITIES.map((v) => `<option ${umlMethod.visibility === v ? 'selected' : ''}>${v}</option>`).join('');
 
     return `
@@ -94,26 +96,24 @@ function methodInputLine(umlMethod: UmlClassMethod, index: number): string {
     <div class="input-group">
         <select class="form-control" data-for="visibility">${visibilityOptions}</select>
         
-        <span class="input-group-addon">
-            <span title="Statisch / Klassenmethode"><input type="checkbox"> s</span>
-            <span title="Abstrakt"><input type="checkbox"> a</span>
+        <span class="modifierDiv">
+            <button class="btn methodModifierBtn${umlMethod.isStatic ? " btn-primary" : ""}" title="Statisch / Klassenmethode">s</button>
+            <button class="btn methodModifierBtn${umlMethod.isAbstract ? " btn-primary" : ""}" title="Abstrakt">a</button>
         </span>
         
         <input class="form-control" placeholder="Methodenname" data-for="name" value="${umlMethod.name}" required>
         
-        <span class="input-group-addon">(</span>
+        <span class="input-group-text">(</span>
         
         <input class="form-control" placeholder="Parameter" data-for="parameters" value="${umlMethod.parameters}" required>
         
-        <span class="input-group-addon">):</span>
+        <span class="input-group-text">):</span>
         
         <select class="form-control" data-for="type">
             ${UmlTypes.map(umlType => `<option ${umlType === umlMethod.type ? 'selected' : ''}>${umlType}</option>`).join("")}
         </select>
         
-        <span class="input-group-addon"></span>
-        
-        <button class="form-control btn-danger" title="Löschen"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-danger" title="Löschen"><span class="octicon octicon-x"></span></button>
     </div>
 </div>`.trim();
 }
@@ -130,8 +130,9 @@ function umlClassAttributeFromHtml(memberGroup: HTMLElement): UmlClassAttribute 
     let base: ClassMemberAttrs = classMemberFromHtml(memberGroup);
 
     let modifiers = {};
-    $('.dropdown-menu').find('input').each((index: number, elem: HTMLInputElement) => {
-        modifiers[elem.value] = elem.checked
+    $('.modifierDiv').find('button.attrModifierBtn').each((index: number, elem: HTMLButtonElement) => {
+        const jElem = $(elem);
+        modifiers[jElem.text()] = jElem.hasClass('btn-primary');
     });
 
     if (base.name.length === 0) {
@@ -141,9 +142,9 @@ function umlClassAttributeFromHtml(memberGroup: HTMLElement): UmlClassAttribute 
             visibility: base.visibility,
             name: base.name,
             type: base.type,
-            isStatic: modifiers['static'],
-            isDerived: modifiers['derived'],
-            isAbstract: modifiers['abstract']
+            isStatic: modifiers['s'],
+            isDerived: modifiers['d'],
+            isAbstract: modifiers['a']
         };
     }
 }
@@ -152,8 +153,9 @@ function umlClassMethodFromHtml(memberGroup: HTMLElement): UmlClassMethod | null
     let base: ClassMemberAttrs = classMemberFromHtml(memberGroup);
 
     let modifiers = {};
-    $('.dropdown-menu').find('input').each((index: number, elem: HTMLInputElement) => {
-        modifiers[elem.value] = elem.checked;
+    $('.modifierDiv').find('button.methodModifierBtn').each((index: number, elem: HTMLButtonElement) => {
+        const jElem = $(elem);
+        modifiers[jElem.text()] = jElem.hasClass('btn-primary');
     });
 
     let parameters = $(memberGroup).find('input[data-for="parameters"]').val() as string;
@@ -166,8 +168,8 @@ function umlClassMethodFromHtml(memberGroup: HTMLElement): UmlClassMethod | null
             name: base.name,
             parameters: parameters,
             type: base.type,
-            isStatic: modifiers['static'],
-            isAbstract: modifiers['abstract']
+            isStatic: modifiers['s'],
+            isAbstract: modifiers['a']
         };
     }
 }
@@ -182,8 +184,8 @@ function editClass(model: MyJointClass): void {
     $('#editClassName').val(model.getClassName());
     $('#classEditSubmit').data('id', model.id);
 
-    addAttributes(model.getAttributes(), 0);
-    addMethods(model.getMethods(), 0);
+    addAttributes(model.getAttributes());
+    addMethods(model.getMethods());
 }
 
 function discardClassEdits(): void {
@@ -264,14 +266,22 @@ function updateLink(): void {
     discardLinkEdits();
 }
 
-function addAttributes(umlAttributes: UmlClassAttribute[], startIndex: number): void {
-    $('#editAttrsPlusBtn').before(umlAttributes.map((a, i) => attributeInputLine(a, startIndex + i)).join('\n'));
+function addAttributes(umlAttributes: UmlClassAttribute[]): void {
+    $('#editAttrsPlusBtn').before(umlAttributes.map(attributeInputLine).join('\n'));
     $('.glyphicon-remove').parent().on('click', (event) => deleteMember(event.target as HTMLElement));
+
+    $('.attrModifierBtn').on('click', (event: JQuery.Event) => {
+        $(event.target).toggleClass('btn-primary');
+    });
 }
 
-function addMethods(umlMethods: UmlClassMethod[], startIndex: number): void {
-    $('#editMethodsPlusBtn').before(umlMethods.map((m, i) => methodInputLine(m, startIndex + i)).join('\n'));
+function addMethods(umlMethods: UmlClassMethod[]): void {
+    $('#editMethodsPlusBtn').before(umlMethods.map(methodInputLine).join('\n'));
     $('.glyphicon-remove').parent().on('click', (event) => deleteMember(event.target as HTMLElement));
+
+    $('.methodModifierBtn').on('click', (event: JQuery.Event) => {
+        $(event.target).toggleClass('btn-primary');
+    });
 }
 
 $(() => {
@@ -284,17 +294,14 @@ $(() => {
     let editAttrsPlusBtn = $('#editAttrsPlusBtn');
     editAttrsPlusBtn.on('click', () => {
         let index = editAttrsPlusBtn.parent().find('.form-group').length;
-        addAttributes([{
-            visibility: '', name: '', type: '',
-            isStatic: false, isAbstract: false, isDerived: false
-        }], index);
+        addAttributes([{visibility: '', name: '', type: '', isStatic: false, isAbstract: false, isDerived: false}]);
     });
 
 
     let editMethodsPlusBtn = $('#editMethodsPlusBtn');
     editMethodsPlusBtn.on('click', () => {
         let index = editMethodsPlusBtn.parent().find('.form-group').length;
-        addMethods([{visibility: '', name: '', parameters: '', type: '', isAbstract: false, isStatic: false}], index);
+        addMethods([{visibility: '', name: '', parameters: '', type: '', isAbstract: false, isStatic: false}]);
     });
 
 
