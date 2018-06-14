@@ -19,8 +19,9 @@ function readAttributeElement(elem: HTMLInputElement): UmlClassAttribute | null 
 
 function readMethodElement(elem: HTMLInputElement): UmlClassMethod | null {
     if (elem.checked) {
+        const jElement = $(elem);
         return {
-            visibility: 'public', name: elem.dataset['value'], type: elem.dataset['type'],
+            visibility: jElement.data('visibility'), name: jElement.data('value'), type: jElement.data('type'),
             parameters: '', isAbstract: false, isStatic: false
         };
     } else {
@@ -64,6 +65,8 @@ function readAllocation(): UmlSolution {
 
 function onMemberAllocationCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
     testBtn.prop('disabled', false);
+
+    // FIXME: implement!
 
     console.warn(JSON.stringify(response, null, 2));
 }
