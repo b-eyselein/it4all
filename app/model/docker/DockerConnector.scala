@@ -1,28 +1,16 @@
 package model.docker
 
 import java.nio.file.{Path, Paths}
-import java.util.concurrent.TimeUnit
 
-import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.model.{Bind, Frame}
-import com.github.dockerjava.core.DockerClientBuilder
-import com.github.dockerjava.core.command.{LogContainerResultCallback, PullImageResultCallback, WaitContainerResultCallback}
+import com.spotify.docker.client.DockerClient.LogsParam
+import com.spotify.docker.client.messages.{ContainerConfig, ContainerCreation, ContainerExit, HostConfig}
+import com.spotify.docker.client.{DefaultDockerClient, DockerClient}
 import play.api.Logger
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
-
-class LogContainerCallback extends LogContainerResultCallback {
-
-  val log: StringBuilder = StringBuilder.newBuilder
-
-  override def onNext(item: Frame): Unit = log ++= new String(item.getPayload)
-
-  override def toString: String = log.toString
-
-}
 
 object DockerConnector {
 
@@ -33,69 +21,78 @@ object DockerConnector {
 
   val DefaultWorkingDir: Path = Paths.get("/data")
 
-  private val DockerClient: DockerClient = DockerClientBuilder.getInstance.build
+  private val dockerClient: DockerClient = DefaultDockerClient.fromEnv().build()
 
   def imageExists(imageName: String): Boolean = {
     // FIXME: run in future?
-    DockerClient.listImagesCmd.exec.asScala map (_.getRepoTags) filter (_ != null) exists (_ contains imageName)
+    dockerClient.listImages().asScala map (_.repoTags) filter (_ != null) exists (_ contains imageName)
   }
 
-  def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Boolean] =
-    Future(Try(DockerClient.pullImageCmd(imageName).exec(new PullImageResultCallback()).awaitCompletion()) match {
-      case Success(_) => true
-      case Failure(_) => false
-    })
+  def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Try[Unit]] =
+    Future(Try(dockerClient.pull(imageName)))
 
-  private def createContainer(imageName: String, workingDir: String, entrypoint: Seq[String], binds: Seq[Bind]): Try[String] = Try {
-    DockerClient.createContainerCmd(imageName)
-      .withWorkingDir(workingDir)
-      .withBinds(binds.asJava)
-      .withEntrypoint(entrypoint.asJava)
-      .exec.getId
+  private def createContainer(imageName: String, workingDir: String, entryPoint: Seq[String], binds: Seq[DockerBind]): Try[ContainerCreation] = Try {
+
+    val hostConfig: HostConfig = HostConfig.builder().binds(binds map (_.toBind.toString) asJava).build()
+
+    val containerConfig: ContainerConfig = ContainerConfig.builder()
+      .image(imageName)
+      .hostConfig(hostConfig)
+      .workingDir(workingDir)
+      .entrypoint(entryPoint asJava)
+      .build()
+
+    dockerClient.createContainer(containerConfig)
   }
 
-  private def createContainer(imageName: String, workingDir: String, binds: Seq[Bind]): Try[String] = Try {
-    DockerClient.createContainerCmd(imageName)
-      .withWorkingDir(workingDir)
-      .withBinds(binds.asJava)
-      .exec.getId
+  private def createContainer(imageName: String, workingDir: String, binds: Seq[DockerBind]): Try[ContainerCreation] = Try {
+
+    val hostConfig: HostConfig = HostConfig.builder().binds(binds map (_.toBind.toString) asJava).build()
+
+    val containerConfig: ContainerConfig = ContainerConfig.builder()
+      .image(imageName)
+      .workingDir(workingDir)
+      .hostConfig(hostConfig)
+      .build()
+
+    dockerClient.createContainer(containerConfig)
   }
 
-  private def startContainer(container: String): Try[Unit] = Try(DockerClient.startContainerCmd(container).exec)
+  private def startContainer(container: String): Try[Unit] = Try(dockerClient.startContainer(container))
 
-  private def waitForContainer(container: String, waitTimeInSeconds: Int): Try[Int] = Try {
-    DockerClient.waitContainerCmd(container)
-      .exec(new WaitContainerResultCallback())
-      .awaitStatusCode(waitTimeInSeconds, TimeUnit.SECONDS)
-  }
+  private def waitForContainer(container: String, waitTimeInSeconds: Int): Try[ContainerExit] = Try(dockerClient.waitContainer(container))
 
-  private def deleteContainer(container: String): Try[Unit] = Try(DockerClient.removeContainerCmd(container).exec)
+  private def deleteContainer(container: String): Try[Unit] = Try(dockerClient.removeContainer(container))
 
   def runContainer(imageName: String, maybeEntryPoint: Option[Seq[String]] = None, dockerBinds: Seq[DockerBind] = Seq.empty, workingDir: Path = DefaultWorkingDir,
                    maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds, deleteContainerAfterRun: Boolean = true)
                   (implicit ec: ExecutionContext): Future[RunContainerResult] = Future {
 
     val createdContainer = maybeEntryPoint match {
-      case None             => createContainer(imageName, workingDir.toString, dockerBinds map (_.toBind))
-      case Some(entryPoint) => createContainer(imageName, workingDir.toString, entryPoint, dockerBinds map (_.toBind))
+      case None => createContainer(imageName, workingDir.toString, dockerBinds)
+      case Some(entryPoint) => createContainer(imageName, workingDir.toString, entryPoint, dockerBinds)
     }
 
     createdContainer match {
-      case Failure(e)           => CreateContainerException(e)
-      case Success(containerId) =>
+      case Failure(e) => CreateContainerException(e)
+      case Success(containerCreation) =>
+
+        val containerId = containerCreation.id
 
         startContainer(containerId) match {
           case Failure(e) => StartContainerException(e)
           case Success(_) =>
 
             waitForContainer(containerId, maxWaitTimeInSeconds) match {
-              case Failure(e)               => WaitContainerException(e)
-              case Success(statusCode: Int) =>
+              case Failure(e) => WaitContainerException(e)
+              case Success(containerExit) =>
+
+                val statusCode = containerExit.statusCode toInt
 
                 val result: RunContainerResult = statusCode match {
                   case SuccessStatusCode => RunContainerSuccess
                   case TimeOutStatusCode => RunContainerTimeOut(MaxWaitTimeInSeconds)
-                  case _                 =>
+                  case _ =>
                     Logger.info("Container statusCode: " + statusCode.toString)
                     RunContainerError(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
                 }
@@ -115,18 +112,6 @@ object DockerConnector {
     }
   }
 
-  private def getContainerLogs(containerId: String, maxWaitTimeInSeconds: Int): String = {
-
-    val logsCallBack: LogContainerCallback =
-      DockerClient.logContainerCmd(containerId)
-        .withStdErr(true).withStdOut(true)
-        .withFollowStream(true)
-        .withTailAll()
-        .exec(new LogContainerCallback)
-
-    logsCallBack.awaitCompletion(maxWaitTimeInSeconds, TimeUnit.SECONDS)
-
-    logsCallBack.toString
-
-  }
+  private def getContainerLogs(containerId: String, maxWaitTimeInSeconds: Int): String =
+    dockerClient.logs(containerId, LogsParam.stdout(), LogsParam.stderr()).readFully()
 }

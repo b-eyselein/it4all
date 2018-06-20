@@ -35,7 +35,7 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "jointjs" % "2.1.2",
 
-//  "org.webjars.npm" % "backbone" % "1.3.3",
+  //  "org.webjars.npm" % "backbone" % "1.3.3",
   "org.webjars.npm" % "types__backbone" % "1.3.42",
 
   "org.webjars.npm" % "lodash" % "4.17.10", "org.webjars.npm" % "types__lodash" % "4.14.109", "org.webjars.npm" % "types__underscore" % "1.8.8",
@@ -44,9 +44,9 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "graphlib" % "2.1.5", "org.webjars.npm" % "types__graphlib" % "2.1.4"
 
-//  "org.webjars.npm" % "autosize" % "4.0.0",
+  //  "org.webjars.npm" % "autosize" % "4.0.0",
 
-//  "org.webjars.bower" % "filesaver" % "1.3.3"
+  //  "org.webjars.bower" % "filesaver" % "1.3.3"
 )
 
 libraryDependencies ++= webJarDependencies
@@ -87,7 +87,8 @@ libraryDependencies ++= Seq(
   "com.github.jsqlparser" % "jsqlparser" % "1.1",
 
   // Programming
-  "com.github.docker-java" % "docker-java" % "3.0.14",
+  //  "com.github.docker-java" % "docker-java" % "3.0.14",
+  "com.spotify" % "docker-client" % "8.11.6",
 
   // Apache POI for Excel
   "org.apache.poi" % "poi" % "3.17",

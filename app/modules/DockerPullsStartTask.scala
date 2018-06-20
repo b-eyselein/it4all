@@ -4,6 +4,7 @@ import model.docker.DockerConnector
 import play.api.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 object DockerPullsStartTask {
 
@@ -15,8 +16,8 @@ object DockerPullsStartTask {
   def pullImages(): Unit = imagesToPull.filterNot(DockerConnector.imageExists).foreach(image => {
     Logger.warn(s"Pulling docker image $image")
     DockerConnector.pullImage(image) map {
-      case true  => Logger.warn(s"Image $image was pulled successfully.")
-      case false => Logger.error(s"Image $image could not be pulled!")
+      case Success(()) => Logger.warn(s"Image $image was pulled successfully.")
+      case Failure(error) => Logger.error(s"Image $image could not be pulled!", error)
     }
   })
 

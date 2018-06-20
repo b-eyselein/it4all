@@ -44,9 +44,9 @@ object RoseCorrector extends FileUtils {
     } yield (solFileTry, actionFileTry, optionsFileTry)
 
     val dockerBinds: Seq[DockerBind] = Seq(
-      DockerBindUtils.mountFileTo(solutionFilePath, DockerConnector.DefaultWorkingDir + "/" + solutionFileName),
-      DockerBindUtils.mountFileTo(actionFilePath, DockerConnector.DefaultWorkingDir + "/" + actionsFileName),
-      DockerBindUtils.mountFileTo(optionsFilePath, DockerConnector.DefaultWorkingDir + "/" + optionsFileName)
+      DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir / solutionFileName),
+      DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir / actionsFileName),
+      DockerBind(optionsFilePath, DockerConnector.DefaultWorkingDir / optionsFileName)
     )
 
     val entryPoint = Seq("python3", "sp_main.py")

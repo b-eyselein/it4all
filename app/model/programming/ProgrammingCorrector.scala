@@ -3,15 +3,16 @@ package model.programming
 import java.nio.file.Path
 
 import model.User
+import model.core.FileUtils
 import model.docker._
 import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-object ProgrammingCorrector extends model.core.FileUtils {
+object ProgrammingCorrector extends FileUtils {
 
-  private val resultFileName   = "result.json"
+  private val resultFileName = "result.json"
   private val testDataFileName = "testdata.json"
 
   private def solutionFileName(fileEnding: String): String = "solution." + fileEnding
@@ -64,13 +65,15 @@ object ProgrammingCorrector extends model.core.FileUtils {
   private def mountProgrammingFiles(exResFolder: Path, solTargetDir: Path, fileEnding: String): Seq[DockerBind] = {
 
     // FIXME: update with files in exerciseResourcesFolder!
-    val testMainMount = DockerBindUtils.mountFileByName(exResFolder, DockerConnector.DefaultWorkingDir, testMainFileName(fileEnding))
+    val teMainFileName: String = testMainFileName(fileEnding)
+    val testMainMount = DockerBind(exResFolder / teMainFileName, DockerConnector.DefaultWorkingDir / teMainFileName)
 
-    val solutionMount = DockerBindUtils.mountFileByName(solTargetDir, DockerConnector.DefaultWorkingDir, solutionFileName(fileEnding))
+    val solFileName = solutionFileName(fileEnding)
+    val solutionMount = DockerBind(solTargetDir / solFileName, DockerConnector.DefaultWorkingDir / solFileName)
 
-    val testDataMount = DockerBindUtils.mountFileByName(solTargetDir, DockerConnector.DefaultWorkingDir, testDataFileName)
+    val testDataMount = DockerBind(solTargetDir / testDataFileName, DockerConnector.DefaultWorkingDir / testDataFileName)
 
-    val resultFileMount = DockerBindUtils.mountFileByName(solTargetDir, DockerConnector.DefaultWorkingDir, resultFileName)
+    val resultFileMount = DockerBind(solTargetDir / resultFileName, DockerConnector.DefaultWorkingDir / resultFileName)
 
     Seq(testMainMount, solutionMount, testDataMount, resultFileMount)
 
