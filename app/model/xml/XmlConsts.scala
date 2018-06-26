@@ -4,11 +4,13 @@ import model.Consts
 
 object XmlConsts extends Consts {
 
-  val GrammarDescriptionName = "grammarDescription"
+  val grammarName = "grammar"
+
+  val grammarDescriptionName = "grammarDescription"
 
   val RootNodeName = "rootNode"
 
-  val SampleGrammarName = "sampleGrammar"
+  val sampleGrammarsName = "sampleGrammars"
 
   val STANDARD_XML_PLAYGROUND: String =
     """<?xml version="1.0" encoding="utf-8"?>

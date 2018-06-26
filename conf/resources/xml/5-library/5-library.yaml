@@ -4,18 +4,34 @@ author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 status: APPROVED
 
+rootNode: bibliothek
 grammarDescription: >
   TODO!
-sampleGrammar: |
-  <!ELEMENT bibliothek (abteilung+)>
-  <!ELEMENT abteilung (buch+)>
-  <!ELEMENT buch (isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
-  <!ATTLIST buch id CDATA #REQUIRED>
-  <!ELEMENT isbn (#PCDATA)>
-  <!ELEMENT titel (#PCDATA)>
-  <!ELEMENT autor (#PCDATA)>
-  <!ELEMENT coautor (#PCDATA)>
-  <!ELEMENT verlag (#PCDATA)>
-  <!ELEMENT auflage (#PCDATA)>
-  <!ELEMENT jahr (#PCDATA)>
-rootNode: bibliothek
+
+sampleGrammars:
+- id: 1
+  grammar: |
+    <!ELEMENT bibliothek (abteilung+)>
+    <!ELEMENT abteilung (buch+)>
+    <!ELEMENT buch (isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
+    <!ATTLIST buch id CDATA #REQUIRED>
+    <!ELEMENT isbn (#PCDATA)>
+    <!ELEMENT titel (#PCDATA)>
+    <!ELEMENT autor (#PCDATA)>
+    <!ELEMENT coautor (#PCDATA)>
+    <!ELEMENT verlag (#PCDATA)>
+    <!ELEMENT auflage (#PCDATA)>
+    <!ELEMENT jahr (#PCDATA)>
+- id: 2
+  grammar: |
+    <!ELEMENT bibliothek (abteilung+)>
+    <!ELEMENT abteilung (buch+)>
+    <!ELEMENT buch (id, isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
+    <!ELEMENT id (#PCDATA)>
+    <!ELEMENT isbn (#PCDATA)>
+    <!ELEMENT titel (#PCDATA)>
+    <!ELEMENT autor (#PCDATA)>
+    <!ELEMENT coautor (#PCDATA)>
+    <!ELEMENT verlag (#PCDATA)>
+    <!ELEMENT auflage (#PCDATA)>
+    <!ELEMENT jahr (#PCDATA)>

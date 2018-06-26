@@ -291,7 +291,7 @@ CREATE TABLE IF NOT EXISTS rose_samples (
 CREATE TABLE IF NOT EXISTS rose_solutions (
   username    VARCHAR(50),
   exercise_id INT,
-  part        VARCHAR(10),
+  part        VARCHAR(30),
   solution    TEXT,
 
   PRIMARY KEY (username, exercise_id, part),
@@ -488,7 +488,7 @@ CREATE TABLE IF NOT EXISTS js_conditions (
 CREATE TABLE IF NOT EXISTS web_solutions (
   exercise_id INT,
   username    VARCHAR(30),
-  part        VARCHAR(10),
+  part        VARCHAR(30),
   solution    TEXT,
 
   PRIMARY KEY (exercise_id, username, part),
@@ -503,7 +503,7 @@ CREATE TABLE IF NOT EXISTS web_solutions (
 CREATE TABLE IF NOT EXISTS web_results (
   username    VARCHAR(60),
   exercise_id INT,
-  part        VARCHAR(10),
+  part        VARCHAR(30),
   points      INT,
   max_points  INT,
 
@@ -527,15 +527,25 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
 
   exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_DTD',
   grammar_description TEXT,
-  sample_grammar      TEXT,
   root_node           VARCHAR(30),
   ref_file_content    TEXT
+);
+
+CREATE TABLE IF NOT EXISTS xml_sample_grammars (
+  id             INT,
+  exercise_id    INT,
+  sample_grammar TEXT,
+
+  PRIMARY KEY (id, exercise_id),
+  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS xml_solutions (
   exercise_id INT,
   username    VARCHAR(50),
-  part        VARCHAR(10),
+  part        VARCHAR(30),
   solution    TEXT,
 
   PRIMARY KEY (exercise_id, username, part),
@@ -550,7 +560,7 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
 CREATE TABLE IF NOT EXISTS xml_results (
   username    VARCHAR(60),
   exercise_id INT,
-  part        VARCHAR(10),
+  part        VARCHAR(30),
   points      INT,
   max_points  INT,
 
@@ -570,6 +580,8 @@ CREATE TABLE IF NOT EXISTS xml_results (
 DROP TABLE IF EXISTS xml_results;
 
 DROP TABLE IF EXISTS xml_solutions;
+
+DROP TABLE IF EXISTS xml_sample_grammars;
 
 DROP TABLE IF EXISTS xml_exercises;
 

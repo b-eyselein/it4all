@@ -4,13 +4,16 @@ author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 status: APPROVED
 
+rootNode: breakfast
 grammarDescription: >
   TODO!
-sampleGrammar: |
-  <!ELEMENT breakfast (food+)>
-  <!ELEMENT food (name, price, description, calories)>
-  <!ELEMENT name (#PCDATA)>
-  <!ELEMENT price (#PCDATA)>
-  <!ELEMENT description (#PCDATA)>
-  <!ELEMENT calories (#PCDATA)>
-rootNode: breakfast
+
+sampleGrammars:
+- id: 1
+  grammar: |
+    <!ELEMENT breakfast (food+)>
+    <!ELEMENT food (name, price, description, calories)>
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT price (#PCDATA)>
+    <!ELEMENT description (#PCDATA)>
+    <!ELEMENT calories (#PCDATA)>

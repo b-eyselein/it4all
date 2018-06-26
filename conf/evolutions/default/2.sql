@@ -20,6 +20,8 @@ DELETE IGNORE FROM xml_results;
 
 DELETE IGNORE FROM xml_solutions;
 
+DELETE IGNORE FROM xml_sample_grammars;
+
 DELETE IGNORE FROM xml_exercises;
 
 # Web

@@ -1,7 +1,7 @@
-@(exercise: model.xml.XmlExercise)
+@(exercise: model.xml.XmlCompleteExercise)
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6">
         <div class="row">
             <div class="col-md-4"><b>ID</b></div>
             <div class="col-md-8">@exercise.id</div>
@@ -29,18 +29,28 @@
 
         <div class="row">
             <div class="col-md-4"><b>Wurzelknoten:</b></div>
-            <div class="col-md-8">@exercise.rootNode</div>
+            <div class="col-md-8">@exercise.ex.rootNode</div>
         </div>
+    </div>
+
+    <div class="col-sm-6">
+        <h2>Grammatikbeschreibung</h2>
+        <p>@exercise.ex.grammarDescription</p>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <p><b>Grammatikbeschreibung:</b></p>
-        <p>@exercise.grammarDescription</p>
+<hr>
+
+@for(sampleGrammarTuple <- exercise.sampleGrammars grouped 2) {
+
+    <div class="row">
+
+    @for(sampleGrammar <- sampleGrammarTuple) {
+        <div class="col-md-6">
+            <p><b>Mustergrammatik @sampleGrammar.id:</b></p>
+            <pre>@sampleGrammar.sampleGrammar.asString</pre>
+        </div>
+    }
+
     </div>
-    <div class="col-md-6">
-        <p><b>Mustergrammatik:</b></p>
-        <pre>@exercise.sampleGrammar.asString</pre>
-    </div>
-</div>
+}

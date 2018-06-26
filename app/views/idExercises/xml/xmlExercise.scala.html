@@ -1,4 +1,4 @@
-@(user: model.User, toolMainObject: model.xml.XmlToolMain, exercise: model.xml.XmlExercise, oldSolution: String,
+@(user: model.User, toolMainObject: model.xml.XmlToolMain, exercise: model.xml.XmlCompleteExercise, oldSolution: String,
         part: model.xml.XmlExPart)
 
 @scripts = {
@@ -37,10 +37,10 @@
                     <div class="card-body bg-light">
                     @part match {
                         case model.xml.XmlExParts.DocumentCreationXmlPart => {
-                            <pre>@play.twirl.api.HtmlFormat.escape(exercise.sampleGrammar.asString)</pre>
+                            <pre>@play.twirl.api.HtmlFormat.escape(exercise.sampleGrammars.head.sampleGrammar.asString)</pre>
                         }
                         case model.xml.XmlExParts.GrammarCreationXmlPart => {
-                            <p class="text-justify">@exercise.grammarDescription</p>
+                            <p class="text-justify">@exercise.ex.grammarDescription</p>
                         }
                     }
                     </div>

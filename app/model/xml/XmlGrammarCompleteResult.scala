@@ -1,12 +1,13 @@
 package model.xml
 
+import model.core.Levenshtein
 import model.core.matching.{MatchType, MatchingResult}
 import model.core.result.SuccessType
 import model.xml.dtd._
 
 import scala.language.postfixOps
 
-case class XmlGrammarCompleteResult(learnerSolution: DocTypeDef, solutionSaved: Boolean, completeEx: XmlExercise)
+case class XmlGrammarCompleteResult(learnerSolution: DocTypeDef, solutionSaved: Boolean, completeEx: XmlCompleteExercise)
   extends XmlCompleteResult {
 
   private val pointsForElement   = 0.5
@@ -14,7 +15,9 @@ case class XmlGrammarCompleteResult(learnerSolution: DocTypeDef, solutionSaved: 
 
   override type SolType = DocTypeDef
 
-  val matchingResult: MatchingResult[ElementLine, ElementLineAnalysisResult, ElementLineMatch] = XmlCorrector.correctDTD(learnerSolution, completeEx.sampleGrammar)
+  val grammar: XmlSampleGrammar = completeEx.sampleGrammars.minBy(sampleG => Levenshtein.levenshteinDistance(learnerSolution.asString, sampleG.sampleGrammar.asString))
+
+  val matchingResult: MatchingResult[ElementLine, ElementLineAnalysisResult, ElementLineMatch] = XmlCorrector.correctDTD(learnerSolution, grammar.sampleGrammar)
 
   private def pointsForElementLine(elementLine: ElementLine): Double = {
     val pointsForElemContent = pointsForElementContent(elementLine.elementDefinition.content)
@@ -44,9 +47,9 @@ case class XmlGrammarCompleteResult(learnerSolution: DocTypeDef, solutionSaved: 
   }
 
   override def maxPoints: Double = {
-    val pointsForElements = pointsForElement * completeEx.sampleGrammar.asElementLines.size
+    val pointsForElements = pointsForElement * grammar.sampleGrammar.asElementLines.size
 
-    val pointsForContents = completeEx.sampleGrammar.asElementLines map pointsForElementLine sum
+    val pointsForContents = grammar.sampleGrammar.asElementLines map pointsForElementLine sum
 
     pointsForElements + pointsForContents
   }

@@ -25,7 +25,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override type ExType = XmlExercise
 
-  override type CompExType = XmlExercise
+  override type CompExType = XmlCompleteExercise
 
   override type Tables = XmlTableDefs
 
@@ -71,22 +71,23 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: ExerciseState): XmlExercise =
-    XmlExercise(id, title = "", author = "", text = "", state, grammarDescription = "", sampleGrammar = null, rootNode = "")
+  override def instantiateExercise(id: Int, state: ExerciseState): XmlCompleteExercise = XmlCompleteExercise(
+    XmlExercise(id, title = "", author = "", text = "", state, grammarDescription = "", rootNode = ""),
+    Seq.empty)
 
   // Yaml
 
-  override val yamlFormat: MyYamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
+  override val yamlFormat: MyYamlFormat[XmlCompleteExercise] = XmlExYamlProtocol.XmlExYamlFormat
 
   // Correction
 
-  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise, solutionSaved: Boolean): Future[Try[CompResult]] =
+  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlCompleteExercise, solutionSaved: Boolean): Future[Try[CompResult]] =
     Future(solution.part match {
       case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
 
         val grammarAndXmlTries: Try[(Path, Path)] = for {
-          grammar <- write(dir, completeEx.rootNode + ".dtd", completeEx.sampleGrammar.asString)
-          xml <- write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, solution.solution)
+          grammar <- write(dir, completeEx.ex.rootNode + ".dtd", completeEx.sampleGrammars.head.sampleGrammar.asString)
+          xml <- write(dir, completeEx.ex.rootNode + "." + XML_FILE_ENDING, solution.solution)
         } yield (grammar, xml)
 
         grammarAndXmlTries map { case (grammar, xml) =>
@@ -104,13 +105,13 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean): Html =
+  override def renderExerciseEditForm(user: User, newEx: XmlCompleteExercise, isCreation: Boolean): Html =
     views.html.idExercises.xml.editXmlExercise(user, this, newEx, isCreation)
 
-  override def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
+  override def renderExercise(user: User, exercise: XmlCompleteExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
     val oldSolutionOrTemplate = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
 
-    views.html.idExercises.xml.xmlExercise(user, this, exercise.ex, oldSolutionOrTemplate, part)
+    views.html.idExercises.xml.xmlExercise(user, this, exercise, oldSolutionOrTemplate, part)
   }
 
   override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
