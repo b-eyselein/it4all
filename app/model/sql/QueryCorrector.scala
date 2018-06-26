@@ -2,6 +2,7 @@ package model.sql
 
 import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.sql.matcher._
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
@@ -40,7 +41,9 @@ abstract class QueryCorrector(val queryType: String) {
     val groupByComparison = compareGroupByElements(userQ, sampleQ)
     val orderByComparison = compareOrderByElements(userQ, sampleQ)
 
-    SqlResult(solutionSaved, learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison)
+    val insertedValuesComparison = compareInsertedValues(userQ, sampleQ)
+
+    SqlResult(solutionSaved, learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison, insertedValuesComparison)
   }
 
   def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch] =
@@ -68,6 +71,8 @@ abstract class QueryCorrector(val queryType: String) {
   protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GenericAnalysisResult, GroupByMatch]] = None
 
   protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, GenericAnalysisResult, OrderByMatch]] = None
+
+  protected def compareInsertedValues(userQuery: Q, sampleQuery: Q): Option[MatchingResult[ExpressionList, GenericAnalysisResult, ExpressionListMatch]] = None
 
   // Parsing
 

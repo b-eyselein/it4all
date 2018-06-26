@@ -4,6 +4,7 @@ import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.sql.SqlConsts._
 import model.sql.matcher._
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.OrderByElement
@@ -16,6 +17,7 @@ case class WrongStatementTypeException(awaited: String, gotten: String) extends 
 class SqlStatementException(cause: Throwable) extends Exception(cause) {
 
   override def getMessage: String = {
+
     @annotation.tailrec
     def go(cause: Throwable): String = {
       if (Option(cause.getMessage).isDefined) cause.getMessage
@@ -34,13 +36,15 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
 }
 
+// FIXME: use builder?
 case class SqlResult(solutionSaved: Boolean, learnerSolution: String,
                      columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
                      tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
                      whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
                      executionResult: SqlExecutionResult,
                      groupByComparison: Option[MatchingResult[Expression, GenericAnalysisResult, GroupByMatch]],
-                     orderByComparison: Option[MatchingResult[OrderByElement, GenericAnalysisResult, OrderByMatch]])
+                     orderByComparison: Option[MatchingResult[OrderByElement, GenericAnalysisResult, OrderByMatch]],
+                     insertedValuesComparison: Option[MatchingResult[ExpressionList, GenericAnalysisResult, ExpressionListMatch]])
   extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison
@@ -50,8 +54,10 @@ case class SqlResult(solutionSaved: Boolean, learnerSolution: String,
     columnsName -> columnComparison.toJson,
     tablesName -> tableComparison.toJson,
     "wheres" -> whereComparison.toJson,
+
     "groupBy" -> groupByComparison.map(_.toJson),
     "orderBy" -> orderByComparison.map(_.toJson),
+    "insertedValues" -> insertedValuesComparison.map(_.toJson),
 
     executionName -> executionResult.toJson
   )

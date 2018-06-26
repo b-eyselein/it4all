@@ -18,6 +18,7 @@ interface SqlCorrectionResult {
     wheres: MatchingResult<any, any>
     groupBy: MatchingResult<any, any> | null
     orderBy: MatchingResult<any, any> | null
+    insertedValues: MatchingResult<any, any> | null
     executionResults: ExecutionResultsObject
 }
 
@@ -169,6 +170,9 @@ function onSqlCorrectionSuccess(response: SqlCorrectionResult): void {
         results.push(renderMatchingResult(response.orderBy, "Order Bys", "des Order By-Statement"));
     }
 
+    if(response.insertedValues != null) {
+        results.push(renderMatchingResult(response.insertedValues, "hinzugefügten Werte", "der Werte"));
+    }
 
     let newHtml = `<ul>${results.map(r => `<li>${r}</li>`).join('\n')}</ul>`;
     correction.html(newHtml);

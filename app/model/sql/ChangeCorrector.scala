@@ -1,6 +1,8 @@
 package model.sql
 
+import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.sql.ColumnWrapper.wrapColumn
+import model.sql.matcher.{ExpressionListMatch, ExpressionListMatcher}
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.expression.operators.relational.{ExpressionList, MultiExpressionList}
 import net.sf.jsqlparser.schema.Table
@@ -11,6 +13,7 @@ import net.sf.jsqlparser.statement.select.SubSelect
 import net.sf.jsqlparser.statement.update.Update
 
 import scala.collection.JavaConverters._
+import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
@@ -21,18 +24,17 @@ abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryTy
 
 object InsertCorrector extends ChangeCorrector("INSERT") {
 
-
   override type Q = Insert
 
-  // FIXME: correct inserted values!
-  protected def correctValues(query: Q): Boolean = {
-    query.getItemsList match {
-      case mel: MultiExpressionList => false
-      case el: ExpressionList       => false
-      case sub: SubSelect           => false
-    }
-    ???
+  private def expressionLists(query: Q): Seq[ExpressionList] = query.getItemsList match {
+    case mel: MultiExpressionList => mel.getExprList asScala
+    case el: ExpressionList       => Seq(el)
+    case sub: SubSelect           => ???
   }
+
+  // FIXME: correct inserted values!
+  override protected def compareInsertedValues(userQuery: Q, sampleQuery: Q): Option[MatchingResult[ExpressionList, GenericAnalysisResult, ExpressionListMatch]] =
+    Some(ExpressionListMatcher.doMatch(expressionLists(userQuery), expressionLists(sampleQuery)))
 
   override protected def getTables(query: Q) = Seq(query.getTable)
 
