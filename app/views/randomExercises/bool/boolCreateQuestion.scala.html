@@ -1,9 +1,5 @@
 @(user: model.User, question: model.bool.CreationQuestion, toolMain: model.bool.BoolToolMain)
 
-@exPart = @{
-    model.bool.FormulaCreation
-}
-
 @variables = @{
     question.variables ++ Option(model.bool.BoolConsts.SolVariable)
 }
@@ -77,12 +73,14 @@
                 <span class="octicon octicon-info"></span>
             </button>
 
-            <button data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, model.bool.FormulaCreation.urlName)"
+            <button data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart,
+                model.bool.BoolExParts.FormulaCreation.urlName)"
             class="btn btn-primary w-100" id="testBtn">Prüfen</button>
 
             <button class="btn btn-success w-100" id="sampleSolBtn">Zeige Musterlösung</button>
 
-            <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)" class="btn btn-secondary  w-100">
+            <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart,
+                model.bool.BoolExParts.FormulaCreation.urlName)" class="btn btn-secondary  w-100">
                 Nächste Aufgabe</a>
         </div>
 

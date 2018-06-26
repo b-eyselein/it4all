@@ -20,20 +20,20 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
     views.html.idExercises.uml.umlPreview(this)
 
   def titleForPart(part: UmlExPart): String = part match {
-    case ClassSelection     => "Auswahl der Klassen"
-    case DiagramDrawing     => "Freies Zeichnen"
-    case DiagramDrawingHelp => "Modellierung der Beziehungen"
-    case MemberAllocation   => "Zuordnung der Member"
+    case UmlExParts.ClassSelection => "Auswahl der Klassen"
+    case UmlExParts.DiagramDrawing => "Freies Zeichnen"
+    case UmlExParts.DiagramDrawingHelp => "Modellierung der Beziehungen"
+    case UmlExParts.MemberAllocation => "Zuordnung der Member"
   }
 
   def textForPart(part: UmlExPart): Html = Html(part match {
-    case ClassSelection | DiagramDrawing => ex.markedText
-    case _                               => ex.text
+    case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => ex.markedText
+    case _ => ex.text
   })
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {
-    case ClassSelection | DiagramDrawing => true // TODO: Currently deactivated...
-    case _                               => false
+    case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => true // TODO: Currently deactivated...
+    case _ => false
   }
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
@@ -41,10 +41,10 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
     val impls: Seq[UmlImplementation] = Seq.empty
 
     val classes: Seq[UmlClass] = part match {
-      case DiagramDrawingHelp => ex.solution.classes.map {
+      case UmlExParts.DiagramDrawingHelp => ex.solution.classes.map {
         oldClass => UmlClass(oldClass.classType, oldClass.className, attributes = Seq.empty, methods = Seq.empty, position = oldClass.position)
       }
-      case _                  => Seq.empty
+      case _ => Seq.empty
     }
 
     UmlClassDiagram(classes, assocs, impls)
@@ -89,7 +89,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table Queries
 
-  override protected val exTable  = TableQuery[UmlExercisesTable]
+  override protected val exTable = TableQuery[UmlExercisesTable]
   override protected val solTable = TableQuery[UmlSolutionsTable]
 
   private val umlMappings = TableQuery[UmlMappingsTable]
@@ -109,7 +109,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Implicit column types
 
   override protected implicit val partTypeColumnType: BaseColumnType[UmlExPart] =
-    MappedColumnType.base[UmlExPart, String](_.urlName, str => UmlExParts.values.find(_.urlName == str) getOrElse ClassSelection)
+    MappedColumnType.base[UmlExPart, String](_.entryName, UmlExParts.withNameInsensitive)
 
   // Table definitions
 

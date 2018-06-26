@@ -1,8 +1,7 @@
 package model.toolMains
 
-import model.core.ExPart
 import model.persistence.IdExerciseTableDefs
-import model.{ExerciseState, SingleCompleteEx, User}
+import model.{ExPart, ExerciseState, SingleCompleteEx, User}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}

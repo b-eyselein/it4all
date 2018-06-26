@@ -54,8 +54,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override def futureSaveSolution(sol: WebSolution): Future[Boolean] = {
     val fileEnding = sol.part match {
-      case PHPPart => "php"
-      case _       => "html"
+      case WebExParts.PHPPart => "php"
+      case _ => "html"
     }
 
     val target: Path = solutionDirForExercise(sol.username, sol.exerciseId) / ("test." + fileEnding)
@@ -67,10 +67,10 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: WebExPart)(implicit ec: ExecutionContext): Future[Option[SolType]] =
     super.futureOldOrDefaultSolution(user, exerciseId, part) flatMap {
       case Some(solution) => Future(Some(solution))
-      case None           =>
+      case None =>
         part match {
-          case JsPart => super.futureOldOrDefaultSolution(user, exerciseId, HtmlPart)
-          case _      => Future(None)
+          case WebExParts.JsPart => super.futureOldOrDefaultSolution(user, exerciseId, WebExParts.HtmlPart)
+          case _ => Future(None)
         }
     }
 
@@ -126,8 +126,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Other helper methods
 
   def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String = part match {
-    case PHPPart => s"http://localhost:9080/${user.username}/$exerciseId/test.php"
-    case _       => s"http://localhost:9080/${user.username}/$exerciseId/test.html"
+    case WebExParts.PHPPart => s"http://localhost:9080/${user.username}/$exerciseId/test.php"
+    case _ => s"http://localhost:9080/${user.username}/$exerciseId/test.html"
   }
 
 }

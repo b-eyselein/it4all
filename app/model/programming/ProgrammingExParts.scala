@@ -1,20 +1,22 @@
 package model.programming
 
-import model.core.{ExPart, ExParts}
+import enumeratum.{Enum, EnumEntry}
+import model.ExPart
+
+import scala.collection.immutable.IndexedSeq
 
 
-sealed abstract class ProgrammingExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class ProgrammingExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
 
-case object TestdataCreation extends ProgrammingExPart(partName = "Erstellen der Testdaten", urlName = "testdata")
+object ProgrammingExParts extends Enum[ProgrammingExPart] {
 
-case object Implementation extends ProgrammingExPart(partName = "Implementierung", urlName = "implementation")
+  val values: IndexedSeq[ProgrammingExPart] = findValues
 
-case object ActivityDiagram extends ProgrammingExPart(partName = "Als Aktivitätsdiagramm", urlName = "activity")
+  case object TestdataCreation extends ProgrammingExPart(partName = "Erstellen der Testdaten", urlName = "testdata")
 
+  case object Implementation extends ProgrammingExPart(partName = "Implementierung", urlName = "implementation")
 
-object ProgrammingExParts extends ExParts[ProgrammingExPart] {
-
-  val values = Seq(TestdataCreation, Implementation, ActivityDiagram)
+  case object ActivityDiagram extends ProgrammingExPart(partName = "Als Aktivitätsdiagramm", urlName = "activity")
 
 }

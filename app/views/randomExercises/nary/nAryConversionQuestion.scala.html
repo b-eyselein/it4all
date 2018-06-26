@@ -1,8 +1,5 @@
 @(user: model.User, startingNumber: model.nary.NAryNumber, toNB: model.nary.NumberBase, reqFromBase: String, reqToBase: String, toolMain: model.nary.NaryToolMain)
 
-@exPart = @{
-    model.nary.NaryConversionExPart
-}
 
 @title = @{
     "Zahlensysteme: Zahlenumwandlung"
@@ -35,7 +32,7 @@
             <div class="col-sm-6 col-sm-offset-3">
 
                 <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
-                <input hidden id="exerciseType" value="@exPart.urlName" title="hidden">
+                <input hidden id="exerciseType" value="@model.nary.NaryExParts.NaryConversionExPart.urlName" title="hidden">
 
                 <p>
                     <em class="text-info">Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em>
@@ -65,9 +62,10 @@
                 <hr>
 
                 <div class="btn-group d-flex">
-                    <button id="testBtn" class="btn btn-primary w-100" data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, exPart.urlName)">
-                        Testen</button>
-                    <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)?fromBase=@reqFromBase&toBase=@reqToBase"
+                    <button id="testBtn" class="btn btn-primary w-100" data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart,
+                        model.nary.NaryExParts.NaryConversionExPart.urlName)">Testen</button>
+                    <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart,
+                        model.nary.NaryExParts.NaryConversionExPart.urlName)?fromBase=@reqFromBase&toBase=@reqToBase"
                     class="btn btn-secondary w-100">Nächste Aufgabe</a>
                 </div>
 

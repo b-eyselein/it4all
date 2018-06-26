@@ -1,7 +1,6 @@
 package model.toolMains
 
-import model.User
-import model.core.ExPart
+import model.{ExPart, User}
 import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html

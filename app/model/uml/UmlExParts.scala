@@ -1,22 +1,24 @@
 package model.uml
 
-import model.core.ExPart
+import enumeratum.{Enum, EnumEntry}
+import model.ExPart
+
+import scala.collection.immutable.IndexedSeq
 
 
-sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
 
-case object ClassSelection extends UmlExPart(partName = "Klassenwahl", urlName = "class_selection")
+object UmlExParts extends Enum[UmlExPart] {
 
-case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagram_drawing_help")
+  val values: IndexedSeq[UmlExPart] = findValues
 
-case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagram_drawing")
+  case object ClassSelection extends UmlExPart(partName = "Klassenwahl", urlName = "class_selection")
 
-case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", urlName = "member_allocation")
+  case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagram_drawing_help")
 
+  case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagram_drawing")
 
-object UmlExParts {
-
-  val values = Seq(ClassSelection, DiagramDrawingHelp, DiagramDrawing, MemberAllocation)
+  case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", urlName = "member_allocation")
 
 }

@@ -1,7 +1,7 @@
 package model.bool
 
-import model.bool.BoolTableRow.generateAllAssignments
 import model.bool.BoolConsts._
+import model.bool.BoolTableRow.generateAllAssignments
 
 import scala.language.postfixOps
 
@@ -72,7 +72,7 @@ case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQuestio
 
   def joinedVariables: String = variables mkString ","
 
-  override val exPart: BoolExPart = FormulaCreation
+  override val exPart: BoolExPart = BoolExParts.FormulaCreation
 
 }
 
@@ -82,6 +82,6 @@ case class FilloutQuestion(formula: ScalaNode) extends BooleanQuestion {
 
   override val variables: Set[Variable] = formula.usedVariables
 
-  override val exPart: BoolExPart = TableFillout
+  override val exPart: BoolExPart = BoolExParts.TableFillout
 
 }

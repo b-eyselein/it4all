@@ -1,7 +1,6 @@
 package model.persistence
 
 import model._
-import model.core.ExPart
 import model.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider

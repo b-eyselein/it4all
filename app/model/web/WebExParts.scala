@@ -1,20 +1,22 @@
 package model.web
 
-import model.core.{ExPart, ExParts}
+import enumeratum.{Enum, EnumEntry}
+import model.ExPart
+
+import scala.collection.immutable.IndexedSeq
 
 
-sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
 
-case object HtmlPart extends WebExPart("Html-Teil", "html")
+object WebExParts extends Enum[WebExPart] {
 
-case object JsPart extends WebExPart("Js-Teil", "js")
+  val values: IndexedSeq[WebExPart] = findValues
 
-case object PHPPart extends WebExPart("PHP-Teil", "php")
+  case object HtmlPart extends WebExPart("Html-Teil", "html")
 
+  case object JsPart extends WebExPart("Js-Teil", "js")
 
-object WebExParts extends ExParts[WebExPart] {
-
-  val values = Seq(HtmlPart, JsPart, PHPPart)
+  case object PHPPart extends WebExPart("PHP-Teil", "php")
 
 }

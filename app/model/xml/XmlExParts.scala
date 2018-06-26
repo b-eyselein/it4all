@@ -1,17 +1,20 @@
 package model.xml
 
-import model.core.{ExPart, ExParts}
+import enumeratum.{Enum, EnumEntry}
+import model.ExPart
+
+import scala.collection.immutable.IndexedSeq
 
 
-sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart
-
-case object DocumentCreationXmlPart extends XmlExPart("Dokument erstellen", "document")
-
-case object GrammarCreationXmlPart extends XmlExPart("Grammatik erstellen", "grammar")
+sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
 
-object XmlExParts extends ExParts[XmlExPart] {
+object XmlExParts extends Enum[XmlExPart] {
 
-  val values = Seq(GrammarCreationXmlPart, DocumentCreationXmlPart)
+  val values: IndexedSeq[XmlExPart] = findValues
+
+  case object DocumentCreationXmlPart extends XmlExPart("Dokument erstellen", "document")
+
+  case object GrammarCreationXmlPart extends XmlExPart("Grammatik erstellen", "grammar")
 
 }

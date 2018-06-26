@@ -2,7 +2,6 @@ package model.blanks
 
 import javax.inject._
 import model.blanks.BlanksConsts._
-import model.blanks.BlanksExParts.BlanksExPart
 import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat

@@ -82,7 +82,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise, solutionSaved: Boolean): Future[Try[CompResult]] =
     Future(solution.part match {
-      case DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
+      case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
 
         val grammarAndXmlTries: Try[(Path, Path)] = for {
           grammar <- write(dir, completeEx.rootNode + ".dtd", completeEx.sampleGrammar.asString)
@@ -95,7 +95,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
         }
       })
 
-      case GrammarCreationXmlPart => DocTypeDefParser.parseDTD(solution.solution) map { userGrammar =>
+      case XmlExParts.GrammarCreationXmlPart => DocTypeDefParser.parseDTD(solution.solution) map { userGrammar =>
         XmlGrammarCompleteResult(userGrammar, solutionSaved, completeEx)
       }
     })

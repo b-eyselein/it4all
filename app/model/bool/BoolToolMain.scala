@@ -41,15 +41,15 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   override def exercisesOverviewForIndex: Html = Html(
     s"""<div class="form-group">
-       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, TableFillout.urlName)}" class="btn btn-primary btn-block">Wahrheitstabellen ausfüllen</a>
+       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, BoolExParts.TableFillout.urlName)}" class="btn btn-primary btn-block">Wahrheitstabellen ausfüllen</a>
        |</div>
        |<div class="form-group">
-       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, FormulaCreation.urlName)}" class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
+       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, BoolExParts.FormulaCreation.urlName)}" class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
        |</div>""".stripMargin)
 
   override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]]): Html = exType match {
-    case FormulaCreation => views.html.randomExercises.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
-    case TableFillout    => views.html.randomExercises.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
+    case BoolExParts.FormulaCreation => views.html.randomExercises.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
+    case BoolExParts.TableFillout => views.html.randomExercises.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
   }
 
   override def playground(user: User): Html = views.html.randomExercises.bool.boolDrawing(user)
@@ -57,10 +57,10 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
   // Handlers
 
   override def checkSolution(user: User, exPart: BoolExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
-    case None          => Json.obj(errorName -> "There has been an error in your request!")
+    case None => Json.obj(errorName -> "There has been an error in your request!")
     case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue) match {
       case JsSuccess(boolSolution, _) => correctPart(exPart, boolSolution).toJson
-      case JsError(errors)            =>
+      case JsError(errors) =>
         errors.foreach(e => Logger.error("Json Error: " + e.toString))
         Json.obj(errorName -> "There has been an error in your json!")
     }
@@ -70,13 +70,13 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
     val formulaParseTry: Try[ScalaNode] = BoolNodeParser.parseBoolFormula(boolSolution.formula)
 
     exPart match {
-      case TableFillout => formulaParseTry match {
-        case Failure(_)       => FilloutQuestionError(boolSolution.formula, "There has been an internal error!")
+      case BoolExParts.TableFillout => formulaParseTry match {
+        case Failure(_) => FilloutQuestionError(boolSolution.formula, "There has been an internal error!")
         case Success(formula) => FilloutQuestionSuccess(formula, boolSolution.assignments map (as => as + (SolVariable -> formula(as))))
       }
 
-      case FormulaCreation => formulaParseTry match {
-        case Failure(error)   => CreationQuestionError(boolSolution.formula, error.getMessage)
+      case BoolExParts.FormulaCreation => formulaParseTry match {
+        case Failure(error) => CreationQuestionError(boolSolution.formula, error.getMessage)
         case Success(formula) => CreationQuestionSuccess(formula, CreationQuestion(boolSolution.assignments))
       }
     }

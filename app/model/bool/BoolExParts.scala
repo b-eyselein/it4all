@@ -1,15 +1,20 @@
 package model.bool
 
-import model.core.{ExPart, ExParts}
+import enumeratum.{Enum, EnumEntry}
+import model.ExPart
 
-object BoolExParts extends ExParts[BoolExPart] {
+import scala.collection.immutable.IndexedSeq
 
-  override def values: Seq[BoolExPart] = Seq(FormulaCreation, TableFillout)
+
+sealed abstract class BoolExPart(val urlName: String, val partName: String) extends ExPart with EnumEntry
+
+
+object BoolExParts extends Enum[BoolExPart] {
+
+  override def values: IndexedSeq[BoolExPart] = findValues
+
+  case object FormulaCreation extends BoolExPart("formula", "Formel erstellen")
+
+  case object TableFillout extends BoolExPart("fillout", "Wahrheitstabelle ausfüllen")
 
 }
-
-sealed abstract class BoolExPart(val urlName: String, val partName: String) extends ExPart
-
-case object FormulaCreation extends BoolExPart("formula", "Formel erstellen")
-
-case object TableFillout extends BoolExPart("fillout", "Wahrheitstabelle ausfüllen")

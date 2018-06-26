@@ -7,15 +7,15 @@
 <script>
         $(() => {
             $('#convButton').click(function () {
-                window.location = '@newExUrl(model.nary.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
+                window.location = '@newExUrl(model.nary.NaryExParts.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
             });
 
             $('#addButton').click(function () {
-                window.location = '@newExUrl(model.nary.NaryAdditionExPart)?base=' + $('#addBase').val();
+                window.location = '@newExUrl(model.nary.NaryExParts.NaryAdditionExPart)?base=' + $('#addBase').val();
             });
 
             $('#twoCompButton').click(function () {
-                window.location = '@newExUrl(model.nary.TwoComplementExPart)?verbose=' + $('#twoComp').val();
+                window.location = '@newExUrl(model.nary.NaryExParts.TwoComplementExPart)?verbose=' + $('#twoComp').val();
             });
         });
 </script>

@@ -1,4 +1,5 @@
-@(user: model.User, completeEx: model.programming.ProgCompleteEx, language: model.programming.ProgLanguage, toolObject: model.toolMains.IdExerciseToolMain)
+@(user: model.User, completeEx: model.programming.ProgCompleteEx, language: model.programming.ProgLanguage,
+        toolObject: model.toolMains.IdExerciseToolMain)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -349,7 +350,7 @@
 
                     <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
                     <input hidden type="number" id="exerciseId" value="@completeEx.id" title="hidden">
-                    <input hidden id="exercisePart" value="@model.programming.ActivityDiagram.urlName" title="hidden">
+                    <input hidden id="exercisePart" value="@model.programming.ProgrammingExParts.ActivityDiagram.urlName" title="hidden">
 
                     <hr>
                 </section>

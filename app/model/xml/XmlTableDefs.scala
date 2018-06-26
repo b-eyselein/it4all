@@ -2,7 +2,6 @@ package model.xml
 
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
-import model.web.{WebExPart, WebResultForPart}
 import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import model.{ExerciseState, _}
 import play.api.Logger
@@ -27,15 +26,15 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
   override def hasPart(partType: XmlExPart): Boolean = true
 
   def getTemplate(part: XmlExPart): String = part match {
-    case DocumentCreationXmlPart => s"""<?xml version="1.0" encoding="UTF-8"?>
-                                       |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
-    case GrammarCreationXmlPart  => s"<!ELEMENT $rootNode (EMPTY)>"
+    case XmlExParts.DocumentCreationXmlPart => s"""<?xml version="1.0" encoding="UTF-8"?>
+                                                  |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
+    case XmlExParts.GrammarCreationXmlPart  => s"<!ELEMENT $rootNode (EMPTY)>"
   }
 
   override def textForPart(urlName: String): String = XmlExParts.values.find(_.urlName == urlName) match {
-    case None                          => text
-    case Some(DocumentCreationXmlPart) => "Erstellen Sie ein XML-Dokument zu folgender Grammatik:"
-    case Some(GrammarCreationXmlPart)  => "Erstellen Sie eine DTD zu folgender Beschreibung. Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen."
+    case None                                     => text
+    case Some(XmlExParts.DocumentCreationXmlPart) => "Erstellen Sie ein XML-Dokument zu folgender Grammatik:"
+    case Some(XmlExParts.GrammarCreationXmlPart)  => "Erstellen Sie eine DTD zu folgender Beschreibung. Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen."
   }
 
 }
@@ -66,7 +65,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Column Types
 
   override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
-    MappedColumnType.base[XmlExPart, String](_.urlName, str => XmlExParts.values.find(_.urlName == str) getOrElse DocumentCreationXmlPart)
+    MappedColumnType.base[XmlExPart, String](_.entryName, XmlExParts.withNameInsensitive)
 
   private implicit val docTypeDefColumnType: BaseColumnType[DocTypeDef] =
     MappedColumnType.base[DocTypeDef, String](_.asString, str => {
@@ -86,8 +85,8 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override def completeExForEx(ex: XmlExercise): Future[XmlExercise] = Future(ex)
 
   override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: XmlExPart): Future[Boolean] = part match {
-    case GrammarCreationXmlPart  => Future(true)
-    case DocumentCreationXmlPart => futureResultForUserExAndPart(username, exerciseId, GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
+    case XmlExParts.GrammarCreationXmlPart  => Future(true)
+    case XmlExParts.DocumentCreationXmlPart => futureResultForUserExAndPart(username, exerciseId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
 
   // Saving

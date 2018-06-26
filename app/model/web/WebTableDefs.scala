@@ -24,12 +24,12 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table queries
 
-  override protected val exTable  = TableQuery[WebExercisesTable]
+  override protected val exTable = TableQuery[WebExercisesTable]
   override protected val solTable = TableQuery[WebSolutionsTable]
 
-  private val htmlTasks  = TableQuery[HtmlTasksTable]
+  private val htmlTasks = TableQuery[HtmlTasksTable]
   private val attributes = TableQuery[AttributesTable]
-  private val jsTasks    = TableQuery[JsTasksTable]
+  private val jsTasks = TableQuery[JsTasksTable]
   private val conditions = TableQuery[ConditionsTable]
 
   private val resultsForPartsTable = TableQuery[WebResultsForPartsTable]
@@ -51,9 +51,9 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     }
 
   override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: WebExPart): Future[Boolean] = part match {
-    case HtmlPart => Future(true)
-    case JsPart   => futureResultForUserExAndPart(username, exerciseId, HtmlPart).map(_.exists(r => r.points == r.maxPoints))
-    case PHPPart  => Future(false)
+    case WebExParts.HtmlPart => Future(true)
+    case WebExParts.JsPart => futureResultForUserExAndPart(username, exerciseId, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
+    case WebExParts.PHPPart => Future(false)
   }
 
 
@@ -99,7 +99,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     MappedColumnType.base[JsActionType, String](_.entryName, str => JsActionType.withNameInsensitiveOption(str) getOrElse JsActionType.CLICK)
 
   override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =
-    MappedColumnType.base[WebExPart, String](_.urlName, str => WebExParts.values.find(_.urlName == str) getOrElse HtmlPart)
+    MappedColumnType.base[WebExPart, String](_.entryName, WebExParts.withNameInsensitive)
 
   // Table definitions
 

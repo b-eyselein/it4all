@@ -1,9 +1,8 @@
 package model.blanks
 
 import javax.inject.Inject
-import model.{ExerciseState, _}
-import model.blanks.BlanksExParts.{BlankExSinglePart, BlanksExPart}
 import model.persistence.SingleExerciseTableDefs
+import model.{ExerciseState, _}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -50,7 +49,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   // Table queries
 
-  override protected val exTable  = TableQuery[BlanksExercisesTable]
+  override protected val exTable = TableQuery[BlanksExercisesTable]
   override protected val solTable = TableQuery[BlanksSolutionsTable]
 
   private val blanksSamples = TableQuery[BlanksSampleAnswersTable]
@@ -71,7 +70,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
 
   override protected implicit val partTypeColumnType: BaseColumnType[BlanksExPart] =
-    MappedColumnType.base[BlanksExPart, String](_.urlName, str => BlanksExParts.values.find(_.urlName == str) getOrElse BlankExSinglePart)
+    MappedColumnType.base[BlanksExPart, String](_.entryName, BlanksExParts.withNameInsensitive)
 
   // Table defs
 

@@ -1,8 +1,5 @@
 @(user: model.User, startingNumber: model.nary.NAryNumber, verbose: Boolean, toolMain: model.nary.NaryToolMain)
 
-@exPart = @{
-    model.nary.TwoComplementExPart
-}
 
 @title = @{
     "Zahlensysteme: Zweierkomplement"
@@ -33,7 +30,7 @@
             <div class="col-sm-6">
 
                 <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
-                <input hidden id="exerciseType" value="@exPart.urlName" title="hidden">
+                <input hidden id="exerciseType" value="@model.nary.NaryExParts.TwoComplementExPart.urlName" title="hidden">
 
                 <p><em class="text-info">
                     Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em></p>
@@ -108,7 +105,8 @@
 
                 <div class="btn-group d-flex">
                     <button id="testBtn" class="btn btn-primary w-100">Testen</button>
-                    <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, exPart.urlName)?verbose=@verbose"
+                    <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart,
+                        model.nary.NaryExParts.TwoComplementExPart.urlName)?verbose=@verbose"
                     class="btn btn-secondary  w-100">Nächste Aufgabe</a>
                 </div>
 

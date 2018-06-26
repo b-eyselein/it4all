@@ -1,13 +1,18 @@
 package model.blanks
 
-import model.core.ExPart
+import enumeratum.{Enum, EnumEntry}
+import model.ExPart
 
-object BlanksExParts {
+import scala.collection.immutable.IndexedSeq
 
-  sealed abstract class BlanksExPart(val partName: String, val urlName: String) extends ExPart
+
+sealed abstract class BlanksExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
+
+
+object BlanksExParts extends Enum[BlanksExPart] {
+
+  val values: IndexedSeq[BlanksExPart] = findValues
 
   case object BlankExSinglePart extends BlanksExPart("Lückentext", "blanks")
-
-  val values = Seq(BlankExSinglePart)
 
 }

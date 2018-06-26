@@ -1,10 +1,10 @@
 package model.rose
 
 import javax.inject.Inject
-import model.{ExerciseState, _}
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgDataTypes.ProgDataType
 import model.programming.{ProgDataTypes, ProgLanguage}
+import model.{ExerciseState, _}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -28,7 +28,7 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
     val (actorClass, methodName, returnType) = if (ex.isMultiplayer) ("MultiPlayerActor", "act", "Action") else ("SinglePlayerActor", "run", "None")
 
     val parameters = inputType match {
-      case Nil   => ""
+      case Nil => ""
       case other => ", " + (other map (it => it.name + ": " + it.inputType.typeName) mkString ", ")
     }
 
@@ -118,7 +118,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
   override protected implicit val partTypeColumnType: BaseColumnType[RoseExPart] =
-    MappedColumnType.base[RoseExPart, String](_.urlName, str => RoseExParts.values.find(_.urlName == str) getOrElse RoseSingleExPart)
+    MappedColumnType.base[RoseExPart, String](_.entryName, RoseExParts.withNameInsensitive)
 
   // Tables
 
@@ -175,7 +175,6 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     override def * = (exerciseId, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
 
   }
-
 
   // Solutions of users
 

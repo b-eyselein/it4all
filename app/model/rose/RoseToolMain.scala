@@ -83,7 +83,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   }
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: RoseExPart): Future[String] = part match {
-    case RoseSingleExPart => futureCompleteExById(id) map {
+    case RoseExParts.RoseSingleExPart => futureCompleteExById(id) map {
       case Some(exercise) => exercise.sampleSolution.head.solution
       case None           => ""
     }

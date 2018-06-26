@@ -62,7 +62,7 @@
                             <div class="card-body text-justify">
                                 <p>@exercise.ex.text</p>
 
-                                @if(part == model.web.HtmlPart) {
+                                @if(part == model.web.WebExParts.HtmlPart) {
                                     <p>@Html(exercise.ex.htmlText getOrElse "")</p>
                                     <ol>
                                     @for(task <- exercise.tasksForPart(part).sortBy(_.task.id)) {

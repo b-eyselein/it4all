@@ -1,7 +1,6 @@
 package model
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.core.{ExPart, FileUtils}
 import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
@@ -45,6 +44,17 @@ trait Solution {
   val exerciseId: Int
 
 }
+
+trait ExPart {
+
+  // FIXME: use enumeratum=!=
+
+  def urlName: String
+
+  def partName: String
+
+}
+
 
 trait PartSolution[PartType <: ExPart] extends Solution {
 
@@ -107,11 +117,11 @@ trait SingleCompleteEx[Ex <: Exercise, PartType <: ExPart] extends CompleteEx[Ex
 
 trait ResultForPart[PartType <: ExPart] {
 
-  val username  : String
+  val username: String
   val exerciseId: Int
-  val part      : PartType
-  val points    : Double
-  val maxPoints : Double
+  val part: PartType
+  val points: Double
+  val maxPoints: Double
 
 }
 
@@ -121,7 +131,7 @@ trait PartsCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleComplete
 
 }
 
-trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] with FileUtils {
+trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] {
 
   def templateFilename: String
 

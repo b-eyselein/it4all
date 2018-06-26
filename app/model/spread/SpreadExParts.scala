@@ -1,8 +1,12 @@
 package model.spread
 
-import model.core.ExPart
+import enumeratum.{Enum, EnumEntry}
+import model.ExPart
 
-sealed abstract class SpreadExPart(val fileName: String, val toolName: String) extends ExPart {
+import scala.collection.immutable.IndexedSeq
+
+
+sealed abstract class SpreadExPart(val fileName: String, val toolName: String) extends ExPart with EnumEntry {
 
   override def urlName: String = fileName
 
@@ -10,12 +14,13 @@ sealed abstract class SpreadExPart(val fileName: String, val toolName: String) e
 
 }
 
-case object MSExcel extends SpreadExPart("xlsx", "MS Excel")
 
-case object OOCalc extends SpreadExPart("ods", "OpenOffice")
+object SpreadExParts extends Enum[SpreadExPart] {
 
-object SpreadExParts {
+  val values: IndexedSeq[SpreadExPart] = findValues
 
-  val values: Seq[SpreadExPart] = Seq(MSExcel, OOCalc)
+  case object MSExcel extends SpreadExPart("xlsx", "MS Excel")
+
+  case object OOCalc extends SpreadExPart("ods", "OpenOffice")
 
 }

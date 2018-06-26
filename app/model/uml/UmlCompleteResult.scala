@@ -30,26 +30,26 @@ case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassD
   private val musterSolution: UmlClassDiagram = exercise.ex.solution
 
   val classResult: Option[MatchingResult[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch]] = part match {
-    case DiagramDrawingHelp                => None
-    case ClassSelection                    => Some(UmlClassMatcher(false).doMatch(learnerSolution.classes, musterSolution.classes))
-    case DiagramDrawing | MemberAllocation => Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
+    case UmlExParts.DiagramDrawingHelp => None
+    case UmlExParts.ClassSelection => Some(UmlClassMatcher(false).doMatch(learnerSolution.classes, musterSolution.classes))
+    case UmlExParts.DiagramDrawing | UmlExParts.MemberAllocation => Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
   }
 
   val assocAndImplResult: Option[(MatchingResult[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch],
     MatchingResult[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch])] = part match {
-    case DiagramDrawingHelp | DiagramDrawing =>
+    case UmlExParts.DiagramDrawingHelp | UmlExParts.DiagramDrawing =>
       val assocRes = UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations)
       val implRes = UmlImplementationMatcher.doMatch(learnerSolution.implementations, musterSolution.implementations)
       Some((assocRes, implRes))
-    case _                                   => None
+    case _ => None
   }
 
   def nextPart: Option[UmlExPart] = part match {
-    case DiagramDrawing => None
+    case UmlExParts.DiagramDrawing => None
 
-    case ClassSelection     => Some(DiagramDrawingHelp)
-    case DiagramDrawingHelp => Some(MemberAllocation)
-    case MemberAllocation   => None
+    case UmlExParts.ClassSelection => Some(UmlExParts.DiagramDrawingHelp)
+    case UmlExParts.DiagramDrawingHelp => Some(UmlExParts.MemberAllocation)
+    case UmlExParts.MemberAllocation => None
   }
 
   private def displayAssocsAndImpls: String =
@@ -71,7 +71,7 @@ case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassD
 
   private def displayMembers(members: Seq[String]): String = members map (m => "<li>" + m + "</li>") match {
     case Nil => "<li>--</li>"
-    case ms  => ms mkString
+    case ms => ms mkString
   }
 
   def toJson: JsValue = Json.obj(

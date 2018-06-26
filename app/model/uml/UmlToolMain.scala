@@ -77,7 +77,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
       Json.fromJson[UmlClassDiagram](jsValue)(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
         case JsSuccess(ucd, _) =>
           Some(UmlSolution(user.username, id, part, ucd))
-        case JsError(errors)   =>
+        case JsError(errors) =>
           errors.foreach(error => Logger.error("Json Error: " + error))
           None
       }
@@ -106,10 +106,10 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Views
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution]): Html = part match {
-    case ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise.ex, this)
-    case DiagramDrawing     => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
-    case DiagramDrawingHelp => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
-    case MemberAllocation   => views.html.idExercises.uml.memberAllocation(user, exercise)
+    case UmlExParts.ClassSelection => views.html.idExercises.uml.classSelection(user, exercise.ex, this)
+    case UmlExParts.DiagramDrawing => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
+    case UmlExParts.DiagramDrawingHelp => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
+    case UmlExParts.MemberAllocation => views.html.idExercises.uml.memberAllocation(user, exercise)
   }
 
   override def renderEditRest(exercise: UmlCompleteEx): Html = views.html.idExercises.uml.editUmlExRest(exercise)
@@ -124,14 +124,14 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Handlers for results
 
   override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: UmlCompleteResult): Html = result.part match {
-    case MemberAllocation =>
+    case UmlExParts.MemberAllocation =>
 
       println(result.learnerSolution)
 
       result.classResult foreach { classRes => classRes.allMatches.map(_.attributesResult) foreach println }
 
       views.html.idExercises.uml.memberAllocationResult(user, result, this)
-    case _                => ??? // Correction is only live!
+    case _ => ??? // Correction is only live!
   }
 
   override def onLiveCorrectionResult(pointsSaved: Boolean, result: UmlCompleteResult): JsValue = result.toJson

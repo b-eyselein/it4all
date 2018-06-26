@@ -8,9 +8,7 @@
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
     <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/uml/umlClass/classSelection.js")');
-    </script>
+    <script>SystemJS.import('@routes.Assets.versioned("app/uml/umlClass/classSelection.js")');</script>
 
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
 }
@@ -63,9 +61,9 @@
             <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#hintModal">
                 <span class="octicon octicon-info"></span>
             </button>
-            <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, model.uml.ClassSelection.urlName)"
+            <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, model.uml.UmlExParts.ClassSelection.urlName)"
             class="btn btn-primary w-100" id="testBtn">@btnText</button>
-            <a href="@routes.ExerciseController.exercise(toolMainObject.urlPart, exercise.id, model.uml.DiagramDrawingHelp.urlName)"
+            <a href="@routes.ExerciseController.exercise(toolMainObject.urlPart, exercise.id, model.uml.UmlExParts.DiagramDrawingHelp.urlName)"
             class="btn btn-secondary w-100">Zum nächsten Aufgabenteil</a>
         </div>
 

@@ -2,7 +2,6 @@ package model.nary
 
 import javax.inject.{Inject, Singleton}
 import model.core.result.EvaluationResult
-import model.learningPath.LearningPath
 import model.nary.NAryNumber.{parseNaryNumber, parseTwoComplement}
 import model.nary.NaryConsts._
 import model.toolMains.{RandomExerciseToolMain, ToolState}
@@ -13,7 +12,6 @@ import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
-import scala.util.Try
 
 @Singleton
 class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("nary") with JsonFormat {
@@ -42,7 +40,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
     views.html.randomExercises.nary.naryOverview(this)
 
   override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]]): Html = exPart match {
-    case NaryAdditionExPart =>
+    case NaryExParts.NaryAdditionExPart =>
 
       val requestedBaseStr: String = options.getOrElse("base", Seq("RANDOM")).mkString
       val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values(generator.nextInt(3))
@@ -52,17 +50,17 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
       views.html.randomExercises.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr, this)
 
-    case NaryConversionExPart =>
+    case NaryExParts.NaryConversionExPart =>
 
       val fromBaseStr = options.getOrElse("fromBase", Seq("RANDOM")).mkString
       val toBaseStr = options.getOrElse("toBase", Seq("RANDOM")).mkString
 
       val (fromBase, toBase): (NumberBase, NumberBase) = fromBaseStr match {
-        case RandomName  => toBaseStr match {
+        case RandomName => toBaseStr match {
           case RandomName =>
             val fromBase = randNumberBase(-1)
             (fromBase, randNumberBase(NumberBase.indexOf(fromBase)))
-          case _          =>
+          case _ =>
             val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
             (randNumberBase(NumberBase.indexOf(toBase)), toBase)
         }
@@ -70,7 +68,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
           val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.BINARY
           val toBase = toBaseStr match {
             case RandomName => randNumberBase(NumberBase.indexOf(fromBase))
-            case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
+            case _ => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
           }
           (fromBase, toBase)
       }
@@ -78,7 +76,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
       views.html.randomExercises.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr, this)
 
 
-    case TwoComplementExPart =>
+    case NaryExParts.TwoComplementExPart =>
       val verbose = options.getOrElse("verbose", Seq("false")).mkString == "true"
       views.html.randomExercises.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
 
@@ -97,13 +95,13 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   override def checkSolution(user: User, exPart: NaryExPart, request: Request[AnyContent]): JsValue = {
     val correctionFunction: JsValue => Option[NAryResult] = exPart match {
-      case NaryAdditionExPart   => readAddSolutionFromJson
-      case NaryConversionExPart => readConvSolutionFromJson
-      case TwoComplementExPart  => readTwoCompSolutionFromJson
+      case NaryExParts.NaryAdditionExPart => readAddSolutionFromJson
+      case NaryExParts.NaryConversionExPart => readConvSolutionFromJson
+      case NaryExParts.TwoComplementExPart => readTwoCompSolutionFromJson
     }
 
     request.body.asJson flatMap correctionFunction match {
-      case None           => Json.obj(errorName -> "TODO!")
+      case None => Json.obj(errorName -> "TODO!")
       case Some(solution) => solution.toJson
     }
   }

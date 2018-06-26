@@ -69,18 +69,18 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
     val language = PYTHON_3
 
     part match {
-      case TestdataCreation =>
+      case ProgrammingExParts.TestdataCreation =>
         val maybeCompleteCommitedTestData: Option[Seq[CommitedTestData]] = jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user)))
         maybeCompleteCommitedTestData map (commitedTestData => TestDataSolution(user.username, id, language, commitedTestData))
 
-      case Implementation => jsValue.asObj flatMap { jsObj =>
+      case ProgrammingExParts.Implementation => jsValue.asObj flatMap { jsObj =>
         for {
           language <- jsObj.enumField(languageName, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
           implementation <- jsObj.stringField(implementationName)
         } yield ImplementationSolution(user.username, id, language, implementation)
       }
 
-      case ActivityDiagram => jsValue.asStr map (str => ActivityDiagramSolution(user.username, id, language, str))
+      case ProgrammingExParts.ActivityDiagram => jsValue.asStr map (str => ActivityDiagramSolution(user.username, id, language, str))
     }
   }
 
@@ -121,38 +121,38 @@ class ProgrammingToolMain @Inject()(override val tables: ProgTableDefs)(implicit
 
     correctionResult match {
       case Success(futureRes) => futureRes
-      case Failure(error)     => Future(Failure(error))
+      case Failure(error) => Future(Failure(error))
     }
   }
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: ProgrammingExPart): Future[String] = part match {
-    case Implementation =>
+    case ProgrammingExParts.Implementation =>
       futureCompleteExById(id) map {
         case Some(exercise) => exercise.sampleSolutions.headOption.map(_.solution).getOrElse("No sample solution!")
-        case None           => "No such exercise!"
+        case None => "No such exercise!"
       }
-    case _              => Future("TODO!")
+    case _ => Future("TODO!")
   }
 
   // Views
 
   override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgrammingExPart, maybeOldSolution: Option[ProgSolution]): Html = part match {
-    case TestdataCreation =>
+    case ProgrammingExParts.TestdataCreation =>
       val oldTestData: Seq[CommitedTestData] = maybeOldSolution match {
         case Some(tds: TestDataSolution) => tds.commitedTestData
-        case _                           => Seq.empty
+        case _ => Seq.empty
       }
       views.html.idExercises.programming.testDataCreation(user, exercise, oldTestData, this)
 
-    case Implementation =>
+    case ProgrammingExParts.Implementation =>
       val declaration: String = maybeOldSolution map (_.solution) getOrElse {
         implExtractorRegex.findFirstMatchIn(exercise.ex.base) map (_.group(1).trim()) getOrElse exercise.ex.base
         // FIXME: remove comments like '# {2}'!
       }
 
-      views.html.idExercises.programming.progExercise(user, this, exercise, declaration, Implementation)
+      views.html.idExercises.programming.progExercise(user, this, exercise, declaration, ProgrammingExParts.Implementation)
 
-    case ActivityDiagram =>
+    case ProgrammingExParts.ActivityDiagram =>
       // TODO: use old soluton!
       views.html.idExercises.umlActivity.activityDrawing.render(user, exercise, language = ProgLanguage.STANDARD_LANG, toolObject = this)
   }

@@ -30,21 +30,21 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
   override def tags: Seq[WebExTag] = WebExParts.values map (part => new WebExTag(part.partName, hasPart(part)))
 
   override def hasPart(partType: WebExPart): Boolean = partType match {
-    case HtmlPart => htmlTasks.nonEmpty
-    case JsPart   => jsTasks.nonEmpty
-    case PHPPart  => phpTasks.nonEmpty
+    case WebExParts.HtmlPart => htmlTasks.nonEmpty
+    case WebExParts.JsPart => jsTasks.nonEmpty
+    case WebExParts.PHPPart => phpTasks.nonEmpty
   }
 
   def maxPoints(part: WebExPart): Double = part match {
-    case HtmlPart => htmlTasks.map(_.maxPoints).sum
-    case JsPart   => jsTasks.map(_.maxPoints).sum
-    case PHPPart  => phpTasks.map(_.maxPoints).sum
+    case WebExParts.HtmlPart => htmlTasks.map(_.maxPoints).sum
+    case WebExParts.JsPart => jsTasks.map(_.maxPoints).sum
+    case WebExParts.PHPPart => phpTasks.map(_.maxPoints).sum
   }
 
   def tasksForPart(part: WebExPart): Seq[WebCompleteTask] = part match {
-    case HtmlPart => htmlTasks
-    case JsPart   => jsTasks
-    case PHPPart  => phpTasks
+    case WebExParts.HtmlPart => htmlTasks
+    case WebExParts.JsPart => jsTasks
+    case WebExParts.PHPPart => phpTasks
   }
 
 }
@@ -88,9 +88,9 @@ case class WebExercise(override val id: Int, override val title: String, overrid
                        htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
 
 trait WebTask {
-  val id        : Int
+  val id: Int
   val exerciseId: Int
-  val text      : String
+  val text: String
   val xpathQuery: String
 }
 
@@ -104,7 +104,7 @@ case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, ac
     case None => false
 
     case Some(element) => actionType match {
-      case JsActionType.CLICK   =>
+      case JsActionType.CLICK =>
         element.click()
         true
       case JsActionType.FILLOUT =>
@@ -113,12 +113,12 @@ case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, ac
         // click on other element to fire the onchange event...
         context.findElement(By.xpath("//body")).click()
         true
-      case _                    => false
+      case _ => false
     }
   }
 
   def actionDescription: String = actionType match {
-    case JsActionType.CLICK   => s"Klicke auf Element mit XPath Query <code>$xpathQuery</code>"
+    case JsActionType.CLICK => s"Klicke auf Element mit XPath Query <code>$xpathQuery</code>"
     case JsActionType.FILLOUT => s"Sende Keys '${keysToSend getOrElse ""}' an Element mit XPath Query $xpathQuery"
   }
 
