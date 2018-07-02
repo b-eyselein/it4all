@@ -7,7 +7,7 @@ import model.core.FileUtils
 import model.programming.ProgConsts._
 import model.uml.UmlClassDiagram
 import model.uml.UmlExYamlProtocol.UmlSolutionYamlFormat
-import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
+import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -16,9 +16,10 @@ import scala.util.Try
 
 object ProgExYamlProtocol extends MyYamlProtocol {
 
-  implicit object ProgExYamlFormat extends HasBaseValuesYamlFormat[ProgCompleteEx] with FileUtils {
+  implicit object ProgExYamlFormat extends MyYamlObjectFormat[ProgCompleteEx] with FileUtils {
 
-    override def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[ProgCompleteEx] = for {
+    override def readObject(yamlObject: YamlObject): Try[ProgCompleteEx] = for {
+      baseValues <- readBaseValues(yamlObject)
       folderIdentifier <- yamlObject.stringField(identifierName)
 
       base <- readAll(Paths.get("conf", "resources", "programming", baseValues._1 + "-" + folderIdentifier, "base.py"))
@@ -47,17 +48,22 @@ object ProgExYamlProtocol extends MyYamlProtocol {
         Logger.error("Could not read programming sample solution", sampleSolutionFailure.exception)
 
       ProgCompleteEx(
-        ProgExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, folderIdentifier, base, functionname, indentLevel, outputType, baseData),
+        ProgExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6,
+          folderIdentifier, base, functionname, indentLevel, outputType, baseData),
         inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
       )
     }
 
-    override protected def writeRest(completeEx: ProgCompleteEx): Map[YamlValue, YamlValue] = Map(
-      YamlString(functionNameName) -> completeEx.ex.functionname,
-      YamlString(inputTypesName) -> YamlArr(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName))),
-      YamlString(sampleSolutionsName) -> YamlArr(completeEx.sampleSolutions map ProgSampleSolutionYamlFormat(completeEx.ex.id).write),
-      YamlString(sampleTestDataName) -> YamlArr(completeEx.sampleTestData map ProgSampleTestdataYamlFormat(completeEx.ex.id).write)
+    override def write(completeEx: ProgCompleteEx): YamlObject = YamlObject(
+      writeBaseValues(completeEx.ex) ++
+        Map(
+          YamlString(functionNameName) -> YamlString(completeEx.ex.functionname),
+          YamlString(inputTypesName) -> YamlArr(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName))),
+          YamlString(sampleSolutionsName) -> YamlArr(completeEx.sampleSolutions map ProgSampleSolutionYamlFormat(completeEx.ex.id).write),
+          YamlString(sampleTestDataName) -> YamlArr(completeEx.sampleTestData map ProgSampleTestdataYamlFormat(completeEx.ex.id).write)
+        )
     )
+
   }
 
   case class UmlClassDiagPartYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlClassDiagPart] {

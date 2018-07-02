@@ -102,7 +102,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, htmlText.?, jsText.?, phpText.?).mapTo[WebExercise]
+    override def * = (id, title, author, text, state, semanticVersion, htmlText.?, jsText.?, phpText.?).mapTo[WebExercise]
 
   }
 

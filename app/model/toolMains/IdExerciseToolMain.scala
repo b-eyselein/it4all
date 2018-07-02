@@ -89,7 +89,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
     case Some(exercise) =>
       correctEx(user, solution, exercise, part) flatMap {
         case Success(res)   =>
-          val dbSolution = instantiateSolution(user.username, exercise.id, part, solution, res.points, res.maxPoints)
+          val dbSolution = instantiateSolution(user.username, exercise.ex.id, part, solution, res.points, res.maxPoints)
 
           tables.futureSaveSolution(dbSolution) map { solutionSaved =>
             if (isLive) Success(Right(onLiveCorrectionResult(solutionSaved, res)))
@@ -141,7 +141,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
       // FIXME: check if user can solve this part!
 
       if (exercise.hasPart(exPart)) {
-        tables.futureUserCanSolvePartOfExercise(user.username, exercise.id, exPart) map {
+        tables.futureUserCanSolvePartOfExercise(user.username, exercise.ex.id, exPart) map {
           enabled => Some(CallForExPart(exPart, controllers.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName), enabled))
         }
 

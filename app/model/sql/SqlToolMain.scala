@@ -3,7 +3,7 @@ package model.sql
 import javax.inject._
 import model._
 import model.core.result.EvaluationResult
-import model.core.{Levenshtein, SolutionFormHelper}
+import model.core.{Java_Levenshtein, SolutionFormHelper}
 import model.sql.SqlConsts._
 import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolState}
@@ -26,7 +26,7 @@ object SqlToolMain {
     SqlExerciseType.DELETE -> (DeleteCorrector, ChangeDAO)
   )
 
-  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = samples.minBy(samp => Levenshtein.levenshteinDistance(samp.sample, userSt))
+  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = samples.minBy(samp => Java_Levenshtein.levenshteinDistance(samp.sample, userSt))
 
   def allDaos: Seq[SqlExecutionDAO] = correctorsAndDaos.values.map(_._2).toSet.toSeq
 
@@ -154,10 +154,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Helper methods
 
   override def instantiateCollection(id: Int, state: ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
-    SqlScenario(id, title = "", author = "", text = "", state, shortName = ""), exercises = Seq.empty)
+    SqlScenario(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), shortName = ""), exercises = Seq.empty)
 
   override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): SqlCompleteEx = SqlCompleteEx(
-    SqlExercise(id, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT, collectionId = collId, tags = "", hint = None), samples = Seq.empty)
+    SqlExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), exerciseType = SqlExerciseType.SELECT, collectionId = collId, tags = "", hint = None), samples = Seq.empty)
 
   override def instantiateSolution(username: String, collId: Int, id: Int, solution: String, points: Double, maxPoints: Double): SqlSolution =
     SqlSolution(username, collId, id, solution, points, maxPoints)

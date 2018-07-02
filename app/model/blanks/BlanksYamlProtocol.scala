@@ -1,6 +1,5 @@
 package model.blanks
 
-import model.ExerciseState
 import model.MyYamlProtocol
 import model.MyYamlProtocol._
 import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}
@@ -41,15 +40,19 @@ object BlanksYamlProtocol extends MyYamlProtocol {
     (newText, solutions map (samp => BlanksAnswer(samp._1, exerciseId, samp._2)) toSeq)
   }
 
-  implicit object BlanksYamlFormat extends HasBaseValuesYamlFormat[BlanksCompleteExercise] {
+  implicit object BlanksYamlFormat extends MyYamlObjectFormat[BlanksCompleteExercise] {
 
-    override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[BlanksCompleteExercise] = for {
+    override protected def readObject(yamlObject: YamlObject): Try[BlanksCompleteExercise] = for {
+      baseValues <- readBaseValues(yamlObject)
       rawBlanksText <- yamlObject.stringField("blankstext")
       (parsedText, samples) = parseBlanksText(baseValues._1, rawBlanksText)
-    } yield BlanksCompleteExercise(new BlanksExercise(baseValues, rawBlanksText, parsedText), samples)
+    } yield BlanksCompleteExercise(BlanksExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, rawBlanksText, parsedText), samples)
 
-    override protected def writeRest(completeEx: BlanksCompleteExercise): Map[YamlValue, YamlValue] = Map(
-      YamlString("blankstext") -> YamlString(completeEx.ex.rawBlanksText)
+    override def write(completeEx: BlanksCompleteExercise): YamlValue = YamlObject(
+      writeBaseValues(completeEx.ex) ++
+        Map(
+          YamlString("blankstext") -> YamlString(completeEx.ex.rawBlanksText)
+        )
     )
 
   }

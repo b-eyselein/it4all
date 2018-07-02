@@ -99,7 +99,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, theme).mapTo[Quiz]
+    override def * = (id, title, author, text, state, semanticVersion, theme).mapTo[Quiz]
 
   }
 
@@ -115,7 +115,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     def quizFk = foreignKey("quiz_fk", collectionId, collTable)(_.id)
 
 
-    override def * = (id, title, author, text, state, collectionId, questionType, maxPoints).mapTo[Question]
+    override def * = (id, title, author, text, state, semanticVersion, collectionId, questionType, maxPoints).mapTo[Question]
 
   }
 

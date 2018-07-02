@@ -83,7 +83,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, shortName).mapTo[SqlScenario]
+    override def * = (id, title, author, text, state, semanticVersion, shortName).mapTo[SqlScenario]
 
   }
 
@@ -101,7 +101,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def scenarioFk = foreignKey("scenario_fk", collectionId, collTable)(_.id)
 
 
-    override def * = (id, title, author, text, state, collectionId, exerciseType, tags, hint.?).mapTo[SqlExercise]
+    override def * = (id, title, author, text, state, semanticVersion, collectionId, exerciseType, tags, hint.?).mapTo[SqlExercise]
 
   }
 

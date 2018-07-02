@@ -55,10 +55,10 @@ case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends Complete
 
 // Case classes for db
 
-case class Quiz(id: Int, title: String, author: String, text: String, state: ExerciseState, theme: String)
-  extends ExerciseCollection[Question, CompleteQuestion]
+case class Quiz(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+                theme: String) extends ExerciseCollection[Question, CompleteQuestion]
 
-case class Question(id: Int, title: String, author: String, text: String, state: ExerciseState,
+case class Question(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
                     collectionId: Int, questionType: QuestionType, maxPoints: Int) extends ExInColl {
 
   def isFreetext: Boolean = questionType == QuestionType.FREETEXT

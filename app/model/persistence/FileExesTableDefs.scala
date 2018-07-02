@@ -7,4 +7,6 @@ import slick.jdbc.JdbcProfile
 trait FileExesTableDefs[Ex <: Exercise, CompExType <: CompleteEx[Ex]] extends IdExerciseTableDefs[Ex, CompExType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
+  // FIXME: eventually remove this class?
+
 }

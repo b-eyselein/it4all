@@ -30,8 +30,9 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSo
 
 // Case classes for tables
 
-case class ProgExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, folderIdentifier: String, base: String,
-                        functionname: String, indentLevel: Int, outputType: ProgDataType, baseData: Option[JsValue]) extends Exercise
+case class ProgExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+                        folderIdentifier: String, base: String, functionname: String, indentLevel: Int,
+                        outputType: ProgDataType, baseData: Option[JsValue]) extends Exercise
 
 
 case class ProgInput(id: Int, exerciseId: Int, inputName: String, inputType: ProgDataType)

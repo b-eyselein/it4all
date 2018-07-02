@@ -1,6 +1,5 @@
 package model.web
 
-import model.ExerciseState
 import model.MyYamlProtocol._
 import model.web.WebConsts._
 import model.{MyYamlProtocol, YamlArr, YamlObj}
@@ -20,20 +19,15 @@ object WebExYamlProtocol extends MyYamlProtocol {
     }
 
     def readRest(yamlObject: YamlObject): Try[WebCompleteEx] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(stateName, ExerciseState.withNameInsensitiveOption(_) getOrElse ExerciseState.CREATED)
-
+      baseValues <- readBaseValues(yamlObject)
 
       htmlText <- yamlObject.optStringField(htmlTextName)
       jsText <- yamlObject.optStringField(jsTextName)
       phpText <- yamlObject.optStringField(phpTextName)
 
-      htmlTaskTries <- yamlObject.optArrayField(htmlTasksName, HtmlCompleteTaskYamlFormat(id).read)
-      jsTaskTries <- yamlObject.optArrayField(jsTasksName, JsCompleteTaskYamlFormat(id).read)
-      phpTasksTries <- yamlObject.optArrayField(phpTasksName, PhpCompleteTaskYamlFormat(id).read)
+      htmlTaskTries <- yamlObject.optArrayField(htmlTasksName, HtmlCompleteTaskYamlFormat(baseValues._1).read)
+      jsTaskTries <- yamlObject.optArrayField(jsTasksName, JsCompleteTaskYamlFormat(baseValues._1).read)
+      phpTasksTries <- yamlObject.optArrayField(phpTasksName, PhpCompleteTaskYamlFormat(baseValues._1).read)
     } yield {
 
       for (htmlTaskFailure <- htmlTaskTries._2)
@@ -49,7 +43,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
         Logger.error("Could not read php task", phpTaskFailure.exception)
 
       WebCompleteEx(
-        WebExercise(id, title, author, text, state, htmlText, jsText, phpText),
+        WebExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, htmlText, jsText, phpText),
         htmlTaskTries._1, jsTaskTries._1, phpTasksTries._1
       )
     }

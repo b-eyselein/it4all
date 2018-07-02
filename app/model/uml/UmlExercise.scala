@@ -1,7 +1,7 @@
 package model.uml
 
+import model._
 import model.uml.UmlConsts._
-import model.{Exercise, ExerciseState, PartSolution, PartsCompleteEx}
 import play.twirl.api.Html
 
 import scala.language.postfixOps
@@ -56,8 +56,8 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
 
 // Table classes
 
-case class UmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, solution: UmlClassDiagram, markedText: String, toIgnore: String)
-  extends Exercise {
+case class UmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+                       solution: UmlClassDiagram, markedText: String, toIgnore: String) extends Exercise {
 
   def splitToIgnore: Seq[String] = toIgnore split tagJoinChar
 

@@ -3,6 +3,7 @@ title: Vorlesung
 author: bje40dc
 text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: APPROVED
+semanticVersion: 1.0.0
 
 rootNode: lecture
 grammarDescription: >

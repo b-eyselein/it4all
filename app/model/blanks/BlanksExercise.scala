@@ -1,6 +1,6 @@
 package model.blanks
 
-import model.{Exercise, ExerciseState, PartSolution, PartsCompleteEx}
+import model._
 import play.twirl.api.Html
 
 
@@ -16,13 +16,8 @@ case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]
 }
 
 
-case class BlanksExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
-                          rawBlanksText: String, blanksText: String) extends Exercise {
-
-  def this(baseValues: (Int, String, String, String, ExerciseState), rawBlanksText: String, blanksText: String) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, rawBlanksText, blanksText)
-
-}
+case class BlanksExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+                          rawBlanksText: String, blanksText: String) extends Exercise
 
 case class BlanksAnswer(id: Int, exerciseId: Int, solution: String)
 

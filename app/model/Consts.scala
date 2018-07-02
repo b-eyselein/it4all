@@ -44,15 +44,16 @@ trait Consts {
 
   val roleName = "role"
 
-  val sampleArgName     = "sampleArg"
-  val sampleSubDir      = "samples"
-  val stateName         = "status"
-  val stdStep           = 10
-  val successTypeName   = "successType"
-  val solutionName      = "solution"
-  val solutionSavedName = "solutionSaved"
-  val solutionsSubDir   = "solutions"
-  val successName       = "success"
+  val sampleArgName       = "sampleArg"
+  val sampleSubDir        = "samples"
+  val semanticVersionName = "semanticVersion"
+  val stateName           = "status"
+  val stdStep             = 10
+  val successTypeName     = "successType"
+  val solutionName        = "solution"
+  val solutionSavedName   = "solutionSaved"
+  val solutionsSubDir     = "solutions"
+  val successName         = "success"
 
   val tagJoinChar    = "#"
   val templateSubDir = "templates"

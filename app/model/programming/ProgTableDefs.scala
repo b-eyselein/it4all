@@ -88,7 +88,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, folderIdentifier, base, functionname, indentLevel, outputType, baseDataAsJson.?).mapTo[ProgExercise]
+    override def * = (id, title, author, text, state, semanticVersion, folderIdentifier, base, functionname, indentLevel, outputType, baseDataAsJson.?).mapTo[ProgExercise]
 
   }
 

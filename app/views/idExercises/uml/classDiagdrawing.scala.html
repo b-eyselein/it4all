@@ -78,7 +78,7 @@
                 </div>
 
                 <div id="sizepaper">
-                    <div id="classDiagPaper" data-url="@routes.ExerciseController.umlClassDiag(exercise.id, curPart.urlName)"></div>
+                    <div id="classDiagPaper" data-url="@routes.ExerciseController.umlClassDiag(exercise.ex.id, curPart.urlName)"></div>
                 </div>
             </div>
 
@@ -97,7 +97,7 @@
 
                 <div class="form-group">
                     <div class="btn-group d-flex">
-                        <button data-url="@routes.ExerciseController.correctLive(toolObject.urlPart, exercise.id, curPart.urlName)"
+                        <button data-url="@routes.ExerciseController.correctLive(toolObject.urlPart, exercise.ex.id, curPart.urlName)"
                         id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>
                         @curPart match {
                             case model.uml.UmlExParts.DiagramDrawingHelp => {

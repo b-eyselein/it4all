@@ -2,10 +2,10 @@ package model.rose
 
 
 import javax.inject.{Inject, Singleton}
+import model._
 import model.programming.ProgLanguages
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, JsonFormat, User}
 import play.api.data.Form
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.twirl.api.Html
@@ -55,7 +55,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
-    RoseExercise(id, title = "", author = "", text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
+    RoseExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
     inputType = Seq.empty, sampleSolution = null
   )
 

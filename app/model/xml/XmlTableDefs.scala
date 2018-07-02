@@ -75,7 +75,6 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Actual table defs
 
-
   class XmlExercisesTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
 
     def rootNode = column[String]("root_node")
@@ -83,7 +82,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def grammarDescription = column[String]("grammar_description")
 
 
-    override def * = (id, title, author, text, state, grammarDescription, rootNode).mapTo[XmlExercise]
+    override def * = (id, title, author, text, state, semanticVersion, grammarDescription, rootNode).mapTo[XmlExercise]
 
   }
 

@@ -1,8 +1,8 @@
 package model.rose
 
+import model._
 import model.programming.ProgDataTypes.ProgDataType
 import model.programming.ProgLanguage
-import model.{Exercise, ExerciseState, PartSolution, PartsCompleteEx}
 import play.twirl.api.Html
 
 // Classes for use
@@ -51,12 +51,8 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
 
 // Case classes for tables
 
-case class RoseExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends Exercise {
-
-  def this(baseValues: (Int, String, String, String, ExerciseState), fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, fieldWidth, fieldHeight, isMultiplayer)
-
-}
+case class RoseExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+                        fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends Exercise
 
 case class RoseInputType(id: Int, exerciseId: Int, name: String, inputType: ProgDataType)
 

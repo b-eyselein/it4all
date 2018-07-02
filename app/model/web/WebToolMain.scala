@@ -3,9 +3,9 @@ package model.web
 import java.nio.file.Path
 
 import javax.inject._
+import model._
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, JsonFormat, User}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Form
 import play.api.libs.json.JsValue
@@ -82,7 +82,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): WebCompleteEx = WebCompleteEx(
-    WebExercise(id, title = "", author = "", text = "", state, htmlText = None, jsText = None, phpText = None),
+    WebExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), htmlText = None, jsText = None, phpText = None),
     htmlTasks = Seq.empty, jsTasks = Seq.empty
   )
 
@@ -110,7 +110,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Correction
 
   override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
-    writeWebSolutionFile(user.username, exercise.id, part, learnerSolution) flatMap { _ =>
+    writeWebSolutionFile(user.username, exercise.ex.id, part, learnerSolution) flatMap { _ =>
 
       val driver = new HtmlUnitDriver(true)
       driver.get(getSolutionUrl(user, exercise.ex.id, part))

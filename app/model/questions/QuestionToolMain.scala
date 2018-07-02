@@ -7,7 +7,6 @@ import model.questions.QuestionEnums.QuestionType
 import model.toolMains.CollectionToolMain
 import model.yaml.MyYamlFormat
 import play.api.data.Form
-import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.Html
 
@@ -90,7 +89,7 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
 
   override def onSubmitCorrectionResult(user: User, result: QuestionResult): Html = ???
 
-//  override def onLiveCorrectionResult(result: QuestionResult): JsValue = result.forJson
+  //  override def onLiveCorrectionResult(result: QuestionResult): JsValue = result.forJson
 
   // Correction
 
@@ -112,10 +111,10 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
   // Helper methods
 
   override def instantiateCollection(id: Int, state: ExerciseState): CompleteQuiz = CompleteQuiz(
-    Quiz(id, title = "", author = "", text = "", state, theme = ""), exercises = Seq.empty)
+    Quiz(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), theme = ""), exercises = Seq.empty)
 
   override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompleteQuestion = CompleteQuestion(
-    Question(id, title = "", author = "", text = "", state, collId, QuestionType.FREETEXT, -1), answers = Seq.empty)
+    Question(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), collId, QuestionType.FREETEXT, -1), answers = Seq.empty)
 
   override def instantiateSolution(username: String, collId: Int, id: Int, solution: Seq[GivenAnswer], points: Double, maxPoints: Double): QuestionSolution =
     QuestionSolution(username, collId, id, solution, points, maxPoints)

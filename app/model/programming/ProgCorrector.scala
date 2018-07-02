@@ -24,7 +24,7 @@ object ProgCorrector extends FileUtils {
   def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, completeTestData: Seq[TestData],
               toolMain: ProgToolMain)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {
 
-    val exerciseResourcesFolder = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.ex.folderIdentifier)
+    val exerciseResourcesFolder = toolMain.exerciseResourcesFolder / (exercise.ex.id + "-" + exercise.ex.folderIdentifier)
     val solutionTargetDir = toolMain.solutionDirForExercise(user.username, exercise.ex.id)
     val testDataFileContent = Json.prettyPrint(TestDataJsonFormat.dumpTestDataToJson(exercise, completeTestData))
 

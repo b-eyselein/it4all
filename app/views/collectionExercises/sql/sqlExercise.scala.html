@@ -77,8 +77,8 @@
 
                 <div class="form-group">
                     <div class="btn-group d-flex">
-                        @if(exercise.id > 1) {
-                            <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.id - 1)"
+                        @if(exercise.ex.id > 1) {
+                            <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id - 1)"
                             class="btn btn-outline-secondary w-100"><span class="octicon octicon-arrow-left"></span></a>
                         } else {
                             <a class="btn btn-outline-secondary w-100 disabled"><span class="octicon octicon-arrow-left"></span></a>
@@ -86,8 +86,8 @@
                         <button class="btn btn-success w-100" id="testBtn">Lösung testen</button>
                         <a class="btn btn-secondary w-100" href="@routes.CollectionController.collection("sql", scenario.id)">
                             Bearbeitung beenden</a>
-                        @if(exercise.id < numOfExes) {
-                            <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.id + 1)"
+                        @if(exercise.ex.id < numOfExes) {
+                            <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id + 1)"
                             class="btn btn-outline-secondary w-100"><span class="octicon octicon-arrow-right"></span></a>
                         } else {
                             <a class="btn btn-outline-secondary w-100 disabled"><span class="octicon octicon-arrow-right"></span></a>

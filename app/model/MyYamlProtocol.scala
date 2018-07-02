@@ -149,28 +149,18 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     YamlString(titleName) -> hasBaseValues.title,
     YamlString(authorName) -> hasBaseValues.author,
     YamlString(textName) -> hasBaseValues.text,
-    YamlString(stateName) -> hasBaseValues.state.entryName
+    YamlString(stateName) -> hasBaseValues.state.entryName,
+    YamlString(semanticVersionName) -> hasBaseValues.semanticVersion.asString
   )
 
-  protected def readBaseValues(yamlObject: YamlObject): Try[(Int, String, String, String, ExerciseState)] = for {
+  protected def readBaseValues(yamlObject: YamlObject): Try[(Int, String, String, String, ExerciseState, SemanticVersion)] = for {
     id <- yamlObject.intField(idName)
     title <- yamlObject.stringField(titleName)
     author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(textName)
     state: ExerciseState <- yamlObject.enumField(stateName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
-  } yield (id, title, author, text, state)
-
-  abstract class HasBaseValuesYamlFormat[E <: HasBaseValues] extends MyYamlObjectFormat[E] {
-
-    override def readObject(yamlObject: YamlObject): Try[E] = readBaseValues(yamlObject) flatMap (readRest(yamlObject, _))
-
-    protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[E]
-
-    override def write(completeEx: E): YamlObject = YamlObject(writeBaseValues(completeEx) ++ writeRest(completeEx))
-
-    protected def writeRest(completeEx: E): Map[YamlValue, YamlValue]
-
-  }
+    semanticVersion <- yamlObject.stringField(semanticVersionName) flatMap SemanticVersionHelper.tryFromString
+  } yield (id, title, author, text, state, semanticVersion)
 
   abstract class MyYamlObjectFormat[T] extends MyYamlFormat[T] {
 

@@ -149,7 +149,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCompleteColls map { allColls =>
-        val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
+        val filteredColls = allColls filter (_.coll.state == ExerciseState.APPROVED)
 
         Ok(views.html.exercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
       }
@@ -160,7 +160,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       toolMain.futureCompleteCollById(id) map {
         case None       => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
         case Some(coll) =>
-          val exercises = coll.exercises.filter(_.state == ExerciseState.APPROVED)
+          val exercises = coll.exercises.filter(_.ex.state == ExerciseState.APPROVED)
           Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, takeSlice(exercises, page), toolMain, page, exercises.size))
       }
   }

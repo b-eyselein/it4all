@@ -1,6 +1,6 @@
 package model.xml
 
-import model.core.Levenshtein
+import model.core.Java_Levenshtein
 import model.core.matching.{MatchType, MatchingResult}
 import model.core.result.SuccessType
 import model.xml.dtd._
@@ -15,7 +15,7 @@ case class XmlGrammarCompleteResult(learnerSolution: DocTypeDef, completeEx: Xml
 
   override type SolType = DocTypeDef
 
-  val grammar: XmlSampleGrammar = completeEx.sampleGrammars.minBy(sampleG => Levenshtein.levenshteinDistance(learnerSolution.asString, sampleG.sampleGrammar.asString))
+  val grammar: XmlSampleGrammar = completeEx.sampleGrammars.minBy(sampleG => Java_Levenshtein.levenshteinDistance(learnerSolution.asString, sampleG.sampleGrammar.asString))
 
   val matchingResult: MatchingResult[ElementLine, ElementLineAnalysisResult, ElementLineMatch] = XmlCorrector.correctDTD(learnerSolution, grammar.sampleGrammar)
 

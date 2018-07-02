@@ -67,7 +67,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, solutionAsJson, markedText, toIgnore).mapTo[UmlExercise]
+    override def * = (id, title, author, text, state, semanticVersion, solutionAsJson, markedText, toIgnore).mapTo[UmlExercise]
 
   }
 

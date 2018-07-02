@@ -8,7 +8,7 @@ import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.xml.XmlConsts._
 import model.xml.dtd.DocTypeDefParser
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, User}
+import model.{Consts, ExerciseState, SemanticVersion, User}
 import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.api.mvc._
@@ -73,7 +73,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): XmlCompleteExercise = XmlCompleteExercise(
-    XmlExercise(id, title = "", author = "", text = "", state, grammarDescription = "", rootNode = ""),
+    XmlExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), grammarDescription = "", rootNode = ""),
     Seq.empty)
 
   override def instantiateSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String, points: Double, maxPoints: Double): XmlSolution =

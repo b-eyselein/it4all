@@ -80,14 +80,15 @@ CREATE TABLE IF NOT EXISTS learning_path_sections (
 # Blanks
 
 CREATE TABLE IF NOT EXISTS blanks_exercises (
-  id              INT PRIMARY KEY,
-  title           VARCHAR(50),
-  author          VARCHAR(50),
-  ex_text         TEXT,
-  ex_state        ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id               INT PRIMARY KEY,
+  title            VARCHAR(50),
+  author           VARCHAR(50),
+  ex_text          TEXT,
+  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version varchar(10),
 
-  blanks_text     TEXT,
-  raw_blanks_text TEXT
+  blanks_text      TEXT,
+  raw_blanks_text  TEXT
 );
 
 CREATE TABLE IF NOT EXISTS blanks_samples (
@@ -109,6 +110,7 @@ CREATE TABLE IF NOT EXISTS prog_exercises (
   author            VARCHAR(50),
   ex_text           TEXT,
   ex_state          ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version  varchar(10),
 
   folder_identifier VARCHAR(30),
   base              TEXT,
@@ -203,25 +205,27 @@ CREATE TABLE IF NOT EXISTS prog_solutions (
 # Question
 
 CREATE TABLE IF NOT EXISTS quizzes (
-  id       INT PRIMARY KEY,
-  title    VARCHAR(50),
-  author   VARCHAR(50),
-  ex_text  TEXT,
-  ex_state ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id               INT PRIMARY KEY,
+  title            VARCHAR(50),
+  author           VARCHAR(50),
+  ex_text          TEXT,
+  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version varchar(10),
 
-  theme    VARCHAR(50)
+  theme            VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS questions (
-  id            INT,
-  title         VARCHAR(50),
-  author        VARCHAR(50),
-  ex_text       TEXT,
-  ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id               INT,
+  title            VARCHAR(50),
+  author           VARCHAR(50),
+  ex_text          TEXT,
+  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version varchar(10),
 
-  collection_id INT,
-  question_type ENUM ('CHOICE', 'FREETEXT', 'FILLOUT')               DEFAULT 'CHOICE',
-  max_points    INT,
+  collection_id    INT,
+  question_type    ENUM ('CHOICE', 'FREETEXT', 'FILLOUT')               DEFAULT 'CHOICE',
+  max_points       INT,
 
   PRIMARY KEY (id, collection_id),
   FOREIGN KEY (collection_id) REFERENCES quizzes (id)
@@ -246,15 +250,16 @@ CREATE TABLE IF NOT EXISTS question_answers (
 # Rose
 
 CREATE TABLE IF NOT EXISTS rose_exercises (
-  id           INT PRIMARY KEY,
-  title        VARCHAR(50),
-  author       VARCHAR(50),
-  ex_text      TEXT,
-  ex_state     ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id               INT PRIMARY KEY,
+  title            VARCHAR(50),
+  author           VARCHAR(50),
+  ex_text          TEXT,
+  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version varchar(10),
 
-  field_width  INT,
-  field_height INT,
-  is_mp        BOOLEAN
+  field_width      INT,
+  field_height     INT,
+  is_mp            BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS rose_inputs (
@@ -305,6 +310,7 @@ CREATE TABLE IF NOT EXISTS spread_exercises (
   author            VARCHAR(50),
   ex_text           TEXT,
   ex_state          ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version  varchar(10),
 
   sample_filename   VARCHAR(50),
   template_filename VARCHAR(50)
@@ -313,27 +319,29 @@ CREATE TABLE IF NOT EXISTS spread_exercises (
 # Sql
 
 CREATE TABLE IF NOT EXISTS sql_scenarioes (
-  id         INT PRIMARY KEY,
-  title      VARCHAR(50),
-  author     VARCHAR(50),
-  ex_text    TEXT,
-  ex_state   ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id               INT PRIMARY KEY,
+  title            VARCHAR(50),
+  author           VARCHAR(50),
+  ex_text          TEXT,
+  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version varchar(10),
 
-  shortName  VARCHAR(50),
-  scriptFile VARCHAR(50)
+  shortName        VARCHAR(50),
+  scriptFile       VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS sql_exercises (
-  id            INT,
-  title         VARCHAR(50),
-  author        VARCHAR(50),
-  ex_text       TEXT,
-  ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    DEFAULT 'RESERVED',
+  id               INT,
+  title            VARCHAR(50),
+  author           VARCHAR(50),
+  ex_text          TEXT,
+  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    DEFAULT 'RESERVED',
+  semantic_version varchar(10),
 
-  collection_id INT,
-  tags          TEXT,
-  exercise_type ENUM ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') DEFAULT 'SELECT',
-  hint          TEXT,
+  collection_id    INT,
+  tags             TEXT,
+  exercise_type    ENUM ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') DEFAULT 'SELECT',
+  hint             TEXT,
 
   PRIMARY KEY (id, collection_id),
   FOREIGN KEY (collection_id) REFERENCES sql_scenarioes (id)
@@ -373,15 +381,16 @@ CREATE TABLE IF NOT EXISTS sql_solutions (
 # Uml
 
 CREATE TABLE IF NOT EXISTS uml_exercises (
-  id            INT PRIMARY KEY,
-  title         VARCHAR(50),
-  author        VARCHAR(50),
-  ex_text       TEXT,
-  ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id               INT PRIMARY KEY,
+  title            VARCHAR(50),
+  author           VARCHAR(50),
+  ex_text          TEXT,
+  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version varchar(10),
 
-  solution_json TEXT,
-  marked_text   TEXT,
-  to_ignore     TEXT
+  solution_json    TEXT,
+  marked_text      TEXT,
+  to_ignore        TEXT
 );
 
 CREATE TABLE IF NOT EXISTS uml_mappings (
@@ -415,15 +424,16 @@ CREATE TABLE IF NOT EXISTS uml_solutions (
 # Web
 
 CREATE TABLE IF NOT EXISTS web_exercises (
-  id        INT PRIMARY KEY,
-  title     VARCHAR(50),
-  author    VARCHAR(50),
-  ex_text   TEXT,
-  ex_state  ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id               INT PRIMARY KEY,
+  title            VARCHAR(50),
+  author           VARCHAR(50),
+  ex_text          TEXT,
+  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version varchar(10),
 
-  html_text TEXT,
-  js_text   TEXT,
-  php_text  TEXT
+  html_text        TEXT,
+  js_text          TEXT,
+  php_text         TEXT
 );
 
 CREATE TABLE IF NOT EXISTS html_tasks (
@@ -508,6 +518,7 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
   author              VARCHAR(50),
   ex_text             TEXT,
   ex_state            ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  semantic_version    varchar(10),
 
   exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_DTD',
   grammar_description TEXT,

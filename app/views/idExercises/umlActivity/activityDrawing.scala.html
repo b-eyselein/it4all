@@ -51,7 +51,7 @@
         case None => {}
         case Some(classDiagPart) => {
             @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
-                <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(completeEx.id)"></div>
+                <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></div>
             }
         }
     }
@@ -109,7 +109,7 @@
             <div class="col-md-6">
 
                 <div class="card">
-                    <div class="card-body text-justify">@completeEx.text</div>
+                    <div class="card-body text-justify">@completeEx.ex.text</div>
                 </div>
 
                 <hr>
@@ -349,7 +349,7 @@
                     </div>
 
                     <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
-                    <input hidden type="number" id="exerciseId" value="@completeEx.id" title="hidden">
+                    <input hidden type="number" id="exerciseId" value="@completeEx.ex.id" title="hidden">
                     <input hidden id="exercisePart" value="@model.programming.ProgExParts.ActivityDiagram.urlName" title="hidden">
 
                     <hr>

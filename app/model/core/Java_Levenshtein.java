@@ -2,7 +2,9 @@ package model.core;
 
 import java.util.stream.IntStream;
 
-public abstract class Levenshtein {
+public abstract class Java_Levenshtein {
+
+    // FIXME: test against Scala_Levenshtein, replace!
 
     /**
      * Algorithm for levenshtein levenshteinDistance of two words as found on
@@ -12,7 +14,7 @@ public abstract class Levenshtein {
      * @return
      * @see <a href=
      * "https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java">
-     * Levenshtein Implementation for Java on Wikibooks</a>}
+     * Java_Levenshtein Implementation for Java on Wikibooks</a>}
      */
     public static int levenshteinDistance(CharSequence lhs, CharSequence rhs) {
         int len0 = lhs.length() + 1;

@@ -1,11 +1,11 @@
 package model.blanks
 
 import javax.inject._
+import model._
 import model.blanks.BlanksConsts._
 import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, JsonFormat, User}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
@@ -69,7 +69,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): BlanksCompleteExercise =
-    BlanksCompleteExercise(BlanksExercise(id, title = "", author = "", text = "", state, rawBlanksText = "", blanksText = ""), samples = Seq.empty)
+    BlanksCompleteExercise(BlanksExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), rawBlanksText = "", blanksText = ""), samples = Seq.empty)
 
   override def instantiateSolution(username: String, exerciseId: Int, part: BlanksExPart, solution: Seq[BlanksAnswer], points: Double, maxPoints: Double): BlanksSolution =
     BlanksSolution(username, exerciseId, part, solution, points, maxPoints)

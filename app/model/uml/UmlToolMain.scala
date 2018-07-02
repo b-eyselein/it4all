@@ -1,11 +1,11 @@
 package model.uml
 
 import javax.inject._
+import model._
 import model.core._
 import model.core.result.EvaluationResult
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, JsonFormat, User}
 import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json._
@@ -89,7 +89,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
-    UmlExercise(id, title = "", author = "", text = "", state, solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), markedText = "", toIgnore = ""),
+    UmlExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0),
+      solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), markedText = "", toIgnore = ""),
     mappings = Seq.empty
   )
 

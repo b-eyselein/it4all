@@ -55,7 +55,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, rawBlanksText, blanksText).mapTo[BlanksExercise]
+    override def * = (id, title, author, text, state, semanticVersion, rawBlanksText, blanksText).mapTo[BlanksExercise]
 
   }
 

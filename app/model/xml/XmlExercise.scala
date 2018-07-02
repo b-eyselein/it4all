@@ -20,7 +20,8 @@ case class XmlCompleteExercise(ex: XmlExercise, sampleGrammars: Seq[XmlSampleGra
 
 }
 
-case class XmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, grammarDescription: String, rootNode: String) extends Exercise
+case class XmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+                       grammarDescription: String, rootNode: String) extends Exercise
 
 case class XmlSampleGrammar(id: Int, exerciseId: Int, sampleGrammar: DocTypeDef)
 

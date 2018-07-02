@@ -4,7 +4,7 @@ package model
 trait ExerciseCollection[ExType <: Exercise, CompExType <: CompleteEx[ExType]] extends HasBaseValues
 
 
-trait CompleteCollection extends HasBaseValues {
+trait CompleteCollection  {
 
   type Ex <: Exercise
 
@@ -20,14 +20,14 @@ trait CompleteCollection extends HasBaseValues {
 
   def renderRest: play.twirl.api.Html
 
-  override def id: Int = coll.id
-
-  override def title: String = coll.title
-
-  override def author: String = coll.author
-
-  override def text: String = coll.text
-
-  override def state: ExerciseState = coll.state
+//  override def id: Int = coll.id
+//
+//  override def title: String = coll.title
+//
+//  override def author: String = coll.author
+//
+//  override def text: String = coll.text
+//
+//  override def state: ExerciseState = coll.state
 
 }

@@ -48,7 +48,7 @@
             case None => {}
             case Some(classDiagPart) => {
                 @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
-                    <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(exercise.id)"></div>
+                    <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(exercise.ex.id)"></div>
                 }
             }
         }
@@ -62,7 +62,7 @@
                 <div class="col-md-6">
                     <h2>Aufgabenstellung</h2>
 
-                    <div class="well">@Html(exercise.text)</div>
+                    <div class="well">@Html(exercise.ex.text)</div>
 
                     <div class="form-group">
                         <div class="btn-group d-flex">
@@ -109,9 +109,9 @@
                     <button class="btn w-100">
                         Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
                     </button>
-                    <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)"
+                    <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
                     class="btn btn-primary w-100" id="testBtn">Lösung testen</button>
-                    <button data-url="@routes.ExerciseController.sampleSolution(toolMainObject.urlPart, exercise.id, part.urlName)"
+                    <button data-url="@routes.ExerciseController.sampleSolution(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
                     class="btn btn-success w-100" id="sampleSolBtn">Musterlösung zeigen
                     </button>
                     <a class="btn btn-secondary w-100" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">

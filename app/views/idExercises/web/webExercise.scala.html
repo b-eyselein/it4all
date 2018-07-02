@@ -48,7 +48,7 @@
                         <a class="nav-link active" data-toggle="tab" href="#exAndEditTab">Aufgabenstellung</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-url="@routes.ExerciseController.updateWebSolution(exercise.id, part.urlName)"
+                        <a class="nav-link" data-url="@routes.ExerciseController.updateWebSolution(exercise.ex.id, part.urlName)"
                         data-toggle="tab" href="#previewTab" id="previewTabBtn">Live-Vorschau</a>
                     </li>
                 </ul>
@@ -81,7 +81,7 @@
                                 @*<button type="button" class="btn w-100" onclick="toggleFullscreen()">*@
                                 @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>*@
                                 @*</button>*@
-                                <button class="btn btn-success w-100" id="testBtn" data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)">
+                                <button class="btn btn-success w-100" id="testBtn" data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.ex.id, part.urlName)">
                                     Lösung testen</button>
                                 <a class="btn btn-secondary  w-100" href="@routes.MainExerciseController.index("web")">
                                     Bearbeitung beenden</a>

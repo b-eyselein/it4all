@@ -3,6 +3,7 @@ title: Frühstück
 author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 status: APPROVED
+semanticVersion: 1.0.0
 
 rootNode: breakfast
 grammarDescription: >

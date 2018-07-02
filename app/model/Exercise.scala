@@ -22,7 +22,6 @@ object ExerciseState extends PlayEnum[ExerciseState] {
 
 }
 
-
 trait HasBaseValues {
 
   def id: Int
@@ -35,7 +34,8 @@ trait HasBaseValues {
 
   def state: ExerciseState
 
-// FIXME:  def semanticVersion = ???
+  // FIXME: use semantic version!
+  def semanticVersion: SemanticVersion
 
 }
 
@@ -96,24 +96,13 @@ trait ExInColl extends Exercise {
 
 }
 
-trait CompleteEx[E <: Exercise] extends HasBaseValues {
+trait CompleteEx[E <: Exercise] {
 
   def ex: E
 
   def preview: Html
 
   def tags: Seq[ExTag] = Seq.empty
-
-
-  override def id: Int = ex.id
-
-  override def title: String = ex.title
-
-  override def author: String = ex.author
-
-  override def text: String = ex.text
-
-  override def state: ExerciseState = ex.state
 
 }
 

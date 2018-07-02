@@ -3,7 +3,7 @@ package model.rose
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
 import model.programming.{ProgDataTypes, ProgLanguages}
-import model.{ExerciseState, MyYamlProtocol, YamlObj}
+import model.{MyYamlProtocol, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -11,9 +11,11 @@ import scala.util.Try
 
 object RoseExYamlProtocol extends MyYamlProtocol {
 
-  implicit object RoseExYamlFormat extends HasBaseValuesYamlFormat[RoseCompleteEx] {
+  implicit object RoseExYamlFormat extends MyYamlObjectFormat[RoseCompleteEx] {
 
-    protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[RoseCompleteEx] = for {
+    override protected def readObject(yamlObject: YamlObject): Try[RoseCompleteEx] = for {
+      baseValues <- readBaseValues(yamlObject)
+
       fieldWidth <- yamlObject.intField("fieldWidth")
       fieldHeight <- yamlObject.intField("fieldHeight")
       isMp <- yamlObject.boolField("isMultiplayer")
@@ -28,10 +30,11 @@ object RoseExYamlProtocol extends MyYamlProtocol {
       //FIXME: return...
         Logger.error("Could not read rose sample sol", sampleSolFailure.exception)
 
-      RoseCompleteEx(new RoseExercise(baseValues, fieldWidth, fieldHeight, isMp), inputTypes._1, sampleSolutions._1)
+      RoseCompleteEx(RoseExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6,
+        fieldWidth, fieldHeight, isMp), inputTypes._1, sampleSolutions._1)
     }
 
-    protected def writeRest(completeEx: RoseCompleteEx): Map[YamlValue, YamlValue] = ???
+    override def write(completeEx: RoseCompleteEx): YamlObject = ???
 
   }
 

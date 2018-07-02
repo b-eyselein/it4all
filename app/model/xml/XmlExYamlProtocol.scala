@@ -26,7 +26,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
         Logger.error("Could not read xml sample grammar", grammarReadError.exception)
 
       XmlCompleteExercise(
-        XmlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, grammarDescription, rootNode),
+        XmlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, grammarDescription, rootNode),
         sampleGrammars._1)
     }
 

@@ -4,7 +4,7 @@ import javax.inject._
 import model.programming.ProgConsts._
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, User}
+import model.{Consts, ExerciseState, SemanticVersion, User}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
@@ -88,7 +88,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
-    ProgExercise(id, title = "", author = "", text = "", state, folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
+    ProgExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0),
+      folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
     inputTypes = Seq.empty, sampleSolutions = Seq.empty, sampleTestData = Seq.empty, maybeClassDiagramPart = None
   )
 

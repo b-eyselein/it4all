@@ -6,7 +6,7 @@ import javax.inject._
 import model.spread.SpreadToolMain._
 import model.toolMains.{FileExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, User}
+import model.{Consts, ExerciseState, SemanticVersion, User}
 import play.api.data.Form
 import play.twirl.api.Html
 
@@ -71,7 +71,7 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): SpreadExercise =
-    SpreadExercise(id, title = "", author = "", text = "", state, sampleFilename = "", templateFilename = "")
+    SpreadExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), sampleFilename = "", templateFilename = "")
 
   // Views
 

@@ -51,7 +51,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
   def downloadTemplate(toolType: String, id: Int, fileExtension: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
       toolMain.futureCompleteExById(id) map {
-        case Some(exercise) => Ok.sendFile((toolMain.templateDirForExercise(exercise.id) / (exercise.templateFilename + "." + fileExtension)).toFile)
+        case Some(exercise) => Ok.sendFile((toolMain.templateDirForExercise(exercise.ex.id) / (exercise.templateFilename + "." + fileExtension)).toFile)
         case None           => Redirect(routes.MainExerciseController.index(toolMain.urlPart))
       }
   }

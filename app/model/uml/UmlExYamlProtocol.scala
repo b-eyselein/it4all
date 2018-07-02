@@ -2,7 +2,7 @@ package model.uml
 
 import model.MyYamlProtocol._
 import model.uml.UmlConsts._
-import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
+import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -11,9 +11,11 @@ import scala.util.{Failure, Try}
 
 object UmlExYamlProtocol extends MyYamlProtocol {
 
-  implicit object UmlExYamlFormat extends HasBaseValuesYamlFormat[UmlCompleteEx] {
+  implicit object UmlExYamlFormat extends MyYamlObjectFormat[UmlCompleteEx] {
 
-    override def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[UmlCompleteEx] = for {
+    override def readObject(yamlObject: YamlObject): Try[UmlCompleteEx] = for {
+      baseValues <- readBaseValues(yamlObject)
+
       mappingTries <- yamlObject.arrayField(mappingsName, UmlMappingYamlFormat(baseValues._1).read)
       ignoreWordTries <- yamlObject.arrayField(ignoreWordsName, _ asStr)
       classDiagram <- yamlObject.someField(solutionName).flatMap(UmlSolutionYamlFormat.read)
@@ -34,16 +36,20 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       val textParser = new UmlExTextParser(baseValues._4, mappingsForTextParser, ignoreWords)
 
       UmlCompleteEx(
-        UmlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, classDiagram,
-          textParser.parseText, ignoreWords mkString tagJoinChar),
+        UmlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6,
+          classDiagram, textParser.parseText, ignoreWords mkString tagJoinChar),
         mappings
       )
     }
 
-    override protected def writeRest(completeEx: UmlCompleteEx): Map[YamlValue, YamlValue] = Map(
-      YamlString(mappingsName) -> YamlArr(completeEx.mappings map UmlMappingYamlFormat(completeEx.ex.id).write),
-      YamlString(ignoreWordsName) -> YamlArr(completeEx.ex.splitToIgnore map YamlString),
+    override def write(completeEx: UmlCompleteEx): YamlValue = YamlObject(
+      writeBaseValues(completeEx.ex) ++
+        Map(
+          YamlString(mappingsName) -> YamlArr(completeEx.mappings map UmlMappingYamlFormat(completeEx.ex.id).write),
+          YamlString(ignoreWordsName) -> YamlArr(completeEx.ex.splitToIgnore map YamlString),
+        )
     )
+
   }
 
   case class UmlMappingYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlMapping] {

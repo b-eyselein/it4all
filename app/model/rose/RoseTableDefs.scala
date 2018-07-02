@@ -70,7 +70,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer).mapTo[RoseExercise]
+    override def * = (id, title, author, text, state, semanticVersion, fieldWidth, fieldHeight, isMultiplayer).mapTo[RoseExercise]
 
   }
 

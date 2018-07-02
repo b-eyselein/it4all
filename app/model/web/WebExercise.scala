@@ -81,7 +81,7 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
 // Database classes
 
-case class WebExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
+case class WebExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
                        htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
 
 trait WebTask {

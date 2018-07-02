@@ -1,8 +1,8 @@
 package model.spread
 
 import javax.inject.Inject
-import model.{ExerciseState, _}
 import model.persistence.FileExesTableDefs
+import model.{ExerciseState, SemanticVersion, _}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 
@@ -10,12 +10,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 // Classes for use
 
-case class SpreadExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
-                          sampleFilename: String, templateFilename: String)
-  extends Exercise with FileCompleteEx[SpreadExercise, SpreadExPart] {
-
-  def this(baseValues: (Int, String, String, String, ExerciseState), sampleFileName: String, templateFileName: String) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, sampleFileName, templateFileName)
+case class SpreadExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+                          sampleFilename: String, templateFilename: String) extends Exercise with FileCompleteEx[SpreadExercise, SpreadExPart] {
 
   override def ex: SpreadExercise = this
 
@@ -51,7 +47,7 @@ class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
     def templateFilename = column[String]("template_filename")
 
-    override def * = (id, title, author, text, state, sampleFilename, templateFilename).mapTo[SpreadExercise]
+    override def * = (id, title, author, text, state, semanticVersion, sampleFilename, templateFilename).mapTo[SpreadExercise]
 
   }
 

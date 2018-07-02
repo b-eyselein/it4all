@@ -141,6 +141,9 @@ trait TableDefs {
   private implicit val markColumnType: BaseColumnType[Mark] =
     MappedColumnType.base[Mark, String](_.entryName, str => Mark.withNameInsensitiveOption(str) getOrElse Mark.NO_MARK)
 
+  protected implicit val semanticVersionColumnType: BaseColumnType[SemanticVersion] =
+    MappedColumnType.base[SemanticVersion, String](_.asString, SemanticVersionHelper.fromString)
+
   // Tables
 
   // Users
@@ -272,6 +275,8 @@ trait TableDefs {
     def text = column[String]("ex_text")
 
     def state = column[ExerciseState]("ex_state")
+
+    def semanticVersion = column[SemanticVersion]("semantic_version")
 
   }
 
