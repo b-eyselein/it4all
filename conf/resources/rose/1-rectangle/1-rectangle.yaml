@@ -4,7 +4,7 @@ author: bje40dc
 text: >
   Zeichen Sie ein Rechteck mit der übergebenen Breite und Höhe! Benutzen Sie dazu die API des Roboters
   und zum "Zeichnen" die Markierungsfunktions des Roboters! Ihr Roboter startet im Feld (0, 0).
-status: CREATED
+status: APPROVED
 
 fieldWidth: 8
 fieldHeight: 10

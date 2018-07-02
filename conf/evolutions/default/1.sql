@@ -186,10 +186,10 @@ CREATE TABLE IF NOT EXISTS prog_solutions (
   username    VARCHAR(50),
   exercise_id INT,
   part        VARCHAR(30),
-  #   language    VARCHAR(20),
   points      DOUBLE,
   max_points  DOUBLE,
   solution    TEXT,
+  language    VARCHAR(20),
 
   PRIMARY KEY (username, exercise_id, part),
   FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)

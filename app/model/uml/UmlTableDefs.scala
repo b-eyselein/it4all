@@ -3,6 +3,7 @@ package model.uml
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,6 +44,15 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected implicit val partTypeColumnType: BaseColumnType[UmlExPart] =
     MappedColumnType.base[UmlExPart, String](_.entryName, UmlExParts.withNameInsensitive)
 
+  //  override protected
+  private implicit val solutionTypeColumnType: BaseColumnType[UmlClassDiagram] =
+    // FIXME: refactor!
+    MappedColumnType.base[UmlClassDiagram, String](UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(_).toString(),
+      str => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
+        case JsSuccess(sol, _) => sol
+        case JsError(_)        => ???
+      })
+
   // Table definitions
 
   class UmlExercisesTable(tag: Tag) extends HasBaseValuesTable[UmlExercise](tag, "uml_exercises") {
@@ -57,7 +67,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, solutionAsJson, markedText, toIgnore) <> (UmlExercise.tupled, UmlExercise.unapply)
+    override def * = (id, title, author, text, state, solutionAsJson, markedText, toIgnore).mapTo[UmlExercise]
 
   }
 
@@ -75,22 +85,15 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    override def * = (exerciseId, mappingKey, mappingValue) <> (UmlMapping.tupled, UmlMapping.unapply)
+    override def * = (exerciseId, mappingKey, mappingValue).mapTo[UmlMapping]
 
   }
 
-  override protected implicit val solutionTypeColumnType: BaseColumnType[UmlClassDiagram] =
-    MappedColumnType.base[UmlClassDiagram, String](_.toString, _ => null)
-
   class UmlSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "uml_solutions") {
 
-//    def solution = column[UmlClassDiagram]("solution_json")
+    def solution = column[UmlClassDiagram]("solution")
 
-
-    //    override def pk = primaryKey("pk", (username, exerciseId, part))
-
-
-    override def * = (username, exerciseId, part, solution, points, maxPoints) <> (UmlSolution.tupled, UmlSolution.unapply)
+    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[UmlSolution]
 
   }
 

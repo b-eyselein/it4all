@@ -5,7 +5,6 @@ import model.persistence.SingleExerciseTableDefs
 import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -84,7 +83,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def grammarDescription = column[String]("grammar_description")
 
 
-    override def * = (id, title, author, text, state, grammarDescription, rootNode) <> (XmlExercise.tupled, XmlExercise.unapply)
+    override def * = (id, title, author, text, state, grammarDescription, rootNode).mapTo[XmlExercise]
 
   }
 
@@ -102,25 +101,17 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    def * = (id, exerciseId, sampleGrammar) <> (XmlSampleGrammar.tupled, XmlSampleGrammar.unapply)
+    def * = (id, exerciseId, sampleGrammar).mapTo[XmlSampleGrammar]
 
   }
-
-  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 
   class XmlSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "xml_solutions") {
 
-    //    def solution = column[String]("solution")
+    def solution = column[String]("solution")
 
 
-    override def * = (username, exerciseId, part, solution, points, maxPoints) <> (XmlSolution.tupled, XmlSolution.unapply)
+    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[XmlSolution]
 
   }
-
-  //  class XmlResultsTable(tag: Tag) extends ResultsForPartsTable[XmlResultForPart](tag, "xml_results") {
-  //
-  //    def * = (username, exerciseId, part, points, maxPoints) <> (XmlResultForPart.tupled, XmlResultForPart.unapply)
-  //
-  //  }
 
 }

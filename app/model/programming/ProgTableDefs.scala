@@ -65,8 +65,8 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
     MappedColumnType.base[ProgExPart, String](_.entryName, ProgExParts.withNameInsensitive)
 
-  override protected implicit val solutionTypeColumnType: BaseColumnType[ProgSolution] =
-    MappedColumnType.base[ProgSolution, String](_.toString, _ => null)
+  //  override protected implicit val solutionTypeColumnType: BaseColumnType[ProgSolution] =
+  //    MappedColumnType.base[ProgSolution, String](_.asJson.toString, ProgSolutionHelper.fromJson)
 
   // Tables
 
@@ -88,7 +88,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, folderIdentifier, base, functionname, indentLevel, outputType, baseDataAsJson.?) <> (ProgExercise.tupled, ProgExercise.unapply)
+    override def * = (id, title, author, text, state, folderIdentifier, base, functionname, indentLevel, outputType, baseDataAsJson.?).mapTo[ProgExercise]
 
   }
 
@@ -108,7 +108,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    override def * = (id, exerciseId, inputName, inputType) <> (ProgInput.tupled, ProgInput.unapply)
+    override def * = (id, exerciseId, inputName, inputType).mapTo[ProgInput]
 
   }
 
@@ -128,7 +128,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    override def * = (exerciseId, language, base, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
+    override def * = (exerciseId, language, base, solution).mapTo[ProgSampleSolution]
 
   }
 
@@ -154,7 +154,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", (id, exerciseId))
 
 
-    override def * = (id, exerciseId, inputAsJson, output) <> (SampleTestData.tupled, SampleTestData.unapply)
+    override def * = (id, exerciseId, inputAsJson, output).mapTo[SampleTestData]
 
   }
 
@@ -170,7 +170,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def userFk = foreignKey("user_fk", username, users)(_.username)
 
 
-    override def * = (id, exerciseId, inputAsJson, output, username, state) <> (CommitedTestData.tupled, CommitedTestData.unapply)
+    override def * = (id, exerciseId, inputAsJson, output, username, state).mapTo[CommitedTestData]
 
   }
 
@@ -189,7 +189,11 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   class ProgSolutionTable(tag: Tag) extends PartSolutionsTable(tag, "prog_solutions") {
 
-    override def * = (username, exerciseId, part, solution, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
+    def solution = column[String]("solution")
+
+    def language = column[ProgLanguage]("language")
+
+    override def * = (username, exerciseId, part, solution, language, points, maxPoints).mapTo[DBProgSolution]
 
   }
 

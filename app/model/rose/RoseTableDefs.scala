@@ -5,7 +5,6 @@ import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgDataTypes.ProgDataType
 import model.programming.{ProgDataTypes, ProgLanguage, ProgLanguages}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -71,7 +70,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer) <> (RoseExercise.tupled, RoseExercise.unapply)
+    override def * = (id, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer).mapTo[RoseExercise]
 
   }
 
@@ -91,7 +90,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    override def * = (id, exerciseId, name, inputType) <> (RoseInputType.tupled, RoseInputType.unapply)
+    override def * = (id, exerciseId, name, inputType).mapTo[RoseInputType]
 
   }
 
@@ -109,17 +108,13 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
-    override def * = (exerciseId, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
+    override def * = (exerciseId, language, solution).mapTo[RoseSampleSolution]
 
   }
 
-  // Solutions of users
-
-  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
-
   class RoseSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "rose_solutions") {
 
-    //    def solution = column[String]("solution")
+    def solution = column[String]("solution")
 
 
     override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[RoseSolution]

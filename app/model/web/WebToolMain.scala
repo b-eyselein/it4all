@@ -53,16 +53,16 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // DB
 
-  override def futureSaveSolution(sol: WebSolution): Future[Boolean] = tables.futureSaveSolution(sol) map (_ && writeWebSolutionFile(sol.username, sol.exerciseId, sol.part, sol.solution))
+  override def futureSaveSolution(sol: WebSolution): Future[Boolean] = tables.futureSaveSolution(sol)
 
-  def writeWebSolutionFile(username: String, exerciseId: Int, part: WebExPart, content: String): Boolean = {
+  def writeWebSolutionFile(username: String, exerciseId: Int, part: WebExPart, content: String): Try[Path] = {
     val fileEnding = part match {
       case WebExParts.PHPPart => "php"
       case _                  => "html"
     }
 
     val target: Path = solutionDirForExercise(username, exerciseId) / ("test." + fileEnding)
-    write(target, content).isSuccess
+    write(target, content)
   }
 
   override def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: WebExPart): Future[Option[DBSolType]] =
@@ -110,12 +110,15 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Correction
 
   override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
-    val driver = new HtmlUnitDriver(true)
-    driver.get(getSolutionUrl(user, exercise.ex.id, part))
+    writeWebSolutionFile(user.username, exercise.id, part, learnerSolution) flatMap { _ =>
 
-    val results = Try(exercise.tasksForPart(part) map (task => WebCorrector.evaluateWebTask(task, driver)))
+      val driver = new HtmlUnitDriver(true)
+      driver.get(getSolutionUrl(user, exercise.ex.id, part))
 
-    results map (WebCompleteResult(learnerSolution, exercise, part, _))
+      val results = Try(exercise.tasksForPart(part) map (task => WebCorrector.evaluateWebTask(task, driver)))
+
+      results map (WebCompleteResult(learnerSolution, exercise, part, _))
+    }
   }
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: WebExPart): Future[String] = ???

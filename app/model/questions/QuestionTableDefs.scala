@@ -86,7 +86,8 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     MappedColumnType.base[Correctness, String](_.name, str => Correctness.byString(str) getOrElse Correctness.OPTIONAL)
 
   override protected implicit val solutionTypeColumnType: BaseColumnType[Seq[GivenAnswer]] = ???
-//    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq.empty)
+
+  //    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq.empty)
 
   // Table defs
 
@@ -98,7 +99,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, theme) <> (Quiz.tupled, Quiz.unapply)
+    override def * = (id, title, author, text, state, theme).mapTo[Quiz]
 
   }
 
@@ -114,7 +115,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     def quizFk = foreignKey("quiz_fk", collectionId, collTable)(_.id)
 
 
-    override def * = (id, title, author, text, state, collectionId, questionType, maxPoints) <> (Question.tupled, Question.unapply)
+    override def * = (id, title, author, text, state, collectionId, questionType, maxPoints).mapTo[Question]
 
   }
 
@@ -138,7 +139,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     def questionFk = foreignKey("question_fk", (questionId, quizId), exTable)(question => (question.id, question.collectionId))
 
 
-    override def * = (id, questionId, quizId, ansText, correctness, explanation.?) <> (Answer.tupled, Answer.unapply)
+    override def * = (id, questionId, quizId, ansText, correctness, explanation.?).mapTo[Answer]
 
   }
 

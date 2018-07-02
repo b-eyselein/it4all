@@ -1,8 +1,7 @@
 package model.spread
 
 import javax.inject.Inject
-import model.ExerciseState
-import model._
+import model.{ExerciseState, _}
 import model.persistence.FileExesTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
@@ -52,7 +51,7 @@ class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
     def templateFilename = column[String]("template_filename")
 
-    override def * = (id, title, author, text, state, sampleFilename, templateFilename) <> (SpreadExercise.tupled, SpreadExercise.unapply)
+    override def * = (id, title, author, text, state, sampleFilename, templateFilename).mapTo[SpreadExercise]
 
   }
 

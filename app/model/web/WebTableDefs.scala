@@ -3,7 +3,6 @@ package model.web
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -89,8 +88,6 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =
     MappedColumnType.base[WebExPart, String](_.entryName, WebExParts.withNameInsensitive)
 
-  //  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
-
   // Table definitions
 
   class WebExercisesTable(tag: Tag) extends HasBaseValuesTable[WebExercise](tag, "web_exercises") {
@@ -105,7 +102,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, htmlText.?, jsText.?, phpText.?) <> (WebExercise.tupled, WebExercise.unapply)
+    override def * = (id, title, author, text, state, htmlText.?, jsText.?, phpText.?).mapTo[WebExercise]
 
   }
 
@@ -131,7 +128,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def textContent = column[String]("text_content")
 
 
-    override def * = (id, exerciseId, text, xpathQuery, textContent.?) <> (HtmlTask.tupled, HtmlTask.unapply)
+    override def * = (id, exerciseId, text, xpathQuery, textContent.?).mapTo[HtmlTask]
 
   }
 
@@ -151,7 +148,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def taskFk = foreignKey("task_fk", (taskId, exerciseId), htmlTasks)(t => (t.id, t.exerciseId))
 
 
-    override def * = (key, taskId, exerciseId, value) <> ((Attribute.apply _).tupled, Attribute.unapply)
+    override def * = (key, taskId, exerciseId, value).mapTo[Attribute]
 
   }
 
@@ -190,14 +187,12 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
-
   class WebSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "web_solutions") {
 
-//    def solution = column[String]("solution")
+    def solution = column[String]("solution")
 
 
-    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[WebSolution] // (WebSolution.tupled, WebSolution.unapply)
+    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[WebSolution]
 
   }
 

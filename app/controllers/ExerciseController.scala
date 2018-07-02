@@ -23,9 +23,9 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Abstract types
 
-//  type SolType // <: Solution
+  //  type SolType // <: Solution
 
-//  type DBSolType <: Solution[SolType]
+  //  type DBSolType <: Solution[SolType]
 
   override type ToolMainType = IdExerciseToolMain
 
@@ -128,10 +128,12 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       request.body.asText match {
         case None       => BadRequest("No content!")
         case Some(text) =>
-          val fileWritten = webToolMain.writeWebSolutionFile(user.username, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), text)
-
-          if (fileWritten) Ok("Solution saved")
-          else BadRequest("Solution was not saved!")
+          webToolMain.writeWebSolutionFile(user.username, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), text) match {
+            case Success(_)     => Ok("Solution saved")
+            case Failure(error) =>
+              Logger.error("Error while updating web solution", error)
+              BadRequest("Solution was not saved!")
+          }
       }
   }
 

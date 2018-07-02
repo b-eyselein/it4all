@@ -99,11 +99,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   // Correction
 
   override def instantiateSolution(username: String, exerciseId: Int, part: ProgExPart, solution: ProgSolution, points: Double, maxPoints: Double): DBProgSolution =
-    DBProgSolution(username, exerciseId, part, solution, points, maxPoints)
+    DBProgSolution(username, exerciseId, part, solution.solution, solution.language, points, maxPoints)
 
   override def correctEx(user: User, sol: SolType, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] = {
-
-    val language = ProgLanguages.STANDARD_LANG
 
     val (implementation, testData) = sol match {
       case ProgTestDataSolution(td, _) =>
@@ -117,7 +115,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     }
 
     val correctionResult: Try[Future[Try[ProgCompleteResult]]] =
-      ProgCorrector.correct(user, exercise, language, implementation, testData, toolMain = this)
+      ProgCorrector.correct(user, exercise, sol.language, implementation, testData, toolMain = this)
 
     correctionResult match {
       case Success(futureRes) => futureRes
@@ -145,12 +143,10 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       val declaration: String = maybeOldSolution map (_.solution) map {
         case ptds: ProgTestDataSolution => ""
         case pss: ProgStringSolution    => pss.solution
-      } getOrElse ""
-
-      //      getOrElse {
-      //        implExtractorRegex.findFirstMatchIn(exercise.ex.base) map (_.group(1).trim()) getOrElse exercise.ex.base
-      // //        FIXME: remove comments like '# {2}'!
-      //      }
+      } getOrElse {
+        //        FIXME: remove comments like '# {2}'!
+        implExtractorRegex.findFirstMatchIn(exercise.ex.base) map (_.group(1).trim()) getOrElse exercise.ex.base
+      }
 
       views.html.idExercises.programming.progExercise(user, this, exercise, declaration, ProgExParts.Implementation)
 

@@ -9,16 +9,14 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType , DBSolType <: PartSolution[PartType, SolType], PartType <: ExPart] extends IdExerciseTableDefs[Ex, CompEx] {
+trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType, DBSolType <: PartSolution[PartType, SolType], PartType <: ExPart] extends IdExerciseTableDefs[Ex, CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
 
-  protected type SolTableDef <: PartSolutionsTable //[SolType, DBSolType]
+  protected type SolTableDef <: PartSolutionsTable
 
   protected val solTable: TableQuery[SolTableDef]
-
-  //  protected type PartResultType <: ResultForPart[PartType]
 
   // Implicit column types
 
@@ -44,7 +42,7 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
   //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
-//  def futureSaveResult(username: String, exerciseId: Int, part: PartType, points: Double, maxPoints: Double): Future[Boolean] = Future(false)
+  //  def futureSaveResult(username: String, exerciseId: Int, part: PartType, points: Double, maxPoints: Double): Future[Boolean] = Future(false)
 
   //    db.run(resultsForPartsTable insertOrUpdate WebResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
   //      case e: Throwable =>
@@ -53,8 +51,6 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
   //    }
 
   // Abstract table definitions
-
-  protected implicit val solutionTypeColumnType: slick.ast.TypedType[SolType]
 
   protected abstract class PartSolutionsTable(tag: Tag, name: String) extends Table[DBSolType](tag, name) {
 
@@ -68,7 +64,7 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
     def maxPoints = column[Double]("max_points")
 
-    def solution = column[SolType]("solution")
+    //    def solution = column[SolType]("solution")
 
 
     def pk = primaryKey("pk", (username, exerciseId, part))

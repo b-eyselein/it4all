@@ -83,7 +83,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk = primaryKey("pk", id)
 
 
-    override def * = (id, title, author, text, state, shortName) <> (SqlScenario.tupled, SqlScenario.unapply)
+    override def * = (id, title, author, text, state, shortName).mapTo[SqlScenario]
 
   }
 
@@ -101,7 +101,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def scenarioFk = foreignKey("scenario_fk", collectionId, collTable)(_.id)
 
 
-    override def * = (id, title, author, text, state, collectionId, exerciseType, tags, hint.?) <> (SqlExercise.tupled, SqlExercise.unapply)
+    override def * = (id, title, author, text, state, collectionId, exerciseType, tags, hint.?).mapTo[SqlExercise]
 
   }
 
@@ -121,7 +121,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def exerciseFk = foreignKey("exercise_fk", (exerciseId, scenarioId), exTable)(exes => (exes.id, exes.collectionId))
 
 
-    override def * = (id, exerciseId, scenarioId, sample) <> (SqlSample.tupled, SqlSample.unapply)
+    override def * = (id, exerciseId, scenarioId, sample).mapTo[SqlSample]
 
   }
 
@@ -130,7 +130,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution = column[String]("solution")
 
 
-    override def * = (username, collectionId, exerciseId, solution, points, maxPoints) <> (SqlSolution.tupled, SqlSolution.unapply)
+    override def * = (username, collectionId, exerciseId, solution, points, maxPoints).mapTo[SqlSolution]
 
   }
 
