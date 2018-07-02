@@ -35,6 +35,8 @@ trait HasBaseValues {
 
   def state: ExerciseState
 
+// FIXME:  def semanticVersion = ???
+
 }
 
 trait Solution[SolType] {
@@ -121,21 +123,7 @@ trait SingleCompleteEx[Ex <: Exercise, PartType <: ExPart] extends CompleteEx[Ex
 
 }
 
-//trait ResultForPart[PartType <: ExPart] {
-//
-//  val username: String
-//  val exerciseId: Int
-//  val part: PartType
-//  val points: Double
-//  val maxPoints: Double
-//
-//}
-
-trait PartsCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] {
-
-  def textForPart(urlName: String): String = ex.text
-
-}
+trait PartsCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType]
 
 trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] {
 

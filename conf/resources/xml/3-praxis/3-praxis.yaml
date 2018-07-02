@@ -6,12 +6,15 @@ status: APPROVED
 
 rootNode: krankenhaus
 grammarDescription: >
-  TODO!
+  In dieser XML-Datei soll eine Praxis [praxis] beschrieben werden. In dieser arbeitet mindestens ein Arzt [arzt].
+  Ein Arzt hat einen Namen [name] und mindestens einen Termin [termin]. Ein Termin besteht aus einem Datum [datum], einer
+  Uhrzeit [uhrzeit], einem Patienten und einer (optionalen) Beschreibung [beschreibung]. Außerdem wird für jeden Termin
+  gespeichert [art], ob es eine Untersuchung [untersuchung], Behandlung [behandlung] oder eine Operation [operation] ist.
 
 sampleGrammars:
 - id: 1
   grammar: |
-    <!ELEMENT krankenhaus (arzt+)>
+    <!ELEMENT praxis (arzt+)>
     <!ELEMENT arzt (name, termin+)>
     <!ELEMENT name (#PCDATA)>
     <!ELEMENT termin (datum, uhrzeit, patient, beschreibung?)>

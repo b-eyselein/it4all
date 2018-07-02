@@ -6,7 +6,11 @@ status: APPROVED
 
 rootNode: lecture
 grammarDescription: >
-  TODO!
+  In den XML-Dateien soll eine Vorlesung [lecture] beschrieben werden. Diese hat mindestens einen Dozenten [lecturer],
+  mindestens einen Vorlesungszeitraum [date] und es nimmt mindestens ein Student [student] teil. Ein Dozent hat einen
+  Namen [name] und einen Titel [title]. Ein Vorlesungszeitraum besteht aus einer Zeit [hours] und einem
+  Wochentag [weekday] mit Werten von Montag bis Sonntag ("mon", "tue", "wed", "thu", "fri", "sat", "sun"). Ein
+  Student hat einen Namen und eine Matrikelnummer [matrikel].
 
 sampleGrammars:
 - id: 1

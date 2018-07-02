@@ -31,7 +31,19 @@
 
                 <hr>
 
-                <p><b>@Html(exercise.textForPart(part.urlName))</b></p>
+                @part match {
+                    case model.xml.XmlExParts.GrammarCreationXmlPart => {
+                        <p><b>Erstellen Sie eine DTD zu folgender Beschreibung.</b></p>
+                        <ul>
+                            <li><i>Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen.</i></li>
+                            <li><i>Falls nichts anderes angegeben ist, sollen die Element nur Text enthalten.</i></li>
+                        </ul>
+                    }
+                    case model.xml.XmlExParts.DocumentCreationXmlPart => {
+                        <p>Erstellen Sie ein XML-Dokument zu folgender Grammatik:</p>
+                    }
+                }
+                @*<p><b>@Html(exercise.textForPart(part.urlName))</b></p>*@
 
                 <div class="card">
                     <div class="card-body bg-light">

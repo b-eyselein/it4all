@@ -12,12 +12,6 @@ case class XmlCompleteExercise(ex: XmlExercise, sampleGrammars: Seq[XmlSampleGra
   override def preview: Html = //FIXME: move to toolMain!
     views.html.idExercises.xml.xmlPreview(this)
 
-  override def textForPart(urlName: String): String = XmlExParts.values.find(_.urlName == urlName) match {
-    case None                                     => text
-    case Some(XmlExParts.DocumentCreationXmlPart) => "Erstellen Sie ein XML-Dokument zu folgender Grammatik:"
-    case Some(XmlExParts.GrammarCreationXmlPart)  => "Erstellen Sie eine DTD zu folgender Beschreibung. Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen."
-  }
-
   def getTemplate(part: XmlExPart): String = part match {
     case XmlExParts.DocumentCreationXmlPart => s"""<?xml version="1.0" encoding="UTF-8"?>
                                                   |<!DOCTYPE ${ex.rootNode} SYSTEM "${ex.rootNode}.dtd">""".stripMargin

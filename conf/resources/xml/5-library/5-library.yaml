@@ -2,7 +2,7 @@ id: 5
 title: Bibliothek
 author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
-status: APPROVED
+status: ACCEPTED
 
 rootNode: bibliothek
 grammarDescription: >
