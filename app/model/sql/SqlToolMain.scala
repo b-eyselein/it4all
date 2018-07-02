@@ -9,7 +9,6 @@ import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.yaml.MyYamlFormat
 import play.api.data.Form
-import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.twirl.api.Html
 
@@ -48,7 +47,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override type Tables = SqlTableDefs
 
-  override type SolType = SqlSolution
+  override type SolType = String
+
+  override type DBSolType = SqlSolution
 
   override type R = EvaluationResult
 
@@ -83,11 +84,11 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Read from requests
 
-  override def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SqlSolution] =
-    request.body.asJson flatMap (_.asObj) flatMap (jsObj => jsObj.stringField(learnerSolutionName)) map (str => SqlSolution(user.username, collId, id, str))
+  override def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
+    request.body.asJson flatMap (_.asObj) flatMap (jsObj => jsObj.stringField(learnerSolutionName)) // map (str => SqlSolution(user.username, collId, id, str))
 
-  override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SqlSolution] =
-    SolutionFormHelper.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(SqlSolution(user.username, collId, id, sol.learnerSolution)))
+  override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
+    SolutionFormHelper.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
 
   override protected def compExTypeForm(collId: Int): Form[SqlCompleteEx] = SqlFormMappings.sqlCompleteExForm(collId)
 
@@ -117,18 +118,19 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Correction
 
-  override protected def correctEx(user: User, learnerSolution: SqlSolution, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Future[Try[SqlCorrResult]] =
-    saveSolution(learnerSolution) map { solutionSaved =>
+  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Future[Try[SqlCorrResult]] = Future {
+    //    saveSolution(learnerSolution) map { solutionSaved =>
 
-      correctorsAndDaos.get(exercise.ex.exerciseType) match {
-        case None                   => Failure(new Exception("There is no corrector or sql dao for " + exercise.ex.exerciseType))
-        case Some((corrector, dao)) =>
-          // FIXME: parse queries here!?!
+    correctorsAndDaos.get(exercise.ex.exerciseType) match {
+      case None                   => Failure(new Exception("There is no corrector or sql dao for " + exercise.ex.exerciseType))
+      case Some((corrector, dao)) =>
+        // FIXME: parse queries here!?!
 
-          val sample = findBestFittingSample(learnerSolution.solution, exercise.samples.toList)
-          Try(corrector.correct(solutionSaved, dao, learnerSolution.solution, sample, exercise, sqlScenario))
-      }
+        val sample = findBestFittingSample(learnerSolution, exercise.samples.toList)
+        Try(corrector.correct(dao, learnerSolution, sample, exercise, sqlScenario))
+      //      }
     }
+  }
 
   // Result handlers
 
@@ -144,10 +146,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   //      Html("Es gab einen Fehler bei der Korrektur!")
   //  }
 
-  override def onLiveCorrectionResult(result: SqlCorrResult): JsValue = result match {
-    case res: SqlResult              => res.toJson
-    case SqlParseFailed(_, _, error) => Json.obj("msg" -> error.getMessage)
-  }
+  //  override def onLiveCorrectionResult(result: SqlCorrResult): JsValue = result match {
+  //    case res: SqlResult              => res.toJson
+  //    case SqlParseFailed(_, _, error) => Json.obj("msg" -> error.getMessage)
+  //  }
 
   // Helper methods
 
@@ -156,5 +158,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): SqlCompleteEx = SqlCompleteEx(
     SqlExercise(id, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT, collectionId = collId, tags = "", hint = None), samples = Seq.empty)
+
+  override def instantiateSolution(username: String, collId: Int, id: Int, solution: String, points: Double, maxPoints: Double): SqlSolution =
+    SqlSolution(username, collId, id, solution, points, maxPoints)
 
 }

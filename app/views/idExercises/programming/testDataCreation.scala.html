@@ -1,8 +1,8 @@
 @(user: model.User, exercise: model.programming.ProgCompleteEx, oldData: Seq[model.programming.CommitedTestData],
-        toolMainObject: model.programming.ProgrammingToolMain)
+        toolMainObject: model.programming.ProgToolMain)
 
 @stdTestSize = @{
-    model.programming.ProgrammingToolMain.standardTestCount
+    model.programming.ProgToolMain.standardTestCount
 }
 
 @scripts = {
@@ -52,7 +52,7 @@
 
                 <div class="btn-group btn-group-justified">
                     <div class="btn-group">
-                        <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, model.programming.ProgrammingExParts.TestdataCreation.urlName)"
+                        <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, model.programming.ProgExParts.TestdataCreation.urlName)"
                         id="testBtn" class="btn btn-primary">Testdaten validieren & speichern</button>
                     </div>
                     <a class="btn btn-default" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
@@ -68,7 +68,7 @@
                 <input title="hidden" hidden id="inputCount" value="@exercise.inputCount">
                 <input title="hidden" hidden id="exerciseId" value="@exercise.id">
                 <input title="hidden" hidden id="toolType" value="@toolMainObject.urlPart">
-                <input title="hidden" hidden id="exercisePart" value="@model.programming.ProgrammingExParts.TestdataCreation.urlName">
+                <input title="hidden" hidden id="exercisePart" value="@model.programming.ProgExParts.TestdataCreation.urlName">
 
                 <input title="hidden" hidden type="number" name="inputCount" id="inputCount" value="@exercise.inputCount">
                 <input title="hidden" hidden type="number" name="testCount" id="testCount" value="@Math.max(oldData.size, stdTestSize)">

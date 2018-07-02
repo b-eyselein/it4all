@@ -5,14 +5,14 @@ import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.Try
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, SqlSolution] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, String, SqlSolution] {
 
   import profile.api._
 
@@ -71,6 +71,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private implicit val SqlExTagColumnType: BaseColumnType[SqlExTag] =
     MappedColumnType.base[SqlExTag, String](_.entryName, str => SqlExTag.withNameInsensitiveOption(str) getOrElse SqlExTag.SQL_JOIN)
 
+  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
+
   // Tables
 
   class SqlScenarioesTable(tag: Tag) extends HasBaseValuesTable[SqlScenario](tag, "sql_scenarioes") {
@@ -123,12 +125,12 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  class SqlSolutionsTable(tag: Tag) extends CollectionExSolutionsTable[SqlSolution](tag, "sql_solutions") {
+  class SqlSolutionsTable(tag: Tag) extends CollectionExSolutionsTable(tag, "sql_solutions") {
 
-    def solution = column[String](solutionName)
+    def solution = column[String]("solution")
 
 
-    override def * = (username, collectionId, exerciseId, solution) <> (SqlSolution.tupled, SqlSolution.unapply)
+    override def * = (username, collectionId, exerciseId, solution, points, maxPoints) <> (SqlSolution.tupled, SqlSolution.unapply)
 
   }
 

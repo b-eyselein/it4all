@@ -31,7 +31,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override type PartType = XmlExPart
 
-  override type SolType = XmlSolution
+  override type SolType = String
+
+  override type DBSolType = XmlSolution
 
   override type R = XmlEvaluationResult
 
@@ -63,11 +65,10 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from requests, saving
 
-  override def readSolutionFromPostRequest(user: User, id: Int, part: XmlExPart)(implicit request: Request[AnyContent]): Option[XmlSolution] =
-    SolutionFormHelper.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution)) map { sol => XmlSolution(user.username, id, part, sol) }
+  override def readSolutionFromPostRequest(user: User, id: Int, part: XmlExPart)(implicit request: Request[AnyContent]): Option[SolType] =
+    SolutionFormHelper.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: XmlExPart): Option[XmlSolution] =
-    jsValue.asStr map (XmlSolution(user.username, id, part, _))
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: XmlExPart): Option[SolType] = jsValue.asStr
 
   // Other helper methods
 
@@ -75,29 +76,32 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     XmlExercise(id, title = "", author = "", text = "", state, grammarDescription = "", rootNode = ""),
     Seq.empty)
 
+  override def instantiateSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String, points: Double, maxPoints: Double): XmlSolution =
+    XmlSolution(username, exerciseId, part, solution, points, maxPoints)
+
   // Yaml
 
   override val yamlFormat: MyYamlFormat[XmlCompleteExercise] = XmlExYamlProtocol.XmlExYamlFormat
 
   // Correction
 
-  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlCompleteExercise, solutionSaved: Boolean): Future[Try[CompResult]] =
-    Future(solution.part match {
+  override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteExercise, part: XmlExPart): Future[Try[CompResult]] =
+    Future(part match {
       case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
 
         val grammarAndXmlTries: Try[(Path, Path)] = for {
           grammar <- write(dir, completeEx.ex.rootNode + ".dtd", completeEx.sampleGrammars.head.sampleGrammar.asString)
-          xml <- write(dir, completeEx.ex.rootNode + "." + XML_FILE_ENDING, solution.solution)
+          xml <- write(dir, completeEx.ex.rootNode + "." + XML_FILE_ENDING, solution)
         } yield (grammar, xml)
 
         grammarAndXmlTries map { case (grammar, xml) =>
           val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml)
-          XmlDocumentCompleteResult(solution.solution, solutionSaved, correctionResult)
+          XmlDocumentCompleteResult(solution, correctionResult)
         }
       })
 
-      case XmlExParts.GrammarCreationXmlPart => DocTypeDefParser.parseDTD(solution.solution) map { userGrammar =>
-        XmlGrammarCompleteResult(userGrammar, solutionSaved, completeEx)
+      case XmlExParts.GrammarCreationXmlPart => DocTypeDefParser.parseDTD(solution) map { userGrammar =>
+        XmlGrammarCompleteResult(userGrammar, completeEx)
       }
     })
 
@@ -115,9 +119,5 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   }
 
   override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
-
-  // Result handlers
-
-  override def onLiveCorrectionResult(pointsSaved: Boolean, result: CompResult): JsValue = result.toJson
 
 }

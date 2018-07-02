@@ -2,42 +2,15 @@ package model.blanks
 
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
-import model.{ExerciseState, _}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-// Classes for user
-
-case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]) extends PartsCompleteEx[BlanksExercise, BlanksExPart] {
-
-  override def preview: Html = // FIXME: move to toolMain!
-    views.html.idExercises.blanks.blanksPreview(this)
-
-  override def hasPart(partType: BlanksExPart): Boolean = true
-
-}
-
-
-case class BlanksExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
-                          rawBlanksText: String, blanksText: String) extends Exercise {
-
-  def this(baseValues: (Int, String, String, String, ExerciseState), rawBlanksText: String, blanksText: String) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, rawBlanksText, blanksText)
-
-}
-
-case class BlanksAnswer(id: Int, exerciseId: Int, solution: String)
-
-case class BlanksSolution(username: String, exerciseId: Int, part: BlanksExPart, answers: Seq[BlanksAnswer]) extends PartSolution[BlanksExPart]
-
-
 // Table definitions
 
 class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[BlanksExercise, BlanksCompleteExercise, BlanksSolution, BlanksExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[BlanksExercise, BlanksCompleteExercise, Seq[BlanksAnswer], BlanksSolution, BlanksExPart] {
 
   import profile.api._
 
@@ -49,7 +22,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   // Table queries
 
-  override protected val exTable = TableQuery[BlanksExercisesTable]
+  override protected val exTable  = TableQuery[BlanksExercisesTable]
   override protected val solTable = TableQuery[BlanksSolutionsTable]
 
   private val blanksSamples = TableQuery[BlanksSampleAnswersTable]
@@ -66,8 +39,8 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   // Column types
 
-  private implicit val givenAnswerColumnType: BaseColumnType[Seq[BlanksAnswer]] =
-    MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
+  //  private implicit val givenAnswerColumnType: BaseColumnType[Seq[BlanksAnswer]] =
+  //    MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
 
   override protected implicit val partTypeColumnType: BaseColumnType[BlanksExPart] =
     MappedColumnType.base[BlanksExPart, String](_.entryName, BlanksExParts.withNameInsensitive)
@@ -106,12 +79,17 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   }
 
-  class BlanksSolutionsTable(tag: Tag) extends PartSolutionsTable[BlanksSolution](tag, "blanks_answers") {
 
-    def answers = column[Seq[BlanksAnswer]]("answers")
+  override protected implicit val solutionTypeColumnType: BaseColumnType[Seq[BlanksAnswer]] =
+    MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
 
 
-    override def * = (username, exerciseId, part, answers) <> (BlanksSolution.tupled, BlanksSolution.unapply)
+  class BlanksSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "blanks_answers") {
+
+//    def solution = column[Seq[BlanksAnswer]]("answers")
+
+
+    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[BlanksSolution]
   }
 
 }

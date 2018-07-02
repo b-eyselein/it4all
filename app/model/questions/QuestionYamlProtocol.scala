@@ -23,7 +23,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read question", questionFailure.exception)
 
-      CompleteQuiz(new Quiz(baseValues, theme), questionTries._1)
+      CompleteQuiz(new Quiz(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, theme), questionTries._1)
     }
 
     override protected def writeRest(completeEx: CompleteQuiz): Map[YamlValue, YamlValue] = Map(
@@ -43,7 +43,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read answer", answerFailure.exception)
 
-      CompleteQuestion(new Question(baseValues, quizId, questionType, maxPoints), answerTries._1)
+      CompleteQuestion(new Question(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, quizId, questionType, maxPoints), answerTries._1)
     }
 
     override protected def writeRest(completeEx: CompleteQuestion): Map[YamlValue, YamlValue] = Map(

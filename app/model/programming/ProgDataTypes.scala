@@ -6,6 +6,8 @@ import play.api.libs.json._
 import scala.util.Try
 import scala.util.matching.Regex
 
+// FIXME: use enumatum!!!
+
 object ProgDataTypes {
 
   private val ListPattern: Regex = "list<(.*?)>".r
@@ -39,8 +41,8 @@ object ProgDataTypes {
   case object FLOAT extends NonGenericProgDataType("float", str => JsNumber(string2FloatBigDecimal(str)), _ => "0.0")
 
   case object BOOLEAN extends NonGenericProgDataType("boolean", str => JsBoolean(str == "true"), {
-    case PYTHON_3 => "False"
-    case _        => "false"
+    case ProgLanguages.PYTHON_3 => "False"
+    case _                      => "false"
   })
 
   case object STRING extends NonGenericProgDataType("string", str => JsString(str), _ => "\"\"")
@@ -52,8 +54,8 @@ object ProgDataTypes {
     override val typeName: String = s"list<${subtype.typeName}>"
 
     override def defaultValue: ProgLanguage => String = {
-      case PYTHON_3 => "[]"
-      case _        => ""
+      case ProgLanguages.PYTHON_3 => "[]"
+      case _                      => ""
     }
   }
 

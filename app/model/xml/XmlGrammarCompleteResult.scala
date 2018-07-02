@@ -7,7 +7,7 @@ import model.xml.dtd._
 
 import scala.language.postfixOps
 
-case class XmlGrammarCompleteResult(learnerSolution: DocTypeDef, solutionSaved: Boolean, completeEx: XmlCompleteExercise)
+case class XmlGrammarCompleteResult(learnerSolution: DocTypeDef, completeEx: XmlCompleteExercise)
   extends XmlCompleteResult {
 
   private val pointsForElement   = 0.5
@@ -27,8 +27,8 @@ case class XmlGrammarCompleteResult(learnerSolution: DocTypeDef, solutionSaved: 
   }
 
   private def pointsForElementContent(elementContent: ElementContent): Double = elementContent match {
-    case s: StaticElementContent        => 0.5
-    case c: ChildElementContent         => 0.5
+    case _: StaticElementContent        => 0.5
+    case _: ChildElementContent         => 0.5
     case u: UnaryOperatorElementContent => 0.5 + pointsForElementContent(u.childContent)
     case m: MultiElementContent         => m.children map pointsForElementContent sum
   }

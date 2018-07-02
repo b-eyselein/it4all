@@ -15,11 +15,11 @@
                 methodDisplay: '@Html(language.activityDiagramDisplay(completeEx))',
                 methodDeclaration: '@Html(language.activityDiagramDeclaration(completeEx))',
                 methodName: '@completeEx.ex.functionname',
-                methodParameters: '@Html( model.programming.ProgLanguage.STANDARD_LANG.buildParams(completeEx))',
+                methodParameters: '@Html( model.programming.ProgLanguages.STANDARD_LANG.buildParams(completeEx))',
                 output: {
                     outputType: '@completeEx.ex.outputType.typeName',
                     output: 'solution',
-                    defaultValue: '@Html(completeEx.ex.outputType.defaultValue( model.programming.ProgLanguage.STANDARD_LANG))'
+                    defaultValue: '@Html(completeEx.ex.outputType.defaultValue( model.programming.ProgLanguages.STANDARD_LANG))'
                 }
             };
 
@@ -56,7 +56,7 @@
         }
     }
 
-    <input title="hidden" hidden id="defaultSolution" value="@Html(completeEx.ex.outputType.defaultValue(model.programming.ProgLanguage.STANDARD_LANG))">
+    <input title="hidden" hidden id="defaultSolution" value="@Html(completeEx.ex.outputType.defaultValue(model.programming.ProgLanguages.STANDARD_LANG))">
 
     <div class="container-fluid" id="fullsc">
 
@@ -195,9 +195,9 @@
                         <div class="col-md-4">
                             <div class="input-group">
                                 <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
-                                @for(lang <- model.programming.ProgLanguage.values) {
-                                    <option value="@lang.name" @{
-                                        if(lang == model.programming.ProgLanguage.STANDARD_LANG) "selected" else ""
+                                @for(lang <- model.programming.ProgLanguages.values) {
+                                    <option value="@lang.entryName" @{
+                                        if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
                                     }>@lang.languageName</option>
                                 }
                                 </select>
@@ -350,7 +350,7 @@
 
                     <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
                     <input hidden type="number" id="exerciseId" value="@completeEx.id" title="hidden">
-                    <input hidden id="exercisePart" value="@model.programming.ProgrammingExParts.ActivityDiagram.urlName" title="hidden">
+                    <input hidden id="exercisePart" value="@model.programming.ProgExParts.ActivityDiagram.urlName" title="hidden">
 
                     <hr>
                 </section>

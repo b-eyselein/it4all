@@ -147,5 +147,10 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(whenClause: WhenClause): Unit = {}
 
-  override def visit(wgexpr: WithinGroupExpression): Unit = {}
+  override def visit(aThis: BitwiseRightShift): Unit = {}
+
+  override def visit(aThis: BitwiseLeftShift): Unit = {}
+
+  override def visit(valueList: ValueListExpression): Unit = {}
+
 }

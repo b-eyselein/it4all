@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS blanks_exercises (
   ex_text         TEXT,
   ex_state        ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  raw_blanks_text TEXT,
-  blanks_text     TEXT
+  blanks_text     TEXT,
+  raw_blanks_text TEXT
 );
 
 CREATE TABLE IF NOT EXISTS blanks_samples (
@@ -101,31 +101,21 @@ CREATE TABLE IF NOT EXISTS blanks_samples (
     ON DELETE CASCADE
 );
 
-# Mindmap
-
-CREATE TABLE IF NOT EXISTS mindmap_exercises (
-  id       INT PRIMARY KEY,
-  title    VARCHAR(50),
-  author   VARCHAR(50),
-  ex_text  TEXT,
-  ex_state ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED'
-);
-
 # Programming
 
 CREATE TABLE IF NOT EXISTS prog_exercises (
-  id             INT PRIMARY KEY,
-  title          VARCHAR(50),
-  author         VARCHAR(50),
-  ex_text        TEXT,
-  ex_state       ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id                INT PRIMARY KEY,
+  title             VARCHAR(50),
+  author            VARCHAR(50),
+  ex_text           TEXT,
+  ex_state          ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  identifier     VARCHAR(30),
-  base           TEXT,
-  function_name  VARCHAR(30),
-  indent_level   INT,
-  output_type    VARCHAR(30),
-  base_data_json TEXT
+  folder_identifier VARCHAR(30),
+  base              TEXT,
+  function_name     VARCHAR(30),
+  indent_level      INT,
+  output_type       VARCHAR(30),
+  base_data_json    TEXT
 );
 
 CREATE TABLE IF NOT EXISTS prog_input_types (
@@ -140,7 +130,7 @@ CREATE TABLE IF NOT EXISTS prog_input_types (
     ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS prog_samples (
+CREATE TABLE IF NOT EXISTS prog_sample_solutions (
   exercise_id INT,
   language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
   base        TEXT,
@@ -165,13 +155,13 @@ CREATE TABLE IF NOT EXISTS prog_sample_testdata (
 );
 
 CREATE TABLE IF NOT EXISTS prog_commited_testdata (
-  id          INT,
-  exercise_id INT,
-  input_json  TEXT,
-  output      VARCHAR(50),
+  id             INT,
+  exercise_id    INT,
+  input_json     TEXT,
+  output         VARCHAR(50),
 
-  username    VARCHAR(50),
-  state       ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  username       VARCHAR(50),
+  approval_state ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
   PRIMARY KEY (id, exercise_id, username),
   FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
@@ -195,8 +185,10 @@ CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
 CREATE TABLE IF NOT EXISTS prog_solutions (
   username    VARCHAR(50),
   exercise_id INT,
-  part        VARCHAR(15),
-  language    VARCHAR(20),
+  part        VARCHAR(30),
+  #   language    VARCHAR(20),
+  points      DOUBLE,
+  max_points  DOUBLE,
   solution    TEXT,
 
   PRIMARY KEY (username, exercise_id, part),
@@ -292,6 +284,8 @@ CREATE TABLE IF NOT EXISTS rose_solutions (
   username    VARCHAR(50),
   exercise_id INT,
   part        VARCHAR(30),
+  points      DOUBLE,
+  max_points  DOUBLE,
   solution    TEXT,
 
   PRIMARY KEY (username, exercise_id, part),
@@ -363,6 +357,8 @@ CREATE TABLE IF NOT EXISTS sql_solutions (
   username      VARCHAR(50),
   collection_id INT,
   exercise_id   INT,
+  points        DOUBLE,
+  max_points    DOUBLE,
   solution      TEXT,
 
   PRIMARY KEY (username, collection_id, exercise_id),
@@ -400,10 +396,12 @@ CREATE TABLE IF NOT EXISTS uml_mappings (
 );
 
 CREATE TABLE IF NOT EXISTS uml_solutions (
-  exercise_id   INT,
-  username      VARCHAR(30),
-  part          VARCHAR(30),
-  solution_json TEXT,
+  exercise_id INT,
+  username    VARCHAR(30),
+  part        VARCHAR(30),
+  points      DOUBLE,
+  max_points  DOUBLE,
+  solution    TEXT,
 
   PRIMARY KEY (username, exercise_id, part),
   FOREIGN KEY (username) REFERENCES users (username)
@@ -489,6 +487,8 @@ CREATE TABLE IF NOT EXISTS web_solutions (
   exercise_id INT,
   username    VARCHAR(30),
   part        VARCHAR(30),
+  points      DOUBLE,
+  max_points  DOUBLE,
   solution    TEXT,
 
   PRIMARY KEY (exercise_id, username, part),
@@ -496,22 +496,6 @@ CREATE TABLE IF NOT EXISTS web_solutions (
     ON UPDATE CASCADE
     ON DELETE CASCADE,
   FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS web_results (
-  username    VARCHAR(60),
-  exercise_id INT,
-  part        VARCHAR(30),
-  points      INT,
-  max_points  INT,
-
-  PRIMARY KEY (username, exercise_id, part),
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id) REFERENCES web_exercises (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -546,6 +530,8 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
   exercise_id INT,
   username    VARCHAR(50),
   part        VARCHAR(30),
+  points      DOUBLE,
+  max_points  DOUBLE,
   solution    TEXT,
 
   PRIMARY KEY (exercise_id, username, part),
@@ -557,27 +543,9 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
     ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS xml_results (
-  username    VARCHAR(60),
-  exercise_id INT,
-  part        VARCHAR(30),
-  points      INT,
-  max_points  INT,
-
-  PRIMARY KEY (username, exercise_id, part),
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
 # --- !Downs
 
 # Xml
-
-DROP TABLE IF EXISTS xml_results;
 
 DROP TABLE IF EXISTS xml_solutions;
 
@@ -586,8 +554,6 @@ DROP TABLE IF EXISTS xml_sample_grammars;
 DROP TABLE IF EXISTS xml_exercises;
 
 # Web
-
-DROP TABLE IF EXISTS web_results;
 
 DROP TABLE IF EXISTS web_solutions;
 
@@ -651,15 +617,11 @@ DROP TABLE IF EXISTS prog_commited_testdata;
 
 DROP TABLE IF EXISTS prog_sample_testdata;
 
-DROP TABLE IF EXISTS prog_samples;
+DROP TABLE IF EXISTS prog_sample_solutions;
 
 DROP TABLE IF EXISTS prog_input_types;
 
 DROP TABLE IF EXISTS prog_exercises;
-
-# Mindmap
-
-DROP TABLE IF EXISTS mindmap_exercises;
 
 # Blanks
 

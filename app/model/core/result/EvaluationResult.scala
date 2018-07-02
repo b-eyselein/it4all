@@ -1,5 +1,7 @@
 package model.core.result
 
+import play.api.libs.json.JsValue
+
 
 object EvaluationResult {
 
@@ -47,18 +49,12 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
   def learnerSolution: SolType
 
-  def solutionSaved: Boolean
+  //  def solutionSaved: Boolean
 
   def results: Seq[E]
 
+  def toJson(saved: Boolean): JsValue
+
   override def success: SuccessType = SuccessType.ofBool(EvaluationResult.allResultsSuccessful(results))
-
-  protected def solSavedRender: String = {
-    val (bsClass, glyphicon) = if (solutionSaved) ("success", "ok") else ("danger", "remove")
-
-    val text = if (solutionSaved) "Ihre Lösung wurde gespeichert." else "Ihre Lösung konnte nicht gespeichert werden!"
-
-    s"""<div class="alert alert-$bsClass"><span class="glyphicon glyphicon-$glyphicon"></span> $text</div>"""
-  }
 
 }

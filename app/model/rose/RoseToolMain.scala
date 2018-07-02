@@ -2,13 +2,12 @@ package model.rose
 
 
 import javax.inject.{Inject, Singleton}
-import model.programming.ProgLanguage
+import model.programming.ProgLanguages
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, JsonFormat, User}
 import play.api.data.Form
 import play.api.libs.json.{JsString, JsValue, Json}
-import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,7 +26,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override type PartType = RoseExPart
 
-  override type SolType = RoseSolution
+  override type SolType = String
+
+  override type DBSolType = RoseSolution
 
   override type R = RoseEvalResult
 
@@ -48,11 +49,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // DB
 
-  override def readSolutionFromPostRequest(user: User, id: Int, part: RoseExPart)(implicit request: Request[AnyContent]): Option[RoseSolution] = ???
-
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: RoseExPart): Option[RoseSolution] = jsValue.asObj flatMap { jsObj =>
-    jsObj.stringField("implementation")
-  } map (RoseSolution(user.username, id, part, _))
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: RoseExPart): Option[SolType] =
+    jsValue.asObj flatMap (_.stringField("implementation"))
 
   // Other helper methods
 
@@ -60,6 +58,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     RoseExercise(id, title = "", author = "", text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
     inputType = Seq.empty, sampleSolution = null
   )
+
+  override def instantiateSolution(username: String, exerciseId: Int, part: RoseExPart, solution: String, points: Double, maxPoints: Double): RoseSolution =
+    RoseSolution(username, exerciseId, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -74,12 +75,12 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Correction
 
-  override protected def correctEx(user: User, sol: RoseSolution, exercise: RoseCompleteEx, solutionSaved: Boolean): Future[Try[RoseCompleteResult]] = {
+  override protected def correctEx(user: User, sol: SolType, exercise: RoseCompleteEx, part: RoseExPart): Future[Try[RoseCompleteResult]] = {
     val solDir = solutionDirForExercise(user.username, exercise.ex.id)
 
     for {
-      result <- RoseCorrector.correct(user, exercise, sol.solution, ProgLanguage.STANDARD_LANG, exerciseResourcesFolder, solDir)
-    } yield Try(RoseCompleteResult(solutionSaved, sol.solution, result))
+      result <- RoseCorrector.correct(user, exercise, sol, ProgLanguages.STANDARD_LANG, exerciseResourcesFolder, solDir)
+    } yield Try(RoseCompleteResult(sol, result))
   }
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: RoseExPart): Future[String] = part match {

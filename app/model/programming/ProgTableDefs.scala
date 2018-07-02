@@ -14,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, ProgrammingExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart] {
 
   import profile.api._
 
@@ -26,13 +26,13 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Table Queries
 
-  override protected val exTable = TableQuery[ProgExercisesTable]
+  override protected val exTable  = TableQuery[ProgExercisesTable]
   override protected val solTable = TableQuery[ProgSolutionTable]
 
-  private val inputTypesQuery = TableQuery[InputTypesTable]
-  private val sampleSolutions = TableQuery[ProgSampleSolutionsTable]
-  private val sampleTestData = TableQuery[SampleTestDataTable]
-  private val commitedTestData = TableQuery[CommitedTestDataTable]
+  private val inputTypesQuery   = TableQuery[InputTypesTable]
+  private val sampleSolutions   = TableQuery[ProgSampleSolutionsTable]
+  private val sampleTestData    = TableQuery[SampleTestDataTable]
+  // TODO:  private val commitedTestData = TableQuery[CommitedTestDataTable]
   private val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
 
   // Queries
@@ -57,19 +57,22 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   private implicit val jsonColumnType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](_.toString, Json.parse)
 
   private implicit val progLanguageColumnType: BaseColumnType[ProgLanguage] =
-    MappedColumnType.base[ProgLanguage, String](_.name, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
+    MappedColumnType.base[ProgLanguage, String](_.entryName, ProgLanguages.withNameInsensitive)
 
   private implicit val progDataTypesColumnType: BaseColumnType[ProgDataType] =
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
-  override protected implicit val partTypeColumnType: BaseColumnType[ProgrammingExPart] =
-    MappedColumnType.base[ProgrammingExPart, String](_.entryName, ProgrammingExParts.withNameInsensitive)
+  override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
+    MappedColumnType.base[ProgExPart, String](_.entryName, ProgExParts.withNameInsensitive)
+
+  override protected implicit val solutionTypeColumnType: BaseColumnType[ProgSolution] =
+    MappedColumnType.base[ProgSolution, String](_.toString, _ => null)
 
   // Tables
 
   class ProgExercisesTable(tag: Tag) extends HasBaseValuesTable[ProgExercise](tag, "prog_exercises") {
 
-    def folderIdentifier = column[String]("identifier")
+    def folderIdentifier = column[String]("folder_identifier")
 
     def base = column[String]("base")
 
@@ -109,7 +112,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class ProgSampleSolutionsTable(tag: Tag) extends Table[ProgSampleSolution](tag, "prog_samples") {
+  class ProgSampleSolutionsTable(tag: Tag) extends Table[ProgSampleSolution](tag, "prog_sample_solutions") {
 
     def exerciseId = column[Int]("exercise_id")
 
@@ -171,8 +174,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  // Inputs for test data
-
   class UmlClassDiagPartsTable(tag: Tag) extends Table[UmlClassDiagPart](tag, "prog_uml_cd_parts") {
 
     def exerciseId = column[Int]("exercise_id", O.PrimaryKey)
@@ -182,18 +183,13 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def classDiagram = column[UmlClassDiagram]("class_diagram")
 
 
-    override def * = (exerciseId, className, classDiagram) <> (UmlClassDiagPart.tupled, UmlClassDiagPart.unapply)
+    override def * = (exerciseId, className, classDiagram).mapTo[UmlClassDiagPart]
 
   }
 
-  class ProgSolutionTable(tag: Tag) extends PartSolutionsTable[ProgSolution](tag, "prog_solutions") {
+  class ProgSolutionTable(tag: Tag) extends PartSolutionsTable(tag, "prog_solutions") {
 
-    def language = column[ProgLanguage]("language")
-
-    def solution = column[String]("solution")
-
-
-    override def * = (username, exerciseId, part, language, solution) <> (ProgSolution.tupled, ProgSolution.unapply)
+    override def * = (username, exerciseId, part, solution, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
 
   }
 

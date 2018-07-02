@@ -5,13 +5,14 @@ import model.persistence.SingleExerciseTableDefs
 import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteExercise, XmlSolution, XmlExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteExercise, String, XmlSolution, XmlExPart] {
 
   import profile.api._
 
@@ -21,7 +22,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected type SolTableDef = XmlSolutionsTable
 
-  override protected type PartResultType = XmlResultForPart
+  //  override protected type PartResultType = XmlResultForPart
 
   override protected val exTable = TableQuery[XmlExercisesTable]
 
@@ -29,7 +30,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   val sampleGrammarsTable = TableQuery[XmlSampleGrammarsTable]
 
-  val resultsForPartsTable = TableQuery[XmlResultsTable]
+  //  val resultsForPartsTable = TableQuery[XmlResultsTable]
 
 
   // Column Types
@@ -49,8 +50,8 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Reading
 
-  override protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlResultForPart]] =
-    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
+  //  override protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlResultForPart]] =
+  //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
   override def completeExForEx(ex: XmlExercise): Future[XmlCompleteExercise] = db.run(sampleGrammarsTable.filter(_.exerciseId === ex.id).result) map {
     sampleGrammars => XmlCompleteExercise(ex, sampleGrammars)
@@ -58,22 +59,23 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: XmlExPart): Future[Boolean] = part match {
     case XmlExParts.GrammarCreationXmlPart  => Future(true)
-    case XmlExParts.DocumentCreationXmlPart => futureResultForUserExAndPart(username, exerciseId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
+    case XmlExParts.DocumentCreationXmlPart => futureOldSolution(username, exerciseId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
 
   // Saving
 
-  override def futureSaveResult(username: String, exerciseId: Int, part: XmlExPart, points: Double, maxPoints: Double): Future[Boolean] =
-    db.run(resultsForPartsTable insertOrUpdate XmlResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
-      case e: Throwable =>
-        Logger.error("Error while updating result: ", e)
-        false
-    }
+  //  override def futureSaveResult(username: String, exerciseId: Int, part: XmlExPart, points: Double, maxPoints: Double): Future[Boolean] =
+  //    db.run(resultsForPartsTable insertOrUpdate XmlResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
+  //      case e: Throwable =>
+  //        Logger.error("Error while updating result: ", e)
+  //        false
+  //    }
 
   override def saveExerciseRest(compEx: XmlCompleteExercise): Future[Boolean] =
     saveSeq[XmlSampleGrammar](compEx.sampleGrammars, xsg => db.run(sampleGrammarsTable += xsg))
 
   // Actual table defs
+
 
   class XmlExercisesTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
 
@@ -104,22 +106,21 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  class XmlSolutionsTable(tag: Tag) extends PartSolutionsTable[XmlSolution](tag, "xml_solutions") {
+  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 
-    def solution = column[String]("solution")
+  class XmlSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "xml_solutions") {
+
+    //    def solution = column[String]("solution")
 
 
-    override def pk = primaryKey("pk", (exerciseId, username, part))
-
-
-    override def * = (username, exerciseId, part, solution) <> (XmlSolution.tupled, XmlSolution.unapply)
-
-  }
-
-  class XmlResultsTable(tag: Tag) extends ResultsForPartsTable[XmlResultForPart](tag, "xml_results") {
-
-    def * = (username, exerciseId, part, points, maxPoints) <> (XmlResultForPart.tupled, XmlResultForPart.unapply)
+    override def * = (username, exerciseId, part, solution, points, maxPoints) <> (XmlSolution.tupled, XmlSolution.unapply)
 
   }
+
+  //  class XmlResultsTable(tag: Tag) extends ResultsForPartsTable[XmlResultForPart](tag, "xml_results") {
+  //
+  //    def * = (username, exerciseId, part, points, maxPoints) <> (XmlResultForPart.tupled, XmlResultForPart.unapply)
+  //
+  //  }
 
 }

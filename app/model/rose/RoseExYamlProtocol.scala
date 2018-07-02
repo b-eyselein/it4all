@@ -1,10 +1,9 @@
 package model.rose
 
-import model.ExerciseState
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
-import model.programming.{ProgDataTypes, ProgLanguage}
-import model.{MyYamlProtocol, YamlObj}
+import model.programming.{ProgDataTypes, ProgLanguages}
+import model.{ExerciseState, MyYamlProtocol, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -51,12 +50,12 @@ object RoseExYamlProtocol extends MyYamlProtocol {
   case class RoseSampleSolutionYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[RoseSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[RoseSampleSolution] = for {
-      language <- yamlObject.enumField(languageName, ProgLanguage.valueOf(_).get)
+      language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.STANDARD_LANG)
       sample <- yamlObject.stringField(sampleName)
     } yield RoseSampleSolution(exerciseId, language, sample)
 
     override def write(pss: RoseSampleSolution): YamlValue = YamlObj(
-      languageName -> pss.language.name,
+      languageName -> pss.language.entryName,
       sampleName -> pss.solution
     )
 

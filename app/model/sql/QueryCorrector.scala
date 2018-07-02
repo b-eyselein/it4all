@@ -15,19 +15,19 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(solutionSaved: Boolean, database: SqlExecutionDAO, learnerSolution: String, sampleSolution: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult = {
+  def correct(database: SqlExecutionDAO, learnerSolution: String, sampleSolution: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult = {
     val statementParseTries = for {
       userStatement <- parseStatement(learnerSolution) flatMap checkStatement
       sampleStatement <- parseStatement(sampleSolution.sample) flatMap checkStatement
     } yield (userStatement, sampleStatement)
 
     statementParseTries match {
-      case Success((userQ, sampleQ)) => correctQueries(solutionSaved, learnerSolution, database, exercise, scenario, userQ, sampleQ)
-      case Failure(error)            => SqlParseFailed(solutionSaved, learnerSolution, error)
+      case Success((userQ, sampleQ)) => correctQueries(learnerSolution, database, exercise, scenario, userQ, sampleQ)
+      case Failure(error)            => SqlParseFailed(learnerSolution, error)
     }
   }
 
-  private def correctQueries(solutionSaved: Boolean, learnerSolution: String, database: SqlExecutionDAO, exercise: SqlCompleteEx, scenario: SqlScenario, userQ: Q, sampleQ: Q) = {
+  private def correctQueries(learnerSolution: String, database: SqlExecutionDAO, exercise: SqlCompleteEx, scenario: SqlScenario, userQ: Q, sampleQ: Q) = {
     val (userTAliases, sampleTAliases) = (resolveAliases(userQ), resolveAliases(sampleQ))
 
     val tableComparison = compareTables(userQ, sampleQ)
@@ -43,7 +43,11 @@ abstract class QueryCorrector(val queryType: String) {
 
     val insertedValuesComparison = compareInsertedValues(userQ, sampleQ)
 
-    SqlResult(solutionSaved, learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison, insertedValuesComparison)
+    // FIXME: calculate points!
+    val points = -1
+    val maxPoints = -1
+
+    SqlResult(learnerSolution, points, maxPoints, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison, insertedValuesComparison)
   }
 
   def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch] =

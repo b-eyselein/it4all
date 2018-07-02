@@ -1,102 +1,17 @@
 package model.questions
 
 import javax.inject.Inject
-import model.ExerciseState
-import model._
 import model.persistence.ExerciseCollectionTableDefs
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-object QuestionHelper {
-
-  val MIN_ANSWERS = 2
-  val STD_ANSWERS = 4
-  val MAX_ANSWERS = 8
-
-}
-
-// Classes for use
-
-case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends CompleteCollection {
-
-  override type Ex = Question
-
-  override type CompEx = CompleteQuestion
-
-  override type Coll = Quiz
-
-  override def renderRest: Html = new Html("") // FIXME: implement! ???
-
-  override def exercisesWithFilter(filter: String): Seq[CompleteQuestion] = QuestionType.byString(filter) match {
-    case Some(questionType) => exercises filter (_.ex.questionType == questionType)
-    case None               => exercises
-  }
-
-}
-
-case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends CompleteExInColl[Question] {
-
-  def givenAnswers: Seq[Answer] = Seq.empty
-
-  def answersForTemplate: Seq[Answer] = scala.util.Random.shuffle(answers)
-
-  def getCorrectAnswers: Seq[Answer] = answers filter (_.isCorrect)
-
-  def userHasAnswered(username: String) = false
-
-  override def preview: Html = new Html(
-    s"""<p><b>Antworten:</b></p>
-       |<div class="row">${answers map previewAnswer mkString}</div>""".stripMargin)
-
-  private def previewAnswer(answer: Answer): String =
-    s"""<div class="col-md-2">${answer.correctness.name}</div>
-       |<div class="col-md-10">${answer.text} </div>""".stripMargin
-
-}
-
-// Case classes for db
-
-case class Quiz(id: Int, title: String, author: String, text: String, state: ExerciseState, theme: String)
-  extends ExerciseCollection[Question, CompleteQuestion] {
-
-  def this(baseValues: (Int, String, String, String, ExerciseState), theme: String) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, theme)
-
-}
-
-
-case class Question(id: Int, title: String, author: String, text: String, state: ExerciseState,
-                    collectionId: Int, questionType: QuestionType, maxPoints: Int) extends ExInColl {
-
-  def this(baseValues: (Int, String, String, String, ExerciseState), collectionId: Int, questionType: QuestionType, maxPoints: Int) =
-    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, collectionId, questionType, maxPoints)
-
-  def isFreetext: Boolean = questionType == QuestionType.FREETEXT
-
-}
-
-case class Answer(id: Int, questionId: Int, quizId: Int, text: String, correctness: Correctness, explanation: Option[String]) extends IdAnswer {
-
-  def isCorrect: Boolean = correctness != Correctness.WRONG
-
-}
-
-case class QuestionRating(questionId: Int, userName: String, rating: Int)
-
-case class UserAnswer(questionId: Int, userName: String, text: String)
-
-case class QuestionSolution(username: String, collectionId: Int, exerciseId: Int, answers: Seq[GivenAnswer]) extends CollectionExSolution
-
-// Table Definitions
-
-class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[Question, CompleteQuestion, Quiz, CompleteQuiz, QuestionSolution] {
+class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[Question, CompleteQuestion, Quiz, CompleteQuiz, Seq[GivenAnswer], QuestionSolution] {
 
   import profile.api._
 
@@ -170,8 +85,8 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
   implicit val correctnessColumnType: BaseColumnType[Correctness] =
     MappedColumnType.base[Correctness, String](_.name, str => Correctness.byString(str) getOrElse Correctness.OPTIONAL)
 
-  implicit val givenAnswerColumnType: BaseColumnType[Seq[GivenAnswer]] =
-    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq.empty)
+  override protected implicit val solutionTypeColumnType: BaseColumnType[Seq[GivenAnswer]] = ???
+//    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq.empty)
 
   // Table defs
 
@@ -227,11 +142,11 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   }
 
-  class QuestionSolutionsTable(tag: Tag) extends CollectionExSolutionsTable[QuestionSolution](tag, "question_solutions") {
+  class QuestionSolutionsTable(tag: Tag) extends CollectionExSolutionsTable(tag, "question_solutions") {
 
-    def givenAnswers = column[Seq[GivenAnswer]]("todo")
+    def solution = column[Seq[GivenAnswer]]("todo")
 
-    override def * = (username, collectionId, exerciseId, givenAnswers) <> (QuestionSolution.tupled, QuestionSolution.unapply)
+    override def * = (username, collectionId, exerciseId, solution, points, maxPoints).mapTo[QuestionSolution]
 
   }
 

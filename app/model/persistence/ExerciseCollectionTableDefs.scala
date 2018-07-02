@@ -1,15 +1,14 @@
 package model.persistence
 
-import model.ExerciseState
-import model._
+import model.{ExerciseState, _}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection, SolType <: CollectionExSolution]
-  extends ExerciseTableDefs[Ex, CompEx] {
+trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection,
+SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[Ex, CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -20,7 +19,7 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
 
   protected type CollTableDef <: HasBaseValuesTable[Coll]
 
-  protected type SolTableDef <: CollectionExSolutionsTable[SolType]
+  protected type SolTableDef <: CollectionExSolutionsTable
 
   // Abstract members
 
@@ -30,10 +29,10 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
 
   // Queries
 
-  def futureOldSolution(username: String, exerciseId: Int): Future[Option[SolType]] =
+  def futureOldSolution(username: String, exerciseId: Int): Future[Option[DBSolType]] =
     db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId).result.headOption)
 
-  def futureSaveSolution(sol: SolType): Future[Boolean] =
+  def futureSaveSolution(sol: DBSolType): Future[Boolean] =
     db.run(solTable insertOrUpdate sol) map (_ => true) recover {
       case e: Exception =>
         Logger.error("Could not save solution", e)
@@ -76,7 +75,7 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
     }
 
 
-  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int): Future[Option[SolType]] =
+  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int): Future[Option[DBSolType]] =
     db.run(solTable.filter(sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId).result.headOption)
 
   // Saving
@@ -89,7 +88,7 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
     coll <- collTable if coll.id === collId
   } yield coll.state).update(newState)) map (_ => true) recover {
     case e: Throwable =>
-      Logger.error(s"Could not update collection $collId")
+      Logger.error(s"Could not update collection $collId", e)
       false
   }
 
@@ -116,19 +115,27 @@ trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex]
 
   // Abstract table definitions
 
+  protected implicit val solutionTypeColumnType: slick.ast.TypedType[SolType]
+
   abstract class ExerciseInCollectionTable[E <: ExInColl](tag: Tag, name: String) extends HasBaseValuesTable[E](tag, name) {
 
     def collectionId = column[Int]("collection_id")
 
   }
 
-  abstract class CollectionExSolutionsTable[S <: Solution](tag: Tag, name: String) extends Table[S](tag, name) {
+  abstract class CollectionExSolutionsTable(tag: Tag, name: String) extends Table[DBSolType](tag, name) {
 
     def username = column[String]("username")
 
     def exerciseId = column[Int]("exercise_id")
 
     def collectionId = column[Int]("collection_id")
+
+    def points = column[Double]("points")
+
+    def maxPoints = column[Double]("max_points")
+
+//    def solution = column[SolType]("solution")
 
 
     def pk = primaryKey("pk", (username, collectionId, exerciseId))

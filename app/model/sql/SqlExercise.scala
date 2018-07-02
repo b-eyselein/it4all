@@ -76,5 +76,5 @@ case class SqlExercise(id: Int, title: String, author: String, text: String, sta
 
 case class SqlSample(id: Int, exerciseId: Int, scenarioId: Int, sample: String)
 
-case class SqlSolution(username: String, collectionId: Int, exerciseId: Int, solution: String) extends CollectionExSolution
+case class SqlSolution(username: String, collectionId: Int, exerciseId: Int, solution: String, points: Double, maxPoints: Double) extends CollectionExSolution[String]
 

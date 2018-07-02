@@ -2,15 +2,16 @@ package model.blanks
 
 import model.core.matching.{GenericAnalysisResult, Matcher, MatchingResult}
 import model.core.result.CompleteResult
+import play.api.libs.json.JsValue
 
 case class BlanksCompleteResult(learnerSolution: Seq[BlanksAnswer], result: MatchingResult[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch])
   extends CompleteResult[MatchingResult[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch]] {
 
   override type SolType = Seq[BlanksAnswer]
 
-  override val solutionSaved = false
-
   override def results: Seq[MatchingResult[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch]] = Seq(result)
+
+  override def toJson(saved: Boolean): JsValue = ???
 
 }
 

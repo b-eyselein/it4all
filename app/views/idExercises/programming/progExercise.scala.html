@@ -1,5 +1,5 @@
 @(user: model.User, toolMainObject: model.toolMains.AToolMain, exercise: model.programming.ProgCompleteEx,
-        oldSolution: String, part: model.programming.ProgrammingExPart)
+        oldSolution: String, part: model.programming.ProgExPart)
 
     @scripts = {
         <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -83,9 +83,9 @@
                                 <span class="input-group-text">Sprache</span>
                             </div>
                             <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
-                            @for(lang <- model.programming.ProgLanguage.values) {
-                                <option value="@lang.name" @{
-                                    if(lang == model.programming.ProgLanguage.STANDARD_LANG) "selected" else ""
+                            @for(lang <- model.programming.ProgLanguages.values) {
+                                <option value="@lang.entryName" @{
+                                    if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
                                 }>@lang.languageName</option>
                             }
                             </select>

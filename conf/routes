@@ -109,6 +109,7 @@ DELETE        /tools/:toolType/admin/exerciseList/:id                       cont
 
 PUT           /tools/:toolType/admin/exercise/:id/state                     controllers.ExerciseController.adminChangeExState(toolType: String, id: Int)
 
+GET           /tools/:toolType/admin/solutions/:id                          controllers.ExerciseController.showSolutions(toolType: String, id: Int)
 
 GET           /tools/:toolType/exercises                                    controllers.ExerciseController.exerciseList(toolType: String, page: Int ?= 1)
 
@@ -117,6 +118,7 @@ GET           /tools/:toolType/solve/:id/:part                              cont
 PUT           /tools/:toolType/solve/:id/:part                              controllers.ExerciseController.correctLive(toolType: String, id: Int, part: String)
 
 GET           /tools/:toolType/:id/:part/solution                           controllers.ExerciseController.sampleSolution(toolType: String, id: Int, part: String)
+
 
 # Other routes
 GET           /tools/uml/classDiagram/:id/:part/cd.js                       controllers.ExerciseController.umlClassDiag(id: Int, part: String)

@@ -25,7 +25,11 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th><th>Status</th><th>Aktionen</th><th>Titel</th><th>Autor</th>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Aktionen</th>
+                    <th>Titel</th>
+                    <th>Autor</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,6 +65,8 @@
                         data-url="@routes.ExerciseController.adminDeleteExercise(toolMainObject.urlPart, exercise.id)">
                             <span class="octicon octicon-x"></span>
                         </button>
+                        <a href="@routes.ExerciseController.showSolutions(toolMainObject.urlPart, exercise.id)"
+                        class="btn btn-info" title="Lösungen anzeigen"><span class="octicon octicon-file"></span></a>
                     </td>
                     <td>@exercise.title</td>
                     <td>@exercise.author</td>

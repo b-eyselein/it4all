@@ -9,16 +9,16 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType <: PartSolution[PartType], PartType <: ExPart] extends IdExerciseTableDefs[Ex, CompEx] {
+trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType , DBSolType <: PartSolution[PartType, SolType], PartType <: ExPart] extends IdExerciseTableDefs[Ex, CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
 
-  protected type SolTableDef <: PartSolutionsTable[SolType]
+  protected type SolTableDef <: PartSolutionsTable //[SolType, DBSolType]
 
   protected val solTable: TableQuery[SolTableDef]
 
-  protected type PartResultType <: ResultForPart[PartType]
+  //  protected type PartResultType <: ResultForPart[PartType]
 
   // Implicit column types
 
@@ -26,23 +26,25 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
   // Queries
 
-  def futureOldSolution(username: String, exerciseId: Int, part: PartType): Future[Option[SolType]] =
+  def futureOldSolution(username: String, exerciseId: Int, part: PartType): Future[Option[DBSolType]] =
     db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId && sol.part === part).result.headOption)
 
-  def futureSaveSolution(sol: SolType): Future[Boolean] =
+  def futureSaveSolution(sol: DBSolType): Future[Boolean] =
     db.run(solTable insertOrUpdate sol) map (_ => true) recover {
       case e: Exception =>
         Logger.error("Could not save solution", e)
         false
     }
 
+  def futureOldSolutions(exerciseId: Int): Future[Seq[DBSolType]] = db.run(solTable.filter(_.exerciseId === exerciseId).result)
+
   def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: PartType): Future[Boolean] = Future(true)
 
-  protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: PartType): Future[Option[PartResultType]] = Future(None)
+  //  protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: PartType): Future[Option[PartResultType]] = Future(None)
 
   //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
-  def futureSaveResult(username: String, exerciseId: Int, part: PartType, points: Double, maxPoints: Double): Future[Boolean] = Future(false)
+//  def futureSaveResult(username: String, exerciseId: Int, part: PartType, points: Double, maxPoints: Double): Future[Boolean] = Future(false)
 
   //    db.run(resultsForPartsTable insertOrUpdate WebResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
   //      case e: Throwable =>
@@ -52,24 +54,9 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
   // Abstract table definitions
 
-  protected abstract class PartSolutionsTable[S <: Solution](tag: Tag, name: String) extends Table[S](tag, name) {
+  protected implicit val solutionTypeColumnType: slick.ast.TypedType[SolType]
 
-    def username = column[String]("username")
-
-    def exerciseId = column[Int]("exercise_id")
-
-    def part = column[PartType]("part")
-
-
-    def pk = primaryKey("pk", (username, exerciseId, part))
-
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
-
-    def userFk = foreignKey("user_fk", username, users)(_.username)
-
-  }
-
-  protected abstract class ResultsForPartsTable[R <: ResultForPart[PartType]](tag: Tag, tableName: String) extends Table[R](tag, tableName) {
+  protected abstract class PartSolutionsTable(tag: Tag, name: String) extends Table[DBSolType](tag, name) {
 
     def username = column[String]("username")
 
@@ -81,12 +68,14 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType 
 
     def maxPoints = column[Double]("max_points")
 
+    def solution = column[SolType]("solution")
+
 
     def pk = primaryKey("pk", (username, exerciseId, part))
 
-    def userFk = foreignKey("user_fk", username, users)(_.username)
-
     def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+
+    def userFk = foreignKey("user_fk", username, users)(_.username)
 
   }
 

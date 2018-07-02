@@ -21,20 +21,23 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   type CompResult <: CompleteResult[R]
 
-  type SolType <: PartSolution[PartType]
+  type SolType
 
-  override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, PartType]
+  type DBSolType <: PartSolution[PartType, SolType]
+
+  override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, DBSolType, PartType]
 
   // Methods
 
   def checkAndCreateSolDir(username: String, exercise: CompExType): Try[Path] =
     Try(Files.createDirectories(solutionDirForExercise(username, exercise.ex.id)))
 
-  def futureSaveSolution(sol: SolType): Future[Boolean] = tables.futureSaveSolution(sol)
+  def futureSaveSolution(sol: DBSolType): Future[Boolean] = tables.futureSaveSolution(sol)
 
-  def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: PartType)(implicit ec: ExecutionContext): Future[Option[SolType]] =
+  def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: PartType): Future[Option[DBSolType]] =
     tables.futureOldSolution(user.username, exerciseId, part)
 
+  def futureSolutionsForExercise(exerciseId: Int): Future[Seq[DBSolType]] = tables.futureOldSolutions(exerciseId)
 
   // Result handling
 
@@ -50,7 +53,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
       views.html.core.correctionError(user, OtherCorrectionException(err))
   }
 
-  def onLiveCorrectionResult(pointsSaved: Boolean, result: CompResult): JsValue
+  def onLiveCorrectionResult(solutionSaved: Boolean, result: CompResult): JsValue = result.toJson(solutionSaved)
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
     Logger.error("There has been an correction error: ", error)
@@ -71,33 +74,35 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
       case None       => Future(Failure(NoSuchPartException(partStr)))
       case Some(part) => readSolution(user, id, part, isLive) match {
         case None           => Future(Failure(SolutionTransferException))
-        case Some(solution) => onSolution(user, solution, id, isLive)
+        case Some(solution) => onSolution(user, solution, id, part, isLive)
       }
     }
 
   def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[String]
 
-  private def onSolution(user: model.User, solution: SolType, id: Int, isLive: Boolean): Future[Try[Either[Html, JsValue]]] = futureCompleteExById(id) flatMap {
+  protected def instantiateSolution(username: String, exerciseId: Int, part: PartType, solution: SolType, points: Double, maxPoints: Double): DBSolType
+
+  private def onSolution(user: model.User, solution: SolType, id: Int, part: PartType, isLive: Boolean): Future[Try[Either[Html, JsValue]]] = futureCompleteExById(id) flatMap {
     case None => Future(Failure(NoSuchExerciseException(id)))
     // FIXME: change return type of function!
 
-    case Some(exercise) => futureSaveSolution(solution) flatMap { solutionSaved =>
-      correctEx(user, solution, exercise, solutionSaved) flatMap {
+    case Some(exercise) =>
+      correctEx(user, solution, exercise, part) flatMap {
         case Success(res)   =>
-          // FIXME: save result...
-          tables.futureSaveResult(user.username, exercise.id, solution.part, res.points, res.maxPoints) map { pointsSaved =>
-            if (isLive) Success(Right(onLiveCorrectionResult(pointsSaved, res)))
-            else Success(Left(onSubmitCorrectionResult(user, pointsSaved, res)))
+          val dbSolution = instantiateSolution(user.username, exercise.id, part, solution, res.points, res.maxPoints)
+
+          tables.futureSaveSolution(dbSolution) map { solutionSaved =>
+            if (isLive) Success(Right(onLiveCorrectionResult(solutionSaved, res)))
+            else Success(Left(onSubmitCorrectionResult(user, solutionSaved, res)))
           }
         case Failure(error) => Future(Failure(error))
       }
-    }
   }
 
   private def readSolution(user: User, id: Int, part: PartType, isLive: Boolean)(implicit request: Request[AnyContent]): Option[SolType] =
     if (isLive) readSolutionFromPutRequest(user, id, part) else readSolutionFromPostRequest(user, id, part)
 
-  protected def readSolutionFromPostRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolutionFromPostRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] = None
 
   protected def readSolutionFromPutRequest(user: User, id: Int, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap (_.asObj) flatMap {
@@ -106,7 +111,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: PartType): Option[SolType]
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompExType, solutionSaved: Boolean): Future[Try[CompResult]]
+  protected def correctEx(user: User, sol: SolType, exercise: CompExType, part: PartType): Future[Try[CompResult]]
 
   // Views
 
@@ -125,7 +130,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
   override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
     views.html.admin.idExes.idExerciseAdminListView(admin, exes, this)
 
-  def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[SolType]): Html
+  def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[DBSolType]): Html
 
   // Calls
 

@@ -1,0 +1,33 @@
+@(user: model.User, solutions: Seq[model.PartSolution[_, _]], toolMainObject: model.toolMains.IdExerciseToolMain)
+
+@title = @{
+    "Lösungen für Aufgabe TODO!"
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+        <h1 class="text-center">@title</h1>
+
+        <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)">
+            Zurück zur Administratorseite</a>
+
+        <hr>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nutzer</th>
+                    <th>Teil</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(solution <- solutions) {
+                <tr>
+                    <td>@solution.username</td>
+                    <td>@solution.part</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

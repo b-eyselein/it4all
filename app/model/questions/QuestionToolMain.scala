@@ -16,7 +16,7 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Try}
 
 @Singleton
-class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("question") with JsonFormat {
+class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("question") with JsonFormat {
 
   // Abstract types
 
@@ -28,9 +28,11 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   override type CompCollType = CompleteQuiz
 
-  override type Tables = QuestionsTableDefs
+  override type Tables = QuestionTableDefs
 
-  override type SolType = QuestionSolution
+  override type SolType = Seq[GivenAnswer]
+
+  override type DBSolType = QuestionSolution
 
   override type R = IdAnswerMatch
 
@@ -50,17 +52,15 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   // Reading from requests
 
-  override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[QuestionSolution] =
+  override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
       val maybeGivenAnswers: Option[Seq[IdGivenAnswer]] = jsObj.stringField(questionTypeName) flatMap QuestionType.byString flatMap {
         case QuestionType.CHOICE   => jsObj.arrayField("chosen", jsValue => Some(IdGivenAnswer(jsValue.asInt getOrElse -1)))
         case QuestionType.FREETEXT => ??? // Some(Seq.empty)
       }
 
-      maybeGivenAnswers map (givenAnswers => QuestionSolution(user.username, collId, id, givenAnswers))
+      maybeGivenAnswers // map (givenAnswers => QuestionSolution(user.username, collId, id, givenAnswers))
     }
-
-  override def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[QuestionSolution] = ???
 
   override protected def compExTypeForm(collId: Int): Form[CompleteQuestion] = ???
 
@@ -90,15 +90,15 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   override def onSubmitCorrectionResult(user: User, result: QuestionResult): Html = ???
 
-  override def onLiveCorrectionResult(result: QuestionResult): JsValue = result.forJson
+//  override def onLiveCorrectionResult(result: QuestionResult): JsValue = result.forJson
 
   // Correction
 
-  def correctEx(user: User, solution: QuestionSolution, quiz: Quiz, exercise: CompleteQuestion): Future[Try[QuestionResult]] = Future {
+  def correctEx(user: User, answers: Seq[GivenAnswer], quiz: Quiz, exercise: CompleteQuestion): Future[Try[QuestionResult]] = Future {
     exercise.ex.questionType match {
       case QuestionType.FREETEXT => Failure(new Exception("Not yet implemented..."))
       case QuestionType.CHOICE   => Try {
-        val idAnswers: Seq[IdGivenAnswer] = solution.answers flatMap {
+        val idAnswers: Seq[IdGivenAnswer] = answers flatMap {
           case idA: IdGivenAnswer => Some(idA)
           case _                  => None
         }
@@ -116,5 +116,8 @@ class QuestionToolMain @Inject()(override val tables: QuestionsTableDefs)(implic
 
   override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompleteQuestion = CompleteQuestion(
     Question(id, title = "", author = "", text = "", state, collId, QuestionType.FREETEXT, -1), answers = Seq.empty)
+
+  override def instantiateSolution(username: String, collId: Int, id: Int, solution: Seq[GivenAnswer], points: Double, maxPoints: Double): QuestionSolution =
+    QuestionSolution(username, collId, id, solution, points, maxPoints)
 
 }

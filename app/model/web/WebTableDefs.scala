@@ -2,15 +2,15 @@ package model.web
 
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
-import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[WebExercise, WebCompleteEx, WebSolution, WebExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[WebExercise, WebCompleteEx, String, WebSolution, WebExPart] {
 
   import profile.api._
 
@@ -20,19 +20,17 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected type SolTableDef = WebSolutionsTable
 
-  override protected type PartResultType = WebResultForPart
+  //  override protected type PartResultType = WebResultForPart
 
   // Table queries
 
-  override protected val exTable = TableQuery[WebExercisesTable]
+  override protected val exTable  = TableQuery[WebExercisesTable]
   override protected val solTable = TableQuery[WebSolutionsTable]
 
-  private val htmlTasks = TableQuery[HtmlTasksTable]
+  private val htmlTasks  = TableQuery[HtmlTasksTable]
   private val attributes = TableQuery[AttributesTable]
-  private val jsTasks = TableQuery[JsTasksTable]
+  private val jsTasks    = TableQuery[JsTasksTable]
   private val conditions = TableQuery[ConditionsTable]
-
-  private val resultsForPartsTable = TableQuery[WebResultsForPartsTable]
 
   // Dependent query tables
 
@@ -40,20 +38,10 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Other queries
 
-  override protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: WebExPart): Future[Option[WebResultForPart]] =
-    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
-
-  override def futureSaveResult(username: String, exerciseId: Int, part: WebExPart, points: Double, maxPoints: Double): Future[Boolean] =
-    db.run(resultsForPartsTable insertOrUpdate WebResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
-      case e: Throwable =>
-        Logger.error("Error while updating result: ", e)
-        false
-    }
-
   override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: WebExPart): Future[Boolean] = part match {
     case WebExParts.HtmlPart => Future(true)
-    case WebExParts.JsPart => futureResultForUserExAndPart(username, exerciseId, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
-    case WebExParts.PHPPart => Future(false)
+    case WebExParts.JsPart   => futureOldSolution(username, exerciseId, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
+    case WebExParts.PHPPart  => Future(false)
   }
 
 
@@ -100,6 +88,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =
     MappedColumnType.base[WebExPart, String](_.entryName, WebExParts.withNameInsensitive)
+
+  //  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 
   // Table definitions
 
@@ -172,7 +162,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def keysToSend = column[String]("keys_to_send")
 
 
-    override def * = (id, exerciseId, text, xpathQuery, actionType, keysToSend.?) <> (JsTask.tupled, JsTask.unapply)
+    override def * = (id, exerciseId, text, xpathQuery, actionType, keysToSend.?).mapTo[JsTask]
 
   }
 
@@ -196,22 +186,18 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def taskFk = foreignKey("task_fk", (taskId, exerciseId), jsTasks)(t => (t.id, t.exerciseId))
 
 
-    override def * = (conditionId, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue) <> (JsCondition.tupled, JsCondition.unapply)
+    override def * = (conditionId, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue).mapTo[JsCondition]
 
   }
 
-  class WebSolutionsTable(tag: Tag) extends PartSolutionsTable[WebSolution](tag, "web_solutions") {
+  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 
-    def solution = column[String]("solution")
+  class WebSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "web_solutions") {
+
+//    def solution = column[String]("solution")
 
 
-    override def * = (username, exerciseId, part, solution) <> (WebSolution.tupled, WebSolution.unapply)
-
-  }
-
-  class WebResultsForPartsTable(tag: Tag) extends ResultsForPartsTable[WebResultForPart](tag, "web_results") {
-
-    def * = (username, exerciseId, part, points, maxPoints) <> (WebResultForPart.tupled, WebResultForPart.unapply)
+    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[WebSolution] // (WebSolution.tupled, WebSolution.unapply)
 
   }
 

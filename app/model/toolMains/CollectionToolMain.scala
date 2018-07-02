@@ -1,11 +1,9 @@
 package model.toolMains
 
-import model.ExerciseState
-import model._
 import model.core._
 import model.core.result.CompleteResult
-import model.learningPath.LearningPath
 import model.persistence.ExerciseCollectionTableDefs
+import model.{ExerciseState, _}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
@@ -28,13 +26,15 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   type CompCollType <: CompleteCollection
 
-  type SolType <: CollectionExSolution
+  type SolType
+
+  type DBSolType <: CollectionExSolution[SolType]
 
   type CompResult <: CompleteResult[R]
 
   override type ReadType = CompCollType
 
-  override type Tables <: ExerciseCollectionTableDefs[ExType, CompExType, CollType, CompCollType, SolType]
+  override type Tables <: ExerciseCollectionTableDefs[ExType, CompExType, CollType, CompCollType, SolType, DBSolType]
 
   // Other members
 
@@ -76,7 +76,7 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def futureSaveExercise(exercise: CompExType): Future[Boolean] = tables.saveCompleteEx(exercise)
 
-  protected def saveSolution(solution: SolType): Future[Boolean]
+  protected def saveSolution(solution: DBSolType): Future[Boolean]
 
   // Update
 
@@ -97,19 +97,31 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
       case None => Future(Failure(SolutionTransferException))
 
       case Some(solution) =>
-        (futureCollById(collId) zip futureCompleteExById(collId, id)) map {
-          case (maybeColl, maybeEx) => (maybeColl zip maybeEx).headOption
-        } flatMap {
+
+        val collAndEx: Future[Option[(CollType, CompExType)]] = for {
+          coll <- futureCollById(collId)
+          ex <- futureCompleteExById(collId, id)
+        } yield (coll zip ex).headOption
+
+        collAndEx flatMap {
           case None => Future(Failure(NoSuchExerciseException(id)))
 
           case Some((collection, exercise)) =>
             val futureResultTry: Future[Try[CompResult]] = correctEx(user, solution, collection, exercise)
 
-            futureResultTry map {
+            futureResultTry flatMap {
+              case Failure(error) => Future(Failure(error))
               case Success(res)   =>
-                if (isLive) Success(Right(onLiveCorrectionResult(res)))
-                else Success(Left(onSubmitCorrectionResult(user, res)))
-              case Failure(error) => Failure(error)
+
+                // FIXME: calculate!
+                val points = -1
+                val maxPoints = -1
+
+                val dbSol = instantiateSolution(user.username, collId, id, solution, points, maxPoints)
+                tables.futureSaveSolution(dbSol) map { solSaved =>
+                  if (isLive) Success(Right(onLiveCorrectionResult(res, solSaved)))
+                  else Success(Left(onSubmitCorrectionResult(user, res)))
+                }
             }
         }
     }
@@ -126,7 +138,7 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
 
-  def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
+  def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] = None
 
   // Views
 
@@ -158,7 +170,7 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def onSubmitCorrectionError(user: User, error: Throwable): Html
 
-  def onLiveCorrectionResult(result: CompResult): JsValue
+  def onLiveCorrectionResult(result: CompResult, solutionSaved: Boolean): JsValue = result.toJson(solutionSaved)
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
     Logger.error("There has been a correction error", error)
@@ -175,6 +187,8 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
   def instantiateCollection(id: Int, state: ExerciseState): CompCollType
 
   def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
+
+  def instantiateSolution(username: String, collId: Int, id: Int, solution: SolType, points: Double, maxPoints: Double): DBSolType
 
   // Calls
 

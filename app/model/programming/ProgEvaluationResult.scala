@@ -1,20 +1,17 @@
 package model.programming
 
-import model.core.result.SuccessType
-import model.core.result.EvaluationResult
-import model.core.result.CompleteResult
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.programming.ProgConsts._
 import play.api.libs.json.{JsBoolean, JsString, JsValue, Json}
-import play.twirl.api.Html
 
 // Types of complete results
 
-case class ProgCompleteResult(implementation: String, solutionSaved: Boolean, results: Seq[ProgEvalResult]) extends CompleteResult[ProgEvalResult] {
+case class ProgCompleteResult(implementation: String, results: Seq[ProgEvalResult]) extends CompleteResult[ProgEvalResult] {
 
   override type SolType = String
 
-  def toJson: JsValue = Json.obj(
-    "solutionSaved" -> solutionSaved,
+  def toJson(saved: Boolean): JsValue = Json.obj(
+    "solutionSaved" -> saved,
     "results" -> results.map(_.toJson)
   )
 

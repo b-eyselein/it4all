@@ -1,7 +1,6 @@
 version: '3'
 
 volumes:
-    main_db_volume:
     select_db_volume:
     update_db_volume:
     create_db_volume:
@@ -14,16 +13,6 @@ services:
         - 9080:80
         volumes:
         - ./data/web/solutions/:/var/www/html/
-    dbit4all:
-        image:        mysql:5.7
-        restart:      always
-        ports:
-        - 3106:3306
-        volumes:
-        - ./conf/inits/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
-        - main_db_volume:/var/lib/mysql
-        environment:
-        - MYSQL_ROOT_PASSWORD=sT8aV#k7
     sqlselect:
         image:        mysql:5.7
         restart:      always

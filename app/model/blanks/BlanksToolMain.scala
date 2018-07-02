@@ -28,7 +28,9 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   override type PartType = BlanksExPart
 
-  override type SolType = BlanksSolution
+  override type SolType = Seq[BlanksAnswer]
+
+  override type DBSolType = BlanksSolution
 
   override type R = MatchingResult[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch]
 
@@ -52,22 +54,25 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Reading solution from requests
 
-  override def readSolutionFromPostRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] = None
+  //  override def readSolutionFromPostRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] = None
 
-  override def readSolutionFromPutRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] =
+  override def readSolutionFromPutRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap (_.asArray(_.asObj flatMap { jsObj =>
       for {
         id <- jsObj.intField(idName)
         answer <- jsObj.stringField(valueName)
       } yield BlanksAnswer(id, -1, answer)
-    })) map (answers => BlanksSolution(user.username, id, part, answers))
+    }))
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlanksExPart): Option[BlanksSolution] = ???
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlanksExPart): Option[SolType] = ???
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): BlanksCompleteExercise =
     BlanksCompleteExercise(BlanksExercise(id, title = "", author = "", text = "", state, rawBlanksText = "", blanksText = ""), samples = Seq.empty)
+
+  override def instantiateSolution(username: String, exerciseId: Int, part: BlanksExPart, solution: Seq[BlanksAnswer], points: Double, maxPoints: Double): BlanksSolution =
+    BlanksSolution(username, exerciseId, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -75,8 +80,8 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Correction
 
-  override protected def correctEx(user: User, sol: BlanksSolution, exercise: BlanksCompleteExercise, solutionSaved: Boolean): Future[Try[BlanksCompleteResult]] =
-    Future(Try(BlanksCompleteResult(sol.answers, BlanksCorrector.doMatch(sol.answers, exercise.samples))))
+  override protected def correctEx(user: User, sol: Seq[BlanksAnswer], exercise: BlanksCompleteExercise, part: BlanksExPart): Future[Try[BlanksCompleteResult]] =
+    Future(Try(BlanksCompleteResult(sol, BlanksCorrector.doMatch(sol, exercise.samples))))
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, partStr: BlanksExPart): Future[String] = ???
 

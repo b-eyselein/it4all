@@ -58,7 +58,7 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.18.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
 
-  "mysql" % "mysql-connector-java" % "6.0.6",
+  "mysql" % "mysql-connector-java" % "8.0.11",
 
   // Better enums for scala
   "com.beachape" %% "enumeratum-play" % "1.5.14",
@@ -79,16 +79,16 @@ libraryDependencies ++= Seq(
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
 
   // Selenium and HtmlUnitDriver for Web+Js
-  "org.seleniumhq.selenium" % "selenium-java" % "3.11.0",
-  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.30.0",
+  "org.seleniumhq.selenium" % "selenium-java" % "3.12.0",
+  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.31.0",
 
   // MyBatis and JSqlParser for SQL
   //  "org.mybatis" % "mybatis" % "3.4.5",
-  "com.github.jsqlparser" % "jsqlparser" % "1.1",
+  "com.github.jsqlparser" % "jsqlparser" % "1.2",
 
   // Programming
   //  "com.github.docker-java" % "docker-java" % "3.0.14",
-  "com.spotify" % "docker-client" % "8.11.6",
+  "com.spotify" % "docker-client" % "8.11.7",
 
   // Apache POI for Excel
   "org.apache.poi" % "poi" % "3.17",
@@ -113,7 +113,7 @@ libraryDependencies ++= Seq(
 
   // DTD Parser
   //  "de.uni-wuerzburg.is" % "scala_dtd_2.12" % "0.3.0-SNAPSHOT"
-  "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.0"
+  "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.1"
 )
 
 // Injected for non-static Routes

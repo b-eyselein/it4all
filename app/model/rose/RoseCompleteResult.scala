@@ -2,18 +2,20 @@ package model.rose
 
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import play.api.libs.json.{JsString, JsValue, Json}
-import play.twirl.api.Html
 
-case class RoseCompleteResult(solutionSaved: Boolean, learnerSolution: String, result: RoseEvalResult) extends CompleteResult[RoseEvalResult] {
+case class RoseCompleteResult(learnerSolution: String, result: RoseEvalResult) extends CompleteResult[RoseEvalResult] {
 
   override type SolType = String
 
   override def results: Seq[RoseEvalResult] = Seq(result)
 
   def render: JsValue = result match {
+      // FIXME: use in toJson!
     case rer: RoseExecutionResult => Json.parse(rer.result)
     case _                        => JsString("ERROR!")
   }
+
+  override def toJson(saved: Boolean): JsValue = ???
 
 }
 

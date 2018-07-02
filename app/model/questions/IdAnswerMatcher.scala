@@ -11,14 +11,14 @@ case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: Complet
 
   override type SolType = Seq[IdGivenAnswer]
 
-  override val solutionSaved = false
-
   override val results: Seq[IdAnswerMatch] = IdAnswerMatcher.doMatch(learnerSolution, question.answers)
 
   def forJson: JsValue = JsArray(results map { r =>
     // FIXME: update option!
     JsObject(Seq("id" -> JsNumber(r.id), "chosen" -> JsBoolean(r.userArg.isDefined), "correct" -> JsBoolean(r.isCorrect)) ++ r.sampleArg.flatMap(_.explanation).map(expl => "explanation" -> JsString(expl)))
   })
+
+  override def toJson(saved: Boolean): JsValue = ???
 
 }
 

@@ -2,13 +2,12 @@ package model.programming
 
 import java.nio.file.Paths
 
-import model.ExerciseState
 import model.MyYamlProtocol._
 import model.core.FileUtils
 import model.programming.ProgConsts._
 import model.uml.UmlClassDiagram
 import model.uml.UmlExYamlProtocol.UmlSolutionYamlFormat
-import model.{MyYamlProtocol, YamlArr, YamlObj}
+import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -24,7 +23,6 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
       base <- readAll(Paths.get("conf", "resources", "programming", baseValues._1 + "-" + folderIdentifier, "base.py"))
 
-      className <- yamlObject.optStringField(classNameName)
       functionname <- yamlObject.stringField(functionNameName)
       indentLevel <- yamlObject.intField(indentLevelName)
       outputType <- yamlObject.enumField(outputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
@@ -88,13 +86,13 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   case class ProgSampleSolutionYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
-      language <- yamlObject.enumField(languageName, ProgLanguage.valueOf) map (_ getOrElse PYTHON_3)
+      language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)
       base <- yamlObject.stringField(baseName)
       sample <- yamlObject.stringField(sampleName)
     } yield ProgSampleSolution(exerciseId, language, base, sample)
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
-      languageName -> pss.language.name,
+      languageName -> pss.language.entryName,
       sampleName -> pss.solution
     )
 

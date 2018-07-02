@@ -5,35 +5,14 @@ import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.web.WebConsts._
 import org.openqa.selenium.WebElement
 import play.api.libs.json.{JsObject, JsValue, Json}
-import play.twirl.api.Html
 
 import scala.language.postfixOps
 
-case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, solutionSaved: Boolean, results: Seq[WebResult]) extends CompleteResult[WebResult] {
+case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, results: Seq[WebResult]) extends CompleteResult[WebResult] {
 
   override type SolType = String
 
-  def render: Html = {
-    // FIXME: convert to template...
-
-    val resultsRender: String = results match {
-      case Nil   => s"""<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span> Es wurden keine Fehler gefunden.</div>"""
-      case reses => reses map (res => {
-        s"""<div class="alert alert-${res.getBSClass}">
-           |  <p data-toggle="collapse" href="#task${res.task.task.id}">${res.task.task.id}. ${res.task.task.text}</p>
-           |  <div id="task${res.task.task.id}" cls="collapse ${if (res.isSuccessful) "" else "in"}</div>
-           |
-           |  <hr>
-           |  ${res.render}
-          )
-        )""".stripMargin
-      }) mkString "\n"
-    }
-
-    Html(solSavedRender + resultsRender)
-  }
-
-  def toJson(pointsSaved: Boolean): JsValue = Json.obj(
+  def toJson(solutionSaved: Boolean): JsValue = Json.obj(
     solutionSavedName -> solutionSaved,
     partName -> part.urlName,
     successName -> results.forall(_.isSuccessful),

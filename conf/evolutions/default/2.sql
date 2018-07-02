@@ -16,8 +16,6 @@ ON DUPLICATE KEY UPDATE pw_hash = VALUES(pw_hash);
 
 # Xml
 
-DELETE IGNORE FROM xml_results;
-
 DELETE IGNORE FROM xml_solutions;
 
 DELETE IGNORE FROM xml_sample_grammars;
@@ -25,8 +23,6 @@ DELETE IGNORE FROM xml_sample_grammars;
 DELETE IGNORE FROM xml_exercises;
 
 # Web
-
-DELETE IGNORE FROM web_results;
 
 DELETE IGNORE FROM web_solutions;
 
@@ -58,10 +54,10 @@ DELETE IGNORE FROM sql_exercises;
 
 DELETE IGNORE FROM sql_scenarioes;
 
-
 # Spread
 
 DELETE IGNORE FROM spread_exercises;
+
 # Rose
 
 DELETE IGNORE FROM rose_solutions;
@@ -90,15 +86,11 @@ DELETE IGNORE FROM prog_commited_testdata;
 
 DELETE IGNORE FROM prog_sample_testdata;
 
-DELETE IGNORE FROM prog_samples;
+DELETE IGNORE FROM prog_sample_solutions;
 
 DELETE IGNORE FROM prog_input_types;
 
 DELETE IGNORE FROM prog_exercises;
-
-# Mindmap
-
-DELETE IGNORE FROM mindmap_exercises;
 
 # Blanks
 

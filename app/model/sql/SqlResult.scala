@@ -37,7 +37,7 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 }
 
 // FIXME: use builder?
-case class SqlResult(solutionSaved: Boolean, learnerSolution: String,
+case class SqlResult(learnerSolution: String, override val points: Double, override val maxPoints: Double,
                      columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
                      tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
                      whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
@@ -49,7 +49,7 @@ case class SqlResult(solutionSaved: Boolean, learnerSolution: String,
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison
 
-  def toJson: JsValue = Json.obj(
+  def toJson(solutionSaved: Boolean): JsValue = Json.obj(
     solutionSavedName -> solutionSaved,
     columnsName -> columnComparison.toJson,
     tablesName -> tableComparison.toJson,
@@ -64,9 +64,11 @@ case class SqlResult(solutionSaved: Boolean, learnerSolution: String,
 
 }
 
-case class SqlParseFailed(solutionSaved: Boolean, learnerSolution: String, error: Throwable) extends SqlCorrResult {
+case class SqlParseFailed(learnerSolution: String, error: Throwable) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq.empty
+
+  override def toJson(saved: Boolean): JsValue = ???
 
 }
 

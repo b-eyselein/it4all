@@ -37,11 +37,17 @@ trait HasBaseValues {
 
 }
 
-trait Solution {
+trait Solution[SolType] {
 
   val username: String
 
   val exerciseId: Int
+
+  val points: Double
+
+  val maxPoints: Double
+
+  val solution: SolType
 
 }
 
@@ -56,13 +62,13 @@ trait ExPart {
 }
 
 
-trait PartSolution[PartType <: ExPart] extends Solution {
+trait PartSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
 
   val part: PartType
 
 }
 
-trait CollectionExSolution extends Solution {
+trait CollectionExSolution[SolType] extends Solution[SolType] {
 
   val collectionId: Int
 
@@ -115,15 +121,15 @@ trait SingleCompleteEx[Ex <: Exercise, PartType <: ExPart] extends CompleteEx[Ex
 
 }
 
-trait ResultForPart[PartType <: ExPart] {
-
-  val username: String
-  val exerciseId: Int
-  val part: PartType
-  val points: Double
-  val maxPoints: Double
-
-}
+//trait ResultForPart[PartType <: ExPart] {
+//
+//  val username: String
+//  val exerciseId: Int
+//  val part: PartType
+//  val points: Double
+//  val maxPoints: Double
+//
+//}
 
 trait PartsCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] {
 

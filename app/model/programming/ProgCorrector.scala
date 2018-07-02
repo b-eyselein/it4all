@@ -10,9 +10,9 @@ import play.api.libs.json._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-object ProgrammingCorrector extends FileUtils {
+object ProgCorrector extends FileUtils {
 
-  private val resultFileName = "result.json"
+  private val resultFileName   = "result.json"
   private val testDataFileName = "testdata.json"
 
   private def solutionFileName(fileEnding: String): String = "solution." + fileEnding
@@ -21,8 +21,8 @@ object ProgrammingCorrector extends FileUtils {
 
   private val dockerImageName = "beyselein/python_prog_tester"
 
-  def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, solutionSaved: Boolean, completeTestData: Seq[TestData],
-              toolMain: ProgrammingToolMain)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {
+  def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, completeTestData: Seq[TestData],
+              toolMain: ProgToolMain)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {
 
     val exerciseResourcesFolder = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.ex.folderIdentifier)
     val solutionTargetDir = toolMain.solutionDirForExercise(user.username, exercise.ex.id)
@@ -44,7 +44,7 @@ object ProgrammingCorrector extends FileUtils {
       }
 
       futureResults map { resultTry =>
-        resultTry map (results => ProgCompleteResult(implementation, solutionSaved, results))
+        resultTry map (results => ProgCompleteResult(implementation, results))
       }
     }
 
