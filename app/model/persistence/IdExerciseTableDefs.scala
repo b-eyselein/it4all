@@ -1,7 +1,6 @@
 package model.persistence
 
-import model.ExerciseState
-import model.{CompleteEx, Exercise}
+import model.{CompleteEx, Exercise, ExerciseState}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -30,5 +29,13 @@ trait IdExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Exer
   // Deletion
 
   def deleteExercise(id: Int): Future[Int] = db.run(exTable.filter(_.id === id).delete)
+
+  // Table definitions
+
+  abstract class ExerciseTableDef(tag: Tag, tableName: String) extends HasBaseValuesTable[Ex](tag, tableName) {
+
+    def pk = primaryKey("pk", (id, semanticVersion))
+
+  }
 
 }

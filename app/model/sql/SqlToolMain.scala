@@ -154,12 +154,13 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Helper methods
 
   override def instantiateCollection(id: Int, state: ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
-    SqlScenario(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), shortName = ""), exercises = Seq.empty)
+    SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, shortName = ""), exercises = Seq.empty)
 
   override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): SqlCompleteEx = SqlCompleteEx(
-    SqlExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), exerciseType = SqlExerciseType.SELECT, collectionId = collId, tags = "", hint = None), samples = Seq.empty)
+    SqlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
+      collectionId = collId, collSemVer = SemanticVersion(0, 1, 0), tags = "", hint = None), samples = Seq.empty)
 
-  override def instantiateSolution(username: String, collId: Int, id: Int, solution: String, points: Double, maxPoints: Double): SqlSolution =
-    SqlSolution(username, collId, id, solution, points, maxPoints)
+  override def instantiateSolution(username: String, coll: SqlScenario, exercise: SqlCompleteEx, solution: String, points: Double, maxPoints: Double): SqlSolution =
+    SqlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
 
 }

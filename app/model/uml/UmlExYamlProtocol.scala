@@ -2,7 +2,7 @@ package model.uml
 
 import model.MyYamlProtocol._
 import model.uml.UmlConsts._
-import model.{MyYamlProtocol, YamlArr, YamlObj}
+import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -16,7 +16,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     override def readObject(yamlObject: YamlObject): Try[UmlCompleteEx] = for {
       baseValues <- readBaseValues(yamlObject)
 
-      mappingTries <- yamlObject.arrayField(mappingsName, UmlMappingYamlFormat(baseValues._1).read)
+      mappingTries <- yamlObject.arrayField(mappingsName, UmlMappingYamlFormat(baseValues).read)
       ignoreWordTries <- yamlObject.arrayField(ignoreWordsName, _ asStr)
       classDiagram <- yamlObject.someField(solutionName).flatMap(UmlSolutionYamlFormat.read)
     } yield {
@@ -33,10 +33,10 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       val ignoreWords = ignoreWordTries._1
 
       val mappingsForTextParser: Map[String, String] = mappings map (mapping => (mapping.key, mapping.value)) toMap
-      val textParser = new UmlExTextParser(baseValues._4, mappingsForTextParser, ignoreWords)
+      val textParser = new UmlExTextParser(baseValues.text, mappingsForTextParser, ignoreWords)
 
       UmlCompleteEx(
-        UmlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6,
+        UmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
           classDiagram, textParser.parseText, ignoreWords mkString tagJoinChar),
         mappings
       )
@@ -45,21 +45,21 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     override def write(completeEx: UmlCompleteEx): YamlValue = YamlObject(
       writeBaseValues(completeEx.ex) ++
         Map(
-          YamlString(mappingsName) -> YamlArr(completeEx.mappings map UmlMappingYamlFormat(completeEx.ex.id).write),
+          YamlString(mappingsName) -> YamlArr(completeEx.mappings map UmlMappingYamlFormat(completeEx.ex.baseValues).write),
           YamlString(ignoreWordsName) -> YamlArr(completeEx.ex.splitToIgnore map YamlString),
         )
     )
 
   }
 
-  case class UmlMappingYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlMapping] {
+  case class UmlMappingYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[UmlMapping] {
 
     override def write(mapping: UmlMapping): YamlValue = YamlObj(keyName -> mapping.key, valueName -> mapping.value)
 
     override def readObject(yamlObject: YamlObject): Try[UmlMapping] = for {
       key <- yamlObject.stringField(keyName)
       value <- yamlObject.stringField(valueName)
-    } yield UmlMapping(exerciseId, key, value)
+    } yield UmlMapping(baseValues.id, baseValues.semanticVersion, key, value)
 
   }
 

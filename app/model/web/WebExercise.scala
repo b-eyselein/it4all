@@ -22,7 +22,7 @@ object JsActionType extends Enum[JsActionType] {
 // Classes for use
 
 case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask], phpTasks: Seq[PHPCompleteTask] = Seq.empty)
-  extends PartsCompleteEx[WebExercise, WebExPart] {
+  extends SingleCompleteEx[WebExercise, WebExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.web.webPreview(this)
@@ -81,21 +81,24 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
 // Database classes
 
-case class WebExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+case class WebExercise(id: Int, semanticVersion: SemanticVersion,title: String, author: String, text: String, state: ExerciseState,
                        htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
 
 trait WebTask {
   val id        : Int
   val exerciseId: Int
+  val exSemVer  : SemanticVersion
   val text      : String
   val xpathQuery: String
 }
 
-case class HtmlTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, textContent: Option[String]) extends WebTask
+case class HtmlTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
+                    textContent: Option[String]) extends WebTask
 
-case class Attribute(key: String, taskId: Int, exerciseId: Int, value: String)
+case class Attribute(key: String, taskId: Int, exerciseId: Int, exSemVer: SemanticVersion, value: String)
 
-case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, actionType: JsActionType, keysToSend: Option[String]) extends WebTask {
+case class JsTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
+                  actionType: JsActionType, keysToSend: Option[String]) extends WebTask {
 
   def perform(context: SearchContext): Boolean = Option(context findElement By.xpath(xpathQuery)) match {
     case None => false
@@ -121,7 +124,8 @@ case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, ac
 
 }
 
-case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String, isPrecondition: Boolean, awaitedValue: String) {
+case class JsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: SemanticVersion, xpathQuery: String,
+                       isPrecondition: Boolean, awaitedValue: String) {
 
   def description = s"""Element mit XPath <code>$xpathQuery</code> sollte den Inhalt <code>$awaitedValue</code> haben"""
 
@@ -129,6 +133,8 @@ case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String
 
 }
 
-case class PHPTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, textContent: Option[String]) extends WebTask
+case class PHPTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
+                   textContent: Option[String]) extends WebTask
 
-case class WebSolution(username: String, exerciseId: Int, part: WebExPart, solution: String, points: Double, maxPoints: Double) extends PartSolution[WebExPart, String]
+case class WebSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart, solution: String,
+                       points: Double, maxPoints: Double) extends DBPartSolution[WebExPart, String]

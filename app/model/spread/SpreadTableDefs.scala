@@ -1,8 +1,8 @@
 package model.spread
 
 import javax.inject.Inject
-import model.persistence.FileExesTableDefs
-import model.{ExerciseState, SemanticVersion, _}
+import model.persistence.IdExerciseTableDefs
+import model.{Exercise, ExerciseState, FileCompleteEx, SemanticVersion}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 
@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 // Classes for use
 
-case class SpreadExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+case class SpreadExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                           sampleFilename: String, templateFilename: String) extends Exercise with FileCompleteEx[SpreadExercise, SpreadExPart] {
 
   override def ex: SpreadExercise = this
@@ -23,7 +23,7 @@ case class SpreadExercise(id: Int, title: String, author: String, text: String, 
 }
 
 class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] with FileExesTableDefs[SpreadExercise, SpreadExercise] {
+  extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] with IdExerciseTableDefs[SpreadExercise, SpreadExercise] {
 
   import profile.api._
 
@@ -41,13 +41,14 @@ class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   // Tables
 
-  class SpreadExerciseTable(tag: Tag) extends HasBaseValuesTable[SpreadExercise](tag, "spread_exercises") {
+  class SpreadExerciseTable(tag: Tag) extends ExerciseTableDef(tag, "spread_exercises") {
 
     def sampleFilename = column[String]("sample_filename")
 
     def templateFilename = column[String]("template_filename")
 
-    override def * = (id, title, author, text, state, semanticVersion, sampleFilename, templateFilename).mapTo[SpreadExercise]
+
+    override def * = (id, semanticVersion, title, author, text, state, sampleFilename, templateFilename).mapTo[SpreadExercise]
 
   }
 

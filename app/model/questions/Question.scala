@@ -55,25 +55,26 @@ case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends Complete
 
 // Case classes for db
 
-case class Quiz(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+case class Quiz(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                 theme: String) extends ExerciseCollection[Question, CompleteQuestion]
 
-case class Question(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
-                    collectionId: Int, questionType: QuestionType, maxPoints: Int) extends ExInColl {
+case class Question(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                    collectionId: Int, collSemVer: SemanticVersion, questionType: QuestionType, maxPoints: Int) extends ExInColl {
 
   def isFreetext: Boolean = questionType == QuestionType.FREETEXT
 
 }
 
-case class Answer(id: Int, questionId: Int, quizId: Int, text: String, correctness: Correctness, explanation: Option[String]) extends IdAnswer {
+case class Answer(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion,
+                  text: String, correctness: Correctness, explanation: Option[String]) extends IdAnswer {
 
   def isCorrect: Boolean = correctness != Correctness.WRONG
 
 }
 
-case class QuestionRating(questionId: Int, userName: String, rating: Int)
+case class QuestionRating(questionId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, userName: String, rating: Int)
 
-case class UserAnswer(questionId: Int, userName: String, text: String)
+case class UserAnswer(questionId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, userName: String, text: String)
 
-case class QuestionSolution(username: String, collectionId: Int, exerciseId: Int, solution: Seq[GivenAnswer],
+case class QuestionSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int, collSemVer: SemanticVersion, solution: Seq[GivenAnswer],
                             points: Double, maxPoints: Double) extends CollectionExSolution[Seq[GivenAnswer]]

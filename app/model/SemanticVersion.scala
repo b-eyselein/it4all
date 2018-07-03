@@ -21,7 +21,7 @@ object SemanticVersionHelper {
 
     val parts = str.split("\\.")
 
-//    println(str + " :: " + parts.mkString(", "))
+    //    println(str + " :: " + parts.mkString(", "))
 
     SemanticVersion(parts(0).toInt, parts(1).toInt, parts(2).toInt)
   }
@@ -32,5 +32,7 @@ object SemanticVersionHelper {
 case class SemanticVersion(major: Int, minor: Int, patch: Int) {
 
   def asString: String = major + "." + minor + "." + patch
+
+  def isCompatibleTo(that: SemanticVersion): Boolean = this.major == that.major && this.minor == that.minor
 
 }

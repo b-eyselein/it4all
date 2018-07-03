@@ -8,8 +8,7 @@ import scala.language.postfixOps
 
 // Classes for use
 
-case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
-  extends PartsCompleteEx[UmlExercise, UmlExPart] {
+case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping]) extends SingleCompleteEx[UmlExercise, UmlExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.uml.umlPreview(this)
@@ -56,7 +55,7 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping])
 
 // Table classes
 
-case class UmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                        solution: UmlClassDiagram, markedText: String, toIgnore: String) extends Exercise {
 
   def splitToIgnore: Seq[String] = toIgnore split tagJoinChar
@@ -64,7 +63,7 @@ case class UmlExercise(id: Int, title: String, author: String, text: String, sta
 }
 
 // FIXME: save ignore words and mappings as json!?!
-case class UmlMapping(exerciseId: Int, key: String, value: String)
+case class UmlMapping(exerciseId: Int, exSemVer: SemanticVersion, key: String, value: String)
 
-case class UmlSolution(username: String, exerciseId: Int, part: UmlExPart, solution: UmlClassDiagram, points: Double, maxPoints: Double)
-  extends PartSolution[UmlExPart, UmlClassDiagram]
+case class UmlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: UmlExPart, solution: UmlClassDiagram,
+                       points: Double, maxPoints: Double) extends DBPartSolution[UmlExPart, UmlClassDiagram]

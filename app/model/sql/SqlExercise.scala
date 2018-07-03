@@ -57,17 +57,18 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
 
 // case classes for db
 
-case class SqlScenario(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+case class SqlScenario(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                        shortName: String) extends ExerciseCollection[SqlExercise, SqlCompleteEx] {
 
   val imageUrl: String = shortName + ".png"
 
 }
 
-case class SqlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
-                       collectionId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ExInColl
+case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                       collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ExInColl
 
-case class SqlSample(id: Int, exerciseId: Int, scenarioId: Int, sample: String)
+case class SqlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, sample: String)
 
-case class SqlSolution(username: String, collectionId: Int, exerciseId: Int, solution: String, points: Double, maxPoints: Double) extends CollectionExSolution[String]
+case class SqlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int, collSemVer: SemanticVersion,
+                       solution: String, points: Double, maxPoints: Double) extends CollectionExSolution[String]
 

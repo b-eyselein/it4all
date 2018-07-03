@@ -49,18 +49,18 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // DB
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: RoseExPart): Option[SolType] =
+  override def readSolutionForPartFromJson(user: User, exercise: RoseCompleteEx, jsValue: JsValue, part: RoseExPart): Option[SolType] =
     jsValue.asObj flatMap (_.stringField("implementation"))
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
-    RoseExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
+    RoseExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
     inputType = Seq.empty, sampleSolution = null
   )
 
-  override def instantiateSolution(username: String, exerciseId: Int, part: RoseExPart, solution: String, points: Double, maxPoints: Double): RoseSolution =
-    RoseSolution(username, exerciseId, part, solution, points, maxPoints)
+  override def instantiateSolution(username: String, exercise: RoseCompleteEx, part: RoseExPart, solution: String, points: Double, maxPoints: Double): RoseSolution =
+    RoseSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 

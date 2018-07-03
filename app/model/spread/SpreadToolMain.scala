@@ -71,7 +71,7 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): SpreadExercise =
-    SpreadExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), sampleFilename = "", templateFilename = "")
+    SpreadExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, sampleFilename = "", templateFilename = "")
 
   // Views
 

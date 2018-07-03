@@ -153,14 +153,14 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     YamlString(semanticVersionName) -> hasBaseValues.semanticVersion.asString
   )
 
-  protected def readBaseValues(yamlObject: YamlObject): Try[(Int, String, String, String, ExerciseState, SemanticVersion)] = for {
+  protected def readBaseValues(yamlObject: YamlObject): Try[BaseValues] = for {
     id <- yamlObject.intField(idName)
     title <- yamlObject.stringField(titleName)
     author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(textName)
     state: ExerciseState <- yamlObject.enumField(stateName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
     semanticVersion <- yamlObject.stringField(semanticVersionName) flatMap SemanticVersionHelper.tryFromString
-  } yield (id, title, author, text, state, semanticVersion)
+  } yield BaseValues(id, semanticVersion, title, author, text, state)
 
   abstract class MyYamlObjectFormat[T] extends MyYamlFormat[T] {
 

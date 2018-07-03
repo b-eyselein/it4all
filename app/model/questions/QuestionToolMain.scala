@@ -111,12 +111,12 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
   // Helper methods
 
   override def instantiateCollection(id: Int, state: ExerciseState): CompleteQuiz = CompleteQuiz(
-    Quiz(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), theme = ""), exercises = Seq.empty)
+    Quiz(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, theme = ""), exercises = Seq.empty)
 
   override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompleteQuestion = CompleteQuestion(
-    Question(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), collId, QuestionType.FREETEXT, -1), answers = Seq.empty)
+    Question(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, collId, collSemVer = SemanticVersion(0, 1, 0), QuestionType.FREETEXT, -1), answers = Seq.empty)
 
-  override def instantiateSolution(username: String, collId: Int, id: Int, solution: Seq[GivenAnswer], points: Double, maxPoints: Double): QuestionSolution =
-    QuestionSolution(username, collId, id, solution, points, maxPoints)
+  override def instantiateSolution(username: String, coll: Quiz, exercise: CompleteQuestion, solution: Seq[GivenAnswer], points: Double, maxPoints: Double): QuestionSolution =
+    QuestionSolution(username, exercise.ex.id, exercise.ex.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
 
 }

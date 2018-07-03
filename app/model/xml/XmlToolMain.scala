@@ -11,7 +11,6 @@ import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, SemanticVersion, User}
 import play.api.data.Form
 import play.api.libs.json.JsValue
-import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -65,19 +64,16 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from requests, saving
 
-  override def readSolutionFromPostRequest(user: User, id: Int, part: XmlExPart)(implicit request: Request[AnyContent]): Option[SolType] =
-    SolutionFormHelper.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
-
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: XmlExPart): Option[SolType] = jsValue.asStr
+  override def readSolutionForPartFromJson(user: User, exercise: XmlCompleteExercise, jsValue: JsValue, part: XmlExPart): Option[SolType] = jsValue.asStr
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): XmlCompleteExercise = XmlCompleteExercise(
-    XmlExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), grammarDescription = "", rootNode = ""),
+    XmlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, grammarDescription = "", rootNode = ""),
     Seq.empty)
 
-  override def instantiateSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String, points: Double, maxPoints: Double): XmlSolution =
-    XmlSolution(username, exerciseId, part, solution, points, maxPoints)
+  override def instantiateSolution(username: String, exercise: XmlCompleteExercise, part: XmlExPart, solution: String, points: Double, maxPoints: Double): XmlSolution =
+    XmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 

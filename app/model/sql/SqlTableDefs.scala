@@ -1,6 +1,7 @@
 package model.sql
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
 import play.api.Logger
@@ -42,7 +43,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     db.run(exTable.filter(_.collectionId === coll.id).result) flatMap (exes => Future.sequence(exes map completeExForEx)) map (exes => SqlCompleteScenario(coll, exes))
 
   private def samplesForEx(collId: Int, exId: Int): Future[Seq[SqlSample]] =
-    db.run(sqlSamples filter (table => table.exerciseId === exId && table.scenarioId === collId) result)
+    db.run(sqlSamples filter (table => table.exerciseId === exId && table.collId === collId) result)
 
   // Saving
 
@@ -75,19 +76,16 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Tables
 
-  class SqlScenarioesTable(tag: Tag) extends HasBaseValuesTable[SqlScenario](tag, "sql_scenarioes") {
+  class SqlScenarioesTable(tag: Tag) extends ExerciseCollectionTable(tag, "sql_scenarioes") {
 
     def shortName = column[String](shortNameName)
 
 
-    def pk = primaryKey("pk", id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, shortName).mapTo[SqlScenario]
+    override def * = (id, semanticVersion, title, author, text, state, shortName).mapTo[SqlScenario]
 
   }
 
-  class SqlExercisesTable(tag: Tag) extends ExerciseInCollectionTable[SqlExercise](tag, "sql_exercises") {
+  class SqlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "sql_exercises") {
 
     def exerciseType = column[SqlExerciseType]("exercise_type")
 
@@ -96,12 +94,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def tags = column[String](tagsName)
 
 
-    def pk = primaryKey("pk", (id, collectionId))
-
-    def scenarioFk = foreignKey("scenario_fk", collectionId, collTable)(_.id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, collectionId, exerciseType, tags, hint.?).mapTo[SqlExercise]
+    override def * = (id, semanticVersion, title, author, text, state, collectionId, collSemVer, exerciseType, tags, hint.?).mapTo[SqlExercise]
 
   }
 
@@ -111,17 +104,22 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def exerciseId = column[Int]("exercise_id")
 
-    def scenarioId = column[Int]("collection_id")
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
+    def collId = column[Int]("collection_id")
+
+    def collSemVer = column[SemanticVersion]("coll_sem_ver")
 
     def sample = column[String]("sample")
 
 
-    def pk = primaryKey("pk", (id, exerciseId, scenarioId))
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer, collId, collSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, scenarioId), exTable)(exes => (exes.id, exes.collectionId))
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer, collId, collSemVer), exTable)(exes =>
+      (exes.id, exes.semanticVersion, exes.collectionId, exes.collSemVer))
 
 
-    override def * = (id, exerciseId, scenarioId, sample).mapTo[SqlSample]
+    override def * = (id, exerciseId, exSemVer, collId, collSemVer, sample).mapTo[SqlSample]
 
   }
 
@@ -130,7 +128,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution = column[String]("solution")
 
 
-    override def * = (username, collectionId, exerciseId, solution, points, maxPoints).mapTo[SqlSolution]
+    override def * = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints).mapTo[SqlSolution]
 
   }
 

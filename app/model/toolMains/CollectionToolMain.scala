@@ -117,7 +117,7 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
                 val points = -1
                 val maxPoints = -1
 
-                val dbSol = instantiateSolution(user.username, collId, id, solution, points, maxPoints)
+                val dbSol = instantiateSolution(user.username, collection, exercise, solution, points, maxPoints)
                 tables.futureSaveSolution(dbSol) map { solSaved =>
                   if (isLive) Success(Right(onLiveCorrectionResult(res, solSaved)))
                   else Success(Left(onSubmitCorrectionResult(user, res)))
@@ -188,7 +188,7 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
 
-  def instantiateSolution(username: String, collId: Int, id: Int, solution: SolType, points: Double, maxPoints: Double): DBSolType
+  def instantiateSolution(username: String, collection: CollType, exercise: CompExType, solution: SolType, points: Double, maxPoints: Double): DBSolType
 
   // Calls
 

@@ -3,7 +3,7 @@ package model.rose
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
 import model.programming.{ProgDataTypes, ProgLanguages}
-import model.{MyYamlProtocol, YamlObj}
+import model.{BaseValues, MyYamlProtocol, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -19,8 +19,8 @@ object RoseExYamlProtocol extends MyYamlProtocol {
       fieldWidth <- yamlObject.intField("fieldWidth")
       fieldHeight <- yamlObject.intField("fieldHeight")
       isMp <- yamlObject.boolField("isMultiplayer")
-      inputTypes <- yamlObject.arrayField("inputTypes", RoseInputTypeYamlFormat(baseValues._1).read)
-      sampleSolutions <- yamlObject.arrayField("sampleSolutions", RoseSampleSolutionYamlFormat(baseValues._1).read)
+      inputTypes <- yamlObject.arrayField("inputTypes", RoseInputTypeYamlFormat(baseValues).read)
+      sampleSolutions <- yamlObject.arrayField("sampleSolutions", RoseSampleSolutionYamlFormat(baseValues).read)
     } yield {
       for (inputTypeFailure <- inputTypes._2)
       // FIXME: return...
@@ -30,7 +30,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
       //FIXME: return...
         Logger.error("Could not read rose sample sol", sampleSolFailure.exception)
 
-      RoseCompleteEx(RoseExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6,
+      RoseCompleteEx(RoseExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         fieldWidth, fieldHeight, isMp), inputTypes._1, sampleSolutions._1)
     }
 
@@ -38,24 +38,24 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class RoseInputTypeYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[RoseInputType] {
+  case class RoseInputTypeYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseInputType] {
 
     override def readObject(yamlObject: YamlObject): Try[RoseInputType] = for {
       id <- yamlObject.intField(idName)
       name <- yamlObject.stringField(nameName)
       inputType <- yamlObject.enumField(typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
-    } yield RoseInputType(id, exerciseId, name, inputType)
+    } yield RoseInputType(id, baseValues.id, baseValues.semanticVersion, name, inputType)
 
     override def write(obj: RoseInputType): YamlValue = ???
 
   }
 
-  case class RoseSampleSolutionYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[RoseSampleSolution] {
+  case class RoseSampleSolutionYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[RoseSampleSolution] = for {
       language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.STANDARD_LANG)
       sample <- yamlObject.stringField(sampleName)
-    } yield RoseSampleSolution(exerciseId, language, sample)
+    } yield RoseSampleSolution(baseValues.id, baseValues.semanticVersion, language, sample)
 
     override def write(pss: RoseSampleSolution): YamlValue = YamlObj(
       languageName -> pss.language.entryName,

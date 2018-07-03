@@ -1,6 +1,7 @@
 package model.questions
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.persistence.ExerciseCollectionTableDefs
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
@@ -35,7 +36,6 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
 
   // Reading
 
-
   override def completeExForEx(ex: Question): Future[CompleteQuestion] =
     answersForQuestion(ex.collectionId, ex.id) map (answers => CompleteQuestion(ex, answers))
 
@@ -60,7 +60,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     }
 
   private def answersForQuestion(quizId: Int, questionId: Int): Future[Seq[Answer]] =
-    db.run(answers.filter(ans => ans.quizId === quizId && ans.questionId === questionId).result)
+    db.run(answers.filter(ans => ans.collId === quizId && ans.exerciseId === questionId).result)
 
   // Saving
 
@@ -91,31 +91,23 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
 
   // Table defs
 
-  class QuizzesTable(tag: Tag) extends HasBaseValuesTable[Quiz](tag, "quizzes") {
+  class QuizzesTable(tag: Tag) extends ExerciseCollectionTable(tag, "quizzes") {
 
     def theme = column[String](themeName)
 
 
-    def pk = primaryKey("pk", id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, theme).mapTo[Quiz]
+    override def * = (id, semanticVersion, title, author, text, state, theme).mapTo[Quiz]
 
   }
 
-  class QuestionsTable(tag: Tag) extends ExerciseInCollectionTable[Question](tag, "questions") {
+  class QuestionsTable(tag: Tag) extends ExerciseInCollectionTable(tag, "questions") {
 
     def questionType = column[QuestionType]("question_type")
 
     def maxPoints = column[Int]("max_points")
 
 
-    def pk = primaryKey("pk", (id, collectionId))
-
-    def quizFk = foreignKey("quiz_fk", collectionId, collTable)(_.id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, collectionId, questionType, maxPoints).mapTo[Question]
+    override def * = (id, semanticVersion, title, author, text, state, collectionId, collSemVer, questionType, maxPoints).mapTo[Question]
 
   }
 
@@ -123,9 +115,13 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
 
     def id = column[Int](idName)
 
-    def questionId = column[Int]("question_id")
+    def exerciseId = column[Int]("question_id")
 
-    def quizId = column[Int]("collection_id")
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
+    def collId = column[Int]("collection_id")
+
+    def collSemVer = column[SemanticVersion]("coll_sem_ver")
 
     def ansText = column[String]("answer_text")
 
@@ -134,12 +130,12 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     def explanation = column[String]("explanation")
 
 
-    def pk = primaryKey("pk", (id, questionId, quizId))
+    def pk = primaryKey("pk", (id, exerciseId, collId))
 
-    def questionFk = foreignKey("question_fk", (questionId, quizId), exTable)(question => (question.id, question.collectionId))
+    def questionFk = foreignKey("question_fk", (exerciseId, collId), exTable)(question => (question.id, question.collectionId))
 
 
-    override def * = (id, questionId, quizId, ansText, correctness, explanation.?).mapTo[Answer]
+    override def * = (id, exerciseId, exSemVer, collId, collSemVer, ansText, correctness, explanation.?).mapTo[Answer]
 
   }
 
@@ -147,7 +143,8 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
 
     def solution = column[Seq[GivenAnswer]]("todo")
 
-    override def * = (username, collectionId, exerciseId, solution, points, maxPoints).mapTo[QuestionSolution]
+
+    override def * = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints).mapTo[QuestionSolution]
 
   }
 

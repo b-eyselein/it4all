@@ -1,11 +1,11 @@
 package model.programming
 
 import javax.inject.Inject
-import model.ExerciseState
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
 import model.uml.UmlClassDiagram
+import model.{ExerciseState, SemanticVersion}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsValue, Json}
 import slick.jdbc.JdbcProfile
@@ -65,12 +65,9 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
     MappedColumnType.base[ProgExPart, String](_.entryName, ProgExParts.withNameInsensitive)
 
-  //  override protected implicit val solutionTypeColumnType: BaseColumnType[ProgSolution] =
-  //    MappedColumnType.base[ProgSolution, String](_.asJson.toString, ProgSolutionHelper.fromJson)
-
   // Tables
 
-  class ProgExercisesTable(tag: Tag) extends HasBaseValuesTable[ProgExercise](tag, "prog_exercises") {
+  class ProgExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "prog_exercises") {
 
     def folderIdentifier = column[String]("folder_identifier")
 
@@ -85,10 +82,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def baseDataAsJson = column[JsValue]("base_data_json")
 
 
-    def pk = primaryKey("pk", id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, folderIdentifier, base, functionname, indentLevel, outputType, baseDataAsJson.?).mapTo[ProgExercise]
+    override def * = (id, semanticVersion, title, author, text, state, folderIdentifier, base, functionname, indentLevel, outputType, baseDataAsJson.?).mapTo[ProgExercise]
 
   }
 
@@ -98,23 +92,27 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def inputName = column[String]("input_name")
 
     def inputType = column[ProgDataType]("input_type")
 
 
-    def pk = primaryKey("pk", (id, exerciseId))
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
-    override def * = (id, exerciseId, inputName, inputType).mapTo[ProgInput]
+    override def * = (id, exerciseId, exSemVer, inputName, inputType).mapTo[ProgInput]
 
   }
 
   class ProgSampleSolutionsTable(tag: Tag) extends Table[ProgSampleSolution](tag, "prog_sample_solutions") {
 
     def exerciseId = column[Int]("exercise_id")
+
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
 
     def language = column[ProgLanguage]("language")
 
@@ -123,12 +121,12 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def solution = column[String]("solution")
 
 
-    def pk = primaryKey("pk", (exerciseId, language))
+    def pk = primaryKey("pk", (exerciseId, exSemVer, language))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
-    override def * = (exerciseId, language, base, solution).mapTo[ProgSampleSolution]
+    override def * = (exerciseId, exSemVer, language, base, solution).mapTo[ProgSampleSolution]
 
   }
 
@@ -140,21 +138,23 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def inputAsJson = column[JsValue]("input_json")
 
     def output = column[String]("output")
 
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
   }
 
   class SampleTestDataTable(tag: Tag) extends ITestDataTable[SampleTestData](tag, "prog_sample_testdata") {
 
-    def pk = primaryKey("pk", (id, exerciseId))
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
 
 
-    override def * = (id, exerciseId, inputAsJson, output).mapTo[SampleTestData]
+    override def * = (id, exerciseId, exSemVer, inputAsJson, output).mapTo[SampleTestData]
 
   }
 
@@ -165,25 +165,32 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def state = column[ExerciseState]("approval_state")
 
 
-    def pk = primaryKey("pk", (id, exerciseId, username))
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer, username))
 
     def userFk = foreignKey("user_fk", username, users)(_.username)
 
 
-    override def * = (id, exerciseId, inputAsJson, output, username, state).mapTo[CommitedTestData]
+    override def * = (id, exerciseId, exSemVer, inputAsJson, output, username, state).mapTo[CommitedTestData]
 
   }
 
   class UmlClassDiagPartsTable(tag: Tag) extends Table[UmlClassDiagPart](tag, "prog_uml_cd_parts") {
 
-    def exerciseId = column[Int]("exercise_id", O.PrimaryKey)
+    def exerciseId = column[Int]("exercise_id")
+
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
 
     def className = column[String]("class_name")
 
     def classDiagram = column[UmlClassDiagram]("class_diagram")
 
 
-    override def * = (exerciseId, className, classDiagram).mapTo[UmlClassDiagPart]
+    def pk = primaryKey("pk", (exerciseId, exSemVer))
+
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+
+    override def * = (exerciseId, exSemVer, className, classDiagram).mapTo[UmlClassDiagPart]
 
   }
 
@@ -193,7 +200,8 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def language = column[ProgLanguage]("language")
 
-    override def * = (username, exerciseId, part, solution, language, points, maxPoints).mapTo[DBProgSolution]
+
+    override def * = (username, exerciseId, exSemVer, part, solution, language, points, maxPoints).mapTo[DBProgSolution]
 
   }
 

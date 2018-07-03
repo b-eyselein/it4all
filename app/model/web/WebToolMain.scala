@@ -77,17 +77,17 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from request
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: WebExPart): Option[SolType] = jsValue.asStr
+  override def readSolutionForPartFromJson(user: User, exercise: WebCompleteEx, jsValue: JsValue, part: WebExPart): Option[SolType] = jsValue.asStr
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): WebCompleteEx = WebCompleteEx(
-    WebExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), htmlText = None, jsText = None, phpText = None),
+    WebExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, htmlText = None, jsText = None, phpText = None),
     htmlTasks = Seq.empty, jsTasks = Seq.empty
   )
 
-  override def instantiateSolution(username: String, exerciseId: Int, part: WebExPart, solution: String, points: Double, maxPoints: Double): WebSolution =
-    WebSolution(username, exerciseId, part, solution, points, maxPoints)
+  override def instantiateSolution(username: String, exercise: WebCompleteEx, part: WebExPart, solution: String, points: Double, maxPoints: Double): WebSolution =
+    WebSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 

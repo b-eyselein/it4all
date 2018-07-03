@@ -1,8 +1,8 @@
 package model.web
 
 import model.MyYamlProtocol._
+import model._
 import model.web.WebConsts._
-import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -25,9 +25,9 @@ object WebExYamlProtocol extends MyYamlProtocol {
       jsText <- yamlObject.optStringField(jsTextName)
       phpText <- yamlObject.optStringField(phpTextName)
 
-      htmlTaskTries <- yamlObject.optArrayField(htmlTasksName, HtmlCompleteTaskYamlFormat(baseValues._1).read)
-      jsTaskTries <- yamlObject.optArrayField(jsTasksName, JsCompleteTaskYamlFormat(baseValues._1).read)
-      phpTasksTries <- yamlObject.optArrayField(phpTasksName, PhpCompleteTaskYamlFormat(baseValues._1).read)
+      htmlTaskTries <- yamlObject.optArrayField(htmlTasksName, HtmlCompleteTaskYamlFormat(baseValues).read)
+      jsTaskTries <- yamlObject.optArrayField(jsTasksName, JsCompleteTaskYamlFormat(baseValues).read)
+      phpTasksTries <- yamlObject.optArrayField(phpTasksName, PhpCompleteTaskYamlFormat(baseValues).read)
     } yield {
 
       for (htmlTaskFailure <- htmlTaskTries._2)
@@ -43,7 +43,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
         Logger.error("Could not read php task", phpTaskFailure.exception)
 
       WebCompleteEx(
-        WebExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, htmlText, jsText, phpText),
+        WebExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText, phpText),
         htmlTaskTries._1, jsTaskTries._1, phpTasksTries._1
       )
     }
@@ -57,12 +57,12 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
       val htmlTasks: Option[(YamlValue, YamlValue)] = completeEx.htmlTasks match {
         case Nil                        => None
-        case hts: Seq[HtmlCompleteTask] => Some(YamlString(htmlTasksName) -> YamlArr(hts map HtmlCompleteTaskYamlFormat(completeEx.ex.id).write))
+        case hts: Seq[HtmlCompleteTask] => Some(YamlString(htmlTasksName) -> YamlArr(hts map HtmlCompleteTaskYamlFormat(completeEx.ex.baseValues).write))
       }
 
       val jsTasks: Option[(YamlValue, YamlValue)] = completeEx.jsTasks match {
         case Nil => None
-        case jts => Some(YamlString(jsTasksName) -> YamlArr(jts map JsCompleteTaskYamlFormat(completeEx.ex.id).write))
+        case jts => Some(YamlString(jsTasksName) -> YamlArr(jts map JsCompleteTaskYamlFormat(completeEx.ex.baseValues).write))
       }
 
       Map.empty ++
@@ -76,12 +76,12 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override def write(obj: WebCompleteEx): YamlValue = ???
   }
 
-  case class HtmlCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[HtmlCompleteTask] {
+  case class HtmlCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[HtmlCompleteTask] {
 
     override def write(htmlCompTask: HtmlCompleteTask): YamlValue = {
       val yamlAttrs: Option[(YamlString, YamlArray)] = htmlCompTask.attributes match {
         case Nil   => None
-        case attrs => Some(YamlString(attributesName) -> YamlArr(attrs map TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId).write))
+        case attrs => Some(YamlString(attributesName) -> YamlArr(attrs map TaskAttributeYamlFormat(htmlCompTask.task.id, baseValues).write))
       }
 
       val tcOpt: Option[(YamlValue, YamlValue)] = htmlCompTask.task.textContent map (tc => YamlString(textContentName) -> YamlString(tc))
@@ -100,7 +100,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       text <- yamlObject.stringField(textName)
       xpathQuery <- yamlObject.stringField(xpathQueryName)
       textContent <- yamlObject.optField(textContentName, str => Success(str.forgivingStr))
-      attributeTries <- yamlObject.optArrayField(attributesName, TaskAttributeYamlFormat(taskId, exerciseId).read)
+      attributeTries <- yamlObject.optArrayField(attributesName, TaskAttributeYamlFormat(taskId, baseValues).read)
     } yield {
 
 
@@ -108,25 +108,25 @@ object WebExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read html attribute", attributeFailure.exception)
 
-      HtmlCompleteTask(HtmlTask(taskId, exerciseId, text, xpathQuery, textContent), attributeTries._1)
+      HtmlCompleteTask(HtmlTask(taskId, baseValues.id, baseValues.semanticVersion, text, xpathQuery, textContent), attributeTries._1)
     }
   }
 
-  case class TaskAttributeYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlObjectFormat[Attribute] {
+  case class TaskAttributeYamlFormat(taskId: Int, baseValues: BaseValues) extends MyYamlObjectFormat[Attribute] {
 
     override def readObject(yamlObject: YamlObject): Try[Attribute] = for {
       key <- yamlObject.stringField(keyName)
       value <- yamlObject.stringField(valueName)
-    } yield Attribute(key, taskId, exerciseId, value)
+    } yield Attribute(key, taskId, baseValues.id, baseValues.semanticVersion, value)
 
     override def write(attr: Attribute): YamlValue = YamlObj(keyName -> attr.key, valueName -> attr.value)
 
   }
 
-  case class JsCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[JsCompleteTask] {
+  case class JsCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[JsCompleteTask] {
 
     override def write(jsTask: JsCompleteTask): YamlValue = {
-      val yamlConds = YamlArr(jsTask.conditions map JsConditionYamlFormat(jsTask.task.id, jsTask.task.exerciseId).write)
+      val yamlConds = YamlArr(jsTask.conditions map JsConditionYamlFormat(jsTask.task.id, baseValues).write)
 
       YamlObj(
         idName -> jsTask.task.id,
@@ -144,26 +144,26 @@ object WebExYamlProtocol extends MyYamlProtocol {
       xpathQuery <- yamlObject.stringField(xpathQueryName)
       actionType <- yamlObject.enumField(actionTypeName, JsActionType.withNameInsensitiveOption) map (_ getOrElse JsActionType.CLICK)
       keysToSend <- yamlObject.optField(KEYS_TO_SEND_NAME, str => Success(str.forgivingStr))
-      conditionTries <- yamlObject.arrayField(conditionsName, JsConditionYamlFormat(taskId, exerciseId).read)
+      conditionTries <- yamlObject.arrayField(conditionsName, JsConditionYamlFormat(taskId, baseValues).read)
     } yield {
 
       for (conditionFailure <- conditionTries._2)
       // FIXME: return...
         Logger.error("Could not read js condition", conditionFailure.exception)
 
-      JsCompleteTask(JsTask(taskId, exerciseId, text, xpathQuery, actionType, keysToSend), conditionTries._1)
+      JsCompleteTask(JsTask(taskId, baseValues.id, baseValues.semanticVersion, text, xpathQuery, actionType, keysToSend), conditionTries._1)
     }
 
   }
 
-  case class JsConditionYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlObjectFormat[JsCondition] {
+  case class JsConditionYamlFormat(taskId: Int, baseValues: BaseValues) extends MyYamlObjectFormat[JsCondition] {
 
     override def readObject(yamlObject: YamlObject): Try[JsCondition] = for {
       id <- yamlObject.intField(idName)
       xpathQuery <- yamlObject.stringField(xpathQueryName)
       isPrecondition <- yamlObject.boolField(IS_PRECOND_NAME)
       awaitedValue <- yamlObject.forgivingStringField(awaitedName)
-    } yield JsCondition(id, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue)
+    } yield JsCondition(id, taskId, baseValues.id, baseValues.semanticVersion, xpathQuery, isPrecondition, awaitedValue)
 
     override def write(jsCond: JsCondition): YamlValue = YamlObj(
       idName -> jsCond.id,
@@ -174,7 +174,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class PhpCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[PHPCompleteTask] {
+  case class PhpCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[PHPCompleteTask] {
 
     override protected def readObject(yamlObject: YamlObject): Try[PHPCompleteTask] = ???
 

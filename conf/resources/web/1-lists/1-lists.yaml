@@ -2,6 +2,7 @@ author: bje40dc
 text: |
   Erstellen Sie eine Liste in HTML, die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!
 id: 1
+semanticVersion: 1.0.0
 status: APPROVED
 title: Listen in Html
 htmlTasks:

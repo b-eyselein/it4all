@@ -13,6 +13,14 @@ case class BlanksCompleteResult(learnerSolution: Seq[BlanksAnswer], result: Matc
 
   override def toJson(saved: Boolean): JsValue = ???
 
+  //    JsArray(
+  //    result.result.allMatches map (m => Json.obj(
+  //      idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
+  //      correctnessName -> m.matchType.entryName,
+  //      explanationName -> m.explanations))
+  //  )
+
+
 }
 
 object BlanksCorrector extends Matcher[BlanksAnswer, GenericAnalysisResult, BlanksAnswerMatch] {

@@ -17,25 +17,25 @@ object SqlYamlProtocol extends MyYamlProtocol {
       baseValues <- readBaseValues(yamlObject)
 
       shortName <- yamlObject.stringField(shortNameName)
-      exercises <- yamlObject.arrayField(exercisesName, SqlExYamlFormat(baseValues._1).read)
+      exercises <- yamlObject.arrayField(exercisesName, SqlExYamlFormat(baseValues).read)
     } yield {
       for (exFailure <- exercises._2)
       // FIXME: return...
         Logger.error("Could not read sql exercise: ", exFailure.exception)
 
-      SqlCompleteScenario(SqlScenario(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, shortName), exercises._1)
+      SqlCompleteScenario(SqlScenario(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, shortName), exercises._1)
     }
 
     override def write(completeEx: SqlCompleteScenario): YamlObject = YamlObject(
       writeBaseValues(completeEx.coll) ++
         Map(
           YamlString(shortNameName) -> YamlString(completeEx.coll.shortName),
-          YamlString(exercisesName) -> YamlArr(completeEx.exercises map SqlExYamlFormat(completeEx.coll.id).write)
+          YamlString(exercisesName) -> YamlArr(completeEx.exercises map SqlExYamlFormat(completeEx.coll.baseValues).write)
         )
     )
   }
 
-  case class SqlExYamlFormat(scenarioId: Int) extends MyYamlObjectFormat[SqlCompleteEx] {
+  case class SqlExYamlFormat(collBaseValues: BaseValues) extends MyYamlObjectFormat[SqlCompleteEx] {
 
     override protected def readObject(yamlObject: YamlObject): Try[SqlCompleteEx] = for {
       baseValues <- readBaseValues(yamlObject)
@@ -45,7 +45,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
       hint <- yamlObject.optStringField(hintName)
 
-      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(scenarioId, baseValues._1).read)
+      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(collBaseValues, baseValues).read)
     } yield {
 
       for (tagFailures <- tagTries._2)
@@ -56,15 +56,15 @@ object SqlYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read sql sample", sampleFailure.exception)
 
-      SqlCompleteEx(SqlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6,
-        scenarioId, exerciseType, tagTries._1 mkString tagJoinChar, hint), sampleTries._1)
+      SqlCompleteEx(SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        collBaseValues.id, collBaseValues.semanticVersion, exerciseType, tagTries._1 mkString tagJoinChar, hint), sampleTries._1)
     }
 
     override def write(completeEx: SqlCompleteEx): YamlValue = YamlObject(
       writeBaseValues(completeEx.ex) ++
         Map(
           YamlString(exerciseTypeName) -> YamlString(completeEx.ex.exerciseType.entryName),
-          YamlString(samplesName) -> YamlArr(completeEx.samples map SqlSampleYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
+          YamlString(samplesName) -> YamlArr(completeEx.samples map SqlSampleYamlFormat(collBaseValues, completeEx.ex.baseValues).write)
         ) ++ completeEx.ex.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(completeEx)
     )
 
@@ -76,12 +76,12 @@ object SqlYamlProtocol extends MyYamlProtocol {
   }
 
 
-  case class SqlSampleYamlFormat(scenarioId: Int, exerciseId: Int) extends MyYamlObjectFormat[SqlSample] {
+  case class SqlSampleYamlFormat(collBaseValues: BaseValues, exerciseBaseValues: BaseValues) extends MyYamlObjectFormat[SqlSample] {
 
     override def readObject(yamlObject: YamlObject): Try[SqlSample] = for {
       id <- yamlObject.intField(idName)
       sample <- yamlObject.stringField(sampleName)
-    } yield SqlSample(id, exerciseId, scenarioId, sample)
+    } yield SqlSample(id, exerciseBaseValues.id, exerciseBaseValues.semanticVersion, collBaseValues.id, collBaseValues.semanticVersion, sample)
 
     override def write(obj: SqlSample): YamlValue = YamlObj(
       idName -> obj.id,

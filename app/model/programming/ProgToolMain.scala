@@ -7,7 +7,6 @@ import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, SemanticVersion, User}
 import play.api.data.Form
 import play.api.libs.json._
-import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,13 +59,11 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Reading solution from requests
 
-  override def readSolutionFromPostRequest(user: User, id: Int, part: ProgExPart)(implicit request: Request[AnyContent]): Option[SolType] = None
-
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgExPart): Option[SolType] = jsValue.asObj flatMap { jsObj =>
+  override def readSolutionForPartFromJson(user: User, exercise: ProgCompleteEx, jsValue: JsValue, part: ProgExPart): Option[SolType] = jsValue.asObj flatMap { jsObj =>
 
     part match {
       case ProgExParts.TestdataCreation => for {
-        testData <- jsObj.arrayField(testdataName, _.asObj flatMap (jsValue => readTestData(id, jsValue, user)))
+        testData <- jsObj.arrayField(testdataName, _.asObj flatMap (jsValue => readTestData(exercise.ex.id, exercise.ex.semanticVersion, jsValue, user)))
         language <- jsObj.stringField(languageName) map ProgLanguages.withNameInsensitive
       } yield ProgTestDataSolution.apply(testData, language)
 
@@ -79,19 +76,23 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   }
 
-  private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CommitedTestData] = for {
+  private def readTestData(exId: Int, exSemVer: SemanticVersion, tdJsObj: JsObject, user: User): Option[CommitedTestData] = for {
     testId <- tdJsObj.intField(idName)
     inputAsJson <- tdJsObj.field(inputName)
     output <- tdJsObj.stringField(outputName)
-  } yield CommitedTestData(testId, id, inputAsJson, output, user.username, ExerciseState.RESERVED)
+  } yield CommitedTestData(testId, exId, exSemVer, inputAsJson, output, user.username, ExerciseState.RESERVED)
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
-    ProgExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0),
+    ProgExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state,
       folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
     inputTypes = Seq.empty, sampleSolutions = Seq.empty, sampleTestData = Seq.empty, maybeClassDiagramPart = None
   )
+
+  override def instantiateSolution(username: String, exercise: ProgCompleteEx, part: ProgExPart,
+                                   solution: ProgSolution, points: Double, maxPoints: Double): DBProgSolution =
+    DBProgSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution.solution, solution.language, points, maxPoints)
 
   // Yaml
 
@@ -99,8 +100,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Correction
 
-  override def instantiateSolution(username: String, exerciseId: Int, part: ProgExPart, solution: ProgSolution, points: Double, maxPoints: Double): DBProgSolution =
-    DBProgSolution(username, exerciseId, part, solution.solution, solution.language, points, maxPoints)
 
   override def correctEx(user: User, sol: SolType, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] = {
 

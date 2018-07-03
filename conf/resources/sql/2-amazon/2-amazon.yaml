@@ -1,4 +1,5 @@
 id: 2
+semanticVersion: 1.0.0
 title: Amazon
 author: bje40dc
 text: ""
@@ -7,6 +8,7 @@ shortName: amazon
 scriptFile: amazon.sql
 exercises:
 - id: 1
+  semanticVersion: 1.0.0
   title: Alles über die Autoren
   author: bje40dc
   text: Geben Sie alle Spalten der Autorentabelle aus!
@@ -23,6 +25,7 @@ exercises:
         FROM authors
 
 - id: 2
+  semanticVersion: 1.0.0
   title: Nachnamen aller Autoren
   author: bje40dc
   text: Geben Sie die Nachnamen aller Autoren aus!
@@ -35,6 +38,7 @@ exercises:
         FROM authors
 
 - id: 3
+  semanticVersion: 1.0.0
   title: Verlagsnamen
   author: bje40dc
   text: Geben Sie die Namen aller Verlage aus!
@@ -47,6 +51,7 @@ exercises:
         FROM publishers
 
 - id: 4
+  semanticVersion: 1.0.0
   title: Namen aller Kunden
   author: bje40dc
   text: Geben Sie die Vor- und Nachnamen aller Kunden aus!
@@ -59,6 +64,7 @@ exercises:
         FROM customers
 
 - id: 5
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Geben Sie für jedes Buch jeweils den Titel das Erscheinungsjahr und die ISBN aus!
@@ -71,6 +77,7 @@ exercises:
         FROM books
 
 - id: 6
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Bestimmen Sie den Titel des Buches mit der ISBN '978-3551354051' (ohne Anführungszeichen).
@@ -84,6 +91,7 @@ exercises:
         WHERE isbn = '978-3551354051'
 
 - id: 7
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Bestimmen Sie den Preis des Buches mit der ISBN '978-3551354068' (ohne Anführungszeichen).
@@ -97,6 +105,7 @@ exercises:
         WHERE isbn = '978-3551354068'
 
 - id: 8
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3.
@@ -110,6 +119,7 @@ exercises:
         WHERE id = 3
 
 - id: 9
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Bestimmen Sie die ID des Autoren des Buches 'Der kleine Prinz' (ohne Anführungszeichen).
@@ -123,6 +133,7 @@ exercises:
         WHERE title = 'Der kleine Prinz'
 
 - id: 10
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Bestimmen Sie den Namen des Verlages der unter der Telefonnummer '+49 2402 / 806341' erreichbar ist.
@@ -136,6 +147,7 @@ exercises:
         WHERE phone = '+49 2402 / 806341'
 
 - id: 11
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Ordnen Sie allen Büchern ihre jeweiligen Autoren zu. Geben Sie jeweils den Titel des Buches und den Nachnamen des Autoren aus!
@@ -150,6 +162,7 @@ exercises:
   tags: [SQL_JOIN]
 
 - id: 12
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Bestimmen Sie Titel und Preis aller Bücher die im Carlsen-Verlag erschienen sind.
@@ -172,6 +185,7 @@ exercises:
   hint: Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.
 
 - id: 13
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Bestimmen Sie Titel und ISBN sämtlicher Bücher der Autorin 'Rowling' (ohne Anführungszeichen).
@@ -193,6 +207,7 @@ exercises:
   tags: [SQL_JOIN]
 
 - id: 14
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Zeigen Sie die Werte aller Ratings an die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben hat.
@@ -208,6 +223,7 @@ exercises:
   tags: [SQL_JOIN]
 
 - id: 15
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Wie lautet der Nachname des Kunden der die Bestellung mit der ID 5 aufgegeben hat?
@@ -223,6 +239,7 @@ exercises:
   tags: [SQL_JOIN]
 
 - id: 16
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de' enden.
@@ -237,6 +254,7 @@ exercises:
   hint: Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.
 
 - id: 17
+  semanticVersion: 1.0.0
   title: Billige Bücher
   author: bje40dc
   text: Geben Sie die Titel aller Bücher aus die weniger als 10,00 € kosten.
@@ -251,6 +269,7 @@ exercises:
         FROM books WHERE price < 10.00
 
 - id: 18
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Geben die die IDs aller Bücher aus die sich Kunden wünschen. Achten Sie darauf dass eine ID nur einmal vorkommt.
@@ -263,6 +282,7 @@ exercises:
         FROM wishlists
 
 - id: 19
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Wählen Sie alle Einträge zu Kunden aus die im Jahr 1981 Geburtstag haben.
@@ -277,6 +297,7 @@ exercises:
   hint: Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres
 
 - id: 20
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Geben Sie die Titel aller Bücher aus die einen Bestand von weniger als 20.000 Exemplaren oder einen Preis über 14€ haben.
@@ -297,6 +318,7 @@ exercises:
            OR price > 14
 
 - id: 21
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'.
@@ -318,6 +340,7 @@ exercises:
   tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
 - id: 22
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'? Nennen Sie die Spalte 'Durchschnitt'.
@@ -339,6 +362,7 @@ exercises:
   tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
 - id: 23
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Wie hoch ist der Gesamtbestand an Harry Potter-Büchern? Nennen Sie die Spalte 'Gesamtbestand'.
@@ -353,6 +377,7 @@ exercises:
   tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 24
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: >
@@ -376,6 +401,7 @@ exercises:
   tags: [SQL_FUNCTION, SQL_ALIAS, SQL_JOIN]
 
 - id: 25
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Wie hoch ist der durchschnittliche Bestand aller Bücher? Nennen Sie die Spalte 'Durchschnitt'
@@ -389,6 +415,7 @@ exercises:
   tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 26
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Wie lauten die Nachnamen der Kunden die sich das Buch 'Harry Potter und der Orden des Phönix' wünschen?
@@ -412,6 +439,7 @@ exercises:
   tags: [SQL_DOUBLE_JOIN]
 
 - id: 27
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.
@@ -429,6 +457,7 @@ exercises:
   tags: [SQL_ORDER_BY, SQL_JOIN]
 
 - id: 28
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Zeigen sie Titel und Autor-ID der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis abwärts.
@@ -444,6 +473,7 @@ exercises:
   tags: [SQL_ORDER_BY, SQL_LIMIT]
 
 - id: 29
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: >
@@ -462,6 +492,7 @@ exercises:
   tags: [SQL_DOUBLE_JOIN]
 
 - id: 30
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de ' oder mit 'gmail.com ' enden.
@@ -476,6 +507,7 @@ exercises:
         OR email LIKE '%gmail.com'
 
 - id: 31
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: >
@@ -495,6 +527,7 @@ exercises:
   tags: [SQL_ORDER_BY]
 
 - id: 32
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: >
@@ -514,6 +547,7 @@ exercises:
   tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 33
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: >
@@ -532,6 +566,7 @@ exercises:
   hint: Verwenden Sie den Sum-Operator und das Schlüsselwort AS.
 
 - id: 34
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen Nachnamen und das Geburtsdatum aus.
@@ -546,6 +581,7 @@ exercises:
   hint: Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.
 
 - id: 35
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Geben Sie den Vornamen Nachnamen und Geburtstag des jüngsten Kunden aus.

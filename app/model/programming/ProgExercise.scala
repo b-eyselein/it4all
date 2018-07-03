@@ -10,7 +10,7 @@ import play.twirl.api.Html
 
 case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
                           sampleTestData: Seq[SampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
-  extends PartsCompleteEx[ProgExercise, ProgExPart] {
+  extends SingleCompleteEx[ProgExercise, ProgExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.programming.progPreview(this)
@@ -30,14 +30,14 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSo
 
 // Case classes for tables
 
-case class ProgExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                         folderIdentifier: String, base: String, functionname: String, indentLevel: Int,
                         outputType: ProgDataType, baseData: Option[JsValue]) extends Exercise
 
 
-case class ProgInput(id: Int, exerciseId: Int, inputName: String, inputType: ProgDataType)
+case class ProgInput(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputName: String, inputType: ProgDataType)
 
-case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, base: String, solution: String)
+case class ProgSampleSolution(exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, base: String, solution: String)
 
 sealed trait TestData {
 
@@ -48,9 +48,9 @@ sealed trait TestData {
 
 }
 
-case class SampleTestData(id: Int, exerciseId: Int, inputAsJson: JsValue, output: String) extends TestData
+case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: String) extends TestData
 
-case class CommitedTestData(id: Int, exerciseId: Int, inputAsJson: JsValue, output: String, username: String, state: ExerciseState) extends TestData {
+case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: String, username: String, state: ExerciseState) extends TestData {
 
   def toJson: JsObject = Json.obj(
     idName -> id,
@@ -73,11 +73,12 @@ object DBProgSolutionHelper extends JsonFormat {
       jsObject <- jsValue.asObj
       id <- jsObject.intField(idName)
       exerciseId <- jsObject.intField(exerciseIdName)
+      semanticVersion <- jsObject.stringField(semanticVersionName) map SemanticVersionHelper.fromString
       output <- jsObject.stringField(outputName)
       inputAsJson <- jsObject.value get "TODO!"
       username <- jsObject.stringField(usernameName)
       state <- jsObject.enumField(stateName, ExerciseState.withNameInsensitive)
-    } yield CommitedTestData(id, exerciseId, inputAsJson, output, username, state)
+    } yield CommitedTestData(id, exerciseId, semanticVersion, inputAsJson, output, username, state)
 
   } getOrElse Seq.empty
 
@@ -100,8 +101,9 @@ case class ProgTestDataSolution(testData: Seq[CommitedTestData], language: ProgL
 
 }
 
-case class DBProgSolution(username: String, exerciseId: Int, part: ProgExPart, solutionStr: String, language: ProgLanguage,
-                          points: Double, maxPoints: Double) extends PartSolution[ProgExPart, ProgSolution] {
+case class DBProgSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
+                          solutionStr: String, language: ProgLanguage, points: Double, maxPoints: Double)
+  extends DBPartSolution[ProgExPart, ProgSolution] {
 
   val solution: ProgSolution = part match {
     case ProgExParts.TestdataCreation => ProgTestDataSolution(???, language)

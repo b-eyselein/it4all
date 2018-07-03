@@ -1,6 +1,7 @@
 package model.web
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
@@ -90,7 +91,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table definitions
 
-  class WebExercisesTable(tag: Tag) extends HasBaseValuesTable[WebExercise](tag, "web_exercises") {
+  class WebExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "web_exercises") {
 
     def htmlText = column[String]("html_text")
 
@@ -99,10 +100,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def phpText = column[String]("php_text")
 
 
-    def pk = primaryKey("pk", id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, htmlText.?, jsText.?, phpText.?).mapTo[WebExercise]
+    override def * = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?, phpText.?).mapTo[WebExercise]
 
   }
 
@@ -112,14 +110,16 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def text = column[String]("text")
 
     def xpathQuery = column[String]("xpath_query")
 
 
-    def pk = primaryKey("pk", (id, exerciseId))
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
   }
 
@@ -128,7 +128,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def textContent = column[String]("text_content")
 
 
-    override def * = (id, exerciseId, text, xpathQuery, textContent.?).mapTo[HtmlTask]
+    override def * = (id, exerciseId, exSemVer, text, xpathQuery, textContent.?).mapTo[HtmlTask]
 
   }
 
@@ -142,13 +142,15 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def exerciseId = column[Int]("exercise_id")
 
-
-    def pk = primaryKey("pk", (key, taskId, exerciseId))
-
-    def taskFk = foreignKey("task_fk", (taskId, exerciseId), htmlTasks)(t => (t.id, t.exerciseId))
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
 
 
-    override def * = (key, taskId, exerciseId, value).mapTo[Attribute]
+    def pk = primaryKey("pk", (key, taskId, exerciseId, exSemVer))
+
+    def taskFk = foreignKey("task_fk", (taskId, exerciseId, exSemVer), htmlTasks)(t => (t.id, t.exerciseId, t.exSemVer))
+
+
+    override def * = (key, taskId, exerciseId, exSemVer, value).mapTo[Attribute]
 
   }
 
@@ -159,7 +161,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def keysToSend = column[String]("keys_to_send")
 
 
-    override def * = (id, exerciseId, text, xpathQuery, actionType, keysToSend.?).mapTo[JsTask]
+    override def * = (id, exerciseId, exSemVer, text, xpathQuery, actionType, keysToSend.?).mapTo[JsTask]
 
   }
 
@@ -171,6 +173,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def xpathQuery = column[String]("xpath_query")
 
     def isPrecondition = column[Boolean]("is_precondition")
@@ -178,12 +182,12 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def awaitedValue = column[String]("awaited_value")
 
 
-    def pk = primaryKey("pk", (conditionId, taskId, exerciseId))
+    def pk = primaryKey("pk", (conditionId, taskId, exerciseId, exSemVer))
 
-    def taskFk = foreignKey("task_fk", (taskId, exerciseId), jsTasks)(t => (t.id, t.exerciseId))
+    def taskFk = foreignKey("task_fk", (taskId, exerciseId, exSemVer), jsTasks)(t => (t.id, t.exerciseId, t.exSemVer))
 
 
-    override def * = (conditionId, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue).mapTo[JsCondition]
+    override def * = (conditionId, taskId, exerciseId, exSemVer, xpathQuery, isPrecondition, awaitedValue).mapTo[JsCondition]
 
   }
 
@@ -192,7 +196,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution = column[String]("solution")
 
 
-    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[WebSolution]
+    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[WebSolution]
 
   }
 

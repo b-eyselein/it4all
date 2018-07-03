@@ -1,6 +1,7 @@
 package model.blanks
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
@@ -39,23 +40,22 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   // Column types
 
-
   override protected implicit val partTypeColumnType: BaseColumnType[BlanksExPart] =
     MappedColumnType.base[BlanksExPart, String](_.entryName, BlanksExParts.withNameInsensitive)
 
+  private implicit val solutionTypeColumnType: BaseColumnType[Seq[BlanksAnswer]] =
+    MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
+
   // Table defs
 
-  class BlanksExercisesTable(tag: Tag) extends HasBaseValuesTable[BlanksExercise](tag, "blanks_exercises") {
+  class BlanksExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "blanks_exercises") {
 
     def blanksText = column[String]("blanks_text")
 
     def rawBlanksText = column[String]("raw_blanks_text")
 
 
-    def pk = primaryKey("pk", id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, rawBlanksText, blanksText).mapTo[BlanksExercise]
+    override def * = (id, semanticVersion, title, author, text, state, rawBlanksText, blanksText).mapTo[BlanksExercise]
 
   }
 
@@ -65,22 +65,19 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def sample = column[String]("solution")
 
 
-    def pk = primaryKey("pk", (id, exerciseId))
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
-    override def * = (id, exerciseId, sample).mapTo[BlanksAnswer]
+    override def * = (id, exerciseId, exSemVer, sample).mapTo[BlanksAnswer]
 
   }
-
-
-  //  override protected
-  private implicit val solutionTypeColumnType: BaseColumnType[Seq[BlanksAnswer]] =
-    MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
 
 
   class BlanksSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "blanks_answers") {
@@ -88,7 +85,7 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     def solution = column[Seq[BlanksAnswer]]("answers")
 
 
-    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[BlanksSolution]
+    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[BlanksSolution]
 
   }
 

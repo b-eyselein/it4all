@@ -80,24 +80,27 @@ CREATE TABLE IF NOT EXISTS learning_path_sections (
 # Blanks
 
 CREATE TABLE IF NOT EXISTS blanks_exercises (
-  id               INT PRIMARY KEY,
+  id               INT,
+  semantic_version VARCHAR(10),
+
   title            VARCHAR(50),
   author           VARCHAR(50),
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version varchar(10),
-
   blanks_text      TEXT,
-  raw_blanks_text  TEXT
+  raw_blanks_text  TEXT,
+
+  PRIMARY KEY (id, semantic_version)
 );
 
 CREATE TABLE IF NOT EXISTS blanks_samples (
   id          INT,
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   solution    VARCHAR(50),
 
-  PRIMARY KEY (id, exercise_id),
-  FOREIGN KEY (exercise_id) REFERENCES blanks_exercises (id)
+  PRIMARY KEY (id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES blanks_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -105,41 +108,45 @@ CREATE TABLE IF NOT EXISTS blanks_samples (
 # Programming
 
 CREATE TABLE IF NOT EXISTS prog_exercises (
-  id                INT PRIMARY KEY,
+  id                INT,
+  semantic_version  VARCHAR(10),
   title             VARCHAR(50),
   author            VARCHAR(50),
   ex_text           TEXT,
   ex_state          ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version  varchar(10),
 
   folder_identifier VARCHAR(30),
   base              TEXT,
   function_name     VARCHAR(30),
   indent_level      INT,
   output_type       VARCHAR(30),
-  base_data_json    TEXT
+  base_data_json    TEXT,
+
+  PRIMARY KEY (id, semantic_version)
 );
 
 CREATE TABLE IF NOT EXISTS prog_input_types (
   id          INT,
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   input_name  VARCHAR(20),
   input_type  VARCHAR(20),
 
-  PRIMARY KEY (id, exercise_id),
-  FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
+  PRIMARY KEY (id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS prog_sample_solutions (
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
   base        TEXT,
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, language),
-  FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
+  PRIMARY KEY (exercise_id, ex_sem_ver, language),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -147,11 +154,12 @@ CREATE TABLE IF NOT EXISTS prog_sample_solutions (
 CREATE TABLE IF NOT EXISTS prog_sample_testdata (
   id          INT,
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   input_json  TEXT,
   output      VARCHAR(50),
 
-  PRIMARY KEY (id, exercise_id),
-  FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
+  PRIMARY KEY (id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -159,14 +167,15 @@ CREATE TABLE IF NOT EXISTS prog_sample_testdata (
 CREATE TABLE IF NOT EXISTS prog_commited_testdata (
   id             INT,
   exercise_id    INT,
+  ex_sem_ver     VARCHAR(10),
   input_json     TEXT,
   output         VARCHAR(50),
 
   username       VARCHAR(50),
   approval_state ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  PRIMARY KEY (id, exercise_id, username),
-  FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
+  PRIMARY KEY (id, exercise_id, ex_sem_ver, username),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
   FOREIGN KEY (username) REFERENCES users (username)
@@ -175,11 +184,13 @@ CREATE TABLE IF NOT EXISTS prog_commited_testdata (
 );
 
 CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
-  exercise_id   INT PRIMARY KEY,
+  exercise_id   INT,
+  ex_sem_ver    VARCHAR(10),
   class_name    VARCHAR(30),
   class_diagram TEXT,
 
-  FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
+  PRIMARY KEY (exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -187,14 +198,15 @@ CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
 CREATE TABLE IF NOT EXISTS prog_solutions (
   username    VARCHAR(50),
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   part        VARCHAR(30),
   points      DOUBLE,
   max_points  DOUBLE,
   solution    TEXT,
   language    VARCHAR(20),
 
-  PRIMARY KEY (username, exercise_id, part),
-  FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
+  PRIMARY KEY (username, exercise_id, ex_sem_ver, part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
   FOREIGN KEY (username) REFERENCES users (username)
@@ -205,14 +217,15 @@ CREATE TABLE IF NOT EXISTS prog_solutions (
 # Question
 
 CREATE TABLE IF NOT EXISTS quizzes (
-  id               INT PRIMARY KEY,
+  id               INT,
+  semantic_version VARCHAR(10),
   title            VARCHAR(50),
   author           VARCHAR(50),
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version varchar(10),
 
-  theme            VARCHAR(50)
+  theme            VARCHAR(50),
+  PRIMARY KEY (id, semantic_version)
 );
 
 CREATE TABLE IF NOT EXISTS questions (
@@ -221,14 +234,15 @@ CREATE TABLE IF NOT EXISTS questions (
   author           VARCHAR(50),
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version varchar(10),
+  semantic_version VARCHAR(10),
 
   collection_id    INT,
+  coll_sem_ver     VARCHAR(10),
   question_type    ENUM ('CHOICE', 'FREETEXT', 'FILLOUT')               DEFAULT 'CHOICE',
   max_points       INT,
 
-  PRIMARY KEY (id, collection_id),
-  FOREIGN KEY (collection_id) REFERENCES quizzes (id)
+  PRIMARY KEY (id, semantic_version, collection_id, coll_sem_ver),
+  FOREIGN KEY (collection_id, coll_sem_ver) REFERENCES quizzes (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -236,13 +250,15 @@ CREATE TABLE IF NOT EXISTS questions (
 CREATE TABLE IF NOT EXISTS question_answers (
   id            INT,
   question_id   INT,
+  ex_sem_ver    VARCHAR(10),
   collection_id INT,
+  coll_sem_ver  VARCHAR(10),
   answer_text   TEXT,
   correctness   ENUM ('CORRECT', 'OPTIONAL', 'WRONG') DEFAULT 'WRONG',
   explanation   TEXT,
 
-  PRIMARY KEY (id, question_id, collection_id),
-  FOREIGN KEY (question_id, collection_id) REFERENCES questions (id, collection_id)
+  PRIMARY KEY (id, question_id, ex_sem_ver, collection_id, coll_sem_ver),
+  FOREIGN KEY (question_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES questions (id, semantic_version, collection_id, coll_sem_ver)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -250,37 +266,41 @@ CREATE TABLE IF NOT EXISTS question_answers (
 # Rose
 
 CREATE TABLE IF NOT EXISTS rose_exercises (
-  id               INT PRIMARY KEY,
+  id               INT,
+  semantic_version VARCHAR(10),
   title            VARCHAR(50),
   author           VARCHAR(50),
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version varchar(10),
 
   field_width      INT,
   field_height     INT,
-  is_mp            BOOLEAN
+  is_mp            BOOLEAN,
+
+  PRIMARY KEY (id, semantic_version)
 );
 
 CREATE TABLE IF NOT EXISTS rose_inputs (
   id          INT,
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   input_name  VARCHAR(20),
   input_type  VARCHAR(20),
 
-  PRIMARY KEY (id, exercise_id),
-  FOREIGN KEY (exercise_id) REFERENCES rose_exercises (id)
+  PRIMARY KEY (id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS rose_samples (
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, language),
-  FOREIGN KEY (exercise_id) REFERENCES rose_exercises (id)
+  PRIMARY KEY (exercise_id, ex_sem_ver, language),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -288,16 +308,17 @@ CREATE TABLE IF NOT EXISTS rose_samples (
 CREATE TABLE IF NOT EXISTS rose_solutions (
   username    VARCHAR(50),
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   part        VARCHAR(30),
   points      DOUBLE,
   max_points  DOUBLE,
   solution    TEXT,
 
-  PRIMARY KEY (username, exercise_id, part),
+  PRIMARY KEY (username, exercise_id, ex_sem_ver, part),
   FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id) REFERENCES rose_exercises (id)
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -305,46 +326,51 @@ CREATE TABLE IF NOT EXISTS rose_solutions (
 # Spread
 
 CREATE TABLE IF NOT EXISTS spread_exercises (
-  id                INT PRIMARY KEY,
+  id                INT,
+  semantic_version  VARCHAR(10),
   title             VARCHAR(50),
   author            VARCHAR(50),
   ex_text           TEXT,
   ex_state          ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version  varchar(10),
 
   sample_filename   VARCHAR(50),
-  template_filename VARCHAR(50)
+  template_filename VARCHAR(50),
+
+  PRIMARY KEY (id, semantic_version)
 );
 
 # Sql
 
 CREATE TABLE IF NOT EXISTS sql_scenarioes (
-  id               INT PRIMARY KEY,
+  id               INT,
+  semantic_version VARCHAR(10),
   title            VARCHAR(50),
   author           VARCHAR(50),
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version varchar(10),
 
   shortName        VARCHAR(50),
-  scriptFile       VARCHAR(50)
+  scriptFile       VARCHAR(50),
+
+  PRIMARY KEY (id, semantic_version)
 );
 
 CREATE TABLE IF NOT EXISTS sql_exercises (
   id               INT,
+  semantic_version VARCHAR(10),
   title            VARCHAR(50),
   author           VARCHAR(50),
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    DEFAULT 'RESERVED',
-  semantic_version varchar(10),
 
   collection_id    INT,
+  coll_sem_ver     VARCHAR(10),
   tags             TEXT,
   exercise_type    ENUM ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') DEFAULT 'SELECT',
   hint             TEXT,
 
-  PRIMARY KEY (id, collection_id),
-  FOREIGN KEY (collection_id) REFERENCES sql_scenarioes (id)
+  PRIMARY KEY (id, semantic_version, collection_id, coll_sem_ver),
+  FOREIGN KEY (collection_id, coll_sem_ver) REFERENCES sql_scenarioes (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -352,28 +378,32 @@ CREATE TABLE IF NOT EXISTS sql_exercises (
 CREATE TABLE IF NOT EXISTS sql_samples (
   id            INT,
   exercise_id   INT,
+  ex_sem_ver    VARCHAR(10),
   collection_id INT,
+  coll_sem_ver  VARCHAR(10),
   sample        TEXT,
 
-  PRIMARY KEY (id, exercise_id, collection_id),
-  FOREIGN KEY (exercise_id, collection_id) REFERENCES sql_exercises (id, collection_id)
+  PRIMARY KEY (id, exercise_id, ex_sem_ver, collection_id, coll_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES sql_exercises (id, semantic_version, collection_id, coll_sem_ver)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS sql_solutions (
   username      VARCHAR(50),
-  collection_id INT,
   exercise_id   INT,
+  ex_sem_ver    VARCHAR(10),
+  collection_id INT,
+  coll_sem_ver  VARCHAR(10),
   points        DOUBLE,
   max_points    DOUBLE,
   solution      TEXT,
 
-  PRIMARY KEY (username, collection_id, exercise_id),
+  PRIMARY KEY (username, exercise_id, ex_sem_ver, collection_id, coll_sem_ver),
   FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id, collection_id) REFERENCES sql_exercises (id, collection_id)
+  FOREIGN KEY (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES sql_exercises (id, semantic_version, collection_id, coll_sem_ver)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -381,42 +411,46 @@ CREATE TABLE IF NOT EXISTS sql_solutions (
 # Uml
 
 CREATE TABLE IF NOT EXISTS uml_exercises (
-  id               INT PRIMARY KEY,
+  id               INT,
+  semantic_version VARCHAR(10),
   title            VARCHAR(50),
   author           VARCHAR(50),
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version varchar(10),
 
   solution_json    TEXT,
   marked_text      TEXT,
-  to_ignore        TEXT
+  to_ignore        TEXT,
+
+  PRIMARY KEY (id, semantic_version)
 );
 
 CREATE TABLE IF NOT EXISTS uml_mappings (
   exercise_id   INT,
+  ex_sem_ver    VARCHAR(10),
   mapping_key   VARCHAR(50),
   mapping_value VARCHAR(50),
 
-  PRIMARY KEY (exercise_id, mapping_key),
-  FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
+  PRIMARY KEY (exercise_id, ex_sem_ver, mapping_key),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS uml_solutions (
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   username    VARCHAR(30),
   part        VARCHAR(30),
   points      DOUBLE,
   max_points  DOUBLE,
   solution    TEXT,
 
-  PRIMARY KEY (username, exercise_id, part),
+  PRIMARY KEY (username, exercise_id, ex_sem_ver, part),
   FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -424,28 +458,31 @@ CREATE TABLE IF NOT EXISTS uml_solutions (
 # Web
 
 CREATE TABLE IF NOT EXISTS web_exercises (
-  id               INT PRIMARY KEY,
+  id               INT,
+  semantic_version VARCHAR(10),
   title            VARCHAR(50),
   author           VARCHAR(50),
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version varchar(10),
 
   html_text        TEXT,
   js_text          TEXT,
-  php_text         TEXT
+  php_text         TEXT,
+
+  PRIMARY KEY (id, semantic_version)
 );
 
 CREATE TABLE IF NOT EXISTS html_tasks (
   task_id      INT,
   exercise_id  INT,
+  ex_sem_ver   VARCHAR(10),
   text         TEXT,
   xpath_query  VARCHAR(50),
 
   text_content VARCHAR(100),
 
-  PRIMARY KEY (task_id, exercise_id),
-  FOREIGN KEY (exercise_id) REFERENCES web_exercises (id)
+  PRIMARY KEY (task_id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -455,9 +492,10 @@ CREATE TABLE IF NOT EXISTS html_attributes (
   attr_value  VARCHAR(150),
   task_id     INT,
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
 
-  PRIMARY KEY (attr_key, task_id, exercise_id),
-  FOREIGN KEY (task_id, exercise_id) REFERENCES html_tasks (task_id, exercise_id)
+  PRIMARY KEY (attr_key, task_id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (task_id, exercise_id, ex_sem_ver) REFERENCES html_tasks (task_id, exercise_id, ex_sem_ver)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -465,6 +503,7 @@ CREATE TABLE IF NOT EXISTS html_attributes (
 CREATE TABLE IF NOT EXISTS js_tasks (
   task_id            INT,
   exercise_id        INT,
+  ex_sem_ver         VARCHAR(10),
   text               TEXT,
   xpath_query        VARCHAR(50),
 
@@ -472,8 +511,8 @@ CREATE TABLE IF NOT EXISTS js_tasks (
   action_xpath_query VARCHAR(50),
   keys_to_send       VARCHAR(100),
 
-  PRIMARY KEY (task_id, exercise_id),
-  FOREIGN KEY (exercise_id) REFERENCES web_exercises (id)
+  PRIMARY KEY (task_id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -482,27 +521,29 @@ CREATE TABLE IF NOT EXISTS js_conditions (
   condition_id    INT,
   task_id         INT,
   exercise_id     INT,
+  ex_sem_ver      VARCHAR(10),
 
   xpath_query     VARCHAR(50),
   is_precondition BOOLEAN DEFAULT TRUE,
   awaited_value   VARCHAR(50),
 
-  PRIMARY KEY (condition_id, task_id, exercise_id),
-  FOREIGN KEY (task_id, exercise_id) REFERENCES js_tasks (task_id, exercise_id)
+  PRIMARY KEY (condition_id, task_id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (task_id, exercise_id, ex_sem_ver) REFERENCES js_tasks (task_id, exercise_id, ex_sem_ver)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS web_solutions (
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   username    VARCHAR(30),
   part        VARCHAR(30),
   points      DOUBLE,
   max_points  DOUBLE,
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, username, part),
-  FOREIGN KEY (exercise_id) REFERENCES web_exercises (id)
+  PRIMARY KEY (exercise_id, ex_sem_ver, username, part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
   FOREIGN KEY (username) REFERENCES users (username)
@@ -513,40 +554,44 @@ CREATE TABLE IF NOT EXISTS web_solutions (
 # Xml
 
 CREATE TABLE IF NOT EXISTS xml_exercises (
-  id                  INT PRIMARY KEY,
+  id                  INT,
+  semantic_version    VARCHAR(10),
   title               VARCHAR(50),
   author              VARCHAR(50),
   ex_text             TEXT,
   ex_state            ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version    varchar(10),
 
   exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_DTD',
   grammar_description TEXT,
   root_node           VARCHAR(30),
-  ref_file_content    TEXT
+  ref_file_content    TEXT,
+
+  PRIMARY KEY (id, semantic_version)
 );
 
 CREATE TABLE IF NOT EXISTS xml_sample_grammars (
   id             INT,
   exercise_id    INT,
+  ex_sem_ver     VARCHAR(10),
   sample_grammar TEXT,
 
-  PRIMARY KEY (id, exercise_id),
-  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
+  PRIMARY KEY (id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS xml_solutions (
   exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
   username    VARCHAR(50),
   part        VARCHAR(30),
   points      DOUBLE,
   max_points  DOUBLE,
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, username, part),
-  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
+  PRIMARY KEY (exercise_id, ex_sem_ver, username, part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
   FOREIGN KEY (username) REFERENCES users (username)

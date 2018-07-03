@@ -1,4 +1,5 @@
 id: 1
+semanticVersion: 1.0.0
 title: Angestellte
 author: bje40dc
 text: Dieses Szenario beschreibt die Datenbank einer kleinen Firma.
@@ -8,6 +9,7 @@ scriptFile: employee.sql
 
 exercises:
 - id: 1
+  semanticVersion: 1.0.0
   title: Anzahl der Angestellten
   author: bje40dc
   text: Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'
@@ -24,6 +26,7 @@ exercises:
         FROM employee
 
 - id: 2
+  semanticVersion: 1.0.0
   title: Angestelltennummer
   author: bje40dc
   text: Welche Angestelltennummer (id) hat Max Becker?
@@ -38,6 +41,7 @@ exercises:
           AND lastname = 'Becker'
 
 - id: 3
+  semanticVersion: 1.0.0
   title: Emailadresse
   author: bje40dc
   text: Welche Emailadresse hat Max Becker für die Arbeit?
@@ -67,6 +71,7 @@ exercises:
   tags: [SQL_JOIN]
 
 - id: 4
+  semanticVersion: 1.0.0
   title: Nutzernamen
   author: bje40dc
   text: Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!
@@ -81,6 +86,7 @@ exercises:
   tags: [SQL_ORDER_BY]
 
 - id: 5
+  semanticVersion: 1.0.0
   title: Anzahl der Untergebenen
   author: bje40dc
   text: Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!
@@ -96,6 +102,7 @@ exercises:
   tags: [SQL_GROUP_BY]
 
 - id: 6
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Erstellen Sie das CREATE TABLE-Skript für die Tabelle employee!
@@ -114,6 +121,7 @@ exercises:
       );
 
 - id: 7
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!
@@ -127,6 +135,7 @@ exercises:
         WHERE id = 8
 
 - id: 8
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.
@@ -139,6 +148,7 @@ exercises:
         WHERE id = 7
 
 - id: 9
+  semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
   text: >

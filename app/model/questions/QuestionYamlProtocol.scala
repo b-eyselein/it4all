@@ -3,7 +3,7 @@ package model.questions
 import model.MyYamlProtocol._
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
-import model.{MyYamlProtocol, YamlArr}
+import model.{BaseValues, ExerciseState, MyYamlProtocol, YamlArr}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -18,39 +18,40 @@ object QuestionYamlProtocol extends MyYamlProtocol {
       baseValues <- readBaseValues(yamlObject)
 
       theme <- yamlObject.stringField(themeName)
-      questionTries <- yamlObject.arrayField(exercisesName, QuestionYamlFormat(baseValues._1).read)
+      questionTries <- yamlObject.arrayField(exercisesName, QuestionYamlFormat(baseValues).read)
     } yield {
       for (questionFailure <- questionTries._2)
       // FIXME: return...
         Logger.error("Could not read question", questionFailure.exception)
 
-      CompleteQuiz(Quiz(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, theme), questionTries._1)
+      CompleteQuiz(Quiz(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, theme), questionTries._1)
     }
 
     override def write(completeEx: CompleteQuiz) = YamlObject(
       writeBaseValues(completeEx.coll) ++
         Map(
           YamlString(themeName) -> YamlString(completeEx.coll.theme),
-          YamlString(exercisesName) -> YamlArr(completeEx.exercises map QuestionYamlFormat(completeEx.coll.id).write)
+          YamlString(exercisesName) -> YamlArr(completeEx.exercises map QuestionYamlFormat(completeEx.coll.baseValues).write)
         )
     )
 
   }
 
-  case class QuestionYamlFormat(quizId: Int) extends MyYamlObjectFormat[CompleteQuestion] {
+  case class QuestionYamlFormat(quizBaseValues: BaseValues) extends MyYamlObjectFormat[CompleteQuestion] {
 
     override protected def readObject(yamlObject: YamlObject): Try[CompleteQuestion] = for {
       baseValues <- readBaseValues(yamlObject)
 
       questionType <- yamlObject.enumField(exerciseTypeName, QuestionType.valueOf)
       maxPoints <- yamlObject.intField(maxPointsName)
-      answerTries <- yamlObject.arrayField(answersName, QuestionAnswerYamlFormat(quizId, baseValues._1).read)
+      answerTries <- yamlObject.arrayField(answersName, QuestionAnswerYamlFormat(quizBaseValues, baseValues).read)
     } yield {
       for (answerFailure <- answerTries._2)
       // FIXME: return...
         Logger.error("Could not read answer", answerFailure.exception)
 
-      CompleteQuestion(Question(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, quizId, questionType, maxPoints), answerTries._1)
+      CompleteQuestion(Question(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        quizBaseValues.id, quizBaseValues.semanticVersion, questionType, maxPoints), answerTries._1)
     }
 
     override def write(completeEx: CompleteQuestion): YamlValue = YamlObject(
@@ -58,13 +59,13 @@ object QuestionYamlProtocol extends MyYamlProtocol {
         Map(
           YamlString(exerciseTypeName) -> YamlString(completeEx.ex.questionType.name),
           YamlString(maxPointsName) -> YamlNumber(completeEx.ex.maxPoints),
-          YamlString(answersName) -> YamlArr(completeEx.answers map QuestionAnswerYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
+          YamlString(answersName) -> YamlArr(completeEx.answers map QuestionAnswerYamlFormat(quizBaseValues, completeEx.ex.baseValues).write)
         )
     )
 
   }
 
-  case class QuestionAnswerYamlFormat(quizId: Int, questionId: Int) extends MyYamlObjectFormat[Answer] {
+  case class QuestionAnswerYamlFormat(quizBaseValues: BaseValues, questionBaseValues: BaseValues) extends MyYamlObjectFormat[Answer] {
 
     override def readObject(yamlObject: YamlObject): Try[Answer] = for {
       id <- yamlObject.intField(idName)
@@ -74,7 +75,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
     } yield {
 
 
-      Answer(id, questionId, quizId, text, correctness, maybeExplanation)
+      Answer(id, questionBaseValues.id, questionBaseValues.semanticVersion, quizBaseValues.id, quizBaseValues.semanticVersion, text, correctness, maybeExplanation)
     }
 
     override def write(obj: Answer): YamlValue = {

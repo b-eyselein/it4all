@@ -1,5 +1,6 @@
 author: bje40dc
 id: 3
+semanticVersion: 1.0.0
 title: Hyperlinks und Bilder in HTML
 text: Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.
 status: APPROVED

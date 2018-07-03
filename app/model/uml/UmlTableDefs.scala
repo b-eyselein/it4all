@@ -1,6 +1,7 @@
 package model.uml
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -46,7 +47,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   //  override protected
   private implicit val solutionTypeColumnType: BaseColumnType[UmlClassDiagram] =
-    // FIXME: refactor!
+  // FIXME: refactor!
     MappedColumnType.base[UmlClassDiagram, String](UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(_).toString(),
       str => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
         case JsSuccess(sol, _) => sol
@@ -55,7 +56,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table definitions
 
-  class UmlExercisesTable(tag: Tag) extends HasBaseValuesTable[UmlExercise](tag, "uml_exercises") {
+  class UmlExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "uml_exercises") {
 
     def solutionAsJson = column[UmlClassDiagram]("solution_json")
 
@@ -64,10 +65,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def toIgnore = column[String]("to_ignore")
 
 
-    def pk = primaryKey("pk", id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, solutionAsJson, markedText, toIgnore).mapTo[UmlExercise]
+    override def * = (id, semanticVersion, title, author, text, state, solutionAsJson, markedText, toIgnore).mapTo[UmlExercise]
 
   }
 
@@ -75,17 +73,19 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def mappingKey = column[String]("mapping_key")
 
     def mappingValue = column[String]("mapping_value")
 
 
-    def pk = primaryKey("pk", (exerciseId, mappingKey))
+    def pk = primaryKey("pk", (exerciseId, exSemVer, mappingKey))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
-    override def * = (exerciseId, mappingKey, mappingValue).mapTo[UmlMapping]
+    override def * = (exerciseId, exSemVer, mappingKey, mappingValue).mapTo[UmlMapping]
 
   }
 
@@ -93,7 +93,8 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def solution = column[UmlClassDiagram]("solution")
 
-    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[UmlSolution]
+
+    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[UmlSolution]
 
   }
 

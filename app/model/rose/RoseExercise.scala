@@ -7,7 +7,7 @@ import play.twirl.api.Html
 
 // Classes for use
 
-case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampleSolution: Seq[RoseSampleSolution]) extends PartsCompleteEx[RoseExercise, RoseExPart] {
+case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampleSolution: Seq[RoseSampleSolution]) extends SingleCompleteEx[RoseExercise, RoseExPart] {
 
   val NewLine = "\n"
 
@@ -51,12 +51,13 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
 
 // Case classes for tables
 
-case class RoseExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+case class RoseExercise(id: Int, semanticVersion: SemanticVersion,title: String, author: String, text: String, state: ExerciseState,
                         fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends Exercise
 
-case class RoseInputType(id: Int, exerciseId: Int, name: String, inputType: ProgDataType)
+case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersion, name: String, inputType: ProgDataType)
 
-case class RoseSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
+case class RoseSampleSolution(exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, solution: String)
 
-case class RoseSolution(username: String, exerciseId: Int, part: RoseExPart, solution: String, points: Double, maxPoints: Double) extends PartSolution[RoseExPart, String]
+case class RoseSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart,
+                        solution: String, points: Double, maxPoints: Double) extends DBPartSolution[RoseExPart, String]
 

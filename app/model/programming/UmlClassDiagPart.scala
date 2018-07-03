@@ -1,9 +1,9 @@
 package model.programming
 
+import model.SemanticVersion
 import model.uml._
-import play.api.libs.json.{JsValue, Json}
 
-case class UmlClassDiagPart(exerciseId: Int, className: String, umlClassDiagram: UmlClassDiagram) {
+case class UmlClassDiagPart(exerciseId: Int, exSemVer: SemanticVersion, className: String, umlClassDiagram: UmlClassDiagram) {
 
 }
 

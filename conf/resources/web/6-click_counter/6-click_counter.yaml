@@ -1,4 +1,5 @@
 id: 6
+semanticVersion: 1.0.0
 title: Klickzähler
 author: bje40dc
 text: Erstellen Sie einen Zähler der die Klicks auf einen Button zählt!

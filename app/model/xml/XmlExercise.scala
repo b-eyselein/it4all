@@ -5,7 +5,7 @@ import model.xml.dtd.DocTypeDef
 import play.twirl.api.Html
 
 
-case class XmlCompleteExercise(ex: XmlExercise, sampleGrammars: Seq[XmlSampleGrammar]) extends PartsCompleteEx[XmlExercise, XmlExPart] {
+case class XmlCompleteExercise(ex: XmlExercise, sampleGrammars: Seq[XmlSampleGrammar]) extends SingleCompleteEx[XmlExercise, XmlExPart] {
 
   override def hasPart(partType: XmlExPart): Boolean = true
 
@@ -20,9 +20,10 @@ case class XmlCompleteExercise(ex: XmlExercise, sampleGrammars: Seq[XmlSampleGra
 
 }
 
-case class XmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, semanticVersion: SemanticVersion,
+case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                        grammarDescription: String, rootNode: String) extends Exercise
 
-case class XmlSampleGrammar(id: Int, exerciseId: Int, sampleGrammar: DocTypeDef)
+case class XmlSampleGrammar(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sampleGrammar: DocTypeDef)
 
-case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String, points: Double, maxPoints: Double) extends PartSolution[XmlExPart, String]
+case class XmlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: XmlExPart, solution: String,
+                       points: Double, maxPoints: Double) extends DBPartSolution[XmlExPart, String]

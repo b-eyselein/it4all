@@ -1,4 +1,5 @@
 id: 8
+semanticVersion: 1.0.0
 title: Schleifen
 author: alg81dm
 text: Erstellen Sie ein einfaches Formular zur Berechnung der Fakultät einer Zahl n (alle Zahlen von 1 bis n multipliziert).

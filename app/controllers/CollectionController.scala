@@ -32,8 +32,6 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   private def takeSlice[T](collection: Seq[T], page: Int): Seq[T] = collection slice(Math.max(0, (page - 1) * stdStep), Math.min(page * stdStep, collection.size))
 
-  private def numOfPages(completeSize: Int) = (completeSize / stdStep) + 2
-
   // Admin
 
   def adminExportCollections(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>

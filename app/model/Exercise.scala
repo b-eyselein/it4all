@@ -22,6 +22,8 @@ object ExerciseState extends PlayEnum[ExerciseState] {
 
 }
 
+case class BaseValues(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState)
+
 trait HasBaseValues {
 
   def id: Int
@@ -37,19 +39,7 @@ trait HasBaseValues {
   // FIXME: use semantic version!
   def semanticVersion: SemanticVersion
 
-}
-
-trait Solution[SolType] {
-
-  val username: String
-
-  val exerciseId: Int
-
-  val points: Double
-
-  val maxPoints: Double
-
-  val solution: SolType
+  def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
 }
 
@@ -63,8 +53,23 @@ trait ExPart {
 
 }
 
+trait Solution[SolType] {
 
-trait PartSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
+  val username: String
+
+  val exerciseId: Int
+
+  val exSemVer: SemanticVersion
+
+  val points: Double
+
+  val maxPoints: Double
+
+  val solution: SolType
+
+}
+
+trait DBPartSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
 
   val part: PartType
 
@@ -73,6 +78,8 @@ trait PartSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
 trait CollectionExSolution[SolType] extends Solution[SolType] {
 
   val collectionId: Int
+
+  val collSemVer: SemanticVersion
 
 }
 
@@ -94,6 +101,8 @@ trait ExInColl extends Exercise {
 
   def collectionId: Int
 
+  def collSemVer: SemanticVersion
+
 }
 
 trait CompleteEx[E <: Exercise] {
@@ -111,8 +120,6 @@ trait SingleCompleteEx[Ex <: Exercise, PartType <: ExPart] extends CompleteEx[Ex
   def hasPart(partType: PartType): Boolean
 
 }
-
-trait PartsCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType]
 
 trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] {
 

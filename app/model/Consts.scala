@@ -70,7 +70,8 @@ trait Consts {
 
 trait CollectionConsts extends Consts {
 
-  val collIdName = "collId"
+  val collIdName     = "collId"
+  val collSemVerName = "collSemVer"
 
   def arrayName(subName: String)(count: Option[Int]): String = subName + "[" + count.getOrElse("") + "]"
 

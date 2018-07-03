@@ -7,7 +7,7 @@ import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.toolMains.IdExerciseToolMain
 import model.yaml.MyYamlFormat
 import play.api.data.Form
-import play.api.libs.json._
+import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
@@ -54,25 +54,23 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
 
   // Reading solution from requests
 
-  //  override def readSolutionFromPostRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[BlanksSolution] = None
-
-  override def readSolutionFromPutRequest(user: User, id: Int, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[SolType] =
+  override def readSolution(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart)(implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap (_.asArray(_.asObj flatMap { jsObj =>
       for {
         id <- jsObj.intField(idName)
         answer <- jsObj.stringField(valueName)
-      } yield BlanksAnswer(id, -1, answer)
+      } yield BlanksAnswer(id, exercise.ex.id, exercise.ex.semanticVersion, answer)
     }))
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlanksExPart): Option[SolType] = ???
+  override protected def readSolutionForPartFromJson(user: User, exercise: BlanksCompleteExercise, jsValue: JsValue, part: BlanksExPart): Option[Seq[BlanksAnswer]] = ???
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): BlanksCompleteExercise =
-    BlanksCompleteExercise(BlanksExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0), rawBlanksText = "", blanksText = ""), samples = Seq.empty)
+    BlanksCompleteExercise(BlanksExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, rawBlanksText = "", blanksText = ""), samples = Seq.empty)
 
-  override def instantiateSolution(username: String, exerciseId: Int, part: BlanksExPart, solution: Seq[BlanksAnswer], points: Double, maxPoints: Double): BlanksSolution =
-    BlanksSolution(username, exerciseId, part, solution, points, maxPoints)
+  override def instantiateSolution(username: String, exercise: BlanksCompleteExercise, part: BlanksExPart, solution: Seq[BlanksAnswer], points: Double, maxPoints: Double): BlanksSolution =
+    BlanksSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -101,15 +99,6 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
        |</div>""".stripMargin)
 
   private def renderSample(sample: BlanksAnswer): String = s"<li>${sample.id} &rarr; ${sample.solution}</li>"
-
-  override def onLiveCorrectionResult(pointsSaved: Boolean, result: BlanksCompleteResult): JsValue = ???
-
-  //    JsArray(
-  //    result.result.allMatches map (m => Json.obj(
-  //      idName -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
-  //      correctnessName -> m.matchType.entryName,
-  //      explanationName -> m.explanations))
-  //  )
 
 }
 

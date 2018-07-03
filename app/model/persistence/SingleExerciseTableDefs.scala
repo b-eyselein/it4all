@@ -9,7 +9,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType, DBSolType <: PartSolution[PartType, SolType], PartType <: ExPart] extends IdExerciseTableDefs[Ex, CompEx] {
+trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType, DBSolType <: DBPartSolution[PartType, SolType], PartType <: ExPart] extends IdExerciseTableDefs[Ex, CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -46,18 +46,18 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def part = column[PartType]("part")
 
     def points = column[Double]("points")
 
     def maxPoints = column[Double]("max_points")
 
-    //    def solution = column[SolType]("solution")
 
+    def pk = primaryKey("pk", (username, exerciseId, exSemVer, part))
 
-    def pk = primaryKey("pk", (username, exerciseId, part))
-
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
     def userFk = foreignKey("user_fk", username, users)(_.username)
 

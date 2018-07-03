@@ -15,7 +15,7 @@ object SpreadExYamlProtocol extends MyYamlProtocol {
       baseValues <- readBaseValues(yamlObject)
       sampleFilename <- yamlObject.stringField(SAMPLE_FILENAME)
       templateFilename <- yamlObject.stringField(TEMPALTE_FILENAME)
-    } yield SpreadExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, sampleFilename, templateFilename)
+    } yield SpreadExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, sampleFilename, templateFilename)
 
     override def write(completeEx: SpreadExercise) = YamlObject(
       writeBaseValues(completeEx.ex) ++ Map(

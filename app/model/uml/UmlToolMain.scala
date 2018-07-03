@@ -2,7 +2,6 @@ package model.uml
 
 import javax.inject._
 import model._
-import model.core._
 import model.core.result.EvaluationResult
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
@@ -52,28 +51,28 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution
 
-  override def readSolutionFromPostRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlClassDiagram] = {
+  //  override def readSolutionFromPostRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlClassDiagram] = {
+  //
+  //    val onFormError: Form[StringSolutionFormHelper] => Option[UmlClassDiagram] = { formWithErrors =>
+  //      formWithErrors.errors.foreach(error => Logger.error("Form Error: " + error))
+  //      None
+  //    }
+  //
+  //    val onRead: StringSolutionFormHelper => Option[UmlClassDiagram] = { sol =>
+  //      Json.fromJson[UmlClassDiagram](Json.parse(sol.learnerSolution))(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
+  //        case JsSuccess(ucd, _) => Some(ucd)
+  //
+  //        case JsError(errors) =>
+  //          errors.foreach(error => Logger.error("Json Error: " + error))
+  //          None
+  //      }
+  //
+  //    }
+  //
+  //    SolutionFormHelper.stringSolForm.bindFromRequest.fold(onFormError, onRead)
+  //  }
 
-    val onFormError: Form[StringSolutionFormHelper] => Option[UmlClassDiagram] = { formWithErrors =>
-      formWithErrors.errors.foreach(error => Logger.error("Form Error: " + error))
-      None
-    }
-
-    val onRead: StringSolutionFormHelper => Option[UmlClassDiagram] = { sol =>
-      Json.fromJson[UmlClassDiagram](Json.parse(sol.learnerSolution))(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
-        case JsSuccess(ucd, _) => Some(ucd)
-
-        case JsError(errors) =>
-          errors.foreach(error => Logger.error("Json Error: " + error))
-          None
-      }
-
-    }
-
-    SolutionFormHelper.stringSolForm.bindFromRequest.fold(onFormError, onRead)
-  }
-
-  override def readSolutionFromPutRequest(user: User, id: Int, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlClassDiagram] =
+  override def readSolution(user: User, exercise: UmlCompleteEx, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlClassDiagram] =
     request.body.asJson flatMap { jsValue =>
       Json.fromJson[UmlClassDiagram](jsValue)(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
         case JsSuccess(ucd, _) =>
@@ -84,18 +83,18 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
       }
     }
 
-  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlClassDiagram] = None
+  override def readSolutionForPartFromJson(user: User, exercise: UmlCompleteEx, jsValue: JsValue, part: UmlExPart): Option[UmlClassDiagram] = None
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
-    UmlExercise(id, title = "", author = "", text = "", state, SemanticVersion(0, 1, 0),
+    UmlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state,
       solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), markedText = "", toIgnore = ""),
     mappings = Seq.empty
   )
 
-  override def instantiateSolution(username: String, exerciseId: Int, part: UmlExPart, solution: UmlClassDiagram, points: Double, maxPoints: Double): UmlSolution =
-    UmlSolution(username, exerciseId, part, solution, points, maxPoints)
+  override def instantiateSolution(username: String, exercise: UmlCompleteEx, part: UmlExPart, solution: UmlClassDiagram, points: Double, maxPoints: Double): UmlSolution =
+    UmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -118,18 +117,5 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     Future(Try(new UmlCompleteResult(exercise, classDiagram, part)))
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: UmlExPart): Future[String] = ???
-
-  // Handlers for results
-
-  override def onSubmitCorrectionResult(user: User, pointsSaved: Boolean, result: UmlCompleteResult): Html = result.part match {
-    case UmlExParts.MemberAllocation =>
-
-      println(result.learnerSolution)
-
-      result.classResult foreach { classRes => classRes.allMatches.map(_.attributesResult) foreach println }
-
-      views.html.idExercises.uml.memberAllocationResult(user, result, this)
-    case _                           => ??? // Correction is only live!
-  }
 
 }

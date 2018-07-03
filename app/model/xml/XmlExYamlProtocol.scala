@@ -1,6 +1,6 @@
 package model.xml
 
-import model.MyYamlProtocol
+import model.{BaseValues, MyYamlProtocol, SemanticVersion}
 import model.MyYamlProtocol._
 import model.xml.XmlConsts._
 import model.xml.dtd.DocTypeDefParser
@@ -20,13 +20,13 @@ object XmlExYamlProtocol extends MyYamlProtocol {
       grammarDescription <- yamlObject.stringField(grammarDescriptionName)
       rootNode <- yamlObject.stringField(RootNodeName)
 
-      sampleGrammars <- yamlObject.arrayField("sampleGrammars", XmlSampleGrammarYamlFormat(baseValues._1).read)
+      sampleGrammars <- yamlObject.arrayField("sampleGrammars", XmlSampleGrammarYamlFormat(baseValues).read)
     } yield {
       for (grammarReadError <- sampleGrammars._2)
         Logger.error("Could not read xml sample grammar", grammarReadError.exception)
 
       XmlCompleteExercise(
-        XmlExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, grammarDescription, rootNode),
+        XmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, grammarDescription, rootNode),
         sampleGrammars._1)
     }
 
@@ -34,18 +34,18 @@ object XmlExYamlProtocol extends MyYamlProtocol {
       writeBaseValues(completeEx.ex) ++
         Map(
           YamlString(grammarDescriptionName) -> YamlString(completeEx.ex.grammarDescription),
-          YamlString(sampleGrammarsName) -> YamlArray(completeEx.sampleGrammars map XmlSampleGrammarYamlFormat(completeEx.ex.id).write toVector),
+          YamlString(sampleGrammarsName) -> YamlArray(completeEx.sampleGrammars map XmlSampleGrammarYamlFormat(completeEx.ex.baseValues).write toVector),
           YamlString(RootNodeName) -> YamlString(completeEx.ex.rootNode)
         )
     )
   }
 
-  case class XmlSampleGrammarYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[XmlSampleGrammar] {
+  case class XmlSampleGrammarYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[XmlSampleGrammar] {
 
     override protected def readObject(yamlObject: YamlObject): Try[XmlSampleGrammar] = for {
       id <- yamlObject.intField(idName)
       sampleGrammar <- yamlObject.stringField(grammarName) flatMap DocTypeDefParser.parseDTD
-    } yield XmlSampleGrammar(id, exerciseId, sampleGrammar)
+    } yield XmlSampleGrammar(id, baseValues.id, baseValues.semanticVersion, sampleGrammar)
 
     override def write(obj: XmlSampleGrammar): YamlValue = YamlObject(
       YamlString(idName) -> YamlNumber(obj.id),

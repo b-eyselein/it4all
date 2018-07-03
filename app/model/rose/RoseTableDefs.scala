@@ -1,6 +1,7 @@
 package model.rose
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgDataTypes.ProgDataType
 import model.programming.{ProgDataTypes, ProgLanguage, ProgLanguages}
@@ -58,7 +59,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Tables
 
-  class RoseExercisesTable(tag: Tag) extends HasBaseValuesTable[RoseExercise](tag, "rose_exercises") {
+  class RoseExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "rose_exercises") {
 
     def fieldWidth = column[Int]("field_width")
 
@@ -67,10 +68,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def isMultiplayer = column[Boolean]("is_mp")
 
 
-    def pk = primaryKey("pk", id)
-
-
-    override def * = (id, title, author, text, state, semanticVersion, fieldWidth, fieldHeight, isMultiplayer).mapTo[RoseExercise]
+    override def * = (id, semanticVersion, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer).mapTo[RoseExercise]
 
   }
 
@@ -80,17 +78,19 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def name = column[String]("input_name")
 
     def inputType = column[ProgDataType]("input_type")
 
 
-    def pk = primaryKey("pk", (id, exerciseId))
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
-    override def * = (id, exerciseId, name, inputType).mapTo[RoseInputType]
+    override def * = (id, exerciseId, exSemVer, name, inputType).mapTo[RoseInputType]
 
   }
 
@@ -98,17 +98,19 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def language = column[ProgLanguage]("language")
 
     def solution = column[String]("solution")
 
 
-    def pk = primaryKey("pk", (exerciseId, language))
+    def pk = primaryKey("pk", (exerciseId, exSemVer, language))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
-    override def * = (exerciseId, language, solution).mapTo[RoseSampleSolution]
+    override def * = (exerciseId, exSemVer, language, solution).mapTo[RoseSampleSolution]
 
   }
 
@@ -117,7 +119,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def solution = column[String]("solution")
 
 
-    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[RoseSolution]
+    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[RoseSolution]
 
   }
 

@@ -1,6 +1,7 @@
 package model.xml
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import play.api.Logger
@@ -75,14 +76,14 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Actual table defs
 
-  class XmlExercisesTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
+  class XmlExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "xml_exercises") {
 
     def rootNode = column[String]("root_node")
 
     def grammarDescription = column[String]("grammar_description")
 
 
-    override def * = (id, title, author, text, state, semanticVersion, grammarDescription, rootNode).mapTo[XmlExercise]
+    override def * = (id, semanticVersion, title, author, text, state, grammarDescription, rootNode).mapTo[XmlExercise]
 
   }
 
@@ -92,15 +93,17 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def exerciseId = column[Int]("exercise_id")
 
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
     def sampleGrammar = column[DocTypeDef]("sample_grammar")
 
 
-    def pk = primaryKey("pk", (id, exerciseId))
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
-    def * = (id, exerciseId, sampleGrammar).mapTo[XmlSampleGrammar]
+    def * = (id, exerciseId, exSemVer, sampleGrammar).mapTo[XmlSampleGrammar]
 
   }
 
@@ -109,7 +112,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution = column[String]("solution")
 
 
-    override def * = (username, exerciseId, part, solution, points, maxPoints).mapTo[XmlSolution]
+    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[XmlSolution]
 
   }
 

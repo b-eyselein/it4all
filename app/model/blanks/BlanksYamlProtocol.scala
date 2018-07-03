@@ -1,7 +1,7 @@
 package model.blanks
 
-import model.MyYamlProtocol
 import model.MyYamlProtocol._
+import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}
 
 import scala.collection.mutable
@@ -15,7 +15,7 @@ object BlanksYamlProtocol extends MyYamlProtocol {
 
   val solRegex: Regex = "sol=\"(.*?)\"".r
 
-  def parseBlanksText(exerciseId: Int, blanksText: String): (String, Seq[BlanksAnswer]) = {
+  def parseBlanksText(baseValues: BaseValues, blanksText: String): (String, Seq[BlanksAnswer]) = {
 
     var newText = blanksText
     var i = 1
@@ -37,7 +37,7 @@ object BlanksYamlProtocol extends MyYamlProtocol {
 
       i += 1
     }
-    (newText, solutions map (samp => BlanksAnswer(samp._1, exerciseId, samp._2)) toSeq)
+    (newText, solutions map (samp => BlanksAnswer(samp._1, baseValues.id, baseValues.semanticVersion, samp._2)) toSeq)
   }
 
   implicit object BlanksYamlFormat extends MyYamlObjectFormat[BlanksCompleteExercise] {
@@ -45,8 +45,8 @@ object BlanksYamlProtocol extends MyYamlProtocol {
     override protected def readObject(yamlObject: YamlObject): Try[BlanksCompleteExercise] = for {
       baseValues <- readBaseValues(yamlObject)
       rawBlanksText <- yamlObject.stringField("blankstext")
-      (parsedText, samples) = parseBlanksText(baseValues._1, rawBlanksText)
-    } yield BlanksCompleteExercise(BlanksExercise(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, baseValues._6, rawBlanksText, parsedText), samples)
+      (parsedText, samples) = parseBlanksText(baseValues, rawBlanksText)
+    } yield BlanksCompleteExercise(BlanksExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, rawBlanksText, parsedText), samples)
 
     override def write(completeEx: BlanksCompleteExercise): YamlValue = YamlObject(
       writeBaseValues(completeEx.ex) ++
