@@ -1,4 +1,3 @@
-//Basis Main
 import * as  $ from 'jquery';
 import * as joint from 'jointjs';
 import * as _ from 'lodash';

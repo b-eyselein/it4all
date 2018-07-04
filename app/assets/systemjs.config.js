@@ -8,13 +8,14 @@
     SystemJS.config({
         paths: {
             // paths serve as alias
-            'npm:': '/assets/lib/'
+            'npm:': '/assets/lib/',
+
+            // our app is within the app folder
+            'app': '/assets/app',
+            'jointjs': '/assets/lib/jointjs/dist/joint.js'
         },
         // map tells the System loader where to look for things
         map: {
-            // our app is within the app folder
-            'app': '/assets/app',
-
             'bootstrap': 'npm:bootstrap/dist/js/bootstrap.js',
             'popper.js': 'npm:popper.js/umd/popper.js',
 
@@ -28,7 +29,10 @@
             'underscore': 'npm:lodash/lodash.js',
 
             'dagre': 'npm:dagre/dist/dagre.js',
-            'jointjs': 'npm:jointjs/dist/joint.js'
+
+            'jointjs': {
+                'backbone': '/assets/app/jointjs-loader-hack.js',
+            }
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {

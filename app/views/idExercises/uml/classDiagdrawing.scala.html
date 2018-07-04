@@ -8,19 +8,11 @@
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
     <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            let imports = [
-                '@routes.Assets.versioned("lib/graphlib/dist/graphlib.js")',
-                '@routes.Assets.versioned("lib/dagre/dist/dagre.js")',
-                '@routes.Assets.versioned("app/uml/umlClass/classDiagDrawing.js")'
-            ];
-            for (let toImport of imports) {
-                SystemJS.import(toImport);
-            }
-    </script>
-
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/uml/umlClass/classDiagDrawing.js")');</script>
+
 
         <!--suppress JSUnusedLocalSymbols -->
     <script>

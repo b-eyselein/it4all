@@ -1,5 +1,8 @@
 import * as $ from 'jquery';
 import * as joint from 'jointjs';
+import * as _ from 'lodash';
+
+import 'backbone';
 
 import {DEF_GRID, GRID_SIZE, PAPER_HEIGHT} from "../umlConsts";
 import {

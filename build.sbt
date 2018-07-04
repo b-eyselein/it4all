@@ -33,7 +33,7 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "systemjs" % "0.21.3", "org.webjars.npm" % "types__systemjs" % "0.20.6",
 
-  "org.webjars.npm" % "jointjs" % "2.1.2",
+  "org.webjars.npm" % "jointjs" % "2.1.2", // FIXME: 2.1.3
 
   //  "org.webjars.npm" % "backbone" % "1.3.3",
   "org.webjars.npm" % "types__backbone" % "1.3.42",
