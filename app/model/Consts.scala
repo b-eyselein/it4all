@@ -42,6 +42,7 @@ trait Consts {
   val questionsName    = "questions"
   val questionTypeName = "questionType"
 
+  val resultsName = "results"
   val roleName = "role"
 
   val sampleArgName       = "sampleArg"

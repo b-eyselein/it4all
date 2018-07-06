@@ -48,8 +48,6 @@ case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[Elem
 
   override protected def descArgForJson(arg: ElementLine): JsValue = Json.obj(nameName -> arg.elementName)
 
-  override def render: String = ???
-
   override def success: SuccessType = if (analysisResult.exists(_.matchType == MatchType.SUCCESSFUL_MATCH)) {
     SuccessType.COMPLETE
   } else SuccessType.NONE

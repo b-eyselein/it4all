@@ -18,7 +18,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
       baseValues <- readBaseValues(yamlObject)
 
       grammarDescription <- yamlObject.stringField(grammarDescriptionName)
-      rootNode <- yamlObject.stringField(RootNodeName)
+      rootNode <- yamlObject.stringField(rootNodeName)
 
       sampleGrammars <- yamlObject.arrayField("sampleGrammars", XmlSampleGrammarYamlFormat(baseValues).read)
     } yield {
@@ -35,7 +35,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
         Map(
           YamlString(grammarDescriptionName) -> YamlString(completeEx.ex.grammarDescription),
           YamlString(sampleGrammarsName) -> YamlArray(completeEx.sampleGrammars map XmlSampleGrammarYamlFormat(completeEx.ex.baseValues).write toVector),
-          YamlString(RootNodeName) -> YamlString(completeEx.ex.rootNode)
+          YamlString(rootNodeName) -> YamlString(completeEx.ex.rootNode)
         )
     )
   }
@@ -44,7 +44,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
 
     override protected def readObject(yamlObject: YamlObject): Try[XmlSampleGrammar] = for {
       id <- yamlObject.intField(idName)
-      sampleGrammar <- yamlObject.stringField(grammarName) flatMap DocTypeDefParser.parseDTD
+      sampleGrammar <- yamlObject.stringField(grammarName) flatMap DocTypeDefParser.tryParseDTD
     } yield XmlSampleGrammar(id, baseValues.id, baseValues.semanticVersion, sampleGrammar)
 
     override def write(obj: XmlSampleGrammar): YamlValue = YamlObject(

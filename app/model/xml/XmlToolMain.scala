@@ -4,6 +4,7 @@ import java.nio.file._
 
 import javax.inject._
 import model.core._
+import model.core.result.{CompleteResult, EvaluationResult}
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.xml.XmlConsts._
 import model.xml.dtd.DocTypeDefParser
@@ -15,7 +16,11 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.Try
+import scala.util.{Success, Try}
+
+trait XmlEvaluationResult extends EvaluationResult with JsonWriteable
+
+trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult]
 
 @Singleton
 class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("xml") with FileUtils {
@@ -81,7 +86,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteExercise, part: XmlExPart): Future[Try[CompResult]] =
+  override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =
     Future(part match {
       case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
 
@@ -96,9 +101,11 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
         }
       })
 
-      case XmlExParts.GrammarCreationXmlPart => DocTypeDefParser.parseDTD(solution) map { userGrammar =>
-        XmlGrammarCompleteResult(userGrammar, completeEx)
-      }
+
+      case XmlExParts.GrammarCreationXmlPart =>
+        val sampleGrammar = completeEx.sampleGrammars.minBy(sampleG => Java_Levenshtein.levenshteinDistance(solution, sampleG.sampleGrammar.asString))
+        Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution), sampleGrammar, completeEx))
+
     })
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: XmlExPart): Future[String] = ???

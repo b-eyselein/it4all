@@ -18,7 +18,13 @@ interface XmlElement {
 interface XmlElementMatch extends Match<XmlElement, XmlElementAnalysisResult> {
 }
 
+interface ParseError {
+    parsed: string
+    message: string
+}
+
 interface XmlGrammarCorrectionResult extends CorrectionResult<XmlElementMatch> {
+    parseErrors: ParseError[]
 }
 
 function escapeXML(unescapedXML: string): string {
@@ -61,10 +67,21 @@ function renderElementMatch(em: XmlElementMatch): string {
     }
 }
 
+function renderParseErrors(parseErrors: ParseError[]): string {
+    const renderedErrors = parseErrors.map((x) => {
+        const escapedParsed = x.parsed.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `<p><div>Fehler beim Parsen von &quot;<code>${escapedParsed}</code>&quot;:</div><div class="text-danger">${x.message}</div></p>`;
+    }).join("\n");
+
+    return `
+<div>
+    <h2>Parsingfehler</h2>
+    ${renderedErrors}
+</div>`.trim();
+}
+
 function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult): string {
     let html: string = '';
-
-    console.warn(response.points + " :: " + response.maxPoints);
 
     if (response.solutionSaved) {
         html += `<p class="text-success">Ihre Lösung wurde gespeichert.</p>`;
@@ -75,8 +92,10 @@ function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult)
     if (response.success) {
         html += `<p class="text-success">Die Korrektur war komplett erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
     } else {
-        html += `<p class="text-danger">Die Korrektur war nicht erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p><hr>`
-            + response.results.map(renderElementMatch).join('\n');
+        html +=
+            '<p class="text-danger">Die Korrektur war nicht erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>'
+            + (response.parseErrors.length === 0 ? '' : '<hr>' + renderParseErrors(response.parseErrors))
+            + '<hr>' + response.results.map(renderElementMatch).join('\n');
     }
 
     return html;

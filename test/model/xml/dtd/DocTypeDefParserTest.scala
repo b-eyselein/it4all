@@ -64,11 +64,11 @@ class DocTypeDefParserTest extends FlatSpec with FileUtils {
     testParseError(DocTypeDefParser.idAttrType, "IDREF")
   }
 
-
   it should "parse an IDREF type for an attribute" in {
     testParse(DocTypeDefParser.idRefAttrType, "IDREF", IDRefAttributeType)
     testParseError(DocTypeDefParser.idRefAttrType, "ID")
   }
+
   it should "parse an CDATA type for an attribute" in {
     testParse(DocTypeDefParser.cDataAttrType, "CDATA", CDataAttributeType)
     testParseError(DocTypeDefParser.cDataAttrType, "ID")
@@ -91,7 +91,7 @@ class DocTypeDefParserTest extends FlatSpec with FileUtils {
       readAll(file) match {
         case Failure(error)   => fail(error.toString)
         case Success(content) =>
-          DocTypeDefParser.parseDTD(content) match {
+          DocTypeDefParser.tryParseDTD(content) match {
             case Failure(error)   => fail(error.toString)
             case Success(grammar) => assert(grammar.asString == content)
           }

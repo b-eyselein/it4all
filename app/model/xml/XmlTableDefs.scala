@@ -4,12 +4,10 @@ import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
-import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteExercise, String, XmlSolution, XmlExPart] {
@@ -32,21 +30,13 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   //  val resultsForPartsTable = TableQuery[XmlResultsTable]
 
-
   // Column Types
 
   override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
     MappedColumnType.base[XmlExPart, String](_.entryName, XmlExParts.withNameInsensitive)
 
   private implicit val docTypeDefColumnType: BaseColumnType[DocTypeDef] =
-    MappedColumnType.base[DocTypeDef, String](_.asString, str => {
-      DocTypeDefParser.parseDTD(str) match {
-        case Success(grammar) => grammar
-        case Failure(error)   =>
-          Logger.error("Error while reading xml dtd from db: ", error)
-          DocTypeDef(Seq.empty)
-      }
-    })
+    MappedColumnType.base[DocTypeDef, String](_.asString, str => DocTypeDefParser.parseDTD(str).dtd)
 
   // Reading
 

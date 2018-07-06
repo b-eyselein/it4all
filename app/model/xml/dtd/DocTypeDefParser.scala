@@ -4,9 +4,15 @@ import model.core.CommonUtils
 import play.api.Logger
 
 import scala.language.postfixOps
-import scala.util.Try
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.JavaTokenParsers
+import scala.util.{Try, Failure => TryFailure, Success => TrySuccess}
+
+
+case class DTDParseException(msg: String, parsedLine: String) extends Exception(msg)
+
+case class DTDParseResult(dtd: DocTypeDef, parseErrors: Seq[DTDParseException])
+
 
 object DocTypeDefParser extends JavaTokenParsers {
 
@@ -17,9 +23,12 @@ object DocTypeDefParser extends JavaTokenParsers {
   val rep1Operator = "+"
   val optOperator  = "?"
 
-  val LineRegex: Regex = "(?m)<[\\s\\S]*?>".r
+  private val lineRegex: Regex = "(?m)<[\\s\\S]*?>".r
 
-  val dtdLine: Parser[DocTypeDefLine] = elementDefinition | attList
+  private val elemRegex    = "(?m)<!ELEMENT.*?>".r
+  private val attListRegex = "(?m)<!ATTLIST.*?>".r
+
+  //  val dtdLine: Parser[DocTypeDefLine] = elementDefinition | attList
 
   // Elements
 
@@ -112,27 +121,54 @@ object DocTypeDefParser extends JavaTokenParsers {
 
   // Parsing function
 
-  private[dtd] def parseDtdLine(str: String): Try[DocTypeDefLine] = parse(dtdLine, str) match {
-    case DocTypeDefParser.Success(res, _)   => scala.util.Success(res)
-    case DocTypeDefParser.NoSuccess(msg, _) => scala.util.Failure(new Exception(msg))
+  private[dtd] def parseDtdLine(str: String): Try[DocTypeDefLine] = {
+    val tryParser: Try[Parser[DocTypeDefLine]] = str match {
+      case elemRegex()    => TrySuccess(elementDefinition)
+      case attListRegex() => TrySuccess(attList)
+      case _              => TryFailure(new DTDParseException("Line can not be identified as element or attlist!", str))
+    }
+
+    tryParser flatMap { parser =>
+      parse(parser, str) match {
+        case DocTypeDefParser.Success(res, _)   => TrySuccess(res)
+        case DocTypeDefParser.NoSuccess(msg, _) => TryFailure(new Exception(msg))
+      }
+    }
   }
 
-  def parseDTD(str: String): Try[DocTypeDef] = {
-    val allLines: List[String] = LineRegex.findAllIn(str) toList
+  def tryParseDTD(str: String): Try[DocTypeDef] = {
+    val allLines: List[String] = lineRegex.findAllIn(str) toList
 
     val parseLinesTries: List[Try[DocTypeDefLine]] = allLines map parseDtdLine
 
     val (parseSuccesses, parseFails) = CommonUtils.splitTriesNew(parseLinesTries)
 
     parseFails match {
-      case Nil    => scala.util.Success(DocTypeDef(parseSuccesses))
+      case Nil    => TrySuccess(DocTypeDef(parseSuccesses))
       case errors =>
         errors.foreach(e => Logger.error("Failure while reading dtd from db: " + e.exception.getMessage))
-        println("--------------------------------------------")
+        TryFailure(errors.head.exception)
+    }
+  }
 
-        scala.util.Failure(new Exception("TODO: collect errors..."))
+  def parseDTD(str: String): DTDParseResult = {
+
+    @annotation.tailrec
+    def go(toParse: List[String], successes: Seq[DocTypeDefLine], failures: Seq[DTDParseException]): DTDParseResult = toParse match {
+      case Nil          => DTDParseResult(DocTypeDef(successes), failures)
+      case head :: tail => parseDtdLine(head) match {
+        case TrySuccess(line)              => go(tail, successes :+ line, failures)
+        case f: TryFailure[DocTypeDefLine] =>
+          val dpe = f.exception match {
+            case dpe: DTDParseException => dpe
+            case e: Throwable           => new DTDParseException(e.getMessage, "TODO!")
+          }
+          go(tail, successes, failures :+ dpe)
+      }
+
     }
 
+    go(lineRegex.findAllIn(str) toList, Seq.empty, Seq.empty)
   }
 
 }
