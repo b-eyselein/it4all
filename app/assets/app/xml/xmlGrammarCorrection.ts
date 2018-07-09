@@ -93,7 +93,7 @@ function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult)
         html += `<p class="text-success">Die Korrektur war komplett erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
     } else {
         html +=
-            '<p class="text-danger">Die Korrektur war nicht erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>'
+            '<p class="text-danger">Die Korrektur war nicht erfolgreich. Sie haben ' + response.points + ' von ' + response.maxPoints + ' erreicht.</p>'
             + (response.parseErrors.length === 0 ? '' : '<hr>' + renderParseErrors(response.parseErrors))
             + '<hr>' + response.results.map(renderElementMatch).join('\n');
     }

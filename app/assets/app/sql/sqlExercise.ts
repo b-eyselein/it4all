@@ -11,8 +11,16 @@ let testBtn: JQuery;
 
 let correction: JQuery;
 
-interface SqlCorrectionResult {
+interface SqlResult {
     solutionSaved: boolean
+    success: 'COMPLETE' | 'PARTIALLY' | 'NONE' | 'ERROR'
+
+    results: SqlCorrectionResult
+}
+
+interface SqlCorrectionResult {
+    message: string
+
     columns: MatchingResult<any, any>
     tables: MatchingResult<any, any>
     wheres: MatchingResult<any, any>
@@ -136,14 +144,11 @@ function explainMatch(aMatch: Match<any, any>, matchName: string): string {
     }
 }
 
-function onSqlCorrectionSuccess(response: SqlCorrectionResult): void {
+function onSqlCorrectionSuccess(response: SqlResult): void {
     testBtn.prop('disabled', false);
 
-    if (response['msg']) {
-        // FIXME: Failure...
-        alert(response['msg']);
-        return;
-    }
+    console.warn(JSON.stringify(response, null, 2));
+
 
     correction.html('');
 
@@ -155,30 +160,41 @@ function onSqlCorrectionSuccess(response: SqlCorrectionResult): void {
         results.push(`<span class=text-danger>Ihre Lösung konnte nicht gespeichert werden!</span>`);
     }
 
-    results.push(
-        renderMatchingResult(response.columns, "Spalten", "der Spalte"),
-        renderMatchingResult(response.tables, "Tabellen", "der Tabelle"),
-        renderMatchingResult(response.wheres, "Bedingungen", "der Bedingung")
-    );
 
+    switch (response.success) {
+        case 'ERROR':
+            results.push(`
+<div class="alert alert-danger">
+    <p>Es gab einen Fehler bei der Korrektur:</p>
+    <code>${response.results.message}</code>
+</div>`.trim());
+            break;
 
-    if (response.groupBy != null) {
-        results.push(renderMatchingResult(response.groupBy, "Group Bys", "des Group By-Statement"));
+        default:
+            results.push(
+                renderMatchingResult(response.results.columns, "Spalten", "der Spalte"),
+                renderMatchingResult(response.results.tables, "Tabellen", "der Tabelle"),
+                renderMatchingResult(response.results.wheres, "Bedingungen", "der Bedingung")
+            );
+
+            if (response.results.groupBy != null) {
+                results.push(renderMatchingResult(response.results.groupBy, "Group Bys", "des Group By-Statement"));
+            }
+
+            if (response.results.orderBy != null) {
+                results.push(renderMatchingResult(response.results.orderBy, "Order Bys", "des Order By-Statement"));
+            }
+
+            if (response.results.insertedValues != null) {
+                results.push(renderMatchingResult(response.results.insertedValues, "hinzugefügten Werte", "der Werte"));
+            }
+
+            $('#executionResultsDiv').html(renderExecution(response.results.executionResults));
+            break;
     }
 
-    if (response.orderBy != null) {
-        results.push(renderMatchingResult(response.orderBy, "Order Bys", "des Order By-Statement"));
-    }
-
-    if(response.insertedValues != null) {
-        results.push(renderMatchingResult(response.insertedValues, "hinzugefügten Werte", "der Werte"));
-    }
-
-    let newHtml = `<ul>${results.map(r => `<li>${r}</li>`).join('\n')}</ul>`;
+    let newHtml = results.map(r => `<p>${r}</p>`).join('\n');
     correction.html(newHtml);
-
-    $('#executionResultsDiv').html(renderExecution(response.executionResults));
-
 }
 
 function onSqlCorrectionError(jqXHR): void {

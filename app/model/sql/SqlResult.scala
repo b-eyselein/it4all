@@ -34,6 +34,16 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
   override type SolType = String
 
+  val successType: SuccessType
+
+  override def toJson(solutionSaved: Boolean): JsValue = Json.obj(
+    solutionSavedName -> solutionSaved,
+    successName -> successType.entryName,
+    resultsName -> jsonRest
+  )
+
+  def jsonRest: JsValue
+
 }
 
 // FIXME: use builder?
@@ -41,7 +51,9 @@ case class SqlResult(learnerSolution: String, override val points: Double, overr
                      columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
                      tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
                      whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
+
                      executionResult: SqlExecutionResult,
+
                      groupByComparison: Option[MatchingResult[Expression, GenericAnalysisResult, GroupByMatch]],
                      orderByComparison: Option[MatchingResult[OrderByElement, GenericAnalysisResult, OrderByMatch]],
                      insertedValuesComparison: Option[MatchingResult[ExpressionList, GenericAnalysisResult, ExpressionListMatch]])
@@ -49,8 +61,9 @@ case class SqlResult(learnerSolution: String, override val points: Double, overr
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison
 
-  def toJson(solutionSaved: Boolean): JsValue = Json.obj(
-    solutionSavedName -> solutionSaved,
+  override val successType: SuccessType = if (EvaluationResult.allResultsSuccessful(results)) SuccessType.COMPLETE else SuccessType.PARTIALLY
+
+  override def jsonRest: JsValue = Json.obj(
     columnsName -> columnComparison.toJson,
     tablesName -> tableComparison.toJson,
     "wheres" -> whereComparison.toJson,
@@ -68,7 +81,9 @@ case class SqlParseFailed(learnerSolution: String, error: Throwable) extends Sql
 
   override def results: Seq[EvaluationResult] = Seq.empty
 
-  override def toJson(saved: Boolean): JsValue = ???
+  override val successType: SuccessType = SuccessType.ERROR
+
+  override def jsonRest: JsValue = Json.obj(messageName -> error.getMessage)
 
 }
 
