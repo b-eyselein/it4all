@@ -1,4 +1,5 @@
-@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: model.CompleteCollection], toolMainObject: model.toolMains.CollectionToolMain)
+@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: model.CompleteCollection],
+        toolMainObject: model.toolMains.CollectionToolMain, toolList: model.toolMains.ToolList)
 
 
 @collWrappers = @{
@@ -6,49 +7,42 @@
     readAndSaveResult.successes.map(_.ex)
 }
 
-@main("Import: " + toolMainObject.collectionSingularName, Some(user)) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Erstellte Aufgabensammlungen</h1>
+@title = @{
+    "Import: " + toolMainObject.collectionSingularName
+}
+
+@admin.adminMain(title, user, toolList, Some(toolMainObject)) {
+    @for(collWrapper <- collWrappers) {
+        <h2>@toolMainObject.collectionSingularName: &quot;@collWrapper.coll.title&quot;</h2>
+
+        <div class="row">
+            <div class="col-sm-2"><b>ID</b>: @collWrapper.coll.id</div>
+            <div class="col-sm-4"><b>Autor</b>: @collWrapper.coll.author</div>
+            <div class="col-sm-2"><b># Aufgaben</b>: @collWrapper.exercises.size</div>
+            <div class="col-sm-4"><b>Status</b>: @collWrapper.coll.state</div>
         </div>
 
-        <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
-            Zurück zur Administratorseite</a>
+        <div class="row">
+            <div class="col-sm-2"><b>Text:</b></div>
+            <div class="col-sm-10">@collWrapper.coll.text</div>
+        </div>
 
-        <hr>
+        @collWrapper.renderRest
 
-        @for(collWrapper <- collWrappers) {
-            <h2>@toolMainObject.collectionSingularName: &quot;@collWrapper.coll.title&quot;</h2>
-
+        @for(exerciseTuple <- collWrapper.exercises.grouped(2)) {
+            <hr>
             <div class="row">
-                <div class="col-sm-2"><b>ID</b>: @collWrapper.coll.id</div>
-                <div class="col-sm-4"><b>Autor</b>: @collWrapper.coll.author</div>
-                <div class="col-sm-2"><b># Aufgaben</b>: @collWrapper.exercises.size</div>
-                <div class="col-sm-4"><b>Status</b>: @collWrapper.coll.state</div>
-            </div>
+            @for(exercise <- exerciseTuple) {
+                <div class="col-sm-6">
+                    <h3>@exercise.ex.title</h3>
 
-            <div class="row">
-                <div class="col-sm-2"><b>Text:</b></div>
-                <div class="col-sm-10">@collWrapper.coll.text</div>
-            </div>
-
-            @collWrapper.renderRest
-
-            @for(exerciseTuple <- collWrapper.exercises.grouped(2)) {
-                <hr>
-                <div class="row">
-                @for(exercise <- exerciseTuple) {
-                    <div class="col-sm-6">
-                        <h3>@exercise.ex.title</h3>
-
-                        @exercise.preview
-
-                    </div>
-                }
+                    @exercise.preview
 
                 </div>
             }
 
+            </div>
         }
-    </div>
+
+    }
 }

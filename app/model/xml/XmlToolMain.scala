@@ -5,7 +5,7 @@ import java.nio.file._
 import javax.inject._
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
-import model.toolMains.{IdExerciseToolMain, ToolState}
+import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.xml.XmlConsts._
 import model.xml.dtd.DocTypeDefParser
 import model.yaml.MyYamlFormat
@@ -112,8 +112,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExerciseEditForm(user: User, newEx: XmlCompleteExercise, isCreation: Boolean): Html =
-    views.html.idExercises.xml.editXmlExercise(user, this, newEx, isCreation)
+  override def renderExerciseEditForm(user: User, newEx: XmlCompleteExercise, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.idExercises.xml.editXmlExercise(user, newEx, isCreation, this, toolList)
 
   override def renderExercise(user: User, exercise: XmlCompleteExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
     val oldSolutionOrTemplate = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)

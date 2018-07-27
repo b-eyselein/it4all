@@ -1,44 +1,38 @@
 package model.toolMains
 
-import scala.collection.mutable.ListBuffer
+import javax.inject.{Inject, Singleton}
 
-object ToolList {
+import scala.collection.JavaConverters._
 
-  val STEP = 10
+@Singleton
+class ToolList @Inject()(javaToolMains: java.util.Set[AToolMain]) {
 
-  // FIXME: refactor!
+  val toolMains: Seq[AToolMain] = javaToolMains.asScala.toSeq
 
-  def FixedExToolMains: ListBuffer[FixedExToolMain] = FileExToolMains ++ ExerciseToolMains ++ ExCollectionToolMains
+  val groupedToolMains: Iterable[AToolMain] = toolMains.groupBy(_.getClass.getSuperclass).values.flatten
 
-  def AllToolMains: ListBuffer[AToolMain] = RandomExToolMains ++ FileExToolMains ++ ExerciseToolMains ++ ExCollectionToolMains
-
-  val RandomExToolMains: ListBuffer[RandomExerciseToolMain] = ListBuffer.empty
-
-  val FileExToolMains: ListBuffer[FileExerciseToolMain] = ListBuffer.empty
-
-  val ExerciseToolMains: ListBuffer[IdExerciseToolMain] = ListBuffer.empty
-
-  val ExCollectionToolMains: ListBuffer[CollectionToolMain] = ListBuffer.empty
-
-  def addTool(tool: AToolMain): Unit = tool match {
-    case w: RandomExerciseToolMain => RandomExToolMains += w
-    case x: FileExerciseToolMain   => FileExToolMains += x
-    case y: IdExerciseToolMain     => ExerciseToolMains += y
-    case z: CollectionToolMain     => ExCollectionToolMains += z
+  def getFileToolMainOption(urlPart: String): Option[FileExerciseToolMain] = toolMains.collectFirst {
+    case fetm: FileExerciseToolMain if fetm.urlPart == urlPart => fetm
   }
 
-  def getFileToolMainOption(urlPart: String): Option[FileExerciseToolMain] = {
-    FileExToolMains.find(_.urlPart == urlPart)
+  def getExerciseToolMainOption(urlPart: String): Option[IdExerciseToolMain] = toolMains.collectFirst {
+    case ietm: IdExerciseToolMain if ietm.urlPart == urlPart => ietm
   }
 
-  def getExerciseToolMainOption(urlPart: String): Option[IdExerciseToolMain] = ExerciseToolMains.find(_.urlPart == urlPart)
+  def getExCollToolMainOption(urlPart: String): Option[CollectionToolMain] = toolMains.collectFirst {
+    case ctm: CollectionToolMain if ctm.urlPart == urlPart => ctm
+  }
 
-  def getExCollToolMainOption(urlPart: String): Option[CollectionToolMain] = ExCollectionToolMains.find(_.urlPart == urlPart)
+  def getSingleExerciseToolMainOption(urlPart: String): Option[ASingleExerciseToolMain] = toolMains.collectFirst {
+    case setm: ASingleExerciseToolMain if setm.urlPart == urlPart => setm
+  }
 
-  def getSingleExerciseToolMainOption(urlPart: String): Option[ASingleExerciseToolMain] = (FileExToolMains ++ ExerciseToolMains).find(_.urlPart == urlPart)
+  def getFixedExToolOption(urlPart: String): Option[FixedExToolMain] = toolMains.collectFirst {
+    case fetm: FixedExToolMain if fetm.urlPart == urlPart => fetm
+  }
 
-  def getFixedExToolOption(urlPart: String): Option[FixedExToolMain] = FixedExToolMains.find(_.urlPart == urlPart)
-
-  def getRandomExToolMainOption(urlPart: String): Option[RandomExerciseToolMain] = RandomExToolMains.find(_.urlPart == urlPart)
+  def getRandomExToolMainOption(urlPart: String): Option[RandomExerciseToolMain] = toolMains.collectFirst {
+    case retm: RandomExerciseToolMain if retm.urlPart == urlPart => retm
+  }
 
 }

@@ -147,22 +147,22 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
        |  <a class="btn btn-primary btn-block" href="${controllers.routes.CollectionController.collectionList(urlPart)}">Zu den Übungsaufgabensammlungen</a>
        |</div>""".stripMargin)
 
-  override def adminIndexView(admin: User): Future[Html] = statistics map {
-    stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this)
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map {
+    stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this, toolList)
   }
 
   def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int): Future[Html]
 
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
 
-  def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean): Html =
-    views.html.admin.collExes.collectionEditForm(user, this, collection, isCreation, new Html("") /*adminRenderEditRest(collection)*/)
+  def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.admin.collExes.collectionEditForm(user, collection, isCreation, new Html(""), this, toolList /*adminRenderEditRest(collection)*/)
 
-  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
-    views.html.admin.exerciseEditForm(user, this, newEx, renderEditRest(newEx), isCreation = true)
+  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
-  override def previewExercise(user: User, read: ReadAndSaveResult[CompCollType]): Html =
-    views.html.admin.collExes.collPreview(user, read, this)
+  override def previewExercise(user: User, read: ReadAndSaveResult[CompCollType], toolList: ToolList): Html =
+    views.html.admin.collExes.collPreview(user, read, this, toolList)
 
   // Result handlers
 

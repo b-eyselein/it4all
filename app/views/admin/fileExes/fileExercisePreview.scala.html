@@ -1,28 +1,20 @@
-@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: model.CompleteEx[_ <: model.Exercise]], toolMainObject: model.toolMains.AToolMain)
+@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: model.CompleteEx[_ <: model.Exercise]],
+        toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
 
-@dispExercise(compEx: model.CompleteEx[_ <: model.Exercise]) = {
-    <h2 data-toggle="collapse" data-target="#collapse_@compEx.ex.id">Aufgabe: &quot;@compEx.ex.title&quot;</h2>
+    @dispExercise(compEx: model.CompleteEx[_ <: model.Exercise]) = {
+        <h2 data-toggle="collapse" data-target="#collapse_@compEx.ex.id">Aufgabe: &quot;@compEx.ex.title&quot;</h2>
 
-    <div id="collapse_@compEx.ex.id" class="collapse in">@compEx.preview</div>
-}
+        <div id="collapse_@compEx.ex.id" class="collapse in">@compEx.preview</div>
+    }
 
-@main("Erstellte Aufgaben", Some(user)) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Erstellte Aufgaben:</h1>
-        </div>
+    @title = @{
+        "Erstellte Aufgaben"
+    }
 
-        <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
-            Zurück zur Administratorseite</a>
-
-        <hr>
-
+    @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
         @for(readAndSaveSuccesses <- readAndSaveResult.successes) {
             @* FIXME: remove cast ... *@
             @dispExercise(readAndSaveSuccesses.ex)
         }
 
-        @* @Html(completeExercises map (ex => dispExercise(ex)) mkString "\n<hr>") *@
-
-    </div>
-}
+    }

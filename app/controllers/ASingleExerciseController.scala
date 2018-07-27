@@ -4,10 +4,10 @@ import java.nio.file.Files
 
 import model.ExerciseState
 import model.core.FileUtils
-import model.toolMains.ASingleExerciseToolMain
+import model.toolMains.{ASingleExerciseToolMain, ToolList}
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms.{of, single}
+import play.api.data.Forms.single
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -15,8 +15,8 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with FileUtils {
+abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList)(implicit ec: ExecutionContext)
+  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with FileUtils {
 
   override type ToolMainType <: ASingleExerciseToolMain
 
@@ -27,7 +27,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
   // Admin
 
   def adminExportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.yamlString map (yaml => Ok(views.html.admin.export(admin, yaml, toolMain)))
+    implicit request => toolMain.yamlString map (yaml => Ok(views.html.admin.export(admin, yaml, toolMain, toolList)))
   }
 
   def adminExportExercisesAsFile(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, toolMain) =>
@@ -63,7 +63,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
   }
 
   def adminExerciseList(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.futureCompleteExes map (exes => Ok(toolMain.adminExerciseList(admin, exes)))
+    implicit request => toolMain.futureCompleteExes map (exes => Ok(toolMain.adminExerciseList(admin, exes, toolList)))
   }
 
   def adminDeleteExercise(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, toolMain) =>
@@ -78,7 +78,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
     implicit request =>
       toolMain.futureCompleteExById(id) map { maybeExercise =>
         val exercise = maybeExercise getOrElse toolMain.instantiateExercise(id, ExerciseState.RESERVED)
-        Ok(toolMain.renderExerciseEditForm(admin, exercise, isCreation = false))
+        Ok(toolMain.renderExerciseEditForm(admin, exercise, isCreation = false, toolList))
       }
   }
 
@@ -86,7 +86,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
     implicit request =>
       toolMain.futureHighestId map { id =>
         val exercise = toolMain.instantiateExercise(id + 1, ExerciseState.RESERVED)
-        Ok(toolMain.renderExerciseEditForm(admin, exercise, isCreation = true))
+        Ok(toolMain.renderExerciseEditForm(admin, exercise, isCreation = true, toolList))
       }
   }
 

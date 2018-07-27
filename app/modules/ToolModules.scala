@@ -1,16 +1,18 @@
 package modules
 
 import com.google.inject.AbstractModule
+import com.google.inject.multibindings.Multibinder
 import com.typesafe.config.Config
+import model.toolMains.AToolMain
 import play.api.{ConfigLoader, Configuration, Environment}
 
-import scala.language.postfixOps
+import scala.util.Try
 
 case class ToolConfig(toolName: String, toolMainClass: String, isEnabled: Boolean = true)
 
 class ToolModules(environment: Environment, configuration: Configuration) extends AbstractModule {
 
-  implicit val configLoader: ConfigLoader[ToolConfig] = (rootConfig: Config, path: String) => {
+  private implicit val configLoader: ConfigLoader[ToolConfig] = (rootConfig: Config, path: String) => {
     val config = rootConfig.getConfig(path)
 
     ToolConfig(
@@ -24,18 +26,19 @@ class ToolModules(environment: Environment, configuration: Configuration) extend
 
     val modulesConfig = configuration.get[Configuration]("modules")
 
-    modulesConfig.subKeys foreach { subKey =>
-      // Get configuration for tool
-      val toolConfig = modulesConfig.get[ToolConfig](subKey)
+    val multiBinder: Multibinder[AToolMain] = Multibinder.newSetBinder(binder(), classOf[AToolMain])
 
-      if (toolConfig.isEnabled) {
+    // TODO: get by annotation...
+    modulesConfig.subKeys
+      .map(modulesConfig.get[ToolConfig]) // Load configuration for tool
+      .filter(_.isEnabled)
+      .foreach { toolConfig =>
         // Get class for toolMain
-        val classOfMain = this.getClass.getClassLoader.loadClass(toolConfig.toolMainClass)
-
-        // Bind class of toolMain
-        bind(classOfMain).asEagerSingleton()
+        Try(this.getClass.getClassLoader.loadClass(toolConfig.toolMainClass)) map {
+          case classOfMain: Class[AToolMain] => multiBinder.addBinding().to(classOfMain)
+          case o                             => println(o)
+        }
       }
-    }
 
 
     DockerPullsStartTask.pullImages()

@@ -17,9 +17,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository, ws: WSClient,
+class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository, ws: WSClient, tl: ToolList,
                                    progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)
-                                  (implicit ec: ExecutionContext) extends ASingleExerciseController(cc, dbcp) with Secured with JsonFormat {
+                                  (implicit ec: ExecutionContext) extends ASingleExerciseController(cc, dbcp, tl) with Secured with JsonFormat {
 
   // Abstract types
 
@@ -29,7 +29,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   override type ToolMainType = IdExerciseToolMain
 
-  override protected def getToolMain(toolType: String): Option[IdExerciseToolMain] = ToolList.getExerciseToolMainOption(toolType)
+  override protected def getToolMain(toolType: String): Option[IdExerciseToolMain] = toolList.getExerciseToolMainOption(toolType)
 
   // Generic Routes
 

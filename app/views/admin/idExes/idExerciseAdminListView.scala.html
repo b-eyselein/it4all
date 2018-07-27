@@ -1,4 +1,4 @@
-@(user: model.User, completeExercises: Seq[model.CompleteEx[_ <: model.Exercise]], toolMainObject: model.toolMains.AToolMain)
+@(user: model.User, completeExercises: Seq[model.CompleteEx[_ <: model.Exercise]], toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -13,7 +13,7 @@
     "Aufgabenübersicht " + toolMainObject.toolname
 }
 
-@main(title, Some(user), scripts) {
+@admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
     <div class="container">
         <h1 class="text-center">@title</h1>
 

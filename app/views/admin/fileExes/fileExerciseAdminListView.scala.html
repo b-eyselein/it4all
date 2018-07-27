@@ -1,19 +1,15 @@
-@(user: model.User, completeExercises: Seq[model.CompleteEx[_ <: model.Exercise]], toolMainObject: model.toolMains.AToolMain)
+@(user: model.User, completeExercises: Seq[model.CompleteEx[_ <: model.Exercise]], toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
 
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+    @scripts = {
+        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/admin/singleExAdmin.js")');
-    </script>
-}
+        <script>
+                SystemJS.import('@routes.Assets.versioned("app/admin/singleExAdmin.js")');
+        </script>
+    }
 
-@main("Aufgabenübersicht", Some(user), scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Verfügbare Aufgaben</h1>
-        </div>
+    @admin.adminMain("Aufgabenübersicht", user, toolList, Some(toolMainObject), scripts) {
 
         <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
@@ -70,6 +66,4 @@
             }
             </tbody>
         </table>
-
-    </div>
-}
+    }

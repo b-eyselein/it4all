@@ -126,7 +126,7 @@ object MyYamlProtocol {
         case (key, value) => key.forgivingStr -> mapToJson(value)
       })
 
-      case YamlDate(date) => JsString(date.toLocalDate.toString)
+      case YamlDate(date) => JsString(date.toString)
 
       case YamlNaN | YamlNegativeInf | YamlPositiveInf => JsNull
 

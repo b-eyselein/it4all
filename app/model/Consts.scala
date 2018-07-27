@@ -43,10 +43,11 @@ trait Consts {
   val questionTypeName = "questionType"
 
   val resultsName = "results"
-  val roleName = "role"
+  val roleName    = "role"
 
   val sampleArgName       = "sampleArg"
   val sampleSubDir        = "samples"
+  val selfName            = "self"
   val semanticVersionName = "semanticVersion"
   val stateName           = "status"
   val stdStep             = 10

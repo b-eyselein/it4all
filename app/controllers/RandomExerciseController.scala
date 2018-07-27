@@ -2,7 +2,6 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
-import model.learningPath.LearningPath
 import model.toolMains.{RandomExerciseToolMain, ToolList}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{ControllerComponents, EssentialAction}
@@ -12,14 +11,14 @@ import scala.concurrent.ExecutionContext
 
 
 @Singleton
-class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AExerciseController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
+  extends AExerciseController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   // Abstract types
 
   override protected type ToolMainType = RandomExerciseToolMain
 
-  override protected def getToolMain(toolType: String): Option[RandomExerciseToolMain] = ToolList.getRandomExToolMainOption(toolType)
+  override protected def getToolMain(toolType: String): Option[RandomExerciseToolMain] = toolList.getRandomExToolMainOption(toolType)
 
   // Routes
 

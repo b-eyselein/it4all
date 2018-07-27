@@ -2,7 +2,7 @@ package model.persistence
 
 import model.ExerciseState.APPROVED
 import model.learningPath.LearningPathTableDefs
-import model.toolMains.ToolList.STEP
+import model.core.CoreConsts.STEP
 import model.{CompleteEx, Exercise}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider

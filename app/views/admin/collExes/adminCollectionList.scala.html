@@ -1,29 +1,20 @@
-@(user: model.User, collWrappers: Seq[model.CompleteCollection], toolObject: model.toolMains.CollectionToolMain)
+@(user: model.User, collWrappers: Seq[model.CompleteCollection], toolMainObject: model.toolMains.CollectionToolMain,
+        toolList: model.toolMains.ToolList)
 
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+    @scripts = {
+        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/admin/collExAdmin.js")');
-    </script>
-}
+        <script>
+                SystemJS.import('@routes.Assets.versioned("app/admin/collExAdmin.js")');
+        </script>
+    }
 
-@title = @{
-    toolObject.collectionPluralName + "übersicht " + toolObject.toolname
-}
+    @title = @{
+        toolMainObject.collectionPluralName + "übersicht " + toolMainObject.toolname
+    }
 
-@main(title, Some(user), scripts) {
-    <div class="container">
-        <h1 class="text-center">@title</h1>
-
-        <a href="@routes.MainExerciseController.adminIndex(toolObject.urlPart)" class="btn btn-primary btn-block">
-            Zurück zur Administratorseite</a>
-
-        <div id="messages"></div>
-
-        <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
-
+    @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
         <table class="table">
             <thead>
                 <tr>
@@ -50,7 +41,7 @@
                             </select>
                             <div class="input-group-append">
                                 <button class="btn btn-info" id="scb_@collection.id" disabled data-id="@collection.id"
-                                data-url="@routes.CollectionController.adminChangeCollectionState(toolObject.urlPart, collection.id)">
+                                data-url="@routes.CollectionController.adminChangeCollectionState(toolMainObject.urlPart, collection.id)">
                                     <span class="octicon octicon-cloud-upload"></span>
                                 </button>
                             </div>
@@ -58,25 +49,23 @@
                     </td>
                     <td>
                         <a class="btn btn-secondary" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
-                        href="@routes.CollectionController.adminEditCollectionForm(toolObject.urlPart, collection.id)">
+                        href="@routes.CollectionController.adminEditCollectionForm(toolMainObject.urlPart, collection.id)">
                             <span class="octicon octicon-pencil"></span>
                         </a>
 
                         <button class="btn btn-danger" title="Aufgabe @collection.id löschen" id="del_@collection.id"
-                        data-url="@routes.CollectionController.adminDeleteCollection(toolObject.urlPart, collection.id)">
+                        data-url="@routes.CollectionController.adminDeleteCollection(toolMainObject.urlPart, collection.id)">
                             <span class="octicon octicon-x"></span>
                         </button>
                     </td>
                     <td>@collection.title</td>
                     <td>@collection.author</td>
                     <td>
-                        <a href="@routes.CollectionController.adminExercisesInCollection(toolObject.urlPart, collection.id)"
+                        <a href="@routes.CollectionController.adminExercisesInCollection(toolMainObject.urlPart, collection.id)"
                         class="btn btn-primary btn-block">Zu den Aufgaben</a>
                     </td>
                 </tr>
             }
             </tbody>
         </table>
-
-    </div>
-}
+    }

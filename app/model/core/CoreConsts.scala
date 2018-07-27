@@ -6,4 +6,6 @@ object CoreConsts extends Consts {
 
   val sessionIdField = "id"
 
+  val STEP = 10
+
 }

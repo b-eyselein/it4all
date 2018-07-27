@@ -1,16 +1,11 @@
-@(user: model.User, courses: Seq[model.Course])
+@(user: model.User, courses: Seq[model.Course], toolList: model.toolMains.ToolList)
 
 @title = @{
     "Kursübersicht"
 }
 
-@main(title, Some(user)) {
-    <div class="container">
-        <h1 class="text-center">@title</h1>
-
-        @for(course <- courses) {
-            @course
-        }
-
-    </div>
+@admin.adminMain(title, user, toolList, None) {
+    @for(course <- courses) {
+        @course
+    }
 }

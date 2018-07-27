@@ -1,13 +1,10 @@
-@(user: model.User, statistics: Html, toolMainObject: model.toolMains.AToolMain)
+@(user: model.User, statistics: Html, toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
 
-@title = @{
-    "Administrator " + toolMainObject.toolname
-}
+    @title = @{
+        "Administrator " + toolMainObject.toolname
+    }
 
-@main(title, Some(user)) {
-    <div class="container">
-        <h1 class="text-center">@title</h1>
-
+    @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
         <section id="statistics">
             <h2>Statistiken</h2>
             <ul>@statistics</ul>
@@ -48,5 +45,4 @@
         <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
             Zu den Aufgaben</a>
 
-    </div>
-}
+    }

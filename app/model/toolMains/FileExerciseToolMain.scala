@@ -47,15 +47,15 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
        |  <a class="btn btn-primary btn-block" href="${controllers.routes.FileExerciseController.exerciseList(urlPart)}">Zu den Übungsaufgaben</a>
        |</div>""".stripMargin)
 
-  override def adminIndexView(admin: User): Future[Html] = statistics map {
-    stats => views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, this)
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map {
+    stats => views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, this, toolList)
   }
 
-  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
-    views.html.admin.fileExes.fileExercisePreview(user, read, this)
+  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType], toolList: ToolList): Html =
+    views.html.admin.fileExes.fileExercisePreview(user, read, this, toolList)
 
-  override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
-    views.html.admin.fileExes.fileExerciseAdminListView(admin, exes, this)
+  override def adminExerciseList(admin: User, exes: Seq[CompExType], toolList: ToolList): Html =
+    views.html.admin.fileExes.fileExerciseAdminListView(admin, exes, this, toolList)
 
   def renderExercise(user: User, exercise: CompExType, fileEnding: String): Html
 

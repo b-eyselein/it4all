@@ -1,0 +1,40 @@
+@(title: String, user: model.User, toolList: model.toolMains.ToolList, maybeActiveToolMain: Option[model.toolMains.AToolMain], scripts: Html = Html(""))(content: Html)
+
+@main(title, Some(user), scripts) {
+
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-sm-2">
+
+                <div class="card">
+                    <div class="card-body">
+
+                        <ul class="list-group list-group-flush">
+
+                            <a class="list-group-item list-group-item-action" href="@routes.AdminController.index()">
+                                Administrator</a>
+
+                            <li class="list-group-item">Tooladministration <br>
+                                <ul class="list-group list-group-flush">
+                                @for(tool <- toolList.groupedToolMains.toList) {
+                                    <a class="list-group-item list-group-item-action@{
+                                        if(maybeActiveToolMain contains tool) " active" else ""
+                                    }" href="@routes.MainExerciseController.adminIndex(tool.urlPart)">@tool.toolname</a>
+                                }
+                                </ul>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-8">@content</div>
+
+        </div>
+    </div>
+}

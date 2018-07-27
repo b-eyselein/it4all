@@ -2,11 +2,11 @@ package model.toolMains
 
 import java.nio.file.{Path, Paths}
 
+import enumeratum.{Enum, EnumEntry}
+import model.Role.RoleUser
 import model._
 import model.core.CoreConsts._
 import model.core.FileUtils
-import enumeratum.{Enum, EnumEntry}
-import model.Role.RoleUser
 import model.core.result.EvaluationResult
 import model.learningPath.{LearningPath, LearningPathTableDefs, LearningPathYamlProtocol}
 import model.yaml.MyYamlFormat
@@ -46,10 +46,6 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
   type R <: EvaluationResult
 
   type Tables <: LearningPathTableDefs
-
-  // Save this ToolMain
-
-  ToolList.addTool(this)
 
   // Other members
 
@@ -107,7 +103,7 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   def exercisesOverviewForIndex: Html
 
-  def adminIndexView(admin: User): Future[Html]
+  def adminIndexView(admin: User, toolList: ToolList): Future[Html]
 
   def playground(user: User): Html = Html("")
 

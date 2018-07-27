@@ -6,7 +6,7 @@ import model.core.result.EvaluationResult
 import model.core.{Java_Levenshtein, SolutionFormHelper}
 import model.sql.SqlConsts._
 import model.sql.SqlToolMain._
-import model.toolMains.{CollectionToolMain, ToolState}
+import model.toolMains.{CollectionToolMain, ToolList, ToolState}
 import model.yaml.MyYamlFormat
 import play.api.data.Form
 import play.api.mvc._
@@ -110,8 +110,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
       views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes, this)
     }
 
-  override def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
-    views.html.collectionExercises.sql.editSqlExercise(user, newEx, this, isCreation)
+  override def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.collectionExercises.sql.editSqlExercise(user, newEx, isCreation, this, toolList)
 
   // FIXME: remove this method...
   override def renderEditRest(exercise: SqlCompleteEx): Html = ???

@@ -6,7 +6,7 @@ import model.core.CoreConsts.solutionName
 import model.core._
 import model.core.result.CompleteResult
 import model.persistence.SingleExerciseTableDefs
-import model.{DBPartSolution, JsonFormat, SemanticVersion, User}
+import model.{DBPartSolution, JsonFormat, User}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, Call, Request}
@@ -103,15 +103,15 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
        |  <a class="btn btn-primary btn-block" href="${controllers.routes.ExerciseController.exerciseList(urlPart)}">Zu den Übungsaufgaben</a>
        |</div>""".stripMargin)
 
-  override def adminIndexView(admin: User): Future[Html] = statistics map { stats =>
-    views.html.admin.idExes.idExerciseAdminIndex(admin, stats, this)
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map { stats =>
+    views.html.admin.idExes.idExerciseAdminIndex(admin, stats, this, toolList)
   }
 
-  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType]): Html =
-    views.html.admin.idExes.idExercisePreview(user, read, this)
+  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType], toolList: ToolList): Html =
+    views.html.admin.idExes.idExercisePreview(user, read, this, toolList)
 
-  override def adminExerciseList(admin: User, exes: Seq[CompExType]): Html =
-    views.html.admin.idExes.idExerciseAdminListView(admin, exes, this)
+  override def adminExerciseList(admin: User, exes: Seq[CompExType], toolList: ToolList): Html =
+    views.html.admin.idExes.idExerciseAdminListView(admin, exes, this, toolList)
 
   def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[DBSolType]): Html
 

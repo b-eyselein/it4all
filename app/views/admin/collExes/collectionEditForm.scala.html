@@ -1,12 +1,11 @@
-@(user: model.User, toolMainObject: model.toolMains.CollectionToolMain, collection: model.CompleteCollection, isCreation: Boolean, renderedRest: Html)
+@(user: model.User, collection: model.CompleteCollection, isCreation: Boolean, renderedRest: Html,
+        toolMainObject: model.toolMains.CollectionToolMain, toolList: model.toolMains.ToolList)
 
-@title = @{
-    (if(isCreation) "Erstellen " else "Bearbeiten ") + "eines " + toolMainObject.collectionSingularName
-}
+    @title = @{
+        (if(isCreation) "Erstellen " else "Bearbeiten ") + "eines " + toolMainObject.collectionSingularName
+    }
 
-@main(title, Some(user)) {
-    <div class="container">
-        <h1 class="text-center">@title</h1>
+    @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
 
         <form class="form" method="post" role="form" action="@routes.CollectionController.adminEditCollection(toolMainObject.urlPart, collection.coll.id)">
 
@@ -57,6 +56,5 @@
             <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
         </form>
 
-    </div>
-}
+    }
 

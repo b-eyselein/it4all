@@ -19,12 +19,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
+class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
+  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
   override type ToolMainType = CollectionToolMain
 
-  override protected def getToolMain(toolType: String): Option[CollectionToolMain] = ToolList.getExCollToolMainOption(toolType)
+  override protected def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
 
   // Helpers
 
@@ -35,7 +35,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   // Admin
 
   def adminExportCollections(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
-    implicit request => toolMain.yamlString map (content => Ok(views.html.admin.export.render(admin, content, toolMain)))
+    implicit request => toolMain.yamlString map (content => Ok(views.html.admin.export.render(admin, content, toolMain, toolList)))
   }
 
   def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (_, toolMain) =>
@@ -86,14 +86,17 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   }
 
   def adminCollectionsList(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
-    implicit request => toolMain.futureCompleteColls map (allColls => Ok(views.html.admin.collExes.adminCollectionList(admin, allColls, toolMain)))
+    implicit request =>
+      toolMain.futureCompleteColls map { allColls =>
+        Ok(views.html.admin.collExes.adminCollectionList(admin, allColls, toolMain, toolList))
+      }
   }
 
   def adminNewCollectionForm(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureHighestCollectionId map { id =>
         val collection = toolMain.instantiateCollection(id + 1, ExerciseState.RESERVED)
-        Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = true))
+        Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = true, toolList))
       }
   }
 
@@ -101,7 +104,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
     implicit request =>
       toolMain.futureCompleteCollById(id) map { maybeCollection =>
         val collection = maybeCollection getOrElse toolMain.instantiateCollection(id, ExerciseState.RESERVED)
-        Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false))
+        Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false, toolList))
       }
   }
 
@@ -138,7 +141,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
     implicit request =>
       toolMain.futureCompleteExesInColl(collId) map { exesInColl =>
         // FIXME: with collection?
-        Ok(views.html.admin.collExes.adminCollExercisesOverview(admin, collId, exesInColl, toolMain))
+        Ok(views.html.admin.collExes.adminCollExercisesOverview(admin, collId, exesInColl, toolMain, toolList))
       }
   }
 
@@ -211,15 +214,15 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
     implicit request =>
       toolMain.futureHighestIdInCollection(collId) map { highestId =>
         val newEx = toolMain.instantiateExercise(collId, highestId + 1, ExerciseState.RESERVED)
-        Ok(toolMain.renderExerciseEditForm(user, newEx, isCreation = true))
+        Ok(toolMain.renderExerciseEditForm(user, newEx, isCreation = true, toolList))
       }
   }
 
   def editExerciseForm(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCompleteExById(collId, exId) map {
-        case None              => Ok(toolMain.renderExerciseEditForm(user, toolMain.instantiateExercise(collId, exId, ExerciseState.RESERVED), isCreation = true))
-        case Some(newExercise) => Ok(toolMain.renderExerciseEditForm(user, newExercise, isCreation = false))
+        case None              => Ok(toolMain.renderExerciseEditForm(user, toolMain.instantiateExercise(collId, exId, ExerciseState.RESERVED), isCreation = true, toolList))
+        case Some(newExercise) => Ok(toolMain.renderExerciseEditForm(user, newExercise, isCreation = false, toolList))
       }
   }
 

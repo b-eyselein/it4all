@@ -12,12 +12,12 @@ import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AExerciseController(cc, dbcp) {
+class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
+  extends AExerciseController(cc, dbcp, tl) {
 
   override protected type ToolMainType = AToolMain
 
-  override protected def getToolMain(toolType: String): Option[AToolMain] = ToolList.AllToolMains.find(_.urlPart == toolType)
+  override protected def getToolMain(toolType: String): Option[AToolMain] = toolList.toolMains.find(_.urlPart == toolType)
 
   def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request => toolMain.futureLearningPaths map (paths => Ok(views.html.exercises.exerciseIndex(user, toolMain, paths)))
@@ -53,7 +53,7 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
   // Admin
 
   def adminIndex(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.adminIndexView(admin) map (html => Ok(html))
+    implicit request => toolMain.adminIndexView(admin, toolList) map (html => Ok(html))
   }
 
   def readLearningPaths(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>

@@ -1,7 +1,7 @@
 package controllers
 
 import model.User
-import model.toolMains.AToolMain
+import model.toolMains.{AToolMain, ToolList}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
@@ -9,8 +9,9 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 
 
-abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured  {
+abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider,
+                                   protected val toolList: ToolList)(implicit ec: ExecutionContext)
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   protected type ToolMainType <: AToolMain
 
@@ -18,6 +19,7 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
 
   // Helper methods
 
+  // FIXME: Redirect and flash!
   private def onNoSuchTool(toolType: String): Result = BadRequest(s"There is no such tool with name $toolType")
 
   protected def withAdminWithToolMain(toolType: String)(f: (User, ToolMainType) => Request[AnyContent] => Result): EssentialAction = withAdmin { admin =>

@@ -1,7 +1,7 @@
 package controllers
 
 import model.core._
-import model.toolMains.FixedExToolMain
+import model.toolMains.{FixedExToolMain, ToolList}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
@@ -10,8 +10,8 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.ExecutionContext
 import scala.util.Failure
 
-abstract class AFixedExController(cc: ControllerComponents, dbcp: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends AExerciseController(cc, dbcp) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+abstract class AFixedExController(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList)(implicit ec: ExecutionContext)
+  extends AExerciseController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   override protected type ToolMainType <: FixedExToolMain
 
@@ -28,7 +28,7 @@ abstract class AFixedExController(cc: ControllerComponents, dbcp: DatabaseConfig
           Logger.error("There has been an error reading a yaml object: ", failure.exception)
         }
 
-        Ok(toolMain.previewExercise(admin, readAndSaveResult))
+        Ok(toolMain.previewExercise(admin, readAndSaveResult, toolList))
       }
   }
 

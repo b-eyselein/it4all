@@ -1,4 +1,4 @@
-@(currentSite: Int, route: Int => Call, numOfExercises: Int, step: Int = model.toolMains.ToolList.STEP)
+@(currentSite: Int, route: Int => Call, numOfExercises: Int, step: Int = model.core.CoreConsts.STEP)
 
     @numOfSites = @{
         Math.ceil(numOfExercises.toDouble / step).intValue()

@@ -1,4 +1,4 @@
-@(user: model.User)
+@(user: model.User, toolList: Seq[model.toolMains.AToolMain])
 
 @main("Startseite", Some(user)) {
     <div class="container">
@@ -20,7 +20,7 @@
 
         <h2>Verfügbare Aufgabentypen</h2>
 
-        @for(tools <- model.toolMains.ToolList.AllToolMains.grouped(3)) {
+        @for(tools <- toolList.grouped(3)) {
             <div class="form-group">
                 <div class="row">
 

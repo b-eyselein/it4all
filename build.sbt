@@ -29,11 +29,11 @@ val webJarDependencies = Seq(
 
   "org.webjars" % "octicons" % "4.3.0",
 
-  "org.webjars.npm" % "bootstrap" % "4.1.1", "org.webjars.npm" % "types__bootstrap" % "4.1.0",
+  "org.webjars.npm" % "bootstrap" % "4.1.3", "org.webjars.npm" % "types__bootstrap" % "4.1.0", // TODO: 4.1.2
 
   "org.webjars.npm" % "systemjs" % "0.21.3", "org.webjars.npm" % "types__systemjs" % "0.20.6",
 
-  "org.webjars.npm" % "jointjs" % "2.1.2", // FIXME: 2.1.3
+  "org.webjars.npm" % "jointjs" % "2.1.3",
 
   //  "org.webjars.npm" % "backbone" % "1.3.3",
   "org.webjars.npm" % "types__backbone" % "1.3.42",

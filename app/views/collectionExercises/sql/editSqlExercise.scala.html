@@ -1,20 +1,18 @@
-@(user: model.User, exercise: model.sql.SqlCompleteEx, toolMainObject: model.sql.SqlToolMain, isCreation: Boolean)
+@(user: model.User, exercise: model.sql.SqlCompleteEx, isCreation: Boolean,
+        toolMainObject: model.sql.SqlToolMain, toolList: model.toolMains.ToolList)
 
-@title = @{
-    "Sql-Aufgabe " + (if(isCreation) " erstellen" else " bearbeiten")
-}
+    @title = @{
+        "Sql-Aufgabe " + (if(isCreation) " erstellen" else " bearbeiten")
+    }
 
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+    @scripts = {
+        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>SystemJS.import('@routes.Assets.versioned("app/sql/editSqlExercise.js")');</script>
-}
+        <script>SystemJS.import('@routes.Assets.versioned("app/sql/editSqlExercise.js")');</script>
+    }
 
-@main(title, Some(user), scripts) {
-    <div class="container-fluid">
-        <h1 class="text-center">@title</h1>
-
+    @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
         <form class="form" method="post" role="form" action="@routes.CollectionController.editExercise(toolMainObject.urlPart, exercise.ex.collectionId, exercise.ex.id)">
 
             <div class="row">
@@ -122,5 +120,4 @@
             <button class="btn btn-primary btn-block">Aufgabe @if(isCreation) {erstellen} else {bearbeiten}</button>
 
         </form>
-    </div>
-}
+    }

@@ -23,7 +23,8 @@ abstract class RandomExerciseToolMain(urlPart: String)(implicit ec: ExecutionCon
 
   def newExercise(user: User, exPart: PartType, option: Map[String, Seq[String]]): Html
 
-  override def adminIndexView(admin: User): Future[Html] = Future(views.html.admin.randomExes.randomExerciseAdminIndex(admin, statistics = Html(""), this))
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] =
+    Future(views.html.admin.randomExes.randomExerciseAdminIndex(admin, statistics = Html(""), this, toolList))
 
   // Correction
 

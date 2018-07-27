@@ -1,27 +1,36 @@
 @(exercise: model.uml.UmlCompleteEx)
 
+@baseFormsPerRow = @{
+    3
+}
+
 <div class="form-horizontal">
-    <div class="form-group">
-        <label class="control-label col-sm-2">Ignoriert:</label>
+
+    <div class="form-group row">
+        <label class="control-label col-sm-2" for="@model.uml.UmlConsts.ignoreWordsName">Ignoriert:</label>
         <div class="col-md-10">
-            <input class="form-control" value="@exercise.ex.splitToIgnore.mkString(", ")">
+            <input class="form-control" value="@exercise.ex.splitToIgnore.mkString(", ")" id="@model.uml.UmlConsts.ignoreWordsName" name="@model.uml.UmlConsts.ignoreWordsName">
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-2">Basisformen:</label>
+    <div class="form-group row">
+        <label class="col-form-label col-sm-2">Basisformen:</label>
         <div class="col-md-10">
-        @for(m <- exercise.mappings) {
-            <div class="form-group">
-                <div class="col-md-12">
+
+        @for(mappingTuple <- exercise.mappings grouped baseFormsPerRow; width = 12 / baseFormsPerRow) {
+            <div class="form-group row">
+            @for(m <- mappingTuple) {
+                <div class="col-sm-@width">
                     <div class="input-group">
-                        <input class="form-control" value="@m.key">
-                        <span class="input-group-addon">&rarr;</span>
-                        <input class="form-control" value="@m.value">
+                        <input class="form-control" value="@m.key" title="Zu ersetzendes Wort">
+                        <span class="input-group-text">&rarr;</span>
+                        <input class="form-control" value="@m.value" title="Eingefügtes Wort">
                     </div>
                 </div>
+            }
             </div>
         }
+
         </div>
     </div>
 </div>
@@ -29,69 +38,93 @@
 <fieldset>
     <legend>Musterlösung</legend>
 
-    <h3>Klassen</h3>
+    <h3 class="text-center">Klassen</h3>
+
     <div class="form-horizontal">
-    @for(clazz <- exercise.ex.solution.classes) {
-        <div class="form-group">
-            <label class="control-label col-md-1">Name:</label>
-            <div class="col-md-5">
-                <input class="form-control" value="@clazz.className">
-            </div>
-            <label class="control-label col-md-1">Typ:</label>
-            <div class="col-md-5">
-                <select class="form-control">
-                @for(classType <- model.uml.UmlClassType.values) {
-                    <option @{
-                        if(classType == clazz.classType) "selected" else ""
-                    }>@classType</option>
-                }
-                </select>
-            </div>
-        </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-1">Attribute:</label>
-            <div class="col-md-5">
-            @for(attribute <- clazz.attributes) {
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="input-group">
-                            <input class="form-control" value="@attribute">
-                            <span class="input-group-addon">:</span>
-                            <input class="form-control" value="@attribute">
+        @classesInRow = @{
+            2
+        }
+
+        @for(clazzTuple <- exercise.ex.solution.classes grouped classesInRow; width = 12 / classesInRow) {
+
+            <div class="row">
+            @for(clazz <- clazzTuple) {
+                <div class="col-sm-@width">
+
+                    <div class="card">
+                        <div class="card-header">
+
+                            <div class="form-group">
+                                <select class="form-control" id="@model.uml.UmlConsts.typeName" name="@model.uml.UmlConsts.typeName" title="Klassentyp">
+                                @for(classType <- model.uml.UmlClassType.values) {
+                                    <option @{
+                                        if(classType == clazz.classType) "selected" else ""
+                                    }>@classType</option>
+                                }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <input class="form-control" value="@clazz.className" id="@model.uml.UmlConsts.nameName" name="@model.uml.UmlConsts.nameName" title="Klassenname">
+                            </div>
+
                         </div>
+
+                        <div class="card-body">
+
+                            <div class="form-group">
+                            @for(attribute <- clazz.attributes) {
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input class="form-control" value="@attribute.memberName">
+                                        <span class="input-group-text">:</span>
+                                        @* FIXME: select with UmlTypes! *@
+                                        <input class="form-control" value="@attribute.memberType">
+                                    </div>
+                                </div>
+                            }
+                            </div>
+
+                            <hr>
+
+                            <div class="form-group">
+                            @for(method <- clazz.methods) {
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input class="form-control" value="@method.memberName">
+                                        <span class="input-group-text">:</span>
+                                        @* FIXME: select with UmlTypes! *@
+                                        <input class="form-control" value="@method.memberType">
+                                    </div>
+                                </div>
+                            }
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             }
             </div>
 
-            <label class="control-label col-md-1">Methoden:</label>
-            <div class="col-md-5">
-            @for(method <- clazz.methods) {
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="input-group">
-                            <input class="form-control" value="@method">
-                            <span class="input-group-addon">:</span>
-                            <input class="form-control" value="@method">
-                        </div>
-                    </div>
-                </div>
+            <br>
             }
-            </div>
-        </div>
-    }
+
     </div>
 
-    <h3>Vererbungen</h3>
-    @for(implementationTuple <- exercise.ex.solution.implementations grouped 2) {
+    @implsPerRow = @{
+        3
+    }
+
+    <h3 class="text-center">Vererbungen</h3>
+    @for(implementationTuple <- exercise.ex.solution.implementations grouped implsPerRow; width = 12 / implsPerRow) {
         <div class="row">
         @for(implementation <- implementationTuple) {
-            <div class="col-md-6">
+            <div class="col-md-@width">
                 <div class="form-group">
                     <div class="input-group">
                         <input class="form-control" value="@implementation.subClass">
-                        <span class="input-group-addon">&rarr;</span>
+                        <span class="input-group-text">&rarr;</span>
                         <input class="form-control" value="@implementation.superClass">
                     </div>
                 </div>
@@ -100,7 +133,7 @@
         </div>
     }
 
-    <h3>Assoziationen</h3>
+    <h3 class="text-center">Assoziationen</h3>
     @for(association <- exercise.ex.solution.associations) {
         <div class="form-group">
             <div class="row">
@@ -110,14 +143,14 @@
                 <div class="col-md-8">
                     <div class="input-group">
                         <input class="form-control" value="@association.firstEnd">
-                        <span class="input-group-addon">&amp;</span>
+                        <span class="input-group-text">&amp;</span>
                         <input class="form-control" value="@association.secondEnd">
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="input-group">
                         <input class="form-control" value="@association.firstMult.representant">
-                        <span class="input-group-addon">:</span>
+                        <span class="input-group-text">:</span>
                         <input class="form-control" value="@association.secondMult.representant">
                     </div>
                 </div>

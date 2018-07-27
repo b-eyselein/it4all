@@ -1,27 +1,24 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.User
 import model.core._
-import model.learningPath.LearningPath
 import model.spread.SpreadConsts
 import model.toolMains.{FileExerciseToolMain, ToolList}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
-import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository)
-                                      (implicit ec: ExecutionContext) extends ASingleExerciseController(cc, dbcp) {
+class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)
+                                      (implicit ec: ExecutionContext) extends ASingleExerciseController(cc, dbcp, tl) {
 
   // Abstract types
 
   override type ToolMainType = FileExerciseToolMain
 
-  override protected def getToolMain(toolType: String): Option[FileExerciseToolMain] = ToolList.getFileToolMainOption(toolType)
+  override protected def getToolMain(toolType: String): Option[FileExerciseToolMain] = toolList.getFileToolMainOption(toolType)
 
   // Routes
 
@@ -35,7 +32,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
 
   def uploadSolution(toolType: String, id: Int, fileExtension: String): EssentialAction = futureWithUser(parse.multipartFormData) { user =>
     implicit request =>
-      ToolList.getFileToolMainOption(toolType) match {
+      getToolMain(toolType) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$toolType<<"))
         case Some(toolMain) =>
           request.body.file(SpreadConsts.FILE_NAME) match {

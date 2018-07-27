@@ -4,7 +4,7 @@ import java.nio.file.Path
 
 import javax.inject._
 import model._
-import model.toolMains.{IdExerciseToolMain, ToolState}
+import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.yaml.MyYamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Form
@@ -95,8 +95,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean): Html =
-    views.html.idExercises.web.editWebExercise(user, this, newEx, isCreation)
+  override def renderExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.idExercises.web.editWebExercise(user, newEx, isCreation, this, toolList)
 
   override def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution]): Html =
     views.html.idExercises.web.webExercise(user, exercise, part, maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML, this)

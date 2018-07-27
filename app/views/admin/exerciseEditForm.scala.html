@@ -1,16 +1,19 @@
-@(user: model.User, toolMainObject: model.toolMains.AToolMain, exercise: model.CompleteEx[_ <: model.Exercise], renderedRest: Html, isCreation: Boolean)
+@(user: model.User, exercise: model.CompleteEx[_ <: model.Exercise], renderedRest: Html, isCreation: Boolean,
+        toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
 
-@scripts = {
-    <style>
-            textarea {
-                resize: vertical;
-            }
-    </style>
-}
+    @scripts = {
+        <style>
+                textarea {
+                    resize: vertical;
+                }
+        </style>
+    }
 
-@main(s"${toolMainObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", Some(user), scripts) {
-    <div class="container">
-        <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolMainObject.toolname-Aufgabe</h1>
+    @title = @{
+        s"${toolMainObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}"
+    }
+
+    @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
 
         <form class="form" method="post" role="form" action="@routes.ExerciseController.adminEditExercise(toolMainObject.urlPart, exercise.ex.id)">
 
@@ -64,6 +67,5 @@
 
             <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
         </form>
-    </div>
-}
+    }
 

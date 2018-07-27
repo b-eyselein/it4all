@@ -69,6 +69,6 @@ abstract class FixedExToolMain(urlPart: String)(implicit ec: ExecutionContext) e
 
   def renderEditRest(exercise: CompExType): Html = Html("")
 
-  def previewExercise(user: User, read: ReadAndSaveResult[ReadType]): Html
+  def previewExercise(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html
 
 }

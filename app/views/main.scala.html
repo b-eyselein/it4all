@@ -5,6 +5,7 @@
 
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <title>it4all: @title</title>
 
@@ -25,20 +26,11 @@
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center">
             <a class="navbar-brand" href="@routes.Application.index">it4all<sup>BETA</sup></a>
 
+
             <ul class="navbar-nav mr-auto">
-
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">
-                        Aufgabenbereiche <span class="caret"></span>
-                    </a>
-
-                    <div class="dropdown-menu">
-                    @for(idPartTool <- model.toolMains.ToolList.AllToolMains.filter(_.toolState != model.toolMains.ToolState.ALPHA)) {
-                        <a class="dropdown-item" href="@routes.MainExerciseController.index(idPartTool.urlPart)">@idPartTool.toolname @idPartTool.toolState.badge</a>
-                    }
-                    </div>
+                    <a class="nav-link" href="@routes.Application.index()">Aufgabenbereiche</a>
                 </li>
-
             </ul>
 
             <span class="navbar-text"><strong>@title</strong></span>
@@ -48,21 +40,10 @@
                 case Some(user) => {
 
                     @if(user.isAdmin) {
-
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">
+                            <a class="nav-link" href="@routes.AdminController.index()">
                                 <span class="octicon octicon-mark-github"></span> Administrator <span class="caret"></span>
                             </a>
-
-                            <ul class="dropdown-menu">
-                                @for(tool <- model.toolMains.ToolList.AllToolMains) {
-                                    <a class="dropdown-item" href="@routes.MainExerciseController.adminIndex(tool.urlPart)">@tool.toolname</a>
-                                }
-
-                                <div class="dropdown-divider"></div>
-
-                                <a class="dropdown-item" href="@routes.AdminController.index">Allgemein</a>
-                            </ul>
                         </li>
                     }
 

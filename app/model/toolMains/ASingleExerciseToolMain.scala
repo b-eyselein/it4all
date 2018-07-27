@@ -74,10 +74,10 @@ abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionCo
 
   // Views
 
-  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean): Html =
-    views.html.admin.exerciseEditForm(user, this, newEx, renderEditRest(newEx), isCreation = true)
+  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
-  def adminExerciseList(admin: User, exes: Seq[CompExType]): Html
+  def adminExerciseList(admin: User, exes: Seq[CompExType], toolList: ToolList): Html
 
   // Routes
 

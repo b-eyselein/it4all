@@ -1,27 +1,23 @@
-@(user: model.User, toolMainObject: model.toolMains.AToolMain, exercise: model.web.WebCompleteEx, isCreation: Boolean)
+@(user: model.User, exercise: model.web.WebCompleteEx, isCreation: Boolean,
+        toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
 
-@scripts = {
-    <style>
-            textarea {
-                resize: vertical;
-            }
-    </style>
-}
+    @scripts = {
+        <style>
+                textarea {
+                    resize: vertical;
+                }
+        </style>
+    }
 
-@title = @{
-    if(isCreation) {
-        "Erstellen"
-    } else {
-        "Bearbeiten"
-    } + " einer " + toolMainObject.toolname + "-Aufgabe"
-}
+    @title = @{
+        if(isCreation) {
+            "Erstellen"
+        } else {
+            "Bearbeiten"
+        } + " einer " + toolMainObject.toolname + "-Aufgabe"
+    }
 
-@main(title, Some(user), scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>@title</h1>
-        </div>
-
+    @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
         <form class="form" method="post" role="form" action="@routes.ExerciseController.adminEditExercise(toolMainObject.urlPart, exercise.ex.id)">
 
             <div class="row">
@@ -103,8 +99,7 @@
 
             <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
         </form>
-    </div>
-}
+    }
 
 
 
