@@ -13,7 +13,8 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends ASingleExerciseToolMain(urlPart) with FileUtils {
+abstract class FileExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
+  extends ASingleExerciseToolMain(tn, up) with FileUtils {
 
   // Abstract types
 
@@ -44,7 +45,7 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
 
   override def exercisesOverviewForIndex: Html = Html(
     s"""<div class="form-group">
-       |  <a class="btn btn-primary btn-block" href="${controllers.routes.FileExerciseController.exerciseList(urlPart)}">Zu den Übungsaufgaben</a>
+       |  <a class="btn btn-primary btn-block" href="${controllers.routes.FileExerciseController.exerciseList(up)}">Zu den Übungsaufgaben</a>
        |</div>""".stripMargin)
 
   override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map {
@@ -89,12 +90,12 @@ abstract class FileExerciseToolMain(urlPart: String)(implicit ec: ExecutionConte
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.up)
 
   override def exerciseRoutesForUser(user: User, exercise: CompExType): Future[Seq[CallForExPart]] = Future {
     exParts flatMap {
       exPart: PartType =>
-        if (exercise.hasPart(exPart)) Some(CallForExPart(exPart, controllers.routes.FileExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName), enabled = true))
+        if (exercise.hasPart(exPart)) Some(CallForExPart(exPart, controllers.routes.FileExerciseController.exercise(up, exercise.ex.id, exPart.urlName), enabled = true))
         else None
     }
   }

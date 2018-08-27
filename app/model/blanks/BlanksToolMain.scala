@@ -16,7 +16,8 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 
 @Singleton
-class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("blanks") with JsonFormat {
+class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: ExecutionContext)
+  extends IdExerciseToolMain("Lückentext", "blanks") with JsonFormat {
 
   // Abstract types
 
@@ -37,8 +38,6 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
   override type CompResult = BlanksCompleteResult
 
   // Other members
-
-  override val toolname: String = "Lückentext"
 
   override val consts: Consts = BlanksConsts
 

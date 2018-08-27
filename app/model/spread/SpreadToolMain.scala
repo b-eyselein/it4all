@@ -21,7 +21,8 @@ object SpreadToolMain {
 }
 
 @Singleton
-class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec: ExecutionContext) extends FileExerciseToolMain("spread") {
+class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec: ExecutionContext)
+  extends FileExerciseToolMain("Spread", "spread") {
 
   // Abstract types
 
@@ -36,8 +37,6 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
   override type PartType = SpreadExPart
 
   // Other members
-
-  override val toolname: String = "Spread"
 
   override val toolState: ToolState = ToolState.LIVE
 

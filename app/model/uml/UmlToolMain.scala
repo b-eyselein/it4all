@@ -16,7 +16,8 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("uml") with JsonFormat {
+class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionContext)
+  extends IdExerciseToolMain("Uml", "uml") with JsonFormat {
 
   // Result types
 
@@ -37,8 +38,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override type CompResult = UmlCompleteResult
 
   // Other members
-
-  override val toolname: String = "Uml"
 
   override val toolState: ToolState = ToolState.LIVE
 

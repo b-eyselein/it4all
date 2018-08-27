@@ -15,7 +15,8 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Try}
 
 @Singleton
-class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("question") with JsonFormat {
+class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implicit ec: ExecutionContext)
+  extends CollectionToolMain("Allgemeine Fragen", "question") with JsonFormat {
 
   // Abstract types
 
@@ -39,7 +40,6 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
 
   // Other members
 
-  override val toolname              : String = "Allgemeine Fragen"
   override val collectionSingularName: String = "Quiz"
   override val collectionPluralName  : String = "Quizze"
 

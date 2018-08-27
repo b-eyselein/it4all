@@ -33,7 +33,8 @@ object SqlToolMain {
 }
 
 @Singleton
-class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("sql") with JsonFormat {
+class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: ExecutionContext)
+  extends CollectionToolMain("Sql", "sql") with JsonFormat {
 
   // Abstract types
 
@@ -57,7 +58,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Members
 
-  override val toolname              : String = "Sql"
   override val collectionSingularName: String = "Szenario"
   override val collectionPluralName  : String = "Szenarien"
 

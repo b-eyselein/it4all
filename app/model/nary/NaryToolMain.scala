@@ -14,7 +14,8 @@ import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
 
 @Singleton
-class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionContext) extends RandomExerciseToolMain("nary") with JsonFormat {
+class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionContext)
+  extends RandomExerciseToolMain("Zahlensysteme", "nary") with JsonFormat {
 
   // Abstract types
 
@@ -25,8 +26,6 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
   override type Tables = NaryTableDefs
 
   // Other members
-
-  override val toolname: String = "Zahlensysteme"
 
   override val toolState: ToolState = ToolState.LIVE
 
@@ -56,11 +55,11 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
       val toBaseStr = options.getOrElse("toBase", Seq("RANDOM")).mkString
 
       val (fromBase, toBase): (NumberBase, NumberBase) = fromBaseStr match {
-        case RandomName => toBaseStr match {
+        case RandomName  => toBaseStr match {
           case RandomName =>
             val fromBase = randNumberBase(-1)
             (fromBase, randNumberBase(NumberBase.indexOf(fromBase)))
-          case _ =>
+          case _          =>
             val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
             (randNumberBase(NumberBase.indexOf(toBase)), toBase)
         }
@@ -68,7 +67,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
           val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.BINARY
           val toBase = toBaseStr match {
             case RandomName => randNumberBase(NumberBase.indexOf(fromBase))
-            case _ => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
+            case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
           }
           (fromBase, toBase)
       }
@@ -95,13 +94,13 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   override def checkSolution(user: User, exPart: NaryExPart, request: Request[AnyContent]): JsValue = {
     val correctionFunction: JsValue => Option[NAryResult] = exPart match {
-      case NaryExParts.NaryAdditionExPart => readAddSolutionFromJson
+      case NaryExParts.NaryAdditionExPart   => readAddSolutionFromJson
       case NaryExParts.NaryConversionExPart => readConvSolutionFromJson
-      case NaryExParts.TwoComplementExPart => readTwoCompSolutionFromJson
+      case NaryExParts.TwoComplementExPart  => readTwoCompSolutionFromJson
     }
 
     request.body.asJson flatMap correctionFunction match {
-      case None => Json.obj(errorName -> "TODO!")
+      case None           => Json.obj(errorName -> "TODO!")
       case Some(solution) => solution.toJson
     }
   }

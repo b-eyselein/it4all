@@ -14,7 +14,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext) extends FixedExToolMain(urlPart) {
+abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends FixedExToolMain(tn, up) {
 
   // Abstract types
 
@@ -144,7 +144,7 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   override def exercisesOverviewForIndex: Html = Html(
     s"""<div class="form-group">
-       |  <a class="btn btn-primary btn-block" href="${controllers.routes.CollectionController.collectionList(urlPart)}">Zu den Übungsaufgabensammlungen</a>
+       |  <a class="btn btn-primary btn-block" href="${controllers.routes.CollectionController.collectionList(up)}">Zu den Übungsaufgabensammlungen</a>
        |</div>""".stripMargin)
 
   override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map {
@@ -192,6 +192,6 @@ abstract class CollectionToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.up)
 
 }

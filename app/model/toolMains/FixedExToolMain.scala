@@ -12,7 +12,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-abstract class FixedExToolMain(urlPart: String)(implicit ec: ExecutionContext) extends AToolMain(urlPart) {
+abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends AToolMain(tn, up) {
 
   // Abstract types
 

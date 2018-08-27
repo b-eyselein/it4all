@@ -14,7 +14,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
-class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("rose") with JsonFormat {
+class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext)
+  extends IdExerciseToolMain("Rose", "rose") with JsonFormat {
 
   // Abstract types
 
@@ -35,8 +36,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override type CompResult = RoseCompleteResult
 
   // Other members
-
-  override val toolname: String = "Rose"
 
   override val toolState: ToolState = ToolState.BETA
 

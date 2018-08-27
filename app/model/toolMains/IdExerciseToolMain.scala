@@ -15,7 +15,8 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends ASingleExerciseToolMain(urlPart) with JsonFormat {
+abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
+  extends ASingleExerciseToolMain(tn, up) with JsonFormat {
 
   // Abstract types
 
@@ -100,7 +101,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   override def exercisesOverviewForIndex: Html = Html(
     s"""<div class="form-group">
-       |  <a class="btn btn-primary btn-block" href="${controllers.routes.ExerciseController.exerciseList(urlPart)}">Zu den Übungsaufgaben</a>
+       |  <a class="btn btn-primary btn-block" href="${controllers.routes.ExerciseController.exerciseList(up)}">Zu den Übungsaufgaben</a>
        |</div>""".stripMargin)
 
   override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map { stats =>
@@ -117,7 +118,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.up)
 
   def exerciseRoutesForUser(user: User, exercise: CompExType): Future[Seq[CallForExPart]] = Future.sequence(exParts map {
     exPart: PartType =>
@@ -125,7 +126,7 @@ abstract class IdExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext
 
       if (exercise.hasPart(exPart)) {
         tables.futureUserCanSolvePartOfExercise(user.username, exercise.ex.id, exPart) map {
-          enabled => Some(CallForExPart(exPart, controllers.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName), enabled))
+          enabled => Some(CallForExPart(exPart, controllers.routes.ExerciseController.exercise(up, exercise.ex.id, exPart.urlName), enabled))
         }
 
 

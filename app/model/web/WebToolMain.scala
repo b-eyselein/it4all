@@ -16,7 +16,8 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("web") with JsonFormat {
+class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext)
+  extends IdExerciseToolMain("Web", "web") with JsonFormat {
 
   // Result types
 
@@ -39,8 +40,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Other members
 
   override val hasPlayground: Boolean = true
-
-  override val toolname: String = "Web"
 
   override val toolState: ToolState = ToolState.LIVE
 

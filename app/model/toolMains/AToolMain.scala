@@ -39,7 +39,7 @@ object ToolState extends Enum[ToolState] {
 
 }
 
-abstract class AToolMain(val urlPart: String) extends FileUtils {
+abstract class AToolMain(val toolname: String, val urlPart: String) extends FileUtils {
 
   // Abstract types
 
@@ -51,7 +51,7 @@ abstract class AToolMain(val urlPart: String) extends FileUtils {
 
   val tables: Tables
 
-  val toolname: String
+//  val toolname: String
 
   val consts: Consts
 

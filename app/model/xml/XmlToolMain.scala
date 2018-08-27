@@ -23,7 +23,8 @@ trait XmlEvaluationResult extends EvaluationResult with JsonWriteable
 trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult]
 
 @Singleton
-class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("xml") with FileUtils {
+class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext)
+  extends IdExerciseToolMain("Xml", "xml") with FileUtils {
 
   // Result types
 
@@ -46,8 +47,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Other members
 
   override val hasPlayground = true
-
-  override val toolname: String = "Xml"
 
   override val toolState: ToolState = ToolState.LIVE
 

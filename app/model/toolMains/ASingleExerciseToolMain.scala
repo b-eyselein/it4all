@@ -9,7 +9,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class ASingleExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends FixedExToolMain(urlPart) {
+abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends FixedExToolMain(tn, up) {
 
   // Abstract Types
 

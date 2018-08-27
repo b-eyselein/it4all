@@ -7,7 +7,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class RandomExerciseToolMain(urlPart: String)(implicit ec: ExecutionContext) extends AToolMain(urlPart) {
+abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends AToolMain(tn, up) {
 
   // Abstract types
 
@@ -32,6 +32,6 @@ abstract class RandomExerciseToolMain(urlPart: String)(implicit ec: ExecutionCon
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.urlPart)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.up)
 
 }

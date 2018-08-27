@@ -20,7 +20,8 @@ object ProgToolMain {
 }
 
 @Singleton
-class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain(urlPart = "programming") {
+class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext)
+  extends IdExerciseToolMain("Programmierung", "programming") {
 
   // Abstract types
 
@@ -41,8 +42,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override type CompResult = ProgCompleteResult
 
   // Other members
-
-  override val toolname: String = "Programmierung"
 
   override val toolState: ToolState = ToolState.BETA
 
