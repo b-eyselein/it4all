@@ -20,17 +20,15 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected type SolTableDef = WebSolutionsTable
 
-  //  override protected type PartResultType = WebResultForPart
-
   // Table queries
 
   override protected val exTable  = TableQuery[WebExercisesTable]
   override protected val solTable = TableQuery[WebSolutionsTable]
 
-  private val htmlTasks  = TableQuery[HtmlTasksTable]
-  private val attributes = TableQuery[AttributesTable]
-  private val jsTasks    = TableQuery[JsTasksTable]
-  private val conditions = TableQuery[ConditionsTable]
+  private val htmlTasksTable  = TableQuery[HtmlTasksTable]
+  private val attributesTable = TableQuery[AttributesTable]
+  private val jsTasksTable    = TableQuery[JsTasksTable]
+  private val conditionsTable = TableQuery[ConditionsTable]
 
   // Dependent query tables
 
@@ -50,18 +48,19 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     jsTasks <- jsTasksForExercise(ex.id)
   } yield WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
 
-  private def htmlTasksForExercise(exId: Int): Future[Seq[HtmlCompleteTask]] = db.run(htmlTasks.filter(_.exerciseId === exId).result) flatMap { htmlTs: Seq[HtmlTask] =>
-    Future.sequence(htmlTs map { htmlTask =>
-      db.run(attributes.filter(att => att.exerciseId === exId && att.taskId === htmlTask.id).result) map {
-        atts => HtmlCompleteTask(htmlTask, atts)
-      }
-    })
-  }
+  private def htmlTasksForExercise(exId: Int): Future[Seq[HtmlCompleteTask]] =
+    db.run(htmlTasksTable.filter(_.exerciseId === exId).result) flatMap { htmlTasks: Seq[HtmlTask] =>
+      Future.sequence(htmlTasks map { htmlTask =>
+        db.run(attributesTable.filter(att => att.exerciseId === exId && att.taskId === htmlTask.id).result) map {
+          attributes => HtmlCompleteTask(htmlTask, attributes)
+        }
+      })
+    }
 
-  private def jsTasksForExercise(exId: Int): Future[Seq[JsCompleteTask]] = db.run(jsTasks.filter(_.exerciseId === exId).result) flatMap { jsTs: Seq[JsTask] =>
+  private def jsTasksForExercise(exId: Int): Future[Seq[JsCompleteTask]] = db.run(jsTasksTable.filter(_.exerciseId === exId).result) flatMap { jsTs: Seq[JsTask] =>
     Future.sequence(jsTs map { jsTask =>
-      db.run(conditions.filter(cond => cond.exerciseId === exId && cond.taskId === jsTask.id).result) map {
-        conds => JsCompleteTask(jsTask, conds)
+      db.run(conditionsTable.filter(cond => cond.exerciseId === exId && cond.taskId === jsTask.id).result) map {
+        conditions => JsCompleteTask(jsTask, conditions)
       }
     })
   }
@@ -73,12 +72,12 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     jsTasksSaved <- saveSeq[JsCompleteTask](compEx.jsTasks, saveJsTask)
   } yield htmlTasksSaved && jsTasksSaved
 
-  private def saveHtmlTask(htmlTask: HtmlCompleteTask): Future[Boolean] = db.run(htmlTasks += htmlTask.task) flatMap { _ =>
-    saveSeq[Attribute](htmlTask.attributes, a => db.run(attributes += a))
+  private def saveHtmlTask(htmlTask: HtmlCompleteTask): Future[Boolean] = db.run(htmlTasksTable += htmlTask.task) flatMap { _ =>
+    saveSeq[Attribute](htmlTask.attributes, a => db.run(attributesTable += a))
   }
 
-  private def saveJsTask(jsTask: JsCompleteTask): Future[Boolean] = db.run(jsTasks += jsTask.task) flatMap { _ =>
-    saveSeq[JsCondition](jsTask.conditions, c => db.run(conditions += c))
+  private def saveJsTask(jsTask: JsCompleteTask): Future[Boolean] = db.run(jsTasksTable += jsTask.task) flatMap { _ =>
+    saveSeq[JsCondition](jsTask.conditions, c => db.run(conditionsTable += c))
   }
 
   // Implicit column types
@@ -147,7 +146,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk = primaryKey("pk", (key, taskId, exerciseId, exSemVer))
 
-    def taskFk = foreignKey("task_fk", (taskId, exerciseId, exSemVer), htmlTasks)(t => (t.id, t.exerciseId, t.exSemVer))
+    def taskFk = foreignKey("task_fk", (taskId, exerciseId, exSemVer), htmlTasksTable)(t => (t.id, t.exerciseId, t.exSemVer))
 
 
     override def * = (key, taskId, exerciseId, exSemVer, value).mapTo[Attribute]
@@ -184,7 +183,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk = primaryKey("pk", (conditionId, taskId, exerciseId, exSemVer))
 
-    def taskFk = foreignKey("task_fk", (taskId, exerciseId, exSemVer), jsTasks)(t => (t.id, t.exerciseId, t.exSemVer))
+    def taskFk = foreignKey("task_fk", (taskId, exerciseId, exSemVer), jsTasksTable)(t => (t.id, t.exerciseId, t.exSemVer))
 
 
     override def * = (conditionId, taskId, exerciseId, exSemVer, xpathQuery, isPrecondition, awaitedValue).mapTo[JsCondition]
