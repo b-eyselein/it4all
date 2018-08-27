@@ -7,7 +7,7 @@ import scala.util.{Failure, Success}
 
 class BoolNodeParserTest {
 
-  val (a, b, c): (ScalaNode, ScalaNode, ScalaNode) = (Variable('a'), Variable('b'), Variable('c'))
+  val (aVar, bVar, cVar): (ScalaNode, ScalaNode, ScalaNode) = (Variable('a'), Variable('b'), Variable('c'))
 
   def testParse(expected: ScalaNode, representations: String*): Unit = for (toParse <- representations) {
     BoolNodeParser.parseBoolFormula(toParse) match {
@@ -18,7 +18,7 @@ class BoolNodeParserTest {
 
   @Test
   def testNoOperators(): Unit = {
-    testParse(a, "a", "A")
+    testParse(aVar, "a", "A")
   }
 
   @Test
@@ -30,19 +30,19 @@ class BoolNodeParserTest {
 
   @Test
   def testSingleOperators(): Unit = {
-    testParse(a and b, "a and b", "(a and b)")
+    testParse(aVar and bVar, "a and b", "(a and b)")
 
-    testParse(a or b, "a or b", "(a or b)")
+    testParse(aVar or bVar, "a or b", "(a or b)")
 
-    testParse(a nand b, "a nand b", "(a nand b)")
+    testParse(aVar nand bVar, "a nand b", "(a nand b)")
 
-    testParse(a nor b, "a nor b", "(a nor b)")
+    testParse(aVar nor bVar, "a nor b", "(a nor b)")
 
-    testParse(a xor b, "a xor b", "(a xor b)")
+    testParse(aVar xor bVar, "a xor b", "(a xor b)")
 
-    testParse(a equiv b, "a equiv b", "(a equiv b)")
+    testParse(aVar equiv bVar, "a equiv b", "(a equiv b)")
 
-    testParse(a impl b, "a impl b", "(a impl b)")
+    testParse(aVar impl bVar, "a impl b", "(a impl b)")
 
     BoolNodeParser.parseBoolFormula("a test b") match {
       case Success(formula) => fail("Parsing of 'a test b' should fail, but succeeded with " + formula.toString)
@@ -53,21 +53,21 @@ class BoolNodeParserTest {
 
   @Test
   def testDoubleOperators(): Unit = {
-    testParse(a and b or c, "a and b or c")
-    testParse(a and (b or c), "a and (b or c)")
+    testParse(aVar and bVar or cVar, "a and b or c")
+    testParse(aVar and (bVar or cVar), "a and (b or c)")
 
-    testParse(a and b or c, "(a and b) or c")
+    testParse(aVar and bVar or cVar, "(a and b) or c")
 
-    testParse(a or (b and c), "a or b and c")
-    testParse(a or (b and c), "a or (b and c)")
+    testParse(aVar or (bVar and cVar), "a or b and c")
+    testParse(aVar or (bVar and cVar), "a or (b and c)")
 
-    testParse((a or b) and c, "(a or b) and c")
+    testParse((aVar or bVar) and cVar, "(a or b) and c")
   }
 
   @Test
   def testTripleOperators(): Unit = {
-    testParse((a and b) or (b and a), "a and b or b and a")
-    testParse(a and (b or (b and a)), "a and (b or b and a)")
+    testParse((aVar and bVar) or (bVar and aVar), "a and b or b and a")
+    testParse(aVar and (bVar or (bVar and aVar)), "a and (b or b and a)")
   }
 
 }
