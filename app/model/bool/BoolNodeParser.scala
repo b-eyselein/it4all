@@ -40,7 +40,7 @@ object BoolNodeParser extends JavaTokenParsers {
   private lazy val boolVariable: Parser[Variable] = "[a-zA-Z]".r ^^ (str => Variable(str.charAt(0).toLower))
 
   def parseBoolFormula(toParse: String): Try[ScalaNode] = parseAll(boolExpression, toParse) match {
-    case Success(result, _)    => scala.util.Success(result)
-    case NoSuccess(msg, input) => scala.util.Failure(new IllegalArgumentException(msg))
+    case Success(result, _) => scala.util.Success(result)
+    case NoSuccess(msg, _)  => scala.util.Failure(new IllegalArgumentException(msg))
   }
 }

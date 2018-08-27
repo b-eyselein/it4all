@@ -33,7 +33,7 @@ abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionCon
       yamlValue: YamlValue => yamlFormat.read(yamlValue)
     }
 
-    val (successes, failures) = CommonUtils.splitTries(readTries)
+    val (successes, failures) = CommonUtils.splitTriesNew(readTries)
 
     futureSaveRead(successes) map {
       saveResult => ReadAndSaveResult[ReadType](saveResult map (readAndSave => ReadAndSaveSuccess[ReadType](readAndSave._1, readAndSave._2)), failures)

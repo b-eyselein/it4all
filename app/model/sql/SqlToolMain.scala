@@ -19,11 +19,11 @@ import scala.util.{Failure, Try}
 object SqlToolMain {
 
   val correctorsAndDaos: Map[SqlExerciseType, (QueryCorrector, SqlExecutionDAO)] = Map(
-    SqlExerciseType.SELECT -> (SelectCorrector, SelectDAO),
-    SqlExerciseType.CREATE -> (CreateCorrector, CreateDAO),
-    SqlExerciseType.UPDATE -> (UpdateCorrector, ChangeDAO),
-    SqlExerciseType.INSERT -> (InsertCorrector, ChangeDAO),
-    SqlExerciseType.DELETE -> (DeleteCorrector, ChangeDAO)
+    SqlExerciseType.SELECT -> ((SelectCorrector, SelectDAO)),
+    SqlExerciseType.CREATE -> ((CreateCorrector, CreateDAO)),
+    SqlExerciseType.UPDATE -> ((UpdateCorrector, ChangeDAO)),
+    SqlExerciseType.INSERT -> ((InsertCorrector, ChangeDAO)),
+    SqlExerciseType.DELETE -> ((DeleteCorrector, ChangeDAO))
   )
 
   def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = samples.minBy(samp => Java_Levenshtein.levenshteinDistance(samp.sample, userSt))
@@ -160,7 +160,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     SqlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
       collectionId = collId, collSemVer = SemanticVersion(0, 1, 0), tags = "", hint = None), samples = Seq.empty)
 
-  override def instantiateSolution(username: String, coll: SqlScenario, exercise: SqlCompleteEx, solution: String, points: Double, maxPoints: Double): SqlSolution =
+  override def instantiateSolution(username: String, coll: SqlScenario, exercise: SqlCompleteEx, solution: String, points: Points, maxPoints: Points): SqlSolution =
     SqlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
 
 }

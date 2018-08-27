@@ -34,8 +34,8 @@ class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases:
 
   private def getColToCompare(expression: BinaryExpression): Column = (expression.getLeftExpression, expression.getRightExpression) match {
     case (left: Column, right: Column) => if (left.toString < right.toString) left else right
-    case (left, right: Column)         => right
-    case (left: Column, right)         => left
+    case (_, right: Column)            => right
+    case (left: Column, _)             => left
     case (_, _)                        => null // throw new CorrectionException("", "")
   }
 

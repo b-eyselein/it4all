@@ -1,6 +1,9 @@
 package model.core.result
 
+import model._
 import play.api.libs.json.JsValue
+
+import scala.language.postfixOps
 
 
 object EvaluationResult {
@@ -43,9 +46,9 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
   type SolType
 
-  def points: Double = -1d
+  def points: Points = -1 point
 
-  def maxPoints: Double = -1d
+  def maxPoints: Points = -1 point
 
   def learnerSolution: SolType
 

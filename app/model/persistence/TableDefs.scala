@@ -142,7 +142,7 @@ trait TableDefs {
     MappedColumnType.base[Mark, String](_.entryName, str => Mark.withNameInsensitiveOption(str) getOrElse Mark.NO_MARK)
 
   protected implicit val semanticVersionColumnType: BaseColumnType[SemanticVersion] =
-    MappedColumnType.base[SemanticVersion, String](_.asString, SemanticVersionHelper.fromString)
+    MappedColumnType.base[SemanticVersion, String](_.asString, SemanticVersionHelper.parseFromString(_).getOrElse(SemanticVersion(0, 1, 0)))
 
   // Tables
 
@@ -167,8 +167,8 @@ trait TableDefs {
     }
 
     def unapplied(user: User): Option[(Int, String, Role, ShowHideAggregate)] = user match {
-      case LtiUser(username, role, showHideAggregate)        => Some(1, username, role, showHideAggregate)
-      case RegisteredUser(username, role, showHideAggregate) => Some(0, username, role, showHideAggregate)
+      case LtiUser(username, role, showHideAggregate)        => Some((1, username, role, showHideAggregate))
+      case RegisteredUser(username, role, showHideAggregate) => Some((0, username, role, showHideAggregate))
     }
 
   }

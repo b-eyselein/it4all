@@ -68,7 +68,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
   override def instantiateExercise(id: Int, state: ExerciseState): BlanksCompleteExercise =
     BlanksCompleteExercise(BlanksExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, rawBlanksText = "", blanksText = ""), samples = Seq.empty)
 
-  override def instantiateSolution(username: String, exercise: BlanksCompleteExercise, part: BlanksExPart, solution: Seq[BlanksAnswer], points: Double, maxPoints: Double): BlanksSolution =
+  override def instantiateSolution(username: String, exercise: BlanksCompleteExercise, part: BlanksExPart, solution: Seq[BlanksAnswer], points: Points, maxPoints: Points): BlanksSolution =
     BlanksSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml

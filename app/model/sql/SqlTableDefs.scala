@@ -69,8 +69,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private implicit val SqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
     MappedColumnType.base[SqlExerciseType, String](_.entryName, str => SqlExerciseType.withNameInsensitiveOption(str) getOrElse SqlExerciseType.SELECT)
 
-  private implicit val SqlExTagColumnType: BaseColumnType[SqlExTag] =
-    MappedColumnType.base[SqlExTag, String](_.entryName, str => SqlExTag.withNameInsensitiveOption(str) getOrElse SqlExTag.SQL_JOIN)
+//  private implicit val SqlExTagColumnType: BaseColumnType[SqlExTag] =
+//    MappedColumnType.base[SqlExTag, String](_.entryName, str => SqlExTag.withNameInsensitiveOption(str) getOrElse SqlExTag.SQL_JOIN)
 
   override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 

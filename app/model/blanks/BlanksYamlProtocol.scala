@@ -19,7 +19,7 @@ object BlanksYamlProtocol extends MyYamlProtocol {
 
     var newText = blanksText
     var i = 1
-    var solutions: mutable.Map[Int, String] = mutable.Map.empty
+    val solutions: mutable.Map[Int, String] = mutable.Map.empty
 
     val iterator: Iterator[Regex.Match] = parseRegex.findAllMatchIn(blanksText)
     while (iterator.hasNext) {

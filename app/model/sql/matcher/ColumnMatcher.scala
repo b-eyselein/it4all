@@ -4,8 +4,6 @@ import model.core.matching._
 import model.sql.ColumnWrapper
 import play.api.libs.json.{JsString, JsValue}
 
-import scala.language.postfixOps
-
 
 case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match[ColumnWrapper, GenericAnalysisResult] {
 

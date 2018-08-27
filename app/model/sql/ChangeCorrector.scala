@@ -29,7 +29,7 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
   private def expressionLists(query: Q): Seq[ExpressionList] = query.getItemsList match {
     case mel: MultiExpressionList => mel.getExprList asScala
     case el: ExpressionList       => Seq(el)
-    case sub: SubSelect           => ???
+    case _: SubSelect             => ???
   }
 
   // FIXME: correct inserted values!

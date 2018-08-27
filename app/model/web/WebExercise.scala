@@ -6,6 +6,7 @@ import org.openqa.selenium.{By, SearchContext}
 import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
+import scala.language.postfixOps
 
 sealed trait JsActionType extends EnumEntry
 
@@ -35,10 +36,10 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
     case WebExParts.PHPPart  => phpTasks.nonEmpty
   }
 
-  def maxPoints(part: WebExPart): Double = part match {
-    case WebExParts.HtmlPart => htmlTasks.map(_.maxPoints).sum
-    case WebExParts.JsPart   => jsTasks.map(_.maxPoints).sum
-    case WebExParts.PHPPart  => phpTasks.map(_.maxPoints).sum
+  def maxPoints(part: WebExPart): Points = part match {
+    case WebExParts.HtmlPart => addUp(htmlTasks.map(_.maxPoints))
+    case WebExParts.JsPart   => addUp(jsTasks.map(_.maxPoints))
+    case WebExParts.PHPPart  => addUp(phpTasks.map(_.maxPoints))
   }
 
   def tasksForPart(part: WebExPart): Seq[WebCompleteTask] = part match {
@@ -53,20 +54,22 @@ trait WebCompleteTask {
 
   val task: WebTask
 
-  def maxPoints: Double
+  def maxPoints: Points
 
 }
 
 case class HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute]) extends WebCompleteTask {
-  override def maxPoints: Double = 1 + task.textContent.map(_ => 1d).getOrElse(0d) + attributes.size
+
+  override def maxPoints: Points = (1 point) + (task.textContent map (_ => 1 point) getOrElse (0 points)) + (attributes.size points)
+
 }
 
 case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) extends WebCompleteTask {
-  override def maxPoints: Double = 1 + conditions.size
+  override def maxPoints: Points = (1 point) + (conditions.size points)
 }
 
 case class PHPCompleteTask(task: PHPTask) extends WebCompleteTask {
-  override def maxPoints: Double = -1
+  override def maxPoints: Points = -1 point
 }
 
 class WebExTag(part: String, hasExes: Boolean) extends ExTag {
@@ -81,7 +84,7 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
 // Database classes
 
-case class WebExercise(id: Int, semanticVersion: SemanticVersion,title: String, author: String, text: String, state: ExerciseState,
+case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                        htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
 
 trait WebTask {
@@ -129,7 +132,7 @@ case class JsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: Semantic
 
   def description = s"""Element mit XPath <code>$xpathQuery</code> sollte den Inhalt <code>$awaitedValue</code> haben"""
 
-  def maxPoints: Double = 1
+  def maxPoints: Points = 1 point
 
 }
 
@@ -137,4 +140,4 @@ case class PHPTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: St
                    textContent: Option[String]) extends WebTask
 
 case class WebSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart, solution: String,
-                       points: Double, maxPoints: Double) extends DBPartSolution[WebExPart, String]
+                       points: Points, maxPoints: Points) extends DBPartSolution[WebExPart, String]

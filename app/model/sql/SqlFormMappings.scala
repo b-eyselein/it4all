@@ -29,8 +29,8 @@ object SqlFormMappings {
                                         tags: Seq[String], hint: Option[String], sampleStrings: Seq[String]): SqlCompleteEx = {
     println(sampleStrings)
 
-    val exerciseSemanticVersion = SemanticVersionHelper.fromString(exSemVer)
-    val collectionSemanticVersion = SemanticVersionHelper.fromString(collSemVer)
+    val exerciseSemanticVersion = SemanticVersionHelper.parseFromString(exSemVer) getOrElse SemanticVersionHelper.DEFAULT
+    val collectionSemanticVersion = SemanticVersionHelper.parseFromString(collSemVer) getOrElse SemanticVersionHelper.DEFAULT
 
     val samples: Seq[SqlSample] = sampleStrings.filter(_.nonEmpty).zipWithIndex map { case (sample, index) =>
       SqlSample(index, exerciseId, exerciseSemanticVersion, collId, collectionSemanticVersion, sample)

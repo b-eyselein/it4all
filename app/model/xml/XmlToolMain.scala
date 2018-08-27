@@ -9,7 +9,7 @@ import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.xml.XmlConsts._
 import model.xml.dtd.DocTypeDefParser
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, SemanticVersion, User}
+import model.{Consts, ExerciseState, Points, SemanticVersion, User}
 import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.twirl.api.Html
@@ -76,7 +76,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     XmlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, grammarDescription = "", rootNode = ""),
     Seq.empty)
 
-  override def instantiateSolution(username: String, exercise: XmlCompleteExercise, part: XmlExPart, solution: String, points: Double, maxPoints: Double): XmlSolution =
+  override def instantiateSolution(username: String, exercise: XmlCompleteExercise, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
     XmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
@@ -94,7 +94,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
           xml <- write(dir, completeEx.ex.rootNode + "." + XML_FILE_ENDING, solution)
         } yield (grammar, xml)
 
-        grammarAndXmlTries map { case (grammar, xml) =>
+        grammarAndXmlTries map { case (_, xml) =>
           val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml)
           XmlDocumentCompleteResult(solution, correctionResult)
         }

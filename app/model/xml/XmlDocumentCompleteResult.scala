@@ -48,8 +48,8 @@ case class XmlDocumentCompleteResult(learnerSolution: String, results: Seq[XmlEr
   def toJson(solutionSaved: Boolean): JsValue = Json.obj(
     solutionSavedName -> solutionSaved,
     successName -> isSuccessful,
-    pointsName -> points,
-    maxPointsName -> maxPoints,
+    pointsName -> points.asDoubleString,
+    maxPointsName -> maxPoints.asDoubleString,
     resultsName -> results.map(_.toJson)
   )
 

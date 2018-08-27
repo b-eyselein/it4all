@@ -59,5 +59,5 @@ case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersion, na
 case class RoseSampleSolution(exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, solution: String)
 
 case class RoseSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart,
-                        solution: String, points: Double, maxPoints: Double) extends DBPartSolution[RoseExPart, String]
+                        solution: String, points: Points, maxPoints: Points) extends DBPartSolution[RoseExPart, String]
 

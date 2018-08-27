@@ -1,9 +1,9 @@
 package model.toolMains
 
+import model._
 import model.core._
 import model.core.result.CompleteResult
 import model.persistence.ExerciseCollectionTableDefs
-import model.{ExerciseState, _}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
@@ -12,6 +12,7 @@ import play.api.mvc.{AnyContent, Call, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends FixedExToolMain(tn, up) {
@@ -114,8 +115,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
               case Success(res)   =>
 
                 // FIXME: calculate!
-                val points = -1
-                val maxPoints = -1
+                val points = -1 point
+                val maxPoints = -1 point
 
                 val dbSol = instantiateSolution(user.username, collection, exercise, solution, points, maxPoints)
                 tables.futureSaveSolution(dbSol) map { solSaved =>
@@ -188,7 +189,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
 
-  def instantiateSolution(username: String, collection: CollType, exercise: CompExType, solution: SolType, points: Double, maxPoints: Double): DBSolType
+  def instantiateSolution(username: String, collection: CollType, exercise: CompExType, solution: SolType, points: Points, maxPoints: Points): DBSolType
 
   // Calls
 

@@ -61,9 +61,9 @@ trait Solution[SolType] {
 
   val exSemVer: SemanticVersion
 
-  val points: Double
+  val points: Points
 
-  val maxPoints: Double
+  val maxPoints: Points
 
   val solution: SolType
 

@@ -98,7 +98,7 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
             BadRequest("Es gab einen Fehler bei der Bearbeitung des Requests!")
         }
       } recover {
-        case e: Throwable => Redirect(routes.AdminController.index()).flashing("hub" -> "Hub ist nicht erreichbar!")
+        case _: Throwable => Redirect(routes.AdminController.index()).flashing("hub" -> "Hub ist nicht erreichbar!")
       }
 
   }

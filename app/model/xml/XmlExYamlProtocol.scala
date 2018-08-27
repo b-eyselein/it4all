@@ -1,9 +1,9 @@
 package model.xml
 
-import model.{BaseValues, MyYamlProtocol, SemanticVersion}
 import model.MyYamlProtocol._
 import model.xml.XmlConsts._
 import model.xml.dtd.DocTypeDefParser
+import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 

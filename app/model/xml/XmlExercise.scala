@@ -26,4 +26,4 @@ case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: String,
 case class XmlSampleGrammar(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sampleGrammar: DocTypeDef)
 
 case class XmlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: XmlExPart, solution: String,
-                       points: Double, maxPoints: Double) extends DBPartSolution[XmlExPart, String]
+                       points: Points, maxPoints: Points) extends DBPartSolution[XmlExPart, String]

@@ -3,7 +3,6 @@ package model.questions
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.questions.QuestionEnums.Correctness
 import play.api.libs.json._
-import play.twirl.api.Html
 
 import scala.collection.mutable.ListBuffer
 
@@ -24,8 +23,10 @@ case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: Complet
 
 object IdAnswerMatcher {
 
+  // FIXME: why does this class not extend Matcher ???
+
   def doMatch(learnerSolution: Seq[IdGivenAnswer], answers: Seq[Answer]): Seq[IdAnswerMatch] = {
-    var matches: ListBuffer[IdAnswerMatch] = ListBuffer.empty
+    val matches: ListBuffer[IdAnswerMatch] = ListBuffer.empty
 
     val firstList = ListBuffer.empty ++ learnerSolution
     val secondList = ListBuffer.empty ++ answers

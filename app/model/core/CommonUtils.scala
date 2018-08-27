@@ -3,7 +3,7 @@ package model.core
 import play.api.Logger
 import play.api.libs.json.JsValue
 
-import scala.collection.mutable.ListBuffer
+import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 trait JsonWriteable {
@@ -26,7 +26,7 @@ object CommonUtils {
     }
   }
 
-  def splitTriesNew[A](ts: List[Try[A]]): (Seq[A], Seq[Failure[A]]) = {
+  def splitTriesNew[A](ts: Seq[Try[A]]): (Seq[A], Seq[Failure[A]]) = {
 
     @annotation.tailrec
     def go(ts: List[Try[A]], successes: Seq[A], failures: Seq[Failure[A]]): (Seq[A], Seq[Failure[A]]) = ts match {
@@ -38,20 +38,7 @@ object CommonUtils {
 
     }
 
-    go(ts, Seq.empty, Seq.empty)
-  }
-
-
-  def splitTries[A](tries: Seq[Try[A]]): (List[A], List[Failure[A]]) = {
-    var sucs: ListBuffer[A] = ListBuffer.empty
-    var fails: ListBuffer[Failure[A]] = ListBuffer.empty
-
-    tries map {
-      case Success(a)    => sucs += a
-      case f: Failure[A] => fails += f
-    }
-
-    (sucs.toList, fails.toList)
+    go(ts toList, Seq.empty, Seq.empty)
   }
 
 }

@@ -22,5 +22,5 @@ case class BlanksExercise(id: Int, semanticVersion: SemanticVersion, title: Stri
 case class BlanksAnswer(id: Int, exerciseId: Int, exSemVer: SemanticVersion, solution: String)
 
 case class BlanksSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: BlanksExPart, solution: Seq[BlanksAnswer],
-                          points: Double, maxPoints: Double) extends DBPartSolution[BlanksExPart, Seq[BlanksAnswer]]
+                          points: Points, maxPoints: Points) extends DBPartSolution[BlanksExPart, Seq[BlanksAnswer]]
 

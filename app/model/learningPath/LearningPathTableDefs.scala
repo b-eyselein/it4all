@@ -1,5 +1,6 @@
 package model.learningPath
 
+import model.Points
 import model.core.CoreConsts._
 import model.learningPath.LearningPathSectionType.{QuestionSectionType, TextSectionType}
 import model.persistence.TableDefs
@@ -43,12 +44,15 @@ trait LearningPathTableDefs extends TableDefs {
     for {
       // Delete old entry first
       _ <- db.run(learningPaths.filter(x => x.id === lp.id && x.toolUrl === lp.toolUrl).delete)
-      _ <- db.run(learningPaths += (lp.toolUrl, lp.id, lp.title))
+      _ <- db.run(learningPaths += ((lp.toolUrl, lp.id, lp.title)))
       sectionsSaved <- saveSeq[LearningPathSection](lp.sections, lps => db.run(learningPathSections += lps))
     } yield sectionsSaved
   }) map (_ forall identity)
 
   // Column types
+
+  protected implicit val pointsColumnType: BaseColumnType[Points] =
+    MappedColumnType.base[Points, Int](_.quarters, Points.apply)
 
   private implicit val learningPathSectionTypeColumnType: BaseColumnType[LearningPathSectionType] =
     MappedColumnType.base[LearningPathSectionType, String](_.entryName, str => LearningPathSectionType.withNameOption(str) getOrElse LearningPathSectionType.TextSectionType)

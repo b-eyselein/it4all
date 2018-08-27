@@ -45,7 +45,7 @@ object NAryNumber {
 
   def padBinary(binary: String): String = {
     val ungrouped = binary.trim().replaceAll("\\s", "")
-    val padLength = 4 * Math.max(2, Math.ceil(ungrouped.length / 4).toInt)
+    val padLength = 4 * Math.max(2, Math.ceil(ungrouped.length.toDouble / 4).toInt)
     val newResult = GStrings.padStart(ungrouped, padLength, '0')
     newResult grouped 4 mkString " "
   }

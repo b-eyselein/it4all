@@ -6,8 +6,6 @@ import com.typesafe.config.Config
 import model.toolMains.AToolMain
 import play.api.{ConfigLoader, Configuration, Environment}
 
-import scala.util.Try
-
 case class ToolConfig(toolName: String, toolMainClass: String, isEnabled: Boolean = true)
 
 class ToolModules(environment: Environment, configuration: Configuration) extends AbstractModule {
@@ -32,14 +30,11 @@ class ToolModules(environment: Environment, configuration: Configuration) extend
     modulesConfig.subKeys
       .map(modulesConfig.get[ToolConfig]) // Load configuration for tool
       .filter(_.isEnabled)
-      .foreach { toolConfig =>
-        // Get class for toolMain
-        Try(this.getClass.getClassLoader.loadClass(toolConfig.toolMainClass)) map {
-          case classOfMain: Class[AToolMain] => multiBinder.addBinding().to(classOfMain)
-          case o                             => println(o)
-        }
+      .map(tc => this.getClass.getClassLoader.loadClass(tc.toolMainClass))
+      .foreach {
+        case classOfMain: Class[AToolMain] => multiBinder.addBinding().to(classOfMain)
+        case o                             => println(o)
       }
-
 
     DockerPullsStartTask.pullImages()
 

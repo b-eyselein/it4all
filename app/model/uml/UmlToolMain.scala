@@ -17,7 +17,7 @@ import scala.util.Try
 
 @Singleton
 class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Uml", "uml") with JsonFormat {
+  extends IdExerciseToolMain("Uml", "uml") {
 
   // Result types
 
@@ -92,7 +92,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     mappings = Seq.empty
   )
 
-  override def instantiateSolution(username: String, exercise: UmlCompleteEx, part: UmlExPart, solution: UmlClassDiagram, points: Double, maxPoints: Double): UmlSolution =
+  override def instantiateSolution(username: String, exercise: UmlCompleteEx, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlSolution =
     UmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml

@@ -65,7 +65,7 @@ object MyYamlProtocol {
     }
 
     def asArray[T](mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = yaml match {
-      case YamlArray(vector) => Success(CommonUtils.splitTries(vector map mapping))
+      case YamlArray(vector) => Success(CommonUtils.splitTriesNew(vector map mapping))
       case other             => Failure(WrongFieldTypeException(other.getClass.toString))
     }
 
@@ -159,7 +159,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(textName)
     state: ExerciseState <- yamlObject.enumField(stateName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
-    semanticVersion <- yamlObject.stringField(semanticVersionName) flatMap SemanticVersionHelper.tryFromString
+    semanticVersion <- yamlObject.stringField(semanticVersionName) flatMap SemanticVersionHelper.tryParseFromString
   } yield BaseValues(id, semanticVersion, title, author, text, state)
 
   abstract class MyYamlObjectFormat[T] extends MyYamlFormat[T] {

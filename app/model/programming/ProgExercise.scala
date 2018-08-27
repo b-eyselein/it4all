@@ -65,26 +65,6 @@ case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion,
 
 // Solution types
 
-object DBProgSolutionHelper extends JsonFormat {
-
-  def readTestDataFromJson(jsonStr: String): Seq[CommitedTestData] = Json.parse(jsonStr).asArray { jsValue =>
-    // FIXME: use play json reads/writes!!!
-    for {
-      jsObject <- jsValue.asObj
-      id <- jsObject.intField(idName)
-      exerciseId <- jsObject.intField(exerciseIdName)
-      semanticVersion <- jsObject.stringField(semanticVersionName) map SemanticVersionHelper.fromString
-      output <- jsObject.stringField(outputName)
-      inputAsJson <- jsObject.value get "TODO!"
-      username <- jsObject.stringField(usernameName)
-      state <- jsObject.enumField(stateName, ExerciseState.withNameInsensitive)
-    } yield CommitedTestData(id, exerciseId, semanticVersion, inputAsJson, output, username, state)
-
-  } getOrElse Seq.empty
-
-}
-
-
 sealed trait ProgSolution {
 
   val language: ProgLanguage
@@ -102,11 +82,11 @@ case class ProgTestDataSolution(testData: Seq[CommitedTestData], language: ProgL
 }
 
 case class DBProgSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
-                          solutionStr: String, language: ProgLanguage, points: Double, maxPoints: Double)
+                          solutionStr: String, language: ProgLanguage, points: Points, maxPoints: Points)
   extends DBPartSolution[ProgExPart, ProgSolution] {
 
   val solution: ProgSolution = part match {
-    case ProgExParts.TestdataCreation => ProgTestDataSolution(???, language)
+    case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)
     case _                            => ProgStringSolution(solutionStr, language)
   }
 

@@ -1,5 +1,6 @@
 package model.xml
 
+import model._
 import model.core.matching.{AnalysisResult, Match, MatchType, Matcher}
 import model.core.result.SuccessType
 import model.xml.XmlConsts._
@@ -18,10 +19,10 @@ case class ElementLineAnalysisResult(matchType: MatchType,
     "attributesCorrect" -> attributesCorrect, "correctAttributes" -> correctAttributes
   )
 
-  def points: Double = Seq(contentCorrect, attributesCorrect).map {
-    case false => 0
-    case true  => 1
-  } sum
+  def points: Points = addUp(Seq(contentCorrect, attributesCorrect).map {
+    case false => 0 points
+    case true  => 1 point
+  })
 
 }
 

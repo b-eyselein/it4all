@@ -4,7 +4,7 @@ import javax.inject._
 import model.programming.ProgConsts._
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, SemanticVersion, User}
+import model.{Consts, ExerciseState, Points, SemanticVersion, User}
 import play.api.data.Form
 import play.api.libs.json._
 import play.twirl.api.Html
@@ -90,7 +90,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   )
 
   override def instantiateSolution(username: String, exercise: ProgCompleteEx, part: ProgExPart,
-                                   solution: ProgSolution, points: Double, maxPoints: Double): DBProgSolution =
+                                   solution: ProgSolution, points: Points, maxPoints: Points): DBProgSolution =
     DBProgSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution.solution, solution.language, points, maxPoints)
 
   // Yaml
@@ -140,8 +140,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
     case ProgExParts.Implementation =>
       val declaration: String = maybeOldSolution map (_.solution) map {
-        case ptds: ProgTestDataSolution => ""
-        case pss: ProgStringSolution    => pss.solution
+        case _: ProgTestDataSolution => ""
+        case pss: ProgStringSolution => pss.solution
       } getOrElse {
         //        FIXME: remove comments like '# {2}'!
         implExtractorRegex.findFirstMatchIn(exercise.ex.base) map (_.group(1).trim()) getOrElse exercise.ex.base

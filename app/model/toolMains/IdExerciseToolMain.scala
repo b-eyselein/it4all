@@ -2,11 +2,11 @@ package model.toolMains
 
 import java.nio.file.{Files, Path}
 
+import model._
 import model.core.CoreConsts.solutionName
 import model.core._
 import model.core.result.CompleteResult
 import model.persistence.SingleExerciseTableDefs
-import model.{DBPartSolution, JsonFormat, User}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, Call, Request}
@@ -75,7 +75,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[String]
 
-  protected def instantiateSolution(username: String, exercise: CompExType, part: PartType, solution: SolType, points: Double, maxPoints: Double): DBSolType
+  protected def instantiateSolution(username: String, exercise: CompExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): DBSolType
 
   private def onSolution(user: model.User, solution: SolType, exercise: CompExType, part: PartType): Future[Try[JsValue]] =
     correctEx(user, solution, exercise, part) flatMap {

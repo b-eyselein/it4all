@@ -50,9 +50,9 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
 
     def part = column[PartType]("part")
 
-    def points = column[Double]("points")
+    def points = column[Points]("points")
 
-    def maxPoints = column[Double]("max_points")
+    def maxPoints = column[Points]("max_points")
 
 
     def pk = primaryKey("pk", (username, exerciseId, exSemVer, part))

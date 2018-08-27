@@ -66,4 +66,4 @@ case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String,
 case class UmlMapping(exerciseId: Int, exSemVer: SemanticVersion, key: String, value: String)
 
 case class UmlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: UmlExPart, solution: UmlClassDiagram,
-                       points: Double, maxPoints: Double) extends DBPartSolution[UmlExPart, UmlClassDiagram]
+                       points: Points, maxPoints: Points) extends DBPartSolution[UmlExPart, UmlClassDiagram]

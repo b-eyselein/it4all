@@ -2,10 +2,10 @@
 
 @urlFunc = @{
     toolObject match {
-        case idt: model.toolMains.IdExerciseToolMain => {
+        case _: model.toolMains.IdExerciseToolMain => {
             index: Int => routes.ExerciseController.exerciseList(toolObject.urlPart, index)
         }
-        case fetm: model.toolMains.FileExerciseToolMain => {
+        case _: model.toolMains.FileExerciseToolMain => {
             index: Int => routes.FileExerciseController.exerciseList(toolObject.urlPart, index)
         }
     }
@@ -50,12 +50,11 @@
                     <div class="col-sm-6">
                         <div class="btn-group d-flex">
                         @for(exRoute <- exAndRoute.routes) {
-                            <a @if(exRoute.enabled) {
-                                href="@exRoute.call"
-                        } else {
-                                disabled title="Vorbedingungen nicht erfüllt!"
-                            } class="btn btn-outline-primary w-100"
-                            >@exRoute.exPart.partName </a>
+                            @if(exRoute.enabled) {
+                                <a href="@exRoute.call" class="btn btn-outline-primary w-100">@exRoute.exPart.partName </a>
+                            } else {
+                                <a title="Vorbedingungen nicht erfüllt!" class="btn btn-outline-primary w-100">@exRoute.exPart.partName </a>
+                            }
                         }
                         </div>
                     </div>

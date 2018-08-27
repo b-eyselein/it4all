@@ -29,7 +29,7 @@ object SqlRow {
 
     val columnNames: Seq[String] = (1 to metaData.getColumnCount) map (count => Try(metaData getColumnLabel count) getOrElse "")
 
-    var pRows: ListBuffer[SqlRow] = ListBuffer.empty
+    val pRows: ListBuffer[SqlRow] = ListBuffer.empty
 
     while (resultSet.next) {
       val cells: Map[String, SqlCell] = columnNames map { colName =>

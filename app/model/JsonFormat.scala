@@ -7,6 +7,7 @@ import scala.util.{Failure, Success, Try}
 
 class JsTypeException(msg: String) extends Exception(msg)
 
+@deprecated(message = "Use play json!", since = "0.9.6")
 trait JsonFormat {
 
   implicit class PimpedJsValue(jsValue: JsValue) {

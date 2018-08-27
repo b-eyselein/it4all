@@ -19,7 +19,7 @@ abstract class AFixedExController(cc: ControllerComponents, dbcp: DatabaseConfig
     implicit request =>
       // FIXME: refactor!!!!!!!!!
 
-      val (readSuccesses: Seq[toolMain.ReadType], readFailures: Seq[Failure[toolMain.ReadType]]) = CommonUtils.splitTries(toolMain.readImports)
+      val (readSuccesses: Seq[toolMain.ReadType], readFailures: Seq[Failure[toolMain.ReadType]]) = CommonUtils.splitTriesNew(toolMain.readImports)
 
       toolMain.futureSaveRead(readSuccesses) map { saveResults: Seq[(toolMain.ReadType, Boolean)] =>
         val readAndSaveResult = ReadAndSaveResult(saveResults map (sr => new ReadAndSaveSuccess[toolMain.ReadType](sr._1, sr._2)), readFailures)

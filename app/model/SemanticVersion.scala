@@ -1,29 +1,26 @@
 package model
 
-import scala.util.Try
+import scala.language.postfixOps
+import scala.util.{Failure, Try}
+import scala.util.matching.Regex
 
 object SemanticVersionHelper {
 
-  //  private val semVerRegex = """(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"""
+  private val semanticVersionRegex: Regex = "(\\d+)\\.(\\d+)\\.(\\d+)".r
 
-  def fromString(str: String): SemanticVersion = {
-    // FIXME: test!
-    val parts = str.split("\\.")
+  val DEFAULT = SemanticVersion(0, 1, 0)
 
-    val major = if (parts.nonEmpty) parts(0) else 0
-    val minor = if (parts.length >= 2) parts(1) else 0
-    val patch = if (parts.length > 3) parts(2) else 0
+  def parseFromString(str: String): Option[SemanticVersion] = tryParseFromString(str) toOption
 
-    SemanticVersion(parts(0).toInt, parts(1).toInt, parts(2).toInt)
-  }
 
-  def tryFromString(str: String): Try[SemanticVersion] = Try {
+  def tryParseFromString(str: String): Try[SemanticVersion] = str match {
+    case semanticVersionRegex(maj, min, pat) => for {
+      major <- Try(maj.toInt)
+      minor <- Try(min.toInt)
+      patch <- Try(pat.toInt)
+    } yield SemanticVersion(major, minor, patch)
 
-    val parts = str.split("\\.")
-
-    //    println(str + " :: " + parts.mkString(", "))
-
-    SemanticVersion(parts(0).toInt, parts(1).toInt, parts(2).toInt)
+    case _ => Failure(new Exception(s"Could not parse String '$str' as Semantic Version!"))
   }
 
 }

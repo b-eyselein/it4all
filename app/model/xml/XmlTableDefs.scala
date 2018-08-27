@@ -54,7 +54,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Saving
 
-  //  override def futureSaveResult(username: String, exerciseId: Int, part: XmlExPart, points: Double, maxPoints: Double): Future[Boolean] =
+  //  override def futureSaveResult(username: String, exerciseId: Int, part: XmlExPart, points: Points, maxPoints: Points): Future[Boolean] =
   //    db.run(resultsForPartsTable insertOrUpdate XmlResultForPart(username, exerciseId, part, points, maxPoints)) map (_ => true) recover {
   //      case e: Throwable =>
   //        Logger.error("Error while updating result: ", e)

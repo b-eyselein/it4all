@@ -1,5 +1,6 @@
 package model.web
 
+import model._
 import model.core.result.EvaluationResult._
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.web.WebConsts._
@@ -17,16 +18,16 @@ case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, p
     partName -> part.urlName,
     successName -> results.forall(_.isSuccessful),
 
-    pointsName -> points,
-    maxPointsName -> maxPoints,
+    pointsName -> points.asDoubleString,
+    maxPointsName -> maxPoints.asDoubleString,
 
     htmlResultsName -> results.filter(_.isInstanceOf[ElementResult]).map(_.toJson),
     jsResultsName -> results.filter(_.isInstanceOf[JsWebResult]).map(_.toJson)
   )
 
-  override def points: Double = results.map(_.points).sum
+  override def points: Points = addUp(results.map(_.points))
 
-  override def maxPoints: Double = exercise.maxPoints(part)
+  override def maxPoints: Points = exercise.maxPoints(part)
 
 }
 
@@ -38,7 +39,7 @@ sealed trait WebResult extends EvaluationResult {
 
   def toJson: JsObject
 
-  def points: Double
+  def points: Points
 
 }
 
@@ -63,17 +64,18 @@ case class ElementResult(task: WebCompleteTask, foundElement: Option[WebElement]
   }
 
   override def toJson: JsObject = Json.obj(
-    "id" -> task.task.id,
-    "points" -> points, "maxPoints" -> task.maxPoints,
-    "success" -> (foundElement.isDefined && textContentResult.forall(_.isSuccessful) && attributeResults.forall(_.isSuccessful)),
+    idName -> task.task.id,
+    pointsName -> points.asDoubleString,
+    maxPointsName -> task.maxPoints.asDoubleString,
+    successName -> (foundElement.isDefined && textContentResult.forall(_.isSuccessful) && attributeResults.forall(_.isSuccessful)),
     "elementFound" -> foundElement.isDefined,
     "textContent" -> (textContentResult map (_.toJson)),
     "attributeResults" -> (attributeResults map (_.toJson))
   )
 
-  override val points: Double = foundElement match {
-    case None    => 0
-    case Some(_) => 1 + (textContentResult map (_.points) getOrElse 0d) + (attributeResults map (_.points) sum)
+  override val points: Points = foundElement match {
+    case None    => 0 points
+    case Some(_) => (1 point) + (textContentResult map (_.points) getOrElse 0.points) + addUp(attributeResults map (_.points))
   }
 
 }
@@ -99,13 +101,13 @@ case class TextContentResult(f: String, a: String) extends TextResult("Der Texti
 
   def toJson: JsObject = Json.obj(
     successName -> isSuccessful,
-    pointsName -> points,
-    maxPointsName -> 1,
+    pointsName -> points.asDoubleString,
+    maxPointsName -> 1.point.asDoubleString,
     awaitedName -> awaitedContent,
     foundName -> foundContent
   )
 
-  val points: Double = if (isSuccessful) 1 else 0
+  val points: Points = if (isSuccessful) 1 point else 0 points
 
 }
 
@@ -113,14 +115,14 @@ case class AttributeResult(attribute: Attribute, foundValue: Option[String]) ext
 
   def toJson: JsObject = Json.obj(
     successName -> isSuccessful,
-    pointsName -> points,
-    maxPointsName -> 1,
+    pointsName -> points.asDoubleString,
+    maxPointsName -> 1.point.asDoubleString,
     "attrName" -> attribute.key,
     awaitedName -> awaitedContent,
     foundName -> foundContent
   )
 
-  val points: Double = if (isSuccessful) 1d else foundValue map (_ => 0.5) getOrElse 0d
+  val points: Points = if (isSuccessful) 1 point else foundValue map (_ => 1 halfPoint) getOrElse 0.points
 
 }
 
@@ -137,8 +139,8 @@ case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResult], a
 
   override def toJson: JsObject = Json.obj(
     idName -> task.task.id,
-    pointsName -> points,
-    maxPointsName -> task.maxPoints,
+    pointsName -> points.asDoubleString,
+    maxPointsName -> task.maxPoints.asDoubleString,
     successName -> (preResults.forall(_.isSuccessful) && actionPerformed && postResults.forall(_.isSuccessful)),
     "preResults" -> preResults.map(_.toJson),
     "actionDescription" -> task.task.actionDescription,
@@ -148,7 +150,7 @@ case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResult], a
     // FIXME: implement!
   )
 
-  override val points: Double = preResults.map(_.points).sum + (if (actionPerformed) 1 else 0) + postResults.map(_.points).sum
+  override val points: Points = addUp(preResults.map(_.points)) + (if (actionPerformed) 1 point else 0 points) + addUp(postResults.map(_.points))
 
 }
 
@@ -159,11 +161,11 @@ case class ConditionResult(override val success: SuccessType, condition: JsCondi
        |  <p>${condition.description}</p>
        |  ${if (isSuccessful) "" else s"<p>Element hatte aber folgenden Wert: $gottenValue</p>"}""".stripMargin)
 
-  def points: Double = if (isSuccessful) 1 else 0
+  def points: Points = if (isSuccessful) 1 point else 0 points
 
   def toJson: JsObject = Json.obj(
-    pointsName -> points,
-    maxPointsName -> condition.maxPoints,
+    pointsName -> points.asDoubleString,
+    maxPointsName -> condition.maxPoints.asDoubleString,
     successName -> isSuccessful,
     descriptionName -> condition.description,
     awaitedName -> condition.awaitedValue,

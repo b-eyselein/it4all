@@ -76,7 +76,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
       futureUserAndPwHash map {
         case (None, _)                  => Redirect(controllers.routes.LoginController.register())
-        case (Some(user), None)         => BadRequest("Cannot change password!")
+        case (Some(_), None)            => BadRequest("Cannot change password!")
         case (Some(user), Some(pwHash)) =>
           if (credentials.password isBcrypted pwHash.pwHash) {
             Redirect(controllers.routes.Application.index()).withSession(sessionIdField -> user.username)

@@ -51,8 +51,6 @@ abstract class AToolMain(val toolname: String, val urlPart: String) extends File
 
   val tables: Tables
 
-//  val toolname: String
-
   val consts: Consts
 
   val hasTags      : Boolean = false

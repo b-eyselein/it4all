@@ -16,8 +16,7 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Web", "web") with JsonFormat {
+class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("Web", "web") {
 
   // Result types
 
@@ -85,7 +84,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     htmlTasks = Seq.empty, jsTasks = Seq.empty
   )
 
-  override def instantiateSolution(username: String, exercise: WebCompleteEx, part: WebExPart, solution: String, points: Double, maxPoints: Double): WebSolution =
+  override def instantiateSolution(username: String, exercise: WebCompleteEx, part: WebExPart, solution: String, points: Points, maxPoints: Points): WebSolution =
     WebSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml

@@ -49,7 +49,7 @@
 
     @completeEx.maybeClassDiagramPart match {
         case None => {}
-        case Some(classDiagPart) => {
+        case Some(_) => {
             @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
                 <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></div>
             }

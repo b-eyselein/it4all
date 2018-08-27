@@ -148,9 +148,9 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
 
     def collSemVer = column[SemanticVersion]("coll_sem_ver")
 
-    def points = column[Double]("points")
+    def points = column[Points]("points")
 
-    def maxPoints = column[Double]("max_points")
+    def maxPoints = column[Points]("max_points")
 
 
     def pk = primaryKey("pk", (username, collectionId, collSemVer, exerciseId, exSemVer))

@@ -34,7 +34,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
   protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult]
 
-  def executeSetup(schemaName: String, scriptFilePath: Path): Unit = {
+  def executeSetup(schemaName: String, scriptFilePath: Path): Try[Unit] = {
     using(mainDB.source.createConnection()) { mainConnection =>
       val res = mainConnection.prepareStatement(s"SHOW DATABASES LIKE '$schemaName';").executeQuery()
 
@@ -52,7 +52,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
     var stringBuilder = StringBuilder.newBuilder
 
     using(Source.fromFile(filePath.toFile)) { source =>
-      var queries: ListBuffer[String] = ListBuffer.empty
+      val queries: ListBuffer[String] = ListBuffer.empty
 
       for (readLine <- source.getLines; trimmedLine = readLine.trim if !(trimmedLine startsWith "--")) {
         stringBuilder ++= trimmedLine + "\n"

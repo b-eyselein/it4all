@@ -70,5 +70,5 @@ case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String,
 case class SqlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, sample: String)
 
 case class SqlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int, collSemVer: SemanticVersion,
-                       solution: String, points: Double, maxPoints: Double) extends CollectionExSolution[String]
+                       solution: String, points: Points, maxPoints: Points) extends CollectionExSolution[String]
 

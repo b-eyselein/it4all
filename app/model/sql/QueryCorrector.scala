@@ -2,6 +2,7 @@ package model.sql
 
 import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.sql.matcher._
+import model._
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
@@ -9,6 +10,7 @@ import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select.OrderByElement
 
+import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 abstract class QueryCorrector(val queryType: String) {
@@ -44,8 +46,8 @@ abstract class QueryCorrector(val queryType: String) {
     val insertedValuesComparison = compareInsertedValues(userQ, sampleQ)
 
     // FIXME: calculate points!
-    val points = -1
-    val maxPoints = -1
+    val points = -1 point
+    val maxPoints = -1 point
 
     SqlResult(learnerSolution, points, maxPoints, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison, insertedValuesComparison)
   }
