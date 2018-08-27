@@ -1,7 +1,6 @@
 package model.bool
 
 import model.bool.NodeSpec._
-import model.nary._
 import org.scalatest._
 
 import scala.language.implicitConversions
@@ -20,13 +19,13 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec {
 
 
   val (ff, ft, tf, tt) = (
-                           BoolTableRow(a -> false, b -> false),
-                           BoolTableRow(a -> false, b -> true),
-                           BoolTableRow(a -> true, b -> false),
-                           BoolTableRow(a -> true, b -> true)
-                         )
+    BoolTableRow(a -> false, b -> false),
+    BoolTableRow(a -> false, b -> true),
+    BoolTableRow(a -> true, b -> false),
+    BoolTableRow(a -> true, b -> true)
+  )
 
-  def testEvaluate(expected: Array[Boolean]) {
+  def testEvaluate(expected: Array[Boolean]): Unit = {
     assert(nodeUnderTest(ff) == expected(0))
     assert(nodeUnderTest(ft) == expected(1))
     assert(nodeUnderTest(tf) == expected(2))
@@ -37,7 +36,7 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec {
 
   def testContainedVariables(expected: Set[Variable]): Assertion = assert(nodeUnderTest.usedVariables == expected)
 
-  def testGetAsString(expectedFalse: String, expectedTrue: String) {
+  def testGetAsString(expectedFalse: String, expectedTrue: String): Unit = {
     assert(nodeUnderTest.getAsString(false) == expectedFalse)
     assert(nodeUnderTest.getAsString(true) == expectedTrue)
   }

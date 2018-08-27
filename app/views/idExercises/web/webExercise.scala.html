@@ -10,9 +10,7 @@
 
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/web/webExercise.js")');
-    </script>
+    <script>SystemJS.import('@routes.Assets.versioned("app/web/webExercise.js")');</script>
 
     <style>
             .CodeMirror {
@@ -36,16 +34,16 @@
         <input hidden type="text" id="exercisePart" value="@part.urlName" title="hidden">
 
         <div class="row">
-            <div class="col-sm-6">
+
+            <div class="col-sm-6 col-xl-5">
                 <textarea id="htmlEditor" title="Editor">@oldSolution</textarea>
             </div>
 
-
-            <div class="col-sm-6">
+            <div class="col-sm-6 col-xl-7">
 
                 <ul class="nav nav-tabs nav-justified">
                     <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#exAndEditTab">Aufgabenstellung</a>
+                        <a class="nav-link active" data-toggle="tab" href="#exerciseTab">Aufgabenstellung</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-url="@routes.ExerciseController.updateWebSolution(exercise.ex.id, part.urlName)"
@@ -53,10 +51,9 @@
                     </li>
                 </ul>
 
-
                 <div class="tab-content">
 
-                    <div id="exAndEditTab" class="tab-pane container active">
+                    <div id="exerciseTab" class="tab-pane fade show active">
 
                         <div class="card">
                             <div class="card-body text-justify">
@@ -76,6 +73,8 @@
                             </div>
                         </div>
 
+                        <br>
+
                         <div class="form-group">
                             <div class="btn-group d-flex">
                                 @*<button type="button" class="btn w-100" onclick="toggleFullscreen()">*@
@@ -88,22 +87,23 @@
                             </div>
                         </div>
 
-                        <hr>
-
-                        <div id="correctionDiv" hidden>
-                            <h2>Korrektur</h2>
-                            <div id="correction">
-                                <div class="alert alert-warning">
-                                    Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
-                            </div>
-                        </div>
                     </div>
 
-                    <div id="previewTab" class="tab-pane container fade">
+                    <div id="previewTab" class="tab-pane fade">
                         <div class="alert alert-warning" id="previewChangedDiv">Ihre Lösung hat sich geändert.</div>
                         <div class="embed-responsive embed-responsive-16by9">
                             <iframe class="embed-responsive-item" src="@routes.ExerciseController.webSolution(exercise.ex.id, part.urlName)" id="preview"></iframe>
                         </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div id="correctionDiv" hidden>
+                    <h2>Korrektur</h2>
+                    <div id="correction">
+                        <div class="alert alert-warning">
+                            Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
                     </div>
                 </div>
 

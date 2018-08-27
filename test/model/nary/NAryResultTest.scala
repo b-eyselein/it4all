@@ -8,7 +8,7 @@ import org.junit.Test
 class NAryResultTest {
 
   @Test
-  def testCheckAddSolution() {
+  def testCheckAddSolution(): Unit = {
     val resTrue = NAryAddResult(OCTAL, new NAryNumber(0, OCTAL), new NAryNumber(127, OCTAL), new NAryNumber(127, OCTAL))
     assertThat(resTrue.solutionCorrect, equalTo(true))
 
@@ -17,7 +17,7 @@ class NAryResultTest {
   }
 
   @Test
-  def testCheckConvSolution() {
+  def testCheckConvSolution(): Unit = {
     val resTrue = NAryConvResult(new NAryNumber(8, OCTAL), OCTAL, BINARY, new NAryNumber(8, OCTAL))
     assertThat(resTrue.solutionCorrect, equalTo(true))
 

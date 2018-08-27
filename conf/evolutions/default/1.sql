@@ -561,10 +561,8 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
   ex_text             TEXT,
   ex_state            ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_DTD',
   grammar_description TEXT,
   root_node           VARCHAR(30),
-  ref_file_content    TEXT,
 
   PRIMARY KEY (id, semantic_version)
 );

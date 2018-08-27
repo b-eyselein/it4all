@@ -4,7 +4,7 @@ import org.junit.Test
 
 import scala.language.implicitConversions
 
-class CreationQuestionTest  {
+class CreationQuestionTest {
 
   implicit def char2Variable(char: Char): Variable = Variable(char)
 
@@ -27,7 +27,7 @@ class CreationQuestionTest  {
     BoolTableRow(a -> true, b -> true, c -> true, z -> true))
 
   @Test
-  def testDnf() {
+  def testDnf(): Unit = {
     val dnf = BoolTableRow.disjunktiveNormalForm(CreationQuestion(assignments).solutions)
     assert(dnf == awaitedDNF,
       s"""Expected that DNF
@@ -37,7 +37,7 @@ class CreationQuestionTest  {
   }
 
   @Test
-  def testKnf() {
+  def testKnf(): Unit = {
     val knf = BoolTableRow.konjunktiveNormalForm(CreationQuestion(assignments).solutions)
     assert(knf == awaitedKNF,
       s"""Expected that KNF

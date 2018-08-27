@@ -63,16 +63,17 @@ class XLSXCorrectorTest {
     fileTries match {
       case Failure(e)                 => Assert.fail(failureLoad(null, e))
       case Success((muster, teilLsg)) =>
-        compareCellFormulas(getCell(muster, 2, 15, 7), getCell(teilLsg, 2, 15, 7)) shouldBe(true, formulaCorrect)
+        compareCellFormulas(getCell(muster, 2, 15, 7), getCell(teilLsg, 2, 15, 7)) shouldBe ((true, formulaCorrect))
 
         // Kein Formel in Muster, Compare leer
-        compareCellFormulas(getCell(muster, 3, 16, 1), getCell(teilLsg, 3, 16, 1)) shouldBe(false, noFormulaRequired)
+        compareCellFormulas(getCell(muster, 3, 16, 1), getCell(teilLsg, 3, 16, 1)) shouldBe ((false, noFormulaRequired))
 
         // Wert in Muster, Compare leer
-        compareCellFormulas(getCell(muster, 3, 16, 5), getCell(teilLsg, 3, 16, 5)) shouldBe(false, formulaMissing)
+        compareCellFormulas(getCell(muster, 3, 16, 5), getCell(teilLsg, 3, 16, 5)) shouldBe ((false, formulaMissing))
 
         // Wert in Muster, Compare leer
-        compareCellFormulas(getCell(muster, 3, 19, 5), getCell(teilLsg, 3, 19, 5)) shouldBe(false, "Formel falsch. Die Bereiche [D20] fehlen.")
+        compareCellFormulas(getCell(muster, 3, 19, 5), getCell(teilLsg, 3, 19, 5))
+          .shouldBe((false, "Formel falsch. Die Bereiche [D20] fehlen."))
     }
   }
 
@@ -87,14 +88,15 @@ class XLSXCorrectorTest {
       case Failure(e)                 => Assert.fail(failureLoad(null, e))
       case Success((muster, teilLsg)) =>
 
-        compareCellValues(getCell(muster, 2, 15, 7), getCell(teilLsg, 2, 15, 7)) shouldBe(true, COMMENT_VALUE_CORRECT)
+        compareCellValues(getCell(muster, 2, 15, 7), getCell(teilLsg, 2, 15, 7)) shouldBe ((true, COMMENT_VALUE_CORRECT))
 
         // Wert in Muster, Compare leer
-        compareCellValues(getCell(muster, 3, 16, 5), getCell(teilLsg, 3, 16, 5)) shouldBe(false, COMMENT_VALUE_MISSING)
+        compareCellValues(getCell(muster, 3, 16, 5), getCell(teilLsg, 3, 16, 5)) shouldBe ((false, COMMENT_VALUE_MISSING))
 
         // Wert in Muster, Compare falsch
         // TODO: Zahl schoener formatieren... 12.142857142857142
-        compareCellValues(getCell(muster, 3, 19, 5), getCell(teilLsg, 3, 19, 5)) shouldBe(false, "Wert falsch. Erwartet wurde '12.142857142857142'.")
+        compareCellValues(getCell(muster, 3, 19, 5), getCell(teilLsg, 3, 19, 5))
+          .shouldBe((false, "Wert falsch. Erwartet wurde '12.142857142857142'."))
     }
   }
 
@@ -108,11 +110,11 @@ class XLSXCorrectorTest {
     fileTries match {
       case Failure(e)                 => Assert.fail(failureLoad(null, e))
       case Success((muster, teilLsg)) =>
-        compareChartsInSheet(muster.getSheetAt(0), muster.getSheetAt(0)) shouldBe(false, COMMENT_CHART_FALSE)
+        compareChartsInSheet(muster.getSheetAt(0), muster.getSheetAt(0)) shouldBe ((false, COMMENT_CHART_FALSE))
 
-        compareChartsInSheet(teilLsg.getSheetAt(0), muster.getSheetAt(2)) shouldBe(false, "Falsche Anzahl Diagramme im Dokument (Erwartet: 2, Gefunden: 0).")
+        compareChartsInSheet(teilLsg.getSheetAt(0), muster.getSheetAt(2)) shouldBe ((false, "Falsche Anzahl Diagramme im Dokument (Erwartet: 2, Gefunden: 0)."))
 
-        compareChartsInSheet(muster.getSheetAt(2), muster.getSheetAt(2)) shouldBe(true, COMMENT_CHART_CORRECT)
+        compareChartsInSheet(muster.getSheetAt(2), muster.getSheetAt(2)) shouldBe ((true, COMMENT_CHART_CORRECT))
       // TODO: Implement!
       // Assert.fail("Still things to implement!")
     }
@@ -121,7 +123,7 @@ class XLSXCorrectorTest {
   @Test
   def testCompareNumberOfChartsInDocument(): Unit = loadDocument(stdDoc) match {
     case Failure(e)        => Assert.fail(failureLoad(stdDoc, e))
-    case Success(document) => compareNumberOfChartsInDocument(document, document) shouldBe(true, "")
+    case Success(document) => compareNumberOfChartsInDocument(document, document) shouldBe ((true, ""))
   }
 
   @Test
@@ -206,14 +208,12 @@ class XLSXCorrectorTest {
 
     loadDocument(testMusterCopy) match {
       case Failure(e)        => Assert.fail(failureLoad(testMusterCopy, e))
-      case Success(document) =>
-        getSheetCount(document) shouldBe 8
+      case Success(document) => getSheetCount(document) shouldBe 8
     }
 
     loadDocument(testSolutionCopy) match {
       case Failure(e)        => Assert.fail(failureLoad(testSolutionCopy, e))
-      case Success(document) =>
-        getSheetCount(document) shouldBe 8
+      case Success(document) => getSheetCount(document) shouldBe 8
     }
   }
 

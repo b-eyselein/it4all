@@ -12,16 +12,16 @@ class NAryNumberTest {
     87 -> Map(HEXADECIMAL -> "57", OCTAL -> "127", BINARY -> "0101 0111"),
     63 -> Map(HEXADECIMAL -> "3f", OCTAL -> "77", BINARY -> "0011 1111"))
 
-  def checkBase(number: NAryNumber, base: NumberBase) {
+  def checkBase(number: NAryNumber, base: NumberBase): Unit = {
     assertThat("Basis von " + number + " sollte " + base + " sein!", number.base, equalTo(base))
   }
 
-  def checkPaddedString(toPad: String, expected: String) {
+  def checkPaddedString(toPad: String, expected: String): Unit = {
     assertThat("Expecting that padded binary string of " + toPad + " is " + expected, NAryNumber.padBinary(toPad),
       equalTo(expected))
   }
 
-  def checkParsingWithoutMark(decValue: Int, base: NumberBase, toParse: String) {
+  def checkParsingWithoutMark(decValue: Int, base: NumberBase, toParse: String): Unit = {
     val posLowerHex = NAryNumber.parseNaryNumber(toParse, base)
     posLowerHex foreach { posLowerHex =>
       checkBase(posLowerHex, base)
@@ -29,7 +29,7 @@ class NAryNumberTest {
     }
   }
 
-  def checkValue(posNary: NAryNumber, decimalvalue: Int) {
+  def checkValue(posNary: NAryNumber, decimalvalue: Int): Unit = {
     assertThat("Dezimalwert von " + posNary + " sollte " + decimalvalue + " sein!", posNary.decimalValue,
       equalTo(decimalvalue))
   }

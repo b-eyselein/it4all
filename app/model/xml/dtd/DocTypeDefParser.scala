@@ -25,8 +25,8 @@ object DocTypeDefParser extends JavaTokenParsers {
 
   private val lineRegex: Regex = "(?m)<[\\s\\S]*?>".r
 
-  private val elemRegex    = "(?m)<!ELEMENT.*?>".r
-  private val attListRegex = "(?m)<!ATTLIST.*?>".r
+  private val elemRegex    = "(?m)<!ELEMENT[\\s\\S]*?>".r
+  private val attListRegex = "(?m)<!ATTLIST[\\s\\S]*?>".r
 
   //  val dtdLine: Parser[DocTypeDefLine] = elementDefinition | attList
 
@@ -125,7 +125,7 @@ object DocTypeDefParser extends JavaTokenParsers {
     val tryParser: Try[Parser[DocTypeDefLine]] = str match {
       case elemRegex()    => TrySuccess(elementDefinition)
       case attListRegex() => TrySuccess(attList)
-      case _              => TryFailure(new DTDParseException("Line can not be identified as element or attlist!", str))
+      case _              => TryFailure(DTDParseException(s"Line can not be identified as element or attlist!", str))
     }
 
     tryParser flatMap { parser =>
@@ -161,7 +161,7 @@ object DocTypeDefParser extends JavaTokenParsers {
         case f: TryFailure[DocTypeDefLine] =>
           val dpe = f.exception match {
             case dpe: DTDParseException => dpe
-            case e: Throwable           => new DTDParseException(e.getMessage, "TODO!")
+            case e: Throwable           => DTDParseException(e.getMessage, "TODO!")
           }
           go(tail, successes, failures :+ dpe)
       }

@@ -9,7 +9,6 @@ sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSoluti
 
   val solutionCorrect: Boolean = targetNumber.decimalValue == learnerSolution.decimalValue
 
-
   def toJson: JsValue
 }
 

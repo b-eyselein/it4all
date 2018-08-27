@@ -116,7 +116,7 @@ function renderHtmlResult(result: HtmlResult): string {
 <ul>
     <li>${elFoundText}</li>
     ${textResult}
-    ${attrResults.map(a => `<li>${a}</li>`)}
+    ${attrResults.map(a => `<li>${a}</li>`).join("")}
 </ul>`.trim();
     }
 }
@@ -150,9 +150,9 @@ function renderJsResult(result: JsResult): string {
         return `
 <span class="text-${result.success ? 'success' : 'danger'}">Test ${dispPoints(result)} war nicht erfolgreich:</span>
 <ul>
-    ${result.preResults.map(r => `<li>${renderConditionResult(r)}</li>`)}
+    ${result.preResults.map(r => `<li>${renderConditionResult(r)}</li>`).join("")}
     <li>${actionDesc}</li>
-    ${result.postResults.map(r => `<li>${renderConditionResult(r)}</li>`)}
+    ${result.postResults.map(r => `<li>${renderConditionResult(r)}</li>`).join("")}
 </ul>`.trim();
     }
 }

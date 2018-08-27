@@ -4,7 +4,7 @@ import org.hamcrest.CoreMatchers._
 import org.junit.Assert._
 import org.junit.Test
 
-import scala.util.Failure
+import scala.util.{Failure, Success, Try}
 
 class NewDocTypeDefParserTest {
 
@@ -34,5 +34,19 @@ class NewDocTypeDefParserTest {
     })
   }
 
+
+  @Test
+  def newTest(): Unit = {
+    val parsed: Try[DocTypeDef] = DocTypeDefParser.tryParseDTD(
+      """<!ATTLIST gast
+        |  ledig (true | false) #REQUIRED
+        |  nuechtern (true | false) #REQUIRED
+        |>""".stripMargin)
+
+    parsed match {
+      case Success(doctypeDef) => Unit
+      case Failure(error)      => fail(error.getMessage)
+    }
+  }
 
 }

@@ -29,7 +29,7 @@ class ODFCorrectorTest {
     workbook.getSheetByIndex(sheetIndex).getCellByPosition(rowIndex, cellIndex)
 
   @Test def testCompareChartsInSheet() {
-    compareChartsInSheet(null, null) shouldBe(false, "")
+    compareChartsInSheet(null, null) shouldBe ((false, ""))
   }
 
   @Test def testCloseDocument(): Unit = loadDocument(standardDocument) match {
@@ -50,16 +50,17 @@ class ODFCorrectorTest {
       case Failure(e)                 => Assert.fail(e.getMessage)
       case Success((muster, teilLsg)) =>
 
-        compareCellFormulas(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)) shouldBe(true, formulaCorrect)
+        compareCellFormulas(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)) shouldBe ((true, formulaCorrect))
 
         // Wert in Muster null, Compare leer
-        compareCellFormulas(getCell(muster, 3, 3, 9), getCell(teilLsg, 3, 3, 9)) shouldBe(true, noFormulaRequired)
+        compareCellFormulas(getCell(muster, 3, 3, 9), getCell(teilLsg, 3, 3, 9)) shouldBe ((true, noFormulaRequired))
 
         // Wert in Muster, Compare leer
-        compareCellFormulas(getCell(muster, 3, 5, 16), getCell(teilLsg, 3, 5, 16)) shouldBe(false, formulaMissing)
+        compareCellFormulas(getCell(muster, 3, 5, 16), getCell(teilLsg, 3, 5, 16)) shouldBe ((false, formulaMissing))
 
         // Wert in Muster, Compare leer
-        compareCellFormulas(getCell(muster, 3, 5, 19), getCell(teilLsg, 3, 5, 19)) shouldBe(false, "Formel falsch. Die Bereiche [D20] fehlen.")
+        compareCellFormulas(getCell(muster, 3, 5, 19), getCell(teilLsg, 3, 5, 19))
+          .shouldBe((false, "Formel falsch. Die Bereiche [D20] fehlen."))
     }
   }
 

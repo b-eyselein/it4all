@@ -104,7 +104,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
       case XmlExParts.GrammarCreationXmlPart =>
         val sampleGrammar = completeEx.sampleGrammars.minBy(sampleG => Java_Levenshtein.levenshteinDistance(solution, sampleG.sampleGrammar.asString))
         Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution), sampleGrammar, completeEx))
-
     })
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: XmlExPart): Future[String] = ???

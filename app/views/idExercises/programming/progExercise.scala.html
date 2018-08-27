@@ -1,135 +1,135 @@
 @(user: model.User, toolMainObject: model.toolMains.AToolMain, exercise: model.programming.ProgCompleteEx,
         oldSolution: String, part: model.programming.ProgExPart)
 
-    @scripts = {
-        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-        <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
-        <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
 
-        <script>
-                const imports = [
-                    '@routes.Assets.versioned("app/programming/progExercise.js")',
-                    '@routes.Assets.versioned("app/programming/progClassDiagram.js")'
-                ];
-                for (let toImport of imports) {
-                    SystemJS.import(toImport);
-                }
-        </script>
+    <script>
+            const imports = [
+                '@routes.Assets.versioned("app/programming/progExercise.js")',
+                '@routes.Assets.versioned("app/programming/progClassDiagram.js")'
+            ];
+            for (let toImport of imports) {
+                SystemJS.import(toImport);
+            }
+    </script>
 
-        <style>
-                .CodeMirror {
-                    border: 1px solid lightgrey;
-                    font-size: 14px;
-                    height: auto;
-                }
+    <style>
+            .CodeMirror {
+                border: 1px solid lightgrey;
+                font-size: 14px;
+                height: auto;
+            }
 
-                #preview {
-                    border: 1px solid lightgrey;
-                }
+            #preview {
+                border: 1px solid lightgrey;
+            }
 
-        </style>
-        @* FIXME: @core.helperTemplates.fullScreenScripts.render() *@
-        @* @if(exercise.maybeClassDiagramPart.isDefined) {*@
-        @*<script src="@routes.ExerciseController.progClassDiagram(exercise.id)"></script>*@
-        @*<script src="@routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>*@
-        @*<link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")"/>*@
-        @*}*@
+    </style>
+    @* FIXME: @core.helperTemplates.fullScreenScripts.render() *@
+    @* @if(exercise.maybeClassDiagramPart.isDefined) {*@
+    @*<script src="@routes.ExerciseController.progClassDiagram(exercise.id)"></script>*@
+    @*<script src="@routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>*@
+    @*<link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")"/>*@
+    @*}*@
+}
+
+@main(toolMainObject.toolname, Some(user), scripts) {
+
+    @core.helperTemplates.modal("TODO", "definitionRest", "lg") {
+        <pre>@exercise.ex.base</pre>
     }
 
-    @main(toolMainObject.toolname, Some(user), scripts) {
-
-        @core.helperTemplates.modal("TODO", "definitionRest", "lg") {
-            <pre>@exercise.ex.base</pre>
-        }
-
-        @exercise.maybeClassDiagramPart match {
-            case None => {}
-            case Some(classDiagPart) => {
-                @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
-                    <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(exercise.ex.id)"></div>
-                }
+    @exercise.maybeClassDiagramPart match {
+        case None => {}
+        case Some(_) => {
+            @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
+                <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(exercise.ex.id)"></div>
             }
         }
-
-        <div class="container" id="fullsc">
-
-            <input hidden value="@exercise.ex.id" name="exerciseId" id="exerciseId" title="hidden" type="number">
-            <input hidden value="@part.urlName" name="exercisePart" id="exercisePart" title="hidden">
-
-            <div class="row">
-                <div class="col-md-6">
-                    <h2>Aufgabenstellung</h2>
-
-                    <div class="well">@Html(exercise.ex.text)</div>
-
-                    <div class="form-group">
-                        <div class="btn-group d-flex">
-                            <button class="btn btn-primary w-100" data-toggle="modal" data-target="#definitionRest">
-                                Rest der Definition</button>
-                            @exercise.maybeClassDiagramPart match {
-                                case None => {}
-                                case Some(classDiagPart) => {
-                                    <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
-                                }
-                            }
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Sprache</span>
-                            </div>
-                            <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
-                            @for(lang <- model.programming.ProgLanguages.values) {
-                                <option value="@lang.entryName" @{
-                                    if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
-                                }>@lang.languageName</option>
-                            }
-                            </select>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="col-md-6">
-                    <h2>Editor</h2>
-
-                    <textarea id="myTextArea" title="Lösung">@oldSolution</textarea>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="form-group">
-                <div class="btn-group d-flex">
-                    @* FIXME: onclick="toggleFullscreen()" *@
-                    <button class="btn w-100">
-                        Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
-                    </button>
-                    <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
-                    class="btn btn-primary w-100" id="testBtn">Lösung testen</button>
-                    <button data-url="@routes.ExerciseController.sampleSolution(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
-                    class="btn btn-success w-100" id="sampleSolBtn">Musterlösung zeigen
-                    </button>
-                    <a class="btn btn-secondary w-100" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
-                        Bearbeitung beenden</a>
-                </div>
-            </div>
-
-            <hr>
-
-            <section id="correctionDiv" hidden>
-                <h2>Korrektur</h2>
-                <div id="correction"></div>
-            </section>
-
-            <section id="sampleSolDiv" hidden>
-                <h2>Musterlösung</h2>
-                <pre id="sampleSolPre"></pre>
-            </section>
-
-        </div>
     }
+
+    <div class="container" id="fullsc">
+
+        <input hidden value="@exercise.ex.id" name="exerciseId" id="exerciseId" title="hidden" type="number">
+        <input hidden value="@part.urlName" name="exercisePart" id="exercisePart" title="hidden">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Aufgabenstellung</h2>
+
+                <div class="well">@Html(exercise.ex.text)</div>
+
+                <div class="form-group">
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-primary w-100" data-toggle="modal" data-target="#definitionRest">
+                            Rest der Definition</button>
+                        @exercise.maybeClassDiagramPart match {
+                            case None => {}
+                            case Some(classDiagPart) => {
+                                <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Sprache</span>
+                        </div>
+                        <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
+                        @for(lang <- model.programming.ProgLanguages.values) {
+                            <option value="@lang.entryName" @{
+                                if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
+                            }>@lang.languageName</option>
+                        }
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+                <h2>Editor</h2>
+
+                <textarea id="myTextArea" title="Lösung">@oldSolution</textarea>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+            <div class="btn-group d-flex">
+                @* FIXME: onclick="toggleFullscreen()" *@
+                <button class="btn w-100">
+                    Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
+                </button>
+                <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
+                class="btn btn-primary w-100" id="testBtn">Lösung testen</button>
+                <button data-url="@routes.ExerciseController.sampleSolution(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
+                class="btn btn-success w-100" id="sampleSolBtn">Musterlösung zeigen
+                </button>
+                <a class="btn btn-secondary w-100" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
+                    Bearbeitung beenden</a>
+            </div>
+        </div>
+
+        <hr>
+
+        <section id="correctionDiv" hidden>
+            <h2>Korrektur</h2>
+            <div id="correction"></div>
+        </section>
+
+        <section id="sampleSolDiv" hidden>
+            <h2>Musterlösung</h2>
+            <pre id="sampleSolPre"></pre>
+        </section>
+
+    </div>
+}
