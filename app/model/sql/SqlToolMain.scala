@@ -9,6 +9,9 @@ import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
 import model.yaml.MyYamlFormat
 import play.api.data.Form
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
 
@@ -34,7 +37,7 @@ object SqlToolMain {
 
 @Singleton
 class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: ExecutionContext)
-  extends CollectionToolMain("Sql", "sql") with JsonFormat {
+  extends CollectionToolMain("Sql", "sql") {
 
   // Abstract types
 
@@ -85,7 +88,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Read from requests
 
   override def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
-    request.body.asJson flatMap (_.asObj) flatMap (jsObj => jsObj.stringField(learnerSolutionName)) // map (str => SqlSolution(user.username, collId, id, str))
+    request.body.asJson flatMap {
+      case JsString(value) => Some(value)
+      case _               => None
+    }
 
   override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
     SolutionFormHelper.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))

@@ -226,7 +226,7 @@ function testSqlSol(): void {
         url: testBtn.data('url'),
         dataType: 'json',
         contentType: 'application/json',
-        data: JSON.stringify({learnerSolution}),
+        data: JSON.stringify(learnerSolution),
         async: true,
         success: onSqlCorrectionSuccess,
         error: onSqlCorrectionError

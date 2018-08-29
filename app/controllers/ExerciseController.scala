@@ -19,7 +19,7 @@ import scala.util.{Failure, Success}
 @Singleton
 class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository, ws: WSClient, tl: ToolList,
                                    progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)
-                                  (implicit ec: ExecutionContext) extends ASingleExerciseController(cc, dbcp, tl) with Secured with JsonFormat {
+                                  (implicit ec: ExecutionContext) extends ASingleExerciseController(cc, dbcp, tl) with Secured {
 
   // Abstract types
 
