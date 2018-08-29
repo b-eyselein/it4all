@@ -7,15 +7,17 @@ import model.programming.ProgLanguages
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
 import play.api.data.Form
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json._
+import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 import scala.util.Try
 
 @Singleton
 class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Rose", "rose") with JsonFormat {
+  extends IdExerciseToolMain("Rose", "rose") {
 
   // Abstract types
 
@@ -48,8 +50,24 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // DB
 
-  override def readSolutionForPartFromJson(user: User, exercise: RoseCompleteEx, jsValue: JsValue, part: RoseExPart): Option[SolType] =
-    jsValue.asObj flatMap (_.stringField("implementation"))
+//  private def roseSolutionJsonReads(ex: RoseCompleteEx, user: User): Reads[RoseSolution] = (
+//    (__ \ implementationName).read[String] and
+//      (__ \ languageName).readNullable[ProgLanguage](ProgLanguages.jsonFormat) // TODO: temporary fix!
+//    ) (RoseSolution.apply(user.username, ex.ex.id, ex.ex.semanticVersion, RoseExParts.RoseSingleExPart, _, -1 point, -1 point))
+
+  override protected def readSolution(user: User, exercise: RoseCompleteEx, part: RoseExPart)(implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap {
+    case JsString(solution) => Some(solution)
+    case _                  => None
+  }
+
+  //    request.body.asJson flatMap { jsValue =>
+  //      roseSolutionJsonReads(exercise, user).reads(jsValue) match {
+  //        case JsSuccess(solution, _) => Some(solution)
+  //        case JsError(jsErrors)      =>
+  //          jsErrors.foreach(println)
+  //          None
+  //      }
+  //    }
 
   // Other helper methods
 

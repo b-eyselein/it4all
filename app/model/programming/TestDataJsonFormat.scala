@@ -19,7 +19,7 @@ object TestDataJsonFormat {
       Json.obj(
         idName -> td.id,
         inputName -> td.inputAsJson,
-        outputName -> outputType.toJson(td.output)
+        outputName -> td.output
       )
     })
 

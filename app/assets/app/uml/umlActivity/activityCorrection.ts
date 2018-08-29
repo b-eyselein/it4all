@@ -1,4 +1,5 @@
 import * as $ from 'jquery';
+import {ProgStringSolution} from "../../programming/progExercise";
 import {onProgCorrectionError, onProgCorrectionSuccess} from "../../programming/progCorrectionHandler";
 
 let testBtn: JQuery;
@@ -8,9 +9,9 @@ function activityCorrection(): void {
 
     testBtn.prop('disabled', true);
 
-    let dataToSend = {
-        exercisePart,
-        solution: $('#preCode').text()
+    let dataToSend: ProgStringSolution = {
+        language: "PYTHON_3",
+        implementation: $('#preCode').text()
     };
 
     $.ajax({

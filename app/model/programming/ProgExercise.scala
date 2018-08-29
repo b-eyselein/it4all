@@ -44,13 +44,13 @@ sealed trait TestData {
   val id         : Int
   val exerciseId : Int
   val inputAsJson: JsValue
-  val output     : String
+  val output     : JsValue
 
 }
 
-case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: String) extends TestData
+case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue) extends TestData
 
-case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: String, username: String, state: ExerciseState) extends TestData {
+case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue, username: String, state: ExerciseState) extends TestData {
 
   def toJson: JsObject = Json.obj(
     idName -> id,

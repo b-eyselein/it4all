@@ -1,12 +1,12 @@
 package model.programming
 
 import javax.inject._
-import model.programming.ProgConsts._
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, Points, SemanticVersion, User}
 import play.api.data.Form
 import play.api.libs.json._
+import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -58,28 +58,15 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Reading solution from requests
 
-  override def readSolutionForPartFromJson(user: User, exercise: ProgCompleteEx, jsValue: JsValue, part: ProgExPart): Option[SolType] = jsValue.asObj flatMap { jsObj =>
-
-    part match {
-      case ProgExParts.TestdataCreation => for {
-        testData <- jsObj.arrayField(testdataName, _.asObj flatMap (jsValue => readTestData(exercise.ex.id, exercise.ex.semanticVersion, jsValue, user)))
-        language <- jsObj.stringField(languageName) map ProgLanguages.withNameInsensitive
-      } yield ProgTestDataSolution.apply(testData, language)
-
-      case ProgExParts.Implementation | ProgExParts.ActivityDiagram => for {
-        solution <- jsObj.stringField(implementationName)
-        language <- jsObj.stringField(languageName) map ProgLanguages.withNameInsensitive
-      } yield ProgStringSolution(solution, language)
-
+  override protected def readSolution(user: User, exercise: ProgCompleteEx, part: ProgExPart)(implicit request: Request[AnyContent]): Option[ProgSolution] =
+    request.body.asJson flatMap { jsValue =>
+      ProgSolutionJsonFormat(exercise, user).readProgSolutionFromJson(part, jsValue) match {
+        case JsSuccess(solution, _) => Some(solution)
+        case JsError(errors)        =>
+          errors.foreach(println)
+          None
+      }
     }
-
-  }
-
-  private def readTestData(exId: Int, exSemVer: SemanticVersion, tdJsObj: JsObject, user: User): Option[CommitedTestData] = for {
-    testId <- tdJsObj.intField(idName)
-    inputAsJson <- tdJsObj.field(inputName)
-    output <- tdJsObj.stringField(outputName)
-  } yield CommitedTestData(testId, exId, exSemVer, inputAsJson, output, user.username, ExerciseState.RESERVED)
 
   // Other helper methods
 

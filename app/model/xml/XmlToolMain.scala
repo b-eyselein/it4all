@@ -11,7 +11,8 @@ import model.xml.dtd.DocTypeDefParser
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, Points, SemanticVersion, User}
 import play.api.data.Form
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsString, JsValue}
+import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -68,7 +69,10 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from requests, saving
 
-  override def readSolutionForPartFromJson(user: User, exercise: XmlCompleteExercise, jsValue: JsValue, part: XmlExPart): Option[SolType] = jsValue.asStr
+  override protected def readSolution(user: User, exercise: XmlCompleteExercise, part: XmlExPart)(implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap {
+    case JsString(solution) => Some(solution)
+    case _                  => None
+  }
 
   // Other helper methods
 

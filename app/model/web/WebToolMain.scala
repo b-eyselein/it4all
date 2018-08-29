@@ -8,7 +8,8 @@ import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.yaml.MyYamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Form
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsString, JsValue}
+import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -75,7 +76,11 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from request
 
-  override def readSolutionForPartFromJson(user: User, exercise: WebCompleteEx, jsValue: JsValue, part: WebExPart): Option[SolType] = jsValue.asStr
+  override protected def readSolution(user: User, exercise: WebCompleteEx, part: WebExPart)(implicit request: Request[AnyContent]): Option[String] =
+    request.body.asJson flatMap {
+      case JsString(solution) => Some(solution)
+      case _                  => None
+    }
 
   // Other helper methods
 

@@ -2,10 +2,10 @@ package model.nary
 
 import javax.inject.{Inject, Singleton}
 import model.core.result.EvaluationResult
-import model.nary.NAryNumber.{parseNaryNumber, parseTwoComplement}
 import model.nary.NaryConsts._
 import model.toolMains.{RandomExerciseToolMain, ToolState}
-import model.{Consts, JsonFormat, User}
+import model.{Consts, User}
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -15,7 +15,7 @@ import scala.language.implicitConversions
 
 @Singleton
 class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionContext)
-  extends RandomExerciseToolMain("Zahlensysteme", "nary") with JsonFormat {
+  extends RandomExerciseToolMain("Zahlensysteme", "nary") {
 
   // Abstract types
 
@@ -92,45 +92,23 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   // Correction
 
-  override def checkSolution(user: User, exPart: NaryExPart, request: Request[AnyContent]): JsValue = {
-    val correctionFunction: JsValue => Option[NAryResult] = exPart match {
-      case NaryExParts.NaryAdditionExPart   => readAddSolutionFromJson
-      case NaryExParts.NaryConversionExPart => readConvSolutionFromJson
-      case NaryExParts.TwoComplementExPart  => readTwoCompSolutionFromJson
-    }
-
-    request.body.asJson flatMap correctionFunction match {
-      case None           => Json.obj(errorName -> "TODO!")
-      case Some(solution) => solution.toJson
-    }
+  override def checkSolution(exPart: NaryExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
+    case None          =>
+      Logger.error("A solution for an nary exercise needs to be sent in json format!")
+      ???
+    case Some(jsValue) =>
+      NarySolutionJsonFormat.readSolutionFromJson(exPart, jsValue) match {
+        case JsError(jsErrors)                                 =>
+          jsErrors.foreach(println)
+          Json.obj(errorName -> "TODO!")
+        case JsSuccess(maybeSolution: Option[NAryResult], _) => maybeSolution match {
+          case None           => ???
+          case Some(solution) => solution.toJson
+        }
+      }
   }
 
   // Reading functions
-
-  private def readAddSolutionFromJson(jsValue: JsValue): Option[NAryAddResult] = jsValue.asObj flatMap { jsObj =>
-    for {
-      base <- jsObj.stringField(BaseName) flatMap numbaseFromString
-      summand1 <- jsObj.stringField(FirstSummand) flatMap (parseNaryNumber(_, base))
-      summand2 <- jsObj.stringField(SecondSummand) flatMap (parseNaryNumber(_, base))
-      solutionNary <- jsObj.stringField(solutionName) flatMap (parseNaryNumber(_, base))
-    } yield NAryAddResult(base, summand1, summand2, solutionNary)
-  }
-
-  private def readConvSolutionFromJson(jsValue: JsValue): Option[NAryConvResult] = jsValue.asObj flatMap { jsObj =>
-    for {
-      startingNumBase <- jsObj.stringField(StartingNumBase) flatMap numbaseFromString
-      targetNumBase <- jsObj.stringField(TargetNumBase) flatMap numbaseFromString
-      startingValue <- jsObj.stringField(valueName) flatMap (parseNaryNumber(_, startingNumBase))
-      learnerSol <- jsObj.stringField(solutionName) flatMap (parseNaryNumber(_, targetNumBase))
-    } yield NAryConvResult(startingValue, startingNumBase, targetNumBase, learnerSol)
-  }
-
-  private def readTwoCompSolutionFromJson(jsValue: JsValue): Option[TwoCompResult] = jsValue.asObj flatMap { jsObj =>
-    for {
-      value <- jsObj.intField(valueName)
-      solution <- jsObj.stringField(solutionName) flatMap parseTwoComplement
-    } yield TwoCompResult(value, solution, jsObj.stringField(BinaryAbs), jsObj.stringField(InvertedAbs))
-  }
 
   private def numbaseFromString(str: String): Option[NumberBase] = NumberBase.withNameInsensitiveOption(str)
 

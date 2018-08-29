@@ -5,6 +5,8 @@ import 'codemirror/mode/python/python';
 
 import {onProgCorrectionError, onProgCorrectionSuccess} from "./progCorrectionHandler";
 
+export {ProgStringSolution};
+
 let editor: CodeMirror.Editor;
 let testBtn: JQuery, sampleSolBtn: JQuery;
 
@@ -27,21 +29,26 @@ function changeProgLanguage() {
     });
 }
 
+interface ProgStringSolution {
+    language: string,
+    implementation: string
+}
+
 function testSol(): void {
     $('#correction').html('');
     testBtn.prop('disabled', true);
+
+    const solution: ProgStringSolution = {
+        language: $('#langSelect').val() as string,
+        implementation: editor.getValue()
+    };
 
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url: testBtn.data('url'),
-        data: JSON.stringify({
-            solution: {
-                language: $('#langSelect').val(),
-                implementation: editor.getValue()
-            }
-        }),
+        data: JSON.stringify(solution),
         async: true,
         success: onProgCorrectionSuccess,
         error: onProgCorrectionError

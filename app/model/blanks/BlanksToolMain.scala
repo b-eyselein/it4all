@@ -61,8 +61,6 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
       } yield BlanksAnswer(id, exercise.ex.id, exercise.ex.semanticVersion, answer)
     }))
 
-  override protected def readSolutionForPartFromJson(user: User, exercise: BlanksCompleteExercise, jsValue: JsValue, part: BlanksExPart): Option[Seq[BlanksAnswer]] = ???
-
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): BlanksCompleteExercise =

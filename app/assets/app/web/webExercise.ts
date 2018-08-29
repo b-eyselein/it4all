@@ -29,12 +29,14 @@ function testSol(): void {
     let testButton = $('#testBtn');
     testButton.prop('disabled', true);
 
+    const solution: string = editor.getValue();
+
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url: testButton.data('url'),
-        data: JSON.stringify({solution: editor.getValue()}),
+        data: JSON.stringify(solution),
         async: true,
         success: onWebCorrectionSuccess,
         error: onWebCorrectionError

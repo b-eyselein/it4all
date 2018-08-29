@@ -29,7 +29,7 @@ case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 object NAryNumber {
 
   def parseNaryNumber(input: String, base: NumberBase): Option[NAryNumber] = {
-    val decimalValue = Try(Option(Integer.parseInt(input.trim().replaceAll("\\s", ""), base.base))) getOrElse None
+    val decimalValue: Option[Int] = Try(Option(Integer.parseInt(input.trim().replaceAll("\\s", ""), base.base))) getOrElse None
 
     decimalValue map (NAryNumber(_, base))
   }
@@ -40,7 +40,7 @@ object NAryNumber {
     val firstBit = trimmedInput(0).asDigit
     val maybeParsedRest = Try(Option(Integer.parseInt(trimmedInput.substring(1), 2))) getOrElse None
 
-    maybeParsedRest map { parsedRest => NAryNumber(if (firstBit == 0) parsedRest else -128 + parsedRest, BINARY) }
+    maybeParsedRest map (parsedRest => NAryNumber(if (firstBit == 0) parsedRest else -128 + parsedRest, BINARY))
   }
 
   def padBinary(binary: String): String = {

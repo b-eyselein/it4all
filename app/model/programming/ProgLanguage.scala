@@ -1,6 +1,6 @@
 package model.programming
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -15,7 +15,7 @@ sealed abstract class ProgLanguage(val languageName: String, val aceName: String
 
 }
 
-object ProgLanguages extends Enum[ProgLanguage] {
+object ProgLanguages extends Enum[ProgLanguage] with PlayJsonEnum[ProgLanguage] {
 
   def STANDARD_LANG: ProgLanguage = PYTHON_3
 

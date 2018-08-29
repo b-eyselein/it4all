@@ -65,12 +65,14 @@ function testSol(): void {
 
     const isDocumentPart: boolean = $('#exercisePart').val() === 'document';
 
+    const solution: string = editor.getValue();
+
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url: $('#testBtn').data('url'),
-        data: JSON.stringify({solution: editor.getValue()}),
+        data: JSON.stringify(solution),
         async: true,
         success: isDocumentPart ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
         error: onXmlCorrectionError

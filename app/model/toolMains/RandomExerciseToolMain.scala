@@ -28,7 +28,7 @@ abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: Execu
 
   // Correction
 
-  def checkSolution(user: User, exPart: PartType, request: Request[AnyContent]): JsValue
+  def checkSolution(exPart: PartType, request: Request[AnyContent]): JsValue
 
   // Calls
 

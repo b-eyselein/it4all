@@ -55,7 +55,7 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   // Handlers
 
-  override def checkSolution(user: User, exPart: BoolExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
+  override def checkSolution(exPart: BoolExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
     case None          => Json.obj(errorName -> "There has been an error in your request!")
     case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue) match {
       case JsSuccess(boolSolution, _) => correctPart(exPart, boolSolution).toJson

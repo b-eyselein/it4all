@@ -108,13 +108,13 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[SampleTestData] = for {
       id <- yamlObject.intField(idName)
-      output <- yamlObject.forgivingStringField(outputName)
+      output <- yamlObject.jsonField(outputName)
       inputAsJson <- yamlObject.jsonField(inputsName)
     } yield SampleTestData(id, baseValues.id, baseValues.semanticVersion, inputAsJson, output)
 
     override def write(cstd: SampleTestData): YamlValue = YamlObj(
       idName -> cstd.id,
-      outputName -> cstd.output,
+      outputName -> cstd.output.toString(),
       inputsName -> cstd.inputAsJson.toString()
     )
 

@@ -142,7 +142,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def inputAsJson = column[JsValue]("input_json")
 
-    def output = column[String]("output")
+    def output = column[JsValue]("output")
 
 
     def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))

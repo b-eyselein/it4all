@@ -3,7 +3,6 @@ package model.toolMains
 import java.nio.file.{Files, Path}
 
 import model._
-import model.core.CoreConsts.solutionName
 import model.core._
 import model.core.result.CompleteResult
 import model.persistence.SingleExerciseTableDefs
@@ -16,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
-  extends ASingleExerciseToolMain(tn, up) with JsonFormat {
+  extends ASingleExerciseToolMain(tn, up) { //with JsonFormat {
 
   // Abstract types
 
@@ -88,12 +87,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
         }
     }
 
-  protected def readSolution(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent]): Option[SolType] =
-    request.body.asJson flatMap (_.asObj) flatMap {
-      _.field(solutionName) flatMap (solution => readSolutionForPartFromJson(user, exercise, solution, part))
-    }
-
-  protected def readSolutionForPartFromJson(user: User, exercise: CompExType, jsValue: JsValue, part: PartType): Option[SolType]
+  protected def readSolution(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
 
   protected def correctEx(user: User, sol: SolType, exercise: CompExType, part: PartType): Future[Try[CompResult]]
 

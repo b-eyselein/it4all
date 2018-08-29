@@ -30,11 +30,11 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
       }
   }
 
-  def correctLive(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
+  def correctLive(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
       toolMain.exTypeFromUrl(exType) match {
         case None         => BadRequest(s"There is no exercise part >>$exType<<")
-        case Some(exPart) => Ok(toolMain.checkSolution(user, exPart, request))
+        case Some(exPart) => Ok(toolMain.checkSolution(exPart, request))
       }
   }
 

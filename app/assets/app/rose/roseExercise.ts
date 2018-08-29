@@ -47,20 +47,19 @@ function onRoseCorrectionError(jqXHR): void {
 function testSol(): void {
     testBtn.prop('disabled', true);
 
-    let dataToSend = {
-        part: "",
-        solution: {
-            languague: "PYTHON",
-            implementation: editor.getValue()
-        }
-    };
+    const solution : string = editor.getValue();
+    // = {
+    //     languague: "PYTHON_3",
+    //     implementation: editor.getValue()
+    // };
+
 
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url: testBtn.data('url'),
-        data: JSON.stringify(dataToSend),
+        data: JSON.stringify(solution),
         async: true,
         success: onRoseCorrectionSuccess,
         error: onRoseCorrectionError
