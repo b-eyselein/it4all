@@ -3,6 +3,7 @@ package model.questions
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.questions.QuestionEnums.Correctness
 import play.api.libs.json._
+import model.questions.QuestionConsts._
 
 import scala.collection.mutable.ListBuffer
 
@@ -12,12 +13,15 @@ case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: Complet
 
   override val results: Seq[IdAnswerMatch] = IdAnswerMatcher.doMatch(learnerSolution, question.answers)
 
-  def forJson: JsValue = JsArray(results map { r =>
-    // FIXME: update option!
-    JsObject(Seq("id" -> JsNumber(r.id), "chosen" -> JsBoolean(r.userArg.isDefined), "correct" -> JsBoolean(r.isCorrect)) ++ r.sampleArg.flatMap(_.explanation).map(expl => "explanation" -> JsString(expl)))
+  override def toJson(saved: Boolean): JsValue = JsArray(results map { r =>
+    Json.obj(
+      idName -> JsNumber(r.id),
+      "chosen" -> JsBoolean(r.userArg.isDefined),
+      correctName -> JsBoolean(r.isCorrect),
+      "explanation" -> r.sampleArg.flatMap(_.explanation).map(JsString)
+    )
   })
 
-  override def toJson(saved: Boolean): JsValue = ???
 
 }
 

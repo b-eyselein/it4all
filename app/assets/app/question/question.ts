@@ -26,8 +26,6 @@ function onAjaxError(jqXHR) {
 }
 
 interface QuestionSolution {
-    quiz: number,
-    question: number,
     questionType: string,
     chosen: number[]
 }
@@ -43,8 +41,6 @@ function testQuestionSol(): void {
     console.warn(chosen);
 
     let solution: QuestionSolution = {
-        quiz: 1,
-        question: 1,
         questionType: "CHOICE", // theQuestionType,
         chosen
     };

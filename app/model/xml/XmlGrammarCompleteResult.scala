@@ -29,7 +29,6 @@ object XmlGrammarCompleteResult {
     case m: MultiElementContent         => addUp(m.children map pointsForElementContent)
   }
 
-
   private def pointsForAttributes(attributeList: AttributeList): Points = pointsForAttribute * attributeList.attributeDefinitions.size
 
 }

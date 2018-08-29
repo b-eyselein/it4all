@@ -16,8 +16,14 @@ dist
 # Node modules
 node_modules/
 
-# Ignore saved files
-data/
+# Ignore saved files, except folder data/web
+data/*
+!data/.gitkeep
+!data/web/
+
+data/web/*
+!data/web/.gitkeep
+
 
 # IntelliJ IDEA
 .idea/
