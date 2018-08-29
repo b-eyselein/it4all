@@ -67,6 +67,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureCompleteExesInColl(collId: Int): Future[Seq[CompExType]] = tables.futureCompleteExesInColl(collId)
 
+  def futureMaybeOldSolution(user: User, collId: Int, exId: Int): Future[Option[DBSolType]] = tables.futureMaybeOldSolution(user.username, collId, exId)
+
   // Saving
 
   override def futureSaveRead(exercises: Seq[CompCollType]): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
@@ -143,7 +145,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this, toolList)
   }
 
-  def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int): Future[Html]
+  def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int, maybeOldSolution: Option[DBSolType]): Html
 
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
 

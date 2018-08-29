@@ -1,7 +1,9 @@
 package model.questions
 
 trait IdAnswer {
+
   val id: Int
+
 }
 
 sealed trait GivenAnswer

@@ -102,13 +102,14 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
        |  </div>
        |</div>""".stripMargin)
 
-  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int): Future[Html] =
-    tables.futureMaybeOldSolution(user.username, sqlScenario.id, exercise.ex.id) map (_ map (_.solution) getOrElse "") map { oldOrDefSol =>
+  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int, maybeOldSolution: Option[DBSolType]): Html = {
 
-      val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
+    val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
-      views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes, this)
-    }
+    val oldOrDefSol = maybeOldSolution map (_.solution) getOrElse ""
+
+    views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes, this)
+  }
 
   override def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.collectionExercises.sql.editSqlExercise(user, newEx, isCreation, this, toolList)

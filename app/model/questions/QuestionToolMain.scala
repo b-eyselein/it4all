@@ -80,7 +80,9 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
        |  </div>
        |</div>""".stripMargin)
 
-  override def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion, numOfExes: Int): Future[Html] = Future {
+  override def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion, numOfExes: Int, maybeOldSolution: Option[DBSolType]): Html = {
+    println(numOfExes)
+
     views.html.collectionExercises.questions.question(user, quiz, exercise, numOfExes, None /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
   }
 

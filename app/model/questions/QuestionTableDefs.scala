@@ -140,7 +140,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
 
   class QuestionSolutionsTable(tag: Tag) extends CollectionExSolutionsTable(tag, "question_solutions") {
 
-    def solution = column[Seq[GivenAnswer]]("todo")
+    def solution = column[Seq[GivenAnswer]]("answers")
 
 
     override def * = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints).mapTo[QuestionSolution]

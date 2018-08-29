@@ -22,7 +22,6 @@ case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: Complet
     )
   })
 
-
 }
 
 object IdAnswerMatcher {

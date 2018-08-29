@@ -14,6 +14,7 @@
             </div>
 
             <div id="answerDiv">
+
             @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.CHOICE) {
                 @for(ans <- question.answersForTemplate) {
                     <div class="form-group">
@@ -31,6 +32,7 @@
                     </div>
                 </div>
             }
+
             </div>
 
             <button data-url="@routes.CollectionController.correctLive("question", quiz.id, question.ex.id)"
@@ -38,7 +40,7 @@
 
             <hr>
 
-            @core.helperTemplates.bsPager(question.ex.id, id => routes.CollectionController.exercise("question", quiz.id, id), numOfExes, step = 10)
+            @core.helperTemplates.bsPager(question.ex.id, id => routes.CollectionController.exercise("question", quiz.id, id), numOfExes, step = 1)
 
         </div>
     }

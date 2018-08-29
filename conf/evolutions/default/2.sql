@@ -70,6 +70,8 @@ DELETE IGNORE FROM rose_exercises;
 
 # Questions
 
+DELETE IGNORE FROM question_solutions;
+
 DELETE IGNORE FROM question_answers;
 
 DELETE IGNORE FROM questions;
@@ -91,12 +93,6 @@ DELETE IGNORE FROM prog_sample_solutions;
 DELETE IGNORE FROM prog_input_types;
 
 DELETE IGNORE FROM prog_exercises;
-
-# Blanks
-
-DELETE IGNORE FROM blanks_samples;
-
-DELETE IGNORE FROM blanks_exercises;
 
 # General
 

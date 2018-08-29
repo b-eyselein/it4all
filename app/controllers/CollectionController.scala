@@ -173,14 +173,15 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None             => Future(BadRequest(s"There is no collection with id $collId!"))
         case Some(collection) =>
 
-          val values: Future[(Option[toolMain.CompExType], Int)] = for {
+          val values: Future[(Option[toolMain.CompExType], Int, Option[toolMain.DBSolType])] = for {
             compEx <- toolMain.futureCompleteExById(collId, id)
             numOfExes <- toolMain.numOfExesInColl(collId)
-          } yield (compEx, numOfExes)
+            oldSolution <- toolMain.futureMaybeOldSolution(user, collId, id)
+          } yield (compEx, numOfExes, oldSolution)
 
-          values flatMap {
-            case (None, _)             => Future(BadRequest(s"There is no exercise with id $id in collection $collId!"))
-            case (Some(ex), numOfExes) => toolMain.renderExercise(user, collection, ex, numOfExes) map (f => Ok(f))
+          values map {
+            case (None, _, _)                            => BadRequest(s"There is no exercise with id $id in collection $collId!")
+            case (Some(ex), numOfExes, maybeOldSolution) => Ok(toolMain.renderExercise(user, collection, ex, numOfExes, maybeOldSolution))
           }
       }
   }

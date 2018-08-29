@@ -2,10 +2,21 @@ import * as $ from 'jquery';
 
 let testBtn: JQuery;
 
+
+interface QuestionResult {
+    id: number,
+    chosen: boolean,
+    correct: boolean,
+    explanation: string
+}
+
 /**
  * @param {Array<{id: Number, chosen: Boolean, correct: Boolean, explanation: String=}>} response
  */
-function onAjaxSuccess(response) {
+function onAjaxSuccess(response: QuestionResult[]) {
+    testBtn.prop('disabled', false);
+
+
     for (let entry of response) {
         let parent = $('#' + entry.id).parent();
         if (entry.correct) {
@@ -22,6 +33,7 @@ function onAjaxSuccess(response) {
 }
 
 function onAjaxError(jqXHR) {
+    testBtn.prop('disabled', false);
     console.error(jqXHR.responseText);
 }
 

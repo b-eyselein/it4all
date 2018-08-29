@@ -77,34 +77,6 @@ CREATE TABLE IF NOT EXISTS learning_path_sections (
     ON DELETE CASCADE
 );
 
-# Blanks
-
-CREATE TABLE IF NOT EXISTS blanks_exercises (
-  id               INT,
-  semantic_version VARCHAR(10),
-
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  blanks_text      TEXT,
-  raw_blanks_text  TEXT,
-
-  PRIMARY KEY (id, semantic_version)
-);
-
-CREATE TABLE IF NOT EXISTS blanks_samples (
-  id          INT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  solution    VARCHAR(50),
-
-  PRIMARY KEY (id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES blanks_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
 # Programming
 
 CREATE TABLE IF NOT EXISTS prog_exercises (
@@ -259,6 +231,22 @@ CREATE TABLE IF NOT EXISTS question_answers (
 
   PRIMARY KEY (id, question_id, ex_sem_ver, collection_id, coll_sem_ver),
   FOREIGN KEY (question_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES questions (id, semantic_version, collection_id, coll_sem_ver)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS question_solutions (
+  username      VARCHAR(50),
+  exercise_id   INT,
+  ex_sem_ver    VARCHAR(10),
+  collection_id INT,
+  coll_sem_ver  VARCHAR(10),
+  points        INT,
+  max_points    INT,
+  answers        TEXT,
+
+  PRIMARY KEY (username, collection_id, coll_sem_ver, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES questions (id, semantic_version, collection_id, coll_sem_ver)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -655,6 +643,8 @@ DROP TABLE IF EXISTS rose_exercises;
 
 # Questions
 
+DROP TABLE IF EXISTS question_solutions;
+
 DROP TABLE IF EXISTS question_answers;
 
 DROP TABLE IF EXISTS questions;
@@ -676,12 +666,6 @@ DROP TABLE IF EXISTS prog_sample_solutions;
 DROP TABLE IF EXISTS prog_input_types;
 
 DROP TABLE IF EXISTS prog_exercises;
-
-# Blanks
-
-DROP TABLE IF EXISTS blanks_samples;
-
-DROP TABLE IF EXISTS blanks_exercises;
 
 # General
 
