@@ -1,24 +1,21 @@
 package model.xml
 
-import model.core.matching.{MatchType, MatchingResult}
+import model._
+import model.core.matching.MatchingResult
 import model.core.result.SuccessType
 import model.xml.XmlConsts._
+import model.xml.XmlGrammarCompleteResult._
 import model.xml.dtd._
 import play.api.libs.json.{JsValue, Json}
 
 import scala.language.postfixOps
-import model._
 
-case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sampleGrammar: XmlSampleGrammar, completeEx: XmlCompleteExercise) extends XmlCompleteResult {
-
-  override type SolType = DTDParseResult
+object XmlGrammarCompleteResult {
 
   private val pointsForElement  : Points = 1 halfPoints
   private val pointsForAttribute: Points = 3 halfPoints
 
-  val matchingResult: MatchingResult[ElementLine, ElementLineAnalysisResult, ElementLineMatch] = XmlCorrector.correctDTD(learnerSolution.dtd, sampleGrammar.sampleGrammar)
-
-  private def pointsForElementLine(elementLine: ElementLine): Points = {
+  def pointsForElementLine(elementLine: ElementLine): Points = {
     val pointsForElemContent: Points = pointsForElementContent(elementLine.elementDefinition.content)
     val pointsForAttrs: Points = addUp(elementLine.attributeLists.map(pointsForAttributes))
 
@@ -32,18 +29,16 @@ case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sampleGramm
     case m: MultiElementContent         => addUp(m.children map pointsForElementContent)
   }
 
+
   private def pointsForAttributes(attributeList: AttributeList): Points = pointsForAttribute * attributeList.attributeDefinitions.size
 
-  private def pointsForMatch(m: ElementLineMatch): Points = m.matchType match {
-    case MatchType.SUCCESSFUL_MATCH                             => m.sampleArg map pointsForElementLine getOrElse (0 points)
-    case MatchType.ONLY_SAMPLE                                  => 0 points
-    case MatchType.ONLY_USER                                    => 0 points
-    case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
-      // FIXME: calculate...
-      m.analysisResult.map { elar: ElementLineAnalysisResult =>
-        elar.points
-      } getOrElse 0.points
-  }
+}
+
+case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sampleGrammar: XmlSampleGrammar, completeEx: XmlCompleteExercise) extends XmlCompleteResult {
+
+  override type SolType = DTDParseResult
+
+  val matchingResult: MatchingResult[ElementLine, ElementLineMatch] = XmlCorrector.correctDTD(learnerSolution.dtd, sampleGrammar.sampleGrammar)
 
   override def maxPoints: Points = {
     val pointsForElements: Points = pointsForElement * sampleGrammar.sampleGrammar.asElementLines.size
@@ -55,7 +50,7 @@ case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sampleGramm
 
   override def points: Points = success match {
     case SuccessType.COMPLETE => maxPoints
-    case _                    => addUp(matchingResult.allMatches map pointsForMatch)
+    case _                    => addUp(matchingResult.allMatches map (_.points))
   }
 
   override val results: Seq[ElementLineMatch] = matchingResult.allMatches

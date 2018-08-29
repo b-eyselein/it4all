@@ -6,7 +6,11 @@ import model.uml.{UmlAttribute, UmlClassMember, UmlMethod, UmlVisibility}
 import play.api.libs.json.{JsValue, Json}
 
 
-sealed trait UmlClassMemberMatch[Mem <: UmlClassMember, AR <: UmlClassMemberAnalysisResult] extends Match[Mem, AR]
+sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match[Mem] {
+
+  override type AR <: UmlClassMemberAnalysisResult
+
+}
 
 sealed trait UmlClassMemberAnalysisResult extends AnalysisResult {
 
@@ -37,9 +41,9 @@ case class UmlAttributeAnalysisResult(matchType: MatchType,
 
 }
 
-case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[UmlAttribute]) extends UmlClassMemberMatch[UmlAttribute, UmlAttributeAnalysisResult] {
+case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[UmlAttribute]) extends UmlClassMemberMatch[UmlAttribute] {
 
-  //  override type MatchAnalysisResult = UmlAttributeAnalysisResult
+  override type AR = UmlAttributeAnalysisResult
 
   override def analyze(arg1: UmlAttribute, arg2: UmlAttribute): UmlAttributeAnalysisResult = {
 
@@ -110,9 +114,9 @@ case class UmlMethodAnalysisResult(matchType: MatchType,
 
 }
 
-case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMethod]) extends UmlClassMemberMatch[UmlMethod, UmlMethodAnalysisResult] {
+case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMethod]) extends UmlClassMemberMatch[UmlMethod] {
 
-  //  override type MatchAnalysisResult = UmlMethodAnalysisResult
+  override type AR = UmlMethodAnalysisResult
 
   override protected def descArgForJson(arg: UmlMethod): JsValue = Json.obj(nameName -> arg.memberName, typeName -> arg.memberType)
 

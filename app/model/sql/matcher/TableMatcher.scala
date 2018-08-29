@@ -4,9 +4,9 @@ import model.core.matching._
 import net.sf.jsqlparser.schema.Table
 import play.api.libs.json.{JsString, JsValue}
 
-case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) extends Match[Table, GenericAnalysisResult] {
+case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) extends Match[Table] {
 
-  //  override type MatchAnalysisResult = GenericAnalysisResult
+  override type AR = GenericAnalysisResult
 
   override protected def descArgForJson(arg: Table): JsValue = JsString(arg.toString)
 

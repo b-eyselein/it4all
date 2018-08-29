@@ -85,9 +85,8 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
   implicit val correctnessColumnType: BaseColumnType[Correctness] =
     MappedColumnType.base[Correctness, String](_.name, str => Correctness.byString(str) getOrElse Correctness.OPTIONAL)
 
-  override protected implicit val solutionTypeColumnType: BaseColumnType[Seq[GivenAnswer]] = ???
-
-  //    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq.empty)
+  override protected implicit val solutionTypeColumnType: BaseColumnType[Seq[GivenAnswer]] = // FIXME!: ???
+    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq.empty)
 
   // Table defs
 

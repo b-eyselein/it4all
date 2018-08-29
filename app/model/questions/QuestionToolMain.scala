@@ -51,7 +51,9 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
 
   // Reading from requests
 
-  override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
+  override def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] = {
+    println(request.body.asJson)
+
     request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
       val maybeGivenAnswers: Option[Seq[IdGivenAnswer]] = jsObj.stringField(questionTypeName) flatMap QuestionType.byString flatMap {
         case QuestionType.CHOICE   => jsObj.arrayField("chosen", jsValue => Some(IdGivenAnswer(jsValue.asInt getOrElse -1)))
@@ -60,6 +62,7 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
 
       maybeGivenAnswers // map (givenAnswers => QuestionSolution(user.username, collId, id, givenAnswers))
     }
+  }
 
   override protected def compExTypeForm(collId: Int): Form[CompleteQuestion] = ???
 
@@ -82,14 +85,6 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
   }
 
   override def renderEditRest(exercise: CompleteQuestion): Html = ???
-
-  // Result handlers
-
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
-
-  override def onSubmitCorrectionResult(user: User, result: QuestionResult): Html = ???
-
-  //  override def onLiveCorrectionResult(result: QuestionResult): JsValue = result.forJson
 
   // Correction
 

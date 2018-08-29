@@ -93,8 +93,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Correction
 
-  def correctAbstract(user: User, collId: Int, id: Int, isLive: Boolean)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[Either[Html, JsValue]]] =
-    readSolution(user, collId, id, isLive) match {
+  def correctAbstract(user: User, collId: Int, id: Int, isLive: Boolean)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
+    readSolution(user, collId, id) match {
       case None => Future(Failure(SolutionTransferException))
 
       case Some(solution) =>
@@ -119,10 +119,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
                 val maxPoints = -1 point
 
                 val dbSol = instantiateSolution(user.username, collection, exercise, solution, points, maxPoints)
-                tables.futureSaveSolution(dbSol) map { solSaved =>
-                  if (isLive) Success(Right(onLiveCorrectionResult(res, solSaved)))
-                  else Success(Left(onSubmitCorrectionResult(user, res)))
-                }
+                tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
             }
         }
     }
@@ -133,13 +130,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def readExerciseFromForm(collId: Int)(implicit request: Request[AnyContent]): Form[CompExType] = compExTypeForm(collId).bindFromRequest()
 
-  private def readSolution(user: User, collId: Int, id: Int, isLive: Boolean)(implicit request: Request[AnyContent]) =
-    if (isLive) readSolutionFromPutRequest(user, collId: Int, id)
-    else readSolutionFromPostRequest(user, collId: Int, id)
-
-  def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
-
-  def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] = None
+  protected def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
 
   // Views
 
@@ -166,10 +157,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     views.html.admin.collExes.collPreview(user, read, this, toolList)
 
   // Result handlers
-
-  def onSubmitCorrectionResult(user: User, result: CompResult): Html
-
-  def onSubmitCorrectionError(user: User, error: Throwable): Html
 
   def onLiveCorrectionResult(result: CompResult, solutionSaved: Boolean): JsValue = result.toJson(solutionSaved)
 

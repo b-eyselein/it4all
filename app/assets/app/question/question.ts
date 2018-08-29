@@ -1,3 +1,7 @@
+import * as $ from 'jquery';
+
+let testBtn: JQuery;
+
 /**
  * @param {Array<{id: Number, chosen: Boolean, correct: Boolean, explanation: String=}>} response
  */
@@ -21,29 +25,43 @@ function onAjaxError(jqXHR) {
     console.error(jqXHR.responseText);
 }
 
-/**
- * @param {string} theUrl
- */
-function testSol(theUrl) {
-    $('#submit').prop('disabled', true);
+interface QuestionSolution {
+    quiz: number,
+    question: number,
+    questionType: string,
+    chosen: number[]
+}
 
-    let theChosen = $('#answerDiv').find('input[data-answerid]').filter((index, elem) => elem.checked).map((index, elem) => parseInt(elem.dataset.answerid)).get();
+function testQuestionSol(): void {
 
-    let theData = {
+    testBtn.prop('disabled', true);
+
+    let chosen: number[] = $('#answerDiv').find('input[data-answerid]')
+        .filter((index, elem: HTMLInputElement) => elem.checked)
+        .map((index, elem) => parseInt(elem.dataset.answerid)).get();
+
+    console.warn(chosen);
+
+    let solution: QuestionSolution = {
         quiz: 1,
         question: 1,
-        questionType: theQuestionType,
-        chosen: theChosen
+        questionType: "CHOICE", // theQuestionType,
+        chosen
     };
 
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
-        url: theUrl,
-        data: JSON.stringify(theData),
+        url: testBtn.data('url'),
+        data: JSON.stringify(solution),
         async: true,
         success: onAjaxSuccess,
         error: onAjaxError
     });
 }
+
+$(() => {
+    testBtn = $('#testBtn');
+    testBtn.on('click', testQuestionSol);
+});

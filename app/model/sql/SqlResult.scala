@@ -1,7 +1,7 @@
 package model.sql
 
 import model.Points
-import model.core.matching.{GenericAnalysisResult, MatchingResult}
+import model.core.matching.MatchingResult
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.sql.SqlConsts._
 import model.sql.matcher._
@@ -49,15 +49,15 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
 // FIXME: use builder?
 case class SqlResult(learnerSolution: String, override val points: Points, override val maxPoints: Points,
-                     columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
-                     tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
-                     whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
+                     columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
+                     tableComparison: MatchingResult[Table, TableMatch],
+                     whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch],
 
                      executionResult: SqlExecutionResult,
 
-                     groupByComparison: Option[MatchingResult[Expression, GenericAnalysisResult, GroupByMatch]],
-                     orderByComparison: Option[MatchingResult[OrderByElement, GenericAnalysisResult, OrderByMatch]],
-                     insertedValuesComparison: Option[MatchingResult[ExpressionList, GenericAnalysisResult, ExpressionListMatch]])
+                     groupByComparison: Option[MatchingResult[Expression, GroupByMatch]],
+                     orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]],
+                     insertedValuesComparison: Option[MatchingResult[ExpressionList, ExpressionListMatch]])
   extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison

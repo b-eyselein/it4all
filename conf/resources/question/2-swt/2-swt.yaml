@@ -3,7 +3,7 @@ semanticVersion: 1.0.0
 title: Softwaretechnik
 author: alg81dm
 text: Fragen zur Vorlesung 'Softwaretechnik'
-state: ACCEPTED
+status: APPROVED
 theme: SWT
 
 exercises:
@@ -13,6 +13,8 @@ exercises:
   text: Wofür werden Fremdschlüssel in Datenbanksystemen genutzt und welche Regeln gelten für sie?
   maxPoints: 2
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: Fremdschlüssel modellieren Assoziationen zwischen Tabellen. Sie müssen immer einen Wert besitzen (Entitätsintegrität).
@@ -27,6 +29,8 @@ exercises:
   text: Beschreiben Sie drei der fünf Normalformen für relationale Datenbanken.
   maxPoints: 3
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: "Erste Normalform: Alle Attributwerte sind atomar (d.h. elementarer Typ; keine Arrays, Listen, Mengen, oder ähnlicher)."
@@ -50,6 +54,8 @@ exercises:
   text: Was wird mit einem physischen Datenmodell beschrieben?
   maxPoints: 1
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: Das physische Datenmodell stellt das interne Schema der Datenbank dar und beschreibt Tabellen mit ihren Spalten, sowie die Beziehungen zwischen Tabellen.
@@ -61,6 +67,8 @@ exercises:
   text: Nennen Sie eine serverseitige Programmiersprache und einen Anwendungsfall, in dem eine solche benötigt wird.
   maxPoints: 1
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: "Sprachen: z.B. PHP, Python, Java, Ruby, C++, C#, ..."
@@ -84,6 +92,8 @@ exercises:
   text: In der Vorlesung wurden zwei Verfahren zur Aufwandsschätzung von Softwareprojekten vorgestellt. Nennen Sie eines und beschreiben Sie es kurz.
   maxPoints: 2
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: "COCOMO: COnstructive COst MOdel, basierend auf geschätzter Programmgröße in Zeilen Code"
@@ -116,6 +126,8 @@ exercises:
   text: Wozu werden DTD und XML-Schema genutzt? Nennen Sie je einen Vorteil von DTD und XML-Schema.
   maxPoints: 2
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: DTD und XML-Schema dienen der Definition von XML-Grammatiken, beschreiben also Reihenfolge, Verschachtelung, Anzahl und Typen von Elementen und Attributen.
@@ -133,6 +145,8 @@ exercises:
   text: Welche Vorteile hat ein UML-Klassendiagramm gegenüber einem Entity-Relationship-Diagramm?
   maxPoints: 1
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: Klassendiagramme sind kompakter und ausdrucksstärker.
@@ -147,6 +161,8 @@ exercises:
   text: Welchen Zweck erfüllt das Pflichtenheft in einem Softwareprojekt?
   maxPoints: 1
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: Das Pflichtenheft legt die gewünschten Leistungen eines Programms, seine Rahmenbedingungen, verwalteten Datenmengen und Benutzerschnittstellen fest.
@@ -161,6 +177,8 @@ exercises:
   text: Wie unterscheidet sich in HTML die Quellenangabe bei der Einbindung von Audio- und Videodateien von der Einbindung von Grafiken?
   maxPoints: 1
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: >
@@ -174,6 +192,8 @@ exercises:
   text: Die Angabe von Formatierungen ist bereits in HTML möglich, trotzdem wird bevorzugt CSS hierfür benuzt. Begründen Sie dies.
   maxPoints: 1
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: Durch die Verwendung von CSS trennt man die Struktur der Daten von ihrer Darstellung.
@@ -188,6 +208,8 @@ exercises:
   text: Wann ist die Verwendung von Javascript anstelle einer serverseitigen Programmiersprache nötig?
   maxPoints: 2
   exerciseType: FREETEXT
+  status: APPROVED
+  semanticVersion: 0.1.0
   answers:
   - id: 1
     text: >

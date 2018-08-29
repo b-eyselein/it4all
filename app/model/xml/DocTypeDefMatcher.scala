@@ -26,9 +26,9 @@ case class ElementLineAnalysisResult(matchType: MatchType,
 
 }
 
-case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[ElementLine]) extends Match[ElementLine, ElementLineAnalysisResult] with XmlEvaluationResult {
+case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[ElementLine]) extends Match[ElementLine] with XmlEvaluationResult {
 
-  //  override type MatchAnalysisResult = ElementLineAnalysisResult
+  override type AR = ElementLineAnalysisResult
 
   override protected def analyze(arg1: ElementLine, arg2: ElementLine): ElementLineAnalysisResult = {
     val contentCorrect = arg1.elementDefinition.contentAsString == arg2.elementDefinition.contentAsString
@@ -52,6 +52,15 @@ case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[Elem
   override def success: SuccessType = if (analysisResult.exists(_.matchType == MatchType.SUCCESSFUL_MATCH)) {
     SuccessType.COMPLETE
   } else SuccessType.NONE
+
+  def points: Points = matchType match {
+    case MatchType.SUCCESSFUL_MATCH                             => sampleArg map XmlGrammarCompleteResult.pointsForElementLine getOrElse (0 points)
+    case MatchType.ONLY_SAMPLE                                  => 0 points
+    case MatchType.ONLY_USER                                    => 0 points
+    case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
+      // FIXME: calculate...
+      analysisResult.map(_.points) getOrElse 0.points
+  }
 
 }
 

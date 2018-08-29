@@ -6,9 +6,9 @@ import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
 
-case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression, GenericAnalysisResult] {
+case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
 
-  //  override type MatchAnalysisResult = GenericAnalysisResult
+  override type AR = GenericAnalysisResult
 
   override def analyze(a1: BinaryExpression, a2: BinaryExpression): GenericAnalysisResult = {
 

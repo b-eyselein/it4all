@@ -5,9 +5,9 @@ import model.sql.ColumnWrapper
 import play.api.libs.json.{JsString, JsValue}
 
 
-case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match[ColumnWrapper, GenericAnalysisResult] {
+case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match[ColumnWrapper] {
 
-  //  override type MatchAnalysisResult = GenericAnalysisResult
+  override type AR = GenericAnalysisResult
 
   val hasAlias: Boolean = (userArg exists (_.hasAlias)) || (sampleArg exists (_.hasAlias))
 

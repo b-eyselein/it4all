@@ -6,9 +6,9 @@ import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
 
-case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match[Expression, GenericAnalysisResult] {
+case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match[Expression] {
 
-  //  override type MatchAnalysisResult = GenericAnalysisResult
+  override type AR = GenericAnalysisResult
 
   override def analyze(ua: Expression, sa: Expression): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
 

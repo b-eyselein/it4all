@@ -2,15 +2,12 @@ package model.sql
 
 import javax.inject._
 import model._
+import model.core.Java_Levenshtein
 import model.core.result.EvaluationResult
-import model.core.{Java_Levenshtein, SolutionFormHelper}
-import model.sql.SqlConsts._
 import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
 import model.yaml.MyYamlFormat
 import play.api.data.Form
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -87,14 +84,11 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Read from requests
 
-  override def readSolutionFromPutRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
+  override protected def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap {
       case JsString(value) => Some(value)
       case _               => None
     }
-
-  override def readSolutionFromPostRequest(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
-    SolutionFormHelper.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
 
   override protected def compExTypeForm(collId: Int): Form[SqlCompleteEx] = SqlFormMappings.sqlCompleteExForm(collId)
 
@@ -137,25 +131,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
       //      }
     }
   }
-
-  // Result handlers
-
-  override def onSubmitCorrectionError(user: User, error: Throwable): Html = ??? // FIXME: implement...
-
-  override def onSubmitCorrectionResult(user: User, result: SqlCorrResult): Html = ???
-
-  //    result match {
-  //    case res: SqlResult           => views.html.core.correction(result, views.html.sql.sqlResult(res), user, this)
-  //    case SqlParseFailed(_, error) =>
-  // //           FIXME: implement...
-  //      Logger.error("There has been a sql correction error", error)
-  //      Html("Es gab einen Fehler bei der Korrektur!")
-  //  }
-
-  //  override def onLiveCorrectionResult(result: SqlCorrResult): JsValue = result match {
-  //    case res: SqlResult              => res.toJson
-  //    case SqlParseFailed(_, _, error) => Json.obj("msg" -> error.getMessage)
-  //  }
 
   // Helper methods
 

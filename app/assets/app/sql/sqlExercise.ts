@@ -147,7 +147,7 @@ function explainMatch(aMatch: Match<any, any>, matchName: string): string {
 function onSqlCorrectionSuccess(response: SqlResult): void {
     testBtn.prop('disabled', false);
 
-    console.warn(JSON.stringify(response, null, 2));
+    // console.warn(JSON.stringify(response, null, 2));
 
 
     correction.html('');

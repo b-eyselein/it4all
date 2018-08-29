@@ -185,28 +185,13 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
   }
 
-  def correct(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      toolMain.correctAbstract(user, collId, id, isLive = false) map {
-        case Failure(error)  => BadRequest(toolMain.onSubmitCorrectionError(user, error))
-        case Success(result) =>
-          result match {
-            case Right(jsValue) => Ok(jsValue)
-            case Left(html)     => Ok(html)
-          }
-      }
-  }
-
   def correctLive(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.correctAbstract(user, collId, id, isLive = true) map {
+        case Success(result) => Ok(result)
         case Failure(error)  =>
           Logger.error("There has been an internal correction error:", error)
           BadRequest(toolMain.onLiveCorrectionError(error))
-        case Success(result) => result match {
-          case Right(jsValue) => Ok(jsValue)
-          case Left(html)     => Ok(html)
-        }
       }
   }
 

@@ -18,14 +18,16 @@ case class GenericAnalysisResult(matchType: MatchType) extends AnalysisResult {
 
 }
 
-trait Match[T, AR <: AnalysisResult] extends JsonWriteable {
+trait Match[T] extends JsonWriteable {
+
+  type AR <: AnalysisResult
 
   //  type MatchAnalysisResult <: AnalysisResult
 
   val userArg  : Option[T]
   val sampleArg: Option[T]
 
-  val analysisResult: Option[AR] = (userArg, sampleArg) match {
+  protected val analysisResult: Option[AR] = (userArg, sampleArg) match {
     case (Some(ua), Some(sa)) => Some(analyze(ua, sa))
     case _                    => None
   }
@@ -38,7 +40,7 @@ trait Match[T, AR <: AnalysisResult] extends JsonWriteable {
     }
   }
 
-  def explanations: Seq[String] = matchType match {
+  protected def explanations: Seq[String] = matchType match {
     case MatchType.ONLY_USER                                    => Seq("Angabe ist falsch!")
     case MatchType.ONLY_SAMPLE                                  => Seq("Angabe fehlt!")
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq(s"Fehler beim Abgleich. Erwartet wurde ${sampleArg map descArg getOrElse ""}")

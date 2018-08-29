@@ -8,7 +8,7 @@
         member.memberName + ": " + member.memberType
     }
 
-    @describeClassMemberMatch(memberMatch: model.uml.matcher.UmlClassMemberMatch[_ <: model.uml.UmlClassMember, _], name: String) = {
+    @describeClassMemberMatch(memberMatch: model.uml.matcher.UmlClassMemberMatch[_ <: model.uml.UmlClassMember], name: String) = {
         <li class="text-@memberMatch.matchType.bsClass">
 
         @memberMatch.matchType match {

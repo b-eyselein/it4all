@@ -1,6 +1,6 @@
 package model.sql
 
-import model.core.matching.{GenericAnalysisResult, MatchingResult}
+import model.core.matching.MatchingResult
 import model.sql.ColumnWrapper.wrapColumn
 import model.sql.matcher.{ExpressionListMatch, ExpressionListMatcher}
 import net.sf.jsqlparser.expression.Expression
@@ -33,7 +33,7 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
   }
 
   // FIXME: correct inserted values!
-  override protected def compareInsertedValues(userQuery: Q, sampleQuery: Q): Option[MatchingResult[ExpressionList, GenericAnalysisResult, ExpressionListMatch]] =
+  override protected def compareInsertedValues(userQuery: Q, sampleQuery: Q): Option[MatchingResult[ExpressionList, ExpressionListMatch]] =
     Some(ExpressionListMatcher.doMatch(expressionLists(userQuery), expressionLists(sampleQuery)))
 
   override protected def getTables(query: Q) = Seq(query.getTable)
@@ -49,7 +49,6 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
 
 object DeleteCorrector extends ChangeCorrector("DELETE") {
-
 
   override type Q = Delete
 

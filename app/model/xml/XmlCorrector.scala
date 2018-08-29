@@ -43,7 +43,7 @@ object XmlCorrector {
     errorHandler.errors
   }
 
-  def correctDTD(userGrammar: DocTypeDef, sampleGrammar: DocTypeDef): MatchingResult[ElementLine, ElementLineAnalysisResult, ElementLineMatch] =
+  def correctDTD(userGrammar: DocTypeDef, sampleGrammar: DocTypeDef): MatchingResult[ElementLine, ElementLineMatch] =
     DocTypeDefMatcher.doMatch(userGrammar.asElementLines, sampleGrammar.asElementLines)
 
 
