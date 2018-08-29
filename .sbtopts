@@ -1,1 +1,2 @@
 -J-XX:MaxMetaspaceSize=1024M
+-J--add-modules=java.xml.bind,java.activation
