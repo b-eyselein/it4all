@@ -40,10 +40,8 @@ object WebCorrector {
   }
 
   private def testCondition(condition: JsCondition, searchContext: SearchContext): ConditionResult = Try(searchContext findElement By.xpath(condition.xpathQuery)) match {
-    case Failure(_)       => ConditionResult(SuccessType.NONE, condition, null)
-    case Success(element) =>
-      val gottenValue = element.getText
-      ConditionResult(SuccessType.ofBool(gottenValue == condition.awaitedValue), condition, gottenValue)
+    case Failure(_)       => ConditionResult(SuccessType.NONE, condition, None)
+    case Success(element) => ConditionResult(SuccessType.ofBool(element.getText == condition.awaitedValue), condition, Some(element.getText))
   }
 
 }

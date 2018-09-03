@@ -54,7 +54,7 @@ final case class AttributeList(elementName: String, attributeDefinitions: Seq[At
 
 final case class AttributeDefinition(attributeName: String, attributeType: AttributeType, attributeSpecification: AttributeSpecification) {
 
-  def asString: String = s"$attributeName  $attributeType  $attributeSpecification"
+  def asString: String = s"$attributeName $attributeType $attributeSpecification"
 
 }
 

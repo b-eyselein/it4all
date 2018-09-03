@@ -141,11 +141,9 @@ libraryDependencies ++= Seq(
   "org.seleniumhq.selenium" % "htmlunit-driver" % "2.31.0",
 
   // MyBatis and JSqlParser for SQL
-  //  "org.mybatis" % "mybatis" % "3.4.5",
   "com.github.jsqlparser" % "jsqlparser" % "1.2",
 
   // Programming
-  //  "com.github.docker-java" % "docker-java" % "3.0.14",
   "com.spotify" % "docker-client" % "8.12.0",
 
   // Apache POI for Excel

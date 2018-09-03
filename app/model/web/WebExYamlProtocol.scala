@@ -133,7 +133,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
         textName -> jsTask.task.text,
         xpathQueryName -> jsTask.task.xpathQuery,
         actionTypeName -> jsTask.task.actionType.entryName,
-        KEYS_TO_SEND_NAME -> jsTask.task.keysToSend.map(YamlString).getOrElse(YamlNull),
+        KEYS_TO_SEND_NAME -> jsTask.task.keysToSend.map[YamlValue](YamlString).getOrElse(YamlNull),
         conditionsName -> yamlConds
       )
     }

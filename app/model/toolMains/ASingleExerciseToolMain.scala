@@ -25,7 +25,7 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   val exParts: Seq[PartType]
 
-  implicit val compExForm: Form[ExType]
+  protected val compExForm: Form[ExType]
 
   // DB
 

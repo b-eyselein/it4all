@@ -35,8 +35,6 @@ sealed trait WebResult extends EvaluationResult {
 
   val task: WebCompleteTask
 
-  def render: String
-
   def toJson: JsObject
 
   def points: Points
@@ -56,11 +54,6 @@ final case class ElementResult(task: WebCompleteTask, foundElement: Option[WebEl
         case None             => SuccessType.COMPLETE
         case Some(textResult) => if (textResult.isSuccessful) SuccessType.COMPLETE else SuccessType.PARTIALLY
       }
-  }
-
-  override def render: String = foundElement match {
-    case None    => asMsg(success = false, "Element konnte nicht gefunden werden!").toString
-    case Some(_) => asMsg(SuccessType.COMPLETE, "Element wurde gefunden.").toString + (textContentResult map (_.render) getOrElse "") + (attributeResults.map(_.render) mkString "\n")
   }
 
   override def toJson: JsObject = Json.obj(
@@ -85,13 +78,6 @@ abstract class TextResult(name: String, val foundContent: String, val awaitedCon
   override val success: SuccessType = if (foundContent == null) SuccessType.NONE
   else if (foundContent contains awaitedContent) SuccessType.COMPLETE
   else SuccessType.PARTIALLY
-
-  def render: String = asMsg(success, success match {
-    case SuccessType.COMPLETE  => s"$name hat den gesuchten Wert."
-    case SuccessType.PARTIALLY => s"$name hat nicht den gesuchten Wert '$awaitedContent' sondern '$foundContent'!"
-    case SuccessType.NONE      => s"$name konnte nicht gefunden werden!"
-    case SuccessType.ERROR     => s"$name konnte aufgrund eines Fehler nicht ueberprueft werden."
-  })
 
   def toJson: JsObject
 
@@ -133,10 +119,6 @@ final case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResu
 
   override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(preResults) && actionPerformed && allResultsSuccessful(postResults))
 
-  override def render: String = (preResults map (_.render) mkString "\n") +
-    asMsg(actionPerformed, s"Aktion konnte ${if (actionPerformed) "" else "nicht"} erfolgreich ausgeführt werden.") +
-    (postResults map (_.render) mkString "\n")
-
   override def toJson: JsObject = Json.obj(
     idName -> task.task.id,
     pointsName -> points.asDoubleString,
@@ -154,12 +136,7 @@ final case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResu
 
 }
 
-final case class ConditionResult(override val success: SuccessType, condition: JsCondition, gottenValue: String) extends EvaluationResult {
-
-  def render: String = asMsg(success,
-    s"""${if (condition.isPrecondition) "Vor" else "Nach"}bedingung konnte ${if (isSuccessful) "" else "nicht"} verifiziert werden.</p>
-       |  <p>${condition.description}</p>
-       |  ${if (isSuccessful) "" else s"<p>Element hatte aber folgenden Wert: $gottenValue</p>"}""".stripMargin)
+final case class ConditionResult(override val success: SuccessType, condition: JsCondition, gottenValue: Option[String]) extends EvaluationResult {
 
   def points: Points = if (isSuccessful) 1 point else 0 points
 
