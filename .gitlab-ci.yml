@@ -2,14 +2,14 @@ image: beyselein/it4all-play-dockerfile
 
 stages:
 - test
-- build
+#- build
 
 test:
     stage: test
     script:
     - sbt test
 
-build:
-    stage: build
-    script:
-    - sbt dist
+#build:
+#    stage: build
+#    script:
+#    - sbt dist
