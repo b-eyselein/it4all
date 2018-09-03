@@ -5,7 +5,7 @@ import model.uml.UmlConsts._
 import model.uml.{UmlAssociation, UmlAssociationType}
 import play.api.libs.json.{JsValue, Json}
 
-case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel: Boolean,
+final case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel: Boolean,
                                         assocTypeEqual: Boolean, correctAssocType: UmlAssociationType,
                                         multiplicitiesEqual: Boolean)
   extends AnalysisResult {
@@ -17,7 +17,7 @@ case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel: Bool
 
 }
 
-case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match[UmlAssociation] {
+final case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match[UmlAssociation] {
 
   override type AR = UmlAssociationAnalysisResult
 
@@ -30,7 +30,7 @@ case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Optio
     else assoc1.firstMult == assoc2.secondMult && assoc1.secondMult == assoc2.firstMult
 
 
-    val matchType = (assocTypeEqual, multiplicitiesEqual) match {
+    val matchType: MatchType = (assocTypeEqual, multiplicitiesEqual) match {
       case (true, true)  => MatchType.SUCCESSFUL_MATCH
       case (false, true) => MatchType.PARTIAL_MATCH
       case _             => MatchType.UNSUCCESSFUL_MATCH

@@ -9,19 +9,19 @@ object FormMappings {
 
   // Forms
 
-  case class UpdateRoleForm(username: String, newRole: Role)
+  final case class UpdateRoleForm(username: String, newRole: Role)
 
-  case class UserCredForm(username: String, password: String)
+  final case class UserCredForm(username: String, password: String)
 
   // Formatters
 
   implicit object RoleFormatter extends Formatter[Role] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Role] = data.get(key) match {
-      case None        => Left(Seq(FormError(key, s"No value for $key was provided!")))
+      case None        => Left[Seq[FormError], Role](Seq(FormError(key, s"No value for $key was provided!")))
       case Some(value) => Role.withNameInsensitiveOption(value) match {
-        case None       => Left(Seq(FormError(key, s"The value $value is no legal value for a role!")))
-        case Some(role) => Right(role)
+        case None       => Left[Seq[FormError], Role](Seq(FormError(key, s"The value $value is no legal value for a role!")))
+        case Some(role) => Right[Seq[FormError], Role](role)
       }
     }
 

@@ -15,7 +15,7 @@
 
             <div id="answerDiv">
 
-            @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.CHOICE) {
+            @if(question.ex.questionType == model.questions.QuestionTypes.CHOICE) {
                 @for(ans <- question.answersForTemplate) {
                     <div class="form-group">
                         <div class="col-md-12">

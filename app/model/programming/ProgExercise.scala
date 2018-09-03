@@ -8,8 +8,8 @@ import play.twirl.api.Html
 
 // Classes for use
 
-case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
-                          sampleTestData: Seq[SampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
+final case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
+                                sampleTestData: Seq[SampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
   extends SingleCompleteEx[ProgExercise, ProgExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
@@ -30,14 +30,14 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSo
 
 // Case classes for tables
 
-case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                        folderIdentifier: String, base: String, functionname: String, indentLevel: Int,
-                        outputType: ProgDataType, baseData: Option[JsValue]) extends Exercise
+final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                              folderIdentifier: String, base: String, functionname: String, indentLevel: Int,
+                              outputType: ProgDataType, baseData: Option[JsValue]) extends Exercise
 
 
-case class ProgInput(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputName: String, inputType: ProgDataType)
+final case class ProgInput(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputName: String, inputType: ProgDataType)
 
-case class ProgSampleSolution(exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, base: String, solution: String)
+final case class ProgSampleSolution(exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, base: String, solution: String)
 
 sealed trait TestData {
 
@@ -48,9 +48,9 @@ sealed trait TestData {
 
 }
 
-case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue) extends TestData
+final case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue) extends TestData
 
-case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue, username: String, state: ExerciseState) extends TestData {
+final case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue, username: String, state: ExerciseState) extends TestData {
 
   def toJson: JsObject = Json.obj(
     idName -> id,
@@ -73,16 +73,16 @@ sealed trait ProgSolution {
 
 }
 
-case class ProgStringSolution(solution: String, language: ProgLanguage) extends ProgSolution
+final case class ProgStringSolution(solution: String, language: ProgLanguage) extends ProgSolution
 
-case class ProgTestDataSolution(testData: Seq[CommitedTestData], language: ProgLanguage) extends ProgSolution {
+final case class ProgTestDataSolution(testData: Seq[CommitedTestData], language: ProgLanguage) extends ProgSolution {
 
   override def solution: String = ???
 
 }
 
-case class DBProgSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
-                          solutionStr: String, language: ProgLanguage, points: Points, maxPoints: Points)
+final case class DBProgSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
+                                solutionStr: String, language: ProgLanguage, points: Points, maxPoints: Points)
   extends DBPartSolution[ProgExPart, ProgSolution] {
 
   val solution: ProgSolution = part match {
@@ -92,7 +92,7 @@ case class DBProgSolution(username: String, exerciseId: Int, exSemVer: SemanticV
 
   def commitedTestData: Seq[CommitedTestData] = solution match {
     case ProgTestDataSolution(td, _) => td
-    case _                           => Seq.empty
+    case _                           => Seq[CommitedTestData]()
   }
 
 }

@@ -5,6 +5,7 @@ import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
@@ -92,110 +93,110 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class WebExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "web_exercises") {
 
-    def htmlText = column[String]("html_text")
+    def htmlText: Rep[String] = column[String]("html_text")
 
-    def jsText = column[String]("js_text")
+    def jsText: Rep[String] = column[String]("js_text")
 
-    def phpText = column[String]("php_text")
+    def phpText: Rep[String] = column[String]("php_text")
 
 
-    override def * = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?, phpText.?).mapTo[WebExercise]
+    override def * : ProvenShape[WebExercise] = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?, phpText.?) <> (WebExercise.tupled, WebExercise.unapply)
 
   }
 
   abstract class WebTasksTable[T <: WebTask](tag: Tag, name: String) extends Table[T](tag, name) {
 
-    def id = column[Int]("task_id")
+    def id: Rep[Int] = column[Int]("task_id")
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def text = column[String]("text")
+    def text: Rep[String] = column[String]("text")
 
-    def xpathQuery = column[String]("xpath_query")
+    def xpathQuery: Rep[String] = column[String]("xpath_query")
 
 
-    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def exerciseFk: ForeignKeyQuery[WebExercisesTable, WebExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
   }
 
   class HtmlTasksTable(tag: Tag) extends WebTasksTable[HtmlTask](tag, "html_tasks") {
 
-    def textContent = column[String]("text_content")
+    def textContent: Rep[String] = column[String]("text_content")
 
 
-    override def * = (id, exerciseId, exSemVer, text, xpathQuery, textContent.?).mapTo[HtmlTask]
+    override def * : ProvenShape[HtmlTask] = (id, exerciseId, exSemVer, text, xpathQuery, textContent.?) <> (HtmlTask.tupled, HtmlTask.unapply)
 
   }
 
   class AttributesTable(tag: Tag) extends Table[Attribute](tag, "html_attributes") {
 
-    def key = column[String]("attr_key")
+    def key: Rep[String] = column[String]("attr_key")
 
-    def value = column[String]("attr_value")
+    def value: Rep[String] = column[String]("attr_value")
 
-    def taskId = column[Int]("task_id")
+    def taskId: Rep[Int] = column[Int]("task_id")
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
-
-
-    def pk = primaryKey("pk", (key, taskId, exerciseId, exSemVer))
-
-    def taskFk = foreignKey("task_fk", (taskId, exerciseId, exSemVer), htmlTasksTable)(t => (t.id, t.exerciseId, t.exSemVer))
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
 
-    override def * = (key, taskId, exerciseId, exSemVer, value).mapTo[Attribute]
+    def pk: PrimaryKey = primaryKey("pk", (key, taskId, exerciseId, exSemVer))
+
+    def taskFk: ForeignKeyQuery[HtmlTasksTable, HtmlTask] = foreignKey("task_fk", (taskId, exerciseId, exSemVer), htmlTasksTable)(t => (t.id, t.exerciseId, t.exSemVer))
+
+
+    override def * : ProvenShape[Attribute] = (key, taskId, exerciseId, exSemVer, value) <> (Attribute.tupled, Attribute.unapply)
 
   }
 
   class JsTasksTable(tag: Tag) extends WebTasksTable[JsTask](tag, "js_tasks") {
 
-    def actionType = column[JsActionType]("action_type")
+    def actionType: Rep[JsActionType] = column[JsActionType]("action_type")
 
-    def keysToSend = column[String]("keys_to_send")
+    def keysToSend: Rep[String] = column[String]("keys_to_send")
 
 
-    override def * = (id, exerciseId, exSemVer, text, xpathQuery, actionType, keysToSend.?).mapTo[JsTask]
+    override def * : ProvenShape[JsTask] = (id, exerciseId, exSemVer, text, xpathQuery, actionType, keysToSend.?) <> (JsTask.tupled, JsTask.unapply)
 
   }
 
   class ConditionsTable(tag: Tag) extends Table[JsCondition](tag, "js_conditions") {
 
-    def conditionId = column[Int]("condition_id")
+    def conditionId: Rep[Int] = column[Int]("condition_id")
 
-    def taskId = column[Int]("task_id")
+    def taskId: Rep[Int] = column[Int]("task_id")
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def xpathQuery = column[String]("xpath_query")
+    def xpathQuery: Rep[String] = column[String]("xpath_query")
 
-    def isPrecondition = column[Boolean]("is_precondition")
+    def isPrecondition: Rep[Boolean] = column[Boolean]("is_precondition")
 
-    def awaitedValue = column[String]("awaited_value")
-
-
-    def pk = primaryKey("pk", (conditionId, taskId, exerciseId, exSemVer))
-
-    def taskFk = foreignKey("task_fk", (taskId, exerciseId, exSemVer), jsTasksTable)(t => (t.id, t.exerciseId, t.exSemVer))
+    def awaitedValue: Rep[String] = column[String]("awaited_value")
 
 
-    override def * = (conditionId, taskId, exerciseId, exSemVer, xpathQuery, isPrecondition, awaitedValue).mapTo[JsCondition]
+    def pk: PrimaryKey = primaryKey("pk", (conditionId, taskId, exerciseId, exSemVer))
+
+    def taskFk: ForeignKeyQuery[JsTasksTable, JsTask] = foreignKey("task_fk", (taskId, exerciseId, exSemVer), jsTasksTable)(t => (t.id, t.exerciseId, t.exSemVer))
+
+
+    override def * : ProvenShape[JsCondition] = (conditionId, taskId, exerciseId, exSemVer, xpathQuery, isPrecondition, awaitedValue) <> (JsCondition.tupled, JsCondition.unapply)
 
   }
 
   class WebSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "web_solutions") {
 
-    def solution = column[String]("solution")
+    def solution: Rep[String] = column[String]("solution")
 
 
-    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[WebSolution]
+    override def * : ProvenShape[WebSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (WebSolution.tupled, WebSolution.unapply)
 
   }
 

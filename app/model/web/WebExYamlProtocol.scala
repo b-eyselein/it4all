@@ -65,10 +65,10 @@ object WebExYamlProtocol extends MyYamlProtocol {
         case jts => Some(YamlString(jsTasksName) -> YamlArr(jts map JsCompleteTaskYamlFormat(completeEx.ex.baseValues).write))
       }
 
-      Map.empty ++
-        (completeEx.ex.htmlText map (t => YamlString(htmlTextName) -> YamlString(t))) ++
-        (completeEx.ex.jsText map (t => YamlString(jsTextName) -> YamlString(t))) ++
-        htmlTasks ++ jsTasks
+      Map[YamlValue, YamlValue]() ++
+        (completeEx.ex.htmlText map (t => YamlString(htmlTextName) -> YamlString(t))).toList ++
+        (completeEx.ex.jsText map (t => YamlString(jsTextName) -> YamlString(t))).toList ++
+        htmlTasks.toList ++ jsTasks.toList
 
     }
 
@@ -76,7 +76,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override def write(obj: WebCompleteEx): YamlValue = ???
   }
 
-  case class HtmlCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[HtmlCompleteTask] {
+  final case class HtmlCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[HtmlCompleteTask] {
 
     override def write(htmlCompTask: HtmlCompleteTask): YamlValue = {
       val yamlAttrs: Option[(YamlString, YamlArray)] = htmlCompTask.attributes match {
@@ -91,7 +91,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
           YamlString(idName) -> htmlCompTask.task.id,
           YamlString(textName) -> htmlCompTask.task.text,
           YamlString(xpathQueryName) -> htmlCompTask.task.xpathQuery
-        ) ++ tcOpt ++ yamlAttrs
+        ) ++ tcOpt.toList ++ yamlAttrs.toList
       )
     }
 
@@ -112,7 +112,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
     }
   }
 
-  case class TaskAttributeYamlFormat(taskId: Int, baseValues: BaseValues) extends MyYamlObjectFormat[Attribute] {
+  final case class TaskAttributeYamlFormat(taskId: Int, baseValues: BaseValues) extends MyYamlObjectFormat[Attribute] {
 
     override def readObject(yamlObject: YamlObject): Try[Attribute] = for {
       key <- yamlObject.stringField(keyName)
@@ -123,7 +123,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class JsCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[JsCompleteTask] {
+  final case class JsCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[JsCompleteTask] {
 
     override def write(jsTask: JsCompleteTask): YamlValue = {
       val yamlConds = YamlArr(jsTask.conditions map JsConditionYamlFormat(jsTask.task.id, baseValues).write)
@@ -156,7 +156,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class JsConditionYamlFormat(taskId: Int, baseValues: BaseValues) extends MyYamlObjectFormat[JsCondition] {
+  final case class JsConditionYamlFormat(taskId: Int, baseValues: BaseValues) extends MyYamlObjectFormat[JsCondition] {
 
     override def readObject(yamlObject: YamlObject): Try[JsCondition] = for {
       id <- yamlObject.intField(idName)
@@ -174,7 +174,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class PhpCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[PHPCompleteTask] {
+  final case class PhpCompleteTaskYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[PHPCompleteTask] {
 
     override protected def readObject(yamlObject: YamlObject): Try[PHPCompleteTask] = ???
 

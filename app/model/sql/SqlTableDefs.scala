@@ -8,6 +8,7 @@ import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
@@ -78,57 +79,57 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class SqlScenarioesTable(tag: Tag) extends ExerciseCollectionTable(tag, "sql_scenarioes") {
 
-    def shortName = column[String](shortNameName)
+    def shortName: Rep[String] = column[String](shortNameName)
 
 
-    override def * = (id, semanticVersion, title, author, text, state, shortName).mapTo[SqlScenario]
+    override def * : ProvenShape[SqlScenario] = (id, semanticVersion, title, author, text, state, shortName) <> (SqlScenario.tupled, SqlScenario.unapply)
 
   }
 
   class SqlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "sql_exercises") {
 
-    def exerciseType = column[SqlExerciseType]("exercise_type")
+    def exerciseType: Rep[SqlExerciseType] = column[SqlExerciseType]("exercise_type")
 
-    def hint = column[String](hintName)
+    def hint: Rep[String] = column[String](hintName)
 
-    def tags = column[String](tagsName)
+    def tags: Rep[String] = column[String](tagsName)
 
 
-    override def * = (id, semanticVersion, title, author, text, state, collectionId, collSemVer, exerciseType, tags, hint.?).mapTo[SqlExercise]
+    override def * : ProvenShape[SqlExercise] = (id, semanticVersion, title, author, text, state, collectionId, collSemVer, exerciseType, tags, hint.?) <> (SqlExercise.tupled, SqlExercise.unapply)
 
   }
 
   class SqlSampleTable(tag: Tag) extends Table[SqlSample](tag, "sql_samples") {
 
-    def id = column[Int](idName)
+    def id: Rep[Int] = column[Int](idName)
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def collId = column[Int]("collection_id")
+    def collId: Rep[Int] = column[Int]("collection_id")
 
-    def collSemVer = column[SemanticVersion]("coll_sem_ver")
+    def collSemVer: Rep[SemanticVersion] = column[SemanticVersion]("coll_sem_ver")
 
-    def sample = column[String]("sample")
+    def sample: Rep[String] = column[String]("sample")
 
 
-    def pk = primaryKey("pk", (id, exerciseId, exSemVer, collId, collSemVer))
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, collId, collSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer, collId, collSemVer), exTable)(exes =>
+    def exerciseFk: ForeignKeyQuery[SqlExercisesTable, SqlExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer, collId, collSemVer), exTable)(exes =>
       (exes.id, exes.semanticVersion, exes.collectionId, exes.collSemVer))
 
 
-    override def * = (id, exerciseId, exSemVer, collId, collSemVer, sample).mapTo[SqlSample]
+    override def * : ProvenShape[SqlSample] = (id, exerciseId, exSemVer, collId, collSemVer, sample) <> (SqlSample.tupled, SqlSample.unapply)
 
   }
 
   class SqlSolutionsTable(tag: Tag) extends CollectionExSolutionsTable(tag, "sql_solutions") {
 
-    def solution = column[String]("solution")
+    def solution: Rep[String] = column[String]("solution")
 
 
-    override def * = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints).mapTo[SqlSolution]
+    override def * : ProvenShape[SqlSolution] = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints) <> (SqlSolution.tupled, SqlSolution.unapply)
 
   }
 

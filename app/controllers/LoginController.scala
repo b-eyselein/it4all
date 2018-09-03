@@ -18,7 +18,7 @@ import scala.language.postfixOps
 class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
 
-  def registerForm = Action { implicit request => Ok(views.html.register.render()) }
+  def registerForm: Action[AnyContent] = Action { implicit request => Ok(views.html.register.render()) }
 
   def register: Action[AnyContent] = Action.async { implicit request =>
 
@@ -110,8 +110,8 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
   }
 
-  def login = Action { implicit request => Ok(views.html.login(FormMappings.userCredForm)) }
+  def login: Action[AnyContent] = Action { implicit request => Ok(views.html.login(FormMappings.userCredForm)) }
 
-  def logout = Action { implicit request => Redirect(routes.LoginController.login()).withNewSession }
+  def logout: Action[AnyContent] = Action { implicit request => Redirect(routes.LoginController.login()).withNewSession }
 
 }

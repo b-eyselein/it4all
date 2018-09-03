@@ -15,11 +15,11 @@
 }
 
 @testInputNameAndId(id: Int, testCount: Int) = @{
-    "inp_" + id + "_" + testCount
+    s"inp_${id}_$testCount"
 }
 
 @testInputPlaceholder(id: Int, testCount: Int) = @{
-    "Test " + (testCount + 1) + ", Input " + (id + 1)
+    s"Test ${testCount + 1}, Input ${id + 1}"
 }
 
 @testOutputPlaceholder(id: Int) = @{

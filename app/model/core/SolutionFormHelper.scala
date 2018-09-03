@@ -12,4 +12,4 @@ object SolutionFormHelper {
 
 abstract class SolutionFormHelper
 
-case class StringSolutionFormHelper(learnerSolution: String) extends SolutionFormHelper
+final case class StringSolutionFormHelper(learnerSolution: String) extends SolutionFormHelper

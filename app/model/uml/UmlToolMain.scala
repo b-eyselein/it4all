@@ -65,8 +65,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override def instantiateExercise(id: Int, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
     UmlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state,
-      solution = UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty), markedText = "", toIgnore = ""),
-    mappings = Seq.empty
+      solution = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]()),
+      markedText = "", toIgnore = ""),
+    mappings = Seq[UmlMapping]()
   )
 
   override def instantiateSolution(username: String, exercise: UmlCompleteEx, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlSolution =

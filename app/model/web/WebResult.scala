@@ -9,7 +9,7 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.language.postfixOps
 
-case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, results: Seq[WebResult]) extends CompleteResult[WebResult] {
+final case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, results: Seq[WebResult]) extends CompleteResult[WebResult] {
 
   override type SolType = String
 
@@ -45,7 +45,7 @@ sealed trait WebResult extends EvaluationResult {
 
 // Html & CSS Results
 
-case class ElementResult(task: WebCompleteTask, foundElement: Option[WebElement], attributeResults: Seq[AttributeResult], textContentResult: Option[TextContentResult])
+final case class ElementResult(task: WebCompleteTask, foundElement: Option[WebElement], attributeResults: Seq[AttributeResult], textContentResult: Option[TextContentResult])
   extends WebResult {
 
   override val success: SuccessType = foundElement match {
@@ -97,7 +97,7 @@ abstract class TextResult(name: String, val foundContent: String, val awaitedCon
 
 }
 
-case class TextContentResult(f: String, a: String) extends TextResult("Der Textinhalt", f, a) {
+final case class TextContentResult(f: String, a: String) extends TextResult("Der Textinhalt", f, a) {
 
   def toJson: JsObject = Json.obj(
     successName -> isSuccessful,
@@ -111,7 +111,7 @@ case class TextContentResult(f: String, a: String) extends TextResult("Der Texti
 
 }
 
-case class AttributeResult(attribute: Attribute, foundValue: Option[String]) extends TextResult(s"Das Attribut '${attribute.key}'", foundValue getOrElse "", attribute.value) {
+final case class AttributeResult(attribute: Attribute, foundValue: Option[String]) extends TextResult(s"Das Attribut '${attribute.key}'", foundValue getOrElse "", attribute.value) {
 
   def toJson: JsObject = Json.obj(
     successName -> isSuccessful,
@@ -128,7 +128,7 @@ case class AttributeResult(attribute: Attribute, foundValue: Option[String]) ext
 
 // Javascript Results
 
-case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResult], actionPerformed: Boolean, postResults: Seq[ConditionResult])
+final case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResult], actionPerformed: Boolean, postResults: Seq[ConditionResult])
   extends WebResult {
 
   override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(preResults) && actionPerformed && allResultsSuccessful(postResults))
@@ -154,7 +154,7 @@ case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResult], a
 
 }
 
-case class ConditionResult(override val success: SuccessType, condition: JsCondition, gottenValue: String) extends EvaluationResult {
+final case class ConditionResult(override val success: SuccessType, condition: JsCondition, gottenValue: String) extends EvaluationResult {
 
   def render: String = asMsg(success,
     s"""${if (condition.isPrecondition) "Vor" else "Nach"}bedingung konnte ${if (isSuccessful) "" else "nicht"} verifiziert werden.</p>

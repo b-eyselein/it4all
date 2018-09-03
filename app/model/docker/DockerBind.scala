@@ -15,7 +15,7 @@ object DockerBindUtils extends FileUtils {
 
 }
 
-case class DockerBind(fromPath: Path, toPath: Path, isReadOnly: Boolean = false) {
+final case class DockerBind(fromPath: Path, toPath: Path, isReadOnly: Boolean = false) {
 
   def toBind: Bind = Bind.from(fromPath.toAbsolutePath.toString).to(toPath.toString).readOnly(isReadOnly).build()
 

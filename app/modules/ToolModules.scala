@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 import model.toolMains.AToolMain
 import play.api.{ConfigLoader, Configuration, Environment}
 
-case class ToolConfig(toolName: String, toolMainClass: String, isEnabled: Boolean = true)
+final case class ToolConfig(toolName: String, toolMainClass: String, isEnabled: Boolean = true)
 
 class ToolModules(environment: Environment, configuration: Configuration) extends AbstractModule {
 

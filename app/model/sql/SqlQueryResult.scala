@@ -15,7 +15,7 @@ object SqlQueryResult {
 }
 
 
-case class SqlCell(colName: String, content: String) {
+final case class SqlCell(colName: String, content: String) {
 
   // FIXME: remove!
   var different: Boolean = false
@@ -44,7 +44,7 @@ object SqlRow {
 
 }
 
-case class SqlRow(cells: Map[String, SqlCell]) {
+final case class SqlRow(cells: Map[String, SqlCell]) {
 
   def columnNames: Seq[String] = cells.keys.toSeq
 
@@ -56,7 +56,7 @@ case class SqlRow(cells: Map[String, SqlCell]) {
 
 }
 
-case class SqlQueryResult(resultSet: ResultSet, tableName: String = "") extends Iterable[SqlRow] {
+final case class SqlQueryResult(resultSet: ResultSet, tableName: String = "") extends Iterable[SqlRow] {
 
   val (columnNames, rows): (Seq[String], Seq[SqlRow]) = SqlRow.buildFrom(resultSet)
 

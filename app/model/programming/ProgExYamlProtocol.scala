@@ -66,7 +66,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class UmlClassDiagPartYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[UmlClassDiagPart] {
+  final case class UmlClassDiagPartYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[UmlClassDiagPart] {
 
     override protected def readObject(yamlObject: YamlObject): Try[UmlClassDiagPart] = for {
       className <- yamlObject.stringField(classNameName)
@@ -77,7 +77,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class ProgInputTypeYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[ProgInput] {
+  final case class ProgInputTypeYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[ProgInput] {
 
     override protected def readObject(yamlObject: YamlObject): Try[ProgInput] = for {
       id <- yamlObject.intField(idName)
@@ -89,7 +89,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class ProgSampleSolutionYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[ProgSampleSolution] {
+  final case class ProgSampleSolutionYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)
@@ -104,7 +104,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class ProgSampleTestdataYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[SampleTestData] {
+  final case class ProgSampleTestdataYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[SampleTestData] {
 
     override def readObject(yamlObject: YamlObject): Try[SampleTestData] = for {
       id <- yamlObject.intField(idName)

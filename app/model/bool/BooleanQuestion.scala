@@ -66,7 +66,7 @@ sealed trait BooleanQuestion {
 
 }
 
-case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQuestion {
+final case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQuestion {
 
   override val variables: Set[Variable] = solutions.headOption map (_.variables.toList.reverse.toSet) getOrElse Set.empty
 
@@ -76,7 +76,7 @@ case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQuestio
 
 }
 
-case class FilloutQuestion(formula: ScalaNode) extends BooleanQuestion {
+final case class FilloutQuestion(formula: ScalaNode) extends BooleanQuestion {
 
   val assignments: Seq[BoolTableRow] = generateAllAssignments(formula.usedVariables toSeq)
 

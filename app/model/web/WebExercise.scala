@@ -22,7 +22,7 @@ object JsActionType extends Enum[JsActionType] {
 
 // Classes for use
 
-case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask], phpTasks: Seq[PHPCompleteTask] = Seq.empty)
+final case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask], phpTasks: Seq[PHPCompleteTask] = Seq[PHPCompleteTask]())
   extends SingleCompleteEx[WebExercise, WebExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
@@ -58,17 +58,17 @@ trait WebCompleteTask {
 
 }
 
-case class HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute]) extends WebCompleteTask {
+final case class HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute]) extends WebCompleteTask {
 
   override def maxPoints: Points = (1 point) + (task.textContent map (_ => 1 point) getOrElse (0 points)) + (attributes.size points)
 
 }
 
-case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) extends WebCompleteTask {
+final case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) extends WebCompleteTask {
   override def maxPoints: Points = (1 point) + (conditions.size points)
 }
 
-case class PHPCompleteTask(task: PHPTask) extends WebCompleteTask {
+final case class PHPCompleteTask(task: PHPTask) extends WebCompleteTask {
   override def maxPoints: Points = -1 point
 }
 
@@ -78,14 +78,14 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
   override def buttonContent: String = part
 
-  override def title = s"Diese Aufgabe besitzt ${if (!hasExes) "k" else ""}einen $part-Teil"
+  override def title: String = s"Diese Aufgabe besitzt ${if (!hasExes) "k" else ""}einen $part-Teil"
 
 }
 
 // Database classes
 
-case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                       htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
+final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                             htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
 
 trait WebTask {
   val id        : Int
@@ -95,13 +95,13 @@ trait WebTask {
   val xpathQuery: String
 }
 
-case class HtmlTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
-                    textContent: Option[String]) extends WebTask
+final case class HtmlTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
+                          textContent: Option[String]) extends WebTask
 
-case class Attribute(key: String, taskId: Int, exerciseId: Int, exSemVer: SemanticVersion, value: String)
+final case class Attribute(key: String, taskId: Int, exerciseId: Int, exSemVer: SemanticVersion, value: String)
 
-case class JsTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
-                  actionType: JsActionType, keysToSend: Option[String]) extends WebTask {
+final case class JsTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
+                        actionType: JsActionType, keysToSend: Option[String]) extends WebTask {
 
   def perform(context: SearchContext): Boolean = Option(context findElement By.xpath(xpathQuery)) match {
     case None => false
@@ -127,17 +127,17 @@ case class JsTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: Str
 
 }
 
-case class JsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: SemanticVersion, xpathQuery: String,
-                       isPrecondition: Boolean, awaitedValue: String) {
+final case class JsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: SemanticVersion, xpathQuery: String,
+                             isPrecondition: Boolean, awaitedValue: String) {
 
-  def description = s"""Element mit XPath <code>$xpathQuery</code> sollte den Inhalt <code>$awaitedValue</code> haben"""
+  def description: String = s"""Element mit XPath <code>$xpathQuery</code> sollte den Inhalt <code>$awaitedValue</code> haben"""
 
   def maxPoints: Points = 1 point
 
 }
 
-case class PHPTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
-                   textContent: Option[String]) extends WebTask
+final case class PHPTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
+                         textContent: Option[String]) extends WebTask
 
-case class WebSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart, solution: String,
-                       points: Points, maxPoints: Points) extends DBPartSolution[WebExPart, String]
+final case class WebSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart, solution: String,
+                             points: Points, maxPoints: Points) extends DBPartSolution[WebExPart, String]

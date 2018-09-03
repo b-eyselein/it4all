@@ -40,7 +40,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
     )
   }
 
-  case class XmlSampleGrammarYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[XmlSampleGrammar] {
+final case class XmlSampleGrammarYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[XmlSampleGrammar] {
 
     override protected def readObject(yamlObject: YamlObject): Try[XmlSampleGrammar] = for {
       id <- yamlObject.intField(idName)

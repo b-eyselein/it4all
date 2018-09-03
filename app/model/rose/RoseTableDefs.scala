@@ -7,6 +7,7 @@ import model.programming.ProgDataTypes.ProgDataType
 import model.programming.{ProgDataTypes, ProgLanguage, ProgLanguages}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
@@ -61,65 +62,65 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   class RoseExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "rose_exercises") {
 
-    def fieldWidth = column[Int]("field_width")
+    def fieldWidth: Rep[Int] = column[Int]("field_width")
 
-    def fieldHeight = column[Int]("field_height")
+    def fieldHeight: Rep[Int] = column[Int]("field_height")
 
-    def isMultiplayer = column[Boolean]("is_mp")
+    def isMultiplayer: Rep[Boolean] = column[Boolean]("is_mp")
 
 
-    override def * = (id, semanticVersion, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer).mapTo[RoseExercise]
+    override def * : ProvenShape[RoseExercise] = (id, semanticVersion, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer) <> (RoseExercise.tupled, RoseExercise.unapply)
 
   }
 
   class RoseInputTypesTable(tag: Tag) extends Table[RoseInputType](tag, "rose_inputs") {
 
-    def id = column[Int]("id")
+    def id: Rep[Int] = column[Int]("id")
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def name = column[String]("input_name")
+    def name: Rep[String] = column[String]("input_name")
 
-    def inputType = column[ProgDataType]("input_type")
-
-
-    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
-
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def inputType: Rep[ProgDataType] = column[ProgDataType]("input_type")
 
 
-    override def * = (id, exerciseId, exSemVer, name, inputType).mapTo[RoseInputType]
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
+
+    def exerciseFk: ForeignKeyQuery[RoseExercisesTable, RoseExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+
+    override def * : ProvenShape[RoseInputType] = (id, exerciseId, exSemVer, name, inputType) <> (RoseInputType.tupled, RoseInputType.unapply)
 
   }
 
   class RoseSampleSolutionsTable(tag: Tag) extends Table[RoseSampleSolution](tag, "rose_samples") {
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def language = column[ProgLanguage]("language")
+    def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
-    def solution = column[String]("solution")
-
-
-    def pk = primaryKey("pk", (exerciseId, exSemVer, language))
-
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def solution: Rep[String] = column[String]("solution")
 
 
-    override def * = (exerciseId, exSemVer, language, solution).mapTo[RoseSampleSolution]
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, language))
+
+    def exerciseFk: ForeignKeyQuery[RoseExercisesTable, RoseExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+
+    override def * : ProvenShape[RoseSampleSolution] = (exerciseId, exSemVer, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
 
   }
 
   class RoseSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "rose_solutions") {
 
-    def solution = column[String]("solution")
+    def solution: Rep[String] = column[String]("solution")
 
 
-    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[RoseSolution]
+    override def * : ProvenShape[RoseSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (RoseSolution.tupled, RoseSolution.unapply)
 
   }
 

@@ -65,7 +65,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
       queries
     }
-  } getOrElse Seq.empty
+  } getOrElse Seq[String]()
 
   private def allTableNames(connection: Connection): Seq[String] = using(connection.prepareStatement("SHOW TABLES;")) { tablesQuery =>
     using(tablesQuery.executeQuery()) { resultSet =>
@@ -76,7 +76,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
       tableNames
     }
-  }.flatten getOrElse Seq.empty
+  }.flatten getOrElse Seq[String]()
 
   def tableContents(schemaName: String): Seq[SqlQueryResult] = using(db(schemaName).source.createConnection()) { connection =>
     allTableNames(connection) map { tableName =>
@@ -84,7 +84,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
       val resultSet = selectStatement.executeQuery()
       SqlQueryResult(resultSet, tableName)
     }
-  } getOrElse Seq.empty
+  } getOrElse Seq[SqlQueryResult]()
 
 }
 

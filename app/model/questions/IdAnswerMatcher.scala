@@ -1,13 +1,12 @@
 package model.questions
 
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
-import model.questions.QuestionEnums.Correctness
 import play.api.libs.json._
 import model.questions.QuestionConsts._
 
 import scala.collection.mutable.ListBuffer
 
-case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: CompleteQuestion) extends CompleteResult[IdAnswerMatch] {
+final case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: CompleteQuestion) extends CompleteResult[IdAnswerMatch] {
 
   override type SolType = Seq[IdGivenAnswer]
 
@@ -54,18 +53,18 @@ object IdAnswerMatcher {
 
 }
 
-case class IdAnswerMatch(userArg: Option[IdGivenAnswer], sampleArg: Option[Answer]) extends EvaluationResult {
+final case class IdAnswerMatch(userArg: Option[IdGivenAnswer], sampleArg: Option[Answer]) extends EvaluationResult {
 
   def id: Int = userArg map (_.id) getOrElse (sampleArg map (_.id) getOrElse (-1))
 
-  def correctness: Correctness = if (userArg.isDefined) sampleArg map (_.correctness) getOrElse Correctness.WRONG
+  def correctness: Correctness = if (userArg.isDefined) sampleArg map (_.correctness) getOrElse Correctnesses.WRONG
   else sampleArg map (_.correctness) match {
-    case Some(Correctness.WRONG | Correctness.OPTIONAL) => Correctness.CORRECT
-    case _                                              => Correctness.WRONG
+    case Some(Correctnesses.WRONG | Correctnesses.OPTIONAL) => Correctnesses.CORRECT
+    case _                                                  => Correctnesses.WRONG
   }
 
   override def success: SuccessType = ???
 
-  def isCorrect: Boolean = correctness != Correctness.WRONG
+  def isCorrect: Boolean = correctness != Correctnesses.WRONG
 
 }

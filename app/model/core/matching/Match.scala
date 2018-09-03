@@ -12,7 +12,7 @@ trait AnalysisResult {
 
 }
 
-case class GenericAnalysisResult(matchType: MatchType) extends AnalysisResult {
+final case class GenericAnalysisResult(matchType: MatchType) extends AnalysisResult {
 
   override def toJson: JsObject = Json.obj(successName -> matchType.entryName)
 
@@ -44,7 +44,7 @@ trait Match[T] extends JsonWriteable {
     case MatchType.ONLY_USER                                    => Seq("Angabe ist falsch!")
     case MatchType.ONLY_SAMPLE                                  => Seq("Angabe fehlt!")
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq(s"Fehler beim Abgleich. Erwartet wurde ${sampleArg map descArg getOrElse ""}")
-    case MatchType.SUCCESSFUL_MATCH                             => Seq.empty
+    case MatchType.SUCCESSFUL_MATCH                             => Seq[String]()
     case _                                                      => Seq("FEHLER!")
   }
 

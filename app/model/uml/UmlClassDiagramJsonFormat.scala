@@ -112,8 +112,8 @@ object UmlClassDiagramJsonFormat {
   private implicit val umlClassReads: Reads[UmlClass] = (
     (__ \ classTypeName).readWithDefault[UmlClassType](UmlClassType.CLASS)(umlClassTypeReads) and
       (__ \ nameName).read[String] and
-      (__ \ attributesName).readWithDefault[Seq[UmlAttribute]](Seq.empty) and
-      (__ \ methodsName).readWithDefault[Seq[UmlMethod]](Seq.empty) and
+      (__ \ attributesName).readWithDefault[Seq[UmlAttribute]](Seq[UmlAttribute]()) and
+      (__ \ methodsName).readWithDefault[Seq[UmlMethod]](Seq[UmlMethod]()) and
       (__ \ positionName).readNullable[Position]
     ) (UmlClass.apply(_, _, _, _, _))
 

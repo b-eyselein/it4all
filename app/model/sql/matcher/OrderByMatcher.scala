@@ -4,7 +4,7 @@ import model.core.matching._
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json.{JsString, JsValue}
 
-case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement] {
+final case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement] {
 
   override type AR = GenericAnalysisResult
 

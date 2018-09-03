@@ -6,7 +6,7 @@ sealed trait ElementContent {
 
 // Fixed content types
 
-abstract class StaticElementContent(name: String) extends ElementContent {
+sealed abstract class StaticElementContent(name: String) extends ElementContent {
   override def asString(needsParentheses: Boolean): String = "(" + name + ")"
 }
 
@@ -35,19 +35,19 @@ sealed trait UnaryOperatorElementContent extends ElementContent {
   }
 }
 
-case class RepElementContent(childContent: ElementContent) extends UnaryOperatorElementContent {
+final case class RepElementContent(childContent: ElementContent) extends UnaryOperatorElementContent {
   override val operator: String = DocTypeDefParser.repOperator
 }
 
-case class Rep1ElementContent(childContent: ElementContent) extends UnaryOperatorElementContent {
+final case class Rep1ElementContent(childContent: ElementContent) extends UnaryOperatorElementContent {
   override val operator: String = DocTypeDefParser.rep1Operator
 }
 
-case class OptElementContent(childContent: ElementContent) extends UnaryOperatorElementContent {
+final case class OptElementContent(childContent: ElementContent) extends UnaryOperatorElementContent {
   override val operator: String = DocTypeDefParser.optOperator
 }
 
-case class ChildElementContent(childName: String) extends ElementContent {
+final case class ChildElementContent(childName: String) extends ElementContent {
   override def asString(needsParentheses: Boolean): String = if (needsParentheses) "(" + childName + ")" else childName
 }
 
@@ -63,10 +63,10 @@ sealed trait MultiElementContent extends ElementContent {
   private def childrenAsStrings(needParentheses: Boolean): String = children map (_.asString(needParentheses)) mkString joinChar
 }
 
-case class SequenceContent(children: Seq[ElementContent]) extends MultiElementContent {
+final case class SequenceContent(children: Seq[ElementContent]) extends MultiElementContent {
   override val joinChar: String = DocTypeDefParser.SequenceSplitCharacter
 }
 
-case class AlternativeContent(children: Seq[ElementContent]) extends MultiElementContent {
+final case class AlternativeContent(children: Seq[ElementContent]) extends MultiElementContent {
   override val joinChar: String = " | "
 }

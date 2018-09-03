@@ -9,9 +9,9 @@ import play.api.libs.json.{JsValue, Json}
 
 import scala.language.postfixOps
 
-case class ElementLineAnalysisResult(matchType: MatchType,
-                                     contentCorrect: Boolean, correctContent: String,
-                                     attributesCorrect: Boolean, correctAttributes: String) extends AnalysisResult {
+final case class ElementLineAnalysisResult(matchType: MatchType,
+                                           contentCorrect: Boolean, correctContent: String,
+                                           attributesCorrect: Boolean, correctAttributes: String) extends AnalysisResult {
 
   override def toJson: JsValue = Json.obj(
     successName -> matchType.entryName,
@@ -26,7 +26,7 @@ case class ElementLineAnalysisResult(matchType: MatchType,
 
 }
 
-case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[ElementLine]) extends Match[ElementLine] with XmlEvaluationResult {
+final case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[ElementLine]) extends Match[ElementLine] with XmlEvaluationResult {
 
   override type AR = ElementLineAnalysisResult
 
@@ -37,7 +37,7 @@ case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[Elem
     val arg2Def = arg2.attributeLists.headOption.map(_.asString)
     val attributesCorrect = arg1Def == arg2Def
 
-    val matchType = if (contentCorrect) {
+    val matchType: MatchType = if (contentCorrect) {
       if (attributesCorrect) MatchType.SUCCESSFUL_MATCH
       else MatchType.PARTIAL_MATCH
     } else MatchType.UNSUCCESSFUL_MATCH

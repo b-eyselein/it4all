@@ -8,7 +8,7 @@ import play.api.libs.json.{JsObject, Json}
 
 import scala.language.postfixOps
 
-case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends EvaluationResult with JsonWriteable {
+final case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends EvaluationResult with JsonWriteable {
 
   // FIXME: is it possible to use ... match { case ...} ?!?
   override def success: SuccessType =

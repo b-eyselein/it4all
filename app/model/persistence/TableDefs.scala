@@ -8,6 +8,7 @@ import model.feedback.{Feedback, FeedbackTableHelper}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -28,8 +29,6 @@ trait TableDefs {
   val courses = TableQuery[CoursesTable]
 
   val usersInCourses = TableQuery[UsersInCoursesTable]
-
-  val tipps = TableQuery[TippsTable]
 
 
   val feedbacks = TableQuery[FeedbackTable]
@@ -175,15 +174,15 @@ trait TableDefs {
 
   class PwHashesTable(tag: Tag) extends Table[PwHash](tag, "pw_hashes") {
 
-    def username = column[String]("username", O.PrimaryKey)
+    def username: Rep[String] = column[String]("username", O.PrimaryKey)
 
-    def pwHash = column[String]("pw_hash")
-
-
-    def userFk = foreignKey("user_fk", username, users)(_.username)
+    def pwHash: Rep[String] = column[String]("pw_hash")
 
 
-    def * = (username, pwHash) <> (PwHash.tupled, PwHash.unapply)
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
+
+
+    override def * : ProvenShape[PwHash] = (username, pwHash) <> (PwHash.tupled, PwHash.unapply)
 
   }
 
@@ -191,44 +190,32 @@ trait TableDefs {
 
   class CoursesTable(tag: Tag) extends Table[Course](tag, "courses") {
 
-    def id = column[String](idName, O.PrimaryKey)
+    def id: Rep[String] = column[String](idName, O.PrimaryKey)
 
-    def courseName = column[String]("course_name")
+    def courseName: Rep[String] = column[String]("course_name")
 
 
-    override def * = (id, courseName) <> (Course.tupled, Course.unapply)
+    override def * : ProvenShape[Course] = (id, courseName) <> (Course.tupled, Course.unapply)
 
   }
 
   class UsersInCoursesTable(tag: Tag) extends Table[UserInCourse](tag, "users_in_courses") {
 
-    def username = column[String]("username")
+    def username: Rep[String] = column[String]("username")
 
-    def courseId = column[String]("course_id")
+    def courseId: Rep[String] = column[String]("course_id")
 
-    def role = column[Role]("role")
-
-
-    def pk = primaryKey("pk", (username, courseId))
-
-    def userFk = foreignKey("user_fk", username, users)(_.username)
-
-    def courseFk = foreignKey("course_fk", courseId, courses)(_.id)
+    def role: Rep[Role] = column[Role]("role")
 
 
-    override def * = (username, courseId, role) <> (UserInCourse.tupled, UserInCourse.unapply)
+    def pk: PrimaryKey = primaryKey("pk", (username, courseId))
 
-  }
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
-  // Tipps
+    def courseFk: ForeignKeyQuery[CoursesTable, Course] = foreignKey("course_fk", courseId, courses)(_.id)
 
-  class TippsTable(tag: Tag) extends Table[Tipp](tag, "tipps") {
 
-    def id = column[Int](idName, O.PrimaryKey, O.AutoInc)
-
-    def str = column[String]("str")
-
-    override def * = (id, str) <> (Tipp.tupled, Tipp.unapply)
+    override def * : ProvenShape[UserInCourse] = (username, courseId, role) <> (UserInCourse.tupled, UserInCourse.unapply)
 
   }
 
@@ -236,29 +223,29 @@ trait TableDefs {
 
   class FeedbackTable(tag: Tag) extends Table[Feedback](tag, "feedback") {
 
-    def username = column[String](usernameName)
+    def username: Rep[String] = column[String](usernameName)
 
-    def toolUrlPart = column[String]("tool_url")
+    def toolUrlPart: Rep[String] = column[String]("tool_url")
 
-    def sense = column[Mark]("sense")
+    def sense: Rep[Mark] = column[Mark]("sense")
 
-    def used = column[Mark]("used")
+    def used: Rep[Mark] = column[Mark]("used")
 
-    def usability = column[Mark]("usability")
+    def usability: Rep[Mark] = column[Mark]("usability")
 
-    def feedback = column[Mark]("feedback")
+    def feedback: Rep[Mark] = column[Mark]("feedback")
 
-    def fairness = column[Mark]("fairness")
+    def fairness: Rep[Mark] = column[Mark]("fairness")
 
-    def comment = column[String]("comment")
-
-
-    def pk = primaryKey("pk", (username, toolUrlPart))
-
-    def userFk = foreignKey("user_fk", username, users)(_.username)
+    def comment: Rep[String] = column[String]("comment")
 
 
-    override def * = (username, toolUrlPart, sense, used, usability, feedback, fairness, comment) <> (FeedbackTableHelper.fromTableTupled, FeedbackTableHelper.forTableUnapplied)
+    def pk: PrimaryKey = primaryKey("pk", (username, toolUrlPart))
+
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
+
+
+    override def * : ProvenShape[Feedback] = (username, toolUrlPart, sense, used, usability, feedback, fairness, comment) <> (FeedbackTableHelper.fromTableTupled, FeedbackTableHelper.forTableUnapplied)
 
   }
 
@@ -266,17 +253,17 @@ trait TableDefs {
 
   abstract class HasBaseValuesTable[E <: HasBaseValues](tag: Tag, name: String) extends Table[E](tag, name) {
 
-    def id = column[Int](idName)
+    def id: Rep[Int] = column[Int](idName)
 
-    def title = column[String]("title")
+    def title: Rep[String] = column[String]("title")
 
-    def author = column[String]("author")
+    def author: Rep[String] = column[String]("author")
 
-    def text = column[String]("ex_text")
+    def text: Rep[String] = column[String]("ex_text")
 
-    def state = column[ExerciseState]("ex_state")
+    def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
 
-    def semanticVersion = column[SemanticVersion]("semantic_version")
+    def semanticVersion: Rep[SemanticVersion] = column[SemanticVersion]("semantic_version")
 
   }
 

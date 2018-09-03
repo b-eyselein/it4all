@@ -52,7 +52,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class UmlMappingYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[UmlMapping] {
+  final case class UmlMappingYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[UmlMapping] {
 
     override def write(mapping: UmlMapping): YamlValue = YamlObj(keyName -> mapping.key, valueName -> mapping.value)
 

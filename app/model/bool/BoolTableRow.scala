@@ -5,7 +5,7 @@ import model.bool.ScalaNode.{constant, not}
 
 import scala.language.postfixOps
 
-case class BoolTableRow(assignments: Map[Variable, Boolean]) {
+final case class BoolTableRow(assignments: Map[Variable, Boolean]) {
 
   def asChar(variable: Variable): Char = if (this (variable)) '1' else '0'
 
@@ -40,7 +40,7 @@ object BoolTableRow {
       }
     }
 
-    go(variables.sorted.toList, Seq.empty)
+    go(variables.sorted.toList, Seq[BoolTableRow]())
   }
 
   def getNF(assignments: Seq[BoolTableRow], takePos: Boolean, innerF: (ScalaNode, ScalaNode) => ScalaNode, outerF: (ScalaNode, ScalaNode) => ScalaNode): ScalaNode =

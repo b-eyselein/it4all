@@ -7,7 +7,7 @@ import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError}
 
-case class FeedbackFormHelper(username: String, toolUrlPart: String) {
+final case class FeedbackFormHelper(username: String, toolUrlPart: String) {
 
   protected implicit object MarkFormatter extends Formatter[Mark] {
 
@@ -56,7 +56,7 @@ object FeedbackTableHelper {
 
 }
 
-case class Feedback(userName: String, toolUrlPart: String, marks: Map[EvaluatedAspect, Mark] = Map.empty, comment: String = "") {
+final case class Feedback(userName: String, toolUrlPart: String, marks: Map[EvaluatedAspect, Mark] = Map.empty, comment: String = "") {
 
   def getMarkForAspect(aspect: EvaluatedAspect): Mark = marks.getOrElse(aspect, NO_MARK)
 

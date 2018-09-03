@@ -18,12 +18,12 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
   def getColumns(select: Q): Seq[SelectItem] = select.getSelectBody match {
     case ps: PlainSelect => ps.getSelectItems.asScala
-    case _               => Seq.empty
+    case _               => Seq[SelectItem]()
   }
 
   override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getSelectBody match {
     case ps: PlainSelect => ps.getSelectItems.asScala map wrapColumn
-    case _               => Seq.empty
+    case _               => Seq[ColumnWrapper]()
   }
 
   override protected def getTables(query: Q): Seq[Table] = query.getSelectBody match {
@@ -31,11 +31,11 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
       val tables = plain.getFromItem match {
         case t: Table => Seq(t)
-        case _        => Seq.empty
+        case _        => Seq[Table]()
       }
 
       val joins: Seq[Table] = Option(plain.getJoins) match {
-        case None       => Seq.empty
+        case None       => Seq[Table]()
         case Some(join) => join.asScala map (_.getRightItem) flatMap {
           case t: Table => Some(t)
           case _        => None
@@ -43,7 +43,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
       }
 
       tables ++ joins
-    case _                  => Seq.empty
+    case _                  => Seq[Table]()
   }
 
   override protected def getWhere(select: Q): Option[Expression] = select.getSelectBody match {
@@ -56,13 +56,13 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   override protected def compareOrderByElements(userQ: Q, sampleQ: Q) = Some(OrderByMatcher.doMatch(orderByElements(userQ), orderByElements(sampleQ)))
 
   def orderByElements(userQ: Q): Seq[OrderByElement] = userQ.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getOrderByElements) map (_.asScala) getOrElse Seq.empty
-    case _               => Seq.empty
+    case ps: PlainSelect => Option(ps.getOrderByElements) map (_.asScala) getOrElse Seq[OrderByElement]()
+    case _               => Seq[OrderByElement]()
   }
 
   def groupByElements(query: Q): Seq[Expression] = query.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getGroupByColumnReferences) map (_.asScala) getOrElse Seq.empty
-    case _               => Seq.empty
+    case ps: PlainSelect => Option(ps.getGroupByColumnReferences) map (_.asScala) getOrElse Seq[Expression]()
+    case _               => Seq[Expression]()
   }
 
   override protected def checkStatement(statement: Statement): Try[Select] = statement match {

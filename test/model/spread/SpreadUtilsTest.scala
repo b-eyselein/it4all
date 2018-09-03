@@ -20,7 +20,7 @@ class SpreadUtilsTest {
 
   @Test
   def testRenderDiffAsString(): Unit = {
-    renderDiffAsStr("Bereiche", Seq.empty) shouldBe ""
+    renderDiffAsStr("Bereiche", Seq[String]()) shouldBe ""
     renderDiffAsStr("Bereiche", Seq("A1")) shouldBe "Die Bereiche [A1] fehlen."
     renderDiffAsStr("Operatoren", Seq("+", "-")) shouldBe "Die Operatoren [+, -] fehlen."
 
@@ -62,7 +62,7 @@ class SpreadUtilsTest {
 
   @Test
   def testGetExcelChartRanges(): Unit = {
-//    "<c:f>$name!(.*?)</c:f>"
+    //    "<c:f>$name!(.*?)</c:f>"
   }
 
 }

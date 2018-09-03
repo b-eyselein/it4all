@@ -5,10 +5,11 @@ import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
 import model.uml.UmlClassDiagram
-import model.{ExerciseState, SemanticVersion}
+import model.{ExerciseState, SemanticVersion, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsValue, Json}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
@@ -69,64 +70,64 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   class ProgExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "prog_exercises") {
 
-    def folderIdentifier = column[String]("folder_identifier")
+    def folderIdentifier: Rep[String] = column[String]("folder_identifier")
 
-    def base = column[String]("base")
+    def base: Rep[String] = column[String]("base")
 
-    def functionname = column[String]("function_name")
+    def functionName: Rep[String] = column[String]("function_name")
 
-    def indentLevel = column[Int]("indent_level")
+    def indentLevel: Rep[Int] = column[Int]("indent_level")
 
-    def outputType = column[ProgDataType]("output_type")
+    def outputType: Rep[ProgDataType] = column[ProgDataType]("output_type")
 
-    def baseDataAsJson = column[JsValue]("base_data_json")
+    def baseDataAsJson: Rep[JsValue] = column[JsValue]("base_data_json")
 
 
-    override def * = (id, semanticVersion, title, author, text, state, folderIdentifier, base, functionname, indentLevel, outputType, baseDataAsJson.?).mapTo[ProgExercise]
+    override def * : ProvenShape[ProgExercise] = (id, semanticVersion, title, author, text, state, folderIdentifier, base, functionName, indentLevel, outputType, baseDataAsJson.?) <> (ProgExercise.tupled, ProgExercise.unapply)
 
   }
 
   class InputTypesTable(tag: Tag) extends Table[ProgInput](tag, "prog_input_types") {
 
-    def id = column[Int](idName)
+    def id: Rep[Int] = column[Int](idName)
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def inputName = column[String]("input_name")
+    def inputName: Rep[String] = column[String]("input_name")
 
-    def inputType = column[ProgDataType]("input_type")
-
-
-    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
-
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def inputType: Rep[ProgDataType] = column[ProgDataType]("input_type")
 
 
-    override def * = (id, exerciseId, exSemVer, inputName, inputType).mapTo[ProgInput]
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
+
+    def exerciseFk: ForeignKeyQuery[ProgExercisesTable, ProgExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+
+    override def * : ProvenShape[ProgInput] = (id, exerciseId, exSemVer, inputName, inputType) <> (ProgInput.tupled, ProgInput.unapply)
 
   }
 
   class ProgSampleSolutionsTable(tag: Tag) extends Table[ProgSampleSolution](tag, "prog_sample_solutions") {
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def language = column[ProgLanguage]("language")
+    def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
-    def base = column[String]("base")
+    def base: Rep[String] = column[String]("base")
 
-    def solution = column[String]("solution")
-
-
-    def pk = primaryKey("pk", (exerciseId, exSemVer, language))
-
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def solution: Rep[String] = column[String]("solution")
 
 
-    override def * = (exerciseId, exSemVer, language, base, solution).mapTo[ProgSampleSolution]
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, language))
+
+    def exerciseFk: ForeignKeyQuery[ProgExercisesTable, ProgExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+
+    override def * : ProvenShape[ProgSampleSolution] = (exerciseId, exSemVer, language, base, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
 
   }
 
@@ -134,74 +135,74 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   abstract class ITestDataTable[T <: TestData](tag: Tag, name: String) extends Table[T](tag, name) {
 
-    def id = column[Int]("id")
+    def id: Rep[Int] = column[Int]("id")
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def inputAsJson = column[JsValue]("input_json")
+    def inputAsJson: Rep[JsValue] = column[JsValue]("input_json")
 
-    def output = column[JsValue]("output")
+    def output: Rep[JsValue] = column[JsValue]("output")
 
 
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def exerciseFk: ForeignKeyQuery[ProgExercisesTable, ProgExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
   }
 
   class SampleTestDataTable(tag: Tag) extends ITestDataTable[SampleTestData](tag, "prog_sample_testdata") {
 
-    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
 
 
-    override def * = (id, exerciseId, exSemVer, inputAsJson, output).mapTo[SampleTestData]
+    override def * : ProvenShape[SampleTestData] = (id, exerciseId, exSemVer, inputAsJson, output) <> (SampleTestData.tupled, SampleTestData.unapply)
 
   }
 
   class CommitedTestDataTable(tag: Tag) extends ITestDataTable[CommitedTestData](tag, "prog_commited_testdata") {
 
-    def username = column[String]("username")
+    def username: Rep[String] = column[String]("username")
 
-    def state = column[ExerciseState]("approval_state")
-
-
-    def pk = primaryKey("pk", (id, exerciseId, exSemVer, username))
-
-    def userFk = foreignKey("user_fk", username, users)(_.username)
+    def state: Rep[ExerciseState] = column[ExerciseState]("approval_state")
 
 
-    override def * = (id, exerciseId, exSemVer, inputAsJson, output, username, state).mapTo[CommitedTestData]
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, username))
+
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
+
+
+    override def * : ProvenShape[CommitedTestData] = (id, exerciseId, exSemVer, inputAsJson, output, username, state) <> (CommitedTestData.tupled, CommitedTestData.unapply)
 
   }
 
   class UmlClassDiagPartsTable(tag: Tag) extends Table[UmlClassDiagPart](tag, "prog_uml_cd_parts") {
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def className = column[String]("class_name")
+    def className: Rep[String] = column[String]("class_name")
 
-    def classDiagram = column[UmlClassDiagram]("class_diagram")
-
-
-    def pk = primaryKey("pk", (exerciseId, exSemVer))
-
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def classDiagram: Rep[UmlClassDiagram] = column[UmlClassDiagram]("class_diagram")
 
 
-    override def * = (exerciseId, exSemVer, className, classDiagram).mapTo[UmlClassDiagPart]
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer))
+
+    def exerciseFk: ForeignKeyQuery[ProgExercisesTable, ProgExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+
+    override def * : ProvenShape[UmlClassDiagPart] = (exerciseId, exSemVer, className, classDiagram) <> (UmlClassDiagPart.tupled, UmlClassDiagPart.unapply)
 
   }
 
   class ProgSolutionTable(tag: Tag) extends PartSolutionsTable(tag, "prog_solutions") {
 
-    def solution = column[String]("solution")
+    def solution: Rep[String] = column[String]("solution")
 
-    def language = column[ProgLanguage]("language")
+    def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
 
-    override def * = (username, exerciseId, exSemVer, part, solution, language, points, maxPoints).mapTo[DBProgSolution]
+    override def * : ProvenShape[DBProgSolution] = (username, exerciseId, exSemVer, part, solution, language, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
 
   }
 

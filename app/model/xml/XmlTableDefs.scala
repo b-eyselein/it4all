@@ -6,6 +6,7 @@ import model.persistence.SingleExerciseTableDefs
 import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -26,7 +27,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected val solTable = TableQuery[XmlSolutionsTable]
 
-  val sampleGrammarsTable = TableQuery[XmlSampleGrammarsTable]
+  private val sampleGrammarsTable = TableQuery[XmlSampleGrammarsTable]
 
   //  val resultsForPartsTable = TableQuery[XmlResultsTable]
 
@@ -68,41 +69,41 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class XmlExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "xml_exercises") {
 
-    def rootNode = column[String]("root_node")
+    def rootNode: Rep[String] = column[String]("root_node")
 
-    def grammarDescription = column[String]("grammar_description")
+    def grammarDescription: Rep[String] = column[String]("grammar_description")
 
 
-    override def * = (id, semanticVersion, title, author, text, state, grammarDescription, rootNode).mapTo[XmlExercise]
+    override def * : ProvenShape[XmlExercise] = (id, semanticVersion, title, author, text, state, grammarDescription, rootNode) <> (XmlExercise.tupled, XmlExercise.unapply)
 
   }
 
   class XmlSampleGrammarsTable(tag: Tag) extends Table[XmlSampleGrammar](tag, "xml_sample_grammars") {
 
-    def id = column[Int]("id")
+    def id: Rep[Int] = column[Int]("id")
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def sampleGrammar = column[DocTypeDef]("sample_grammar")
-
-
-    def pk = primaryKey("pk", (id, exerciseId, exSemVer))
-
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def sampleGrammar: Rep[DocTypeDef] = column[DocTypeDef]("sample_grammar")
 
 
-    def * = (id, exerciseId, exSemVer, sampleGrammar).mapTo[XmlSampleGrammar]
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
+
+    def exerciseFk: ForeignKeyQuery[XmlExercisesTable, XmlExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+
+    override def * : ProvenShape[XmlSampleGrammar] = (id, exerciseId, exSemVer, sampleGrammar) <> (XmlSampleGrammar.tupled, XmlSampleGrammar.unapply)
 
   }
 
   class XmlSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "xml_solutions") {
 
-    def solution = column[String]("solution")
+    def solution: Rep[String] = column[String]("solution")
 
 
-    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[XmlSolution]
+    override def * : ProvenShape[XmlSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (XmlSolution.tupled, XmlSolution.unapply)
 
   }
 

@@ -86,7 +86,7 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
             BadRequest("Es gab einen Fehler bei der Bearbeitung des Requests!")
 
           case Success(JsArray(contents)) =>
-            val toolsInHub: IndexedSeq[HubTool] = contents.flatMap(content => HubJsonProtocol.hubToolFormat.reads(content) asOpt)
+            val toolsInHub: IndexedSeq[HubTool] = contents.flatMap(content => HubJsonProtocol.hubToolFormat.reads(content).asOpt.toList)
 
             val (syncableTools, notSyncableTools) = toolList.toolMains.partition(toolMain => toolsInHub.map(_.toolId) contains toolMain.urlPart)
 

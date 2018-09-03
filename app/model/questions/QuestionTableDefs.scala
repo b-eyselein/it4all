@@ -4,9 +4,9 @@ import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.ExerciseCollectionTableDefs
 import model.questions.QuestionConsts._
-import model.questions.QuestionEnums.{Correctness, QuestionType}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
@@ -42,7 +42,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
   override def completeCollForColl(coll: Quiz): Future[CompleteQuiz] =
     questionsForQuiz(coll.id) map (qs => CompleteQuiz(coll, qs))
 
-  def completeQuizzes: Future[Seq[CompleteQuiz]] = db.run(collTable.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq.empty)) }
+  def completeQuizzes: Future[Seq[CompleteQuiz]] = db.run(collTable.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq[CompleteQuestion]())) }
 
   def completeQuiz(id: Int): Future[Option[CompleteQuiz]] = db.run(collTable.filter(_.id === id).result.headOption) flatMap {
     case None       => Future(None)
@@ -80,70 +80,70 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
   // Column types
 
   implicit val questiontypeColumnType: BaseColumnType[QuestionType] =
-    MappedColumnType.base[QuestionType, String](_.name, str => QuestionType.byString(str) getOrElse QuestionType.CHOICE)
+    MappedColumnType.base[QuestionType, String](_.entryName, QuestionTypes.withNameInsensitive)
 
   implicit val correctnessColumnType: BaseColumnType[Correctness] =
-    MappedColumnType.base[Correctness, String](_.name, str => Correctness.byString(str) getOrElse Correctness.OPTIONAL)
+    MappedColumnType.base[Correctness, String](_.entryName, Correctnesses.withNameInsensitive)
 
   override protected implicit val solutionTypeColumnType: BaseColumnType[Seq[GivenAnswer]] = // FIXME!: ???
-    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq.empty)
+    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq[GivenAnswer]())
 
   // Table defs
 
   class QuizzesTable(tag: Tag) extends ExerciseCollectionTable(tag, "quizzes") {
 
-    def theme = column[String](themeName)
+    def theme: Rep[String] = column[String](themeName)
 
 
-    override def * = (id, semanticVersion, title, author, text, state, theme).mapTo[Quiz]
+    override def * : ProvenShape[Quiz] = (id, semanticVersion, title, author, text, state, theme) <> (Quiz.tupled, Quiz.unapply)
 
   }
 
   class QuestionsTable(tag: Tag) extends ExerciseInCollectionTable(tag, "questions") {
 
-    def questionType = column[QuestionType]("question_type")
+    def questionType: Rep[QuestionType] = column[QuestionType]("question_type")
 
-    def maxPoints = column[Int]("max_points")
+    def maxPoints: Rep[Int] = column[Int]("max_points")
 
 
-    override def * = (id, semanticVersion, title, author, text, state, collectionId, collSemVer, questionType, maxPoints).mapTo[Question]
+    override def * : ProvenShape[Question] = (id, semanticVersion, title, author, text, state, collectionId, collSemVer, questionType, maxPoints) <> (Question.tupled, Question.unapply)
 
   }
 
   class AnswersTable(tag: Tag) extends Table[Answer](tag, "question_answers") {
 
-    def id = column[Int](idName)
+    def id: Rep[Int] = column[Int](idName)
 
-    def exerciseId = column[Int]("question_id")
+    def exerciseId: Rep[Int] = column[Int]("question_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def collId = column[Int]("collection_id")
+    def collId: Rep[Int] = column[Int]("collection_id")
 
-    def collSemVer = column[SemanticVersion]("coll_sem_ver")
+    def collSemVer: Rep[SemanticVersion] = column[SemanticVersion]("coll_sem_ver")
 
-    def ansText = column[String]("answer_text")
+    def ansText: Rep[String] = column[String]("answer_text")
 
-    def correctness = column[Correctness]("correctness")
+    def correctness: Rep[Correctness] = column[Correctness]("correctness")
 
-    def explanation = column[String]("explanation")
-
-
-    def pk = primaryKey("pk", (id, exerciseId, collId))
-
-    def questionFk = foreignKey("question_fk", (exerciseId, collId), exTable)(question => (question.id, question.collectionId))
+    def explanation: Rep[String] = column[String]("explanation")
 
 
-    override def * = (id, exerciseId, exSemVer, collId, collSemVer, ansText, correctness, explanation.?).mapTo[Answer]
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, collId))
+
+    def questionFk: ForeignKeyQuery[QuestionsTable, Question] = foreignKey("question_fk", (exerciseId, collId), exTable)(question => (question.id, question.collectionId))
+
+
+    override def * : ProvenShape[Answer] = (id, exerciseId, exSemVer, collId, collSemVer, ansText, correctness, explanation.?) <> (Answer.tupled, Answer.unapply)
 
   }
 
   class QuestionSolutionsTable(tag: Tag) extends CollectionExSolutionsTable(tag, "question_solutions") {
 
-    def solution = column[Seq[GivenAnswer]]("answers")
+    def solution: Rep[Seq[GivenAnswer]] = column[Seq[GivenAnswer]]("answers")
 
 
-    override def * = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints).mapTo[QuestionSolution]
+    override def * : ProvenShape[QuestionSolution] = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints) <> (QuestionSolution.tupled, QuestionSolution.unapply)
 
   }
 

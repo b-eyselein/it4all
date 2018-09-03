@@ -7,7 +7,7 @@ import play.api.libs.json.{JsValue, Json}
 
 import scala.language.postfixOps
 
-case class UmlClassMatchAnalysisResult(matchType: MatchType, classTypeCorrect: Boolean, correctClassType: UmlClassType,
+final case class UmlClassMatchAnalysisResult(matchType: MatchType, classTypeCorrect: Boolean, correctClassType: UmlClassType,
                                        maybeAttributeMatchingResult: Option[MatchingResult[UmlAttribute, UmlAttributeMatch]],
                                        maybeMethodMatchingResult: Option[MatchingResult[UmlMethod, UmlMethodMatch]])
   extends AnalysisResult {
@@ -22,7 +22,7 @@ case class UmlClassMatchAnalysisResult(matchType: MatchType, classTypeCorrect: B
 }
 
 
-case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass], compAM: Boolean) extends Match[UmlClass] {
+final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass], compAM: Boolean) extends Match[UmlClass] {
 
   override type AR = UmlClassMatchAnalysisResult
 
@@ -31,11 +31,11 @@ case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass],
 
     if (compAM) {
       val attributesResult: MatchingResult[UmlAttribute, UmlAttributeMatch] = UmlAttributeMatcher.doMatch(c1.attributes, c2.attributes)
-      val methodsResult = UmlMethodMatcher.doMatch(c1.methods, c2.methods)
+      val methodsResult: MatchingResult[UmlMethod, UmlMethodMatch] = UmlMethodMatcher.doMatch(c1.methods, c2.methods)
 
-      val membersCorrect = attributesResult.isSuccessful && methodsResult.isSuccessful
+      val membersCorrect: Boolean = attributesResult.isSuccessful && methodsResult.isSuccessful
 
-      val matchType = (classTypeCorrect, membersCorrect) match {
+      val matchType: MatchType = (classTypeCorrect, membersCorrect) match {
         case (true, true)  => MatchType.SUCCESSFUL_MATCH
         case (false, true) => MatchType.PARTIAL_MATCH
         case _             => MatchType.UNSUCCESSFUL_MATCH
@@ -56,7 +56,7 @@ case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass],
 }
 
 
-case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch] {
+final case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch] {
 
   override protected def canMatch: (UmlClass, UmlClass) => Boolean = _.className == _.className
 

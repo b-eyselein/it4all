@@ -6,7 +6,7 @@ import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
 
-case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
+final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
 
   override type AR = GenericAnalysisResult
 
@@ -18,7 +18,7 @@ case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: O
     val parallelEqual = (a1Left == a2Left) && (a1Right == a2Right)
     val crossedEqual = (a1Left == a2Right) && (a1Right == a2Left)
 
-    val matchType = if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
+    val matchType: MatchType = if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
     else MatchType.UNSUCCESSFUL_MATCH
 
     GenericAnalysisResult(matchType)

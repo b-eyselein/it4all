@@ -3,7 +3,7 @@ package model.rose
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import play.api.libs.json.{JsString, JsValue, Json}
 
-case class RoseCompleteResult(learnerSolution: String, result: RoseEvalResult) extends CompleteResult[RoseEvalResult] {
+final case class RoseCompleteResult(learnerSolution: String, result: RoseEvalResult) extends CompleteResult[RoseEvalResult] {
 
   override type SolType = String
 
@@ -28,13 +28,13 @@ case object RoseTimeOutResult extends RoseEvalResult {
 
 }
 
-case class RoseSyntaxErrorResult(cause: String) extends RoseEvalResult {
+final case class RoseSyntaxErrorResult(cause: String) extends RoseEvalResult {
 
   override def success: SuccessType = SuccessType.NONE
 
 }
 
-case class RoseExecutionResult(result: String) extends RoseEvalResult {
+final case class RoseExecutionResult(result: String) extends RoseEvalResult {
 
   override def success: SuccessType = ???
 

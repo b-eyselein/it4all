@@ -18,7 +18,7 @@ import scala.util.{Failure, Success, Try}
 
 abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
 
-  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = Seq.empty
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = Seq[ColumnWrapper]()
 
 }
 

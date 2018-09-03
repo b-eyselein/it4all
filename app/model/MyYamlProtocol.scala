@@ -10,7 +10,7 @@ import play.api.libs.json._
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Success, Try}
 
-case class WrongFieldTypeException(fieldtype: String) extends Exception
+final case class WrongFieldTypeException(fieldtype: String) extends Exception
 
 
 object YamlObj {
@@ -106,7 +106,7 @@ object MyYamlProtocol {
     def arrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = someField(fieldName) flatMap (_.asArray(mapping))
 
     def optArrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = yamlObject.fields get fieldName match {
-      case None        => Success((Seq.empty, Seq.empty))
+      case None        => Success((Seq[T](), Seq[Failure[T]]()))
       case Some(field) => field.asArray(mapping)
     }
 
@@ -135,8 +135,6 @@ object MyYamlProtocol {
       case YamlNull               => JsNull
       case YamlNumber(bigDecimal) => JsNumber(bigDecimal)
 
-      // TODO: other yamlValues such as YamlPosInf, YamlNegInf, ...
-      //      case other => other.toString
     }
   }
 
@@ -144,7 +142,7 @@ object MyYamlProtocol {
 
 abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
-  protected def writeBaseValues(hasBaseValues: HasBaseValues): Map[YamlValue, YamlValue] = Map(
+  protected def writeBaseValues(hasBaseValues: HasBaseValues): Map[YamlValue, YamlValue] = Map[YamlValue, YamlValue](
     YamlString(idName) -> hasBaseValues.id,
     YamlString(titleName) -> hasBaseValues.title,
     YamlString(authorName) -> hasBaseValues.author,

@@ -32,7 +32,7 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
           case None         => Future(BadRequest(s"No such value $str!"))
           case Some(newVal) =>
             repository.updateShowHideAggregate(user, newVal) map {
-              case 1 => Ok(Json.obj("showHideAgg" -> newVal.toString))
+              case 1 => Ok(Json.obj("showHideAgg" -> newVal.entryName))
               case _ => BadRequest("TODO!")
             }
         }

@@ -38,7 +38,7 @@ object CommonUtils {
 
     }
 
-    go(ts toList, Seq.empty, Seq.empty)
+    go(ts toList, Seq[A](), Seq[Failure[A]]())
   }
 
 }

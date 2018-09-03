@@ -38,10 +38,10 @@
                                 <input name="correctness_@count" id="correctness_@count" hidden value="WRONG">
                                 <input name="@count" id="@count" class="form-control" placeholder="Antwort @count">
                                 <div class="input-group-btn">
-                                @for(correctness <- model.questions.QuestionEnums.Correctness.values()) {
+                                @for(correctness <- model.questions.Correctnesses.values) {
                                     <button type="button" onclick="changeCorrectness(@count, '@correctness', this)" title="@correctness.title"
-                                    class="btn btn-@if(correctness == model.questions.QuestionEnums.Correctness.WRONG) {danger} else {default}">
-                                        <span class="@correctness.bsGlyphicon"></span>
+                                    class="btn btn-@if(correctness == model.questions.Correctnesses.WRONG) {danger} else {default}">
+                                        @*<span class="@correctness.bsGlyphicon"></span>*@
                                     </button>
                                 }
                                 </div>

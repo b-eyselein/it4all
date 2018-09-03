@@ -9,9 +9,9 @@ import scala.util.parsing.combinator.JavaTokenParsers
 import scala.util.{Try, Failure => TryFailure, Success => TrySuccess}
 
 
-case class DTDParseException(msg: String, parsedLine: String) extends Exception(msg)
+final case class DTDParseException(msg: String, parsedLine: String) extends Exception(msg)
 
-case class DTDParseResult(dtd: DocTypeDef, parseErrors: Seq[DTDParseException])
+final case class DTDParseResult(dtd: DocTypeDef, parseErrors: Seq[DTDParseException])
 
 
 object DocTypeDefParser extends JavaTokenParsers {
@@ -125,13 +125,13 @@ object DocTypeDefParser extends JavaTokenParsers {
     val tryParser: Try[Parser[DocTypeDefLine]] = str match {
       case elemRegex()    => TrySuccess(elementDefinition)
       case attListRegex() => TrySuccess(attList)
-      case _              => TryFailure(DTDParseException(s"Line can not be identified as element or attlist!", str))
+      case _              => TryFailure[Parser[DocTypeDefLine]](DTDParseException(s"Line can not be identified as element or attlist!", str))
     }
 
     tryParser flatMap { parser =>
       parse(parser, str) match {
         case DocTypeDefParser.Success(res, _)   => TrySuccess(res)
-        case DocTypeDefParser.NoSuccess(msg, _) => TryFailure(new Exception(msg))
+        case DocTypeDefParser.NoSuccess(msg, _) => TryFailure[DocTypeDefLine](new Exception(msg))
       }
     }
   }
@@ -147,7 +147,7 @@ object DocTypeDefParser extends JavaTokenParsers {
       case Nil    => TrySuccess(DocTypeDef(parseSuccesses))
       case errors =>
         errors.foreach(e => Logger.error("Failure while reading dtd from db: " + e.exception.getMessage))
-        TryFailure(errors.head.exception)
+        TryFailure[DocTypeDef](errors.headOption.getOrElse(???).exception)
     }
   }
 
@@ -168,7 +168,7 @@ object DocTypeDefParser extends JavaTokenParsers {
 
     }
 
-    go(lineRegex.findAllIn(str) toList, Seq.empty, Seq.empty)
+    go(lineRegex.findAllIn(str) toList, Seq[DocTypeDefLine](), Seq[DTDParseException]())
   }
 
 }

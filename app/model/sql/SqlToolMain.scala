@@ -136,11 +136,11 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Helper methods
 
   override def instantiateCollection(id: Int, state: ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
-    SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, shortName = ""), exercises = Seq.empty)
+    SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, shortName = ""), exercises = Seq[SqlCompleteEx]())
 
   override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): SqlCompleteEx = SqlCompleteEx(
     SqlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
-      collectionId = collId, collSemVer = SemanticVersion(0, 1, 0), tags = "", hint = None), samples = Seq.empty)
+      collectionId = collId, collSemVer = SemanticVersion(0, 1, 0), tags = "", hint = None), samples = Seq[SqlSample]())
 
   override def instantiateSolution(username: String, coll: SqlScenario, exercise: SqlCompleteEx, solution: String, points: Points, maxPoints: Points): SqlSolution =
     SqlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)

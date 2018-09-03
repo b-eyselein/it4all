@@ -6,7 +6,7 @@ import model.nary.NumberBase._
 
 import scala.util.Try
 
-case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
+final case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 
   def +(that: NAryNumber) = new NAryNumber(this.decimalValue + that.decimalValue, this.base)
 

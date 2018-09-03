@@ -46,7 +46,7 @@
 
     @exercise.maybeClassDiagramPart match {
         case None => {}
-        case Some(_) => {
+        case Some(classDiagPart@_) => {
             @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
                 <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(exercise.ex.id)"></div>
             }
@@ -70,7 +70,7 @@
                             Rest der Definition</button>
                         @exercise.maybeClassDiagramPart match {
                             case None => {}
-                            case Some(classDiagPart) => {
+                            case Some(classDiagPart@_) => {
                                 <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
                             }
                         }

@@ -2,11 +2,10 @@ package model.questions
 
 import javax.inject.{Inject, Singleton}
 import model._
-import model.questions.QuestionConsts._
-import model.questions.QuestionEnums.QuestionType
 import model.toolMains.CollectionToolMain
 import model.yaml.MyYamlFormat
 import play.api.data.Form
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc._
 import play.twirl.api.Html
 
@@ -16,7 +15,7 @@ import scala.util.{Failure, Try}
 
 @Singleton
 class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implicit ec: ExecutionContext)
-  extends CollectionToolMain("Allgemeine Fragen", "question") with JsonFormat {
+  extends CollectionToolMain("Allgemeine Fragen", "question") {
 
   // Abstract types
 
@@ -51,16 +50,14 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
 
   // Reading from requests
 
-  override def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] = {
-    println(request.body.asJson)
+  override def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] = request.body.asJson flatMap { jsValue =>
 
-    request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
-      val maybeGivenAnswers: Option[Seq[IdGivenAnswer]] = jsObj.stringField(questionTypeName) flatMap QuestionType.byString flatMap {
-        case QuestionType.CHOICE   => jsObj.arrayField("chosen", jsValue => Some(IdGivenAnswer(jsValue.asInt getOrElse -1)))
-        case QuestionType.FREETEXT => ??? // Some(Seq.empty)
-      }
+    QuestionSolutionJsonProtocol.questionSolutionReads.reads(jsValue) match {
+      case JsError(errors) =>
+        errors.foreach(println)
+        None
 
-      maybeGivenAnswers // map (givenAnswers => QuestionSolution(user.username, collId, id, givenAnswers))
+      case JsSuccess(commitedQuestionSolution, _) => Some(commitedQuestionSolution.chosen map IdGivenAnswer)
     }
   }
 
@@ -81,8 +78,6 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
        |</div>""".stripMargin)
 
   override def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion, numOfExes: Int, maybeOldSolution: Option[DBSolType]): Html = {
-    println(numOfExes)
-
     views.html.collectionExercises.questions.question(user, quiz, exercise, numOfExes, None /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
   }
 
@@ -92,8 +87,8 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
 
   def correctEx(user: User, answers: Seq[GivenAnswer], quiz: Quiz, exercise: CompleteQuestion): Future[Try[QuestionResult]] = Future {
     exercise.ex.questionType match {
-      case QuestionType.FREETEXT => Failure(new Exception("Not yet implemented..."))
-      case QuestionType.CHOICE   => Try {
+      case QuestionTypes.FREETEXT => Failure(new Exception("Not yet implemented..."))
+      case QuestionTypes.CHOICE   => Try {
         val idAnswers: Seq[IdGivenAnswer] = answers flatMap {
           case idA: IdGivenAnswer => Some(idA)
           case _                  => None
@@ -108,10 +103,10 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
   // Helper methods
 
   override def instantiateCollection(id: Int, state: ExerciseState): CompleteQuiz = CompleteQuiz(
-    Quiz(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, theme = ""), exercises = Seq.empty)
+    Quiz(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, theme = ""), exercises = Seq[CompleteQuestion]())
 
   override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompleteQuestion = CompleteQuestion(
-    Question(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, collId, collSemVer = SemanticVersion(0, 1, 0), QuestionType.FREETEXT, -1), answers = Seq.empty)
+    Question(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, collId, collSemVer = SemanticVersion(0, 1, 0), QuestionTypes.FREETEXT, -1), answers = Seq[Answer]())
 
   override def instantiateSolution(username: String, coll: Quiz, exercise: CompleteQuestion, solution: Seq[GivenAnswer], points: Points, maxPoints: Points): QuestionSolution =
     QuestionSolution(username, exercise.ex.id, exercise.ex.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)

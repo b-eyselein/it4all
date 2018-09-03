@@ -79,8 +79,10 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def umlClassDiag(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
+      def emptyClassDiagram: UmlClassDiagram = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]())
+
       val futureClassDiagram: Future[UmlClassDiagram] = umlToolMain.partTypeFromUrl(partStr) match {
-        case None       => Future(UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty))
+        case None       => Future(emptyClassDiagram)
         case Some(part) =>
           umlToolMain.futureOldOrDefaultSolution(user, id, part) flatMap {
             case Some(solution) => Future(solution.solution)
@@ -89,7 +91,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
                 case Some(exercise: UmlCompleteEx) => exercise.getDefaultClassDiagForPart(part)
                 case None                          =>
                   Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
-                  UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty)
+                  emptyClassDiagram
               }
           }
       }

@@ -1,7 +1,7 @@
 package model.persistence
 
 import model._
-import model.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
+import model.uml._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -73,7 +73,7 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
       case JsSuccess(ucd, _) => ucd
       case JsError(errors)   =>
         errors.foreach(error => Logger.error("There has been an error loading a uml class diagram from json" + error))
-        UmlClassDiagram(Seq.empty, Seq.empty, Seq.empty)
+        UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]())
     }
 
     MappedColumnType.base[UmlClassDiagram, String](write, read)

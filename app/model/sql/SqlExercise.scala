@@ -26,7 +26,7 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
 // Classes for use
 
-case class SqlCompleteScenario(override val coll: SqlScenario, override val exercises: Seq[SqlCompleteEx]) extends CompleteCollection {
+final case class SqlCompleteScenario(override val coll: SqlScenario, override val exercises: Seq[SqlCompleteEx]) extends CompleteCollection {
 
   override type Ex = SqlExercise
 
@@ -34,7 +34,7 @@ case class SqlCompleteScenario(override val coll: SqlScenario, override val exer
 
   override type Coll = SqlScenario
 
-  override def exercisesWithFilter(filter: String): Seq[SqlCompleteEx] = SqlExerciseType.withNameInsensitiveOption(filter) map (exType => getExercisesByType(exType)) getOrElse Seq.empty
+  override def exercisesWithFilter(filter: String): Seq[SqlCompleteEx] = SqlExerciseType.withNameInsensitiveOption(filter) map (exType => getExercisesByType(exType)) getOrElse Seq[SqlCompleteEx]()
 
   def getExercisesByType(exType: SqlExerciseType): Seq[SqlCompleteEx] = exercises filter (_.ex.exerciseType == exType)
 
@@ -46,7 +46,7 @@ case class SqlCompleteScenario(override val coll: SqlScenario, override val exer
 
 }
 
-case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteExInColl[SqlExercise] {
+final case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteExInColl[SqlExercise] {
 
   override def tags: Seq[SqlExTag] = (ex.tags split SqlConsts.tagJoinChar).toSeq flatMap SqlExTag.withNameInsensitiveOption
 
@@ -55,20 +55,20 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
 
 }
 
-// case classes for db
+// final case classes for db
 
-case class SqlScenario(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                       shortName: String) extends ExerciseCollection[SqlExercise, SqlCompleteEx] {
+final case class SqlScenario(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                             shortName: String) extends ExerciseCollection[SqlExercise, SqlCompleteEx] {
 
   val imageUrl: String = shortName + ".png"
 
 }
 
-case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                       collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ExInColl
+final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                             collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ExInColl
 
-case class SqlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, sample: String)
+final case class SqlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, sample: String)
 
-case class SqlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int, collSemVer: SemanticVersion,
-                       solution: String, points: Points, maxPoints: Points) extends CollectionExSolution[String]
+final case class SqlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int, collSemVer: SemanticVersion,
+                             solution: String, points: Points, maxPoints: Points) extends CollectionExSolution[String]
 

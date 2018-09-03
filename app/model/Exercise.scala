@@ -22,7 +22,7 @@ object ExerciseState extends PlayEnum[ExerciseState] {
 
 }
 
-case class BaseValues(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState)
+final case class BaseValues(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState)
 
 trait HasBaseValues {
 
@@ -85,9 +85,9 @@ trait CollectionExSolution[SolType] extends Solution[SolType] {
 
 trait ExTag {
 
-  def render = new Html(s"""<span class="$cssClass" title="$title">$buttonContent</span>""")
+  def render: Html = new Html(s"""<span class="$cssClass" title="$title">$buttonContent</span>""")
 
-  def cssClass = "badge badge-primary"
+  def cssClass: String = "badge badge-primary"
 
   def buttonContent: String
 
@@ -111,7 +111,7 @@ trait CompleteEx[E <: Exercise] {
 
   def preview: Html
 
-  def tags: Seq[ExTag] = Seq.empty
+  def tags: Seq[ExTag] = Seq[ExTag]()
 
 }
 

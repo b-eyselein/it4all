@@ -23,13 +23,13 @@ sealed trait BooleanQuestionResult extends EvaluationResult {
 
 sealed trait CreationQuestionResult extends BooleanQuestionResult
 
-case class CreationQuestionError(formula: String, errorMsg: String) extends CreationQuestionResult {
+final case class CreationQuestionError(formula: String, errorMsg: String) extends CreationQuestionResult {
 
   override def success: SuccessType = SuccessType.ERROR
 
   override def isCorrect: Boolean = false
 
-  override val assignments: Seq[BoolTableRow] = Seq.empty
+  override val assignments: Seq[BoolTableRow] = Seq[BoolTableRow]()
 
   override def restJson: Seq[(String, JsValue)] = Seq(
     formulaName -> JsString(formula),
@@ -38,7 +38,7 @@ case class CreationQuestionError(formula: String, errorMsg: String) extends Crea
 
 }
 
-case class CreationQuestionSuccess(learnerSolution: ScalaNode, question: CreationQuestion) extends CreationQuestionResult {
+final case class CreationQuestionSuccess(learnerSolution: ScalaNode, question: CreationQuestion) extends CreationQuestionResult {
 
   override val isCorrect: Boolean = question.solutions forall (as => as(SolVariable) == learnerSolution(as))
 
@@ -61,7 +61,7 @@ case class CreationQuestionSuccess(learnerSolution: ScalaNode, question: Creatio
 
 sealed trait FilloutQuestionResult extends BooleanQuestionResult
 
-case class FilloutQuestionError(formula: String, errorMsg: String) extends FilloutQuestionResult {
+final case class FilloutQuestionError(formula: String, errorMsg: String) extends FilloutQuestionResult {
 
   override def success: SuccessType = SuccessType.ERROR
 
@@ -69,10 +69,10 @@ case class FilloutQuestionError(formula: String, errorMsg: String) extends Fillo
 
   override def restJson: Seq[(String, JsValue)] = ???
 
-  override val assignments: Seq[BoolTableRow] = Seq.empty
+  override val assignments: Seq[BoolTableRow] = Seq[BoolTableRow]()
 }
 
-case class FilloutQuestionSuccess(formula: ScalaNode, assignments: Seq[BoolTableRow]) extends FilloutQuestionResult {
+final case class FilloutQuestionSuccess(formula: ScalaNode, assignments: Seq[BoolTableRow]) extends FilloutQuestionResult {
 
   override val isCorrect: Boolean = assignments forall (as => as.isSet(LerVariable) && as(LerVariable) == as(SolVariable))
 

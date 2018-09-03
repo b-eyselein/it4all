@@ -79,13 +79,14 @@ function testSol(): void {
             const id: number = $(elem).data('testid');
 
             const inputs: TestDataInput[] = [];
-            $(elem).find('td input').filter((i, e: HTMLInputElement) => e.name.startsWith('inp'))
-                .each((id, e: HTMLInputElement) => {
-                    inputs.push({id, input: e.value});
-                });
+            $(elem).find('td input').filter((i, e: Element) =>
+                e instanceof HTMLInputElement && e.name.startsWith('inp')
+            ).each((id, e: Element) => {
+                inputs.push({id, input: (e as HTMLInputElement).value});
+            });
 
             const output: string = $(elem).find('td input')
-                .filter((i, e: HTMLInputElement) => e.name.startsWith('outp')).val() as string;
+                .filter((i, e: Element) => e instanceof HTMLInputElement && e.name.startsWith('outp')).val() as string;
 
             if (output.length === 0) {
                 $(elem).addClass('warning');

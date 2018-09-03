@@ -45,7 +45,7 @@ object ColumnWrapper {
 
 }
 
-case class ChangeColumnWrapper(col: Column) extends ColumnWrapper {
+final case class ChangeColumnWrapper(col: Column) extends ColumnWrapper {
 
   override type C = Column
 
@@ -64,7 +64,7 @@ case class ChangeColumnWrapper(col: Column) extends ColumnWrapper {
 
 }
 
-case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
+final case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
 
   override type C = ColumnDefinition
 
@@ -128,7 +128,7 @@ case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
 
 }
 
-case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
+final case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
 
   override type C = SelectItem
 

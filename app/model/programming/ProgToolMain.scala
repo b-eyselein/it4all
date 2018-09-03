@@ -1,6 +1,7 @@
 package model.programming
 
 import javax.inject._
+import model.programming.ProgDataTypes.ProgDataType
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import model.yaml.MyYamlFormat
 import model.{Consts, ExerciseState, Points, SemanticVersion, User}
@@ -73,7 +74,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
     ProgExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state,
       folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
-    inputTypes = Seq.empty, sampleSolutions = Seq.empty, sampleTestData = Seq.empty, maybeClassDiagramPart = None
+    inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[SampleTestData](), maybeClassDiagramPart = None
   )
 
   override def instantiateSolution(username: String, exercise: ProgCompleteEx, part: ProgExPart,
@@ -122,7 +123,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart, maybeOldSolution: Option[DBProgSolution]): Html = part match {
     case ProgExParts.TestdataCreation =>
-      val oldTestData: Seq[CommitedTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq.empty)
+      val oldTestData: Seq[CommitedTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[CommitedTestData]())
       views.html.idExercises.programming.testDataCreation(user, exercise, oldTestData, this)
 
     case ProgExParts.Implementation =>

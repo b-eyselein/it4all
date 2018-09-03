@@ -6,6 +6,7 @@ import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
@@ -58,43 +59,43 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class UmlExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "uml_exercises") {
 
-    def solutionAsJson = column[UmlClassDiagram]("solution_json")
+    def solutionAsJson: Rep[UmlClassDiagram] = column[UmlClassDiagram]("solution_json")
 
-    def markedText = column[String]("marked_text")
+    def markedText: Rep[String] = column[String]("marked_text")
 
-    def toIgnore = column[String]("to_ignore")
+    def toIgnore: Rep[String] = column[String]("to_ignore")
 
 
-    override def * = (id, semanticVersion, title, author, text, state, solutionAsJson, markedText, toIgnore).mapTo[UmlExercise]
+    override def * : ProvenShape[UmlExercise] = (id, semanticVersion, title, author, text, state, solutionAsJson, markedText, toIgnore) <> (UmlExercise.tupled, UmlExercise.unapply)
 
   }
 
   class UmlMappingsTable(tag: Tag) extends Table[UmlMapping](tag, "uml_mappings") {
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def mappingKey = column[String]("mapping_key")
+    def mappingKey: Rep[String] = column[String]("mapping_key")
 
-    def mappingValue = column[String]("mapping_value")
-
-
-    def pk = primaryKey("pk", (exerciseId, exSemVer, mappingKey))
-
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def mappingValue: Rep[String] = column[String]("mapping_value")
 
 
-    override def * = (exerciseId, exSemVer, mappingKey, mappingValue).mapTo[UmlMapping]
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, mappingKey))
+
+    def exerciseFk: ForeignKeyQuery[UmlExercisesTable, UmlExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+
+    override def * : ProvenShape[UmlMapping] = (exerciseId, exSemVer, mappingKey, mappingValue) <> (UmlMapping.tupled, UmlMapping.unapply)
 
   }
 
   class UmlSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "uml_solutions") {
 
-    def solution = column[UmlClassDiagram]("solution")
+    def solution: Rep[UmlClassDiagram] = column[UmlClassDiagram]("solution")
 
 
-    override def * = (username, exerciseId, exSemVer, part, solution, points, maxPoints).mapTo[UmlSolution]
+    override def * : ProvenShape[UmlSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (UmlSolution.tupled, UmlSolution.unapply)
 
   }
 

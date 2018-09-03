@@ -26,7 +26,7 @@ object SemanticVersionHelper {
 }
 
 
-case class SemanticVersion(major: Int, minor: Int, patch: Int) {
+final case class SemanticVersion(major: Int, minor: Int, patch: Int) {
 
   def asString: String = major + "." + minor + "." + patch
 

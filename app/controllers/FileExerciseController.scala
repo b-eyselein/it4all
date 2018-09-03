@@ -30,7 +30,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
       }
   }
 
-  def uploadSolution(toolType: String, id: Int, fileExtension: String): EssentialAction = futureWithUser(parse.multipartFormData) { user =>
+  def uploadSolution(toolType: String, id: Int, fileExtension: String): EssentialAction = futureWithUserWithBodyParser(parse.multipartFormData) { user =>
     implicit request =>
       getToolMain(toolType) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$toolType<<"))

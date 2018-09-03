@@ -6,7 +6,7 @@ import model.uml.UmlConsts._
 import model.uml.UmlImplementation
 import play.api.libs.json.{JsValue, Json}
 
-case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
+final case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
 
   override type AR = GenericAnalysisResult
 
@@ -14,7 +14,7 @@ case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg:
     GenericAnalysisResult(if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH)
 
   override def explanations: Seq[String] = matchType match {
-    case MatchType.SUCCESSFUL_MATCH                             => Seq.empty
+    case MatchType.SUCCESSFUL_MATCH                             => Seq[String]()
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq("Vererbungsrichtung falsch.")
     case MatchType.ONLY_SAMPLE                                  => Seq("Vererbungsbeziehung nicht erstellt.")
     case MatchType.ONLY_USER                                    => Seq("Vererbengsbeziehung ist falsch.")

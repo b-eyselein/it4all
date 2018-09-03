@@ -5,12 +5,13 @@ import model.persistence.IdExerciseTableDefs
 import model.{Exercise, ExerciseState, FileCompleteEx, SemanticVersion}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
+import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 
 // Classes for use
 
-case class SpreadExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+final case class SpreadExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                           sampleFilename: String, templateFilename: String) extends Exercise with FileCompleteEx[SpreadExercise, SpreadExPart] {
 
   override def ex: SpreadExercise = this
@@ -43,12 +44,12 @@ class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   class SpreadExerciseTable(tag: Tag) extends ExerciseTableDef(tag, "spread_exercises") {
 
-    def sampleFilename = column[String]("sample_filename")
+    def sampleFilename: Rep[String] = column[String]("sample_filename")
 
-    def templateFilename = column[String]("template_filename")
+    def templateFilename: Rep[String] = column[String]("template_filename")
 
 
-    override def * = (id, semanticVersion, title, author, text, state, sampleFilename, templateFilename).mapTo[SpreadExercise]
+    override def * : ProvenShape[SpreadExercise] = (id, semanticVersion, title, author, text, state, sampleFilename, templateFilename) <> (SpreadExercise.tupled, SpreadExercise.unapply)
 
   }
 

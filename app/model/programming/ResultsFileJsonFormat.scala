@@ -10,7 +10,7 @@ import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
 
-case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], errors: String)
+final case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], errors: String)
 
 //noinspection ConvertibleToMethodValue
 object ResultsFileJsonFormat extends FileUtils {

@@ -6,7 +6,7 @@ import play.api.libs.json.{JsBoolean, JsString, JsValue, Json}
 
 // Types of complete results
 
-case class ProgCompleteResult(implementation: String, results: Seq[ProgEvalResult]) extends CompleteResult[ProgEvalResult] {
+final case class ProgCompleteResult(implementation: String, results: Seq[ProgEvalResult]) extends CompleteResult[ProgEvalResult] {
 
   override type SolType = String
 
@@ -27,7 +27,7 @@ trait ProgEvalResult extends EvaluationResult {
 
 }
 
-case class SyntaxError(error: String) extends ProgEvalResult {
+final case class SyntaxError(error: String) extends ProgEvalResult {
 
   override val success: SuccessType = SuccessType.ERROR
 
@@ -37,7 +37,7 @@ case class SyntaxError(error: String) extends ProgEvalResult {
 }
 
 
-case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, result: JsValue, consoleOutput: Option[String]) extends ProgEvalResult {
+final case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, result: JsValue, consoleOutput: Option[String]) extends ProgEvalResult {
 
   override def toJson: JsValue = Json.obj(
     idName -> id,

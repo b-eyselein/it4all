@@ -57,6 +57,15 @@ scalacOptions ++= Seq(
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
 
+// Wart remover for scalac options
+wartremoverWarnings ++= Warts.allBut(Wart.DefaultArguments, Wart.Equals, Wart.ImplicitParameter, Wart.Nothing)
+
+wartremoverExcluded ++= routes.in(Compile).value
+wartremoverExcluded += sourceManaged.value
+wartremoverExcluded += (target in TwirlKeys.compileTemplates).value
+
+
+
 updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true)
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node

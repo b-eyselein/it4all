@@ -5,9 +5,9 @@ import play.api.libs.functional.syntax._
 
 import model.bool.BoolConsts._
 
-case class BoolSolution(formula: String, assignments: Seq[BoolTableRow])
+final case class BoolSolution(formula: String, assignments: Seq[BoolTableRow])
 
-case class BoolAssignment(variable: Variable, value: Boolean)
+final case class BoolAssignment(variable: Variable, value: Boolean)
 
 //noinspection ConvertibleToMethodValue
 object BoolSolutionJsonFormat {

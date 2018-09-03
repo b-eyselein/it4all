@@ -3,7 +3,7 @@ package model
 import scala.math.Integral.Implicits._
 
 
-case class Points(quarters: Int) extends AnyVal {
+final case class Points(quarters: Int) extends AnyVal {
 
   def +(that: Points): Points = Points(this.quarters + that.quarters)
 
@@ -19,7 +19,7 @@ case class Points(quarters: Int) extends AnyVal {
 
 }
 
-case class PointsOps(value: Int) extends AnyVal {
+final case class PointsOps(value: Int) extends AnyVal {
 
 
   def point: Points = points

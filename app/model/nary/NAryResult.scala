@@ -12,21 +12,21 @@ sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSoluti
   def toJson: JsValue
 }
 
-case class NAryAddResult(base: NumberBase, firstSummand: NAryNumber, secondSummand: NAryNumber, learnerSol: NAryNumber)
+final case class NAryAddResult(base: NumberBase, firstSummand: NAryNumber, secondSummand: NAryNumber, learnerSol: NAryNumber)
   extends NAryResult(firstSummand + secondSummand, learnerSol) {
 
   override def toJson: JsValue = Json.obj(correctName -> solutionCorrect)
 
 }
 
-case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberBase, targetBase: NumberBase, learnerSol: NAryNumber)
+final case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberBase, targetBase: NumberBase, learnerSol: NAryNumber)
   extends NAryResult(new NAryNumber(startingValue.decimalValue, targetBase), learnerSol) {
 
   override def toJson: JsValue = Json.obj(correctName -> solutionCorrect)
 
 }
 
-case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, maybeBinaryAbs: Option[String], maybeInvertedAbs: Option[String])
+final case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, maybeBinaryAbs: Option[String], maybeInvertedAbs: Option[String])
   extends NAryResult(new NAryNumber(targetNum, BINARY), learnerSol) {
 
   def verbose: Boolean = maybeBinaryAbs.isDefined && maybeInvertedAbs.isDefined

@@ -5,7 +5,7 @@ import model.enums.EvaluatedAspects._
 import model.enums.Mark
 import model.enums.Mark.NO_MARK
 
-case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
+final case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 
   // FIXME: refactor!
 

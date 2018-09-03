@@ -17,7 +17,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 
 trait XmlEvaluationResult extends EvaluationResult with JsonWriteable
 
@@ -78,7 +78,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override def instantiateExercise(id: Int, state: ExerciseState): XmlCompleteExercise = XmlCompleteExercise(
     XmlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, grammarDescription = "", rootNode = ""),
-    Seq.empty)
+    Seq[XmlSampleGrammar]())
 
   override def instantiateSolution(username: String, exercise: XmlCompleteExercise, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
     XmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
@@ -106,8 +106,18 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
 
       case XmlExParts.GrammarCreationXmlPart =>
-        val sampleGrammar = completeEx.sampleGrammars.minBy(sampleG => Java_Levenshtein.levenshteinDistance(solution, sampleG.sampleGrammar.asString))
-        Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution), sampleGrammar, completeEx))
+
+        val maybeSampleGrammar = completeEx.sampleGrammars.reduceOption((sampleG1, sampleG2) => {
+          val dist1 = Java_Levenshtein.levenshteinDistance(solution, sampleG1.sampleGrammar.asString)
+          val dist2 = Java_Levenshtein.levenshteinDistance(solution, sampleG2.sampleGrammar.asString)
+
+          if (dist1 < dist2) sampleG1 else sampleG2
+        })
+
+        maybeSampleGrammar match {
+          case None                => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
+          case Some(sampleGrammar) => Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution), sampleGrammar, completeEx))
+        }
     })
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: XmlExPart): Future[String] = ???

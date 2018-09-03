@@ -11,7 +11,7 @@ import scala.util.Try
 
 object LearningPathYamlProtocol extends MyYamlProtocol {
 
-  case class LearningPathYamlFormat(toolUrl: String) extends MyYamlObjectFormat[LearningPath] {
+  final case class LearningPathYamlFormat(toolUrl: String) extends MyYamlObjectFormat[LearningPath] {
 
     override protected def readObject(yamlObject: YamlObject): Try[LearningPath] = for {
       id <- yamlObject.intField(idName)
@@ -31,7 +31,7 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class LearningPathSectionYamlFormat(toolUrl: String, pathId: Int) extends MyYamlObjectFormat[LearningPathSection] {
+final case class LearningPathSectionYamlFormat(toolUrl: String, pathId: Int) extends MyYamlObjectFormat[LearningPathSection] {
 
     override protected def readObject(yamlObject: YamlObject): Try[LearningPathSection] = for {
       id: Int <- yamlObject.intField(idName)

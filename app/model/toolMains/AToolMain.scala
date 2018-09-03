@@ -67,13 +67,13 @@ abstract class AToolMain(val toolname: String, val urlPart: String) extends File
   def readLearningPaths: Seq[LearningPath] = readAll(exerciseResourcesFolder / "learningPath.yaml") match {
     case Failure(error)       =>
       Logger.error(s"Error while reading learning paths for tool $urlPart", error)
-      Seq.empty
+      Seq[LearningPath]()
     case Success(fileContent) =>
       learningPathsYamlFormat.read(fileContent.parseYaml) match {
         case Success(read)  => Seq(read)
         case Failure(error) =>
           Logger.error("Fehler: ", error)
-          Seq.empty
+          Seq[LearningPath]()
       }
   }
 

@@ -38,7 +38,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class RoseInputTypeYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseInputType] {
+final case class RoseInputTypeYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseInputType] {
 
     override def readObject(yamlObject: YamlObject): Try[RoseInputType] = for {
       id <- yamlObject.intField(idName)
@@ -50,7 +50,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  case class RoseSampleSolutionYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseSampleSolution] {
+final case class RoseSampleSolutionYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[RoseSampleSolution] = for {
       language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.STANDARD_LANG)

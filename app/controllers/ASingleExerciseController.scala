@@ -14,6 +14,7 @@ import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList)(implicit ec: ExecutionContext)
   extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with FileUtils {
@@ -35,9 +36,12 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
       toolMain.yamlString map { yaml =>
         val file = Files.createTempFile(s"export_${toolMain.urlPart}", ".yaml")
 
-        write(file, yaml)
-
-        Ok.sendPath(file, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => Files.delete(file))
+        write(file, yaml) match {
+          case Success(_)         => Ok.sendPath(file, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => Files.delete(file))
+          case Failure(exception) =>
+            Logger.error("Error while saving file", exception)
+            BadRequest("Es gab einen Fehler bei der Vorbereitung des Downloads...")
+        }
       }
   }
 

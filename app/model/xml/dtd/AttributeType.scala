@@ -14,6 +14,6 @@ case object CDataAttributeType extends AttributeType {
   override def toString: String = "CDATA"
 }
 
-case class EnumAttributeType(values: Seq[String]) extends AttributeType {
+final case class EnumAttributeType(values: Seq[String]) extends AttributeType {
   override def toString: String = "(" + values.mkString(" | ") + ")"
 }

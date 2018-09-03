@@ -41,7 +41,7 @@ class XmlError(val errorType: XmlErrorType, e: SAXParseException) extends XmlEva
 }
 
 
-case class XmlDocumentCompleteResult(learnerSolution: String, results: Seq[XmlError]) extends XmlCompleteResult {
+final case class XmlDocumentCompleteResult(learnerSolution: String, results: Seq[XmlError]) extends XmlCompleteResult {
 
   override type SolType = String
 

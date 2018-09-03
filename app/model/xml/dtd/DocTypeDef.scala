@@ -2,7 +2,7 @@ package model.xml.dtd
 
 import scala.language.postfixOps
 
-case class DocTypeDef(lines: Seq[DocTypeDefLine]) {
+final case class DocTypeDef(lines: Seq[DocTypeDefLine]) {
 
   private def splitLines(lines: List[DocTypeDefLine]): (Seq[ElementDefinition], Seq[AttributeList]) = {
 
@@ -15,7 +15,7 @@ case class DocTypeDef(lines: Seq[DocTypeDefLine]) {
       }
     }
 
-    go(lines, Seq.empty, Seq.empty)
+    go(lines, Seq[ElementDefinition](), Seq[AttributeList]())
   }
 
   def asString: String = lines map (_.asString) mkString "\n"
@@ -37,9 +37,9 @@ sealed abstract class DocTypeDefLine {
 
 }
 
-case class ElementLine(elementName: String, elementDefinition: ElementDefinition, attributeLists: Seq[AttributeList])
+final case class ElementLine(elementName: String, elementDefinition: ElementDefinition, attributeLists: Seq[AttributeList])
 
-case class AttributeList(elementName: String, attributeDefinitions: Seq[AttributeDefinition]) extends DocTypeDefLine {
+final case class AttributeList(elementName: String, attributeDefinitions: Seq[AttributeDefinition]) extends DocTypeDefLine {
 
   override def asString: String = attributeDefinitions match {
     case attr :: Nil => s"""<!ATTLIST $elementName ${attr.asString}>"""
@@ -52,14 +52,14 @@ case class AttributeList(elementName: String, attributeDefinitions: Seq[Attribut
 
 }
 
-case class AttributeDefinition(attributeName: String, attributeType: AttributeType, attributeSpecification: AttributeSpecification) {
+final case class AttributeDefinition(attributeName: String, attributeType: AttributeType, attributeSpecification: AttributeSpecification) {
 
-  def asString: String = attributeName + " " + attributeType + " " + attributeSpecification
+  def asString: String = s"$attributeName  $attributeType  $attributeSpecification"
 
 }
 
 
-case class ElementDefinition(elementName: String, content: ElementContent) extends DocTypeDefLine {
+final case class ElementDefinition(elementName: String, content: ElementContent) extends DocTypeDefLine {
 
   def contentAsString: String = content.asString(true)
 

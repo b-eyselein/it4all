@@ -86,7 +86,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override def instantiateExercise(id: Int, state: ExerciseState): WebCompleteEx = WebCompleteEx(
     WebExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, htmlText = None, jsText = None, phpText = None),
-    htmlTasks = Seq.empty, jsTasks = Seq.empty
+    htmlTasks = Seq[HtmlCompleteTask](), jsTasks = Seq[JsCompleteTask]()
   )
 
   override def instantiateSolution(username: String, exercise: WebCompleteEx, part: WebExPart, solution: String, points: Points, maxPoints: Points): WebSolution =

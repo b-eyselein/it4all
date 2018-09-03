@@ -47,7 +47,7 @@ object ProgDataTypes {
 
   case object STRING extends NonGenericProgDataType("string", str => JsString(str), _ => "\"\"")
 
-  case class LIST(subtype: ProgDataType) extends GenericProgDataType {
+  final case class LIST(subtype: ProgDataType) extends GenericProgDataType {
 
     override def toJson(str: String): JsValue = JsArray(str.split(", ") map subtype.toJson)
 

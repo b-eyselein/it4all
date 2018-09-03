@@ -59,7 +59,7 @@ abstract class QueryCorrector(val queryType: String) {
     new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
   def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
-    case None             => Seq.empty
+    case None             => Seq[BinaryExpression]()
     case Some(expression) => new ExpressionExtractor(expression).extracted
   }
 

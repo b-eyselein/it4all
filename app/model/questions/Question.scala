@@ -1,9 +1,10 @@
 package model.questions
 
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 import model._
-import model.questions.QuestionEnums.{Correctness, QuestionType}
 import play.twirl.api.Html
 
+import scala.collection.immutable.IndexedSeq
 import scala.language.postfixOps
 
 object QuestionHelper {
@@ -14,9 +15,39 @@ object QuestionHelper {
 
 }
 
+sealed abstract class QuestionType(val german: String) extends EnumEntry
+
+object QuestionTypes extends Enum[QuestionType] with PlayJsonEnum[QuestionType] {
+
+  override val values: IndexedSeq[QuestionType] = findValues
+
+
+  case object CHOICE extends QuestionType("Auswahlfrage")
+
+  case object FREETEXT extends QuestionType("Freitextfrage")
+
+}
+
+
+sealed abstract class Correctness(val title: String, val bsButtonColor: String) extends EnumEntry
+
+object Correctnesses extends Enum[Correctness] with PlayJsonEnum[Correctness] {
+
+  val values: IndexedSeq[Correctness] = findValues
+
+
+  case object CORRECT extends Correctness("Korrekt", "success")
+
+  case object OPTIONAL extends Correctness("Optional", "warning")
+
+  case object WRONG extends Correctness("Falsch", "danger")
+
+}
+
+
 // Classes for use
 
-case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends CompleteCollection {
+final case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends CompleteCollection {
 
   override type Ex = Question
 
@@ -26,16 +57,16 @@ case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends Co
 
   override def renderRest: Html = new Html("") // FIXME: implement! ???
 
-  override def exercisesWithFilter(filter: String): Seq[CompleteQuestion] = QuestionType.byString(filter) match {
+  override def exercisesWithFilter(filter: String): Seq[CompleteQuestion] = QuestionTypes.withNameInsensitiveOption(filter) match {
     case Some(questionType) => exercises filter (_.ex.questionType == questionType)
     case None               => exercises
   }
 
 }
 
-case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends CompleteExInColl[Question] {
+final case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends CompleteExInColl[Question] {
 
-  def givenAnswers: Seq[Answer] = Seq.empty
+  def givenAnswers: Seq[Answer] = Seq[Answer]()
 
   def answersForTemplate: Seq[Answer] = scala.util.Random.shuffle(answers)
 
@@ -48,33 +79,33 @@ case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends Complete
        |<div class="row">${answers map previewAnswer mkString}</div>""".stripMargin)
 
   private def previewAnswer(answer: Answer): String =
-    s"""<div class="col-md-2">${answer.correctness.name}</div>
+    s"""<div class="col-md-2">${answer.correctness.entryName}</div>
        |<div class="col-md-10">${answer.text} </div>""".stripMargin
 
 }
 
 // Case classes for db
 
-case class Quiz(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                theme: String) extends ExerciseCollection[Question, CompleteQuestion]
+final case class Quiz(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                      theme: String) extends ExerciseCollection[Question, CompleteQuestion]
 
-case class Question(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                    collectionId: Int, collSemVer: SemanticVersion, questionType: QuestionType, maxPoints: Int) extends ExInColl {
+final case class Question(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                          collectionId: Int, collSemVer: SemanticVersion, questionType: QuestionType, maxPoints: Int) extends ExInColl {
 
-  def isFreetext: Boolean = questionType == QuestionType.FREETEXT
-
-}
-
-case class Answer(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion,
-                  text: String, correctness: Correctness, explanation: Option[String]) extends IdAnswer {
-
-  def isCorrect: Boolean = correctness != Correctness.WRONG
+  def isFreetext: Boolean = questionType == QuestionTypes.FREETEXT
 
 }
 
-case class QuestionRating(questionId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, userName: String, rating: Int)
+final case class Answer(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion,
+                        text: String, correctness: Correctness, explanation: Option[String]) extends IdAnswer {
 
-case class UserAnswer(questionId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, userName: String, text: String)
+  def isCorrect: Boolean = correctness != Correctnesses.WRONG
 
-case class QuestionSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int, collSemVer: SemanticVersion, solution: Seq[GivenAnswer],
-                            points: Points, maxPoints: Points) extends CollectionExSolution[Seq[GivenAnswer]]
+}
+
+final case class QuestionRating(questionId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, userName: String, rating: Int)
+
+final case class UserAnswer(questionId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, userName: String, text: String)
+
+final case class QuestionSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int, collSemVer: SemanticVersion, solution: Seq[GivenAnswer],
+                                  points: Points, maxPoints: Points) extends CollectionExSolution[Seq[GivenAnswer]]

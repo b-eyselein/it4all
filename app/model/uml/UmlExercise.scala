@@ -8,7 +8,7 @@ import scala.language.postfixOps
 
 // Classes for use
 
-case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping]) extends SingleCompleteEx[UmlExercise, UmlExPart] {
+final case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping]) extends SingleCompleteEx[UmlExercise, UmlExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.uml.umlPreview(this)
@@ -31,14 +31,14 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping]) extends Sin
   }
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
-    val assocs: Seq[UmlAssociation] = Seq.empty
-    val impls: Seq[UmlImplementation] = Seq.empty
+    val assocs: Seq[UmlAssociation] = Seq[UmlAssociation]()
+    val impls: Seq[UmlImplementation] = Seq[UmlImplementation]()
 
     val classes: Seq[UmlClass] = part match {
       case UmlExParts.DiagramDrawingHelp => ex.solution.classes.map {
-        oldClass => UmlClass(oldClass.classType, oldClass.className, attributes = Seq.empty, methods = Seq.empty, position = oldClass.position)
+        oldClass => UmlClass(oldClass.classType, oldClass.className, attributes = Seq[UmlAttribute](), methods = Seq[UmlMethod](), position = oldClass.position)
       }
-      case _                             => Seq.empty
+      case _                             => Seq[UmlClass]()
     }
 
     UmlClassDiagram(classes, assocs, impls)
@@ -55,15 +55,15 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping]) extends Sin
 
 // Table classes
 
-case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                       solution: UmlClassDiagram, markedText: String, toIgnore: String) extends Exercise {
+final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                             solution: UmlClassDiagram, markedText: String, toIgnore: String) extends Exercise {
 
   def splitToIgnore: Seq[String] = toIgnore split tagJoinChar
 
 }
 
 // FIXME: save ignore words and mappings as json!?!
-case class UmlMapping(exerciseId: Int, exSemVer: SemanticVersion, key: String, value: String)
+final case class UmlMapping(exerciseId: Int, exSemVer: SemanticVersion, key: String, value: String)
 
-case class UmlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: UmlExPart, solution: UmlClassDiagram,
-                       points: Points, maxPoints: Points) extends DBPartSolution[UmlExPart, UmlClassDiagram]
+final case class UmlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: UmlExPart, solution: UmlClassDiagram,
+                             points: Points, maxPoints: Points) extends DBPartSolution[UmlExPart, UmlClassDiagram]

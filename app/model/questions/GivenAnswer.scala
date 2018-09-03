@@ -8,6 +8,6 @@ trait IdAnswer {
 
 sealed trait GivenAnswer
 
-case class IdGivenAnswer(id: Int) extends GivenAnswer with IdAnswer
+final case class IdGivenAnswer(id: Int) extends GivenAnswer with IdAnswer
 
-case class TextAnswer(text: String) extends GivenAnswer
+final case class TextAnswer(text: String) extends GivenAnswer

@@ -64,17 +64,17 @@ object DockerConnector {
 
   private def deleteContainer(container: String): Try[Unit] = Try(dockerClient.removeContainer(container))
 
-  def runContainer(imageName: String, maybeEntryPoint: Option[Seq[String]] = None, dockerBinds: Seq[DockerBind] = Seq.empty, workingDir: Path = DefaultWorkingDir,
+  def runContainer(imageName: String, maybeEntryPoint: Option[Seq[String]] = None, dockerBinds: Seq[DockerBind] = Seq[DockerBind](), workingDir: Path = DefaultWorkingDir,
                    maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds, deleteContainerAfterRun: Boolean = true)
                   (implicit ec: ExecutionContext): Future[RunContainerResult] = Future {
 
     val createdContainer = maybeEntryPoint match {
-      case None => createContainer(imageName, workingDir.toString, dockerBinds)
+      case None             => createContainer(imageName, workingDir.toString, dockerBinds)
       case Some(entryPoint) => createContainer(imageName, workingDir.toString, entryPoint, dockerBinds)
     }
 
     createdContainer match {
-      case Failure(e) => CreateContainerException(e)
+      case Failure(e)                 => CreateContainerException(e)
       case Success(containerCreation) =>
 
         val containerId = containerCreation.id
@@ -84,7 +84,7 @@ object DockerConnector {
           case Success(_) =>
 
             waitForContainer(containerId, maxWaitTimeInSeconds) match {
-              case Failure(e) => WaitContainerException(e)
+              case Failure(e)             => WaitContainerException(e)
               case Success(containerExit) =>
 
                 val statusCode = containerExit.statusCode toInt
@@ -92,7 +92,7 @@ object DockerConnector {
                 val result: RunContainerResult = statusCode match {
                   case SuccessStatusCode => RunContainerSuccess
                   case TimeOutStatusCode => RunContainerTimeOut(MaxWaitTimeInSeconds)
-                  case _ =>
+                  case _                 =>
                     Logger.info("Container statusCode: " + statusCode.toString)
                     RunContainerError(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
                 }

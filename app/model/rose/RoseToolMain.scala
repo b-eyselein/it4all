@@ -50,10 +50,10 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // DB
 
-//  private def roseSolutionJsonReads(ex: RoseCompleteEx, user: User): Reads[RoseSolution] = (
-//    (__ \ implementationName).read[String] and
-//      (__ \ languageName).readNullable[ProgLanguage](ProgLanguages.jsonFormat) // TODO: temporary fix!
-//    ) (RoseSolution.apply(user.username, ex.ex.id, ex.ex.semanticVersion, RoseExParts.RoseSingleExPart, _, -1 point, -1 point))
+  //  private def roseSolutionJsonReads(ex: RoseCompleteEx, user: User): Reads[RoseSolution] = (
+  //    (__ \ implementationName).read[String] and
+  //      (__ \ languageName).readNullable[ProgLanguage](ProgLanguages.jsonFormat) // TODO: temporary fix!
+  //    ) (RoseSolution.apply(user.username, ex.ex.id, ex.ex.semanticVersion, RoseExParts.RoseSingleExPart, _, -1 point, -1 point))
 
   override protected def readSolution(user: User, exercise: RoseCompleteEx, part: RoseExPart)(implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap {
     case JsString(solution) => Some(solution)
@@ -73,7 +73,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override def instantiateExercise(id: Int, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
     RoseExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
-    inputType = Seq.empty, sampleSolution = null
+    inputType = Seq[RoseInputType](), sampleSolution = null
   )
 
   override def instantiateSolution(username: String, exercise: RoseCompleteEx, part: RoseExPart, solution: String, points: Points, maxPoints: Points): RoseSolution =

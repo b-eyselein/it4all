@@ -8,6 +8,7 @@ import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{Format, JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.Future
 
@@ -61,41 +62,41 @@ trait LearningPathTableDefs extends TableDefs {
 
   class LearningPathsTable(tag: Tag) extends Table[(String, Int, String)](tag, "learning_paths") {
 
-    def toolUrl = column[String]("tool_url")
+    def toolUrl: Rep[String] = column[String]("tool_url")
 
-    def id = column[Int](idName)
+    def id: Rep[Int] = column[Int](idName)
 
-    def title = column[String](titleName)
-
-
-    def pk = primaryKey("pk", (toolUrl, id))
+    def title: Rep[String] = column[String](titleName)
 
 
-    override def * = (toolUrl, id, title)
+    def pk: PrimaryKey = primaryKey("pk", (toolUrl, id))
+
+
+    override def * : ProvenShape[(String, Int, String)] = (toolUrl, id, title)
 
   }
 
   class LearningPathSectionsTable(tag: Tag) extends Table[LearningPathSection](tag, "learning_path_sections") {
 
-    def toolUrl = column[String]("tool_url")
+    def toolUrl: Rep[String] = column[String]("tool_url")
 
-    def id = column[Int](idName)
+    def id: Rep[Int] = column[Int](idName)
 
-    def pathId = column[Int]("path_id")
+    def pathId: Rep[Int] = column[Int]("path_id")
 
-    def sectionType = column[LearningPathSectionType]("section_type")
+    def sectionType: Rep[LearningPathSectionType] = column[LearningPathSectionType]("section_type")
 
-    def title = column[String](titleName)
+    def title: Rep[String] = column[String](titleName)
 
-    def content = column[String](contentName)
-
-
-    def pk = primaryKey("pk", (id, toolUrl, pathId))
-
-    def pathFk = foreignKey("path_fk", (toolUrl, pathId), learningPaths)(p => (p.toolUrl, p.id))
+    def content: Rep[String] = column[String](contentName)
 
 
-    override def * = (id, toolUrl, pathId, title, content, sectionType) <> (tupled, unapplied)
+    def pk: PrimaryKey = primaryKey("pk", (id, toolUrl, pathId))
+
+    def pathFk: ForeignKeyQuery[LearningPathsTable, (String, Int, String)] = foreignKey("path_fk", (toolUrl, pathId), learningPaths)(p => (p.toolUrl, p.id))
+
+
+    override def * : ProvenShape[LearningPathSection] = (id, toolUrl, pathId, title, content, sectionType) <> (tupled, unapplied)
 
 
     private implicit val lPQuestionJsonFormat: Format[LPQuestion] = LPQuestionJsonFormat.lpQuestionJsonFormat
@@ -109,7 +110,7 @@ trait LearningPathTableDefs extends TableDefs {
       case JsSuccess(res, _) => res
       case JsError(errors)   =>
         errors.foreach(error => Logger.error(error.toString))
-        Seq.empty
+        Seq[LPQuestion]()
     }
 
     private def unapplied(lps: LearningPathSection): Option[(Int, String, Int, String, String, LearningPathSectionType)] = lps match {

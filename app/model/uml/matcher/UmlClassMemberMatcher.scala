@@ -23,12 +23,12 @@ sealed trait UmlClassMemberAnalysisResult extends AnalysisResult {
 }
 
 
-case class UmlAttributeAnalysisResult(matchType: MatchType,
-                                      visibilityComparison: Boolean, correctVisibility: UmlVisibility,
-                                      typeComparison: Boolean, correctType: String,
-                                      staticCorrect: Boolean, correctStatic: Boolean,
-                                      derivedCorrect: Boolean, correctDerived: Boolean,
-                                      abstractCorrect: Boolean, correctAbstract: Boolean) extends UmlClassMemberAnalysisResult {
+final case class UmlAttributeAnalysisResult(matchType: MatchType,
+                                            visibilityComparison: Boolean, correctVisibility: UmlVisibility,
+                                            typeComparison: Boolean, correctType: String,
+                                            staticCorrect: Boolean, correctStatic: Boolean,
+                                            derivedCorrect: Boolean, correctDerived: Boolean,
+                                            abstractCorrect: Boolean, correctAbstract: Boolean) extends UmlClassMemberAnalysisResult {
 
   override def toJson: JsValue = Json.obj(
     successName -> matchType.entryName,
@@ -41,7 +41,7 @@ case class UmlAttributeAnalysisResult(matchType: MatchType,
 
 }
 
-case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[UmlAttribute]) extends UmlClassMemberMatch[UmlAttribute] {
+final case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[UmlAttribute]) extends UmlClassMemberMatch[UmlAttribute] {
 
   override type AR = UmlAttributeAnalysisResult
 
@@ -58,7 +58,7 @@ case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[Um
     val isDerivedComparison = arg1.isDerived == arg2.isDerived
     val isAbstractComparison = arg1.isAbstract == arg2.isAbstract
 
-    val matchType = if (returnTypeComparison) {
+    val matchType: MatchType = if (returnTypeComparison) {
       if (visibilityComparison && isStaticComparison && isDerivedComparison && isAbstractComparison) {
         MatchType.SUCCESSFUL_MATCH
       } else {
@@ -95,12 +95,12 @@ object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisRes
 }
 
 
-case class UmlMethodAnalysisResult(matchType: MatchType,
-                                   visibilityComparison: Boolean, correctVisibility: UmlVisibility,
-                                   typeComparison: Boolean, correctType: String,
-                                   parameterComparison: Boolean, correctParameters: String,
-                                   staticCorrect: Boolean, correctStatic: Boolean,
-                                   abstractCorrect: Boolean, correctAbstract: Boolean)
+final case class UmlMethodAnalysisResult(matchType: MatchType,
+                                         visibilityComparison: Boolean, correctVisibility: UmlVisibility,
+                                         typeComparison: Boolean, correctType: String,
+                                         parameterComparison: Boolean, correctParameters: String,
+                                         staticCorrect: Boolean, correctStatic: Boolean,
+                                         abstractCorrect: Boolean, correctAbstract: Boolean)
   extends UmlClassMemberAnalysisResult {
 
   override def toJson: JsValue = Json.obj(
@@ -114,7 +114,7 @@ case class UmlMethodAnalysisResult(matchType: MatchType,
 
 }
 
-case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMethod]) extends UmlClassMemberMatch[UmlMethod] {
+final case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMethod]) extends UmlClassMemberMatch[UmlMethod] {
 
   override type AR = UmlMethodAnalysisResult
 
@@ -134,7 +134,7 @@ case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMetho
     val isStaticComparison = arg1.isStatic == arg2.isStatic
     val isAbstractComparison = arg1.isAbstract == arg2.isAbstract
 
-    val matchType = if (returnTypeComparison) {
+    val matchType: MatchType = if (returnTypeComparison) {
       if (visibilityComparison && isStaticComparison && parameterComparison && isAbstractComparison) {
         MatchType.SUCCESSFUL_MATCH
       } else {

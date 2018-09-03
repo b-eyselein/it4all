@@ -13,7 +13,7 @@ import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
 
-case class WrongStatementTypeException(awaited: String, gotten: String) extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")
+final case class WrongStatementTypeException(awaited: String, gotten: String) extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")
 
 class SqlStatementException(cause: Throwable) extends Exception(cause) {
 
@@ -48,7 +48,7 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 }
 
 // FIXME: use builder?
-case class SqlResult(learnerSolution: String, override val points: Points, override val maxPoints: Points,
+final case class SqlResult(learnerSolution: String, override val points: Points, override val maxPoints: Points,
                      columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
                      tableComparison: MatchingResult[Table, TableMatch],
                      whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch],
@@ -78,9 +78,9 @@ case class SqlResult(learnerSolution: String, override val points: Points, overr
 
 }
 
-case class SqlParseFailed(learnerSolution: String, error: Throwable) extends SqlCorrResult {
+final case class SqlParseFailed(learnerSolution: String, error: Throwable) extends SqlCorrResult {
 
-  override def results: Seq[EvaluationResult] = Seq.empty
+  override def results: Seq[EvaluationResult] = Seq[EvaluationResult]()
 
   override val successType: SuccessType = SuccessType.ERROR
 
@@ -88,7 +88,7 @@ case class SqlParseFailed(learnerSolution: String, error: Throwable) extends Sql
 
 }
 
-case class SqlExecutionResult(userResultTry: Try[SqlQueryResult], sampleResultTry: Try[SqlQueryResult]) extends EvaluationResult {
+final case class SqlExecutionResult(userResultTry: Try[SqlQueryResult], sampleResultTry: Try[SqlQueryResult]) extends EvaluationResult {
 
   override val success: SuccessType = (userResultTry, sampleResultTry) match {
     case (Success(userResult), Success(sampleResult)) => SuccessType.ofBool(userResult isIdentic sampleResult)

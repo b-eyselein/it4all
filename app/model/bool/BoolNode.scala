@@ -67,15 +67,15 @@ object ScalaNode {
 
 object FALSE extends Constant(false)
 
-case class NAndScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("NAND", l, r, (l, r) => !(l && r))
+final case class NAndScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("NAND", l, r, (l, r) => !(l && r))
 
-case class Implication(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("IMPL", l, r, (l, r) => !l || r)
+final case class Implication(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("IMPL", l, r, (l, r) => !l || r)
 
-case class Equivalency(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("EQUIV", l, r, (l, r) => l == r)
+final case class Equivalency(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("EQUIV", l, r, (l, r) => l == r)
 
-case class NOrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("NOR", l, r, (l, r) => !(l || r))
+final case class NOrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("NOR", l, r, (l, r) => !(l || r))
 
-case class NotScalaNode(child: ScalaNode) extends ScalaNode {
+final case class NotScalaNode(child: ScalaNode) extends ScalaNode {
 
   override def apply(assignment: BoolTableRow): Boolean = !child(assignment)
 
@@ -90,9 +90,9 @@ case class NotScalaNode(child: ScalaNode) extends ScalaNode {
 
 }
 
-case class OrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("OR", l, r, (l, r) => l || r)
+final case class OrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("OR", l, r, (l, r) => l || r)
 
-case class Constant(value: Boolean) extends ScalaNode {
+class Constant(value: Boolean) extends ScalaNode {
 
   override def apply(assignment: BoolTableRow): Boolean = value
 
@@ -105,7 +105,7 @@ case class Constant(value: Boolean) extends ScalaNode {
 
 object TRUE extends Constant(true)
 
-case class Variable(variable: Char) extends ScalaNode with Ordered[Variable] {
+final case class Variable(variable: Char) extends ScalaNode with Ordered[Variable] {
 
   override def apply(assignment: BoolTableRow) = assignment(this)
 
@@ -119,9 +119,9 @@ case class Variable(variable: Char) extends ScalaNode with Ordered[Variable] {
 
 }
 
-case class AndScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("AND", l, r, (l, r) => l && r)
+final case class AndScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("AND", l, r, (l, r) => l && r)
 
-case class XOrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("XOR", l, r, (l, r) => l ^ r)
+final case class XOrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("XOR", l, r, (l, r) => l ^ r)
 
 sealed abstract class BinaryScalaNode(operator: String, left: ScalaNode, right: ScalaNode, eval: (Boolean, Boolean) => Boolean) extends ScalaNode {
 

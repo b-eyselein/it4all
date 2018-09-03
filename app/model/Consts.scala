@@ -75,6 +75,6 @@ trait CollectionConsts extends Consts {
   val collIdName     = "collId"
   val collSemVerName = "collSemVer"
 
-  def arrayName(subName: String)(count: Option[Int]): String = subName + "[" + count.getOrElse("") + "]"
+  def arrayName(subName: String)(count: Option[Int]): String = s"$subName[${count.map(_.toString).getOrElse[String]("")}]"
 
 }

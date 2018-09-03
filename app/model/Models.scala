@@ -45,28 +45,14 @@ sealed trait User {
 
 }
 
-case class LtiUser(username: String, stdRole: Role = Role.RoleUser, showHideAggregate: ShowHideAggregate = ShowHideAggregate.SHOW) extends User
+final case class LtiUser(username: String, stdRole: Role = Role.RoleUser, showHideAggregate: ShowHideAggregate = ShowHideAggregate.SHOW) extends User
 
-case class RegisteredUser(username: String, stdRole: Role = Role.RoleUser, showHideAggregate: ShowHideAggregate = ShowHideAggregate.SHOW) extends User
+final case class RegisteredUser(username: String, stdRole: Role = Role.RoleUser, showHideAggregate: ShowHideAggregate = ShowHideAggregate.SHOW) extends User
 
-case class PwHash(username: String, pwHash: String)
+final case class PwHash(username: String, pwHash: String)
 
 // Courses
 
-case class Course(id: String, courseName: String)
+final case class Course(id: String, courseName: String)
 
-case class UserInCourse(username: String, courseId: String, role: Role = Role.RoleUser)
-
-// Tipps
-
-object TippHelper {
-
-  val ran = new Random
-
-  val StdTipp = "Hier werden in Zukunft Tipps & Tricks zur Benutzung von it4all präsentiert."
-
-  def getRandom: Tipp = Tipp(-1, StdTipp)
-
-}
-
-case class Tipp(id: Int, str: String)
+final case class UserInCourse(username: String, courseId: String, role: Role = Role.RoleUser)

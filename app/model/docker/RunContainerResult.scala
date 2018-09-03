@@ -11,9 +11,9 @@ sealed abstract class RunContainerFailure(msg: String, cause: Throwable) extends
 
 // Failure types
 
-case class RunContainerTimeOut(waitTime: Int) extends RunContainerFailure("", null)
+final case class RunContainerTimeOut(waitTime: Int) extends RunContainerFailure("", null)
 
-case class RunContainerError(statusCode: Int, logs: String) extends RunContainerFailure(logs, null)
+final case class RunContainerError(statusCode: Int, logs: String) extends RunContainerFailure(logs, null)
 
 sealed abstract class RunContainerException(msg: String) extends RunContainerFailure(msg, null) {
 
@@ -23,9 +23,9 @@ sealed abstract class RunContainerException(msg: String) extends RunContainerFai
 
 // Exceptions
 
-case class WaitContainerException(error: Throwable) extends RunContainerException(error.getMessage)
+final case class WaitContainerException(error: Throwable) extends RunContainerException(error.getMessage)
 
-case class CreateContainerException(error: Throwable) extends RunContainerException(error.getMessage)
+final case class CreateContainerException(error: Throwable) extends RunContainerException(error.getMessage)
 
-case class StartContainerException(error: Throwable) extends RunContainerException(error.getMessage)
+final case class StartContainerException(error: Throwable) extends RunContainerException(error.getMessage)
 

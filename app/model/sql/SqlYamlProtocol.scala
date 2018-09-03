@@ -35,7 +35,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
     )
   }
 
-  case class SqlExYamlFormat(collBaseValues: BaseValues) extends MyYamlObjectFormat[SqlCompleteEx] {
+  final case class SqlExYamlFormat(collBaseValues: BaseValues) extends MyYamlObjectFormat[SqlCompleteEx] {
 
     override protected def readObject(yamlObject: YamlObject): Try[SqlCompleteEx] = for {
       baseValues <- readBaseValues(yamlObject)
@@ -76,7 +76,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
   }
 
 
-  case class SqlSampleYamlFormat(collBaseValues: BaseValues, exerciseBaseValues: BaseValues) extends MyYamlObjectFormat[SqlSample] {
+  final case class SqlSampleYamlFormat(collBaseValues: BaseValues, exerciseBaseValues: BaseValues) extends MyYamlObjectFormat[SqlSample] {
 
     override def readObject(yamlObject: YamlObject): Try[SqlSample] = for {
       id <- yamlObject.intField(idName)

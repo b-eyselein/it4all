@@ -65,7 +65,7 @@ object UmlAssociationType extends Enum[UmlAssociationType] with PlayJsonEnum[Uml
 }
 
 
-case class Position(xCoord: Int, yCoord: Int)
+final case class Position(xCoord: Int, yCoord: Int)
 
 
 sealed trait UmlClassMember {
@@ -79,19 +79,19 @@ sealed trait UmlClassMember {
 
 }
 
-case class UmlAttribute(visibility: UmlVisibility, memberName: String, memberType: String, isStatic: Boolean, isDerived: Boolean, isAbstract: Boolean) extends UmlClassMember
+final case class UmlAttribute(visibility: UmlVisibility, memberName: String, memberType: String, isStatic: Boolean, isDerived: Boolean, isAbstract: Boolean) extends UmlClassMember
 
-case class UmlMethod(visibility: UmlVisibility, memberName: String, memberType: String, parameters: String, isStatic: Boolean, isAbstract: Boolean) extends UmlClassMember
+final case class UmlMethod(visibility: UmlVisibility, memberName: String, memberType: String, parameters: String, isStatic: Boolean, isAbstract: Boolean) extends UmlClassMember
 
 
-case class UmlClass(classType: UmlClassType, className: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod], position: Option[Position]) {
+final case class UmlClass(classType: UmlClassType, className: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod], position: Option[Position]) {
 
   def allMembers: Seq[UmlClassMember] = attributes ++ methods
 
 }
 
 
-case class UmlAssociation(assocType: UmlAssociationType, assocName: Option[String], firstEnd: String, firstMult: UmlMultiplicity, secondEnd: String, secondMult: UmlMultiplicity) {
+final case class UmlAssociation(assocType: UmlAssociationType, assocName: Option[String], firstEnd: String, firstMult: UmlMultiplicity, secondEnd: String, secondMult: UmlMultiplicity) {
 
   def displayMult(turn: Boolean): String =
     if (turn) secondMult.representant + ":" + firstMult.representant
@@ -100,7 +100,7 @@ case class UmlAssociation(assocType: UmlAssociationType, assocName: Option[Strin
 }
 
 
-case class UmlImplementation(subClass: String, superClass: String)
+final case class UmlImplementation(subClass: String, superClass: String)
 
 
-case class UmlClassDiagram(classes: Seq[UmlClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation])
+final case class UmlClassDiagram(classes: Seq[UmlClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation])

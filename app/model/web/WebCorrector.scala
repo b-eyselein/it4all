@@ -15,14 +15,14 @@ object WebCorrector {
 
   private def evaluateHtmlTask(completeHtmlTask: HtmlCompleteTask, searchContext: SearchContext): ElementResult =
     searchContext.findElements(By.xpath(completeHtmlTask.task.xpathQuery)).asScala.toList match {
-      case Nil => ElementResult(completeHtmlTask, None, Seq.empty, None)
+      case Nil => ElementResult(completeHtmlTask, None, Seq[AttributeResult](), None)
 
       case foundElement :: Nil =>
         val attrResults = completeHtmlTask.attributes map (evaluateAttribute(_, foundElement))
         val textResult = completeHtmlTask.task.textContent map (TextContentResult(foundElement.getText, _))
         ElementResult(completeHtmlTask, Some(foundElement), attrResults, textResult)
 
-      case _ :: _ => ElementResult(completeHtmlTask, None, Seq.empty, None)
+      case _ :: _ => ElementResult(completeHtmlTask, None, Seq[AttributeResult](), None)
     }
 
   private def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult =

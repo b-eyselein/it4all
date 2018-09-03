@@ -16,14 +16,14 @@ object UmlCompleteResult {
 
 }
 
-case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassDiagram, part: UmlExPart)
+final case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassDiagram, part: UmlExPart)
   extends CompleteResult[EvaluationResult] {
 
   override type SolType = UmlClassDiagram
 
   override val success: SuccessType = SuccessType.NONE
 
-  override def results: Seq[MatchingResult[_, _ <: Match[_]]] = Seq.empty ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
+  override def results: Seq[MatchingResult[_, _ <: Match[_]]] = Seq[MatchingResult[_, _ <: Match[_]]]() ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
 
   private val musterSolution: UmlClassDiagram = exercise.ex.solution
 

@@ -10,10 +10,10 @@ case object ImpliedSpecification extends AttributeSpecification {
   override def toString: String = "#IMPLIED"
 }
 
-case class DefaultValueSpecification(default: String) extends AttributeSpecification {
+final case class DefaultValueSpecification(default: String) extends AttributeSpecification {
   override def toString: String = "\"" + default + "\""
 }
 
-case class FixedValueSpecification(value: String) extends AttributeSpecification {
+final case class FixedValueSpecification(value: String) extends AttributeSpecification {
   override def toString: String = "#FIXED \"" + value + "\""
 }
