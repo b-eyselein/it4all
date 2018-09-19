@@ -23,23 +23,27 @@ final case class FeedbackFormHelper(username: String, toolUrlPart: String) {
 
   }
 
-  val feedbackFormMapping = Form(
-    mapping(
-      "sense" -> Mark.formField,
-      "used" -> Mark.formField,
-      "usability" -> Mark.formField,
-      "style_of_feedback" -> Mark.formField,
-      "fairness_of_feedback" -> Mark.formField,
-      "comment" -> text
-    )(fromFormApplied)(forFormUnapplied)
-  )
+  val feedbackFormMapping: Form[Feedback] = {
 
-  private def fromFormApplied(sense: Mark, used: Mark, usability: Mark, feedback: Mark, fairness: Mark, comment: String) =
-    Feedback(username, toolUrlPart, FeedbackTableHelper.constructList(sense, used, usability, feedback, fairness), comment)
+    def fromFormApplied(sense: Mark, used: Mark, usability: Mark, feedback: Mark, fairness: Mark, comment: String) =
+      Feedback(username, toolUrlPart, FeedbackTableHelper.constructList(sense, used, usability, feedback, fairness), comment)
 
-  private def forFormUnapplied(arg: Feedback): Option[(Mark, Mark, Mark, Mark, Mark, String)] =
-    Some((arg.getMarkForAspect(SENSE), arg.getMarkForAspect(USED), arg.getMarkForAspect(USABILITY),
-      arg.getMarkForAspect(STYLE_OF_FEEDBACK), arg.getMarkForAspect(FAIRNESS_OF_FEEDBACK), arg.comment))
+    def forFormUnapplied(arg: Feedback): Option[(Mark, Mark, Mark, Mark, Mark, String)] =
+      Some((arg.getMarkForAspect(SENSE), arg.getMarkForAspect(USED), arg.getMarkForAspect(USABILITY),
+        arg.getMarkForAspect(STYLE_OF_FEEDBACK), arg.getMarkForAspect(FAIRNESS_OF_FEEDBACK), arg.comment))
+
+    Form(
+      mapping(
+        "sense" -> Mark.formField,
+        "used" -> Mark.formField,
+        "usability" -> Mark.formField,
+        "style_of_feedback" -> Mark.formField,
+        "fairness_of_feedback" -> Mark.formField,
+        "comment" -> text
+      )(fromFormApplied)(forFormUnapplied)
+    )
+  }
+
 
 }
 
