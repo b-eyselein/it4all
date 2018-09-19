@@ -96,3 +96,6 @@ final case class DBProgSolution(username: String, exerciseId: Int, exSemVer: Sem
   }
 
 }
+
+final case class ProgExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: ProgExPart,
+                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[ProgExPart]

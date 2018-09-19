@@ -65,8 +65,12 @@
                         data-url="@routes.ExerciseController.adminDeleteExercise(toolMainObject.urlPart, exercise.id)">
                             <span class="octicon octicon-x"></span>
                         </button>
+
                         <a href="@routes.ExerciseController.showSolutions(toolMainObject.urlPart, exercise.id)"
                         class="btn btn-info" title="Lösungen anzeigen"><span class="octicon octicon-file"></span></a>
+
+                        <a href="@routes.ExerciseController.showReviews(toolMainObject.urlPart, exercise.id)"
+                        class="btn btn-info" title="Reviews anzeigen"><span class="octicon octicon-checklist"></span></a>
                     </td>
                     <td>@exercise.title</td>
                     <td>@exercise.author</td>

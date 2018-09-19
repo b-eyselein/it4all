@@ -12,20 +12,21 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlExercise, UmlCompleteEx, UmlClassDiagram, UmlSolution, UmlExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlExercise, UmlCompleteEx, UmlClassDiagram, UmlSolution, UmlExPart, UmlExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
   override protected type ExTableDef = UmlExercisesTable
-
   override protected type SolTableDef = UmlSolutionsTable
+  override protected type ReviewsTableDef = UmlExerciseReviewsTable
 
   // Table Queries
 
-  override protected val exTable  = TableQuery[UmlExercisesTable]
-  override protected val solTable = TableQuery[UmlSolutionsTable]
+  override protected val exTable      = TableQuery[UmlExercisesTable]
+  override protected val solTable     = TableQuery[UmlSolutionsTable]
+  override protected val reviewsTable = TableQuery[UmlExerciseReviewsTable]
 
   private val umlMappings = TableQuery[UmlMappingsTable]
 
@@ -96,6 +97,12 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
 
     override def * : ProvenShape[UmlSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (UmlSolution.tupled, UmlSolution.unapply)
+
+  }
+
+  class UmlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "uml_exercise_reviews") {
+
+    def * : ProvenShape[UmlExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (UmlExerciseReview.tupled, UmlExerciseReview.unapply)
 
   }
 

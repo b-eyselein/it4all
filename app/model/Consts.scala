@@ -13,6 +13,9 @@ trait Consts {
   val correctName     = "correct"
   val correctnessName = "correctness"
 
+  val difficultyName = "difficulty"
+  val durationName   = "duration"
+
   val errorName        = "error"
   val exercisesName    = "exercises"
   val exerciseIdName   = "exerciseId"

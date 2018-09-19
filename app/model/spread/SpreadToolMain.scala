@@ -3,11 +3,12 @@ package model.spread
 import java.nio.file.Path
 
 import javax.inject._
+import model.spread.SpreadConsts.{difficultyName, durationName}
 import model.spread.SpreadToolMain._
 import model.toolMains.{FileExerciseToolMain, ToolState}
-import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, SemanticVersion, User}
+import model._
 import play.api.data.Form
+import play.api.data.Forms._
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
@@ -36,6 +37,8 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
 
   override type PartType = SpreadExPart
 
+  override type ReviewType = SpreadExerciseReview
+
   // Other members
 
   override val toolState: ToolState = ToolState.LIVE
@@ -46,8 +49,25 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
 
   override val exParts: Seq[SpreadExPart] = SpreadExParts.values
 
+  // Forms
+
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[SpreadExercise] = null
+  override val compExForm: Form[SpreadExercise] = null
+
+  override def exerciseReviewForm(username: String, completeExercise: SpreadExercise, exercisePart: SpreadExPart): Form[SpreadExerciseReview] = {
+
+    val apply = (diffStr: String, dur: Option[Int]) =>
+      SpreadExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
+
+    val unapply = (cr: SpreadExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
+
+    Form(
+      mapping(
+        difficultyName -> nonEmptyText,
+        durationName -> optional(number(min = 0, max = 100))
+      )(apply)(unapply)
+    )
+  }
 
   // Yaml
 

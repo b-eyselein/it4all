@@ -186,6 +186,20 @@ CREATE TABLE IF NOT EXISTS prog_solutions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS prog_exercise_reviews (
+  username VARCHAR(50),
+  exercise_id    INT,
+  ex_sem_ver     VARCHAR(10),
+  exercise_part  VARCHAR(30),
+  difficulty     VARCHAR(20),
+  maybe_duration INT,
+
+  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Question
 
 CREATE TABLE IF NOT EXISTS quizzes (
@@ -243,7 +257,7 @@ CREATE TABLE IF NOT EXISTS question_solutions (
   coll_sem_ver  VARCHAR(10),
   points        INT,
   max_points    INT,
-  answers        TEXT,
+  answers       TEXT,
 
   PRIMARY KEY (username, collection_id, coll_sem_ver, exercise_id, ex_sem_ver),
   FOREIGN KEY (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES questions (id, semantic_version, collection_id, coll_sem_ver)
@@ -311,6 +325,20 @@ CREATE TABLE IF NOT EXISTS rose_solutions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS rose_exercise_reviews (
+  username VARCHAR(50),
+  exercise_id    INT,
+  ex_sem_ver     VARCHAR(10),
+  exercise_part  VARCHAR(30),
+  difficulty     VARCHAR(20),
+  maybe_duration INT,
+
+  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Spread
 
 CREATE TABLE IF NOT EXISTS spread_exercises (
@@ -325,6 +353,20 @@ CREATE TABLE IF NOT EXISTS spread_exercises (
   template_filename VARCHAR(50),
 
   PRIMARY KEY (id, semantic_version)
+);
+
+CREATE TABLE IF NOT EXISTS spread_exercise_reviews (
+  username VARCHAR(50),
+  exercise_id    INT,
+  ex_sem_ver     VARCHAR(10),
+  exercise_part  VARCHAR(30),
+  difficulty     VARCHAR(20),
+  maybe_duration INT,
+
+  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES spread_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 # Sql
@@ -443,6 +485,20 @@ CREATE TABLE IF NOT EXISTS uml_solutions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS uml_exercise_reviews (
+  username VARCHAR(50),
+  exercise_id    INT,
+  ex_sem_ver     VARCHAR(10),
+  exercise_part  VARCHAR(30),
+  difficulty     VARCHAR(20),
+  maybe_duration INT,
+
+  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Web
 
 CREATE TABLE IF NOT EXISTS web_exercises (
@@ -539,6 +595,20 @@ CREATE TABLE IF NOT EXISTS web_solutions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS web_exercise_reviews (
+  username VARCHAR(50),
+  exercise_id    INT,
+  ex_sem_ver     VARCHAR(10),
+  exercise_part  VARCHAR(30),
+  difficulty     VARCHAR(20),
+  maybe_duration INT,
+
+  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Xml
 
 CREATE TABLE IF NOT EXISTS xml_exercises (
@@ -585,9 +655,25 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS xml_exercise_reviews (
+  username VARCHAR(50),
+  exercise_id    INT,
+  ex_sem_ver     VARCHAR(10),
+  exercise_part  VARCHAR(30),
+  difficulty     VARCHAR(20),
+  maybe_duration INT,
+
+  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # --- !Downs
 
 # Xml
+
+DROP TABLE IF EXISTS xml_exercise_reviews;
 
 DROP TABLE IF EXISTS xml_solutions;
 
@@ -596,6 +682,8 @@ DROP TABLE IF EXISTS xml_sample_grammars;
 DROP TABLE IF EXISTS xml_exercises;
 
 # Web
+
+DROP TABLE IF EXISTS web_exercise_reviews;
 
 DROP TABLE IF EXISTS web_solutions;
 
@@ -611,6 +699,8 @@ DROP TABLE IF EXISTS web_exercises;
 
 # Uml
 
+DROP TABLE IF EXISTS uml_exercise_reviews;
+
 DROP TABLE IF EXISTS uml_solutions;
 
 DROP TABLE IF EXISTS uml_mappings;
@@ -618,6 +708,8 @@ DROP TABLE IF EXISTS uml_mappings;
 DROP TABLE IF EXISTS uml_exercises;
 
 # Spread
+
+DROP TABLE IF EXISTS spread_exercise_reviews;
 
 DROP TABLE IF EXISTS spread_exercises;
 
@@ -632,6 +724,8 @@ DROP TABLE IF EXISTS sql_exercises;
 DROP TABLE IF EXISTS sql_scenarioes;
 
 # Rose
+
+DROP TABLE IF EXISTS rose_exercise_reviews;
 
 DROP TABLE IF EXISTS rose_solutions;
 
@@ -652,6 +746,8 @@ DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS quizzes;
 
 # Programming
+
+DROP TABLE IF EXISTS prog_exercise_reviews;
 
 DROP TABLE IF EXISTS prog_solutions;
 

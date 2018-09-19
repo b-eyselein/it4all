@@ -141,3 +141,6 @@ final case class PHPTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, te
 
 final case class WebSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart, solution: String,
                              points: Points, maxPoints: Points) extends DBPartSolution[WebExPart, String]
+
+final case class WebExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: WebExPart,
+                                   difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[WebExPart]

@@ -6,7 +6,6 @@ import model.core.Java_Levenshtein
 import model.core.result.EvaluationResult
 import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
-import model.yaml.MyYamlFormat
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._

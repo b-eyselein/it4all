@@ -2,11 +2,13 @@ package model.uml
 
 import javax.inject._
 import model._
+import model.Difficulties
 import model.core.result.EvaluationResult
 import model.toolMains.{IdExerciseToolMain, ToolState}
-import model.yaml.MyYamlFormat
+import model.uml.UmlConsts.{difficultyName, durationName}
 import play.api.Logger
 import play.api.data.Form
+import play.api.data.Forms._
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -37,6 +39,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override type CompResult = UmlCompleteResult
 
+  override type ReviewType = UmlExerciseReview
+
   // Other members
 
   override val toolState: ToolState = ToolState.LIVE
@@ -45,8 +49,25 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[UmlExPart] = UmlExParts.values
 
+  // Forms
+
   // TODO: create Form mapping ...
   override implicit val compExForm: Form[UmlExercise] = null
+
+  override def exerciseReviewForm(username: String, completeExercise: UmlCompleteEx, exercisePart: UmlExPart): Form[UmlExerciseReview] = {
+
+    val apply = (diffStr: String, dur: Option[Int]) =>
+      UmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
+
+    val unapply = (cr: UmlExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
+
+    Form(
+      mapping(
+        difficultyName -> nonEmptyText,
+        durationName -> optional(number(min = 0, max = 100))
+      )(apply)(unapply)
+    )
+  }
 
   // Reading solution
 

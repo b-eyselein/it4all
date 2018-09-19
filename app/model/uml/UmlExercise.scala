@@ -67,3 +67,6 @@ final case class UmlMapping(exerciseId: Int, exSemVer: SemanticVersion, key: Str
 
 final case class UmlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: UmlExPart, solution: UmlClassDiagram,
                              points: Points, maxPoints: Points) extends DBPartSolution[UmlExPart, UmlClassDiagram]
+
+final case class UmlExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: UmlExPart,
+                                   difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[UmlExPart]

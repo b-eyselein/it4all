@@ -1,0 +1,13 @@
+@import model._
+
+@(user: User, reviews: Seq[ExerciseReview[_ <: ExPart]], toolList: model.toolMains.ToolList, toolMainObject: model.toolMains.IdExerciseToolMain)
+
+@title = @{
+    "Aufgabenreviews"
+}
+
+@admin.adminMain(title, user, toolList, Some(toolMainObject)) {
+    @for(review <- reviews) {
+        <p>@review</p>
+    }
+}

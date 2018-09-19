@@ -5,40 +5,44 @@
 }
 
 @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
-    <section id="statistics">
-        <h2>Statistiken</h2>
-        <ul>@statistics</ul>
-    </section>
+    @*<section id="statistics">*@
+    @*<h2>Statistiken</h2>*@
+    @*<ul>@statistics</ul>*@
+    @*</section>*@
 
-    <hr>
-
+    @*<hr>*@
     <section id="administration">
         <h2>Verwaltung der @toolMainObject.pluralName</h2>
 
         <div class="form-group">
-            <a class="btn btn-secondary btn-block" href="@routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)">
-                Übersicht über alle Aufgaben</a>
+            <a href="@routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)"
+            class="btn btn-secondary btn-block">Übersicht über alle Aufgaben</a>
         </div>
 
         <div class="form-group">
-            <a class="btn btn-success btn-block" href="@routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)">
-                Neue Aufgabe erstellen</a>
-        </div>
-
-        <div class="form-group">
-            <a class="btn btn-secondary btn-block" href="@routes.MainExerciseController.readLearningPaths(toolMainObject.urlPart)">
-                Lernpfade einlesen</a>
+            <a href="@routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)"
+            class="btn btn-success btn-block">Neue Aufgabe erstellen</a>
         </div>
 
         <div class="form-group">
             <div class="btn-group d-flex">
-                <a class="btn btn-secondary w-100" href="@routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)">
-                    Aufgaben als YAML exportieren</a>
-                <a class="btn btn-secondary w-100" href="@routes.ExerciseController.adminImportToRead(toolMainObject.urlPart)">
-                    Aufgaben aus YAML importieren</a>
+                <a href="@routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)"
+                class="btn btn-secondary w-100">Aufgaben als YAML exportieren</a>
+                <a href="@routes.ExerciseController.adminImportToRead(toolMainObject.urlPart)"
+                class="btn btn-secondary w-100">Aufgaben aus YAML importieren</a>
             </div>
         </div>
     </section>
+
+
+    <hr>
+
+    <h2>Lernpfade</h2>
+
+    <div class="form-group">
+        <a href="@routes.MainExerciseController.readLearningPaths(toolMainObject.urlPart)"
+        class="btn btn-secondary btn-block">Lernpfade einlesen</a>
+    </div>
 
     <hr>
 

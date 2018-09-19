@@ -3,14 +3,28 @@ package model
 import model.MyYamlProtocol._
 import model.core.CommonUtils
 import model.core.CoreConsts._
-import model.yaml.MyYamlFormat
-import net.jcazevedo.moultingyaml.{YamlNull, _}
+import net.jcazevedo.moultingyaml._
 import play.api.libs.json._
 
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Success, Try}
 
 final case class WrongFieldTypeException(fieldtype: String) extends Exception
+
+trait MyYamlReader[A] {
+
+  def read(yaml: YamlValue): Try[A]
+
+}
+
+
+trait MyYamlWriter[A] {
+
+  def write(obj: A): YamlValue
+
+}
+
+trait MyYamlFormat[A] extends MyYamlReader[A] with MyYamlWriter[A]
 
 
 object YamlObj {

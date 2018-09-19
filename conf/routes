@@ -119,8 +119,12 @@ GET           /tools/:toolType/exercises                                    cont
 GET           /tools/:toolType/solve/:id/:part                              controllers.ExerciseController.exercise(toolType: String, id: Int, part: String)
 PUT           /tools/:toolType/solve/:id/:part                              controllers.ExerciseController.correctLive(toolType: String, id: Int, part: String)
 
+GET           /tools/:toolType/:id/:partStr/evaluationPartForm              controllers.ExerciseController.reviewExercisePartForm(toolType: String, id: Int, partStr: String)
+POST          /tools/:toolType/:id/:partStr/evaluatePart                    controllers.ExerciseController.reviewExercisePart(toolType: String, id: Int, partStr: String)
+
 GET           /tools/:toolType/:id/:part/solution                           controllers.ExerciseController.sampleSolution(toolType: String, id: Int, part: String)
 
+GET           /tools/:toolType/:id/reviews                                  controllers.ExerciseController.showReviews(toolType: String, id: Int)
 
 # Other routes
 GET           /tools/uml/classDiagram/:id/:part/cd.js                       controllers.ExerciseController.umlClassDiag(id: Int, part: String)

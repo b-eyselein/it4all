@@ -51,13 +51,15 @@ final case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType],
 
 // Case classes for tables
 
-final case class RoseExercise(id: Int, semanticVersion: SemanticVersion,title: String, author: String, text: String, state: ExerciseState,
-                        fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends Exercise
+final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                              fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends Exercise
 
 final case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersion, name: String, inputType: ProgDataType)
 
 final case class RoseSampleSolution(exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, solution: String)
 
 final case class RoseSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart,
-                        solution: String, points: Points, maxPoints: Points) extends DBPartSolution[RoseExPart, String]
+                              solution: String, points: Points, maxPoints: Points) extends DBPartSolution[RoseExPart, String]
 
+final case class RoseExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: RoseExPart,
+                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[RoseExPart]

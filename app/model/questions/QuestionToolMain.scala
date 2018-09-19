@@ -3,7 +3,6 @@ package model.questions
 import javax.inject.{Inject, Singleton}
 import model._
 import model.toolMains.CollectionToolMain
-import model.yaml.MyYamlFormat
 import play.api.data.Form
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc._

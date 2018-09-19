@@ -3,15 +3,16 @@ package model.xml
 import java.nio.file._
 
 import javax.inject._
+import model.core.CoreConsts.{difficultyName, durationName}
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.xml.XmlConsts._
 import model.xml.dtd.DocTypeDefParser
-import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, Points, SemanticVersion, User}
+import model.{Consts, Difficulties, ExerciseState, MyYamlFormat, Points, SemanticVersion, User}
 import play.api.data.Form
-import play.api.libs.json.{JsString, JsValue}
+import play.api.data.Forms._
+import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
@@ -45,6 +46,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override type CompResult = XmlCompleteResult
 
+  override type ReviewType = XmlExerciseReview
+
   // Other members
 
   override val hasPlayground = true
@@ -55,7 +58,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[XmlExPart] = XmlExParts.values
 
-  override implicit val compExForm: Form[XmlExercise] = null
+  // Forms
+
+  override val compExForm: Form[XmlExercise] = null
   //    Form(mapping(
   //    "id" -> number,
   //    "title" -> nonEmptyText,
@@ -66,6 +71,22 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   //    "sampleGrammar" -> nonEmptyText,
   //    "rootNode" -> nonEmptyText
   //  )(XmlExercise.apply)(XmlExercise.unapply))
+
+
+  override def exerciseReviewForm(username: String, completeExercise: XmlCompleteExercise, exercisePart: XmlExPart): Form[XmlExerciseReview] = {
+
+    val apply = (diffStr: String, dur: Option[Int]) =>
+      XmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
+
+    val unapply = (cr: XmlExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
+
+    Form(
+      mapping(
+        difficultyName -> nonEmptyText,
+        durationName -> optional(number(min = 0, max = 100))
+      )(apply)(unapply)
+    )
+  }
 
   // Reading solution from requests, saving
 
@@ -132,6 +153,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
     views.html.idExercises.xml.xmlExercise(user, this, exercise, oldSolutionOrTemplate, part)
   }
+
+  override def renderExerciseReview(user: User, exercise: XmlCompleteExercise, part: XmlExPart): Html =
+    views.html.idExercises.xml.xmlExerciseReview(user, this, exercise, part)
 
   override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
 

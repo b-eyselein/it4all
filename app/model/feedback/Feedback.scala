@@ -1,8 +1,8 @@
 package model.feedback
 
-import model.enums.EvaluatedAspects._
-import model.enums.Mark.NO_MARK
-import model.enums._
+import model.EvaluatedAspects._
+import model.Mark.NO_MARK
+import model._
 import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError}

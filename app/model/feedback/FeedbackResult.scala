@@ -1,9 +1,9 @@
 package model.feedback
 
-import model.enums.EvaluatedAspect
-import model.enums.EvaluatedAspects._
-import model.enums.Mark
-import model.enums.Mark.NO_MARK
+import model.EvaluatedAspect
+import model.EvaluatedAspects._
+import model.Mark
+import model.Mark.NO_MARK
 
 final case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 

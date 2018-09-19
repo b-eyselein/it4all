@@ -11,25 +11,21 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 import scala.concurrent.{ExecutionContext, Future}
 
 class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteExercise, String, XmlSolution, XmlExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteExercise, String, XmlSolution, XmlExPart, XmlExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
   override protected type ExTableDef = XmlExercisesTable
-
   override protected type SolTableDef = XmlSolutionsTable
+  override protected type ReviewsTableDef = XmlExerciseReviewsTable
 
-  //  override protected type PartResultType = XmlResultForPart
-
-  override protected val exTable = TableQuery[XmlExercisesTable]
-
-  override protected val solTable = TableQuery[XmlSolutionsTable]
+  override protected val exTable      = TableQuery[XmlExercisesTable]
+  override protected val solTable     = TableQuery[XmlSolutionsTable]
+  override protected val reviewsTable = TableQuery[XmlExerciseReviewsTable]
 
   private val sampleGrammarsTable = TableQuery[XmlSampleGrammarsTable]
-
-  //  val resultsForPartsTable = TableQuery[XmlResultsTable]
 
   // Column Types
 
@@ -104,6 +100,12 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
 
     override def * : ProvenShape[XmlSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (XmlSolution.tupled, XmlSolution.unapply)
+
+  }
+
+  class XmlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "xml_exercise_reviews") {
+
+    override def * : ProvenShape[XmlExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (XmlExerciseReview.tupled, XmlExerciseReview.unapply)
 
   }
 

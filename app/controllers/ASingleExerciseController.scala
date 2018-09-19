@@ -112,7 +112,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
         }
       }
 
-      toolMain.readEditFromForm(request).fold(onFormError, onFormSuccess)
+      toolMain.compExForm.bindFromRequest().fold(onFormError, onFormSuccess)
   }
 
   def adminCreateExercise(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, _) =>

@@ -13,21 +13,22 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RoseExercise, RoseCompleteEx, String, RoseSolution, RoseExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RoseExercise, RoseCompleteEx, String, RoseSolution, RoseExPart, RoseExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
   override protected type ExTableDef = RoseExercisesTable
-
   override protected type SolTableDef = RoseSolutionsTable
+  override protected type ReviewsTableDef = RoseExerciseReviewsTable
 
   // Table Queries
 
-  override protected val exTable = TableQuery[RoseExercisesTable]
+  override protected val exTable      = TableQuery[RoseExercisesTable]
+  override protected val solTable     = TableQuery[RoseSolutionsTable]
+  override protected val reviewsTable = TableQuery[RoseExerciseReviewsTable]
 
-  override protected val solTable = TableQuery[RoseSolutionsTable]
 
   val roseInputs = TableQuery[RoseInputTypesTable]
 
@@ -121,6 +122,12 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
 
     override def * : ProvenShape[RoseSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (RoseSolution.tupled, RoseSolution.unapply)
+
+  }
+
+  class RoseExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "rose_exercise_reviews") {
+
+    override def * : ProvenShape[RoseExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (RoseExerciseReview.tupled, RoseExerciseReview.unapply)
 
   }
 

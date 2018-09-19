@@ -2,10 +2,9 @@ package model.toolMains
 
 import java.nio.file.Path
 
+import model._
 import model.core._
 import model.persistence.ExerciseTableDefs
-import model.yaml.MyYamlFormat
-import model.{CompleteEx, Exercise, User}
 import net.jcazevedo.moultingyaml._
 import play.twirl.api.Html
 

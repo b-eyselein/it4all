@@ -5,10 +5,11 @@ import java.nio.file.Path
 import javax.inject._
 import model._
 import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
-import model.yaml.MyYamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.api.data.Form
-import play.api.libs.json.{JsString, JsValue}
+import play.api.data.Forms._
+import play.api.data._
+import model.web.WebConsts._
+import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
@@ -37,6 +38,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override type CompResult = WebCompleteResult
 
+  override type ReviewType = WebExerciseReview
+
   // Other members
 
   override val hasPlayground: Boolean = true
@@ -48,11 +51,25 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override val exParts: Seq[WebExPart] = WebExParts.values
 
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[WebExercise] = null
+  override val compExForm: Form[WebExercise] = null
+
+  override def exerciseReviewForm(username: String, completeExercise: WebCompleteEx, exercisePart: WebExPart): Form[WebExerciseReview] = {
+
+    val apply = (diffStr: String, maybeDuration: Option[Int]) =>
+      WebExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), maybeDuration)
+
+    val unapply = (cr: WebExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
+
+    Form(
+      mapping(
+        difficultyName -> nonEmptyText,
+        durationName -> optional(number(min = 0, max = 100))
+      )(apply)(unapply)
+    )
+
+  }
 
   // DB
-
-  override def futureSaveSolution(sol: WebSolution): Future[Boolean] = tables.futureSaveSolution(sol)
 
   def writeWebSolutionFile(username: String, exerciseId: Int, part: WebExPart, content: String): Try[Path] = {
     val fileEnding = part match {

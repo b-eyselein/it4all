@@ -11,20 +11,21 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[WebExercise, WebCompleteEx, String, WebSolution, WebExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[WebExercise, WebCompleteEx, String, WebSolution, WebExPart, WebExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
   override protected type ExTableDef = WebExercisesTable
-
   override protected type SolTableDef = WebSolutionsTable
+  override protected type ReviewsTableDef = WebExerciseReviewsTable
 
   // Table queries
 
-  override protected val exTable  = TableQuery[WebExercisesTable]
-  override protected val solTable = TableQuery[WebSolutionsTable]
+  override protected val exTable      = TableQuery[WebExercisesTable]
+  override protected val solTable     = TableQuery[WebSolutionsTable]
+  override protected val reviewsTable = TableQuery[WebExerciseReviewsTable]
 
   private val htmlTasksTable  = TableQuery[HtmlTasksTable]
   private val attributesTable = TableQuery[AttributesTable]
@@ -197,6 +198,12 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
 
     override def * : ProvenShape[WebSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (WebSolution.tupled, WebSolution.unapply)
+
+  }
+
+  class WebExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "web_exercise_reviews") {
+
+    override def * : ProvenShape[WebExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (WebExerciseReview.tupled, WebExerciseReview.unapply)
 
   }
 

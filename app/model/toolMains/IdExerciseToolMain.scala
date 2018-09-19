@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
-  extends ASingleExerciseToolMain(tn, up) { //with JsonFormat {
+  extends ASingleExerciseToolMain(tn, up) {
 
   // Abstract types
 
@@ -25,7 +25,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   type DBSolType <: DBPartSolution[PartType, SolType]
 
-  override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, DBSolType, PartType]
+  override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, DBSolType, PartType, ReviewType]
 
   // Methods
 
@@ -38,6 +38,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
     tables.futureOldSolution(user.username, exerciseId, part)
 
   def futureSolutionsForExercise(exerciseId: Int): Future[Seq[DBSolType]] = tables.futureOldSolutions(exerciseId)
+
 
   // Result handling
 
@@ -57,19 +58,10 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
   // Correction
 
   // FIXME: change return type of function!
-  def correctAbstract(user: User, id: Int, partStr: String)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
-    partTypeFromUrl(partStr) match {
-      case None       => Future(Failure(NoSuchPartException(partStr)))
-      case Some(part) =>
-        futureCompleteExById(id) flatMap {
-          case None => Future(Failure(NoSuchExerciseException(id)))
-
-          case Some(exercise) =>
-            readSolution(user, exercise, part) match {
-              case None           => Future(Failure(SolutionTransferException))
-              case Some(solution) => onSolution(user, solution, exercise, part)
-            }
-        }
+  def correctAbstract(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
+    readSolution(user, exercise, part) match {
+      case None           => Future(Failure(SolutionTransferException))
+      case Some(solution) => onSolution(user, solution, exercise, part)
     }
 
   def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[String]
@@ -109,6 +101,8 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
     views.html.admin.idExes.idExerciseAdminListView(admin, exes, this, toolList)
 
   def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[DBSolType]): Html
+
+  def renderExerciseReview(user: User, exercise: CompExType, part: PartType): Html = ???
 
   // Calls
 

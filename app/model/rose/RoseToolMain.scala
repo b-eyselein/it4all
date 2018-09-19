@@ -4,9 +4,10 @@ package model.rose
 import javax.inject.{Inject, Singleton}
 import model._
 import model.programming.ProgLanguages
+import model.rose.RoseConsts.{difficultyName, durationName}
 import model.toolMains.{IdExerciseToolMain, ToolState}
-import model.yaml.MyYamlFormat
 import play.api.data.Form
+import play.api.data.Forms._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -37,6 +38,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override type CompResult = RoseCompleteResult
 
+  override type ReviewType = RoseExerciseReview
+
   // Other members
 
   override val toolState: ToolState = ToolState.BETA
@@ -45,8 +48,25 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override val exParts: Seq[RoseExPart] = RoseExParts.values
 
+  // Forms
+
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[RoseExercise] = null
+  override val compExForm: Form[RoseExercise] = null
+
+  override def exerciseReviewForm(username: String, completeExercise: RoseCompleteEx, exercisePart: RoseExPart): Form[RoseExerciseReview] = {
+
+    val apply = (diffStr: String, dur: Option[Int]) =>
+      RoseExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
+
+    val unapply = (cr: RoseExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
+
+    Form(
+      mapping(
+        difficultyName -> nonEmptyText,
+        durationName -> optional(number(min = 0, max = 100))
+      )(apply)(unapply)
+    )
+  }
 
   // DB
 

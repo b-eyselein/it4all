@@ -15,20 +15,21 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
   override protected type ExTableDef = ProgExercisesTable
-
   override protected type SolTableDef = ProgSolutionTable
+  override protected type ReviewsTableDef = ProgExerciseReviewsTable
 
   // Table Queries
 
-  override protected val exTable  = TableQuery[ProgExercisesTable]
-  override protected val solTable = TableQuery[ProgSolutionTable]
+  override protected val exTable      = TableQuery[ProgExercisesTable]
+  override protected val solTable     = TableQuery[ProgSolutionTable]
+  override protected val reviewsTable = TableQuery[ProgExerciseReviewsTable]
 
   private val inputTypesQuery   = TableQuery[InputTypesTable]
   private val sampleSolutions   = TableQuery[ProgSampleSolutionsTable]
@@ -203,6 +204,12 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
 
     override def * : ProvenShape[DBProgSolution] = (username, exerciseId, exSemVer, part, solution, language, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
+
+  }
+
+  class ProgExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "prog_exercise_reviews") {
+
+    override def * : ProvenShape[ProgExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (ProgExerciseReview.tupled, ProgExerciseReview.unapply)
 
   }
 

@@ -9,7 +9,6 @@ import model.core.CoreConsts._
 import model.core.FileUtils
 import model.core.result.EvaluationResult
 import model.learningPath.{LearningPath, LearningPathTableDefs, LearningPathYamlProtocol}
-import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.mvc.Call

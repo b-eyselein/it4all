@@ -3,7 +3,7 @@ package model.persistence
 import com.github.t3hnar.bcrypt._
 import model._
 import model.core.CoreConsts._
-import model.enums.Mark
+import model.Mark
 import model.feedback.{Feedback, FeedbackTableHelper}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider

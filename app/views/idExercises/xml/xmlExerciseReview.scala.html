@@ -1,0 +1,51 @@
+@import model.xml._
+
+@(user: model.User, toolMainObject: XmlToolMain, exercise: XmlCompleteExercise, part: XmlExPart)
+
+@title = @{
+    "Aufgabenbewertung XML"
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+
+        <h4 class="text-center">Bitte bewerten Sie diese Aufgabe nach folgenden Kriterien:</h4>
+
+        <br>
+
+        <form action="@routes.ExerciseController.reviewExercisePart(toolMainObject.urlPart, exercise.ex.id, part.urlName)" method="post">
+
+            <div class="form-group row">
+                <label class="col-sm-4" for="@XmlConsts.difficultyName">Schwierigkeit</label>
+                <div class="col-sm-8">
+                    @*<div class="form-check form-check-inline">*@
+                    @*<input class="form-check-input" type="radio" name="@XmlConsts.difficultyName" value="" id="difficulty_0" autocomplete="off">*@
+                    @*<label class="form-check-label" for="difficulty_0">Keine Angabe</label>*@
+                    @*</div>*@
+                    @for(difficulty <- model.Difficulties.values) {
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="@XmlConsts.difficultyName" value="@difficulty" id="difficulty_@difficulty" autocomplete="off"
+                            @if(difficulty == model.Difficulties.NOT_SPECIFIED) { checked }>
+                            <label class="form-check-label" for="difficulty_@difficulty">@difficulty.german</label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-sm-4" for="@XmlConsts.durationName">Bearbeitungsdauer (Minuten)</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="number" min="0" max="100" name="@XmlConsts.durationName" id="@XmlConsts.durationName">
+                </div>
+            </div>
+
+            <div class="btn-group d-flex">
+                <a href="@routes.MainExerciseController.index(toolMainObject.urlPart)" class="btn btn-light w-100">
+                    Überspringen</a>
+                <button class="btn btn-primary w-100">Bewerten</button>
+            </div>
+
+        </form>
+
+    </div>
+}

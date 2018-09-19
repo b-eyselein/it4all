@@ -1,11 +1,11 @@
 package model.programming
 
 import javax.inject._
-import model.programming.ProgDataTypes.ProgDataType
+import model.programming.ProgConsts.{difficultyName, durationName}
 import model.toolMains.{IdExerciseToolMain, ToolState}
-import model.yaml.MyYamlFormat
-import model.{Consts, ExerciseState, Points, SemanticVersion, User}
+import model._
 import play.api.data.Form
+import play.api.data.Forms._
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -42,6 +42,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override type CompResult = ProgCompleteResult
 
+  override type ReviewType = ProgExerciseReview
+
   // Other members
 
   override val toolState: ToolState = ToolState.BETA
@@ -50,8 +52,27 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override val exParts: Seq[ProgExPart] = ProgExParts.values
 
+  // Forms
+
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[ProgExercise] = null
+  override val compExForm: Form[ProgExercise] = null
+
+  override def exerciseReviewForm(username: String, completeExercise: ProgCompleteEx, exercisePart: ProgExPart): Form[ProgExerciseReview] = {
+
+    val apply = (diffStr: String, dur: Option[Int]) =>
+      ProgExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
+
+    val unapply = (cr: ProgExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
+
+    Form(
+      mapping(
+        difficultyName -> nonEmptyText,
+        durationName -> optional(number(min = 0, max = 100))
+      )(apply)(unapply)
+    )
+  }
+
+  // Regexes
 
   private val implExtractorRegex = "# \\{12?\\}([\\S\\s]*)# \\{12?\\}".r
 
@@ -86,7 +107,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override implicit val yamlFormat: MyYamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
 
   // Correction
-
 
   override def correctEx(user: User, sol: SolType, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] = {
 

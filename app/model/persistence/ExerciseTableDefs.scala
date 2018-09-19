@@ -1,8 +1,8 @@
 package model.persistence
 
 import model.ExerciseState.APPROVED
-import model.learningPath.LearningPathTableDefs
 import model.core.CoreConsts.STEP
+import model.learningPath.LearningPathTableDefs
 import model.{CompleteEx, Exercise}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -58,4 +58,6 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
     Logger.error(s"Could not update exercise ${ex.id}", e)
     false
   }
+
+
 }

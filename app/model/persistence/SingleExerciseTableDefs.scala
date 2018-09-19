@@ -9,7 +9,8 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType, DBSolType <: DBPartSolution[PartType, SolType], PartType <: ExPart] extends IdExerciseTableDefs[Ex, CompEx] {
+trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType, DBSolType <: DBPartSolution[PartType, SolType], PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
+  extends IdExerciseTableDefs[Ex, CompEx, PartType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -17,10 +18,6 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
   protected type SolTableDef <: PartSolutionsTable
 
   protected val solTable: TableQuery[SolTableDef]
-
-  // Implicit column types
-
-  protected implicit val partTypeColumnType: BaseColumnType[PartType]
 
   // Queries
 

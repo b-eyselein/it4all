@@ -3,6 +3,7 @@ package model.docker
 import java.nio.file.{Path, Paths}
 
 import com.spotify.docker.client.DockerClient.LogsParam
+import com.spotify.docker.client.messages.HostConfig.Bind
 import com.spotify.docker.client.messages.{ContainerConfig, ContainerCreation, ContainerExit, HostConfig}
 import com.spotify.docker.client.{DefaultDockerClient, DockerClient}
 import play.api.Logger
@@ -11,6 +12,12 @@ import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
+
+final case class DockerBind(fromPath: Path, toPath: Path, isReadOnly: Boolean = false) {
+
+  def toBind: Bind = Bind.from(fromPath.toAbsolutePath.toString).to(toPath.toString).readOnly(isReadOnly).build()
+
+}
 
 object DockerConnector {
 

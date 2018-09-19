@@ -1,10 +1,9 @@
 package model.toolMains
 
 import model.persistence.IdExerciseTableDefs
-import model.{ExPart, ExerciseState, SingleCompleteEx, User}
+import model.{ExPart, ExerciseState, ExerciseReview, SingleCompleteEx, User}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.data.Form
-import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,21 +14,30 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   type PartType <: ExPart
 
+  type ReviewType <: ExerciseReview[PartType]
+
   override type CompExType <: SingleCompleteEx[ExType, PartType]
 
-  override type Tables <: IdExerciseTableDefs[ExType, CompExType]
+  override type Tables <: IdExerciseTableDefs[ExType, CompExType, PartType, ReviewType]
 
   override type ReadType = CompExType
+
 
   // Other members
 
   val exParts: Seq[PartType]
 
-  protected val compExForm: Form[ExType]
+  // Forms
+
+  def exerciseReviewForm(username: String, completeExercise: CompExType, exercisePart: PartType): Form[ReviewType]
+
+  val compExForm: Form[ExType]
 
   // DB
 
   def futureUpdateExercise(exercise: ExType): Future[Boolean] = tables.futureUpdateExercise(exercise)
+
+  def futureSaveReview(review: ReviewType): Future[Boolean] = tables.futureSaveReview(review)
 
   def futureCompleteExById(id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(id)
 
@@ -42,6 +50,8 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
   def updateExerciseState(id: Int, newState: ExerciseState): Future[Boolean] = tables.updateExerciseState(id, newState)
 
   def futureDeleteExercise(id: Int): Future[Int] = tables.deleteExercise(id)
+
+  def futureReviewsForExercise(id: Int): Future[Seq[ReviewType]] = tables.futureReviewsForExercise(id)
 
   // Helper methods
 
@@ -69,8 +79,6 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
   override def yamlString: Future[String] = futureCompleteExes map {
     exes => "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   }
-
-  def readEditFromForm(implicit request: Request[AnyContent]): Form[ExType] = compExForm.bindFromRequest()
 
   // Views
 

@@ -10,7 +10,11 @@ import {CorrectionResult} from "../matches";
 import {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult} from "./xmlGrammarCorrection";
 
 let editor: CodeMirror.Editor;
+
 let testBtn: JQuery;
+let endSolveBtn: JQuery;
+
+let solutionChanged: boolean;
 
 interface XmlError {
     errorType: 'WARNING' | 'ERROR' | 'FATAL',
@@ -29,16 +33,16 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
     let html: string = '';
 
     if (response.solutionSaved) {
-        html += `<div class="alert alert-success">Ihre Lösung wurde gespeichert. </div>`;
+        html += `<div class="alert alert-success">Ihre Lösung wurde gespeichert.</div>`;
     } else {
-        html += `<div class="alert alert-danger">Ihre Lösung konnte nicht gespeichert werden! </div>`;
+        html += `<div class="alert alert-danger">Ihre Lösung konnte nicht gespeichert werden!</div>`;
     }
 
     if (response.success) {
         html += `<div class="alert alert-success">Die Korrektur war erfolgreich. Es wurden keine Fehler gefunden.</div>`;
     } else {
-        html += response.results.map((xmlError) => {
-            let cls = xmlError.errorType === 'WARNING' ? 'warning' : 'danger';
+        html += response.results.map((xmlError: XmlError) => {
+            const cls = xmlError.errorType === 'WARNING' ? 'warning' : 'danger';
             return `<div class="alert alert-${cls}"><b>Fehler in Zeile ${xmlError.line}</b>: ${xmlError.errorMessage}</div>`;
         }).join('\n');
     }
@@ -48,9 +52,9 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
 
 
 function onXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult): void {
+    solutionChanged = false;
     testBtn.prop('disabled', false);
-    const html = renderXmlGrammarCorrectionSuccess(response);
-    $('#correction').html(html);
+    $('#correction').html(renderXmlGrammarCorrectionSuccess(response));
 }
 
 function onXmlCorrectionError(jqXHR): void {
@@ -71,7 +75,7 @@ function testSol(): void {
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url: $('#testBtn').data('url'),
+        url: testBtn.data('url'),
         data: JSON.stringify(solution),
         async: true,
         success: isDocumentPart ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
@@ -79,11 +83,21 @@ function testSol(): void {
     });
 }
 
+function endSolve(): boolean {
+    return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
+}
+
 $(() => {
     const language: string = ($('#exercisePart').val() === 'grammar') ? 'application/xml-dtd' : 'xml';
 
     editor = initEditor(language, 'xmlEditor');
+    editor.on('change', () => {
+        solutionChanged = true;
+    });
 
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
+
+    endSolveBtn = $('#endSolveBtn');
+    endSolveBtn.on('click', endSolve);
 });
