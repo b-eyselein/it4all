@@ -15,7 +15,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionContext)
@@ -71,15 +71,16 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution
 
-  override def readSolution(user: User, exercise: UmlCompleteEx, part: UmlExPart)(implicit request: Request[AnyContent]): Option[UmlClassDiagram] =
-    request.body.asJson flatMap { jsValue =>
-      Json.fromJson[UmlClassDiagram](jsValue)(UmlClassDiagramJsonFormat.umlSolutionJsonFormat) match {
-        case JsSuccess(ucd, _) =>
-          Some(ucd)
-        case JsError(errors)   =>
-          errors.foreach(error => Logger.error("Json Error: " + error))
-          None
-      }
+  override def readSolution(user: User, exercise: UmlCompleteEx, part: UmlExPart)(implicit request: Request[AnyContent]): Try[UmlClassDiagram] =
+    request.body.asJson match {
+      case None          => Failure(new Exception("Request body does not contain json!"))
+      case Some(jsValue) =>
+        UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
+          case JsSuccess(ucd, _) => Success(ucd)
+          case JsError(errors)   =>
+            errors.foreach(error => Logger.error("Json Error: " + error))
+            Failure(new Exception(errors.map(_.toString).mkString("\n")))
+        }
     }
 
   // Other helper methods
@@ -114,6 +115,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override def correctEx(user: User, classDiagram: UmlClassDiagram, exercise: UmlCompleteEx, part: UmlExPart): Future[Try[UmlCompleteResult]] =
     Future(Try(new UmlCompleteResult(exercise, classDiagram, part)))
 
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: UmlExPart): Future[String] = ???
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: UmlExPart): Future[Option[String]] = ???
 
 }

@@ -21,6 +21,8 @@ object WebExYamlProtocol extends MyYamlProtocol {
     def readRest(yamlObject: YamlObject): Try[WebCompleteEx] = for {
       baseValues <- readBaseValues(yamlObject)
 
+      sampleSolution <- yamlObject.stringField(sampleSolutionName)
+
       htmlText <- yamlObject.optStringField(htmlTextName)
       jsText <- yamlObject.optStringField(jsTextName)
       phpText <- yamlObject.optStringField(phpTextName)
@@ -43,7 +45,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
         Logger.error("Could not read php task", phpTaskFailure.exception)
 
       WebCompleteEx(
-        WebExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText, phpText),
+        WebExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, sampleSolution, htmlText, jsText, phpText),
         htmlTaskTries._1, jsTaskTries._1, phpTasksTries._1
       )
     }

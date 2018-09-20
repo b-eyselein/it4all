@@ -14,7 +14,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext)
@@ -75,9 +75,12 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   //      (__ \ languageName).readNullable[ProgLanguage](ProgLanguages.jsonFormat) // TODO: temporary fix!
   //    ) (RoseSolution.apply(user.username, ex.ex.id, ex.ex.semanticVersion, RoseExParts.RoseSingleExPart, _, -1 point, -1 point))
 
-  override protected def readSolution(user: User, exercise: RoseCompleteEx, part: RoseExPart)(implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap {
-    case JsString(solution) => Some(solution)
-    case _                  => None
+  override protected def readSolution(user: User, exercise: RoseCompleteEx, part: RoseExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
+    case None       => Failure(new Exception("Request body does not contain json!"))
+    case Some(json) => json match {
+      case JsString(solution) => Success(solution)
+      case _                  => Failure(new Exception("Request body is no string!"))
+    }
   }
 
   //    request.body.asJson flatMap { jsValue =>
@@ -120,10 +123,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     } yield Try(RoseCompleteResult(sol, result))
   }
 
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: RoseExPart): Future[String] = part match {
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: RoseExPart): Future[Option[String]] = part match {
     case RoseExParts.RoseSingleExPart => futureCompleteExById(id) map {
-      case Some(exercise) => exercise.sampleSolution.head.solution
-      case None           => ""
+      maybeCompleteEx => maybeCompleteEx flatMap (_.sampleSolution.headOption map (_.solution))
     }
   }
 

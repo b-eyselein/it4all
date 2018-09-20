@@ -94,6 +94,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class WebExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "web_exercises") {
 
+    def sampleSolution: Rep[String] = column[String]("sample_sol")
+
     def htmlText: Rep[String] = column[String]("html_text")
 
     def jsText: Rep[String] = column[String]("js_text")
@@ -101,7 +103,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def phpText: Rep[String] = column[String]("php_text")
 
 
-    override def * : ProvenShape[WebExercise] = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?, phpText.?) <> (WebExercise.tupled, WebExercise.unapply)
+    override def * : ProvenShape[WebExercise] = (id, semanticVersion, title, author, text, state, sampleSolution, htmlText.?, jsText.?, phpText.?) <> (WebExercise.tupled, WebExercise.unapply)
 
   }
 

@@ -3,19 +3,26 @@ import {initEditor} from '../editorHelpers';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/python/python';
 
-import {onProgCorrectionError, onProgCorrectionSuccess} from "./progCorrectionHandler";
+import {renderProgCorrectionSuccess, ProgCorrectionResult} from "./progCorrectionHandler";
 
-export {ProgStringSolution};
+export {ProgStringSolution, onProgCorrectionSuccess};
 
 let editor: CodeMirror.Editor;
 let testBtn: JQuery, sampleSolBtn: JQuery;
+
+let solutionChanged: boolean = false;
+
+interface ProgStringSolution {
+    language: string,
+    implementation: string
+}
 
 function onChangeLanguageSuccess(response) {
     $('#language').val(response.language);
     // editor.setValue(response, 1000000);
 }
 
-function changeProgLanguage() {
+function changeProgLanguage(): void {
     // @controllers.routes.ExerciseController.progGetDeclaration("")
 
     let url = '';
@@ -29,10 +36,6 @@ function changeProgLanguage() {
     });
 }
 
-interface ProgStringSolution {
-    language: string,
-    implementation: string
-}
 
 function testSol(): void {
     $('#correction').html('');
@@ -53,6 +56,21 @@ function testSol(): void {
         success: onProgCorrectionSuccess,
         error: onProgCorrectionError
     });
+}
+
+function onProgCorrectionSuccess(result: ProgCorrectionResult): void {
+    testBtn.prop('disabled', false);
+    const html = renderProgCorrectionSuccess(result);
+
+    $('#correctionDiv').prop('hidden', false);
+    $('#correction').html(html);
+
+    solutionChanged = false;
+}
+
+function onProgCorrectionError(jqXHR): void {
+    console.error(jqXHR.responseText);
+    testBtn.prop('disabled', false);
 }
 
 function onShowSampleSolSuccess(response: string): void {
@@ -79,10 +97,18 @@ function showSampleSol(): void {
 }
 
 $(() => {
-    editor = initEditor('python', 'myTextArea');
+    editor = initEditor('python', 'textEditor');
+    editor.on('change', () => {
+        solutionChanged = true;
+    });
+
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
 
     sampleSolBtn = $('#sampleSolBtn');
     sampleSolBtn.on('click', showSampleSol);
+
+    $('#endSolveBtn').on('click', () => {
+        return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
+    });
 });

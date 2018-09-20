@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS prog_solutions (
 );
 
 CREATE TABLE IF NOT EXISTS prog_exercise_reviews (
-  username VARCHAR(50),
+  username       VARCHAR(50),
   exercise_id    INT,
   ex_sem_ver     VARCHAR(10),
   exercise_part  VARCHAR(30),
@@ -326,7 +326,7 @@ CREATE TABLE IF NOT EXISTS rose_solutions (
 );
 
 CREATE TABLE IF NOT EXISTS rose_exercise_reviews (
-  username VARCHAR(50),
+  username       VARCHAR(50),
   exercise_id    INT,
   ex_sem_ver     VARCHAR(10),
   exercise_part  VARCHAR(30),
@@ -356,7 +356,7 @@ CREATE TABLE IF NOT EXISTS spread_exercises (
 );
 
 CREATE TABLE IF NOT EXISTS spread_exercise_reviews (
-  username VARCHAR(50),
+  username       VARCHAR(50),
   exercise_id    INT,
   ex_sem_ver     VARCHAR(10),
   exercise_part  VARCHAR(30),
@@ -486,7 +486,7 @@ CREATE TABLE IF NOT EXISTS uml_solutions (
 );
 
 CREATE TABLE IF NOT EXISTS uml_exercise_reviews (
-  username VARCHAR(50),
+  username       VARCHAR(50),
   exercise_id    INT,
   ex_sem_ver     VARCHAR(10),
   exercise_part  VARCHAR(30),
@@ -509,6 +509,7 @@ CREATE TABLE IF NOT EXISTS web_exercises (
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
+  sample_sol       TEXT,
   html_text        TEXT,
   js_text          TEXT,
   php_text         TEXT,
@@ -596,7 +597,7 @@ CREATE TABLE IF NOT EXISTS web_solutions (
 );
 
 CREATE TABLE IF NOT EXISTS web_exercise_reviews (
-  username VARCHAR(50),
+  username       VARCHAR(50),
   exercise_id    INT,
   ex_sem_ver     VARCHAR(10),
   exercise_part  VARCHAR(30),
@@ -637,6 +638,18 @@ CREATE TABLE IF NOT EXISTS xml_sample_grammars (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS xml_sample_documents (
+  id              INT,
+  exercise_id     INT,
+  ex_sem_ver      VARCHAR(10),
+  sample_document TEXT,
+
+  PRIMARY KEY (id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS xml_solutions (
   exercise_id INT,
   ex_sem_ver  VARCHAR(10),
@@ -656,7 +669,7 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
 );
 
 CREATE TABLE IF NOT EXISTS xml_exercise_reviews (
-  username VARCHAR(50),
+  username       VARCHAR(50),
   exercise_id    INT,
   ex_sem_ver     VARCHAR(10),
   exercise_part  VARCHAR(30),
@@ -676,6 +689,8 @@ CREATE TABLE IF NOT EXISTS xml_exercise_reviews (
 DROP TABLE IF EXISTS xml_exercise_reviews;
 
 DROP TABLE IF EXISTS xml_solutions;
+
+DROP TABLE IF EXISTS xml_sample_documents;
 
 DROP TABLE IF EXISTS xml_sample_grammars;
 

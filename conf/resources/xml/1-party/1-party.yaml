@@ -24,3 +24,21 @@ sampleGrammars:
       ledig (true | false) #REQUIRED
       nuechtern (true | false) #REQUIRED
     >
+
+sampleDocuments:
+- id: 1
+  document: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE party SYSTEM "party.dtd">
+    <party datum="1999-31-12">
+      <gast ledig="false" nuechtern="true">
+        <vorname>Jason</vorname>
+        <nachname>Bourne</nachname>
+        <getraenk>Wasser</getraenk>
+      </gast>
+      <gast ledig="true" nuechtern="false">
+        <vorname>James</vorname>
+        <nachname>Bourne</nachname>
+        <getraenk>Wodka Martini, geschüttelt nicht gerührt</getraenk>
+      </gast>
+    </party>

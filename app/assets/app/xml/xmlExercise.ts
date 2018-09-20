@@ -28,6 +28,7 @@ interface XmlDocumentCorrectionResponse extends CorrectionResult<XmlError> {
 }
 
 function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse): void {
+    solutionChanged = false;
     testBtn.prop('disabled', false);
 
     let html: string = '';
@@ -54,6 +55,7 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
 function onXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult): void {
     solutionChanged = false;
     testBtn.prop('disabled', false);
+
     $('#correction').html(renderXmlGrammarCorrectionSuccess(response));
 }
 
@@ -90,7 +92,7 @@ function endSolve(): boolean {
 $(() => {
     const language: string = ($('#exercisePart').val() === 'grammar') ? 'application/xml-dtd' : 'xml';
 
-    editor = initEditor(language, 'xmlEditor');
+    editor = initEditor(language, 'textEditor');
     editor.on('change', () => {
         solutionChanged = true;
     });

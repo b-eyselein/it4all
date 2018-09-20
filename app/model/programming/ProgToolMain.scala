@@ -80,14 +80,16 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Reading solution from requests
 
-  override protected def readSolution(user: User, exercise: ProgCompleteEx, part: ProgExPart)(implicit request: Request[AnyContent]): Option[ProgSolution] =
-    request.body.asJson flatMap { jsValue =>
-      ProgSolutionJsonFormat(exercise, user).readProgSolutionFromJson(part, jsValue) match {
-        case JsSuccess(solution, _) => Some(solution)
-        case JsError(errors)        =>
-          errors.foreach(println)
-          None
-      }
+  override protected def readSolution(user: User, exercise: ProgCompleteEx, part: ProgExPart)(implicit request: Request[AnyContent]): Try[ProgSolution] =
+    request.body.asJson match {
+      case None          => Failure(new Exception("Request does not contain json!"))
+      case Some(jsValue) =>
+        ProgSolutionJsonFormat(exercise, user).readProgSolutionFromJson(part, jsValue) match {
+          case JsSuccess(solution, _) => Success(solution)
+          case JsError(errors)        =>
+            errors.foreach(println)
+            Failure(new Exception(errors.map(_.toString).mkString("\n")))
+        }
     }
 
   // Other helper methods
@@ -111,8 +113,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override def correctEx(user: User, sol: SolType, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] = {
 
     val (implementation, testData) = sol match {
-      case ProgTestDataSolution(td, _) =>
-        (exercise.sampleSolutions.head.solution, td)
+      case ProgTestDataSolution(td, _) => (exercise.sampleSolutions.head.solution, td)
 
       case ProgStringSolution(solution, _) => part match {
         case ProgExParts.Implementation => (implExtractorRegex.replaceFirstIn(exercise.ex.base, solution), exercise.sampleTestData)
@@ -121,22 +122,18 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       }
     }
 
-    val correctionResult: Try[Future[Try[ProgCompleteResult]]] =
-      ProgCorrector.correct(user, exercise, sol.language, implementation, testData, toolMain = this)
-
-    correctionResult match {
+    ProgCorrector.correct(user, exercise, sol.language, implementation, testData, toolMain = this) match {
       case Success(futureRes) => futureRes
       case Failure(error)     => Future(Failure(error))
     }
   }
 
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: ProgExPart): Future[String] = part match {
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: ProgExPart): Future[Option[String]] = part match {
     case ProgExParts.Implementation =>
       futureCompleteExById(id) map {
-        case Some(exercise) => exercise.sampleSolutions.headOption.map(_.solution).getOrElse("No sample solution!")
-        case None           => "No such exercise!"
+        maybeCompleteEx => maybeCompleteEx flatMap (_.sampleSolutions.headOption.map(_.solution))
       }
-    case _                          => Future("TODO!")
+    case _                          => Future(None) // TODO!
   }
 
   // Views

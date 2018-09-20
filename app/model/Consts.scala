@@ -49,6 +49,7 @@ trait Consts {
   val roleName    = "role"
 
   val sampleArgName       = "sampleArg"
+  val sampleSolutionName  = "sampleSolution"
   val sampleSubDir        = "samples"
   val selfName            = "self"
   val semanticVersionName = "semanticVersion"

@@ -15,7 +15,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("Web", "web") {
@@ -93,16 +93,19 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from request
 
-  override protected def readSolution(user: User, exercise: WebCompleteEx, part: WebExPart)(implicit request: Request[AnyContent]): Option[String] =
-    request.body.asJson flatMap {
-      case JsString(solution) => Some(solution)
-      case _                  => None
+  override protected def readSolution(user: User, exercise: WebCompleteEx, part: WebExPart)(implicit request: Request[AnyContent]): Try[String] =
+    request.body.asJson match {
+      case None          => Failure(new Exception("Request body does not contain json!"))
+      case Some(jsValue) => jsValue match {
+        case JsString(solution) => Success(solution)
+        case other              => Failure(new Exception("Wrong json content: " + other.toString))
+      }
     }
 
   // Other helper methods
 
   override def instantiateExercise(id: Int, state: ExerciseState): WebCompleteEx = WebCompleteEx(
-    WebExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, htmlText = None, jsText = None, phpText = None),
+    WebExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, sampleSolution = "", htmlText = None, jsText = None, phpText = None),
     htmlTasks = Seq[HtmlCompleteTask](), jsTasks = Seq[JsCompleteTask]()
   )
 
@@ -141,7 +144,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     }
   }
 
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: WebExPart): Future[String] = ???
+  override def futureSampleSolutionForExerciseAndPart(id: Int, part: WebExPart): Future[Option[String]] =
+    tables.futureCompleteExById(id) map (maybeCompleteEx => maybeCompleteEx.map(_.ex.sampleSolution))
+
 
   // Other helper methods
 

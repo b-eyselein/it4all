@@ -4,8 +4,8 @@ import model.Consts
 
 object CoreConsts extends Consts {
 
-  val sessionIdField = "id"
+  val sessionIdField: String = "id"
 
-  val STEP = 10
+  val STEP: Int = 10
 
 }

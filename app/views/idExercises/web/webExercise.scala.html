@@ -1,114 +1,36 @@
-@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, oldSolution: String, toolMainObject: model.web.WebToolMain)
+@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, oldSolution: String, toolMainObject: model.toolMains.IdExerciseToolMain)
 
-@tasks = @{
-    exercise.tasksForPart(part)
-}
-
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
-
-    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
-
+@additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/web/webExercise.js")');</script>
-
-    <style>
-            .CodeMirror {
-                border: 1px solid lightgrey;
-                font-size: 14px;
-                height: 700px;
-            }
-
-            #preview {
-                border: 1px solid lightgrey;
-            }
-
-    </style>
-    @* FIXME: @core.helperTemplates.fullScreenScripts.render() *@
 }
 
-@main("Web", Some(user), scripts) {
-    <div class="container-fluid" id="fullsc">
+@exerciseText = {
+    <span>@exercise.ex.text</span>
 
-        <input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">
-        <input hidden type="text" id="exercisePart" value="@part.urlName" title="hidden">
+@if(part == model.web.WebExParts.HtmlPart) {
+    <span>@Html(exercise.ex.htmlText getOrElse "")</span>
+    <ol>
+    @for(task <- exercise.tasksForPart(part).sortBy(_.task.id)) {
+        <li><span id="text_@task.task.id">@task.task.text</span></li>
+    }
+    </ol>
+} else {
+    <p>@Html(exercise.ex.jsText getOrElse "")</p>
+    <p>Es gibt insgesamt @exercise.tasksForPart(part).size Testfälle.</p>
+}
 
-        <div class="row">
+}
 
-            <div class="col-sm-6 col-xl-5">
-                <textarea id="htmlEditor" title="Editor">@oldSolution</textarea>
-            </div>
-
-            <div class="col-sm-6 col-xl-7">
-
-                <ul class="nav nav-tabs nav-justified">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#exerciseTab">Aufgabenstellung</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-url="@routes.ExerciseController.updateWebSolution(exercise.ex.id, part.urlName)"
-                        data-toggle="tab" href="#previewTab" id="previewTabBtn">Live-Vorschau</a>
-                    </li>
-                </ul>
-
-                <div class="tab-content">
-
-                    <div id="exerciseTab" class="tab-pane fade show active">
-
-                        <div class="card">
-                            <div class="card-body text-justify">
-                                <p>@exercise.ex.text</p>
-
-                                @if(part == model.web.WebExParts.HtmlPart) {
-                                    <p>@Html(exercise.ex.htmlText getOrElse "")</p>
-                                    <ol>
-                                    @for(task <- exercise.tasksForPart(part).sortBy(_.task.id)) {
-                                        <li><p id="text_@task.task.id">@task.task.text</p></li>
-                                    }
-                                    </ol>
-                                } else {
-                                    <p>@Html(exercise.ex.jsText getOrElse "")</p>
-                                    <p>Es gibt insgesamt @tasks.size Testfälle.</p>
-                                }
-                            </div>
-                        </div>
-
-                        <br>
-
-                        <div class="form-group">
-                            <div class="btn-group d-flex">
-                                @*<button type="button" class="btn w-100" onclick="toggleFullscreen()">*@
-                                @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>*@
-                                @*</button>*@
-                                <button class="btn btn-success w-100" id="testBtn" data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.ex.id, part.urlName)">
-                                    Lösung testen</button>
-                                <a class="btn btn-secondary  w-100" href="@routes.MainExerciseController.index("web")">
-                                    Bearbeitung beenden</a>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div id="previewTab" class="tab-pane fade">
-                        <div class="alert alert-warning" id="previewChangedDiv">Ihre Lösung hat sich geändert.</div>
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item" src="@routes.ExerciseController.webSolution(exercise.ex.id, part.urlName)" id="preview"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div id="correctionDiv" hidden>
-                    <h2>Korrektur</h2>
-                    <div id="correction">
-                        <div class="alert alert-warning">
-                            Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
-                    </div>
-                </div>
-
-            </div>
+@solutionPreview = {
+    <div id="previewTab" class="tab-pane fade">
+        <div class="alert alert-warning" id="previewChangedDiv">
+            Ihre Lösung hat sich geändert. Laden Sie sie neu,
+            indem Sie diesen Tab neu aufrufen.</div>
+        <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="@routes.ExerciseController.webSolution(exercise.ex.id, part.urlName)" id="preview"></iframe>
         </div>
-
     </div>
 }
+
+@idExercises.textExercise(user, exerciseText, exercise, part, oldSolution, toolMainObject, additionalScripts,
+    solutionPreview = Some(solutionPreview))

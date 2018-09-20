@@ -1,6 +1,6 @@
 import * as $ from "jquery";
 
-export {onWebCorrectionError, onWebCorrectionSuccess};
+export {onWebCorrectionError, renderWebCompleteResult, WebCompleteResult};
 
 interface WebCompleteResult {
     solutionSaved: boolean
@@ -158,7 +158,7 @@ function renderJsResult(result: JsResult): string {
 }
 
 
-function onWebCorrectionSuccess(corr: WebCompleteResult): void {
+function renderWebCompleteResult(corr: WebCompleteResult): void {
     let html: string = '';
 
     let solutionSavedMsg: string, solSavedClass: string;
@@ -201,8 +201,6 @@ function onWebCorrectionSuccess(corr: WebCompleteResult): void {
     $('#correctionDiv').prop('hidden', false);
 
     // $('#correctionTabBtn').tab('show');
-
-    $('#testBtn').prop('disabled', false);
 }
 
 function onWebCorrectionError(jqXHR): void {

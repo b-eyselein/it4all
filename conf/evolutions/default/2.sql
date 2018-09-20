@@ -23,6 +23,9 @@ DELETE IGNORE
 FROM xml_solutions;
 
 DELETE IGNORE
+FROM xml_sample_documents;
+
+DELETE IGNORE
 FROM xml_sample_grammars;
 
 DELETE IGNORE

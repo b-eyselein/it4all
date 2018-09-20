@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.ExerciseReview
 import model.core._
 import model.programming.ProgToolMain
 import model.toolMains.{IdExerciseToolMain, ToolList}
@@ -74,8 +73,8 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
         case Some(part) =>
           toolMain.futureCompleteExById(id) map {
             case None               => onNoSuchExercise(id)
-            case Some(compExercise) => Ok(toolMain.renderExerciseReview(user, compExercise, part))
-            //          Future(Ok(views.html.idExercises.xml.xmlExerciseReview(user, toolMain, )))
+            case Some(compExercise) => Ok(toolMain.renderExerciseReviewForm(user, compExercise, part))
+            //          Future(Ok(views.html.idExercises.xml.exerciseReviewForm(user, toolMain, )))
           }
       }
   }
@@ -114,12 +113,13 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
-  def sampleSolution(toolType: String, id: Int, partStr: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, toolMain) =>
+  def sampleSolutionForPart(toolType: String, id: Int, partStr: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
       toolMain.partTypeFromUrl(partStr) match {
         case None       => Future(onNoSuchExercisePart(partStr))
         case Some(part) => toolMain.futureSampleSolutionForExerciseAndPart(id, part) map {
-          sol => Ok(sol)
+          case None      => NotFound("Could not find a sample solution...")
+          case Some(sol) => Ok(sol)
         }
       }
   }

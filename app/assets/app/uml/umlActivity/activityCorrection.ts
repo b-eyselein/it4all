@@ -1,12 +1,9 @@
 import * as $ from 'jquery';
-import {ProgStringSolution} from "../../programming/progExercise";
-import {onProgCorrectionError, onProgCorrectionSuccess} from "../../programming/progCorrectionHandler";
+import {onProgCorrectionSuccess, ProgStringSolution} from "../../programming/progExercise";
 
 let testBtn: JQuery;
 
 function activityCorrection(): void {
-    let exercisePart = $('#exercisePart').val();
-
     testBtn.prop('disabled', true);
 
     let dataToSend: ProgStringSolution = {
@@ -25,6 +22,13 @@ function activityCorrection(): void {
         error: onProgCorrectionError
     });
 }
+
+
+function onProgCorrectionError(jqXHR): void {
+    console.error(jqXHR.responseText);
+    testBtn.prop('disabled', false);
+}
+
 
 $(() => {
     testBtn = $('#testBtn');

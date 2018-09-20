@@ -68,7 +68,7 @@ function testSol(): void {
 }
 
 $(() => {
-    editor = initEditor('python', 'roseEditor');
+    editor = initEditor('python', 'textEditor');
 
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);

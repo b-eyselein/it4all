@@ -122,7 +122,7 @@ PUT           /tools/:toolType/solve/:id/:part                              cont
 GET           /tools/:toolType/:id/:partStr/evaluationPartForm              controllers.ExerciseController.reviewExercisePartForm(toolType: String, id: Int, partStr: String)
 POST          /tools/:toolType/:id/:partStr/evaluatePart                    controllers.ExerciseController.reviewExercisePart(toolType: String, id: Int, partStr: String)
 
-GET           /tools/:toolType/:id/:part/solution                           controllers.ExerciseController.sampleSolution(toolType: String, id: Int, part: String)
+GET           /tools/:toolType/:id/:part/solution                           controllers.ExerciseController.sampleSolutionForPart(toolType: String, id: Int, part: String)
 
 GET           /tools/:toolType/:id/reviews                                  controllers.ExerciseController.showReviews(toolType: String, id: Int)
 

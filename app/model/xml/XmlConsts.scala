@@ -4,6 +4,8 @@ import model.Consts
 
 object XmlConsts extends Consts {
 
+  val documentName = "document"
+
   val grammarName            = "grammar"
   val grammarDescriptionName = "grammarDescription"
 

@@ -85,7 +85,7 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 // Database classes
 
 final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
+                             sampleSolution: String, htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
 
 trait WebTask {
   val id        : Int

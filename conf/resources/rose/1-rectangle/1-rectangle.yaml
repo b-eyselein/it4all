@@ -21,6 +21,7 @@ sampleSolutions:
     for h in range(height - 1):
       self.mark()
       self.go_up()
+
     for w in range(width - 1):
       self.mark()
       self.go_right()

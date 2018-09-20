@@ -1,93 +1,32 @@
-@import model.xml._
+@(user: model.User, toolMainObject: model.toolMains.IdExerciseToolMain, exercise: model.xml.XmlCompleteExercise, oldSolution: String, part: model.xml.XmlExPart)
 
-@(user: model.User, toolMainObject: XmlToolMain, exercise: XmlCompleteExercise, oldSolution: String, part: XmlExPart)
-
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
-
-    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
-
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/xml/xmlExercise.js")');
-    </script>
-
-    <style>
-            .CodeMirror {
-                border: 1px solid lightgrey;
-                font-size: 14px;
-            }
-    </style>
+@additionalScripts = {
+    <script>SystemJS.import('@routes.Assets.versioned("app/xml/xmlExercise.js")');</script>
 }
 
-@main(toolMainObject.toolname, Some(user), scripts) {
-    <div class="container-fluid" id="fullsc">
+@exerciseText = {
 
-        <input hidden value="@exercise.ex.id" name="exerciseId" id="exerciseId" title="hidden" type="number">
-        <input hidden value="@part.urlName" name="exercisePart" id="exercisePart" title="hidden">
 
-        <div class="row">
-            <div class="col-sm-4">
-                <h2>Aufgabenstellung</h2>
-
-                <hr>
-
-                @part match {
-                    case XmlExParts.GrammarCreationXmlPart => {
-                        <p><b>Erstellen Sie eine DTD zu folgender Beschreibung.</b></p>
-                        <ul>
-                            <li><i>Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen.</i></li>
-                            <li><i>Falls nichts anderes angegeben ist, sollen die Element nur Text enthalten.</i></li>
-                        </ul>
-                    }
-                    case XmlExParts.DocumentCreationXmlPart => {
-                        <p>Erstellen Sie ein XML-Dokument zu folgender Grammatik:</p>
-                    }
-                }
-                @*<p><b>@Html(exercise.textForPart(part.urlName))</b></p>*@
-
-                <div class="card">
-                    <div class="card-body bg-light">
-                    @part match {
-                        case XmlExParts.DocumentCreationXmlPart => {
-                            <pre>@play.twirl.api.HtmlFormat.escape(exercise.sampleGrammars.head.sampleGrammar.asString)</pre>
-                        }
-                        case XmlExParts.GrammarCreationXmlPart => {
-                            <p class="text-justify">@exercise.ex.grammarDescription</p>
-                        }
-                    }
-                    </div>
-                </div>
-
-                <br>
-
-                <div class="form-group">
-                    <div class="btn-group d-flex">
-                        <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
-                        id="testBtn" class="btn btn-success w-100">Lösung testen</button>
-
-                        <a href="@routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.ex.id, part.urlName)" id="endSolveBtn"
-                        class="btn btn-secondary w-100">Bearbeitung beenden</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-4">
-                <h2>Editor</h2>
-
-                <hr>
-
-                <textarea id="xmlEditor" title="Editor">@oldSolution</textarea>
-            </div>
-
-            <div class="col-sm-4">
-                <h2>Korrektur</h2>
-
-                <hr>
-
-                <div id="correction"></div>
-            </div>
-        </div>
-
-    </div>
+@part match {
+    case model.xml.XmlExParts.GrammarCreationXmlPart => {
+        <p><b>Erstellen Sie eine DTD zu folgender Beschreibung.</b></p>
+        <p>
+            <i>Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen.
+                Falls nichts anderes angegeben ist, sollen die Elemente nur Text enthalten.</i>
+        </p>
+        <span class="text-justify">@exercise.ex.grammarDescription</span>
+    }
+    case model.xml.XmlExParts.DocumentCreationXmlPart => {
+        <p><b>Erstellen Sie ein XML-Dokument zu folgender Grammatik:</b></p>
+        <pre>@play.twirl.api.HtmlFormat.escape(exercise.sampleGrammars.head.sampleGrammar.asString)</pre>
+    }
 }
+
+}
+
+@remainigExerciseDef = {
+    <input hidden id="exercisePart" value="@part.urlName">
+}
+
+@idExercises.textExercise(user, exerciseText, exercise, part, oldSolution, toolMainObject, additionalScripts,
+    remainingExDef = Some(remainigExerciseDef))

@@ -60,26 +60,23 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
   // FIXME: change return type of function!
   def correctAbstract(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
     readSolution(user, exercise, part) match {
-      case None           => Future(Failure(SolutionTransferException))
-      case Some(solution) => onSolution(user, solution, exercise, part)
+      case Failure(exception) => Future(Failure(exception))
+      case Success(solution)  => correctEx(user, solution, exercise, part) flatMap {
+        case Failure(error) => Future(Failure(error))
+        case Success(res)   =>
+          val dbSolution = instantiateSolution(user.username, exercise, part, solution, res.points, res.maxPoints)
+
+          tables.futureSaveSolution(dbSolution) map { solutionSaved =>
+            Success(onLiveCorrectionResult(solutionSaved, res))
+          }
+      }
     }
 
-  def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[String]
+  def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[Option[String]]
 
   protected def instantiateSolution(username: String, exercise: CompExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): DBSolType
 
-  private def onSolution(user: model.User, solution: SolType, exercise: CompExType, part: PartType): Future[Try[JsValue]] =
-    correctEx(user, solution, exercise, part) flatMap {
-      case Failure(error) => Future(Failure(error))
-      case Success(res)   =>
-        val dbSolution = instantiateSolution(user.username, exercise, part, solution, res.points, res.maxPoints)
-
-        tables.futureSaveSolution(dbSolution) map { solutionSaved =>
-          Success(onLiveCorrectionResult(solutionSaved, res))
-        }
-    }
-
-  protected def readSolution(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolution(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent]): Try[SolType]
 
   protected def correctEx(user: User, sol: SolType, exercise: CompExType, part: PartType): Future[Try[CompResult]]
 
@@ -102,7 +99,8 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[DBSolType]): Html
 
-  def renderExerciseReview(user: User, exercise: CompExType, part: PartType): Html = ???
+  def renderExerciseReviewForm(user: User, exercise: CompExType, part: PartType): Html =
+    views.html.idExercises.exerciseReviewForm(user, exercise, part, this)
 
   // Calls
 

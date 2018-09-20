@@ -21,18 +21,22 @@ object XmlExYamlProtocol extends MyYamlProtocol {
       rootNode <- yamlObject.stringField(rootNodeName)
 
       sampleGrammars <- yamlObject.arrayField("sampleGrammars", XmlSampleGrammarYamlFormat(baseValues).read)
+      sampleDocuments <- yamlObject.arrayField("sampleDocuments", XmlSampleDocumentYamlFormat(baseValues).read)
     } yield {
       for (grammarReadError <- sampleGrammars._2)
         Logger.error("Could not read xml sample grammar", grammarReadError.exception)
 
+      for (documentReadError <- sampleDocuments._2)
+        Logger.error("Could not read xml sample document", documentReadError.exception)
+
       XmlCompleteExercise(
         XmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, grammarDescription, rootNode),
-        sampleGrammars._1)
+        sampleGrammars._1, sampleDocuments._1)
     }
 
     override def write(completeEx: XmlCompleteExercise) = new YamlObject(
       writeBaseValues(completeEx.ex) ++
-        Map(
+        Map[YamlValue, YamlValue](
           YamlString(grammarDescriptionName) -> YamlString(completeEx.ex.grammarDescription),
           YamlString(sampleGrammarsName) -> YamlArray(completeEx.sampleGrammars map XmlSampleGrammarYamlFormat(completeEx.ex.baseValues).write toVector),
           YamlString(rootNodeName) -> YamlString(completeEx.ex.rootNode)
@@ -40,7 +44,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
     )
   }
 
-final case class XmlSampleGrammarYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[XmlSampleGrammar] {
+  final case class XmlSampleGrammarYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[XmlSampleGrammar] {
 
     override protected def readObject(yamlObject: YamlObject): Try[XmlSampleGrammar] = for {
       id <- yamlObject.intField(idName)
@@ -51,6 +55,18 @@ final case class XmlSampleGrammarYamlFormat(baseValues: BaseValues) extends MyYa
       YamlString(idName) -> YamlNumber(obj.id),
       YamlString(grammarName) -> YamlString(obj.sampleGrammar.asString)
     )
+
+  }
+
+
+  final case class XmlSampleDocumentYamlFormat(values: BaseValues) extends MyYamlObjectFormat[XmlSampleDocument] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[XmlSampleDocument] = for {
+      id <- yamlObject.intField(idName)
+      sampleDocument <- yamlObject.stringField(documentName)
+    } yield XmlSampleDocument(id, values.id, values.semanticVersion, sampleDocument)
+
+    override def write(obj: XmlSampleDocument): YamlValue = ???
 
   }
 
