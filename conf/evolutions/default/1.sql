@@ -626,22 +626,11 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
   PRIMARY KEY (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS xml_sample_grammars (
+CREATE TABLE IF NOT EXISTS xml_samples (
   id             INT,
   exercise_id    INT,
   ex_sem_ver     VARCHAR(10),
   sample_grammar TEXT,
-
-  PRIMARY KEY (id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS xml_sample_documents (
-  id              INT,
-  exercise_id     INT,
-  ex_sem_ver      VARCHAR(10),
   sample_document TEXT,
 
   PRIMARY KEY (id, exercise_id, ex_sem_ver),
@@ -690,9 +679,7 @@ DROP TABLE IF EXISTS xml_exercise_reviews;
 
 DROP TABLE IF EXISTS xml_solutions;
 
-DROP TABLE IF EXISTS xml_sample_documents;
-
-DROP TABLE IF EXISTS xml_sample_grammars;
+DROP TABLE IF EXISTS xml_samples;
 
 DROP TABLE IF EXISTS xml_exercises;
 

@@ -102,12 +102,12 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override def instantiateExercise(id: Int, state: ExerciseState): XmlCompleteExercise = XmlCompleteExercise(
     XmlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, grammarDescription = "", rootNode = ""),
-    sampleGrammars = Seq[XmlSampleGrammar](), sampleDocuments = Seq[XmlSampleDocument]())
+    sampleGrammars = Seq[XmlSample]())
 
   override def instantiateSolution(username: String, exercise: XmlCompleteExercise, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
     XmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
-  private def getFirstSampleGrammar(completeEx: XmlCompleteExercise): Option[XmlSampleGrammar] = completeEx.sampleGrammars.toList match {
+  private def getFirstSample(completeEx: XmlCompleteExercise): Option[XmlSample] = completeEx.sampleGrammars.toList match {
     case Nil       => None
     case head :: _ => Some(head)
   }
@@ -121,8 +121,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =
     Future(part match {
       case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap { dir =>
-        getFirstSampleGrammar(completeEx) map (_.sampleGrammar.toString) match {
-          case None                 => Failure(new Exception("There is no grammar for exercise " + completeEx.ex.id))
+        getFirstSample(completeEx) map (_.sampleGrammar.asString) match {
+          case None                 => Failure(new Exception(s"There is no grammar for exercise ${completeEx.ex.id}"))
           case Some(grammarToWrite) =>
 
             val grammarAndXmlTries: Try[(Path, Path)] = for {
@@ -154,13 +154,10 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: XmlExPart): Future[Option[String]] = futureCompleteExById(id) map {
     futureCompleteEx =>
-      part match {
-        case XmlExParts.GrammarCreationXmlPart  => futureCompleteEx flatMap getFirstSampleGrammar map (_.sampleGrammar.toString)
-        case XmlExParts.DocumentCreationXmlPart => futureCompleteEx flatMap {
-          _.sampleDocuments.toList match {
-            case Nil       => None
-            case head :: _ => Some(head.document)
-          }
+      futureCompleteEx flatMap getFirstSample map { firstSample: XmlSample =>
+        part match {
+          case XmlExParts.GrammarCreationXmlPart  => firstSample.sampleGrammar.asString
+          case XmlExParts.DocumentCreationXmlPart => firstSample.sampleDocument
         }
       }
   }

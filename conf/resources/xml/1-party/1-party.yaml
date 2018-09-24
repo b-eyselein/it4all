@@ -11,7 +11,7 @@ grammarDescription: >
   anwesend). Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast
   hat mindestens ein Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.
 
-sampleGrammars:
+samples:
 - id: 1
   grammar: |
     <!ELEMENT party (gast+)>
@@ -24,9 +24,6 @@ sampleGrammars:
       ledig (true | false) #REQUIRED
       nuechtern (true | false) #REQUIRED
     >
-
-sampleDocuments:
-- id: 1
   document: |
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE party SYSTEM "party.dtd">

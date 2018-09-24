@@ -14,6 +14,7 @@ object XmlConsts extends Consts {
 
   val rootNodeName = "rootNode"
 
+  val samplesName = "samples"
   val sampleGrammarsName = "sampleGrammars"
 
   val STANDARD_XML_PLAYGROUND: String =

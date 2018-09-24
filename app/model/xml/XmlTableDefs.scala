@@ -26,8 +26,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected val solTable     = TableQuery[XmlSolutionsTable]
   override protected val reviewsTable = TableQuery[XmlExerciseReviewsTable]
 
-  private val sampleGrammarsTable  = TableQuery[XmlSampleGrammarsTable]
-  private val sampleDocumentsTable = TableQuery[XmlSampleDocumentsTable]
+  private val samplesTable = TableQuery[XmlSamplesTable]
 
   // Column Types
 
@@ -43,9 +42,8 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
   override def completeExForEx(ex: XmlExercise): Future[XmlCompleteExercise] = for {
-    sampleGrammars <- db.run(sampleGrammarsTable.filter(_.exerciseId === ex.id).result)
-    sampleDocuments <- db.run(sampleDocumentsTable.filter(_.exerciseId === ex.id).result)
-  } yield XmlCompleteExercise(ex, sampleGrammars, sampleDocuments)
+    samples <- db.run(samplesTable.filter(_.exerciseId === ex.id).result)
+  } yield XmlCompleteExercise(ex, samples)
 
   override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: XmlExPart): Future[Boolean] = part match {
     case XmlExParts.GrammarCreationXmlPart  => Future(true)
@@ -55,9 +53,8 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Saving
 
   override def saveExerciseRest(compEx: XmlCompleteExercise): Future[Boolean] = for {
-    sampleGrammarsSaved <- saveSeq[XmlSampleGrammar](compEx.sampleGrammars, xsg => db.run(sampleGrammarsTable += xsg))
-    sampleDocumentsSaved <- saveSeq[XmlSampleDocument](compEx.sampleDocuments, xsd => db.run(sampleDocumentsTable += xsd))
-  } yield sampleGrammarsSaved && sampleDocumentsSaved
+    samplesSaved <- saveSeq[XmlSample](compEx.sampleGrammars, xsg => db.run(samplesTable += xsg))
+  } yield samplesSaved
 
   // Actual table defs
 
@@ -72,7 +69,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  abstract class XmlSampleTable[SampleType <: XmlSample](tag: Tag, tableName: String) extends Table[SampleType](tag, tableName) {
+  class XmlSamplesTable(tag: Tag) extends Table[XmlSample](tag, "xml_samples") {
 
     def id: Rep[Int] = column[Int](idName)
 
@@ -80,28 +77,17 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
+    def sampleGrammar: Rep[DocTypeDef] = column[DocTypeDef]("sample_grammar")
+
+    def sampleDocument: Rep[String] = column[String]("sample_document")
+
 
     def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
 
     def exerciseFk: ForeignKeyQuery[XmlExercisesTable, XmlExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
-  }
 
-  class XmlSampleGrammarsTable(tag: Tag) extends XmlSampleTable[XmlSampleGrammar](tag, "xml_sample_grammars") {
-
-    def sampleGrammar: Rep[DocTypeDef] = column[DocTypeDef]("sample_grammar")
-
-
-    override def * : ProvenShape[XmlSampleGrammar] = (id, exerciseId, exSemVer, sampleGrammar) <> (XmlSampleGrammar.tupled, XmlSampleGrammar.unapply)
-
-  }
-
-  class XmlSampleDocumentsTable(tag: Tag) extends XmlSampleTable[XmlSampleDocument](tag, "xml_sample_documents") {
-
-    def sampleDocument: Rep[String] = column[String]("sample_document")
-
-
-    override def * : ProvenShape[XmlSampleDocument] = (id, exerciseId, exSemVer, sampleDocument) <> (XmlSampleDocument.tupled, XmlSampleDocument.unapply)
+    override def * : ProvenShape[XmlSample] = (id, exerciseId, exSemVer, sampleGrammar, sampleDocument) <> (XmlSample.tupled, XmlSample.unapply)
 
   }
 

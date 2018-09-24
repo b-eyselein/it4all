@@ -12,7 +12,7 @@ sealed abstract class StaticElementContent(name: String) extends ElementContent 
 
 case object PCData extends StaticElementContent("#PCDATA")
 
-case object EmptyContent extends StaticElementContent("EMTPY")
+case object EmptyContent extends StaticElementContent("EMPTY")
 
 case object AnyContent extends StaticElementContent("ANY")
 

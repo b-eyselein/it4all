@@ -33,16 +33,16 @@ object XmlGrammarCompleteResult {
 
 }
 
-final case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sampleGrammar: XmlSampleGrammar, completeEx: XmlCompleteExercise) extends XmlCompleteResult {
+final case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sample: XmlSample, completeEx: XmlCompleteExercise) extends XmlCompleteResult {
 
   override type SolType = DTDParseResult
 
-  val matchingResult: MatchingResult[ElementLine, ElementLineMatch] = XmlCorrector.correctDTD(learnerSolution.dtd, sampleGrammar.sampleGrammar)
+  val matchingResult: MatchingResult[ElementLine, ElementLineMatch] = XmlCorrector.correctDTD(learnerSolution.dtd, sample.sampleGrammar)
 
   override def maxPoints: Points = {
-    val pointsForElements: Points = pointsForElement * sampleGrammar.sampleGrammar.asElementLines.size
+    val pointsForElements: Points = pointsForElement * sample.sampleGrammar.asElementLines.size
 
-    val pointsForContents: Points = addUp(sampleGrammar.sampleGrammar.asElementLines map pointsForElementLine)
+    val pointsForContents: Points = addUp(sample.sampleGrammar.asElementLines map pointsForElementLine)
 
     pointsForElements + pointsForContents
   }
