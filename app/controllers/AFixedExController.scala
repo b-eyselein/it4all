@@ -28,7 +28,7 @@ abstract class AFixedExController(cc: ControllerComponents, dbcp: DatabaseConfig
           Logger.error("There has been an error reading a yaml object: ", failure.exception)
         }
 
-        Ok(toolMain.previewExercise(admin, readAndSaveResult, toolList))
+        Ok(toolMain.previewReadAndSaveResult(admin, readAndSaveResult, toolList))
       }
   }
 

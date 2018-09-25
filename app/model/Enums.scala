@@ -1,6 +1,6 @@
 package model
 
-import enumeratum.{Enum, EnumEntry, PlayEnum, PlayJsonEnum}
+import enumeratum.{EnumEntry, PlayEnum}
 
 import scala.collection.immutable
 import scala.collection.immutable.IndexedSeq
@@ -10,7 +10,7 @@ import scala.collection.immutable.IndexedSeq
 
 sealed abstract class Difficulty(val german: String) extends EnumEntry
 
-case object Difficulties extends Enum[Difficulty] with PlayJsonEnum[Difficulty] {
+case object Difficulties extends PlayEnum[Difficulty] {
 
   override val values: IndexedSeq[Difficulty] = findValues
 
@@ -72,7 +72,7 @@ object Mark extends PlayEnum[Mark] {
 
 sealed abstract class EvaluatedAspect(val question: String, val positive: String, val neutral: String, val negative: String) extends EnumEntry
 
-object EvaluatedAspects extends Enum[EvaluatedAspect] {
+object EvaluatedAspects extends PlayEnum[EvaluatedAspect] {
 
   override def values: immutable.IndexedSeq[EvaluatedAspect] = findValues
 

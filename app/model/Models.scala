@@ -1,13 +1,12 @@
 package model
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 
 import scala.collection.immutable.IndexedSeq
-import scala.util.Random
 
 sealed trait Role extends EnumEntry
 
-object Role extends Enum[Role] {
+object Role extends PlayEnum[Role] {
 
   override val values: IndexedSeq[Role] = findValues
 
@@ -21,7 +20,7 @@ object Role extends Enum[Role] {
 
 sealed abstract class ShowHideAggregate(val german: String) extends EnumEntry
 
-object ShowHideAggregate extends Enum[ShowHideAggregate] {
+object ShowHideAggregate extends PlayEnum[ShowHideAggregate] {
 
   override val values: IndexedSeq[ShowHideAggregate] = findValues
 

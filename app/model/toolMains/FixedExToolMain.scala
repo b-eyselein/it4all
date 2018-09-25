@@ -60,6 +60,10 @@ abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionCon
 
   def futureCompleteExes: Future[Seq[CompExType]] = tables.futureCompleteExes
 
+  def futureSaveCompleteEx(completeEx: CompExType): Future[Boolean] = tables.futureSaveCompleteEx(completeEx)
+
+  def futureInsertCompleteEx(completeEx: CompExType): Future[Boolean] = tables.futureInsertCompleteEx(completeEx)
+
   def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]
 
   def statistics: Future[Html] = futureNumOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
@@ -68,6 +72,11 @@ abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionCon
 
   def renderEditRest(exercise: CompExType): Html = Html("")
 
-  def previewExercise(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html
+  def renderExercisePreview(user: User, newExercise: CompExType, saved: Boolean): Html = {
+    println(newExercise)
+    ???
+  }
+
+  def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html
 
 }

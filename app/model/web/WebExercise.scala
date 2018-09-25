@@ -1,6 +1,6 @@
 package model.web
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import org.openqa.selenium.{By, SearchContext}
 import play.twirl.api.Html
@@ -10,7 +10,7 @@ import scala.language.postfixOps
 
 sealed trait JsActionType extends EnumEntry
 
-object JsActionType extends Enum[JsActionType] {
+object JsActionType extends PlayEnum[JsActionType] {
 
   override val values: IndexedSeq[JsActionType] = findValues
 

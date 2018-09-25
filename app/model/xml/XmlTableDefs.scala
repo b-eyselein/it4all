@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import model.xml.XmlConsts._
 
 class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteExercise, String, XmlSolution, XmlExPart, XmlExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteEx, String, XmlSolution, XmlExPart, XmlExerciseReview] {
 
   import profile.api._
 
@@ -41,9 +41,9 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   //  override protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlResultForPart]] =
   //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
-  override def completeExForEx(ex: XmlExercise): Future[XmlCompleteExercise] = for {
+  override def completeExForEx(ex: XmlExercise): Future[XmlCompleteEx] = for {
     samples <- db.run(samplesTable.filter(_.exerciseId === ex.id).result)
-  } yield XmlCompleteExercise(ex, samples)
+  } yield XmlCompleteEx(ex, samples)
 
   override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: XmlExPart): Future[Boolean] = part match {
     case XmlExParts.GrammarCreationXmlPart  => Future(true)
@@ -52,8 +52,8 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Saving
 
-  override def saveExerciseRest(compEx: XmlCompleteExercise): Future[Boolean] = for {
-    samplesSaved <- saveSeq[XmlSample](compEx.sampleGrammars, xsg => db.run(samplesTable += xsg))
+  override def saveExerciseRest(compEx: XmlCompleteEx): Future[Boolean] = for {
+    samplesSaved <- saveSeq[XmlSample](compEx.samples, xsg => db.run(samplesTable += xsg))
   } yield samplesSaved
 
   // Actual table defs

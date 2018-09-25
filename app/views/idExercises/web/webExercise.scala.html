@@ -1,4 +1,5 @@
-@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, oldSolution: String, toolMainObject: model.toolMains.IdExerciseToolMain)
+@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, oldSolution: String,
+        toolMainObject: model.toolMains.IdExerciseToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/web/webExercise.js")');</script>

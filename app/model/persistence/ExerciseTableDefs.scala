@@ -43,11 +43,15 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
 
   // Saving
 
-  def saveCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable.filter(_.id === compEx.ex.id).delete) flatMap { _ =>
+  def futureSaveCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable.filter(_.id === compEx.ex.id).delete) flatMap { _ =>
     db.run(exTable += compEx.ex) flatMap { _ => saveExerciseRest(compEx) } recover { case e: Throwable =>
       Logger.error("Could not save exercise", e)
       false
     }
+  }
+
+  def futureInsertCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable += compEx.ex) flatMap {
+    insertCount => saveExerciseRest(compEx)
   }
 
   protected def saveExerciseRest(compEx: CompEx): Future[Boolean]

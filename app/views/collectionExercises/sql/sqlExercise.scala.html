@@ -1,5 +1,6 @@
 @(user: model.User, exercise: model.sql.SqlCompleteEx, oldOrDefSol: String, tables: Seq[model.sql.SqlQueryResult],
-        scenario: model.sql.SqlScenario, numOfExes: Int, toolMainObject: model.sql.SqlToolMain)
+        scenario: model.sql.SqlScenario, numOfExes: Int, toolMainObject: model.sql.SqlToolMain)(implicit
+        requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -74,6 +75,9 @@
                 </div>
 
                 <div class="form-group">
+
+                    @helper.CSRF.formField
+
                     <div class="btn-group d-flex">
                         @if(exercise.ex.id > 1) {
                             <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id - 1)"

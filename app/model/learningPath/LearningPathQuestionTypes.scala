@@ -1,6 +1,6 @@
 package model.learningPath
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -9,7 +9,7 @@ import scala.collection.immutable.IndexedSeq
 
 sealed trait LearningPathQuestionTypes extends EnumEntry
 
-object LearningPathQuestionTypes extends Enum[LearningPathQuestionTypes] {
+object LearningPathQuestionTypes extends PlayEnum[LearningPathQuestionTypes] {
 
   override val values: IndexedSeq[LearningPathQuestionTypes] = findValues
 

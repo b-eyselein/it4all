@@ -4,6 +4,7 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.toolMains.CollectionToolMain
 import play.api.data.Form
+import play.api.i18n.MessagesProvider
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc._
 import play.twirl.api.Html
@@ -76,7 +77,8 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
        |  </div>
        |</div>""".stripMargin)
 
-  override def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion, numOfExes: Int, maybeOldSolution: Option[DBSolType]): Html = {
+  override def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion, numOfExes: Int, maybeOldSolution: Option[DBSolType])
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     views.html.collectionExercises.questions.question(user, quiz, exercise, numOfExes, None /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
   }
 

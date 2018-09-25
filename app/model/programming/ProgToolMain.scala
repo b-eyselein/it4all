@@ -6,8 +6,9 @@ import model.toolMains.{IdExerciseToolMain, ToolState}
 import model._
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.MessagesProvider
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,7 +56,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   // Forms
 
   // TODO: create Form mapping ...
-  override val compExForm: Form[ProgExercise] = null
+  override val compExForm: Form[ProgCompleteEx] = null
 
   override def exerciseReviewForm(username: String, completeExercise: ProgCompleteEx, exercisePart: ProgExPart): Form[ProgExerciseReview] = {
 
@@ -94,8 +95,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
-    ProgExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state,
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
+    ProgExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
       folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
     inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[SampleTestData](), maybeClassDiagramPart = None
   )
@@ -138,7 +139,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Views
 
-  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart, maybeOldSolution: Option[DBProgSolution]): Html = part match {
+  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart, maybeOldSolution: Option[DBProgSolution])
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
     case ProgExParts.TestdataCreation =>
       val oldTestData: Seq[CommitedTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[CommitedTestData]())
       views.html.idExercises.programming.testDataCreation(user, exercise, oldTestData, this)

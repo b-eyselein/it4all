@@ -1,6 +1,6 @@
 package model.core.result
 
-import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
+import enumeratum.{EnumEntry, PlayEnum}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -8,7 +8,7 @@ import scala.collection.immutable.IndexedSeq
 sealed abstract class SuccessType(val color: String, val glyphicon: String) extends EnumEntry
 
 
-object SuccessType extends Enum[SuccessType] with PlayJsonEnum[SuccessType] {
+object SuccessType extends PlayEnum[SuccessType] {
 
   override val values: IndexedSeq[SuccessType] = findValues
 

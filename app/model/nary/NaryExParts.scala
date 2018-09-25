@@ -1,6 +1,6 @@
 package model.nary
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.ExPart
 
 import scala.collection.immutable.IndexedSeq
@@ -9,7 +9,7 @@ import scala.collection.immutable.IndexedSeq
 sealed abstract class NaryExPart(val urlName: String, val partName: String) extends ExPart with EnumEntry
 
 
-object NaryExParts extends Enum[NaryExPart] {
+object NaryExParts extends PlayEnum[NaryExPart] {
 
   override def values: IndexedSeq[NaryExPart] = findValues
 

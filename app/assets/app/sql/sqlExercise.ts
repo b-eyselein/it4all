@@ -228,6 +228,10 @@ function testSqlSol(): void {
         contentType: 'application/json',
         data: JSON.stringify(learnerSolution),
         async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: onSqlCorrectionSuccess,
         error: onSqlCorrectionError
     });

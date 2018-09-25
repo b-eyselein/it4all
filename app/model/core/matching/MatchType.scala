@@ -1,6 +1,6 @@
 package model.core.matching
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -8,7 +8,7 @@ import scala.collection.immutable.IndexedSeq
 sealed abstract class MatchType(val glyphicon: String, val bsClass: String) extends EnumEntry
 
 
-object MatchType extends Enum[MatchType] {
+object MatchType extends PlayEnum[MatchType] {
 
   override val values: IndexedSeq[MatchType] = findValues
 

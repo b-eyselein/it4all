@@ -1,6 +1,6 @@
 package model.uml
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.ExPart
 
 import scala.collection.immutable.IndexedSeq
@@ -9,7 +9,7 @@ import scala.collection.immutable.IndexedSeq
 sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
 
-object UmlExParts extends Enum[UmlExPart] {
+object UmlExParts extends PlayEnum[UmlExPart] {
 
   val values: IndexedSeq[UmlExPart] = findValues
 

@@ -29,9 +29,8 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Generic results
 
-  private def onNoSuchExercisePart(partStr: String): Result = NotFound(s"Es gibt keine Aufgabenteil '$partStr'")
+  protected def onNoSuchExercisePart(partStr: String): Result = NotFound(s"Es gibt keine Aufgabenteil '$partStr'")
 
-  private def onNoSuchExercise(id: Int): Result = NotFound(s"Es gibt keine Aufgabe mit der ID $id")
 
   // Generic Routes
 
@@ -74,7 +73,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
           toolMain.futureCompleteExById(id) map {
             case None               => onNoSuchExercise(id)
             case Some(compExercise) => Ok(toolMain.renderExerciseReviewForm(user, compExercise, part))
-            //          Future(Ok(views.html.idExercises.xml.exerciseReviewForm(user, toolMain, )))
+            //          Future(Ok(views.html.idExercises.xml.evaluateExerciseForm(user, toolMain, )))
           }
       }
   }

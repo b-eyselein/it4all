@@ -1,13 +1,13 @@
 package model.uml
 
-import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
+import enumeratum.{EnumEntry, PlayEnum}
 
 import scala.collection.immutable.IndexedSeq
 
 
 sealed abstract class UmlVisibility(val representant: String) extends EnumEntry
 
-object UmlVisibility extends Enum[UmlVisibility] /* with PlayJsonEnum[UmlVisibility] */{
+object UmlVisibility extends PlayEnum[UmlVisibility] {
 
   override val values: IndexedSeq[UmlVisibility] = findValues
 
@@ -24,7 +24,7 @@ object UmlVisibility extends Enum[UmlVisibility] /* with PlayJsonEnum[UmlVisibil
 
 sealed abstract class UmlClassType(val german: String) extends EnumEntry
 
-object UmlClassType extends Enum[UmlClassType] with PlayJsonEnum[UmlClassType] {
+object UmlClassType extends PlayEnum[UmlClassType] {
 
   override val values: IndexedSeq[UmlClassType] = findValues
 
@@ -39,7 +39,7 @@ object UmlClassType extends Enum[UmlClassType] with PlayJsonEnum[UmlClassType] {
 
 sealed abstract class UmlMultiplicity(val representant: String) extends EnumEntry
 
-object UmlMultiplicity extends Enum[UmlMultiplicity] with PlayJsonEnum[UmlMultiplicity] {
+object UmlMultiplicity extends PlayEnum[UmlMultiplicity] {
 
   override val values: IndexedSeq[UmlMultiplicity] = findValues
 
@@ -52,7 +52,7 @@ object UmlMultiplicity extends Enum[UmlMultiplicity] with PlayJsonEnum[UmlMultip
 
 sealed abstract class UmlAssociationType(val german: String) extends EnumEntry
 
-object UmlAssociationType extends Enum[UmlAssociationType] with PlayJsonEnum[UmlAssociationType] {
+object UmlAssociationType extends PlayEnum[UmlAssociationType] {
 
   override val values: IndexedSeq[UmlAssociationType] = findValues
 

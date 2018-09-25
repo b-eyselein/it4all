@@ -1,6 +1,7 @@
 @import model._
 
-@(user: model.User, exercise: CompleteEx[_ <: Exercise], part: ExPart, toolMainObject: model.toolMains.IdExerciseToolMain)
+@(user: model.User, exercise: CompleteEx[_ <: Exercise], part: ExPart, toolMainObject: model.toolMains.IdExerciseToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     "Aufgabenbewertung " + toolMainObject.toolname
@@ -13,7 +14,9 @@
 
         <br>
 
-        <form action="@routes.ExerciseController.reviewExercisePart(toolMainObject.urlPart, exercise.ex.id, part.urlName)" method="post">
+        @helper.form(routes.ExerciseController.reviewExercisePart(toolMainObject.urlPart, exercise.ex.id, part.urlName)) {
+
+            @helper.CSRF.formField
 
             <div class="form-group row">
                 <label class="col-sm-4" for="@model.core.CoreConsts.difficultyName">Schwierigkeit</label>
@@ -33,7 +36,8 @@
             </div>
 
             <div class="form-group row">
-                <label class="col-form-label col-sm-4" for="@model.core.CoreConsts.durationName">Bearbeitungsdauer (Minuten)</label>
+                <label class="col-form-label col-sm-4" for="@model.core.CoreConsts.durationName">
+                    Bearbeitungsdauer (Minuten)</label>
                 <div class="col-sm-8">
                     <input class="form-control" type="number" min="0" max="100" name="@model.core.CoreConsts.durationName" id="@model.core.CoreConsts.durationName">
                 </div>
@@ -45,7 +49,7 @@
                 <button class="btn btn-primary w-100">Bewerten</button>
             </div>
 
-        </form>
+        }
 
     </div>
 }

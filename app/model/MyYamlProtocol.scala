@@ -161,7 +161,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     YamlString(titleName) -> hasBaseValues.title,
     YamlString(authorName) -> hasBaseValues.author,
     YamlString(textName) -> hasBaseValues.text,
-    YamlString(stateName) -> hasBaseValues.state.entryName,
+    YamlString(statusName) -> hasBaseValues.state.entryName,
     YamlString(semanticVersionName) -> hasBaseValues.semanticVersion.asString
   )
 
@@ -170,7 +170,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     title <- yamlObject.stringField(titleName)
     author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(textName)
-    state: ExerciseState <- yamlObject.enumField(stateName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+    state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
     semanticVersion <- yamlObject.stringField(semanticVersionName) flatMap SemanticVersionHelper.tryParseFromString
   } yield BaseValues(id, semanticVersion, title, author, text, state)
 

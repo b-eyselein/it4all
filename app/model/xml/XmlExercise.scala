@@ -5,7 +5,7 @@ import model.xml.dtd.DocTypeDef
 import play.twirl.api.Html
 
 
-final case class XmlCompleteExercise(ex: XmlExercise, sampleGrammars: Seq[XmlSample])
+final case class XmlCompleteEx(ex: XmlExercise, samples: Seq[XmlSample])
   extends SingleCompleteEx[XmlExercise, XmlExPart] {
 
   override def hasPart(partType: XmlExPart): Boolean = true

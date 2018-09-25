@@ -1,4 +1,5 @@
-@(user: model.User, exercise: model.uml.UmlCompleteEx)
+@(user: model.User, exercise: model.uml.UmlCompleteEx, toolMainObject: model.uml.UmlToolMain)(implicit
+        requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -43,8 +44,14 @@
                 <br>
 
                 <div class="form-group">
-                    <button data-url="@routes.ExerciseController.correctLive("uml", exercise.ex.id, part = model.uml.UmlExParts.MemberAllocation.urlName)"
-                    class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
+
+                    @helper.CSRF.formField
+                    <div class="btn-group d-flex">
+                        <button data-url="@routes.ExerciseController.correctLive("uml", exercise.ex.id, part = model.uml.UmlExParts.MemberAllocation.urlName)"
+                        class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
+                        <a href="@routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.ex.id, model.uml.UmlExParts.MemberAllocation.urlName)"
+                        id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                    </div>
                 </div>
 
             </div>

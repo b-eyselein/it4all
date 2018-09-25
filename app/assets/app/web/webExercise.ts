@@ -51,6 +51,10 @@ function testSol(): void {
         url: testButton.data('url'),
         data: JSON.stringify(solution),
         async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: onWebCorrectionSuccess,
         error: onWebCorrectionError
     });
@@ -81,6 +85,10 @@ function updatePreview(): void {
         url: $('#previewTabBtn').data('url'),
         data: unescapeHTML(editor.getValue()),
         async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: () => {
             $('#preview').attr('src', function (i, val) {
                 // Refresh iFrame

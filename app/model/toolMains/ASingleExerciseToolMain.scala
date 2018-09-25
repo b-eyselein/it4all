@@ -1,9 +1,11 @@
 package model.toolMains
 
 import model.persistence.IdExerciseTableDefs
-import model.{ExPart, ExerciseState, ExerciseReview, SingleCompleteEx, User}
+import model.{ExPart, ExerciseReview, ExerciseState, SingleCompleteEx, User}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.data.Form
+import play.api.i18n.MessagesProvider
+import play.api.mvc.RequestHeader
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,7 +33,7 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   def exerciseReviewForm(username: String, completeExercise: CompExType, exercisePart: PartType): Form[ReviewType]
 
-  val compExForm: Form[ExType]
+  val compExForm: Form[CompExType]
 
   // DB
 
@@ -42,7 +44,7 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
   def futureCompleteExById(id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(id)
 
   override def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(exercises map {
-    ex => tables.saveCompleteEx(ex) map (saveRes => (ex, saveRes))
+    ex => tables.futureSaveCompleteEx(ex) map (saveRes => (ex, saveRes))
   })
 
   def futureHighestId: Future[Int] = tables.futureHighestExerciseId
@@ -65,15 +67,7 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   // Helper methods for admin
 
-  def reserveExercise: Future[CompExType] = tables.futureHighestExerciseId map { highestId =>
-    val compExercise = instantiateExercise(highestId + 1, ExerciseState.RESERVED)
-
-    tables.saveCompleteEx(compExercise)
-
-    compExercise
-  }
-
-  def instantiateExercise(id: Int, state: ExerciseState): CompExType
+  def instantiateExercise(id: Int, author: String, state: ExerciseState): CompExType
 
   // TODO: scalarStyle = Folded if fixed...
   override def yamlString: Future[String] = futureCompleteExes map {
@@ -82,8 +76,11 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   // Views
 
-  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
+  def renderAdminExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
+
+  def renderUserExerciseEditForm(user: User, newExForm: Form[CompExType], isCreation: Boolean)
+                                (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = ???
 
   def adminExerciseList(admin: User, exes: Seq[CompExType], toolList: ToolList): Html
 

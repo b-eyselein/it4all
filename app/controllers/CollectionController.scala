@@ -20,7 +20,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
+  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils with play.api.i18n.I18nSupport {
 
   override type ToolMainType = CollectionToolMain
 

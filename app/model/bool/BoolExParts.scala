@@ -1,6 +1,6 @@
 package model.bool
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.ExPart
 
 import scala.collection.immutable.IndexedSeq
@@ -9,7 +9,7 @@ import scala.collection.immutable.IndexedSeq
 sealed abstract class BoolExPart(val urlName: String, val partName: String) extends ExPart with EnumEntry
 
 
-object BoolExParts extends Enum[BoolExPart] {
+object BoolExParts extends PlayEnum[BoolExPart] {
 
   override def values: IndexedSeq[BoolExPart] = findValues
 

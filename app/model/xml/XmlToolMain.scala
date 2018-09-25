@@ -8,12 +8,13 @@ import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.xml.XmlConsts._
-import model.xml.dtd.DocTypeDefParser
-import model.{Consts, Difficulties, ExerciseState, MyYamlFormat, Points, SemanticVersion, User}
-import play.api.data.Form
+import model.xml.dtd.{DocTypeDef, DocTypeDefLine, DocTypeDefParser}
+import model.{Consts, Difficulties, ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
 import play.api.data.Forms._
+import play.api.data._
+import play.api.i18n.MessagesProvider
 import play.api.libs.json.JsString
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +33,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override type ExType = XmlExercise
 
-  override type CompExType = XmlCompleteExercise
+  override type CompExType = XmlCompleteEx
 
   override type Tables = XmlTableDefs
 
@@ -60,20 +61,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Forms
 
-  override val compExForm: Form[XmlExercise] = null
-  //    Form(mapping(
-  //    "id" -> number,
-  //    "title" -> nonEmptyText,
-  //    "author" -> nonEmptyText,
-  //    "text" -> nonEmptyText,
-  //    "status" -> ExerciseState.formField,
-  //    "grammarDescription" -> nonEmptyText,
-  //    "sampleGrammar" -> nonEmptyText,
-  //    "rootNode" -> nonEmptyText
-  //  )(XmlExercise.apply)(XmlExercise.unapply))
+  override val compExForm: Form[XmlCompleteEx] = XmlCompleteExerciseForm.format
 
-
-  override def exerciseReviewForm(username: String, completeExercise: XmlCompleteExercise, exercisePart: XmlExPart): Form[XmlExerciseReview] = {
+  override def exerciseReviewForm(username: String, completeExercise: XmlCompleteEx, exercisePart: XmlExPart): Form[XmlExerciseReview] = {
 
     val apply = (diffStr: String, dur: Option[Int]) =>
       XmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
@@ -90,7 +80,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from requests, saving
 
-  override protected def readSolution(user: User, exercise: XmlCompleteExercise, part: XmlExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
+  override protected def readSolution(user: User, exercise: XmlCompleteEx, part: XmlExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
     case None          => Failure(new Exception("Request body does not contain json!"))
     case Some(jsValue) => jsValue match {
       case JsString(solution) => Success(solution)
@@ -100,25 +90,25 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: ExerciseState): XmlCompleteExercise = XmlCompleteExercise(
-    XmlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, grammarDescription = "", rootNode = ""),
-    sampleGrammars = Seq[XmlSample]())
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): XmlCompleteEx = XmlCompleteEx(
+    XmlExercise(id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, grammarDescription = "", rootNode = ""),
+    samples = Seq(XmlSample(1, id, SemanticVersionHelper.DEFAULT, DocTypeDef(lines = Seq[DocTypeDefLine]()), "")))
 
-  override def instantiateSolution(username: String, exercise: XmlCompleteExercise, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
+  override def instantiateSolution(username: String, exercise: XmlCompleteEx, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
     XmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
-  private def getFirstSample(completeEx: XmlCompleteExercise): Option[XmlSample] = completeEx.sampleGrammars.toList match {
+  private def getFirstSample(completeEx: XmlCompleteEx): Option[XmlSample] = completeEx.samples.toList match {
     case Nil       => None
     case head :: _ => Some(head)
   }
 
   // Yaml
 
-  override val yamlFormat: MyYamlFormat[XmlCompleteExercise] = XmlExYamlProtocol.XmlExYamlFormat
+  override val yamlFormat: MyYamlFormat[XmlCompleteEx] = XmlExYamlProtocol.XmlExYamlFormat
 
   // Correction
 
-  override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =
+  override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteEx, part: XmlExPart): Future[Try[XmlCompleteResult]] =
     Future(part match {
       case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap { dir =>
         getFirstSample(completeEx) map (_.sampleGrammar.asString) match {
@@ -139,7 +129,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
       case XmlExParts.GrammarCreationXmlPart =>
 
-        val maybeSampleGrammar = completeEx.sampleGrammars.reduceOption((sampleG1, sampleG2) => {
+        val maybeSampleGrammar = completeEx.samples.reduceOption((sampleG1, sampleG2) => {
           val dist1 = Java_Levenshtein.levenshteinDistance(solution, sampleG1.sampleGrammar.asString)
           val dist2 = Java_Levenshtein.levenshteinDistance(solution, sampleG2.sampleGrammar.asString)
 
@@ -164,14 +154,22 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExerciseEditForm(user: User, newEx: XmlCompleteExercise, isCreation: Boolean, toolList: ToolList): Html =
-    views.html.idExercises.xml.editXmlExercise(user, newEx, isCreation, this, toolList)
+  override def renderAdminExerciseEditForm(user: User, newEx: XmlCompleteEx, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.idExercises.xml.adminEditXmlExercise(user, newEx, isCreation, this, toolList)
 
-  override def renderExercise(user: User, exercise: XmlCompleteExercise, part: XmlExPart, maybeOldSolution: Option[XmlSolution]): Html = {
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[XmlCompleteEx], isCreation: Boolean)
+                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
+    views.html.idExercises.xml.editXmlExerciseForm(user, newExForm, isCreation, this)
+
+  override def renderExercise(user: User, exercise: XmlCompleteEx, part: XmlExPart, maybeOldSolution: Option[XmlSolution])
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     val oldSolutionOrTemplate = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
 
     views.html.idExercises.xml.xmlExercise(user, this, exercise, oldSolutionOrTemplate, part)
   }
+
+  override def renderExercisePreview(user: User, newExercise: XmlCompleteEx, saved: Boolean): Html =
+    views.html.idExercises.xml.xmlNewExercise(user, newExercise, saved, this)
 
   override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
 

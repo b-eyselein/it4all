@@ -1,6 +1,6 @@
 package model.nary
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import play.twirl.api.Html
 
 import scala.collection.immutable
@@ -23,7 +23,7 @@ sealed abstract class NumberBase(val base: Int, val baseName: String, val mark: 
 
 }
 
-object NumberBase extends Enum[NumberBase] {
+object NumberBase extends PlayEnum[NumberBase] {
 
   override val values: immutable.IndexedSeq[NumberBase] = findValues
 

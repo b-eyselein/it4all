@@ -1,6 +1,6 @@
 package model.xml
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.core.result.SuccessType
 import model.xml.XmlConsts._
 import org.xml.sax.SAXParseException
@@ -10,7 +10,7 @@ import scala.collection.immutable.IndexedSeq
 
 sealed abstract class XmlErrorType(val german: String) extends EnumEntry
 
-object XmlErrorType extends Enum[XmlErrorType] {
+object XmlErrorType extends PlayEnum[XmlErrorType] {
 
   val values: IndexedSeq[XmlErrorType] = findValues
 

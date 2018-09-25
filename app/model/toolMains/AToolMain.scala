@@ -2,7 +2,7 @@ package model.toolMains
 
 import java.nio.file.{Path, Paths}
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.Role.RoleUser
 import model._
 import model.core.CoreConsts._
@@ -24,7 +24,7 @@ sealed abstract class ToolState(val german: String, val greek: String, requiredR
 
 }
 
-object ToolState extends Enum[ToolState] {
+object ToolState extends PlayEnum[ToolState] {
 
   override val values: immutable.IndexedSeq[ToolState] = findValues
 

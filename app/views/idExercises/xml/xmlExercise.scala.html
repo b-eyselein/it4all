@@ -1,4 +1,5 @@
-@(user: model.User, toolMainObject: model.toolMains.IdExerciseToolMain, exercise: model.xml.XmlCompleteExercise, oldSolution: String, part: model.xml.XmlExPart)
+@(user: model.User, toolMainObject: model.toolMains.IdExerciseToolMain, exercise: model.xml.XmlCompleteEx,
+        oldSolution: String, part: model.xml.XmlExPart)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/xml/xmlExercise.js")');</script>
@@ -18,7 +19,7 @@
     }
     case model.xml.XmlExParts.DocumentCreationXmlPart => {
         <p><b>Erstellen Sie ein XML-Dokument zu folgender Grammatik:</b></p>
-        <pre>@play.twirl.api.HtmlFormat.escape(exercise.sampleGrammars.head.sampleGrammar.asString)</pre>
+        <pre>@play.twirl.api.HtmlFormat.escape(exercise.samples.head.sampleGrammar.asString)</pre>
     }
 }
 

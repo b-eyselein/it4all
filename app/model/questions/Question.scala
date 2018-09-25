@@ -1,6 +1,6 @@
 package model.questions
 
-import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
+import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import play.twirl.api.Html
 
@@ -17,7 +17,7 @@ object QuestionHelper {
 
 sealed abstract class QuestionType(val german: String) extends EnumEntry
 
-object QuestionTypes extends Enum[QuestionType] with PlayJsonEnum[QuestionType] {
+object QuestionTypes extends PlayEnum[QuestionType] {
 
   override val values: IndexedSeq[QuestionType] = findValues
 
@@ -31,7 +31,7 @@ object QuestionTypes extends Enum[QuestionType] with PlayJsonEnum[QuestionType] 
 
 sealed abstract class Correctness(val title: String, val bsButtonColor: String) extends EnumEntry
 
-object Correctnesses extends Enum[Correctness] with PlayJsonEnum[Correctness] {
+object Correctnesses extends PlayEnum[Correctness] {
 
   val values: IndexedSeq[Correctness] = findValues
 

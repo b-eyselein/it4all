@@ -1,4 +1,4 @@
-@(user: model.User, exercise: model.xml.XmlCompleteExercise, isCreation: Boolean,
+@(user: model.User, exercise: model.xml.XmlCompleteEx, isCreation: Boolean,
         toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
 
     @scripts = {
@@ -53,9 +53,9 @@
             <div class="form-group row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="@model.core.CoreConsts.stateName">Status:</label>
+                        <label for="@model.core.CoreConsts.statusName">Status:</label>
                         <div >
-                            <select class="form-control" name="@model.core.CoreConsts.stateName" id="@model.core.CoreConsts.stateName" required>
+                            <select class="form-control" name="@model.core.CoreConsts.statusName" id="@model.core.CoreConsts.statusName" required>
                             @for(state <- model.ExerciseState.values) {
                                 <option @{
                                     if(state == exercise.ex.state) "selected" else ""
@@ -78,7 +78,7 @@
                         <input class="form-control" name="@model.xml.XmlConsts.rootNodeName" id="@model.xml.XmlConsts.rootNodeName" required value="@exercise.ex.rootNode">
                     </div>
 
-                    @for(sampleGrammar <- exercise.sampleGrammars) {
+                    @for(sampleGrammar <- exercise.samples) {
                         <div class="form-group">
                             <label for="@model.xml.XmlConsts.sampleGrammarsName">Mustergrammaik</label>
                             <textarea class="form-control" name="@model.xml.XmlConsts.sampleGrammarsName" id="@model.xml.XmlConsts.sampleGrammarsName" rows="15"

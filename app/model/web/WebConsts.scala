@@ -22,7 +22,7 @@ object WebConsts extends Consts {
   val jsTasksName   = "jsTasks"
   val jsTextName    = "jsText"
 
-  val KEYS_TO_SEND_NAME = "keysToSend"
+  val keysToSendName = "keysToSend"
 
   val partName     = "part"
   val phpTasksName = "phpTasks"

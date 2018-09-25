@@ -100,6 +100,11 @@ GET           /tools/:toolType/admin/exportFile                             cont
 
 GET           /tools/:toolType/admin/exerciseList                           controllers.ExerciseController.adminExerciseList(toolType: String)
 
+GET           /tools/:toolType/newExForm                                    controllers.ExerciseController.newExerciseForm(toolType: String)
+POST          /tools/:toolType/newExercise                                  controllers.ExerciseController.newExercise(toolType: String)
+POST          /tools/:toolType/:id/editExercise                             controllers.ExerciseController.editExercise(toolType: String, id: Int)
+
+
 GET           /tools/:toolType/admin/newExForm                              controllers.ExerciseController.adminNewExerciseForm(toolType: String)
 
 GET           /tools/:toolType/admin/exerciseList/:id                       controllers.ExerciseController.adminEditExerciseForm(toolType: String, id: Int)
@@ -143,9 +148,7 @@ POST          /course/addController/:id                                     cont
 GET           /register                                                     controllers.LoginController.registerForm
 POST          /register                                                     controllers.LoginController.register
 
-PUT           /checkUserName                                                controllers.LoginController.checkUserName
-
-GET           /login                                                        controllers.LoginController.login
+GET           /login                                                        controllers.LoginController.loginForm
 POST          /authenticate                                                 controllers.LoginController.authenticate
 
 GET           /logout                                                       controllers.LoginController.logout
@@ -169,4 +172,4 @@ GET           /eval/stats                                                   cont
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                                                 controllers.Assets.versioned(path="/public", file: Asset)
-GET           /                                                             controllers.LoginController.register
+GET           /favicon.ico                                                  controllers.Assets.at(path="/public", file="images/favicon.ico")

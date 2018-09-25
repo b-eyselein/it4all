@@ -1,5 +1,5 @@
 @(user: model.User, toolMainObject: model.programming.ProgToolMain, exercise: model.programming.ProgCompleteEx,
-        oldSolution: String, part: model.programming.ProgExPart)
+        oldSolution: String, part: model.programming.ProgExPart)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
     <script>

@@ -1,0 +1,5 @@
+@(field: Field, rowCount: Int, placeHolder: Option[String] = None)
+
+<textarea class="form-control" name="@field.name" id="@field.id" rows="@rowCount" required@{
+    placeHolder.map(ph => Html(s""" placeholder="$ph" """)).getOrElse("")
+}>@field.value</textarea>

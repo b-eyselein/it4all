@@ -8,8 +8,9 @@ import model.rose.RoseConsts.{difficultyName, durationName}
 import model.toolMains.{IdExerciseToolMain, ToolState}
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.MessagesProvider
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +52,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   // Forms
 
   // TODO: create Form mapping ...
-  override val compExForm: Form[RoseExercise] = null
+  override val compExForm: Form[RoseCompleteEx] = null
 
   override def exerciseReviewForm(username: String, completeExercise: RoseCompleteEx, exercisePart: RoseExPart): Form[RoseExerciseReview] = {
 
@@ -94,8 +95,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
-    RoseExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
+    RoseExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
     inputType = Seq[RoseInputType](), sampleSolution = null
   )
 
@@ -108,7 +109,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Views
 
-  override def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart, maybeOldSolution: Option[RoseSolution]): Html =
+  override def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart, maybeOldSolution: Option[RoseSolution])
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true), this)
 
   override def renderEditRest(exercise: RoseCompleteEx): Html = ???

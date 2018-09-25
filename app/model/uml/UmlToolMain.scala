@@ -9,6 +9,7 @@ import model.uml.UmlConsts.{difficultyName, durationName}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.MessagesProvider
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -52,7 +53,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Forms
 
   // TODO: create Form mapping ...
-  override implicit val compExForm: Form[UmlExercise] = null
+  override implicit val compExForm: Form[UmlCompleteEx] = null
 
   override def exerciseReviewForm(username: String, completeExercise: UmlCompleteEx, exercisePart: UmlExPart): Form[UmlExerciseReview] = {
 
@@ -85,8 +86,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
-    UmlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state,
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
+    UmlExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
       solution = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]()),
       markedText = "", toIgnore = ""),
     mappings = Seq[UmlMapping]()
@@ -101,11 +102,12 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution]): Html = part match {
+  override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution])
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
     case UmlExParts.ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise.ex, this)
     case UmlExParts.DiagramDrawing     => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
     case UmlExParts.DiagramDrawingHelp => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
-    case UmlExParts.MemberAllocation   => views.html.idExercises.uml.memberAllocation(user, exercise)
+    case UmlExParts.MemberAllocation   => views.html.idExercises.uml.memberAllocation(user, exercise, this)
   }
 
   override def renderEditRest(exercise: UmlCompleteEx): Html = views.html.idExercises.uml.editUmlExRest(exercise)

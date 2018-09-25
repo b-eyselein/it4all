@@ -40,9 +40,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="@model.core.CoreConsts.stateName">Status:</label>
+                        <label for="@model.core.CoreConsts.statusName">Status:</label>
                         <div >
-                            <select class="form-control" name="@model.core.CoreConsts.stateName" id="@model.core.CoreConsts.stateName" required>
+                            <select class="form-control" name="@model.core.CoreConsts.statusName" id="@model.core.CoreConsts.statusName" required>
                             @for(state <- model.ExerciseState.values) {
                                 <option @{
                                     if(state == exercise.ex.state) "selected" else ""

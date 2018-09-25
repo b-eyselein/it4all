@@ -19,6 +19,8 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
 
   // Helper methods
 
+  protected def onNoSuchExercise(id: Int): Result = NotFound(s"Es gibt keine Aufgabe mit der ID $id")
+
   // FIXME: Redirect and flash!
   private def onNoSuchTool(toolType: String): Result = BadRequest(s"There is no such tool with name $toolType")
 

@@ -26,7 +26,7 @@ abstract class FileExerciseToolMain(tn: String, up: String)(implicit ec: Executi
     ex =>
       // FIXME: check files...
       checkFiles(ex)
-      tables.saveCompleteEx(ex) map (saveRes => (ex, saveRes))
+      tables.futureSaveCompleteEx(ex) map (saveRes => (ex, saveRes))
   })
 
   protected def checkFiles(ex: ReadType): Seq[Try[Path]]
@@ -52,7 +52,7 @@ abstract class FileExerciseToolMain(tn: String, up: String)(implicit ec: Executi
     stats => views.html.admin.fileExes.fileExerciseAdminMain(admin, stats, this, toolList)
   }
 
-  override def previewExercise(user: User, read: ReadAndSaveResult[CompExType], toolList: ToolList): Html =
+  override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[CompExType], toolList: ToolList): Html =
     views.html.admin.fileExes.fileExercisePreview(user, read, this, toolList)
 
   override def adminExerciseList(admin: User, exes: Seq[CompExType], toolList: ToolList): Html =

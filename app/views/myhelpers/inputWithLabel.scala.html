@@ -1,0 +1,11 @@
+@(field: Field, labelContent: String, fieldType: String, labelWidth: Int, inputWidth: Int, placeHolder: Option[String] = None, isReadOnly: Boolean = false)
+
+<label class="col-form-label col-md-@labelWidth" for="@field.id">@labelContent:</label>
+<div class="col-md-@inputWidth">
+    <input type="@fieldType" class="form-control" name="@field.name" id="@field.id" value="@field.value.getOrElse("")" required@{
+        placeHolder.map(ph => Html(s""" placeholder="$ph" """)).getOrElse("")
+    } @{
+        if(isReadOnly) """readonly""" else ""
+    }>
+
+</div>

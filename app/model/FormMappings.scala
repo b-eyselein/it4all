@@ -11,7 +11,7 @@ object FormMappings {
 
   final case class UpdateRoleForm(username: String, newRole: Role)
 
-  final case class UserCredForm(username: String, password: String)
+  final case class UserCredentials(username: String, password: String)
 
   // Formatters
 
@@ -42,10 +42,10 @@ object FormMappings {
 
   val pwChangeForm: Form[(String, String, String)] = Form(tuple("oldpw" -> nonEmptyText, "newpw1" -> nonEmptyText, "newpw2" -> nonEmptyText))
 
-  val userCredForm: Form[UserCredForm] = Form(mapping(
+  val userCredForm: Form[UserCredentials] = Form(mapping(
     nameName -> nonEmptyText,
     pwName -> nonEmptyText
-  )(UserCredForm.apply)(UserCredForm.unapply))
+  )(UserCredentials.apply)(UserCredentials.unapply))
 
   def singleStrForm(str: String): Form[String] = Form(str -> nonEmptyText)
 

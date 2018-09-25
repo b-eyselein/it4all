@@ -7,6 +7,7 @@ import model.core.result.EvaluationResult
 import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
 import play.api.data.Form
+import play.api.i18n.MessagesProvider
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -101,7 +102,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
        |  </div>
        |</div>""".stripMargin)
 
-  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int, maybeOldSolution: Option[DBSolType]): Html = {
+  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int, maybeOldSolution: Option[DBSolType])
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
     val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 

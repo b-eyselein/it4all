@@ -1,6 +1,6 @@
 package model.sql
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.ExTag
 
 import scala.collection.immutable.IndexedSeq
@@ -8,7 +8,7 @@ import scala.collection.immutable.IndexedSeq
 sealed abstract class SqlExTag(val buttonContent: String, val title: String) extends ExTag with EnumEntry
 
 
-object SqlExTag extends Enum[SqlExTag] {
+object SqlExTag extends PlayEnum[SqlExTag] {
 
   override def values: IndexedSeq[SqlExTag] = findValues
 

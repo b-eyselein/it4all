@@ -14,7 +14,7 @@ object SqlFormMappings {
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,
       textName -> nonEmptyText,
-      stateName -> ExerciseState.formField,
+      statusName -> ExerciseState.formField,
       collIdName -> number,
       collSemVerName -> nonEmptyText,
       exerciseTypeName -> SqlExerciseType.formField,

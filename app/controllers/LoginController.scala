@@ -16,17 +16,19 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)(implicit ec: ExecutionContext)
-  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with play.api.i18n.I18nSupport {
 
-  def registerForm: Action[AnyContent] = Action { implicit request => Ok(views.html.register.render()) }
+  def registerForm: Action[AnyContent] = Action {
+    implicit request => Ok(views.html.registerForm(userCredForm))
+  }
 
   def register: Action[AnyContent] = Action.async { implicit request =>
 
-    val onError: Form[UserCredForm] => Future[Result] = { _ =>
+    val onError: Form[UserCredentials] => Future[Result] = { _ =>
       Future(BadRequest("There has been an error in your form..."))
     }
 
-    val onRead: UserCredForm => Future[Result] = { credentials =>
+    val onRead: UserCredentials => Future[Result] = { credentials =>
       val newUser = RegisteredUser(credentials.username)
       val pwHash = PwHash(credentials.username, credentials.password.bcrypt)
 
@@ -42,32 +44,13 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     userCredForm.bindFromRequest.fold(onError, onRead)
   }
 
-  /**
-    * Checks username in register form with ajax request
-    *
-    * FIXME: entfernen?
-    *
-    * @return {{userexists: Boolean, username: String (from form)}}
-    */
-  def checkUserName: Action[AnyContent] = Action.async { implicit request =>
-    val onError: Form[String] => Future[Result] = { _ =>
-      Future(BadRequest("TODO!"))
-    }
-
-    val onRead: String => Future[Result] = { userName =>
-      repo.userByName(userName) map (res => Ok(Json.obj("userexists" -> res.isDefined, usernameName -> userName)))
-    }
-
-    singleStrForm(nameName).bindFromRequest.fold(onError, onRead)
-  }
-
   def authenticate: Action[AnyContent] = Action.async { implicit request =>
 
-    val onError: Form[UserCredForm] => Future[Result] = { formWithErrors =>
-      Future(BadRequest(views.html.login(formWithErrors)))
+    val onError: Form[UserCredentials] => Future[Result] = { formWithErrors =>
+      Future(BadRequest(views.html.loginForm(formWithErrors)))
     }
 
-    val onRead: UserCredForm => Future[Result] = { credentials =>
+    val onRead: UserCredentials => Future[Result] = { credentials =>
 
       val futureUserAndPwHash: Future[(Option[User], Option[PwHash])] = for {
         user <- repo.userByName(credentials.username)
@@ -81,7 +64,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
           if (credentials.password isBcrypted pwHash.pwHash) {
             Redirect(controllers.routes.Application.index()).withSession(sessionIdField -> user.username)
           } else {
-            Ok(views.html.login(FormMappings.userCredForm.fill(credentials)))
+            Ok(views.html.loginForm(FormMappings.userCredForm.fill(credentials)))
           }
       }
     }
@@ -93,9 +76,9 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     // FIXME: not used yet...
     implicit request =>
       if (userName.isEmpty)
-        Future(Redirect(routes.LoginController.login()))
+        Future(Redirect(routes.LoginController.loginForm()))
       else {
-        Future(Redirect(routes.LoginController.login()))
+        Future(Redirect(routes.LoginController.loginForm()))
         //        findOrCreateStudent(userName, passwort = "").map {
         //          user =>
         //
@@ -110,8 +93,12 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
   }
 
-  def login: Action[AnyContent] = Action { implicit request => Ok(views.html.login(FormMappings.userCredForm)) }
+  def loginForm: Action[AnyContent] = Action {
+    implicit request => Ok(views.html.loginForm(FormMappings.userCredForm))
+  }
 
-  def logout: Action[AnyContent] = Action { implicit request => Redirect(routes.LoginController.login()).withNewSession }
+  def logout: Action[AnyContent] = Action {
+    implicit request => Redirect(routes.LoginController.loginForm()).withNewSession
+  }
 
 }

@@ -135,7 +135,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
         textName -> jsTask.task.text,
         xpathQueryName -> jsTask.task.xpathQuery,
         actionTypeName -> jsTask.task.actionType.entryName,
-        KEYS_TO_SEND_NAME -> jsTask.task.keysToSend.map[YamlValue](YamlString).getOrElse(YamlNull),
+        keysToSendName -> jsTask.task.keysToSend.map[YamlValue](YamlString).getOrElse(YamlNull),
         conditionsName -> yamlConds
       )
     }
@@ -145,7 +145,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       text <- yamlObject.stringField(textName)
       xpathQuery <- yamlObject.stringField(xpathQueryName)
       actionType <- yamlObject.enumField(actionTypeName, JsActionType.withNameInsensitiveOption) map (_ getOrElse JsActionType.CLICK)
-      keysToSend <- yamlObject.optField(KEYS_TO_SEND_NAME, str => Success(str.forgivingStr))
+      keysToSend <- yamlObject.optField(keysToSendName, str => Success(str.forgivingStr))
       conditionTries <- yamlObject.arrayField(conditionsName, JsConditionYamlFormat(taskId, baseValues).read)
     } yield {
 

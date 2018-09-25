@@ -17,7 +17,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with FileUtils {
+  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with FileUtils with play.api.i18n.I18nSupport {
 
   override type ToolMainType <: ASingleExerciseToolMain
 
@@ -80,17 +80,17 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
 
   def adminEditExerciseForm(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteExById(id) map { maybeExercise =>
-        val exercise = maybeExercise getOrElse toolMain.instantiateExercise(id, ExerciseState.RESERVED)
-        Ok(toolMain.renderExerciseEditForm(admin, exercise, isCreation = false, toolList))
+      toolMain.futureCompleteExById(id) map {
+        case None           => onNoSuchExercise(id)
+        case Some(exercise) => Ok(toolMain.renderAdminExerciseEditForm(admin, exercise, isCreation = false, toolList))
       }
   }
 
   def adminNewExerciseForm(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureHighestId map { id =>
-        val exercise = toolMain.instantiateExercise(id + 1, ExerciseState.RESERVED)
-        Ok(toolMain.renderExerciseEditForm(admin, exercise, isCreation = true, toolList))
+        val exercise = toolMain.instantiateExercise(id + 1, admin.username, ExerciseState.RESERVED)
+        Ok(toolMain.renderAdminExerciseEditForm(admin, exercise, isCreation = true, toolList))
       }
   }
 
@@ -112,7 +112,8 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
         }
       }
 
-      toolMain.compExForm.bindFromRequest().fold(onFormError, onFormSuccess)
+      //      toolMain.compExForm.bindFromRequest().fold(onFormError, onFormSuccess)
+      ???
   }
 
   def adminCreateExercise(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, _) =>
@@ -126,6 +127,58 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
       toolMain.dataForUserExesOverview(user, page) map {
         dataForUserExesOverview => Ok(views.html.exercises.userExercisesOverview(user, dataForUserExesOverview, toolMain, page))
       }
+  }
+
+  def newExerciseForm(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    request =>
+      toolMain.futureHighestId map { id =>
+        val exercise = toolMain.instantiateExercise(id + 1, user.username, ExerciseState.RESERVED)
+        Ok(toolMain.renderUserExerciseEditForm(user, toolMain.compExForm.fill(exercise), isCreation = true)(request, request2Messages(request)))
+      }
+  }
+
+  def editExercise(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+
+      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
+
+        for (formError <- formWithError.errors)
+          Logger.error(formError.key + " :: " + formError.message)
+
+        Future(BadRequest("Your form has has errors!"))
+      }
+
+      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
+        //FIXME: save ex
+        ???
+
+        toolMain.futureUpdateExercise(compEx) map { _ =>
+          Ok(views.html.admin.singleExercisePreview(user, compEx, toolMain))
+        }
+      }
+
+      //      toolMain.compExForm.bindFromRequest().fold(onFormError, onFormSuccess)
+      ???
+  }
+
+  def newExercise(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+
+      val onFormError: Form[toolMain.CompExType] => Future[Result] = { formWithErrors =>
+        Future(BadRequest(toolMain.renderUserExerciseEditForm(user, formWithErrors, isCreation = true)(request, request2Messages(request))))
+      }
+
+      val onRead: toolMain.CompExType => Future[Result] = { compEx =>
+
+        toolMain.futureInsertCompleteEx(compEx).transform {
+          case Success(saved)     => Success(Ok(toolMain.renderExercisePreview(user, compEx, saved)))
+          case Failure(error) =>
+            Logger.error("Error while saving an exercise", error)
+            Success(BadRequest("Your new exercise could not be saved..."))
+        }
+      }
+
+      toolMain.compExForm.bindFromRequest().fold(onFormError, onRead)
   }
 
 }

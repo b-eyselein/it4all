@@ -1,6 +1,6 @@
 package model.spread
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.ExPart
 
 import scala.collection.immutable.IndexedSeq
@@ -15,7 +15,7 @@ sealed abstract class SpreadExPart(val fileName: String, val toolName: String) e
 }
 
 
-object SpreadExParts extends Enum[SpreadExPart] {
+object SpreadExParts extends PlayEnum[SpreadExPart] {
 
   val values: IndexedSeq[SpreadExPart] = findValues
 

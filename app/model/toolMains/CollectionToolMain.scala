@@ -7,8 +7,9 @@ import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
+import play.api.i18n.MessagesProvider
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContent, Call, Request}
+import play.api.mvc.{AnyContent, Call, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -77,7 +78,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def saveReadCollection(read: Seq[CompCollType]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteColl)
 
-  def futureSaveExercise(exercise: CompExType): Future[Boolean] = tables.saveCompleteEx(exercise)
+  def futureSaveExercise(exercise: CompExType): Future[Boolean] = tables.futureSaveCompleteEx(exercise)
 
   protected def saveSolution(solution: DBSolType): Future[Boolean]
 
@@ -145,7 +146,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this, toolList)
   }
 
-  def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int, maybeOldSolution: Option[DBSolType]): Html
+  def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int, maybeOldSolution: Option[DBSolType])
+                    (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
 
@@ -155,7 +157,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
-  override def previewExercise(user: User, read: ReadAndSaveResult[CompCollType], toolList: ToolList): Html =
+  override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[CompCollType], toolList: ToolList): Html =
     views.html.admin.collExes.collPreview(user, read, this, toolList)
 
   // Result handlers

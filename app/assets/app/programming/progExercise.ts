@@ -53,6 +53,10 @@ function testSol(): void {
         url: testBtn.data('url'),
         data: JSON.stringify(solution),
         async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: onProgCorrectionSuccess,
         error: onProgCorrectionError
     });

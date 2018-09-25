@@ -12,9 +12,9 @@ import scala.util.Try
 
 object XmlExYamlProtocol extends MyYamlProtocol {
 
-  implicit object XmlExYamlFormat extends MyYamlObjectFormat[XmlCompleteExercise] {
+  implicit object XmlExYamlFormat extends MyYamlObjectFormat[XmlCompleteEx] {
 
-    override def readObject(yamlObject: YamlObject): Try[XmlCompleteExercise] = for {
+    override def readObject(yamlObject: YamlObject): Try[XmlCompleteEx] = for {
       baseValues <- readBaseValues(yamlObject)
 
       grammarDescription <- yamlObject.stringField(grammarDescriptionName)
@@ -25,16 +25,16 @@ object XmlExYamlProtocol extends MyYamlProtocol {
       for (sampleReadError <- samples._2)
         Logger.error("Could not read xml sample", sampleReadError.exception)
 
-      XmlCompleteExercise(
+      XmlCompleteEx(
         XmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, grammarDescription, rootNode),
         samples._1)
     }
 
-    override def write(completeEx: XmlCompleteExercise) = new YamlObject(
+    override def write(completeEx: XmlCompleteEx) = new YamlObject(
       writeBaseValues(completeEx.ex) ++
         Map[YamlValue, YamlValue](
           YamlString(grammarDescriptionName) -> YamlString(completeEx.ex.grammarDescription),
-          YamlString(samplesName) -> YamlArray(completeEx.sampleGrammars map XmlSampleYamlFormat(completeEx.ex.id, completeEx.ex.semanticVersion).write toVector),
+          YamlString(samplesName) -> YamlArray(completeEx.samples map XmlSampleYamlFormat(completeEx.ex.id, completeEx.ex.semanticVersion).write toVector),
           YamlString(rootNodeName) -> YamlString(completeEx.ex.rootNode)
         )
     )

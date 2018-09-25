@@ -31,16 +31,19 @@ trait Consts {
 
   val keyName = "key"
 
-  val matchesName   = "matches"
-  val matchTypeName = "matchType"
-  val maxPointsName = "maxPoints"
-  val messageName   = "message"
+  val majorName: String = "major"
+  val matchesName       = "matches"
+  val matchTypeName     = "matchType"
+  val maxPointsName     = "maxPoints"
+  val messageName       = "message"
+  val minorName         = "minor"
 
   val nameName = "name"
 
-  val pointsName = "points"
-  val pwName     = "passwort"
-  val pw2Name    = "passwort_wieder"
+  val patchName: String = "patch"
+  val pointsName        = "points"
+  val pwName            = "passwort"
+  val pw2Name           = "passwort_wieder"
 
   val questionsName    = "questions"
   val questionTypeName = "questionType"
@@ -53,7 +56,7 @@ trait Consts {
   val sampleSubDir        = "samples"
   val selfName            = "self"
   val semanticVersionName = "semanticVersion"
-  val stateName           = "status"
+  val statusName          = "status"
   val stdStep             = 10
   val successTypeName     = "successType"
   val solutionName        = "solution"

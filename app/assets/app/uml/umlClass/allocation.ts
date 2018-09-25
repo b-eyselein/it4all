@@ -8,7 +8,7 @@ function readAttributeElement(elem: HTMLInputElement): UmlClassAttribute | null 
     if (elem.checked) {
         const jElement = $(elem);
         return {
-            visibility: jElement.data('visibility'),name: jElement.data('value'), type: jElement.data('type'),
+            visibility: jElement.data('visibility'), name: jElement.data('value'), type: jElement.data('type'),
             isDerived: false, isAbstract: false, isStatic: false
         };
     } else {
@@ -54,7 +54,12 @@ function readAllocation(): UmlSolution {
                 }
             });
 
-            solution.classes.push({classType: jElement.data('classtype'), name: jElement.data('classname'), attributes, methods});
+            solution.classes.push({
+                classType: jElement.data('classtype'),
+                name: jElement.data('classname'),
+                attributes,
+                methods
+            });
         });
     } catch (err) {
         console.error(err);
@@ -88,6 +93,10 @@ function testSol() {
         url: $('#testBtn').data('url'),
         data: JSON.stringify(solution),
         async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: onMemberAllocationCorrectionSuccess,
         error: onMemberAllocationCorrectionError
     });
@@ -98,4 +107,10 @@ $(() => {
     testBtn.on('click', testSol);
 
     $('#allocationForm').on('submit', readAllocation);
+
+    let solutionChanged = false; // TODO!
+
+    $('#endSolveBtn').on('click', () => {
+        return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
+    });
 });

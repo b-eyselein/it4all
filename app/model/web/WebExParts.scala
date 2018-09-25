@@ -1,6 +1,6 @@
 package model.web
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.ExPart
 
 import scala.collection.immutable.IndexedSeq
@@ -9,7 +9,7 @@ import scala.collection.immutable.IndexedSeq
 sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
 
-object WebExParts extends Enum[WebExPart] {
+object WebExParts extends PlayEnum[WebExPart] {
 
   val values: IndexedSeq[WebExPart] = findValues
 

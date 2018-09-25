@@ -1,6 +1,6 @@
 package model.xml
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.ExPart
 
 import scala.collection.immutable.IndexedSeq
@@ -9,7 +9,7 @@ import scala.collection.immutable.IndexedSeq
 sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
 
-object XmlExParts extends Enum[XmlExPart] {
+object XmlExParts extends PlayEnum[XmlExPart] {
 
   val values: IndexedSeq[XmlExPart] = findValues
 

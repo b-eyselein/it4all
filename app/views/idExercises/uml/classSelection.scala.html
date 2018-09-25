@@ -1,4 +1,5 @@
-@(user: model.User, exercise: model.uml.UmlExercise, toolMainObject: model.uml.UmlToolMain)
+@(user: model.User, exercise: model.uml.UmlExercise, toolMainObject: model.uml.UmlToolMain)(implicit requestHeader: RequestHeader,
+        messagesProvider: MessagesProvider)
 
 @btnText = @{
     "Klassen verifizieren"
@@ -53,18 +54,23 @@
             </div>
         </div>
 
-        <hr>
+        <br>
 
-        <input type="hidden" class="form-control" name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName" required>
+        @*<input type="hidden" class="form-control" name="@model.uml.UmlConsts.learnerSolutionName" id="@model.uml.UmlConsts.learnerSolutionName" required>*@
 
-        <div class="btn-group d-flex">
-            <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#hintModal">
-                <span class="octicon octicon-info"></span>
-            </button>
-            <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, model.uml.UmlExParts.ClassSelection.urlName)"
-            class="btn btn-primary w-100" id="testBtn">@btnText</button>
-            <a href="@routes.ExerciseController.exercise(toolMainObject.urlPart, exercise.id, model.uml.UmlExParts.DiagramDrawingHelp.urlName)"
-            class="btn btn-secondary w-100">Zum nächsten Aufgabenteil</a>
+        <div class="form-group">
+
+            @helper.CSRF.formField
+
+            <div class="btn-group d-flex">
+                <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#hintModal">
+                    <span class="octicon octicon-info"></span>
+                </button>
+                <button data-url="@routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, model.uml.UmlExParts.ClassSelection.urlName)"
+                class="btn btn-primary w-100" id="testBtn">@btnText</button>
+                <a href="@routes.ExerciseController.exercise(toolMainObject.urlPart, exercise.id, model.uml.UmlExParts.DiagramDrawingHelp.urlName)"
+                class="btn btn-secondary w-100">Zum nächsten Aufgabenteil</a>
+            </div>
         </div>
 
         <hr>

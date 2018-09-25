@@ -1,4 +1,5 @@
-@(user: model.User, exercise: model.uml.UmlCompleteEx, curPart: model.uml.UmlExPart, getsHelp: Boolean, toolObject: model.uml.UmlToolMain)
+@(user: model.User, exercise: model.uml.UmlCompleteEx, curPart: model.uml.UmlExPart, getsHelp: Boolean,
+        toolObject: model.uml.UmlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     exercise.titleForPart(curPart)
@@ -77,9 +78,9 @@
 
             <div class="col-md-6">
 
-                <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
-                <input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">
-                <input hidden id="exercisePart" value="@curPart.urlName" title="hidden">
+                @*<input hidden id="toolType" value="@toolObject.urlPart" title="hidden">*@
+                @*<input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">*@
+                @*<input hidden id="exercisePart" value="@curPart.urlName" title="hidden">*@
 
                 <div class="card">
                     <div class="card-body text-justify">@exercise.textForPart(curPart)</div>
@@ -88,6 +89,9 @@
                 <br>
 
                 <div class="form-group">
+
+                    @helper.CSRF.formField
+
                     <div class="btn-group d-flex">
                         <button data-url="@routes.ExerciseController.correctLive(toolObject.urlPart, exercise.ex.id, curPart.urlName)"
                         id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>

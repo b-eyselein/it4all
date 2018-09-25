@@ -1,6 +1,6 @@
 package model.rose
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{EnumEntry, PlayEnum}
 import model.ExPart
 
 import scala.collection.immutable.IndexedSeq
@@ -9,7 +9,7 @@ import scala.collection.immutable.IndexedSeq
 abstract sealed class RoseExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
 
-object RoseExParts extends Enum[RoseExPart] {
+object RoseExParts extends PlayEnum[RoseExPart] {
 
   val values: IndexedSeq[RoseExPart] = findValues
 

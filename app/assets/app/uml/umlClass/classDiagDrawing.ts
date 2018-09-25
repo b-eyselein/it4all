@@ -87,7 +87,7 @@ function blankOnPointerDown(evt: Event, x: number, y: number) {
 }
 
 
-function cellOnLeftClick(cellView: joint.dia.CellView, evt) {
+function cellOnLeftClick(cellView: joint.dia.CellView, evt): void {
 
     console.warn('pointer click...');
 
@@ -309,8 +309,14 @@ function onSolutionLoadError(jqXHR): void {
 
 function loadSolution(url: string): void {
     $.ajax({
-        type: 'GET', dataType: 'json',
-        url, async: true,
+        type: 'GET',
+        dataType: 'json',
+        url,
+        async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: onSolutionLoadSuccess,
         error: onSolutionLoadError
     });
@@ -465,6 +471,10 @@ function testSol(): void {
         url: classDiagTestBtn.data('url'),
         data: JSON.stringify(solution),
         async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: onUmlClassDiagCorrectionSuccess,
         error: onUmlClassDiagCorrectionError
     });

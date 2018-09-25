@@ -57,7 +57,7 @@ final case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVe
     exerciseIdName -> exerciseId,
     usernameName -> username,
     outputName -> output,
-    stateName -> state.entryName,
+    statusName -> state.entryName,
     inputsName -> inputAsJson
   )
 

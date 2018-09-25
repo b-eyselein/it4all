@@ -9,8 +9,9 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Forms._
 import play.api.data._
 import model.web.WebConsts._
+import play.api.i18n.MessagesProvider
 import play.api.libs.json.JsString
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,8 +51,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[WebExPart] = WebExParts.values
 
-  // TODO: create Form mapping ...
-  override val compExForm: Form[WebExercise] = null
+  // Forms
+
+  override val compExForm: Form[WebCompleteEx] = WebCompleteExerciseForm.format
 
   override def exerciseReviewForm(username: String, completeExercise: WebCompleteEx, exercisePart: WebExPart): Form[WebExerciseReview] = {
 
@@ -104,8 +106,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, state: ExerciseState): WebCompleteEx = WebCompleteEx(
-    WebExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, sampleSolution = "", htmlText = None, jsText = None, phpText = None),
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebCompleteEx = WebCompleteEx(
+    WebExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, sampleSolution = "", htmlText = None, jsText = None, phpText = None),
     htmlTasks = Seq[HtmlCompleteTask](), jsTasks = Seq[JsCompleteTask]()
   )
 
@@ -118,10 +120,15 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean, toolList: ToolList): Html =
+  override def renderAdminExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean, toolList: ToolList): Html =
     views.html.idExercises.web.editWebExercise(user, newEx, isCreation, this, toolList)
 
-  override def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution]): Html =
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[WebCompleteEx], isCreation: Boolean)
+                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
+    views.html.idExercises.web.editWebExerciseForm(user, newExForm, isCreation, this)
+
+  override def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution])
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.web.webExercise(user, exercise, part, maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML, this)
 
   override def renderEditRest(exercise: WebCompleteEx): Html =
