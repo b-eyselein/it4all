@@ -1,14 +1,29 @@
 package model.programming
 
 
+import enumeratum.{EnumEntry, PlayEnum}
 import play.api.libs.json._
 
+import scala.collection.immutable.IndexedSeq
 import scala.util.Try
 import scala.util.matching.Regex
 
-// FIXME: use enumatum!!!
+// FIXME: use enumeratum!!!
 
-object ProgDataTypes {
+sealed trait ProgDataType extends EnumEntry {
+
+  def toJson(str: String): JsValue
+
+  def typeName: String
+
+  def defaultValue: ProgLanguage => String
+
+}
+
+object ProgDataTypes extends PlayEnum[ProgDataType] {
+
+  override val values: IndexedSeq[ProgDataType] = findValues
+
 
   private val ListPattern: Regex = "list<(.*?)>".r
 
@@ -16,15 +31,6 @@ object ProgDataTypes {
 
   private def string2FloatBigDecimal(str: String): BigDecimal = BigDecimal(Try(str.toDouble) getOrElse 0d)
 
-  sealed trait ProgDataType {
-
-    def toJson(str: String): JsValue
-
-    def typeName: String
-
-    def defaultValue: ProgLanguage => String
-
-  }
 
   sealed abstract class NonGenericProgDataType(val typeName: String, val convertToJson: String => JsValue, val defaultValue: ProgLanguage => String) extends ProgDataType {
 
@@ -33,6 +39,7 @@ object ProgDataTypes {
   }
 
   sealed abstract class GenericProgDataType extends ProgDataType
+
 
   case object VOID extends NonGenericProgDataType("void", _ => JsString("void"), _ => "void")
 
@@ -67,7 +74,7 @@ object ProgDataTypes {
     case "string"  => Some(STRING)
 
     case ListPattern(c) =>
-      val subType = ProgDataTypes.byName(c)
+      val subType: Option[ProgDataType] = ProgDataTypes.byName(c)
       subType map LIST
 
     case _ => None

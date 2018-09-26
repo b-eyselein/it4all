@@ -56,22 +56,16 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   // Forms
 
   // TODO: create Form mapping ...
-  override val compExForm: Form[ProgCompleteEx] = null
+  override def compExForm: Form[ProgCompleteEx] = ???
 
-  override def exerciseReviewForm(username: String, completeExercise: ProgCompleteEx, exercisePart: ProgExPart): Form[ProgExerciseReview] = {
-
-    val apply = (diffStr: String, dur: Option[Int]) =>
-      ProgExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
-
-    val unapply = (cr: ProgExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
-
-    Form(
-      mapping(
-        difficultyName -> nonEmptyText,
-        durationName -> optional(number(min = 0, max = 100))
-      )(apply)(unapply)
+  override def exerciseReviewForm(username: String, completeExercise: ProgCompleteEx, exercisePart: ProgExPart): Form[ProgExerciseReview] = Form(
+    mapping(
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
     )
-  }
+    (ProgExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (per => Some((per.difficulty, per.maybeDuration)))
+  )
 
   // Regexes
 
@@ -160,6 +154,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       // TODO: use old soluton!
       views.html.idExercises.umlActivity.activityDrawing.render(user, exercise, language = ProgLanguages.STANDARD_LANG, toolObject = this)
   }
+
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[ProgCompleteEx], isCreation: Boolean)
+                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = ???
 
   override def renderEditRest(exercise: ProgCompleteEx): Html = ???
 

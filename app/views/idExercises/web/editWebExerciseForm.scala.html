@@ -31,7 +31,8 @@
 
                 @myhelpers.inputWithLabel(exerciseForm(WebConsts.authorName), "Autor", "text", 1, 2, isReadOnly = true)
 
-                @myhelpers.selectWithLabel(exerciseForm(WebConsts.statusName), "Status", model.ExerciseState.values.map(_.entryName), 1, 4)
+                @myhelpers.selectWithLabel(exerciseForm(WebConsts.statusName), "Status",
+                    model.ExerciseState.values.map(e => (e.entryName, e.german)), 1, 4)
             </div>
 
             <div class="form-group row">

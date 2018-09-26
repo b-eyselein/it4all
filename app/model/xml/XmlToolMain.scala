@@ -63,20 +63,14 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val compExForm: Form[XmlCompleteEx] = XmlCompleteExerciseForm.format
 
-  override def exerciseReviewForm(username: String, completeExercise: XmlCompleteEx, exercisePart: XmlExPart): Form[XmlExerciseReview] = {
-
-    val apply = (diffStr: String, dur: Option[Int]) =>
-      XmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
-
-    val unapply = (cr: XmlExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
-
-    Form(
-      mapping(
-        difficultyName -> nonEmptyText,
-        durationName -> optional(number(min = 0, max = 100))
-      )(apply)(unapply)
+  override def exerciseReviewForm(username: String, completeExercise: XmlCompleteEx, exercisePart: XmlExPart): Form[XmlExerciseReview] = Form(
+    mapping(
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
     )
-  }
+    (XmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (xer => Some((xer.difficulty, xer.maybeDuration)))
+  )
 
   // Reading solution from requests, saving
 
@@ -92,7 +86,10 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): XmlCompleteEx = XmlCompleteEx(
     XmlExercise(id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, grammarDescription = "", rootNode = ""),
-    samples = Seq(XmlSample(1, id, SemanticVersionHelper.DEFAULT, DocTypeDef(lines = Seq[DocTypeDefLine]()), "")))
+    samples = Seq[XmlSample](
+      XmlSample(1, id, SemanticVersionHelper.DEFAULT, DocTypeDef(lines = Seq[DocTypeDefLine]()), "")
+    )
+  )
 
   override def instantiateSolution(username: String, exercise: XmlCompleteEx, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
     XmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)

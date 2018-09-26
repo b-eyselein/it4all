@@ -2,34 +2,37 @@ package model
 
 trait Consts {
 
-  val adminFolder        = "admin"
-  val analysisResultName = "analysisResult"
-  val answersName        = "answers"
-  val attributesName     = "attributes"
-  val authorName         = "author"
-  val awaitedName        = "awaited"
+  val analysisResultName: String = "analysisResult"
+  val answersName       : String = "answers"
+  val attributesName    : String = "attributes"
+  val authorName        : String = "author"
+  val awaitedName       : String = "awaited"
 
-  val contentName     = "content"
-  val correctName     = "correct"
-  val correctnessName = "correctness"
+  val contentName    : String = "content"
+  val correctName    : String = "correct"
+  val correctnessName: String = "correctness"
 
-  val difficultyName = "difficulty"
-  val durationName   = "duration"
+  val difficultyName: String = "difficulty"
+  val durationName  : String = "duration"
 
-  val errorName        = "error"
-  val exercisesName    = "exercises"
-  val exerciseIdName   = "exerciseId"
-  val exerciseTypeName = "exerciseType"
-  val explanationName  = "explanation"
-  val explanationsName = "explanations"
+  val errorName       : String = "error"
+  val exercisesName   : String = "exercises"
+  val exerciseIdName           = "exerciseId"
+  val exerciseTypeName: String = "exerciseType"
+  val explanationName          = "explanation"
+  val explanationsName         = "explanations"
 
-  val gottenName = "gotten"
+  val gottenName: String = "gotten"
 
   val learnerSolutionName = "learnerSolution"
 
-  val idName = "id"
+  val idName        : String = "id"
+  val inputTypeName : String = "inputType"
+  val inputTypesName: String = "inputTypes"
 
-  val keyName = "key"
+  val keyName: String = "key"
+
+  val languageName: String = "language"
 
   val majorName: String = "major"
   val matchesName       = "matches"
@@ -51,9 +54,11 @@ trait Consts {
   val resultsName = "results"
   val roleName    = "role"
 
+  val sampleName          = "sample"
   val sampleArgName       = "sampleArg"
   val sampleSolutionName  = "sampleSolution"
   val sampleSubDir        = "samples"
+  val samplesName: String = "samples"
   val selfName            = "self"
   val semanticVersionName = "semanticVersion"
   val statusName          = "status"

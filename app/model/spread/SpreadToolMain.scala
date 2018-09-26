@@ -9,6 +9,8 @@ import model.toolMains.{FileExerciseToolMain, ToolState}
 import model._
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.MessagesProvider
+import play.api.mvc.RequestHeader
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
@@ -52,22 +54,16 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
   // Forms
 
   // TODO: create Form mapping ...
-  override val compExForm: Form[SpreadExercise] = null
+  override def compExForm: Form[SpreadExercise] = ???
 
-  override def exerciseReviewForm(username: String, completeExercise: SpreadExercise, exercisePart: SpreadExPart): Form[SpreadExerciseReview] = {
-
-    val apply = (diffStr: String, dur: Option[Int]) =>
-      SpreadExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
-
-    val unapply = (cr: SpreadExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
-
-    Form(
-      mapping(
-        difficultyName -> nonEmptyText,
-        durationName -> optional(number(min = 0, max = 100))
-      )(apply)(unapply)
+  override def exerciseReviewForm(username: String, completeExercise: SpreadExercise, exercisePart: SpreadExPart): Form[SpreadExerciseReview] = Form(
+    mapping(
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
     )
-  }
+    (SpreadExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
+    (ser => Some((ser.difficulty, ser.maybeDuration)))
+  )
 
   // Yaml
 
@@ -101,6 +97,9 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
     views.html.fileExercises.spread.spreadCorrectionResult(user, correctionResult, exercise, fileExtension)
 
   override def renderEditRest(exercise: SpreadExercise): Html = ???
+
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[SpreadExercise], isCreation: Boolean)
+                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = ???
 
   // Correction
 

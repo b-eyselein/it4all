@@ -1,7 +1,6 @@
 package model.programming
 
 import model.programming.ProgConsts._
-import model.programming.ProgDataTypes.ProgDataType
 import play.api.libs.json._
 
 object TestDataJsonFormat {

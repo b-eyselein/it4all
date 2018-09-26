@@ -3,7 +3,7 @@ package model.rose
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
 import model.programming.{ProgDataTypes, ProgLanguages}
-import model.{BaseValues, MyYamlProtocol, YamlObj}
+import model.{BaseValues, MyYamlProtocol, SemanticVersion, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -20,7 +20,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
       fieldHeight <- yamlObject.intField("fieldHeight")
       isMp <- yamlObject.boolField("isMultiplayer")
       inputTypes <- yamlObject.arrayField("inputTypes", RoseInputTypeYamlFormat(baseValues).read)
-      sampleSolutions <- yamlObject.arrayField("sampleSolutions", RoseSampleSolutionYamlFormat(baseValues).read)
+      sampleSolutions <- yamlObject.arrayField("sampleSolutions", RoseSampleSolutionYamlFormat(baseValues.id, baseValues.semanticVersion).read)
     } yield {
       for (inputTypeFailure <- inputTypes._2)
       // FIXME: return...
@@ -38,7 +38,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
   }
 
-final case class RoseInputTypeYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseInputType] {
+  final case class RoseInputTypeYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseInputType] {
 
     override def readObject(yamlObject: YamlObject): Try[RoseInputType] = for {
       id <- yamlObject.intField(idName)
@@ -50,16 +50,18 @@ final case class RoseInputTypeYamlFormat(baseValues: BaseValues) extends MyYamlO
 
   }
 
-final case class RoseSampleSolutionYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[RoseSampleSolution] {
+  final case class RoseSampleSolutionYamlFormat(exerciseId: Int, semanticVersion: SemanticVersion) extends MyYamlObjectFormat[RoseSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[RoseSampleSolution] = for {
+      id <- yamlObject.intField(idName)
       language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.STANDARD_LANG)
       sample <- yamlObject.stringField(sampleName)
-    } yield RoseSampleSolution(baseValues.id, baseValues.semanticVersion, language, sample)
+    } yield RoseSampleSolution(id, exerciseId, semanticVersion, language, sample)
 
-    override def write(pss: RoseSampleSolution): YamlValue = YamlObj(
-      languageName -> pss.language.entryName,
-      sampleName -> pss.solution
+    override def write(obj: RoseSampleSolution): YamlValue = YamlObj(
+      idName -> obj.id,
+      languageName -> obj.language.entryName,
+      sampleName -> obj.solution
     )
 
   }

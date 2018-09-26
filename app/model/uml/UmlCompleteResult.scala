@@ -25,7 +25,7 @@ final case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: Uml
 
   override def results: Seq[MatchingResult[_, _ <: Match[_]]] = Seq[MatchingResult[_, _ <: Match[_]]]() ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
 
-  private val musterSolution: UmlClassDiagram = exercise.ex.solution
+  private val musterSolution: UmlClassDiagram = exercise.sampleSolutions.head.sample // FIXME!
 
   val classResult: Option[MatchingResult[UmlClass, UmlClassMatch]] = part match {
     case UmlExParts.DiagramDrawingHelp                           => None

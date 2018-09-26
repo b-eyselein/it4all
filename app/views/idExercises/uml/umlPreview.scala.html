@@ -18,7 +18,7 @@
             </tr>
             <tr>
                 <th>Ignoriert</th>
-                <td>@Html(completeEx.ex.splitToIgnore.map(i => "<code>" + i + "</code>").mkString(", "))</td>
+                <td>@Html(completeEx.toIgnore.map(i => "<code>" + i + "</code>").mkString(", "))</td>
             </tr>
         </table>
     </div>
@@ -27,9 +27,9 @@
     <div class="col-md-6">
         <h2>Mappings</h2>
         <ul>
-        @for(mapping <- completeEx.mappings) {
-            <li>@mapping.key &rarr;
-                @mapping.value</li>
+        @for((key, value) <- completeEx.mappings) {
+            <li>@key &rarr;
+                @value</li>
         }
         </ul>
     </div>
@@ -38,9 +38,13 @@
 <p>Marked Text</p>
 <div class="well pre-scrollable">@completeEx.ex.markedText</div>
 
+    @sampleSolution = @{
+    completeEx.sampleSolutions.head.sample
+}
+
 <td>
     <p>Lösung</p>
-    <p>@completeEx.ex.solution.classes</p>
-    <p>@completeEx.ex.solution.associations</p>
-    <p>@completeEx.ex.solution.implementations</p>
+    <p>@sampleSolution.classes</p>
+    <p>@sampleSolution.associations</p>
+    <p>@sampleSolution.implementations</p>
 </td>

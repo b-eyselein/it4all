@@ -57,16 +57,16 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override def exerciseReviewForm(username: String, completeExercise: WebCompleteEx, exercisePart: WebExPart): Form[WebExerciseReview] = {
 
-    val apply = (diffStr: String, maybeDuration: Option[Int]) =>
-      WebExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), maybeDuration)
 
     val unapply = (cr: WebExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
 
     Form(
       mapping(
-        difficultyName -> nonEmptyText,
+        difficultyName -> Difficulties.formField,
         durationName -> optional(number(min = 0, max = 100))
-      )(apply)(unapply)
+      )
+      (WebExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+      (wer => Some((wer.difficulty, wer.maybeDuration)))
     )
 
   }

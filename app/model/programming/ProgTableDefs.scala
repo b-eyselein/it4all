@@ -88,13 +88,9 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class InputTypesTable(tag: Tag) extends Table[ProgInput](tag, "prog_input_types") {
+  class InputTypesTable(tag: Tag) extends ExForeignKeyTable[ProgInput](tag, "prog_input_types") {
 
     def id: Rep[Int] = column[Int](idName)
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def inputName: Rep[String] = column[String]("input_name")
 
@@ -103,18 +99,12 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
 
-    def exerciseFk: ForeignKeyQuery[ProgExercisesTable, ProgExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
-
 
     override def * : ProvenShape[ProgInput] = (id, exerciseId, exSemVer, inputName, inputType) <> (ProgInput.tupled, ProgInput.unapply)
 
   }
 
-  class ProgSampleSolutionsTable(tag: Tag) extends Table[ProgSampleSolution](tag, "prog_sample_solutions") {
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+  class ProgSampleSolutionsTable(tag: Tag) extends ExForeignKeyTable[ProgSampleSolution](tag, "prog_sample_solutions") {
 
     def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
@@ -125,8 +115,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, language))
 
-    def exerciseFk: ForeignKeyQuery[ProgExercisesTable, ProgExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
-
 
     override def * : ProvenShape[ProgSampleSolution] = (exerciseId, exSemVer, language, base, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
 
@@ -134,20 +122,13 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Test data
 
-  abstract class ITestDataTable[T <: TestData](tag: Tag, name: String) extends Table[T](tag, name) {
+  abstract class ITestDataTable[T <: TestData](tag: Tag, name: String) extends ExForeignKeyTable[T](tag, name) {
 
     def id: Rep[Int] = column[Int]("id")
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def inputAsJson: Rep[JsValue] = column[JsValue]("input_json")
 
     def output: Rep[JsValue] = column[JsValue]("output")
-
-
-    def exerciseFk: ForeignKeyQuery[ProgExercisesTable, ProgExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
   }
 
@@ -176,11 +157,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class UmlClassDiagPartsTable(tag: Tag) extends Table[UmlClassDiagPart](tag, "prog_uml_cd_parts") {
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+  class UmlClassDiagPartsTable(tag: Tag) extends ExForeignKeyTable[UmlClassDiagPart](tag, "prog_uml_cd_parts") {
 
     def className: Rep[String] = column[String]("class_name")
 
@@ -188,8 +165,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer))
-
-    def exerciseFk: ForeignKeyQuery[ProgExercisesTable, ProgExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
     override def * : ProvenShape[UmlClassDiagPart] = (exerciseId, exSemVer, className, classDiagram) <> (UmlClassDiagPart.tupled, UmlClassDiagPart.unapply)

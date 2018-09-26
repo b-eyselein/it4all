@@ -3,8 +3,7 @@ package model.rose
 import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
-import model.programming.ProgDataTypes.ProgDataType
-import model.programming.{ProgDataTypes, ProgLanguage, ProgLanguages}
+import model.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
@@ -29,12 +28,9 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected val solTable     = TableQuery[RoseSolutionsTable]
   override protected val reviewsTable = TableQuery[RoseExerciseReviewsTable]
 
-
-  val roseInputs = TableQuery[RoseInputTypesTable]
-
-  val roseSamples = TableQuery[RoseSampleSolutionsTable]
-
-  val roseSolutions = TableQuery[RoseSolutionsTable]
+  private val roseInputs    = TableQuery[RoseInputTypesTable]
+  private val roseSamples   = TableQuery[RoseSampleSolutionsTable]
+  private val roseSolutions = TableQuery[RoseSolutionsTable]
 
   // Queries
 
@@ -45,7 +41,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   override protected def saveExerciseRest(compEx: RoseCompleteEx): Future[Boolean] = for {
     inputsSaved <- saveSeq[RoseInputType](compEx.inputType, it => db.run(roseInputs insertOrUpdate it))
-    samplesSaved <- saveSeq[RoseSampleSolution](compEx.sampleSolution, rss => db.run(roseSamples insertOrUpdate rss))
+    samplesSaved <- saveSeq[RoseSampleSolution](compEx.sampleSolutions, rss => db.run(roseSamples insertOrUpdate rss))
   } yield inputsSaved && samplesSaved
 
   // Implicit column types
@@ -74,13 +70,9 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class RoseInputTypesTable(tag: Tag) extends Table[RoseInputType](tag, "rose_inputs") {
+  class RoseInputTypesTable(tag: Tag) extends ExForeignKeyTable[RoseInputType](tag, "rose_inputs") {
 
     def id: Rep[Int] = column[Int]("id")
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def name: Rep[String] = column[String]("input_name")
 
@@ -89,30 +81,24 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
 
-    def exerciseFk: ForeignKeyQuery[RoseExercisesTable, RoseExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
-
 
     override def * : ProvenShape[RoseInputType] = (id, exerciseId, exSemVer, name, inputType) <> (RoseInputType.tupled, RoseInputType.unapply)
 
   }
 
-  class RoseSampleSolutionsTable(tag: Tag) extends Table[RoseSampleSolution](tag, "rose_samples") {
+  class RoseSampleSolutionsTable(tag: Tag) extends ExForeignKeyTable[RoseSampleSolution](tag, "rose_samples") {
 
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+    def id: Rep[Int] = column[Int]("id")
 
     def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
     def solution: Rep[String] = column[String]("solution")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, language))
-
-    def exerciseFk: ForeignKeyQuery[RoseExercisesTable, RoseExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, language))
 
 
-    override def * : ProvenShape[RoseSampleSolution] = (exerciseId, exSemVer, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
+    override def * : ProvenShape[RoseSampleSolution] = (id, exerciseId, exSemVer, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
 
   }
 

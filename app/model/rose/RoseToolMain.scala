@@ -51,23 +51,16 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Forms
 
-  // TODO: create Form mapping ...
-  override val compExForm: Form[RoseCompleteEx] = null
+  override val compExForm: Form[RoseCompleteEx] = RoseCompleteExerciseForm.format
 
-  override def exerciseReviewForm(username: String, completeExercise: RoseCompleteEx, exercisePart: RoseExPart): Form[RoseExerciseReview] = {
-
-    val apply = (diffStr: String, dur: Option[Int]) =>
-      RoseExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
-
-    val unapply = (cr: RoseExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
-
-    Form(
-      mapping(
-        difficultyName -> nonEmptyText,
-        durationName -> optional(number(min = 0, max = 100))
-      )(apply)(unapply)
+  override def exerciseReviewForm(username: String, completeExercise: RoseCompleteEx, exercisePart: RoseExPart): Form[RoseExerciseReview] = Form(
+    mapping(
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
     )
-  }
+    (RoseExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (rer => Some((rer.difficulty, rer.maybeDuration)))
+  )
 
   // DB
 
@@ -84,20 +77,11 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     }
   }
 
-  //    request.body.asJson flatMap { jsValue =>
-  //      roseSolutionJsonReads(exercise, user).reads(jsValue) match {
-  //        case JsSuccess(solution, _) => Some(solution)
-  //        case JsError(jsErrors)      =>
-  //          jsErrors.foreach(println)
-  //          None
-  //      }
-  //    }
-
   // Other helper methods
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
     RoseExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
-    inputType = Seq[RoseInputType](), sampleSolution = null
+    inputType = Seq[RoseInputType](), sampleSolutions = Seq[RoseSampleSolution]()
   )
 
   override def instantiateSolution(username: String, exercise: RoseCompleteEx, part: RoseExPart, solution: String, points: Points, maxPoints: Points): RoseSolution =
@@ -115,6 +99,10 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override def renderEditRest(exercise: RoseCompleteEx): Html = ???
 
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[RoseCompleteEx], isCreation: Boolean)
+                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
+    views.html.idExercises.rose.exitRoseExerciseForm(user, newExForm, isCreation, this)
+
   // Correction
 
   override protected def correctEx(user: User, sol: SolType, exercise: RoseCompleteEx, part: RoseExPart): Future[Try[RoseCompleteResult]] = {
@@ -127,7 +115,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: RoseExPart): Future[Option[String]] = part match {
     case RoseExParts.RoseSingleExPart => futureCompleteExById(id) map {
-      maybeCompleteEx => maybeCompleteEx flatMap (_.sampleSolution.headOption map (_.solution))
+      maybeCompleteEx => maybeCompleteEx flatMap (_.sampleSolutions.headOption map (_.solution))
     }
   }
 

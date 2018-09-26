@@ -139,6 +139,14 @@ final case class JsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: Se
 final case class PHPTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
                          textContent: Option[String]) extends WebTask
 
+final case class WebSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion,
+                                   htmlSample: String, jsSample: String, phpSample: String)
+  extends SampleSolution[(String, String, String)] {
+
+  override def sample: (String, String, String) = (htmlSample, jsSample, phpSample)
+
+}
+
 final case class WebSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart, solution: String,
                              points: Points, maxPoints: Points) extends DBPartSolution[WebExPart, String]
 

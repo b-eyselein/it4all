@@ -296,12 +296,13 @@ CREATE TABLE IF NOT EXISTS rose_inputs (
 );
 
 CREATE TABLE IF NOT EXISTS rose_samples (
+  id          INT,
   exercise_id INT,
   ex_sem_ver  VARCHAR(10),
   language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, language),
+  PRIMARY KEY (id, exercise_id, ex_sem_ver, language),
   FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE
@@ -627,10 +628,10 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
 );
 
 CREATE TABLE IF NOT EXISTS xml_samples (
-  id             INT,
-  exercise_id    INT,
-  ex_sem_ver     VARCHAR(10),
-  sample_grammar TEXT,
+  id              INT,
+  exercise_id     INT,
+  ex_sem_ver      VARCHAR(10),
+  sample_grammar  TEXT,
   sample_document TEXT,
 
   PRIMARY KEY (id, exercise_id, ex_sem_ver),

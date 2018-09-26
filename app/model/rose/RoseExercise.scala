@@ -1,13 +1,12 @@
 package model.rose
 
 import model._
-import model.programming.ProgDataTypes.ProgDataType
-import model.programming.ProgLanguage
+import model.programming.{ProgDataType, ProgLanguage}
 import play.twirl.api.Html
 
 // Classes for use
 
-final case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampleSolution: Seq[RoseSampleSolution]) extends SingleCompleteEx[RoseExercise, RoseExPart] {
+final case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]) extends SingleCompleteEx[RoseExercise, RoseExPart] {
 
   val NewLine = "\n"
 
@@ -42,7 +41,7 @@ final case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType],
   }
 
   def buildSampleSolution(language: ProgLanguage): String = {
-    val sampleSol = sampleSolution.find(_.language == language) map (_.solution) getOrElse ""
+    val sampleSol = sampleSolutions.find(_.language == language) map (_.solution) getOrElse ""
 
     declaration(false) + NewLine + sampleSol.split(NewLine).map(" " * 4 + _).mkString(NewLine)
   }
@@ -56,7 +55,7 @@ final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
 final case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersion, name: String, inputType: ProgDataType)
 
-final case class RoseSampleSolution(exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, solution: String)
+final case class RoseSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, solution: String)
 
 final case class RoseSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart,
                               solution: String, points: Points, maxPoints: Points) extends DBPartSolution[RoseExPart, String]

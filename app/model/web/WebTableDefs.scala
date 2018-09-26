@@ -107,13 +107,9 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  abstract class WebTasksTable[T <: WebTask](tag: Tag, name: String) extends Table[T](tag, name) {
+  abstract class WebTasksTable[T <: WebTask](tag: Tag, name: String) extends ExForeignKeyTable[T](tag, name) {
 
     def id: Rep[Int] = column[Int]("task_id")
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def text: Rep[String] = column[String]("text")
 
@@ -121,8 +117,6 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
 
     def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
-
-    def exerciseFk: ForeignKeyQuery[WebExercisesTable, WebExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
   }
 

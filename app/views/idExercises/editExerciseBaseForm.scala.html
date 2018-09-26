@@ -1,0 +1,93 @@
+@import model.core.CoreConsts
+
+@(user: model.User, exerciseForm: Form[_ <: model.CompleteEx[_ <: model.Exercise]], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain,
+        specialFields: Html, additionalScripts: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+    @scripts = {
+        <style>
+                textarea {
+                    resize: vertical;
+                }
+        </style>
+
+    @additionalScripts
+    }
+
+    @title = @{
+        s"${if(isCreation) "Erstellen" else "Bearbeiten"}  einer ${toolMainObject.toolname}-Aufgabe"
+    }
+
+    @majorField = @{
+        exerciseForm(CoreConsts.semanticVersionName + "." + CoreConsts.majorName)
+    }
+
+    @minorField = @{
+        exerciseForm(CoreConsts.semanticVersionName + "." + CoreConsts.minorName)
+    }
+
+    @patchField = @{
+        exerciseForm(CoreConsts.semanticVersionName + "." + CoreConsts.patchName)
+    }
+
+    @main(title, Some(user), scripts) {
+        <div class="container">
+
+        @helper.form(routes.ExerciseController.newExercise(toolMainObject.urlPart), 'class -> "form") {
+
+            <fieldset>
+                <legend class="text-center">Standardangaben</legend>
+
+                @helper.CSRF.formField
+
+                <div class="form-group row">
+                    @myhelpers.inputWithLabel(exerciseForm(CoreConsts.idName), "ID", "number", 2, 2, isRequired = true, isReadOnly = true)
+
+                    @myhelpers.inputWithLabel(exerciseForm(CoreConsts.authorName), "Autor", "text", 1, 2, isRequired = true, isReadOnly = true)
+
+                    @myhelpers.selectWithLabel(exerciseForm(CoreConsts.statusName), "Status",
+                        model.ExerciseState.values.map(e => (e.entryName, e.german)), 1, 4)
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-2" for="@CoreConsts.semanticVersionName">Version:</label>
+
+                    <div class="col-md-2">@myhelpers.input(majorField, "number", isRequired = true)</div>
+                    <label class="col-form-label col-md-1" for="@majorField.id">(Major)</label>
+
+                    <div class="col-md-2">@myhelpers.input(minorField, "number", isRequired = true)</div>
+                    <label class="col-form-label col-md-1" for="@minorField.id">(Minor)</label>
+
+                    <div class="col-md-2"> @myhelpers.input(patchField, "number", isRequired = true)</div>
+                    <label class="col-form-label col-md-1" for="@patchField.id">(Patch)</label>
+
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-outline-info btn-block" title="Infos zur Versionierung" onclick="alert('TODO!');">
+                            <span class="octicon octicon-info"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                @myhelpers.inputWithLabel(exerciseForm(CoreConsts.titleName), "Titel", "text", 2, 10,
+                    isRequired = true, placeHolder = Some("Titel der Aufgabe"))
+                </div>
+
+                <div class="form-group row">
+                @myhelpers.textareaWithLabel(exerciseForm(CoreConsts.textName), "Text", rowCount = 5, 2, 10,
+                    isRequired = true, placeHolder = Some("Text der Aufgaben"))
+                </div>
+
+            </fieldset>
+
+            @specialFields
+
+            <button class="btn btn-primary btn-block">Aufgabe @if(isCreation) {erstellen} else {bearbeiten}</button>
+
+            <br>
+            }
+
+        </div>
+    }
+
+
+

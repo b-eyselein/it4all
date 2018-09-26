@@ -10,6 +10,7 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
+import model.uml.UmlConsts._
 
 class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlExercise, UmlCompleteEx, UmlClassDiagram, UmlSolution, UmlExPart, UmlExerciseReview] {
@@ -28,19 +29,25 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected val solTable     = TableQuery[UmlSolutionsTable]
   override protected val reviewsTable = TableQuery[UmlExerciseReviewsTable]
 
+  private val umlToIgnore = TableQuery[UmlToIgnoreTable]
   private val umlMappings = TableQuery[UmlMappingsTable]
+  private val umlSamples  = TableQuery[UmlSampleSolutionsTable]
 
   // Reading
 
   override def completeExForEx(ex: UmlExercise): Future[UmlCompleteEx] = for {
+    toIgnore <- db.run(umlToIgnore filter (_.exerciseId === ex.id) result)
     mappings <- db.run(umlMappings filter (_.exerciseId === ex.id) result)
-  } yield UmlCompleteEx(ex, mappings)
+    samples <- db.run(umlSamples filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result)
+  } yield UmlCompleteEx(ex, toIgnore map (_._3), mappings map (m => m._3 -> m._4) toMap, samples)
 
 
   // Saving
 
   override protected def saveExerciseRest(compEx: UmlCompleteEx): Future[Boolean] =
-    saveSeq[UmlMapping](compEx.mappings, m => db.run(umlMappings += m))
+    saveSeq[(String, String)](compEx.mappings toSeq, {
+      case (key, value) => db.run(umlMappings += ((compEx.ex.id, compEx.ex.semanticVersion, key, value)))
+    })
 
   // Implicit column types
 
@@ -60,22 +67,30 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class UmlExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "uml_exercises") {
 
-    def solutionAsJson: Rep[UmlClassDiagram] = column[UmlClassDiagram]("solution_json")
+    //    def solutionAsJson: Rep[UmlClassDiagram] = column[UmlClassDiagram]("solution_json")
 
     def markedText: Rep[String] = column[String]("marked_text")
+
+    //    def toIgnore: Rep[String] = column[String]("to_ignore")
+
+
+    override def * : ProvenShape[UmlExercise] = (id, semanticVersion, title, author, text, state, markedText) <> (UmlExercise.tupled, UmlExercise.unapply)
+
+  }
+
+  class UmlToIgnoreTable(tag: Tag) extends ExForeignKeyTable[(Int, SemanticVersion, String)](tag, "uml_to_ignore") {
 
     def toIgnore: Rep[String] = column[String]("to_ignore")
 
 
-    override def * : ProvenShape[UmlExercise] = (id, semanticVersion, title, author, text, state, solutionAsJson, markedText, toIgnore) <> (UmlExercise.tupled, UmlExercise.unapply)
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, toIgnore))
+
+
+    def * : ProvenShape[(Int, SemanticVersion, String)] = (exerciseId, exSemVer, toIgnore)
 
   }
 
-  class UmlMappingsTable(tag: Tag) extends Table[UmlMapping](tag, "uml_mappings") {
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+  class UmlMappingsTable(tag: Tag) extends ExForeignKeyTable[(Int, SemanticVersion, String, String)](tag, "uml_mappings") {
 
     def mappingKey: Rep[String] = column[String]("mapping_key")
 
@@ -84,10 +99,22 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, mappingKey))
 
-    def exerciseFk: ForeignKeyQuery[UmlExercisesTable, UmlExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+    override def * : ProvenShape[(Int, SemanticVersion, String, String)] = (exerciseId, exSemVer, mappingKey, mappingValue) // <> (UmlMapping.tupled, UmlMapping.unapply)
+
+  }
+
+  class UmlSampleSolutionsTable(tag: Tag) extends ExForeignKeyTable[UmlSampleSolution](tag, "uml_sample_solutions") {
+
+    def id: Rep[Int] = column[Int](idName)
+
+    def sample: Rep[UmlClassDiagram] = column[UmlClassDiagram]("sample")
 
 
-    override def * : ProvenShape[UmlMapping] = (exerciseId, exSemVer, mappingKey, mappingValue) <> (UmlMapping.tupled, UmlMapping.unapply)
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
+
+
+    def * : ProvenShape[UmlSampleSolution] = (id, exerciseId, exSemVer, sample) <> (UmlSampleSolution.tupled, UmlSampleSolution.unapply)
 
   }
 

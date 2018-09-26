@@ -1,0 +1,11 @@
+@(field: Field, fieldType: String = "text", placeHolder: Option[String] = None, isRequired: Boolean = false, isReadOnly: Boolean = false)
+
+<input type="@fieldType" class="form-control" name="@field.name" id="@field.id" @{
+    field.value.map(v => Html(s""" value="$v" """)).getOrElse("")
+} @{
+    if(isRequired) """required""" else ""
+} @{
+    placeHolder.map(ph => Html(s""" placeholder="$ph" """)).getOrElse("")
+} @{
+    if(isReadOnly) """readonly""" else ""
+}>

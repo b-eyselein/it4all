@@ -16,8 +16,6 @@ object SqlConsts extends CollectionConsts {
 
   val NewLine = "\n"
 
-  val sampleName       = "sample"
-  val samplesName      = "samples"
   val sampleResultName = "sampleResult"
   val shortNameName    = "shortName"
   val SELECT_ALL_DUMMY = "SELECT * FROM "

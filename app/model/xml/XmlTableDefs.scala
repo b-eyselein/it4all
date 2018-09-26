@@ -69,13 +69,9 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  class XmlSamplesTable(tag: Tag) extends Table[XmlSample](tag, "xml_samples") {
+  class XmlSamplesTable(tag: Tag) extends ExForeignKeyTable[XmlSample](tag, "xml_samples") {
 
     def id: Rep[Int] = column[Int](idName)
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def sampleGrammar: Rep[DocTypeDef] = column[DocTypeDef]("sample_grammar")
 
@@ -83,8 +79,6 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
 
     def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
-
-    def exerciseFk: ForeignKeyQuery[XmlExercisesTable, XmlExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
 
     override def * : ProvenShape[XmlSample] = (id, exerciseId, exSemVer, sampleGrammar, sampleDocument) <> (XmlSample.tupled, XmlSample.unapply)

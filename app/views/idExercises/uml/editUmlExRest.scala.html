@@ -9,7 +9,7 @@
     <div class="form-group row">
         <label class="control-label col-sm-2" for="@model.uml.UmlConsts.ignoreWordsName">Ignoriert:</label>
         <div class="col-md-10">
-            <input class="form-control" value="@exercise.ex.splitToIgnore.mkString(", ")" id="@model.uml.UmlConsts.ignoreWordsName" name="@model.uml.UmlConsts.ignoreWordsName">
+            <input class="form-control" value="@exercise.toIgnore.mkString(", ")" id="@model.uml.UmlConsts.ignoreWordsName" name="@model.uml.UmlConsts.ignoreWordsName">
         </div>
     </div>
 
@@ -19,12 +19,12 @@
 
         @for(mappingTuple <- exercise.mappings grouped baseFormsPerRow; width = 12 / baseFormsPerRow) {
             <div class="form-group row">
-            @for(m <- mappingTuple) {
+            @for((key, value) <- mappingTuple) {
                 <div class="col-sm-@width">
                     <div class="input-group">
-                        <input class="form-control" value="@m.key" title="Zu ersetzendes Wort">
+                        <input class="form-control" value="@key" title="Zu ersetzendes Wort">
                         <span class="input-group-text">&rarr;</span>
-                        <input class="form-control" value="@m.value" title="Eingefügtes Wort">
+                        <input class="form-control" value="@value" title="Eingefügtes Wort">
                     </div>
                 </div>
             }
@@ -46,7 +46,11 @@
             2
         }
 
-        @for(clazzTuple <- exercise.ex.solution.classes grouped classesInRow; width = 12 / classesInRow) {
+        @sampleSolution = @{
+            exercise.sampleSolutions.head.sample
+        }
+        
+        @for(clazzTuple <- sampleSolution.classes grouped classesInRow; width = 12 / classesInRow) {
 
             <div class="row">
             @for(clazz <- clazzTuple) {
@@ -117,7 +121,7 @@
     }
 
     <h3 class="text-center">Vererbungen</h3>
-    @for(implementationTuple <- exercise.ex.solution.implementations grouped implsPerRow; width = 12 / implsPerRow) {
+    @for(implementationTuple <- sampleSolution.implementations grouped implsPerRow; width = 12 / implsPerRow) {
         <div class="row">
         @for(implementation <- implementationTuple) {
             <div class="col-md-@width">
@@ -134,7 +138,7 @@
     }
 
     <h3 class="text-center">Assoziationen</h3>
-    @for(association <- exercise.ex.solution.associations) {
+    @for(association <- sampleSolution.associations) {
         <div class="form-group">
             <div class="row">
                 <div class="col-md-2">

@@ -29,37 +29,38 @@ object UmlExYamlProtocol extends MyYamlProtocol {
         Logger.error("Could not read ignore word", ignoreWordFailure.exception)
 
 
-      val mappings = mappingTries._1
+      val mappings = mappingTries._1 toMap
       val ignoreWords = ignoreWordTries._1
 
-      val mappingsForTextParser: Map[String, String] = mappings map (mapping => (mapping.key, mapping.value)) toMap
-      val textParser = new UmlExTextParser(baseValues.text, mappingsForTextParser, ignoreWords)
+      //      val mappingsForTextParser: Map[String, String] = mappings map (mapping => (mapping._1, mapping._2)) toMap
+      val textParser = new UmlExTextParser(baseValues.text, mappings, ignoreWords)
 
       UmlCompleteEx(
-        UmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-          classDiagram, textParser.parseText, ignoreWords mkString tagJoinChar),
-        mappings
+        UmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, textParser.parseText),
+        ignoreWords,
+        mappings,
+        sampleSolutions = Seq[UmlSampleSolution](UmlSampleSolution(1, baseValues.id, baseValues.semanticVersion, classDiagram)) // TODO!
       )
     }
 
     override def write(completeEx: UmlCompleteEx): YamlValue = YamlObject(
       writeBaseValues(completeEx.ex) ++
         Map(
-          YamlString(mappingsName) -> YamlArr(completeEx.mappings map UmlMappingYamlFormat(completeEx.ex.baseValues).write),
-          YamlString(ignoreWordsName) -> YamlArr(completeEx.ex.splitToIgnore map YamlString),
+          YamlString(mappingsName) -> YamlArr(completeEx.mappings.toSeq map UmlMappingYamlFormat(completeEx.ex.baseValues).write),
+          YamlString(ignoreWordsName) -> YamlArr(completeEx.toIgnore map YamlString),
         )
     )
 
   }
 
-  final case class UmlMappingYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[UmlMapping] {
+  final case class UmlMappingYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[(String, String)] {
 
-    override def write(mapping: UmlMapping): YamlValue = YamlObj(keyName -> mapping.key, valueName -> mapping.value)
+    override def write(mapping: (String, String)): YamlValue = YamlObj(keyName -> mapping._1, valueName -> mapping._2)
 
-    override def readObject(yamlObject: YamlObject): Try[UmlMapping] = for {
+    override def readObject(yamlObject: YamlObject): Try[(String, String)] = for {
       key <- yamlObject.stringField(keyName)
       value <- yamlObject.stringField(valueName)
-    } yield UmlMapping(baseValues.id, baseValues.semanticVersion, key, value)
+    } yield (key, value)
 
   }
 

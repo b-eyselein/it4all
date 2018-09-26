@@ -1,4 +1,4 @@
-@import model.xml._
+@import model.xml.XmlConsts
 
 @(user: model.User, exerciseForm: Form[model.xml.XmlCompleteEx], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
@@ -11,88 +11,44 @@
     </style>
 }
 
-@title = @{
-    s"${if(isCreation) "Erstellen" else "Bearbeiten"}  einer ${toolMainObject.toolname}-Aufgabe"
-}
+@specialFields = {
 
-@main(title, Some(user), scripts) {
-    <div class="container">
+    <fieldset>
+        <legend class="text-center">Spezialangaben</legend>
 
-    @helper.form(routes.ExerciseController.newExercise(toolMainObject.urlPart), 'class -> "form") {
+        <div class="form-group row">
+        @myhelpers.textareaWithLabel(exerciseForm(XmlConsts.grammarDescriptionName), "Grammatik-beschreibung", rowCount = 5, 2, 10,
+            placeHolder = Some("Beschreibung der Grammatik"))
+        </div>
 
-        <fieldset>
-            <legend class="text-center">Standardangaben</legend>
+        <div class="form-group row">
+        @myhelpers.inputWithLabel(exerciseForm(XmlConsts.rootNodeName), "Wurzelknoten", "text", 2, 10,
+            placeHolder = Some("root"))
+        </div>
+    </fieldset>
 
-            @helper.CSRF.formField
+    <fieldset>
+        <legend class="text-center">Musterlösungen</legend>
+
+        @helper.repeat(exerciseForm(XmlConsts.samplesName), min = 1) { sampleField =>
 
             <div class="form-group row">
-
-                @myhelpers.inputWithLabel(exerciseForm(XmlConsts.idName), "ID", "number", 2, 2, isReadOnly = true)
-
-                @myhelpers.inputWithLabel(exerciseForm(XmlConsts.authorName), "Autor", "text", 1, 2, isReadOnly = true)
-
-                @myhelpers.selectWithLabel(exerciseForm(XmlConsts.statusName), "Status", model.ExerciseState.values.map(_.entryName), 1, 4)
+                @myhelpers.inputWithLabel(sampleField(XmlConsts.idName), "ID", "number", 2, 10, isReadOnly = true)
             </div>
 
             <div class="form-group row">
-
-                <label class="col-form-label col-md-2" for="@XmlConsts.semanticVersionName">Version:</label>
-
-                @myhelpers.inputWithLabel(exerciseForm(XmlConsts.semanticVersionName + "." + XmlConsts.majorName), "Major", "number", 1, 2)
-
-                @myhelpers.inputWithLabel(exerciseForm(XmlConsts.semanticVersionName + "." + XmlConsts.minorName), "Minor", "number", 1, 2)
-
-                @myhelpers.inputWithLabel(exerciseForm(XmlConsts.semanticVersionName + "." + XmlConsts.patchName), "Patch", "number", 1, 2)
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.inputWithLabel(exerciseForm(XmlConsts.titleName), "Titel", "text", 2, 10,
-                placeHolder = Some("Titel der Aufgabe"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.textareaWithLabel(exerciseForm(XmlConsts.textName), "Text", rowCount = 5, 2, 10,
-                placeHolder = Some("Text der Aufgaben"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.textareaWithLabel(exerciseForm(XmlConsts.grammarDescriptionName), "Grammatik-beschreibung", rowCount = 5, 2, 10,
-                placeHolder = Some("Beschreibung der Grammatik"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.inputWithLabel(exerciseForm(XmlConsts.rootNodeName), "Wurzelknoten", "text", 2, 10,
-                placeHolder = Some("root"))
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend class="text-center">Musterlösungen</legend>
-
-            @helper.repeat(exerciseForm(XmlConsts.samplesName), min = 1) { sampleField =>
-
-                <div class="form-group row">
-                    @myhelpers.inputWithLabel(sampleField(XmlConsts.idName), "ID", "number", 2, 10, isReadOnly = true)
+                <div class="col-md-2">
+                    <label for="@sampleField(XmlConsts.grammarName).id">Grammatik</label> /
+                    <label for="@sampleField(XmlConsts.documentName).id">Dokument:</label>
                 </div>
+                <div class="col-md-5">@myhelpers.textarea(sampleField(XmlConsts.grammarName), 10, placeHolder = Some("<!ELEMENT root ...>"))</div>
+                <div class="col-md-5">@myhelpers.textarea(sampleField(XmlConsts.documentName), 10, placeHolder = Some("<root></root>"))</div>
+            </div>
+        }
 
-                <div class="form-group row">
-                    <div class="col-md-2">
-                        <label for="@sampleField(XmlConsts.grammarName).id">Grammatik</label> /
-                        <label for="@sampleField(XmlConsts.documentName).id">Dokument:</label>
-                    </div>
-                    <div class="col-md-5">@myhelpers.textarea(sampleField(XmlConsts.grammarName), 10, placeHolder = Some("<!ELEMENT root ...>"))</div>
-                    <div class="col-md-5">@myhelpers.textarea(sampleField(XmlConsts.documentName), 10, placeHolder = Some("<root></root>"))</div>
-                </div>
-            }
+    </fieldset>
 
-        </fieldset>
-
-
-        <button class="btn btn-primary btn-block">Aufgabe @if(isCreation) {erstellen} else {bearbeiten}</button>
-    }
-
-    </div>
 }
 
 
-
+@idExercises.editExerciseBaseForm(user, exerciseForm, isCreation, toolMainObject, specialFields)

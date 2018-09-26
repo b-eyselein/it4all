@@ -52,23 +52,16 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Forms
 
-  // TODO: create Form mapping ...
-  override implicit val compExForm: Form[UmlCompleteEx] = null
+  override def compExForm: Form[UmlCompleteEx] = UmlCompleteExerciseForm.format
 
-  override def exerciseReviewForm(username: String, completeExercise: UmlCompleteEx, exercisePart: UmlExPart): Form[UmlExerciseReview] = {
-
-    val apply = (diffStr: String, dur: Option[Int]) =>
-      UmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, Difficulties.withNameInsensitive(diffStr), dur)
-
-    val unapply = (cr: UmlExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
-
-    Form(
-      mapping(
-        difficultyName -> nonEmptyText,
-        durationName -> optional(number(min = 0, max = 100))
-      )(apply)(unapply)
+  override def exerciseReviewForm(username: String, completeExercise: UmlCompleteEx, exercisePart: UmlExPart): Form[UmlExerciseReview] = Form(
+    mapping(
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
     )
-  }
+    (UmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (uer => Some((uer.difficulty, uer.maybeDuration)))
+  )
 
   // Reading solution
 
@@ -87,10 +80,12 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Other helper methods
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
-    UmlExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
-      solution = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]()),
-      markedText = "", toIgnore = ""),
-    mappings = Seq[UmlMapping]()
+    UmlExercise(id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, markedText = ""),
+    toIgnore = Seq[String](),
+    mappings = Map[String, String](),
+    sampleSolutions = Seq[UmlSampleSolution](
+      UmlSampleSolution(1, id, SemanticVersionHelper.DEFAULT, sample = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]()))
+    )
   )
 
   override def instantiateSolution(username: String, exercise: UmlCompleteEx, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlSolution =
@@ -111,6 +106,10 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   }
 
   override def renderEditRest(exercise: UmlCompleteEx): Html = views.html.idExercises.uml.editUmlExRest(exercise)
+
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[UmlCompleteEx], isCreation: Boolean)
+                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
+    views.html.idExercises.uml.editUmlExerciseForm(user, newExForm, isCreation, this)
 
   // Correction
 

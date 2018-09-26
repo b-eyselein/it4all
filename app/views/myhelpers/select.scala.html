@@ -1,0 +1,13 @@
+@(field: Field, options: Seq[(String, String)], isRequired: Boolean = false, isDisabled: Boolean = false)
+
+<select class="form-control" name="@field.name" id="@field.id" @{
+    if(isRequired) """ required """ else ""
+} @{
+    if(isDisabled) """ disabled """ else ""
+}>
+@for((optValue, optText) <- options) {
+    <option value="@optValue"@{
+        if(field.value contains optValue) " selected " else ""
+    }>@optText</option>
+}
+</select>

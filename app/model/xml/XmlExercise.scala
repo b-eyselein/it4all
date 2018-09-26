@@ -27,6 +27,11 @@ final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
 
 
 final case class XmlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sampleGrammar: DocTypeDef, sampleDocument: String)
+  extends SampleSolution[(DocTypeDef, String)] {
+
+  override def sample: (DocTypeDef, String) = (sampleGrammar, sampleDocument)
+
+}
 
 final case class XmlSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: XmlExPart, solution: String,
                              points: Points, maxPoints: Points) extends DBPartSolution[XmlExPart, String]

@@ -3,7 +3,7 @@ package model.persistence
 import model.ExerciseState.APPROVED
 import model.core.CoreConsts.STEP
 import model.learningPath.LearningPathTableDefs
-import model.{CompleteEx, Exercise}
+import model.{CompleteEx, Exercise, SemanticVersion}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -63,5 +63,17 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
     false
   }
 
+  // Abstract table classes
+
+  abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
+
+    def exerciseId = column[Int]("exercise_id")
+
+    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+
+
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+  }
 
 }

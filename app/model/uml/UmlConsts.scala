@@ -4,40 +4,35 @@ import model.Consts
 
 object UmlConsts extends Consts {
 
-  // Numbers
+  val associationsName    : String = "associations"
+  val associationNameName : String = "assocName"
+  val associationTypeName : String = "assocType"
+  val attributesResultName: String = "attributesResult"
 
-  val OFFSET        = 100
-  val GapHorizontal = 250
-  val GapVertival   = 200
+  val classesName  : String = "classes"
+  val classNameName: String = "className"
+  val classTypeName: String = "classType"
 
-  // Strings
+  val firstEndName : String = "firstEnd"
+  val firstMultName: String = "firstMult"
 
-  val associationsName     = "associations"
-  val associationNameName  = "assocName"
-  val associationTypeName  = "assocType"
-  val attributesResultName = "attributesResult"
+  val implementationsName: String = "implementations"
+  val ignoreWordsName    : String = "ignoreWords"
 
-  val classesName   = "classes"
-  val classNameName = "className"
-  val classTypeName = "classType"
+  val mappingsName     : String = "mappings"
+  val methodsName      : String = "methods"
+  val methodsResultName: String = "methodsResult"
 
-  val firstEndName  = "firstEnd"
-  val firstMultName = "firstMult"
+  val positionName: String = "position"
 
-  val implementationsName = "implementations"
-  val ignoreWordsName     = "ignoreWords"
+  val secondEndName : String = "secondEnd"
+  val secondMultName: String = "secondMult"
+  val subClassName  : String = "subClass"
+  val superClassName: String = "superClass"
 
-  val mappingsName      = "mappings"
-  val methodsName       = "methods"
-  val methodsResultName = "methodsResult"
+  val visibilityName: String = "visibility"
 
-  val positionName = "position"
-
-  val secondEndName  = "secondEnd"
-  val secondMultName = "secondMult"
-  val subClassName   = "subClass"
-  val superClassName = "superClass"
-
-  val visibilityName = "visibility"
+  val xCoordName: String = "xCoord"
+  val yCoordName: String = "yCoord"
 
 }

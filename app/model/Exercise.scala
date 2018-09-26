@@ -5,20 +5,20 @@ import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
 
-sealed trait ExerciseState extends EnumEntry
+sealed abstract class ExerciseState(val german: String) extends EnumEntry
 
 
 object ExerciseState extends PlayEnum[ExerciseState] {
 
   override val values: IndexedSeq[ExerciseState] = findValues
 
-  case object RESERVED extends ExerciseState
+  case object RESERVED extends ExerciseState("Reserviert")
 
-  case object CREATED extends ExerciseState
+  case object CREATED extends ExerciseState("Erstellt")
 
-  case object ACCEPTED extends ExerciseState
+  case object ACCEPTED extends ExerciseState("Akzeptiert")
 
-  case object APPROVED extends ExerciseState
+  case object APPROVED extends ExerciseState("Zugelassen")
 
 }
 

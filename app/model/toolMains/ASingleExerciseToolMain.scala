@@ -33,7 +33,7 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   def exerciseReviewForm(username: String, completeExercise: CompExType, exercisePart: PartType): Form[ReviewType]
 
-  val compExForm: Form[CompExType]
+  def compExForm: Form[CompExType]
 
   // DB
 
@@ -80,7 +80,7 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
     views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
   def renderUserExerciseEditForm(user: User, newExForm: Form[CompExType], isCreation: Boolean)
-                                (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = ???
+                                (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html //= ???
 
   def adminExerciseList(admin: User, exes: Seq[CompExType], toolList: ToolList): Html
 

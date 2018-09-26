@@ -1,14 +1,5 @@
-@(field: Field, labelContent: String, options: Seq[String], labelWidth: Int, selectWidth: Int, isDisabled: Boolean = false)
+@(field: Field, labelContent: String, options: Seq[(String, String)], labelWidth: Int, selectWidth: Int,
+        isRequired: Boolean = false, isDisabled: Boolean = false)
 
 <label class="col-form-label col-md-@labelWidth" for="@field.id">@labelContent:</label>
-<div class="col-md-@selectWidth">
-    <select class="form-control" name="@field.name" id="@field.id" required @{
-        if(isDisabled) """disabled""" else ""
-    }>
-    @for(option <- options) {
-        <option@{
-            if(field.value contains option) " selected" else ""
-        }>@option</option>
-    }
-    </select>
-</div>
+<div class="col-md-@selectWidth">@myhelpers.select(field, options, isRequired, isDisabled)</div>
