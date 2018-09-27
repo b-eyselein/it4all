@@ -11,7 +11,7 @@ cache:
   paths:
   - sbt-cache/.ivy.cache
   - sbt-cache/.boot
-  -sbt-cache/.sbt-boot
+  - sbt-cache/.sbt-boot
 
 stages:
 - test
