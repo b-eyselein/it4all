@@ -42,7 +42,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
   override def completeExForEx(ex: XmlExercise): Future[XmlCompleteEx] = for {
-    samples <- db.run(samplesTable.filter(_.exerciseId === ex.id).result)
+    samples <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result)
   } yield XmlCompleteEx(ex, samples)
 
   override def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: XmlExPart): Future[Boolean] = part match {

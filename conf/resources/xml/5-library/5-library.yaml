@@ -7,13 +7,16 @@ semanticVersion: 1.0.0
 
 rootNode: bibliothek
 grammarDescription: >
-  TODO!
+  In dieser Aufgabe soll eine XML-Grammatik für die Beschreibung einer Bibliothek [bibliothek] erstellt werden. Diese
+  besteht aus mehreren Abteilung, die jeweils einen Titel [titel] und Bücher [buch] enthalten. Die Bücher wiederum
+  besitzen eine ISBN [isbn], einen Titel, einen Autor [autor], eventuell mehrere Co-Autoren [coautor], und ein
+  Veröffentlichungsjahr [jahr]. Außerdem kann optional ein Verlag [verlag] bzw. eine Auflage [auflage] angegeben sein.
 
 samples:
 - id: 1
   grammar: |
     <!ELEMENT bibliothek (abteilung+)>
-    <!ELEMENT abteilung (buch+)>
+    <!ELEMENT abteilung (titel, buch+)>
     <!ELEMENT buch (isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
     <!ATTLIST buch id CDATA #REQUIRED>
     <!ELEMENT isbn (#PCDATA)>
@@ -25,12 +28,16 @@ samples:
     <!ELEMENT jahr (#PCDATA)>
   document: |
     <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE lecture SYSTEM "lecture.dtd">
+    <!DOCTYPE bibliothek SYSTEM "bibliothek.dtd">
+    <bibliothek>
+      <abteilung>
+      </abteilung>
+    </bibliothek>
 
 - id: 2
   grammar: |
     <!ELEMENT bibliothek (abteilung+)>
-    <!ELEMENT abteilung (buch+)>
+    <!ELEMENT abteilung (titel, buch+)>
     <!ELEMENT buch (id, isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
     <!ELEMENT id (#PCDATA)>
     <!ELEMENT isbn (#PCDATA)>
@@ -42,4 +49,4 @@ samples:
     <!ELEMENT jahr (#PCDATA)>
   document: |
     <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE lecture SYSTEM "lecture.dtd">
+    <!DOCTYPE bibliothek SYSTEM "bibliothek.dtd">

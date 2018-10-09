@@ -4,9 +4,7 @@
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
     <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/admin/singleExAdmin.js")');
-    </script>
+    <script>SystemJS.import('@routes.Assets.versioned("app/admin/singleExAdmin.js")');</script>
 }
 
 @title = @{
@@ -26,6 +24,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Version</th>
                     <th>Status</th>
                     <th>Aktionen</th>
                     <th>Titel</th>
@@ -36,7 +35,7 @@
             @for(exercise <- completeExercises.map(_.ex)) {
                 <tr id="tr1_@exercise.id">
                     <td>@exercise.id</td>
-
+                    <td>@exercise.semanticVersion.asString</td>
                     <td>
                         <div class="input-group">
                             <select title="Status ändern" class="form-control" id="state_@exercise.id" data-val="@exercise.state" data-id="@exercise.id">

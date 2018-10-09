@@ -61,11 +61,11 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
   // FIXME: change return type of function!
   def correctAbstract(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
     readSolution(user, exercise, part) match {
-      case Failure(exception) => Future(Failure(exception))
-      case Success(solution)  => correctEx(user, solution, exercise, part) flatMap {
+      case Failure(exception)    => Future(Failure(exception))
+      case Success(userSolution) => correctEx(user, userSolution, exercise, part) flatMap {
         case Failure(error) => Future(Failure(error))
         case Success(res)   =>
-          val dbSolution = instantiateSolution(id = 0, user.username, exercise, part, solution, res.points, res.maxPoints)
+          val dbSolution = instantiateSolution(id = 0, user.username, exercise, part, userSolution, res.points, res.maxPoints)
 
           tables.futureSaveSolution(dbSolution) map { solutionSaved =>
             Success(onLiveCorrectionResult(solutionSaved, res))
