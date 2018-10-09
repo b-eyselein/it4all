@@ -3,7 +3,8 @@ package model.persistence
 import model.ExerciseState.APPROVED
 import model.core.CoreConsts.STEP
 import model.learningPath.LearningPathTableDefs
-import model.{CompleteEx, Exercise, SemanticVersion}
+import model.toolMains.{ExAndRoute, UserExOverviewContent}
+import model.{CompleteEx, Exercise, SemanticVersion, User}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -21,20 +22,32 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
 
   // Numbers
 
-  def futureNumOfExes: Future[Int] = db.run(exTable.length.result)
+  def futureNumOfExes: Future[Int] = db.run(exTable.distinctOn(_.semanticVersion).length.result)
 
   // Reading
 
   def futureCompleteExes: Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
 
-  def futureCompleteExesForPage(page: Int): Future[Seq[CompEx]] = db.run(exTable.result) flatMap { allExes =>
-    val approvedExes = allExes.filter(_.state == APPROVED)
+  def futureCompleteExesForPage(page: Int): Future[Seq[CompEx]] = db.run(exTable.result) flatMap {
+    allExes: Seq[Ex] =>
+      val distincExes: Map[SemanticVersion, Seq[Ex]] = allExes.groupBy(_.semanticVersion)
 
-    val (sliceStart, sliceEnd) = (Math.max(0, (page - 1) * STEP), Math.min(page * STEP, approvedExes.size))
-    Future.sequence(approvedExes slice(sliceStart, sliceEnd) map completeExForEx)
+      val approvedExes = allExes.filter(_.state == APPROVED)
+
+      val (sliceStart, sliceEnd) = (Math.max(0, (page - 1) * STEP), Math.min(page * STEP, approvedExes.size))
+      Future.sequence(approvedExes slice(sliceStart, sliceEnd) map completeExForEx)
   }
 
-  def futureCompleteExById(id: Int): Future[Option[CompEx]] = db.run(exTable.filter(_.id === id).result.headOption) flatMap {
+  def futureCompleteExById(id: Int): Future[Option[CompEx]] = db.run {
+    exTable.filter(_.id === id).sortBy(_.semanticVersion.desc).result.headOption
+  } flatMap {
+    case Some(ex) => completeExForEx(ex) map Some.apply
+    case None     => Future(None)
+  }
+
+  def futureCompleteExByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[CompEx]] = db.run {
+    exTable.filter(e => e.id === id && e.semanticVersion === semVer).result.headOption
+  } flatMap {
     case Some(ex) => completeExForEx(ex) map Some.apply
     case None     => Future(None)
   }

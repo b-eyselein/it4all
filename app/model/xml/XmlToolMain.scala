@@ -59,6 +59,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[XmlExPart] = XmlExParts.values
 
+  override val userCanCreateExes: Boolean = true
+
   // Forms
 
   override val compExForm: Form[XmlCompleteEx] = XmlCompleteExerciseForm.format
@@ -91,8 +93,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     )
   )
 
-  override def instantiateSolution(username: String, exercise: XmlCompleteEx, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
-    XmlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
+  override def instantiateSolution(id: Int, username: String, exercise: XmlCompleteEx, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
+    XmlSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   private def getFirstSample(completeEx: XmlCompleteEx): Option[XmlSample] = completeEx.samples.toList match {
     case Nil       => None
@@ -151,8 +153,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderAdminExerciseEditForm(user: User, newEx: XmlCompleteEx, isCreation: Boolean, toolList: ToolList): Html =
-    views.html.idExercises.xml.adminEditXmlExercise(user, newEx, isCreation, this, toolList)
+  override def renderAdminExerciseEditForm(user: User, newEx: XmlCompleteEx, isCreation: Boolean, toolList: ToolList)
+                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
+    views.html.idExercises.xml.adminEditXmlExercise(user, XmlCompleteExerciseForm.format.fill(newEx), isCreation, this, toolList)
 
   override def renderUserExerciseEditForm(user: User, newExForm: Form[XmlCompleteEx], isCreation: Boolean)
                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =

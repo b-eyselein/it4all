@@ -168,6 +168,7 @@ CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
 );
 
 CREATE TABLE IF NOT EXISTS prog_solutions (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
   username    VARCHAR(50),
   exercise_id INT,
   ex_sem_ver  VARCHAR(10),
@@ -177,7 +178,6 @@ CREATE TABLE IF NOT EXISTS prog_solutions (
   solution    TEXT,
   language    VARCHAR(20),
 
-  PRIMARY KEY (username, exercise_id, ex_sem_ver, part),
   FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -250,6 +250,7 @@ CREATE TABLE IF NOT EXISTS question_answers (
 );
 
 CREATE TABLE IF NOT EXISTS question_solutions (
+  id            INT PRIMARY KEY AUTO_INCREMENT,
   username      VARCHAR(50),
   exercise_id   INT,
   ex_sem_ver    VARCHAR(10),
@@ -259,7 +260,6 @@ CREATE TABLE IF NOT EXISTS question_solutions (
   max_points    INT,
   answers       TEXT,
 
-  PRIMARY KEY (username, collection_id, coll_sem_ver, exercise_id, ex_sem_ver),
   FOREIGN KEY (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES questions (id, semantic_version, collection_id, coll_sem_ver)
     ON UPDATE CASCADE
     ON DELETE CASCADE
@@ -309,6 +309,7 @@ CREATE TABLE IF NOT EXISTS rose_samples (
 );
 
 CREATE TABLE IF NOT EXISTS rose_solutions (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
   username    VARCHAR(50),
   exercise_id INT,
   ex_sem_ver  VARCHAR(10),
@@ -317,7 +318,6 @@ CREATE TABLE IF NOT EXISTS rose_solutions (
   max_points  DOUBLE,
   solution    TEXT,
 
-  PRIMARY KEY (username, exercise_id, ex_sem_ver, part),
   FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -421,6 +421,7 @@ CREATE TABLE IF NOT EXISTS sql_samples (
 );
 
 CREATE TABLE IF NOT EXISTS sql_solutions (
+  id            INT PRIMARY KEY AUTO_INCREMENT,
   username      VARCHAR(50),
   exercise_id   INT,
   ex_sem_ver    VARCHAR(10),
@@ -430,7 +431,6 @@ CREATE TABLE IF NOT EXISTS sql_solutions (
   max_points    DOUBLE,
   solution      TEXT,
 
-  PRIMARY KEY (username, exercise_id, ex_sem_ver, collection_id, coll_sem_ver),
   FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -449,11 +449,20 @@ CREATE TABLE IF NOT EXISTS uml_exercises (
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  solution_json    TEXT,
   marked_text      TEXT,
-  to_ignore        TEXT,
 
   PRIMARY KEY (id, semantic_version)
+);
+
+CREATE TABLE IF NOT EXISTS uml_to_ignore (
+  exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
+  to_ignore   VARCHAR(50),
+
+  PRIMARY KEY (exercise_id, ex_sem_ver, to_ignore),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS uml_mappings (
@@ -468,7 +477,20 @@ CREATE TABLE IF NOT EXISTS uml_mappings (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS uml_sample_solutions (
+  id          INT,
+  exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
+  sample      TEXT,
+
+  PRIMARY KEY (id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS uml_solutions (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
   exercise_id INT,
   ex_sem_ver  VARCHAR(10),
   username    VARCHAR(30),
@@ -477,7 +499,6 @@ CREATE TABLE IF NOT EXISTS uml_solutions (
   max_points  DOUBLE,
   solution    TEXT,
 
-  PRIMARY KEY (username, exercise_id, ex_sem_ver, part),
   FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -510,7 +531,6 @@ CREATE TABLE IF NOT EXISTS web_exercises (
   ex_text          TEXT,
   ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  sample_sol       TEXT,
   html_text        TEXT,
   js_text          TEXT,
   php_text         TEXT,
@@ -579,7 +599,23 @@ CREATE TABLE IF NOT EXISTS js_conditions (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS web_sample_solutions (
+  id          INT,
+  exercise_id INT,
+  ex_sem_ver  VARCHAR(10),
+
+  html_sample TEXT,
+  js_sample   TEXT,
+  php_sample  TEXT,
+
+  PRIMARY KEY (id, exercise_id, ex_sem_ver),
+  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS web_solutions (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
   exercise_id INT,
   ex_sem_ver  VARCHAR(10),
   username    VARCHAR(30),
@@ -588,7 +624,6 @@ CREATE TABLE IF NOT EXISTS web_solutions (
   max_points  DOUBLE,
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, username, part),
   FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -641,6 +676,7 @@ CREATE TABLE IF NOT EXISTS xml_samples (
 );
 
 CREATE TABLE IF NOT EXISTS xml_solutions (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
   exercise_id INT,
   ex_sem_ver  VARCHAR(10),
   username    VARCHAR(50),
@@ -649,7 +685,6 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
   max_points  DOUBLE,
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, username, part),
   FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
@@ -690,6 +725,8 @@ DROP TABLE IF EXISTS web_exercise_reviews;
 
 DROP TABLE IF EXISTS web_solutions;
 
+DROP TABLE IF EXISTS web_sample_solutions;
+
 DROP TABLE IF EXISTS js_conditions;
 
 DROP TABLE IF EXISTS js_tasks;
@@ -706,7 +743,11 @@ DROP TABLE IF EXISTS uml_exercise_reviews;
 
 DROP TABLE IF EXISTS uml_solutions;
 
+DROP TABLE IF EXISTS uml_sample_solutions;
+
 DROP TABLE IF EXISTS uml_mappings;
+
+DROP TABLE IF EXISTS uml_to_ignore;
 
 DROP TABLE IF EXISTS uml_exercises;
 

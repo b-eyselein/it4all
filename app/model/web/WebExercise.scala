@@ -22,7 +22,8 @@ object JsActionType extends PlayEnum[JsActionType] {
 
 // Classes for use
 
-final case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask], phpTasks: Seq[PHPCompleteTask] = Seq[PHPCompleteTask]())
+final case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask],
+                               phpTasks: Seq[PHPCompleteTask] = Seq[PHPCompleteTask](), sampleSolutions: Seq[WebSampleSolution])
   extends SingleCompleteEx[WebExercise, WebExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
@@ -85,7 +86,7 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 // Database classes
 
 final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             sampleSolution: String, htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
+                             htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
 
 trait WebTask {
   val id        : Int
@@ -140,15 +141,15 @@ final case class PHPTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, te
                          textContent: Option[String]) extends WebTask
 
 final case class WebSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion,
-                                   htmlSample: String, jsSample: String, phpSample: String)
-  extends SampleSolution[(String, String, String)] {
+                                   htmlSample: Option[String], jsSample: Option[String], phpSample: Option[String])
+  extends SampleSolution[(Option[String], Option[String], Option[String])] {
 
-  override def sample: (String, String, String) = (htmlSample, jsSample, phpSample)
+  def sample: (Option[String], Option[String], Option[String]) = (htmlSample, jsSample, phpSample)
 
 }
 
-final case class WebSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart, solution: String,
-                             points: Points, maxPoints: Points) extends DBPartSolution[WebExPart, String]
+final case class WebSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart,
+                             solution: String, points: Points, maxPoints: Points) extends DBPartSolution[WebExPart, String]
 
 final case class WebExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: WebExPart,
                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[WebExPart]

@@ -1,9 +1,9 @@
 package model
 
 import model.core.CoreConsts._
+import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}
 import play.api.data.Form
 import play.api.data.Forms._
-
 import scala.language.postfixOps
 import scala.util.matching.Regex
 import scala.util.{Failure, Try}
@@ -24,6 +24,18 @@ object SemanticVersionHelper {
       patchName -> number
     )(SemanticVersion.apply)(SemanticVersion.unapply)
   )
+
+  def semanticVersionYamlField(yamlValue: YamlValue): Try[SemanticVersion] = yamlValue match {
+    case YamlString(str)     => tryParseFromString(str)
+    case yamlObj: YamlObject =>
+      import MyYamlProtocol._
+
+      for {
+        major <- yamlObj.intField(majorName)
+        minor <- yamlObj.intField(minorName)
+        patch <- yamlObj.intField(patchName)
+      } yield SemanticVersion(major, minor, patch)
+  }
 
 
   //  object SemanticVersionFormatter extends Formatter[SemanticVersion] {
@@ -49,10 +61,12 @@ object SemanticVersionHelper {
 }
 
 
-final case class SemanticVersion(major: Int, minor: Int, patch: Int) {
+final case class SemanticVersion(major: Int, minor: Int, patch: Int) extends Ordered[SemanticVersion] {
 
   def asString: String = s"$major.$minor.$patch"
 
   def isCompatibleTo(that: SemanticVersion): Boolean = this.major == that.major && this.minor == that.minor
+
+  override def compare(that: SemanticVersion): Int = (major * 10000 + minor * 100 + patch) - (that.major * 10000 + that.minor * 100 + that.patch)
 
 }

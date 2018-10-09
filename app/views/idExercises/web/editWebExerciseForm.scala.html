@@ -1,94 +1,108 @@
-@import model.web._
+@import model.web.WebConsts
 
 @(user: model.User, exerciseForm: Form[model.web.WebCompleteEx], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
-@scripts = {
+@additionalScripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
+
     <style>
-            textarea {
-                resize: vertical;
+            .CodeMirror {
+                border: 1px solid lightgrey;
+                font-size: 14px;
+                /*height: 700px; */
             }
     </style>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/web/editWebExerciseForm.js")');</script>
 }
 
-@title = @{
-    s"${if(isCreation) "Erstellen" else "Bearbeiten"}  einer ${toolMainObject.toolname}-Aufgabe"
+@htmlTextField = @{
+    exerciseForm(WebConsts.htmlTextName)
 }
 
-@main(title, Some(user), scripts) {
-    <div class="container">
-
-    @helper.form(routes.ExerciseController.newExercise(toolMainObject.urlPart), 'class -> "form") {
-
-        <fieldset>
-            <legend class="text-center">Standardangaben</legend>
-
-            @helper.CSRF.formField
-
-            <div class="form-group row">
-
-                @myhelpers.inputWithLabel(exerciseForm(WebConsts.idName), "ID", "number", 2, 2, isReadOnly = true)
-
-                @myhelpers.inputWithLabel(exerciseForm(WebConsts.authorName), "Autor", "text", 1, 2, isReadOnly = true)
-
-                @myhelpers.selectWithLabel(exerciseForm(WebConsts.statusName), "Status",
-                    model.ExerciseState.values.map(e => (e.entryName, e.german)), 1, 4)
-            </div>
-
-            <div class="form-group row">
-
-                <label class="col-form-label col-md-2" for="@WebConsts.semanticVersionName">Version:</label>
-
-                @myhelpers.inputWithLabel(exerciseForm(WebConsts.semanticVersionName + "." + WebConsts.majorName), "Major", "number", 1, 2)
-
-                @myhelpers.inputWithLabel(exerciseForm(WebConsts.semanticVersionName + "." + WebConsts.minorName), "Minor", "number", 1, 2)
-
-                @myhelpers.inputWithLabel(exerciseForm(WebConsts.semanticVersionName + "." + WebConsts.patchName), "Patch", "number", 1, 2)
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.inputWithLabel(exerciseForm(WebConsts.titleName), "Titel", "text", 2, 10,
-                placeHolder = Some("Titel der Aufgabe"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.textareaWithLabel(exerciseForm(WebConsts.textName), "Text", rowCount = 5, 2, 10,
-                placeHolder = Some("Text der Aufgaben"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.textareaWithLabel(exerciseForm(WebConsts.sampleSolutionName), "Musterlösung", rowCount = 10, 2, 10,
-                placeHolder = Some("Musterlösung"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.textareaWithLabel(exerciseForm(WebConsts.htmlTextName), "Text HTML-Teil", rowCount = 5, 2, 10,
-                placeHolder = Some("Text HTML-Teil"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.textareaWithLabel(exerciseForm(WebConsts.jsTextName), "Text JS-Teil", rowCount = 5, 2, 10,
-                placeHolder = Some("Text JS-Teil"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.textareaWithLabel(exerciseForm(WebConsts.phpTextName), "Text PHP-Teil", rowCount = 5, 2, 10,
-                placeHolder = Some("Text PHP-Teil"))
-            </div>
-        </fieldset>
-
-
-        <fieldset>
-            <legend>Htmltasks</legend>
-
-            @helper.repeat(exerciseForm(WebConsts.htmlTasksName), min = 1) { htmlTaskField =>
-                @htmlTaskField
-            }
-
-        </fieldset>
-
-        <button class="btn btn-primary btn-block">Aufgabe @if(isCreation) {erstellen} else {bearbeiten}</button>
-    }
-
-    </div>
+@sampleSolField = @{
+    exerciseForm(WebConsts.samplesName)
 }
+
+@specialFields = {
+    <fieldset>
+        <legend class="text-center">Html-Teil</legend>
+
+        <div class="form-group row">
+            <div class="col-md-2">
+                <label class="col-form-label" for="@htmlTextField.id">Text</label> /
+                <label class="col-form-label" for="@{
+                    sampleSolField.id
+                }_editor">Musterlösung:</label>
+            </div>
+            <div class="col-md-5">@myhelpers.textarea(htmlTextField, rowCount = 12, placeHolder = Some("Text HTML-Teil"))</div>
+            <div class="col-md-5">
+                <input type="hidden" id="@sampleSolField.id" name="@sampleSolField.name" value="@sampleSolField.value">
+                <textarea id="@{
+                    sampleSolField.id
+                }_editor" rows="10" placeHolder="Musterlösung">@sampleSolField.value</textarea>
+            </div>
+        </div>
+
+        <div id="htmlTasksDiv">
+        @helper.repeat(exerciseForm(WebConsts.htmlTasksName), min = 1) { htmlTaskField =>
+            <div class="form-group">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            @myhelpers.inputWithLabel(htmlTaskField(WebConsts.idName), "ID", "number", 2, 2, isRequired = true,
+                                isReadOnly = true)
+
+                            @myhelpers.inputWithLabel(htmlTaskField(WebConsts.xpathQueryName), "XPath", "text", 1, 7,
+                                isRequired = true, placeHolder = Some("XPath - Query"))
+                        </div>
+
+                        <div class="form-group row">
+                        @myhelpers.textareaWithLabel(htmlTaskField(WebConsts.textName), "Text", rowCount = 3, 2, 10,
+                            isRequired = true, placeHolder = Some("Teilaufgabentext"))
+                        </div>
+
+                        <div class="form-group row">
+                        @myhelpers.inputWithLabel(htmlTaskField(WebConsts.textContentName), "Textinhalt", "text", 2, 10,
+                            placeHolder = Some("Textinhalt des Elements, optional"))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+
+        <div class="form-group">
+            <button type="button" class="btn btn-outline-primary btn-block" id="addHtmlTaskBtn"
+            title="Html-Teilaufgabe hinzufügen">
+                <span class="octicon octicon-plus"></span>
+            </button>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend class="text-center">Javascript-Teil</legend>
+
+        <div class="form-group row">
+            <div class="col-md-2">
+                <label class="col-form-label">Text</label> /
+                <label class="col-form-label">Musterlösung:</label>
+            </div>
+        @myhelpers.textareaWithLabel(exerciseForm(WebConsts.jsTextName), "Text JS-Teil", rowCount = 5, 2, 10,
+            placeHolder = Some("Text JS-Teil"))
+        </div>
+
+        <div class="form-group row">
+        @myhelpers.textareaWithLabel(exerciseForm(WebConsts.phpTextName), "Text PHP-Teil", rowCount = 5, 2, 10,
+            placeHolder = Some("Text PHP-Teil"))
+        </div>
+    </fieldset>
+
+
+}
+
+@idExercises.editExerciseBaseForm(user, exerciseForm, isCreation, toolMainObject, specialFields, additionalScripts)

@@ -1,17 +1,14 @@
 id: 7
-semanticVersion: 1.0.0
+semanticVersion:
+  major: 1
+  minor: 0
+  patch: 0
 title: Verzweigungen und Strings
 author: alg81dm
 text: Erstellen Sie ein Anmeldeformular, das eine einfache Passwort-Qualitätsprüfung durchführt.
 htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
 status: APPROVED
-jsText: >
-  Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen wird. Sie
-  soll den Inhalt (value) des Passwortfeldes auslesen und verschiedene Tests durchführen. Bei fehlgeschlagenen Tests
-  soll der Inhalt des Elements mit der ID 'errors' auf den entsprechenden Text gesetzt werden. Es soll immer nur der
-  erste fehlgeschlagene Test (in der Reihenfolge der Teilaufgaben) beachtet werden. Wenn kein Test fehlschlägt,
-  soll der Fehlertext gelöscht werden (auf '' setzen). Wenn das Passwort unter 8 Zeichen lang ist, soll der Fehlertext
-  'Zu kurz' lauten. Wenn die Eingabe den Teilstring 'passwort' enthält, soll 'Zu einfach' gesetzt werden.
+
 htmlTasks:
 - id: 1
   text: Erstellen Sie ein Texteingabefeld mit der ID 'name'
@@ -29,6 +26,15 @@ htmlTasks:
     Erstellen Sie einen Span mit der ID 'errors', der später anzeigen soll, wenn das Passwort zu schwach ist. Zu Anfang
     soll dieser leer sein.
   xpathQuery: /html/body//span[@id='errors']
+
+jsText: >
+  Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen wird. Sie
+  soll den Inhalt (value) des Passwortfeldes auslesen und verschiedene Tests durchführen. Bei fehlgeschlagenen Tests
+  soll der Inhalt des Elements mit der ID 'errors' auf den entsprechenden Text gesetzt werden. Es soll immer nur der
+  erste fehlgeschlagene Test (in der Reihenfolge der Teilaufgaben) beachtet werden. Wenn kein Test fehlschlägt,
+  soll der Fehlertext gelöscht werden (auf '' setzen). Wenn das Passwort unter 8 Zeichen lang ist, soll der Fehlertext
+  'Zu kurz' lauten. Wenn die Eingabe den Teilstring 'passwort' enthält, soll 'Zu einfach' gesetzt werden.
+
 jsTasks:
 - id: 1
   text: Wenn das Passwort unter 8 Zeichen lang ist, setze den Fehlertext auf 'Zu kurz'
@@ -60,3 +66,20 @@ jsTasks:
     xpathQuery: /html/body//span[@id='errors']
     isPrecondition: false
     awaited: ''
+
+phpTasks: []
+
+samples:
+- id: 1
+  htmlSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>
+  jsSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>

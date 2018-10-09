@@ -107,5 +107,6 @@ final case class QuestionRating(questionId: Int, exSemVer: SemanticVersion, coll
 
 final case class UserAnswer(questionId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, userName: String, text: String)
 
-final case class QuestionSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int, collSemVer: SemanticVersion, solution: Seq[GivenAnswer],
-                                  points: Points, maxPoints: Points) extends CollectionExSolution[Seq[GivenAnswer]]
+final case class QuestionSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, collectionId: Int,
+                                  collSemVer: SemanticVersion, solution: Seq[GivenAnswer], points: Points, maxPoints: Points)
+  extends CollectionExSolution[Seq[GivenAnswer]]

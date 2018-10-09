@@ -5,16 +5,9 @@ RUNNING_PID
 .cache-main
 .cache-tests
 project/project
-project/target
 tmp
-dist
-.history
-
 # Js mapping files
 **/*.js.map
-
-# Node modules
-node_modules/
 
 # Ignore saved files, except folder data/web
 data/*
@@ -35,4 +28,3 @@ venv/
 .project
 .classpath
 .scala_dependencies
-bin

@@ -2,12 +2,12 @@ package model.uml
 
 import model.MyYamlProtocol._
 import model.uml.UmlConsts._
-import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
+import model.{BaseValues, MyYamlProtocol, SemanticVersion, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
 import scala.language.{implicitConversions, postfixOps}
-import scala.util.{Failure, Try}
+import scala.util.Try
 
 object UmlExYamlProtocol extends MyYamlProtocol {
 
@@ -18,7 +18,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
       mappingTries <- yamlObject.arrayField(mappingsName, UmlMappingYamlFormat(baseValues).read)
       ignoreWordTries <- yamlObject.arrayField(ignoreWordsName, _ asStr)
-      classDiagram <- yamlObject.someField(solutionName).flatMap(UmlSolutionYamlFormat.read)
+      sampleSolutions <- yamlObject.arrayField(samplesName, UmlSampleSolutionYamlFormat(baseValues.id, baseValues.semanticVersion).read)
     } yield {
       for (mappingFailure <- mappingTries._2)
       // FIXME: return...
@@ -28,6 +28,9 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read ignore word", ignoreWordFailure.exception)
 
+      for (sampleSolFailure <- sampleSolutions._2)
+      // FIXME: return...
+        Logger.error("Could not read uml sample solution", sampleSolFailure.exception)
 
       val mappings = mappingTries._1 toMap
       val ignoreWords = ignoreWordTries._1
@@ -39,7 +42,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
         UmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, textParser.parseText),
         ignoreWords,
         mappings,
-        sampleSolutions = Seq[UmlSampleSolution](UmlSampleSolution(1, baseValues.id, baseValues.semanticVersion, classDiagram)) // TODO!
+        sampleSolutions._1
       )
     }
 
@@ -64,10 +67,11 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  implicit object UmlSolutionYamlFormat extends MyYamlObjectFormat[UmlClassDiagram] {
+  final case class UmlSampleSolutionYamlFormat(exId: Int, exSemVer: SemanticVersion) extends MyYamlObjectFormat[UmlSampleSolution] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[UmlClassDiagram] = for {
-      classes: (Seq[UmlClass], Seq[Failure[UmlClass]]) <- yamlObject.arrayField(classesName, UmlCompleteClassYamlFormat.read)
+    override protected def readObject(yamlObject: YamlObject): Try[UmlSampleSolution] = for {
+      id <- yamlObject.intField(idName)
+      classes <- yamlObject.arrayField(classesName, UmlCompleteClassYamlFormat.read)
       associations <- yamlObject.arrayField(associationsName, UmlAssocYamlFormat.read)
       implementations <- yamlObject.arrayField(implementationsName, UmlImplYamlFormat.read)
     } yield {
@@ -84,13 +88,16 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read uml implementation", implementationFailure.exception)
 
-      UmlClassDiagram(classes._1, associations._1, implementations._1)
+      UmlSampleSolution(
+        id, exId, exSemVer, UmlClassDiagram(classes._1, associations._1, implementations._1)
+      )
     }
 
-    override def write(ucd: UmlClassDiagram): YamlValue = YamlObj(
-      classesName -> YamlArr(ucd.classes map UmlCompleteClassYamlFormat.write),
-      implementationsName -> YamlArr(ucd.implementations map UmlImplYamlFormat.write),
-      associationsName -> YamlArr(ucd.associations map UmlAssocYamlFormat.write)
+    override def write(obj: UmlSampleSolution): YamlValue = YamlObj(
+      idName -> YamlNumber(obj.id),
+      classesName -> YamlArr(obj.sample.classes map UmlCompleteClassYamlFormat.write),
+      implementationsName -> YamlArr(obj.sample.implementations map UmlImplYamlFormat.write),
+      associationsName -> YamlArr(obj.sample.associations map UmlAssocYamlFormat.write)
     )
 
   }

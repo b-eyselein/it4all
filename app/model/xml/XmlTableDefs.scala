@@ -45,10 +45,12 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     samples <- db.run(samplesTable.filter(_.exerciseId === ex.id).result)
   } yield XmlCompleteEx(ex, samples)
 
-  override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: XmlExPart): Future[Boolean] = part match {
+  override def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: XmlExPart): Future[Boolean] = part match {
     case XmlExParts.GrammarCreationXmlPart  => Future(true)
-    case XmlExParts.DocumentCreationXmlPart => futureOldSolution(username, exerciseId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
+    case XmlExParts.DocumentCreationXmlPart => futureOldSolution(username, exId, exSemVer, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
+
+  override protected def copyDBSolType(oldSol: XmlSolution, newId: Int): XmlSolution = oldSol.copy(id = newId)
 
   // Saving
 
@@ -90,7 +92,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution: Rep[String] = column[String]("solution")
 
 
-    override def * : ProvenShape[XmlSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (XmlSolution.tupled, XmlSolution.unapply)
+    override def * : ProvenShape[XmlSolution] = (id, username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (XmlSolution.tupled, XmlSolution.unapply)
 
   }
 

@@ -95,9 +95,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[SampleTestData](), maybeClassDiagramPart = None
   )
 
-  override def instantiateSolution(username: String, exercise: ProgCompleteEx, part: ProgExPart,
+  override def instantiateSolution(id: Int, username: String, exercise: ProgCompleteEx, part: ProgExPart,
                                    solution: ProgSolution, points: Points, maxPoints: Points): DBProgSolution =
-    DBProgSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution.solution, solution.language, points, maxPoints)
+    DBProgSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution.solution, solution.language, points, maxPoints)
 
   // Yaml
 

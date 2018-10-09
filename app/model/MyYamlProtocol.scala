@@ -171,7 +171,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(textName)
     state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
-    semanticVersion <- yamlObject.stringField(semanticVersionName) flatMap SemanticVersionHelper.tryParseFromString
+    semanticVersion <- yamlObject.someField(semanticVersionName) flatMap SemanticVersionHelper.semanticVersionYamlField
   } yield BaseValues(id, semanticVersion, title, author, text, state)
 
   abstract class MyYamlObjectFormat[T] extends MyYamlFormat[T] {

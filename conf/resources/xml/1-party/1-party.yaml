@@ -1,9 +1,9 @@
 id: 1
+semanticVersion: 1.0.0
 title: Party
 author: bje40dc
 text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: APPROVED
-semanticVersion: 1.0.0
 
 rootNode: party
 grammarDescription: >

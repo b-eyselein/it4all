@@ -2,14 +2,14 @@ id: 5
 title: Bibliothek
 author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
-status: ACCEPTED
+status: APPROVED
 semanticVersion: 1.0.0
 
 rootNode: bibliothek
 grammarDescription: >
   TODO!
 
-sampleGrammars:
+samples:
 - id: 1
   grammar: |
     <!ELEMENT bibliothek (abteilung+)>
@@ -23,6 +23,10 @@ sampleGrammars:
     <!ELEMENT verlag (#PCDATA)>
     <!ELEMENT auflage (#PCDATA)>
     <!ELEMENT jahr (#PCDATA)>
+  document: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE lecture SYSTEM "lecture.dtd">
+
 - id: 2
   grammar: |
     <!ELEMENT bibliothek (abteilung+)>
@@ -36,3 +40,6 @@ sampleGrammars:
     <!ELEMENT verlag (#PCDATA)>
     <!ELEMENT auflage (#PCDATA)>
     <!ELEMENT jahr (#PCDATA)>
+  document: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE lecture SYSTEM "lecture.dtd">

@@ -1,9 +1,13 @@
-author: bje40dc
 id: 4
-semanticVersion: 1.0.0
+semanticVersion:
+  major: 1
+  minor: 0
+  patch: 0
 title: Login-Formular
+author: bje40dc
 text: Erstellen Sie ein Login-Formular in HTML
 status: APPROVED
+
 htmlTasks:
 - id: 1
   text: |
@@ -46,3 +50,16 @@ htmlTasks:
   xpathQuery: /html/body//form//input[@type='submit']
   attributes:
   - {key: class, value: btn btn-default}
+
+jsTasks: []
+
+phpTasks: []
+
+samples:
+- id: 1
+  htmlSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>

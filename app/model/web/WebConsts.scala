@@ -13,20 +13,23 @@ object WebConsts extends Consts {
   val foundName = "found"
 
   val htmlResultsName = "htmlResults"
+  val htmlSampleName  = "htmlSample"
   val htmlTasksName   = "htmlTasks"
   val htmlTextName    = "htmlText"
 
   val IS_PRECOND_NAME = "isPrecondition"
 
   val jsResultsName = "jsResults"
+  val jsSampleName  = "jsSample"
   val jsTasksName   = "jsTasks"
   val jsTextName    = "jsText"
 
   val keysToSendName = "keysToSend"
 
-  val partName     = "part"
-  val phpTasksName = "phpTasks"
-  val phpTextName  = "phpText"
+  val partName      = "part"
+  val phpSampleName = "phpSample"
+  val phpTasksName  = "phpTasks"
+  val phpTextName   = "phpText"
 
   val textContentName = "textContent"
 

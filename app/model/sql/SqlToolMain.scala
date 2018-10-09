@@ -143,7 +143,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     SqlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
       collectionId = collId, collSemVer = SemanticVersion(0, 1, 0), tags = "", hint = None), samples = Seq[SqlSample]())
 
-  override def instantiateSolution(username: String, coll: SqlScenario, exercise: SqlCompleteEx, solution: String, points: Points, maxPoints: Points): SqlSolution =
-    SqlSolution(username, exercise.ex.id, exercise.ex.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
+  override def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlCompleteEx, solution: String,
+                                   points: Points, maxPoints: Points): SqlSolution =
+    SqlSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
 
 }

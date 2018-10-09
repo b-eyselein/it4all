@@ -5,14 +5,14 @@ text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: APPROVED
 semanticVersion: 1.0.0
 
-rootNode: krankenhaus
+rootNode: praxis
 grammarDescription: >
   In dieser XML-Datei soll eine Praxis [praxis] beschrieben werden. In dieser arbeitet mindestens ein Arzt [arzt].
   Ein Arzt hat einen Namen [name] und mindestens einen Termin [termin]. Ein Termin besteht aus einem Datum [datum], einer
   Uhrzeit [uhrzeit], einem Patienten und einer (optionalen) Beschreibung [beschreibung]. Außerdem wird für jeden Termin
   gespeichert [art], ob es eine Untersuchung [untersuchung], Behandlung [behandlung] oder eine Operation [operation] ist.
 
-sampleGrammars:
+samples:
 - id: 1
   grammar: |
     <!ELEMENT praxis (arzt+)>
@@ -24,3 +24,9 @@ sampleGrammars:
     <!ELEMENT uhrzeit (#PCDATA)>
     <!ELEMENT patient (#PCDATA)>
     <!ELEMENT beschreibung (#PCDATA)>
+  document: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE praxis SYSTEM "praxis.dtd">
+    <praxis>
+      TODO!
+    </praxis>

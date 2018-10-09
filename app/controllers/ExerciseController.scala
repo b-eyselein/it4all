@@ -6,6 +6,7 @@ import model.programming.ProgToolMain
 import model.toolMains.{IdExerciseToolMain, ToolList}
 import model.uml._
 import model.web.{WebExParts, WebToolMain}
+import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
@@ -34,15 +35,26 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Generic Routes
 
-  def exercise(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  def exercise(toolType: String, id: Int, partStr: String, versionStr: String = "latest"): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
+
+      val requestedVersion: Option[SemanticVersion] = versionStr match {
+        case "latest" => None
+        case _        => SemanticVersionHelper.parseFromString(versionStr)
+      }
+
+      def futureCompleteEx: Future[Option[toolMain.CompExType]] = requestedVersion match {
+        case Some(version) => toolMain.futureCompleteExByIdAndVersion(id, version)
+        case None          => toolMain.futureCompleteExById(id)
+      }
+
       toolMain.partTypeFromUrl(partStr) match {
         case None       => Future(onNoSuchExercisePart(partStr))
         case Some(part) =>
-          toolMain.futureCompleteExById(id) flatMap {
+          futureCompleteEx flatMap {
             case None           => Future(onNoSuchExercise(id))
             case Some(exercise) =>
-              toolMain.futureOldOrDefaultSolution(user, id, part) map {
+              toolMain.futureOldOrDefaultSolution(user, exercise.ex.id, exercise.ex.semanticVersion, part) map {
                 oldSolution => Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
               }
           }
@@ -126,7 +138,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   def showSolutions(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureSolutionsForExercise(id) map {
-        solutions => Ok(views.html.admin.idExes.idExerciseSolutions(user, solutions, toolMain))
+        solutions => Ok(views.html.admin.idExes.idExerciseSolutions(user, solutions, toolList, toolMain))
       }
   }
 
@@ -138,17 +150,15 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
       val futureClassDiagram: Future[UmlClassDiagram] = umlToolMain.partTypeFromUrl(partStr) match {
         case None       => Future(emptyClassDiagram)
-        case Some(part) =>
-          umlToolMain.futureOldOrDefaultSolution(user, id, part) flatMap {
-            case Some(solution) => Future(solution.solution)
-            case None           =>
-              umlToolMain.futureCompleteExById(id) map {
-                case Some(exercise: UmlCompleteEx) => exercise.getDefaultClassDiagForPart(part)
-                case None                          =>
-                  Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
-                  emptyClassDiagram
-              }
+        case Some(part) => umlToolMain.futureCompleteExById(id) flatMap {
+          case None                          =>
+            Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
+            Future(emptyClassDiagram)
+          case Some(exercise: UmlCompleteEx) => umlToolMain.futureOldOrDefaultSolution(user, exercise.ex.id, exercise.ex.semanticVersion, part) map {
+            case Some(solution) => solution.solution
+            case None           => exercise.getDefaultClassDiagForPart(part)
           }
+        }
       }
 
       futureClassDiagram map { classDiagram =>

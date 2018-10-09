@@ -6,8 +6,8 @@ import model.MyYamlProtocol._
 import model.core.FileUtils
 import model.programming.ProgConsts._
 import model.uml.UmlClassDiagram
-import model.uml.UmlExYamlProtocol.UmlSolutionYamlFormat
-import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
+import model.uml.UmlExYamlProtocol.UmlSampleSolutionYamlFormat
+import model.{BaseValues, MyYamlProtocol, SemanticVersionHelper, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -70,7 +70,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override protected def readObject(yamlObject: YamlObject): Try[UmlClassDiagPart] = for {
       className <- yamlObject.stringField(classNameName)
-      classDiagram: UmlClassDiagram <- yamlObject.someField(classDiagramName).flatMap(UmlSolutionYamlFormat.read)
+      // FIXME: reverse to only UmlClassDiagram
+      classDiagram: UmlClassDiagram <- yamlObject.someField(classDiagramName).flatMap(UmlSampleSolutionYamlFormat(0, SemanticVersionHelper.DEFAULT).read).map(_.sample)
     } yield UmlClassDiagPart(baseValues.id, baseValues.semanticVersion, className, classDiagram)
 
     override def write(obj: UmlClassDiagPart): YamlValue = ???

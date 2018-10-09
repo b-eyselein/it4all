@@ -1,41 +1,41 @@
-@(currentSite: Int, route: Int => Call, numOfExercises: Int, step: Int = model.core.CoreConsts.STEP)
+@(currentSite: Int, route: Int => Call, numOfItems: Int, step: Int = model.core.CoreConsts.STEP)
 
-    @numOfSites = @{
-        Math.ceil(numOfExercises.toDouble / step).intValue()
+@numOfSites = @{
+    Math.ceil(numOfItems.toDouble / step).intValue()
+}
+
+<ul class="pagination">
+    @if(currentSite == 1) {
+        <li class="page-item disabled"><a class="page-link" onclick="return false">&lt;&lt;</a></li>
+    } else {
+        <li class="page-item"><a class="page-link" href="@route(1)" >&lt;&lt;</a></li>
     }
 
-    <ul class="pagination">
-        @if(currentSite == 1) {
-            <li class="page-item disabled"><a class="page-link" onclick="return false">&lt;&lt;</a></li>
-        } else {
-            <li class="page-item"><a class="page-link" href="@route(1)" >&lt;&lt;</a></li>
-        }
+    @if(currentSite <= 1) {
+        <li class="page-item disabled"><a class="page-link">&lt;</a></li>
+    } else {
+        <li class="page-item"><a class="page-link" href="@route(currentSite - 1)">&lt;</a></li>
 
-        @if(currentSite <= 1) {
-            <li class="page-item disabled"><a class="page-link">&lt;</a></li>
-        } else {
-            <li class="page-item"><a class="page-link" href="@route(currentSite - 1)">&lt;</a></li>
+    }
 
-        }
+    @for(adder <- -2 to 2 if currentSite + adder > 0 && (currentSite + adder) <= numOfSites) {
+        <li @if(adder == 0) {
+            class="active" }><a class="page-link" href="@route(currentSite + adder)">@{
+            currentSite + adder
+        }</a>
+        </li>
+    }
 
-        @for(adder <- -2 to 2 if currentSite + adder > 0 && (currentSite + adder) <= numOfSites) {
-            <li @if(adder == 0) {
-                class="active" }><a class="page-link" href="@route(currentSite + adder)">@{
-                currentSite + adder
-            }</a>
-            </li>
-        }
+    @if(currentSite + 1 > numOfSites) {
+        <li class="page-item disabled"><a class="page-link" onclick="return false">&gt;</a></li>
+    } else {
+        <li class="page-item"><a class="page-link" href="@route(currentSite + 1)">&gt;</a></li>
+    }
 
-        @if(currentSite + 1 > numOfSites) {
-            <li class="page-item disabled"><a class="page-link" onclick="return false">&gt;</a></li>
-        } else {
-            <li class="page-item"><a class="page-link" href="@route(currentSite + 1)">&gt;</a></li>
-        }
+    @if(currentSite + 1 > numOfSites) {
+        <li class="page-item disabled"><a class="page-link" onclick="return false">&gt;&gt;</a></li>
+    } else {
+        <li class="page-item"><a class="page-link" href="@route(numOfSites)">&gt;&gt;</a></li>
+    }
 
-        @if(currentSite + 1 > numOfSites) {
-            <li class="page-item disabled"><a class="page-link" onclick="return false">&gt;&gt;</a></li>
-        } else {
-            <li class="page-item"><a class="page-link" href="@route(numOfSites)" >&gt;&gt;</a></li>
-        }
-
-    </ul>
+</ul>

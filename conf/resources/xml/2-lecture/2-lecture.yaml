@@ -13,7 +13,7 @@ grammarDescription: >
   Wochentag [weekday] mit Werten von Montag bis Sonntag ("mon", "tue", "wed", "thu", "fri", "sat", "sun"). Ein
   Student hat einen Namen und eine Matrikelnummer [matrikel].
 
-sampleGrammars:
+samples:
 - id: 1
   grammar: |
     <!ELEMENT lecture (lecturer+, date+, student+)>
@@ -25,20 +25,6 @@ sampleGrammars:
     <!ATTLIST student matrikel CDATA #REQUIRED>
     <!ELEMENT name (#PCDATA)>
     <!ELEMENT hours (#PCDATA)>
-- id: 2
-  grammar: |
-    <!ELEMENT lecture (lecturer+, date+, student+)>
-    <!ELEMENT lecturer (name, title)>
-    <!ELEMENT date (hours)>
-    <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun) #REQUIRED>
-    <!ELEMENT student (name, matrikel)>
-    <!ELEMENT name (#PCDATA)>
-    <!ELEMENT hours (#PCDATA)>
-    <!ELEMENT title (#PCDATA)>
-    <!ELEMENT matrikel (#PCDATA)>
-
-sampleDocuments:
-- id: 1
   document: |
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE lecture SYSTEM "lecture.dtd">
@@ -55,4 +41,22 @@ sampleDocuments:
       <student matrikel="173">
         <name>Jack Bauer</name>
       </student>
+    </lecture>
+
+- id: 2
+  grammar: |
+    <!ELEMENT lecture (lecturer+, date+, student+)>
+    <!ELEMENT lecturer (name, title)>
+    <!ELEMENT date (hours)>
+    <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun) #REQUIRED>
+    <!ELEMENT student (name, matrikel)>
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT hours (#PCDATA)>
+    <!ELEMENT title (#PCDATA)>
+    <!ELEMENT matrikel (#PCDATA)>
+  document: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE lecture SYSTEM "lecture.dtd">
+    <lecture>
+      TODO!
     </lecture>

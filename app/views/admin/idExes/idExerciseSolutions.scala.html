@@ -1,30 +1,58 @@
-@(user: model.User, solutions: Seq[model.DBPartSolution[_, _]], toolMainObject: model.toolMains.IdExerciseToolMain)
+@(adminUser: model.User, solutions: Seq[model.DBPartSolution[_ <: model.ExPart, _]], toolList: model.toolMains.ToolList,
+        toolMainObject: model.toolMains.IdExerciseToolMain)
 
 @title = @{
     "Lösungen für Aufgabe TODO!"
 }
 
-@main(title, Some(user)) {
+@allUsers = @{
+    solutions.map(_.username).distinct
+}
+
+@additionalScripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/admin/idExerciseSolutions.js")');</script>
+}
+
+@admin.adminMain(title, adminUser, toolList, Some(toolMainObject), additionalScripts) {
     <div class="container">
         <h1 class="text-center">@title</h1>
 
-        <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)">
-            Zurück zur Administratorseite</a>
+        <div class="form-group">
+            <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)">
+                Zurück zur Administratorseite</a>
+        </div>
 
-        <hr>
+        <div class="form-group row">
+            <label class="col-form-label col-md-3" for="userFilter">Nutzer:</label>
+            <div class="col-md-9">
+                <select class="form-control" id="userFilter" >
+                    <option value="">Alle</option>
+                    @for(user <- allUsers) {
+                        <option>@user</option>
+                    }
+                </select>
+            </div>
+        </div>
 
         <table class="table">
             <thead>
                 <tr>
                     <th>Nutzer</th>
+                    <th>Lösungs-ID</th>
                     <th>Teil</th>
+                    <th>Punktzahl</th>
                 </tr>
             </thead>
             <tbody>
             @for(solution <- solutions) {
                 <tr>
                     <td>@solution.username</td>
+                    <td>@solution.id</td>
                     <td>@solution.part</td>
+                    <td>@solution.points.asDoubleString / @solution.maxPoints.asDoubleString</td>
                 </tr>
             }
             </tbody>

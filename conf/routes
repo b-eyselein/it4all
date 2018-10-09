@@ -121,7 +121,7 @@ GET           /tools/:toolType/admin/solutions/:id                          cont
 GET           /tools/:toolType/exercises                                    controllers.ExerciseController.exerciseList(toolType: String, page: Int ?= 1)
 
 
-GET           /tools/:toolType/solve/:id/:part                              controllers.ExerciseController.exercise(toolType: String, id: Int, part: String)
+GET           /tools/:toolType/solve/:id/:part                              controllers.ExerciseController.exercise(toolType: String, id: Int, part: String, version: String ?= "latest")
 PUT           /tools/:toolType/solve/:id/:part                              controllers.ExerciseController.correctLive(toolType: String, id: Int, part: String)
 
 GET           /tools/:toolType/:id/:partStr/evaluationPartForm              controllers.ExerciseController.reviewExercisePartForm(toolType: String, id: Int, partStr: String)

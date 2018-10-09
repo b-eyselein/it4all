@@ -1,14 +1,15 @@
 id: 6
-semanticVersion: 1.0.0
+semanticVersion:
+  major: 1
+  minor: 0
+  patch: 0
 title: Klickzähler
 author: bje40dc
 text: Erstellen Sie einen Zähler der die Klicks auf einen Button zählt!
 status: APPROVED
+
 htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
-jsText: >
-  Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
-  gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id 'theSpan' auslesen und um 1 erhöhen.
-  Sie können die Funktion <code>parseInt(str)</code> verwenden um einen String in eine Ganzzahl umzuwandeln.
+
 htmlTasks:
 - id: 1
   text: |
@@ -22,6 +23,12 @@ htmlTasks:
     Erstellen Sie einen Span mit der ID 'theSpan' in dem die Anzahl der Klicks angezeigt werden. Zu Anfang soll dieser eine 0 anzeigen.
   xpathQuery: /html/body//span[@id='theSpan']
   textContent: '0'
+
+jsText: >
+  Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
+  gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id 'theSpan' auslesen und um 1 erhöhen.
+  Sie können die Funktion <code>parseInt(str)</code> verwenden um einen String in eine Ganzzahl umzuwandeln.
+
 jsTasks:
 - id: 1
   text: Test 1
@@ -77,3 +84,14 @@ jsTasks:
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
     awaited: 4
+
+phpTasks: []
+
+samples:
+- id: 1
+  htmlSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>

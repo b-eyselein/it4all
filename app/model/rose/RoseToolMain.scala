@@ -84,8 +84,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     inputType = Seq[RoseInputType](), sampleSolutions = Seq[RoseSampleSolution]()
   )
 
-  override def instantiateSolution(username: String, exercise: RoseCompleteEx, part: RoseExPart, solution: String, points: Points, maxPoints: Points): RoseSolution =
-    RoseSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
+  override def instantiateSolution(id: Int, username: String, exercise: RoseCompleteEx, part: RoseExPart, solution: String,
+                                   points: Points, maxPoints: Points): RoseSolution =
+    RoseSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 

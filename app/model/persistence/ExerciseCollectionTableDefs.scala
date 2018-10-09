@@ -4,8 +4,10 @@ import model.{ExerciseState, _}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 trait ExerciseCollectionTableDefs[Ex <: ExInColl, CompEx <: CompleteExInColl[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection,
 SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[Ex, CompEx] {
@@ -29,15 +31,22 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
 
   // Queries
 
+  protected def copyDBSolType(sol: DBSolType, newId: Int): DBSolType
+
   def futureOldSolution(username: String, exerciseId: Int): Future[Option[DBSolType]] =
     db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId).result.headOption)
 
-  def futureSaveSolution(sol: DBSolType): Future[Boolean] =
-    db.run(solTable insertOrUpdate sol) map (_ => true) recover {
-      case e: Exception =>
+  def futureSaveSolution(sol: DBSolType): Future[Boolean] = {
+    val insertQuery = solTable returning solTable.map(_.id) into ((sol, id) => copyDBSolType(sol, id))
+
+    db.run(insertQuery += sol) transform {
+      case Success(_) => Success(true)
+      case Failure(e) =>
         Logger.error("Could not save solution", e)
-        false
+        Success(false)
     }
+  }
+
 
   // Numbers
 
@@ -119,46 +128,48 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
 
   abstract class ExerciseCollectionTable(tag: Tag, tableName: String) extends HasBaseValuesTable[Coll](tag, tableName) {
 
-    def pk = primaryKey("pk", (id, semanticVersion))
+    def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion))
 
   }
 
   abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[Ex](tag, name) {
 
-    def collectionId = column[Int]("collection_id")
+    def collectionId: Rep[Int] = column[Int]("collection_id")
 
-    def collSemVer = column[SemanticVersion]("coll_sem_ver")
+    def collSemVer: Rep[SemanticVersion] = column[SemanticVersion]("coll_sem_ver")
 
 
-    def pk = primaryKey("pk", (id, semanticVersion, collectionId, collSemVer))
+    def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId, collSemVer))
 
-    def scenarioFk = foreignKey("scenario_fk", (collectionId, collSemVer), collTable)(co => (co.id, co.semanticVersion))
+    def scenarioFk: ForeignKeyQuery[CollTableDef, Coll] = foreignKey("scenario_fk", (collectionId, collSemVer), collTable)(co => (co.id, co.semanticVersion))
 
   }
 
   abstract class CollectionExSolutionsTable(tag: Tag, name: String) extends Table[DBSolType](tag, name) {
 
-    def username = column[String]("username")
+    def id: Rep[Int] = column[Int]("id")
 
-    def exerciseId = column[Int]("exercise_id")
+    def username: Rep[String] = column[String]("username")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def collectionId = column[Int]("collection_id")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def collSemVer = column[SemanticVersion]("coll_sem_ver")
+    def collectionId: Rep[Int] = column[Int]("collection_id")
 
-    def points = column[Points]("points")
+    def collSemVer: Rep[SemanticVersion] = column[SemanticVersion]("coll_sem_ver")
 
-    def maxPoints = column[Points]("max_points")
+    def points: Rep[Points] = column[Points]("points")
+
+    def maxPoints: Rep[Points] = column[Points]("max_points")
 
 
-    def pk = primaryKey("pk", (username, collectionId, collSemVer, exerciseId, exSemVer))
+    def pk: PrimaryKey = primaryKey("pk", (id, username, collectionId, collSemVer, exerciseId, exSemVer))
 
-    def exerciseFk = foreignKey("exercise_fk", (collectionId, collSemVer, exerciseId, exSemVer), exTable)(ex =>
+    def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (collectionId, collSemVer, exerciseId, exSemVer), exTable)(ex =>
       (ex.collectionId, ex.collSemVer, ex.id, ex.semanticVersion))
 
-    def userFk = foreignKey("user_fk", username, users)(_.username)
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
   }
 

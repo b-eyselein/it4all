@@ -11,57 +11,77 @@
     }
 }
 
-@main(toolObject.toolname, Some(user)) {
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/userExercisesOverview.js")');</script>
+}
+
+@main(toolObject.toolname, Some(user), scripts) {
     <div class="container">
         <h1 class="text-center">Übersicht über verfügbare Aufgaben</h1>
-
-        <hr>
 
         @if(dataForUserExesOverview.exesAndRoutes.isEmpty) {
             <div class="alert alert-danger">
                 Es existieren bisher keine Aufgaben in der Kategorie @toolObject.toolname.
                 Wenden Sie Sich bitte an den Administrator.</div>
         } else {
-            <div class="row">
-                <div class="col-sm-2"><h4>Id</h4></div>
-                @if(toolObject.hasTags) {
-                    <div class="col-sm-2"><h4>Tags</h4></div>
-                    <div class="col-sm-3"><h4>Tags</h4></div>
-                } else {
-                    <div class="col-sm-4"><h4>Titel</h4></div>
-                }
-                <div class="col-sm-6"><h4>Link(s)</h4></div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        @if(toolObject.hasTags) {
+                            <th>Tags</th>
+                        }
+                        <th>Titel</th>
 
-            </div>
+                        <th>Version</th>
+                        <th>Link(s)</th>
+                    </tr>
+                </thead>
 
-            <hr>
-
-            @for(exAndRoute <- dataForUserExesOverview.exesAndRoutes) {
-                <div class="row">
-                    <div class="col-sm-2">@exAndRoute.ex.ex.id</div>
-                    @if(toolObject.hasTags) {
-                        <div class="col-sm-2">@for(tag <- exAndRoute.ex.tags) {
-                            @tag.render
-                        }</div>
-                        <div class="col-sm-3">@exAndRoute.ex.ex.title</div>
-                    } else {
-                        <div class="col-sm-4">@exAndRoute.ex.ex.title</div>
-                    }
-                    <div class="col-sm-6">
-                        <div class="btn-group d-flex">
-                        @for(exRoute <- exAndRoute.routes) {
-                            @if(exRoute.enabled) {
-                                <a href="@exRoute.call" class="btn btn-outline-primary w-100">@exRoute.exPart.partName </a>
-                            } else {
-                                <a title="Vorbedingungen nicht erfüllt!" class="btn btn-outline-primary w-100">@exRoute.exPart.partName </a>
+                <tbody>
+                @for(exAndRoute <- dataForUserExesOverview.exesAndRoutes.sortBy(_.ex.ex.id)) {
+                    <tr>
+                        <td>@exAndRoute.ex.ex.id</td>
+                        @if(toolObject.hasTags) {
+                            <td>@for(tag <- exAndRoute.ex.tags) {
+                                @tag.render
+                            }</td>
+                        }
+                        <td>@exAndRoute.ex.ex.title</td>
+                        <td>@exAndRoute.versions match {
+                            case Seq() => {--}
+                            case Seq(head) => {
+                                @head.asString
+                            }
+                            case other => {
+                                <select class="form-control version_select" data-id="@exAndRoute.ex.ex.id" title="Versionswahl">
+                                @for(version <- other.sorted.reverse) {
+                                    <option>@version.asString</option>
+                                }
+                                </select>
                             }
                         }
-                        </div>
-                    </div>
-                </div>
+                        </td>
+                        <td>
+                            <div class="btn-group d-flex">
+                            @for(exRoute <- exAndRoute.routes) {
+                                <a class="btn btn-outline-primary w-100 ex_link_@exAndRoute.ex.ex.id" @if(exRoute.enabled) {
+                                    href="@exRoute.call"
+                                } else {
+                                    title="Vorbedingungen nicht erfüllt!"
+                                    }>@exRoute.exPart.partName</a>
+                            }
+                            </div>
+                        </td>
+                    </tr>
 
-                <hr>
                 }
+
+                </tbody>
+            </table>
 
             @core.helperTemplates.bsPager(currentPage, urlFunc, dataForUserExesOverview.numOfExes, step = dataForUserExesOverview.exesAndRoutes.size)
 

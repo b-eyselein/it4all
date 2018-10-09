@@ -56,14 +56,14 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
         Future(BadRequest("There has been an error!"))
       }
 
-      def onFormRead(toolMain: ASingleExerciseToolMain): ExerciseState => Future[Result] = { newState =>
+      val onFormRead: ExerciseState => Future[Result] = { newState =>
         toolMain.updateExerciseState(id, newState) map {
           case true  => Ok(Json.obj("id" -> id, "newState" -> newState.entryName))
           case false => BadRequest(Json.obj("message" -> "Could not update exercise!"))
         }
       }
 
-      stateForm.bindFromRequest().fold(onFormError, onFormRead(toolMain))
+      stateForm.bindFromRequest().fold(onFormError, onFormRead)
   }
 
   def adminExerciseList(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
@@ -97,20 +97,20 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
   def adminEditExercise(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
 
-      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
+//      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
+//
+//        for (formError <- formWithError.errors)
+//          Logger.error(formError.key + " :: " + formError.message)
+//
+//        Future(BadRequest("Your form has has errors!"))
+//      }
 
-        for (formError <- formWithError.errors)
-          Logger.error(formError.key + " :: " + formError.message)
-
-        Future(BadRequest("Your form has has errors!"))
-      }
-
-      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
-        //FIXME: save ex
-        toolMain.futureUpdateExercise(compEx) map { _ =>
-          Ok(views.html.admin.singleExercisePreview(admin, compEx, toolMain))
-        }
-      }
+//      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
+// //        FIXME: save ex
+//        toolMain.futureUpdateExercise(compEx) map { _ =>
+//          Ok(views.html.admin.singleExercisePreview(admin, compEx, toolMain))
+//        }
+//      }
 
       //      toolMain.compExForm.bindFromRequest().fold(onFormError, onFormSuccess)
       ???
@@ -131,8 +131,9 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
 
   def newExerciseForm(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     request =>
+      // FIXME: reserve exercise... ?
       toolMain.futureHighestId map { id =>
-        val exercise = toolMain.instantiateExercise(id + 1, user.username, ExerciseState.RESERVED)
+        val exercise = toolMain.instantiateExercise(id + 1, user.username, ExerciseState.CREATED)
         Ok(toolMain.renderUserExerciseEditForm(user, toolMain.compExForm.fill(exercise), isCreation = true)(request, request2Messages(request)))
       }
   }
@@ -171,7 +172,7 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
       val onRead: toolMain.CompExType => Future[Result] = { compEx =>
 
         toolMain.futureInsertCompleteEx(compEx).transform {
-          case Success(saved)     => Success(Ok(toolMain.renderExercisePreview(user, compEx, saved)))
+          case Success(saved) => Success(Ok(toolMain.renderExercisePreview(user, compEx, saved)))
           case Failure(error) =>
             Logger.error("Error while saving an exercise", error)
             Success(BadRequest("Your new exercise could not be saved..."))

@@ -118,10 +118,11 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
               case Success(res)   =>
 
                 // FIXME: calculate!
+                val id = 0
                 val points = -1 point
                 val maxPoints = -1 point
 
-                val dbSol = instantiateSolution(user.username, collection, exercise, solution, points, maxPoints)
+                val dbSol = instantiateSolution(id, user.username, collection, exercise, solution, points, maxPoints)
                 tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
             }
         }
@@ -180,7 +181,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
 
-  def instantiateSolution(username: String, collection: CollType, exercise: CompExType, solution: SolType, points: Points, maxPoints: Points): DBSolType
+  def instantiateSolution(id: Int, username: String, collection: CollType, exercise: CompExType, solution: SolType,
+                          points: Points, maxPoints: Points): DBSolType
 
   // Calls
 

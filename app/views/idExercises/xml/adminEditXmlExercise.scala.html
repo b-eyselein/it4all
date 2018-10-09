@@ -1,5 +1,5 @@
-@(user: model.User, exercise: model.xml.XmlCompleteEx, isCreation: Boolean,
-        toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
+@(user: model.User, exercise: Form[model.xml.XmlCompleteEx], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain,
+        toolList: model.toolMains.ToolList)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
     @scripts = {
         <style>
@@ -18,81 +18,81 @@
     }
 
     @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
-        <form class="form" method="post" role="form" action="@routes.ExerciseController.adminEditExercise(toolMainObject.urlPart, exercise.ex.id)">
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="@model.core.CoreConsts.idName">ID:</label>
-                        <input type="number" class="form-control from-control-static" name="@model.core.CoreConsts.idName" id="@model.core.CoreConsts.idName"
-                        required value="@exercise.ex.id" readonly>
-                    </div>
+        @idExercises.xml.editXmlExerciseForm(user, exercise, isCreation, toolMainObject)
+        @*<form class="form" method="post" role="form" action="@routes.ExerciseController.adminEditExercise(toolMainObject.urlPart, exercise.ex.id)">*@
 
-                    <div class="form-group">
-                        <label for="@model.core.CoreConsts.authorName">Autor:</label>
-                        <input class="form-control" name="@model.core.CoreConsts.authorName" id="@model.core.CoreConsts.authorName" value="@user.username"
-                        title="Dieser Wert kann nicht geändert werden." readonly required>
-                    </div>
+        @*<div class="row">*@
+        @*<div class="col-md-6">*@
+        @*<div class="form-group">*@
+        @*<label for="@model.core.CoreConsts.idName">ID:</label>*@
+        @*<input type="number" class="form-control from-control-static" name="@model.core.CoreConsts.idName" id="@model.core.CoreConsts.idName"*@
+        @*required value="@exercise.ex.id" readonly>*@
+        @*</div>*@
 
-                    <div class="form-group">
-                        <label for="@model.core.CoreConsts.titleName">Titel:</label>
-                        <input class="form-control" name="@model.core.CoreConsts.titleName" id="@model.core.CoreConsts.titleName" required
-                        value="@exercise.ex.title">
-                    </div>
-                </div>
+        @*<div class="form-group">*@
+        @*<label for="@model.core.CoreConsts.authorName">Autor:</label>*@
+        @*<input class="form-control" name="@model.core.CoreConsts.authorName" id="@model.core.CoreConsts.authorName" value="@user.username"*@
+        @*title="Dieser Wert kann nicht geändert werden." readonly required>*@
+        @*</div>*@
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="@model.core.CoreConsts.textName">Text:</label>
-                        <textarea class="form-control" name="@model.core.CoreConsts.textName" id="@model.core.CoreConsts.textName" rows="9"
-                        required>@exercise.ex.text</textarea>
-                    </div>
-                </div>
-            </div>
+        @*<div class="form-group">*@
+        @*<label for="@model.core.CoreConsts.titleName">Titel:</label>*@
+        @*<input class="form-control" name="@model.core.CoreConsts.titleName" id="@model.core.CoreConsts.titleName" required*@
+        @*value="@exercise.ex.title">*@
+        @*</div>*@
+        @*</div>*@
 
-            <div class="form-group row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="@model.core.CoreConsts.statusName">Status:</label>
-                        <div >
-                            <select class="form-control" name="@model.core.CoreConsts.statusName" id="@model.core.CoreConsts.statusName" required>
-                            @for(state <- model.ExerciseState.values) {
-                                <option @{
-                                    if(state == exercise.ex.state) "selected" else ""
-                                }>@state</option>
-                            }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="@model.xml.XmlConsts.grammarDescriptionName">Grammatikbeschreibung</label>
-                        <textarea class="form-control" name="@model.xml.XmlConsts.grammarDescriptionName" id="@model.xml.XmlConsts.grammarDescriptionName" rows="15"
-                        placeholder="Beschreibung der Grammatik" required>@exercise.ex.grammarDescription</textarea>
-                    </div>
-                </div>
+        @*<div class="col-md-6">*@
+        @*<div class="form-group">*@
+        @*<label for="@model.core.CoreConsts.textName">Text:</label>*@
+        @*<textarea class="form-control" name="@model.core.CoreConsts.textName" id="@model.core.CoreConsts.textName" rows="9"*@
+        @*required>@exercise.ex.text</textarea>*@
+        @*</div>*@
+        @*</div>*@
+        @*</div>*@
 
+        @*<div class="form-group row">*@
+        @*<div class="col-md-6">*@
+        @*<div class="form-group">*@
+        @*<label for="@model.core.CoreConsts.statusName">Status:</label>*@
+        @*<div >*@
+        @*<select class="form-control" name="@model.core.CoreConsts.statusName" id="@model.core.CoreConsts.statusName" required>*@
+        @* @for(state <- model.ExerciseState.values) {*@
+            @*<option @{*@
+            @*if(state == exercise.ex.state) "selected" else ""*@
+            @*}>@state</option>*@
+            @*}*@
+            @*</select>*@
+            @*</div>*@
+            @*</div>*@
+            @*<div class="form-group">*@
+            @*<label for="@model.xml.XmlConsts.grammarDescriptionName">Grammatikbeschreibung</label>*@
+            @*<textarea class="form-control" name="@model.xml.XmlConsts.grammarDescriptionName" id="@model.xml.XmlConsts.grammarDescriptionName" rows="15"*@
+            @*placeholder="Beschreibung der Grammatik" required>@exercise.ex.grammarDescription</textarea>*@
+            @*</div>*@
+            @*</div>*@
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="@model.xml.XmlConsts.rootNodeName">Wurzelknoten:</label>
-                        <input class="form-control" name="@model.xml.XmlConsts.rootNodeName" id="@model.xml.XmlConsts.rootNodeName" required value="@exercise.ex.rootNode">
-                    </div>
+            @*<div class="col-md-6">*@
+            @*<div class="form-group">*@
+            @*<label for="@model.xml.XmlConsts.rootNodeName">Wurzelknoten:</label>*@
+            @*<input class="form-control" name="@model.xml.XmlConsts.rootNodeName" id="@model.xml.XmlConsts.rootNodeName" required value="@exercise.ex.rootNode">*@
+            @*</div>*@
+            @* @for(sampleGrammar <- exercise.samples) {*@
+                @*<div class="form-group">*@
+                @*<label for="@model.xml.XmlConsts.sampleGrammarsName">Mustergrammaik</label>*@
+                @*<textarea class="form-control" name="@model.xml.XmlConsts.sampleGrammarsName" id="@model.xml.XmlConsts.sampleGrammarsName" rows="15"*@
+                @*placeholder="<!ELEMENT root ...>" required>@Html(sampleGrammar.sampleGrammar.asString)</textarea>*@
+                @*</div>*@
+                @*}*@
+                @*</div>*@
+                @*</div>*@
 
-                    @for(sampleGrammar <- exercise.samples) {
-                        <div class="form-group">
-                            <label for="@model.xml.XmlConsts.sampleGrammarsName">Mustergrammaik</label>
-                            <textarea class="form-control" name="@model.xml.XmlConsts.sampleGrammarsName" id="@model.xml.XmlConsts.sampleGrammarsName" rows="15"
-                            placeholder="<!ELEMENT root ...>" required>@Html(sampleGrammar.sampleGrammar.asString)</textarea>
-                        </div>
-                    }
-                </div>
-            </div>
+                @*<hr>*@
 
-            <hr>
-
-            <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
-        </form>
-    }
+                @*<button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>*@
+                @*</form>*@
+            }
 
 
 

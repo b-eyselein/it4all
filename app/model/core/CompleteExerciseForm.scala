@@ -9,6 +9,6 @@ trait CompleteExerciseForm[ExType <: Exercise, CompExType <: CompleteEx[ExType]]
 
   val format: Form[CompExType]
 
-  def unapplyCompEx(compEx: CompExType): Option[FormData]
+  protected def unapplyCompEx(compEx: CompExType): Option[FormData]
 
 }

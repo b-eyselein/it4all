@@ -6,6 +6,7 @@ import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
+import model.web.WebConsts._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
@@ -32,23 +33,25 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private val jsTasksTable    = TableQuery[JsTasksTable]
   private val conditionsTable = TableQuery[ConditionsTable]
 
+  private val sampleSolutionsTable = TableQuery[WebSampleSolutionsTable]
+
   // Dependent query tables
 
   lazy val webSolutions = TableQuery[WebSolutionsTable]
 
   // Other queries
 
-  override def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: WebExPart): Future[Boolean] = part match {
+  override def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: WebExPart): Future[Boolean] = part match {
     case WebExParts.HtmlPart => Future(true)
-    case WebExParts.JsPart   => futureOldSolution(username, exerciseId, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
+    case WebExParts.JsPart   => futureOldSolution(username, exId, exSemVer, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
     case WebExParts.PHPPart  => Future(false)
   }
-
 
   override def completeExForEx(ex: WebExercise): Future[WebCompleteEx] = for {
     htmlTasks <- htmlTasksForExercise(ex.id)
     jsTasks <- jsTasksForExercise(ex.id)
-  } yield WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
+    sampleSolutions <- db.run(sampleSolutionsTable filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result)
+  } yield WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id), sampleSolutions = sampleSolutions)
 
   private def htmlTasksForExercise(exId: Int): Future[Seq[HtmlCompleteTask]] =
     db.run(htmlTasksTable.filter(_.exerciseId === exId).result) flatMap { htmlTasks: Seq[HtmlTask] =>
@@ -67,12 +70,16 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     })
   }
 
+  override protected def copyDBSolType(oldSol: WebSolution, newId: Int): WebSolution = oldSol.copy(id = newId)
+
   // Saving
 
   override def saveExerciseRest(compEx: WebCompleteEx): Future[Boolean] = for {
     htmlTasksSaved <- saveSeq[HtmlCompleteTask](compEx.htmlTasks, saveHtmlTask)
     jsTasksSaved <- saveSeq[JsCompleteTask](compEx.jsTasks, saveJsTask)
-  } yield htmlTasksSaved && jsTasksSaved
+
+    sampleSolutionsSaved <- saveSeq[WebSampleSolution](compEx.sampleSolutions, s => db.run(sampleSolutionsTable += s))
+  } yield htmlTasksSaved && jsTasksSaved && sampleSolutionsSaved
 
   private def saveHtmlTask(htmlTask: HtmlCompleteTask): Future[Boolean] = db.run(htmlTasksTable += htmlTask.task) flatMap { _ =>
     saveSeq[Attribute](htmlTask.attributes, a => db.run(attributesTable += a))
@@ -94,8 +101,6 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class WebExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "web_exercises") {
 
-    def sampleSolution: Rep[String] = column[String]("sample_sol")
-
     def htmlText: Rep[String] = column[String]("html_text")
 
     def jsText: Rep[String] = column[String]("js_text")
@@ -103,7 +108,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def phpText: Rep[String] = column[String]("php_text")
 
 
-    override def * : ProvenShape[WebExercise] = (id, semanticVersion, title, author, text, state, sampleSolution, htmlText.?, jsText.?, phpText.?) <> (WebExercise.tupled, WebExercise.unapply)
+    override def * : ProvenShape[WebExercise] = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?, phpText.?) <> (WebExercise.tupled, WebExercise.unapply)
 
   }
 
@@ -188,12 +193,26 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
+  class WebSampleSolutionsTable(tag: Tag) extends ExForeignKeyTable[WebSampleSolution](tag, "web_sample_solutions") {
+
+    def id: Rep[Int] = column[Int](idName)
+
+    def htmlSample: Rep[String] = column[String]("html_sample")
+
+    def jsSample: Rep[String] = column[String]("js_sample")
+
+    def phpSample: Rep[String] = column[String]("php_sample")
+
+    def * : ProvenShape[WebSampleSolution] = (id, exerciseId, exSemVer, htmlSample.?, jsSample.?, phpSample.?) <> (WebSampleSolution.tupled, WebSampleSolution.unapply)
+
+  }
+
   class WebSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "web_solutions") {
 
     def solution: Rep[String] = column[String]("solution")
 
 
-    override def * : ProvenShape[WebSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (WebSolution.tupled, WebSolution.unapply)
+    override def * : ProvenShape[WebSolution] = (id, username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (WebSolution.tupled, WebSolution.unapply)
 
   }
 

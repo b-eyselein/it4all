@@ -57,7 +57,7 @@ final case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersi
 
 final case class RoseSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, solution: String)
 
-final case class RoseSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart,
+final case class RoseSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart,
                               solution: String, points: Points, maxPoints: Points) extends DBPartSolution[RoseExPart, String]
 
 final case class RoseExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: RoseExPart,

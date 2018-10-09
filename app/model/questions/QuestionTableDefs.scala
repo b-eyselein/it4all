@@ -62,6 +62,8 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
   private def answersForQuestion(quizId: Int, questionId: Int): Future[Seq[Answer]] =
     db.run(answers.filter(ans => ans.collId === quizId && ans.exerciseId === questionId).result)
 
+  override protected def copyDBSolType(sol: QuestionSolution, newId: Int): QuestionSolution = sol.copy(id = newId)
+
   // Saving
 
   override def saveCompleteColl(compQuiz: CompleteQuiz): Future[Boolean] = db.run(collTable insertOrUpdate compQuiz.coll) flatMap {
@@ -143,7 +145,8 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
     def solution: Rep[Seq[GivenAnswer]] = column[Seq[GivenAnswer]]("answers")
 
 
-    override def * : ProvenShape[QuestionSolution] = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints) <> (QuestionSolution.tupled, QuestionSolution.unapply)
+    override def * : ProvenShape[QuestionSolution] = (id, username, exerciseId, exSemVer, collectionId, collSemVer,
+      solution, points, maxPoints) <> (QuestionSolution.tupled, QuestionSolution.unapply)
 
   }
 

@@ -53,6 +53,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     classDiagPartSaved <- saveSeq[UmlClassDiagPart](compEx.maybeClassDiagramPart.toSeq, i => db.run(umlClassDiagParts += i))
   } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && classDiagPartSaved
 
+  override def copyDBSolType(oldSol: DBProgSolution, newId: Int): DBProgSolution = oldSol.copy(id = newId)
 
   // Implicit column types
 
@@ -178,7 +179,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
 
-    override def * : ProvenShape[DBProgSolution] = (username, exerciseId, exSemVer, part, solution, language, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
+    override def * : ProvenShape[DBProgSolution] = (id, username, exerciseId, exSemVer, part, solution, language, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
 
   }
 

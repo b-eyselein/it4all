@@ -9,8 +9,6 @@ class ToolList @Inject()(javaToolMains: java.util.Set[AToolMain]) {
 
   val toolMains: Seq[AToolMain] = javaToolMains.asScala.toSeq
 
-  val groupedToolMains: Iterable[AToolMain] = toolMains.groupBy(_.getClass.getSuperclass).values.flatten
-
   def getFileToolMainOption(urlPart: String): Option[FileExerciseToolMain] = toolMains.collectFirst {
     case fetm: FileExerciseToolMain if fetm.urlPart == urlPart => fetm
   }

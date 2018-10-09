@@ -9,13 +9,17 @@ text: >
   ihre Kundennummer identifiziert. Es soll außerdem jeweils der komplette Name gespeichert werden. Jeder Kunde kann mehrere Konten besitzen
   und hat die Möglichkeit, sich das Gesamtsaldo aller Konten anzeigen zu lassen und Geld auf ein Konto einzuzahlen.
 status: APPROVED
+
 mappings:
 - {key: Konten, value: Konto}
 - {key: Kunden, value: Kunde}
 - {key: Jahren, value: Jahr}
 - {key: Zinsen, value: Zins}
+
 ignoreWords: [Eine, Jedes, Diese, Für, Jeder, Es, Zudem, Die]
-solution:
+
+samples:
+- id: 1
   classes:
   - classType: CLASS
     name: Kunde

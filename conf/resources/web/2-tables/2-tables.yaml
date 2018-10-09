@@ -1,9 +1,13 @@
+id: 2
+semanticVersion:
+  major: 1
+  minor: 0
+  patch: 0
+title: Tabellen in Html
 author: bje40dc
 text: Erstellen Sie eine Tabelle in Html!
-id: 2
-semanticVersion: 1.0.0
 status: APPROVED
-title: Tabellen in Html
+
 htmlTasks:
 - id: 1
   text: |
@@ -61,3 +65,16 @@ htmlTasks:
   text: Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt '58374162' haben
   xpathQuery: html/body//table//tr[4]/td[2]
   textContent: '58374162'
+
+jsTasks: []
+
+phpTasks: []
+
+samples:
+- id: 1
+  htmlSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>

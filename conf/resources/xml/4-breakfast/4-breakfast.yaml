@@ -11,7 +11,7 @@ grammarDescription: >
   Frühstückskarte [breakfast] werden mehrere Speißen [food] angeboten. Jede Speiße hat einen Namen [food],
   einen Preis [price], eine Beschreibung [description] und eine Anzahl an Kalorien [calories].
 
-sampleGrammars:
+samples:
 - id: 1
   grammar: |
     <!ELEMENT breakfastmenu (food+)>
@@ -20,3 +20,6 @@ sampleGrammars:
     <!ELEMENT price (#PCDATA)>
     <!ELEMENT description (#PCDATA)>
     <!ELEMENT calories (#PCDATA)>
+  document: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE lecture SYSTEM "lecture.dtd">

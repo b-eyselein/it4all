@@ -9,6 +9,7 @@ text: >
   beinhalten kann. Ein Medikament hat eine eindeutige Id und einen Namen und kann Patienten auf verschiedenen Rezepten
   verschrieben werden. Ein Patient wiederum kann in einer Station aufgenommen bzw. entlassen werden.
 status: APPROVED
+
 mappings:
 - {key: Stationen, value: Station}
 - {key: Doktoren, value: Doktor}
@@ -18,7 +19,9 @@ mappings:
 - {key: Medikamente, value: Medikament}
 - {key: Rezepten, value: Rezept}
 ignoreWords: [Ein, Jede]
-solution:
+
+samples:
+- id: 1
   classes:
   - classType: ABSTRACT
     name: Person
@@ -54,7 +57,7 @@ solution:
     name: Medikament
     attributes:
     - {visibility: public, name: id, type: int}
-    - {visibility: public, visibility: public, name: name, type: String}
+    - {visibility: public, name: name, type: String}
 
   - classType: CLASS
     name: Krankenhaus

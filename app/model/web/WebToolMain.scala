@@ -55,21 +55,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override val compExForm: Form[WebCompleteEx] = WebCompleteExerciseForm.format
 
-  override def exerciseReviewForm(username: String, completeExercise: WebCompleteEx, exercisePart: WebExPart): Form[WebExerciseReview] = {
-
-
-    val unapply = (cr: WebExerciseReview) => Some((cr.difficulty.entryName, cr.maybeDuration))
-
-    Form(
-      mapping(
-        difficultyName -> Difficulties.formField,
-        durationName -> optional(number(min = 0, max = 100))
-      )
-      (WebExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
-      (wer => Some((wer.difficulty, wer.maybeDuration)))
+  override def exerciseReviewForm(username: String, completeExercise: WebCompleteEx, exercisePart: WebExPart): Form[WebExerciseReview] = Form(
+    mapping(
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
     )
-
-  }
+    (WebExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (wer => Some((wer.difficulty, wer.maybeDuration)))
+  )
 
   // DB
 
@@ -83,12 +76,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     write(target, content)
   }
 
-  override def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: WebExPart): Future[Option[DBSolType]] =
-    super.futureOldOrDefaultSolution(user, exerciseId, part) flatMap {
+  override def futureOldOrDefaultSolution(user: User, exId: Int, exSemVer: SemanticVersion, part: WebExPart): Future[Option[DBSolType]] =
+    super.futureOldOrDefaultSolution(user, exId, exSemVer, part) flatMap {
       case Some(solution) => Future(Some(solution))
       case None           =>
         part match {
-          case WebExParts.JsPart => super.futureOldOrDefaultSolution(user, exerciseId, WebExParts.HtmlPart)
+          case WebExParts.JsPart => super.futureOldOrDefaultSolution(user, exId, exSemVer, WebExParts.HtmlPart)
           case _                 => Future(None)
         }
     }
@@ -106,13 +99,26 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebCompleteEx = WebCompleteEx(
-    WebExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, sampleSolution = "", htmlText = None, jsText = None, phpText = None),
-    htmlTasks = Seq[HtmlCompleteTask](), jsTasks = Seq[JsCompleteTask]()
-  )
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebCompleteEx = {
+    val semVer = SemanticVersionHelper.DEFAULT
 
-  override def instantiateSolution(username: String, exercise: WebCompleteEx, part: WebExPart, solution: String, points: Points, maxPoints: Points): WebSolution =
-    WebSolution(username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
+    WebCompleteEx(
+      WebExercise(id, semVer, title = "", author, text = "", state, htmlText = None, jsText = None, phpText = None),
+      htmlTasks = Seq(
+        HtmlCompleteTask(HtmlTask(1, id, semVer, "", "", None), attributes = Seq[Attribute]())
+      ),
+      jsTasks = Seq(
+        JsCompleteTask(JsTask(1, id, semVer, "", "", JsActionType.FILLOUT, None), conditions = Seq[JsCondition]())
+      ),
+      sampleSolutions = Seq(
+        WebSampleSolution(1, id, semVer, htmlSample = None, jsSample = None, phpSample = None)
+      )
+    )
+  }
+
+  override def instantiateSolution(id: Int, username: String, exercise: WebCompleteEx, part: WebExPart, solution: String,
+                                   points: Points, maxPoints: Points): WebSolution =
+    WebSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -120,12 +126,16 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderAdminExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean, toolList: ToolList): Html =
-    views.html.idExercises.web.editWebExercise(user, newEx, isCreation, this, toolList)
+  override def renderAdminExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean, toolList: ToolList)
+                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
+    views.html.idExercises.web.editWebExercise(user, WebCompleteExerciseForm.format.fill(newEx), isCreation, this, toolList)
 
   override def renderUserExerciseEditForm(user: User, newExForm: Form[WebCompleteEx], isCreation: Boolean)
                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.web.editWebExerciseForm(user, newExForm, isCreation, this)
+
+  override def renderExercisePreview(user: User, newExercise: WebCompleteEx, saved: Boolean): Html =
+    views.html.idExercises.web.webPreview(newExercise)
 
   override def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
@@ -152,8 +162,15 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   }
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: WebExPart): Future[Option[String]] =
-    tables.futureCompleteExById(id) map (maybeCompleteEx => maybeCompleteEx.map(_.ex.sampleSolution))
-
+    tables.futureCompleteExById(id) map {
+      _.flatMap(_.sampleSolutions.headOption flatMap { webSample =>
+        part match {
+          case WebExParts.HtmlPart => webSample.htmlSample
+          case WebExParts.JsPart   => webSample.jsSample
+          case WebExParts.PHPPart  => webSample.phpSample
+        }
+      })
+    }
 
   // Other helper methods
 

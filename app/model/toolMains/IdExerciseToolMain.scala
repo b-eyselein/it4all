@@ -35,8 +35,8 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureSaveSolution(sol: DBSolType): Future[Boolean] = tables.futureSaveSolution(sol)
 
-  def futureOldOrDefaultSolution(user: User, exerciseId: Int, part: PartType): Future[Option[DBSolType]] =
-    tables.futureOldSolution(user.username, exerciseId, part)
+  def futureOldOrDefaultSolution(user: User, exId: Int, exSemVer: SemanticVersion, part: PartType): Future[Option[DBSolType]] =
+    tables.futureOldSolution(user.username, exId, exSemVer, part)
 
   def futureSolutionsForExercise(exerciseId: Int): Future[Seq[DBSolType]] = tables.futureOldSolutions(exerciseId)
 
@@ -65,7 +65,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
       case Success(solution)  => correctEx(user, solution, exercise, part) flatMap {
         case Failure(error) => Future(Failure(error))
         case Success(res)   =>
-          val dbSolution = instantiateSolution(user.username, exercise, part, solution, res.points, res.maxPoints)
+          val dbSolution = instantiateSolution(id = 0, user.username, exercise, part, solution, res.points, res.maxPoints)
 
           tables.futureSaveSolution(dbSolution) map { solutionSaved =>
             Success(onLiveCorrectionResult(solutionSaved, res))
@@ -75,7 +75,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[Option[String]]
 
-  protected def instantiateSolution(username: String, exercise: CompExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): DBSolType
+  protected def instantiateSolution(id: Int, username: String, exercise: CompExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): DBSolType
 
   protected def readSolution(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent]): Try[SolType]
 
@@ -87,10 +87,13 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
     s"""<div class="form-group">
        |  <a class="btn btn-primary btn-block" href="${controllers.routes.ExerciseController.exerciseList(up)}">Zu den Übungsaufgaben</a>
        |</div>
-       |
-       |<div class="form-group">
-       |  <a class="btn btn-success btn-block" href="${controllers.routes.ExerciseController.newExerciseForm(up)}">Neue Aufgabe erstellen</a>
-       |</div>""".stripMargin)
+       |""".stripMargin + {
+      if (userCanCreateExes) {
+        s"""<div class="form-group">
+           |  <a class="btn btn-success btn-block" href="${controllers.routes.ExerciseController.newExerciseForm(up)}">Neue Aufgabe erstellen</a>
+           |</div>""".stripMargin
+      } else ""
+    })
 
   override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map { stats =>
     views.html.admin.idExes.idExerciseAdminIndex(admin, stats, this, toolList)
@@ -118,7 +121,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
       // FIXME: check if user can solve this part!
 
       if (exercise.hasPart(exPart)) {
-        tables.futureUserCanSolvePartOfExercise(user.username, exercise.ex.id, exPart) map {
+        tables.futureUserCanSolvePartOfExercise(user.username, exercise.ex.id, exercise.ex.semanticVersion, exPart) map {
           enabled => Some(CallForExPart(exPart, controllers.routes.ExerciseController.exercise(up, exercise.ex.id, exPart.urlName), enabled))
         }
 

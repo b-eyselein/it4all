@@ -65,6 +65,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
       false
     }
 
+  override protected def copyDBSolType(sol: SqlSolution, newId: Int): SqlSolution = sol.copy(id = newId)
+
   // Column types
 
   private implicit val SqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
@@ -129,7 +131,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution: Rep[String] = column[String]("solution")
 
 
-    override def * : ProvenShape[SqlSolution] = (username, exerciseId, exSemVer, collectionId, collSemVer, solution, points, maxPoints) <> (SqlSolution.tupled, SqlSolution.unapply)
+    override def * : ProvenShape[SqlSolution] = (id, username, exerciseId, exSemVer, collectionId, collSemVer, solution,
+      points, maxPoints) <> (SqlSolution.tupled, SqlSolution.unapply)
 
   }
 

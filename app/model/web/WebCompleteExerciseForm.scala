@@ -12,12 +12,16 @@ object WebCompleteExerciseForm extends CompleteExerciseForm[WebExercise, WebComp
 
   case class HtmlCompleteTaskFormValues(taskId: Int, taskText: String, xpathQuery: String, textContent: Option[String])
 
-  def applyHtmlTask(exerciseId: Int, exSemVer: SemanticVersion, fvs: HtmlCompleteTaskFormValues): HtmlCompleteTask = HtmlCompleteTask(
-    HtmlTask(fvs.taskId, exerciseId, exSemVer, fvs.taskText, fvs.xpathQuery, fvs.textContent),
-    attributes = Seq[Attribute]() // TODO!
-  )
+  private def applyHtmlTask(exerciseId: Int, exSemVer: SemanticVersion): HtmlCompleteTaskFormValues => HtmlCompleteTask = {
+    case HtmlCompleteTaskFormValues(taskId, taskText, xpathQuery, textContent) =>
+      HtmlCompleteTask(
+        HtmlTask(taskId, exerciseId, exSemVer, taskText, xpathQuery, textContent),
+        attributes = Seq[Attribute]() // TODO!
+      )
+  }
 
-  def unapplyHtmlTask(htmlCompleteTask: HtmlCompleteTask): HtmlCompleteTaskFormValues = ???
+  private def unapplyHtmlTask(t: HtmlCompleteTask): HtmlCompleteTaskFormValues =
+    HtmlCompleteTaskFormValues(t.task.id, t.task.text, t.task.xpathQuery, t.task.textContent)
 
   private val htmlTasksMapping: Mapping[HtmlCompleteTaskFormValues] = mapping(
     idName -> number,
@@ -30,12 +34,16 @@ object WebCompleteExerciseForm extends CompleteExerciseForm[WebExercise, WebComp
 
   case class JsCompleteTaskFormValues(taskId: Int, taskText: String, xpathQuery: String, actionType: JsActionType, keysToSend: Option[String])
 
-  def applyJstask(exerciseId: Int, exSemVer: SemanticVersion, fvs: JsCompleteTaskFormValues): JsCompleteTask = JsCompleteTask(
-    JsTask(fvs.taskId, exerciseId, exSemVer, fvs.taskText, fvs.xpathQuery, fvs.actionType, fvs.keysToSend),
-    conditions = Seq[JsCondition]() // TODO!
-  )
+  private def applyJstask(exerciseId: Int, exSemVer: SemanticVersion): JsCompleteTaskFormValues => JsCompleteTask = {
+    case JsCompleteTaskFormValues(taskId, taskText, xpathQuery, actionType, keysToSend) =>
+      JsCompleteTask(
+        JsTask(taskId, exerciseId, exSemVer, taskText, xpathQuery, actionType, keysToSend),
+        conditions = Seq[JsCondition]() // TODO!
+      )
+  }
 
-  def unapplyJsTask(jsCompleteTask: JsCompleteTask): JsCompleteTaskFormValues = ???
+  private def unapplyJsTask(t: JsCompleteTask): JsCompleteTaskFormValues =
+    JsCompleteTaskFormValues(t.task.id, t.task.text, t.task.xpathQuery, t.task.actionType, t.task.keysToSend)
 
   private val jsTasksMapping = mapping(
     idName -> number,
@@ -45,25 +53,46 @@ object WebCompleteExerciseForm extends CompleteExerciseForm[WebExercise, WebComp
     keysToSendName -> optional(nonEmptyText)
   )(JsCompleteTaskFormValues.apply)(JsCompleteTaskFormValues.unapply)
 
+  // WebSampleSolution
+
+  final case class WebSampleSolutionFormValues(id: Int, htmlSample: Option[String], jsSample: Option[String], phpSample: Option[String])
+
+  private def applyWebSampleSolution(exId: Int, exSemVer: SemanticVersion): WebSampleSolutionFormValues => WebSampleSolution = {
+    case WebSampleSolutionFormValues(id, htmlSample, jsSample, phpSample) => WebSampleSolution(id, exId, exSemVer, htmlSample, jsSample, phpSample)
+  }
+
+  private def unapplyWebSampleSolution(t: WebSampleSolution): WebSampleSolutionFormValues =
+    WebSampleSolutionFormValues(t.id, t.htmlSample, t.jsSample, t.phpSample)
+
+  private val webSampleSolutionMapping: Mapping[WebSampleSolutionFormValues] = mapping(
+    idName -> number,
+    "htmlSample" -> optional(nonEmptyText),
+    "jsSample" -> optional(nonEmptyText),
+    "phpSample" -> optional(nonEmptyText)
+  )(WebSampleSolutionFormValues.apply)(WebSampleSolutionFormValues.unapply)
+
   // Complete exercise
 
-  override type FormData = (Int, SemanticVersion, String, String, String, ExerciseState, String, Option[String], Option[String], Option[String],
-    Seq[HtmlCompleteTaskFormValues], Seq[JsCompleteTaskFormValues])
+  override type FormData = (Int, SemanticVersion, String, String, String, ExerciseState, Option[String], Option[String], Option[String],
+    Seq[HtmlCompleteTaskFormValues], Seq[JsCompleteTaskFormValues], Seq[WebSampleSolutionFormValues])
 
-  def applyCompEx(id: Int, semVer: SemanticVersion, author: String, title: String, exText: String, status: ExerciseState, sampleSol: String,
-                  htmlText: Option[String], jsText: Option[String], phpText: Option[String],
-                  htmlCompleteTaskFormValues: Seq[HtmlCompleteTaskFormValues],
-                  jsCompleteTaskFormValues: Seq[JsCompleteTaskFormValues]): WebCompleteEx =
+  private def applyCompEx(id: Int, semVer: SemanticVersion, author: String, title: String, exText: String, status: ExerciseState,
+                          htmlText: Option[String], jsText: Option[String], phpText: Option[String],
+                          htmlCompleteTaskFormValues: Seq[HtmlCompleteTaskFormValues],
+                          jsCompleteTaskFormValues: Seq[JsCompleteTaskFormValues],
+                          webSampleFormValue: Seq[WebSampleSolutionFormValues]): WebCompleteEx =
     WebCompleteEx(
-      WebExercise(id, semVer, author, title, exText, status, sampleSol, htmlText, jsText, phpText),
-      htmlTasks = htmlCompleteTaskFormValues map (task => applyHtmlTask(id, semVer, task)),
-      jsTasks = jsCompleteTaskFormValues map (task => applyJstask(id, semVer, task))
+      WebExercise(id, semVer, author, title, exText, status, htmlText, jsText, phpText),
+      htmlTasks = htmlCompleteTaskFormValues map applyHtmlTask(id, semVer),
+      jsTasks = jsCompleteTaskFormValues map applyJstask(id, semVer),
+      sampleSolutions = webSampleFormValue map applyWebSampleSolution(id, semVer)
     )
 
-  override def unapplyCompEx(compEx: WebCompleteEx): Option[FormData] = Some((
+  override protected def unapplyCompEx(compEx: WebCompleteEx): Option[FormData] = Some((
     compEx.ex.id, compEx.ex.semanticVersion, compEx.ex.title, compEx.ex.author, compEx.ex.text, compEx.ex.state,
-    compEx.ex.sampleSolution, compEx.ex.htmlText, compEx.ex.jsText, compEx.ex.phpText,
-    compEx.htmlTasks map unapplyHtmlTask, compEx.jsTasks map unapplyJsTask
+    compEx.ex.htmlText, compEx.ex.jsText, compEx.ex.phpText,
+    compEx.htmlTasks map unapplyHtmlTask, compEx.jsTasks map unapplyJsTask,
+    compEx.sampleSolutions map unapplyWebSampleSolution
   ))
 
   override val format: Form[WebCompleteEx] = Form(
@@ -74,12 +103,15 @@ object WebCompleteExerciseForm extends CompleteExerciseForm[WebExercise, WebComp
       authorName -> nonEmptyText,
       textName -> nonEmptyText,
       statusName -> ExerciseState.formField,
-      sampleSolutionName -> nonEmptyText,
+
       htmlTextName -> optional(nonEmptyText),
       jsTextName -> optional(nonEmptyText),
       phpTextName -> optional(nonEmptyText),
+
       htmlTasksName -> seq(htmlTasksMapping),
-      jsTasksName -> seq(jsTasksMapping)
+      jsTasksName -> seq(jsTasksMapping),
+
+      samplesName -> seq(webSampleSolutionMapping)
     )(applyCompEx)(unapplyCompEx)
   )
 

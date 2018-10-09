@@ -1,9 +1,13 @@
-author: bje40dc
 id: 3
-semanticVersion: 1.0.0
+semanticVersion:
+  major: 1
+  minor: 0
+  patch: 0
 title: Hyperlinks und Bilder in HTML
+author: bje40dc
 text: Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.
 status: APPROVED
+
 htmlTasks:
 - id: 1
   text: >
@@ -36,3 +40,16 @@ htmlTasks:
   - {key: width, value: '250'}
   - {key: height, value: '188'}
   - {key: class, value: img-rounded}
+
+jsTasks: []
+
+phpTasks: []
+
+samples:
+- id: 1
+  htmlSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>

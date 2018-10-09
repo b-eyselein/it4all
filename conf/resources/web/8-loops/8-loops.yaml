@@ -1,14 +1,14 @@
 id: 8
-semanticVersion: 1.0.0
+semanticVersion:
+  major: 1
+  minor: 0
+  patch: 0
 title: Schleifen
 author: alg81dm
 text: Erstellen Sie ein einfaches Formular zur Berechnung der Fakultät einer Zahl n (alle Zahlen von 1 bis n multipliziert).
 htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
 status: APPROVED
-jsText: >
-  Implementieren Sie nun die Funktion <code>fakultaet()</code>, die bei Änderung des Felds aufgerufen wird. Sie soll
-  den Inhalt (value) des Eingabefeldes auslesen, die Fakultät davon berechnen und den Inhalt (textContent) des Elements
-  mit der ID 'result' auf das Ergebnis setzen
+
 htmlTasks:
 - id: 1
   text: Erstellen Sie ein Zahlen-Eingabefeld mit der ID 'number'. Bei Änderung des Feldes (onchange) soll die Funktion 'fakultaet()' aufgerufen werden.
@@ -19,6 +19,12 @@ htmlTasks:
 - id: 2
   text: Erstellen Sie einen Span mit der ID 'result', in dem das Ergebnis der Berechnung stehen soll. Zu Anfang soll dieser leer sein.
   xpathQuery: /html/body//span[@id='result']
+
+jsText: >
+  Implementieren Sie nun die Funktion <code>fakultaet()</code>, die bei Änderung des Felds aufgerufen wird. Sie soll
+  den Inhalt (value) des Eingabefeldes auslesen, die Fakultät davon berechnen und den Inhalt (textContent) des Elements
+  mit der ID 'result' auf das Ergebnis setzen
+
 jsTasks:
 - id: 1
   text: Fakultät von 1 muss 1 sein
@@ -60,3 +66,20 @@ jsTasks:
     xpathQuery: /html/body//span[@id='result']
     isPrecondition: false
     awaited: 3628800
+
+phpTasks: []
+
+samples:
+- id: 1
+  htmlSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>
+  jsSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>

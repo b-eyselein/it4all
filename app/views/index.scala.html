@@ -3,24 +3,11 @@
 @main("Startseite", Some(user)) {
     <div class="container">
 
-        @*<div class="card">*@
-            @*<div class="card-header">*@
-                @*<h2>Tipps &amp; Tricks</h2>*@
-            @*</div>*@
-            @*<div class="card-body">@model.TippHelper.getRandom.str</div>*@
-            @*<div class="card-footer">*@
-                @*<div class="btn-group d-flex">*@
-                    @*<button class="btn w-100" disabled>Vorheriger Tipp</button>*@
-                    @*<button class="btn w-100" disabled>Nächster Tipp</button>*@
-                @*</div>*@
-            @*</div>*@
-        @*</div>*@
+        <h2 class="text-center">Verfügbare Aufgabentypen</h2>
 
-        @*<hr>*@
+        <br>
 
-        <h2>Verfügbare Aufgabentypen</h2>
-
-        @for(tools <- toolList.grouped(3)) {
+        @for(tools <- toolList sortBy (_.toolname) grouped 3) {
             <div class="form-group">
                 <div class="row">
 
@@ -35,8 +22,6 @@
                 </div>
             </div>
         }
-
-        <hr>
 
     </div>
 }

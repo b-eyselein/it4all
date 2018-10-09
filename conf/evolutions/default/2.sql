@@ -37,6 +37,9 @@ DELETE IGNORE
 FROM web_solutions;
 
 DELETE IGNORE
+FROM web_sample_solutions;
+
+DELETE IGNORE
 FROM js_conditions;
 
 DELETE IGNORE
@@ -60,7 +63,13 @@ DELETE IGNORE
 FROM uml_solutions;
 
 DELETE IGNORE
+FROM uml_sample_solutions;
+
+DELETE IGNORE
 FROM uml_mappings;
+
+DELETE IGNORE
+FROM uml_to_ignore;
 
 DELETE IGNORE
 FROM uml_exercises;

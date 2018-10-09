@@ -36,18 +36,24 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Reading
 
   override def completeExForEx(ex: UmlExercise): Future[UmlCompleteEx] = for {
-    toIgnore <- db.run(umlToIgnore filter (_.exerciseId === ex.id) result)
-    mappings <- db.run(umlMappings filter (_.exerciseId === ex.id) result)
+    toIgnore <- db.run(umlToIgnore filter (i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion) result)
+    mappings <- db.run(umlMappings filter (m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion) result)
     samples <- db.run(umlSamples filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result)
   } yield UmlCompleteEx(ex, toIgnore map (_._3), mappings map (m => m._3 -> m._4) toMap, samples)
 
+  override protected def copyDBSolType(oldSol: UmlSolution, newId: Int): UmlSolution = oldSol.copy(id = newId)
 
   // Saving
 
-  override protected def saveExerciseRest(compEx: UmlCompleteEx): Future[Boolean] =
-    saveSeq[(String, String)](compEx.mappings toSeq, {
+  override protected def saveExerciseRest(compEx: UmlCompleteEx): Future[Boolean] = for {
+    toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.ex.id, compEx.ex.semanticVersion, i))))
+
+    mappingsSaved <- saveSeq[(String, String)](compEx.mappings toSeq, {
       case (key, value) => db.run(umlMappings += ((compEx.ex.id, compEx.ex.semanticVersion, key, value)))
     })
+
+    sampleSolutionsSaved <- saveSeq[UmlSampleSolution](compEx.sampleSolutions, sample => db.run(umlSamples += sample))
+  } yield toIngoreSaved && mappingsSaved && sampleSolutionsSaved
 
   // Implicit column types
 
@@ -67,11 +73,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class UmlExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "uml_exercises") {
 
-    //    def solutionAsJson: Rep[UmlClassDiagram] = column[UmlClassDiagram]("solution_json")
-
     def markedText: Rep[String] = column[String]("marked_text")
-
-    //    def toIgnore: Rep[String] = column[String]("to_ignore")
 
 
     override def * : ProvenShape[UmlExercise] = (id, semanticVersion, title, author, text, state, markedText) <> (UmlExercise.tupled, UmlExercise.unapply)
@@ -100,7 +102,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, mappingKey))
 
 
-    override def * : ProvenShape[(Int, SemanticVersion, String, String)] = (exerciseId, exSemVer, mappingKey, mappingValue) // <> (UmlMapping.tupled, UmlMapping.unapply)
+    override def * : ProvenShape[(Int, SemanticVersion, String, String)] = (exerciseId, exSemVer, mappingKey, mappingValue)
 
   }
 
@@ -123,7 +125,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution: Rep[UmlClassDiagram] = column[UmlClassDiagram]("solution")
 
 
-    override def * : ProvenShape[UmlSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (UmlSolution.tupled, UmlSolution.unapply)
+    override def * : ProvenShape[UmlSolution] = (id, username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (UmlSolution.tupled, UmlSolution.unapply)
 
   }
 

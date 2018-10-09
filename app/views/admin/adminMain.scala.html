@@ -12,7 +12,7 @@
                             if(maybeActiveToolMain.isEmpty) " list-group-item-primary"
                         }" href="@routes.AdminController.index()">Administrator Startseite</a>
 
-                        @for(tool <- toolList.groupedToolMains.toList) {
+                        @for(tool <- toolList.toolMains.sortBy(_.toolname).toList) {
                             <a class="list-group-item list-group-item-action@{
                                 if(maybeActiveToolMain contains tool) " list-group-item-primary" else ""
                             }" href="@routes.MainExerciseController.adminIndex(tool.urlPart)">@tool.toolname</a>

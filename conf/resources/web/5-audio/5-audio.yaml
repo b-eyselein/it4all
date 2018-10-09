@@ -1,9 +1,13 @@
-author: bje40dc
 id: 5
-semanticVersion: 1.0.0
+semanticVersion:
+  major: 1
+  minor: 0
+  patch: 0
 title: Audio in HTML 5
+author: bje40dc
 text: Erstellen Sie ein Audio-Element in Html5!
 status: APPROVED
+
 htmlTasks:
 - id: 1
   text: Erstellen Sie eine passende h1-Überschrift die 'Deutsche Nationalhymne' enthält.
@@ -23,3 +27,15 @@ htmlTasks:
   attributes:
   - {key: type, value: audio/ogg}
   - {key: src, value: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg'}
+
+jsTasks: []
+phpTasks: []
+
+samples:
+- id: 1
+  htmlSample: |
+    <!doctype html>
+    <html>
+    <head></head>
+    <body>TODO!<body>
+    </html>

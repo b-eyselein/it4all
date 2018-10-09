@@ -44,6 +44,8 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     samplesSaved <- saveSeq[RoseSampleSolution](compEx.sampleSolutions, rss => db.run(roseSamples insertOrUpdate rss))
   } yield inputsSaved && samplesSaved
 
+  override protected def copyDBSolType(oldSol: RoseSolution, newId: Int): RoseSolution = oldSol.copy(id = newId)
+
   // Implicit column types
 
   implicit val ProgLanguageColumnType: BaseColumnType[ProgLanguage] =
@@ -107,7 +109,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def solution: Rep[String] = column[String]("solution")
 
 
-    override def * : ProvenShape[RoseSolution] = (username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (RoseSolution.tupled, RoseSolution.unapply)
+    override def * : ProvenShape[RoseSolution] = (id, username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (RoseSolution.tupled, RoseSolution.unapply)
 
   }
 

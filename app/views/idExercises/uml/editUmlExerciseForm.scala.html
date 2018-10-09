@@ -87,7 +87,25 @@
                         </div>
                         <div class="card-body">
 
-                            <p class="text-danger">TODO: Attribute...</p>
+                            @helper.repeat(sampleField(UmlConsts.attributesName)) { attributeField =>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        @myhelpers.select(attributeField(UmlConsts.visibilityName),
+                                            model.uml.UmlVisibility.values.map(v => (v.entryName, v.representant)))
+
+                                    <button type="button" class="btn" title="Abstrakt">a</button>
+                                    <button type="button" class="btn" title="Statisch">s</button>
+                                    <button type="button" class="btn" title="Abgeleitet">d</button>
+
+                                        @myhelpers.input(attributeField(UmlConsts.nameName), placeHolder = Some("Name"))
+
+                                    <div class="input-group-text">:</div>
+
+                                        @myhelpers.select(attributeField(UmlConsts.typeName),
+                                            model.programming.ProgDataTypes.values.map(t => (t.entryName, t.typeName)))
+                                    </div>
+                                </div>
+                            }
 
                             <hr>
 

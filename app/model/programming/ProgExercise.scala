@@ -80,9 +80,8 @@ final case class ProgTestDataSolution(testData: Seq[CommitedTestData], language:
 
 }
 
-final case class DBProgSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
-                                solutionStr: String, language: ProgLanguage, points: Points, maxPoints: Points)
-  extends DBPartSolution[ProgExPart, ProgSolution] {
+final case class DBProgSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
+                                solutionStr: String, language: ProgLanguage, points: Points, maxPoints: Points) extends DBPartSolution[ProgExPart, ProgSolution] {
 
   val solution: ProgSolution = part match {
     case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)

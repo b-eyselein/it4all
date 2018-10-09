@@ -6,8 +6,10 @@ import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
+import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType, DBSolType <: DBPartSolution[PartType, SolType], PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
   extends IdExerciseTableDefs[Ex, CompEx, PartType, ReviewType] {
@@ -21,42 +23,52 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
 
   // Queries
 
-  def futureOldSolution(username: String, exerciseId: Int, part: PartType): Future[Option[DBSolType]] =
-    db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId && sol.part === part).result.headOption)
+  def futureOldSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: PartType): Future[Option[DBSolType]] = db.run(solTable
+    .filter { sol => sol.username === username && sol.exerciseId === exerciseId && sol.part === part && sol.exSemVer === exSemVer }
+    .sortBy(_.id.desc)
+    .result.headOption)
 
-  def futureSaveSolution(sol: DBSolType): Future[Boolean] =
-    db.run(solTable insertOrUpdate sol) map (_ => true) recover {
-      case e: Exception =>
-        Logger.error("Could not save solution", e)
-        false
+  protected def copyDBSolType(oldSol: DBSolType, newId: Int): DBSolType
+
+  def futureSaveSolution(sol: DBSolType): Future[Boolean] = {
+    val insertQuery = solTable returning solTable.map(_.id) into ((sol, id) => copyDBSolType(sol, id))
+
+    db.run(insertQuery += sol) transform {
+      case Success(_)     => Success(true)
+      case Failure(error) =>
+        Logger.error("Error while saving sample solution", error)
+        Success(false)
     }
+  }
 
   def futureOldSolutions(exerciseId: Int): Future[Seq[DBSolType]] = db.run(solTable.filter(_.exerciseId === exerciseId).result)
 
-  def futureUserCanSolvePartOfExercise(username: String, exerciseId: Int, part: PartType): Future[Boolean] = Future(true)
+  def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: PartType): Future[Boolean] = Future(true)
 
   // Abstract table definitions
 
   protected abstract class PartSolutionsTable(tag: Tag, name: String) extends Table[DBSolType](tag, name) {
 
-    def username = column[String]("username")
+    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-    def exerciseId = column[Int]("exercise_id")
+    def username: Rep[String] = column[String]("username")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def part = column[PartType]("part")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+
+    def part: Rep[PartType] = column[PartType]("part")
 
     def points = column[Points]("points")
 
-    def maxPoints = column[Points]("max_points")
+    def maxPoints: Rep[Points] = column[Points]("max_points")
 
 
-    def pk = primaryKey("pk", (username, exerciseId, exSemVer, part))
+    //    def pk: PrimaryKey = primaryKey("pk", (id, username, exerciseId, exSemVer, part))
 
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
-    def userFk = foreignKey("user_fk", username, users)(_.username)
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
   }
 
