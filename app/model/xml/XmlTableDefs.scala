@@ -3,13 +3,13 @@ package model.xml
 import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
+import model.xml.XmlConsts._
 import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
+import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
-import model.xml.XmlConsts._
 
 class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteEx, String, XmlSolution, XmlExPart, XmlExerciseReview] {
