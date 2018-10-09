@@ -14,7 +14,7 @@ grammarDescription: >
 samples:
 - id: 1
   grammar: |
-    <!ELEMENT breakfastmenu (food+)>
+    <!ELEMENT breakfast (food+)>
     <!ELEMENT food (name, price, description, calories)>
     <!ELEMENT name (#PCDATA)>
     <!ELEMENT price (#PCDATA)>

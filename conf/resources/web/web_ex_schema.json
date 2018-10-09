@@ -1,0 +1,105 @@
+{
+  "title": "WebExerciseCompleteEx",
+  "type": "object",
+  "properties": {
+    "id": {"type": "number"},
+    "semanticVersion": {"$ref": "#/definitions/SemanticVersion"},
+    "title": {"type": "string"},
+    "author": {"type": "string"},
+    "text": {"type": "string"},
+    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+    "htmlTasks": {
+      "type": "array", "items": {"$ref": "#/definitions/htmlTask"}
+    },
+    "jsTasks": {
+      "type": "array", "items": {"$ref": "#/definitions/jsTask"}
+    },
+    "phpTasks": {
+      "type": "array", "items": {"$ref": "#/definitions/phpTask"}
+    },
+    "samples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "number"},
+          "htmlSample": {"type": "string"},
+          "jsSample": {"type": "string"},
+          "phpSample": {"type": "string"}
+        },
+        "required": ["id"]
+      }
+    }
+  },
+  "required": [
+    "id", "semanticVersion", "title", "author", "text", "status",
+    "htmlTasks", "jsTasks", "phpTasks", "samples"
+  ],
+  "additionalItems": false,
+  "definitions": {
+    "SemanticVersion": {
+      "anyOf": [
+        {"type": "string"},
+        {
+          "type": "object",
+          "properties": {
+            "major": {"type": "number"},
+            "minor": {"type": "number"},
+            "patch": {"type": "number"}
+          }
+        }
+      ]
+    },
+    "htmlTask": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "text": {"type": "string"},
+        "xpathQuery": {"type": "string"},
+        "attributes": {
+          "type": "array", "items": {"$ref": "#/definitions/htmlAttribute"}
+        },
+        "textContent": {"type": "string"}
+      },
+      "required": ["id", "text", "xpathQuery"]
+    },
+    "htmlAttribute": {
+      "type": "object",
+      "properties": {
+        "key": {"type": "string"},
+        "value": {"type": "string"}
+      },
+      "required": ["key", "value"]
+    },
+    "jsTask": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "text": {"type": "string"},
+        "xpathQuery": {"type": "string"},
+        "actiontype": {
+          "type": "string",
+          "enum": ["CLICK", "FILLOUT"]
+        },
+        "conditions": {
+          "type": "array", "items": {"$ref": "#/definitions/jsCondition"}
+        }
+      },
+      "required": ["id", "text", "xpathQuery", "actiontype", "conditions"]
+    },
+    "jsCondition": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "xpathQuery": {"type": "string"},
+        "isPrecondition": {"type": "boolean"},
+        "awaited": {}
+      },
+      "required": ["id", "xpathQuery", "isPrecondition", "awaited"]
+    },
+    "phpTask": {
+      "type": "object",
+      "properties": {}
+    }
+  }
+}

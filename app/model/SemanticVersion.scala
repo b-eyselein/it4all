@@ -37,17 +37,6 @@ object SemanticVersionHelper {
       } yield SemanticVersion(major, minor, patch)
   }
 
-
-  //  object SemanticVersionFormatter extends Formatter[SemanticVersion] {
-  //
-  //    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SemanticVersion] =
-  //      Right(SemanticVersionHelper.DEFAULT) // TODO!
-  //
-  //    override def unbind(key: String, value: SemanticVersion): Map[String, String] = Map(CoreConsts.semanticVersionName -> value.asString)
-  //
-  //  }
-
-
   def tryParseFromString(str: String): Try[SemanticVersion] = str match {
     case semanticVersionRegex(maj, min, pat) => for {
       major <- Try(maj.toInt)
