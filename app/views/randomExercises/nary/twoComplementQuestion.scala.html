@@ -1,4 +1,7 @@
-@(user: model.User, startingNumber: model.nary.NAryNumber, verbose: Boolean, toolMain: model.nary.NaryToolMain)
+@import model.nary.{NumberBase, NAryNumber, NaryToolMain, NaryExParts, NaryConsts}
+
+@(user: model.User, startingNumber: NAryNumber, verbose: Boolean, toolMain: NaryToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 
 @title = @{
@@ -9,9 +12,7 @@
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
     <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/nary/twoComp.js")');
-    </script>
+    <script>SystemJS.import('@routes.Assets.versioned("app/nary/twoComp.js")');</script>
 
     <style>
             textarea {
@@ -29,8 +30,7 @@
 
             <div class="col-sm-6">
 
-                <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
-                <input hidden id="exerciseType" value="@model.nary.NaryExParts.TwoComplementExPart.urlName" title="hidden">
+                @helper.CSRF.formField
 
                 <p><em class="text-info">
                     Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em></p>
@@ -38,7 +38,7 @@
                 <div class="form-group">
                     <div class="input-group">
                         <input value="@startingNumber" type="number" title="Vorgegebene Zahl" readonly class="form-control text-right"
-                        name="@model.nary.NaryConsts.valueName" id="@model.nary.NaryConsts.valueName">
+                        name="@NaryConsts.valueName" id="@NaryConsts.valueName">
                         <div class="input-group-append">
                             <span class="input-group-text">@startingNumber.base.dispBase</span>
                         </div>
@@ -54,9 +54,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">--></span>
                                 </div>
-                                <input pattern="@model.nary.NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                                class="form-control text-right" name="@model.nary.NaryConsts.BinaryAbs"
-                                id="@model.nary.NaryConsts.BinaryAbs" placeholder="Ihre Lösung" required>
+                                <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus class="form-control text-right"
+                                name="@NaryConsts.BinaryAbs" id="@NaryConsts.BinaryAbs" placeholder="Ihre Lösung" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text"><sub>2</sub></span>
                                 </div>
@@ -72,9 +71,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">--></span>
                                 </div>
-                                <input pattern="@model.nary.NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                                class="form-control text-right" name="@model.nary.NaryConsts.InvertedAbs"
-                                id="@model.nary.NaryConsts.InvertedAbs" placeholder="Ihre Lösung" required>
+                                <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus class="form-control text-right"
+                                name="@NaryConsts.InvertedAbs" id="@NaryConsts.InvertedAbs" placeholder="Ihre Lösung" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text"><sub>2</sub></span>
                                 </div>
@@ -91,9 +89,8 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">--></span>
                             </div>
-                            <input pattern="@model.nary.NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                            class="form-control text-right" name="@model.nary.NaryConsts.solutionName"
-                            id="@model.nary.NaryConsts.solutionName" placeholder="Ihre Lösung" required>
+                            <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus class="form-control text-right"
+                            name="@NaryConsts.solutionName" id="@NaryConsts.solutionName" placeholder="Ihre Lösung" required>
                             <div class="input-group-append">
                                 <span class="input-group-text"><sub>2</sub></span>
                             </div>
@@ -105,8 +102,7 @@
 
                 <div class="btn-group d-flex">
                     <button id="testBtn" class="btn btn-primary w-100">Testen</button>
-                    <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart,
-                        model.nary.NaryExParts.TwoComplementExPart.urlName)?verbose=@verbose"
+                    <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, NaryExParts.TwoComplementExPart.urlName)?verbose=@verbose"
                     class="btn btn-secondary  w-100">Nächste Aufgabe</a>
                 </div>
 
@@ -121,7 +117,7 @@
 
         <em class="text-info">Notizen werden für die Korrektur nicht beachtet.</em>
 
-        <textarea title="Platz für Notizen" placeholder="Platz für Notizen" style="resize: none;" class="form-control" rows="10"></textarea>
+        <textarea title="Platz für Notizen" placeholder="Platz für Notizen" class="form-control" rows="10"></textarea>
 
     </div>
 }

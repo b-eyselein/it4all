@@ -40,7 +40,7 @@ object BoolTableRow {
       }
     }
 
-    go(variables.sorted.toList, Seq[BoolTableRow]())
+    go(variables.sorted.reverse.toList, Seq[BoolTableRow]())
   }
 
   def getNF(assignments: Seq[BoolTableRow], takePos: Boolean, innerF: (ScalaNode, ScalaNode) => ScalaNode, outerF: (ScalaNode, ScalaNode) => ScalaNode): ScalaNode =

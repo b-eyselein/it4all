@@ -1,8 +1,9 @@
 package model.toolMains
 
 import model.{ExPart, User}
+import play.api.i18n.MessagesProvider
 import play.api.libs.json.JsValue
-import play.api.mvc.{AnyContent, Call, Request}
+import play.api.mvc.{AnyContent, Call, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,7 +22,8 @@ abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: Execu
 
   // Views
 
-  def newExercise(user: User, exPart: PartType, option: Map[String, Seq[String]]): Html
+  def newExercise(user: User, exPart: PartType, option: Map[String, Seq[String]])
+                 (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
   override def adminIndexView(admin: User, toolList: ToolList): Future[Html] =
     Future(views.html.admin.randomExes.randomExerciseAdminIndex(admin, statistics = Html(""), this, toolList))

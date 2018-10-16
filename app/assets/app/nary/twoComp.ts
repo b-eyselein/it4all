@@ -40,6 +40,10 @@ function testSol(): void {
             value: parseInt($('#value').val() as string),
             solution: solution.val()
         }),
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         async: true,
         success: onAjaxSuccess
     });

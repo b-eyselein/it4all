@@ -1,5 +1,7 @@
-@(user: model.User, firstSummand: model.nary.NAryNumber, secondSummand: model.nary.NAryNumber, base: model.nary.NumberBase, requestedBase: String, toolMain: model.nary.NaryToolMain)
+@import model.nary.{NAryNumber, NumberBase, NaryToolMain, NaryExParts, NaryConsts}
 
+@(user: model.User, firstSummand: NAryNumber, secondSummand: NAryNumber, base: NumberBase, requestedBase: String, toolMain: NaryToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     "Zahlensysteme: Addition"
@@ -9,9 +11,7 @@
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
     <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/nary/naryAddition.js")');
-    </script>
+    <script>SystemJS.import('@routes.Assets.versioned("app/nary/naryAddition.js")');</script>
 }
 
 @main(title, Some(user), scripts) {
@@ -23,15 +23,14 @@
 
             <div class="col-sm-6">
 
-                <input hidden id="toolType" value="@toolMain.urlPart" title="hidden">
-                <input hidden id="exerciseType" value="@model.nary.NaryExParts.NaryAdditionExPart.urlName" title="hidden">
+                @helper.CSRF.formField
 
                 <p><em class="text-info">
                     Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em></p>
 
                 <div class="form-group">
                     <div class="input-group">
-                        <input title="Erster Summand" value="@firstSummand" id="firstSummand" readonly class="form-control text-right" name="@model.nary.NaryConsts.FirstSummand">
+                        <input title="Erster Summand" value="@firstSummand" id="firstSummand" readonly class="form-control text-right" name="@NaryConsts.FirstSummand">
                         <div class="input-group-append">
                             <span class="input-group-text"><sub>@base.base</sub></span>
                         </div>
@@ -43,7 +42,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">+</span>
                         </div>
-                        <input title="Zweiter Summand" value="@secondSummand" id="secondSummand" readonly class="form-control text-right" name="@model.nary.NaryConsts.SecondSummand">
+                        <input title="Zweiter Summand" value="@secondSummand" id="secondSummand" readonly class="form-control text-right" name="@NaryConsts.SecondSummand">
                         <div class="input-group-append">
                             <span class="input-group-text"><sub>@base.base</sub></span>
                         </div>
@@ -57,7 +56,7 @@
                         <input pattern="@base.htmlPattern" id="solution" autocomplete="off"
                         style="direction: rtl;
                             unicode-bidi: bidi-override;" autofocus
-                        class="form-control text-right" name="@model.nary.NaryConsts.learnerSolutionName" placeholder="Ihre Lösung" required>
+                        class="form-control text-right" name="@NaryConsts.learnerSolutionName" placeholder="Ihre Lösung" required>
                         <div class="input-group-append">
                             <span class="input-group-text"><sub>@base.base</sub></span>
                         </div>
@@ -69,8 +68,7 @@
 
                 <div class="btn-group d-flex">
                     <button id="testBtn" class="btn btn-primary w-100">Testen</button>
-                    <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart,
-                        model.nary.NaryExParts.NaryAdditionExPart.urlName)?base=@requestedBase"
+                    <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, NaryExParts.NaryAdditionExPart.urlName)?base=@requestedBase"
                     class="btn btn-secondary w-100">Nächste Aufgabe</a>
                 </div>
 

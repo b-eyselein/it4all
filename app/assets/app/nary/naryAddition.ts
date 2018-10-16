@@ -2,6 +2,13 @@ import * as $ from 'jquery';
 
 let testBtn: JQuery, solutionInput: JQuery;
 
+interface NaryAdditionSolution {
+    base: number,
+    summand1: string,
+    summand2: string,
+    solution: string
+}
+
 interface NaryAdditionResult {
     correct: boolean
 }
@@ -35,6 +42,10 @@ function testSol(): void {
             solution: (solutionInput.val() as string).split('').reverse().join('')
         }),
         async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: onNaryAdditionSuccess,
         error: onNaryAdditionError
     });

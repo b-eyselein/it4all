@@ -1,4 +1,4 @@
-@(user: model.User, question: model.bool.FilloutQuestion, toolMain: model.bool.BoolToolMain)
+@(user: model.User, question: model.bool.FilloutQuestion, toolMain: model.bool.BoolToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @variables = @{
     question.variables.toList.sortBy(_.variable)
@@ -8,9 +8,7 @@
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
     <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/bool/boolFillout.js")');
-    </script>
+    <script>SystemJS.import('@routes.Assets.versioned("app/bool/boolFillout.js")');</script>
 }
 
 @title = @{
@@ -56,6 +54,8 @@
                     }
                     </tbody>
                 </table>
+
+                @helper.CSRF.formField
 
                 <div class="btn-group d-flex">
                     <button id="testBtn" class="btn btn-primary w-100" data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, model.bool.BoolExParts.TableFillout.urlName)">

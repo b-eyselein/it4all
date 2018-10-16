@@ -6,8 +6,9 @@ import model.nary.NaryConsts._
 import model.toolMains.{RandomExerciseToolMain, ToolState}
 import model.{Consts, User}
 import play.api.Logger
+import play.api.i18n.MessagesProvider
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
@@ -38,7 +39,8 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
   override def exercisesOverviewForIndex: Html =
     views.html.randomExercises.nary.naryOverview(this)
 
-  override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]]): Html = exPart match {
+  override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]])
+                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = exPart match {
     case NaryExParts.NaryAdditionExPart =>
 
       val requestedBaseStr: String = options.getOrElse("base", Seq("RANDOM")).mkString
@@ -98,7 +100,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
       ???
     case Some(jsValue) =>
       NarySolutionJsonFormat.readSolutionFromJson(exPart, jsValue) match {
-        case JsError(jsErrors)                                 =>
+        case JsError(jsErrors)                               =>
           jsErrors.foreach(println)
           Json.obj(errorName -> "TODO!")
         case JsSuccess(maybeSolution: Option[NAryResult], _) => maybeSolution match {

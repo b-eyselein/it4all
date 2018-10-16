@@ -35,6 +35,10 @@ function testSol(): void {
             solution: solutionInput.val()
         }),
         async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         success: onNaryConversionSuccess,
         error: onNaryConversionError
     });

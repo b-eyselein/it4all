@@ -7,8 +7,9 @@ import model.bool.BooleanQuestion._
 import model.core.result.EvaluationResult
 import model.toolMains.{RandomExerciseToolMain, ToolState}
 import play.api.Logger
+import play.api.i18n.MessagesProvider
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
@@ -46,7 +47,8 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
        |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, BoolExParts.FormulaCreation.urlName)}" class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
        |</div>""".stripMargin)
 
-  override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]]): Html = exType match {
+  override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]])
+                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = exType match {
     case BoolExParts.FormulaCreation => views.html.randomExercises.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
     case BoolExParts.TableFillout    => views.html.randomExercises.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
   }

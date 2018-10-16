@@ -1,16 +1,16 @@
-@(user: model.User, question: model.bool.CreationQuestion, toolMain: model.bool.BoolToolMain)
+@import model.bool.{CreationQuestion, BoolToolMain, BoolConsts, BoolExParts}
+
+@(user: model.User, question: CreationQuestion, toolMain: BoolToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @variables = @{
-    question.variables ++ Option(model.bool.BoolConsts.SolVariable)
+    question.variables.toSeq ++ Option(BoolConsts.SolVariable)
 }
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
     <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>
-            SystemJS.import('@routes.Assets.versioned("app/bool/boolCreation.js")');
-    </script>
+    <script>SystemJS.import('@routes.Assets.versioned("app/bool/boolCreation.js")');</script>
 }
 
 @title = @{
@@ -36,7 +36,7 @@
                             @for(variable <- variables) {
                                 <th class="text-center">@variable</th>
                             }
-                            <th class="text-center" id="learnerFormula">@model.bool.BoolConsts.SolVariable &#39;</th>
+                            <th class="text-center" id="learnerFormula">@BoolConsts.SolVariable &#39;</th>
                         </tr>
                     </thead>
                     <tbody id="valueTableBody">
@@ -56,28 +56,27 @@
         </div>
 
         <div class="form-group row">
-            <label class="col-form-label col-sm-1" for="@model.bool.BoolConsts.LearnerSol">
-                @model.bool.BoolConsts.SolVariable = </label>
+            <label class="col-form-label col-sm-1" for="@BoolConsts.LearnerSol">@BoolConsts.SolVariable = </label>
             <div class="col-sm-11">
-                <input class="form-control" name="@model.bool.BoolConsts.LearnerSol" id="@model.bool.BoolConsts.LearnerSol" placeholder="Ihre Lösung"
+                <input class="form-control" name="@BoolConsts.LearnerSol" id="@BoolConsts.LearnerSol" placeholder="Ihre Lösung"
                 autocomplete="off" required>
             </div>
         </div>
+
+        @helper.CSRF.formField
 
         <div class="btn-group d-flex">
             <button class="btn btn-info w-100" data-toggle="modal" data-target="#infoModal">
                 <span class="octicon octicon-info"></span>
             </button>
 
-            <button data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart,
-                model.bool.BoolExParts.FormulaCreation.urlName)"
+            <button data-url="@routes.RandomExerciseController.correctLive(toolMain.urlPart, BoolExParts.FormulaCreation.urlName)"
             class="btn btn-primary w-100" id="testBtn">Prüfen</button>
 
             <button class="btn btn-success w-100" id="sampleSolBtn">Zeige Musterlösung</button>
 
-            <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart,
-                model.bool.BoolExParts.FormulaCreation.urlName)" class="btn btn-secondary  w-100">
-                Nächste Aufgabe</a>
+            <a href="@routes.RandomExerciseController.newExercise(toolMain.urlPart, BoolExParts.FormulaCreation.urlName)"
+            class="btn btn-secondary w-100">Nächste Aufgabe</a>
         </div>
 
         <div id="messageDiv"></div>
