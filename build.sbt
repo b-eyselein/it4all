@@ -101,7 +101,9 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "codemirror" % "5.40.0", "org.webjars.npm" % "types__codemirror" % "0.0.59",
 
-  "org.webjars.npm" % "graphlib" % "2.1.5", "org.webjars.npm" % "types__graphlib" % "2.1.4"
+  "org.webjars.npm" % "graphlib" % "2.1.5", "org.webjars.npm" % "types__graphlib" % "2.1.4",
+
+  //"org.webjars.npm" % "node-blockly" % "1.0.35"
 
   //  "org.webjars.npm" % "autosize" % "4.0.0",
 

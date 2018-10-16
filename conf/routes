@@ -167,6 +167,9 @@ POST          /:toolType/submitEvaluation                                   cont
 
 GET           /:toolType/admin/index                                        controllers.MainExerciseController.adminIndex(toolType: String)
 
+# Blockly test
+GET           /blockly                                                      controllers.Application.blocklyTest
+
 # Evaluation
 GET           /eval/stats                                                   controllers.AdminController.evaluationResults
 

@@ -13,6 +13,10 @@ import scala.concurrent.ExecutionContext
 class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, toolList: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
-  def index: EssentialAction = withUser { user => implicit request => Ok(views.html.index(user, toolList.toolMains.toSeq)) }
+  def index: EssentialAction = withUser { user => implicit request => Ok(views.html.index(user, toolList.toolMains)) }
+
+  def blocklyTest: EssentialAction = withUser { user =>
+    implicit request => Ok(views.html.blocklyTest(user))
+  }
 
 }
