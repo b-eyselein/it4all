@@ -6,6 +6,9 @@ version := "0.9.0"
 
 scalaVersion := "2.12.6"
 
+// Compile to java 8 for debian...
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+
 scalacOptions ++= Seq(
   //  "-Xfatal-warnings",
   "-Xfuture",
