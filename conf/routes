@@ -25,7 +25,9 @@ PUT           /users/changeRole                                             cont
 GET           /courses                                                      controllers.AdminController.courses
 
 # LTI Test
++ nocsrf
 GET           /lti                                                          controllers.LTIController.honeypot
++ nocsrf
 POST          /lti                                                          controllers.LTIController.honeypot
 
 # Random tools
