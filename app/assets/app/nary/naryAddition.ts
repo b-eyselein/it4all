@@ -18,8 +18,10 @@ function onNaryAdditionSuccess(response: NaryAdditionResult): void {
 
     if (response.correct) {
         solutionInput.removeClass('is-invalid').addClass('is-valid');
+        $('#correctnessHook').html('<h1 class="text-center">&check;</h1>');
     } else {
         solutionInput.removeClass('is-valid').addClass('is-invalid');
+        $('#correctnessHook').html('');
     }
 }
 
@@ -29,18 +31,29 @@ function onNaryAdditionError(jqXHR): void {
 }
 
 function testSol(): void {
+
+    const solution = (solutionInput.val() as string).split('').reverse().join('');
+
+    if (solution === '') {
+        alert('Sie können keine leere Lösung abgeben!');
+        return;
+    }
+
     testBtn.prop('disabled', true);
+
+    const completeSolution: NaryAdditionSolution = {
+        summand1: $('#firstSummand').val() as string,
+        summand2: $('#secondSummand').val() as string,
+        base: $('#base').data('base'),
+        solution
+    };
+
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
         url: testBtn.data('url'),
-        data: JSON.stringify({
-            summand1: $('#firstSummand').val(),
-            summand2: $('#secondSummand').val(),
-            base: $('#base').data('base'),
-            solution: (solutionInput.val() as string).split('').reverse().join('')
-        }),
+        data: JSON.stringify(completeSolution),
         async: true,
         beforeSend: (xhr) => {
             const token = $('input[name="csrfToken"]').val() as string;

@@ -23,9 +23,9 @@
 
 @main(title, Some(user), scripts) {
     <div class="container">
-        <h1>@title
+        <h3 class="text-center">@title
             vom <span id="@NaryConsts.StartingNumBase" data-base="@startingNumber.base">@startingNumber.base.systemName</span>
-            in das <span id="@NaryConsts.TargetNumBase" data-base="@toNB">@toNB.systemName</span></h1>
+            in das <span id="@NaryConsts.TargetNumBase" data-base="@toNB">@toNB.systemName</span></h3>
 
         <div class="row">
             <div class="col-sm-3"></div>
@@ -34,9 +34,7 @@
 
                 @helper.CSRF.formField
 
-                <p>
-                    <em class="text-info">Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em>
-                </p>
+                <em class="text-info">Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em>
 
                 <div class="form-group">
                     <div class="input-group">
@@ -59,6 +57,8 @@
                     </div>
                 </div>
 
+                <div id="correctnessHook"></div>
+
                 <hr>
 
                 <div class="btn-group d-flex">
@@ -75,7 +75,7 @@
 
         <hr>
 
-        <h3>Platz für Notizen</h3>
+        <h4 class="text-center">Platz für Notizen</h4>
 
         <em class="text-info">Notizen werden für die Korrektur nicht beachtet.</em>
 

@@ -35,10 +35,15 @@ function renderBoolCreationSuccess(response: BoolCreationSuccess): void {
     for (const assignment of response.assignments) {
         let elem = $('#' + assignment.id);
         elem.html(assignment.learnerVal ? '1' : '0');
+
+        console.info(elem.parent());
+
         if (assignment.correct) {
             elem.removeClass('table-danger').addClass('table-success');
+            elem.parent().find('.correctnessHook').html('&check;');
         } else {
             elem.removeClass('table-success').addClass('table-danger');
+            elem.parent().find('.correctnessHook').html('');
         }
     }
 }

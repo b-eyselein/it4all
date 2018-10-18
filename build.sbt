@@ -68,7 +68,6 @@ wartremoverExcluded += sourceManaged.value
 wartremoverExcluded += (target in TwirlKeys.compileTemplates).value
 
 
-
 updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true)
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
@@ -149,7 +148,7 @@ libraryDependencies ++= Seq(
   "com.github.jsqlparser" % "jsqlparser" % "1.2",
 
   // Programming
-  "com.spotify" % "docker-client" % "8.12.0",
+  "com.spotify" % "docker-client" % "8.14.1",
 
   // Apache POI for Excel
   "org.apache.poi" % "poi" % "3.17",

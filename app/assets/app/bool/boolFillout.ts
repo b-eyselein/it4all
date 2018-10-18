@@ -40,8 +40,10 @@ function onFilloutCorrectionSuccess(respone: BoolFilloutResult): void {
 
         if (row.learner === row.sample) {
             elem.removeClass('table-danger').addClass('table-success');
+            elem.find('.correctnessHook').html('&check;');
         } else {
             elem.removeClass('table-success').addClass('table-danger');
+            elem.find('.correctnessHook').html('');
         }
     }
 }

@@ -37,6 +37,7 @@
                                 <th class="text-center">@variable</th>
                             }
                             <th class="text-center" id="learnerFormula">@BoolConsts.SolVariable &#39;</th>
+                            <th>&nbsp;</th>
                         </tr>
                     </thead>
                     <tbody id="valueTableBody">
@@ -46,6 +47,7 @@
                                 <td class="text-center" data-variable="@variable" data-value="@assignment(variable)">@assignment.asChar(variable)</td>
                             }
                         <td class="text-center" id="@assignment.identifier">--</td>
+                        <td class="text-center correctnessHook">&nbsp;</td>
                         </tr>
                     }
                     </tbody>
