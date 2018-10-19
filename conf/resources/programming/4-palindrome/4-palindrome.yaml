@@ -16,12 +16,12 @@ outputType: boolean
 sampleSolutions:
 - language: PYTHON_3
   base: |
-    def is_palindrome(word):
-      return False
+    def is_palindrome(word: str) -> bool:
+        return False
   sample: |
-    def is_palindrome(word):
-      lower = word.lower()
-      return lower == lower[::-1]
+    def is_palindrome(word: str) -> bool:
+        lower = word.lower()
+        return lower == lower[::-1]
 
 sampleTestData:
 - id: 1

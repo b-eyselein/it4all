@@ -15,15 +15,19 @@ outputType: string
 sampleSolutions:
 - language: PYTHON_3
   base: |
-    def longest_string(my_list):
-      return ''
+    from typing import List
+
+    def longest_string(my_list: List[str]) -> str:
+        return ''
   sample: |
-    def longest_string(my_list):
-      longest = ""
-      for string in my_list:
-        if len(string) > len(longest):
-          longest = string
-      return longest
+    from typing import List
+
+    def longest_string(my_list: List[str]) -> str:
+        longest = ""
+        for string in my_list:
+            if len(string) > len(longest):
+                longest = string
+        return longest
 sampleTestData:
 - id: 1
   inputs: []

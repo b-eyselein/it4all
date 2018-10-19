@@ -16,15 +16,19 @@ outputType: float
 sampleSolutions:
 - language: PYTHON_3
   base: |
-    def average(my_list):
-      return 0
+    from typing import List
+
+    def average(my_list: List[int]) -> float:
+        return 0
   sample: |
-    def average(my_list):
-      length = len(my_list)
-      if length == 0:
-          return "Fehler"
-      else:
-          return sum(my_list) / length
+    from typing import List
+
+    def average(my_list: List[int]) -> float:
+        length = len(my_list)
+        if length == 0:
+            return 0
+        else:
+            return sum(my_list) / length
 
 sampleTestData:
 - id: 1

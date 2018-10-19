@@ -1,13 +1,13 @@
 package model.programming
 
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 
 import model.MyYamlProtocol._
 import model.core.FileUtils
 import model.programming.ProgConsts._
 import model.uml.UmlClassDiagram
 import model.uml.UmlExYamlProtocol.UmlSampleSolutionYamlFormat
-import model.{BaseValues, MyYamlProtocol, SemanticVersionHelper, YamlArr, YamlObj}
+import model.{BaseValues, MyYamlProtocol, SemanticVersion, SemanticVersionHelper, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -16,13 +16,13 @@ import scala.util.Try
 
 object ProgExYamlProtocol extends MyYamlProtocol {
 
+  val basePath: Path = Paths.get("conf", "resources", "programming")
+
   implicit object ProgExYamlFormat extends MyYamlObjectFormat[ProgCompleteEx] with FileUtils {
 
     override def readObject(yamlObject: YamlObject): Try[ProgCompleteEx] = for {
       baseValues <- readBaseValues(yamlObject)
       folderIdentifier <- yamlObject.stringField(identifierName)
-
-      base <- readAll(Paths.get("conf", "resources", "programming", baseValues.id + "-" + folderIdentifier, "base.py"))
 
       functionname <- yamlObject.stringField(functionNameName)
       indentLevel <- yamlObject.intField(indentLevelName)
@@ -30,7 +30,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       baseData <- yamlObject.optJsonField(baseDataName)
 
       inputTypes <- yamlObject.arrayField(inputTypesName, ProgInputTypeYamlFormat(baseValues).read)
-      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(baseValues).read)
+      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(baseValues.id, baseValues.semanticVersion, folderIdentifier).read)
       sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat(baseValues).read)
 
       maybeClassDiagramPart <- yamlObject.optField(classDiagramPartName, UmlClassDiagPartYamlFormat(baseValues).read)
@@ -49,20 +49,23 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
       ProgCompleteEx(
         ProgExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-          folderIdentifier, base, functionname, indentLevel, outputType, baseData),
+          folderIdentifier, functionname, indentLevel, outputType, baseData),
         inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
       )
     }
 
-    override def write(completeEx: ProgCompleteEx): YamlObject = YamlObject(
-      writeBaseValues(completeEx.ex) ++
-        Map(
-          YamlString(functionNameName) -> YamlString(completeEx.ex.functionname),
-          YamlString(inputTypesName) -> YamlArr(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName))),
-          YamlString(sampleSolutionsName) -> YamlArr(completeEx.sampleSolutions map ProgSampleSolutionYamlFormat(completeEx.ex.baseValues).write),
-          YamlString(sampleTestDataName) -> YamlArr(completeEx.sampleTestData map ProgSampleTestdataYamlFormat(completeEx.ex.baseValues).write)
-        )
-    )
+    override def write(completeEx: ProgCompleteEx): YamlObject = {
+      val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(completeEx.ex.baseValues.id, completeEx.ex.semanticVersion, completeEx.ex.folderIdentifier)
+      YamlObject(
+        writeBaseValues(completeEx.ex) ++
+          Map(
+            YamlString(functionNameName) -> YamlString(completeEx.ex.functionname),
+            YamlString(inputTypesName) -> YamlArr(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName))),
+            YamlString(sampleSolutionsName) -> YamlArr(completeEx.sampleSolutions map progSampleSolYamlFormat.write),
+            YamlString(sampleTestDataName) -> YamlArr(completeEx.sampleTestData map ProgSampleTestdataYamlFormat(completeEx.ex.baseValues).write)
+          )
+      )
+    }
 
   }
 
@@ -90,13 +93,13 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  final case class ProgSampleSolutionYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[ProgSampleSolution] {
+  final case class ProgSampleSolutionYamlFormat(exId: Int, exSemVer: SemanticVersion, folderIdentifier: String) extends MyYamlObjectFormat[ProgSampleSolution] with FileUtils {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)
       base <- yamlObject.stringField(baseName)
       sample <- yamlObject.stringField(sampleName)
-    } yield ProgSampleSolution(baseValues.id, baseValues.semanticVersion, language, base, sample)
+    } yield ProgSampleSolution(exId, exSemVer, language, base, sample)
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
       languageName -> pss.language.entryName,

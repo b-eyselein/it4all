@@ -67,12 +67,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     (per => Some((per.difficulty, per.maybeDuration)))
   )
 
-  // Regexes
-
-  private val implExtractorRegex = "# \\{12?\\}([\\S\\s]*)# \\{12?\\}".r
-
-  private val actDiagExtractorRegex = "# \\{1?2\\}([\\S\\s]*)# \\{1?2\\}".r
-
   // Reading solution from requests
 
   override protected def readSolution(user: User, exercise: ProgCompleteEx, part: ProgExPart)(implicit request: Request[AnyContent]): Try[ProgSolution] =
@@ -91,7 +85,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
     ProgExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
-      folderIdentifier = "", base = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
+      folderIdentifier = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
     inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[SampleTestData](), maybeClassDiagramPart = None
   )
 
@@ -107,14 +101,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def correctEx(user: User, sol: SolType, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] = {
 
-    val (implementation, testData) = sol match {
-      case ProgTestDataSolution(td, _) => (exercise.sampleSolutions.head.solution, td)
-
-      case ProgStringSolution(solution, _) => part match {
-        case ProgExParts.Implementation => (implExtractorRegex.replaceFirstIn(exercise.ex.base, solution), exercise.sampleTestData)
-
-        case ProgExParts.ActivityDiagram => (actDiagExtractorRegex.replaceFirstIn(exercise.ex.base, exercise.addIndent(solution)), exercise.sampleTestData)
-      }
+    val (implementation: String, testData: Seq[TestData]) = sol match {
+      case ProgTestDataSolution(td, _)        => (exercise.sampleSolutions.head.solution, td)
+      case ProgStringSolution(solution, lang) => (solution, exercise.sampleTestData)
     }
 
     ProgCorrector.correct(user, exercise, sol.language, implementation, testData, toolMain = this) match {
@@ -134,25 +123,36 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   // Views
 
   override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart, maybeOldSolution: Option[DBProgSolution])
-                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
-    case ProgExParts.TestdataCreation =>
-      val oldTestData: Seq[CommitedTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[CommitedTestData]())
-      views.html.idExercises.programming.testDataCreation(user, exercise, oldTestData, this)
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
-    case ProgExParts.Implementation =>
-      val declaration: String = maybeOldSolution map (_.solution) map {
-        case _: ProgTestDataSolution => ""
-        case pss: ProgStringSolution => pss.solution
-      } getOrElse {
-        //        FIXME: remove comments like '# {2}'!
-        implExtractorRegex.findFirstMatchIn(exercise.ex.base) map (_.group(1).trim()) getOrElse exercise.ex.base
-      }
+    // FIXME: how to get language? ==> GET param?
+    val language: ProgLanguage = ProgLanguages.PYTHON_3
 
-      views.html.idExercises.programming.progExercise(user, this, exercise, declaration, ProgExParts.Implementation)
+    part match {
+      case ProgExParts.TestdataCreation =>
+        val oldTestData: Seq[CommitedTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[CommitedTestData]())
+        views.html.idExercises.programming.testDataCreation(user, exercise, oldTestData, this)
 
-    case ProgExParts.ActivityDiagram =>
-      // TODO: use old soluton!
-      views.html.idExercises.umlActivity.activityDrawing.render(user, exercise, language = ProgLanguages.STANDARD_LANG, toolObject = this)
+      case ProgExParts.Implementation =>
+
+        val declaration: String = maybeOldSolution map (_.solution) map {
+          case _: ProgTestDataSolution => ""
+          case pss: ProgStringSolution => pss.solution
+        } getOrElse {
+          exercise.sampleSolutions find (_.language == language) map (_.base) getOrElse ""
+        }
+
+        views.html.idExercises.programming.progExercise(user, this, exercise, declaration, ProgExParts.Implementation)
+
+      case ProgExParts.ActivityDiagram =>
+        // TODO: use old soluton!
+        val definitionRest: String = exercise.sampleSolutions.find(_.language == language) map (_.base) match {
+          case None       => ""
+          case Some(base) => base.split("\n").zipWithIndex.map(si => (si._2 + 1).toString + "\t" + si._1).mkString("\n")
+        }
+
+        views.html.idExercises.umlActivity.activityDrawing.render(user, exercise, language, definitionRest, toolObject = this)
+    }
   }
 
   override def renderUserExerciseEditForm(user: User, newExForm: Form[ProgCompleteEx], isCreation: Boolean)

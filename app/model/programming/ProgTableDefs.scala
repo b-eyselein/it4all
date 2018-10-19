@@ -74,8 +74,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def folderIdentifier: Rep[String] = column[String]("folder_identifier")
 
-    def base: Rep[String] = column[String]("base")
-
     def functionName: Rep[String] = column[String]("function_name")
 
     def indentLevel: Rep[Int] = column[Int]("indent_level")
@@ -85,7 +83,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def baseDataAsJson: Rep[JsValue] = column[JsValue]("base_data_json")
 
 
-    override def * : ProvenShape[ProgExercise] = (id, semanticVersion, title, author, text, state, folderIdentifier, base, functionName, indentLevel, outputType, baseDataAsJson.?) <> (ProgExercise.tupled, ProgExercise.unapply)
+    override def * : ProvenShape[ProgExercise] = (id, semanticVersion, title, author, text, state, folderIdentifier, functionName, indentLevel, outputType, baseDataAsJson.?) <> (ProgExercise.tupled, ProgExercise.unapply)
 
   }
 

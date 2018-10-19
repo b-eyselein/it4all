@@ -88,7 +88,6 @@ CREATE TABLE IF NOT EXISTS prog_exercises (
   ex_state          ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
   folder_identifier VARCHAR(30),
-  base              TEXT,
   function_name     VARCHAR(30),
   indent_level      INT,
   output_type       VARCHAR(30),

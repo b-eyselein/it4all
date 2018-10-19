@@ -1,5 +1,5 @@
 @(user: model.User, completeEx: model.programming.ProgCompleteEx, language: model.programming.ProgLanguage,
-        toolObject: model.toolMains.IdExerciseToolMain)
+        definitionRest: String, toolObject: model.toolMains.IdExerciseToolMain)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -42,7 +42,7 @@
     @core.helperTemplates.modal("TODO", "definitionRest", "lg") {
         <div class="card bg-light">
             <div class="card-body">
-                <pre>@completeEx.ex.base.split("\n").zipWithIndex.map(si => (si._2 + 1).toString + "\t" + si._1).mkString("\n")</pre>
+                <pre>@definitionRest</pre>
             </div>
         </div>
     }

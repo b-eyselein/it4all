@@ -21,7 +21,8 @@ function initEditor(language: string, elementId: string): CodeMirror.Editor {
         return CodeMirror.fromTextArea(textArea, {
             mode: {name: language},
             lineNumbers: true,
-            value: '<xml></xml>'
+            value: '<xml></xml>',
+            indentUnit: 4
         });
     } else {
         console.warn(textArea);

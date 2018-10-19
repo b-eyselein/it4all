@@ -17,15 +17,15 @@ outputType: int
 sampleSolutions:
 - language: PYTHON_3
   base: |
-    def ggt(a, b):
-      return 0
+    def ggt(a: int, b: int) -> int:
+        return 0
   sample: |
-    def ggt(a, b):
-      while b != 0:
-        h = a % b
-        a = b
-        b = h
-      return a
+    def ggt(a: int, b: int) -> int:
+        while b != 0:
+            h = a % b
+            a = b
+            b = h
+        return a
 
 sampleTestData:
 - id: 1
