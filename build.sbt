@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
 
 // Compile to java 8 for debian...
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
@@ -83,7 +83,7 @@ resolvers ++= Seq(
 )
 
 val webJarDependencies = Seq(
-  "org.webjars.npm" % "jquery" % "3.3.1", "org.webjars.npm" % "types__jquery" % "3.3.6",
+  "org.webjars.npm" % "jquery" % "3.3.1", "org.webjars.npm" % "types__jquery" % "3.3.17", // TODO: 3.3.21
 
   "org.webjars" % "popper.js" % "1.14.3",
 
@@ -115,6 +115,12 @@ val webJarDependencies = Seq(
 libraryDependencies ++= webJarDependencies
 
 resolveFromWebjarsNodeModulesDir := true
+
+dependencyOverrides ++= Seq(
+  "org.webjars.npm" % "types__jquery" % "3.3.17",
+  "org.webjars.npm" % "types__underscore" % "1.8.9",
+  "org.webjars.npm" % "types__sizzle" % "2.3.2"
+)
 
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
@@ -165,7 +171,7 @@ libraryDependencies ++= Seq(
   "org.apache.odftoolkit" % "odfdom-java" % "0.8.11-incubating",
   "org.apache.odftoolkit" % "simple-odf" % "0.8.2-incubating",
   "org.apache.odftoolkit" % "taglets" % "0.8.11-incubating",
-  "xerces" % "xercesImpl" % "2.9.", // 2.11.0-22
+  "xerces" % "xercesImpl" % "2.9.0", // 2.11.0-22
   "xml-apis" % "xml-apis" % "1.3.04",
 
   // Apache Commons IO
