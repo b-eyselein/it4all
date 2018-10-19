@@ -1,7 +1,12 @@
-import * as $ from 'jquery';
 import {CorrectionResult} from "../matches";
 
-export {renderProgCorrectionSuccess, ProgCorrectionResult};
+export {renderProgCorrectionSuccess, ProgCorrectionResult, ProgStringSolution};
+
+
+interface ProgStringSolution {
+    language: string,
+    implementation: string
+}
 
 function printValue(value: any): string {
     if (value == null) {

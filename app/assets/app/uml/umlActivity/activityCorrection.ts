@@ -1,5 +1,9 @@
 import * as $ from 'jquery';
-import {onProgCorrectionSuccess, ProgStringSolution} from "../../programming/progExercise";
+import {
+    ProgCorrectionResult,
+    renderProgCorrectionSuccess,
+    ProgStringSolution
+} from "../../programming/progCorrectionHandler";
 
 let testBtn: JQuery;
 
@@ -18,13 +22,27 @@ function activityCorrection(): void {
         url: testBtn.data('url'),
         data: JSON.stringify(dataToSend),
         async: true,
-        success: onProgCorrectionSuccess,
-        error: onProgCorrectionError
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
+        success: onActivityCorrectionSuccess,
+        error: onActivityCorrectionError
     });
 }
 
 
-function onProgCorrectionError(jqXHR): void {
+function onActivityCorrectionSuccess(result: ProgCorrectionResult): void {
+    testBtn.prop('disabled', false);
+    const html = renderProgCorrectionSuccess(result);
+
+    $('#correctionDiv').prop('hidden', false);
+    $('#correction').html(html);
+
+    // solutionChanged = false;
+}
+
+function onActivityCorrectionError(jqXHR): void {
     console.error(jqXHR.responseText);
     testBtn.prop('disabled', false);
 }

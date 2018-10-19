@@ -1,13 +1,13 @@
 @(user: model.User, completeEx: model.programming.ProgCompleteEx, language: model.programming.ProgLanguage,
-        definitionRest: String, toolObject: model.toolMains.IdExerciseToolMain)
+        definitionRest: String, toolObject: model.toolMains.IdExerciseToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
-
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/activity.css")">
+
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
     <script>
             // Parameters for Task
@@ -109,7 +109,7 @@
             <div class="col-md-6">
 
                 <div class="card">
-                    <div class="card-body text-justify">@completeEx.ex.text</div>
+                    <div class="card-body text-justify">@Html(completeEx.ex.text)</div>
                 </div>
 
                 <hr>
@@ -190,8 +190,10 @@
                 <hr>
 
                 <div class="form-group">
-                    <div class="row">
 
+                    @helper.CSRF.formField
+
+                    <div class="row">
                         <div class="col-md-4">
                             <div class="input-group">
                                 <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
@@ -215,8 +217,8 @@
                             <a class="btn btn-secondary btn-block" href="@routes.MainExerciseController.index(toolObject.urlPart)">
                                 Bearbeitung beenden</a>
                         </div>
-
                     </div>
+
                 </div>
 
                 <div class="card card-default" id="actionInputEditSection" hidden>

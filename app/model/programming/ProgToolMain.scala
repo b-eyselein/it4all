@@ -151,7 +151,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
           case Some(base) => base.split("\n").zipWithIndex.map(si => (si._2 + 1).toString + "\t" + si._1).mkString("\n")
         }
 
-        views.html.idExercises.umlActivity.activityDrawing.render(user, exercise, language, definitionRest, toolObject = this)
+        views.html.idExercises.umlActivity.activityDrawing(user, exercise, language, definitionRest, toolObject = this)
     }
   }
 

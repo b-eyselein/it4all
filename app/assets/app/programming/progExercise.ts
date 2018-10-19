@@ -3,19 +3,15 @@ import {initEditor} from '../editorHelpers';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/python/python';
 
-import {renderProgCorrectionSuccess, ProgCorrectionResult} from "./progCorrectionHandler";
+import {renderProgCorrectionSuccess, ProgCorrectionResult, ProgStringSolution} from "./progCorrectionHandler";
 
-export {ProgStringSolution, onProgCorrectionSuccess};
+export {onProgCorrectionSuccess};
 
 let editor: CodeMirror.Editor;
 let testBtn: JQuery, sampleSolBtn: JQuery;
 
 let solutionChanged: boolean = false;
 
-interface ProgStringSolution {
-    language: string,
-    implementation: string
-}
 
 function onChangeLanguageSuccess(response) {
     $('#language').val(response.language);
