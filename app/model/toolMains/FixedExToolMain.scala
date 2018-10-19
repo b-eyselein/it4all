@@ -23,6 +23,10 @@ abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionCon
 
   override type Tables <: ExerciseTableDefs[ExType, CompExType]
 
+  // Values
+
+  val usersCanCreateExes: Boolean = false
+
   // Reading Yaml
 
   val yamlFormat: MyYamlFormat[ReadType]

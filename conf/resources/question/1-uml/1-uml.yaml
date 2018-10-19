@@ -47,12 +47,14 @@ exercises:
   - id: 1
     text: Sie werden im Klassendiagramm unterstrichen dargestellt.
     correctness: WRONG
+    explanation: Dies gilt für statische Attribute
   - id: 2
     text: Sie werden aus anderen Attributen berechnet.
     correctness: CORRECT
   - id: 3
     text: Sie haben für alle Instanzen der Klasse denselben Wert.
     correctness: WRONG
+    explanation: Dies gilt für statische Attribute.
   - id: 4
     text: Sie werden mit einem vorangestellten '/' dargestellt.
     correctness: CORRECT
@@ -72,9 +74,11 @@ exercises:
   - id: 2
     text: Sie werden aus anderen Attributen berechnet.
     correctness: WRONG
+    explanation: Abgeleitete Attribute werden aus anderen berechnet, nicht Klassenattribute.
   - id: 3
     text: Sie haben für alle Instanzen der Klasse denselben Wert.
     correctness: CORRECT
   - id: 4
     text: Sie werden mit einem vorangestellten '/' dargestellt.
     correctness: WRONG
+    explanation: Dies gilt für abgeleitete Attribute.

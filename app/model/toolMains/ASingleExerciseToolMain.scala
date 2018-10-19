@@ -30,8 +30,6 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   val exParts: Seq[PartType]
 
-  val userCanCreateExes: Boolean = false
-
   // Forms
 
   def exerciseReviewForm(username: String, completeExercise: CompExType, exercisePart: PartType): Form[ReviewType]

@@ -65,6 +65,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val consts: Consts = SqlConsts
 
+  override val usersCanCreateExes: Boolean = false
+
   // Yaml
 
   override implicit val yamlFormat: MyYamlFormat[SqlCompleteScenario] = SqlYamlProtocol.SqlScenarioYamlFormat

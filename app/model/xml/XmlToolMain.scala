@@ -59,7 +59,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val exParts: Seq[XmlExPart] = XmlExParts.values
 
-  override val userCanCreateExes: Boolean = true
+  override val usersCanCreateExes: Boolean = true
 
   // Forms
 

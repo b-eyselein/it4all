@@ -147,7 +147,7 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
 
   abstract class CollectionExSolutionsTable(tag: Tag, name: String) extends Table[DBSolType](tag, name) {
 
-    def id: Rep[Int] = column[Int]("id")
+    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def username: Rep[String] = column[String]("username")
 
@@ -164,7 +164,7 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
     def maxPoints: Rep[Points] = column[Points]("max_points")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, username, collectionId, collSemVer, exerciseId, exSemVer))
+//    def pk: PrimaryKey = primaryKey("pk", (id, username, collectionId, collSemVer, exerciseId, exSemVer))
 
     def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (collectionId, collSemVer, exerciseId, exSemVer), exTable)(ex =>
       (ex.collectionId, ex.collSemVer, ex.id, ex.semanticVersion))

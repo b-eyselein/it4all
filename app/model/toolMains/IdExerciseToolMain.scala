@@ -88,7 +88,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
        |  <a class="btn btn-primary btn-block" href="${controllers.routes.ExerciseController.exerciseList(up)}">Zu den Übungsaufgaben</a>
        |</div>
        |""".stripMargin + {
-      if (userCanCreateExes) {
+      if (usersCanCreateExes) {
         s"""<div class="form-group">
            |  <a class="btn btn-success btn-block" href="${controllers.routes.ExerciseController.newExerciseForm(up)}">Neue Aufgabe erstellen</a>
            |</div>""".stripMargin
