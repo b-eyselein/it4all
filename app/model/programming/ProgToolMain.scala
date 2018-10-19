@@ -102,8 +102,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override def correctEx(user: User, sol: SolType, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] = {
 
     val (implementation: String, testData: Seq[TestData]) = sol match {
-      case ProgTestDataSolution(td, _)        => (exercise.sampleSolutions.head.solution, td)
-      case ProgStringSolution(solution, lang) => (solution, exercise.sampleTestData)
+      case ProgTestDataSolution(td, _)     => (exercise.sampleSolutions.head.solution, td)
+      case ProgStringSolution(solution, _) => (solution, exercise.sampleTestData)
     }
 
     ProgCorrector.correct(user, exercise, sol.language, implementation, testData, toolMain = this) match {

@@ -36,6 +36,7 @@ object XmlCorrector {
       val builder = DocBuilderFactory.newDocumentBuilder
       builder.setErrorHandler(errorHandler)
       builder.parse(xml.toFile)
+      ()
     } catch {
       case _: SAXException => // Ignore...
     }
