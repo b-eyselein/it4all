@@ -133,6 +133,8 @@ GET           /tools/:toolType/:id/:part/solution                           cont
 
 GET           /tools/:toolType/:id/reviews                                  controllers.ExerciseController.showReviews(toolType: String, id: Int)
 
+GET           /tools/:toolType/reviews                                      controllers.ExerciseController.exerciseReviewsList(toolType: String)
+
 # Other routes
 GET           /tools/uml/classDiagram/:id/:part/cd.js                       controllers.ExerciseController.umlClassDiag(id: Int, part: String)
 GET           /tools/programming/classDiagram/:id/cd.js                     controllers.ExerciseController.progClassDiagram(id: Int)
@@ -154,7 +156,6 @@ GET           /login                                                        cont
 POST          /authenticate                                                 controllers.LoginController.authenticate
 
 GET           /logout                                                       controllers.LoginController.logout
-GET           /direct                                                       controllers.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
 
 # Unified routes
 GET           /:toolType/index                                              controllers.MainExerciseController.index(toolType: String)

@@ -114,12 +114,19 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
+  def exerciseReviewsList(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
+    implicit request =>
+      toolMain.futureAllReviews map {
+        allReviews => Ok(views.html.admin.idExes.idExerciseReviewsList(admin, allReviews, toolList, toolMain))
+      }
+  }
+
   def showReviews(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureCompleteExById(id) flatMap {
         case None    => Future(onNoSuchExercise(id))
         case Some(_) => toolMain.futureReviewsForExercise(id) map {
-          reviews => Ok(views.html.admin.idExes.idExerciseReviewList(admin, reviews, toolList, toolMain))
+          reviews => Ok(views.html.admin.idExes.idExerciseReviewListExercise(admin, reviews, toolList, toolMain))
         }
       }
   }

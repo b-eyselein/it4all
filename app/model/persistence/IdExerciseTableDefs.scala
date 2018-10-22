@@ -24,6 +24,8 @@ trait IdExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], PartType <: 
 
   // Reading
 
+  def futureAllReviews: Future[Seq[ReviewType]] = db.run(reviewsTable.result)
+
   def futureReviewsForExercise(id: Int): Future[Seq[ReviewType]] = db.run(reviewsTable.filter(_.exerciseId === id).result)
 
   // Update

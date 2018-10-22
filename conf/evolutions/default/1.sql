@@ -1,824 +1,826 @@
 # --- !Ups
 
-CREATE TABLE IF NOT EXISTS users (
-  user_type   INT,
-  username    VARCHAR(30) PRIMARY KEY,
-  std_role    ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
-  showHideAgg ENUM ('SHOW', 'HIDE', 'AGGREGATE')               DEFAULT 'SHOW'
+create table if not exists users (
+  user_type   int,
+  username    varchar(30) primary key,
+  std_role    enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser',
+  showHideAgg enum ('SHOW', 'HIDE', 'AGGREGATE')               default 'SHOW'
 );
 
-CREATE TABLE IF NOT EXISTS pw_hashes (
-  username VARCHAR(30) PRIMARY KEY,
-  pw_hash  VARCHAR(60),
+create table if not exists pw_hashes (
+  username varchar(30) primary key,
+  pw_hash  varchar(60),
 
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS courses (
-  id          VARCHAR(30) PRIMARY KEY,
-  course_name VARCHAR(100)
+create table if not exists courses (
+  id          varchar(30) primary key,
+  course_name varchar(100)
 );
 
-CREATE TABLE IF NOT EXISTS users_in_courses (
-  username  VARCHAR(30),
-  course_id VARCHAR(30),
-  role      ENUM ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') DEFAULT 'RoleUser',
+create table if not exists users_in_courses (
+  username  varchar(30),
+  course_id varchar(30),
+  role      enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser',
 
-  PRIMARY KEY (username, course_id),
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (course_id) REFERENCES courses (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (username, course_id),
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade,
+  foreign key (course_id) references courses (id)
+    on update cascade
+    on delete cascade
 );
 
 # Feedback
 
-CREATE TABLE IF NOT EXISTS feedback (
-  username  VARCHAR(30),
-  tool_url  VARCHAR(30),
-  sense     VARCHAR(10),
-  used      VARCHAR(10),
-  usability VARCHAR(10),
-  feedback  VARCHAR(10),
-  fairness  VARCHAR(10),
-  comment   TEXT,
+create table if not exists feedback (
+  username  varchar(30),
+  tool_url  varchar(30),
+  sense     varchar(10),
+  used      varchar(10),
+  usability varchar(10),
+  feedback  varchar(10),
+  fairness  varchar(10),
+  comment   text,
 
-  PRIMARY KEY (username, tool_url),
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (username, tool_url),
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade
 );
 
 # Learning paths
 
-CREATE TABLE IF NOT EXISTS learning_paths (
-  tool_url VARCHAR(10),
-  id       INT,
-  title    VARCHAR(50),
+create table if not exists learning_paths (
+  tool_url varchar(10),
+  id       int,
+  title    varchar(50),
 
-  PRIMARY KEY (tool_url, id)
+  primary key (tool_url, id)
 );
 
-CREATE TABLE IF NOT EXISTS learning_path_sections (
-  id           INT,
-  tool_url     VARCHAR(10),
-  path_id      INT,
-  section_type VARCHAR(30),
-  title        VARCHAR(60),
-  content      TEXT,
+create table if not exists learning_path_sections (
+  id           int,
+  tool_url     varchar(10),
+  path_id      int,
+  section_type varchar(30),
+  title        varchar(60),
+  content      text,
 
-  PRIMARY KEY (id, tool_url, path_id),
-  FOREIGN KEY (tool_url, path_id) REFERENCES learning_paths (tool_url, id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, tool_url, path_id),
+  foreign key (tool_url, path_id) references learning_paths (tool_url, id)
+    on update cascade
+    on delete cascade
 );
 
 # Programming
 
-CREATE TABLE IF NOT EXISTS prog_exercises (
-  id                INT,
-  semantic_version  VARCHAR(10),
-  title             VARCHAR(50),
-  author            VARCHAR(50),
-  ex_text           TEXT,
-  ex_state          ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+create table if not exists prog_exercises (
+  id                int,
+  semantic_version  varchar(10),
+  title             varchar(50),
+  author            varchar(50),
+  ex_text           text,
+  ex_state          enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  folder_identifier VARCHAR(30),
-  function_name     VARCHAR(30),
-  indent_level      INT,
-  output_type       VARCHAR(30),
-  base_data_json    TEXT,
+  folder_identifier varchar(30),
+  function_name     varchar(30),
+  indent_level      int,
+  output_type       varchar(30),
+  base_data_json    text,
 
-  PRIMARY KEY (id, semantic_version)
+  primary key (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS prog_input_types (
-  id          INT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  input_name  VARCHAR(20),
-  input_type  VARCHAR(20),
+create table if not exists prog_input_types (
+  id          int,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  input_name  varchar(20),
+  input_type  varchar(20),
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS prog_sample_solutions (
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
-  base        TEXT,
-  solution    TEXT,
+create table if not exists prog_sample_solutions (
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  language    enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
+  base        text,
+  solution    text,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, language),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (exercise_id, ex_sem_ver, language),
+  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS prog_sample_testdata (
-  id          INT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  input_json  TEXT,
-  output      VARCHAR(50),
+create table if not exists prog_sample_testdata (
+  id          int,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  input_json  text,
+  output      varchar(50),
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS prog_commited_testdata (
-  id             INT,
-  exercise_id    INT,
-  ex_sem_ver     VARCHAR(10),
-  input_json     TEXT,
-  output         VARCHAR(50),
+create table if not exists prog_commited_testdata (
+  id             int,
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  input_json     text,
+  output         varchar(50),
 
-  username       VARCHAR(50),
-  approval_state ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  username       varchar(50),
+  approval_state enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver, username),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver, username),
+  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade,
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS prog_uml_cd_parts (
-  exercise_id   INT,
-  ex_sem_ver    VARCHAR(10),
-  class_name    VARCHAR(30),
-  class_diagram TEXT,
+create table if not exists prog_uml_cd_parts (
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  class_name    varchar(30),
+  class_diagram text,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS prog_solutions (
-  id          INT PRIMARY KEY AUTO_INCREMENT,
-  username    VARCHAR(50),
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  part        VARCHAR(30),
-  points      DOUBLE,
-  max_points  DOUBLE,
-  solution    TEXT,
-  language    VARCHAR(20),
+create table if not exists prog_solutions (
+  id          int primary key auto_increment,
+  username    varchar(50),
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  part        varchar(30),
+  points      double,
+  max_points  double,
+  solution    text,
+  language    varchar(20),
 
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade,
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS prog_exercise_reviews (
-  username       VARCHAR(50),
-  exercise_id    INT,
-  ex_sem_ver     VARCHAR(10),
-  exercise_part  VARCHAR(30),
-  difficulty     VARCHAR(20),
-  maybe_duration INT,
+create table if not exists prog_exercise_reviews (
+  username       varchar(50),
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  exercise_part  varchar(30),
+  difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+  maybe_duration int,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES prog_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (username, exercise_id, ex_sem_ver, exercise_part),
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade,
+  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
 # Question
 
-CREATE TABLE IF NOT EXISTS quizzes (
-  id               INT,
-  semantic_version VARCHAR(10),
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+create table if not exists quizzes (
+  id               int,
+  semantic_version varchar(10),
+  title            varchar(50),
+  author           varchar(50),
+  ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  theme            VARCHAR(50),
-  PRIMARY KEY (id, semantic_version)
+  theme            varchar(50),
+  primary key (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS questions (
-  id               INT,
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-  semantic_version VARCHAR(10),
+create table if not exists questions (
+  id               int,
+  title            varchar(50),
+  author           varchar(50),
+  ex_text          text,
+  ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+  semantic_version varchar(10),
 
-  collection_id    INT,
-  coll_sem_ver     VARCHAR(10),
-  question_type    ENUM ('CHOICE', 'FREETEXT', 'FILLOUT')               DEFAULT 'CHOICE',
-  max_points       INT,
+  collection_id    int,
+  coll_sem_ver     varchar(10),
+  question_type    enum ('CHOICE', 'FREETEXT', 'FILLOUT')               default 'CHOICE',
+  max_points       int,
 
-  PRIMARY KEY (id, semantic_version, collection_id, coll_sem_ver),
-  FOREIGN KEY (collection_id, coll_sem_ver) REFERENCES quizzes (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, semantic_version, collection_id, coll_sem_ver),
+  foreign key (collection_id, coll_sem_ver) references quizzes (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS question_answers (
-  id            INT,
-  question_id   INT,
-  ex_sem_ver    VARCHAR(10),
-  collection_id INT,
-  coll_sem_ver  VARCHAR(10),
-  answer_text   TEXT,
-  correctness   ENUM ('CORRECT', 'OPTIONAL', 'WRONG') DEFAULT 'WRONG',
-  explanation   TEXT,
+create table if not exists question_answers (
+  id            int,
+  question_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  coll_sem_ver  varchar(10),
+  answer_text   text,
+  correctness   enum ('CORRECT', 'OPTIONAL', 'WRONG') default 'WRONG',
+  explanation   text,
 
-  PRIMARY KEY (id, question_id, ex_sem_ver, collection_id, coll_sem_ver),
-  FOREIGN KEY (question_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES questions (id, semantic_version, collection_id, coll_sem_ver)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, question_id, ex_sem_ver, collection_id, coll_sem_ver),
+  foreign key (question_id, ex_sem_ver, collection_id, coll_sem_ver) references questions (id, semantic_version, collection_id, coll_sem_ver)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS question_solutions (
-  id            INT PRIMARY KEY AUTO_INCREMENT,
-  username      VARCHAR(50),
-  exercise_id   INT,
-  ex_sem_ver    VARCHAR(10),
-  collection_id INT,
-  coll_sem_ver  VARCHAR(10),
-  points        INT,
-  max_points    INT,
-  answers       TEXT,
+create table if not exists question_solutions (
+  id            int primary key auto_increment,
+  username      varchar(50),
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  coll_sem_ver  varchar(10),
+  points        int,
+  max_points    int,
+  answers       text,
 
-  FOREIGN KEY (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES questions (id, semantic_version, collection_id, coll_sem_ver)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  foreign key (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) references questions (id, semantic_version, collection_id, coll_sem_ver)
+    on update cascade
+    on delete cascade
 );
 
 # Rose
 
-CREATE TABLE IF NOT EXISTS rose_exercises (
-  id               INT,
-  semantic_version VARCHAR(10),
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+create table if not exists rose_exercises (
+  id               int,
+  semantic_version varchar(10),
+  title            varchar(50),
+  author           varchar(50),
+  ex_text          text,
+  ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  field_width      INT,
-  field_height     INT,
-  is_mp            BOOLEAN,
+  field_width      int,
+  field_height     int,
+  is_mp            boolean,
 
-  PRIMARY KEY (id, semantic_version)
+  primary key (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS rose_inputs (
-  id          INT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  input_name  VARCHAR(20),
-  input_type  VARCHAR(20),
+create table if not exists rose_inputs (
+  id          int,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  input_name  varchar(20),
+  input_type  varchar(20),
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references rose_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS rose_samples (
-  id          INT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
-  solution    TEXT,
+create table if not exists rose_samples (
+  id          int,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  language    enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
+  solution    text,
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver, language),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver, language),
+  foreign key (exercise_id, ex_sem_ver) references rose_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS rose_solutions (
-  id          INT PRIMARY KEY AUTO_INCREMENT,
-  username    VARCHAR(50),
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  part        VARCHAR(30),
-  points      DOUBLE,
-  max_points  DOUBLE,
-  solution    TEXT,
+create table if not exists rose_solutions (
+  id          int primary key auto_increment,
+  username    varchar(50),
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  part        varchar(30),
+  points      double,
+  max_points  double,
+  solution    text,
 
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade,
+  foreign key (exercise_id, ex_sem_ver) references rose_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS rose_exercise_reviews (
-  username       VARCHAR(50),
-  exercise_id    INT,
-  ex_sem_ver     VARCHAR(10),
-  exercise_part  VARCHAR(30),
-  difficulty     VARCHAR(20),
-  maybe_duration INT,
+create table if not exists rose_exercise_reviews (
+  username       varchar(50),
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  exercise_part  varchar(30),
+  difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+  maybe_duration int,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES rose_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (username, exercise_id, ex_sem_ver, exercise_part),
+  foreign key (exercise_id, ex_sem_ver) references rose_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
 # Spread
 
-CREATE TABLE IF NOT EXISTS spread_exercises (
-  id                INT,
-  semantic_version  VARCHAR(10),
-  title             VARCHAR(50),
-  author            VARCHAR(50),
-  ex_text           TEXT,
-  ex_state          ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+create table if not exists spread_exercises (
+  id                int,
+  semantic_version  varchar(10),
+  title             varchar(50),
+  author            varchar(50),
+  ex_text           text,
+  ex_state          enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  sample_filename   VARCHAR(50),
-  template_filename VARCHAR(50),
+  sample_filename   varchar(50),
+  template_filename varchar(50),
 
-  PRIMARY KEY (id, semantic_version)
+  primary key (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS spread_exercise_reviews (
-  username       VARCHAR(50),
-  exercise_id    INT,
-  ex_sem_ver     VARCHAR(10),
-  exercise_part  VARCHAR(30),
-  difficulty     VARCHAR(20),
-  maybe_duration INT,
+create table if not exists spread_exercise_reviews (
+  username       varchar(50),
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  exercise_part  varchar(30),
+  difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+  maybe_duration int,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES spread_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (username, exercise_id, ex_sem_ver, exercise_part),
+  foreign key (exercise_id, ex_sem_ver) references spread_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
 # Sql
 
-CREATE TABLE IF NOT EXISTS sql_scenarioes (
-  id               INT,
-  semantic_version VARCHAR(10),
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+create table if not exists sql_scenarioes (
+  id               int,
+  semantic_version varchar(10),
+  title            varchar(50),
+  author           varchar(50),
+  ex_text          text,
+  ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  shortName        VARCHAR(50),
-  scriptFile       VARCHAR(50),
+  shortName        varchar(50),
+  scriptFile       varchar(50),
 
-  PRIMARY KEY (id, semantic_version)
+  primary key (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS sql_exercises (
-  id               INT,
-  semantic_version VARCHAR(10),
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    DEFAULT 'RESERVED',
+create table if not exists sql_exercises (
+  id               int,
+  semantic_version varchar(10),
+  title            varchar(50),
+  author           varchar(50),
+  ex_text          text,
+  ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    default 'RESERVED',
 
-  collection_id    INT,
-  coll_sem_ver     VARCHAR(10),
-  tags             TEXT,
-  exercise_type    ENUM ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') DEFAULT 'SELECT',
-  hint             TEXT,
+  collection_id    int,
+  coll_sem_ver     varchar(10),
+  tags             text,
+  exercise_type    enum ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') default 'SELECT',
+  hint             text,
 
-  PRIMARY KEY (id, semantic_version, collection_id, coll_sem_ver),
-  FOREIGN KEY (collection_id, coll_sem_ver) REFERENCES sql_scenarioes (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, semantic_version, collection_id, coll_sem_ver),
+  foreign key (collection_id, coll_sem_ver) references sql_scenarioes (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS sql_samples (
-  id            INT,
-  exercise_id   INT,
-  ex_sem_ver    VARCHAR(10),
-  collection_id INT,
-  coll_sem_ver  VARCHAR(10),
-  sample        TEXT,
+create table if not exists sql_samples (
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  coll_sem_ver  varchar(10),
+  sample        text,
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver, collection_id, coll_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES sql_exercises (id, semantic_version, collection_id, coll_sem_ver)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver, collection_id, coll_sem_ver),
+  foreign key (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) references sql_exercises (id, semantic_version, collection_id, coll_sem_ver)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS sql_solutions (
-  id            INT PRIMARY KEY AUTO_INCREMENT,
-  username      VARCHAR(50),
-  exercise_id   INT,
-  ex_sem_ver    VARCHAR(10),
-  collection_id INT,
-  coll_sem_ver  VARCHAR(10),
-  points        DOUBLE,
-  max_points    DOUBLE,
-  solution      TEXT,
+create table if not exists sql_solutions (
+  id            int primary key auto_increment,
+  username      varchar(50),
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  coll_sem_ver  varchar(10),
+  points        double,
+  max_points    double,
+  solution      text,
 
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) REFERENCES sql_exercises (id, semantic_version, collection_id, coll_sem_ver)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade,
+  foreign key (exercise_id, ex_sem_ver, collection_id, coll_sem_ver) references sql_exercises (id, semantic_version, collection_id, coll_sem_ver)
+    on update cascade
+    on delete cascade
 );
 
 # Uml
 
-CREATE TABLE IF NOT EXISTS uml_exercises (
-  id               INT,
-  semantic_version VARCHAR(10),
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+create table if not exists uml_exercises (
+  id               int,
+  semantic_version varchar(10),
+  title            varchar(50),
+  author           varchar(50),
+  ex_text          text,
+  ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  marked_text      TEXT,
+  marked_text      text,
 
-  PRIMARY KEY (id, semantic_version)
+  primary key (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS uml_to_ignore (
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  to_ignore   VARCHAR(50),
+create table if not exists uml_to_ignore (
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  to_ignore   varchar(50),
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, to_ignore),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (exercise_id, ex_sem_ver, to_ignore),
+  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS uml_mappings (
-  exercise_id   INT,
-  ex_sem_ver    VARCHAR(10),
-  mapping_key   VARCHAR(50),
-  mapping_value VARCHAR(50),
+create table if not exists uml_mappings (
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  mapping_key   varchar(50),
+  mapping_value varchar(50),
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, mapping_key),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (exercise_id, ex_sem_ver, mapping_key),
+  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS uml_sample_solutions (
-  id          INT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  sample      TEXT,
+create table if not exists uml_sample_solutions (
+  id          int,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  sample      text,
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS uml_solutions (
-  id          INT PRIMARY KEY AUTO_INCREMENT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  username    VARCHAR(30),
-  part        VARCHAR(30),
-  points      DOUBLE,
-  max_points  DOUBLE,
-  solution    TEXT,
+create table if not exists uml_solutions (
+  id          int primary key auto_increment,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  username    varchar(30),
+  part        varchar(30),
+  points      double,
+  max_points  double,
+  solution    text,
 
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade,
+  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS uml_exercise_reviews (
-  username       VARCHAR(50),
-  exercise_id    INT,
-  ex_sem_ver     VARCHAR(10),
-  exercise_part  VARCHAR(30),
-  difficulty     VARCHAR(20),
-  maybe_duration INT,
+create table if not exists uml_exercise_reviews (
+  username       varchar(50),
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  exercise_part  varchar(30),
+  difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+  maybe_duration int,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES uml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (username, exercise_id, ex_sem_ver, exercise_part),
+  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
 # Web
 
-CREATE TABLE IF NOT EXISTS web_exercises (
-  id               INT,
-  semantic_version VARCHAR(10),
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+create table if not exists web_exercises (
+  id               int,
+  semantic_version varchar(10),
+  title            varchar(50),
+  author           varchar(50),
+  ex_text          text,
+  ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  html_text        TEXT,
-  js_text          TEXT,
-  php_text         TEXT,
+  html_text        text,
+  js_text          text,
+  php_text         text,
 
-  PRIMARY KEY (id, semantic_version)
+  primary key (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS html_tasks (
-  task_id      INT,
-  exercise_id  INT,
-  ex_sem_ver   VARCHAR(10),
-  text         TEXT,
-  xpath_query  VARCHAR(50),
+create table if not exists html_tasks (
+  task_id      int,
+  exercise_id  int,
+  ex_sem_ver   varchar(10),
+  text         text,
+  xpath_query  varchar(50),
 
-  text_content VARCHAR(100),
+  text_content varchar(100),
 
-  PRIMARY KEY (task_id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (task_id, exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS html_attributes (
-  attr_key    VARCHAR(30),
-  attr_value  VARCHAR(150),
-  task_id     INT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
+create table if not exists html_attributes (
+  attr_key    varchar(30),
+  attr_value  varchar(150),
+  task_id     int,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
 
-  PRIMARY KEY (attr_key, task_id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (task_id, exercise_id, ex_sem_ver) REFERENCES html_tasks (task_id, exercise_id, ex_sem_ver)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (attr_key, task_id, exercise_id, ex_sem_ver),
+  foreign key (task_id, exercise_id, ex_sem_ver) references html_tasks (task_id, exercise_id, ex_sem_ver)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS js_tasks (
-  task_id            INT,
-  exercise_id        INT,
-  ex_sem_ver         VARCHAR(10),
-  text               TEXT,
-  xpath_query        VARCHAR(50),
+create table if not exists js_tasks (
+  task_id            int,
+  exercise_id        int,
+  ex_sem_ver         varchar(10),
+  text               text,
+  xpath_query        varchar(50),
 
-  action_type        ENUM ('CLICK', 'FILLOUT') DEFAULT 'CLICK',
-  action_xpath_query VARCHAR(50),
-  keys_to_send       VARCHAR(100),
+  action_type        enum ('CLICK', 'FILLOUT') default 'CLICK',
+  action_xpath_query varchar(50),
+  keys_to_send       varchar(100),
 
-  PRIMARY KEY (task_id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (task_id, exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS js_conditions (
-  condition_id    INT,
-  task_id         INT,
-  exercise_id     INT,
-  ex_sem_ver      VARCHAR(10),
+create table if not exists js_conditions (
+  condition_id    int,
+  task_id         int,
+  exercise_id     int,
+  ex_sem_ver      varchar(10),
 
-  xpath_query     VARCHAR(50),
-  is_precondition BOOLEAN DEFAULT TRUE,
-  awaited_value   VARCHAR(50),
+  xpath_query     varchar(50),
+  is_precondition boolean default true,
+  awaited_value   varchar(50),
 
-  PRIMARY KEY (condition_id, task_id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (task_id, exercise_id, ex_sem_ver) REFERENCES js_tasks (task_id, exercise_id, ex_sem_ver)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (condition_id, task_id, exercise_id, ex_sem_ver),
+  foreign key (task_id, exercise_id, ex_sem_ver) references js_tasks (task_id, exercise_id, ex_sem_ver)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS web_sample_solutions (
-  id          INT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
+create table if not exists web_sample_solutions (
+  id          int,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
 
-  html_sample TEXT,
-  js_sample   TEXT,
-  php_sample  TEXT,
+  html_sample text,
+  js_sample   text,
+  php_sample  text,
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS web_solutions (
-  id          INT PRIMARY KEY AUTO_INCREMENT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  username    VARCHAR(30),
-  part        VARCHAR(30),
-  points      DOUBLE,
-  max_points  DOUBLE,
-  solution    TEXT,
+create table if not exists web_solutions (
+  id          int primary key auto_increment,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  username    varchar(30),
+  part        varchar(30),
+  points      double,
+  max_points  double,
+  solution    text,
 
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade,
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS web_exercise_reviews (
-  username       VARCHAR(50),
-  exercise_id    INT,
-  ex_sem_ver     VARCHAR(10),
-  exercise_part  VARCHAR(30),
-  difficulty     VARCHAR(20),
-  maybe_duration INT,
+create table if not exists web_exercise_reviews (
+  username       varchar(50),
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  exercise_part  varchar(30),
+  difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+  maybe_duration int,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES web_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (username, exercise_id, ex_sem_ver, exercise_part),
+  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
 # Xml
 
-CREATE TABLE IF NOT EXISTS xml_exercises (
-  id                  INT,
-  semantic_version    VARCHAR(10),
-  title               VARCHAR(50),
-  author              VARCHAR(50),
-  ex_text             TEXT,
-  ex_state            ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+create table if not exists xml_exercises (
+  id                  int,
+  semantic_version    varchar(10),
+  title               varchar(50),
+  author              varchar(50),
+  ex_text             text,
+  ex_state            enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  grammar_description TEXT,
-  root_node           VARCHAR(30),
+  grammar_description text,
+  root_node           varchar(30),
 
-  PRIMARY KEY (id, semantic_version)
+  primary key (id, semantic_version)
 );
 
-CREATE TABLE IF NOT EXISTS xml_samples (
-  id              INT,
-  exercise_id     INT,
-  ex_sem_ver      VARCHAR(10),
-  sample_grammar  TEXT,
-  sample_document TEXT,
+create table if not exists xml_samples (
+  id              int,
+  exercise_id     int,
+  ex_sem_ver      varchar(10),
+  sample_grammar  text,
+  sample_document text,
 
-  PRIMARY KEY (id, exercise_id, ex_sem_ver),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (id, exercise_id, ex_sem_ver),
+  foreign key (exercise_id, ex_sem_ver) references xml_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS xml_solutions (
-  id          INT PRIMARY KEY AUTO_INCREMENT,
-  exercise_id INT,
-  ex_sem_ver  VARCHAR(10),
-  username    VARCHAR(50),
-  part        VARCHAR(30),
-  points      DOUBLE,
-  max_points  DOUBLE,
-  solution    TEXT,
+create table if not exists xml_solutions (
+  id          int primary key auto_increment,
+  exercise_id int,
+  ex_sem_ver  varchar(10),
+  username    varchar(50),
+  part        varchar(30),
+  points      double,
+  max_points  double,
+  solution    text,
 
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  foreign key (exercise_id, ex_sem_ver) references xml_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade,
+  foreign key (username) references users (username)
+    on update cascade
+    on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS xml_exercise_reviews (
-  username       VARCHAR(50),
-  exercise_id    INT,
-  ex_sem_ver     VARCHAR(10),
-  exercise_part  VARCHAR(30),
-  difficulty     VARCHAR(20),
-  maybe_duration INT,
+create table if not exists xml_exercise_reviews (
+  username       varchar(50),
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  exercise_part  varchar(30),
+  difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+  maybe_duration int,
 
-  PRIMARY KEY (exercise_id, ex_sem_ver, exercise_part),
-  FOREIGN KEY (exercise_id, ex_sem_ver) REFERENCES xml_exercises (id, semantic_version)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  primary key (username, exercise_id, ex_sem_ver, exercise_part),
+  foreign key (exercise_id, ex_sem_ver) references xml_exercises (id, semantic_version)
+    on update cascade
+    on delete cascade
 );
 
 # --- !Downs
 
 # Xml
 
-DROP TABLE IF EXISTS xml_exercise_reviews;
+drop table if exists xml_exercise_reviews;
 
-DROP TABLE IF EXISTS xml_solutions;
+drop table if exists xml_solutions;
 
-DROP TABLE IF EXISTS xml_samples;
+drop table if exists xml_samples;
 
-DROP TABLE IF EXISTS xml_exercises;
+drop table if exists xml_exercises;
 
 # Web
 
-DROP TABLE IF EXISTS web_exercise_reviews;
+drop table if exists web_exercise_reviews;
 
-DROP TABLE IF EXISTS web_solutions;
+drop table if exists web_solutions;
 
-DROP TABLE IF EXISTS web_sample_solutions;
+drop table if exists web_sample_solutions;
 
-DROP TABLE IF EXISTS js_conditions;
+drop table if exists js_conditions;
 
-DROP TABLE IF EXISTS js_tasks;
+drop table if exists js_tasks;
 
-DROP TABLE IF EXISTS html_attributes;
+drop table if exists html_attributes;
 
-DROP TABLE IF EXISTS html_tasks;
+drop table if exists html_tasks;
 
-DROP TABLE IF EXISTS web_exercises;
+drop table if exists web_exercises;
 
 # Uml
 
-DROP TABLE IF EXISTS uml_exercise_reviews;
+drop table if exists uml_exercise_reviews;
 
-DROP TABLE IF EXISTS uml_solutions;
+drop table if exists uml_solutions;
 
-DROP TABLE IF EXISTS uml_sample_solutions;
+drop table if exists uml_sample_solutions;
 
-DROP TABLE IF EXISTS uml_mappings;
+drop table if exists uml_mappings;
 
-DROP TABLE IF EXISTS uml_to_ignore;
+drop table if exists uml_to_ignore;
 
-DROP TABLE IF EXISTS uml_exercises;
+drop table if exists uml_exercises;
 
 # Spread
 
-DROP TABLE IF EXISTS spread_exercise_reviews;
+drop table if exists spread_exercise_reviews;
 
-DROP TABLE IF EXISTS spread_exercises;
+drop table if exists spread_exercises;
 
 # Sql
 
-DROP TABLE IF EXISTS sql_solutions;
+drop table if exists sql_solutions;
 
-DROP TABLE IF EXISTS sql_samples;
+drop table if exists sql_samples;
 
-DROP TABLE IF EXISTS sql_exercises;
+drop table if exists sql_exercises;
 
-DROP TABLE IF EXISTS sql_scenarioes;
+drop table if exists sql_scenarioes;
 
 # Rose
 
-DROP TABLE IF EXISTS rose_exercise_reviews;
+drop table if exists rose_exercise_reviews;
 
-DROP TABLE IF EXISTS rose_solutions;
+drop table if exists rose_solutions;
 
-DROP TABLE IF EXISTS rose_samples;
+drop table if exists rose_samples;
 
-DROP TABLE IF EXISTS rose_inputs;
+drop table if exists rose_inputs;
 
-DROP TABLE IF EXISTS rose_exercises;
+drop table if exists rose_exercises;
 
 # Questions
 
-DROP TABLE IF EXISTS question_solutions;
+drop table if exists question_solutions;
 
-DROP TABLE IF EXISTS question_answers;
+drop table if exists question_answers;
 
-DROP TABLE IF EXISTS questions;
+drop table if exists questions;
 
-DROP TABLE IF EXISTS quizzes;
+drop table if exists quizzes;
 
 # Programming
 
-DROP TABLE IF EXISTS prog_exercise_reviews;
+drop table if exists prog_exercise_reviews;
 
-DROP TABLE IF EXISTS prog_solutions;
+drop table if exists prog_solutions;
 
-DROP TABLE IF EXISTS prog_uml_cd_parts;
+drop table if exists prog_uml_cd_parts;
 
-DROP TABLE IF EXISTS prog_commited_testdata;
+drop table if exists prog_commited_testdata;
 
-DROP TABLE IF EXISTS prog_sample_testdata;
+drop table if exists prog_sample_testdata;
 
-DROP TABLE IF EXISTS prog_sample_solutions;
+drop table if exists prog_sample_solutions;
 
-DROP TABLE IF EXISTS prog_input_types;
+drop table if exists prog_input_types;
 
-DROP TABLE IF EXISTS prog_exercises;
+drop table if exists prog_exercises;
 
 # General
 
-DROP TABLE IF EXISTS learning_path_sections;
+drop table if exists learning_path_sections;
 
-DROP TABLE IF EXISTS learning_paths;
+drop table if exists learning_paths;
 
-DROP TABLE IF EXISTS feedback;
+drop table if exists feedback;
 
-DROP TABLE IF EXISTS users_in_courses;
+drop table if exists users_in_courses;
 
-DROP TABLE IF EXISTS courses;
+drop table if exists courses;
 
-DROP TABLE IF EXISTS pw_hashes;
+drop table if exists pw_hashes;
 
-DROP TABLE IF EXISTS users;
+drop table if exists users;
 

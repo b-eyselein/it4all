@@ -2,13 +2,12 @@ package controllers
 
 import com.github.t3hnar.bcrypt._
 import javax.inject._
-import model.FormMappings._
+import model.FormMappings.UserCredentials
 import model.core.CoreConsts._
 import model.core.Repository
 import model.{FormMappings, PwHash, RegisteredUser, User}
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.Json
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
@@ -19,7 +18,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with play.api.i18n.I18nSupport {
 
   def registerForm: Action[AnyContent] = Action {
-    implicit request => Ok(views.html.registerForm(userCredForm))
+    implicit request => Ok(views.html.registerForm(FormMappings.userCredForm))
   }
 
   def register: Action[AnyContent] = Action.async { implicit request =>
@@ -41,7 +40,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
     }
 
-    userCredForm.bindFromRequest.fold(onError, onRead)
+    FormMappings.userCredForm.bindFromRequest.fold(onError, onRead)
   }
 
   def authenticate: Action[AnyContent] = Action.async { implicit request =>
@@ -69,28 +68,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
     }
 
-    userCredForm.bindFromRequest.fold(onError, onRead)
-  }
-
-  def fromWuecampus(userName: String, courseId: Int, courseName: String): Action[AnyContent] = Action.async {
-    // FIXME: not used yet...
-    implicit request =>
-      if (userName.isEmpty)
-        Future(Redirect(routes.LoginController.loginForm()))
-      else {
-        Future(Redirect(routes.LoginController.loginForm()))
-        //        findOrCreateStudent(userName, passwort = "").map {
-        //          user =>
-        //
-        //                  if (Course.finder.byId(courseId) == null && courseId != -1) {
-        //        Create course
-        //                    val course = new Course()
-        //                    course.name = courseName
-        //                    course.save()
-        //                  }
-        //
-        //            Redirect(controllers.routes.Application.activityDrawingIndex()).withSession(SESSION_ID_FIELD -> user.get.username)
-      }
+    FormMappings.userCredForm.bindFromRequest.fold(onError, onRead)
   }
 
   def loginForm: Action[AnyContent] = Action {

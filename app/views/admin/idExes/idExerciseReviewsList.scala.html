@@ -1,0 +1,48 @@
+@import model.{User, ExerciseReview, ExPart, Difficulties}
+
+@(user: User, allReviews: Seq[ExerciseReview[_ <: ExPart]], toolList: model.toolMains.ToolList, toolMainObject: model.toolMains.IdExerciseToolMain)
+
+    @title = @{
+        "Aufgabenbewertungen Tool " + toolMainObject.toolname
+    }
+
+    @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
+
+        @if(allReviews.nonEmpty) {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Aufgaben-ID</th>
+                        <th>Aufgabenteil</th>
+                        <th>&empty; Dauer</th>
+                        <th>&empty; Bewertungen</th>
+                        @for(difficulty <- Difficulties.values) {
+                            <th>@difficulty</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                @for((exId, reviewsForEx) <- allReviews.groupBy(_.exerciseId).toSeq.sortBy(_._1);
+                (part, reviewsForPart) <- reviewsForEx.groupBy(_.exercisePart);
+                reviewsForDifficulty = reviewsForPart.groupBy(_.difficulty)
+                ) {
+                    <tr>
+                        <td>@exId</td>
+                        <td>@part.partName</td>
+                        <td>@{
+                            val allDurations = reviewsForPart.flatMap(_.maybeDuration)
+                            math.rint(allDurations.sum / allDurations.length * 100) / 100
+                        }</td>
+                        <td>@Difficulties.avg(reviewsForPart.map(_.difficulty))</td>
+                        @for(difficulty <- Difficulties.values) {
+                            <td>@reviewsForDifficulty.get(difficulty).map(_.length).getOrElse("")</td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        } else {
+            <div class="alert alert-danger">Es konnten keine Aufgabenbewertungen gefunden werden!</div>
+        }
+
+    }

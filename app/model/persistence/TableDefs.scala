@@ -11,6 +11,7 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 trait TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
@@ -113,17 +114,19 @@ trait TableDefs {
   // Abstract queries
 
   protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any]): Future[Boolean] = Future.sequence(seqToSave map {
-    toSave =>
-      save(toSave) map (_ => true) recover { case e: Exception =>
+    save(_) transform {
+      case Success(_) => Success(true)
+      case Failure(e) =>
         Logger.error("Could not perform save option", e)
-        false
-      }
+        Success(false)
+    }
   }) map (_ forall identity)
 
-  protected def saveSingle(performSave: => Future[Any]): Future[Boolean] = performSave map (_ => true) recover {
-    case e: Throwable =>
+  protected def saveSingle(performSave: => Future[Any]): Future[Boolean] = performSave transform {
+    case Success(_) => Success(true)
+    case Failure(e) =>
       Logger.error("Could not perform save option", e)
-      false
+      Success(false)
   }
 
   // Column types
@@ -141,7 +144,7 @@ trait TableDefs {
     MappedColumnType.base[Mark, String](_.entryName, str => Mark.withNameInsensitiveOption(str) getOrElse Mark.NO_MARK)
 
   protected implicit val semanticVersionColumnType: BaseColumnType[SemanticVersion] =
-    MappedColumnType.base[SemanticVersion, String](_.asString, SemanticVersionHelper.parseFromString(_).getOrElse(SemanticVersion(0, 1, 0)))
+    MappedColumnType.base[SemanticVersion, String](_.asString, SemanticVersionHelper.parseFromString(_).getOrElse(SemanticVersionHelper.DEFAULT))
 
   // Tables
 
@@ -149,16 +152,16 @@ trait TableDefs {
 
   class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 
-    def userType = column[Int]("user_type")
+    def userType: Rep[Int] = column[Int]("user_type")
 
-    def username = column[String]("username", O.PrimaryKey)
+    def username: Rep[String] = column[String]("username", O.PrimaryKey)
 
-    def role = column[Role]("std_role")
+    def role: Rep[Role] = column[Role]("std_role")
 
-    def showHideAgg = column[ShowHideAggregate]("showHideAgg")
+    def showHideAgg: Rep[ShowHideAggregate] = column[ShowHideAggregate]("showHideAgg")
 
 
-    override def * = (userType, username, role, showHideAgg) <> (tupled, unapplied)
+    override def * : ProvenShape[User] = (userType, username, role, showHideAgg) <> (tupled, unapplied)
 
     def tupled(values: (Int, String, Role, ShowHideAggregate)): User = values._1 match {
       case 1 => LtiUser(values._2, values._3, values._4)

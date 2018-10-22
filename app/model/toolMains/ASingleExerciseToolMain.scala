@@ -57,6 +57,8 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   def futureDeleteExercise(id: Int): Future[Int] = tables.deleteExercise(id)
 
+  def futureAllReviews: Future[Seq[ReviewType]] = tables.futureAllReviews
+
   def futureReviewsForExercise(id: Int): Future[Seq[ReviewType]] = tables.futureReviewsForExercise(id)
 
   // Helper methods

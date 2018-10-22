@@ -1,178 +1,174 @@
 # --- !Ups
 
-INSERT INTO users (user_type, username, std_role, showHideAgg)
-VALUES (0, 's319286', 'RoleUser', 'AGGREGATE'),
-       (0, 'bje40dc', 'RoleAdmin', 'AGGREGATE'),
-       (0, 'developer', 'RoleSuperAdmin', 'AGGREGATE')
-ON DUPLICATE KEY UPDATE std_role = VALUES(std_role);
+insert into users (user_type, username, std_role, showHideAgg)
+values (0, 'developer', 'RoleSuperAdmin', 'AGGREGATE')
+on duplicate key update std_role = values(std_role);
 
-INSERT INTO pw_hashes (username, pw_hash)
-VALUES ('s319286', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG'),
-       ('bje40dc', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG'),
-       ('developer', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG')
-ON DUPLICATE KEY UPDATE pw_hash = VALUES(pw_hash);
+insert into pw_hashes (username, pw_hash)
+values ('developer', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3PnkG')
+on duplicate key update pw_hash = values(pw_hash);
 
 # --- !Downs
 
 # Xml
 
-DELETE IGNORE
-FROM xml_exercise_reviews;
+delete ignore
+from xml_exercise_reviews;
 
-DELETE IGNORE
-FROM xml_solutions;
+delete ignore
+from xml_solutions;
 
-DELETE IGNORE
-FROM xml_samples;
+delete ignore
+from xml_samples;
 
-DELETE IGNORE
-FROM xml_exercises;
+delete ignore
+from xml_exercises;
 
 # Web
 
-DELETE IGNORE
-FROM web_exercise_reviews;
+delete ignore
+from web_exercise_reviews;
 
-DELETE IGNORE
-FROM web_solutions;
+delete ignore
+from web_solutions;
 
-DELETE IGNORE
-FROM web_sample_solutions;
+delete ignore
+from web_sample_solutions;
 
-DELETE IGNORE
-FROM js_conditions;
+delete ignore
+from js_conditions;
 
-DELETE IGNORE
-FROM js_tasks;
+delete ignore
+from js_tasks;
 
-DELETE IGNORE
-FROM html_attributes;
+delete ignore
+from html_attributes;
 
-DELETE IGNORE
-FROM html_tasks;
+delete ignore
+from html_tasks;
 
-DELETE IGNORE
-FROM web_exercises;
+delete ignore
+from web_exercises;
 
 # Uml
 
-DELETE IGNORE
-FROM uml_exercise_reviews;
+delete ignore
+from uml_exercise_reviews;
 
-DELETE IGNORE
-FROM uml_solutions;
+delete ignore
+from uml_solutions;
 
-DELETE IGNORE
-FROM uml_sample_solutions;
+delete ignore
+from uml_sample_solutions;
 
-DELETE IGNORE
-FROM uml_mappings;
+delete ignore
+from uml_mappings;
 
-DELETE IGNORE
-FROM uml_to_ignore;
+delete ignore
+from uml_to_ignore;
 
-DELETE IGNORE
-FROM uml_exercises;
+delete ignore
+from uml_exercises;
 
 # Sql
 
-DELETE IGNORE
-FROM sql_solutions;
+delete ignore
+from sql_solutions;
 
-DELETE IGNORE
-FROM sql_samples;
+delete ignore
+from sql_samples;
 
-DELETE IGNORE
-FROM sql_exercises;
+delete ignore
+from sql_exercises;
 
-DELETE IGNORE
-FROM sql_scenarioes;
+delete ignore
+from sql_scenarioes;
 
 # Spread
 
-DELETE IGNORE
-FROM spread_exercise_reviews;
+delete ignore
+from spread_exercise_reviews;
 
-DELETE IGNORE
-FROM spread_exercises;
+delete ignore
+from spread_exercises;
 
 # Rose
 
-DELETE IGNORE
-FROM rose_exercise_reviews;
+delete ignore
+from rose_exercise_reviews;
 
-DELETE IGNORE
-FROM rose_solutions;
+delete ignore
+from rose_solutions;
 
-DELETE IGNORE
-FROM rose_samples;
+delete ignore
+from rose_samples;
 
-DELETE IGNORE
-FROM rose_inputs;
+delete ignore
+from rose_inputs;
 
-DELETE IGNORE
-FROM rose_exercises;
+delete ignore
+from rose_exercises;
 
 # Questions
 
-DELETE IGNORE
-FROM question_solutions;
+delete ignore
+from question_solutions;
 
-DELETE IGNORE
-FROM question_answers;
+delete ignore
+from question_answers;
 
-DELETE IGNORE
-FROM questions;
+delete ignore
+from questions;
 
-DELETE IGNORE
-FROM quizzes;
+delete ignore
+from quizzes;
 
 # Programming
 
-DELETE IGNORE
-FROM prog_exercise_reviews;
+delete ignore
+from prog_exercise_reviews;
 
-DELETE IGNORE
-FROM prog_solutions;
+delete ignore
+from prog_solutions;
 
-DELETE IGNORE
-FROM prog_uml_cd_parts;
+delete ignore
+from prog_uml_cd_parts;
 
-DELETE IGNORE
-FROM prog_commited_testdata;
+delete ignore
+from prog_commited_testdata;
 
-DELETE IGNORE
-FROM prog_sample_testdata;
+delete ignore
+from prog_sample_testdata;
 
-DELETE IGNORE
-FROM prog_sample_solutions;
+delete ignore
+from prog_sample_solutions;
 
-DELETE IGNORE
-FROM prog_input_types;
+delete ignore
+from prog_input_types;
 
-DELETE IGNORE
-FROM prog_exercises;
+delete ignore
+from prog_exercises;
 
 # General
 
-DELETE IGNORE
-FROM learning_path_sections;
+delete ignore
+from learning_path_sections;
 
-DELETE IGNORE
-FROM learning_paths;
+delete ignore
+from learning_paths;
 
-DELETE IGNORE
-FROM feedback;
+delete ignore
+from feedback;
 
-DELETE IGNORE
-FROM users_in_courses;
+delete ignore
+from users_in_courses;
 
-DELETE IGNORE
-FROM courses;
+delete ignore
+from courses;
 
-DELETE IGNORE
-FROM pw_hashes;
+delete ignore
+from pw_hashes;
 
-DELETE IGNORE
-FROM users;
+delete ignore
+from users;
 
