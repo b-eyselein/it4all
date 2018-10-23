@@ -1,5 +1,8 @@
 id: 2
-semanticVersion: 1.0.0
+semanticVersion:
+  major: 1
+  minor: 0
+  patch: 0
 title: Amazon
 author: bje40dc
 text: ""
@@ -543,7 +546,7 @@ exercises:
   - id: 2
     sample:
       SELECT SUM(amount) AS Anzahl
-        FROM order_positions WHERE price < 5.00
+      FROM order_positions WHERE price < 5.00
   tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 33

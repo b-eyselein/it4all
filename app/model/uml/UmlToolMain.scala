@@ -72,7 +72,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
         UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
           case JsSuccess(ucd, _) => Success(ucd)
           case JsError(errors)   =>
-            errors.foreach(error => Logger.error("Json Error: " + error))
+            errors.foreach(error => Logger.error(s"Json Error: $error"))
             Failure(new Exception(errors.map(_.toString).mkString("\n")))
         }
     }

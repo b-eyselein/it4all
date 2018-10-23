@@ -1,0 +1,74 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {"type": "number"},
+    "semanticVersion": {"$ref": "#/definitions/SemanticVersion"},
+    "title": {"type": "string"},
+    "author": {"type": "string"},
+    "text": {"type": "string"},
+    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+    "shortName": {"type": "string"},
+    "scriptFile": {"type": "string"},
+    "exercises": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/SqlExercise"}
+    }
+  },
+  "required": ["id", "semanticVersion", "title", "author", "text", "status", "shortName", "scriptFile", "exercises"],
+  "definitions": {
+    "SemanticVersion": {
+      "anyOf": [
+        {"type": "string"},
+        {
+          "type": "object",
+          "properties": {
+            "major": {"type": "number"},
+            "minor": {"type": "number"},
+            "patch": {"type": "number"}
+          },
+          "required": ["major", "minor", "patch"]
+        }
+      ]
+    },
+    "SqlExercise": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "semanticVersion": {"$ref": "#/definitions/SemanticVersion"},
+        "title": {"type": "string"},
+        "author": {"type": "string"},
+        "text": {"type": "string"},
+        "exerciseType": {"type": "string", "enum": ["SELECT", "CREATE", "UPDATE", "INSERT", "DELETE"]},
+        "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+        "samples": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/SqlSample"}
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "SQL_JOIN",
+              "SQL_FUNCTION",
+              "SQL_ALIAS",
+              "SQL_DOUBLE_JOIN",
+              "SQL_ORDER_BY",
+              "SQL_LIMIT",
+              "SQL_GROUP_BY"
+            ]
+          }
+        }
+      },
+      "required": ["id", "semanticVersion", "title", "author", "text", "exerciseType", "status", "samples"]
+    },
+    "SqlSample": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "sample": {"type": "string"}
+      },
+      "required": ["id", "sample"]
+    }
+  }
+}

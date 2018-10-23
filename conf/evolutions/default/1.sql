@@ -209,9 +209,11 @@ create table if not exists quizzes (
   semantic_version varchar(10),
   title            varchar(50),
   author           varchar(50),
+  ex_text          text,
   ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
   theme            varchar(50),
+
   primary key (id, semantic_version)
 );
 
