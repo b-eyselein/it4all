@@ -27,7 +27,7 @@ To develop it4all, you need to have installed the following programs (names of p
 
 * Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git) of the institute of computer science of the university of Wuerzburg and change folders:
 
-  `$ git clone https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git`
+  `$ git clone --recurse-submodules https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git`
 
   `$ cd it4all`
 
