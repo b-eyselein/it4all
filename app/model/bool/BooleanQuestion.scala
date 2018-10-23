@@ -10,7 +10,7 @@ object BooleanQuestion {
 
   private def randomBetweenInclBounds(startIncl: Int, endIncl: Int): Int = startIncl + generator.nextInt(endIncl - startIncl + 1)
 
-  private def takeRandom[A](seq: Seq[A]): A = seq(generator.nextInt(seq.size))
+  private def takeRandom[A](sequence: Seq[A]): A = sequence(generator.nextInt(sequence.size))
 
   private val MinVars = 2
   private val MaxVars = 3

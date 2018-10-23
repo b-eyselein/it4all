@@ -21,10 +21,10 @@ final case class DockerBind(fromPath: Path, toPath: Path, isReadOnly: Boolean = 
 
 object DockerConnector {
 
-  val MaxWaitTimeInSeconds = 3
+  val MaxWaitTimeInSeconds: Int = 3
 
-  val SuccessStatusCode = 0
-  val TimeOutStatusCode = 124
+  val SuccessStatusCode: Int = 0
+  val TimeOutStatusCode: Int = 124
 
   val DefaultWorkingDir: Path = Paths.get("/data")
 

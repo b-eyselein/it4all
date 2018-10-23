@@ -11,13 +11,13 @@ import scala.util.{Failure, Success, Try}
 
 // Types of results
 
-abstract sealed class SpreadSheetCorrectionResult(val success: SuccessType, val notices: List[String]) extends EvaluationResult
+abstract sealed class SpreadSheetCorrectionResult(val success: SuccessType, val notices: Seq[String]) extends EvaluationResult
 
-final case class SpreadSheetCorrectionFailure(cause: String) extends SpreadSheetCorrectionResult(SuccessType.ERROR, List(cause))
+final case class SpreadSheetCorrectionFailure(cause: String) extends SpreadSheetCorrectionResult(SuccessType.ERROR, Seq(cause))
 
-final case class SpreadSheetCorrectionError(strs: List[String]) extends SpreadSheetCorrectionResult(SuccessType.NONE, strs)
+final case class SpreadSheetCorrectionError(strs: Seq[String]) extends SpreadSheetCorrectionResult(SuccessType.NONE, strs)
 
-case object SpreadSheetCorrectionSuccess extends SpreadSheetCorrectionResult(SuccessType.COMPLETE, List(SUCCESS_CORRECTION))
+case object SpreadSheetCorrectionSuccess extends SpreadSheetCorrectionResult(SuccessType.COMPLETE, Seq(SUCCESS_CORRECTION))
 
 // Actual corrector
 
@@ -105,13 +105,13 @@ abstract class SpreadCorrector extends FileUtils {
 
   protected def compareSheet(sampleTable: SheetType, compareTable: SheetType, conditionalFormating: Boolean): Unit
 
-  protected def compareSheetConditionalFormatting(master: SheetType, compare: SheetType): List[String]
+  protected def compareSheetConditionalFormatting(master: SheetType, compare: SheetType): Seq[String]
 
   // Getters and other helper methods
 
   protected def getCellByPosition(table: SheetType, row: Int, column: Int): Option[CellType]
 
-  protected def getColoredRange(master: SheetType): List[CellType]
+  protected def getColoredRange(master: SheetType): Seq[CellType]
 
   protected def getSheetByIndex(sampleDocument: DocumentType, sheetIndex: Int): SheetType
 

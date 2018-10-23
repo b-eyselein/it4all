@@ -21,19 +21,18 @@ final case class Points(quarters: Int) extends AnyVal {
 
 final case class PointsOps(value: Int) extends AnyVal {
 
-
   def point: Points = points
 
-  def points = Points(value * 4)
+  def points: Points = Points(value * 4)
 
 
   def halfPoint: Points = halfPoints
 
-  def halfPoints = Points(value * 2)
+  def halfPoints: Points = Points(value * 2)
 
 
   def quarterPoint: Points = quarterPoints
 
-  def quarterPoints = Points(value)
+  def quarterPoints: Points = Points(value)
 
 }

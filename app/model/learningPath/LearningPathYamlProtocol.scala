@@ -31,11 +31,11 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
 
   }
 
-final case class LearningPathSectionYamlFormat(toolUrl: String, pathId: Int) extends MyYamlObjectFormat[LearningPathSection] {
+  final case class LearningPathSectionYamlFormat(toolUrl: String, pathId: Int) extends MyYamlObjectFormat[LearningPathSection] {
 
     override protected def readObject(yamlObject: YamlObject): Try[LearningPathSection] = for {
       id: Int <- yamlObject.intField(idName)
-      sectionType <- yamlObject.enumField(typeName, LearningPathSectionType.withNameInsensitiveOption(_) getOrElse LearningPathSectionType.TextSectionType)
+      sectionType: LearningPathSectionType <- yamlObject.enumField(typeName, LearningPathSectionType.withNameInsensitiveOption(_) getOrElse LearningPathSectionType.TextSectionType)
       title <- yamlObject.stringField(titleName)
 
       section: LearningPathSection <- sectionType match {

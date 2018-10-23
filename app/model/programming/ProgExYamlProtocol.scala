@@ -58,7 +58,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(completeEx.ex.baseValues.id, completeEx.ex.semanticVersion, completeEx.ex.folderIdentifier)
       YamlObject(
         writeBaseValues(completeEx.ex) ++
-          Map(
+          Map[YamlValue, YamlValue](
             YamlString(functionNameName) -> YamlString(completeEx.ex.functionname),
             YamlString(inputTypesName) -> YamlArr(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName))),
             YamlString(sampleSolutionsName) -> YamlArr(completeEx.sampleSolutions map progSampleSolYamlFormat.write),

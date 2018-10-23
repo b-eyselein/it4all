@@ -9,9 +9,9 @@ import scala.language.postfixOps
 
 object QuestionHelper {
 
-  val MIN_ANSWERS = 2
-  val STD_ANSWERS = 4
-  val MAX_ANSWERS = 8
+  val MIN_ANSWERS: Int = 2
+  val STD_ANSWERS: Int = 4
+  val MAX_ANSWERS: Int = 8
 
 }
 

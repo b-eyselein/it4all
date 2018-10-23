@@ -86,7 +86,7 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
     idsAndExes: Seq[(Int, Seq[CompExType])] <- futureCompleteExesForPage(page)
     exesAndRoutes <- Future.sequence {
       idsAndExes map {
-        case (id, exes) => exerciseRoutesForUser(user, exes.head) map (rs => ExAndRoute(exes.head, exes.map(_.ex.semanticVersion), rs))
+        case (id@_, exes) => exerciseRoutesForUser(user, exes.head) map (rs => ExAndRoute(exes.head, exes.map(_.ex.semanticVersion), rs))
       }
     }
   } yield UserExOverviewContent(numOfExes, exesAndRoutes)

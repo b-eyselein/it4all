@@ -108,7 +108,7 @@ object ODFCorrector extends SpreadCorrector {
 
   override def getCellByPosition(table: Table, column: Int, row: Int): Option[Cell] = Option(table.getCellByPosition(column, row))
 
-  override def getColoredRange(master: Table): List[Cell] =
+  override def getColoredRange(master: Table): Seq[Cell] =
     (for {row <- 0 until maxRow
           column <- 0 until maxColumn
           oCell = Option(master getRowByIndex row getCellByIndex column)
@@ -118,7 +118,7 @@ object ODFCorrector extends SpreadCorrector {
   private def checkCellBackground(maybeCell: Option[Cell]): Boolean =
     Try(maybeCell map (_.getCellBackgroundColor) exists (_ != Color.WHITE)) getOrElse false
 
-  override def compareSheetConditionalFormatting(master: Table, compare: Table): List[String] = List.empty
+  override def compareSheetConditionalFormatting(master: Table, compare: Table): Seq[String] = Seq[String]()
 
   override def getSheetByIndex(document: SpreadsheetDocument, sheetIndex: Int): Table = document.getSheetByIndex(sheetIndex)
 

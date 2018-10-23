@@ -9,23 +9,27 @@ final case class BoolTableRow(assignments: Map[Variable, Boolean]) {
 
   def asChar(variable: Variable): Char = if (this (variable)) '1' else '0'
 
-  def apply(variable: Variable) = assignments(variable)
+  def apply(variable: Variable): Boolean = assignments(variable)
 
   def variables: Iterable[Variable] = assignments.keys filter (variable => variable != SolVariable && variable != LerVariable)
 
   def isSet(variable: Variable): Boolean = assignments.isDefinedAt(variable)
 
-  def +(toAssign: (Variable, Boolean)) = new BoolTableRow(assignments = assignments + (toAssign._1 -> toAssign._2))
+  def +(toAssign: (Variable, Boolean)): BoolTableRow = new BoolTableRow(assignments = assignments + (toAssign._1 -> toAssign._2))
 
-  def identifier: String = assignments.toSeq.filter(as => as._1 != SolVariable && as._1 != LerVariable).sortBy(_._1.variable) map (as => as._1 + (if (as._2) "1" else "0")) mkString
+  def identifier: String = assignments.toSeq
+    .filter(as => as._1 != SolVariable && as._1 != LerVariable)
+    .sortBy(_._1.variable)
+    .map(as => s"${as._1}${if (as._2) "1" else "0"}")
+    .mkString
 
 }
 
 object BoolTableRow {
 
-  def apply(assignments: Map[Variable, Boolean]) = new BoolTableRow(assignments)
+  def apply(assignments: Map[Variable, Boolean]): BoolTableRow = new BoolTableRow(assignments)
 
-  def apply(assigns: (Variable, Boolean)*) = new BoolTableRow(assigns.toMap)
+  def apply(assigns: (Variable, Boolean)*): BoolTableRow = new BoolTableRow(assigns.toMap)
 
   def fromAssignments(assignments: Seq[BoolAssignment]): BoolTableRow = new BoolTableRow(assignments.map(a => (a.variable, a.value)).toMap)
 

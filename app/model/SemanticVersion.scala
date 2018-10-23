@@ -12,7 +12,7 @@ object SemanticVersionHelper {
 
   private val semanticVersionRegex: Regex = "(\\d+)\\.(\\d+)\\.(\\d+)".r
 
-  val DEFAULT = SemanticVersion(0, 1, 0)
+  val DEFAULT: SemanticVersion = SemanticVersion(0, 1, 0)
 
   def parseFromString(str: String): Option[SemanticVersion] = tryParseFromString(str) toOption
 

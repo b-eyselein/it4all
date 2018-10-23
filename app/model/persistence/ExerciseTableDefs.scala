@@ -3,11 +3,11 @@ package model.persistence
 import model.ExerciseState.APPROVED
 import model.core.CoreConsts.STEP
 import model.learningPath.LearningPathTableDefs
-import model.toolMains.{ExAndRoute, UserExOverviewContent}
-import model.{CompleteEx, Exercise, SemanticVersion, User}
+import model.{CompleteEx, Exercise, SemanticVersion}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
+import slick.lifted.ForeignKeyQuery
 
 import scala.concurrent.Future
 
@@ -30,7 +30,7 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
 
   def futureCompleteExesForPage(page: Int): Future[Seq[CompEx]] = db.run(exTable.result) flatMap {
     allExes: Seq[Ex] =>
-      val distincExes: Map[SemanticVersion, Seq[Ex]] = allExes.groupBy(_.semanticVersion)
+      //      val distincExes: Map[SemanticVersion, Seq[Ex]] = allExes.groupBy(_.semanticVersion)
 
       val approvedExes = allExes.filter(_.state == APPROVED)
 
@@ -80,12 +80,12 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
 
   abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
 
-    def exerciseId = column[Int]("exercise_id")
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer = column[SemanticVersion]("ex_sem_ver")
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
 
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
   }
 

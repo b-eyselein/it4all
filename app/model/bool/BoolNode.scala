@@ -2,6 +2,8 @@ package model.bool
 
 import model.bool.ScalaNode._
 
+import scala.annotation.tailrec
+
 sealed abstract class ScalaNode {
 
   def apply(assignment: BoolTableRow): Boolean
@@ -12,37 +14,42 @@ sealed abstract class ScalaNode {
 
   def usedVariables: Set[Variable]
 
-  def and(that: ScalaNode) = AndScalaNode(this, that)
+  def and(that: ScalaNode): AndScalaNode = AndScalaNode(this, that)
 
-  def or(that: ScalaNode) = OrScalaNode(this, that)
+  def or(that: ScalaNode): OrScalaNode = OrScalaNode(this, that)
 
-  def nand(that: ScalaNode) = NAndScalaNode(this, that)
+  def nand(that: ScalaNode): NAndScalaNode = NAndScalaNode(this, that)
 
-  def nor(that: ScalaNode) = NOrScalaNode(this, that)
+  def nor(that: ScalaNode): NOrScalaNode = NOrScalaNode(this, that)
 
-  def xor(that: ScalaNode) = XOrScalaNode(this, that)
+  def xor(that: ScalaNode): XOrScalaNode = XOrScalaNode(this, that)
 
-  def impl(that: ScalaNode) = Implication(this, that)
+  def impl(that: ScalaNode): Implication = Implication(this, that)
 
-  def equiv(that: ScalaNode) = Equivalency(this, that)
+  def equiv(that: ScalaNode): Equivalency = Equivalency(this, that)
 
-  def unary_-() = NotScalaNode(this)
+  def unary_-(): NotScalaNode = NotScalaNode(this)
 
   override def toString: String = getAsString(false)
 
   def asString: String = getAsString(false)
 
   def asHtml: String = {
-    var formulaAsHtml = getAsString(false)
-    for ((key, value) <- HtmlReplacers) formulaAsHtml = formulaAsHtml.replaceAll(key, value)
-    formulaAsHtml
+
+    @tailrec
+    def go(formula: String, replacers: List[(String, String)]): String = replacers match {
+      case Nil                  => formula
+      case (key, value) :: tail => go(formula.replaceAll(key, value), tail)
+    }
+
+    go(getAsString(false), HtmlReplacers.toList)
   }
 
 }
 
 object ScalaNode {
 
-  val HtmlReplacers = Map(
+  val HtmlReplacers: Map[String, String] = Map[String, String](
     "impl" -> "&rArr;",
     "nor" -> "&#x22bd;",
     "nand" -> "&#x22bc;",
@@ -52,16 +59,9 @@ object ScalaNode {
     "xor" -> "&oplus;",
     "or" -> "&or;")
 
-  def not(child: ScalaNode) = NotScalaNode(child)
+  def not(child: ScalaNode): NotScalaNode = NotScalaNode(child)
 
   def constant(value: Boolean): Constant = if (value) TRUE else FALSE
-
-  def constant(value: String): ScalaNode = value match {
-    case "1" | "true" | "TRUE"   => TRUE
-    case "0" | "false" | "FALSE" => FALSE
-    case x if x.length == 1      => Variable(x charAt 0)
-    case _                       => null
-  }
 
 }
 
@@ -92,7 +92,7 @@ final case class NotScalaNode(child: ScalaNode) extends ScalaNode {
 
 final case class OrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("OR", l, r, (l, r) => l || r)
 
-class Constant(value: Boolean) extends ScalaNode {
+sealed abstract class Constant(value: Boolean) extends ScalaNode {
 
   override def apply(assignment: BoolTableRow): Boolean = value
 
@@ -144,7 +144,12 @@ sealed abstract class BinaryScalaNode(operator: String, left: ScalaNode, right: 
   }
 
   override def getAsString(needsParans: Boolean): String = {
-    val inner = left.getAsString(left.isInstanceOf[BinaryScalaNode]) + " " + operator.toLowerCase + " " + right.getAsString(right.isInstanceOf[BinaryScalaNode])
+    def isBinaryNode(node: ScalaNode): Boolean = node match {
+      case _: BinaryScalaNode => true
+      case _                  => false
+    }
+
+    val inner = left.getAsString(isBinaryNode(left)) + " " + operator.toLowerCase + " " + right.getAsString(isBinaryNode(right))
     if (needsParans) "(" + inner + ")" else inner
   }
 

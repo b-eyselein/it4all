@@ -30,7 +30,6 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   private val roseInputs    = TableQuery[RoseInputTypesTable]
   private val roseSamples   = TableQuery[RoseSampleSolutionsTable]
-  private val roseSolutions = TableQuery[RoseSolutionsTable]
 
   // Queries
 

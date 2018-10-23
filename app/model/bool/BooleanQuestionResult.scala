@@ -52,7 +52,7 @@ final case class CreationQuestionSuccess(learnerSolution: ScalaNode, question: C
     correctName -> (assignment(SolVariable) == learnerSolution(assignment))
   )
 
-  override def restJson: Seq[(String, JsValue)] = Seq(
+  override def restJson: Seq[(String, JsValue)] = Seq[(String, JsValue)](
     assignmentsName -> JsArray(assignments map assignmentMapping),
     "knf" -> JsString(disjunktiveNormalForm(assignments).asString),
     "dnf" -> JsString(konjunktiveNormalForm(assignments).asString)

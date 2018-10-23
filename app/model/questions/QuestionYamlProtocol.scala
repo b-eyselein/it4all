@@ -28,7 +28,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
     override def write(completeEx: CompleteQuiz) = YamlObject(
       writeBaseValues(completeEx.coll) ++
-        Map(
+        Map[YamlValue, YamlValue](
           YamlString(themeName) -> YamlString(completeEx.coll.theme),
           YamlString(exercisesName) -> YamlArr(completeEx.exercises map QuestionYamlFormat(completeEx.coll.baseValues).write)
         )
@@ -55,7 +55,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
     override def write(completeEx: CompleteQuestion): YamlValue = YamlObject(
       writeBaseValues(completeEx.ex) ++
-        Map(
+        Map[YamlValue, YamlValue](
           YamlString(exerciseTypeName) -> YamlString(completeEx.ex.questionType.entryName),
           YamlString(maxPointsName) -> YamlNumber(completeEx.ex.maxPoints),
           YamlString(answersName) -> YamlArr(completeEx.answers map QuestionAnswerYamlFormat(quizBaseValues, completeEx.ex.baseValues).write)

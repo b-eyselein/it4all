@@ -80,18 +80,18 @@ object XLSXCorrector extends SpreadCorrector {
     } else cell.toString
 
 
-  override protected def compareSheetConditionalFormatting(master: Sheet, compare: Sheet): List[String] = {
+  override protected def compareSheetConditionalFormatting(master: Sheet, compare: Sheet): Seq[String] = {
     val scf1: SheetConditionalFormatting = master.getSheetConditionalFormatting
     val scf2: SheetConditionalFormatting = compare.getSheetConditionalFormatting
 
     scf1.getNumConditionalFormattings match {
-      case 0 => List(COMMENT_CONDITIONAL_FORMATTING_NUM_FALSE)
+      case 0 => Seq(COMMENT_CONDITIONAL_FORMATTING_NUM_FALSE)
 
       case count1 => scf2.getNumConditionalFormattings match {
-        case 0 => List(COMMENT_CONDITIONAL_FORMATTING_NUM_INCORRECT)
+        case 0 => Seq(COMMENT_CONDITIONAL_FORMATTING_NUM_INCORRECT)
 
         case count2 =>
-          if (count1 != count2) List(s"Bedingte Formatierung falsch. Fehlende bedingte Formatierungen (Erwartet: $count1, Gefunden: $count2).\n")
+          if (count1 != count2) Seq(s"Bedingte Formatierung falsch. Fehlende bedingte Formatierungen (Erwartet: $count1, Gefunden: $count2).\n")
           else (0 to count1).map(i => compareConditionalFormattings(scf1.getConditionalFormattingAt(i), Option(scf2.getConditionalFormattingAt(i)))).toList
       }
     }
@@ -128,7 +128,10 @@ object XLSXCorrector extends SpreadCorrector {
   }
 
   // FIXME: remove cast ...
-  private def getCharts(sheet: Sheet): List[XSSFChart] = sheet.asInstanceOf[XSSFSheet].createDrawingPatriarch().getCharts.asScala.toList
+  private def getCharts(sheet: Sheet): Seq[XSSFChart] = sheet match {
+    case xssfSheet: XSSFSheet => xssfSheet.createDrawingPatriarch().getCharts.asScala.toList
+    case _                    => Seq[XSSFChart]()
+  }
 
   override def compareChartsInSheet(compareSheet: Sheet, sampleSheet: Sheet): (Boolean, String) = getCharts(sampleSheet) match {
     case Nil          => (false, COMMENT_CHART_FALSE)
@@ -191,13 +194,16 @@ object XLSXCorrector extends SpreadCorrector {
     })
 
 
-  override def getColoredRange(master: Sheet): List[XSSFCell] =
-    (for {
+  override def getColoredRange(master: Sheet): Seq[XSSFCell] = {
+    val cells = for {
       row <- master.rowIterator.asScala
       cell <- row.cellIterator.asScala
       if cell.getCellStyle.getFillForegroundColorColor != null && cell.getCellStyle.getFillBackgroundColorColor != null
       // FIXME: remove cast ...
-    } yield cell.asInstanceOf[XSSFCell]).toList
+    } yield cell.asInstanceOf[XSSFCell]
+
+    cells.toSeq
+  }
 
 
   override def getSheetByIndex(document: Workbook, sheetIndex: Int): Sheet = document.getSheetAt(sheetIndex)

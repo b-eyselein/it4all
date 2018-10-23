@@ -33,7 +33,7 @@ final case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, maybeBina
 
   def binaryAbsCorrect: Boolean = maybeBinaryAbs flatMap (parseNaryNumber(_, BINARY)) exists (_.decimalValue == Math.abs(targetNumber.decimalValue))
 
-  def invertedAbsCorrect: Boolean = (maybeInvertedAbs zip maybeBinaryAbs).headOption exists {
+  def invertedAbsCorrect: Boolean = (maybeInvertedAbs.toList zip maybeBinaryAbs.toList).headOption exists {
     case (binaryAbs, invertedAbs) => invertDigits(binaryAbs) == invertedAbs
   }
 
