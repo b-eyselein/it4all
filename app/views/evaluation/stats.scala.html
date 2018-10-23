@@ -21,7 +21,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @for(evaledAspect <- model.EvaluatedAspects.values; marks = res.get(evaledAspect)) {
+                    @for(evaledAspect <- model.EvaluatedAspects.values; marks = res.feedbackFor(evaledAspect)) {
                         <tr>
                             <td>@evaledAspect.question</td>
                             <td>@model.feedback.FeedbackResult.avg(marks) / @marks.size</td>

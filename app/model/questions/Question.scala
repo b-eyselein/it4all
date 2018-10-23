@@ -9,9 +9,9 @@ import scala.language.postfixOps
 
 object QuestionHelper {
 
-  val MIN_ANSWERS: Int = 2
-  val STD_ANSWERS: Int = 4
-  val MAX_ANSWERS: Int = 8
+  val MinAnswers: Int = 2
+  val StdAnswers: Int = 4
+  val MaxAnswers: Int = 8
 
 }
 
@@ -72,7 +72,7 @@ final case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends Co
 
   def getCorrectAnswers: Seq[Answer] = answers filter (_.isCorrect)
 
-  def userHasAnswered(username: String) = false
+  def userHasAnswered(username: String): Boolean = false
 
   override def preview: Html = new Html(
     s"""<p><b>Antworten:</b></p>

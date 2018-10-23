@@ -91,7 +91,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Implicit column types
 
-  private implicit val ActionTypeColumnType: BaseColumnType[JsActionType] =
+  private implicit val actionTypeColumnType: BaseColumnType[JsActionType] =
     MappedColumnType.base[JsActionType, String](_.entryName, str => JsActionType.withNameInsensitiveOption(str) getOrElse JsActionType.CLICK)
 
   override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =

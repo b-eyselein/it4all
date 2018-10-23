@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import random
 from typing import List
 
@@ -10,8 +12,9 @@ def generate_user_names(user_count: int) -> List[str]:
 def generate_user_insert_stmt(user_names: List[str]) -> str:
     return """\
 insert into users (user_type, username, std_role, showHideAgg) values
-{};""".format(
-        ",\n".join(map(lambda username: "(0, '{}', 'RoleUser', 'AGGREGATE')".format(username), user_names))
+{}
+    on duplicate key update username = values(username);""".format(
+        ",\n".join(map(lambda username: "    (0, '{}', 'RoleUser', 'AGGREGATE')".format(username), user_names))
     )
 
 

@@ -1,7 +1,7 @@
 package model.feedback
 
 import model.EvaluatedAspects._
-import model.Mark.NO_MARK
+import model.Mark.NoMark
 import model._
 import play.api.data.Forms._
 import play.api.data.format.Formatter
@@ -62,7 +62,7 @@ object FeedbackTableHelper {
 
 final case class Feedback(userName: String, toolUrlPart: String, marks: Map[EvaluatedAspect, Mark] = Map.empty, comment: String = "") {
 
-  def getMarkForAspect(aspect: EvaluatedAspect): Mark = marks.getOrElse(aspect, NO_MARK)
+  def getMarkForAspect(aspect: EvaluatedAspect): Mark = marks.getOrElse(aspect, NoMark)
 
   def sense: Mark = getMarkForAspect(SENSE)
 

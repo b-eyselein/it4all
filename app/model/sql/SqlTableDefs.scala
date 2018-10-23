@@ -69,7 +69,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Column types
 
-  private implicit val SqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
+  private implicit val sqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
     MappedColumnType.base[SqlExerciseType, String](_.entryName, str => SqlExerciseType.withNameInsensitiveOption(str) getOrElse SqlExerciseType.SELECT)
 
 //  private implicit val SqlExTagColumnType: BaseColumnType[SqlExTag] =

@@ -38,14 +38,14 @@ create table if not exists users_in_courses (
 # Feedback
 
 create table if not exists feedback (
-  username  varchar(30),
-  tool_url  varchar(30),
-  sense     varchar(10),
-  used      varchar(10),
-  usability varchar(10),
-  feedback  varchar(10),
-  fairness  varchar(10),
-  comment   text,
+  username          varchar(30),
+  tool_url          varchar(30),
+  sense             enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
+  used              enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
+  usability         enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
+  style_feedback    enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
+  fairness_feedback enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
+  comment           text,
 
   primary key (username, tool_url),
   foreign key (username) references users (username)

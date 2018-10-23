@@ -141,7 +141,7 @@ trait TableDefs {
     MappedColumnType.base[ExerciseState, String](_.entryName, str => ExerciseState.withNameInsensitiveOption(str) getOrElse ExerciseState.CREATED)
 
   private implicit val markColumnType: BaseColumnType[Mark] =
-    MappedColumnType.base[Mark, String](_.entryName, str => Mark.withNameInsensitiveOption(str) getOrElse Mark.NO_MARK)
+    MappedColumnType.base[Mark, String](_.entryName, str => Mark.withNameInsensitiveOption(str) getOrElse Mark.NoMark)
 
   protected implicit val semanticVersionColumnType: BaseColumnType[SemanticVersion] =
     MappedColumnType.base[SemanticVersion, String](_.asString, SemanticVersionHelper.parseFromString(_).getOrElse(SemanticVersionHelper.DEFAULT))
@@ -236,9 +236,9 @@ trait TableDefs {
 
     def usability: Rep[Mark] = column[Mark]("usability")
 
-    def feedback: Rep[Mark] = column[Mark]("feedback")
+    def feedback: Rep[Mark] = column[Mark]("style_feedback")
 
-    def fairness: Rep[Mark] = column[Mark]("fairness")
+    def fairness: Rep[Mark] = column[Mark]("fairness_feedback")
 
     def comment: Rep[String] = column[String]("comment")
 

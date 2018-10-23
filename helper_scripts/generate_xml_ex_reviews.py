@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
+
 import random
-from generate_users import *
 from typing import List, Tuple
+
+from generate_users import generate_user_names
 
 difficulties: List[str] = ['NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD']
 

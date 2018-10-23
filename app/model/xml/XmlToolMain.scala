@@ -116,7 +116,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
             val grammarAndXmlTries: Try[(Path, Path)] = for {
               grammar <- write(dir, completeEx.ex.rootNode + ".dtd", grammarToWrite)
-              xml <- write(dir, completeEx.ex.rootNode + "." + XML_FILE_ENDING, solution)
+              xml <- write(dir, completeEx.ex.rootNode + "." + xmlFileEnding, solution)
             } yield (grammar, xml)
 
             grammarAndXmlTries map { case (_, xml) =>

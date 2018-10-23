@@ -4,24 +4,24 @@ import model.Consts
 
 object XmlConsts extends Consts {
 
-  val documentName = "document"
+  val documentName: String = "document"
 
-  val grammarName            = "grammar"
-  val grammarDescriptionName = "grammarDescription"
+  val grammarName           : String = "grammar"
+  val grammarDescriptionName: String = "grammarDescription"
 
-  val parsedName      = "parsed"
-  val parseErrorsName = "parseErrors"
+  val parsedName     : String = "parsed"
+  val parseErrorsName: String = "parseErrors"
 
-  val rootNodeName = "rootNode"
+  val rootNodeName: String = "rootNode"
 
-  val sampleGrammarsName = "sampleGrammars"
+  val sampleGrammarsName: String = "sampleGrammars"
 
-  val STANDARD_XML_PLAYGROUND: String =
+  val StandardXmlPlayground: String =
     """<?xml version="1.0" encoding="utf-8"?>
       |<!DOCTYPE root [
       |
       |]>""".stripMargin
 
-  val XML_FILE_ENDING = "xml"
+  val xmlFileEnding: String = "xml"
 
 }

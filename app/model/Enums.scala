@@ -50,27 +50,27 @@ object Mark extends PlayEnum[Mark] {
 
   override val values: IndexedSeq[Mark] = findValues
 
-  case object VERY_GOOD extends Mark(1) {
+  case object VeryGood extends Mark(1) {
     override def display(evaluatedAspect: EvaluatedAspect): String = "Sehr " + evaluatedAspect.positive.toLowerCase
   }
 
-  case object GOOD extends Mark(2) {
+  case object Good extends Mark(2) {
     override def display(evaluatedAspect: EvaluatedAspect): String = evaluatedAspect.positive
   }
 
-  case object NEUTRAL extends Mark(3) {
+  case object Neutral extends Mark(3) {
     override def display(evaluatedAspect: EvaluatedAspect): String = evaluatedAspect.neutral
   }
 
-  case object BAD extends Mark(4) {
+  case object Bad extends Mark(4) {
     override def display(evaluatedAspect: EvaluatedAspect): String = evaluatedAspect.negative
   }
 
-  case object VERY_BAD extends Mark(5) {
+  case object VeryBad extends Mark(5) {
     override def display(evaluatedAspect: EvaluatedAspect): String = "Sehr " + evaluatedAspect.negative.toLowerCase
   }
 
-  case object NO_MARK extends Mark(-1) {
+  case object NoMark extends Mark(-1) {
     override def display(evaluatedAspect: EvaluatedAspect): String = "Keine Angabe"
   }
 

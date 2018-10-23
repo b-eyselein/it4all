@@ -25,12 +25,12 @@
                     <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
                     <div class="col-sm-10">
                         <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
-                        min="@model.questions.QuestionHelper.MIN_ANSWERS" max="@model.questions.QuestionHelper.MAX_ANSWERS"
-                        value="@model.questions.QuestionHelper.STD_ANSWERS" required>
+                        min="@model.questions.QuestionHelper.MinAnswers" max="@model.questions.QuestionHelper.MaxAnswers"
+                        value="@model.questions.QuestionHelper.StdAnswers" required>
                     </div>
                 </div>
 
-                @for(count <- 1 to model.questions.QuestionHelper.MAX_ANSWERS) {
+                @for(count <- 1 to model.questions.QuestionHelper.MaxAnswers) {
                     <div class="form-group">
                         <label class="control-label col-sm-2">Antwort @count</label>
                         <div class="col-sm-10" id="answerDiv">
@@ -54,12 +54,12 @@
                     <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
                     <div class="col-sm-10">
                         <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
-                        min="@model.questions.QuestionHelper.MIN_ANSWERS" max="@model.questions.QuestionHelper.MAX_ANSWERS"
-                        value="@model.questions.QuestionHelper.STD_ANSWERS" required>
+                        min="@model.questions.QuestionHelper.MinAnswers" max="@model.questions.QuestionHelper.MaxAnswers"
+                        value="@model.questions.QuestionHelper.StdAnswers" required>
                     </div>
                 </div>
 
-                @for(count <- 1 to model.questions.QuestionHelper.MAX_ANSWERS) {
+                @for(count <- 1 to model.questions.QuestionHelper.MaxAnswers) {
                     <div class="form-group">
                         <label class="control-label col-sm-2">Antwort @count:</label>
                         <div class="col-sm-10" id="answerDiv">
