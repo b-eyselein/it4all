@@ -1,30 +1,33 @@
-@(user: model.User, feedbackResults: Seq[model.feedback.FeedbackResult])
+@import model.feedback.FeedbackResult
+
+@(user: model.User, feedbackResults: Seq[FeedbackResult])
 
 @main("Evaluation", Some(user)) {
     <div class="container">
-        <div class="page-header">
-            <h1>Auswertung der Evaluation der Tools</h1>
-        </div>
+        <h1 class="text-center">Auswertung der Evaluation der Tools</h1>
 
         @if(feedbackResults.nonEmpty) {
             @for(res <- feedbackResults) {
-                <h2>@res.tool</h2>
+                <h2 class="text-center">@res.tool</h2>
 
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Frage</th>
-                            <th>&empty; / #</th>
+                            <th>#</th>
+                            <th>&empty;</th>
                             @for(mark <- model.Mark.values) {
                                 <th>@mark.value</th>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                    @for(evaledAspect <- model.EvaluatedAspects.values; marks = res.feedbackFor(evaledAspect)) {
+                    @for(evaledAspect <- model.EvaluatedAspects.values; marks = res.feedbackFor(evaledAspect);
+                    avgAndCount = FeedbackResult.avgAndCount(marks)) {
                         <tr>
                             <td>@evaledAspect.question</td>
-                            <td>@model.feedback.FeedbackResult.avg(marks) / @marks.size</td>
+                            <td>@avgAndCount._2</td>
+                            <td>@avgAndCount._1</td>
                             @for(mark <- model.Mark.values) {
                                 <td>@marks.getOrElse(mark, 0)</td>
                             }
