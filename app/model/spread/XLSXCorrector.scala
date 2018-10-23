@@ -16,7 +16,25 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
-object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Short](IndexedColors.RED.getIndex, IndexedColors.GREEN.getIndex) {
+object XLSXCorrector extends SpreadCorrector {
+
+  // Override types
+
+  override protected type DocumentType = Workbook
+
+  override protected type SheetType = Sheet
+
+  override protected type CellType = XSSFCell
+
+  override protected type FontType = org.apache.poi.ss.usermodel.Font
+
+  override protected type ColorType = Short
+
+  // Set colors
+
+  override protected val green: Short = IndexedColors.GREEN.getIndex
+
+  override protected val red: Short = IndexedColors.RED.getIndex
 
   private def compareChart(compSheetName: String, sampSheetName: String, chartMaster: CTChart, chartCompareOpt: Option[CTChart]): (Boolean, String) = chartCompareOpt match {
     case None               => (false, ERROR_LOAD_SHEET)
@@ -192,7 +210,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
     val fileNameNew: String = GFiles.getNameWithoutExtension(testPath.toString) + CORRECTION_ADD_STRING +
       "." + GFiles.getFileExtension(testPath.toString)
 
-    val savePath: Path = Paths.get(testPath.getParent.toString, fileNameNew)
+    val savePath: Path = testPath.getParent / fileNameNew
     if (!savePath.getParent.toFile.exists())
       Files.createDirectories(savePath.getParent)
 
@@ -226,7 +244,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
     cell.setCellComment(comment)
   }
 
-  override def setCellStyle(cell: XSSFCell, font: Font, success: Boolean): Unit = {
+  override def setCellStyle(cell: XSSFCell, font: org.apache.poi.ss.usermodel.Font, success: Boolean): Unit = {
     font.setColor(if (success) green else red)
 
     val style: CellStyle = cell.getSheet.getWorkbook.createCellStyle()

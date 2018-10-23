@@ -1,26 +1,43 @@
 package model.spread
 
 import java.io.FileOutputStream
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Files, Path}
 
 import com.google.common.io.{Files => GFiles}
 import model.spread.SpreadConsts._
 import model.spread.SpreadUtils._
 import org.odftoolkit.odfdom.`type`.Color
 import org.odftoolkit.simple.SpreadsheetDocument
-import org.odftoolkit.simple.style.Font
 import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle
 import org.odftoolkit.simple.table.{Cell, Table}
 
 import scala.util.Try
 
-object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Font, Color](Color.GREEN, Color.RED) {
+object ODFCorrector extends SpreadCorrector {
 
-  val maxRow    = 80
-  val maxColumn = 22
+  // Override types
 
-  val fontName         = "Arial"
-  val fontSize: Double = 10
+  override protected type DocumentType = SpreadsheetDocument
+
+  override protected type SheetType = Table
+
+  override protected type CellType = Cell
+
+  override protected type FontType = org.odftoolkit.simple.style.Font
+
+  override protected type ColorType = Color
+
+  // Override colours
+
+  override protected val green: Color = Color.GREEN
+
+  override protected val red: Color = Color.RED
+
+  private val maxRow   : Int = 80
+  private val maxColumn: Int = 22
+
+  private val fontName: String = "Arial"
+  private val fontSize: Double = 10
 
   override def closeDocument(document: SpreadsheetDocument): Unit = document.close()
 
@@ -82,7 +99,7 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
 
           val fontstyle = if (cellValueResult && cellFormulaResult) FontStyle.BOLD else FontStyle.ITALIC
 
-          val font = new Font(fontName, fontstyle, fontSize)
+          val font = new org.odftoolkit.simple.style.Font(fontName, fontstyle, fontSize)
 
           setCellStyle(cellCompare, font, cellValueResult && cellFormulaResult)
       }
@@ -112,7 +129,7 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
   override def saveCorrectedSpreadsheet(compareDocument: SpreadsheetDocument, testPath: Path): Try[Path] = {
     val tPath = testPath.toString
     val fileNameNew = GFiles.getNameWithoutExtension(tPath) + CORRECTION_ADD_STRING + "." + GFiles.getFileExtension(tPath)
-    val savePath = Paths.get(testPath.getParent.toString, fileNameNew)
+    val savePath = testPath.getParent / fileNameNew
 
     Try({
       if (!savePath.getParent.toFile.exists())
@@ -131,7 +148,7 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
     cell.setNoteText(message)
   }
 
-  override def setCellStyle(cell: Cell, font: Font, success: Boolean): Unit = {
+  override def setCellStyle(cell: Cell, font: org.odftoolkit.simple.style.Font, success: Boolean): Unit = {
     font.setColor(if (success) green else red)
     cell.setFont(font)
   }

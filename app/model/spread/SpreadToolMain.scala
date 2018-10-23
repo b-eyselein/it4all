@@ -3,10 +3,10 @@ package model.spread
 import java.nio.file.Path
 
 import javax.inject._
+import model._
 import model.spread.SpreadConsts.{difficultyName, durationName}
 import model.spread.SpreadToolMain._
 import model.toolMains.{FileExerciseToolMain, ToolState}
-import model._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.MessagesProvider
@@ -19,7 +19,7 @@ import scala.util.Try
 
 object SpreadToolMain {
 
-  val correctors = Map("ods" -> ODFCorrector, "xlsx" -> XLSXCorrector, "xlsm" -> XLSXCorrector)
+  val correctors: Map[String, SpreadCorrector] = Map[String, SpreadCorrector]("ods" -> ODFCorrector, "xlsx" -> XLSXCorrector, "xlsm" -> XLSXCorrector)
 
 }
 

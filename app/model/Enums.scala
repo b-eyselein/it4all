@@ -8,36 +8,29 @@ import scala.collection.immutable.IndexedSeq
 
 // Difficulty
 
-sealed abstract class Difficulty(val german: String) extends EnumEntry
+sealed abstract class Difficulty(val value: Int, val german: String) extends EnumEntry
 
 case object Difficulties extends PlayEnum[Difficulty] {
 
   override val values: IndexedSeq[Difficulty] = findValues
 
 
-  case object NOT_SPECIFIED extends Difficulty("Keine Angabe")
+  case object NOT_SPECIFIED extends Difficulty(0, "Keine Angabe")
 
 
-  case object VERY_EASY extends Difficulty("Sehr leicht")
+  case object VERY_EASY extends Difficulty(1, "Sehr leicht")
 
-  case object EASY extends Difficulty("Leicht")
+  case object EASY extends Difficulty(2, "Leicht")
 
-  case object MEDIUM extends Difficulty("Mittel")
+  case object MEDIUM extends Difficulty(3, "Mittel")
 
-  case object HARD extends Difficulty("Schwer")
+  case object HARD extends Difficulty(4, "Schwer")
 
-  case object VERY_HARD extends Difficulty("Sehr schwer")
+  case object VERY_HARD extends Difficulty(5, "Sehr schwer")
 
 
   def avg(difficulties: Seq[Difficulty]): Double = {
-    val marks = difficulties.filter(_ != Difficulties.NOT_SPECIFIED).map {
-      case VERY_EASY => 1
-      case EASY      => 2
-      case MEDIUM    => 3
-      case HARD      => 4
-      case VERY_HARD => 5
-      case _         => 0
-    }
+    val marks = difficulties filter (_ != Difficulties.NOT_SPECIFIED) map (_.value)
 
     // Round to max two decimal places
     math.rint(marks.sum.toDouble / marks.length * 100) / 100

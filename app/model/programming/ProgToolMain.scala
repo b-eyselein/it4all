@@ -17,7 +17,7 @@ import scala.util.{Failure, Success, Try}
 
 object ProgToolMain {
 
-  val standardTestCount = 2
+  val standardTestCount: Int = 2
 
 }
 

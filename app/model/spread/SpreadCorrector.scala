@@ -2,6 +2,7 @@ package model.spread
 
 import java.nio.file.Path
 
+import model.core.FileUtils
 import model.core.result.{EvaluationResult, SuccessType}
 import model.spread.SpreadConsts._
 
@@ -20,7 +21,26 @@ case object SpreadSheetCorrectionSuccess extends SpreadSheetCorrectionResult(Suc
 
 // Actual corrector
 
-abstract class SpreadCorrector[D, S, C, F, ColorType](val green: ColorType, val red: ColorType) {
+abstract class SpreadCorrector extends FileUtils {
+
+  // Abstract types
+
+  protected type DocumentType
+
+  protected type SheetType
+
+  protected type CellType
+
+  protected type FontType
+
+  protected type ColorType
+
+  // Colors
+
+  protected val green: ColorType
+
+  protected val red: ColorType
+
 
   def correct(samplePath: Path, comparePath: Path, conditionalFormating: Boolean, compareCharts: Boolean): SpreadSheetCorrectionResult = {
     if (!samplePath.toFile.exists) SpreadSheetCorrectionFailure(ERROR_MISSING_SAMPLE)
@@ -53,8 +73,8 @@ abstract class SpreadCorrector[D, S, C, F, ColorType](val green: ColorType, val 
             val sheetCount = getSheetCount(sampleDocument)
             for (sheetIndex <- 0 until sheetCount) {
 
-              val sampleTable: S = getSheetByIndex(sampleDocument, sheetIndex)
-              val compareTable: S = getSheetByIndex(compareDocument, sheetIndex)
+              val sampleTable: SheetType = getSheetByIndex(sampleDocument, sheetIndex)
+              val compareTable: SheetType = getSheetByIndex(compareDocument, sheetIndex)
 
               if (compareTable == null || sampleTable == null)
                 notices += s"""Beim Öffnen der ${sheetCount + 1}. Tabelle ist ein Fehler aufgetreten."""
@@ -75,36 +95,36 @@ abstract class SpreadCorrector[D, S, C, F, ColorType](val green: ColorType, val 
   }
 
 
-  protected def compareCellFormulas(masterCell: C, compareCell: C): (Boolean, String)
+  protected def compareCellFormulas(masterCell: CellType, compareCell: CellType): (Boolean, String)
 
-  protected def compareCellValues(masterCell: C, compareCell: C): (Boolean, String)
+  protected def compareCellValues(masterCell: CellType, compareCell: CellType): (Boolean, String)
 
-  protected def compareChartsInSheet(compareSheet: S, sampleSheet: S): (Boolean, String)
+  protected def compareChartsInSheet(compareSheet: SheetType, sampleSheet: SheetType): (Boolean, String)
 
-  protected def compareNumberOfChartsInDocument(compareDocument: D, sampleDocument: D): (Boolean, String)
+  protected def compareNumberOfChartsInDocument(compareDocument: DocumentType, sampleDocument: DocumentType): (Boolean, String)
 
-  protected def compareSheet(sampleTable: S, compareTable: S, conditionalFormating: Boolean): Unit
+  protected def compareSheet(sampleTable: SheetType, compareTable: SheetType, conditionalFormating: Boolean): Unit
 
-  protected def compareSheetConditionalFormatting(master: S, compare: S): List[String]
+  protected def compareSheetConditionalFormatting(master: SheetType, compare: SheetType): List[String]
 
   // Getters and other helper methods
 
-  protected def getCellByPosition(table: S, row: Int, column: Int): Option[C]
+  protected def getCellByPosition(table: SheetType, row: Int, column: Int): Option[CellType]
 
-  protected def getColoredRange(master: S): List[C]
+  protected def getColoredRange(master: SheetType): List[CellType]
 
-  protected def getSheetByIndex(sampleDocument: D, sheetIndex: Int): S
+  protected def getSheetByIndex(sampleDocument: DocumentType, sheetIndex: Int): SheetType
 
-  protected def getSheetCount(sampleDocument: D): Int
+  protected def getSheetCount(sampleDocument: DocumentType): Int
 
-  protected def closeDocument(compareDocument: D): Unit
+  protected def closeDocument(compareDocument: DocumentType): Unit
 
-  protected def loadDocument(musterPath: Path): Try[D]
+  protected def loadDocument(musterPath: Path): Try[DocumentType]
 
-  protected def saveCorrectedSpreadsheet(compareDocument: D, testPath: Path): Try[Path]
+  protected def saveCorrectedSpreadsheet(compareDocument: DocumentType, testPath: Path): Try[Path]
 
-  protected def setCellComment(cell: C, comment: String): Unit
+  protected def setCellComment(cell: CellType, comment: String): Unit
 
-  protected def setCellStyle(cell: C, font: F, success: Boolean): Unit
+  protected def setCellStyle(cell: CellType, font: FontType, success: Boolean): Unit
 
 }
