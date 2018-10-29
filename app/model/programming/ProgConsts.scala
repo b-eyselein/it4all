@@ -4,37 +4,37 @@ import model.Consts
 
 object ProgConsts extends Consts {
 
-  val baseDataName = "baseData"
-  val baseName     = "base"
+  val baseDataName: String = "baseData"
+  val baseName    : String = "base"
 
-  val classNameName        = "className"
-  val classDiagramName     = "classDiagram"
-  val classDiagramPartName = "classDiagramPart"
-  val consoleOutputName    = "consoleOutput"
+  val classNameName       : String = "className"
+  val classDiagramName    : String = "classDiagram"
+  val classDiagramPartName: String = "classDiagramPart"
+  val consoleOutputName   : String = "consoleOutput"
 
-  val evaluatedName = "evaluated"
+  val evaluatedName: String = "evaluated"
 
-  val functionNameName = "functionname"
+  val functionNameName: String = "functionname"
 
-  val identifierName     = "identifier"
-  val implementationName = "implementation"
-  val indentLevelName    = "indentLevel"
-  val inputName          = "input"
-  val inputsName         = "inputs"
+  val identifierName    : String = "identifier"
+  val implementationName: String = "implementation"
+  val indentLevelName   : String = "indentLevel"
+  val inputName         : String = "input"
+  val inputsName        : String = "inputs"
 
-  val outputName     = "output"
-  val outputTypeName = "outputType"
+  val outputName    : String = "output"
+  val outputTypeName: String = "outputType"
 
-  val resultName = "result"
+  val resultName: String = "result"
 
-  val sampleSolutionsName = "sampleSolutions"
-  val sampleTestDataName  = "sampleTestData"
-  val stdoutName          = "stdout"
+  val sampleSolutionsName: String = "sampleSolutions"
+  val sampleTestDataName : String = "sampleTestData"
+  val stdoutName         : String = "stdout"
 
-  val testIdName   = "testId"
-  val testdataName = "testdata"
-  val testMainName = "testMain"
+  val testIdName  : String = "testId"
+  val testdataName         = "testdata"
+  val testMainName: String = "testMain"
 
-  val variableName = "variable"
+  val variableName: String = "variable"
 
 }

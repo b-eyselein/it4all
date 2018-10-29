@@ -1,0 +1,47 @@
+@import model.User
+@import model.ideTest.IdeFile
+
+@(user: User, files: Seq[IdeFile], maybeActiveFile: Option[IdeFile])
+
+@title = @{
+    "IDE Test"
+}
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/ideTest.js")');</script>
+
+    <style>
+            .CodeMirror {
+                border: 1px solid lightgrey;
+                font-size: 14px;
+                /*height: 700px; */
+            }
+    </style>
+}
+
+@main(title, Some(user), scripts) {
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-6">
+
+                <div class="btn-group d-flex">
+                @for(file <- files) {
+                    <button class="fileBtn btn @{
+                        if(maybeActiveFile contains file) "btn-outline-primary" else "btn-outline-secondary"
+                    } w-100" data-filename="@file.name">@file.name</button>
+                }
+                </div>
+
+                <textarea id="myTextEditor"></textarea>
+
+            </div>
+        </div>
+
+    </div>
+}
