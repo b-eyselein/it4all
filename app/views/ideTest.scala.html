@@ -19,7 +19,7 @@
             .CodeMirror {
                 border: 1px solid lightgrey;
                 font-size: 14px;
-                /*height: 700px; */
+                height: 700px;
             }
     </style>
 }
@@ -30,15 +30,17 @@
         <div class="row">
             <div class="col-md-6">
 
-                <div class="btn-group d-flex">
-                @for(file <- files) {
-                    <button class="fileBtn btn @{
-                        if(maybeActiveFile contains file) "btn-outline-primary" else "btn-outline-secondary"
-                    } w-100" data-filename="@file.name">@file.name</button>
-                }
+                <div class="form-group">
+                    <div class="btn-group d-flex">
+                    @for(file <- files) {
+                        <button class="fileBtn btn @{
+                            if(maybeActiveFile contains file) "btn-primary" else "btn-outline-secondary"
+                        } w-100" data-filename="@file.name">@file.name</button>
+                    }
+                    </div>
                 </div>
 
-                <textarea id="myTextEditor"></textarea>
+                <textarea id="myTextEditor" title="Initialized to CodeMirror Editor">@maybeActiveFile.map(_.content).getOrElse("")</textarea>
 
             </div>
         </div>

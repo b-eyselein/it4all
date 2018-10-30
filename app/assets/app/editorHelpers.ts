@@ -15,6 +15,8 @@ function changeFontSize(value: number): void {
 }
 
 function initEditor(language: string, elementId: string): CodeMirror.Editor {
+    // FIXME: dynamically import mode (language...) with import(): Promise!
+
     let textArea = document.getElementById(elementId);
 
     if (textArea instanceof HTMLTextAreaElement) {

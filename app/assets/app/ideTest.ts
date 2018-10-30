@@ -2,12 +2,6 @@ import * as $ from 'jquery';
 import * as CodeMirror from 'codemirror';
 import {initEditor} from './editorHelpers';
 
-const modes = ["python", "htmlmixed", "jinja2"];
-
-modes.forEach(mode => {
-    import('codemirror/mode/' + mode + '/' + mode);
-});
-
 let filenames: string[] = [];
 let fileBtns: JQuery;
 
@@ -22,18 +16,23 @@ interface LoadFileSingleResult {
 }
 
 
-function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
+function onLoadFileSuccess(result: LoadFileSingleResult[], activeFile: string): void {
+    // Fill file map
     for (const res of result) {
         files.set(res.name, res);
     }
 
-    console.warn(files);
-    const firstFile: LoadFileSingleResult = files.get("app.py");
+    // Read all CodeMirror modes from result array
+    const allModes: string[] = Array.from(new Set(result.map(r => r.filetype)));
 
-    editor = initEditor(firstFile.filetype, "myTextEditor");
-
-
-    editor.setValue(firstFile.content);
+    // Load all file modes
+    Promise.all(allModes.map(mode => import('codemirror/mode/' + mode + '/' + mode)))
+        .then(() => {
+            // Init editor (all modes have already been loaded!)
+            const firstFile: LoadFileSingleResult = files.get(activeFile);
+            // FIXME: get => null!
+            editor = initEditor(firstFile.filetype, "myTextEditor");
+        });
 }
 
 $(() => {
@@ -42,6 +41,8 @@ $(() => {
     fileBtns.each((_: number, el: HTMLElement) => {
         filenames.push($(el).data('filename'));
     });
+
+    const activeFile: string = $('.btn-primary').data('filename');
 
     fileBtns.on('click', (event: JQuery.Event) => {
         const clickedBtn: JQuery<HTMLButtonElement> = $(event.target as HTMLButtonElement);
@@ -52,6 +53,9 @@ $(() => {
 
         editor.setValue(nextFile.content);
         editor.setOption('mode', nextFile.filetype);
+
+        fileBtns.removeClass('btn-primary').addClass('btn-outline-secondary');
+        clickedBtn.removeClass('btn-outline-secondary').addClass('btn-primary');
     });
 
     $.ajax({
@@ -60,7 +64,7 @@ $(() => {
         error: jqXHR => {
             console.error(jqXHR)
         },
-        success: onLoadFileSuccess
+        success: (r) => onLoadFileSuccess(r, activeFile)
     });
 
 });
