@@ -19,7 +19,7 @@ object ProgCorrector extends FileUtils {
 
   private def testMainFileName(fileEnding: String): String = "test_main." + fileEnding
 
-  private val dockerImageName = "beyselein/python_prog_tester"
+  private val dockerImageName = "beyselein/python_prog_tester:0.9"
 
   def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, completeTestData: Seq[TestData],
               toolMain: ProgToolMain)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {

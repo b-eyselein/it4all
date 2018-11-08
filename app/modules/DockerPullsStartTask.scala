@@ -10,7 +10,7 @@ object DockerPullsStartTask {
 
   val imagesToPull: Seq[String] = Seq(
     "beyselein/rose:latest",
-    "beyselein/python_prog_tester:latest"
+    "beyselein/python_prog_tester:0.9"
   )
 
   def pullImages(): Unit = imagesToPull.filterNot(DockerConnector.imageExists).foreach(image => {
