@@ -3,7 +3,11 @@ import * as CodeMirror from 'codemirror';
 import {initEditor} from './editorHelpers';
 
 let filenames: string[] = [];
+let activeFile: string;
+
 let fileBtns: JQuery;
+
+let uploadBtn: JQuery<HTMLButtonElement>;
 
 let files: Map<string, LoadFileSingleResult> = new Map<string, LoadFileSingleResult>();
 
@@ -15,8 +19,7 @@ interface LoadFileSingleResult {
     filetype: string,
 }
 
-
-function onLoadFileSuccess(result: LoadFileSingleResult[], activeFile: string): void {
+function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
     // Fill file map
     for (const res of result) {
         files.set(res.name, res);
@@ -35,36 +38,61 @@ function onLoadFileSuccess(result: LoadFileSingleResult[], activeFile: string): 
         });
 }
 
+function changeEditorContent(event: JQuery.Event): void {
+    // save current editor content for activeFile!
+    files.get(activeFile).content = editor.getValue();
+
+    // TODO: mark current file btn as changed?
+
+    // Get name and content of next file
+    const clickedBtn: JQuery<HTMLButtonElement> = $(event.target as HTMLButtonElement);
+    activeFile = clickedBtn.data('filename') as string;
+    const nextFile: LoadFileSingleResult = files.get(activeFile);
+
+    // Update editor content and mode (language!)
+    editor.setValue(nextFile.content);
+    editor.setOption('mode', nextFile.filetype);
+
+    // Update buttons
+    fileBtns.removeClass('btn-primary').addClass('btn-outline-secondary');
+    clickedBtn.removeClass('btn-outline-secondary').addClass('btn-primary');
+}
+
+interface FileUploadContent {
+    name: string,
+    content: string
+}
+
+function uploadFiles(): void {
+    // TODO: implement!
+    console.warn("TODO: Upload!");
+}
+
 $(() => {
+    activeFile = $('.btn-primary').data('filename');
+
     fileBtns = $('.fileBtn');
 
     fileBtns.each((_: number, el: HTMLElement) => {
         filenames.push($(el).data('filename'));
     });
 
-    const activeFile: string = $('.btn-primary').data('filename');
-
-    fileBtns.on('click', (event: JQuery.Event) => {
-        const clickedBtn: JQuery<HTMLButtonElement> = $(event.target as HTMLButtonElement);
-
-        const nextFileName: string = clickedBtn.data('filename') as string;
-
-        const nextFile: LoadFileSingleResult = files.get(nextFileName);
-
-        editor.setValue(nextFile.content);
-        editor.setOption('mode', nextFile.filetype);
-
-        fileBtns.removeClass('btn-primary').addClass('btn-outline-secondary');
-        clickedBtn.removeClass('btn-outline-secondary').addClass('btn-primary');
-    });
+    fileBtns.on('click', changeEditorContent);
 
     $.ajax({
+        method: "POST",
         url: "http://localhost:9000/ideFiles",
         data: JSON.stringify(filenames),
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token);
+        },
         error: jqXHR => {
             console.error(jqXHR)
         },
-        success: (r) => onLoadFileSuccess(r, activeFile)
+        success: onLoadFileSuccess
     });
 
+    uploadBtn = $('#uploadBtn');
+    uploadBtn.on('click', uploadFiles);
 });

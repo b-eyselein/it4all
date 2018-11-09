@@ -15,8 +15,8 @@ final case class IdeFile(name: String, content: String, codeMirrorFileType: Stri
 
 object IdeFilesTest {
 
-  val files: Seq[IdeFile] = Seq(
-    IdeFile("app.py",
+  val files: Map[String, IdeFile] = Map(
+    "app.py" -> IdeFile("app.py",
       """from flask import Flask
         |
         |app = Flask(__name__)
@@ -27,7 +27,7 @@ object IdeFilesTest {
         |    return "TODO!"
       """.stripMargin, "python"),
 
-    IdeFile("templates/base.html",
+    "templates/base.html" -> IdeFile("templates/base.html",
       """<!doctype html>
         |<html>
         |<head>
@@ -40,7 +40,7 @@ object IdeFilesTest {
         |</html>
       """.stripMargin, "jinja2"),
 
-    IdeFile("templates/index.html",
+    "templates/index.html" -> IdeFile("templates/index.html",
       """{% extends "base.html" %}
         |
         |{% block content %}

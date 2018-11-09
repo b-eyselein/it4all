@@ -1,7 +1,7 @@
 @import model.User
 @import model.ideTest.IdeFile
 
-@(user: User, files: Seq[IdeFile], maybeActiveFile: Option[IdeFile])
+@(user: User, fileNames: Seq[String], maybeActiveFile: Option[IdeFile])(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     "IDE Test"
@@ -27,21 +27,33 @@
 @main(title, Some(user), scripts) {
     <div class="container-fluid">
 
+        @helper.CSRF.formField
+
         <div class="row">
             <div class="col-md-6">
 
                 <div class="form-group">
                     <div class="btn-group d-flex">
-                    @for(file <- files) {
+                    @for(fileName <- fileNames) {
                         <button class="fileBtn btn @{
-                            if(maybeActiveFile contains file) "btn-primary" else "btn-outline-secondary"
-                        } w-100" data-filename="@file.name">@file.name</button>
+                            if(maybeActiveFile.map(_.name) contains fileName) "btn-primary" else "btn-outline-secondary"
+                        } w-100" data-filename="@fileName">
+                            @fileName @* <span class="octicon octicon-check"></span> *@
+                        </button>
                     }
                     </div>
                 </div>
 
                 <textarea id="myTextEditor" title="Initialized to CodeMirror Editor">@maybeActiveFile.map(_.content).getOrElse("")</textarea>
 
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <button class="btn btn-success btn-block" id="uploadBtn">
+                        <span class="octicon octicon-cloud-upload"></span> Hochladen...
+                    </button>
+                </div>
             </div>
         </div>
 

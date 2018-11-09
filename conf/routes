@@ -174,7 +174,7 @@ GET           /:toolType/admin/index                                        cont
 GET           /blockly                                                      controllers.Application.blocklyTest
 
 GET           /ideTest                                                      controllers.Application.ideTest
-GET           /ideFiles                                                     controllers.Application.ideFiles
+POST          /ideFiles                                                     controllers.Application.ideFiles
 
 # Evaluation
 GET           /eval/stats                                                   controllers.AdminController.evaluationResults
