@@ -1,7 +1,6 @@
 package model.spread
 
-import java.nio.file.Path
-
+import better.files.File
 import javax.inject._
 import model._
 import model.spread.SpreadConsts.{difficultyName, durationName}
@@ -15,7 +14,6 @@ import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
 import scala.language.{implicitConversions, postfixOps}
-import scala.util.Try
 
 object SpreadToolMain {
 
@@ -71,16 +69,21 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
 
   // File checking
 
-  protected def checkFiles(ex: SpreadExercise): Seq[Try[Path]] = fileTypes flatMap {
+  override protected def checkFiles(ex: SpreadExercise): Seq[File] = fileTypes flatMap {
     case (fileEnding, _) =>
       //    FIXME: use result !
       val sampleFilename = ex.sampleFilename + "." + fileEnding
       val templateFilename = ex.templateFilename + "." + fileEnding
 
-      Seq(
-        copy(sampleFilename, exerciseResourcesFolder, sampleDirForExercise(ex.id)),
-        copy(templateFilename, exerciseResourcesFolder, templateDirForExercise(ex.id))
-      )
+      val sampleSourceFile: File = exerciseResourcesFolder / sampleFilename
+      val templateSourceFile: File = exerciseResourcesFolder / templateFilename
+
+
+      val sampleTargetFile = sampleSourceFile.copyToDirectory(sampleDirForExercise(ex.id))
+      val templateTargetFile = templateSourceFile.copyToDirectory(templateDirForExercise(ex.id))
+
+      Seq(sampleTargetFile, templateTargetFile)
+
   } toSeq
 
   // Other helper methods
@@ -103,10 +106,10 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
 
   // Correction
 
-  override protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): SpreadSheetCorrectionResult =
+  override protected def correctEx(learnerFilePath: File, sampleFilePath: File, fileExtension: String): SpreadSheetCorrectionResult =
     correctors.get(fileExtension) match {
       case None            => SpreadSheetCorrectionFailure(s"""The filetype "$fileExtension" is not supported. Could not start correction.""")
-      case Some(corrector) => corrector.correct(samplePath = sampleFilePath, comparePath = learnerFilePath, conditionalFormating = false, compareCharts = false)
+      case Some(corrector) => corrector.correct(samplePath = sampleFilePath.toJava.toPath, comparePath = learnerFilePath.toJava.toPath, conditionalFormating = false, compareCharts = false)
     }
 
 }

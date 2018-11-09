@@ -146,6 +146,9 @@ libraryDependencies ++= Seq(
 
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
 
+  // Betterfiles
+  "com.github.pathikrit" %% "better-files" % "3.6.0",
+
   // Selenium and HtmlUnitDriver for Web+Js
   "org.seleniumhq.selenium" % "selenium-java" % "3.12.0",
   "org.seleniumhq.selenium" % "htmlunit-driver" % "2.31.0",

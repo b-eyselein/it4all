@@ -27,7 +27,7 @@ trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult]
 
 @Singleton
 class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Xml", "xml") with FileUtils {
+  extends IdExerciseToolMain("Xml", "xml") {
 
   // Result types
 
@@ -109,20 +109,18 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteEx, part: XmlExPart): Future[Try[XmlCompleteResult]] =
     Future(part match {
-      case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap { dir =>
+      case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) map { dir =>
         getFirstSample(completeEx) map (_.sampleGrammar.asString) match {
-          case None                 => Failure(new Exception(s"There is no grammar for exercise ${completeEx.ex.id}"))
+          case None                 =>
+            //            new Exception(s"There is no grammar for exercise ${completeEx.ex.id}")
+            ???
           case Some(grammarToWrite) =>
 
-            val grammarAndXmlTries: Try[(Path, Path)] = for {
-              grammar <- write(dir, completeEx.ex.rootNode + ".dtd", grammarToWrite)
-              xml <- write(dir, completeEx.ex.rootNode + "." + xmlFileEnding, solution)
-            } yield (grammar, xml)
+            val grammar = (dir / (completeEx.ex.rootNode + ".dtd")) write grammarToWrite
+            val xml = (dir / (completeEx.ex.rootNode + "." + xmlFileEnding)) write solution
 
-            grammarAndXmlTries map { case (_, xml) =>
-              val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml)
-              XmlDocumentCompleteResult(solution, correctionResult)
-            }
+            val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml.path)
+            XmlDocumentCompleteResult(solution, correctionResult)
         }
       }
 

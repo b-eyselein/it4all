@@ -1,5 +1,6 @@
 package controllers
 
+import better.files.File
 import javax.inject.{Inject, Singleton}
 import model.core._
 import model.spread.SpreadConsts
@@ -48,7 +49,9 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
   def downloadTemplate(toolType: String, id: Int, fileExtension: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
       toolMain.futureCompleteExById(id) map {
-        case Some(exercise) => Ok.sendFile((toolMain.templateDirForExercise(exercise.ex.id) / (exercise.templateFilename + "." + fileExtension)).toFile)
+        case Some(exercise) =>
+          val fileToSend: File = toolMain.templateDirForExercise(exercise.ex.id) / (exercise.templateFilename + "." + fileExtension)
+          Ok.sendFile(fileToSend.toJava)
         case None           => Redirect(routes.MainExerciseController.index(toolMain.urlPart))
       }
   }
@@ -58,7 +61,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
       toolMain.futureCompleteExById(id) map {
         case Some(exercise) =>
           val correctedFilePath = toolMain.solutionDirForExercise(user.username, exercise.ex.id) / (exercise.templateFilename + SpreadConsts.CORRECTION_ADD_STRING + "." + fileExtension)
-          Ok.sendFile(correctedFilePath.toFile)
+          Ok.sendFile(correctedFilePath.toJava)
         case None           => BadRequest("There is no such exercise!")
       }
   }

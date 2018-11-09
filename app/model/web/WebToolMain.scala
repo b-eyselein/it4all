@@ -1,14 +1,13 @@
 package model.web
 
-import java.nio.file.Path
-
+import better.files.File
 import javax.inject._
 import model._
 import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
+import model.web.WebConsts._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Forms._
 import play.api.data._
-import model.web.WebConsts._
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request, RequestHeader}
@@ -66,14 +65,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // DB
 
-  def writeWebSolutionFile(username: String, exerciseId: Int, part: WebExPart, content: String): Try[Path] = {
+  def writeWebSolutionFile(username: String, exerciseId: Int, part: WebExPart, content: String): File = {
     val fileEnding = part match {
       case WebExParts.PHPPart => "php"
       case _                  => "html"
     }
 
-    val target: Path = solutionDirForExercise(username, exerciseId) / ("test." + fileEnding)
-    write(target, content)
+    val target: File = solutionDirForExercise(username, exerciseId) / ("test." + fileEnding)
+    target.write(content)
   }
 
   override def futureOldOrDefaultSolution(user: User, exId: Int, exSemVer: SemanticVersion, part: WebExPart): Future[Option[DBSolType]] =
@@ -150,15 +149,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Correction
 
   override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
-    writeWebSolutionFile(user.username, exercise.ex.id, part, learnerSolution) flatMap { _ =>
+    writeWebSolutionFile(user.username, exercise.ex.id, part, learnerSolution)
 
-      val driver = new HtmlUnitDriver(true)
-      driver.get(getSolutionUrl(user, exercise.ex.id, part))
+    val driver = new HtmlUnitDriver(true)
+    driver.get(getSolutionUrl(user, exercise.ex.id, part))
 
-      val results = Try(exercise.tasksForPart(part) map (task => WebCorrector.evaluateWebTask(task, driver)))
+    val results = Try(exercise.tasksForPart(part) map (task => WebCorrector.evaluateWebTask(task, driver)))
 
-      results map (WebCompleteResult(learnerSolution, exercise, part, _))
-    }
+    results map (WebCompleteResult(learnerSolution, exercise, part, _))
   }
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: WebExPart): Future[Option[String]] =

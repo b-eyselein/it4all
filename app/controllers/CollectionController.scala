@@ -1,7 +1,6 @@
 package controllers
 
-import java.nio.file.Files
-
+import better.files._
 import javax.inject.{Inject, Singleton}
 import model.ExerciseState
 import model.core.CoreConsts._
@@ -20,7 +19,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils with play.api.i18n.I18nSupport {
+  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured  with play.api.i18n.I18nSupport {
 
   override type ToolMainType = CollectionToolMain
 
@@ -40,10 +39,10 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
-      val file = Files.createTempFile(s"export_${toolMain.urlPart}", ".yaml")
+      val file = File.newTemporaryFile(s"export_${toolMain.urlPart}", ".yaml")
 
-      toolMain.yamlString map (content => write(file, content)) map { _ =>
-        Ok.sendPath(file, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => Files.delete(file))
+      toolMain.yamlString map (content => file.write(content)) map { _ =>
+        Ok.sendPath(file.path, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => file.delete())
       }
   }
 

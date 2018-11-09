@@ -106,10 +106,11 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       case ProgStringSolution(solution, _) => (solution, exercise.sampleTestData)
     }
 
-    ProgCorrector.correct(user, exercise, sol.language, implementation, testData, toolMain = this) match {
-      case Success(futureRes) => futureRes
-      case Failure(error)     => Future(Failure(error))
-    }
+    ProgCorrector.correct(user, exercise, sol.language, implementation, testData, toolMain = this)
+//    match {
+//      case Success(futureRes) => futureRes
+//      case Failure(error)     => Future(Failure(error))
+//    }
   }
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: ProgExPart): Future[Option[String]] = part match {

@@ -2,12 +2,12 @@ package model.xml
 
 import java.nio.file.Paths
 
-import model.core.FileUtils
+import better.files.File._
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.scalatest.Matchers._
 
-class XmlCorrectorTest extends FileUtils {
+class XmlCorrectorTest { //extends FileUtils {
 
   private val basePath = Paths.get("test", "resources", "xml")
 

@@ -2,6 +2,7 @@ package model.docker
 
 import java.nio.file.{Path, Paths}
 
+import better.files.File
 import com.spotify.docker.client.DockerClient.LogsParam
 import com.spotify.docker.client.messages.HostConfig.Bind
 import com.spotify.docker.client.messages.{ContainerConfig, ContainerCreation, ContainerExit, HostConfig}
@@ -13,9 +14,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
-final case class DockerBind(fromPath: Path, toPath: Path, isReadOnly: Boolean = false) {
+final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {
 
-  def toBind: Bind = Bind.from(fromPath.toAbsolutePath.toString).to(toPath.toString).readOnly(isReadOnly).build()
+  def toBind: Bind = Bind
+    .from(fromPath.path.toAbsolutePath.toString)
+    .to(toPath.path.toAbsolutePath.toString)
+    .readOnly(isReadOnly).build()
 
 }
 

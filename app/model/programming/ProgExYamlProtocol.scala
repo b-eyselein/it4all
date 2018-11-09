@@ -3,7 +3,6 @@ package model.programming
 import java.nio.file.{Path, Paths}
 
 import model.MyYamlProtocol._
-import model.core.FileUtils
 import model.programming.ProgConsts._
 import model.uml.UmlClassDiagram
 import model.uml.UmlExYamlProtocol.UmlSampleSolutionYamlFormat
@@ -18,7 +17,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   val basePath: Path = Paths.get("conf", "resources", "programming")
 
-  implicit object ProgExYamlFormat extends MyYamlObjectFormat[ProgCompleteEx] with FileUtils {
+  implicit object ProgExYamlFormat extends MyYamlObjectFormat[ProgCompleteEx] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgCompleteEx] = for {
       baseValues <- readBaseValues(yamlObject)
@@ -93,7 +92,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  final case class ProgSampleSolutionYamlFormat(exId: Int, exSemVer: SemanticVersion, folderIdentifier: String) extends MyYamlObjectFormat[ProgSampleSolution] with FileUtils {
+  final case class ProgSampleSolutionYamlFormat(exId: Int, exSemVer: SemanticVersion, folderIdentifier: String) extends MyYamlObjectFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)

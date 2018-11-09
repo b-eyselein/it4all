@@ -1,12 +1,13 @@
 package model.toolMains
 
-import java.nio.file.{Path, Paths}
+import java.nio.file.Paths
 
+import better.files.File._
+import better.files._
 import enumeratum.{EnumEntry, PlayEnum}
 import model.Role.RoleUser
 import model._
 import model.core.CoreConsts._
-import model.core.FileUtils
 import model.core.result.EvaluationResult
 import model.learningPath.{LearningPath, LearningPathTableDefs, LearningPathYamlProtocol}
 import net.jcazevedo.moultingyaml._
@@ -38,7 +39,7 @@ object ToolState extends PlayEnum[ToolState] {
 
 }
 
-abstract class AToolMain(val toolname: String, val urlPart: String) extends FileUtils {
+abstract class AToolMain(val toolname: String, val urlPart: String)  {
 
   // Abstract types
 
@@ -63,17 +64,16 @@ abstract class AToolMain(val toolname: String, val urlPart: String) extends File
 
   // Helper methods
 
-  def readLearningPaths: Seq[LearningPath] = readAll(exerciseResourcesFolder / "learningPath.yaml") match {
-    case Failure(error)       =>
-      Logger.error(s"Error while reading learning paths for tool $urlPart", error)
-      Seq[LearningPath]()
-    case Success(fileContent) =>
-      learningPathsYamlFormat.read(fileContent.parseYaml) match {
-        case Success(read)  => Seq(read)
-        case Failure(error) =>
-          Logger.error("Fehler: ", error)
-          Seq[LearningPath]()
-      }
+  def readLearningPaths: Seq[LearningPath] = {
+    val learningPathFile: File = exerciseResourcesFolder / "learningPath.yaml"
+    val content: String = learningPathFile.contentAsString
+
+    learningPathsYamlFormat.read(content.parseYaml) match {
+      case Success(read)  => Seq(read)
+      case Failure(error) =>
+        Logger.error("Fehler: ", error)
+        Seq[LearningPath]()
+    }
   }
 
   // DB
@@ -88,13 +88,13 @@ abstract class AToolMain(val toolname: String, val urlPart: String) extends File
 
   private val rootDir: String = "data"
 
-  private val resourcesFolder: Path = Paths.get("conf", "resources")
+  private val resourcesFolder: File = Paths.get("conf", "resources")
 
-  lazy val exerciseResourcesFolder: Path = resourcesFolder / urlPart
+  lazy val exerciseResourcesFolder: File = resourcesFolder / urlPart
 
-  protected lazy val exerciseRootDir: Path = Paths.get(rootDir, urlPart)
+  protected lazy val exerciseRootDir: File = Paths.get(rootDir, urlPart)
 
-  def solutionDirForExercise(username: String, id: Int): Path = exerciseRootDir / solutionsSubDir / username / String.valueOf(id)
+  def solutionDirForExercise(username: String, id: Int): File = exerciseRootDir / solutionsSubDir / username / String.valueOf(id)
 
   // Views
 

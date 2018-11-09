@@ -2,8 +2,8 @@ package model.programming
 
 import java.nio.file.Path
 
+import better.files.File._
 import model.core.result.SuccessType
-import model.core.FileUtils
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 final case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], errors: String)
 
 //noinspection ConvertibleToMethodValue
-object ResultsFileJsonFormat extends FileUtils {
+object ResultsFileJsonFormat {
 
   private implicit val executionResultJsonReads: Reads[ExecutionResult] = (
     (__ \ "success").read[SuccessType] and
@@ -30,8 +30,9 @@ object ResultsFileJsonFormat extends FileUtils {
       (__ \ "errors").read[String]
     ) (ResultFileContent.apply(_, _, _))
 
-  def readResultFile(targetFile: Path, completeTestData: Seq[TestData]): Try[Seq[ExecutionResult]] = readAll(targetFile) flatMap { resultFileContent =>
-    resultsFileJsonReads.reads(Json.parse(resultFileContent)) match {
+  def readResultFile(targetFile: Path, completeTestData: Seq[TestData]): Try[Seq[ExecutionResult]] = {
+
+    resultsFileJsonReads.reads(Json.parse(targetFile.contentAsString)) match {
       case JsSuccess(result: ResultFileContent, _) =>
         Success(
           result.results)

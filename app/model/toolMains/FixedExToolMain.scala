@@ -2,6 +2,7 @@ package model.toolMains
 
 import java.nio.file.Path
 
+import better.files.File
 import model._
 import model.core._
 import model.persistence.ExerciseTableDefs
@@ -9,6 +10,7 @@ import net.jcazevedo.moultingyaml._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 import scala.util.{Failure, Try}
 
 abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends AToolMain(tn, up) {
@@ -45,16 +47,16 @@ abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionCon
 
   def yamlString: Future[String]
 
-  def readImports: Seq[Try[ReadType]] = subDirectoriesOf(exerciseResourcesFolder) map { subDirectory =>
-    val filesToRead = filesInDirectory(subDirectory) sortBy (_.getFileName)
+  def readImports: Seq[Try[ReadType]] = {
+    val subDirectories = exerciseResourcesFolder.list filter (_.isDirectory) toSeq
 
-    filesToRead find (_.getFileName.toString endsWith ".yaml") match {
-      case None                 => Failure(new Exception(s"There is no yaml file in folder ${subDirectory.toString}"))
-      case Some(filePath: Path) =>
-        readAll(filePath) flatMap { yamlFileContent: String =>
-          val yamlValue: YamlValue = yamlFileContent.parseYaml
-          yamlFormat.read(yamlValue)
-        }
+    subDirectories map { subDirectory: File =>
+      val filesToRead = subDirectory.list.toList sortBy (_.name)
+
+      filesToRead find (_.name.toString endsWith ".yaml") match {
+        case None                 => Failure(new Exception(s"There is no yaml file in folder ${subDirectory.toString}"))
+        case Some(filePath: Path) => yamlFormat.read(filePath.contentAsString.parseYaml)
+      }
     }
   }
 

@@ -3,6 +3,8 @@ package model.spread
 import java.io.FileOutputStream
 import java.nio.file.{Files, Path}
 
+import better.files.File
+import better.files.File._
 import com.google.common.io.{Files => GFiles}
 import model.spread.SpreadConsts._
 import model.spread.SpreadUtils._
@@ -129,17 +131,16 @@ object ODFCorrector extends SpreadCorrector {
   override def saveCorrectedSpreadsheet(compareDocument: SpreadsheetDocument, testPath: Path): Try[Path] = {
     val tPath = testPath.toString
     val fileNameNew = GFiles.getNameWithoutExtension(tPath) + CORRECTION_ADD_STRING + "." + GFiles.getFileExtension(tPath)
-    val savePath = testPath.getParent / fileNameNew
+    val savePath: File = testPath.getParent / fileNameNew
 
     Try({
-      if (!savePath.getParent.toFile.exists())
-        Files.createDirectories(savePath.getParent)
+      savePath.parent.createDirectories()
 
-      val fileOut: FileOutputStream = new FileOutputStream(savePath.toFile)
+      val fileOut: FileOutputStream = new FileOutputStream(savePath.toJava)
       compareDocument.save(fileOut)
       fileOut.close()
 
-      savePath
+      savePath.path
     })
 
   }

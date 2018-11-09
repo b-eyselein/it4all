@@ -1,9 +1,8 @@
 package model.toolMains
 
-import java.nio.file.Path
-
+import better.files.File
 import model.core.CoreConsts._
-import model.core.{FileUtils, NoSuchExerciseException, ReadAndSaveResult}
+import model.core.{NoSuchExerciseException, ReadAndSaveResult}
 import model.{FileCompleteEx, User}
 import play.api.libs.Files.TemporaryFile
 import play.api.mvc.Call
@@ -11,10 +10,10 @@ import play.api.mvc.MultipartFormData.FilePart
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 abstract class FileExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
-  extends ASingleExerciseToolMain(tn, up) with FileUtils {
+  extends ASingleExerciseToolMain(tn, up) {
 
   // Abstract types
 
@@ -29,7 +28,7 @@ abstract class FileExerciseToolMain(tn: String, up: String)(implicit ec: Executi
       tables.futureSaveCompleteEx(ex) map (saveRes => (ex, saveRes))
   })
 
-  protected def checkFiles(ex: ReadType): Seq[Try[Path]]
+  protected def checkFiles(ex: ReadType): Seq[File]
 
   // Other members
 
@@ -37,9 +36,9 @@ abstract class FileExerciseToolMain(tn: String, up: String)(implicit ec: Executi
 
   // Paths
 
-  def sampleDirForExercise(id: Int): Path = exerciseRootDir / sampleSubDir / String.valueOf(id)
+  def sampleDirForExercise(id: Int): File = exerciseRootDir / sampleSubDir / String.valueOf(id)
 
-  def templateDirForExercise(id: Int): Path = exerciseRootDir / templateSubDir / String.valueOf(id)
+  def templateDirForExercise(id: Int): File = exerciseRootDir / templateSubDir / String.valueOf(id)
 
   // Views
 
@@ -66,27 +65,22 @@ abstract class FileExerciseToolMain(tn: String, up: String)(implicit ec: Executi
     futureCompleteExById(id) map {
       case None         => Failure(NoSuchExerciseException(id))
       case Some(compEx) =>
-        val learnerFileTargetPath: Path = solutionDirForExercise(user.username, compEx.ex.id) / s"${compEx.templateFilename}.$fileExtension"
+        val learnerFileTargetPath: File = solutionDirForExercise(user.username, compEx.ex.id) / s"${compEx.templateFilename}.$fileExtension"
 
-        val sampleFilename = s"${compEx.sampleFilename}.$fileExtension"
-        val musterFileSourcePath = sampleDirForExercise(compEx.ex.id) / sampleFilename
-        val musterFileTargetPath = solutionDirForExercise(user.username, compEx.ex.id) / sampleFilename
+        val sampleFilename: String = s"${compEx.sampleFilename}.$fileExtension"
+        val musterFileSourcePath: File = sampleDirForExercise(compEx.ex.id) / sampleFilename
+        val musterFileTargetPath: File = solutionDirForExercise(user.username, compEx.ex.id) / sampleFilename
 
-        val fileCopyTries = for {
-          learnerTry <- move(file.ref.path, learnerFileTargetPath)
-          musterTry <- copy(musterFileSourcePath, musterFileTargetPath)
-        } yield (learnerTry, musterTry)
+        File(file.ref.path) moveTo learnerFileTargetPath
+        musterFileSourcePath copyTo musterFileTargetPath
 
-        fileCopyTries map {
-          case (learnerFilePath, musterFilePath) =>
-            val correction = correctEx(learnerFilePath, musterFilePath, fileExtension)
-            renderResult(user, correction, compEx, fileExtension)
-        }
+        val correction = correctEx(learnerFileTargetPath, musterFileTargetPath, fileExtension)
+        Success(renderResult(user, correction, compEx, fileExtension))
     }
 
   // Correction
 
-  protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): R
+  protected def correctEx(learnerFilePath: File, sampleFilePath: File, fileExtension: String): R
 
   // Calls
 

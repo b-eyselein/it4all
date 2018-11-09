@@ -2,7 +2,6 @@ package model.spread
 
 import java.nio.file.Path
 
-import model.core.FileUtils
 import model.core.result.{EvaluationResult, SuccessType}
 import model.spread.SpreadConsts._
 
@@ -21,7 +20,7 @@ case object SpreadSheetCorrectionSuccess extends SpreadSheetCorrectionResult(Suc
 
 // Actual corrector
 
-abstract class SpreadCorrector extends FileUtils {
+abstract class SpreadCorrector {
 
   // Abstract types
 
