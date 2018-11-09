@@ -3,6 +3,8 @@ package model.spread
 import java.io.{FileOutputStream, IOException}
 import java.nio.file._
 
+import better.files.File
+import better.files.File._
 import com.google.common.io.{Files => GFiles}
 import model.spread.SpreadConsts._
 import model.spread.SpreadUtils._
@@ -216,15 +218,15 @@ object XLSXCorrector extends SpreadCorrector {
     val fileNameNew: String = GFiles.getNameWithoutExtension(testPath.toString) + CORRECTION_ADD_STRING +
       "." + GFiles.getFileExtension(testPath.toString)
 
-    val savePath: Path = testPath.getParent / fileNameNew
-    if (!savePath.getParent.toFile.exists())
-      Files.createDirectories(savePath.getParent)
+    val savePath: File = testPath.getParent / fileNameNew
 
-    val fileOut: FileOutputStream = new FileOutputStream(savePath.toFile)
+    savePath.parent.createDirectories()
+
+    val fileOut: FileOutputStream = new FileOutputStream(savePath.toJava)
     compareDocument.write(fileOut)
     fileOut.close()
 
-    savePath
+    savePath.path
   })
 
   override def setCellComment(cell: XSSFCell, message: String): Unit = if (message != null && message.nonEmpty) {

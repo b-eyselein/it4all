@@ -199,12 +199,14 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       request.body.asText match {
         case None       => BadRequest("No content!")
         case Some(text) =>
-          webToolMain.writeWebSolutionFile(user.username, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), text) match {
-            case Success(_)     => Ok("Solution saved")
-            case Failure(error) =>
-              Logger.error("Error while updating web solution", error)
-              BadRequest("Solution was not saved!")
-          }
+          webToolMain.writeWebSolutionFile(user.username, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), text)
+          //          match {
+          //            case Success(_)     =>
+          Ok("Solution saved")
+        //            case Failure(error) =>
+        //              Logger.error("Error while updating web solution", error)
+        //              BadRequest("Solution was not saved!")
+        //          }
       }
   }
 

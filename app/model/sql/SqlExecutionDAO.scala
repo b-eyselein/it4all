@@ -1,8 +1,8 @@
 package model.sql
 
-import java.nio.file.Path
 import java.sql.Connection
 
+import better.files.File
 import model.core.CommonUtils.using
 import model.sql.SqlConsts._
 import net.sf.jsqlparser.statement.Statement
@@ -13,7 +13,6 @@ import net.sf.jsqlparser.statement.update.Update
 import slick.jdbc.JdbcBackend.Database
 
 import scala.collection.mutable.ListBuffer
-import scala.io.Source
 import scala.language.postfixOps
 import scala.util.{Failure, Try}
 
@@ -34,7 +33,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
   protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult]
 
-  def executeSetup(schemaName: String, scriptFilePath: Path): Try[Unit] = {
+  def executeSetup(schemaName: String, scriptFilePath: File): Try[Unit] = {
     using(mainDB.source.createConnection()) { mainConnection =>
       val res = mainConnection.prepareStatement(s"SHOW DATABASES LIKE '$schemaName';").executeQuery()
 
@@ -48,24 +47,22 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
     }
   }
 
-  private def readScript(filePath: Path): Seq[String] = {
+  private def readScript(filePath: File): Seq[String] = {
     var stringBuilder = StringBuilder.newBuilder
 
-    using(Source.fromFile(filePath.toFile)) { source =>
-      val queries: ListBuffer[String] = ListBuffer.empty
+    val queries: ListBuffer[String] = ListBuffer.empty
 
-      for (readLine <- source.getLines; trimmedLine = readLine.trim if !(trimmedLine startsWith "--")) {
-        stringBuilder ++= trimmedLine + "\n"
+    for (readLine <- filePath.lines; trimmedLine = readLine.trim if !(trimmedLine startsWith "--")) {
+      stringBuilder ++= trimmedLine + "\n"
 
-        if (trimmedLine endsWith Delimiter) {
-          queries += stringBuilder.toString
-          stringBuilder = StringBuilder.newBuilder
-        }
+      if (trimmedLine endsWith Delimiter) {
+        queries += stringBuilder.toString
+        stringBuilder = StringBuilder.newBuilder
       }
-
-      queries
     }
-  } getOrElse Seq[String]()
+
+    queries
+  }
 
   private def allTableNames(connection: Connection): Seq[String] = using(connection.prepareStatement("SHOW TABLES;")) { tablesQuery =>
     using(tablesQuery.executeQuery()) { resultSet =>

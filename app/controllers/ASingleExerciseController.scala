@@ -2,8 +2,8 @@ package controllers
 
 import java.nio.file.Files
 
+import better.files.File._
 import model.ExerciseState
-import model.core.FileUtils
 import model.toolMains.{ASingleExerciseToolMain, ToolList}
 import play.api.Logger
 import play.api.data.Form
@@ -17,7 +17,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with FileUtils with play.api.i18n.I18nSupport {
+  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile]  with play.api.i18n.I18nSupport {
 
   override type ToolMainType <: ASingleExerciseToolMain
 
@@ -36,12 +36,9 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
       toolMain.yamlString map { yaml =>
         val file = Files.createTempFile(s"export_${toolMain.urlPart}", ".yaml")
 
-        write(file, yaml) match {
-          case Success(_)         => Ok.sendPath(file, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => Files.delete(file))
-          case Failure(exception) =>
-            Logger.error("Error while saving file", exception)
-            BadRequest("Es gab einen Fehler bei der Vorbereitung des Downloads...")
-        }
+        file.write(yaml)
+
+        Ok.sendPath(file, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => Files.delete(file))
       }
   }
 
@@ -97,20 +94,20 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
   def adminEditExercise(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
 
-//      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
-//
-//        for (formError <- formWithError.errors)
-//          Logger.error(formError.key + " :: " + formError.message)
-//
-//        Future(BadRequest("Your form has has errors!"))
-//      }
+      //      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
+      //
+      //        for (formError <- formWithError.errors)
+      //          Logger.error(formError.key + " :: " + formError.message)
+      //
+      //        Future(BadRequest("Your form has has errors!"))
+      //      }
 
-//      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
-// //        FIXME: save ex
-//        toolMain.futureUpdateExercise(compEx) map { _ =>
-//          Ok(views.html.admin.singleExercisePreview(admin, compEx, toolMain))
-//        }
-//      }
+      //      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
+      // //        FIXME: save ex
+      //        toolMain.futureUpdateExercise(compEx) map { _ =>
+      //          Ok(views.html.admin.singleExercisePreview(admin, compEx, toolMain))
+      //        }
+      //      }
 
       //      toolMain.compExForm.bindFromRequest().fold(onFormError, onFormSuccess)
       ???

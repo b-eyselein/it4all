@@ -1,7 +1,6 @@
 package model.toolMains
 
-import java.nio.file.{Files, Path}
-
+import better.files.File
 import model._
 import model.core._
 import model.core.result.CompleteResult
@@ -30,8 +29,8 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Methods
 
-  def checkAndCreateSolDir(username: String, exercise: CompExType): Try[Path] =
-    Try(Files.createDirectories(solutionDirForExercise(username, exercise.ex.id)))
+  def checkAndCreateSolDir(username: String, exercise: CompExType): Try[File] =
+    Try(solutionDirForExercise(username, exercise.ex.id).createDirectories())
 
   def futureSaveSolution(sol: DBSolType): Future[Boolean] = tables.futureSaveSolution(sol)
 

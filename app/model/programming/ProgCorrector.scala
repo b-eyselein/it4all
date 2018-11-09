@@ -1,19 +1,18 @@
 package model.programming
 
-import java.nio.file.Path
-
+import better.files.File._
+import better.files._
 import model.User
-import model.core.FileUtils
 import model.docker._
 import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-object ProgCorrector extends FileUtils {
+object ProgCorrector {
 
-  private val resultFileName   = "result.json"
-  private val testDataFileName = "testdata.json"
+  private val resultFileName  : String = "result.json"
+  private val testDataFileName: String = "testdata.json"
 
   private def solutionFileName(fileEnding: String): String = "solution." + fileEnding
 
@@ -22,58 +21,58 @@ object ProgCorrector extends FileUtils {
   private val dockerImageName = "beyselein/python_prog_tester:0.9"
 
   def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, completeTestData: Seq[TestData],
-              toolMain: ProgToolMain)(implicit ec: ExecutionContext): Try[Future[Try[ProgCompleteResult]]] = {
+              toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
-    val exerciseResourcesFolder = toolMain.exerciseResourcesFolder / (exercise.ex.id + "-" + exercise.ex.folderIdentifier)
-    val solutionTargetDir = toolMain.solutionDirForExercise(user.username, exercise.ex.id)
-    val testDataFileContent = Json.prettyPrint(TestDataJsonFormat.dumpTestDataToJson(exercise, completeTestData))
+    val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / (exercise.ex.id + "-" + exercise.ex.folderIdentifier)
+    val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, exercise.ex.id)
+    val testDataFileContent: String = Json.prettyPrint(TestDataJsonFormat.dumpTestDataToJson(exercise, completeTestData))
 
-    writeAndCopyFiles(solutionTargetDir, language.fileEnding, implementation, testDataFileContent) map { _ =>
+    writeAndCopyFiles(solutionTargetDir, language.fileEnding, implementation, testDataFileContent)
 
-      // FIXME: what if image does not exist?
-      val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(dockerImageName,
-        dockerBinds = mountProgrammingFiles(exerciseResourcesFolder, solutionTargetDir, fileEnding = "py") //, deleteContainerAfterRun = false
-      )
+    // FIXME: what if image does not exist?
+    val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(dockerImageName,
+      dockerBinds = mountProgrammingFiles(exerciseResourcesFolder, solutionTargetDir, fileEnding = "py") //, deleteContainerAfterRun = false
+    )
 
-      val futureResults = containerResult map {
+    val futureResults = containerResult map {
 
-        case RunContainerSuccess => ResultsFileJsonFormat.readResultFile(solutionTargetDir / resultFileName, completeTestData)
+      case RunContainerSuccess => ResultsFileJsonFormat.readResultFile((solutionTargetDir / resultFileName).toJava.toPath, completeTestData)
 
-        case failure: RunContainerFailure => Failure(failure)
+      case failure: RunContainerFailure => Failure(failure)
 
-      }
+    }
 
-      futureResults map { resultTry =>
-        resultTry map (results => ProgCompleteResult(implementation, results))
-      }
+    futureResults map { resultTry =>
+      resultTry map (results => ProgCompleteResult(implementation, results))
     }
 
   }
 
-  private def writeAndCopyFiles(solTargetDir: Path, fileEnding: String, impl: String, testDataFileContent: String): Try[(Path, Path, Path)] = for {
+  private def writeAndCopyFiles(solTargetDir: File, fileEnding: String, impl: String, testDataFileContent: String): (File, File, File) = {
 
     // FIXME: evaluate files!
 
-    solutionWrite: Path <- write(solTargetDir / solutionFileName(fileEnding), impl)
+    val solutionWrite = (solTargetDir / solutionFileName(fileEnding)).write(impl)
 
-    testDataWrite: Path <- write(solTargetDir / testDataFileName, testDataFileContent)
+    val testDataWrite = (solTargetDir / testDataFileName).write(testDataFileContent)
 
-    resultFileCreate: Path <- createEmptyFile(solTargetDir / resultFileName)
+    val resultFileCreate = (solTargetDir / resultFileName).createIfNotExists(createParents = true)
 
-  } yield (solutionWrite, testDataWrite, resultFileCreate)
+    (solutionWrite, testDataWrite, resultFileCreate)
+  }
 
-  private def mountProgrammingFiles(exResFolder: Path, solTargetDir: Path, fileEnding: String): Seq[DockerBind] = {
+  private def mountProgrammingFiles(exResFolder: File, solTargetDir: File, fileEnding: String): Seq[DockerBind] = {
 
     // FIXME: update with files in exerciseResourcesFolder!
     val teMainFileName: String = testMainFileName(fileEnding)
-    val testMainMount = DockerBind(exResFolder / teMainFileName, DockerConnector.DefaultWorkingDir / teMainFileName)
+    val testMainMount = DockerBind((exResFolder / teMainFileName).toJava.toPath, (DockerConnector.DefaultWorkingDir / teMainFileName).toJava.toPath)
 
     val solFileName = solutionFileName(fileEnding)
-    val solutionMount = DockerBind(solTargetDir / solFileName, DockerConnector.DefaultWorkingDir / solFileName)
+    val solutionMount = DockerBind((solTargetDir / solFileName).toJava.toPath, (DockerConnector.DefaultWorkingDir / solFileName).toJava.toPath)
 
-    val testDataMount = DockerBind(solTargetDir / testDataFileName, DockerConnector.DefaultWorkingDir / testDataFileName)
+    val testDataMount = DockerBind((solTargetDir / testDataFileName).toJava.toPath, (DockerConnector.DefaultWorkingDir / testDataFileName).toJava.toPath)
 
-    val resultFileMount = DockerBind(solTargetDir / resultFileName, DockerConnector.DefaultWorkingDir / resultFileName)
+    val resultFileMount = DockerBind((solTargetDir / resultFileName).toJava.toPath, (DockerConnector.DefaultWorkingDir / resultFileName).toJava.toPath)
 
     Seq(testMainMount, solutionMount, testDataMount, resultFileMount)
 

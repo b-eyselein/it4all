@@ -1,7 +1,6 @@
 package model.xml
 
-import java.nio.file.Path
-
+import better.files.File
 import javax.xml.parsers.DocumentBuilderFactory
 import model.core.matching.MatchingResult
 import model.xml.dtd.{DocTypeDef, ElementLine}
@@ -29,13 +28,13 @@ object XmlCorrector {
   private val DocBuilderFactory = DocumentBuilderFactory.newInstance
   DocBuilderFactory.setValidating(true)
 
-  def correctAgainstMentionedDTD(xml: Path): Seq[XmlError] = {
+  def correctAgainstMentionedDTD(xml: File): Seq[XmlError] = {
     val errorHandler = new CorrectionErrorHandler
 
     try {
       val builder = DocBuilderFactory.newDocumentBuilder
       builder.setErrorHandler(errorHandler)
-      builder.parse(xml.toFile)
+      builder.parse(xml.toJava)
       ()
     } catch {
       case _: SAXException => // Ignore...

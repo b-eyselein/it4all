@@ -2,12 +2,12 @@ package model.xml.dtd
 
 import java.nio.file.Paths
 
-import model.core.FileUtils
+import better.files.File._
 import org.scalatest.FlatSpec
 
 import scala.util.{Failure, Success}
 
-class DocTypeDefParserTest extends FlatSpec with FileUtils {
+class DocTypeDefParserTest extends FlatSpec {
 
   private def testParseError[T](parseSpec: DocTypeDefParser.Parser[T], toParse: String): Unit = {
     assert(DocTypeDefParser.parse(parseSpec, toParse).isInstanceOf[DocTypeDefParser.NoSuccess])
@@ -88,13 +88,11 @@ class DocTypeDefParserTest extends FlatSpec with FileUtils {
   it should "parse a dtd" in {
     val file = Paths.get("test", "resources", "xml", "note.dtd")
     if (file.toFile.exists()) {
-      readAll(file) match {
+      val content = file.contentAsString
+
+      DocTypeDefParser.tryParseDTD(content) match {
         case Failure(error)   => fail(error.toString)
-        case Success(content) =>
-          DocTypeDefParser.tryParseDTD(content) match {
-            case Failure(error)   => fail(error.toString)
-            case Success(grammar) => assert(grammar.asString == content)
-          }
+        case Success(grammar) => assert(grammar.asString == content)
       }
     } else {
       fail("A file does not exist!")
