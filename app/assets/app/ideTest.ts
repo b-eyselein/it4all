@@ -14,9 +14,15 @@ let files: Map<string, LoadFileSingleResult> = new Map<string, LoadFileSingleRes
 let editor: CodeMirror.Editor;
 
 interface LoadFileSingleResult {
-    name: string,
-    content: string,
-    filetype: string,
+    name: string
+    orig_content: string
+    filetype: string
+    new_content?: string
+}
+
+interface IdeWorkspace {
+    filesNum: number
+    files: LoadFileSingleResult[]
 }
 
 function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
@@ -34,13 +40,13 @@ function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
             // Init editor (all modes have already been loaded!)
             const firstFile: LoadFileSingleResult = files.get(activeFile);
             // FIXME: get => null!
-            editor = initEditor(firstFile.filetype, "myTextEditor");
+            editor = initEditor(firstFile.filetype, 'myTextEditor');
         });
 }
 
 function changeEditorContent(event: JQuery.Event): void {
     // save current editor content for activeFile!
-    files.get(activeFile).content = editor.getValue();
+    files.get(activeFile).new_content = editor.getValue();
 
     // TODO: mark current file btn as changed?
 
@@ -50,7 +56,7 @@ function changeEditorContent(event: JQuery.Event): void {
     const nextFile: LoadFileSingleResult = files.get(activeFile);
 
     // Update editor content and mode (language!)
-    editor.setValue(nextFile.content);
+    editor.setValue(nextFile.new_content ? nextFile.new_content : nextFile.orig_content);
     editor.setOption('mode', nextFile.filetype);
 
     // Update buttons
@@ -58,14 +64,35 @@ function changeEditorContent(event: JQuery.Event): void {
     clickedBtn.removeClass('btn-outline-secondary').addClass('btn-primary');
 }
 
-interface FileUploadContent {
-    name: string,
-    content: string
-}
-
-function uploadFiles(): void {
+function uploadFiles(event: JQuery.Event): void {
     // TODO: implement!
-    console.warn("TODO: Upload!");
+    console.warn('TODO: Upload!');
+
+    const url = $(event.target).data('href');
+    console.info(url);
+
+
+    const fileValues: IdeWorkspace = {
+        files: [...files.values()],
+        filesNum: files.size
+    };
+
+    console.warn(fileValues);
+
+    $.ajax({
+        method: 'PUT',
+        url,
+        data: JSON.stringify(fileValues),
+        dataType: 'json',
+        contentType: 'application/json',
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader('Csrf-Token', token);
+        },
+        error: (jqXHR) => {
+            console.error(jqXHR.responseText);
+        }
+    });
 }
 
 $(() => {
@@ -80,12 +107,12 @@ $(() => {
     fileBtns.on('click', changeEditorContent);
 
     $.ajax({
-        method: "POST",
-        url: "http://localhost:9000/ideFiles",
+        method: 'POST',
+        url: 'http://localhost:9000/ideFiles',
         data: JSON.stringify(filenames),
         beforeSend: (xhr) => {
             const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
+            xhr.setRequestHeader('Csrf-Token', token);
         },
         error: jqXHR => {
             console.error(jqXHR)

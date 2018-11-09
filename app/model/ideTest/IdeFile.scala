@@ -1,19 +1,40 @@
 package model.ideTest
 
-import play.api.libs.json.{JsValue, Json}
+import better.files._
+import model.User
+
+final case class IdeWorkspace(ideFiles: Seq[IdeFile], numFiles: Int)
 
 final case class IdeFile(name: String, content: String, codeMirrorFileType: String) {
 
   def htmlId: String = name.replace(".", "_")
 
-  def toJson: JsValue = Json.obj(
-    "name" -> name,
-    "content" -> content,
-    "filetype" -> codeMirrorFileType
-  )
 }
 
 object IdeFilesTest {
+
+  def saveWorkspace(user: User, ideWorkspace: IdeWorkspace): Unit = {
+
+    val path = File.currentWorkingDirectory / "data" / "ideTest" / user.username
+    println(path)
+
+
+    ideWorkspace.ideFiles.foreach { ideFile =>
+      val targetPath = path / ideFile.name
+
+      println("TODO: save " + ideFile.name)
+      println("TO: " + targetPath)
+      println()
+
+      targetPath
+        .createIfNotExists(createParents = true)
+        .overwrite(ideFile.content)
+
+    }
+
+
+    ???
+  }
 
   val files: Map[String, IdeFile] = Map(
     "app.py" -> IdeFile("app.py",

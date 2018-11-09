@@ -51,10 +51,10 @@ scalacOptions ++= Seq(
   "-Ywarn-nullary-override", // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Ywarn-nullary-unit", // Warn when nullary methods return Unit.
   "-Ywarn-numeric-widen", // Warn when numerics are widened.
-//  "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
+  //  "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
   //  "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
   "-Ywarn-unused:locals", // Warn if a local definition is unused.
-//  "-Ywarn-unused:params", // Warn if a value parameter is unused.
+  //  "-Ywarn-unused:params", // Warn if a value parameter is unused.
   "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
   "-Ywarn-unused:privates", // Warn if a private member is unused.
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
@@ -145,6 +145,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
 
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
+
+  // Betterfiles
+  "com.github.pathikrit" %% "better-files" % "3.6.0",
 
   // Selenium and HtmlUnitDriver for Web+Js
   "org.seleniumhq.selenium" % "selenium-java" % "3.12.0",

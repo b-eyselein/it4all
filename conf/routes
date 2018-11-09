@@ -175,6 +175,7 @@ GET           /blockly                                                      cont
 
 GET           /ideTest                                                      controllers.Application.ideTest
 POST          /ideFiles                                                     controllers.Application.ideFiles
+PUT           /ideFiles                                                     controllers.Application.uploadFiles
 
 # Evaluation
 GET           /eval/stats                                                   controllers.AdminController.evaluationResults
