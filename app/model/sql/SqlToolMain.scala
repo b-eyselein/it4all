@@ -128,7 +128,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     //    saveSolution(learnerSolution) map { solutionSaved =>
 
     correctorsAndDaos.get(exercise.ex.exerciseType) match {
-      case None                   => Failure(new Exception("There is no corrector or sql dao for " + exercise.ex.exerciseType))
+      case None                   => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.ex.exerciseType}"))
       case Some((corrector, dao)) =>
         // FIXME: parse queries here!?!
 
