@@ -1,5 +1,6 @@
 package model.sql
 
+import better.files.File
 import javax.inject._
 import model._
 import model.core.Java_Levenshtein
@@ -75,7 +76,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override def futureSaveRead(exercises: Seq[CompCollType]): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
     compColl =>
-      val scriptFilePath = exerciseResourcesFolder / s"${compColl.coll.shortName}.sql"
+      // FIXME: record failure!
+      val scriptFilePath: File = exerciseResourcesFolder / s"${compColl.coll.shortName}.sql"
 
       allDaos.foreach(_.executeSetup(compColl.coll.shortName, scriptFilePath))
 
