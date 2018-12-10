@@ -64,6 +64,8 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
 
   override protected def copyDBSolType(sol: QuestionSolution, newId: Int): QuestionSolution = sol.copy(id = newId)
 
+  override def futureMaybeSampleSol(scenarioId: Int, exerciseId: Int): Future[Option[String]] = ???
+
   // Saving
 
   override def saveCompleteColl(compQuiz: CompleteQuiz): Future[Boolean] = db.run(collTable insertOrUpdate compQuiz.coll) flatMap {

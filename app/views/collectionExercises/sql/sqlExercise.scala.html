@@ -1,6 +1,7 @@
-@(user: model.User, exercise: model.sql.SqlCompleteEx, oldOrDefSol: String, tables: Seq[model.sql.SqlQueryResult],
-        scenario: model.sql.SqlScenario, numOfExes: Int, toolMainObject: model.sql.SqlToolMain)(implicit
-        requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@import model.sql.{SqlCompleteEx, SqlQueryResult, SqlScenario, SqlToolMain}
+
+@(user: model.User, exercise: SqlCompleteEx, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario,
+        numOfExes: Int, toolMainObject: SqlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -19,6 +20,14 @@
     </style>
 }
 
+@nextBtnDisabled = @{
+    if(exercise.ex.id < numOfExes) "" else " disabled"
+}
+
+@prevBtnDisabled = @{
+    if(exercise.ex.id > 1) "" else " disabled"
+}
+
 @main("SQL", Some(user), scripts) {
     @core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
         <img class="img-fluid" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
@@ -31,18 +40,25 @@
     }
 
     <div class="container-fluid">
-
-        <input type="number" hidden id="collId" value="@scenario.id" title="hidden">
-        <input type="number" hidden id="exerciseId" value="@exercise.ex.id" title="hidden">
+        <div class="row">
+            <div class="col-sm-3">
+                <h2 class="text-center">@exercise.ex.title</h2>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-sm-3">
-                <section>
-                    <h2 class="text-center">Info</h2>
+                <div class="form-group card">
+                    <div class="card-body">
+                        <p>@exercise.ex.text</p>
+                        @exercise.ex.hint.map(hint => s"""<p><i>Hinweis:</i> $hint</p>""").getOrElse("")
+                    </div>
+                </div>
 
+                <section>
                     <div class="form-group">
-                        <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#databaseSchema">
-                            Datenbankschema</button>
+                        <button type="button" class="btn btn-block btn-info" data-toggle="modal"
+                        data-target="#databaseSchema">Datenbankschema</button>
                     </div>
 
                     @for(tableTuple <- tables grouped 2) {
@@ -61,49 +77,51 @@
             </div>
 
             <div class="col-sm-4">
-                <h2 class="text-center">Aufgabe &quot;@exercise.ex.title&quot;</h2>
-
-                <div class="well">
-                    <p>@exercise.ex.text</p>
-                    @exercise.ex.hint match {
-                        case Some(hint) => {
-                            <p><i>Hinweis:</i>
-                                @hint</p>
-                        }
-                        case None => {}
-                    }
+                <div class="form-group">
+                    <textarea id="sqlEditor" title="Editor">@oldOrDefSol</textarea>
                 </div>
 
                 <div class="form-group">
-
                     @helper.CSRF.formField
 
                     <div class="btn-group d-flex">
-                        @if(exercise.ex.id > 1) {
-                            <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id - 1)"
-                            class="btn btn-outline-secondary w-100"><span class="octicon octicon-arrow-left"></span></a>
-                        } else {
-                            <a class="btn btn-outline-secondary w-100 disabled"><span class="octicon octicon-arrow-left"></span></a>
-                        }
                         <button class="btn btn-success w-100" id="testBtn">Lösung testen</button>
-                        <a class="btn btn-secondary w-100" href="@routes.CollectionController.collection("sql", scenario.id)">
-                            Bearbeitung beenden</a>
-                        @if(exercise.ex.id < numOfExes) {
-                            <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id + 1)"
-                            class="btn btn-outline-secondary w-100"><span class="octicon octicon-arrow-right"></span></a>
-                        } else {
-                            <a class="btn btn-outline-secondary w-100 disabled"><span class="octicon octicon-arrow-right"></span></a>
-                        }
+
+                        <button data-href="@routes.CollectionController.sampleSol(toolMainObject.urlPart, scenario.id, exercise.ex.id)"
+                        class="btn btn-primary w-100" id="showSampleSolBtn">Musterlösung anzeigen</button>
+
+                        <a href="@routes.CollectionController.collection(toolMainObject.urlPart, scenario.id)"
+                        class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
                 </div>
 
-                <textarea id="sqlEditor" title="Editor">@oldOrDefSol</textarea>
+                <div class="form-group">
+                    <div class="card" hidden>
+                        <div class="card-body bg-light">
+                            <pre id="sampleSolPre"></pre>
+                        </div>
+                    </div>
+                </div>
 
+
+                <div class="form-group">
+                    <div class="btn-group d-flex">
+                        <a class="btn btn-outline-secondary w-100@prevBtnDisabled" @if(exercise.ex.id > 1) {
+                            href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id - 1)"
+                            } title="Vorherige Aufgabe">
+                            <span class="octicon octicon-arrow-left"></span>
+                        </a>
+
+                        <a class="btn btn-outline-secondary w-100@nextBtnDisabled" @if(exercise.ex.id < numOfExes) {
+                            href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id + 1)"
+                            } title="Nächste Aufgabe">
+                            <span class="octicon octicon-arrow-right"></span>
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div class="col-sm-5">
-                <h2 class="text-center">Korrektur</h2>
-
                 <div id="correctionDiv" hidden>
                     <div id="correction"></div>
                 </div>

@@ -21,11 +21,11 @@ exercises:
   - id: 1
     sample: |
       SELECT *
-        FROM authors
+        FROM authors;
   - id: 2
     sample: |
       SELECT id, first_name, family_name, birthday
-        FROM authors
+        FROM authors;
 
 - id: 2
   semanticVersion: 1.0.0
@@ -38,7 +38,7 @@ exercises:
   - id: 1
     sample: |
       SELECT family_name
-        FROM authors
+        FROM authors;
 
 - id: 3
   semanticVersion: 1.0.0
@@ -51,7 +51,7 @@ exercises:
   - id: 1
     sample: |
       SELECT name
-        FROM publishers
+        FROM publishers;
 
 - id: 4
   semanticVersion: 1.0.0
@@ -64,11 +64,11 @@ exercises:
   - id: 1
     sample: |
       SELECT first_name, family_name
-        FROM customers
+        FROM customers;
 
 - id: 5
   semanticVersion: 1.0.0
-  title: TODO!
+  title: Daten über Bücher
   author: bje40dc
   text: Geben Sie für jedes Buch jeweils den Titel das Erscheinungsjahr und die ISBN aus!
   exerciseType: SELECT
@@ -77,11 +77,11 @@ exercises:
   - id: 1
     sample: |
       SELECT title, year, isbn
-        FROM books
+        FROM books;
 
 - id: 6
   semanticVersion: 1.0.0
-  title: TODO!
+  title: Titelsuche
   author: bje40dc
   text: Bestimmen Sie den Titel des Buches mit der ISBN '978-3551354051' (ohne Anführungszeichen).
   exerciseType: SELECT
@@ -91,11 +91,11 @@ exercises:
     sample: |
       SELECT title
         FROM books
-        WHERE isbn = '978-3551354051'
+        WHERE isbn = '978-3551354051';
 
 - id: 7
   semanticVersion: 1.0.0
-  title: TODO!
+  title: Preissuche
   author: bje40dc
   text: Bestimmen Sie den Preis des Buches mit der ISBN '978-3551354068' (ohne Anführungszeichen).
   exerciseType: SELECT
@@ -109,7 +109,7 @@ exercises:
 
 - id: 8
   semanticVersion: 1.0.0
-  title: TODO!
+  title: Autorensuche
   author: bje40dc
   text: Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3.
   exerciseType: SELECT

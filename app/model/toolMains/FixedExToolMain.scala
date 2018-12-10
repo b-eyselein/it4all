@@ -51,11 +51,11 @@ abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionCon
     val subDirectories = exerciseResourcesFolder.list filter (_.isDirectory) toSeq
 
     subDirectories map { subDirectory: File =>
-      val filesToRead = subDirectory.list.toList sortBy (_.name)
+      val filesToRead: Seq[File] = subDirectory.list.toList sortBy (_.name)
 
       filesToRead find (_.name.toString endsWith ".yaml") match {
-        case None                 => Failure(new Exception(s"There is no yaml file in folder ${subDirectory.toString}"))
-        case Some(filePath: Path) => yamlFormat.read(filePath.contentAsString.parseYaml)
+        case None           => Failure(new Exception(s"There is no yaml file in folder ${subDirectory.toString}"))
+        case Some(filePath) => yamlFormat.read(filePath.contentAsString.parseYaml)
       }
     }
   }

@@ -89,6 +89,8 @@ GET           /colTools/:toolType/collections/:collId                       cont
 GET           /colTools/:toolType/solve/:collId/:exId                       controllers.CollectionController.exercise(toolType: String, collId: Int, exId: Int)
 PUT           /colTools/:toolType/solve/:collId/:exId                       controllers.CollectionController.correctLive(toolType: String, collId: Int, exId: Int)
 
+GET           /colTools/:toolType/sample/:collId/:exId                      controllers.CollectionController.sampleSol(toolType: String, collId: Int, exId: Int)
+
 GET           /colTools/:toolType/:collId/newExForm                         controllers.CollectionController.newExerciseForm(toolType: String, collId :Int)
 GET           /colTools/:toolType/:collId/:exId/editForm                    controllers.CollectionController.editExerciseForm(toolType: String, collId: Int, exId: Int)
 POST          /colTools/:toolType/:collId/:exId                             controllers.CollectionController.editExercise(toolType: String, collId: Int, exId: Int)

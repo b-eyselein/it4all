@@ -70,6 +70,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureMaybeOldSolution(user: User, collId: Int, exId: Int): Future[Option[DBSolType]] = tables.futureMaybeOldSolution(user.username, collId, exId)
 
+  def futureMaybeSampleSol(collId: Int, exId: Int): Future[Option[String]] = tables.futureMaybeSampleSol(collId, exId)
+
   // Saving
 
   override def futureSaveRead(exercises: Seq[CompCollType]): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {

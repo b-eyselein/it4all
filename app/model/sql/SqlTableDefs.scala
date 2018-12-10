@@ -46,6 +46,9 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private def samplesForEx(collId: Int, exId: Int): Future[Seq[SqlSample]] =
     db.run(sqlSamples filter (table => table.exerciseId === exId && table.collId === collId) result)
 
+  override def futureMaybeSampleSol(scenarioId: Int, exerciseId: Int): Future[Option[String]] =
+    db.run(sqlSamples.filter(e => e.collId === scenarioId && e.id === exerciseId).map(_.sample).result.headOption)
+
   // Saving
 
   def saveSolution(sol: SqlSolution): Future[Boolean] = db.run(solTable insertOrUpdate sol) map (_ => true) recover { case _: Throwable => false }
@@ -72,8 +75,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private implicit val sqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
     MappedColumnType.base[SqlExerciseType, String](_.entryName, str => SqlExerciseType.withNameInsensitiveOption(str) getOrElse SqlExerciseType.SELECT)
 
-//  private implicit val SqlExTagColumnType: BaseColumnType[SqlExTag] =
-//    MappedColumnType.base[SqlExTag, String](_.entryName, str => SqlExTag.withNameInsensitiveOption(str) getOrElse SqlExTag.SQL_JOIN)
+  //  private implicit val SqlExTagColumnType: BaseColumnType[SqlExTag] =
+  //    MappedColumnType.base[SqlExTag, String](_.entryName, str => SqlExTag.withNameInsensitiveOption(str) getOrElse SqlExTag.SQL_JOIN)
 
   override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 

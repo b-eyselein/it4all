@@ -20,16 +20,9 @@ object IdeFilesTest {
 
 
     ideWorkspace.ideFiles.foreach { ideFile =>
-      val targetPath = path / ideFile.name
-
-      println("TODO: save " + ideFile.name)
-      println("TO: " + targetPath)
-      println()
-
-      targetPath
+      (path / ideFile.name)
         .createIfNotExists(createParents = true)
         .overwrite(ideFile.content)
-
     }
 
 

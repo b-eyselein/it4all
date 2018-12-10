@@ -12,18 +12,18 @@ exercises:
   semanticVersion: 1.0.0
   title: Anzahl der Angestellten
   author: bje40dc
-  text: Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'
+  text: Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'.
   exerciseType: SELECT
   status: APPROVED
   samples:
   - id: 1
     sample: |
       SELECT COUNT(*) AS Anzahl
-        FROM employee
+        FROM employee;
   - id: 2
     sample: |
       SELECT COUNT(id) AS Anzahl
-        FROM employee
+        FROM employee;
 
 - id: 2
   semanticVersion: 1.0.0
@@ -38,7 +38,7 @@ exercises:
       SELECT id
         FROM employee
         WHERE firstname = 'Max'
-          AND lastname = 'Becker'
+          AND lastname = 'Becker';
 
 - id: 3
   semanticVersion: 1.0.0
@@ -53,21 +53,21 @@ exercises:
       SELECT emailaddress
         FROM employee
           JOIN emailaddress ON employee.id = emailaddress.employee_id
-        WHERE firstname = 'Max' AND lastname = 'Becker'
+        WHERE firstname = 'Max' AND lastname = 'Becker';
 
   - id: 2
     sample: |
       SELECT emailaddress
         FROM employee, emailaddress
         WHERE employee.id = emailaddress.employee_id
-          AND firstname = 'Max' AND lastname = 'Becker'
+          AND firstname = 'Max' AND lastname = 'Becker';
 
   - id: 3
     sample: |
       SELECT emailaddress
         FROM employee as emp, emailaddress as email
         WHERE emp.id = email.employee_id
-          AND firstname = 'Max' AND lastname = 'Becker'
+          AND firstname = 'Max' AND lastname = 'Becker';
   tags: [SQL_JOIN]
 
 - id: 4
@@ -82,7 +82,7 @@ exercises:
     sample: |
       SELECT username
         FROM employee
-        ORDER BY username
+        ORDER BY username;
   tags: [SQL_ORDER_BY]
 
 - id: 5
@@ -98,7 +98,7 @@ exercises:
       SELECT chef_id, count(id)
         FROM employee
         WHERE chef_id IS NOT NULL
-        GROUP BY chef_id
+        GROUP BY chef_id;
   tags: [SQL_GROUP_BY]
 
 - id: 6

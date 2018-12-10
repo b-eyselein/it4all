@@ -19,7 +19,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured  with play.api.i18n.I18nSupport {
+  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
   override type ToolMainType = CollectionToolMain
 
@@ -192,6 +192,14 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case Failure(error)  =>
           Logger.error("There has been an internal correction error:", error)
           BadRequest(toolMain.onLiveCorrectionError(error))
+      }
+  }
+
+  def sampleSol(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
+    implicit request =>
+      toolMain.futureMaybeSampleSol(collId, id) map {
+        case None            => BadRequest("There is no such exercise!")
+        case Some(sampleSol) => Ok(sampleSol)
       }
   }
 

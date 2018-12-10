@@ -85,7 +85,13 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
 
 
   def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int): Future[Option[DBSolType]] =
-    db.run(solTable.filter(sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId).result.headOption)
+    db.run(solTable
+      .filter(sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId)
+      // take last sample sol (with highest id)
+      .sortBy(_.id.desc)
+      .result.headOption)
+
+  def futureMaybeSampleSol(scenarioId: Int, exerciseId: Int): Future[Option[String]]
 
   // Saving
 
@@ -164,7 +170,7 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
     def maxPoints: Rep[Points] = column[Points]("max_points")
 
 
-//    def pk: PrimaryKey = primaryKey("pk", (id, username, collectionId, collSemVer, exerciseId, exSemVer))
+    //    def pk: PrimaryKey = primaryKey("pk", (id, username, collectionId, collSemVer, exerciseId, exSemVer))
 
     def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (collectionId, collSemVer, exerciseId, exSemVer), exTable)(ex =>
       (ex.collectionId, ex.collSemVer, ex.id, ex.semanticVersion))
