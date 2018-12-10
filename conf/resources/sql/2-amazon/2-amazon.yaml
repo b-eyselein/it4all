@@ -527,7 +527,7 @@ exercises:
               JOIN authors on authors.id = books.author_id
             WHERE authors.family_name = 'Tolkien'
             AND price > 10
-            ORDER BY year DESC
+            ORDER BY year DESC;
     tags: [SQL_ORDER_BY]
 
   - id: 32
@@ -535,7 +535,7 @@ exercises:
     title: Billig gekauft
     author: bje40dc
     text: >
-      Berechnen Sie die Anzahl der bestellten Bücher (Tabelle order_positions) die zum Zeitpunkt des Kaufes weniger als
+      Berechnen Sie die Anzahl der bestellten Buchexemplare (Tabelle order_positions) die zum Zeitpunkt des Kaufes weniger als
       fünf Euro gekostet haben. Geben Sie das Ergebnis unter dem Spaltenname 'Anzahl' aus.
     exerciseType: SELECT
     status: APPROVED
@@ -543,11 +543,11 @@ exercises:
       - id: 1
         sample: |
           SELECT SUM(amount) AS Anzahl
-            FROM order_positions WHERE price < 5
+            FROM order_positions WHERE price < 5;
       - id: 2
         sample:
           SELECT SUM(amount) AS Anzahl
-          FROM order_positions WHERE price < 5.00
+          FROM order_positions WHERE price < 5.00;
     tags: [SQL_FUNCTION, SQL_ALIAS]
 
   - id: 33
@@ -565,7 +565,7 @@ exercises:
           SELECT author_id, sum(stock) AS stock_sum
             FROM books
             GROUP BY author_id
-            ORDER BY stock_sum DESC
+            ORDER BY stock_sum DESC;
     tags: [SQL_FUNCTION, SQL_GROUP_BY, SQL_ORDER_BY]
     hint: Verwenden Sie den Sum-Operator und das Schlüsselwort AS.
 
@@ -573,7 +573,7 @@ exercises:
     semanticVersion: 1.0.0
     title: Februargeburtstag
     author: bje40dc
-    text: Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen Nachnamen und das Geburtsdatum aus.
+    text: Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen, Nachnamen und das Geburtsdatum aus.
     exerciseType: SELECT
     status: APPROVED
     samples:
@@ -581,14 +581,14 @@ exercises:
         sample: |
           SELECT first_name, family_name, birthday
             FROM customers
-           WHERE birthday LIKE '%-02-%'
+           WHERE birthday LIKE '%-02-%';
     hint: Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.
 
   - id: 35
     semanticVersion: 1.0.0
     title: Ich bin der jüngste!
     author: bje40dc
-    text: Geben Sie den Vornamen Nachnamen und Geburtstag des jüngsten Kunden aus.
+    text: Geben Sie den Vornamen, Nachnamen und Geburtstag des jüngsten Kunden aus.
     exerciseType: SELECT
     status: APPROVED
     samples:
@@ -597,6 +597,6 @@ exercises:
           SELECT first_name, family_name, birthday
             FROM customers
             ORDER BY birthday DESC
-            LIMIT 1
+            LIMIT 1;
     tags: [SQL_ORDER_BY, SQL_LIMIT]
     hint: Achten Sie darauf dass sich die Spaltennamen nicht verändern.
