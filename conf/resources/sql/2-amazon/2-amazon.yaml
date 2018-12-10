@@ -497,9 +497,9 @@ exercises:
 
   - id: 30
     semanticVersion: 1.0.0
-    title: TODO!
+    title: Emails mit G
     author: bje40dc
-    text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de ' oder mit 'gmail.com ' enden.
+    text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de ' oder mit 'gmail.com' enden.
     exerciseType: SELECT
     status: APPROVED
     samples:
@@ -512,7 +512,7 @@ exercises:
 
   - id: 31
     semanticVersion: 1.0.0
-    title: TODO!
+    title: Tolkien in Billig
     author: bje40dc
     text: >
       Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis über 10€ liegt. Ordnen Sie die
@@ -532,7 +532,7 @@ exercises:
 
   - id: 32
     semanticVersion: 1.0.0
-    title: TODO!
+    title: Billig gekauft
     author: bje40dc
     text: >
       Berechnen Sie die Anzahl der bestellten Bücher (Tabelle order_positions) die zum Zeitpunkt des Kaufes weniger als
@@ -552,7 +552,7 @@ exercises:
 
   - id: 33
     semanticVersion: 1.0.0
-    title: TODO!
+    title: Kumulierter Bestand
     author: bje40dc
     text: >
       Erfassen Sie die ID aller Autoren und den kumulierten Bestand ihrer Bücher. Ordnen Sie die Einträge nach kumulierten
@@ -571,7 +571,7 @@ exercises:
 
   - id: 34
     semanticVersion: 1.0.0
-    title: TODO!
+    title: Februargeburtstag
     author: bje40dc
     text: Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen Nachnamen und das Geburtsdatum aus.
     exerciseType: SELECT
@@ -586,7 +586,7 @@ exercises:
 
   - id: 35
     semanticVersion: 1.0.0
-    title: TODO!
+    title: Ich bin der jüngste!
     author: bje40dc
     text: Geben Sie den Vornamen Nachnamen und Geburtstag des jüngsten Kunden aus.
     exerciseType: SELECT
