@@ -1,5 +1,6 @@
 package model.sql
 
+import model.core.matching.{Match, MatchingResult}
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
@@ -22,5 +23,7 @@ object CreateCorrector extends QueryCorrector("CREATE TABLE") {
     case q: CreateTable   => Success(q)
     case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
+
+  override protected def performAdditionalComparisons(userQuery: CreateTable, sampleQuery: CreateTable): Seq[MatchingResult[_, _ <: Match[_]]] = Seq.empty
 
 }

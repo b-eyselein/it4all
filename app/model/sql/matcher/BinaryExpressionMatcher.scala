@@ -32,26 +32,46 @@ final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sample
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
   extends Matcher[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch] {
 
-  private def getColToCompare(expression: BinaryExpression): Column = (expression.getLeftExpression, expression.getRightExpression) match {
-    case (left: Column, right: Column) => if (left.toString < right.toString) left else right
-    case (_, right: Column)            => right
-    case (left: Column, _)             => left
-    case (_, _)                        => null // throw new CorrectionException("", "")
+  override protected val matchName: String = "Bedingungen"
+
+  override protected val matchSingularName: String = "der Bedingung"
+
+  private def getColToCompare(expression: BinaryExpression): Option[Column] = expression.getLeftExpression match {
+    case left: Column =>
+      Some(
+        expression.getRightExpression match {
+          case right: Column => if (left.toString < right.toString) left else right
+          case _             => left
+        })
+    case _            =>
+      expression.getRightExpression match {
+        case right: Column => Some(right)
+        case _             => None
+      }
   }
+
 
   override protected def canMatch: (BinaryExpression, BinaryExpression) => Boolean = (binEx1, binEx2) => {
 
-    def colNameAndAlias(col: Column) = (col.getColumnName, col.getTable.getName)
+    def maybeTableAlias(col: Column): Option[String] = col.getTable match {
+      case null  => None
+      case table => Some(table.getName)
+    }
 
-    val (column1, alias1) = colNameAndAlias(getColToCompare(binEx1))
-    val (column2, alias2) = colNameAndAlias(getColToCompare(binEx2))
+    getColToCompare(binEx1) match {
+      case None           => ???
+      case Some(colComp1) =>
+        getColToCompare(binEx2) match {
+          case None           => ???
+          case Some(colComp2) =>
 
-    val table1 = if (alias1 == null) "" else userTAliases.getOrElse(alias1, alias1)
-    val table2 = if (alias2 == null) "" else sampleTAliases.getOrElse(alias2, alias2)
+            val table1 = maybeTableAlias(colComp1).map(a => userTAliases.getOrElse(a, a)).getOrElse("")
+            val table2 = maybeTableAlias(colComp2).map(a => sampleTAliases.getOrElse(a, a)).getOrElse("")
 
-    column1 == column2 && table1 == table2
+            colComp1.getColumnName == colComp2.getColumnName && table1 == table2
+        }
+    }
   }
-
 
   override protected def matchInstantiation: (Option[BinaryExpression], Option[BinaryExpression]) => BinaryExpressionMatch = BinaryExpressionMatch
 

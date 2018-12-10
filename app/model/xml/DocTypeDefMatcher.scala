@@ -66,6 +66,10 @@ final case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Optio
 
 object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult, ElementLineMatch] {
 
+  override protected val matchName: String = "DTD-Zeilen"
+
+  override protected val matchSingularName: String = "DTD-Zeile"
+
   override protected def canMatch: (ElementLine, ElementLine) => Boolean = _.elementName == _.elementName
 
   override protected def matchInstantiation: (Option[ElementLine], Option[ElementLine]) => ElementLineMatch = ElementLineMatch

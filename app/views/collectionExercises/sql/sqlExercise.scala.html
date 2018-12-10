@@ -44,6 +44,22 @@
             <div class="col-sm-3">
                 <h2 class="text-center">@exercise.ex.title</h2>
             </div>
+            <div class="col-sm-4"></div>
+            <div class="col-md-5">
+
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#correctionTab" id="correctionTabBtn">
+                            Korrektur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#sampleSolTab" id="sampleSolTabBtn">
+                            Musterlösung(en)</a>
+                    </li>
+                </ul>
+
+
+            </div>
         </div>
 
         <div class="row">
@@ -51,7 +67,7 @@
                 <div class="form-group card">
                     <div class="card-body">
                         <p>@exercise.ex.text</p>
-                        @exercise.ex.hint.map(hint => s"""<p><i>Hinweis:</i> $hint</p>""").getOrElse("")
+                        @exercise.ex.hint.map(hint => Html(s"""<p><i>Hinweis:</i> $hint</p>""")).getOrElse("")
                     </div>
                 </div>
 
@@ -66,7 +82,8 @@
                             <div class="row">
                             @for(table <- tableTuple) {
                                 <div class="col-sm-6">
-                                    <button type="button" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#@table.tableName">@table.tableName</button>
+                                    <button type="button" class="btn btn-secondary btn-block" data-toggle="modal"
+                                    data-target="#@table.tableName">@table.tableName</button>
                                 </div>
                             }
                             </div>
@@ -88,7 +105,7 @@
                         <button class="btn btn-success w-100" id="testBtn">Lösung testen</button>
 
                         <button data-href="@routes.CollectionController.sampleSol(toolMainObject.urlPart, scenario.id, exercise.ex.id)"
-                        class="btn btn-primary w-100" id="showSampleSolBtn">Musterlösung anzeigen</button>
+                        class="btn btn-primary w-100" id="showSampleSolBtn">Musterlösung(en) anzeigen</button>
 
                         <a href="@routes.CollectionController.collection(toolMainObject.urlPart, scenario.id)"
                         class="btn btn-secondary w-100">Bearbeitung beenden</a>
@@ -96,25 +113,16 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="card" hidden>
-                        <div class="card-body bg-light">
-                            <pre id="sampleSolPre"></pre>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="form-group">
                     <div class="btn-group d-flex">
                         <a class="btn btn-outline-secondary w-100@prevBtnDisabled" @if(exercise.ex.id > 1) {
                             href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id - 1)"
-                            } title="Vorherige Aufgabe">
+                        } title="Vorherige Aufgabe">
                             <span class="octicon octicon-arrow-left"></span>
                         </a>
 
                         <a class="btn btn-outline-secondary w-100@nextBtnDisabled" @if(exercise.ex.id < numOfExes) {
                             href="@routes.CollectionController.exercise(toolMainObject.urlPart, scenario.id, exercise.ex.id + 1)"
-                            } title="Nächste Aufgabe">
+                        } title="Nächste Aufgabe">
                             <span class="octicon octicon-arrow-right"></span>
                         </a>
                     </div>
@@ -122,8 +130,14 @@
             </div>
 
             <div class="col-sm-5">
-                <div id="correctionDiv" hidden>
-                    <div id="correction"></div>
+                <div class="tab-content">
+                    <div id="correctionTab" class="tab-pane fade show active">
+                        <div id="correctionDiv" hidden>
+                            <div id="correction"></div>
+                        </div>
+                    </div>
+
+                    <div id="sampleSolTab" class="tab-pane fade"></div>
                 </div>
             </div>
 

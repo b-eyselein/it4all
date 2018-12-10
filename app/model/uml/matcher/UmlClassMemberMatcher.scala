@@ -88,6 +88,10 @@ final case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Opt
 
 object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisResult, UmlAttributeMatch] {
 
+  override protected val matchName: String = "Attribute"
+
+  override protected val matchSingularName: String = "des Attributs"
+
   override protected def canMatch: (UmlAttribute, UmlAttribute) => Boolean = _.memberName == _.memberName
 
   override protected def matchInstantiation: (Option[UmlAttribute], Option[UmlAttribute]) => UmlAttributeMatch = UmlAttributeMatch
@@ -155,6 +159,10 @@ final case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[Um
 }
 
 object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlMethodMatch] {
+
+  override protected val matchName: String = "Methoden"
+
+  override protected val matchSingularName: String = "der Methode"
 
   override protected def canMatch: (UmlMethod, UmlMethod) => Boolean = _.memberName == _.memberName
 

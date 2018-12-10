@@ -1,6 +1,6 @@
 package model.sql
 
-import model.core.matching.MatchingResult
+import model.core.matching.{Match, MatchingResult}
 import model.sql.ColumnWrapper.wrapColumn
 import model.sql.matcher.{ExpressionListMatch, ExpressionListMatcher}
 import net.sf.jsqlparser.expression.Expression
@@ -32,11 +32,14 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
     case _: SubSelect             => ???
   }
 
-  // FIXME: correct inserted values!
-  override protected def compareInsertedValues(userQuery: Q, sampleQuery: Q): Option[MatchingResult[ExpressionList, ExpressionListMatch]] =
-    Some(ExpressionListMatcher.doMatch(expressionLists(userQuery), expressionLists(sampleQuery)))
+  override protected def performAdditionalComparisons(userQuery: Insert, sampleQuery: Insert): Seq[MatchingResult[_, _ <: Match[_]]] =
+    Seq(compareInsertedValues(userQuery, sampleQuery))
 
-  override protected def getTables(query: Q) = Seq(query.getTable)
+  // FIXME: correct inserted values!
+  private def compareInsertedValues(userQuery: Q, sampleQuery: Q): MatchingResult[ExpressionList, ExpressionListMatch] =
+    ExpressionListMatcher.doMatch(expressionLists(userQuery), expressionLists(sampleQuery))
+
+  override protected def getTables(query: Q): Seq[Table] = Seq(query.getTable)
 
   override protected def getWhere(query: Q): Option[Expression] = None
 
@@ -61,10 +64,11 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
     case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
 
+  override protected def performAdditionalComparisons(userQuery: Delete, sampleQuery: Delete): Seq[MatchingResult[_, _ <: Match[_]]] = Seq.empty
+
 }
 
 object UpdateCorrector extends ChangeCorrector("UPDATE") {
-
 
   override type Q = Update
 
@@ -78,5 +82,7 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
     case q: Update        => Success(q)
     case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
+
+  override protected def performAdditionalComparisons(userQuery: Update, sampleQuery: Update): Seq[MatchingResult[_, _ <: Match[_]]] = Seq.empty
 
 }

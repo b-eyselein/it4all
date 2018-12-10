@@ -10,7 +10,7 @@ import {ExecutionResultsObject, renderExecution, renderMatchingResult} from "./s
 let editor: CodeMirror.Editor;
 let testBtn: JQuery;
 let showSampleSolBtn: JQuery;
-let sampleSolPre: JQuery;
+let sampleSolTab: JQuery;
 
 let correction: JQuery;
 
@@ -24,12 +24,12 @@ interface SqlResult {
 interface SqlCorrectionResult {
     message: string
 
-    columns: MatchingResult<any, any>
-    tables: MatchingResult<any, any>
-    wheres: MatchingResult<any, any>
-    groupBy: MatchingResult<any, any> | null
-    orderBy: MatchingResult<any, any> | null
-    insertedValues: MatchingResult<any, any> | null
+    columnComparisons: MatchingResult<any, any>
+    tableComparisons: MatchingResult<any, any>
+    whereComparisons: MatchingResult<any, any>
+
+    additionalComparisons: MatchingResult<any, any>[]
+
     executionResults: ExecutionResultsObject
 }
 
@@ -46,40 +46,37 @@ function onSqlCorrectionSuccess(response: SqlResult): void {
         results.push(`<span class=text-danger>Ihre Lösung konnte nicht gespeichert werden!</span>`);
     }
 
-    switch (response.success) {
-        case 'ERROR':
-            results.push(`
+    if (response.success === 'ERROR') {
+        results.push(`
 <div class="alert alert-danger">
     <p>Es gab einen Fehler bei der Korrektur:</p>
     <code>${response.results.message}</code>
 </div>`.trim());
-            break;
+    } else {
 
-        default:
-            results.push(
-                renderMatchingResult(response.results.columns, "Spalten", "der Spalte"),
-                renderMatchingResult(response.results.tables, "Tabellen", "der Tabelle"),
-                renderMatchingResult(response.results.wheres, "Bedingungen", "der Bedingung")
-            );
+        results.push(
+            renderMatchingResult(response.results.columnComparisons),
+            renderMatchingResult(response.results.tableComparisons),
+            renderMatchingResult(response.results.whereComparisons)
+        );
 
-            if (response.results.groupBy != null) {
-                results.push(renderMatchingResult(response.results.groupBy, "Group Bys", "des Group By-Statement"));
-            }
+        for (const additionalComp of response.results.additionalComparisons) {
+            results.push(renderMatchingResult(additionalComp));
+        }
 
-            if (response.results.orderBy != null) {
-                results.push(renderMatchingResult(response.results.orderBy, "Order Bys", "des Order By-Statement"));
-            }
+        if (response.results.executionResults.success === 'COMPLETE') {
+            results.push(`<span class="text-success">Der Vergleich der Ergebnistabellen war erfolgreich.`);
+        } else {
+            results.push(`<span class="text-danger">Der Vergleich der Ergebnistabellen war nicht erfolgreich.`);
+        }
 
-            if (response.results.insertedValues != null) {
-                results.push(renderMatchingResult(response.results.insertedValues, "hinzugefügten Werte", "der Werte"));
-            }
-
-            $('#executionResultsDiv').html(renderExecution(response.results.executionResults));
-            break;
+        $('#executionResultsDiv').html(renderExecution(response.results.executionResults));
     }
 
     let newHtml = results.map(r => `<p>${r}</p>`).join('\n');
     correction.html(newHtml);
+
+    $('#correctionTabBtn').get()[0].click();
 }
 
 function onSqlCorrectionError(jqXHR): void {
@@ -123,14 +120,21 @@ function testSqlSol(): void {
 }
 
 function onShowSampleSol(): void {
-    console.error('showing sample sol!');
-
     $.ajax({
         url: showSampleSolBtn.data('href'),
-        success: (sampleSol: string) => {
-            // console.warn(sampleSol);
-            sampleSolPre.parent().parent().prop('hidden', false);
-            sampleSolPre.html(sampleSol);
+        dataType: 'json',
+        success: (sampleSolutions: string[]) => {
+            const renderedSols = sampleSolutions.map(sampleSol => `
+<div class="form-group">
+    <div class="card">
+        <div class="card-body bg-light">
+            <pre id="sampleSolPre">${sampleSol}</pre>
+        </div>
+    </div>
+</div>`.trim());
+
+            sampleSolTab.html(renderedSols.join("\n"));
+            $('#sampleSolTabBtn').get()[0].click();
         }
     })
 }
@@ -146,5 +150,5 @@ $(() => {
     showSampleSolBtn = $('#showSampleSolBtn');
     showSampleSolBtn.on('click', onShowSampleSol);
 
-    sampleSolPre = $('#sampleSolPre');
+    sampleSolTab = $('#sampleSolTab');
 });

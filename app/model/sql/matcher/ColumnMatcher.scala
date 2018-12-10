@@ -23,7 +23,8 @@ final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[C
 
   val secondRest: String = sampleArg map (_.getRest) getOrElse ""
 
-  override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): GenericAnalysisResult = GenericAnalysisResult(userArg doMatch sampleArg)
+  override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): GenericAnalysisResult =
+    GenericAnalysisResult(userArg doMatch sampleArg)
 
   override protected def descArgForJson(arg: ColumnWrapper): JsValue = JsString(arg.toString)
 
@@ -32,8 +33,11 @@ final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[C
 
 object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, ColumnMatch] {
 
-  override protected def canMatch: (ColumnWrapper, ColumnWrapper) => Boolean = _ canMatch _
+  override protected val matchName: String = "Spalten"
 
+  override protected val matchSingularName: String = "der Spalte"
+
+  override protected def canMatch: (ColumnWrapper, ColumnWrapper) => Boolean = _ canMatch _
 
   override protected def matchInstantiation: (Option[ColumnWrapper], Option[ColumnWrapper]) => ColumnMatch = ColumnMatch
 

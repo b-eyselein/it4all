@@ -1,9 +1,9 @@
 import {AnalysisResult, Match, MatchingResult} from "../matches";
 
-export { ExecutionResultsObject, renderMatchingResult,renderExecution}
+export {ExecutionResultsObject, renderMatchingResult, renderExecution}
 
 interface ExecutionResultsObject {
-    success: string
+    success: 'COMPLETE' | 'PARTIALLY' | 'NONE' | 'ERROR'
     userResult: ExecutionTable | null
     sampleResult: ExecutionTable | null
 }
@@ -53,14 +53,14 @@ function displayMatchResult(matchingRes: Match<any, any>, matchName: string) {
 }
 
 
-function renderMatchingResult(matchObj: MatchingResult<string, AnalysisResult>, matchName: string, matchSingularName: string): string {
+function renderMatchingResult(matchObj: MatchingResult<string, AnalysisResult>): string {
     if (matchObj.success) {
-        return `<span class="text-success">Der Vergleich der ${matchName} war erfolgreich.</span>`;
+        return `<span class="text-success">Der Vergleich der ${matchObj.matchName} war erfolgreich.</span>`;
     } else {
         return `
-<span class="text-danger">Der Vergleich der ${matchName} war nicht komplett korrekt:</span>
+<span class="text-danger">Der Vergleich der ${matchObj.matchName} war nicht komplett korrekt:</span>
 <ul>
-    ${matchObj.matches.map(s => `<li>${displayMatchResult(s, matchSingularName)}</li>`).join('\n')}
+    ${matchObj.matches.map(s => `<li>${displayMatchResult(s, matchObj.matchSingularName)}</li>`).join('\n')}
 </ul>`.trim();
     }
 }

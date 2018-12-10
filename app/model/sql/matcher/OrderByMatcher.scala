@@ -16,8 +16,11 @@ final case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option
 
 object OrderByMatcher extends Matcher[OrderByElement, GenericAnalysisResult, OrderByMatch] {
 
-  override protected def canMatch: (OrderByElement, OrderByElement) => Boolean = _.getExpression.toString == _.getExpression.toString
+  override protected val matchName: String = "Order Bys"
 
+  override protected val matchSingularName: String = "des Order By-Statement"
+
+  override protected def canMatch: (OrderByElement, OrderByElement) => Boolean = _.getExpression.toString == _.getExpression.toString
 
   override protected def matchInstantiation: (Option[OrderByElement], Option[OrderByElement]) => OrderByMatch = OrderByMatch
 

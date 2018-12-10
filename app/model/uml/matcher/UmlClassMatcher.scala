@@ -58,6 +58,10 @@ final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlC
 
 final case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch] {
 
+  override protected val matchName: String = "Klassen"
+
+  override protected val matchSingularName: String = "der Klasse"
+
   override protected def canMatch: (UmlClass, UmlClass) => Boolean = _.className == _.className
 
   override protected def matchInstantiation: (Option[UmlClass], Option[UmlClass]) => UmlClassMatch = UmlClassMatch(_, _, compareAttrsAndMethods)

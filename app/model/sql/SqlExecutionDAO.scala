@@ -55,7 +55,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
     for (readLine <- filePath.lines; trimmedLine = readLine.trim if !(trimmedLine startsWith "--")) {
       stringBuilder ++= trimmedLine + "\n"
 
-      if (trimmedLine endsWith Delimiter) {
+      if (trimmedLine endsWith sqlDelimiter) {
         queries += stringBuilder.toString
         stringBuilder = StringBuilder.newBuilder
       }

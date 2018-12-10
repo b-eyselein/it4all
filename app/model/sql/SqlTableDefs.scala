@@ -46,8 +46,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private def samplesForEx(collId: Int, exId: Int): Future[Seq[SqlSample]] =
     db.run(sqlSamples filter (table => table.exerciseId === exId && table.collId === collId) result)
 
-  override def futureMaybeSampleSol(scenarioId: Int, exerciseId: Int): Future[Option[String]] =
-    db.run(sqlSamples.filter(e => e.collId === scenarioId && e.id === exerciseId).map(_.sample).result.headOption)
+  override def futureSampleSolutions(scenarioId: Int, exerciseId: Int): Future[Seq[String]] =
+    db.run(sqlSamples.filter(e => e.collId === scenarioId && e.exerciseId === exerciseId).map(_.sample).result)
 
   // Saving
 

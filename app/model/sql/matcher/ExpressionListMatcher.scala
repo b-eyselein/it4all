@@ -20,6 +20,10 @@ final case class ExpressionListMatch(userArg: Option[ExpressionList], sampleArg:
 
 object ExpressionListMatcher extends Matcher[ExpressionList, GenericAnalysisResult, ExpressionListMatch] {
 
+  override protected val matchName: String = "Bedingungen"
+
+  override protected val matchSingularName: String = "der Bedingung"
+
   override protected def canMatch: (ExpressionList, ExpressionList) => Boolean = _.toString == _.toString
 
   override protected def matchInstantiation: (Option[ExpressionList], Option[ExpressionList]) => ExpressionListMatch = ExpressionListMatch

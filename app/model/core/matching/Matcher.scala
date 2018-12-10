@@ -8,7 +8,8 @@ import play.api.libs.json.{JsObject, Json}
 
 import scala.language.postfixOps
 
-final case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends EvaluationResult with JsonWriteable {
+final case class MatchingResult[T, M <: Match[T]](matchName: String, matchSingularName: String, allMatches: Seq[M])
+  extends EvaluationResult with JsonWriteable {
 
   // FIXME: is it possible to use ... match { case ...} ?!?
   override def success: SuccessType =
@@ -20,6 +21,8 @@ final case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends Ev
       COMPLETE
 
   override def toJson: JsObject = Json.obj(
+    matchNameName -> matchName,
+    matchSingularNameName -> matchSingularName,
     successName -> allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH),
     matchesName -> allMatches.map(_.toJson)
   )
@@ -27,6 +30,10 @@ final case class MatchingResult[T, M <: Match[T]](allMatches: Seq[M]) extends Ev
 }
 
 trait Matcher[T, AR <: AnalysisResult, M <: Match[T]] {
+
+  protected val matchName: String
+
+  protected val matchSingularName: String
 
   protected def canMatch: (T, T) => Boolean
 
@@ -54,7 +61,7 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T]] {
     def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[T, M] = firstCollection match {
       case Nil =>
         val missing = secondCollection map (s => matchInstantiation(None, Some(s)))
-        MatchingResult[T, M](matches ++ missing)
+        MatchingResult[T, M](matchName, matchSingularName, matches ++ missing)
 
       case firstHead :: firstTail =>
         val (foundMatch, notMatchedInSecond) = findMatchInSecondCollection(firstHead, secondCollection)

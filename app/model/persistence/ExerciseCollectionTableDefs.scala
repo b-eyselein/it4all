@@ -91,7 +91,7 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
       .sortBy(_.id.desc)
       .result.headOption)
 
-  def futureMaybeSampleSol(scenarioId: Int, exerciseId: Int): Future[Option[String]]
+  def futureSampleSolutions(scenarioId: Int, exerciseId: Int): Future[Seq[String]]
 
   // Saving
 

@@ -10,7 +10,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.single
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsArray, JsString, Json}
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
@@ -197,9 +197,8 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def sampleSol(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
-      toolMain.futureMaybeSampleSol(collId, id) map {
-        case None            => BadRequest("There is no such exercise!")
-        case Some(sampleSol) => Ok(sampleSol)
+      toolMain.futureSampleSolutions(collId, id) map {
+        sampleSolutions => Ok(JsArray(sampleSolutions map JsString.apply))
       }
   }
 

@@ -5,6 +5,8 @@ interface AnalysisResult {
 }
 
 interface MatchingResult<T, AR> {
+    matchName: string
+    matchSingularName: string
     success: boolean
     matches: Match<T, AR>[]
 }

@@ -64,7 +64,7 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
 
   override protected def copyDBSolType(sol: QuestionSolution, newId: Int): QuestionSolution = sol.copy(id = newId)
 
-  override def futureMaybeSampleSol(scenarioId: Int, exerciseId: Int): Future[Option[String]] = ???
+  override def futureSampleSolutions(scenarioId: Int, exerciseId: Int): Future[Seq[String]] = ???
 
   // Saving
 

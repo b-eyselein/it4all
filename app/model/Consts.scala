@@ -34,12 +34,14 @@ trait Consts {
 
   val languageName: String = "language"
 
-  val majorName: String = "major"
-  val matchesName       = "matches"
-  val matchTypeName     = "matchType"
-  val maxPointsName     = "maxPoints"
-  val messageName       = "message"
-  val minorName         = "minor"
+  val majorName: String     = "major"
+  val matchesName           = "matches"
+  val matchNameName         = "matchName"
+  val matchSingularNameName = "matchSingularName"
+  val matchTypeName         = "matchType"
+  val maxPointsName         = "maxPoints"
+  val messageName           = "message"
+  val minorName             = "minor"
 
   val nameName = "name"
 

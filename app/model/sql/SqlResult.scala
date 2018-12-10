@@ -1,14 +1,12 @@
 package model.sql
 
 import model.Points
-import model.core.matching.MatchingResult
+import model.core.matching.{Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.sql.SqlConsts._
 import model.sql.matcher._
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList
-import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
+import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
@@ -49,29 +47,26 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
 // FIXME: use builder?
 final case class SqlResult(learnerSolution: String, override val points: Points, override val maxPoints: Points,
-                     columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
-                     tableComparison: MatchingResult[Table, TableMatch],
-                     whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch],
+                           columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
+                           tableComparison: MatchingResult[Table, TableMatch],
+                           whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch],
 
-                     executionResult: SqlExecutionResult,
+                           executionResult: SqlExecutionResult,
 
-                     groupByComparison: Option[MatchingResult[Expression, GroupByMatch]],
-                     orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]],
-                     insertedValuesComparison: Option[MatchingResult[ExpressionList, ExpressionListMatch]])
+                           additionalComparisons: Seq[MatchingResult[_, _ <: Match[_]]]
+                          )
   extends SqlCorrResult {
 
-  override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison
+  override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons //groupByComparison ++ orderByComparison
 
   override val successType: SuccessType = if (EvaluationResult.allResultsSuccessful(results)) SuccessType.COMPLETE else SuccessType.PARTIALLY
 
   override def jsonRest: JsValue = Json.obj(
-    columnsName -> columnComparison.toJson,
-    tablesName -> tableComparison.toJson,
-    "wheres" -> whereComparison.toJson,
+    columnComparisonsName -> columnComparison.toJson,
+    tableComparisonsName -> tableComparison.toJson,
+    whereComparisonsName -> whereComparison.toJson,
 
-    "groupBy" -> groupByComparison.map(_.toJson),
-    "orderBy" -> orderByComparison.map(_.toJson),
-    "insertedValues" -> insertedValuesComparison.map(_.toJson),
+    additionalComparisonsName -> additionalComparisons.map(_.toJson),
 
     executionName -> executionResult.toJson
   )
@@ -90,27 +85,22 @@ final case class SqlParseFailed(learnerSolution: String, error: Throwable) exten
 
 final case class SqlExecutionResult(userResultTry: Try[SqlQueryResult], sampleResultTry: Try[SqlQueryResult]) extends EvaluationResult {
 
-  override val success: SuccessType = (userResultTry, sampleResultTry) match {
-    case (Success(userResult), Success(sampleResult)) => SuccessType.ofBool(userResult isIdentic sampleResult)
-
-    case (Failure(_), Success(_)) => SuccessType.ERROR
-
-    case (Success(_), Failure(_)) => SuccessType.PARTIALLY
-
-    case (Failure(_), Failure(_)) => SuccessType.ERROR
+  override val success: SuccessType = userResultTry match {
+    case Failure(_)          => SuccessType.ERROR
+    case Success(userResult) => sampleResultTry match {
+      case Failure(_)            => SuccessType.PARTIALLY
+      case Success(sampleResult) => SuccessType.ofBool(userResult isIdentic sampleResult)
+    }
   }
 
 
-  def toJson: JsObject = {
-    val userTable: (String, JsValue) = userResultTry match {
+  def toJson: JsObject = Json.obj(
+    successName -> success,
+    userResultTry match {
       case Success(result) => userResultName -> result.toJson
       case Failure(error)  => userErrorName -> JsString(error.toString)
-    }
-    val sampleTable: JsValue = sampleResultTry.map(_.toJson) getOrElse JsNull
-
-    JsObject
-
-    JsObject(Seq(userTable, sampleResultName -> sampleTable))
-  }
+    },
+    sampleResultName -> sampleResultTry.map(_.toJson).toOption
+  )
 
 }

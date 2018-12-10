@@ -1,14 +1,12 @@
 package model.sql
 
 import model._
-import model.core.matching.MatchingResult
+import model.core.matching.{Match, MatchingResult}
 import model.sql.matcher._
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
-import net.sf.jsqlparser.statement.select.OrderByElement
 
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
@@ -40,16 +38,19 @@ abstract class QueryCorrector(val queryType: String) {
 
     val executionResult: SqlExecutionResult = database.executeQueries(scenario, exercise, userQ, sampleQ)
 
-    val groupByComparison = compareGroupByElements(userQ, sampleQ)
-    val orderByComparison = compareOrderByElements(userQ, sampleQ)
+    //    val groupByComparison = compareGroupByElements(userQ, sampleQ)
+    //    val orderByComparison = compareOrderByElements(userQ, sampleQ)
+    //    val limitComparison = compareLimits(userQ, sampleQ)
+    //    val insertedValuesComparison = compareInsertedValues(userQ, sampleQ)
 
-    val insertedValuesComparison = compareInsertedValues(userQ, sampleQ)
+    val additionalComparisons = performAdditionalComparisons(userQ, sampleQ)
 
     // FIXME: calculate points!
     val points = -1 point
     val maxPoints = -1 point
 
-    SqlResult(learnerSolution, points, maxPoints, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison, insertedValuesComparison)
+    SqlResult(learnerSolution, points, maxPoints, columnComparison, tableComparison, whereComparison, executionResult,
+      additionalComparisons /* groupByComparison, orderByComparison, insertedValuesComparison*/)
   }
 
   def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnWrapper, ColumnMatch] =
@@ -74,11 +75,13 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected def getWhere(query: Q): Option[Expression]
 
-  protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]] = None
+  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): Seq[MatchingResult[_, _ <: Match[_]]]
 
-  protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, OrderByMatch]] = None
+//  protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]] = None
 
-  protected def compareInsertedValues(userQuery: Q, sampleQuery: Q): Option[MatchingResult[ExpressionList, ExpressionListMatch]] = None
+//  protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, OrderByMatch]] = None
+
+//  protected def compareInsertedValues(userQuery: Q, sampleQuery: Q): Option[MatchingResult[ExpressionList, ExpressionListMatch]] = None
 
   // Parsing
 

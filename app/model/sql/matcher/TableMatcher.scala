@@ -15,6 +15,10 @@ final case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) ex
 
 object TableMatcher extends Matcher[Table, GenericAnalysisResult, TableMatch] {
 
+  override protected val matchName: String = "Tabellen"
+
+  override protected val matchSingularName: String = "der Tabelle"
+
   override protected def canMatch: (Table, Table) => Boolean = _.getName == _.getName
 
   override protected def matchInstantiation: (Option[Table], Option[Table]) => TableMatch = TableMatch

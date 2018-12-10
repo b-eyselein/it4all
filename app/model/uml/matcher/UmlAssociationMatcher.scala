@@ -6,8 +6,8 @@ import model.uml.{UmlAssociation, UmlAssociationType}
 import play.api.libs.json.{JsValue, Json}
 
 final case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel: Boolean,
-                                        assocTypeEqual: Boolean, correctAssocType: UmlAssociationType,
-                                        multiplicitiesEqual: Boolean)
+                                              assocTypeEqual: Boolean, correctAssocType: UmlAssociationType,
+                                              multiplicitiesEqual: Boolean)
   extends AnalysisResult {
 
   override def toJson: JsValue = Json.obj(successName -> matchType.entryName,
@@ -50,10 +50,13 @@ final case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg:
 
 object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch] {
 
+  override protected val matchName: String = "Assoziationen"
+
+  override protected val matchSingularName: String = "der Assoziation"
+
   private def endsCrossedEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean = (assoc1.firstEnd == assoc2.secondEnd) && (assoc1.secondEnd == assoc2.firstEnd)
 
   def endsParallelEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean = (assoc1.firstEnd == assoc2.firstEnd) && (assoc1.secondEnd == assoc2.secondEnd)
-
 
   override protected def canMatch: (UmlAssociation, UmlAssociation) => Boolean = (assoc1, assoc2) => endsParallelEqual(assoc1, assoc2) || endsCrossedEqual(assoc1, assoc2)
 

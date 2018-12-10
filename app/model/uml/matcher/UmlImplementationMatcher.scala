@@ -31,9 +31,12 @@ final case class UmlImplementationMatch(userArg: Option[UmlImplementation], samp
 
 object UmlImplementationMatcher extends Matcher[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch] {
 
+  override protected val matchName: String = "Vererbungen"
+
+  override protected val matchSingularName: String = "der Vererbung"
+
   override protected def canMatch: (UmlImplementation, UmlImplementation) => Boolean = (i1, i2) =>
     (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)
-
 
   override protected def matchInstantiation: (Option[UmlImplementation], Option[UmlImplementation]) => UmlImplementationMatch = UmlImplementationMatch
 

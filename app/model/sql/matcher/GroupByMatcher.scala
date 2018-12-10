@@ -19,6 +19,10 @@ final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Exp
 
 object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupByMatch] {
 
+  override protected val matchName: String = "Group Bys"
+
+  override protected val matchSingularName: String = "des Group By-Statement"
+
   override protected def canMatch: (Expression, Expression) => Boolean = (exp1, exp2) => exp1 match {
     case column1: Column => exp2 match {
       case column2: Column => column1.getColumnName == column2.getColumnName
