@@ -444,7 +444,7 @@ exercises:
 
   - id: 27
     semanticVersion: 1.0.0
-    title: TODO!
+    title: Orwellianisch
     author: bje40dc
     text: Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.
     exerciseType: SELECT
@@ -462,7 +462,7 @@ exercises:
 
   - id: 28
     semanticVersion: 1.0.0
-    title: TODO!
+    title: Teuer, teuer und teuer
     author: bje40dc
     text: Zeigen sie Titel und Autor-ID der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis abwärts.
     exerciseType: SELECT

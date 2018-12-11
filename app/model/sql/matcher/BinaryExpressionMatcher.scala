@@ -1,9 +1,12 @@
 package model.sql.matcher
 
+import model._
 import model.core.matching._
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
+
+import scala.language.postfixOps
 
 
 final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
@@ -26,8 +29,18 @@ final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sample
 
   override protected def descArgForJson(arg: BinaryExpression): JsValue = JsString(arg.toString)
 
-}
+  override def points: Points = matchType match {
+    case MatchType.SUCCESSFUL_MATCH   => 1 point
+    case MatchType.UNSUCCESSFUL_MATCH => 1 halfPoint
+    case _                            => 0 points
+  }
 
+  override def maxPoints: Points = sampleArg match {
+    case None    => 0 points
+    case Some(_) => 1 point
+  }
+
+}
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
   extends Matcher[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch] {
@@ -51,7 +64,7 @@ class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases:
   }
 
 
-  override protected def canMatch: (BinaryExpression, BinaryExpression) => Boolean = (binEx1, binEx2) => {
+  override protected def canMatch(binEx1: BinaryExpression, binEx2: BinaryExpression): Boolean = {
 
     def maybeTableAlias(col: Column): Option[String] = col.getTable match {
       case null  => None
@@ -73,6 +86,7 @@ class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases:
     }
   }
 
-  override protected def matchInstantiation: (Option[BinaryExpression], Option[BinaryExpression]) => BinaryExpressionMatch = BinaryExpressionMatch
+  override protected def matchInstantiation(ua: Option[BinaryExpression], sa: Option[BinaryExpression]): BinaryExpressionMatch =
+    BinaryExpressionMatch(ua, sa)
 
 }

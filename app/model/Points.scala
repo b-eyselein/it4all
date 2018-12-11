@@ -9,6 +9,8 @@ final case class Points(quarters: Int) extends AnyVal {
 
   def *(multiplier: Int): Points = Points(multiplier * this.quarters)
 
+  def asDouble: Double = quarters / 4d
+
   def asDoubleString: String = quarters /% 4 match {
     case (quotient, 0) => quotient.toString
     case (quotient, 1) => s"$quotient.25"

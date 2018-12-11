@@ -54,11 +54,13 @@ function displayMatchResult(matchingRes: Match<any, any>, matchName: string) {
 
 
 function renderMatchingResult(matchObj: MatchingResult<string, AnalysisResult>): string {
+    const pointStr: string = `(${matchObj.points} / ${matchObj.maxPoints} P)`;
+
     if (matchObj.success) {
-        return `<span class="text-success">Der Vergleich der ${matchObj.matchName} war erfolgreich.</span>`;
+        return `<span class="text-success">${pointStr} Der Vergleich der ${matchObj.matchName} war erfolgreich.</span>`;
     } else {
         return `
-<span class="text-danger">Der Vergleich der ${matchObj.matchName} war nicht komplett korrekt:</span>
+<span class="text-danger">${pointStr} Der Vergleich der ${matchObj.matchName} war nicht komplett korrekt:</span>
 <ul>
     ${matchObj.matches.map(s => `<li>${displayMatchResult(s, matchObj.matchSingularName)}</li>`).join('\n')}
 </ul>`.trim();

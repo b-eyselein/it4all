@@ -30,7 +30,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   override protected def getTables(query: Q): Seq[Table] = query.getSelectBody match {
     case plain: PlainSelect =>
 
-      val tables = plain.getFromItem match {
+      val tables: Seq[Table] = plain.getFromItem match {
         case t: Table => Seq(t)
         case _        => Seq[Table]()
       }

@@ -8,8 +8,8 @@ import play.api.libs.json.{JsValue, Json}
 import scala.language.postfixOps
 
 final case class UmlClassMatchAnalysisResult(matchType: MatchType, classTypeCorrect: Boolean, correctClassType: UmlClassType,
-                                       maybeAttributeMatchingResult: Option[MatchingResult[UmlAttribute, UmlAttributeMatch]],
-                                       maybeMethodMatchingResult: Option[MatchingResult[UmlMethod, UmlMethodMatch]])
+                                             maybeAttributeMatchingResult: Option[MatchingResult[UmlAttribute, UmlAttributeMatch]],
+                                             maybeMethodMatchingResult: Option[MatchingResult[UmlMethod, UmlMethodMatch]])
   extends AnalysisResult {
 
   override def toJson: JsValue = Json.obj(
@@ -62,8 +62,9 @@ final case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matche
 
   override protected val matchSingularName: String = "der Klasse"
 
-  override protected def canMatch: (UmlClass, UmlClass) => Boolean = _.className == _.className
+  override protected def canMatch(c1: UmlClass, c2: UmlClass): Boolean = c1.className == c2.className
 
-  override protected def matchInstantiation: (Option[UmlClass], Option[UmlClass]) => UmlClassMatch = UmlClassMatch(_, _, compareAttrsAndMethods)
+  override protected def matchInstantiation(ua: Option[UmlClass], sa: Option[UmlClass]): UmlClassMatch =
+    UmlClassMatch(ua, sa, compareAttrsAndMethods)
 
 }

@@ -10,7 +10,7 @@ object WebCompleteExerciseForm extends CompleteExerciseForm[WebExercise, WebComp
 
   // HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute])
 
-  case class HtmlCompleteTaskFormValues(taskId: Int, taskText: String, xpathQuery: String, textContent: Option[String])
+  final case class HtmlCompleteTaskFormValues(taskId: Int, taskText: String, xpathQuery: String, textContent: Option[String])
 
   private def applyHtmlTask(exerciseId: Int, exSemVer: SemanticVersion): HtmlCompleteTaskFormValues => HtmlCompleteTask = {
     case HtmlCompleteTaskFormValues(taskId, taskText, xpathQuery, textContent) =>
@@ -32,7 +32,7 @@ object WebCompleteExerciseForm extends CompleteExerciseForm[WebExercise, WebComp
 
   // JsCompleteTask(task: JsTask, conditions: Seq[JsCondition])
 
-  case class JsCompleteTaskFormValues(taskId: Int, taskText: String, xpathQuery: String, actionType: JsActionType, keysToSend: Option[String])
+  final case class JsCompleteTaskFormValues(taskId: Int, taskText: String, xpathQuery: String, actionType: JsActionType, keysToSend: Option[String])
 
   private def applyJstask(exerciseId: Int, exSemVer: SemanticVersion): JsCompleteTaskFormValues => JsCompleteTask = {
     case JsCompleteTaskFormValues(taskId, taskText, xpathQuery, actionType, keysToSend) =>

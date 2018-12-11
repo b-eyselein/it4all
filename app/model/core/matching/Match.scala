@@ -1,8 +1,11 @@
 package model.core.matching
 
+import model._
 import model.core.CoreConsts._
 import model.core.JsonWriteable
 import play.api.libs.json.{JsObject, JsValue, Json}
+
+import scala.language.postfixOps
 
 trait AnalysisResult {
 
@@ -22,12 +25,11 @@ trait Match[T] extends JsonWriteable {
 
   type AR <: AnalysisResult
 
-  //  type MatchAnalysisResult <: AnalysisResult
-
   val userArg  : Option[T]
   val sampleArg: Option[T]
 
   protected val analysisResult: Option[AR] = (userArg, sampleArg) match {
+    // FIXME: refactor!
     case (Some(ua), Some(sa)) => Some(analyze(ua, sa))
     case _                    => None
   }
@@ -53,6 +55,10 @@ trait Match[T] extends JsonWriteable {
   protected def descArg(arg: T): String = arg.toString
 
   protected def descArgForJson(arg: T): JsValue
+
+  def points: Points = -1 point
+
+  def maxPoints: Points = -1 point
 
   override def toJson: JsValue = Json.obj(
     matchTypeName -> matchType.entryName,

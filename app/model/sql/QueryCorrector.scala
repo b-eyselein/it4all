@@ -38,35 +38,25 @@ abstract class QueryCorrector(val queryType: String) {
 
     val executionResult: SqlExecutionResult = database.executeQueries(scenario, exercise, userQ, sampleQ)
 
-    //    val groupByComparison = compareGroupByElements(userQ, sampleQ)
-    //    val orderByComparison = compareOrderByElements(userQ, sampleQ)
-    //    val limitComparison = compareLimits(userQ, sampleQ)
-    //    val insertedValuesComparison = compareInsertedValues(userQ, sampleQ)
-
     val additionalComparisons = performAdditionalComparisons(userQ, sampleQ)
 
-    // FIXME: calculate points!
-    val points = -1 point
-    val maxPoints = -1 point
-
-    SqlResult(learnerSolution, points, maxPoints, columnComparison, tableComparison, whereComparison, executionResult,
-      additionalComparisons /* groupByComparison, orderByComparison, insertedValuesComparison*/)
+    SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, additionalComparisons)
   }
 
-  def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnWrapper, ColumnMatch] =
+  private def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnWrapper, ColumnMatch] =
     ColumnMatcher.doMatch(getColumnWrappers(userQ), getColumnWrappers(sampleQ))
 
-  def compareWhereClauses(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[BinaryExpression, BinaryExpressionMatch] =
+  private def compareWhereClauses(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[BinaryExpression, BinaryExpressionMatch] =
     new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
-  def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
+  private def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
     case None             => Seq[BinaryExpression]()
     case Some(expression) => new ExpressionExtractor(expression).extracted
   }
 
-  def compareTables(userQ: Q, sampleQ: Q): MatchingResult[Table, TableMatch] = TableMatcher.doMatch(getTables(userQ), getTables(sampleQ))
+  private def compareTables(userQ: Q, sampleQ: Q): MatchingResult[Table, TableMatch] = TableMatcher.doMatch(getTables(userQ), getTables(sampleQ))
 
-  def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(q => Option(q.getAlias).isDefined).map(t => t.getAlias.getName -> t.getName).toMap
+  private def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(q => Option(q.getAlias).isDefined).map(t => t.getAlias.getName -> t.getName).toMap
 
 
   protected def getColumnWrappers(query: Q): Seq[ColumnWrapper]
@@ -76,12 +66,6 @@ abstract class QueryCorrector(val queryType: String) {
   protected def getWhere(query: Q): Option[Expression]
 
   protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): Seq[MatchingResult[_, _ <: Match[_]]]
-
-//  protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]] = None
-
-//  protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, OrderByMatch]] = None
-
-//  protected def compareInsertedValues(userQuery: Q, sampleQuery: Q): Option[MatchingResult[ExpressionList, ExpressionListMatch]] = None
 
   // Parsing
 

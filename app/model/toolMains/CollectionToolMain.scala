@@ -119,12 +119,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
               case Failure(error) => Future(Failure(error))
               case Success(res)   =>
 
-                // FIXME: calculate!
-                val id = 0
-                val points = -1 point
-                val maxPoints = -1 point
-
-                val dbSol = instantiateSolution(id, user.username, collection, exercise, solution, points, maxPoints)
+                // FIXME: points != 0? maxPoints != 0?
+                val dbSol = instantiateSolution(id = -1, user.username, collection, exercise, solution, res.points, res.maxPoints)
                 tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
             }
         }

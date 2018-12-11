@@ -54,12 +54,16 @@ object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationAnaly
 
   override protected val matchSingularName: String = "der Assoziation"
 
-  private def endsCrossedEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean = (assoc1.firstEnd == assoc2.secondEnd) && (assoc1.secondEnd == assoc2.firstEnd)
+  private def endsCrossedEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean =
+    (assoc1.firstEnd == assoc2.secondEnd) && (assoc1.secondEnd == assoc2.firstEnd)
 
-  def endsParallelEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean = (assoc1.firstEnd == assoc2.firstEnd) && (assoc1.secondEnd == assoc2.secondEnd)
+  def endsParallelEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean =
+    (assoc1.firstEnd == assoc2.firstEnd) && (assoc1.secondEnd == assoc2.secondEnd)
 
-  override protected def canMatch: (UmlAssociation, UmlAssociation) => Boolean = (assoc1, assoc2) => endsParallelEqual(assoc1, assoc2) || endsCrossedEqual(assoc1, assoc2)
+  override protected def canMatch(a1: UmlAssociation, a2: UmlAssociation): Boolean =
+    endsParallelEqual(a1, a2) || endsCrossedEqual(a1, a2)
 
-  override protected def matchInstantiation: (Option[UmlAssociation], Option[UmlAssociation]) => UmlAssociationMatch = UmlAssociationMatch
+  override protected def matchInstantiation(ua: Option[UmlAssociation], sa: Option[UmlAssociation]): UmlAssociationMatch =
+    UmlAssociationMatch(ua, sa)
 
 }

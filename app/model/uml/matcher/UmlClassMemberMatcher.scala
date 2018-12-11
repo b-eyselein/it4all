@@ -92,9 +92,10 @@ object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisRes
 
   override protected val matchSingularName: String = "des Attributs"
 
-  override protected def canMatch: (UmlAttribute, UmlAttribute) => Boolean = _.memberName == _.memberName
+  override protected def canMatch(a1: UmlAttribute, a2: UmlAttribute): Boolean = a1.memberName == a2.memberName
 
-  override protected def matchInstantiation: (Option[UmlAttribute], Option[UmlAttribute]) => UmlAttributeMatch = UmlAttributeMatch
+  override protected def matchInstantiation(ua: Option[UmlAttribute], sa: Option[UmlAttribute]): UmlAttributeMatch =
+    UmlAttributeMatch(ua, sa)
 
 }
 
@@ -164,8 +165,9 @@ object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlM
 
   override protected val matchSingularName: String = "der Methode"
 
-  override protected def canMatch: (UmlMethod, UmlMethod) => Boolean = _.memberName == _.memberName
+  override protected def canMatch(m1: UmlMethod, m2: UmlMethod): Boolean = m1.memberName == m2.memberName
 
-  override protected def matchInstantiation: (Option[UmlMethod], Option[UmlMethod]) => UmlMethodMatch = UmlMethodMatch
+  override protected def matchInstantiation(ua: Option[UmlMethod], sa: Option[UmlMethod]): UmlMethodMatch =
+    UmlMethodMatch(ua, sa)
 
 }

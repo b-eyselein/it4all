@@ -24,8 +24,9 @@ object ExpressionListMatcher extends Matcher[ExpressionList, GenericAnalysisResu
 
   override protected val matchSingularName: String = "der Bedingung"
 
-  override protected def canMatch: (ExpressionList, ExpressionList) => Boolean = _.toString == _.toString
+  override protected def canMatch(el1: ExpressionList, el2: ExpressionList): Boolean = el1.toString == el2.toString
 
-  override protected def matchInstantiation: (Option[ExpressionList], Option[ExpressionList]) => ExpressionListMatch = ExpressionListMatch
+  override protected def matchInstantiation(ua: Option[ExpressionList], sa: Option[ExpressionList]): ExpressionListMatch =
+    ExpressionListMatch(ua, sa)
 
 }

@@ -1,5 +1,6 @@
 package model.core.matching
 
+import model._
 import model.core.CoreConsts._
 import model.core.JsonWriteable
 import model.core.result.SuccessType._
@@ -20,11 +21,17 @@ final case class MatchingResult[T, M <: Match[T]](matchName: String, matchSingul
     else
       COMPLETE
 
+  val points: Points = allMatches.map(_.points).fold(0 points)(_ + _)
+
+  val maxPoints: Points = allMatches.map(_.maxPoints).fold(0 points)(_ + _)
+
   override def toJson: JsObject = Json.obj(
     matchNameName -> matchName,
     matchSingularNameName -> matchSingularName,
     successName -> allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH),
-    matchesName -> allMatches.map(_.toJson)
+    matchesName -> allMatches.map(_.toJson),
+    pointsName -> points.asDouble,
+    maxPointsName -> maxPoints.asDouble
   )
 
 }
@@ -35,9 +42,9 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T]] {
 
   protected val matchSingularName: String
 
-  protected def canMatch: (T, T) => Boolean
+  protected def canMatch(t1: T, t2: T): Boolean
 
-  protected def matchInstantiation: (Option[T], Option[T]) => M
+  protected def matchInstantiation(ua: Option[T], sa: Option[T]): M
 
   def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): MatchingResult[T, M] = {
 

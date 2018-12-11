@@ -35,9 +35,10 @@ object UmlImplementationMatcher extends Matcher[UmlImplementation, GenericAnalys
 
   override protected val matchSingularName: String = "der Vererbung"
 
-  override protected def canMatch: (UmlImplementation, UmlImplementation) => Boolean = (i1, i2) =>
+  override protected def canMatch(i1: UmlImplementation, i2: UmlImplementation): Boolean =
     (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)
 
-  override protected def matchInstantiation: (Option[UmlImplementation], Option[UmlImplementation]) => UmlImplementationMatch = UmlImplementationMatch
+  override protected def matchInstantiation(ua: Option[UmlImplementation], sa: Option[UmlImplementation]): UmlImplementationMatch =
+    UmlImplementationMatch(ua, sa)
 
 }

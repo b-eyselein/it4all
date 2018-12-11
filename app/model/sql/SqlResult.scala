@@ -1,6 +1,6 @@
 package model.sql
 
-import model.Points
+import model._
 import model.core.matching.{Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.sql.SqlConsts._
@@ -9,6 +9,7 @@ import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Table
 import play.api.libs.json._
 
+import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 final case class WrongStatementTypeException(awaited: String, gotten: String) extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")
@@ -46,7 +47,7 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 }
 
 // FIXME: use builder?
-final case class SqlResult(learnerSolution: String, override val points: Points, override val maxPoints: Points,
+final case class SqlResult(learnerSolution: String,
                            columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
                            tableComparison: MatchingResult[Table, TableMatch],
                            whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch],
@@ -57,9 +58,13 @@ final case class SqlResult(learnerSolution: String, override val points: Points,
                           )
   extends SqlCorrResult {
 
-  override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons //groupByComparison ++ orderByComparison
+  override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons
 
   override val successType: SuccessType = if (EvaluationResult.allResultsSuccessful(results)) SuccessType.COMPLETE else SuccessType.PARTIALLY
+
+  // FIXME: calculate points!
+  override val points   : Points = calculatePoints
+  override val maxPoints: Points = calculateMaxPoints
 
   override def jsonRest: JsValue = Json.obj(
     columnComparisonsName -> columnComparison.toJson,
@@ -70,6 +75,16 @@ final case class SqlResult(learnerSolution: String, override val points: Points,
 
     executionName -> executionResult.toJson
   )
+
+  private def calculatePoints: Points = columnComparison.points +
+    tableComparison.points +
+    whereComparison.points +
+    additionalComparisons.map(_.points).fold(0 points)(_ + _)
+
+  private def calculateMaxPoints: Points = columnComparison.maxPoints +
+    tableComparison.maxPoints +
+    whereComparison.maxPoints +
+    additionalComparisons.map(_.maxPoints).fold(0 points)(_ + _)
 
 }
 

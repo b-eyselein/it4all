@@ -23,8 +23,8 @@ object LimitMatcher extends Matcher[Limit, GenericAnalysisResult, LimitMatch] {
 
   override protected val matchSingularName: String = "des Limits"
 
-  override protected def canMatch: (Limit, Limit) => Boolean = (_, _) => true
+  override protected def canMatch(l1: Limit, l2: Limit): Boolean = true
 
-  override protected def matchInstantiation: (Option[Limit], Option[Limit]) => LimitMatch = LimitMatch
+  override protected def matchInstantiation(ua: Option[Limit], sa: Option[Limit]): LimitMatch = LimitMatch(ua, sa)
 
 }

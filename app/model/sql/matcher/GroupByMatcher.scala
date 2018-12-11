@@ -1,9 +1,12 @@
 package model.sql.matcher
 
+import model._
 import model.core.matching._
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
+
+import scala.language.postfixOps
 
 
 final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match[Expression] {
@@ -14,6 +17,13 @@ final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Exp
 
   override protected def descArgForJson(arg: Expression): JsValue = JsString(arg.toString)
 
+  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) 1 halfPoint else 0 points
+
+  override def maxPoints: Points = sampleArg match {
+    case None    => 0 points
+    case Some(_) => 1 halfPoint
+  }
+
 }
 
 
@@ -23,8 +33,8 @@ object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupBy
 
   override protected val matchSingularName: String = "des Group By-Statement"
 
-  override protected def canMatch: (Expression, Expression) => Boolean = (exp1, exp2) => exp1 match {
-    case column1: Column => exp2 match {
+  override protected def canMatch(e1: Expression, e2: Expression): Boolean = e1 match {
+    case column1: Column => e2 match {
       case column2: Column => column1.getColumnName == column2.getColumnName
       case _               => false
     }
@@ -32,6 +42,7 @@ object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupBy
   }
 
 
-  override protected def matchInstantiation: (Option[Expression], Option[Expression]) => GroupByMatch = GroupByMatch
+  override protected def matchInstantiation(ua: Option[Expression], sa: Option[Expression]): GroupByMatch =
+    GroupByMatch(ua, sa)
 
 }

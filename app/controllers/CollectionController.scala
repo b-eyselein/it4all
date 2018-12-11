@@ -29,7 +29,12 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
-  private def takeSlice[T](collection: Seq[T], page: Int): Seq[T] = collection slice(Math.max(0, (page - 1) * stdStep), Math.min(page * stdStep, collection.size))
+  private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
+    val start = Math.max(0, (page - 1) * step)
+    val end = Math.min(page * step, collection.size)
+
+    collection slice(start, end)
+  }
 
   // Admin
 
@@ -160,8 +165,13 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       toolMain.futureCompleteCollById(id) map {
         case None       => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
         case Some(coll) =>
+          val step = 18
+
           val exercises = coll.exercises.filter(_.ex.state == ExerciseState.APPROVED)
-          Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, takeSlice(exercises, page), toolMain, page, exercises.size))
+
+          val exesToDisplay = takeSlice(exercises, page, step)
+
+          Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, exesToDisplay, toolMain, page, step, exercises.size))
       }
   }
 

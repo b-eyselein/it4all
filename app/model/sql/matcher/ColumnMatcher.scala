@@ -1,35 +1,30 @@
 package model.sql.matcher
 
+import model._
 import model.core.matching._
 import model.sql.ColumnWrapper
 import play.api.libs.json.{JsString, JsValue}
+
+import scala.language.postfixOps
 
 
 final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match[ColumnWrapper] {
 
   override type AR = GenericAnalysisResult
 
-  val hasAlias: Boolean = (userArg exists (_.hasAlias)) || (sampleArg exists (_.hasAlias))
-
-  val restMatched: Boolean = false
-
-  val colNamesMatched: Boolean = matchType == MatchType.SUCCESSFUL_MATCH || matchType == MatchType.UNSUCCESSFUL_MATCH
-
-  val firstColName: String = userArg map (_.getColName) getOrElse ""
-
-  val firstRest: String = userArg map (_.getRest) getOrElse ""
-
-  val secondColName: String = sampleArg map (_.getColName) getOrElse ""
-
-  val secondRest: String = sampleArg map (_.getRest) getOrElse ""
-
-  override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): GenericAnalysisResult =
+  override protected def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): GenericAnalysisResult =
     GenericAnalysisResult(userArg doMatch sampleArg)
 
   override protected def descArgForJson(arg: ColumnWrapper): JsValue = JsString(arg.toString)
 
-}
+  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) 1 halfPoint else 0 points
 
+  override def maxPoints: Points = sampleArg match {
+    case None    => 0 points
+    case Some(_) => 1 halfPoint
+  }
+
+}
 
 object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, ColumnMatch] {
 
@@ -37,8 +32,9 @@ object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, Colum
 
   override protected val matchSingularName: String = "der Spalte"
 
-  override protected def canMatch: (ColumnWrapper, ColumnWrapper) => Boolean = _ canMatch _
+  override protected def canMatch(cw1: ColumnWrapper, cw2: ColumnWrapper): Boolean = cw1 canMatch cw2
 
-  override protected def matchInstantiation: (Option[ColumnWrapper], Option[ColumnWrapper]) => ColumnMatch = ColumnMatch
+  override protected def matchInstantiation(ua: Option[ColumnWrapper], sa: Option[ColumnWrapper]): ColumnMatch =
+    ColumnMatch(ua, sa)
 
 }

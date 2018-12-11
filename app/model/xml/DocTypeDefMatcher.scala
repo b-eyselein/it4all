@@ -53,7 +53,7 @@ final case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Optio
     SuccessType.COMPLETE
   } else SuccessType.NONE
 
-  def points: Points = matchType match {
+  override def points: Points = matchType match {
     case MatchType.SUCCESSFUL_MATCH                             => sampleArg map XmlGrammarCompleteResult.pointsForElementLine getOrElse (0 points)
     case MatchType.ONLY_SAMPLE                                  => 0 points
     case MatchType.ONLY_USER                                    => 0 points
@@ -70,8 +70,9 @@ object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult,
 
   override protected val matchSingularName: String = "DTD-Zeile"
 
-  override protected def canMatch: (ElementLine, ElementLine) => Boolean = _.elementName == _.elementName
+  override protected def canMatch(el1: ElementLine, el2: ElementLine): Boolean = el1.elementName == el2.elementName
 
-  override protected def matchInstantiation: (Option[ElementLine], Option[ElementLine]) => ElementLineMatch = ElementLineMatch
+  override protected def matchInstantiation(ua: Option[ElementLine], sa: Option[ElementLine]): ElementLineMatch =
+    ElementLineMatch(ua, sa)
 
 }
