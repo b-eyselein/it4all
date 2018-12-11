@@ -3,7 +3,7 @@ package model.xml
 import better.files.File
 import javax.xml.parsers.DocumentBuilderFactory
 import model.core.matching.MatchingResult
-import model.xml.dtd.{DocTypeDef, ElementLine}
+import model.xml.dtd.DocTypeDef
 import org.xml.sax.{ErrorHandler, SAXParseException}
 
 import scala.collection.mutable.ListBuffer
@@ -43,7 +43,7 @@ object XmlCorrector {
     errorHandler.errors
   }
 
-  def correctDTD(userGrammar: DocTypeDef, sampleGrammar: DocTypeDef): MatchingResult[ElementLine, ElementLineMatch] =
+  def correctDTD(userGrammar: DocTypeDef, sampleGrammar: DocTypeDef): MatchingResult[ElementLineMatch] =
     DocTypeDefMatcher.doMatch(userGrammar.asElementLines, sampleGrammar.asElementLines)
 
 

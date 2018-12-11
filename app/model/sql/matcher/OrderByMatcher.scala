@@ -7,7 +7,9 @@ import play.api.libs.json.{JsString, JsValue}
 
 import scala.language.postfixOps
 
-final case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement] {
+final case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match {
+
+  override type T = OrderByElement
 
   override type AR = GenericAnalysisResult
 

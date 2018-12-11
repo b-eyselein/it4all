@@ -21,8 +21,9 @@ final case class GenericAnalysisResult(matchType: MatchType) extends AnalysisRes
 
 }
 
-trait Match[T] extends JsonWriteable {
+trait Match extends JsonWriteable {
 
+  type T
   type AR <: AnalysisResult
 
   val userArg  : Option[T]

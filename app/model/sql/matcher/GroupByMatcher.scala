@@ -9,7 +9,9 @@ import play.api.libs.json.{JsString, JsValue}
 import scala.language.postfixOps
 
 
-final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match[Expression] {
+final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match {
+
+  override type T = Expression
 
   override type AR = GenericAnalysisResult
 

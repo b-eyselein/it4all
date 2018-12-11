@@ -8,7 +8,9 @@ import play.api.libs.json.{JsString, JsValue}
 import scala.language.postfixOps
 
 
-final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match[ColumnWrapper] {
+final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match {
+
+  override type T = ColumnWrapper
 
   override type AR = GenericAnalysisResult
 

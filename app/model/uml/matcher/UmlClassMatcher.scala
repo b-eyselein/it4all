@@ -2,14 +2,14 @@ package model.uml.matcher
 
 import model.core.matching._
 import model.uml.UmlConsts._
-import model.uml.{UmlAttribute, UmlClass, UmlClassType, UmlMethod}
+import model.uml.{UmlClass, UmlClassType}
 import play.api.libs.json.{JsValue, Json}
 
 import scala.language.postfixOps
 
 final case class UmlClassMatchAnalysisResult(matchType: MatchType, classTypeCorrect: Boolean, correctClassType: UmlClassType,
-                                             maybeAttributeMatchingResult: Option[MatchingResult[UmlAttribute, UmlAttributeMatch]],
-                                             maybeMethodMatchingResult: Option[MatchingResult[UmlMethod, UmlMethodMatch]])
+                                             maybeAttributeMatchingResult: Option[MatchingResult[UmlAttributeMatch]],
+                                             maybeMethodMatchingResult: Option[MatchingResult[UmlMethodMatch]])
   extends AnalysisResult {
 
   override def toJson: JsValue = Json.obj(
@@ -22,7 +22,9 @@ final case class UmlClassMatchAnalysisResult(matchType: MatchType, classTypeCorr
 }
 
 
-final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass], compAM: Boolean) extends Match[UmlClass] {
+final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlClass], compAM: Boolean) extends Match {
+
+  override type T = UmlClass
 
   override type AR = UmlClassMatchAnalysisResult
 
@@ -30,8 +32,8 @@ final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlC
     val classTypeCorrect = c1.classType == c2.classType
 
     if (compAM) {
-      val attributesResult: MatchingResult[UmlAttribute, UmlAttributeMatch] = UmlAttributeMatcher.doMatch(c1.attributes, c2.attributes)
-      val methodsResult: MatchingResult[UmlMethod, UmlMethodMatch] = UmlMethodMatcher.doMatch(c1.methods, c2.methods)
+      val attributesResult: MatchingResult[UmlAttributeMatch] = UmlAttributeMatcher.doMatch(c1.attributes, c2.attributes)
+      val methodsResult: MatchingResult[UmlMethodMatch] = UmlMethodMatcher.doMatch(c1.methods, c2.methods)
 
       val membersCorrect: Boolean = attributesResult.isSuccessful && methodsResult.isSuccessful
 
@@ -50,8 +52,8 @@ final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlC
   // FIXME: check if correct!
   override protected def descArgForJson(arg: UmlClass): JsValue = Json.obj(nameName -> arg.className, classTypeName -> arg.classType.entryName)
 
-  val attributesResult: Option[MatchingResult[UmlAttribute, UmlAttributeMatch]] = analysisResult.flatMap(_.maybeAttributeMatchingResult)
-  val methodsResult   : Option[MatchingResult[UmlMethod, UmlMethodMatch]]       = analysisResult.flatMap(_.maybeMethodMatchingResult)
+  val attributesResult: Option[MatchingResult[UmlAttributeMatch]] = analysisResult.flatMap(_.maybeAttributeMatchingResult)
+  val methodsResult   : Option[MatchingResult[UmlMethodMatch]]    = analysisResult.flatMap(_.maybeMethodMatchingResult)
 
 }
 

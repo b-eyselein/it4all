@@ -6,7 +6,9 @@ import model.uml.{UmlAttribute, UmlClassMember, UmlMethod, UmlVisibility}
 import play.api.libs.json.{JsValue, Json}
 
 
-sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match[Mem] {
+sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match {
+
+  override type T = Mem
 
   override type AR <: UmlClassMemberAnalysisResult
 

@@ -23,24 +23,24 @@ final case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: Uml
 
   override val success: SuccessType = SuccessType.NONE
 
-  override def results: Seq[MatchingResult[_, _ <: Match[_]]] = Seq[MatchingResult[_, _ <: Match[_]]]() ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
+  override def results: Seq[MatchingResult[_ <: Match]] = Seq[MatchingResult[_ <: Match]]() ++ classResult ++ assocAndImplResult.map(_._1) ++ assocAndImplResult.map(_._2)
 
   private val musterSolution: UmlClassDiagram = exercise.sampleSolutions.head.sample // FIXME!
 
-  val classResult: Option[MatchingResult[UmlClass, UmlClassMatch]] = part match {
+  val classResult: Option[MatchingResult[UmlClassMatch]] = part match {
     case UmlExParts.DiagramDrawingHelp                           => None
     case UmlExParts.ClassSelection                               => Some(UmlClassMatcher(false).doMatch(learnerSolution.classes, musterSolution.classes))
     case UmlExParts.DiagramDrawing | UmlExParts.MemberAllocation => Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
   }
 
-  val assocAndImplResult: Option[(MatchingResult[UmlAssociation, UmlAssociationMatch],
-    MatchingResult[UmlImplementation, UmlImplementationMatch])] = part match {
-    case UmlExParts.DiagramDrawingHelp | UmlExParts.DiagramDrawing =>
-      val assocRes = UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations)
-      val implRes = UmlImplementationMatcher.doMatch(learnerSolution.implementations, musterSolution.implementations)
-      Some((assocRes, implRes))
-    case _                                                         => None
-  }
+  val assocAndImplResult: Option[(MatchingResult[UmlAssociationMatch], MatchingResult[UmlImplementationMatch])] =
+    part match {
+      case UmlExParts.DiagramDrawingHelp | UmlExParts.DiagramDrawing =>
+        val assocRes = UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations)
+        val implRes = UmlImplementationMatcher.doMatch(learnerSolution.implementations, musterSolution.implementations)
+        Some((assocRes, implRes))
+      case _                                                         => None
+    }
 
   def nextPart: Option[UmlExPart] = part match {
     case UmlExParts.DiagramDrawing => None

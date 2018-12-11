@@ -1,6 +1,5 @@
 package model.sql
 
-import model._
 import model.core.matching.{Match, MatchingResult}
 import model.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
@@ -43,10 +42,10 @@ abstract class QueryCorrector(val queryType: String) {
     SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, additionalComparisons)
   }
 
-  private def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnWrapper, ColumnMatch] =
+  private def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnMatch] =
     ColumnMatcher.doMatch(getColumnWrappers(userQ), getColumnWrappers(sampleQ))
 
-  private def compareWhereClauses(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[BinaryExpression, BinaryExpressionMatch] =
+  private def compareWhereClauses(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[BinaryExpressionMatch] =
     new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
   private def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
@@ -54,7 +53,7 @@ abstract class QueryCorrector(val queryType: String) {
     case Some(expression) => new ExpressionExtractor(expression).extracted
   }
 
-  private def compareTables(userQ: Q, sampleQ: Q): MatchingResult[Table, TableMatch] = TableMatcher.doMatch(getTables(userQ), getTables(sampleQ))
+  private def compareTables(userQ: Q, sampleQ: Q): MatchingResult[TableMatch] = TableMatcher.doMatch(getTables(userQ), getTables(sampleQ))
 
   private def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(q => Option(q.getAlias).isDefined).map(t => t.getAlias.getName -> t.getName).toMap
 
@@ -65,7 +64,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected def getWhere(query: Q): Option[Expression]
 
-  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): Seq[MatchingResult[_, _ <: Match[_]]]
+  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): Seq[MatchingResult[_ <: Match]]
 
   // Parsing
 

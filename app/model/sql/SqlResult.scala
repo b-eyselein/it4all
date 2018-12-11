@@ -5,8 +5,6 @@ import model.core.matching.{Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.sql.SqlConsts._
 import model.sql.matcher._
-import net.sf.jsqlparser.expression.BinaryExpression
-import net.sf.jsqlparser.schema.Table
 import play.api.libs.json._
 
 import scala.language.postfixOps
@@ -48,13 +46,13 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
 // FIXME: use builder?
 final case class SqlResult(learnerSolution: String,
-                           columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
-                           tableComparison: MatchingResult[Table, TableMatch],
-                           whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch],
+                           columnComparison: MatchingResult[ColumnMatch],
+                           tableComparison: MatchingResult[TableMatch],
+                           whereComparison: MatchingResult[BinaryExpressionMatch],
 
                            executionResult: SqlExecutionResult,
 
-                           additionalComparisons: Seq[MatchingResult[_, _ <: Match[_]]]
+                           additionalComparisons: Seq[MatchingResult[_ <: Match]]
                           )
   extends SqlCorrResult {
 

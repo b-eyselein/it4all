@@ -26,7 +26,9 @@ final case class ElementLineAnalysisResult(matchType: MatchType,
 
 }
 
-final case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[ElementLine]) extends Match[ElementLine] with XmlEvaluationResult {
+final case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Option[ElementLine]) extends Match with XmlEvaluationResult {
+
+  override type T = ElementLine
 
   override type AR = ElementLineAnalysisResult
 

@@ -4,7 +4,9 @@ import model.core.matching.{GenericAnalysisResult, Match, MatchType, Matcher}
 import net.sf.jsqlparser.statement.select.Limit
 import play.api.libs.json.{JsString, JsValue}
 
-final case class LimitMatch(userArg: Option[Limit], sampleArg: Option[Limit]) extends Match[Limit] {
+final case class LimitMatch(userArg: Option[Limit], sampleArg: Option[Limit]) extends Match {
+
+  override type T = Limit
 
   override type AR = GenericAnalysisResult
 

@@ -9,7 +9,9 @@ import play.api.libs.json.{JsString, JsValue}
 import scala.language.postfixOps
 
 
-final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
+final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match {
+
+  override type T = BinaryExpression
 
   override type AR = GenericAnalysisResult
 

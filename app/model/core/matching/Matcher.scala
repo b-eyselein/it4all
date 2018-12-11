@@ -9,7 +9,7 @@ import play.api.libs.json.{JsObject, Json}
 
 import scala.language.postfixOps
 
-final case class MatchingResult[T, M <: Match[T]](matchName: String, matchSingularName: String, allMatches: Seq[M])
+final case class MatchingResult[M <: Match](matchName: String, matchSingularName: String, allMatches: Seq[M])
   extends EvaluationResult with JsonWriteable {
 
   // FIXME: is it possible to use ... match { case ...} ?!?
@@ -36,7 +36,7 @@ final case class MatchingResult[T, M <: Match[T]](matchName: String, matchSingul
 
 }
 
-trait Matcher[T, AR <: AnalysisResult, M <: Match[T]] {
+trait Matcher[T, AR <: AnalysisResult, M <: Match] {
 
   protected val matchName: String
 
@@ -46,7 +46,7 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T]] {
 
   protected def matchInstantiation(ua: Option[T], sa: Option[T]): M
 
-  def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): MatchingResult[T, M] = {
+  def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): MatchingResult[M] = {
 
     def findMatchInSecondCollection(firstHead: T, secondCollection: List[T]): (M, List[T]) = {
 
@@ -65,10 +65,10 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T]] {
     }
 
     @annotation.tailrec
-    def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[T, M] = firstCollection match {
+    def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[M] = firstCollection match {
       case Nil =>
         val missing = secondCollection map (s => matchInstantiation(None, Some(s)))
-        MatchingResult[T, M](matchName, matchSingularName, matches ++ missing)
+        MatchingResult[M](matchName, matchSingularName, matches ++ missing)
 
       case firstHead :: firstTail =>
         val (foundMatch, notMatchedInSecond) = findMatchInSecondCollection(firstHead, secondCollection)

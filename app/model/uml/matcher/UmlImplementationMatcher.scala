@@ -6,7 +6,9 @@ import model.uml.UmlConsts._
 import model.uml.UmlImplementation
 import play.api.libs.json.{JsValue, Json}
 
-final case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
+final case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match {
+
+  override type T = UmlImplementation
 
   override type AR = GenericAnalysisResult
 

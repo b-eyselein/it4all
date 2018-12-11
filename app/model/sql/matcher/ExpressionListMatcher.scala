@@ -5,7 +5,9 @@ import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import play.api.libs.json.{JsString, JsValue}
 
 
-final case class ExpressionListMatch(userArg: Option[ExpressionList], sampleArg: Option[ExpressionList]) extends Match[ExpressionList] {
+final case class ExpressionListMatch(userArg: Option[ExpressionList], sampleArg: Option[ExpressionList]) extends Match {
+
+  override type T = ExpressionList
 
   override type AR = GenericAnalysisResult
 

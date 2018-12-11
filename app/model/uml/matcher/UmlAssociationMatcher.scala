@@ -17,7 +17,9 @@ final case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel
 
 }
 
-final case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match[UmlAssociation] {
+final case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match {
+
+  override type T = UmlAssociation
 
   override type AR = UmlAssociationAnalysisResult
 
