@@ -1,12 +1,12 @@
-package controllers
+package controllers.coll
 
 import better.files._
+import controllers.{AFixedExController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.core.overviewHelpers.{SolvedStates, UserCollEx}
-import model.core.result.SuccessType
 import model.toolMains.{CollectionToolMain, ToolList}
 import play.api.Logger
 import play.api.data.Form

@@ -19,7 +19,7 @@ function onChangeLanguageSuccess(response) {
 }
 
 function changeProgLanguage(): void {
-    // @controllers.routes.ExerciseController.progGetDeclaration("")
+    // @controllers.exes.routes.ExerciseController.progGetDeclaration("")
 
     let url = '';
 

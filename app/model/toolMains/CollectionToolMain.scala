@@ -141,7 +141,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override def exercisesOverviewForIndex: Html = Html(
     s"""<div class="form-group">
-       |  <a class="btn btn-primary btn-block" href="${controllers.routes.CollectionController.collectionList(up)}">Zu den Übungsaufgabensammlungen</a>
+       |  <a class="btn btn-primary btn-block" href="${controllers.coll.routes.CollectionController.collectionList(up)}">Zu den Übungsaufgabensammlungen</a>
        |</div>""".stripMargin)
 
   override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map {

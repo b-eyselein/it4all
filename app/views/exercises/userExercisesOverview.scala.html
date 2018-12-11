@@ -3,7 +3,7 @@
 @urlFunc = @{
     toolObject match {
         case _: model.toolMains.IdExerciseToolMain => {
-            index: Int => routes.ExerciseController.exerciseList(toolObject.urlPart, index)
+            index: Int => exes.routes.ExerciseController.exerciseList(toolObject.urlPart, index)
         }
         case _: model.toolMains.FileExerciseToolMain => {
             index: Int => routes.FileExerciseController.exerciseList(toolObject.urlPart, index)

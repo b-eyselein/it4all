@@ -13,7 +13,7 @@
     }
 
     @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
-        <form class="form" method="post" role="form" action="@routes.CollectionController.editExercise(toolMainObject.urlPart, exercise.ex.collectionId, exercise.ex.id)">
+        <form class="form" method="post" role="form" action="@coll.routes.CollectionController.editExercise(toolMainObject.urlPart, exercise.ex.collectionId, exercise.ex.id)">
 
             <div class="row">
 

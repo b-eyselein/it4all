@@ -41,13 +41,13 @@
         <div class="form-group">
             @helper.CSRF.formField
 
-            <button data-url="@routes.CollectionController.correctLive("question", quiz.id, question.ex.id)"
+            <button data-url="@coll.routes.CollectionController.correctLive("question", quiz.id, question.ex.id)"
             class="btn btn-block btn-primary" id="testBtn">Kontrollieren</button>
         </div>
 
         @*<hr>*@
 
-        @core.helperTemplates.bsPager(question.ex.id, id => routes.CollectionController.exercise("question", quiz.id, id), numOfExes, step = 1)
+        @core.helperTemplates.bsPager(question.ex.id, id => coll.routes.CollectionController.exercise("question", quiz.id, id), numOfExes, step = 1)
 
     </div>
 }

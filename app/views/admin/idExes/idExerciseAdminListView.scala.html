@@ -47,7 +47,7 @@
                             </select>
                             <div class="input-group-append">
                                 <button class="btn btn-info" id="scb_@exercise.id" data-id="@exercise.id" disabled
-                                data-url="@routes.ExerciseController.adminChangeExState(toolMainObject.urlPart, exercise.id)">
+                                data-url="@exes.routes.ExerciseController.adminChangeExState(toolMainObject.urlPart, exercise.id)">
                                     <span class="octicon octicon-cloud-upload"></span>
                                 </button>
                             </div>
@@ -56,19 +56,19 @@
 
                     <td>
                         <a class="btn btn-secondary" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id"
-                        href="@routes.ExerciseController.adminEditExerciseForm(toolMainObject.urlPart, exercise.id)">
+                        href="@exes.routes.ExerciseController.adminEditExerciseForm(toolMainObject.urlPart, exercise.id)">
                             <span class="octicon octicon-pencil"></span>
                         </a>
 
                         <button class="btn btn-danger" title="Aufgabe @exercise.id löschen" id="del_@exercise.id"
-                        data-url="@routes.ExerciseController.adminDeleteExercise(toolMainObject.urlPart, exercise.id)">
+                        data-url="@exes.routes.ExerciseController.adminDeleteExercise(toolMainObject.urlPart, exercise.id)">
                             <span class="octicon octicon-x"></span>
                         </button>
 
-                        <a href="@routes.ExerciseController.showSolutions(toolMainObject.urlPart, exercise.id)"
+                        <a href="@exes.routes.ExerciseController.showSolutions(toolMainObject.urlPart, exercise.id)"
                         class="btn btn-info" title="Lösungen anzeigen"><span class="octicon octicon-file"></span></a>
 
-                        <a href="@routes.ExerciseController.showReviews(toolMainObject.urlPart, exercise.id)"
+                        <a href="@exes.routes.ExerciseController.showReviews(toolMainObject.urlPart, exercise.id)"
                         class="btn btn-info" title="Reviews anzeigen"><span class="octicon octicon-checklist"></span></a>
                     </td>
                     <td>@exercise.title</td>

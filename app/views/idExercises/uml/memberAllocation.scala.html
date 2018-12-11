@@ -47,9 +47,9 @@
 
                     @helper.CSRF.formField
                     <div class="btn-group d-flex">
-                        <button data-url="@routes.ExerciseController.correctLive("uml", exercise.ex.id, part = model.uml.UmlExParts.MemberAllocation.urlName)"
+                        <button data-url="@exes.routes.ExerciseController.correctLive("uml", exercise.ex.id, part = model.uml.UmlExParts.MemberAllocation.urlName)"
                         class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
-                        <a href="@routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.ex.id, model.uml.UmlExParts.MemberAllocation.urlName)"
+                        <a href="@exes.routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.ex.id, model.uml.UmlExParts.MemberAllocation.urlName)"
                         id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
                 </div>

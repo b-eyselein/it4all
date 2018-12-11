@@ -14,7 +14,7 @@
 
         <br>
 
-        @helper.form(routes.ExerciseController.reviewExercisePart(toolMainObject.urlPart, exercise.ex.id, part.urlName)) {
+        @helper.form(exes.routes.ExerciseController.reviewExercisePart(toolMainObject.urlPart, exercise.ex.id, part.urlName)) {
 
             @helper.CSRF.formField
 

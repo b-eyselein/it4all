@@ -5,7 +5,7 @@
 }
 
 @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
-    <a href="@routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+    <a href="@exes.routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)" class="btn btn-primary btn-block">
         <span class="glyphicon glyphicon-download"></span> Download als Datei
     </a>
 

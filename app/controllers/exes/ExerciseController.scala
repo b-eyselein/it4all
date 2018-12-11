@@ -1,5 +1,6 @@
-package controllers
+package controllers.exes
 
+import controllers.{ASingleExerciseController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.core._
 import model.programming.ProgToolMain
@@ -104,7 +105,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
             val onFormRead: toolMain.ReviewType => Future[Result] = { currentReview =>
               toolMain.futureSaveReview(currentReview) map {
-                case true  => Redirect(routes.MainExerciseController.index(toolMain.urlPart))
+                case true  => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
                 case false => ???
               }
             }

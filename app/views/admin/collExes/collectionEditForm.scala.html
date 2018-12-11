@@ -7,7 +7,7 @@
 
     @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
 
-        <form class="form" method="post" role="form" action="@routes.CollectionController.adminEditCollection(toolMainObject.urlPart, collection.coll.id)">
+        <form class="form" method="post" role="form" action="@coll.routes.CollectionController.adminEditCollection(toolMainObject.urlPart, collection.coll.id)">
 
 
             <div class="form-group row">

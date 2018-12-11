@@ -15,7 +15,7 @@
 
     @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
 
-        <form class="form" method="post" role="form" action="@routes.ExerciseController.adminEditExercise(toolMainObject.urlPart, exercise.ex.id)">
+        <form class="form" method="post" role="form" action="@exes.routes.ExerciseController.adminEditExercise(toolMainObject.urlPart, exercise.ex.id)">
 
             <div class="row">
                 <div class="col-md-4">

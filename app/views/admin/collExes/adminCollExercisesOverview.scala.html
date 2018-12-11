@@ -42,7 +42,7 @@
                             </select>
                             <span class="input-group-btn">
                                 <button class="btn btn-info" id="scb_@exercise.id" disabled data-id="@exercise.id"
-                                data-url="@routes.CollectionController.adminChangeExerciseState(toolMainObject.urlPart, collectionId, exercise.id)">
+                                data-url="@coll.routes.CollectionController.adminChangeExerciseState(toolMainObject.urlPart, collectionId, exercise.id)">
                                     <span class="octicon octicon-cloud-upload"></span>
                                 </button>
                             </span>
@@ -50,11 +50,11 @@
                     </td>
                     <td>
                         <a class="btn btn-secondary" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id"
-                        href="@routes.CollectionController.editExerciseForm(toolMainObject.urlPart, collectionId, exercise.id)">
+                        href="@coll.routes.CollectionController.editExerciseForm(toolMainObject.urlPart, collectionId, exercise.id)">
                             <span class="octicon octicon-pencil"></span>
                         </a>
                         <button class="btn btn-danger" title="Aufgabe @exercise.id löschen" id="del_@exercise.id"
-                        data-url="@routes.CollectionController.adminDeleteExercise(toolMainObject.urlPart, collectionId, exercise.id)">
+                        data-url="@coll.routes.CollectionController.adminDeleteExercise(toolMainObject.urlPart, collectionId, exercise.id)">
                             <span class="octicon octicon-x"></span>
                         </button>
                     </td>

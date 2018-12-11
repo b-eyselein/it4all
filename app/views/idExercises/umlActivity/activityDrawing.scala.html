@@ -51,7 +51,7 @@
         case None => {}
         case Some(classDiagPart@_) => {
             @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
-                <div id="classdiagram" data-url="@routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></div>
+                <div id="classdiagram" data-url="@exes.routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></div>
             }
         }
     }

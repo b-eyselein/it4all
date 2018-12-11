@@ -84,12 +84,12 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   override def exercisesOverviewForIndex: Html = Html(
     s"""<div class="form-group">
-       |  <a class="btn btn-primary btn-block" href="${controllers.routes.ExerciseController.exerciseList(up)}">Zu den Übungsaufgaben</a>
+       |  <a class="btn btn-primary btn-block" href="${controllers.exes.routes.ExerciseController.exerciseList(up)}">Zu den Übungsaufgaben</a>
        |</div>
        |""".stripMargin + {
       if (usersCanCreateExes) {
         s"""<div class="form-group">
-           |  <a class="btn btn-success btn-block" href="${controllers.routes.ExerciseController.newExerciseForm(up)}">Neue Aufgabe erstellen</a>
+           |  <a class="btn btn-success btn-block" href="${controllers.exes.routes.ExerciseController.newExerciseForm(up)}">Neue Aufgabe erstellen</a>
            |</div>""".stripMargin
       } else ""
     })
@@ -121,7 +121,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
       if (exercise.hasPart(exPart)) {
         tables.futureUserCanSolvePartOfExercise(user.username, exercise.ex.id, exercise.ex.semanticVersion, exPart) map {
-          enabled => Some(CallForExPart(exPart, controllers.routes.ExerciseController.exercise(up, exercise.ex.id, exPart.urlName), enabled))
+          enabled => Some(CallForExPart(exPart, controllers.exes.routes.ExerciseController.exercise(up, exercise.ex.id, exPart.urlName), enabled))
         }
 
 

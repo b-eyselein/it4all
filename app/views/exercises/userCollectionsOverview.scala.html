@@ -23,14 +23,14 @@
                         <div class="col-sm-2">@collection.coll.id</div>
                         <div class="col-sm-4">@collection.coll.title</div>
                         <div class="col-sm-6">
-                            <a href="@routes.CollectionController.collection(toolObject.urlPart, collection.coll.id)" class="btn btn-primary btn-block">Zur Sammlung</a>
+                            <a href="@coll.routes.CollectionController.collection(toolObject.urlPart, collection.coll.id)" class="btn btn-primary btn-block">Zur Sammlung</a>
                         </div>
                     </div>
 
                     <hr>
                     }
 
-                @core.helperTemplates.bsPager(curPage, i => routes.CollectionController.collectionList(toolObject.urlPart, i), collections.size)
+                @core.helperTemplates.bsPager(curPage, i => coll.routes.CollectionController.collectionList(toolObject.urlPart, i), collections.size)
             }
         </div>
     }

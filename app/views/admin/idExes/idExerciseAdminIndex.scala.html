@@ -8,25 +8,25 @@
     <h2 class="text-center">Verwaltung der @toolMainObject.pluralName</h2>
 
     <div class="form-group">
-        <a href="@routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)"
+        <a href="@exes.routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)"
         class="btn btn-secondary btn-block">Übersicht über alle Aufgaben</a>
     </div>
 
     <div class="form-group">
-        <a href="@routes.ExerciseController.exerciseReviewsList(toolMainObject.urlPart)"
+        <a href="@exes.routes.ExerciseController.exerciseReviewsList(toolMainObject.urlPart)"
         class="btn btn-info btn-block">Bewertungen aller Aufgaben</a>
     </div>
 
     <div class="form-group">
-        <a href="@routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)"
+        <a href="@exes.routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)"
         class="btn btn-success btn-block">Neue Aufgabe erstellen</a>
     </div>
 
     <div class="form-group">
         <div class="btn-group d-flex">
-            <a href="@routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)"
+            <a href="@exes.routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)"
             class="btn btn-secondary w-100">Aufgaben als YAML exportieren</a>
-            <a href="@routes.ExerciseController.adminImportToRead(toolMainObject.urlPart)"
+            <a href="@exes.routes.ExerciseController.adminImportToRead(toolMainObject.urlPart)"
             class="btn btn-secondary w-100">Aufgaben aus YAML importieren</a>
         </div>
     </div>
