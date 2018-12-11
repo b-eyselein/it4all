@@ -50,7 +50,9 @@ final case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg:
 }
 
 
-object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch] {
+object UmlAssociationMatcher extends Matcher[UmlAssociationMatch] {
+
+  override type T = UmlAssociation
 
   override protected val matchName: String = "Assoziationen"
 

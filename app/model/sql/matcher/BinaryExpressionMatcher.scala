@@ -45,7 +45,9 @@ final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sample
 }
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
-  extends Matcher[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch] {
+  extends Matcher[BinaryExpressionMatch] {
+
+  override type T = BinaryExpression
 
   override protected val matchName: String = "Bedingungen"
 

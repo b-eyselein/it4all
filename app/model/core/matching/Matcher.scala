@@ -36,7 +36,9 @@ final case class MatchingResult[M <: Match](matchName: String, matchSingularName
 
 }
 
-trait Matcher[T, AR <: AnalysisResult, M <: Match] {
+trait Matcher[M <: Match] {
+
+  type T
 
   protected val matchName: String
 

@@ -28,7 +28,9 @@ final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[C
 
 }
 
-object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, ColumnMatch] {
+object ColumnMatcher extends Matcher[ColumnMatch] {
+
+  override type T = ColumnWrapper
 
   override protected val matchName: String = "Spalten"
 

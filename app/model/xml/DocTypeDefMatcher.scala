@@ -66,7 +66,9 @@ final case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Optio
 
 }
 
-object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult, ElementLineMatch] {
+object DocTypeDefMatcher extends Matcher[ElementLineMatch] {
+
+  override type T = ElementLine
 
   override protected val matchName: String = "DTD-Zeilen"
 

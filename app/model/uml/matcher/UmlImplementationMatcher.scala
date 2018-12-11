@@ -31,7 +31,9 @@ final case class UmlImplementationMatch(userArg: Option[UmlImplementation], samp
 }
 
 
-object UmlImplementationMatcher extends Matcher[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch] {
+object UmlImplementationMatcher extends Matcher[UmlImplementationMatch] {
+
+  override type T = UmlImplementation
 
   override protected val matchName: String = "Vererbungen"
 

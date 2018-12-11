@@ -26,7 +26,9 @@ final case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) ex
 
 }
 
-object TableMatcher extends Matcher[Table, GenericAnalysisResult, TableMatch] {
+object TableMatcher extends Matcher[TableMatch] {
+
+  override type T = Table
 
   override protected val matchName: String = "Tabellen"
 

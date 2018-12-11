@@ -26,7 +26,9 @@ final case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option
 
 }
 
-object OrderByMatcher extends Matcher[OrderByElement, GenericAnalysisResult, OrderByMatch] {
+object OrderByMatcher extends Matcher[OrderByMatch] {
+
+  override type T = OrderByElement
 
   override protected val matchName: String = "Order Bys"
 

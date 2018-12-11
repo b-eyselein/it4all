@@ -20,7 +20,9 @@ final case class ExpressionListMatch(userArg: Option[ExpressionList], sampleArg:
 
 }
 
-object ExpressionListMatcher extends Matcher[ExpressionList, GenericAnalysisResult, ExpressionListMatch] {
+object ExpressionListMatcher extends Matcher[ExpressionListMatch] {
+
+  override type T = ExpressionList
 
   override protected val matchName: String = "Bedingungen"
 

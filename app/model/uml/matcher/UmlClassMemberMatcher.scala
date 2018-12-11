@@ -88,7 +88,9 @@ final case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Opt
 
 }
 
-object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisResult, UmlAttributeMatch] {
+object UmlAttributeMatcher extends Matcher[UmlAttributeMatch] {
+
+  override type T = UmlAttribute
 
   override protected val matchName: String = "Attribute"
 
@@ -161,7 +163,9 @@ final case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[Um
 
 }
 
-object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlMethodMatch] {
+object UmlMethodMatcher extends Matcher[UmlMethodMatch] {
+
+  override type T = UmlMethod
 
   override protected val matchName: String = "Methoden"
 

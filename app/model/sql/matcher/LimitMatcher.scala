@@ -19,7 +19,9 @@ final case class LimitMatch(userArg: Option[Limit], sampleArg: Option[Limit]) ex
 
 }
 
-object LimitMatcher extends Matcher[Limit, GenericAnalysisResult, LimitMatch] {
+object LimitMatcher extends Matcher[LimitMatch] {
+
+  override type T = Limit
 
   override protected val matchName: String = "Limits"
 

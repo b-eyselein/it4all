@@ -58,7 +58,9 @@ final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlC
 }
 
 
-final case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch] {
+final case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClassMatch] {
+
+  override type T = UmlClass
 
   override protected val matchName: String = "Klassen"
 

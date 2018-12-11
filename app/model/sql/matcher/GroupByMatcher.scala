@@ -29,7 +29,9 @@ final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Exp
 }
 
 
-object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupByMatch] {
+object GroupByMatcher extends Matcher[GroupByMatch] {
+
+  override type T = Expression
 
   override protected val matchName: String = "Group Bys"
 
