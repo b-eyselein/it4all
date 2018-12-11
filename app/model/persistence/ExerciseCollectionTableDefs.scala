@@ -1,5 +1,6 @@
 package model.persistence
 
+import model.core.overviewHelpers.{SolvedState, UserCollEx}
 import model.{ExerciseState, _}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -83,7 +84,6 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
       case None     => Future(None)
     }
 
-
   def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int): Future[Option[DBSolType]] =
     db.run(solTable
       .filter(sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId)
@@ -92,6 +92,8 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
       .result.headOption)
 
   def futureSampleSolutions(scenarioId: Int, exerciseId: Int): Future[Seq[String]]
+
+  def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]]
 
   // Saving
 

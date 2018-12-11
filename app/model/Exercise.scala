@@ -99,4 +99,4 @@ trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteE
 
 }
 
-trait CompleteExInColl[Ex <: Exercise] extends CompleteEx[Ex]
+trait CompleteExInColl[Ex <: ExInColl] extends CompleteEx[Ex]

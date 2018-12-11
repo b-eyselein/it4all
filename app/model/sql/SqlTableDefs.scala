@@ -1,14 +1,16 @@
 package model.sql
 
 import javax.inject.Inject
-import model.SemanticVersion
+import model.core.overviewHelpers.{SolvedState, SolvedStates}
+import model.core.result.SuccessType
+import model.{SemanticVersion, User}
 import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape, QueryBase}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
@@ -34,9 +36,45 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected val solTable = TableQuery[SqlSolutionsTable]
 
-  private val sqlSamples = TableQuery[SqlSampleTable]
+  private val sqlSamples = TableQuery[SqlSamplesTable]
 
   // Reading
+
+  override def futureCompleteExById(collId: Int, id: Int): Future[Option[SqlCompleteEx]] = for {
+    maybeEx <- db.run(exTable.filter(e => e.id === id && e.collectionId === collId).result.headOption)
+    samples <- db.run(sqlSamples.filter(sa => sa.exerciseId === id && sa.collId === collId).result)
+  } yield maybeEx map (e => SqlCompleteEx(e, samples))
+
+  override def futureCompleteExesInColl(collId: Int): Future[Seq[SqlCompleteEx]] = for {
+    allExes: Seq[SqlExercise] <- db.run(exTable.filter(_.collectionId === collId).result)
+    allSamples: Seq[SqlSample] <- db.run(sqlSamples.filter(_.collId === collId).result)
+  } yield {
+    // match ex and samples...
+
+    @annotation.tailrec
+    def go(exes: List[SqlExercise], samples: Seq[SqlSample], compExes: Seq[SqlCompleteEx]): Seq[SqlCompleteEx] = exes match {
+      case Nil          => compExes
+      case head :: tail =>
+        val (fittingSamples, otherSamples) = samples.partition(_.exerciseId == head.id)
+        go(tail, otherSamples, compExes :+ SqlCompleteEx(head, fittingSamples))
+    }
+
+    go(allExes.toList, allSamples, Seq[SqlCompleteEx]())
+  }
+
+  override def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = db.run(
+    solTable.filter {
+      sol => sol.username === user.username && sol.collectionId === collId && sol.exerciseId === exId
+    }
+      .sortBy(_.id.desc)
+      .result.headOption.map {
+      case None           => None
+      case Some(solution) =>
+        if (solution.points == solution.maxPoints) Some(SolvedStates.CompletelySolved)
+        else Some(SolvedStates.PartlySolved)
+    }
+  )
+
 
   override def completeExForEx(ex: SqlExercise): Future[SqlCompleteEx] = samplesForEx(ex.collectionId, ex.id) map (samples => SqlCompleteEx(ex, samples))
 
@@ -104,7 +142,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  class SqlSampleTable(tag: Tag) extends Table[SqlSample](tag, "sql_samples") {
+  class SqlSamplesTable(tag: Tag) extends Table[SqlSample](tag, "sql_samples") {
 
     def id: Rep[Int] = column[Int](idName)
 

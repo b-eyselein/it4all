@@ -1,56 +1,56 @@
 @import model.{User, CompleteCollection, CompleteEx, Exercise}
 
-@(user: User, collection: CompleteCollection, exes: Seq[CompleteEx[_ <: Exercise]],
+@(user: User, collection: CompleteCollection, exes: Seq[model.core.overviewHelpers.UserCollEx],
         toolMainObject: model.toolMains.CollectionToolMain, currentSite: Int, step: Int, numOfExercises: Int)
 
-@title = @{
-    s"""${toolMainObject.collectionSingularName} "${collection.coll.title}""""
-}
+    @title = @{
+        s"""${toolMainObject.collectionSingularName} "${collection.coll.title}""""
+    }
 
-@colCount = @{
-    3
-}
+    @colCount = @{
+        3
+    }
 
-@main(title, Some(user)) {
-    <div class="container">
-        <h1 class="text-center">@title</h1>
+    @main(title, Some(user)) {
+        <div class="container">
+            <h1 class="text-center">@title</h1>
 
-        <br>
+            <br>
 
-        @if(toolMainObject.usersCanCreateExes) {
-            <div class="form-group">
-                <a href="@routes.CollectionController.newExerciseForm(toolMainObject.urlPart, collection.coll.id)"
-                class="btn btn-info btn-block">Neue Aufgabe erstellen</a>
-            </div>
-        }
-
-        @for(exBatch <- exes grouped colCount) {
-            <div class="form-group">
-                <div class="row">
-                @for(ex <- exBatch) {
-                    <div class="col-sm-@{
-                        12 / colCount
-                    }">
-                        <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, collection.coll.id, ex.ex.id)"
-                        class="btn btn-outline-secondary btn-block">
-                            <div>@{
-                                ex.ex.id + ". " + ex.ex.title
-                            }</div>
-                            <span>@Html(
-                                Option(ex.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
-                            )</span>
-                        </a>
-                    </div>
-                }
+            @if(toolMainObject.usersCanCreateExes) {
+                <div class="form-group">
+                    <a href="@routes.CollectionController.newExerciseForm(toolMainObject.urlPart, collection.coll.id)"
+                    class="btn btn-info btn-block">Neue Aufgabe erstellen</a>
                 </div>
-            </div>
-        }
+            }
 
-        <hr>
+            @for(exBatch <- exes grouped colCount) {
+                <div class="form-group">
+                    <div class="row">
+                    @for((ex, successType) <- exBatch.map(s => (s.ex, s.solved))) {
+                        <div class="col-sm-@{
+                            12 / colCount
+                        }">
+                            <a href="@routes.CollectionController.exercise(toolMainObject.urlPart, collection.coll.id, ex.ex.id)"
+                            class="btn @successType.btnOutline btn-block">
+                                <div>@{
+                                    ex.ex.id + ". " + ex.ex.title
+                                }</div>
+                                <span>@Html(
+                                    Option(ex.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
+                                )</span>
+                            </a>
+                        </div>
+                    }
+                    </div>
+                </div>
+            }
 
-        @core.helperTemplates.bsPager(currentSite,
-            index => routes.CollectionController.collection(toolMainObject.urlPart, collection.coll.id, index),
-            numOfExercises, step)
+            <hr>
 
-    </div>
-}
+            @core.helperTemplates.bsPager(currentSite,
+                index => routes.CollectionController.collection(toolMainObject.urlPart, collection.coll.id, index),
+                numOfExercises, step)
+
+        </div>
+    }

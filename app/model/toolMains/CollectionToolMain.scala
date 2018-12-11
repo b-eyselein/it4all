@@ -2,6 +2,7 @@ package model.toolMains
 
 import model._
 import model.core._
+import model.core.overviewHelpers.{SolvedState, UserCollEx}
 import model.core.result.CompleteResult
 import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml.Auto
@@ -71,6 +72,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   def futureMaybeOldSolution(user: User, collId: Int, exId: Int): Future[Option[DBSolType]] = tables.futureMaybeOldSolution(user.username, collId, exId)
 
   def futureSampleSolutions(collId: Int, exId: Int): Future[Seq[String]] = tables.futureSampleSolutions(collId, exId)
+
+  def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = tables.futureSolveState(user, collId, exId)
 
   // Saving
 

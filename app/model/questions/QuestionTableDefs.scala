@@ -1,7 +1,8 @@
 package model.questions
 
 import javax.inject.Inject
-import model.SemanticVersion
+import model.core.overviewHelpers.SolvedState
+import model.{SemanticVersion, User}
 import model.persistence.ExerciseCollectionTableDefs
 import model.questions.QuestionConsts._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -65,6 +66,8 @@ class QuestionTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfig
   override protected def copyDBSolType(sol: QuestionSolution, newId: Int): QuestionSolution = sol.copy(id = newId)
 
   override def futureSampleSolutions(scenarioId: Int, exerciseId: Int): Future[Seq[String]] = ???
+
+  override def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = ???
 
   // Saving
 

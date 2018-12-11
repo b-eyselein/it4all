@@ -5,6 +5,8 @@ import javax.inject.{Inject, Singleton}
 import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
+import model.core.overviewHelpers.{SolvedStates, UserCollEx}
+import model.core.result.SuccessType
 import model.toolMains.{CollectionToolMain, ToolList}
 import play.api.Logger
 import play.api.data.Form
@@ -162,16 +164,28 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def collection(toolType: String, id: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteCollById(id) map {
-        case None       => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
-        case Some(coll) =>
+      toolMain.futureCompleteCollById(id) flatMap {
+        case None                              => Future(Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart)))
+        case Some(coll: toolMain.CompCollType) =>
           val step = 18
 
-          val exercises = coll.exercises.filter(_.ex.state == ExerciseState.APPROVED)
+          val approvedExercises: Seq[coll.CompEx] = coll.exercises.filter(_.ex.state == ExerciseState.APPROVED)
 
-          val exesToDisplay = takeSlice(exercises, page, step)
+          val exesToDisplay = takeSlice(approvedExercises, page, step)
 
-          Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, exesToDisplay, toolMain, page, step, exercises.size))
+          val futureExesAndSuccessTypes: Future[Seq[UserCollEx]] = Future.sequence(exesToDisplay.map {
+            ex: coll.CompEx =>
+              toolMain.futureSolveState(user, ex.ex.collectionId, ex.ex.id) map {
+                // FIXME: query solved state!
+                maybeSolvedState => UserCollEx(ex, maybeSolvedState getOrElse SolvedStates.NotStarted)
+              }
+          })
+
+          futureExesAndSuccessTypes map {
+            exesAndSuccessTypes =>
+              Ok(views.html.exercises.userCollectionExercisesOverview(
+                user, coll, exesAndSuccessTypes, toolMain, page, step, approvedExercises.size))
+          }
       }
   }
 
