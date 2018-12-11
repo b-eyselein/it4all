@@ -62,7 +62,6 @@ final case class SqlResult(learnerSolution: String,
 
   override val successType: SuccessType = if (EvaluationResult.allResultsSuccessful(results)) SuccessType.COMPLETE else SuccessType.PARTIALLY
 
-  // FIXME: calculate points!
   override val points   : Points = calculatePoints
   override val maxPoints: Points = calculateMaxPoints
 
@@ -80,6 +79,8 @@ final case class SqlResult(learnerSolution: String,
     tableComparison.points +
     whereComparison.points +
     additionalComparisons.map(_.points).fold(0 points)(_ + _)
+
+  // FIXME: points for executionResult?
 
   private def calculateMaxPoints: Points = columnComparison.maxPoints +
     tableComparison.maxPoints +
