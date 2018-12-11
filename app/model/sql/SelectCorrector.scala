@@ -1,5 +1,6 @@
 package model.sql
 
+
 import model.core.matching.{Match, MatchingResult}
 import model.sql.ColumnWrapper.wrapColumn
 import model.sql.matcher._
@@ -30,20 +31,20 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   override protected def getTables(query: Q): Seq[Table] = query.getSelectBody match {
     case plain: PlainSelect =>
 
-      val tables: Seq[Table] = plain.getFromItem match {
-        case t: Table => Seq(t)
-        case _        => Seq[Table]()
+      val mainTable: Option[Table] = plain.getFromItem match {
+        case t: Table => Some(t)
+        case _        => None
       }
 
       val joinedTables: Seq[Table] = Option(plain.getJoins) match {
-        case None       => Seq[Table]()
-        case Some(join) => join.asScala map (_.getRightItem) flatMap {
+        case None                             => Seq[Table]()
+        case Some(join: java.util.List[Join]) => join.asScala map (_.getRightItem) flatMap {
           case t: Table => Some(t)
           case _        => None
         }
       }
 
-      tables ++ joinedTables
+      mainTable.toSeq ++ joinedTables
     case _                  => Seq[Table]()
   }
 

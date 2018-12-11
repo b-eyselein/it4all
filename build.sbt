@@ -83,7 +83,7 @@ resolvers ++= Seq(
 )
 
 val webJarDependencies = Seq(
-  "org.webjars.npm" % "jquery" % "3.3.1", "org.webjars.npm" % "types__jquery" % "3.3.17", // TODO: 3.3.21
+  "org.webjars.npm" % "jquery" % "3.3.1", "org.webjars.npm" % "types__jquery" % "3.3.22",
 
   "org.webjars" % "popper.js" % "1.14.3",
 
@@ -93,7 +93,7 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "systemjs" % "0.21.4", "org.webjars.npm" % "types__systemjs" % "0.20.6", // TODO: "2.0.2" and OK
 
-  "org.webjars.npm" % "jointjs" % "2.1.4",
+  "org.webjars.npm" % "jointjs" % "2.1.4", // TODO: 2.2.1
 
   //  "org.webjars.npm" % "backbone" % "1.3.3",
   "org.webjars.npm" % "types__backbone" % "1.3.43",
@@ -101,11 +101,9 @@ val webJarDependencies = Seq(
   "org.webjars.npm" % "lodash" % "4.17.10", "org.webjars.npm" % "types__lodash" % "4.14.116",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
 
-  "org.webjars.npm" % "codemirror" % "5.40.2", "org.webjars.npm" % "types__codemirror" % "0.0.59", // TODO: 0.0.65
+  "org.webjars.npm" % "codemirror" % "5.42.0", "org.webjars.npm" % "types__codemirror" % "0.0.65", // TODO: 0.0.70
 
   "org.webjars.npm" % "graphlib" % "2.1.5", "org.webjars.npm" % "types__graphlib" % "2.1.4",
-
-  //"org.webjars.npm" % "node-blockly" % "1.0.35"
 
   //  "org.webjars.npm" % "autosize" % "4.0.0",
 
@@ -126,7 +124,7 @@ dependencyOverrides ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
 
-  "mysql" % "mysql-connector-java" % "8.0.12",
+  "mysql" % "mysql-connector-java" % "8.0.13",
 
   // Better enums for scala
   "com.beachape" %% "enumeratum-play" % "1.5.14",
@@ -147,17 +145,17 @@ libraryDependencies ++= Seq(
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
 
   // Betterfiles
-  "com.github.pathikrit" %% "better-files" % "3.6.0",
+  "com.github.pathikrit" %% "better-files" % "3.7.0",
 
   // Selenium and HtmlUnitDriver for Web+Js
-  "org.seleniumhq.selenium" % "selenium-java" % "3.12.0",
-  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.31.0",
+  "org.seleniumhq.selenium" % "selenium-java" % "3.141.59",
+  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.33.3",
 
   // MyBatis and JSqlParser for SQL
   "com.github.jsqlparser" % "jsqlparser" % "1.3",
 
   // Programming
-  "com.spotify" % "docker-client" % "8.14.1",
+  "com.spotify" % "docker-client" % "8.14.5",
 
   // Apache POI for Excel
   "org.apache.poi" % "poi" % "3.17",

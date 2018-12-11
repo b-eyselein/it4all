@@ -13,11 +13,12 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   val binaryExpressions: ListBuffer[BinaryExpression] = new ListBuffer()
 
-  // FIXME: compare compelte tree with and, or ...
+  // FIXME: compare complete tree with and, or ...
 
   def extracted: Seq[BinaryExpression] = {
     if (expression != null)
       expression accept this
+
     binaryExpressions.toList
   }
 
