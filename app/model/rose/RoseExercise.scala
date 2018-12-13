@@ -41,7 +41,7 @@ final case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType],
   }
 
   def buildSampleSolution(language: ProgLanguage): String = {
-    val sampleSol = sampleSolutions.find(_.language == language) map (_.solution) getOrElse ""
+    val sampleSol = sampleSolutions.find(_.language == language) map (_.solution) getOrElse ???
 
     declaration(false) + NewLine + sampleSol.split(NewLine).map(" " * 4 + _).mkString(NewLine)
   }

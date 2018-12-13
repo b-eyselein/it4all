@@ -146,7 +146,7 @@ function moveRobot(robot: Robot, direction: SimulatorCoordinates): void {
 function instantiateField(element: JQuery, start: MyPosition, width: number, height: number, actions: string[]): SimulatorThings {
     let graph = new joint.dia.Graph();
 
-    new joint.dia.Paper({el: element, model: graph, width, height, interactive: false});
+    new joint.dia.Paper({el: element,  model: graph, width, height, interactive: false});
 
     let cells = [];
     for (let w of _.range(FIELD_SIZE_CELLS.x)) {
@@ -202,7 +202,6 @@ function instantiateAll(runResult: CompleteRunResult): void {
     stepBackBtn.on('click', stepBack);
     stepOnBtn.on('click', stepOn);
     playBtn.on('click', play);
-    // $('#pauseBtn').on('click', pause);
 
     updateHtml();
 }

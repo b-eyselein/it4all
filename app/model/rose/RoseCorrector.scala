@@ -11,12 +11,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object RoseCorrector {
 
-  val ScriptName  : String = "script.py"
-  val TestDataFile: String = "testconfig.json"
+  private val NewLine: String = "\n"
 
-  val NewLine: String = "\n"
+  private val Image: String = "beyselein/rose:latest"
 
-  val Image: String = "beyselein/rose:latest"
+  private val actionsFileName = "actions.json"
+  private val optionsFileName = "options.json"
 
   def correct(user: User, exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage, exerciseResourcesFolder: File, solutionTargetDir: File)
              (implicit ec: ExecutionContext): Future[RoseEvalResult] = {
@@ -25,13 +25,10 @@ object RoseCorrector {
     val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(Image))
 
     val solutionFileName = s"solution.${language.fileEnding}"
-    val actionsFileName = "actions.json"
-    val optionsFileName = "options.json"
 
     val solutionFilePath: File = solutionTargetDir / solutionFileName
     val actionFilePath: File = solutionTargetDir / actionsFileName
     val optionsFilePath: File = solutionTargetDir / optionsFileName
-
 
     // FIXME: write exercise options file...
     solutionFilePath.write(buildSolutionFileContent(exercise, learnerSolution, language))

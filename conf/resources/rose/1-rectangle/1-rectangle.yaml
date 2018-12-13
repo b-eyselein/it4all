@@ -17,6 +17,7 @@ inputTypes:
 
 sampleSolutions:
 - language: PYTHON_3
+  id: 1
   sample: |
     for h in range(height - 1):
       self.mark()
