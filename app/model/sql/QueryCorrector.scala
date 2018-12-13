@@ -28,9 +28,13 @@ abstract class QueryCorrector(val queryType: String) {
           parseStatement(sqlSample.sample) flatMap checkStatement map {
             sampleQ: Q => performStaticComparison(userQ, sampleQ, userColumns, userTables, userExpressions, userTableAliases)
           } toOption
-        } reduceOption {
+        } reduceOption { (comp1, comp2) =>
           // FIXME: minByOption with Scala 2.13...
-          (comp1, comp2) => if (comp1.points > comp2.points) comp1 else comp2
+          if (comp1.points > comp2.points) comp1
+          else if (comp1.points == comp2.points) {
+            if (comp1.maxPoints > comp2.maxPoints) comp2
+            else comp1
+          } else comp2
         }
 
         maybeStaticComparison match {
