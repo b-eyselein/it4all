@@ -1,6 +1,5 @@
 package model.sql
 
-
 import model.core.matching.{Match, MatchingResult}
 import model.sql.ColumnWrapper.wrapColumn
 import model.sql.matcher._
@@ -37,11 +36,14 @@ object SelectCorrector extends QueryCorrector("SELECT") {
       }
 
       val joinedTables: Seq[Table] = Option(plain.getJoins) match {
-        case None                             => Seq[Table]()
-        case Some(join: java.util.List[Join]) => join.asScala map (_.getRightItem) flatMap {
-          case t: Table => Some(t)
-          case _        => None
-        }
+        case None                              => Seq[Table]()
+        case Some(joins: java.util.List[Join]) =>
+          joins.asScala flatMap { join =>
+            join.getRightItem match {
+              case t: Table => Some(t)
+              case _        => None
+            }
+          }
       }
 
       mainTable.toSeq ++ joinedTables

@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.8"
 
 // Compile to java 8 for debian...
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")

@@ -14,49 +14,59 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, sampleSolution: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult = {
-    val statementParseTries = for {
-      userStatement <- parseStatement(learnerSolution) flatMap checkStatement
-      sampleStatement <- parseStatement(sampleSolution.sample) flatMap checkStatement
-    } yield (userStatement, sampleStatement)
+  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[SqlSample], exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult =
+    parseStatement(learnerSolution) flatMap checkStatement match {
+      case Failure(error) => SqlParseFailed(learnerSolution, error)
+      case Success(userQ) =>
 
-    statementParseTries match {
-      case Success((userQ, sampleQ)) => correctQueries(learnerSolution, database, exercise, scenario, userQ, sampleQ)
-      case Failure(error)            => SqlParseFailed(learnerSolution, error)
+        val userColumns = getColumnWrappers(userQ)
+        val userTables = getTables(userQ)
+        val userExpressions = getExpressions(userQ)
+        val userTableAliases = resolveAliases(userTables)
+
+        val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.samples.flatMap { sqlSample =>
+          parseStatement(sqlSample.sample) flatMap checkStatement map {
+            sampleQ: Q => performStaticComparison(userQ, sampleQ, userColumns, userTables, userExpressions, userTableAliases)
+          } toOption
+        } reduceOption {
+          // FIXME: minByOption with Scala 2.13...
+          (comp1, comp2) => if (comp1.points > comp2.points) comp1 else comp2
+        }
+
+        maybeStaticComparison match {
+          case None     => ???
+          case Some(sc) =>
+            println(sc.sampleQ)
+
+            SqlResult(learnerSolution, sc.columnComparison, sc.tableComparison, sc.whereComparison, sc.additionalComparisons,
+              database.executeQueries(scenario, exercise, sc.userQ, sc.sampleQ))
+        }
     }
+
+  private def performStaticComparison(userQ: Q, sampleQ: Q, userColumns: Seq[ColumnWrapper], userTables: Seq[Table],
+                                      userExpressions: Seq[BinaryExpression], userTableAliases: Map[String, String]): SqlQueriesStaticComparison[Q] = {
+    val sampleTables = getTables(sampleQ)
+    val sampleColumns = getColumnWrappers(sampleQ)
+    val sampleExpressions = getExpressions(sampleQ)
+    val sampleTAliases: Map[String, String] = resolveAliases(sampleTables)
+
+    SqlQueriesStaticComparison(userQ, sampleQ,
+      ColumnMatcher.doMatch(userColumns, sampleColumns),
+      TableMatcher.doMatch(userTables, sampleTables),
+      new BinaryExpressionMatcher(userTableAliases, sampleTAliases).doMatch(userExpressions, sampleExpressions),
+      performAdditionalComparisons(userQ, sampleQ)
+    )
   }
-
-  private def correctQueries(learnerSolution: String, database: SqlExecutionDAO, exercise: SqlCompleteEx, scenario: SqlScenario, userQ: Q, sampleQ: Q) = {
-    val (userTAliases, sampleTAliases) = (resolveAliases(userQ), resolveAliases(sampleQ))
-
-    val tableComparison = compareTables(userQ, sampleQ)
-
-    val columnComparison = compareColumns(userQ, userTAliases, sampleQ, sampleTAliases)
-
-    val whereComparison = compareWhereClauses(userQ, userTAliases, sampleQ, sampleTAliases)
-
-    val executionResult: SqlExecutionResult = database.executeQueries(scenario, exercise, userQ, sampleQ)
-
-    val additionalComparisons = performAdditionalComparisons(userQ, sampleQ)
-
-    SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, additionalComparisons)
-  }
-
-  private def compareColumns(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[ColumnMatch] =
-    ColumnMatcher.doMatch(getColumnWrappers(userQ), getColumnWrappers(sampleQ))
-
-  private def compareWhereClauses(userQ: Q, userTAliases: Map[String, String], sampleQ: Q, sampleTAliases: Map[String, String]): MatchingResult[BinaryExpressionMatch] =
-    new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
   private def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
     case None             => Seq[BinaryExpression]()
     case Some(expression) => new ExpressionExtractor(expression).extracted
   }
 
-  private def compareTables(userQ: Q, sampleQ: Q): MatchingResult[TableMatch] = TableMatcher.doMatch(getTables(userQ), getTables(sampleQ))
-
-  private def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(q => Option(q.getAlias).isDefined).map(t => t.getAlias.getName -> t.getName).toMap
-
+  private def resolveAliases(tables: Seq[Table]): Map[String, String] =
+    tables
+      .filter(q => Option(q.getAlias).isDefined)
+      .map(t => t.getAlias.getName -> t.getName).toMap
 
   protected def getColumnWrappers(query: Q): Seq[ColumnWrapper]
 

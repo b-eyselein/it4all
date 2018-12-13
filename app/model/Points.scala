@@ -3,7 +3,7 @@ package model
 import scala.math.Integral.Implicits._
 
 
-final case class Points(quarters: Int) extends AnyVal {
+final case class Points(quarters: Int) extends AnyVal with Ordered[Points] {
 
   def +(that: Points): Points = Points(this.quarters + that.quarters)
 
@@ -18,6 +18,8 @@ final case class Points(quarters: Int) extends AnyVal {
     case (quotient, 3) => s"$quotient.75"
     case _             => "FEHLER!"
   }
+
+  override def compare(that: Points): Int = this.quarters - that.quarters
 
 }
 

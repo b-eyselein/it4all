@@ -115,21 +115,18 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         collAndEx flatMap {
           case None => Future(Failure(NoSuchExerciseException(id)))
 
-          case Some((collection, exercise)) =>
-            val futureResultTry: Future[Try[CompResult]] = correctEx(user, solution, collection, exercise)
+          case Some((collection, exercise)) => correctEx(user, solution, collection, exercise) match {
+            case Failure(error) => Future(Failure(error))
+            case Success(res)   =>
 
-            futureResultTry flatMap {
-              case Failure(error) => Future(Failure(error))
-              case Success(res)   =>
-
-                // FIXME: points != 0? maxPoints != 0?
-                val dbSol = instantiateSolution(id = -1, user.username, collection, exercise, solution, res.points, res.maxPoints)
-                tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
-            }
+              // FIXME: points != 0? maxPoints != 0?
+              val dbSol = instantiateSolution(id = -1, user.username, collection, exercise, solution, res.points, res.maxPoints)
+              tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
+          }
         }
     }
 
-  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: CompExType): Future[Try[CompResult]]
+  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: CompExType): Try[CompResult]
 
   // Reading from requests
 

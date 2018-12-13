@@ -27,8 +27,6 @@ object SqlToolMain {
     SqlExerciseType.DELETE -> ((DeleteCorrector, ChangeDAO))
   )
 
-  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = samples.minBy(samp => Java_Levenshtein.levenshteinDistance(samp.sample, userSt))
-
   def allDaos: Seq[SqlExecutionDAO] = correctorsAndDaos.values.map(_._2).toSet.toSeq
 
 }
@@ -124,19 +122,11 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Correction
 
-  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Future[Try[SqlCorrResult]] = Future {
-    //    saveSolution(learnerSolution) map { solutionSaved =>
-
+  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Try[SqlCorrResult] =
     correctorsAndDaos.get(exercise.ex.exerciseType) match {
       case None                   => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.ex.exerciseType}"))
-      case Some((corrector, dao)) =>
-        // FIXME: parse queries here!?!
-
-        val sample = findBestFittingSample(learnerSolution, exercise.samples.toList)
-        Try(corrector.correct(dao, learnerSolution, sample, exercise, sqlScenario))
-      //      }
+      case Some((corrector, dao)) => Try(corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario))
     }
-  }
 
   // Helper methods
 

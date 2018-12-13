@@ -334,13 +334,13 @@ exercises:
           SELECT COUNT(*) AS Anzahl
             FROM ratings
               JOIN books ON books.id = ratings.book_id
-            WHERE title = 'Die Stadt in der Wüste'
+            WHERE title = 'Die Stadt in der Wüste';
       - id: 2
         sample: |
           SELECT COUNT(*) AS Anzahl
             FROM ratings, books
             WHERE books.id = ratings.book_id
-              AND title = 'Die Stadt in der Wüste'
+              AND title = 'Die Stadt in der Wüste';
     tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
   - id: 22

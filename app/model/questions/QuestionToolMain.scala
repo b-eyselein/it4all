@@ -86,18 +86,16 @@ class QuestionToolMain @Inject()(override val tables: QuestionTableDefs)(implici
 
   // Correction
 
-  def correctEx(user: User, answers: Seq[GivenAnswer], quiz: Quiz, exercise: CompleteQuestion): Future[Try[QuestionResult]] = Future {
-    exercise.ex.questionType match {
-      case QuestionTypes.FREETEXT => Failure(new Exception("Not yet implemented..."))
-      case QuestionTypes.CHOICE   => Try {
-        val idAnswers: Seq[IdGivenAnswer] = answers flatMap {
-          case idA: IdGivenAnswer => Some(idA)
-          case _                  => None
-        }
-
-        QuestionResult(idAnswers, exercise)
-        // ???
+  override def correctEx(user: User, answers: Seq[GivenAnswer], quiz: Quiz, exercise: CompleteQuestion): Try[QuestionResult] = exercise.ex.questionType match {
+    case QuestionTypes.FREETEXT => Failure(new Exception("Not yet implemented..."))
+    case QuestionTypes.CHOICE   => Try {
+      val idAnswers: Seq[IdGivenAnswer] = answers flatMap {
+        case idA: IdGivenAnswer => Some(idA)
+        case _                  => None
       }
+
+      QuestionResult(idAnswers, exercise)
+      // ???
     }
   }
 
