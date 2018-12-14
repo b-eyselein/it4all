@@ -178,12 +178,6 @@ exercises:
             FROM books
               JOIN publishers ON publisher_id = publishers.id
             WHERE name = 'Carlsen';
-      - id: 2
-        sample: |
-          SELECT title, price
-            FROM books, publishers
-            WHERE publisher_id = publishers.id
-              AND publishers.name = 'Carlsen';
     tags: [SQL_JOIN]
     hint: Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.
 
@@ -201,12 +195,6 @@ exercises:
             FROM books
               JOIN authors on books.author_id = authors.id
             WHERE family_name = 'Rowling'
-      - id: 2
-        sample: |
-          SELECT title, isbn
-            FROM books, authors
-            WHERE books.author_id = authors.id
-              AND family_name = 'Rowling';
     tags: [SQL_JOIN]
 
   - id: 14
@@ -335,12 +323,6 @@ exercises:
             FROM ratings
               JOIN books ON books.id = ratings.book_id
             WHERE title = 'Die Stadt in der Wüste';
-      - id: 2
-        sample: |
-          SELECT COUNT(*) AS Anzahl
-            FROM ratings, books
-            WHERE books.id = ratings.book_id
-              AND title = 'Die Stadt in der Wüste';
     tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
   - id: 22
@@ -357,12 +339,6 @@ exercises:
             FROM ratings
               JOIN books ON books.id = ratings.book_id
             WHERE title = 'Die Stadt in der Wüste';
-      - id: 2
-        sample: |
-          SELECT AVG(rating) AS Durchschnitt
-            FROM ratings, books
-            WHERE books.id = ratings.book_id
-              AND title = 'Die Stadt in der Wüste';
     tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
   - id: 23
@@ -396,12 +372,6 @@ exercises:
             FROM books
               JOIN ratings ON books.id = ratings.book_id
             WHERE title = 'Harry Potter und der Halbblutprinz';
-      - id: 2
-        sample: |
-          SELECT min(rating) AS Schlechteste, max(rating) AS Beste
-            FROM books, ratings
-            WHERE books.id = ratings.book_id
-              AND title = 'Harry Potter und der Halbblutprinz';
     tags: [SQL_FUNCTION, SQL_ALIAS, SQL_JOIN]
 
   - id: 25
@@ -433,13 +403,6 @@ exercises:
               JOIN wishlists ON wishlists.customer_id = customers.id
               JOIN books on wishlists.book_id = books.id
             WHERE title = 'Harry Potter und der Orden des Phönix';
-      - id: 2
-        sample: |
-          SELECT family_name
-            FROM customers, wishlists, books
-            WHERE wishlists.customer_id = customers.id
-              AND wishlists.book_id = books.id
-              AND title = 'Harry Potter und der Orden des Phönix';
     tags: [SQL_DOUBLE_JOIN]
 
   - id: 27

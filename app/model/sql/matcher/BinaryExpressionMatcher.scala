@@ -44,6 +44,14 @@ final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sample
 
 }
 
+class JoinExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
+  extends BinaryExpressionMatcher(userTAliases, sampleTAliases) {
+
+  override protected val matchName        : String = "Join-Bedingungen"
+  override protected val matchSingularName: String = "der Join-Bedingung"
+
+}
+
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
   extends Matcher[BinaryExpressionMatch] {
 

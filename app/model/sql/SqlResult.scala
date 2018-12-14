@@ -47,16 +47,19 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 final case class SqlQueriesStaticComparison[Q](userQ: Q, sampleQ: Q,
                                                columnComparison: MatchingResult[ColumnMatch],
                                                tableComparison: MatchingResult[TableMatch],
+                                               joinExpressionComparison: MatchingResult[BinaryExpressionMatch],
                                                whereComparison: MatchingResult[BinaryExpressionMatch],
                                                additionalComparisons: Seq[MatchingResult[_ <: Match]]) {
 
   val points: Points = columnComparison.points +
     tableComparison.points +
+    joinExpressionComparison.points +
     whereComparison.points +
     additionalComparisons.map(_.points).fold(0 points)(_ + _)
 
   val maxPoints: Points = columnComparison.maxPoints +
     tableComparison.maxPoints +
+    joinExpressionComparison.maxPoints +
     whereComparison.maxPoints +
     additionalComparisons.map(_.maxPoints).fold(0 points)(_ + _)
 
@@ -66,6 +69,7 @@ final case class SqlQueriesStaticComparison[Q](userQ: Q, sampleQ: Q,
 final case class SqlResult(learnerSolution: String,
                            columnComparison: MatchingResult[ColumnMatch],
                            tableComparison: MatchingResult[TableMatch],
+                           joinExpressionComparison: MatchingResult[BinaryExpressionMatch],
                            whereComparison: MatchingResult[BinaryExpressionMatch],
                            additionalComparisons: Seq[MatchingResult[_ <: Match]],
                            executionResult: SqlExecutionResult) extends SqlCorrResult {
@@ -76,6 +80,7 @@ final case class SqlResult(learnerSolution: String,
 
   override val points: Points = columnComparison.points +
     tableComparison.points +
+    joinExpressionComparison.points +
     whereComparison.points +
     additionalComparisons.map(_.points).fold(0 points)(_ + _)
 
@@ -83,12 +88,14 @@ final case class SqlResult(learnerSolution: String,
 
   override val maxPoints: Points = columnComparison.maxPoints +
     tableComparison.maxPoints +
+    joinExpressionComparison.maxPoints +
     whereComparison.maxPoints +
     additionalComparisons.map(_.maxPoints).fold(0 points)(_ + _)
 
   override def jsonRest: JsValue = Json.obj(
     columnComparisonsName -> columnComparison.toJson,
     tableComparisonsName -> tableComparison.toJson,
+    joinExpressionsComparisonsName -> joinExpressionComparison.toJson,
     whereComparisonsName -> whereComparison.toJson,
 
     additionalComparisonsName -> additionalComparisons.map(_.toJson),

@@ -26,6 +26,7 @@ interface SqlCorrectionResult {
 
     columnComparisons: MatchingResult<any, any>
     tableComparisons: MatchingResult<any, any>
+    joinExpressionComparisons: MatchingResult<any, any>
     whereComparisons: MatchingResult<any, any>
 
     additionalComparisons: MatchingResult<any, any>[]
@@ -57,6 +58,7 @@ function onSqlCorrectionSuccess(response: SqlResult): void {
         results.push(
             renderMatchingResult(response.results.columnComparisons),
             renderMatchingResult(response.results.tableComparisons),
+            renderMatchingResult(response.results.joinExpressionComparisons),
             renderMatchingResult(response.results.whereComparisons)
         );
 

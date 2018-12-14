@@ -3,7 +3,7 @@ package model.sql
 import model.core.matching.{Match, MatchingResult}
 import model.sql.ColumnWrapper.wrapColumn
 import model.sql.matcher._
-import net.sf.jsqlparser.expression.Expression
+import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select._
@@ -35,10 +35,10 @@ object SelectCorrector extends QueryCorrector("SELECT") {
         case _        => None
       }
 
-      val joinedTables: Seq[Table] = Option(plain.getJoins) match {
-        case None                              => Seq[Table]()
-        case Some(joins: java.util.List[Join]) =>
-          joins.asScala flatMap { join =>
+      val joinedTables: Seq[Table] = Option(plain.getJoins) map (_.asScala) match {
+        case None                   => Seq[Table]()
+        case Some(joins: Seq[Join]) =>
+          joins flatMap { join =>
             join.getRightItem match {
               case t: Table => Some(t)
               case _        => None
@@ -48,6 +48,21 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
       mainTable.toSeq ++ joinedTables
     case _                  => Seq[Table]()
+  }
+
+  override protected def getJoinExpressions(query: Select): Seq[BinaryExpression] = query.getSelectBody match {
+    case ps: PlainSelect =>
+      Option(ps.getJoins) map (_.asScala) match {
+        case None                   => Seq.empty
+        case Some(joins: Seq[Join]) =>
+          joins flatMap { join =>
+            Option(join.getOnExpression) flatMap {
+              case be: BinaryExpression => Some(be)
+              case _                    => None
+            }
+          }
+      }
+    case _               => Seq.empty
   }
 
   override protected def getWhere(select: Q): Option[Expression] = select.getSelectBody match {

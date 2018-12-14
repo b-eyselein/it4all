@@ -15,6 +15,8 @@ object SqlConsts extends CollectionConsts {
 
   val hintName = "hint"
 
+  val joinExpressionsComparisonsName = "joinExpressionComparisons"
+
   val sampleResultName = "sampleResult"
   val shortNameName    = "shortName"
   val SELECT_ALL_DUMMY = "SELECT * FROM "
