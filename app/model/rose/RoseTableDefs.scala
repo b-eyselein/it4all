@@ -39,7 +39,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   } yield RoseCompleteEx(ex, inputTypes, samples)
 
   override protected def saveExerciseRest(compEx: RoseCompleteEx): Future[Boolean] = for {
-    inputsSaved <- saveSeq[RoseInputType](compEx.inputType, it => db.run(roseInputs insertOrUpdate it))
+    inputsSaved <- saveSeq[RoseInputType](compEx.inputTypes, it => db.run(roseInputs insertOrUpdate it))
     samplesSaved <- saveSeq[RoseSampleSolution](compEx.sampleSolutions, rss => db.run(roseSamples insertOrUpdate rss))
   } yield inputsSaved && samplesSaved
 

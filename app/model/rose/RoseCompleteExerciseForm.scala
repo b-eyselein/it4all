@@ -53,14 +53,14 @@ object RoseCompleteExerciseForm extends CompleteExerciseForm[RoseExercise, RoseC
                   roseSampleSolutionFormValues: Seq[RoseSampleSolutionFormValues]): RoseCompleteEx =
     RoseCompleteEx(
       RoseExercise(id, semanticVersion, title, author, exText, state, fieldWidth, fieldHeight, isMultiplayer),
-      inputType = roseInputTypeFormValues map (r => applyRoseInputType(r, id, semanticVersion)),
+      inputTypes = roseInputTypeFormValues map (r => applyRoseInputType(r, id, semanticVersion)),
       sampleSolutions = roseSampleSolutionFormValues map (r => applyRoseSampleSolution(r, id, semanticVersion))
     )
 
   override def unapplyCompEx(compEx: RoseCompleteEx): Option[FormData] =
     Some(
       (compEx.ex.id, compEx.ex.semanticVersion, compEx.ex.title, compEx.ex.author, compEx.ex.text, compEx.ex.state, compEx.ex.fieldWidth, compEx.ex.fieldHeight, compEx.ex.isMultiplayer,
-        compEx.inputType map unapplyRoseInputType,
+        compEx.inputTypes map unapplyRoseInputType,
         compEx.sampleSolutions map unapplyRoseSampleSolution)
     )
 

@@ -19,58 +19,69 @@ object RoseCorrector {
   private val optionsFileName = "options.json"
 
   def correct(user: User, exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage, exerciseResourcesFolder: File, solutionTargetDir: File)
-             (implicit ec: ExecutionContext): Future[RoseEvalResult] = {
+             (implicit ec: ExecutionContext): Future[RoseEvalResult] = exercise.sampleSolutions.headOption match {
+    case None                 => ???
+    case Some(sampleSolution) =>
 
-    // Check if image exists
-    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(Image))
+      // Check if image exists
+      val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(Image))
 
-    val solutionFileName = s"solution.${language.fileEnding}"
+      val solutionFileName = s"solution_robot.${language.fileEnding}"
+      val sampleFileName = s"sample_robot.${language.fileEnding}"
 
-    val solutionFilePath: File = solutionTargetDir / solutionFileName
-    val actionFilePath: File = solutionTargetDir / actionsFileName
-    val optionsFilePath: File = solutionTargetDir / optionsFileName
+      val solutionFilePath: File = solutionTargetDir / solutionFileName
+      val sampleFilePath: File = solutionTargetDir / sampleFileName
 
-    // FIXME: write exercise options file...
-    solutionFilePath.write(buildSolutionFileContent(exercise, learnerSolution, language))
-    actionFilePath.createIfNotExists()
-    optionsFilePath.write(buildOptionFileContent(exercise))
+      val actionFilePath: File = solutionTargetDir / actionsFileName
+      val optionsFilePath: File = solutionTargetDir / optionsFileName
 
-    val dockerBinds: Seq[DockerBind] = Seq(
-      DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir / solutionFileName),
-      DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir / actionsFileName),
-      DockerBind(optionsFilePath, DockerConnector.DefaultWorkingDir / optionsFileName)
-    )
+      // FIXME: write exercise options file...
+      solutionFilePath.write(learnerSolution)
+      sampleFilePath.write(buildSampleFileContent(sampleSolution.solution))
 
-    val entryPoint = Seq("python3", "sp_main.py")
+      actionFilePath.createIfNotExists()
+      optionsFilePath.write(buildOptionFileContent(exercise))
 
-    //    fileWriteTries match {
-    //      case Failure(e) =>
-    //        Logger.error("Some files could not be written:", e)
-    //        Future(RoseEvalFailed)
-    //      case Success(_) =>
+      val dockerBinds: Seq[DockerBind] = Seq(
+        DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir / solutionFileName),
+        DockerBind(sampleFilePath, DockerConnector.DefaultWorkingDir / sampleFileName),
 
-    futureImageExists flatMap { _ =>
-      DockerConnector.runContainer(Image, Some(entryPoint), dockerBinds
-        //            , deleteContainerAfterRun = false
+        DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir / actionsFileName),
+        DockerBind(optionsFilePath, DockerConnector.DefaultWorkingDir / optionsFileName)
       )
-    } map {
-      // Error while waiting for container
-      case RunContainerTimeOut(_) => RoseTimeOutResult
 
-      // Error while running script with status code other than 0 or 124 (from timeout!)
-      case RunContainerError(_, msg) => RoseSyntaxErrorResult(msg)
+      //    val entryPoint = Seq("python3", "sp_main.py")
 
-      case RunContainerSuccess => RoseExecutionResult(actionFilePath.contentAsString) //map (content => RoseExecutionResult(content)) getOrElse RoseEvalFailed
+      futureImageExists flatMap { _ =>
+        DockerConnector.runContainer(Image, /* Some(entryPoint)*/ None, dockerBinds = dockerBinds /*, deleteContainerAfterRun = false */)
+      } map {
+        // Error while waiting for container
+        case RunContainerTimeOut(_) => RoseTimeOutResult
 
-      case exc: RunContainerException =>
-        Logger.error("Error running container:", exc.error)
-        RoseEvalFailed
-    }
-    //    }
+        // Error while running script with status code other than 0 or 124 (from timeout!)
+        case RunContainerError(_, msg) => RoseSyntaxErrorResult(msg)
+
+        case RunContainerSuccess => RoseExecutionResult(actionFilePath.contentAsString)
+
+        case exc: RunContainerException =>
+          Logger.error("Error running container:", exc.error)
+          RoseEvalFailed
+      }
   }
 
-  private def buildSolutionFileContent(exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage): String =
-    exercise.imports + (NewLine * 3) + learnerSolution + (NewLine * 3) + exercise.buildSampleSolution(language) + (NewLine * 3)
+  private def indent(str: String, depth: Int): String = str.split(NewLine).map(" " * 4 * depth + _).mkString(NewLine)
+
+  private def buildSampleFileContent(sampleSolution: String): String = {
+    val baseDeclaration =
+      """from base.robot import Robot
+        |
+        |
+        |class SampleRobot(Robot):
+        |    def run(self, width: int, height: int):
+        |""".stripMargin
+
+    baseDeclaration + indent(sampleSolution, 2)
+  }
 
   private def buildOptionFileContent(exercise: RoseCompleteEx): String =
     """|{

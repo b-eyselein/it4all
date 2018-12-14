@@ -6,9 +6,7 @@ import play.twirl.api.Html
 
 // Classes for use
 
-final case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]) extends SingleCompleteEx[RoseExercise, RoseExPart] {
-
-  val NewLine = "\n"
+final case class RoseCompleteEx(ex: RoseExercise, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]) extends SingleCompleteEx[RoseExercise, RoseExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.rose.rosePreview.render(this)
@@ -17,33 +15,18 @@ final case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType],
 
   def declaration(forUser: Boolean): String = {
     val className = if (forUser) "UserRobot" else "SampleRobot"
-    val (actorClass, methodName, returnType) = if (ex.isMultiplayer) ("MultiPlayerActor", "act", "Action") else ("SinglePlayerActor", "run", "None")
+    val (methodName, returnType) = if (ex.isMultiplayer) ("act", "Action") else ("run", "None")
 
-    val parameters = inputType match {
-      case Nil   => ""
+    val parameters = inputTypes match {
+      case Seq() => ""
       case other => ", " + (other map (it => it.name + ": " + it.inputType.typeName) mkString ", ")
     }
 
-    s"""class $className(Robot, $actorClass):
-       |  def $methodName(self$parameters) -> $returnType:""".stripMargin
-  }
-
-  def imports: String = if (ex.isMultiplayer) {
-    """from typing import Dict
-      |from base.actors import MultiPlayerActor
-      |from base.actions import *
-      |from base.robot import Robot""".stripMargin
-  } else {
-    """from typing import Dict
-      |from base.actors import SinglePlayerActor
-      |from base.actions import *
-      |from base.robot import Robot""".stripMargin
-  }
-
-  def buildSampleSolution(language: ProgLanguage): String = {
-    val sampleSol = sampleSolutions.find(_.language == language) map (_.solution) getOrElse ???
-
-    declaration(false) + NewLine + sampleSol.split(NewLine).map(" " * 4 + _).mkString(NewLine)
+    s"""from base.robot import Robot
+       |
+       |class $className(Robot):
+       |    def $methodName(self$parameters) -> $returnType:
+       |        pass""".stripMargin
   }
 
 }

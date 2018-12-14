@@ -43,7 +43,6 @@ To develop it4all, you need to have installed the following programs (names of p
 
   `$ sbt run`
 
-
 ### Following starts
 
 Since the containers are all built and started, you can just restart the server with
@@ -65,3 +64,25 @@ Since the containers are all built and started, you can just restart the server 
 ### IntelliJ Idea IDE
 
 Install `Scala Tools` Plugin for IntelliJ Idea and import the `build.sbt`-file
+
+## Deployment to production (Ubuntu Server)
+
+### Prerequisites
+
+* JRE (`apt`: `default-jre`)
+* MySQL Server (`apt`: `mariadb-server`)
+* Docker with docker-compose (`snap`: `docker`)
+
+### Running
+
+* Create docker containers:
+
+  `docker-compose up -d`
+  
+* Create solution dir or reset ownership (recursively) on `data/web`
+
+* Perform first start with db init
+  
+  `bin/it4all -Dplay.http.secret.key="<random string>" -Dplay.evolutions.db.default.autoApply=true`
+  
+* Subsequent starts without db update:

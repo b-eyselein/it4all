@@ -12,25 +12,25 @@ fieldHeight: 10
 isMultiplayer: false
 
 inputTypes:
-- {id: 1, name: width, type: int}
-- {id: 2, name: height, type: int}
+  - {id: 1, name: width, type: int}
+  - {id: 2, name: height, type: int}
 
 sampleSolutions:
-- language: PYTHON_3
-  id: 1
-  sample: |
-    for h in range(height - 1):
-      self.mark()
-      self.go_up()
+  - language: PYTHON_3
+    id: 1
+    sample: |
+      for h in range(height - 1):
+          self.mark()
+          self.go_up()
 
-    for w in range(width - 1):
-      self.mark()
-      self.go_right()
+      for w in range(width - 1):
+          self.mark()
+          self.go_right()
 
-    for h in range(height - 1):
-      self.mark()
-      self.go_down()
+      for h in range(height - 1):
+          self.mark()
+          self.go_down()
 
-    for w in range(width - 1):
-      self.mark()
-      self.go_left()
+      for w in range(width - 1):
+          self.mark()
+          self.go_left()

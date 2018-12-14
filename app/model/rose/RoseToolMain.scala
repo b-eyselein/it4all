@@ -81,7 +81,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
     RoseExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
-    inputType = Seq[RoseInputType](), sampleSolutions = Seq[RoseSampleSolution]()
+    inputTypes = Seq[RoseInputType](), sampleSolutions = Seq[RoseSampleSolution]()
   )
 
   override def instantiateSolution(id: Int, username: String, exercise: RoseCompleteEx, part: RoseExPart, solution: String,
@@ -95,8 +95,10 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   // Views
 
   override def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart, maybeOldSolution: Option[RoseSolution])
-                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-    views.html.idExercises.rose.roseExercise(user, exercise, maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true), this)
+                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
+    val declaration = maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true)
+    views.html.idExercises.rose.roseExercise(user, exercise, declaration, this)
+  }
 
   override def renderEditRest(exercise: RoseCompleteEx): Html = ???
 
