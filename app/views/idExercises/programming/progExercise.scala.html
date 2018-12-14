@@ -1,8 +1,8 @@
 @(user: model.User, toolMainObject: model.programming.ProgToolMain, exercise: model.programming.ProgCompleteEx,
         oldSolution: String, part: model.programming.ProgExPart)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
-@additionalScripts = {
-    <script>
+    @additionalScripts = {
+        <script>
             const imports = [
                 '@routes.Assets.versioned("app/programming/progExercise.js")',
                 '@routes.Assets.versioned("app/programming/progClassDiagram.js")'
@@ -11,48 +11,41 @@
                 SystemJS.import(toImport);
             }
     </script>
-    @* FIXME: @core.helperTemplates.fullScreenScripts.render() *@
-    @* @if(exercise.maybeClassDiagramPart.isDefined) {*@
-    @*<script src="@exes.routes.ExerciseController.progClassDiagram(exercise.id)"></script>*@
-    @*<script src="@routes.Assets.versioned("javascripts/programming/classDiagram.js")"></script>*@
-    @*<link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")"/>*@
-    @*}*@
-}
+    }
 
-    @* @main(toolMainObject.toolname, Some(user), scripts) *@
-@exerciseText = {
-@exercise.ex.text
-}
+    @exerciseText = {
+        @exercise.ex.text
+    }
 
-@remainingExerciseDef = {
-    <div class="form-group">
-        <div class="btn-group d-flex">
-            <button class="btn btn-outline-primary w-100" data-toggle="modal" data-target="#definitionRest">
+    @remainingExerciseDef = {
+        <div class="form-group">
+            <div class="btn-group d-flex">
+                <button class="btn btn-outline-primary w-100" data-toggle="modal" data-target="#definitionRest">
                 Rest der Definition</button>
-            @exercise.maybeClassDiagramPart match {
-                case None => {}
-                case Some(classDiagPart@_) => {
-                    <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
+                @exercise.maybeClassDiagramPart match {
+                    case None => {}
+                    case Some(classDiagPart@_) => {
+                        <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
+                    }
                 }
-            }
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text">Sprache</span>
             </div>
-            <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
-            @for(lang <- model.programming.ProgLanguages.values) {
-                <option value="@lang.entryName" @{
-                    if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
-                }>@lang.languageName</option>
-            }
-            </select>
         </div>
-    </div>
-}
 
-@idExercises.textExercise(user, exerciseText, exercise, part, oldSolution, toolMainObject, additionalScripts,
-    remainingExDef = Some(remainingExerciseDef))
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="langSelect">Sprache</label>
+                </div>
+                <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
+                @for(lang <- model.programming.ProgLanguages.values) {
+                    <option value="@lang.entryName" @{
+                        if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
+                    }>@lang.languageName</option>
+                }
+                </select>
+            </div>
+        </div>
+    }
+
+    @idExercises.textExercise(user, exerciseText, exercise, part, oldSolution, toolMainObject, additionalScripts,
+        remainingExDef = Some(remainingExerciseDef))
