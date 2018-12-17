@@ -12,7 +12,8 @@ object ProgConsts extends Consts {
   val classDiagramPartName: String = "classDiagramPart"
   val consoleOutputName   : String = "consoleOutput"
 
-  val evaluatedName: String = "evaluated"
+  val evaluatedName        : String = "evaluated"
+  val extendedUnitTestsName: String = "extendedUnitTests"
 
   val functionNameName: String = "functionname"
 

@@ -36,12 +36,25 @@
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="langSelect">Sprache</label>
                 </div>
-                <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
+                <select class="form-control" id="langSelect">
                 @for(lang <- model.programming.ProgLanguages.values) {
                     <option value="@lang.entryName" @{
                         if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
                     }>@lang.languageName</option>
                 }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="extendedUnitTests">Tests</label>
+                </div>
+                <select class="form-control" id="extendedUnitTests">
+                    <option value="0" selected>Vereinfacht</option>
+                    @* FIXME: reactivate... *@
+                    @*<option value="1">Normal</option>*@
                 </select>
             </div>
         </div>

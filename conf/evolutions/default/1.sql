@@ -1,13 +1,15 @@
 # --- !Ups
 
-create table if not exists users (
+create table if not exists users
+(
   user_type   int,
   username    varchar(30) primary key,
   std_role    enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser',
   showHideAgg enum ('SHOW', 'HIDE', 'AGGREGATE')               default 'SHOW'
 );
 
-create table if not exists pw_hashes (
+create table if not exists pw_hashes
+(
   username varchar(30) primary key,
   pw_hash  varchar(60),
 
@@ -16,12 +18,14 @@ create table if not exists pw_hashes (
     on delete cascade
 );
 
-create table if not exists courses (
+create table if not exists courses
+(
   id          varchar(30) primary key,
   course_name varchar(100)
 );
 
-create table if not exists users_in_courses (
+create table if not exists users_in_courses
+(
   username  varchar(30),
   course_id varchar(30),
   role      enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser',
@@ -37,7 +41,8 @@ create table if not exists users_in_courses (
 
 # Feedback
 
-create table if not exists feedback (
+create table if not exists feedback
+(
   username          varchar(30),
   tool_url          varchar(30),
   sense             enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
@@ -55,7 +60,8 @@ create table if not exists feedback (
 
 # Learning paths
 
-create table if not exists learning_paths (
+create table if not exists learning_paths
+(
   tool_url varchar(10),
   id       int,
   title    varchar(50),
@@ -63,7 +69,8 @@ create table if not exists learning_paths (
   primary key (tool_url, id)
 );
 
-create table if not exists learning_path_sections (
+create table if not exists learning_path_sections
+(
   id           int,
   tool_url     varchar(10),
   path_id      int,
@@ -79,7 +86,8 @@ create table if not exists learning_path_sections (
 
 # Programming
 
-create table if not exists prog_exercises (
+create table if not exists prog_exercises
+(
   id                int,
   semantic_version  varchar(10),
   title             varchar(50),
@@ -96,7 +104,8 @@ create table if not exists prog_exercises (
   primary key (id, semantic_version)
 );
 
-create table if not exists prog_input_types (
+create table if not exists prog_input_types
+(
   id          int,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -109,7 +118,8 @@ create table if not exists prog_input_types (
     on delete cascade
 );
 
-create table if not exists prog_sample_solutions (
+create table if not exists prog_sample_solutions
+(
   exercise_id int,
   ex_sem_ver  varchar(10),
   language    enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
@@ -122,7 +132,8 @@ create table if not exists prog_sample_solutions (
     on delete cascade
 );
 
-create table if not exists prog_sample_testdata (
+create table if not exists prog_sample_testdata
+(
   id          int,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -135,7 +146,8 @@ create table if not exists prog_sample_testdata (
     on delete cascade
 );
 
-create table if not exists prog_commited_testdata (
+create table if not exists prog_commited_testdata
+(
   id             int,
   exercise_id    int,
   ex_sem_ver     varchar(10),
@@ -154,7 +166,8 @@ create table if not exists prog_commited_testdata (
     on delete cascade
 );
 
-create table if not exists prog_uml_cd_parts (
+create table if not exists prog_uml_cd_parts
+(
   exercise_id   int,
   ex_sem_ver    varchar(10),
   class_name    varchar(30),
@@ -166,16 +179,18 @@ create table if not exists prog_uml_cd_parts (
     on delete cascade
 );
 
-create table if not exists prog_solutions (
-  id          int primary key auto_increment,
-  username    varchar(50),
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  part        varchar(30),
-  points      double,
-  max_points  double,
-  solution    text,
-  language    varchar(20),
+create table if not exists prog_solutions
+(
+  id                  int primary key auto_increment,
+  username            varchar(50),
+  exercise_id         int,
+  ex_sem_ver          varchar(10),
+  part                varchar(30),
+  points              double,
+  max_points          double,
+  solution            text,
+  language            varchar(20),
+  extended_unit_tests boolean default false,
 
   foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
     on update cascade
@@ -185,7 +200,8 @@ create table if not exists prog_solutions (
     on delete cascade
 );
 
-create table if not exists prog_exercise_reviews (
+create table if not exists prog_exercise_reviews
+(
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
@@ -204,7 +220,8 @@ create table if not exists prog_exercise_reviews (
 
 # Question
 
-create table if not exists quizzes (
+create table if not exists quizzes
+(
   id               int,
   semantic_version varchar(10),
   title            varchar(50),
@@ -217,7 +234,8 @@ create table if not exists quizzes (
   primary key (id, semantic_version)
 );
 
-create table if not exists questions (
+create table if not exists questions
+(
   id               int,
   title            varchar(50),
   author           varchar(50),
@@ -236,7 +254,8 @@ create table if not exists questions (
     on delete cascade
 );
 
-create table if not exists question_answers (
+create table if not exists question_answers
+(
   id            int,
   question_id   int,
   ex_sem_ver    varchar(10),
@@ -252,7 +271,8 @@ create table if not exists question_answers (
     on delete cascade
 );
 
-create table if not exists question_solutions (
+create table if not exists question_solutions
+(
   id            int primary key auto_increment,
   username      varchar(50),
   exercise_id   int,
@@ -270,7 +290,8 @@ create table if not exists question_solutions (
 
 # Rose
 
-create table if not exists rose_exercises (
+create table if not exists rose_exercises
+(
   id               int,
   semantic_version varchar(10),
   title            varchar(50),
@@ -285,7 +306,8 @@ create table if not exists rose_exercises (
   primary key (id, semantic_version)
 );
 
-create table if not exists rose_inputs (
+create table if not exists rose_inputs
+(
   id          int,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -298,7 +320,8 @@ create table if not exists rose_inputs (
     on delete cascade
 );
 
-create table if not exists rose_samples (
+create table if not exists rose_samples
+(
   id          int,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -311,7 +334,8 @@ create table if not exists rose_samples (
     on delete cascade
 );
 
-create table if not exists rose_solutions (
+create table if not exists rose_solutions
+(
   id          int primary key auto_increment,
   username    varchar(50),
   exercise_id int,
@@ -329,7 +353,8 @@ create table if not exists rose_solutions (
     on delete cascade
 );
 
-create table if not exists rose_exercise_reviews (
+create table if not exists rose_exercise_reviews
+(
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
@@ -345,7 +370,8 @@ create table if not exists rose_exercise_reviews (
 
 # Spread
 
-create table if not exists spread_exercises (
+create table if not exists spread_exercises
+(
   id                int,
   semantic_version  varchar(10),
   title             varchar(50),
@@ -359,7 +385,8 @@ create table if not exists spread_exercises (
   primary key (id, semantic_version)
 );
 
-create table if not exists spread_exercise_reviews (
+create table if not exists spread_exercise_reviews
+(
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
@@ -375,7 +402,8 @@ create table if not exists spread_exercise_reviews (
 
 # Sql
 
-create table if not exists sql_scenarioes (
+create table if not exists sql_scenarioes
+(
   id               int,
   semantic_version varchar(10),
   title            varchar(50),
@@ -389,7 +417,8 @@ create table if not exists sql_scenarioes (
   primary key (id, semantic_version)
 );
 
-create table if not exists sql_exercises (
+create table if not exists sql_exercises
+(
   id               int,
   semantic_version varchar(10),
   title            varchar(50),
@@ -409,7 +438,8 @@ create table if not exists sql_exercises (
     on delete cascade
 );
 
-create table if not exists sql_samples (
+create table if not exists sql_samples
+(
   id            int,
   exercise_id   int,
   ex_sem_ver    varchar(10),
@@ -423,7 +453,8 @@ create table if not exists sql_samples (
     on delete cascade
 );
 
-create table if not exists sql_solutions (
+create table if not exists sql_solutions
+(
   id            int primary key auto_increment,
   username      varchar(50),
   exercise_id   int,
@@ -444,7 +475,8 @@ create table if not exists sql_solutions (
 
 # Uml
 
-create table if not exists uml_exercises (
+create table if not exists uml_exercises
+(
   id               int,
   semantic_version varchar(10),
   title            varchar(50),
@@ -457,7 +489,8 @@ create table if not exists uml_exercises (
   primary key (id, semantic_version)
 );
 
-create table if not exists uml_to_ignore (
+create table if not exists uml_to_ignore
+(
   exercise_id int,
   ex_sem_ver  varchar(10),
   to_ignore   varchar(50),
@@ -468,7 +501,8 @@ create table if not exists uml_to_ignore (
     on delete cascade
 );
 
-create table if not exists uml_mappings (
+create table if not exists uml_mappings
+(
   exercise_id   int,
   ex_sem_ver    varchar(10),
   mapping_key   varchar(50),
@@ -480,7 +514,8 @@ create table if not exists uml_mappings (
     on delete cascade
 );
 
-create table if not exists uml_sample_solutions (
+create table if not exists uml_sample_solutions
+(
   id          int,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -492,7 +527,8 @@ create table if not exists uml_sample_solutions (
     on delete cascade
 );
 
-create table if not exists uml_solutions (
+create table if not exists uml_solutions
+(
   id          int primary key auto_increment,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -510,7 +546,8 @@ create table if not exists uml_solutions (
     on delete cascade
 );
 
-create table if not exists uml_exercise_reviews (
+create table if not exists uml_exercise_reviews
+(
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
@@ -526,7 +563,8 @@ create table if not exists uml_exercise_reviews (
 
 # Web
 
-create table if not exists web_exercises (
+create table if not exists web_exercises
+(
   id               int,
   semantic_version varchar(10),
   title            varchar(50),
@@ -541,7 +579,8 @@ create table if not exists web_exercises (
   primary key (id, semantic_version)
 );
 
-create table if not exists html_tasks (
+create table if not exists html_tasks
+(
   task_id      int,
   exercise_id  int,
   ex_sem_ver   varchar(10),
@@ -556,7 +595,8 @@ create table if not exists html_tasks (
     on delete cascade
 );
 
-create table if not exists html_attributes (
+create table if not exists html_attributes
+(
   attr_key    varchar(30),
   attr_value  varchar(150),
   task_id     int,
@@ -569,7 +609,8 @@ create table if not exists html_attributes (
     on delete cascade
 );
 
-create table if not exists js_tasks (
+create table if not exists js_tasks
+(
   task_id            int,
   exercise_id        int,
   ex_sem_ver         varchar(10),
@@ -586,7 +627,8 @@ create table if not exists js_tasks (
     on delete cascade
 );
 
-create table if not exists js_conditions (
+create table if not exists js_conditions
+(
   condition_id    int,
   task_id         int,
   exercise_id     int,
@@ -602,7 +644,8 @@ create table if not exists js_conditions (
     on delete cascade
 );
 
-create table if not exists web_sample_solutions (
+create table if not exists web_sample_solutions
+(
   id          int,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -617,7 +660,8 @@ create table if not exists web_sample_solutions (
     on delete cascade
 );
 
-create table if not exists web_solutions (
+create table if not exists web_solutions
+(
   id          int primary key auto_increment,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -635,7 +679,8 @@ create table if not exists web_solutions (
     on delete cascade
 );
 
-create table if not exists web_exercise_reviews (
+create table if not exists web_exercise_reviews
+(
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
@@ -651,7 +696,8 @@ create table if not exists web_exercise_reviews (
 
 # Xml
 
-create table if not exists xml_exercises (
+create table if not exists xml_exercises
+(
   id                  int,
   semantic_version    varchar(10),
   title               varchar(50),
@@ -665,7 +711,8 @@ create table if not exists xml_exercises (
   primary key (id, semantic_version)
 );
 
-create table if not exists xml_samples (
+create table if not exists xml_samples
+(
   id              int,
   exercise_id     int,
   ex_sem_ver      varchar(10),
@@ -678,7 +725,8 @@ create table if not exists xml_samples (
     on delete cascade
 );
 
-create table if not exists xml_solutions (
+create table if not exists xml_solutions
+(
   id          int primary key auto_increment,
   exercise_id int,
   ex_sem_ver  varchar(10),
@@ -696,7 +744,8 @@ create table if not exists xml_solutions (
     on delete cascade
 );
 
-create table if not exists xml_exercise_reviews (
+create table if not exists xml_exercise_reviews
+(
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),

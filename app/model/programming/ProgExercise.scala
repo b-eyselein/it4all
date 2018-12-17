@@ -23,7 +23,8 @@ final case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sa
     case ProgExParts.TestdataCreation => false
   }
 
-  def addIndent(solution: String): String = solution split "\n" map (str => " " * (4 * ex.indentLevel) + str) mkString "\n"
+  def buildTestDataFileContent(completeTestData: Seq[TestData], extendedUnitTests: Boolean): JsValue = if (extendedUnitTests) ???
+  else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
 
 }
 
@@ -68,24 +69,28 @@ sealed trait ProgSolution {
 
   val language: ProgLanguage
 
+  def extendedUnitTests: Boolean
+
   def solution: String
 
 }
 
-final case class ProgStringSolution(solution: String, language: ProgLanguage) extends ProgSolution
+final case class ProgStringSolution(solution: String, extendedUnitTests: Boolean, language: ProgLanguage) extends ProgSolution
 
 final case class ProgTestDataSolution(testData: Seq[CommitedTestData], language: ProgLanguage) extends ProgSolution {
 
   override def solution: String = ???
 
+  override def extendedUnitTests: Boolean = false
+
 }
 
 final case class DBProgSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
-                                solutionStr: String, language: ProgLanguage, points: Points, maxPoints: Points) extends DBPartSolution[ProgExPart, ProgSolution] {
+                                solutionStr: String, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points) extends DBPartSolution[ProgExPart, ProgSolution] {
 
   val solution: ProgSolution = part match {
     case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)
-    case _                            => ProgStringSolution(solutionStr, language)
+    case _                            => ProgStringSolution(solutionStr, extendedUnitTests, language)
   }
 
   def commitedTestData: Seq[CommitedTestData] = solution match {

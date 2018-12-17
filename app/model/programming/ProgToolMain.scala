@@ -1,9 +1,9 @@
 package model.programming
 
 import javax.inject._
+import model._
 import model.programming.ProgConsts.{difficultyName, durationName}
 import model.toolMains.{IdExerciseToolMain, ToolState}
-import model._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.MessagesProvider
@@ -91,7 +91,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def instantiateSolution(id: Int, username: String, exercise: ProgCompleteEx, part: ProgExPart,
                                    solution: ProgSolution, points: Points, maxPoints: Points): DBProgSolution =
-    DBProgSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution.solution, solution.language, points, maxPoints)
+    DBProgSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution.solution, solution.language, solution.extendedUnitTests, points, maxPoints)
 
   // Yaml
 
@@ -99,19 +99,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Correction
 
-  override def correctEx(user: User, sol: SolType, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] = {
-
-    val (implementation: String, testData: Seq[TestData]) = sol match {
-      case ProgTestDataSolution(td, _)     => (exercise.sampleSolutions.head.solution, td)
-      case ProgStringSolution(solution, _) => (solution, exercise.sampleTestData)
-    }
-
-    ProgCorrector.correct(user, exercise, sol.language, implementation, testData, toolMain = this)
-//    match {
-//      case Success(futureRes) => futureRes
-//      case Failure(error)     => Future(Failure(error))
-//    }
-  }
+  override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] =
+    ProgCorrector.correct(user, sol, exercise, toolMain = this)
 
   override def futureSampleSolutionForExerciseAndPart(id: Int, part: ProgExPart): Future[Option[String]] = part match {
     case ProgExParts.Implementation =>

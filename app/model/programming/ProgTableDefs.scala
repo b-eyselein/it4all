@@ -174,10 +174,13 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def solution: Rep[String] = column[String]("solution")
 
+    def extendedUnitTests: Rep[Boolean] = column[Boolean]("extended_unit_tests")
+
     def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
 
-    override def * : ProvenShape[DBProgSolution] = (id, username, exerciseId, exSemVer, part, solution, language, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
+    override def * : ProvenShape[DBProgSolution] = (id, username, exerciseId, exSemVer, part, solution, language,
+      extendedUnitTests, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
 
   }
 

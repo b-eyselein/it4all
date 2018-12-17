@@ -39,6 +39,7 @@ function testSol(): void {
 
     const solution: ProgStringSolution = {
         language: $('#langSelect').val() as string,
+        extendedUnitTests: $('#extendedUnitTests').val() == 1,
         implementation: editor.getValue()
     };
 
@@ -70,6 +71,13 @@ function onProgCorrectionSuccess(result: ProgCorrectionResult): void {
 
 function onProgCorrectionError(jqXHR): void {
     console.error(jqXHR.responseText);
+
+    $('#correctionDiv').prop('hidden', false);
+    $('#correction').html(`
+<div class="alert alert-danger">
+    Es gab einen internen Fehler bei der Korrektur Ihrer Lösung.
+</div>`);
+
     testBtn.prop('disabled', false);
 }
 

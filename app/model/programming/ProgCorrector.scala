@@ -15,25 +15,30 @@ object ProgCorrector {
   private val resultFileName  : String = "result.json"
   private val testDataFileName: String = "test_data.json"
 
-  private def solutionFileName(fileEnding: String): String = "solution." + fileEnding
+  private def buildSolutionFileName(fileEnding: String): String = "solution." + fileEnding
 
   private def buildTestMainFileName(fileEnding: String): String = "test_main." + fileEnding
 
-  def correct(user: User, exercise: ProgCompleteEx, language: ProgLanguage, implementation: String, completeTestData: Seq[TestData],
-              toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
+  def correct(user: User, progSolution: ProgSolution, exercise: ProgCompleteEx, toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
+    val (implementation: String, completeTestData: Seq[TestData]) = progSolution match {
+      case ProgTestDataSolution(td, _)        => (exercise.sampleSolutions.headOption.map(_.solution).getOrElse(???), td)
+      case ProgStringSolution(solution, _, _) => (solution, exercise.sampleTestData)
+    }
 
     val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / (exercise.ex.id + "-" + exercise.ex.folderIdentifier)
+
     val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, exercise.ex.id)
-    val testDataFileContent: String = Json.prettyPrint(TestDataJsonFormat.dumpTestDataToJson(exercise, completeTestData))
+
+    val testDataFileContent: JsValue = exercise.buildTestDataFileContent(completeTestData, progSolution.extendedUnitTests)
 
     // Write/Create files
-    val solFileName = solutionFileName(language.fileEnding)
+    val solFileName = buildSolutionFileName(progSolution.language.fileEnding)
     val solutionFile = solutionTargetDir / solFileName
     solutionFile.write(implementation)
 
     val testDataFile = solutionTargetDir / testDataFileName
-    testDataFile.write(testDataFileContent)
+    testDataFile.write(Json.prettyPrint(testDataFileContent))
 
     val resultFile = solutionTargetDir / resultFileName
     resultFile.createIfNotExists(createParents = true)
@@ -45,7 +50,8 @@ object ProgCorrector {
      */
     val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(
       imageName = DockerPullsStartTask.pythonProgTesterImage,
-      maybeDockerBinds = Some(mountProgrammingFiles(exerciseResourcesFolder, solutionTargetDir, solFileName, fileEnding = "py")) //, deleteContainerAfterRun = false
+      maybeDockerBinds = Some(mountProgrammingFiles(exerciseResourcesFolder, progSolution.extendedUnitTests, solutionTargetDir, solFileName, fileEnding = "py")),
+      maybeCmd = if (progSolution.extendedUnitTests) Some(Seq("--extended")) else None
     )
 
     val futureResults = containerResult map {
@@ -61,19 +67,18 @@ object ProgCorrector {
     }
   }
 
-  private def mountProgrammingFiles(exResFolder: File, solTargetDir: File, solFileName: String, fileEnding: String): Seq[DockerBind] = {
-
-    // FIXME: update with files in exerciseResourcesFolder!
+  private def mountProgrammingFiles(exResFolder: File, extendedUnitTests: Boolean, solTargetDir: File, solFileName: String, fileEnding: String): Seq[DockerBind] = {
     val testMainFileName = buildTestMainFileName(fileEnding)
-    val testMainMount = DockerBind(exResFolder / testMainFileName, DockerConnector.DefaultWorkingDir / testMainFileName, isReadOnly = true)
 
-    val solutionMount = DockerBind(solTargetDir / solFileName, DockerConnector.DefaultWorkingDir / solFileName, isReadOnly = true)
+    val testMainFileMount = if (extendedUnitTests) None
+    else Some(
+      DockerBind(exResFolder / testMainFileName, DockerConnector.DefaultWorkingDir / testMainFileName, isReadOnly = true),
+    )
 
-    val testDataMount = DockerBind(solTargetDir / testDataFileName, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true)
-
-    val resultFileMount = DockerBind(solTargetDir / resultFileName, DockerConnector.DefaultWorkingDir / resultFileName)
-
-    Seq(testMainMount, solutionMount, testDataMount, resultFileMount)
-
+    Seq(
+      DockerBind(solTargetDir / solFileName, DockerConnector.DefaultWorkingDir / solFileName, isReadOnly = true),
+      DockerBind(solTargetDir / testDataFileName, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
+      DockerBind(solTargetDir / resultFileName, DockerConnector.DefaultWorkingDir / resultFileName)
+    ) ++ testMainFileMount
   }
 }

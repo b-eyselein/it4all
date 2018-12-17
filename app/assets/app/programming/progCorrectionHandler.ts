@@ -5,6 +5,7 @@ export {renderProgCorrectionSuccess, ProgCorrectionResult, ProgStringSolution};
 
 interface ProgStringSolution {
     language: string,
+    extendedUnitTests: boolean
     implementation: string
 }
 

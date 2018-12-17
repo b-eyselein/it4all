@@ -27,7 +27,8 @@ final case class ProgSolutionJsonFormat(exercise: ProgCompleteEx, user: User) {
 
   private val progStringSolutionReads: Reads[ProgStringSolution] = (
     (__ \ implementationName).read[String] and
+      (__ \ extendedUnitTestsName).read[Boolean] and
       (__ \ languageName).read[ProgLanguage](ProgLanguages.jsonFormat)
-    ) (ProgStringSolution.apply(_, _))
+    ) (ProgStringSolution.apply(_, _, _))
 
 }
