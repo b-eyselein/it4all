@@ -1,8 +1,6 @@
 package model.programming
 
-import java.nio.file.Path
-
-import better.files.File._
+import better.files.File
 import model.core.result.SuccessType
 import play.api.Logger
 import play.api.libs.functional.syntax._
@@ -30,7 +28,7 @@ object ResultsFileJsonFormat {
       (__ \ "errors").read[String]
     ) (ResultFileContent.apply(_, _, _))
 
-  def readResultFile(targetFile: Path, completeTestData: Seq[TestData]): Try[Seq[ExecutionResult]] = {
+  def readResultFile(targetFile: File, completeTestData: Seq[TestData]): Try[Seq[ExecutionResult]] = {
 
     resultsFileJsonReads.reads(Json.parse(targetFile.contentAsString)) match {
       case JsSuccess(result: ResultFileContent, _) =>
