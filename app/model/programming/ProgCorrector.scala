@@ -43,8 +43,9 @@ object ProgCorrector {
      * FIXME: what if image does not exist?
      *  --> val imageExists: Boolean = DockerConnector.imageExists(DockerPullsStartTask.pythonProgTesterImage)
      */
-    val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(DockerPullsStartTask.pythonProgTesterImage,
-      dockerBinds = mountProgrammingFiles(exerciseResourcesFolder, solutionTargetDir, solFileName, fileEnding = "py") //, deleteContainerAfterRun = false
+    val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(
+      imageName = DockerPullsStartTask.pythonProgTesterImage,
+      maybeDockerBinds = Some(mountProgrammingFiles(exerciseResourcesFolder, solutionTargetDir, solFileName, fileEnding = "py")) //, deleteContainerAfterRun = false
     )
 
     val futureResults = containerResult map {

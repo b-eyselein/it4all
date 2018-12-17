@@ -42,29 +42,36 @@ object DockerConnector {
   def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Try[Unit]] =
     Future(Try(dockerClient.pull(imageName)))
 
-  private def createContainer(imageName: String, workingDir: String, entryPoint: Seq[String], binds: Seq[DockerBind]): Try[ContainerCreation] = Try {
+  private def createContainer(imageName: String, maybeWorkingDir: Option[String], maybeEntryPoint: Option[Seq[String]] = None,
+                              maybeCmd: Option[Seq[String]] = None, maybeBinds: Option[Seq[DockerBind]] = None): Try[ContainerCreation] = Try {
 
-    val hostConfig: HostConfig = HostConfig.builder().binds(binds map (_.toBind.toString) asJava).build()
+    // Build host config
+    val hostConfigBuilder = HostConfig.builder()
 
-    val containerConfig: ContainerConfig = ContainerConfig.builder()
+    maybeBinds map {
+      binds => hostConfigBuilder.binds(binds map (_.toBind.toString) asJava)
+    }
+
+    val hostConfig: HostConfig = hostConfigBuilder.build()
+
+    // Build container config
+    val containerConfigBuilder = ContainerConfig.builder()
       .image(imageName)
       .hostConfig(hostConfig)
-      .workingDir(workingDir)
-      .entrypoint(entryPoint asJava)
-      .build()
 
-    dockerClient.createContainer(containerConfig)
-  }
+    maybeWorkingDir map {
+      workDir => containerConfigBuilder.workingDir(workDir)
+    }
 
-  private def createContainer(imageName: String, workingDir: String, binds: Seq[DockerBind]): Try[ContainerCreation] = Try {
+    maybeEntryPoint map {
+      entryPoint => containerConfigBuilder.entrypoint(entryPoint asJava)
+    }
 
-    val hostConfig: HostConfig = HostConfig.builder().binds(binds map (_.toBind.toString) asJava).build()
+    maybeCmd map {
+      cmd => containerConfigBuilder.cmd(cmd asJava)
+    }
 
-    val containerConfig: ContainerConfig = ContainerConfig.builder()
-      .image(imageName)
-      .workingDir(workingDir)
-      .hostConfig(hostConfig)
-      .build()
+    val containerConfig: ContainerConfig = containerConfigBuilder.build()
 
     dockerClient.createContainer(containerConfig)
   }
@@ -75,16 +82,12 @@ object DockerConnector {
 
   private def deleteContainer(container: String): Try[Unit] = Try(dockerClient.removeContainer(container))
 
-  def runContainer(imageName: String, maybeEntryPoint: Option[Seq[String]] = None, dockerBinds: Seq[DockerBind] = Seq[DockerBind](), workingDir: Path = DefaultWorkingDir,
+  def runContainer(imageName: String, maybeWorkingDir: Option[Path] = Some(DefaultWorkingDir), maybeEntryPoint: Option[Seq[String]] = None,
+                   maybeCmd: Option[Seq[String]] = None, maybeDockerBinds: Option[Seq[DockerBind]] = None,
                    maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds, deleteContainerAfterRun: Boolean = true)
                   (implicit ec: ExecutionContext): Future[RunContainerResult] = Future {
 
-    val createdContainer = maybeEntryPoint match {
-      case None             => createContainer(imageName, workingDir.toString, dockerBinds)
-      case Some(entryPoint) => createContainer(imageName, workingDir.toString, entryPoint, dockerBinds)
-    }
-
-    createdContainer match {
+    createContainer(imageName, maybeWorkingDir map (_.toString), maybeEntryPoint, maybeCmd, maybeDockerBinds) match {
       case Failure(e)                 => CreateContainerException(e)
       case Success(containerCreation) =>
 
@@ -111,8 +114,7 @@ object DockerConnector {
                 if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
                   // Do not delete failed containers for now
                   val containerDeleted = deleteContainer(containerId)
-                  if (containerDeleted.isFailure)
-                    Logger.error("Could not delete container!")
+                  if (containerDeleted.isFailure) Logger.error("Could not delete container!")
                 } else {
                   Logger.debug("NOT Deleting container...")
                 }

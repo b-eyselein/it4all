@@ -5,6 +5,7 @@ import better.files._
 import model.User
 import model.docker._
 import model.programming.ProgLanguage
+import modules.DockerPullsStartTask
 import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -12,8 +13,6 @@ import scala.concurrent.{ExecutionContext, Future}
 object RoseCorrector {
 
   private val NewLine: String = "\n"
-
-  private val Image: String = "beyselein/rose:latest"
 
   private val actionsFileName = "actions.json"
   private val optionsFileName = "options.json"
@@ -24,7 +23,7 @@ object RoseCorrector {
     case Some(sampleSolution) =>
 
       // Check if image exists
-      val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(Image))
+      val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(DockerPullsStartTask.roseImage))
 
       val solutionFileName = s"solution_robot.${language.fileEnding}"
       val sampleFileName = s"sample_robot.${language.fileEnding}"
@@ -53,7 +52,11 @@ object RoseCorrector {
       //    val entryPoint = Seq("python3", "sp_main.py")
 
       futureImageExists flatMap { _ =>
-        DockerConnector.runContainer(Image, /* Some(entryPoint)*/ None, dockerBinds = dockerBinds /*, deleteContainerAfterRun = false */)
+        DockerConnector.runContainer(
+          imageName = DockerPullsStartTask.roseImage,
+          maybeEntryPoint = None /* Some(entryPoint)*/ ,
+          maybeDockerBinds = Some(dockerBinds) /*,
+          deleteContainerAfterRun = false */)
       } map {
         // Error while waiting for container
         case RunContainerTimeOut(_) => RoseTimeOutResult
