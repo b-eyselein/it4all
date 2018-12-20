@@ -76,10 +76,14 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(package
 
 // Resolver for JFrog Uni Wue
 resolvers ++= Seq(
+  // LS 6 Uni Wue Artifactory
   "Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-release",
   "Snapshot Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-snapshot/",
 
-  Resolver.bintrayRepo("webjars", "maven")
+  Resolver.bintrayRepo("webjars", "maven"),
+  
+  // Repo for play-json-schema-validator
+  "emueller-bintray" at "http://dl.bintray.com/emueller/maven"
 )
 
 val webJarDependencies = Seq(
@@ -151,6 +155,9 @@ libraryDependencies ++= Seq(
   "org.seleniumhq.selenium" % "selenium-java" % "3.141.59",
   "org.seleniumhq.selenium" % "htmlunit-driver" % "2.33.3",
 
+  // Json Schema Parser/Validator for Json
+  "com.eclipsesource"  %% "play-json-schema-validator" % "0.9.5-M4",
+  
   // MyBatis and JSqlParser for SQL
   "com.github.jsqlparser" % "jsqlparser" % "1.3",
 

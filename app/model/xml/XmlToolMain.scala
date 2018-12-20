@@ -1,7 +1,5 @@
 package model.xml
 
-import java.nio.file._
-
 import javax.inject._
 import model.core.CoreConsts.{difficultyName, durationName}
 import model.core._
