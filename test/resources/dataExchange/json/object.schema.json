@@ -1,0 +1,7 @@
+{
+  "type": "object",
+  "properties": {
+    "first_name": {"type": "string"},
+    "family_name": {"type": "string"}
+  }
+}

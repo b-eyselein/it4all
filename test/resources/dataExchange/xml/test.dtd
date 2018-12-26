@@ -1,0 +1,4 @@
+DOCTYPE name [
+        <!ELEMENT name (#PCDATA)>
+
+        ]

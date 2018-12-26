@@ -6,7 +6,7 @@ import org.junit.Assert.assertThat
 
 class NAryNumberTest {
 
-  val TO_TEST = Map(
+  private val TO_TEST = Map(
     234 -> Map(HEXADECIMAL -> "ea", OCTAL -> "352", BINARY -> "1110 1010"),
     127 -> Map(HEXADECIMAL -> "7f", OCTAL -> "177", BINARY -> "0111 1111"),
     87 -> Map(HEXADECIMAL -> "57", OCTAL -> "127", BINARY -> "0101 0111"),
