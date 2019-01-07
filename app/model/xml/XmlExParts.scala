@@ -13,8 +13,8 @@ object XmlExParts extends PlayEnum[XmlExPart] {
 
   val values: IndexedSeq[XmlExPart] = findValues
 
-  case object GrammarCreationXmlPart extends XmlExPart("Grammatik erstellen", "grammar")
+  case object GrammarCreationXmlPart extends XmlExPart("Grammatik", "grammar")
 
-  case object DocumentCreationXmlPart extends XmlExPart("Dokument erstellen", "document")
+  case object DocumentCreationXmlPart extends XmlExPart("Dokument", "document")
 
 }

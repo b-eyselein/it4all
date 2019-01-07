@@ -12,6 +12,7 @@ function activityCorrection(): void {
 
     let dataToSend: ProgStringSolution = {
         language: "PYTHON_3",
+        extendedUnitTests: false,
         implementation: $('#preCode').text()
     };
 

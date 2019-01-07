@@ -65,30 +65,36 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
-  private def futureCompleteExesForPage(page: Int): Future[Seq[(Int, Seq[CompExType])]] = tables.futureCompleteExes map {
+  private def futureCompleteExesForPage(page: Int): Future[Seq[CompExType]] = tables.futureCompleteExes map {
     allExes: Seq[CompExType] =>
       val STEP = 10
 
-      val distincExes: Map[Int, Seq[CompExType]] = allExes
-        .filter(_.ex.state == APPROVED)
-        .groupBy(_.ex.id)
+      val distinctExes: Seq[CompExType] = allExes.filter(_.ex.state == APPROVED)
 
-      val approvedExes: Seq[CompExType] = allExes.filter(_.ex.state == APPROVED)
+      val sliceStart = Math.max(0, (page - 1) * STEP)
+      val sliceEnd = Math.min(page * STEP, distinctExes.size)
 
-      val (sliceStart, sliceEnd) = (Math.max(0, (page - 1) * STEP), Math.min(page * STEP, approvedExes.size))
-
-      distincExes slice(sliceStart, sliceEnd) toSeq
+      distinctExes slice(sliceStart, sliceEnd)
   }
 
+  private def getRoutesForEx(user: User, exes: Seq[CompExType]): Future[Seq[ExAndRoute]] = Future.sequence {
+    exes.groupBy(_.ex.id) map {
+      case (id: Int, allVersionsOfEx: Seq[CompExType]) =>
+        exerciseRoutesForUser(user, allVersionsOfEx.head) map {
+          routes: Seq[CallForExPart] =>
+            val versions = allVersionsOfEx.map(_.ex.semanticVersion)
+
+            val exTitle = allVersionsOfEx.head.ex.title
+
+            ExAndRoute(id, exTitle, versions, routes)
+        }
+    } toSeq
+  }
 
   def dataForUserExesOverview(user: User, page: Int): Future[UserExOverviewContent] = for {
     numOfExes <- tables.futureNumOfExes
-    idsAndExes: Seq[(Int, Seq[CompExType])] <- futureCompleteExesForPage(page)
-    exesAndRoutes <- Future.sequence {
-      idsAndExes map {
-        case (id@_, exes) => exerciseRoutesForUser(user, exes.head) map (rs => ExAndRoute(exes.head, exes.map(_.ex.semanticVersion), rs))
-      }
-    }
+    exes <- futureCompleteExesForPage(page)
+    exesAndRoutes <- getRoutesForEx(user, exes)
   } yield UserExOverviewContent(numOfExes, exesAndRoutes)
 
   // Helper methods for admin
