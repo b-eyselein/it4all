@@ -72,7 +72,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     }
 
     val target: File = solutionDirForExercise(username, exerciseId) / ("test." + fileEnding)
-    target.write(content)
+    target.createFileIfNotExists(createParents = true).write(content)
   }
 
   override def futureOldOrDefaultSolution(user: User, exId: Int, exSemVer: SemanticVersion, part: WebExPart): Future[Option[DBSolType]] =

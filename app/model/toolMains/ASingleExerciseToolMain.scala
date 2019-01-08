@@ -74,21 +74,20 @@ abstract class ASingleExerciseToolMain(tn: String, up: String)(implicit ec: Exec
       val sliceStart = Math.max(0, (page - 1) * STEP)
       val sliceEnd = Math.min(page * STEP, distinctExes.size)
 
-      distinctExes slice(sliceStart, sliceEnd)
+      distinctExes.slice(sliceStart, sliceEnd)
   }
 
   private def getRoutesForEx(user: User, exes: Seq[CompExType]): Future[Seq[ExAndRoute]] = Future.sequence {
-    exes.groupBy(_.ex.id) map {
+    exes.groupBy(_.ex.id).map {
       case (id: Int, allVersionsOfEx: Seq[CompExType]) =>
-        exerciseRoutesForUser(user, allVersionsOfEx.head) map {
+        exerciseRoutesForUser(user, allVersionsOfEx.head).map {
           routes: Seq[CallForExPart] =>
             val versions = allVersionsOfEx.map(_.ex.semanticVersion)
-
             val exTitle = allVersionsOfEx.head.ex.title
 
             ExAndRoute(id, exTitle, versions, routes)
         }
-    } toSeq
+    }.toSeq
   }
 
   def dataForUserExesOverview(user: User, page: Int): Future[UserExOverviewContent] = for {
