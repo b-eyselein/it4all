@@ -31,7 +31,7 @@ PUT           /:toolType/solve/:id/:part                        controllers.exes
 GET           /:toolType/:id/:partStr/evaluationPartForm        controllers.exes.ExerciseController.reviewExercisePartForm(toolType: String, id: Int, partStr: String)
 POST          /:toolType/:id/:partStr/evaluatePart              controllers.exes.ExerciseController.reviewExercisePart(toolType: String, id: Int, partStr: String)
 
-GET           /:toolType/:id/:part/solution                     controllers.exes.ExerciseController.sampleSolutionForPart(toolType: String, id: Int, part: String)
+GET           /:toolType/:id/:part/solution                     controllers.exes.ExerciseController.sampleSolutionsForPart(toolType: String, id: Int, part: String)
 
 GET           /:toolType/:id/reviews                            controllers.exes.ExerciseController.showReviews(toolType: String, id: Int)
 

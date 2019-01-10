@@ -11,20 +11,34 @@ function escapeHtml(unescapedHtml: string): string {
         .replace(/'/g, "&#039;");
 }
 
+function onShowSampleSolutionSuccess(solutions: string[]): void {
+    let solutionRenders: string[] = [];
+
+    for (const solution of solutions) {
+        solutionRenders.push(`<pre>${escapeHtml(solution)}</pre>`);
+    }
+
+    $('#sampleSolTab').html(`
+<div class="card">
+    <div class="card-body bg-light">
+        ${solutionRenders.join("\n")}
+    </div>
+</div>`);
+}
+
+function onShowSampleSolutionError(jqXHR): void {
+    console.error(jqXHR.responseText);
+}
+
 $(() => {
     showSampleSolBtn = $('#showSampleSolBtn');
     showSampleSolBtn.on('click', () => {
+        showSampleSolBtn.prop('disabled', true);
         $.ajax({
             url: showSampleSolBtn.data('url'),
             method: 'GET',
-            success: (data: string) => {
-                $('#sampleSolTab').html(`
-<div class="card">
-    <div class="card-body bg-light">
-        <pre>${escapeHtml(data)}</pre>
-    </div>
-</div>`);
-            }
+            success: onShowSampleSolutionSuccess,
+            error: onShowSampleSolutionError
         });
     });
 });

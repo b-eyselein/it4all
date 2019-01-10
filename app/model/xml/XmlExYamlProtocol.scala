@@ -44,7 +44,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
 
     override protected def readObject(yamlObject: YamlObject): Try[XmlSample] = for {
       id <- yamlObject.intField(idName)
-      sampleGrammar <- yamlObject.stringField(grammarName) flatMap DocTypeDefParser.tryParseDTD
+      sampleGrammar <- yamlObject.stringField(grammarName)
       sampleDocument <- yamlObject.stringField(documentName)
     } yield XmlSample(id, exerciseId, semanticVersion, sampleGrammar, sampleDocument)
 

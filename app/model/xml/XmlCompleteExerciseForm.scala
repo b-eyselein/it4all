@@ -2,10 +2,9 @@ package model.xml
 
 import model.core.CompleteExerciseForm
 import model.xml.XmlConsts._
-import model.xml.dtd.DocTypeDefParser
 import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
-import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
+import play.api.data.{Form, Mapping}
 
 import scala.language.postfixOps
 
@@ -16,7 +15,7 @@ object XmlCompleteExerciseForm extends CompleteExerciseForm[XmlExercise, XmlComp
   final case class XmlSampleFormValues(id: Int, grammar: String, document: String)
 
   def applyXmlSample(exerciseId: Int, exerciseSemVer: SemanticVersion): XmlSampleFormValues => XmlSample = {
-    case XmlSampleFormValues(id, grammar, document) => XmlSample(id, exerciseId, exerciseSemVer, DocTypeDefParser.tryParseDTD(grammar).get, document)
+    case XmlSampleFormValues(id, grammar, document) => XmlSample(id, exerciseId, exerciseSemVer, grammar, document)
   }
 
   def unapplyXmlSample(xmlSample: XmlSample): XmlSampleFormValues =

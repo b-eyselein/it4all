@@ -43,6 +43,8 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected def copyDBSolType(oldSol: UmlSolution, newId: Int): UmlSolution = oldSol.copy(id = newId)
 
+  override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: UmlExPart): Future[Seq[String]] = ???
+
   // Saving
 
   override protected def saveExerciseRest(compEx: UmlCompleteEx): Future[Boolean] = for {

@@ -159,17 +159,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     results map (WebCompleteResult(learnerSolution, exercise, part, _))
   }
 
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: WebExPart): Future[Option[String]] =
-    tables.futureCompleteExById(id) map {
-      _.flatMap(_.sampleSolutions.headOption flatMap { webSample =>
-        part match {
-          case WebExParts.HtmlPart => webSample.htmlSample
-          case WebExParts.JsPart   => webSample.jsSample
-          case WebExParts.PHPPart  => webSample.phpSample
-        }
-      })
-    }
-
   // Other helper methods
 
   def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String = part match {

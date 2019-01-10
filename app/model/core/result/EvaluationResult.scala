@@ -34,10 +34,6 @@ trait EvaluationResult {
 
   def success: SuccessType
 
-  def getBSClass: String = success.color
-
-  def getGlyphicon: String = success.glyphicon
-
   def isSuccessful: Boolean = success == SuccessType.COMPLETE
 
 }

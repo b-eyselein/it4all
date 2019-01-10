@@ -116,12 +116,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     } yield Try(RoseCompleteResult(sol, result))
   }
 
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: RoseExPart): Future[Option[String]] = part match {
-    case RoseExParts.RoseSingleExPart => futureCompleteExById(id) map {
-      maybeCompleteEx => maybeCompleteEx flatMap (_.sampleSolutions.headOption map (_.solution))
-    }
-  }
-
   // Result handlers
 
   override def onLiveCorrectionResult(pointsSaved: Boolean, result: RoseCompleteResult): JsValue = {

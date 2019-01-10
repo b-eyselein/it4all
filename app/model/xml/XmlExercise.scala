@@ -1,7 +1,7 @@
 package model.xml
 
 import model._
-import model.xml.dtd.DocTypeDef
+import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import play.twirl.api.Html
 
 
@@ -26,8 +26,10 @@ final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
                              grammarDescription: String, rootNode: String) extends Exercise
 
 
-final case class XmlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sampleGrammar: DocTypeDef, sampleDocument: String)
+final case class XmlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sampleGrammarString: String, sampleDocument: String)
   extends SampleSolution[(DocTypeDef, String)] {
+
+  def sampleGrammar: DocTypeDef = DocTypeDefParser.tryParseDTD(sampleGrammarString).getOrElse(???)
 
   override def sample: (DocTypeDef, String) = (sampleGrammar, sampleDocument)
 

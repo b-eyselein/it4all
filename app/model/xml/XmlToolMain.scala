@@ -6,7 +6,7 @@ import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.xml.XmlConsts._
-import model.xml.dtd.{DocTypeDef, DocTypeDefLine, DocTypeDefParser}
+import model.xml.dtd.DocTypeDefParser
 import model.{Consts, Difficulties, ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
 import play.api.data.Forms._
 import play.api.data._
@@ -87,7 +87,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): XmlCompleteEx = XmlCompleteEx(
     XmlExercise(id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, grammarDescription = "", rootNode = ""),
     samples = Seq[XmlSample](
-      XmlSample(1, id, SemanticVersionHelper.DEFAULT, DocTypeDef(lines = Seq[DocTypeDefLine]()), "")
+      XmlSample(1, id, SemanticVersionHelper.DEFAULT, sampleGrammarString = "", sampleDocument = "")
     )
   )
 
@@ -136,16 +136,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
           case Some(sampleGrammar) => Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution), sampleGrammar, completeEx))
         }
     })
-
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: XmlExPart): Future[Option[String]] = futureCompleteExById(id) map {
-    futureCompleteEx =>
-      futureCompleteEx flatMap getFirstSample map { firstSample: XmlSample =>
-        part match {
-          case XmlExParts.GrammarCreationXmlPart  => firstSample.sampleGrammar.asString
-          case XmlExParts.DocumentCreationXmlPart => firstSample.sampleDocument
-        }
-      }
-  }
 
   // Views
 

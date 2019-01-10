@@ -105,7 +105,7 @@ val webJarDependencies = Seq(
   "org.webjars.npm" % "lodash" % "4.17.10", "org.webjars.npm" % "types__lodash" % "4.14.116",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
 
-  "org.webjars.npm" % "codemirror" % "5.42.0", "org.webjars.npm" % "types__codemirror" % "0.0.65", // TODO: 0.0.70
+  "org.webjars.npm" % "codemirror" % "5.42.2", "org.webjars.npm" % "types__codemirror" % "0.0.65", // TODO: 0.0.70
 
   "org.webjars.npm" % "graphlib" % "2.1.5", "org.webjars.npm" % "types__graphlib" % "2.1.4",
 

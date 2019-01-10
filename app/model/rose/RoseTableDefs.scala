@@ -28,8 +28,8 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected val solTable     = TableQuery[RoseSolutionsTable]
   override protected val reviewsTable = TableQuery[RoseExerciseReviewsTable]
 
-  private val roseInputs    = TableQuery[RoseInputTypesTable]
-  private val roseSamples   = TableQuery[RoseSampleSolutionsTable]
+  private val roseInputs  = TableQuery[RoseInputTypesTable]
+  private val roseSamples = TableQuery[RoseSampleSolutionsTable]
 
   // Queries
 
@@ -44,6 +44,9 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   } yield inputsSaved && samplesSaved
 
   override protected def copyDBSolType(oldSol: RoseSolution, newId: Int): RoseSolution = oldSol.copy(id = newId)
+
+  override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: RoseExPart): Future[Seq[String]] =
+    db.run(roseSamples.filter(_.exerciseId === exerciseId).map(_.solution).result)
 
   // Implicit column types
 

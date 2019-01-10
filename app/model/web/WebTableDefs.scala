@@ -72,6 +72,15 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected def copyDBSolType(oldSol: WebSolution, newId: Int): WebSolution = oldSol.copy(id = newId)
 
+  override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: WebExPart): Future[Seq[String]] =
+    db.run(sampleSolutionsTable.filter(_.exerciseId === exerciseId).map { sample =>
+      part match {
+        case WebExParts.HtmlPart => sample.htmlSample
+        case WebExParts.JsPart   => sample.jsSample
+        case WebExParts.PHPPart  => sample.phpSample
+      }
+    }.result)
+
   // Saving
 
   override def saveExerciseRest(compEx: WebCompleteEx): Future[Boolean] = for {

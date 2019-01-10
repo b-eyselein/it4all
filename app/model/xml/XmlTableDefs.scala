@@ -1,5 +1,7 @@
 package model.xml
 
+import java.io
+
 import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
@@ -42,7 +44,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
   override def completeExForEx(ex: XmlExercise): Future[XmlCompleteEx] = for {
-    samples <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result)
+    samples: Seq[XmlSample] <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result)
   } yield XmlCompleteEx(ex, samples)
 
   override def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: XmlExPart): Future[Boolean] = part match {
@@ -51,6 +53,14 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   }
 
   override protected def copyDBSolType(oldSol: XmlSolution, newId: Int): XmlSolution = oldSol.copy(id = newId)
+
+  override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: XmlExPart): Future[Seq[String]] =
+    db.run(samplesTable.filter(_.exerciseId === exerciseId).map { sample: XmlSamplesTable =>
+      part match {
+        case XmlExParts.GrammarCreationXmlPart  => sample.sampleGrammar
+        case XmlExParts.DocumentCreationXmlPart => sample.sampleDocument
+      }
+    }.result)
 
   // Saving
 
@@ -75,7 +85,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def id: Rep[Int] = column[Int](idName)
 
-    def sampleGrammar: Rep[DocTypeDef] = column[DocTypeDef]("sample_grammar")
+    def sampleGrammar: Rep[String] = column[String]("sample_grammar")
 
     def sampleDocument: Rep[String] = column[String]("sample_document")
 

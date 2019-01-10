@@ -116,6 +116,4 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override def correctEx(user: User, classDiagram: UmlClassDiagram, exercise: UmlCompleteEx, part: UmlExPart): Future[Try[UmlCompleteResult]] =
     Future(Try(new UmlCompleteResult(exercise, classDiagram, part)))
 
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: UmlExPart): Future[Option[String]] = ???
-
 }

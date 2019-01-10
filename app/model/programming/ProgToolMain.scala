@@ -102,12 +102,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override def correctEx(user: User, sol: ProgSolution, exercise: ProgCompleteEx, part: ProgExPart): Future[Try[ProgCompleteResult]] =
     ProgCorrector.correct(user, sol, exercise, toolMain = this)
 
-  override def futureSampleSolutionForExerciseAndPart(id: Int, part: ProgExPart): Future[Option[String]] = part match {
-    case ProgExParts.Implementation =>
-      futureCompleteExById(id) map {
-        maybeCompleteEx => maybeCompleteEx flatMap (_.sampleSolutions.headOption.map(_.solution))
-      }
-    case _                          => Future(None) // TODO!
+  override def futureSampleSolutionsForExerciseAndPart(id: Int, part: ProgExPart): Future[Seq[String]] = part match {
+    case ProgExParts.Implementation => tables.futureSampleSolutionsForExercisePart(id, part)
+    case _                          => Future(Seq.empty) // TODO!
   }
 
   // Views

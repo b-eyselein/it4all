@@ -11,7 +11,7 @@ import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 import play.api.libs.ws._
 import play.api.mvc._
 
@@ -132,13 +132,13 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
-  def sampleSolutionForPart(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
+  def sampleSolutionsForPart(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
       toolMain.partTypeFromUrl(partStr) match {
         case None       => Future(onNoSuchExercisePart(partStr))
-        case Some(part) => toolMain.futureSampleSolutionForExerciseAndPart(id, part) map {
-          case None      => NotFound("Could not find a sample solution...")
-          case Some(sol) => Ok(sol)
+        case Some(part) => toolMain.futureSampleSolutionsForExerciseAndPart(id, part) map {
+          case Seq()                  => NotFound("Could not find a sample solution...")
+          case solutions: Seq[String] => Ok(JsArray(solutions map JsString.apply))
         }
       }
   }

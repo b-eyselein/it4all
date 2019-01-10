@@ -17,6 +17,7 @@ import scala.language.{implicitConversions, postfixOps}
 class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
 
+
   import profile.api._
 
   // Abstract types
@@ -54,6 +55,9 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && classDiagPartSaved
 
   override def copyDBSolType(oldSol: DBProgSolution, newId: Int): DBProgSolution = oldSol.copy(id = newId)
+
+  override def futureSampleSolutionsForExercisePart(id: Int, part: ProgExPart): Future[Seq[String]] =
+    db.run(sampleSolutions.filter(_.exerciseId === id).map(_.solution).result)
 
   // Implicit column types
 

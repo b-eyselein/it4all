@@ -1,6 +1,7 @@
 package model.persistence
 
 import model._
+import model.regex.RegexExPart
 import model.uml._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -44,6 +45,8 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
   def futureOldSolutions(exerciseId: Int): Future[Seq[DBSolType]] = db.run(solTable.filter(_.exerciseId === exerciseId).result)
 
   def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: PartType): Future[Boolean] = Future(true)
+
+  def futureSampleSolutionsForExercisePart(exerciseId: Int, part: PartType): Future[Seq[String]]
 
   // Abstract table definitions
 

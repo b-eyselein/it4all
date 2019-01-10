@@ -14,8 +14,8 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
-  extends ASingleExerciseToolMain(tn, up) {
+abstract class IdExerciseToolMain(aToolName: String, aUrlPart: String)(implicit ec: ExecutionContext)
+  extends ASingleExerciseToolMain(aToolName, aUrlPart) {
 
   // Abstract types
 
@@ -72,7 +72,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
       }
     }
 
-  def futureSampleSolutionForExerciseAndPart(id: Int, part: PartType): Future[Option[String]]
+  def futureSampleSolutionsForExerciseAndPart(id: Int, part: PartType): Future[Seq[String]] = tables.futureSampleSolutionsForExercisePart(id, part)
 
   protected def instantiateSolution(id: Int, username: String, exercise: CompExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): DBSolType
 
@@ -84,12 +84,12 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   override def exercisesOverviewForIndex: Html = Html(
     s"""<div class="form-group">
-       |  <a class="btn btn-primary btn-block" href="${controllers.exes.routes.ExerciseController.exerciseList(up)}">Zu den Übungsaufgaben</a>
+       |  <a class="btn btn-primary btn-block" href="${controllers.exes.routes.ExerciseController.exerciseList(urlPart)}">Zu den Übungsaufgaben</a>
        |</div>
        |""".stripMargin + {
       if (usersCanCreateExes) {
         s"""<div class="form-group">
-           |  <a class="btn btn-success btn-block" href="${controllers.exes.routes.ExerciseController.newExerciseForm(up)}">Neue Aufgabe erstellen</a>
+           |  <a class="btn btn-success btn-block" href="${controllers.exes.routes.ExerciseController.newExerciseForm(urlPart)}">Neue Aufgabe erstellen</a>
            |</div>""".stripMargin
       } else ""
     })
@@ -113,7 +113,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.up)
+  override def indexCall: Call = controllers.routes.MainExerciseController.index(urlPart)
 
   def exerciseRoutesForUser(user: User, exercise: CompExType): Future[Seq[CallForExPart]] = Future.sequence(exParts map {
     exPart: PartType =>
@@ -121,7 +121,7 @@ abstract class IdExerciseToolMain(tn: String, up: String)(implicit ec: Execution
 
       if (exercise.hasPart(exPart)) {
         tables.futureUserCanSolvePartOfExercise(user.username, exercise.ex.id, exercise.ex.semanticVersion, exPart) map {
-          enabled => Some(CallForExPart(exPart, controllers.exes.routes.ExerciseController.exercise(up, exercise.ex.id, exPart.urlName), enabled))
+          enabled => Some(CallForExPart(exPart, controllers.exes.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName), enabled))
         }
 
 

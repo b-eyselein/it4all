@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Try}
 
-abstract class FixedExToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends AToolMain(tn, up) {
+abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec: ExecutionContext) extends AToolMain(aToolName, aUrlPart) {
 
   // Abstract types
 
