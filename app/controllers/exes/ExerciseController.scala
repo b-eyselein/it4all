@@ -132,7 +132,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
-  def sampleSolutionForPart(toolType: String, id: Int, partStr: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, toolMain) =>
+  def sampleSolutionForPart(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
       toolMain.partTypeFromUrl(partStr) match {
         case None       => Future(onNoSuchExercisePart(partStr))

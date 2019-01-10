@@ -19,7 +19,7 @@ trait Secured {
   private def futureOnUnauthorized(request: RequestHeader)(implicit ec: ExecutionContext): Future[Result] =
     Future(onUnauthorized(request))
 
-  private def onInsufficientPrivileges(request: RequestHeader): Result = Redirect(routes.Application.index())
+  private def onInsufficientPrivileges(request: RequestHeader): Result = Redirect(routes.Application.index()).flashing("msg" -> "You do not have sufficient privileges!")
 
   private def futureOnInsufficientPrivileges(request: RequestHeader)(implicit ec: ExecutionContext): Future[Result] =
     Future(onInsufficientPrivileges(request))

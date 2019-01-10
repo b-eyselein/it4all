@@ -16,7 +16,9 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
   def index: EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.index(user, toolList.toolMains))
+    implicit request =>
+//      println(request.flash)
+      Ok(views.html.index(user, toolList.toolMains))
   }
 
   def blocklyTest: EssentialAction = withUser { user =>
