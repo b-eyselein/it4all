@@ -14,7 +14,7 @@ services:
         volumes:
         - ./data/web/solutions/:/var/www/html/
     sqlselect:
-        image:        mysql:5.7
+        image:        mariadb
         restart:      always
         ports:
         - 3107:3306
@@ -24,7 +24,7 @@ services:
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     sqlchange:
-        image:        mysql:5.7
+        image:        mariadb
         restart:      always
         ports:
         - 3108:3306
@@ -34,7 +34,7 @@ services:
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     sqlcreate:
-        image:        mysql:5.7
+        image:        mariadb
         restart:      always
         ports:
         - 3109:3306
