@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {"type": "number"},
+    "semanticVersion": {"$ref": "#/definitions/SemanticVersion"},
+    "title": {"type": "string"},
+    "author": {"type": "string"},
+    "text": {"type": "string"},
+    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+    "testData": {"type": "array", "items": {"$ref": "#/definitions/RegexTestData"}},
+    "samples": {"type": "array", "items": {"$ref": "#/definitions/RegexSample"}}
+  },
+  "required": [
+    "id", "semanticVersion", "title", "author", "text", "status", "testData", "samples"
+  ],
+  "definitions": {
+    "SemanticVersion": {
+      "anyOf": [
+        {"type": "string"},
+        {
+          "type": "object",
+          "properties": {
+            "major": {"type": "number"},
+            "minor": {"type": "number"},
+            "patch": {"type": "number"}
+          },
+          "required": ["major", "minor", "patch"]
+        }
+      ]
+    },
+    "RegexTestData": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "data": {"type": "string"},
+        "included": {"type": "boolean"}
+      },
+      "required": ["id", "data", "included"]
+    },
+    "RegexSample": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "sample": {"type": "string"}
+      },
+      "required": ["id", "sample"]
+    }
+  }
+}

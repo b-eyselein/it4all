@@ -18,7 +18,7 @@ create table if not exists regex_sample_solutions
   exercise_id int,
   ex_sem_ver  varchar(10),
 
-  sample      varchar(50),
+  sample      varchar(100),
   primary key (id, exercise_id, ex_sem_ver),
   foreign key (exercise_id, ex_sem_ver) references regex_exercises (id, semantic_version)
     on update cascade

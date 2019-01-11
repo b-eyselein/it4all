@@ -1,0 +1,25 @@
+id: 5
+semanticVersion:
+  major: 0
+  minor: 0
+  patch: 0
+title: E-Mail-Adressen
+author: bje40dc
+text: >
+  Erstellen Sie einen regulären Ausdruck, der E-Mail-Adressen überprüfen kann. Eine Mailadresse besteht aus einem
+  lokalen und einem Domänenteil, die durch ein @-Zeichen getrennt sind. Der Domänenteil wiederum besteht aus einem
+  Hostnamen und einer Top-Level-Domain, die durch einen Punkt getrennt sind. Der Einfachkeit halber beschränken wir die
+  Zeichen, die in einer Mailadresse vorkommen dürfen, auf alle Klein- und Großbuchstaben, alle Ziffern, Minus,
+  Punkt und Unterstrich (_). Jeder Teil besteht aus mindestens einem dieser Zeichen.
+status: APPROVED
+
+testData:
+  - {id: 1, data: 'james.bond@mi5.uk', included: true}
+  - {id: 2, data: 'jason_bourne@cia.gov', included: true}
+  - {id: 3, data: 'jack.bauer@24.com', included: true}
+  - {id: 4, data: 'xyz@localhost', included: false}
+  - {id: 5, data: '@web.de', included: false}
+  - {id: 6, data: 'test.net', included: false}
+
+samples:
+  - {id: 1, sample: '([a-z]|[A-Z]|[0-9]|_|-|\.)+@([a-z]|[A-Z]|[0-9]|_|-)+\.([a-z]|[A-Z]|[0-9]|_|-|\.)+'}

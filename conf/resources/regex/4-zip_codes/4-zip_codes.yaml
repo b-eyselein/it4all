@@ -1,0 +1,23 @@
+id: 4
+semanticVersion:
+  major: 0
+  minor: 0
+  patch: 1
+title: Postleitzahlen
+author: bje40dc
+text: >
+  Schreiben Sie einen regulären Ausdruck, der (deutsche) Postleitzahlen überprüfen kann. Diese bestehen aus 5 Ziffern
+  ohne führende Nullen.
+status: APPROVED
+
+testData:
+  - {id: 1, data: '97070', included: true}
+  - {id: 2, data: '90210', included: true}
+  - {id: 3, data: '10115', included: true}
+  - {id: 4, data: '01234', included: false}
+  - {id: 5, data: '8911', included: false}
+  - {id: 6, data: '654321', included: false}
+
+samples:
+  - {id: 1, sample: '[1-9]\d{4}'}
+  - {id: 2, sample: '[1-9][1-9]{4}'}
