@@ -7,6 +7,8 @@ import scala.collection.immutable.IndexedSeq
 
 object RegexConsts extends Consts {
 
+  val dataName: String = "data"
+
   val includedName: String = "included"
 
   val testDataName: String = "testData"

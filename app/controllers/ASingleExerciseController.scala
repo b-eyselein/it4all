@@ -163,10 +163,13 @@ abstract class ASingleExerciseController(cc: ControllerComponents, dbcp: Databas
     implicit request =>
 
       val onFormError: Form[toolMain.CompExType] => Future[Result] = { formWithErrors =>
+        formWithErrors.errors.foreach(println)
         Future(BadRequest(toolMain.renderUserExerciseEditForm(user, formWithErrors, isCreation = true)(request, request2Messages(request))))
       }
 
       val onRead: toolMain.CompExType => Future[Result] = { compEx =>
+
+        println(compEx)
 
         toolMain.futureInsertCompleteEx(compEx).transform {
           case Success(saved) => Success(Ok(toolMain.renderExercisePreview(user, compEx, saved)))

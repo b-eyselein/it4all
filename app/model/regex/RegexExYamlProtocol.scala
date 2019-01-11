@@ -50,7 +50,7 @@ object RegexExYamlProtocol extends MyYamlProtocol {
 
     override protected def readObject(yamlObject: YamlObject): Try[RegexTestData] = for {
       id <- yamlObject.intField(idName)
-      data <- yamlObject.stringField("data")
+      data <- yamlObject.stringField(dataName)
       isIncluded <- yamlObject.boolField(includedName)
     } yield RegexTestData(id, exId, exSemVer, data, isIncluded)
 

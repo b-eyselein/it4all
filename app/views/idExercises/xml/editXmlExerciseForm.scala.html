@@ -1,6 +1,6 @@
-@import model.xml.XmlConsts
+@import model.xml.{XmlConsts, XmlCompleteEx, XmlToolMain}
 
-@(user: model.User, exerciseForm: Form[model.xml.XmlCompleteEx], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain)(
+@(user: model.User, exerciseForm: Form[XmlCompleteEx], isCreation: Boolean, toolMainObject: XmlToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
@@ -14,7 +14,7 @@
 @specialFields = {
 
     <p>
-        @exerciseForm.errors.foreach(println)
+    @exerciseForm.errors.foreach(println)
     </p>
 
     <fieldset>
@@ -22,12 +22,12 @@
 
         <div class="form-group row">
         @myhelpers.textareaWithLabel(exerciseForm(XmlConsts.grammarDescriptionName), "Grammatik-beschreibung", rowCount = 5, 2, 10,
-            placeHolder = Some("Beschreibung der Grammatik"))
+            placeHolder = Some("Beschreibung der Grammatik"), isRequired = true)
         </div>
 
         <div class="form-group row">
         @myhelpers.inputWithLabel(exerciseForm(XmlConsts.rootNodeName), "Wurzelknoten", "text", 2, 10,
-            placeHolder = Some("root"))
+            placeHolder = Some("root"), isRequired = true)
         </div>
     </fieldset>
 

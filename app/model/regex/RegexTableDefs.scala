@@ -73,7 +73,7 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
     def id: Rep[Int] = column[Int](idName)
 
-    def data: Rep[String] = column[String]("data")
+    def data: Rep[String] = column[String](dataName)
 
     def isIncluded: Rep[Boolean] = column[Boolean]("is_included")
 

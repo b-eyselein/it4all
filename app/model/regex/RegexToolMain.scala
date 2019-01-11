@@ -2,7 +2,7 @@ package model.regex
 
 import javax.inject.Inject
 import model.toolMains.IdExerciseToolMain
-import model.{Consts, ExerciseState, MyYamlFormat, Points, User}
+import model.{Consts, ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.JsString
@@ -38,8 +38,9 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override val consts    : Consts                        = RegexConsts
   override val exParts   : Seq[RegexExPart]              = RegexExParts.values
 
+  override val usersCanCreateExes: Boolean = true
 
-  override def compExForm: Form[RegexCompleteEx] = ???
+  override def compExForm: Form[RegexCompleteEx] = RegexCompleteExForm.format
 
   // Database helpers
 
@@ -78,7 +79,15 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override def exerciseReviewForm(username: String, completeExercise: RegexCompleteEx, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexCompleteEx = ???
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexCompleteEx = RegexCompleteEx(
+    RegexExercise(id, title = "", author, text = "", state, SemanticVersionHelper.DEFAULT),
+    sampleSolutions = Seq[RegexSampleSolution](
+      RegexSampleSolution(0, id, SemanticVersionHelper.DEFAULT, "")
+    ),
+    testData = Seq[RegexTestData](
+      RegexTestData(0, id, SemanticVersionHelper.DEFAULT, "", isIncluded = false)
+    )
+  )
 
   // Views
 
@@ -87,6 +96,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     views.html.idExercises.regex.regexExercise(user, this, exercise, part, oldSolution.map(_.solution))
 
   override def renderUserExerciseEditForm(user: User, newExForm: Form[RegexCompleteEx], isCreation: Boolean)(
-    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = ???
+    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
+    views.html.idExercises.regex.editRegexExerciseForm(user, newExForm, isCreation, this)
 
 }

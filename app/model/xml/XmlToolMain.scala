@@ -83,7 +83,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): XmlCompleteEx = XmlCompleteEx(
     XmlExercise(id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, grammarDescription = "", rootNode = ""),
     samples = Seq[XmlSample](
-      XmlSample(1, id, SemanticVersionHelper.DEFAULT, sampleGrammarString = "", sampleDocument = "")
+      XmlSample(0, id, SemanticVersionHelper.DEFAULT, sampleGrammarString = "", sampleDocument = "")
     )
   )
 

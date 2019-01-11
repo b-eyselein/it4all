@@ -112,7 +112,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
     views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
   def renderUserExerciseEditForm(user: User, newExForm: Form[CompExType], isCreation: Boolean)
-                                (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html //= ???
+                                (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
   def adminExerciseList(admin: User, exes: Seq[CompExType], toolList: ToolList): Html
 

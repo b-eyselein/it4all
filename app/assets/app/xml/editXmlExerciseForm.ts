@@ -35,13 +35,13 @@ $(() => {
         const newId: number = sampleSolsDiv.children().length;
 
         sampleSolsDiv.append(`
-<div class="form-group row" id="sample_row_${newId + 1}">
+<div class="form-group row" id="sample_row_${newId}">
     <div class="col-md-2">
         <div class="form-group">
-            <input type="number" class="form-control" name="samples[${newId}].id" id="samples_${newId}_id" value="${newId + 1}" readonly="">
+            <input type="number" class="form-control" name="samples[${newId}].id" id="samples_${newId}_id" value="${newId}" readonly="">
         </div>
         <div class="form-group">
-            <button type="button" class="btn btn-danger btn-block deleteSampleSolBtn" title="Musterlösung löschen" data-solutionid="${newId + 1}">
+            <button type="button" class="btn btn-danger btn-block deleteSampleSolBtn" title="Musterlösung löschen" data-solutionid="${newId}">
                 <span class="octicon octicon-x"></span>
             </button>
         </div>
