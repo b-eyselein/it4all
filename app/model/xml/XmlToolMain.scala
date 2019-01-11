@@ -1,9 +1,8 @@
 package model.xml
 
 import javax.inject._
-import model.core.CoreConsts.{difficultyName, durationName}
+//import model.core.CoreConsts.{difficultyName, durationName}
 import model.core._
-import model.core.result.{CompleteResult, EvaluationResult}
 import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.xml.XmlConsts._
 import model.xml.dtd.DocTypeDefParser
@@ -19,9 +18,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 
-trait XmlEvaluationResult extends EvaluationResult with JsonWriteable
-
-trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult]
 
 @Singleton
 class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext)
@@ -94,11 +90,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override def instantiateSolution(id: Int, username: String, exercise: XmlCompleteEx, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
     XmlSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
 
-  private def getFirstSample(completeEx: XmlCompleteEx): Option[XmlSample] = completeEx.samples.toList match {
-    case Nil       => None
-    case head :: _ => Some(head)
-  }
-
   // Yaml
 
   override val yamlFormat: MyYamlFormat[XmlCompleteEx] = XmlExYamlProtocol.XmlExYamlFormat
@@ -108,7 +99,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteEx, part: XmlExPart): Future[Try[XmlCompleteResult]] =
     Future(part match {
       case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) map { dir =>
-        getFirstSample(completeEx) map (_.sampleGrammar.asString) match {
+        completeEx.samples.headOption map (_.sampleGrammar.asString) match {
           case None                 =>
             //            new Exception(s"There is no grammar for exercise ${completeEx.ex.id}")
             ???

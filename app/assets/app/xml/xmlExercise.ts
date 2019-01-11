@@ -3,11 +3,13 @@ import * as $ from 'jquery';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/dtd/dtd';
-import {initEditor} from "../editorHelpers";
+import {initEditor} from '../editorHelpers';
 
-import {CorrectionResult} from "../matches";
+import {CorrectionResult} from '../matches';
 
-import {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult} from "./xmlGrammarCorrection";
+import {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult} from './xmlGrammarCorrection';
+
+import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
 
 let editor: CodeMirror.Editor;
 
@@ -49,6 +51,7 @@ function onXmlDocumentCorrectionSuccess(response: XmlDocumentCorrectionResponse)
     }
 
     $('#correction').html(html);
+    focusOnCorrection();
 }
 
 
@@ -57,6 +60,7 @@ function onXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult): vo
     testBtn.prop('disabled', false);
 
     $('#correction').html(renderXmlGrammarCorrectionSuccess(response));
+    focusOnCorrection();
 }
 
 function onXmlCorrectionError(jqXHR): void {
@@ -73,20 +77,9 @@ function testSol(): void {
 
     const solution: string = editor.getValue();
 
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json', // return type
-        contentType: 'application/json', // type of message to server
-        url: testBtn.data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token)
-        },
-        success: isDocumentPart ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
-        error: onXmlCorrectionError
-    });
+    testTextExerciseSolution(testBtn, solution,
+        isDocumentPart ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
+        onXmlCorrectionError);
 }
 
 function endSolve(): boolean {

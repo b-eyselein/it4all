@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "id": {"type": "number"},
-    "semanticVersion": {"$ref": "#/definitions/SemanticVersion"},
+    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
     "title": {"type": "string"},
     "author": {"type": "string"},
     "text": {"type": "string"},
@@ -16,19 +16,6 @@
     "mappings", "ignoreWords", "samples"
   ],
   "definitions": {
-    "SemanticVersion": {
-      "anyOf": [
-        {"type": "string"},
-        {
-          "type": "object",
-          "properties": {
-            "major": {"type": "number"},
-            "minor": {"type": "number"},
-            "patch": {"type": "number"}
-          }
-        }
-      ]
-    },
     "UmlMapping": {
       "type": "object",
       "properties": {
@@ -43,7 +30,7 @@
         "id": {"type": "number"},
         "classes": {"type": "array", "items": {"$ref": "#/definitions/UmlClass"}},
         "associations": {"type": "array", "items": {"$ref": "#/definitions/UmlAssoc"}},
-        "implementations": {"type": "array", "items": {"$ref": "#/defitions/UmlImpls"}}
+        "implementations": {"type": "array", "items": {"$ref": "#/definitions/UmlImpls"}}
       },
       "required": ["id", "classes", "associations", "implementations"]
     },

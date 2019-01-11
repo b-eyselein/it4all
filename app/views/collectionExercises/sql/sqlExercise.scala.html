@@ -104,9 +104,6 @@
                     <div class="btn-group d-flex">
                         <button class="btn btn-success w-100" id="testBtn">Lösung testen</button>
 
-                        <button data-href="@coll.routes.CollectionController.sampleSol(toolMainObject.urlPart, scenario.id, exercise.ex.id)"
-                        class="btn btn-primary w-100" id="showSampleSolBtn">Musterlösung(en) anzeigen</button>
-
                         <a href="@coll.routes.CollectionController.collection(toolMainObject.urlPart, scenario.id)"
                         class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
@@ -137,7 +134,10 @@
                         </div>
                     </div>
 
-                    <div id="sampleSolTab" class="tab-pane fade"></div>
+                    <div id="sampleSolTab" class="tab-pane fade">
+                        <button data-href="@coll.routes.CollectionController.sampleSol(toolMainObject.urlPart, scenario.id, exercise.ex.id)"
+                        class="btn btn-outline-success btn-block" id="showSampleSolBtn">Musterlösung(en) anzeigen</button>
+                    </div>
                 </div>
             </div>
 

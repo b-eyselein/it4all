@@ -1,0 +1,14 @@
+{
+  "anyOf": [
+    {"type": "string"},
+    {
+      "type": "object",
+      "properties": {
+        "major": {"type": "number"},
+        "minor": {"type": "number"},
+        "patch": {"type": "number"}
+      },
+      "required": ["major", "minor", "patch"]
+    }
+  ]
+}

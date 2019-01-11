@@ -45,6 +45,8 @@ final case class XmlDocumentCompleteResult(learnerSolution: String, results: Seq
 
   override type SolType = String
 
+  override def isSuccessful: Boolean = results.isEmpty
+
   def toJson(solutionSaved: Boolean): JsValue = Json.obj(
     solutionSavedName -> solutionSaved,
     successName -> isSuccessful,

@@ -1,8 +1,12 @@
 import * as $ from 'jquery';
+
 import * as CodeMirror from 'codemirror';
 import {initEditor} from "../editorHelpers";
 import 'codemirror/mode/htmlmixed/htmlmixed';
+
 import {onWebCorrectionError, renderWebCompleteResult, WebCompleteResult} from "./webCorrection";
+
+import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
 
 let editor: CodeMirror.Editor;
 
@@ -44,20 +48,21 @@ function testSol(): void {
 
     const solution: string = editor.getValue();
 
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json', // return type
-        contentType: 'application/json', // type of message to server
-        url: testButton.data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onWebCorrectionSuccess,
-        error: onWebCorrectionError
-    });
+    testTextExerciseSolution(testButton, solution, onWebCorrectionSuccess, onWebCorrectionError);
+    // $.ajax({
+    //     type: 'PUT',
+    //     dataType: 'json', // return type
+    //     contentType: 'application/json', // type of message to server
+    //     url: testButton.data('url'),
+    //     data: JSON.stringify(solution),
+    //     async: true,
+    //     beforeSend: (xhr) => {
+    //         const token = $('input[name="csrfToken"]').val() as string;
+    //         xhr.setRequestHeader("Csrf-Token", token);
+    //     },
+    //     success: onWebCorrectionSuccess,
+    //     error: onWebCorrectionError
+    // });
 }
 
 function onWebCorrectionSuccess(result: WebCompleteResult): void {
@@ -66,6 +71,7 @@ function onWebCorrectionSuccess(result: WebCompleteResult): void {
     testBtn.prop('disabled', false);
 
     renderWebCompleteResult(result);
+    focusOnCorrection();
 }
 
 function unescapeHTML(escapedHTML: string): string {

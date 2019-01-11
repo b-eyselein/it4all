@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "id": {"type": "number"},
-    "semanticVersion": {"$ref": "#/definitions/SemanticVersion"},
+    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
     "title": {"type": "string"},
     "author": {"type": "string"},
     "text": {"type": "string"},
@@ -14,20 +14,6 @@
     "id", "semanticVersion", "title", "author", "text", "status", "testData", "samples"
   ],
   "definitions": {
-    "SemanticVersion": {
-      "anyOf": [
-        {"type": "string"},
-        {
-          "type": "object",
-          "properties": {
-            "major": {"type": "number"},
-            "minor": {"type": "number"},
-            "patch": {"type": "number"}
-          },
-          "required": ["major", "minor", "patch"]
-        }
-      ]
-    },
     "RegexTestData": {
       "type": "object",
       "properties": {

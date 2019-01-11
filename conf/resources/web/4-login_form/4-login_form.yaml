@@ -9,57 +9,74 @@ text: Erstellen Sie ein Login-Formular in HTML
 status: APPROVED
 
 htmlTasks:
-- id: 1
-  text: |
-    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/lib/bootstrap/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
-  xpathQuery: /html/head//link
-  attributes:
-  - {key: rel, value: stylesheet}
-  - {key: href, value: /assets/lib/bootstrap/css/bootstrap.css}
-- id: 2
-  text: >
-    Erstellen Sie das Formular-Tag. Geben Sie für die Attribute 'action' und 'method' jeweils die
-    Werte '/test.php' und 'post' an.
-  xpathQuery: /html/body//form
-  attributes:
-  - {key: action, value: /test.php}
-  - {key: method, value: post}
-- id: 3
-  text: >
-    Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen
-    und geben Sie dem Attribut 'name' den Wert 'email'. Die Eingabe soll außerdem required sein. Geben Sie dem
-    Feld zur Eingabe der Emailadressedie Klasse 'form-control'.
-  xpathQuery: /html/body//form//input[@type='email']
-  attributes:
-  - {key: name, value: email}
-  - {key: required, value: 'true'}
-  - {key: class, value: form-control}
-- id: 4
-  text: >
-    Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und
-    geben Sie dem Attribut 'name' den Wert 'passwort'. Die Eingabe soll außerdem verpflichtend sein. Geben
-    Sie dem Feld zur Eingabe des Passworts Klasse 'form-control'.
-  xpathQuery: /html/body//form//input[@type='password']
-  attributes:
-  - {key: name, value: passwort}
-  - {key: required, value: 'true'}
-  - {key: class, value: form-control}
-- id: 5
-  text: |
-    Erstellen Sie einen Knopf (input) um das Formular abzusenden. Geben Sie den Knopf zum Absenden des Formular die Klasse 'btn btn-default'
-  xpathQuery: /html/body//form//input[@type='submit']
-  attributes:
-  - {key: class, value: btn btn-default}
+  - id: 1
+    text: |
+      Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/lib/bootstrap/dist/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
+    xpathQuery: /html/head//link
+    attributes:
+      - {key: rel, value: stylesheet}
+      - {key: href, value: /assets/lib/bootstrap/dist/css/bootstrap.css}
+  - id: 2
+    text: >
+      Erstellen Sie das Formular-Tag. Geben Sie für die Attribute 'action' und 'method' jeweils die
+      Werte '/test.php' und 'post' an.
+    xpathQuery: /html/body//form
+    attributes:
+      - {key: action, value: /test.php}
+      - {key: method, value: post}
+  - id: 3
+    text: >
+      Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen
+      und geben Sie dem Attribut 'name' den Wert 'email'. Die Eingabe soll außerdem required sein. Geben Sie dem
+      Feld zur Eingabe der Emailadressedie Klasse 'form-control'.
+    xpathQuery: /html/body//form//input[@type='email']
+    attributes:
+      - {key: name, value: email}
+      - {key: required, value: 'true'}
+      - {key: class, value: form-control}
+  - id: 4
+    text: >
+      Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und
+      geben Sie dem Attribut 'name' den Wert 'passwort'. Die Eingabe soll außerdem verpflichtend sein. Geben
+      Sie dem Feld zur Eingabe des Passworts Klasse 'form-control'.
+    xpathQuery: /html/body//form//input[@type='password']
+    attributes:
+      - {key: name, value: passwort}
+      - {key: required, value: 'true'}
+      - {key: class, value: form-control}
+  - id: 5
+    text: |
+      Erstellen Sie einen Knopf (input) um das Formular abzusenden. Geben Sie den Knopf zum Absenden des Formular die Klasse 'btn btn-default'
+    xpathQuery: /html/body//form//input[@type='submit']
+    attributes:
+      - {key: class, value: btn btn-default}
 
 jsTasks: []
 
 phpTasks: []
 
 samples:
-- id: 1
-  htmlSample: |
-    <!doctype html>
-    <html>
-    <head></head>
-    <body>TODO!<body>
-    </html>
+  - id: 1
+    htmlSample: |
+      <!doctype html>
+      <html>
+      <head>
+          <title>Login-Formular</title>
+          <link rel="stylesheet" href="/assets/lib/bootstrap/dist/css/bootstrap.css">
+      </head>
+      <body>
+      <form action="/test.php" method="post">
+          <p>
+              <label for="email">E-Mail-Adresse:</label>
+              <input type="email" id="email" name="email" class="form-control" required>
+          </p>
+          <p>
+              <label for="passwort">Passwort:</label>
+              <input type="password" id="passwort" name="passwort" class="form-control" required>
+          </p>
+          <p>
+              <input type="submit" class="btn btn-default">
+          </p>
+      </form>
+      </body>
+      </html>

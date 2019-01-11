@@ -1,6 +1,9 @@
 import * as $ from 'jquery';
+
 import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
+
+import {focusOnCorrection, testTextExerciseSolution} from "../textExercise";
 
 let editor: CodeMirror.Editor;
 
@@ -57,20 +60,7 @@ function testSol(): void {
 
     testBtn.prop('disabled', true);
 
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json', // return type
-        contentType: 'application/json', // type of message to server
-        url: testBtn.data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader('Csrf-Token', token);
-        },
-        success: onRegexCorrectionSuccess,
-        error: onRegexCorrectionError
-    });
+    testTextExerciseSolution(testBtn, solution, onRegexCorrectionSuccess, onRegexCorrectionError);
 }
 
 function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void {
@@ -106,10 +96,12 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
 
 
     $('#correctionDiv').html(html);
+    focusOnCorrection();
 }
 
 function onRegexCorrectionError(jqXHR): void {
     testBtn.prop('disabled', false);
 
     console.error(jqXHR.responseText);
+    focusOnCorrection();
 }

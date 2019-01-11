@@ -46,5 +46,4 @@ object XmlCorrector {
   def correctDTD(userGrammar: DocTypeDef, sampleGrammar: DocTypeDef): MatchingResult[ElementLineMatch] =
     DocTypeDefMatcher.doMatch(userGrammar.asElementLines, sampleGrammar.asElementLines)
 
-
 }

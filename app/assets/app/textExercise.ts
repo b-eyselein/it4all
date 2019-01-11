@@ -1,6 +1,12 @@
 import * as $ from 'jquery';
 
+export {focusOnCorrection, testTextExerciseSolution};
+
 let showSampleSolBtn: JQuery;
+
+function focusOnCorrection(): void {
+    $('#showCorrectionTabA').get()[0].click();
+}
 
 function escapeHtml(unescapedHtml: string): string {
     return unescapedHtml
@@ -10,6 +16,30 @@ function escapeHtml(unescapedHtml: string): string {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+
+function testTextExerciseSolution(testBtn: JQuery, solution: any, success, error): void {
+    testBtn.prop('disabled', true);
+
+    const isDocumentPart: boolean = $('#exercisePart').val() === 'document';
+
+    // const solution: string = editor.getValue();
+
+    $.ajax({
+        type: 'PUT',
+        dataType: 'json', // return type
+        contentType: 'application/json', // type of message to server
+        url: testBtn.data('url'),
+        data: JSON.stringify(solution),
+        async: true,
+        beforeSend: (xhr) => {
+            const token = $('input[name="csrfToken"]').val() as string;
+            xhr.setRequestHeader("Csrf-Token", token)
+        },
+        success, //: isDocumentPart ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
+        error, //: onXmlCorrectionError
+    });
+}
+
 
 function onShowSampleSolutionSuccess(solutions: string[]): void {
     let solutionRenders: string[] = [];
