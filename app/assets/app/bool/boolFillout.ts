@@ -21,9 +21,9 @@ function changeValue(button: HTMLButtonElement): void {
 
     jButton.text(newValue);
     if (newValue === 0) {
-        jButton.removeClass('btn-primary');
+        jButton.removeClass('btn-primary').addClass('btn-outline-primary');
     } else {
-        jButton.addClass('btn-primary');
+        jButton.removeClass('btn-outline-primary').addClass('btn-primary');
     }
 }
 
