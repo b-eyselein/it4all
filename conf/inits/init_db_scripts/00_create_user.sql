@@ -1,0 +1,3 @@
+DROP USER IF EXISTS 'it4all';
+
+CREATE USER it4all@'%' IDENTIFIED BY 'sT8aV#k7';

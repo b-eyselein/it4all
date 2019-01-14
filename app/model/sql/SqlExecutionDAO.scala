@@ -18,11 +18,16 @@ import scala.util.{Failure, Try}
 
 abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
-  protected val mainDB = db(mainDbName)
+  protected val mainDB = db(None)
 
-  protected def db(schemaName: String): Database = Database.forURL(
-    url = s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false",
-    user = "it4all", password = "sT8aV#k7", driver = "com.mysql.cj.jdbc.Driver")
+  protected def db(maybeSchemaName: Option[String]): Database = {
+    val url = maybeSchemaName match {
+      case None             => s"jdbc:mysql://localhost:$port?useSSL=false"
+      case Some(schemaName) => s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false"
+    }
+
+    Database.forURL(url, user = "it4all", password = "sT8aV#k7", driver = "com.mysql.cj.jdbc.Driver")
+  }
 
 
   def executeQueries(scenario: SqlScenario, exercise: SqlCompleteEx, userStatement: Statement, sampleStatement: Statement): SqlExecutionResult = {
@@ -42,7 +47,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
       }
     }
 
-    using(db(schemaName).source.createConnection()) { connection =>
+    using(db(Some(schemaName)).source.createConnection()) { connection =>
       readScript(scriptFilePath) foreach { query => using(connection.prepareStatement(query))(_.execute()) }
     }
   }
@@ -75,7 +80,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
     }
   }.flatten getOrElse Seq[String]()
 
-  def tableContents(schemaName: String): Seq[SqlQueryResult] = using(db(schemaName).source.createConnection()) { connection =>
+  def tableContents(schemaName: String): Seq[SqlQueryResult] = using(db(Some(schemaName)).source.createConnection()) { connection =>
     allTableNames(connection) map { tableName =>
       val selectStatement = connection.prepareStatement(SELECT_ALL_DUMMY + tableName)
       val resultSet = selectStatement.executeQuery()
@@ -89,7 +94,7 @@ object SelectDAO extends SqlExecutionDAO("sqlselect", 3107) {
 
   override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = query match {
     case sel: Select =>
-      using(db(schemaName).source.createConnection()) { connection =>
+      using(db(Some(schemaName)).source.createConnection()) { connection =>
         using(connection.prepareStatement(sel.toString)) { statement => SqlQueryResult(statement.executeQuery()) }
       } flatten
     case _           => Failure(null)
@@ -100,7 +105,7 @@ object ChangeDAO extends SqlExecutionDAO("sqlchange", 3108) {
 
   override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = query match {
     case change@(_: Update | _: Insert | _: Delete) =>
-      using(db(schemaName).source.createConnection()) { connection =>
+      using(db(Some(schemaName)).source.createConnection()) { connection =>
         connection.setAutoCommit(false)
         using(connection.prepareStatement(change.toString)) { statement => statement.executeUpdate() } flatMap { _ =>
 

@@ -12,6 +12,18 @@ object SqlExTag extends PlayEnum[SqlExTag] {
 
   override def values: IndexedSeq[SqlExTag] = findValues
 
+  // Types of queries?
+
+  case object SQL_SELECT extends SqlExTag("S", "SELECT")
+
+  case object SQL_UPDATE extends SqlExTag("U", "UPDATE")
+
+  case object SQL_INSERT extends SqlExTag("I", "INSERT")
+
+  case object SQL_DELETE extends SqlExTag("D", "DELETE")
+
+  // Constructs used in queryy
+
   case object SQL_JOIN extends SqlExTag("J", "Join")
 
   case object SQL_DOUBLE_JOIN extends SqlExTag("2J", "Zweifacher Join")

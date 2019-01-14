@@ -1,9 +1,7 @@
 package model.sql
 
-import better.files.File
-import javax.inject._
+import javax.inject.{Inject, Singleton}
 import model._
-import model.core.Java_Levenshtein
 import model.core.result.EvaluationResult
 import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
@@ -71,16 +69,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override implicit val yamlFormat: MyYamlFormat[SqlCompleteScenario] = SqlYamlProtocol.SqlScenarioYamlFormat
 
   // db
-
-  override def futureSaveRead(exercises: Seq[CompCollType]): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
-    compColl =>
-      // FIXME: record failure!
-      val scriptFilePath: File = exerciseResourcesFolder / s"${compColl.coll.shortName}.sql"
-
-      allDaos.foreach(_.executeSetup(compColl.coll.shortName, scriptFilePath))
-
-      tables.saveCompleteColl(compColl) map (saveRes => (compColl, saveRes))
-  })
 
   override protected def saveSolution(solution: SqlSolution): Future[Boolean] = tables.saveSolution(solution)
 

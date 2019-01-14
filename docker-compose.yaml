@@ -1,45 +1,45 @@
 version: '3'
 
 volumes:
-    select_db_volume:
-    update_db_volume:
-    create_db_volume:
+  select_db_volume: {}
+  update_db_volume: {}
+  create_db_volume: {}
 
 services:
-    webtester:
-        image:        php:7-apache
-        restart:      always
-        ports:
-        - 9080:80
-        volumes:
-        - ./data/web/solutions/:/var/www/html/
-    sqlselect:
-        image:        mariadb
-        restart:      always
-        ports:
-        - 3107:3306
-        volumes:
-        - ./conf/inits/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
-        - select_db_volume:/var/lib/mysql
-        environment:
-        - MYSQL_ROOT_PASSWORD=sT8aV#k7
-    sqlchange:
-        image:        mariadb
-        restart:      always
-        ports:
-        - 3108:3306
-        volumes:
-        - ./conf/inits/sql_change_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
-        - update_db_volume:/var/lib/mysql
-        environment:
-        - MYSQL_ROOT_PASSWORD=sT8aV#k7
-    sqlcreate:
-        image:        mariadb
-        restart:      always
-        ports:
-        - 3109:3306
-        volumes:
-        - ./conf/inits/sql_create_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
-        - create_db_volume:/var/lib/mysql
-        environment:
-        - MYSQL_ROOT_PASSWORD=sT8aV#k7
+  webtester:
+    image:        php:7-apache
+    restart:      always
+    ports:
+      - 9080:80
+    volumes:
+      - ./data/web/solutions/:/var/www/html/
+  sqlselect:
+    image:        mariadb
+    restart:      always
+    ports:
+      - 3107:3306
+    volumes:
+      - ./conf/inits/init_db_scripts/:/docker-entrypoint-initdb.d/
+      - select_db_volume:/var/lib/mysql
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+  sqlchange:
+    image:        mariadb
+    restart:      always
+    ports:
+      - 3108:3306
+    volumes:
+      - ./conf/inits/init_db_scripts/:/docker-entrypoint-initdb.d/
+      - update_db_volume:/var/lib/mysql
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+  sqlcreate:
+    image:        mariadb
+    restart:      always
+    ports:
+      - 3109:3306
+    volumes:
+      - ./conf/inits/sql_create_setup.sql:/docker-entrypoint-initdb.d/00_create_user_and_db.sql
+      - create_db_volume:/var/lib/mysql
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
