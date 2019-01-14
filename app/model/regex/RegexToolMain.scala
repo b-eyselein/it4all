@@ -38,7 +38,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override val consts    : Consts                        = RegexConsts
   override val exParts   : Seq[RegexExPart]              = RegexExParts.values
 
-  override val usersCanCreateExes: Boolean = true
+  override val usersCanCreateExes: Boolean = false
 
   override def compExForm: Form[RegexCompleteEx] = RegexCompleteExForm.format
 
