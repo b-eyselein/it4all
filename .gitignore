@@ -19,7 +19,7 @@ data/web/*
 
 
 # IntelliJ IDEA
-.idea/
+.idea/*
 !.idea/jsonSchemas.xml
 venv/
 
