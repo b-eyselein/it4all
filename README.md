@@ -9,19 +9,27 @@ it4all is a web correction framework for
 - Uml Class Diagrams and Activity Diagrams
 - Spreadsheets [MS Excel, Libre-/Openoffice Calc]
 - Nary Numbers, Boolean Algebra
+- Regular Expressions
 
 [![build status](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/badges/master/build.svg)](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/commits/master)
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2941021ee993484db0cab405aa03b209)](https://www.codacy.com/app/it4all/it4all?utm_source=gitlab2.informatik.uni-wuerzburg.de&amp;utm_medium=referral&amp;utm_content=bje40dc/it4all&amp;utm_campaign=Badge_Grade)
 
 ## Development
 
 ### Prerequisites
-To develop it4all, you need to have installed the following programs (names of packages in Ubuntu in brackets):
+To develop `it4all`, you need to have installed the following programs (names of packages in Ubuntu in brackets):
 
 1. Git (`git`)
-2. Docker (`docker.io`) (Do not forget to add yourself to group "docker" on Linux with
+2. (Open-)JDK 11 (`default-jdk` or `openjdk-11-jdk`)
+3. NodeJS (`nodejs` for compiling Typescript)
+4. Docker (`docker.io`) (Do not forget to add yourself to group "docker" on Linux with
    `sudo usermod -aG docker $(whoami)` and log yourself out and in again)
-3. Docker-compose (`docker-compose`)
+5. Docker-compose (`docker-compose`)
+
+### MariaDB-Server
+
+`it4all` expects a `MariaDB`-Server running on port 3306 with users given in `conf/application.conf`
 
 ### First start
 
@@ -35,7 +43,7 @@ To develop it4all, you need to have installed the following programs (names of p
 
   `$ docker-compose up -d`
 
-* Change ownership of all folders in `data/` (it gets created with ownership `root:root`):
+* Change ownership of all folders in `data/` (it gets created with ownership `root:root` by docker-compose):
 
   `$ sudo chown -R $(whoami):$(whoami) data/`
 
@@ -69,9 +77,9 @@ Install `Scala Tools` Plugin for IntelliJ Idea and import the `build.sbt`-file
 
 ### Prerequisites
 
-* JRE (`apt`: `default-jre`)
-* MySQL Server (`apt`: `mariadb-server`)
-* Docker with docker-compose (`snap`: `docker`)
+* JRE (`default-jre`)
+* MariaDB Server (`mariadb-server`)
+* Docker with docker-compose (`docker.io`, `docker-compose`)
 
 ### Running
 
@@ -86,3 +94,5 @@ Install `Scala Tools` Plugin for IntelliJ Idea and import the `build.sbt`-file
   `bin/it4all -Dplay.http.secret.key="<random string>" -Dplay.evolutions.db.default.autoApply=true`
   
 * Subsequent starts without db update:
+
+  `bin/it4all -Dplay.http.secret.key="<random string>"`
