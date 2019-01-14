@@ -163,5 +163,5 @@ exercises:
         (9, 'Tina', 'Sattler', 'tina_sattler', 2)
   - id: 2
     sample: |
-      INSERT INTO employee (`id`, `firstname`, `lastname`, `username`, `chef_id`) VALUES
+      INSERT INTO employee (id, firstname, lastname, username, chef_id) VALUES
         (9, 'Tina', 'Sattler', 'tina_sattler', 2)

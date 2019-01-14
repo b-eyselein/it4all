@@ -6,6 +6,7 @@ import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
+import play.api.Logger
 
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
@@ -25,10 +26,13 @@ abstract class QueryCorrector(val queryType: String) {
         val userExpressions = getExpressions(userQ)
         val userTableAliases = resolveAliases(userTables)
 
-        val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.samples.flatMap { sqlSample =>
-          parseStatement(sqlSample.sample) flatMap checkStatement map {
-            sampleQ: Q => performStaticComparison(userQ, sampleQ, userColumns, userTables, userJoinExpressions, userExpressions, userTableAliases)
-          } toOption
+        val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.samples.map { sqlSample =>
+          parseStatement(sqlSample.sample) flatMap checkStatement match {
+            case Failure(error)      =>
+              Logger.error("There has been an error parsing a sql sample solution", error)
+              ???
+            case Success(sampleQ: Q) => performStaticComparison(userQ, sampleQ, userColumns, userTables, userJoinExpressions, userExpressions, userTableAliases)
+          }
         } reduceOption { (comp1, comp2) =>
           // FIXME: minByOption with Scala 2.13...
           if (comp1.points > comp2.points) comp1

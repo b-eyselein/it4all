@@ -544,7 +544,7 @@ exercises:
         sample: |
           SELECT first_name, family_name, birthday
             FROM customers
-           WHERE birthday LIKE '%-02-%';
+            WHERE birthday LIKE '%-02-%';
     hint: Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.
 
   - id: 35
@@ -563,3 +563,92 @@ exercises:
             LIMIT 1;
     tags: [SQL_ORDER_BY, SQL_LIMIT]
     hint: Achten Sie darauf dass sich die Spaltennamen nicht verändern.
+
+  - id: 36
+    semanticVersion: 1.0.0
+    title: Passwortupdate!
+    author: bje40dc
+    text: >
+      Sie möchten ihre Kunden dazu motivieren sichere Passwörter zu verwenden. Alle Kunden, die als Kennwort 'Passwort'
+      verwenden, sollen beim nächsten Login über eine Meldung aufgefordert werden sich was neues auszudenken. Geben Sie
+      die ID und die Email-Adresse der faulen Kunden aus.
+    exerciseType: SELECT
+    status: APPROVED
+    samples:
+      - id: 1
+        sample: |
+          SELECT id, email
+            FROM customers
+            WHERE password = '3e45af4ca27ea2b03fc6183af40ea112';
+    tags: []
+    hint: >
+      Die Passwörter der Kunden sind als MD5-Hash-String in der Tabelle 'customers' gespeichert. Der MD5-Hashstring
+      zu 'Passwort' lautet '3e45af4ca27ea2b03fc6183af40ea112'.
+
+  - id: 37
+    semanticVersion: 1.0.0
+    title: Mit allem zufrieden?
+    author: bje40dc
+    text: >
+      Ermitteln Sie den Kunden, welcher die höchste durchschnittliche Bewertung abgegeben hat. Geben Sie dazu Vorname,
+      Nachname und seine durchschnittliche Bewertung (Spaltenbezeichnung 'avg_rating') aus.
+    exerciseType: SELECT
+    status: APPROVED
+    samples:
+      - id: 1
+        sample: |
+          SELECT customers.first_name, customers.family_name, AVG(rating) AS avg_rating
+            FROM ratings LEFT JOIN customers ON customers.id = customer_id
+            GROUP BY customer_id
+            ORDER BY avg_rating DESC
+            LIMIT 1;
+    tags: [SQL_JOIN, SQL_FUNCTION, SQL_GROUP_BY, SQL_ORDER_BY, SQL_LIMIT]
+
+  - id: 38
+    semanticVersion: 1.0.0
+    title: Teure Wünsche...
+    author: bje40dc
+    text: >
+      Ermitteln Sie den Einkaufswert der Wunschlisten für jeden Kunden. Listen Sie dabei Vorname, Nachname und
+      Einkaufswert (Spaltenbezeichnung 'value') auf. Sortieren Sie die Einträge aufwärts nach Einkaufswert.
+    exerciseType: SELECT
+    status: APPROVED
+    samples:
+      - id: 1
+        sample: |
+          SELECT customers.first_name, customers.family_name, SUM(price) AS value
+            FROM wishlists
+              LEFT JOIN books ON books.id = book_id
+              LEFT JOIN customers ON customers.id = customer_id
+            GROUP BY customer_id
+            ORDER BY value ASC;
+    tags: [SQL_FUNCTION, SQL_ALIAS, SQL_DOUBLE_JOIN, SQL_GROUP_BY, SQL_ORDER_BY]
+
+  - id: 39
+    semanticVersion: 1.0.0
+    title: Veröffentlichungsjahre
+    author: bje40dc
+    text: Wählen Sie alle Bücher aus, die in den Jahren 1998, 2001 oder 2011 veröffentlicht wurden.
+    exerciseType: SELECT
+    status: APPROVED
+    samples:
+      - id: 1
+        sample: |
+          SELECT * FROM books
+            WHERE year IN (1998, 2001, 2011);
+
+  - id: 100
+    semanticVersion: 1.0.0
+    title: Aufgestockt
+    author: bje40dc
+    text: >
+      Es sind neue Exemplare des Buches mit dem Titel 1894 eingetroffen. Aktualisieren Sie den Bestand auf den neuen
+      Wert von 15000.
+    exerciseType: UPDATE
+    status: APPROVED
+    samples:
+      - id: 1
+        sample: |
+          UPDATE books
+            SET stock = 15000
+            WHERE title = '1984';

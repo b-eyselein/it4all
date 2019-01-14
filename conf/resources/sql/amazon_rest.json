@@ -1,15 +1,5 @@
 [
 	{
-		"id": 102, 
-		"exercisetype": "SELECT", 
-		"text": "Sie möchten ihre Kunden dazu motivieren sichere Passwörter zu verwenden. Alle Kunden, die als Kennwort 'Passwort' verwenden, sollen beim nächsten Login über eine Meldung aufgefordert werden sich was neues auszudenken. Geben Sie die ID und die Email-Adresse der faulen Kunden aus.", 
-		"hint": "Die Passwörter der Kunden sind als MD5-Hash-String in der Tabelle 'customers ' gespeichert. Der MD5-Hashstring zu 'Passwort' lautet '3e45af4ca27ea2b03fc6183af40ea112'.", 
-		"samplesolutions": [
-			"SELECT id, email FROM customers WHERE password = '3e45af4ca27ea2b03fc6183af40ea112'", 
-			"SELECT id, email FROM customers WHERE password = \"3e45af4ca27ea2b03fc6183af40ea112\""
-		]
-	}, 
-	{
 		"id": 114, 
 		"exercisetype": "SELECT", 
 		"text": "Wählen Sie alle Kunden aus, deren Nachname nur aus vier Buchstaben besteht. Geben Sie nur den Vornamen und Nachnamen aus. Die Datensätze sollen nach dem Nachnamen alphabetisch sortiert werden.", 
@@ -22,55 +12,17 @@
 		]
 	}, 
 	{
-		"id": 115, 
-		"exercisetype": "SELECT", 
-		"text": "Finden Sie alle Bücher, die zu einem reduziertem Preis erworben wurden. Geben Sie hierfür die ID der Bestellposition (Tabelle: 'order_positions'), den Buchtitel, den aktuellen Preis (neue Spalte: 'current_price') und den reduzierten Preis (neue Spalte: 'order_price') aus.", 
+		"id": 115,
+		"exercisetype": "SELECT",
+		"text": "Finden Sie alle Bücher, die zu einem reduziertem Preis erworben wurden. Geben Sie hierfür die ID der Bestellposition (Tabelle: 'order_positions'), den Buchtitel, den aktuellen Preis (neue Spalte: 'current_price') und den reduzierten Preis (neue Spalte: 'order_price') aus.",
 		"samplesolutions": [
 			"SELECT order_positions.id, title, books.price AS current_price, order_positions.price AS order_price FROM order_positions JOIN books ON books.id = book_id WHERE (books.price - order_positions.price) > 0"
-		], 
+		],
 		"tags": [
-			"JOIN", 
+			"JOIN",
 			"ALIAS"
 		]
-	}, 
-	{
-		"id": 117, 
-		"exercisetype": "SELECT", 
-		"text": "Ermitteln Sie den Kunden, welcher die höchste durchschnittliche Bewertung abgegeben hat. Geben Sie dazu Vorname, Nachname und seine durchschnittliche Bewertung (Spaltenbezeichnung avg_rating).", 
-		"samplesolutions": [
-			"SELECT customers.first_name, customers.family_name, avg(rating) AS avg_rating FROM ratings LEFT JOIN customers ON customers.id=customer_id GROUP BY customer_id ORDER BY avg_rating DESC LIMIT 1"
-		], 
-		"tags": [
-			"FUNCTION", 
-			"JOIN", 
-			"GROUP_BY", 
-			"ALIAS", 
-			"LIMIT"
-		]
-	}, 
-	{
-		"id": 118, 
-		"exercisetype": "SELECT", 
-		"text": "Ermitteln Sie den Einkaufswert der Wunschlisten für jeden Kunden. Listen Sie dabei Vorname, Nachname und Einkaufswert (Spaltenbezeichnung 'value') auf. Sortieren Sie die Einträge aufwärts nach Einkaufswert.", 
-		"samplesolutions": [
-			"SELECT customers.first_name, customers.family_name, sum(price) AS value FROM wishlists LEFT JOIN books ON books.id=book_id LEFT JOIN customers ON customers.id=customer_id GROUP BY customer_id ORDER BY value ASC</"
-		], 
-		"tags": [
-			"FUNCTION", 
-			"ALIAS", 
-			"DOUBLE_JOIN", 
-			"GROUP_BY", 
-			"ORDER_BY"
-		]
-	}, 
-	{
-		"id": 119, 
-		"exercisetype": "SELECT", 
-		"text": "Wählen Sie alle Bücher aus, die in den Jahren 1998, 2001 oder 2011 veröffentlicht wurden.", 
-		"samplesolutions": [
-			"SELECT * FROM books WHERE year IN (1998, 2001, 2011)"
-		]
-	}, 
+	},
 	{
 		"id": 121, 
 		"exercisetype": "SELECT", 

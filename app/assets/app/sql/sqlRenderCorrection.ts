@@ -13,9 +13,13 @@ interface ExecTableCell {
     different: boolean
 }
 
+interface ExecTableRow {
+    [name: string]: ExecTableCell
+}
+
 interface ExecutionTable {
     colNames: string[]
-    content: ExecTableCell[][]
+    content: ExecTableRow[]
 }
 
 function displayMatchResult(matchingRes: Match<any, any>, matchName: string) {
@@ -73,7 +77,14 @@ function renderExecutionResult(executionTable: ExecutionTable): string {
     } else {
         let tableBody: string = '';
         for (let row of executionTable.content) {
-            tableBody += `<tr>${row.map((cell) => `<td${cell.different ? ` class="danger"` : ''}>${cell.content}</td>`).join('')}</tr>`;
+            let cells: string[] = [];
+
+            for (const colName of executionTable.colNames) {
+                const cell = row[colName];
+                cells.push(`<td${cell.different ? ` class="table-danger"` : ''}>${cell.content}</td>`)
+            }
+
+            tableBody += `<tr>${cells.join('')}</tr>`;
         }
 
         return `
@@ -87,6 +98,8 @@ function renderExecutionResult(executionTable: ExecutionTable): string {
 }
 
 function renderExecution(executionResults: ExecutionResultsObject): string {
+    console.info(JSON.stringify(executionResults, null, 2));
+
     return `
 <h3 class="text-center">Vergleich der Ergebnistabellen</h3>
 <div class="row">

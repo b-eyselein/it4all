@@ -2,7 +2,7 @@ package model.sql
 
 import java.sql.{ResultSet, ResultSetMetaData}
 
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
@@ -19,6 +19,8 @@ final case class SqlCell(colName: String, content: String) {
 
   // FIXME: remove!
   var different: Boolean = false
+
+  def toJson: JsObject = Json.obj("content" -> content, "different" -> different)
 
 }
 
@@ -54,6 +56,10 @@ final case class SqlRow(cells: Map[String, SqlCell]) {
 
   def apply(colName: String): Option[SqlCell] = cells get colName
 
+  def toJson: JsObject = JsObject(cells.map {
+    case (colName, sqlCell) => colName -> sqlCell.toJson
+  })
+
 }
 
 final case class SqlQueryResult(resultSet: ResultSet, tableName: String = "") extends Iterable[SqlRow] {
@@ -88,11 +94,8 @@ final case class SqlQueryResult(resultSet: ResultSet, tableName: String = "") ex
 
   def toJson: JsObject = Json.obj(
     "colNames" -> columnNames,
-    "content" -> JsArray(rows.map { row =>
-      JsArray(row.cells.map {
-        case (_, cell) => Json.obj("content" -> cell.content, "different" -> cell.different)
-      }.toSeq)
-    })
+    "content" -> JsArray(rows.map(_.toJson))
   )
+
 
 }
