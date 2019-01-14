@@ -8,7 +8,6 @@ author: bje40dc
 text: ""
 status: APPROVED
 shortName: amazon
-scriptFile: amazon.sql
 exercises:
   - id: 1
     semanticVersion: 1.0.0

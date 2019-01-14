@@ -5,7 +5,6 @@ author: bje40dc
 text: Dieses Szenario beschreibt die Datenbank einer kleinen Firma.
 status: APPROVED
 shortName: employee
-scriptFile: employee.sql
 
 exercises:
 - id: 1

@@ -8,13 +8,12 @@
     "text": {"type": "string"},
     "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
     "shortName": {"type": "string"},
-    "scriptFile": {"type": "string"},
     "exercises": {
       "type": "array",
       "items": {"$ref": "#/definitions/SqlExercise"}
     }
   },
-  "required": ["id", "semanticVersion", "title", "author", "text", "status", "shortName", "scriptFile", "exercises"],
+  "required": ["id", "semanticVersion", "title", "author", "text", "status", "shortName", "exercises"],
   "definitions": {
     "SqlExercise": {
       "type": "object",
