@@ -20,6 +20,7 @@ data/web/*
 
 # IntelliJ IDEA
 .idea/
+!.idea/jsonSchemas.xml
 venv/
 
 # Eclipse
