@@ -35,10 +35,10 @@ object ProgCorrector {
     // Write/Create files
     val solFileName = buildSolutionFileName(progSolution.language.fileEnding)
     val solutionFile = solutionTargetDir / solFileName
-    solutionFile.write(implementation)
+    solutionFile.createFileIfNotExists(createParents = true).write(implementation)
 
     val testDataFile = solutionTargetDir / testDataFileName
-    testDataFile.write(Json.prettyPrint(testDataFileContent))
+    testDataFile.createFileIfNotExists(createParents = true).write(Json.prettyPrint(testDataFileContent))
 
     val resultFile = solutionTargetDir / resultFileName
     resultFile.createIfNotExists(createParents = true)
