@@ -1,12 +1,9 @@
 package model.xml
 
-import java.io
-
 import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import model.xml.XmlConsts._
-import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
@@ -35,13 +32,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
     MappedColumnType.base[XmlExPart, String](_.entryName, XmlExParts.withNameInsensitive)
 
-  private implicit val docTypeDefColumnType: BaseColumnType[DocTypeDef] =
-    MappedColumnType.base[DocTypeDef, String](_.asString, str => DocTypeDefParser.parseDTD(str).dtd)
-
   // Reading
-
-  //  override protected def futureResultForUserExAndPart(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlResultForPart]] =
-  //    db.run(resultsForPartsTable.filter(r => r.username === username && r.exerciseId === exerciseId && r.part === part).result.headOption)
 
   override def completeExForEx(ex: XmlExercise): Future[XmlCompleteEx] = for {
     samples: Seq[XmlSample] <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result)

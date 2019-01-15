@@ -1,7 +1,8 @@
 package model.xml
 
+import de.uniwue.dtd.model.DocTypeDef
+import de.uniwue.dtd.parser.DocTypeDefParser
 import model._
-import model.xml.dtd.{DocTypeDef, DocTypeDefParser}
 import play.twirl.api.Html
 
 

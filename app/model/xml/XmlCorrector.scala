@@ -3,7 +3,7 @@ package model.xml
 import better.files.File
 import javax.xml.parsers.DocumentBuilderFactory
 import model.core.matching.MatchingResult
-import model.xml.dtd.DocTypeDef
+import de.uniwue.dtd.model.DocTypeDef
 import org.xml.sax.{ErrorHandler, SAXParseException}
 
 import scala.collection.mutable.ListBuffer

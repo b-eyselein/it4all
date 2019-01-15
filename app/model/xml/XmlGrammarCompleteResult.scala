@@ -5,7 +5,8 @@ import model.core.matching.MatchingResult
 import model.core.result.SuccessType
 import model.xml.XmlConsts._
 import model.xml.XmlGrammarCompleteResult._
-import model.xml.dtd._
+import de.uniwue.dtd.model._
+import de.uniwue.dtd.parser._
 import play.api.libs.json.{JsValue, Json}
 
 import scala.language.postfixOps

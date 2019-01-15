@@ -1,10 +1,10 @@
 package model.xml
 
+import de.uniwue.dtd.model.ElementLine
 import model._
 import model.core.matching.{AnalysisResult, Match, MatchType, Matcher}
 import model.core.result.SuccessType
 import model.xml.XmlConsts._
-import model.xml.dtd.ElementLine
 import play.api.libs.json.{JsValue, Json}
 
 import scala.language.postfixOps

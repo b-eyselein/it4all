@@ -81,7 +81,7 @@ resolvers ++= Seq(
   "Snapshot Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-snapshot/",
 
   Resolver.bintrayRepo("webjars", "maven"),
-  
+
   // Repo for play-json-schema-validator
   "emueller-bintray" at "http://dl.bintray.com/emueller/maven"
 )
@@ -158,8 +158,8 @@ libraryDependencies ++= Seq(
   "org.seleniumhq.selenium" % "htmlunit-driver" % "2.33.3",
 
   // Json Schema Parser/Validator for Json
-  "com.eclipsesource"  %% "play-json-schema-validator" % "0.9.5-M4",
-  
+  "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5-M4",
+
   // MyBatis and JSqlParser for SQL
   "com.github.jsqlparser" % "jsqlparser" % "1.3",
 
@@ -188,8 +188,8 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
 
   // DTD Parser
-  //  "de.uni-wuerzburg.is" % "scala_dtd_2.12" % "0.3.0-SNAPSHOT"
-  "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.1"
+  "de.uniwue" %% "scala_dtd" % "0.3.0-SNAPSHOT",
+  //  "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.1"
 )
 
 // Injected for non-static Routes

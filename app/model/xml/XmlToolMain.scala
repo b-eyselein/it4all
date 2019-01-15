@@ -1,11 +1,10 @@
 package model.xml
 
+import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.inject._
-//import model.core.CoreConsts.{difficultyName, durationName}
 import model.core._
 import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.xml.XmlConsts._
-import model.xml.dtd.DocTypeDefParser
 import model.{Consts, Difficulties, ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
 import play.api.data.Forms._
 import play.api.data._
