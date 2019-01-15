@@ -1,5 +1,6 @@
 package model.xml
 
+import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.inject._
 import model.core._
@@ -97,26 +98,27 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override protected def correctEx(user: User, solution: SolType, completeEx: XmlCompleteEx, part: XmlExPart): Future[Try[XmlCompleteResult]] =
     Future(part match {
-      case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) map { dir =>
-        completeEx.samples.headOption map (_.sampleGrammar.asString) match {
-          case None                 =>
-            //            new Exception(s"There is no grammar for exercise ${completeEx.ex.id}")
-            ???
-          case Some(grammarToWrite) =>
+      case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, completeEx) flatMap { dir: File =>
+        completeEx.samples.headOption match {
+          case None            => Failure(new Exception("There is no sample solution!"))
+          case Some(xmlSample) =>
+            // Write grammar
+            val grammarPath: File = dir / s"${completeEx.ex.rootNode}.dtd"
+            grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sampleGrammarString)
 
-            val grammar = (dir / (completeEx.ex.rootNode + ".dtd")) write grammarToWrite
-            val xml = (dir / (completeEx.ex.rootNode + "." + xmlFileEnding)) write solution
+            // Write document
+            val documentPath: File = dir / s"${completeEx.ex.rootNode}.xml"
+            documentPath.createFileIfNotExists(createParents = true).write(solution)
 
-            val correctionResult = XmlCorrector.correctAgainstMentionedDTD(xml.path)
-            XmlDocumentCompleteResult(solution, correctionResult)
+            Success(XmlDocumentCompleteResult(solution, XmlCorrector.correctAgainstMentionedDTD(documentPath)))
         }
       }
 
       case XmlExParts.GrammarCreationXmlPart =>
 
-        val maybeSampleGrammar = completeEx.samples.reduceOption((sampleG1, sampleG2) => {
-          val dist1 = Java_Levenshtein.levenshteinDistance(solution, sampleG1.sampleGrammar.asString)
-          val dist2 = Java_Levenshtein.levenshteinDistance(solution, sampleG2.sampleGrammar.asString)
+        val maybeSampleGrammar: Option[XmlSample] = completeEx.samples.reduceOption((sampleG1, sampleG2) => {
+          val dist1 = Java_Levenshtein.levenshteinDistance(solution, sampleG1.sampleGrammarString)
+          val dist2 = Java_Levenshtein.levenshteinDistance(solution, sampleG2.sampleGrammarString)
 
           if (dist1 < dist2) sampleG1 else sampleG2
         })

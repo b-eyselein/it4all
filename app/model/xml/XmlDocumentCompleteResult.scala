@@ -2,9 +2,7 @@ package model.xml
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model.core.result.SuccessType
-import model.xml.XmlConsts._
 import org.xml.sax.SAXParseException
-import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -34,10 +32,6 @@ class XmlError(val errorType: XmlErrorType, e: SAXParseException) extends XmlEva
     case _                    => SuccessType.NONE
   }
 
-  val lineStr: String = if (line != -1) s" in Zeile $line" else ""
-
-  override def toJson: JsObject = Json.obj("errorType" -> errorType.entryName, "errorMessage" -> errorMessage, "line" -> line, "success" -> success.entryName)
-
 }
 
 
@@ -46,13 +40,5 @@ final case class XmlDocumentCompleteResult(learnerSolution: String, results: Seq
   override type SolType = String
 
   override def isSuccessful: Boolean = results.isEmpty
-
-  def toJson(solutionSaved: Boolean): JsValue = Json.obj(
-    solutionSavedName -> solutionSaved,
-    successName -> isSuccessful,
-    pointsName -> points.asDoubleString,
-    maxPointsName -> maxPoints.asDoubleString,
-    resultsName -> results.map(_.toJson)
-  )
 
 }

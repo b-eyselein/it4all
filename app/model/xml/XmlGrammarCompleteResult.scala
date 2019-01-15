@@ -1,13 +1,11 @@
 package model.xml
 
+import de.uniwue.dtd.model._
+import de.uniwue.dtd.parser._
 import model._
 import model.core.matching.MatchingResult
 import model.core.result.SuccessType
-import model.xml.XmlConsts._
 import model.xml.XmlGrammarCompleteResult._
-import de.uniwue.dtd.model._
-import de.uniwue.dtd.parser._
-import play.api.libs.json.{JsValue, Json}
 
 import scala.language.postfixOps
 
@@ -54,14 +52,5 @@ final case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sampl
   }
 
   override val results: Seq[ElementLineMatch] = matchingResult.allMatches
-
-  def toJson(solutionSaved: Boolean): JsValue = Json.obj(
-    solutionSavedName -> solutionSaved,
-    successName -> isSuccessful,
-    pointsName -> points.asDoubleString,
-    maxPointsName -> maxPoints.asDoubleString,
-    resultsName -> results.map(_.toJson),
-    parseErrorsName -> learnerSolution.parseErrors.map(e => Json.obj(messageName -> e.getMessage, parsedName -> e.parsedLine))
-  )
 
 }

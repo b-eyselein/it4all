@@ -9,6 +9,8 @@ object XmlConsts extends Consts {
   val grammarName           : String = "grammar"
   val grammarDescriptionName: String = "grammarDescription"
 
+  val lineName: String = "line"
+
   val parsedName     : String = "parsed"
   val parseErrorsName: String = "parseErrors"
 
@@ -21,7 +23,5 @@ object XmlConsts extends Consts {
       |<!DOCTYPE root [
       |
       |]>""".stripMargin
-
-  val xmlFileEnding: String = "xml"
 
 }
