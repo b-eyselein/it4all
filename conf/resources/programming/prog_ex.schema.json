@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {"type": "number"},
+    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
+    "title": {"type": "string"},
+    "author": {"type": "string"},
+    "text": {"type": "string"},
+    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+    "sampleTestData": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleTestData"}},
+    "sampleSolutions": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleSolution"}}
+  },
+  "required": [
+    "id", "semanticVersion", "title", "author", "text", "status", "sampleTestData", "sampleSolutions"
+  ],
+  "definitions": {
+    "ProgSampleSolution": {
+      "type": "object",
+      "properties": {
+        "base": {"type": "string"},
+        "language": {"type": "string", "enum": ["PYTHON_3", "JAVA_8"]},
+        "sample": {"type": "string"}
+      },
+      "required": ["base", "language", "sample"]
+    },
+    "ProgSampleTestData": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "inputs": {},
+        "output": {}
+      },
+      "required": ["id", "inputs", "output"]
+    }
+  }
+}

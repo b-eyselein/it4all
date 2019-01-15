@@ -10,22 +10,22 @@ htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
 status: APPROVED
 
 htmlTasks:
-- id: 1
-  text: Erstellen Sie ein Texteingabefeld mit der ID 'name'
-  xpathQuery: /html/body//input[@id='name']
-  attributes:
-  - {key: type, value: text}
-- id: 2
-  text: Erstellen Sie ein Passworteingabefeld mit der ID 'password'. Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.
-  xpathQuery: /html/body//input[@id='password']
-  attributes:
-  - {key: type, value: password}
-  - {key: onchange, value: passwordStrength()}
-- id: 3
-  text: >
-    Erstellen Sie einen Span mit der ID 'errors', der später anzeigen soll, wenn das Passwort zu schwach ist. Zu Anfang
-    soll dieser leer sein.
-  xpathQuery: /html/body//span[@id='errors']
+  - id: 1
+    text: Erstellen Sie ein Texteingabefeld mit der ID 'name'
+    xpathQuery: /html/body//input[@id='name']
+    attributes:
+      - {key: type, value: text}
+  - id: 2
+    text: Erstellen Sie ein Passworteingabefeld mit der ID 'password'. Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.
+    xpathQuery: /html/body//input[@id='password']
+    attributes:
+      - {key: type, value: password}
+      - {key: onchange, value: passwordStrength()}
+  - id: 3
+    text: >
+      Erstellen Sie einen Span mit der ID 'errors', der später anzeigen soll, wenn das Passwort zu schwach ist. Zu Anfang
+      soll dieser leer sein.
+    xpathQuery: /html/body//span[@id='errors']
 
 jsText: >
   Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen wird. Sie
@@ -36,50 +36,50 @@ jsText: >
   'Zu kurz' lauten. Wenn die Eingabe den Teilstring 'passwort' enthält, soll 'Zu einfach' gesetzt werden.
 
 jsTasks:
-- id: 1
-  text: Wenn das Passwort unter 8 Zeichen lang ist, setze den Fehlertext auf 'Zu kurz'
-  xpathQuery: /html/body//input[@id='password']
-  actiontype: FILLOUT
-  keysToSend: 123
-  conditions:
   - id: 1
-    xpathQuery: /html/body//span[@id='errors']
-    isPrecondition: false
-    awaited: Zu kurz
-- id: 2
-  text: Wenn das Passwort 'passwort' enthält, setze den Fehlertext auf 'Zu einfach'
-  xpathQuery: /html/body//input[@id='password']
-  actiontype: FILLOUT
-  keysToSend: meinpasswort
-  conditions:
-  - id: 1
-    xpathQuery: /html/body//span[@id='errors']
-    isPrecondition: false
-    awaited: Zu einfach
-- id: 3
-  text: Für alle anderen Passwörter soll das Fehlerfeld geleert (auf '' gesetzt) werden
-  actiontype: FILLOUT
-  xpathQuery: /html/body//input[@id='password']
-  keysToSend: GanzGanzSicherUndGeheim
-  conditions:
-  - id: 1
-    xpathQuery: /html/body//span[@id='errors']
-    isPrecondition: false
-    awaited: ''
+    text: Wenn das Passwort unter 8 Zeichen lang ist, setze den Fehlertext auf 'Zu kurz'
+    xpathQuery: /html/body//input[@id='password']
+    actiontype: FILLOUT
+    keysToSend: 123
+    conditions:
+      - id: 1
+        xpathQuery: /html/body//span[@id='errors']
+        isPrecondition: false
+        awaited: Zu kurz
+  - id: 2
+    text: Wenn das Passwort 'passwort' enthält, setze den Fehlertext auf 'Zu einfach'
+    xpathQuery: /html/body//input[@id='password']
+    actiontype: FILLOUT
+    keysToSend: meinpasswort
+    conditions:
+      - id: 1
+        xpathQuery: /html/body//span[@id='errors']
+        isPrecondition: false
+        awaited: Zu einfach
+  - id: 3
+    text: Für alle anderen Passwörter soll das Fehlerfeld geleert (auf '' gesetzt) werden
+    actiontype: FILLOUT
+    xpathQuery: /html/body//input[@id='password']
+    keysToSend: GanzGanzSicherUndGeheim
+    conditions:
+      - id: 1
+        xpathQuery: /html/body//span[@id='errors']
+        isPrecondition: false
+        awaited: ''
 
 phpTasks: []
 
 samples:
-- id: 1
-  htmlSample: |
-    <!doctype html>
-    <html>
-    <head></head>
-    <body>TODO!<body>
-    </html>
-  jsSample: |
-    <!doctype html>
-    <html>
-    <head></head>
-    <body>TODO!<body>
-    </html>
+  - id: 1
+    htmlSample: |
+      <!doctype html>
+      <html>
+      <head></head>
+      <body>TODO!<body>
+      </html>
+    jsSample: |
+      <!doctype html>
+      <html>
+      <head></head>
+      <body>TODO!<body>
+      </html>

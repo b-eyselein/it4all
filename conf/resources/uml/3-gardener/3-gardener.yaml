@@ -18,30 +18,30 @@ text: >
 status: CREATED
 
 mappings:
-- {key: Vertrauens, value: Vertrauen}
-- {key: Gewächshäuser, value: Gewächshaus}
-- {key: Typs, value: Typ}
-- {key: Koordinaten, value: Koordinate}
-- {key: Pflanzentypen, value: Pflanzentyp}
-- {key: Untertypen, value: Untertyp}
-- {key: Bäume, value: Baum}
-- {key: Blumen, value: Blume}
-- {key: Nutzpflanzen, value: Nutzpflanze}
-- {key: Blütenfarben, value: Blützenfarbe}
-- {key: Pflanzen, value: Pflanze}
+  - {key: Vertrauens, value: Vertrauen}
+  - {key: Gewächshäuser, value: Gewächshaus}
+  - {key: Typs, value: Typ}
+  - {key: Koordinaten, value: Koordinate}
+  - {key: Pflanzentypen, value: Pflanzentyp}
+  - {key: Untertypen, value: Untertyp}
+  - {key: Bäume, value: Baum}
+  - {key: Blumen, value: Blume}
+  - {key: Nutzpflanzen, value: Nutzpflanze}
+  - {key: Blütenfarben, value: Blützenfarbe}
+  - {key: Pflanzen, value: Pflanze}
 ignoreWords: ['Sie', 'Jede', 'In', 'Dieser', 'Außerdem', 'Für', 'Bei']
 
 samples:
-- id: 1
-  classes:
-  - classType: ABSTRACT
-    name: Pflanze
-    pos_x: 1
-    pos_y: 1
-  - classType: ABSTRACT
-    name: Baum
-    pos_x: 1
-    pos_y: 2
-  implementations:
-  - {subClass: Baum, superClass: Pflanze}
-  associations: []
+  - id: 1
+    classes:
+      - classType: ABSTRACT
+        name: Pflanze
+        pos_x: 1
+        pos_y: 1
+      - classType: ABSTRACT
+        name: Baum
+        pos_x: 1
+        pos_y: 2
+    implementations:
+      - {subClass: Baum, superClass: Pflanze}
+    associations: []

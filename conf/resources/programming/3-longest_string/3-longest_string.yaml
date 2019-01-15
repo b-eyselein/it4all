@@ -10,31 +10,31 @@ identifier: longest_string
 functionname: longest_string
 indentLevel: 0
 inputTypes:
-- {id: 1, name: my_list, type: list<string>}
+  - {id: 1, name: my_list, type: list<string>}
 outputType: string
 sampleSolutions:
-- language: PYTHON_3
-  base: |
-    from typing import List
+  - language: PYTHON_3
+    base: |
+      from typing import List
 
-    def longest_string(my_list: List[str]) -> str:
-        return ''
-  sample: |
-    from typing import List
+      def longest_string(my_list: List[str]) -> str:
+          return ''
+    sample: |
+      from typing import List
 
-    def longest_string(my_list: List[str]) -> str:
-        longest = ""
-        for string in my_list:
-            if len(string) > len(longest):
-                longest = string
-        return longest
+      def longest_string(my_list: List[str]) -> str:
+          longest = ""
+          for string in my_list:
+              if len(string) > len(longest):
+                  longest = string
+          return longest
 sampleTestData:
-- id: 1
-  inputs: []
-  output: ""
-- id: 2
-  inputs: ["0"]
-  output: "0"
-- id: 3
-  inputs: ["1", "11", "111"]
-  output: "111"
+  - id: 1
+    inputs: []
+    output: ""
+  - id: 2
+    inputs: ["0"]
+    output: "0"
+  - id: 3
+    inputs: ["1", "11", "111"]
+    output: "111"

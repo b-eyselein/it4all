@@ -11,18 +11,18 @@ status: APPROVED
 htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
 
 htmlTasks:
-- id: 1
-  text: |
-    Erstellen Sie einen Button auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerdem soll beim Klick die Funktion 'increment()' aufgerufen werden.
-  xpathQuery: /html/body//button
-  attributes:
-  - {key: onclick, value: increment()}
-  textContent: Klick mich!
-- id: 2
-  text: |
-    Erstellen Sie einen Span mit der ID 'theSpan' in dem die Anzahl der Klicks angezeigt werden. Zu Anfang soll dieser eine 0 anzeigen.
-  xpathQuery: /html/body//span[@id='theSpan']
-  textContent: '0'
+  - id: 1
+    text: |
+      Erstellen Sie einen Button auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerdem soll beim Klick die Funktion 'increment()' aufgerufen werden.
+    xpathQuery: /html/body//button
+    attributes:
+      - {key: onclick, value: increment()}
+    textContent: Klick mich!
+  - id: 2
+    text: |
+      Erstellen Sie einen Span mit der ID 'theSpan' in dem die Anzahl der Klicks angezeigt werden. Zu Anfang soll dieser eine 0 anzeigen.
+    xpathQuery: /html/body//span[@id='theSpan']
+    textContent: '0'
 
 jsText: >
   Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
@@ -30,68 +30,68 @@ jsText: >
   Sie können die Funktion <code>parseInt(str)</code> verwenden um einen String in eine Ganzzahl umzuwandeln.
 
 jsTasks:
-- id: 1
-  text: Test 1
-  xpathQuery: /html/body//button
-  actiontype: CLICK
-  conditions:
   - id: 1
-    xpathQuery: /html/body//span[@id='theSpan']
-    isPrecondition: true
-    awaited: 0
+    text: Test 1
+    xpathQuery: /html/body//button
+    actiontype: CLICK
+    conditions:
+      - id: 1
+        xpathQuery: /html/body//span[@id='theSpan']
+        isPrecondition: true
+        awaited: 0
+      - id: 2
+        xpathQuery: /html/body//span[@id='theSpan']
+        isPrecondition: false
+        awaited: 1
   - id: 2
-    xpathQuery: /html/body//span[@id='theSpan']
-    isPrecondition: false
-    awaited: 1
-- id: 2
-  text: Test 2
-  xpathQuery: /html/body//button
-  actiontype: CLICK
-  conditions:
-  - id: 1
-    xpathQuery: /html/body//span[@id='theSpan']
-    isPrecondition: true
-    awaited: 1
+    text: Test 2
+    xpathQuery: /html/body//button
+    actiontype: CLICK
+    conditions:
+      - id: 1
+        xpathQuery: /html/body//span[@id='theSpan']
+        isPrecondition: true
+        awaited: 1
 
-  - id: 2
-    xpathQuery: /html/body//span[@id='theSpan']
-    isPrecondition: false
-    awaited: 2
-- id: 3
-  text: Test 3
-  xpathQuery: /html/body//button
-  actiontype: CLICK
-  conditions:
-  - id: 1
-    xpathQuery: /html/body//span[@id='theSpan']
-    isPrecondition: true
-    awaited: 2
+      - id: 2
+        xpathQuery: /html/body//span[@id='theSpan']
+        isPrecondition: false
+        awaited: 2
+  - id: 3
+    text: Test 3
+    xpathQuery: /html/body//button
+    actiontype: CLICK
+    conditions:
+      - id: 1
+        xpathQuery: /html/body//span[@id='theSpan']
+        isPrecondition: true
+        awaited: 2
 
-  - id: 2
-    xpathQuery: /html/body//span[@id='theSpan']
-    isPrecondition: false
-    awaited: 3
-- id: 4
-  text: Test 4
-  xpathQuery: /html/body//button
-  actiontype: CLICK
-  conditions:
-  - id: 1
-    xpathQuery: /html/body//span[@id='theSpan']
-    isPrecondition: true
-    awaited: 3
-  - id: 2
-    xpathQuery: /html/body//span[@id='theSpan']
-    isPrecondition: false
-    awaited: 4
+      - id: 2
+        xpathQuery: /html/body//span[@id='theSpan']
+        isPrecondition: false
+        awaited: 3
+  - id: 4
+    text: Test 4
+    xpathQuery: /html/body//button
+    actiontype: CLICK
+    conditions:
+      - id: 1
+        xpathQuery: /html/body//span[@id='theSpan']
+        isPrecondition: true
+        awaited: 3
+      - id: 2
+        xpathQuery: /html/body//span[@id='theSpan']
+        isPrecondition: false
+        awaited: 4
 
 phpTasks: []
 
 samples:
-- id: 1
-  htmlSample: |
-    <!doctype html>
-    <html>
-    <head></head>
-    <body>TODO!<body>
-    </html>
+  - id: 1
+    htmlSample: |
+      <!doctype html>
+      <html>
+      <head></head>
+      <body>TODO!<body>
+      </html>
