@@ -35,11 +35,11 @@ object RoseCorrector {
       val optionsFilePath: File = solutionTargetDir / optionsFileName
 
       // FIXME: write exercise options file...
-      solutionFilePath.write(learnerSolution)
-      sampleFilePath.write(buildSampleFileContent(sampleSolution.solution))
+      solutionFilePath.createFileIfNotExists(createParents = true).write(learnerSolution)
+      sampleFilePath.createFileIfNotExists(createParents = true).write(buildSampleFileContent(sampleSolution.solution))
 
       actionFilePath.createIfNotExists()
-      optionsFilePath.write(buildOptionFileContent(exercise))
+      optionsFilePath.createFileIfNotExists(createParents = true).write(buildOptionFileContent(exercise))
 
       val dockerBinds: Seq[DockerBind] = Seq(
         DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir / solutionFileName),

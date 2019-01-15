@@ -3,27 +3,17 @@ package model.web
 import model._
 import model.core.result.EvaluationResult._
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
-import model.web.WebConsts._
 import org.openqa.selenium.WebElement
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.JsValue
 
 import scala.language.postfixOps
 
-final case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, results: Seq[WebResult]) extends CompleteResult[WebResult] {
+final case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart,
+                                   elementResults: Seq[ElementResult], jsWebResults: Seq[JsWebResult]) extends CompleteResult[WebResult] {
 
   override type SolType = String
 
-  def toJson(solutionSaved: Boolean): JsValue = Json.obj(
-    solutionSavedName -> solutionSaved,
-    partName -> part.urlName,
-    successName -> results.forall(_.isSuccessful),
-
-    pointsName -> points.asDoubleString,
-    maxPointsName -> maxPoints.asDoubleString,
-
-    htmlResultsName -> results.filter(_.isInstanceOf[ElementResult]).map(_.toJson),
-    jsResultsName -> results.filter(_.isInstanceOf[JsWebResult]).map(_.toJson)
-  )
+  override def results: Seq[WebResult] = elementResults ++ jsWebResults
 
   override def points: Points = addUp(results.map(_.points))
 
@@ -35,7 +25,7 @@ sealed trait WebResult extends EvaluationResult {
 
   val task: WebCompleteTask
 
-  def toJson: JsObject
+  def isCompletelySuccessful: Boolean
 
   def points: Points
 
@@ -56,15 +46,7 @@ final case class ElementResult(task: WebCompleteTask, foundElement: Option[WebEl
       }
   }
 
-  override def toJson: JsObject = Json.obj(
-    idName -> task.task.id,
-    pointsName -> points.asDoubleString,
-    maxPointsName -> task.maxPoints.asDoubleString,
-    successName -> (foundElement.isDefined && textContentResult.forall(_.isSuccessful) && attributeResults.forall(_.isSuccessful)),
-    "elementFound" -> foundElement.isDefined,
-    "textContent" -> (textContentResult map (_.toJson)),
-    "attributeResults" -> (attributeResults map (_.toJson))
-  )
+  override def isCompletelySuccessful: Boolean = foundElement.isDefined && textContentResult.forall(_.isSuccessful) && attributeResults.forall(_.isSuccessful)
 
   override val points: Points = foundElement match {
     case None    => 0 points
@@ -79,34 +61,15 @@ abstract class TextResult(name: String, val foundContent: String, val awaitedCon
   else if (foundContent contains awaitedContent) SuccessType.COMPLETE
   else SuccessType.PARTIALLY
 
-  def toJson: JsObject
-
 }
 
 final case class TextContentResult(f: String, a: String) extends TextResult("Der Textinhalt", f, a) {
-
-  def toJson: JsObject = Json.obj(
-    successName -> isSuccessful,
-    pointsName -> points.asDoubleString,
-    maxPointsName -> 1.point.asDoubleString,
-    awaitedName -> awaitedContent,
-    foundName -> foundContent
-  )
 
   val points: Points = if (isSuccessful) 1 point else 0 points
 
 }
 
 final case class AttributeResult(attribute: Attribute, foundValue: Option[String]) extends TextResult(s"Das Attribut '${attribute.key}'", foundValue getOrElse "", attribute.value) {
-
-  def toJson: JsObject = Json.obj(
-    successName -> isSuccessful,
-    pointsName -> points.asDoubleString,
-    maxPointsName -> 1.point.asDoubleString,
-    "attrName" -> attribute.key,
-    awaitedName -> awaitedContent,
-    foundName -> foundContent
-  )
 
   val points: Points = if (isSuccessful) 1 point else foundValue map (_ => 1 halfPoint) getOrElse 0.points
 
@@ -119,18 +82,7 @@ final case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResu
 
   override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(preResults) && actionPerformed && allResultsSuccessful(postResults))
 
-  override def toJson: JsObject = Json.obj(
-    idName -> task.task.id,
-    pointsName -> points.asDoubleString,
-    maxPointsName -> task.maxPoints.asDoubleString,
-    successName -> (preResults.forall(_.isSuccessful) && actionPerformed && postResults.forall(_.isSuccessful)),
-    "preResults" -> preResults.map(_.toJson),
-    "actionDescription" -> task.task.actionDescription,
-    "actionPerformed" -> actionPerformed,
-    "postResults" -> postResults.map(_.toJson)
-
-    // FIXME: implement!
-  )
+  override def isCompletelySuccessful: Boolean = preResults.forall(_.isSuccessful) && actionPerformed && postResults.forall(_.isSuccessful)
 
   override val points: Points = addUp(preResults.map(_.points)) + (if (actionPerformed) 1 point else 0 points) + addUp(postResults.map(_.points))
 
@@ -139,14 +91,5 @@ final case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResu
 final case class ConditionResult(override val success: SuccessType, condition: JsCondition, gottenValue: Option[String]) extends EvaluationResult {
 
   def points: Points = if (isSuccessful) 1 point else 0 points
-
-  def toJson: JsObject = Json.obj(
-    pointsName -> points.asDoubleString,
-    maxPointsName -> condition.maxPoints.asDoubleString,
-    successName -> isSuccessful,
-    descriptionName -> condition.description,
-    awaitedName -> condition.awaitedValue,
-    gottenName -> gottenValue
-  )
 
 }

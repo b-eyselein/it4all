@@ -13,7 +13,7 @@ object WebCorrector {
     case task: JsCompleteTask   => evaluateJsTask(task, searchContent)
   }
 
-  private def evaluateHtmlTask(completeHtmlTask: HtmlCompleteTask, searchContext: SearchContext): ElementResult =
+   def evaluateHtmlTask(completeHtmlTask: HtmlCompleteTask, searchContext: SearchContext): ElementResult =
     searchContext.findElements(By.xpath(completeHtmlTask.task.xpathQuery)).asScala.toList match {
       case Nil => ElementResult(completeHtmlTask, None, Seq[AttributeResult](), None)
 
@@ -28,7 +28,7 @@ object WebCorrector {
   private def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult =
     AttributeResult(attribute, Try(element.getAttribute(attribute.key)).toOption)
 
-  private def evaluateJsTask(completeJsTask: JsCompleteTask, searchContext: SearchContext) = {
+  def evaluateJsTask(completeJsTask: JsCompleteTask, searchContext: SearchContext): JsWebResult = {
     val (preconds, postconds) = completeJsTask.conditions.partition(_.isPrecondition)
 
     JsWebResult(

@@ -34,9 +34,11 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override type ReviewType = RegexExerciseReview
 
 
-  override val yamlFormat: MyYamlFormat[RegexCompleteEx] = RegexExYamlProtocol.RegexExYamlFormat
-  override val consts    : Consts                        = RegexConsts
-  override val exParts   : Seq[RegexExPart]              = RegexExParts.values
+  override protected val exParts: Seq[RegexExPart] = RegexExParts.values
+
+  override protected val yamlFormat: MyYamlFormat[RegexCompleteEx] = RegexExYamlProtocol.RegexExYamlFormat
+
+  override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
 
   override val usersCanCreateExes: Boolean = false
 

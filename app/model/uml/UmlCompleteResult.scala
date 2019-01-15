@@ -50,13 +50,4 @@ final case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: Uml
     case UmlExParts.MemberAllocation   => None
   }
 
-  override def toJson(solutionSaved: Boolean): JsValue = Json.obj(
-    "classResult" -> classResult.map(_.toJson),
-    "assocAndImplResult" -> assocAndImplResult.map {
-      case (assocRes, implRes) => Json.obj(
-        "assocResult" -> assocRes.toJson,
-        "implResult" -> implRes.toJson)
-    },
-  )
-
 }

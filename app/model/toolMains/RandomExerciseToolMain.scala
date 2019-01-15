@@ -16,7 +16,7 @@ abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: Execu
 
   // Helper methods
 
-  val exParts: Seq[PartType]
+  protected val exParts: Seq[PartType]
 
   def exTypeFromUrl(exType: String): Option[PartType] = exParts.find(_.urlName == exType)
 

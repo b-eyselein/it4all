@@ -30,9 +30,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val consts: Consts = NaryConsts
-
-  override val exParts: Seq[NaryExPart] = NaryExParts.values
+  override protected val exParts: Seq[NaryExPart] = NaryExParts.values
 
   // Views
 

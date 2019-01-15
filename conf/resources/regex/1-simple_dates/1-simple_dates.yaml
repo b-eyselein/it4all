@@ -16,7 +16,7 @@ testData:
   - {id: 1, data: '12.01.1999', included: true}
   - {id: 2, data: '99.17.3006', included: true}
   - {id: 3, data: '33.11.1931', included: true}
-  - {id: 4, data: '01.01.0700', included: false}
+  - {id: 4, data: '01.01.0700', included: true}
   - {id: 5, data: '1.1.1999', included: false}
   - {id: 6, data: '01.01.700', included: false}
   - {id: 7, data: '3.12.2011', included: false}

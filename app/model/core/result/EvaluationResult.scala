@@ -1,7 +1,7 @@
 package model.core.result
 
 import model._
-import play.api.libs.json.JsValue
+import play.api.libs.json.Writes
 
 import scala.language.postfixOps
 
@@ -48,12 +48,14 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
   def learnerSolution: SolType
 
-  //  def solutionSaved: Boolean
-
   def results: Seq[E]
 
-  def toJson(saved: Boolean): JsValue
-
   override def success: SuccessType = SuccessType.ofBool(EvaluationResult.allResultsSuccessful(results))
+
+}
+
+trait CompleteResultJsonProtocol[E <: EvaluationResult, CR <: CompleteResult[E]] {
+
+  def completeResultWrites(solutionSaved: Boolean): Writes[CR]
 
 }

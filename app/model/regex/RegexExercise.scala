@@ -28,34 +28,6 @@ final case class RegexDBSolution(id: Int, username: String, exerciseId: Int, exS
                                  part: RegexExPart, solution: String, points: Points, maxPoints: Points)
   extends DBPartSolution[RegexExPart, String]
 
-
-// Results
-
-final case class RegexEvaluationResult(testData: RegexTestData, resultType: BinaryClassificationResultType) extends EvaluationResult {
-
-  override def success: SuccessType = ???
-
-  def toJson: JsValue = Json.obj(
-    "testData" -> testData.data,
-    "included" -> testData.isIncluded,
-    "resultType" -> resultType.entryName
-  )
-
-}
-
-
-final case class RegexCompleteResult(learnerSolution: String, exercise: RegexCompleteEx, part: RegexExPart,
-                                     results: Seq[RegexEvaluationResult]) extends CompleteResult[RegexEvaluationResult] {
-
-  override type SolType = String
-
-  override def toJson(saved: Boolean): JsValue = Json.obj(
-    "solution" -> learnerSolution,
-    "results" -> results.map(_.toJson)
-  )
-
-}
-
 // Review
 
 final case class RegexExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: RegexExPart,

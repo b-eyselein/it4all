@@ -46,9 +46,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val consts: Consts = UmlConsts
+  override protected val exParts: Seq[UmlExPart] = UmlExParts.values
 
-  override val exParts: Seq[UmlExPart] = UmlExParts.values
+  override protected val completeResultJsonProtocol: UmlCompleteResultJsonProtocol.type = UmlCompleteResultJsonProtocol
 
   // Forms
 

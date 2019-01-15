@@ -33,8 +33,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   type DBSolType <: CollectionExSolution[SolType]
 
-  type CompResult <: CompleteResult[R]
-
   override type ReadType = CompCollType
 
   override type Tables <: ExerciseCollectionTableDefs[ExType, CompExType, CollType, CompCollType, SolType, DBSolType]
@@ -161,7 +159,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Result handlers
 
-  def onLiveCorrectionResult(result: CompResult, solutionSaved: Boolean): JsValue = result.toJson(solutionSaved)
+  def onLiveCorrectionResult(result: CompResult, solutionSaved: Boolean): JsValue =
+    completeResultJsonProtocol.completeResultWrites(solutionSaved).writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
     Logger.error("There has been a correction error", error)

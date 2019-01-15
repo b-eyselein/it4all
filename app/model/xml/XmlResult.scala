@@ -1,22 +1,19 @@
 package model.xml
 
 import de.uniwue.dtd.parser.DTDParseException
-import model.core.result.{CompleteResult, EvaluationResult}
+import model.core.result.{CompleteResult, CompleteResultJsonProtocol, EvaluationResult}
 import model.xml.XmlConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Writes, _}
 
 trait XmlEvaluationResult extends EvaluationResult
 
-trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult] {
+trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult]
 
-  override def toJson(saved: Boolean): JsValue = XmlCompleteResultJsonProtocol.xmlCompleteResultWrites(saved).writes(this)
 
-}
+object XmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] {
 
-object XmlCompleteResultJsonProtocol {
-
-  def xmlCompleteResultWrites(solutionSaved: Boolean): Writes[XmlCompleteResult] = {
+  override def completeResultWrites(solutionSaved: Boolean): Writes[XmlCompleteResult] = {
     case xmlGrammarCompleteResult: XmlGrammarCompleteResult   => xmlGrammarCompleteResultWrites(solutionSaved).writes(xmlGrammarCompleteResult)
     case xmlDocumentCompleteResult: XmlDocumentCompleteResult => xmlDocumentCompleteResultWrites(solutionSaved).writes(xmlDocumentCompleteResult)
   }

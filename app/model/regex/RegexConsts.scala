@@ -11,6 +11,8 @@ object RegexConsts extends Consts {
 
   val includedName: String = "included"
 
+  val resultTypeName: String = "resultType"
+
   val testDataName: String = "testData"
 
 }

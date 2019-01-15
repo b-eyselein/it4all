@@ -28,7 +28,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Other members
 
-  val exParts: Seq[PartType]
+  protected val exParts: Seq[PartType]
 
   // Forms
 

@@ -3,7 +3,6 @@ package model.toolMains
 import better.files.File
 import model._
 import model.core._
-import model.core.result.CompleteResult
 import model.persistence.SingleExerciseTableDefs
 import play.api.Logger
 import play.api.i18n.MessagesProvider
@@ -18,8 +17,6 @@ abstract class IdExerciseToolMain(aToolName: String, aUrlPart: String)(implicit 
   extends ASingleExerciseToolMain(aToolName, aUrlPart) {
 
   // Abstract types
-
-  type CompResult <: CompleteResult[R]
 
   type SolType
 
@@ -42,7 +39,8 @@ abstract class IdExerciseToolMain(aToolName: String, aUrlPart: String)(implicit 
 
   // Result handling
 
-  def onLiveCorrectionResult(solutionSaved: Boolean, result: CompResult): JsValue = result.toJson(solutionSaved)
+  def onLiveCorrectionResult(solutionSaved: Boolean, result: CompResult): JsValue =
+    completeResultJsonProtocol.completeResultWrites(solutionSaved).writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
     Logger.error("There has been an correction error: ", error)

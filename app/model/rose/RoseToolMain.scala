@@ -45,13 +45,13 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override val toolState: ToolState = ToolState.BETA
 
-  override val consts: Consts = RoseConsts
-
-  override val exParts: Seq[RoseExPart] = RoseExParts.values
-
-  // Forms
+  override protected val exParts: Seq[RoseExPart] = RoseExParts.values
 
   override val compExForm: Form[RoseCompleteEx] = RoseCompleteExerciseForm.format
+
+  override protected val completeResultJsonProtocol: RoseCompleteResultJsonProtocol.type = RoseCompleteResultJsonProtocol
+
+  // Forms
 
   override def exerciseReviewForm(username: String, completeExercise: RoseCompleteEx, exercisePart: RoseExPart): Form[RoseExerciseReview] = Form(
     mapping(
@@ -63,11 +63,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   )
 
   // DB
-
-  //  private def roseSolutionJsonReads(ex: RoseCompleteEx, user: User): Reads[RoseSolution] = (
-  //    (__ \ implementationName).read[String] and
-  //      (__ \ languageName).readNullable[ProgLanguage](ProgLanguages.jsonFormat) // TODO: temporary fix!
-  //    ) (RoseSolution.apply(user.username, ex.ex.id, ex.ex.semanticVersion, RoseExParts.RoseSingleExPart, _, -1 point, -1 point))
 
   override protected def readSolution(user: User, exercise: RoseCompleteEx, part: RoseExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
     case None       => Failure(new Exception("Request body does not contain json!"))

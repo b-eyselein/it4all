@@ -49,15 +49,15 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val consts: Consts = XmlConsts
-
-  override val exParts: Seq[XmlExPart] = XmlExParts.values
-
   override val usersCanCreateExes: Boolean = true
 
-  // Forms
+  override protected val exParts: Seq[XmlExPart] = XmlExParts.values
 
   override val compExForm: Form[XmlCompleteEx] = XmlCompleteExerciseForm.format
+
+  override protected val completeResultJsonProtocol: XmlCompleteResultJsonProtocol.type = XmlCompleteResultJsonProtocol
+
+  // Forms
 
   override def exerciseReviewForm(username: String, completeExercise: XmlCompleteEx, exercisePart: XmlExPart): Form[XmlExerciseReview] = Form(
     mapping(

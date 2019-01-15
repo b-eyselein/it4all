@@ -46,9 +46,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val consts: Consts = WebConsts
+  override protected val exParts: Seq[WebExPart] = WebExParts.values
 
-  override val exParts: Seq[WebExPart] = WebExParts.values
+  override protected val completeResultJsonProtocol: WebCompleteResultJsonProtocol.type = WebCompleteResultJsonProtocol
 
   // Forms
 
@@ -148,16 +148,22 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
+  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future(Try {
     writeWebSolutionFile(user.username, exercise.ex.id, part, learnerSolution)
 
     val driver = new HtmlUnitDriver(true)
     driver.get(getSolutionUrl(user, exercise.ex.id, part))
 
-    val results = Try(exercise.tasksForPart(part) map (task => WebCorrector.evaluateWebTask(task, driver)))
-
-    results map (WebCompleteResult(learnerSolution, exercise, part, _))
-  }
+    part match {
+      case WebExParts.HtmlPart =>
+        val elementResults = exercise.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
+        WebCompleteResult(learnerSolution, exercise, part, elementResults, Seq[JsWebResult]())
+      case WebExParts.JsPart   =>
+        val jsWebResults = exercise.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
+        WebCompleteResult(learnerSolution, exercise, part, Seq[ElementResult](), jsWebResults)
+      case _                   => ???
+    }
+  })
 
   // Other helper methods
 

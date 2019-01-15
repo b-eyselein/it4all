@@ -1,10 +1,9 @@
 package model.toolMains
 
-import java.nio.file.Path
-
 import better.files.File
 import model._
 import model.core._
+import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
 import model.persistence.ExerciseTableDefs
 import net.jcazevedo.moultingyaml._
 import play.twirl.api.Html
@@ -21,6 +20,8 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   type CompExType <: CompleteEx[ExType]
 
+  type CompResult <: CompleteResult[R]
+
   type ReadType
 
   override type Tables <: ExerciseTableDefs[ExType, CompExType]
@@ -29,9 +30,12 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   val usersCanCreateExes: Boolean = false
 
+  protected val completeResultJsonProtocol: CompleteResultJsonProtocol[R, CompResult]
+
+
   // Reading Yaml
 
-  val yamlFormat: MyYamlFormat[ReadType]
+  protected val yamlFormat: MyYamlFormat[ReadType]
 
   def readAndSave(yamlFileContent: String): Future[ReadAndSaveResult[ReadType]] = {
     val readTries: Seq[Try[ReadType]] = yamlFileContent.parseYamls map {

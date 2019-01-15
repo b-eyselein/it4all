@@ -39,7 +39,7 @@ object ToolState extends PlayEnum[ToolState] {
 
 }
 
-abstract class AToolMain(val toolname: String, val urlPart: String)  {
+abstract class AToolMain(val toolname: String, val urlPart: String) {
 
   // Abstract types
 
@@ -49,9 +49,7 @@ abstract class AToolMain(val toolname: String, val urlPart: String)  {
 
   // Other members
 
-  val tables: Tables
-
-  val consts: Consts
+  protected val tables: Tables
 
   val hasTags      : Boolean = false
   val hasPlayground: Boolean = false

@@ -33,9 +33,7 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val consts: Consts = BoolConsts
-
-  override val exParts: Seq[PartType] = BoolExParts.values
+  override protected val exParts: Seq[PartType] = BoolExParts.values
 
   // Views
 

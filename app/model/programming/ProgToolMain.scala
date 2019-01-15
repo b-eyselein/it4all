@@ -49,9 +49,11 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override val toolState: ToolState = ToolState.BETA
 
-  override val consts: Consts = ProgConsts
+  override protected val exParts: Seq[ProgExPart] = ProgExParts.values
 
-  override val exParts: Seq[ProgExPart] = ProgExParts.values
+  override implicit val yamlFormat: MyYamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
+
+  override protected val completeResultJsonProtocol: ProgCompleteResultJsonProtocol.type = ProgCompleteResultJsonProtocol
 
   // Forms
 
@@ -92,10 +94,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override def instantiateSolution(id: Int, username: String, exercise: ProgCompleteEx, part: ProgExPart,
                                    solution: ProgSolution, points: Points, maxPoints: Points): DBProgSolution =
     DBProgSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution.solution, solution.language, solution.extendedUnitTests, points, maxPoints)
-
-  // Yaml
-
-  override implicit val yamlFormat: MyYamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
 
   // Correction
 

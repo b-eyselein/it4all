@@ -60,9 +60,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val consts: Consts = SqlConsts
-
   override val usersCanCreateExes: Boolean = false
+
+  override val completeResultJsonProtocol: SqlCorrResultJsonProtocol.type = SqlCorrResultJsonProtocol
 
   // Yaml
 

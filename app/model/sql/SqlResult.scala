@@ -34,14 +34,6 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
   val successType: SuccessType
 
-  override def toJson(solutionSaved: Boolean): JsValue = Json.obj(
-    solutionSavedName -> solutionSaved,
-    successName -> successType.entryName,
-    resultsName -> jsonRest
-  )
-
-  def jsonRest: JsValue
-
 }
 
 final case class SqlQueriesStaticComparison[Q](userQ: Q, sampleQ: Q,
@@ -92,17 +84,6 @@ final case class SqlResult(learnerSolution: String,
     whereComparison.maxPoints +
     additionalComparisons.map(_.maxPoints).fold(0 points)(_ + _)
 
-  override def jsonRest: JsValue = Json.obj(
-    columnComparisonsName -> columnComparison.toJson,
-    tableComparisonsName -> tableComparison.toJson,
-    joinExpressionsComparisonsName -> joinExpressionComparison.toJson,
-    whereComparisonsName -> whereComparison.toJson,
-
-    additionalComparisonsName -> additionalComparisons.map(_.toJson),
-
-    executionName -> executionResult.toJson
-  )
-
 }
 
 final case class SqlParseFailed(learnerSolution: String, error: Throwable) extends SqlCorrResult {
@@ -110,8 +91,6 @@ final case class SqlParseFailed(learnerSolution: String, error: Throwable) exten
   override def results: Seq[EvaluationResult] = Seq[EvaluationResult]()
 
   override val successType: SuccessType = SuccessType.ERROR
-
-  override def jsonRest: JsValue = Json.obj(messageName -> error.getMessage)
 
 }
 
@@ -124,15 +103,5 @@ final case class SqlExecutionResult(userResultTry: Try[SqlQueryResult], sampleRe
       case Success(sampleResult) => SuccessType.ofBool(userResult isIdentic sampleResult)
     }
   }
-
-
-  def toJson: JsObject = Json.obj(
-    successName -> success,
-    userResultTry match {
-      case Success(result) => userResultName -> result.toJson
-      case Failure(error)  => userErrorName -> JsString(error.toString)
-    },
-    sampleResultName -> sampleResultTry.map(_.toJson).toOption
-  )
 
 }

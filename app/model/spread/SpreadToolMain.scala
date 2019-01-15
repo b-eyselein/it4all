@@ -43,11 +43,11 @@ class SpreadToolMain @Inject()(override val tables: SpreadTableDefs)(implicit ec
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val consts: Consts = SpreadConsts
-
   override val fileTypes: Map[String, String] = Map("xlsx" -> "MS Excel", "ods" -> "OpenOffice")
 
-  override val exParts: Seq[SpreadExPart] = SpreadExParts.values
+  override protected val exParts: Seq[SpreadExPart] = SpreadExParts.values
+
+  override protected val completeResultJsonProtocol: Null = null
 
   // Forms
 
