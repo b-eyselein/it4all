@@ -68,17 +68,17 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
 
     for ((docId, toRead, grammarContent, docContent) <- valuesToTest) {
 
-      val dtd = DocTypeDefParser.tryParseDTD(grammarContent) match {
-        case Failure(error)   =>
-          Logger.error("Could not parse dtd", error)
-          fail(error.getMessage)
-        case Success(someDtd) => someDtd
-      }
+      //      val dtd = DocTypeDefParser.tryParseDTD(grammarContent) match {
+      //        case Failure(error)   =>
+      //          Logger.error("Could not parse dtd", error)
+      //          fail(error.getMessage)
+      //        case Success(someDtd) => someDtd
+      //      }
 
       xmlSampleYamlFormat.read(toRead.parseYaml) match {
         case Failure(error)     => fail("Could not read yaml: " + error.getMessage)
         case Success(xmlSample) =>
-          xmlSample shouldBe XmlSample(docId, 1, SemanticVersionHelper.DEFAULT, dtd, docContent)
+          xmlSample shouldBe XmlSample(docId, 1, SemanticVersionHelper.DEFAULT, grammarContent, docContent)
           xmlSampleYamlFormat.write(xmlSample).prettyPrint shouldBe toRead
       }
     }
@@ -114,12 +114,14 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
       case Failure(error)           => fail("Could not read yaml: " + error.getMessage)
       case Success(readXmlExercise) =>
 
-        val awaitedDTD = DocTypeDefParser.tryParseDTD("<!ELEMENT root (#PCDATA)>") match {
-          case Failure(error)   =>
-            Logger.error("Error while parsing dtd", error)
-            fail("Error while parsing dtd..." + error.getMessage)
-          case Success(someDTD) => someDTD
-        }
+        val grammarContent = "<!ELEMENT root (#PCDATA)>"
+
+        //        val awaitedDTD = DocTypeDefParser.tryParseDTD(grammarContent) match {
+        //          case Failure(error)   =>
+        //            Logger.error("Error while parsing dtd", error)
+        //            fail("Error while parsing dtd..." + error.getMessage)
+        //          case Success(someDTD) => someDTD
+        //        }
 
         readXmlExercise shouldBe
           XmlCompleteEx(
@@ -128,7 +130,7 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
                 "Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast hat mindestens ein " +
                 "Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.\n",
               rootNode = "party"),
-            Seq(XmlSample(1, 1, SemanticVersion(1, 0, 0), awaitedDTD,
+            Seq(XmlSample(1, 1, SemanticVersion(1, 0, 0), grammarContent,
               """<root>
                 |</root>
                 |""".stripMargin)))
