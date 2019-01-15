@@ -54,7 +54,7 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
           |""".stripMargin,
         """<!ELEMENT found (name, date)>
           |<!ELEMENT name (#PCDATA)>
-          |<!ELEMENT date (#PCDATA)>""",
+          |<!ELEMENT date (#PCDATA)>""".stripMargin,
         """<found>
           |  <name>test</name>
           |  <date>2018-01-01</date>
