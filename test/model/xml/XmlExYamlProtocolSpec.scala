@@ -1,11 +1,9 @@
 package model.xml
 
-import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
 import model.xml.XmlExYamlProtocol.XmlSampleYamlFormat
-import model.xml.dtd.{DocTypeDef, DocTypeDefParser, ElementLine}
+import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
 import net.jcazevedo.moultingyaml._
 import org.scalatest._
-import play.api.Logger
 
 import scala.util.{Failure, Success}
 

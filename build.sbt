@@ -87,20 +87,19 @@ resolvers ++= Seq(
 )
 
 val webJarDependencies = Seq(
-  "org.webjars.npm" % "jquery" % "3.3.1", "org.webjars.npm" % "types__jquery" % "3.3.27", // TODO: OK and 3.3.29
+  "org.webjars.npm" % "jquery" % "3.3.1", "org.webjars.npm" % "types__jquery" % "3.3.29",
 
   "org.webjars" % "popper.js" % "1.14.6",
 
   "org.webjars" % "octicons" % "4.3.0",
 
-  "org.webjars.npm" % "bootstrap" % "4.2.1", "org.webjars.npm" % "types__bootstrap" % "4.1.2", // TODO: OK and 4.2.0
+  "org.webjars.npm" % "bootstrap" % "4.2.1", "org.webjars.npm" % "types__bootstrap" % "4.2.0",
 
   "org.webjars.npm" % "systemjs" % "0.21.4", "org.webjars.npm" % "types__systemjs" % "0.20.6", // TODO: "2.0.2" and OK
 
   "org.webjars.npm" % "jointjs" % "2.2.1",
 
-  //  "org.webjars.npm" % "backbone" % "1.3.3",
-  "org.webjars.npm" % "types__backbone" % "1.3.43", // TODO: 1.3.45
+  "org.webjars.npm" % "types__backbone" % "1.3.45",
 
   "org.webjars.npm" % "lodash" % "4.17.11", "org.webjars.npm" % "types__lodash" % "4.14.119",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
@@ -119,11 +118,16 @@ libraryDependencies ++= webJarDependencies
 resolveFromWebjarsNodeModulesDir := true
 
 dependencyOverrides ++= Seq(
-  "org.webjars.npm" % "types__jquery" % "3.3.17",
+  "org.webjars.npm" % "types__jquery" % "3.3.29",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
   "org.webjars.npm" % "types__sizzle" % "2.3.2",
-  "org.webjars.npm" % "types__tern" % "0.22.1",
   "org.webjars.npm" % "types__estree" % "0.0.39"
+  //  , "org.webjars.npm" % "types__tern" % "0.22.1"
+)
+
+excludeDependencies ++= Seq(
+  //  TODO: exclude tern since it has an compile error
+  ExclusionRule(organization = "org.webjars.npm", name = "types__tern")
 )
 
 // Used libraries from Maven Repository

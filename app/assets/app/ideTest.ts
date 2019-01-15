@@ -44,7 +44,7 @@ function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
         });
 }
 
-function changeEditorContent(event: JQuery.Event): void {
+function changeEditorContent(event: Event): void {
     // save current editor content for activeFile!
     files.get(activeFile).new_content = editor.getValue();
 
@@ -64,7 +64,7 @@ function changeEditorContent(event: JQuery.Event): void {
     clickedBtn.removeClass('btn-outline-secondary').addClass('btn-primary');
 }
 
-function uploadFiles(event: JQuery.Event): void {
+function uploadFiles(event: Event): void {
     // TODO: implement!
     console.warn('TODO: Upload!');
 
