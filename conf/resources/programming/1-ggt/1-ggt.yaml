@@ -3,7 +3,7 @@ semanticVersion: 1.0.0
 title: Größter gemeinsamer Teiler
 author: bje40dc
 text: >
-  Implementieren Sie die folgende Funktion <code>ggt(a, b)</code> die den größten gemeinsamen Teiler
+  Implementieren Sie die folgende Funktion ggt(a: int, b -> int) -> int, die den größten gemeinsamen Teiler
   zweier Zahlen berechnet!
 status: APPROVED
 identifier: ggt
