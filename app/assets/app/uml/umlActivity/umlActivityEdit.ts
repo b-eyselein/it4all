@@ -39,7 +39,7 @@ function resetActionInput(): void {
 }
 
 
-function updateActionInput(event: JQuery.Event): void {
+function updateActionInput(event: Event): void {
     const cell = getCell(event.target as HTMLElement);
 
     if (cell instanceof ActionInput) {
@@ -95,7 +95,7 @@ function resetForLoopText(): void {
     forLoopTextEditSection.prop('hidden', true);
 }
 
-function updateForLoopText(event: JQuery.Event) {
+function updateForLoopText(event: Event) {
     const cell = getCell(event.target as HTMLElement);
 
     if (cell instanceof ForLoopText) {
@@ -158,7 +158,7 @@ function resetIfElseText(): void {
     ifElseTextEditSection.prop('hidden', true);
 }
 
-function updateIfElseText(event: JQuery.Event): void {
+function updateIfElseText(event: Event): void {
     const cell = getCell(event.target as HTMLElement);
 
     if (cell instanceof IfElseText) {
@@ -209,7 +209,7 @@ function whileInstantiate(): void {
 
 }
 
-function updateWhileText(event: JQuery.Event): void {
+function updateWhileText(event: Event): void {
     const cell = getCell(event.target as HTMLElement);
 
     if (cell instanceof WhileLoopText) {

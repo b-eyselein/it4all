@@ -270,7 +270,7 @@ function addAttributes(umlAttributes: UmlClassAttribute[]): void {
     $('#editAttrsPlusBtn').before(umlAttributes.map(attributeInputLine).join('\n'));
     $('.glyphicon-remove').parent().on('click', (event) => deleteMember(event.target as HTMLElement));
 
-    $('.attrModifierBtn').on('click', (event: JQuery.Event) => {
+    $('.attrModifierBtn').on('click', (event: Event) => {
         $(event.target).toggleClass('btn-primary');
     });
 }
@@ -279,7 +279,7 @@ function addMethods(umlMethods: UmlClassMethod[]): void {
     $('#editMethodsPlusBtn').before(umlMethods.map(methodInputLine).join('\n'));
     $('.glyphicon-remove').parent().on('click', (event) => deleteMember(event.target as HTMLElement));
 
-    $('.methodModifierBtn').on('click', (event: JQuery.Event) => {
+    $('.methodModifierBtn').on('click', (event: Event) => {
         $(event.target).toggleClass('btn-primary');
     });
 }

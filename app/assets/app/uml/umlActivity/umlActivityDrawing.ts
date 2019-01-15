@@ -260,7 +260,7 @@ function connectNodes(connectProperties: ConnectProperties): void {
 function initElementButtons(): void {
     let jButtons = $('#buttonsDiv').find('a');
 
-    jButtons.on('click', (event: JQuery.Event) => setSelElement(event.target as HTMLElement));
+    jButtons.on('click', (event: Event) => setSelElement(event.target as HTMLElement));
 
     jButtons.prop('draggable', true);
     jButtons.each((index, element: HTMLElement) => {
@@ -274,7 +274,7 @@ function initElementButtons(): void {
 
 
 function initPaperEvents(jPaper: JQuery): void {
-    jPaper.on('dragover', (event: JQuery.Event) => event.preventDefault());
+    jPaper.on('dragover', (event: Event) => event.preventDefault());
     jPaper.on('drop', (event: JQuery.Event) => {
         event.preventDefault();
 

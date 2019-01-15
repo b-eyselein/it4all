@@ -1,4 +1,4 @@
-function onUpdateVersionSelect(event: JQuery.Event): void {
+function onUpdateVersionSelect(event: Event): void {
 
     const targetSelect: JQuery<HTMLSelectElement> = $(event.target as HTMLSelectElement);
 
