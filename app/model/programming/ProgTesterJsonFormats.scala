@@ -2,11 +2,36 @@ package model.programming
 
 import better.files.File
 import model.core.result.SuccessType
+import model.programming.ProgConsts._
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
+
+
+object TestDataJsonFormat {
+
+  def dumpTestDataToJson(exercise: ProgCompleteEx, testData: Seq[TestData]): JsValue = Json.obj(
+    simplifiedName -> Json.obj(
+      functionNameName -> JsString(exercise.ex.functionname),
+      "test_data" -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.ex.outputType),
+      baseDataName -> exercise.ex.baseData
+    ),
+    extendedName -> JsNull
+  )
+
+  // FIXME: how to display input? ==> with variable name!!
+  private def dumpTestData(testData: Seq[TestData], sortedInputs: Seq[ProgInput], outputType: ProgDataType): JsValue =
+    JsArray(testData sortBy (_.id) map { td =>
+      Json.obj(
+        idName -> td.id,
+        inputName -> td.inputAsJson,
+        outputName -> td.output
+      )
+    })
+
+}
 
 final case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], errors: String)
 

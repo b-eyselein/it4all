@@ -52,14 +52,14 @@ final case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVers
 
 final case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue, username: String, state: ExerciseState) extends TestData {
 
-  def toJson: JsObject = Json.obj(
-    idName -> id,
-    exerciseIdName -> exerciseId,
-    usernameName -> username,
-    outputName -> output,
-    statusName -> state.entryName,
-    inputsName -> inputAsJson
-  )
+//  def toJson: JsObject = Json.obj(
+//    idName -> id,
+//    exerciseIdName -> exerciseId,
+//    usernameName -> username,
+//    outputName -> output,
+//    statusName -> state.entryName,
+//    inputsName -> inputAsJson
+//  )
 
 }
 

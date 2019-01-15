@@ -13,6 +13,7 @@ object ProgConsts extends Consts {
   val consoleOutputName   : String = "consoleOutput"
 
   val evaluatedName        : String = "evaluated"
+  val extendedName         : String = "extended"
   val extendedUnitTestsName: String = "extendedUnitTests"
 
   val functionNameName: String = "functionname"
@@ -30,6 +31,7 @@ object ProgConsts extends Consts {
 
   val sampleSolutionsName: String = "sampleSolutions"
   val sampleTestDataName : String = "sampleTestData"
+  val simplifiedName     : String = "simplified"
   val stdoutName         : String = "stdout"
 
   val testIdName  : String = "testId"
