@@ -13,13 +13,13 @@ object WebCorrector {
     case task: JsCompleteTask   => evaluateJsTask(task, searchContent)
   }
 
-   def evaluateHtmlTask(completeHtmlTask: HtmlCompleteTask, searchContext: SearchContext): ElementResult =
+  def evaluateHtmlTask(completeHtmlTask: HtmlCompleteTask, searchContext: SearchContext): ElementResult =
     searchContext.findElements(By.xpath(completeHtmlTask.task.xpathQuery)).asScala.toList match {
       case Nil => ElementResult(completeHtmlTask, None, Seq[AttributeResult](), None)
 
       case foundElement :: Nil =>
         val attrResults = completeHtmlTask.attributes map (evaluateAttribute(_, foundElement))
-        val textResult = completeHtmlTask.task.textContent map (TextContentResult(foundElement.getText, _))
+        val textResult = completeHtmlTask.task.textContent map (TextContentResult(foundElement.getAttribute("textContent"), _))
         ElementResult(completeHtmlTask, Some(foundElement), attrResults, textResult)
 
       case _ :: _ => ElementResult(completeHtmlTask, None, Seq[AttributeResult](), None)

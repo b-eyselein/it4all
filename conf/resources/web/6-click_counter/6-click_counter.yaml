@@ -92,6 +92,29 @@ samples:
     htmlSample: |
       <!doctype html>
       <html>
-      <head></head>
-      <body>TODO!<body>
+      <head>
+          <title>Klickzähler</title>
+      </head>
+      <body>
+          <button onclick="increment()">Klick mich!</button>
+          <span id="theSpan">0</span>
+      </body>
+      </html>
+    jsSample: |
+      <!doctype html>
+      <html>
+      <head>
+          <title>Klickzähler</title>
+      	<script>
+              function increment() {
+                  let theSpan = document.getElementById('theSpan');
+                  let value = parseInt(theSpan.textContent) + 1;
+                  theSpan.textContent = value;
+              }
+          </script>
+      </head>
+      <body>
+          <button onclick="increment()">Klick mich!</button>
+          <span id="theSpan">0</span>
+      </body>
       </html>

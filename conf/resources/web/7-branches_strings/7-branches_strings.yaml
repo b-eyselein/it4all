@@ -74,12 +74,55 @@ samples:
     htmlSample: |
       <!doctype html>
       <html>
-      <head></head>
-      <body>TODO!<body>
+      <head>
+          <!-- Hier: CSS und Javascript -->
+          <title>Passwortstärke</title>
+      </head>
+      <body>
+      <p>
+          <label for="name">Name:</label>
+          <input id="name">
+      </p>
+      <p>
+          <label for="password">Passwort:</label>
+          <input id="password" type="password" onchange="passwordStrength()">
+      </p>
+      <p>
+          <span id="errors"></span>
+      </p>
+      </body>
       </html>
     jsSample: |
       <!doctype html>
       <html>
-      <head></head>
-      <body>TODO!<body>
+      <head>
+          <title>Passwortstärke</title>
+          <script>
+              function passwordStrength() {
+                  let passwordValue = document.getElementById('password').value;
+                  let errorsSpan = document.getElementById('errors');
+
+                  if (passwordValue === 'meinpasswort') {
+                      errorsSpan.textContent = 'Zu einfach';
+                  } else if (passwordValue.length < 8) {
+                      errorsSpan.textContent = 'Zu kurz';
+                  } else {
+                      errorsSpan.textContent = '';
+                  }
+              }
+          </script>
+      </head>
+      <body>
+      <p>
+          <label for="name">Name:</label>
+          <input id="name">
+      </p>
+      <p>
+          <label for="password">Passwort:</label>
+          <input id="password" type="password" onchange="passwordStrength()">
+      </p>
+      <p>
+          <span id="errors"></span>
+      </p>
+      </body>
       </html>

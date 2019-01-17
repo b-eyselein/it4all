@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 
-export {onWebCorrectionError, renderWebCompleteResult, WebCompleteResult};
+export {renderWebCompleteResult, WebCompleteResult};
 
 interface WebCompleteResult {
     solutionSaved: boolean
@@ -66,11 +66,20 @@ function renderTextResult(textContent: TextResult): string {
     if (textContent.success) {
         return `<span class="text-success">Das Element hat den richtigen Textinhalt.</span>`
     } else {
+        let foundRender: string;
+        if (textContent.found === null || textContent.found.length === 0) {
+            foundRender = '<b>kein Textinhalt!</b>'
+        } else {
+            foundRender = `&quot;<code>${textContent.found}</code>&quot;`;
+        }
+
         return `
 <span class="text-danger">
-    Das Element hat nicht den richtigen Textinhalt.
-    Gesucht war <code>${textContent.awaited}</code>,
-    gefunden wurde ${textContent.found != null ? (`<code>${textContent.found}</code>`) : '<b>Kein Textinhalt!</b>'}</code>
+    Das Element hat nicht den richtigen Textinhalt:
+    <ul>
+        <li>Gesucht war &quot;<code>${textContent.awaited}</code>&quot;,</li>
+        <li>gefunden wurde ${foundRender}</li>
+    </ul>
 </span>`.trim();
     }
 }
@@ -82,9 +91,11 @@ function renderAttrResult(attrResult: AttributeResult): string {
     } else {
         return `
 <span class="text-danger">
-    Das Attribut <code>${attrResult.attrName}</code> hat nicht den richtigen Wert.
-    Gesucht war <code>${attrResult.awaited}</code>
-    gefunden wurde ${attrResult.found != null ? (`<code>${attrResult.found}</code>`) : ' <b>kein Attribut!</b>'}
+    Das Attribut <code>${attrResult.attrName}</code> hat nicht den richtigen Wert:
+    <ul>
+        <li>Gesucht war <code>${attrResult.awaited}</code>,</li>
+        <li>gefunden wurde ${attrResult.found != null ? (`<code>${attrResult.found}</code>`) : ' <b>kein Attribut!</b>'}</li>
+    </ul>
 </span>`.trim();
     }
 }
@@ -203,12 +214,3 @@ function renderWebCompleteResult(corr: WebCompleteResult): void {
     // $('#correctionTabBtn').tab('show');
 }
 
-function onWebCorrectionError(jqXHR): void {
-    $('#testBtn').prop('disabled', false);
-
-    $('#correction').html(`
-<div class="alert alert-danger">Es gab einen Fehler bei der Korrekur:
-    <hr>
-    <pre>${jqXHR.responseJSON.msg}</pre>
-</div>`.trim())
-}

@@ -4,7 +4,7 @@ import * as CodeMirror from 'codemirror';
 import {initEditor} from "../editorHelpers";
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
-import {onWebCorrectionError, renderWebCompleteResult, WebCompleteResult} from "./webCorrection";
+import {renderWebCompleteResult, WebCompleteResult} from "./webCorrection";
 
 import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
 
@@ -49,20 +49,6 @@ function testSol(): void {
     const solution: string = editor.getValue();
 
     testTextExerciseSolution(testButton, solution, onWebCorrectionSuccess, onWebCorrectionError);
-    // $.ajax({
-    //     type: 'PUT',
-    //     dataType: 'json', // return type
-    //     contentType: 'application/json', // type of message to server
-    //     url: testButton.data('url'),
-    //     data: JSON.stringify(solution),
-    //     async: true,
-    //     beforeSend: (xhr) => {
-    //         const token = $('input[name="csrfToken"]').val() as string;
-    //         xhr.setRequestHeader("Csrf-Token", token);
-    //     },
-    //     success: onWebCorrectionSuccess,
-    //     error: onWebCorrectionError
-    // });
 }
 
 function onWebCorrectionSuccess(result: WebCompleteResult): void {
@@ -71,6 +57,18 @@ function onWebCorrectionSuccess(result: WebCompleteResult): void {
     testBtn.prop('disabled', false);
 
     renderWebCompleteResult(result);
+    focusOnCorrection();
+}
+
+function onWebCorrectionError(jqXHR): void {
+    $('#testBtn').prop('disabled', false);
+
+    $('#correction').html(`
+<div class="alert alert-danger">Es gab einen Fehler bei der Korrekur:
+    <hr>
+    <pre>${jqXHR.responseJSON.msg}</pre>
+</div>`.trim())
+
     focusOnCorrection();
 }
 
