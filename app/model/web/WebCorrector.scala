@@ -8,11 +8,6 @@ import scala.util.{Failure, Success, Try}
 
 object WebCorrector {
 
-  def evaluateWebTask(task: WebCompleteTask, searchContent: SearchContext): WebResult = task match {
-    case task: HtmlCompleteTask => evaluateHtmlTask(task, searchContent)
-    case task: JsCompleteTask   => evaluateJsTask(task, searchContent)
-  }
-
   def evaluateHtmlTask(completeHtmlTask: HtmlCompleteTask, searchContext: SearchContext): ElementResult =
     searchContext.findElements(By.xpath(completeHtmlTask.task.xpathQuery)).asScala.toList match {
       case Nil => ElementResult(completeHtmlTask, None, Seq[AttributeResult](), None)

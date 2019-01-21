@@ -1,10 +1,12 @@
 package model.web
 
 import better.files.File
+import com.gargoylesoftware.htmlunit.ScriptException
 import javax.inject._
 import model._
 import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
 import model.web.WebConsts._
+import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Forms._
 import play.api.data._
@@ -65,13 +67,13 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // DB
 
-  def writeWebSolutionFile(username: String, exerciseId: Int, part: WebExPart, content: String): File = {
+  def writeWebSolutionFile(username: String, exerciseId: Int, part: WebExPart, content: String): Try[File] = Try {
     val fileEnding = part match {
       case WebExParts.PHPPart => "php"
       case _                  => "html"
     }
 
-    val target: File = solutionDirForExercise(username, exerciseId) / ("test." + fileEnding)
+    val target: File = solutionDirForExercise(username, exerciseId) / s"test.$fileEnding"
     target.createFileIfNotExists(createParents = true).write(content)
   }
 
@@ -148,12 +150,18 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future(Try {
-    writeWebSolutionFile(user.username, exercise.ex.id, part, learnerSolution)
+  private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
+    case syntaxError: WebDriverException =>
+      Option(syntaxError.getCause) match {
+        case Some(scriptException: ScriptException) => Failure(scriptException)
+        case _                                      => ???
+      }
+    case otherError                      =>
+      print(otherError)
+      ???
+  }
 
-    val driver = new HtmlUnitDriver(true)
-    driver.get(getSolutionUrl(user, exercise.ex.id, part))
-
+  private def onDriverGetSuccess(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, driver: HtmlUnitDriver): Try[WebCompleteResult] = Try {
     part match {
       case WebExParts.HtmlPart =>
         val elementResults = exercise.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
@@ -163,7 +171,20 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
         WebCompleteResult(learnerSolution, exercise, part, Seq[ElementResult](), jsWebResults)
       case _                   => ???
     }
-  })
+  }
+
+  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
+    writeWebSolutionFile(user.username, exercise.ex.id, part, learnerSolution) flatMap { _ =>
+
+      val driver = new HtmlUnitDriver(true)
+      Try {
+        driver.get(getSolutionUrl(user, exercise.ex.id, part))
+      }.transform(
+        _ => onDriverGetSuccess(learnerSolution, exercise, part, driver),
+        onDriverGetError
+      )
+    }
+  }
 
   // Other helper methods
 
