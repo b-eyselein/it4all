@@ -23,10 +23,6 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
     implicit request => toolMain.futureLearningPaths map (paths => Ok(views.html.exercises.exerciseIndex(user, toolMain, paths)))
   }
 
-  //  def exercisesOverview(toolType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
-  //    implicit request => Ok(toolMain.exercisesOverview(user))
-  //  }
-
   // Evaluation
 
   def evaluate(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
