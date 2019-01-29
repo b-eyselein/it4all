@@ -7,9 +7,9 @@ import scala.util.{Failure, Success}
 
 class BoolNodeParserTest {
 
-  val (aVar, bVar, cVar): (ScalaNode, ScalaNode, ScalaNode) = (Variable('a'), Variable('b'), Variable('c'))
+  val (aVar, bVar, cVar): (BoolNode, BoolNode, BoolNode) = (Variable('a'), Variable('b'), Variable('c'))
 
-  def testParse(expected: ScalaNode, representations: String*): Unit = for (toParse <- representations) {
+  def testParse(expected: BoolNode, representations: String*): Unit = for (toParse <- representations) {
     BoolNodeParser.parseBoolFormula(toParse) match {
       case Success(parsed) => assert(parsed == expected, s"""expected that parsing "$toParse" is equal to $expected""")
       case Failure(error)  => fail(s"""expected that parsing of "$toParse" succeeds, but got error $error!""")

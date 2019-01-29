@@ -38,7 +38,7 @@ final case class CreationQuestionError(formula: String, errorMsg: String) extend
 
 }
 
-final case class CreationQuestionSuccess(learnerSolution: ScalaNode, question: CreationQuestion) extends CreationQuestionResult {
+final case class CreationQuestionSuccess(learnerSolution: BoolNode, question: CreationQuestion) extends CreationQuestionResult {
 
   override val isCorrect: Boolean = question.solutions forall (as => as(SolVariable) == learnerSolution(as))
 
@@ -72,7 +72,7 @@ final case class FilloutQuestionError(formula: String, errorMsg: String) extends
   override val assignments: Seq[BoolTableRow] = Seq[BoolTableRow]()
 }
 
-final case class FilloutQuestionSuccess(formula: ScalaNode, assignments: Seq[BoolTableRow]) extends FilloutQuestionResult {
+final case class FilloutQuestionSuccess(formula: BoolNode, assignments: Seq[BoolTableRow]) extends FilloutQuestionResult {
 
   override val isCorrect: Boolean = assignments forall (as => as.isSet(LerVariable) && as(LerVariable) == as(SolVariable))
 

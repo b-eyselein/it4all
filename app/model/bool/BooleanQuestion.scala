@@ -18,7 +18,7 @@ object BooleanQuestion {
   private val MinDepth = 1
   private val MaxDepth = 2
 
-  def generateRandom: ScalaNode = if (randomBetweenInclBounds(MinDepth, MaxDepth) < 2)
+  def generateRandom: BoolNode = if (randomBetweenInclBounds(MinDepth, MaxDepth) < 2)
     generateRandomOperator(Variable('a'), Variable('b'))
   else {
     val variables = ('a' to 'z') map Variable take randomBetweenInclBounds(MinVars, MaxVars)
@@ -38,7 +38,7 @@ object BooleanQuestion {
     * <li>zusaetzlich 33%, dass linker oder rechter Kindoperator negiert wird</li>
     * </ul>
     */
-  private def generateRandomOperator(leftChild: ScalaNode, rightChild: ScalaNode): ScalaNode = {
+  private def generateRandomOperator(leftChild: BoolNode, rightChild: BoolNode): BoolNode = {
     val left = if (generator.nextInt(3) == 2) leftChild.negate else leftChild
     val right = if (generator.nextInt(3) == 2) rightChild.negate else rightChild
 
@@ -76,7 +76,7 @@ final case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQ
 
 }
 
-final case class FilloutQuestion(formula: ScalaNode) extends BooleanQuestion {
+final case class FilloutQuestion(formula: BoolNode) extends BooleanQuestion {
 
   val assignments: Seq[BoolTableRow] = generateAllAssignments(formula.usedVariables toSeq)
 

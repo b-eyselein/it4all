@@ -66,7 +66,7 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
   }
 
   private def correctPart(exPart: BoolExPart, boolSolution: BoolSolution): BooleanQuestionResult = {
-    val formulaParseTry: Try[ScalaNode] = BoolNodeParser.parseBoolFormula(boolSolution.formula)
+    val formulaParseTry: Try[BoolNode] = BoolNodeParser.parseBoolFormula(boolSolution.formula)
 
     exPart match {
       case BoolExParts.TableFillout => formulaParseTry match {

@@ -1,7 +1,7 @@
 package model.bool
 
 import model.bool.BoolConsts._
-import model.bool.ScalaNode.{constant, not}
+import model.bool.BoolNode.{constant, not}
 
 import scala.language.postfixOps
 
@@ -36,26 +36,29 @@ object BoolTableRow {
   def generateAllAssignments(variables: Seq[Variable]): Seq[BoolTableRow] = {
 
     @annotation.tailrec
-    def go(variables: List[Variable], tableRows: Seq[BoolTableRow]): Seq[BoolTableRow] = variables match {
+    def go(variables: List[Variable], tableRows: List[BoolTableRow]): Seq[BoolTableRow] = variables match {
       case Nil          => tableRows
       case head :: tail => tableRows match {
-        case Seq() => go(tail, Seq(BoolTableRow(head -> false), BoolTableRow(head -> true)))
-        case _     => go(tail, tableRows.map(_ + (head -> false)) ++ tableRows.map(_ + (head -> true)))
+        case Nil => go(tail, List(BoolTableRow(head -> false), BoolTableRow(head -> true)))
+        case _   => go(tail, tableRows.map(_ + (head -> false)) ++ tableRows.map(_ + (head -> true)))
       }
     }
 
-    go(variables.sorted.reverse.toList, Seq[BoolTableRow]())
+    go(variables.sorted.toList, List[BoolTableRow]())
   }
 
-  def getNF(assignments: Seq[BoolTableRow], takePos: Boolean, innerF: (ScalaNode, ScalaNode) => ScalaNode, outerF: (ScalaNode, ScalaNode) => ScalaNode): ScalaNode =
+  private def getNF(assignments: Seq[BoolTableRow], takeTrues: Boolean, innerF: (BoolNode, BoolNode) => BoolNode, outerF: (BoolNode, BoolNode) => BoolNode): BoolNode =
     assignments
-      .filter(takePos ^ _.apply(SolVariable))
-      .map(as => as.variables map (v => if (takePos ^ as(v)) v else not(v)) reduceLeft innerF) match {
-      case Nil => constant(takePos)
-      case l   => l reduceLeft outerF
+      .toList
+      .filter(takeTrues == _.apply(SolVariable)) match {
+      case Nil  => constant(!takeTrues)
+      case rows =>
+        val innerTerms = rows.map(as => as.variables map (v => if (as(v)) v else not(v)) reduceLeft innerF)
+        innerTerms reduceLeft outerF
     }
 
-  def disjunktiveNormalForm(assignments: Seq[BoolTableRow]): ScalaNode = getNF(assignments, takePos = false, AndScalaNode, OrScalaNode)
+  def disjunktiveNormalForm(assignments: Seq[BoolTableRow]): BoolNode = getNF(assignments, takeTrues = true, AndBoolNode, OrBoolNode)
 
-  def konjunktiveNormalForm(assignments: Seq[BoolTableRow]): ScalaNode = getNF(assignments, takePos = true, OrScalaNode, AndScalaNode)
+  def konjunktiveNormalForm(assignments: Seq[BoolTableRow]): BoolNode = getNF(assignments, takeTrues = false, OrBoolNode, AndBoolNode)
+
 }

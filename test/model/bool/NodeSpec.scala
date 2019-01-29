@@ -9,13 +9,13 @@ object NodeSpec {
 
   implicit def char2Variable(char: Char): Variable = Variable(char)
 
-  implicit def char2Scalanode(char: Char): ScalaNode = Variable(char)
+  implicit def char2Scalanode(char: Char): BoolNode = Variable(char)
 
   val (aVar, bVar, cVar): (Variable, Variable, Variable) = ('a', 'b', 'c')
 
 }
 
-class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec with Matchers {
+abstract class NodeSpec(protected val nodeUnderTest: BoolNode) extends FlatSpec with Matchers {
 
   val (ff, ft, tf, tt) = (
     BoolTableRow(aVar -> false, bVar -> false),
@@ -31,7 +31,7 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec with Mat
     nodeUnderTest(tt) shouldBe expected(3)
   }
 
-  def testNegate(expected: ScalaNode): Assertion = nodeUnderTest.negate shouldBe expected
+  def testNegate(expected: BoolNode): Assertion = nodeUnderTest.negate shouldBe expected
 
   def testContainedVariables(expected: Set[Variable]): Assertion = nodeUnderTest.usedVariables shouldBe expected
 
@@ -40,11 +40,11 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec with Mat
     nodeUnderTest.getAsString(true) shouldBe expectedTrue
   }
 
-  def evaluate(nodeUnderTest: ScalaNode, assignment: BoolTableRow, expected: Boolean): Assertion = nodeUnderTest(assignment) shouldBe expected
+  def evaluate(nodeUnderTest: BoolNode, assignment: BoolTableRow, expected: Boolean): Assertion = nodeUnderTest(assignment) shouldBe expected
 
 }
 
-class NotSpec extends NodeSpec(NotScalaNode(aVar)) {
+class NotSpec extends NodeSpec(NotBoolNode(aVar)) {
   "A NOT node \"not a\"" should "only contain the variable 'a'" in testContainedVariables(Set('a'))
 
   it should "evaluate to the opposite of 'a'" in testEvaluate(Array(true, true, false, false))
@@ -66,7 +66,7 @@ class VariableSpec extends NodeSpec(aVar) {
 
   it should "always return a constant string representation" in testGetAsString("a", "a")
 
-  it should "negate to \"not a\"" in testNegate(NotScalaNode(aVar))
+  it should "negate to \"not a\"" in testNegate(NotBoolNode(aVar))
 }
 
 class TrueSpec extends NodeSpec(TRUE) {
@@ -89,47 +89,47 @@ class FalseSpec extends NodeSpec(FALSE) {
   it should "negate to the TRUE constant" in testNegate(TRUE)
 }
 
-class AndSpec extends NodeSpec(AndScalaNode(aVar, bVar)) {
+class AndSpec extends NodeSpec(AndBoolNode(aVar, bVar)) {
   "A ScalaNode of \"a and b\"" should "contain exactly the variables 'a' and 'b'" in testContainedVariables(Set(aVar, bVar))
 
   it should "evalute to certain values" in testEvaluate(Array(false, false, false, true))
 
   it should "return a certain string representation" in testGetAsString("a and b", "(a and b)")
 
-  it should "negate to \"a nand b\"" in testNegate(NAndScalaNode(aVar, bVar))
+  it should "negate to \"a nand b\"" in testNegate(NAndBoolNode(aVar, bVar))
 }
 
-class OrSpec extends NodeSpec(OrScalaNode(aVar, bVar)) {
+class OrSpec extends NodeSpec(OrBoolNode(aVar, bVar)) {
   "A ScalaNode of \"a or b\"" should "contain exactly the variables 'a' and 'b'" in testContainedVariables(Set(aVar, bVar))
 
   it should "evalute to certain values" in testEvaluate(Array(false, true, true, true))
 
   it should "return a certain string representation" in testGetAsString("a or b", "(a or b)")
 
-  it should "negate to \"a nand b\"" in testNegate(NOrScalaNode(aVar, bVar))
+  it should "negate to \"a nand b\"" in testNegate(NOrBoolNode(aVar, bVar))
 }
 
-class NAndSpec extends NodeSpec(NAndScalaNode(aVar, bVar)) {
+class NAndSpec extends NodeSpec(NAndBoolNode(aVar, bVar)) {
   "A ScalaNode of \"a nand b\"" should "contain exactly the variables 'a' and 'b'" in testContainedVariables(Set(aVar, bVar))
 
   it should "evalute to certain values" in testEvaluate(Array(true, true, true, false))
 
   it should "return a certain string representation" in testGetAsString("a nand b", "(a nand b)")
 
-  it should "negate to \"a nand b\"" in testNegate(AndScalaNode(aVar, bVar))
+  it should "negate to \"a nand b\"" in testNegate(AndBoolNode(aVar, bVar))
 }
 
-class NOrSpec extends NodeSpec(NOrScalaNode(aVar, bVar)) {
+class NOrSpec extends NodeSpec(NOrBoolNode(aVar, bVar)) {
   "A ScalaNode of \"a nor b\"" should "contain exactly the variables 'a' and 'b'" in testContainedVariables(Set(aVar, bVar))
 
   it should "evalute to certain values" in testEvaluate(Array(true, false, false, false))
 
   it should "return a certain string representation" in testGetAsString("a nor b", "(a nor b)")
 
-  it should "negate to \"a nand b\"" in testNegate(OrScalaNode(aVar, bVar))
+  it should "negate to \"a nand b\"" in testNegate(OrBoolNode(aVar, bVar))
 }
 
-class XOrSpec extends NodeSpec(XOrScalaNode(aVar, bVar)) {
+class XOrSpec extends NodeSpec(XOrBoolNode(aVar, bVar)) {
   "A ScalaNode of \"a xor b\"" should "contain exactly the variables 'a' and 'b'" in testContainedVariables(Set(aVar, bVar))
 
   it should "evalute to certain values" in testEvaluate(Array(false, true, true, false))
@@ -146,7 +146,7 @@ class EquivalencySpec extends NodeSpec(Equivalency(aVar, bVar)) {
 
   it should "return a certain string representation" in testGetAsString("a equiv b", "(a equiv b)")
 
-  it should "negate to \"a nand b\"" in testNegate(XOrScalaNode(aVar, bVar))
+  it should "negate to \"a nand b\"" in testNegate(XOrBoolNode(aVar, bVar))
 }
 
 class ImplicationSpec extends NodeSpec(Implication(aVar, bVar)) {
@@ -156,6 +156,6 @@ class ImplicationSpec extends NodeSpec(Implication(aVar, bVar)) {
 
   it should "return a certain string representation" in testGetAsString("a impl b", "(a impl b)")
 
-  it should "negate to \"a nand b\"" in testNegate(AndScalaNode(aVar, ScalaNode.not(bVar)))
+  it should "negate to \"a nand b\"" in testNegate(AndBoolNode(aVar, BoolNode.not(bVar)))
 }
 
