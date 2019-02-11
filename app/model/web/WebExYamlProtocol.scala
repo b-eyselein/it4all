@@ -23,11 +23,9 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
       htmlText <- yamlObject.optStringField(htmlTextName)
       jsText <- yamlObject.optStringField(jsTextName)
-      phpText <- yamlObject.optStringField(phpTextName)
 
       htmlTaskTries <- yamlObject.optArrayField(htmlTasksName, HtmlCompleteTaskYamlFormat(baseValues.id, baseValues.semanticVersion).read)
       jsTaskTries <- yamlObject.optArrayField(jsTasksName, JsCompleteTaskYamlFormat(baseValues.id, baseValues.semanticVersion).read)
-      phpTasksTries <- yamlObject.optArrayField(phpTasksName, PhpCompleteTaskYamlFormat(baseValues.id, baseValues.semanticVersion).read)
 
       sampleSolutionTries <- yamlObject.arrayField(samplesName, WebSampleSolutionYamlFormat(baseValues.id, baseValues.semanticVersion).read)
     } yield {
@@ -40,13 +38,9 @@ object WebExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read js task", jsTaskFailure.exception)
 
-      for (phpTaskFailure <- phpTasksTries._2)
-      // FIXME: return...
-        Logger.error("Could not read php task", phpTaskFailure.exception)
-
       WebCompleteEx(
-        WebExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText, phpText),
-        htmlTaskTries._1, jsTaskTries._1, phpTasksTries._1,
+        WebExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText),
+        htmlTaskTries._1, jsTaskTries._1,
         sampleSolutionTries._1
       )
     }
@@ -180,22 +174,13 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  final case class PhpCompleteTaskYamlFormat(exId: Int, exSemVer: SemanticVersion) extends MyYamlObjectFormat[PHPCompleteTask] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[PHPCompleteTask] = ???
-
-    override def write(obj: PHPCompleteTask): YamlValue = ???
-
-  }
-
   final case class WebSampleSolutionYamlFormat(exId: Int, exSemVer: SemanticVersion) extends MyYamlObjectFormat[WebSampleSolution] {
 
     override protected def readObject(yamlObject: YamlObject): Try[WebSampleSolution] = for {
       id <- yamlObject.intField(idName)
       htmlSample <- yamlObject.optStringField(htmlSampleName)
       jsSample <- yamlObject.optStringField(jsSampleName)
-      phpSample <- yamlObject.optStringField(phpSampleName)
-    } yield WebSampleSolution(id, exId, exSemVer, htmlSample, jsSample, phpSample)
+    } yield WebSampleSolution(id, exId, exSemVer, htmlSample, jsSample)
 
     override def write(obj: WebSampleSolution): YamlValue = ???
 

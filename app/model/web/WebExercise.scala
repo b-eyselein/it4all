@@ -23,7 +23,7 @@ object JsActionType extends PlayEnum[JsActionType] {
 // Classes for use
 
 final case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask],
-                               phpTasks: Seq[PHPCompleteTask] = Seq[PHPCompleteTask](), sampleSolutions: Seq[WebSampleSolution])
+                               sampleSolutions: Seq[WebSampleSolution])
   extends SingleCompleteEx[WebExercise, WebExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
@@ -34,19 +34,16 @@ final case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask]
   override def hasPart(partType: WebExPart): Boolean = partType match {
     case WebExParts.HtmlPart => htmlTasks.nonEmpty
     case WebExParts.JsPart   => jsTasks.nonEmpty
-    case WebExParts.PHPPart  => phpTasks.nonEmpty
   }
 
   def maxPoints(part: WebExPart): Points = part match {
     case WebExParts.HtmlPart => addUp(htmlTasks.map(_.maxPoints))
     case WebExParts.JsPart   => addUp(jsTasks.map(_.maxPoints))
-    case WebExParts.PHPPart  => addUp(phpTasks.map(_.maxPoints))
   }
 
   def tasksForPart(part: WebExPart): Seq[WebCompleteTask] = part match {
     case WebExParts.HtmlPart => htmlTasks
     case WebExParts.JsPart   => jsTasks
-    case WebExParts.PHPPart  => phpTasks
   }
 
 }
@@ -69,10 +66,6 @@ final case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) exte
   override def maxPoints: Points = (1 point) + (conditions.size points)
 }
 
-final case class PHPCompleteTask(task: PHPTask) extends WebCompleteTask {
-  override def maxPoints: Points = -1 point
-}
-
 class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
   override def cssClass: String = if (hasExes) "label label-primary" else "label label-default"
@@ -86,7 +79,7 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 // Database classes
 
 final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             htmlText: Option[String], jsText: Option[String], phpText: Option[String]) extends Exercise
+                             htmlText: Option[String], jsText: Option[String]) extends Exercise
 
 trait WebTask {
   val id        : Int
@@ -137,14 +130,11 @@ final case class JsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: Se
 
 }
 
-final case class PHPTask(id: Int, exerciseId: Int, exSemVer: SemanticVersion, text: String, xpathQuery: String,
-                         textContent: Option[String]) extends WebTask
-
 final case class WebSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion,
-                                   htmlSample: Option[String], jsSample: Option[String], phpSample: Option[String])
-  extends SampleSolution[(Option[String], Option[String], Option[String])] {
+                                   htmlSample: Option[String], jsSample: Option[String])
+  extends SampleSolution[(Option[String], Option[String])] {
 
-  def sample: (Option[String], Option[String], Option[String]) = (htmlSample, jsSample, phpSample)
+  def sample: (Option[String], Option[String]) = (htmlSample, jsSample)
 
 }
 

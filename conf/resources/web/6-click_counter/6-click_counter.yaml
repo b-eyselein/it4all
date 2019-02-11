@@ -85,8 +85,6 @@ jsTasks:
         isPrecondition: false
         awaited: 4
 
-phpTasks: []
-
 samples:
   - id: 1
     htmlSample: |

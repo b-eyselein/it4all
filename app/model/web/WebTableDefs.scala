@@ -42,9 +42,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Other queries
 
   override def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: WebExPart): Future[Boolean] = part match {
-    case WebExParts.HtmlPart => Future(true)
+    case WebExParts.HtmlPart => Future.successful(true)
     case WebExParts.JsPart   => futureOldSolution(username, exId, exSemVer, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
-    case WebExParts.PHPPart  => Future(false)
   }
 
   override def completeExForEx(ex: WebExercise): Future[WebCompleteEx] = for {
@@ -77,7 +76,6 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
       part match {
         case WebExParts.HtmlPart => sample.htmlSample
         case WebExParts.JsPart   => sample.jsSample
-        case WebExParts.PHPPart  => sample.phpSample
       }
     }.result)
 
@@ -114,10 +112,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def jsText: Rep[String] = column[String]("js_text")
 
-    def phpText: Rep[String] = column[String]("php_text")
 
-
-    override def * : ProvenShape[WebExercise] = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?, phpText.?) <> (WebExercise.tupled, WebExercise.unapply)
+    override def * : ProvenShape[WebExercise] = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?) <> (WebExercise.tupled, WebExercise.unapply)
 
   }
 
@@ -210,9 +206,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def jsSample: Rep[String] = column[String]("js_sample")
 
-    def phpSample: Rep[String] = column[String]("php_sample")
-
-    def * : ProvenShape[WebSampleSolution] = (id, exerciseId, exSemVer, htmlSample.?, jsSample.?, phpSample.?) <> (WebSampleSolution.tupled, WebSampleSolution.unapply)
+    def * : ProvenShape[WebSampleSolution] = (id, exerciseId, exSemVer, htmlSample.?, jsSample.?) <> (WebSampleSolution.tupled, WebSampleSolution.unapply)
 
   }
 

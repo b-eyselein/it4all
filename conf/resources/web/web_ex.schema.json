@@ -14,9 +14,6 @@
     "jsTasks": {
       "type": "array", "items": {"$ref": "#/definitions/JsTask"}
     },
-    "phpTasks": {
-      "type": "array", "items": {"$ref": "#/definitions/PhpTask"}
-    },
     "samples": {
       "type": "array",
       "items": {
@@ -24,15 +21,14 @@
         "properties": {
           "id": {"type": "number"},
           "htmlSample": {"type": "string"},
-          "jsSample": {"type": "string"},
-          "phpSample": {"type": "string"}
+          "jsSample": {"type": "string"}
         },
         "required": ["id"]
       }
     }
   },
   "required": [
-    "id", "semanticVersion", "title", "author", "text", "status", "htmlTasks", "jsTasks", "phpTasks", "samples"
+    "id", "semanticVersion", "title", "author", "text", "status", "htmlTasks", "jsTasks", "samples"
   ],
   "additionalItems": false,
   "definitions": {
@@ -82,10 +78,6 @@
         "awaited": {}
       },
       "required": ["id", "xpathQuery", "isPrecondition", "awaited"]
-    },
-    "PhpTask": {
-      "type": "object",
-      "properties": {}
     }
   }
 }

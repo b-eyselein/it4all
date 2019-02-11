@@ -574,7 +574,6 @@ create table if not exists web_exercises
 
   html_text        text,
   js_text          text,
-  php_text         text,
 
   primary key (id, semantic_version)
 );
@@ -652,7 +651,6 @@ create table if not exists web_sample_solutions
 
   html_sample text,
   js_sample   text,
-  php_sample  text,
 
   primary key (id, exercise_id, ex_sem_ver),
   foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)

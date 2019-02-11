@@ -69,8 +69,6 @@ htmlTasks:
 
 jsTasks: []
 
-phpTasks: []
-
 samples:
   - id: 1
     htmlSample: |

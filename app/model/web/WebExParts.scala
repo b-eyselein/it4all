@@ -17,6 +17,4 @@ object WebExParts extends PlayEnum[WebExPart] {
 
   case object JsPart extends WebExPart("Js-Teil", "js")
 
-  case object PHPPart extends WebExPart("PHP-Teil", "php")
-
 }

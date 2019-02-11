@@ -68,12 +68,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // DB
 
   def writeWebSolutionFile(username: String, exerciseId: Int, part: WebExPart, content: String): Try[File] = Try {
-    val fileEnding = part match {
-      case WebExParts.PHPPart => "php"
-      case _                  => "html"
-    }
-
-    val target: File = solutionDirForExercise(username, exerciseId) / s"test.$fileEnding"
+    val target: File = solutionDirForExercise(username, exerciseId) / s"test.html"
     target.createFileIfNotExists(createParents = true).write(content)
   }
 
@@ -104,7 +99,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     val semVer = SemanticVersionHelper.DEFAULT
 
     WebCompleteEx(
-      WebExercise(id, semVer, title = "", author, text = "", state, htmlText = None, jsText = None, phpText = None),
+      WebExercise(id, semVer, title = "", author, text = "", state, htmlText = None, jsText = None),
       htmlTasks = Seq(
         HtmlCompleteTask(HtmlTask(1, id, semVer, "", "", None), attributes = Seq[Attribute]())
       ),
@@ -112,7 +107,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
         JsCompleteTask(JsTask(1, id, semVer, "", "", JsActionType.FILLOUT, None), conditions = Seq[JsCondition]())
       ),
       sampleSolutions = Seq(
-        WebSampleSolution(1, id, semVer, htmlSample = None, jsSample = None, phpSample = None)
+        WebSampleSolution(1, id, semVer, htmlSample = None, jsSample = None)
       )
     )
   }
@@ -169,7 +164,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       case WebExParts.JsPart   =>
         val jsWebResults = exercise.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
         WebCompleteResult(learnerSolution, exercise, part, Seq[ElementResult](), jsWebResults)
-      case _                   => ???
     }
   }
 
@@ -179,18 +173,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       val driver = new HtmlUnitDriver(true)
       Try {
         driver.get(getSolutionUrl(user, exercise.ex.id, part))
-      }.transform(
-        _ => onDriverGetSuccess(learnerSolution, exercise, part, driver),
-        onDriverGetError
-      )
+      }.transform(_ => onDriverGetSuccess(learnerSolution, exercise, part, driver), onDriverGetError)
     }
   }
 
   // Other helper methods
 
-  def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String = part match {
-    case WebExParts.PHPPart => s"http://localhost:9080/${user.username}/$exerciseId/test.php"
-    case _                  => s"http://localhost:9080/${user.username}/$exerciseId/test.html"
-  }
+  def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String = s"http://localhost:9080/${user.username}/$exerciseId/test.html"
 
 }
