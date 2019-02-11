@@ -70,7 +70,7 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
 
   def futureCompleteCollById(id: Int): Future[Option[CompColl]] = futureCollById(id) flatMap {
     case Some(coll) => completeCollForColl(coll) map Some.apply
-    case None       => Future(None)
+    case None       => Future.successful(None)
   }
 
   protected def completeCollForColl(coll: Coll): Future[CompColl]
@@ -81,7 +81,7 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
   def futureCompleteExById(collId: Int, id: Int): Future[Option[CompEx]] =
     db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).result.headOption) flatMap {
       case Some(ex) => completeExForEx(ex) map Some.apply
-      case None     => Future(None)
+      case None     => Future.successful(None)
     }
 
   def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int): Future[Option[DBSolType]] =

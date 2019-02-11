@@ -58,9 +58,9 @@ abstract class IdExerciseToolMain(aToolName: String, aUrlPart: String)(implicit 
   // FIXME: change return type of function!
   def correctAbstract(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
     readSolution(user, exercise, part) match {
-      case Failure(exception)    => Future(Failure(exception))
+      case Failure(exception)    => Future.successful(Failure(exception))
       case Success(userSolution) => correctEx(user, userSolution, exercise, part) flatMap {
-        case Failure(error) => Future(Failure(error))
+        case Failure(error) => Future.successful(Failure(error))
         case Success(res)   =>
           val dbSolution = instantiateSolution(id = 0, user.username, exercise, part, userSolution, res.points, res.maxPoints)
 

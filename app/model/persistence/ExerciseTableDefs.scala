@@ -42,14 +42,14 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
     exTable.filter(_.id === id).sortBy(_.semanticVersion.desc).result.headOption
   } flatMap {
     case Some(ex) => completeExForEx(ex) map Some.apply
-    case None     => Future(None)
+    case None     => Future.successful(None)
   }
 
   def futureCompleteExByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[CompEx]] = db.run {
     exTable.filter(e => e.id === id && e.semanticVersion === semVer).result.headOption
   } flatMap {
     case Some(ex) => completeExForEx(ex) map Some.apply
-    case None     => Future(None)
+    case None     => Future.successful(None)
   }
 
   protected def completeExForEx(ex: Ex): Future[CompEx]

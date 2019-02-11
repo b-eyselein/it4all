@@ -101,7 +101,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def correctAbstract(user: User, collId: Int, id: Int, isLive: Boolean)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
     readSolution(user, collId, id) match {
-      case None => Future(Failure(SolutionTransferException))
+      case None => Future.successful(Failure(SolutionTransferException))
 
       case Some(solution) =>
 
@@ -111,10 +111,10 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         } yield (coll zip ex).headOption
 
         collAndEx flatMap {
-          case None => Future(Failure(NoSuchExerciseException(id)))
+          case None => Future.successful(Failure(NoSuchExerciseException(id)))
 
           case Some((collection, exercise)) => correctEx(user, solution, collection, exercise) match {
-            case Failure(error) => Future(Failure(error))
+            case Failure(error) => Future.successful(Failure(error))
             case Success(res)   =>
 
               // FIXME: points != 0? maxPoints != 0?

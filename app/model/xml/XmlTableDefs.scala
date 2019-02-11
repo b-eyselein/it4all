@@ -39,7 +39,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   } yield XmlCompleteEx(ex, samples)
 
   override def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: XmlExPart): Future[Boolean] = part match {
-    case XmlExParts.GrammarCreationXmlPart  => Future(true)
+    case XmlExParts.GrammarCreationXmlPart  => Future.successful(true)
     case XmlExParts.DocumentCreationXmlPart => futureOldSolution(username, exId, exSemVer, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
 

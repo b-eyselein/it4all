@@ -74,11 +74,11 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override def futureOldOrDefaultSolution(user: User, exId: Int, exSemVer: SemanticVersion, part: WebExPart): Future[Option[DBSolType]] =
     super.futureOldOrDefaultSolution(user, exId, exSemVer, part) flatMap {
-      case Some(solution) => Future(Some(solution))
+      case Some(solution) => Future.successful(Some(solution))
       case None           =>
         part match {
           case WebExParts.JsPart => super.futureOldOrDefaultSolution(user, exId, exSemVer, WebExParts.HtmlPart)
-          case _                 => Future(None)
+          case _                 => Future.successful(None)
         }
     }
 
