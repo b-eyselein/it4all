@@ -15,9 +15,9 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[WebResul
       (__ \ pointsName).write[String] and
       (__ \ maxPointsName).write[String] and
       (__ \ awaitedName).write[String] and
-      (__ \ foundName).write[String]
+      (__ \ foundName).write[Option[String]]
     ) (tcr =>
-    (tcr.isSuccessful, tcr.points.asDoubleString, 1.point.asDoubleString, tcr.awaitedContent, tcr.foundContent)
+    (tcr.isSuccessful, tcr.points.asDoubleString, 1.point.asDoubleString, tcr.awaitedContent, tcr.maybeFoundContent)
   )
 
   private implicit val attributeResultWrites: Writes[AttributeResult] = (
@@ -26,9 +26,9 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[WebResul
       (__ \ maxPointsName).write[String] and
       (__ \ "attrName").write[String] and
       (__ \ awaitedName).write[String] and
-      (__ \ foundName).write[String]
+      (__ \ foundName).write[Option[String]]
     ) (ar =>
-    (ar.isSuccessful, ar.points.asDoubleString, 1.point.asDoubleString, ar.attribute.key, ar.awaitedContent, ar.foundContent)
+    (ar.isSuccessful, ar.points.asDoubleString, 1.point.asDoubleString, ar.attribute.key, ar.awaitedContent, ar.maybeFoundContent)
   )
 
   private implicit val elementResultWrites: Writes[ElementResult] = (

@@ -16,7 +16,7 @@ object WebCorrector {
 
       case foundElement :: Nil =>
         val attrResults = completeHtmlTask.attributes map (evaluateAttribute(_, foundElement))
-        val textResult = completeHtmlTask.task.textContent map (TextContentResult(foundElement.getAttribute("textContent"), _))
+        val textResult = completeHtmlTask.task.textContent map (TextContentResult(Option(foundElement.getAttribute("textContent")), _))
 
         ElementResult(completeHtmlTask, Some(foundElement), attrResults, textResult)
 

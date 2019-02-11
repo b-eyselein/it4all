@@ -55,23 +55,35 @@ final case class ElementResult(task: WebCompleteTask, foundElement: Option[WebEl
 
 }
 
-abstract class TextResult(name: String, val foundContent: String, val awaitedContent: String) extends EvaluationResult {
+abstract class TextResult(name: String) extends EvaluationResult {
 
-  override val success: SuccessType = if (foundContent == null) SuccessType.NONE
-  else if (foundContent contains awaitedContent) SuccessType.COMPLETE
-  else SuccessType.PARTIALLY
+  val maybeFoundContent: Option[String]
+
+  val awaitedContent: String
+
+  override def success: SuccessType = maybeFoundContent match {
+    case None     => SuccessType.NONE
+    case Some(fc) =>
+      if (fc contains awaitedContent)
+        SuccessType.COMPLETE
+      else
+        SuccessType.PARTIALLY
+  }
 
 }
 
-final case class TextContentResult(f: String, a: String) extends TextResult("Der Textinhalt", f, a) {
+final case class TextContentResult(maybeFoundContent: Option[String], awaitedContent: String) extends TextResult("Der Textinhalt") {
 
   val points: Points = if (isSuccessful) 1 point else 0 points
 
 }
 
-final case class AttributeResult(attribute: Attribute, foundValue: Option[String]) extends TextResult(s"Das Attribut '${attribute.key}'", foundValue getOrElse "", attribute.value) {
+final case class AttributeResult(attribute: Attribute, maybeFoundContent: Option[String]) extends
+  TextResult(s"Das Attribut '${attribute.key}'") {
 
-  val points: Points = if (isSuccessful) 1 point else foundValue map (_ => 1 halfPoint) getOrElse 0.points
+  override val awaitedContent: String = attribute.value
+
+  val points: Points = if (isSuccessful) 1 point else maybeFoundContent map (_ => 1 halfPoint) getOrElse 0.points
 
 }
 
