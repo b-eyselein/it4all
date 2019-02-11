@@ -14,8 +14,9 @@ htmlTasks:
     xpathQuery: /html/body//h1
     textContent: Deutsche Nationalhymne
   - id: 2
-    text: |
-      Erstellen Sie das Grundelement für die Audiodatei. Aktivieren Sie die Kontrollelement. Falls der Browser keine Audiodateiene unterstützt soll der Text 'Ihr Browser unterstützt kein Audio!' ausgegeben werden
+    text: >
+      Erstellen Sie das Grundelement für die Audiodatei. Aktivieren Sie die Kontrollelement. Falls der Browser keine
+      Audiodateiene unterstützt soll der Text 'Ihr Browser unterstützt kein Audio!' ausgegeben werden
     xpathQuery: /html/body//audio
     attributes:
       - {key: controls, value: 'true'}

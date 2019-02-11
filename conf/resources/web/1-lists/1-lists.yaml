@@ -14,7 +14,7 @@ htmlTasks:
   - id: 1
     text: >
       Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL
-      '/assets/lib/bootstrap/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das
+      '/assets/lib/bootstrap/dist/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das
       Attribut 'rel'!
     xpathQuery: /html/head/link
     attributes:
