@@ -50,10 +50,10 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
 
       toolMain.partTypeFromUrl(partStr) match {
-        case None       => Future(onNoSuchExercisePart(partStr))
+        case None       => Future.successful(onNoSuchExercisePart(partStr))
         case Some(part) =>
           futureCompleteEx flatMap {
-            case None           => Future(onNoSuchExercise(id))
+            case None           => Future.successful(onNoSuchExercise(id))
             case Some(exercise) =>
               toolMain.futureOldOrDefaultSolution(user, exercise.ex.id, exercise.ex.semanticVersion, part) map {
                 oldSolution => Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
@@ -65,9 +65,9 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   def correctLive(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.partTypeFromUrl(partStr) match {
-        case None       => Future(onNoSuchExercisePart(partStr))
+        case None       => Future.successful(onNoSuchExercisePart(partStr))
         case Some(part) => toolMain.futureCompleteExById(id) flatMap {
-          case None               => Future(onNoSuchExercise(id))
+          case None               => Future.successful(onNoSuchExercise(id))
           case Some(compExercise) => toolMain.correctAbstract(user, compExercise, part) map {
             case Success(result) => Ok(result)
             case Failure(error)  =>
@@ -81,7 +81,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   def reviewExercisePartForm(toolType: String, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.partTypeFromUrl(partStr) match {
-        case None       => Future(onNoSuchExercisePart(partStr))
+        case None       => Future.successful(onNoSuchExercisePart(partStr))
         case Some(part) =>
           toolMain.futureCompleteExById(id) map {
             case None               => onNoSuchExercise(id)

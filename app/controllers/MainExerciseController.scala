@@ -35,7 +35,7 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
   def submitEvaluation(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
-      val onError: Form[Feedback] => Future[Result] = { _ => Future(BadRequest("TODO!")) }
+      val onError: Form[Feedback] => Future[Result] = { _ => Future.successful(BadRequest("TODO!")) }
 
       val onRead: Feedback => Future[Result] = { feedback =>
         repository.saveFeedback(feedback) map {
