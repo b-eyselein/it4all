@@ -3,7 +3,6 @@ package model.uml
 import model.core.matching.{Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.uml.matcher._
-import play.api.libs.json._
 
 import scala.language.postfixOps
 

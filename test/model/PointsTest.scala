@@ -1,8 +1,7 @@
 package model
 
-import org.junit.Test
-import model._
 import org.junit.Assert._
+import org.junit.Test
 
 import scala.language.postfixOps
 

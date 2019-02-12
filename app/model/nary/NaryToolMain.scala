@@ -1,10 +1,10 @@
 package model.nary
 
 import javax.inject.{Inject, Singleton}
+import model.User
 import model.core.result.EvaluationResult
 import model.nary.NaryConsts._
 import model.toolMains.{RandomExerciseToolMain, ToolState}
-import model.{Consts, User}
 import play.api.Logger
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._

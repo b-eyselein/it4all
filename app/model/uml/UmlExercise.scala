@@ -1,7 +1,6 @@
 package model.uml
 
 import model._
-import model.uml.UmlConsts._
 import play.twirl.api.Html
 
 import scala.language.postfixOps

@@ -3,16 +3,15 @@ package model.programming
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
-import model.programming.ProgDataTypes._
 import model.uml.UmlClassDiagram
-import model.{ExerciseState, SemanticVersion, User}
+import model.{ExerciseState, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsValue, Json}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.{implicitConversions, postfixOps}
+//import scala.language.{implicitConversions, postfixOps}
 
 class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
@@ -51,7 +50,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     samplesSaved <- saveSeq[ProgSampleSolution](compEx.sampleSolutions, i => db.run(sampleSolutions += i))
     inputTypesSaved <- saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i))
     sampleTestDataSaved <- saveSeq[SampleTestData](compEx.sampleTestData, i => db.run(sampleTestData += i))
-    classDiagPartSaved <- saveSeq[UmlClassDiagPart](compEx.maybeClassDiagramPart.toSeq, i => db.run(umlClassDiagParts += i))
+    classDiagPartSaved <- saveSeq[UmlClassDiagPart](compEx.maybeClassDiagramPart.toList, i => db.run(umlClassDiagParts += i))
   } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && classDiagPartSaved
 
   override def copyDBSolType(oldSol: DBProgSolution, newId: Int): DBProgSolution = oldSol.copy(id = newId)

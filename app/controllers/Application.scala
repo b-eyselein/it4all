@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 import model.core.Repository
-import model.ideTest.{IdeFile, IdeFileJsonProtocol, IdeFilesTest}
+import model.ideTest.{IdeFileJsonProtocol, IdeFilesTest}
 import model.toolMains.ToolList
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._

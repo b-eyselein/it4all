@@ -2,15 +2,14 @@ package model.sql
 
 import javax.inject.Inject
 import model.core.overviewHelpers.{SolvedState, SolvedStates}
-import model.core.result.SuccessType
-import model.{SemanticVersion, User}
 import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
+import model.{SemanticVersion, User}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape, QueryBase}
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps

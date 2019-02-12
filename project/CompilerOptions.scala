@@ -10,6 +10,10 @@ object CompilerOptions {
     "-unchecked"
   )
 
+  private val unusedCodeOptions: Seq[String] = Seq(
+    "-Ywarn-dead-code", "-Ywarn-inaccessible", /*"-Ywarn-unused", */ "-Ywarn-unused-import", "-Ywarn-value-discard"
+  )
+
   private val lintOptions: Seq[String] = Seq(
     "-Xlint:adapted-args", // Warn if an argument list is modified to match the receiver.
     "-Xlint:by-name-right-associative", // By-name parameter of right associative operator.
@@ -50,6 +54,6 @@ object CompilerOptions {
   )
 
 
-  val allOptions: Seq[String] = lintOptions ++ warnOptions ++ otherOptions
+  val allOptions: Seq[String] = lintOptions ++ warnOptions ++ unusedCodeOptions ++ otherOptions
 
 }

@@ -1,13 +1,12 @@
 package model.persistence
 
 import model._
-import model.regex.RegexExPart
 import model.uml._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey}
+import slick.lifted.ForeignKeyQuery
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}

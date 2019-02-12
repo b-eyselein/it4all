@@ -1,6 +1,6 @@
 package model.persistence
 
-import model.core.overviewHelpers.{SolvedState, UserCollEx}
+import model.core.overviewHelpers.SolvedState
 import model.{ExerciseState, _}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider

@@ -1,8 +1,6 @@
 package model.regex
 
 import model._
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
-import play.api.libs.json.{JsValue, Json}
 import play.twirl.api.Html
 
 import scala.language.postfixOps

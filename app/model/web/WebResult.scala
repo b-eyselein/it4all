@@ -4,7 +4,6 @@ import model._
 import model.core.result.EvaluationResult._
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import org.openqa.selenium.WebElement
-import play.api.libs.json.JsValue
 
 import scala.language.postfixOps
 

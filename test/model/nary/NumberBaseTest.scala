@@ -8,7 +8,7 @@ import org.junit.Test
 class NumberBaseTest {
 
   @Test
-  def testGetBase() {
+  def testGetBase(): Unit = {
     assertThat(BINARY.base, equalTo(2))
     assertThat(OCTAL.base, equalTo(8))
     assertThat(DECIMAL.base, equalTo(10))
@@ -16,7 +16,7 @@ class NumberBaseTest {
   }
 
   @Test
-  def testGetHtmlPattern() {
+  def testGetHtmlPattern(): Unit = {
     assertThat(BINARY.htmlPattern, equalTo("[\\s0-1]+"))
     assertThat(OCTAL.htmlPattern, equalTo("[\\s0-7]+"))
     assertThat(DECIMAL.htmlPattern, equalTo("[\\s0-9]+"))
@@ -24,7 +24,7 @@ class NumberBaseTest {
   }
 
   @Test
-  def testGetPluralName() {
+  def testGetPluralName(): Unit = {
     assertThat(BINARY.pluralName, equalTo("Binärzahlen"))
     assertThat(OCTAL.pluralName, equalTo("Oktalzahlen"))
     assertThat(DECIMAL.pluralName, equalTo("Dezimalzahlen"))
@@ -32,7 +32,7 @@ class NumberBaseTest {
   }
 
   @Test
-  def testGetRegex() {
+  def testGetRegex(): Unit = {
     assertThat(BINARY.regex, equalTo("-?0b[0-1][0-1]*"))
     assertThat(OCTAL.regex, equalTo("-?0o[1-7][0-7]*"))
     assertThat(DECIMAL.regex, equalTo("-?[1-9][0-9]*"))
@@ -40,7 +40,7 @@ class NumberBaseTest {
   }
 
   @Test
-  def testGetSingularName() {
+  def testGetSingularName(): Unit = {
     assertThat(BINARY.singularName, equalTo("Binärzahl"))
     assertThat(OCTAL.singularName, equalTo("Oktalzahl"))
     assertThat(DECIMAL.singularName, equalTo("Dezimalzahl"))
@@ -48,7 +48,7 @@ class NumberBaseTest {
   }
 
   @Test
-  def testGetSystemName() {
+  def testGetSystemName(): Unit = {
     assertThat(BINARY.systemName, equalTo("Binärsystem"))
     assertThat(OCTAL.systemName, equalTo("Oktalsystem"))
     assertThat(DECIMAL.systemName, equalTo("Dezimalsystem"))
@@ -56,7 +56,7 @@ class NumberBaseTest {
   }
 
   @Test
-  def testValueOf() {
+  def testValueOf(): Unit = {
     assert(NumberBase.withNameInsensitive("BINARY") == BINARY)
     assert(NumberBase.withNameInsensitive("OCTAL") == OCTAL)
     assert(NumberBase.withNameInsensitive("DECIMAL") == DECIMAL)
@@ -64,7 +64,7 @@ class NumberBaseTest {
   }
 
   @Test(expected = classOf[NoSuchElementException])
-  def testValueOfWrongValue() {
+  def testValueOfWrongValue(): Unit = {
     NumberBase.withNameInsensitive("TERNARY")
   }
 }

@@ -1,6 +1,6 @@
 package model.toolMains
 
-import model.{CompleteEx, ExPart, Exercise, SemanticVersion}
+import model.{ExPart, SemanticVersion}
 import play.api.mvc.Call
 
 final case class UserExOverviewContent(numOfExes: Int, exesAndRoutes: Seq[ExAndRoute])

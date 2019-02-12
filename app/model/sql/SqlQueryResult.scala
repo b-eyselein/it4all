@@ -2,15 +2,13 @@ package model.sql
 
 import java.sql.{ResultSet, ResultSetMetaData}
 
-import play.api.libs.json.{JsArray, JsObject, JsString, Json}
-
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
 import scala.util.Try
 
 object SqlQueryResult {
 
-  def apply(resultSet: ResultSet, tableName: String = "") = new SqlQueryResult(resultSet, tableName)
+  def apply(resultSet: ResultSet, tableName: String = ""): SqlQueryResult = new SqlQueryResult(resultSet, tableName)
 
 }
 

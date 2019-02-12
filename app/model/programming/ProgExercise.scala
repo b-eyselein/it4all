@@ -1,8 +1,7 @@
 package model.programming
 
 import model._
-import model.programming.ProgConsts._
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.JsValue
 import play.twirl.api.Html
 
 // Classes for use

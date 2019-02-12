@@ -3,9 +3,7 @@ package model.sql
 import model._
 import model.core.matching.{Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
-import model.sql.SqlConsts._
 import model.sql.matcher._
-import play.api.libs.json._
 
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}

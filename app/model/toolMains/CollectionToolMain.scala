@@ -2,8 +2,7 @@ package model.toolMains
 
 import model._
 import model.core._
-import model.core.overviewHelpers.{SolvedState, UserCollEx}
-import model.core.result.CompleteResult
+import model.core.overviewHelpers.SolvedState
 import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger

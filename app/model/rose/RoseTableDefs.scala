@@ -1,12 +1,11 @@
 package model.rose
 
 import javax.inject.Inject
-import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import model.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
+import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
