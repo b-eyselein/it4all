@@ -11,6 +11,8 @@ import scala.util.Try
 
 object UmlExYamlProtocol extends MyYamlProtocol {
 
+  private val logger = Logger("model.uml.UmlExYamlProtocol")
+
   implicit object UmlExYamlFormat extends MyYamlObjectFormat[UmlCompleteEx] {
 
     override def readObject(yamlObject: YamlObject): Try[UmlCompleteEx] = for {
@@ -22,15 +24,15 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     } yield {
       for (mappingFailure <- mappingTries._2)
       // FIXME: return...
-        Logger.error("Could not read uml mapping", mappingFailure.exception)
+        logger.error("Could not read uml mapping", mappingFailure.exception)
 
       for (ignoreWordFailure <- ignoreWordTries._2)
       // FIXME: return...
-        Logger.error("Could not read ignore word", ignoreWordFailure.exception)
+        logger.error("Could not read ignore word", ignoreWordFailure.exception)
 
       for (sampleSolFailure <- sampleSolutions._2)
       // FIXME: return...
-        Logger.error("Could not read uml sample solution", sampleSolFailure.exception)
+        logger.error("Could not read uml sample solution", sampleSolFailure.exception)
 
       val mappings = mappingTries._1 toMap
       val ignoreWords = ignoreWordTries._1
@@ -78,15 +80,15 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
       for (classFailure <- classes._2)
       // FIXME: return...
-        Logger.error("Could not read uml class", classFailure.exception)
+        logger.error("Could not read uml class", classFailure.exception)
 
       for (associationFailure <- associations._2)
       // FIXME: return...
-        Logger.error("Could not read uml association", associationFailure.exception)
+        logger.error("Could not read uml association", associationFailure.exception)
 
       for (implementationFailure <- implementations._2)
       // FIXME: return...
-        Logger.error("Could not read uml implementation", implementationFailure.exception)
+        logger.error("Could not read uml implementation", implementationFailure.exception)
 
       UmlSampleSolution(
         id, exId, exSemVer, UmlClassDiagram(classes._1, associations._1, implementations._1)
@@ -119,11 +121,11 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     } yield {
       for (attributeFailure <- attributeTries._2)
       // FIXME: return...
-        Logger.error("Could not read uml class attribute", attributeFailure.exception)
+        logger.error("Could not read uml class attribute", attributeFailure.exception)
 
       for (methodFailure <- methodTries._2)
       // FIXME: return...
-        Logger.error("Could not read uml class method", methodFailure.exception)
+        logger.error("Could not read uml class method", methodFailure.exception)
 
       UmlClass(classType, className, attributeTries._1, methodTries._1, None)
     }

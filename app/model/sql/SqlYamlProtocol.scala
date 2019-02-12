@@ -6,10 +6,11 @@ import model.sql.SqlConsts._
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
-import scala.language.postfixOps
 import scala.util.Try
 
 object SqlYamlProtocol extends MyYamlProtocol {
+
+  private val logger = Logger("model.sql.SqlYamlProtocol")
 
   implicit object SqlScenarioYamlFormat extends MyYamlObjectFormat[SqlCompleteScenario] {
 
@@ -21,7 +22,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
     } yield {
       for (exFailure <- exercises._2)
       // FIXME: return...
-        Logger.error("Could not read sql exercise: ", exFailure.exception)
+        logger.error("Could not read sql exercise: ", exFailure.exception)
 
       SqlCompleteScenario(SqlScenario(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, shortName), exercises._1)
     }
@@ -50,19 +51,19 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
       for (tagFailures <- tagTries._2)
       // FIXME: return...
-        Logger.error("Could not read sql tag", tagFailures.exception)
+        logger.error("Could not read sql tag", tagFailures.exception)
 
       for (sampleFailure <- sampleTries._2)
       // FIXME: return...
-        Logger.error("Could not read sql sample", sampleFailure.exception)
+        logger.error("Could not read sql sample", sampleFailure.exception)
 
       SqlCompleteEx(SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        collBaseValues.id, collBaseValues.semanticVersion, exerciseType, tagTries._1 mkString tagJoinChar, hint), sampleTries._1)
+        collBaseValues.id, collBaseValues.semanticVersion, exerciseType, tagTries._1.mkString(tagJoinChar), hint), sampleTries._1)
     }
 
     override def write(completeEx: SqlCompleteEx): YamlValue = YamlObject(
       writeBaseValues(completeEx.ex) ++
-        Map(
+        Map[YamlValue, YamlValue](
           YamlString(exerciseTypeName) -> YamlString(completeEx.ex.exerciseType.entryName),
           YamlString(samplesName) -> YamlArr(completeEx.samples map SqlSampleYamlFormat(collBaseValues, completeEx.ex.baseValues).write)
         ) ++ completeEx.ex.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(completeEx)
@@ -70,7 +71,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
     private def writeTags(completeEx: SqlCompleteEx): Option[(YamlValue, YamlValue)] = completeEx.tags match {
       case Nil  => None
-      case tags => Some(YamlString(tagsName) -> YamlArr(tags map (t => YamlString(t.entryName))))
+      case tags => Some(YamlString(tagsName) -> YamlArr(tags.map(t => YamlString(t.entryName))))
     }
 
   }

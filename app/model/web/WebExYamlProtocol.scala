@@ -11,6 +11,8 @@ import scala.util.{Success, Try}
 
 object WebExYamlProtocol extends MyYamlProtocol {
 
+  private val logger = Logger("model.web.WebExYamlProtocol")
+
   implicit object WebExYamlFormat extends MyYamlObjectFormat[WebCompleteEx] {
 
     override protected def readObject(yamlObject: YamlObject): Try[WebCompleteEx] = yamlObject.optField("extern", str => Success(str.forgivingStr)) match {
@@ -32,11 +34,11 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
       for (htmlTaskFailure <- htmlTaskTries._2)
       // FIXME: return...
-        Logger.error("Could not read html task", htmlTaskFailure.exception)
+        logger.error("Could not read html task", htmlTaskFailure.exception)
 
       for (jsTaskFailure <- jsTaskTries._2)
       // FIXME: return...
-        Logger.error("Could not read js task", jsTaskFailure.exception)
+        logger.error("Could not read js task", jsTaskFailure.exception)
 
       WebCompleteEx(
         WebExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText),
@@ -106,7 +108,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
       for (attributeFailure <- attributeTries._2)
       // FIXME: return...
-        Logger.error("Could not read html attribute", attributeFailure.exception)
+        logger.error("Could not read html attribute", attributeFailure.exception)
 
       HtmlCompleteTask(HtmlTask(taskId, exId, exSemVer, text, xpathQuery, textContent), attributeTries._1)
     }
@@ -149,7 +151,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
       for (conditionFailure <- conditionTries._2)
       // FIXME: return...
-        Logger.error("Could not read js condition", conditionFailure.exception)
+        logger.error("Could not read js condition", conditionFailure.exception)
 
       JsCompleteTask(JsTask(taskId, exId, exSemVer, text, xpathQuery, actionType, keysToSend), conditionTries._1)
     }

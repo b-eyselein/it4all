@@ -25,6 +25,8 @@ final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = 
 
 object DockerConnector {
 
+  private val logger: Logger = Logger("model.docker.DockerConnector")
+
   private val MaxWaitTimeInSeconds: Int = 3
 
   private val SuccessStatusCode: Int = 0
@@ -107,16 +109,16 @@ object DockerConnector {
                   case SuccessStatusCode => RunContainerSuccess
                   case TimeOutStatusCode => RunContainerTimeOut(MaxWaitTimeInSeconds)
                   case _                 =>
-                    Logger.info("Container statusCode: " + statusCode.toString)
+                    logger.info("Container statusCode: " + statusCode.toString)
                     RunContainerError(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
                 }
 
                 if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
                   // Do not delete failed containers for now
                   val containerDeleted = deleteContainer(containerId)
-                  if (containerDeleted.isFailure) Logger.error("Could not delete container!")
+                  if (containerDeleted.isFailure) logger.error("Could not delete container!")
                 } else {
-                  Logger.debug("NOT Deleting container...")
+                  logger.debug("NOT Deleting container...")
                 }
 
                 result

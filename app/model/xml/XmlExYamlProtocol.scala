@@ -11,6 +11,8 @@ import scala.util.Try
 
 object XmlExYamlProtocol extends MyYamlProtocol {
 
+  private val logger = Logger("model.xml.XmlExYamlProtocol")
+
   implicit object XmlExYamlFormat extends MyYamlObjectFormat[XmlCompleteEx] {
 
     override def readObject(yamlObject: YamlObject): Try[XmlCompleteEx] = for {
@@ -22,7 +24,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
       samples <- yamlObject.arrayField(samplesName, XmlSampleYamlFormat(baseValues.id, baseValues.semanticVersion).read)
     } yield {
       for (sampleReadError <- samples._2)
-        Logger.error("Could not read xml sample", sampleReadError.exception)
+        logger.error("Could not read xml sample", sampleReadError.exception)
 
       XmlCompleteEx(
         XmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, grammarDescription, rootNode),
