@@ -4,9 +4,9 @@ import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.inject._
 import model.core._
-import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
+import model.toolMains.{ASingleExerciseToolMain, ToolList, ToolState}
 import model.xml.XmlConsts._
-import model.{Consts, Difficulties, ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
+import model.{Difficulties, ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
 import play.api.data.Forms._
 import play.api.data._
 import play.api.i18n.MessagesProvider
@@ -21,7 +21,7 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Xml", "xml") {
+  extends ASingleExerciseToolMain("Xml", "xml") {
 
   // Result types
 

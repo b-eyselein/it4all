@@ -1,7 +1,7 @@
 @import model.{User, Exercise, CompleteEx, ExPart}
 
 @(user: User, exerciseText: Html, exercise: CompleteEx[_ <: model.Exercise], part: ExPart, oldSolution: String,
-        toolMainObject: model.toolMains.IdExerciseToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
+        toolMainObject: model.toolMains.ASingleExerciseToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
         remainingExDef: Option[Html] = None, remainingPage: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {

@@ -5,7 +5,7 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.programming.ProgLanguages
 import model.rose.RoseConsts.{difficultyName, durationName}
-import model.toolMains.{IdExerciseToolMain, ToolState}
+import model.toolMains.{ASingleExerciseToolMain, ToolState}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.MessagesProvider
@@ -19,7 +19,7 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Rose", "rose") {
+  extends ASingleExerciseToolMain("Rose", "rose") {
 
   // Abstract types
 

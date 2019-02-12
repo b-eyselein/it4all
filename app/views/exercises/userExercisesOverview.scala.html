@@ -2,91 +2,84 @@
 
 @(user: model.User, dataForUserExesOverview: UserExOverviewContent, toolObject: ASingleExerciseToolMain, currentPage: Int)
 
-@urlFunc = @{
-    toolObject match {
-        case _: model.toolMains.IdExerciseToolMain => {
-            index: Int => exes.routes.ExerciseController.exerciseList(toolObject.urlPart, index)
-        }
-        case _: model.toolMains.FileExerciseToolMain => {
-            index: Int => routes.FileExerciseController.exerciseList(toolObject.urlPart, index)
-        }
+    @urlFunc = @{
+        index: Int => exes.routes.ExerciseController.exerciseList(toolObject.urlPart, index)
     }
-}
 
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+    @scripts = {
+        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>SystemJS.import('@routes.Assets.versioned("app/userExercisesOverview.js")');</script>
-}
+        <script>SystemJS.import('@routes.Assets.versioned("app/userExercisesOverview.js")');</script>
+    }
 
-@colExCount = @{
-    2
-}
+    @colExCount = @{
+        2
+    }
 
-@main(toolObject.toolname, Some(user), scripts) {
-    <div class="container">
-        <h1 class="text-center">Übersicht über verfügbare Aufgaben</h1>
+    @main(toolObject.toolname, Some(user), scripts) {
+        <div class="container">
+            <h1 class="text-center">Übersicht über verfügbare Aufgaben</h1>
 
-        <br>
+            <br>
 
-        @if(dataForUserExesOverview.exesAndRoutes.isEmpty) {
-            <div class="alert alert-danger">
-                Es existieren bisher keine Aufgaben in der Kategorie @toolObject.toolname.
-                Wenden Sie Sich bitte an den Administrator.
-            </div>
-        } else {
-            @for(exesAndRoutes <- dataForUserExesOverview.exesAndRoutes.sortBy(_.exId) grouped colExCount) {
-                <div class="form-group row">
-                @for(exAndRoute <- exesAndRoutes) {
-                    <div class="col-md-@{
-                        12 / colExCount
-                    }">
-                        <div class="card">
-                            <div class="card-body">
-                                <p class="text-center">
-                                    <strong>@exAndRoute.exId: @exAndRoute.exTitle</strong>
-                                    - Version: @exAndRoute.versions match {
-                                    case Seq() => {--}
-                                    case Seq(head) => {
-                                        @head.asString
-                                    }
-                                    case other => {
-                                        <select class="form-control version_select" data-id="@exAndRoute.exId" title="Versionswahl">
-                                        @for(version <- other.sorted.reverse) {
-                                            <option>@version.asString</option>
+            @if(dataForUserExesOverview.exesAndRoutes.isEmpty) {
+                <div class="alert alert-danger">
+                    Es existieren bisher keine Aufgaben in der Kategorie @toolObject.toolname.
+                    Wenden Sie Sich bitte an den Administrator.
+                </div>
+            } else {
+                @for(exesAndRoutes <- dataForUserExesOverview.exesAndRoutes.sortBy(_.exId) grouped colExCount) {
+                    <div class="form-group row">
+                    @for(exAndRoute <- exesAndRoutes) {
+                        <div class="col-md-@{
+                            12 / colExCount
+                        }">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="text-center">
+                                        <strong>@exAndRoute.exId: @exAndRoute.exTitle</strong>
+                                        - Version: @exAndRoute.versions match {
+                                        case Seq() => {--}
+                                        case Seq(head) => {
+                                            @head.asString
                                         }
-                                        </select>
+                                        case other => {
+                                            <select class="form-control version_select" data-id="@exAndRoute.exId" title="Versionswahl">
+                                            @for(version <- other.sorted.reverse) {
+                                                <option>@version.asString</option>
+                                            }
+                                            </select>
+                                        }
+                                        }
+                                    </p>
+                                    @* @if(toolObject.hasTags) {
+                                    <td>@for(tag <- exAndRoute.ex.tags) {
+                                    @tag.render
+                                    }</td>
+                                    } *@
+                                    <div class="btn-group d-flex">
+                                    @for(exRoute <- exAndRoute.routes) {
+                                        <a class="btn btn-outline-primary w-100 ex_link_@exAndRoute.exId" @if(exRoute.enabled) {
+                                            href="@exRoute.call"
+                                        } else {
+                                            title="Vorbedingungen nicht erfüllt!"
+                                            }>@exRoute.exPart.partName</a>
                                     }
-                                    }
-                                </p>
-                                @* @if(toolObject.hasTags) {
-                                <td>@for(tag <- exAndRoute.ex.tags) {
-                                @tag.render
-                                }</td>
-                                } *@
-                                <div class="btn-group d-flex">
-                                @for(exRoute <- exAndRoute.routes) {
-                                    <a class="btn btn-outline-primary w-100 ex_link_@exAndRoute.exId" @if(exRoute.enabled) {
-                                        href="@exRoute.call"
-                                    } else {
-                                        title="Vorbedingungen nicht erfüllt!"
-                                        }>@exRoute.exPart.partName</a>
-                                }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    }
+
+                    </div>
                 }
 
-                </div>
-            }
 
+                <hr>
 
-            <hr>
-
-                @core.helperTemplates.bsPager(currentPage, urlFunc, dataForUserExesOverview.numOfExes, step = dataForUserExesOverview.exesAndRoutes.size)
-            }
-    </div>
-}
+                    @core.helperTemplates.bsPager(currentPage, urlFunc, dataForUserExesOverview.numOfExes, step = dataForUserExesOverview.exesAndRoutes.size)
+                }
+        </div>
+    }

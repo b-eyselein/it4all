@@ -1,6 +1,6 @@
 @import model.{User, ExerciseReview, ExPart, Difficulties}
 
-@(user: User, allReviews: Seq[ExerciseReview[_ <: ExPart]], toolList: model.toolMains.ToolList, toolMainObject: model.toolMains.IdExerciseToolMain)
+@(user: User, allReviews: Seq[ExerciseReview[_ <: ExPart]], toolList: model.toolMains.ToolList, toolMainObject: model.toolMains.ASingleExerciseToolMain)
 
     @title = @{
         "Aufgabenbewertungen Tool " + toolMainObject.toolname

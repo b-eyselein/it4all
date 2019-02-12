@@ -1,5 +1,7 @@
-@(user: model.User, toolMainObject: model.toolMains.IdExerciseToolMain, exercise: model.xml.XmlCompleteEx,
-        oldSolution: String, part: model.xml.XmlExPart)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@import model.xml.{XmlToolMain, XmlCompleteEx, XmlExPart}
+
+@(user: model.User, toolMainObject: XmlToolMain, exercise: XmlCompleteEx, oldSolution: String, part: XmlExPart)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/xml/xmlExercise.js")');</script>

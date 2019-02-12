@@ -35,33 +35,6 @@ POST          /lti                                                     controlle
 GET           /random/:toolType/:exPart                                controllers.RandomExerciseController.newExercise(toolType: String, exPart: String)
 PUT           /random/:toolType/:exPart                                controllers.RandomExerciseController.correctLive(toolType: String, exPart: String)
 
-
-# File tools
-GET           /fileTools/:toolType/admin/import                        controllers.FileExerciseController.adminImportToRead(toolType: String)
-GET           /fileTools/:toolType/admin/export                        controllers.FileExerciseController.adminExportExercises(toolType: String)
-GET           /fileTools/:toolType/admin/exportFile                    controllers.FileExerciseController.adminExportExercisesAsFile(toolType: String)
-
-GET           /fileTools/:toolType/admin/exerciseList                  controllers.FileExerciseController.adminExerciseList(toolType: String)
-GET           /fileTools/:toolType/admin/newExForm                     controllers.FileExerciseController.adminNewExerciseForm(toolType: String)
-PUT           /fileTools/:toolType/admin/exerciseList                  controllers.FileExerciseController.adminCreateExercise(toolType: String)
-POST          /fileTools/:toolType/admin/exerciseList                  controllers.FileExerciseController.adminCreateExercise(toolType: String)
-
-GET           /fileTools/:toolType/admin/exerciseList/:id              controllers.FileExerciseController.adminEditExerciseForm(toolType: String, id: Int)
-PUT           /fileTools/:toolType/admin/exerciseList/:id              controllers.FileExerciseController.adminEditExercise(toolType: String, id: Int)
-POST          /fileTools/:toolType/admin/exerciseList/:id              controllers.FileExerciseController.adminEditExercise(toolType: String, id: Int)
-DELETE        /fileTools/:toolType/admin/exerciseList/:id              controllers.FileExerciseController.adminDeleteExercise(toolType: String, id: Int)
-
-PUT           /fileTools/:toolType/admin/exercise/:id/state            controllers.FileExerciseController.adminChangeExState(toolType: String, id: Int)
-
-
-GET           /fileTools/:toolType/exercises                           controllers.FileExerciseController.exerciseList(toolType: String, page: Int ?= 1)
-
-GET           /fileTools/:toolType/templates/:id/:fileExtension        controllers.FileExerciseController.downloadTemplate(toolType: String, id: Int, fileExtension: String)
-GET           /fileTools/:toolType/:id/:fileExtension                  controllers.FileExerciseController.exercise(toolType: String, id: Int, fileExtension: String)
-POST          /fileTools/:toolType/:id/:fileExtension                  controllers.FileExerciseController.uploadSolution(toolType: String, id: Int, fileExtension: String)
-
-GET           /fileTools/:toolType/corrected/:id/:part                 controllers.FileExerciseController.downloadCorrected(toolType: String, id: Int, part: String)
-
 # Collection Tools
 ->            /colTools                                                coll.Routes
 

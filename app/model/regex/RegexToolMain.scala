@@ -1,8 +1,8 @@
 package model.regex
 
 import javax.inject.Inject
-import model.toolMains.IdExerciseToolMain
-import model.{Consts, ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
+import model.toolMains.ASingleExerciseToolMain
+import model.{ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.JsString
@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Reguläre Ausdrücke", "regex") {
+  extends ASingleExerciseToolMain("Reguläre Ausdrücke", "regex") {
 
   override type ExType = RegexExercise
 

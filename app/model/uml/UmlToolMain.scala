@@ -2,9 +2,8 @@ package model.uml
 
 import javax.inject._
 import model._
-import model.Difficulties
 import model.core.result.EvaluationResult
-import model.toolMains.{IdExerciseToolMain, ToolState}
+import model.toolMains.{ASingleExerciseToolMain, ToolState}
 import model.uml.UmlConsts.{difficultyName, durationName}
 import play.api.Logger
 import play.api.data.Form
@@ -20,7 +19,7 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Uml", "uml") {
+  extends ASingleExerciseToolMain("Uml", "uml") {
 
   // Result types
 

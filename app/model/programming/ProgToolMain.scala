@@ -3,7 +3,7 @@ package model.programming
 import javax.inject._
 import model._
 import model.programming.ProgConsts.{difficultyName, durationName}
-import model.toolMains.{IdExerciseToolMain, ToolState}
+import model.toolMains.{ASingleExerciseToolMain, ToolState}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.MessagesProvider
@@ -23,7 +23,7 @@ object ProgToolMain {
 
 @Singleton
 class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends IdExerciseToolMain("Programmierung", "programming") {
+  extends ASingleExerciseToolMain("Programmierung", "programming") {
 
   // Abstract types
 

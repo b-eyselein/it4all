@@ -4,7 +4,7 @@ import better.files.File
 import com.gargoylesoftware.htmlunit.ScriptException
 import javax.inject._
 import model._
-import model.toolMains.{IdExerciseToolMain, ToolList, ToolState}
+import model.toolMains.{ASingleExerciseToolMain, ToolList, ToolState}
 import model.web.WebConsts._
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -20,7 +20,7 @@ import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends IdExerciseToolMain("Web", "web") {
+class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends ASingleExerciseToolMain("Web", "web") {
 
   // Result types
 

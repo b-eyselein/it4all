@@ -1,5 +1,6 @@
-@(adminUser: model.User, solutions: Seq[model.DBPartSolution[_ <: model.ExPart, _]], toolList: model.toolMains.ToolList,
-        toolMainObject: model.toolMains.IdExerciseToolMain)
+@import model.{User, DBPartSolution, ExPart}
+
+@(adminUser: User, solutions: Seq[DBPartSolution[_ <: ExPart, _]], toolList: model.toolMains.ToolList, toolMainObject: model.toolMains.ASingleExerciseToolMain)
 
 @title = @{
     "Lösungen für Aufgabe TODO!"

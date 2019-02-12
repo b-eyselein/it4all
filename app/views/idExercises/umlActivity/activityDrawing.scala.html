@@ -1,5 +1,7 @@
-@(user: model.User, completeEx: model.programming.ProgCompleteEx, language: model.programming.ProgLanguage,
-        definitionRest: String, toolObject: model.toolMains.IdExerciseToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@import model.programming.{ProgCompleteEx, ProgLanguage, ProgToolMain}
+
+@(user: model.User, completeEx: ProgCompleteEx, language: ProgLanguage, definitionRest: String, toolObject: ProgToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
