@@ -3,13 +3,14 @@ package controllers
 import better.files.File
 import javax.inject.{Inject, Singleton}
 import model.core._
-import model.spread.SpreadConsts
 import model.toolMains.{FileExerciseToolMain, ToolList}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+
+object MyFileConsts extends FileExConsts
 
 @Singleton
 class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)
@@ -36,7 +37,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
       getToolMain(toolType) match {
         case None           => Future(BadRequest(s"There is no tool with name >>$toolType<<"))
         case Some(toolMain) =>
-          request.body.file(SpreadConsts.FILE_NAME) match {
+          request.body.file(MyFileConsts.FILE_NAME) match {
             case None       => Future(BadRequest("There has been an error uploading your file!"))
             case Some(file) => toolMain.correctAndRender(user, id, file, fileExtension) map {
               case Success(render) => Ok(render)
@@ -60,7 +61,7 @@ class FileExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
     implicit request =>
       toolMain.futureCompleteExById(id) map {
         case Some(exercise) =>
-          val correctedFilePath = toolMain.solutionDirForExercise(user.username, exercise.ex.id) / (exercise.templateFilename + SpreadConsts.CORRECTION_ADD_STRING + "." + fileExtension)
+          val correctedFilePath = toolMain.solutionDirForExercise(user.username, exercise.ex.id) / (exercise.templateFilename + MyFileConsts.CORRECTION_ADD_STRING + "." + fileExtension)
           Ok.sendFile(correctedFilePath.toJava)
         case None           => BadRequest("There is no such exercise!")
       }
