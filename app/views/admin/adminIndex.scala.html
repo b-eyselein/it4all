@@ -23,19 +23,6 @@
                 Zur Auswertung der Evaluation</a>
         </section>
 
-
-        <hr>
-
-        <section>
-            <h2>Synchronisation mit ExerciseHub</h2>
-
-            @flash.get("hub").map { msg =>
-                <p class="text-danger">@msg</p>
-            }
-
-            <a class="btn btn-info btn-block" href="@routes.AdminController.synchronize">Synchronisation</a>
-        </section>
-
         <hr>
 
         <section id="administration">

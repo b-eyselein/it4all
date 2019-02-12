@@ -4,24 +4,24 @@ import javax.inject._
 import model.FormMappings.UpdateRoleForm
 import model.core.Repository
 import model.feedback.{Feedback, FeedbackResult}
-import model.hubapi.{HubJsonProtocol, HubTool}
 import model.toolMains._
 import model.{FormMappings, Role, User}
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.{Failure, Success, Try}
 
 class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider,
                                 val repository: Repository, toolList: ToolList, ws: WSClient)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+
+  private val logger = Logger("controllers.AdminController")
 
   private def getToolMain(toolType: String): Option[AToolMain] = toolList.toolMains.find(_.urlPart == toolType)
 
@@ -36,15 +36,13 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
   }
 
-  private val hubUrl = "http://localhost:5555"
-
   def changeRole: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
 
       val onFormError: Form[UpdateRoleForm] => Future[Result] = { formWithErrors =>
 
         for (formError <- formWithErrors.errors)
-          Logger.error(formError.message)
+          logger.error(formError.message)
 
         Future(BadRequest("TODO!"))
       }
@@ -69,51 +67,6 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
         } toSeq
 
         Ok(views.html.evaluation.stats(user, results))
-      }
-  }
-
-  def synchronize: EssentialAction = futureWithAdmin { admin =>
-    implicit request =>
-
-      println(toolList.toolMains)
-
-      // FIXME: current work...
-
-      ws.url(hubUrl).withHttpHeaders("Accept" -> "application/json").get map { response =>
-        Try(Json.parse(response.body)) match {
-          case Failure(error) =>
-            Logger.error("Could not parse request as json", error)
-            BadRequest("Es gab einen Fehler bei der Bearbeitung des Requests!")
-
-          case Success(JsArray(contents)) =>
-            val toolsInHub: IndexedSeq[HubTool] = contents.flatMap(content => HubJsonProtocol.hubToolFormat.reads(content).asOpt.toList)
-
-            val (syncableTools, notSyncableTools) = toolList.toolMains.partition(toolMain => toolsInHub.map(_.toolId) contains toolMain.urlPart)
-
-
-            Ok(views.html.admin.hub.hubTools(admin, syncableTools, notSyncableTools))
-
-
-          case Success(_) =>
-            BadRequest("Es gab einen Fehler bei der Bearbeitung des Requests!")
-        }
-      } recover {
-        case _: Throwable => Redirect(routes.AdminController.index()).flashing("hub" -> "Hub ist nicht erreichbar!")
-      }
-
-  }
-
-  def synchronizeTool(toolId: String): EssentialAction = futureWithAdminWithToolMain(toolId) { (admin, toolMain) =>
-    implicit request =>
-      toolMain match {
-        case setm: ASingleExerciseToolMain =>
-          setm.futureCompleteExes map {
-            exercises => Ok(views.html.admin.hub.syncExToolMain(admin, setm, exercises))
-          }
-        case ctm: CollectionToolMain       =>
-          ctm.futureCompleteColls map {
-            collections => Ok(views.html.admin.hub.syncCollToolMain(admin, ctm, collections))
-          }
       }
   }
 

@@ -16,9 +16,6 @@ PUT           /preferences/updatePassword                              controlle
 # Controller
 GET           /admin                                                   controllers.AdminController.index
 
-GET           /admin/synchronize                                       controllers.AdminController.synchronize
-GET           /admin/synchronize/:toolId                               controllers.AdminController.synchronizeTool(toolId: String)
-
 GET           /users                                                   controllers.AdminController.users
 PUT           /users/changeRole                                        controllers.AdminController.changeRole
 
