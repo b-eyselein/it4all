@@ -275,7 +275,7 @@ function initElementButtons(): void {
 
 function initPaperEvents(jPaper: JQuery): void {
     jPaper.on('dragover', (event: Event) => event.preventDefault());
-    jPaper.on('drop', (event: JQuery.Event) => {
+    jPaper.on('drop', (event) => {
         event.preventDefault();
 
         createElements((event.originalEvent as DragEvent).dataTransfer.getData('text'), {

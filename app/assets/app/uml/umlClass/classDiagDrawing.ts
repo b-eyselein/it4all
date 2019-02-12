@@ -350,7 +350,7 @@ function onDragStart(ev: DragEvent): void {
 }
 
 
-function drop(jqEvent: JQuery.Event): void {
+function drop(jqEvent): void {
     jqEvent.preventDefault();
 
     let event = jqEvent.originalEvent as DragEvent;
