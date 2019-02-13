@@ -169,13 +169,13 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case Some(coll: toolMain.CompCollType) =>
           val step = 18
 
-          val approvedExercises: Seq[coll.CompEx] = coll.exercises.filter(_.ex.state == ExerciseState.APPROVED)
+          val approvedExercises: Seq[coll.CompEx] = coll.exercises.filter(_.state == ExerciseState.APPROVED)
 
           val exesToDisplay = takeSlice(approvedExercises, page, step)
 
           val futureExesAndSuccessTypes: Future[Seq[UserCollEx]] = Future.sequence(exesToDisplay.map {
             ex: coll.CompEx =>
-              toolMain.futureSolveState(user, ex.ex.collectionId, ex.ex.id) map {
+              toolMain.futureSolveState(user, ex.collectionId, ex.id) map {
                 // FIXME: query solved state!
                 maybeSolvedState => UserCollEx(ex, maybeSolvedState getOrElse SolvedStates.NotStarted)
               }

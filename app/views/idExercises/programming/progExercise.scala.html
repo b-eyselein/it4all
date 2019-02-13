@@ -15,10 +15,6 @@
     </script>
 }
 
-@exerciseText = {
-@exercise.ex.text
-}
-
 @remainingExerciseDef = {
     <div class="form-group">
         <div class="btn-group d-flex">
@@ -41,7 +37,7 @@
             <select class="form-control" id="langSelect">
             @for(lang <- model.programming.ProgLanguages.values) {
                 <option value="@lang.entryName" @{
-                    if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
+                    if(lang == model.programming.ProgLanguages.StandardLanguage) "selected" else ""
                 }>@lang.languageName</option>
             }
             </select>
@@ -62,5 +58,5 @@
     </div>
 }
 
-@idExercises.textExercise(user, exerciseText, exercise, part, oldSolution, toolMainObject, additionalScripts,
+@idExercises.textExercise(user, Html(exercise.text), exercise, part, oldSolution, toolMainObject, additionalScripts,
     remainingExDef = Some(remainingExerciseDef))

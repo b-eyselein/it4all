@@ -3,11 +3,11 @@
 @main("", Some(user)) {
     <div class="container">
         <div class="page-header">
-            <h1>Tasks Aufgabe @exercise.ex.id</h1>
+            <h1>Tasks Aufgabe @exercise.id</h1>
         </div>
 
         <h2>Html-Text</h2>
-        <pre>@exercise.ex.htmlText</pre>
+        <pre>@exercise.htmlText</pre>
 
         @if(exercise.htmlTasks.nonEmpty) {
             <h2>Html-Tasks</h2>
@@ -43,7 +43,7 @@
         <hr>
 
         <h2>Js-Text</h2>
-        <pre>@exercise.ex.jsText</pre>
+        <pre>@exercise.jsText</pre>
 
         @if(exercise.jsTasks.nonEmpty) {
             <h2>Js-Tasks</h2>

@@ -26,9 +26,9 @@ object ProgCorrector {
       case ProgStringSolution(solution, _, _) => (solution, exercise.sampleTestData)
     }
 
-    val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / (exercise.ex.id + "-" + exercise.ex.folderIdentifier)
+    val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.folderIdentifier)
 
-    val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, exercise.ex.id)
+    val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, exercise.id)
 
     val testDataFileContent: JsValue = exercise.buildTestDataFileContent(completeTestData, progSolution.extendedUnitTests)
 

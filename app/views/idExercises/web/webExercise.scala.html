@@ -8,17 +8,17 @@
 }
 
 @exerciseText = {
-    <span>@exercise.ex.text</span>
+    <span>@exercise.text</span>
 
 @if(part == model.web.WebExParts.HtmlPart) {
-    <span>@Html(exercise.ex.htmlText getOrElse "")</span>
+    <span>@Html(exercise.htmlText getOrElse "")</span>
     <ol>
     @for(task <- exercise.tasksForPart(part).sortBy(_.task.id)) {
         <li><span id="text_@task.task.id">@task.task.text</span></li>
     }
     </ol>
 } else {
-    <p>@Html(exercise.ex.jsText getOrElse "")</p>
+    <p>@Html(exercise.jsText getOrElse "")</p>
     <p>Es gibt insgesamt @exercise.tasksForPart(part).size Testfälle.</p>
 }
 
@@ -30,7 +30,7 @@
             Ihre Lösung hat sich geändert. Laden Sie sie neu,
             indem Sie diesen Tab neu aufrufen.</div>
         <div class="embed-responsive embed-responsive-16by9">
-            <iframe class="embed-responsive-item" src="@exes.routes.ExerciseController.webSolution(exercise.ex.id, part.urlName)" id="preview"></iframe>
+            <iframe class="embed-responsive-item" src="@exes.routes.ExerciseController.webSolution(exercise.id, part.urlName)" id="preview"></iframe>
         </div>
     </div>
 }

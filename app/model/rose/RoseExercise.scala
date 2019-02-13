@@ -8,6 +8,16 @@ import play.twirl.api.Html
 
 final case class RoseCompleteEx(ex: RoseExercise, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]) extends SingleCompleteEx[RoseExercise, RoseExPart] {
 
+  // remaining field from RoseExercise
+
+  def fieldWidth: Int = ex.fieldHeight
+
+  def fieldHeight: Int = ex.fieldHeight
+
+  def isMultiplayer: Boolean = ex.isMultiplayer
+
+  // other methods
+
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.rose.rosePreview.render(this)
 
@@ -15,7 +25,7 @@ final case class RoseCompleteEx(ex: RoseExercise, inputTypes: Seq[RoseInputType]
 
   def declaration(forUser: Boolean): String = {
     val className = if (forUser) "UserRobot" else "SampleRobot"
-    val (methodName, returnType) = if (ex.isMultiplayer) ("act", "Action") else ("run", "None")
+    val (methodName, returnType) = if (isMultiplayer) ("act", "Action") else ("run", "None")
 
     val parameters = inputTypes match {
       case Seq() => ""

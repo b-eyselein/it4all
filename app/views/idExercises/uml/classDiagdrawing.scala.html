@@ -71,7 +71,7 @@
                 </div>
 
                 <div id="sizepaper">
-                    <div id="classDiagPaper" data-url="@exes.routes.ExerciseController.umlClassDiag(exercise.ex.id, curPart.urlName)"></div>
+                    <div id="classDiagPaper" data-url="@exes.routes.ExerciseController.umlClassDiag(exercise.id, curPart.urlName)"></div>
                 </div>
             </div>
 
@@ -79,7 +79,7 @@
             <div class="col-md-6">
 
                 @*<input hidden id="toolType" value="@toolObject.urlPart" title="hidden">*@
-                @*<input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">*@
+                @*<input hidden type="number" id="exerciseId" value="@exercise.id" title="hidden">*@
                 @*<input hidden id="exercisePart" value="@curPart.urlName" title="hidden">*@
 
                 <div class="card">
@@ -93,11 +93,11 @@
                     @helper.CSRF.formField
 
                     <div class="btn-group d-flex">
-                        <button data-url="@exes.routes.ExerciseController.correctLive(toolObject.urlPart, exercise.ex.id, curPart.urlName)"
+                        <button data-url="@exes.routes.ExerciseController.correctLive(toolObject.urlPart, exercise.id, curPart.urlName)"
                         id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>
                         @curPart match {
                             case model.uml.UmlExParts.DiagramDrawingHelp => {
-                                <a href="@exes.routes.ExerciseController.exercise(toolObject.urlPart, exercise.ex.id, model.uml.UmlExParts.MemberAllocation.urlName)"
+                                <a href="@exes.routes.ExerciseController.exercise(toolObject.urlPart, exercise.id, model.uml.UmlExParts.MemberAllocation.urlName)"
                                 class="btn btn-secondary w-100">Nächster Aufgabenteil</a>
                             }
                             case _ => {

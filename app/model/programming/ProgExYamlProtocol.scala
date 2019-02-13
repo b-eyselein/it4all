@@ -24,7 +24,6 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       folderIdentifier <- yamlObject.stringField(identifierName)
 
       functionname <- yamlObject.stringField(functionNameName)
-      indentLevel <- yamlObject.intField(indentLevelName)
       outputType <- yamlObject.enumField(outputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
       baseData <- yamlObject.optJsonField(baseDataName)
 
@@ -48,20 +47,20 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
       ProgCompleteEx(
         ProgExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-          folderIdentifier, functionname, indentLevel, outputType, baseData),
+          folderIdentifier, functionname, outputType, baseData),
         inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
       )
     }
 
     override def write(completeEx: ProgCompleteEx): YamlObject = {
-      val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(completeEx.ex.baseValues.id, completeEx.ex.semanticVersion, completeEx.ex.folderIdentifier)
+      val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(completeEx.id, completeEx.semanticVersion, completeEx.folderIdentifier)
       YamlObject(
-        writeBaseValues(completeEx.ex) ++
+        writeBaseValues(completeEx.baseValues) ++
           Map[YamlValue, YamlValue](
-            YamlString(functionNameName) -> YamlString(completeEx.ex.functionname),
+            YamlString(functionNameName) -> YamlString(completeEx.functionName),
             YamlString(inputTypesName) -> YamlArr(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName))),
             YamlString(sampleSolutionsName) -> YamlArr(completeEx.sampleSolutions map progSampleSolYamlFormat.write),
-            YamlString(sampleTestDataName) -> YamlArr(completeEx.sampleTestData map ProgSampleTestdataYamlFormat(completeEx.ex.baseValues).write)
+            YamlString(sampleTestDataName) -> YamlArr(completeEx.sampleTestData map ProgSampleTestdataYamlFormat(completeEx.baseValues).write)
           )
       )
     }

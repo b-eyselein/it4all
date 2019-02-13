@@ -28,7 +28,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(completeEx: SqlCompleteScenario): YamlObject = YamlObject(
-      writeBaseValues(completeEx.coll) ++
+      writeBaseValues(completeEx.coll.baseValues) ++
         Map(
           YamlString(shortNameName) -> YamlString(completeEx.coll.shortName),
           YamlString(exercisesName) -> YamlArr(completeEx.exercises map SqlExYamlFormat(completeEx.coll.baseValues).write)
@@ -62,11 +62,11 @@ object SqlYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(completeEx: SqlCompleteEx): YamlValue = YamlObject(
-      writeBaseValues(completeEx.ex) ++
+      writeBaseValues(completeEx.baseValues) ++
         Map[YamlValue, YamlValue](
-          YamlString(exerciseTypeName) -> YamlString(completeEx.ex.exerciseType.entryName),
-          YamlString(samplesName) -> YamlArr(completeEx.samples map SqlSampleYamlFormat(collBaseValues, completeEx.ex.baseValues).write)
-        ) ++ completeEx.ex.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(completeEx)
+          YamlString(exerciseTypeName) -> YamlString(completeEx.exerciseType.entryName),
+          YamlString(samplesName) -> YamlArr(completeEx.samples map SqlSampleYamlFormat(collBaseValues, completeEx.baseValues).write)
+        ) ++ completeEx.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(completeEx)
     )
 
     private def writeTags(completeEx: SqlCompleteEx): Option[(YamlValue, YamlValue)] = completeEx.tags match {

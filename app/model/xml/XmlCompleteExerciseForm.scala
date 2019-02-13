@@ -8,7 +8,7 @@ import play.api.data.{Form, Mapping}
 
 import scala.language.postfixOps
 
-object XmlCompleteExerciseForm extends CompleteExerciseForm[XmlExercise, XmlCompleteEx] {
+object XmlCompleteExerciseForm extends CompleteExerciseForm[XmlCompleteEx] {
 
   // Xml samples
 
@@ -39,8 +39,8 @@ object XmlCompleteExerciseForm extends CompleteExerciseForm[XmlExercise, XmlComp
     )
 
   override def unapplyCompEx(compEx: XmlCompleteEx): Option[FormData] =
-    Some((compEx.ex.id, compEx.ex.semanticVersion, compEx.ex.title, compEx.ex.author, compEx.ex.text, compEx.ex.state,
-      compEx.ex.grammarDescription, compEx.ex.rootNode, compEx.samples map unapplyXmlSample))
+    Some((compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state,
+      compEx.grammarDescription, compEx.rootNode, compEx.samples map unapplyXmlSample))
 
   override val format: Form[XmlCompleteEx] = Form(
     mapping(

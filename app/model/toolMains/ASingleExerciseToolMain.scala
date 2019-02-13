@@ -78,7 +78,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
     allExes: Seq[CompExType] =>
       val STEP = 10
 
-      val distinctExes: Seq[CompExType] = allExes.filter(_.ex.state == APPROVED)
+      val distinctExes: Seq[CompExType] = allExes.filter(_.state == APPROVED)
 
       val sliceStart = Math.max(0, (page - 1) * STEP)
       val sliceEnd = Math.min(page * STEP, distinctExes.size)
@@ -87,12 +87,12 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   }
 
   private def getRoutesForEx(user: User, exes: Seq[CompExType]): Future[Seq[ExAndRoute]] = Future.sequence {
-    exes.groupBy(_.ex.id).map {
+    exes.groupBy(_.id).map {
       case (id: Int, allVersionsOfEx: Seq[CompExType]) =>
         exerciseRoutesForUser(user, allVersionsOfEx.head).map {
           routes: Seq[CallForExPart] =>
-            val versions = allVersionsOfEx.map(_.ex.semanticVersion)
-            val exTitle = allVersionsOfEx.head.ex.title
+            val versions = allVersionsOfEx.map(_.semanticVersion)
+            val exTitle = allVersionsOfEx.head.title
 
             ExAndRoute(id, exTitle, versions, routes)
         }
@@ -131,7 +131,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   // Methods
 
   def checkAndCreateSolDir(username: String, exercise: CompExType): Try[File] =
-    Try(solutionDirForExercise(username, exercise.ex.id).createDirectories())
+    Try(solutionDirForExercise(username, exercise.id).createDirectories())
 
   def futureSaveSolution(sol: DBSolType): Future[Boolean] = tables.futureSaveSolution(sol)
 
@@ -219,8 +219,8 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
       // FIXME: check if user can solve this part!
 
       if (exercise.hasPart(exPart)) {
-        tables.futureUserCanSolvePartOfExercise(user.username, exercise.ex.id, exercise.ex.semanticVersion, exPart) map {
-          enabled => Some(CallForExPart(exPart, controllers.exes.routes.ExerciseController.exercise(urlPart, exercise.ex.id, exPart.urlName), enabled))
+        tables.futureUserCanSolvePartOfExercise(user.username, exercise.id, exercise.semanticVersion, exPart) map {
+          enabled => Some(CallForExPart(exPart, controllers.exes.routes.ExerciseController.exercise(urlPart, exercise.id, exPart.urlName), enabled))
         }
 
 

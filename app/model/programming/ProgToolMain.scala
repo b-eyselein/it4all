@@ -65,7 +65,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       difficultyName -> Difficulties.formField,
       durationName -> optional(number(min = 0, max = 100))
     )
-    (ProgExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (ProgExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
     (per => Some((per.difficulty, per.maybeDuration)))
   )
 
@@ -87,13 +87,13 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgCompleteEx = ProgCompleteEx(
     ProgExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
-      folderIdentifier = "", functionname = "", indentLevel = 0, outputType = ProgDataTypes.STRING, baseData = None),
+      folderIdentifier = "", functionname = "", outputType = ProgDataTypes.STRING, baseData = None),
     inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[SampleTestData](), maybeClassDiagramPart = None
   )
 
   override def instantiateSolution(id: Int, username: String, exercise: ProgCompleteEx, part: ProgExPart,
                                    solution: ProgSolution, points: Points, maxPoints: Points): DBProgSolution =
-    DBProgSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution.solution, solution.language, solution.extendedUnitTests, points, maxPoints)
+    DBProgSolution(id, username, exercise.id, exercise.semanticVersion, part, solution.solution, solution.language, solution.extendedUnitTests, points, maxPoints)
 
   // Correction
 

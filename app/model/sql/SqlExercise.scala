@@ -36,7 +36,7 @@ final case class SqlCompleteScenario(override val coll: SqlScenario, override va
 
   override def exercisesWithFilter(filter: String): Seq[SqlCompleteEx] = SqlExerciseType.withNameInsensitiveOption(filter) map (exType => getExercisesByType(exType)) getOrElse Seq[SqlCompleteEx]()
 
-  def getExercisesByType(exType: SqlExerciseType): Seq[SqlCompleteEx] = exercises filter (_.ex.exerciseType == exType)
+  def getExercisesByType(exType: SqlExerciseType): Seq[SqlCompleteEx] = exercises filter (_.exerciseType == exType)
 
   override def renderRest: Html = new Html(
     s"""<div class="row">
@@ -47,6 +47,14 @@ final case class SqlCompleteScenario(override val coll: SqlScenario, override va
 }
 
 final case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteExInColl[SqlExercise] {
+
+  // remaining fields from SqlExercise
+
+  def exerciseType: SqlExerciseType = ex.exerciseType
+
+  def hint: Option[String] = ex.hint
+
+  // other methods
 
   override def tags: Seq[SqlExTag] = (ex.tags split SqlConsts.tagJoinChar).toSeq flatMap SqlExTag.withNameInsensitiveOption
 

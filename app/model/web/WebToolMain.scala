@@ -61,7 +61,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       difficultyName -> Difficulties.formField,
       durationName -> optional(number(min = 0, max = 100))
     )
-    (WebExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (WebExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
     (wer => Some((wer.difficulty, wer.maybeDuration)))
   )
 
@@ -114,7 +114,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override def instantiateSolution(id: Int, username: String, exercise: WebCompleteEx, part: WebExPart, solution: String,
                                    points: Points, maxPoints: Points): WebSolution =
-    WebSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
+    WebSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -168,11 +168,11 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   }
 
   override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
-    writeWebSolutionFile(user.username, exercise.ex.id, part, learnerSolution) flatMap { _ =>
+    writeWebSolutionFile(user.username, exercise.id, part, learnerSolution) flatMap { _ =>
 
       val driver = new HtmlUnitDriver(true)
       Try {
-        driver.get(getSolutionUrl(user, exercise.ex.id, part))
+        driver.get(getSolutionUrl(user, exercise.id, part))
       }.transform(_ => onDriverGetSuccess(learnerSolution, exercise, part, driver), onDriverGetError)
     }
   }

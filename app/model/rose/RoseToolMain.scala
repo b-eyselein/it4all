@@ -58,7 +58,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
       difficultyName -> Difficulties.formField,
       durationName -> optional(number(min = 0, max = 100))
     )
-    (RoseExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (RoseExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
     (rer => Some((rer.difficulty, rer.maybeDuration)))
   )
 
@@ -81,7 +81,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override def instantiateSolution(id: Int, username: String, exercise: RoseCompleteEx, part: RoseExPart, solution: String,
                                    points: Points, maxPoints: Points): RoseSolution =
-    RoseSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
+    RoseSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -104,10 +104,10 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   // Correction
 
   override protected def correctEx(user: User, sol: SolType, exercise: RoseCompleteEx, part: RoseExPart): Future[Try[RoseCompleteResult]] = {
-    val solDir = solutionDirForExercise(user.username, exercise.ex.id)
+    val solDir = solutionDirForExercise(user.username, exercise.id)
 
     for {
-      result <- RoseCorrector.correct(user, exercise, sol, ProgLanguages.STANDARD_LANG, exerciseResourcesFolder, solDir)
+      result <- RoseCorrector.correct(user, exercise, sol, ProgLanguages.StandardLanguage, exerciseResourcesFolder, solDir)
     } yield Try(RoseCompleteResult(sol, result))
   }
 

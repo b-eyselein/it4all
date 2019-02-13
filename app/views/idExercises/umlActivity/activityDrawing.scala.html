@@ -16,12 +16,12 @@
             const EXERCISE_PARAMETERS = {
                 methodDisplay: '@Html(language.activityDiagramDisplay(completeEx))',
                 methodDeclaration: '@Html(language.activityDiagramDeclaration(completeEx))',
-                methodName: '@completeEx.ex.functionname',
-                methodParameters: '@Html( model.programming.ProgLanguages.STANDARD_LANG.buildParams(completeEx))',
+                methodName: '@completeEx.functionName',
+                methodParameters: '@Html( model.programming.ProgLanguages.StandardLanguage.buildParams(completeEx))',
                 output: {
-                    outputType: '@completeEx.ex.outputType.typeName',
+                    outputType: '@completeEx.outputType.typeName',
                     output: 'solution',
-                    defaultValue: '@Html(completeEx.ex.outputType.defaultValue( model.programming.ProgLanguages.STANDARD_LANG))'
+                    defaultValue: '@Html(completeEx.outputType.defaultValue( model.programming.ProgLanguages.StandardLanguage))'
                 }
             };
 
@@ -53,12 +53,12 @@
         case None => {}
         case Some(classDiagPart@_) => {
             @core.helperTemplates.modal("Klassendiagramm", "classDiagramModal", "lg") {
-                <div id="classdiagram" data-url="@exes.routes.ExerciseController.progClassDiagram(completeEx.ex.id)"></div>
+                <div id="classdiagram" data-url="@exes.routes.ExerciseController.progClassDiagram(completeEx.id)"></div>
             }
         }
     }
 
-    <input title="hidden" hidden id="defaultSolution" value="@Html(completeEx.ex.outputType.defaultValue(model.programming.ProgLanguages.STANDARD_LANG))">
+    <input title="hidden" hidden id="defaultSolution" value="@Html(completeEx.outputType.defaultValue(model.programming.ProgLanguages.StandardLanguage))">
 
     <div class="container-fluid" id="fullsc">
 
@@ -111,7 +111,7 @@
             <div class="col-md-6">
 
                 <div class="card">
-                    <div class="card-body text-justify">@Html(completeEx.ex.text)</div>
+                    <div class="card-body text-justify">@Html(completeEx.text)</div>
                 </div>
 
                 <hr>
@@ -201,7 +201,7 @@
                                 <select class="form-control" id="langSelect" onchange="changeProgLanguage()" title="test">
                                 @for(lang <- model.programming.ProgLanguages.values) {
                                     <option value="@lang.entryName" @{
-                                        if(lang == model.programming.ProgLanguages.STANDARD_LANG) "selected" else ""
+                                        if(lang == model.programming.ProgLanguages.StandardLanguage) "selected" else ""
                                     }>@lang.languageName</option>
                                 }
                                 </select>
@@ -353,7 +353,7 @@
                     </div>
 
                     <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
-                    <input hidden type="number" id="exerciseId" value="@completeEx.ex.id" title="hidden">
+                    <input hidden type="number" id="exerciseId" value="@completeEx.id" title="hidden">
                     <input hidden id="exercisePart" value="@model.programming.ProgExParts.ActivityDiagram.urlName" title="hidden">
 
                     <hr>

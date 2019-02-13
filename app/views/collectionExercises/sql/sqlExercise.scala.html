@@ -21,11 +21,11 @@
 }
 
 @nextBtnDisabled = @{
-    if(exercise.ex.id < numOfExes) "" else " disabled"
+    if(exercise.id < numOfExes) "" else " disabled"
 }
 
 @prevBtnDisabled = @{
-    if(exercise.ex.id > 1) "" else " disabled"
+    if(exercise.id > 1) "" else " disabled"
 }
 
 @main("SQL", Some(user), scripts) {
@@ -42,7 +42,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-3">
-                <h2 class="text-center">@exercise.ex.title</h2>
+                <h2 class="text-center">@exercise.title</h2>
             </div>
             <div class="col-sm-4"></div>
             <div class="col-md-5">
@@ -66,8 +66,8 @@
             <div class="col-sm-3">
                 <div class="form-group card">
                     <div class="card-body">
-                        <p>@exercise.ex.text</p>
-                        @exercise.ex.hint.map(hint => Html(s"""<p><i>Hinweis:</i> $hint</p>""")).getOrElse("")
+                        <p>@exercise.text</p>
+                        @exercise.hint.map(hint => Html(s"""<p><i>Hinweis:</i> $hint</p>""")).getOrElse("")
                     </div>
                 </div>
 
@@ -119,7 +119,7 @@
                     </div>
 
                     <div id="sampleSolTab" class="tab-pane fade">
-                        <button data-href="@coll.routes.CollectionController.sampleSol(toolMainObject.urlPart, scenario.id, exercise.ex.id)"
+                        <button data-href="@coll.routes.CollectionController.sampleSol(toolMainObject.urlPart, scenario.id, exercise.id)"
                         class="btn btn-outline-success btn-block" id="showSampleSolBtn">Musterlösung(en) anzeigen</button>
                     </div>
                 </div>

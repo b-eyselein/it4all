@@ -226,7 +226,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
           futureCompleteEx flatMap {
             case None           => Future.successful(onNoSuchExercise(id))
             case Some(exercise) =>
-              toolMain.futureOldOrDefaultSolution(user, exercise.ex.id, exercise.ex.semanticVersion, part) map {
+              toolMain.futureOldOrDefaultSolution(user, exercise.id, exercise.semanticVersion, part) map {
                 oldSolution => Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
               }
           }
@@ -333,7 +333,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
           case None                          =>
             Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
             Future(emptyClassDiagram)
-          case Some(exercise: UmlCompleteEx) => umlToolMain.futureOldOrDefaultSolution(user, exercise.ex.id, exercise.ex.semanticVersion, part) map {
+          case Some(exercise: UmlCompleteEx) => umlToolMain.futureOldOrDefaultSolution(user, exercise.id, exercise.semanticVersion, part) map {
             case Some(solution) => solution.solution
             case None           => exercise.getDefaultClassDiagForPart(part)
           }

@@ -1,123 +1,124 @@
-@(user: model.User, exercise: model.sql.SqlCompleteEx, isCreation: Boolean,
-        toolMainObject: model.sql.SqlToolMain, toolList: model.toolMains.ToolList)
+@import model.sql.{SqlCompleteEx, SqlToolMain}
 
-    @title = @{
-        "Sql-Aufgabe " + (if(isCreation) " erstellen" else " bearbeiten")
-    }
+@(user: model.User, exercise: SqlCompleteEx, isCreation: Boolean, toolMainObject: SqlToolMain, toolList: model.toolMains.ToolList)
 
-    @scripts = {
-        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+@title = @{
+    "Sql-Aufgabe " + (if(isCreation) " erstellen" else " bearbeiten")
+}
 
-        <script>SystemJS.import('@routes.Assets.versioned("app/sql/editSqlExercise.js")');</script>
-    }
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
-        <form class="form" method="post" role="form" action="@coll.routes.CollectionController.editExercise(toolMainObject.urlPart, exercise.ex.collectionId, exercise.ex.id)">
+    <script>SystemJS.import('@routes.Assets.versioned("app/sql/editSqlExercise.js")');</script>
+}
 
-            <div class="row">
+@admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
+    <form class="form" method="post" role="form" action="@coll.routes.CollectionController.editExercise(toolMainObject.urlPart, exercise.collectionId, exercise.id)">
 
-                <div class="col-sm-4">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="@model.sql.SqlConsts.idName">ID:</label>
-                                <input type="number" class="form-control from-control-static" name="@model.sql.SqlConsts.idName" id="@model.sql.SqlConsts.idName"
-                                required value="@exercise.ex.id" title="Dieser Wert kann nicht geändert werden" readonly>
-                            </div>
-                        </div>
+        <div class="row">
 
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="@model.sql.SqlConsts.collIdName">Szenario-ID:</label>
-                                <input type="number" class="form-control from-control-static" name="@model.sql.SqlConsts.collIdName" id="@model.sql.SqlConsts.collIdName"
-                                required value="@exercise.ex.collectionId" title="Dieser Wert kann nicht geändert werden" readonly>
-                            </div>
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="@model.sql.SqlConsts.idName">ID:</label>
+                            <input type="number" class="form-control from-control-static" name="@model.sql.SqlConsts.idName" id="@model.sql.SqlConsts.idName"
+                            required value="@exercise.id" title="Dieser Wert kann nicht geändert werden" readonly>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="@model.sql.SqlConsts.authorName">Autor:</label>
-                                <input class="form-control" name="@model.sql.SqlConsts.authorName" id="@model.sql.SqlConsts.authorName" value="@user.username"
-                                title="Dieser Wert kann nicht geändert werden." readonly required>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="@model.sql.SqlConsts.statusName">Status:</label>
-                                <input class="form-control" name="@model.sql.SqlConsts.statusName" id="@model.sql.SqlConsts.statusName"
-                                value="@model.ExerciseState.CREATED.entryName" title="Dieser Wert kann nicht geändert werden" readonly required>
-                            </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="@model.sql.SqlConsts.collIdName">Szenario-ID:</label>
+                            <input type="number" class="form-control from-control-static" name="@model.sql.SqlConsts.collIdName" id="@model.sql.SqlConsts.collIdName"
+                            required value="@exercise.collectionId" title="Dieser Wert kann nicht geändert werden" readonly>
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="@model.sql.SqlConsts.titleName">Titel*:</label>
-                        <input class="form-control" name="@model.sql.SqlConsts.titleName" id="@model.sql.SqlConsts.titleName" required
-                        value="@exercise.ex.title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="@model.sql.SqlConsts.authorName">Autor:</label>
+                            <input class="form-control" name="@model.sql.SqlConsts.authorName" id="@model.sql.SqlConsts.authorName" value="@user.username"
+                            title="Dieser Wert kann nicht geändert werden." readonly required>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="@model.sql.SqlConsts.exerciseTypeName">Typ*:</label>
-                        <select class="form-control" name="@model.sql.SqlConsts.exerciseTypeName" id="@model.sql.SqlConsts.exerciseTypeName" required>
-                            <option value="">Bitte wählen...</option>
-                            @for(sqlExType <- model.sql.SqlExerciseType.values) {
-                                <option @{
-                                    if(sqlExType == exercise.ex.exerciseType) "selected" else ""
-                                }>@sqlExType.entryName</option>
-                            }
-                        </select>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="@model.sql.SqlConsts.statusName">Status:</label>
+                            <input class="form-control" name="@model.sql.SqlConsts.statusName" id="@model.sql.SqlConsts.statusName"
+                            value="@model.ExerciseState.CREATED.entryName" title="Dieser Wert kann nicht geändert werden" readonly required>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label>Tags:</label>
-                        @for(exTagTriple <- model.sql.SqlExTag.values.grouped(3)) {
-                            <div class="row">
-                            @for(exTag <- exTagTriple) {
-                                <div class="col-sm-4">
-                                    <label><input type="checkbox" name="@model.sql.SqlConsts.tagsArrayName" value="@exTag.entryName"> @exTag.title</label>
-                                </div>
-                            }
+                <div class="form-group">
+                    <label for="@model.sql.SqlConsts.titleName">Titel*:</label>
+                    <input class="form-control" name="@model.sql.SqlConsts.titleName" id="@model.sql.SqlConsts.titleName" required
+                    value="@exercise.title">
+                </div>
+
+                <div class="form-group">
+                    <label for="@model.sql.SqlConsts.exerciseTypeName">Typ*:</label>
+                    <select class="form-control" name="@model.sql.SqlConsts.exerciseTypeName" id="@model.sql.SqlConsts.exerciseTypeName" required>
+                        <option value="">Bitte wählen...</option>
+                        @for(sqlExType <- model.sql.SqlExerciseType.values) {
+                            <option @{
+                                if(sqlExType == exercise.exerciseType) "selected" else ""
+                            }>@sqlExType.entryName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags:</label>
+                    @for(exTagTriple <- model.sql.SqlExTag.values.grouped(3)) {
+                        <div class="row">
+                        @for(exTag <- exTagTriple) {
+                            <div class="col-sm-4">
+                                <label><input type="checkbox" name="@model.sql.SqlConsts.tagsArrayName" value="@exTag.entryName"> @exTag.title</label>
                             </div>
                         }
-                    </div>
-
-                </div>
-
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="@model.sql.SqlConsts.textName">Text*:</label>
-                        <textarea class="form-control" rows="10" name="@model.sql.SqlConsts.textName" id="@model.sql.SqlConsts.textName" required>@exercise.ex.text</textarea>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="@model.sql.SqlConsts.hintName">Hinweis (optional):</label>
-                        <textarea class="form-control" rows="2" name="@model.sql.SqlConsts.hintName" id="@model.sql.SqlConsts.hintName">@exercise.ex.hint.getOrElse("")</textarea>
-                    </div>
-                </div>
-
-                <div class="col-sm-4" >
-                    <div id="sampleSolDiv">
-                        <div class="form-group">
-                            <label for="@model.sql.SqlConsts.samplesArrayName(1)">Musterlösung 1*:</label>
-                            <textarea name="@model.sql.SqlConsts.samplesArrayName()" rows="4" class="form-control" required
-                            id="@model.sql.SqlConsts.samplesArrayName(1)">@exercise.samples.headOption.map(_.sample).getOrElse("")</textarea>
                         </div>
-                    </div>
+                    }
+                </div>
 
-                    <hr>
+            </div>
 
-                    <button type="button" class="btn btn-block" id="addSampleSolutionBtn">Weitere Musterlösung</button>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="@model.sql.SqlConsts.textName">Text*:</label>
+                    <textarea class="form-control" rows="10" name="@model.sql.SqlConsts.textName" id="@model.sql.SqlConsts.textName" required>@exercise.text</textarea>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="@model.sql.SqlConsts.hintName">Hinweis (optional):</label>
+                    <textarea class="form-control" rows="2" name="@model.sql.SqlConsts.hintName" id="@model.sql.SqlConsts.hintName">@exercise.hint.getOrElse("")</textarea>
                 </div>
             </div>
 
-            <hr>
+            <div class="col-sm-4" >
+                <div id="sampleSolDiv">
+                    <div class="form-group">
+                        <label for="@model.sql.SqlConsts.samplesArrayName(1)">Musterlösung 1*:</label>
+                        <textarea name="@model.sql.SqlConsts.samplesArrayName()" rows="4" class="form-control" required
+                        id="@model.sql.SqlConsts.samplesArrayName(1)">@exercise.samples.headOption.map(_.sample).getOrElse("")</textarea>
+                    </div>
+                </div>
 
-            <button class="btn btn-primary btn-block">Aufgabe @if(isCreation) {erstellen} else {bearbeiten}</button>
+                <hr>
 
-        </form>
-    }
+                <button type="button" class="btn btn-block" id="addSampleSolutionBtn">Weitere Musterlösung</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <button class="btn btn-primary btn-block">Aufgabe @if(isCreation) {erstellen} else {bearbeiten}</button>
+
+    </form>
+}

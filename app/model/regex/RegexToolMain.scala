@@ -48,7 +48,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override protected def instantiateSolution(id: Int, username: String, exercise: RegexCompleteEx, part: RegexExPart,
                                              solution: String, points: Points, maxPoints: Points): RegexDBSolution =
-    RegexDBSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
+    RegexDBSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Correction
 

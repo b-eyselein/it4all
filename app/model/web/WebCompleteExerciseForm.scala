@@ -6,7 +6,7 @@ import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 import model.web.WebConsts._
 
-object WebCompleteExerciseForm extends CompleteExerciseForm[WebExercise, WebCompleteEx] {
+object WebCompleteExerciseForm extends CompleteExerciseForm[WebCompleteEx] {
 
   // HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute])
 
@@ -88,8 +88,8 @@ object WebCompleteExerciseForm extends CompleteExerciseForm[WebExercise, WebComp
     )
 
   override protected def unapplyCompEx(compEx: WebCompleteEx): Option[FormData] = Some((
-    compEx.ex.id, compEx.ex.semanticVersion, compEx.ex.title, compEx.ex.author, compEx.ex.text, compEx.ex.state,
-    compEx.ex.htmlText, compEx.ex.jsText,
+    compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state,
+    compEx.htmlText, compEx.jsText,
     compEx.htmlTasks map unapplyHtmlTask, compEx.jsTasks map unapplyJsTask,
     compEx.sampleSolutions map unapplyWebSampleSolution
   ))

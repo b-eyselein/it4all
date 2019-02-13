@@ -54,8 +54,8 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
     protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {
 
-      val htmlCompleteTaskYamlFormat = HtmlCompleteTaskYamlFormat(completeEx.ex.id, completeEx.ex.semanticVersion)
-      val jsCompleteTaskYamlFormat = JsCompleteTaskYamlFormat(completeEx.ex.id, completeEx.ex.semanticVersion)
+      val htmlCompleteTaskYamlFormat = HtmlCompleteTaskYamlFormat(completeEx.id, completeEx.semanticVersion)
+      val jsCompleteTaskYamlFormat = JsCompleteTaskYamlFormat(completeEx.id, completeEx.semanticVersion)
 
       val htmlTasks: Option[(YamlValue, YamlValue)] = completeEx.htmlTasks match {
         case Nil                        => None
@@ -68,8 +68,8 @@ object WebExYamlProtocol extends MyYamlProtocol {
       }
 
       Map[YamlValue, YamlValue]() ++
-        (completeEx.ex.htmlText map (t => YamlString(htmlTextName) -> YamlString(t))).toList ++
-        (completeEx.ex.jsText map (t => YamlString(jsTextName) -> YamlString(t))).toList ++
+        (completeEx.htmlText map (t => YamlString(htmlTextName) -> YamlString(t))).toList ++
+        (completeEx.jsText map (t => YamlString(jsTextName) -> YamlString(t))).toList ++
         htmlTasks.toList ++ jsTasks.toList
 
     }

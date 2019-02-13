@@ -38,7 +38,7 @@
                 <h2 class="text-center">@title</h2>
 
                 <div class="card">
-                    <div class="card-body">@exercise.ex.text</div>
+                    <div class="card-body">@exercise.text</div>
                 </div>
 
                 <br>
@@ -47,9 +47,9 @@
 
                     @helper.CSRF.formField
                     <div class="btn-group d-flex">
-                        <button data-url="@exes.routes.ExerciseController.correctLive("uml", exercise.ex.id, part = model.uml.UmlExParts.MemberAllocation.urlName)"
+                        <button data-url="@exes.routes.ExerciseController.correctLive("uml", exercise.id, part = model.uml.UmlExParts.MemberAllocation.urlName)"
                         class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
-                        <a href="@exes.routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.ex.id, model.uml.UmlExParts.MemberAllocation.urlName)"
+                        <a href="@exes.routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.id, model.uml.UmlExParts.MemberAllocation.urlName)"
                         id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
                 </div>

@@ -49,9 +49,9 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(completeEx: UmlCompleteEx): YamlValue = YamlObject(
-      writeBaseValues(completeEx.ex) ++
+      writeBaseValues(completeEx.baseValues) ++
         Map(
-          YamlString(mappingsName) -> YamlArr(completeEx.mappings.toSeq map UmlMappingYamlFormat(completeEx.ex.baseValues).write),
+          YamlString(mappingsName) -> YamlArr(completeEx.mappings.toSeq map UmlMappingYamlFormat(completeEx.baseValues).write),
           YamlString(ignoreWordsName) -> YamlArr(completeEx.toIgnore map YamlString),
         )
     )

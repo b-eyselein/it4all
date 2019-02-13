@@ -40,7 +40,7 @@ object SqlFormMappings {
   }
 
   private def unapplySqlCompleteEx(ex: SqlCompleteEx): Option[(Int, String, String, String, String, ExerciseState, Int, String, SqlExerciseType, Seq[String], Option[String], Seq[String])] =
-    Some((ex.ex.id, ex.ex.semanticVersion.asString, ex.ex.title, ex.ex.author, ex.ex.text, ex.ex.state, ex.ex.collectionId,
-      ex.ex.collSemVer.asString, ex.ex.exerciseType, ex.tags.map(_.toString), ex.ex.hint, ex.samples.map(_.sample)))
+    Some((ex.id, ex.semanticVersion.asString, ex.title, ex.author, ex.text, ex.state, ex.collectionId,
+      ex.collSemVer.asString, ex.exerciseType, ex.tags.map(_.toString), ex.hint, ex.samples.map(_.sample)))
 
 }

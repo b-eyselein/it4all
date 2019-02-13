@@ -3,7 +3,7 @@ package model.core
 import model.{CompleteEx, Exercise}
 import play.api.data.Form
 
-trait CompleteExerciseForm[ExType <: Exercise, CompExType <: CompleteEx[ExType]] {
+trait CompleteExerciseForm[CompExType <: CompleteEx[_ <: Exercise]] {
 
   type FormData
 

@@ -10,6 +10,12 @@ import scala.language.postfixOps
 final case class UmlCompleteEx(ex: UmlExercise, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution])
   extends SingleCompleteEx[UmlExercise, UmlExPart] {
 
+  // remaining fields from UmlExercise
+
+  def markedText: String = ex.markedText
+
+  // other methods
+
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.uml.umlPreview(this)
 
@@ -21,8 +27,8 @@ final case class UmlCompleteEx(ex: UmlExercise, toIgnore: Seq[String], mappings:
   }
 
   def textForPart(part: UmlExPart): Html = Html(part match {
-    case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => ex.markedText
-    case _                                                     => ex.text
+    case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => markedText
+    case _                                                     => text
   })
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {

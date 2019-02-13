@@ -111,8 +111,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Correction
 
   override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Try[SqlCorrResult] =
-    correctorsAndDaos.get(exercise.ex.exerciseType) match {
-      case None                   => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.ex.exerciseType}"))
+    correctorsAndDaos.get(exercise.exerciseType) match {
+      case None                   => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}"))
       case Some((corrector, dao)) => Try(corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario))
     }
 
@@ -127,6 +127,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlCompleteEx, solution: String,
                                    points: Points, maxPoints: Points): SqlSolution =
-    SqlSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
+    SqlSolution(id, username, exercise.id, exercise.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
 
 }

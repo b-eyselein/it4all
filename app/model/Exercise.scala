@@ -92,6 +92,8 @@ trait CompleteEx[E <: Exercise] {
 
   def state: ExerciseState = ex.state
 
+  def baseValues: BaseValues = ex.baseValues
+
 
   def preview: Html
 
@@ -113,4 +115,10 @@ trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteE
 
 }
 
-trait CompleteExInColl[Ex <: ExInColl] extends CompleteEx[Ex]
+trait CompleteExInColl[Ex <: ExInColl] extends CompleteEx[Ex] {
+
+  def collectionId: Int = ex.collectionId
+
+  def collSemVer: SemanticVersion = ex.collSemVer
+
+}

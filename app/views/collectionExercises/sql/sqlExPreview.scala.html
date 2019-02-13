@@ -3,28 +3,28 @@
 <table class="table">
     <tr>
         <th>ID</th>
-        <td>@sqlCompleteEx.ex.id</td>
+        <td>@sqlCompleteEx.id</td>
 
         <th>SzenarioID</th>
-        <td>@sqlCompleteEx.ex.collectionId</td>
+        <td>@sqlCompleteEx.collectionId</td>
 
         <th>Autor</th>
-        <td>@sqlCompleteEx.ex.author</td>
+        <td>@sqlCompleteEx.author</td>
     </tr>
     <tr>
         <th>Status</th>
-        <td colspan="2">@sqlCompleteEx.ex.state</td>
+        <td colspan="2">@sqlCompleteEx.state</td>
 
         <th>Aufgabentyp</th>
-        <td colspan="2">@sqlCompleteEx.ex.exerciseType</td>
+        <td colspan="2">@sqlCompleteEx.exerciseType</td>
     </tr>
     <tr>
         <th>Text</th>
-        <td colspan="5">@sqlCompleteEx.ex.text</td>
+        <td colspan="5">@sqlCompleteEx.text</td>
     </tr>
     <tr>
         <th>Hinweis</th>
-        <td colspan="5">@sqlCompleteEx.ex.hint.getOrElse("--")</td>
+        <td colspan="5">@sqlCompleteEx.hint.getOrElse("--")</td>
     </tr>
     <tr>
         <th>Tags</th>

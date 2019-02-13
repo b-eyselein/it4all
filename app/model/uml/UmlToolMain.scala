@@ -58,7 +58,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
       difficultyName -> Difficulties.formField,
       durationName -> optional(number(min = 0, max = 100))
     )
-    (UmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (UmlExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
     (uer => Some((uer.difficulty, uer.maybeDuration)))
   )
 
@@ -88,7 +88,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   )
 
   override def instantiateSolution(id: Int, username: String, exercise: UmlCompleteEx, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlSolution =
-    UmlSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
+    UmlSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -98,7 +98,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
-    case UmlExParts.ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise.ex, this)
+    case UmlExParts.ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise, this)
     case UmlExParts.DiagramDrawing     => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
     case UmlExParts.DiagramDrawingHelp => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = true, this)
     case UmlExParts.MemberAllocation   => views.html.idExercises.uml.memberAllocation(user, exercise, this)

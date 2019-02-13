@@ -8,7 +8,7 @@ import model.uml.UmlConsts._
 
 import scala.language.postfixOps
 
-object UmlCompleteExerciseForm extends CompleteExerciseForm[UmlExercise, UmlCompleteEx] {
+object UmlCompleteExerciseForm extends CompleteExerciseForm[UmlCompleteEx] {
 
   // UmlClassDiagram
 
@@ -85,7 +85,7 @@ object UmlCompleteExerciseForm extends CompleteExerciseForm[UmlExercise, UmlComp
 
   override def unapplyCompEx(compEx: UmlCompleteEx): Option[FormData] =
     Some(
-      (compEx.ex.id, compEx.ex.semanticVersion, compEx.ex.title, compEx.ex.author, compEx.ex.text, compEx.ex.state,
+      (compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state,
         compEx.toIgnore, compEx.mappings toSeq, compEx.sampleSolutions map unapplySampleSolution)
     )
 

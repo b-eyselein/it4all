@@ -9,6 +9,14 @@ import play.twirl.api.Html
 final case class XmlCompleteEx(ex: XmlExercise, samples: Seq[XmlSample])
   extends SingleCompleteEx[XmlExercise, XmlExPart] {
 
+  // remaining fields from XmlExercise
+
+  def grammarDescription: String = ex.grammarDescription
+
+  def rootNode: String = ex.rootNode
+
+  // other methods
+
   override def hasPart(partType: XmlExPart): Boolean = true
 
   override def preview: Html = //FIXME: move to toolMain!
@@ -16,8 +24,8 @@ final case class XmlCompleteEx(ex: XmlExercise, samples: Seq[XmlSample])
 
   def getTemplate(part: XmlExPart): String = part match {
     case XmlExParts.DocumentCreationXmlPart => s"""<?xml version="1.0" encoding="UTF-8"?>
-                                                  |<!DOCTYPE ${ex.rootNode} SYSTEM "${ex.rootNode}.dtd">""".stripMargin
-    case XmlExParts.GrammarCreationXmlPart  => s"<!ELEMENT ${ex.rootNode} (EMPTY)>"
+                                                  |<!DOCTYPE ${rootNode} SYSTEM "${rootNode}.dtd">""".stripMargin
+    case XmlExParts.GrammarCreationXmlPart  => s"<!ELEMENT ${rootNode} (EMPTY)>"
   }
 
 }

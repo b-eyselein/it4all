@@ -27,17 +27,17 @@
             @for(exBatch <- exes grouped colCount) {
                 <div class="form-group">
                     <div class="row">
-                    @for((ex, successType) <- exBatch.map(s => (s.ex, s.solved))) {
+                    @for((compEx, successType) <- exBatch.map(s => (s.ex, s.solved))) {
                         <div class="col-sm-@{
                             12 / colCount
                         }">
-                            <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.coll.id, ex.ex.id)"
+                            <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.coll.id, compEx.id)"
                             class="btn @successType.btnOutline btn-block">
                                 <div>@{
-                                    ex.ex.id + ". " + ex.ex.title
+                                    compEx.id + ". " + compEx.title
                                 }</div>
                                 <span>@Html(
-                                    Option(ex.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
+                                    Option(compEx.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
                                 )</span>
                             </a>
                         </div>

@@ -14,9 +14,9 @@ object TestDataJsonFormat {
 
   def dumpTestDataToJson(exercise: ProgCompleteEx, testData: Seq[TestData]): JsValue = Json.obj(
     simplifiedName -> Json.obj(
-      functionNameName -> JsString(exercise.ex.functionname),
-      "test_data" -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.ex.outputType),
-      baseDataName -> exercise.ex.baseData
+      functionNameName -> JsString(exercise.functionName),
+      "test_data" -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.outputType),
+      baseDataName -> exercise.baseData
     ),
     extendedName -> JsNull
   )

@@ -26,6 +26,14 @@ final case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask]
                                sampleSolutions: Seq[WebSampleSolution])
   extends SingleCompleteEx[WebExercise, WebExPart] {
 
+  // remaining fields from WebExercise
+
+  def htmlText: Option[String] = ex.htmlText
+
+  def jsText: Option[String] = ex.jsText
+
+  // other methods
+
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.web.webPreview(this)
 

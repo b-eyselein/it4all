@@ -7,7 +7,7 @@ import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
 import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 
-object RoseCompleteExerciseForm extends CompleteExerciseForm[RoseExercise, RoseCompleteEx] {
+object RoseCompleteExerciseForm extends CompleteExerciseForm[RoseCompleteEx] {
 
   // Input types
 
@@ -59,7 +59,7 @@ object RoseCompleteExerciseForm extends CompleteExerciseForm[RoseExercise, RoseC
 
   override def unapplyCompEx(compEx: RoseCompleteEx): Option[FormData] =
     Some(
-      (compEx.ex.id, compEx.ex.semanticVersion, compEx.ex.title, compEx.ex.author, compEx.ex.text, compEx.ex.state, compEx.ex.fieldWidth, compEx.ex.fieldHeight, compEx.ex.isMultiplayer,
+      (compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state, compEx.fieldWidth, compEx.fieldHeight, compEx.isMultiplayer,
         compEx.inputTypes map unapplyRoseInputType,
         compEx.sampleSolutions map unapplyRoseSampleSolution)
     )

@@ -54,10 +54,10 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Saving
 
   override protected def saveExerciseRest(compEx: UmlCompleteEx): Future[Boolean] = for {
-    toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.ex.id, compEx.ex.semanticVersion, i))))
+    toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.id, compEx.semanticVersion, i))))
 
     mappingsSaved <- saveSeq[(String, String)](compEx.mappings toSeq, {
-      case (key, value) => db.run(umlMappings += ((compEx.ex.id, compEx.ex.semanticVersion, key, value)))
+      case (key, value) => db.run(umlMappings += ((compEx.id, compEx.semanticVersion, key, value)))
     })
 
     sampleSolutionsSaved <- saveSeq[UmlSampleSolution](compEx.sampleSolutions, sample => db.run(umlSamples += sample))

@@ -64,7 +64,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
       difficultyName -> Difficulties.formField,
       durationName -> optional(number(min = 0, max = 100))
     )
-    (XmlExerciseReview(username, completeExercise.ex.id, completeExercise.ex.semanticVersion, exercisePart, _, _))
+    (XmlExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
     (xer => Some((xer.difficulty, xer.maybeDuration)))
   )
 
@@ -88,7 +88,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   )
 
   override def instantiateSolution(id: Int, username: String, exercise: XmlCompleteEx, part: XmlExPart, solution: String, points: Points, maxPoints: Points): XmlSolution =
-    XmlSolution(id, username, exercise.ex.id, exercise.ex.semanticVersion, part, solution, points, maxPoints)
+    XmlSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -103,11 +103,11 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
           case None            => Failure(new Exception("There is no sample solution!"))
           case Some(xmlSample) =>
             // Write grammar
-            val grammarPath: File = dir / s"${completeEx.ex.rootNode}.dtd"
+            val grammarPath: File = dir / s"${completeEx.rootNode}.dtd"
             grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sampleGrammarString)
 
             // Write document
-            val documentPath: File = dir / s"${completeEx.ex.rootNode}.xml"
+            val documentPath: File = dir / s"${completeEx.rootNode}.xml"
             documentPath.createFileIfNotExists(createParents = true).write(solution)
 
             Success(XmlDocumentCompleteResult(solution, XmlCorrector.correctAgainstMentionedDTD(documentPath)))

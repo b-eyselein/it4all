@@ -6,7 +6,7 @@ import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object RegexCompleteExForm extends CompleteExerciseForm[RegexExercise, RegexCompleteEx] {
+object RegexCompleteExForm extends CompleteExerciseForm[ RegexCompleteEx] {
 
   // Sample solutions
 
@@ -58,7 +58,7 @@ object RegexCompleteExForm extends CompleteExerciseForm[RegexExercise, RegexComp
   )
 
   override protected def unapplyCompEx(compEx: RegexCompleteEx): Option[FormData] = Some((
-    compEx.ex.id, compEx.ex.semanticVersion, compEx.ex.title, compEx.ex.author, compEx.ex.text, compEx.ex.state,
+    compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state,
     compEx.sampleSolutions.map(unapplyRegexSampleSolution), compEx.testData.map(unapplyRegexTestData)
   ))
 

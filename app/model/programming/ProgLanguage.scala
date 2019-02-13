@@ -17,7 +17,7 @@ sealed abstract class ProgLanguage(val languageName: String, val aceName: String
 
 object ProgLanguages extends PlayEnum[ProgLanguage] {
 
-  def STANDARD_LANG: ProgLanguage = PYTHON_3
+  def StandardLanguage: ProgLanguage = PYTHON_3
 
   val values: IndexedSeq[ProgLanguage] = findValues
 
@@ -27,11 +27,10 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
   case object PYTHON_3 extends ProgLanguage("Python 3", "python", "py") {
 
     override def activityDiagramDisplay(exercise: ProgCompleteEx): String = exercise.maybeClassDiagramPart match {
-      case Some(classDiagPart: UmlClassDiagPart) => classDiagPart.className + "::" + exercise.ex.functionname + buildParams(exercise)
-      case None                                  => exercise.ex.functionname + buildParams(exercise)
+      case None => exercise.functionName + buildParams(exercise)
     }
 
-    override def activityDiagramDeclaration(exercise: ProgCompleteEx): String = "def " + exercise.ex.functionname + buildParams(exercise)
+    override def activityDiagramDeclaration(exercise: ProgCompleteEx): String = "def " + exercise.functionName + buildParams(exercise)
 
     override def buildParams(exercise: ProgCompleteEx): String = {
       val inputs = exercise.inputTypes map (it => it.inputName)

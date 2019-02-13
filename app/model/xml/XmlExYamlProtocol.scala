@@ -32,11 +32,11 @@ object XmlExYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(completeEx: XmlCompleteEx) = new YamlObject(
-      writeBaseValues(completeEx.ex) ++
+      writeBaseValues(completeEx.baseValues) ++
         Map[YamlValue, YamlValue](
-          YamlString(grammarDescriptionName) -> YamlString(completeEx.ex.grammarDescription),
-          YamlString(samplesName) -> YamlArray(completeEx.samples map XmlSampleYamlFormat(completeEx.ex.id, completeEx.ex.semanticVersion).write toVector),
-          YamlString(rootNodeName) -> YamlString(completeEx.ex.rootNode)
+          YamlString(grammarDescriptionName) -> YamlString(completeEx.grammarDescription),
+          YamlString(samplesName) -> YamlArray(completeEx.samples map XmlSampleYamlFormat(completeEx.id, completeEx.semanticVersion).write toVector),
+          YamlString(rootNodeName) -> YamlString(completeEx.rootNode)
         )
     )
   }

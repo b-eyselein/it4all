@@ -17,7 +17,7 @@ final case class ProgSolutionJsonFormat(exercise: ProgCompleteEx, user: User) {
     (__ \ idName).read[Int] and
       (__ \ inputName).read[JsValue] and
       (__ \ outputName).read[JsValue]
-    ) (CommitedTestData.apply(_, exercise.ex.id, exercise.ex.semanticVersion, _, _, user.username, ExerciseState.RESERVED))
+    ) (CommitedTestData.apply(_, exercise.id, exercise.semanticVersion, _, _, user.username, ExerciseState.RESERVED))
 
   private val testDataCreationSolutionReads: Reads[ProgTestDataSolution] = (
     (__ \ testdataName).read[Seq[CommitedTestData]] and

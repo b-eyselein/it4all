@@ -1,137 +1,137 @@
 @(completeEx: model.web.WebCompleteEx)
 
-@dispHtmlTask(htmlTask: model.web.HtmlCompleteTask) = {
+    @dispHtmlTask(htmlTask: model.web.HtmlCompleteTask) = {
+        <div class="row">
+            <div class="col-md-2"><b>ID:</b></div>
+            <div class="col-md-10">@htmlTask.task.id</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2"><b>Text:</b></div>
+            <div class="col-md-10">@htmlTask.task.text</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2"><b>Textinhalt:</b></div>
+            <div class="col-md-10">@htmlTask.task.textContent.getOrElse("--")</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2"><b>XPath Query:</b></div>
+            <div class="col-md-10">@htmlTask.task.xpathQuery</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2"><b>Attribute:</b></div>
+            <div class="col-md-10">
+                <ul>
+                @for(attr <- htmlTask.attributes) {
+                    <li>@attr.key=@attr.value</li>
+                }
+                </ul>
+            </div>
+        </div>
+    }
+
+    @dispJsTask(jsTask: model.web.JsCompleteTask) = {
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6"><b>ID:</b></div>
+                    <div class="col-md-6">@jsTask.task.id</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><b>Text:</b></div>
+                    <div class="col-md-6">@jsTask.task.text</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><b>XPath Query:</b></div>
+                    <div class="col-md-6">@jsTask.task.xpathQuery</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><b>Keys:</b></div>
+                    <div class="col-md-6">@jsTask.task.keysToSend.getOrElse("--")</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><b>Typ d. Aktion:</b></div>
+                    <div class="col-md-6">@jsTask.task.actionType.entryName</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <p><b>Bedingungen:</b></p>
+                @for(groupedConds <- jsTask.conditions.grouped(2)) {
+                    <div class="row">
+                        @for(cond <- groupedConds) {
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-3"><b>ID:</b></div>
+                                    <div class="col-md-9">@cond.id</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3"><b>XPath:</b></div>
+                                    <div class="col-md-9">@cond.xpathQuery</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3"><b>Vorbed:</b></div>
+                                    <div class="col-md-9">@cond.isPrecondition</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3"><b>Erwartet:</b></div>
+                                    <div class="col-md-9">@cond.awaitedValue</div>
+                                </div>
+                            </div>
+                        }
+                    <hr>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
     <div class="row">
         <div class="col-md-2"><b>ID:</b></div>
-        <div class="col-md-10">@htmlTask.task.id</div>
+        <div class="col-md-10">@completeEx.id</div>
     </div>
+
+    <div class="row">
+        <div class="col-md-2"><b>Titel:</b></div>
+        <div class="col-md-10">@completeEx.title</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"><b>Autor:</b></div>
+        <div class="col-md-10">@completeEx.author</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"><b>Status:</b></div>
+        <div class="col-md-10">@completeEx.state</div>
+    </div>
+
     <div class="row">
         <div class="col-md-2"><b>Text:</b></div>
-        <div class="col-md-10">@htmlTask.task.text</div>
+        <div class="col-md-10">@completeEx.text</div>
     </div>
+
+    <hr>
+
+        <!-- html part -->
     <div class="row">
-        <div class="col-md-2"><b>Textinhalt:</b></div>
-        <div class="col-md-10">@htmlTask.task.textContent.getOrElse("--")</div>
+        <div class="col-md-2"><b>Html Text:</b></div>
+        <div class="col-md-10">@completeEx.htmlText.getOrElse("--")</div>
     </div>
+
     <div class="row">
-        <div class="col-md-2"><b>XPath Query:</b></div>
-        <div class="col-md-10">@htmlTask.task.xpathQuery</div>
+        <div class="col-md-2"><b>Html Tasks:</b></div>
+        <div class="col-md-10">@Html(completeEx.htmlTasks.map(task => dispHtmlTask(task)).mkString("\n<hr>"))</div>
     </div>
+
+    <hr>
+
+        <!-- js part -->
     <div class="row">
-        <div class="col-md-2"><b>Attribute:</b></div>
-        <div class="col-md-10">
-            <ul>
-            @for(attr <- htmlTask.attributes) {
-                <li>@attr.key=@attr.value</li>
-            }
-            </ul>
-        </div>
+        <div class="col-md-2"><b>Js Text:</b></div>
+        <div class="col-md-10">@completeEx.jsText.getOrElse("--")</div>
     </div>
-}
 
-@dispJsTask(jsTask: model.web.JsCompleteTask) = {
     <div class="row">
-        <div class="col-md-6">
-            <div class="row">
-                <div class="col-md-6"><b>ID:</b></div>
-                <div class="col-md-6">@jsTask.task.id</div>
-            </div>
-            <div class="row">
-                <div class="col-md-6"><b>Text:</b></div>
-                <div class="col-md-6">@jsTask.task.text</div>
-            </div>
-            <div class="row">
-                <div class="col-md-6"><b>XPath Query:</b></div>
-                <div class="col-md-6">@jsTask.task.xpathQuery</div>
-            </div>
-            <div class="row">
-                <div class="col-md-6"><b>Keys:</b></div>
-                <div class="col-md-6">@jsTask.task.keysToSend.getOrElse("--")</div>
-            </div>
-            <div class="row">
-                <div class="col-md-6"><b>Typ d. Aktion:</b></div>
-                <div class="col-md-6">@jsTask.task.actionType.entryName</div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <p><b>Bedingungen:</b></p>
-            @for(groupedConds <- jsTask.conditions.grouped(2)) {
-                <div class="row">
-                    @for(cond <- groupedConds) {
-                        <div class="col-md-6">
-                            <div class="row">
-                                <div class="col-md-3"><b>ID:</b></div>
-                                <div class="col-md-9">@cond.id</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3"><b>XPath:</b></div>
-                                <div class="col-md-9">@cond.xpathQuery</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3"><b>Vorbed:</b></div>
-                                <div class="col-md-9">@cond.isPrecondition</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3"><b>Erwartet:</b></div>
-                                <div class="col-md-9">@cond.awaitedValue</div>
-                            </div>
-                        </div>
-                    }
-                <hr>
-                </div>
-            }
-        </div>
+        <div class="col-md-2"><b>Js Tasks:</b></div>
+        <div class="col-md-10">@Html(completeEx.jsTasks.map(task => dispJsTask(task)).mkString("\n<hr>"))</div>
     </div>
-}
-
-<div class="row">
-    <div class="col-md-2"><b>ID:</b></div>
-    <div class="col-md-10">@completeEx.ex.id</div>
-</div>
-
-<div class="row">
-    <div class="col-md-2"><b>Titel:</b></div>
-    <div class="col-md-10">@completeEx.ex.title</div>
-</div>
-
-<div class="row">
-    <div class="col-md-2"><b>Autor:</b></div>
-    <div class="col-md-10">@completeEx.ex.author</div>
-</div>
-
-<div class="row">
-    <div class="col-md-2"><b>Status:</b></div>
-    <div class="col-md-10">@completeEx.ex.state</div>
-</div>
-
-<div class="row">
-    <div class="col-md-2"><b>Text:</b></div>
-    <div class="col-md-10">@completeEx.ex.text</div>
-</div>
-
-<hr>
-
-    <!-- html part -->
-<div class="row">
-    <div class="col-md-2"><b>Html Text:</b></div>
-    <div class="col-md-10">@completeEx.ex.htmlText.getOrElse("--")</div>
-</div>
-
-<div class="row">
-    <div class="col-md-2"><b>Html Tasks:</b></div>
-    <div class="col-md-10">@Html(completeEx.htmlTasks.map(task => dispHtmlTask(task)).mkString("\n<hr>"))</div>
-</div>
-
-<hr>
-
-    <!-- js part -->
-<div class="row">
-    <div class="col-md-2"><b>Js Text:</b></div>
-    <div class="col-md-10">@completeEx.ex.jsText.getOrElse("--")</div>
-</div>
-
-<div class="row">
-    <div class="col-md-2"><b>Js Tasks:</b></div>
-    <div class="col-md-10">@Html(completeEx.jsTasks.map(task => dispJsTask(task)).mkString("\n<hr>"))</div>
-</div>

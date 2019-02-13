@@ -10,6 +10,18 @@ final case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sa
                                 sampleTestData: Seq[SampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
   extends SingleCompleteEx[ProgExercise, ProgExPart] {
 
+  // remanining fiels from ProgExercise
+
+  def folderIdentifier: String = ex.folderIdentifier
+
+  def functionName: String = ex.functionname
+
+  def outputType: ProgDataType = ex.outputType
+
+  def baseData: Option[JsValue] = ex.baseData
+
+  // Other methods
+
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.programming.progPreview(this)
 
@@ -22,15 +34,16 @@ final case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sa
     case ProgExParts.TestdataCreation => false
   }
 
-  def buildTestDataFileContent(completeTestData: Seq[TestData], extendedUnitTests: Boolean): JsValue = if (extendedUnitTests) ???
-  else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
+  def buildTestDataFileContent(completeTestData: Seq[TestData], extendedUnitTests: Boolean): JsValue =
+    if (extendedUnitTests) ???
+    else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
 
 }
 
 // Case classes for tables
 
 final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                              folderIdentifier: String, functionname: String, indentLevel: Int, outputType: ProgDataType,
+                              folderIdentifier: String, functionname: String, outputType: ProgDataType,
                               baseData: Option[JsValue]) extends Exercise
 
 
@@ -51,14 +64,14 @@ final case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVers
 
 final case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue, username: String, state: ExerciseState) extends TestData {
 
-//  def toJson: JsObject = Json.obj(
-//    idName -> id,
-//    exerciseIdName -> exerciseId,
-//    usernameName -> username,
-//    outputName -> output,
-//    statusName -> state.entryName,
-//    inputsName -> inputAsJson
-//  )
+  //  def toJson: JsObject = Json.obj(
+  //    idName -> id,
+  //    exerciseIdName -> exerciseId,
+  //    usernameName -> username,
+  //    outputName -> output,
+  //    statusName -> state.entryName,
+  //    inputsName -> inputAsJson
+  //  )
 
 }
 
