@@ -80,8 +80,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def saveReadCollection(read: Seq[CompCollType]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteColl)
 
-  def futureSaveExercise(exercise: CompExType): Future[Boolean] = tables.futureSaveCompleteEx(exercise)
-
   protected def saveSolution(solution: DBSolType): Future[Boolean]
 
   // Update

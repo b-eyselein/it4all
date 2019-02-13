@@ -14,9 +14,14 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   import profile.api._
 
+  // Abstract types
+
+  override protected type ExDbValues = RegexExercise
   override protected type ExTableDef = RegexExerciseTable
   override protected type SolTableDef = RegexSolutionTable
   override protected type ReviewsTableDef = RegexExerciseReviewsTable
+
+  // Table Queries
 
   override protected val exTable     : TableQuery[RegexExerciseTable]        = TableQuery[RegexExerciseTable]
   override protected val solTable    : TableQuery[RegexSolutionTable]        = TableQuery[RegexSolutionTable]
@@ -25,11 +30,13 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   private val regexSampleSolutionsTable: TableQuery[RegexSampleSolutionsTable] = TableQuery[RegexSampleSolutionsTable]
   private val regexTestDataTable       : TableQuery[RegexTestDataTable]        = TableQuery[RegexTestDataTable]
 
-  override protected implicit val partTypeColumnType: BaseColumnType[RegexExPart] =
-    MappedColumnType.base[RegexExPart, String](_.entryName, RegexExParts.withNameInsensitive)
+  // Helper methods
 
+  override protected def exDbValuesFromCompleteEx(compEx: RegexCompleteEx): ExDbValues = compEx.ex
 
   override protected def copyDBSolType(oldSol: RegexDBSolution, newId: Int): RegexDBSolution = oldSol.copy(id = newId)
+
+  // Queries
 
   override protected def completeExForEx(ex: RegexExercise): Future[RegexCompleteEx] = for {
     sampleSolutions <- db.run(regexSampleSolutionsTable.filter {
@@ -49,6 +56,11 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: RegexExPart): Future[Seq[String]] =
     db.run(regexSampleSolutionsTable.filter(_.exerciseId === exerciseId).map(_.sample).result)
+
+  // Column types
+
+  override protected implicit val partTypeColumnType: BaseColumnType[RegexExPart] =
+    MappedColumnType.base[RegexExPart, String](_.entryName, RegexExParts.withNameInsensitive)
 
   // Tables
 

@@ -49,15 +49,15 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
 
   // Abstract table definitions
 
-  protected abstract class PartSolutionsTable(tag: Tag, name: String) extends Table[DBSolType](tag, name) {
+  protected abstract class PartSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DBSolType](tag, name) {
 
     def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def username: Rep[String] = column[String]("username")
 
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
+//    def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+//    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def part: Rep[PartType] = column[PartType]("part")
 
@@ -68,7 +68,7 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
 
     //    def pk: PrimaryKey = primaryKey("pk", (id, username, exerciseId, exSemVer, part))
 
-    def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+//    def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 

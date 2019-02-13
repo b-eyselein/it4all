@@ -70,8 +70,6 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   def futureCompleteExes: Future[Seq[CompExType]] = tables.futureCompleteExes
 
-  def futureSaveCompleteEx(completeEx: CompExType): Future[Boolean] = tables.futureSaveCompleteEx(completeEx)
-
   def futureInsertCompleteEx(completeEx: CompExType): Future[Boolean] = tables.futureInsertCompleteEx(completeEx)
 
   def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]

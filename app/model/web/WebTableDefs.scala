@@ -18,6 +18,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Abstract types
 
+  override protected type ExDbValues = WebExercise
   override protected type ExTableDef = WebExercisesTable
   override protected type SolTableDef = WebSolutionsTable
   override protected type ReviewsTableDef = WebExerciseReviewsTable
@@ -35,9 +36,13 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   private val sampleSolutionsTable = TableQuery[WebSampleSolutionsTable]
 
-  // Dependent query tables
-
   lazy val webSolutions = TableQuery[WebSolutionsTable]
+
+  // Helper methods
+
+  override protected def exDbValuesFromCompleteEx(compEx: WebCompleteEx): WebExercise = compEx.ex
+
+  override protected def copyDBSolType(oldSol: WebSolution, newId: Int): WebSolution = oldSol.copy(id = newId)
 
   // Other queries
 
@@ -69,7 +74,6 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     })
   }
 
-  override protected def copyDBSolType(oldSol: WebSolution, newId: Int): WebSolution = oldSol.copy(id = newId)
 
   override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: WebExPart): Future[Seq[String]] =
     db.run(sampleSolutionsTable.filter(_.exerciseId === exerciseId).map { sample =>

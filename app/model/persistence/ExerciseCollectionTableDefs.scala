@@ -76,7 +76,9 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
   protected def completeCollForColl(coll: Coll): Future[CompColl]
 
   def futureCompleteExesInColl(collId: Int): Future[Seq[CompEx]] =
-    db.run(exTable.filter(_.collectionId === collId).result) flatMap (futureExes => Future.sequence(futureExes map completeExForEx))
+    db.run(exTable.filter(_.collectionId === collId).result) flatMap {
+      futureExes: Seq[ExDbValues] => Future.sequence(futureExes map completeExForEx)
+    }
 
   def futureCompleteExById(collId: Int, id: Int): Future[Option[CompEx]] =
     db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).result.headOption) flatMap {
@@ -140,7 +142,7 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
 
   }
 
-  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[Ex](tag, name) {
+  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[ExDbValues](tag, name) {
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
@@ -174,7 +176,7 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[E
 
     //    def pk: PrimaryKey = primaryKey("pk", (id, username, collectionId, collSemVer, exerciseId, exSemVer))
 
-    def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (collectionId, collSemVer, exerciseId, exSemVer), exTable)(ex =>
+    def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", (collectionId, collSemVer, exerciseId, exSemVer), exTable)(ex =>
       (ex.collectionId, ex.collSemVer, ex.id, ex.semanticVersion))
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)

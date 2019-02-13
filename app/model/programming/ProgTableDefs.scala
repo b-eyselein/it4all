@@ -11,7 +11,6 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
-//import scala.language.{implicitConversions, postfixOps}
 
 class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
@@ -21,6 +20,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Abstract types
 
+  override protected type ExDbValues = ProgExercise
   override protected type ExTableDef = ProgExercisesTable
   override protected type SolTableDef = ProgSolutionTable
   override protected type ReviewsTableDef = ProgExerciseReviewsTable
@@ -36,6 +36,10 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   private val sampleTestData    = TableQuery[SampleTestDataTable]
   // TODO:  private val commitedTestData = TableQuery[CommitedTestDataTable]
   private val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
+
+  // Helper methods
+
+  override protected def exDbValuesFromCompleteEx(compEx: ProgCompleteEx): ProgExercise = compEx.ex
 
   // Queries
 

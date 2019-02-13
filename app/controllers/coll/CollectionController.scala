@@ -256,7 +256,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
 
       val onFormRead: toolMain.CompExType => Future[Result] = { newExercise =>
-        toolMain.futureSaveExercise(newExercise) map {
+        toolMain.futureInsertCompleteEx(newExercise) map {
           case false =>
             // TODO: make view?
             BadRequest("Your exercise could not be saved...")

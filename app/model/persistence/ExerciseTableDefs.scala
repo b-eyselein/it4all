@@ -1,8 +1,7 @@
 package model.persistence
 
 import model.learningPath.LearningPathTableDefs
-import model.{CompleteEx, Exercise, SemanticVersion}
-import play.api.Logger
+import model.{CompleteEx, Exercise, HasBaseValues, SemanticVersion}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.ForeignKeyQuery
@@ -14,9 +13,19 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
 
   import profile.api._
 
-  protected type ExTableDef <: HasBaseValuesTable[Ex]
+  // Abstract types
+
+  protected type ExDbValues <: HasBaseValues
+
+  protected type ExTableDef <: HasBaseValuesTable[ExDbValues]
+
+  // Table Queries
 
   protected val exTable: TableQuery[ExTableDef]
+
+  // Helper methods
+
+  protected def exDbValuesFromCompleteEx(compEx: CompEx): ExDbValues
 
   // Numbers
 
@@ -40,18 +49,11 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
     case None     => Future.successful(None)
   }
 
-  protected def completeExForEx(ex: Ex): Future[CompEx]
+  protected def completeExForEx(ex: ExDbValues): Future[CompEx]
 
   // Saving
 
-  def futureSaveCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable.filter(_.id === compEx.ex.id).delete) flatMap { _ =>
-    db.run(exTable += compEx.ex) flatMap { _ => saveExerciseRest(compEx) } recover { case e: Throwable =>
-      Logger.error("Could not save exercise", e)
-      false
-    }
-  }
-
-  def futureInsertCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable += compEx.ex) flatMap {
+  def futureInsertCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable += exDbValuesFromCompleteEx(compEx)) flatMap {
     insertCount => saveExerciseRest(compEx)
   }
 
@@ -66,7 +68,7 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
     def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
 
-    def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+    def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
   }
 

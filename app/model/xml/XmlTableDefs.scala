@@ -17,9 +17,12 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Abstract types
 
+  override protected type ExDbValues = XmlExercise
   override protected type ExTableDef = XmlExercisesTable
   override protected type SolTableDef = XmlSolutionsTable
   override protected type ReviewsTableDef = XmlExerciseReviewsTable
+
+  // Table Queries
 
   override protected val exTable      = TableQuery[XmlExercisesTable]
   override protected val solTable     = TableQuery[XmlSolutionsTable]
@@ -27,14 +30,15 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   private val samplesTable = TableQuery[XmlSamplesTable]
 
-  // Column Types
+  // Helper methods
 
-  override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
-    MappedColumnType.base[XmlExPart, String](_.entryName, XmlExParts.withNameInsensitive)
+  override protected def exDbValuesFromCompleteEx(compEx: XmlCompleteEx): XmlExercise = compEx.ex
+
+  override protected def copyDBSolType(oldSol: XmlSolution, newId: Int): XmlSolution = oldSol.copy(id = newId)
 
   // Reading
 
-  override def completeExForEx(ex: XmlExercise): Future[XmlCompleteEx] = for {
+  override protected def completeExForEx(ex: XmlExercise): Future[XmlCompleteEx] = for {
     samples: Seq[XmlSample] <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result)
   } yield XmlCompleteEx(ex, samples)
 
@@ -42,8 +46,6 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     case XmlExParts.GrammarCreationXmlPart  => Future.successful(true)
     case XmlExParts.DocumentCreationXmlPart => futureOldSolution(username, exId, exSemVer, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
-
-  override protected def copyDBSolType(oldSol: XmlSolution, newId: Int): XmlSolution = oldSol.copy(id = newId)
 
   override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: XmlExPart): Future[Seq[String]] =
     db.run(samplesTable.filter(_.exerciseId === exerciseId).map { sample: XmlSamplesTable =>
@@ -58,6 +60,13 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override def saveExerciseRest(compEx: XmlCompleteEx): Future[Boolean] = for {
     samplesSaved <- saveSeq[XmlSample](compEx.samples, xsg => db.run(samplesTable += xsg))
   } yield samplesSaved
+
+
+  // Column Types
+
+  override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
+    MappedColumnType.base[XmlExPart, String](_.entryName, XmlExParts.withNameInsensitive)
+
 
   // Actual table defs
 

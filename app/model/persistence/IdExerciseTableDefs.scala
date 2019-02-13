@@ -57,7 +57,7 @@ trait IdExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], PartType <: 
 
   // Table definitions
 
-  abstract class ExerciseTableDef(tag: Tag, tableName: String) extends HasBaseValuesTable[Ex](tag, tableName) {
+  abstract class ExerciseTableDef(tag: Tag, tableName: String) extends HasBaseValuesTable[ExDbValues](tag, tableName) {
 
     def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion))
 
@@ -80,7 +80,7 @@ trait IdExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], PartType <: 
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exercisePart))
 
-    def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
   }
 

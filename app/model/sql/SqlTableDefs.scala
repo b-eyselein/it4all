@@ -21,6 +21,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table types
 
+  override type ExDbValues = SqlExercise
+
   override protected type ExTableDef = SqlExercisesTable
 
   override protected type CollTableDef = SqlScenarioesTable
@@ -38,6 +40,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private val sqlSamples = TableQuery[SqlSamplesTable]
 
   // Reading
+
+  override def exDbValuesFromCompleteEx(compEx: SqlCompleteEx): SqlExercise = compEx.ex
 
   override def futureCompleteExById(collId: Int, id: Int): Future[Option[SqlCompleteEx]] = for {
     maybeEx <- db.run(exTable.filter(e => e.id === id && e.collectionId === collId).result.headOption)

@@ -17,6 +17,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Abstract types
 
+  override protected type ExDbValues = RoseExercise
   override protected type ExTableDef = RoseExercisesTable
   override protected type SolTableDef = RoseSolutionsTable
   override protected type ReviewsTableDef = RoseExerciseReviewsTable
@@ -30,6 +31,12 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   private val roseInputs  = TableQuery[RoseInputTypesTable]
   private val roseSamples = TableQuery[RoseSampleSolutionsTable]
 
+  // Helper methods
+
+  override protected def exDbValuesFromCompleteEx(compEx: RoseCompleteEx) = compEx.ex
+
+  override protected def copyDBSolType(oldSol: RoseSolution, newId: Int): RoseSolution = oldSol.copy(id = newId)
+
   // Queries
 
   override protected def completeExForEx(ex: RoseExercise): Future[RoseCompleteEx] = for {
@@ -42,7 +49,6 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     samplesSaved <- saveSeq[RoseSampleSolution](compEx.sampleSolutions, rss => db.run(roseSamples insertOrUpdate rss))
   } yield inputsSaved && samplesSaved
 
-  override protected def copyDBSolType(oldSol: RoseSolution, newId: Int): RoseSolution = oldSol.copy(id = newId)
 
   override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: RoseExPart): Future[Seq[String]] =
     db.run(roseSamples.filter(_.exerciseId === exerciseId).map(_.solution).result)

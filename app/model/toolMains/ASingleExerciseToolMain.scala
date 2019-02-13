@@ -57,7 +57,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
     tables.futureCompleteExByIdAndVersion(id, semVer)
 
   override def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(exercises map {
-    ex => tables.futureSaveCompleteEx(ex) map (saveRes => (ex, saveRes))
+    ex => tables.futureInsertCompleteEx(ex) map (saveRes => (ex, saveRes))
   })
 
   def futureHighestId: Future[Int] = tables.futureHighestExerciseId

@@ -19,6 +19,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Abstract types
 
+  override protected type ExDbValues = UmlExercise
   override protected type ExTableDef = UmlExercisesTable
   override protected type SolTableDef = UmlSolutionsTable
   override protected type ReviewsTableDef = UmlExerciseReviewsTable
@@ -33,6 +34,12 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   private val umlMappings = TableQuery[UmlMappingsTable]
   private val umlSamples  = TableQuery[UmlSampleSolutionsTable]
 
+  // Helper methods
+
+  override protected def exDbValuesFromCompleteEx(compEx: UmlCompleteEx): UmlExercise = compEx.ex
+
+  override protected def copyDBSolType(oldSol: UmlSolution, newId: Int): UmlSolution = oldSol.copy(id = newId)
+
   // Reading
 
   override def completeExForEx(ex: UmlExercise): Future[UmlCompleteEx] = for {
@@ -41,7 +48,6 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     samples <- db.run(umlSamples filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result)
   } yield UmlCompleteEx(ex, toIgnore map (_._3), mappings map (m => m._3 -> m._4) toMap, samples)
 
-  override protected def copyDBSolType(oldSol: UmlSolution, newId: Int): UmlSolution = oldSol.copy(id = newId)
 
   override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: UmlExPart): Future[Seq[String]] = ???
 
