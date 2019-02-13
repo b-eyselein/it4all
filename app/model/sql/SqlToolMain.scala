@@ -35,8 +35,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Abstract types
 
-  override type ExType = SqlExercise
-
   override type CompExType = SqlCompleteEx
 
   override type CollType = SqlScenario

@@ -23,8 +23,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Result types
 
-  override type ExType = UmlExercise
-
   override type CompExType = UmlCompleteEx
 
   override type Tables = UmlTableDefs

@@ -6,8 +6,9 @@ import model._
 import play.twirl.api.Html
 
 
-final case class XmlCompleteEx(ex: XmlExercise, samples: Seq[XmlSample])
-  extends SingleCompleteEx[XmlExercise, XmlExPart] {
+final case class XmlCompleteEx(ex: XmlExercise, samples: Seq[XmlSample]) extends SingleCompleteEx[XmlExPart] {
+
+  override type E = XmlExercise
 
   // remaining fields from XmlExercise
 

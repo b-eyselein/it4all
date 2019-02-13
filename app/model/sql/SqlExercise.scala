@@ -28,8 +28,6 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
 final case class SqlCompleteScenario(override val coll: SqlScenario, override val exercises: Seq[SqlCompleteEx]) extends CompleteCollection {
 
-  override type Ex = SqlExercise
-
   override type CompEx = SqlCompleteEx
 
   override type Coll = SqlScenario
@@ -46,7 +44,9 @@ final case class SqlCompleteScenario(override val coll: SqlScenario, override va
 
 }
 
-final case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteExInColl[SqlExercise] {
+final case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteExInColl {
+
+  override type E = SqlExercise
 
   // remaining fields from SqlExercise
 
@@ -66,7 +66,7 @@ final case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends
 // final case classes for db
 
 final case class SqlScenario(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             shortName: String) extends ExerciseCollection[SqlExercise, SqlCompleteEx] {
+                             shortName: String) extends ExerciseCollection[SqlCompleteEx] {
 
   val imageUrl: String = shortName + ".png"
 

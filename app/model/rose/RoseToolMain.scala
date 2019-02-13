@@ -23,8 +23,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Abstract types
 
-  override type ExType = RoseExercise
-
   override type CompExType = RoseCompleteEx
 
   override type Tables = RoseTableDefs

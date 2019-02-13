@@ -27,8 +27,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Abstract types
 
-  override type ExType = ProgExercise
-
   override type CompExType = ProgCompleteEx
 
   override type Tables = ProgTableDefs

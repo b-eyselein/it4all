@@ -1,6 +1,6 @@
 @import model.{User, CompleteEx, ExPart}
 
-@(user: model.User, exercise: CompleteEx[_], part: ExPart, toolMainObject: model.toolMains.ASingleExerciseToolMain)(
+@(user: model.User, exercise: CompleteEx, part: ExPart, toolMainObject: model.toolMains.ASingleExerciseToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{

@@ -6,7 +6,10 @@ import play.twirl.api.Html
 
 // Classes for use
 
-final case class RoseCompleteEx(ex: RoseExercise, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]) extends SingleCompleteEx[RoseExercise, RoseExPart] {
+final case class RoseCompleteEx(ex: RoseExercise, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution])
+  extends SingleCompleteEx[RoseExPart] {
+
+  override type E = RoseExercise
 
   // remaining field from RoseExercise
 

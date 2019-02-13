@@ -75,7 +75,9 @@ trait ExInColl extends Exercise {
 
 }
 
-trait CompleteEx[E <: Exercise] {
+trait CompleteEx {
+
+  type E <: Exercise
 
   def ex: E
 
@@ -101,21 +103,15 @@ trait CompleteEx[E <: Exercise] {
 
 }
 
-trait SingleCompleteEx[Ex <: Exercise, PartType <: ExPart] extends CompleteEx[Ex] {
+trait SingleCompleteEx[PartType <: ExPart] extends CompleteEx {
 
   def hasPart(partType: PartType): Boolean
 
 }
 
-trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] {
+trait CompleteExInColl extends CompleteEx {
 
-  def templateFilename: String
-
-  def sampleFilename: String
-
-}
-
-trait CompleteExInColl[Ex <: ExInColl] extends CompleteEx[Ex] {
+  override type E <: ExInColl
 
   def collectionId: Int = ex.collectionId
 

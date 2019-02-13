@@ -8,7 +8,9 @@ import scala.language.postfixOps
 // Classes for use
 
 final case class UmlCompleteEx(ex: UmlExercise, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution])
-  extends SingleCompleteEx[UmlExercise, UmlExPart] {
+  extends SingleCompleteEx[UmlExPart] {
+
+  override type E = UmlExercise
 
   // remaining fields from UmlExercise
 

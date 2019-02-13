@@ -24,8 +24,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Result types
 
-  override type ExType = WebExercise
-
   override type CompExType = WebCompleteEx
 
   override type Tables = WebTableDefs

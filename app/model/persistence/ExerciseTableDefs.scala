@@ -1,14 +1,14 @@
 package model.persistence
 
 import model.learningPath.LearningPathTableDefs
-import model.{CompleteEx, Exercise, HasBaseValues, SemanticVersion}
+import model.{CompleteEx, HasBaseValues, SemanticVersion}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.ForeignKeyQuery
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefs[CompEx <: CompleteEx[_ <: Exercise]] extends LearningPathTableDefs {
+trait ExerciseTableDefs[CompEx <: CompleteEx] extends LearningPathTableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._

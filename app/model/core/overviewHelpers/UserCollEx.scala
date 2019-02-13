@@ -20,4 +20,4 @@ object SolvedStates extends PlayEnum[SolvedState] {
 }
 
 
-final case class UserCollEx(ex: CompleteEx[_ <: Exercise], solved: SolvedState)
+final case class UserCollEx(ex: CompleteEx, solved: SolvedState)

@@ -1,7 +1,7 @@
 @import model.toolMains.ASingleExerciseToolMain
 @import model.{CompleteEx, ExPart, User}
 
-@(user: User, exerciseText: Html, exercise: CompleteEx[_], part: ExPart, oldSolution: String,
+@(user: User, exerciseText: Html, exercise: CompleteEx, part: ExPart, oldSolution: String,
         toolMainObject: ASingleExerciseToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
         remainingExDef: Option[Html] = None, remainingPage: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 

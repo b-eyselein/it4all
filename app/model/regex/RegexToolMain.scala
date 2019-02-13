@@ -15,8 +15,6 @@ import scala.util.{Failure, Success, Try}
 class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: ExecutionContext)
   extends ASingleExerciseToolMain("Reguläre Ausdrücke", "regex") {
 
-  override type ExType = RegexExercise
-
   override type CompExType = RegexCompleteEx
 
   override type Tables = RegexTableDefs

@@ -12,7 +12,10 @@ final case class RegexSampleSolution(id: Int, exerciseId: Int, exSemVer: Semanti
 
 final case class RegexTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, data: String, isIncluded: Boolean)
 
-final case class RegexCompleteEx(ex: RegexExercise, sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData]) extends SingleCompleteEx[RegexExercise, RegexExPart] {
+final case class RegexCompleteEx(ex: RegexExercise, sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData])
+  extends SingleCompleteEx[RegexExPart] {
+
+  override type E = RegexExercise
 
   override def hasPart(partType: RegexExPart): Boolean = true
 

@@ -1,16 +1,14 @@
 package model
 
 
-trait ExerciseCollection[ExType <: ExInColl, CompExType <: CompleteExInColl[ExType]] extends HasBaseValues
+trait ExerciseCollection[CompExType <: CompleteExInColl] extends HasBaseValues
 
 
-trait CompleteCollection  {
+trait CompleteCollection {
 
-  type Ex <: ExInColl
+  type CompEx <: CompleteExInColl
 
-  type CompEx <: CompleteExInColl[Ex]
-
-  type Coll <: ExerciseCollection[Ex, CompEx]
+  type Coll <: ExerciseCollection[CompEx]
 
   def coll: Coll
 

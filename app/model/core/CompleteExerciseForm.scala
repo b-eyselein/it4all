@@ -1,9 +1,9 @@
 package model.core
 
-import model.{CompleteEx, Exercise}
+import model.CompleteEx
 import play.api.data.Form
 
-trait CompleteExerciseForm[CompExType <: CompleteEx[_ <: Exercise]] {
+trait CompleteExerciseForm[CompExType <: CompleteEx] {
 
   type FormData
 

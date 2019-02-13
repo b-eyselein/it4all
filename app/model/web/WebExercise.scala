@@ -23,8 +23,9 @@ object JsActionType extends PlayEnum[JsActionType] {
 // Classes for use
 
 final case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask],
-                               sampleSolutions: Seq[WebSampleSolution])
-  extends SingleCompleteEx[WebExercise, WebExPart] {
+                               sampleSolutions: Seq[WebSampleSolution]) extends SingleCompleteEx[WebExPart] {
+
+  override type E = WebExercise
 
   // remaining fields from WebExercise
 

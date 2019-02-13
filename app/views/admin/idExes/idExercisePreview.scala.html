@@ -1,9 +1,9 @@
 @import model.{User, CompleteEx}
 @import model.toolMains.{AToolMain, ToolList}
 
-@(user: User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: CompleteEx[_]], toolMainObject: AToolMain, toolList: ToolList)
+@(user: User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: CompleteEx], toolMainObject: AToolMain, toolList: ToolList)
 
-@dispExercise(compEx: model.CompleteEx[_]) = {
+@dispExercise(compEx: model.CompleteEx) = {
     <h2 data-toggle="collapse" data-target="#collapse_@compEx.id">Aufgabe: &quot;@compEx.title&quot;</h2>
 
     <div id="collapse_@compEx.id" class="collapse in">@compEx.preview</div>

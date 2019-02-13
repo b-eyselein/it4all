@@ -8,7 +8,9 @@ import play.twirl.api.Html
 
 final case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
                                 sampleTestData: Seq[SampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
-  extends SingleCompleteEx[ProgExercise, ProgExPart] {
+  extends SingleCompleteEx[ProgExPart] {
+
+  override type E = ProgExercise
 
   // remanining fiels from ProgExercise
 

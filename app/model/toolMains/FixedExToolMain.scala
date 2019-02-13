@@ -16,9 +16,7 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   // Abstract types
 
-  type ExType <: Exercise
-
-  type CompExType <: CompleteEx[ExType]
+  type CompExType <: CompleteEx
 
   type CompResult <: CompleteResult[R]
 

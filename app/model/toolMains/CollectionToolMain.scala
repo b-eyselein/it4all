@@ -20,11 +20,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Abstract types
 
-  override type ExType <: ExInColl
+  override type CompExType <: CompleteExInColl
 
-  override type CompExType <: CompleteExInColl[ExType]
-
-  type CollType <: ExerciseCollection[ExType, CompExType]
+  type CollType <: ExerciseCollection[CompExType]
 
   type CompCollType <: CompleteCollection
 

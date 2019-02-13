@@ -25,8 +25,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Result types
 
-  override type ExType = XmlExercise
-
   override type CompExType = XmlCompleteEx
 
   override type Tables = XmlTableDefs
