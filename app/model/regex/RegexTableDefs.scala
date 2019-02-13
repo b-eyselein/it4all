@@ -10,7 +10,7 @@ import slick.lifted.ProvenShape
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RegexExercise, RegexCompleteEx, String, RegexDBSolution, RegexExPart, RegexExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RegexCompleteEx, String, RegexDBSolution, RegexExPart, RegexExerciseReview] {
 
   import profile.api._
 

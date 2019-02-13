@@ -24,7 +24,7 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   type ReadType
 
-  override type Tables <: ExerciseTableDefs[ExType, CompExType]
+  override type Tables <: ExerciseTableDefs[CompExType]
 
   // Values
 

@@ -11,7 +11,7 @@ import slick.lifted.{PrimaryKey, ProvenShape}
 import scala.concurrent.{ExecutionContext, Future}
 
 class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlCompleteEx, String, XmlSolution, XmlExPart, XmlExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlCompleteEx, String, XmlSolution, XmlExPart, XmlExerciseReview] {
 
   import profile.api._
 

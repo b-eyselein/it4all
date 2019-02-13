@@ -8,8 +8,8 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
 
-trait IdExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
-  extends ExerciseTableDefs[Ex, CompEx] {
+trait IdExerciseTableDefs[CompEx <: CompleteEx[_ <: Exercise], PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
+  extends ExerciseTableDefs[CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._

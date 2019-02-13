@@ -33,7 +33,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   override type CompExType <: SingleCompleteEx[ExType, PartType]
 
   //  override type Tables <: IdExerciseTableDefs[ExType, CompExType, PartType, ReviewType]
-  override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, DBSolType, PartType, ReviewType]
+  override type Tables <: SingleExerciseTableDefs[CompExType, SolType, DBSolType, PartType, ReviewType]
 
   override type ReadType = CompExType
 

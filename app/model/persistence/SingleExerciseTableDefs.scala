@@ -11,8 +11,8 @@ import slick.lifted.ForeignKeyQuery
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType, DBSolType <: DBPartSolution[PartType, SolType], PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
-  extends IdExerciseTableDefs[Ex, CompEx, PartType, ReviewType] {
+trait SingleExerciseTableDefs[CompEx <: CompleteEx[_ <: Exercise], SolType, DBSolType <: DBPartSolution[PartType, SolType], PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
+  extends IdExerciseTableDefs[CompEx, PartType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -55,20 +55,12 @@ trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType,
 
     def username: Rep[String] = column[String]("username")
 
-//    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-//    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
-
     def part: Rep[PartType] = column[PartType]("part")
 
     def points = column[Points]("points")
 
     def maxPoints: Rep[Points] = column[Points]("max_points")
 
-
-    //    def pk: PrimaryKey = primaryKey("pk", (id, username, exerciseId, exSemVer, part))
-
-//    def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 

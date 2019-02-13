@@ -13,7 +13,7 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
 
 
   import profile.api._
