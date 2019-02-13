@@ -10,7 +10,7 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait ExerciseCollectionTableDefs[CompEx <: CompleteExInColl, Coll <: ExerciseCollection[CompEx], CompColl <: CompleteCollection,
+trait ExerciseCollectionTableDefs[CompEx <: ExerciseInColl, Coll <: ExerciseCollection[CompEx], CompColl <: CompleteCollection,
 SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
@@ -75,12 +75,12 @@ SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[C
 
   protected def completeCollForColl(coll: Coll): Future[CompColl]
 
-  def futureCompleteExesInColl(collId: Int): Future[Seq[CompEx]] =
+  def futureExercisesInColl(collId: Int): Future[Seq[CompEx]] =
     db.run(exTable.filter(_.collectionId === collId).result) flatMap {
       futureExes: Seq[ExDbValues] => Future.sequence(futureExes map completeExForEx)
     }
 
-  def futureCompleteExById(collId: Int, id: Int): Future[Option[CompEx]] =
+  def futureExerciseById(collId: Int, id: Int): Future[Option[CompEx]] =
     db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).result.headOption) flatMap {
       case Some(ex) => completeExForEx(ex) map Some.apply
       case None     => Future.successful(None)

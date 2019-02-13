@@ -75,7 +75,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   }
 
   def adminExerciseList(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.futureCompleteExes map (exes => Ok(toolMain.adminExerciseList(admin, exes, toolList)))
+    implicit request => toolMain.futureAllExercises map (exes => Ok(toolMain.adminExerciseList(admin, exes, toolList)))
   }
 
   def adminDeleteExercise(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (_, toolMain) =>
@@ -88,7 +88,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def adminEditExerciseForm(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteExById(id) map {
+      toolMain.futureExerciseById(id) map {
         case None           => onNoSuchExercise(id)
         case Some(exercise) => Ok(toolMain.renderAdminExerciseEditForm(admin, exercise, isCreation = false, toolList))
       }
@@ -142,7 +142,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       // FIXME: reserve exercise... ?
       toolMain.futureHighestId map { id =>
         val exercise = toolMain.instantiateExercise(id + 1, user.username, ExerciseState.CREATED)
-        Ok(toolMain.renderUserExerciseEditForm(user, toolMain.compExForm.fill(exercise), isCreation = true)(request, request2Messages(request)))
+        Ok(toolMain.renderUserExerciseEditForm(user, toolMain.exerciseForm.fill(exercise), isCreation = true)(request, request2Messages(request)))
       }
   }
 
@@ -173,16 +173,16 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   def newExercise(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
-      val onFormError: Form[toolMain.CompExType] => Future[Result] = { formWithErrors =>
+      val onFormError: Form[toolMain.ExType] => Future[Result] = { formWithErrors =>
         formWithErrors.errors.foreach(println)
         Future(BadRequest(toolMain.renderUserExerciseEditForm(user, formWithErrors, isCreation = true)(request, request2Messages(request))))
       }
 
-      val onRead: toolMain.CompExType => Future[Result] = { compEx =>
+      val onRead: toolMain.ExType => Future[Result] = { compEx =>
 
         println(compEx)
 
-        toolMain.futureInsertCompleteEx(compEx).transform {
+        toolMain.futureInsertExercise(compEx).transform {
           case Success(saved) => Success(Ok(toolMain.renderExercisePreview(user, compEx, saved)))
           case Failure(error) =>
             Logger.error("Error while saving an exercise", error)
@@ -190,7 +190,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
         }
       }
 
-      toolMain.compExForm.bindFromRequest().fold(onFormError, onRead)
+      toolMain.exerciseForm.bindFromRequest().fold(onFormError, onRead)
   }
 
   // FIXME: old class
@@ -215,9 +215,9 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
         case _        => SemanticVersionHelper.parseFromString(versionStr)
       }
 
-      def futureCompleteEx: Future[Option[toolMain.CompExType]] = requestedVersion match {
-        case Some(version) => toolMain.futureCompleteExByIdAndVersion(id, version)
-        case None          => toolMain.futureCompleteExById(id)
+      def futureCompleteEx: Future[Option[toolMain.ExType]] = requestedVersion match {
+        case Some(version) => toolMain.futureExerciseByIdAndVersion(id, version)
+        case None          => toolMain.futureExerciseById(id)
       }
 
       toolMain.partTypeFromUrl(partStr) match {
@@ -237,7 +237,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
     implicit request =>
       toolMain.partTypeFromUrl(partStr) match {
         case None       => Future.successful(onNoSuchExercisePart(partStr))
-        case Some(part) => toolMain.futureCompleteExById(id) flatMap {
+        case Some(part) => toolMain.futureExerciseById(id) flatMap {
           case None               => Future.successful(onNoSuchExercise(id))
           case Some(compExercise) => toolMain.correctAbstract(user, compExercise, part) map {
             case Success(result) => Ok(result)
@@ -254,7 +254,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       toolMain.partTypeFromUrl(partStr) match {
         case None       => Future.successful(onNoSuchExercisePart(partStr))
         case Some(part) =>
-          toolMain.futureCompleteExById(id) map {
+          toolMain.futureExerciseById(id) map {
             case None               => onNoSuchExercise(id)
             case Some(compExercise) => Ok(toolMain.renderExerciseReviewForm(user, compExercise, part))
             //          Future(Ok(views.html.idExercises.xml.evaluateExerciseForm(user, toolMain, )))
@@ -267,7 +267,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
     implicit request =>
       toolMain.partTypeFromUrl(partStr) match {
         case None       => Future(onNoSuchExercisePart(partStr))
-        case Some(part) => toolMain.futureCompleteExById(id) flatMap {
+        case Some(part) => toolMain.futureExerciseById(id) flatMap {
           case None                   => Future(onNoSuchExercise(id))
           case Some(completeExercise) =>
             val onFormError: Form[toolMain.ReviewType] => Future[Result] = { formWithErrors =>
@@ -295,7 +295,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def showReviews(toolType: String, id: Int): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteExById(id) flatMap {
+      toolMain.futureExerciseById(id) flatMap {
         case None    => Future(onNoSuchExercise(id))
         case Some(_) => toolMain.futureReviewsForExercise(id) map {
           reviews => Ok(views.html.admin.idExes.idExerciseReviewListExercise(admin, reviews, toolList, toolMain))
@@ -329,11 +329,11 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
       val futureClassDiagram: Future[UmlClassDiagram] = umlToolMain.partTypeFromUrl(partStr) match {
         case None       => Future(emptyClassDiagram)
-        case Some(part) => umlToolMain.futureCompleteExById(id) flatMap {
-          case None                          =>
+        case Some(part) => umlToolMain.futureExerciseById(id) flatMap {
+          case None                        =>
             Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
             Future(emptyClassDiagram)
-          case Some(exercise: UmlCompleteEx) => umlToolMain.futureOldOrDefaultSolution(user, exercise.id, exercise.semanticVersion, part) map {
+          case Some(exercise: UmlExercise) => umlToolMain.futureOldOrDefaultSolution(user, exercise.id, exercise.semanticVersion, part) map {
             case Some(solution) => solution.solution
             case None           => exercise.getDefaultClassDiagForPart(part)
           }
@@ -347,7 +347,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def progClassDiagram(id: Int): EssentialAction = futureWithUser { _ =>
     implicit request =>
-      progToolMain.futureCompleteExById(id) map {
+      progToolMain.futureExerciseById(id) map {
         case None           => onNoSuchExercise(id)
         case Some(exercise) =>
           val jsValue = exercise.maybeClassDiagramPart match {

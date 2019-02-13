@@ -1,6 +1,6 @@
-@import model.regex.{RegexCompleteEx, RegexToolMain, RegexConsts}
+@import model.regex.{RegexExercise, RegexToolMain, RegexConsts}
 
-@(user: model.User, exerciseForm: Form[RegexCompleteEx], isCreation: Boolean, toolMainObject: RegexToolMain)(
+@(user: model.User, exerciseForm: Form[RegexExercise], isCreation: Boolean, toolMainObject: RegexToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {

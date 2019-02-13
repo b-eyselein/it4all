@@ -13,9 +13,9 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger("model.uml.UmlExYamlProtocol")
 
-  implicit object UmlExYamlFormat extends MyYamlObjectFormat[UmlCompleteEx] {
+  implicit object UmlExYamlFormat extends MyYamlObjectFormat[UmlExercise] {
 
-    override def readObject(yamlObject: YamlObject): Try[UmlCompleteEx] = for {
+    override def readObject(yamlObject: YamlObject): Try[UmlExercise] = for {
       baseValues <- readBaseValues(yamlObject)
 
       mappingTries <- yamlObject.arrayField(mappingsName, UmlMappingYamlFormat(baseValues).read)
@@ -40,19 +40,17 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       //      val mappingsForTextParser: Map[String, String] = mappings map (mapping => (mapping._1, mapping._2)) toMap
       val textParser = new UmlExTextParser(baseValues.text, mappings, ignoreWords)
 
-      UmlCompleteEx(
-        UmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, textParser.parseText),
-        ignoreWords,
-        mappings,
-        sampleSolutions._1
+      UmlExercise(
+        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, textParser.parseText,
+        ignoreWords, mappings, sampleSolutions._1
       )
     }
 
-    override def write(completeEx: UmlCompleteEx): YamlValue = YamlObject(
-      writeBaseValues(completeEx.baseValues) ++
+    override def write(exercise: UmlExercise): YamlValue = YamlObject(
+      writeBaseValues(exercise.baseValues) ++
         Map(
-          YamlString(mappingsName) -> YamlArr(completeEx.mappings.toSeq map UmlMappingYamlFormat(completeEx.baseValues).write),
-          YamlString(ignoreWordsName) -> YamlArr(completeEx.toIgnore map YamlString),
+          YamlString(mappingsName) -> YamlArr(exercise.mappings.toSeq map UmlMappingYamlFormat(exercise.baseValues).write),
+          YamlString(ignoreWordsName) -> YamlArr(exercise.toIgnore map YamlString),
         )
     )
 

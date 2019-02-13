@@ -1,9 +1,9 @@
-package model.uml
+package model.uml.persistence
 
-import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import model.uml.UmlConsts._
+import model.uml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
@@ -12,14 +12,14 @@ import slick.lifted.{PrimaryKey, ProvenShape}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlCompleteEx, UmlClassDiagram, UmlSolution, UmlExPart, UmlExerciseReview] {
+class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlExercise, UmlClassDiagram, UmlSolution, UmlExPart, UmlExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
-  override protected type ExDbValues = UmlExercise
+  override protected type ExDbValues = DbUmlExercise
   override protected type ExTableDef = UmlExercisesTable
   override protected type SolTableDef = UmlSolutionsTable
   override protected type ReviewsTableDef = UmlExerciseReviewsTable
@@ -36,24 +36,24 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Helper methods
 
-  override protected def exDbValuesFromCompleteEx(compEx: UmlCompleteEx): UmlExercise = compEx.ex
+  override protected def exDbValuesFromExercise(compEx: UmlExercise): DbUmlExercise = UmlDbModels.dbExerciseFromExercise(compEx)
 
   override protected def copyDBSolType(oldSol: UmlSolution, newId: Int): UmlSolution = oldSol.copy(id = newId)
 
   // Reading
 
-  override def completeExForEx(ex: UmlExercise): Future[UmlCompleteEx] = for {
+  override def completeExForEx(ex: DbUmlExercise): Future[UmlExercise] = for {
     toIgnore <- db.run(umlToIgnore filter (i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion) result)
     mappings <- db.run(umlMappings filter (m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion) result)
     samples <- db.run(umlSamples filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result)
-  } yield UmlCompleteEx(ex, toIgnore map (_._3), mappings map (m => m._3 -> m._4) toMap, samples)
+  } yield UmlDbModels.exerciseFromDbExercise(ex, toIgnore map (_._3), mappings map (m => m._3 -> m._4) toMap, samples)
 
 
   override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: UmlExPart): Future[Seq[String]] = ???
 
   // Saving
 
-  override protected def saveExerciseRest(compEx: UmlCompleteEx): Future[Boolean] = for {
+  override protected def saveExerciseRest(compEx: UmlExercise): Future[Boolean] = for {
     toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.id, compEx.semanticVersion, i))))
 
     mappingsSaved <- saveSeq[(String, String)](compEx.mappings toSeq, {
@@ -84,7 +84,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def markedText: Rep[String] = column[String]("marked_text")
 
 
-    override def * : ProvenShape[UmlExercise] = (id, semanticVersion, title, author, text, state, markedText) <> (UmlExercise.tupled, UmlExercise.unapply)
+    override def * : ProvenShape[DbUmlExercise] = (id, semanticVersion, title, author, text, state, markedText) <> (DbUmlExercise.tupled, DbUmlExercise.unapply)
 
   }
 

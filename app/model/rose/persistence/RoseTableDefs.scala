@@ -1,8 +1,9 @@
-package model.rose
+package model.rose.persistence
 
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
 import model.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
+import model.rose._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
@@ -11,13 +12,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RoseCompleteEx, String, RoseSolution, RoseExPart, RoseExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RoseExercise, String, RoseSolution, RoseExPart, RoseExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
-  override protected type ExDbValues = RoseExercise
+  override protected type ExDbValues = DbRoseExercise
   override protected type ExTableDef = RoseExercisesTable
   override protected type SolTableDef = RoseSolutionsTable
   override protected type ReviewsTableDef = RoseExerciseReviewsTable
@@ -33,18 +34,18 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Helper methods
 
-  override protected def exDbValuesFromCompleteEx(compEx: RoseCompleteEx) = compEx.ex
+  override protected def exDbValuesFromExercise(compEx: RoseExercise): DbRoseExercise = RoseDbModels.dbExerciseFromExercise(compEx)
 
   override protected def copyDBSolType(oldSol: RoseSolution, newId: Int): RoseSolution = oldSol.copy(id = newId)
 
   // Queries
 
-  override protected def completeExForEx(ex: RoseExercise): Future[RoseCompleteEx] = for {
+  override protected def completeExForEx(ex: DbRoseExercise): Future[RoseExercise] = for {
     inputTypes <- db.run(roseInputs.filter(_.exerciseId === ex.id).result)
     samples <- db.run(roseSamples.filter(_.exerciseId === ex.id).result)
-  } yield RoseCompleteEx(ex, inputTypes, samples)
+  } yield RoseDbModels.exerciseFromDbValues(ex, inputTypes, samples)
 
-  override protected def saveExerciseRest(compEx: RoseCompleteEx): Future[Boolean] = for {
+  override protected def saveExerciseRest(compEx: RoseExercise): Future[Boolean] = for {
     inputsSaved <- saveSeq[RoseInputType](compEx.inputTypes, it => db.run(roseInputs insertOrUpdate it))
     samplesSaved <- saveSeq[RoseSampleSolution](compEx.sampleSolutions, rss => db.run(roseSamples insertOrUpdate rss))
   } yield inputsSaved && samplesSaved
@@ -75,7 +76,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def isMultiplayer: Rep[Boolean] = column[Boolean]("is_mp")
 
 
-    override def * : ProvenShape[RoseExercise] = (id, semanticVersion, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer) <> (RoseExercise.tupled, RoseExercise.unapply)
+    override def * : ProvenShape[DbRoseExercise] = (id, semanticVersion, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer) <> (DbRoseExercise.tupled, DbRoseExercise.unapply)
 
   }
 

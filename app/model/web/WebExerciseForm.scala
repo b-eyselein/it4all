@@ -1,12 +1,12 @@
 package model.web
 
-import model.core.CompleteExerciseForm
+import model.core.ExerciseForm
 import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
 import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 import model.web.WebConsts._
 
-object WebCompleteExerciseForm extends CompleteExerciseForm[WebCompleteEx] {
+object WebExerciseForm extends ExerciseForm[WebExercise] {
 
   // HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute])
 
@@ -79,22 +79,22 @@ object WebCompleteExerciseForm extends CompleteExerciseForm[WebCompleteEx] {
                           htmlText: Option[String], jsText: Option[String],
                           htmlCompleteTaskFormValues: Seq[HtmlCompleteTaskFormValues],
                           jsCompleteTaskFormValues: Seq[JsCompleteTaskFormValues],
-                          webSampleFormValue: Seq[WebSampleSolutionFormValues]): WebCompleteEx =
-    WebCompleteEx(
-      WebExercise(id, semVer, author, title, exText, status, htmlText, jsText),
+                          webSampleFormValue: Seq[WebSampleSolutionFormValues]): WebExercise =
+    WebExercise(
+      id, semVer, author, title, exText, status, htmlText, jsText,
       htmlTasks = htmlCompleteTaskFormValues map applyHtmlTask(id, semVer),
       jsTasks = jsCompleteTaskFormValues map applyJstask(id, semVer),
       sampleSolutions = webSampleFormValue map applyWebSampleSolution(id, semVer)
     )
 
-  override protected def unapplyCompEx(compEx: WebCompleteEx): Option[FormData] = Some((
+  override protected def unapplyCompEx(compEx: WebExercise): Option[FormData] = Some((
     compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state,
     compEx.htmlText, compEx.jsText,
     compEx.htmlTasks map unapplyHtmlTask, compEx.jsTasks map unapplyJsTask,
     compEx.sampleSolutions map unapplyWebSampleSolution
   ))
 
-  override val format: Form[WebCompleteEx] = Form(
+  override val format: Form[WebExercise] = Form(
     mapping(
       idName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,

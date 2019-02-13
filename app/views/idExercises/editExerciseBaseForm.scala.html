@@ -1,7 +1,7 @@
-@import model.{User, CompleteEx}
+@import model.{User, Exercise}
 @import model.core.CoreConsts
 
-@(user: User, exerciseForm: Form[_ <: CompleteEx], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain,
+@(user: User, exerciseForm: Form[_ <: Exercise], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain,
         specialFields: Html, additionalScripts: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {

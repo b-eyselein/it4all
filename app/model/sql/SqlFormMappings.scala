@@ -7,7 +7,7 @@ import play.api.data.Forms._
 
 object SqlFormMappings {
 
-  def sqlCompleteExForm(collId: Int): Form[SqlCompleteEx] = Form(
+  def sqlExerciseForm(collId: Int): Form[SqlExercise] = Form(
     mapping(
       idName -> number,
       semanticVersionName -> nonEmptyText,
@@ -21,12 +21,12 @@ object SqlFormMappings {
       tagsName -> seq(text),
       hintName -> optional(text),
       samplesName -> seq(text)
-    )(createCompleteSqlExercise)(unapplySqlCompleteEx)
+    )(createSqlEx)(unapplySqlEx)
   )
 
-  private def createCompleteSqlExercise(exerciseId: Int, exSemVer: String, title: String, author: String, text: String, state: ExerciseState,
+  private def createSqlEx(exerciseId: Int, exSemVer: String, title: String, author: String, text: String, state: ExerciseState,
                                         collId: Int, collSemVer: String, exerciseType: SqlExerciseType,
-                                        tags: Seq[String], hint: Option[String], sampleStrings: Seq[String]): SqlCompleteEx = {
+                                        tags: Seq[String], hint: Option[String], sampleStrings: Seq[String]): SqlExercise = {
     println(sampleStrings)
 
     val exerciseSemanticVersion = SemanticVersionHelper.parseFromString(exSemVer) getOrElse SemanticVersionHelper.DEFAULT
@@ -36,10 +36,10 @@ object SqlFormMappings {
       SqlSample(index, exerciseId, exerciseSemanticVersion, collId, collectionSemanticVersion, sample)
     }
 
-    SqlCompleteEx(SqlExercise(exerciseId, exerciseSemanticVersion, title, author, text, state, collId, collectionSemanticVersion, exerciseType, tags.mkString("#"), hint), samples)
+    SqlExercise(exerciseId, exerciseSemanticVersion, title, author, text, state, collId, collectionSemanticVersion, exerciseType, tags.map(SqlExTag.withNameInsensitive), hint, samples)
   }
 
-  private def unapplySqlCompleteEx(ex: SqlCompleteEx): Option[(Int, String, String, String, String, ExerciseState, Int, String, SqlExerciseType, Seq[String], Option[String], Seq[String])] =
+  private def unapplySqlEx(ex: SqlExercise): Option[(Int, String, String, String, String, ExerciseState, Int, String, SqlExerciseType, Seq[String], Option[String], Seq[String])] =
     Some((ex.id, ex.semanticVersion.asString, ex.title, ex.author, ex.text, ex.state, ex.collectionId,
       ex.collSemVer.asString, ex.exerciseType, ex.tags.map(_.toString), ex.hint, ex.samples.map(_.sample)))
 

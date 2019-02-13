@@ -122,12 +122,12 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
         //        }
 
         readXmlExercise shouldBe
-          XmlCompleteEx(
-            XmlExercise(1, SemanticVersion(1, 0, 0), "Party", "bje40dc", "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument", ExerciseState.APPROVED,
-              grammarDescription = "In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von Gästen [gast] (mindestens ein Gast war anwesend). " +
-                "Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast hat mindestens ein " +
-                "Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.\n",
-              rootNode = "party"),
+          XmlExercise(
+            1, SemanticVersion(1, 0, 0), "Party", "bje40dc", "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument", ExerciseState.APPROVED,
+            grammarDescription = "In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von Gästen [gast] (mindestens ein Gast war anwesend). " +
+              "Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast hat mindestens ein " +
+              "Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.\n",
+            rootNode = "party",
             Seq(XmlSample(1, 1, SemanticVersion(1, 0, 0), grammarContent,
               """<root>
                 |</root>

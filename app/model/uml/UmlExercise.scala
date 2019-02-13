@@ -7,14 +7,11 @@ import scala.language.postfixOps
 
 // Classes for use
 
-final case class UmlCompleteEx(ex: UmlExercise, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution])
-  extends SingleCompleteEx[UmlExPart] {
+final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String,
+                             state: ExerciseState, markedText: String, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution])
+  extends SingleExercise[UmlExPart] {
 
-  override type E = UmlExercise
-
-  // remaining fields from UmlExercise
-
-  def markedText: String = ex.markedText
+  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
   // other methods
 
@@ -66,19 +63,8 @@ final case class UmlCompleteEx(ex: UmlExercise, toIgnore: Seq[String], mappings:
 
 // Table classes
 
-final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String,
-                             state: ExerciseState, markedText: String) extends HasBaseValues {
-
-  //  def splitToIgnore: Seq[String] = toIgnore split tagJoinChar
-
-}
-
 final case class UmlSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sample: UmlClassDiagram)
   extends SampleSolution[UmlClassDiagram]
-
-//final case class UmlIgnore(exerciseId: Int, exSemVer: SemanticVersion, toIgnore: String)
-
-final case class UmlMapping(exerciseId: Int, exSemVer: SemanticVersion, key: String, value: String)
 
 final case class UmlSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: UmlExPart,
                              solution: UmlClassDiagram, points: Points, maxPoints: Points) extends DBPartSolution[UmlExPart, UmlClassDiagram]

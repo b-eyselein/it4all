@@ -1,24 +1,24 @@
-package model.web
+package model.web.persistence
 
-import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
+import model.web.WebConsts._
+import model.web._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
-import model.web.WebConsts._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[WebCompleteEx, String, WebSolution, WebExPart, WebExerciseReview] {
+class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[WebExercise, String, WebSolution, WebExPart, WebExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
-  override protected type ExDbValues = WebExercise
+  override protected type ExDbValues = DbWebExercise
   override protected type ExTableDef = WebExercisesTable
   override protected type SolTableDef = WebSolutionsTable
   override protected type ReviewsTableDef = WebExerciseReviewsTable
@@ -40,7 +40,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Helper methods
 
-  override protected def exDbValuesFromCompleteEx(compEx: WebCompleteEx): WebExercise = compEx.ex
+  override protected def exDbValuesFromExercise(compEx: WebExercise): DbWebExercise = WebDbModels.dbExerciseFromExercise(compEx)
 
   override protected def copyDBSolType(oldSol: WebSolution, newId: Int): WebSolution = oldSol.copy(id = newId)
 
@@ -51,11 +51,11 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     case WebExParts.JsPart   => futureOldSolution(username, exId, exSemVer, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
 
-  override def completeExForEx(ex: WebExercise): Future[WebCompleteEx] = for {
+  override def completeExForEx(ex: DbWebExercise): Future[WebExercise] = for {
     htmlTasks <- htmlTasksForExercise(ex.id)
     jsTasks <- jsTasksForExercise(ex.id)
     sampleSolutions <- db.run(sampleSolutionsTable filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result)
-  } yield WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id), sampleSolutions = sampleSolutions)
+  } yield WebDbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id), sampleSolutions)
 
   private def htmlTasksForExercise(exId: Int): Future[Seq[HtmlCompleteTask]] =
     db.run(htmlTasksTable.filter(_.exerciseId === exId).result) flatMap { htmlTasks: Seq[HtmlTask] =>
@@ -85,7 +85,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Saving
 
-  override def saveExerciseRest(compEx: WebCompleteEx): Future[Boolean] = for {
+  override def saveExerciseRest(compEx: WebExercise): Future[Boolean] = for {
     htmlTasksSaved <- saveSeq[HtmlCompleteTask](compEx.htmlTasks, saveHtmlTask)
     jsTasksSaved <- saveSeq[JsCompleteTask](compEx.jsTasks, saveJsTask)
 
@@ -117,7 +117,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def jsText: Rep[String] = column[String]("js_text")
 
 
-    override def * : ProvenShape[WebExercise] = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?) <> (WebExercise.tupled, WebExercise.unapply)
+    override def * : ProvenShape[DbWebExercise] = (id, semanticVersion, title, author, text, state, htmlText.?, jsText.?) <> (DbWebExercise.tupled, DbWebExercise.unapply)
 
   }
 

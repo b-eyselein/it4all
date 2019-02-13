@@ -12,7 +12,7 @@ final case class RegexEvaluationResult(testData: RegexTestData, resultType: Bina
 }
 
 
-final case class RegexCompleteResult(learnerSolution: String, exercise: RegexCompleteEx, part: RegexExPart,
+final case class RegexCompleteResult(learnerSolution: String, exercise: RegexExercise, part: RegexExPart,
                                      results: Seq[RegexEvaluationResult]) extends CompleteResult[RegexEvaluationResult] {
 
   override type SolType = String

@@ -13,14 +13,14 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger("model.web.WebExYamlProtocol")
 
-  implicit object WebExYamlFormat extends MyYamlObjectFormat[WebCompleteEx] {
+  implicit object WebExYamlFormat extends MyYamlObjectFormat[WebExercise] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[WebCompleteEx] = yamlObject.optField("extern", str => Success(str.forgivingStr)) match {
+    override protected def readObject(yamlObject: YamlObject): Try[WebExercise] = yamlObject.optField("extern", str => Success(str.forgivingStr)) match {
       case Success(Some(fileName)) => readExtern(fileName)
       case _                       => readRest(yamlObject)
     }
 
-    def readRest(yamlObject: YamlObject): Try[WebCompleteEx] = for {
+    def readRest(yamlObject: YamlObject): Try[WebExercise] = for {
       baseValues <- readBaseValues(yamlObject)
 
       htmlText <- yamlObject.optStringField(htmlTextName)
@@ -40,42 +40,42 @@ object WebExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         logger.error("Could not read js task", jsTaskFailure.exception)
 
-      WebCompleteEx(
-        WebExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText),
+      WebExercise(
+        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText,
         htmlTaskTries._1, jsTaskTries._1,
         sampleSolutionTries._1
       )
     }
 
-    def readExtern(fileName: String): Try[WebCompleteEx] = {
+    def readExtern(fileName: String): Try[WebExercise] = {
       println(fileName)
       ???
     }
 
-    protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {
+    protected def writeRest(exercise: WebExercise): Map[YamlValue, YamlValue] = {
 
-      val htmlCompleteTaskYamlFormat = HtmlCompleteTaskYamlFormat(completeEx.id, completeEx.semanticVersion)
-      val jsCompleteTaskYamlFormat = JsCompleteTaskYamlFormat(completeEx.id, completeEx.semanticVersion)
+      val htmlCompleteTaskYamlFormat = HtmlCompleteTaskYamlFormat(exercise.id, exercise.semanticVersion)
+      val jsCompleteTaskYamlFormat = JsCompleteTaskYamlFormat(exercise.id, exercise.semanticVersion)
 
-      val htmlTasks: Option[(YamlValue, YamlValue)] = completeEx.htmlTasks match {
+      val htmlTasks: Option[(YamlValue, YamlValue)] = exercise.htmlTasks match {
         case Nil                        => None
         case hts: Seq[HtmlCompleteTask] => Some(YamlString(htmlTasksName) -> YamlArr(hts map htmlCompleteTaskYamlFormat.write))
       }
 
-      val jsTasks: Option[(YamlValue, YamlValue)] = completeEx.jsTasks match {
+      val jsTasks: Option[(YamlValue, YamlValue)] = exercise.jsTasks match {
         case Nil => None
         case jts => Some(YamlString(jsTasksName) -> YamlArr(jts map jsCompleteTaskYamlFormat.write))
       }
 
       Map[YamlValue, YamlValue]() ++
-        (completeEx.htmlText map (t => YamlString(htmlTextName) -> YamlString(t))).toList ++
-        (completeEx.jsText map (t => YamlString(jsTextName) -> YamlString(t))).toList ++
+        (exercise.htmlText map (t => YamlString(htmlTextName) -> YamlString(t))).toList ++
+        (exercise.jsText map (t => YamlString(jsTextName) -> YamlString(t))).toList ++
         htmlTasks.toList ++ jsTasks.toList
 
     }
 
 
-    override def write(obj: WebCompleteEx): YamlValue = ???
+    override def write(obj: WebExercise): YamlValue = ???
   }
 
   final case class HtmlCompleteTaskYamlFormat(exId: Int, exSemVer: SemanticVersion) extends MyYamlObjectFormat[HtmlCompleteTask] {

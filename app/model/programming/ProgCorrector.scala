@@ -19,7 +19,7 @@ object ProgCorrector {
 
   private def buildTestMainFileName(fileEnding: String): String = "test_main." + fileEnding
 
-  def correct(user: User, progSolution: ProgSolution, exercise: ProgCompleteEx, toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
+  def correct(user: User, progSolution: ProgSolution, exercise: ProgExercise, toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val (implementation: String, completeTestData: Seq[TestData]) = progSolution match {
       case ProgTestDataSolution(td, _)        => (exercise.sampleSolutions.headOption.map(_.solution).getOrElse(???), td)

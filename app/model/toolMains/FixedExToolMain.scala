@@ -16,13 +16,13 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   // Abstract types
 
-  type CompExType <: CompleteEx
+  type ExType <: Exercise
 
   type CompResult <: CompleteResult[R]
 
   type ReadType
 
-  override type Tables <: ExerciseTableDefs[CompExType]
+  override type Tables <: ExerciseTableDefs[ExType]
 
   // Values
 
@@ -66,9 +66,9 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   def futureNumOfExes: Future[Int] = tables.futureNumOfExes
 
-  def futureCompleteExes: Future[Seq[CompExType]] = tables.futureCompleteExes
+  def futureAllExercises: Future[Seq[ExType]] = tables.futureAllExes
 
-  def futureInsertCompleteEx(completeEx: CompExType): Future[Boolean] = tables.futureInsertCompleteEx(completeEx)
+  def futureInsertExercise(exercise: ExType): Future[Boolean] = tables.futureInsertExercise(exercise)
 
   def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]
 
@@ -76,9 +76,9 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   // Views
 
-  def renderEditRest(exercise: CompExType): Html = Html("")
+  def renderEditRest(exercise: ExType): Html = Html("")
 
-  def renderExercisePreview(user: User, newExercise: CompExType, saved: Boolean): Html = {
+  def renderExercisePreview(user: User, newExercise: ExType, saved: Boolean): Html = {
     println(newExercise)
     ???
   }

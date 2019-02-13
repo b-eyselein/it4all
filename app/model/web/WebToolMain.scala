@@ -6,6 +6,7 @@ import javax.inject._
 import model._
 import model.toolMains.{ASingleExerciseToolMain, ToolList, ToolState}
 import model.web.WebConsts._
+import model.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data.Forms._
@@ -24,7 +25,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Result types
 
-  override type CompExType = WebCompleteEx
+  override type ExType = WebExercise
 
   override type Tables = WebTableDefs
 
@@ -52,14 +53,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Forms
 
-  override val compExForm: Form[WebCompleteEx] = WebCompleteExerciseForm.format
+  override val exerciseForm: Form[WebExercise] = WebExerciseForm.format
 
-  override def exerciseReviewForm(username: String, completeExercise: WebCompleteEx, exercisePart: WebExPart): Form[WebExerciseReview] = Form(
+  override def exerciseReviewForm(username: String, exercise: WebExercise, exercisePart: WebExPart): Form[WebExerciseReview] = Form(
     mapping(
       difficultyName -> Difficulties.formField,
       durationName -> optional(number(min = 0, max = 100))
     )
-    (WebExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
+    (WebExerciseReview(username, exercise.id, exercise.semanticVersion, exercisePart, _, _))
     (wer => Some((wer.difficulty, wer.maybeDuration)))
   )
 
@@ -82,7 +83,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Reading solution from request
 
-  override protected def readSolution(user: User, exercise: WebCompleteEx, part: WebExPart)(implicit request: Request[AnyContent]): Try[String] =
+  override protected def readSolution(user: User, exercise: WebExercise, part: WebExPart)(implicit request: Request[AnyContent]): Try[String] =
     request.body.asJson match {
       case None          => Failure(new Exception("Request body does not contain json!"))
       case Some(jsValue) => jsValue match {
@@ -93,11 +94,11 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebCompleteEx = {
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebExercise = {
     val semVer = SemanticVersionHelper.DEFAULT
 
-    WebCompleteEx(
-      WebExercise(id, semVer, title = "", author, text = "", state, htmlText = None, jsText = None),
+    WebExercise(
+      id, semVer, title = "", author, text = "", state, htmlText = None, jsText = None,
       htmlTasks = Seq(
         HtmlCompleteTask(HtmlTask(1, id, semVer, "", "", None), attributes = Seq[Attribute]())
       ),
@@ -110,32 +111,32 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     )
   }
 
-  override def instantiateSolution(id: Int, username: String, exercise: WebCompleteEx, part: WebExPart, solution: String,
+  override def instantiateSolution(id: Int, username: String, exercise: WebExercise, part: WebExPart, solution: String,
                                    points: Points, maxPoints: Points): WebSolution =
     WebSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
-  override val yamlFormat: MyYamlFormat[WebCompleteEx] = WebExYamlProtocol.WebExYamlFormat
+  override val yamlFormat: MyYamlFormat[WebExercise] = WebExYamlProtocol.WebExYamlFormat
 
   // Views
 
-  override def renderAdminExerciseEditForm(user: User, newEx: WebCompleteEx, isCreation: Boolean, toolList: ToolList)
+  override def renderAdminExerciseEditForm(user: User, newEx: WebExercise, isCreation: Boolean, toolList: ToolList)
                                           (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-    views.html.idExercises.web.editWebExercise(user, WebCompleteExerciseForm.format.fill(newEx), isCreation, this, toolList)
+    views.html.idExercises.web.editWebExercise(user, WebExerciseForm.format.fill(newEx), isCreation, this, toolList)
 
-  override def renderUserExerciseEditForm(user: User, newExForm: Form[WebCompleteEx], isCreation: Boolean)
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[WebExercise], isCreation: Boolean)
                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.web.editWebExerciseForm(user, newExForm, isCreation, this)
 
-  override def renderExercisePreview(user: User, newExercise: WebCompleteEx, saved: Boolean): Html =
+  override def renderExercisePreview(user: User, newExercise: WebExercise, saved: Boolean): Html =
     views.html.idExercises.web.webPreview(newExercise)
 
-  override def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart, maybeOldSolution: Option[WebSolution])
+  override def renderExercise(user: User, exercise: WebExercise, part: WebExPart, maybeOldSolution: Option[WebSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.web.webExercise(user, exercise, part, maybeOldSolution map (_.solution) getOrElse WebConsts.STANDARD_HTML, this)
 
-  override def renderEditRest(exercise: WebCompleteEx): Html =
+  override def renderEditRest(exercise: WebExercise): Html =
     views.html.idExercises.web.editWebExRest(exercise)
 
   override def playground(user: User): Html =
@@ -154,7 +155,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       ???
   }
 
-  private def onDriverGetSuccess(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, driver: HtmlUnitDriver): Try[WebCompleteResult] = Try {
+  private def onDriverGetSuccess(learnerSolution: String, exercise: WebExercise, part: WebExPart, driver: HtmlUnitDriver): Try[WebCompleteResult] = Try {
     part match {
       case WebExParts.HtmlPart =>
         val elementResults = exercise.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
@@ -165,7 +166,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     }
   }
 
-  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
+  override def correctEx(user: User, learnerSolution: String, exercise: WebExercise, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
     writeWebSolutionFile(user.username, exercise.id, part, learnerSolution) flatMap { _ =>
 
       val driver = new HtmlUnitDriver(true)

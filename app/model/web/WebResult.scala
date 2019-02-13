@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement
 
 import scala.language.postfixOps
 
-final case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart,
+final case class WebCompleteResult(learnerSolution: String, exercise: WebExercise, part: WebExPart,
                                    elementResults: Seq[ElementResult], jsWebResults: Seq[JsWebResult]) extends CompleteResult[WebResult] {
 
   override type SolType = String

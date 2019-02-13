@@ -1,23 +1,23 @@
-package model.xml
+package model.xml.persistence
 
-import javax.inject.Inject
 import model.SemanticVersion
 import model.persistence.SingleExerciseTableDefs
 import model.xml.XmlConsts._
+import model.xml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlCompleteEx, String, XmlSolution, XmlExPart, XmlExerciseReview] {
+class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, String, XmlSolution, XmlExPart, XmlExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
-  override protected type ExDbValues = XmlExercise
+  override protected type ExDbValues = DbXmlExercise
   override protected type ExTableDef = XmlExercisesTable
   override protected type SolTableDef = XmlSolutionsTable
   override protected type ReviewsTableDef = XmlExerciseReviewsTable
@@ -32,15 +32,15 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Helper methods
 
-  override protected def exDbValuesFromCompleteEx(compEx: XmlCompleteEx): XmlExercise = compEx.ex
+  override protected def exDbValuesFromExercise(compEx: XmlExercise): DbXmlExercise = XmlDbModels.dbExerciseFromExercise(compEx)
 
   override protected def copyDBSolType(oldSol: XmlSolution, newId: Int): XmlSolution = oldSol.copy(id = newId)
 
   // Reading
 
-  override protected def completeExForEx(ex: XmlExercise): Future[XmlCompleteEx] = for {
+  override protected def completeExForEx(ex: DbXmlExercise): Future[XmlExercise] = for {
     samples: Seq[XmlSample] <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result)
-  } yield XmlCompleteEx(ex, samples)
+  } yield XmlDbModels.exerciseFromDbValues(ex, samples)
 
   override def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: XmlExPart): Future[Boolean] = part match {
     case XmlExParts.GrammarCreationXmlPart  => Future.successful(true)
@@ -57,7 +57,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Saving
 
-  override def saveExerciseRest(compEx: XmlCompleteEx): Future[Boolean] = for {
+  override def saveExerciseRest(compEx: XmlExercise): Future[Boolean] = for {
     samplesSaved <- saveSeq[XmlSample](compEx.samples, xsg => db.run(samplesTable += xsg))
   } yield samplesSaved
 
@@ -77,7 +77,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def grammarDescription: Rep[String] = column[String]("grammar_description")
 
 
-    override def * : ProvenShape[XmlExercise] = (id, semanticVersion, title, author, text, state, grammarDescription, rootNode) <> (XmlExercise.tupled, XmlExercise.unapply)
+    override def * : ProvenShape[DbXmlExercise] = (id, semanticVersion, title, author, text, state, grammarDescription, rootNode) <> (DbXmlExercise.tupled, DbXmlExercise.unapply)
 
   }
 

@@ -1,6 +1,6 @@
-@import model.xml.{XmlCompleteEx, XmlToolMain}
+@import model.xml.{XmlExercise, XmlToolMain}
 
-@(user: model.User, exercise: Form[XmlCompleteEx], isCreation: Boolean, toolMainObject: XmlToolMain,
+@(user: model.User, exercise: Form[XmlExercise], isCreation: Boolean, toolMainObject: XmlToolMain,
         toolList: model.toolMains.ToolList)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {

@@ -1,6 +1,6 @@
-@import model.sql.{SqlCompleteEx, SqlToolMain}
+@import model.sql.{SqlExercise, SqlToolMain}
 
-@(user: model.User, exercise: SqlCompleteEx, isCreation: Boolean, toolMainObject: SqlToolMain, toolList: model.toolMains.ToolList)
+@(user: model.User, exercise: SqlExercise, isCreation: Boolean, toolMainObject: SqlToolMain, toolList: model.toolMains.ToolList)
 
 @title = @{
     "Sql-Aufgabe " + (if(isCreation) " erstellen" else " bearbeiten")

@@ -1,4 +1,4 @@
-@(completeEx: model.uml.UmlCompleteEx)
+@(umlExercise: model.uml.UmlExercise)
 
 
 <div class="row">
@@ -6,19 +6,19 @@
         <table class="table">
             <tr>
                 <th>ID</th>
-                <td>@completeEx.id</td>
+                <td>@umlExercise.id</td>
             </tr>
             <tr>
                 <th>Autor</th>
-                <td>@completeEx.author</td>
+                <td>@umlExercise.author</td>
             </tr>
             <tr>
                 <th>Status</th>
-                <td>@completeEx.state</td>
+                <td>@umlExercise.state</td>
             </tr>
             <tr>
                 <th>Ignoriert</th>
-                <td>@Html(completeEx.toIgnore.map(i => "<code>" + i + "</code>").mkString(", "))</td>
+                <td>@Html(umlExercise.toIgnore.map(i => "<code>" + i + "</code>").mkString(", "))</td>
             </tr>
         </table>
     </div>
@@ -27,7 +27,7 @@
     <div class="col-md-6">
         <h2>Mappings</h2>
         <ul>
-        @for((key, value) <- completeEx.mappings) {
+        @for((key, value) <- umlExercise.mappings) {
             <li>@key &rarr;
                 @value</li>
         }
@@ -36,11 +36,11 @@
 </div>
 
 <p>Marked Text</p>
-<div class="well pre-scrollable">@completeEx.markedText</div>
+<div class="well pre-scrollable">@umlExercise.markedText</div>
 
     @sampleSolution = @{
-    completeEx.sampleSolutions.head.sample
-}
+        umlExercise.sampleSolutions.head.sample
+    }
 
 <td>
     <p>Lösung</p>

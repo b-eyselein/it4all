@@ -5,17 +5,17 @@ import play.twirl.api.Html
 
 import scala.language.postfixOps
 
-final case class RegexExercise(id: Int, title: String, author: String, text: String, state: ExerciseState,
-                               semanticVersion: SemanticVersion) extends HasBaseValues
-
 final case class RegexSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sample: String) extends SampleSolution[String]
 
 final case class RegexTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, data: String, isIncluded: Boolean)
 
-final case class RegexCompleteEx(ex: RegexExercise, sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData])
-  extends SingleCompleteEx[RegexExPart] {
+final case class RegexExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                               sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData])
+  extends SingleExercise[RegexExPart] {
 
-  override type E = RegexExercise
+  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
+
+  // other methods
 
   override def hasPart(partType: RegexExPart): Boolean = true
 

@@ -1,14 +1,14 @@
 package model.uml
 
 import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
-import model.core.CompleteExerciseForm
+import model.core.ExerciseForm
 import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 import model.uml.UmlConsts._
 
 import scala.language.postfixOps
 
-object UmlCompleteExerciseForm extends CompleteExerciseForm[UmlCompleteEx] {
+object UmlExerciseForm extends ExerciseForm[UmlExercise] {
 
   // UmlClassDiagram
 
@@ -83,25 +83,23 @@ object UmlCompleteExerciseForm extends CompleteExerciseForm[UmlCompleteEx] {
 
   override type FormData = (Int, SemanticVersion, String, String, String, ExerciseState, Seq[String], Seq[(String, String)], Seq[UmlSampleSolutionFormValues])
 
-  override def unapplyCompEx(compEx: UmlCompleteEx): Option[FormData] =
+  override def unapplyCompEx(compEx: UmlExercise): Option[FormData] =
     Some(
       (compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state,
         compEx.toIgnore, compEx.mappings toSeq, compEx.sampleSolutions map unapplySampleSolution)
     )
 
   def applyCompEx(id: Int, semVer: SemanticVersion, title: String, author: String, exText: String, state: ExerciseState,
-                  toIgnore: Seq[String], mappings: Seq[(String, String)], sampleSolutionFormValues: Seq[UmlSampleSolutionFormValues]): UmlCompleteEx = {
+                  toIgnore: Seq[String], mappings: Seq[(String, String)], sampleSolutionFormValues: Seq[UmlSampleSolutionFormValues]): UmlExercise = {
     val markedText: String = ???
 
-    UmlCompleteEx(
-      UmlExercise(id, semVer, title, author, exText, state, markedText),
-      toIgnore,
-      mappings toMap,
+    UmlExercise(
+      id, semVer, title, author, exText, state, markedText, toIgnore, mappings toMap,
       sampleSolutions = sampleSolutionFormValues map applySampleSolution(id, semVer) // TODO!
     )
   }
 
-  override val format: Form[UmlCompleteEx] = Form(
+  override val format: Form[UmlExercise] = Form(
     mapping(
       idName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,

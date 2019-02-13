@@ -27,18 +27,18 @@ object SqlYamlProtocol extends MyYamlProtocol {
       SqlCompleteScenario(SqlScenario(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, shortName), exercises._1)
     }
 
-    override def write(completeEx: SqlCompleteScenario): YamlObject = YamlObject(
-      writeBaseValues(completeEx.coll.baseValues) ++
+    override def write(sqlCompleteScenario: SqlCompleteScenario): YamlObject = YamlObject(
+      writeBaseValues(sqlCompleteScenario.coll.baseValues) ++
         Map(
-          YamlString(shortNameName) -> YamlString(completeEx.coll.shortName),
-          YamlString(exercisesName) -> YamlArr(completeEx.exercises map SqlExYamlFormat(completeEx.coll.baseValues).write)
+          YamlString(shortNameName) -> YamlString(sqlCompleteScenario.coll.shortName),
+          YamlString(exercisesName) -> YamlArr(sqlCompleteScenario.exercises map SqlExYamlFormat(sqlCompleteScenario.coll.baseValues).write)
         )
     )
   }
 
-  final case class SqlExYamlFormat(collBaseValues: BaseValues) extends MyYamlObjectFormat[SqlCompleteEx] {
+  final case class SqlExYamlFormat(collBaseValues: BaseValues) extends MyYamlObjectFormat[SqlExercise] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[SqlCompleteEx] = for {
+    override protected def readObject(yamlObject: YamlObject): Try[SqlExercise] = for {
       baseValues <- readBaseValues(yamlObject)
 
       exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.withNameInsensitiveOption) map (_ getOrElse SqlExerciseType.SELECT)
@@ -57,19 +57,19 @@ object SqlYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         logger.error("Could not read sql sample", sampleFailure.exception)
 
-      SqlCompleteEx(SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        collBaseValues.id, collBaseValues.semanticVersion, exerciseType, tagTries._1.mkString(tagJoinChar), hint), sampleTries._1)
+      SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        collBaseValues.id, collBaseValues.semanticVersion, exerciseType, tagTries._1, hint, sampleTries._1)
     }
 
-    override def write(completeEx: SqlCompleteEx): YamlValue = YamlObject(
-      writeBaseValues(completeEx.baseValues) ++
+    override def write(sqlEx: SqlExercise): YamlValue = YamlObject(
+      writeBaseValues(sqlEx.baseValues) ++
         Map[YamlValue, YamlValue](
-          YamlString(exerciseTypeName) -> YamlString(completeEx.exerciseType.entryName),
-          YamlString(samplesName) -> YamlArr(completeEx.samples map SqlSampleYamlFormat(collBaseValues, completeEx.baseValues).write)
-        ) ++ completeEx.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(completeEx)
+          YamlString(exerciseTypeName) -> YamlString(sqlEx.exerciseType.entryName),
+          YamlString(samplesName) -> YamlArr(sqlEx.samples map SqlSampleYamlFormat(collBaseValues, sqlEx.baseValues).write)
+        ) ++ sqlEx.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(sqlEx)
     )
 
-    private def writeTags(completeEx: SqlCompleteEx): Option[(YamlValue, YamlValue)] = completeEx.tags match {
+    private def writeTags(sqlEx: SqlExercise): Option[(YamlValue, YamlValue)] = sqlEx.tags match {
       case Nil  => None
       case tags => Some(YamlString(tagsName) -> YamlArr(tags.map(t => YamlString(t.entryName))))
     }

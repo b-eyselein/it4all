@@ -32,7 +32,7 @@ object XmlGrammarCompleteResult {
 
 }
 
-final case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sample: XmlSample, completeEx: XmlCompleteEx) extends XmlCompleteResult {
+final case class XmlGrammarCompleteResult(learnerSolution: DTDParseResult, sample: XmlSample, exercise: XmlExercise) extends XmlCompleteResult {
 
   override type SolType = DTDParseResult
 

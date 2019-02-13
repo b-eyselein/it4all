@@ -1,6 +1,6 @@
-@import model.uml.{UmlToolMain, UmlCompleteEx}
+@import model.uml.{UmlToolMain, UmlExercise}
 
-@(user: model.User, exercise: UmlCompleteEx, toolMainObject: UmlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@(user: model.User, exercise: UmlExercise, toolMainObject: UmlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @btnText = @{
     "Klassen verifizieren"

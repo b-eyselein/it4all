@@ -17,7 +17,7 @@ object RoseCorrector {
   private val actionsFileName = "actions.json"
   private val optionsFileName = "options.json"
 
-  def correct(user: User, exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage, exerciseResourcesFolder: File, solutionTargetDir: File)
+  def correct(user: User, exercise: RoseExercise, learnerSolution: String, language: ProgLanguage, exerciseResourcesFolder: File, solutionTargetDir: File)
              (implicit ec: ExecutionContext): Future[RoseEvalResult] = exercise.sampleSolutions.headOption match {
     case None                 => ???
     case Some(sampleSolution) =>
@@ -86,7 +86,7 @@ object RoseCorrector {
     baseDeclaration + indent(sampleSolution, 2)
   }
 
-  private def buildOptionFileContent(exercise: RoseCompleteEx): String =
+  private def buildOptionFileContent(exercise: RoseExercise): String =
     """|{
        |  "start": {
        |    "x": 0,

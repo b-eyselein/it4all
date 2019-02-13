@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
 class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: ExecutionContext)
   extends ASingleExerciseToolMain("Reguläre Ausdrücke", "regex") {
 
-  override type CompExType = RegexCompleteEx
+  override type ExType = RegexExercise
 
   override type Tables = RegexTableDefs
 
@@ -34,28 +34,28 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override protected val exParts: Seq[RegexExPart] = RegexExParts.values
 
-  override protected val yamlFormat: MyYamlFormat[RegexCompleteEx] = RegexExYamlProtocol.RegexExYamlFormat
+  override protected val yamlFormat: MyYamlFormat[RegexExercise] = RegexExYamlProtocol.RegexExYamlFormat
 
   override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
 
   override val usersCanCreateExes: Boolean = false
 
-  override def compExForm: Form[RegexCompleteEx] = RegexCompleteExForm.format
+  override def exerciseForm: Form[RegexExercise] = RegexExForm.format
 
   // Database helpers
 
-  override protected def instantiateSolution(id: Int, username: String, exercise: RegexCompleteEx, part: RegexExPart,
+  override protected def instantiateSolution(id: Int, username: String, exercise: RegexExercise, part: RegexExPart,
                                              solution: String, points: Points, maxPoints: Points): RegexDBSolution =
     RegexDBSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Correction
 
-  override protected def readSolution(user: User, exercise: RegexCompleteEx, part: RegexExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
+  override protected def readSolution(user: User, exercise: RegexExercise, part: RegexExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
     case Some(JsString(regex)) => Success(regex)
     case _                     => Failure(new Exception("TODO!"))
   }
 
-  override protected def correctEx(user: User, sol: String, exercise: RegexCompleteEx, part: RegexExPart): Future[Try[RegexCompleteResult]] = Future(Try {
+  override protected def correctEx(user: User, sol: String, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] = Future(Try {
 
     val regex = sol.r
 
@@ -77,10 +77,10 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   })
 
 
-  override def exerciseReviewForm(username: String, completeExercise: RegexCompleteEx, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
+  override def exerciseReviewForm(username: String, completeExercise: RegexExercise, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexCompleteEx = RegexCompleteEx(
-    RegexExercise(id, title = "", author, text = "", state, SemanticVersionHelper.DEFAULT),
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
+    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state,
     sampleSolutions = Seq[RegexSampleSolution](
       RegexSampleSolution(0, id, SemanticVersionHelper.DEFAULT, "")
     ),
@@ -91,11 +91,11 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   // Views
 
-  override def renderExercise(user: User, exercise: RegexCompleteEx, part: RegexExPart, oldSolution: Option[RegexDBSolution])
+  override def renderExercise(user: User, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[RegexDBSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.regex.regexExercise(user, this, exercise, part, oldSolution.map(_.solution))
 
-  override def renderUserExerciseEditForm(user: User, newExForm: Form[RegexCompleteEx], isCreation: Boolean)(
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[RegexExercise], isCreation: Boolean)(
     implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.regex.editRegexExerciseForm(user, newExForm, isCreation, this)
 

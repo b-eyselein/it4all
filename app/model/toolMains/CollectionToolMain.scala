@@ -20,9 +20,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Abstract types
 
-  override type CompExType <: CompleteExInColl
+  override type ExType <: ExerciseInColl
 
-  type CollType <: ExerciseCollection[CompExType]
+  type CollType <: ExerciseCollection[ExType]
 
   type CompCollType <: CompleteCollection
 
@@ -32,7 +32,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ReadType = CompCollType
 
-  override type Tables <: ExerciseCollectionTableDefs[CompExType, CollType, CompCollType, SolType, DBSolType]
+  override type Tables <: ExerciseCollectionTableDefs[ExType, CollType, CompCollType, SolType, DBSolType]
 
   // Other members
 
@@ -40,7 +40,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   val collectionPluralName: String
 
-  protected def compExTypeForm(collId: Int): Form[CompExType]
+  protected def compExTypeForm(collId: Int): Form[ExType]
 
   // Database queries
 
@@ -60,9 +60,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureCompleteCollById(id: Int): Future[Option[CompCollType]] = tables.futureCompleteCollById(id)
 
-  def futureCompleteExById(collId: Int, id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(collId, id)
+  def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] = tables.futureExerciseById(collId, id)
 
-  def futureCompleteExesInColl(collId: Int): Future[Seq[CompExType]] = tables.futureCompleteExesInColl(collId)
+  def futureExercisesInColl(collId: Int): Future[Seq[ExType]] = tables.futureExercisesInColl(collId)
 
   def futureMaybeOldSolution(user: User, collId: Int, exId: Int): Future[Option[DBSolType]] = tables.futureMaybeOldSolution(user.username, collId, exId)
 
@@ -100,9 +100,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
       case Some(solution) =>
 
-        val collAndEx: Future[Option[(CollType, CompExType)]] = for {
+        val collAndEx: Future[Option[(CollType, ExType)]] = for {
           coll <- futureCollById(collId)
-          ex <- futureCompleteExById(collId, id)
+          ex <- futureExerciseById(collId, id)
         } yield (coll zip ex).headOption
 
         collAndEx flatMap {
@@ -119,11 +119,11 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         }
     }
 
-  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: CompExType): Try[CompResult]
+  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType): Try[CompResult]
 
   // Reading from requests
 
-  def readExerciseFromForm(collId: Int)(implicit request: Request[AnyContent]): Form[CompExType] = compExTypeForm(collId).bindFromRequest()
+  def readExerciseFromForm(collId: Int)(implicit request: Request[AnyContent]): Form[ExType] = compExTypeForm(collId).bindFromRequest()
 
   protected def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
 
@@ -138,7 +138,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this, toolList)
   }
 
-  def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int, maybeOldSolution: Option[DBSolType])
+  def renderExercise(user: User, coll: CollType, exercise: ExType, numOfExes: Int, maybeOldSolution: Option[DBSolType])
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
@@ -146,7 +146,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.admin.collExes.collectionEditForm(user, collection, isCreation, new Html(""), this, toolList /*adminRenderEditRest(collection)*/)
 
-  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
+  def renderExerciseEditForm(user: User, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
   override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[CompCollType], toolList: ToolList): Html =
@@ -171,9 +171,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def instantiateCollection(id: Int, state: ExerciseState): CompCollType
 
-  def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
+  def instantiateExercise(collId: Int, id: Int, state: ExerciseState): ExType
 
-  def instantiateSolution(id: Int, username: String, collection: CollType, exercise: CompExType, solution: SolType,
+  def instantiateSolution(id: Int, username: String, collection: CollType, exercise: ExType, solution: SolType,
                           points: Points, maxPoints: Points): DBSolType
 
   // Calls

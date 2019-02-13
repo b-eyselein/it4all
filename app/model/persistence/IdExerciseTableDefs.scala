@@ -1,6 +1,6 @@
 package model.persistence
 
-import model.{CompleteEx, Difficulties, Difficulty, ExPart, ExerciseReview, ExerciseState, SemanticVersion}
+import model.{Exercise, Difficulties, Difficulty, ExPart, ExerciseReview, ExerciseState, SemanticVersion}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -8,7 +8,7 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
 
-trait IdExerciseTableDefs[CompEx <: CompleteEx, PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
+trait IdExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
   extends ExerciseTableDefs[CompEx] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 

@@ -1,12 +1,12 @@
 package model.regex
 
+import model.core.ExerciseForm
 import model.regex.RegexConsts._
-import model.core.CompleteExerciseForm
 import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object RegexCompleteExForm extends CompleteExerciseForm[ RegexCompleteEx] {
+object RegexExForm extends ExerciseForm[RegexExercise] {
 
   // Sample solutions
 
@@ -44,7 +44,7 @@ object RegexCompleteExForm extends CompleteExerciseForm[ RegexCompleteEx] {
   override type FormData = (Int, SemanticVersion, String, String, String, ExerciseState,
     Seq[RegexSampleSolutionFormValues], Seq[RegexTestDataFormValues])
 
-  override val format: Form[RegexCompleteEx] = Form(
+  override val format: Form[RegexExercise] = Form(
     mapping(
       idName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
@@ -57,15 +57,15 @@ object RegexCompleteExForm extends CompleteExerciseForm[ RegexCompleteEx] {
     )(applyCompEx)(unapplyCompEx)
   )
 
-  override protected def unapplyCompEx(compEx: RegexCompleteEx): Option[FormData] = Some((
+  override protected def unapplyCompEx(compEx: RegexExercise): Option[FormData] = Some((
     compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state,
     compEx.sampleSolutions.map(unapplyRegexSampleSolution), compEx.testData.map(unapplyRegexTestData)
   ))
 
   def applyCompEx(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                  sampleSolutionFormValues: Seq[RegexSampleSolutionFormValues], testDataFormValues: Seq[RegexTestDataFormValues]): RegexCompleteEx =
-    RegexCompleteEx(
-      RegexExercise(id, title, author, text, state, semanticVersion),
+                  sampleSolutionFormValues: Seq[RegexSampleSolutionFormValues], testDataFormValues: Seq[RegexTestDataFormValues]): RegexExercise =
+    RegexExercise(
+      id, semanticVersion, title, author, text, state,
       sampleSolutions = sampleSolutionFormValues.map(applyRegexSample(id, semanticVersion, _)),
       testData = testDataFormValues.map(applyRegexTestDataFormValues(id, semanticVersion, _))
     )

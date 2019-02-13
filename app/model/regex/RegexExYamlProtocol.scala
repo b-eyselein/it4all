@@ -9,9 +9,9 @@ import scala.util.Try
 
 object RegexExYamlProtocol extends MyYamlProtocol {
 
-  implicit object RegexExYamlFormat extends MyYamlObjectFormat[RegexCompleteEx] {
+  implicit object RegexExYamlFormat extends MyYamlObjectFormat[RegexExercise] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[RegexCompleteEx] = for {
+    override protected def readObject(yamlObject: YamlObject): Try[RegexExercise] = for {
       baseValues <- readBaseValues(yamlObject)
 
       sampleSolutionTries <- yamlObject.arrayField(samplesName, RegexSampleSolutionYamlFormat(baseValues.id, baseValues.semanticVersion).read)
@@ -25,13 +25,13 @@ object RegexExYamlProtocol extends MyYamlProtocol {
       for (testDataReadError <- testDataTries._2)
         println(testDataReadError)
 
-      RegexCompleteEx(
-        RegexExercise(baseValues.id, baseValues.title, baseValues.author, baseValues.text, baseValues.state, baseValues.semanticVersion),
+      RegexExercise(
+        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         sampleSolutionTries._1, testDataTries._1
       )
     }
 
-    override def write(obj: RegexCompleteEx): YamlValue = ???
+    override def write(obj: RegexExercise): YamlValue = ???
 
   }
 

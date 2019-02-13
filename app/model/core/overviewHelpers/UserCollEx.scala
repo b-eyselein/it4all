@@ -1,7 +1,7 @@
 package model.core.overviewHelpers
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.CompleteEx
+import model.Exercise
 
 import scala.collection.immutable.IndexedSeq
 
@@ -20,4 +20,4 @@ object SolvedStates extends PlayEnum[SolvedState] {
 }
 
 
-final case class UserCollEx(ex: CompleteEx, solved: SolvedState)
+final case class UserCollEx(ex: Exercise, solved: SolvedState)

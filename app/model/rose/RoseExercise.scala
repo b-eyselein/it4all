@@ -6,18 +6,11 @@ import play.twirl.api.Html
 
 // Classes for use
 
-final case class RoseCompleteEx(ex: RoseExercise, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution])
-  extends SingleCompleteEx[RoseExPart] {
+final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                              fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution])
+  extends SingleExercise[RoseExPart] {
 
-  override type E = RoseExercise
-
-  // remaining field from RoseExercise
-
-  def fieldWidth: Int = ex.fieldHeight
-
-  def fieldHeight: Int = ex.fieldHeight
-
-  def isMultiplayer: Boolean = ex.isMultiplayer
+  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
   // other methods
 
@@ -45,9 +38,6 @@ final case class RoseCompleteEx(ex: RoseExercise, inputTypes: Seq[RoseInputType]
 }
 
 // Case classes for tables
-
-final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                              fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends HasBaseValues
 
 final case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersion, name: String, inputType: ProgDataType)
 

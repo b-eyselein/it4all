@@ -15,7 +15,7 @@ object UmlCompleteResult {
 
 }
 
-final case class UmlCompleteResult(exercise: UmlCompleteEx, learnerSolution: UmlClassDiagram, part: UmlExPart)
+final case class UmlCompleteResult(exercise: UmlExercise, learnerSolution: UmlClassDiagram, part: UmlExPart)
   extends CompleteResult[EvaluationResult] {
 
   override type SolType = UmlClassDiagram

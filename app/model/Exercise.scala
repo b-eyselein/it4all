@@ -73,26 +73,21 @@ trait HasBaseValuesInColl extends HasBaseValues {
 
 }
 
-trait CompleteEx {
+trait Exercise {
 
-  type E <: HasBaseValues
+  def id: Int
 
-  def ex: E
+  def semanticVersion: SemanticVersion
 
+  def title: String
 
-  def id: Int = ex.id
+  def author: String
 
-  def semanticVersion: SemanticVersion = ex.semanticVersion
+  def text: String
 
-  def title: String = ex.title
+  def state: ExerciseState
 
-  def author: String = ex.author
-
-  def text: String = ex.text
-
-  def state: ExerciseState = ex.state
-
-  def baseValues: BaseValues = ex.baseValues
+  def baseValues: BaseValues
 
 
   def preview: Html
@@ -101,18 +96,16 @@ trait CompleteEx {
 
 }
 
-trait SingleCompleteEx[PartType <: ExPart] extends CompleteEx {
+trait SingleExercise[PartType <: ExPart] extends Exercise {
 
   def hasPart(partType: PartType): Boolean
 
 }
 
-trait CompleteExInColl extends CompleteEx {
+trait ExerciseInColl extends Exercise {
 
-  override type E <: HasBaseValuesInColl
+  def collectionId: Int
 
-  def collectionId: Int = ex.collectionId
-
-  def collSemVer: SemanticVersion = ex.collSemVer
+  def collSemVer: SemanticVersion
 
 }

@@ -6,7 +6,7 @@ import model.programming.ProgConsts._
 import play.api.libs.functional.syntax._
 
 //noinspection ConvertibleToMethodValue
-final case class ProgSolutionJsonFormat(exercise: ProgCompleteEx, user: User) {
+final case class ProgSolutionJsonFormat(exercise: ProgExercise, user: User) {
 
   def readProgSolutionFromJson(exPart: ProgExPart, solutionJson: JsValue): JsResult[_ <: ProgSolution] = exPart match {
     case ProgExParts.TestdataCreation => testDataCreationSolutionReads.reads(solutionJson)

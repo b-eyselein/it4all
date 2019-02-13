@@ -11,7 +11,7 @@ import slick.lifted.ForeignKeyQuery
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait SingleExerciseTableDefs[CompEx <: CompleteEx, SolType, DBSolType <: DBPartSolution[PartType, SolType], PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
+trait SingleExerciseTableDefs[CompEx <: Exercise, SolType, DBSolType <: DBPartSolution[PartType, SolType], PartType <: ExPart, ReviewType <: ExerciseReview[PartType]]
   extends IdExerciseTableDefs[CompEx, PartType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 

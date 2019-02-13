@@ -1,13 +1,13 @@
 package model.rose
 
-import model.core.CompleteExerciseForm
+import model.core.ExerciseForm
 import model.programming.{ProgDataTypes, ProgLanguage, ProgLanguages}
 import model.rose.RoseConsts._
 import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
-import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
+import play.api.data.{Form, Mapping}
 
-object RoseCompleteExerciseForm extends CompleteExerciseForm[RoseCompleteEx] {
+object RoseExerciseForm extends ExerciseForm[RoseExercise] {
 
   // Input types
 
@@ -50,21 +50,21 @@ object RoseCompleteExerciseForm extends CompleteExerciseForm[RoseCompleteEx] {
   def applyCompEx(id: Int, semanticVersion: SemanticVersion, title: String, author: String, exText: String,
                   state: ExerciseState, fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean,
                   roseInputTypeFormValues: Seq[RoseInputTypeFormValues],
-                  roseSampleSolutionFormValues: Seq[RoseSampleSolutionFormValues]): RoseCompleteEx =
-    RoseCompleteEx(
-      RoseExercise(id, semanticVersion, title, author, exText, state, fieldWidth, fieldHeight, isMultiplayer),
+                  roseSampleSolutionFormValues: Seq[RoseSampleSolutionFormValues]): RoseExercise =
+    RoseExercise(
+      id, semanticVersion, title, author, exText, state, fieldWidth, fieldHeight, isMultiplayer,
       inputTypes = roseInputTypeFormValues map (r => applyRoseInputType(r, id, semanticVersion)),
       sampleSolutions = roseSampleSolutionFormValues map (r => applyRoseSampleSolution(r, id, semanticVersion))
     )
 
-  override def unapplyCompEx(compEx: RoseCompleteEx): Option[FormData] =
+  override def unapplyCompEx(compEx: RoseExercise): Option[FormData] =
     Some(
       (compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state, compEx.fieldWidth, compEx.fieldHeight, compEx.isMultiplayer,
         compEx.inputTypes map unapplyRoseInputType,
         compEx.sampleSolutions map unapplyRoseSampleSolution)
     )
 
-  override val format: Form[RoseCompleteEx] = Form(
+  override val format: Form[RoseExercise] = Form(
     mapping(
       idName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,

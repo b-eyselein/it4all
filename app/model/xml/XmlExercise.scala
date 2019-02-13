@@ -6,15 +6,10 @@ import model._
 import play.twirl.api.Html
 
 
-final case class XmlCompleteEx(ex: XmlExercise, samples: Seq[XmlSample]) extends SingleCompleteEx[XmlExPart] {
+final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                             grammarDescription: String, rootNode: String, samples: Seq[XmlSample]) extends SingleExercise[XmlExPart] {
 
-  override type E = XmlExercise
-
-  // remaining fields from XmlExercise
-
-  def grammarDescription: String = ex.grammarDescription
-
-  def rootNode: String = ex.rootNode
+  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
   // other methods
 
@@ -30,11 +25,6 @@ final case class XmlCompleteEx(ex: XmlExercise, samples: Seq[XmlSample]) extends
   }
 
 }
-
-
-final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             grammarDescription: String, rootNode: String)  extends HasBaseValues
-
 
 final case class XmlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sampleGrammarString: String, sampleDocument: String)
   extends SampleSolution[(DocTypeDef, String)] {

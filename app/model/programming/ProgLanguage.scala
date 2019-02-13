@@ -7,11 +7,11 @@ import scala.collection.immutable.IndexedSeq
 
 sealed abstract class ProgLanguage(val languageName: String, val aceName: String, val fileEnding: String) extends EnumEntry {
 
-  def activityDiagramDisplay(exercise: ProgCompleteEx): String
+  def activityDiagramDisplay(exercise: ProgExercise): String
 
-  def activityDiagramDeclaration(exercise: ProgCompleteEx): String
+  def activityDiagramDeclaration(exercise: ProgExercise): String
 
-  def buildParams(exercise: ProgCompleteEx): String
+  def buildParams(exercise: ProgExercise): String
 
 }
 
@@ -26,13 +26,13 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
 
   case object PYTHON_3 extends ProgLanguage("Python 3", "python", "py") {
 
-    override def activityDiagramDisplay(exercise: ProgCompleteEx): String = exercise.maybeClassDiagramPart match {
+    override def activityDiagramDisplay(exercise: ProgExercise): String = exercise.maybeClassDiagramPart match {
       case None => exercise.functionName + buildParams(exercise)
     }
 
-    override def activityDiagramDeclaration(exercise: ProgCompleteEx): String = "def " + exercise.functionName + buildParams(exercise)
+    override def activityDiagramDeclaration(exercise: ProgExercise): String = "def " + exercise.functionName + buildParams(exercise)
 
-    override def buildParams(exercise: ProgCompleteEx): String = {
+    override def buildParams(exercise: ProgExercise): String = {
       val inputs = exercise.inputTypes map (it => it.inputName)
 
       val allInputs: Seq[String] = if (exercise.maybeClassDiagramPart.isEmpty) inputs else "self" +: inputs
@@ -44,11 +44,11 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
 
   case object JAVA_8 extends ProgLanguage("Java 8", "java", "java") {
 
-    override def activityDiagramDisplay(exercise: ProgCompleteEx): String = ???
+    override def activityDiagramDisplay(exercise: ProgExercise): String = ???
 
-    override def activityDiagramDeclaration(exercise: ProgCompleteEx): String = ???
+    override def activityDiagramDeclaration(exercise: ProgExercise): String = ???
 
-    override def buildParams(exercise: ProgCompleteEx): String =
+    override def buildParams(exercise: ProgExercise): String =
       exercise.inputTypes sortBy (_.id) map (it => it.inputType.typeName + " " + it.inputName) mkString ", "
 
   }

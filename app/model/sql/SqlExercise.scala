@@ -26,15 +26,15 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
 // Classes for use
 
-final case class SqlCompleteScenario(override val coll: SqlScenario, override val exercises: Seq[SqlCompleteEx]) extends CompleteCollection {
+final case class SqlCompleteScenario(override val coll: SqlScenario, override val exercises: Seq[SqlExercise]) extends CompleteCollection {
 
-  override type CompEx = SqlCompleteEx
+  override type CompEx = SqlExercise
 
   override type Coll = SqlScenario
 
-  override def exercisesWithFilter(filter: String): Seq[SqlCompleteEx] = SqlExerciseType.withNameInsensitiveOption(filter) map (exType => getExercisesByType(exType)) getOrElse Seq[SqlCompleteEx]()
+  override def exercisesWithFilter(filter: String): Seq[SqlExercise] = SqlExerciseType.withNameInsensitiveOption(filter) map (exType => getExercisesByType(exType)) getOrElse Seq[SqlExercise]()
 
-  def getExercisesByType(exType: SqlExerciseType): Seq[SqlCompleteEx] = exercises filter (_.exerciseType == exType)
+  def getExercisesByType(exType: SqlExerciseType): Seq[SqlExercise] = exercises filter (_.exerciseType == exType)
 
   override def renderRest: Html = new Html(
     s"""<div class="row">
@@ -44,19 +44,13 @@ final case class SqlCompleteScenario(override val coll: SqlScenario, override va
 
 }
 
-final case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteExInColl {
+final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                             collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, override val tags: Seq[SqlExTag],
+                             hint: Option[String], samples: Seq[SqlSample]) extends ExerciseInColl {
 
-  override type E = SqlExercise
-
-  // remaining fields from SqlExercise
-
-  def exerciseType: SqlExerciseType = ex.exerciseType
-
-  def hint: Option[String] = ex.hint
+  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
   // other methods
-
-  override def tags: Seq[SqlExTag] = (ex.tags split SqlConsts.tagJoinChar).toSeq flatMap SqlExTag.withNameInsensitiveOption
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.collectionExercises.sql.sqlExPreview(this)
@@ -66,14 +60,11 @@ final case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends
 // final case classes for db
 
 final case class SqlScenario(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             shortName: String) extends ExerciseCollection[SqlCompleteEx] {
+                             shortName: String) extends ExerciseCollection[SqlExercise] {
 
   val imageUrl: String = shortName + ".png"
 
 }
-
-final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends HasBaseValuesInColl
 
 final case class SqlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, sample: String)
 

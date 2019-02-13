@@ -17,13 +17,13 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   val basePath: Path = Paths.get("conf", "resources", "programming")
 
-  implicit object ProgExYamlFormat extends MyYamlObjectFormat[ProgCompleteEx] {
+  implicit object ProgExYamlFormat extends MyYamlObjectFormat[ProgExercise] {
 
-    override def readObject(yamlObject: YamlObject): Try[ProgCompleteEx] = for {
+    override def readObject(yamlObject: YamlObject): Try[ProgExercise] = for {
       baseValues <- readBaseValues(yamlObject)
       folderIdentifier <- yamlObject.stringField(identifierName)
 
-      functionname <- yamlObject.stringField(functionNameName)
+      functionName <- yamlObject.stringField(functionNameName)
       outputType <- yamlObject.enumField(outputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
       baseData <- yamlObject.optJsonField(baseDataName)
 
@@ -45,22 +45,22 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       // FIXME: return ...
         Logger.error("Could not read programming sample solution", sampleSolutionFailure.exception)
 
-      ProgCompleteEx(
-        ProgExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-          folderIdentifier, functionname, outputType, baseData),
+      ProgExercise(
+        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        folderIdentifier, functionName, outputType, baseData,
         inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
       )
     }
 
-    override def write(completeEx: ProgCompleteEx): YamlObject = {
-      val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(completeEx.id, completeEx.semanticVersion, completeEx.folderIdentifier)
+    override def write(exercise: ProgExercise): YamlObject = {
+      val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(exercise.id, exercise.semanticVersion, exercise.folderIdentifier)
       YamlObject(
-        writeBaseValues(completeEx.baseValues) ++
+        writeBaseValues(exercise.baseValues) ++
           Map[YamlValue, YamlValue](
-            YamlString(functionNameName) -> YamlString(completeEx.functionName),
-            YamlString(inputTypesName) -> YamlArr(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName))),
-            YamlString(sampleSolutionsName) -> YamlArr(completeEx.sampleSolutions map progSampleSolYamlFormat.write),
-            YamlString(sampleTestDataName) -> YamlArr(completeEx.sampleTestData map ProgSampleTestdataYamlFormat(completeEx.baseValues).write)
+            YamlString(functionNameName) -> YamlString(exercise.functionName),
+            YamlString(inputTypesName) -> YamlArr(exercise.inputTypes.map(it => YamlString(it.inputType.typeName))),
+            YamlString(sampleSolutionsName) -> YamlArr(exercise.sampleSolutions map progSampleSolYamlFormat.write),
+            YamlString(sampleTestDataName) -> YamlArr(exercise.sampleTestData map ProgSampleTestdataYamlFormat(exercise.baseValues).write)
           )
       )
     }

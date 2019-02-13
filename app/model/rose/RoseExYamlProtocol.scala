@@ -11,9 +11,9 @@ import scala.util.Try
 
 object RoseExYamlProtocol extends MyYamlProtocol {
 
-  implicit object RoseExYamlFormat extends MyYamlObjectFormat[RoseCompleteEx] {
+  implicit object RoseExYamlFormat extends MyYamlObjectFormat[RoseExercise] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[RoseCompleteEx] = for {
+    override protected def readObject(yamlObject: YamlObject): Try[RoseExercise] = for {
       baseValues <- readBaseValues(yamlObject)
 
       fieldWidth <- yamlObject.intField("fieldWidth")
@@ -30,11 +30,11 @@ object RoseExYamlProtocol extends MyYamlProtocol {
       //FIXME: return...
         Logger.error("Could not read rose sample sol", sampleSolFailure.exception)
 
-      RoseCompleteEx(RoseExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        fieldWidth, fieldHeight, isMp), inputTypes._1, sampleSolutions._1)
+      RoseExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        fieldWidth, fieldHeight, isMp, inputTypes._1, sampleSolutions._1)
     }
 
-    override def write(completeEx: RoseCompleteEx): YamlObject = ???
+    override def write(exercise: RoseExercise): YamlObject = ???
 
   }
 

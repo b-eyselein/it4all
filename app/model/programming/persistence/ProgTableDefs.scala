@@ -1,8 +1,8 @@
-package model.programming
+package model.programming.persistence
 
-import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
+import model.programming._
 import model.uml.UmlClassDiagram
 import model.{ExerciseState, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -12,15 +12,16 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgCompleteEx, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
-
+class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+                                          (override implicit val executionContext: ExecutionContext)
+  extends HasDatabaseConfigProvider[JdbcProfile]
+    with SingleExerciseTableDefs[ProgExercise, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
-  override protected type ExDbValues = ProgExercise
+  override protected type ExDbValues = DbProgExercise
   override protected type ExTableDef = ProgExercisesTable
   override protected type SolTableDef = ProgSolutionTable
   override protected type ReviewsTableDef = ProgExerciseReviewsTable
@@ -39,18 +40,18 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Helper methods
 
-  override protected def exDbValuesFromCompleteEx(compEx: ProgCompleteEx): ProgExercise = compEx.ex
+  override protected def exDbValuesFromExercise(compEx: ProgExercise): DbProgExercise = ProgDbModels.dbExerciseFromExercise(compEx)
 
   // Queries
 
-  override def completeExForEx(ex: ProgExercise): Future[ProgCompleteEx] = for {
+  override def completeExForEx(ex: DbProgExercise): Future[ProgExercise] = for {
     samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result)
     sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result)
     maybeClassDiagramPart <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption)
-  } yield ProgCompleteEx(ex, inputTypes, samples, sampleTestData, maybeClassDiagramPart)
+  } yield ProgDbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, maybeClassDiagramPart)
 
-  override def saveExerciseRest(compEx: ProgCompleteEx): Future[Boolean] = for {
+  override def saveExerciseRest(compEx: ProgExercise): Future[Boolean] = for {
     samplesSaved <- saveSeq[ProgSampleSolution](compEx.sampleSolutions, i => db.run(sampleSolutions += i))
     inputTypesSaved <- saveSeq[ProgInput](compEx.inputTypes, i => db.run(inputTypesQuery += i))
     sampleTestDataSaved <- saveSeq[SampleTestData](compEx.sampleTestData, i => db.run(sampleTestData += i))
@@ -88,8 +89,8 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def baseDataAsJson: Rep[JsValue] = column[JsValue]("base_data_json")
 
 
-    override def * : ProvenShape[ProgExercise] = (id, semanticVersion, title, author, text, state,
-      folderIdentifier, functionName, outputType, baseDataAsJson.?) <> (ProgExercise.tupled, ProgExercise.unapply)
+    override def * : ProvenShape[DbProgExercise] = (id, semanticVersion, title, author, text, state,
+      folderIdentifier, functionName, outputType, baseDataAsJson.?) <> (DbProgExercise.tupled, DbProgExercise.unapply)
 
   }
 

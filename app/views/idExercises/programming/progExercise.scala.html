@@ -1,6 +1,6 @@
-@import model.programming.{ProgToolMain, ProgCompleteEx, ProgExPart}
+@import model.programming.{ProgToolMain, ProgExercise, ProgExPart}
 
-@(user: model.User, toolMainObject: ProgToolMain, exercise: ProgCompleteEx, oldSolution: String, part: ProgExPart)(implicit
+@(user: model.User, toolMainObject: ProgToolMain, exercise: ProgExercise, oldSolution: String, part: ProgExPart)(implicit
         requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {

@@ -4,7 +4,7 @@ import better.files.File
 import model.ExerciseState.APPROVED
 import model.core.{NoSuchExerciseException, ReadAndSaveResult, SolutionTransferException}
 import model.persistence.SingleExerciseTableDefs
-import model.{DBPartSolution, ExPart, ExerciseReview, ExerciseState, Points, SemanticVersion, SingleCompleteEx, User}
+import model.{DBPartSolution, ExPart, ExerciseReview, ExerciseState, Points, SemanticVersion, SingleExercise, User}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
@@ -21,7 +21,6 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Abstract Types
 
-
   type SolType
 
   type DBSolType <: DBPartSolution[PartType, SolType]
@@ -30,12 +29,11 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   type ReviewType <: ExerciseReview[PartType]
 
-  override type CompExType <: SingleCompleteEx[PartType]
+  override type ExType <: SingleExercise[PartType]
 
-  //  override type Tables <: IdExerciseTableDefs[ExType, CompExType, PartType, ReviewType]
-  override type Tables <: SingleExerciseTableDefs[CompExType, SolType, DBSolType, PartType, ReviewType]
+  override type Tables <: SingleExerciseTableDefs[ExType, SolType, DBSolType, PartType, ReviewType]
 
-  override type ReadType = CompExType
+  override type ReadType = ExType
 
   // Other members
 
@@ -43,21 +41,21 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Forms
 
-  def exerciseReviewForm(username: String, completeExercise: CompExType, exercisePart: PartType): Form[ReviewType]
+  def exerciseReviewForm(username: String, exercise: ExType, exercisePart: PartType): Form[ReviewType]
 
-  def compExForm: Form[CompExType]
+  def exerciseForm: Form[ExType]
 
   // DB
 
   def futureSaveReview(review: ReviewType): Future[Boolean] = tables.futureSaveReview(review)
 
-  def futureCompleteExById(id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(id)
+  def futureExerciseById(id: Int): Future[Option[ExType]] = tables.futureExerciseById(id)
 
-  def futureCompleteExByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[CompExType]] =
-    tables.futureCompleteExByIdAndVersion(id, semVer)
+  def futureExerciseByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[ExType]] =
+    tables.futureExerciseByIdAndVersion(id, semVer)
 
   override def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(exercises map {
-    ex => tables.futureInsertCompleteEx(ex) map (saveRes => (ex, saveRes))
+    ex => tables.futureInsertExercise(ex) map (saveRes => (ex, saveRes))
   })
 
   def futureHighestId: Future[Int] = tables.futureHighestExerciseId
@@ -74,11 +72,11 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
-  private def futureCompleteExesForPage(page: Int): Future[Seq[CompExType]] = tables.futureCompleteExes map {
-    allExes: Seq[CompExType] =>
+  private def futureCompleteExesForPage(page: Int): Future[Seq[ExType]] = tables.futureAllExes map {
+    allExes: Seq[ExType] =>
       val STEP = 10
 
-      val distinctExes: Seq[CompExType] = allExes.filter(_.state == APPROVED)
+      val distinctExes: Seq[ExType] = allExes.filter(_.state == APPROVED)
 
       val sliceStart = Math.max(0, (page - 1) * STEP)
       val sliceEnd = Math.min(page * STEP, distinctExes.size)
@@ -86,9 +84,9 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
       distinctExes.slice(sliceStart, sliceEnd)
   }
 
-  private def getRoutesForEx(user: User, exes: Seq[CompExType]): Future[Seq[ExAndRoute]] = Future.sequence {
+  private def getRoutesForEx(user: User, exes: Seq[ExType]): Future[Seq[ExAndRoute]] = Future.sequence {
     exes.groupBy(_.id).map {
-      case (id: Int, allVersionsOfEx: Seq[CompExType]) =>
+      case (id: Int, allVersionsOfEx: Seq[ExType]) =>
         exerciseRoutesForUser(user, allVersionsOfEx.head).map {
           routes: Seq[CallForExPart] =>
             val versions = allVersionsOfEx.map(_.semanticVersion)
@@ -107,30 +105,30 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Helper methods for admin
 
-  def instantiateExercise(id: Int, author: String, state: ExerciseState): CompExType
+  def instantiateExercise(id: Int, author: String, state: ExerciseState): ExType
 
   // TODO: scalarStyle = Folded if fixed...
-  override def yamlString: Future[String] = futureCompleteExes map {
+  override def yamlString: Future[String] = futureAllExercises map {
     exes => "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   }
 
   // Views
 
-  def renderAdminExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList)
+  def renderAdminExerciseEditForm(user: User, newEx: ExType, isCreation: Boolean, toolList: ToolList)
                                  (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
-  def renderUserExerciseEditForm(user: User, newExForm: Form[CompExType], isCreation: Boolean)
+  def renderUserExerciseEditForm(user: User, newExForm: Form[ExType], isCreation: Boolean)
                                 (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
-  def adminExerciseList(admin: User, exes: Seq[CompExType], toolList: ToolList): Html =
+  def adminExerciseList(admin: User, exes: Seq[ExType], toolList: ToolList): Html =
     views.html.admin.idExes.idExerciseAdminListView(admin, exes, this, toolList)
 
   // FIXME: former class IdExerciseToolMain
 
   // Methods
 
-  def checkAndCreateSolDir(username: String, exercise: CompExType): Try[File] =
+  def checkAndCreateSolDir(username: String, exercise: ExType): Try[File] =
     Try(solutionDirForExercise(username, exercise.id).createDirectories())
 
   def futureSaveSolution(sol: DBSolType): Future[Boolean] = tables.futureSaveSolution(sol)
@@ -160,7 +158,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   // Correction
 
   // FIXME: change return type of function!
-  def correctAbstract(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
+  def correctAbstract(user: User, exercise: ExType, part: PartType)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
     readSolution(user, exercise, part) match {
       case Failure(exception)    => Future.successful(Failure(exception))
       case Success(userSolution) => correctEx(user, userSolution, exercise, part) flatMap {
@@ -176,11 +174,11 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   def futureSampleSolutionsForExerciseAndPart(id: Int, part: PartType): Future[Seq[String]] = tables.futureSampleSolutionsForExercisePart(id, part)
 
-  protected def instantiateSolution(id: Int, username: String, exercise: CompExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): DBSolType
+  protected def instantiateSolution(id: Int, username: String, exercise: ExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): DBSolType
 
-  protected def readSolution(user: User, exercise: CompExType, part: PartType)(implicit request: Request[AnyContent]): Try[SolType]
+  protected def readSolution(user: User, exercise: ExType, part: PartType)(implicit request: Request[AnyContent]): Try[SolType]
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompExType, part: PartType): Future[Try[CompResult]]
+  protected def correctEx(user: User, sol: SolType, exercise: ExType, part: PartType): Future[Try[CompResult]]
 
   // Views
 
@@ -200,13 +198,13 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
     views.html.admin.idExes.idExerciseAdminIndex(admin, stats, this, toolList)
   }
 
-  override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[CompExType], toolList: ToolList): Html =
+  override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ExType], toolList: ToolList): Html =
     views.html.admin.idExes.idExercisePreview(user, read, this, toolList)
 
-  def renderExercise(user: User, exercise: CompExType, part: PartType, oldSolution: Option[DBSolType])
+  def renderExercise(user: User, exercise: ExType, part: PartType, oldSolution: Option[DBSolType])
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
-  def renderExerciseReviewForm(user: User, exercise: CompExType, part: PartType)(
+  def renderExerciseReviewForm(user: User, exercise: ExType, part: PartType)(
     implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.evaluateExerciseForm(user, exercise, part, this)
 
@@ -214,7 +212,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   override def indexCall: Call = controllers.routes.MainExerciseController.index(urlPart)
 
-  def exerciseRoutesForUser(user: User, exercise: CompExType): Future[Seq[CallForExPart]] = Future.sequence(exParts map {
+  def exerciseRoutesForUser(user: User, exercise: ExType): Future[Seq[CallForExPart]] = Future.sequence(exParts map {
     exPart: PartType =>
       // FIXME: check if user can solve this part!
 

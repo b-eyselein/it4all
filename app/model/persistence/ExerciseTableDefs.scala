@@ -1,14 +1,14 @@
 package model.persistence
 
 import model.learningPath.LearningPathTableDefs
-import model.{CompleteEx, HasBaseValues, SemanticVersion}
+import model.{Exercise, HasBaseValues, SemanticVersion}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.ForeignKeyQuery
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefs[CompEx <: CompleteEx] extends LearningPathTableDefs {
+trait ExerciseTableDefs[CompEx <: Exercise] extends LearningPathTableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -25,7 +25,7 @@ trait ExerciseTableDefs[CompEx <: CompleteEx] extends LearningPathTableDefs {
 
   // Helper methods
 
-  protected def exDbValuesFromCompleteEx(compEx: CompEx): ExDbValues
+  protected def exDbValuesFromExercise(compEx: CompEx): ExDbValues
 
   // Numbers
 
@@ -33,16 +33,16 @@ trait ExerciseTableDefs[CompEx <: CompleteEx] extends LearningPathTableDefs {
 
   // Reading
 
-  def futureCompleteExes: Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
+  def futureAllExes: Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
 
-  def futureCompleteExById(id: Int): Future[Option[CompEx]] = db.run {
+  def futureExerciseById(id: Int): Future[Option[CompEx]] = db.run {
     exTable.filter(_.id === id).sortBy(_.semanticVersion.desc).result.headOption
   } flatMap {
     case Some(ex) => completeExForEx(ex) map Some.apply
     case None     => Future.successful(None)
   }
 
-  def futureCompleteExByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[CompEx]] = db.run {
+  def futureExerciseByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[CompEx]] = db.run {
     exTable.filter(e => e.id === id && e.semanticVersion === semVer).result.headOption
   } flatMap {
     case Some(ex) => completeExForEx(ex) map Some.apply
@@ -53,7 +53,7 @@ trait ExerciseTableDefs[CompEx <: CompleteEx] extends LearningPathTableDefs {
 
   // Saving
 
-  def futureInsertCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable += exDbValuesFromCompleteEx(compEx)) flatMap {
+  def futureInsertExercise(compEx: CompEx): Future[Boolean] = db.run(exTable += exDbValuesFromExercise(compEx)) flatMap {
     insertCount => saveExerciseRest(compEx)
   }
 

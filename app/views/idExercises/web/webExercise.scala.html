@@ -1,6 +1,6 @@
-@import model.web.{WebCompleteEx, WebExPart, WebToolMain}
+@import model.web.{WebExercise, WebExPart, WebToolMain}
 
-@(user: model.User, exercise: WebCompleteEx, part: WebExPart, oldSolution: String, toolMainObject: WebToolMain)(
+@(user: model.User, exercise: WebExercise, part: WebExPart, oldSolution: String, toolMainObject: WebToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {

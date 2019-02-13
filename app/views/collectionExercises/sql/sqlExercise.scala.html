@@ -1,6 +1,6 @@
-@import model.sql.{SqlCompleteEx, SqlQueryResult, SqlScenario, SqlToolMain}
+@import model.sql.{SqlExercise, SqlQueryResult, SqlScenario, SqlToolMain}
 
-@(user: model.User, exercise: SqlCompleteEx, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario,
+@(user: model.User, exercise: SqlExercise, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario,
         numOfExes: Int, toolMainObject: SqlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {

@@ -35,7 +35,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Abstract types
 
-  override type CompExType = SqlCompleteEx
+  override type ExType = SqlExercise
 
   override type CollType = SqlScenario
 
@@ -78,7 +78,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
       case _               => None
     }
 
-  override protected def compExTypeForm(collId: Int): Form[SqlCompleteEx] = SqlFormMappings.sqlCompleteExForm(collId)
+  override protected def compExTypeForm(collId: Int): Form[SqlExercise] = SqlFormMappings.sqlExerciseForm(collId)
 
   // Views
 
@@ -90,7 +90,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
        |  </div>
        |</div>""".stripMargin)
 
-  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int, maybeOldSolution: Option[DBSolType])
+  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, numOfExes: Int, maybeOldSolution: Option[DBSolType])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
     val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
@@ -100,15 +100,15 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes, this)
   }
 
-  override def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
+  override def renderExerciseEditForm(user: User, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.collectionExercises.sql.editSqlExercise(user, newEx, isCreation, this, toolList)
 
   // FIXME: remove this method...
-  override def renderEditRest(exercise: SqlCompleteEx): Html = ???
+  override def renderEditRest(exercise: SqlExercise): Html = ???
 
   // Correction
 
-  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Try[SqlCorrResult] =
+  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlExercise): Try[SqlCorrResult] =
     correctorsAndDaos.get(exercise.exerciseType) match {
       case None                   => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}"))
       case Some((corrector, dao)) => Try(corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario))
@@ -117,13 +117,13 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Helper methods
 
   override def instantiateCollection(id: Int, state: ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
-    SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, shortName = ""), exercises = Seq[SqlCompleteEx]())
+    SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, shortName = ""), exercises = Seq[SqlExercise]())
 
-  override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): SqlCompleteEx = SqlCompleteEx(
-    SqlExercise(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
-      collectionId = collId, collSemVer = SemanticVersion(0, 1, 0), tags = "", hint = None), samples = Seq[SqlSample]())
+  override def instantiateExercise(collId: Int, id: Int, state: ExerciseState): SqlExercise = SqlExercise(
+    id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
+    collectionId = collId, collSemVer = SemanticVersion(0, 1, 0), tags = Seq[SqlExTag](), hint = None, samples = Seq[SqlSample]())
 
-  override def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlCompleteEx, solution: String,
+  override def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlExercise, solution: String,
                                    points: Points, maxPoints: Points): SqlSolution =
     SqlSolution(id, username, exercise.id, exercise.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
 

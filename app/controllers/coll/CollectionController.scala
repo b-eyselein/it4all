@@ -145,7 +145,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def adminExercisesInCollection(tool: String, collId: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteExesInColl(collId) map { exesInColl =>
+      toolMain.futureExercisesInColl(collId) map { exesInColl =>
         // FIXME: with collection?
         Ok(views.html.admin.collExes.adminCollExercisesOverview(admin, collId, exesInColl, toolMain, toolList))
       }
@@ -196,8 +196,8 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None             => Future(BadRequest(s"There is no collection with id $collId!"))
         case Some(collection) =>
 
-          val values: Future[(Option[toolMain.CompExType], Int, Option[toolMain.DBSolType])] = for {
-            compEx <- toolMain.futureCompleteExById(collId, id)
+          val values: Future[(Option[toolMain.ExType], Int, Option[toolMain.DBSolType])] = for {
+            compEx <- toolMain.futureExerciseById(collId, id)
             numOfExes <- toolMain.numOfExesInColl(collId)
             oldSolution <- toolMain.futureMaybeOldSolution(user, collId, id)
           } yield (compEx, numOfExes, oldSolution)
@@ -236,7 +236,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def editExerciseForm(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteExById(collId, exId) map {
+      toolMain.futureExerciseById(collId, exId) map {
         case None              => Ok(toolMain.renderExerciseEditForm(user, toolMain.instantiateExercise(collId, exId, ExerciseState.RESERVED), isCreation = true, toolList))
         case Some(newExercise) => Ok(toolMain.renderExerciseEditForm(user, newExercise, isCreation = false, toolList))
       }
@@ -246,7 +246,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def editExercise(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
-      val onFormError: Form[toolMain.CompExType] => Future[Result] = { formWithErrors =>
+      val onFormError: Form[toolMain.ExType] => Future[Result] = { formWithErrors =>
 
         for (formError <- formWithErrors.errors)
           Logger.error(s"The form has had an error for key '${formError.key}': " + formError.message)
@@ -255,8 +255,8 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         Future(BadRequest("TODO!"))
       }
 
-      val onFormRead: toolMain.CompExType => Future[Result] = { newExercise =>
-        toolMain.futureInsertCompleteEx(newExercise) map {
+      val onFormRead: toolMain.ExType => Future[Result] = { newExercise =>
+        toolMain.futureInsertExercise(newExercise) map {
           case false =>
             // TODO: make view?
             BadRequest("Your exercise could not be saved...")

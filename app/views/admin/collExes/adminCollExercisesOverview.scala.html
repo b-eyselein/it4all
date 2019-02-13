@@ -1,8 +1,7 @@
-@import model.{User, CompleteExInColl}
+@import model.{User, ExerciseInColl}
 @import model.toolMains.{CollectionToolMain, ToolList}
 
-@(user: User, collectionId: Int, completeExercises: Seq[CompleteExInColl],
-        toolMainObject: CollectionToolMain, toolList: ToolList)
+@(user: User, collectionId: Int, exercises: Seq[ExerciseInColl], toolMainObject: CollectionToolMain, toolList: ToolList)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -29,7 +28,7 @@
             </tr>
         </thead>
         <tbody>
-        @for(exercise <- completeExercises) {
+        @for(exercise <- exercises) {
             <tr id="tr1_@exercise.id">
                 <td>@exercise.id</td>
                 <td>

@@ -4,6 +4,7 @@ import javax.inject.Inject
 import model.core.overviewHelpers.{SolvedState, SolvedStates}
 import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
+import model.sql.persistence.{DbSqlExercise, SqlDbModels}
 import model.{SemanticVersion, User}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -15,13 +16,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlCompleteEx, SqlScenario, SqlCompleteScenario, String, SqlSolution] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlScenario, SqlCompleteScenario, String, SqlSolution] {
 
   import profile.api._
 
   // Table types
 
-  override protected type ExDbValues = SqlExercise
+  override protected type ExDbValues = DbSqlExercise
 
   override protected type ExTableDef = SqlExercisesTable
 
@@ -41,31 +42,24 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Helper methods
 
-  override def exDbValuesFromCompleteEx(compEx: SqlCompleteEx): SqlExercise = compEx.ex
+  override def exDbValuesFromExercise(compEx: SqlExercise): DbSqlExercise = SqlDbModels.dbExerciseFromExercise(compEx)
 
   // Reading
 
-  override def futureCompleteExById(collId: Int, id: Int): Future[Option[SqlCompleteEx]] = for {
+  override def futureExerciseById(collId: Int, id: Int): Future[Option[SqlExercise]] = for {
     maybeEx <- db.run(exTable.filter(e => e.id === id && e.collectionId === collId).result.headOption)
     samples <- db.run(sqlSamples.filter(sa => sa.exerciseId === id && sa.collId === collId).result)
-  } yield maybeEx map (e => SqlCompleteEx(e, samples))
+  } yield maybeEx map (dbEx => SqlDbModels.exerciseFromDbValues(dbEx, samples))
 
-  override def futureCompleteExesInColl(collId: Int): Future[Seq[SqlCompleteEx]] = for {
-    allExes: Seq[SqlExercise] <- db.run(exTable.filter(_.collectionId === collId).result)
-    allSamples: Seq[SqlSample] <- db.run(sqlSamples.filter(_.collId === collId).result)
-  } yield {
-    // match ex and samples...
+  override def futureExercisesInColl(collId: Int): Future[Seq[SqlExercise]] =
+    db.run(exTable.filter(_.collectionId === collId).result) flatMap { allExes =>
 
-    @annotation.tailrec
-    def go(exes: List[SqlExercise], samples: Seq[SqlSample], compExes: Seq[SqlCompleteEx]): Seq[SqlCompleteEx] = exes match {
-      case Nil          => compExes
-      case head :: tail =>
-        val (fittingSamples, otherSamples) = samples.partition(_.exerciseId == head.id)
-        go(tail, otherSamples, compExes :+ SqlCompleteEx(head, fittingSamples))
+      Future.sequence(allExes map { dbEx =>
+        db.run(sqlSamples.filter {
+          sample => sample.collId === collId && sample.exerciseId === dbEx.id && sample.exSemVer === dbEx.semanticVersion
+        }.result) map { samples => SqlDbModels.exerciseFromDbValues(dbEx, samples) }
+      })
     }
-
-    go(allExes.toList, allSamples, Seq[SqlCompleteEx]())
-  }
 
   override def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = db.run(
     solTable.filter {
@@ -81,7 +75,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   )
 
 
-  override protected def completeExForEx(ex: SqlExercise): Future[SqlCompleteEx] = samplesForEx(ex.collectionId, ex.id) map (samples => SqlCompleteEx(ex, samples))
+  override protected def completeExForEx(ex: DbSqlExercise): Future[SqlExercise] =
+    samplesForEx(ex.collectionId, ex.id) map (samples => SqlDbModels.exerciseFromDbValues(ex, samples))
 
   override def completeCollForColl(coll: SqlScenario): Future[SqlCompleteScenario] =
     db.run(exTable.filter(_.collectionId === coll.id).result) flatMap (exes => Future.sequence(exes map completeExForEx)) map (exes => SqlCompleteScenario(coll, exes))
@@ -96,14 +91,14 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   def saveSolution(sol: SqlSolution): Future[Boolean] = db.run(solTable insertOrUpdate sol) map (_ => true) recover { case _: Throwable => false }
 
-  override def saveExerciseRest(compEx: SqlCompleteEx): Future[Boolean] =
+  override def saveExerciseRest(compEx: SqlExercise): Future[Boolean] =
     saveSeq[SqlSample](compEx.samples, saveSqlSample)
 
   override def saveCompleteColl(completeScenario: SqlCompleteScenario): Future[Boolean] =
-    db.run(collTable insertOrUpdate completeScenario.coll) flatMap (_ => saveSeq(completeScenario.exercises, saveSqlCompleteEx))
+    db.run(collTable insertOrUpdate completeScenario.coll) flatMap (_ => saveSeq(completeScenario.exercises, saveSqlExercise))
 
-  private def saveSqlCompleteEx(completeEx: SqlCompleteEx): Future[Boolean] =
-    db.run(exTable insertOrUpdate completeEx.ex) flatMap { _ => saveSeq(completeEx.samples, saveSqlSample) }
+  private def saveSqlExercise(sqlExercise: SqlExercise): Future[Boolean] =
+    db.run(exTable insertOrUpdate SqlDbModels.dbExerciseFromExercise(sqlExercise)) flatMap { _ => saveSeq(sqlExercise.samples, saveSqlSample) }
 
   private def saveSqlSample(sample: SqlSample): Future[Boolean] =
     db.run(sqlSamples insertOrUpdate sample) map (_ => true) recover { case e: Throwable =>
@@ -143,7 +138,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def tags: Rep[String] = column[String](tagsName)
 
 
-    override def * : ProvenShape[SqlExercise] = (id, semanticVersion, title, author, text, state, collectionId, collSemVer, exerciseType, tags, hint.?) <> (SqlExercise.tupled, SqlExercise.unapply)
+    override def * : ProvenShape[DbSqlExercise] = (id, semanticVersion, title, author, text, state, collectionId, collSemVer, exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)
 
   }
 
@@ -164,7 +159,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, collId, collSemVer))
 
-    def exerciseFk: ForeignKeyQuery[SqlExercisesTable, SqlExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer, collId, collSemVer), exTable)(exes =>
+    def exerciseFk: ForeignKeyQuery[SqlExercisesTable, DbSqlExercise] = foreignKey("exercise_fk", (exerciseId, exSemVer, collId, collSemVer), exTable)(exes =>
       (exes.id, exes.semanticVersion, exes.collectionId, exes.collSemVer))
 
 

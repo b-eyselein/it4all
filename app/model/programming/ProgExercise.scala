@@ -6,34 +6,28 @@ import play.twirl.api.Html
 
 // Classes for use
 
-final case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
-                                sampleTestData: Seq[SampleTestData], maybeClassDiagramPart: Option[UmlClassDiagPart])
-  extends SingleCompleteEx[ProgExPart] {
+final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                              folderIdentifier: String, functionName: String, outputType: ProgDataType, baseData: Option[JsValue],
+                              inputTypes: Seq[ProgInput],
+                              sampleSolutions: Seq[ProgSampleSolution],
+                              sampleTestData: Seq[SampleTestData],
+                              maybeClassDiagramPart: Option[UmlClassDiagPart]) extends SingleExercise[ProgExPart] {
 
-  override type E = ProgExercise
-
-  // remanining fiels from ProgExercise
-
-  def folderIdentifier: String = ex.folderIdentifier
-
-  def functionName: String = ex.functionname
-
-  def outputType: ProgDataType = ex.outputType
-
-  def baseData: Option[JsValue] = ex.baseData
+  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
   // Other methods
+
+  val inputCount: Int = inputTypes.size
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.programming.progPreview(this)
 
-  val inputCount: Int = inputTypes.size
-
   override def hasPart(partType: ProgExPart): Boolean = partType match {
-    case ProgExParts.Implementation  => true
-    case ProgExParts.ActivityDiagram => true
-    // TODO: Creation of test data is currently disabled
-    case ProgExParts.TestdataCreation => false
+    case ProgExParts.Implementation   => true
+    case ProgExParts.ActivityDiagram  => true
+    case ProgExParts.TestdataCreation =>
+      // TODO: Creation of test data is currently disabled
+      false
   }
 
   def buildTestDataFileContent(completeTestData: Seq[TestData], extendedUnitTests: Boolean): JsValue =
@@ -43,11 +37,6 @@ final case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sa
 }
 
 // Case classes for tables
-
-final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                              folderIdentifier: String, functionname: String, outputType: ProgDataType,
-                              baseData: Option[JsValue]) extends HasBaseValues
-
 
 final case class ProgInput(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputName: String, inputType: ProgDataType)
 
@@ -64,18 +53,7 @@ sealed trait TestData {
 
 final case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue) extends TestData
 
-final case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue, username: String, state: ExerciseState) extends TestData {
-
-  //  def toJson: JsObject = Json.obj(
-  //    idName -> id,
-  //    exerciseIdName -> exerciseId,
-  //    usernameName -> username,
-  //    outputName -> output,
-  //    statusName -> state.entryName,
-  //    inputsName -> inputAsJson
-  //  )
-
-}
+final case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue, username: String, state: ExerciseState) extends TestData
 
 // Solution types
 

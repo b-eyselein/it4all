@@ -13,9 +13,9 @@ object XmlExYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger("model.xml.XmlExYamlProtocol")
 
-  implicit object XmlExYamlFormat extends MyYamlObjectFormat[XmlCompleteEx] {
+  implicit object XmlExYamlFormat extends MyYamlObjectFormat[XmlExercise] {
 
-    override def readObject(yamlObject: YamlObject): Try[XmlCompleteEx] = for {
+    override def readObject(yamlObject: YamlObject): Try[XmlExercise] = for {
       baseValues <- readBaseValues(yamlObject)
 
       grammarDescription <- yamlObject.stringField(grammarDescriptionName)
@@ -26,17 +26,17 @@ object XmlExYamlProtocol extends MyYamlProtocol {
       for (sampleReadError <- samples._2)
         logger.error("Could not read xml sample", sampleReadError.exception)
 
-      XmlCompleteEx(
-        XmlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, grammarDescription, rootNode),
-        samples._1)
+      XmlExercise(
+        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        grammarDescription, rootNode, samples._1)
     }
 
-    override def write(completeEx: XmlCompleteEx) = new YamlObject(
-      writeBaseValues(completeEx.baseValues) ++
+    override def write(exercise: XmlExercise) = new YamlObject(
+      writeBaseValues(exercise.baseValues) ++
         Map[YamlValue, YamlValue](
-          YamlString(grammarDescriptionName) -> YamlString(completeEx.grammarDescription),
-          YamlString(samplesName) -> YamlArray(completeEx.samples map XmlSampleYamlFormat(completeEx.id, completeEx.semanticVersion).write toVector),
-          YamlString(rootNodeName) -> YamlString(completeEx.rootNode)
+          YamlString(grammarDescriptionName) -> YamlString(exercise.grammarDescription),
+          YamlString(samplesName) -> YamlArray(exercise.samples map XmlSampleYamlFormat(exercise.id, exercise.semanticVersion).write toVector),
+          YamlString(rootNodeName) -> YamlString(exercise.rootNode)
         )
     )
   }

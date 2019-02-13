@@ -5,6 +5,7 @@ import model._
 import model.core.result.EvaluationResult
 import model.toolMains.{ASingleExerciseToolMain, ToolState}
 import model.uml.UmlConsts.{difficultyName, durationName}
+import model.uml.persistence.UmlTableDefs
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
@@ -23,7 +24,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Result types
 
-  override type CompExType = UmlCompleteEx
+  override type ExType = UmlExercise
 
   override type Tables = UmlTableDefs
 
@@ -49,20 +50,20 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Forms
 
-  override def compExForm: Form[UmlCompleteEx] = UmlCompleteExerciseForm.format
+  override def exerciseForm: Form[UmlExercise] = UmlExerciseForm.format
 
-  override def exerciseReviewForm(username: String, completeExercise: UmlCompleteEx, exercisePart: UmlExPart): Form[UmlExerciseReview] = Form(
+  override def exerciseReviewForm(username: String, exercise: UmlExercise, exercisePart: UmlExPart): Form[UmlExerciseReview] = Form(
     mapping(
       difficultyName -> Difficulties.formField,
       durationName -> optional(number(min = 0, max = 100))
     )
-    (UmlExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
+    (UmlExerciseReview(username, exercise.id, exercise.semanticVersion, exercisePart, _, _))
     (uer => Some((uer.difficulty, uer.maybeDuration)))
   )
 
   // Reading solution
 
-  override def readSolution(user: User, exercise: UmlCompleteEx, part: UmlExPart)(implicit request: Request[AnyContent]): Try[UmlClassDiagram] =
+  override def readSolution(user: User, exercise: UmlExercise, part: UmlExPart)(implicit request: Request[AnyContent]): Try[UmlClassDiagram] =
     request.body.asJson match {
       case None          => Failure(new Exception("Request body does not contain json!"))
       case Some(jsValue) =>
@@ -76,8 +77,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): UmlCompleteEx = UmlCompleteEx(
-    UmlExercise(id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, markedText = ""),
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): UmlExercise = UmlExercise(
+    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, markedText = "",
     toIgnore = Seq[String](),
     mappings = Map[String, String](),
     sampleSolutions = Seq[UmlSampleSolution](
@@ -85,16 +86,16 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     )
   )
 
-  override def instantiateSolution(id: Int, username: String, exercise: UmlCompleteEx, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlSolution =
+  override def instantiateSolution(id: Int, username: String, exercise: UmlExercise, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlSolution =
     UmlSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
-  override val yamlFormat: MyYamlFormat[UmlCompleteEx] = UmlExYamlProtocol.UmlExYamlFormat
+  override val yamlFormat: MyYamlFormat[UmlExercise] = UmlExYamlProtocol.UmlExYamlFormat
 
   // Views
 
-  override def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart, maybeOldSolution: Option[UmlSolution])
+  override def renderExercise(user: User, exercise: UmlExercise, part: UmlExPart, maybeOldSolution: Option[UmlSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
     case UmlExParts.ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise, this)
     case UmlExParts.DiagramDrawing     => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)
@@ -102,15 +103,15 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     case UmlExParts.MemberAllocation   => views.html.idExercises.uml.memberAllocation(user, exercise, this)
   }
 
-  override def renderEditRest(exercise: UmlCompleteEx): Html = views.html.idExercises.uml.editUmlExRest(exercise)
+  override def renderEditRest(exercise: UmlExercise): Html = views.html.idExercises.uml.editUmlExRest(exercise)
 
-  override def renderUserExerciseEditForm(user: User, newExForm: Form[UmlCompleteEx], isCreation: Boolean)
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[UmlExercise], isCreation: Boolean)
                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.uml.editUmlExerciseForm(user, newExForm, isCreation, this)
 
   // Correction
 
-  override def correctEx(user: User, classDiagram: UmlClassDiagram, exercise: UmlCompleteEx, part: UmlExPart): Future[Try[UmlCompleteResult]] =
+  override def correctEx(user: User, classDiagram: UmlClassDiagram, exercise: UmlExercise, part: UmlExPart): Future[Try[UmlCompleteResult]] =
     Future(Try(new UmlCompleteResult(exercise, classDiagram, part)))
 
 }

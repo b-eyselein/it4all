@@ -1,4 +1,4 @@
-@(completeEx: model.rose.RoseCompleteEx)
+@(exercise: model.rose.RoseExercise)
 
 <div class="row">
     <div class="col-md-6">
@@ -12,31 +12,31 @@
             <tbody>
                 <tr>
                     <th>ID</th>
-                    <td>@completeEx.id</td>
+                    <td>@exercise.id</td>
                 </tr>
                 <tr>
                     <th>Titel</th>
-                    <td>@completeEx.title</td>
+                    <td>@exercise.title</td>
                 </tr>
                 <tr>
                     <th>Autor</th>
-                    <td>@completeEx.author</td>
+                    <td>@exercise.author</td>
                 </tr>
                 <tr>
                     <th>Text</th>
-                    <td>@completeEx.text</td>
+                    <td>@exercise.text</td>
                 </tr>
                 <tr>
                     <th>Status</th>
-                    <td>@completeEx.state</td>
+                    <td>@exercise.state</td>
                 </tr>
                 <tr>
                     <th>Feldbreite x -höhe</th>
-                    <td>@completeEx.fieldWidth x @completeEx.fieldHeight</td>
+                    <td>@exercise.fieldWidth x @exercise.fieldHeight</td>
                 </tr>
                 <tr>
                     <th>Multiplayer?</th>
-                    <td>@if(completeEx.isMultiplayer) {Ja} else {Nein}</td>
+                    <td>@if(exercise.isMultiplayer) {Ja} else {Nein}</td>
                 </tr>
             </tbody>
         </table>

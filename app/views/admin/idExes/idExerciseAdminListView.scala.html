@@ -1,7 +1,7 @@
-@import model.{User, CompleteEx}
+@import model.{User, Exercise}
 @import model.toolMains.{AToolMain, ToolList}
 
-@(user: User, completeExercises: Seq[CompleteEx], toolMainObject: AToolMain, toolList: ToolList)
+@(user: User, exercises: Seq[Exercise], toolMainObject: AToolMain, toolList: ToolList)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -35,7 +35,7 @@
                 </tr>
             </thead>
             <tbody>
-            @for(exercise <- completeExercises) {
+            @for(exercise <- exercises) {
                 <tr id="tr1_@exercise.id">
                     <td>@exercise.id</td>
                     <td>@exercise.semanticVersion.asString</td>

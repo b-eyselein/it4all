@@ -3,6 +3,7 @@ package model.regex
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
 import model.regex.RegexConsts._
+import model.regex.persistence.{DbRegexExercise, RegexDbModels}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
@@ -10,13 +11,13 @@ import slick.lifted.ProvenShape
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RegexCompleteEx, String, RegexDBSolution, RegexExPart, RegexExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RegexExercise, String, RegexDBSolution, RegexExPart, RegexExerciseReview] {
 
   import profile.api._
 
   // Abstract types
 
-  override protected type ExDbValues = RegexExercise
+  override protected type ExDbValues = DbRegexExercise
   override protected type ExTableDef = RegexExerciseTable
   override protected type SolTableDef = RegexSolutionTable
   override protected type ReviewsTableDef = RegexExerciseReviewsTable
@@ -32,22 +33,22 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   // Helper methods
 
-  override protected def exDbValuesFromCompleteEx(compEx: RegexCompleteEx): ExDbValues = compEx.ex
+  override protected def exDbValuesFromExercise(compEx: RegexExercise): ExDbValues = RegexDbModels.dbExerciseFromExercise(compEx)
 
   override protected def copyDBSolType(oldSol: RegexDBSolution, newId: Int): RegexDBSolution = oldSol.copy(id = newId)
 
   // Queries
 
-  override protected def completeExForEx(ex: RegexExercise): Future[RegexCompleteEx] = for {
+  override protected def completeExForEx(ex: DbRegexExercise): Future[RegexExercise] = for {
     sampleSolutions <- db.run(regexSampleSolutionsTable.filter {
       e => e.id === ex.id && e.exSemVer === ex.semanticVersion
     }.result)
     testData <- db.run(regexTestDataTable.filter {
       td => td.exerciseId === ex.id && td.exSemVer === ex.semanticVersion
     }.result)
-  } yield RegexCompleteEx(ex, sampleSolutions, testData)
+  } yield RegexDbModels.exerciseFromDbExercise(ex, sampleSolutions, testData)
 
-  override protected def saveExerciseRest(compEx: RegexCompleteEx): Future[Boolean] = for {
+  override protected def saveExerciseRest(compEx: RegexExercise): Future[Boolean] = for {
     samplesSaved <- saveSeq[RegexSampleSolution](compEx.sampleSolutions, sample => db.run(regexSampleSolutionsTable += sample))
     testDataSaved <- saveSeq[RegexTestData](compEx.testData, td => db.run(regexTestDataTable += td))
   } yield samplesSaved && testDataSaved
@@ -66,7 +67,7 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   class RegexExerciseTable(tag: Tag) extends ExerciseTableDef(tag, "regex_exercises") {
 
-    override def * : ProvenShape[RegexExercise] = (id, title, author, text, state, semanticVersion) <> (RegexExercise.tupled, RegexExercise.unapply)
+    override def * : ProvenShape[DbRegexExercise] = (id, semanticVersion, title, author, text, state) <> (DbRegexExercise.tupled, DbRegexExercise.unapply)
 
   }
 

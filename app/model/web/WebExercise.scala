@@ -22,16 +22,12 @@ object JsActionType extends PlayEnum[JsActionType] {
 
 // Classes for use
 
-final case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask],
-                               sampleSolutions: Seq[WebSampleSolution]) extends SingleCompleteEx[WebExPart] {
+final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+                             htmlText: Option[String], jsText: Option[String],
+                             htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask],
+                             sampleSolutions: Seq[WebSampleSolution]) extends SingleExercise[WebExPart] {
 
-  override type E = WebExercise
-
-  // remaining fields from WebExercise
-
-  def htmlText: Option[String] = ex.htmlText
-
-  def jsText: Option[String] = ex.jsText
+  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
   // other methods
 
@@ -86,9 +82,6 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 }
 
 // Database classes
-
-final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             htmlText: Option[String], jsText: Option[String]) extends HasBaseValues
 
 trait WebTask {
   val id        : Int

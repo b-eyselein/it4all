@@ -5,6 +5,7 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.programming.ProgLanguages
 import model.rose.RoseConsts.{difficultyName, durationName}
+import model.rose.persistence.RoseTableDefs
 import model.toolMains.{ASingleExerciseToolMain, ToolState}
 import play.api.data.Form
 import play.api.data.Forms._
@@ -23,7 +24,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Abstract types
 
-  override type CompExType = RoseCompleteEx
+  override type ExType = RoseExercise
 
   override type Tables = RoseTableDefs
 
@@ -45,24 +46,24 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override protected val exParts: Seq[RoseExPart] = RoseExParts.values
 
-  override val compExForm: Form[RoseCompleteEx] = RoseCompleteExerciseForm.format
+  override val exerciseForm: Form[RoseExercise] = RoseExerciseForm.format
 
   override protected val completeResultJsonProtocol: RoseCompleteResultJsonProtocol.type = RoseCompleteResultJsonProtocol
 
   // Forms
 
-  override def exerciseReviewForm(username: String, completeExercise: RoseCompleteEx, exercisePart: RoseExPart): Form[RoseExerciseReview] = Form(
+  override def exerciseReviewForm(username: String, exercise: RoseExercise, exercisePart: RoseExPart): Form[RoseExerciseReview] = Form(
     mapping(
       difficultyName -> Difficulties.formField,
       durationName -> optional(number(min = 0, max = 100))
     )
-    (RoseExerciseReview(username, completeExercise.id, completeExercise.semanticVersion, exercisePart, _, _))
+    (RoseExerciseReview(username, exercise.id, exercise.semanticVersion, exercisePart, _, _))
     (rer => Some((rer.difficulty, rer.maybeDuration)))
   )
 
   // DB
 
-  override protected def readSolution(user: User, exercise: RoseCompleteEx, part: RoseExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
+  override protected def readSolution(user: User, exercise: RoseExercise, part: RoseExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
     case None       => Failure(new Exception("Request body does not contain json!"))
     case Some(json) => json match {
       case JsString(solution) => Success(solution)
@@ -72,36 +73,36 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Other helper methods
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RoseCompleteEx = RoseCompleteEx(
-    RoseExercise(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false),
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RoseExercise = RoseExercise(
+    id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false,
     inputTypes = Seq[RoseInputType](), sampleSolutions = Seq[RoseSampleSolution]()
   )
 
-  override def instantiateSolution(id: Int, username: String, exercise: RoseCompleteEx, part: RoseExPart, solution: String,
+  override def instantiateSolution(id: Int, username: String, exercise: RoseExercise, part: RoseExPart, solution: String,
                                    points: Points, maxPoints: Points): RoseSolution =
     RoseSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
 
   // Yaml
 
-  override implicit val yamlFormat: MyYamlFormat[RoseCompleteEx] = RoseExYamlProtocol.RoseExYamlFormat
+  override implicit val yamlFormat: MyYamlFormat[RoseExercise] = RoseExYamlProtocol.RoseExYamlFormat
 
   // Views
 
-  override def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart, maybeOldSolution: Option[RoseSolution])
+  override def renderExercise(user: User, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     val declaration = maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true)
     views.html.idExercises.rose.roseExercise(user, exercise, declaration, this)
   }
 
-  override def renderEditRest(exercise: RoseCompleteEx): Html = ???
+  override def renderEditRest(exercise: RoseExercise): Html = ???
 
-  override def renderUserExerciseEditForm(user: User, newExForm: Form[RoseCompleteEx], isCreation: Boolean)
+  override def renderUserExerciseEditForm(user: User, newExForm: Form[RoseExercise], isCreation: Boolean)
                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.idExercises.rose.exitRoseExerciseForm(user, newExForm, isCreation, this)
 
   // Correction
 
-  override protected def correctEx(user: User, sol: SolType, exercise: RoseCompleteEx, part: RoseExPart): Future[Try[RoseCompleteResult]] = {
+  override protected def correctEx(user: User, sol: SolType, exercise: RoseExercise, part: RoseExPart): Future[Try[RoseCompleteResult]] = {
     val solDir = solutionDirForExercise(user.username, exercise.id)
 
     for {

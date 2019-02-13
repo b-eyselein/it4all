@@ -12,7 +12,7 @@ import scala.util.{Failure, Success, Try}
 
 object TestDataJsonFormat {
 
-  def dumpTestDataToJson(exercise: ProgCompleteEx, testData: Seq[TestData]): JsValue = Json.obj(
+  def dumpTestDataToJson(exercise: ProgExercise, testData: Seq[TestData]): JsValue = Json.obj(
     simplifiedName -> Json.obj(
       functionNameName -> JsString(exercise.functionName),
       "test_data" -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.outputType),
