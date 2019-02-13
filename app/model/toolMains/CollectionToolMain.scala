@@ -34,7 +34,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ReadType = CompCollType
 
-  override type Tables <: ExerciseCollectionTableDefs[ExType, CompExType, CollType, CompCollType, SolType, DBSolType]
+  override type Tables <: ExerciseCollectionTableDefs[CompExType, CollType, CompCollType, SolType, DBSolType]
 
   // Other members
 

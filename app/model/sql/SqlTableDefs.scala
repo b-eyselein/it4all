@@ -15,13 +15,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, String, SqlSolution] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlCompleteEx, SqlScenario, SqlCompleteScenario, String, SqlSolution] {
 
   import profile.api._
 
   // Table types
 
-  override type ExDbValues = SqlExercise
+  override protected type ExDbValues = SqlExercise
 
   override protected type ExTableDef = SqlExercisesTable
 
@@ -39,9 +39,11 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   private val sqlSamples = TableQuery[SqlSamplesTable]
 
-  // Reading
+  // Helper methods
 
   override def exDbValuesFromCompleteEx(compEx: SqlCompleteEx): SqlExercise = compEx.ex
+
+  // Reading
 
   override def futureCompleteExById(collId: Int, id: Int): Future[Option[SqlCompleteEx]] = for {
     maybeEx <- db.run(exTable.filter(e => e.id === id && e.collectionId === collId).result.headOption)
