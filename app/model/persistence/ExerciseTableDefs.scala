@@ -28,16 +28,6 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
 
   def futureCompleteExes: Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
 
-  def futureCompleteExesForPage(page: Int): Future[Seq[CompEx]] = db.run(exTable.result) flatMap {
-    allExes: Seq[Ex] =>
-      //      val distincExes: Map[SemanticVersion, Seq[Ex]] = allExes.groupBy(_.semanticVersion)
-
-      val approvedExes = allExes.filter(_.state == APPROVED)
-
-      val (sliceStart, sliceEnd) = (Math.max(0, (page - 1) * STEP), Math.min(page * STEP, approvedExes.size))
-      Future.sequence(approvedExes slice(sliceStart, sliceEnd) map completeExForEx)
-  }
-
   def futureCompleteExById(id: Int): Future[Option[CompEx]] = db.run {
     exTable.filter(_.id === id).sortBy(_.semanticVersion.desc).result.headOption
   } flatMap {
