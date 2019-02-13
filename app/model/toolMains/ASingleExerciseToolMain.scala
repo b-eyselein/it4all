@@ -49,8 +49,6 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // DB
 
-  def futureUpdateExercise(exercise: ExType): Future[Boolean] = tables.futureUpdateExercise(exercise)
-
   def futureSaveReview(review: ReviewType): Future[Boolean] = tables.futureSaveReview(review)
 
   def futureCompleteExById(id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(id)

@@ -1,7 +1,5 @@
 package model.persistence
 
-import model.ExerciseState.APPROVED
-import model.core.CoreConsts.STEP
 import model.learningPath.LearningPathTableDefs
 import model.{CompleteEx, Exercise, SemanticVersion}
 import play.api.Logger
@@ -58,13 +56,6 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
   }
 
   protected def saveExerciseRest(compEx: CompEx): Future[Boolean]
-
-  // Update
-
-  def futureUpdateExercise(ex: Ex): Future[Boolean] = db.run(exTable insertOrUpdate ex) map (_ => true) recover { case e: Throwable =>
-    Logger.error(s"Could not update exercise ${ex.id}", e)
-    false
-  }
 
   // Abstract table classes
 
