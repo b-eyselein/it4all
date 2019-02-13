@@ -1,7 +1,7 @@
 package model.core.overviewHelpers
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{CompleteEx, Exercise}
+import model.CompleteEx
 
 import scala.collection.immutable.IndexedSeq
 
