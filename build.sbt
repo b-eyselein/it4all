@@ -119,31 +119,9 @@ libraryDependencies ++= Seq(
   // Programming
   "com.spotify" % "docker-client" % "8.15.0",
 
-  // Apache POI for Excel
-  "org.apache.poi" % "poi" % "3.17",
-  "org.apache.poi" % "poi-excelant" % "3.17",
-  "org.apache.poi" % "poi-ooxml" % "3.17",
-  "org.apache.poi" % "poi-ooxml-schemas" % "3.17",
-  "org.apache.poi" % "poi-scratchpad" % "3.17",
-  "org.apache.xmlbeans" % "xmlbeans" % "2.6.0",
-
-  // ODF Toolkit for OpenOffice Calc
-  "commons-validator" % "commons-validator" % "1.5.0", // 1.6
-  "net.rootdev" % "java-rdfa" % "0.4.2",
-  "org.apache.jena" % "jena-core" % "2.11.2", // 3.4.0
-  "org.apache.odftoolkit" % "odfdom-java" % "0.8.11-incubating",
-  "org.apache.odftoolkit" % "simple-odf" % "0.8.2-incubating",
-  "org.apache.odftoolkit" % "taglets" % "0.8.11-incubating",
-  "xerces" % "xercesImpl" % "2.9.0", // 2.11.0-22
-  "xml-apis" % "xml-apis" % "1.3.04",
-
-  // Apache Commons IO
-  "commons-io" % "commons-io" % "2.4",
-
   // DTD Parser
   "de.uniwue" %% "scala_dtd" % "0.3.0-SNAPSHOT",
-  //  "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.1"
 )
 
 // Injected for non-static Routes
-routesGenerator := InjectedRoutesGenerator
+//routesGenerator := InjectedRoutesGenerator

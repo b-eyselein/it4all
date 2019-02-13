@@ -1,6 +1,7 @@
 package model.regex
 
 import javax.inject.Inject
+import model.regex.persistence.RegexTableDefs
 import model.toolMains.ASingleExerciseToolMain
 import model.{ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
 import play.api.data.Form
@@ -77,7 +78,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   })
 
 
-  override def exerciseReviewForm(username: String, completeExercise: RegexExercise, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
+  override def exerciseReviewForm(username: String, exercise: RegexExercise, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state,

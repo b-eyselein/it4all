@@ -1,9 +1,9 @@
-package model.regex
+package model.regex.persistence
 
 import javax.inject.Inject
 import model.persistence.SingleExerciseTableDefs
 import model.regex.RegexConsts._
-import model.regex.persistence.{DbRegexExercise, RegexDbModels}
+import model.regex._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape

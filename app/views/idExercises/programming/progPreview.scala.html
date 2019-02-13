@@ -1,4 +1,4 @@
-@(completeEx: model.programming.ProgExercise)
+@(exercise: model.programming.ProgExercise)
 
 <section>
     <div class="row">
@@ -7,33 +7,33 @@
 
             <div class="row">
                 <div class="col-md-4"><b>ID:</b></div>
-                <div class="col-md-8">@completeEx.id</div>
+                <div class="col-md-8">@exercise.id</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><b>Titel:</b></div>
-                <div class="col-md-8">@completeEx.title</div>
+                <div class="col-md-8">@exercise.title</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><b>Autor:</b></div>
-                <div class="col-md-8">@completeEx.author</div>
+                <div class="col-md-8">@exercise.author</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><b>Status:</b></div>
-                <div class="col-md-8">@completeEx.state</div>
+                <div class="col-md-8">@exercise.state</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><b>Name der Fkt.:</b></div>
-                <div class="col-md-8">@completeEx.functionName</div>
+                <div class="col-md-8">@exercise.functionName</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><b>Signatur:</b></div>
-                <div class="col-md-8"><code>(@completeEx.inputTypes.map(_.inputType.typeName).mkString(", ")) &rarr;
-                    @completeEx.outputType.typeName </code>
+                <div class="col-md-8"><code>(@exercise.inputTypes.map(_.inputType.typeName).mkString(", ")) &rarr;
+                    @exercise.outputType.typeName </code>
                 </div>
             </div>
         </div>
 
-        @completeEx.baseData.map { baseData =>
+        @exercise.baseData.map { baseData =>
             <div class="col-md-6">
                 <h3>Basisdaten</h3>
                 <pre>@baseData</pre>
@@ -43,7 +43,7 @@
 
     <div class="row">
         <div class="col-md-2"><b>Text:</b></div>
-        <div class="col-md-10">@Html(completeEx.text)</div>
+        <div class="col-md-10">@Html(exercise.text)</div>
     </div>
 
 
@@ -54,7 +54,7 @@
 <section>
     <h3>Musterlösungen</h3>
 
-    @for(sampleSolTriple <- completeEx.sampleSolutions grouped 2) {
+    @for(sampleSolTriple <- exercise.sampleSolutions grouped 2) {
         <div class="row">
         @for(sampleSol <- sampleSolTriple) {
             <div class="col-md-6">
@@ -71,7 +71,7 @@
 <section>
     <h3>Mustertestdaten</h3>
 
-    @for(sampleTestDataTriple <- completeEx.sampleTestData grouped 3) {
+    @for(sampleTestDataTriple <- exercise.sampleTestData grouped 3) {
         <div class="row">
         @for(sampleTestData <- sampleTestDataTriple) {
             <div class="col-md-4">
