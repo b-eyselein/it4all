@@ -1,7 +1,8 @@
-@import model.{User, Exercise, CompleteEx, ExPart}
+@import model.toolMains.ASingleExerciseToolMain
+@import model.{CompleteEx, ExPart, User}
 
-@(user: User, exerciseText: Html, exercise: CompleteEx[_ <: model.Exercise], part: ExPart, oldSolution: String,
-        toolMainObject: model.toolMains.ASingleExerciseToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
+@(user: User, exerciseText: Html, exercise: CompleteEx[_], part: ExPart, oldSolution: String,
+        toolMainObject: ASingleExerciseToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
         remainingExDef: Option[Html] = None, remainingPage: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
@@ -61,9 +62,9 @@
                         @*<button type="button" class="btn w-100" onclick="toggleFullscreen()">*@
                         @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>*@
                         @*</button>*@
-                        <button class="btn btn-primary w-100" id="testBtn" data-url="@exes.routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.ex.id, part.urlName)">
+                        <button class="btn btn-primary w-100" id="testBtn" data-url="@exes.routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)">
                             Lösung testen</button>
-                        <a href="@exes.routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
+                        <a href="@exes.routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.id, part.urlName)"
                         id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
                 </div>
@@ -79,7 +80,7 @@
                     </li>
                     @if(solutionPreview.isDefined) {
                         <li class="nav-item">
-                            <a class="nav-link" data-url="@exes.routes.ExerciseController.updateWebSolution(exercise.ex.id, part.urlName)"
+                            <a class="nav-link" data-url="@exes.routes.ExerciseController.updateWebSolution(exercise.id, part.urlName)"
                             data-toggle="tab" href="#previewTab" id="previewTabBtn">Live-Vorschau</a>
                         </li>
                     }
@@ -109,7 +110,7 @@
                     }
 
                     <div id="sampleSolTab" class="tab-pane fade">
-                        <button data-url="@exes.routes.ExerciseController.sampleSolutionsForPart(toolMainObject.urlPart, exercise.ex.id, part.urlName)"
+                        <button data-url="@exes.routes.ExerciseController.sampleSolutionsForPart(toolMainObject.urlPart, exercise.id, part.urlName)"
                         id="showSampleSolBtn" class="btn btn-outline-success btn-block">Musterlösung anzeigen</button>
 
                         <div id="sampleSolDiv"></div>

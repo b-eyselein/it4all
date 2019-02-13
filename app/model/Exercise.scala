@@ -79,6 +79,20 @@ trait CompleteEx[E <: Exercise] {
 
   def ex: E
 
+
+  def id: Int = ex.id
+
+  def semanticVersion = ex.semanticVersion
+
+  def title: String = ex.title
+
+  def author: String = ex.author
+
+  def text: String = ex.text
+
+  def state: ExerciseState = ex.state
+
+
   def preview: Html
 
   def tags: Seq[ExTag] = Seq[ExTag]()

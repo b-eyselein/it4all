@@ -1,4 +1,6 @@
-@(user: model.User, exercise: model.Exercise, toolMainObject: model.toolMains.AToolMain)
+@import model.{User, CompleteEx}
+
+@(user: User, exercise: CompleteEx[_], toolMainObject: model.toolMains.AToolMain)
 
 @main("Erstellte Aufgaben", Some(user)) {
     <div class="container">

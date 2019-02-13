@@ -149,22 +149,22 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   def editExercise(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
-      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
-
-        for (formError <- formWithError.errors)
-          Logger.error(formError.key + " :: " + formError.message)
-
-        Future(BadRequest("Your form has has errors!"))
-      }
-
-      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
-        //FIXME: save ex
-        ???
-
-        toolMain.futureUpdateExercise(compEx) map { _ =>
-          Ok(views.html.admin.singleExercisePreview(user, compEx, toolMain))
-        }
-      }
+      //      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
+      //
+      //        for (formError <- formWithError.errors)
+      //          Logger.error(formError.key + " :: " + formError.message)
+      //
+      //        Future(BadRequest("Your form has has errors!"))
+      //      }
+      //
+      //      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
+      //        //FIXME: save ex
+      //        ???
+      //
+      //        toolMain.futureUpdateExercise(compEx) map { _ =>
+      //          Ok(views.html.admin.singleExercisePreview(user, compEx, toolMain))
+      //        }
+      //      }
 
       //      toolMain.compExForm.bindFromRequest().fold(onFormError, onFormSuccess)
       ???

@@ -1,20 +1,22 @@
-@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: model.CompleteEx[_ <: model.Exercise]],
-        toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
+@import model.{User, CompleteEx}
+@import model.toolMains.{AToolMain, ToolList}
 
-    @dispExercise(compEx: model.CompleteEx[_ <: model.Exercise]) = {
-        <h2 data-toggle="collapse" data-target="#collapse_@compEx.ex.id">Aufgabe: &quot;@compEx.ex.title&quot;</h2>
+@(user: User, readAndSaveResult: model.core.ReadAndSaveResult[_ <: CompleteEx[_]], toolMainObject: AToolMain, toolList: ToolList)
 
-        <div id="collapse_@compEx.ex.id" class="collapse in">@compEx.preview</div>
+@dispExercise(compEx: model.CompleteEx[_]) = {
+    <h2 data-toggle="collapse" data-target="#collapse_@compEx.id">Aufgabe: &quot;@compEx.title&quot;</h2>
+
+    <div id="collapse_@compEx.id" class="collapse in">@compEx.preview</div>
+}
+
+@title = @{
+    "Erstellte Aufgaben"
+}
+
+@admin.adminMain(title, user, toolList, Some(toolMainObject)) {
+    @for(readAndSaveSuccesses <- readAndSaveResult.successes) {
+        @* FIXME: remove cast ... *@
+        @dispExercise(readAndSaveSuccesses.ex)
     }
-
-    @title = @{
-        "Erstellte Aufgaben"
-    }
-
-    @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
-        @for(readAndSaveSuccesses <- readAndSaveResult.successes) {
-            @* FIXME: remove cast ... *@
-            @dispExercise(readAndSaveSuccesses.ex)
-        }
-        @* @Html(completeExercises map (ex => dispExercise(ex)) mkString "\n<hr>") *@
-    }
+    @* @Html(completeExercises map (ex => dispExercise(ex)) mkString "\n<hr>") *@
+}
