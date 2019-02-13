@@ -46,7 +46,7 @@ final case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[ProgInput], sa
 
 final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                               folderIdentifier: String, functionname: String, outputType: ProgDataType,
-                              baseData: Option[JsValue]) extends Exercise
+                              baseData: Option[JsValue]) extends HasBaseValues
 
 
 final case class ProgInput(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputName: String, inputType: ProgDataType)

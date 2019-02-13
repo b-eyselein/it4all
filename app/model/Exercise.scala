@@ -65,9 +65,7 @@ trait ExTag {
 
 }
 
-trait Exercise extends HasBaseValues
-
-trait ExInColl extends Exercise {
+trait HasBaseValuesInColl extends HasBaseValues {
 
   def collectionId: Int
 
@@ -77,14 +75,14 @@ trait ExInColl extends Exercise {
 
 trait CompleteEx {
 
-  type E <: Exercise
+  type E <: HasBaseValues
 
   def ex: E
 
 
   def id: Int = ex.id
 
-  def semanticVersion = ex.semanticVersion
+  def semanticVersion: SemanticVersion = ex.semanticVersion
 
   def title: String = ex.title
 
@@ -111,7 +109,7 @@ trait SingleCompleteEx[PartType <: ExPart] extends CompleteEx {
 
 trait CompleteExInColl extends CompleteEx {
 
-  override type E <: ExInColl
+  override type E <: HasBaseValuesInColl
 
   def collectionId: Int = ex.collectionId
 

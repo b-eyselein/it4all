@@ -67,7 +67,7 @@ final case class UmlCompleteEx(ex: UmlExercise, toIgnore: Seq[String], mappings:
 // Table classes
 
 final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String,
-                             state: ExerciseState, markedText: String) extends Exercise {
+                             state: ExerciseState, markedText: String) extends HasBaseValues {
 
   //  def splitToIgnore: Seq[String] = toIgnore split tagJoinChar
 

@@ -47,7 +47,7 @@ final case class RoseCompleteEx(ex: RoseExercise, inputTypes: Seq[RoseInputType]
 // Case classes for tables
 
 final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                              fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends Exercise
+                              fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends HasBaseValues
 
 final case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersion, name: String, inputType: ProgDataType)
 

@@ -6,7 +6,7 @@ import play.twirl.api.Html
 import scala.language.postfixOps
 
 final case class RegexExercise(id: Int, title: String, author: String, text: String, state: ExerciseState,
-                               semanticVersion: SemanticVersion) extends Exercise
+                               semanticVersion: SemanticVersion) extends HasBaseValues
 
 final case class RegexSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sample: String) extends SampleSolution[String]
 

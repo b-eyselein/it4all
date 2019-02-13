@@ -33,7 +33,7 @@ final case class XmlCompleteEx(ex: XmlExercise, samples: Seq[XmlSample]) extends
 
 
 final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             grammarDescription: String, rootNode: String) extends Exercise
+                             grammarDescription: String, rootNode: String)  extends HasBaseValues
 
 
 final case class XmlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sampleGrammarString: String, sampleDocument: String)
