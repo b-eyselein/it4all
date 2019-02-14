@@ -19,7 +19,7 @@ object SqlDbModels extends DbModels {
 
 
   def exerciseFromDbValues(dbEx: DbSqlExercise, samples: Seq[SqlSample]): SqlExercise = {
-    val tagsFromString: Array[SqlExTag] = dbEx.tags.split(SqlConsts.tagJoinChar).map(SqlExTag.withNameInsensitive)
+    val tagsFromString: Seq[SqlExTag] = dbEx.tags.split(SqlConsts.tagJoinChar).toSeq.flatMap(SqlExTag.withNameInsensitiveOption)
 
     SqlExercise(dbEx.id, dbEx.semanticVersion, dbEx.title, dbEx.author, dbEx.text, dbEx.state,
       dbEx.collectionId, dbEx.collSemVer, dbEx.exerciseType, tagsFromString, dbEx.hint, samples)

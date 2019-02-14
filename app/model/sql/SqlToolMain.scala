@@ -11,6 +11,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
 
+import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
@@ -41,6 +42,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override type CompCollType = SqlCompleteScenario
 
+  override type PartType = SqlExPart
+
   override type Tables = SqlTableDefs
 
   override type SolType = String
@@ -61,6 +64,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override val usersCanCreateExes: Boolean = false
 
   override val completeResultJsonProtocol: SqlCorrResultJsonProtocol.type = SqlCorrResultJsonProtocol
+
+  override val exParts: IndexedSeq[SqlExPart] = SqlExParts.values
 
   // Yaml
 
@@ -90,7 +95,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
        |  </div>
        |</div>""".stripMargin)
 
-  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, numOfExes: Int, maybeOldSolution: Option[DBSolType])
+  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, numOfExes: Int, maybeOldSolution: Option[DBSolType], part: SqlExPart)
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
     val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
@@ -108,7 +113,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Correction
 
-  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlExercise): Try[SqlCorrResult] =
+  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart): Try[SqlCorrResult] =
     correctorsAndDaos.get(exercise.exerciseType) match {
       case None                   => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}"))
       case Some((corrector, dao)) => Try(corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario))

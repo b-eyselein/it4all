@@ -21,23 +21,13 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Abstract Types
 
-  type SolType
+  override type ExType <: SingleExercise[PartType]
 
   type DBSolType <: DBPartSolution[PartType, SolType]
 
-  type PartType <: ExPart
-
-  type ReviewType <: ExerciseReview[PartType]
-
-  override type ExType <: SingleExercise[PartType]
-
-  override type Tables <: SingleExerciseTableDefs[ExType, SolType, DBSolType, PartType, ReviewType]
-
   override type ReadType = ExType
 
-  // Other members
-
-  protected val exParts: Seq[PartType]
+  override type Tables <: SingleExerciseTableDefs[ExType, SolType, DBSolType, PartType, ReviewType]
 
   // Forms
 
@@ -70,7 +60,6 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Helper methods
 
-  def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
   private def futureCompleteExesForPage(page: Int): Future[Seq[ExType]] = tables.futureAllExes map {
     allExes: Seq[ExType] =>

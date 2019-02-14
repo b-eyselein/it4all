@@ -189,33 +189,42 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
   }
 
-  def exercise(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  def exercise(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
-      toolMain.futureCollById(collId) flatMap {
-        case None             => Future(BadRequest(s"There is no collection with id $collId!"))
-        case Some(collection) =>
+      toolMain.partTypeFromUrl(partStr) match {
+        case None         => Future.successful(onNoSuchExercisePart(partStr))
+        case Some(exPart) =>
 
-          val values: Future[(Option[toolMain.ExType], Int, Option[toolMain.DBSolType])] = for {
-            compEx <- toolMain.futureExerciseById(collId, id)
-            numOfExes <- toolMain.numOfExesInColl(collId)
-            oldSolution <- toolMain.futureMaybeOldSolution(user, collId, id)
-          } yield (compEx, numOfExes, oldSolution)
+          toolMain.futureCollById(collId) flatMap {
+            case None             => Future(BadRequest(s"There is no collection with id $collId!"))
+            case Some(collection) =>
 
-          values map {
-            case (None, _, _)                            => BadRequest(s"There is no exercise with id $id in collection $collId!")
-            case (Some(ex), numOfExes, maybeOldSolution) => Ok(toolMain.renderExercise(user, collection, ex, numOfExes, maybeOldSolution))
+              val values: Future[(Option[toolMain.ExType], Int, Option[toolMain.DBSolType])] = for {
+                compEx <- toolMain.futureExerciseById(collId, id)
+                numOfExes <- toolMain.numOfExesInColl(collId)
+                oldSolution <- toolMain.futureMaybeOldSolution(user, collId, id)
+              } yield (compEx, numOfExes, oldSolution)
+
+              values map {
+                case (None, _, _)                            => BadRequest(s"There is no exercise with id $id in collection $collId!")
+                case (Some(ex), numOfExes, maybeOldSolution) => Ok(toolMain.renderExercise(user, collection, ex, numOfExes, maybeOldSolution, exPart))
+              }
           }
       }
   }
 
-  def correctLive(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  def correctLive(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.correctAbstract(user, collId, id, isLive = true) map {
-        case Success(result) => Ok(result)
-        case Failure(error)  =>
-          Logger.error("There has been an internal correction error:", error)
-          BadRequest(toolMain.onLiveCorrectionError(error))
+      toolMain.partTypeFromUrl(partStr) match {
+        case None         => Future.successful(onNoSuchExercisePart(partStr))
+        case Some(exPart) =>
+          toolMain.correctAbstract(user, collId, id, exPart) map {
+            case Success(result) => Ok(result)
+            case Failure(error)  =>
+              Logger.error("There has been an internal correction error:", error)
+              BadRequest(toolMain.onLiveCorrectionError(error))
+          }
       }
   }
 

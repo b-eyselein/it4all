@@ -18,21 +18,23 @@ import scala.util.{Failure, Success, Try}
 
 abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends FixedExToolMain(tn, up) {
 
+  // TODO: remove...
+
+  def theExParts: Seq[PartType] = exParts
+
   // Abstract types
 
   override type ExType <: ExerciseInColl
-
-  type CollType <: ExerciseCollection[ExType]
-
-  type CompCollType <: CompleteCollection
-
-  type SolType
 
   type DBSolType <: CollectionExSolution[SolType]
 
   override type ReadType = CompCollType
 
   override type Tables <: ExerciseCollectionTableDefs[ExType, CollType, CompCollType, SolType, DBSolType]
+
+  type CollType <: ExerciseCollection[ExType]
+
+  type CompCollType <: CompleteCollection
 
   // Other members
 
@@ -94,7 +96,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Correction
 
-  def correctAbstract(user: User, collId: Int, id: Int, isLive: Boolean)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
+  def correctAbstract(user: User, collId: Int, id: Int, part: PartType)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
     readSolution(user, collId, id) match {
       case None => Future.successful(Failure(SolutionTransferException))
 
@@ -108,7 +110,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         collAndEx flatMap {
           case None => Future.successful(Failure(NoSuchExerciseException(id)))
 
-          case Some((collection, exercise)) => correctEx(user, solution, collection, exercise) match {
+          case Some((collection, exercise)) => correctEx(user, solution, collection, exercise, part) match {
             case Failure(error) => Future.successful(Failure(error))
             case Success(res)   =>
 
@@ -119,7 +121,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         }
     }
 
-  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType): Try[CompResult]
+  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType, part: PartType): Try[CompResult]
 
   // Reading from requests
 
@@ -138,7 +140,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this, toolList)
   }
 
-  def renderExercise(user: User, coll: CollType, exercise: ExType, numOfExes: Int, maybeOldSolution: Option[DBSolType])
+  def renderExercise(user: User, coll: CollType, exercise: ExType, numOfExes: Int, maybeOldSolution: Option[DBSolType], part: PartType)
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
   def adminRenderEditRest(exercise: Option[CompCollType]): Html

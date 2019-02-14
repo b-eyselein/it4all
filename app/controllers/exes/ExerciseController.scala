@@ -197,13 +197,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Abstract types
 
-
   override protected def getToolMain(toolType: String): Option[ASingleExerciseToolMain] = toolList.getSingleExerciseToolMainOption(toolType)
-
-  // Generic results
-
-  protected def onNoSuchExercisePart(partStr: String): Result = NotFound(s"Es gibt keine Aufgabenteil '$partStr'")
-
 
   // Generic Routes
 

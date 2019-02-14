@@ -31,7 +31,8 @@
                         <div class="col-sm-@{
                             12 / colCount
                         }">
-                            <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.coll.id, compEx.id)"
+                        @for(exPart <- toolMainObject.theExParts) {
+                            <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.coll.id, compEx.id, exPart.urlName)"
                             class="btn @successType.btnOutline btn-block">
                                 <div>@{
                                     compEx.id + ". " + compEx.title
@@ -40,6 +41,7 @@
                                     Option(compEx.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
                                 )</span>
                             </a>
+                        }
                         </div>
                     }
                     </div>

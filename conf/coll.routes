@@ -21,8 +21,8 @@ PUT           /:toolType/admin/exercise/:collId/:exId/state        controllers.c
 GET           /:toolType/collections                               controllers.coll.CollectionController.collectionList(toolType: String, page: Int ?= 1)
 
 GET           /:toolType/collections/:collId                       controllers.coll.CollectionController.collection(toolType: String, collId: Int, page: Int ?= 1)
-GET           /:toolType/solve/:collId/:exId                       controllers.coll.CollectionController.exercise(toolType: String, collId: Int, exId: Int)
-PUT           /:toolType/solve/:collId/:exId                       controllers.coll.CollectionController.correctLive(toolType: String, collId: Int, exId: Int)
+GET           /:toolType/solve/:collId/:exId/:partStr              controllers.coll.CollectionController.exercise(toolType: String, collId: Int, exId: Int, partStr: String)
+PUT           /:toolType/solve/:collId/:exId/:partStr              controllers.coll.CollectionController.correctLive(toolType: String, collId: Int, exId: Int, partStr: String)
 
 GET           /:toolType/sample/:collId/:exId                      controllers.coll.CollectionController.sampleSol(toolType: String, collId: Int, exId: Int)
 

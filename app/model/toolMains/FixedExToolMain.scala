@@ -18,11 +18,17 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   type ExType <: Exercise
 
+  type PartType <: ExPart
+
+  type SolType
+
   type CompResult <: CompleteResult[R]
 
   type ReadType
 
   override type Tables <: ExerciseTableDefs[ExType]
+
+  type ReviewType <: ExerciseReview[PartType]
 
   // Values
 
@@ -30,6 +36,11 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   protected val completeResultJsonProtocol: CompleteResultJsonProtocol[R, CompResult]
 
+  protected val exParts: Seq[PartType]
+
+  // Helper methods
+
+  def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
   // Reading Yaml
 

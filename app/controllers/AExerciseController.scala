@@ -21,8 +21,11 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
 
   protected def onNoSuchExercise(id: Int): Result = NotFound(s"Es gibt keine Aufgabe mit der ID $id")
 
+  protected def onNoSuchExercisePart(partStr: String): Result = NotFound(s"Es gibt keine Aufgabenteil '$partStr'")
+
   // FIXME: Redirect and flash!
   private def onNoSuchTool(toolType: String): Result = BadRequest(s"There is no such tool with name $toolType")
+
 
   protected def withAdminWithToolMain(toolType: String)(f: (User, ToolMainType) => Request[AnyContent] => Result): EssentialAction = withAdmin { admin =>
     implicit request =>
