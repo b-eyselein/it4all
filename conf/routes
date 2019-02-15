@@ -57,7 +57,7 @@ GET           /logout                                                  controlle
 # Unified routes
 GET           /:toolType/index                                         controllers.MainExerciseController.index(toolType: String)
 
-GET           /:toolType/learningPaths/read                            controllers.MainExerciseController.readLearningPaths(toolType: String)
+GET           /:toolType/learningPaths/read                            controllers.MainExerciseAdminController.readLearningPaths(toolType: String)
 GET           /:toolType/learningPaths/:id                             controllers.MainExerciseController.learningPath(toolType: String, id: Int)
 
 GET           /:toolType/playground                                    controllers.MainExerciseController.playground(toolType: String)
@@ -65,7 +65,7 @@ GET           /:toolType/playground                                    controlle
 GET           /:toolType/evaluate                                      controllers.MainExerciseController.evaluate(toolType: String)
 POST          /:toolType/submitEvaluation                              controllers.MainExerciseController.submitEvaluation(toolType: String)
 
-GET           /:toolType/admin/index                                   controllers.MainExerciseController.adminIndex(toolType: String)
+GET           /:toolType/admin/index                                   controllers.MainExerciseAdminController.adminIndex(toolType: String)
 
 # Blockly test
 GET           /blockly                                                 controllers.Application.blocklyTest

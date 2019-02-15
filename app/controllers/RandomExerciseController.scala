@@ -20,6 +20,8 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
 
   override protected def getToolMain(toolType: String): Option[RandomExerciseToolMain] = toolList.getRandomExToolMainOption(toolType)
 
+  override protected val adminRightsRequired: Boolean = false
+
   // Routes
 
   def newExercise(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>

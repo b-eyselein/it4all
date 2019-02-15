@@ -19,6 +19,8 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
 
   override protected def getToolMain(toolType: String): Option[AToolMain] = toolList.toolMains.find(_.urlPart == toolType)
 
+  override protected val adminRightsRequired: Boolean = false
+
   def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request => toolMain.futureLearningPaths map (paths => Ok(views.html.exercises.exerciseIndex(user, toolMain, paths)))
   }
@@ -44,21 +46,6 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
       }
 
       FeedbackFormHelper(user.username, toolMain.urlPart).feedbackFormMapping.bindFromRequest().fold(onError, onRead)
-  }
-
-  // Admin
-
-  def adminIndex(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.adminIndexView(admin, toolList) map (html => Ok(html))
-  }
-
-  def readLearningPaths(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      val readLearningPaths: Seq[LearningPath] = toolMain.readLearningPaths
-
-      toolMain.futureSaveLearningPaths(readLearningPaths) map {
-        _ => Ok(views.html.admin.learningPathRead(user, readLearningPaths, toolMain))
-      }
   }
 
   def learningPath(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>

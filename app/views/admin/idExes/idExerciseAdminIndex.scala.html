@@ -8,7 +8,7 @@
     <h2 class="text-center">Verwaltung der @toolMainObject.pluralName</h2>
 
     <div class="form-group">
-        <a href="@exes.routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)"
+        <a href="@exes.routes.ExerciseAdminController.adminExerciseList(toolMainObject.urlPart)"
         class="btn btn-secondary btn-block">Übersicht über alle Aufgaben</a>
     </div>
 
@@ -18,15 +18,15 @@
     </div>
 
     <div class="form-group">
-        <a href="@exes.routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)"
+        <a href="@exes.routes.ExerciseAdminController.adminNewExerciseForm(toolMainObject.urlPart)"
         class="btn btn-success btn-block">Neue Aufgabe erstellen</a>
     </div>
 
     <div class="form-group">
         <div class="btn-group d-flex">
-            <a href="@exes.routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)"
+            <a href="@exes.routes.ExerciseAdminController.adminExportExercises(toolMainObject.urlPart)"
             class="btn btn-secondary w-100">Aufgaben als YAML exportieren</a>
-            <a href="@exes.routes.ExerciseController.adminImportToRead(toolMainObject.urlPart)"
+            <a href="@exes.routes.ExerciseAdminController.adminImportToRead(toolMainObject.urlPart)"
             class="btn btn-secondary w-100">Aufgaben aus YAML importieren</a>
         </div>
     </div>
@@ -36,7 +36,7 @@
     <h2 class="text-center">Lernpfade</h2>
 
     <div class="form-group">
-        <a href="@routes.MainExerciseController.readLearningPaths(toolMainObject.urlPart)"
+        <a href="@routes.MainExerciseAdminController.readLearningPaths(toolMainObject.urlPart)"
         class="btn btn-secondary btn-block">Lernpfade einlesen</a>
     </div>
 

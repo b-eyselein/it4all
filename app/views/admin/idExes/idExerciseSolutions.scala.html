@@ -1,6 +1,7 @@
 @import model.{User, DBPartSolution, ExPart}
+@import model.toolMains.{ToolList, ASingleExerciseToolMain}
 
-@(adminUser: User, solutions: Seq[DBPartSolution[_ <: ExPart, _]], toolList: model.toolMains.ToolList, toolMainObject: model.toolMains.ASingleExerciseToolMain)
+@(adminUser: User, solutions: Seq[DBPartSolution[_ <: ExPart, _]], toolList: ToolList, toolMainObject: ASingleExerciseToolMain)
 
 @title = @{
     "Lösungen für Aufgabe TODO!"
@@ -22,7 +23,7 @@
         <h1 class="text-center">@title</h1>
 
         <div class="form-group">
-            <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)">
+            <a class="btn btn-primary btn-block" href="@routes.MainExerciseAdminController.adminIndex(toolMainObject.urlPart)">
                 Zurück zur Administratorseite</a>
         </div>
 

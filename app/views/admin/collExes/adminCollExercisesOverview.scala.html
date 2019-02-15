@@ -12,7 +12,7 @@
 
 @admin.adminMain("Aufgabenübersicht", user, toolList, Some(toolMainObject), scripts) {
 
-    <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+    <a href="@routes.MainExerciseAdminController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
         Zurück zur Administratorseite</a>
 
     <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
@@ -42,7 +42,7 @@
                         </select>
                         <span class="input-group-btn">
                             <button class="btn btn-info" id="scb_@exercise.id" disabled data-id="@exercise.id"
-                            data-url="@coll.routes.CollectionController.adminChangeExerciseState(toolMainObject.urlPart, collectionId, exercise.id)">
+                            data-url="@coll.routes.CollectionAdminController.adminChangeExerciseState(toolMainObject.urlPart, collectionId, exercise.id)">
                                 <span class="octicon octicon-cloud-upload"></span>
                             </button>
                         </span>
@@ -54,7 +54,7 @@
                         <span class="octicon octicon-pencil"></span>
                     </a>
                     <button class="btn btn-danger" title="Aufgabe @exercise.id löschen" id="del_@exercise.id"
-                    data-url="@coll.routes.CollectionController.adminDeleteExercise(toolMainObject.urlPart, collectionId, exercise.id)">
+                    data-url="@coll.routes.CollectionAdminController.adminDeleteExercise(toolMainObject.urlPart, collectionId, exercise.id)">
                         <span class="octicon octicon-x"></span>
                     </button>
                 </td>

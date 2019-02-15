@@ -18,7 +18,7 @@
     <div class="container">
         <h1 class="text-center">@title</h1>
 
-        <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@routes.MainExerciseAdminController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">
@@ -50,7 +50,7 @@
                             </select>
                             <div class="input-group-append">
                                 <button class="btn btn-info" id="scb_@exercise.id" data-id="@exercise.id" disabled
-                                data-url="@exes.routes.ExerciseController.adminChangeExState(toolMainObject.urlPart, exercise.id)">
+                                data-url="@exes.routes.ExerciseAdminController.adminChangeExState(toolMainObject.urlPart, exercise.id)">
                                     <span class="octicon octicon-cloud-upload"></span>
                                 </button>
                             </div>
@@ -59,12 +59,12 @@
 
                     <td>
                         <a class="btn btn-secondary" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id"
-                        href="@exes.routes.ExerciseController.adminEditExerciseForm(toolMainObject.urlPart, exercise.id)">
+                        href="@exes.routes.ExerciseAdminController.adminEditExerciseForm(toolMainObject.urlPart, exercise.id)">
                             <span class="octicon octicon-pencil"></span>
                         </a>
 
                         <button class="btn btn-danger" title="Aufgabe @exercise.id löschen" id="del_@exercise.id"
-                        data-url="@exes.routes.ExerciseController.adminDeleteExercise(toolMainObject.urlPart, exercise.id)">
+                        data-url="@exes.routes.ExerciseAdminController.adminDeleteExercise(toolMainObject.urlPart, exercise.id)">
                             <span class="octicon octicon-x"></span>
                         </button>
 

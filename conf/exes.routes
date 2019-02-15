@@ -1,26 +1,26 @@
-GET           /:toolType/admin/import                           controllers.exes.ExerciseController.adminImportToRead(toolType: String)
-GET           /:toolType/admin/export                           controllers.exes.ExerciseController.adminExportExercises(toolType: String)
-GET           /:toolType/admin/exportFile                       controllers.exes.ExerciseController.adminExportExercisesAsFile(toolType: String)
+GET           /:toolType/admin/import                           controllers.exes.ExerciseAdminController.adminImportToRead(toolType: String)
+GET           /:toolType/admin/export                           controllers.exes.ExerciseAdminController.adminExportExercises(toolType: String)
+GET           /:toolType/admin/exportFile                       controllers.exes.ExerciseAdminController.adminExportExercisesAsFile(toolType: String)
 
-GET           /:toolType/admin/exerciseList                     controllers.exes.ExerciseController.adminExerciseList(toolType: String)
+GET           /:toolType/admin/exerciseList                     controllers.exes.ExerciseAdminController.adminExerciseList(toolType: String)
 
 GET           /:toolType/newExForm                              controllers.exes.ExerciseController.newExerciseForm(toolType: String)
 POST          /:toolType/newExercise                            controllers.exes.ExerciseController.newExercise(toolType: String)
 POST          /:toolType/:id/editExercise                       controllers.exes.ExerciseController.editExercise(toolType: String, id: Int)
 
 
-GET           /:toolType/admin/newExForm                        controllers.exes.ExerciseController.adminNewExerciseForm(toolType: String)
+GET           /:toolType/admin/newExForm                        controllers.exes.ExerciseAdminController.adminNewExerciseForm(toolType: String)
 
-GET           /:toolType/admin/exerciseList/:id                 controllers.exes.ExerciseController.adminEditExerciseForm(toolType: String, id: Int)
+GET           /:toolType/admin/exerciseList/:id                 controllers.exes.ExerciseAdminController.adminEditExerciseForm(toolType: String, id: Int)
 
-PUT           /:toolType/admin/exerciseList/:id                 controllers.exes.ExerciseController.adminEditExercise(toolType: String, id: Int)
-POST          /:toolType/admin/exerciseList/:id                 controllers.exes.ExerciseController.adminEditExercise(toolType: String, id: Int)
+PUT           /:toolType/admin/exerciseList/:id                 controllers.exes.ExerciseAdminController.adminEditExercise(toolType: String, id: Int)
+POST          /:toolType/admin/exerciseList/:id                 controllers.exes.ExerciseAdminController.adminEditExercise(toolType: String, id: Int)
 
-DELETE        /:toolType/admin/exerciseList/:id                 controllers.exes.ExerciseController.adminDeleteExercise(toolType: String, id: Int)
+DELETE        /:toolType/admin/exerciseList/:id                 controllers.exes.ExerciseAdminController.adminDeleteExercise(toolType: String, id: Int)
 
-PUT           /:toolType/admin/exercise/:id/state               controllers.exes.ExerciseController.adminChangeExState(toolType: String, id: Int)
+PUT           /:toolType/admin/exercise/:id/state               controllers.exes.ExerciseAdminController.adminChangeExState(toolType: String, id: Int)
 
-GET           /:toolType/admin/solutions/:id                    controllers.exes.ExerciseController.showSolutions(toolType: String, id: Int)
+GET           /:toolType/solutions/:id                          controllers.exes.ExerciseController.showSolutions(toolType: String, id: Int)
 
 GET           /:toolType/exercises                              controllers.exes.ExerciseController.exerciseList(toolType: String, page: Int ?= 1)
 

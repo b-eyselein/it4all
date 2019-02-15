@@ -12,8 +12,10 @@ import scala.concurrent.ExecutionContext
 class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
+  override protected val adminRightsRequired: Boolean = true
+
   // FIXME: AJAX!
-  def addAdmin(courseId: Int): EssentialAction = withAdmin { _ =>
+  def addAdmin(courseId: Int): EssentialAction = withUser { _ =>
     implicit request =>
       //      val userName = singleStrForm(NAME_NAME).bindFromRequest.get.str
       //      Option(User.finder.byId(userName)) match {
@@ -30,7 +32,7 @@ class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProv
       Ok("TODO!")
   }
 
-  def course(id: Int): EssentialAction = withAdmin { _ =>
+  def course(id: Int): EssentialAction = withUser { _ =>
     implicit request =>
       //      Ok(views.html.admin.course.render(user, Course.finder.byId(id)))
 
@@ -38,7 +40,7 @@ class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProv
   }
 
   // FIXME: AJAX!
-  def newCourse(): EssentialAction = withAdmin { _ =>
+  def newCourse(): EssentialAction = withUser { _ =>
     implicit request =>
       //      val courseName = singleStrForm(NAME_NAME).bindFromRequest.get.str
       //      Course.finder.all.asScala.find(_.name == courseName) match {
@@ -58,5 +60,5 @@ class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProv
       Ok("TODO!")
   }
 
-  def newCourseForm(): EssentialAction = withAdmin { user => implicit request => Ok(views.html.admin.newCourseForm.render(user)) }
+  def newCourseForm(): EssentialAction = withUser { user => implicit request => Ok(views.html.admin.newCourseForm.render(user)) }
 }

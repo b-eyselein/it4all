@@ -1,21 +1,21 @@
 
-GET           /:toolType/admin/collections                         controllers.coll.CollectionController.adminCollectionsList(toolType: String)
+GET           /:toolType/admin/collections                         controllers.coll.CollectionAdminController.adminCollectionsList(toolType: String)
 
-GET           /:toolType/admin/import                              controllers.coll.CollectionController.adminImportToRead(toolType: String)
-GET           /:toolType/admin/export                              controllers.coll.CollectionController.adminExportCollections(toolType: String)
-GET           /:toolType/admin/exportAsFile                        controllers.coll.CollectionController.adminExportCollectionsAsFile(toolType: String)
+GET           /:toolType/admin/import                              controllers.coll.CollectionAdminController.adminImportToRead(toolType: String)
+GET           /:toolType/admin/export                              controllers.coll.CollectionAdminController.adminExportCollections(toolType: String)
+GET           /:toolType/admin/exportAsFile                        controllers.coll.CollectionAdminController.adminExportCollectionsAsFile(toolType: String)
 
-GET           /:toolType/admin/newForm                             controllers.coll.CollectionController.adminNewCollectionForm(toolType: String)
-GET           /:toolType/admin/:collId                             controllers.coll.CollectionController.adminEditCollectionForm(toolType: String, collId: Int)
-POST          /:toolType/admin/:collId                             controllers.coll.CollectionController.adminEditCollection(toolType: String, collId: Int)
+GET           /:toolType/admin/newForm                             controllers.coll.CollectionAdminController.adminNewCollectionForm(toolType: String)
+GET           /:toolType/admin/:collId                             controllers.coll.CollectionAdminController.adminEditCollectionForm(toolType: String, collId: Int)
+POST          /:toolType/admin/:collId                             controllers.coll.CollectionAdminController.adminEditCollection(toolType: String, collId: Int)
 
-DELETE        /:toolType/admin/:collId                             controllers.coll.CollectionController.adminDeleteCollection(toolType: String, collId: Int)
-DELETE        /:toolType/admin/:collId/:exId                       controllers.coll.CollectionController.adminDeleteExercise(toolType: String, collId: Int, exId: Int)
+DELETE        /:toolType/admin/:collId                             controllers.coll.CollectionAdminController.adminDeleteCollection(toolType: String, collId: Int)
+DELETE        /:toolType/admin/:collId/:exId                       controllers.coll.CollectionAdminController.adminDeleteExercise(toolType: String, collId: Int, exId: Int)
 
-GET           /:toolType/admin/:collId/exercises                   controllers.coll.CollectionController.adminExercisesInCollection(toolType: String, collId: Int)
+GET           /:toolType/admin/:collId/exercises                   controllers.coll.CollectionAdminController.adminExercisesInCollection(toolType: String, collId: Int)
 
-PUT           /:toolType/admin/collection/:id/state                controllers.coll.CollectionController.adminChangeCollectionState(toolType: String, id: Int)
-PUT           /:toolType/admin/exercise/:collId/:exId/state        controllers.coll.CollectionController.adminChangeExerciseState(toolType: String, collId: Int, exId: Int)
+PUT           /:toolType/admin/collection/:id/state                controllers.coll.CollectionAdminController.adminChangeCollectionState(toolType: String, id: Int)
+PUT           /:toolType/admin/exercise/:collId/:exId/state        controllers.coll.CollectionAdminController.adminChangeExerciseState(toolType: String, collId: Int, exId: Int)
 
 
 GET           /:toolType/collections                               controllers.coll.CollectionController.collectionList(toolType: String, page: Int ?= 1)
