@@ -16,7 +16,7 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   // Abstract types
 
-  type ExId
+  type ExId <: ExerciseIdentifier
 
   type ExType <: Exercise
 
