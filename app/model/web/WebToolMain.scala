@@ -4,7 +4,7 @@ import better.files.File
 import com.gargoylesoftware.htmlunit.ScriptException
 import javax.inject._
 import model._
-import model.toolMains.{ASingleExerciseToolMain, ToolList, ToolState}
+import model.toolMains.{ASingleExerciseToolMain, SingleExerciseIdentifier, ToolList, ToolState}
 import model.web.WebConsts._
 import model.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
@@ -71,12 +71,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     target.createFileIfNotExists(createParents = true).write(content)
   }
 
-  override def futureOldOrDefaultSolution(user: User, exId: Int, exSemVer: SemanticVersion, part: WebExPart): Future[Option[DBSolType]] =
-    super.futureOldOrDefaultSolution(user, exId, exSemVer, part) flatMap {
+  override def futureMaybeOldSolution(user: User, exIdentifier: SingleExerciseIdentifier, part: WebExPart): Future[Option[DBSolType]] =
+    super.futureMaybeOldSolution(user, exIdentifier, part) flatMap {
       case Some(solution) => Future.successful(Some(solution))
       case None           =>
         part match {
-          case WebExParts.JsPart => super.futureOldOrDefaultSolution(user, exId, exSemVer, WebExParts.HtmlPart)
+          case WebExParts.JsPart => super.futureMaybeOldSolution(user, exIdentifier, WebExParts.HtmlPart)
           case _                 => Future.successful(None)
         }
     }

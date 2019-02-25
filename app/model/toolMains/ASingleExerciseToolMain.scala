@@ -4,7 +4,7 @@ import better.files.File
 import model.ExerciseState.APPROVED
 import model.core.{NoSuchExerciseException, ReadAndSaveResult, SolutionTransferException}
 import model.persistence.SingleExerciseTableDefs
-import model.{DBPartSolution, ExPart, ExerciseReview, ExerciseState, Points, SemanticVersion, SingleExercise, User}
+import model.{DBPartSolution, ExerciseState, Points, SemanticVersion, SingleExercise, User}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
@@ -17,13 +17,17 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
+
 abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(implicit ec: ExecutionContext) extends FixedExToolMain(aToolName, aUrlPart) {
+
 
   // Abstract Types
 
+  override type ExId = SingleExerciseIdentifier
+
   override type ExType <: SingleExercise[PartType]
 
-  type DBSolType <: DBPartSolution[PartType, SolType]
+  override type DBSolType <: DBPartSolution[PartType, SolType]
 
   override type ReadType = ExType
 
@@ -57,6 +61,14 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   def futureAllReviews: Future[Seq[ReviewType]] = tables.futureAllReviews
 
   def futureReviewsForExercise(id: Int): Future[Seq[ReviewType]] = tables.futureReviewsForExercise(id)
+
+  def futureSaveSolution(sol: DBSolType): Future[Boolean] = tables.futureSaveSolution(sol)
+
+  override def futureMaybeOldSolution(user: User, exIdentifier: SingleExerciseIdentifier, part: PartType): Future[Option[DBSolType]] =
+    tables.futureOldSolution(user.username, exIdentifier.exId, exIdentifier.exSemVer, part)
+
+  def futureSolutionsForExercise(exerciseId: Int): Future[Seq[DBSolType]] = tables.futureOldSolutions(exerciseId)
+
 
   // Helper methods
 
@@ -119,13 +131,6 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   def checkAndCreateSolDir(username: String, exercise: ExType): Try[File] =
     Try(solutionDirForExercise(username, exercise.id).createDirectories())
-
-  def futureSaveSolution(sol: DBSolType): Future[Boolean] = tables.futureSaveSolution(sol)
-
-  def futureOldOrDefaultSolution(user: User, exId: Int, exSemVer: SemanticVersion, part: PartType): Future[Option[DBSolType]] =
-    tables.futureOldSolution(user.username, exId, exSemVer, part)
-
-  def futureSolutionsForExercise(exerciseId: Int): Future[Seq[DBSolType]] = tables.futureOldSolutions(exerciseId)
 
 
   // Result handling

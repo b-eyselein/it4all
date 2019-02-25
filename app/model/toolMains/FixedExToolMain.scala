@@ -16,7 +16,11 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   // Abstract types
 
+  type ExId
+
   type ExType <: Exercise
+
+  type DBSolType <: UserSolution[SolType]
 
   type PartType <: ExPart
 
@@ -37,6 +41,10 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
   protected val completeResultJsonProtocol: CompleteResultJsonProtocol[R, CompResult]
 
   protected val exParts: Seq[PartType]
+
+  // DB
+
+  def futureMaybeOldSolution(user: User, exIdentifier: ExId, part: PartType): Future[Option[DBSolType]]
 
   // Helper methods
 

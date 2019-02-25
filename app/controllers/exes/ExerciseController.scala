@@ -5,7 +5,7 @@ import controllers.{AFixedExController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.core._
 import model.programming.ProgToolMain
-import model.toolMains.{ASingleExerciseToolMain, ToolList}
+import model.toolMains.{ASingleExerciseToolMain, SingleExerciseIdentifier, ToolList}
 import model.uml._
 import model.web.{WebExParts, WebToolMain}
 import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
@@ -127,7 +127,8 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
           futureCompleteEx flatMap {
             case None           => Future.successful(onNoSuchExercise(id))
             case Some(exercise) =>
-              toolMain.futureOldOrDefaultSolution(user, exercise.id, exercise.semanticVersion, part) map {
+              val exIdentifier = SingleExerciseIdentifier(exercise.id, exercise.semanticVersion)
+              toolMain.futureMaybeOldSolution(user, exIdentifier, part) map {
                 oldSolution => Ok(toolMain.renderExercise(user, exercise, part, oldSolution))
               }
           }
@@ -234,10 +235,13 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
           case None                        =>
             Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
             Future(emptyClassDiagram)
-          case Some(exercise: UmlExercise) => umlToolMain.futureOldOrDefaultSolution(user, exercise.id, exercise.semanticVersion, part) map {
-            case Some(solution) => solution.solution
-            case None           => exercise.getDefaultClassDiagForPart(part)
-          }
+          case Some(exercise: UmlExercise) =>
+            val exIdentifier = SingleExerciseIdentifier(exercise.id, exercise.semanticVersion)
+
+            umlToolMain.futureMaybeOldSolution(user, exIdentifier, part) map {
+              case Some(solution) => solution.solution
+              case None           => exercise.getDefaultClassDiagForPart(part)
+            }
         }
       }
 

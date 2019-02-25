@@ -18,19 +18,23 @@ import scala.util.{Failure, Success, Try}
 
 abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends FixedExToolMain(tn, up) {
 
+
   // TODO: remove...
 
   def theExParts: Seq[PartType] = exParts
 
   // Abstract types
 
+  override type ExId = CollectionExIdentifier
+
   override type ExType <: ExerciseInColl
 
-  type DBSolType <: CollectionExSolution[SolType]
+  override type DBSolType <: CollectionExSolution[SolType]
 
   override type ReadType = CompCollType
 
   override type Tables <: ExerciseCollectionTableDefs[ExType, CollType, CompCollType, SolType, DBSolType]
+
 
   type CollType <: ExerciseCollection[ExType]
 
@@ -66,7 +70,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureExercisesInColl(collId: Int): Future[Seq[ExType]] = tables.futureExercisesInColl(collId)
 
-  def futureMaybeOldSolution(user: User, collId: Int, exId: Int): Future[Option[DBSolType]] = tables.futureMaybeOldSolution(user.username, collId, exId)
+  override def futureMaybeOldSolution(user: User, exIdentifier: CollectionExIdentifier, part: PartType): Future[Option[DBSolType]] =
+    tables.futureMaybeOldSolution(user.username, exIdentifier.collId, exIdentifier.exId)
 
   def futureSampleSolutions(collId: Int, exId: Int): Future[Seq[String]] = tables.futureSampleSolutions(collId, exId)
 

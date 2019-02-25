@@ -7,7 +7,7 @@ import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.core.overviewHelpers.{SolvedStates, UserCollEx}
-import model.toolMains.{CollectionToolMain, ToolList}
+import model.toolMains.{CollectionExIdentifier, CollectionToolMain, ToolList}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.single
@@ -88,11 +88,13 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
           toolMain.futureCollById(collId) flatMap {
             case None             => Future(BadRequest(s"There is no collection with id $collId!"))
             case Some(collection) =>
+              val exIdentifier = CollectionExIdentifier(collId, id)
+
 
               val values: Future[(Option[toolMain.ExType], Int, Option[toolMain.DBSolType])] = for {
                 compEx <- toolMain.futureExerciseById(collId, id)
                 numOfExes <- toolMain.numOfExesInColl(collId)
-                oldSolution <- toolMain.futureMaybeOldSolution(user, collId, id)
+                oldSolution <- toolMain.futureMaybeOldSolution(user, exIdentifier, exPart)
               } yield (compEx, numOfExes, oldSolution)
 
               values map {
@@ -153,7 +155,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         Future(BadRequest("TODO!"))
       }
 
-      val onFormRead: toolMain.ExType => Future[Result] = { newExercise =>
+      val onFormRead: toolMain.ExType => Future[Result] = { newExercise: toolMain.ExType =>
         toolMain.futureInsertExercise(newExercise) map {
           case false =>
             // TODO: make view?
