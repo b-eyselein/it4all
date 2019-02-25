@@ -1,7 +1,7 @@
 package model.persistence
 
+import model._
 import model.core.overviewHelpers.SolvedState
-import model.{ExerciseState, _}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -10,7 +10,7 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait ExerciseCollectionTableDefs[CompEx <: Exercise, Coll <: ExerciseCollection[CompEx], CompColl <: CompleteCollection, SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[CompEx] {
+trait ExerciseCollectionTableDefs[ExType <: Exercise, CollType <: ExerciseCollection, CompColl <: CompleteCollection, SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[ExType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -61,9 +61,9 @@ trait ExerciseCollectionTableDefs[CompEx <: Exercise, Coll <: ExerciseCollection
 
   // Reading
 
-  def futureColls: Future[Seq[Coll]] = db.run(collTable.result)
+  def futureColls: Future[Seq[CollType]] = db.run(collTable.result)
 
-  def futureCollById(id: Int): Future[Option[Coll]] = db.run(collTable.filter(_.id === id).result.headOption)
+  def futureCollById(id: Int): Future[Option[CollType]] = db.run(collTable.filter(_.id === id).result.headOption)
 
   def futureCompleteColls: Future[Seq[CompColl]] = futureColls flatMap (colls => Future.sequence(colls map completeCollForColl))
 
@@ -72,14 +72,14 @@ trait ExerciseCollectionTableDefs[CompEx <: Exercise, Coll <: ExerciseCollection
     case None       => Future.successful(None)
   }
 
-  protected def completeCollForColl(coll: Coll): Future[CompColl]
+  protected def completeCollForColl(coll: CollType): Future[CompColl]
 
-  def futureExercisesInColl(collId: Int): Future[Seq[CompEx]] =
+  def futureExercisesInColl(collId: Int): Future[Seq[ExType]] =
     db.run(exTable.filter(_.collectionId === collId).result) flatMap {
       futureExes: Seq[ExDbValues] => Future.sequence(futureExes map completeExForEx)
     }
 
-  def futureExerciseById(collId: Int, id: Int): Future[Option[CompEx]] =
+  def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] =
     db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).result.headOption) flatMap {
       case Some(ex) => completeExForEx(ex) map Some.apply
       case None     => Future.successful(None)
@@ -97,6 +97,9 @@ trait ExerciseCollectionTableDefs[CompEx <: Exercise, Coll <: ExerciseCollection
   def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]]
 
   // Saving
+
+  def futureInsertCollection(collection: CollType): Future[Boolean] =
+    db.run(collTable += collection).transform(_ == 1, identity)
 
   def saveCompleteColl(compColl: CompColl): Future[Boolean]
 
@@ -135,7 +138,7 @@ trait ExerciseCollectionTableDefs[CompEx <: Exercise, Coll <: ExerciseCollection
 
   protected implicit val solutionTypeColumnType: slick.ast.TypedType[SolType]
 
-  abstract class ExerciseCollectionTable(tag: Tag, tableName: String) extends HasBaseValuesTable[Coll](tag, tableName) {
+  abstract class ExerciseCollectionTable(tag: Tag, tableName: String) extends HasBaseValuesTable[CollType](tag, tableName) {
 
     def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion))
 
@@ -150,7 +153,7 @@ trait ExerciseCollectionTableDefs[CompEx <: Exercise, Coll <: ExerciseCollection
 
     def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId, collSemVer))
 
-    def scenarioFk: ForeignKeyQuery[CollTableDef, Coll] = foreignKey("scenario_fk", (collectionId, collSemVer), collTable)(co => (co.id, co.semanticVersion))
+    def scenarioFk: ForeignKeyQuery[CollTableDef, CollType] = foreignKey("scenario_fk", (collectionId, collSemVer), collTable)(co => (co.id, co.semanticVersion))
 
   }
 

@@ -32,8 +32,6 @@ final case class SqlCompleteScenario(override val coll: SqlScenario, override va
 
   override type Coll = SqlScenario
 
-  override def exercisesWithFilter(filter: String): Seq[SqlExercise] = SqlExerciseType.withNameInsensitiveOption(filter) map (exType => getExercisesByType(exType)) getOrElse Seq[SqlExercise]()
-
   def getExercisesByType(exType: SqlExerciseType): Seq[SqlExercise] = exercises filter (_.exerciseType == exType)
 
   override def renderRest: Html = new Html(
@@ -60,7 +58,7 @@ final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: S
 // final case classes for db
 
 final case class SqlScenario(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             shortName: String) extends ExerciseCollection[SqlExercise] {
+                             shortName: String) extends ExerciseCollection {
 
   val imageUrl: String = shortName + ".png"
 

@@ -1,13 +1,19 @@
-
 GET           /:toolType/admin/collections                         controllers.coll.CollectionAdminController.adminCollectionsList(toolType: String)
 
-GET           /:toolType/admin/import                              controllers.coll.CollectionAdminController.adminImportToRead(toolType: String)
+GET           /:toolType/admin/import                              controllers.coll.CollectionAdminController.adminImportCollections(toolType: String)
+
 GET           /:toolType/admin/export                              controllers.coll.CollectionAdminController.adminExportCollections(toolType: String)
 GET           /:toolType/admin/exportAsFile                        controllers.coll.CollectionAdminController.adminExportCollectionsAsFile(toolType: String)
 
 GET           /:toolType/admin/newForm                             controllers.coll.CollectionAdminController.adminNewCollectionForm(toolType: String)
-GET           /:toolType/admin/:collId                             controllers.coll.CollectionAdminController.adminEditCollectionForm(toolType: String, collId: Int)
-POST          /:toolType/admin/:collId                             controllers.coll.CollectionAdminController.adminEditCollection(toolType: String, collId: Int)
+
+GET           /:toolType/admin/:collId                             controllers.coll.CollectionAdminController.adminCollection(toolType: String, collId: Int)
+
+GET           /:toolType/admin/:collId/import                      controllers.coll.CollectionAdminController.adminImportExercises(toolType: String, collId: Int)
+GET           /:toolType/admin/:collId/export                      controllers.coll.CollectionAdminController.adminExportExercises(toolType: String, collId: Int)
+
+GET           /:toolType/admin/:collId/edit                        controllers.coll.CollectionAdminController.adminEditCollectionForm(toolType: String, collId: Int)
+POST          /:toolType/admin/:collId/edit                        controllers.coll.CollectionAdminController.adminEditCollection(toolType: String, collId: Int)
 
 DELETE        /:toolType/admin/:collId                             controllers.coll.CollectionAdminController.adminDeleteCollection(toolType: String, collId: Int)
 DELETE        /:toolType/admin/:collId/:exId                       controllers.coll.CollectionAdminController.adminDeleteExercise(toolType: String, collId: Int, exId: Int)

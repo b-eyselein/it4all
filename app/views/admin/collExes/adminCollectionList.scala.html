@@ -1,71 +1,73 @@
-@(user: model.User, collWrappers: Seq[model.CompleteCollection], toolMainObject: model.toolMains.CollectionToolMain,
-        toolList: model.toolMains.ToolList)
+@import model.{User, Exercise, ExerciseCollection, CompleteCollection}
+@import model.toolMains.{ToolList, CollectionToolMain}
 
-    @scripts = {
-        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+@(user: User, collWrappers: Seq[ExerciseCollection], toolMainObject: CollectionToolMain, toolList: ToolList)
 
-        <script>
-                SystemJS.import('@routes.Assets.versioned("app/admin/collExAdmin.js")');
-        </script>
-    }
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    @title = @{
-        toolMainObject.collectionPluralName + "übersicht " + toolMainObject.toolname
-    }
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/admin/collExAdmin.js")');
+    </script>
+}
 
-    @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Status</th>
-                    <th>Aktionen</th>
-                    <th>Titel</th>
-                    <th>Autor</th>
-                    <th>Aufgaben</th>
-                </tr>
-            </thead>
-            <tbody>
-            @for(collection <- collWrappers.map(_.coll)) {
-                <tr id="tr1_@collection.id">
-                    <td>@collection.id</td>
-                    <td>
-                        <div class="input-group">
-                            <select class="form-control" id="state_@collection.id" title="Status der Aufgabe" data-val="@collection.state" data-id="@collection.id">
-                            @for(exState <- model.ExerciseState.values) {
-                                <option @{
-                                    if(exState == collection.state) "selected" else ""
-                                }>@exState </option>
-                            }
-                            </select>
-                            <div class="input-group-append">
-                                <button class="btn btn-info" id="scb_@collection.id" disabled data-id="@collection.id"
-                                data-url="@coll.routes.CollectionAdminController.adminChangeCollectionState(toolMainObject.urlPart, collection.id)">
-                                    <span class="octicon octicon-cloud-upload"></span>
-                                </button>
-                            </div>
+@title = @{
+    toolMainObject.collectionPluralName + "übersicht " + toolMainObject.toolname
+}
+
+@admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Aktionen</th>
+                <th>Titel</th>
+                <th>Autor</th>
+                <th>Aufgaben</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(collection <- collWrappers) {
+            <tr id="tr1_@collection.id">
+                <td>@collection.id</td>
+                <td>
+                    <div class="input-group">
+                        <select class="form-control" id="state_@collection.id" title="Status der Aufgabe" data-val="@collection.state" data-id="@collection.id">
+                        @for(exState <- model.ExerciseState.values) {
+                            <option @{
+                                if(exState == collection.state) "selected" else ""
+                            }>@exState </option>
+                        }
+                        </select>
+                        <div class="input-group-append">
+                            <button class="btn btn-info" id="scb_@collection.id" disabled data-id="@collection.id"
+                            data-url="@coll.routes.CollectionAdminController.adminChangeCollectionState(toolMainObject.urlPart, collection.id)">
+                                <span class="octicon octicon-cloud-upload"></span>
+                            </button>
                         </div>
-                    </td>
-                    <td>
-                        <a class="btn btn-secondary" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
-                        href="@coll.routes.CollectionAdminController.adminEditCollectionForm(toolMainObject.urlPart, collection.id)">
-                            <span class="octicon octicon-pencil"></span>
-                        </a>
+                    </div>
+                </td>
+                <td>
+                    <a class="btn btn-secondary" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id"
+                    href="@coll.routes.CollectionAdminController.adminEditCollectionForm(toolMainObject.urlPart, collection.id)">
+                        <span class="octicon octicon-pencil"></span>
+                    </a>
 
-                        <button class="btn btn-danger" title="Aufgabe @collection.id löschen" id="del_@collection.id"
-                        data-url="@coll.routes.CollectionAdminController.adminDeleteCollection(toolMainObject.urlPart, collection.id)">
-                            <span class="octicon octicon-x"></span>
-                        </button>
-                    </td>
-                    <td>@collection.title</td>
-                    <td>@collection.author</td>
-                    <td>
-                        <a href="@coll.routes.CollectionAdminController.adminExercisesInCollection(toolMainObject.urlPart, collection.id)"
-                        class="btn btn-primary btn-block">Zu den Aufgaben</a>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    }
+                    <button class="btn btn-danger" title="Aufgabe @collection.id löschen" id="del_@collection.id"
+                    data-url="@coll.routes.CollectionAdminController.adminDeleteCollection(toolMainObject.urlPart, collection.id)">
+                        <span class="octicon octicon-x"></span>
+                    </button>
+                </td>
+                <td>@collection.title</td>
+                <td>@collection.author</td>
+                <td>
+                    <a href="@coll.routes.CollectionAdminController.adminExercisesInCollection(toolMainObject.urlPart, collection.id)"
+                    class="btn btn-primary btn-block">Zu den Aufgaben</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

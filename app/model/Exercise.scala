@@ -45,7 +45,7 @@ trait HasBaseValues {
 
 trait ExPart {
 
-  // FIXME: use enumeratum=!=
+  // FIXME: use enumeratum =?=
 
   def urlName: String
 
@@ -65,13 +65,6 @@ trait ExTag {
 
 }
 
-trait HasBaseValuesInColl extends HasBaseValues {
-
-  def collectionId: Int
-
-  def collSemVer: SemanticVersion
-
-}
 
 trait Exercise {
 

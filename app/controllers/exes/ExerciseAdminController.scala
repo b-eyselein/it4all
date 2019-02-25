@@ -21,6 +21,7 @@ import play.api.libs.ws._
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Failure
 
 @Singleton
 class ExerciseAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val repository: Repository, ws: WSClient, tl: ToolList,
@@ -33,6 +34,7 @@ class ExerciseAdminController @Inject()(cc: ControllerComponents, dbcp: Database
 
   override protected val adminRightsRequired: Boolean = true
 
+
   // Helpers
 
   override protected def getToolMain(toolType: String): Option[ASingleExerciseToolMain] = toolList.getSingleExerciseToolMainOption(toolType)
@@ -40,6 +42,24 @@ class ExerciseAdminController @Inject()(cc: ControllerComponents, dbcp: Database
   private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   // Admin
+
+  def adminImportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
+    implicit request =>
+      // FIXME: refactor!!!!!!!!!
+
+      val (readSuccesses: Seq[toolMain.ExType], readFailures: Seq[Failure[toolMain.ExType]]) = CommonUtils.splitTriesNew(toolMain.readImports)
+
+      toolMain.futureSaveRead(readSuccesses) map { saveResults: Seq[(toolMain.ExType, Boolean)] =>
+        val readAndSaveResult = ReadAndSaveResult(saveResults map (sr => new ReadAndSaveSuccess[toolMain.ExType](sr._1, sr._2)), readFailures)
+
+        for (failure <- readAndSaveResult.failures) {
+          Logger.error("There has been an error reading a yaml object: ", failure.exception)
+        }
+
+        Ok(toolMain.previewReadAndSaveResult(admin, readAndSaveResult, toolList))
+      }
+  }
+
 
   def adminExportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
     implicit request => toolMain.yamlString map (yaml => Ok(views.html.admin.export(admin, yaml, toolMain, toolList)))

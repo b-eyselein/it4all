@@ -53,8 +53,15 @@ trait ExerciseTableDefs[CompEx <: Exercise] extends LearningPathTableDefs {
 
   // Saving
 
-  def futureInsertExercise(compEx: CompEx): Future[Boolean] = db.run(exTable += exDbValuesFromExercise(compEx)) flatMap {
-    insertCount => saveExerciseRest(compEx)
+  def futureInsertExercise(compEx: CompEx): Future[Boolean] = {
+    val deleteOldExQuery = exTable.filter(dbEx => dbEx.id === compEx.id && dbEx.semanticVersion === compEx.semanticVersion).delete
+    val insertNewExQuery = exTable += exDbValuesFromExercise(compEx)
+
+    db.run(deleteOldExQuery) flatMap { _ =>
+      db.run(insertNewExQuery) flatMap {
+        insertCount: Int => saveExerciseRest(compEx)
+      }
+    }
   }
 
   protected def saveExerciseRest(compEx: CompEx): Future[Boolean]

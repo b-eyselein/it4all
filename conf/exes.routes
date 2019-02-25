@@ -1,4 +1,4 @@
-GET           /:toolType/admin/import                           controllers.exes.ExerciseAdminController.adminImportToRead(toolType: String)
+GET           /:toolType/admin/import                           controllers.exes.ExerciseAdminController.adminImportExercises(toolType: String)
 GET           /:toolType/admin/export                           controllers.exes.ExerciseAdminController.adminExportExercises(toolType: String)
 GET           /:toolType/admin/exportFile                       controllers.exes.ExerciseAdminController.adminExportExercisesAsFile(toolType: String)
 

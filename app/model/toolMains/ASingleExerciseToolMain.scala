@@ -46,7 +46,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   def futureExerciseByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[ExType]] =
     tables.futureExerciseByIdAndVersion(id, semVer)
 
-  override def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(exercises map {
+  override def futureSaveRead(exercises: Seq[ExType]): Future[Seq[(ExType, Boolean)]] = Future.sequence(exercises map {
     ex => tables.futureInsertExercise(ex) map (saveRes => (ex, saveRes))
   })
 

@@ -1,8 +1,8 @@
 package model.sql.persistence
 
-import model.{ExerciseState, HasBaseValuesInColl, SemanticVersion}
 import model.persistence.DbModels
 import model.sql._
+import model.{ExerciseState, HasBaseValues, SemanticVersion}
 
 object SqlDbModels extends DbModels {
 
@@ -29,4 +29,5 @@ object SqlDbModels extends DbModels {
 }
 
 final case class DbSqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                               collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends HasBaseValuesInColl
+                               collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends HasBaseValues
+

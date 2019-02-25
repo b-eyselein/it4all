@@ -1,18 +1,16 @@
 package model
 
 
-trait ExerciseCollection[CompExType <: Exercise] extends HasBaseValues
+trait ExerciseCollection extends HasBaseValues
 
 
 trait CompleteCollection {
 
   type CompEx <: Exercise
 
-  type Coll <: ExerciseCollection[CompEx]
+  type Coll <: ExerciseCollection
 
   def coll: Coll
-
-  def exercisesWithFilter(filter: String): Seq[CompEx] = exercises
 
   def exercises: Seq[CompEx]
 

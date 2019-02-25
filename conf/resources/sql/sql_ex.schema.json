@@ -1,19 +1,6 @@
 {
-  "type": "object",
-  "properties": {
-    "id": {"type": "number"},
-    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-    "title": {"type": "string"},
-    "author": {"type": "string"},
-    "text": {"type": "string"},
-    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-    "shortName": {"type": "string"},
-    "exercises": {
-      "type": "array",
-      "items": {"$ref": "#/definitions/SqlExercise"}
-    }
-  },
-  "required": ["id", "semanticVersion", "title", "author", "text", "status", "shortName", "exercises"],
+  "type": "array",
+  "items": {"$ref": "#/definitions/SqlExercise"},
   "definitions": {
     "SqlExercise": {
       "type": "object",

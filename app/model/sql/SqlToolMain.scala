@@ -2,9 +2,10 @@ package model.sql
 
 import javax.inject.{Inject, Singleton}
 import model._
-import model.core.result.EvaluationResult
+import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
+import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
@@ -63,15 +64,23 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val usersCanCreateExes: Boolean = false
 
-  override val completeResultJsonProtocol: SqlCorrResultJsonProtocol.type = SqlCorrResultJsonProtocol
+  override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlCorrResultJsonProtocol
 
   override val exParts: IndexedSeq[SqlExPart] = SqlExParts.values
 
   // Yaml
 
-  override implicit val yamlFormat: MyYamlFormat[SqlCompleteScenario] = SqlYamlProtocol.SqlScenarioYamlFormat
+  override val collectionYamlFormat: MyYamlFormat[SqlScenario] = NewSqlYamlProtocol.SqlCollectionYamlFormat
+  override val exerciseYamlFormat  : MyYamlFormat[SqlExercise] = NewSqlYamlProtocol.SqlExerciseYamlFormat
+
+  override implicit val yamlFormat: MyYamlFormat[ReadType] = null // FIXME: SqlYamlProtocol.SqlScenarioYamlFormat
 
   // db
+
+  override def futureSaveRead(reads: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(reads map {
+    ex => tables.saveCompleteColl(SqlCompleteScenario(ex._1, ex._2)) map (saveRes => (ex, saveRes))
+  })
+
 
   override protected def saveSolution(solution: SqlSolution): Future[Boolean] = tables.saveSolution(solution)
 
@@ -123,8 +132,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override protected def exerciseHasPart(exercise: SqlExercise, partType: SqlExPart): Boolean = true
 
-  override def instantiateCollection(id: Int, state: ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
-    SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, shortName = ""), exercises = Seq[SqlExercise]())
+  override def instantiateCollection(id: Int, author: String, state: ExerciseState): SqlScenario =
+    SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(collId: Int, id: Int, author: String, state: ExerciseState): SqlExercise = {
     val semVer = SemanticVersionHelper.DEFAULT

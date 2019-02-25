@@ -1,0 +1,70 @@
+@import model.{User, ExerciseCollection, Exercise}
+@import model.toolMains.{ToolList, CollectionToolMain}
+
+@(user: User, collection: ExerciseCollection, exercises: Seq[Exercise], toolMain: CollectionToolMain, toolList: ToolList)
+
+@title = @{
+    s"Administration Sammlung '${collection.title}'"
+}
+
+
+@exesPerRow = @{
+    3
+}
+
+@rowsPerTab = @{
+    6
+}
+
+@exerciseTabGroupCount = @{
+    Math.ceil(exercises.size.toDouble / (rowsPerTab * exesPerRow).toDouble).toInt
+}
+
+@admin.adminMain(title, user, toolList, Some(toolMain)) {
+    <section>
+        <h2 class="text-center">Aufgaben</h2>
+
+        <ul class="nav nav-tabs">
+        @for(exTabIndex <- 0 until exerciseTabGroupCount) {
+            <li class="nav-item">
+                <a class="nav-link @if(exTabIndex == 0) {active}" data-toggle="tab" href="#exTab_@exTabIndex">@exTabIndex</a>
+            </li>
+        }
+        </ul>
+
+        <div class="tab-content mt-3">
+        @for((exercisesTabGroup, index) <- exercises.sortBy(_.id).grouped(rowsPerTab * exesPerRow).zipWithIndex) {
+            <div class="tab-pane @if(index == 0) {active} else {fade}" id="exTab_@index">
+            @for(exercisesRowGroup <- exercisesTabGroup.grouped(exesPerRow)) {
+                <div class="form-group row">
+                @for(exercise <- exercisesRowGroup) {
+                    <div class="col-md-@{
+                        12 / exesPerRow
+                    }">
+                        <div class="btn btn-primary btn-block">
+                            @exercise.id: @exercise.title
+                        </div>
+                    </div>
+                }
+                </div>
+            }
+            </div>
+        }
+        </div>
+
+        <div class="form-group">
+            <a href="@coll.routes.CollectionController.newExerciseForm(toolMain.urlPart, collection.id)"
+            class="btn btn-success btn-block">Neue Aufgabe erstellen</a>
+        </div>
+
+        <div class="form-group">
+            <div class="btn-group d-flex">
+                <a class="btn btn-secondary w-100" href="@coll.routes.CollectionAdminController.adminExportExercises(toolMain.urlPart, collection.id)">
+                    Aufgaben aus dieser Sammlung als YAML exportieren</a>
+                <a class="btn btn-secondary w-100" href="@coll.routes.CollectionAdminController.adminImportExercises(toolMain.urlPart, collection.id)">
+                    Aufgaben in diese Sammlung aus YAML importieren</a>
+            </div>
+        </div>
+
+    </section>
+}

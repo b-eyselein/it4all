@@ -1,11 +1,12 @@
 package model.toolMains
 
-import model._
+import better.files.File
+import model.{YamlArr, _}
 import model.core._
 import model.core.overviewHelpers.SolvedState
 import model.persistence.ExerciseCollectionTableDefs
-import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
+import net.jcazevedo.moultingyaml._
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.{JsValue, Json}
@@ -29,16 +30,20 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type DBSolType <: CollectionExSolution[SolType]
 
-  override type ReadType = CompCollType
+  override type ReadType = (CollType, Seq[ExType])
 
   override type Tables <: ExerciseCollectionTableDefs[ExType, CollType, CompCollType, SolType, DBSolType]
 
 
-  type CollType <: ExerciseCollection[ExType]
+  type CollType <: ExerciseCollection
 
   type CompCollType <: CompleteCollection
 
   // Other members
+
+  protected val collectionYamlFormat: MyYamlFormat[CollType]
+
+  protected val exerciseYamlFormat: MyYamlFormat[ExType]
 
   val collectionSingularName: String
 
@@ -77,11 +82,15 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Saving
 
-  override def futureSaveRead(exercises: Seq[CompCollType]): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
-    ex => tables.saveCompleteColl(ex) map (saveRes => (ex, saveRes))
-  })
+  def futureInsertCollection(collection: CollType): Future[Boolean] = tables.futureInsertCollection(collection)
 
-  def saveReadCollection(read: Seq[CompCollType]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteColl)
+  def futureSaveExercise(exercise: ExType): Future[Boolean] = ???
+
+  override def futureSaveRead(reads: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]
+
+  //  = Future.sequence(reads map {
+  //    ex => tables.saveCompleteColl(ex) map (saveRes => (ex, saveRes))
+  //  })
 
   protected def saveSolution(solution: DBSolType): Future[Boolean]
 
@@ -139,8 +148,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
        |  <a class="btn btn-primary btn-block" href="${controllers.coll.routes.CollectionController.collectionList(up)}">Zu den Übungsaufgabensammlungen</a>
        |</div>""".stripMargin)
 
-  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map {
-    stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this, toolList)
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = tables.futureColls map {
+    collections => views.html.admin.collExes.collectionAdminIndex(admin, collections, this, toolList)
   }
 
   def renderExercise(user: User, coll: CollType, exercise: ExType, numOfExes: Int, maybeOldSolution: Option[DBSolType], part: PartType)
@@ -148,18 +157,27 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def adminRenderEditRest(exercise: Option[CompCollType]): Html
 
-  def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean, toolList: ToolList): Html =
+  def renderCollectionEditForm(user: User, collection: CollType, isCreation: Boolean, toolList: ToolList)
+                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.admin.collExes.collectionEditForm(user, collection, isCreation, new Html(""), this, toolList /*adminRenderEditRest(collection)*/)
 
   def renderExerciseEditForm(user: User, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
-  override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[CompCollType], toolList: ToolList): Html =
-    views.html.admin.collExes.collPreview(user, read, this, toolList)
+  def previewCollectionReadAndSaveResult(user: User, readCollections: ReadAndSaveResult[CollType], toolList: ToolList): Html = {
+     views.html.admin.collExes.readCollectionsPreview(user, readCollections, this, toolList)
+
+  }
+
+  override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html = {
+    ???
+
+    //  views.html.admin.collExes.collPreview(user, read, this, toolList)
+  }
 
   // Result handlers
 
-  def onLiveCorrectionResult(result: CompResultType, solutionSaved: Boolean): JsValue =
+  private def onLiveCorrectionResult(result: CompResultType, solutionSaved: Boolean): JsValue =
     completeResultJsonProtocol.completeResultWrites(solutionSaved).writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
@@ -169,12 +187,24 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Helper methods for admin
 
-  // TODO: scalarStyle = Folded if fixed...
-  override def yamlString: Future[String] = futureCompleteColls map {
-    exes => "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
+  def readCollectionsFromYaml: Seq[Try[CollType]] = {
+    val fileToRead: File = this.exerciseResourcesFolder / "collections.yaml"
+
+    Try(fileToRead.contentAsString.parseYaml) match {
+      case Failure(error)     => Seq(Failure(error))
+      case Success(yamlValue) => yamlValue match {
+        case YamlArray(yamlObjects) => yamlObjects.map(collectionYamlFormat.read)
+        case _                      => ???
+      }
+    }
   }
 
-  def instantiateCollection(id: Int, state: ExerciseState): CompCollType
+  // TODO: scalarStyle = Folded if fixed...
+  override def yamlString: Future[String] = futureCompleteColls map {
+    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
+  }
+
+  def instantiateCollection(id: Int, author: String, state: ExerciseState): CollType
 
   def instantiateExercise(collId: Int, id: Int, author: String, state: ExerciseState): ExType
 

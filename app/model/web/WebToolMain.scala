@@ -94,6 +94,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
+  def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String =
+    s"http://localhost:9080/${user.username}/$exerciseId/test.html"
+
   override protected def exerciseHasPart(exercise: WebExercise, partType: WebExPart): Boolean = partType match {
     case WebExParts.HtmlPart => exercise.htmlTasks.nonEmpty
     case WebExParts.JsPart   => exercise.jsTasks.nonEmpty
@@ -181,9 +184,5 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       }.transform(_ => onDriverGetSuccess(learnerSolution, exercise, part, driver), onDriverGetError)
     }
   }
-
-  // Other helper methods
-
-  def getSolutionUrl(user: User, exerciseId: Int, part: WebExPart): String = s"http://localhost:9080/${user.username}/$exerciseId/test.html"
 
 }

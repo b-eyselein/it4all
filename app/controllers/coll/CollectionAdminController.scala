@@ -16,6 +16,7 @@ import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try}
 
 @Singleton
 class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
@@ -31,14 +32,48 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
-  private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
-    val start = Math.max(0, (page - 1) * step)
-    val end = Math.min(page * step, collection.size)
+  // Admin
 
-    collection slice(start, end)
+  def adminCollection(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      toolMain.futureCollById(collId) flatMap {
+        case None             => ???
+        case Some(collection) =>
+          toolMain.futureExercisesInColl(collId) map {
+            exercises => Ok(views.html.admin.collExes.collectionAdmin(user, collection, exercises, toolMain, toolList))
+          }
+      }
   }
 
-  // Admin
+  def adminImportCollections(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
+    implicit request =>
+      // FIXME: refactor!!!!!!!!!
+
+      val readTries: Seq[Try[toolMain.CollType]] = toolMain.readCollectionsFromYaml
+
+      val (readSuccesses: Seq[toolMain.CollType], readFailures: Seq[Failure[toolMain.CollType]]) = CommonUtils.splitTriesNew(readTries)
+
+      Future.sequence(readSuccesses
+        .map { readCollection =>
+          toolMain.futureInsertCollection(readCollection) map (saved => (readCollection, saved))
+        })
+        .map { saveResults: Seq[(toolMain.CollType, Boolean)] =>
+          val readAndSaveResult = ReadAndSaveResult(saveResults map (sr => new ReadAndSaveSuccess[toolMain.CollType](sr._1, sr._2)), readFailures)
+
+          for (failure <- readAndSaveResult.failures) {
+            Logger.error("There has been an error reading a yaml object: ", failure.exception)
+          }
+
+          Ok(toolMain.previewCollectionReadAndSaveResult(admin, readAndSaveResult, toolList))
+        }
+  }
+
+  def adminImportExercises(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      ???
+  }
+
+  def adminExportExercises(toolType: String, collId: Int): EssentialAction = ???
 
   def adminExportCollections(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request => toolMain.yamlString map (content => Ok(views.html.admin.export.render(admin, content, toolMain, toolList)))
@@ -94,14 +129,14 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
   def adminCollectionsList(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureCompleteColls map { allColls =>
-        Ok(views.html.admin.collExes.adminCollectionList(admin, allColls, toolMain, toolList))
+        Ok(views.html.admin.collExes.adminCollectionList(admin, allColls.map(_.coll), toolMain, toolList))
       }
   }
 
-  def adminNewCollectionForm(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
+  def adminNewCollectionForm(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureHighestCollectionId map { id =>
-        val collection = toolMain.instantiateCollection(id + 1, ExerciseState.RESERVED)
+        val collection: toolMain.CollType = toolMain.instantiateCollection(id + 1, admin.username, ExerciseState.RESERVED)
         Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = true, toolList))
       }
   }
@@ -109,7 +144,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
   def adminEditCollectionForm(tool: String, id: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureCompleteCollById(id) map { maybeCollection =>
-        val collection = maybeCollection getOrElse toolMain.instantiateCollection(id, ExerciseState.RESERVED)
+        val collection: toolMain.CollType = ??? // FIXME: maybeCollection.map(_.coll) getOrElse toolMain.instantiateCollection(id, ExerciseState.RESERVED)
         Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false, toolList))
       }
   }

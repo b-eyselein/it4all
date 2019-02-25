@@ -1,6 +1,5 @@
 package controllers.coll
 
-import better.files._
 import controllers.{AFixedExController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.ExerciseState
@@ -10,7 +9,6 @@ import model.core.overviewHelpers.{SolvedStates, UserCollEx}
 import model.toolMains.{CollectionExIdentifier, CollectionToolMain, ToolList}
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms.single
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsArray, JsString, Json}
 import play.api.mvc._
@@ -31,7 +29,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Helpers
 
-  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
+//  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
     val start = Math.max(0, (page - 1) * step)
@@ -47,7 +45,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       toolMain.futureCompleteColls map { allColls =>
         val filteredColls = allColls filter (_.coll.state == ExerciseState.APPROVED)
 
-        Ok(views.html.exercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
+        Ok(views.html.exercises.userCollectionsOverview(user, takeSlice(filteredColls, page).map(_.coll), toolMain, page, filteredColls.size / stdStep + 1))
       }
   }
 
@@ -73,7 +71,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
           futureExesAndSuccessTypes map {
             exesAndSuccessTypes =>
               Ok(views.html.exercises.userCollectionExercisesOverview(
-                user, coll, exesAndSuccessTypes, toolMain, page, step, approvedExercises.size))
+                user, coll.coll, exesAndSuccessTypes, toolMain, page, step, approvedExercises.size))
           }
       }
   }

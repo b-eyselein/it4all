@@ -1,0 +1,16 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {"type": "number"},
+      "semanticVersion": {"$ref": "../semantic_version.schema.json"},
+      "title": {"type": "string"},
+      "author": {"type": "string"},
+      "text": {"type": "string"},
+      "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+      "shortName": {"type": "string"}
+    },
+    "required": ["id", "semanticVersion", "title", "author", "text", "status", "shortName"]
+  }
+}
