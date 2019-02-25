@@ -15,7 +15,13 @@ $(() => {
 });
 
 function checkPws(): boolean {
-    return ((pw1.val() as string).length >= 8) && checkSecondPw();
+    const firstPwOk = (pw1.val() as string).length >= 8
+
+    if (!firstPwOk) {
+        alert("Das Passwort ist zu kurz!");
+    }
+
+    return firstPwOk && checkSecondPw();
 }
 
 function checkSecondPw(): boolean {
