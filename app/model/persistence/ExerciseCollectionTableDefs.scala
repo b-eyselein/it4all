@@ -98,8 +98,15 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, CollType <: ExerciseCollec
 
   // Saving
 
-  def futureInsertCollection(collection: CollType): Future[Boolean] =
-    db.run(collTable += collection).transform(_ == 1, identity)
+  def futureInsertAndDeleteOldCollection(collection: CollType): Future[Boolean] = {
+    val deleteOldQuery = collTable.filter {
+      c => c.id === collection.id && c.semanticVersion === collection.semanticVersion
+    }.delete
+
+    db.run(deleteOldQuery) flatMap {
+      _ => db.run(collTable += collection).transform(_ == 1, identity)
+    }
+  }
 
   def saveCompleteColl(compColl: CompColl): Future[Boolean]
 

@@ -19,6 +19,7 @@ import scala.util.{Failure, Success, Try}
 
 abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends FixedExToolMain(tn, up) {
 
+  private val logger = Logger(classOf[CollectionToolMain])
 
   // TODO: remove...
 
@@ -43,7 +44,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   protected val collectionYamlFormat: MyYamlFormat[CollType]
 
-  protected val exerciseYamlFormat: MyYamlFormat[ExType]
+  protected def exerciseYamlFormat(collId: Int, collSemVer: SemanticVersion): MyYamlFormat[ExType]
 
   val collectionSingularName: String
 
@@ -82,7 +83,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Saving
 
-  def futureInsertCollection(collection: CollType): Future[Boolean] = tables.futureInsertCollection(collection)
+  def futureInsertAndDeleteOldCollection(collection: CollType): Future[Boolean] =
+    tables.futureInsertAndDeleteOldCollection(collection)
 
   def futureSaveExercise(exercise: ExType): Future[Boolean] = ???
 
@@ -164,10 +166,11 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   def renderExerciseEditForm(user: User, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
-  def previewCollectionReadAndSaveResult(user: User, readCollections: ReadAndSaveResult[CollType], toolList: ToolList): Html = {
-     views.html.admin.collExes.readCollectionsPreview(user, readCollections, this, toolList)
+  def previewCollectionReadAndSaveResult(user: User, readCollections: ReadAndSaveResult[CollType], toolList: ToolList): Html =
+    views.html.admin.collExes.readCollectionsPreview(user, readCollections, this, toolList)
 
-  }
+  def previewExerciseReadsAndSaveResult(user: User, readExercises: ReadAndSaveResult[ExType], toolList: ToolList): Html =
+    views.html.admin.collExes.readExercisesPreview(user, readExercises, this, toolList)
 
   override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html = {
     ???
@@ -181,19 +184,32 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     completeResultJsonProtocol.completeResultWrites(solutionSaved).writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
-    Logger.error("There has been a correction error", error)
+    logger.error("There has been a correction error", error)
     Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
   }
 
   // Helper methods for admin
 
   def readCollectionsFromYaml: Seq[Try[CollType]] = {
-    val fileToRead: File = this.exerciseResourcesFolder / "collections.yaml"
+    val fileToRead: File = exerciseResourcesFolder / "collections.yaml"
 
     Try(fileToRead.contentAsString.parseYaml) match {
       case Failure(error)     => Seq(Failure(error))
       case Success(yamlValue) => yamlValue match {
         case YamlArray(yamlObjects) => yamlObjects.map(collectionYamlFormat.read)
+        case _                      => ???
+      }
+    }
+  }
+
+  def readExercisesFromYaml(collection: CollType): Seq[Try[ExType]] = {
+
+    val fileToRead: File = exerciseResourcesFolder / s"${collection.id}-${collection.shortName}.yaml"
+
+    Try(fileToRead.contentAsString.parseYaml) match {
+      case Failure(error)     => Seq(Failure(error))
+      case Success(yamlValue) => yamlValue match {
+        case YamlArray(yamlObjects) => yamlObjects.map(exerciseYamlFormat(collection.id, collection.semanticVersion).read)
         case _                      => ???
       }
     }

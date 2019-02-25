@@ -46,7 +46,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
       hint <- yamlObject.optStringField(hintName)
 
-      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(collBaseValues, baseValues).read)
+      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(collBaseValues.id, collBaseValues.semanticVersion, baseValues).read)
     } yield {
 
       for (tagFailures <- tagTries._2)
@@ -65,7 +65,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
       writeBaseValues(sqlEx.baseValues) ++
         Map[YamlValue, YamlValue](
           YamlString(exerciseTypeName) -> YamlString(sqlEx.exerciseType.entryName),
-          YamlString(samplesName) -> YamlArr(sqlEx.samples map SqlSampleYamlFormat(collBaseValues, sqlEx.baseValues).write)
+          YamlString(samplesName) -> YamlArr(sqlEx.samples map SqlSampleYamlFormat(collBaseValues.id, collBaseValues.semanticVersion, sqlEx.baseValues).write)
         ) ++ sqlEx.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(sqlEx)
     )
 
@@ -77,12 +77,12 @@ object SqlYamlProtocol extends MyYamlProtocol {
   }
 
 
-  final case class SqlSampleYamlFormat(collBaseValues: BaseValues, exerciseBaseValues: BaseValues) extends MyYamlObjectFormat[SqlSample] {
+  final case class SqlSampleYamlFormat(collId: Int, collSemVer: SemanticVersion, exerciseBaseValues: BaseValues) extends MyYamlObjectFormat[SqlSample] {
 
     override def readObject(yamlObject: YamlObject): Try[SqlSample] = for {
       id <- yamlObject.intField(idName)
       sample <- yamlObject.stringField(sampleName)
-    } yield SqlSample(id, exerciseBaseValues.id, exerciseBaseValues.semanticVersion, collBaseValues.id, collBaseValues.semanticVersion, sample)
+    } yield SqlSample(id, exerciseBaseValues.id, exerciseBaseValues.semanticVersion, collId, collSemVer, sample)
 
     override def write(obj: SqlSample): YamlValue = YamlObj(
       idName -> obj.id,

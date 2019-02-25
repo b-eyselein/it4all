@@ -10,4 +10,17 @@
 
 @admin.adminMain(title, user, toolList, Some(toolMain)) {
 
+    @for(readCollection <- readCollections.successes) {
+        <div class="card mb-3">
+            <div class="card-header">@{
+                readCollection.ex.id
+            }. @readCollection.ex.title</div>
+            <div class="card-body">
+
+                <p>@readCollection</p>
+
+            </div>
+        </div>
+    }
+
 }

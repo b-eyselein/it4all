@@ -1,0 +1,17 @@
+@import model.{User, Exercise}
+@import model.toolMains.{ToolList, CollectionToolMain}
+@import model.core.ReadAndSaveResult
+
+@(user: User, readExercises: ReadAndSaveResult[_ <: Exercise], toolMain: CollectionToolMain, toolList: ToolList)
+
+@title = @{
+    s"Eingelesene Sammlungen Tool '${toolMain.toolname}'"
+}
+
+@admin.adminMain(title, user, toolList, Some(toolMain)) {
+
+    @for(readExercise <- readExercises.successes) {
+        <p>@readExercise</p>
+    }
+
+}

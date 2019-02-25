@@ -1,7 +1,11 @@
 package model
 
 
-trait ExerciseCollection extends HasBaseValues
+trait ExerciseCollection extends HasBaseValues {
+
+  val shortName: String
+
+}
 
 
 trait CompleteCollection {

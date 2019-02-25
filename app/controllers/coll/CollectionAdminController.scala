@@ -22,6 +22,8 @@ import scala.util.{Failure, Try}
 class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
   extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
+  private val logger = Logger(classOf[CollectionAdminController])
+
   override protected type ToolMainType = CollectionToolMain
 
   override protected def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
@@ -45,41 +47,68 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       }
   }
 
-  def adminImportCollections(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
+  def adminImportCollections(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
       // FIXME: refactor!!!!!!!!!
 
       val readTries: Seq[Try[toolMain.CollType]] = toolMain.readCollectionsFromYaml
 
-      val (readSuccesses: Seq[toolMain.CollType], readFailures: Seq[Failure[toolMain.CollType]]) = CommonUtils.splitTriesNew(readTries)
+      val (readSuccesses, readFailures) = CommonUtils.splitTriesNew(readTries)
 
-      Future.sequence(readSuccesses
-        .map { readCollection =>
-          toolMain.futureInsertCollection(readCollection) map (saved => (readCollection, saved))
-        })
-        .map { saveResults: Seq[(toolMain.CollType, Boolean)] =>
-          val readAndSaveResult = ReadAndSaveResult(saveResults map (sr => new ReadAndSaveSuccess[toolMain.CollType](sr._1, sr._2)), readFailures)
+      val readAndSaveSuccesses: Future[Seq[(toolMain.CollType, Boolean)]] = Future.sequence(readSuccesses.map { readCollection =>
+        toolMain.futureInsertAndDeleteOldCollection(readCollection) map (saved => (readCollection, saved))
+      })
 
-          for (failure <- readAndSaveResult.failures) {
-            Logger.error("There has been an error reading a yaml object: ", failure.exception)
-          }
+      readAndSaveSuccesses.map { saveResults: Seq[(toolMain.CollType, Boolean)] =>
+        val readAndSaveResult = ReadAndSaveResult(saveResults map {
+          sr => new ReadAndSaveSuccess[toolMain.CollType](sr._1, sr._2)
+        }, readFailures)
 
-          Ok(toolMain.previewCollectionReadAndSaveResult(admin, readAndSaveResult, toolList))
+        for (failure <- readAndSaveResult.failures) {
+          logger.error("There has been an error reading a yaml object: ", failure.exception)
         }
+
+        Ok(toolMain.previewCollectionReadAndSaveResult(admin, readAndSaveResult, toolList))
+      }
   }
 
   def adminImportExercises(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      ???
+      // FIXME: refactor!!!!!!!!!
+
+      toolMain.futureCollById(collId) flatMap {
+        case None             => ???
+        case Some(collection) =>
+          val readTries: Seq[Try[toolMain.ExType]] = toolMain.readExercisesFromYaml(collection)
+
+          val (readSuccesses, readFailures) = CommonUtils.splitTriesNew(readTries)
+
+          val readAndSaveSuccesses: Future[Seq[(toolMain.ExType, Boolean)]] = Future.sequence(readSuccesses.map {
+            readExercise => toolMain.futureInsertExercise(readExercise) map (saved => (readExercise, saved))
+          })
+
+          readAndSaveSuccesses.map { saveResults: Seq[(toolMain.ExType, Boolean)] =>
+            val readAndSaveResult = ReadAndSaveResult(saveResults map {
+              sr => new ReadAndSaveSuccess[toolMain.ExType](sr._1, sr._2)
+            }, readFailures)
+
+            for (failure <- readAndSaveResult.failures) {
+              logger.error("There has been an error reading an yaml object", failure.exception)
+            }
+
+            Ok(toolMain.previewExerciseReadsAndSaveResult(user, readAndSaveResult, toolList))
+          }
+
+      }
   }
 
   def adminExportExercises(toolType: String, collId: Int): EssentialAction = ???
 
-  def adminExportCollections(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
+  def adminExportCollections(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
     implicit request => toolMain.yamlString map (content => Ok(views.html.admin.export.render(admin, content, toolMain, toolList)))
   }
 
-  def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (_, toolMain) =>
+  def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
       val file = File.newTemporaryFile(s"export_${toolMain.urlPart}", ".yaml")
 
@@ -93,7 +122,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
       val onFormError: Form[ExerciseState] => Future[Result] = { formWithErrors =>
         for (formError <- formWithErrors.errors)
-          Logger.error(s"Form error while changinge state of exercise $id: ${formError.message}")
+          logger.error(s"Form error while changinge state of exercise $id: ${formError.message}")
         Future(BadRequest("There has been an error!"))
       }
 
@@ -112,7 +141,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
       val onFormError: Form[ExerciseState] => Future[Result] = { formWithErrors =>
         for (formError <- formWithErrors.errors)
-          Logger.error(s"Form error while changinge state of exercise $exId: ${formError.message}")
+          logger.error(s"Form error while changinge state of exercise $exId: ${formError.message}")
         Future(BadRequest("There has been an error!"))
       }
 

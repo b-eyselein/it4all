@@ -71,7 +71,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Yaml
 
   override val collectionYamlFormat: MyYamlFormat[SqlScenario] = NewSqlYamlProtocol.SqlCollectionYamlFormat
-  override val exerciseYamlFormat  : MyYamlFormat[SqlExercise] = NewSqlYamlProtocol.SqlExerciseYamlFormat
+
+  override def exerciseYamlFormat(collId: Int, collSemVer: SemanticVersion): MyYamlFormat[SqlExercise] =
+    NewSqlYamlProtocol.SqlExerciseYamlFormat(collId, collSemVer)
 
   override implicit val yamlFormat: MyYamlFormat[ReadType] = null // FIXME: SqlYamlProtocol.SqlScenarioYamlFormat
 
