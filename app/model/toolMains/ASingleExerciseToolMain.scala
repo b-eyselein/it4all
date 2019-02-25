@@ -25,7 +25,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   override type ExId = SingleExerciseIdentifier
 
-  override type ExType <: SingleExercise[PartType]
+  override type ExType <: SingleExercise
 
   override type DBSolType <: DBPartSolution[PartType, SolType]
 
@@ -206,11 +206,13 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   override def indexCall: Call = controllers.routes.MainExerciseController.index(urlPart)
 
+  protected def exerciseHasPart(exercise: ExType, partType: PartType): Boolean
+
   def exerciseRoutesForUser(user: User, exercise: ExType): Future[Seq[CallForExPart]] = Future.sequence(exParts map {
     exPart: PartType =>
       // FIXME: check if user can solve this part!
 
-      if (exercise.hasPart(exPart)) {
+      if (exerciseHasPart(exercise, exPart)) {
         tables.futureUserCanSolvePartOfExercise(user.username, exercise.id, exercise.semanticVersion, exPart) map {
           enabled => Some(CallForExPart(exPart, controllers.exes.routes.ExerciseController.exercise(urlPart, exercise.id, exPart.urlName), enabled))
         }

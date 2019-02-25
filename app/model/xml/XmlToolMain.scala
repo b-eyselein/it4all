@@ -79,6 +79,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
+  override def exerciseHasPart(exercise: XmlExercise, partType: XmlExPart): Boolean = true
+
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): XmlExercise = XmlExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, grammarDescription = "", rootNode = "",
     samples = Seq[XmlSample](

@@ -10,14 +10,11 @@ final case class RegexSampleSolution(id: Int, exerciseId: Int, exSemVer: Semanti
 final case class RegexTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, data: String, isIncluded: Boolean)
 
 final case class RegexExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                               sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData])
-  extends SingleExercise[RegexExPart] {
+                               sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData]) extends SingleExercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
   // other methods
-
-  override def hasPart(partType: RegexExPart): Boolean = true
 
   override def preview: Html = Html(toString) // FIXME: implement!
 

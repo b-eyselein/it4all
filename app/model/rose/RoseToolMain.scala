@@ -73,6 +73,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Other helper methods
 
+  override protected def exerciseHasPart(exercise: RoseExercise, partType: RoseExPart): Boolean = true
+
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RoseExercise = RoseExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false,
     inputTypes = Seq[RoseInputType](), sampleSolutions = Seq[RoseSampleSolution]()

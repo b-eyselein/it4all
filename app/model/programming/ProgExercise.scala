@@ -11,7 +11,7 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
                               inputTypes: Seq[ProgInput],
                               sampleSolutions: Seq[ProgSampleSolution],
                               sampleTestData: Seq[SampleTestData],
-                              maybeClassDiagramPart: Option[UmlClassDiagPart]) extends SingleExercise[ProgExPart] {
+                              maybeClassDiagramPart: Option[UmlClassDiagPart]) extends SingleExercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -21,14 +21,6 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.programming.progPreview(this)
-
-  override def hasPart(partType: ProgExPart): Boolean = partType match {
-    case ProgExParts.Implementation   => true
-    case ProgExParts.ActivityDiagram  => true
-    case ProgExParts.TestdataCreation =>
-      // TODO: Creation of test data is currently disabled
-      false
-  }
 
   def buildTestDataFileContent(completeTestData: Seq[TestData], extendedUnitTests: Boolean): JsValue =
     if (extendedUnitTests) ???

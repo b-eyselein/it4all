@@ -9,7 +9,7 @@ import scala.language.postfixOps
 
 final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String,
                              state: ExerciseState, markedText: String, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution])
-  extends SingleExercise[UmlExPart] {
+  extends SingleExercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -29,11 +29,6 @@ final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
     case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => markedText
     case _                                                     => text
   })
-
-  override def hasPart(partType: UmlExPart): Boolean = partType match {
-    case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => true // TODO: Currently deactivated...
-    case _                                                     => false
-  }
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
     val assocs: Seq[UmlAssociation] = Seq[UmlAssociation]()

@@ -96,9 +96,7 @@ trait Exercise {
 
 }
 
-trait SingleExercise[PartType <: ExPart] extends Exercise {
-
-  def hasPart(partType: PartType): Boolean
+trait SingleExercise extends Exercise {
 
 }
 

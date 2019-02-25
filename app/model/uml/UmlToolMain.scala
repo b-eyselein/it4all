@@ -77,6 +77,11 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
+  override protected def exerciseHasPart(exercise: UmlExercise, partType: UmlExPart): Boolean = partType match {
+    case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => true // TODO: Currently deactivated...
+    case _                                                     => false
+  }
+
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): UmlExercise = UmlExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, markedText = "",
     toIgnore = Seq[String](),

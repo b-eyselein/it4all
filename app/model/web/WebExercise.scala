@@ -25,7 +25,7 @@ object JsActionType extends PlayEnum[JsActionType] {
 final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                              htmlText: Option[String], jsText: Option[String],
                              htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask],
-                             sampleSolutions: Seq[WebSampleSolution]) extends SingleExercise[WebExPart] {
+                             sampleSolutions: Seq[WebSampleSolution]) extends SingleExercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -36,10 +36,11 @@ final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: S
 
   override def tags: Seq[WebExTag] = WebExParts.values map (part => new WebExTag(part.partName, hasPart(part)))
 
-  override def hasPart(partType: WebExPart): Boolean = partType match {
+  def hasPart(partType: WebExPart): Boolean = partType match {
     case WebExParts.HtmlPart => htmlTasks.nonEmpty
     case WebExParts.JsPart   => jsTasks.nonEmpty
   }
+
 
   def maxPoints(part: WebExPart): Points = part match {
     case WebExParts.HtmlPart => addUp(htmlTasks.map(_.maxPoints))

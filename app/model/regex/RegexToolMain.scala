@@ -80,6 +80,10 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override def exerciseReviewForm(username: String, exercise: RegexExercise, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
 
+  // Other helper methods
+
+  override def exerciseHasPart(exercise: RegexExercise, partType: RegexExPart): Boolean = true
+
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state,
     sampleSolutions = Seq[RegexSampleSolution](

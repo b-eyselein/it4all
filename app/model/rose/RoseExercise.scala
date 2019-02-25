@@ -8,7 +8,7 @@ import play.twirl.api.Html
 
 final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                               fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution])
-  extends SingleExercise[RoseExPart] {
+  extends SingleExercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -16,8 +16,6 @@ final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.rose.rosePreview.render(this)
-
-  override def hasPart(partType: RoseExPart): Boolean = true
 
   def declaration(forUser: Boolean): String = {
     val className = if (forUser) "UserRobot" else "SampleRobot"

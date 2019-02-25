@@ -84,6 +84,15 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Other helper methods
 
+  override protected def exerciseHasPart(exercise: ProgExercise, partType: ProgExPart): Boolean = partType match {
+    case ProgExParts.Implementation   => true
+    case ProgExParts.ActivityDiagram  => true
+    case ProgExParts.TestdataCreation =>
+      // TODO: Creation of test data is currently disabled
+      false
+  }
+
+
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgExercise = ProgExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
     folderIdentifier = "", functionName = "", outputType = ProgDataTypes.STRING, baseData = None,

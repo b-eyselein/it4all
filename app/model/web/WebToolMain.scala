@@ -94,6 +94,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
+  override protected def exerciseHasPart(exercise: WebExercise, partType: WebExPart): Boolean = partType match {
+    case WebExParts.HtmlPart => exercise.htmlTasks.nonEmpty
+    case WebExParts.JsPart   => exercise.jsTasks.nonEmpty
+  }
+
+
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebExercise = {
     val semVer = SemanticVersionHelper.DEFAULT
 
