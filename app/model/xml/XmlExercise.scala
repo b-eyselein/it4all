@@ -7,7 +7,7 @@ import play.twirl.api.Html
 
 
 final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             grammarDescription: String, rootNode: String, samples: Seq[XmlSample]) extends SingleExercise {
+                             grammarDescription: String, rootNode: String, samples: Seq[XmlSample]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 

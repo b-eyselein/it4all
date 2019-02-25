@@ -4,7 +4,7 @@ import better.files.File
 import model.ExerciseState.APPROVED
 import model.core.{NoSuchExerciseException, ReadAndSaveResult, SolutionTransferException}
 import model.persistence.SingleExerciseTableDefs
-import model.{DBPartSolution, ExerciseState, Points, SemanticVersion, SingleExercise, User}
+import model.{DBPartSolution, ExerciseState, Points, SemanticVersion, User}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
@@ -24,8 +24,6 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   // Abstract Types
 
   override type ExIdentifierType = SingleExerciseIdentifier
-
-  override type ExType <: SingleExercise
 
   override type DBSolType <: DBPartSolution[PartType, SolType]
 

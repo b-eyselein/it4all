@@ -104,7 +104,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     val semVer = SemanticVersionHelper.DEFAULT
 
     WebExercise(
-      id, semVer, collectionId = 1 /*collId*/ , collSemVer = semVer, title = "", author, text = "", state, htmlText = None, jsText = None,
+      id, semVer, /* collectionId = 1 /*collId*/ , collSemVer = semVer, */ title = "", author, text = "", state, htmlText = None, jsText = None,
       htmlTasks = Seq(
         HtmlCompleteTask(HtmlTask(1, id, semVer, "", "", None), attributes = Seq[Attribute]())
       ),

@@ -10,7 +10,7 @@ final case class RegexSampleSolution(id: Int, exerciseId: Int, exSemVer: Semanti
 final case class RegexTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, data: String, isIncluded: Boolean)
 
 final case class RegexExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                               sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData]) extends SingleExercise {
+                               sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 

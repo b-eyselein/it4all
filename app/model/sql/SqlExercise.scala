@@ -45,8 +45,8 @@ final case class SqlCompleteScenario(override val coll: SqlScenario, override va
 }
 
 final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, override val tags: Seq[SqlExTag],
-                             hint: Option[String], samples: Seq[SqlSample]) extends CollectionExercise {
+                             override val collectionId: Int, override val collSemVer: SemanticVersion, exerciseType: SqlExerciseType,
+                             override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[SqlSample]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 

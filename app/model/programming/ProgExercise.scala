@@ -11,7 +11,7 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
                               inputTypes: Seq[ProgInput],
                               sampleSolutions: Seq[ProgSampleSolution],
                               sampleTestData: Seq[SampleTestData],
-                              maybeClassDiagramPart: Option[UmlClassDiagPart]) extends SingleExercise {
+                              maybeClassDiagramPart: Option[UmlClassDiagPart]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 

@@ -1,12 +1,12 @@
 package model
 
 
-trait ExerciseCollection[CompExType <: CollectionExercise] extends HasBaseValues
+trait ExerciseCollection[CompExType <: Exercise] extends HasBaseValues
 
 
 trait CompleteCollection {
 
-  type CompEx <: CollectionExercise
+  type CompEx <: Exercise
 
   type Coll <: ExerciseCollection[CompEx]
 

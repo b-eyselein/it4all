@@ -27,8 +27,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ExIdentifierType = CollectionExIdentifier
 
-  override type ExType <: CollectionExercise
-
   override type DBSolType <: CollectionExSolution[SolType]
 
   override type ReadType = CompCollType

@@ -94,16 +94,11 @@ trait Exercise {
 
   def tags: Seq[ExTag] = Seq[ExTag]()
 
-}
 
-trait SingleExercise extends Exercise {
+  // TODO: for later...
 
-}
+  def collectionId: Int = -1
 
-trait CollectionExercise extends Exercise {
-
-  def collectionId: Int
-
-  def collSemVer: SemanticVersion
+  def collSemVer: SemanticVersion = SemanticVersionHelper.DEFAULT
 
 }

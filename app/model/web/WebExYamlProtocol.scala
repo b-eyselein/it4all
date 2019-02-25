@@ -41,7 +41,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
         logger.error("Could not read js task", jsTaskFailure.exception)
 
       WebExercise(
-        baseValues.id, baseValues.semanticVersion, collectionId = 1, collSemVer = SemanticVersionHelper.DEFAULT,
+        baseValues.id, baseValues.semanticVersion, /* collectionId = 1, collSemVer = SemanticVersionHelper.DEFAULT,*/
         baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText,
         htmlTaskTries._1, jsTaskTries._1,
         sampleSolutionTries._1

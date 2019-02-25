@@ -1,7 +1,7 @@
-@import model.{User, CollectionExercise}
+@import model.{User, Exercise}
 @import model.toolMains.{CollectionToolMain, ToolList}
 
-@(user: User, collectionId: Int, exercises: Seq[CollectionExercise], toolMainObject: CollectionToolMain, toolList: ToolList)
+@(user: User, collectionId: Int, exercises: Seq[Exercise], toolMainObject: CollectionToolMain, toolList: ToolList)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>

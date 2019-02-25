@@ -9,7 +9,7 @@ import scala.language.postfixOps
 
 final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String,
                              state: ExerciseState, markedText: String, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution])
-  extends SingleExercise {
+  extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
