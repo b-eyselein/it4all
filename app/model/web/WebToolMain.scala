@@ -4,7 +4,7 @@ import better.files.File
 import com.gargoylesoftware.htmlunit.ScriptException
 import javax.inject._
 import model._
-import model.toolMains.{ASingleExerciseToolMain, SingleExerciseIdentifier, ToolList, ToolState}
+import model.toolMains._
 import model.web.WebConsts._
 import model.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
@@ -100,11 +100,11 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   }
 
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebExercise = {
+  override def instantiateExercise(/*collId: Int,*/ id: Int, author: String, state: ExerciseState): WebExercise = {
     val semVer = SemanticVersionHelper.DEFAULT
 
     WebExercise(
-      id, semVer, title = "", author, text = "", state, htmlText = None, jsText = None,
+      id, semVer, collectionId = 1 /*collId*/ , collSemVer = semVer, title = "", author, text = "", state, htmlText = None, jsText = None,
       htmlTasks = Seq(
         HtmlCompleteTask(HtmlTask(1, id, semVer, "", "", None), attributes = Seq[Attribute]())
       ),

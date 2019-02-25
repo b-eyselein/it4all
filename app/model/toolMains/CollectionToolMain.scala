@@ -178,7 +178,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def instantiateCollection(id: Int, state: ExerciseState): CompCollType
 
-  def instantiateExercise(collId: Int, id: Int, state: ExerciseState): ExType
+  def instantiateExercise(collId: Int, id: Int, author: String, state: ExerciseState): ExType
 
   protected def instantiateSolution(id: Int, username: String, collection: CollType, exercise: ExType, solution: SolType,
                                     points: Points, maxPoints: Points): DBSolType

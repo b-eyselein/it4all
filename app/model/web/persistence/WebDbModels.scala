@@ -2,7 +2,7 @@ package model.web.persistence
 
 import model.persistence.DbModels
 import model.web.{HtmlCompleteTask, JsCompleteTask, WebExercise, WebSampleSolution}
-import model.{ExerciseState, HasBaseValues, SemanticVersion}
+import model.{ExerciseState, HasBaseValues, SemanticVersion, SemanticVersionHelper}
 
 object WebDbModels extends DbModels {
 
@@ -15,7 +15,8 @@ object WebDbModels extends DbModels {
 
   def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask], sampleSolutions: Seq[WebSampleSolution]) =
     WebExercise(
-      ex.id, ex.semanticVersion, ex.title, ex.author, ex.title, ex.state, ex.htmlText, ex.jsText,
+      ex.id, ex.semanticVersion, collectionId = 1, collSemVer = SemanticVersionHelper.DEFAULT,
+      ex.title, ex.author, ex.title, ex.state, ex.htmlText, ex.jsText,
       htmlTasks, jsTasks, sampleSolutions
     )
 

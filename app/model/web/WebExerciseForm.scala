@@ -81,7 +81,7 @@ object WebExerciseForm extends ExerciseForm[WebExercise] {
                           jsCompleteTaskFormValues: Seq[JsCompleteTaskFormValues],
                           webSampleFormValue: Seq[WebSampleSolutionFormValues]): WebExercise =
     WebExercise(
-      id, semVer, author, title, exText, status, htmlText, jsText,
+      id, semVer, collectionId = 1, collSemVer = SemanticVersionHelper.DEFAULT, author, title, exText, status, htmlText, jsText,
       htmlTasks = htmlCompleteTaskFormValues map applyHtmlTask(id, semVer),
       jsTasks = jsCompleteTaskFormValues map applyJstask(id, semVer),
       sampleSolutions = webSampleFormValue map applyWebSampleSolution(id, semVer)

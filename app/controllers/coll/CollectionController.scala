@@ -129,7 +129,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def newExerciseForm(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureHighestIdInCollection(collId) map { highestId =>
-        val newEx = toolMain.instantiateExercise(collId, highestId + 1, ExerciseState.RESERVED)
+        val newEx = toolMain.instantiateExercise(collId, highestId + 1, user.username, ExerciseState.RESERVED)
         Ok(toolMain.renderExerciseEditForm(user, newEx, isCreation = true, toolList))
       }
   }
@@ -137,8 +137,10 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def editExerciseForm(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureExerciseById(collId, exId) map {
-        case None              => Ok(toolMain.renderExerciseEditForm(user, toolMain.instantiateExercise(collId, exId, ExerciseState.RESERVED), isCreation = true, toolList))
         case Some(newExercise) => Ok(toolMain.renderExerciseEditForm(user, newExercise, isCreation = false, toolList))
+        case None              =>
+          val newExercise = toolMain.instantiateExercise(collId, exId, user.username, ExerciseState.RESERVED)
+          Ok(toolMain.renderExerciseEditForm(user, newExercise, isCreation = true, toolList))
       }
   }
 

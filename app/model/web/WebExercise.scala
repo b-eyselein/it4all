@@ -22,7 +22,8 @@ object JsActionType extends PlayEnum[JsActionType] {
 
 // Classes for use
 
-final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+final case class WebExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int = 1, collSemVer: SemanticVersion = SemanticVersionHelper.DEFAULT,
+                             title: String, author: String, text: String, state: ExerciseState,
                              htmlText: Option[String], jsText: Option[String],
                              htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask],
                              sampleSolutions: Seq[WebSampleSolution]) extends SingleExercise {
