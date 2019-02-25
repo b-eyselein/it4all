@@ -119,7 +119,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
       case Some((corrector, dao)) => Try(corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario))
     }
 
-  // Helper methods
+  // Other helper methods
+
+  override protected def exerciseHasPart(exercise: SqlExercise, partType: SqlExPart): Boolean = true
 
   override def instantiateCollection(id: Int, state: ExerciseState): SqlCompleteScenario = SqlCompleteScenario(
     SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, shortName = ""), exercises = Seq[SqlExercise]())
@@ -128,8 +130,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     id, SemanticVersion(0, 1, 0), title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
     collectionId = collId, collSemVer = SemanticVersion(0, 1, 0), tags = Seq[SqlExTag](), hint = None, samples = Seq[SqlSample]())
 
-  override def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlExercise, solution: String,
-                                   points: Points, maxPoints: Points): SqlSolution =
+  override protected def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlExercise, solution: String,
+                                             points: Points, maxPoints: Points): SqlSolution =
     SqlSolution(id, username, exercise.id, exercise.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
 
 }

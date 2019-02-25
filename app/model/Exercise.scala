@@ -100,7 +100,7 @@ trait SingleExercise extends Exercise {
 
 }
 
-trait ExerciseInColl extends Exercise {
+trait CollectionExercise extends Exercise {
 
   def collectionId: Int
 

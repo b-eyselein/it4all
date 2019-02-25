@@ -27,7 +27,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ExIdentifierType = CollectionExIdentifier
 
-  override type ExType <: ExerciseInColl
+  override type ExType <: CollectionExercise
 
   override type DBSolType <: CollectionExSolution[SolType]
 
@@ -180,8 +180,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def instantiateExercise(collId: Int, id: Int, state: ExerciseState): ExType
 
-  def instantiateSolution(id: Int, username: String, collection: CollType, exercise: ExType, solution: SolType,
-                          points: Points, maxPoints: Points): DBSolType
+  protected def instantiateSolution(id: Int, username: String, collection: CollType, exercise: ExType, solution: SolType,
+                                    points: Points, maxPoints: Points): DBSolType
 
   // Calls
 

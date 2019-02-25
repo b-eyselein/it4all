@@ -206,8 +206,6 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   override def indexCall: Call = controllers.routes.MainExerciseController.index(urlPart)
 
-  protected def exerciseHasPart(exercise: ExType, partType: PartType): Boolean
-
   def exerciseRoutesForUser(user: User, exercise: ExType): Future[Seq[CallForExPart]] = Future.sequence(exParts map {
     exPart: PartType =>
       // FIXME: check if user can solve this part!

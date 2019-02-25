@@ -48,6 +48,8 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   // Helper methods
 
+  protected def exerciseHasPart(exercise: ExType, partType: PartType): Boolean
+
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
   // Reading Yaml
