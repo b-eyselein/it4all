@@ -23,7 +23,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Abstract Types
 
-  override type ExId = SingleExerciseIdentifier
+  override type ExIdentifierType = SingleExerciseIdentifier
 
   override type ExType <: SingleExercise
 
@@ -135,7 +135,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Result handling
 
-  def onLiveCorrectionResult(solutionSaved: Boolean, result: CompResult): JsValue =
+  def onLiveCorrectionResult(solutionSaved: Boolean, result: CompResultType): JsValue =
     completeResultJsonProtocol.completeResultWrites(solutionSaved).writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = {
@@ -172,7 +172,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   protected def readSolution(user: User, exercise: ExType, part: PartType)(implicit request: Request[AnyContent]): Try[SolType]
 
-  protected def correctEx(user: User, sol: SolType, exercise: ExType, part: PartType): Future[Try[CompResult]]
+  protected def correctEx(user: User, sol: SolType, exercise: ExType, part: PartType): Future[Try[CompResultType]]
 
   // Views
 

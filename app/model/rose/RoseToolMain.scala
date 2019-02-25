@@ -34,9 +34,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override type DBSolType = RoseSolution
 
-  override type R = RoseEvalResult
+  override type ResultType = RoseEvalResult
 
-  override type CompResult = RoseCompleteResult
+  override type CompResultType = RoseCompleteResult
 
   override type ReviewType = RoseExerciseReview
 

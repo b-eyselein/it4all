@@ -35,9 +35,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override type DBSolType = WebSolution
 
-  override type R = WebResult
+  override type ResultType = WebResult
 
-  override type CompResult = WebCompleteResult
+  override type CompResultType = WebCompleteResult
 
   override type ReviewType = WebExerciseReview
 
@@ -71,7 +71,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     target.createFileIfNotExists(createParents = true).write(content)
   }
 
-  override def futureMaybeOldSolution(user: User, exIdentifier: SingleExerciseIdentifier, part: WebExPart): Future[Option[DBSolType]] =
+  override def futureMaybeOldSolution(user: User, exIdentifier: ExIdentifierType, part: WebExPart): Future[Option[DBSolType]] =
     super.futureMaybeOldSolution(user, exIdentifier, part) flatMap {
       case Some(solution) => Future.successful(Some(solution))
       case None           =>

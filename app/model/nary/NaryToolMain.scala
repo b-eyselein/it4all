@@ -22,7 +22,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   override type PartType = NaryExPart
 
-  override type R = EvaluationResult
+  override type ResultType = EvaluationResult
 
   override type Tables = NaryTableDefs
 

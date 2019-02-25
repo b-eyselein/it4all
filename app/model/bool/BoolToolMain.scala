@@ -23,7 +23,7 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   override type PartType = BoolExPart
 
-  override type R = EvaluationResult
+  override type ResultType = EvaluationResult
 
   override type Tables = BoolTableDefs
 

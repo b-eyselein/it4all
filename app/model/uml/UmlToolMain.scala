@@ -34,9 +34,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override type DBSolType = UmlSolution
 
-  override type R = EvaluationResult
+  override type ResultType = EvaluationResult
 
-  override type CompResult = UmlCompleteResult
+  override type CompResultType = UmlCompleteResult
 
   override type ReviewType = UmlExerciseReview
 

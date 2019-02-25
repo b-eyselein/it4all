@@ -38,9 +38,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override type DBSolType = DBProgSolution
 
-  override type R = ProgEvalResult
+  override type ResultType = ProgEvalResult
 
-  override type CompResult = ProgCompleteResult
+  override type CompResultType = ProgCompleteResult
 
   override type ReviewType = ProgExerciseReview
 

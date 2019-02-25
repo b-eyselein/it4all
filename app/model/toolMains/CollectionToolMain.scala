@@ -25,7 +25,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Abstract types
 
-  override type ExId = CollectionExIdentifier
+  override type ExIdentifierType = CollectionExIdentifier
 
   override type ExType <: ExerciseInColl
 
@@ -126,7 +126,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         }
     }
 
-  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType, part: PartType): Try[CompResult]
+  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType, part: PartType): Try[CompResultType]
 
   // Reading from requests
 
@@ -161,7 +161,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Result handlers
 
-  def onLiveCorrectionResult(result: CompResult, solutionSaved: Boolean): JsValue =
+  def onLiveCorrectionResult(result: CompResultType, solutionSaved: Boolean): JsValue =
     completeResultJsonProtocol.completeResultWrites(solutionSaved).writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = {

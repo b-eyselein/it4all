@@ -50,9 +50,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override type DBSolType = SqlSolution
 
-  override type R = EvaluationResult
+  override type ResultType = EvaluationResult
 
-  override type CompResult = SqlCorrResult
+  override type CompResultType = SqlCorrResult
 
   // Members
 

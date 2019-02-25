@@ -26,9 +26,9 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override type DBSolType = RegexDBSolution
 
-  override type R = RegexEvaluationResult
+  override type ResultType = RegexEvaluationResult
 
-  override type CompResult = RegexCompleteResult
+  override type CompResultType = RegexCompleteResult
 
   override type ReviewType = RegexExerciseReview
 

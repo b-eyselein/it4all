@@ -36,9 +36,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override type DBSolType = XmlSolution
 
-  override type R = XmlEvaluationResult
+  override type ResultType = XmlEvaluationResult
 
-  override type CompResult = XmlCompleteResult
+  override type CompResultType = XmlCompleteResult
 
   override type ReviewType = XmlExerciseReview
 
