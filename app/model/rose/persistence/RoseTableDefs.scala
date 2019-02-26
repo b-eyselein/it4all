@@ -1,7 +1,7 @@
 package model.rose.persistence
 
 import javax.inject.Inject
-import model.persistence.SingleExerciseTableDefs
+import model.persistence.IdExerciseTableDefs
 import model.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
 import model.rose._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RoseExercise, String, RoseSolution, RoseExPart, RoseExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with IdExerciseTableDefs[RoseExercise, RoseExPart, String, RoseSolution, RoseExerciseReview] {
 
   import profile.api._
 

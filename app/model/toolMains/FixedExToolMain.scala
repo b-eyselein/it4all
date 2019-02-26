@@ -30,7 +30,7 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   type ReadType
 
-  override type Tables <: ExerciseTableDefs[ExType]
+  override type Tables <: ExerciseTableDefs[ExType, PartType]
 
   type ReviewType <: ExerciseReview[PartType]
 

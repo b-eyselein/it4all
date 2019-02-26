@@ -1,6 +1,6 @@
 package model.programming.persistence
 
-import model.persistence.SingleExerciseTableDefs
+import model.persistence.IdExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming._
 import model.uml.UmlClassDiagram
@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
                                           (override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with SingleExerciseTableDefs[ProgExercise, ProgSolution, DBProgSolution, ProgExPart, ProgExerciseReview] {
+    with IdExerciseTableDefs[ProgExercise, ProgExPart, ProgSolution, DBProgSolution, ProgExerciseReview] {
 
   import profile.api._
 

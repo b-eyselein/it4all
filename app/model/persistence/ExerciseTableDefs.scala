@@ -1,14 +1,14 @@
 package model.persistence
 
 import model.learningPath.LearningPathTableDefs
-import model.{Exercise, HasBaseValues, SemanticVersion}
+import model.{ExPart, Exercise, HasBaseValues, SemanticVersion}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.ForeignKeyQuery
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefs[CompEx <: Exercise] extends LearningPathTableDefs {
+trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart] extends LearningPathTableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -54,18 +54,19 @@ trait ExerciseTableDefs[CompEx <: Exercise] extends LearningPathTableDefs {
   // Saving
 
   def futureInsertExercise(compEx: CompEx): Future[Boolean]
-//  = {
-//    val deleteOldExQuery = exTable.filter{
-//      dbEx: ExTableDef => dbEx.id === compEx.id && dbEx.semanticVersion === compEx.semanticVersion
-//    }.delete
-//    val insertNewExQuery = exTable += exDbValuesFromExercise(compEx)
-//
-//    db.run(deleteOldExQuery) flatMap { _ =>
-//      db.run(insertNewExQuery) flatMap {
-//        insertCount: Int => saveExerciseRest(compEx)
-//      }
-//    }
-//  }
+
+  //  = {
+  //    val deleteOldExQuery = exTable.filter{
+  //      dbEx: ExTableDef => dbEx.id === compEx.id && dbEx.semanticVersion === compEx.semanticVersion
+  //    }.delete
+  //    val insertNewExQuery = exTable += exDbValuesFromExercise(compEx)
+  //
+  //    db.run(deleteOldExQuery) flatMap { _ =>
+  //      db.run(insertNewExQuery) flatMap {
+  //        insertCount: Int => saveExerciseRest(compEx)
+  //      }
+  //    }
+  //  }
 
   protected def saveExerciseRest(compEx: CompEx): Future[Boolean]
 

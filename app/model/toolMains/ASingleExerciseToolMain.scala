@@ -3,7 +3,7 @@ package model.toolMains
 import better.files.File
 import model.ExerciseState.APPROVED
 import model.core.{NoSuchExerciseException, ReadAndSaveResult, SolutionTransferException}
-import model.persistence.SingleExerciseTableDefs
+import model.persistence.IdExerciseTableDefs
 import model.{DBPartSolution, ExerciseState, Points, SemanticVersion, User}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
@@ -29,7 +29,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   override type ReadType = ExType
 
-  override type Tables <: SingleExerciseTableDefs[ExType, SolType, DBSolType, PartType, ReviewType]
+  override type Tables <: IdExerciseTableDefs[ExType, PartType, SolType, DBSolType, ReviewType]
 
   // Forms
 

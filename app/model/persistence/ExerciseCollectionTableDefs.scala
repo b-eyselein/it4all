@@ -10,7 +10,8 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait ExerciseCollectionTableDefs[ExType <: Exercise, CollType <: ExerciseCollection, SolType, DBSolType <: CollectionExSolution[SolType]] extends ExerciseTableDefs[ExType] {
+trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollType <: ExerciseCollection, SolType, DBSolType <: CollectionExSolution[SolType]]
+  extends ExerciseTableDefs[ExType, PartType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._

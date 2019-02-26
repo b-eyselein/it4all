@@ -33,7 +33,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ReadType = (CollType, Seq[ExType])
 
-  override type Tables <: ExerciseCollectionTableDefs[ExType, CollType, SolType, DBSolType]
+  override type Tables <: ExerciseCollectionTableDefs[ExType, PartType, CollType, SolType, DBSolType]
 
 
   type CollType <: ExerciseCollection
