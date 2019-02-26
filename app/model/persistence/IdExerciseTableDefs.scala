@@ -30,6 +30,19 @@ trait IdExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart, ReviewType <: 
 
   // Update
 
+  def futureInsertExercise(compEx: CompEx): Future[Boolean] = {
+    val deleteOldExQuery = exTable.filter {
+      dbEx: ExTableDef => dbEx.id === compEx.id && dbEx.semanticVersion === compEx.semanticVersion
+    }.delete
+    val insertNewExQuery = exTable += exDbValuesFromExercise(compEx)
+
+    db.run(deleteOldExQuery) flatMap { _ =>
+      db.run(insertNewExQuery) flatMap {
+        insertCount: Int => saveExerciseRest(compEx)
+      }
+    }
+  }
+
   def futureSaveReview(review: ReviewType): Future[Boolean] = db.run(reviewsTable insertOrUpdate review) map (_ => true) recover {
     case e: Throwable =>
       Logger.error("Error while saving review", e)

@@ -108,6 +108,22 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, CollType <: ExerciseCollec
     }
   }
 
+  def futureInsertExercise(compEx: ExType): Future[Boolean] = {
+    val deleteOldExQuery = exTable.filter {
+      dbEx: ExTableDef =>
+        dbEx.id === compEx.id && dbEx.semanticVersion === compEx.semanticVersion &&
+          dbEx.collectionId === compEx.collectionId && dbEx.collSemVer === compEx.collSemVer
+    }.delete
+
+    val insertNewExQuery = exTable += exDbValuesFromExercise(compEx)
+
+    db.run(deleteOldExQuery) flatMap { _ =>
+      db.run(insertNewExQuery) flatMap {
+        insertCount: Int => saveExerciseRest(compEx)
+      }
+    }
+  }
+
   def saveCompleteColl(compColl: CompColl): Future[Boolean]
 
   // Update

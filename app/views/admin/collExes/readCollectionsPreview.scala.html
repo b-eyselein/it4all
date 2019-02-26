@@ -1,6 +1,6 @@
-@import model.{User, ExerciseCollection}
-@import model.toolMains.{ToolList, CollectionToolMain}
 @import model.core.ReadAndSaveResult
+@import model.toolMains.{CollectionToolMain, ToolList}
+@import model.{ExerciseCollection, User}
 
 @(user: User, readCollections: ReadAndSaveResult[_ <: ExerciseCollection], toolMain: CollectionToolMain, toolList: ToolList)
 
@@ -13,12 +13,11 @@
     @for(readCollection <- readCollections.successes) {
         <div class="card mb-3">
             <div class="card-header">@{
-                readCollection.ex.id
-            }. @readCollection.ex.title</div>
+                s"${readCollection.ex.id}. ${readCollection.ex.title}"
+            }</div>
             <div class="card-body">
-
-                <p>@readCollection</p>
-
+                <p>Titel: @readCollection.ex.title</p>
+                <p>Beschreibung: @readCollection.ex.text</p>
             </div>
         </div>
     }
