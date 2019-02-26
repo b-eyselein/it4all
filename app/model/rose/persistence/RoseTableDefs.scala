@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with IdExerciseTableDefs[RoseExercise, RoseExPart, String, RoseSolution, RoseExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with IdExerciseTableDefs[RoseExercise, RoseExPart, String, RoseSampleSolution, RoseSolution, RoseExerciseReview] {
 
   import profile.api._
 
@@ -96,9 +96,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class RoseSampleSolutionsTable(tag: Tag) extends ExForeignKeyTable[RoseSampleSolution](tag, "rose_samples") {
-
-    def id: Rep[Int] = column[Int]("id")
+  class RoseSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "rose_samples") {
 
     def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 

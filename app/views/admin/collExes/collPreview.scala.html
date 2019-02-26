@@ -6,12 +6,12 @@
 
 
 @title = @{
-    "Import: " + toolMainObject.collectionSingularName
+    "Import: Sammlung"
 }
 
 @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
     @for((exerciseCollection, exercises) <- readAndSaveResult.successes.map(_.ex)) {
-        <h2>@toolMainObject.collectionSingularName: &quot;@exerciseCollection.title&quot;</h2>
+        <h2>Sammlung: &quot;@exerciseCollection.title&quot;</h2>
 
         <div class="row">
             <div class="col-sm-2"><b>ID</b>: @exerciseCollection.id</div>
@@ -24,9 +24,7 @@
             <div class="col-sm-2"><b>Text:</b></div>
             <div class="col-sm-10">@exerciseCollection.text</div>
         </div>
-
         @* FIXME: exerciseCollection.renderRest *@
-
         @for(exerciseTuple <- exercises.grouped(2)) {
             <hr>
             <div class="row">

@@ -32,7 +32,17 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
 final case class ProgInput(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputName: String, inputType: ProgDataType)
 
-final case class ProgSampleSolution(exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, base: String, solution: String)
+final case class ProgSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, base: String, solutionStr: String)
+  extends SampleSolution[ProgSolution] {
+
+  val part = ProgExParts.Implementation
+
+  val sample: ProgSolution = part match {
+    //    case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)
+    case _ => ProgStringSolution(solutionStr, extendedUnitTests = false, language)
+  }
+
+}
 
 sealed trait TestData {
 

@@ -1,0 +1,10 @@
+@import model.regex.{RegexExercise, RegexExPart, RegexToolMain, RegexCollection, RegexDBSolution}
+
+@(user: model.User, toolMainObject: RegexToolMain, regexCollection: RegexCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[String])(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@additionalScripts = {
+    <script>SystemJS.import('@routes.Assets.versioned("app/regex/regexExercise.js")');</script>
+}
+
+@idExercises.textExercise(user, Html(exercise.text), Some(regexCollection), exercise, part, oldSolution.getOrElse(""), toolMainObject, additionalScripts)

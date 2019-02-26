@@ -12,7 +12,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
@@ -36,26 +36,27 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Abstract types
 
+  override type PartType = SqlExPart
+
   override type ExType = SqlExercise
 
   override type CollType = SqlScenario
 
-  override type PartType = SqlExPart
-
-  override type Tables = SqlTableDefs
 
   override type SolType = String
 
-  override type DBSolType = SqlSolution
+  override type SampleSolType = SqlSample
+
+  override type UserSolType = SqlSolution
+
+
+  override type Tables = SqlTableDefs
 
   override type ResultType = EvaluationResult
 
   override type CompResultType = SqlCorrResult
 
   // Members
-
-  override val collectionSingularName: String = "Szenario"
-  override val collectionPluralName  : String = "Szenarien"
 
   override val toolState: ToolState = ToolState.LIVE
 
@@ -69,33 +70,34 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val collectionYamlFormat: MyYamlFormat[SqlScenario] = NewSqlYamlProtocol.SqlCollectionYamlFormat
 
-  override def exerciseYamlFormat(collId: Int, collSemVer: SemanticVersion): MyYamlFormat[SqlExercise] =
-    NewSqlYamlProtocol.SqlExerciseYamlFormat(collId, collSemVer)
+  override def exerciseYamlFormat(collId: Int): MyYamlFormat[SqlExercise] =
+    NewSqlYamlProtocol.SqlExerciseYamlFormat(collId)
 
   override implicit val yamlFormat: MyYamlFormat[ReadType] = null // FIXME: SqlYamlProtocol.SqlScenarioYamlFormat
 
   // db
 
-  override def futureSaveRead(reads: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(reads map {
-    case (collection, exercises) => tables.futureInsertAndDeleteOldCollection(collection) flatMap {
-      case false => Future.successful(((collection, exercises), false))
-      case true  =>
-        val futureAllExesSaved: Future[Boolean] = Future.sequence(exercises map {
-          exercise => tables.futureInsertExercise(exercise).transform(_ == 1, identity)
-        }).map(_.forall(identity))
+  //  override def futureSaveRead(reads: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(reads map {
+  //    case (collection, exercises) => tables.futureInsertAndDeleteOldCollection(collection) flatMap {
+  //      case false => Future.successful(((collection, exercises), false))
+  //      case true  =>
+  //        val futureAllExesSaved: Future[Boolean] = Future.sequence(exercises map {
+  //          exercise => tables.futureInsertExercise(exercise).transform(_ == 1, identity)
+  //        }).map(_.forall(identity))
+  //
+  //        futureAllExesSaved map {
+  //          allExesSaved => ((collection, exercises), allExesSaved)
+  //        }
+  //    }
+  //  })
 
-        futureAllExesSaved map {
-          allExesSaved => ((collection, exercises), allExesSaved)
-        }
-    }
-  })
 
-
-  override protected def saveSolution(solution: SqlSolution): Future[Boolean] = tables.saveSolution(solution)
+  //  override protected def saveSolution(solution: SqlSolution): Future[Boolean] = tables.saveSolution(solution)
 
   // Read from requests
 
-  override protected def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType] =
+  override protected def readSolution(user: User, collection: SqlScenario, exercise: SqlExercise, part: SqlExPart)
+                                     (implicit request: Request[AnyContent]): Option[SolType] =
     request.body.asJson flatMap {
       case JsString(value) => Some(value)
       case _               => None
@@ -105,14 +107,14 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Views
 
-  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, numOfExes: Int, maybeOldSolution: Option[DBSolType], part: SqlExPart)
+  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart, maybeOldSolution: Option[UserSolType])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
     val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
     val oldOrDefSol = maybeOldSolution map (_.solution) getOrElse ""
 
-    views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes, this)
+    views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, this)
   }
 
   override def renderExerciseEditForm(user: User, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
@@ -134,19 +136,19 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override protected def exerciseHasPart(exercise: SqlExercise, partType: SqlExPart): Boolean = true
 
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): SqlScenario =
-    SqlScenario(id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, shortName = "")
+    SqlScenario(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(collId: Int, id: Int, author: String, state: ExerciseState): SqlExercise = {
     val semVer = SemanticVersionHelper.DEFAULT
 
     SqlExercise(
       id, semVer, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
-      collectionId = collId, collSemVer = semVer, tags = Seq[SqlExTag](), hint = None, samples = Seq[SqlSample]()
+      collectionId = collId, tags = Seq[SqlExTag](), hint = None, samples = Seq[SqlSample]()
     )
   }
 
   override protected def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlExercise, part: SqlExPart,
                                              solution: String, points: Points, maxPoints: Points): SqlSolution =
-    SqlSolution(id, username, exercise.id, exercise.semanticVersion, coll.id, coll.semanticVersion, part, solution, points, maxPoints)
+    SqlSolution(id, username, exercise.id, exercise.semanticVersion, coll.id, part, solution, points, maxPoints)
 
 }

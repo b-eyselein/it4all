@@ -1,3 +1,5 @@
+# Admin
+
 GET           /:toolType/admin/collections                         controllers.coll.CollectionAdminController.adminCollectionsList(toolType: String)
 
 GET           /:toolType/admin/import                              controllers.coll.CollectionAdminController.adminImportCollections(toolType: String)
@@ -23,6 +25,9 @@ GET           /:toolType/admin/:collId/exercises                   controllers.c
 PUT           /:toolType/admin/collection/:id/state                controllers.coll.CollectionAdminController.adminChangeCollectionState(toolType: String, id: Int)
 PUT           /:toolType/admin/exercise/:collId/:exId/state        controllers.coll.CollectionAdminController.adminChangeExerciseState(toolType: String, collId: Int, exId: Int)
 
+# User
+
+GET           /:toolType/index                                     controllers.coll.CollectionController.index(toolType: String)
 
 GET           /:toolType/collections                               controllers.coll.CollectionController.collectionList(toolType: String, page: Int ?= 1)
 
@@ -30,7 +35,7 @@ GET           /:toolType/collections/:collId                       controllers.c
 GET           /:toolType/solve/:collId/:exId/:partStr              controllers.coll.CollectionController.exercise(toolType: String, collId: Int, exId: Int, partStr: String)
 PUT           /:toolType/solve/:collId/:exId/:partStr              controllers.coll.CollectionController.correctLive(toolType: String, collId: Int, exId: Int, partStr: String)
 
-GET           /:toolType/sample/:collId/:exId                      controllers.coll.CollectionController.sampleSol(toolType: String, collId: Int, exId: Int)
+GET           /:toolType/sample/:collId/:exId/:partStr             controllers.coll.CollectionController.sampleSol(toolType: String, collId: Int, exId: Int, partStr: String)
 
 GET           /:toolType/:collId/newExForm                         controllers.coll.CollectionController.newExerciseForm(toolType: String, collId :Int)
 GET           /:toolType/:collId/:exId/editForm                    controllers.coll.CollectionController.editExerciseForm(toolType: String, collId: Int, exId: Int)

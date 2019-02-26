@@ -1,8 +1,8 @@
-@import model.toolMains.ASingleExerciseToolMain
-@import model.{Exercise, ExPart, User}
+@import model.toolMains.{FixedExToolMain, CollectionToolMain, ASingleExerciseToolMain}
+@import model.{Exercise, ExerciseCollection, ExPart, User}
 
-@(user: User, exerciseText: Html, exercise: Exercise, part: ExPart, oldSolution: String,
-        toolMainObject: ASingleExerciseToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
+@(user: User, exerciseText: Html, collection: Option[ExerciseCollection] = None, exercise: Exercise, part: ExPart, oldSolution: String,
+        toolMainObject: FixedExToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
         remainingExDef: Option[Html] = None, remainingPage: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
@@ -28,6 +28,20 @@
     @* FIXME: @core.helperTemplates.fullScreenScripts.render() *@
 @additionalScripts
 
+}
+
+@correctionUrl = @{
+    toolMainObject match {
+        case _: ASingleExerciseToolMain => exes.routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)
+        case _: CollectionToolMain => coll.routes.CollectionController.correctLive(toolMainObject.urlPart, collection.map(_.id).getOrElse(-1), exercise.id, part.urlName)
+    }
+}
+
+@sampleSolUrl = @{
+    toolMainObject match {
+        case _: ASingleExerciseToolMain => exes.routes.ExerciseController.sampleSolutionsForPart(toolMainObject.urlPart, exercise.id, part.urlName)
+        case _: CollectionToolMain => coll.routes.CollectionController.sampleSol(toolMainObject.urlPart, collection.map(_.id).getOrElse(-1), exercise.id, part.urlName)
+    }
 }
 
 @main(toolMainObject.toolname, Some(user), scripts) {
@@ -62,7 +76,7 @@
                         @*<button type="button" class="btn w-100" onclick="toggleFullscreen()">*@
                         @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>*@
                         @*</button>*@
-                        <button class="btn btn-primary w-100" id="testBtn" data-url="@exes.routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, part.urlName)">
+                        <button class="btn btn-primary w-100" id="testBtn" data-url="@correctionUrl">
                             Lösung testen</button>
                         <a href="@exes.routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.id, part.urlName)"
                         id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
@@ -110,7 +124,7 @@
                     }
 
                     <div id="sampleSolTab" class="tab-pane fade">
-                        <button data-url="@exes.routes.ExerciseController.sampleSolutionsForPart(toolMainObject.urlPart, exercise.id, part.urlName)"
+                        <button data-url="@sampleSolUrl"
                         id="showSampleSolBtn" class="btn btn-outline-success btn-block">Musterlösung anzeigen</button>
 
                         <div id="sampleSolDiv"></div>

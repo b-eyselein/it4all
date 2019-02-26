@@ -142,7 +142,7 @@ function onShowSampleSol(): void {
 }
 
 $(() => {
-    editor = initEditor('text/x-mysql', 'sqlEditor');
+    editor = initEditor('text/x-mysql', 'textEditor');
 
     testBtn = $('#testBtn');
     testBtn.on('click', testSqlSol);

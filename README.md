@@ -7,7 +7,6 @@ it4all is a web correction framework for
 - SQL
 - Different Programming Languages (Python3, Java, ...)
 - Uml Class Diagrams and Activity Diagrams
-- Spreadsheets [MS Excel, Libre-/Openoffice Calc]
 - Nary Numbers, Boolean Algebra
 - Regular Expressions
 

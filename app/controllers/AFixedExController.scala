@@ -12,4 +12,6 @@ abstract class AFixedExController(cc: ControllerComponents, dbcp: DatabaseConfig
 
   override protected type ToolMainType <: FixedExToolMain
 
+  protected def onNoSuchCollection(collId: Int): Result = NotFound(s"There is no collection with id '$collId'")
+
 }

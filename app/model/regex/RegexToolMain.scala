@@ -2,29 +2,35 @@ package model.regex
 
 import javax.inject.Inject
 import model.regex.persistence.RegexTableDefs
-import model.toolMains.ASingleExerciseToolMain
-import model.{ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
+import model.toolMains.CollectionToolMain
+import model.{ExerciseState, MyYamlFormat, Points, SemanticVersion, SemanticVersionHelper, User}
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.ExecutionContext
+import scala.util.Try
 
 class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: ExecutionContext)
-  extends ASingleExerciseToolMain("Reguläre Ausdrücke", "regex") {
-
-  override type ExType = RegexExercise
-
-  override type Tables = RegexTableDefs
+  extends CollectionToolMain("Reguläre Ausdrücke", "regex") {
 
   override type PartType = RegexExPart
 
+  override type ExType = RegexExercise
+
+  override type CollType = RegexCollection
+
+
   override type SolType = String
 
-  override type DBSolType = RegexDBSolution
+  override type SampleSolType = RegexSampleSolution
+
+  override type UserSolType = RegexDBSolution
+
+
+  override type Tables = RegexTableDefs
 
   override type ResultType = RegexEvaluationResult
 
@@ -35,28 +41,51 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override protected val exParts: Seq[RegexExPart] = RegexExParts.values
 
-  override protected val yamlFormat: MyYamlFormat[RegexExercise] = RegexExYamlProtocol.RegexExYamlFormat
+  //  override protected val yamlFormat: MyYamlFormat[RegexExercise] = RegexExYamlProtocol.RegexExYamlFormat
+  override protected val yamlFormat: MyYamlFormat[(RegexCollection, Seq[RegexExercise])] = null // RegexExYamlProtocol.RegexExYamlFormat
+  override protected val collectionYamlFormat: MyYamlFormat[RegexCollection] = RegexExYamlProtocol.RegexCollectionYamlFormat
+
+  override protected def exerciseYamlFormat(collId: Int): MyYamlFormat[RegexExercise] = RegexExYamlProtocol.RegexExYamlFormat(collId)
 
   override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
 
   override val usersCanCreateExes: Boolean = false
 
-  override def exerciseForm: Form[RegexExercise] = RegexExForm.format
+  //  override def exerciseForm: Form[RegexExercise] = RegexExForm.format
+  override def compExTypeForm(collId: Int): Form[RegexExercise] = null
 
   // Database helpers
 
-  override protected def instantiateSolution(id: Int, username: String, exercise: RegexExercise, part: RegexExPart,
+  override def instantiateCollection(id: Int, author: String, state: ExerciseState): RegexCollection =
+    RegexCollection(id, title = "", author, text = "", state, shortName = "")
+
+  override def instantiateExercise(collId: Int, id: Int, author: String, state: ExerciseState): RegexExercise = {
+    val semVer = SemanticVersionHelper.DEFAULT
+
+    RegexExercise(
+      id, semVer, collId, title = "", author, text = "", state,
+      sampleSolutions = Seq[RegexSampleSolution](
+        RegexSampleSolution(0, id, semVer, collId, "")
+      ),
+      testData = Seq[RegexTestData](
+        RegexTestData(0, id, semVer, collId, "", isIncluded = false)
+      )
+    )
+  }
+
+  override protected def instantiateSolution(id: Int, username: String, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart,
                                              solution: String, points: Points, maxPoints: Points): RegexDBSolution =
-    RegexDBSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
+    RegexDBSolution(id, username, exercise.id, exercise.semanticVersion, collection.id, part, solution, points, maxPoints)
 
   // Correction
 
-  override protected def readSolution(user: User, exercise: RegexExercise, part: RegexExPart)(implicit request: Request[AnyContent]): Try[String] = request.body.asJson match {
-    case Some(JsString(regex)) => Success(regex)
-    case _                     => Failure(new Exception("TODO!"))
+  override protected def readSolution(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart)
+                                     (implicit request: Request[AnyContent]): Option[String] = request.body.asJson match {
+    case Some(JsString(regex)) => Some(regex)
+    case _                     => None
   }
 
-  override protected def correctEx(user: User, sol: String, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] = Future(Try {
+  override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Try[RegexCompleteResult] = Try {
 
     val regex = sol.r
 
@@ -75,33 +104,23 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     }
 
     RegexCompleteResult(sol, exercise, part, results)
-  })
+  }
 
 
-  override def exerciseReviewForm(username: String, exercise: RegexExercise, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
+  //  override def exerciseReviewForm(username: String, exercise: RegexExercise, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
 
   // Other helper methods
 
   override def exerciseHasPart(exercise: RegexExercise, partType: RegexExPart): Boolean = true
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
-    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state,
-    sampleSolutions = Seq[RegexSampleSolution](
-      RegexSampleSolution(0, id, SemanticVersionHelper.DEFAULT, "")
-    ),
-    testData = Seq[RegexTestData](
-      RegexTestData(0, id, SemanticVersionHelper.DEFAULT, "", isIncluded = false)
-    )
-  )
-
   // Views
 
-  override def renderExercise(user: User, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[RegexDBSolution])
+  override def renderExercise(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[RegexDBSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-    views.html.idExercises.regex.regexExercise(user, this, exercise, part, oldSolution.map(_.solution))
+    views.html.collectionExercises.regex.regexExercise(user, this, collection, exercise, part, oldSolution.map(_.solution))
 
-  override def renderUserExerciseEditForm(user: User, newExForm: Form[RegexExercise], isCreation: Boolean)(
-    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-    views.html.idExercises.regex.editRegexExerciseForm(user, newExForm, isCreation, this)
+  //  override def renderUserExerciseEditForm(user: User, newExForm: Form[RegexExercise], isCreation: Boolean)(
+  //    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
+  //    views.html.idExercises.regex.editRegexExerciseForm(user, newExForm, isCreation, this)
 
 }

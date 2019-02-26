@@ -3,27 +3,28 @@
 @(user: User, collection: ExerciseCollection, exes: Seq[model.core.overviewHelpers.UserCollEx],
         toolMainObject: model.toolMains.CollectionToolMain, currentSite: Int, step: Int, numOfExercises: Int)
 
-    @title = @{
-        s"""${toolMainObject.collectionSingularName} "${collection.title}""""
-    }
+@title = @{
+    s"Sammlung '${collection.title}'"
+}
 
-    @colCount = @{
-        3
-    }
+@colCount = @{
+    3
+}
 
-    @main(title, Some(user)) {
-        <div class="container">
-            <h1 class="text-center">@title</h1>
+@main(title, Some(user)) {
+    <div class="container">
+        <h1 class="text-center">@title</h1>
 
-            <br>
+        <br>
 
-            @if(toolMainObject.usersCanCreateExes) {
-                <div class="form-group">
-                    <a href="@coll.routes.CollectionController.newExerciseForm(toolMainObject.urlPart, collection.id)"
-                    class="btn btn-info btn-block">Neue Aufgabe erstellen</a>
-                </div>
-            }
+        @if(toolMainObject.usersCanCreateExes) {
+            <div class="form-group">
+                <a href="@coll.routes.CollectionController.newExerciseForm(toolMainObject.urlPart, collection.id)"
+                class="btn btn-info btn-block">Neue Aufgabe erstellen</a>
+            </div>
+        }
 
+        @if(exes.nonEmpty) {
             @for(exBatch <- exes grouped colCount) {
                 <div class="form-group">
                     <div class="row">
@@ -35,7 +36,7 @@
                             <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, compEx.id, exPart.urlName)"
                             class="btn @successType.btnOutline btn-block">
                                 <div>@{
-                                    compEx.id + ". " + compEx.title
+                                    s"${compEx.id}. ${compEx.title}"
                                 }</div>
                                 <span>@Html(
                                     Option(compEx.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
@@ -47,12 +48,15 @@
                     </div>
                 </div>
             }
+        } else {
+            <p class="text-danger">Für diese Sammlung existieren noch keine Aufgaben.</p>
+        }
 
-            <hr>
+        <hr>
 
-            @core.helperTemplates.bsPager(currentSite,
-                index => coll.routes.CollectionController.collection(toolMainObject.urlPart, collection.id, index),
-                numOfExercises, step)
+        @core.helperTemplates.bsPager(currentSite,
+            index => coll.routes.CollectionController.collection(toolMainObject.urlPart, collection.id, index),
+            numOfExercises, step)
 
-        </div>
-    }
+    </div>
+}

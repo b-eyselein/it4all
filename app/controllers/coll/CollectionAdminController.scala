@@ -77,7 +77,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       // FIXME: refactor!!!!!!!!!
 
       toolMain.futureCollById(collId) flatMap {
-        case None             => ???
+        case None             => Future.successful(onNoSuchCollection(collId))
         case Some(collection) =>
           val readTries: Seq[Try[toolMain.ExType]] = toolMain.readExercisesFromYaml(collection)
 
@@ -96,7 +96,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
               logger.error("There has been an error reading an yaml object", failure.exception)
             }
 
-            Ok(toolMain.previewExerciseReadsAndSaveResult(user, readAndSaveResult, toolList))
+            Ok(toolMain.previewExerciseReadsAndSaveResult(user, collection, readAndSaveResult, toolList))
           }
 
       }

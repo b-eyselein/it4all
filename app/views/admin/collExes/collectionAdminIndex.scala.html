@@ -3,61 +3,61 @@
 
 @(user: model.User, collections: Seq[ExerciseCollection], toolMain: CollectionToolMain, toolList: ToolList)
 
-@title = @{
-    "Administrator " + toolMain.toolname
-}
+    @title = @{
+        "Administrator " + toolMain.toolname
+    }
 
-@collsPerRow = @{
-    3
-}
+    @collsPerRow = @{
+        3
+    }
 
-@admin.adminMain(title, user, toolList, Some(toolMain)) {
-    <section class="pt-3">
-        <h2 class="text-center">Alle Szenarien</h2>
+    @admin.adminMain(title, user, toolList, Some(toolMain)) {
+        <section class="pt-3">
+            <h2 class="text-center">Alle Szenarien</h2>
 
-        @for(collectionGroup <- collections.grouped(collsPerRow)) {
+            @for(collectionGroup <- collections.grouped(collsPerRow)) {
 
-            <div class="row">
-            @for(collection <- collectionGroup) {
-                <div class="form-group col-md-@{
-                    12 / collsPerRow
-                }">
-                    <a href="@coll.routes.CollectionAdminController.adminCollection(toolMain.urlPart, collection.id)"
-                    class="btn btn-primary btn-block">@collection.id: @collection.title</a>
+                <div class="row">
+                @for(collection <- collectionGroup) {
+                    <div class="form-group col-md-@{
+                        12 / collsPerRow
+                    }">
+                        <a href="@coll.routes.CollectionAdminController.adminCollection(toolMain.urlPart, collection.id)"
+                        class="btn btn-primary btn-block">@collection.id: @collection.title</a>
+                    </div>
+                }
                 </div>
+
             }
+
+            <div class="form-group">
+                <a class="btn btn-success btn-block" href="@coll.routes.CollectionAdminController.adminNewCollectionForm(toolMain.urlPart)">
+                    Neues Sammlung erstellen</a>
             </div>
 
-        }
-
-        <div class="form-group">
-            <a class="btn btn-success btn-block" href="@coll.routes.CollectionAdminController.adminNewCollectionForm(toolMain.urlPart)">
-                Neues @toolMain.collectionSingularName erstellen</a>
-        </div>
-
-        <div class="form-group">
-            <div class="btn-group d-flex">
-                <a href="@coll.routes.CollectionAdminController.adminExportCollections(toolMain.urlPart)"
-                class="btn btn-secondary w-100">Sammlungen als YAML exportieren</a>
-                <a href="@coll.routes.CollectionAdminController.adminImportCollections(toolMain.urlPart)"
-                class="btn btn-secondary w-100">Sammlungen aus YAML importieren</a>
+            <div class="form-group">
+                <div class="btn-group d-flex">
+                    <a href="@coll.routes.CollectionAdminController.adminExportCollections(toolMain.urlPart)"
+                    class="btn btn-secondary w-100">Sammlungen als YAML exportieren</a>
+                    <a href="@coll.routes.CollectionAdminController.adminImportCollections(toolMain.urlPart)"
+                    class="btn btn-secondary w-100">Sammlungen aus YAML importieren</a>
+                </div>
             </div>
-        </div>
 
-    </section>
+        </section>
 
-    <section class="pt-3">
-        <h2 class="text-center">Lernpfade</h2>
+        <section class="pt-3">
+            <h2 class="text-center">Lernpfade</h2>
 
-        <div class="form-group">
-            <a class="btn btn-secondary btn-block" href="@routes.MainExerciseAdminController.readLearningPaths(toolMain.urlPart)">
-                Lernpfade einlesen</a>
-        </div>
-    </section>
+            <div class="form-group">
+                <a class="btn btn-secondary btn-block" href="@routes.MainExerciseAdminController.readLearningPaths(toolMain.urlPart)">
+                    Lernpfade einlesen</a>
+            </div>
+        </section>
 
-    <hr>
+        <hr>
 
-    <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.index(toolMain.urlPart)">
-        Zur Nutzeransicht</a>
+        <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.index(toolMain.urlPart)">
+            Zur Nutzeransicht</a>
 
-}
+    }

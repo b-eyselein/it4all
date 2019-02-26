@@ -25,18 +25,17 @@ object SqlFormMappings {
   )
 
   private def createSqlEx(exerciseId: Int, exSemVer: String, title: String, author: String, text: String, state: ExerciseState,
-                                        collId: Int, collSemVer: String, exerciseType: SqlExerciseType,
-                                        tags: Seq[String], hint: Option[String], sampleStrings: Seq[String]): SqlExercise = {
+                          collId: Int, collSemVer: String, exerciseType: SqlExerciseType,
+                          tags: Seq[String], hint: Option[String], sampleStrings: Seq[String]): SqlExercise = {
     println(sampleStrings)
 
     val exerciseSemanticVersion = SemanticVersionHelper.parseFromString(exSemVer) getOrElse SemanticVersionHelper.DEFAULT
-    val collectionSemanticVersion = SemanticVersionHelper.parseFromString(collSemVer) getOrElse SemanticVersionHelper.DEFAULT
 
     val samples: Seq[SqlSample] = sampleStrings.filter(_.nonEmpty).zipWithIndex map { case (sample, index) =>
-      SqlSample(index, exerciseId, exerciseSemanticVersion, collId, collectionSemanticVersion, sample)
+      SqlSample(index, exerciseId, exerciseSemanticVersion, collId, sample)
     }
 
-    SqlExercise(exerciseId, exerciseSemanticVersion, title, author, text, state, collId, collectionSemanticVersion, exerciseType, tags.map(SqlExTag.withNameInsensitive), hint, samples)
+    SqlExercise(exerciseId, exerciseSemanticVersion, title, author, text, state, collId, exerciseType, tags.map(SqlExTag.withNameInsensitive), hint, samples)
   }
 
   private def unapplySqlEx(ex: SqlExercise): Option[(Int, String, String, String, String, ExerciseState, Int, String, SqlExerciseType, Seq[String], Option[String], Seq[String])] =

@@ -24,13 +24,15 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   type SolType
 
-  type DBSolType <: UserSolution[PartType, SolType]
+  type SampleSolType <: SampleSolution[SolType]
+
+  type UserSolType <: UserSolution[PartType, SolType]
 
   type CompResultType <: CompleteResult[ResultType]
 
   type ReadType
 
-  override type Tables <: ExerciseTableDefs[ExType, PartType, SolType, DBSolType]
+  override type Tables <: ExerciseTableDefs[ExType, PartType, SolType, SampleSolType, UserSolType]
 
   type ReviewType <: ExerciseReview[PartType]
 
@@ -44,7 +46,7 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   // DB
 
-  def futureMaybeOldSolution(user: User, exIdentifier: ExIdentifierType, part: PartType): Future[Option[DBSolType]]
+  def futureMaybeOldSolution(user: User, exIdentifier: ExIdentifierType, part: PartType): Future[Option[UserSolType]]
 
   // Helper methods
 
@@ -55,18 +57,6 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
   // Reading Yaml
 
   protected val yamlFormat: MyYamlFormat[ReadType]
-
-  def readAndSave(yamlFileContent: String): Future[ReadAndSaveResult[ReadType]] = {
-    val readTries: Seq[Try[ReadType]] = yamlFileContent.parseYamls map {
-      yamlValue: YamlValue => yamlFormat.read(yamlValue)
-    }
-
-    val (successes, failures) = CommonUtils.splitTriesNew(readTries)
-
-    futureSaveRead(successes) map {
-      saveResult => ReadAndSaveResult[ReadType](saveResult map (readAndSave => ReadAndSaveSuccess[ReadType](readAndSave._1, readAndSave._2)), failures)
-    }
-  }
 
   def yamlString: Future[String]
 
@@ -91,7 +81,7 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   def futureInsertExercise(exercise: ExType): Future[Boolean] = tables.futureInsertExercise(exercise)
 
-  def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]
+  //  def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]
 
   def statistics: Future[Html] = futureNumOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 

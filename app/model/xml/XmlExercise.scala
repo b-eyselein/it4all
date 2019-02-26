@@ -25,11 +25,13 @@ final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
 }
 
 final case class XmlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sampleGrammarString: String, sampleDocument: String)
-  extends SampleSolution[(DocTypeDef, String)] {
+  extends SampleSolution[String] {
 
   def sampleGrammar: DocTypeDef = DocTypeDefParser.tryParseDTD(sampleGrammarString).getOrElse(???)
 
-  override def sample: (DocTypeDef, String) = (sampleGrammar, sampleDocument)
+  def bothSamples: (DocTypeDef, String) = (sampleGrammar, sampleDocument)
+
+  override def sample = ""
 
 }
 

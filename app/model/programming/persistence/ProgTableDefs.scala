@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
                                           (override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with IdExerciseTableDefs[ProgExercise, ProgExPart, ProgSolution, DBProgSolution, ProgExerciseReview] {
+    with IdExerciseTableDefs[ProgExercise, ProgExPart, ProgSolution, ProgSampleSolution, DBProgSolution, ProgExerciseReview] {
 
   import profile.api._
 
@@ -110,7 +110,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   }
 
-  class ProgSampleSolutionsTable(tag: Tag) extends ExForeignKeyTable[ProgSampleSolution](tag, "prog_sample_solutions") {
+  class ProgSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "prog_sample_solutions") {
 
     def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
@@ -122,7 +122,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, language))
 
 
-    override def * : ProvenShape[ProgSampleSolution] = (exerciseId, exSemVer, language, base, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
+    override def * : ProvenShape[ProgSampleSolution] = (id, exerciseId, exSemVer, language, base, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
 
   }
 

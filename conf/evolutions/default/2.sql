@@ -84,14 +84,6 @@ from sql_exercises;
 delete ignore
 from sql_scenarioes;
 
-# Spread
-
-delete ignore
-from spread_exercise_reviews;
-
-delete ignore
-from spread_exercises;
-
 # Rose
 
 delete ignore

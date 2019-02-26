@@ -1,12 +1,12 @@
 package model.toolMains
 
 import better.files.File
-import model.{YamlArr, _}
+import model._
 import model.core._
 import model.core.overviewHelpers.SolvedState
 import model.persistence.ExerciseCollectionTableDefs
-import play.api.Logger
 import net.jcazevedo.moultingyaml._
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.{JsValue, Json}
@@ -31,7 +31,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ReadType = (CollType, Seq[ExType])
 
-  override type Tables <: ExerciseCollectionTableDefs[ExType, PartType, CollType, SolType, DBSolType]
+  override type Tables <: ExerciseCollectionTableDefs[ExType, PartType, CollType, SolType, SampleSolType, UserSolType]
 
 
   type CollType <: ExerciseCollection
@@ -40,11 +40,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   protected val collectionYamlFormat: MyYamlFormat[CollType]
 
-  protected def exerciseYamlFormat(collId: Int, collSemVer: SemanticVersion): MyYamlFormat[ExType]
-
-  val collectionSingularName: String
-
-  val collectionPluralName: String
+  protected def exerciseYamlFormat(collId: Int): MyYamlFormat[ExType]
 
   protected def compExTypeForm(collId: Int): Form[ExType]
 
@@ -68,10 +64,10 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureExercisesInColl(collId: Int): Future[Seq[ExType]] = tables.futureExercisesInColl(collId)
 
-  override def futureMaybeOldSolution(user: User, exIdentifier: CollectionExIdentifier, part: PartType): Future[Option[DBSolType]] =
+  override def futureMaybeOldSolution(user: User, exIdentifier: CollectionExIdentifier, part: PartType): Future[Option[UserSolType]] =
     tables.futureMaybeOldSolution(user.username, exIdentifier.collId, exIdentifier.exId)
 
-  def futureSampleSolutions(collId: Int, exId: Int): Future[Seq[String]] = tables.futureSampleSolutions(collId, exId)
+  def futureSampleSolutions(collId: Int, exId: Int, part: PartType): Future[Seq[String]] = tables.futureSampleSolutionsForExPart(collId, exId, part)
 
   def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = tables.futureSolveState(user, collId, exId)
 
@@ -81,14 +77,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     tables.futureInsertAndDeleteOldCollection(collection)
 
   def futureSaveExercise(exercise: ExType): Future[Boolean] = ???
-
-  override def futureSaveRead(reads: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]
-
-  //  = Future.sequence(reads map {
-  //    ex => tables.saveCompleteColl(ex) map (saveRes => (ex, saveRes))
-  //  })
-
-  protected def saveSolution(solution: DBSolType): Future[Boolean]
 
   // Update
 
@@ -104,28 +92,30 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Correction
 
-  def correctAbstract(user: User, collId: Int, id: Int, part: PartType)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
-    readSolution(user, collId, id) match {
+  def correctAbstract(user: User, collection: CollType, exercise: ExType, part: PartType)
+                     (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
+    readSolution(user, collection, exercise, part) match {
       case None => Future.successful(Failure(SolutionTransferException))
 
       case Some(solution) =>
 
-        val collAndEx: Future[Option[(CollType, ExType)]] = for {
-          coll <- futureCollById(collId)
-          ex <- futureExerciseById(collId, id)
-        } yield (coll zip ex).headOption
+        //        val collAndEx: Future[Option[(CollType, ExType)]] = for {
+        //          coll <- futureCollById(collection.id)
+        //          ex <- futureExerciseById(collId, id)
+        //        } yield (coll zip ex).headOption
 
-        collAndEx flatMap {
-          case None => Future.successful(Failure(NoSuchExerciseException(id)))
+        //        collAndEx flatMap {
+        //          case None => Future.successful(Failure(NoSuchExerciseException(id)))
+        //
+        //          case Some((collection, exercise)) =>
+        correctEx(user, solution, collection, exercise, part) match {
+          case Failure(error) => Future.successful(Failure(error))
+          case Success(res)   =>
 
-          case Some((collection, exercise)) => correctEx(user, solution, collection, exercise, part) match {
-            case Failure(error) => Future.successful(Failure(error))
-            case Success(res)   =>
-
-              // FIXME: points != 0? maxPoints != 0?
-              val dbSol = instantiateSolution(id = -1, user.username, collection, exercise, part, solution, res.points, res.maxPoints)
-              tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
-          }
+            // FIXME: points != 0? maxPoints != 0?
+            val dbSol = instantiateSolution(id = -1, user.username, collection, exercise, part, solution, res.points, res.maxPoints)
+            tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
+          //          }
         }
     }
 
@@ -135,7 +125,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def readExerciseFromForm(collId: Int)(implicit request: Request[AnyContent]): Form[ExType] = compExTypeForm(collId).bindFromRequest()
 
-  protected def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolution(user: User, collection: CollType, exercise: ExType, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
 
   // Views
 
@@ -148,7 +138,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     collections => views.html.admin.collExes.collectionAdminIndex(admin, collections, this, toolList)
   }
 
-  def renderExercise(user: User, coll: CollType, exercise: ExType, numOfExes: Int, maybeOldSolution: Option[DBSolType], part: PartType)
+  def renderExercise(user: User, coll: CollType, exercise: ExType, part: PartType, maybeOldSolution: Option[UserSolType])
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
   def renderCollectionEditForm(user: User, collection: CollType, isCreation: Boolean, toolList: ToolList)
@@ -161,8 +151,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   def previewCollectionReadAndSaveResult(user: User, readCollections: ReadAndSaveResult[CollType], toolList: ToolList): Html =
     views.html.admin.collExes.readCollectionsPreview(user, readCollections, this, toolList)
 
-  def previewExerciseReadsAndSaveResult(user: User, readExercises: ReadAndSaveResult[ExType], toolList: ToolList): Html =
-    views.html.admin.collExes.readExercisesPreview(user, readExercises, this, toolList)
+  def previewExerciseReadsAndSaveResult(user: User, collection: CollType, readExercises: ReadAndSaveResult[ExType], toolList: ToolList): Html =
+    views.html.admin.collExes.readExercisesPreview(user, collection, readExercises, this, toolList)
 
   override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html = {
     ???
@@ -201,7 +191,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     Try(fileToRead.contentAsString.parseYaml) match {
       case Failure(error)     => Seq(Failure(error))
       case Success(yamlValue) => yamlValue match {
-        case YamlArray(yamlObjects) => yamlObjects.map(exerciseYamlFormat(collection.id, collection.semanticVersion).read)
+        case YamlArray(yamlObjects) => yamlObjects.map(exerciseYamlFormat(collection.id).read)
         case _                      => ???
       }
     }
@@ -219,7 +209,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   def instantiateExercise(collId: Int, id: Int, author: String, state: ExerciseState): ExType
 
   protected def instantiateSolution(id: Int, username: String, collection: CollType, exercise: ExType, part: PartType,
-                                    solution: SolType, points: Points, maxPoints: Points): DBSolType
+                                    solution: SolType, points: Points, maxPoints: Points): UserSolType
 
   // Calls
 

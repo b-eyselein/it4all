@@ -73,6 +73,7 @@ abstract class AToolMain(val toolname: String, val urlPart: String) {
 
   // Views
 
+  // FIXME: remove...
   def exercisesOverviewForIndex: Html
 
   def adminIndexView(admin: User, toolList: ToolList): Future[Html]

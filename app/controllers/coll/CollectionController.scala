@@ -27,8 +27,6 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   override protected val adminRightsRequired: Boolean = true
 
-  // Helpers
-
   //  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
@@ -40,12 +38,20 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // User
 
+  def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      for {
+        allCollections <- toolMain.futureAllCollections
+        allLearningPaths <- toolMain.futureLearningPaths
+      } yield Ok(views.html.collectionExercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
+  }
+
   def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureAllCollections map { allColls =>
         val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
 
-        Ok(views.html.exercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
+        Ok(views.html.collectionExercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
       }
   }
 
@@ -73,7 +79,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
             futureExesAndSuccessTypes map {
               exesAndSuccessTypes =>
-                Ok(views.html.exercises.userCollectionExercisesOverview(
+                Ok(views.html.collectionExercises.userCollectionExercisesOverview(
                   user, coll, exesAndSuccessTypes, toolMain, page, step, approvedExercises.size))
             }
           }
@@ -92,16 +98,12 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
             case Some(collection) =>
               val exIdentifier = CollectionExIdentifier(collId, id)
 
-
-              val values: Future[(Option[toolMain.ExType], Int, Option[toolMain.DBSolType])] = for {
-                compEx <- toolMain.futureExerciseById(collId, id)
-                numOfExes <- toolMain.numOfExesInColl(collId)
-                oldSolution <- toolMain.futureMaybeOldSolution(user, exIdentifier, exPart)
-              } yield (compEx, numOfExes, oldSolution)
-
-              values map {
-                case (None, _, _)                            => BadRequest(s"There is no exercise with id $id in collection $collId!")
-                case (Some(ex), numOfExes, maybeOldSolution) => Ok(toolMain.renderExercise(user, collection, ex, numOfExes, maybeOldSolution, exPart))
+              toolMain.futureExerciseById(collId, id) flatMap {
+                case None           => Future.successful(onNoSuchExercise(id))
+                case Some(exercise) =>
+                  toolMain.futureMaybeOldSolution(user, exIdentifier, exPart) map {
+                    maybeOldSolution => Ok(toolMain.renderExercise(user, collection, exercise, exPart, maybeOldSolution))
+                  }
               }
           }
       }
@@ -112,19 +114,31 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       toolMain.partTypeFromUrl(partStr) match {
         case None         => Future.successful(onNoSuchExercisePart(partStr))
         case Some(exPart) =>
-          toolMain.correctAbstract(user, collId, id, exPart) map {
-            case Success(result) => Ok(result)
-            case Failure(error)  =>
-              Logger.error("There has been an internal correction error:", error)
-              BadRequest(toolMain.onLiveCorrectionError(error))
+          toolMain.futureCollById(collId) flatMap {
+            case None             => Future.successful(onNoSuchCollection(collId))
+            case Some(collection) =>
+              toolMain.futureExerciseById(collection.id, id) flatMap {
+                case None           => Future.successful(onNoSuchExercise(id))
+                case Some(exercise) =>
+                  toolMain.correctAbstract(user, collection, exercise, exPart) map {
+                    case Success(result) => Ok(result)
+                    case Failure(error)  =>
+                      Logger.error("There has been an internal correction error:", error)
+                      BadRequest(toolMain.onLiveCorrectionError(error))
+                  }
+              }
           }
       }
   }
 
-  def sampleSol(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
+  def sampleSol(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
-      toolMain.futureSampleSolutions(collId, id) map {
-        sampleSolutions => Ok(JsArray(sampleSolutions map JsString.apply))
+      toolMain.partTypeFromUrl(partStr) match {
+        case None       => Future.successful(onNoSuchExercisePart(partStr))
+        case Some(part) =>
+          toolMain.futureSampleSolutions(collId, id, part) map {
+            sampleSolutions => Ok(JsArray(sampleSolutions map JsString.apply))
+          }
       }
   }
 

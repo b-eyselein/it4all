@@ -1,14 +1,15 @@
 package model.persistence
 
+import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
-import model.{ExPart, Exercise, HasBaseValues, Points, SemanticVersion, User, UserSolution}
+import model.{ExPart, Exercise, HasBaseValues, Points, SampleSolution, SemanticVersion, Solution, User, UserSolution}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.ForeignKeyQuery
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart, SolType, DBSolType <: UserSolution[PartType, SolType]] extends LearningPathTableDefs {
+trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType]] extends LearningPathTableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -91,9 +92,19 @@ trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart, SolType, DBSolTy
 
   }
 
-  protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DBSolType](tag, name) {
+  protected abstract class ASolutionsTable[S <: Solution[SolType]](tag: Tag, name: String) extends ExForeignKeyTable[S](tag, name) {
 
     def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
+
+  }
+
+  protected abstract class ASampleSolutionsTable(tag: Tag, name: String) extends ASolutionsTable[SampleSolType](tag, name) {
+
+    def sample: Rep[String] = column[String](sampleName)
+
+  }
+
+  protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ASolutionsTable[UserSolType](tag, name) {
 
     def username: Rep[String] = column[String]("username")
 

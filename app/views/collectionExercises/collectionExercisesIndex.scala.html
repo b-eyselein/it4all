@@ -1,0 +1,75 @@
+@import model.{User, ExerciseCollection}
+
+@(user: User, collections: Seq[_ <: ExerciseCollection], toolMain: model.toolMains.AToolMain, learningPaths: Seq[model.learningPath.LearningPath])
+
+@title = @{
+    toolMain.toolname
+}
+
+@collsPerRow = @{
+    3
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+
+        @* FIXME: TODO-List, welche Aufgaben noch nicht bearbeitet... *@
+
+        @if(learningPaths.nonEmpty) {
+            <section>
+                <h2>Lernpfade</h2>
+
+                @for(learningPath <- learningPaths) {
+                    <a href="@routes.MainExerciseController.learningPath(toolMain.urlPart, learningPath.id)"
+                    class="btn btn-secondary btn-block">Lernpfad: @learningPath.title</a>
+                }
+            </section>
+
+            <hr>
+        }
+
+        <section>
+            <h2 class="text-center">Sammlungen</h2>
+
+            @for(collGroup <- collections.grouped(collsPerRow)) {
+                <div class="row">
+                @for(collection <- collGroup) {
+                    <div class="col-md-@{
+                        12 / collsPerRow
+                    }">
+                        <a href="@coll.routes.CollectionController.collection(toolMain.urlPart, collection.id)"
+                        class="btn btn-primary btn-block">@{
+                            s"${collection.id}. ${collection.title}"
+                        }</a>
+                    </div>
+                }
+                </div>
+            }
+        </section>
+
+        <br>
+
+        @if(toolMain.hasPlayground) {
+            <section>
+                <h2 class="text-center">Playground</h2>
+
+                <div class="form-group">
+                    <a class="btn btn-secondary btn-block" href="@routes.MainExerciseController.playground(toolMain.urlPart)">
+                        Playground für dieses Tool</a>
+                </div>
+            </section>
+
+            <br>
+        }
+
+        <section>
+            <h2 class="text-center">Evaluation</h2>
+
+            <div class="form-group">
+                <a class="btn btn-success btn-block" href="@routes.MainExerciseController.evaluate(toolMain.urlPart)">
+                    Dieses Tool evaluieren</a>
+            </div>
+        </section>
+
+    </div>
+}

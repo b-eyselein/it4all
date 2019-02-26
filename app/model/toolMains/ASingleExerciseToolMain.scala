@@ -4,7 +4,7 @@ import better.files.File
 import model.ExerciseState.APPROVED
 import model.core.{NoSuchExerciseException, ReadAndSaveResult, SolutionTransferException}
 import model.persistence.IdExerciseTableDefs
-import model.{ExerciseState, Points, SemanticVersion, User, UserSolution}
+import model.{ExerciseState, Points, SampleSolution, SemanticVersion, User, UserSolution}
 import net.jcazevedo.moultingyaml.Auto
 import play.api.Logger
 import play.api.data.Form
@@ -25,11 +25,9 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   override type ExIdentifierType = SingleExerciseIdentifier
 
-  override type DBSolType <: UserSolution[PartType, SolType]
-
   override type ReadType = ExType
 
-  override type Tables <: IdExerciseTableDefs[ExType, PartType, SolType, DBSolType, ReviewType]
+  override type Tables <: IdExerciseTableDefs[ExType, PartType, SolType, SampleSolType, UserSolType, ReviewType]
 
   // Forms
 
@@ -46,7 +44,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   def futureExerciseByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[ExType]] =
     tables.futureExerciseByIdAndVersion(id, semVer)
 
-  override def futureSaveRead(exercises: Seq[ExType]): Future[Seq[(ExType, Boolean)]] = Future.sequence(exercises map {
+  def futureSaveRead(exercises: Seq[ExType]): Future[Seq[(ExType, Boolean)]] = Future.sequence(exercises map {
     ex => tables.futureInsertExercise(ex) map (saveRes => (ex, saveRes))
   })
 
@@ -60,12 +58,12 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   def futureReviewsForExercise(id: Int): Future[Seq[ReviewType]] = tables.futureReviewsForExercise(id)
 
-  def futureSaveSolution(sol: DBSolType): Future[Boolean] = tables.futureSaveSolution(sol)
+  def futureSaveSolution(sol: UserSolType): Future[Boolean] = tables.futureSaveSolution(sol)
 
-  override def futureMaybeOldSolution(user: User, exIdentifier: SingleExerciseIdentifier, part: PartType): Future[Option[DBSolType]] =
+  override def futureMaybeOldSolution(user: User, exIdentifier: SingleExerciseIdentifier, part: PartType): Future[Option[UserSolType]] =
     tables.futureOldSolution(user.username, exIdentifier.exId, exIdentifier.exSemVer, part)
 
-  def futureSolutionsForExercise(exerciseId: Int): Future[Seq[DBSolType]] = tables.futureOldSolutions(exerciseId)
+  def futureSolutionsForExercise(exerciseId: Int): Future[Seq[UserSolType]] = tables.futureOldSolutions(exerciseId)
 
 
   // Helper methods
@@ -166,7 +164,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   def futureSampleSolutionsForExerciseAndPart(id: Int, part: PartType): Future[Seq[String]] = tables.futureSampleSolutionsForExercisePart(id, part)
 
-  protected def instantiateSolution(id: Int, username: String, exercise: ExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): DBSolType
+  protected def instantiateSolution(id: Int, username: String, exercise: ExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): UserSolType
 
   protected def readSolution(user: User, exercise: ExType, part: PartType)(implicit request: Request[AnyContent]): Try[SolType]
 
@@ -193,7 +191,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
   override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ExType], toolList: ToolList): Html =
     views.html.admin.idExes.idExercisePreview(user, read, this, toolList)
 
-  def renderExercise(user: User, exercise: ExType, part: PartType, oldSolution: Option[DBSolType])
+  def renderExercise(user: User, exercise: ExType, part: PartType, oldSolution: Option[UserSolType])
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
   def renderExerciseReviewForm(user: User, exercise: ExType, part: PartType)(

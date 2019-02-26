@@ -40,7 +40,7 @@ object RoseExerciseForm extends ExerciseForm[RoseExercise] {
     RoseSampleSolution(fvs.id, exerciseId, semanticVersion, fvs.language, fvs.sample)
 
   private def unapplyRoseSampleSolution(r: RoseSampleSolution): RoseSampleSolutionFormValues =
-    RoseSampleSolutionFormValues(r.id, r.language, r.solution)
+    RoseSampleSolutionFormValues(r.id, r.language, r.sample)
 
   // Complete exericse
 

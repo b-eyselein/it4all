@@ -20,7 +20,7 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
   def index: EssentialAction = withUser { user =>
     implicit request =>
       //      println(request.flash)
-      Ok(views.html.index(user, toolList.toolMains))
+      Ok(views.html.index(user, toolList))
   }
 
   def blocklyTest: EssentialAction = withUser { user =>

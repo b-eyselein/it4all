@@ -61,7 +61,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
     override def write(obj: RoseSampleSolution): YamlValue = YamlObj(
       idName -> obj.id,
       languageName -> obj.language.entryName,
-      sampleName -> obj.solution
+      sampleName -> obj.sample
     )
 
   }

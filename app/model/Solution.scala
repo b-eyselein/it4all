@@ -1,22 +1,8 @@
 package model
 
-trait SampleSolution[SolType] {
+trait Solution[SolType] {
 
   val id: Int
-
-  val exerciseId: Int
-
-  val exSemVer: SemanticVersion
-
-  def sample: SolType
-
-}
-
-trait UserSolution[PartType <: ExPart, SolType] {
-
-  val id: Int
-
-  val username: String
 
   val exerciseId: Int
 
@@ -25,6 +11,18 @@ trait UserSolution[PartType <: ExPart, SolType] {
   val collectionId: Int = -1
 
   val collSemVer: SemanticVersion = SemanticVersionHelper.DEFAULT
+
+}
+
+trait SampleSolution[SolType] extends Solution[SolType] {
+
+  def sample: SolType
+
+}
+
+trait UserSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
+
+  val username: String
 
   val part: PartType
 

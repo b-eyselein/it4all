@@ -14,7 +14,7 @@ object SqlDbModels extends DbModels {
   override def dbExerciseFromExercise(ex: SqlExercise): DbSqlExercise = {
     val tagsAsString = ex.tags.map(_.entryName).mkString(SqlConsts.tagJoinChar)
 
-    DbSqlExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.collectionId, ex.collSemVer, ex.exerciseType, tagsAsString, ex.hint)
+    DbSqlExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.collectionId, ex.exerciseType, tagsAsString, ex.hint)
   }
 
 
@@ -22,12 +22,12 @@ object SqlDbModels extends DbModels {
     val tagsFromString: Seq[SqlExTag] = dbEx.tags.split(SqlConsts.tagJoinChar).toSeq.flatMap(SqlExTag.withNameInsensitiveOption)
 
     SqlExercise(dbEx.id, dbEx.semanticVersion, dbEx.title, dbEx.author, dbEx.text, dbEx.state,
-      dbEx.collectionId, dbEx.collSemVer, dbEx.exerciseType, tagsFromString, dbEx.hint, samples)
+      dbEx.collectionId, dbEx.exerciseType, tagsFromString, dbEx.hint, samples)
   }
 
 
 }
 
 final case class DbSqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                               collectionId: Int, collSemVer: SemanticVersion, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends HasBaseValues
+                               collectionId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends HasBaseValues
 

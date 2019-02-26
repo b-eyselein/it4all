@@ -1,136 +1,54 @@
-@import model.sql.{SqlExercise, SqlQueryResult, SqlScenario, SqlToolMain}
+@import model.sql.{SqlExercise, SqlQueryResult, SqlScenario, SqlToolMain, SqlExParts}
 
 @(user: model.User, exercise: SqlExercise, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario,
-        numOfExes: Int, toolMainObject: SqlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+        toolMainObject: SqlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
-
-    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
-
+@additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/sql/sqlExercise.js")');</script>
-
-    <style>
-            .CodeMirror {
-                border: 1px solid lightgrey;
-                font-size: 14px;
-                height: 150px;
-            }
-    </style>
 }
 
-@nextBtnDisabled = @{
-    if(exercise.id < numOfExes) "" else " disabled"
+@exerciseText = {
+@core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
+    <img class="img-fluid" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
 }
 
-@prevBtnDisabled = @{
-    if(exercise.id > 1) "" else " disabled"
-}
-
-@main("SQL", Some(user), scripts) {
-    @core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
-        <img class="img-fluid" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
+@for(table <- tables) {
+    @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
+        @views.html.collectionExercises.sql.resultTable.render(table)
     }
+}
+    <section>
+        <p>@exercise.text</p>
+        @exercise.hint.map(hint => Html(s"""<p><i>Hinweis:</i> $hint</p>""")).getOrElse("")
+    </section>
 
-    @for(table <- tables) {
-        @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
-            @views.html.collectionExercises.sql.resultTable.render(table)
+    <section>
+        <div class="form-group">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal"
+            data-target="#databaseSchema">Datenbankschema</button>
+        </div>
+
+        @for(tableTuple <- tables grouped 2) {
+            <div class="form-group">
+                <div class="row">
+                @for(table <- tableTuple) {
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-secondary btn-block" data-toggle="modal"
+                        data-target="#@table.tableName">@table.tableName</button>
+                    </div>
+                }
+                </div>
+            </div>
         }
-    }
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3">
-                <h2 class="text-center">@exercise.title</h2>
-            </div>
-            <div class="col-sm-4"></div>
-            <div class="col-md-5">
+    </section>
 
-                <ul class="nav nav-tabs nav-justified">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#correctionTab" id="correctionTabBtn">
-                            Korrektur</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#sampleSolTab" id="sampleSolTabBtn">
-                            Musterlösung(en)</a>
-                    </li>
-                </ul>
-
-
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="form-group card">
-                    <div class="card-body">
-                        <p>@exercise.text</p>
-                        @exercise.hint.map(hint => Html(s"""<p><i>Hinweis:</i> $hint</p>""")).getOrElse("")
-                    </div>
-                </div>
-
-                <section>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-block btn-info" data-toggle="modal"
-                        data-target="#databaseSchema">Datenbankschema</button>
-                    </div>
-
-                    @for(tableTuple <- tables grouped 2) {
-                        <div class="form-group">
-                            <div class="row">
-                            @for(table <- tableTuple) {
-                                <div class="col-sm-6">
-                                    <button type="button" class="btn btn-secondary btn-block" data-toggle="modal"
-                                    data-target="#@table.tableName">@table.tableName</button>
-                                </div>
-                            }
-                            </div>
-                        </div>
-                    }
-
-                </section>
-            </div>
-
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <textarea id="sqlEditor" title="Editor">@oldOrDefSol</textarea>
-                </div>
-
-                <div class="form-group">
-                    @helper.CSRF.formField
-
-                    <div class="btn-group d-flex">
-                        <button class="btn btn-success w-100" id="testBtn">Lösung testen</button>
-
-                        <a href="@coll.routes.CollectionController.collection(toolMainObject.urlPart, scenario.id)"
-                        class="btn btn-secondary w-100">Bearbeitung beenden</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-5">
-                <div class="tab-content">
-                    <div id="correctionTab" class="tab-pane fade show active">
-                        <div id="correctionDiv" hidden>
-                            <div id="correction"></div>
-                        </div>
-                    </div>
-
-                    <div id="sampleSolTab" class="tab-pane fade">
-                        <button data-href="@coll.routes.CollectionController.sampleSol(toolMainObject.urlPart, scenario.id, exercise.id)"
-                        class="btn btn-outline-success btn-block" id="showSampleSolBtn">Musterlösung(en) anzeigen</button>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <hr>
-
-        <div id="executionResultsDiv"></div>
-
-    </div>
 
 }
+
+
+@remainingPage = {
+    <div id="executionResultsDiv"></div>
+}
+
+@idExercises.textExercise(user, exerciseText, Some(scenario), exercise, SqlExParts.SqlSingleExPart, oldOrDefSol, toolMainObject, additionalScripts, remainingPage = remainingPage)

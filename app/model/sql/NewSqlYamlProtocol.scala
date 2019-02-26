@@ -1,7 +1,8 @@
 package model.sql
 
-import model.{MyYamlProtocol, SemanticVersion}
+import model.{ExerciseState, MyYamlProtocol, SemanticVersion, SemanticVersionHelper}
 import model.MyYamlProtocol._
+import model.core.CoreConsts.{authorName, idName, semanticVersionName, statusName, textName, titleName}
 import model.sql.SqlConsts._
 import model.sql.SqlYamlProtocol.{SqlSampleYamlFormat, logger, readBaseValues}
 import net.jcazevedo.moultingyaml.{YamlObject, YamlValue}
@@ -16,16 +17,19 @@ object NewSqlYamlProtocol extends MyYamlProtocol {
   object SqlCollectionYamlFormat extends MyYamlObjectFormat[SqlScenario] {
 
     override protected def readObject(yamlObject: YamlObject): Try[SqlScenario] = for {
-      baseValues <- readBaseValues(yamlObject)
-
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
       shortName <- yamlObject.stringField(shortNameName)
-    } yield SqlScenario(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, shortName)
+    } yield SqlScenario(id, title, author, text, state, shortName)
 
     override def write(obj: SqlScenario): YamlValue = ???
 
   }
 
-  final case class SqlExerciseYamlFormat(collId: Int, collSemVer: SemanticVersion) extends MyYamlObjectFormat[SqlExercise] {
+  final case class SqlExerciseYamlFormat(collId: Int) extends MyYamlObjectFormat[SqlExercise] {
 
     //    override protected def readObject(yamlObject: YamlObject): Try[SqlExercise] = ???
 
@@ -40,7 +44,7 @@ object NewSqlYamlProtocol extends MyYamlProtocol {
 
       hint <- yamlObject.optStringField(hintName)
 
-      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(collId, collSemVer, baseValues).read)
+      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(collId, baseValues).read)
     } yield {
 
       for (tagFailures <- tagTries._2)
@@ -52,7 +56,7 @@ object NewSqlYamlProtocol extends MyYamlProtocol {
       //        logger.error("Could not read sql sample", sampleFailure.exception)
 
       SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        collId, collSemVer, exerciseType, tagTries._1, hint, sampleTries._1)
+        collId, exerciseType, tagTries._1, hint, sampleTries._1)
     }
   }
 

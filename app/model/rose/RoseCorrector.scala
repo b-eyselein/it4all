@@ -36,7 +36,7 @@ object RoseCorrector {
 
       // FIXME: write exercise options file...
       solutionFilePath.createFileIfNotExists(createParents = true).write(learnerSolution)
-      sampleFilePath.createFileIfNotExists(createParents = true).write(buildSampleFileContent(sampleSolution.solution))
+      sampleFilePath.createFileIfNotExists(createParents = true).write(buildSampleFileContent(sampleSolution.sample))
 
       actionFilePath.createIfNotExists()
       optionsFilePath.createFileIfNotExists(createParents = true).write(buildOptionFileContent(exercise))

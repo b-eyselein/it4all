@@ -33,6 +33,9 @@
                   <Item>
                     <option name="path" value="conf/resources/sql/sql_collection.schema.json" />
                   </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/regex/regex_collections.schema.json" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
@@ -50,6 +53,22 @@
                     <option name="pattern" value="true" />
                     <option name="path" value="conf/resources/programming/*/*.yaml" />
                     <option name="mappingKind" value="Pattern" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="regex_collections.schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="regex_collections.schema" />
+              <option name="relativePathToSchema" value="conf/resources/regex/regex_collections.schema.json" />
+              <option name="schemaVersion" value="JSON schema version 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="conf/resources/regex/collections.yaml" />
                   </Item>
                 </list>
               </option>
@@ -84,6 +103,9 @@
                 <list>
                   <Item>
                     <option name="path" value="conf/resources/sql/sql_collections.yaml" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/sql/collections.yaml" />
                   </Item>
                 </list>
               </option>

@@ -1,11 +1,12 @@
-@import model.{User, Exercise}
+@import model.{User, Exercise, ExerciseCollection}
 @import model.toolMains.{ToolList, CollectionToolMain}
 @import model.core.ReadAndSaveResult
 
-@(user: User, readExercises: ReadAndSaveResult[_ <: Exercise], toolMain: CollectionToolMain, toolList: ToolList)
+@(user: User, collection: ExerciseCollection, readExercises: ReadAndSaveResult[_ <: Exercise], toolMain: CollectionToolMain, toolList: ToolList)
 
 @title = @{
-    s"Eingelesene Sammlungen Tool '${toolMain.toolname}'"
+    /* FIXME: collection... */
+    s"Eingelesene Aufgaben für Sammlung '${collection.title}' Tool '${toolMain.toolname}'"
 }
 
 @admin.adminMain(title, user, toolList, Some(toolMain)) {
@@ -13,5 +14,10 @@
     @for(readExercise <- readExercises.successes) {
         <p>@readExercise</p>
     }
+
+    <hr>
+
+    <a href="@coll.routes.CollectionAdminController.adminCollection(toolMain.urlPart, collection.id)"
+    class="btn btn-primary btn-block">Zurück zur Sammlung</a>
 
 }

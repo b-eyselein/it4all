@@ -9,6 +9,18 @@ class ToolList @Inject()(javaToolMains: java.util.Set[AToolMain]) {
 
   val toolMains: Seq[AToolMain] = javaToolMains.asScala.toSeq
 
+  def randomExToolMains: Seq[RandomExerciseToolMain] = toolMains.collect {
+    case x: RandomExerciseToolMain => x
+  }
+
+  def singleExToolMains: Seq[ASingleExerciseToolMain] = toolMains.collect {
+    case x: ASingleExerciseToolMain => x
+  }
+
+  def collectionToolMains: Seq[CollectionToolMain] = toolMains.collect {
+    case x: CollectionToolMain => x
+  }
+
   def getExCollToolMainOption(urlPart: String): Option[CollectionToolMain] = toolMains.collectFirst {
     case ctm: CollectionToolMain if ctm.urlPart == urlPart => ctm
   }

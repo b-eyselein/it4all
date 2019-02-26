@@ -39,10 +39,11 @@ final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
 final case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersion, name: String, inputType: ProgDataType)
 
-final case class RoseSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, solution: String)
+final case class RoseSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, sample: String)
+  extends SampleSolution[String]
 
-final case class RoseSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart,
-                              solution: String, points: Points, maxPoints: Points) extends UserSolution[RoseExPart, String]
+final case class RoseSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart, solution: String, points: Points, maxPoints: Points)
+  extends UserSolution[RoseExPart, String]
 
-final case class RoseExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: RoseExPart,
-                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[RoseExPart]
+final case class RoseExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: RoseExPart, difficulty: Difficulty, maybeDuration: Option[Int])
+  extends ExerciseReview[RoseExPart]

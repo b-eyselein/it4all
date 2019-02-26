@@ -27,7 +27,7 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 // Classes for use
 
 final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             override val collectionId: Int, override val collSemVer: SemanticVersion, exerciseType: SqlExerciseType,
+                             override val collectionId: Int, exerciseType: SqlExerciseType,
                              override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[SqlSample]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
@@ -41,16 +41,17 @@ final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: S
 
 // final case classes for db
 
-final case class SqlScenario(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             shortName: String) extends ExerciseCollection {
+final case class SqlScenario(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
+  extends ExerciseCollection {
 
   val imageUrl: String = shortName + ".png"
 
 }
 
-final case class SqlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int, collSemVer: SemanticVersion, sample: String)
+final case class SqlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, override val collectionId: Int, sample: String)
+  extends SampleSolution[String]
 
 final case class SqlSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion,
-                             override val collectionId: Int, override val collSemVer: SemanticVersion, part: SqlExPart,
+                             override val collectionId: Int, part: SqlExPart,
                              solution: String, points: Points, maxPoints: Points) extends UserSolution[SqlExPart, String]
 

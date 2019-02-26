@@ -1,32 +1,38 @@
 package model.regex.persistence
 
 import javax.inject.Inject
-import model.persistence.IdExerciseTableDefs
+import model.persistence.ExerciseCollectionTableDefs
 import model.regex.RegexConsts._
 import model.regex._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with IdExerciseTableDefs[RegexExercise, RegexExPart, String, RegexDBSolution, RegexExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[RegexExercise, RegexExPart, RegexCollection, String, RegexSampleSolution, RegexDBSolution /*, RegexExerciseReview*/ ] {
 
   import profile.api._
 
   // Abstract types
 
   override protected type ExDbValues = DbRegexExercise
+
   override protected type ExTableDef = RegexExerciseTable
+  override protected type CollTableDef = RegexCollectionsTable
+
+  override protected type SamplesTableDef = RegexSampleSolutionsTable
   override protected type SolTableDef = RegexSolutionTable
-  override protected type ReviewsTableDef = RegexExerciseReviewsTable
+  //  override protected type ReviewsTableDef = RegexExerciseReviewsTable
 
   // Table Queries
 
-  override protected val exTable     : TableQuery[RegexExerciseTable]        = TableQuery[RegexExerciseTable]
-  override protected val solTable    : TableQuery[RegexSolutionTable]        = TableQuery[RegexSolutionTable]
-  override protected val reviewsTable: TableQuery[RegexExerciseReviewsTable] = TableQuery[RegexExerciseReviewsTable]
+  override protected val collTable: TableQuery[RegexCollectionsTable] = TableQuery[RegexCollectionsTable]
+  override protected val exTable  : TableQuery[RegexExerciseTable]    = TableQuery[RegexExerciseTable]
+  override protected val solTable : TableQuery[RegexSolutionTable]    = TableQuery[RegexSolutionTable]
+  //  override protected val reviewsTable: TableQuery[RegexExerciseReviewsTable] = TableQuery[RegexExerciseReviewsTable]
 
   private val regexSampleSolutionsTable: TableQuery[RegexSampleSolutionsTable] = TableQuery[RegexSampleSolutionsTable]
   private val regexTestDataTable       : TableQuery[RegexTestDataTable]        = TableQuery[RegexTestDataTable]
@@ -55,30 +61,35 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   // Other queries
 
-  override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: RegexExPart): Future[Seq[String]] =
-    db.run(regexSampleSolutionsTable.filter(_.exerciseId === exerciseId).map(_.sample).result)
+  override def futureSampleSolutionsForExPart(collectionId: Int, exerciseId: Int, part: RegexExPart): Future[Seq[String]] =
+    db.run(regexSampleSolutionsTable.filter {
+      s => s.collectionId === collectionId && s.exerciseId === exerciseId
+    }.map(_.sample).result)
 
   // Column types
+
+  override protected implicit val solutionTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 
   override protected implicit val partTypeColumnType: BaseColumnType[RegexExPart] =
     MappedColumnType.base[RegexExPart, String](_.entryName, RegexExParts.withNameInsensitive)
 
   // Tables
 
-  class RegexExerciseTable(tag: Tag) extends ExerciseTableDef(tag, "regex_exercises") {
+  class RegexCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "regex_collections") {
 
-    override def * : ProvenShape[DbRegexExercise] = (id, semanticVersion, title, author, text, state) <> (DbRegexExercise.tupled, DbRegexExercise.unapply)
+    override def * : ProvenShape[RegexCollection] = (id, title, author, text, state, shortName) <> (RegexCollection.tupled, RegexCollection.unapply)
 
   }
 
-  class RegexSampleSolutionsTable(tag: Tag) extends ExForeignKeyTable[RegexSampleSolution](tag, "regex_sample_solutions") {
+  class RegexExerciseTable(tag: Tag) extends ExerciseInCollectionTable(tag, "regex_exercises") {
 
-    def id: Rep[Int] = column[Int](idName)
+    override def * : ProvenShape[DbRegexExercise] = (id, semanticVersion, collectionId, title, author, text, state) <> (DbRegexExercise.tupled, DbRegexExercise.unapply)
 
-    def sample: Rep[String] = column[String](sampleName)
+  }
 
+  class RegexSampleSolutionsTable(tag: Tag) extends ACollectionSamplesTable(tag, "regex_sample_solutions") {
 
-    override def * : ProvenShape[RegexSampleSolution] = (id, exerciseId, exSemVer, sample) <> (RegexSampleSolution.tupled, RegexSampleSolution.unapply)
+    override def * : ProvenShape[RegexSampleSolution] = (id, exerciseId, exSemVer, collectionId, sample) <> (RegexSampleSolution.tupled, RegexSampleSolution.unapply)
 
   }
 
@@ -86,29 +97,32 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
     def id: Rep[Int] = column[Int](idName)
 
+    def collectionId: Rep[Int] = column[Int]("collection_id")
+
     def data: Rep[String] = column[String](dataName)
 
     def isIncluded: Rep[Boolean] = column[Boolean]("is_included")
 
 
-    def * : ProvenShape[RegexTestData] = (id, exerciseId, exSemVer, data, isIncluded) <> (RegexTestData.tupled, RegexTestData.unapply)
+    def * : ProvenShape[RegexTestData] = (id, exerciseId, exSemVer, collectionId, data, isIncluded) <> (RegexTestData.tupled, RegexTestData.unapply)
 
   }
 
-  class RegexSolutionTable(tag: Tag) extends AUserSolutionsTable(tag, "regex_solutions") {
+  class RegexSolutionTable(tag: Tag) extends CollectionExSolutionsTable(tag, "regex_solutions") {
 
     def solution: Rep[String] = column[String]("solution")
 
 
-    override def * : ProvenShape[RegexDBSolution] = (id, username, exerciseId, exSemVer, part, solution, points, maxPoints) <> (RegexDBSolution.tupled, RegexDBSolution.unapply)
+    override def * : ProvenShape[RegexDBSolution] = (id, username, exerciseId, exSemVer, collectionId, part,
+      solution, points, maxPoints) <> (RegexDBSolution.tupled, RegexDBSolution.unapply)
 
   }
 
-  class RegexExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "regex_exercise_reviews") {
-
-    override def * : ProvenShape[RegexExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty,
-      maybeDuration.?) <> (RegexExerciseReview.tupled, RegexExerciseReview.unapply)
-
-  }
+  //  class RegexExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "regex_exercise_reviews") {
+  //
+  //    override def * : ProvenShape[RegexExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty,
+  //      maybeDuration.?) <> (RegexExerciseReview.tupled, RegexExerciseReview.unapply)
+  //
+  //  }
 
 }

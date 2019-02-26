@@ -1,22 +1,45 @@
 package model.regex
 
 import model.MyYamlProtocol._
+import model.core.CoreConsts.{sampleName => _, samplesName => _, semanticVersionName => _, _}
 import model.regex.RegexConsts._
-import model.{MyYamlProtocol, SemanticVersion}
+import model.sql.SqlConsts.{authorName, idName, shortNameName, statusName, textName, titleName}
+import model.sql.SqlScenario
+import model.{ExerciseState, MyYamlProtocol, SemanticVersion, SemanticVersionHelper}
 import net.jcazevedo.moultingyaml.{YamlObject, YamlValue}
 
 import scala.util.Try
 
 object RegexExYamlProtocol extends MyYamlProtocol {
 
-  implicit object RegexExYamlFormat extends MyYamlObjectFormat[RegexExercise] {
+  object RegexCollectionYamlFormat extends MyYamlObjectFormat[RegexCollection] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[RegexCollection] = for {
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      shortName <- yamlObject.stringField(shortNameName)
+    } yield RegexCollection(id, title, author, text, state, shortName)
+
+    override def write(obj: RegexCollection): YamlValue = ???
+
+  }
+
+  final case class RegexExYamlFormat(collId: Int) extends MyYamlObjectFormat[RegexExercise] {
 
     override protected def readObject(yamlObject: YamlObject): Try[RegexExercise] = for {
-      baseValues <- readBaseValues(yamlObject)
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      semanticVersion <- yamlObject.someField(semanticVersionName) flatMap SemanticVersionHelper.semanticVersionYamlField
 
-      sampleSolutionTries <- yamlObject.arrayField(samplesName, RegexSampleSolutionYamlFormat(baseValues.id, baseValues.semanticVersion).read)
+      sampleSolutionTries <- yamlObject.arrayField(samplesName, RegexSampleSolutionYamlFormat(id, semanticVersion, collId).read)
 
-      testDataTries <- yamlObject.arrayField(testDataName, RegexTestDataYamlFormat(baseValues.id, baseValues.semanticVersion).read)
+      testDataTries <- yamlObject.arrayField(testDataName, RegexTestDataYamlFormat(id, semanticVersion, collId).read)
     } yield {
 
       for (sampleSolReadError <- sampleSolutionTries._2)
@@ -25,34 +48,31 @@ object RegexExYamlProtocol extends MyYamlProtocol {
       for (testDataReadError <- testDataTries._2)
         println(testDataReadError)
 
-      RegexExercise(
-        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        sampleSolutionTries._1, testDataTries._1
-      )
+      RegexExercise(id, semanticVersion, collId, title, author, text, state, sampleSolutionTries._1, testDataTries._1)
     }
 
     override def write(obj: RegexExercise): YamlValue = ???
 
   }
 
-  private final case class RegexSampleSolutionYamlFormat(exId: Int, exSemVer: SemanticVersion) extends MyYamlObjectFormat[RegexSampleSolution] {
+  private final case class RegexSampleSolutionYamlFormat(exId: Int, exSemVer: SemanticVersion, collId: Int) extends MyYamlObjectFormat[RegexSampleSolution] {
 
     override protected def readObject(yamlObject: YamlObject): Try[RegexSampleSolution] = for {
       id <- yamlObject.intField(idName)
       sample <- yamlObject.stringField(sampleName)
-    } yield RegexSampleSolution(id, exId, exSemVer, sample)
+    } yield RegexSampleSolution(id, exId, exSemVer, collId, sample)
 
     override def write(obj: RegexSampleSolution): YamlValue = ???
 
   }
 
-  private final case class RegexTestDataYamlFormat(exId: Int, exSemVer: SemanticVersion) extends MyYamlObjectFormat[RegexTestData] {
+  private final case class RegexTestDataYamlFormat(exId: Int, exSemVer: SemanticVersion, collId: Int) extends MyYamlObjectFormat[RegexTestData] {
 
     override protected def readObject(yamlObject: YamlObject): Try[RegexTestData] = for {
       id <- yamlObject.intField(idName)
       data <- yamlObject.stringField(dataName)
       isIncluded <- yamlObject.boolField(includedName)
-    } yield RegexTestData(id, exId, exSemVer, data, isIncluded)
+    } yield RegexTestData(id, exId, exSemVer, collId, data, isIncluded)
 
     override def write(obj: RegexTestData): YamlValue = ???
 

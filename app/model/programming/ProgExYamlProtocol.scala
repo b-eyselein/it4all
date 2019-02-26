@@ -94,14 +94,15 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   final case class ProgSampleSolutionYamlFormat(exId: Int, exSemVer: SemanticVersion, folderIdentifier: String) extends MyYamlObjectFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
+      id <- yamlObject.intField(idName)
       language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)
       base <- yamlObject.stringField(baseName)
       sample <- yamlObject.stringField(sampleName)
-    } yield ProgSampleSolution(exId, exSemVer, language, base, sample)
+    } yield ProgSampleSolution(id, exId, exSemVer, language, base, sample)
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
       languageName -> pss.language.entryName,
-      sampleName -> pss.solution
+      sampleName -> pss.sample.solution
     )
 
   }

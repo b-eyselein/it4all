@@ -4,6 +4,7 @@
     "type": "object",
     "properties": {
       "id": {"type": "number"},
+      "semanticVersion": {"$ref": "../semantic_version.schema.json"},
       "title": {"type": "string"},
       "author": {"type": "string"},
       "text": {"type": "string"},

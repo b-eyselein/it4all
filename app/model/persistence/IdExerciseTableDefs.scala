@@ -1,7 +1,7 @@
 package model.persistence
 
 import model.uml._
-import model.{Difficulties, Difficulty, ExPart, Exercise, ExerciseReview, ExerciseState, SemanticVersion, UserSolution}
+import model.{Difficulties, Difficulty, ExPart, Exercise, ExerciseReview, ExerciseState, SampleSolution, SemanticVersion, UserSolution}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -11,8 +11,8 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, DBSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview[PartType]]
-  extends ExerciseTableDefs[ExType, PartType, SolType, DBSolType] {
+trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, SampleSolType <: SampleSolution[SolType], DBSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview[PartType]]
+  extends ExerciseTableDefs[ExType, PartType, SolType, SampleSolType, DBSolType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._

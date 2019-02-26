@@ -137,9 +137,11 @@ final case class JsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: Se
 
 final case class WebSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion,
                                    htmlSample: Option[String], jsSample: Option[String])
-  extends SampleSolution[(Option[String], Option[String])] {
+  extends SampleSolution[String] {
 
-  def sample: (Option[String], Option[String]) = (htmlSample, jsSample)
+  def sample = ""
+
+  def maybeSamples: (Option[String], Option[String]) = (htmlSample, jsSample)
 
 }
 
