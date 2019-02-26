@@ -1,4 +1,4 @@
-@import model.sql.{SqlExercise, SqlQueryResult, SqlScenario, SqlToolMain, SqlExParts}
+@import model.tools.sql.{SqlExercise, SqlQueryResult, SqlScenario, SqlToolMain, SqlExParts}
 
 @(user: model.User, exercise: SqlExercise, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario,
         toolMainObject: SqlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)

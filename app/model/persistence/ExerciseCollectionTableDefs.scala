@@ -3,7 +3,7 @@ package model.persistence
 import model._
 import model.core.CoreConsts.idName
 import model.core.overviewHelpers.{SolvedState, SolvedStates}
-import model.sql.SqlConsts.shortNameName
+import model.tools.sql.SqlConsts.shortNameName
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
