@@ -29,8 +29,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ExIdentifierType = CollectionExIdentifier
 
-  override type DBSolType <: CollectionExSolution[SolType]
-
   override type ReadType = (CollType, Seq[ExType])
 
   override type Tables <: ExerciseCollectionTableDefs[ExType, PartType, CollType, SolType, DBSolType]
@@ -125,7 +123,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
             case Success(res)   =>
 
               // FIXME: points != 0? maxPoints != 0?
-              val dbSol = instantiateSolution(id = -1, user.username, collection, exercise, solution, res.points, res.maxPoints)
+              val dbSol = instantiateSolution(id = -1, user.username, collection, exercise, part, solution, res.points, res.maxPoints)
               tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
           }
         }
@@ -220,8 +218,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def instantiateExercise(collId: Int, id: Int, author: String, state: ExerciseState): ExType
 
-  protected def instantiateSolution(id: Int, username: String, collection: CollType, exercise: ExType, solution: SolType,
-                                    points: Points, maxPoints: Points): DBSolType
+  protected def instantiateSolution(id: Int, username: String, collection: CollType, exercise: ExType, part: PartType,
+                                    solution: SolType, points: Points, maxPoints: Points): DBSolType
 
   // Calls
 

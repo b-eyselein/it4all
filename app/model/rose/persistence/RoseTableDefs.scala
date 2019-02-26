@@ -112,7 +112,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class RoseSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "rose_solutions") {
+  class RoseSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "rose_solutions") {
 
     def solution: Rep[String] = column[String]("solution")
 

@@ -95,7 +95,7 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   }
 
-  class RegexSolutionTable(tag: Tag) extends PartSolutionsTable(tag, "regex_solutions") {
+  class RegexSolutionTable(tag: Tag) extends AUserSolutionsTable(tag, "regex_solutions") {
 
     def solution: Rep[String] = column[String]("solution")
 

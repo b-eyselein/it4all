@@ -128,7 +128,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class UmlSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "uml_solutions") {
+  class UmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "uml_solutions") {
 
     def solution: Rep[UmlClassDiagram] = column[UmlClassDiagram]("solution")
 

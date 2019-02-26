@@ -20,17 +20,17 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   type ExType <: Exercise
 
-  type DBSolType <: UserSolution[SolType]
-
   type PartType <: ExPart
 
   type SolType
+
+  type DBSolType <: UserSolution[PartType, SolType]
 
   type CompResultType <: CompleteResult[ResultType]
 
   type ReadType
 
-  override type Tables <: ExerciseTableDefs[ExType, PartType]
+  override type Tables <: ExerciseTableDefs[ExType, PartType, SolType, DBSolType]
 
   type ReviewType <: ExerciseReview[PartType]
 

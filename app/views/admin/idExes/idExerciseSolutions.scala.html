@@ -1,7 +1,7 @@
-@import model.{User, DBPartSolution, ExPart}
-@import model.toolMains.{ToolList, ASingleExerciseToolMain}
+@import model.toolMains.{ASingleExerciseToolMain, ToolList}
+@import model.{ExPart, User, UserSolution}
 
-@(adminUser: User, solutions: Seq[DBPartSolution[_ <: ExPart, _]], toolList: ToolList, toolMainObject: ASingleExerciseToolMain)
+@(adminUser: User, solutions: Seq[UserSolution[_ <: ExPart, _]], toolList: ToolList, toolMainObject: ASingleExerciseToolMain)
 
 @title = @{
     "Lösungen für Aufgabe TODO!"

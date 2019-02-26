@@ -12,7 +12,7 @@ trait SampleSolution[SolType] {
 
 }
 
-trait UserSolution[SolType] {
+trait UserSolution[PartType <: ExPart, SolType] {
 
   val id: Int
 
@@ -22,24 +22,16 @@ trait UserSolution[SolType] {
 
   val exSemVer: SemanticVersion
 
+  val collectionId: Int = -1
+
+  val collSemVer: SemanticVersion = SemanticVersionHelper.DEFAULT
+
+  val part: PartType
+
   val points: Points
 
   val maxPoints: Points
 
   val solution: SolType
-
-}
-
-trait DBPartSolution[PartType <: ExPart, SolType] extends UserSolution[SolType] {
-
-  val part: PartType
-
-}
-
-trait CollectionExSolution[SolType] extends UserSolution[SolType] {
-
-  val collectionId: Int
-
-  val collSemVer: SemanticVersion
 
 }

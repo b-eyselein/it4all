@@ -1,14 +1,14 @@
 package model.persistence
 
 import model.learningPath.LearningPathTableDefs
-import model.{ExPart, Exercise, HasBaseValues, SemanticVersion}
+import model.{ExPart, Exercise, HasBaseValues, Points, SemanticVersion, User, UserSolution}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.ForeignKeyQuery
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart] extends LearningPathTableDefs {
+trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart, SolType, DBSolType <: UserSolution[PartType, SolType]] extends LearningPathTableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -19,9 +19,13 @@ trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart] extends Learning
 
   protected type ExTableDef <: HasBaseValuesTable[ExDbValues]
 
+  protected type SolTableDef <: AUserSolutionsTable
+
   // Table Queries
 
   protected val exTable: TableQuery[ExTableDef]
+
+  protected val solTable: TableQuery[SolTableDef]
 
   // Helper methods
 
@@ -70,6 +74,10 @@ trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart] extends Learning
 
   protected def saveExerciseRest(compEx: CompEx): Future[Boolean]
 
+  // Implicit column types
+
+  protected implicit val partTypeColumnType: BaseColumnType[PartType]
+
   // Abstract table classes
 
   abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
@@ -80,6 +88,23 @@ trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart] extends Learning
 
 
     def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+  }
+
+  protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DBSolType](tag, name) {
+
+    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
+
+    def username: Rep[String] = column[String]("username")
+
+    def part: Rep[PartType] = column[PartType]("part")
+
+    def points = column[Points]("points")
+
+    def maxPoints: Rep[Points] = column[Points]("max_points")
+
+
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
   }
 

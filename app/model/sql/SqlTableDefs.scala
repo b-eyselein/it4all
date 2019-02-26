@@ -104,6 +104,9 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Column types
 
+  override protected implicit val partTypeColumnType: profile.api.BaseColumnType[SqlExPart] =
+    MappedColumnType.base[SqlExPart, String](_.entryName, SqlExParts.withNameInsensitive)
+
   private implicit val sqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
     MappedColumnType.base[SqlExerciseType, String](_.entryName, str => SqlExerciseType.withNameInsensitiveOption(str) getOrElse SqlExerciseType.SELECT)
 
@@ -166,7 +169,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution: Rep[String] = column[String]("solution")
 
 
-    override def * : ProvenShape[SqlSolution] = (id, username, exerciseId, exSemVer, collectionId, collSemVer, solution,
+    override def * : ProvenShape[SqlSolution] = (id, username, exerciseId, exSemVer, collectionId, collSemVer, part, solution,
       points, maxPoints) <> (SqlSolution.tupled, SqlSolution.unapply)
 
   }

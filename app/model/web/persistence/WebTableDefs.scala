@@ -214,7 +214,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class WebSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "web_solutions") {
+  class WebSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "web_solutions") {
 
     def solution: Rep[String] = column[String]("solution")
 

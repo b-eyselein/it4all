@@ -145,8 +145,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     )
   }
 
-  override protected def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlExercise, solution: String,
-                                             points: Points, maxPoints: Points): SqlSolution =
-    SqlSolution(id, username, exercise.id, exercise.semanticVersion, coll.id, coll.semanticVersion, solution, points, maxPoints)
+  override protected def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlExercise, part: SqlExPart,
+                                             solution: String, points: Points, maxPoints: Points): SqlSolution =
+    SqlSolution(id, username, exercise.id, exercise.semanticVersion, coll.id, coll.semanticVersion, part, solution, points, maxPoints)
 
 }

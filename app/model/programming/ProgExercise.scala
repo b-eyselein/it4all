@@ -70,7 +70,7 @@ final case class ProgTestDataSolution(testData: Seq[CommitedTestData], language:
 }
 
 final case class DBProgSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
-                                solutionStr: String, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points) extends DBPartSolution[ProgExPart, ProgSolution] {
+                                solutionStr: String, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points) extends UserSolution[ProgExPart, ProgSolution] {
 
   val solution: ProgSolution = part match {
     case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)

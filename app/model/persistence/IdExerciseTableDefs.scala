@@ -1,7 +1,7 @@
 package model.persistence
 
 import model.uml._
-import model.{DBPartSolution, Difficulties, Difficulty, ExPart, Exercise, ExerciseReview, ExerciseState, Points, SemanticVersion, User}
+import model.{Difficulties, Difficulty, ExPart, Exercise, ExerciseReview, ExerciseState, SemanticVersion, UserSolution}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -11,19 +11,15 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, DBSolType <: DBPartSolution[PartType, SolType], ReviewType <: ExerciseReview[PartType]]
-  extends ExerciseTableDefs[ExType, PartType] {
+trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, DBSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview[PartType]]
+  extends ExerciseTableDefs[ExType, PartType, SolType, DBSolType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
 
   protected type ReviewsTableDef <: ExerciseReviewsTable
 
-  protected type SolTableDef <: PartSolutionsTable
-
   protected val reviewsTable: TableQuery[ReviewsTableDef]
-
-  protected val solTable: TableQuery[SolTableDef]
 
   // Numbers
 
@@ -113,8 +109,6 @@ trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, DBSol
 
   // Implicit column types
 
-  protected implicit val partTypeColumnType: BaseColumnType[PartType]
-
   protected implicit val difficultyColumnType: BaseColumnType[Difficulty] =
     MappedColumnType.base[Difficulty, String](_.entryName, Difficulties.withNameInsensitive)
 
@@ -146,23 +140,5 @@ trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, DBSol
     def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
   }
-
-  protected abstract class PartSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DBSolType](tag, name) {
-
-    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
-
-    def username: Rep[String] = column[String]("username")
-
-    def part: Rep[PartType] = column[PartType]("part")
-
-    def points = column[Points]("points")
-
-    def maxPoints: Rep[Points] = column[Points]("max_points")
-
-
-    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
-
-  }
-
 
 }

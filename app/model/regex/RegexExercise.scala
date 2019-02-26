@@ -24,7 +24,7 @@ final case class RegexExercise(id: Int, semanticVersion: SemanticVersion, title:
 
 final case class RegexDBSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion,
                                  part: RegexExPart, solution: String, points: Points, maxPoints: Points)
-  extends DBPartSolution[RegexExPart, String]
+  extends UserSolution[RegexExPart, String]
 
 // Review
 

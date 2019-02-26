@@ -34,7 +34,7 @@ final case class XmlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, 
 }
 
 final case class XmlSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: XmlExPart,
-                             solution: String, points: Points, maxPoints: Points) extends DBPartSolution[XmlExPart, String]
+                             solution: String, points: Points, maxPoints: Points) extends UserSolution[XmlExPart, String]
 
 final case class XmlExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: XmlExPart,
                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[XmlExPart]

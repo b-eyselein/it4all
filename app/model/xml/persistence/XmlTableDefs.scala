@@ -97,7 +97,7 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class XmlSolutionsTable(tag: Tag) extends PartSolutionsTable(tag, "xml_solutions") {
+  class XmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "xml_solutions") {
 
     def solution: Rep[String] = column[String]("solution")
 

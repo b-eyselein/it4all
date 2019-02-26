@@ -144,7 +144,7 @@ final case class WebSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticV
 }
 
 final case class WebSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: WebExPart,
-                             solution: String, points: Points, maxPoints: Points) extends DBPartSolution[WebExPart, String]
+                             solution: String, points: Points, maxPoints: Points) extends UserSolution[WebExPart, String]
 
 final case class WebExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: WebExPart,
                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[WebExPart]

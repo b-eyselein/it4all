@@ -62,7 +62,7 @@ final case class UmlSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticV
   extends SampleSolution[UmlClassDiagram]
 
 final case class UmlSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: UmlExPart,
-                             solution: UmlClassDiagram, points: Points, maxPoints: Points) extends DBPartSolution[UmlExPart, UmlClassDiagram]
+                             solution: UmlClassDiagram, points: Points, maxPoints: Points) extends UserSolution[UmlExPart, UmlClassDiagram]
 
 final case class UmlExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: UmlExPart,
                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[UmlExPart]

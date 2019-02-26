@@ -10,8 +10,8 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollType <: ExerciseCollection, SolType, DBSolType <: CollectionExSolution[SolType]]
-  extends ExerciseTableDefs[ExType, PartType] {
+trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollType <: ExerciseCollection, SolType, DBSolType <: UserSolution[PartType, SolType]]
+  extends ExerciseTableDefs[ExType, PartType, SolType, DBSolType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -170,31 +170,11 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
 
   }
 
-  abstract class CollectionExSolutionsTable(tag: Tag, name: String) extends Table[DBSolType](tag, name) {
-
-    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
-
-    def username: Rep[String] = column[String]("username")
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+  abstract class CollectionExSolutionsTable(tag: Tag, name: String) extends AUserSolutionsTable(tag, name) {
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
     def collSemVer: Rep[SemanticVersion] = column[SemanticVersion]("coll_sem_ver")
-
-    def points: Rep[Points] = column[Points]("points")
-
-    def maxPoints: Rep[Points] = column[Points]("max_points")
-
-
-    //    def pk: PrimaryKey = primaryKey("pk", (id, username, collectionId, collSemVer, exerciseId, exSemVer))
-
-    def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", (collectionId, collSemVer, exerciseId, exSemVer), exTable)(ex =>
-      (ex.collectionId, ex.collSemVer, ex.id, ex.semanticVersion))
-
-    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
   }
 
