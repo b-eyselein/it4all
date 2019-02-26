@@ -26,22 +26,6 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
 // Classes for use
 
-final case class SqlCompleteScenario(override val coll: SqlScenario, override val exercises: Seq[SqlExercise]) extends CompleteCollection {
-
-  override type CompEx = SqlExercise
-
-  override type Coll = SqlScenario
-
-  def getExercisesByType(exType: SqlExerciseType): Seq[SqlExercise] = exercises filter (_.exerciseType == exType)
-
-  override def renderRest: Html = new Html(
-    s"""<div class="row">
-       |  <div class="col-md-2"><b>Kurzname</b></div>
-       |  <div class="col-md-4">${coll.shortName}</div>
-       |</div>""".stripMargin)
-
-}
-
 final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                              override val collectionId: Int, override val collSemVer: SemanticVersion, exerciseType: SqlExerciseType,
                              override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[SqlSample]) extends Exercise {

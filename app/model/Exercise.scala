@@ -65,7 +65,6 @@ trait ExTag {
 
 }
 
-
 trait Exercise {
 
   def id: Int
@@ -93,5 +92,11 @@ trait Exercise {
   def collectionId: Int = -1
 
   def collSemVer: SemanticVersion = SemanticVersionHelper.DEFAULT
+
+}
+
+trait ExerciseCollection extends HasBaseValues {
+
+  val shortName: String
 
 }

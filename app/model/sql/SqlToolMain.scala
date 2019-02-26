@@ -5,7 +5,6 @@ import model._
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
-import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
@@ -40,8 +39,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override type ExType = SqlExercise
 
   override type CollType = SqlScenario
-
-  override type CompCollType = SqlCompleteScenario
 
   override type PartType = SqlExPart
 
@@ -80,7 +77,17 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // db
 
   override def futureSaveRead(reads: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(reads map {
-    ex => tables.saveCompleteColl(SqlCompleteScenario(ex._1, ex._2)) map (saveRes => (ex, saveRes))
+    case (collection, exercises) => tables.futureInsertAndDeleteOldCollection(collection) flatMap {
+      case false => Future.successful(((collection, exercises), false))
+      case true  =>
+        val futureAllExesSaved: Future[Boolean] = Future.sequence(exercises map {
+          exercise => tables.futureInsertExercise(exercise).transform(_ == 1, identity)
+        }).map(_.forall(identity))
+
+        futureAllExesSaved map {
+          allExesSaved => ((collection, exercises), allExesSaved)
+        }
+    }
   })
 
 
@@ -97,14 +104,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override protected def compExTypeForm(collId: Int): Form[SqlExercise] = SqlFormMappings.sqlExerciseForm(collId)
 
   // Views
-
-  override def adminRenderEditRest(collOpt: Option[SqlCompleteScenario]): Html = new Html(
-    s"""<div class="form-group row">
-       |  <div class="col-sm-12">
-       |    <label for="${SqlConsts.shortNameName}">Name der DB:</label>
-       |    <input class="form-control" name="${SqlConsts.shortNameName}" id="${SqlConsts.shortNameName}" required ${collOpt map (coll => s"""value="${coll.coll.shortName}"""") getOrElse ""})>
-       |  </div>
-       |</div>""".stripMargin)
 
   override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, numOfExes: Int, maybeOldSolution: Option[DBSolType], part: SqlExPart)
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {

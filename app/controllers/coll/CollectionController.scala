@@ -29,7 +29,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Helpers
 
-//  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
+  //  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
     val start = Math.max(0, (page - 1) * step)
@@ -42,36 +42,40 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteColls map { allColls =>
-        val filteredColls = allColls filter (_.coll.state == ExerciseState.APPROVED)
+      toolMain.futureAllCollections map { allColls =>
+        val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
 
-        Ok(views.html.exercises.userCollectionsOverview(user, takeSlice(filteredColls, page).map(_.coll), toolMain, page, filteredColls.size / stdStep + 1))
+        Ok(views.html.exercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
       }
   }
 
   def collection(toolType: String, id: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteCollById(id) flatMap {
-        case None                              => Future(Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart)))
-        case Some(coll: toolMain.CompCollType) =>
-          val step = 18
+      val step = 18
 
-          val approvedExercises: Seq[coll.CompEx] = coll.exercises.filter(_.state == ExerciseState.APPROVED)
+      toolMain.futureCollById(id) flatMap {
+        case None                          => Future(Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart)))
+        case Some(coll: toolMain.CollType) =>
+          toolMain.futureExercisesInColl(coll.id) flatMap { exercises =>
 
-          val exesToDisplay = takeSlice(approvedExercises, page, step)
 
-          val futureExesAndSuccessTypes: Future[Seq[UserCollEx]] = Future.sequence(exesToDisplay.map {
-            ex: coll.CompEx =>
-              toolMain.futureSolveState(user, ex.collectionId, ex.id) map {
-                // FIXME: query solved state!
-                maybeSolvedState => UserCollEx(ex, maybeSolvedState getOrElse SolvedStates.NotStarted)
-              }
-          })
+            val approvedExercises: Seq[toolMain.ExType] = exercises.filter(_.state == ExerciseState.APPROVED)
 
-          futureExesAndSuccessTypes map {
-            exesAndSuccessTypes =>
-              Ok(views.html.exercises.userCollectionExercisesOverview(
-                user, coll.coll, exesAndSuccessTypes, toolMain, page, step, approvedExercises.size))
+            val exesToDisplay = takeSlice(approvedExercises, page, step)
+
+            val futureExesAndSuccessTypes: Future[Seq[UserCollEx]] = Future.sequence(exesToDisplay.map {
+              ex: toolMain.ExType =>
+                toolMain.futureSolveState(user, ex.collectionId, ex.id) map {
+                  // FIXME: query solved state!
+                  maybeSolvedState => UserCollEx(ex, maybeSolvedState getOrElse SolvedStates.NotStarted)
+                }
+            })
+
+            futureExesAndSuccessTypes map {
+              exesAndSuccessTypes =>
+                Ok(views.html.exercises.userCollectionExercisesOverview(
+                  user, coll, exesAndSuccessTypes, toolMain, page, step, approvedExercises.size))
+            }
           }
       }
   }

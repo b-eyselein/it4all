@@ -16,7 +16,7 @@ import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.Try
 
 @Singleton
 class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
@@ -157,8 +157,8 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminCollectionsList(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteColls map { allColls =>
-        Ok(views.html.admin.collExes.adminCollectionList(admin, allColls.map(_.coll), toolMain, toolList))
+      toolMain.futureAllCollections map { allColls =>
+        Ok(views.html.admin.collExes.adminCollectionList(admin, allColls, toolMain, toolList))
       }
   }
 
@@ -172,8 +172,8 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminEditCollectionForm(tool: String, id: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureCompleteCollById(id) map { maybeCollection =>
-        val collection: toolMain.CollType = ??? // FIXME: maybeCollection.map(_.coll) getOrElse toolMain.instantiateCollection(id, ExerciseState.RESERVED)
+      toolMain.futureCollById(id) map { maybeCollection: Option[toolMain.CollType] =>
+        val collection: toolMain.CollType = maybeCollection getOrElse toolMain.instantiateCollection(id, admin.username, ExerciseState.RESERVED)
         Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false, toolList))
       }
   }
@@ -183,7 +183,6 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       // FIXME: implement: editing of collection!
       Future(Ok("TODO: Editing collection...!"))
   }
-
 
   def adminCreateCollection(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (_, _) =>
     implicit request =>

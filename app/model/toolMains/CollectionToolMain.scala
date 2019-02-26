@@ -33,12 +33,10 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ReadType = (CollType, Seq[ExType])
 
-  override type Tables <: ExerciseCollectionTableDefs[ExType, CollType, CompCollType, SolType, DBSolType]
+  override type Tables <: ExerciseCollectionTableDefs[ExType, CollType, SolType, DBSolType]
 
 
   type CollType <: ExerciseCollection
-
-  type CompCollType <: CompleteCollection
 
   // Other members
 
@@ -66,9 +64,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureCollById(id: Int): Future[Option[CollType]] = tables.futureCollById(id)
 
-  def futureCompleteColls: Future[Seq[CompCollType]] = tables.futureCompleteColls
-
-  def futureCompleteCollById(id: Int): Future[Option[CompCollType]] = tables.futureCompleteCollById(id)
+  def futureAllCollections: Future[Seq[CollType]] = tables.futureAllCollections
 
   def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] = tables.futureExerciseById(collId, id)
 
@@ -150,14 +146,12 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
        |  <a class="btn btn-primary btn-block" href="${controllers.coll.routes.CollectionController.collectionList(up)}">Zu den Übungsaufgabensammlungen</a>
        |</div>""".stripMargin)
 
-  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = tables.futureColls map {
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = tables.futureAllCollections map {
     collections => views.html.admin.collExes.collectionAdminIndex(admin, collections, this, toolList)
   }
 
   def renderExercise(user: User, coll: CollType, exercise: ExType, numOfExes: Int, maybeOldSolution: Option[DBSolType], part: PartType)
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
-
-  def adminRenderEditRest(exercise: Option[CompCollType]): Html
 
   def renderCollectionEditForm(user: User, collection: CollType, isCreation: Boolean, toolList: ToolList)
                               (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
@@ -216,9 +210,11 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   }
 
   // TODO: scalarStyle = Folded if fixed...
-  override def yamlString: Future[String] = futureCompleteColls map {
-    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
-  }
+  override def yamlString: Future[String] = ???
+
+  //  futureCompleteColls map {
+  //    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
+  //  }
 
   def instantiateCollection(id: Int, author: String, state: ExerciseState): CollType
 

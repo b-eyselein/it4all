@@ -16,7 +16,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlScenario, SqlCompleteScenario, String, SqlSolution] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlScenario, String, SqlSolution] {
 
   import profile.api._
 
@@ -78,9 +78,6 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected def completeExForEx(ex: DbSqlExercise): Future[SqlExercise] =
     samplesForEx(ex.collectionId, ex.id) map (samples => SqlDbModels.exerciseFromDbValues(ex, samples))
 
-  override def completeCollForColl(coll: SqlScenario): Future[SqlCompleteScenario] =
-    db.run(exTable.filter(_.collectionId === coll.id).result) flatMap (exes => Future.sequence(exes map completeExForEx)) map (exes => SqlCompleteScenario(coll, exes))
-
   private def samplesForEx(collId: Int, exId: Int): Future[Seq[SqlSample]] =
     db.run(sqlSamples filter (table => table.exerciseId === exId && table.collId === collId) result)
 
@@ -93,9 +90,6 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override def saveExerciseRest(compEx: SqlExercise): Future[Boolean] =
     saveSeq[SqlSample](compEx.samples, saveSqlSample)
-
-  override def saveCompleteColl(completeScenario: SqlCompleteScenario): Future[Boolean] =
-    db.run(collTable insertOrUpdate completeScenario.coll) flatMap (_ => saveSeq(completeScenario.exercises, saveSqlExercise))
 
   private def saveSqlExercise(sqlExercise: SqlExercise): Future[Boolean] =
     db.run(exTable insertOrUpdate SqlDbModels.dbExerciseFromExercise(sqlExercise)) flatMap { _ => saveSeq(sqlExercise.samples, saveSqlSample) }
