@@ -100,8 +100,9 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Column types
 
-  override protected implicit val partTypeColumnType: profile.api.BaseColumnType[SqlExPart] =
+  override protected implicit val partTypeColumnType: BaseColumnType[SqlExPart] =
     MappedColumnType.base[SqlExPart, String](_.entryName, SqlExParts.withNameInsensitive)
+
 
   private implicit val sqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
     MappedColumnType.base[SqlExerciseType, String](_.entryName, str => SqlExerciseType.withNameInsensitiveOption(str) getOrElse SqlExerciseType.SELECT)
@@ -115,7 +116,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class SqlScenarioesTable(tag: Tag) extends ExerciseCollectionTable(tag, "sql_scenarioes") {
 
-    override def * : ProvenShape[SqlScenario] = (id,  title, author, text, state, shortName) <> (SqlScenario.tupled, SqlScenario.unapply)
+    override def * : ProvenShape[SqlScenario] = (id, title, author, text, state, shortName) <> (SqlScenario.tupled, SqlScenario.unapply)
 
   }
 
@@ -128,17 +129,16 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def tags: Rep[String] = column[String](tagsName)
 
 
-    override def * : ProvenShape[DbSqlExercise] = (id, semanticVersion, title, author, text, state, collectionId,  exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)
+    override def * : ProvenShape[DbSqlExercise] = (id, semanticVersion, title, author, text, state, collectionId, exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)
 
   }
 
   class SqlSamplesTable(tag: Tag) extends ACollectionSamplesTable(tag, "sql_samples") {
 
-
     def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, collectionId))
 
 
-    override def * : ProvenShape[SqlSample] = (id, exerciseId, exSemVer, collectionId,  sample) <> (SqlSample.tupled, SqlSample.unapply)
+    override def * : ProvenShape[SqlSample] = (id, exerciseId, exSemVer, collectionId, sample) <> (SqlSample.tupled, SqlSample.unapply)
 
   }
 
@@ -147,7 +147,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def solution: Rep[String] = column[String]("solution")
 
 
-    override def * : ProvenShape[SqlSolution] = (id, username, exerciseId, exSemVer, collectionId,  part, solution,
+    override def * : ProvenShape[SqlSolution] = (id, username, exerciseId, exSemVer, collectionId, part, solution,
       points, maxPoints) <> (SqlSolution.tupled, SqlSolution.unapply)
 
   }

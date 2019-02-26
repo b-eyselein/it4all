@@ -11,6 +11,6 @@ object SqlExParts extends PlayEnum[SqlExPart] {
 
   val values: immutable.IndexedSeq[SqlExPart] = findValues
 
-  object SqlSingleExPart extends SqlExPart("Bearbeiten", "solve")
+  case object SqlSingleExPart extends SqlExPart("Bearbeiten", "solve")
 
 }

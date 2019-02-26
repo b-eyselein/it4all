@@ -31,19 +31,23 @@
         <section>
             <h2 class="text-center">Sammlungen</h2>
 
-            @for(collGroup <- collections.grouped(collsPerRow)) {
-                <div class="row">
-                @for(collection <- collGroup) {
-                    <div class="col-md-@{
-                        12 / collsPerRow
-                    }">
-                        <a href="@coll.routes.CollectionController.collection(toolMain.urlPart, collection.id)"
-                        class="btn btn-primary btn-block">@{
-                            s"${collection.id}. ${collection.title}"
-                        }</a>
+            @if(collections.nonEmpty) {
+                @for(collGroup <- collections.grouped(collsPerRow)) {
+                    <div class="row">
+                    @for(collection <- collGroup) {
+                        <div class="col-md-@{
+                            12 / collsPerRow
+                        }">
+                            <a href="@coll.routes.CollectionController.collection(toolMain.urlPart, collection.id)"
+                            class="btn btn-primary btn-block">@{
+                                s"${collection.id}. ${collection.title}"
+                            }</a>
+                        </div>
+                    }
                     </div>
                 }
-                </div>
+            } else {
+                <div class="alert alert-danger">Für dieses Tool existieren noch keine Sammlungen.</div>
             }
         </section>
 

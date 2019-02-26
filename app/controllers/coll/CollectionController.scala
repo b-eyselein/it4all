@@ -46,14 +46,14 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       } yield Ok(views.html.collectionExercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
   }
 
-  def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      toolMain.futureAllCollections map { allColls =>
-        val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
-
-        Ok(views.html.collectionExercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
-      }
-  }
+//  def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+//    implicit request =>
+//      toolMain.futureAllCollections map { allColls =>
+//        val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
+//
+//        Ok(views.html.collectionExercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
+//      }
+//  }
 
   def collection(toolType: String, id: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
@@ -137,7 +137,9 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None       => Future.successful(onNoSuchExercisePart(partStr))
         case Some(part) =>
           toolMain.futureSampleSolutions(collId, id, part) map {
-            sampleSolutions => Ok(JsArray(sampleSolutions map JsString.apply))
+            sampleSolutions =>
+              println(sampleSolutions)
+              Ok(JsArray(sampleSolutions map JsString.apply))
           }
       }
   }

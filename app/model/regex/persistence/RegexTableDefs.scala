@@ -55,8 +55,8 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   } yield RegexDbModels.exerciseFromDbExercise(ex, sampleSolutions, testData)
 
   override protected def saveExerciseRest(compEx: RegexExercise): Future[Boolean] = for {
-    samplesSaved <- saveSeq[RegexSampleSolution](compEx.sampleSolutions, sample => db.run(regexSampleSolutionsTable += sample))
-    testDataSaved <- saveSeq[RegexTestData](compEx.testData, td => db.run(regexTestDataTable += td))
+    samplesSaved <- saveSeq[RegexSampleSolution](compEx.sampleSolutions, sample => db.run(regexSampleSolutionsTable += sample), Some("RegexSampleSolution"))
+    testDataSaved <- saveSeq[RegexTestData](compEx.testData, td => db.run(regexTestDataTable += td), Some("RegexTestData"))
   } yield samplesSaved && testDataSaved
 
   // Other queries
@@ -104,6 +104,9 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     def isIncluded: Rep[Boolean] = column[Boolean]("is_included")
 
 
+    def pk = primaryKey("pk", (id, exerciseId, exSemVer, collectionId))
+
+
     def * : ProvenShape[RegexTestData] = (id, exerciseId, exSemVer, collectionId, data, isIncluded) <> (RegexTestData.tupled, RegexTestData.unapply)
 
   }
@@ -111,6 +114,9 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   class RegexSolutionTable(tag: Tag) extends CollectionExSolutionsTable(tag, "regex_solutions") {
 
     def solution: Rep[String] = column[String]("solution")
+
+
+    def pk = primaryKey("pk", id)
 
 
     override def * : ProvenShape[RegexDBSolution] = (id, username, exerciseId, exSemVer, collectionId, part,

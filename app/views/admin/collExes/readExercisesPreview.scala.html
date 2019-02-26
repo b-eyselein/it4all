@@ -2,22 +2,27 @@
 @import model.toolMains.{ToolList, CollectionToolMain}
 @import model.core.ReadAndSaveResult
 
-@(user: User, collection: ExerciseCollection, readExercises: ReadAndSaveResult[_ <: Exercise], toolMain: CollectionToolMain, toolList: ToolList)
+@(user: User, collection: ExerciseCollection, readExerciseResults: ReadAndSaveResult[_ <: Exercise], toolMain: CollectionToolMain, toolList: ToolList)
 
-@title = @{
-    /* FIXME: collection... */
-    s"Eingelesene Aufgaben für Sammlung '${collection.title}' Tool '${toolMain.toolname}'"
-}
-
-@admin.adminMain(title, user, toolList, Some(toolMain)) {
-
-    @for(readExercise <- readExercises.successes) {
-        <p>@readExercise</p>
+    @title = @{
+        /* FIXME: collection... */
+        s"Eingelesene Aufgaben für Sammlung '${collection.title}' Tool '${toolMain.toolname}'"
     }
 
-    <hr>
+    @admin.adminMain(title, user, toolList, Some(toolMain)) {
 
-    <a href="@coll.routes.CollectionAdminController.adminCollection(toolMain.urlPart, collection.id)"
-    class="btn btn-primary btn-block">Zurück zur Sammlung</a>
+        @for(readExerciseSuccess <- readExerciseResults.successes;
+        readExercise = readExerciseSuccess.ex;
+        saved = readExerciseSuccess.saved) {
+            <section>
+                <p class="text-@if(saved) {success} else {danger}">@if(!saved) {Nicht k} else {K}omplett gespeichert</p>
+                <p>@readExercise</p>
+            </section>
+        }
 
-}
+        <hr>
+
+        <a href="@coll.routes.CollectionAdminController.adminCollection(toolMain.urlPart, collection.id)"
+        class="btn btn-primary btn-block">Zurück zur Sammlung</a>
+
+    }

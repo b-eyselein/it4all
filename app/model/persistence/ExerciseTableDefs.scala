@@ -94,11 +94,12 @@ trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart, SolType, SampleS
 
   protected abstract class ASolutionsTable[S <: Solution[SolType]](tag: Tag, name: String) extends ExForeignKeyTable[S](tag, name) {
 
-    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
   }
 
   protected abstract class ASampleSolutionsTable(tag: Tag, name: String) extends ASolutionsTable[SampleSolType](tag, name) {
+
+    def id: Rep[Int] = column[Int]("id", O.PrimaryKey)
 
     def sample: Rep[String] = column[String](sampleName)
 
@@ -106,11 +107,13 @@ trait ExerciseTableDefs[CompEx <: Exercise, PartType <: ExPart, SolType, SampleS
 
   protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ASolutionsTable[UserSolType](tag, name) {
 
+    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
+
     def username: Rep[String] = column[String]("username")
 
     def part: Rep[PartType] = column[PartType]("part")
 
-    def points = column[Points]("points")
+    def points: Rep[Points] = column[Points]("points")
 
     def maxPoints: Rep[Points] = column[Points]("max_points")
 

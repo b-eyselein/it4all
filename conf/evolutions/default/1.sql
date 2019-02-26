@@ -354,7 +354,7 @@ create table if not exists sql_solutions
   points        double,
   max_points    double,
   solution      text,
-  part          varchar(25),
+  part          varchar(30),
 
   foreign key (username) references users (username)
     on update cascade on delete cascade,
@@ -710,16 +710,6 @@ drop table if exists rose_samples;
 drop table if exists rose_inputs;
 
 drop table if exists rose_exercises;
-
-# Questions
-
-drop table if exists question_solutions;
-
-drop table if exists question_answers;
-
-drop table if exists questions;
-
-drop table if exists quizzes;
 
 # Programming
 

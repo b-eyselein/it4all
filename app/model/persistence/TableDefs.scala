@@ -113,11 +113,11 @@ trait TableDefs {
 
   // Abstract queries
 
-  protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any]): Future[Boolean] = Future.sequence(seqToSave map {
+  protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any], saveType: Option[String] = None): Future[Boolean] = Future.sequence(seqToSave map {
     save(_) transform {
       case Success(_) => Success(true)
       case Failure(e) =>
-        Logger.error("Could not perform save option", e)
+        Logger.error("Could not perform save option" + saveType.map(st => s" on $st").getOrElse(""), e)
         Success(false)
     }
   }) map (_ forall identity)
