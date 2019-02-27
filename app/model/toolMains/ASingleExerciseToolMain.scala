@@ -123,12 +123,6 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // FIXME: former class IdExerciseToolMain
 
-  // Methods
-
-  def checkAndCreateSolDir(username: String, exercise: ExType): Try[File] =
-    Try(solutionDirForExercise(username, exercise.id).createDirectories())
-
-
   // Result handling
 
   def onLiveCorrectionResult(solutionSaved: Boolean, result: CompResultType): JsValue =

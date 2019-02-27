@@ -101,23 +101,25 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override protected def correctEx(user: User, solution: SolType, exercise: XmlExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =
-    Future(part match {
-      case XmlExParts.DocumentCreationXmlPart => checkAndCreateSolDir(user.username, exercise) flatMap { dir: File =>
+  override protected def correctEx(user: User, solution: SolType, exercise: XmlExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] = Future.successful {
+    val solutionBaseDir = solutionDirForExercise(user.username, exercise.id).createDirectories()
+
+    part match {
+      case XmlExParts.DocumentCreationXmlPart =>
         exercise.samples.headOption match {
           case None            => Failure(new Exception("There is no sample solution!"))
           case Some(xmlSample) =>
             // Write grammar
-            val grammarPath: File = dir / s"${exercise.rootNode}.dtd"
+            val grammarPath: File = solutionBaseDir / s"${exercise.rootNode}.dtd"
             grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sampleGrammarString)
 
             // Write document
-            val documentPath: File = dir / s"${exercise.rootNode}.xml"
+            val documentPath: File = solutionBaseDir / s"${exercise.rootNode}.xml"
             documentPath.createFileIfNotExists(createParents = true).write(solution)
 
             Success(XmlDocumentCompleteResult(solution, XmlCorrector.correctAgainstMentionedDTD(documentPath)))
         }
-      }
+
 
       case XmlExParts.GrammarCreationXmlPart =>
 
@@ -132,7 +134,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
           case None                => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
           case Some(sampleGrammar) => Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution), sampleGrammar, exercise))
         }
-    })
+    }
+  }
 
   // Views
 
