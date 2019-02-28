@@ -1,6 +1,6 @@
-@import model.rose.RoseConsts
+@import model.rose.{RoseConsts, RoseExercise, RoseCollection, RoseToolMain}
 
-@(user: model.User, exerciseForm: Form[model.rose.RoseExercise], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain)(
+@(user: model.User, collection: RoseCollection, exerciseForm: Form[RoseExercise], isCreation: Boolean, toolMainObject: RoseToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @widthField = @{
@@ -66,5 +66,5 @@
 
 }
 
-@idExercises.editExerciseBaseForm(user, exerciseForm, isCreation, toolMainObject, specialFields)
+@idExercises.editExerciseBaseForm(user, collection.id, exerciseForm, isCreation, toolMainObject, specialFields)
 

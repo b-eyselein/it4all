@@ -1,9 +1,9 @@
 package model.rose.persistence
 
-import model.persistence.{ADbModels, ADbSampleSol, ADbUserSol}
+import model.persistence._
 import model.programming.{ProgDataType, ProgLanguage}
 import model.rose._
-import model.{ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
 
 object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise, RoseSampleSolution, DbRoseSampleSolution, RoseUserSolution, DbRoseUserSolution] {
 
@@ -34,6 +34,16 @@ object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise, RoseSampleSo
 
 }
 
+object RoseExerciseReviewDbModels extends AExerciseReviewDbModels[RoseExPart, RoseExerciseReview, DbRoseExerciseReview] {
+
+  override def dbReviewFromReview(username: String, collId: Int, exId: Int, part: RoseExPart, review: RoseExerciseReview): DbRoseExerciseReview =
+    DbRoseExerciseReview(username, collId, exId, part, review.difficulty, review.maybeDuration)
+
+  override def reviewFromDbReview(dbReview: DbRoseExerciseReview): RoseExerciseReview =
+    RoseExerciseReview(dbReview.difficulty, dbReview.maybeDuration)
+
+}
+
 final case class DbRoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                                 fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends HasBaseValues
 
@@ -45,3 +55,8 @@ final case class DbRoseUserSolution(id: Int, exId: Int, exSemVer: SemanticVersio
   extends ADbUserSol[String]
 
 final case class DbRoseInputType(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, name: String, inputType: ProgDataType)
+
+// Exercise review
+
+final case class DbRoseExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: RoseExPart, difficulty: Difficulty, maybeDuration: Option[Int])
+  extends DbExerciseReview[RoseExPart]

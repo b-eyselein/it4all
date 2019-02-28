@@ -10,7 +10,8 @@ import slick.lifted.{PrimaryKey, ProvenShape}
 import scala.concurrent.{ExecutionContext, Future}
 
 class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[XmlExercise, XmlExPart, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution /*, XmlExerciseReview*/ ] {
+  extends HasDatabaseConfigProvider[JdbcProfile]
+    with ExerciseCollectionTableDefs[XmlExercise, XmlExPart, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview] {
 
   import profile.api._
 
@@ -33,20 +34,23 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override protected type DbUserSolTable = XmlSolutionsTable
 
 
-  //  override protected type ReviewsTableDef = XmlExerciseReviewsTable
+  override protected type DbReviewType = DbXmlExerciseReview
+
+  override protected type ReviewsTable = XmlExerciseReviewsTable
 
   // Table Queries
 
-  override protected val collTable: TableQuery[XmlCollectionsTable] = TableQuery[XmlCollectionsTable]
-  override protected val exTable  : TableQuery[XmlExercisesTable]   = TableQuery[XmlExercisesTable]
-  override protected val solTable : TableQuery[XmlSolutionsTable]   = TableQuery[XmlSolutionsTable]
-  //  override protected val reviewsTable = TableQuery[XmlExerciseReviewsTable]
+  override protected val collTable   : TableQuery[XmlCollectionsTable]     = TableQuery[XmlCollectionsTable]
+  override protected val exTable     : TableQuery[XmlExercisesTable]       = TableQuery[XmlExercisesTable]
+  override protected val solTable    : TableQuery[XmlSolutionsTable]       = TableQuery[XmlSolutionsTable]
+  override protected val reviewsTable: TableQuery[XmlExerciseReviewsTable] = TableQuery[XmlExerciseReviewsTable]
 
   private val samplesTable = TableQuery[XmlSamplesTable]
 
   // Helper methods
 
-  override protected val dbModels = XmlDbModels
+  override protected val dbModels               = XmlDbModels
+  override protected val exerciseReviewDbModels = XmlExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbXmlUserSolution, newId: Int): DbXmlUserSolution = oldSol.copy(id = newId)
 
@@ -139,10 +143,10 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  //  class XmlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "xml_exercise_reviews") {
-  //
-  //    override def * : ProvenShape[XmlExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (XmlExerciseReview.tupled, XmlExerciseReview.unapply)
-  //
-  //  }
+  class XmlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "xml_exercise_reviews") {
+
+    override def * : ProvenShape[DbXmlExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbXmlExerciseReview.tupled, DbXmlExerciseReview.unapply)
+
+  }
 
 }

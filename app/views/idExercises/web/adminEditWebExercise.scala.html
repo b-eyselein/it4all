@@ -1,0 +1,27 @@
+@import model.tools.web.{WebExercise, WebToolMain}
+
+@(user: model.User, collId: Int, exercise: Form[WebExercise], isCreation: Boolean, toolMainObject: WebToolMain,
+        toolList: model.toolMains.ToolList)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@scripts = {
+    <style>
+            textarea {
+                resize: vertical;
+            }
+    </style>
+}
+
+@title = @{
+    if(isCreation) {
+        "Erstellen"
+    } else {
+        "Bearbeiten"
+    } + " einer " + toolMainObject.toolname + "-Aufgabe"
+}
+
+@admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
+    @idExercises.web.editWebExerciseForm(user, collId, exercise, isCreation, toolMainObject)
+}
+
+
+

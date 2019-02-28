@@ -1,0 +1,15 @@
+@(user: model.User, collectionId: Int, exported: String, toolMainObject: model.toolMains.AToolMain, toolList: model.toolMains.ToolList)
+
+    @title = @{
+        "Export " + toolMainObject.toolname
+    }
+
+    @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
+        <a href="@coll.routes.CollectionAdminController.adminExportExercises(toolMainObject.urlPart, collectionId)" class="btn btn-primary btn-block">
+            <span class="glyphicon glyphicon-download"></span> Download als Datei
+        </a>
+
+        <hr>
+
+        <pre id="exported"><code>@exported</code></pre>
+    }

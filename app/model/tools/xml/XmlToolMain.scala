@@ -1,11 +1,10 @@
 package model.tools.xml
 
-import java.io
-
 import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.inject._
 import model.core._
+import model.core.result.CompleteResultJsonProtocol
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.xml.persistence.XmlTableDefs
 import model.{ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
@@ -16,7 +15,7 @@ import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 
@@ -30,26 +29,19 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Result types
 
   override type PartType = XmlExPart
-
   override type ExType = XmlExercise
-
   override type CollType = XmlCollection
 
-
   override type SolType = XmlSolution
-
   override type SampleSolType = XmlSampleSolution
-
   override type UserSolType = XmlUserSolution
 
-
-  override type Tables = XmlTableDefs
+  override type ReviewType = XmlExerciseReview
 
   override type ResultType = XmlEvaluationResult
-
   override type CompResultType = XmlCompleteResult
 
-  override type ReviewType = XmlExerciseReview
+  override type Tables = XmlTableDefs
 
   // Other members
 
@@ -61,45 +53,16 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override protected val exParts: Seq[XmlExPart] = XmlExParts.values
 
-
-  override protected val completeResultJsonProtocol: XmlCompleteResultJsonProtocol.type = XmlCompleteResultJsonProtocol
-
-  // Forms
-
-
-  //  override def exerciseReviewForm(username: String, exercise: XmlExercise, exercisePart: XmlExPart): Form[XmlExerciseReview] = Form(
-  //    mapping(
-  //      difficultyName -> Difficulties.formField,
-  //      durationName -> optional(number(min = 0, max = 100))
-  //    )
-  //    (XmlExerciseReview(username, exercise.id, exercise.semanticVersion, exercisePart, _, _))
-  //    (xer => Some((xer.difficulty, xer.maybeDuration)))
-  //  )
-
-  // Reading solution from requests, saving
-
-  override protected def readSolution(user: User, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart)
-                                     (implicit request: Request[AnyContent]): Option[XmlSolution] = request.body.asJson flatMap { jsValue =>
-    jsValue match {
-      case JsString(solution) =>
-        part match {
-          case XmlExParts.GrammarCreationXmlPart  => Some(XmlSolution(document = "", grammar = solution))
-          case XmlExParts.DocumentCreationXmlPart => Some(XmlSolution(document = solution, grammar = ""))
-        }
-      case other              =>
-        logger.error("Wrong json content: " + other.toString)
-        None
-    }
-  }
-
-  // Yaml, Html forms
+  // Yaml, Html forms, Json
 
   override protected val collectionYamlFormat: MyYamlFormat[XmlCollection] = XmlExYamlProtocol.XmlCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[XmlExercise]   = XmlExYamlProtocol.XmlExYamlFormat
 
-  override val collectionForm: Form[XmlCollection] = XmlExerciseForm.collectionFormat
-  override val exerciseForm  : Form[XmlExercise]   = XmlExerciseForm.exerciseFormat
+  override val collectionForm    : Form[XmlCollection]     = XmlExerciseForm.collectionFormat
+  override val exerciseForm      : Form[XmlExercise]       = XmlExerciseForm.exerciseFormat
+  override val exerciseReviewForm: Form[XmlExerciseReview] = XmlExerciseForm.exerciseReviewForm
 
+  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] = XmlCompleteResultJsonProtocol
 
   // Other helper methods
 
@@ -120,40 +83,55 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override protected def correctEx(user: User, solution: XmlSolution, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart): Try[XmlCompleteResult] = part match {
-    case XmlExParts.DocumentCreationXmlPart =>
-      val solutionBaseDir = solutionDirForExercise(user.username, exercise.id).createDirectories()
-
-      exercise.samples.headOption match {
-        case None            => Failure(new Exception("There is no sample solution!"))
-        case Some(xmlSample) =>
-          // Write grammar
-          val grammarPath: File = solutionBaseDir / s"${exercise.rootNode}.dtd"
-          grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sample.grammar)
-
-          // Write document
-          val documentPath: File = solutionBaseDir / s"${exercise.rootNode}.xml"
-          documentPath.createFileIfNotExists(createParents = true).write(solution.document)
-
-          Success(XmlDocumentCompleteResult(solution.document, XmlCorrector.correctAgainstMentionedDTD(documentPath)))
-      }
-
-
-    case XmlExParts.GrammarCreationXmlPart =>
-
-      val maybeSampleGrammar: Option[XmlSampleSolution] = exercise.samples
-        .reduceOption((sampleG1, sampleG2) => {
-          val dist1 = Java_Levenshtein.levenshteinDistance(solution.grammar, sampleG1.sample.grammar)
-          val dist2 = Java_Levenshtein.levenshteinDistance(solution.grammar, sampleG2.sample.grammar)
-
-          if (dist1 < dist2) sampleG1 else sampleG2
-        })
-
-      maybeSampleGrammar match {
-        case None                => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
-        case Some(sampleGrammar) => Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution.grammar), sampleGrammar, exercise))
-      }
+  override protected def readSolution(user: User, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart)
+                                     (implicit request: Request[AnyContent]): Option[XmlSolution] = request.body.asJson flatMap { jsValue =>
+    jsValue match {
+      case JsString(solution) =>
+        part match {
+          case XmlExParts.GrammarCreationXmlPart  => Some(XmlSolution(document = "", grammar = solution))
+          case XmlExParts.DocumentCreationXmlPart => Some(XmlSolution(document = solution, grammar = ""))
+        }
+      case other              =>
+        logger.error("Wrong json content: " + other.toString)
+        None
+    }
   }
+
+  override protected def correctEx(user: User, solution: XmlSolution, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =
+    Future.successful(part match {
+      case XmlExParts.DocumentCreationXmlPart =>
+        val solutionBaseDir = solutionDirForExercise(user.username, exercise.id).createDirectories()
+
+        exercise.samples.headOption match {
+          case None            => Failure(new Exception("There is no sample solution!"))
+          case Some(xmlSample) =>
+            // Write grammar
+            val grammarPath: File = solutionBaseDir / s"${exercise.rootNode}.dtd"
+            grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sample.grammar)
+
+            // Write document
+            val documentPath: File = solutionBaseDir / s"${exercise.rootNode}.xml"
+            documentPath.createFileIfNotExists(createParents = true).write(solution.document)
+
+            Success(XmlDocumentCompleteResult(solution.document, XmlCorrector.correctAgainstMentionedDTD(documentPath)))
+        }
+
+
+      case XmlExParts.GrammarCreationXmlPart =>
+
+        val maybeSampleGrammar: Option[XmlSampleSolution] = exercise.samples
+          .reduceOption((sampleG1, sampleG2) => {
+            val dist1 = Java_Levenshtein.levenshteinDistance(solution.grammar, sampleG1.sample.grammar)
+            val dist2 = Java_Levenshtein.levenshteinDistance(solution.grammar, sampleG2.sample.grammar)
+
+            if (dist1 < dist2) sampleG1 else sampleG2
+          })
+
+        maybeSampleGrammar match {
+          case None                => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
+          case Some(sampleGrammar) => Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution.grammar), sampleGrammar, exercise))
+        }
+    })
 
   // Views
 
@@ -172,8 +150,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     views.html.idExercises.xml.xmlExercise(user, collection, exercise, oldSolutionOrTemplate, part, this)
   }
 
-  override def renderExercisePreview(user: User, newExercise: XmlExercise, saved: Boolean): Html =
-    views.html.idExercises.xml.xmlNewExercise(user, newExercise, saved, this)
+  override def renderExercisePreview(user: User, collId: Int, newExercise: XmlExercise, saved: Boolean): Html =
+    views.html.idExercises.xml.xmlNewExercise(user, collId, newExercise, saved, this)
 
   override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
 

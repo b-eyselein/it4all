@@ -1,15 +1,15 @@
 package model.tools.web.persistence
 
-import model.persistence.{ADbModels, ADbSampleSol, ADbUserSol}
+import model.persistence._
 import model.tools.web._
-import model.{ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
 
 object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSolution, DbWebSampleSolution, WebUserSolution, DbWebUserSolution] {
 
   // Exercise
 
   override def dbExerciseFromExercise(collId: Int, ex: WebExercise): DbWebExercise =
-    DbWebExercise(ex.id, ex.semanticVersion, collId,  ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText)
+    DbWebExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText)
 
   def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], sampleSolutions: Seq[WebSampleSolution]) =
     WebExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.title, ex.state, ex.htmlText, ex.jsText,
@@ -40,7 +40,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSoluti
 
   def htmlTaskFromDbHtmlTask(dbHtmlTask: DbHtmlTask, dbHtmlAttributes: Seq[DbHtmlAttribute]): HtmlTask =
     HtmlTask(
-      dbHtmlTask.id, dbHtmlTask.text, dbHtmlTask.xpathQuery, dbHtmlTask.textContent, dbHtmlAttributes map (htmlAttributeFromDbHtmlAttribute)
+      dbHtmlTask.id, dbHtmlTask.text, dbHtmlTask.xpathQuery, dbHtmlTask.textContent, dbHtmlAttributes map htmlAttributeFromDbHtmlAttribute
     )
 
   // HtmlAttributes
@@ -60,7 +60,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSoluti
 
   def jsTaskFromDbJsTask(dbJsTask: DbJsTask, dbJsconditions: Seq[DbJsCondition]): JsTask =
     JsTask(
-      dbJsTask.id, dbJsTask.text, dbJsTask.xpathQuery, dbJsTask.actionType, dbJsTask.keysToSend, dbJsconditions map (jsConditionFromDbJsCondition)
+      dbJsTask.id, dbJsTask.text, dbJsTask.xpathQuery, dbJsTask.actionType, dbJsTask.keysToSend, dbJsconditions map jsConditionFromDbJsCondition
     )
 
   // JsCondition
@@ -70,6 +70,16 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSoluti
 
   def jsConditionFromDbJsCondition(dbJsCondition: DbJsCondition): JsCondition =
     JsCondition(dbJsCondition.id, dbJsCondition.xpathQuery, dbJsCondition.isPrecondition, dbJsCondition.awaitedValue)
+
+}
+
+object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebExerciseReview, DbWebExerciseReview] {
+
+  override def dbReviewFromReview(username: String, collId: Int, exId: Int, part: WebExPart, review: WebExerciseReview): DbWebExerciseReview =
+    DbWebExerciseReview(username, collId, exId, part, review.difficulty, review.maybeDuration)
+
+  override def reviewFromDbReview(dbReview: DbWebExerciseReview): WebExerciseReview =
+    WebExerciseReview(dbReview.difficulty, dbReview.maybeDuration)
 
 }
 
@@ -116,3 +126,9 @@ final case class DbJsTask(id: Int, exId: Int, exSemVer: SemanticVersion, collId:
 
 final case class DbJsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int,
                                xpathQuery: String, isPrecondition: Boolean, awaitedValue: String)
+
+// Exercise review
+
+
+final case class DbWebExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: WebExPart,
+                                     difficulty: Difficulty, maybeDuration: Option[Int]) extends DbExerciseReview[WebExPart]

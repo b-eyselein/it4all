@@ -1,5 +1,6 @@
-@(user: model.User, exercise: model.programming.ProgExercise, oldData: Seq[model.programming.ProgUserTestData],
-        toolMainObject: model.programming.ProgToolMain)
+@import model.programming.{ProgExercise, ProgCollection, ProgUserTestData, ProgToolMain}
+
+@(user: model.User, collection: ProgCollection, exercise: ProgExercise, oldData: Seq[ProgUserTestData], toolMainObject: ProgToolMain)
 
 @stdTestSize = @{
     model.programming.ProgToolMain.standardTestCount
@@ -52,7 +53,7 @@
 
                 <div class="btn-group btn-group-justified">
                     <div class="btn-group">
-                        <button data-url="@exes.routes.ExerciseController.correctLive(toolMainObject.urlPart, exercise.id, model.programming.ProgExParts.TestdataCreation.urlName)"
+                        <button data-url="@coll.routes.CollectionController.correctLive(toolMainObject.urlPart, collection.id, exercise.id, model.programming.ProgExParts.TestdataCreation.urlName)"
                         id="testBtn" class="btn btn-primary">Testdaten validieren & speichern</button>
                     </div>
                     <a class="btn btn-default" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">

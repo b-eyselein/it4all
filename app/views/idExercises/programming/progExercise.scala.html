@@ -1,6 +1,6 @@
-@import model.programming.{ProgToolMain, ProgExercise, ProgExPart}
+@import model.programming.{ProgToolMain, ProgExercise, ProgExPart, ProgCollection}
 
-@(user: model.User, toolMainObject: ProgToolMain, exercise: ProgExercise, oldSolution: String, part: ProgExPart)(implicit
+@(user: model.User, collection: ProgCollection, exercise: ProgExercise, oldSolution: String, part: ProgExPart, toolMainObject: ProgToolMain)(implicit
         requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
@@ -58,5 +58,5 @@
     </div>
 }
 
-@idExercises.textExercise(user, Html(exercise.text), None /* FIXME: collection */, exercise, part, oldSolution, toolMainObject, additionalScripts,
+@idExercises.textExercise(user, Html(exercise.text), collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
     remainingExDef = Some(remainingExerciseDef))

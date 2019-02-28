@@ -1,5 +1,7 @@
-@(user: model.User, exercise: model.programming.ProgExercise, validatedTestData: model.programming.ProgCompleteResult)
+@import model.programming.{ProgCollection, ProgExercise, ProgCompleteResult, ProgToolMain, ProgExParts}
 
+@(user: model.User, collection: ProgCollection, exercise: ProgExercise, validatedTestData: ProgCompleteResult, toolMain: ProgToolMain)
+@* FIXME: use Form[ProgUserTestData] *@
 @main("Programmierung: Validierte Testdaten", Some(user)) {
     <div class="container">
         <div class="page-header">
@@ -34,7 +36,7 @@
         <hr>
 
         @* FIXME: part !?! *@
-        <a class="btn btn-primary btn-block" href="@exes.routes.ExerciseController.exercise("prog", exercise.id, "-1")">
+        <a class="btn btn-primary btn-block" href="@coll.routes.CollectionController.exercise(toolMain.urlPart, collection.id, exercise.id, ProgExParts.Implementation.urlName)">
             Aufgabe bearbeiten</a>
 
     </div>

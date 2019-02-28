@@ -1,4 +1,6 @@
-@(user: model.User, exercise: model.uml.UmlExercise, toolMainObject: model.uml.UmlToolMain)(implicit
+@import model.uml.{UmlCollection, UmlExercise, UmlToolMain}
+
+@(user: model.User, collection: UmlCollection, exercise: UmlExercise, toolMain: UmlToolMain)(implicit
         requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
@@ -47,9 +49,9 @@
 
                     @helper.CSRF.formField
                     <div class="btn-group d-flex">
-                        <button data-url="@exes.routes.ExerciseController.correctLive("uml", exercise.id, part = model.uml.UmlExParts.MemberAllocation.urlName)"
+                        <button data-url="@coll.routes.CollectionController.correctLive(toolMain.urlPart, collection.id, exercise.id, model.uml.UmlExParts.MemberAllocation.urlName)"
                         class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
-                        <a href="@exes.routes.ExerciseController.reviewExercisePartForm(toolMainObject.urlPart, exercise.id, model.uml.UmlExParts.MemberAllocation.urlName)"
+                        <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMain.urlPart, collection.id, exercise.id, model.uml.UmlExParts.MemberAllocation.urlName)"
                         id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
                 </div>

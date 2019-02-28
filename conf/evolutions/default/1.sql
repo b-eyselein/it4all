@@ -86,10 +86,21 @@ create table if not exists learning_path_sections
 
 # Programming
 
+create table if not exists prog_collections
+(
+  id         int primary key,
+  title      varchar(50),
+  author     varchar(50),
+  ex_text    text,
+  ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+  short_name varchar(50)
+);
+
 create table if not exists prog_exercises
 (
   id                int,
   semantic_version  varchar(10),
+  collection_id     int,
   title             varchar(50),
   author            varchar(50),
   ex_text           text,
@@ -101,49 +112,51 @@ create table if not exists prog_exercises
   output_type       varchar(30),
   base_data_json    text,
 
-  primary key (id, semantic_version)
+  primary key (id, semantic_version, collection_id),
+  foreign key (collection_id) references prog_collections (id)
+    on update cascade on delete cascade
 );
 
 create table if not exists prog_input_types
 (
-  id          int,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  input_name  varchar(20),
-  input_type  varchar(20),
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  input_name    varchar(20),
+  input_type    varchar(20),
 
-  primary key (id, exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists prog_sample_solutions
 (
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  language    enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
-  base        text,
-  solution    text,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  language      enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
+  base          text,
+  solution      text,
 
-  primary key (exercise_id, ex_sem_ver, language),
-  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (exercise_id, ex_sem_ver, collection_id, language),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists prog_sample_testdata
 (
-  id          int,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  input_json  text,
-  output      varchar(50),
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  input_json    text,
+  output        varchar(50),
 
-  primary key (id, exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists prog_commited_testdata
@@ -151,32 +164,31 @@ create table if not exists prog_commited_testdata
   id             int,
   exercise_id    int,
   ex_sem_ver     varchar(10),
+  collection_id  int,
   input_json     text,
   output         varchar(50),
 
   username       varchar(50),
   approval_state enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-  primary key (id, exercise_id, ex_sem_ver, username),
-  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade,
+  primary key (id, exercise_id, ex_sem_ver, collection_id, username),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade,
   foreign key (username) references users (username)
-    on update cascade
-    on delete cascade
+    on update cascade on delete cascade
 );
 
 create table if not exists prog_uml_cd_parts
 (
   exercise_id   int,
   ex_sem_ver    varchar(10),
+  collection_id int,
   class_name    varchar(30),
   class_diagram text,
 
-  primary key (exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists prog_solutions
@@ -185,6 +197,7 @@ create table if not exists prog_solutions
   username            varchar(50),
   exercise_id         int,
   ex_sem_ver          varchar(10),
+  collection_id       int,
   part                varchar(30),
   points              double,
   max_points          double,
@@ -192,12 +205,10 @@ create table if not exists prog_solutions
   language            varchar(20),
   extended_unit_tests boolean default false,
 
-  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade,
+  foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade,
   foreign key (username) references users (username)
-    on update cascade
-    on delete cascade
+    on update cascade on delete cascade
 );
 
 create table if not exists prog_exercise_reviews
@@ -205,17 +216,16 @@ create table if not exists prog_exercise_reviews
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
+  collection_id  int,
   exercise_part  varchar(30),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, exercise_part),
+  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade,
   foreign key (username) references users (username)
-    on update cascade
-    on delete cascade,
-  foreign key (exercise_id, ex_sem_ver) references prog_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+    on update cascade on delete cascade
 );
 
 # Rose

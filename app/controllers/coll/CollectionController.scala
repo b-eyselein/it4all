@@ -6,11 +6,15 @@ import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.core.overviewHelpers.{SolvedStates, UserCollEx}
+import model.programming.ProgToolMain
 import model.toolMains.{CollectionExIdentifier, CollectionToolMain, ToolList}
+import model.tools.web.{WebExParts, WebToolMain}
+import model.uml._
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{JsArray, JsString, Json}
+import play.api.libs.json.{JsArray, JsObject, JsString, Json}
+import play.api.libs.ws.WSClient
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
@@ -18,7 +22,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
+class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, ws: WSClient, val repository: Repository,
+                                     progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)(implicit ec: ExecutionContext)
   extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
   override protected type ToolMainType = CollectionToolMain
@@ -146,7 +151,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def newExerciseForm(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.futureHighestIdInCollection(collId) map { highestId =>
+      toolMain.futureHighestExerciseIdInCollection(collId) map { highestId =>
         val newEx = toolMain.instantiateExercise(highestId + 1, user.username, ExerciseState.RESERVED)
         Ok(toolMain.renderExerciseEditForm(user, collId, newEx, isCreation = true, toolList))
       }
@@ -192,6 +197,107 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       toolMain.futureDeleteExercise(collId, exId) map {
         case false => BadRequest("TODO!")
         case true  => Ok(Json.obj("id" -> exId, "collId" -> collId))
+      }
+  }
+
+  // Exercise review process
+
+  def reviewExercisePartForm(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      toolMain.partTypeFromUrl(partStr) match {
+        case None       => Future.successful(onNoSuchExercisePart(partStr))
+        case Some(part) =>
+          toolMain.futureExerciseById(collId, id) map {
+            case None           => onNoSuchExercise(id)
+            case Some(exercise) => Ok(views.html.idExercises.evaluateExerciseForm(user, collId, exercise, part, toolMain))
+          }
+      }
+  }
+
+  def reviewExercisePart(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      toolMain.partTypeFromUrl(partStr) match {
+        case None       => Future(onNoSuchExercisePart(partStr))
+        case Some(part) => toolMain.futureExerciseById(collId, id) flatMap {
+          case None           => Future(onNoSuchExercise(id))
+          case Some(exercise) =>
+            val onFormError: Form[toolMain.ReviewType] => Future[Result] = { formWithErrors =>
+              ???
+            }
+
+            val onFormRead: toolMain.ReviewType => Future[Result] = { currentReview =>
+              toolMain.futureSaveReview(user.username, collId, exercise.id, part, currentReview) map {
+                case true  => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
+                case false => ???
+              }
+            }
+
+            toolMain.exerciseReviewForm.bindFromRequest().fold(onFormError, onFormRead)
+        }
+      }
+  }
+
+
+  // Other routes
+
+  def umlClassDiag(collId: Int, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
+    implicit request =>
+      def emptyClassDiagram: UmlClassDiagram = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]())
+
+      val futureClassDiagram: Future[UmlClassDiagram] = umlToolMain.partTypeFromUrl(partStr) match {
+        case None       => Future(emptyClassDiagram)
+        case Some(part) => umlToolMain.futureExerciseById(collId, id) flatMap {
+          case None                        =>
+            Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
+            Future.successful(emptyClassDiagram)
+          case Some(exercise: UmlExercise) =>
+            val exIdentifier = CollectionExIdentifier(collId, id)
+            umlToolMain.futureMaybeOldSolution(user, exIdentifier, part) map {
+              case Some(solution) => solution.solution
+              case None           => exercise.getDefaultClassDiagForPart(part)
+            }
+        }
+      }
+
+      futureClassDiagram map { classDiagram =>
+        Ok(Json.prettyPrint(UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(classDiagram))).as("text/javascript")
+      }
+  }
+
+  def progClassDiagram(collId: Int, id: Int): EssentialAction = futureWithUser { _ =>
+    implicit request =>
+      progToolMain.futureExerciseById(collId, id) map {
+        case None           => onNoSuchExercise(id)
+        case Some(exercise) =>
+          val jsValue = exercise.maybeClassDiagramPart match {
+            case Some(cd) => Json.toJson(cd)(UmlClassDiagramJsonFormat.umlSolutionJsonFormat)
+            case None     => JsObject.empty
+          }
+          Ok(jsValue) //.as("text/javascript")
+      }
+  }
+
+  def webSolution(collId: Int, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
+    implicit request =>
+      webToolMain.partTypeFromUrl(partStr) match {
+        case None       => Future(onNoSuchExercisePart(partStr))
+        case Some(part) => ws.url(webToolMain.getSolutionUrl(user, id, part)).get() map (wsRequest => Ok(wsRequest.body).as("text/html"))
+      }
+  }
+
+  def updateWebSolution(collId: Int, id: Int, part: String): EssentialAction = withUser { user =>
+    implicit request =>
+      request.body.asText match {
+        case None       => BadRequest("No content!")
+        case Some(text) =>
+          webToolMain.writeWebSolutionFile(user.username, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), text)
+          //          match {
+          //            case Success(_)     =>
+          Ok("Solution saved")
+        //            case Failure(error) =>
+        //              Logger.error("Error while updating web solution", error)
+        //              BadRequest("Solution was not saved!")
+        //          }
       }
   }
 

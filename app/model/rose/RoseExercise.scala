@@ -44,5 +44,4 @@ final case class RoseSampleSolution(id: Int, language: ProgLanguage, sample: Str
 final case class RoseUserSolution(id: Int, part: RoseExPart, language: ProgLanguage, solution: String, points: Points, maxPoints: Points)
   extends UserSolution[RoseExPart, String]
 
-final case class RoseExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: RoseExPart, difficulty: Difficulty, maybeDuration: Option[Int])
-  extends ExerciseReview[RoseExPart]
+final case class RoseExerciseReview(difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview

@@ -3,11 +3,11 @@ package model.rose
 import model.core.ExerciseForm
 import model.programming.{ProgDataType, ProgDataTypes, ProgLanguages}
 import model.rose.RoseConsts._
-import model.{ExerciseState, SemanticVersionHelper}
+import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object RoseExerciseForm extends ExerciseForm[RoseExercise, RoseCollection] {
+object RoseExerciseForm extends ExerciseForm[RoseExercise, RoseCollection, RoseExerciseReview] {
 
   // Input types
 
@@ -27,6 +27,17 @@ object RoseExerciseForm extends ExerciseForm[RoseExercise, RoseCollection] {
 
   // Complete exericse
 
+  override val collectionFormat: Form[RoseCollection] = Form(
+    mapping(
+      idName -> number,
+      titleName -> nonEmptyText,
+      authorName -> nonEmptyText,
+      textName -> nonEmptyText,
+      statusName -> ExerciseState.formField,
+      shortNameName -> nonEmptyText
+    )(RoseCollection.apply)(RoseCollection.unapply)
+  )
+
   override val exerciseFormat: Form[RoseExercise] = Form(
     mapping(
       idName -> number,
@@ -43,15 +54,11 @@ object RoseExerciseForm extends ExerciseForm[RoseExercise, RoseCollection] {
     )(RoseExercise.apply)(RoseExercise.unapply)
   )
 
-  override val collectionFormat: Form[RoseCollection] = Form(
+  override val exerciseReviewForm: Form[RoseExerciseReview] = Form(
     mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(RoseCollection.apply)(RoseCollection.unapply)
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
+    )(RoseExerciseReview.apply)(RoseExerciseReview.unapply)
   )
 
 }

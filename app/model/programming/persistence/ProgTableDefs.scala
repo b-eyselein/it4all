@@ -1,6 +1,6 @@
 package model.programming.persistence
 
-import model.persistence.IdExerciseTableDefs
+import model.persistence.ExerciseCollectionTableDefs
 import model.programming.ProgConsts._
 import model.programming._
 import model.uml.UmlClassDiagram
@@ -16,7 +16,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
                                           (override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with IdExerciseTableDefs[ProgExercise, ProgExPart, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgExerciseReview] {
+    with ExerciseCollectionTableDefs[ProgExercise, ProgExPart, ProgCollection, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgExerciseReview] {
 
   import profile.api._
 
@@ -25,6 +25,9 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   override protected type DbExType = DbProgExercise
 
   override protected type ExTableDef = ProgExercisesTable
+
+
+  override protected type CollTableDef = ProgCollectionsTable
 
 
   override protected type DbSampleSolType = DbProgSampleSolution
@@ -37,11 +40,15 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   override protected type DbUserSolTable = ProgSolutionTable
 
-  override protected type ReviewsTableDef = ProgExerciseReviewsTable
+
+  override protected type DbReviewType = DbProgrammingExerciseReview
+
+  override protected type ReviewsTable = ProgExerciseReviewsTable
 
   // Table Queries
 
   override protected val exTable      = TableQuery[ProgExercisesTable]
+  override protected val collTable    = TableQuery[ProgCollectionsTable]
   override protected val solTable     = TableQuery[ProgSolutionTable]
   override protected val reviewsTable = TableQuery[ProgExerciseReviewsTable]
 
@@ -53,7 +60,8 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   // Helper methods
 
-  override protected val dbModels = ProgDbModels
+  override protected val dbModels               = ProgDbModels
+  override protected val exerciseReviewDbModels = ProgExerciseReviewDbModels
 
   override def copyDbUserSolType(oldSol: DbProgUserSolution, newId: Int): DbProgUserSolution = oldSol.copy(id = newId)
 
@@ -66,23 +74,24 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result) map (_ map dbModels.sampleSolFromDbSampleSol)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result) map (_ map dbModels.progInputFromDbProgInput)
     sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result) map (_ map dbModels.sampleTestDataFromDbSampleTestData)
-    maybeClassDiagramPart <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption)
-  } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, maybeClassDiagramPart)
+    maybeClassDiagram <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption).map(_.map(_.classDiagram))
+  } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, maybeClassDiagram)
 
   override def saveExerciseRest(collId: Int, ex: ProgExercise): Future[Boolean] = {
     val dbSamples = ex.sampleSolutions map (s => dbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
     val dbProgInputs = ex.inputTypes map (it => dbModels.dbProgInputFromProgInput(ex.id, ex.semanticVersion, collId, it))
     val dbSampleTestData = ex.sampleTestData map (std => dbModels.dbSampleTestDataFromSampleTestData(ex.id, ex.semanticVersion, collId, std))
+    val dbProgUmlClassDiagram = ex.maybeClassDiagramPart.map(mcd => dbModels.dbProgUmlClassDiagramFromUmlClassDiagram(ex.id, ex.semanticVersion, collId, mcd)).toList
 
     for {
       samplesSaved <- saveSeq[DbProgSampleSolution](dbSamples, i => db.run(sampleSolutions += i))
       inputTypesSaved <- saveSeq[DbProgInput](dbProgInputs, i => db.run(inputTypesQuery += i))
       sampleTestDataSaved <- saveSeq[DbProgSampleTestData](dbSampleTestData, i => db.run(sampleTestData += i))
-      classDiagPartSaved <- saveSeq[UmlClassDiagPart](ex.maybeClassDiagramPart.toList, i => db.run(umlClassDiagParts += i))
+      classDiagPartSaved <- saveSeq[DbProgUmlClassDiagram](dbProgUmlClassDiagram, i => db.run(umlClassDiagParts += i))
     } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && classDiagPartSaved
   }
 
-  override def futureSampleSolutionsForExercisePart(id: Int, part: ProgExPart): Future[Seq[String]] =
+  override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[String]] =
   //  FIXME:  db.run(sampleSolutions.filter(_.exerciseId === id).map(_.sample).result.map(_.solution))
     ???
 
@@ -105,7 +114,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
       progSolution.solution
     },
       solutionStr => {
-        ProgStringSolution(solutionStr, false, ProgLanguages.StandardLanguage)
+        ProgStringSolution(solutionStr, extendedUnitTests = false, ProgLanguages.StandardLanguage)
         //        val solution: ProgSolution = part match {
         //          case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)
         //          case _                            => ProgStringSolution(solutionStr, extendedUnitTests, language)
@@ -115,7 +124,13 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   // Tables
 
-  class ProgExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "prog_exercises") {
+  class ProgCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "prog_collections") {
+
+    def * : ProvenShape[ProgCollection] = (id, title, author, text, state, shortName) <> (ProgCollection.tupled, ProgCollection.unapply)
+
+  }
+
+  class ProgExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "prog_exercises") {
 
     def folderIdentifier: Rep[String] = column[String]("folder_identifier")
 
@@ -126,7 +141,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     def baseDataAsJson: Rep[JsValue] = column[JsValue]("base_data_json")
 
 
-    override def * : ProvenShape[DbProgExercise] = (id, semanticVersion, /*collectionId,*/ title, author, text, state,
+    override def * : ProvenShape[DbProgExercise] = (id, semanticVersion, collectionId, title, author, text, state,
       folderIdentifier, functionName, outputType, baseDataAsJson.?) <> (DbProgExercise.tupled, DbProgExercise.unapply)
 
   }
@@ -151,15 +166,15 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   class ProgSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "prog_sample_solutions") {
 
-    def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
+    def language: Rep[ProgLanguage] = column[ProgLanguage](languageName)
 
-    def base: Rep[String] = column[String]("base")
+    def base: Rep[String] = column[String](baseName)
 
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, language))
 
 
-    override def * : ProvenShape[DbProgSampleSolution] = ??? // (id, exerciseId, exSemVer, collectionId, language, base, sample) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
+    override def * : ProvenShape[DbProgSampleSolution] = ??? //(id, exerciseId, exSemVer, collectionId, language, base, sample) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
 
   }
 
@@ -202,9 +217,9 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   }
 
-  class UmlClassDiagPartsTable(tag: Tag) extends ExForeignKeyTable[UmlClassDiagPart](tag, "prog_uml_cd_parts") {
+  class UmlClassDiagPartsTable(tag: Tag) extends ExForeignKeyTable[DbProgUmlClassDiagram](tag, "prog_uml_cd_parts") {
 
-    def className: Rep[String] = column[String]("class_name")
+    def collectionId: Rep[Int] = column[Int]("collection_id")
 
     def classDiagram: Rep[UmlClassDiagram] = column[UmlClassDiagram]("class_diagram")
 
@@ -212,7 +227,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer))
 
 
-    override def * : ProvenShape[UmlClassDiagPart] = (exerciseId, exSemVer, className, classDiagram) <> (UmlClassDiagPart.tupled, UmlClassDiagPart.unapply)
+    override def * : ProvenShape[DbProgUmlClassDiagram] = (exerciseId, exSemVer, collectionId, classDiagram) <> (DbProgUmlClassDiagram.tupled, DbProgUmlClassDiagram.unapply)
 
   }
 
@@ -225,16 +240,17 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
 
-    override def * = ???
+    //    override def * = ???
 
-    //    override def * : ProvenShape[DBProgSolution] = (id, username, exerciseId, exSemVer, collectionId, part, solution, language,
-    //      extendedUnitTests, points, maxPoints) <> (DBProgSolution.tupled, DBProgSolution.unapply)
+    override def * : ProvenShape[DbProgUserSolution] = (id, username, exerciseId, exSemVer, collectionId, part, solution,
+      language, extendedUnitTests, points, maxPoints) <> (DbProgUserSolution.tupled, DbProgUserSolution.unapply)
 
   }
 
   class ProgExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "prog_exercise_reviews") {
 
-    override def * : ProvenShape[ProgExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (ProgExerciseReview.tupled, ProgExerciseReview.unapply)
+    override def * : ProvenShape[DbProgrammingExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty,
+      maybeDuration.?) <> (DbProgrammingExerciseReview.tupled, DbProgrammingExerciseReview.unapply)
 
   }
 

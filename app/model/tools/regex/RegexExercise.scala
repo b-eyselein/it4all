@@ -33,6 +33,4 @@ final case class RegexUserSolution(id: Int, part: RegexExPart, solution: String,
 
 // Review
 
-final case class RegexExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: RegexExPart,
-                                     difficulty: Difficulty, maybeDuration: Option[Int])
-  extends ExerciseReview[RegexExPart]
+final case class RegexExerciseReview(difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview

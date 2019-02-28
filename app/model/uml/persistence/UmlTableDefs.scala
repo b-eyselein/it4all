@@ -1,7 +1,7 @@
 package model.uml.persistence
 
 import model.SemanticVersion
-import model.persistence.IdExerciseTableDefs
+import model.persistence.ExerciseCollectionTableDefs
 import model.uml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -12,7 +12,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with IdExerciseTableDefs[UmlExercise, UmlExPart, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile]
+    with ExerciseCollectionTableDefs[UmlExercise, UmlExPart, UmlCollection, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
 
   import profile.api._
 
@@ -21,6 +22,8 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override protected type DbExType = DbUmlExercise
 
   override protected type ExTableDef = UmlExercisesTable
+
+  override protected type CollTableDef = UmlCollectionsTable
 
 
   override protected type DbSampleSolType = DbUmlSampleSolution
@@ -33,13 +36,16 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override protected type DbUserSolTable = UmlSolutionsTable
 
 
-  override protected type ReviewsTableDef = UmlExerciseReviewsTable
+  override protected type DbReviewType = DbUmlExerciseReview
+
+  override protected type ReviewsTable = UmlExerciseReviewsTable
 
   // Table Queries
 
-  override protected val exTable      = TableQuery[UmlExercisesTable]
-  override protected val solTable     = TableQuery[UmlSolutionsTable]
-  override protected val reviewsTable = TableQuery[UmlExerciseReviewsTable]
+  override protected val collTable   : TableQuery[UmlCollectionsTable]     = TableQuery[UmlCollectionsTable]
+  override protected val exTable     : TableQuery[UmlExercisesTable]       = TableQuery[UmlExercisesTable]
+  override protected val solTable    : TableQuery[UmlSolutionsTable]       = TableQuery[UmlSolutionsTable]
+  override protected val reviewsTable: TableQuery[UmlExerciseReviewsTable] = TableQuery[UmlExerciseReviewsTable]
 
   private val umlToIgnore = TableQuery[UmlToIgnoreTable]
   private val umlMappings = TableQuery[UmlMappingsTable]
@@ -47,7 +53,8 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Helper methods
 
-  override protected val dbModels = UmlDbModels
+  override protected val dbModels               = UmlDbModels
+  override protected val exerciseReviewDbModels = UmlExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbUmlUserSolution, newId: Int): DbUmlUserSolution = oldSol.copy(id = newId)
 
@@ -63,7 +70,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   } yield dbModels.exerciseFromDbExercise(ex, toIgnore map (_._3), mappings map (m => m._3 -> m._4) toMap, samples)
 
 
-  override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: UmlExPart): Future[Seq[String]] = ???
+  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: UmlExPart): Future[Seq[String]] = ???
 
   // Saving
 
@@ -97,7 +104,13 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Table definitions
 
-  class UmlExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "uml_exercises") {
+  class UmlCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "uml_collections") {
+
+    def * = (id, title, author, text, state, shortName) <> (UmlCollection.tupled, UmlCollection.unapply)
+
+  }
+
+  class UmlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "uml_exercises") {
 
     def markedText: Rep[String] = column[String]("marked_text")
 
@@ -150,7 +163,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   class UmlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "uml_exercise_reviews") {
 
-    def * : ProvenShape[UmlExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (UmlExerciseReview.tupled, UmlExerciseReview.unapply)
+    def * : ProvenShape[DbUmlExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbUmlExerciseReview.tupled, DbUmlExerciseReview.unapply)
 
   }
 

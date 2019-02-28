@@ -53,3 +53,5 @@ final case class SqlSampleSolution(id: Int, sample: String)
 final case class SqlUserSolution(id: Int, part: SqlExPart, solution: String, points: Points, maxPoints: Points)
   extends UserSolution[SqlExPart, String]
 
+
+final case class SqlExerciseReview(difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview

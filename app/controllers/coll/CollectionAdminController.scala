@@ -104,8 +104,15 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminExportExercises(toolType: String, collId: Int): EssentialAction = ???
 
+
+  def adminExportExercisesAsFile(toolType: String, collId: Int): EssentialAction = ???
+
+
   def adminExportCollections(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
-    implicit request => toolMain.yamlString map (content => Ok(views.html.admin.export.render(admin, content, toolMain, toolList)))
+    implicit request =>
+      toolMain.yamlString map {
+        exportedContent => Ok(views.html.admin.exportedCollection.render(admin, exportedContent, toolMain, toolList))
+      }
   }
 
   def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
@@ -117,7 +124,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       }
   }
 
-  def adminChangeCollectionState(tool: String, id: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (_, toolMain) =>
+  def adminChangeCollectionState(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
 
       val onFormError: Form[ExerciseState] => Future[Result] = { formWithErrors =>
@@ -136,7 +143,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       stateForm.bindFromRequest().fold(onFormError, onFormRead(toolMain))
   }
 
-  def adminChangeExerciseState(tool: String, collId: Int, exId: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (_, toolMain) =>
+  def adminChangeExerciseState(tool: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
 
       val onFormError: Form[ExerciseState] => Future[Result] = { formWithErrors =>
@@ -155,10 +162,28 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       stateForm.bindFromRequest().fold(onFormError, onFormRead(toolMain))
   }
 
-  def adminCollectionsList(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
+  def adminCollectionsList(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureAllCollections map { allColls =>
         Ok(views.html.admin.collExes.adminCollectionList(admin, allColls, toolMain, toolList))
+      }
+  }
+
+  def adminExercisesInCollection(tool: String, collId: Int): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
+    implicit request =>
+      toolMain.futureExercisesInColl(collId) map { exesInColl =>
+        // FIXME: with collection?
+        Ok(views.html.admin.collExes.adminCollExercisesOverview(admin, collId, exesInColl, toolMain, toolList))
+      }
+  }
+
+  // Creating, updating and removing collections
+
+  def adminEditCollectionForm(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
+    implicit request =>
+      toolMain.futureCollById(id) map { maybeCollection: Option[toolMain.CollType] =>
+        val collection: toolMain.CollType = maybeCollection getOrElse toolMain.instantiateCollection(id, admin.username, ExerciseState.RESERVED)
+        Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false, toolList))
       }
   }
 
@@ -170,27 +195,19 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       }
   }
 
-  def adminEditCollectionForm(tool: String, id: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureCollById(id) map { maybeCollection: Option[toolMain.CollType] =>
-        val collection: toolMain.CollType = maybeCollection getOrElse toolMain.instantiateCollection(id, admin.username, ExerciseState.RESERVED)
-        Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false, toolList))
-      }
-  }
-
-  def adminEditCollection(tool: String, id: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (_, _) =>
+  def adminEditCollection(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, _) =>
     implicit request =>
       // FIXME: implement: editing of collection!
       Future(Ok("TODO: Editing collection...!"))
   }
 
-  def adminCreateCollection(tool: String): EssentialAction = futureWithAdminWithToolMain(tool) { (_, _) =>
+  def adminCreateCollection(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, _) =>
     implicit request =>
       // FIXME: implement: creation of collection!
       Future(Ok("TODO: Creating new collection...!"))
   }
 
-  def adminDeleteCollection(tool: String, id: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (_, toolMain) =>
+  def adminDeleteCollection(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
       toolMain.futureDeleteCollection(id) map {
         case true  => Ok(Json.obj(idName -> id))
@@ -198,7 +215,50 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       }
   }
 
-  def adminDeleteExercise(tool: String, collId: Int, exId: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (_, toolMain) =>
+  // Creating, updating and removing exercises
+
+  def adminEditExerciseForm(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
+    implicit request =>
+      toolMain.futureExerciseById(collId, id) map {
+        case None           => onNoSuchExercise(id)
+        case Some(exercise) => Ok(toolMain.renderExerciseEditForm(admin, collId, exercise, isCreation = false, toolList))
+      }
+  }
+
+  def adminNewExerciseForm(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
+    implicit request =>
+      toolMain.futureHighestExerciseIdInCollection(collId) map { id =>
+        val exercise = toolMain.instantiateExercise(id + 1, admin.username, ExerciseState.RESERVED)
+        Ok(toolMain.renderExerciseEditForm(admin, collId, exercise, isCreation = true, toolList))
+      }
+  }
+
+  def adminEditExercise(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
+    implicit request =>
+
+      //      def onFormError: Form[toolMain.ExType] => Future[Result] = { formWithError =>
+      //
+      //        for (formError <- formWithError.errors)
+      //          Logger.error(formError.key + " :: " + formError.message)
+      //
+      //        Future(BadRequest("Your form has has errors!"))
+      //      }
+
+      //      def onFormSuccess: toolMain.ExType => Future[Result] = { compEx =>
+      // //        FIXME: save ex
+      //        toolMain.futureUpdateExercise(compEx) map { _ =>
+      //          Ok(views.html.admin.singleExercisePreview(admin, compEx, toolMain))
+      //        }
+      //      }
+
+      //      toolMain.compExForm.bindFromRequest().fold(onFormError, onFormSuccess)
+      ???
+  }
+
+  def adminCreateExercise(toolType: String, collId: Int): EssentialAction = ???
+
+
+  def adminDeleteExercise(tool: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
       toolMain.futureDeleteExercise(collId, exId) map {
         case true  => Ok(Json.obj(idName -> exId))
@@ -206,12 +266,27 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       }
   }
 
-  def adminExercisesInCollection(tool: String, collId: Int): EssentialAction = futureWithAdminWithToolMain(tool) { (admin, toolMain) =>
+  // Reviews
+
+
+  def exerciseReviewsList(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureExercisesInColl(collId) map { exesInColl =>
-        // FIXME: with collection?
-        Ok(views.html.admin.collExes.adminCollExercisesOverview(admin, collId, exesInColl, toolMain, toolList))
-      }
+      ???
+    //      toolMain.futureAllReviews map {
+    //        allReviews => Ok(views.html.admin.idExes.idExerciseReviewsList(admin, allReviews, toolList, toolMain))
+    //      }
   }
+
+  def showReviews(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
+    implicit request =>
+      //      toolMain.futureExerciseById(collId, id) flatMap {
+      //        case None    => Future(onNoSuchExercise(id))
+      //        case Some(_) => toolMain.futureReviewsForExercise(id) map {
+      //          reviews => Ok(views.html.admin.idExes.idExerciseReviewListExercise(admin, reviews, toolList, toolMain))
+      //        }
+      //      }
+      ???
+  }
+
 
 }

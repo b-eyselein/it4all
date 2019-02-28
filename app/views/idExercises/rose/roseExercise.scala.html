@@ -1,4 +1,6 @@
-@(user: model.User, exercise: model.rose.RoseExercise, oldSolution: String, toolMainObject: model.rose.RoseToolMain)(
+@import model.rose.{RoseCollection, RoseExercise, RoseToolMain}
+
+@(user: model.User, collection: RoseCollection, exercise: RoseExercise, oldSolution: String, toolMainObject: RoseToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
@@ -47,5 +49,5 @@
 
 }
 
-@idExercises.textExercise(user, Html(exercise.text), None /* FIXME: collection */ , exercise, model.rose.RoseExParts.RoseSingleExPart, oldSolution,
+@idExercises.textExercise(user, Html(exercise.text), collection, exercise, model.rose.RoseExParts.RoseSingleExPart, oldSolution,
     toolMainObject, additionalScripts, Some(remainigExerciseDef), remainingPage = remainingPage)

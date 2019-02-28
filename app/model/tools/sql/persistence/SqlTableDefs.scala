@@ -13,7 +13,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlExPart, SqlScenario, String, SqlSampleSolution, SqlUserSolution] {
+  extends HasDatabaseConfigProvider[JdbcProfile]
+    with ExerciseCollectionTableDefs[SqlExercise, SqlExPart, SqlScenario, String, SqlSampleSolution, SqlUserSolution, SqlExerciseReview] {
 
   import profile.api._
 
@@ -35,17 +36,24 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected type DbUserSolTable = SqlSolutionsTable
 
+
+  override protected type DbReviewType = DbSqlExerciseReview
+
+  override protected type ReviewsTable = SqlExerciseReviewsTable
+
   // Table queries
 
-  override protected val exTable   = TableQuery[SqlExercisesTable]
-  override protected val collTable = TableQuery[SqlScenarioesTable]
-  override protected val solTable  = TableQuery[SqlSolutionsTable]
+  override protected val exTable     : TableQuery[SqlExercisesTable]       = TableQuery[SqlExercisesTable]
+  override protected val collTable   : TableQuery[SqlScenarioesTable]      = TableQuery[SqlScenarioesTable]
+  override protected val solTable    : TableQuery[SqlSolutionsTable]       = TableQuery[SqlSolutionsTable]
+  override protected val reviewsTable: TableQuery[SqlExerciseReviewsTable] = TableQuery[SqlExerciseReviewsTable]
 
   private val sqlSamples = TableQuery[SqlSamplesTable]
 
   // Helper methods
 
-  override protected val dbModels = SqlDbModels
+  override protected val dbModels               = SqlDbModels
+  override protected val exerciseReviewDbModels = SqlExerciseReviewDbModels
 
   override protected def copyDbUserSolType(sol: DbSqlUserSolution, newId: Int): DbSqlUserSolution = sol.copy(id = newId)
 
@@ -162,6 +170,12 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     override def * : ProvenShape[DbSqlUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part, solution,
       points, maxPoints) <> (DbSqlUserSolution.tupled, DbSqlUserSolution.unapply)
+
+  }
+
+  class SqlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "sql_exercise_reviews") {
+
+    override def * : ProvenShape[DbSqlExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbSqlExerciseReview.tupled, DbSqlExerciseReview.unapply)
 
   }
 

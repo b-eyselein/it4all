@@ -1,6 +1,6 @@
 @import model.tools.xml.{XmlExercise, XmlToolMain}
 
-@(user: model.User, exercise: Form[XmlExercise], isCreation: Boolean, toolMainObject: XmlToolMain,
+@(user: model.User, collId: Int, exercise: Form[XmlExercise], isCreation: Boolean, toolMainObject: XmlToolMain,
         toolList: model.toolMains.ToolList)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
@@ -21,7 +21,7 @@
 
 @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
 
-    @idExercises.xml.editXmlExerciseForm(user, exercise, isCreation, toolMainObject)
+    @idExercises.xml.editXmlExerciseForm(user, collId, exercise, isCreation, toolMainObject)
     @*<form class="form" method="post" role="form" action="@exes.routes.ExerciseController.adminEditExercise(toolMainObject.urlPart, exercise.ex.id)">*@
 
     @*<div class="row">*@

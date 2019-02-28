@@ -1,6 +1,6 @@
 @import model.tools.regex.{RegexExercise, RegexToolMain, RegexConsts}
 
-@(user: model.User, exerciseForm: Form[RegexExercise], isCreation: Boolean, toolMainObject: RegexToolMain)(
+@(user: model.User, collId: Int, exerciseForm: Form[RegexExercise], isCreation: Boolean, toolMainObject: RegexToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
@@ -91,4 +91,4 @@
 }
 
 
-@idExercises.editExerciseBaseForm(user, exerciseForm, isCreation, toolMainObject, specialFields, additionalScripts)
+@idExercises.editExerciseBaseForm(user, collId, exerciseForm, isCreation, toolMainObject, specialFields, additionalScripts)

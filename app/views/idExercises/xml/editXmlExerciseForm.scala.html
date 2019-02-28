@@ -1,6 +1,6 @@
 @import model.tools.xml.{XmlConsts, XmlExercise, XmlToolMain}
 
-@(user: model.User, exerciseForm: Form[XmlExercise], isCreation: Boolean, toolMainObject: XmlToolMain)(
+@(user: model.User, collId: Int, exerciseForm: Form[XmlExercise], isCreation: Boolean, toolMainObject: XmlToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
@@ -73,4 +73,4 @@
 }
 
 
-@idExercises.editExerciseBaseForm(user, exerciseForm, isCreation, toolMainObject, specialFields, additionalScripts)
+@idExercises.editExerciseBaseForm(user, collId, exerciseForm, isCreation, toolMainObject, specialFields, additionalScripts)

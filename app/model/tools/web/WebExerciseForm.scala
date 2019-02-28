@@ -2,11 +2,11 @@ package model.tools.web
 
 import model.core.ExerciseForm
 import model.tools.web.WebConsts._
-import model.{ExerciseState, SemanticVersionHelper}
+import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object WebExerciseForm extends ExerciseForm[WebExercise, WebCollection] {
+object WebExerciseForm extends ExerciseForm[WebExercise, WebCollection, WebExerciseReview] {
 
   // HtmlTask
 
@@ -43,7 +43,6 @@ object WebExerciseForm extends ExerciseForm[WebExercise, WebCollection] {
 
   // WebSampleSolution
 
-
   private val webSampleSolutionMapping: Mapping[WebSampleSolution] = mapping(
     idName -> number,
     htmlSampleName -> nonEmptyText,
@@ -51,6 +50,17 @@ object WebExerciseForm extends ExerciseForm[WebExercise, WebCollection] {
   )((id, hs, js) => WebSampleSolution(id, WebSolution(hs, js)))(wss => Some((wss.id, wss.sample.htmlSolution, wss.sample.jsSolution)))
 
   // Complete exercise
+
+  override val collectionFormat: Form[WebCollection] = Form(
+    mapping(
+      idName -> number,
+      titleName -> nonEmptyText,
+      authorName -> nonEmptyText,
+      textName -> nonEmptyText,
+      statusName -> ExerciseState.formField,
+      shortNameName -> nonEmptyText
+    )(WebCollection.apply)(WebCollection.unapply)
+  )
 
   override val exerciseFormat: Form[WebExercise] = Form(
     mapping(
@@ -71,15 +81,11 @@ object WebExerciseForm extends ExerciseForm[WebExercise, WebCollection] {
     )(WebExercise.apply)(WebExercise.unapply)
   )
 
-  override val collectionFormat: Form[WebCollection] = Form(
+  override val exerciseReviewForm: Form[WebExerciseReview] = Form(
     mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(WebCollection.apply)(WebCollection.unapply)
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
+    )(WebExerciseReview.apply)(WebExerciseReview.unapply)
   )
 
 }

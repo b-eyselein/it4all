@@ -1,17 +1,19 @@
 package model.programming
 
 import model._
+import model.uml.UmlClassDiagram
 import play.api.libs.json.JsValue
 import play.twirl.api.Html
 
-// Classes for use
+final case class ProgCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
+  extends ExerciseCollection
 
 final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                               folderIdentifier: String, functionName: String, outputType: ProgDataType, baseData: Option[JsValue],
                               inputTypes: Seq[ProgInput],
                               sampleSolutions: Seq[ProgSampleSolution],
                               sampleTestData: Seq[ProgSampleTestData],
-                              maybeClassDiagramPart: Option[UmlClassDiagPart]) extends Exercise {
+                              maybeClassDiagramPart: Option[UmlClassDiagram]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -36,11 +38,11 @@ final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 final case class ProgSampleSolution(id: Int, language: ProgLanguage, base: String, solutionStr: String)
   extends SampleSolution[ProgSolution] {
 
-  val part = ProgExParts.Implementation
+  val part: ProgExPart = ProgExParts.Implementation
 
   val sample: ProgSolution = part match {
-    //    case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)
-    case _ => ProgStringSolution(solutionStr, extendedUnitTests = false, language)
+    case ProgExParts.TestdataCreation => ??? // ProgSolution(solutionStr = "", language)
+    case _                            => ProgSolution(solutionStr, testData = Seq[ProgUserTestData](), extendedUnitTests = false, language)
   }
 
 }
@@ -59,36 +61,23 @@ final case class ProgUserTestData(id: Int, inputAsJson: JsValue, output: JsValue
 
 // Solution types
 
-sealed trait ProgSolution {
+final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData], extendedUnitTests: Boolean, language: ProgLanguage)
 
-  val language: ProgLanguage
-
-  def extendedUnitTests: Boolean
-
-  def solution: String
-
-}
-
-final case class ProgStringSolution(solution: String, extendedUnitTests: Boolean, language: ProgLanguage) extends ProgSolution
-
-final case class ProgTestDataSolution(testData: Seq[ProgUserTestData], language: ProgLanguage) extends ProgSolution {
-
-  override def solution: String = ???
-
-  override def extendedUnitTests: Boolean = false
-
-}
+//final case class ProgStringSolution(solution: String, extendedUnitTests: Boolean, language: ProgLanguage) extends ProgSolution
+//
+//final case class ProgTestDataSolution(testData: Seq[ProgUserTestData], language: ProgLanguage) extends ProgSolution {
+//
+//  override def solution: String = ???
+//
+//  override def extendedUnitTests: Boolean = false
+//
+//}
 
 final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points)
   extends UserSolution[ProgExPart, ProgSolution] {
 
-
-  def commitedTestData: Seq[ProgUserTestData] = solution match {
-    case ProgTestDataSolution(td, _) => td
-    case _                           => Seq[ProgUserTestData]()
-  }
+  def commitedTestData: Seq[ProgUserTestData] = solution.testData
 
 }
 
-final case class ProgExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: ProgExPart,
-                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[ProgExPart]
+final case class ProgExerciseReview(difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview

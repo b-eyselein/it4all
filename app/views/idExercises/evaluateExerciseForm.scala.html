@@ -1,6 +1,6 @@
 @import model.{User, Exercise, ExPart}
 
-@(user: model.User, exercise: Exercise, part: ExPart, toolMainObject: model.toolMains.ASingleExerciseToolMain)(
+@(user: model.User, collId: Int, exercise: Exercise, part: ExPart, toolMainObject: model.toolMains.CollectionToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
@@ -14,7 +14,7 @@
 
         <br>
 
-        @helper.form(exes.routes.ExerciseController.reviewExercisePart(toolMainObject.urlPart, exercise.id, part.urlName)) {
+        @helper.form(coll.routes.CollectionController.reviewExercisePart(toolMainObject.urlPart, collId, exercise.id, part.urlName)) {
 
             @helper.CSRF.formField
 

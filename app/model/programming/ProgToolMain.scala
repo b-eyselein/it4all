@@ -2,11 +2,11 @@ package model.programming
 
 import javax.inject._
 import model._
-import model.programming.ProgConsts.{difficultyName, durationName}
+import model.core.result.CompleteResultJsonProtocol
 import model.programming.persistence.ProgTableDefs
-import model.toolMains.{ASingleExerciseToolMain, ToolState}
+import model.toolMains.{CollectionToolMain, ToolState}
+import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms._
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request, RequestHeader}
@@ -14,7 +14,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 object ProgToolMain {
 
@@ -24,27 +24,26 @@ object ProgToolMain {
 
 @Singleton
 class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends ASingleExerciseToolMain("Programmierung", "programming") {
+  extends CollectionToolMain("Programmierung", "programming") {
+
+  private val logger = Logger(classOf[ProgToolMain])
 
   // Abstract types
 
   override type PartType = ProgExPart
-
   override type ExType = ProgExercise
+  override type CollType = ProgCollection
 
   override type SolType = ProgSolution
-
   override type SampleSolType = ProgSampleSolution
-
   override type UserSolType = ProgUserSolution
 
-  override type Tables = ProgTableDefs
+  override type ReviewType = ProgExerciseReview
 
   override type ResultType = ProgEvalResult
-
   override type CompResultType = ProgCompleteResult
 
-  override type ReviewType = ProgExerciseReview
+  override type Tables = ProgTableDefs
 
   // Other members
 
@@ -52,37 +51,16 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override protected val exParts: Seq[ProgExPart] = ProgExParts.values
 
-  override implicit val yamlFormat: MyYamlFormat[ProgExercise] = ProgExYamlProtocol.ProgExYamlFormat
+  // Yaml, Html Forms, Json
 
-  override protected val completeResultJsonProtocol: ProgCompleteResultJsonProtocol.type = ProgCompleteResultJsonProtocol
+  override protected val collectionYamlFormat: MyYamlFormat[ProgCollection] = ProgExYamlProtocol.ProgCollectionYamlFormat
+  override protected val exerciseYamlFormat  : MyYamlFormat[ProgExercise]   = ProgExYamlProtocol.ProgExYamlFormat
 
-  // Forms
+  override val collectionForm    : Form[ProgCollection]     = ProgExerciseForm.collectionFormat
+  override val exerciseForm      : Form[ProgExercise]       = ProgExerciseForm.exerciseFormat
+  override val exerciseReviewForm: Form[ProgExerciseReview] = ProgExerciseForm.exerciseReviewForm
 
-  // TODO: create Form mapping ...
-  override def exerciseForm: Form[ProgExercise] = ???
-
-  override def exerciseReviewForm(username: String, exercise: ProgExercise, exercisePart: ProgExPart): Form[ProgExerciseReview] = Form(
-    mapping(
-      difficultyName -> Difficulties.formField,
-      durationName -> optional(number(min = 0, max = 100))
-    )
-    (ProgExerciseReview(username, exercise.id, exercise.semanticVersion, exercisePart, _, _))
-    (per => Some((per.difficulty, per.maybeDuration)))
-  )
-
-  // Reading solution from requests
-
-  override protected def readSolution(user: User, exercise: ProgExercise, part: ProgExPart)(implicit request: Request[AnyContent]): Try[ProgSolution] =
-    request.body.asJson match {
-      case None          => Failure(new Exception("Request does not contain json!"))
-      case Some(jsValue) =>
-        ProgSolutionJsonFormat(exercise, user).readProgSolutionFromJson(part, jsValue) match {
-          case JsSuccess(solution, _) => Success(solution)
-          case JsError(errors)        =>
-            errors.foreach(println)
-            Failure(new Exception(errors.map(_.toString).mkString("\n")))
-        }
-    }
+  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] = ProgCompleteResultJsonProtocol
 
   // Other helper methods
 
@@ -94,6 +72,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       false
   }
 
+  override def instantiateCollection(id: Int, author: String, state: ExerciseState): ProgCollection =
+    ProgCollection(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgExercise = ProgExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
@@ -105,19 +85,36 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
                                    solution: ProgSolution, points: Points, maxPoints: Points): ProgUserSolution =
     ProgUserSolution(id, part, solution, solution.language, solution.extendedUnitTests, points, maxPoints)
 
-  // Correction
+  // Db
 
-  override def correctEx(user: User, sol: ProgSolution, exercise: ProgExercise, part: ProgExPart): Future[Try[ProgCompleteResult]] =
-    ProgCorrector.correct(user, sol, exercise, toolMain = this)
-
-  override def futureSampleSolutionsForExerciseAndPart(id: Int, part: ProgExPart): Future[Seq[String]] = part match {
-    case ProgExParts.Implementation => tables.futureSampleSolutionsForExercisePart(id, part)
+  override def futureSampleSolutions(collId: Int, id: Int, part: ProgExPart): Future[Seq[String]] = part match {
+    case ProgExParts.Implementation => tables.futureSampleSolutionsForExPart(collId, id, part)
     case _                          => Future(Seq.empty) // TODO!
   }
 
+  // Correction
+
+  override protected def readSolution(user: User, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart)
+                                     (implicit request: Request[AnyContent]): Option[ProgSolution] =
+    request.body.asJson match {
+      case None          =>
+        logger.error("Request does not contain json!")
+        None
+      case Some(jsValue) =>
+        ProgSolutionJsonFormat(exercise, user).readProgSolutionFromJson(part, jsValue) match {
+          case JsSuccess(solution, _) => Some(solution)
+          case JsError(errors)        =>
+            errors.foreach(jsErr => logger.error(jsErr.toString()))
+            None
+        }
+    }
+
+  override def correctEx(user: User, sol: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart): Future[Try[ProgCompleteResult]] =
+    ProgCorrector.correct(user, sol, exercise, toolMain = this)
+
   // Views
 
-  override def renderExercise(user: User, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[ProgUserSolution])
+  override def renderExercise(user: User, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[ProgUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
     // FIXME: how to get language? ==> GET param?
@@ -126,7 +123,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     part match {
       case ProgExParts.TestdataCreation =>
         val oldTestData: Seq[ProgUserTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[ProgUserTestData]())
-        views.html.idExercises.programming.testDataCreation(user, exercise, oldTestData, this)
+        views.html.idExercises.programming.testDataCreation(user, collection, exercise, oldTestData, this)
 
       case ProgExParts.Implementation =>
 
@@ -137,7 +134,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
           exercise.sampleSolutions find (_.language == language) map (_.base) getOrElse ""
         }
 
-        views.html.idExercises.programming.progExercise(user, this, exercise, declaration, ProgExParts.Implementation)
+        views.html.idExercises.programming.progExercise(user, collection, exercise, declaration, ProgExParts.Implementation, this)
 
       case ProgExParts.ActivityDiagram =>
         // TODO: use old soluton!
@@ -146,12 +143,12 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
           case Some(base) => base.split("\n").zipWithIndex.map(si => (si._2 + 1).toString + "\t" + si._1).mkString("\n")
         }
 
-        views.html.idExercises.umlActivity.activityDrawing(user, exercise, language, definitionRest, toolObject = this)
+        views.html.idExercises.umlActivity.activityDrawing(user, collection, exercise, language, definitionRest, this)
     }
   }
 
-  override def renderUserExerciseEditForm(user: User, newExForm: Form[ProgExercise], isCreation: Boolean)
-                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = ???
+  //  override def renderUserExerciseEditForm(user: User, newExForm: Form[ProgExercise], isCreation: Boolean)
+  //                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = ???
 
   override def renderEditRest(exercise: ProgExercise): Html = ???
 

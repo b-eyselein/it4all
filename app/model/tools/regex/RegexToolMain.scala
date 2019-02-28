@@ -10,50 +10,44 @@ import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: ExecutionContext)
   extends CollectionToolMain("Reguläre Ausdrücke", "regex") {
 
   override type PartType = RegexExPart
-
   override type ExType = RegexExercise
-
   override type CollType = RegexCollection
 
 
   override type SolType = String
-
   override type SampleSolType = RegexSampleSolution
-
   override type UserSolType = RegexUserSolution
-
-
-  override type Tables = RegexTableDefs
-
-  override type ResultType = RegexEvaluationResult
-
-  override type CompResultType = RegexCompleteResult
 
   override type ReviewType = RegexExerciseReview
 
+  override type ResultType = RegexEvaluationResult
+  override type CompResultType = RegexCompleteResult
+
+  override type Tables = RegexTableDefs
+
+  // Members
 
   override protected val exParts: Seq[RegexExPart] = RegexExParts.values
 
-  // Yaml, Html forms
+  override val usersCanCreateExes: Boolean = false
+
+  // Yaml, Html forms, Json
 
   override protected val collectionYamlFormat: MyYamlFormat[RegexCollection] = RegexExYamlProtocol.RegexCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[RegexExercise]   = RegexExYamlProtocol.RegexExYamlFormat
 
-  override val collectionForm: Form[RegexCollection] = RegexExForm.collectionFormat
-  override val exerciseForm  : Form[RegexExercise]   = RegexExForm.exerciseFormat
-
-  // Json
+  override val collectionForm    : Form[RegexCollection]     = RegexExForm.collectionFormat
+  override val exerciseForm      : Form[RegexExercise]       = RegexExForm.exerciseFormat
+  override val exerciseReviewForm: Form[RegexExerciseReview] = RegexExForm.exerciseReviewForm
 
   override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
-
-  override val usersCanCreateExes: Boolean = false
 
   // Database helpers
 
@@ -81,7 +75,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     case _                     => None
   }
 
-  override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Try[RegexCompleteResult] = Try {
+  override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] = Future.successful(Try {
 
     val regex = sol.r
 
@@ -100,10 +94,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     }
 
     RegexCompleteResult(sol, exercise, part, results)
-  }
-
-
-  //  override def exerciseReviewForm(username: String, exercise: RegexExercise, exercisePart: RegexExPart): Form[RegexExerciseReview] = ???
+  })
 
   // Other helper methods
 

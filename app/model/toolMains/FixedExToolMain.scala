@@ -1,22 +1,21 @@
 package model.toolMains
 
-import better.files.File
 import model._
-import model.core._
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
 import model.persistence.ExerciseTableDefs
-import net.jcazevedo.moultingyaml._
+import play.api.data.Form
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.{Failure, Try}
 
 abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec: ExecutionContext) extends AToolMain(aToolName, aUrlPart) {
 
   // Abstract types
 
   type ExIdentifierType <: ExerciseIdentifier
+
+  type CollType <: ExerciseCollection
 
   type ExType <: Exercise
 
@@ -32,17 +31,26 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   type ReadType
 
-  override type Tables <: ExerciseTableDefs[ExType, PartType, SolType, SampleSolType, UserSolType]
+  type ReviewType <: ExerciseReview
 
-  type ReviewType <: ExerciseReview[PartType]
+  override type Tables <: ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType]
 
   // Values
 
   val usersCanCreateExes: Boolean = false
 
-  protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ResultType, CompResultType]
-
   protected val exParts: Seq[PartType]
+
+  // Yaml, Html forms, Json
+
+  protected val collectionYamlFormat: MyYamlFormat[CollType]
+  protected val exerciseYamlFormat  : MyYamlFormat[ExType]
+
+  val collectionForm    : Form[CollType]
+  val exerciseForm      : Form[ExType]
+  val exerciseReviewForm: Form[ReviewType]
+
+  protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ResultType, CompResultType]
 
   // DB
 
@@ -75,11 +83,11 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   def renderEditRest(exercise: ExType): Html = Html("")
 
-  def renderExercisePreview(user: User, newExercise: ExType, saved: Boolean): Html = {
+  def renderExercisePreview(user: User, collId: Int, newExercise: ExType, saved: Boolean): Html = {
     println(newExercise)
     ???
   }
 
-//  def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html
+  //  def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html
 
 }

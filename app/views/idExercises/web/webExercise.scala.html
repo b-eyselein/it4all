@@ -3,37 +3,37 @@
 @(user: model.User, collection: WebCollection, exercise: WebExercise, part: WebExPart, oldSolution: String, toolMainObject: WebToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
-    @additionalScripts = {
-        <script>SystemJS.import('@routes.Assets.versioned("app/web/webExercise.js")');</script>
+@additionalScripts = {
+    <script>SystemJS.import('@routes.Assets.versioned("app/web/webExercise.js")');</script>
+}
+
+@exerciseText = {
+    <span>@exercise.text</span>
+
+@if(part == WebExParts.HtmlPart) {
+    <span>@Html(exercise.htmlText getOrElse "")</span>
+    <ol>
+    @for(task <- exercise.tasksForPart(part).sortBy(_.id)) {
+        <li><span id="text_@task.id">@task.text</span></li>
     }
+    </ol>
+} else {
+    <p>@Html(exercise.jsText getOrElse "")</p>
+    <p>Es gibt insgesamt @exercise.tasksForPart(part).size Testfälle.</p>
+}
 
-    @exerciseText = {
-        <span>@exercise.text</span>
+}
 
-    @if(part == WebExParts.HtmlPart) {
-        <span>@Html(exercise.htmlText getOrElse "")</span>
-        <ol>
-        @for(task <- exercise.tasksForPart(part).sortBy(_.id)) {
-            <li><span id="text_@task.id">@task.text</span></li>
-        }
-        </ol>
-    } else {
-        <p>@Html(exercise.jsText getOrElse "")</p>
-        <p>Es gibt insgesamt @exercise.tasksForPart(part).size Testfälle.</p>
-    }
-
-    }
-
-    @solutionPreview = {
-        <div id="previewTab" class="tab-pane fade">
-            <div class="alert alert-warning" id="previewChangedDiv">
-                Ihre Lösung hat sich geändert. Laden Sie sie neu,
-                indem Sie diesen Tab neu aufrufen.</div>
-            <div class="embed-responsive embed-responsive-16by9">
-                <iframe class="embed-responsive-item" src="@exes.routes.ExerciseController.webSolution(exercise.id, part.urlName)" id="preview"></iframe>
-            </div>
+@solutionPreview = {
+    <div id="previewTab" class="tab-pane fade">
+        <div class="alert alert-warning" id="previewChangedDiv">
+            Ihre Lösung hat sich geändert. Laden Sie sie neu,
+            indem Sie diesen Tab neu aufrufen.</div>
+        <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="@coll.routes.CollectionController.webSolution(collection.id, exercise.id, part.urlName)" id="preview"></iframe>
         </div>
-    }
+    </div>
+}
 
-    @idExercises.textExercise(user, exerciseText, Some(collection), exercise, part, oldSolution, toolMainObject, additionalScripts,
-        solutionPreview = Some(solutionPreview))
+@idExercises.textExercise(user, exerciseText, collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
+    solutionPreview = Some(solutionPreview))

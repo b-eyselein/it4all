@@ -1,6 +1,6 @@
-@import model.tools.web.WebConsts
+@import model.tools.web.{WebConsts, WebExercise, WebToolMain}
 
-@(user: model.User, exerciseForm: Form[model.tools.web.WebExercise], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain)(
+@(user: model.User, collId: Int, exerciseForm: Form[WebExercise], isCreation: Boolean, toolMainObject: WebToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
@@ -92,8 +92,8 @@
                 <label class="col-form-label">Text</label> /
                 <label class="col-form-label">Musterlösung:</label>
             </div>
-        @myhelpers.textareaWithLabel(exerciseForm(WebConsts.jsTextName), "Text JS-Teil", rowCount = 5, 2, 10,
-            placeHolder = Some("Text JS-Teil"))
+            @myhelpers.textareaWithLabel(exerciseForm(WebConsts.jsTextName), "Text JS-Teil", rowCount = 5, 2, 10,
+                placeHolder = Some("Text JS-Teil"))
         </div>
 
     </fieldset>
@@ -101,4 +101,4 @@
 
 }
 
-@idExercises.editExerciseBaseForm(user, exerciseForm, isCreation, toolMainObject, specialFields, additionalScripts)
+@idExercises.editExerciseBaseForm(user, collId, exerciseForm, isCreation, toolMainObject, specialFields, additionalScripts)

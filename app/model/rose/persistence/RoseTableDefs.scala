@@ -1,7 +1,7 @@
 package model.rose.persistence
 
 import javax.inject.Inject
-import model.persistence.IdExerciseTableDefs
+import model.persistence.ExerciseCollectionTableDefs
 import model.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
 import model.rose._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -13,7 +13,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with IdExerciseTableDefs[RoseExercise, RoseExPart, String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
+  extends HasDatabaseConfigProvider[JdbcProfile]
+    with ExerciseCollectionTableDefs[RoseExercise, RoseExPart, RoseCollection, String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
 
   import profile.api._
 
@@ -22,6 +23,9 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected type DbExType = DbRoseExercise
 
   override protected type ExTableDef = RoseExercisesTable
+
+
+  override protected type CollTableDef = RoseCollectionsTable
 
 
   override protected type DbSampleSolType = DbRoseSampleSolution
@@ -34,20 +38,23 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected type DbUserSolTable = RoseSolutionsTable
 
 
-  override protected type ReviewsTableDef = RoseExerciseReviewsTable
+  override protected type DbReviewType = DbRoseExerciseReview
+
+  override protected type ReviewsTable = RoseExerciseReviewsTable
 
   // Table Queries
-
-  override protected val exTable      = TableQuery[RoseExercisesTable]
-  override protected val solTable     = TableQuery[RoseSolutionsTable]
-  override protected val reviewsTable = TableQuery[RoseExerciseReviewsTable]
+  override protected val collTable   : TableQuery[RoseCollectionsTable]     = TableQuery[RoseCollectionsTable]
+  override protected val exTable     : TableQuery[RoseExercisesTable]       = TableQuery[RoseExercisesTable]
+  override protected val solTable    : TableQuery[RoseSolutionsTable]       = TableQuery[RoseSolutionsTable]
+  override protected val reviewsTable: TableQuery[RoseExerciseReviewsTable] = TableQuery[RoseExerciseReviewsTable]
 
   private val roseInputs  = TableQuery[RoseInputTypesTable]
   private val roseSamples = TableQuery[RoseSampleSolutionsTable]
 
   // Helper methods
 
-  override protected val dbModels = RoseDbModels
+  override protected val dbModels               = RoseDbModels
+  override protected val exerciseReviewDbModels = RoseExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbRoseUserSolution, newId: Int): DbRoseUserSolution = oldSol.copy(id = newId)
 
@@ -73,8 +80,14 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   }
 
 
-  override def futureSampleSolutionsForExercisePart(exerciseId: Int, part: RoseExPart): Future[Seq[String]] =
-    db.run(roseSamples.filter(_.exerciseId === exerciseId).map(_.sample).result)
+  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: RoseExPart): Future[Seq[String]] = db.run(
+    roseSamples
+      .filter {
+        s => s.exerciseId === exerciseId && s.collectionId === collId
+      }
+      .map(_.sample)
+      .result
+  )
 
   // Implicit column types
 
@@ -91,7 +104,13 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Tables
 
-  class RoseExercisesTable(tag: Tag) extends ExerciseTableDef(tag, "rose_exercises") {
+  class RoseCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "rose_collections") {
+
+    def * = (id, title, author, text, state, shortName) <> (RoseCollection.tupled, RoseCollection.unapply)
+
+  }
+
+  class RoseExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "rose_exercises") {
 
     def fieldWidth: Rep[Int] = column[Int]("field_width")
 
@@ -145,9 +164,8 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   class RoseExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "rose_exercise_reviews") {
 
-    override def * : ProvenShape[RoseExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (RoseExerciseReview.tupled, RoseExerciseReview.unapply)
+    override def * : ProvenShape[DbRoseExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbRoseExerciseReview.tupled, DbRoseExerciseReview.unapply)
 
   }
-
 
 }

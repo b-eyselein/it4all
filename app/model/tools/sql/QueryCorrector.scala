@@ -8,6 +8,7 @@ import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import play.api.Logger
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
@@ -15,7 +16,8 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[SqlSampleSolution], exercise: SqlExercise, scenario: SqlScenario): SqlCorrResult =
+  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[SqlSampleSolution], exercise: SqlExercise, scenario: SqlScenario)
+             (implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
     parseStatement(learnerSolution) flatMap checkStatement match {
       case Failure(error) => SqlParseFailed(learnerSolution, error)
       case Success(userQ) =>
@@ -48,6 +50,7 @@ abstract class QueryCorrector(val queryType: String) {
             sc.whereComparison, sc.additionalComparisons, database.executeQueries(scenario, exercise, sc.userQ, sc.sampleQ))
         }
     }
+  })
 
   private def performStaticComparison(userQ: Q, sampleQ: Q, userColumns: Seq[ColumnWrapper], userTables: Seq[Table],
                                       userJoinExpressions: Seq[BinaryExpression], userExpressions: Seq[BinaryExpression],

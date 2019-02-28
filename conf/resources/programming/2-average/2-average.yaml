@@ -31,12 +31,6 @@ sampleSolutions:
               return sum(my_list) / length
 
 sampleTestData:
-  - id: 1
-    inputs: []
-    output: 0.
-  - id: 2
-    inputs: [1]
-    output: 1.
-  - id: 3
-    inputs: [3, 5, 7]
-    output: 5.
+  - {id: 1, inputs: [], output: 0.0}
+  - {id: 2, inputs: [1], output: 1.0}
+  - {id: 3, inputs: [3, 5, 7], output: 5.0}

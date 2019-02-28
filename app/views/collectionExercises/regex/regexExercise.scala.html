@@ -7,4 +7,4 @@
     <script>SystemJS.import('@routes.Assets.versioned("app/regex/regexExercise.js")');</script>
 }
 
-@idExercises.textExercise(user, Html(exercise.text), Some(regexCollection), exercise, part, oldSolution.getOrElse(""), toolMainObject, additionalScripts)
+@idExercises.textExercise(user, Html(exercise.text), regexCollection, exercise, part, oldSolution.getOrElse(""), toolMainObject, additionalScripts)

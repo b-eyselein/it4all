@@ -1,7 +1,7 @@
 @import model.tools.sql.{SqlExercise, SqlQueryResult, SqlScenario, SqlToolMain, SqlExParts}
 
-@(user: model.User, exercise: SqlExercise, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario,
-        toolMainObject: SqlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@(user: model.User, exercise: SqlExercise, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario, toolMainObject: SqlToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/sql/sqlExercise.js")');</script>
@@ -51,4 +51,4 @@
     <div id="executionResultsDiv"></div>
 }
 
-@idExercises.textExercise(user, exerciseText, Some(scenario), exercise, SqlExParts.SqlSingleExPart, oldOrDefSol, toolMainObject, additionalScripts, remainingPage = remainingPage)
+@idExercises.textExercise(user, exerciseText, scenario, exercise, SqlExParts.SqlSingleExPart, oldOrDefSol, toolMainObject, additionalScripts, remainingPage = remainingPage)

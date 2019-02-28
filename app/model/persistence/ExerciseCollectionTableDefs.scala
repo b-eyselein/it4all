@@ -1,33 +1,23 @@
 package model.persistence
 
 import model._
-import model.core.CoreConsts.idName
 import model.core.overviewHelpers.{SolvedState, SolvedStates}
+import model.uml._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType]]
-  extends ExerciseTableDefs[ExType, PartType, SolType, SampleSolType, UserSolType] {
+trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+  extends ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
+  private val logger = Logger(this.getClass)
+
   import profile.api._
-
-  // Abstract types
-
-  override protected type ExTableDef <: ExerciseInCollectionTable
-
-  protected type CollTableDef <: ExerciseCollectionTable
-
-  // Abstract members
-
-  protected val collTable: TableQuery[CollTableDef]
-
-  protected val solTable: TableQuery[DbUserSolTable]
 
   // Queries
 
@@ -41,7 +31,7 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
     db.run(insertQuery += dbUserSol) transform {
       case Success(_) => Success(true)
       case Failure(e) =>
-        Logger.error("Could not save solution", e)
+        logger.error("Could not save solution", e)
         Success(false)
     }
   }
@@ -54,7 +44,7 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
 
   def futureHighestCollectionId: Future[Int] = db.run(collTable.map(_.id).max.result) map (_ getOrElse (-1))
 
-  def futureHighestIdInCollection(collId: Int): Future[Int] =
+  def futureHighestExerciseIdInCollection(collId: Int): Future[Int] =
     db.run(exTable.filter(_.collectionId === collId).map(_.id).max.result) map (_ getOrElse (-1))
 
   // Reading
@@ -126,13 +116,19 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
     }
   }
 
+  def futureSaveReview(username: String, collId: Int, exId: Int, part: PartType, review: ReviewType): Future[Boolean] = {
+    val dbReview = exerciseReviewDbModels.dbReviewFromReview(username, collId, exId, part, review)
+    db.run(reviewsTable insertOrUpdate dbReview).transform(_ == 1, identity)
+  }
+
+
   // Update
 
   def updateCollectionState(collId: Int, newState: ExerciseState): Future[Boolean] = db.run((for {
     coll <- collTable if coll.id === collId
   } yield coll.state).update(newState)) map (_ => true) recover {
     case e: Throwable =>
-      Logger.error(s"Could not update collection $collId", e)
+      logger.error(s"Could not update collection $collId", e)
       false
   }
 
@@ -141,51 +137,36 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
       ex <- exTable if ex.id === exId && ex.collectionId === collId
     } yield ex.state).update(newState)) map (_ => true) recover {
       case e: Throwable =>
-        Logger.error(s"Could not update state of exercise $exId in collection $collId", e)
+        logger.error(s"Could not update state of exercise $exId in collection $collId", e)
         false
     }
 
   // Deletion
 
   def futureDeleteExercise(collId: Int, id: Int): Future[Boolean] = db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).delete) map (_ => true) recover { case e: Throwable =>
-    Logger.error(s"Could not delete exercise $id in collection $collId", e)
+    logger.error(s"Could not delete exercise $id in collection $collId", e)
     false
   }
 
   def futureDeleteCollection(collId: Int): Future[Boolean] = db.run(collTable.filter(_.id === collId).delete) map (_ => true) recover { case e: Throwable =>
-    Logger.error(s"Could not delete collection $collId", e)
+    logger.error(s"Could not delete collection $collId", e)
     false
   }
 
-  // Abstract table definitions
+  // For programming and uml!
 
-  protected implicit val solTypeColumnType: slick.ast.TypedType[SolType]
+  protected implicit val umlClassDiagramColumnType: BaseColumnType[UmlClassDiagram] = {
 
-  abstract class ExerciseCollectionTable(tag: Tag, tableName: String) extends Table[CollType](tag, tableName) {
+    val write = (ucd: UmlClassDiagram) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(ucd).toString
 
-    def id: Rep[Int] = column[Int](idName, O.PrimaryKey)
+    val read = (str: String) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
+      case JsSuccess(ucd, _) => ucd
+      case JsError(errors)   =>
+        errors.foreach(error => logger.error("There has been an error loading a uml class diagram from json" + error))
+        UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]())
+    }
 
-    def title: Rep[String] = column[String]("title")
-
-    def author: Rep[String] = column[String]("author")
-
-    def text: Rep[String] = column[String]("ex_text")
-
-    def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
-
-    def shortName: Rep[String] = column[String]("short_name")
-
-  }
-
-  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[DbExType](tag, name) {
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId))
-
-    def scenarioFk: ForeignKeyQuery[CollTableDef, CollType] = foreignKey("scenario_fk", collectionId, collTable)(_.id)
-
+    MappedColumnType.base[UmlClassDiagram, String](write, read)
   }
 
 }

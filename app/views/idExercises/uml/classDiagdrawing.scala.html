@@ -1,5 +1,7 @@
-@(user: model.User, exercise: model.uml.UmlExercise, curPart: model.uml.UmlExPart, getsHelp: Boolean,
-        toolObject: model.uml.UmlToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@import model.uml.{UmlExercise, UmlCollection, UmlToolMain, UmlExPart}
+
+@(user: model.User, collection: UmlCollection, exercise: UmlExercise, curPart: UmlExPart, getsHelp: Boolean, toolObject: UmlToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     exercise.titleForPart(curPart)
@@ -71,7 +73,7 @@
                 </div>
 
                 <div id="sizepaper">
-                    <div id="classDiagPaper" data-url="@exes.routes.ExerciseController.umlClassDiag(exercise.id, curPart.urlName)"></div>
+                    <div id="classDiagPaper" data-url="@coll.routes.CollectionController.umlClassDiag(collection.id, exercise.id, curPart.urlName)"></div>
                 </div>
             </div>
 
@@ -93,11 +95,11 @@
                     @helper.CSRF.formField
 
                     <div class="btn-group d-flex">
-                        <button data-url="@exes.routes.ExerciseController.correctLive(toolObject.urlPart, exercise.id, curPart.urlName)"
+                        <button data-url="@coll.routes.CollectionController.correctLive(toolObject.urlPart, collection.id, exercise.id, curPart.urlName)"
                         id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>
                         @curPart match {
                             case model.uml.UmlExParts.DiagramDrawingHelp => {
-                                <a href="@exes.routes.ExerciseController.exercise(toolObject.urlPart, exercise.id, model.uml.UmlExParts.MemberAllocation.urlName)"
+                                <a href="@coll.routes.CollectionController.exercise(toolObject.urlPart, collection.id, exercise.id, model.uml.UmlExParts.MemberAllocation.urlName)"
                                 class="btn btn-secondary w-100">Nächster Aufgabenteil</a>
                             }
                             case _ => {

@@ -33,5 +33,4 @@ final case class XmlSampleSolution(id: Int, sample: XmlSolution)
 final case class XmlUserSolution(id: Int, part: XmlExPart, solution: XmlSolution, points: Points, maxPoints: Points)
   extends UserSolution[XmlExPart, XmlSolution]
 
-final case class XmlExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: XmlExPart,
-                                   difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[XmlExPart]
+final case class XmlExerciseReview(difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview

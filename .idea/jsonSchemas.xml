@@ -47,6 +47,22 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="prog_collections.schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="prog_collections.schema" />
+              <option name="relativePathToSchema" value="conf/resources/programming/prog_collections.schema.json" />
+              <option name="schemaVersion" value="JSON schema version 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="conf/resources/programming/collections.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="prog_ex.schema">
           <value>
             <SchemaInfo>

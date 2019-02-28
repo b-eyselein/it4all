@@ -1,6 +1,6 @@
 package model.persistence
 
-import model.{Points, SemanticVersion}
+import model.{Difficulty, ExPart, ExerciseReview, Points, SemanticVersion}
 
 trait ADbModels[Exercise, DbExercise, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType] {
 
@@ -15,6 +15,15 @@ trait ADbModels[Exercise, DbExercise, SampleSolType, DbSampleSolType, UserSolTyp
   def dbUserSolFromUserSol(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, solution: UserSolType): DbUserSolType
 
   def userSolFromDbUserSol(dbSolution: DbUserSolType): UserSolType
+
+
+}
+
+trait AExerciseReviewDbModels[PartType <: ExPart, ReviewType <: ExerciseReview, DbReviewType <: DbExerciseReview[PartType]] {
+
+  def dbReviewFromReview(username: String, collId: Int, exId: Int, part: PartType, review: ReviewType): DbReviewType
+
+  def reviewFromDbReview(dbReview: DbReviewType): ReviewType
 
 }
 
@@ -45,5 +54,22 @@ trait ADbUserSol[SolType] extends ADbSolution[SolType] {
   val points: Points
 
   val maxPoints: Points
+
+}
+
+trait DbExerciseReview[PartType <: ExPart] {
+
+  val username: String
+
+  val exerciseId: Int
+
+  val collId: Int
+
+  val exercisePart: PartType
+
+  val difficulty: Difficulty
+
+  val maybeDuration: Option[Int]
+
 
 }

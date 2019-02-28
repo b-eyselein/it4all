@@ -31,18 +31,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override type ReadType = (CollType, Seq[ExType])
 
-  override type Tables <: ExerciseCollectionTableDefs[ExType, PartType, CollType, SolType, SampleSolType, UserSolType]
-
-
-  type CollType <: ExerciseCollection
-
-  // Other members
-
-  protected val collectionYamlFormat: MyYamlFormat[CollType]
-  protected val exerciseYamlFormat  : MyYamlFormat[ExType]
-
-  val collectionForm: Form[CollType]
-  val exerciseForm  : Form[ExType]
+  override type Tables <: ExerciseCollectionTableDefs[ExType, PartType, CollType, SolType, SampleSolType, UserSolType, ReviewType]
 
   // Database queries
 
@@ -52,7 +41,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureHighestCollectionId: Future[Int] = tables.futureHighestCollectionId
 
-  def futureHighestIdInCollection(collId: Int): Future[Int] = tables.futureHighestIdInCollection(collId)
+  def futureHighestExerciseIdInCollection(collId: Int): Future[Int] = tables.futureHighestExerciseIdInCollection(collId)
 
   // Reading
 
@@ -76,6 +65,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   def futureInsertAndDeleteOldCollection(collection: CollType): Future[Boolean] =
     tables.futureInsertAndDeleteOldCollection(collection)
 
+  def futureSaveReview(username: String, collId: Int, exId: Int, part: PartType, review: ReviewType): Future[Boolean] =
+    tables.futureSaveReview(username, collId, exId, part, review)
+
   // Update
 
   def updateExerciseState(collId: Int, exId: Int, newState: ExerciseState): Future[Boolean] = tables.updateExerciseState(collId, exId, newState)
@@ -97,7 +89,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
       case Some(solution) =>
 
-        correctEx(user, solution, collection, exercise, part) match {
+        correctEx(user, solution, collection, exercise, part) flatMap {
           case Failure(error) => Future.successful(Failure(error))
           case Success(res)   =>
 
@@ -109,7 +101,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         }
     }
 
-  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType, part: PartType): Try[CompResultType]
+  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType, part: PartType): Future[Try[CompResultType]]
 
   // Reading from requests
 

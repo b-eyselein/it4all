@@ -1,6 +1,6 @@
-@import model.uml.UmlConsts
+@import model.uml.{UmlConsts, UmlExercise, UmlToolMain}
 
-@(user: model.User, compExForm: Form[model.uml.UmlExercise], isCreation: Boolean, toolMainObject: model.uml.UmlToolMain)(
+@(user: model.User, collId: Int, compExForm: Form[UmlExercise], isCreation: Boolean, toolMainObject: UmlToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 
@@ -181,4 +181,4 @@
     </fieldset>
 }
 
-@idExercises.editExerciseBaseForm(user, compExForm, isCreation, toolMainObject, specialFields, additionalScripts)
+@idExercises.editExerciseBaseForm(user, collId, compExForm, isCreation, toolMainObject, specialFields, additionalScripts)

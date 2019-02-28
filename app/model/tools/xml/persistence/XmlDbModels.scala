@@ -1,8 +1,8 @@
 package model.tools.xml.persistence
 
-import model.persistence.{ADbModels, ADbSampleSol, ADbUserSol}
+import model.persistence._
 import model.tools.xml._
-import model.{ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
 
 object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise, XmlSampleSolution, DbXmlSampleSolution, XmlUserSolution, DbXmlUserSolution] {
 
@@ -26,8 +26,18 @@ object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise, XmlSampleSoluti
 
   override def userSolFromDbUserSol(dbSolution: DbXmlUserSolution): XmlUserSolution =
     XmlUserSolution(dbSolution.id, dbSolution.part, dbSolution.solution, dbSolution.points, dbSolution.maxPoints)
+
 }
 
+object XmlExerciseReviewDbModels extends AExerciseReviewDbModels[XmlExPart, XmlExerciseReview, DbXmlExerciseReview] {
+
+  override def dbReviewFromReview(username: String, collId: Int, exId: Int, part: XmlExPart, review: XmlExerciseReview): DbXmlExerciseReview =
+    DbXmlExerciseReview(username, collId, exId, part, review.difficulty, review.maybeDuration)
+
+  override def reviewFromDbReview(dbReview: DbXmlExerciseReview): XmlExerciseReview =
+    XmlExerciseReview(dbReview.difficulty, dbReview.maybeDuration)
+
+}
 
 final case class DbXmlExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
                                grammarDescription: String, rootNode: String) extends HasBaseValues
@@ -46,3 +56,8 @@ final case class DbXmlUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion
   val solution = XmlSolution(document, grammar)
 
 }
+
+// Exercise review
+
+final case class DbXmlExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: XmlExPart,
+                                     difficulty: Difficulty, maybeDuration: Option[Int]) extends DbExerciseReview[XmlExPart]

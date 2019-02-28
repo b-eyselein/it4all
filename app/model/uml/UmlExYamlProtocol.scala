@@ -2,7 +2,7 @@ package model.uml
 
 import model.MyYamlProtocol._
 import model.uml.UmlConsts._
-import model.{MyYamlProtocol, YamlArr, YamlObj}
+import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -12,6 +12,21 @@ import scala.util.Try
 object UmlExYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger("model.uml.UmlExYamlProtocol")
+
+  object UmlCollectionYamlFormat extends MyYamlObjectFormat[UmlCollection] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[UmlCollection] = for {
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      shortName <- yamlObject.stringField(shortNameName)
+    } yield UmlCollection(id, title, author, text, state, shortName)
+
+    override def write(obj: UmlCollection): YamlValue = ???
+
+  }
 
   object UmlExYamlFormat extends MyYamlObjectFormat[UmlExercise] {
 

@@ -3,13 +3,30 @@ package model.rose
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
 import model.programming.{ProgDataTypes, ProgLanguages}
-import model.{MyYamlProtocol, YamlObj}
+import model.{ExerciseState, MyYamlProtocol, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
 import scala.util.Try
 
 object RoseExYamlProtocol extends MyYamlProtocol {
+
+  private val logger = Logger(RoseExYamlProtocol.getClass)
+
+  object RoseCollectionYamlFormat extends MyYamlObjectFormat[RoseCollection] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[RoseCollection] = for {
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      shortName <- yamlObject.stringField(shortNameName)
+    } yield RoseCollection(id, title, author, text, state, shortName)
+
+    override def write(obj: RoseCollection): YamlValue = ???
+
+  }
 
   object RoseExYamlFormat extends MyYamlObjectFormat[RoseExercise] {
 
@@ -24,11 +41,11 @@ object RoseExYamlProtocol extends MyYamlProtocol {
     } yield {
       for (inputTypeFailure <- inputTypes._2)
       // FIXME: return...
-        Logger.error("Could not read rose input type", inputTypeFailure.exception)
+        logger.error("Could not read rose input type", inputTypeFailure.exception)
 
       for (sampleSolFailure <- sampleSolutions._2)
       //FIXME: return...
-        Logger.error("Could not read rose sample sol", sampleSolFailure.exception)
+        logger.error("Could not read rose sample sol", sampleSolFailure.exception)
 
       RoseExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         fieldWidth, fieldHeight, isMp, inputTypes._1, sampleSolutions._1)

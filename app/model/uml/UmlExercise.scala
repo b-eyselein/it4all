@@ -65,5 +65,4 @@ final case class UmlSampleSolution(id: Int, sample: UmlClassDiagram)
 final case class UmlUserSolution(id: Int, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points)
   extends UserSolution[UmlExPart, UmlClassDiagram]
 
-final case class UmlExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: UmlExPart,
-                                   difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[UmlExPart]
+final case class UmlExerciseReview(difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview

@@ -13,7 +13,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
@@ -38,24 +38,19 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Abstract types
 
   override type PartType = SqlExPart
-
   override type ExType = SqlExercise
-
   override type CollType = SqlScenario
 
-
   override type SolType = String
-
   override type SampleSolType = SqlSampleSolution
-
   override type UserSolType = SqlUserSolution
 
-
-  override type Tables = SqlTableDefs
+  override type ReviewType = SqlExerciseReview
 
   override type ResultType = EvaluationResult
-
   override type CompResultType = SqlCorrResult
+
+  override type Tables = SqlTableDefs
 
   // Members
 
@@ -63,17 +58,18 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val usersCanCreateExes: Boolean = false
 
-  override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlCorrResultJsonProtocol
-
   override val exParts: IndexedSeq[SqlExPart] = SqlExParts.values
 
-  // Yaml, Html forms
+  // Yaml, Html forms, Json
 
   override protected val collectionYamlFormat: MyYamlFormat[SqlScenario] = NewSqlYamlProtocol.SqlCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[SqlExercise] = NewSqlYamlProtocol.SqlExerciseYamlFormat
 
-  override val collectionForm: Form[SqlScenario] = SqlFormMappings.collectionFormat
-  override val exerciseForm  : Form[SqlExercise] = SqlFormMappings.exerciseFormat
+  override val collectionForm    : Form[SqlScenario]       = SqlFormMappings.collectionFormat
+  override val exerciseForm      : Form[SqlExercise]       = SqlFormMappings.exerciseFormat
+  override val exerciseReviewForm: Form[SqlExerciseReview] = SqlFormMappings.exerciseReviewForm
+
+  override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlCorrResultJsonProtocol
 
   // db
 
@@ -93,15 +89,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
 
   //  override protected def saveSolution(solution: SqlSolution): Future[Boolean] = tables.saveSolution(solution)
-
-  // Read from requests
-
-  override protected def readSolution(user: User, collection: SqlScenario, exercise: SqlExercise, part: SqlExPart)
-                                     (implicit request: Request[AnyContent]): Option[SolType] =
-    request.body.asJson flatMap {
-      case JsString(value) => Some(value)
-      case _               => None
-    }
 
   // Views
 
@@ -123,10 +110,17 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Correction
 
-  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart): Try[SqlCorrResult] =
+  override protected def readSolution(user: User, collection: SqlScenario, exercise: SqlExercise, part: SqlExPart)
+                                     (implicit request: Request[AnyContent]): Option[SolType] =
+    request.body.asJson flatMap {
+      case JsString(value) => Some(value)
+      case _               => None
+    }
+
+  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart): Future[Try[SqlCorrResult]] =
     correctorsAndDaos.get(exercise.exerciseType) match {
-      case None                   => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}"))
-      case Some((corrector, dao)) => Try(corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario))
+      case None                   => Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}")))
+      case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario)
     }
 
   // Other helper methods

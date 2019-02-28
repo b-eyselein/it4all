@@ -2,13 +2,13 @@ package model.uml
 
 import model.core.ExerciseForm
 import model.uml.UmlConsts._
-import model.{ExerciseState, SemanticVersionHelper}
+import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
 import scala.language.postfixOps
 
-object UmlExerciseForm extends ExerciseForm[UmlExercise, UmlCollection] {
+object UmlExerciseForm extends ExerciseForm[UmlExercise, UmlCollection, UmlExerciseReview] {
 
   // UmlClassDiagram
 
@@ -57,7 +57,7 @@ object UmlExerciseForm extends ExerciseForm[UmlExercise, UmlCollection] {
     superClassName -> nonEmptyText
   )(UmlImplementation.apply)(UmlImplementation.unapply)
 
-  private val classDiagramMapping: Mapping[UmlClassDiagram] = mapping(
+  val classDiagramMapping: Mapping[UmlClassDiagram] = mapping(
     classesName -> seq(classMapping),
     associationsName -> seq(associationMapping),
     implementationsName -> seq(implementationMapping)
@@ -71,6 +71,17 @@ object UmlExerciseForm extends ExerciseForm[UmlExercise, UmlCollection] {
   )(UmlSampleSolution.apply)(UmlSampleSolution.unapply)
 
   // Complete exercise
+
+  override val collectionFormat: Form[UmlCollection] = Form(
+    mapping(
+      idName -> number,
+      titleName -> nonEmptyText,
+      authorName -> nonEmptyText,
+      textName -> nonEmptyText,
+      statusName -> ExerciseState.formField,
+      shortNameName -> nonEmptyText
+    )(UmlCollection.apply)(UmlCollection.unapply)
+  )
 
   override val exerciseFormat: Form[UmlExercise] = Form(
     mapping(
@@ -89,15 +100,11 @@ object UmlExerciseForm extends ExerciseForm[UmlExercise, UmlCollection] {
     )(UmlExercise.apply)(UmlExercise.unapply)
   )
 
-  override val collectionFormat: Form[UmlCollection] = Form(
+  override val exerciseReviewForm: Form[UmlExerciseReview] = Form(
     mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(UmlCollection.apply)(UmlCollection.unapply)
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
+    )(UmlExerciseReview.apply)(UmlExerciseReview.unapply)
   )
 
 }

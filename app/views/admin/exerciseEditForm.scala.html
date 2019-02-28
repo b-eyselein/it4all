@@ -17,7 +17,7 @@
 
     @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
 
-        <form class="form" method="post" role="form" action="@exes.routes.ExerciseAdminController.adminEditExercise(toolMainObject.urlPart, exercise.id)">
+        @helper.form(coll.routes.CollectionAdminController.adminEditExercise(toolMainObject.urlPart, collId, exercise.id), 'class -> "form", 'method -> "post", 'role -> "form") {
 
             <div class="row">
                 <div class="col-md-4">
@@ -68,6 +68,6 @@
             <hr>
 
             <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
-        </form>
+        }
     }
 

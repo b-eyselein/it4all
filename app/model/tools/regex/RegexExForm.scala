@@ -2,11 +2,11 @@ package model.tools.regex
 
 import model.core.ExerciseForm
 import model.tools.regex.RegexConsts._
-import model.{ExerciseState, SemanticVersionHelper}
+import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object RegexExForm extends ExerciseForm[RegexExercise, RegexCollection] {
+object RegexExForm extends ExerciseForm[RegexExercise, RegexCollection, RegexExerciseReview] {
 
   // Sample solutions
 
@@ -25,19 +25,6 @@ object RegexExForm extends ExerciseForm[RegexExercise, RegexCollection] {
 
   // Complete exercise
 
-  override val exerciseFormat: Form[RegexExercise] = Form(
-    mapping(
-      idName -> number,
-      semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      samplesName -> seq(sampleMapping),
-      testDataName -> seq(testDataMapping)
-    )(RegexExercise.apply)(RegexExercise.unapply)
-  )
-
   override val collectionFormat: Form[RegexCollection] = Form(
     mapping(
       idName -> number,
@@ -49,4 +36,23 @@ object RegexExForm extends ExerciseForm[RegexExercise, RegexCollection] {
     )(RegexCollection.apply)(RegexCollection.unapply)
   )
 
+
+  override val exerciseFormat    : Form[RegexExercise]       = Form(
+    mapping(
+      idName -> number,
+      semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
+      titleName -> nonEmptyText,
+      authorName -> nonEmptyText,
+      textName -> nonEmptyText,
+      statusName -> ExerciseState.formField,
+      samplesName -> seq(sampleMapping),
+      testDataName -> seq(testDataMapping)
+    )(RegexExercise.apply)(RegexExercise.unapply)
+  )
+  override val exerciseReviewForm: Form[RegexExerciseReview] = Form(
+    mapping(
+      difficultyName -> Difficulties.formField,
+      durationName -> optional(number(min = 0, max = 100))
+    )(RegexExerciseReview.apply)(RegexExerciseReview.unapply)
+  )
 }

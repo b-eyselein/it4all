@@ -4,9 +4,8 @@ import java.nio.file.{Path, Paths}
 
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
-import model.uml.UmlClassDiagram
 import model.uml.UmlExYamlProtocol.UmlSampleSolutionYamlFormat
-import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
+import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -16,6 +15,20 @@ import scala.util.Try
 object ProgExYamlProtocol extends MyYamlProtocol {
 
   val basePath: Path = Paths.get("conf", "resources", "programming")
+
+  object ProgCollectionYamlFormat extends MyYamlObjectFormat[ProgCollection] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[ProgCollection] = for {
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      shortName <- yamlObject.stringField(shortNameName)
+    } yield ProgCollection(id, title, author, text, state, shortName)
+
+    override def write(obj: ProgCollection): YamlValue = ???
+  }
 
   object ProgExYamlFormat extends MyYamlObjectFormat[ProgExercise] {
 
@@ -31,7 +44,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(folderIdentifier).read)
       sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
 
-      maybeClassDiagramPart <- yamlObject.optField(classDiagramPartName, UmlClassDiagPartYamlFormat(baseValues).read)
+      maybeClassDiagramPart <- yamlObject.optField(classDiagramName, UmlSampleSolutionYamlFormat.read).map(_.map(_.sample))
     } yield {
       for (sampleTdFailure <- sampleTestDataTries._2)
       // FIXME: return...
@@ -64,18 +77,6 @@ object ProgExYamlProtocol extends MyYamlProtocol {
           )
       )
     }
-
-  }
-
-  final case class UmlClassDiagPartYamlFormat(baseValues: BaseValues) extends MyYamlObjectFormat[UmlClassDiagPart] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[UmlClassDiagPart] = for {
-      className <- yamlObject.stringField(classNameName)
-      // FIXME: reverse to only UmlClassDiagram
-      classDiagram: UmlClassDiagram <- yamlObject.someField(classDiagramName).flatMap(UmlSampleSolutionYamlFormat.read).map(_.sample)
-    } yield UmlClassDiagPart(baseValues.id, baseValues.semanticVersion, className, classDiagram)
-
-    override def write(obj: UmlClassDiagPart): YamlValue = ???
 
   }
 

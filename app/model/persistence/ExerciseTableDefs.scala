@@ -2,14 +2,15 @@ package model.persistence
 
 import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
-import model.{ExPart, Exercise, HasBaseValues, Points, SampleSolution, SemanticVersion, User, UserSolution}
+import model.{Difficulties, Difficulty, ExPart, Exercise, ExerciseCollection, ExerciseReview, ExerciseState, HasBaseValues, Points, SampleSolution, SemanticVersion, User, UserSolution}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import slick.lifted.ForeignKeyQuery
+import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType]] extends LearningPathTableDefs {
+trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection,
+SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview] extends LearningPathTableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -18,7 +19,10 @@ trait ExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, SampleS
 
   protected type DbExType <: HasBaseValues
 
-  protected type ExTableDef <: HasBaseValuesTable[DbExType]
+  protected type ExTableDef <: ExerciseInCollectionTable
+
+
+  protected type CollTableDef <: ExerciseCollectionTable
 
 
   protected type DbSampleSolType <: ADbSampleSol[SolType]
@@ -30,15 +34,26 @@ trait ExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, SampleS
 
   protected type DbUserSolTable <: AUserSolutionsTable
 
+
+  protected type DbReviewType <: DbExerciseReview[PartType]
+
+  protected type ReviewsTable <: ExerciseReviewsTable
+
   // Table Queries
+
+  protected val collTable: TableQuery[CollTableDef]
 
   protected val exTable: TableQuery[ExTableDef]
 
   protected val solTable: TableQuery[DbUserSolTable]
 
+  protected val reviewsTable: TableQuery[ReviewsTable]
+
   // Helper methods
 
   protected val dbModels: ADbModels[ExType, DbExType, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType]
+
+  protected val exerciseReviewDbModels: AExerciseReviewDbModels[PartType, ReviewType, DbReviewType]
 
   protected def exDbValuesFromExercise(collId: Int, exercise: ExType): DbExType
 
@@ -91,7 +106,37 @@ trait ExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, SampleS
 
   protected implicit val solTypeColumnType: slick.ast.TypedType[SolType]
 
+  protected implicit val difficultyColumnType: BaseColumnType[Difficulty] =
+    MappedColumnType.base[Difficulty, String](_.entryName, Difficulties.withNameInsensitive)
+
   // Abstract table classes
+
+  abstract class ExerciseCollectionTable(tag: Tag, tableName: String) extends Table[CollType](tag, tableName) {
+
+    def id: Rep[Int] = column[Int](idName, O.PrimaryKey)
+
+    def title: Rep[String] = column[String]("title")
+
+    def author: Rep[String] = column[String]("author")
+
+    def text: Rep[String] = column[String]("ex_text")
+
+    def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
+
+    def shortName: Rep[String] = column[String]("short_name")
+
+  }
+
+  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[DbExType](tag, name) {
+
+    def collectionId: Rep[Int] = column[Int]("collection_id")
+
+
+    def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId))
+
+    def scenarioFk: ForeignKeyQuery[CollTableDef, CollType] = foreignKey("scenario_fk", collectionId, collTable)(_.id)
+
+  }
 
   abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
 
@@ -135,5 +180,27 @@ trait ExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, SampleS
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
   }
+
+  abstract class ExerciseReviewsTable(tag: Tag, tableName: String) extends Table[DbReviewType](tag, tableName) {
+
+    def username: Rep[String] = column[String]("username")
+
+    def collectionId: Rep[Int] = column[Int]("collection_id")
+
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
+
+    def exercisePart: Rep[PartType] = column[PartType]("exercise_part")
+
+    def difficulty: Rep[Difficulty] = column[Difficulty]("difficulty")
+
+    def maybeDuration: Rep[Int] = column[Int]("maybe_duration")
+
+
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exercisePart))
+
+    def exerciseFk: ForeignKeyQuery[ExTableDef, DbExType] = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+
+  }
+
 
 }

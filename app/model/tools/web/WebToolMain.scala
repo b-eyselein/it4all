@@ -4,6 +4,7 @@ import better.files.File
 import com.gargoylesoftware.htmlunit.ScriptException
 import javax.inject._
 import model._
+import model.core.result.CompleteResultJsonProtocol
 import model.toolMains._
 import model.tools.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
@@ -27,26 +28,21 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Result types
 
   override type PartType = WebExPart
-
   override type ExType = WebExercise
-
   override type CollType = WebCollection
 
 
   override type SolType = WebSolution
-
   override type SampleSolType = WebSampleSolution
-
   override type UserSolType = WebUserSolution
 
+  override type ReviewType = WebExerciseReview
+
+  override type ResultType = WebResult
+  override type CompResultType = WebCompleteResult
 
   override type Tables = WebTableDefs
 
-  override type ResultType = WebResult
-
-  override type CompResultType = WebCompleteResult
-
-  override type ReviewType = WebExerciseReview
 
   // Other members
 
@@ -56,24 +52,16 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override protected val exParts: Seq[WebExPart] = WebExParts.values
 
-  override protected val completeResultJsonProtocol: WebCompleteResultJsonProtocol.type = WebCompleteResultJsonProtocol
-
-  // Yaml, Html forms
+  // Yaml, Html forms, Json
 
   override protected val collectionYamlFormat: MyYamlFormat[WebCollection] = WebExYamlProtocol.WebCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[WebExercise]   = WebExYamlProtocol.WebExYamlFormat
 
-  override val collectionForm: Form[WebCollection] = WebExerciseForm.collectionFormat
-  override val exerciseForm  : Form[WebExercise]   = WebExerciseForm.exerciseFormat
+  override val collectionForm    : Form[WebCollection]     = WebExerciseForm.collectionFormat
+  override val exerciseForm      : Form[WebExercise]       = WebExerciseForm.exerciseFormat
+  override val exerciseReviewForm: Form[WebExerciseReview] = WebExerciseForm.exerciseReviewForm
 
-  //  override def exerciseReviewForm(username: String, exercise: WebExercise, exercisePart: WebExPart): Form[WebExerciseReview] = Form(
-  //    mapping(
-  //      difficultyName -> Difficulties.formField,
-  //      durationName -> optional(number(min = 0, max = 100))
-  //    )
-  //    (WebExerciseReview(username, exercise.id, exercise.semanticVersion, exercisePart, _, _))
-  //    (wer => Some((wer.difficulty, wer.maybeDuration)))
-  //  )
+  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[WebResult, WebCompleteResult] = WebCompleteResultJsonProtocol
 
   // DB
 
@@ -90,26 +78,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
           case WebExParts.JsPart => super.futureMaybeOldSolution(user, exIdentifier, WebExParts.HtmlPart)
           case _                 => Future.successful(None)
         }
-    }
-
-  // Reading solution from request
-
-  override protected def readSolution(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart)
-                                     (implicit request: Request[AnyContent]): Option[WebSolution] =
-    request.body.asJson match {
-      case None          =>
-        logger.error("Request body does not contain json!")
-        None
-      case Some(jsValue) => jsValue match {
-        case JsString(solution) =>
-          part match {
-            case WebExParts.HtmlPart => Some(WebSolution(htmlSolution = solution, jsSolution = ""))
-            case WebExParts.JsPart   => Some(WebSolution(htmlSolution = "", jsSolution = solution))
-          }
-        case other              =>
-          logger.error("Wrong json content: " + other.toString)
-          None
-      }
     }
 
   // Other helper methods
@@ -145,13 +113,13 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   //  override def renderAdminExerciseEditForm(user: User, newEx: WebExercise, isCreation: Boolean, toolList: ToolList)
   //                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-  //    views.html.idExercises.web.editWebExercise(user, WebExerciseForm.exerciseFormat.fill(newEx), isCreation, this, toolList)
+  //    views.html.idExercises.web.adminEditWebExercise(user, WebExerciseForm.exerciseFormat.fill(newEx), isCreation, this, toolList)
 
   //  override def renderUserExerciseEditForm(user: User, newExForm: Form[WebExercise], isCreation: Boolean)
   //                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
   //    views.html.idExercises.web.editWebExerciseForm(user, newExForm, isCreation, this)
 
-  override def renderExercisePreview(user: User, newExercise: WebExercise, saved: Boolean): Html =
+  override def renderExercisePreview(user: User, collId: Int, newExercise: WebExercise, saved: Boolean): Html =
     views.html.idExercises.web.webPreview(newExercise)
 
   override def renderExercise(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart, maybeOldSolution: Option[WebUserSolution])
@@ -172,6 +140,24 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     views.html.idExercises.web.webPlayground(user)
 
   // Correction
+
+  override protected def readSolution(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart)
+                                     (implicit request: Request[AnyContent]): Option[WebSolution] =
+    request.body.asJson match {
+      case None          =>
+        logger.error("Request body does not contain json!")
+        None
+      case Some(jsValue) => jsValue match {
+        case JsString(solution) =>
+          part match {
+            case WebExParts.HtmlPart => Some(WebSolution(htmlSolution = solution, jsSolution = ""))
+            case WebExParts.JsPart   => Some(WebSolution(htmlSolution = "", jsSolution = solution))
+          }
+        case other              =>
+          logger.error("Wrong json content: " + other.toString)
+          None
+      }
+    }
 
   private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
     case syntaxError: WebDriverException =>
@@ -195,7 +181,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     }
   }
 
-  override def correctEx(user: User, learnerSolution: WebSolution, collection: WebCollection, exercise: WebExercise, part: WebExPart): Try[WebCompleteResult] = {
+  override def correctEx(user: User, learnerSolution: WebSolution, collection: WebCollection, exercise: WebExercise, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
     val toWrite = part match {
       case WebExParts.HtmlPart => learnerSolution.htmlSolution
       case WebExParts.JsPart   => learnerSolution.jsSolution

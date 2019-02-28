@@ -12,7 +12,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[WebExercise, WebExPart, WebCollection, WebSolution, WebSampleSolution, WebUserSolution /*, WebExerciseReview*/ ] {
+  extends HasDatabaseConfigProvider[JdbcProfile]
+    with ExerciseCollectionTableDefs[WebExercise, WebExPart, WebCollection, WebSolution, WebSampleSolution, WebUserSolution, WebExerciseReview] {
 
   import profile.api._
 
@@ -36,14 +37,16 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override protected type DbUserSolTable = WebSolutionsTable
 
 
-  //  override protected type ReviewsTableDef = WebExerciseReviewsTable
+  override protected type DbReviewType = DbWebExerciseReview
+
+  override protected type ReviewsTable = WebExerciseReviewsTable
 
   // Table queries
 
-  override protected val exTable   = TableQuery[WebExercisesTable]
-  override protected val collTable = TableQuery[WebCollectionsTable]
-  override protected val solTable  = TableQuery[WebSolutionsTable]
-  //  override protected val reviewsTable = TableQuery[WebExerciseReviewsTable]
+  override protected val exTable      = TableQuery[WebExercisesTable]
+  override protected val collTable    = TableQuery[WebCollectionsTable]
+  override protected val solTable     = TableQuery[WebSolutionsTable]
+  override protected val reviewsTable = TableQuery[WebExerciseReviewsTable]
 
   private val htmlTasksTable  = TableQuery[HtmlTasksTable]
   private val attributesTable = TableQuery[AttributesTable]
@@ -56,7 +59,8 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Helper methods
 
-  override protected val dbModels = WebDbModels
+  override protected val dbModels               = WebDbModels
+  override protected val exerciseReviewDbModels = WebExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbWebUserSolution, newId: Int): DbWebUserSolution = oldSol.copy(id = newId)
 
@@ -73,7 +77,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override def completeExForEx(collId: Int, ex: DbWebExercise): Future[WebExercise] = for {
     htmlTasks <- htmlTasksForExercise(collId, ex.id)
     jsTasks <- jsTasksForExercise(collId, ex.id)
-    sampleSolutions <- db.run(sampleSolutionsTable filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map (dbModels.sampleSolFromDbSampleSol))
+    sampleSolutions <- db.run(sampleSolutionsTable filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map dbModels.sampleSolFromDbSampleSol)
   } yield dbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), sampleSolutions)
 
   private def htmlTasksForExercise(collId: Int, exId: Int): Future[Seq[HtmlTask]] = {
@@ -291,11 +295,10 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  //  class WebExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "web_exercise_reviews") {
-  //
-  //    override def * : ProvenShape[WebExerciseReview] = (username, exerciseId, exerciseSemVer,
-  //      exercisePart, difficulty, maybeDuration.?) <> (WebExerciseReview.tupled, WebExerciseReview.unapply)
-  //
-  //  }
+  class WebExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "web_exercise_reviews") {
+
+    override def * : ProvenShape[DbWebExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbWebExerciseReview.tupled, DbWebExerciseReview.unapply)
+
+  }
 
 }

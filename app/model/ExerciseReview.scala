@@ -1,14 +1,6 @@
 package model
 
-trait ExerciseReview[PartType <: ExPart] {
-
-  val username: String
-
-  val exerciseId: Int
-
-  val exerciseSemVer: SemanticVersion
-
-  val exercisePart: PartType
+trait ExerciseReview {
 
   val difficulty: Difficulty
 
