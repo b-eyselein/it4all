@@ -20,7 +20,7 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionContext)
-  extends ASingleExerciseToolMain("Uml", "uml") {
+  extends ASingleExerciseToolMain("Uml - Klassendiagramme", "uml") {
 
   // Result types
 
