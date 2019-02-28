@@ -4,7 +4,8 @@ import model._
 import model.programming.{ProgDataType, ProgLanguage}
 import play.twirl.api.Html
 
-// Classes for use
+final case class RoseCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
+  extends ExerciseCollection
 
 final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                               fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution])
@@ -35,14 +36,12 @@ final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
 }
 
-// Case classes for tables
+final case class RoseInputType(id: Int, name: String, inputType: ProgDataType)
 
-final case class RoseInputType(id: Int, exerciseId: Int, exSemVer: SemanticVersion, name: String, inputType: ProgDataType)
-
-final case class RoseSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, sample: String)
+final case class RoseSampleSolution(id: Int, language: ProgLanguage, sample: String)
   extends SampleSolution[String]
 
-final case class RoseSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: RoseExPart, solution: String, points: Points, maxPoints: Points)
+final case class RoseUserSolution(id: Int, part: RoseExPart, language: ProgLanguage, solution: String, points: Points, maxPoints: Points)
   extends UserSolution[RoseExPart, String]
 
 final case class RoseExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: RoseExPart, difficulty: Difficulty, maybeDuration: Option[Int])

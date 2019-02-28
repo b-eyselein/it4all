@@ -1,0 +1,214 @@
+- id: 1
+  semanticVersion: 1.0.0
+  title: Party
+  author: bje40dc
+  text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+  status: APPROVED
+
+  rootNode: party
+  grammarDescription: >
+    In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von Gästen [gast] (mindestens ein Gast war
+    anwesend). Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast
+    hat mindestens ein Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.
+
+  samples:
+    - id: 1
+      grammar: |
+        <!ELEMENT party (gast+)>
+        <!ATTLIST party datum CDATA #REQUIRED>
+        <!ELEMENT gast (vorname, nachname, getraenk+)>
+        <!ELEMENT vorname (#PCDATA)>
+        <!ELEMENT nachname (#PCDATA)>
+        <!ELEMENT getraenk (#PCDATA)>
+        <!ATTLIST gast
+          ledig (true | false) #REQUIRED
+          nuechtern (true | false) #REQUIRED
+        >
+      document: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE party SYSTEM "party.dtd">
+        <party datum="1999-31-12">
+          <gast ledig="false" nuechtern="true">
+            <vorname>Jason</vorname>
+            <nachname>Bourne</nachname>
+            <getraenk>Wasser</getraenk>
+          </gast>
+          <gast ledig="true" nuechtern="false">
+            <vorname>James</vorname>
+            <nachname>Bourne</nachname>
+            <getraenk>Wodka Martini, geschüttelt nicht gerührt</getraenk>
+          </gast>
+        </party>
+
+- id: 2
+  title: Vorlesung
+  author: bje40dc
+  text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+  status: APPROVED
+  semanticVersion: 1.0.0
+
+  rootNode: lecture
+  grammarDescription: >
+    In den XML-Dateien soll eine Vorlesung [lecture] beschrieben werden. Diese hat mindestens einen Dozenten [lecturer],
+    mindestens einen Vorlesungszeitraum [date] und es nimmt mindestens ein Student [student] teil. Ein Dozent hat einen
+    Namen [name] und einen Titel [title]. Ein Vorlesungszeitraum besteht aus einer Zeit [hours] und einem
+    Wochentag [weekday] mit Werten von Montag bis Sonntag ("mon", "tue", "wed", "thu", "fri", "sat", "sun"). Ein
+    Student hat einen Namen und eine Matrikelnummer [matrikel].
+
+  samples:
+    - id: 1
+      grammar: |
+        <!ELEMENT lecture (lecturer+, date+, student+)>
+        <!ELEMENT lecturer (name)>
+        <!ATTLIST lecturer title CDATA #REQUIRED>
+        <!ELEMENT date (hours)>
+        <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun) #REQUIRED>
+        <!ELEMENT student (name)>
+        <!ATTLIST student matrikel CDATA #REQUIRED>
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT hours (#PCDATA)>
+      document: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE lecture SYSTEM "lecture.dtd">
+        <lecture>
+          <lecturer title="Prof.">
+            <name>Jason Bourne</name>
+          </lecturer>
+          <lecturer title="Commander">
+            <name>James Bond</name>
+          </lecturer>
+          <date weekday="mon">
+            <hours>16.00 to 18.00</hours>
+          </date>
+          <student matrikel="173">
+            <name>Jack Bauer</name>
+          </student>
+        </lecture>
+
+    - id: 2
+      grammar: |
+        <!ELEMENT lecture (lecturer+, date+, student+)>
+        <!ELEMENT lecturer (name, title)>
+        <!ELEMENT date (hours)>
+        <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun) #REQUIRED>
+        <!ELEMENT student (name, matrikel)>
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT hours (#PCDATA)>
+        <!ELEMENT title (#PCDATA)>
+        <!ELEMENT matrikel (#PCDATA)>
+      document: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE lecture SYSTEM "lecture.dtd">
+        <lecture>
+          TODO!
+        </lecture>
+- id: 3
+  title: Krankenhaus
+  author: bje40dc
+  text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+  status: APPROVED
+  semanticVersion: 1.0.0
+
+  rootNode: praxis
+  grammarDescription: >
+    In dieser XML-Datei soll eine Praxis [praxis] beschrieben werden. In dieser arbeitet mindestens ein Arzt [arzt].
+    Ein Arzt hat einen Namen [name] und mindestens einen Termin [termin]. Ein Termin besteht aus einem Datum [datum], einer
+    Uhrzeit [uhrzeit], einem Patienten und einer (optionalen) Beschreibung [beschreibung]. Außerdem wird für jeden Termin
+    gespeichert [art], ob es eine Untersuchung [untersuchung], Behandlung [behandlung] oder eine Operation [operation] ist.
+
+  samples:
+    - id: 1
+      grammar: |
+        <!ELEMENT praxis (arzt+)>
+        <!ELEMENT arzt (name, termin+)>
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT termin (datum, uhrzeit, patient, beschreibung?)>
+        <!ATTLIST termin art (untersuchung | behandlung | operation) #REQUIRED>
+        <!ELEMENT datum (#PCDATA)>
+        <!ELEMENT uhrzeit (#PCDATA)>
+        <!ELEMENT patient (#PCDATA)>
+        <!ELEMENT beschreibung (#PCDATA)>
+      document: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE praxis SYSTEM "praxis.dtd">
+        <praxis>
+          TODO!
+        </praxis>
+
+- id: 4
+  title: Frühstück
+  author: bje40dc
+  text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
+  status: APPROVED
+  semanticVersion: 1.0.0
+
+  rootNode: breakfast
+  grammarDescription: >
+    Mit dieser DTD sollen XML-Dokumente erstellt werden, die das Frühstücksmenü eines Restaurants darstellen. Auf der
+    Frühstückskarte [breakfast] werden mehrere Speißen [food] angeboten. Jede Speiße hat einen Namen [food],
+    einen Preis [price], eine Beschreibung [description] und eine Anzahl an Kalorien [calories].
+
+  samples:
+    - id: 1
+      grammar: |
+        <!ELEMENT breakfast (food+)>
+        <!ELEMENT food (name, price, description, calories)>
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT price (#PCDATA)>
+        <!ELEMENT description (#PCDATA)>
+        <!ELEMENT calories (#PCDATA)>
+      document: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE lecture SYSTEM "lecture.dtd">
+- id: 5
+  title: Bibliothek
+  author: bje40dc
+  text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
+  status: APPROVED
+  semanticVersion: 1.0.0
+
+  rootNode: bibliothek
+  grammarDescription: >
+    In dieser Aufgabe soll eine XML-Grammatik für die Beschreibung einer Bibliothek [bibliothek] erstellt werden. Diese
+    besteht aus mehreren Abteilung, die jeweils einen Titel [titel] und Bücher [buch] enthalten. Die Bücher wiederum
+    besitzen eine ISBN [isbn], einen Titel, einen Autor [autor], eventuell mehrere Co-Autoren [coautor], und ein
+    Veröffentlichungsjahr [jahr]. Außerdem kann optional ein Verlag [verlag] bzw. eine Auflage [auflage] angegeben sein.
+
+  samples:
+    - id: 1
+      grammar: |
+        <!ELEMENT bibliothek (abteilung+)>
+        <!ELEMENT abteilung (titel, buch+)>
+        <!ELEMENT buch (isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
+        <!ATTLIST buch id CDATA #REQUIRED>
+        <!ELEMENT isbn (#PCDATA)>
+        <!ELEMENT titel (#PCDATA)>
+        <!ELEMENT autor (#PCDATA)>
+        <!ELEMENT coautor (#PCDATA)>
+        <!ELEMENT verlag (#PCDATA)>
+        <!ELEMENT auflage (#PCDATA)>
+        <!ELEMENT jahr (#PCDATA)>
+      document: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE bibliothek SYSTEM "bibliothek.dtd">
+        <bibliothek>
+          <abteilung>
+          </abteilung>
+        </bibliothek>
+
+    - id: 2
+      grammar: |
+        <!ELEMENT bibliothek (abteilung+)>
+        <!ELEMENT abteilung (titel, buch+)>
+        <!ELEMENT buch (id, isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
+        <!ELEMENT id (#PCDATA)>
+        <!ELEMENT isbn (#PCDATA)>
+        <!ELEMENT titel (#PCDATA)>
+        <!ELEMENT autor (#PCDATA)>
+        <!ELEMENT coautor (#PCDATA)>
+        <!ELEMENT verlag (#PCDATA)>
+        <!ELEMENT auflage (#PCDATA)>
+        <!ELEMENT jahr (#PCDATA)>
+      document: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE bibliothek SYSTEM "bibliothek.dtd">

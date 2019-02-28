@@ -5,7 +5,8 @@ import play.twirl.api.Html
 
 import scala.language.postfixOps
 
-// Classes for use
+final case class UmlCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
+  extends ExerciseCollection
 
 final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String,
                              state: ExerciseState, markedText: String, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution])
@@ -58,11 +59,11 @@ final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
 
 // Table classes
 
-final case class UmlSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, sample: UmlClassDiagram)
+final case class UmlSampleSolution(id: Int, sample: UmlClassDiagram)
   extends SampleSolution[UmlClassDiagram]
 
-final case class UmlSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: UmlExPart,
-                             solution: UmlClassDiagram, points: Points, maxPoints: Points) extends UserSolution[UmlExPart, UmlClassDiagram]
+final case class UmlUserSolution(id: Int, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points)
+  extends UserSolution[UmlExPart, UmlClassDiagram]
 
 final case class UmlExerciseReview(username: String, exerciseId: Int, exerciseSemVer: SemanticVersion, exercisePart: UmlExPart,
                                    difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview[UmlExPart]

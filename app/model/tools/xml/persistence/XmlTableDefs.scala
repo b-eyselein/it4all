@@ -1,0 +1,148 @@
+package model.tools.xml.persistence
+
+import model.persistence.ExerciseCollectionTableDefs
+import model.tools.xml._
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.ast.TypedType
+import slick.jdbc.JdbcProfile
+import slick.lifted.{PrimaryKey, ProvenShape}
+
+import scala.concurrent.{ExecutionContext, Future}
+
+class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[XmlExercise, XmlExPart, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution /*, XmlExerciseReview*/ ] {
+
+  import profile.api._
+
+  // Abstract types
+
+  override protected type DbExType = DbXmlExercise
+
+  override protected type ExTableDef = XmlExercisesTable
+
+  override protected type CollTableDef = XmlCollectionsTable
+
+
+  override protected type DbSampleSolType = DbXmlSampleSolution
+
+  override protected type DbSampleSolTable = XmlSamplesTable
+
+
+  override protected type DbUserSolType = DbXmlUserSolution
+
+  override protected type DbUserSolTable = XmlSolutionsTable
+
+
+  //  override protected type ReviewsTableDef = XmlExerciseReviewsTable
+
+  // Table Queries
+
+  override protected val collTable: TableQuery[XmlCollectionsTable] = TableQuery[XmlCollectionsTable]
+  override protected val exTable  : TableQuery[XmlExercisesTable]   = TableQuery[XmlExercisesTable]
+  override protected val solTable : TableQuery[XmlSolutionsTable]   = TableQuery[XmlSolutionsTable]
+  //  override protected val reviewsTable = TableQuery[XmlExerciseReviewsTable]
+
+  private val samplesTable = TableQuery[XmlSamplesTable]
+
+  // Helper methods
+
+  override protected val dbModels = XmlDbModels
+
+  override protected def copyDbUserSolType(oldSol: DbXmlUserSolution, newId: Int): DbXmlUserSolution = oldSol.copy(id = newId)
+
+  override protected def exDbValuesFromExercise(collId: Int, compEx: XmlExercise): DbXmlExercise =
+    dbModels.dbExerciseFromExercise(collId, compEx)
+
+  // Reading
+
+  override protected def completeExForEx(collId: Int, ex: DbXmlExercise): Future[XmlExercise] = for {
+    samples <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result) map (_ map dbModels.sampleSolFromDbSampleSol)
+  } yield dbModels.exerciseFromDbValues(ex, samples)
+
+  //  override def futureUserCanSolvePartOfExercise(username: String, collId: Int, exId: Int, exSemVer: SemanticVersion, part: XmlExPart): Future[Boolean] = part match {
+  //    case XmlExParts.GrammarCreationXmlPart  => Future.successful(true)
+  //    case XmlExParts.DocumentCreationXmlPart => futureMaybeOldSolution(username, collId, exId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
+  //  }
+
+  override def futureSampleSolutionsForExPart(collId: Int, exId: Int, part: XmlExPart): Future[Seq[String]] =
+    db.run(
+      samplesTable
+        .filter { s => s.collectionId === collId && s.exerciseId === exId }
+        .map { sampleSol =>
+          part match {
+            case XmlExParts.GrammarCreationXmlPart  => sampleSol.grammar
+            case XmlExParts.DocumentCreationXmlPart => sampleSol.document
+          }
+        }
+        .result)
+
+  // Saving
+
+  override def saveExerciseRest(collId: Int, compEx: XmlExercise): Future[Boolean] = {
+    val dbSamples = compEx.samples map (s => dbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+
+    for {
+      samplesSaved <- saveSeq[DbXmlSampleSolution](dbSamples, i => db.run(samplesTable += i), Some("XmlSample"))
+    } yield samplesSaved
+  }
+
+
+  // Column Types
+
+  override protected implicit val solTypeColumnType: TypedType[XmlSolution] = null //ScalaBaseType.stringType
+
+  override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
+    MappedColumnType.base[XmlExPart, String](_.entryName, XmlExParts.withNameInsensitive)
+
+  // Actual table defs
+
+  class XmlCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "xml_collections") {
+
+    override def * : ProvenShape[XmlCollection] = (id, title, author, text, state, shortName) <> (XmlCollection.tupled, XmlCollection.unapply)
+
+  }
+
+  class XmlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "xml_exercises") {
+
+    def rootNode: Rep[String] = column[String]("root_node")
+
+    def grammarDescription: Rep[String] = column[String]("grammar_description")
+
+
+    override def * : ProvenShape[DbXmlExercise] = (id, semanticVersion, collectionId, title, author, text, state, grammarDescription, rootNode) <> (DbXmlExercise.tupled, DbXmlExercise.unapply)
+
+  }
+
+  class XmlSamplesTable(tag: Tag) extends ASampleSolutionsTable(tag, "xml_samples") {
+
+    def grammar: Rep[String] = column[String]("grammar")
+
+    def document: Rep[String] = column[String]("document")
+
+
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
+
+
+    override def * : ProvenShape[DbXmlSampleSolution] = (id, exerciseId, exSemVer, collectionId, document, grammar) <> (DbXmlSampleSolution.tupled, DbXmlSampleSolution.unapply)
+
+  }
+
+  class XmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "xml_solutions") {
+
+    def grammar: Rep[String] = column[String]("grammar")
+
+    def document: Rep[String] = column[String]("document")
+
+
+    override def * : ProvenShape[DbXmlUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part,
+      document, grammar, points, maxPoints) <> (DbXmlUserSolution.tupled, DbXmlUserSolution.unapply)
+
+  }
+
+  //  class XmlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "xml_exercise_reviews") {
+  //
+  //    override def * : ProvenShape[XmlExerciseReview] = (username, exerciseId, exerciseSemVer, exercisePart, difficulty, maybeDuration.?) <> (XmlExerciseReview.tupled, XmlExerciseReview.unapply)
+  //
+  //  }
+
+}

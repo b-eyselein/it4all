@@ -4,32 +4,28 @@ import model.CollectionConsts
 
 object SqlConsts extends CollectionConsts {
 
-  val additionalComparisonsName = "additionalComparisons"
+  val additionalComparisonsName: String = "additionalComparisons"
 
-  val columnComparisonsName = "columnComparisons"
-  val COLUMNS_NAME          = "Spalten"
+  val columnComparisonsName: String = "columnComparisons"
 
-  val sqlDelimiter = ";"
+  val sqlDelimiter: String = ";"
 
-  val executionName = "executionResults"
+  val executionResultsName: String = "executionResults"
 
-  val hintName = "hint"
+  val hintName: String = "hint"
 
-  val joinExpressionsComparisonsName = "joinExpressionComparisons"
+  val joinExpressionsComparisonsName: String = "joinExpressionComparisons"
 
-  val sampleResultName = "sampleResult"
-  val shortNameName    = "shortName"
-  val SELECT_ALL_DUMMY = "SELECT * FROM "
-  val SHOW_ALL_TABLES  = "SHOW TABLES"
+  val sampleResultName: String = "sampleResult"
+  val SELECT_ALL_DUMMY         = "SELECT * FROM "
 
-  val tableComparisonsName  = "tableComparisons"
-  val tagsName              = "tags"
-  val tagsArrayName: String = arrayName(tagsName)(None)
+  val tableComparisonsName: String = "tableComparisons"
+  val tagsName            : String = "tags"
+  val tagsArrayName       : String = arrayName(tagsName)(None)
 
-  val userErrorName  = "userError"
-  val userResultName = "userResult"
+  val userResultName: String = "userResult"
 
-  val whereComparisonsName = "whereComparisons"
+  val whereComparisonsName: String = "whereComparisons"
 
   def samplesArrayName(count: Int = -1): String = arrayName(samplesName)(if (count > 0) Some(count) else None)
 

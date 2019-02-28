@@ -12,7 +12,7 @@ import scala.util.{Failure, Success, Try}
 
 object TestDataJsonFormat {
 
-  def dumpTestDataToJson(exercise: ProgExercise, testData: Seq[TestData]): JsValue = Json.obj(
+  def dumpTestDataToJson(exercise: ProgExercise, testData: Seq[ProgTestData]): JsValue = Json.obj(
     simplifiedName -> Json.obj(
       functionNameName -> JsString(exercise.functionName),
       "test_data" -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.outputType),
@@ -22,7 +22,7 @@ object TestDataJsonFormat {
   )
 
   // FIXME: how to display input? ==> with variable name!!
-  private def dumpTestData(testData: Seq[TestData], sortedInputs: Seq[ProgInput], outputType: ProgDataType): JsValue =
+  private def dumpTestData(testData: Seq[ProgTestData], sortedInputs: Seq[ProgInput], outputType: ProgDataType): JsValue =
     JsArray(testData sortBy (_.id) map { td =>
       Json.obj(
         idName -> td.id,
@@ -53,7 +53,7 @@ object ResultsFileJsonFormat {
       (__ \ "errors").read[String]
     ) (ResultFileContent.apply(_, _, _))
 
-  def readResultFile(targetFile: File, completeTestData: Seq[TestData]): Try[Seq[ExecutionResult]] = {
+  def readResultFile(targetFile: File, completeTestData: Seq[ProgTestData]): Try[Seq[ExecutionResult]] = {
 
     resultsFileJsonReads.reads(Json.parse(targetFile.contentAsString)) match {
       case JsSuccess(result: ResultFileContent, _) =>

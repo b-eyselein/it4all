@@ -56,22 +56,8 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   // Reading Yaml
 
-  protected val yamlFormat: MyYamlFormat[ReadType]
-
   def yamlString: Future[String]
 
-  def readImports: Seq[Try[ReadType]] = {
-    val subDirectories = exerciseResourcesFolder.list filter (_.isDirectory) toSeq
-
-    subDirectories map { subDirectory: File =>
-      val filesToRead: Seq[File] = subDirectory.list.toList sortBy (_.name)
-
-      filesToRead find (_.name.toString endsWith ".yaml") match {
-        case None           => Failure(new Exception(s"There is no yaml file in folder ${subDirectory.toString}"))
-        case Some(filePath) => yamlFormat.read(filePath.contentAsString.parseYaml)
-      }
-    }
-  }
 
   // DB Operations
 
@@ -79,7 +65,7 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
 
   def futureAllExercises: Future[Seq[ExType]] = tables.futureAllExes
 
-  def futureInsertExercise(exercise: ExType): Future[Boolean] = tables.futureInsertExercise(exercise)
+  def futureInsertExercise(collId: Int, exercise: ExType): Future[Boolean] = tables.futureInsertExercise(collId, exercise)
 
   //  def futureSaveRead(exercises: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]]
 
@@ -94,6 +80,6 @@ abstract class FixedExToolMain(aToolName: String, aUrlPart: String)(implicit ec:
     ???
   }
 
-  def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html
+//  def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ReadType], toolList: ToolList): Html
 
 }

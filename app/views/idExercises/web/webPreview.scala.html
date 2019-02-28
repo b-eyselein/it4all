@@ -1,21 +1,21 @@
-@(webExercise: model.web.WebExercise)
+@(webExercise: model.tools.web.WebExercise)
 
-    @dispHtmlTask(htmlTask: model.web.HtmlCompleteTask) = {
+    @dispHtmlTask(htmlTask: model.tools.web.HtmlTask) = {
         <div class="row">
             <div class="col-md-2"><b>ID:</b></div>
-            <div class="col-md-10">@htmlTask.task.id</div>
+            <div class="col-md-10">@htmlTask.id</div>
         </div>
         <div class="row">
             <div class="col-md-2"><b>Text:</b></div>
-            <div class="col-md-10">@htmlTask.task.text</div>
+            <div class="col-md-10">@htmlTask.text</div>
         </div>
         <div class="row">
             <div class="col-md-2"><b>Textinhalt:</b></div>
-            <div class="col-md-10">@htmlTask.task.textContent.getOrElse("--")</div>
+            <div class="col-md-10">@htmlTask.textContent.getOrElse("--")</div>
         </div>
         <div class="row">
             <div class="col-md-2"><b>XPath Query:</b></div>
-            <div class="col-md-10">@htmlTask.task.xpathQuery</div>
+            <div class="col-md-10">@htmlTask.xpathQuery</div>
         </div>
         <div class="row">
             <div class="col-md-2"><b>Attribute:</b></div>
@@ -29,28 +29,28 @@
         </div>
     }
 
-    @dispJsTask(jsTask: model.web.JsCompleteTask) = {
+    @dispJsTask(jsTask: model.tools.web.JsTask) = {
         <div class="row">
             <div class="col-md-6">
                 <div class="row">
                     <div class="col-md-6"><b>ID:</b></div>
-                    <div class="col-md-6">@jsTask.task.id</div>
+                    <div class="col-md-6">@jsTask.id</div>
                 </div>
                 <div class="row">
                     <div class="col-md-6"><b>Text:</b></div>
-                    <div class="col-md-6">@jsTask.task.text</div>
+                    <div class="col-md-6">@jsTask.text</div>
                 </div>
                 <div class="row">
                     <div class="col-md-6"><b>XPath Query:</b></div>
-                    <div class="col-md-6">@jsTask.task.xpathQuery</div>
+                    <div class="col-md-6">@jsTask.xpathQuery</div>
                 </div>
                 <div class="row">
                     <div class="col-md-6"><b>Keys:</b></div>
-                    <div class="col-md-6">@jsTask.task.keysToSend.getOrElse("--")</div>
+                    <div class="col-md-6">@jsTask.keysToSend.getOrElse("--")</div>
                 </div>
                 <div class="row">
                     <div class="col-md-6"><b>Typ d. Aktion:</b></div>
-                    <div class="col-md-6">@jsTask.task.actionType.entryName</div>
+                    <div class="col-md-6">@jsTask.actionType.entryName</div>
                 </div>
             </div>
 

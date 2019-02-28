@@ -7,11 +7,10 @@ import model.core._
 import model.programming.ProgToolMain
 import model.toolMains.{ASingleExerciseToolMain, SingleExerciseIdentifier, ToolList}
 import model.uml._
-import model.web.{WebExParts, WebToolMain}
+import model.tools.web.{WebExParts, WebToolMain}
 import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms.single
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 import play.api.libs.ws._
@@ -33,7 +32,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Helpers
 
-  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
+  //  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
   // Views
 
@@ -89,7 +88,7 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
         println(compEx)
 
-        toolMain.futureInsertExercise(compEx).transform {
+        toolMain.futureInsertExercise(collId = -1, compEx).transform {
           case Success(saved) => Success(Ok(toolMain.renderExercisePreview(user, compEx, saved)))
           case Failure(error) =>
             Logger.error("Error while saving an exercise", error)
@@ -218,9 +217,10 @@ class ExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def showSolutions(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.futureSolutionsForExercise(id) map {
-        solutions => Ok(views.html.admin.idExes.idExerciseSolutions(user, solutions, toolList, toolMain))
-      }
+      ???
+    //      for {
+    //        solutions <- toolMain.futureSolutionsForExercise(id)
+    //      } yield Ok(views.html.admin.idExes.idExerciseSolutions(user, solutions, toolList, toolMain))
   }
 
   // Other routes

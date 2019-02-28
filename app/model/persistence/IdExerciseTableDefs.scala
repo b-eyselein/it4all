@@ -11,8 +11,8 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, SampleSolType <: SampleSolution[SolType], DBSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview[PartType]]
-  extends ExerciseTableDefs[ExType, PartType, SolType, SampleSolType, DBSolType] {
+trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview[PartType]]
+  extends ExerciseTableDefs[ExType, PartType, SolType, SampleSolType, UserSolType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -33,15 +33,15 @@ trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, Sampl
 
   // Update
 
-  def futureInsertExercise(compEx: ExType): Future[Boolean] = {
+  override def futureInsertExercise(collId: Int, compEx: ExType): Future[Boolean] = {
     val deleteOldExQuery = exTable.filter {
       dbEx: ExTableDef => dbEx.id === compEx.id && dbEx.semanticVersion === compEx.semanticVersion
     }.delete
-    val insertNewExQuery = exTable += exDbValuesFromExercise(compEx)
+    val insertNewExQuery = exTable += exDbValuesFromExercise(collId, compEx)
 
     db.run(deleteOldExQuery) flatMap { _ =>
       db.run(insertNewExQuery) flatMap {
-        insertCount: Int => saveExerciseRest(compEx)
+        insertCount: Int => saveExerciseRest(collId, compEx)
       }
     }
   }
@@ -66,17 +66,25 @@ trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, Sampl
 
   // Queries
 
-  def futureOldSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: PartType): Future[Option[DBSolType]] = db.run(solTable
-    .filter { sol => sol.username === username && sol.exerciseId === exerciseId && sol.part === part && sol.exSemVer === exSemVer }
-    .sortBy(_.id.desc)
-    .result.headOption)
+  def futureOldSolution(username: String, exerciseId: Int, exSemVer: SemanticVersion, part: PartType): Future[Option[UserSolType]] = db.run(
+    solTable
+      .filter {
+        sol => sol.username === username && sol.exerciseId === exerciseId && sol.part === part && sol.exSemVer === exSemVer
+      }
+      .sortBy(_.id.desc)
+      .result
+      .headOption
+      .map(_ map dbModels.userSolFromDbUserSol)
+  )
 
-  protected def copyDBSolType(oldSol: DBSolType, newId: Int): DBSolType
+  protected def copyDbUserSolType(oldSol: DbUserSolType, newId: Int): DbUserSolType
 
-  def futureSaveSolution(sol: DBSolType): Future[Boolean] = {
-    val insertQuery = solTable returning solTable.map(_.id) into ((sol, id) => copyDBSolType(sol, id))
+  def futureSaveSolution(exId: Int, exSemVer: SemanticVersion, username: String, sol: UserSolType): Future[Boolean] = {
+    val dbSol = dbModels.dbUserSolFromUserSol(exId, exSemVer, collId = -1, username, sol)
 
-    db.run(insertQuery += sol) transform {
+    val insertQuery = solTable returning solTable.map(_.id) into ((dbSol, id) => copyDbUserSolType(dbSol, id))
+
+    db.run(insertQuery += dbSol) transform {
       case Success(_)     => Success(true)
       case Failure(error) =>
         Logger.error("Error while saving sample solution", error)
@@ -84,7 +92,8 @@ trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, Sampl
     }
   }
 
-  def futureOldSolutions(exerciseId: Int): Future[Seq[DBSolType]] = db.run(solTable.filter(_.exerciseId === exerciseId).result)
+  def futureOldSolutions(exerciseId: Int): Future[Seq[UserSolType]] =
+    db.run(solTable.filter(_.exerciseId === exerciseId).result.map(_ map dbModels.userSolFromDbUserSol))
 
   def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, part: PartType): Future[Boolean] = Future(true)
 
@@ -114,7 +123,7 @@ trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, Sampl
 
   // Abstract table definitions
 
-  abstract class ExerciseTableDef(tag: Tag, tableName: String) extends HasBaseValuesTable[ExDbValues](tag, tableName) {
+  abstract class ExerciseTableDef(tag: Tag, tableName: String) extends HasBaseValuesTable[DbExType](tag, tableName) {
 
     def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion))
 
@@ -137,7 +146,7 @@ trait IdExerciseTableDefs[ExType <: Exercise, PartType <: ExPart, SolType, Sampl
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exercisePart))
 
-    def exerciseFk: ForeignKeyQuery[ExTableDef, ExDbValues] = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
+    def exerciseFk: ForeignKeyQuery[ExTableDef, DbExType] = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
   }
 

@@ -15,7 +15,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[SqlSample], exercise: SqlExercise, scenario: SqlScenario): SqlCorrResult =
+  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[SqlSampleSolution], exercise: SqlExercise, scenario: SqlScenario): SqlCorrResult =
     parseStatement(learnerSolution) flatMap checkStatement match {
       case Failure(error) => SqlParseFailed(learnerSolution, error)
       case Success(userQ) =>

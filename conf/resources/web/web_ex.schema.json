@@ -23,7 +23,7 @@
           "htmlSample": {"type": "string"},
           "jsSample": {"type": "string"}
         },
-        "required": ["id"]
+        "required": ["id", "htmlSample", "jsSample"]
       }
     }
   },

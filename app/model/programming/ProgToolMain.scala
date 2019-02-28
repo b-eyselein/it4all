@@ -36,7 +36,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override type SampleSolType = ProgSampleSolution
 
-  override type UserSolType = DBProgSolution
+  override type UserSolType = ProgUserSolution
 
   override type Tables = ProgTableDefs
 
@@ -98,12 +98,12 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgExercise = ProgExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
     folderIdentifier = "", functionName = "", outputType = ProgDataTypes.STRING, baseData = None,
-    inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[SampleTestData](), maybeClassDiagramPart = None
+    inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[ProgSampleTestData](), maybeClassDiagramPart = None
   )
 
-  override def instantiateSolution(id: Int, username: String, exercise: ProgExercise, part: ProgExPart,
-                                   solution: ProgSolution, points: Points, maxPoints: Points): DBProgSolution =
-    DBProgSolution(id, username, exercise.id, exercise.semanticVersion, part, solution.solution, solution.language, solution.extendedUnitTests, points, maxPoints)
+  override def instantiateSolution(id: Int, exercise: ProgExercise, part: ProgExPart,
+                                   solution: ProgSolution, points: Points, maxPoints: Points): ProgUserSolution =
+    ProgUserSolution(id, part, solution, solution.language, solution.extendedUnitTests, points, maxPoints)
 
   // Correction
 
@@ -117,7 +117,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Views
 
-  override def renderExercise(user: User, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[DBProgSolution])
+  override def renderExercise(user: User, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[ProgUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
     // FIXME: how to get language? ==> GET param?
@@ -125,7 +125,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
     part match {
       case ProgExParts.TestdataCreation =>
-        val oldTestData: Seq[CommitedTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[CommitedTestData]())
+        val oldTestData: Seq[ProgUserTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[ProgUserTestData]())
         views.html.idExercises.programming.testDataCreation(user, exercise, oldTestData, this)
 
       case ProgExParts.Implementation =>

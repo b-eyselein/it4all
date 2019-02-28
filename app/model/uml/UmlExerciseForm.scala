@@ -1,14 +1,14 @@
 package model.uml
 
-import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
 import model.core.ExerciseForm
-import play.api.data.{Form, Mapping}
-import play.api.data.Forms._
 import model.uml.UmlConsts._
+import model.{ExerciseState, SemanticVersionHelper}
+import play.api.data.Forms._
+import play.api.data.{Form, Mapping}
 
 import scala.language.postfixOps
 
-object UmlExerciseForm extends ExerciseForm[UmlExercise] {
+object UmlExerciseForm extends ExerciseForm[UmlExercise, UmlCollection] {
 
   // UmlClassDiagram
 
@@ -65,41 +65,14 @@ object UmlExerciseForm extends ExerciseForm[UmlExercise] {
 
   // UmlSampleSolution
 
-  final case class UmlSampleSolutionFormValues(id: Int, sample: UmlClassDiagram)
-
-  private val sampleSolutionMapping: Mapping[UmlSampleSolutionFormValues] = mapping(
+  private val sampleSolutionMapping: Mapping[UmlSampleSolution] = mapping(
     idName -> number,
     sampleName -> classDiagramMapping
-  )(UmlSampleSolutionFormValues.apply)(UmlSampleSolutionFormValues.unapply)
-
-  private def unapplySampleSolution(sample: UmlSampleSolution): UmlSampleSolutionFormValues =
-    UmlSampleSolutionFormValues(sample.id, sample.sample)
-
-  private def applySampleSolution(exerciseId: Int, exSemVer: SemanticVersion): UmlSampleSolutionFormValues => UmlSampleSolution = {
-    case UmlSampleSolutionFormValues(id, sample) => UmlSampleSolution(id, exerciseId, exSemVer, sample)
-  }
+  )(UmlSampleSolution.apply)(UmlSampleSolution.unapply)
 
   // Complete exercise
 
-  override type FormData = (Int, SemanticVersion, String, String, String, ExerciseState, Seq[String], Seq[(String, String)], Seq[UmlSampleSolutionFormValues])
-
-  override def unapplyCompEx(compEx: UmlExercise): Option[FormData] =
-    Some(
-      (compEx.id, compEx.semanticVersion, compEx.title, compEx.author, compEx.text, compEx.state,
-        compEx.toIgnore, compEx.mappings toSeq, compEx.sampleSolutions map unapplySampleSolution)
-    )
-
-  def applyCompEx(id: Int, semVer: SemanticVersion, title: String, author: String, exText: String, state: ExerciseState,
-                  toIgnore: Seq[String], mappings: Seq[(String, String)], sampleSolutionFormValues: Seq[UmlSampleSolutionFormValues]): UmlExercise = {
-    val markedText: String = ???
-
-    UmlExercise(
-      id, semVer, title, author, exText, state, markedText, toIgnore, mappings toMap,
-      sampleSolutions = sampleSolutionFormValues map applySampleSolution(id, semVer) // TODO!
-    )
-  }
-
-  override val format: Form[UmlExercise] = Form(
+  override val exerciseFormat: Form[UmlExercise] = Form(
     mapping(
       idName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
@@ -107,12 +80,24 @@ object UmlExerciseForm extends ExerciseForm[UmlExercise] {
       authorName -> nonEmptyText,
       textName -> nonEmptyText,
       statusName -> ExerciseState.formField,
+      "markedText" -> text,
       ignoreWordsName -> seq(text),
       mappingsName -> seq(
         tuple(keyName -> text, valueName -> text)
-      ),
+      ).transform[Map[String, String]](_.toMap, _.toSeq),
       sampleSolutionName -> seq(sampleSolutionMapping)
-    )(applyCompEx)(unapplyCompEx)
+    )(UmlExercise.apply)(UmlExercise.unapply)
+  )
+
+  override val collectionFormat: Form[UmlCollection] = Form(
+    mapping(
+      idName -> number,
+      titleName -> nonEmptyText,
+      authorName -> nonEmptyText,
+      textName -> nonEmptyText,
+      statusName -> ExerciseState.formField,
+      shortNameName -> nonEmptyText
+    )(UmlCollection.apply)(UmlCollection.unapply)
   )
 
 }

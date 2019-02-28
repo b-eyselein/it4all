@@ -5,6 +5,7 @@ import model._
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.tools.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
+import model.tools.sql.persistence.SqlTableDefs
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
@@ -45,9 +46,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override type SolType = String
 
-  override type SampleSolType = SqlSample
+  override type SampleSolType = SqlSampleSolution
 
-  override type UserSolType = SqlSolution
+  override type UserSolType = SqlUserSolution
 
 
   override type Tables = SqlTableDefs
@@ -66,14 +67,13 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val exParts: IndexedSeq[SqlExPart] = SqlExParts.values
 
-  // Yaml
+  // Yaml, Html forms
 
-  override val collectionYamlFormat: MyYamlFormat[SqlScenario] = NewSqlYamlProtocol.SqlCollectionYamlFormat
+  override protected val collectionYamlFormat: MyYamlFormat[SqlScenario] = NewSqlYamlProtocol.SqlCollectionYamlFormat
+  override protected val exerciseYamlFormat  : MyYamlFormat[SqlExercise] = NewSqlYamlProtocol.SqlExerciseYamlFormat
 
-  override def exerciseYamlFormat(collId: Int): MyYamlFormat[SqlExercise] =
-    NewSqlYamlProtocol.SqlExerciseYamlFormat(collId)
-
-  override implicit val yamlFormat: MyYamlFormat[ReadType] = null // FIXME: SqlYamlProtocol.SqlScenarioYamlFormat
+  override val collectionForm: Form[SqlScenario] = SqlFormMappings.collectionFormat
+  override val exerciseForm  : Form[SqlExercise] = SqlFormMappings.exerciseFormat
 
   // db
 
@@ -103,8 +103,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
       case _               => None
     }
 
-  override protected def compExTypeForm(collId: Int): Form[SqlExercise] = SqlFormMappings.sqlExerciseForm(collId)
-
   // Views
 
   override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart, maybeOldSolution: Option[UserSolType])
@@ -117,8 +115,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     views.html.collectionExercises.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, this)
   }
 
-  override def renderExerciseEditForm(user: User, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
-    views.html.collectionExercises.sql.editSqlExercise(user, newEx, isCreation, this, toolList)
+  override def renderExerciseEditForm(user: User, collId: Int, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.collectionExercises.sql.editSqlExercise(user, collId, newEx, isCreation, this, toolList)
 
   // FIXME: remove this method...
   override def renderEditRest(exercise: SqlExercise): Html = ???
@@ -138,17 +136,12 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): SqlScenario =
     SqlScenario(id, title = "", author, text = "", state, shortName = "")
 
-  override def instantiateExercise(collId: Int, id: Int, author: String, state: ExerciseState): SqlExercise = {
-    val semVer = SemanticVersionHelper.DEFAULT
+  override def instantiateExercise(id: Int, author: String, state: ExerciseState): SqlExercise = SqlExercise(
+    id, SemanticVersionHelper.DEFAULT, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
+    tags = Seq[SqlExTag](), hint = None, samples = Seq[SqlSampleSolution]()
+  )
 
-    SqlExercise(
-      id, semVer, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
-      collectionId = collId, tags = Seq[SqlExTag](), hint = None, samples = Seq[SqlSample]()
-    )
-  }
-
-  override protected def instantiateSolution(id: Int, username: String, coll: SqlScenario, exercise: SqlExercise, part: SqlExPart,
-                                             solution: String, points: Points, maxPoints: Points): SqlSolution =
-    SqlSolution(id, username, exercise.id, exercise.semanticVersion, coll.id, part, solution, points, maxPoints)
+  override protected def instantiateSolution(id: Int, exercise: SqlExercise, part: SqlExPart, solution: String, points: Points, maxPoints: Points): SqlUserSolution =
+    SqlUserSolution(id, part, solution, points, maxPoints)
 
 }

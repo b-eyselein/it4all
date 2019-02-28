@@ -11,7 +11,7 @@ import model.core._
 import model.programming.ProgToolMain
 import model.toolMains.{ASingleExerciseToolMain, ToolList}
 import model.uml._
-import model.web.WebToolMain
+import model.tools.web.WebToolMain
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.single
@@ -43,7 +43,7 @@ class ExerciseAdminController @Inject()(cc: ControllerComponents, dbcp: Database
 
   // Admin
 
-  def adminImportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain) =>
+  def adminImportExercises(toolType: String): EssentialAction = futureWithAdminWithToolMain(toolType) { (admin, toolMain: ASingleExerciseToolMain) =>
     implicit request =>
       // FIXME: refactor!!!!!!!!!
 

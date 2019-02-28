@@ -4,8 +4,8 @@ import better.files.File
 import model.ExerciseState.APPROVED
 import model.core.{NoSuchExerciseException, ReadAndSaveResult, SolutionTransferException}
 import model.persistence.IdExerciseTableDefs
-import model.{ExerciseState, Points, SampleSolution, SemanticVersion, User, UserSolution}
-import net.jcazevedo.moultingyaml.Auto
+import model.{ExerciseState, MyYamlFormat, Points, SemanticVersion, User}
+import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
@@ -19,7 +19,6 @@ import scala.util.{Failure, Success, Try}
 
 
 abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(implicit ec: ExecutionContext) extends FixedExToolMain(aToolName, aUrlPart) {
-
 
   // Abstract Types
 
@@ -45,7 +44,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
     tables.futureExerciseByIdAndVersion(id, semVer)
 
   def futureSaveRead(exercises: Seq[ExType]): Future[Seq[(ExType, Boolean)]] = Future.sequence(exercises map {
-    ex => tables.futureInsertExercise(ex) map (saveRes => (ex, saveRes))
+    ex => tables.futureInsertExercise(collId = -1, ex) map (saveRes => (ex, saveRes))
   })
 
   def futureHighestId: Future[Int] = tables.futureHighestExerciseId
@@ -58,7 +57,8 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   def futureReviewsForExercise(id: Int): Future[Seq[ReviewType]] = tables.futureReviewsForExercise(id)
 
-  def futureSaveSolution(sol: UserSolType): Future[Boolean] = tables.futureSaveSolution(sol)
+  def futureSaveSolution(exId: Int, exSemVer: SemanticVersion, username: String, sol: UserSolType): Future[Boolean] =
+    tables.futureSaveSolution(exId, exSemVer, username, sol)
 
   override def futureMaybeOldSolution(user: User, exIdentifier: SingleExerciseIdentifier, part: PartType): Future[Option[UserSolType]] =
     tables.futureOldSolution(user.username, exIdentifier.exId, exIdentifier.exSemVer, part)
@@ -102,6 +102,22 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   // Helper methods for admin
 
+  protected val yamlFormat: MyYamlFormat[ReadType]
+
+
+  def readImports: Seq[Try[ReadType]] = {
+    val subDirectories = exerciseResourcesFolder.list filter (_.isDirectory) toSeq
+
+    subDirectories map { subDirectory: File =>
+      val filesToRead: Seq[File] = subDirectory.list.toList sortBy (_.name)
+
+      filesToRead find (_.name.toString endsWith ".yaml") match {
+        case None           => Failure(new Exception(s"There is no yaml file in folder ${subDirectory.toString}"))
+        case Some(filePath) => yamlFormat.read(filePath.contentAsString.parseYaml)
+      }
+    }
+  }
+
   def instantiateExercise(id: Int, author: String, state: ExerciseState): ExType
 
   // TODO: scalarStyle = Folded if fixed...
@@ -113,7 +129,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   def renderAdminExerciseEditForm(user: User, newEx: ExType, isCreation: Boolean, toolList: ToolList)
                                  (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-    views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
+    views.html.admin.exerciseEditForm(user, collId = -1, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
   def renderUserExerciseEditForm(user: User, newExForm: Form[ExType], isCreation: Boolean)
                                 (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
@@ -148,9 +164,9 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
       case Success(userSolution) => correctEx(user, userSolution, exercise, part) flatMap {
         case Failure(error) => Future.successful(Failure(error))
         case Success(res)   =>
-          val dbSolution = instantiateSolution(id = 0, user.username, exercise, part, userSolution, res.points, res.maxPoints)
+          val dbSolution = instantiateSolution(id = 0, exercise, part, userSolution, res.points, res.maxPoints)
 
-          tables.futureSaveSolution(dbSolution) map { solutionSaved =>
+          tables.futureSaveSolution(exercise.id, exercise.semanticVersion, user.username, dbSolution) map { solutionSaved =>
             Success(onLiveCorrectionResult(solutionSaved, res))
           }
       }
@@ -158,7 +174,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
 
   def futureSampleSolutionsForExerciseAndPart(id: Int, part: PartType): Future[Seq[String]] = tables.futureSampleSolutionsForExercisePart(id, part)
 
-  protected def instantiateSolution(id: Int, username: String, exercise: ExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): UserSolType
+  protected def instantiateSolution(id: Int, exercise: ExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): UserSolType
 
   protected def readSolution(user: User, exercise: ExType, part: PartType)(implicit request: Request[AnyContent]): Try[SolType]
 
@@ -182,7 +198,7 @@ abstract class ASingleExerciseToolMain(aToolName: String, aUrlPart: String)(impl
     views.html.admin.idExes.idExerciseAdminIndex(admin, stats, this, toolList)
   }
 
-  override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ExType], toolList: ToolList): Html =
+  def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[ExType], toolList: ToolList): Html =
     views.html.admin.idExes.idExercisePreview(user, read, this, toolList)
 
   def renderExercise(user: User, exercise: ExType, part: PartType, oldSolution: Option[UserSolType])

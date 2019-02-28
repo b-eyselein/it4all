@@ -1,4 +1,4 @@
-@import model.xml.{XmlExercise, XmlToolMain}
+@import model.tools.xml.{XmlExercise, XmlToolMain}
 
 @(user: model.User, exercise: Form[XmlExercise], isCreation: Boolean, toolMainObject: XmlToolMain,
         toolList: model.toolMains.ToolList)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
@@ -69,21 +69,21 @@
     @*</div>*@
     @*</div>*@
     @*<div class="form-group">*@
-    @*<label for="@model.xml.XmlConsts.grammarDescriptionName">Grammatikbeschreibung</label>*@
-    @*<textarea class="form-control" name="@model.xml.XmlConsts.grammarDescriptionName" id="@model.xml.XmlConsts.grammarDescriptionName" rows="15"*@
+    @*<label for="@model.tools.xml.XmlConsts.grammarDescriptionName">Grammatikbeschreibung</label>*@
+    @*<textarea class="form-control" name="@model.tools.xml.XmlConsts.grammarDescriptionName" id="@model.tools.xml.XmlConsts.grammarDescriptionName" rows="15"*@
     @*placeholder="Beschreibung der Grammatik" required>@exercise.ex.grammarDescription</textarea>*@
     @*</div>*@
     @*</div>*@
 
     @*<div class="col-md-6">*@
     @*<div class="form-group">*@
-    @*<label for="@model.xml.XmlConsts.rootNodeName">Wurzelknoten:</label>*@
-    @*<input class="form-control" name="@model.xml.XmlConsts.rootNodeName" id="@model.xml.XmlConsts.rootNodeName" required value="@exercise.ex.rootNode">*@
+    @*<label for="@model.tools.xml.XmlConsts.rootNodeName">Wurzelknoten:</label>*@
+    @*<input class="form-control" name="@model.tools.xml.XmlConsts.rootNodeName" id="@model.tools.xml.XmlConsts.rootNodeName" required value="@exercise.ex.rootNode">*@
     @*</div>*@
     @* @for(sampleGrammar <- exercise.samples) {*@
     @*<div class="form-group">*@
-    @*<label for="@model.xml.XmlConsts.sampleGrammarsName">Mustergrammaik</label>*@
-    @*<textarea class="form-control" name="@model.xml.XmlConsts.sampleGrammarsName" id="@model.xml.XmlConsts.sampleGrammarsName" rows="15"*@
+    @*<label for="@model.tools.xml.XmlConsts.sampleGrammarsName">Mustergrammaik</label>*@
+    @*<textarea class="form-control" name="@model.tools.xml.XmlConsts.sampleGrammarsName" id="@model.tools.xml.XmlConsts.sampleGrammarsName" rows="15"*@
     @*placeholder="<!ELEMENT root ...>" required>@Html(sampleGrammar.sampleGrammar.asString)</textarea>*@
     @*</div>*@
     @*}*@

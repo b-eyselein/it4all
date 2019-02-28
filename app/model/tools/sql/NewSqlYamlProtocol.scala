@@ -29,7 +29,7 @@ object NewSqlYamlProtocol extends MyYamlProtocol {
 
   }
 
-  final case class SqlExerciseYamlFormat(collId: Int) extends MyYamlObjectFormat[SqlExercise] {
+  object SqlExerciseYamlFormat extends MyYamlObjectFormat[SqlExercise] {
 
     //    override protected def readObject(yamlObject: YamlObject): Try[SqlExercise] = ???
 
@@ -44,7 +44,7 @@ object NewSqlYamlProtocol extends MyYamlProtocol {
 
       hint <- yamlObject.optStringField(hintName)
 
-      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(collId, baseValues).read)
+      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(baseValues).read)
     } yield {
 
       for (tagFailures <- tagTries._2)
@@ -56,7 +56,7 @@ object NewSqlYamlProtocol extends MyYamlProtocol {
       //        logger.error("Could not read sql sample", sampleFailure.exception)
 
       SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        collId, exerciseType, tagTries._1, hint, sampleTries._1)
+        exerciseType, tagTries._1, hint, sampleTries._1)
     }
   }
 

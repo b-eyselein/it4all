@@ -1,4 +1,4 @@
-@(exercise: model.web.WebExercise)
+@(exercise: model.tools.web.WebExercise)
 
 <fieldset>
     <legend>Angaben zum Html-Teil</legend>
@@ -12,33 +12,33 @@
         <h3>Aufgaben</h3>
         @for(task <- exercise.htmlTasks) {
             <div class="form-group">
-                <label class="control-label col-md-2" for="html_task_id_@task.task.id">ID:</label>
+                <label class="control-label col-md-2" for="html_task_id_@task.id">ID:</label>
                 <div class="col-md-10">
-                    <input type="number" class="form-control" readonly name="html_task_id_@task.task.id" id="html_task_id_@task.task.id" value="@task.task.id">
+                    <input type="number" class="form-control" readonly name="html_task_id_@task.id" id="html_task_id_@task.id" value="@task.id">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-md-2" for="html_task_text_@task.task.id">Text:</label>
+                <label class="control-label col-md-2" for="html_task_text_@task.id">Text:</label>
                 <div class="col-md-10">
-                    <textarea class="form-control" rows="3" name="html_task_text_@task.task.id" id="html_task_text_@task.task.id"
-                    placeholder="Beschreibung der Teilaufgabe">@task.task.text</textarea>
+                    <textarea class="form-control" rows="3" name="html_task_text_@task.id" id="html_task_text_@task.id"
+                    placeholder="Beschreibung der Teilaufgabe">@task.text</textarea>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-md-2" for="html_task_xpath_@task.task.id">XPath:</label>
+                <label class="control-label col-md-2" for="html_task_xpath_@task.id">XPath:</label>
                 <div class="col-md-10">
-                    <input class="form-control" name="html_task_xpath_@task.task.id" id="html_task_xpath_@task.task.id"
-                    placeholder="XPathQuery für diesen Task" value="@task.task.xpathQuery">
+                    <input class="form-control" name="html_task_xpath_@task.id" id="html_task_xpath_@task.id"
+                    placeholder="XPathQuery für diesen Task" value="@task.xpathQuery">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-md-2" for="html_task_content_@task.task.id">Textinhalt:</label>
+                <label class="control-label col-md-2" for="html_task_content_@task.id">Textinhalt:</label>
                 <div class="col-md-10">
-                    <input class="form-control" name="html_task_content_@task.task.id" id="html_task_content_@task.task.id"
-                    placeholder="Gewünschter Textinhalt (Optionaler Wert)" value="@task.task.textContent.getOrElse("")">
+                    <input class="form-control" name="html_task_content_@task.id" id="html_task_content_@task.id"
+                    placeholder="Gewünschter Textinhalt (Optionaler Wert)" value="@task.textContent.getOrElse("")">
                 </div>
             </div>
 

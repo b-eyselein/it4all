@@ -46,20 +46,20 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       } yield Ok(views.html.collectionExercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
   }
 
-//  def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-//    implicit request =>
-//      toolMain.futureAllCollections map { allColls =>
-//        val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
-//
-//        Ok(views.html.collectionExercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
-//      }
-//  }
+  //  def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  //    implicit request =>
+  //      toolMain.futureAllCollections map { allColls =>
+  //        val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
+  //
+  //        Ok(views.html.collectionExercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
+  //      }
+  //  }
 
-  def collection(toolType: String, id: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  def collection(toolType: String, collId: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       val step = 18
 
-      toolMain.futureCollById(id) flatMap {
+      toolMain.futureCollById(collId) flatMap {
         case None                          => Future(Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart)))
         case Some(coll: toolMain.CollType) =>
           toolMain.futureExercisesInColl(coll.id) flatMap { exercises =>
@@ -71,7 +71,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
             val futureExesAndSuccessTypes: Future[Seq[UserCollEx]] = Future.sequence(exesToDisplay.map {
               ex: toolMain.ExType =>
-                toolMain.futureSolveState(user, ex.collectionId, ex.id) map {
+                toolMain.futureSolveState(user, collId, ex.id) map {
                   // FIXME: query solved state!
                   maybeSolvedState => UserCollEx(ex, maybeSolvedState getOrElse SolvedStates.NotStarted)
                 }
@@ -147,18 +147,18 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def newExerciseForm(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureHighestIdInCollection(collId) map { highestId =>
-        val newEx = toolMain.instantiateExercise(collId, highestId + 1, user.username, ExerciseState.RESERVED)
-        Ok(toolMain.renderExerciseEditForm(user, newEx, isCreation = true, toolList))
+        val newEx = toolMain.instantiateExercise(highestId + 1, user.username, ExerciseState.RESERVED)
+        Ok(toolMain.renderExerciseEditForm(user, collId, newEx, isCreation = true, toolList))
       }
   }
 
   def editExerciseForm(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureExerciseById(collId, exId) map {
-        case Some(newExercise) => Ok(toolMain.renderExerciseEditForm(user, newExercise, isCreation = false, toolList))
+        case Some(newExercise) => Ok(toolMain.renderExerciseEditForm(user, collId, newExercise, isCreation = false, toolList))
         case None              =>
-          val newExercise = toolMain.instantiateExercise(collId, exId, user.username, ExerciseState.RESERVED)
-          Ok(toolMain.renderExerciseEditForm(user, newExercise, isCreation = true, toolList))
+          val newExercise = toolMain.instantiateExercise(exId, user.username, ExerciseState.RESERVED)
+          Ok(toolMain.renderExerciseEditForm(user, collId, newExercise, isCreation = true, toolList))
       }
   }
 
@@ -176,7 +176,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
 
       val onFormRead: toolMain.ExType => Future[Result] = { newExercise: toolMain.ExType =>
-        toolMain.futureInsertExercise(newExercise) map {
+        toolMain.futureInsertExercise(collId, newExercise) map {
           case false =>
             // TODO: make view?
             BadRequest("Your exercise could not be saved...")
@@ -184,7 +184,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         }
       }
 
-      toolMain.readExerciseFromForm(collId).fold(onFormError, onFormRead)
+      toolMain.exerciseForm.bindFromRequest().fold(onFormError, onFormRead)
   }
 
   def deleteExerciseInCollection(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>

@@ -28,6 +28,9 @@ trait HasBaseValues {
 
   def id: Int
 
+  // FIXME: remove? semantic version!
+  def semanticVersion: SemanticVersion
+
   def title: String
 
   def author: String
@@ -36,8 +39,6 @@ trait HasBaseValues {
 
   def state: ExerciseState
 
-  // FIXME: use semantic version!
-  def semanticVersion: SemanticVersion
 
   def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -65,37 +66,32 @@ trait ExTag {
 
 }
 
-trait Exercise {
+trait Exercise extends HasBaseValues {
 
-  def id: Int
+  //  def id: Int
 
-  def semanticVersion: SemanticVersion
+  //  def semanticVersion: SemanticVersion
 
-  def title: String
+  //  def collectionId: Int
 
-  def author: String
+  //  def title: String
 
-  def text: String
+  //  def author: String
 
-  def state: ExerciseState
+  //  def text: String
 
-  def baseValues: BaseValues
+  //  def state: ExerciseState
+
+  //  def baseValues: BaseValues
 
 
   def preview: Html
 
   def tags: Seq[ExTag] = Seq[ExTag]()
 
-
-  // TODO: for later...
-
-  def collectionId: Int = -1
-
-  def collSemVer: SemanticVersion = SemanticVersionHelper.DEFAULT
-
 }
 
-trait ExerciseCollection  {
+trait ExerciseCollection {
 
   def id: Int
 

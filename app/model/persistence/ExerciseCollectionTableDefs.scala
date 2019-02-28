@@ -3,7 +3,6 @@ package model.persistence
 import model._
 import model.core.CoreConsts.idName
 import model.core.overviewHelpers.{SolvedState, SolvedStates}
-import model.tools.sql.SqlConsts.shortNameName
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -24,34 +23,28 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
 
   protected type CollTableDef <: ExerciseCollectionTable
 
-  protected type SamplesTableDef <: ACollectionSamplesTable
-
-  protected type SolTableDef <: CollectionExSolutionsTable
-
   // Abstract members
 
   protected val collTable: TableQuery[CollTableDef]
 
-  protected val solTable: TableQuery[SolTableDef]
+  protected val solTable: TableQuery[DbUserSolTable]
 
   // Queries
 
-  protected def copyDBSolType(sol: UserSolType, newId: Int): UserSolType
+  protected def copyDbUserSolType(sol: DbUserSolType, newId: Int): DbUserSolType
 
-  def futureOldSolution(username: String, exerciseId: Int): Future[Option[UserSolType]] =
-    db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId).result.headOption)
+  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UserSolType): Future[Boolean] = {
+    val dbUserSol = dbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol)
 
-  def futureSaveSolution(sol: UserSolType): Future[Boolean] = {
-    val insertQuery = solTable returning solTable.map(_.id) into ((sol, id) => copyDBSolType(sol, id))
+    val insertQuery = solTable returning solTable.map(_.id) into ((dbUserSol, id) => copyDbUserSolType(dbUserSol, id))
 
-    db.run(insertQuery += sol) transform {
+    db.run(insertQuery += dbUserSol) transform {
       case Success(_) => Success(true)
       case Failure(e) =>
         Logger.error("Could not save solution", e)
         Success(false)
     }
   }
-
 
   // Numbers
 
@@ -72,21 +65,25 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
 
   def futureExercisesInColl(collId: Int): Future[Seq[ExType]] =
     db.run(exTable.filter(_.collectionId === collId).result) flatMap {
-      futureExes: Seq[ExDbValues] => Future.sequence(futureExes map completeExForEx)
+      futureExes: Seq[DbExType] => Future.sequence(futureExes map (ex => completeExForEx(collId, ex)))
     }
 
   def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] =
     db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).result.headOption) flatMap {
-      case Some(ex) => completeExForEx(ex) map Some.apply
+      case Some(ex) => completeExForEx(collId, ex) map Some.apply
       case None     => Future.successful(None)
     }
 
-  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int): Future[Option[UserSolType]] =
-    db.run(solTable
-      .filter(sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId)
+  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: PartType): Future[Option[UserSolType]] = db.run(
+    solTable
+      .filter {
+        sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId && sol.part === part
+      }
       // take last sample sol (with highest id)
       .sortBy(_.id.desc)
-      .result.headOption)
+      .result
+      .headOption
+      .map(_ map dbModels.userSolFromDbUserSol))
 
   def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, part: PartType): Future[Seq[String]]
 
@@ -114,17 +111,17 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
     }
   }
 
-  def futureInsertExercise(compEx: ExType): Future[Boolean] = {
+  override def futureInsertExercise(collId: Int, exercise: ExType): Future[Boolean] = {
     val deleteOldExQuery = exTable.filter {
       dbEx: ExTableDef =>
-        dbEx.id === compEx.id && dbEx.semanticVersion === compEx.semanticVersion && dbEx.collectionId === compEx.collectionId
+        dbEx.id === exercise.id && dbEx.semanticVersion === exercise.semanticVersion && dbEx.collectionId === collId
     }.delete
 
-    val insertNewExQuery = exTable += exDbValuesFromExercise(compEx)
+    val insertNewExQuery = exTable += exDbValuesFromExercise(collId, exercise)
 
     db.run(deleteOldExQuery) flatMap { _ =>
       db.run(insertNewExQuery) flatMap {
-        insertCount: Int => saveExerciseRest(compEx)
+        insertCount: Int => saveExerciseRest(collId, exercise)
       }
     }
   }
@@ -162,7 +159,7 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
 
   // Abstract table definitions
 
-  protected implicit val solutionTypeColumnType: slick.ast.TypedType[SolType]
+  protected implicit val solTypeColumnType: slick.ast.TypedType[SolType]
 
   abstract class ExerciseCollectionTable(tag: Tag, tableName: String) extends Table[CollType](tag, tableName) {
 
@@ -180,7 +177,7 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
 
   }
 
-  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[ExDbValues](tag, name) {
+  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[DbExType](tag, name) {
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
@@ -188,18 +185,6 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
     def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId))
 
     def scenarioFk: ForeignKeyQuery[CollTableDef, CollType] = foreignKey("scenario_fk", collectionId, collTable)(_.id)
-
-  }
-
-  abstract class ACollectionSamplesTable(tag: Tag, name: String) extends ASampleSolutionsTable(tag, name) {
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
-  }
-
-  abstract class CollectionExSolutionsTable(tag: Tag, name: String) extends AUserSolutionsTable(tag, name) {
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
 
   }
 

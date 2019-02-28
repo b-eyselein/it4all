@@ -13,14 +13,14 @@ final case class ProgSolutionJsonFormat(exercise: ProgExercise, user: User) {
     case _                            => progStringSolutionReads.reads(solutionJson)
   }
 
-  private implicit val commitedTestDataReads: Reads[CommitedTestData] = (
+  private implicit val commitedTestDataReads: Reads[ProgUserTestData] = (
     (__ \ idName).read[Int] and
       (__ \ inputName).read[JsValue] and
       (__ \ outputName).read[JsValue]
-    ) (CommitedTestData.apply(_, exercise.id, exercise.semanticVersion, _, _, user.username, ExerciseState.RESERVED))
+    ) (ProgUserTestData.apply(_, _, _, ExerciseState.RESERVED))
 
   private val testDataCreationSolutionReads: Reads[ProgTestDataSolution] = (
-    (__ \ testdataName).read[Seq[CommitedTestData]] and
+    (__ \ testdataName).read[Seq[ProgUserTestData]] and
       (__ \ languageName).read[ProgLanguage](ProgLanguages.jsonFormat)
     ) (ProgTestDataSolution.apply(_, _))
 

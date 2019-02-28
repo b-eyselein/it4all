@@ -1,14 +1,10 @@
 @import model.toolMains.{ASingleExerciseToolMain, ToolList}
 @import model.{ExPart, User, UserSolution}
 
-@(adminUser: User, solutions: Seq[UserSolution[_ <: ExPart, _]], toolList: ToolList, toolMainObject: ASingleExerciseToolMain)
+@(adminUser: User, solutions: Seq[(User, UserSolution[_ <: ExPart, _])], allUsers: Seq[User], toolList: ToolList, toolMainObject: ASingleExerciseToolMain)
 
 @title = @{
     "Lösungen für Aufgabe TODO!"
-}
-
-@allUsers = @{
-    solutions.map(_.username).distinct
 }
 
 @additionalScripts = {
@@ -49,9 +45,9 @@
                 </tr>
             </thead>
             <tbody>
-            @for(solution <- solutions) {
+            @for((user, solution) <- solutions) {
                 <tr>
-                    <td>@solution.username</td>
+                    <td>@user.username</td>
                     <td>@solution.id</td>
                     <td>@solution.part</td>
                     <td>@solution.points.asDoubleString / @solution.maxPoints.asDoubleString</td>

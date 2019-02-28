@@ -33,7 +33,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override type SampleSolType = UmlSampleSolution
 
-  override type UserSolType = UmlSolution
+  override type UserSolType = UmlUserSolution
 
 
   override type Tables = UmlTableDefs
@@ -54,7 +54,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Forms
 
-  override def exerciseForm: Form[UmlExercise] = UmlExerciseForm.format
+  override def exerciseForm: Form[UmlExercise] = UmlExerciseForm.exerciseFormat
 
   override def exerciseReviewForm(username: String, exercise: UmlExercise, exercisePart: UmlExPart): Form[UmlExerciseReview] = Form(
     mapping(
@@ -91,12 +91,12 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     toIgnore = Seq[String](),
     mappings = Map[String, String](),
     sampleSolutions = Seq[UmlSampleSolution](
-      UmlSampleSolution(1, id, SemanticVersionHelper.DEFAULT, sample = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]()))
+      UmlSampleSolution(1, sample = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]()))
     )
   )
 
-  override def instantiateSolution(id: Int, username: String, exercise: UmlExercise, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlSolution =
-    UmlSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
+  override def instantiateSolution(id: Int, exercise: UmlExercise, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlUserSolution =
+    UmlUserSolution(id, part, solution, points, maxPoints)
 
   // Yaml
 
@@ -104,7 +104,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExercise(user: User, exercise: UmlExercise, part: UmlExPart, maybeOldSolution: Option[UmlSolution])
+  override def renderExercise(user: User, exercise: UmlExercise, part: UmlExPart, maybeOldSolution: Option[UmlUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
     case UmlExParts.ClassSelection     => views.html.idExercises.uml.classSelection(user, exercise, this)
     case UmlExParts.DiagramDrawing     => views.html.idExercises.uml.classDiagdrawing(user, exercise, part, getsHelp = false, this)

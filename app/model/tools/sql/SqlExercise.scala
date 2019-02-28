@@ -27,8 +27,7 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 // Classes for use
 
 final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             override val collectionId: Int, exerciseType: SqlExerciseType,
-                             override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[SqlSample]) extends Exercise {
+                             exerciseType: SqlExerciseType, override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[SqlSampleSolution]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -48,10 +47,9 @@ final case class SqlScenario(id: Int, title: String, author: String, text: Strin
 
 }
 
-final case class SqlSample(id: Int, exerciseId: Int, exSemVer: SemanticVersion, override val collectionId: Int, sample: String)
+final case class SqlSampleSolution(id: Int, sample: String)
   extends SampleSolution[String]
 
-final case class SqlSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion,
-                             override val collectionId: Int, part: SqlExPart,
-                             solution: String, points: Points, maxPoints: Points) extends UserSolution[SqlExPart, String]
+final case class SqlUserSolution(id: Int, part: SqlExPart, solution: String, points: Points, maxPoints: Points)
+  extends UserSolution[SqlExPart, String]
 

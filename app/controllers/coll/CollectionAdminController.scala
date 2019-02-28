@@ -84,7 +84,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
           val (readSuccesses, readFailures) = CommonUtils.splitTriesNew(readTries)
 
           val readAndSaveSuccesses: Future[Seq[(toolMain.ExType, Boolean)]] = Future.sequence(readSuccesses.map {
-            readExercise => toolMain.futureInsertExercise(readExercise) map (saved => (readExercise, saved))
+            readExercise => toolMain.futureInsertExercise(collId, readExercise) map (saved => (readExercise, saved))
           })
 
           readAndSaveSuccesses.map { saveResults: Seq[(toolMain.ExType, Boolean)] =>

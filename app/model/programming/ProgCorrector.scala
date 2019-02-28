@@ -21,7 +21,7 @@ object ProgCorrector {
 
   def correct(user: User, progSolution: ProgSolution, exercise: ProgExercise, toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
-    val (implementation: String, completeTestData: Seq[TestData]) = progSolution match {
+    val (implementation: String, completeTestData: Seq[ProgTestData]) = progSolution match {
       case ProgTestDataSolution(td, _)        => (exercise.sampleSolutions.headOption.map(_.sample).getOrElse(???), td)
       case ProgStringSolution(solution, _, _) => (solution, exercise.sampleTestData)
     }

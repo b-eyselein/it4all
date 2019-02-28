@@ -33,7 +33,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override type SampleSolType = RoseSampleSolution
 
-  override type UserSolType = RoseSolution
+  override type UserSolType = RoseUserSolution
 
 
   override type Tables = RoseTableDefs
@@ -50,7 +50,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override protected val exParts: Seq[RoseExPart] = RoseExParts.values
 
-  override val exerciseForm: Form[RoseExercise] = RoseExerciseForm.format
+  override val exerciseForm: Form[RoseExercise] = RoseExerciseForm.exerciseFormat
 
   override protected val completeResultJsonProtocol: RoseCompleteResultJsonProtocol.type = RoseCompleteResultJsonProtocol
 
@@ -84,9 +84,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     inputTypes = Seq[RoseInputType](), sampleSolutions = Seq[RoseSampleSolution]()
   )
 
-  override def instantiateSolution(id: Int, username: String, exercise: RoseExercise, part: RoseExPart, solution: String,
-                                   points: Points, maxPoints: Points): RoseSolution =
-    RoseSolution(id, username, exercise.id, exercise.semanticVersion, part, solution, points, maxPoints)
+  override def instantiateSolution(id: Int, exercise: RoseExercise, part: RoseExPart, solution: String, points: Points, maxPoints: Points): RoseUserSolution =
+    RoseUserSolution(id, part, language = ProgLanguages.StandardLanguage, solution, points, maxPoints)
 
   // Yaml
 
@@ -94,7 +93,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Views
 
-  override def renderExercise(user: User, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseSolution])
+  override def renderExercise(user: User, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     val declaration = maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true)
     views.html.idExercises.rose.roseExercise(user, exercise, declaration, this)

@@ -1,73 +1,73 @@
 @import model.{User, Exercise}
 @import model.toolMains.{AToolMain, ToolList}
 
-@(user: User, exercise: Exercise, renderedRest: Html, isCreation: Boolean, toolMainObject: AToolMain, toolList: ToolList)
+@(user: User, collId: Int, exercise: Exercise, renderedRest: Html, isCreation: Boolean, toolMainObject: AToolMain, toolList: ToolList)
 
-@scripts = {
-    <style>
+    @scripts = {
+        <style>
             textarea {
                 resize: vertical;
             }
     </style>
-}
+    }
 
-@title = @{
-    s"${toolMainObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}"
-}
+    @title = @{
+        s"${toolMainObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}"
+    }
 
-@admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
+    @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
 
-    <form class="form" method="post" role="form" action="@exes.routes.ExerciseAdminController.adminEditExercise(toolMainObject.urlPart, exercise.id)">
+        <form class="form" method="post" role="form" action="@exes.routes.ExerciseAdminController.adminEditExercise(toolMainObject.urlPart, exercise.id)">
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="@model.core.CoreConsts.idName">ID:</label>
-                    <input type="number" class="form-control from-control-static" name="@model.core.CoreConsts.idName" id="@model.core.CoreConsts.idName"
-                    required value="@exercise.id" readonly>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="@model.core.CoreConsts.idName">ID:</label>
+                        <input type="number" class="form-control from-control-static" name="@model.core.CoreConsts.idName" id="@model.core.CoreConsts.idName"
+                        required value="@exercise.id" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="@model.core.CoreConsts.authorName">Autor:</label>
+                        <input class="form-control" name="@model.core.CoreConsts.authorName" id="@model.core.CoreConsts.authorName" value="@user.username"
+                        title="Dieser Wert kann nicht geändert werden." readonly required>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="@model.core.CoreConsts.authorName">Autor:</label>
-                    <input class="form-control" name="@model.core.CoreConsts.authorName" id="@model.core.CoreConsts.authorName" value="@user.username"
-                    title="Dieser Wert kann nicht geändert werden." readonly required>
-                </div>
-            </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="@model.core.CoreConsts.titleName">Titel:</label>
+                        <input class="form-control" name="@model.core.CoreConsts.titleName" id="@model.core.CoreConsts.titleName" required
+                        value="@exercise.title">
+                    </div>
 
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="@model.core.CoreConsts.titleName">Titel:</label>
-                    <input class="form-control" name="@model.core.CoreConsts.titleName" id="@model.core.CoreConsts.titleName" required
-                    value="@exercise.title">
+                    <div class="form-group">
+                        <label for="@model.core.CoreConsts.statusName">Status:</label>
+                        <div >
+                            <select class="form-control" name="@model.core.CoreConsts.statusName" id="@model.core.CoreConsts.statusName" required>
+                            @for(state <- model.ExerciseState.values) {
+                                <option @{
+                                    if(state == exercise.state) "selected" else ""
+                                }>@state</option>
+                            }
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="@model.core.CoreConsts.statusName">Status:</label>
-                    <div >
-                        <select class="form-control" name="@model.core.CoreConsts.statusName" id="@model.core.CoreConsts.statusName" required>
-                        @for(state <- model.ExerciseState.values) {
-                            <option @{
-                                if(state == exercise.state) "selected" else ""
-                            }>@state</option>
-                        }
-                        </select>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="@model.core.CoreConsts.textName">Text:</label>
+                        <textarea class="form-control" rows="5" name="@model.core.CoreConsts.textName" id="@model.core.CoreConsts.textName" required>@exercise.text</textarea>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="@model.core.CoreConsts.textName">Text:</label>
-                    <textarea class="form-control" rows="5" name="@model.core.CoreConsts.textName" id="@model.core.CoreConsts.textName" required>@exercise.text</textarea>
-                </div>
-            </div>
-        </div>
+            @renderedRest
 
-        @renderedRest
+            <hr>
 
-        <hr>
-
-        <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
-    </form>
-}
+            <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
+        </form>
+    }
 

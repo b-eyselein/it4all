@@ -1,4 +1,4 @@
-@(user: model.User, exercise: model.web.WebExercise)
+@(user: model.User, exercise: model.tools.web.WebExercise)
 
 @main("", Some(user)) {
     <div class="container">
@@ -24,10 +24,10 @@
                 <tbody>
                 @for(task <- exercise.htmlTasks) {
                     <tr>
-                        <td>@task.task.id</td>
-                        <td>@task.task.text</td>
-                        <td>@task.task.xpathQuery</td>
-                        <td>@task.task.textContent.getOrElse("")</td>
+                        <td>@task.id</td>
+                        <td>@task.text</td>
+                        <td>@task.xpathQuery</td>
+                        <td>@task.textContent.getOrElse("")</td>
                         <td><ul>
                         @for(attr <- task.attributes) {
                             <li>@attr.toString</li>
@@ -60,11 +60,11 @@
                 <tbody>
                 @for(task <- exercise.jsTasks) {
                     <tr>
-                        <td>@task.task.id</td>
-                        <td>@task.task.text</td>
-                        <td>@task.task.xpathQuery</td>
+                        <td>@task.id</td>
+                        <td>@task.text</td>
+                        <td>@task.xpathQuery</td>
                         <td>@task.conditions.size</td>
-                        <td>@* TODO: implement ... *@ @@task.task.action …</td>
+                        <td>@* TODO: implement ... *@ @@task.action …</td>
                     </tr>
                 }
                 </tbody>

@@ -451,10 +451,21 @@ create table if not exists uml_exercise_reviews
 
 # Web
 
+create table if not exists web_collections
+(
+  id         int primary key,
+  title      varchar(50),
+  author     varchar(50),
+  ex_text    varchar(50),
+  ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+  short_name varchar(50)
+);
+
 create table if not exists web_exercises
 (
   id               int,
   semantic_version varchar(10),
+  collection_id    int,
   title            varchar(50),
   author           varchar(50),
   ex_text          text,
@@ -463,37 +474,37 @@ create table if not exists web_exercises
   html_text        text,
   js_text          text,
 
-  primary key (id, semantic_version)
+  primary key (id, semantic_version, collection_id)
 );
 
 create table if not exists html_tasks
 (
-  task_id      int,
-  exercise_id  int,
-  ex_sem_ver   varchar(10),
-  text         text,
-  xpath_query  varchar(50),
+  task_id       int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  text          text,
+  xpath_query   varchar(50),
 
-  text_content varchar(100),
+  text_content  varchar(100),
 
-  primary key (task_id, exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (task_id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists html_attributes
 (
-  attr_key    varchar(30),
-  attr_value  varchar(150),
-  task_id     int,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
+  attr_key      varchar(30),
+  task_id       int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  attr_value    varchar(150),
 
-  primary key (attr_key, task_id, exercise_id, ex_sem_ver),
-  foreign key (task_id, exercise_id, ex_sem_ver) references html_tasks (task_id, exercise_id, ex_sem_ver)
-    on update cascade
-    on delete cascade
+  primary key (attr_key, task_id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (task_id, exercise_id, ex_sem_ver, collection_id) references html_tasks (task_id, exercise_id, ex_sem_ver, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists js_tasks
@@ -501,6 +512,7 @@ create table if not exists js_tasks
   task_id            int,
   exercise_id        int,
   ex_sem_ver         varchar(10),
+  collection_id      int,
   text               text,
   xpath_query        varchar(50),
 
@@ -508,10 +520,9 @@ create table if not exists js_tasks
   action_xpath_query varchar(50),
   keys_to_send       varchar(100),
 
-  primary key (task_id, exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (task_id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists js_conditions
@@ -520,49 +531,52 @@ create table if not exists js_conditions
   task_id         int,
   exercise_id     int,
   ex_sem_ver      varchar(10),
+  collection_id   int,
 
   xpath_query     varchar(50),
   is_precondition boolean default true,
   awaited_value   varchar(50),
 
-  primary key (condition_id, task_id, exercise_id, ex_sem_ver),
-  foreign key (task_id, exercise_id, ex_sem_ver) references js_tasks (task_id, exercise_id, ex_sem_ver)
-    on update cascade
-    on delete cascade
+  primary key (condition_id, task_id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (task_id, exercise_id, ex_sem_ver, collection_id) references js_tasks (task_id, exercise_id, ex_sem_ver, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists web_sample_solutions
 (
-  id          int,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
 
-  html_sample text,
-  js_sample   text,
+  html_sample   text,
+  js_sample     text,
 
-  primary key (id, exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists web_solutions
 (
-  id          int primary key auto_increment,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  username    varchar(30),
-  part        varchar(30),
-  points      double,
-  max_points  double,
-  solution    text,
+  id            int primary key auto_increment,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  username      varchar(30),
 
-  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade,
+  part          varchar(50),
+
+  html_solution text,
+  js_solution   text,
+
+  points        double,
+  max_points    double,
+
+  foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade,
   foreign key (username) references users (username)
-    on update cascade
-    on delete cascade
+    on update cascade on delete cascade
 );
 
 create table if not exists web_exercise_reviews
@@ -570,22 +584,33 @@ create table if not exists web_exercise_reviews
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
+  collection_id  int,
   exercise_part  varchar(30),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, exercise_part),
-  foreign key (exercise_id, ex_sem_ver) references web_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (username, exercise_id, ex_sem_ver, exercise_part, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 # Xml
+
+create table if not exists xml_collections
+(
+  id         int primary key,
+  title      varchar(50),
+  author     varchar(50),
+  ex_text    text,
+  ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+  short_name varchar(50)
+);
 
 create table if not exists xml_exercises
 (
   id                  int,
   semantic_version    varchar(10),
+  collection_id       int,
   title               varchar(50),
   author              varchar(50),
   ex_text             text,
@@ -594,40 +619,42 @@ create table if not exists xml_exercises
   grammar_description text,
   root_node           varchar(30),
 
-  primary key (id, semantic_version)
+  primary key (id, semantic_version, collection_id),
+  foreign key (collection_id) references xml_collections (id)
+    on update cascade on delete cascade
 );
 
 create table if not exists xml_samples
 (
-  id              int,
-  exercise_id     int,
-  ex_sem_ver      varchar(10),
-  sample_grammar  text,
-  sample_document text,
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  grammar       text,
+  document      text,
 
-  primary key (id, exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references xml_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references xml_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists xml_solutions
 (
-  id          int primary key auto_increment,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  username    varchar(50),
-  part        varchar(30),
-  points      double,
-  max_points  double,
-  solution    text,
+  id            int primary key auto_increment,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  username      varchar(50),
+  part          varchar(30),
+  points        double,
+  max_points    double,
+  grammar       text,
+  document      text,
 
-  foreign key (exercise_id, ex_sem_ver) references xml_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade,
+  foreign key (exercise_id, ex_sem_ver, collection_id) references xml_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade,
   foreign key (username) references users (username)
-    on update cascade
-    on delete cascade
+    on update cascade on delete cascade
 );
 
 create table if not exists xml_exercise_reviews
@@ -635,14 +662,14 @@ create table if not exists xml_exercise_reviews
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
+  collection_id  int,
   exercise_part  varchar(30),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, exercise_part),
-  foreign key (exercise_id, ex_sem_ver) references xml_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references xml_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 # --- !Downs
@@ -656,6 +683,8 @@ drop table if exists xml_solutions;
 drop table if exists xml_samples;
 
 drop table if exists xml_exercises;
+
+drop table if exists xml_collections;
 
 # Web
 
@@ -674,6 +703,8 @@ drop table if exists html_attributes;
 drop table if exists html_tasks;
 
 drop table if exists web_exercises;
+
+drop table if exists web_collections;
 
 # Uml
 

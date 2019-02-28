@@ -24,6 +24,9 @@ from xml_samples;
 delete ignore
 from xml_exercises;
 
+delete ignore
+from xml_collections;
+
 # Web
 
 delete ignore
@@ -49,6 +52,9 @@ from html_tasks;
 
 delete ignore
 from web_exercises;
+
+delete ignore
+from web_collections;
 
 # Uml
 
@@ -100,20 +106,6 @@ from rose_inputs;
 
 delete ignore
 from rose_exercises;
-
-# Questions
-
-delete ignore
-from question_solutions;
-
-delete ignore
-from question_answers;
-
-delete ignore
-from questions;
-
-delete ignore
-from quizzes;
 
 # Programming
 

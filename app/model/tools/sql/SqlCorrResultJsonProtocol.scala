@@ -38,7 +38,7 @@ object SqlCorrResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationRe
       (__ \ joinExpressionsComparisonsName).write[JsValue] and
       (__ \ whereComparisonsName).write[JsValue] and
       (__ \ additionalComparisonsName).write[Seq[JsValue]] and
-      (__ \ executionName).write[SqlExecutionResult]
+      (__ \ executionResultsName).write[SqlExecutionResult]
     ) (sr =>
     (sr.columnComparison.toJson, sr.tableComparison.toJson, sr.joinExpressionComparison.toJson, sr.whereComparison.toJson,
       sr.additionalComparisons.map(_.toJson), sr.executionResult)

@@ -10,7 +10,7 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
                               folderIdentifier: String, functionName: String, outputType: ProgDataType, baseData: Option[JsValue],
                               inputTypes: Seq[ProgInput],
                               sampleSolutions: Seq[ProgSampleSolution],
-                              sampleTestData: Seq[SampleTestData],
+                              sampleTestData: Seq[ProgSampleTestData],
                               maybeClassDiagramPart: Option[UmlClassDiagPart]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
@@ -22,7 +22,7 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.idExercises.programming.progPreview(this)
 
-  def buildTestDataFileContent(completeTestData: Seq[TestData], extendedUnitTests: Boolean): JsValue =
+  def buildTestDataFileContent(completeTestData: Seq[ProgTestData], extendedUnitTests: Boolean): JsValue =
     if (extendedUnitTests) ???
     else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
 
@@ -30,9 +30,10 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
 // Case classes for tables
 
-final case class ProgInput(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputName: String, inputType: ProgDataType)
+//FIXME: remove exId, exSemVer
+final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSampleSolution(id: Int, exerciseId: Int, exSemVer: SemanticVersion, language: ProgLanguage, base: String, solutionStr: String)
+final case class ProgSampleSolution(id: Int, language: ProgLanguage, base: String, solutionStr: String)
   extends SampleSolution[ProgSolution] {
 
   val part = ProgExParts.Implementation
@@ -44,18 +45,17 @@ final case class ProgSampleSolution(id: Int, exerciseId: Int, exSemVer: Semantic
 
 }
 
-sealed trait TestData {
+sealed trait ProgTestData {
 
   val id         : Int
-  val exerciseId : Int
   val inputAsJson: JsValue
   val output     : JsValue
 
 }
 
-final case class SampleTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue) extends TestData
+final case class ProgSampleTestData(id: Int, inputAsJson: JsValue, output: JsValue) extends ProgTestData
 
-final case class CommitedTestData(id: Int, exerciseId: Int, exSemVer: SemanticVersion, inputAsJson: JsValue, output: JsValue, username: String, state: ExerciseState) extends TestData
+final case class ProgUserTestData(id: Int, inputAsJson: JsValue, output: JsValue, state: ExerciseState) extends ProgTestData
 
 // Solution types
 
@@ -71,7 +71,7 @@ sealed trait ProgSolution {
 
 final case class ProgStringSolution(solution: String, extendedUnitTests: Boolean, language: ProgLanguage) extends ProgSolution
 
-final case class ProgTestDataSolution(testData: Seq[CommitedTestData], language: ProgLanguage) extends ProgSolution {
+final case class ProgTestDataSolution(testData: Seq[ProgUserTestData], language: ProgLanguage) extends ProgSolution {
 
   override def solution: String = ???
 
@@ -79,17 +79,13 @@ final case class ProgTestDataSolution(testData: Seq[CommitedTestData], language:
 
 }
 
-final case class DBProgSolution(id: Int, username: String, exerciseId: Int, exSemVer: SemanticVersion, part: ProgExPart,
-                                solutionStr: String, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points) extends UserSolution[ProgExPart, ProgSolution] {
+final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points)
+  extends UserSolution[ProgExPart, ProgSolution] {
 
-  val solution: ProgSolution = part match {
-    case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)
-    case _                            => ProgStringSolution(solutionStr, extendedUnitTests, language)
-  }
 
-  def commitedTestData: Seq[CommitedTestData] = solution match {
+  def commitedTestData: Seq[ProgUserTestData] = solution match {
     case ProgTestDataSolution(td, _) => td
-    case _                           => Seq[CommitedTestData]()
+    case _                           => Seq[ProgUserTestData]()
   }
 
 }

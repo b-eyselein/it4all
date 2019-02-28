@@ -1,14 +1,12 @@
 package model.core
 
-import model.Exercise
+import model.{Exercise, ExerciseCollection}
 import play.api.data.Form
 
-trait ExerciseForm[CompExType <: Exercise] {
+trait ExerciseForm[ExType <: Exercise, CollType <: ExerciseCollection] {
 
-  type FormData
+  val exerciseFormat: Form[ExType]
 
-  val format: Form[CompExType]
-
-  protected def unapplyCompEx(compEx: CompExType): Option[FormData]
+  val collectionFormat: Form[CollType]
 
 }
