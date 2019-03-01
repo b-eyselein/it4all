@@ -84,13 +84,13 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override def renderExercise(user: User, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart, maybeOldSolution: Option[UmlUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
-    case UmlExParts.ClassSelection     => views.html.tools.uml.classSelection(user, collection, exercise, this)
-    case UmlExParts.DiagramDrawing     => views.html.tools.uml.classDiagdrawing(user, collection, exercise, part, getsHelp = false, this)
-    case UmlExParts.DiagramDrawingHelp => views.html.tools.uml.classDiagdrawing(user, collection, exercise, part, getsHelp = true, this)
-    case UmlExParts.MemberAllocation   => views.html.tools.uml.memberAllocation(user, collection, exercise, this)
+    case UmlExParts.ClassSelection     => views.html.toolViews.uml.classSelection(user, collection, exercise, this)
+    case UmlExParts.DiagramDrawing     => views.html.toolViews.uml.classDiagdrawing(user, collection, exercise, part, getsHelp = false, this)
+    case UmlExParts.DiagramDrawingHelp => views.html.toolViews.uml.classDiagdrawing(user, collection, exercise, part, getsHelp = true, this)
+    case UmlExParts.MemberAllocation   => views.html.toolViews.uml.memberAllocation(user, collection, exercise, this)
   }
 
-  override def renderEditRest(exercise: UmlExercise): Html = views.html.tools.uml.editUmlExRest(exercise)
+  override def renderEditRest(exercise: UmlExercise): Html = views.html.toolViews.uml.editUmlExRest(exercise)
 
   //  override def renderUserExerciseEditForm(user: User, newExForm: Form[UmlExercise], isCreation: Boolean)
   //                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =

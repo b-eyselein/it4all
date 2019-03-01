@@ -22,7 +22,7 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
   val inputCount: Int = inputTypes.size
 
   override def preview: Html = // FIXME: move to toolMain!
-    views.html.tools.programming.progPreview(this)
+    views.html.toolViews.programming.progPreview(this)
 
   def buildTestDataFileContent(completeTestData: Seq[ProgTestData], extendedUnitTests: Boolean): JsValue =
     if (extendedUnitTests) ???

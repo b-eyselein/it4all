@@ -10,7 +10,7 @@
 @remainigExerciseDef = {
 
 @core.helperTemplates.modal("API des Roboters", "robot_api", "lg") {
-    @views.html.tools.rose.roseAPI.render()
+    @views.html.toolViews.rose.roseAPI.render()
 }
 
     <div class="form-group">
@@ -49,5 +49,5 @@
 
 }
 
-@idExercises.textExercise(user, Html(exercise.text), collection, exercise, RoseExParts.RoseSingleExPart, oldSolution,
+@toolViews.textExercise(user, Html(exercise.text), collection, exercise, RoseExParts.RoseSingleExPart, oldSolution,
     toolMainObject, additionalScripts, Some(remainigExerciseDef), remainingPage = remainingPage)

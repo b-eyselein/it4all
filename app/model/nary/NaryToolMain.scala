@@ -35,7 +35,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
   // Views
 
   override def exercisesOverviewForIndex: Html =
-    views.html.randomExercises.nary.naryOverview(this)
+    views.html.toolViews.nary.naryOverview(this)
 
   override def newExercise(user: User, exPart: NaryExPart, options: Map[String, Seq[String]])
                           (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = exPart match {
@@ -47,7 +47,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
       val sum = generator.nextInt(255) + 1
       val firstSummand = generator.nextInt(sum)
 
-      views.html.randomExercises.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr, this)
+      views.html.toolViews.nary.nAryAdditionQuestion(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr, this)
 
     case NaryExParts.NaryConversionExPart =>
 
@@ -72,12 +72,12 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
           (fromBase, toBase)
       }
 
-      views.html.randomExercises.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr, this)
+      views.html.toolViews.nary.nAryConversionQuestion(user, new NAryNumber(generator.nextInt(256), fromBase), toBase, fromBaseStr, toBaseStr, this)
 
 
     case NaryExParts.TwoComplementExPart =>
       val verbose = options.getOrElse("verbose", Seq("false")).mkString == "true"
-      views.html.randomExercises.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
+      views.html.toolViews.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
 
   }
 

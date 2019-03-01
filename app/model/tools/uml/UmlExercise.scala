@@ -17,7 +17,7 @@ final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
   // other methods
 
   override def preview: Html = // FIXME: move to toolMain!
-    views.html.tools.uml.umlPreview(this)
+    views.html.toolViews.uml.umlPreview(this)
 
   def titleForPart(part: UmlExPart): String = part match {
     case UmlExParts.ClassSelection     => "Auswahl der Klassen"

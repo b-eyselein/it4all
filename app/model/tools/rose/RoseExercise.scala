@@ -16,7 +16,7 @@ final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: 
   // other methods
 
   override def preview: Html = // FIXME: move to toolMain!
-    views.html.tools.rose.rosePreview.render(this)
+    views.html.toolViews.rose.rosePreview.render(this)
 
   def declaration(forUser: Boolean): String = {
     val className = if (forUser) "UserRobot" else "SampleRobot"

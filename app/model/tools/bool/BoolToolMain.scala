@@ -47,11 +47,11 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]])
                           (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = exType match {
-    case BoolExParts.FormulaCreation => views.html.randomExercises.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
-    case BoolExParts.TableFillout    => views.html.randomExercises.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
+    case BoolExParts.FormulaCreation => views.html.toolViews.bool.boolCreateQuestion(user, generateNewCreationQuestion, this)
+    case BoolExParts.TableFillout    => views.html.toolViews.bool.boolFilloutQuestion(user, generateNewFilloutQuestion, this)
   }
 
-  override def playground(user: User): Html = views.html.randomExercises.bool.boolDrawing(user)
+  override def playground(user: User): Html = views.html.toolViews.bool.boolDrawing(user)
 
   // Handlers
 

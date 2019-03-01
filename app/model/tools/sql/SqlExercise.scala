@@ -34,7 +34,7 @@ final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: S
   // other methods
 
   override def preview: Html = // FIXME: move to toolMain!
-    views.html.tools.sql.sqlExPreview(this)
+    views.html.toolViews.sql.sqlExPreview(this)
 
 }
 

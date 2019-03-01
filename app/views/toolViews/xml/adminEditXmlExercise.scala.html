@@ -21,7 +21,7 @@
 
 @admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
 
-    @tools.xml.editXmlExerciseForm(user, collId, exercise, isCreation, toolMainObject)
+    @toolViews.xml.editXmlExerciseForm(user, collId, exercise, isCreation, toolMainObject)
     @*<form class="form" method="post" role="form" action="@exes.routes.ExerciseController.adminEditExercise(toolMainObject.urlPart, exercise.ex.id)">*@
 
     @*<div class="row">*@

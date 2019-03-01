@@ -80,11 +80,11 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
     val oldOrDefSol = maybeOldSolution map (_.solution) getOrElse ""
 
-    views.html.tools.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, this)
+    views.html.toolViews.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, this)
   }
 
   override def renderExerciseEditForm(user: User, collId: Int, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
-    views.html.tools.sql.editSqlExercise(user, collId, newEx, isCreation, this, toolList)
+    views.html.toolViews.sql.editSqlExercise(user, collId, newEx, isCreation, this, toolList)
 
   // FIXME: remove this method...
   override def renderEditRest(exercise: SqlExercise): Html = ???

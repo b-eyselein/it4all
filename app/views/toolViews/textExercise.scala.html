@@ -7,11 +7,11 @@
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("../../assets/systemjs.config.js")"></script>
 
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
 
-    <script>SystemJS.import('@routes.Assets.versioned("app/textExercise.js")');</script>
+    <script>SystemJS.import('@routes.Assets.versioned("../../../target/web/typescript/main/app/textExercise.js")');</script>
 
     <style>
             .CodeMirror {

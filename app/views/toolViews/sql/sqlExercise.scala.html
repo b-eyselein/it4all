@@ -14,7 +14,7 @@
 
 @for(table <- tables) {
     @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
-        @views.html.tools.sql.resultTable.render(table)
+        @views.html.toolViews.sql.resultTable.render(table)
     }
 }
     <section>
@@ -51,4 +51,4 @@
     <div id="executionResultsDiv"></div>
 }
 
-@idExercises.textExercise(user, exerciseText, scenario, exercise, SqlExParts.SqlSingleExPart, oldOrDefSol, toolMainObject, additionalScripts, remainingPage = remainingPage)
+@toolViews.textExercise(user, exerciseText, scenario, exercise, SqlExParts.SqlSingleExPart, oldOrDefSol, toolMainObject, additionalScripts, remainingPage = remainingPage)

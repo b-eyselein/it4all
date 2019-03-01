@@ -123,7 +123,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     part match {
       case ProgExParts.TestdataCreation =>
         val oldTestData: Seq[ProgUserTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[ProgUserTestData]())
-        views.html.tools.programming.testDataCreation(user, collection, exercise, oldTestData, this)
+        views.html.toolViews.programming.testDataCreation(user, collection, exercise, oldTestData, this)
 
       case ProgExParts.Implementation =>
 
@@ -131,7 +131,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
           exercise.sampleSolutions find (_.language == language) map (_.base) getOrElse ""
         }
 
-        views.html.tools.programming.progExercise(user, collection, exercise, declaration, ProgExParts.Implementation, this)
+        views.html.toolViews.programming.progExercise(user, collection, exercise, declaration, ProgExParts.Implementation, this)
 
       case ProgExParts.ActivityDiagram =>
         // TODO: use old soluton!
@@ -140,7 +140,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
           case Some(base) => base.split("\n").zipWithIndex.map(si => (si._2 + 1).toString + "\t" + si._1).mkString("\n")
         }
 
-        views.html.tools.umlActivity.activityDrawing(user, collection, exercise, language, definitionRest, this)
+        views.html.toolViews.umlActivity.activityDrawing(user, collection, exercise, language, definitionRest, this)
     }
   }
 

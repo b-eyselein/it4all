@@ -79,7 +79,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override def renderExercise(user: User, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     val declaration = maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true)
-    views.html.tools.rose.roseExercise(user, collection, exercise, declaration, this)
+    views.html.toolViews.rose.roseExercise(user, collection, exercise, declaration, this)
   }
 
   override def renderEditRest(exercise: RoseExercise): Html = ???
