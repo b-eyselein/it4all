@@ -119,15 +119,14 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def isMultiplayer: Rep[Boolean] = column[Boolean]("is_mp")
 
 
-    override def * : ProvenShape[DbRoseExercise] = (id, semanticVersion, title, author, text, state, fieldWidth, fieldHeight, isMultiplayer) <> (DbRoseExercise.tupled, DbRoseExercise.unapply)
+    override def * : ProvenShape[DbRoseExercise] = (id, semanticVersion, collectionId, title, author, text, state,
+      fieldWidth, fieldHeight, isMultiplayer) <> (DbRoseExercise.tupled, DbRoseExercise.unapply)
 
   }
 
   class RoseInputTypesTable(tag: Tag) extends ExForeignKeyTable[DbRoseInputType](tag, "rose_inputs") {
 
     def id: Rep[Int] = column[Int]("id")
-
-    def collectionId: Rep[Int] = column[Int]("coll_id")
 
     def name: Rep[String] = column[String]("input_name")
 

@@ -64,10 +64,21 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Reading
 
   override def completeExForEx(collId: Int, ex: DbUmlExercise): Future[UmlExercise] = for {
-    toIgnore <- db.run(umlToIgnore filter (i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion) result)
-    mappings <- db.run(umlMappings filter (m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion) result)
+    dbToIgnore <- db.run(umlToIgnore filter (i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion) result)
+    dbMappings <- db.run(umlMappings filter (m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion) result)
     samples <- db.run(umlSamples filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map dbModels.sampleSolFromDbSampleSol)
-  } yield dbModels.exerciseFromDbExercise(ex, toIgnore map (_._3), mappings map (m => m._3 -> m._4) toMap, samples)
+  } yield {
+
+    val toIgnore = dbToIgnore map {
+      case (_, _, _, toIgnoreWord) => toIgnoreWord
+    }
+
+    val mappings = dbMappings.map {
+      case (_, _, _, key, value) => (key -> value)
+    }.toMap
+
+    dbModels.exerciseFromDbExercise(ex, toIgnore, mappings, samples)
+  }
 
 
   override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: UmlExPart): Future[Seq[String]] = ???
@@ -78,10 +89,10 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     val dbSamples = compEx.sampleSolutions map (s => dbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
-      toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.id, compEx.semanticVersion, i))))
+      toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.id, compEx.semanticVersion, collId, i))))
 
       mappingsSaved <- saveSeq[(String, String)](compEx.mappings toSeq, {
-        case (key, value) => db.run(umlMappings += ((compEx.id, compEx.semanticVersion, key, value)))
+        case (key, value) => db.run(umlMappings += ((compEx.id, compEx.semanticVersion, collId, key, value)))
       })
 
       sampleSolutionsSaved <- saveSeq[DbUmlSampleSolution](dbSamples, sample => db.run(umlSamples += sample))
@@ -115,33 +126,33 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def markedText: Rep[String] = column[String]("marked_text")
 
 
-    override def * : ProvenShape[DbUmlExercise] = (id, semanticVersion, title, author, text, state, markedText) <> (DbUmlExercise.tupled, DbUmlExercise.unapply)
+    override def * : ProvenShape[DbUmlExercise] = (id, semanticVersion, collectionId, title, author, text, state, markedText) <> (DbUmlExercise.tupled, DbUmlExercise.unapply)
 
   }
 
-  class UmlToIgnoreTable(tag: Tag) extends ExForeignKeyTable[(Int, SemanticVersion, String)](tag, "uml_to_ignore") {
+  class UmlToIgnoreTable(tag: Tag) extends ExForeignKeyTable[(Int, SemanticVersion, Int, String)](tag, "uml_to_ignore") {
 
     def toIgnore: Rep[String] = column[String]("to_ignore")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, toIgnore))
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, collectionId, toIgnore))
 
 
-    def * : ProvenShape[(Int, SemanticVersion, String)] = (exerciseId, exSemVer, toIgnore)
+    def * : ProvenShape[(Int, SemanticVersion, Int, String)] = (exerciseId, exSemVer, collectionId, toIgnore)
 
   }
 
-  class UmlMappingsTable(tag: Tag) extends ExForeignKeyTable[(Int, SemanticVersion, String, String)](tag, "uml_mappings") {
+  class UmlMappingsTable(tag: Tag) extends ExForeignKeyTable[(Int, SemanticVersion, Int, String, String)](tag, "uml_mappings") {
 
     def mappingKey: Rep[String] = column[String]("mapping_key")
 
     def mappingValue: Rep[String] = column[String]("mapping_value")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, mappingKey))
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, collectionId, mappingKey))
 
 
-    override def * : ProvenShape[(Int, SemanticVersion, String, String)] = (exerciseId, exSemVer, mappingKey, mappingValue)
+    override def * : ProvenShape[(Int, SemanticVersion, Int, String, String)] = (exerciseId, exSemVer, collectionId, mappingKey, mappingValue)
 
   }
 

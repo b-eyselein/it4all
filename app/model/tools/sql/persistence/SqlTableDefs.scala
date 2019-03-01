@@ -153,7 +153,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def tags: Rep[String] = column[String](tagsName)
 
 
-    override def * : ProvenShape[DbSqlExercise] = (id, semanticVersion, title, author, text, state, collectionId, exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)
+    override def * : ProvenShape[DbSqlExercise] = (id, semanticVersion, collectionId, title, author, text, state, exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)
 
   }
 

@@ -2,23 +2,61 @@
 @import model.toolMains.{ToolList, CollectionToolMain}
 @import model.core.ReadAndSaveResult
 
-@(user: User, collection: ExerciseCollection, readExerciseResults: ReadAndSaveResult[_ <: Exercise], toolMain: CollectionToolMain, toolList: ToolList)
+@(user: User, collection: ExerciseCollection, readAndSaveResults: ReadAndSaveResult[_ <: Exercise], toolMain: CollectionToolMain, toolList: ToolList)
 
     @title = @{
-        /* FIXME: collection... */
-        s"Eingelesene Aufgaben für Sammlung '${collection.title}' Tool '${toolMain.toolname}'"
+        s"Eingelesene Aufgaben für Sammlung '${collection.title}' im Tool '${toolMain.toolname}'"
+    }
+
+
+    @readResultsPerRow = @{
+        2
     }
 
     @admin.adminMain(title, user, toolList, Some(toolMain)) {
 
-        @for(readExerciseSuccess <- readExerciseResults.successes;
-        readExercise = readExerciseSuccess.ex;
-        saved = readExerciseSuccess.saved) {
-            <section>
-                <p class="text-@if(saved) {success} else {danger}">@if(!saved) {Nicht k} else {K}omplett gespeichert</p>
-                <p>@readExercise</p>
-            </section>
+        @for(readAndSaveResultGroup <- readAndSaveResults.successes.grouped(readResultsPerRow)) {
+            <div class="row mb-3">
+            @for(readExerciseSuccess <- readAndSaveResultGroup; readExercise = readExerciseSuccess.read; saved = readExerciseSuccess.saved) {
+                <div class="col-md-@{
+                    12 / readResultsPerRow
+                }">
+                    <div class="card">
+                        <div class="card-header @if(saved) {text-success} else {text-danger}">@{
+                            s"${readExercise.id}. ${readExercise.title}"
+                        }</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">Author:</div>
+                                <div class="col-md-8">@readExercise.title</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">Text:</div>
+                                <div class="col-md-8">@readExercise.text</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">Status:</div>
+                                <div class="col-md-8">@readExercise.state</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-8"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-8"></div>
+                            </div>
+
+                            <hr>
+
+                            <p>@readExercise</p>
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
         }
+
 
         <hr>
 

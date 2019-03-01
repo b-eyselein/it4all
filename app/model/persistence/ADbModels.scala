@@ -1,6 +1,6 @@
 package model.persistence
 
-import model.{Difficulty, ExPart, ExerciseReview, Points, SemanticVersion}
+import model.{Difficulty, ExPart, ExerciseReview, HasBaseValues, Points, SemanticVersion}
 
 trait ADbModels[Exercise, DbExercise, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType] {
 
@@ -16,6 +16,12 @@ trait ADbModels[Exercise, DbExercise, SampleSolType, DbSampleSolType, UserSolTyp
 
   def userSolFromDbUserSol(dbSolution: DbUserSolType): UserSolType
 
+
+}
+
+trait ADbExercise extends HasBaseValues {
+
+  def collectionId: Int
 
 }
 

@@ -149,8 +149,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def id: Rep[Int] = column[Int](idName)
 
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
     def inputName: Rep[String] = column[String]("input_name")
 
     def inputType: Rep[ProgDataType] = column[ProgDataType]("input_type")
@@ -185,8 +183,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def id: Rep[Int] = column[Int]("id")
 
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
     def inputAsJson: Rep[JsValue] = column[JsValue]("input_json")
 
     def output: Rep[JsValue] = column[JsValue]("output")
@@ -219,8 +215,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   }
 
   class UmlClassDiagPartsTable(tag: Tag) extends ExForeignKeyTable[DbProgUmlClassDiagram](tag, "prog_uml_cd_parts") {
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
 
     def classDiagram: Rep[UmlClassDiagram] = column[UmlClassDiagram]("class_diagram")
 

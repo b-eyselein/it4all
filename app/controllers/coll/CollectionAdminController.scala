@@ -150,11 +150,12 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminImportExercises(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      // FIXME: refactor!!!!!!!!!
-
       toolMain.futureCollById(collId) flatMap {
         case None             => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(collection) =>
+
+          // FIXME: refactor!!!!!!!!!
+
           val readTries: Seq[Try[toolMain.ExType]] = toolMain.readExercisesFromYaml(collection)
 
           val (readSuccesses, readFailures) = CommonUtils.splitTriesNew(readTries)

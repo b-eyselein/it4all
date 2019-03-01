@@ -82,7 +82,7 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 }
 
 final case class DbProgExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-                                folderIdentifier: String, functionname: String, outputType: ProgDataType, baseData: Option[JsValue]) extends HasBaseValues
+                                folderIdentifier: String, functionname: String, outputType: ProgDataType, baseData: Option[JsValue]) extends ADbExercise
 
 
 final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, language: ProgLanguage, base: String, sampleStr: String)

@@ -118,8 +118,6 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
     def id: Rep[Int] = column[Int](idName)
 
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
     def data: Rep[String] = column[String](dataName)
 
     def isIncluded: Rep[Boolean] = column[Boolean]("is_included")

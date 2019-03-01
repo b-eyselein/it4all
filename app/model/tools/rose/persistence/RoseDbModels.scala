@@ -3,12 +3,12 @@ package model.tools.rose.persistence
 import model.persistence._
 import model.tools.programming.{ProgDataType, ProgLanguage}
 import model.tools.rose._
-import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, Points, SemanticVersion}
 
 object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise, RoseSampleSolution, DbRoseSampleSolution, RoseUserSolution, DbRoseUserSolution] {
 
   override def dbExerciseFromExercise(collId: Int, ex: RoseExercise): DbRoseExercise =
-    DbRoseExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer)
+    DbRoseExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer)
 
   def exerciseFromDbValues(ex: DbRoseExercise, inputTypes: Seq[RoseInputType], samples: Seq[RoseSampleSolution]): RoseExercise =
     RoseExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer, inputTypes, samples)
@@ -44,8 +44,8 @@ object RoseExerciseReviewDbModels extends AExerciseReviewDbModels[RoseExPart, Ro
 
 }
 
-final case class DbRoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                                fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends HasBaseValues
+final case class DbRoseExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
+                                fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends ADbExercise
 
 final case class DbRoseSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, language: ProgLanguage, sample: String)
   extends ADbSampleSol[String]

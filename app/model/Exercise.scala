@@ -68,23 +68,6 @@ trait ExTag {
 
 trait Exercise extends HasBaseValues {
 
-  //  def id: Int
-
-  //  def semanticVersion: SemanticVersion
-
-  //  def collectionId: Int
-
-  //  def title: String
-
-  //  def author: String
-
-  //  def text: String
-
-  //  def state: ExerciseState
-
-  //  def baseValues: BaseValues
-
-
   def preview: Html
 
   def tags: Seq[ExTag] = Seq[ExTag]()

@@ -190,8 +190,6 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
     def id: Rep[Int] = column[Int]("task_id")
 
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
     def text: Rep[String] = column[String]("text")
 
     def xpathQuery: Rep[String] = column[String]("xpath_query")

@@ -32,7 +32,7 @@
         }
         </ul>
 
-        <div class="tab-content mt-3">
+        <div class="tab-content mt-4">
         @for((exercisesTabGroup, index) <- exercises.sortBy(_.id).grouped(rowsPerTab * exesPerRow).zipWithIndex) {
             <div class="tab-pane @if(index == 0) {active} else {fade}" id="exTab_@index">
             @for(exercisesRowGroup <- exercisesTabGroup.grouped(exesPerRow)) {
@@ -52,18 +52,23 @@
         }
         </div>
 
-        <div class="form-group">
+        <div class="my-4">
             <a href="@coll.routes.CollectionController.newExerciseForm(toolMain.urlPart, collection.id)"
             class="btn btn-success btn-block">Neue Aufgabe erstellen</a>
         </div>
 
-        <div class="form-group">
+        <div class="my-4">
             <div class="btn-group d-flex">
                 <a class="btn btn-secondary w-100" href="@coll.routes.CollectionAdminController.adminExportExercises(toolMain.urlPart, collection.id)">
                     Aufgaben aus dieser Sammlung als YAML exportieren</a>
                 <a class="btn btn-secondary w-100" href="@coll.routes.CollectionAdminController.adminImportExercises(toolMain.urlPart, collection.id)">
                     Aufgaben in diese Sammlung aus YAML importieren</a>
             </div>
+        </div>
+
+        <div class="my-4">
+            <a href="@coll.routes.CollectionAdminController.adminIndex(toolMain.urlPart)"
+            class="btn btn-primary btn-block">Zurück zur Sammlungsübersicht</a>
         </div>
 
     </section>

@@ -2,14 +2,14 @@ package model.tools.sql.persistence
 
 import model.persistence._
 import model.tools.sql._
-import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, Points, SemanticVersion}
 
 object SqlDbModels extends ADbModels[SqlExercise, DbSqlExercise, SqlSampleSolution, DbSqlSampleSolution, SqlUserSolution, DbSqlUserSolution] {
 
   override def dbExerciseFromExercise(collId: Int, ex: SqlExercise): DbSqlExercise = {
     val tagsAsString = ex.tags.map(_.entryName).mkString(SqlConsts.tagJoinChar)
 
-    DbSqlExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, collId, ex.exerciseType, tagsAsString, ex.hint)
+    DbSqlExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.exerciseType, tagsAsString, ex.hint)
   }
 
   def exerciseFromDbValues(dbEx: DbSqlExercise, samples: Seq[SqlSampleSolution]): SqlExercise = {
@@ -42,8 +42,8 @@ object SqlExerciseReviewDbModels extends AExerciseReviewDbModels[SqlExPart, SqlE
 
 }
 
-final case class DbSqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                               collectionId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends HasBaseValues
+final case class DbSqlExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
+                               exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ADbExercise
 
 final case class DbSqlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, sample: String)
   extends ADbSampleSol[String]

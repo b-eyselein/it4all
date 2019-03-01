@@ -40,7 +40,7 @@ object XmlExerciseReviewDbModels extends AExerciseReviewDbModels[XmlExPart, XmlE
 }
 
 final case class DbXmlExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-                               grammarDescription: String, rootNode: String) extends HasBaseValues
+                               grammarDescription: String, rootNode: String) extends ADbExercise
 
 final case class DbXmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, document: String, grammar: String)
   extends ADbSampleSol[XmlSolution] {

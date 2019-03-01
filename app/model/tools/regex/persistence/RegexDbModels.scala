@@ -48,7 +48,8 @@ object RegexExerciseReviewDbModels extends AExerciseReviewDbModels[RegexExPart, 
 
 }
 
-final case class DbRegexExercise(id: Int, semanticVersion: SemanticVersion, collId: Int, title: String, author: String, text: String, state: ExerciseState) extends HasBaseValues
+final case class DbRegexExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String,
+                                 author: String, text: String, state: ExerciseState) extends ADbExercise
 
 final case class DbRegexSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, sample: String)
   extends ADbSampleSol[String]

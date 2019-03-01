@@ -2,7 +2,7 @@ package model.tools.web.persistence
 
 import model.persistence._
 import model.tools.web._
-import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, Points, SemanticVersion}
 
 object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSolution, DbWebSampleSolution, WebUserSolution, DbWebUserSolution] {
 
@@ -83,8 +83,8 @@ object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebE
 
 }
 
-final case class DbWebExercise(id: Int, semanticVersion: SemanticVersion, collId: Int, title: String, author: String, text: String, state: ExerciseState,
-                               htmlText: Option[String], jsText: Option[String]) extends HasBaseValues
+final case class DbWebExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
+                               htmlText: Option[String], jsText: Option[String]) extends ADbExercise
 
 final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, htmlSample: String, jsSample: String)
   extends ADbSampleSol[WebSolution] {

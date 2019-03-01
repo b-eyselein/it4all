@@ -2,7 +2,7 @@
 @import model.toolMains.{CollectionToolMain, ToolList}
 @import model.{ExerciseCollection, User}
 
-@(user: User, readCollections: ReadAndSaveResult[_ <: ExerciseCollection], toolMain: CollectionToolMain, toolList: ToolList)
+@(user: User, readAndSaveResults: ReadAndSaveResult[_ <: ExerciseCollection], toolMain: CollectionToolMain, toolList: ToolList)
 
 @title = @{
     s"Eingelesene Sammlungen Tool '${toolMain.toolname}'"
@@ -14,9 +14,9 @@
 
 @admin.adminMain(title, user, toolList, Some(toolMain)) {
 
-    @for(readCollectionGroup <- readCollections.successes.grouped(readResultsPerRow)) {
+    @for(readAndSaveResultGroupd <- readAndSaveResults.successes.grouped(readResultsPerRow)) {
         <div class="row mb-3">
-        @for(readCollectionResult <- readCollectionGroup; readCollection = readCollectionResult.ex; collectionSaved = readCollectionResult.saved) {
+        @for(readCollectionResult <- readAndSaveResultGroupd; readCollection = readCollectionResult.read; collectionSaved = readCollectionResult.saved) {
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header @if(collectionSaved) {text-success} else {text-danger}">@{
@@ -30,6 +30,10 @@
                         <div class="row">
                             <div class="col-md-4">Beschreibung:</div>
                             <div class="col-md-8">@readCollection.text</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Status:</div>
+                            <div class="col-md-8"><code>@readCollection.state</code></div>
                         </div>
                         <div class="row">
                             <div class="col-md-4">Kurzname:</div>
