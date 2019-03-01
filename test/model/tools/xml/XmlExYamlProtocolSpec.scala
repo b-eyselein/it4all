@@ -1,7 +1,7 @@
 package model.tools.xml
 
 import model.tools.xml.XmlExYamlProtocol.XmlSampleYamlFormat
-import model.{ExerciseState, SemanticVersion, SemanticVersionHelper}
+import model.{ExerciseState, SemanticVersion}
 import net.jcazevedo.moultingyaml._
 import org.scalatest._
 
@@ -62,7 +62,7 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
           |""".stripMargin)
     )
 
-    val xmlSampleYamlFormat = XmlSampleYamlFormat(1, SemanticVersionHelper.DEFAULT)
+    val xmlSampleYamlFormat = XmlSampleYamlFormat
 
     for ((docId, toRead, grammarContent, docContent) <- valuesToTest) {
 
@@ -76,7 +76,7 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
       xmlSampleYamlFormat.read(toRead.parseYaml) match {
         case Failure(error)     => fail("Could not read yaml: " + error.getMessage)
         case Success(xmlSample) =>
-          xmlSample shouldBe XmlSample(docId, grammarContent, docContent)
+          xmlSample shouldBe XmlSampleSolution(docId, XmlSolution(docContent, grammarContent))
           xmlSampleYamlFormat.write(xmlSample).prettyPrint shouldBe toRead
       }
     }
@@ -128,10 +128,10 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
               "Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast hat mindestens ein " +
               "Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.\n",
             rootNode = "party",
-            Seq(XmlSample(1, grammarContent,
+            Seq(XmlSampleSolution(1, XmlSolution(
               """<root>
                 |</root>
-                |""".stripMargin)))
+                |""".stripMargin, grammarContent))))
 
 
         // Write and read again => ordering is not important
