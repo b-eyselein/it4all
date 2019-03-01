@@ -14,7 +14,7 @@ import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[SqlExercise, SqlExPart, SqlScenario, String, SqlSampleSolution, SqlUserSolution, SqlExerciseReview] {
+    with ExerciseCollectionTableDefs[SqlExPart, SqlExercise, SqlScenario, String, SqlSampleSolution, SqlUserSolution, SqlExerciseReview] {
 
   import profile.api._
 

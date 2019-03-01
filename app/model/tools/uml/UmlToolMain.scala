@@ -44,7 +44,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override protected val exParts: Seq[UmlExPart] = UmlExParts.values
+  override val exParts: Seq[UmlExPart] = UmlExParts.values
 
 
   // Yaml, Html forms, Json

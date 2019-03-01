@@ -11,7 +11,7 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+trait ExerciseCollectionTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
   extends ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
@@ -40,9 +40,9 @@ trait ExerciseCollectionTableDefs[ExType <: Exercise, PartType <: ExPart, CollTy
 
   def futureNumOfCollections: Future[Int] = db.run(collTable.length.result)
 
-  def futureNumOfExesInColl(collId: Int): Future[Int] = db.run(exTable.filter(_.collectionId === collId).length.result)
-
   def futureHighestCollectionId: Future[Int] = db.run(collTable.map(_.id).max.result) map (_ getOrElse (-1))
+
+  def futureNumOfExesInColl(collId: Int): Future[Int] = db.run(exTable.filter(_.collectionId === collId).length.result)
 
   def futureHighestExerciseIdInCollection(collId: Int): Future[Int] =
     db.run(exTable.filter(_.collectionId === collId).map(_.id).max.result) map (_ getOrElse (-1))

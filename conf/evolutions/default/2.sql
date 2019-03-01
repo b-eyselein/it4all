@@ -76,6 +76,9 @@ from uml_to_ignore;
 delete ignore
 from uml_exercises;
 
+delete ignore
+from uml_collections;
+
 # Sql
 
 delete ignore
@@ -107,6 +110,29 @@ from rose_inputs;
 delete ignore
 from rose_exercises;
 
+delete ignore
+from rose_collections;
+
+# Regex
+
+delete ignore
+from regex_exercise_reviews;
+
+delete ignore
+from regex_solutions;
+
+delete ignore
+from regex_test_data;
+
+delete ignore
+from regex_sample_solutions;
+
+delete ignore
+from regex_exercises;
+
+delete ignore
+from regex_collections;
+
 # Programming
 
 delete ignore
@@ -132,6 +158,9 @@ from prog_input_types;
 
 delete ignore
 from prog_exercises;
+
+delete ignore
+from prog_collections;
 
 # General
 

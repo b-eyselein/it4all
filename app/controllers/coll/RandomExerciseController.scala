@@ -1,5 +1,6 @@
-package controllers
+package controllers.coll
 
+import controllers.{AExerciseController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
 import model.toolMains.{RandomExerciseToolMain, ToolList}
@@ -23,6 +24,10 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
   override protected val adminRightsRequired: Boolean = false
 
   // Routes
+
+  def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request => toolMain.futureLearningPaths map (paths => Ok(views.html.exercises.exerciseIndex(user, toolMain, paths)))
+  }
 
   def newExercise(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>

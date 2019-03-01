@@ -32,7 +32,7 @@
                         <div class="col-sm-@{
                             12 / colCount
                         }">
-                        @for(exPart <- toolMainObject.theExParts) {
+                        @for(exPart <- toolMainObject.exParts) {
                             <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, compEx.id, exPart.urlName)"
                             class="btn @successType.btnOutline btn-block">
                                 <div>@{

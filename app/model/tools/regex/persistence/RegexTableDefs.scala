@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[RegexExercise, RegexExPart, RegexCollection, String, RegexSampleSolution, RegexUserSolution, RegexExerciseReview] {
+    with ExerciseCollectionTableDefs[RegexExPart, RegexExercise, RegexCollection, String, RegexSampleSolution, RegexUserSolution, RegexExerciseReview] {
 
   import profile.api._
 

@@ -8,27 +8,28 @@
         <div class="container">
 
             <div class="form-group">
-                <a class="btn btn-primary btn-block" href="@routes.MainExerciseAdminController.adminIndex(toolMain.urlPart)">Zurück zur Administratorseite</a>
+                <a class="btn btn-primary btn-block" href="@coll.routes.CollectionAdminController.adminIndex(toolMain.urlPart)">
+                    Zurück zur Administratorseite</a>
             </div>
 
-        @for(learningPath <- learningPaths) {
-            <p>Titel: @learningPath.title</p>
+            @for(learningPath <- learningPaths) {
+                <p>Titel: @learningPath.title</p>
 
-            @for(section <- learningPath.sections) {
-                <p>ID: @section.id, Titel: @section.title</p>
+                @for(section <- learningPath.sections) {
+                    <p>ID: @section.id, Titel: @section.title</p>
 
-                @section match {
-                    case ts: model.learningPath.TextSection => {
-                        <pre>@ts.text</pre>
+                    @section match {
+                        case ts: model.learningPath.TextSection => {
+                            <pre>@ts.text</pre>
+                        }
+                        case qs: model.learningPath.QuestionSection => {
+                            <pre>@qs.questions.map(_.toString).mkString("\n")</pre>
+                        }
                     }
-                    case qs: model.learningPath.QuestionSection => {
-                        <pre>@qs.questions.map(_.toString).mkString("\n")</pre>
+
+                    <hr>
                     }
-                }
 
-                <hr>
-                }
-
-        }
+            }
         </div>
     }

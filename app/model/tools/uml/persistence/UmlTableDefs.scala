@@ -13,7 +13,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[UmlExercise, UmlExPart, UmlCollection, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
+    with ExerciseCollectionTableDefs[UmlExPart, UmlExercise, UmlCollection, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
 
   import profile.api._
 

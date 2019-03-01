@@ -1,7 +1,7 @@
 package controllers.coll
 
 import better.files._
-import controllers.{AFixedExController, Secured}
+import controllers.Secured
 import javax.inject.{Inject, Singleton}
 import model.ExerciseState
 import model.core.CoreConsts._
@@ -20,7 +20,7 @@ import scala.util.Try
 
 @Singleton
 class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
+  extends AToolAdminController(cc, dbcp, tl, repository) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
   private val logger = Logger(classOf[CollectionAdminController])
 
@@ -28,13 +28,11 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   override protected def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
 
-  override protected val adminRightsRequired: Boolean = true
-
   // Helpers
 
   private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
-  // Admin
+  // Routes
 
   def adminCollection(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
@@ -77,7 +75,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       // FIXME: refactor!!!!!!!!!
 
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(collId))
+        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(collection) =>
           val readTries: Seq[Try[toolMain.ExType]] = toolMain.readExercisesFromYaml(collection)
 

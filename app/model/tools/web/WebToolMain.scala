@@ -50,7 +50,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override protected val exParts: Seq[WebExPart] = WebExParts.values
+  override val exParts: Seq[WebExPart] = WebExParts.values
 
   // Yaml, Html forms, Json
 
@@ -70,15 +70,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     target.createFileIfNotExists(createParents = true).write(content)
   }
 
-  override def futureMaybeOldSolution(user: User, exIdentifier: ExIdentifierType, part: WebExPart): Future[Option[UserSolType]] =
-    super.futureMaybeOldSolution(user, exIdentifier, part) flatMap {
-      case Some(solution) => Future.successful(Some(solution))
-      case None           =>
-        part match {
-          case WebExParts.JsPart => super.futureMaybeOldSolution(user, exIdentifier, WebExParts.HtmlPart)
-          case _                 => Future.successful(None)
-        }
-    }
+  override def futureMaybeOldSolution(user: User, collId: Int, exId: Int, part: WebExPart): Future[Option[UserSolType]] = part match {
+    case WebExParts.HtmlPart => super.futureMaybeOldSolution(user, collId, exId, part)
+    case WebExParts.JsPart   =>
+      super.futureMaybeOldSolution(user, collId, exId, WebExParts.JsPart) flatMap {
+        case Some(solution) => Future.successful(Some(solution))
+        case None           => super.futureMaybeOldSolution(user, collId, exId, WebExParts.HtmlPart)
+      }
+  }
 
   // Other helper methods
 

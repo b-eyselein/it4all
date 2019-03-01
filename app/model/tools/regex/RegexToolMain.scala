@@ -34,7 +34,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   // Members
 
-  override protected val exParts: Seq[RegexExPart] = RegexExParts.values
+  override val exParts: Seq[RegexExPart] = RegexExParts.values
 
   override val usersCanCreateExes: Boolean = false
 

@@ -1,15 +1,15 @@
 package controllers.coll
 
-import controllers.{AFixedExController, Secured}
+import controllers.{AExerciseController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.core.overviewHelpers.{SolvedStates, UserCollEx}
+import model.toolMains.{CollectionToolMain, ToolList}
 import model.tools.programming.ProgToolMain
-import model.toolMains.{CollectionExIdentifier, CollectionToolMain, ToolList}
-import model.tools.web.{WebExParts, WebToolMain}
 import model.tools.uml._
+import model.tools.web.{WebExParts, WebToolMain}
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -24,7 +24,7 @@ import scala.util.{Failure, Success}
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, ws: WSClient, val repository: Repository,
                                      progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)(implicit ec: ExecutionContext)
-  extends AFixedExController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
+  extends AExerciseController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
   override protected type ToolMainType = CollectionToolMain
 
@@ -65,7 +65,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       val step = 18
 
       toolMain.futureCollById(collId) flatMap {
-        case None                          => Future(Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart)))
+        case None                          => Future(onNoSuchCollection(toolMain, collId))
         case Some(coll: toolMain.CollType) =>
           toolMain.futureExercisesInColl(coll.id) flatMap { exercises =>
 
@@ -91,7 +91,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
   }
 
-  def exercise(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  def exercise(toolType: String, collId: Int, exId: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
       toolMain.partTypeFromUrl(partStr) match {
@@ -101,12 +101,11 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
           toolMain.futureCollById(collId) flatMap {
             case None             => Future(BadRequest(s"There is no collection with id $collId!"))
             case Some(collection) =>
-              val exIdentifier = CollectionExIdentifier(collId, id)
 
-              toolMain.futureExerciseById(collId, id) flatMap {
-                case None           => Future.successful(onNoSuchExercise(id))
+              toolMain.futureExerciseById(collId, exId) flatMap {
+                case None           => Future.successful(onNoSuchExercise(exId))
                 case Some(exercise) =>
-                  toolMain.futureMaybeOldSolution(user, exIdentifier, exPart) map {
+                  toolMain.futureMaybeOldSolution(user, collId, exId, exPart) map {
                     maybeOldSolution => Ok(toolMain.renderExercise(user, collection, exercise, exPart, maybeOldSolution))
                   }
               }
@@ -120,13 +119,13 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None         => Future.successful(onNoSuchExercisePart(partStr))
         case Some(exPart) =>
           toolMain.futureCollById(collId) flatMap {
-            case None             => Future.successful(onNoSuchCollection(collId))
+            case None             => Future.successful(onNoSuchCollection(toolMain, collId))
             case Some(collection) =>
               toolMain.futureExerciseById(collection.id, id) flatMap {
                 case None           => Future.successful(onNoSuchExercise(id))
                 case Some(exercise) =>
                   toolMain.correctAbstract(user, collection, exercise, exPart) map {
-                    case Success(result) => Ok(result)
+                    case Success(result) => Ok(toolMain.onLiveCorrectionResult(result._1, result._2))
                     case Failure(error)  =>
                       Logger.error("There has been an internal correction error:", error)
                       BadRequest(toolMain.onLiveCorrectionError(error))
@@ -227,7 +226,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
             val onFormRead: toolMain.ReviewType => Future[Result] = { currentReview =>
               toolMain.futureSaveReview(user.username, collId, exercise.id, part, currentReview) map {
-                case true  => Redirect(controllers.routes.MainExerciseController.index(toolMain.urlPart))
+                case true  => Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
                 case false => ???
               }
             }
@@ -240,19 +239,18 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Other routes
 
-  def umlClassDiag(collId: Int, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
+  def umlClassDiag(collId: Int, exId: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
       def emptyClassDiagram: UmlClassDiagram = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]())
 
       val futureClassDiagram: Future[UmlClassDiagram] = umlToolMain.partTypeFromUrl(partStr) match {
         case None       => Future(emptyClassDiagram)
-        case Some(part) => umlToolMain.futureExerciseById(collId, id) flatMap {
+        case Some(part) => umlToolMain.futureExerciseById(collId, exId) flatMap {
           case None                        =>
-            Logger.error(s"Error while loading uml class diagram for uml exercise $id and part $part")
+            Logger.error(s"Error while loading uml class diagram for uml exercise $exId and part $part")
             Future.successful(emptyClassDiagram)
           case Some(exercise: UmlExercise) =>
-            val exIdentifier = CollectionExIdentifier(collId, id)
-            umlToolMain.futureMaybeOldSolution(user, exIdentifier, part) map {
+            umlToolMain.futureMaybeOldSolution(user, collId, exId, part) map {
               case Some(solution) => solution.solution
               case None           => exercise.getDefaultClassDiagForPart(part)
             }

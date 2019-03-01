@@ -51,7 +51,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val usersCanCreateExes: Boolean = true
 
-  override protected val exParts: Seq[XmlExPart] = XmlExParts.values
+  override val exParts: Seq[XmlExPart] = XmlExParts.values
 
   // Yaml, Html forms, Json
 

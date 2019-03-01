@@ -71,25 +71,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlCorrResultJsonProtocol
 
-  // db
-
-  //  override def futureSaveRead(reads: Seq[ReadType]): Future[Seq[(ReadType, Boolean)]] = Future.sequence(reads map {
-  //    case (collection, exercises) => tables.futureInsertAndDeleteOldCollection(collection) flatMap {
-  //      case false => Future.successful(((collection, exercises), false))
-  //      case true  =>
-  //        val futureAllExesSaved: Future[Boolean] = Future.sequence(exercises map {
-  //          exercise => tables.futureInsertExercise(exercise).transform(_ == 1, identity)
-  //        }).map(_.forall(identity))
-  //
-  //        futureAllExesSaved map {
-  //          allExesSaved => ((collection, exercises), allExesSaved)
-  //        }
-  //    }
-  //  })
-
-
-  //  override protected def saveSolution(solution: SqlSolution): Future[Boolean] = tables.saveSolution(solution)
-
   // Views
 
   override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart, maybeOldSolution: Option[UserSolType])

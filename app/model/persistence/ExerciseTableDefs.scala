@@ -9,6 +9,8 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
 
+// FIXME: remove this trait...
+
 trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection,
 SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview] extends LearningPathTableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>

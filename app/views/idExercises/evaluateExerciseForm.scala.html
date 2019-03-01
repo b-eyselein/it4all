@@ -1,6 +1,7 @@
 @import model.{User, Exercise, ExPart}
+@import model.toolMains.CollectionToolMain
 
-@(user: model.User, collId: Int, exercise: Exercise, part: ExPart, toolMainObject: model.toolMains.CollectionToolMain)(
+@(user: model.User, collId: Int, exercise: Exercise, part: ExPart, toolMainObject: CollectionToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
@@ -45,7 +46,7 @@
             </div>
 
             <div class="btn-group d-flex">
-                <a href="@routes.MainExerciseController.index(toolMainObject.urlPart)" class="btn btn-light w-100">
+                <a href="@coll.routes.CollectionController.index(toolMainObject.urlPart)" class="btn btn-light w-100">
                     Überspringen</a>
                 <button class="btn btn-primary w-100">Bewerten</button>
             </div>

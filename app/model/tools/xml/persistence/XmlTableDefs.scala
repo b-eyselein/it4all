@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[XmlExercise, XmlExPart, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview] {
+    with ExerciseCollectionTableDefs[XmlExPart, XmlExercise, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview] {
 
   import profile.api._
 

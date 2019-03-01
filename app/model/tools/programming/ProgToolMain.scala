@@ -49,7 +49,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override val toolState: ToolState = ToolState.BETA
 
-  override protected val exParts: Seq[ProgExPart] = ProgExParts.values
+  override val exParts: Seq[ProgExPart] = ProgExParts.values
 
   // Yaml, Html Forms, Json
 

@@ -13,7 +13,7 @@ import scala.language.postfixOps
 
 class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[WebExercise, WebExPart, WebCollection, WebSolution, WebSampleSolution, WebUserSolution, WebExerciseReview] {
+    with ExerciseCollectionTableDefs[WebExPart, WebExercise, WebCollection, WebSolution, WebSampleSolution, WebUserSolution, WebExerciseReview] {
 
   import profile.api._
 

@@ -133,14 +133,15 @@ create table if not exists prog_input_types
 
 create table if not exists prog_sample_solutions
 (
-  exercise_id   int,
-  ex_sem_ver    varchar(10),
-  collection_id int,
-  language      enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
-  base          text,
-  solution      text,
+  id             int,
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  collection_id  int,
+  language       enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
+  base           text,
+  implementation text,
 
-  primary key (exercise_id, ex_sem_ver, collection_id, language),
+  primary key (id, exercise_id, ex_sem_ver, collection_id, language),
   foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade
 );
@@ -228,12 +229,110 @@ create table if not exists prog_exercise_reviews
     on update cascade on delete cascade
 );
 
+# Regex
+
+create table if not exists regex_collections
+(
+  id         int primary key,
+  title      varchar(50),
+  author     varchar(50),
+  ex_text    text,
+  ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+  short_name varchar(50)
+);
+
+create table if not exists regex_exercises
+(
+  id               int,
+  semantic_version varchar(10),
+  collection_id    int,
+  title            varchar(50),
+  author           varchar(50),
+  ex_text          text,
+  ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+
+  primary key (id, semantic_version, collection_id),
+  foreign key (collection_id) references regex_collections (id)
+    on update cascade on delete cascade
+);
+
+create table if not exists regex_sample_solutions
+(
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+
+  sample        varchar(100),
+  primary key (id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references regex_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
+);
+
+create table if not exists regex_test_data
+(
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  data          varchar(100),
+  is_included   boolean,
+
+  primary key (id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references regex_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
+);
+
+create table if not exists regex_solutions
+(
+  id            int primary key auto_increment,
+  username      varchar(50),
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  part          varchar(30),
+  points        double,
+  max_points    double,
+  solution      varchar(100),
+
+  foreign key (username) references users (username)
+    on update cascade on delete cascade,
+  foreign key (exercise_id, ex_sem_ver, collection_id) references regex_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
+);
+
+create table if not exists regex_exercise_reviews
+(
+  username       varchar(50),
+  exercise_id    int,
+  ex_sem_ver     varchar(10),
+  collection_id  int,
+  exercise_part  varchar(30),
+  difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+  maybe_duration int,
+
+  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references regex_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
+);
+
 # Rose
+
+create table if not exists rose_collections
+(
+  id         int primary key,
+  title      varchar(50),
+  author     varchar(50),
+  ex_text    text,
+  ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+  short_name varchar(50)
+);
 
 create table if not exists rose_exercises
 (
   id               int,
   semantic_version varchar(10),
+  collection_id    int,
   title            varchar(50),
   author           varchar(50),
   ex_text          text,
@@ -243,54 +342,55 @@ create table if not exists rose_exercises
   field_height     int,
   is_mp            boolean,
 
-  primary key (id, semantic_version)
+  primary key (id, semantic_version, collection_id),
+  foreign key (collection_id) references rose_collections (id)
+    on update cascade on delete cascade
 );
 
 create table if not exists rose_inputs
 (
-  id          int,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  input_name  varchar(20),
-  input_type  varchar(20),
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  input_name    varchar(20),
+  input_type    varchar(20),
 
-  primary key (id, exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references rose_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references rose_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists rose_samples
 (
-  id          int,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  language    enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
-  solution    text,
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  language      enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
+  solution      text,
 
-  primary key (id, exercise_id, ex_sem_ver, language),
-  foreign key (exercise_id, ex_sem_ver) references rose_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (id, exercise_id, ex_sem_ver, collection_id, language),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references rose_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists rose_solutions
 (
-  id          int primary key auto_increment,
-  username    varchar(50),
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  part        varchar(30),
-  points      double,
-  max_points  double,
-  solution    text,
+  id            int primary key auto_increment,
+  username      varchar(50),
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  part          varchar(30),
+  points        double,
+  max_points    double,
+  solution      text,
 
   foreign key (username) references users (username)
-    on update cascade
-    on delete cascade,
-  foreign key (exercise_id, ex_sem_ver) references rose_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+    on update cascade on delete cascade,
+  foreign key (exercise_id, ex_sem_ver, collection_id) references rose_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists rose_exercise_reviews
@@ -298,14 +398,14 @@ create table if not exists rose_exercise_reviews
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
+  collection_id  int,
   exercise_part  varchar(30),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, exercise_part),
-  foreign key (exercise_id, ex_sem_ver) references rose_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references rose_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 # Sql
@@ -374,10 +474,21 @@ create table if not exists sql_solutions
 
 # Uml
 
+create table if not exists uml_collections
+(
+  id         int primary key,
+  title      varchar(50),
+  author     varchar(50),
+  ex_text    text,
+  ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+  short_name varchar(50)
+);
+
 create table if not exists uml_exercises
 (
   id               int,
   semantic_version varchar(10),
+  collection_id    int,
   title            varchar(50),
   author           varchar(50),
   ex_text          text,
@@ -385,17 +496,20 @@ create table if not exists uml_exercises
 
   marked_text      text,
 
-  primary key (id, semantic_version)
+  primary key (id, semantic_version, collection_id),
+  foreign key (collection_id) references uml_collections (id)
+    on update cascade on delete cascade
 );
 
 create table if not exists uml_to_ignore
 (
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  to_ignore   varchar(50),
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  to_ignore     varchar(50),
 
-  primary key (exercise_id, ex_sem_ver, to_ignore),
-  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
+  primary key (exercise_id, ex_sem_ver, collection_id, to_ignore),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references uml_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade
 );
 
@@ -403,45 +517,44 @@ create table if not exists uml_mappings
 (
   exercise_id   int,
   ex_sem_ver    varchar(10),
+  collection_id int,
   mapping_key   varchar(50),
   mapping_value varchar(50),
 
-  primary key (exercise_id, ex_sem_ver, mapping_key),
-  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (exercise_id, ex_sem_ver, collection_id, mapping_key),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references uml_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists uml_sample_solutions
 (
-  id          int,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  sample      text,
+  id            int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  sample        text,
 
-  primary key (id, exercise_id, ex_sem_ver),
-  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references uml_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists uml_solutions
 (
-  id          int primary key auto_increment,
-  exercise_id int,
-  ex_sem_ver  varchar(10),
-  username    varchar(30),
-  part        varchar(30),
-  points      double,
-  max_points  double,
-  solution    text,
+  id            int primary key auto_increment,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  username      varchar(30),
+  part          varchar(30),
+  points        double,
+  max_points    double,
+  solution      text,
 
   foreign key (username) references users (username)
-    on update cascade
-    on delete cascade,
-  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+    on update cascade on delete cascade,
+  foreign key (exercise_id, ex_sem_ver, collection_id) references uml_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists uml_exercise_reviews
@@ -449,14 +562,16 @@ create table if not exists uml_exercise_reviews
   username       varchar(50),
   exercise_id    int,
   ex_sem_ver     varchar(10),
+  collection_id  int,
   exercise_part  varchar(30),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, exercise_part),
-  foreign key (exercise_id, ex_sem_ver) references uml_exercises (id, semantic_version)
-    on update cascade
-    on delete cascade
+  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  foreign key (username) references users (username)
+    on update cascade on delete cascade,
+  foreign key (exercise_id, ex_sem_ver, collection_id) references uml_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
 );
 
 # Web
@@ -751,6 +866,22 @@ drop table if exists rose_samples;
 drop table if exists rose_inputs;
 
 drop table if exists rose_exercises;
+
+drop table if exists rose_collections;
+
+# Regex
+
+drop table if exists regex_exercise_reviews;
+
+drop table if exists regex_solutions;
+
+drop table if exists regex_test_data;
+
+drop table if exists regex_sample_solutions;
+
+drop table if exists regex_exercises;
+
+drop table if exists regex_collections;
 
 # Programming
 

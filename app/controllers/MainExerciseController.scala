@@ -21,10 +21,6 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
 
   override protected val adminRightsRequired: Boolean = false
 
-  def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request => toolMain.futureLearningPaths map (paths => Ok(views.html.exercises.exerciseIndex(user, toolMain, paths)))
-  }
-
   // Evaluation
 
   def evaluate(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>

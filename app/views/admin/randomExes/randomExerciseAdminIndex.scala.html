@@ -1,6 +1,6 @@
-@import model.toolMains.{ToolList, AToolMain}
+@import model.toolMains.{RandomExerciseToolMain, ToolList}
 
-@(user: model.User, statistics: Html, toolMainObject: AToolMain, toolList: ToolList)
+@(user: model.User, statistics: Html, toolMainObject: RandomExerciseToolMain, toolList: ToolList)
 
 @title = @{
     "Administrator " + toolMainObject.toolname
@@ -19,7 +19,7 @@
         <h2>Verwaltung der @toolMainObject.pluralName</h2>
 
         <div class="form-group">
-            <a class="btn btn-secondary btn-block" href="@routes.MainExerciseAdminController.readLearningPaths(toolMainObject.urlPart)">
+            <a class="btn btn-secondary btn-block" href="@coll.routes.RandomExerciseAdminController.readLearningPaths(toolMainObject.urlPart)">
                 Lernpfade einlesen</a>
         </div>
     </section>
@@ -27,7 +27,7 @@
 
     <hr>
 
-    <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
+    <a class="btn btn-primary btn-block" href="@coll.routes.RandomExerciseController.index(toolMainObject.urlPart)">
         Zu den Aufgaben</a>
 
 }

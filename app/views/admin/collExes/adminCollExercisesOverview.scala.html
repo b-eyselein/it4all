@@ -12,7 +12,7 @@
 
 @admin.adminMain("Aufgabenübersicht", user, toolList, Some(toolMainObject), scripts) {
 
-    <a href="@routes.MainExerciseAdminController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+    <a href="@coll.routes.CollectionAdminController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
         Zurück zur Administratorseite</a>
 
     <input hidden id="toolType" value="@toolMainObject.urlPart" title="hidden">

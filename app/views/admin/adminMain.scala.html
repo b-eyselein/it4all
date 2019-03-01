@@ -14,10 +14,16 @@
                             if(maybeActiveToolMain.isEmpty) " list-group-item-primary"
                         }" href="@routes.AdminController.index()">Administrator Startseite</a>
 
-                        @for(tool <- toolList.toolMains.sortBy(_.toolname).toList) {
+                        @for(randomTool <- toolList.randomExToolMains.sortBy(_.toolname)) {
                             <a class="list-group-item list-group-item-action@{
-                                if(maybeActiveToolMain contains tool) " list-group-item-primary" else ""
-                            }" href="@routes.MainExerciseAdminController.adminIndex(tool.urlPart)">@tool.toolname</a>
+                                if(maybeActiveToolMain contains randomTool) " list-group-item-primary" else ""
+                            }" href="@coll.routes.RandomExerciseAdminController.adminIndex(randomTool.urlPart)">@randomTool.toolname</a>
+                        }
+
+                        @for(collTool <- toolList.collectionToolMains.sortBy(_.toolname).toList) {
+                            <a class="list-group-item list-group-item-action@{
+                                if(maybeActiveToolMain contains collTool) " list-group-item-primary" else ""
+                            }" href="@coll.routes.CollectionAdminController.adminIndex(collTool.urlPart)">@collTool.toolname</a>
                         }
                     </ul>
                 </div>

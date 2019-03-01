@@ -39,10 +39,10 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   override def exercisesOverviewForIndex: Html = Html(
     s"""<div class="form-group">
-       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, BoolExParts.TableFillout.urlName)}" class="btn btn-primary btn-block">Wahrheitstabellen ausfüllen</a>
+       |  <a href="${controllers.coll.routes.RandomExerciseController.newExercise(urlPart, BoolExParts.TableFillout.urlName)}" class="btn btn-primary btn-block">Wahrheitstabellen ausfüllen</a>
        |</div>
        |<div class="form-group">
-       |  <a href="${controllers.routes.RandomExerciseController.newExercise(urlPart, BoolExParts.FormulaCreation.urlName)}" class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
+       |  <a href="${controllers.coll.routes.RandomExerciseController.newExercise(urlPart, BoolExParts.FormulaCreation.urlName)}" class="btn btn-primary btn-block">Erstellen einer Booleschen Formel</a>
        |</div>""".stripMargin)
 
   override def newExercise(user: User, exType: BoolExPart, options: Map[String, Seq[String]])

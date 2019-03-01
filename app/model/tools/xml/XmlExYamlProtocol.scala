@@ -57,7 +57,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
     )
   }
 
-  private object XmlSampleYamlFormat extends MyYamlObjectFormat[XmlSampleSolution] {
+  object XmlSampleYamlFormat extends MyYamlObjectFormat[XmlSampleSolution] {
 
     override protected def readObject(yamlObject: YamlObject): Try[XmlSampleSolution] = for {
       id <- yamlObject.intField(idName)

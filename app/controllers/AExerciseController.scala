@@ -19,12 +19,14 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
 
   // Helper methods
 
+  // FIXME: Redirect and flash!
+  private def onNoSuchTool(toolType: String): Result = BadRequest(s"There is no such tool with name $toolType")
+
+  protected def onNoSuchCollection(tool: ToolMainType, collId: Int): Result = NotFound(s"There is no collection with id '$collId'")
+
   protected def onNoSuchExercise(id: Int): Result = NotFound(s"Es gibt keine Aufgabe mit der ID $id")
 
   protected def onNoSuchExercisePart(partStr: String): Result = NotFound(s"Es gibt keine Aufgabenteil '$partStr'")
-
-  // FIXME: Redirect and flash!
-  private def onNoSuchTool(toolType: String): Result = BadRequest(s"There is no such tool with name $toolType")
 
 
   protected def withUserWithToolMain(toolType: String)(f: (User, ToolMainType) => Request[AnyContent] => Result): EssentialAction = withUser { user =>
@@ -32,15 +34,6 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
       getToolMain(toolType) match {
         case None           => onNoSuchTool(toolType)
         case Some(toolMain) => f(user, toolMain)(request)
-      }
-  }
-
-  @deprecated("Use futureWithUserWithToolMain with field adminRightsRequired!")
-  protected def futureWithAdminWithToolMain(toolType: String)(f: (User, ToolMainType) => Request[AnyContent] => Future[Result]): EssentialAction = futureWithAdmin { admin =>
-    implicit request =>
-      getToolMain(toolType) match {
-        case None           => Future(onNoSuchTool(toolType))
-        case Some(toolMain) => f(admin, toolMain)(request)
       }
   }
 

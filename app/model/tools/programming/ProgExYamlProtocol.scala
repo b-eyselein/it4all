@@ -14,6 +14,8 @@ import scala.util.Try
 
 object ProgExYamlProtocol extends MyYamlProtocol {
 
+  private val logger = Logger(ProgExYamlProtocol.getClass)
+
   val basePath: Path = Paths.get("conf", "resources", "programming")
 
   object ProgCollectionYamlFormat extends MyYamlObjectFormat[ProgCollection] {
@@ -48,15 +50,15 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     } yield {
       for (sampleTdFailure <- sampleTestDataTries._2)
       // FIXME: return...
-        Logger.error("Could not read sample test data", sampleTdFailure.exception)
+        logger.error("Could not read sample test data", sampleTdFailure.exception)
 
       for (inputTypeFailure <- inputTypes._2)
       // FIXME: return ...
-        Logger.error("Could not read input type name ", inputTypeFailure.exception)
+        logger.error("Could not read input type name ", inputTypeFailure.exception)
 
       for (sampleSolutionFailure <- sampleSolutions._2)
       // FIXME: return ...
-        Logger.error("Could not read programming sample solution", sampleSolutionFailure.exception)
+        logger.error("Could not read programming sample solution", sampleSolutionFailure.exception)
 
       ProgExercise(
         baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
@@ -112,8 +114,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleTestData] = for {
       id <- yamlObject.intField(idName)
-      output <- yamlObject.jsonField(outputName)
       inputAsJson <- yamlObject.jsonField(inputsName)
+      output <- yamlObject.jsonField(outputName)
     } yield ProgSampleTestData(id, inputAsJson, output)
 
     override def write(cstd: ProgSampleTestData): YamlValue = YamlObj(

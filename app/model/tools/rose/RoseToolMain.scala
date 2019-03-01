@@ -46,7 +46,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override val toolState: ToolState = ToolState.BETA
 
-  override protected val exParts: Seq[RoseExPart] = RoseExParts.values
+  override val exParts: Seq[RoseExPart] = RoseExParts.values
 
   // Yaml, Html forms, Json
 

@@ -29,24 +29,35 @@ POST          /lti                                                              
 
 # Random tools
 
-GET           /random/:toolType/:exPart                                          controllers.RandomExerciseController.newExercise(toolType: String, exPart: String)
-PUT           /random/:toolType/:exPart                                          controllers.RandomExerciseController.correctLive(toolType: String, exPart: String)
+GET           /randomTools/:toolType/index                                       controllers.coll.RandomExerciseController.index(toolType: String)
+
+
+GET           /randomTools/:toolType/admin/index                                 controllers.coll.RandomExerciseAdminController.adminIndex(toolType: String)
+GET           /randomTools/:toolType/admin/learningPaths/read                    controllers.coll.RandomExerciseAdminController.readLearningPaths(toolType: String)
+
+
+GET           /randomTools/:toolType/:exPart                                     controllers.coll.RandomExerciseController.newExercise(toolType: String, exPart: String)
+PUT           /randomTools/:toolType/:exPart                                     controllers.coll.RandomExerciseController.correctLive(toolType: String, exPart: String)
 
 # Admin
 
+GET           /colTools/:toolType/admin/index                                    controllers.coll.CollectionAdminController.adminIndex(toolType: String)
+
+GET           /colTools/:toolType/learningPaths/read                             controllers.coll.CollectionAdminController.readLearningPaths(toolType: String)
+
 GET           /colTools/:toolType/admin/collections                              controllers.coll.CollectionAdminController.adminCollectionsList(toolType: String)
 
-GET           /colTools/:toolType/admin/import                                   controllers.coll.CollectionAdminController.adminImportCollections(toolType: String)
+GET           /colTools/:toolType/admin/collections/import                       controllers.coll.CollectionAdminController.adminImportCollections(toolType: String)
 
-GET           /colTools/:toolType/admin/export                                   controllers.coll.CollectionAdminController.adminExportCollections(toolType: String)
-GET           /colTools/:toolType/admin/exportAsFile                             controllers.coll.CollectionAdminController.adminExportCollectionsAsFile(toolType: String)
+GET           /colTools/:toolType/admin/collections/export                       controllers.coll.CollectionAdminController.adminExportCollections(toolType: String)
+GET           /colTools/:toolType/admin/collections/exportAsFile                 controllers.coll.CollectionAdminController.adminExportCollectionsAsFile(toolType: String)
 
 
-GET           /colTools/:toolType/admin/:collId                                  controllers.coll.CollectionAdminController.adminCollection(toolType: String, collId: Int)
+GET           /colTools/:toolType/admin/collections/:collId                      controllers.coll.CollectionAdminController.adminCollection(toolType: String, collId: Int)
 
-GET           /colTools/:toolType/admin/:collId/import                           controllers.coll.CollectionAdminController.adminImportExercises(toolType: String, collId: Int)
-GET           /colTools/:toolType/admin/:collId/export                           controllers.coll.CollectionAdminController.adminExportExercises(toolType: String, collId: Int)
-GET           /colTools/:toolType/admin/:collId/exportAsFile                     controllers.coll.CollectionAdminController.adminExportExercisesAsFile(toolType: String, collId: Int)
+GET           /colTools/:toolType/admin/collections/:collId/import               controllers.coll.CollectionAdminController.adminImportExercises(toolType: String, collId: Int)
+GET           /colTools/:toolType/admin/collections/:collId/export               controllers.coll.CollectionAdminController.adminExportExercises(toolType: String, collId: Int)
+GET           /colTools/:toolType/admin/collections/:collId/exportAsFile         controllers.coll.CollectionAdminController.adminExportExercisesAsFile(toolType: String, collId: Int)
 
 # Create, update and remove collection
 
@@ -59,6 +70,7 @@ POST          /colTools/:toolType/admin/:collId/edit                            
 DELETE        /colTools/:toolType/admin/:collId                                  controllers.coll.CollectionAdminController.adminDeleteCollection(toolType: String, collId: Int)
 
 # Create, update and remove exercises
+
 
 GET           /colTools/:toolType/admin/:collId/createExerciseForm               controllers.coll.CollectionAdminController.adminNewExerciseForm(toolType: String, collId: Int)
 POST          /colTools/:toolType/admin/:collId/createExercise                   controllers.coll.CollectionAdminController.adminCreateExercise(toolType: String, collId: Int)
@@ -77,7 +89,6 @@ PUT           /colTools/:toolType/admin/exercise/:collId/:exId/state            
 
 GET           /colTools/:toolType/:collId/:id/reviews                            controllers.coll.CollectionAdminController.showReviews(toolType: String, collId:Int, id: Int)
 GET           /colTools/:toolType/reviews                                        controllers.coll.CollectionAdminController.exerciseReviewsList(toolType: String,collId: Int)
-
 
 # User
 
@@ -126,17 +137,13 @@ POST          /authenticate                                                     
 GET           /logout                                                            controllers.LoginController.logout
 
 # Unified routes
-GET           /:toolType/index                                                   controllers.MainExerciseController.index(toolType: String)
 
-GET           /:toolType/learningPaths/read                                      controllers.MainExerciseAdminController.readLearningPaths(toolType: String)
 GET           /:toolType/learningPaths/:id                                       controllers.MainExerciseController.learningPath(toolType: String, id: Int)
 
 GET           /:toolType/playground                                              controllers.MainExerciseController.playground(toolType: String)
 
 GET           /:toolType/evaluate                                                controllers.MainExerciseController.evaluate(toolType: String)
 POST          /:toolType/submitEvaluation                                        controllers.MainExerciseController.submitEvaluation(toolType: String)
-
-GET           /:toolType/admin/index                                             controllers.MainExerciseAdminController.adminIndex(toolType: String)
 
 # Blockly test
 GET           /blockly                                                           controllers.Application.blocklyTest

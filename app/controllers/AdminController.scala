@@ -23,12 +23,7 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
   override protected val adminRightsRequired: Boolean = true
 
-  private val logger = Logger("controllers.AdminController")
-
-  private def getToolMain(toolType: String): Option[AToolMain] = toolList.toolMains.find(_.urlPart == toolType)
-
-  // FIXME: Redirect and flash!
-  private def onNoSuchTool(toolType: String): Result = BadRequest(s"There is no such tool with name $toolType")
+  private val logger = Logger(classOf[AdminController])
 
   def changeRole: EssentialAction = futureWithUser { admin =>
     implicit request =>

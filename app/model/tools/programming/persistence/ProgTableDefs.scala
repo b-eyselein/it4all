@@ -16,7 +16,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
                                           (override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[ProgExercise, ProgExPart, ProgCollection, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgExerciseReview] {
+    with ExerciseCollectionTableDefs[ProgExPart, ProgExercise, ProgCollection, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgExerciseReview] {
 
   import profile.api._
 
@@ -169,11 +169,13 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def base: Rep[String] = column[String](baseName)
 
+    def implementation: Rep[String] = column[String](implementationName)
+
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, language))
 
 
-    override def * : ProvenShape[DbProgSampleSolution] = ??? //(id, exerciseId, exSemVer, collectionId, language, base, sample) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
+    override def * : ProvenShape[DbProgSampleSolution] = (id, exerciseId, exSemVer, collectionId, language, base, implementation) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
 
   }
 
@@ -240,8 +242,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
 
-
-    //    override def * = ???
 
     override def * : ProvenShape[DbProgUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part, implementation, testData,
       language, extendedUnitTests, points, maxPoints) <> (DbProgUserSolution.tupled, DbProgUserSolution.unapply)

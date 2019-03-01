@@ -1,8 +1,8 @@
-@import model.toolMains.{CollectionToolMain, FixedExToolMain}
+@import model.toolMains.CollectionToolMain
 @import model.{ExPart, Exercise, ExerciseCollection, User}
 
 @(user: User, exerciseText: Html, collection: ExerciseCollection, exercise: Exercise, part: ExPart, oldSolution: String,
-        toolMainObject: FixedExToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
+        toolMainObject: CollectionToolMain, additionalScripts: Html, solutionPreview: Option[Html] = None,
         remainingExDef: Option[Html] = None, remainingPage: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {

@@ -14,7 +14,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[RoseExercise, RoseExPart, RoseCollection, String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
+    with ExerciseCollectionTableDefs[RoseExPart, RoseExercise, RoseCollection, String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
 
   import profile.api._
 
