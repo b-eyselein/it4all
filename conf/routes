@@ -45,8 +45,6 @@ GET           /colTools/:toolType/admin/index                                   
 
 GET           /colTools/:toolType/learningPaths/read                             controllers.coll.CollectionAdminController.readLearningPaths(toolType: String)
 
-GET           /colTools/:toolType/admin/collections                              controllers.coll.CollectionAdminController.adminCollectionsList(toolType: String)
-
 GET           /colTools/:toolType/admin/collections/import                       controllers.coll.CollectionAdminController.adminImportCollections(toolType: String)
 
 GET           /colTools/:toolType/admin/collections/export                       controllers.coll.CollectionAdminController.adminExportCollections(toolType: String)
@@ -81,20 +79,17 @@ POST          /colTools/:toolType/admin/:collId/:exId/edit                      
 DELETE        /colTools/:toolType/admin/:collId/:exId                            controllers.coll.CollectionAdminController.adminDeleteExercise(toolType: String, collId: Int, exId: Int)
 
 
-GET           /colTools/:toolType/admin/:collId/exercises                        controllers.coll.CollectionAdminController.adminExercisesInCollection(toolType: String, collId: Int)
+#GET           /colTools/:toolType/admin/:collId/exercises                        controllers.coll.CollectionAdminController.adminExercisesInCollection(toolType: String, collId: Int)
 
 PUT           /colTools/:toolType/admin/collection/:id/state                     controllers.coll.CollectionAdminController.adminChangeCollectionState(toolType: String, id: Int)
 PUT           /colTools/:toolType/admin/exercise/:collId/:exId/state             controllers.coll.CollectionAdminController.adminChangeExerciseState(toolType: String, collId: Int, exId: Int)
 
 
 GET           /colTools/:toolType/:collId/:id/reviews                            controllers.coll.CollectionAdminController.showReviews(toolType: String, collId:Int, id: Int)
-GET           /colTools/:toolType/reviews                                        controllers.coll.CollectionAdminController.exerciseReviewsList(toolType: String,collId: Int)
 
 # User
 
 GET           /colTools/:toolType/index                                          controllers.coll.CollectionController.index(toolType: String)
-
-#GET           /:toolType/collections                               controllers.coll.CollectionController.collectionList(toolType: String, page: Int ?= 1)
 
 GET           /colTools/:toolType/collections/:collId                            controllers.coll.CollectionController.collection(toolType: String, collId: Int, page: Int ?= 1)
 GET           /colTools/:toolType/solve/:collId/:exId/:partStr                   controllers.coll.CollectionController.exercise(toolType: String, collId: Int, exId: Int, partStr: String)

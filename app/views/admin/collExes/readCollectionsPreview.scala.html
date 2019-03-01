@@ -8,17 +8,41 @@
     s"Eingelesene Sammlungen Tool '${toolMain.toolname}'"
 }
 
+@readResultsPerRow = @{
+    2
+}
+
 @admin.adminMain(title, user, toolList, Some(toolMain)) {
 
-    @for(readCollection <- readCollections.successes) {
-        <div class="card mb-3">
-            <div class="card-header">@{
-                s"${readCollection.ex.id}. ${readCollection.ex.title}"
-            }</div>
-            <div class="card-body">
-                <p>Titel: @readCollection.ex.title</p>
-                <p>Beschreibung: @readCollection.ex.text</p>
+    @for(readCollectionGroup <- readCollections.successes.grouped(readResultsPerRow)) {
+        <div class="row mb-3">
+        @for(readCollectionResult <- readCollectionGroup; readCollection = readCollectionResult.ex; collectionSaved = readCollectionResult.saved) {
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header @if(collectionSaved) {text-success} else {text-danger}">@{
+                        s"${readCollection.id}. ${readCollection.title}"
+                    }</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">Autor:</div>
+                            <div class="col-md-8">@readCollection.author</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Beschreibung:</div>
+                            <div class="col-md-8">@readCollection.text</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Kurzname:</div>
+                            <div class="col-md-8"><code>@readCollection.shortName</code></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Gespeichert:</div>
+                            <div class="col-md-8"><code>@collectionSaved</code></div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        }
         </div>
     }
 

@@ -45,7 +45,9 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       }
   }
 
-  def adminImportCollections(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
+  // Administrate Collections
+
+  def adminImportCollections(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       // FIXME: refactor!!!!!!!!!
 
@@ -66,59 +68,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
           logger.error("There has been an error reading a yaml object: ", failure.exception)
         }
 
-        Ok(toolMain.previewCollectionReadAndSaveResult(admin, readAndSaveResult, toolList))
-      }
-  }
-
-  def adminImportExercises(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      // FIXME: refactor!!!!!!!!!
-
-      toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
-        case Some(collection) =>
-          val readTries: Seq[Try[toolMain.ExType]] = toolMain.readExercisesFromYaml(collection)
-
-          val (readSuccesses, readFailures) = CommonUtils.splitTriesNew(readTries)
-
-          val readAndSaveSuccesses: Future[Seq[(toolMain.ExType, Boolean)]] = Future.sequence(readSuccesses.map {
-            readExercise => toolMain.futureInsertExercise(collId, readExercise) map (saved => (readExercise, saved))
-          })
-
-          readAndSaveSuccesses.map { saveResults: Seq[(toolMain.ExType, Boolean)] =>
-            val readAndSaveResult = ReadAndSaveResult(saveResults map {
-              sr => new ReadAndSaveSuccess[toolMain.ExType](sr._1, sr._2)
-            }, readFailures)
-
-            for (failure <- readAndSaveResult.failures) {
-              logger.error("There has been an error reading an yaml object", failure.exception)
-            }
-
-            Ok(toolMain.previewExerciseReadsAndSaveResult(user, collection, readAndSaveResult, toolList))
-          }
-
-      }
-  }
-
-  def adminExportExercises(toolType: String, collId: Int): EssentialAction = ???
-
-
-  def adminExportExercisesAsFile(toolType: String, collId: Int): EssentialAction = ???
-
-
-  def adminExportCollections(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.yamlString map {
-        exportedContent => Ok(views.html.admin.exportedCollection.render(admin, exportedContent, toolMain, toolList))
-      }
-  }
-
-  def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
-    implicit request =>
-      val file = File.newTemporaryFile(s"export_${toolMain.urlPart}", ".yaml")
-
-      toolMain.yamlString map (content => file.write(content)) map { _ =>
-        Ok.sendPath(file.path, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => file.delete())
+        Ok(views.html.admin.collExes.readCollectionsPreview(user, readAndSaveResult, toolMain, toolList))
       }
   }
 
@@ -141,37 +91,20 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       stateForm.bindFromRequest().fold(onFormError, onFormRead(toolMain))
   }
 
-  def adminChangeExerciseState(tool: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
+
+  def adminExportCollections(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
-
-      val onFormError: Form[ExerciseState] => Future[Result] = { formWithErrors =>
-        for (formError <- formWithErrors.errors)
-          logger.error(s"Form error while changinge state of exercise $exId: ${formError.message}")
-        Future(BadRequest("There has been an error!"))
-      }
-
-      def onFormRead(toolMain: CollectionToolMain): ExerciseState => Future[Result] = { newState =>
-        toolMain.updateExerciseState(collId, exId, newState) map {
-          case true  => Ok(Json.obj(idName -> exId, "newState" -> newState.entryName))
-          case false => BadRequest(Json.obj(messageName -> "Could not update exercise!"))
-        }
-      }
-
-      stateForm.bindFromRequest().fold(onFormError, onFormRead(toolMain))
-  }
-
-  def adminCollectionsList(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureAllCollections map { allColls =>
-        Ok(views.html.admin.collExes.adminCollectionList(admin, allColls, toolMain, toolList))
+      toolMain.yamlString map {
+        exportedContent => Ok(views.html.admin.exportedCollection.render(admin, exportedContent, toolMain, toolList))
       }
   }
 
-  def adminExercisesInCollection(tool: String, collId: Int): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
+  def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
-      toolMain.futureExercisesInColl(collId) map { exesInColl =>
-        // FIXME: with collection?
-        Ok(views.html.admin.collExes.adminCollExercisesOverview(admin, collId, exesInColl, toolMain, toolList))
+      val file = File.newTemporaryFile(s"export_${toolMain.urlPart}", ".yaml")
+
+      toolMain.yamlString map (content => file.write(content)) map { _ =>
+        Ok.sendPath(file.path, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => file.delete())
       }
   }
 
@@ -212,6 +145,61 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
         case false => NotFound(Json.obj(messageName -> s"Die Sammlung mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
       }
   }
+
+  // Administrate exercises in collection
+
+  def adminImportExercises(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      // FIXME: refactor!!!!!!!!!
+
+      toolMain.futureCollById(collId) flatMap {
+        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case Some(collection) =>
+          val readTries: Seq[Try[toolMain.ExType]] = toolMain.readExercisesFromYaml(collection)
+
+          val (readSuccesses, readFailures) = CommonUtils.splitTriesNew(readTries)
+
+          val readAndSaveSuccesses: Future[Seq[(toolMain.ExType, Boolean)]] = Future.sequence(readSuccesses.map {
+            readExercise => toolMain.futureInsertExercise(collId, readExercise) map (saved => (readExercise, saved))
+          })
+
+          readAndSaveSuccesses.map { saveResults: Seq[(toolMain.ExType, Boolean)] =>
+            val readAndSaveResult = ReadAndSaveResult(saveResults map {
+              sr => new ReadAndSaveSuccess[toolMain.ExType](sr._1, sr._2)
+            }, readFailures)
+
+            for (failure <- readAndSaveResult.failures) {
+              logger.error("There has been an error reading an yaml object", failure.exception)
+            }
+
+            Ok(views.html.admin.collExes.readExercisesPreview(user, collection, readAndSaveResult, toolMain, toolList))
+          }
+      }
+  }
+
+  def adminChangeExerciseState(tool: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
+    implicit request =>
+
+      val onFormError: Form[ExerciseState] => Future[Result] = { formWithErrors =>
+        for (formError <- formWithErrors.errors)
+          logger.error(s"Form error while changinge state of exercise $exId: ${formError.message}")
+        Future(BadRequest("There has been an error!"))
+      }
+
+      def onFormRead(toolMain: CollectionToolMain): ExerciseState => Future[Result] = { newState =>
+        toolMain.updateExerciseState(collId, exId, newState) map {
+          case true  => Ok(Json.obj(idName -> exId, "newState" -> newState.entryName))
+          case false => BadRequest(Json.obj(messageName -> "Could not update exercise!"))
+        }
+      }
+
+      stateForm.bindFromRequest().fold(onFormError, onFormRead(toolMain))
+  }
+
+  def adminExportExercises(toolType: String, collId: Int): EssentialAction = ???
+
+
+  def adminExportExercisesAsFile(toolType: String, collId: Int): EssentialAction = ???
 
   // Creating, updating and removing exercises
 
@@ -265,7 +253,6 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
   }
 
   // Reviews
-
 
   def exerciseReviewsList(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>

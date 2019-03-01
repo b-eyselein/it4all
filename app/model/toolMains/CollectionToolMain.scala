@@ -112,12 +112,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   def renderExerciseEditForm(user: User, collId: Int, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
     views.html.admin.exerciseEditForm(user, collId, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
-  def previewCollectionReadAndSaveResult(user: User, readCollections: ReadAndSaveResult[CollType], toolList: ToolList): Html =
-    views.html.admin.collExes.readCollectionsPreview(user, readCollections, this, toolList)
-
-  def previewExerciseReadsAndSaveResult(user: User, collection: CollType, readExercises: ReadAndSaveResult[ExType], toolList: ToolList): Html =
-    views.html.admin.collExes.readExercisesPreview(user, collection, readExercises, this, toolList)
-
   def renderEditRest(exercise: ExType): Html = Html("")
 
   def renderExercisePreview(user: User, collId: Int, newExercise: ExType, saved: Boolean): Html = {

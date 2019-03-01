@@ -42,21 +42,26 @@
                   <Item>
                     <option name="path" value="conf/resources/web/web_collections.schema.json" />
                   </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/collections.schema.json" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
           </value>
         </entry>
-        <entry key="prog_collections.schema">
+        <entry key="collections.schema">
           <value>
             <SchemaInfo>
-              <option name="name" value="prog_collections.schema" />
-              <option name="relativePathToSchema" value="conf/resources/programming/prog_collections.schema.json" />
+              <option name="name" value="collections.schema" />
+              <option name="relativePathToSchema" value="conf/resources/collections.schema.json" />
               <option name="schemaVersion" value="JSON schema version 7" />
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="conf/resources/programming/collections.yaml" />
+                    <option name="pattern" value="true" />
+                    <option name="path" value="conf/resources/*/collections.yaml" />
+                    <option name="mappingKind" value="Pattern" />
                   </Item>
                 </list>
               </option>
@@ -81,22 +86,6 @@
             </SchemaInfo>
           </value>
         </entry>
-        <entry key="regex_collections.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="regex_collections.schema" />
-              <option name="relativePathToSchema" value="conf/resources/regex/regex_collections.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="path" value="conf/resources/regex/collections.yaml" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
         <entry key="regex_ex.schema">
           <value>
             <SchemaInfo>
@@ -109,25 +98,6 @@
                     <option name="pattern" value="true" />
                     <option name="path" value="conf/resources/regex/*/*.yaml" />
                     <option name="mappingKind" value="Pattern" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
-        <entry key="sql_collections.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="sql_collections.schema" />
-              <option name="relativePathToSchema" value="conf/resources/sql/sql_collections.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="path" value="conf/resources/sql/sql_collections.yaml" />
-                  </Item>
-                  <Item>
-                    <option name="path" value="conf/resources/sql/collections.yaml" />
                   </Item>
                 </list>
               </option>
@@ -173,22 +143,6 @@
             </SchemaInfo>
           </value>
         </entry>
-        <entry key="web_collections.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="web_collections.schema" />
-              <option name="relativePathToSchema" value="conf/resources/web/web_collections.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="path" value="conf/resources/web/collections.yaml" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
         <entry key="web_ex.schema">
           <value>
             <SchemaInfo>
@@ -200,40 +154,6 @@
                   <Item>
                     <option name="pattern" value="true" />
                     <option name="path" value="conf/resources/web/*/*.yaml" />
-                    <option name="mappingKind" value="Pattern" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
-        <entry key="xml_collections.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="xml_collections.schema" />
-              <option name="relativePathToSchema" value="conf/resources/xml/xml_collections.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="path" value="conf/resources/xml/collections.yaml" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
-        <entry key="xml_ex.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="xml_ex.schema" />
-              <option name="relativePathToSchema" value="conf/resources/xml/xml_ex.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="pattern" value="true" />
-                    <option name="path" value="conf/resources/xml/*/*.yaml" />
                     <option name="mappingKind" value="Pattern" />
                   </Item>
                 </list>
