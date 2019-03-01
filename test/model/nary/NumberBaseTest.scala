@@ -9,58 +9,58 @@ class NumberBaseTest {
 
   @Test
   def testGetBase(): Unit = {
-    assertThat(BINARY.base, equalTo(2))
-    assertThat(OCTAL.base, equalTo(8))
-    assertThat(DECIMAL.base, equalTo(10))
-    assertThat(HEXADECIMAL.base, equalTo(16))
+    assertThat(Binary.base, equalTo(2))
+    assertThat(Octal.base, equalTo(8))
+    assertThat(Decimal.base, equalTo(10))
+    assertThat(HexaDecimal.base, equalTo(16))
   }
 
   @Test
   def testGetHtmlPattern(): Unit = {
-    assertThat(BINARY.htmlPattern, equalTo("[\\s0-1]+"))
-    assertThat(OCTAL.htmlPattern, equalTo("[\\s0-7]+"))
-    assertThat(DECIMAL.htmlPattern, equalTo("[\\s0-9]+"))
-    assertThat(HEXADECIMAL.htmlPattern, equalTo("[\\s0-9a-fA-F]+"))
+    assertThat(Binary.htmlPattern, equalTo("[\\s0-1]+"))
+    assertThat(Octal.htmlPattern, equalTo("[\\s0-7]+"))
+    assertThat(Decimal.htmlPattern, equalTo("[\\s0-9]+"))
+    assertThat(HexaDecimal.htmlPattern, equalTo("[\\s0-9a-fA-F]+"))
   }
 
   @Test
   def testGetPluralName(): Unit = {
-    assertThat(BINARY.pluralName, equalTo("Binärzahlen"))
-    assertThat(OCTAL.pluralName, equalTo("Oktalzahlen"))
-    assertThat(DECIMAL.pluralName, equalTo("Dezimalzahlen"))
-    assertThat(HEXADECIMAL.pluralName, equalTo("Hexadezimalzahlen"))
+    assertThat(Binary.pluralName, equalTo("Binärzahlen"))
+    assertThat(Octal.pluralName, equalTo("Oktalzahlen"))
+    assertThat(Decimal.pluralName, equalTo("Dezimalzahlen"))
+    assertThat(HexaDecimal.pluralName, equalTo("Hexadezimalzahlen"))
   }
 
   @Test
   def testGetRegex(): Unit = {
-    assertThat(BINARY.regex, equalTo("-?0b[0-1][0-1]*"))
-    assertThat(OCTAL.regex, equalTo("-?0o[1-7][0-7]*"))
-    assertThat(DECIMAL.regex, equalTo("-?[1-9][0-9]*"))
-    assertThat(HEXADECIMAL.regex, equalTo("-?0x[1-9a-fA-F][0-9a-fA-F]*"))
+    assertThat(Binary.regex, equalTo("-?0b[0-1][0-1]*"))
+    assertThat(Octal.regex, equalTo("-?0o[1-7][0-7]*"))
+    assertThat(Decimal.regex, equalTo("-?[1-9][0-9]*"))
+    assertThat(HexaDecimal.regex, equalTo("-?0x[1-9a-fA-F][0-9a-fA-F]*"))
   }
 
   @Test
   def testGetSingularName(): Unit = {
-    assertThat(BINARY.singularName, equalTo("Binärzahl"))
-    assertThat(OCTAL.singularName, equalTo("Oktalzahl"))
-    assertThat(DECIMAL.singularName, equalTo("Dezimalzahl"))
-    assertThat(HEXADECIMAL.singularName, equalTo("Hexadezimalzahl"))
+    assertThat(Binary.singularName, equalTo("Binärzahl"))
+    assertThat(Octal.singularName, equalTo("Oktalzahl"))
+    assertThat(Decimal.singularName, equalTo("Dezimalzahl"))
+    assertThat(HexaDecimal.singularName, equalTo("Hexadezimalzahl"))
   }
 
   @Test
   def testGetSystemName(): Unit = {
-    assertThat(BINARY.systemName, equalTo("Binärsystem"))
-    assertThat(OCTAL.systemName, equalTo("Oktalsystem"))
-    assertThat(DECIMAL.systemName, equalTo("Dezimalsystem"))
-    assertThat(HEXADECIMAL.systemName, equalTo("Hexadezimalsystem"))
+    assertThat(Binary.systemName, equalTo("Binärsystem"))
+    assertThat(Octal.systemName, equalTo("Oktalsystem"))
+    assertThat(Decimal.systemName, equalTo("Dezimalsystem"))
+    assertThat(HexaDecimal.systemName, equalTo("Hexadezimalsystem"))
   }
 
   @Test
   def testValueOf(): Unit = {
-    assert(NumberBase.withNameInsensitive("BINARY") == BINARY)
-    assert(NumberBase.withNameInsensitive("OCTAL") == OCTAL)
-    assert(NumberBase.withNameInsensitive("DECIMAL") == DECIMAL)
-    assert(NumberBase.withNameInsensitive("HEXADECIMAL") == HEXADECIMAL)
+    assert(NumberBase.withNameInsensitive("BINARY") == Binary)
+    assert(NumberBase.withNameInsensitive("OCTAL") == Octal)
+    assert(NumberBase.withNameInsensitive("DECIMAL") == Decimal)
+    assert(NumberBase.withNameInsensitive("HEXADECIMAL") == HexaDecimal)
   }
 
   @Test(expected = classOf[NoSuchElementException])

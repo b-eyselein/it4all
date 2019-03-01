@@ -8,19 +8,19 @@ class NAryResultTest {
 
   @Test
   def testCheckAddSolution(): Unit = {
-    val resTrue = NAryAddResult(OCTAL, new NAryNumber(0, OCTAL), new NAryNumber(127, OCTAL), new NAryNumber(127, OCTAL))
+    val resTrue = NAryAddResult(Octal, new NAryNumber(0, Octal), new NAryNumber(127, Octal), new NAryNumber(127, Octal))
     assertTrue(resTrue.solutionCorrect)
 
-    val resFalse = NAryAddResult(OCTAL, new NAryNumber(2, OCTAL), new NAryNumber(127, OCTAL), new NAryNumber(127, OCTAL))
+    val resFalse = NAryAddResult(Octal, new NAryNumber(2, Octal), new NAryNumber(127, Octal), new NAryNumber(127, Octal))
     assertFalse(resFalse.solutionCorrect)
   }
 
   @Test
   def testCheckConvSolution(): Unit = {
-    val resTrue = NAryConvResult(new NAryNumber(8, OCTAL), OCTAL, BINARY, new NAryNumber(8, OCTAL))
+    val resTrue = NAryConvResult(new NAryNumber(8, Octal), Octal, Binary, new NAryNumber(8, Octal))
     assertTrue(resTrue.solutionCorrect)
 
-    val resFalse = NAryConvResult(new NAryNumber(8, OCTAL), OCTAL, BINARY, new NAryNumber(9, OCTAL))
+    val resFalse = NAryConvResult(new NAryNumber(8, Octal), Octal, Binary, new NAryNumber(9, Octal))
     assertFalse(resFalse.solutionCorrect)
   }
 

@@ -7,10 +7,10 @@ import org.junit.Assert.assertThat
 class NAryNumberTest {
 
   private val TO_TEST = Map(
-    234 -> Map(HEXADECIMAL -> "ea", OCTAL -> "352", BINARY -> "1110 1010"),
-    127 -> Map(HEXADECIMAL -> "7f", OCTAL -> "177", BINARY -> "0111 1111"),
-    87 -> Map(HEXADECIMAL -> "57", OCTAL -> "127", BINARY -> "0101 0111"),
-    63 -> Map(HEXADECIMAL -> "3f", OCTAL -> "77", BINARY -> "0011 1111"))
+    234 -> Map(HexaDecimal -> "ea", Octal -> "352", Binary -> "1110 1010"),
+    127 -> Map(HexaDecimal -> "7f", Octal -> "177", Binary -> "0111 1111"),
+    87 -> Map(HexaDecimal -> "57", Octal -> "127", Binary -> "0101 0111"),
+    63 -> Map(HexaDecimal -> "3f", Octal -> "77", Binary -> "0011 1111"))
 
   def checkBase(number: NAryNumber, base: NumberBase): Unit = {
     assertThat("Basis von " + number + " sollte " + base + " sein!", number.base, equalTo(base))

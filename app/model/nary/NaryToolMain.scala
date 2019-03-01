@@ -18,6 +18,8 @@ import scala.language.implicitConversions
 class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionContext)
   extends RandomExerciseToolMain("Zahlensysteme", "nary") {
 
+  private val logger = Logger(classOf[NaryToolMain])
+
   // Abstract types
 
   override type PartType = NaryExPart
@@ -41,7 +43,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
                           (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = exPart match {
     case NaryExParts.NaryAdditionExPart =>
 
-      val requestedBaseStr: String = options.getOrElse("base", Seq("RANDOM")).mkString
+      val requestedBaseStr: String = options.getOrElse("base", Seq(RandomName)).mkString
       val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values(generator.nextInt(3))
 
       val sum = generator.nextInt(255) + 1
@@ -51,23 +53,23 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
     case NaryExParts.NaryConversionExPart =>
 
-      val fromBaseStr = options.getOrElse("fromBase", Seq("RANDOM")).mkString
-      val toBaseStr = options.getOrElse("toBase", Seq("RANDOM")).mkString
+      val fromBaseStr: String = options.get("fromBase").map(_.mkString).getOrElse(RandomName)
+      val toBaseStr: String = options.get("toBase").map(_.mkString).getOrElse(RandomName)
 
       val (fromBase, toBase): (NumberBase, NumberBase) = fromBaseStr match {
         case RandomName  => toBaseStr match {
           case RandomName =>
-            val fromBase = randNumberBase(-1)
-            (fromBase, randNumberBase(NumberBase.indexOf(fromBase)))
+            val (fromBase, remaining) = randAndRemainingNumberBase(NumberBase.values)
+            (fromBase, randAndRemainingNumberBase(remaining)._1)
           case _          =>
-            val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
-            (randNumberBase(NumberBase.indexOf(toBase)), toBase)
+            val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.Binary
+            (randAndRemainingNumberBase(NumberBase.values.filter(_ != toBase))._1, toBase)
         }
         case fromBaseReq =>
-          val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.BINARY
+          val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.Binary
           val toBase = toBaseStr match {
-            case RandomName => randNumberBase(NumberBase.indexOf(fromBase))
-            case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.BINARY
+            case RandomName => randAndRemainingNumberBase(NumberBase.values.filter(_ != fromBase))._1
+            case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.Binary
           }
           (fromBase, toBase)
       }
@@ -77,24 +79,22 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
     case NaryExParts.TwoComplementExPart =>
       val verbose = options.getOrElse("verbose", Seq("false")).mkString == "true"
-      views.html.toolViews.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose, this)
+      views.html.toolViews.nary.twoComplementQuestion(user, NAryNumber(-generator.nextInt(129), NumberBase.Decimal), verbose, this)
 
   }
 
   // Helper functions
 
-  private def randNumberBase(notBaseOrdinal: Int): NumberBase = {
-    var res = generator.nextInt(4)
-    while (notBaseOrdinal == res)
-      res = generator.nextInt(4)
-    NumberBase.values(res)
+  private def randAndRemainingNumberBase(remainingBases: Seq[NumberBase]): (NumberBase, Seq[NumberBase]) = {
+    val shuffledBases = generator.shuffle(remainingBases)
+    (shuffledBases.head, shuffledBases.tail)
   }
 
   // Correction
 
   override def checkSolution(exPart: NaryExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
     case None          =>
-      Logger.error("A solution for an nary exercise needs to be sent in json format!")
+      logger.error("A solution for an nary exercise needs to be sent in json format!")
       ???
     case Some(jsValue) =>
       NarySolutionJsonFormat.readSolutionFromJson(exPart, jsValue) match {

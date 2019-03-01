@@ -19,7 +19,7 @@ final case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
   override def toString: String = {
     val result = Integer.toString(Math.abs(decimalValue), base.base)
 
-    val paddedRes = if (base == BINARY) padBinary(result) else result
+    val paddedRes = if (base == Binary) padBinary(result) else result
 
     if (decimalValue < 0) '-' + paddedRes else paddedRes
   }
@@ -40,7 +40,7 @@ object NAryNumber {
     val firstBit = trimmedInput(0).asDigit
     val maybeParsedRest = Try(Option(Integer.parseInt(trimmedInput.substring(1), 2))) getOrElse None
 
-    maybeParsedRest map (parsedRest => NAryNumber(if (firstBit == 0) parsedRest else -128 + parsedRest, BINARY))
+    maybeParsedRest map (parsedRest => NAryNumber(if (firstBit == 0) parsedRest else -128 + parsedRest, Binary))
   }
 
   def padBinary(binary: String): String = {

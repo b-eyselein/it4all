@@ -27,11 +27,11 @@ final case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberB
 }
 
 final case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, maybeBinaryAbs: Option[String], maybeInvertedAbs: Option[String])
-  extends NAryResult(new NAryNumber(targetNum, BINARY), learnerSol) {
+  extends NAryResult(new NAryNumber(targetNum, Binary), learnerSol) {
 
   def verbose: Boolean = maybeBinaryAbs.isDefined && maybeInvertedAbs.isDefined
 
-  def binaryAbsCorrect: Boolean = maybeBinaryAbs flatMap (parseNaryNumber(_, BINARY)) exists (_.decimalValue == Math.abs(targetNumber.decimalValue))
+  def binaryAbsCorrect: Boolean = maybeBinaryAbs flatMap (parseNaryNumber(_, Binary)) exists (_.decimalValue == Math.abs(targetNumber.decimalValue))
 
   def invertedAbsCorrect: Boolean = (maybeInvertedAbs.toList zip maybeBinaryAbs.toList).headOption exists {
     case (binaryAbs, invertedAbs) => invertDigits(binaryAbs) == invertedAbs
