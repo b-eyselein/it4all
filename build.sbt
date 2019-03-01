@@ -75,7 +75,7 @@ dependencyOverrides ++= Seq(
 )
 
 excludeDependencies ++= Seq(
-  //  TODO: exclude tern since it has an compile error
+  // exclude tern since it has an compile error
   ExclusionRule(organization = "org.webjars.npm", name = "types__tern")
 )
 
