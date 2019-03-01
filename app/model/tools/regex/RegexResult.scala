@@ -3,11 +3,15 @@ package model.tools.regex
 import model.tools.regex.RegexConsts._
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol, EvaluationResult, SuccessType}
 import play.api.libs.json._
+import BinaryClassificationResultTypes._
 import play.api.libs.functional.syntax._
 
 final case class RegexEvaluationResult(testData: RegexTestData, resultType: BinaryClassificationResultType) extends EvaluationResult {
 
-  override def success: SuccessType = ???
+  override def success: SuccessType = resultType match {
+    case TruePositive | TrueNegative   => SuccessType.COMPLETE
+    case FalsePositive | FalseNegative => SuccessType.NONE
+  }
 
 }
 
