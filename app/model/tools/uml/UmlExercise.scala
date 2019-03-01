@@ -1,6 +1,7 @@
 package model.tools.uml
 
 import model._
+import model.points.Points
 import play.twirl.api.Html
 
 import scala.language.postfixOps

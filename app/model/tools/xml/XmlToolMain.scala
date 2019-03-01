@@ -5,9 +5,10 @@ import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.inject._
 import model.core._
 import model.core.result.CompleteResultJsonProtocol
+import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.xml.persistence.XmlTableDefs
-import model.{ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
+import model._
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
@@ -134,6 +135,11 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     })
 
   // Views
+
+  override def previewExerciseRest(ex: Exercise): Html = ex match {
+    case xe: XmlExercise => views.html.toolViews.xml.previewXmlExerciseRest(xe)
+    case _               => ???
+  }
 
   //  override def renderAdminExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean, toolList: ToolList)
   //                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =

@@ -1,35 +1,39 @@
 {
-  "type": "object",
-  "properties": {
-    "id": {"type": "number"},
-    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-    "title": {"type": "string"},
-    "author": {"type": "string"},
-    "text": {"type": "string"},
-    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-    "testData": {"type": "array", "items": {"$ref": "#/definitions/RegexTestData"}},
-    "samples": {"type": "array", "items": {"$ref": "#/definitions/RegexSample"}}
-  },
-  "required": [
-    "id", "semanticVersion", "title", "author", "text", "status", "testData", "samples"
-  ],
-  "definitions": {
-    "RegexTestData": {
-      "type": "object",
-      "properties": {
-        "id": {"type": "number"},
-        "data": {"type": "string"},
-        "included": {"type": "boolean"}
-      },
-      "required": ["id", "data", "included"]
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {"type": "number"},
+      "semanticVersion": {"$ref": "../semantic_version.schema.json"},
+      "title": {"type": "string"},
+      "author": {"type": "string"},
+      "text": {"type": "string"},
+      "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+      "maxPoints": {"type": "number"},
+      "testData": {"type": "array", "items": {"$ref": "#/definitions/RegexTestData"}},
+      "samples": {"type": "array", "items": {"$ref": "#/definitions/RegexSample"}}
     },
-    "RegexSample": {
-      "type": "object",
-      "properties": {
-        "id": {"type": "number"},
-        "sample": {"type": "string"}
+    "required": [
+      "id", "semanticVersion", "title", "author", "text", "maxPoints", "status", "testData", "samples"
+    ],
+    "definitions": {
+      "RegexTestData": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "number"},
+          "data": {"type": "string"},
+          "included": {"type": "boolean"}
+        },
+        "required": ["id", "data", "included"]
       },
-      "required": ["id", "sample"]
+      "RegexSample": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "number"},
+          "sample": {"type": "string"}
+        },
+        "required": ["id", "sample"]
+      }
     }
   }
 }

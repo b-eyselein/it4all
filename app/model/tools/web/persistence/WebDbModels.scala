@@ -1,8 +1,9 @@
 package model.tools.web.persistence
 
 import model.persistence._
+import model.points.Points
 import model.tools.web._
-import model.{Difficulty, ExerciseState, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSolution, DbWebSampleSolution, WebUserSolution, DbWebUserSolution] {
 

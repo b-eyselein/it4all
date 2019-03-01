@@ -104,7 +104,9 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   class RegexExerciseTable(tag: Tag) extends ExerciseInCollectionTable(tag, "regex_exercises") {
 
-    override def * : ProvenShape[DbRegexExercise] = (id, semanticVersion, collectionId, title, author, text, state) <> (DbRegexExercise.tupled, DbRegexExercise.unapply)
+    def maxPoints: Rep[Int] = column[Int]("max_points")
+
+    override def * : ProvenShape[DbRegexExercise] = (id, semanticVersion, collectionId, title, author, text, state, maxPoints) <> (DbRegexExercise.tupled, DbRegexExercise.unapply)
 
   }
 

@@ -1,8 +1,9 @@
 package model.tools.uml.persistence
 
 import model.persistence._
+import model.points.Points
 import model.tools.uml._
-import model.{Difficulty, ExerciseState, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise, UmlSampleSolution, DbUmlSampleSolution, UmlUserSolution, DbUmlUserSolution] {
 

@@ -2,7 +2,7 @@ package model.tools.xml
 
 import de.uniwue.dtd.model._
 import de.uniwue.dtd.parser._
-import model._
+import model.points._
 import model.core.matching.MatchingResult
 import model.core.result.SuccessType
 import model.tools.xml.XmlGrammarCompleteResult._

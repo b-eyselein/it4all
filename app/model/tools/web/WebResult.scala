@@ -1,6 +1,6 @@
 package model.tools.web
 
-import model._
+import model.points._
 import model.core.result.EvaluationResult._
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import org.openqa.selenium.WebElement

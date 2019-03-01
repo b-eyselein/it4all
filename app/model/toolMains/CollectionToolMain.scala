@@ -2,6 +2,7 @@ package model.toolMains
 
 import better.files.File
 import model._
+import model.points._
 import model.core._
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
 import model.persistence.ExerciseCollectionTableDefs
@@ -95,6 +96,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   protected def readSolution(user: User, collection: CollType, exercise: ExType, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
 
   // Views
+
+  def previewExerciseRest(ex: Exercise): Html = Html(ex.toString)
 
   override def exercisesOverviewForIndex: Html = ???
 

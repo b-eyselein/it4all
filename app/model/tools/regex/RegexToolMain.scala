@@ -1,9 +1,11 @@
 package model.tools.regex
 
 import javax.inject.Inject
+import model.points._
 import model.toolMains.CollectionToolMain
+import model.tools.regex.BinaryClassificationResultTypes._
 import model.tools.regex.persistence.RegexTableDefs
-import model.{ExerciseState, MyYamlFormat, Points, SemanticVersionHelper, User}
+import model._
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.JsString
@@ -40,8 +42,8 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   // Yaml, Html forms, Json
 
-  override protected val collectionYamlFormat: MyYamlFormat[RegexCollection] = RegexExYamlProtocol.RegexCollectionYamlFormat
-  override protected val exerciseYamlFormat  : MyYamlFormat[RegexExercise]   = RegexExYamlProtocol.RegexExYamlFormat
+  override protected val collectionYamlFormat: MyYamlFormat[RegexCollection] = RegexToolYamlProtocol.RegexCollectionYamlFormat
+  override protected val exerciseYamlFormat  : MyYamlFormat[RegexExercise]   = RegexToolYamlProtocol.RegexExYamlFormat
 
   override val collectionForm    : Form[RegexCollection]     = RegexExForm.collectionFormat
   override val exerciseForm      : Form[RegexExercise]       = RegexExForm.exerciseFormat
@@ -55,7 +57,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     RegexCollection(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
-    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state,
+    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, maxPoints = 0,
     sampleSolutions = Seq[RegexSampleSolution](
       RegexSampleSolution(0, "")
     ),
@@ -93,7 +95,13 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
         RegexEvaluationResult(testData, classificationResultType)
     }
 
-    RegexCompleteResult(sol, exercise, part, results)
+    val correctResultsCount: Int = results.filter {
+      s => s.resultType == TruePositive || s.resultType == TrueNegative
+    }.size
+
+    val points: Points = (correctResultsCount.toDouble / exercise.testData.size.toDouble * exercise.maxPoints * 4).toInt quarterPoints
+
+    RegexCompleteResult(sol, exercise, part, results, points, exercise.maxPoints points)
   })
 
   // Other helper methods
@@ -101,6 +109,11 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override def exerciseHasPart(exercise: RegexExercise, partType: RegexExPart): Boolean = true
 
   // Views
+
+  override def previewExerciseRest(ex: Exercise): Html = ex match {
+    case re: RegexExercise => views.html.toolViews.regex.previewRegexExerciseRest(re)
+    case _                 => ???
+  }
 
   override def renderExercise(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[RegexUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =

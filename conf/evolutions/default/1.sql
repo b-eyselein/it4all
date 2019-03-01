@@ -250,6 +250,7 @@ create table if not exists regex_exercises
   author           varchar(50),
   ex_text          text,
   ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+  max_points       int,
 
   primary key (id, semantic_version, collection_id),
   foreign key (collection_id) references regex_collections (id)

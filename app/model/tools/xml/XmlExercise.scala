@@ -1,6 +1,7 @@
 package model.tools.xml
 
 import model._
+import model.points.Points
 import play.twirl.api.Html
 
 final case class XmlCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)

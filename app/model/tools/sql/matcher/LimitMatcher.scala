@@ -1,7 +1,7 @@
 package model.tools.sql.matcher
 
-import model._
 import model.core.matching.{GenericAnalysisResult, Match, MatchType, Matcher}
+import model.points._
 import net.sf.jsqlparser.statement.select.Limit
 import play.api.libs.json.{JsString, JsValue}
 

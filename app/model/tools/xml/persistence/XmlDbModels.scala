@@ -1,8 +1,9 @@
 package model.tools.xml.persistence
 
 import model.persistence._
+import model.points.Points
 import model.tools.xml._
-import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise, XmlSampleSolution, DbXmlSampleSolution, XmlUserSolution, DbXmlUserSolution] {
 

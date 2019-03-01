@@ -13,37 +13,37 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="conf/resources/xml/xml_ex.schema.json" />
-                  </Item>
-                  <Item>
-                    <option name="path" value="conf/resources/web/web_ex.schema.json" />
-                  </Item>
-                  <Item>
-                    <option name="path" value="conf/resources/uml/uml_ex.schema.json" />
-                  </Item>
-                  <Item>
-                    <option name="path" value="conf/resources/sql/sql_ex.schema.json" />
-                  </Item>
-                  <Item>
-                    <option name="path" value="conf/resources/regex/regex_ex.schema.json" />
+                    <option name="path" value="conf/resources/collections.schema.json" />
                   </Item>
                   <Item>
                     <option name="path" value="conf/resources/programming/prog_ex.schema.json" />
                   </Item>
                   <Item>
-                    <option name="path" value="conf/resources/sql/sql_collection.schema.json" />
-                  </Item>
-                  <Item>
                     <option name="path" value="conf/resources/regex/regex_collections.schema.json" />
                   </Item>
                   <Item>
-                    <option name="path" value="conf/resources/xml/xml_collections.schema.json" />
+                    <option name="path" value="conf/resources/regex/regex_ex.schema.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/sql/sql_collection.schema.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/sql/sql_ex.schema.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/uml/uml_ex.schema.json" />
                   </Item>
                   <Item>
                     <option name="path" value="conf/resources/web/web_collections.schema.json" />
                   </Item>
                   <Item>
-                    <option name="path" value="conf/resources/collections.schema.json" />
+                    <option name="path" value="conf/resources/web/web_ex.schema.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/xml/xml_collections.schema.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/xml/xml_ex.schema.json" />
                   </Item>
                 </list>
               </option>
@@ -68,24 +68,6 @@
             </SchemaInfo>
           </value>
         </entry>
-        <entry key="prog_ex.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="prog_ex.schema" />
-              <option name="relativePathToSchema" value="conf/resources/programming/prog_ex.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="pattern" value="true" />
-                    <option name="path" value="conf/resources/programming/*/*.yaml" />
-                    <option name="mappingKind" value="Pattern" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
         <entry key="regex_ex.schema">
           <value>
             <SchemaInfo>
@@ -95,66 +77,7 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="pattern" value="true" />
-                    <option name="path" value="conf/resources/regex/*/*.yaml" />
-                    <option name="mappingKind" value="Pattern" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
-        <entry key="sql_ex.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="sql_ex.schema" />
-              <option name="relativePathToSchema" value="conf/resources/sql/sql_ex.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="pattern" value="true" />
-                    <option name="path" value="conf/resources/sql/*/*.yaml" />
-                    <option name="mappingKind" value="Pattern" />
-                  </Item>
-                  <Item>
-                    <option name="path" value="conf/resources/sql/2-amazon/2-amazon.yaml" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
-        <entry key="uml_ex.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="uml_ex.schema" />
-              <option name="relativePathToSchema" value="conf/resources/uml/uml_ex.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="pattern" value="true" />
-                    <option name="path" value="conf/resources/uml/*/*.yaml" />
-                    <option name="mappingKind" value="Pattern" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
-        <entry key="web_ex.schema">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="web_ex.schema" />
-              <option name="relativePathToSchema" value="conf/resources/web/web_ex.schema.json" />
-              <option name="schemaVersion" value="JSON schema version 7" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="pattern" value="true" />
-                    <option name="path" value="conf/resources/web/*/*.yaml" />
-                    <option name="mappingKind" value="Pattern" />
+                    <option name="path" value="conf/resources/regex/1-numbers_facts.yaml" />
                   </Item>
                 </list>
               </option>

@@ -2,6 +2,7 @@ package model.tools.web
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
+import model.points._
 import org.openqa.selenium.{By, SearchContext}
 import play.twirl.api.Html
 

@@ -1,7 +1,7 @@
 package model.tools.sql.matcher
 
-import model._
 import model.core.matching._
+import model.points._
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json.{JsString, JsValue}
 

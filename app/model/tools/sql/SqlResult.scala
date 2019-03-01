@@ -1,8 +1,8 @@
 package model.tools.sql
 
-import model._
 import model.core.matching.{Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.points._
 import model.tools.sql.matcher._
 
 import scala.language.postfixOps
@@ -84,11 +84,13 @@ final case class SqlResult(learnerSolution: String,
 
 }
 
-final case class SqlParseFailed(learnerSolution: String, error: Throwable) extends SqlCorrResult {
+final case class SqlParseFailed(learnerSolution: String, error: Throwable, maxPoints: Points) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq[EvaluationResult]()
 
   override val successType: SuccessType = SuccessType.ERROR
+
+  override val points = 0 points
 
 }
 

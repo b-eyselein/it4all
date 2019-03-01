@@ -1,6 +1,7 @@
 package model.tools.rose
 
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol, EvaluationResult, SuccessType}
+import model.points._
 import play.api.libs.json.Writes
 
 final case class RoseCompleteResult(learnerSolution: String, result: RoseEvalResult) extends CompleteResult[RoseEvalResult] {
@@ -8,6 +9,10 @@ final case class RoseCompleteResult(learnerSolution: String, result: RoseEvalRes
   override type SolType = String
 
   override def results: Seq[RoseEvalResult] = Seq(result)
+
+  override def points: Points = -1 points
+
+  override def maxPoints: Points = -1 points
 
 }
 

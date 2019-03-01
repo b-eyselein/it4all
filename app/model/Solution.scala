@@ -1,5 +1,7 @@
 package model
 
+import model.points.Points
+
 trait Solution[SolType] {
 
   val id: Int

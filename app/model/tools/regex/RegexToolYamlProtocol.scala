@@ -7,7 +7,7 @@ import net.jcazevedo.moultingyaml.{YamlObject, YamlValue}
 
 import scala.util.Try
 
-object RegexExYamlProtocol extends MyYamlProtocol {
+object RegexToolYamlProtocol extends MyYamlProtocol {
 
   object RegexCollectionYamlFormat extends MyYamlObjectFormat[RegexCollection] {
 
@@ -28,11 +28,12 @@ object RegexExYamlProtocol extends MyYamlProtocol {
 
     override protected def readObject(yamlObject: YamlObject): Try[RegexExercise] = for {
       id <- yamlObject.intField(idName)
+      semanticVersion <- yamlObject.someField(semanticVersionName) flatMap SemanticVersionHelper.semanticVersionYamlField
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
       state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
-      semanticVersion <- yamlObject.someField(semanticVersionName) flatMap SemanticVersionHelper.semanticVersionYamlField
+      maxPoints <- yamlObject.intField(maxPointsName)
 
       sampleSolutionTries <- yamlObject.arrayField(samplesName, RegexSampleSolutionYamlFormat.read)
 
@@ -45,7 +46,7 @@ object RegexExYamlProtocol extends MyYamlProtocol {
       for (testDataReadError <- testDataTries._2)
         println(testDataReadError)
 
-      RegexExercise(id, semanticVersion, title, author, text, state, sampleSolutionTries._1, testDataTries._1)
+      RegexExercise(id, semanticVersion, title, author, text, state, maxPoints, sampleSolutionTries._1, testDataTries._1)
     }
 
     override def write(obj: RegexExercise): YamlValue = ???

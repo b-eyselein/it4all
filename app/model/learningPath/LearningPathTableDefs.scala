@@ -1,9 +1,9 @@
 package model.learningPath
 
-import model.Points
 import model.core.CoreConsts._
 import model.learningPath.LearningPathSectionType.{QuestionSectionType, TextSectionType}
 import model.persistence.TableDefs
+import model.points.Points
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{Format, JsError, JsSuccess, Json}

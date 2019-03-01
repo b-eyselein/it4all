@@ -2,7 +2,8 @@ package model.persistence
 
 import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
-import model.{Difficulties, Difficulty, ExPart, Exercise, ExerciseCollection, ExerciseReview, ExerciseState, Points, SampleSolution, SemanticVersion, User, UserSolution}
+import model.points.Points
+import model._
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey}

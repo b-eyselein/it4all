@@ -1,9 +1,9 @@
 package model.tools.xml
 
 import de.uniwue.dtd.model.ElementLine
-import model._
 import model.core.matching.{AnalysisResult, Match, MatchType, Matcher}
 import model.core.result.SuccessType
+import model.points._
 import model.tools.xml.XmlConsts._
 import play.api.libs.json.{JsValue, Json}
 

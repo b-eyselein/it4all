@@ -2,7 +2,8 @@ package model.tools.rose
 
 
 import javax.inject.{Inject, Singleton}
-import model._
+import model.{ExerciseState, MyYamlFormat, SemanticVersion, User}
+import model.points.Points
 import model.core.result.CompleteResultJsonProtocol
 import model.tools.programming.ProgLanguages
 import model.tools.rose.persistence.RoseTableDefs

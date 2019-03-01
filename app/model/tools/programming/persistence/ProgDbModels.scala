@@ -1,9 +1,10 @@
 package model.tools.programming.persistence
 
 import model.persistence._
+import model.points.Points
 import model.tools.programming._
 import model.tools.uml.UmlClassDiagram
-import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, SemanticVersion}
 import play.api.libs.json.JsValue
 
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise, ProgSampleSolution, DbProgSampleSolution, ProgUserSolution, DbProgUserSolution] {

@@ -1,6 +1,6 @@
-import scala.language.implicitConversions
+package model
 
-package object model {
+package object points {
 
   implicit def toPointsOps(p: Int): PointsOps = PointsOps(p)
 

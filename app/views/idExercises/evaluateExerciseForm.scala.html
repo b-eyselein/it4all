@@ -4,54 +4,54 @@
 @(user: model.User, collId: Int, exercise: Exercise, part: ExPart, toolMainObject: CollectionToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
-@title = @{
-    "Aufgabenbewertung " + toolMainObject.toolname
-}
+    @title = @{
+        "Aufgabenbewertung " + toolMainObject.toolname
+    }
 
-@main(title, Some(user)) {
-    <div class="container">
+    @main(title, Some(user)) {
+        <div class="container">
 
-        <h4 class="text-center">Bitte bewerten Sie diese Aufgabe nach folgenden Kriterien:</h4>
+            <h4 class="text-center">Bitte bewerten Sie diese Aufgabe nach folgenden Kriterien:</h4>
 
-        <br>
+            <br>
 
-        @helper.form(coll.routes.CollectionController.reviewExercisePart(toolMainObject.urlPart, collId, exercise.id, part.urlName)) {
+            @helper.form(coll.routes.CollectionController.reviewExercisePart(toolMainObject.urlPart, collId, exercise.id, part.urlName)) {
 
-            @helper.CSRF.formField
+                @helper.CSRF.formField
 
-            <div class="form-group row">
-                <label class="col-sm-4" for="@model.core.CoreConsts.difficultyName">Schwierigkeit</label>
-                <div class="col-sm-8">
-                    @*<div class="form-check form-check-inline">*@
-                    @*<input class="form-check-input" type="radio" name="@model.core.CoreConsts.difficultyName" value="" id="difficulty_0" autocomplete="off">*@
-                    @*<label class="form-check-label" for="difficulty_0">Keine Angabe</label>*@
-                    @*</div>*@
-                    @for(difficulty <- model.Difficulties.values) {
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="@model.core.CoreConsts.difficultyName"
-                            value="@difficulty" id="difficulty_@difficulty" autocomplete="off"
-                            @if(difficulty == model.Difficulties.NOT_SPECIFIED) { checked }>
-                            <label class="form-check-label" for="difficulty_@difficulty">@difficulty.german</label>
-                        </div>
-                    }
+                <div class="form-group row">
+                    <label class="col-sm-4" for="@model.core.CoreConsts.difficultyName">Schwierigkeit</label>
+                    <div class="col-sm-8">
+                        @*<div class="form-check form-check-inline">*@
+                        @*<input class="form-check-input" type="radio" name="@model.core.CoreConsts.difficultyName" value="" id="difficulty_0" autocomplete="off">*@
+                        @*<label class="form-check-label" for="difficulty_0">Keine Angabe</label>*@
+                        @*</div>*@
+                        @for(difficulty <- model.Difficulties.values) {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="@model.core.CoreConsts.difficultyName"
+                                value="@difficulty" id="difficulty_@difficulty" autocomplete="off"
+                                @if(difficulty == model.Difficulties.NOT_SPECIFIED) { checked }>
+                                <label class="form-check-label" for="difficulty_@difficulty">@difficulty.german</label>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group row">
-                <label class="col-form-label col-sm-4" for="@model.core.CoreConsts.durationName">
-                    Bearbeitungsdauer (Minuten)</label>
-                <div class="col-sm-8">
-                    <input class="form-control" type="number" min="0" max="100" name="@model.core.CoreConsts.durationName" id="@model.core.CoreConsts.durationName">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-4" for="@model.core.CoreConsts.durationName">
+                        Bearbeitungsdauer (Minuten)</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="number" min="0" max="100" name="@model.core.CoreConsts.durationName" id="@model.core.CoreConsts.durationName">
+                    </div>
                 </div>
-            </div>
 
-            <div class="btn-group d-flex">
-                <a href="@coll.routes.CollectionController.index(toolMainObject.urlPart)" class="btn btn-light w-100">
-                    Überspringen</a>
-                <button class="btn btn-primary w-100">Bewerten</button>
-            </div>
+                <div class="btn-group d-flex">
+                    <a href="@coll.routes.CollectionController.collection(toolMainObject.urlPart, collId)" class="btn btn-light w-100">
+                        Überspringen</a>
+                    <button class="btn btn-primary w-100">Bewerten</button>
+                </div>
 
-        }
+            }
 
-    </div>
-}
+        </div>
+    }

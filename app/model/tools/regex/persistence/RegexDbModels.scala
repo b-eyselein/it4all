@@ -1,16 +1,17 @@
 package model.tools.regex.persistence
 
 import model.persistence._
+import model.points.Points
 import model.tools.regex._
-import model.{Difficulty, ExerciseState, HasBaseValues, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object RegexDbModels extends ADbModels[RegexExercise, DbRegexExercise, RegexSampleSolution, DbRegexSampleSolution, RegexUserSolution, DbRegexUserSolution] {
 
   override def dbExerciseFromExercise(collId: Int, ex: RegexExercise): DbRegexExercise =
-    DbRegexExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state)
+    DbRegexExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.maxPoints)
 
   def exerciseFromDbExercise(ex: DbRegexExercise, sampleSolutions: Seq[RegexSampleSolution], testData: Seq[RegexTestData]) =
-    RegexExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, sampleSolutions, testData)
+    RegexExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.maxPoints, sampleSolutions, testData)
 
   // Sample solutions
 
@@ -49,7 +50,7 @@ object RegexExerciseReviewDbModels extends AExerciseReviewDbModels[RegexExPart, 
 }
 
 final case class DbRegexExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String,
-                                 author: String, text: String, state: ExerciseState) extends ADbExercise
+                                 author: String, text: String, state: ExerciseState, maxPoints: Int) extends ADbExercise
 
 final case class DbRegexSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, sample: String)
   extends ADbSampleSol[String]

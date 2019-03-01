@@ -1,6 +1,7 @@
 package model.persistence
 
-import model.{Difficulty, ExPart, ExerciseReview, HasBaseValues, Points, SemanticVersion}
+import model.points.Points
+import model._
 
 trait ADbModels[Exercise, DbExercise, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType] {
 

@@ -7,6 +7,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import play.api.Logger
+import model.points._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
@@ -19,7 +20,7 @@ abstract class QueryCorrector(val queryType: String) {
   def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[SqlSampleSolution], exercise: SqlExercise, scenario: SqlScenario)
              (implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
     parseStatement(learnerSolution) flatMap checkStatement match {
-      case Failure(error) => SqlParseFailed(learnerSolution, error)
+      case Failure(error) => SqlParseFailed(learnerSolution, error, -1 points)
       case Success(userQ) =>
 
         val userColumns = getColumnWrappers(userQ)

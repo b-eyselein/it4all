@@ -1,6 +1,6 @@
 package model.tools.web
 
-import model._
+import model.points._
 import model.core.result.CompleteResultJsonProtocol
 import model.tools.web.WebConsts._
 import play.api.libs.functional.syntax._

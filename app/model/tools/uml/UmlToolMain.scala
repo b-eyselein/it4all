@@ -1,7 +1,8 @@
 package model.tools.uml
 
 import javax.inject._
-import model._
+import model.{ExerciseState, MyYamlFormat, SemanticVersionHelper, User}
+import model.points.Points
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.uml.persistence.UmlTableDefs

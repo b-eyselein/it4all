@@ -2,11 +2,12 @@ package model.tools.web
 
 import better.files.File
 import com.gargoylesoftware.htmlunit.ScriptException
-import javax.inject._
-import model._
+import javax.inject.{Inject, Singleton}
 import model.core.result.CompleteResultJsonProtocol
+import model.points.Points
 import model.toolMains._
 import model.tools.web.persistence.WebTableDefs
+import model._
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.Logger
@@ -109,6 +110,11 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     WebUserSolution(id, part, solution, points, maxPoints)
 
   // Views
+
+  override def previewExerciseRest(ex: Exercise): Html = ex match {
+    case we: WebExercise => views.html.toolViews.web.previewWebExerciseRest(we)
+    case _               => ???
+  }
 
   //  override def renderAdminExerciseEditForm(user: User, newEx: WebExercise, isCreation: Boolean, toolList: ToolList)
   //                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =

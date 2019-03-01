@@ -1,6 +1,7 @@
 package model.tools.programming
 
 import model._
+import model.points.Points
 import model.tools.uml.UmlClassDiagram
 import play.api.libs.json.JsValue
 import play.twirl.api.Html

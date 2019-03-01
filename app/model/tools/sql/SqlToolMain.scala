@@ -1,7 +1,7 @@
 package model.tools.sql
 
 import javax.inject.{Inject, Singleton}
-import model._
+import model.{ExerciseState, MyYamlFormat, SemanticVersionHelper, User}
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.tools.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
@@ -11,6 +11,7 @@ import play.api.i18n.MessagesProvider
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
+import model.points.Points
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}

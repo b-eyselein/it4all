@@ -2,6 +2,7 @@ package model.tools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
+import model.points.Points
 import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq

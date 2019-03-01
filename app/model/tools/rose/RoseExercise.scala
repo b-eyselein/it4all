@@ -1,6 +1,7 @@
 package model.tools.rose
 
 import model._
+import model.points.Points
 import model.tools.programming.{ProgDataType, ProgLanguage}
 import play.twirl.api.Html
 

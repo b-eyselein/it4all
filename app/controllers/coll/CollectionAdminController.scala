@@ -141,7 +141,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
           readSaveAndPreview[toolMain.ExType](
             toolMain.readExercisesFromYaml(collection),
             toolMain.futureInsertExercise(collId, _),
-            readAndSaveResult => views.html.admin.collExes.readExercisesPreview(user, collection, readAndSaveResult, toolMain, toolList)
+            readAndSaveResult => views.html.admin.collExes.readExercisesPreview(user, collection, readAndSaveResult, toolMain, toolList, toolMain.previewExerciseRest)
           )
       }
   }

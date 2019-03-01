@@ -1,8 +1,9 @@
 package model.tools.sql.persistence
 
 import model.persistence._
+import model.points.Points
 import model.tools.sql._
-import model.{Difficulty, ExerciseState, Points, SemanticVersion}
+import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object SqlDbModels extends ADbModels[SqlExercise, DbSqlExercise, SqlSampleSolution, DbSqlSampleSolution, SqlUserSolution, DbSqlUserSolution] {
 

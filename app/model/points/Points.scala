@@ -1,4 +1,4 @@
-package model
+package model.points
 
 import scala.math.Integral.Implicits._
 

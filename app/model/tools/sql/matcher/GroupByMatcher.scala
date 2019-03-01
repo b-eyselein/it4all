@@ -1,6 +1,6 @@
 package model.tools.sql.matcher
 
-import model._
+import model.points._
 import model.core.matching._
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Column

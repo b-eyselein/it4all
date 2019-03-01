@@ -4,6 +4,7 @@ import model.core.result.{CompleteResult, CompleteResultJsonProtocol, Evaluation
 import model.tools.programming.ProgConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import model.points._
 
 // Types of complete results
 
@@ -12,6 +13,10 @@ final case class ProgCompleteResult(implementation: String, results: Seq[ProgEva
   override type SolType = String
 
   override def learnerSolution: String = implementation
+
+  override val points: Points = -1 points
+
+  override val maxPoints: Points = -1 points
 
 }
 

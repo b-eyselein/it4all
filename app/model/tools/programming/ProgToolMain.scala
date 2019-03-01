@@ -1,7 +1,8 @@
 package model.tools.programming
 
 import javax.inject._
-import model._
+import model.{ExerciseState, MyYamlFormat, SemanticVersion, User}
+import model.points.Points
 import model.core.result.CompleteResultJsonProtocol
 import model.tools.programming.persistence.ProgTableDefs
 import model.toolMains.{CollectionToolMain, ToolState}

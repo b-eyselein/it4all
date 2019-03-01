@@ -2,6 +2,7 @@ package model.tools.uml
 
 import model.core.matching.{Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.points._
 import model.tools.uml.matcher._
 
 import scala.language.postfixOps
@@ -48,5 +49,9 @@ final case class UmlCompleteResult(exercise: UmlExercise, learnerSolution: UmlCl
     case UmlExParts.DiagramDrawingHelp => Some(UmlExParts.MemberAllocation)
     case UmlExParts.MemberAllocation   => None
   }
+
+  override val points = -1 points
+
+  override def maxPoints: Points = -1 points
 
 }

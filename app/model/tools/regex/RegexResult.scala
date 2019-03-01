@@ -1,10 +1,11 @@
 package model.tools.regex
 
-import model.tools.regex.RegexConsts._
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol, EvaluationResult, SuccessType}
-import play.api.libs.json._
-import BinaryClassificationResultTypes._
+import model.points.Points
+import model.tools.regex.BinaryClassificationResultTypes._
+import model.tools.regex.RegexConsts._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 final case class RegexEvaluationResult(testData: RegexTestData, resultType: BinaryClassificationResultType) extends EvaluationResult {
 
@@ -15,9 +16,8 @@ final case class RegexEvaluationResult(testData: RegexTestData, resultType: Bina
 
 }
 
-
 final case class RegexCompleteResult(learnerSolution: String, exercise: RegexExercise, part: RegexExPart,
-                                     results: Seq[RegexEvaluationResult]) extends CompleteResult[RegexEvaluationResult] {
+                                     results: Seq[RegexEvaluationResult], points: Points, maxPoints: Points) extends CompleteResult[RegexEvaluationResult] {
 
   override type SolType = String
 
