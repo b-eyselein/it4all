@@ -206,9 +206,13 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminEditExerciseForm(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureExerciseById(collId, id) map {
-        case None           => onNoSuchExercise(id)
-        case Some(exercise) => Ok(toolMain.renderExerciseEditForm(admin, collId, exercise, isCreation = false, toolList))
+      toolMain.futureCollById(collId) flatMap {
+        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case Some(collection) =>
+          toolMain.futureExerciseById(collId, id) map {
+            case None           => onNoSuchExercise(toolMain, collection, id)
+            case Some(exercise) => Ok(toolMain.renderExerciseEditForm(admin, collId, exercise, isCreation = false, toolList))
+          }
       }
   }
 
