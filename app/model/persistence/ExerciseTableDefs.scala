@@ -187,9 +187,9 @@ SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[P
 
     def username: Rep[String] = column[String]("username")
 
-    def exercisePart: Rep[PartType] = column[PartType]("exercise_part")
+    def exercisePart: Rep[PartType] = column[PartType](partName)
 
-    def difficulty: Rep[Difficulty] = column[Difficulty]("difficulty")
+    def difficulty: Rep[Difficulty] = column[Difficulty](difficultyName)
 
     def maybeDuration: Rep[Int] = column[Int]("maybe_duration")
 

@@ -199,12 +199,12 @@ create table if not exists prog_solutions
   exercise_id         int,
   ex_sem_ver          varchar(10),
   collection_id       int,
-  part                varchar(30),
-  points              double,
-  max_points          double,
-  solution            text,
+  part                varchar(50),
+  implementation      text,
   language            varchar(20),
   extended_unit_tests boolean default false,
+  points              double,
+  max_points          double,
 
   foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade,
@@ -218,11 +218,11 @@ create table if not exists prog_exercise_reviews
   exercise_id    int,
   ex_sem_ver     varchar(10),
   collection_id  int,
-  exercise_part  varchar(30),
+  part           varchar(50),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  primary key (username, exercise_id, ex_sem_ver, collection_id, part),
   foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade,
   foreign key (username) references users (username)
@@ -290,7 +290,7 @@ create table if not exists regex_solutions
   exercise_id   int,
   ex_sem_ver    varchar(10),
   collection_id int,
-  part          varchar(30),
+  part          varchar(50),
   points        double,
   max_points    double,
   solution      varchar(100),
@@ -307,11 +307,11 @@ create table if not exists regex_exercise_reviews
   exercise_id    int,
   ex_sem_ver     varchar(10),
   collection_id  int,
-  exercise_part  varchar(30),
+  part           varchar(50),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  primary key (username, exercise_id, ex_sem_ver, collection_id, part),
   foreign key (exercise_id, ex_sem_ver, collection_id) references regex_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade
 );
@@ -382,10 +382,11 @@ create table if not exists rose_solutions
   exercise_id   int,
   ex_sem_ver    varchar(10),
   collection_id int,
-  part          varchar(30),
+  part          varchar(50),
+  language      enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
+  solution      text,
   points        double,
   max_points    double,
-  solution      text,
 
   foreign key (username) references users (username)
     on update cascade on delete cascade,
@@ -399,11 +400,11 @@ create table if not exists rose_exercise_reviews
   exercise_id    int,
   ex_sem_ver     varchar(10),
   collection_id  int,
-  exercise_part  varchar(30),
+  part           varchar(50),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  primary key (username, exercise_id, ex_sem_ver, collection_id, part),
   foreign key (exercise_id, ex_sem_ver, collection_id) references rose_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade
 );
@@ -464,7 +465,7 @@ create table if not exists sql_solutions
   points        double,
   max_points    double,
   solution      text,
-  part          varchar(30),
+  part          varchar(50),
 
   foreign key (username) references users (username)
     on update cascade on delete cascade,
@@ -546,7 +547,7 @@ create table if not exists uml_solutions
   ex_sem_ver    varchar(10),
   collection_id int,
   username      varchar(30),
-  part          varchar(30),
+  part          varchar(50),
   points        double,
   max_points    double,
   solution      text,
@@ -563,11 +564,11 @@ create table if not exists uml_exercise_reviews
   exercise_id    int,
   ex_sem_ver     varchar(10),
   collection_id  int,
-  exercise_part  varchar(30),
+  part           varchar(50),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  primary key (username, exercise_id, ex_sem_ver, collection_id, part),
   foreign key (username) references users (username)
     on update cascade on delete cascade,
   foreign key (exercise_id, ex_sem_ver, collection_id) references uml_exercises (id, semantic_version, collection_id)
@@ -710,11 +711,11 @@ create table if not exists web_exercise_reviews
   exercise_id    int,
   ex_sem_ver     varchar(10),
   collection_id  int,
-  exercise_part  varchar(30),
+  part           varchar(50),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, exercise_part, collection_id),
+  primary key (username, exercise_id, ex_sem_ver, part, collection_id),
   foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade
 );
@@ -770,7 +771,7 @@ create table if not exists xml_solutions
   ex_sem_ver    varchar(10),
   collection_id int,
   username      varchar(50),
-  part          varchar(30),
+  part          varchar(50),
   points        double,
   max_points    double,
   grammar       text,
@@ -788,11 +789,11 @@ create table if not exists xml_exercise_reviews
   exercise_id    int,
   ex_sem_ver     varchar(10),
   collection_id  int,
-  exercise_part  varchar(30),
+  part           varchar(50),
   difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
   maybe_duration int,
 
-  primary key (username, exercise_id, ex_sem_ver, collection_id, exercise_part),
+  primary key (username, exercise_id, ex_sem_ver, collection_id, part),
   foreign key (exercise_id, ex_sem_ver, collection_id) references xml_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade
 );
