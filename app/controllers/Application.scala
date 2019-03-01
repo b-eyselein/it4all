@@ -18,9 +18,7 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
   override protected val adminRightsRequired: Boolean = false
 
   def index: EssentialAction = withUser { user =>
-    implicit request =>
-      //      println(request.flash)
-      Ok(views.html.index(user, toolList))
+    implicit request => Ok(views.html.index(user, toolList))
   }
 
   def blocklyTest: EssentialAction = withUser { user =>
