@@ -6,10 +6,10 @@ import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.core.overviewHelpers.{SolvedStates, UserCollEx}
-import model.programming.ProgToolMain
+import model.tools.programming.ProgToolMain
 import model.toolMains.{CollectionExIdentifier, CollectionToolMain, ToolList}
 import model.tools.web.{WebExParts, WebToolMain}
-import model.uml._
+import model.tools.uml._
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}

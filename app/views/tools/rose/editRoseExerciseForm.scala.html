@@ -1,0 +1,69 @@
+@import model.tools.rose.{RoseConsts, RoseExercise, RoseCollection, RoseToolMain}
+@import model.tools.programming.{ProgDataTypes, ProgLanguages}
+
+@(user: model.User, collection: RoseCollection, exerciseForm: Form[RoseExercise], isCreation: Boolean, toolMainObject: RoseToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@widthField = @{
+    exerciseForm(RoseConsts.fieldWidthName)
+}
+@heightField = @{
+    exerciseForm(RoseConsts.fieldHeightName)
+}
+
+@specialFields = {
+
+    <fieldset>
+        <legend class="text-center">Spezialangaben</legend>
+        <div class="form-group row">
+            <label class="col-form-label col-md-2">Feldgröße:</label>
+
+            <div class="col-md-2">@myhelpers.input(widthField, "number", placeHolder = Some("Feldbreite"))</div>
+            <label class="col-form-label col-md-1" for="@widthField.id">(Breite)</label>
+
+            <div class="col-md-2">@myhelpers.input(heightField, "number", placeHolder = Some("Feldhöhe"))</div>
+            <label class="col-form-label col-md-1" for="@heightField.id">(Höhe)</label>
+        </div>
+
+        @helper.repeat(exerciseForm(RoseConsts.inputTypesName), min = 1) { inputTypeField =>
+            <div class="form-group row">
+                @myhelpers.inputWithLabel(inputTypeField(RoseConsts.idName), "ID", "number", 2, 2, isReadOnly = true)
+
+                @myhelpers.inputWithLabel(inputTypeField(RoseConsts.nameName), "Name", "text", 1, 2)
+
+                @myhelpers.selectWithLabel(inputTypeField(RoseConsts.inputTypeName), "Typ", ProgDataTypes.values.map(t => (t.entryName, t.entryName)), 1, 4)
+
+            </div>
+        }
+
+    </fieldset>
+
+    <fieldset>
+        <legend class="text-center">Musterlösungen</legend>
+        @helper.repeat(exerciseForm(RoseConsts.samplesName), min = 1) { sampleField =>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        @myhelpers.inputWithLabel(sampleField(RoseConsts.idName), "ID", "number", 6, 6, isReadOnly = true)
+                    </div>
+                    <div class="form-group row">
+                    @myhelpers.selectWithLabel(sampleField(RoseConsts.languageName), "Sprache", ProgLanguages.values.map(l => (l.entryName, l.languageName)), 6, 6)
+                    </div>
+
+                </div>
+                <div class="col-md-8">
+
+                    <div class="form-group row">
+                    @myhelpers.textareaWithLabel(sampleField(RoseConsts.sampleSolutionName), "Lösung", rowCount = 10, 2, 10)
+                    </div>
+                </div>
+            </div>
+        }
+    </fieldset>
+
+
+}
+
+@idExercises.editExerciseBaseForm(user, collection.id, exerciseForm, isCreation, toolMainObject, specialFields)
+

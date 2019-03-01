@@ -14,7 +14,7 @@ final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
   // other methods
 
   override def preview: Html = //FIXME: move to toolMain!
-    views.html.idExercises.xml.xmlPreview(this)
+    views.html.tools.xml.xmlPreview(this)
 
   def getTemplate(part: XmlExPart): XmlSolution = XmlSolution(
     document =

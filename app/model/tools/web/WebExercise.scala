@@ -33,7 +33,7 @@ final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: S
   // other methods
 
   override def preview: Html = // FIXME: move to toolMain!
-    views.html.idExercises.web.webPreview(this)
+    views.html.tools.web.webPreview(this)
 
   override def tags: Seq[WebExTag] = WebExParts.values map (part => new WebExTag(part.partName, hasPart(part)))
 

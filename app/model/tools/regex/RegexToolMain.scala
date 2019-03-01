@@ -104,7 +104,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override def renderExercise(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[RegexUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-    views.html.collectionExercises.regex.regexExercise(user, this, collection, exercise, part, oldSolution.map(_.solution))
+    views.html.tools.regex.regexExercise(user, this, collection, exercise, part, oldSolution.map(_.solution))
 
   //  override def renderUserExerciseEditForm(user: User, newExForm: Form[RegexExercise], isCreation: Boolean)(
   //    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =

@@ -147,12 +147,12 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     val oldSolutionOrTemplate: XmlSolution = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
 
-    views.html.idExercises.xml.xmlExercise(user, collection, exercise, oldSolutionOrTemplate, part, this)
+    views.html.tools.xml.xmlExercise(user, collection, exercise, oldSolutionOrTemplate, part, this)
   }
 
   override def renderExercisePreview(user: User, collId: Int, newExercise: XmlExercise, saved: Boolean): Html =
-    views.html.idExercises.xml.xmlNewExercise(user, collId, newExercise, saved, this)
+    views.html.tools.xml.xmlNewExercise(user, collId, newExercise, saved, this)
 
-  override def playground(user: User): Html = views.html.idExercises.xml.xmlPlayground(user)
+  override def playground(user: User): Html = views.html.tools.xml.xmlPlayground(user)
 
 }

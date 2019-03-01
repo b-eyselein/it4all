@@ -120,7 +120,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   //    views.html.idExercises.web.editWebExerciseForm(user, newExForm, isCreation, this)
 
   override def renderExercisePreview(user: User, collId: Int, newExercise: WebExercise, saved: Boolean): Html =
-    views.html.idExercises.web.webPreview(newExercise)
+    views.html.tools.web.webPreview(newExercise)
 
   override def renderExercise(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart, maybeOldSolution: Option[WebUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
@@ -130,14 +130,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
         case WebExParts.JsPart   => oldSol.solution.jsSolution
       }).getOrElse(WebConsts.STANDARD_HTML)
 
-    views.html.idExercises.web.webExercise(user, collection, exercise, part, oldOrDefaultSolutionString, this)
+    views.html.tools.web.webExercise(user, collection, exercise, part, oldOrDefaultSolutionString, this)
   }
 
   override def renderEditRest(exercise: WebExercise): Html =
-    views.html.idExercises.web.editWebExRest(exercise)
+    views.html.tools.web.editWebExRest(exercise)
 
   override def playground(user: User): Html =
-    views.html.idExercises.web.webPlayground(user)
+    views.html.tools.web.webPlayground(user)
 
   // Correction
 

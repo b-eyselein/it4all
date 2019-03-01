@@ -1,0 +1,86 @@
+@import model.tools.uml.{UmlToolMain, UmlExercise, UmlCollection, UmlExParts}
+
+@(user: model.User, collection: UmlCollection, exercise: UmlExercise, toolMainObject: UmlToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@btnText = @{
+    "Klassen verifizieren"
+}
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/uml/umlClass/classSelection.js")');</script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+}
+
+@main("UML", Some(user), scripts) {
+        <!-- Modal for hints -->
+    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal", "lg") {
+        <ul>
+            <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext auswählen.</li>
+            <li>Sie können nur Nomen auswählen.</li>
+            <li>Es werden alle Vorkommen gewählter Klassen markiert, um eine Doppelauswahl zu verhindern.</li>
+            <li>Durch erneutes Anklicken einer Klasse - unabhängig von der Position - können Sie eine Klasse wieder abwählen.</li>
+            <li>Auf der rechten Seite wird Ihnen eine Liste Ihrer gewählten Klassen angezeigt.</li>
+            <li>Wenn Sie alle Klassen ausgewählt haben, können Sie Ihre Wahl mit dem Link &quot;@btnText&quot; korrigieren lassen und zum nächsten Schritt gelangen.</li>
+        </ul>
+    }
+
+    <div class="container">
+        <h1 class="text-center">Auswahl der Klassen</h1>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Aufgabentext</h2>
+
+                <hr>
+
+                <div class="card">
+                    <div class="card-body text-justify" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+                    @Html(exercise.markedText)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <h2>Gewählte Klassen</h2>
+
+                <hr>
+
+                <ul id="classesList">
+                    <li>--</li>
+                </ul>
+            </div>
+        </div>
+
+        <br>
+
+        @*<input type="hidden" class="form-control" name="@model.tools.uml.UmlConsts.learnerSolutionName" id="@model.tools.uml.UmlConsts.learnerSolutionName" required>*@
+
+        <div class="form-group">
+
+            @helper.CSRF.formField
+
+            <div class="btn-group d-flex">
+                <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#hintModal">
+                    <span class="octicon octicon-info"></span>
+                </button>
+                <button data-url="@coll.routes.CollectionController.correctLive(toolMainObject.urlPart, collection.id, exercise.id, UmlExParts.ClassSelection.urlName)"
+                class="btn btn-primary w-100" id="testBtn">@btnText</button>
+                <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, exercise.id, UmlExParts.DiagramDrawingHelp.urlName)"
+                class="btn btn-secondary w-100">Zum nächsten Aufgabenteil</a>
+            </div>
+        </div>
+
+        <hr>
+
+        <div id="correctionDiv" hidden>
+            <h2>Korrektur</h2>
+            <div id="correction"></div>
+        </div>
+
+    </div>
+}

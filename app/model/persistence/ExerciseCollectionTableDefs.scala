@@ -2,7 +2,7 @@ package model.persistence
 
 import model._
 import model.core.overviewHelpers.{SolvedState, SolvedStates}
-import model.uml._
+import model.tools.uml._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{JsError, JsSuccess, Json}
