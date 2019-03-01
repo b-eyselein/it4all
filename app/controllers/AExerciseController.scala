@@ -19,8 +19,8 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
 
   // Helper methods
 
-  // FIXME: Redirect and flash!
-  private def onNoSuchTool(toolType: String): Result = NotFound(s"Es gibt kein Tool mit dem Kürzel '$toolType'")
+  private def onNoSuchTool(toolType: String): Result =
+    NotFound(s"Es gibt kein Tool mit dem Kürzel '$toolType'")
 
   protected def onNoSuchCollection(tool: ToolMainType, collId: Int): Result =
     NotFound(s"Es gibt keine Sammlung mit der ID '$collId' für das Tool '${tool.toolname}'")
@@ -39,7 +39,6 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
         case Some(toolMain) => f(user, toolMain)(request)
       }
   }
-
   protected def futureWithUserWithToolMain(toolType: String)(f: (User, ToolMainType) => Request[AnyContent] => Future[Result]): EssentialAction = futureWithUser { user =>
     implicit request =>
       getToolMain(toolType) match {

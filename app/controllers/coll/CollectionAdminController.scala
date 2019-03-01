@@ -49,27 +49,11 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminImportCollections(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      // FIXME: refactor!!!!!!!!!
-
-      val readTries: Seq[Try[toolMain.CollType]] = toolMain.readCollectionsFromYaml
-
-      val (readSuccesses, readFailures) = CommonUtils.splitTriesNew(readTries)
-
-      val readAndSaveSuccesses: Future[Seq[(toolMain.CollType, Boolean)]] = Future.sequence(readSuccesses.map { readCollection =>
-        toolMain.futureInsertAndDeleteOldCollection(readCollection) map (saved => (readCollection, saved))
-      })
-
-      readAndSaveSuccesses.map { saveResults: Seq[(toolMain.CollType, Boolean)] =>
-        val readAndSaveResult = ReadAndSaveResult(saveResults map {
-          sr => new ReadAndSaveSuccess[toolMain.CollType](sr._1, sr._2)
-        }, readFailures)
-
-        for (failure <- readAndSaveResult.failures) {
-          logger.error("There has been an error reading a yaml object: ", failure.exception)
-        }
-
-        Ok(views.html.admin.collExes.readCollectionsPreview(user, readAndSaveResult, toolMain, toolList))
-      }
+      readSaveAndPreview[toolMain.CollType](
+        toolMain.readCollectionsFromYaml,
+        toolMain.futureInsertAndDeleteOldCollection,
+        readAndSaveResult => views.html.admin.collExes.readCollectionsPreview(user, readAndSaveResult, toolMain, toolList)
+      )
   }
 
   def adminChangeCollectionState(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
@@ -150,31 +134,16 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminImportExercises(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
+
       toolMain.futureCollById(collId) flatMap {
         case None             => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(collection) =>
 
-          // FIXME: refactor!!!!!!!!!
-
-          val readTries: Seq[Try[toolMain.ExType]] = toolMain.readExercisesFromYaml(collection)
-
-          val (readSuccesses, readFailures) = CommonUtils.splitTriesNew(readTries)
-
-          val readAndSaveSuccesses: Future[Seq[(toolMain.ExType, Boolean)]] = Future.sequence(readSuccesses.map {
-            readExercise => toolMain.futureInsertExercise(collId, readExercise) map (saved => (readExercise, saved))
-          })
-
-          readAndSaveSuccesses.map { saveResults: Seq[(toolMain.ExType, Boolean)] =>
-            val readAndSaveResult = ReadAndSaveResult(saveResults map {
-              sr => new ReadAndSaveSuccess[toolMain.ExType](sr._1, sr._2)
-            }, readFailures)
-
-            for (failure <- readAndSaveResult.failures) {
-              logger.error("There has been an error reading an yaml object", failure.exception)
-            }
-
-            Ok(views.html.admin.collExes.readExercisesPreview(user, collection, readAndSaveResult, toolMain, toolList))
-          }
+          readSaveAndPreview[toolMain.ExType](
+            toolMain.readExercisesFromYaml(collection),
+            toolMain.futureInsertExercise(collId, _),
+            readAndSaveResult => views.html.admin.collExes.readExercisesPreview(user, collection, readAndSaveResult, toolMain, toolList)
+          )
       }
   }
 
