@@ -1,7 +1,7 @@
 package model.tools.uml.persistence
 
 import model.SemanticVersion
-import model.persistence.ExerciseCollectionTableDefs
+import model.persistence.ExerciseTableDefs
 import model.tools.uml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -13,7 +13,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[UmlExPart, UmlExercise, UmlCollection, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
+    with ExerciseTableDefs[UmlExPart, UmlExercise, UmlCollection, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
 
   import profile.api._
 

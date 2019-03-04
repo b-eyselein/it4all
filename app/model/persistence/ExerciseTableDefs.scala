@@ -1,19 +1,18 @@
 package model.persistence
 
+import model._
 import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
 import model.points.Points
-import model._
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
 
-// FIXME: remove this trait...
-
-trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection,
-SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview] extends LearningPathTableDefs {
+trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+  extends LearningPathTableDefs
+    with ExerciseTableDefQueries[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -60,27 +59,7 @@ SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[P
 
   protected def exDbValuesFromExercise(collId: Int, exercise: ExType): DbExType
 
-  // Numbers
-
-  def futureNumOfExes: Future[Int] = db.run(exTable.distinctOn(_.semanticVersion).length.result)
-
   // Reading
-
-  def futureAllExes: Future[Seq[ExType]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map (ex => completeExForEx(collId = -1, ex))))
-
-  def futureExerciseById(id: Int): Future[Option[ExType]] = db.run {
-    exTable.filter(_.id === id).sortBy(_.semanticVersion.desc).result.headOption
-  } flatMap {
-    case Some(ex) => completeExForEx(collId = -1, ex) map Some.apply
-    case None     => Future.successful(None)
-  }
-
-  def futureExerciseByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[ExType]] = db.run {
-    exTable.filter(e => e.id === id && e.semanticVersion === semVer).result.headOption
-  } flatMap {
-    case Some(ex) => completeExForEx(collId = -1, ex) map Some.apply
-    case None     => Future.successful(None)
-  }
 
   protected def completeExForEx(collId: Int, ex: DbExType): Future[ExType]
 

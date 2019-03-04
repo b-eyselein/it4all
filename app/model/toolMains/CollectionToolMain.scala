@@ -7,7 +7,7 @@ import model.points._
 import model.core._
 import model.core.overviewHelpers.{SolvedStates, SolvedStatesForExerciseParts}
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
-import model.persistence.ExerciseCollectionTableDefs
+import model.persistence.ExerciseTableDefs
 import net.jcazevedo.moultingyaml._
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
@@ -40,7 +40,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   type ReviewType <: ExerciseReview
 
-  override type Tables <: ExerciseCollectionTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType]
+  override type Tables <: ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType]
 
   // Values
 

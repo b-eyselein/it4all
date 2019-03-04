@@ -1,6 +1,6 @@
 package model.tools.xml.persistence
 
-import model.persistence.ExerciseCollectionTableDefs
+import model.persistence.ExerciseTableDefs
 import model.tools.xml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.ast.TypedType
@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[XmlExPart, XmlExercise, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview] {
+    with ExerciseTableDefs[XmlExPart, XmlExercise, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview] {
 
   import profile.api._
 

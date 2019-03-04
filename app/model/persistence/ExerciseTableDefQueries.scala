@@ -11,15 +11,13 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait ExerciseCollectionTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
-  extends ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType] {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+  extends HasDatabaseConfigProvider[JdbcProfile] {
+  self: ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType] =>
 
   private val logger = Logger(this.getClass)
 
   import profile.api._
-
-  // Queries
 
   protected def copyDbUserSolType(sol: DbUserSolType, newId: Int): DbUserSolType
 
@@ -169,5 +167,6 @@ trait ExerciseCollectionTableDefs[PartType <: ExPart, ExType <: Exercise, CollTy
 
     MappedColumnType.base[UmlClassDiagram, String](write, read)
   }
+
 
 }

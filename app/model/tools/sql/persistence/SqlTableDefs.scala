@@ -1,7 +1,7 @@
 package model.tools.sql.persistence
 
 import javax.inject.Inject
-import model.persistence.ExerciseCollectionTableDefs
+import model.persistence.ExerciseTableDefs
 import model.tools.sql.SqlConsts._
 import model.tools.sql._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -14,7 +14,7 @@ import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[SqlExPart, SqlExercise, SqlScenario, String, SqlSampleSolution, SqlUserSolution, SqlExerciseReview] {
+    with ExerciseTableDefs[SqlExPart, SqlExercise, SqlScenario, String, SqlSampleSolution, SqlUserSolution, SqlExerciseReview] {
 
   import profile.api._
 

@@ -1,7 +1,7 @@
 package model.tools.web.persistence
 
 import model.SemanticVersion
-import model.persistence.ExerciseCollectionTableDefs
+import model.persistence.ExerciseTableDefs
 import model.tools.web._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.ast.TypedType
@@ -13,7 +13,7 @@ import scala.language.postfixOps
 
 class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[WebExPart, WebExercise, WebCollection, WebSolution, WebSampleSolution, WebUserSolution, WebExerciseReview] {
+    with ExerciseTableDefs[WebExPart, WebExercise, WebCollection, WebSolution, WebSampleSolution, WebUserSolution, WebExerciseReview] {
 
   import profile.api._
 

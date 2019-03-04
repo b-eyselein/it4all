@@ -1,7 +1,7 @@
 package model.tools.regex.persistence
 
 import javax.inject.Inject
-import model.persistence.ExerciseCollectionTableDefs
+import model.persistence.ExerciseTableDefs
 import model.tools.regex.RegexConsts._
 import model.tools.regex._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseCollectionTableDefs[RegexExPart, RegexExercise, RegexCollection, String, RegexSampleSolution, RegexUserSolution, RegexExerciseReview] {
+    with ExerciseTableDefs[RegexExPart, RegexExercise, RegexCollection, String, RegexSampleSolution, RegexUserSolution, RegexExerciseReview] {
 
   import profile.api._
 
