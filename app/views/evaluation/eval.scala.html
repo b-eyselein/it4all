@@ -1,47 +1,36 @@
 @(user: model.User, toEvaluate: model.feedback.Feedback, toolMain: model.toolMains.AToolMain)
 
 @title = @{
-    s"""Evaluation des Tools "${toolMain.toolname}""""
+    s"Evaluation des Tools '${toolMain.toolname}'"
 }
 
 @main(title, Some(user)) {
     <div class="container">
-        <div class="page-header">
-            <h1>@title</h1>
-        </div>
+        <h1 class="text-center">@title</h1>
 
-        <form action="@routes.MainExerciseController.submitEvaluation(toolMain.urlPart)" method="post" class="form">
+        @helper.form(routes.MainExerciseController.submitEvaluation(toolMain.urlPart), 'class -> "form") {
 
             @for(evaledAspect <- model.EvaluatedAspects.values) {
-                <div class="form-group">
+                <div class="my-3">
+                    <h4>@evaledAspect.question</h4>
 
-                    <div class="row">
-                        <label class="col-md-4">@evaledAspect.question</label>
-
-                        <div class="col-md-8">
-                            <div class="row">
-
-                            @for(mark <- model.Mark.values) {
-                                <div class="col-md-2">
-                                    <label for="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase">
-                                        <input type="radio" name="@evaledAspect.toString.toLowerCase" id="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase"
-                                        value="@mark.entryName" @{
-                                            if(mark == toEvaluate.getMarkForAspect(evaledAspect)) "checked" else ""
-                                        }> @mark.display(evaledAspect)
-                                    </label>
-                                </div>
-                            }
-
-                            </div>
+                    <div class="row mt-3">
+                    @for(mark <- model.Mark.values) {
+                        <div class="col-md-2">
+                            <label for="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase">
+                                <input type="radio" name="@evaledAspect.toString.toLowerCase" id="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase"
+                                value="@mark.entryName" @{
+                                    if(mark == toEvaluate.getMarkForAspect(evaledAspect)) "checked" else ""
+                                }> @mark.display(evaledAspect)
+                            </label>
                         </div>
-
+                    }
                     </div>
-
                 </div>
             }
 
             <div class="form-group">
-                <label for="comment">Verbesserungsvorschläge:</label>
+                <h4><label for="comment">Verbesserungsvorschläge:</label></h4>
                 <textarea class="form-control" rows="5" name="comment" id="comment" placeholder="Verbesserungsvorschläge">@toEvaluate.comment</textarea>
                 <p class="text-info">Bitte beschränken Sie Sich auf 250 Zeichen.</p>
             </div>
@@ -52,6 +41,6 @@
                 <button type="submit" class="btn btn-primary btn-block">Evaluation absenden</button>
             </div>
 
-        </form>
+        }
     </div>
 }
