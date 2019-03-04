@@ -118,7 +118,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
       .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
       .map(sample => part match {
         case WebExParts.HtmlPart => sample.htmlSample
-        case WebExParts.JsPart   => sample.jsSample
+        case WebExParts.JsPart   => sample.jsSample.getOrElse("")
       })
       .result
   )
@@ -269,7 +269,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
     def htmlSample: Rep[String] = column[String]("html_sample")
 
-    def jsSample: Rep[String] = column[String]("js_sample")
+    def jsSample: Rep[Option[String]] = column[Option[String]]("js_sample")
 
 
     def * : ProvenShape[DbWebSampleSolution] = (id, exerciseId, exSemVer, collectionId, htmlSample, jsSample) <> (DbWebSampleSolution.tupled, DbWebSampleSolution.unapply)
@@ -280,7 +280,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
     def htmlSolution: Rep[String] = column[String]("html_solution")
 
-    def jsSolution: Rep[String] = column[String]("js_solution")
+    def jsSolution: Rep[Option[String]] = column[Option[String]]("js_solution")
 
     override def * : ProvenShape[DbWebUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part,
       htmlSolution, jsSolution, points, maxPoints) <> (DbWebUserSolution.tupled, DbWebUserSolution.unapply)

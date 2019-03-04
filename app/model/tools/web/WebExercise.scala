@@ -113,7 +113,7 @@ final case class JsCondition(id: Int, xpathQuery: String, isPrecondition: Boolea
 
 }
 
-final case class WebSolution(htmlSolution: String, jsSolution: String)
+final case class WebSolution(htmlSolution: String, jsSolution: Option[String])
 
 final case class WebSampleSolution(id: Int, sample: WebSolution)
   extends SampleSolution[WebSolution]

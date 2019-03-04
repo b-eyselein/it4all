@@ -9,8 +9,17 @@
     s"Eingelesene Aufgaben für Sammlung '${collection.title}' im Tool '${toolMain.toolname}'"
 }
 
+@scripts = {
+    <style>
+            pre {
+                background: lightgrey;
+                border-radius: 5px;
+                padding: 5px;
+            }
+    </style>
+}
 
-@admin.adminMain(title, user, toolList, Some(toolMain)) {
+@admin.adminMain(title, user, toolList, Some(toolMain), scripts) {
 
     <div class="mb-3">
         <a href="@coll.routes.CollectionAdminController.adminCollection(toolMain.urlPart, collection.id)"
@@ -20,7 +29,7 @@
     <hr>
 
     @for(readExerciseSuccess <- readAndSaveResults.successes; readExercise = readExerciseSuccess.read; saved = readExerciseSuccess.saved) {
-        <div class="card">
+        <div class="card my-3">
             <div class="card-header @if(saved) {text-success} else {text-danger}">@{
                 s"${readExercise.id}. ${readExercise.title}"
             }</div>

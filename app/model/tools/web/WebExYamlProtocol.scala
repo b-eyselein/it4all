@@ -55,11 +55,12 @@ object WebExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         logger.error("Could not read js task", jsTaskFailure.exception)
 
+      for (sampleSolFailure <- sampleSolutionTries._2)
+        logger.error("Could not read web sample solution", sampleSolFailure.exception)
+
       WebExercise(
-        baseValues.id, baseValues.semanticVersion, /* collectionId = 1, collSemVer = SemanticVersionHelper.DEFAULT,*/
-        baseValues.title, baseValues.author, baseValues.text, baseValues.state, htmlText, jsText,
-        htmlTaskTries._1, jsTaskTries._1,
-        sampleSolutionTries._1
+        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        htmlText, jsText, htmlTaskTries._1, jsTaskTries._1, sampleSolutionTries._1
       )
     }
 
@@ -194,7 +195,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override protected def readObject(yamlObject: YamlObject): Try[WebSampleSolution] = for {
       id <- yamlObject.intField(idName)
       htmlSample <- yamlObject.stringField(htmlSampleName)
-      jsSample <- yamlObject.stringField(jsSampleName)
+      jsSample <- yamlObject.optStringField(jsSampleName)
     } yield WebSampleSolution(id, WebSolution(htmlSample, jsSample))
 
     override def write(obj: WebSampleSolution): YamlValue = ???

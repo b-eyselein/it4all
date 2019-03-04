@@ -1,0 +1,19 @@
+@(ex: model.tools.sql.SqlExercise)
+
+@samplesPerRow = @{
+    2
+}
+
+<div class="row my-3">
+    <div class="col-md-3">Hinweis:</div>
+    <div class="col-md-9">@ex.hint.getOrElse("--")</div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Musterlösungen:</div>
+    <div class="col-md-9">
+    @for(sample <- ex.samples) {
+        <pre>@sample.sample</pre>
+    }
+    </div>
+</div>

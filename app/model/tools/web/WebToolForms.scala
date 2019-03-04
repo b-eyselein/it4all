@@ -46,7 +46,7 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
   private val webSampleSolutionMapping: Mapping[WebSampleSolution] = mapping(
     idName -> number,
     htmlSampleName -> nonEmptyText,
-    jsSampleName -> nonEmptyText
+    jsSampleName -> optional(nonEmptyText)
   )((id, hs, js) => WebSampleSolution(id, WebSolution(hs, js)))(wss => Some((wss.id, wss.sample.htmlSolution, wss.sample.jsSolution)))
 
   // Complete exercise

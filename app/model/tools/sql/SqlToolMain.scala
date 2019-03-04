@@ -12,6 +12,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
 import model.points.Points
+import play.api.Logger
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,6 +36,8 @@ object SqlToolMain {
 @Singleton
 class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: ExecutionContext)
   extends CollectionToolMain("Sql", "sql") {
+
+  private val logger = Logger(classOf[SqlToolMain])
 
   // Abstract types
 
@@ -73,6 +76,13 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlCorrResultJsonProtocol
 
   // Views
+
+  override def previewExerciseRest(ex: Exercise): Html = ex match {
+    case se: SqlExercise => views.html.toolViews.sql.previewSqlExerciseRest(se)
+    case _               =>
+      logger.error(s"ERROR: Tries to preview a ${ex.getClass} with SqlToolMain")
+      Html("")
+  }
 
   override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart, maybeOldSolution: Option[UserSolType])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {

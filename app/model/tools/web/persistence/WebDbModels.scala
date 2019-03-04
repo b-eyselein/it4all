@@ -89,7 +89,7 @@ object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebE
 final case class DbWebExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
                                htmlText: Option[String], jsText: Option[String]) extends ADbExercise
 
-final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, htmlSample: String, jsSample: String)
+final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, htmlSample: String, jsSample: Option[String])
   extends ADbSampleSol[WebSolution] {
 
   override val sample: WebSolution = WebSolution(htmlSample, jsSample)
@@ -97,7 +97,7 @@ final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersi
 }
 
 final case class DbWebUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: WebExPart,
-                                   htmlSolution: String, jsSolution: String, points: Points, maxPoints: Points)
+                                   htmlSolution: String, jsSolution: Option[String], points: Points, maxPoints: Points)
   extends ADbUserSol[WebExPart, WebSolution] {
 
   override val solution: WebSolution = WebSolution(htmlSolution, jsSolution)

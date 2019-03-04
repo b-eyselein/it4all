@@ -107,7 +107,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       JsTask(1, "", "", JsActionType.FILLOUT, None, conditions = Seq[JsCondition]())
     ),
     sampleSolutions = Seq(
-      WebSampleSolution(1, WebSolution(htmlSolution = "", jsSolution = "")),
+      WebSampleSolution(1, WebSolution(htmlSolution = "", jsSolution = Some(""))),
     )
   )
 
@@ -137,8 +137,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     val oldOrDefaultSolutionString: String = maybeOldSolution.map(oldSol =>
       part match {
         case WebExParts.HtmlPart => oldSol.solution.htmlSolution
-        case WebExParts.JsPart   =>
-          if (oldSol.solution.jsSolution.nonEmpty) oldSol.solution.jsSolution else oldSol.solution.htmlSolution
+        case WebExParts.JsPart   => oldSol.solution.jsSolution.getOrElse(oldSol.solution.htmlSolution)
       }).getOrElse(WebConsts.STANDARD_HTML)
 
     views.html.toolViews.web.webExercise(user, collection, exercise, part, oldOrDefaultSolutionString, this)
@@ -156,8 +155,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
                                      (implicit request: Request[AnyContent]): Option[WebSolution] = request.body.asJson flatMap {
     case JsString(solution) =>
       part match {
-        case WebExParts.HtmlPart => Some(WebSolution(htmlSolution = solution, jsSolution = ""))
-        case WebExParts.JsPart   => Some(WebSolution(htmlSolution = "", jsSolution = solution))
+        case WebExParts.HtmlPart => Some(WebSolution(htmlSolution = solution, jsSolution = None))
+        case WebExParts.JsPart   => Some(WebSolution(htmlSolution = "", jsSolution = Some(solution)))
       }
     case other              =>
       logger.error("Wrong json content: " + other.toString)
@@ -189,7 +188,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override def correctEx(user: User, learnerSolution: WebSolution, collection: WebCollection, exercise: WebExercise, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
     val toWrite = part match {
       case WebExParts.HtmlPart => learnerSolution.htmlSolution
-      case WebExParts.JsPart   => learnerSolution.jsSolution
+      case WebExParts.JsPart   => learnerSolution.jsSolution.getOrElse("")
     }
 
     writeWebSolutionFile(user.username, exercise.id, part, toWrite) flatMap { _ =>
