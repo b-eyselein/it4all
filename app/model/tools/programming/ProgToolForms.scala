@@ -1,14 +1,14 @@
 package model.tools.programming
 
-import model.core.ExerciseForm
+import model.core.ToolForms
 import model.tools.programming.ProgConsts._
 import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
-import model.tools.uml.UmlExerciseForm.classDiagramMapping
+import model.tools.uml.UmlToolForms.classDiagramMapping
 import play.api.data.{Form, Mapping}
 import play.api.libs.json.{JsValue, Json}
 
-object ProgExerciseForm extends ExerciseForm[ProgExercise, ProgCollection, ProgExerciseReview] {
+object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExerciseReview] {
 
   private val jsValueFormMapping: Mapping[JsValue] = nonEmptyText.transform(Json.parse, Json.prettyPrint)
 

@@ -1,12 +1,12 @@
 package model.tools.regex
 
-import model.core.ExerciseForm
+import model.core.ToolForms
 import model.tools.regex.RegexConsts._
 import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object RegexExForm extends ExerciseForm[RegexExercise, RegexCollection, RegexExerciseReview] {
+object RegexToolForm extends ToolForms[RegexExercise, RegexCollection, RegexExerciseReview] {
 
   // Sample solutions
 
@@ -45,6 +45,7 @@ object RegexExForm extends ExerciseForm[RegexExercise, RegexCollection, RegexExe
       authorName -> nonEmptyText,
       textName -> nonEmptyText,
       statusName -> ExerciseState.formField,
+      maxPointsName -> number,
       samplesName -> seq(sampleMapping),
       testDataName -> seq(testDataMapping)
     )(RegexExercise.apply)(RegexExercise.unapply)

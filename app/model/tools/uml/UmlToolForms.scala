@@ -1,6 +1,6 @@
 package model.tools.uml
 
-import model.core.ExerciseForm
+import model.core.ToolForms
 import model.tools.uml.UmlConsts._
 import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
@@ -8,7 +8,7 @@ import play.api.data.{Form, Mapping}
 
 import scala.language.postfixOps
 
-object UmlExerciseForm extends ExerciseForm[UmlExercise, UmlCollection, UmlExerciseReview] {
+object UmlToolForms extends ToolForms[UmlExercise, UmlCollection, UmlExerciseReview] {
 
   // UmlClassDiagram
 

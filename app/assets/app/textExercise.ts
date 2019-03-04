@@ -20,10 +20,6 @@ function escapeHtml(unescapedHtml: string): string {
 function testTextExerciseSolution(testBtn: JQuery, solution: any, success, error): void {
     testBtn.prop('disabled', true);
 
-    const isDocumentPart: boolean = $('#exercisePart').val() === 'document';
-
-    // const solution: string = editor.getValue();
-
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
@@ -35,8 +31,8 @@ function testTextExerciseSolution(testBtn: JQuery, solution: any, success, error
             const token = $('input[name="csrfToken"]').val() as string;
             xhr.setRequestHeader("Csrf-Token", token)
         },
-        success, //: isDocumentPart ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
-        error, //: onXmlCorrectionError
+        success,
+        error,
     });
 }
 
@@ -53,7 +49,7 @@ function onShowSampleSolutionSuccess(solutions: string[]): void {
     <div class="card-body bg-light">
         ${solutionRenders.join("\n")}
     </div>
-</div>`);
+</div>`.trim());
 }
 
 function onShowSampleSolutionError(jqXHR): void {

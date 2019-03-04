@@ -3,7 +3,7 @@ package model.core
 import model.{Exercise, ExerciseCollection, ExerciseReview}
 import play.api.data.Form
 
-trait ExerciseForm[ExType <: Exercise, CollType <: ExerciseCollection, ReviewType <: ExerciseReview] {
+trait ToolForms[ExType <: Exercise, CollType <: ExerciseCollection, ReviewType <: ExerciseReview] {
 
   val collectionFormat: Form[CollType]
 

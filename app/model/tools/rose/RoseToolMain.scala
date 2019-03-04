@@ -54,9 +54,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override val collectionYamlFormat: MyYamlFormat[RoseCollection] = RoseExYamlProtocol.RoseCollectionYamlFormat
   override val exerciseYamlFormat  : MyYamlFormat[RoseExercise]   = RoseExYamlProtocol.RoseExYamlFormat
 
-  override val collectionForm    : Form[RoseCollection]     = RoseExerciseForm.collectionFormat
-  override val exerciseForm      : Form[RoseExercise]       = RoseExerciseForm.exerciseFormat
-  override val exerciseReviewForm: Form[RoseExerciseReview] = RoseExerciseForm.exerciseReviewForm
+  override val collectionForm    : Form[RoseCollection]     = RoseToolForms.collectionFormat
+  override val exerciseForm      : Form[RoseExercise]       = RoseToolForms.exerciseFormat
+  override val exerciseReviewForm: Form[RoseExerciseReview] = RoseToolForms.exerciseReviewForm
 
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[RoseEvalResult, RoseCompleteResult] = RoseCompleteResultJsonProtocol
 
@@ -92,18 +92,12 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   // Correction
 
   override protected def readSolution(user: User, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart)
-                                     (implicit request: Request[AnyContent]): Option[String] =
-    request.body.asJson match {
-      case None       =>
-        logger.error("Request body does not contain json!")
-        None
-      case Some(json) => json match {
-        case JsString(solution) => Some(solution)
-        case _                  =>
-          logger.error("Request body is no string!")
-          None
-      }
-    }
+                                     (implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap {
+    case JsString(solution) => Some(solution)
+    case _                  =>
+      logger.error("Request body is no string!")
+      None
+  }
 
   override protected def correctEx(user: User, sol: String, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart): Future[Try[RoseCompleteResult]] = {
     val solDir = solutionDirForExercise(user.username, exercise.id)

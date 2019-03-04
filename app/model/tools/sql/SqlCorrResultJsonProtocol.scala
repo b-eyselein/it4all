@@ -45,7 +45,7 @@ object SqlCorrResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationRe
   )
 
   private implicit val sqlCorrResultRestWrites: Writes[SqlCorrResult] = {
-    case SqlParseFailed(_, error) => Json.obj(messageName -> error.getMessage)
+    case SqlParseFailed(_, error, _) => Json.obj(messageName -> error.getMessage)
     case sr: SqlResult            => sqlResultRestWrites.writes(sr)
   }
 

@@ -53,9 +53,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override val collectionYamlFormat: MyYamlFormat[UmlCollection] = UmlExYamlProtocol.UmlCollectionYamlFormat
   override val exerciseYamlFormat  : MyYamlFormat[UmlExercise]   = UmlExYamlProtocol.UmlExYamlFormat
 
-  override val collectionForm    : Form[UmlCollection]     = UmlExerciseForm.collectionFormat
-  override val exerciseForm      : Form[UmlExercise]       = UmlExerciseForm.exerciseFormat
-  override val exerciseReviewForm: Form[UmlExerciseReview] = UmlExerciseForm.exerciseReviewForm
+  override val collectionForm    : Form[UmlCollection]     = UmlToolForms.collectionFormat
+  override val exerciseForm      : Form[UmlExercise]       = UmlToolForms.exerciseFormat
+  override val exerciseReviewForm: Form[UmlExerciseReview] = UmlToolForms.exerciseReviewForm
 
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, UmlCompleteResult] = UmlCompleteResultJsonProtocol
 
@@ -100,19 +100,15 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   // Correction
 
   override def readSolution(user: User, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart)
-                           (implicit request: Request[AnyContent]): Option[UmlClassDiagram] =
-    request.body.asJson match {
-      case None          =>
-        logger.error("Request body does not contain json!")
-        None
-      case Some(jsValue) =>
-        UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
-          case JsSuccess(ucd, _) => Some(ucd)
-          case JsError(errors)   =>
-            errors.foreach(error => logger.error(s"Json Error: $error"))
-            None
-        }
-    }
+                           (implicit request: Request[AnyContent]): Option[UmlClassDiagram] = request.body.asJson flatMap {
+    case jsValue =>
+      UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
+        case JsSuccess(ucd, _) => Some(ucd)
+        case JsError(errors)   =>
+          errors.foreach(error => logger.error(s"Json Error: $error"))
+          None
+      }
+  }
 
   override def correctEx(user: User, classDiagram: UmlClassDiagram, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart): Future[Try[UmlCompleteResult]] =
     Future.successful {

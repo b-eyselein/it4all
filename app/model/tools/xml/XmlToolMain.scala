@@ -59,9 +59,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override protected val collectionYamlFormat: MyYamlFormat[XmlCollection] = XmlExYamlProtocol.XmlCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[XmlExercise]   = XmlExYamlProtocol.XmlExYamlFormat
 
-  override val collectionForm    : Form[XmlCollection]     = XmlExerciseForm.collectionFormat
-  override val exerciseForm      : Form[XmlExercise]       = XmlExerciseForm.exerciseFormat
-  override val exerciseReviewForm: Form[XmlExerciseReview] = XmlExerciseForm.exerciseReviewForm
+  override val collectionForm    : Form[XmlCollection]     = XmlToolForms.collectionFormat
+  override val exerciseForm      : Form[XmlExercise]       = XmlToolForms.exerciseFormat
+  override val exerciseReviewForm: Form[XmlExerciseReview] = XmlToolForms.exerciseReviewForm
 
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] = XmlCompleteResultJsonProtocol
 
@@ -85,17 +85,15 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Correction
 
   override protected def readSolution(user: User, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart)
-                                     (implicit request: Request[AnyContent]): Option[XmlSolution] = request.body.asJson flatMap { jsValue =>
-    jsValue match {
-      case JsString(solution) =>
-        part match {
-          case XmlExParts.GrammarCreationXmlPart  => Some(XmlSolution(document = "", grammar = solution))
-          case XmlExParts.DocumentCreationXmlPart => Some(XmlSolution(document = solution, grammar = ""))
-        }
-      case other              =>
-        logger.error("Wrong json content: " + other.toString)
-        None
-    }
+                                     (implicit request: Request[AnyContent]): Option[XmlSolution] = request.body.asJson flatMap {
+    case JsString(solution) =>
+      part match {
+        case XmlExParts.GrammarCreationXmlPart  => Some(XmlSolution(document = "", grammar = solution))
+        case XmlExParts.DocumentCreationXmlPart => Some(XmlSolution(document = solution, grammar = ""))
+      }
+    case other              =>
+      logger.error("Wrong json content: " + other.toString)
+      None
   }
 
   override protected def correctEx(user: User, solution: XmlSolution, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =

@@ -28,8 +28,10 @@ object RegexCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RegexE
   override def completeResultWrites(solutionSaved: Boolean): Writes[RegexCompleteResult] = (
     (__ \ solutionSavedName).write[Boolean] and
       (__ \ solutionName).write[String] and
+      (__ \ pointsName).write[Double] and
+      (__ \ maxPointsName).write[Double] and
       (__ \ resultsName).write[Seq[RegexEvaluationResult]]
-    ) (rcr => (solutionSaved, rcr.learnerSolution, rcr.results))
+    ) (rcr => (solutionSaved, rcr.learnerSolution, rcr.points.asDouble, rcr.maxPoints.asDouble, rcr.results))
 
   private implicit val regexEvaluationResultWrites: Writes[RegexEvaluationResult] = (
     (__ \ testDataName).write[String] and

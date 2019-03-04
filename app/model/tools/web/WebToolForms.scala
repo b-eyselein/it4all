@@ -1,12 +1,12 @@
 package model.tools.web
 
-import model.core.ExerciseForm
+import model.core.ToolForms
 import model.tools.web.WebConsts._
 import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object WebExerciseForm extends ExerciseForm[WebExercise, WebCollection, WebExerciseReview] {
+object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseReview] {
 
   // HtmlTask
 

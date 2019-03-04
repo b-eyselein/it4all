@@ -1,18 +1,32 @@
 package model.tools.xml
 
+import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.points.Points
 import play.twirl.api.Html
+
+import scala.collection.immutable.IndexedSeq
+
+
+sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
+
+
+object XmlExParts extends PlayEnum[XmlExPart] {
+
+  val values: IndexedSeq[XmlExPart] = findValues
+
+  case object GrammarCreationXmlPart extends XmlExPart("Grammatik", "grammar")
+
+  case object DocumentCreationXmlPart extends XmlExPart("Dokument", "document")
+
+}
+
 
 final case class XmlCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
   extends ExerciseCollection
 
 final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                              grammarDescription: String, rootNode: String, samples: Seq[XmlSampleSolution]) extends Exercise {
-
-  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
-
-  // other methods
 
   override def preview: Html = //FIXME: move to toolMain!
     views.html.toolViews.xml.xmlPreview(this)

@@ -22,7 +22,6 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override type ExType = RegexExercise
   override type CollType = RegexCollection
 
-
   override type SolType = String
   override type SampleSolType = RegexSampleSolution
   override type UserSolType = RegexUserSolution
@@ -45,9 +44,9 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override protected val collectionYamlFormat: MyYamlFormat[RegexCollection] = RegexToolYamlProtocol.RegexCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[RegexExercise]   = RegexToolYamlProtocol.RegexExYamlFormat
 
-  override val collectionForm    : Form[RegexCollection]     = RegexExForm.collectionFormat
-  override val exerciseForm      : Form[RegexExercise]       = RegexExForm.exerciseFormat
-  override val exerciseReviewForm: Form[RegexExerciseReview] = RegexExForm.exerciseReviewForm
+  override val collectionForm    : Form[RegexCollection]     = RegexToolForm.collectionFormat
+  override val exerciseForm      : Form[RegexExercise]       = RegexToolForm.exerciseFormat
+  override val exerciseReviewForm: Form[RegexExerciseReview] = RegexToolForm.exerciseReviewForm
 
   override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
 
@@ -72,9 +71,9 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   // Correction
 
   override protected def readSolution(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart)
-                                     (implicit request: Request[AnyContent]): Option[String] = request.body.asJson match {
-    case Some(JsString(regex)) => Some(regex)
-    case _                     => None
+                                     (implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap {
+    case JsString(regex) => Some(regex)
+    case _               => None
   }
 
   override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] = Future.successful(Try {
@@ -99,9 +98,9 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
       s => s.resultType == TruePositive || s.resultType == TrueNegative
     }.size
 
-    val points: Points = (correctResultsCount.toDouble / exercise.testData.size.toDouble * exercise.maxPoints * 4).toInt quarterPoints
+    val points: Points = (correctResultsCount.toDouble / exercise.testData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
 
-    RegexCompleteResult(sol, exercise, part, results, points, exercise.maxPoints points)
+    RegexCompleteResult(sol, exercise, part, results, points, exercise.maxPoints.points)
   })
 
   // Other helper methods

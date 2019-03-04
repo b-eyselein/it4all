@@ -1,6 +1,6 @@
 package model.tools.xml
 
-import model.core.ExerciseForm
+import model.core.ToolForms
 import model.tools.xml.XmlConsts._
 import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
@@ -8,7 +8,7 @@ import play.api.data.{Form, Mapping}
 
 import scala.language.postfixOps
 
-object XmlExerciseForm extends ExerciseForm[XmlExercise, XmlCollection, XmlExerciseReview] {
+object XmlToolForms extends ToolForms[XmlExercise, XmlCollection, XmlExerciseReview] {
 
   // Xml samples
 

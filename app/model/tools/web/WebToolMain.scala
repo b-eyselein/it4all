@@ -58,9 +58,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override protected val collectionYamlFormat: MyYamlFormat[WebCollection] = WebExYamlProtocol.WebCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[WebExercise]   = WebExYamlProtocol.WebExYamlFormat
 
-  override val collectionForm    : Form[WebCollection]     = WebExerciseForm.collectionFormat
-  override val exerciseForm      : Form[WebExercise]       = WebExerciseForm.exerciseFormat
-  override val exerciseReviewForm: Form[WebExerciseReview] = WebExerciseForm.exerciseReviewForm
+  override val collectionForm    : Form[WebCollection]     = WebToolForms.collectionFormat
+  override val exerciseForm      : Form[WebExercise]       = WebToolForms.exerciseFormat
+  override val exerciseReviewForm: Form[WebExerciseReview] = WebToolForms.exerciseReviewForm
 
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[WebResult, WebCompleteResult] = WebCompleteResultJsonProtocol
 
@@ -147,22 +147,16 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Correction
 
   override protected def readSolution(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart)
-                                     (implicit request: Request[AnyContent]): Option[WebSolution] =
-    request.body.asJson match {
-      case None          =>
-        logger.error("Request body does not contain json!")
-        None
-      case Some(jsValue) => jsValue match {
-        case JsString(solution) =>
-          part match {
-            case WebExParts.HtmlPart => Some(WebSolution(htmlSolution = solution, jsSolution = ""))
-            case WebExParts.JsPart   => Some(WebSolution(htmlSolution = "", jsSolution = solution))
-          }
-        case other              =>
-          logger.error("Wrong json content: " + other.toString)
-          None
+                                     (implicit request: Request[AnyContent]): Option[WebSolution] = request.body.asJson flatMap {
+    case JsString(solution) =>
+      part match {
+        case WebExParts.HtmlPart => Some(WebSolution(htmlSolution = solution, jsSolution = ""))
+        case WebExParts.JsPart   => Some(WebSolution(htmlSolution = "", jsSolution = solution))
       }
-    }
+    case other              =>
+      logger.error("Wrong json content: " + other.toString)
+      None
+  }
 
   private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
     case syntaxError: WebDriverException =>

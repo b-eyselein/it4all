@@ -66,9 +66,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override protected val collectionYamlFormat: MyYamlFormat[SqlScenario] = NewSqlYamlProtocol.SqlCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[SqlExercise] = NewSqlYamlProtocol.SqlExerciseYamlFormat
 
-  override val collectionForm    : Form[SqlScenario]       = SqlFormMappings.collectionFormat
-  override val exerciseForm      : Form[SqlExercise]       = SqlFormMappings.exerciseFormat
-  override val exerciseReviewForm: Form[SqlExerciseReview] = SqlFormMappings.exerciseReviewForm
+  override val collectionForm    : Form[SqlScenario]       = SqlToolForms.collectionFormat
+  override val exerciseForm      : Form[SqlExercise]       = SqlToolForms.exerciseFormat
+  override val exerciseReviewForm: Form[SqlExerciseReview] = SqlToolForms.exerciseReviewForm
 
   override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlCorrResultJsonProtocol
 
@@ -93,11 +93,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   // Correction
 
   override protected def readSolution(user: User, collection: SqlScenario, exercise: SqlExercise, part: SqlExPart)
-                                     (implicit request: Request[AnyContent]): Option[SolType] =
-    request.body.asJson flatMap {
-      case JsString(value) => Some(value)
-      case _               => None
-    }
+                                     (implicit request: Request[AnyContent]): Option[SolType] = request.body.asJson flatMap {
+    case JsString(value) => Some(value)
+    case _               => None
+  }
 
   override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart): Future[Try[SqlCorrResult]] =
     correctorsAndDaos.get(exercise.exerciseType) match {

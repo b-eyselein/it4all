@@ -1,12 +1,12 @@
 package model.tools.sql
 
-import model.core.ExerciseForm
+import model.core.ToolForms
 import model.tools.sql.SqlConsts._
 import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object SqlFormMappings extends ExerciseForm[SqlExercise, SqlScenario, SqlExerciseReview] {
+object SqlToolForms extends ToolForms[SqlExercise, SqlScenario, SqlExerciseReview] {
 
   private val sqlSampleMapping: Mapping[SqlSampleSolution] = mapping(
     idName -> number,

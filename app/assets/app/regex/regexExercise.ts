@@ -22,7 +22,10 @@ interface RegexSingleCorrectionResult {
 }
 
 interface RegexCorrectionResult {
-    solution: string,
+    solutionSaved: boolean
+    solution: string
+    points: number
+    maxPoints: number
     results: RegexSingleCorrectionResult[]
 }
 
@@ -45,7 +48,6 @@ $(() => {
         return !solutionChanged || confirm('Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?');
     });
 
-
     testBtn.on('click', testSol);
 });
 
@@ -66,8 +68,18 @@ function testSol(): void {
 function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void {
     testBtn.prop('disabled', false);
 
+    solutionChanged = false;
+
     let html: string = '';
 
+    // Was solution saved?
+    const solSaved = correctionResult.solutionSaved;
+    html += `<p class="${solSaved ? 'text-success' : 'text-danger'}">Ihre Lösung wurde ${solSaved ? '' : 'nicht'}gespeichert.</p>`;
+
+    // How many (max) points?
+    html += `<p>Sie haben ${correctionResult.points} von ${correctionResult.maxPoints} Punkten erreicht.</p>`;
+
+    // Single results
     for (const result of correctionResult.results) {
 
         let toAdd: string;
