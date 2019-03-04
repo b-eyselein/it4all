@@ -13,7 +13,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
     DbWebExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText)
 
   def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], sampleSolutions: Seq[WebSampleSolution]) =
-    WebExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.title, ex.state, ex.htmlText, ex.jsText,
+    WebExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText,
       htmlTasks, jsTasks, sampleSolutions)
 
   // HtmlTask
