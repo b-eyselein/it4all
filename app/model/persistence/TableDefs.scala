@@ -16,6 +16,8 @@ import scala.util.{Failure, Success}
 trait TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
+  private val logger = Logger(classOf[TableDefs])
+
   import profile.api._
 
   implicit val executionContext: ExecutionContext
@@ -72,7 +74,7 @@ trait TableDefs {
 
   def updateUserRole(userToChangeName: String, newRole: Role): Future[Boolean] =
     db.run(users.filter(_.username === userToChangeName).map(_.role).update(newRole)) map (_ => true) recover { case e: Throwable =>
-      Logger.error(s"Could not update std role of user $userToChangeName to ${newRole.entryName}", e)
+      logger.error(s"Could not update std role of user $userToChangeName to ${newRole.entryName}", e)
       false
     }
 
@@ -86,26 +88,26 @@ trait TableDefs {
 
   def saveUser(user: User): Future[Boolean] = db.run(users += user) map (_ => true) recover {
     case e: Throwable =>
-      Logger.error(s"Could not save user $user", e)
+      logger.error(s"Could not save user $user", e)
       false
   }
 
   def savePwHash(pwHash: PwHash): Future[Boolean] = db.run(pwHashes += pwHash) map (_ => true) recover {
     case e: Throwable =>
-      Logger.error(s"Could not save pwHash $pwHash", e)
+      logger.error(s"Could not save pwHash $pwHash", e)
       false
   }
 
   def saveCourse(course: Course): Future[Boolean] = db.run(courses += course) map (_ => true) recover {
     case e: Throwable =>
-      Logger.error("Could not save course", e)
+      logger.error("Could not save course", e)
       false
   }
 
   def addUserToCourse(userInCourse: UserInCourse): Future[Boolean] =
     db.run(usersInCourses += userInCourse) map (_ => true) recover {
       case e: Throwable =>
-        Logger.error("Could not add user to course", e)
+        logger.error("Could not add user to course", e)
         false
     }
 
@@ -117,7 +119,7 @@ trait TableDefs {
     save(_) transform {
       case Success(_) => Success(true)
       case Failure(e) =>
-        Logger.error("Could not perform save option" + saveType.map(st => s" on $st").getOrElse(""), e)
+        logger.error("Could not perform save option" + saveType.map(st => s" on $st").getOrElse(""), e)
         Success(false)
     }
   }) map (_ forall identity)
@@ -125,7 +127,7 @@ trait TableDefs {
   protected def saveSingle(performSave: => Future[Any]): Future[Boolean] = performSave transform {
     case Success(_) => Success(true)
     case Failure(e) =>
-      Logger.error("Could not perform save option", e)
+      logger.error("Could not perform save option", e)
       Success(false)
   }
 
