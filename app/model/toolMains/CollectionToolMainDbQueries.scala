@@ -26,8 +26,8 @@ trait CollectionToolMainDbQueries {
 
   def futureExercisesInColl(collId: Int): Future[Seq[ExType]] = tables.futureExercisesInColl(collId)
 
-  def futureMaybeOldSolution(user: User, collId: Int, exId: Int, part: PartType): Future[Option[UserSolType]] =
-    tables.futureMaybeOldSolution(user.username, collId, exId, part)
+  def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: PartType): Future[Option[UserSolType]] =
+    tables.futureMaybeOldSolution(username, collId, exId, part)
 
   def futureSampleSolutions(collId: Int, exId: Int, part: PartType): Future[Seq[String]] = tables.futureSampleSolutionsForExPart(collId, exId, part)
 

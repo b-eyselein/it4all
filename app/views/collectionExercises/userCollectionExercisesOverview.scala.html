@@ -1,5 +1,5 @@
 @import model.{Exercise, ExerciseCollection, User, ExPart}
-@import model.core.overviewHelpers.SolvedStatesForExerciseParts
+@import model.core.overviewHelpers.{SolvedStatesForExerciseParts, SolvedStates}
 @import model.toolMains.CollectionToolMain
 
 @(user: User, collection: ExerciseCollection, exes: Seq[SolvedStatesForExerciseParts[_ <: ExPart]],
@@ -19,6 +19,10 @@
 
 @partCount = @{
     toolMainObject.exParts.size
+}
+
+@exerciseUrl(exId: Int, partUrlPart: String) = @{
+    coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, exId, partUrlPart)
 }
 
 @main(title, Some(user)) {
@@ -49,8 +53,11 @@
                                 <div class="btn-group d-flex">
 
                                 @for((exPart, solvedState) <- solvedStatesForParts) {
-                                    <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, compEx.id, exPart.urlName)"
-                                    class="btn @solvedState.btnOutline w-100">
+                                    <a @if(solvedState != SolvedStates.Locked) {
+                                        href="@exerciseUrl(compEx.id, exPart.urlName)"
+                                    } else {
+                                        title="Dieser Teil ist noch gesperrt."
+                                    } class="btn @solvedState.btnOutline w-100">
                                         @exPart.partName <span>@Html(
                                         Option(compEx.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
                                     )</span>

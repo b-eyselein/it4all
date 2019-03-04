@@ -71,13 +71,18 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     target.createFileIfNotExists(createParents = true).write(content)
   }
 
-  override def futureMaybeOldSolution(user: User, collId: Int, exId: Int, part: WebExPart): Future[Option[UserSolType]] = part match {
-    case WebExParts.HtmlPart => super.futureMaybeOldSolution(user, collId, exId, part)
+  override def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: WebExPart): Future[Option[UserSolType]] = part match {
+    case WebExParts.HtmlPart => super.futureMaybeOldSolution(username, collId, exId, part)
     case WebExParts.JsPart   =>
-      super.futureMaybeOldSolution(user, collId, exId, WebExParts.JsPart) flatMap {
+      super.futureMaybeOldSolution(username, collId, exId, WebExParts.JsPart) flatMap {
         case Some(solution) => Future.successful(Some(solution))
-        case None           => super.futureMaybeOldSolution(user, collId, exId, WebExParts.HtmlPart)
+        case None           => super.futureMaybeOldSolution(username, collId, exId, WebExParts.HtmlPart)
       }
+  }
+
+  override def futureUserCanSolveExPart(username: String, collId: Int, exId: Int, part: WebExPart): Future[Boolean] = part match {
+    case WebExParts.HtmlPart => Future.successful(true)
+    case WebExParts.JsPart   => futureMaybeOldSolution(username, collId, exId, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
 
   // Other helper methods

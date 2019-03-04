@@ -77,7 +77,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     collection slice(start, end)
   }
 
-  def futureExesAndSolvedStatesForParts(user: User, collection: CollType, page:Int, step: Int): Future[Seq[SolvedStatesForExerciseParts[PartType]]] =
+  def futureUserCanSolveExPart(username: String, collId: Int, exId: Int, part: PartType): Future[Boolean] = Future.successful(true)
+
+  def futureExesAndSolvedStatesForParts(user: User, collection: CollType, page: Int, step: Int): Future[Seq[SolvedStatesForExerciseParts[PartType]]] =
 
     futureExercisesInColl(collection.id) flatMap { exercises =>
 
@@ -90,9 +92,13 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         val exPartsForExercise = exParts.filter(exerciseHasPart(ex, _))
 
         val futureSolvedStatesForExerciseParts = Future.sequence(exPartsForExercise.map { exPart =>
-          futureSolveStateForExercisePart(user, collection.id, ex.id, exPart) map {
-            // FIXME: query solved state!
-            maybeSolvedState => (exPart, maybeSolvedState getOrElse SolvedStates.NotStarted)
+          futureUserCanSolveExPart(user.username, collection.id, ex.id, exPart) flatMap {
+            case true  =>
+              futureSolveStateForExercisePart(user, collection.id, ex.id, exPart) map {
+                // FIXME: query solved state!
+                maybeSolvedState => (exPart, maybeSolvedState getOrElse SolvedStates.NotStarted)
+              }
+            case false => Future.successful((exPart, SolvedStates.Locked))
           }
         }).map(_.toMap)
 

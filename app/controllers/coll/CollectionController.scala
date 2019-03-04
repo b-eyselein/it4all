@@ -25,16 +25,15 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                                      progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)(implicit ec: ExecutionContext)
   extends AExerciseController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
+  private val logger = Logger(classOf[CollectionController])
+
   override protected type ToolMainType = CollectionToolMain
 
   override protected def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
 
   override protected val adminRightsRequired: Boolean = true
 
-  //  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
-
-
-  // User
+  // Routes
 
   def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
@@ -44,22 +43,14 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       } yield Ok(views.html.collectionExercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
   }
 
-  //  def collectionList(toolType: String, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-  //    implicit request =>
-  //      toolMain.futureAllCollections map { allColls =>
-  //        val filteredColls = allColls filter (_.state == ExerciseState.APPROVED)
-  //
-  //        Ok(views.html.collectionExercises.userCollectionsOverview(user, takeSlice(filteredColls, page), toolMain, page, filteredColls.size / stdStep + 1))
-  //      }
-  //  }
-
   def collection(toolType: String, collId: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       val step = 12
 
       toolMain.futureCollById(collId) flatMap {
-        case None                          => Future.successful(onNoSuchCollection(toolMain, collId))
-        case Some(coll: toolMain.CollType) =>
+        case None       => Future.successful(onNoSuchCollection(toolMain, collId))
+        case Some(coll) =>
+
           toolMain.futureExesAndSolvedStatesForParts(user, coll, page, step) map {
             exesAndSuccessTypes: Seq[SolvedStatesForExerciseParts[toolMain.PartType]] =>
               Ok(views.html.collectionExercises.userCollectionExercisesOverview(user, coll, exesAndSuccessTypes, toolMain, page, step, exesAndSuccessTypes.size))
@@ -69,7 +60,6 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def exercise(toolType: String, collId: Int, exId: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-
       toolMain.futureCollById(collId) flatMap {
         case None             => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(collection) =>
@@ -82,7 +72,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                 case None         => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
                 case Some(exPart) =>
 
-                  toolMain.futureMaybeOldSolution(user, collId, exId, exPart) map {
+                  toolMain.futureMaybeOldSolution(user.username, collId, exId, exPart) map {
                     maybeOldSolution => Ok(toolMain.renderExercise(user, collection, exercise, exPart, maybeOldSolution))
                   }
               }
@@ -107,7 +97,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                   toolMain.correctAbstract(user, collection, exercise, exPart) map {
                     case Success(result) => Ok(toolMain.onLiveCorrectionResult(result._1, result._2))
                     case Failure(error)  =>
-                      Logger.error("There has been an internal correction error:", error)
+                      logger.error("There has been an internal correction error:", error)
                       BadRequest(toolMain.onLiveCorrectionError(error))
                   }
               }
@@ -162,7 +152,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       val onFormError: Form[toolMain.ExType] => Future[Result] = { formWithErrors =>
 
         for (formError <- formWithErrors.errors)
-          Logger.error(s"The form has had an error for key '${formError.key}': " + formError.message)
+          logger.error(s"The form has had an error for key '${formError.key}': " + formError.message)
 
         // FIXME: return in form...
         Future(BadRequest("TODO!"))
@@ -239,7 +229,6 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
   }
 
-
   // Other routes
 
   def umlClassDiag(collId: Int, exId: Int, partStr: String): EssentialAction = futureWithUser { user =>
@@ -250,10 +239,10 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None       => Future(emptyClassDiagram)
         case Some(part) => umlToolMain.futureExerciseById(collId, exId) flatMap {
           case None                        =>
-            Logger.error(s"Error while loading uml class diagram for uml exercise $exId and part $part")
+            logger.error(s"Error while loading uml class diagram for uml exercise $exId and part $part")
             Future.successful(emptyClassDiagram)
           case Some(exercise: UmlExercise) =>
-            umlToolMain.futureMaybeOldSolution(user, collId, exId, part) map {
+            umlToolMain.futureMaybeOldSolution(user.username, collId, exId, part) map {
               case Some(solution) => solution.solution
               case None           => exercise.getDefaultClassDiagForPart(part)
             }
@@ -313,7 +302,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
           //            case Success(_)     =>
           Ok("Solution saved")
         //            case Failure(error) =>
-        //              Logger.error("Error while updating web solution", error)
+        //              logger.error("Error while updating web solution", error)
         //              BadRequest("Solution was not saved!")
         //          }
       }

@@ -67,6 +67,11 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Other helper methods
 
+  override def futureUserCanSolveExPart(username: String, collId: Int, exId: Int, part: XmlExPart): Future[Boolean] = part match {
+    case XmlExParts.GrammarCreationXmlPart  => Future.successful(true)
+    case XmlExParts.DocumentCreationXmlPart => futureMaybeOldSolution(username, collId, exId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
+  }
+
   override def exerciseHasPart(exercise: XmlExercise, partType: XmlExPart): Boolean = true
 
   def instantiateCollection(id: Int, author: String, state: model.ExerciseState): XmlCollection =

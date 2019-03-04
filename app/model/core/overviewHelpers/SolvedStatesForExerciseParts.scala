@@ -11,6 +11,8 @@ object SolvedStates extends PlayEnum[SolvedState] {
 
   override def values: IndexedSeq[SolvedState] = findValues
 
+  case object Locked extends SolvedState("btn-outline-danger")
+
   case object NotStarted extends SolvedState("btn-outline-secondary")
 
   case object PartlySolved extends SolvedState("btn-outline-warning")
