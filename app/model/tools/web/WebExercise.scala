@@ -36,13 +36,6 @@ final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: S
   override def preview: Html = // FIXME: move to toolMain!
     views.html.toolViews.web.webPreview(this)
 
-  override def tags: Seq[WebExTag] = WebExParts.values map (part => new WebExTag(part.partName, hasPart(part)))
-
-  def hasPart(partType: WebExPart): Boolean = partType match {
-    case WebExParts.HtmlPart => htmlTasks.nonEmpty
-    case WebExParts.JsPart   => jsTasks.nonEmpty
-  }
-
   def maxPoints(part: WebExPart): Points = part match {
     case WebExParts.HtmlPart => addUp(htmlTasks.map(_.maxPoints))
     case WebExParts.JsPart   => addUp(jsTasks.map(_.maxPoints))

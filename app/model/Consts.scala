@@ -65,15 +65,15 @@ trait Consts {
   val solutionsSubDir    : String = "solutions"
   val successName        : String = "success"
 
-  val tagJoinChar = "#"
-  val textName    = "text"
-  val titleName   = "title"
-  val typeName    = "type"
+  val tagJoinChar       = "#"
+  val textName : String = "text"
+  val titleName: String = "title"
+  val typeName : String = "type"
 
-  val userArgName  = "userArg"
-  val usernameName = "username"
+  val userArgName : String = "userArg"
+  val usernameName: String = "username"
 
-  val valueName = "value"
+  val valueName: String = "value"
 
 }
 

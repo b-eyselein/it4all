@@ -13,22 +13,6 @@ object FormMappings {
 
   final case class UserCredentials(username: String, password: String)
 
-  // Formatters
-
-  implicit object RoleFormatter extends Formatter[Role] {
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Role] = data.get(key) match {
-      case None        => Left[Seq[FormError], Role](Seq(FormError(key, s"No value for $key was provided!")))
-      case Some(value) => Role.withNameInsensitiveOption(value) match {
-        case None       => Left[Seq[FormError], Role](Seq(FormError(key, s"The value $value is no legal value for a role!")))
-        case Some(role) => Right[Seq[FormError], Role](role)
-      }
-    }
-
-    override def unbind(key: String, value: Role): Map[String, String] = Map(key -> value.entryName)
-
-  }
-
   // Mappings
 
   val saveOptionsForm: Form[String] = Form("showHideAgg" -> nonEmptyText)
@@ -36,7 +20,7 @@ object FormMappings {
   val updateRoleForm: Form[UpdateRoleForm] = Form(
     mapping(
       nameName -> nonEmptyText,
-      roleName -> of[Role]
+      roleName -> Role.formField
     )(UpdateRoleForm.apply)(UpdateRoleForm.unapply)
   )
 

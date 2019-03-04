@@ -77,18 +77,19 @@ trait ExerciseCollectionTableDefs[PartType <: ExPart, ExType <: Exercise, CollTy
 
   def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, part: PartType): Future[Seq[String]]
 
-  def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = db.run(
+  def futureSolveStateForExercisePart(user: User, collId: Int, exId: Int, part: PartType): Future[Option[SolvedState]] = db.run(
     solTable
       .filter {
-        sol => sol.username === user.username && sol.collectionId === collId && sol.exerciseId === exId
+        sol => sol.username === user.username && sol.collectionId === collId && sol.exerciseId === exId && sol.part === part
       }
       .sortBy(_.id.desc)
-      .result.headOption.map {
-      case None           => None
-      case Some(solution) =>
-        if (solution.points == solution.maxPoints) Some(SolvedStates.CompletelySolved)
-        else Some(SolvedStates.PartlySolved)
-    }
+      .result.headOption
+      .map {
+        case None           => None
+        case Some(solution) =>
+          if (solution.points == solution.maxPoints) Some(SolvedStates.CompletelySolved)
+          else Some(SolvedStates.PartlySolved)
+      }
   )
 
   // Saving

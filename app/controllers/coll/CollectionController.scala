@@ -3,9 +3,8 @@ package controllers.coll
 import controllers.{AExerciseController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.ExerciseState
-import model.core.CoreConsts._
 import model.core._
-import model.core.overviewHelpers.{SolvedStates, UserCollEx}
+import model.core.overviewHelpers.SolvedStatesForExerciseParts
 import model.toolMains.{CollectionToolMain, ToolList}
 import model.tools.programming.ProgToolMain
 import model.tools.uml._
@@ -34,12 +33,6 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   //  private val stateForm: Form[ExerciseState] = Form(single("state" -> ExerciseState.formField))
 
-  private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
-    val start = Math.max(0, (page - 1) * step)
-    val end = Math.min(page * step, collection.size)
-
-    collection slice(start, end)
-  }
 
   // User
 
@@ -62,31 +55,14 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def collection(toolType: String, collId: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      val step = 18
+      val step = 12
 
       toolMain.futureCollById(collId) flatMap {
-        case None                          => Future(onNoSuchCollection(toolMain, collId))
+        case None                          => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(coll: toolMain.CollType) =>
-          toolMain.futureExercisesInColl(coll.id) flatMap { exercises =>
-
-
-            val approvedExercises: Seq[toolMain.ExType] = exercises.filter(_.state == ExerciseState.APPROVED)
-
-            val exesToDisplay = takeSlice(approvedExercises, page, step)
-
-            val futureExesAndSuccessTypes: Future[Seq[UserCollEx]] = Future.sequence(exesToDisplay.map {
-              ex: toolMain.ExType =>
-                toolMain.futureSolveState(user, collId, ex.id) map {
-                  // FIXME: query solved state!
-                  maybeSolvedState => UserCollEx(ex, maybeSolvedState getOrElse SolvedStates.NotStarted)
-                }
-            })
-
-            futureExesAndSuccessTypes map {
-              exesAndSuccessTypes =>
-                Ok(views.html.collectionExercises.userCollectionExercisesOverview(
-                  user, coll, exesAndSuccessTypes, toolMain, page, step, approvedExercises.size))
-            }
+          toolMain.futureExesAndSolvedStatesForParts(user, coll, page, step) map {
+            exesAndSuccessTypes: Seq[SolvedStatesForExerciseParts[toolMain.PartType]] =>
+              Ok(views.html.collectionExercises.userCollectionExercisesOverview(user, coll, exesAndSuccessTypes, toolMain, page, step, exesAndSuccessTypes.size))
           }
       }
   }

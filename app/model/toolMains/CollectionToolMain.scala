@@ -2,8 +2,10 @@ package model.toolMains
 
 import better.files.File
 import model._
+import model.core.CoreConsts.stdStep
 import model.points._
 import model.core._
+import model.core.overviewHelpers.{SolvedStates, SolvedStatesForExerciseParts}
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
 import model.persistence.ExerciseCollectionTableDefs
 import net.jcazevedo.moultingyaml._
@@ -65,6 +67,42 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   protected def exerciseHasPart(exercise: ExType, partType: PartType): Boolean
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
+
+  // Db
+
+  private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
+    val start = Math.max(0, (page - 1) * step)
+    val end = Math.min(page * step, collection.size)
+
+    collection slice(start, end)
+  }
+
+  def futureExesAndSolvedStatesForParts(user: User, collection: CollType, page:Int, step: Int): Future[Seq[SolvedStatesForExerciseParts[PartType]]] =
+
+    futureExercisesInColl(collection.id) flatMap { exercises =>
+
+      val approvedExercises: Seq[ExType] = exercises.filter(_.state == ExerciseState.APPROVED)
+
+      val exesToDisplay = takeSlice(approvedExercises, page, step)
+
+      Future.sequence(exesToDisplay.map { ex: ExType =>
+
+        val exPartsForExercise = exParts.filter(exerciseHasPart(ex, _))
+
+        val futureSolvedStatesForExerciseParts = Future.sequence(exPartsForExercise.map { exPart =>
+          futureSolveStateForExercisePart(user, collection.id, ex.id, exPart) map {
+            // FIXME: query solved state!
+            maybeSolvedState => (exPart, maybeSolvedState getOrElse SolvedStates.NotStarted)
+          }
+        }).map(_.toMap)
+
+        futureSolvedStatesForExerciseParts map {
+          solvedStatesForExerciseParts => SolvedStatesForExerciseParts(ex, solvedStatesForExerciseParts)
+        }
+
+      })
+
+    }
 
   // Correction
 

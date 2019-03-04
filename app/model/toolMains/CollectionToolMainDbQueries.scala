@@ -31,7 +31,8 @@ trait CollectionToolMainDbQueries {
 
   def futureSampleSolutions(collId: Int, exId: Int, part: PartType): Future[Seq[String]] = tables.futureSampleSolutionsForExPart(collId, exId, part)
 
-  def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = tables.futureSolveState(user, collId, exId)
+  def futureSolveStateForExercisePart(user: User, collId: Int, exId: Int, part: PartType): Future[Option[SolvedState]] =
+    tables.futureSolveStateForExercisePart(user, collId, exId, part)
 
   // Saving
 

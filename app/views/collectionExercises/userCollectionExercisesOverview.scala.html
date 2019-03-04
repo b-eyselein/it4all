@@ -1,7 +1,9 @@
-@import model.{Exercise, ExerciseCollection, User}
+@import model.{Exercise, ExerciseCollection, User, ExPart}
+@import model.core.overviewHelpers.SolvedStatesForExerciseParts
+@import model.toolMains.CollectionToolMain
 
-@(user: User, collection: ExerciseCollection, exes: Seq[model.core.overviewHelpers.UserCollEx],
-        toolMainObject: model.toolMains.CollectionToolMain, currentSite: Int, step: Int, numOfExercises: Int)
+@(user: User, collection: ExerciseCollection, exes: Seq[SolvedStatesForExerciseParts[_ <: ExPart]],
+        toolMainObject: CollectionToolMain, currentSite: Int, step: Int, numOfExercises: Int)
 
 @title = @{
     s"Sammlung '${collection.title}'"
@@ -9,6 +11,14 @@
 
 @colCount = @{
     3
+}
+
+@colWidth = @{
+    s"col-sm-${12 / colCount}"
+}
+
+@partCount = @{
+    toolMainObject.exParts.size
 }
 
 @main(title, Some(user)) {
@@ -26,26 +36,33 @@
 
         @if(exes.nonEmpty) {
             @for(exBatch <- exes grouped colCount) {
-                <div class="form-group">
-                    <div class="row">
-                    @for((compEx, successType) <- exBatch.map(s => (s.ex, s.solved))) {
-                        <div class="col-sm-@{
-                            12 / colCount
-                        }">
-                        @for(exPart <- toolMainObject.exParts) {
-                            <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, compEx.id, exPart.urlName)"
-                            class="btn @successType.btnOutline btn-block">
-                                <div>@{
-                                    s"${compEx.id}. ${compEx.title}"
-                                }</div>
-                                <span>@Html(
-                                    Option(compEx.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
-                                )</span>
-                            </a>
-                        }
+                <div class="row my-3">
+
+                @for((compEx, solvedStatesForParts) <- exBatch.map(s => (s.ex, s.solvedStates))) {
+                    <div class="@colWidth">
+
+                        <div class="card">
+                            <div class="card-header">@{
+                                s"${compEx.id}. ${compEx.title}"
+                            }</div>
+                            <div class="card-body">
+                                <div class="btn-group d-flex">
+
+                                @for((exPart, solvedState) <- solvedStatesForParts) {
+                                    <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, compEx.id, exPart.urlName)"
+                                    class="btn @solvedState.btnOutline w-100">
+                                        @exPart.partName <span>@Html(
+                                        Option(compEx.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
+                                    )</span>
+                                    </a>
+                                }
+                                </div>
+                            </div>
                         </div>
-                    }
+
                     </div>
+                }
+
                 </div>
             }
         } else {
