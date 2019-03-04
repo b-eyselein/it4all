@@ -57,7 +57,7 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Co
 
   }
 
-  abstract class AStringUserSolutionsTable(tag: Tag, tableName: String) extends AUserSolutionsTable(tag, "regex_solutions") {
+  abstract class AStringUserSolutionsTable(tag: Tag, tableName: String) extends AUserSolutionsTable(tag, tableName) {
 
     def solution: Rep[String] = column[String](solutionName)
 

@@ -46,14 +46,16 @@ object SqlCorrResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationRe
 
   private implicit val sqlCorrResultRestWrites: Writes[SqlCorrResult] = {
     case SqlParseFailed(_, error, _) => Json.obj(messageName -> error.getMessage)
-    case sr: SqlResult            => sqlResultRestWrites.writes(sr)
+    case sr: SqlResult               => sqlResultRestWrites.writes(sr)
   }
 
   override def completeResultWrites(solutionSaved: Boolean): Writes[SqlCorrResult] = (
     (__ \ solutionSavedName).write[Boolean] and
       (__ \ successName).write[String] and
-      (__ \ resultsName).write[SqlCorrResult]
-    ) (scr => (solutionSaved, scr.successType.entryName, scr))
+      (__ \ pointsName).write[Double] and
+      (__ \ maxPointsName).write[Double] and
+      (__ \ resultsName).write[SqlCorrResult](sqlCorrResultRestWrites)
+    ) (scr => (solutionSaved, scr.successType.entryName, scr.points.asDouble, scr.maxPoints.asDouble, scr))
 
 
 }

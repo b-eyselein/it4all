@@ -137,7 +137,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     val oldOrDefaultSolutionString: String = maybeOldSolution.map(oldSol =>
       part match {
         case WebExParts.HtmlPart => oldSol.solution.htmlSolution
-        case WebExParts.JsPart   => oldSol.solution.jsSolution
+        case WebExParts.JsPart   =>
+          if (oldSol.solution.jsSolution.nonEmpty) oldSol.solution.jsSolution else oldSol.solution.htmlSolution
       }).getOrElse(WebConsts.STANDARD_HTML)
 
     views.html.toolViews.web.webExercise(user, collection, exercise, part, oldOrDefaultSolutionString, this)

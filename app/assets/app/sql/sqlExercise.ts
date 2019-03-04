@@ -17,7 +17,8 @@ let correction: JQuery;
 interface SqlResult {
     solutionSaved: boolean
     success: 'COMPLETE' | 'PARTIALLY' | 'NONE' | 'ERROR'
-
+    points: number
+    maxPoints: number
     results: SqlCorrectionResult
 }
 
@@ -46,6 +47,8 @@ function onSqlCorrectionSuccess(response: SqlResult): void {
     } else {
         results.push(`<span class=text-danger>Ihre Lösung konnte nicht gespeichert werden!</span>`);
     }
+
+    results.push(`<p>Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`.trim());
 
     if (response.success === 'ERROR') {
         results.push(`
@@ -78,7 +81,7 @@ function onSqlCorrectionSuccess(response: SqlResult): void {
     let newHtml = results.map(r => `<p>${r}</p>`).join('\n');
     correction.html(newHtml);
 
-    $('#correctionTabBtn').get()[0].click();
+    $('#showCorrectionTabA').get()[0].click();
 }
 
 function onSqlCorrectionError(jqXHR): void {

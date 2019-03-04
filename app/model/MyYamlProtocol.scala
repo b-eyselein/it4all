@@ -192,7 +192,10 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
       sample <- yamlObject.stringField(sampleName)
     } yield StringSampleSolution(id, sample)
 
-    override def write(obj: StringSampleSolution): YamlValue = ???
+    override def write(obj: StringSampleSolution): YamlValue = YamlObject(
+      YamlString(idName) -> YamlNumber(obj.id),
+      YamlString(sampleName) -> YamlString(obj.sample)
+    )
 
   }
 

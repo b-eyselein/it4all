@@ -98,8 +98,6 @@ function renderExecutionResult(executionTable: ExecutionTable): string {
 }
 
 function renderExecution(executionResults: ExecutionResultsObject): string {
-    console.info(JSON.stringify(executionResults, null, 2));
-
     return `
 <h3 class="text-center">Vergleich der Ergebnistabellen</h3>
 <div class="row">
