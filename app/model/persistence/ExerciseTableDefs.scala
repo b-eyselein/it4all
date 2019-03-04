@@ -44,10 +44,10 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
   // Table Queries
 
   protected val collTable: TableQuery[CollTableDef]
+  protected val exTable  : TableQuery[ExTableDef]
 
-  protected val exTable: TableQuery[ExTableDef]
-
-  protected val solTable: TableQuery[DbUserSolTable]
+  protected val sampleSolutionsTableQuery: TableQuery[DbSampleSolTable]
+  protected val userSolutionsTableQuery  : TableQuery[DbUserSolTable]
 
   protected val reviewsTable: TableQuery[ReviewsTable]
 
@@ -70,8 +70,6 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
   // Implicit column types
 
   protected implicit val partTypeColumnType: BaseColumnType[PartType]
-
-  protected implicit val solTypeColumnType: slick.ast.TypedType[SolType]
 
   protected implicit val difficultyColumnType: BaseColumnType[Difficulty] =
     MappedColumnType.base[Difficulty, String](_.entryName, Difficulties.withNameInsensitive)
@@ -118,19 +116,14 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
 
   }
 
-  protected abstract class ASolutionsTable[S <: ADbSolution[SolType]](tag: Tag, name: String) extends ExForeignKeyTable[S](tag, name) {
 
-  }
-
-  protected abstract class ASampleSolutionsTable(tag: Tag, name: String) extends ASolutionsTable[DbSampleSolType](tag, name) {
+  protected abstract class ASampleSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DbSampleSolType](tag, name) {
 
     def id: Rep[Int] = column[Int]("id", O.PrimaryKey)
 
-    def sample: Rep[SolType] = column[SolType](sampleName)(solTypeColumnType)
-
   }
 
-  protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ASolutionsTable[DbUserSolType](tag, name) {
+  protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DbUserSolType](tag, name) {
 
     def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
@@ -142,11 +135,11 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
 
     def maxPoints: Rep[Points] = column[Points]("max_points")
 
-    def solution: Rep[SolType] = column[SolType](solutionName)(solTypeColumnType)
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
   }
+
 
   abstract class ExerciseReviewsTable(tag: Tag, tableName: String) extends ExForeignKeyTable[DbReviewType](tag, tableName) {
 

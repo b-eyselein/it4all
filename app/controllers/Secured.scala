@@ -19,20 +19,11 @@ trait Secured {
 
   private def onUnauthorized(request: RequestHeader): Result = Redirect(controllers.routes.LoginController.loginForm()).withNewSession
 
-  private def futureOnUnauthorized(request: RequestHeader)(implicit ec: ExecutionContext): Future[Result] =
-    Future(onUnauthorized(request))
-
   private def onInsufficientPrivileges(request: RequestHeader): Result = Redirect(routes.Application.index()).flashing("msg" -> "You do not have sufficient privileges!")
-
-  private def futureOnInsufficientPrivileges(request: RequestHeader)(implicit ec: ExecutionContext): Future[Result] =
-    Future(onInsufficientPrivileges(request))
 
 
   private def withAuth(f: => String => Request[AnyContent] => Future[Result]): EssentialAction =
     Security.Authenticated(username, onUnauthorized)(user => controllerComponents.actionBuilder.async(request => f(user)(request)))
-
-  private def withAuthWithBodyParser[A](bodyParser: BodyParser[A])(f: => String => Request[A] => Future[Result]): EssentialAction =
-    Security.Authenticated(username, onUnauthorized)(user => controllerComponents.actionBuilder.async(bodyParser)(request => f(user)(request)))
 
 
   def withUser(f: User => Request[AnyContent] => Result)(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
@@ -40,7 +31,7 @@ trait Secured {
       repository.userByName(username) map {
         case Some(user) =>
           if (!adminRightsRequired || user.isAdmin) f(user)(request)
-          else onUnauthorized(request)
+          else onInsufficientPrivileges(request)
         case None       => onUnauthorized(request)
       }
     }
@@ -51,20 +42,8 @@ trait Secured {
       repository.userByName(username) flatMap {
         case Some(user) =>
           if (!adminRightsRequired || user.isAdmin) f(user)(request)
-          else futureOnInsufficientPrivileges(request)
-        case None       => futureOnUnauthorized(request)
-      }
-
-  }
-
-
-  def futureWithAdmin(f: User => Request[AnyContent] => Future[Result])(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
-    implicit request =>
-      repository.userByName(username) flatMap {
-        case Some(user) =>
-          if (user.isAdmin) f(user)(request)
-          else futureOnInsufficientPrivileges(request)
-        case None       => futureOnUnauthorized(request)
+          else Future.successful(onInsufficientPrivileges(request))
+        case None       => Future.successful(onUnauthorized(request))
       }
 
   }

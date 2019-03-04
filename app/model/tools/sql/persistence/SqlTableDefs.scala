@@ -4,9 +4,7 @@ import javax.inject.Inject
 import model.persistence._
 import model.tools.sql.SqlConsts._
 import model.tools.sql._
-import model.{StringSampleSolution, StringUserSolution}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 
@@ -15,8 +13,7 @@ import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[SqlExPart, SqlExercise, SqlScenario, String, StringSampleSolution, StringUserSolution[SqlExPart], SqlExerciseReview]
-    with StringSolutionExerciseTableDefs[SqlExPart, SqlExercise, SqlScenario, StringSampleSolution, StringUserSolution[SqlExPart], SqlExerciseReview] {
+    with StringSolutionExerciseTableDefs[SqlExPart, SqlExercise, SqlScenario, SqlExerciseReview] {
 
   import profile.api._
 
@@ -43,8 +40,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected val exTable  : TableQuery[SqlExercisesTable]  = TableQuery[SqlExercisesTable]
   override protected val collTable: TableQuery[SqlScenarioesTable] = TableQuery[SqlScenarioesTable]
 
-  override protected val samplesTableQuery                           = TableQuery[SqlSampleSolutionsTable]
-  override protected val solTable: TableQuery[SqlUserSolutionsTable] = TableQuery[SqlUserSolutionsTable]
+  override protected val sampleSolutionsTableQuery                                  = TableQuery[SqlSampleSolutionsTable]
+  override protected val userSolutionsTableQuery: TableQuery[SqlUserSolutionsTable] = TableQuery[SqlUserSolutionsTable]
 
   override protected val reviewsTable: TableQuery[SqlExerciseReviewsTable] = TableQuery[SqlExerciseReviewsTable]
 
@@ -67,7 +64,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     val dbSamples = compEx.samples map (s => solutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
-      samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(samplesTableQuery insertOrUpdate s))
+      samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery insertOrUpdate s))
     } yield samplesSaved
   }
 
@@ -76,14 +73,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected implicit val partTypeColumnType: BaseColumnType[SqlExPart] =
     MappedColumnType.base[SqlExPart, String](_.entryName, SqlExParts.withNameInsensitive)
 
-
   private implicit val sqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
     MappedColumnType.base[SqlExerciseType, String](_.entryName, str => SqlExerciseType.withNameInsensitiveOption(str) getOrElse SqlExerciseType.SELECT)
-
-  //  private implicit val SqlExTagColumnType: BaseColumnType[SqlExTag] =
-  //    MappedColumnType.base[SqlExTag, String](_.entryName, str => SqlExTag.withNameInsensitiveOption(str) getOrElse SqlExTag.SQL_JOIN)
-
-  override protected implicit val solTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 
   // Tables
 

@@ -1,12 +1,11 @@
 package model.tools.regex.persistence
 
 import javax.inject.Inject
-import model.{StringSampleSolution, StringUserSolution}
 import model.persistence._
 import model.tools.regex.RegexConsts._
 import model.tools.regex._
+import model.{StringSampleSolution, StringUserSolution}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
@@ -14,8 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[RegexExPart, RegexExercise, RegexCollection, String, StringSampleSolution, StringUserSolution[RegexExPart], RegexExerciseReview]
-    with StringSolutionExerciseTableDefs[RegexExPart, RegexExercise, RegexCollection, StringSampleSolution, StringUserSolution[RegexExPart], RegexExerciseReview] {
+    with StringSolutionExerciseTableDefs[RegexExPart, RegexExercise, RegexCollection, RegexExerciseReview] {
 
   import profile.api._
 
@@ -42,8 +40,8 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   override protected val exTable  : TableQuery[RegexExerciseTable]    = TableQuery[RegexExerciseTable]
   override protected val collTable: TableQuery[RegexCollectionsTable] = TableQuery[RegexCollectionsTable]
 
-  override protected val samplesTableQuery: TableQuery[RegexSampleSolutionsTable] = TableQuery[RegexSampleSolutionsTable]
-  override protected val solTable         : TableQuery[RegexUserSolutionsTable]   = TableQuery[RegexUserSolutionsTable]
+  override protected val sampleSolutionsTableQuery: TableQuery[RegexSampleSolutionsTable] = TableQuery[RegexSampleSolutionsTable]
+  override protected val userSolutionsTableQuery  : TableQuery[RegexUserSolutionsTable]   = TableQuery[RegexUserSolutionsTable]
 
   override protected val reviewsTable: TableQuery[RegexExerciseReviewsTable] = TableQuery[RegexExerciseReviewsTable]
 
@@ -59,7 +57,7 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   // Queries
 
   override protected def completeExForEx(collId: Int, ex: DbRegexExercise): Future[RegexExercise] = for {
-    sampleSolutions <- db.run(samplesTableQuery.filter {
+    sampleSolutions <- db.run(sampleSolutionsTableQuery.filter {
       e => e.id === ex.id && e.exSemVer === ex.semanticVersion && e.collectionId === collId
     }.result.map(_ map solutionDbModels.sampleSolFromDbSampleSol))
     testData <- db.run(regexTestDataTable.filter {
@@ -72,14 +70,12 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     val dbTestdata = ex.testData map (td => dbModels.dbTestDataFromTestData(ex.id, ex.semanticVersion, collId, td))
 
     for {
-      samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(samplesTableQuery += s), Some("RegexSampleSolution"))
+      samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery += s), Some("RegexSampleSolution"))
       testDataSaved <- saveSeq[DbRegexTestData](dbTestdata, td => db.run(regexTestDataTable += td), Some("RegexTestData"))
     } yield samplesSaved && testDataSaved
   }
 
   // Column types
-
-  override protected implicit val solTypeColumnType: TypedType[String] = ScalaBaseType.stringType
 
   override protected implicit val partTypeColumnType: BaseColumnType[RegexExPart] =
     MappedColumnType.base[RegexExPart, String](_.entryName, RegexExParts.withNameInsensitive)

@@ -7,7 +7,6 @@ import model.tools.uml.UmlClassDiagram
 import model.{ExerciseState, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsValue, Json}
-import slick.ast.TypedType
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
@@ -46,13 +45,15 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   // Table Queries
 
-  override protected val exTable      = TableQuery[ProgExercisesTable]
-  override protected val collTable    = TableQuery[ProgCollectionsTable]
-  override protected val solTable     = TableQuery[ProgSolutionTable]
-  override protected val reviewsTable = TableQuery[ProgExerciseReviewsTable]
+  override protected val exTable  : TableQuery[ProgExercisesTable]   = TableQuery[ProgExercisesTable]
+  override protected val collTable: TableQuery[ProgCollectionsTable] = TableQuery[ProgCollectionsTable]
+
+  override protected val sampleSolutionsTableQuery: TableQuery[ProgSampleSolutionsTable] = TableQuery[ProgSampleSolutionsTable]
+  override protected val userSolutionsTableQuery  : TableQuery[ProgSolutionTable]        = TableQuery[ProgSolutionTable]
+
+  override protected val reviewsTable: TableQuery[ProgExerciseReviewsTable] = TableQuery[ProgExerciseReviewsTable]
 
   private val inputTypesQuery   = TableQuery[InputTypesTable]
-  private val sampleSolutions   = TableQuery[ProgSampleSolutionsTable]
   private val sampleTestData    = TableQuery[ProgSampleTestDataTable]
   // TODO:  private val commitedTestData = TableQuery[CommitedTestDataTable]
   private val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
@@ -71,7 +72,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   // Queries
 
   override def completeExForEx(collId: Int, ex: DbProgExercise): Future[ProgExercise] = for {
-    samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result) map (_ map dbModels.progInputFromDbProgInput)
     sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result) map (_ map dbModels.sampleTestDataFromDbSampleTestData)
     maybeClassDiagram <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption).map(_.map(_.classDiagram))
@@ -84,7 +85,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     val dbProgUmlClassDiagram = ex.maybeClassDiagramPart.map(mcd => dbModels.dbProgUmlClassDiagramFromUmlClassDiagram(ex.id, ex.semanticVersion, collId, mcd)).toList
 
     for {
-      samplesSaved <- saveSeq[DbProgSampleSolution](dbSamples, i => db.run(sampleSolutions += i))
+      samplesSaved <- saveSeq[DbProgSampleSolution](dbSamples, i => db.run(sampleSolutionsTableQuery += i))
       inputTypesSaved <- saveSeq[DbProgInput](dbProgInputs, i => db.run(inputTypesQuery += i))
       sampleTestDataSaved <- saveSeq[DbProgSampleTestData](dbSampleTestData, i => db.run(sampleTestData += i))
       classDiagPartSaved <- saveSeq[DbProgUmlClassDiagram](dbProgUmlClassDiagram, i => db.run(umlClassDiagParts += i))
@@ -107,20 +108,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
     MappedColumnType.base[ProgExPart, String](_.entryName, ProgExParts.withNameInsensitive)
-
-  override protected implicit val solTypeColumnType: TypedType[ProgSolution] =
-    MappedColumnType.base[ProgSolution, String](progSolution => {
-      //FIXME: implement!
-      progSolution.implementation
-    },
-      solutionStr => {
-        ProgSolution(solutionStr, testData = Seq.empty, extendedUnitTests = false, ProgLanguages.StandardLanguage)
-        //        val solution: ProgSolution = part match {
-        //          case ProgExParts.TestdataCreation => ??? // ProgTestDataSolution(???, language)
-        //          case _                            => ProgStringSolution(solutionStr, extendedUnitTests, language)
-        //        }
-
-      })
 
   // Tables
 

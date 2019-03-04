@@ -24,7 +24,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
   def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UserSolType): Future[Boolean] = {
     val dbUserSol = solutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol)
 
-    val insertQuery = solTable returning solTable.map(_.id) into ((dbUserSol, id) => copyDbUserSolType(dbUserSol, id))
+    val insertQuery = userSolutionsTableQuery returning userSolutionsTableQuery.map(_.id) into ((dbUserSol, id) => copyDbUserSolType(dbUserSol, id))
 
     db.run(insertQuery += dbUserSol) transform {
       case Success(_) => Success(true)
@@ -63,7 +63,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
     }
 
   def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: PartType): Future[Option[UserSolType]] = db.run(
-    solTable
+    userSolutionsTableQuery
       .filter {
         sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId && sol.part === part
       }
@@ -75,7 +75,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
   def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, part: PartType): Future[Seq[String]]
 
   def futureSolveStateForExercisePart(user: User, collId: Int, exId: Int, part: PartType): Future[Option[SolvedState]] = db.run(
-    solTable
+    userSolutionsTableQuery
       .filter {
         sol => sol.username === user.username && sol.collectionId === collId && sol.exerciseId === exId && sol.part === part
       }

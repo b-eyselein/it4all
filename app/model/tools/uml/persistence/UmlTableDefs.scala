@@ -1,10 +1,10 @@
 package model.tools.uml.persistence
 
 import model.SemanticVersion
+import model.core.CoreConsts.{sampleName, solutionName}
 import model.persistence.ExerciseTableDefs
 import model.tools.uml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
@@ -42,14 +42,16 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Table Queries
 
-  override protected val collTable   : TableQuery[UmlCollectionsTable]     = TableQuery[UmlCollectionsTable]
-  override protected val exTable     : TableQuery[UmlExercisesTable]       = TableQuery[UmlExercisesTable]
-  override protected val solTable    : TableQuery[UmlSolutionsTable]       = TableQuery[UmlSolutionsTable]
+  override protected val collTable: TableQuery[UmlCollectionsTable] = TableQuery[UmlCollectionsTable]
+  override protected val exTable  : TableQuery[UmlExercisesTable]   = TableQuery[UmlExercisesTable]
+
+  override protected val sampleSolutionsTableQuery: TableQuery[UmlSampleSolutionsTable] = TableQuery[UmlSampleSolutionsTable]
+  override protected val userSolutionsTableQuery  : TableQuery[UmlSolutionsTable]       = TableQuery[UmlSolutionsTable]
+
   override protected val reviewsTable: TableQuery[UmlExerciseReviewsTable] = TableQuery[UmlExerciseReviewsTable]
 
   private val umlToIgnore = TableQuery[UmlToIgnoreTable]
   private val umlMappings = TableQuery[UmlMappingsTable]
-  private val umlSamples  = TableQuery[UmlSampleSolutionsTable]
 
   // Helper methods
 
@@ -67,7 +69,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override def completeExForEx(collId: Int, ex: DbUmlExercise): Future[UmlExercise] = for {
     dbToIgnore <- db.run(umlToIgnore filter (i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion) result)
     dbMappings <- db.run(umlMappings filter (m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion) result)
-    samples <- db.run(umlSamples filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(sampleSolutionsTableQuery filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
   } yield {
 
     val toIgnore = dbToIgnore map {
@@ -96,7 +98,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
         case (key, value) => db.run(umlMappings += ((compEx.id, compEx.semanticVersion, collId, key, value)))
       })
 
-      sampleSolutionsSaved <- saveSeq[DbUmlSampleSolution](dbSamples, sample => db.run(umlSamples += sample))
+      sampleSolutionsSaved <- saveSeq[DbUmlSampleSolution](dbSamples, sample => db.run(sampleSolutionsTableQuery += sample))
     } yield toIngoreSaved && mappingsSaved && sampleSolutionsSaved
   }
 
@@ -105,20 +107,19 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override protected implicit val partTypeColumnType: BaseColumnType[UmlExPart] =
     MappedColumnType.base[UmlExPart, String](_.entryName, UmlExParts.withNameInsensitive)
 
-  //  override protected
-  override protected implicit val solTypeColumnType: BaseColumnType[UmlClassDiagram] =
-  // FIXME: refactor!
-    MappedColumnType.base[UmlClassDiagram, String](UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(_).toString(),
-      str => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
-        case JsSuccess(sol, _) => sol
-        case JsError(_)        => ???
-      })
+//  private implicit val umlClassDiagramColumnType: BaseColumnType[UmlClassDiagram] =
+//  // FIXME: refactor!
+//    MappedColumnType.base[UmlClassDiagram, String](UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(_).toString(),
+//      str => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
+//        case JsSuccess(sol, _) => sol
+//        case JsError(_)        => ???
+//      })
 
   // Table definitions
 
   class UmlCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "uml_collections") {
 
-    def * = (id, title, author, text, state, shortName) <> (UmlCollection.tupled, UmlCollection.unapply)
+    def * : ProvenShape[UmlCollection] = (id, title, author, text, state, shortName) <> (UmlCollection.tupled, UmlCollection.unapply)
 
   }
 
@@ -159,6 +160,9 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   class UmlSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "uml_sample_solutions") {
 
+    def sample: Rep[UmlClassDiagram] = column[UmlClassDiagram](sampleName)(umlClassDiagramColumnType)
+
+
     def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
 
 
@@ -167,6 +171,9 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   }
 
   class UmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "uml_solutions") {
+
+    def solution: Rep[UmlClassDiagram] = column[UmlClassDiagram](solutionName)(umlClassDiagramColumnType)
+
 
     override def * : ProvenShape[DbUmlUserSolution] = (id, exerciseId, exSemVer, collectionId, username,
       part, solution, points, maxPoints) <> (DbUmlUserSolution.tupled, DbUmlUserSolution.unapply)

@@ -4,7 +4,6 @@ import model.SemanticVersion
 import model.persistence.ExerciseTableDefs
 import model.tools.web._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.ast.TypedType
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
@@ -43,17 +42,18 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Table queries
 
-  override protected val exTable      = TableQuery[WebExercisesTable]
-  override protected val collTable    = TableQuery[WebCollectionsTable]
-  override protected val solTable     = TableQuery[WebSolutionsTable]
-  override protected val reviewsTable = TableQuery[WebExerciseReviewsTable]
+  override protected val exTable  : TableQuery[WebExercisesTable]   = TableQuery[WebExercisesTable]
+  override protected val collTable: TableQuery[WebCollectionsTable] = TableQuery[WebCollectionsTable]
+
+  override protected val sampleSolutionsTableQuery: TableQuery[WebSampleSolutionsTable] = TableQuery[WebSampleSolutionsTable]
+  override protected val userSolutionsTableQuery  : TableQuery[WebSolutionsTable]       = TableQuery[WebSolutionsTable]
+
+  override protected val reviewsTable: TableQuery[WebExerciseReviewsTable] = TableQuery[WebExerciseReviewsTable]
 
   private val htmlTasksTable  = TableQuery[HtmlTasksTable]
   private val attributesTable = TableQuery[AttributesTable]
   private val jsTasksTable    = TableQuery[JsTasksTable]
   private val conditionsTable = TableQuery[ConditionsTable]
-
-  private val sampleSolutionsTable = TableQuery[WebSampleSolutionsTable]
 
   lazy val webSolutions = TableQuery[WebSolutionsTable]
 
@@ -73,7 +73,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override def completeExForEx(collId: Int, ex: DbWebExercise): Future[WebExercise] = for {
     htmlTasks <- htmlTasksForExercise(collId, ex.id)
     jsTasks <- jsTasksForExercise(collId, ex.id)
-    sampleSolutions <- db.run(sampleSolutionsTable filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
+    sampleSolutions <- db.run(sampleSolutionsTableQuery filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
   } yield dbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), sampleSolutions)
 
   private def htmlTasksForExercise(collId: Int, exId: Int): Future[Seq[HtmlTask]] = {
@@ -114,7 +114,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   }
 
   override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: WebExPart): Future[Seq[String]] = db.run(
-    sampleSolutionsTable
+    sampleSolutionsTableQuery
       .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
       .map(sample => part match {
         case WebExParts.HtmlPart => sample.htmlSample
@@ -133,7 +133,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
       htmlTasksSaved <- saveSeq[HtmlTask](ex.htmlTasks, t => saveHtmlTask(ex.id, ex.semanticVersion, collId, t))
       jsTasksSaved <- saveSeq[JsTask](ex.jsTasks, t => saveJsTask(ex.id, ex.semanticVersion, collId, t))
 
-      sampleSolutionsSaved <- saveSeq[DbWebSampleSolution](dbSamples, s => db.run(sampleSolutionsTable += s))
+      sampleSolutionsSaved <- saveSeq[DbWebSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery += s))
     } yield htmlTasksSaved && jsTasksSaved && sampleSolutionsSaved
   }
 
@@ -156,12 +156,10 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Implicit column types
 
   private implicit val actionTypeColumnType: BaseColumnType[JsActionType] =
-    MappedColumnType.base[JsActionType, String](_.entryName, str => JsActionType.withNameInsensitiveOption(str) getOrElse JsActionType.CLICK)
+    MappedColumnType.base[JsActionType, String](_.entryName, JsActionType.withNameInsensitive)
 
   override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =
     MappedColumnType.base[WebExPart, String](_.entryName, WebExParts.withNameInsensitive)
-
-  override protected implicit val solTypeColumnType: TypedType[WebSolution] = null // ScalaBaseType.stringType
 
   // Table definitions
 

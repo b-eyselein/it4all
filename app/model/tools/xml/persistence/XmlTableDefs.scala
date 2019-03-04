@@ -3,7 +3,6 @@ package model.tools.xml.persistence
 import model.persistence.ExerciseTableDefs
 import model.tools.xml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.ast.TypedType
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
@@ -40,12 +39,13 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Table Queries
 
-  override protected val collTable   : TableQuery[XmlCollectionsTable]     = TableQuery[XmlCollectionsTable]
-  override protected val exTable     : TableQuery[XmlExercisesTable]       = TableQuery[XmlExercisesTable]
-  override protected val solTable    : TableQuery[XmlSolutionsTable]       = TableQuery[XmlSolutionsTable]
-  override protected val reviewsTable: TableQuery[XmlExerciseReviewsTable] = TableQuery[XmlExerciseReviewsTable]
+  override protected val exTable  : TableQuery[XmlExercisesTable]   = TableQuery[XmlExercisesTable]
+  override protected val collTable: TableQuery[XmlCollectionsTable] = TableQuery[XmlCollectionsTable]
 
-  private val samplesTable = TableQuery[XmlSamplesTable]
+  override protected val sampleSolutionsTableQuery: TableQuery[XmlSamplesTable]   = TableQuery[XmlSamplesTable]
+  override protected val userSolutionsTableQuery  : TableQuery[XmlSolutionsTable] = TableQuery[XmlSolutionsTable]
+
+  override protected val reviewsTable: TableQuery[XmlExerciseReviewsTable] = TableQuery[XmlExerciseReviewsTable]
 
   // Helper methods
 
@@ -61,25 +61,19 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Reading
 
   override protected def completeExForEx(collId: Int, ex: DbXmlExercise): Future[XmlExercise] = for {
-    samples <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(sampleSolutionsTableQuery.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
   } yield dbModels.exerciseFromDbValues(ex, samples)
 
-  //  override def futureUserCanSolvePartOfExercise(username: String, collId: Int, exId: Int, exSemVer: SemanticVersion, part: XmlExPart): Future[Boolean] = part match {
-  //    case XmlExParts.GrammarCreationXmlPart  => Future.successful(true)
-  //    case XmlExParts.DocumentCreationXmlPart => futureMaybeOldSolution(username, collId, exId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
-  //  }
-
   override def futureSampleSolutionsForExPart(collId: Int, exId: Int, part: XmlExPart): Future[Seq[String]] =
-    db.run(
-      samplesTable
-        .filter { s => s.collectionId === collId && s.exerciseId === exId }
-        .map { sampleSol =>
-          part match {
-            case XmlExParts.GrammarCreationXmlPart  => sampleSol.grammar
-            case XmlExParts.DocumentCreationXmlPart => sampleSol.document
-          }
+    db.run(sampleSolutionsTableQuery
+      .filter { s => s.collectionId === collId && s.exerciseId === exId }
+      .map { sampleSol =>
+        part match {
+          case XmlExParts.GrammarCreationXmlPart  => sampleSol.grammar
+          case XmlExParts.DocumentCreationXmlPart => sampleSol.document
         }
-        .result)
+      }
+      .result)
 
   // Saving
 
@@ -87,14 +81,11 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     val dbSamples = compEx.samples map (s => solutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
-      samplesSaved <- saveSeq[DbXmlSampleSolution](dbSamples, i => db.run(samplesTable += i), Some("XmlSample"))
+      samplesSaved <- saveSeq[DbXmlSampleSolution](dbSamples, i => db.run(sampleSolutionsTableQuery += i), Some("XmlSample"))
     } yield samplesSaved
   }
 
-
   // Column Types
-
-  override protected implicit val solTypeColumnType: TypedType[XmlSolution] = null //ScalaBaseType.stringType
 
   override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
     MappedColumnType.base[XmlExPart, String](_.entryName, XmlExParts.withNameInsensitive)
