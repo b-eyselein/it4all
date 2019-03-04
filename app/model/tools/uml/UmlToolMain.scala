@@ -43,7 +43,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Other members
 
-  override val toolState: ToolState = ToolState.LIVE
+  override val toolState: ToolState = ToolState.BETA
 
   override val exParts: Seq[UmlExPart] = UmlExParts.values
 

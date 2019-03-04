@@ -48,6 +48,7 @@
                 <div class="form-group">
 
                     @helper.CSRF.formField
+
                     <div class="btn-group d-flex">
                         <button data-url="@coll.routes.CollectionController.correctLive(toolMain.urlPart, collection.id, exercise.id, UmlExParts.MemberAllocation.urlName)"
                         class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>

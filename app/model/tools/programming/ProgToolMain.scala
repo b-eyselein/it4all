@@ -48,7 +48,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Other members
 
-  override val toolState: ToolState = ToolState.BETA
+  override val toolState: ToolState = ToolState.ALPHA
 
   override val exParts: Seq[ProgExPart] = ProgExParts.values
 

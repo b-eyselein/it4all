@@ -45,7 +45,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Other members
 
-  override val toolState: ToolState = ToolState.BETA
+  override val toolState: ToolState = ToolState.ALPHA
 
   override val exParts: Seq[RoseExPart] = RoseExParts.values
 

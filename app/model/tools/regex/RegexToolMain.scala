@@ -2,7 +2,7 @@ package model.tools.regex
 
 import javax.inject.Inject
 import model.points._
-import model.toolMains.CollectionToolMain
+import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.regex.BinaryClassificationResultTypes._
 import model.tools.regex.persistence.RegexTableDefs
 import model._
@@ -34,6 +34,8 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override type Tables = RegexTableDefs
 
   // Members
+
+  override val toolState: ToolState = ToolState.BETA
 
   override val exParts: Seq[RegexExPart] = RegexExParts.values
 
