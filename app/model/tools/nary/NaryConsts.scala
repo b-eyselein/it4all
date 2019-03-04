@@ -1,4 +1,4 @@
-package model.nary
+package model.tools.nary
 
 import model.core.EssentialsConsts
 

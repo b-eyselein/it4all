@@ -2,7 +2,6 @@ package model.tools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
-import model.points.Points
 import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
@@ -28,7 +27,7 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 // Classes for use
 
 final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             exerciseType: SqlExerciseType, override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[SqlSampleSolution]) extends Exercise {
+                             exerciseType: SqlExerciseType, override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[StringSampleSolution]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -47,12 +46,5 @@ final case class SqlScenario(id: Int, title: String, author: String, text: Strin
   val imageUrl: String = shortName + ".png"
 
 }
-
-final case class SqlSampleSolution(id: Int, sample: String)
-  extends SampleSolution[String]
-
-final case class SqlUserSolution(id: Int, part: SqlExPart, solution: String, points: Points, maxPoints: Points)
-  extends UserSolution[SqlExPart, String]
-
 
 final case class SqlExerciseReview(difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview

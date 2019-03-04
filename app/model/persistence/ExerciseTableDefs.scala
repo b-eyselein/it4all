@@ -32,7 +32,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
   protected type DbSampleSolTable <: ASampleSolutionsTable
 
 
-  protected type DbUserSolType <: ADbUserSol[SolType]
+  protected type DbUserSolType <: ADbUserSol[PartType, SolType]
 
   protected type DbUserSolTable <: AUserSolutionsTable
 
@@ -53,8 +53,8 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
 
   // Helper methods
 
-  protected val dbModels: ADbModels[ExType, DbExType, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType]
-
+  protected val dbModels              : ADbModels[ExType, DbExType]
+  protected val solutionDbModels      : ASolutionDbModels[SolType, PartType, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType]
   protected val exerciseReviewDbModels: AExerciseReviewDbModels[PartType, ReviewType, DbReviewType]
 
   protected def exDbValuesFromExercise(collId: Int, exercise: ExType): DbExType
@@ -64,21 +64,6 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
   protected def completeExForEx(collId: Int, ex: DbExType): Future[ExType]
 
   // Saving
-
-  def futureInsertExercise(collId: Int, compEx: ExType): Future[Boolean]
-
-  //  = {
-  //    val deleteOldExQuery = exTable.filter{
-  //      dbEx: ExTableDef => dbEx.id === compEx.id && dbEx.semanticVersion === compEx.semanticVersion
-  //    }.delete
-  //    val insertNewExQuery = exTable += exDbValuesFromExercise(compEx)
-  //
-  //    db.run(deleteOldExQuery) flatMap { _ =>
-  //      db.run(insertNewExQuery) flatMap {
-  //        insertCount: Int => saveExerciseRest(compEx)
-  //      }
-  //    }
-  //  }
 
   protected def saveExerciseRest(collId: Int, ex: ExType): Future[Boolean]
 

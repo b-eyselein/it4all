@@ -1,6 +1,6 @@
-package model.nary
+package model.tools.nary
 
-import model.nary.NumberBase._
+import model.tools.nary.NumberBase._
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 

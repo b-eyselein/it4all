@@ -5,7 +5,7 @@ import model.points.Points
 import model.tools.xml._
 import model.{Difficulty, ExerciseState, SemanticVersion}
 
-object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise, XmlSampleSolution, DbXmlSampleSolution, XmlUserSolution, DbXmlUserSolution] {
+object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise] {
 
   override def dbExerciseFromExercise(collId: Int, ex: XmlExercise): DbXmlExercise =
     DbXmlExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.grammarDescription, ex.rootNode)
@@ -15,6 +15,10 @@ object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise, XmlSampleSoluti
       dbXmlEx.id, dbXmlEx.semanticVersion, dbXmlEx.title, dbXmlEx.author, dbXmlEx.text, dbXmlEx.state,
       dbXmlEx.grammarDescription, dbXmlEx.rootNode, samples
     )
+
+}
+
+object XmlSolutionDbModels extends ASolutionDbModels[XmlSolution, XmlExPart, XmlSampleSolution, DbXmlSampleSolution, XmlUserSolution, DbXmlUserSolution] {
 
   override def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: XmlSampleSolution): DbXmlSampleSolution =
     DbXmlSampleSolution(sample.id, exId, exSemVer, collId, sample.sample.document, sample.sample.grammar)
@@ -52,7 +56,7 @@ final case class DbXmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersi
 
 final case class DbXmlUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: XmlExPart,
                                    document: String, grammar: String, points: Points, maxPoints: Points)
-  extends ADbUserSol[XmlSolution] {
+  extends ADbUserSol[XmlExPart, XmlSolution] {
 
   val solution = XmlSolution(document, grammar)
 

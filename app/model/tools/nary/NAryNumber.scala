@@ -1,8 +1,8 @@
-package model.nary
+package model.tools.nary
 
 import com.google.common.base.{Strings => GStrings}
-import model.nary.NAryNumber._
-import model.nary.NumberBase._
+import model.tools.nary.NAryNumber._
+import model.tools.nary.NumberBase._
 
 import scala.util.Try
 

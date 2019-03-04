@@ -1,7 +1,8 @@
 package model.tools.regex.persistence
 
 import javax.inject.Inject
-import model.persistence.ExerciseTableDefs
+import model.{StringSampleSolution, StringUserSolution}
+import model.persistence._
 import model.tools.regex.RegexConsts._
 import model.tools.regex._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -13,7 +14,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[RegexExPart, RegexExercise, RegexCollection, String, RegexSampleSolution, RegexUserSolution, RegexExerciseReview] {
+    with ExerciseTableDefs[RegexExPart, RegexExercise, RegexCollection, String, StringSampleSolution, StringUserSolution[RegexExPart], RegexExerciseReview]
+    with StringSolutionExerciseTableDefs[RegexExPart, RegexExercise, RegexCollection, StringSampleSolution, StringUserSolution[RegexExPart], RegexExerciseReview] {
 
   import profile.api._
 
@@ -26,14 +28,9 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   override protected type CollTableDef = RegexCollectionsTable
 
 
-  override protected type DbSampleSolType = DbRegexSampleSolution
-
   override protected type DbSampleSolTable = RegexSampleSolutionsTable
 
-
-  override protected type DbUserSolType = DbRegexUserSolution
-
-  override protected type DbUserSolTable = RegexSolutionTable
+  override protected type DbUserSolTable = RegexUserSolutionsTable
 
 
   override protected type DbReviewType = DbRegexExerciseReview
@@ -42,50 +39,43 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   // Table Queries
 
-  override protected val collTable   : TableQuery[RegexCollectionsTable]     = TableQuery[RegexCollectionsTable]
-  override protected val exTable     : TableQuery[RegexExerciseTable]        = TableQuery[RegexExerciseTable]
-  override protected val solTable    : TableQuery[RegexSolutionTable]        = TableQuery[RegexSolutionTable]
+  override protected val exTable  : TableQuery[RegexExerciseTable]    = TableQuery[RegexExerciseTable]
+  override protected val collTable: TableQuery[RegexCollectionsTable] = TableQuery[RegexCollectionsTable]
+
+  override protected val samplesTableQuery: TableQuery[RegexSampleSolutionsTable] = TableQuery[RegexSampleSolutionsTable]
+  override protected val solTable         : TableQuery[RegexUserSolutionsTable]   = TableQuery[RegexUserSolutionsTable]
+
   override protected val reviewsTable: TableQuery[RegexExerciseReviewsTable] = TableQuery[RegexExerciseReviewsTable]
 
-  private val regexSampleSolutionsTable: TableQuery[RegexSampleSolutionsTable] = TableQuery[RegexSampleSolutionsTable]
-  private val regexTestDataTable       : TableQuery[RegexTestDataTable]        = TableQuery[RegexTestDataTable]
+  private val regexTestDataTable: TableQuery[RegexTestDataTable] = TableQuery[RegexTestDataTable]
 
   // Helper methods
 
   override protected val dbModels               = RegexDbModels
   override protected val exerciseReviewDbModels = RegexExerciseReviewDbModels
 
-  override protected def copyDbUserSolType(oldSol: DbRegexUserSolution, newId: Int): DbRegexUserSolution = oldSol.copy(id = newId)
-
   override protected def exDbValuesFromExercise(collId: Int, compEx: RegexExercise): DbExType = dbModels.dbExerciseFromExercise(collId, compEx)
 
   // Queries
 
   override protected def completeExForEx(collId: Int, ex: DbRegexExercise): Future[RegexExercise] = for {
-    sampleSolutions <- db.run(regexSampleSolutionsTable.filter {
+    sampleSolutions <- db.run(samplesTableQuery.filter {
       e => e.id === ex.id && e.exSemVer === ex.semanticVersion && e.collectionId === collId
-    }.result.map(_ map dbModels.sampleSolFromDbSampleSol))
+    }.result.map(_ map solutionDbModels.sampleSolFromDbSampleSol))
     testData <- db.run(regexTestDataTable.filter {
       td => td.exerciseId === ex.id && td.exSemVer === ex.semanticVersion && td.collectionId === collId
     }.result.map(_ map dbModels.testDataFromDbTestData))
   } yield dbModels.exerciseFromDbExercise(ex, sampleSolutions, testData)
 
   override protected def saveExerciseRest(collId: Int, ex: RegexExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => dbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
     val dbTestdata = ex.testData map (td => dbModels.dbTestDataFromTestData(ex.id, ex.semanticVersion, collId, td))
 
     for {
-      samplesSaved <- saveSeq[DbRegexSampleSolution](dbSamples, s => db.run(regexSampleSolutionsTable += s), Some("RegexSampleSolution"))
+      samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(samplesTableQuery += s), Some("RegexSampleSolution"))
       testDataSaved <- saveSeq[DbRegexTestData](dbTestdata, td => db.run(regexTestDataTable += td), Some("RegexTestData"))
     } yield samplesSaved && testDataSaved
   }
-
-  // Other queries
-
-  override def futureSampleSolutionsForExPart(collectionId: Int, exerciseId: Int, part: RegexExPart): Future[Seq[String]] =
-    db.run(regexSampleSolutionsTable.filter {
-      s => s.collectionId === collectionId && s.exerciseId === exerciseId
-    }.map(_.sample).result)
 
   // Column types
 
@@ -110,11 +100,6 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   }
 
-  class RegexSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "regex_sample_solutions") {
-
-    override def * : ProvenShape[DbRegexSampleSolution] = (id, exerciseId, exSemVer, collectionId, sample) <> (DbRegexSampleSolution.tupled, DbRegexSampleSolution.unapply)
-
-  }
 
   class RegexTestDataTable(tag: Tag) extends ExForeignKeyTable[DbRegexTestData](tag, "regex_test_data") {
 
@@ -132,15 +117,11 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   }
 
-  class RegexSolutionTable(tag: Tag) extends AUserSolutionsTable(tag, "regex_solutions") {
 
-    def pk: PrimaryKey = primaryKey("pk", id)
+  class RegexSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "regex_sample_solutions")
 
+  class RegexUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "regex_solutions")
 
-    override def * : ProvenShape[DbRegexUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part,
-      solution, points, maxPoints) <> (DbRegexUserSolution.tupled, DbRegexUserSolution.unapply)
-
-  }
 
   class RegexExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "regex_exercise_reviews") {
 

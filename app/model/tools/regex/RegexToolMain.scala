@@ -23,8 +23,8 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override type CollType = RegexCollection
 
   override type SolType = String
-  override type SampleSolType = RegexSampleSolution
-  override type UserSolType = RegexUserSolution
+  override type SampleSolType = StringSampleSolution
+  override type UserSolType = StringUserSolution[RegexExPart]
 
   override type ReviewType = RegexExerciseReview
 
@@ -57,16 +57,16 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, maxPoints = 0,
-    sampleSolutions = Seq[RegexSampleSolution](
-      RegexSampleSolution(0, "")
+    sampleSolutions = Seq[StringSampleSolution](
+      StringSampleSolution(0, "")
     ),
     testData = Seq[RegexTestData](
       RegexTestData(0, "", isIncluded = false)
     )
   )
 
-  override protected def instantiateSolution(id: Int, exercise: RegexExercise, part: RegexExPart, solution: String, points: Points, maxPoints: Points): RegexUserSolution =
-    RegexUserSolution(id, part, solution, points, maxPoints)
+  override protected def instantiateSolution(id: Int, exercise: RegexExercise, part: RegexExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[RegexExPart] =
+    StringUserSolution[RegexExPart](id, part, solution, points, maxPoints)
 
   // Correction
 
@@ -114,7 +114,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     case _                 => ???
   }
 
-  override def renderExercise(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[RegexUserSolution])
+  override def renderExercise(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[StringUserSolution[RegexExPart]])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.toolViews.regex.regexExercise(user, this, collection, exercise, part, oldSolution.map(_.solution))
 

@@ -8,13 +8,6 @@ import play.api.data.{Form, Mapping}
 
 object RegexToolForm extends ToolForms[RegexExercise, RegexCollection, RegexExerciseReview] {
 
-  // Sample solutions
-
-  private val sampleMapping: Mapping[RegexSampleSolution] = mapping(
-    idName -> number,
-    sampleName -> nonEmptyText
-  )(RegexSampleSolution.apply)(RegexSampleSolution.unapply)
-
   // Test data
 
   private val testDataMapping: Mapping[RegexTestData] = mapping(
@@ -46,7 +39,7 @@ object RegexToolForm extends ToolForms[RegexExercise, RegexCollection, RegexExer
       textName -> nonEmptyText,
       statusName -> ExerciseState.formField,
       maxPointsName -> number,
-      samplesName -> seq(sampleMapping),
+      samplesName -> seq(stringSampleMapping),
       testDataName -> seq(testDataMapping)
     )(RegexExercise.apply)(RegexExercise.unapply)
   )

@@ -60,6 +60,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   // Helper methods
 
   override protected val dbModels               = ProgDbModels
+  override protected val solutionDbModels       = ProgSolutionDbModels
   override protected val exerciseReviewDbModels = ProgExerciseReviewDbModels
 
   override def copyDbUserSolType(oldSol: DbProgUserSolution, newId: Int): DbProgUserSolution = oldSol.copy(id = newId)
@@ -70,14 +71,14 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   // Queries
 
   override def completeExForEx(collId: Int, ex: DbProgExercise): Future[ProgExercise] = for {
-    samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result) map (_ map dbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(sampleSolutions.filter(_.exerciseId === ex.id).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result) map (_ map dbModels.progInputFromDbProgInput)
     sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result) map (_ map dbModels.sampleTestDataFromDbSampleTestData)
     maybeClassDiagram <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption).map(_.map(_.classDiagram))
   } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, maybeClassDiagram)
 
   override def saveExerciseRest(collId: Int, ex: ProgExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => dbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
     val dbProgInputs = ex.inputTypes map (it => dbModels.dbProgInputFromProgInput(ex.id, ex.semanticVersion, collId, it))
     val dbSampleTestData = ex.sampleTestData map (std => dbModels.dbSampleTestDataFromSampleTestData(ex.id, ex.semanticVersion, collId, std))
     val dbProgUmlClassDiagram = ex.maybeClassDiagramPart.map(mcd => dbModels.dbProgUmlClassDiagramFromUmlClassDiagram(ex.id, ex.semanticVersion, collId, mcd)).toList

@@ -6,13 +6,23 @@ import model.tools.programming.{ProgDataType, ProgLanguage}
 import model.tools.rose._
 import model.{Difficulty, ExerciseState, SemanticVersion}
 
-object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise, RoseSampleSolution, DbRoseSampleSolution, RoseUserSolution, DbRoseUserSolution] {
+object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise] {
 
   override def dbExerciseFromExercise(collId: Int, ex: RoseExercise): DbRoseExercise =
     DbRoseExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer)
 
   def exerciseFromDbValues(ex: DbRoseExercise, inputTypes: Seq[RoseInputType], samples: Seq[RoseSampleSolution]): RoseExercise =
     RoseExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer, inputTypes, samples)
+
+  def dbInputTypeFromInputType(exId: Int, exSemVer: SemanticVersion, collId: Int, inputType: RoseInputType): DbRoseInputType =
+    DbRoseInputType(inputType.id, exId, exSemVer, collId, inputType.name, inputType.inputType)
+
+  def inputTypeFromDbInputType(dbInputType: DbRoseInputType): RoseInputType =
+    RoseInputType(dbInputType.id, dbInputType.name, dbInputType.inputType)
+
+}
+
+object RoseSolutionDbModels extends ASolutionDbModels[String, RoseExPart, RoseSampleSolution, DbRoseSampleSolution, RoseUserSolution, DbRoseUserSolution] {
 
   override def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: RoseSampleSolution): DbRoseSampleSolution =
     DbRoseSampleSolution(sample.id, exId, exSemVer, collId, sample.language, sample.sample)
@@ -25,13 +35,6 @@ object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise, RoseSampleSo
 
   override def userSolFromDbUserSol(dbSolution: DbRoseUserSolution): RoseUserSolution =
     RoseUserSolution(dbSolution.id, dbSolution.part, dbSolution.language, dbSolution.solution, dbSolution.points, dbSolution.maxPoints)
-
-
-  def dbInputTypeFromInputType(exId: Int, exSemVer: SemanticVersion, collId: Int, inputType: RoseInputType): DbRoseInputType =
-    DbRoseInputType(inputType.id, exId, exSemVer, collId, inputType.name, inputType.inputType)
-
-  def inputTypeFromDbInputType(dbInputType: DbRoseInputType): RoseInputType =
-    RoseInputType(dbInputType.id, dbInputType.name, dbInputType.inputType)
 
 }
 
@@ -53,7 +56,7 @@ final case class DbRoseSampleSolution(id: Int, exId: Int, exSemVer: SemanticVers
 
 final case class DbRoseUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: RoseExPart,
                                     language: ProgLanguage, solution: String, points: Points, maxPoints: Points)
-  extends ADbUserSol[String]
+  extends ADbUserSol[RoseExPart, String]
 
 final case class DbRoseInputType(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, name: String, inputType: ProgDataType)
 

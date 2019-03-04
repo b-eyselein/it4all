@@ -60,6 +60,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Helper methods
 
   override protected val dbModels               = WebDbModels
+  override protected val solutionDbModels       = WebSolutionDbModels
   override protected val exerciseReviewDbModels = WebExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbWebUserSolution, newId: Int): DbWebUserSolution = oldSol.copy(id = newId)
@@ -69,15 +70,10 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Other queries
 
-  //  override def futureUserCanSolvePartOfExercise(username: String, exId: Int, exSemVer: SemanticVersion, collId: Int, part: WebExPart): Future[Boolean] = part match {
-  //    case WebExParts.HtmlPart => Future.successful(true)
-  //    case WebExParts.JsPart   => futureMaybeOldSolution(username, exId, collId /* exSemVer*/, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
-  //  }
-
   override def completeExForEx(collId: Int, ex: DbWebExercise): Future[WebExercise] = for {
     htmlTasks <- htmlTasksForExercise(collId, ex.id)
     jsTasks <- jsTasksForExercise(collId, ex.id)
-    sampleSolutions <- db.run(sampleSolutionsTable filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map dbModels.sampleSolFromDbSampleSol)
+    sampleSolutions <- db.run(sampleSolutionsTable filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
   } yield dbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), sampleSolutions)
 
   private def htmlTasksForExercise(collId: Int, exId: Int): Future[Seq[HtmlTask]] = {
@@ -130,7 +126,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Saving
 
   override def saveExerciseRest(collId: Int, ex: WebExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => dbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
 
 
     for {

@@ -2,16 +2,16 @@ package model.tools.sql
 
 import model.core.ToolForms
 import model.tools.sql.SqlConsts._
-import model.{Difficulties, ExerciseState, SemanticVersionHelper}
+import model.{Difficulties, ExerciseState, SemanticVersionHelper, StringSampleSolution}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
 object SqlToolForms extends ToolForms[SqlExercise, SqlScenario, SqlExerciseReview] {
 
-  private val sqlSampleMapping: Mapping[SqlSampleSolution] = mapping(
+  private val sqlSampleMapping: Mapping[StringSampleSolution] = mapping(
     idName -> number,
     sampleName -> nonEmptyText
-  )(SqlSampleSolution.apply)(SqlSampleSolution.unapply)
+  )(StringSampleSolution.apply)(StringSampleSolution.unapply)
 
   // Complete exercise
 

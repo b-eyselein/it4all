@@ -5,13 +5,17 @@ import model.points.Points
 import model.tools.uml._
 import model.{Difficulty, ExerciseState, SemanticVersion}
 
-object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise, UmlSampleSolution, DbUmlSampleSolution, UmlUserSolution, DbUmlUserSolution] {
+object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise] {
 
   override def dbExerciseFromExercise(collectionId: Int, ex: UmlExercise): DbUmlExercise =
     DbUmlExercise(ex.id, ex.semanticVersion, collectionId, ex.title, ex.author, ex.text, ex.state, ex.markedText)
 
   def exerciseFromDbExercise(ex: DbUmlExercise, toIgnore: Seq[String], mappings: Map[String, String], samples: Seq[UmlSampleSolution]) =
     UmlExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, toIgnore, mappings, samples)
+
+}
+
+object UmlSolutionDbModels extends ASolutionDbModels[UmlClassDiagram, UmlExPart, UmlSampleSolution, DbUmlSampleSolution, UmlUserSolution, DbUmlUserSolution] {
 
   override def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collectionId: Int, sample: UmlSampleSolution): DbUmlSampleSolution =
     DbUmlSampleSolution(sample.id, exId, exSemVer, collectionId, sample.sample)
@@ -24,7 +28,6 @@ object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise, UmlSampleSoluti
 
   override def userSolFromDbUserSol(dbSolution: DbUmlUserSolution): UmlUserSolution =
     UmlUserSolution(dbSolution.id, dbSolution.part, dbSolution.solution, dbSolution.points, dbSolution.maxPoints)
-
 
 }
 
@@ -46,7 +49,7 @@ final case class DbUmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersi
 
 final case class DbUmlUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: UmlExPart,
                                    solution: UmlClassDiagram, points: Points, maxPoints: Points)
-  extends ADbUserSol[UmlClassDiagram]
+  extends ADbUserSol[UmlExPart, UmlClassDiagram]
 
 
 // Exercise review

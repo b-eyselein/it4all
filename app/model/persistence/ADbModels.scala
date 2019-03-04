@@ -3,10 +3,13 @@ package model.persistence
 import model.points.Points
 import model._
 
-trait ADbModels[Exercise, DbExercise, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType] {
+trait ADbModels[Exercise, DbExercise] {
 
   def dbExerciseFromExercise(collId: Int, ex: Exercise): DbExercise
 
+}
+
+trait ASolutionDbModels[SolType, PartType <: ExPart, SampleSolType <: SampleSolution[SolType], DbSampleSolType, UserSolType <: UserSolution[PartType, SolType], DbUserSolType] {
 
   def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: SampleSolType): DbSampleSolType
 
@@ -52,9 +55,11 @@ trait ADbSampleSol[SolType] extends ADbSolution[SolType] {
 
 }
 
-trait ADbUserSol[SolType] extends ADbSolution[SolType] {
+trait ADbUserSol[PartType <: ExPart, SolType] extends ADbSolution[SolType] {
 
   val username: String
+
+  val part: PartType
 
   val solution: SolType
 

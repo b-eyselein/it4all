@@ -77,14 +77,14 @@ object SqlYamlProtocol extends MyYamlProtocol {
   //  }
 
 
-  final case class SqlSampleYamlFormat(exerciseBaseValues: BaseValues) extends MyYamlObjectFormat[SqlSampleSolution] {
+  final case class SqlSampleYamlFormat(exerciseBaseValues: BaseValues) extends MyYamlObjectFormat[StringSampleSolution] {
 
-    override def readObject(yamlObject: YamlObject): Try[SqlSampleSolution] = for {
+    override def readObject(yamlObject: YamlObject): Try[StringSampleSolution] = for {
       id <- yamlObject.intField(idName)
       sample <- yamlObject.stringField(sampleName)
-    } yield SqlSampleSolution(id, sample)
+    } yield StringSampleSolution(id, sample)
 
-    override def write(obj: SqlSampleSolution): YamlValue = YamlObj(
+    override def write(obj: StringSampleSolution): YamlValue = YamlObj(
       idName -> obj.id,
       sampleName -> obj.sample
     )

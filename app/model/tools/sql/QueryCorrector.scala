@@ -1,5 +1,6 @@
 package model.tools.sql
 
+import model.StringSampleSolution
 import model.core.matching.{Match, MatchingResult}
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
@@ -17,7 +18,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[SqlSampleSolution], exercise: SqlExercise, scenario: SqlScenario)
+  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[StringSampleSolution], exercise: SqlExercise, scenario: SqlScenario)
              (implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
     parseStatement(learnerSolution) flatMap checkStatement match {
       case Failure(error) => SqlParseFailed(learnerSolution, error, -1 points)

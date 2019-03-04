@@ -1,7 +1,7 @@
 package model.tools.sql
 
 import javax.inject.{Inject, Singleton}
-import model.{ExerciseState, MyYamlFormat, SemanticVersionHelper, User}
+import model._
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.tools.sql.SqlToolMain._
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
@@ -43,8 +43,8 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override type CollType = SqlScenario
 
   override type SolType = String
-  override type SampleSolType = SqlSampleSolution
-  override type UserSolType = SqlUserSolution
+  override type SampleSolType = StringSampleSolution
+  override type UserSolType = StringUserSolution[SqlExPart]
 
   override type ReviewType = SqlExerciseReview
 
@@ -113,10 +113,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): SqlExercise = SqlExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
-    tags = Seq[SqlExTag](), hint = None, samples = Seq[SqlSampleSolution]()
+    tags = Seq[SqlExTag](), hint = None, samples = Seq[StringSampleSolution]()
   )
 
-  override protected def instantiateSolution(id: Int, exercise: SqlExercise, part: SqlExPart, solution: String, points: Points, maxPoints: Points): SqlUserSolution =
-    SqlUserSolution(id, part, solution, points, maxPoints)
+  override protected def instantiateSolution(id: Int, exercise: SqlExercise, part: SqlExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[SqlExPart] =
+    StringUserSolution[SqlExPart](id, part, solution, points, maxPoints)
 
 }

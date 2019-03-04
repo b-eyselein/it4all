@@ -1,4 +1,4 @@
-package model.nary
+package model.tools.nary
 
 import enumeratum.{EnumEntry, PlayEnum}
 import play.twirl.api.Html

@@ -5,7 +5,7 @@ import model.points.Points
 import model.tools.web._
 import model.{Difficulty, ExerciseState, SemanticVersion}
 
-object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSolution, DbWebSampleSolution, WebUserSolution, DbWebUserSolution] {
+object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
   // Exercise
 
@@ -15,22 +15,6 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSoluti
   def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], sampleSolutions: Seq[WebSampleSolution]) =
     WebExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.title, ex.state, ex.htmlText, ex.jsText,
       htmlTasks, jsTasks, sampleSolutions)
-
-  // Sample solutions
-
-  override def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: WebSampleSolution): DbWebSampleSolution =
-    DbWebSampleSolution(sample.id, exId, exSemVer, collId, sample.sample.htmlSolution, sample.sample.jsSolution)
-
-  override def sampleSolFromDbSampleSol(dbSample: DbWebSampleSolution): WebSampleSolution =
-    WebSampleSolution(dbSample.id, dbSample.sample)
-
-  // User solutions
-
-  override def dbUserSolFromUserSol(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, solution: WebUserSolution): DbWebUserSolution =
-    DbWebUserSolution(solution.id, exId, exSemVer, collId, username, solution.part, solution.solution.htmlSolution, solution.solution.jsSolution, solution.points, solution.maxPoints)
-
-  override def userSolFromDbUserSol(dbSolution: DbWebUserSolution): WebUserSolution =
-    WebUserSolution(dbSolution.id, dbSolution.part, dbSolution.solution, dbSolution.points, dbSolution.maxPoints)
 
   // HtmlTask
 
@@ -74,6 +58,24 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise, WebSampleSoluti
 
 }
 
+object WebSolutionDbModels extends ASolutionDbModels[WebSolution, WebExPart, WebSampleSolution, DbWebSampleSolution, WebUserSolution, DbWebUserSolution] {
+
+  override def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: WebSampleSolution): DbWebSampleSolution =
+    DbWebSampleSolution(sample.id, exId, exSemVer, collId, sample.sample.htmlSolution, sample.sample.jsSolution)
+
+  override def sampleSolFromDbSampleSol(dbSample: DbWebSampleSolution): WebSampleSolution =
+    WebSampleSolution(dbSample.id, dbSample.sample)
+
+  // User solutions
+
+  override def dbUserSolFromUserSol(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, solution: WebUserSolution): DbWebUserSolution =
+    DbWebUserSolution(solution.id, exId, exSemVer, collId, username, solution.part, solution.solution.htmlSolution, solution.solution.jsSolution, solution.points, solution.maxPoints)
+
+  override def userSolFromDbUserSol(dbSolution: DbWebUserSolution): WebUserSolution =
+    WebUserSolution(dbSolution.id, dbSolution.part, dbSolution.solution, dbSolution.points, dbSolution.maxPoints)
+
+}
+
 object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebExerciseReview, DbWebExerciseReview] {
 
   override def dbReviewFromReview(username: String, collId: Int, exId: Int, part: WebExPart, review: WebExerciseReview): DbWebExerciseReview =
@@ -96,7 +98,7 @@ final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersi
 
 final case class DbWebUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: WebExPart,
                                    htmlSolution: String, jsSolution: String, points: Points, maxPoints: Points)
-  extends ADbUserSol[WebSolution] {
+  extends ADbUserSol[WebExPart, WebSolution] {
 
   override val solution: WebSolution = WebSolution(htmlSolution, jsSolution)
 

@@ -1,6 +1,6 @@
-package model.nary
+package model.tools.nary
 
-import model.nary.NaryConsts._
+import model.tools.nary.NaryConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 

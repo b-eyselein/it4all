@@ -1,20 +1,22 @@
 package model.tools.sql.persistence
 
 import javax.inject.Inject
-import model.persistence.ExerciseTableDefs
+import model.persistence._
 import model.tools.sql.SqlConsts._
 import model.tools.sql._
+import model.{StringSampleSolution, StringUserSolution}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.ast.{ScalaBaseType, TypedType}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{PrimaryKey, ProvenShape}
+import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[SqlExPart, SqlExercise, SqlScenario, String, SqlSampleSolution, SqlUserSolution, SqlExerciseReview] {
+    with ExerciseTableDefs[SqlExPart, SqlExercise, SqlScenario, String, StringSampleSolution, StringUserSolution[SqlExPart], SqlExerciseReview]
+    with StringSolutionExerciseTableDefs[SqlExPart, SqlExercise, SqlScenario, StringSampleSolution, StringUserSolution[SqlExPart], SqlExerciseReview] {
 
   import profile.api._
 
@@ -27,14 +29,9 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected type CollTableDef = SqlScenarioesTable
 
 
-  override protected type DbSampleSolType = DbSqlSampleSolution
+  override protected type DbSampleSolTable = SqlSampleSolutionsTable
 
-  override protected type DbSampleSolTable = SqlSamplesTable
-
-
-  override protected type DbUserSolType = DbSqlUserSolution
-
-  override protected type DbUserSolTable = SqlSolutionsTable
+  override protected type DbUserSolTable = SqlUserSolutionsTable
 
 
   override protected type DbReviewType = DbSqlExerciseReview
@@ -43,84 +40,36 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Table queries
 
-  override protected val exTable     : TableQuery[SqlExercisesTable]       = TableQuery[SqlExercisesTable]
-  override protected val collTable   : TableQuery[SqlScenarioesTable]      = TableQuery[SqlScenarioesTable]
-  override protected val solTable    : TableQuery[SqlSolutionsTable]       = TableQuery[SqlSolutionsTable]
-  override protected val reviewsTable: TableQuery[SqlExerciseReviewsTable] = TableQuery[SqlExerciseReviewsTable]
+  override protected val exTable  : TableQuery[SqlExercisesTable]  = TableQuery[SqlExercisesTable]
+  override protected val collTable: TableQuery[SqlScenarioesTable] = TableQuery[SqlScenarioesTable]
 
-  private val sqlSamples = TableQuery[SqlSamplesTable]
+  override protected val samplesTableQuery                           = TableQuery[SqlSampleSolutionsTable]
+  override protected val solTable: TableQuery[SqlUserSolutionsTable] = TableQuery[SqlUserSolutionsTable]
+
+  override protected val reviewsTable: TableQuery[SqlExerciseReviewsTable] = TableQuery[SqlExerciseReviewsTable]
 
   // Helper methods
 
   override protected val dbModels               = SqlDbModels
   override protected val exerciseReviewDbModels = SqlExerciseReviewDbModels
 
-  override protected def copyDbUserSolType(sol: DbSqlUserSolution, newId: Int): DbSqlUserSolution = sol.copy(id = newId)
-
   override def exDbValuesFromExercise(collId: Int, compEx: SqlExercise): DbSqlExercise = dbModels.dbExerciseFromExercise(collId, compEx)
 
   // Reading
-
-  protected def futureSamplesForExercise(collId: Int, exId: Int): Future[Seq[SqlSampleSolution]] =
-    db.run(sqlSamples
-      .filter {
-        sample => sample.collectionId === collId && sample.exerciseId === exId
-      }
-      .result
-      .map(_ map dbModels.sampleSolFromDbSampleSol))
-
-
-  override def futureExerciseById(collId: Int, exId: Int): Future[Option[SqlExercise]] = for {
-    maybeEx <- db.run(exTable.filter(e => e.id === exId && e.collectionId === collId).result.headOption)
-    samples <- futureSamplesForExercise(collId, exId)
-  } yield maybeEx map (dbEx => dbModels.exerciseFromDbValues(dbEx, samples))
-
-  override def futureExercisesInColl(collId: Int): Future[Seq[SqlExercise]] =
-    db.run(exTable.filter(_.collectionId === collId).result) flatMap { allExes =>
-
-      Future.sequence(allExes map { dbEx =>
-        futureSamplesForExercise(collId, dbEx.id) map {
-          samples => dbModels.exerciseFromDbValues(dbEx, samples)
-        }
-      })
-    }
-
-  //  override def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = db.run(
-  //    solTable.filter {
-  //      sol => sol.username === user.username && sol.collectionId === collId && sol.exerciseId === exId
-  //    }
-  //      .sortBy(_.id.desc)
-  //      .result.headOption.map {
-  //      case None           => None
-  //      case Some(solution) =>
-  //        if (solution.points == solution.maxPoints) Some(SolvedStates.CompletelySolved)
-  //        else Some(SolvedStates.PartlySolved)
-  //    }
-  //  )
-
 
   override protected def completeExForEx(collId: Int, ex: DbSqlExercise): Future[SqlExercise] = for {
     samples <- futureSamplesForExercise(collId, ex.id)
   } yield dbModels.exerciseFromDbValues(ex, samples)
 
-
-  override def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, sqlExPart: SqlExPart): Future[Seq[String]] =
-    db.run(sqlSamples.filter {
-      e => e.collectionId === scenarioId && e.exerciseId === exerciseId
-    }.map(_.sample).result)
-
   // Saving
 
   override def saveExerciseRest(collId: Int, compEx: SqlExercise): Future[Boolean] = {
-    val dbSamples = compEx.samples map (s => dbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+    val dbSamples = compEx.samples map (s => solutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
-      samplesSaved <- saveSeq[DbSqlSampleSolution](dbSamples, s => db.run(sqlSamples insertOrUpdate s))
+      samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(samplesTableQuery insertOrUpdate s))
     } yield samplesSaved
   }
-
-  //  private def saveSqlExercise(sqlExercise: SqlExercise): Future[Boolean] =
-  //    db.run(exTable insertOrUpdate dbModels.dbExerciseFromExercise(sqlExercise)) flatMap { _ => saveSeq(sqlExercise.samples, saveSqlSample) }
 
   // Column types
 
@@ -157,21 +106,11 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  class SqlSamplesTable(tag: Tag) extends ASampleSolutionsTable(tag, "sql_samples") {
 
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, collectionId))
+  class SqlSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "sql_samples")
 
+  class SqlUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "sql_solutions")
 
-    override def * : ProvenShape[DbSqlSampleSolution] = (id, exerciseId, exSemVer, collectionId, sample) <> (DbSqlSampleSolution.tupled, DbSqlSampleSolution.unapply)
-
-  }
-
-  class SqlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "sql_solutions") {
-
-    override def * : ProvenShape[DbSqlUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part, solution,
-      points, maxPoints) <> (DbSqlUserSolution.tupled, DbSqlUserSolution.unapply)
-
-  }
 
   class SqlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "sql_exercise_reviews") {
 

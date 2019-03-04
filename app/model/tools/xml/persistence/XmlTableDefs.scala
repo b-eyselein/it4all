@@ -50,6 +50,7 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Helper methods
 
   override protected val dbModels               = XmlDbModels
+  override protected val solutionDbModels       = XmlSolutionDbModels
   override protected val exerciseReviewDbModels = XmlExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbXmlUserSolution, newId: Int): DbXmlUserSolution = oldSol.copy(id = newId)
@@ -60,7 +61,7 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Reading
 
   override protected def completeExForEx(collId: Int, ex: DbXmlExercise): Future[XmlExercise] = for {
-    samples <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result) map (_ map dbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(samplesTable.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
   } yield dbModels.exerciseFromDbValues(ex, samples)
 
   //  override def futureUserCanSolvePartOfExercise(username: String, collId: Int, exId: Int, exSemVer: SemanticVersion, part: XmlExPart): Future[Boolean] = part match {
@@ -83,7 +84,7 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Saving
 
   override def saveExerciseRest(collId: Int, compEx: XmlExercise): Future[Boolean] = {
-    val dbSamples = compEx.samples map (s => dbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+    val dbSamples = compEx.samples map (s => solutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
       samplesSaved <- saveSeq[DbXmlSampleSolution](dbSamples, i => db.run(samplesTable += i), Some("XmlSample"))

@@ -1,4 +1,4 @@
-package model.nary
+package model.tools.nary
 
 import javax.inject.Inject
 import model.learningPath.LearningPathTableDefs

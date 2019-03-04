@@ -1,8 +1,8 @@
-package model.nary
+package model.tools.nary
 
-import model.nary.NAryNumber._
-import model.nary.NaryConsts.{BinaryAbs, correctName, InvertedAbs}
-import model.nary.NumberBase._
+import model.tools.nary.NAryNumber._
+import model.tools.nary.NaryConsts.{BinaryAbs, correctName, InvertedAbs}
+import model.tools.nary.NumberBase._
 import play.api.libs.json.{JsValue, Json}
 
 sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSolution: NAryNumber) {

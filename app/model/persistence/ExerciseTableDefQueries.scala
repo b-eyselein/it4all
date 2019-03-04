@@ -22,7 +22,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
   protected def copyDbUserSolType(sol: DbUserSolType, newId: Int): DbUserSolType
 
   def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UserSolType): Future[Boolean] = {
-    val dbUserSol = dbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol)
+    val dbUserSol = solutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol)
 
     val insertQuery = solTable returning solTable.map(_.id) into ((dbUserSol, id) => copyDbUserSolType(dbUserSol, id))
 
@@ -57,9 +57,9 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
     }
 
   def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] =
-    db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).result.headOption) flatMap {
-      case Some(ex) => completeExForEx(collId, ex) map Some.apply
+    db.run(exTable.filter { ex => ex.id === id && ex.collectionId === collId }.result.headOption) flatMap {
       case None     => Future.successful(None)
+      case Some(ex) => completeExForEx(collId, ex) map Some.apply
     }
 
   def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: PartType): Future[Option[UserSolType]] = db.run(
@@ -67,11 +67,10 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
       .filter {
         sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId && sol.part === part
       }
-      // take last sample sol (with highest id)
-      .sortBy(_.id.desc)
+      .sortBy(_.id.desc) // take last sample sol (with highest id)
       .result
       .headOption
-      .map(_ map dbModels.userSolFromDbUserSol))
+      .map(_ map solutionDbModels.userSolFromDbUserSol))
 
   def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, part: PartType): Future[Seq[String]]
 
@@ -100,7 +99,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
     }
   }
 
-  override def futureInsertExercise(collId: Int, exercise: ExType): Future[Boolean] = {
+  def futureInsertExercise(collId: Int, exercise: ExType): Future[Boolean] = {
     val deleteOldExQuery = exTable.filter {
       dbEx: ExTableDef =>
         dbEx.id === exercise.id && dbEx.semanticVersion === exercise.semanticVersion && dbEx.collectionId === collId

@@ -35,7 +35,7 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
       state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
       maxPoints <- yamlObject.intField(maxPointsName)
 
-      sampleSolutionTries <- yamlObject.arrayField(samplesName, RegexSampleSolutionYamlFormat.read)
+      sampleSolutionTries <- yamlObject.arrayField(samplesName, StringSampleSolutionYamlFormat.read)
 
       testDataTries <- yamlObject.arrayField(testDataName, RegexTestDataYamlFormat.read)
     } yield {
@@ -50,17 +50,6 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(obj: RegexExercise): YamlValue = ???
-
-  }
-
-  private object RegexSampleSolutionYamlFormat extends MyYamlObjectFormat[RegexSampleSolution] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[RegexSampleSolution] = for {
-      id <- yamlObject.intField(idName)
-      sample <- yamlObject.stringField(sampleName)
-    } yield RegexSampleSolution(id, sample)
-
-    override def write(obj: RegexSampleSolution): YamlValue = ???
 
   }
 

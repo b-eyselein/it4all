@@ -1,9 +1,9 @@
-package model.nary
+package model.tools.nary
 
 import javax.inject.{Inject, Singleton}
 import model.User
 import model.core.result.EvaluationResult
-import model.nary.NaryConsts._
+import model.tools.nary.NaryConsts._
 import model.toolMains.{RandomExerciseToolMain, ToolState}
 import play.api.Logger
 import play.api.i18n.MessagesProvider

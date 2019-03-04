@@ -1,21 +1,21 @@
-@(toolMain: model.nary.NaryToolMain)
+@(toolMain: model.tools.nary.NaryToolMain)
 
-@newExUrl(part: model.nary.NaryExPart) = @{
+@newExUrl(part: model.tools.nary.NaryExPart) = @{
     coll.routes.RandomExerciseController.newExercise(toolMain.urlPart, part.urlName)
 }
 
 <script>
         $(() => {
             $('#convButton').click(function () {
-                window.location = '@newExUrl(model.nary.NaryExParts.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
+                window.location = '@newExUrl(model.tools.nary.NaryExParts.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
             });
 
             $('#addButton').click(function () {
-                window.location = '@newExUrl(model.nary.NaryExParts.NaryAdditionExPart)?base=' + $('#addBase').val();
+                window.location = '@newExUrl(model.tools.nary.NaryExParts.NaryAdditionExPart)?base=' + $('#addBase').val();
             });
 
             $('#twoCompButton').click(function () {
-                window.location = '@newExUrl(model.nary.NaryExParts.TwoComplementExPart)?verbose=' + $('#twoComp').val();
+                window.location = '@newExUrl(model.tools.nary.NaryExParts.TwoComplementExPart)?verbose=' + $('#twoComp').val();
             });
         });
 </script>
@@ -29,14 +29,14 @@
         </div>
         <select title="Startsystem Umwandlung" class="form-control" id="convFromBase">
             <option value="RANDOM">Zufälligem System</option>
-            @for(base <- model.nary.NumberBase.values) {
+            @for(base <- model.tools.nary.NumberBase.values) {
                 <option value="@base.entryName">@base.systemName</option>
             }
         </select>
         <span class="input-group-text">nach</span>
         <select title="Zielsystem Umwandlung" class="form-control" id="convToBase">
             <option value="RANDOM">Zufälligem System</option>
-            @for(base <- model.nary.NumberBase.values) {
+            @for(base <- model.tools.nary.NumberBase.values) {
                 <option value="@base.entryName">@base.systemName</option>
             }
         </select>
@@ -54,7 +54,7 @@
         </div>
         <select title="System Addition" class="form-control" id="addBase">
             <option value="RANDOM">Zufälligem System</option>
-            @for(base <- model.nary.NumberBase.values) {
+            @for(base <- model.tools.nary.NumberBase.values) {
                 <option value="@base.entryName">@base.systemName</option>
             }
         </select>

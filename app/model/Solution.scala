@@ -25,3 +25,9 @@ trait UserSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
   val solution: SolType
 
 }
+
+
+final case class StringSampleSolution(id: Int, sample: String) extends SampleSolution[String]
+
+final case class StringUserSolution[PartType <: ExPart](id: Int, part: PartType, solution: String, points: Points, maxPoints: Points)
+  extends UserSolution[PartType, String]

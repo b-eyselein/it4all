@@ -54,6 +54,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Helper methods
 
   override protected val dbModels               = UmlDbModels
+  override protected val solutionDbModels       = UmlSolutionDbModels
   override protected val exerciseReviewDbModels = UmlExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbUmlUserSolution, newId: Int): DbUmlUserSolution = oldSol.copy(id = newId)
@@ -66,7 +67,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override def completeExForEx(collId: Int, ex: DbUmlExercise): Future[UmlExercise] = for {
     dbToIgnore <- db.run(umlToIgnore filter (i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion) result)
     dbMappings <- db.run(umlMappings filter (m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion) result)
-    samples <- db.run(umlSamples filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map dbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(umlSamples filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
   } yield {
 
     val toIgnore = dbToIgnore map {
@@ -86,7 +87,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Saving
 
   override protected def saveExerciseRest(collId: Int, compEx: UmlExercise): Future[Boolean] = {
-    val dbSamples = compEx.sampleSolutions map (s => dbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+    val dbSamples = compEx.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
       toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.id, compEx.semanticVersion, collId, i))))

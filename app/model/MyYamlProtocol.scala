@@ -185,4 +185,16 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
   }
 
+  protected object StringSampleSolutionYamlFormat extends MyYamlObjectFormat[StringSampleSolution] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[StringSampleSolution] = for {
+      id <- yamlObject.intField(idName)
+      sample <- yamlObject.stringField(sampleName)
+    } yield StringSampleSolution(id, sample)
+
+    override def write(obj: StringSampleSolution): YamlValue = ???
+
+  }
+
+
 }

@@ -54,6 +54,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   // Helper methods
 
   override protected val dbModels               = RoseDbModels
+  override protected val solutionDbModels       = RoseSolutionDbModels
   override protected val exerciseReviewDbModels = RoseExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbRoseUserSolution, newId: Int): DbRoseUserSolution = oldSol.copy(id = newId)
@@ -65,12 +66,12 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   override protected def completeExForEx(collId: Int, ex: DbRoseExercise): Future[RoseExercise] = for {
     inputTypes <- db.run(roseInputs.filter(_.exerciseId === ex.id).result) map (_ map dbModels.inputTypeFromDbInputType)
-    samples <- db.run(roseSamples.filter(_.exerciseId === ex.id).result) map (_ map dbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(roseSamples.filter(_.exerciseId === ex.id).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
   } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples)
 
 
   override protected def saveExerciseRest(collId: Int, ex: RoseExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => dbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
     val dbInputs = ex.inputTypes map (it => dbModels.dbInputTypeFromInputType(ex.id, ex.semanticVersion, collId, it))
 
     for {
@@ -80,14 +81,11 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   }
 
 
-  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: RoseExPart): Future[Seq[String]] = db.run(
-    roseSamples
-      .filter {
-        s => s.exerciseId === exerciseId && s.collectionId === collId
-      }
+  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: RoseExPart): Future[Seq[String]] =
+    db.run(roseSamples
+      .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
       .map(_.sample)
-      .result
-  )
+      .result)
 
   // Implicit column types
 
