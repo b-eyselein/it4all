@@ -1,0 +1,85 @@
+@import model.tools.nary.{NAryNumber, NaryConsts, NumberBase, NaryToolMain, NaryExParts}
+
+@(user: model.User, startingNumber: NAryNumber, toNB: NumberBase, reqFromBase: String, reqToBase: String, toolMain: NaryToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+
+@title = @{
+    "Zahlensysteme: Zahlenumwandlung"
+}
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/nary/naryConversion.js")');</script>
+
+    <style>
+            textarea {
+                resize: none;
+            }
+    </style>
+}
+
+@main(title, Some(user), scripts) {
+    <div class="container">
+        <h3 class="text-center">@title
+            vom <span id="@NaryConsts.StartingNumBase" data-base="@startingNumber.base">@startingNumber.base.systemName</span>
+            in das <span id="@NaryConsts.TargetNumBase" data-base="@toNB">@toNB.systemName</span></h3>
+
+        <div class="row">
+            <div class="col-sm-3"></div>
+
+            <div class="col-sm-6 col-sm-offset-3">
+
+                @helper.CSRF.formField
+
+                <em class="text-info">Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.</em>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <input value="@startingNumber" title="Vorgegebene Zahl" readonly class="form-control text-right" id="@NaryConsts.valueName">
+                        <div class="input-group-append">
+                            <span class="input-group-text">@startingNumber.base.dispBase</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">--></span>
+                        </div>
+                        <input pattern="@toNB.htmlPattern" autocomplete="off" autofocus class="form-control text-right" id="@NaryConsts.solutionName" placeholder="Ihre Lösung">
+                        <div class="input-group-append">
+                            <span class="input-group-text">@toNB.dispBase</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="correctnessHook"></div>
+
+                <hr>
+
+                <div class="btn-group d-flex">
+                    <button id="testBtn" class="btn btn-primary w-100" data-url="@coll.routes.RandomExerciseController.correctLive(toolMain.urlPart,
+                        NaryExParts.NaryConversionExPart.urlName)">Testen</button>
+                    <a href="@coll.routes.RandomExerciseController.newExercise(toolMain.urlPart, NaryExParts.NaryConversionExPart.urlName)?fromBase=@reqFromBase&toBase=@reqToBase"
+                    class="btn btn-secondary w-100">Nächste Aufgabe</a>
+                </div>
+
+            </div>
+
+            <div class="col-sm-3"></div>
+        </div>
+
+        <hr>
+
+        <h4 class="text-center">Platz für Notizen</h4>
+
+        <em class="text-info">Notizen werden für die Korrektur nicht beachtet.</em>
+
+        <textarea title="Platz für Notizen" placeholder="Platz für Notizen" class="form-control" rows="10"></textarea>
+
+    </div>
+}

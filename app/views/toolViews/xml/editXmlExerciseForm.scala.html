@@ -1,0 +1,76 @@
+@import model.tools.xml.{XmlConsts, XmlExercise, XmlToolMain}
+
+@(user: model.User, collId: Int, exerciseForm: Form[XmlExercise], isCreation: Boolean, toolMainObject: XmlToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@additionalScripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/xml/editXmlExerciseForm.js")');</script>
+}
+
+
+@specialFields = {
+
+    <p>
+    @exerciseForm.errors.foreach(println)
+    </p>
+
+    <fieldset>
+        <legend class="text-center">Spezialangaben</legend>
+
+        <div class="form-group row">
+        @myhelpers.textareaWithLabel(exerciseForm(XmlConsts.grammarDescriptionName), "Grammatik-beschreibung", rowCount = 5, 2, 10,
+            placeHolder = Some("Beschreibung der Grammatik"), isRequired = true)
+        </div>
+
+        <div class="form-group row">
+        @myhelpers.inputWithLabel(exerciseForm(XmlConsts.rootNodeName), "Wurzelknoten", "text", 2, 10,
+            placeHolder = Some("root"), isRequired = true)
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend class="text-center">Musterlösungen</legend>
+
+        <div class="row">
+            <div class="col-md-2"><p class="text-center">ID</p></div>
+            <div class="col-md-5"><p class="text-center">Grammatik</p></div>
+            <div class="col-md-5"><p class="text-center">Dokument</p></div>
+        </div>
+
+        <div id="sampleSolsDiv">
+        @helper.repeat(exerciseForm(XmlConsts.samplesName), min = 1) { sampleField =>
+            <div class="form-group row" id="sample_row_@sampleField(XmlConsts.idName).value">
+                <div class="col-md-2">
+                    <div class="form-group">@myhelpers.input(sampleField(XmlConsts.idName), "number", isReadOnly = true)</div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger btn-block deleteSampleSolBtn" title="Musterlösung löschen"
+                        data-solutionid="@sampleField(XmlConsts.idName).value">
+                            <span class="octicon octicon-x"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-5">@myhelpers.textarea(sampleField(XmlConsts.grammarName), 10, placeHolder = Some("<!ELEMENT root ...>"),
+                    isRequired = true)</div>
+                <div class="col-md-5">@myhelpers.textarea(sampleField(XmlConsts.documentName), 10, placeHolder = Some("<root></root>"),
+                    isRequired = true)</div>
+            </div>
+        }
+        </div>
+
+        <div class="form-group">
+            <button type="button" class="btn btn-outline-primary btn-block" title="Weitere Musterlösung" id="addSampleSolBtn">
+                <span class="octicon octicon-plus"></span>
+            </button>
+        </div>
+
+        <hr>
+
+    </fieldset>
+
+}
+
+
+@idExercises.editExerciseBaseForm(user, collId, exerciseForm, isCreation, toolMainObject, specialFields, additionalScripts)

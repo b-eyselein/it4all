@@ -1,0 +1,35 @@
+@(user: model.User)
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
+
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/xml/xmlPlayground.js")');
+    </script>
+
+    <style>
+            .CodeMirror {
+                border: 1px solid lightgrey;
+                /*font-family: Arial, monospace;*/
+                font-size: 14px;
+            }
+    </style>
+}
+
+@main("XML: Playground", Some(user), scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>XML: Playground</h1>
+        </div>
+
+        <h2>Editor</h2>
+        <textarea id="xmlEditor">@model.tools.xml.XmlConsts.StandardXmlPlayground</textarea>
+
+        @* FIXME implement functionality ... *@
+        @*<button onclick="testTheSolution('@exes.idPartExes.routes.XmlController.playgroundCorrection');"*@
+        @*class="btn btn-primary btn-block">Gegen DTD in Dokument testen...</button>*@
+    </div>
+}

@@ -34,6 +34,6 @@ abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: Execu
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.up)
+  override def indexCall: Call = controllers.coll.routes.RandomExerciseController.index(this.urlPart)
 
 }

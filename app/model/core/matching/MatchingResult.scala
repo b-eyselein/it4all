@@ -1,10 +1,10 @@
 package model.core.matching
 
-import model._
 import model.core.CoreConsts._
 import model.core.JsonWriteable
-import model.core.result.{EvaluationResult, SuccessType}
 import model.core.result.SuccessType.{COMPLETE, NONE, PARTIALLY}
+import model.core.result.{EvaluationResult, SuccessType}
+import model.points._
 import play.api.libs.json.{JsObject, Json}
 
 import scala.language.postfixOps
@@ -35,4 +35,3 @@ final case class MatchingResult[M <: Match](matchName: String, matchSingularName
   )
 
 }
-

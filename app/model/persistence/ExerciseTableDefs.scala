@@ -1,63 +1,107 @@
 package model.persistence
 
+import model._
+import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
-import model.{CompleteEx, Exercise, SemanticVersion}
-import play.api.Logger
+import model.points.Points
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import slick.lifted.ForeignKeyQuery
+import slick.lifted.{ForeignKeyQuery, PrimaryKey}
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends LearningPathTableDefs {
+trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+  extends LearningPathTableDefs
+    with ExerciseTableDefQueries[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
 
-  protected type ExTableDef <: HasBaseValuesTable[Ex]
+  // Abstract types
 
-  protected val exTable: TableQuery[ExTableDef]
+  protected type DbExType <: ADbExercise
 
-  // Numbers
+  protected type ExTableDef <: ExerciseInCollectionTable
 
-  def futureNumOfExes: Future[Int] = db.run(exTable.distinctOn(_.semanticVersion).length.result)
+
+  protected type CollTableDef <: ExerciseCollectionTable
+
+
+  protected type DbSampleSolType <: ADbSampleSol[SolType]
+
+  protected type DbSampleSolTable <: ASampleSolutionsTable
+
+
+  protected type DbUserSolType <: ADbUserSol[PartType, SolType]
+
+  protected type DbUserSolTable <: AUserSolutionsTable
+
+
+  protected type DbReviewType <: DbExerciseReview[PartType]
+
+  protected type ReviewsTable <: ExerciseReviewsTable
+
+  // Table Queries
+
+  protected val collTable: TableQuery[CollTableDef]
+  protected val exTable  : TableQuery[ExTableDef]
+
+  protected val sampleSolutionsTableQuery: TableQuery[DbSampleSolTable]
+  protected val userSolutionsTableQuery  : TableQuery[DbUserSolTable]
+
+  protected val reviewsTable: TableQuery[ReviewsTable]
+
+  // Helper methods
+
+  protected val dbModels              : ADbModels[ExType, DbExType]
+  protected val solutionDbModels      : ASolutionDbModels[SolType, PartType, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType]
+  protected val exerciseReviewDbModels: AExerciseReviewDbModels[PartType, ReviewType, DbReviewType]
+
+  protected def exDbValuesFromExercise(collId: Int, exercise: ExType): DbExType
 
   // Reading
 
-  def futureCompleteExes: Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
-
-  def futureCompleteExById(id: Int): Future[Option[CompEx]] = db.run {
-    exTable.filter(_.id === id).sortBy(_.semanticVersion.desc).result.headOption
-  } flatMap {
-    case Some(ex) => completeExForEx(ex) map Some.apply
-    case None     => Future.successful(None)
-  }
-
-  def futureCompleteExByIdAndVersion(id: Int, semVer: SemanticVersion): Future[Option[CompEx]] = db.run {
-    exTable.filter(e => e.id === id && e.semanticVersion === semVer).result.headOption
-  } flatMap {
-    case Some(ex) => completeExForEx(ex) map Some.apply
-    case None     => Future.successful(None)
-  }
-
-  protected def completeExForEx(ex: Ex): Future[CompEx]
+  protected def completeExForEx(collId: Int, ex: DbExType): Future[ExType]
 
   // Saving
 
-  def futureSaveCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable.filter(_.id === compEx.ex.id).delete) flatMap { _ =>
-    db.run(exTable += compEx.ex) flatMap { _ => saveExerciseRest(compEx) } recover { case e: Throwable =>
-      Logger.error("Could not save exercise", e)
-      false
-    }
-  }
+  protected def saveExerciseRest(collId: Int, ex: ExType): Future[Boolean]
 
-  def futureInsertCompleteEx(compEx: CompEx): Future[Boolean] = db.run(exTable += compEx.ex) flatMap {
-    insertCount => saveExerciseRest(compEx)
-  }
+  // Implicit column types
 
-  protected def saveExerciseRest(compEx: CompEx): Future[Boolean]
+  protected implicit val partTypeColumnType: BaseColumnType[PartType]
+
+  protected implicit val difficultyColumnType: BaseColumnType[Difficulty] =
+    MappedColumnType.base[Difficulty, String](_.entryName, Difficulties.withNameInsensitive)
 
   // Abstract table classes
+
+  abstract class ExerciseCollectionTable(tag: Tag, tableName: String) extends Table[CollType](tag, tableName) {
+
+    def id: Rep[Int] = column[Int](idName, O.PrimaryKey)
+
+    def title: Rep[String] = column[String]("title")
+
+    def author: Rep[String] = column[String]("author")
+
+    def text: Rep[String] = column[String]("ex_text")
+
+    def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
+
+    def shortName: Rep[String] = column[String]("short_name")
+
+  }
+
+  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[DbExType](tag, name) {
+
+    def collectionId: Rep[Int] = column[Int]("collection_id")
+
+
+    def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId))
+
+    def scenarioFk: ForeignKeyQuery[CollTableDef, CollType] = foreignKey("scenario_fk", collectionId, collTable)(_.id)
+
+  }
 
   abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
 
@@ -65,9 +109,52 @@ trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends Learni
 
     def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
+    def collectionId: Rep[Int] = column[Int]("collection_id")
 
-    def exerciseFk: ForeignKeyQuery[ExTableDef, Ex] = foreignKey("exercise_fk", (exerciseId, exSemVer), exTable)(ex => (ex.id, ex.semanticVersion))
+
+    def exerciseFk: ForeignKeyQuery[ExTableDef, DbExType] = foreignKey("exercise_fk", (exerciseId, exSemVer, collectionId), exTable)(ex => (ex.id, ex.semanticVersion, ex.collectionId))
 
   }
+
+
+  protected abstract class ASampleSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DbSampleSolType](tag, name) {
+
+    def id: Rep[Int] = column[Int]("id", O.PrimaryKey)
+
+  }
+
+  protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DbUserSolType](tag, name) {
+
+    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
+
+    def username: Rep[String] = column[String]("username")
+
+    def part: Rep[PartType] = column[PartType]("part")(partTypeColumnType)
+
+    def points: Rep[Points] = column[Points](pointsName)
+
+    def maxPoints: Rep[Points] = column[Points]("max_points")
+
+
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
+
+  }
+
+
+  abstract class ExerciseReviewsTable(tag: Tag, tableName: String) extends ExForeignKeyTable[DbReviewType](tag, tableName) {
+
+    def username: Rep[String] = column[String]("username")
+
+    def exercisePart: Rep[PartType] = column[PartType](partName)
+
+    def difficulty: Rep[Difficulty] = column[Difficulty](difficultyName)
+
+    def maybeDuration: Rep[Int] = column[Int]("maybe_duration")
+
+
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, collectionId, exercisePart))
+
+  }
+
 
 }

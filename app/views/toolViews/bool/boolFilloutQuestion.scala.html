@@ -1,0 +1,72 @@
+@(user: model.User, question: model.tools.bool.FilloutQuestion, toolMain: model.tools.bool.BoolToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@variables = @{
+    question.variables.toList.sortBy(_.variable)
+}
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/bool/boolFillout.js")');</script>
+}
+
+@title = @{
+    "Ausfüllen einer Wertetabelle"
+}
+
+@main(title, Some(user), scripts) {
+    <div class="container">
+
+        <h2 class="text-center">
+            <code>@model.tools.bool.BoolConsts.LerVariable
+                = <span id="@model.tools.bool.BoolConsts.formulaName" data-formula="@question.formula.asString">@Html(question.formula.asHtml)</span></code>
+        </h2>
+
+        <br>
+
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            @for(v <- variables) {
+                                <th class="text-center">@v</th>
+                            }
+                            <th class="text-center" id="lerVar">@model.tools.bool.BoolConsts.LerVariable</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody id="valueTableBody">
+                    @for(assignment <- question.assignments) {
+                        <tr id="@assignment.identifier">
+
+                            @for(variable <- variables) {
+                                <td class="text-center" data-variable="@variable" data-value="@assignment(variable)">@assignment.asChar(variable)</td>
+                            }
+
+                        <td>
+                            <button type="button" class="btn btn-outline-primary btn-block">0</button>
+                        </td>
+                        <td class="correctnessHook">&nbsp;</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+
+                @helper.CSRF.formField
+
+                <div class="btn-group d-flex">
+                    <button id="testBtn" class="btn btn-primary w-100" data-url="@coll.routes.RandomExerciseController.correctLive(toolMain.urlPart, model.tools.bool.BoolExParts.TableFillout.urlName)">
+                        Testen</button>
+                    <a class="btn btn-secondary w-100" href="@coll.routes.RandomExerciseController.newExercise(toolMain.urlPart, question.exPart.urlName)">
+                        Nächste Aufgabe</a>
+                </div>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+
+    </div>
+}

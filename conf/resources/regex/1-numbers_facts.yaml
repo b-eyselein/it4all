@@ -1,0 +1,122 @@
+- id: 1
+  semanticVersion: {major: 0, minor: 0, patch: 1}
+  title: Postleitzahlen
+  author: bje40dc
+  text: >
+    Schreiben Sie einen regulären Ausdruck, der (deutsche) Postleitzahlen überprüfen kann. Diese bestehen aus 5 Ziffern
+    ohne führende Nullen.
+  status: APPROVED
+  maxPoints: 1
+  testData:
+    - {id: 1, data: '97070', included: true}
+    - {id: 2, data: '90210', included: true}
+    - {id: 3, data: '10115', included: true}
+    - {id: 4, data: '01234', included: false}
+    - {id: 5, data: '8911', included: false}
+    - {id: 6, data: '654321', included: false}
+  samples:
+    - {id: 1, sample: '[1-9]\d{4}'}
+    - {id: 2, sample: '[1-9][1-9]{4}'}
+
+- id: 2
+  semanticVersion: {major: 1, minor: 0, patch: 0}
+  title: Einfache Datumsangaben
+  author: bje40dc
+  text: >
+    Schreiben Sie einen regulären Ausdruck, der eine einfache Version von Datumsangaben findet. Dabei sollen der Tag und
+    der Monat jeweils aus zwei und die Jahresangabe aus vier Zahlen bestehen. Als Trennzeichen soll jeweils ein Punkt
+    verwendet werden. Eine Validierung auf kalendarische Korrektheit (zum Beispiel, dass der 30.02.2019 oder der
+    99.17.3005 nicht existieren) ist nicht erforderlich. Außerdem sind führende Nullen erlaubt.
+  status: APPROVED
+  maxPoints: 2
+  testData:
+    - {id: 1, data: '12.01.1999', included: true}
+    - {id: 2, data: '99.17.3006', included: true}
+    - {id: 3, data: '33.11.1931', included: true}
+    - {id: 4, data: '01.01.0700', included: true}
+    - {id: 5, data: '1.1.1999', included: false}
+    - {id: 6, data: '01.01.700', included: false}
+    - {id: 7, data: '3.12.2011', included: false}
+    - {id: 8, data: '29.3.2018', included: false}
+    - {id: 9, data: '1.1.1', included: false}
+    - {id: 10, data: '12.10', included: false}
+    - {id: 11, data: '11.2.',included: false}
+  samples:
+    - {id: 1, sample: '\d\d\.\d\d\.\d\d\d\d'}
+    - {id: 2, sample: '\d{2}\.\d{2}\.\d{4}'}
+    - {id: 3, sample: '[0-9]{2}\.[0-9]{2}\.[0-9]{4}'}
+
+- id: 3
+  semanticVersion: {major: 0, minor: 0, patch: 1}
+  title: Komlexe Datumsangaben
+  author: bje40dc
+  text: >
+    Schreiben Sie einen regulären Ausdruck, der eine komplexere Version von Datumsangaben überprüfen kann. Dabei sollen
+    der Tag und der Monat jeweils aus ein oder zwei und die Jahresangabe aus zwei bis vier Ziffern bestehen. Als
+    Trennzeichen soll jeweils ein Punkt verwendet werden. Eine Validierung auf kalendarische Korrektheit ist nicht
+    erforderlich. Führende Nullen sind erlaubt.
+  status: APPROVED
+  maxPoints: 3
+  testData:
+    - {id: 1, data: '12.01.1999', included: true}
+    - {id: 2, data: '99.17.3006', included: true}
+    - {id: 3, data: '33.11.1931', included: true}
+    - {id: 4, data: '1.1.1999', included: true}
+    - {id: 5, data: '01.01.0700', included: true}
+    - {id: 6, data: '01.01.700', included: true}
+    - {id: 7, data: '3.12.2011', included: true}
+    - {id: 8, data: '29.3.2018', included: true}
+    - {id: 9, data: '1.1.1',included: false}
+    - {id: 10, data: '12.10', included: false}
+    - {id: 11, data: '11.2.', included: false}
+  samples:
+    - {id: 1, sample: '\d\d?\.\d\d?\.\d\d\d?\d?'}
+    - {id: 2, sample: '\d{1,2}\.\d{1,2}\.\d{2,4}'}
+    - {id: 3, sample: '[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4}'}
+
+- id: 4
+  semanticVersion: {major: 0, minor: 0, patch: 1}
+  title: Semantische Versionierung
+  author: bje40dc
+  text: >
+    Schreiben Sie einen regulären Ausruck, der semantische Versionsnummern überprüfen kann. (Semantische) Versionsnummern
+    bestehen aus einer Haupt-, einer Neben-, einer Revisions- und einer optionalen Buildnummer, die jeweils mit einem
+    Punkt beziehungsweise im Fall der Revisions- und Buildnummer mit einem Minus getrennt werden. Jede der Nummern kann
+    mehrstellig sein und führende Nullen besitzen.
+  status: APPROVED
+  maxPoints: 3
+  testData:
+    - {id: 1, data: '2.3.5-0041', included: true}
+    - {id: 2, data: '0.0.1', included: true}
+    - {id: 3, data: '1.3.3-7', included: true}
+    - {id: 4, data: '1.12.2-21', included: true}
+    - {id: 5, data: '2.05.7-11', included: true}
+    - {id: 6, data: '1.0', included: false}
+    - {id: 7, data: '1..10', included: false}
+    - {id: 8, data: '1..10', included: false}
+    - {id: 9, data: '1.0-3', included: false}
+  samples:
+    - {id: 1, sample: '\d+\.\d+\.\d+(-\d+)?'}
+    - {id: 2, sample: '[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+)?'}
+
+- id: 5
+  semanticVersion: {major: 0, minor: 0, patch: 1}
+  title: E-Mail-Adressen
+  author: bje40dc
+  text: >
+    Erstellen Sie einen regulären Ausdruck, der E-Mail-Adressen überprüfen kann. Eine Mailadresse besteht aus einem
+    lokalen und einem Domänenteil, die durch ein @-Zeichen getrennt sind. Der Domänenteil wiederum besteht aus einem
+    Hostnamen und einer Top-Level-Domain, die durch einen Punkt getrennt sind. Der Einfachkeit halber beschränken wir die
+    Zeichen, die in einer Mailadresse vorkommen dürfen, auf alle Klein- und Großbuchstaben, alle Ziffern, Minus,
+    Punkt und Unterstrich (_). Jeder Teil besteht aus mindestens einem dieser Zeichen.
+  status: APPROVED
+  maxPoints: 4
+  testData:
+    - {id: 1, data: 'james.bond@mi5.uk', included: true}
+    - {id: 2, data: 'jason_bourne@cia.gov', included: true}
+    - {id: 3, data: 'jack.bauer@24.com', included: true}
+    - {id: 4, data: 'xyz@localhost', included: false}
+    - {id: 5, data: '@web.de', included: false}
+    - {id: 6, data: 'test.net', included: false}
+  samples:
+    - {id: 1, sample: '([a-z]|[A-Z]|[0-9]|_|-|\.)+@([a-z]|[A-Z]|[0-9]|_|-)+\.([a-z]|[A-Z]|[0-9]|_|-|\.)+'}

@@ -1,11 +1,14 @@
 package model.toolMains
 
+import better.files.File
 import model._
+import model.core.CoreConsts.stdStep
+import model.points._
 import model.core._
-import model.core.overviewHelpers.SolvedState
-import model.persistence.ExerciseCollectionTableDefs
-import net.jcazevedo.moultingyaml.Auto
-import play.api.Logger
+import model.core.overviewHelpers.{SolvedStates, SolvedStatesForExerciseParts}
+import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
+import model.persistence.ExerciseTableDefs
+import net.jcazevedo.moultingyaml._
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.{JsValue, Json}
@@ -16,172 +19,199 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
-abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends FixedExToolMain(tn, up) {
+abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
+  extends AToolMain(tn, up) with CollectionToolMainDbQueries {
 
   // Abstract types
 
-  override type ExType <: ExInColl
+  type CollType <: ExerciseCollection
 
-  override type CompExType <: CompleteExInColl[ExType]
+  type ExType <: Exercise
 
-  type CollType <: ExerciseCollection[ExType, CompExType]
-
-  type CompCollType <: CompleteCollection
+  type PartType <: ExPart
 
   type SolType
 
-  type DBSolType <: CollectionExSolution[SolType]
+  type SampleSolType <: SampleSolution[SolType]
 
-  override type ReadType = CompCollType
+  type UserSolType <: UserSolution[PartType, SolType]
 
-  override type Tables <: ExerciseCollectionTableDefs[ExType, CompExType, CollType, CompCollType, SolType, DBSolType]
+  type CompResultType <: CompleteResult[ResultType]
 
-  // Other members
+  type ReviewType <: ExerciseReview
 
-  val collectionSingularName: String
+  override type Tables <: ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType]
 
-  val collectionPluralName: String
+  // Values
 
-  protected def compExTypeForm(collId: Int): Form[CompExType]
+  val usersCanCreateExes: Boolean = false
 
-  // Database queries
+  val exParts: Seq[PartType]
 
-  // Numbers
+  // Yaml, Html forms, Json
 
-  def numOfExesInColl(id: Int): Future[Int] = tables.futureNumOfExesInColl(id)
+  protected val collectionYamlFormat: MyYamlFormat[CollType]
+  protected val exerciseYamlFormat  : MyYamlFormat[ExType]
 
-  def futureHighestCollectionId: Future[Int] = tables.futureHighestCollectionId
+  val collectionForm    : Form[CollType]
+  val exerciseForm      : Form[ExType]
+  val exerciseReviewForm: Form[ReviewType]
 
-  def futureHighestIdInCollection(collId: Int): Future[Int] = tables.futureHighestIdInCollection(collId)
+  // TODO: scalarStyle = Folded if fixed...
+  def yamlString: Future[String] = ???
 
-  // Reading
+  protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ResultType, CompResultType]
 
-  def futureCollById(id: Int): Future[Option[CollType]] = tables.futureCollById(id)
+  // Other helper methods
 
-  def futureCompleteColls: Future[Seq[CompCollType]] = tables.futureCompleteColls
+  protected def exerciseHasPart(exercise: ExType, partType: PartType): Boolean
 
-  def futureCompleteCollById(id: Int): Future[Option[CompCollType]] = tables.futureCompleteCollById(id)
+  def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
-  def futureCompleteExById(collId: Int, id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(collId, id)
+  // Db
 
-  def futureCompleteExesInColl(collId: Int): Future[Seq[CompExType]] = tables.futureCompleteExesInColl(collId)
+  private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
+    val start = Math.max(0, (page - 1) * step)
+    val end = Math.min(page * step, collection.size)
 
-  def futureMaybeOldSolution(user: User, collId: Int, exId: Int): Future[Option[DBSolType]] = tables.futureMaybeOldSolution(user.username, collId, exId)
+    collection slice(start, end)
+  }
 
-  def futureSampleSolutions(collId: Int, exId: Int): Future[Seq[String]] = tables.futureSampleSolutions(collId, exId)
+  def futureUserCanSolveExPart(username: String, collId: Int, exId: Int, part: PartType): Future[Boolean] = Future.successful(true)
 
-  def futureSolveState(user: User, collId: Int, exId: Int): Future[Option[SolvedState]] = tables.futureSolveState(user, collId, exId)
+  def futureExesAndSolvedStatesForParts(user: User, collection: CollType, page: Int, step: Int): Future[Seq[SolvedStatesForExerciseParts[PartType]]] =
 
-  // Saving
+    futureExercisesInColl(collection.id) flatMap { exercises =>
 
-  override def futureSaveRead(exercises: Seq[CompCollType]): Future[Seq[(CompCollType, Boolean)]] = Future.sequence(exercises map {
-    ex => tables.saveCompleteColl(ex) map (saveRes => (ex, saveRes))
-  })
+      val approvedExercises: Seq[ExType] = exercises.filter(_.state == ExerciseState.APPROVED)
 
-  def saveReadCollection(read: Seq[CompCollType]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteColl)
+      val exesToDisplay = takeSlice(approvedExercises, page, step)
 
-  def futureSaveExercise(exercise: CompExType): Future[Boolean] = tables.futureSaveCompleteEx(exercise)
+      Future.sequence(exesToDisplay.map { ex: ExType =>
 
-  protected def saveSolution(solution: DBSolType): Future[Boolean]
+        val exPartsForExercise = exParts.filter(exerciseHasPart(ex, _))
 
-  // Update
+        val futureSolvedStatesForExerciseParts = Future.sequence(exPartsForExercise.map { exPart =>
+          futureUserCanSolveExPart(user.username, collection.id, ex.id, exPart) flatMap {
+            case true  =>
+              futureSolveStateForExercisePart(user, collection.id, ex.id, exPart) map {
+                // FIXME: query solved state!
+                maybeSolvedState => (exPart, maybeSolvedState getOrElse SolvedStates.NotStarted)
+              }
+            case false => Future.successful((exPart, SolvedStates.Locked))
+          }
+        }).map(_.toMap)
 
-  def updateExerciseState(collId: Int, exId: Int, newState: ExerciseState): Future[Boolean] = tables.updateExerciseState(collId, exId, newState)
+        futureSolvedStatesForExerciseParts map {
+          solvedStatesForExerciseParts => SolvedStatesForExerciseParts(ex, solvedStatesForExerciseParts)
+        }
 
-  def updateCollectionState(collId: Int, newState: ExerciseState): Future[Boolean] = tables.updateCollectionState(collId, newState)
+      })
 
-  // Deletion
-
-  def futureDeleteCollection(collId: Int): Future[Boolean] = tables.futureDeleteCollection(collId)
-
-  def futureDeleteExercise(collId: Int, exId: Int): Future[Boolean] = tables.futureDeleteExercise(collId, exId)
+    }
 
   // Correction
 
-  def correctAbstract(user: User, collId: Int, id: Int, isLive: Boolean)(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[JsValue]] =
-    readSolution(user, collId, id) match {
+  def correctAbstract(user: User, collection: CollType, exercise: ExType, part: PartType)
+                     (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[(CompResultType, Boolean)]] =
+    readSolution(user, collection, exercise, part) match {
       case None => Future.successful(Failure(SolutionTransferException))
 
       case Some(solution) =>
 
-        val collAndEx: Future[Option[(CollType, CompExType)]] = for {
-          coll <- futureCollById(collId)
-          ex <- futureCompleteExById(collId, id)
-        } yield (coll zip ex).headOption
+        correctEx(user, solution, collection, exercise, part) flatMap {
+          case Failure(error) => Future.successful(Failure(error))
+          case Success(res)   =>
 
-        collAndEx flatMap {
-          case None => Future.successful(Failure(NoSuchExerciseException(id)))
-
-          case Some((collection, exercise)) => correctEx(user, solution, collection, exercise) match {
-            case Failure(error) => Future.successful(Failure(error))
-            case Success(res)   =>
-
-              // FIXME: points != 0? maxPoints != 0?
-              val dbSol = instantiateSolution(id = -1, user.username, collection, exercise, solution, res.points, res.maxPoints)
-              tables.futureSaveSolution(dbSol) map { solSaved => Success(onLiveCorrectionResult(res, solSaved)) }
-          }
+            // FIXME: points != 0? maxPoints != 0?
+            val dbSol = instantiateSolution(id = -1, exercise, part, solution, res.points, res.maxPoints)
+            tables.futureSaveUserSolution(exercise.id, exercise.semanticVersion, collection.id, user.username, dbSol) map {
+              solSaved => Success((res, solSaved))
+            }
         }
     }
 
-  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: CompExType): Try[CompResult]
+  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType, part: PartType): Future[Try[CompResultType]]
 
   // Reading from requests
 
-  def readExerciseFromForm(collId: Int)(implicit request: Request[AnyContent]): Form[CompExType] = compExTypeForm(collId).bindFromRequest()
+  def readExerciseFromForm(implicit request: Request[AnyContent]): Form[ExType] = exerciseForm.bindFromRequest()
 
-  protected def readSolution(user: User, collId: Int, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolution(user: User, collection: CollType, exercise: ExType, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
 
   // Views
 
-  override def exercisesOverviewForIndex: Html = Html(
-    s"""<div class="form-group">
-       |  <a class="btn btn-primary btn-block" href="${controllers.coll.routes.CollectionController.collectionList(up)}">Zu den Übungsaufgabensammlungen</a>
-       |</div>""".stripMargin)
+  def previewExerciseRest(ex: Exercise): Html = Html(ex.toString)
 
-  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = statistics map {
-    stats => views.html.admin.collExes.collectionAdminIndex(admin, stats, this, toolList)
+  override def exercisesOverviewForIndex: Html = ???
+
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = tables.futureAllCollections map {
+    collections => views.html.admin.collExes.collectionAdminIndex(admin, collections, this, toolList)
   }
 
-  def renderExercise(user: User, coll: CollType, exercise: CompExType, numOfExes: Int, maybeOldSolution: Option[DBSolType])
+  def renderExercise(user: User, coll: CollType, exercise: ExType, part: PartType, maybeOldSolution: Option[UserSolType])
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
-  def adminRenderEditRest(exercise: Option[CompCollType]): Html
-
-  def renderCollectionEditForm(user: User, collection: CompCollType, isCreation: Boolean, toolList: ToolList): Html =
+  def renderCollectionEditForm(user: User, collection: CollType, isCreation: Boolean, toolList: ToolList)
+                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.admin.collExes.collectionEditForm(user, collection, isCreation, new Html(""), this, toolList /*adminRenderEditRest(collection)*/)
 
-  def renderExerciseEditForm(user: User, newEx: CompExType, isCreation: Boolean, toolList: ToolList): Html =
-    views.html.admin.exerciseEditForm(user, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
+  def renderExerciseEditForm(user: User, collId: Int, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
+    views.html.admin.exerciseEditForm(user, collId, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
 
-  override def previewReadAndSaveResult(user: User, read: ReadAndSaveResult[CompCollType], toolList: ToolList): Html =
-    views.html.admin.collExes.collPreview(user, read, this, toolList)
+  def renderEditRest(exercise: ExType): Html = Html("")
+
+  def renderExercisePreview(user: User, collId: Int, newExercise: ExType, saved: Boolean): Html = {
+    println(newExercise)
+    ???
+  }
 
   // Result handlers
 
-  def onLiveCorrectionResult(result: CompResult, solutionSaved: Boolean): JsValue =
+  def onLiveCorrectionResult(result: CompResultType, solutionSaved: Boolean): JsValue =
     completeResultJsonProtocol.completeResultWrites(solutionSaved).writes(result)
 
-  def onLiveCorrectionError(error: Throwable): JsValue = {
-    Logger.error("There has been a correction error", error)
-    Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
-  }
+  def onLiveCorrectionError(error: Throwable): JsValue = Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
 
   // Helper methods for admin
 
-  // TODO: scalarStyle = Folded if fixed...
-  override def yamlString: Future[String] = futureCompleteColls map {
-    exes => "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
+  def readCollectionsFromYaml: Seq[Try[CollType]] = {
+    val fileToRead: File = exerciseResourcesFolder / "collections.yaml"
+
+    Try(fileToRead.contentAsString.parseYaml) match {
+      case Failure(error)     => Seq(Failure(error))
+      case Success(yamlValue) => yamlValue match {
+        case YamlArray(yamlObjects) => yamlObjects.map(collectionYamlFormat.read)
+        case _                      => ???
+      }
+    }
   }
 
-  def instantiateCollection(id: Int, state: ExerciseState): CompCollType
+  def readExercisesFromYaml(collection: CollType): Seq[Try[ExType]] = {
 
-  def instantiateExercise(collId: Int, id: Int, state: ExerciseState): CompExType
+    val fileToRead: File = exerciseResourcesFolder / s"${collection.id}-${collection.shortName}.yaml"
 
-  def instantiateSolution(id: Int, username: String, collection: CollType, exercise: CompExType, solution: SolType,
-                          points: Points, maxPoints: Points): DBSolType
+    Try(fileToRead.contentAsString.parseYaml) match {
+      case Failure(error)     => Seq(Failure(error))
+      case Success(yamlValue) => yamlValue match {
+        case YamlArray(yamlObjects) => yamlObjects.map(exerciseYamlFormat.read)
+        case _                      => ???
+      }
+    }
+  }
+
+  //  futureCompleteColls map {
+  //    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
+  //  }
+
+  def instantiateCollection(id: Int, author: String, state: ExerciseState): CollType
+
+  def instantiateExercise(id: Int, author: String, state: ExerciseState): ExType
+
+  protected def instantiateSolution(id: Int, exercise: ExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): UserSolType
 
   // Calls
 
-  override def indexCall: Call = controllers.routes.MainExerciseController.index(this.up)
+  override def indexCall: Call = controllers.coll.routes.CollectionController.index(this.urlPart)
 
 }

@@ -1,0 +1,86 @@
+@import model.{Exercise, ExerciseCollection, User, ExPart}
+@import model.core.overviewHelpers.{SolvedStatesForExerciseParts, SolvedStates}
+@import model.toolMains.CollectionToolMain
+
+@(user: User, collection: ExerciseCollection, exes: Seq[SolvedStatesForExerciseParts[_ <: ExPart]],
+        toolMainObject: CollectionToolMain, currentSite: Int, step: Int, numOfExercises: Int)
+
+@title = @{
+    s"Sammlung '${collection.title}'"
+}
+
+@colCount = @{
+    3
+}
+
+@colWidth = @{
+    s"col-sm-${12 / colCount}"
+}
+
+@partCount = @{
+    toolMainObject.exParts.size
+}
+
+@exerciseUrl(exId: Int, partUrlPart: String) = @{
+    coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, exId, partUrlPart)
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+        <h1 class="text-center">@title</h1>
+
+        <br>
+
+        @if(toolMainObject.usersCanCreateExes) {
+            <div class="form-group">
+                <a href="@coll.routes.CollectionController.newExerciseForm(toolMainObject.urlPart, collection.id)"
+                class="btn btn-info btn-block">Neue Aufgabe erstellen</a>
+            </div>
+        }
+
+        @if(exes.nonEmpty) {
+            @for(exBatch <- exes grouped colCount) {
+                <div class="row my-3">
+
+                @for((compEx, solvedStatesForParts) <- exBatch.map(s => (s.ex, s.solvedStates))) {
+                    <div class="@colWidth">
+
+                        <div class="card">
+                            <div class="card-header">@{
+                                s"${compEx.id}. ${compEx.title}"
+                            }</div>
+                            <div class="card-body">
+                                <div class="btn-group d-flex">
+
+                                @for((exPart, solvedState) <- solvedStatesForParts) {
+                                    <a @if(solvedState != SolvedStates.Locked) {
+                                        href="@exerciseUrl(compEx.id, exPart.urlName)"
+                                    } else {
+                                        title="Dieser Teil ist noch gesperrt."
+                                    } class="btn @solvedState.btnOutline w-100">
+                                        @exPart.partName <span>@Html(
+                                        Option(compEx.tags.map(_.render).mkString("&nbsp;")).filter(_.nonEmpty).getOrElse("&nbsp;")
+                                    )</span>
+                                    </a>
+                                }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
+                </div>
+            }
+        } else {
+            <p class="text-danger">Für diese Sammlung existieren noch keine Aufgaben.</p>
+        }
+
+        <hr>
+
+        @core.helperTemplates.bsPager(currentSite,
+            index => coll.routes.CollectionController.collection(toolMainObject.urlPart, collection.id, index),
+            numOfExercises, step)
+
+    </div>
+}

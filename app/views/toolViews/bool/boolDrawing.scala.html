@@ -1,0 +1,69 @@
+@(user: model.User)
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>
+            SystemJS.import('@routes.Assets.versioned("app/bool/boolDrawing.js")');
+    </script>
+    <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bool/boolDrawing.css")">
+
+    <noscript>
+        <p>
+            JavaScript ist deaktiviert oder steht nicht zur Verfügung. Um die Anwendung nutzen zu können, müssen
+            Sie JavaScript zulassen.
+        </p>
+    </noscript>
+}
+
+@title = @{
+    "Boolesche Gatter"
+}
+
+@main(title, Some(user), scripts) {
+    <div class="container-fluid" id="fullsc">
+
+        <div class="row">
+            <div class="col-md-8" id="leftblock">
+
+                <div class="form-group" id="creationButtonsDiv">
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-outline-secondary w-100" name="elementAND">AND</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementOR">OR</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementNOT">NOT</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementNAND">NAND</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementXOR">XOR</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementXNOR">XNOR</button>
+                        <button class="btn btn-outline-secondary w-100" name="elementNOR">NOR</button>
+                    </div>
+                </div>
+
+                <div id="paper"></div>
+            </div>
+
+            <div class="col-md-4">
+
+                <h2>@title</h2>
+                <p class="text-justify">Diese Applikation erm&ouml;glicht das Zeichnen von booleschen Formeln als Gatterstrukturen.</p>
+
+                @*<div class="form-group">*@
+                @* FIXME: fullscreen... *@
+                @*<button type="button" class="btn btn-block" onclick="toggleFullscreen()">*@
+                @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span></button>*@
+                @*</div>*@
+
+                <hr>
+
+                <h3 class="text-center">Ergebnis</h3>
+
+                <div class="form-group">
+                    <button class="btn btn-block btn-primary" id="generateFormula">Formel generieren</button>
+                </div>
+
+                <div id="preCode"></div>
+            </div>
+        </div>
+    </div>
+}

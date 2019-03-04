@@ -1,0 +1,124 @@
+@import model.tools.sql.{SqlExercise, SqlToolMain, SqlConsts, SqlExerciseType, SqlExTag}
+
+@(user: model.User, collId: Int, exercise: SqlExercise, isCreation: Boolean, toolMainObject: SqlToolMain, toolList: model.toolMains.ToolList)
+
+@title = @{
+    "Sql-Aufgabe " + (if(isCreation) " erstellen" else " bearbeiten")
+}
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/sql/editSqlExercise.js")');</script>
+}
+
+@admin.adminMain(title, user, toolList, Some(toolMainObject), scripts) {
+    <form class="form" method="post" role="form" action="@coll.routes.CollectionController.editExercise(toolMainObject.urlPart, collId, exercise.id)">
+
+        <div class="row">
+
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="@SqlConsts.idName">ID:</label>
+                            <input type="number" class="form-control from-control-static" name="@SqlConsts.idName" id="@SqlConsts.idName"
+                            required value="@exercise.id" title="Dieser Wert kann nicht geändert werden" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="@SqlConsts.collIdName">Szenario-ID:</label>
+                            <input type="number" class="form-control from-control-static" name="@SqlConsts.collIdName" id="@SqlConsts.collIdName"
+                            required value="@collId" title="Dieser Wert kann nicht geändert werden" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="@SqlConsts.authorName">Autor:</label>
+                            <input class="form-control" name="@SqlConsts.authorName" id="@SqlConsts.authorName" value="@user.username"
+                            title="Dieser Wert kann nicht geändert werden." readonly required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="@SqlConsts.statusName">Status:</label>
+                            <input class="form-control" name="@SqlConsts.statusName" id="@SqlConsts.statusName"
+                            value="@model.ExerciseState.CREATED.entryName" title="Dieser Wert kann nicht geändert werden" readonly required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="@SqlConsts.titleName">Titel*:</label>
+                    <input class="form-control" name="@SqlConsts.titleName" id="@SqlConsts.titleName" required
+                    value="@exercise.title">
+                </div>
+
+                <div class="form-group">
+                    <label for="@SqlConsts.exerciseTypeName">Typ*:</label>
+                    <select class="form-control" name="@SqlConsts.exerciseTypeName" id="@SqlConsts.exerciseTypeName" required>
+                        <option value="">Bitte wählen...</option>
+                        @for(sqlExType <- SqlExerciseType.values) {
+                            <option @{
+                                if(sqlExType == exercise.exerciseType) "selected" else ""
+                            }>@sqlExType.entryName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags:</label>
+                    @for(exTagTriple <- SqlExTag.values.grouped(3)) {
+                        <div class="row">
+                        @for(exTag <- exTagTriple) {
+                            <div class="col-sm-4">
+                                <label><input type="checkbox" name="@SqlConsts.tagsArrayName" value="@exTag.entryName"> @exTag.title</label>
+                            </div>
+                        }
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="@SqlConsts.textName">Text*:</label>
+                    <textarea class="form-control" rows="10" name="@SqlConsts.textName" id="@SqlConsts.textName" required>@exercise.text</textarea>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="@SqlConsts.hintName">Hinweis (optional):</label>
+                    <textarea class="form-control" rows="2" name="@SqlConsts.hintName" id="@SqlConsts.hintName">@exercise.hint.getOrElse("")</textarea>
+                </div>
+            </div>
+
+            <div class="col-sm-4" >
+                <div id="sampleSolDiv">
+                    <div class="form-group">
+                        <label for="@SqlConsts.samplesArrayName(1)">Musterlösung 1*:</label>
+                        <textarea name="@SqlConsts.samplesArrayName()" rows="4" class="form-control" required
+                        id="@SqlConsts.samplesArrayName(1)">@exercise.samples.headOption.map(_.sample).getOrElse("")</textarea>
+                    </div>
+                </div>
+
+                <hr>
+
+                <button type="button" class="btn btn-block" id="addSampleSolutionBtn">Weitere Musterlösung</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <button class="btn btn-primary btn-block">Aufgabe @if(isCreation) {erstellen} else {bearbeiten}</button>
+
+    </form>
+}

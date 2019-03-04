@@ -1,0 +1,56 @@
+@(exercise: model.tools.xml.XmlExercise)
+
+<div class="row">
+    <div class="col-md-2"><b>ID:</b></div>
+    <div class="col-md-2">@exercise.id</div>
+
+    <div class="col-md-2"><b>Autor:</b></div>
+    <div class="col-md-2"><code>@exercise.author</code></div>
+
+    <div class="col-md-2"><b>Status:</b></div>
+    <div class="col-md-2"><code>@exercise.state</code></div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><b>Wurzelknoten:</b></div>
+    <div class="col-md-10"><code>@exercise.rootNode</code></div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><b>Titel:</b></div>
+    <div class="col-md-10">@exercise.title</div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><b>Text:</b></div>
+    <div class="col-md-10">@exercise.text</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><b>Grammatikbeschr.</b></div>
+    <div class="col-sm-10">@exercise.grammarDescription</div>
+</div>
+
+<hr>
+
+@for(sample <- exercise.samples) {
+    <div class="row">
+        <div class="col-md-2">@{
+            sample.id + "."
+        }</div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body bg-light">
+                    <pre>@* FIXME: sample.sampleGrammar.asString *@</pre>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body bg-light">
+                    <pre>@* FIXME: sample.sampleDocument *@</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+}

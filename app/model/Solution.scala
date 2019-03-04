@@ -1,26 +1,22 @@
 package model
 
-trait SampleSolution[SolType] {
+import model.points.Points
+
+trait Solution[SolType] {
 
   val id: Int
 
-  val exerciseId: Int
+}
 
-  val exSemVer: SemanticVersion
+trait SampleSolution[SolType] extends Solution[SolType] {
 
   def sample: SolType
 
 }
 
-trait UserSolution[SolType] {
+trait UserSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
 
-  val id: Int
-
-  val username: String
-
-  val exerciseId: Int
-
-  val exSemVer: SemanticVersion
+  val part: PartType
 
   val points: Points
 
@@ -30,16 +26,8 @@ trait UserSolution[SolType] {
 
 }
 
-trait DBPartSolution[PartType <: ExPart, SolType] extends UserSolution[SolType] {
 
-  val part: PartType
+final case class StringSampleSolution(id: Int, sample: String) extends SampleSolution[String]
 
-}
-
-trait CollectionExSolution[SolType] extends UserSolution[SolType] {
-
-  val collectionId: Int
-
-  val collSemVer: SemanticVersion
-
-}
+final case class StringUserSolution[PartType <: ExPart](id: Int, part: PartType, solution: String, points: Points, maxPoints: Points)
+  extends UserSolution[PartType, String]

@@ -156,13 +156,13 @@ object MyYamlProtocol {
 
 abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
-  protected def writeBaseValues(hasBaseValues: HasBaseValues): Map[YamlValue, YamlValue] = Map[YamlValue, YamlValue](
-    YamlString(idName) -> hasBaseValues.id,
-    YamlString(titleName) -> hasBaseValues.title,
-    YamlString(authorName) -> hasBaseValues.author,
-    YamlString(textName) -> hasBaseValues.text,
-    YamlString(statusName) -> hasBaseValues.state.entryName,
-    YamlString(semanticVersionName) -> hasBaseValues.semanticVersion.asString
+  protected def writeBaseValues(baseValues: BaseValues): Map[YamlValue, YamlValue] = Map[YamlValue, YamlValue](
+    YamlString(idName) -> baseValues.id,
+    YamlString(titleName) -> baseValues.title,
+    YamlString(authorName) -> baseValues.author,
+    YamlString(textName) -> baseValues.text,
+    YamlString(statusName) -> baseValues.state.entryName,
+    YamlString(semanticVersionName) -> baseValues.semanticVersion.asString
   )
 
   protected def readBaseValues(yamlObject: YamlObject): Try[BaseValues] = for {
@@ -184,5 +184,20 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     protected def readObject(yamlObject: YamlObject): Try[T]
 
   }
+
+  protected object StringSampleSolutionYamlFormat extends MyYamlObjectFormat[StringSampleSolution] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[StringSampleSolution] = for {
+      id <- yamlObject.intField(idName)
+      sample <- yamlObject.stringField(sampleName)
+    } yield StringSampleSolution(id, sample)
+
+    override def write(obj: StringSampleSolution): YamlValue = YamlObject(
+      YamlString(idName) -> YamlNumber(obj.id),
+      YamlString(sampleName) -> YamlString(obj.sample)
+    )
+
+  }
+
 
 }

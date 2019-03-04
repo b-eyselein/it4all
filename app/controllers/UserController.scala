@@ -16,6 +16,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
+  override protected val adminRightsRequired: Boolean = false
+
   def preferences: EssentialAction = withUser { user => implicit request => Ok(views.html.preferences(user)) }
 
   def myCourses: EssentialAction = futureWithUser { user =>
@@ -41,7 +43,7 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
       saveOptionsForm.bindFromRequest().fold(onFormError, onRead)
   }
 
-  def saveNewPassword: EssentialAction = futureWithAdmin { user =>
+  def saveNewPassword: EssentialAction = futureWithUser { user =>
     implicit request =>
       println(request)
 

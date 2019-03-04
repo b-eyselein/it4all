@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <title>Fakult&auml;t</title>
+    <script>
+        function fakultaet() {
+            const num = document.getElementById('number').value;
+            let fak = 1;
+            for (let i = 1; i <= num; i++) {
+                fak = fak * i;
+            }
+            document.getElementById('result').textContent = fak;
+        }
+    </script>
+</head>
+<body>
+<input type="number" id="number" onchange="fakultaet()">
+<span id="result"></span>
+</body>
+</html>

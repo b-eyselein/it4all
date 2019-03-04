@@ -1,6 +1,6 @@
 package model.core.result
 
-import model._
+import model.points.Points
 import play.api.libs.json.Writes
 
 import scala.language.postfixOps
@@ -42,9 +42,9 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
   type SolType
 
-  def points: Points = -1 point
+  def points: Points //= -1 point
 
-  def maxPoints: Points = -1 point
+  def maxPoints: Points// = -1 point
 
   def learnerSolution: SolType
 

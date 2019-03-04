@@ -1,0 +1,349 @@
+- id: 6
+  semanticVersion:
+    major: 1
+    minor: 0
+    patch: 0
+  title: Klickzähler
+  author: bje40dc
+  text: Erstellen Sie einen Zähler der die Klicks auf einen Button zählt!
+  status: APPROVED
+
+  htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
+
+  htmlTasks:
+    - id: 1
+      text: |
+        Erstellen Sie einen Button auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerdem soll beim Klick die Funktion 'increment()' aufgerufen werden.
+      xpathQuery: /html/body//button
+      attributes:
+        - {key: onclick, value: increment()}
+      textContent: Klick mich!
+    - id: 2
+      text: |
+        Erstellen Sie einen Span mit der ID 'theSpan' in dem die Anzahl der Klicks angezeigt werden. Zu Anfang soll dieser eine 0 anzeigen.
+      xpathQuery: /html/body//span[@id='theSpan']
+      textContent: '0'
+
+  jsText: >
+    Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
+    gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id 'theSpan' auslesen und um 1 erhöhen.
+    Sie können die Funktion <code>parseInt(str)</code> verwenden um einen String in eine Ganzzahl umzuwandeln.
+
+  jsTasks:
+    - id: 1
+      text: Test 1
+      xpathQuery: /html/body//button
+      actiontype: CLICK
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='theSpan']
+          isPrecondition: true
+          awaited: 0
+        - id: 2
+          xpathQuery: /html/body//span[@id='theSpan']
+          isPrecondition: false
+          awaited: 1
+    - id: 2
+      text: Test 2
+      xpathQuery: /html/body//button
+      actiontype: CLICK
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='theSpan']
+          isPrecondition: true
+          awaited: 1
+
+        - id: 2
+          xpathQuery: /html/body//span[@id='theSpan']
+          isPrecondition: false
+          awaited: 2
+    - id: 3
+      text: Test 3
+      xpathQuery: /html/body//button
+      actiontype: CLICK
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='theSpan']
+          isPrecondition: true
+          awaited: 2
+
+        - id: 2
+          xpathQuery: /html/body//span[@id='theSpan']
+          isPrecondition: false
+          awaited: 3
+    - id: 4
+      text: Test 4
+      xpathQuery: /html/body//button
+      actiontype: CLICK
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='theSpan']
+          isPrecondition: true
+          awaited: 3
+        - id: 2
+          xpathQuery: /html/body//span[@id='theSpan']
+          isPrecondition: false
+          awaited: 4
+
+  samples:
+    - id: 1
+      htmlSample: |
+        <!doctype html>
+        <html>
+        <head>
+            <title>Klickzähler</title>
+        </head>
+        <body>
+            <button onclick="increment()">Klick mich!</button>
+            <span id="theSpan">0</span>
+        </body>
+        </html>
+      jsSample: |
+        <!doctype html>
+        <html>
+        <head>
+            <title>Klickzähler</title>
+        	<script>
+                function increment() {
+                    let theSpan = document.getElementById('theSpan');
+                    let value = parseInt(theSpan.textContent) + 1;
+                    theSpan.textContent = value;
+                }
+            </script>
+        </head>
+        <body>
+            <button onclick="increment()">Klick mich!</button>
+            <span id="theSpan">0</span>
+        </body>
+        </html>
+
+- id: 7
+  semanticVersion:
+    major: 1
+    minor: 0
+    patch: 0
+  title: Verzweigungen und Strings
+  author: alg81dm
+  text: Erstellen Sie ein Anmeldeformular, das eine einfache Passwort-Qualitätsprüfung durchführt.
+  htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
+  status: APPROVED
+
+  htmlTasks:
+    - id: 1
+      text: Erstellen Sie ein Texteingabefeld mit der ID 'name'
+      xpathQuery: /html/body//input[@id='name']
+      attributes:
+        - {key: type, value: text}
+    - id: 2
+      text: Erstellen Sie ein Passworteingabefeld mit der ID 'password'. Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.
+      xpathQuery: /html/body//input[@id='password']
+      attributes:
+        - {key: type, value: password}
+        - {key: onchange, value: passwordStrength()}
+    - id: 3
+      text: >
+        Erstellen Sie einen Span mit der ID 'errors', der später anzeigen soll, wenn das Passwort zu schwach ist. Zu Anfang
+        soll dieser leer sein.
+      xpathQuery: /html/body//span[@id='errors']
+
+  jsText: >
+    Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen wird. Sie
+    soll den Inhalt (value) des Passwortfeldes auslesen und verschiedene Tests durchführen. Bei fehlgeschlagenen Tests
+    soll der Inhalt des Elements mit der ID 'errors' auf den entsprechenden Text gesetzt werden. Es soll immer nur der
+    erste fehlgeschlagene Test (in der Reihenfolge der Teilaufgaben) beachtet werden. Wenn kein Test fehlschlägt,
+    soll der Fehlertext gelöscht werden (auf '' setzen). Wenn das Passwort unter 8 Zeichen lang ist, soll der Fehlertext
+    'Zu kurz' lauten. Wenn die Eingabe den Teilstring 'passwort' enthält, soll 'Zu einfach' gesetzt werden.
+
+  jsTasks:
+    - id: 1
+      text: Wenn das Passwort unter 8 Zeichen lang ist, setze den Fehlertext auf 'Zu kurz'
+      xpathQuery: /html/body//input[@id='password']
+      actiontype: FILLOUT
+      keysToSend: 123
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='errors']
+          isPrecondition: false
+          awaited: Zu kurz
+    - id: 2
+      text: Wenn das Passwort 'passwort' enthält, setze den Fehlertext auf 'Zu einfach'
+      xpathQuery: /html/body//input[@id='password']
+      actiontype: FILLOUT
+      keysToSend: meinpasswort
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='errors']
+          isPrecondition: false
+          awaited: Zu einfach
+    - id: 3
+      text: Für alle anderen Passwörter soll das Fehlerfeld geleert (auf '' gesetzt) werden
+      actiontype: FILLOUT
+      xpathQuery: /html/body//input[@id='password']
+      keysToSend: GanzGanzSicherUndGeheim
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='errors']
+          isPrecondition: false
+          awaited: ''
+
+  samples:
+    - id: 1
+      htmlSample: |
+        <!doctype html>
+        <html>
+        <head>
+            <!-- Hier: CSS und Javascript -->
+            <title>Passwortstärke</title>
+        </head>
+        <body>
+        <p>
+            <label for="name">Name:</label>
+            <input id="name">
+        </p>
+        <p>
+            <label for="password">Passwort:</label>
+            <input id="password" type="password" onchange="passwordStrength()">
+        </p>
+        <p>
+            <span id="errors"></span>
+        </p>
+        </body>
+        </html>
+      jsSample: |
+        <!doctype html>
+        <html>
+        <head>
+            <title>Passwortstärke</title>
+            <script>
+                function passwordStrength() {
+                    let passwordValue = document.getElementById('password').value;
+                    let errorsSpan = document.getElementById('errors');
+
+                    if (passwordValue === 'meinpasswort') {
+                        errorsSpan.textContent = 'Zu einfach';
+                    } else if (passwordValue.length < 8) {
+                        errorsSpan.textContent = 'Zu kurz';
+                    } else {
+                        errorsSpan.textContent = '';
+                    }
+                }
+            </script>
+        </head>
+        <body>
+        <p>
+            <label for="name">Name:</label>
+            <input id="name">
+        </p>
+        <p>
+            <label for="password">Passwort:</label>
+            <input id="password" type="password" onchange="passwordStrength()">
+        </p>
+        <p>
+            <span id="errors"></span>
+        </p>
+        </body>
+        </html>
+- id: 8
+  semanticVersion:
+    major: 1
+    minor: 0
+    patch: 0
+  title: Schleifen
+  author: alg81dm
+  text: Erstellen Sie ein einfaches Formular zur Berechnung der Fakultät einer Zahl n (alle Zahlen von 1 bis n multipliziert).
+  htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
+  status: APPROVED
+
+  htmlTasks:
+    - id: 1
+      text: Erstellen Sie ein Zahlen-Eingabefeld mit der ID 'number'. Bei Änderung des Feldes (onchange) soll die Funktion 'fakultaet()' aufgerufen werden.
+      xpathQuery: /html/body//input[@id='number']
+      attributes:
+        - {key: type, value: number}
+        - {key: onchange, value: fakultaet()}
+    - id: 2
+      text: Erstellen Sie einen Span mit der ID 'result', in dem das Ergebnis der Berechnung stehen soll. Zu Anfang soll dieser leer sein.
+      xpathQuery: /html/body//span[@id='result']
+
+  jsText: >
+    Implementieren Sie nun die Funktion <code>fakultaet()</code>, die bei Änderung des Felds aufgerufen wird. Sie soll
+    den Inhalt (value) des Eingabefeldes auslesen, die Fakultät davon berechnen und den Inhalt (textContent) des Elements
+    mit der ID 'result' auf das Ergebnis setzen
+
+  jsTasks:
+    - id: 1
+      text: Fakultät von 1 muss 1 sein
+      actiontype: FILLOUT
+      xpathQuery: /html/body//input[@id='number']
+      keysToSend: 1
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='result']
+          isPrecondition: false
+          awaited: 1
+    - id: 2
+      text: Fakultät von 3 muss 6 sein
+      actiontype: FILLOUT
+      xpathQuery: /html/body//input[@id='number']
+      keysToSend: 3
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='result']
+          isPrecondition: false
+          awaited: 6
+    - id: 3
+      text: Fakultät von 6 muss 720 sein
+      actiontype: FILLOUT
+      xpathQuery: /html/body//input[@id='number']
+      keysToSend: 6
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='result']
+          isPrecondition: false
+          awaited: 720
+    - id: 4
+      text: Fakultät von 10 muss 3628800 sein
+      actiontype: FILLOUT
+      xpathQuery: /html/body//input[@id='number']
+      keysToSend: 10
+      conditions:
+        - id: 1
+          xpathQuery: /html/body//span[@id='result']
+          isPrecondition: false
+          awaited: 3628800
+
+  samples:
+    - id: 1
+      htmlSample: |
+        <!doctype html>
+        <html>
+        <head>
+            <title>Fakult&auml;t</title>
+        </head>
+        <body>
+        <input type="number" id="number" onchange="fakultaet()">
+        <span id="result"></span>
+        </body>
+        </html>
+      jsSample: |
+        <!doctype html>
+        <html>
+        <head>
+            <title>Fakult&auml;t</title>
+            <script>
+                function fakultaet() {
+                    const num = document.getElementById('number').value;
+                    // TODO: berechne fakultaet
+                    let fak = 1;
+                    for (let i = 1; i <= num; i++) {
+                        fak = fak * i;
+                    }
+                    document.getElementById('result').textContent = fak;
+                }
+            </script>
+        </head>
+        <body>
+        <input type="number" id="number" onchange="fakultaet()">
+        <span id="result"></span>
+        </body>
+        </html>

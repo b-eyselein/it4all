@@ -1,0 +1,54 @@
+@import model.tools.sql.{SqlExercise, SqlQueryResult, SqlScenario, SqlToolMain, SqlExParts}
+
+@(user: model.User, exercise: SqlExercise, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario, toolMainObject: SqlToolMain)(
+        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@additionalScripts = {
+    <script>SystemJS.import('@routes.Assets.versioned("app/sql/sqlExercise.js")');</script>
+}
+
+@exerciseText = {
+@core.helperTemplates.modal("Datenbankschema", "databaseSchema", "lg") {
+    <img class="img-fluid" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
+}
+
+@for(table <- tables) {
+    @core.helperTemplates.modal("Tabelle: " + table.tableName, table.tableName, "lg") {
+        @views.html.toolViews.sql.resultTable.render(table)
+    }
+}
+    <section>
+        <p>@exercise.text</p>
+        @exercise.hint.map(hint => Html(s"""<p><i>Hinweis:</i> $hint</p>""")).getOrElse("")
+    </section>
+
+    <section>
+        <div class="form-group">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal"
+            data-target="#databaseSchema">Datenbankschema</button>
+        </div>
+
+        @for(tableTuple <- tables grouped 2) {
+            <div class="form-group">
+                <div class="row">
+                @for(table <- tableTuple) {
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-secondary btn-block" data-toggle="modal"
+                        data-target="#@table.tableName">@table.tableName</button>
+                    </div>
+                }
+                </div>
+            </div>
+        }
+
+    </section>
+
+
+}
+
+
+@remainingPage = {
+    <div id="executionResultsDiv"></div>
+}
+
+@toolViews.textExercise(user, exerciseText, scenario, exercise, SqlExParts.SqlSingleExPart, oldOrDefSol, toolMainObject, additionalScripts, remainingPage = remainingPage)

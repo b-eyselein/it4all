@@ -1,0 +1,27 @@
+@(ex: model.tools.xml.XmlExercise)
+
+<div class="row my-3">
+    <div class="col-md-3">Wurzelknoten:</div>
+    <div class="col-md-9">@ex.rootNode</div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Grammatikbeschreibung:</div>
+    <div class="col-md-9">@ex.grammarDescription</div>
+</div>
+
+@for(sample <- ex.samples) {
+    <div class="row my-3">
+        <div class="col-md-3">Musterlösung @sample.id:</div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-6">
+                    <pre>@sample.sample.document</pre>
+                </div>
+                <div class="col-md-6">
+                    <pre>@sample.sample.grammar</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+}

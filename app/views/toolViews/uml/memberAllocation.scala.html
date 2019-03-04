@@ -1,0 +1,102 @@
+@import model.tools.uml.{UmlCollection, UmlExercise, UmlToolMain, UmlExParts}
+
+@(user: model.User, collection: UmlCollection, exercise: UmlExercise, toolMain: UmlToolMain)(implicit
+        requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+
+    <script>SystemJS.import('@routes.Assets.versioned("app/uml/umlClass/allocation.js")');</script>
+}
+
+
+@attributeInput(attr: model.tools.uml.UmlAttribute) = {
+    <div class="checkbox">
+        <label><input type="checkbox" data-visibility="@attr.visibility.representant" data-type="@attr.memberType" data-value="@attr.memberName">
+            @attr.visibility.representant @attr.memberName: @attr.memberType
+        </label>
+    </div>
+}
+
+
+@methodInput(met: model.tools.uml.UmlMethod) = {
+    <div class="checkbox">
+        <label><input type="checkbox" data-visibility="@met.visibility.representant" data-type="@met.memberType" data-value="@met.memberName">
+            @met.visibility.representant @met.memberName (@met.parameters): @met.memberType
+        </label>
+    </div>
+}
+
+@title = @{
+    "Zuordnung der Attribute und Methoden"
+}
+
+@main(title, Some(user), scripts) {
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-sm-4">
+                <h2 class="text-center">@title</h2>
+
+                <div class="card">
+                    <div class="card-body">@exercise.text</div>
+                </div>
+
+                <br>
+
+                <div class="form-group">
+
+                    @helper.CSRF.formField
+
+                    <div class="btn-group d-flex">
+                        <button data-url="@coll.routes.CollectionController.correctLive(toolMain.urlPart, collection.id, exercise.id, UmlExParts.MemberAllocation.urlName)"
+                        class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
+                        <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMain.urlPart, collection.id, exercise.id, UmlExParts.MemberAllocation.urlName)"
+                        id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-8">
+
+            @for(clazzQuadruple <- exercise.sampleSolutions.head.sample.classes grouped 4) {
+                <div class="row">
+                @for(completeClass <- clazzQuadruple) {
+                    <div class="col-md-3">
+
+                        <div class="card" data-classname="@completeClass.className" data-classtype="@completeClass.classType.entryName">
+                            <div class="card-header">@completeClass.className</div>
+
+                            <div class="card-body">
+
+                                <section class="attributeList">
+                                @for(attr <- exercise.allAttributes) {
+                                    @attributeInput(attr)
+                                }
+                                </section>
+
+                                <hr>
+
+                                <section class="methodList">
+                                @for(method <- exercise.allMethods) {
+                                    @methodInput(method)
+                                }
+                                </section>
+
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                </div>
+
+                <hr>
+                }
+
+            </div>
+        </div>
+
+    </div>
+}

@@ -1,7 +1,7 @@
-@import model.{User, CompleteEx}
+@import model.{User, Exercise}
 @import model.core.CoreConsts
 
-@(user: User, exerciseForm: Form[_ <: CompleteEx[_]], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain,
+@(user: User, collId: Int, exerciseForm: Form[_ <: Exercise], isCreation: Boolean, toolMainObject: model.toolMains.AToolMain,
         specialFields: Html, additionalScripts: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
@@ -36,7 +36,6 @@
 
 @main(title, Some(user), scripts) {
 
-
     @core.helperTemplates.modal("Semantische Versionierung", "semVerInfoModal", "lg") {
         <h3>Erklärung von <a href="https://semver.org/lang/de/">Semantic Versioning:</a></h3>
         <p>Auf Grundlage einer Versionsnummer von <code>MAJOR</code>.<code>MINOR</code>.<code>PATCH</code>
@@ -55,7 +54,7 @@
 
     <div class="container">
 
-    @helper.form(exes.routes.ExerciseController.newExercise(toolMainObject.urlPart), 'class -> "form") {
+    @helper.form(coll.routes.CollectionAdminController.adminCreateExercise(toolMainObject.urlPart, collId), 'class -> "form") {
 
         <fieldset>
             <legend class="text-center">Standardangaben</legend>

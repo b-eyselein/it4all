@@ -1,0 +1,62 @@
+@import model.tools.programming.{ProgToolMain, ProgExercise, ProgExPart, ProgCollection, ProgLanguages}
+
+@(user: model.User, collection: ProgCollection, exercise: ProgExercise, oldSolution: String, part: ProgExPart, toolMainObject: ProgToolMain)(implicit
+        requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@additionalScripts = {
+    <script>
+            const imports = [
+                '@routes.Assets.versioned("app/programming/progExercise.js")',
+                '@routes.Assets.versioned("app/programming/progClassDiagram.js")'
+            ];
+            for (let toImport of imports) {
+                SystemJS.import(toImport);
+            }
+    </script>
+}
+
+@remainingExerciseDef = {
+    <div class="form-group">
+        <div class="btn-group d-flex">
+            <button class="btn btn-outline-primary w-100" data-toggle="modal" data-target="#definitionRest">
+                Rest der Definition</button>
+            @exercise.maybeClassDiagramPart match {
+                case None => {}
+                case Some(classDiagPart@_) => {
+                    <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="langSelect">Sprache</label>
+            </div>
+            <select class="form-control" id="langSelect">
+            @for(lang <- ProgLanguages.values) {
+                <option value="@lang.entryName" @{
+                    if(lang == ProgLanguages.StandardLanguage) "selected" else ""
+                }>@lang.languageName</option>
+            }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="extendedUnitTests">Tests</label>
+            </div>
+            <select class="form-control" id="extendedUnitTests">
+                <option value="0" selected>Vereinfacht</option>
+                @* FIXME: reactivate... *@
+                @*<option value="1">Normal</option>*@
+            </select>
+        </div>
+    </div>
+}
+
+@toolViews.textExercise(user, Html(exercise.text), collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
+    remainingExDef = Some(remainingExerciseDef))

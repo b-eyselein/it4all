@@ -1,48 +1,63 @@
-@(user: model.User, statistics: Html, toolMainObject: model.toolMains.CollectionToolMain, toolList: model.toolMains.ToolList)
+@import model.ExerciseCollection
+@import model.toolMains.{CollectionToolMain, ToolList}
+
+@(user: model.User, collections: Seq[ExerciseCollection], toolMain: CollectionToolMain, toolList: ToolList)
 
     @title = @{
-        "Administrator " + toolMainObject.toolname
+        "Administrator " + toolMain.toolname
     }
 
-    @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
-        <section id="statistics">
-            <h2>Statistiken</h2>
-            <ul>@statistics</ul>
-        </section>
+    @collsPerRow = @{
+        3
+    }
 
-        <hr>
+    @admin.adminMain(title, user, toolList, Some(toolMain)) {
+        <section class="pt-3">
+            <h2 class="text-center">Alle Szenarien</h2>
 
-        <section id="administration">
-            <h2>Verwaltung der @toolMainObject.pluralName</h2>
+            @for(collectionGroup <- collections.grouped(collsPerRow)) {
+
+                <div class="row">
+                @for(collection <- collectionGroup) {
+                    <div class="form-group col-md-@{
+                        12 / collsPerRow
+                    }">
+                        <a href="@coll.routes.CollectionAdminController.adminCollection(toolMain.urlPart, collection.id)"
+                        class="btn btn-primary btn-block">@collection.id: @collection.title</a>
+                    </div>
+                }
+                </div>
+
+            }
 
             <div class="form-group">
-                <a class="btn btn-secondary btn-block" href="@coll.routes.CollectionController.adminCollectionsList(toolMainObject.urlPart)">
-                    Übersicht über alle @toolMainObject.collectionPluralName</a>
-            </div>
-
-            <div class="form-group">
-                <a class="btn btn-success btn-block" href="@coll.routes.CollectionController.adminNewCollectionForm(toolMainObject.urlPart)">
-                    Neues @toolMainObject.collectionSingularName erstellen</a>
-            </div>
-
-            <div class="form-group">
-                <a class="btn btn-secondary btn-block" href="@routes.MainExerciseController.readLearningPaths(toolMainObject.urlPart)">
-                    Lernpfade einlesen</a>
+                <a class="btn btn-success btn-block" href="@coll.routes.CollectionAdminController.adminNewCollectionForm(toolMain.urlPart)">
+                    Neues Sammlung erstellen</a>
             </div>
 
             <div class="form-group">
                 <div class="btn-group d-flex">
-                    <a class="btn btn-secondary w-100" href="@coll.routes.CollectionController.adminExportCollections(toolMainObject.urlPart)">
-                        @toolMainObject.collectionPluralName als YAML exportieren</a>
-                    <a class="btn btn-secondary w-100" href="@coll.routes.CollectionController.adminImportToRead(toolMainObject.urlPart)">
-                        @toolMainObject.collectionPluralName aus YAML importieren</a>
+                    <a href="@coll.routes.CollectionAdminController.adminExportCollections(toolMain.urlPart)"
+                    class="btn btn-secondary w-100">Sammlungen als YAML exportieren</a>
+                    <a href="@coll.routes.CollectionAdminController.adminImportCollections(toolMain.urlPart)"
+                    class="btn btn-secondary w-100">Sammlungen aus YAML importieren</a>
                 </div>
+            </div>
+
+        </section>
+
+        <section class="pt-3">
+            <h2 class="text-center">Lernpfade</h2>
+
+            <div class="form-group">
+                <a class="btn btn-secondary btn-block" href="@coll.routes.CollectionAdminController.readLearningPaths(toolMain.urlPart)">
+                    Lernpfade einlesen</a>
             </div>
         </section>
 
         <hr>
 
-        <a class="btn btn-primary btn-block" href="@routes.MainExerciseController.index(toolMainObject.urlPart)">
-            Zu den @toolMainObject.collectionPluralName</a>
+        <a class="btn btn-primary btn-block" href="@coll.routes.CollectionController.index(toolMain.urlPart)">
+            Zur Nutzeransicht</a>
 
     }

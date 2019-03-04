@@ -15,22 +15,22 @@ import scala.language.postfixOps
 class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, toolList: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
+  override protected val adminRightsRequired: Boolean = false
+
   def index: EssentialAction = withUser { user =>
-    implicit request =>
-//      println(request.flash)
-      Ok(views.html.index(user, toolList.toolMains))
+    implicit request => Ok(views.html.index(user, toolList))
   }
 
   def blocklyTest: EssentialAction = withUser { user =>
     implicit request => Ok(views.html.blocklyTest(user))
   }
 
-  def ideTest: EssentialAction = withAdmin { admin =>
+  def ideTest: EssentialAction = withUser { admin =>
     implicit request =>
       Ok(views.html.ideTest(admin, IdeFilesTest.files.keys toSeq, IdeFilesTest.files.headOption.map(_._2)))
   }
 
-  def ideFiles: EssentialAction = withAdmin { _ =>
+  def ideFiles: EssentialAction = withUser { _ =>
     implicit request =>
       // TODO: read files from request...s
       //      println(request.body)
@@ -38,7 +38,7 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
       Ok(JsArray(IdeFilesTest.files.values map IdeFileJsonProtocol.ideFileFormat.writes toSeq))
   }
 
-  def uploadFiles: EssentialAction = withAdmin { admin =>
+  def uploadFiles: EssentialAction = withUser { admin =>
     implicit request =>
       request.body.asJson match {
         case None       => BadRequest("Awaited JSON request!")

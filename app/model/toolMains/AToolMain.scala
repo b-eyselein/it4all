@@ -4,8 +4,6 @@ import java.nio.file.Paths
 
 import better.files.File._
 import better.files._
-import enumeratum.{EnumEntry, PlayEnum}
-import model.Role.RoleUser
 import model._
 import model.core.CoreConsts._
 import model.core.result.EvaluationResult
@@ -15,35 +13,14 @@ import play.api.Logger
 import play.api.mvc.Call
 import play.twirl.api.Html
 
-import scala.collection.immutable
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-
-sealed abstract class ToolState(val german: String, val greek: String, requiredRole: Role) extends EnumEntry {
-
-  def badge: Html = Html(s"<sup>$greek</sup>")
-
-}
-
-object ToolState extends PlayEnum[ToolState] {
-
-  override val values: immutable.IndexedSeq[ToolState] = findValues
-
-  case object LIVE extends ToolState("Verfügbare Tools", "", RoleUser) {
-    override def badge: Html = new Html("")
-  }
-
-  case object ALPHA extends ToolState("Tools in Alpha-Status", "&alpha;", Role.RoleAdmin)
-
-  case object BETA extends ToolState("Tools in Beta-Status", "&beta;", Role.RoleAdmin)
-
-}
 
 abstract class AToolMain(val toolname: String, val urlPart: String) {
 
   // Abstract types
 
-  type R <: EvaluationResult
+  type ResultType <: EvaluationResult
 
   type Tables <: LearningPathTableDefs
 
@@ -96,6 +73,7 @@ abstract class AToolMain(val toolname: String, val urlPart: String) {
 
   // Views
 
+  // FIXME: remove...
   def exercisesOverviewForIndex: Html
 
   def adminIndexView(admin: User, toolList: ToolList): Future[Html]

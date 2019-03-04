@@ -28,6 +28,9 @@ trait HasBaseValues {
 
   def id: Int
 
+  // FIXME: remove? semantic version!
+  def semanticVersion: SemanticVersion
+
   def title: String
 
   def author: String
@@ -36,8 +39,6 @@ trait HasBaseValues {
 
   def state: ExerciseState
 
-  // FIXME: use semantic version!
-  def semanticVersion: SemanticVersion
 
   def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -45,7 +46,7 @@ trait HasBaseValues {
 
 trait ExPart {
 
-  // FIXME: use enumeratum=!=
+  // FIXME: use enumeratum =?=
 
   def urlName: String
 
@@ -65,33 +66,7 @@ trait ExTag {
 
 }
 
-trait Exercise extends HasBaseValues
-
-trait ExInColl extends Exercise {
-
-  def collectionId: Int
-
-  def collSemVer: SemanticVersion
-
-}
-
-trait CompleteEx[E <: Exercise] {
-
-  def ex: E
-
-
-  def id: Int = ex.id
-
-  def semanticVersion = ex.semanticVersion
-
-  def title: String = ex.title
-
-  def author: String = ex.author
-
-  def text: String = ex.text
-
-  def state: ExerciseState = ex.state
-
+trait Exercise extends HasBaseValues {
 
   def preview: Html
 
@@ -99,18 +74,18 @@ trait CompleteEx[E <: Exercise] {
 
 }
 
-trait SingleCompleteEx[Ex <: Exercise, PartType <: ExPart] extends CompleteEx[Ex] {
+trait ExerciseCollection {
 
-  def hasPart(partType: PartType): Boolean
+  def id: Int
+
+  def title: String
+
+  def author: String
+
+  def text: String
+
+  def state: ExerciseState
+
+  def shortName: String
 
 }
-
-trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] {
-
-  def templateFilename: String
-
-  def sampleFilename: String
-
-}
-
-trait CompleteExInColl[Ex <: ExInColl] extends CompleteEx[Ex]

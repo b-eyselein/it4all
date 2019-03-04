@@ -28,18 +28,8 @@ sampleSolutions:
           return a
 
 sampleTestData:
-  - id: 1
-    inputs: [12, 4]
-    output: 4
-  - id: 2
-    inputs: [3, 7]
-    output: 1
-  - id: 3
-    inputs: [64, 46]
-    output: 2
-  - id: 4
-    inputs: [777, 111]
-    output: 111
-  - id: 5
-    inputs: [15, 25]
-    output: 5
+  - {id: 1, inputs: [12, 4], output: 4}
+  - {id: 2, inputs: [3, 7], output: 1}
+  - {id: 3, inputs: [64, 46], output: 2}
+  - {id: 4, inputs: [777, 111], output: 111}
+  - {id: 5, inputs: [15, 25], output: 5}

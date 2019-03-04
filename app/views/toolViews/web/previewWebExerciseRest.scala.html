@@ -1,0 +1,43 @@
+@(ex: model.tools.web.WebExercise)
+
+<div class="row my-3">
+    <div class="col-md-3">Html Text:</div>
+    <div class="col-md-9">@ex.htmlText.getOrElse("--")</div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Html Tasks:</div>
+    <div class="col-md-9">
+    @if(ex.htmlTasks.nonEmpty) {
+        @for(htmlTask <- ex.htmlTasks) {
+            <p>@htmlTask</p>
+        }
+    } else {--}
+    </div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Js Text:</div>
+    <div class="col-md-9">@ex.jsText.getOrElse("--")</div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Js Tasks:</div>
+    <div class="col-md-9">
+    @if(ex.jsTasks.nonEmpty) {
+        @for(jsTask <- ex.jsTasks) {
+            <p>@jsTask</p>
+        }
+    } else {--}
+    </div>
+</div>
+
+@for(sample <- ex.sampleSolutions) {
+    <div class="row my-3">
+        <div class="col-md-3">Musterlösung @sample.id:</div>
+        <div class="col-md-9">
+            <pre>@sample.sample.htmlSolution</pre>
+            @sample.sample.jsSolution.map(s => s"<pre>$s</pre>").getOrElse("")
+        </div>
+    </div>
+}

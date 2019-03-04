@@ -21,22 +21,11 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
                                 val repository: Repository, toolList: ToolList, ws: WSClient)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
-  private val logger = Logger("controllers.AdminController")
+  override protected val adminRightsRequired: Boolean = true
 
-  private def getToolMain(toolType: String): Option[AToolMain] = toolList.toolMains.find(_.urlPart == toolType)
+  private val logger = Logger(classOf[AdminController])
 
-  // FIXME: Redirect and flash!
-  private def onNoSuchTool(toolType: String): Result = BadRequest(s"There is no such tool with name $toolType")
-
-  protected def futureWithAdminWithToolMain(toolType: String)(f: (User, AToolMain) => Request[AnyContent] => Future[Result]): EssentialAction = futureWithAdmin { admin =>
-    implicit request =>
-      getToolMain(toolType) match {
-        case None           => Future(onNoSuchTool(toolType))
-        case Some(toolMain) => f(admin, toolMain)(request)
-      }
-  }
-
-  def changeRole: EssentialAction = futureWithAdmin { admin =>
+  def changeRole: EssentialAction = futureWithUser { admin =>
     implicit request =>
 
       val onFormError: Form[UpdateRoleForm] => Future[Result] = { formWithErrors =>
@@ -58,7 +47,7 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       else FormMappings.updateRoleForm.bindFromRequest().fold(onFormError, onFromValue)
   }
 
-  def evaluationResults: EssentialAction = futureWithAdmin { user =>
+  def evaluationResults: EssentialAction = futureWithUser { user =>
     implicit request =>
       repository.futureEvaluationResultsForTools map { evaluationResultsForTools: Seq[Feedback] =>
 
@@ -70,7 +59,7 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
   }
 
-  def index: EssentialAction = futureWithAdmin { admin =>
+  def index: EssentialAction = futureWithUser { admin =>
     implicit request =>
       for {
         numOfUsers <- repository.numOfUsers
@@ -78,11 +67,11 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       } yield Ok(views.html.admin.adminIndex(admin, numOfUsers, numOfCourses, toolList))
   }
 
-  def users: EssentialAction = futureWithAdmin { admin =>
+  def users: EssentialAction = futureWithUser { admin =>
     implicit request => repository.allUsers map (allUsers => Ok(views.html.admin.userOverview(admin, allUsers, toolList)))
   }
 
-  def courses: EssentialAction = futureWithAdmin { admin =>
+  def courses: EssentialAction = futureWithUser { admin =>
     implicit request => repository.allCourses map (allCourses => Ok(views.html.admin.coursesOverview(admin, allCourses, toolList)))
   }
 

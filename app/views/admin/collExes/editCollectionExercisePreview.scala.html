@@ -1,6 +1,6 @@
-@import model.{User, CompleteEx}
+@import model.{User, Exercise}
 
-@(user: User, newExercise: CompleteEx[_], toolMainObject: model.toolMains.AToolMain)
+@(user: User, newExercise: Exercise, toolMainObject: model.toolMains.AToolMain)
 
 
 @main("Erstellte Aufgaben", Some(user)) {
@@ -9,7 +9,7 @@
             <h1>Erstellte Aufgaben:</h1>
         </div>
 
-        <a href="@routes.MainExerciseController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@coll.routes.CollectionAdminController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zurück zur Administratorseite</a>
 
         <hr>

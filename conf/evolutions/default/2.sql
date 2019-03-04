@@ -24,6 +24,9 @@ from xml_samples;
 delete ignore
 from xml_exercises;
 
+delete ignore
+from xml_collections;
+
 # Web
 
 delete ignore
@@ -50,6 +53,9 @@ from html_tasks;
 delete ignore
 from web_exercises;
 
+delete ignore
+from web_collections;
+
 # Uml
 
 delete ignore
@@ -70,6 +76,9 @@ from uml_to_ignore;
 delete ignore
 from uml_exercises;
 
+delete ignore
+from uml_collections;
+
 # Sql
 
 delete ignore
@@ -83,14 +92,6 @@ from sql_exercises;
 
 delete ignore
 from sql_scenarioes;
-
-# Spread
-
-delete ignore
-from spread_exercise_reviews;
-
-delete ignore
-from spread_exercises;
 
 # Rose
 
@@ -109,19 +110,28 @@ from rose_inputs;
 delete ignore
 from rose_exercises;
 
-# Questions
+delete ignore
+from rose_collections;
+
+# Regex
 
 delete ignore
-from question_solutions;
+from regex_exercise_reviews;
 
 delete ignore
-from question_answers;
+from regex_solutions;
 
 delete ignore
-from questions;
+from regex_test_data;
 
 delete ignore
-from quizzes;
+from regex_sample_solutions;
+
+delete ignore
+from regex_exercises;
+
+delete ignore
+from regex_collections;
 
 # Programming
 
@@ -148,6 +158,9 @@ from prog_input_types;
 
 delete ignore
 from prog_exercises;
+
+delete ignore
+from prog_collections;
 
 # General
 

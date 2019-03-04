@@ -1,0 +1,13 @@
+- id: 1
+  title: Angestellte
+  author: bje40dc
+  text: Dieses Szenario beschreibt die Datenbank einer kleinen Firma.
+  status: APPROVED
+  shortName: employee
+
+- id: 2
+  title: Amazon
+  author: bje40dc
+  text: ""
+  status: APPROVED
+  shortName: amazon

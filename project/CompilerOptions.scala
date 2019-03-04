@@ -11,7 +11,7 @@ object CompilerOptions {
   )
 
   private val unusedCodeOptions: Seq[String] = Seq(
-    "-Ywarn-dead-code", "-Ywarn-inaccessible", /*"-Ywarn-unused", */ "-Ywarn-unused-import", "-Ywarn-value-discard"
+    "-Ywarn-dead-code", "-Ywarn-inaccessible", /*"-Ywarn-unused",  "-Ywarn-unused-import", */ "-Ywarn-value-discard"
   )
 
   private val lintOptions: Seq[String] = Seq(

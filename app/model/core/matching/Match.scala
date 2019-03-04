@@ -1,8 +1,8 @@
 package model.core.matching
 
-import model._
 import model.core.CoreConsts._
 import model.core.JsonWriteable
+import model.points._
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.language.postfixOps
