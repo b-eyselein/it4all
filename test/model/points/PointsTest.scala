@@ -1,4 +1,4 @@
-package model
+package model.points
 
 import org.junit.Assert._
 import org.junit.Test
