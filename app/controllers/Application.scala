@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 import model.core.Repository
-import model.ideTest.{IdeFileJsonProtocol, IdeFilesTest}
+import model.ideTest.{IdeFile, IdeFileJsonProtocol, IdeFilesTest}
 import model.toolMains.ToolList
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
@@ -27,7 +27,10 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
 
   def ideTest: EssentialAction = withUser { admin =>
     implicit request =>
-      Ok(views.html.ideTest(admin, IdeFilesTest.files.keys toSeq, IdeFilesTest.files.headOption.map(_._2)))
+      val allFileNames: Seq[String] = IdeFilesTest.files.keys.toSeq
+      val maybeFirstFile: Option[IdeFile] = IdeFilesTest.files.headOption.map(_._2)
+
+      Ok(views.html.ideTest(admin, allFileNames, maybeFirstFile))
   }
 
   def ideFiles: EssentialAction = withUser { _ =>
