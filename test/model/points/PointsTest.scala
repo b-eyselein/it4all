@@ -9,7 +9,7 @@ class PointsTest {
 
   @Test
   def testCompare(): Unit = {
-    assertTrue((1 halfPoint) > (0 points))
+    assertTrue((1 halfPoint) > (zeroPoints))
   }
 
 }

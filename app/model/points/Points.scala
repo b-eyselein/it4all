@@ -39,4 +39,6 @@ final case class PointsOps(value: Int) extends AnyVal {
 
   def quarterPoints: Points = Points(value)
 
+
+
 }

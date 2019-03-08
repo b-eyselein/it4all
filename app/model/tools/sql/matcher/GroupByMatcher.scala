@@ -19,10 +19,10 @@ final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Exp
 
   override protected def descArgForJson(arg: Expression): JsValue = JsString(arg.toString)
 
-  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) 1 halfPoint else 0 points
+  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) 1 halfPoint else zeroPoints
 
   override def maxPoints: Points = sampleArg match {
-    case None    => 0 points
+    case None    => zeroPoints
     case Some(_) => 1 halfPoint
   }
 

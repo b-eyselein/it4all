@@ -21,9 +21,9 @@ final case class MatchingResult[M <: Match](matchName: String, matchSingularName
     else
       COMPLETE
 
-  val points: Points = allMatches.map(_.points).fold(0 points)(_ + _)
+  val points: Points = allMatches.map(_.points).fold(zeroPoints)(_ + _)
 
-  val maxPoints: Points = allMatches.map(_.maxPoints).fold(0 points)(_ + _)
+  val maxPoints: Points = allMatches.map(_.maxPoints).fold(zeroPoints)(_ + _)
 
   override def toJson: JsObject = Json.obj(
     matchNameName -> matchName,

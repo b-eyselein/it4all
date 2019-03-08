@@ -4,13 +4,20 @@ import model.Consts
 
 object WebConsts extends Consts {
 
-  val actionTypeName: String = "actiontype"
+  val actionName          : String = "action"
+  val actionTypeName      : String = "actiontype"
+  val attributeResultsName: String = "attributeResults"
+  val awaitedTagName      : String = "awaitedTag"
 
   val conditionsName: String = "conditions"
 
   val descriptionName: String = "description"
 
-  val foundName: String = "found"
+  val elementFoundName: String = "elementFound"
+  val elementSpecName : String = "elementSpec"
+
+  val fileNameName: String = "fileName"
+  val foundName   : String = "found"
 
   val htmlResultsName: String = "htmlResults"
   val htmlSampleName          = "htmlSample"
@@ -26,8 +33,13 @@ object WebConsts extends Consts {
 
   val keysToSendName: String = "keysToSend"
 
+  val preConditionsName : String = "preConditions"
+  val postConditionsName: String = "postConditions"
 
-  val textContentName: String = "textContent"
+  val siteSpecName: String = "siteSpec"
+
+  val textContentName      : String = "textContent"
+  val textContentResultName: String = "textContentResult"
 
   val xpathQueryName: String = "xpathQuery"
 

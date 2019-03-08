@@ -1,49 +1,51 @@
 {
-  "title": "WebExerciseCompleteEx",
-  "type": "object",
-  "properties": {
-    "id": {"type": "number"},
-    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-    "title": {"type": "string"},
-    "author": {"type": "string"},
-    "text": {"type": "string"},
-    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-    "htmlTasks": {
-      "type": "array", "items": {"$ref": "#/definitions/HtmlTask"}
-    },
-    "jsTasks": {
-      "type": "array", "items": {"$ref": "#/definitions/JsTask"}
-    },
-    "samples": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {"type": "number"},
-          "htmlSample": {"type": "string"},
-          "jsSample": {"type": "string"}
-        },
-        "required": ["id", "htmlSample", "jsSample"]
+  "type": "array",
+  "items": {
+    "title": "WebExerciseCompleteEx",
+    "type": "object",
+    "properties": {
+      "id": {"type": "number"},
+      "semanticVersion": {"$ref": "../semantic_version.schema.json"},
+      "title": {"type": "string"},
+      "author": {"type": "string"},
+      "text": {"type": "string"},
+      "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+      "htmlTasks": {
+        "type": "array", "items": {"$ref": "#/definitions/HtmlTask"}
+      },
+      "jsTasks": {
+        "type": "array", "items": {"$ref": "#/definitions/JsTask"}
+      },
+      "samples": {
+        "type": "array", "items": {"$ref": "#/definitions/WebSample"}
       }
-    }
+    },
+    "required": [
+      "id", "semanticVersion", "title", "author", "text", "status", "htmlTasks", "jsTasks", "samples"
+    ],
+    "additionalItems": false
   },
-  "required": [
-    "id", "semanticVersion", "title", "author", "text", "status", "htmlTasks", "jsTasks", "samples"
-  ],
-  "additionalItems": false,
   "definitions": {
     "HtmlTask": {
       "type": "object",
       "properties": {
         "id": {"type": "number"},
         "text": {"type": "string"},
+        "elementSpec": {"$ref": "#/definitions/HtmlElementSpec"}
+      },
+      "required": ["id", "text", "elementSpec"]
+    },
+    "HtmlElementSpec": {
+      "type": "object",
+      "properties": {
         "xpathQuery": {"type": "string"},
+        "awaitedTag": {"type": "string"},
+        "textContent": {"type": "string"},
         "attributes": {
           "type": "array", "items": {"$ref": "#/definitions/HtmlAttribute"}
-        },
-        "textContent": {"type": "string"}
+        }
       },
-      "required": ["id", "text", "xpathQuery"]
+      "required": ["xpathQuery", "awaitedTag"]
     },
     "HtmlAttribute": {
       "type": "object",
@@ -58,26 +60,30 @@
       "properties": {
         "id": {"type": "number"},
         "text": {"type": "string"},
-        "xpathQuery": {"type": "string"},
-        "actiontype": {
-          "type": "string",
-          "enum": ["CLICK", "FILLOUT"]
+        "preConditions": {
+          "type": "array", "items": {"$ref": "#/definitions/HtmlElementSpec"}
         },
-        "conditions": {
-          "type": "array", "items": {"$ref": "#/definitions/JsCondition"}
+        "action": {
+          "xpathQuery": {"type": "string"},
+          "actiontype": {
+            "type": "string",
+            "enum": ["CLICK", "FILLOUT"]
+          }
+        },
+        "postConditions": {
+          "type": "array", "items": {"$ref": "#/definitions/HtmlElementSpec"}
         }
       },
-      "required": ["id", "text", "xpathQuery", "actiontype", "conditions"]
+      "required": ["id", "text", "preConditions", "xpathQuery", "actiontype", "postConditions"]
     },
-    "JsCondition": {
+    "WebSample": {
       "type": "object",
       "properties": {
         "id": {"type": "number"},
-        "xpathQuery": {"type": "string"},
-        "isPrecondition": {"type": "boolean"},
-        "awaited": {}
+        "htmlSample": {"type": "string"},
+        "jsSample": {"type": "string"}
       },
-      "required": ["id", "xpathQuery", "isPrecondition", "awaited"]
+      "required": ["id", "htmlSample", "jsSample"]
     }
   }
 }

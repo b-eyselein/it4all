@@ -19,10 +19,10 @@ final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[C
 
   override protected def descArgForJson(arg: ColumnWrapper): JsValue = JsString(arg.toString)
 
-  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) 1 halfPoint else 0 points
+  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
   override def maxPoints: Points = sampleArg match {
-    case None    => 0 points
+    case None    => zeroPoints
     case Some(_) => 1 halfPoint
   }
 

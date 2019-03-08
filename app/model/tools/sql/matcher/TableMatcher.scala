@@ -17,10 +17,10 @@ final case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) ex
 
   override protected def analyze(arg1: Table, arg2: Table): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
 
-  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) 1 halfPoint else 0 points
+  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) 1 halfPoint else zeroPoints
 
   override def maxPoints: Points = sampleArg match {
-    case None    => 0 points
+    case None    => zeroPoints
     case Some(_) => 1 halfPoint
   }
 

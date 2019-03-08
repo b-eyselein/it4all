@@ -20,7 +20,7 @@ final case class ElementLineAnalysisResult(matchType: MatchType,
   )
 
   def points: Points = addUp(Seq(contentCorrect, attributesCorrect).map {
-    case false => 0 points
+    case false => zeroPoints
     case true  => 1 point
   })
 
@@ -56,12 +56,12 @@ final case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Optio
   } else SuccessType.NONE
 
   override def points: Points = matchType match {
-    case MatchType.SUCCESSFUL_MATCH                             => sampleArg map XmlGrammarCompleteResult.pointsForElementLine getOrElse (0 points)
-    case MatchType.ONLY_SAMPLE                                  => 0 points
-    case MatchType.ONLY_USER                                    => 0 points
+    case MatchType.SUCCESSFUL_MATCH                             => sampleArg map XmlGrammarCompleteResult.pointsForElementLine getOrElse zeroPoints
+    case MatchType.ONLY_SAMPLE                                  => zeroPoints
+    case MatchType.ONLY_USER                                    => zeroPoints
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
       // FIXME: calculate...
-      analysisResult.map(_.points) getOrElse 0.points
+      analysisResult.map(_.points) getOrElse zeroPoints
   }
 
 }

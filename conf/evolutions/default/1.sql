@@ -593,27 +593,28 @@ create table if not exists web_exercises
   id               int,
   semantic_version varchar(10),
   collection_id    int,
-  title            varchar(50),
-  author           varchar(50),
+  title            varchar(50)  not null,
+  author           varchar(50)  not null,
   ex_text          text,
   ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
   html_text        text,
   js_text          text,
+  file_name        varchar(100) not null,
 
   primary key (id, semantic_version, collection_id)
 );
 
 create table if not exists html_tasks
 (
-  task_id       int,
-  exercise_id   int,
-  ex_sem_ver    varchar(10),
-  collection_id int,
-  text          text,
-  xpath_query   varchar(50),
-
-  text_content  varchar(100),
+  task_id         int,
+  exercise_id     int,
+  ex_sem_ver      varchar(10),
+  collection_id   int,
+  text            text,
+  xpath_query     varchar(50),
+  awaited_tagname varchar(50),
+  text_content    varchar(100),
 
   primary key (task_id, exercise_id, ex_sem_ver, collection_id),
   foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
@@ -659,13 +660,31 @@ create table if not exists js_conditions
   exercise_id     int,
   ex_sem_ver      varchar(10),
   collection_id   int,
+  is_precondition boolean default true,
 
   xpath_query     varchar(50),
-  is_precondition boolean default true,
+  awaited_tagname varchar(50),
   awaited_value   varchar(50),
 
-  primary key (condition_id, task_id, exercise_id, ex_sem_ver, collection_id),
+  primary key (condition_id, task_id, exercise_id, ex_sem_ver, collection_id, is_precondition),
   foreign key (task_id, exercise_id, ex_sem_ver, collection_id) references js_tasks (task_id, exercise_id, ex_sem_ver, collection_id)
+    on update cascade on delete cascade
+);
+
+create table if not exists web_js_condition_attributes
+(
+  attr_key        varchar(30),
+  cond_id         int,
+  task_id         int,
+  exercise_id     int,
+  ex_sem_ver      varchar(10),
+  collection_id   int,
+  is_precondition boolean      not null,
+  attr_value      varchar(150) not null,
+
+  primary key (attr_key, cond_id, task_id, exercise_id, ex_sem_ver, collection_id, is_precondition),
+  foreign key (cond_id, task_id, exercise_id, ex_sem_ver, collection_id, is_precondition)
+    references js_conditions (condition_id, task_id, exercise_id, ex_sem_ver, collection_id, is_precondition)
     on update cascade on delete cascade
 );
 
@@ -820,6 +839,8 @@ drop table if exists web_exercise_reviews;
 drop table if exists web_solutions;
 
 drop table if exists web_sample_solutions;
+
+drop table if exists web_js_condition_attributes;
 
 drop table if exists js_conditions;
 

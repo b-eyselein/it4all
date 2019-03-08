@@ -115,7 +115,7 @@ object MyYamlProtocol {
       case Success(field) => field.asStr map Some.apply
     }
 
-    def objField[A](fieldName: String, f: YamlObject => A): Try[A] = someField(fieldName) map (_.asYamlObject) map f
+    def objField[A](fieldName: String, f: YamlObject => Try[A]): Try[A] = someField(fieldName) map (_.asYamlObject) flatMap f
 
     def arrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = someField(fieldName) flatMap (_.asArray(mapping))
 

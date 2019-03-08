@@ -9,7 +9,7 @@
         <h2>Html-Text</h2>
         <pre>@exercise.htmlText</pre>
 
-        @if(exercise.htmlTasks.nonEmpty) {
+        @if(exercise.siteSpec.htmlTasks.nonEmpty) {
             <h2>Html-Tasks</h2>
             <table class="table">
                 <thead>
@@ -22,14 +22,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                @for(task <- exercise.htmlTasks) {
+                @for(task <- exercise.siteSpec.htmlTasks) {
                     <tr>
                         <td>@task.id</td>
                         <td>@task.text</td>
-                        <td>@task.xpathQuery</td>
-                        <td>@task.textContent.getOrElse("")</td>
+                        <td>@task.elementSpec.xpathQuery</td>
+                        <td>@task.elementSpec.awaitedTextContent.getOrElse("")</td>
                         <td><ul>
-                        @for(attr <- task.attributes) {
+                        @for(attr <- task.elementSpec.attributes) {
                             <li>@attr.toString</li>
                         }
                         </ul>
@@ -45,7 +45,7 @@
         <h2>Js-Text</h2>
         <pre>@exercise.jsText</pre>
 
-        @if(exercise.jsTasks.nonEmpty) {
+        @if(exercise.siteSpec.jsTasks.nonEmpty) {
             <h2>Js-Tasks</h2>
             <table class="table">
                 <thead>
@@ -58,12 +58,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                @for(task <- exercise.jsTasks) {
+                @for(task <- exercise.siteSpec.jsTasks) {
                     <tr>
                         <td>@task.id</td>
                         <td>@task.text</td>
-                        <td>@task.xpathQuery</td>
-                        <td>@task.conditions.size</td>
+                        <td>@task.action.xpathQuery</td>
+                        @*<td>@task.conditions.size</td>*@
                         <td>@* TODO: implement ... *@ @@task.action …</td>
                     </tr>
                 }

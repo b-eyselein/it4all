@@ -2,6 +2,7 @@ package model.tools.web
 
 import better.files.File
 import com.gargoylesoftware.htmlunit.ScriptException
+import de.uniwue.webtester._
 import javax.inject.{Inject, Singleton}
 import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
@@ -39,7 +40,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override type ReviewType = WebExerciseReview
 
-  override type ResultType = WebResult
+  override type ResultType = GradedWebTaskResult
   override type CompResultType = WebCompleteResult
 
   override type Tables = WebTableDefs
@@ -55,14 +56,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected val collectionYamlFormat: MyYamlFormat[WebCollection] = WebExYamlProtocol.WebCollectionYamlFormat
-  override protected val exerciseYamlFormat  : MyYamlFormat[WebExercise]   = WebExYamlProtocol.WebExYamlFormat
+  override protected val collectionYamlFormat: MyYamlFormat[WebCollection] = WebToolYamlProtocol.WebCollectionYamlFormat
+  override protected val exerciseYamlFormat  : MyYamlFormat[WebExercise]   = WebToolYamlProtocol.WebExYamlFormat
 
   override val collectionForm    : Form[WebCollection]     = WebToolForms.collectionFormat
   override val exerciseForm      : Form[WebExercise]       = WebToolForms.exerciseFormat
   override val exerciseReviewForm: Form[WebExerciseReview] = WebToolForms.exerciseReviewForm
 
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[WebResult, WebCompleteResult] = WebCompleteResultJsonProtocol
+  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] = WebCompleteResultJsonProtocol
 
   // DB
 
@@ -91,8 +92,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     s"http://localhost:9080/${user.username}/$exerciseId/test.html"
 
   override protected def exerciseHasPart(exercise: WebExercise, partType: WebExPart): Boolean = partType match {
-    case WebExParts.HtmlPart => exercise.htmlTasks.nonEmpty
-    case WebExParts.JsPart   => exercise.jsTasks.nonEmpty
+    case WebExParts.HtmlPart => exercise.siteSpec.htmlTasks.nonEmpty
+    case WebExParts.JsPart   => exercise.siteSpec.jsTasks.nonEmpty
   }
 
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): WebCollection =
@@ -100,11 +101,18 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebExercise = WebExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, htmlText = None, jsText = None,
-    htmlTasks = Seq(
-      HtmlTask(1, "", "", None, attributes = Seq[HtmlAttribute]())
-    ),
-    jsTasks = Seq(
-      JsTask(1, "", "", JsActionType.FILLOUT, None, conditions = Seq[JsCondition]())
+    SiteSpec(
+      1, "",
+      htmlTasks = Seq(
+        HtmlTask("", HtmlElementSpec(1, "", "", None, attributes = Seq[HtmlAttribute]()))
+      ),
+      jsTasks = Seq(
+        JsTask(1, "",
+          preConditions = Seq[HtmlElementSpec](),
+          JsAction("", JsActionType.FillOut, None),
+          postConditions = Seq[HtmlElementSpec]()
+        )
+      )
     ),
     sampleSolutions = Seq(
       WebSampleSolution(1, WebSolution(htmlSolution = "", jsSolution = Some(""))),
@@ -175,13 +183,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   }
 
   private def onDriverGetSuccess(learnerSolution: String, exercise: WebExercise, part: WebExPart, driver: HtmlUnitDriver): Try[WebCompleteResult] = Try {
+    val siteSpec = exercise.siteSpec
     part match {
       case WebExParts.HtmlPart =>
-        val elementResults = exercise.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
-        WebCompleteResult(learnerSolution, exercise, part, elementResults, Seq[JsWebResult]())
+        val elementResults = siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver)).map(WebGrader.gradeHtmlTaskResult)
+        WebCompleteResult(learnerSolution, exercise, part, elementResults, Seq[GradedJsTaskResult]())
       case WebExParts.JsPart   =>
-        val jsWebResults = exercise.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
-        WebCompleteResult(learnerSolution, exercise, part, Seq[ElementResult](), jsWebResults)
+        val jsWebResults = siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver)).map(WebGrader.gradeJsTaskResult)
+        WebCompleteResult(learnerSolution, exercise, part, Seq[GradedHtmlTaskResult](), jsWebResults)
     }
   }
 

@@ -36,7 +36,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
   def adminCollection(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCollById(collId) flatMap {
-        case None             => ???
+        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(collection) =>
           toolMain.futureExercisesInColl(collId) map {
             exercises => Ok(views.html.admin.collExes.collectionAdmin(user, collection, exercises, toolMain, toolList))

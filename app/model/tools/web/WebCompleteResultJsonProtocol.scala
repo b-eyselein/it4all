@@ -1,92 +1,75 @@
 package model.tools.web
 
-import model.points._
 import model.core.result.CompleteResultJsonProtocol
 import model.tools.web.WebConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[WebResult, WebCompleteResult] {
+object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
 
-  // Html Result
+  // Text Result: HtmlAttributeResult, TextContentResult
 
-  private implicit val textContentResultWrites: Writes[TextContentResult] = (
-    (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[String] and
-      (__ \ maxPointsName).write[String] and
+  private def unapplyGradedTextResult(gtcr: GradedTextResult): (String, String, Option[String], Boolean, Double, Double) =
+    (gtcr.keyName, gtcr.awaitedContent, gtcr.maybeFoundContent, gtcr.isSuccessful, gtcr.points.asDouble, gtcr.maxPoints.asDouble)
+
+  private implicit val gradedTextResultWrites: Writes[GradedTextResult] = (
+    (__ \ keyName).write[String] and
       (__ \ awaitedName).write[String] and
-      (__ \ foundName).write[Option[String]]
-    ) (tcr =>
-    (tcr.isSuccessful, tcr.points.asDoubleString, 1.point.asDoubleString, tcr.awaitedContent, tcr.maybeFoundContent)
-  )
-
-  private implicit val attributeResultWrites: Writes[AttributeResult] = (
-    (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[String] and
-      (__ \ maxPointsName).write[String] and
-      (__ \ "attrName").write[String] and
-      (__ \ awaitedName).write[String] and
-      (__ \ foundName).write[Option[String]]
-    ) (ar =>
-    (ar.isSuccessful, ar.points.asDoubleString, 1.point.asDoubleString, ar.attribute.key, ar.awaitedContent, ar.maybeFoundContent)
-  )
-
-  private implicit val elementResultWrites: Writes[ElementResult] = (
-    (__ \ idName).write[Int] and
-      (__ \ pointsName).write[String] and
-      (__ \ maxPointsName).write[String] and
+      (__ \ foundName).write[Option[String]] and
       (__ \ successName).write[Boolean] and
-      (__ \ "elementFound").write[Boolean] and
-      (__ \ "textContent").write[Option[TextContentResult]] and
-      (__ \ "attributeResults").write[Seq[AttributeResult]]
-    ) (er =>
-    (er.task.id, er.points.asDoubleString, er.task.maxPoints.asDoubleString, er.isCompletelySuccessful, er.foundElement.isDefined,
-      er.textContentResult, er.attributeResults)
-  )
+      (__ \ pointsName).write[Double] and
+      (__ \ maxPointsName).write[Double]
+    ) (unapplyGradedTextResult(_))
+
+  // GradedElementSpecResult
+
+  private def unapplyGradedHtmlTaskResult(gesr: GradedElementSpecResult): (Int, Boolean, Option[GradedTextResult], Seq[GradedTextResult], Boolean, Double, Double) =
+    (gesr.id, gesr.foundElement.isDefined, gesr.textContentResult, gesr.attributeResults, gesr.isSuccessful, gesr.points.asDouble, gesr.maxPoints.asDouble)
+
+  private implicit val elementResultWrites: Writes[GradedElementSpecResult] = (
+    (__ \ idName).write[Int] and
+      (__ \ elementFoundName).write[Boolean] and
+      (__ \ textContentResultName).write[Option[GradedTextResult]] and
+      (__ \ attributeResultsName).write[Seq[GradedTextResult]] and
+      (__ \ successName).write[Boolean] and
+      (__ \ pointsName).write[Double] and
+      (__ \ maxPointsName).write[Double]
+    ) (unapplyGradedHtmlTaskResult(_))
 
   // Js Result
 
-  private implicit val conditionResultWrites: Writes[ConditionResult] = (
-    (__ \ pointsName).write[String] and
-      (__ \ maxPointsName).write[String] and
-      (__ \ successName).write[Boolean] and
-      (__ \ descriptionName).write[String] and
-      (__ \ awaitedName).write[String] and
-      (__ \ gottenName).write[Option[String]]
-    ) (cr =>
-    (cr.points.asDoubleString, cr.condition.maxPoints.asDoubleString, cr.isSuccessful, cr.condition.description, cr.condition.awaitedValue, cr.gottenValue)
-  )
+  private def unapplyGradedJsTaskResult(gjtr: GradedJsTaskResult): (Int, Seq[GradedElementSpecResult], String, Boolean, Seq[GradedElementSpecResult], Boolean, Double, Double) =
+    (gjtr.id, gjtr.gradedPreResults, gjtr.gradedJsActionResult.actionDescription, gjtr.gradedJsActionResult.actionPerformed, gjtr.gradedPostResults,
+      gjtr.isSuccessful, gjtr.points.asDouble, gjtr.maxPoints.asDouble)
 
-  private implicit val jsWebResultWrites: Writes[JsWebResult] = (
+  private implicit val jsWebResultWrites: Writes[GradedJsTaskResult] = (
     (__ \ idName).write[Int] and
-      (__ \ pointsName).write[String] and
-      (__ \ maxPointsName).write[String] and
-      (__ \ successName).write[Boolean] and
-      (__ \ "preResults").write[Seq[ConditionResult]] and
+      (__ \ "preResults").write[Seq[GradedElementSpecResult]] and
       (__ \ "actionDescription").write[String] and
       (__ \ "actionPerformed").write[Boolean] and
-      (__ \ "postResults").write[Seq[ConditionResult]]
-    ) (jwr =>
-    (jwr.task.id, jwr.points.asDoubleString, jwr.task.maxPoints.asDoubleString, jwr.isCompletelySuccessful,
-      jwr.preResults, jwr.task.actionDescription, jwr.actionPerformed, jwr.postResults)
-  )
+      (__ \ "postResults").write[Seq[GradedElementSpecResult]] and
+      (__ \ successName).write[Boolean] and
+      (__ \ pointsName).write[Double] and
+      (__ \ maxPointsName).write[Double]
+    ) (unapplyGradedJsTaskResult(_))
 
   // Complete Result
+
+  private def unapplyWebCompleteResult(solutionSaved: Boolean, wcr: WebCompleteResult): (Boolean, String, Seq[GradedElementSpecResult], Seq[GradedJsTaskResult], Boolean, Double, Double) =
+    (solutionSaved, wcr.part.urlName, wcr.gradedHtmlTaskResults.map(_.gradedElementSpecResult), wcr.gradedJsTaskResults,
+      wcr.results.forall(_.isSuccessful), wcr.points.asDouble, wcr.maxPoints.asDouble)
 
   override def completeResultWrites(solutionSaved: Boolean): Writes[WebCompleteResult] = (
     (__ \ solutionSavedName).write[Boolean] and
       (__ \ partName).write[String] and
+
+      (__ \ htmlResultsName).write[Seq[GradedElementSpecResult]] and
+      (__ \ jsResultsName).write[Seq[GradedJsTaskResult]] and
+
       (__ \ successName).write[Boolean] and
-
-      (__ \ pointsName).write[String] and
-      (__ \ maxPointsName).write[String] and
-
-      (__ \ htmlResultsName).write[Seq[ElementResult]] and
-      (__ \ jsResultsName).write[Seq[JsWebResult]]
-    ) (wcr =>
-    (solutionSaved, wcr.part.urlName, wcr.results.forall(_.isSuccessful), wcr.points.asDoubleString, wcr.maxPoints.asDoubleString,
-      wcr.elementResults, wcr.jsWebResults)
-  )
+      (__ \ pointsName).write[Double] and
+      (__ \ maxPointsName).write[Double]
+    ) (unapplyWebCompleteResult(solutionSaved, _))
 
 
 }

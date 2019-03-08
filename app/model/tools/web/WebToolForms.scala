@@ -1,5 +1,6 @@
 package model.tools.web
 
+import de.uniwue.webtester._
 import model.core.ToolForms
 import model.tools.web.WebConsts._
 import model.{Difficulties, ExerciseState, SemanticVersionHelper}
@@ -15,30 +16,33 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
     valueName -> nonEmptyText
   )(HtmlAttribute.apply)(HtmlAttribute.unapply)
 
-  private val htmlTasksMapping: Mapping[HtmlTask] = mapping(
+  private val htmlElmementSpecMapping: Mapping[HtmlElementSpec] = mapping(
     idName -> number,
-    textName -> nonEmptyText,
     xpathQueryName -> nonEmptyText,
+    awaitedTagName -> nonEmptyText,
     textContentName -> optional(nonEmptyText),
     attributesName -> seq(htmlAttributesMapping)
+  )(HtmlElementSpec.apply)(HtmlElementSpec.unapply)
+
+  private val htmlTasksMapping: Mapping[HtmlTask] = mapping(
+    textName -> nonEmptyText,
+    elementSpecName -> htmlElmementSpecMapping,
   )(HtmlTask.apply)(HtmlTask.unapply)
 
   // JsTask
 
-  private val jsConditionMapping: Mapping[JsCondition] = mapping(
-    idName -> number,
+  private val jsActionMapping: Mapping[JsAction] = mapping(
     xpathQueryName -> nonEmptyText,
-    IS_PRECOND_NAME -> boolean,
-    awaitedName -> nonEmptyText
-  )(JsCondition.apply)(JsCondition.unapply)
+    actionTypeName -> JsActionType.formField,
+    keysToSendName -> optional(nonEmptyText),
+  )(JsAction.apply)(JsAction.unapply)
 
   private val jsTasksMapping: Mapping[JsTask] = mapping(
     idName -> number,
     textName -> nonEmptyText,
-    xpathQueryName -> nonEmptyText,
-    actionTypeName -> JsActionType.formField,
-    keysToSendName -> optional(nonEmptyText),
-    conditionsName -> seq(jsConditionMapping)
+    preConditionsName -> seq(htmlElmementSpecMapping),
+    actionName -> jsActionMapping,
+    postConditionsName -> seq(htmlElmementSpecMapping)
   )(JsTask.apply)(JsTask.unapply)
 
   // WebSampleSolution
@@ -48,6 +52,15 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
     htmlSampleName -> nonEmptyText,
     jsSampleName -> optional(nonEmptyText)
   )((id, hs, js) => WebSampleSolution(id, WebSolution(hs, js)))(wss => Some((wss.id, wss.sample.htmlSolution, wss.sample.jsSolution)))
+
+  // Site Spec
+
+  private val siteSpecMapping: Mapping[SiteSpec] = mapping(
+    idName -> number,
+    fileNameName -> nonEmptyText,
+    htmlTasksName -> seq(htmlTasksMapping),
+    jsTasksName -> seq(jsTasksMapping),
+  )(SiteSpec.apply)(SiteSpec.unapply)
 
   // Complete exercise
 
@@ -74,8 +87,7 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
       htmlTextName -> optional(nonEmptyText),
       jsTextName -> optional(nonEmptyText),
 
-      htmlTasksName -> seq(htmlTasksMapping),
-      jsTasksName -> seq(jsTasksMapping),
+      siteSpecName -> siteSpecMapping,
 
       samplesName -> seq(webSampleSolutionMapping)
     )(WebExercise.apply)(WebExercise.unapply)

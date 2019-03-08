@@ -45,7 +45,7 @@ val webJarDependencies = Seq(
 
   "org.webjars" % "octicons" % "4.3.0",
 
-  "org.webjars.npm" % "bootstrap" % "4.3.1", "org.webjars.npm" % "types__bootstrap" % "4.2.0",
+  "org.webjars.npm" % "bootstrap" % "4.3.1", "org.webjars.npm" % "types__bootstrap" % "4.2.2",
 
   "org.webjars.npm" % "systemjs" % "0.21.5", "org.webjars.npm" % "types__systemjs" % "0.20.6",
 
@@ -56,7 +56,7 @@ val webJarDependencies = Seq(
   "org.webjars.npm" % "lodash" % "4.17.11", "org.webjars.npm" % "types__lodash" % "4.14.120",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
 
-  "org.webjars.npm" % "codemirror" % "5.43.0", "org.webjars.npm" % "types__codemirror" % "0.0.71",
+  "org.webjars.npm" % "codemirror" % "5.44.0", "org.webjars.npm" % "types__codemirror" % "0.0.71",
 
   "org.webjars.npm" % "graphlib" % "2.1.7", "org.webjars.npm" % "types__graphlib" % "2.1.4"
 )
@@ -91,7 +91,7 @@ libraryDependencies ++= Seq(
 
   // Dependency injection
   guice,
-  "net.codingwell" %% "scala-guice" % "4.2.2",
+  "net.codingwell" %% "scala-guice" % "4.2.3",
 
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
 
@@ -101,14 +101,14 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "4.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "4.0.0",
 
-  "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.0",
 
   // Betterfiles
-  "com.github.pathikrit" %% "better-files" % "3.7.0",
+  "com.github.pathikrit" %% "better-files" % "3.7.1",
 
   // Selenium and HtmlUnitDriver for Web+Js
   "org.seleniumhq.selenium" % "selenium-java" % "3.141.59",
-  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.33.3",
+  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.34.0",
 
   // Json Schema Parser/Validator for Json
   "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5-M4",
@@ -116,12 +116,12 @@ libraryDependencies ++= Seq(
   // MyBatis and JSqlParser for SQL
   "com.github.jsqlparser" % "jsqlparser" % "1.4",
 
-  // Programming
+  // Docker
   "com.spotify" % "docker-client" % "8.15.1",
 
   // DTD Parser
-  "de.uniwue" %% "scala_dtd" % "0.3.0-SNAPSHOT",
-)
+  "de.uniwue" %% "scala_dtd" % "0.4.0",
 
-// Injected for non-static Routes
-//routesGenerator := InjectedRoutesGenerator
+  // Web tester
+  "de.uniwue" %% "it4all_webtester" % "0.2.2"
+)

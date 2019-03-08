@@ -84,6 +84,25 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="web_ex.schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="web_ex.schema" />
+              <option name="relativePathToSchema" value="conf/resources/web/web_ex.schema.json" />
+              <option name="schemaVersion" value="JSON schema version 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="conf/resources/web/1-html_elements.yaml" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/web/2-js_basics.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
       </map>
     </state>
   </component>

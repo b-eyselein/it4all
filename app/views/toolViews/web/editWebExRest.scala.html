@@ -10,7 +10,7 @@
 
     <div class="form-horizontal">
         <h3>Aufgaben</h3>
-        @for(task <- exercise.htmlTasks) {
+        @for(task <- exercise.siteSpec.htmlTasks) {
             <div class="form-group">
                 <label class="control-label col-md-2" for="html_task_id_@task.id">ID:</label>
                 <div class="col-md-10">
@@ -30,7 +30,7 @@
                 <label class="control-label col-md-2" for="html_task_xpath_@task.id">XPath:</label>
                 <div class="col-md-10">
                     <input class="form-control" name="html_task_xpath_@task.id" id="html_task_xpath_@task.id"
-                    placeholder="XPathQuery für diesen Task" value="@task.xpathQuery">
+                    placeholder="XPathQuery für diesen Task" value="@task.elementSpec.xpathQuery">
                 </div>
             </div>
 
@@ -38,14 +38,14 @@
                 <label class="control-label col-md-2" for="html_task_content_@task.id">Textinhalt:</label>
                 <div class="col-md-10">
                     <input class="form-control" name="html_task_content_@task.id" id="html_task_content_@task.id"
-                    placeholder="Gewünschter Textinhalt (Optionaler Wert)" value="@task.textContent.getOrElse("")">
+                    placeholder="Gewünschter Textinhalt (Optionaler Wert)" value="@task.elementSpec.awaitedTextContent.getOrElse("")">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="control-label col-md-2">Attribute:</label>
                 <div class="col-md-10">
-                @for(attr <- task.attributes) {
+                @for(attr <- task.elementSpec.attributes) {
                     <div class="form-group">
                         <div class="col-md-12">
                             <div class="input-group">
@@ -75,7 +75,7 @@
 
     <div class="form-horizontal">
         <h3>Aufgaben</h3>
-        @for(task <- exercise.jsTasks) {
+        @for(task <- exercise.siteSpec.jsTasks) {
             @* FIXME: Aufgaben! *@
             <p>@task</p>
         }

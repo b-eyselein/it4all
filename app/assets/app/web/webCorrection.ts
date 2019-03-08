@@ -35,7 +35,7 @@ interface TextResult {
 
 interface AttributeResult {
     success: boolean
-    attrName: string
+    keyName: string
     awaited: string
     found: string | null
 }
@@ -87,11 +87,11 @@ function renderTextResult(textContent: TextResult): string {
 
 function renderAttrResult(attrResult: AttributeResult): string {
     if (attrResult.success) {
-        return `<span class="text-success">Das Attribut <code>${attrResult.attrName}</code> hat den richtigen Wert.</span>`
+        return `<span class="text-success">Das Attribut <code>${attrResult.keyName}</code> hat den richtigen Wert.</span>`
     } else {
         return `
 <span class="text-danger">
-    Das Attribut <code>${attrResult.attrName}</code> hat nicht den richtigen Wert:
+    Das Attribut <code>${attrResult.keyName}</code> hat nicht den richtigen Wert:
     <ul>
         <li>Gesucht war <code>${attrResult.awaited}</code>,</li>
         <li>gefunden wurde ${attrResult.found != null ? (`<code>${attrResult.found}</code>`) : ' <b>kein Attribut!</b>'}</li>

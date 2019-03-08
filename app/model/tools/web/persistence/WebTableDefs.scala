@@ -1,5 +1,6 @@
 package model.tools.web.persistence
 
+import de.uniwue.webtester.JsActionType
 import model.SemanticVersion
 import model.persistence.ExerciseTableDefs
 import model.tools.web._
@@ -7,12 +8,13 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.language.postfixOps
 
 class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[WebExPart, WebExercise, WebCollection, WebSolution, WebSampleSolution, WebUserSolution, WebExerciseReview] {
+    with ExerciseTableDefs[WebExPart, WebExercise, WebCollection, WebSolution, WebSampleSolution, WebUserSolution, WebExerciseReview]
+    with WebTableQueries {
 
   import profile.api._
 
@@ -50,12 +52,12 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   override protected val reviewsTable: TableQuery[WebExerciseReviewsTable] = TableQuery[WebExerciseReviewsTable]
 
-  private val htmlTasksTable  = TableQuery[HtmlTasksTable]
-  private val attributesTable = TableQuery[AttributesTable]
-  private val jsTasksTable    = TableQuery[JsTasksTable]
-  private val conditionsTable = TableQuery[ConditionsTable]
+  protected val htmlTasksTable : TableQuery[HtmlTasksTable]  = TableQuery[HtmlTasksTable]
+  protected val attributesTable: TableQuery[AttributesTable] = TableQuery[AttributesTable]
 
-  lazy val webSolutions = TableQuery[WebSolutionsTable]
+  protected val jsTasksTable                   : TableQuery[JsTasksTable]               = TableQuery[JsTasksTable]
+  protected val jsConditionsTableQuery         : TableQuery[ConditionsTable]            = TableQuery[ConditionsTable]
+  protected val jsConditionAttributesTableQuery: TableQuery[JsConditionAttributesTable] = TableQuery[JsConditionAttributesTable]
 
   // Helper methods
 
@@ -67,91 +69,6 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   override protected def exDbValuesFromExercise(collId: Int, compEx: WebExercise): DbWebExercise =
     dbModels.dbExerciseFromExercise(collId, compEx)
-
-  // Other queries
-
-  override def completeExForEx(collId: Int, ex: DbWebExercise): Future[WebExercise] = for {
-    htmlTasks <- htmlTasksForExercise(collId, ex.id)
-    jsTasks <- jsTasksForExercise(collId, ex.id)
-    sampleSolutions <- db.run(sampleSolutionsTableQuery filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
-  } yield dbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), sampleSolutions)
-
-  private def htmlTasksForExercise(collId: Int, exId: Int): Future[Seq[HtmlTask]] = {
-
-    val htmlTasksForExQuery = htmlTasksTable.filter {
-      ht => ht.exerciseId === exId && ht.collectionId === collId
-    }.result
-
-    def dbHtmlAttributesForTask(taskId: Int) = attributesTable.filter {
-      ha => ha.taskId === taskId && ha.exerciseId === exId && ha.collectionId === collId
-    }.result
-
-    db.run(htmlTasksForExQuery) flatMap { dbHtmlTasks: Seq[DbHtmlTask] =>
-      Future.sequence(dbHtmlTasks map { dbHtmlTask =>
-        for {
-          attributes <- db.run(dbHtmlAttributesForTask(dbHtmlTask.id))
-        } yield dbModels.htmlTaskFromDbHtmlTask(dbHtmlTask, attributes)
-      })
-    }
-  }
-
-  private def jsTasksForExercise(collId: Int, exId: Int): Future[Seq[JsTask]] = {
-    val jsTasksForExQuery = jsTasksTable.filter {
-      jt => jt.exerciseId === exId && jt.collectionId === collId
-    }.result
-
-    def dbJsConditionsForTaskQuery(taskId: Int) = conditionsTable.filter {
-      jc => jc.taskId === taskId && jc.exerciseId === exId && jc.collectionId === collId
-    }.result
-
-    db.run(jsTasksForExQuery) flatMap { dbJsTasks: Seq[DbJsTask] =>
-      Future.sequence(dbJsTasks map { dbJsTask =>
-        for {
-          conditions <- db.run(dbJsConditionsForTaskQuery(dbJsTask.id))
-        } yield dbModels.jsTaskFromDbJsTask(dbJsTask, conditions)
-      })
-    }
-  }
-
-  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: WebExPart): Future[Seq[String]] = db.run(
-    sampleSolutionsTableQuery
-      .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
-      .map(sample => part match {
-        case WebExParts.HtmlPart => sample.htmlSample
-        case WebExParts.JsPart   => sample.jsSample.getOrElse("")
-      })
-      .result
-  )
-
-  // Saving
-
-  override def saveExerciseRest(collId: Int, ex: WebExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
-
-
-    for {
-      htmlTasksSaved <- saveSeq[HtmlTask](ex.htmlTasks, t => saveHtmlTask(ex.id, ex.semanticVersion, collId, t))
-      jsTasksSaved <- saveSeq[JsTask](ex.jsTasks, t => saveJsTask(ex.id, ex.semanticVersion, collId, t))
-
-      sampleSolutionsSaved <- saveSeq[DbWebSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery += s))
-    } yield htmlTasksSaved && jsTasksSaved && sampleSolutionsSaved
-  }
-
-  private def saveHtmlTask(exId: Int, exSemVer: SemanticVersion, collId: Int, htmlTask: HtmlTask): Future[Boolean] = {
-    val (dbHtmlTask, dbHtmlAttributes) = dbModels.dbHtmlTaskFromHtmlTask(exId, exSemVer, collId, htmlTask)
-
-    db.run(htmlTasksTable += dbHtmlTask) flatMap { _ =>
-      saveSeq[DbHtmlAttribute](dbHtmlAttributes, a => db.run(attributesTable += a))
-    }
-  }
-
-  private def saveJsTask(exId: Int, exSemVer: SemanticVersion, collId: Int, jsTask: JsTask): Future[Boolean] = {
-    val (dbJsTask, dbJsConditions) = dbModels.dbJsTaskFromJsTask(exId, exSemVer, collId, jsTask)
-
-    db.run(jsTasksTable += dbJsTask) flatMap { _ =>
-      saveSeq[DbJsCondition](dbJsConditions, c => db.run(conditionsTable += c))
-    }
-  }
 
   // Implicit column types
 
@@ -171,12 +88,14 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   class WebExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "web_exercises") {
 
-    def htmlText: Rep[String] = column[String]("html_text")
+    def htmlText: Rep[Option[String]] = column[Option[String]]("html_text")
 
-    def jsText: Rep[String] = column[String]("js_text")
+    def jsText: Rep[Option[String]] = column[Option[String]]("js_text")
+
+    def fileName: Rep[String] = column[String]("file_name")
 
 
-    override def * : ProvenShape[DbWebExercise] = (id, semanticVersion, collectionId, title, author, text, state, htmlText.?, jsText.?) <> (DbWebExercise.tupled, DbWebExercise.unapply)
+    override def * : ProvenShape[DbWebExercise] = (id, semanticVersion, collectionId, title, author, text, state, htmlText, jsText, fileName) <> (DbWebExercise.tupled, DbWebExercise.unapply)
 
   }
 
@@ -189,16 +108,18 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def xpathQuery: Rep[String] = column[String]("xpath_query")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, collectionId))
 
   }
 
   class HtmlTasksTable(tag: Tag) extends WebTasksTable[DbHtmlTask](tag, "html_tasks") {
 
-    def textContent: Rep[String] = column[String]("text_content")
+    def awaitedTagname: Rep[String] = column[String]("awaited_tagname")
+
+    def textContent: Rep[Option[String]] = column[Option[String]]("text_content")
 
 
-    override def * : ProvenShape[DbHtmlTask] = (id, exerciseId, exSemVer, collectionId, text, xpathQuery, textContent.?) <> (DbHtmlTask.tupled, DbHtmlTask.unapply)
+    override def * : ProvenShape[DbHtmlTask] = (id, exerciseId, exSemVer, collectionId, text, xpathQuery, awaitedTagname, textContent) <> (DbHtmlTask.tupled, DbHtmlTask.unapply)
 
   }
 
@@ -249,19 +170,52 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
+    def isPrecondition: Rep[Boolean] = column[Boolean]("is_precondition")
+
+    def awaitedTagname: Rep[String] = column[String]("awaited_tagname")
+
     def xpathQuery: Rep[String] = column[String]("xpath_query")
+
+    def awaitedTextContent: Rep[Option[String]] = column[Option[String]]("awaited_value")
+
+
+    def pk: PrimaryKey = primaryKey("pk", (id, taskId, exerciseId, exSemVer, collectionId, isPrecondition))
+
+    def taskFk: ForeignKeyQuery[JsTasksTable, DbJsTask] = foreignKey("task_fk", (taskId, exerciseId, exSemVer, collectionId),
+      jsTasksTable)(t => (t.id, t.exerciseId, t.exSemVer, t.collectionId))
+
+
+    override def * : ProvenShape[DbJsCondition] = (id, taskId, exerciseId, exSemVer, collectionId, isPrecondition, xpathQuery,
+      awaitedTagname, awaitedTextContent) <> (DbJsCondition.tupled, DbJsCondition.unapply)
+
+  }
+
+  class JsConditionAttributesTable(tag: Tag) extends Table[DbJsConditionAttribute](tag, "web_js_condition_attributes") {
+
+    def key: Rep[String] = column[String]("attr_key")
+
+    def condId: Rep[Int] = column[Int]("cond_id")
+
+    def taskId: Rep[Int] = column[Int]("task_id")
+
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
+
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+
+    def collectionId: Rep[Int] = column[Int]("collection_id")
 
     def isPrecondition: Rep[Boolean] = column[Boolean]("is_precondition")
 
-    def awaitedValue: Rep[String] = column[String]("awaited_value")
+    def value: Rep[String] = column[String]("attr_value")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, taskId, exerciseId, exSemVer))
+    def pk: PrimaryKey = primaryKey("pk", (key, condId, taskId, exerciseId, exSemVer, collectionId, isPrecondition))
 
-    def taskFk: ForeignKeyQuery[JsTasksTable, DbJsTask] = foreignKey("task_fk", (taskId, exerciseId, exSemVer), jsTasksTable)(t => (t.id, t.exerciseId, t.exSemVer))
+    def condFk: ForeignKeyQuery[ConditionsTable, DbJsCondition] = foreignKey("cond_fk", (condId, taskId, exerciseId, exSemVer, collectionId, isPrecondition),
+      jsConditionsTableQuery)(jc => (jc.id, jc.taskId, jc.exerciseId, jc.exSemVer, jc.collectionId, jc.isPrecondition))
 
 
-    override def * : ProvenShape[DbJsCondition] = (id, taskId, exerciseId, exSemVer, collectionId, xpathQuery, isPrecondition, awaitedValue) <> (DbJsCondition.tupled, DbJsCondition.unapply)
+    override def * = (condId, taskId, exerciseId, exSemVer, collectionId, isPrecondition, key, value) <> (DbJsConditionAttribute.tupled, DbJsConditionAttribute.unapply)
 
   }
 

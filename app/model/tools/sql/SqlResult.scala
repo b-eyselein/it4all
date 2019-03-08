@@ -45,13 +45,13 @@ final case class SqlQueriesStaticComparison[Q](userQ: Q, sampleQ: Q,
     tableComparison.points +
     joinExpressionComparison.points +
     whereComparison.points +
-    additionalComparisons.map(_.points).fold(0 points)(_ + _)
+    additionalComparisons.map(_.points).fold(zeroPoints)(_ + _)
 
   val maxPoints: Points = columnComparison.maxPoints +
     tableComparison.maxPoints +
     joinExpressionComparison.maxPoints +
     whereComparison.maxPoints +
-    additionalComparisons.map(_.maxPoints).fold(0 points)(_ + _)
+    additionalComparisons.map(_.maxPoints).fold(zeroPoints)(_ + _)
 
 }
 
@@ -72,7 +72,7 @@ final case class SqlResult(learnerSolution: String,
     tableComparison.points +
     joinExpressionComparison.points +
     whereComparison.points +
-    additionalComparisons.map(_.points).fold(0 points)(_ + _)
+    additionalComparisons.map(_.points).fold(zeroPoints)(_ + _)
 
   // FIXME: points for executionResult?
 
@@ -80,7 +80,7 @@ final case class SqlResult(learnerSolution: String,
     tableComparison.maxPoints +
     joinExpressionComparison.maxPoints +
     whereComparison.maxPoints +
-    additionalComparisons.map(_.maxPoints).fold(0 points)(_ + _)
+    additionalComparisons.map(_.maxPoints).fold(zeroPoints)(_ + _)
 
 }
 
@@ -90,7 +90,7 @@ final case class SqlParseFailed(learnerSolution: String, error: Throwable, maxPo
 
   override val successType: SuccessType = SuccessType.ERROR
 
-  override val points = 0 points
+  override val points = zeroPoints
 
 }
 

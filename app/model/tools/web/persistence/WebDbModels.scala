@@ -3,6 +3,7 @@ package model.tools.web.persistence
 import model.persistence._
 import model.points.Points
 import model.tools.web._
+import de.uniwue.webtester._
 import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
@@ -10,23 +11,23 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   // Exercise
 
   override def dbExerciseFromExercise(collId: Int, ex: WebExercise): DbWebExercise =
-    DbWebExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText)
+    DbWebExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
 
   def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], sampleSolutions: Seq[WebSampleSolution]) =
     WebExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText,
-      htmlTasks, jsTasks, sampleSolutions)
+      SiteSpec(1, ex.fileName, htmlTasks, jsTasks), sampleSolutions)
 
   // HtmlTask
 
   def dbHtmlTaskFromHtmlTask(exId: Int, exSemVer: SemanticVersion, collId: Int, htmlTask: HtmlTask): (DbHtmlTask, Seq[DbHtmlAttribute]) = (
-    DbHtmlTask(htmlTask.id, exId, exSemVer, collId, htmlTask.text, htmlTask.xpathQuery, htmlTask.textContent),
-    htmlTask.attributes map (ha => dbHtmlAttributeFromHtmlAttribute(htmlTask.id, exId, exSemVer, collId, ha))
+    DbHtmlTask(htmlTask.id, exId, exSemVer, collId, htmlTask.text, htmlTask.elementSpec.xpathQuery,
+      htmlTask.elementSpec.awaitedTagName, htmlTask.elementSpec.awaitedTextContent),
+    htmlTask.elementSpec.attributes map (ha => dbHtmlAttributeFromHtmlAttribute(htmlTask.id, exId, exSemVer, collId, ha))
   )
 
-  def htmlTaskFromDbHtmlTask(dbHtmlTask: DbHtmlTask, dbHtmlAttributes: Seq[DbHtmlAttribute]): HtmlTask =
-    HtmlTask(
-      dbHtmlTask.id, dbHtmlTask.text, dbHtmlTask.xpathQuery, dbHtmlTask.textContent, dbHtmlAttributes map htmlAttributeFromDbHtmlAttribute
-    )
+  def htmlTaskFromDbHtmlTask(dbHtmlTask: DbHtmlTask, dbHtmlAttributes: Seq[DbHtmlAttribute]): HtmlTask = HtmlTask(
+    dbHtmlTask.text, HtmlElementSpec(dbHtmlTask.id, dbHtmlTask.xpathQuery, dbHtmlTask.awaitedTag, dbHtmlTask.textContent, dbHtmlAttributes map htmlAttributeFromDbHtmlAttribute)
+  )
 
   // HtmlAttributes
 
@@ -38,23 +39,46 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
   // JsTask
 
-  def dbJsTaskFromJsTask(exId: Int, exSemVer: SemanticVersion, collId: Int, jsTask: JsTask): (DbJsTask, Seq[DbJsCondition]) = (
-    DbJsTask(jsTask.id, exId, exSemVer, collId, jsTask.text, jsTask.xpathQuery, jsTask.actionType, jsTask.keysToSend),
-    jsTask.conditions map (jc => dbJsConditionFromJsCondition(jsTask.id, exId, exSemVer, collId, jc))
-  )
+  def dbJsTaskFromJsTask(exId: Int, exSemVer: SemanticVersion, collId: Int, jsTask: JsTask): (DbJsTask, Seq[(DbJsCondition, Seq[DbJsConditionAttribute])]) = {
+    val dbPreConditions = jsTask.preConditions.map(pc => dbJsConditionFromJsCondition(jsTask.id, exId, exSemVer, collId, pc, isPrecondition = true))
+    val dbPostConditions = jsTask.preConditions.map(pc => dbJsConditionFromJsCondition(jsTask.id, exId, exSemVer, collId, pc, isPrecondition = false))
 
-  def jsTaskFromDbJsTask(dbJsTask: DbJsTask, dbJsconditions: Seq[DbJsCondition]): JsTask =
-    JsTask(
-      dbJsTask.id, dbJsTask.text, dbJsTask.xpathQuery, dbJsTask.actionType, dbJsTask.keysToSend, dbJsconditions map jsConditionFromDbJsCondition
+    (
+      DbJsTask(jsTask.id, exId, exSemVer, collId, jsTask.text, jsTask.action.xpathQuery, jsTask.action.actionType, jsTask.action.keysToSend),
+      dbPreConditions ++ dbPostConditions
     )
+  }
+
+  def jsTaskFromDbJsTask(dbJsTask: DbJsTask, dbJsconditions: Seq[(DbJsCondition, Seq[DbJsConditionAttribute])]): JsTask = {
+    val jsAction = JsAction(dbJsTask.xpathQuery, dbJsTask.actionType, dbJsTask.keysToSend)
+
+    val (dbPreConds, dbPostConds) = dbJsconditions.partition { case (condition, _) => condition.isPrecondition }
+
+    JsTask(
+      dbJsTask.id, dbJsTask.text, dbPreConds.map(jsConditionFromDbJsCondition), jsAction, dbPostConds.map(jsConditionFromDbJsCondition)
+    )
+  }
 
   // JsCondition
 
-  def dbJsConditionFromJsCondition(taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, jsCondition: JsCondition): DbJsCondition =
-    DbJsCondition(jsCondition.id, taskId, exId, exSemVer, collId, jsCondition.xpathQuery, jsCondition.isPrecondition, jsCondition.awaitedValue)
+  def dbJsConditionFromJsCondition(taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, jsCondition: HtmlElementSpec,
+                                   isPrecondition: Boolean): (DbJsCondition, Seq[DbJsConditionAttribute]) = (
+    DbJsCondition(jsCondition.id, taskId, exId, exSemVer, collId, isPrecondition, jsCondition.xpathQuery, jsCondition.awaitedTagName, jsCondition.awaitedTextContent),
+    jsCondition.attributes.map(dbJsConditionAttributeFromHtmlAttribute(jsCondition.id, taskId, exId, exSemVer, collId, isPrecondition, _))
+  )
 
-  def jsConditionFromDbJsCondition(dbJsCondition: DbJsCondition): JsCondition =
-    JsCondition(dbJsCondition.id, dbJsCondition.xpathQuery, dbJsCondition.isPrecondition, dbJsCondition.awaitedValue)
+  private val jsConditionFromDbJsCondition: ((DbJsCondition, Seq[DbJsConditionAttribute])) => HtmlElementSpec = {
+    case (dbJsCondition, dbJsConditionAttributes) =>
+      HtmlElementSpec(dbJsCondition.id, dbJsCondition.xpathQuery, dbJsCondition.awaitedTag, dbJsCondition.awaitedTextContent,
+        dbJsConditionAttributes.map(htmlAttributeFromDbJsConditionAttribute))
+  }
+
+  // JsConditionAttribute
+
+  def dbJsConditionAttributeFromHtmlAttribute(condId: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, isPrecondition: Boolean, ha: HtmlAttribute) =
+    DbJsConditionAttribute(condId, taskId, exId, exSemVer, collId, isPrecondition, ha.key, ha.value)
+
+  def htmlAttributeFromDbJsConditionAttribute(dbAttr: DbJsConditionAttribute): HtmlAttribute = HtmlAttribute(dbAttr.key, dbAttr.value)
 
 }
 
@@ -87,7 +111,7 @@ object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebE
 }
 
 final case class DbWebExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-                               htmlText: Option[String], jsText: Option[String]) extends ADbExercise
+                               htmlText: Option[String], jsText: Option[String], fileName: String) extends ADbExercise
 
 final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, htmlSample: String, jsSample: Option[String])
   extends ADbSampleSol[WebSolution] {
@@ -117,7 +141,7 @@ trait DbWebTask {
 
 // HtmlTask, HtmlAttribute
 
-final case class DbHtmlTask(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, text: String, xpathQuery: String, textContent: Option[String])
+final case class DbHtmlTask(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, text: String, xpathQuery: String, awaitedTag: String, textContent: Option[String])
   extends DbWebTask
 
 final case class DbHtmlAttribute(key: String, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, value: String)
@@ -127,8 +151,11 @@ final case class DbHtmlAttribute(key: String, taskId: Int, exId: Int, exSemVer: 
 final case class DbJsTask(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, text: String, xpathQuery: String, actionType: JsActionType, keysToSend: Option[String])
   extends DbWebTask
 
-final case class DbJsCondition(id: Int, taskId: Int, exerciseId: Int, exSemVer: SemanticVersion, collId: Int,
-                               xpathQuery: String, isPrecondition: Boolean, awaitedValue: String)
+final case class DbJsCondition(id: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, isPrecondition: Boolean,
+                               xpathQuery: String, awaitedTag: String, awaitedTextContent: Option[String])
+
+final case class DbJsConditionAttribute(condId: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, isPrecondition: Boolean,
+                                        key: String, value: String)
 
 // Exercise review
 

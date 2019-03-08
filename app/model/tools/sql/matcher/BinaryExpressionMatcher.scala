@@ -34,11 +34,11 @@ final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sample
   override def points: Points = matchType match {
     case MatchType.SUCCESSFUL_MATCH   => 1 point
     case MatchType.UNSUCCESSFUL_MATCH => 1 halfPoint
-    case _                            => 0 points
+    case _                            => zeroPoints
   }
 
   override def maxPoints: Points = sampleArg match {
-    case None    => 0 points
+    case None    => zeroPoints
     case Some(_) => 1 point
   }
 
