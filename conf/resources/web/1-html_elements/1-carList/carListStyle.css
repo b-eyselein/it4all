@@ -1,0 +1,13 @@
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    text-decoration: underline;
+    text-align: center;
+}
+
+ul {
+    list-style-type: square;
+}

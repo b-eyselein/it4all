@@ -16,12 +16,15 @@
       "jsTasks": {
         "type": "array", "items": {"$ref": "#/definitions/JsTask"}
       },
+      "files": {
+        "type": "array", "items": {"$ref": "#/definitions/WebFile"}
+      },
       "samples": {
         "type": "array", "items": {"$ref": "#/definitions/WebSample"}
       }
     },
     "required": [
-      "id", "semanticVersion", "title", "author", "text", "status", "htmlTasks", "jsTasks", "samples"
+      "id", "semanticVersion", "title", "author", "text", "status", "htmlTasks", "jsTasks", "files", "samples"
     ],
     "additionalItems": false
   },
@@ -60,21 +63,29 @@
       "properties": {
         "id": {"type": "number"},
         "text": {"type": "string"},
-        "preConditions": {
-          "type": "array", "items": {"$ref": "#/definitions/HtmlElementSpec"}
-        },
-        "action": {
-          "xpathQuery": {"type": "string"},
-          "actiontype": {
-            "type": "string",
-            "enum": ["CLICK", "FILLOUT"]
-          }
-        },
-        "postConditions": {
-          "type": "array", "items": {"$ref": "#/definitions/HtmlElementSpec"}
-        }
+        "preConditions": {"type": "array", "items": {"$ref": "#/definitions/HtmlElementSpec"}},
+        "action": {"$ref": "#/definitions/JsAction"},
+        "postConditions": {"type": "array", "items": {"$ref": "#/definitions/HtmlElementSpec"}}
       },
-      "required": ["id", "text", "preConditions", "xpathQuery", "actiontype", "postConditions"]
+      "required": ["id", "text", "preConditions", "action", "postConditions"]
+    },
+    "JsAction": {
+      "type": "object",
+      "properties": {
+        "xpathQuery": {"type": "string"},
+        "actionType": {"type": "string", "enum": ["Click", "FillOut"]}
+      },
+      "required": ["xpathQuery", "actionType"]
+    },
+    "WebFile": {
+      "type": "object",
+      "properties": {
+        "path": {"type": "string"},
+        "resourcePath": {"type": "string"},
+        "fileType": {"type": "string", "enum": ["htmlmixed", "css", "js"]},
+        "editable": {"type": "boolean"}
+      },
+      "required": ["path", "resourcePath", "fileType"]
     },
     "WebSample": {
       "type": "object",
@@ -83,7 +94,7 @@
         "htmlSample": {"type": "string"},
         "jsSample": {"type": "string"}
       },
-      "required": ["id", "htmlSample", "jsSample"]
+      "required": ["id", "htmlSample"]
     }
   }
 }

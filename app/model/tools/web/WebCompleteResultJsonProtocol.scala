@@ -5,6 +5,7 @@ import model.tools.web.WebConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+//noinspection ConvertibleToMethodValue
 object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
 
   // Text Result: HtmlAttributeResult, TextContentResult

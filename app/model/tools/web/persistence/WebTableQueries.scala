@@ -1,15 +1,13 @@
 package model.tools.web.persistence
 
 import de.uniwue.webtester.{HtmlTask, JsTask}
-import model.SemanticVersion
-import model.tools.web.{WebExPart, WebExParts, WebExercise}
+import model.{ExerciseFile, SemanticVersion}
+import model.tools.web._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait WebTableQueries {
   self: WebTableDefs =>
-
-  protected implicit val executionContext: ExecutionContext
 
   import profile.api._
 
@@ -18,10 +16,11 @@ trait WebTableQueries {
   override def completeExForEx(collId: Int, ex: DbWebExercise): Future[WebExercise] = for {
     htmlTasks <- htmlTasksForExercise(collId, ex.id)
     jsTasks <- jsTasksForExercise(collId, ex.id)
+    files <- webFilesForExercise(collId, ex.id)
     sampleSolutions <- db.run(sampleSolutionsTableQuery.filter {
       s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion
     }.result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
-  } yield dbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), sampleSolutions)
+  } yield dbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), files, sampleSolutions)
 
   private def htmlTasksForExercise(collId: Int, exId: Int): Future[Seq[HtmlTask]] = {
 
@@ -42,10 +41,15 @@ trait WebTableQueries {
     }
   }
 
+  private def webFilesForExercise(collId: Int, exId: Int): Future[Seq[ExerciseFile]] = db.run(
+    webFilesTableQuery
+      .filter { wf => wf.exerciseId === exId && wf.collectionId === collId }
+      .result).map(_.map(WebDbModels.webFileFromDbWebFile))
+
   private def jsTasksForExercise(collId: Int, exId: Int): Future[Seq[JsTask]] = {
-    val jsTasksForExQuery = jsTasksTable.filter {
-      jt => jt.exerciseId === exId && jt.collectionId === collId
-    }.result
+    val jsTasksForExQuery = jsTasksTable
+      .filter { jt => jt.exerciseId === exId && jt.collectionId === collId }
+      .result
 
     db.run(jsTasksForExQuery) flatMap { dbJsTasks: Seq[DbJsTask] =>
       Future.sequence(dbJsTasks.map { dbJsTask =>
@@ -58,9 +62,8 @@ trait WebTableQueries {
 
   private def dbJsConditionsForTask(collId: Int, exId: Int, taskId: Int): Future[Seq[(DbJsCondition, Seq[DbJsConditionAttribute])]] = {
     def futureJsConditionsForTask: Future[Seq[DbJsCondition]] = db.run(jsConditionsTableQuery
-      .filter {
-        jc => jc.collectionId === collId && jc.exerciseId === exId && jc.taskId === taskId
-      }.result)
+      .filter { jc => jc.collectionId === collId && jc.exerciseId === exId && jc.taskId === taskId }
+      .result)
 
     futureJsConditionsForTask.flatMap { jsConditions: Seq[DbJsCondition] =>
       Future.sequence(jsConditions.map { jsCond =>
@@ -76,8 +79,7 @@ trait WebTableQueries {
   private def dbJsConditionAttributesForCondition(collId: Int, exId: Int, taskId: Int, condId: Int): Future[Seq[DbJsConditionAttribute]] = db.run(
     jsConditionAttributesTableQuery
       .filter { ca => ca.collectionId === collId && ca.exerciseId === exId && ca.taskId === taskId && ca.condId === condId }
-      .result
-  )
+      .result)
 
   override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: WebExPart): Future[Seq[String]] = db.run(
     sampleSolutionsTableQuery
@@ -91,17 +93,12 @@ trait WebTableQueries {
 
   // Saving
 
-  override def saveExerciseRest(collId: Int, ex: WebExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
-
-
-    for {
-      htmlTasksSaved <- saveSeq[HtmlTask](ex.siteSpec.htmlTasks, t => saveHtmlTask(ex.id, ex.semanticVersion, collId, t))
-      jsTasksSaved <- saveSeq[JsTask](ex.siteSpec.jsTasks, t => saveJsTask(ex.id, ex.semanticVersion, collId, t))
-
-      sampleSolutionsSaved <- saveSeq[DbWebSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery += s))
-    } yield htmlTasksSaved && jsTasksSaved && sampleSolutionsSaved
-  }
+  override def saveExerciseRest(collId: Int, ex: WebExercise): Future[Boolean] = for {
+    htmlTasksSaved <- saveSeq[HtmlTask](ex.siteSpec.htmlTasks, t => saveHtmlTask(ex.id, ex.semanticVersion, collId, t))
+    jsTasksSaved <- saveSeq[JsTask](ex.siteSpec.jsTasks, t => saveJsTask(ex.id, ex.semanticVersion, collId, t))
+    webFilesSaved <- saveWebFiles(ex.id, ex.semanticVersion, collId, ex.files)
+    sampleSolutionsSaved <- saveWebSampleSolutions(ex.id, ex.semanticVersion, collId, ex.sampleSolutions)
+  } yield htmlTasksSaved && jsTasksSaved && webFilesSaved && sampleSolutionsSaved
 
   private def saveHtmlTask(exId: Int, exSemVer: SemanticVersion, collId: Int, htmlTask: HtmlTask): Future[Boolean] = {
     val (dbHtmlTask, dbHtmlAttributes) = dbModels.dbHtmlTaskFromHtmlTask(exId, exSemVer, collId, htmlTask)
@@ -123,6 +120,18 @@ trait WebTableQueries {
     db.run(jsConditionsTableQuery += toSave._1) flatMap {
       _ => saveSeq[DbJsConditionAttribute](toSave._2, jca => db.run(jsConditionAttributesTableQuery += jca))
     }
+  }
+
+  private def saveWebFiles(exId: Int, exSemVer: SemanticVersion, collId: Int, webFiles: Seq[ExerciseFile]): Future[Boolean] = {
+    val dbWebFiles = webFiles.map(WebDbModels.dbWebFileFromWebFile(exId, exSemVer, collId, _))
+
+    saveSeq[DbWebFile](dbWebFiles, dbwf => db.run(webFilesTableQuery += dbwf))
+  }
+
+  private def saveWebSampleSolutions(exId: Int, exSemVer: SemanticVersion, collId: Int, sampleSolutions: Seq[WebSampleSolution]): Future[Boolean] = {
+    val dbSamples = sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(exId, exSemVer, collId, s))
+
+    saveSeq[DbWebSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery += s))
   }
 
 }

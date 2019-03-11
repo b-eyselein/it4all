@@ -29,9 +29,9 @@ sealed trait GradedWebTaskResult extends EvaluationResult
 
 final case class GradedHtmlTaskResult(gradedElementSpecResult: GradedElementSpecResult, success: SuccessType) extends GradedWebTaskResult {
 
-  def points = gradedElementSpecResult.points
+  def points: Points = gradedElementSpecResult.points
 
-  def maxPoints = gradedElementSpecResult.maxPoints
+  def maxPoints: Points = gradedElementSpecResult.maxPoints
 
 }
 

@@ -50,6 +50,16 @@ GET           /tools/:toolType/admin/collections/import                       co
 GET           /tools/:toolType/admin/collections/export                       controllers.coll.CollectionAdminController.adminExportCollections(toolType: String)
 GET           /tools/:toolType/admin/collections/exportAsFile                 controllers.coll.CollectionAdminController.adminExportCollectionsAsFile(toolType: String)
 
+# Create, update and remove collection
+
+GET           /tools/:toolType/admin/collections/createForm                   controllers.coll.CollectionAdminController.adminNewCollectionForm(toolType: String)
+POST          /tools/:toolType/admin/collections/create                       controllers.coll.CollectionAdminController.adminCreateCollection(toolType: String)
+
+GET           /tools/:toolType/admin/collection/:collId/editForm              controllers.coll.CollectionAdminController.adminEditCollectionForm(toolType: String, collId: Int)
+POST          /tools/:toolType/admin/collection/:collId/edit                  controllers.coll.CollectionAdminController.adminEditCollection(toolType: String, collId: Int)
+
+DELETE        /tools/:toolType/admin/:collId                                  controllers.coll.CollectionAdminController.adminDeleteCollection(toolType: String, collId: Int)
+
 
 GET           /tools/:toolType/admin/collections/:collId                      controllers.coll.CollectionAdminController.adminCollection(toolType: String, collId: Int)
 
@@ -57,18 +67,7 @@ GET           /tools/:toolType/admin/collections/:collId/import               co
 GET           /tools/:toolType/admin/collections/:collId/export               controllers.coll.CollectionAdminController.adminExportExercises(toolType: String, collId: Int)
 GET           /tools/:toolType/admin/collections/:collId/exportAsFile         controllers.coll.CollectionAdminController.adminExportExercisesAsFile(toolType: String, collId: Int)
 
-# Create, update and remove collection
-
-GET           /tools/:toolType/admin/collections/createForm                   controllers.coll.CollectionAdminController.adminNewCollectionForm(toolType: String)
-POST          /tools/:toolType/admin/collections/create                       controllers.coll.CollectionAdminController.adminCreateCollection(toolType: String)
-
-GET           /tools/:toolType/admin/:collId/editForm                         controllers.coll.CollectionAdminController.adminEditCollectionForm(toolType: String, collId: Int)
-POST          /tools/:toolType/admin/:collId/edit                             controllers.coll.CollectionAdminController.adminEditCollection(toolType: String, collId: Int)
-
-DELETE        /tools/:toolType/admin/:collId                                  controllers.coll.CollectionAdminController.adminDeleteCollection(toolType: String, collId: Int)
-
 # Create, update and remove exercises
-
 
 GET           /tools/:toolType/admin/:collId/createExerciseForm               controllers.coll.CollectionAdminController.adminNewExerciseForm(toolType: String, collId: Int)
 POST          /tools/:toolType/admin/:collId/createExercise                   controllers.coll.CollectionAdminController.adminCreateExercise(toolType: String, collId: Int)
@@ -104,7 +103,7 @@ DELETE        /tools/:toolType/:collId/:exId                                  co
 GET           /tools/:toolType/:collId/:id/:partStr/evaluationPartForm        controllers.coll.CollectionController.reviewExercisePartForm(toolType: String, collId: Int, id: Int, partStr: String)
 POST          /tools/:toolType/:collId/:id/:partStr/evaluatePart              controllers.coll.CollectionController.reviewExercisePart(toolType: String,collId: Int, id: Int, partStr: String)
 
-
+GET           /tools/:toolType/:collId/:exId/loadFiles                        controllers.coll.CollectionController.loadFiles(toolType: String, collId: Int, exId: Int)
 
 # Other routes
 GET           /uml/classDiagram/:id/:part/cd.js                               controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)

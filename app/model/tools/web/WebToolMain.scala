@@ -14,7 +14,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.Logger
 import play.api.data._
 import play.api.i18n.MessagesProvider
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, Json}
 import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
@@ -103,17 +103,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, htmlText = None, jsText = None,
     SiteSpec(
       1, "",
-      htmlTasks = Seq(
-        HtmlTask("", HtmlElementSpec(1, "", "", None, attributes = Seq[HtmlAttribute]()))
-      ),
+      htmlTasks = Seq(HtmlTask("", HtmlElementSpec(1, "", "", None, attributes = Seq[HtmlAttribute]()))),
       jsTasks = Seq(
-        JsTask(1, "",
-          preConditions = Seq[HtmlElementSpec](),
-          JsAction("", JsActionType.FillOut, None),
-          postConditions = Seq[HtmlElementSpec]()
-        )
+        JsTask(1, "", preConditions = Seq[HtmlElementSpec](), JsAction("", JsActionType.FillOut, None), postConditions = Seq[HtmlElementSpec]())
       )
     ),
+    files = Seq.empty,
     sampleSolutions = Seq(
       WebSampleSolution(1, WebSolution(htmlSolution = "", jsSolution = Some(""))),
     )
@@ -160,15 +155,19 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   // Correction
 
   override protected def readSolution(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart)
-                                     (implicit request: Request[AnyContent]): Option[WebSolution] = request.body.asJson flatMap {
-    case JsString(solution) =>
-      part match {
-        case WebExParts.HtmlPart => Some(WebSolution(htmlSolution = solution, jsSolution = None))
-        case WebExParts.JsPart   => Some(WebSolution(htmlSolution = "", jsSolution = Some(solution)))
-      }
-    case other              =>
-      logger.error("Wrong json content: " + other.toString)
-      None
+                                     (implicit request: Request[AnyContent]): Option[WebSolution] = {
+    println(request.body.asJson.map(Json.prettyPrint))
+
+    request.body.asJson flatMap {
+      case JsString(solution) =>
+        part match {
+          case WebExParts.HtmlPart => Some(WebSolution(htmlSolution = solution, jsSolution = None))
+          case WebExParts.JsPart   => Some(WebSolution(htmlSolution = "", jsSolution = Some(solution)))
+        }
+      case other              =>
+        logger.error("Wrong json content: " + other.toString)
+        None
+    }
   }
 
   private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
@@ -208,5 +207,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       }.transform(_ => onDriverGetSuccess(toWrite, exercise, part, driver), onDriverGetError)
     }
   }
+
+  override def filesForExercise(collId: Int, ex: WebExercise): Seq[ExerciseFile] = ex.files
 
 }

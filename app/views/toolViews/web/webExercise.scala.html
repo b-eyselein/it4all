@@ -35,5 +35,7 @@
     </div>
 }
 
-@toolViews.textExercise(user, exerciseText, collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
-    solutionPreview = Some(solutionPreview))
+@* @toolViews.textExercise(user, exerciseText, collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
+solutionPreview = Some(solutionPreview)) *@
+
+@toolViews.ideExercise(user, exerciseText, exercise.files.map(_.path), None, toolMainObject, collection, exercise, part, solutionPreview = Some(solutionPreview))

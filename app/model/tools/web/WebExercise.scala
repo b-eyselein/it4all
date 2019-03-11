@@ -11,7 +11,7 @@ final case class WebCollection(id: Int, title: String, author: String, text: Str
   extends ExerciseCollection
 
 final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec,
+                             htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec, files: Seq[ExerciseFile],
                              sampleSolutions: Seq[WebSampleSolution]) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
@@ -32,6 +32,7 @@ final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: S
   }
 
 }
+
 
 final case class WebSolution(htmlSolution: String, jsSolution: Option[String])
 

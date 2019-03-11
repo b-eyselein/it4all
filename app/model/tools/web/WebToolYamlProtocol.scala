@@ -37,10 +37,12 @@ object WebToolYamlProtocol extends MyYamlProtocol {
       htmlText <- yamlObject.optStringField(htmlTextName)
       jsText <- yamlObject.optStringField(jsTextName)
 
-
       fileName <- yamlObject.stringField(fileNameName)
+
       htmlTaskTries <- yamlObject.optArrayField(htmlTasksName, HtmlCompleteTaskYamlFormat.read)
       jsTaskTries <- yamlObject.optArrayField(jsTasksName, JsCompleteTaskYamlFormat.read)
+
+      filesName <- yamlObject.arrayField("files", WebFileYamlFormat.read)
 
       sampleSolutionTries <- yamlObject.arrayField(samplesName, WebSampleSolutionYamlFormat.read)
     } yield {
@@ -58,7 +60,7 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
       WebExercise(
         baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        htmlText, jsText, SiteSpec(1, fileName, htmlTaskTries._1, jsTaskTries._1), sampleSolutionTries._1
+        htmlText, jsText, SiteSpec(1, fileName, htmlTaskTries._1, jsTaskTries._1), filesName._1, sampleSolutionTries._1
       )
     }
 
@@ -81,8 +83,21 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
     }
 
-
     override def write(obj: WebExercise): YamlValue = ???
+
+  }
+
+  private object WebFileYamlFormat extends MyYamlObjectFormat[ExerciseFile] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[ExerciseFile] = for {
+      path <- yamlObject.stringField("path")
+      resourcePath <- yamlObject.stringField("resourcePath")
+      fileType <- yamlObject.stringField("fileType")
+      editable <- yamlObject.optBoolField("editable").map(_.getOrElse(true))
+    } yield ExerciseFile(path, resourcePath, fileType, editable)
+
+    override def write(obj: ExerciseFile): YamlValue = ???
+
   }
 
   private object HtmlCompleteTaskYamlFormat extends MyYamlObjectFormat[HtmlTask] {

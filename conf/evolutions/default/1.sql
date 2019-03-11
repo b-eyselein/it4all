@@ -688,6 +688,21 @@ create table if not exists web_js_condition_attributes
     on update cascade on delete cascade
 );
 
+create table if not exists web_files
+(
+  path          varchar(100),
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  resource_path varchar(200) not null,
+  file_type     varchar(20)  not null,
+  editable      boolean      not null,
+
+  primary key (path, exercise_id, ex_sem_ver, collection_id),
+  foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
+    on update cascade on delete cascade
+);
+
 create table if not exists web_sample_solutions
 (
   id            int,
@@ -837,6 +852,8 @@ drop table if exists xml_collections;
 drop table if exists web_exercise_reviews;
 
 drop table if exists web_solutions;
+
+drop table if exists web_files;
 
 drop table if exists web_sample_solutions;
 

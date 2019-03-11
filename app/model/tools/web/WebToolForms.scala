@@ -3,7 +3,7 @@ package model.tools.web
 import de.uniwue.webtester._
 import model.core.ToolForms
 import model.tools.web.WebConsts._
-import model.{Difficulties, ExerciseState, SemanticVersionHelper}
+import model.{Difficulties, ExerciseFile, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
@@ -53,6 +53,15 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
     jsSampleName -> optional(nonEmptyText)
   )((id, hs, js) => WebSampleSolution(id, WebSolution(hs, js)))(wss => Some((wss.id, wss.sample.htmlSolution, wss.sample.jsSolution)))
 
+  // Web Files
+
+  private val webFileMapping: Mapping[ExerciseFile] = mapping(
+    "path" -> nonEmptyText,
+    "resourcePath" -> nonEmptyText,
+    "fileType" -> nonEmptyText,
+    "editable" -> boolean
+  )(ExerciseFile.apply)(ExerciseFile.unapply)
+
   // Site Spec
 
   private val siteSpecMapping: Mapping[SiteSpec] = mapping(
@@ -88,6 +97,8 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
       jsTextName -> optional(nonEmptyText),
 
       siteSpecName -> siteSpecMapping,
+
+      "files" -> seq(webFileMapping),
 
       samplesName -> seq(webSampleSolutionMapping)
     )(WebExercise.apply)(WebExercise.unapply)

@@ -3,11 +3,11 @@ package model.toolMains
 import better.files.File
 import model._
 import model.core.CoreConsts.stdStep
-import model.points._
 import model.core._
 import model.core.overviewHelpers.{SolvedStates, SolvedStatesForExerciseParts}
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
 import model.persistence.ExerciseTableDefs
+import model.points._
 import net.jcazevedo.moultingyaml._
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
@@ -213,5 +213,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   // Calls
 
   override def indexCall: Call = controllers.coll.routes.CollectionController.index(this.urlPart)
+
+  // Files ?!? TODO!
+
+  def filesForExercise(collId: Int, ex: ExType): Seq[ExerciseFile] = Seq.empty
 
 }

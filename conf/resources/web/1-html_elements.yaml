@@ -8,35 +8,36 @@
   status: APPROVED
   fileName: carList.html
 
+  files:
+    - path: carList.html
+      resourcePath: web/1-html_elements/1-carList/carList.html
+      fileType: htmlmixed
+    - path: carListStyle.css
+      resourcePath: web/1-html_elements/1-carList/carListStyle.css
+      fileType: css
+      editable: false
+
   htmlTasks:
     - id: 1
       text: >
-        Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL
-        '/assets/lib/bootstrap/dist/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das
-        Attribut 'rel'!
+        Binden Sie die vorgegebene Style-Datei 'carListStyle.css' ein. Die entsprechende Datei ist unter der URL
+        'carListStyle.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'!
       elementSpec:
         xpathQuery: /html/head/link
         awaitedTag: link
         attributes:
-          - {key: href, value: /assets/lib/bootstrap/dist/css/bootstrap.css}
+          - {key: href, value: 'carListStyle.css'}
           - {key: rel, value: stylesheet}
 
     - id: 2
       text: Erstellen Sie eine passende h1-Überschrift, die das Wort 'Autohersteller' enthält.
-      elementSpec:
-        xpathQuery: /html/body//h1
-        awaitedTag: h1
-        textContent: Autohersteller
+      elementSpec: {xpathQuery: '/html/body//h1', awaitedTag: 'h1', textContent: 'Autohersteller'}
 
     - id: 3
       text: >
         Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.
         Geben Sie dieser Liste die Klasse 'list-group'.
-      elementSpec:
-        xpathQuery: /html/body//ul
-        awaitedTag: ul
-        attributes:
-          - {key: class, value: list-group}
+      elementSpec: {xpathQuery: '/html/body//ul', awaitedTag: 'ul', attributes: [{key: class, value: list-group}]}
 
     - id: 4
       text: Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse 'list-group-item'.
@@ -106,6 +107,14 @@
   status: APPROVED
   fileName: production.html
 
+  files:
+    - path: production.html
+      resourcePath: web/1-html_elements/2-production/production.html
+      fileType: htmlmixed
+    - path: style.css
+      resourcePath: web/1-html_elements/2-production/productionStyle.css
+      fileType: css
+
   htmlTasks:
     - id: 1
       text: >
@@ -128,9 +137,7 @@
 
     - id: 3
       text: Erstellen Sie die erste Zeile für die Überschriften
-      elementSpec:
-        xpathQuery: /html/body//table//tr[1]
-        awaitedTag: tr
+      elementSpec: {xpathQuery: '/html/body//table//tr[1]', awaitedTag: 'tr'}
 
     - id: 4
       text: Erstellen Sie die erste Zelle für die Überschrift. Diese soll als Inhalt 'Jahr' haben
@@ -148,9 +155,7 @@
 
     - id: 6
       text: Erstellen Sie die zweite Zeile in der Tabelle
-      elementSpec:
-        xpathQuery: /html/body//table//tr[2]
-        awaitedTag: tr
+      elementSpec: {xpathQuery: '/html/body//table//tr[2]', awaitedTag: 'tr'}
 
     - id: 7
       text: Erstellen Sie die erste Zelle in der zweiten Zeile. Diese soll als Inhalt '1900' haben
@@ -168,9 +173,7 @@
 
     - id: 9
       text: Erstellen Sie die dritte Zeile in der Tabelle
-      elementSpec:
-        xpathQuery: /html/body//table//tr[3]
-        awaitedTag: tr
+      elementSpec: {xpathQuery: '/html/body//table//tr[3]', awaitedTag: 'tr'}
 
     - id: 10
       text: Erstellen Sie die erste Zelle in der dritten Zeile. Diese soll als Inhalt '1950' haben
@@ -201,10 +204,7 @@
 
     - id: 14
       text: Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt '58374162' haben
-      elementSpec:
-        xpathQuery: html/body//table//tr[4]/td[2]
-        awaitedTag: td
-        textContent: '58374162'
+      elementSpec: {xpathQuery: 'html/body//table//tr[4]/td[2]', awaitedTag: 'td', textContent: '58374162'}
 
   jsTasks: []
 
@@ -415,10 +415,7 @@
   htmlTasks:
     - id: 1
       text: Erstellen Sie eine passende h1-Überschrift die 'Deutsche Nationalhymne' enthält.
-      elementSpec:
-        xpathQuery: /html/body//h1
-        awaitedTag: h1
-        textContent: Deutsche Nationalhymne
+      elementSpec: {xpathQuery: '/html/body//h1', awaitedTag: 'h1', textContent: 'Deutsche Nationalhymne'}
 
     - id: 2
       text: >

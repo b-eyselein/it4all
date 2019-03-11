@@ -1,10 +1,10 @@
 package model.tools.web.persistence
 
+import de.uniwue.webtester._
 import model.persistence._
 import model.points.Points
 import model.tools.web._
-import de.uniwue.webtester._
-import model.{Difficulty, ExerciseState, SemanticVersion}
+import model.{Difficulty, ExerciseFile, ExerciseState, SemanticVersion}
 
 object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
@@ -13,9 +13,9 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   override def dbExerciseFromExercise(collId: Int, ex: WebExercise): DbWebExercise =
     DbWebExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
 
-  def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], sampleSolutions: Seq[WebSampleSolution]) =
+  def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], files: Seq[ExerciseFile], sampleSolutions: Seq[WebSampleSolution]) =
     WebExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText,
-      SiteSpec(1, ex.fileName, htmlTasks, jsTasks), sampleSolutions)
+      SiteSpec(1, ex.fileName, htmlTasks, jsTasks), files, sampleSolutions)
 
   // HtmlTask
 
@@ -79,6 +79,13 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
     DbJsConditionAttribute(condId, taskId, exId, exSemVer, collId, isPrecondition, ha.key, ha.value)
 
   def htmlAttributeFromDbJsConditionAttribute(dbAttr: DbJsConditionAttribute): HtmlAttribute = HtmlAttribute(dbAttr.key, dbAttr.value)
+
+  // WebFile
+
+  def dbWebFileFromWebFile(exId: Int, exSemVer: SemanticVersion, collId: Int, webFile: ExerciseFile): DbWebFile =
+    DbWebFile(webFile.path, exId, exSemVer, collId, webFile.resourcePath, webFile.fileType, webFile.editable)
+
+  def webFileFromDbWebFile(dbWebFile: DbWebFile): ExerciseFile = ExerciseFile(dbWebFile.path, dbWebFile.resourcePath, dbWebFile.fileType, dbWebFile.editable)
 
 }
 
@@ -157,8 +164,11 @@ final case class DbJsCondition(id: Int, taskId: Int, exId: Int, exSemVer: Semant
 final case class DbJsConditionAttribute(condId: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, isPrecondition: Boolean,
                                         key: String, value: String)
 
-// Exercise review
+// WebFile
 
+final case class DbWebFile(path: String, exId: Int, exSemVer: SemanticVersion, collId: Int, resourcePath: String, fileType: String, editable: Boolean)
+
+// Exercise review
 
 final case class DbWebExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: WebExPart,
                                      difficulty: Difficulty, maybeDuration: Option[Int]) extends DbExerciseReview[WebExPart]

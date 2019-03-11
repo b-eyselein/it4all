@@ -2,7 +2,7 @@ package controllers.coll
 
 import controllers.{AExerciseController, Secured}
 import javax.inject.{Inject, Singleton}
-import model.ExerciseState
+import model.{ExerciseFile, ExerciseFileJsonProtocol, ExerciseState}
 import model.core._
 import model.core.overviewHelpers.SolvedStatesForExerciseParts
 import model.toolMains.{CollectionToolMain, ToolList}
@@ -12,7 +12,8 @@ import model.tools.web.{WebExParts, WebToolMain}
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{JsArray, JsObject, JsString, Json}
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 import play.api.libs.ws.WSClient
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
@@ -225,6 +226,23 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
                   toolMain.exerciseReviewForm.bindFromRequest().fold(onFormError, onFormRead)
               }
+          }
+      }
+  }
+
+  def loadFiles(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+    implicit request =>
+      toolMain.futureCollById(collId).flatMap {
+        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case Some(collection) =>
+
+          toolMain.futureExerciseById(collId, exId).map {
+            case None           => onNoSuchExercise(toolMain, collection, exId)
+            case Some(exercise) =>
+
+              val filesForExercise: Seq[ExerciseFile] = toolMain.filesForExercise(collId, exercise)
+
+              Ok(JsArray(filesForExercise.map(ExerciseFileJsonProtocol.exerciseFileWrites.writes)))
           }
       }
   }

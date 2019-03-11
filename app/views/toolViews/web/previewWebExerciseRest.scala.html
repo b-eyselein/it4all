@@ -6,6 +6,15 @@
 </div>
 
 <div class="row my-3">
+    <div class="col-md-3">Dateien:</div>
+    <div class="col-md-9">
+    @for(file <- ex.files) {
+        <p>@file</p>
+    }
+    </div>
+</div>
+
+<div class="row my-3">
     <div class="col-md-3">Html Text:</div>
     <div class="col-md-9">@ex.htmlText.getOrElse("--")</div>
 </div>

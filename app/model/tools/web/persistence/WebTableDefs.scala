@@ -59,6 +59,8 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   protected val jsConditionsTableQuery         : TableQuery[ConditionsTable]            = TableQuery[ConditionsTable]
   protected val jsConditionAttributesTableQuery: TableQuery[JsConditionAttributesTable] = TableQuery[JsConditionAttributesTable]
 
+  protected val webFilesTableQuery: TableQuery[WebFilesTable] = TableQuery[WebFilesTable]
+
   // Helper methods
 
   override protected val dbModels               = WebDbModels
@@ -215,7 +217,22 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
       jsConditionsTableQuery)(jc => (jc.id, jc.taskId, jc.exerciseId, jc.exSemVer, jc.collectionId, jc.isPrecondition))
 
 
-    override def * = (condId, taskId, exerciseId, exSemVer, collectionId, isPrecondition, key, value) <> (DbJsConditionAttribute.tupled, DbJsConditionAttribute.unapply)
+    override def * : ProvenShape[DbJsConditionAttribute] = (condId, taskId, exerciseId, exSemVer, collectionId, isPrecondition, key, value) <> (DbJsConditionAttribute.tupled, DbJsConditionAttribute.unapply)
+
+  }
+
+  class WebFilesTable(tag: Tag) extends ExForeignKeyTable[DbWebFile](tag, "web_files") {
+
+    def path: Rep[String] = column[String]("path")
+
+    def resourcePath: Rep[String] = column[String]("resource_path")
+
+    def fileType: Rep[String] = column[String]("file_type")
+
+    def editable: Rep[Boolean] = column[Boolean]("editable")
+
+
+    def * : ProvenShape[DbWebFile] = (path, exerciseId, exSemVer, collectionId, resourcePath, fileType, editable) <> (DbWebFile.tupled, DbWebFile.unapply)
 
   }
 
