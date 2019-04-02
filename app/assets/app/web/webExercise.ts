@@ -1,13 +1,11 @@
 import * as $ from 'jquery';
-
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import {renderWebCompleteResult, WebCompleteResult} from "./webCorrection";
+import {focusOnCorrection} from '../textExercise';
 
-import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
-
-import {editor, uploadFiles} from '../tools/ideExercise';
+import {maybeEditor, setupEditor, uploadFiles} from '../tools/ideExercise';
 
 let uploadBtn: HTMLButtonElement;
 
@@ -17,18 +15,25 @@ let showSampleSolBtn: JQuery;
 let previewIsUpToDate: boolean = false;
 let solutionChanged: boolean = false;
 
+let editor: CodeMirror.Editor;
+
 $(() => {
+    setupEditor();
+
     previewChangedDiv = $('#previewChangedDiv');
 
     // FIXME: activate?
-    // editor.on('change', () => {
-    //     solutionChanged = true;
-    //     if (previewIsUpToDate) {
-    //         previewIsUpToDate = false;
-    //         previewChangedDiv.prop('hidden', false);
-    //     }
-    // });
-
+    maybeEditor.then(resolvedEditor => {
+            editor = resolvedEditor;
+            editor.on('change', () => {
+                solutionChanged = true;
+                if (previewIsUpToDate) {
+                    previewIsUpToDate = false;
+                    previewChangedDiv.prop('hidden', false);
+                }
+            });
+        }
+    );
 
     document.getElementById('endSolveBtn').onclick = () => {
         return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
@@ -44,9 +49,7 @@ $(() => {
 function testSol(): void {
     uploadBtn.disabled = true;
 
-    const solution: string = editor.getValue();
-
-    uploadFiles<WebCompleteResult>(uploadBtn, /*solution, */onWebCorrectionSuccess, onWebCorrectionError);
+    uploadFiles<WebCompleteResult>(uploadBtn, onWebCorrectionSuccess, onWebCorrectionError);
 }
 
 function onWebCorrectionSuccess(result: WebCompleteResult): void {

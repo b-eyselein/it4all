@@ -2,3 +2,12 @@
     max-width: 900px;
     margin: auto;
 }
+
+table, tr, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+}

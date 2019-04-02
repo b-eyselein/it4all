@@ -56,9 +56,11 @@ object WebGrader {
           case Some(textResult) => if (textResult.success) SuccessType.COMPLETE else SuccessType.PARTIALLY
         }
 
-        GradedElementSpecResult(elementSpecResult.elementSpec.id, successType, Some(foundElement), maybeGradedTextContentResult, gradedAttributeResults, true, points, maxPoints)
+        val isSuccessful = successType == SuccessType.COMPLETE
 
-      case _ => GradedElementSpecResult(elementSpecResult.elementSpec.id, SuccessType.NONE, None, None, Seq[GradedTextResult](), false, zeroPoints, maxPoints)
+        GradedElementSpecResult(elementSpecResult.elementSpec.id, successType, Some(foundElement), maybeGradedTextContentResult, gradedAttributeResults, isSuccessful, points, maxPoints)
+
+      case _ => GradedElementSpecResult(elementSpecResult.elementSpec.id, SuccessType.NONE, None, None, Seq[GradedTextResult](), isSuccessful = false, zeroPoints, maxPoints)
     }
   }
 

@@ -1,17 +1,17 @@
-import * as $ from 'jquery';
 import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
 
-let filenames: string[] = [];
 let activeFile: string;
+let filenames: string[] = [];
 
-let fileBtns: JQuery;
-
-let uploadBtn: JQuery<HTMLButtonElement>;
+let fileChangeBtns: HTMLButtonElement[] = [];
 
 let files: Map<string, LoadFileSingleResult> = new Map<string, LoadFileSingleResult>();
 
 export let editor: CodeMirror.Editor;
+
+export let maybeEditor: Promise<CodeMirror.Editor> = new Promise<CodeMirror.Editor>(() => {
+});
 
 interface LoadFileSingleResult {
     path: string
@@ -26,33 +26,33 @@ interface IdeWorkspace {
 }
 
 function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
-    console.warn(JSON.stringify(result, null, 2));
-
-    // Fill file map
     for (const res of result) {
+        // Fill file map
         files.set(res.path, res);
     }
 
     activeFile = result[0].path;
 
     // Read all CodeMirror modes from result array
-    const allModes: string[] = Array.from(new Set(result.map(r => r.fileType)));
+    const allDistinctModes: string[] = Array.from(new Set(result.map(r => r.fileType)));
 
     // Load all file modes
-    Promise.all(allModes.map(mode => import(`codemirror/mode/${mode}/${mode}`)))
+    maybeEditor = Promise
+        .all(allDistinctModes.map(mode => import(`codemirror/mode/${mode}/${mode}`)))
         .then(() => {
-            console.warn('Initing editor with ' + activeFile);
             // Init editor (all modes have already been loaded!)
             const firstFile: LoadFileSingleResult | undefined = files.get(activeFile);
             // FIXME: get => null!
             editor = initEditor(firstFile.fileType, 'myTextEditor');
 
             insertContentIntoEditor(firstFile);
+
+            return editor;
         });
 }
 
 function insertContentIntoEditor(nextFile: LoadFileSingleResult) {
-// Update editor content and mode (language!)
+    // Update editor content and mode (language!)
     editor.setValue(nextFile.content);
 
     editor.setOption('mode', nextFile.fileType);
@@ -70,66 +70,64 @@ function changeEditorContent(event: Event): void {
     // TODO: mark current file btn as changed?
 
     // Get name and content of next file
-    const clickedBtn: JQuery<HTMLButtonElement> = $(event.target as HTMLButtonElement);
-    activeFile = clickedBtn.data('filename') as string;
+    const clickedBtn: HTMLButtonElement = event.target as HTMLButtonElement;
+    activeFile = clickedBtn.dataset['filename'] as string;
 
     const nextFile: LoadFileSingleResult = files.get(activeFile);
 
     insertContentIntoEditor(nextFile);
 
     // Update buttons
-    fileBtns.removeClass('btn-primary').addClass('btn-outline-secondary');
-    clickedBtn.removeClass('btn-outline-secondary').addClass('btn-primary');
+    fileChangeBtns.forEach((fileChangeBtn) => {
+        fileChangeBtn.classList.remove('btn-primary');
+        fileChangeBtn.classList.add('btn-outline-secondary');
+    });
+
+    // fileBtns.removeClass('btn-primary').addClass('btn-outline-secondary');
+    clickedBtn.classList.remove('btn-outline-secondary');
+    clickedBtn.classList.add('btn-primary');
 }
 
 
-export function uploadFiles<ResultType>(testButton: HTMLButtonElement, success: (ResultType) => void, error): void {
+export function uploadFiles<ResultType>(testButton: HTMLButtonElement, onSuccess: (ResultType) => void, onError): void {
     // Save current changes
     saveEditorContent();
 
-    // TODO: implement!
-
-    const url = testButton.dataset['href'];
+    const url: string = testButton.dataset['href'];
 
     const fileValues: IdeWorkspace = {
         files: [...files.values()],
         filesNum: files.size
     };
 
-    $.ajax({
-        method: 'PUT',
-        url,
-        data: JSON.stringify(fileValues),
-        dataType: 'json',
-        contentType: 'application/json',
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader('Csrf-Token', token);
-        },
-        success,
-        error
+    const token: string = document.querySelector<HTMLInputElement>('input[name="csrfToken"]').value as string;
+
+    const headers: Headers = new Headers({
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Csrf-Token": token
     });
+
+    fetch(url, {method: 'PUT', body: JSON.stringify(fileValues), headers})
+        .then(response => response.json())
+        .then(onSuccess)
+        .catch(onError);
 }
 
-$(() => {
-    activeFile = $('.btn-primary').data('filename');
+export function setupEditor() {
+    fileChangeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.fileBtn'));
 
-    fileBtns = $('.fileBtn');
-
-    fileBtns.each((_: number, el: HTMLElement) => {
-        filenames.push(el.dataset['filename']);
+    fileChangeBtns.forEach((fileChangeBtn: HTMLButtonElement) => {
+        filenames.push(fileChangeBtn.dataset['filename']);
+        fileChangeBtn.onclick = changeEditorContent;
     });
 
-    fileBtns.on('click', changeEditorContent);
+    const loadFilesUrl: string = document.getElementById('theContainer').dataset['loadfilesurl'];
 
-    const loadFilesUrl: string = document.getElementById('theContainer').dataset['loadfilesurl']; // 'http://localhost:9000/ideFiles'
+    fetch(loadFilesUrl)
+        .then(response => response.json())
+        .then(onLoadFileSuccess)
+        .catch(reason => console.error(reason));
+}
 
-    $.ajax({
-        url: loadFilesUrl,
-        error: jqXHR => {
-            console.error(jqXHR)
-        },
-        success: onLoadFileSuccess
-    });
-
-});
+// $(() => setupEditor());

@@ -53,7 +53,7 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "types__backbone" % "1.3.45",
 
-  "org.webjars.npm" % "lodash" % "4.17.11", "org.webjars.npm" % "types__lodash" % "4.14.123",
+  "org.webjars.npm" % "lodash" % "4.17.11", // "org.webjars.npm" % "types__lodash" % "4.14.123",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
 
   "org.webjars.npm" % "codemirror" % "5.44.0", "org.webjars.npm" % "types__codemirror" % "0.0.72",

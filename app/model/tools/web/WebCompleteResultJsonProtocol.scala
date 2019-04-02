@@ -23,11 +23,9 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWe
   //      (__ \ maxPointsName).write[Double]
   //    ) (unapplyGradedTextResult(_))
 
-  private implicit val pointsWrites: Writes[Points] = {
-    point => JsNumber(point.asDouble)
-  }
+  private implicit val pointsWrites: Writes[Points] = { point => JsNumber(point.asDouble) }
 
-  private implicit val gradedTextResultWrites = Json.writes[GradedTextResult]
+  private implicit val gradedTextResultWrites: Writes[GradedTextResult] = Json.writes[GradedTextResult]
 
   // GradedElementSpecResult
 

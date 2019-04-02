@@ -44,6 +44,7 @@ final case class GradedElementSpecResult(id: Int, successType: SuccessType, foun
                                          attributeResults: Seq[GradedTextResult],
                                          isSuccessful: Boolean, points: Points, maxPoints: Points)
 
+
 // Text Results: TextContent, AttributeResult
 
 final case class GradedTextResult(keyName: String, awaitedContent: String, maybeFoundContent: Option[String],

@@ -46,7 +46,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override type Tables = WebTableDefs
 
-
   // Other members
 
   override val hasPlayground: Boolean = true
@@ -76,6 +75,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
     exerciseFiles.map { exerciseFile: ExerciseFile =>
       val fileTargetPath = targetDir / exerciseFile.name
+
       fileTargetPath.createFileIfNotExists(createParents = true).write(exerciseFile.content)(openOptions)
     }
   }

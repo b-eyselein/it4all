@@ -23,23 +23,18 @@ interface WebResult {
 
 interface HtmlResult extends WebResult {
     elementFound: boolean
-    textContentResult: TextContent | null
-    attributeResults: AttributeResult[]
+    textContentResult: TextResult | null
+    attributeResults: TextResult[]
 }
 
 interface TextResult {
-    success: boolean
-    awaited: string
-    found: string | null
-}
-
-interface TextContent extends TextResult {
-}
-
-interface AttributeResult extends TextResult {
     keyName: string
+    awaitedContent: string
+    maybeFoundContent: string | null
+    isSuccessful: boolean
+    points: number
+    maxPoints: number
 }
-
 
 interface JsResult extends WebResult {
     preResults: ConditionResult[]
@@ -63,21 +58,21 @@ function dispPoints(result: WebResult): string {
 }
 
 function renderTextResult(textContentResult: TextResult): string {
-    if (textContentResult.success) {
+    if (textContentResult.isSuccessful) {
         return `<span class="text-success">Das Element hat den richtigen Textinhalt.</span>`
     } else {
         let foundRender: string;
-        if (textContentResult.found === null || textContentResult.found.length === 0) {
+        if (textContentResult.maybeFoundContent === null || textContentResult.maybeFoundContent.length === 0) {
             foundRender = '<b>kein Textinhalt!</b>'
         } else {
-            foundRender = `&quot;<code>${textContentResult.found}</code>&quot;`;
+            foundRender = `&quot;<code>${textContentResult.maybeFoundContent}</code>&quot;`;
         }
 
         return `
 <span class="text-danger">
     Das Element hat nicht den richtigen Textinhalt:
     <ul>
-        <li>Gesucht war &quot;<code>${textContentResult.awaited}</code>&quot;,</li>
+        <li>Gesucht war &quot;<code>${textContentResult.awaitedContent}</code>&quot;,</li>
         <li>gefunden wurde ${foundRender}</li>
     </ul>
 </span>`.trim();
@@ -85,16 +80,16 @@ function renderTextResult(textContentResult: TextResult): string {
 }
 
 
-function renderAttrResult(attrResult: AttributeResult): string {
-    if (attrResult.success) {
+function renderAttrResult(attrResult: TextResult): string {
+    if (attrResult.isSuccessful) {
         return `<span class="text-success">Das Attribut <code>${attrResult.keyName}</code> hat den richtigen Wert.</span>`
     } else {
         return `
 <span class="text-danger">
     Das Attribut <code>${attrResult.keyName}</code> hat nicht den richtigen Wert:
     <ul>
-        <li>Gesucht war <code>${attrResult.awaited}</code>,</li>
-        <li>gefunden wurde ${attrResult.found != null ? (`<code>${attrResult.found}</code>`) : ' <b>kein Attribut!</b>'}</li>
+        <li>Gesucht war <code>${attrResult.awaitedContent}</code>,</li>
+        <li>gefunden wurde ${attrResult.maybeFoundContent != null ? (`<code>${attrResult.maybeFoundContent}</code>`) : ' <b>kein Attribut!</b>'}</li>
     </ul>
 </span>`.trim();
     }
@@ -170,8 +165,6 @@ function renderJsResult(result: JsResult): string {
 
 
 export function renderWebCompleteResult(corr: WebCompleteResult): void {
-
-    console.warn(JSON.stringify(corr, null, 2));
 
     let html: string = '';
 
