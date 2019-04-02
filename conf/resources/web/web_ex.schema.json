@@ -91,10 +91,11 @@
       "type": "object",
       "properties": {
         "id": {"type": "number"},
-        "htmlSample": {"type": "string"},
-        "jsSample": {"type": "string"}
+        "files": {
+          "type": "array", "items": {"$ref": "#/definitions/WebFile"}
+        }
       },
-      "required": ["id", "htmlSample"]
+      "required": ["id", "files"]
     }
   }
 }

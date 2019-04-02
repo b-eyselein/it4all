@@ -9,7 +9,8 @@
     <div class="col-md-3">Dateien:</div>
     <div class="col-md-9">
     @for(file <- ex.files) {
-        <p>@file</p>
+        <p>@file.name (@file.fileType, @file.editable)</p>
+        <pre>@file.content</pre>
     }
     </div>
 </div>
@@ -50,8 +51,9 @@
     <div class="row my-3">
         <div class="col-md-3">Musterlösung @sample.id:</div>
         <div class="col-md-9">
-            <pre>@sample.sample.htmlSolution</pre>
-            @sample.sample.jsSolution.map(s => s"<pre>$s</pre>").getOrElse("")
+        @for(sampleFile <- sample.sample) {
+            <pre>@sampleFile</pre>
+        }
         </div>
     </div>
 }

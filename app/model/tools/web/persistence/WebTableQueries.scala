@@ -1,8 +1,8 @@
 package model.tools.web.persistence
 
 import de.uniwue.webtester.{HtmlTask, JsTask}
-import model.{ExerciseFile, SemanticVersion}
 import model.tools.web._
+import model.{ExerciseFile, SemanticVersion}
 
 import scala.concurrent.Future
 
@@ -17,9 +17,7 @@ trait WebTableQueries {
     htmlTasks <- htmlTasksForExercise(collId, ex.id)
     jsTasks <- jsTasksForExercise(collId, ex.id)
     files <- webFilesForExercise(collId, ex.id)
-    sampleSolutions <- db.run(sampleSolutionsTableQuery.filter {
-      s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion
-    }.result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
+    sampleSolutions <- futureSampleSolutionsForExercise(collId, ex.id)
   } yield dbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), files, sampleSolutions)
 
   private def htmlTasksForExercise(collId: Int, exId: Int): Future[Seq[HtmlTask]] = {
@@ -84,10 +82,11 @@ trait WebTableQueries {
   override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: WebExPart): Future[Seq[String]] = db.run(
     sampleSolutionsTableQuery
       .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
-      .map(sample => part match {
-        case WebExParts.HtmlPart => sample.htmlSample
-        case WebExParts.JsPart   => sample.jsSample.getOrElse("")
-      })
+      //      .map(sample => part match {
+      //        case WebExParts.HtmlPart => sample.htmlSample
+      //        case WebExParts.JsPart   => sample.jsSample.getOrElse("")
+      //      })
+      .map(_ => "" /* FIXME: implement...*/)
       .result
   )
 
@@ -97,7 +96,7 @@ trait WebTableQueries {
     htmlTasksSaved <- saveSeq[HtmlTask](ex.siteSpec.htmlTasks, t => saveHtmlTask(ex.id, ex.semanticVersion, collId, t))
     jsTasksSaved <- saveSeq[JsTask](ex.siteSpec.jsTasks, t => saveJsTask(ex.id, ex.semanticVersion, collId, t))
     webFilesSaved <- saveWebFiles(ex.id, ex.semanticVersion, collId, ex.files)
-    sampleSolutionsSaved <- saveWebSampleSolutions(ex.id, ex.semanticVersion, collId, ex.sampleSolutions)
+    sampleSolutionsSaved <- futureSaveSampleSolutions(ex.id, ex.semanticVersion, collId, ex.sampleSolutions)
   } yield htmlTasksSaved && jsTasksSaved && webFilesSaved && sampleSolutionsSaved
 
   private def saveHtmlTask(exId: Int, exSemVer: SemanticVersion, collId: Int, htmlTask: HtmlTask): Future[Boolean] = {
@@ -126,12 +125,6 @@ trait WebTableQueries {
     val dbWebFiles = webFiles.map(WebDbModels.dbWebFileFromWebFile(exId, exSemVer, collId, _))
 
     saveSeq[DbWebFile](dbWebFiles, dbwf => db.run(webFilesTableQuery += dbwf))
-  }
-
-  private def saveWebSampleSolutions(exId: Int, exSemVer: SemanticVersion, collId: Int, sampleSolutions: Seq[WebSampleSolution]): Future[Boolean] = {
-    val dbSamples = sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(exId, exSemVer, collId, s))
-
-    saveSeq[DbWebSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery += s))
   }
 
 }

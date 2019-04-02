@@ -104,7 +104,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override protected def correctEx(user: User, solution: XmlSolution, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =
     Future.successful(part match {
       case XmlExParts.DocumentCreationXmlPart =>
-        val solutionBaseDir = solutionDirForExercise(user.username, exercise.id).createDirectories()
+        val solutionBaseDir = solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories()
 
         exercise.samples.headOption match {
           case None            => Failure(new Exception("There is no sample solution!"))

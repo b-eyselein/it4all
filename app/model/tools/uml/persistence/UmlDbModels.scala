@@ -45,11 +45,11 @@ final case class DbUmlExercise(id: Int, semanticVersion: SemanticVersion, collec
                                state: ExerciseState, markedText: String) extends ADbExercise
 
 final case class DbUmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, sample: UmlClassDiagram)
-  extends ADbSampleSol[UmlClassDiagram]
+  extends ADbSampleSol
 
 final case class DbUmlUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: UmlExPart,
                                    solution: UmlClassDiagram, points: Points, maxPoints: Points)
-  extends ADbUserSol[UmlExPart, UmlClassDiagram]
+  extends ADbUserSol[UmlExPart]
 
 
 // Exercise review

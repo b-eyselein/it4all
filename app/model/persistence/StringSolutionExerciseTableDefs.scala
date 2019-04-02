@@ -28,8 +28,6 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Co
 
   // Helpers
 
-  override protected val solutionDbModels = new StringSolutionDbModels[PartType]()
-
   override protected def copyDbUserSolType(oldSol: DbStringUserSolution[PartType], newId: Int): DbStringUserSolution[PartType] = oldSol.copy(id = newId)
 
   // Queries
@@ -38,13 +36,17 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Co
     db.run(sampleSolutionsTableQuery
       .filter { sample => sample.collectionId === collId && sample.exerciseId === exId }
       .result
-      .map(_ map solutionDbModels.sampleSolFromDbSampleSol))
+      .map(_ map StringSolutionDbModels.sampleSolFromDbSampleSol))
 
   override def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, exPart: PartType): Future[Seq[String]] =
     db.run(sampleSolutionsTableQuery
       .filter { e => e.collectionId === scenarioId && e.exerciseId === exerciseId }
       .map(_.sample)
       .result)
+
+  override def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: PartType): Future[Option[StringUserSolution[PartType]]] = ???
+
+  override def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: StringUserSolution[PartType]): Future[Boolean] = ???
 
   // Abstract Tables
 

@@ -37,7 +37,7 @@ trait AExerciseReviewDbModels[PartType <: ExPart, ReviewType <: ExerciseReview, 
 
 }
 
-sealed trait ADbSolution[SolType] {
+sealed trait ADbSolution {
 
   val id: Int
 
@@ -49,19 +49,13 @@ sealed trait ADbSolution[SolType] {
 
 }
 
-trait ADbSampleSol[SolType] extends ADbSolution[SolType] {
+trait ADbSampleSol extends ADbSolution
 
-  val sample: SolType
-
-}
-
-trait ADbUserSol[PartType <: ExPart, SolType] extends ADbSolution[SolType] {
+trait ADbUserSol[PartType <: ExPart] extends ADbSolution {
 
   val username: String
 
   val part: PartType
-
-  val solution: SolType
 
   val points: Points
 

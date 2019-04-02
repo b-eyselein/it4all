@@ -1,6 +1,7 @@
 package model.tools.rose.persistence
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.core.CoreConsts.{sampleName, solutionName}
 import model.persistence.ExerciseTableDefs
 import model.tools.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
@@ -56,7 +57,6 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   // Helper methods
 
   override protected val dbModels               = RoseDbModels
-  override protected val solutionDbModels       = RoseSolutionDbModels
   override protected val exerciseReviewDbModels = RoseExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbRoseUserSolution, newId: Int): DbRoseUserSolution = oldSol.copy(id = newId)
@@ -68,12 +68,12 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   override protected def completeExForEx(collId: Int, ex: DbRoseExercise): Future[RoseExercise] = for {
     inputTypes <- db.run(roseInputs.filter(_.exerciseId === ex.id).result) map (_ map dbModels.inputTypeFromDbInputType)
-    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result) map (_ map RoseSolutionDbModels.sampleSolFromDbSampleSol)
   } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples)
 
 
   override protected def saveExerciseRest(collId: Int, ex: RoseExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbSamples = ex.sampleSolutions map (s => RoseSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
     val dbInputs = ex.inputTypes map (it => dbModels.dbInputTypeFromInputType(ex.id, ex.semanticVersion, collId, it))
 
     for {
@@ -88,6 +88,10 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
       .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
       .map(_.sample)
       .result)
+
+  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: RoseExPart): Future[Option[RoseUserSolution]] = ???
+
+  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: RoseUserSolution): Future[Boolean] = ???
 
   // Implicit column types
 

@@ -41,22 +41,22 @@ resolvers ++= Seq(
 val webJarDependencies = Seq(
   "org.webjars.npm" % "jquery" % "3.3.1", "org.webjars.npm" % "types__jquery" % "3.3.29",
 
-  "org.webjars" % "popper.js" % "1.14.6",
+  "org.webjars" % "popper.js" % "1.14.7",
 
   "org.webjars" % "octicons" % "4.3.0",
 
   "org.webjars.npm" % "bootstrap" % "4.3.1", "org.webjars.npm" % "types__bootstrap" % "4.2.2",
 
-  "org.webjars.npm" % "systemjs" % "0.21.5", "org.webjars.npm" % "types__systemjs" % "0.20.6",
+  "org.webjars.npm" % "systemjs" % "0.21.6", "org.webjars.npm" % "types__systemjs" % "0.20.6",
 
   "org.webjars.npm" % "jointjs" % "2.2.1",
 
   "org.webjars.npm" % "types__backbone" % "1.3.45",
 
-  "org.webjars.npm" % "lodash" % "4.17.11", "org.webjars.npm" % "types__lodash" % "4.14.120",
+  "org.webjars.npm" % "lodash" % "4.17.11", "org.webjars.npm" % "types__lodash" % "4.14.123",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
 
-  "org.webjars.npm" % "codemirror" % "5.44.0", "org.webjars.npm" % "types__codemirror" % "0.0.71",
+  "org.webjars.npm" % "codemirror" % "5.44.0", "org.webjars.npm" % "types__codemirror" % "0.0.72",
 
   "org.webjars.npm" % "graphlib" % "2.1.7", "org.webjars.npm" % "types__graphlib" % "2.1.4"
 )
@@ -83,7 +83,11 @@ excludeDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % "test",
 
+  // db
   "mysql" % "mysql-connector-java" % "8.0.15",
+
+  "com.typesafe.play" %% "play-slick" % "4.0.0",
+  "com.typesafe.play" %% "play-slick-evolutions" % "4.0.0",
 
   // Better enums for scala
   "com.beachape" %% "enumeratum-play" % "1.5.16",
@@ -96,10 +100,6 @@ libraryDependencies ++= Seq(
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
 
   ws,
-
-  // core
-  "com.typesafe.play" %% "play-slick" % "4.0.0",
-  "com.typesafe.play" %% "play-slick-evolutions" % "4.0.0",
 
   "com.github.t3hnar" %% "scala-bcrypt" % "4.0",
 

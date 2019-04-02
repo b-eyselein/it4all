@@ -17,6 +17,8 @@ trait Consts {
   val exerciseTypeName: String = "exerciseType"
   val explanationsName         = "explanations"
 
+  val filesName: String = "files"
+
   val gottenName: String = "gotten"
 
   val learnerSolutionName: String = "learnerSolution"
@@ -42,6 +44,7 @@ trait Consts {
 
   val partName  : String = "part"
   val patchName : String = "patch"
+  val pathName  : String = "path"
   val pointsName: String = "points"
   val pwName    : String = "passwort"
   val pw2Name   : String = "passwort_wieder"

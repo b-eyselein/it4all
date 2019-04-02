@@ -2,7 +2,7 @@ package model.tools.web.persistence
 
 import de.uniwue.webtester.JsActionType
 import model.SemanticVersion
-import model.persistence.ExerciseTableDefs
+import model.persistence.{DbFilesUserSolution, FilesSolutionExerciseTableDefs}
 import model.tools.web._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
@@ -13,7 +13,7 @@ import scala.language.postfixOps
 
 class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[WebExPart, WebExercise, WebCollection, WebSolution, WebSampleSolution, WebUserSolution, WebExerciseReview]
+    with FilesSolutionExerciseTableDefs[WebExPart, WebExercise, WebCollection, WebExerciseReview]
     with WebTableQueries {
 
   import profile.api._
@@ -28,14 +28,14 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override protected type ExTableDef = WebExercisesTable
 
 
-  override protected type DbSampleSolType = DbWebSampleSolution
-
   override protected type DbSampleSolTable = WebSampleSolutionsTable
 
+  override protected type DbFilesSampleSolutionFilesTable = WebSampleSolutionFilesTable
 
-  override protected type DbUserSolType = DbWebUserSolution
 
-  override protected type DbUserSolTable = WebSolutionsTable
+  override protected type DbUserSolTable = WebUserSolutionsTable
+
+  override protected type DbFilesUserSolutionFilesTable = WebUserSolutionFilesTable
 
 
   override protected type DbReviewType = DbWebExerciseReview
@@ -47,8 +47,11 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override protected val exTable  : TableQuery[WebExercisesTable]   = TableQuery[WebExercisesTable]
   override protected val collTable: TableQuery[WebCollectionsTable] = TableQuery[WebCollectionsTable]
 
-  override protected val sampleSolutionsTableQuery: TableQuery[WebSampleSolutionsTable] = TableQuery[WebSampleSolutionsTable]
-  override protected val userSolutionsTableQuery  : TableQuery[WebSolutionsTable]       = TableQuery[WebSolutionsTable]
+  override protected val sampleSolutionsTableQuery    : TableQuery[WebSampleSolutionsTable]     = TableQuery[WebSampleSolutionsTable]
+  override protected val sampleSolutionFilesTableQuery: TableQuery[WebSampleSolutionFilesTable] = TableQuery[WebSampleSolutionFilesTable]
+
+  override protected val userSolutionsTableQuery    : TableQuery[WebUserSolutionsTable]     = TableQuery[WebUserSolutionsTable]
+  override protected val userSolutionFilesTableQuery: TableQuery[WebUserSolutionFilesTable] = TableQuery[WebUserSolutionFilesTable]
 
   override protected val reviewsTable: TableQuery[WebExerciseReviewsTable] = TableQuery[WebExerciseReviewsTable]
 
@@ -64,10 +67,10 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Helper methods
 
   override protected val dbModels               = WebDbModels
-  override protected val solutionDbModels       = WebSolutionDbModels
   override protected val exerciseReviewDbModels = WebExerciseReviewDbModels
 
-  override protected def copyDbUserSolType(oldSol: DbWebUserSolution, newId: Int): DbWebUserSolution = oldSol.copy(id = newId)
+
+  override protected def copyDbUserSolType(oldSol: DbFilesUserSolution[WebExPart], newId: Int): DbFilesUserSolution[WebExPart] = oldSol.copy(id = newId)
 
   override protected def exDbValuesFromExercise(collId: Int, compEx: WebExercise): DbWebExercise =
     dbModels.dbExerciseFromExercise(collId, compEx)
@@ -236,27 +239,16 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class WebSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "web_sample_solutions") {
 
-    def htmlSample: Rep[String] = column[String]("html_sample")
+  class WebSampleSolutionsTable(tag: Tag) extends AFilesSampleSolutionsTable(tag, "web_sample_solutions")
 
-    def jsSample: Rep[Option[String]] = column[Option[String]]("js_sample")
+  class WebSampleSolutionFilesTable(tag: Tag) extends AFilesSampleSolutionFilesTable(tag, "web_sample_solution_files")
 
 
-    def * : ProvenShape[DbWebSampleSolution] = (id, exerciseId, exSemVer, collectionId, htmlSample, jsSample) <> (DbWebSampleSolution.tupled, DbWebSampleSolution.unapply)
+  class WebUserSolutionsTable(tag: Tag) extends AFilesUserSolutionsTable(tag, "web_user_solutions")
 
-  }
+  class WebUserSolutionFilesTable(tag: Tag) extends AFilesUserSolutionFilesTable(tag, "web_user_solution_files")
 
-  class WebSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "web_solutions") {
-
-    def htmlSolution: Rep[String] = column[String]("html_solution")
-
-    def jsSolution: Rep[Option[String]] = column[Option[String]]("js_solution")
-
-    override def * : ProvenShape[DbWebUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part,
-      htmlSolution, jsSolution, points, maxPoints) <> (DbWebUserSolution.tupled, DbWebUserSolution.unapply)
-
-  }
 
   class WebExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "web_exercise_reviews") {
 

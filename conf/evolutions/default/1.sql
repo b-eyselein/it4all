@@ -602,7 +602,9 @@ create table if not exists web_exercises
   js_text          text,
   file_name        varchar(100) not null,
 
-  primary key (id, semantic_version, collection_id)
+  primary key (id, semantic_version, collection_id),
+  foreign key (collection_id) references web_collections (id)
+    on update cascade on delete cascade
 );
 
 create table if not exists html_tasks
@@ -699,7 +701,8 @@ create table if not exists web_files
   editable      boolean      not null,
 
   primary key (path, exercise_id, ex_sem_ver, collection_id),
-  foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
+  foreign key (exercise_id, ex_sem_ver, collection_id)
+    references web_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade
 );
 
@@ -714,13 +717,31 @@ create table if not exists web_sample_solutions
   js_sample     text,
 
   primary key (id, exercise_id, ex_sem_ver, collection_id),
-  foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
+  foreign key (exercise_id, ex_sem_ver, collection_id)
+    references web_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade
 );
 
-create table if not exists web_solutions
+create table if not exists web_sample_solution_files
 (
-  id            int primary key auto_increment,
+  name          varchar(50),
+  sample_id     int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  content       text        not null,
+  file_type     varchar(50) not null,
+  editable      boolean     not null,
+
+  primary key (name, sample_id, exercise_id, ex_sem_ver, collection_id),
+  foreign key (sample_id, exercise_id, ex_sem_ver, collection_id)
+    references web_sample_solutions (id, exercise_id, ex_sem_ver, collection_id)
+    on update cascade on delete cascade
+);
+
+create table if not exists web_user_solutions
+(
+  id            int,
   exercise_id   int,
   ex_sem_ver    varchar(10),
   collection_id int,
@@ -728,15 +749,34 @@ create table if not exists web_solutions
 
   part          varchar(50),
 
-  html_solution text,
-  js_solution   text,
-
   points        double,
   max_points    double,
 
+
+  primary key (id, exercise_id, ex_sem_ver, collection_id, username, part),
   foreign key (exercise_id, ex_sem_ver, collection_id) references web_exercises (id, semantic_version, collection_id)
     on update cascade on delete cascade,
   foreign key (username) references users (username)
+    on update cascade on delete cascade
+);
+
+create table if not exists web_user_solution_files
+(
+  name          varchar(50),
+  solution_id   int,
+  exercise_id   int,
+  ex_sem_ver    varchar(10),
+  collection_id int,
+  username      varchar(30),
+  part          varchar(50),
+
+  content       text    not null,
+  file_type     varchar(50),
+  editable      boolean not null,
+
+  primary key (name, solution_id, exercise_id, ex_sem_ver, collection_id, username, part),
+  foreign key (solution_id, exercise_id, ex_sem_ver, collection_id, username, part)
+    references web_user_solutions (id, exercise_id, ex_sem_ver, collection_id, username, part)
     on update cascade on delete cascade
 );
 
@@ -851,11 +891,15 @@ drop table if exists xml_collections;
 
 drop table if exists web_exercise_reviews;
 
-drop table if exists web_solutions;
+drop table if exists web_user_solution_files;
 
-drop table if exists web_files;
+drop table if exists web_user_solutions;
+
+drop table if exists web_sample_solution_files;
 
 drop table if exists web_sample_solutions;
+
+drop table if exists web_files;
 
 drop table if exists web_js_condition_attributes;
 

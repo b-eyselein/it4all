@@ -216,6 +216,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Files ?!? TODO!
 
-  def filesForExercise(collId: Int, ex: ExType): Seq[ExerciseFile] = Seq.empty
+  def futureFilesForExercise(user: User, collId: Int, exercise: ExType, part: PartType): Future[Seq[ExerciseFile]] =
+    Future.successful(Seq.empty)
 
 }

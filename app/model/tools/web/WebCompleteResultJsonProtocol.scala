@@ -1,6 +1,7 @@
 package model.tools.web
 
 import model.core.result.CompleteResultJsonProtocol
+import model.points.Points
 import model.tools.web.WebConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -10,17 +11,23 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWe
 
   // Text Result: HtmlAttributeResult, TextContentResult
 
-  private def unapplyGradedTextResult(gtcr: GradedTextResult): (String, String, Option[String], Boolean, Double, Double) =
-    (gtcr.keyName, gtcr.awaitedContent, gtcr.maybeFoundContent, gtcr.isSuccessful, gtcr.points.asDouble, gtcr.maxPoints.asDouble)
+  //  private def unapplyGradedTextResult(gtcr: GradedTextResult): (String, String, Option[String], Boolean, Double, Double) =
+  //    (gtcr.keyName, gtcr.awaitedContent, gtcr.maybeFoundContent, gtcr.isSuccessful, gtcr.points.asDouble, gtcr.maxPoints.asDouble)
+  //
+  //  private implicit val gradedTextResultWrites: Writes[GradedTextResult] = (
+  //    (__ \ keyName).write[String] and
+  //      (__ \ awaitedName).write[String] and
+  //      (__ \ foundName).write[Option[String]] and
+  //      (__ \ successName).write[Boolean] and
+  //      (__ \ pointsName).write[Double] and
+  //      (__ \ maxPointsName).write[Double]
+  //    ) (unapplyGradedTextResult(_))
 
-  private implicit val gradedTextResultWrites: Writes[GradedTextResult] = (
-    (__ \ keyName).write[String] and
-      (__ \ awaitedName).write[String] and
-      (__ \ foundName).write[Option[String]] and
-      (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[Double] and
-      (__ \ maxPointsName).write[Double]
-    ) (unapplyGradedTextResult(_))
+  private implicit val pointsWrites: Writes[Points] = {
+    point => JsNumber(point.asDouble)
+  }
+
+  private implicit val gradedTextResultWrites = Json.writes[GradedTextResult]
 
   // GradedElementSpecResult
 

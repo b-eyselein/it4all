@@ -1,16 +1,16 @@
 import * as $ from 'jquery';
 
 import * as CodeMirror from 'codemirror';
-import {initEditor} from "../editorHelpers";
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import {renderWebCompleteResult, WebCompleteResult} from "./webCorrection";
 
 import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
 
-let editor: CodeMirror.Editor;
+import {editor, uploadFiles} from '../tools/ideExercise';
 
-let testBtn: JQuery;
+let uploadBtn: HTMLButtonElement;
+
 let previewChangedDiv: JQuery;
 let showSampleSolBtn: JQuery;
 
@@ -19,55 +19,53 @@ let solutionChanged: boolean = false;
 
 $(() => {
     previewChangedDiv = $('#previewChangedDiv');
-    testBtn = $('#testBtn');
+
+    // FIXME: activate?
+    // editor.on('change', () => {
+    //     solutionChanged = true;
+    //     if (previewIsUpToDate) {
+    //         previewIsUpToDate = false;
+    //         previewChangedDiv.prop('hidden', false);
+    //     }
+    // });
 
 
-    editor = initEditor('htmlmixed', 'textEditor');
-    editor.on('change', () => {
-        solutionChanged = true;
-        if (previewIsUpToDate) {
-            previewIsUpToDate = false;
-            previewChangedDiv.prop('hidden', false);
-        }
-    });
-
-
-    $('#endSolveBtn').on('click', () => {
+    document.getElementById('endSolveBtn').onclick = () => {
         return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
-    });
+    };
 
-    $('#previewTabBtn').on('click', updatePreview);
+    document.getElementById('previewTabBtn').onclick = updatePreview;
 
-    testBtn.on('click', testSol);
+    uploadBtn = document.getElementById('uploadBtn') as HTMLButtonElement;
+    uploadBtn.onclick = testSol;
 });
 
 
 function testSol(): void {
-    let testButton = $('#testBtn');
-    testButton.prop('disabled', true);
+    uploadBtn.disabled = true;
 
     const solution: string = editor.getValue();
 
-    testTextExerciseSolution(testButton, solution, onWebCorrectionSuccess, onWebCorrectionError);
+    uploadFiles<WebCompleteResult>(uploadBtn, /*solution, */onWebCorrectionSuccess, onWebCorrectionError);
 }
 
 function onWebCorrectionSuccess(result: WebCompleteResult): void {
     solutionChanged = false;
 
-    testBtn.prop('disabled', false);
+    uploadBtn.disabled = false;
 
     renderWebCompleteResult(result);
     focusOnCorrection();
 }
 
 function onWebCorrectionError(jqXHR): void {
-    $('#testBtn').prop('disabled', false);
+    uploadBtn.disabled = false;
 
-    $('#correction').html(`
+    document.getElementById('correction').innerHTML = `
 <div class="alert alert-danger">Es gab einen Fehler bei der Korrekur:
     <hr>
     <pre>${jqXHR.responseJSON.msg}</pre>
-</div>`.trim())
+</div>`.trim();
 
     focusOnCorrection();
 }
@@ -86,7 +84,7 @@ function updatePreview(): void {
     $.ajax({
         type: 'PUT',
         contentType: 'text/plain', // type of message to server, "pure" html
-        url: $('#previewTabBtn').data('url'),
+        url: document.getElementById('previewTabBtn').dataset['url'],
         data: unescapeHTML(editor.getValue()),
         async: true,
         beforeSend: (xhr) => {

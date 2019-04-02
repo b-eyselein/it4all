@@ -4,7 +4,6 @@ import javax.inject.Inject
 import model.persistence._
 import model.tools.regex.RegexConsts._
 import model.tools.regex._
-import model.{StringSampleSolution, StringUserSolution}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
@@ -59,14 +58,14 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   override protected def completeExForEx(collId: Int, ex: DbRegexExercise): Future[RegexExercise] = for {
     sampleSolutions <- db.run(sampleSolutionsTableQuery.filter {
       e => e.id === ex.id && e.exSemVer === ex.semanticVersion && e.collectionId === collId
-    }.result.map(_ map solutionDbModels.sampleSolFromDbSampleSol))
+    }.result.map(_ map StringSolutionDbModels.sampleSolFromDbSampleSol))
     testData <- db.run(regexTestDataTable.filter {
       td => td.exerciseId === ex.id && td.exSemVer === ex.semanticVersion && td.collectionId === collId
     }.result.map(_ map dbModels.testDataFromDbTestData))
   } yield dbModels.exerciseFromDbExercise(ex, sampleSolutions, testData)
 
   override protected def saveExerciseRest(collId: Int, ex: RegexExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbSamples = ex.sampleSolutions map (s => StringSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
     val dbTestdata = ex.testData map (td => dbModels.dbTestDataFromTestData(ex.id, ex.semanticVersion, collId, td))
 
     for {

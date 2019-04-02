@@ -4,7 +4,7 @@ import model.persistence.ExerciseTableDefs
 import model.tools.programming.ProgConsts._
 import model.tools.programming._
 import model.tools.uml.UmlClassDiagram
-import model.{ExerciseState, User}
+import model.{ExerciseState, SemanticVersion, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsValue, Json}
 import slick.jdbc.JdbcProfile
@@ -61,7 +61,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   // Helper methods
 
   override protected val dbModels               = ProgDbModels
-  override protected val solutionDbModels       = ProgSolutionDbModels
   override protected val exerciseReviewDbModels = ProgExerciseReviewDbModels
 
   override def copyDbUserSolType(oldSol: DbProgUserSolution, newId: Int): DbProgUserSolution = oldSol.copy(id = newId)
@@ -72,14 +71,14 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   // Queries
 
   override def completeExForEx(collId: Int, ex: DbProgExercise): Future[ProgExercise] = for {
-    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
+    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result) map (_ map ProgSolutionDbModels.sampleSolFromDbSampleSol)
     inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result) map (_ map dbModels.progInputFromDbProgInput)
     sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result) map (_ map dbModels.sampleTestDataFromDbSampleTestData)
     maybeClassDiagram <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption).map(_.map(_.classDiagram))
   } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, maybeClassDiagram)
 
   override def saveExerciseRest(collId: Int, ex: ProgExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => solutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbSamples = ex.sampleSolutions map (s => ProgSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
     val dbProgInputs = ex.inputTypes map (it => dbModels.dbProgInputFromProgInput(ex.id, ex.semanticVersion, collId, it))
     val dbSampleTestData = ex.sampleTestData map (std => dbModels.dbSampleTestDataFromSampleTestData(ex.id, ex.semanticVersion, collId, std))
     val dbProgUmlClassDiagram = ex.maybeClassDiagramPart.map(mcd => dbModels.dbProgUmlClassDiagramFromUmlClassDiagram(ex.id, ex.semanticVersion, collId, mcd)).toList
@@ -95,6 +94,11 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[String]] =
   //  FIXME:  db.run(sampleSolutions.filter(_.exerciseId === id).map(_.sample).result.map(_.solution))
     ???
+
+
+  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: ProgExPart): Future[Option[ProgUserSolution]] = ???
+
+  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: ProgUserSolution): Future[Boolean] = ???
 
   // Implicit column types
 

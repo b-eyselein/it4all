@@ -2,15 +2,19 @@ package model.tools.xml.persistence
 
 import model.persistence.ExerciseTableDefs
 import model.tools.xml._
+import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[XmlExPart, XmlExercise, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview] {
+  extends ExerciseTableDefs[XmlExPart, XmlExercise, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview]
+    with HasDatabaseConfigProvider[JdbcProfile]
+    with XmlTableQueries {
+
+  protected val logger = Logger(classOf[XmlTableDefs])
 
   import profile.api._
 
@@ -50,40 +54,12 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Helper methods
 
   override protected val dbModels               = XmlDbModels
-  override protected val solutionDbModels       = XmlSolutionDbModels
   override protected val exerciseReviewDbModels = XmlExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbXmlUserSolution, newId: Int): DbXmlUserSolution = oldSol.copy(id = newId)
 
   override protected def exDbValuesFromExercise(collId: Int, compEx: XmlExercise): DbXmlExercise =
     dbModels.dbExerciseFromExercise(collId, compEx)
-
-  // Reading
-
-  override protected def completeExForEx(collId: Int, ex: DbXmlExercise): Future[XmlExercise] = for {
-    samples <- db.run(sampleSolutionsTableQuery.filter(e => e.exerciseId === ex.id && e.exSemVer === ex.semanticVersion).result) map (_ map solutionDbModels.sampleSolFromDbSampleSol)
-  } yield dbModels.exerciseFromDbValues(ex, samples)
-
-  override def futureSampleSolutionsForExPart(collId: Int, exId: Int, part: XmlExPart): Future[Seq[String]] =
-    db.run(sampleSolutionsTableQuery
-      .filter { s => s.collectionId === collId && s.exerciseId === exId }
-      .map { sampleSol =>
-        part match {
-          case XmlExParts.GrammarCreationXmlPart  => sampleSol.grammar
-          case XmlExParts.DocumentCreationXmlPart => sampleSol.document
-        }
-      }
-      .result)
-
-  // Saving
-
-  override def saveExerciseRest(collId: Int, compEx: XmlExercise): Future[Boolean] = {
-    val dbSamples = compEx.samples map (s => solutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
-
-    for {
-      samplesSaved <- saveSeq[DbXmlSampleSolution](dbSamples, i => db.run(sampleSolutionsTableQuery += i), Some("XmlSample"))
-    } yield samplesSaved
-  }
 
   // Column Types
 

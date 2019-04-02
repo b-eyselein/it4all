@@ -1,6 +1,6 @@
-@import model.tools.web.{WebCollection, WebExercise, WebExPart, WebToolMain, WebExParts}
+@import model.tools.web.{WebCollection, WebExPart, WebExParts, WebExercise, WebToolMain}
 
-@(user: model.User, collection: WebCollection, exercise: WebExercise, part: WebExPart, oldSolution: String, toolMainObject: WebToolMain)(
+@(user: model.User, collection: WebCollection, exercise: WebExercise, part: WebExPart, toolMainObject: WebToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
@@ -27,8 +27,7 @@
 @solutionPreview = {
     <div id="previewTab" class="tab-pane fade">
         <div class="alert alert-warning" id="previewChangedDiv">
-            Ihre Lösung hat sich geändert. Laden Sie sie neu,
-            indem Sie diesen Tab neu aufrufen.</div>
+            Ihre Lösung hat sich geändert. Laden Sie sie neu, indem Sie diesen Tab neu aufrufen.</div>
         <div class="embed-responsive embed-responsive-16by9">
             <iframe class="embed-responsive-item" src="@coll.routes.CollectionController.webSolution(collection.id, exercise.id, part.urlName)" id="preview"></iframe>
         </div>
@@ -38,4 +37,5 @@
 @* @toolViews.textExercise(user, exerciseText, collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
 solutionPreview = Some(solutionPreview)) *@
 
-@toolViews.ideExercise(user, exerciseText, exercise.files.map(_.path), None, toolMainObject, collection, exercise, part, solutionPreview = Some(solutionPreview))
+@toolViews.ideExercise(user, exerciseText, exercise.files.map(_.name), exercise.files.headOption, toolMainObject,
+    collection, exercise, part, solutionPreview = Some(solutionPreview), additionalScripts)

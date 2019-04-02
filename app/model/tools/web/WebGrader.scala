@@ -2,9 +2,11 @@ package model.tools.web
 
 import de.uniwue.webtester._
 import model.core.result.SuccessType
-import model.points.{Points, addUp, singlePoint, zeroPoints}
+import model.points._
 
 object WebGrader {
+
+  private val pointForCorrectTextResult: Points = singlePoint
 
   private def gradeTextResult(tcr: TextResult): GradedTextResult = {
 
@@ -13,13 +15,26 @@ object WebGrader {
       case TextContentResult(_, _)                   => "TextContent"
     }
 
-    val points = if (tcr.success) singlePoint else zeroPoints
+    val points = if (tcr.success) pointForCorrectTextResult else zeroPoints
 
     GradedTextResult(keyName, tcr.awaitedContent, tcr.maybeFoundContent, tcr.success, points, maxPoints = singlePoint)
   }
 
+  private def calculateMaxPointsForElementSpec(element: HtmlElementSpec): Points = {
+    val pointsForElement = singlePoint
+
+    val pointsForTextcontentResult = element.awaitedTextContent match {
+      case None    => zeroPoints
+      case Some(_) => pointForCorrectTextResult
+    }
+
+    val pointsForAttributes: Seq[Points] = element.attributes.map(_ => pointForCorrectTextResult)
+
+    pointsForElement + pointsForTextcontentResult + addUp(pointsForAttributes)
+  }
+
   private def gradeElementSpecResult(elementSpecResult: ElementSpecResult): GradedElementSpecResult = {
-    val maxPoints = ???
+    val maxPoints = calculateMaxPointsForElementSpec(elementSpecResult.elementSpec)
 
     elementSpecResult match {
       case ElementFoundElementSpecResult(_, foundElement, textContentResult, attributeResults) =>
@@ -34,9 +49,16 @@ object WebGrader {
 
         val points = pointsForElement + pointsForTextContentResult + pointsForAttributeResults
 
-        GradedElementSpecResult(elementSpecResult.elementSpec.id, Some(foundElement), maybeGradedTextContentResult, gradedAttributeResults, true, points, maxPoints)
 
-      case _ => GradedElementSpecResult(elementSpecResult.elementSpec.id, None, None, Seq[GradedTextResult](), false, zeroPoints, maxPoints)
+        val successType = if (attributeResults.exists(!_.success)) SuccessType.PARTIALLY
+        else textContentResult match {
+          case None             => SuccessType.COMPLETE
+          case Some(textResult) => if (textResult.success) SuccessType.COMPLETE else SuccessType.PARTIALLY
+        }
+
+        GradedElementSpecResult(elementSpecResult.elementSpec.id, successType, Some(foundElement), maybeGradedTextContentResult, gradedAttributeResults, true, points, maxPoints)
+
+      case _ => GradedElementSpecResult(elementSpecResult.elementSpec.id, SuccessType.NONE, None, None, Seq[GradedTextResult](), false, zeroPoints, maxPoints)
     }
   }
 
@@ -46,20 +68,7 @@ object WebGrader {
 
     val gradedElementSpecResult = gradeElementSpecResult(htr.elementSpecResult)
 
-    val success: SuccessType = ???
-    //      gradedElementSpecResult match {
-    //      case ElementFoundElementSpecResult(_, _, textContentResult, attributeResults) =>
-    //
-    //        if (notAllResultsSuccessful(attributeResults)) SuccessType.PARTIALLY
-    //        else textContentResult match {
-    //          case None             => SuccessType.COMPLETE
-    //          case Some(textResult) => if (textResult.success) SuccessType.COMPLETE else SuccessType.PARTIALLY
-    //        }
-    //
-    //      case _ => SuccessType.NONE
-    //    }
-
-    GradedHtmlTaskResult(gradedElementSpecResult, success)
+    GradedHtmlTaskResult(gradedElementSpecResult, gradedElementSpecResult.successType)
   }
 
   def gradeJsTaskResult(jtr: JsTaskResult): GradedJsTaskResult = {

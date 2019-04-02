@@ -1,5 +1,6 @@
 package model.tools.web
 
+import better.files.File
 import model.MyYamlProtocol._
 import model._
 import model.tools.web.WebConsts._
@@ -13,6 +14,8 @@ import scala.util.{Success, Try}
 object WebToolYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger("model.tools.web.WebExYamlProtocol")
+
+  private val baseResourcesPath = File("conf") / "resources"
 
   object WebCollectionYamlFormat extends MyYamlObjectFormat[WebCollection] {
 
@@ -90,11 +93,14 @@ object WebToolYamlProtocol extends MyYamlProtocol {
   private object WebFileYamlFormat extends MyYamlObjectFormat[ExerciseFile] {
 
     override protected def readObject(yamlObject: YamlObject): Try[ExerciseFile] = for {
-      path <- yamlObject.stringField("path")
+      path <- yamlObject.stringField(pathName)
       resourcePath <- yamlObject.stringField("resourcePath")
       fileType <- yamlObject.stringField("fileType")
       editable <- yamlObject.optBoolField("editable").map(_.getOrElse(true))
-    } yield ExerciseFile(path, resourcePath, fileType, editable)
+    } yield {
+      val content = (baseResourcesPath / resourcePath).contentAsString
+      ExerciseFile(path, content, fileType, editable)
+    }
 
     override def write(obj: ExerciseFile): YamlValue = ???
 
@@ -228,15 +234,20 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
   }
 
-  private object WebSampleSolutionYamlFormat extends MyYamlObjectFormat[WebSampleSolution] {
+  private object WebSampleSolutionYamlFormat extends MyYamlObjectFormat[FilesSampleSolution] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[WebSampleSolution] = for {
+    override protected def readObject(yamlObject: YamlObject): Try[FilesSampleSolution] = for {
       id <- yamlObject.intField(idName)
-      htmlSample <- yamlObject.stringField(htmlSampleName)
-      jsSample <- yamlObject.optStringField(jsSampleName)
-    } yield WebSampleSolution(id, WebSolution(htmlSample, jsSample))
+      files <- yamlObject.arrayField(filesName, WebFileYamlFormat.read)
+    } yield {
 
-    override def write(obj: WebSampleSolution): YamlValue = ???
+      for (sampleFileReadError <- files._2)
+        logger.error("Error while reading web sample", sampleFileReadError.exception)
+
+      FilesSampleSolution(id, files._1)
+    }
+
+    override def write(obj: FilesSampleSolution): YamlValue = ???
 
   }
 

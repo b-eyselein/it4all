@@ -103,7 +103,7 @@ DELETE        /tools/:toolType/:collId/:exId                                  co
 GET           /tools/:toolType/:collId/:id/:partStr/evaluationPartForm        controllers.coll.CollectionController.reviewExercisePartForm(toolType: String, collId: Int, id: Int, partStr: String)
 POST          /tools/:toolType/:collId/:id/:partStr/evaluatePart              controllers.coll.CollectionController.reviewExercisePart(toolType: String,collId: Int, id: Int, partStr: String)
 
-GET           /tools/:toolType/:collId/:exId/loadFiles                        controllers.coll.CollectionController.loadFiles(toolType: String, collId: Int, exId: Int)
+GET           /tools/:toolType/:collId/:exId/:partStr/loadFiles               controllers.coll.CollectionController.loadFiles(toolType: String, collId: Int, exId: Int, partStr: String)
 
 # Other routes
 GET           /uml/classDiagram/:id/:part/cd.js                               controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)

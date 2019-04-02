@@ -100,7 +100,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   }
 
   override protected def correctEx(user: User, sol: String, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart): Future[Try[RoseCompleteResult]] = {
-    val solDir = solutionDirForExercise(user.username, exercise.id)
+    val solDir = solutionDirForExercise(user.username, collection.id, exercise.id)
 
     for {
       result <- RoseCorrector.correct(user, exercise, sol, ProgLanguages.StandardLanguage, exerciseResourcesFolder, solDir)

@@ -11,14 +11,13 @@ let uploadBtn: JQuery<HTMLButtonElement>;
 
 let files: Map<string, LoadFileSingleResult> = new Map<string, LoadFileSingleResult>();
 
-let editor: CodeMirror.Editor;
+export let editor: CodeMirror.Editor;
 
 interface LoadFileSingleResult {
     path: string
-    origContent: string
+    content: string
     fileType: string
     editable: boolean
-    new_content?: string
 }
 
 interface IdeWorkspace {
@@ -27,7 +26,7 @@ interface IdeWorkspace {
 }
 
 function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
-    // console.warn(JSON.stringify(result, null, 2));
+    console.warn(JSON.stringify(result, null, 2));
 
     // Fill file map
     for (const res of result) {
@@ -40,51 +39,62 @@ function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
     const allModes: string[] = Array.from(new Set(result.map(r => r.fileType)));
 
     // Load all file modes
-    Promise.all(allModes.map(mode => import('codemirror/mode/' + mode + '/' + mode)))
+    Promise.all(allModes.map(mode => import(`codemirror/mode/${mode}/${mode}`)))
         .then(() => {
+            console.warn('Initing editor with ' + activeFile);
             // Init editor (all modes have already been loaded!)
-            const firstFile: LoadFileSingleResult = files.get(activeFile);
+            const firstFile: LoadFileSingleResult | undefined = files.get(activeFile);
             // FIXME: get => null!
             editor = initEditor(firstFile.fileType, 'myTextEditor');
+
+            insertContentIntoEditor(firstFile);
         });
 }
 
-function changeEditorContent(event: Event): void {
+function insertContentIntoEditor(nextFile: LoadFileSingleResult) {
+// Update editor content and mode (language!)
+    editor.setValue(nextFile.content);
+
+    editor.setOption('mode', nextFile.fileType);
+    editor.setOption('readOnly', !nextFile.editable);
+}
+
+function saveEditorContent(): void {
     // save current editor content for activeFile!
-    files.get(activeFile).new_content = editor.getValue();
+    files.get(activeFile).content = editor.getValue();
+}
+
+function changeEditorContent(event: Event): void {
+    saveEditorContent();
 
     // TODO: mark current file btn as changed?
 
     // Get name and content of next file
     const clickedBtn: JQuery<HTMLButtonElement> = $(event.target as HTMLButtonElement);
     activeFile = clickedBtn.data('filename') as string;
+
     const nextFile: LoadFileSingleResult = files.get(activeFile);
 
-    // Update editor content and mode (language!)
-    editor.setValue(nextFile.new_content ? nextFile.new_content : nextFile.origContent);
-
-    editor.setOption('mode', nextFile.fileType);
-    editor.setOption('readOnly', !nextFile.editable);
+    insertContentIntoEditor(nextFile);
 
     // Update buttons
     fileBtns.removeClass('btn-primary').addClass('btn-outline-secondary');
     clickedBtn.removeClass('btn-outline-secondary').addClass('btn-primary');
 }
 
-function uploadFiles(event: Event): void {
+
+export function uploadFiles<ResultType>(testButton: HTMLButtonElement, success: (ResultType) => void, error): void {
+    // Save current changes
+    saveEditorContent();
+
     // TODO: implement!
-    console.warn('TODO: Upload!');
 
-    const url = $(event.target).data('href');
-    console.info(url);
-
+    const url = testButton.dataset['href'];
 
     const fileValues: IdeWorkspace = {
         files: [...files.values()],
         filesNum: files.size
     };
-
-    console.warn(fileValues);
 
     $.ajax({
         method: 'PUT',
@@ -96,9 +106,8 @@ function uploadFiles(event: Event): void {
             const token = $('input[name="csrfToken"]').val() as string;
             xhr.setRequestHeader('Csrf-Token', token);
         },
-        error: (jqXHR) => {
-            console.error(jqXHR.responseText);
-        }
+        success,
+        error
     });
 }
 
@@ -108,7 +117,7 @@ $(() => {
     fileBtns = $('.fileBtn');
 
     fileBtns.each((_: number, el: HTMLElement) => {
-        filenames.push($(el).data('filename'));
+        filenames.push(el.dataset['filename']);
     });
 
     fileBtns.on('click', changeEditorContent);
@@ -123,6 +132,4 @@ $(() => {
         success: onLoadFileSuccess
     });
 
-    uploadBtn = $('#uploadBtn');
-    uploadBtn.on('click', uploadFiles);
 });

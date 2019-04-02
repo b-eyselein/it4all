@@ -106,7 +106,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   }
 
   override def correctEx(user: User, sol: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart): Future[Try[ProgCompleteResult]] =
-    ProgCorrector.correct(user, sol, exercise, part, toolMain = this)
+    ProgCorrector.correct(user, sol, collection, exercise, part, toolMain = this)
 
   // Views
 

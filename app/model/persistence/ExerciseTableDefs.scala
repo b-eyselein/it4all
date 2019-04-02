@@ -27,12 +27,12 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
   protected type CollTableDef <: ExerciseCollectionTable
 
 
-  protected type DbSampleSolType <: ADbSampleSol[SolType]
+  protected type DbSampleSolType <: ADbSampleSol
 
   protected type DbSampleSolTable <: ASampleSolutionsTable
 
 
-  protected type DbUserSolType <: ADbUserSol[PartType, SolType]
+  protected type DbUserSolType <: ADbUserSol[PartType]
 
   protected type DbUserSolTable <: AUserSolutionsTable
 
@@ -54,7 +54,6 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
   // Helper methods
 
   protected val dbModels              : ADbModels[ExType, DbExType]
-  protected val solutionDbModels      : ASolutionDbModels[SolType, PartType, SampleSolType, DbSampleSolType, UserSolType, DbUserSolType]
   protected val exerciseReviewDbModels: AExerciseReviewDbModels[PartType, ReviewType, DbReviewType]
 
   protected def exDbValuesFromExercise(collId: Int, exercise: ExType): DbExType
@@ -125,7 +124,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
 
   protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DbUserSolType](tag, name) {
 
-    def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def id: Rep[Int] = column[Int]("id")
 
     def username: Rep[String] = column[String]("username")
 

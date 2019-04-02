@@ -92,18 +92,18 @@ final case class DbProgExercise(id: Int, semanticVersion: SemanticVersion, colle
 
 
 final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, language: ProgLanguage, base: String, sampleStr: String)
-  extends ADbSampleSol[ProgSolution] {
+  extends ADbSampleSol {
 
-  override val sample = ProgSolution(sampleStr, testData = Seq[ProgUserTestData](), extendedUnitTests = false, language)
+  val sample = ProgSolution(sampleStr, testData = Seq[ProgUserTestData](), extendedUnitTests = false, language)
 
 }
 
 final case class DbProgUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: ProgExPart,
                                     implementation: String, testData: JsValue, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points)
-  extends ADbUserSol[ProgExPart, ProgSolution] {
+  extends ADbUserSol[ProgExPart] {
 
 
-  override val solution: ProgSolution = ProgSolution(implementation, ProgSolutionDbModels.testDataFromJson(testData), extendedUnitTests, language)
+  val solution: ProgSolution = ProgSolution(implementation, ProgSolutionDbModels.testDataFromJson(testData), extendedUnitTests, language)
 
 }
 

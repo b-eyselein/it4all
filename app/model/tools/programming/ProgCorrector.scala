@@ -19,7 +19,7 @@ object ProgCorrector {
 
   private def buildTestMainFileName(fileEnding: String): String = "test_main." + fileEnding
 
-  def correct(user: User, progSolution: ProgSolution, exercise: ProgExercise, part: ProgExPart, toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
+  def correct(user: User, progSolution: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val (implementation: String, completeTestData: Seq[ProgTestData]) = part match {
       case ProgExParts.TestdataCreation => (exercise.sampleSolutions.headOption.map(_.sample).getOrElse(???), progSolution.testData)
@@ -28,7 +28,7 @@ object ProgCorrector {
 
     val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.folderIdentifier)
 
-    val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, exercise.id)
+    val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, collection.id, exercise.id)
 
     val testDataFileContent: JsValue = exercise.buildTestDataFileContent(completeTestData, progSolution.extendedUnitTests)
 

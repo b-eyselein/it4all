@@ -61,7 +61,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Saving
 
   override def saveExerciseRest(collId: Int, compEx: SqlExercise): Future[Boolean] = {
-    val dbSamples = compEx.samples map (s => solutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+    val dbSamples = compEx.samples map (s => StringSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
       samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery insertOrUpdate s))

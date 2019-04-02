@@ -4,7 +4,7 @@ import de.uniwue.webtester._
 import model.persistence._
 import model.points.Points
 import model.tools.web._
-import model.{Difficulty, ExerciseFile, ExerciseState, SemanticVersion}
+import model._
 
 object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
@@ -13,7 +13,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   override def dbExerciseFromExercise(collId: Int, ex: WebExercise): DbWebExercise =
     DbWebExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
 
-  def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], files: Seq[ExerciseFile], sampleSolutions: Seq[WebSampleSolution]) =
+  def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], files: Seq[ExerciseFile], sampleSolutions: Seq[FilesSampleSolution]) =
     WebExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText,
       SiteSpec(1, ex.fileName, htmlTasks, jsTasks), files, sampleSolutions)
 
@@ -83,27 +83,9 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   // WebFile
 
   def dbWebFileFromWebFile(exId: Int, exSemVer: SemanticVersion, collId: Int, webFile: ExerciseFile): DbWebFile =
-    DbWebFile(webFile.path, exId, exSemVer, collId, webFile.resourcePath, webFile.fileType, webFile.editable)
+    DbWebFile(webFile.name, exId, exSemVer, collId, webFile.content, webFile.fileType, webFile.editable)
 
   def webFileFromDbWebFile(dbWebFile: DbWebFile): ExerciseFile = ExerciseFile(dbWebFile.path, dbWebFile.resourcePath, dbWebFile.fileType, dbWebFile.editable)
-
-}
-
-object WebSolutionDbModels extends ASolutionDbModels[WebSolution, WebExPart, WebSampleSolution, DbWebSampleSolution, WebUserSolution, DbWebUserSolution] {
-
-  override def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: WebSampleSolution): DbWebSampleSolution =
-    DbWebSampleSolution(sample.id, exId, exSemVer, collId, sample.sample.htmlSolution, sample.sample.jsSolution)
-
-  override def sampleSolFromDbSampleSol(dbSample: DbWebSampleSolution): WebSampleSolution =
-    WebSampleSolution(dbSample.id, dbSample.sample)
-
-  // User solutions
-
-  override def dbUserSolFromUserSol(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, solution: WebUserSolution): DbWebUserSolution =
-    DbWebUserSolution(solution.id, exId, exSemVer, collId, username, solution.part, solution.solution.htmlSolution, solution.solution.jsSolution, solution.points, solution.maxPoints)
-
-  override def userSolFromDbUserSol(dbSolution: DbWebUserSolution): WebUserSolution =
-    WebUserSolution(dbSolution.id, dbSolution.part, dbSolution.solution, dbSolution.points, dbSolution.maxPoints)
 
 }
 
@@ -121,19 +103,12 @@ final case class DbWebExercise(id: Int, semanticVersion: SemanticVersion, collec
                                htmlText: Option[String], jsText: Option[String], fileName: String) extends ADbExercise
 
 final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, htmlSample: String, jsSample: Option[String])
-  extends ADbSampleSol[WebSolution] {
-
-  override val sample: WebSolution = WebSolution(htmlSample, jsSample)
-
-}
+  extends ADbSampleSol
 
 final case class DbWebUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: WebExPart,
                                    htmlSolution: String, jsSolution: Option[String], points: Points, maxPoints: Points)
-  extends ADbUserSol[WebExPart, WebSolution] {
+  extends ADbUserSol[WebExPart]
 
-  override val solution: WebSolution = WebSolution(htmlSolution, jsSolution)
-
-}
 
 // Tasks
 

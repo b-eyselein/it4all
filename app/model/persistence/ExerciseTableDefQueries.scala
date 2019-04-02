@@ -21,18 +21,20 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
 
   protected def copyDbUserSolType(sol: DbUserSolType, newId: Int): DbUserSolType
 
-  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UserSolType): Future[Boolean] = {
-    val dbUserSol = solutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol)
+  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UserSolType): Future[Boolean]
 
-    val insertQuery = userSolutionsTableQuery returning userSolutionsTableQuery.map(_.id) into ((dbUserSol, id) => copyDbUserSolType(dbUserSol, id))
-
-    db.run(insertQuery += dbUserSol) transform {
-      case Success(_) => Success(true)
-      case Failure(e) =>
-        logger.error("Could not save solution", e)
-        Success(false)
-    }
-  }
+  //  = {
+  //    val dbUserSol = solutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol)
+  //
+  //    val insertQuery = userSolutionsTableQuery returning userSolutionsTableQuery.map(_.id) into ((dbUserSol, id) => copyDbUserSolType(dbUserSol, id))
+  //
+  //    db.run(insertQuery += dbUserSol) transform {
+  //      case Success(_) => Success(true)
+  //      case Failure(e) =>
+  //        logger.error("Could not save solution", e)
+  //        Success(false)
+  //    }
+  //  }
 
   // Numbers
 
@@ -62,15 +64,17 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
       case Some(ex) => completeExForEx(collId, ex) map Some.apply
     }
 
-  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: PartType): Future[Option[UserSolType]] = db.run(
-    userSolutionsTableQuery
-      .filter {
-        sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId && sol.part === part
-      }
-      .sortBy(_.id.desc) // take last sample sol (with highest id)
-      .result
-      .headOption
-      .map(_ map solutionDbModels.userSolFromDbUserSol))
+  def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: PartType): Future[Option[UserSolType]]
+
+  //  = db.run(
+  //    userSolutionsTableQuery
+  //      .filter {
+  //        sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId && sol.part === part
+  //      }
+  //      .sortBy(_.id.desc) // take last sample sol (with highest id)
+  //      .result
+  //      .headOption
+  //      .map(_ map solutionDbModels.userSolFromDbUserSol))
 
   def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, part: PartType): Future[Seq[String]]
 

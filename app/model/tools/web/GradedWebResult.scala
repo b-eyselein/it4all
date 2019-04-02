@@ -1,15 +1,16 @@
 package model.tools.web
 
 import de.uniwue.webtester.{JsAction, JsActionType}
+import model.ExerciseFile
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import org.openqa.selenium.WebElement
 
-final case class WebCompleteResult(learnerSolution: String, exercise: WebExercise, part: WebExPart,
+final case class WebCompleteResult(learnerSolution: Seq[ExerciseFile], exercise: WebExercise, part: WebExPart,
                                    gradedHtmlTaskResults: Seq[GradedHtmlTaskResult], gradedJsTaskResults: Seq[GradedJsTaskResult])
   extends CompleteResult[GradedWebTaskResult] {
 
-  override type SolType = String
+  override type SolType = Seq[ExerciseFile]
 
   override def results: Seq[GradedWebTaskResult] = gradedHtmlTaskResults ++ gradedJsTaskResults
 
@@ -18,7 +19,10 @@ final case class WebCompleteResult(learnerSolution: String, exercise: WebExercis
     case WebExParts.JsPart   => addUp(gradedJsTaskResults.map(_.points))
   }
 
-  override def maxPoints: Points = exercise.maxPoints(part)
+  override def maxPoints: Points = part match {
+    case WebExParts.HtmlPart => addUp(gradedHtmlTaskResults.map(_.maxPoints))
+    case WebExParts.JsPart   => addUp(gradedJsTaskResults.map(_.maxPoints))
+  }
 
 }
 
@@ -35,7 +39,7 @@ final case class GradedHtmlTaskResult(gradedElementSpecResult: GradedElementSpec
 
 }
 
-final case class GradedElementSpecResult(id: Int, foundElement: Option[WebElement],
+final case class GradedElementSpecResult(id: Int, successType: SuccessType, foundElement: Option[WebElement],
                                          textContentResult: Option[GradedTextResult],
                                          attributeResults: Seq[GradedTextResult],
                                          isSuccessful: Boolean, points: Points, maxPoints: Points)

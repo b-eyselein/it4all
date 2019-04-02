@@ -1,9 +1,9 @@
-@import model.ideTest.IdeFile
 @import model.toolMains.CollectionToolMain
-@import model.{ExPart, Exercise, ExerciseCollection, User}
+@import model._
 
-@(user: User, exerciseText: Html, fileNames: Seq[String], maybeActiveFile: Option[IdeFile], toolMain: CollectionToolMain,
-        collection: ExerciseCollection, exercise: Exercise, part: ExPart, solutionPreview: Option[Html] = None)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@(user: User, exerciseText: Html, fileNames: Seq[String], maybeActiveFile: Option[ExerciseFile], toolMain: CollectionToolMain,
+        collection: ExerciseCollection, exercise: Exercise, part: ExPart, solutionPreview: Option[Html] = None,
+        additionalScripts: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     "IDE Test"
@@ -24,6 +24,8 @@
                 height: 700px;
             }
     </style>
+
+@additionalScripts
 }
 
 @correctionUrl = @{
@@ -35,7 +37,7 @@
 }
 
 @main(title, Some(user), scripts) {
-    <div class="container-fluid" id="theContainer" data-loadfilesurl="@coll.routes.CollectionController.loadFiles(toolMain.urlPart, collection.id, exercise.id)">
+    <div class="container-fluid" id="theContainer" data-loadfilesurl="@coll.routes.CollectionController.loadFiles(toolMain.urlPart, collection.id, exercise.id, part.urlName)">
 
         @helper.CSRF.formField
 
@@ -54,7 +56,7 @@
                     </div>
                 </div>
 
-                <textarea id="myTextEditor" title="Initialized to CodeMirror Editor">@maybeActiveFile.map(_.content).getOrElse("")</textarea>
+                <textarea id="myTextEditor" title="Initialized to CodeMirror Editor"></textarea>
 
             </div>
 
@@ -94,10 +96,11 @@
 
                         @* @remainingExDef *@
 
-                        <div class="form-group">
-                            <button class="btn btn-success btn-block" id="uploadBtn" data-href="@correctionUrl">
-                                Lösung testen
-                            </button>
+                        <div class="btn-group d-flex">
+                            <button class="btn btn-success w-100" id="uploadBtn" data-href="@correctionUrl">
+                                Lösung testen</button>
+                            <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMain.urlPart, collection.id, exercise.id, part.urlName)"
+                            id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
                         </div>
                     </div>
 

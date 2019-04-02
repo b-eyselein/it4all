@@ -3,7 +3,7 @@ package model.tools.web
 import de.uniwue.webtester._
 import model.core.ToolForms
 import model.tools.web.WebConsts._
-import model.{Difficulties, ExerciseFile, ExerciseState, SemanticVersionHelper}
+import model._
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
@@ -47,11 +47,17 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
 
   // WebSampleSolution
 
-  private val webSampleSolutionMapping: Mapping[WebSampleSolution] = mapping(
+  private def applyWebSampleSolution(id: Int, htmlSample: String, jsSample: Option[String]): FilesSampleSolution = ???
+
+  //  (id, hs, js) => WebSampleSolution(id, WebSolution(hs, js)))(wss => Some((wss.id, wss.sample.htmlSolution, wss.sample.jsSolution))
+
+  private def unapplyWebSampleSolution(wss: FilesSampleSolution): Option[(Int, String, Option[String])] = ???
+
+  private val webSampleSolutionMapping: Mapping[FilesSampleSolution] = mapping(
     idName -> number,
     htmlSampleName -> nonEmptyText,
     jsSampleName -> optional(nonEmptyText)
-  )((id, hs, js) => WebSampleSolution(id, WebSolution(hs, js)))(wss => Some((wss.id, wss.sample.htmlSolution, wss.sample.jsSolution)))
+  )(applyWebSampleSolution)(unapplyWebSampleSolution)
 
   // Web Files
 

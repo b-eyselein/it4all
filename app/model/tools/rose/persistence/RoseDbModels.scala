@@ -52,11 +52,11 @@ final case class DbRoseExercise(id: Int, semanticVersion: SemanticVersion, colle
                                 fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends ADbExercise
 
 final case class DbRoseSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, language: ProgLanguage, sample: String)
-  extends ADbSampleSol[String]
+  extends ADbSampleSol
 
 final case class DbRoseUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: RoseExPart,
                                     language: ProgLanguage, solution: String, points: Points, maxPoints: Points)
-  extends ADbUserSol[RoseExPart, String]
+  extends ADbUserSol[RoseExPart]
 
 final case class DbRoseInputType(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, name: String, inputType: ProgDataType)
 

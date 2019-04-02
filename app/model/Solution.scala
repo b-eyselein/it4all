@@ -31,3 +31,9 @@ final case class StringSampleSolution(id: Int, sample: String) extends SampleSol
 
 final case class StringUserSolution[PartType <: ExPart](id: Int, part: PartType, solution: String, points: Points, maxPoints: Points)
   extends UserSolution[PartType, String]
+
+
+final case class FilesSampleSolution(id: Int, sample: Seq[ExerciseFile]) extends SampleSolution[Seq[ExerciseFile]]
+
+final case class FilesUserSolution[PartType <: ExPart](id: Int, part: PartType, solution: Seq[ExerciseFile], points: Points, maxPoints: Points)
+  extends UserSolution[PartType, Seq[ExerciseFile]]

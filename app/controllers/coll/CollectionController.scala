@@ -2,18 +2,17 @@ package controllers.coll
 
 import controllers.{AExerciseController, Secured}
 import javax.inject.{Inject, Singleton}
-import model.{ExerciseFile, ExerciseFileJsonProtocol, ExerciseState}
 import model.core._
 import model.core.overviewHelpers.SolvedStatesForExerciseParts
 import model.toolMains.{CollectionToolMain, ToolList}
 import model.tools.programming.ProgToolMain
 import model.tools.uml._
 import model.tools.web.{WebExParts, WebToolMain}
+import model.{ExerciseFileJsonProtocol, ExerciseState}
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 import play.api.libs.ws.WSClient
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
@@ -230,19 +229,26 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
   }
 
-  def loadFiles(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  def loadFiles(toolType: String, collId: Int, exId: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
+
       toolMain.futureCollById(collId).flatMap {
         case None             => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(collection) =>
 
-          toolMain.futureExerciseById(collId, exId).map {
-            case None           => onNoSuchExercise(toolMain, collection, exId)
+          toolMain.futureExerciseById(collId, exId).flatMap {
+            case None           => Future.successful(onNoSuchExercise(toolMain, collection, exId))
             case Some(exercise) =>
 
-              val filesForExercise: Seq[ExerciseFile] = toolMain.filesForExercise(collId, exercise)
 
-              Ok(JsArray(filesForExercise.map(ExerciseFileJsonProtocol.exerciseFileWrites.writes)))
+              toolMain.partTypeFromUrl(partStr) match {
+                case None       => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
+                case Some(part) =>
+
+                  toolMain.futureFilesForExercise(user, collId, exercise, part).map {
+                    filesForExercise => Ok(JsArray(filesForExercise.map(ExerciseFileJsonProtocol.exerciseFileJsonFormat.writes)))
+                  }
+              }
           }
       }
   }
@@ -304,7 +310,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
               webToolMain.partTypeFromUrl(partStr) match {
                 case None       => Future.successful(onNoSuchExercisePart(webToolMain, collection, exercise, partStr))
                 case Some(part) =>
-                  ws.url(webToolMain.getSolutionUrl(user, id, part)).get() map (wsRequest => Ok(wsRequest.body).as("text/html"))
+                  ws.url(webToolMain.getSolutionUrl(user, 0, id, "test.html")).get() map (wsRequest => Ok(wsRequest.body).as("text/html"))
               }
           }
       }
@@ -312,17 +318,22 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def updateWebSolution(collId: Int, id: Int, part: String): EssentialAction = withUser { user =>
     implicit request =>
-      request.body.asText match {
-        case None       => BadRequest("No content!")
-        case Some(text) =>
-          webToolMain.writeWebSolutionFile(user.username, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), text)
-          //          match {
-          //            case Success(_)     =>
-          Ok("Solution saved")
-        //            case Failure(error) =>
-        //              logger.error("Error while updating web solution", error)
-        //              BadRequest("Solution was not saved!")
-        //          }
+      request.body.asJson match {
+        case Some(JsArray(jsonFiles)) =>
+
+          val filesToWrite = jsonFiles.map {
+            ExerciseFileJsonProtocol.exerciseFileJsonFormat.reads
+          }.map(_.get)
+
+          webToolMain.writeWebSolutionFiles(user.username, collId, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), filesToWrite) match {
+            case Success(_)     => Ok("Solution saved")
+            case Failure(error) =>
+              logger.error("Error while updating web solution", error)
+              BadRequest("Solution was not saved!")
+          }
+
+        case _ => BadRequest("No content!")
+
       }
   }
 

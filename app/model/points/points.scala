@@ -7,12 +7,12 @@ package object points {
   def addUp(points: Seq[Points]): Points = Points(points.map(_.quarters).sum)
 
 
-  def zeroPoints: Points = zeroPoints
+  def zeroPoints: Points = 0.points
 
-  def singlePoint: Points = 1 point
+  def singlePoint: Points = 1.point
 
-  def singleHalfPoint: Points = 1 halfPoint
+  def singleHalfPoint: Points = 1.halfPoint
 
-  def singleQuarterPoint: Points = 1 quarterPoint
+  def singleQuarterPoint: Points = 1.quarterPoint
 
 }

@@ -1,29 +1,29 @@
 import * as $ from 'jquery';
 
-export {renderWebCompleteResult, WebCompleteResult};
 
-interface WebCompleteResult {
+export interface WebCompleteResult {
     solutionSaved: boolean
-    part: string
-    success: string
-
-    points: number
-    maxPoints: number
+    part: 'html' | 'js'
 
     htmlResults: HtmlResult[]
     jsResults: JsResult[]
+
+    success: boolean
+    points: number
+    maxPoints: number
 }
 
 interface WebResult {
     id: number
+
+    success: boolean
     points: number
     maxPoints: number
-    success: boolean
 }
 
 interface HtmlResult extends WebResult {
     elementFound: boolean
-    textContent: TextResult | null
+    textContentResult: TextContent | null
     attributeResults: AttributeResult[]
 }
 
@@ -33,11 +33,11 @@ interface TextResult {
     found: string | null
 }
 
-interface AttributeResult {
-    success: boolean
+interface TextContent extends TextResult {
+}
+
+interface AttributeResult extends TextResult {
     keyName: string
-    awaited: string
-    found: string | null
 }
 
 
@@ -62,22 +62,22 @@ function dispPoints(result: WebResult): string {
     return '(' + result.points + " / " + result.maxPoints + ' Punkte)';
 }
 
-function renderTextResult(textContent: TextResult): string {
-    if (textContent.success) {
+function renderTextResult(textContentResult: TextResult): string {
+    if (textContentResult.success) {
         return `<span class="text-success">Das Element hat den richtigen Textinhalt.</span>`
     } else {
         let foundRender: string;
-        if (textContent.found === null || textContent.found.length === 0) {
+        if (textContentResult.found === null || textContentResult.found.length === 0) {
             foundRender = '<b>kein Textinhalt!</b>'
         } else {
-            foundRender = `&quot;<code>${textContent.found}</code>&quot;`;
+            foundRender = `&quot;<code>${textContentResult.found}</code>&quot;`;
         }
 
         return `
 <span class="text-danger">
     Das Element hat nicht den richtigen Textinhalt:
     <ul>
-        <li>Gesucht war &quot;<code>${textContent.awaited}</code>&quot;,</li>
+        <li>Gesucht war &quot;<code>${textContentResult.awaited}</code>&quot;,</li>
         <li>gefunden wurde ${foundRender}</li>
     </ul>
 </span>`.trim();
@@ -115,8 +115,8 @@ function renderHtmlResult(result: HtmlResult): string {
         }
 
 
-        if (result.textContent !== null) {
-            textResult = `<li>${renderTextResult(result.textContent)}</li>`;
+        if (result.textContentResult !== null) {
+            textResult = `<li>${renderTextResult(result.textContentResult)}</li>`;
         } else {
             textResult = '';
         }
@@ -169,7 +169,10 @@ function renderJsResult(result: JsResult): string {
 }
 
 
-function renderWebCompleteResult(corr: WebCompleteResult): void {
+export function renderWebCompleteResult(corr: WebCompleteResult): void {
+
+    console.warn(JSON.stringify(corr, null, 2));
+
     let html: string = '';
 
     let solutionSavedMsg: string, solSavedClass: string;
@@ -211,6 +214,5 @@ function renderWebCompleteResult(corr: WebCompleteResult): void {
     $('#correction').html(html);
     $('#correctionDiv').prop('hidden', false);
 
-    // $('#correctionTabBtn').tab('show');
 }
 
