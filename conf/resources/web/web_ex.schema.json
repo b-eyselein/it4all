@@ -10,6 +10,7 @@
       "author": {"type": "string"},
       "text": {"type": "string"},
       "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+      "fileName": {"type": "string"},
       "htmlTasks": {
         "type": "array", "items": {"$ref": "#/definitions/HtmlTask"}
       },
@@ -24,9 +25,19 @@
       }
     },
     "required": [
-      "id", "semanticVersion", "title", "author", "text", "status", "htmlTasks", "jsTasks", "files", "samples"
+      "id",
+      "semanticVersion",
+      "title",
+      "author",
+      "text",
+      "status",
+      "fileName",
+      "htmlTasks",
+      "jsTasks",
+      "files",
+      "samples"
     ],
-    "additionalItems": false
+    "additionalProperties": false
   },
   "definitions": {
     "HtmlTask": {
@@ -36,19 +47,21 @@
         "text": {"type": "string"},
         "elementSpec": {"$ref": "#/definitions/HtmlElementSpec"}
       },
-      "required": ["id", "text", "elementSpec"]
+      "required": ["id", "text", "elementSpec"],
+      "additionalProperties": false
     },
     "HtmlElementSpec": {
       "type": "object",
       "properties": {
         "xpathQuery": {"type": "string"},
         "awaitedTag": {"type": "string"},
-        "textContent": {"type": "string"},
+        "awaitedTextContent": {"type": "string"},
         "attributes": {
           "type": "array", "items": {"$ref": "#/definitions/HtmlAttribute"}
         }
       },
-      "required": ["xpathQuery", "awaitedTag"]
+      "required": ["xpathQuery", "awaitedTag"],
+      "additionalProperties": false
     },
     "HtmlAttribute": {
       "type": "object",
@@ -67,7 +80,8 @@
         "action": {"$ref": "#/definitions/JsAction"},
         "postConditions": {"type": "array", "items": {"$ref": "#/definitions/HtmlElementSpec"}}
       },
-      "required": ["id", "text", "preConditions", "action", "postConditions"]
+      "required": ["id", "text", "preConditions", "action", "postConditions"],
+      "additionalProperties": false
     },
     "JsAction": {
       "type": "object",
@@ -75,7 +89,8 @@
         "xpathQuery": {"type": "string"},
         "actionType": {"type": "string", "enum": ["Click", "FillOut"]}
       },
-      "required": ["xpathQuery", "actionType"]
+      "required": ["xpathQuery", "actionType"],
+      "additionalProperties": false
     },
     "WebFile": {
       "type": "object",
@@ -85,7 +100,8 @@
         "fileType": {"type": "string", "enum": ["htmlmixed", "css", "js"]},
         "editable": {"type": "boolean", "default": true}
       },
-      "required": ["path", "resourcePath", "fileType"]
+      "required": ["path", "resourcePath", "fileType"],
+      "additionalProperties": false
     },
     "WebSample": {
       "type": "object",
@@ -95,7 +111,8 @@
           "type": "array", "items": {"$ref": "#/definitions/WebFile"}
         }
       },
-      "required": ["id", "files"]
+      "required": ["id", "files"],
+      "additionalProperties": false
     }
   }
 }

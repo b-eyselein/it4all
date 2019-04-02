@@ -123,5 +123,5 @@ libraryDependencies ++= Seq(
   "de.uniwue" %% "scala_dtd" % "0.4.0",
 
   // Web tester
-  "de.uniwue" %% "it4all_webtester" % "0.2.2"
+  "de.uniwue" %% "it4all_webtester" % "0.2.3"
 )

@@ -23,14 +23,14 @@ object WebGrader {
   private def calculateMaxPointsForElementSpec(element: HtmlElementSpec): Points = {
     val pointsForElement = singlePoint
 
-    val pointsForTextcontentResult = element.awaitedTextContent match {
+    val pointsForTextContentResult = element.awaitedTextContent match {
       case None    => zeroPoints
       case Some(_) => pointForCorrectTextResult
     }
 
     val pointsForAttributes: Seq[Points] = element.attributes.map(_ => pointForCorrectTextResult)
 
-    pointsForElement + pointsForTextcontentResult + addUp(pointsForAttributes)
+    pointsForElement + pointsForTextContentResult + addUp(pointsForAttributes)
   }
 
   private def gradeElementSpecResult(elementSpecResult: ElementSpecResult): GradedElementSpecResult = {
@@ -49,12 +49,14 @@ object WebGrader {
 
         val points = pointsForElement + pointsForTextContentResult + pointsForAttributeResults
 
+        val allAttributeResultsSuccessful = attributeResults.forall(_.success)
 
-        val successType = if (attributeResults.exists(!_.success)) SuccessType.PARTIALLY
-        else textContentResult match {
-          case None             => SuccessType.COMPLETE
-          case Some(textResult) => if (textResult.success) SuccessType.COMPLETE else SuccessType.PARTIALLY
-        }
+        val successType = if (allAttributeResultsSuccessful) {
+          textContentResult match {
+            case None             => SuccessType.COMPLETE
+            case Some(textResult) => if (textResult.success) SuccessType.COMPLETE else SuccessType.PARTIALLY
+          }
+        } else SuccessType.PARTIALLY
 
         val isSuccessful = successType == SuccessType.COMPLETE
 

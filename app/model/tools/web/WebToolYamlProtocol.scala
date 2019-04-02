@@ -131,7 +131,7 @@ object WebToolYamlProtocol extends MyYamlProtocol {
     override protected def readObject(yamlObject: YamlObject): Try[HtmlElementSpec] = for {
       xpathQuery <- yamlObject.stringField(xpathQueryName)
       awaitedTag <- yamlObject.stringField(awaitedTagName)
-      awaitedTextContent <- yamlObject.optStringField(awaitedName)
+      awaitedTextContent <- yamlObject.optStringField(awaitedTextContentName)
       attributes <- yamlObject.optArrayField(attributesName, HtmlAttributeYamlFormat.read)
     } yield {
       for (attributeFailure <- attributes._2)

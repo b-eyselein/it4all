@@ -8,10 +8,8 @@ let fileChangeBtns: HTMLButtonElement[] = [];
 
 let files: Map<string, LoadFileSingleResult> = new Map<string, LoadFileSingleResult>();
 
-export let editor: CodeMirror.Editor;
+let editor: CodeMirror.Editor;
 
-export let maybeEditor: Promise<CodeMirror.Editor> = new Promise<CodeMirror.Editor>(() => {
-});
 
 interface LoadFileSingleResult {
     path: string
@@ -25,7 +23,7 @@ interface IdeWorkspace {
     files: LoadFileSingleResult[]
 }
 
-function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
+function onLoadFileSuccess(result: LoadFileSingleResult[]): Promise<CodeMirror.Editor> {
     for (const res of result) {
         // Fill file map
         files.set(res.path, res);
@@ -37,8 +35,7 @@ function onLoadFileSuccess(result: LoadFileSingleResult[]): void {
     const allDistinctModes: string[] = Array.from(new Set(result.map(r => r.fileType)));
 
     // Load all file modes
-    maybeEditor = Promise
-        .all(allDistinctModes.map(mode => import(`codemirror/mode/${mode}/${mode}`)))
+    return Promise.all(allDistinctModes.map(mode => import(`codemirror/mode/${mode}/${mode}`)))
         .then(() => {
             // Init editor (all modes have already been loaded!)
             const firstFile: LoadFileSingleResult | undefined = files.get(activeFile);
@@ -114,7 +111,7 @@ export function uploadFiles<ResultType>(testButton: HTMLButtonElement, onSuccess
         .catch(onError);
 }
 
-export function setupEditor() {
+export function setupEditor(): Promise<CodeMirror.Editor> {
     fileChangeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.fileBtn'));
 
     fileChangeBtns.forEach((fileChangeBtn: HTMLButtonElement) => {
@@ -124,7 +121,7 @@ export function setupEditor() {
 
     const loadFilesUrl: string = document.getElementById('theContainer').dataset['loadfilesurl'];
 
-    fetch(loadFilesUrl)
+    return fetch(loadFilesUrl)
         .then(response => response.json())
         .then(onLoadFileSuccess)
         .catch(reason => console.error(reason));

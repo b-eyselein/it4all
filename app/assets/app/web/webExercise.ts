@@ -5,12 +5,11 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 import {renderWebCompleteResult, WebCompleteResult} from "./webCorrection";
 import {focusOnCorrection} from '../textExercise';
 
-import {maybeEditor, setupEditor, uploadFiles} from '../tools/ideExercise';
+import {setupEditor, uploadFiles} from '../tools/ideExercise';
 
 let uploadBtn: HTMLButtonElement;
 
-let previewChangedDiv: JQuery;
-let showSampleSolBtn: JQuery;
+let previewChangedDiv: HTMLDivElement;
 
 let previewIsUpToDate: boolean = false;
 let solutionChanged: boolean = false;
@@ -18,22 +17,22 @@ let solutionChanged: boolean = false;
 let editor: CodeMirror.Editor;
 
 $(() => {
-    setupEditor();
+    previewChangedDiv = document.querySelector<HTMLDivElement>('#previewChangedDiv');
 
-    previewChangedDiv = $('#previewChangedDiv');
+    setupEditor()
+        .then(theEditor => {
 
-    // FIXME: activate?
-    maybeEditor.then(resolvedEditor => {
-            editor = resolvedEditor;
-            editor.on('change', () => {
-                solutionChanged = true;
-                if (previewIsUpToDate) {
-                    previewIsUpToDate = false;
-                    previewChangedDiv.prop('hidden', false);
-                }
-            });
-        }
-    );
+                editor = theEditor;
+
+                editor.on('change', () => {
+                    solutionChanged = true;
+                    if (previewIsUpToDate) {
+                        previewIsUpToDate = false;
+                        previewChangedDiv.hidden = false;
+                    }
+                });
+            }
+        );
 
     document.getElementById('endSolveBtn').onclick = () => {
         return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
@@ -84,26 +83,26 @@ function unescapeHTML(escapedHTML: string): string {
 
 
 function updatePreview(): void {
-    $.ajax({
-        type: 'PUT',
-        contentType: 'text/plain', // type of message to server, "pure" html
-        url: document.getElementById('previewTabBtn').dataset['url'],
-        data: unescapeHTML(editor.getValue()),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: () => {
+    const url = document.getElementById('previewTabBtn').dataset['url'];
+
+    console.info(url);
+
+    const token: string = document.querySelector<HTMLInputElement>('input[name="csrfToken"]').value;
+    const headers: Headers = new Headers({
+        'Content-Type': 'text/plain',
+        'Csrf-Token': token
+    });
+
+    fetch(url, {method: 'PUT', headers, body: unescapeHTML(editor.getValue())})
+        .then(() => {
             $('#preview').attr('src', function (i, val) {
                 // Refresh iFrame
                 return val;
             });
             previewIsUpToDate = true;
-            previewChangedDiv.prop('hidden', true);
-        },
-        error: (jqXHR) => {
-            console.error(jqXHR);
-        }
-    });
+            previewChangedDiv.hidden = true;
+        })
+        .catch(reason => {
+            console.error(reason);
+        });
 }

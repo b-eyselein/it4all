@@ -327,6 +327,8 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def updateWebSolution(collId: Int, id: Int, part: String): EssentialAction = withUser { user =>
     implicit request =>
+      println("Updating web solution...")
+
       request.body.asJson match {
         case Some(JsArray(jsonFiles)) =>
 
@@ -341,7 +343,11 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
               BadRequest("Solution was not saved!")
           }
 
-        case _ => BadRequest("No content!")
+        case Some(otherJs) =>
+          logger.error("Gotten" + otherJs)
+          BadRequest("Wrong json content!")
+
+        case None => BadRequest("No content!")
 
       }
   }
