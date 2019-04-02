@@ -47,11 +47,11 @@ trait FilesSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Col
 
     def sampleId: Rep[Int] = column[Int]("sample_id")
 
-    def exId: Rep[Int] = column[Int]("ex_id")
+    def exId: Rep[Int] = column[Int]("exercise_id")
 
     def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
-    def collId: Rep[Int] = column[Int]("coll_id")
+    def collId: Rep[Int] = column[Int]("collection_id")
 
     def content: Rep[String] = column[String](contentName)
 

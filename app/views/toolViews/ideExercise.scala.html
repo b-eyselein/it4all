@@ -49,8 +49,7 @@
                     @for(fileName <- fileNames) {
                         <button class="fileBtn btn @{
                             if(maybeActiveFile.map(_.name) contains fileName) "btn-primary" else "btn-outline-secondary"
-                        } w-100" data-filename="@fileName">
-                            @fileName @* <span class="octicon octicon-check"></span> *@
+                        } w-100" data-filename="@fileName"> @fileName
                         </button>
                     }
                     </div>
@@ -83,7 +82,14 @@
                     </li>
                 </ul>
 
-                <br>
+                <div class="my-3">
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-success w-100" id="uploadBtn" data-href="@correctionUrl">
+                            Lösung testen</button>
+                        <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMain.urlPart, collection.id, exercise.id, part.urlName)"
+                        id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                    </div>
+                </div>
 
                 <div class="tab-content">
                     <div id="exerciseTextTab" class="tab-pane fade show active">
@@ -92,16 +98,8 @@
                             <div class="card-body bg-light text-justify">@exerciseText</div>
                         </div>
 
-                        <br>
-
                         @* @remainingExDef *@
 
-                        <div class="btn-group d-flex">
-                            <button class="btn btn-success w-100" id="uploadBtn" data-href="@correctionUrl">
-                                Lösung testen</button>
-                            <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMain.urlPart, collection.id, exercise.id, part.urlName)"
-                            id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
-                        </div>
                     </div>
 
                     <div id="correctionTab" class="tab-pane fade">

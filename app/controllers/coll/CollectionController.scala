@@ -297,20 +297,29 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
   }
 
-  def webSolution(collId: Int, id: Int, partStr: String): EssentialAction = futureWithUser { user =>
+  def webSolution(collId: Int, exId: Int, partStr: String, fileName: String): EssentialAction = futureWithUser { user =>
     implicit request =>
       webToolMain.futureCollById(collId) flatMap {
         case None             => Future.successful(onNoSuchCollection(webToolMain, collId))
         case Some(collection) =>
 
-          webToolMain.futureExerciseById(collection.id, id) flatMap {
-            case None           => Future.successful(onNoSuchExercise(webToolMain, collection, id))
+          webToolMain.futureExerciseById(collection.id, exId) flatMap {
+            case None           => Future.successful(onNoSuchExercise(webToolMain, collection, exId))
             case Some(exercise) =>
 
               webToolMain.partTypeFromUrl(partStr) match {
-                case None       => Future.successful(onNoSuchExercisePart(webToolMain, collection, exercise, partStr))
-                case Some(part) =>
-                  ws.url(webToolMain.getSolutionUrl(user, 0, id, "test.html")).get() map (wsRequest => Ok(wsRequest.body).as("text/html"))
+                case None    => Future.successful(onNoSuchExercisePart(webToolMain, collection, exercise, partStr))
+                case Some(_) =>
+
+                  val contentType: String = fileName.split("\\.").last match {
+                    case "html" => "text/html"
+                    case "css"  => "text/css"
+                    case "js"   => "text/javascript"
+                    case _      => "text/plain"
+                  }
+
+                  ws.url(webToolMain.getSolutionUrl(user, collId, exId, fileName)).get()
+                    .map(wsRequest => Ok(wsRequest.body).as(contentType))
               }
           }
       }

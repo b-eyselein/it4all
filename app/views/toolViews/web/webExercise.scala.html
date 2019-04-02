@@ -29,7 +29,7 @@
         <div class="alert alert-warning" id="previewChangedDiv">
             Ihre Lösung hat sich geändert. Laden Sie sie neu, indem Sie diesen Tab neu aufrufen.</div>
         <div class="embed-responsive embed-responsive-16by9">
-            <iframe class="embed-responsive-item" src="@coll.routes.CollectionController.webSolution(collection.id, exercise.id, part.urlName)" id="preview"></iframe>
+            <iframe class="embed-responsive-item" src="@coll.routes.CollectionController.webSolution(collection.id, exercise.id, part.urlName, exercise.siteSpec.fileName)" id="preview"></iframe>
         </div>
     </div>
 }

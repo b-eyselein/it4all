@@ -66,9 +66,6 @@
                     @helper.CSRF.formField
 
                     <div class="btn-group d-flex">
-                        @*<button type="button" class="btn w-100" onclick="toggleFullscreen()">*@
-                        @*Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>*@
-                        @*</button>*@
                         <button class="btn btn-primary w-100" id="testBtn" data-url="@correctionUrl">
                             Lösung testen</button>
                         <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMainObject.urlPart, collection.id, exercise.id, part.urlName)"

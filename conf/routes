@@ -107,8 +107,10 @@ GET           /tools/:toolType/:collId/:exId/:partStr/loadFiles               co
 
 # Other routes
 GET           /uml/classDiagram/:id/:part/cd.js                               controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)
+
 GET           /programming/classDiagram/:collId/:id/cd.js                     controllers.coll.CollectionController.progClassDiagram(collId: Int, id: Int)
-GET           /web/solution/:collId/:id/:part                                 controllers.coll.CollectionController.webSolution(collId: Int, id: Int, part: String)
+
+GET           /web/solution/:collId/:id/:part/:fileName                       controllers.coll.CollectionController.webSolution(collId: Int, id: Int, part: String, fileName: String)
 PUT           /web/solution/:collId/:id/:part                                 controllers.coll.CollectionController.updateWebSolution(collId: Int, id: Int, part: String)
 
 

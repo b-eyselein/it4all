@@ -45,8 +45,7 @@
         xpathQuery: /html/body//ul/li[contains(text(), 'Audi')]
         awaitedTag: li
         textContent: Audi
-        attributes:
-          - {key: class, value: list-group-item}
+        attributes: [{key: class, value: list-group-item}]
 
     - id: 5
       text: Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse 'list-group-item'.
@@ -54,8 +53,7 @@
         xpathQuery: /html/body//ul/li[contains(text(), 'BMW')]
         awaitedTag: li
         textContent: BMW
-        attributes:
-          - {key: class, value: list-group-item}
+        attributes: [{key: class, value: list-group-item}]
 
     - id: 6
       text: Erstellen Sie das Listenelement für Mercedes. Geben Sie diesem Element die Klasse 'list-group-item'.
@@ -63,8 +61,7 @@
         xpathQuery: /html/body//ul/li[contains(text(), 'Mercedes')]
         awaitedTag: li
         textContent: Mercedes
-        attributes:
-          - {key: class, value: list-group-item}
+        attributes: [{key: class, value: list-group-item}]
 
     - id: 7
       text: Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse 'list-group-item'.
@@ -72,33 +69,17 @@
         xpathQuery: /html/body//ul/li[contains(text(), 'Volkswagen')]
         awaitedTag: li
         textContent: Volkswagen
-        attributes:
-          - {key: class, value: list-group-item}
+        attributes: [{key: class, value: list-group-item}]
 
   jsTasks: []
 
   samples:
     - id: 1
       files:
-        name: carList.html
-        content: |
-          <!doctype html>
-          <html>
-            <head>
-              <title>Musterlösung Aufgabe 1</title>
-              <link rel="stylesheet"
-                href="/assets/lib/bootstrap/dist/css/bootstrap.css">
-            </head>
-            <body>
-              <h1>Autohersteller</h1>
-              <ul class="list-group">
-                <li class="list-group-item">Audi</li>
-                <li class="list-group-item">BMW</li>
-                <li class="list-group-item">Mercedes-Benz</li>
-                <li class="list-group-item">Volkswagen</li>
-              </ul>
-            </body>
-          </html>
+        - path: carList.html
+          fileType: htmlmixed
+          resourcePath: web/1-html_elements/1-carList/carListSolution.html
+          editable: false
 
 - id: 2
   semanticVersion: {major: 1, minor: 0, patch: 0}
@@ -115,6 +96,7 @@
     - path: style.css
       resourcePath: web/1-html_elements/2-production/productionStyle.css
       fileType: css
+      editable: false
 
   htmlTasks:
     - id: 1
@@ -133,8 +115,7 @@
       elementSpec:
         xpathQuery: /html/body//table
         awaitedTag: table
-        attributes:
-          - {key: class, value: table table-striped}
+        attributes: [{key: class, value: table table-striped}]
 
     - id: 3
       text: Erstellen Sie die erste Zeile für die Überschriften
@@ -211,33 +192,10 @@
 
   samples:
     - id: 1
-      htmlSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <link rel="stylesheet" href="/assets/lib/bootstrap/dist/css/bootstrap.css">
-        </head>
-        <body>
-        <table class="table table-striped">
-            <tr>
-                <th>Jahr</th>
-                <th>Produktion</th>
-            </tr>
-            <tr>
-                <td>1900</td>
-                <td>9504</td>
-            </tr>
-            <tr>
-                <td>1950</td>
-                <td>10577426</td>
-            </tr>
-            <tr>
-                <td>2000</td>
-                <td>58374162</td>
-            </tr>
-        </table>
-        </body>
-        </html>
+      files:
+        - path: production.html
+          resourcePath: web/1-html_elements/2-production/productionSolution.html
+          fileType: htmlmixed
 
 - id: 3
   semanticVersion: {major: 1, minor: 0, patch: 0}
@@ -246,6 +204,15 @@
   text: Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.
   status: APPROVED
   fileName: mustang.html
+
+  files:
+    - path: mustang.html
+      resourcePath: web/1-html_elements/3-links_images/mustang.html
+      fileType: htmlmixed
+    - path: mustangStyle.css
+      resourcePath: web/1-html_elements/3-links_images/mustangStyle.css
+      fileType: css
+      editable: false
 
   htmlTasks:
     - id: 1
@@ -272,8 +239,7 @@
       elementSpec:
         xpathQuery: /html/body//a
         awaitedTag: a
-        attributes:
-          - {key: href, value: 'https://de.wikipedia.org/wiki/Ford_Mustang'}
+        attributes: [{key: href, value: 'https://de.wikipedia.org/wiki/Ford_Mustang'}]
 
     - id: 4
       text: >
@@ -295,21 +261,10 @@
 
   samples:
     - id: 1
-      htmlSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <title>Links und Bilder</title>
-            <link rel="stylesheet" href="/assets/lib/bootstrap/dist/css/bootstrap.css">
-        </head>
-        <body>
-        <h1>Ford Mustang</h1>
-        <a href="https://de.wikipedia.org/wiki/Ford_Mustang">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg"
-                 width="250" height="188" class="rounded" alt="Ford Mustang">
-        </a>
-        </body>
-        </html>
+      files:
+        - path: mustang.html
+          resourcePath: web/1-html_elements/3-links_images/mustang.html
+          fileType: htmlmixed
 
 - id: 4
   semanticVersion: {major: 1, minor: 0, patch: 0}
@@ -318,6 +273,15 @@
   text: Erstellen Sie ein Login-Formular in HTML
   status: APPROVED
   fileName: login.html
+
+  files:
+    - path: login.html
+      resourcePath: web/1-html_elements/4-login/login.html
+      fileType: htmlmixed
+    - path: loginStyle.css
+      resourcePath: web/1-html_elements/4-login/loginStyle.css
+      fileType: css
+      editable: false
 
   htmlTasks:
     - id: 1
@@ -338,9 +302,7 @@
       elementSpec:
         xpathQuery: /html/body//form
         awaitedTag: form
-        attributes:
-          - {key: action, value: /test.php}
-          - {key: method, value: post}
+        attributes: [{key: "action", value: "/test.php"}, {key: "method", value: "post"}]
 
     - id: 3
       text: >
@@ -381,29 +343,10 @@
 
   samples:
     - id: 1
-      htmlSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <title>Login-Formular</title>
-            <link rel="stylesheet" href="/assets/lib/bootstrap/dist/css/bootstrap.css">
-        </head>
-        <body>
-        <form action="/test.php" method="post">
-            <p>
-                <label for="email">E-Mail-Adresse:</label>
-                <input type="email" id="email" name="email" class="form-control" required>
-            </p>
-            <p>
-                <label for="passwort">Passwort:</label>
-                <input type="password" id="passwort" name="passwort" class="form-control" required>
-            </p>
-            <p>
-                <input type="submit" class="btn btn-default">
-            </p>
-        </form>
-        </body>
-        </html>
+      files:
+        - path: login.html
+          resourcePath: web/1-html_elements/4-login/loginSolution.html
+          fileType: htmlmixed
 
 - id: 5
   semanticVersion: {major: 1, minor: 0, patch: 0}
@@ -412,6 +355,11 @@
   text: Erstellen Sie ein Audio-Element in Html5!
   status: APPROVED
   fileName: hymn.html
+
+  files:
+    - path: hymn.html
+      resourcePath: web/1-html_elements/5-audio/hyml.html
+      fileType: htmlmixed
 
   htmlTasks:
     - id: 1
@@ -426,8 +374,7 @@
         xpathQuery: /html/body//audio
         awaitedTag: audio
         textContent: Ihr Browser unterstützt kein Audio!
-        attributes:
-          - {key: controls, value: 'true'}
+        attributes: [{key: "controls", value: "true"}]
 
     - id: 3
       text:
@@ -436,25 +383,14 @@
         xpathQuery: /html/body//audio/source
         awaitedTag: source
         attributes:
-          - {key: type, value: audio/ogg}
+          - {key: "type", value: "audio/ogg"}
           - {key: src, value: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg'}
 
   jsTasks: []
 
   samples:
     - id: 1
-      htmlSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <title>Audio in HTML</title>
-        </head>
-        <body>
-        <h1>Deutsche Nationalhymne</h1>
-        <audio controls>
-            <source type="audio/ogg"
-                    src="https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg">
-            Ihr Browser unterst&uuml;tzt kein Audio!
-        </audio>
-        </body>
-        </html>
+      files:
+        - path: hymn.html
+          resourcePath: web/1-html_elements/5-audio/audioSolution.html
+          fileType: htmlmixed

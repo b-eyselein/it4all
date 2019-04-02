@@ -83,7 +83,7 @@
         "path": {"type": "string"},
         "resourcePath": {"type": "string"},
         "fileType": {"type": "string", "enum": ["htmlmixed", "css", "js"]},
-        "editable": {"type": "boolean"}
+        "editable": {"type": "boolean", "default": true}
       },
       "required": ["path", "resourcePath", "fileType"]
     },
