@@ -126,10 +126,10 @@ export function setupEditor(): Promise<CodeMirror.Editor> {
 
     const loadFilesUrl: string = document.getElementById('theContainer').dataset['loadfilesurl'];
 
-    return fetch(loadFilesUrl)
+    const editorPromise: Promise<void | CodeMirror.Editor> = fetch(loadFilesUrl)
         .then(response => response.json())
         .then(onLoadFileSuccess)
         .catch(reason => console.error(reason));
-}
 
-// $(() => setupEditor());
+    return editorPromise;
+}

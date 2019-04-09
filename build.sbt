@@ -6,9 +6,6 @@ version := "0.9.0"
 
 scalaVersion := "2.12.8"
 
-// Compile to java 8 for debian...
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
-
 scalacOptions ++= CompilerOptions.allOptions
 
 // Wart remover for scalac options
@@ -95,7 +92,6 @@ libraryDependencies ++= Seq(
 
   // Dependency injection
   guice,
-  "net.codingwell" %% "scala-guice" % "4.2.3",
 
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
 
