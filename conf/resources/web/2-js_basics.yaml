@@ -16,21 +16,21 @@
 
   htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
   htmlTasks:
-    - id: 1
-      text: >
+    - text: >
         Erstellen Sie einen Button auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerdem soll beim
         Klick die Funktion 'increment()' aufgerufen werden.
       elementSpec:
+        id: 1
         xpathQuery: /html/body//button
         awaitedTag: button
         attributes: [{key: 'onclick', value: 'increment()'}]
         awaitedTextContent: Klick mich!
 
-    - id: 2
-      text: >
+    - text: >
         Erstellen Sie einen Span mit der ID 'theSpan' in dem die Anzahl der Klicks angezeigt werden. Zu Anfang soll
         dieser eine 0 anzeigen.
       elementSpec:
+        id: 2
         xpathQuery: /html/body//span[@id='theSpan']
         awaitedTag: span
         awaitedTextContent: '0'
@@ -46,15 +46,15 @@
         - id: 1
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
-          textContent: "0"
+          awaitedTextContent: '0'
       action:
         xpathQuery: /html/body//button
-        actiontype: CLICK
+        actionType: Click
       postConditions:
         - id: 2
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
-          textContent: "1"
+          awaitedTextContent: '1'
 
     - id: 2
       text: Test 2
@@ -62,15 +62,15 @@
         - id: 1
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
-          textContent: "1"
+          awaitedTextContent: '1'
       action:
         xpathQuery: /html/body//button
-        actiontype: CLICK
+        actionType: Click
       postConditions:
         - id: 2
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
-          textContent: "2"
+          awaitedTextContent: '2'
 
     - id: 3
       text: Test 3
@@ -78,15 +78,15 @@
         - id: 1
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
-          textContent: "2"
+          awaitedTextContent: '2'
       action:
         xpathQuery: /html/body//button
-        actiontype: CLICK
+        actionType: Click
       postConditions:
         - id: 2
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
-          textContent: "3"
+          awaitedTextContent: '3'
 
     - id: 4
       text: Test 4
@@ -94,15 +94,15 @@
         - id: 1
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
-          textContent: "3"
+          awaitedTextContent: '3'
       action:
         xpathQuery: /html/body//button
-        actiontype: CLICK
+        actionType: Click
       postConditions:
         - id: 2
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
-          textContent: "4"
+          awaitedTextContent: '4'
 
   samples:
     - id: 1
@@ -114,7 +114,7 @@
           resourcePath: web/2-js_basics/1-clickCounter/clickCounterSolution.js
           fileType: javascript
 
-- id: 7
+- id: 2
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Verzweigungen und Strings
   author: alg81dm
@@ -122,32 +122,38 @@
   status: APPROVED
   fileName: pwChecker.html
 
-  files: []
+  files:
+    - path: pwChecker.html
+      resourcePath: web/2-js_basics/2-branchesStrings/branchesStrings.html
+      fileType: htmlmixed
+    - path: pwChecker.js
+      resourcePath: web/2-js_basics/2-branchesStrings/branchesStrings.js
+      fileType: javascript
 
   htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
   htmlTasks:
-    - id: 1
-      text: Erstellen Sie ein Texteingabefeld mit der ID 'name'
+    - text: Erstellen Sie ein Texteingabefeld mit der ID 'name'
       elementSpec:
+        id: 1
         xpathQuery: /html/body//input[@id='name']
         awaitedTag: input
         attributes:
           - {key: type, value: text}
 
-    - id: 2
-      text: Erstellen Sie ein Passworteingabefeld mit der ID 'password'. Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.
+    - text: Erstellen Sie ein Passworteingabefeld mit der ID 'password'. Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.
       elementSpec:
+        id: 2
         xpathQuery: /html/body//input[@id='password']
         awaitedTag: input
         attributes:
           - {key: type, value: password}
           - {key: onchange, value: passwordStrength()}
 
-    - id: 3
-      text: >
+    - text: >
         Erstellen Sie einen Span mit der ID 'errors', der später anzeigen soll, wenn das Passwort zu schwach ist. Zu Anfang
         soll dieser leer sein.
       elementSpec:
+        id: 3
         xpathQuery: /html/body//span[@id='errors']
         awaitedTag: span
 
@@ -164,8 +170,8 @@
       preConditions: []
       action:
         xpathQuery: /html/body//input[@id='password']
-        actiontype: FILLOUT
-        keysToSend: 123
+        actionType: FillOut
+        keysToSend: '123'
       postConditions:
         - id: 1
           xpathQuery: /html/body//span[@id='errors']
@@ -177,7 +183,7 @@
       preConditions: []
       action:
         xpathQuery: /html/body//input[@id='password']
-        actiontype: FILLOUT
+        actionType: FillOut
         keysToSend: meinpasswort
       postConditions:
         - id: 1
@@ -189,7 +195,7 @@
       text: Für alle anderen Passwörter soll das Fehlerfeld geleert (auf '' gesetzt) werden
       preConditions: []
       action:
-        actiontype: FILLOUT
+        actionType: FillOut
         xpathQuery: /html/body//input[@id='password']
         keysToSend: GanzGanzSicherUndGeheim
       postConditions:
@@ -200,63 +206,15 @@
 
   samples:
     - id: 1
-      htmlSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <!-- Hier: CSS und Javascript -->
-            <title>Passwortstärke</title>
-        </head>
-        <body>
-        <p>
-            <label for="name">Name:</label>
-            <input id="name">
-        </p>
-        <p>
-            <label for="password">Passwort:</label>
-            <input id="password" type="password" onchange="passwordStrength()">
-        </p>
-        <p>
-            <span id="errors"></span>
-        </p>
-        </body>
-        </html>
-      jsSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <title>Passwortstärke</title>
-            <script>
-                function passwordStrength() {
-                    let passwordValue = document.getElementById('password').value;
-                    let errorsSpan = document.getElementById('errors');
+      files:
+        - path: pwChecker.html
+          resourcePath: web/2-js_basics/2-branchesStrings/branchesStringsSolution.html
+          fileType: htmlmixed
+        - path: pwChecker.js
+          resourcePath: web/2-js_basics/2-branchesStrings/branchesStringsSolution.js
+          fileType: javascript
 
-                    if (passwordValue === 'meinpasswort') {
-                        errorsSpan.textContent = 'Zu einfach';
-                    } else if (passwordValue.length < 8) {
-                        errorsSpan.textContent = 'Zu kurz';
-                    } else {
-                        errorsSpan.textContent = '';
-                    }
-                }
-            </script>
-        </head>
-        <body>
-        <p>
-            <label for="name">Name:</label>
-            <input id="name">
-        </p>
-        <p>
-            <label for="password">Passwort:</label>
-            <input id="password" type="password" onchange="passwordStrength()">
-        </p>
-        <p>
-            <span id="errors"></span>
-        </p>
-        </body>
-        </html>
-
-- id: 8
+- id: 3
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Schleifen
   author: alg81dm
@@ -264,22 +222,26 @@
   status: APPROVED
   fileName: factorial.html
 
-  files: []
+  files:
+    - path: factorial.html
+      resourcePath: web/2-js_basics/3-loops/factorial.html
+      fileType: htmlmixed
+    - path: factorial.js
+      resourcePath: web/2-js_basics/3-loops/factorial.js
+      fileType: javascript
 
   htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
   htmlTasks:
-    - id: 1
-      text: Erstellen Sie ein Zahlen-Eingabefeld mit der ID 'number'. Bei Änderung des Feldes (onchange) soll die Funktion 'fakultaet()' aufgerufen werden.
+    - text: Erstellen Sie ein Zahlen-Eingabefeld mit der ID 'number'. Bei Änderung des Feldes (onchange) soll die Funktion 'fakultaet()' aufgerufen werden.
       elementSpec:
+        id: 1
         xpathQuery: /html/body//input[@id='number']
         awaitedTag: input
-        attributes:
-          - {key: type, value: number}
-          - {key: onchange, value: fakultaet()}
+        attributes: [{key: 'type', value: 'number'}, {key: 'onchange', value: 'fakultaet()'}]
 
-    - id: 2
-      text: Erstellen Sie einen Span mit der ID 'result', in dem das Ergebnis der Berechnung stehen soll. Zu Anfang soll dieser leer sein.
+    - text: Erstellen Sie einen Span mit der ID 'result', in dem das Ergebnis der Berechnung stehen soll. Zu Anfang soll dieser leer sein.
       elementSpec:
+        id: 2
         xpathQuery: /html/body//span[@id='result']
         awaitedTag: span
 
@@ -292,86 +254,60 @@
       text: Fakultät von 1 muss 1 sein
       preConditions: []
       action:
-        actiontype: FILLOUT
+        actionType: FillOut
         xpathQuery: /html/body//input[@id='number']
-        keysToSend: "1"
+        keysToSend: '1'
       postConditions:
         - id: 1
           xpathQuery: /html/body//span[@id='result']
           awaitedTag: span
-          awaitedTextContent: 1
+          awaitedTextContent: '1'
 
     - id: 2
       text: Fakultät von 3 muss 6 sein
       preConditions: []
       action:
-        actiontype: FILLOUT
+        actionType: FillOut
         xpathQuery: /html/body//input[@id='number']
-        keysToSend: "3"
+        keysToSend: '3'
       postConditions:
         - id: 1
           xpathQuery: /html/body//span[@id='result']
           awaitedTag: span
-          awaitedTextContent: "6"
+          awaitedTextContent: '6'
 
     - id: 3
       text: Fakultät von 6 muss 720 sein
       preConditions: []
       action:
-        actiontype: FILLOUT
+        actionType: FillOut
         xpathQuery: /html/body//input[@id='number']
-        keysToSend: "6"
+        keysToSend: '6'
       postConditions:
         - id: 1
           xpathQuery: /html/body//span[@id='result']
           awaitedTag: span
-          awaitedTextContent: "720"
+          awaitedTextContent: '720'
 
     - id: 4
       text: Fakultät von 10 muss 3628800 sein
       preConditions: []
       action:
-        actiontype: FILLOUT
+        actionType: FillOut
         xpathQuery: /html/body//input[@id='number']
-        keysToSend: "10"
+        keysToSend: '10'
       postConditions:
         - id: 1
           xpathQuery: /html/body//span[@id='result']
           awaitedTag: span
-          awaitedTextContent: "3628800"
+          awaitedTextContent: '3628800'
 
   samples:
     - id: 1
-      htmlSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <title>Fakult&auml;t</title>
-        </head>
-        <body>
-        <input type="number" id="number" onchange="fakultaet()">
-        <span id="result"></span>
-        </body>
-        </html>
-      jsSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <title>Fakult&auml;t</title>
-            <script>
-                function fakultaet() {
-                    const num = document.getElementById('number').value;
-                    // TODO: berechne fakultaet
-                    let fak = 1;
-                    for (let i = 1; i <= num; i++) {
-                        fak = fak * i;
-                    }
-                    document.getElementById('result').textContent = fak;
-                }
-            </script>
-        </head>
-        <body>
-        <input type="number" id="number" onchange="fakultaet()">
-        <span id="result"></span>
-        </body>
-        </html>
+      files:
+        - path: factorial.html
+          resourcePath: web/2-js_basics/3-loops/factorialSolution.html
+          fileType: htmlmixed
+        - path: factorial.js
+          resourcePath: web/2-js_basics/3-loops/factorialSolution.js
+          fileType: javascript

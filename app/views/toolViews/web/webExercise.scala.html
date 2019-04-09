@@ -1,7 +1,10 @@
 @import model.tools.web.{WebCollection, WebExPart, WebExParts, WebExercise, WebToolMain}
 
-@(user: model.User, collection: WebCollection, exercise: WebExercise, part: WebExPart, toolMainObject: WebToolMain)(
-        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@(user: model.User, collection: WebCollection, exercise: WebExercise, part: WebExPart, toolMainObject: WebToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@title = @{
+    s"Tool Web, Sammlung ${collection.id}, Aufgabe ${exercise.id}"
+}
 
 @additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/web/webExercise.js")');</script>
@@ -37,5 +40,5 @@
 @* @toolViews.textExercise(user, exerciseText, collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
 solutionPreview = Some(solutionPreview)) *@
 
-@toolViews.ideExercise(user, exerciseText, exercise.files.map(_.name), exercise.files.headOption, toolMainObject,
+@toolViews.ideExercise(user, title, exerciseText, exercise.files.map(_.name), exercise.files.headOption, toolMainObject,
     collection, exercise, part, solutionPreview = Some(solutionPreview), additionalScripts)

@@ -11,9 +11,11 @@
       "text": {"type": "string"},
       "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
       "fileName": {"type": "string"},
+      "htmlText": {"type": "string"},
       "htmlTasks": {
         "type": "array", "items": {"$ref": "#/definitions/HtmlTask"}
       },
+      "jsText": {"type": "string"},
       "jsTasks": {
         "type": "array", "items": {"$ref": "#/definitions/JsTask"}
       },
@@ -43,16 +45,16 @@
     "HtmlTask": {
       "type": "object",
       "properties": {
-        "id": {"type": "number"},
         "text": {"type": "string"},
         "elementSpec": {"$ref": "#/definitions/HtmlElementSpec"}
       },
-      "required": ["id", "text", "elementSpec"],
+      "required": ["text", "elementSpec"],
       "additionalProperties": false
     },
     "HtmlElementSpec": {
       "type": "object",
       "properties": {
+        "id": {"type": "integer"},
         "xpathQuery": {"type": "string"},
         "awaitedTag": {"type": "string"},
         "awaitedTextContent": {"type": "string"},
@@ -60,7 +62,7 @@
           "type": "array", "items": {"$ref": "#/definitions/HtmlAttribute"}
         }
       },
-      "required": ["xpathQuery", "awaitedTag"],
+      "required": ["id", "xpathQuery", "awaitedTag"],
       "additionalProperties": false
     },
     "HtmlAttribute": {
@@ -87,6 +89,7 @@
       "type": "object",
       "properties": {
         "xpathQuery": {"type": "string"},
+        "keysToSend": {"type": "string"},
         "actionType": {"type": "string", "enum": ["Click", "FillOut"]}
       },
       "required": ["xpathQuery", "actionType"],

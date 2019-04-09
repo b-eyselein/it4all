@@ -109,26 +109,21 @@ object WebToolYamlProtocol extends MyYamlProtocol {
   private object HtmlCompleteTaskYamlFormat extends MyYamlObjectFormat[HtmlTask] {
 
     override def readObject(yamlObject: YamlObject): Try[HtmlTask] = for {
-      taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
-      elementSpec <- yamlObject.objField(elementSpecName, HtmlElementSpecYamlFormat(taskId).read)
+      elementSpec <- yamlObject.objField(elementSpecName, HtmlElementSpecYamlFormat.read)
     } yield HtmlTask(text, elementSpec)
 
     override def write(htmlTask: HtmlTask): YamlValue = YamlObject(
-      YamlString(idName) -> htmlTask.id,
       YamlString(textName) -> htmlTask.text,
-      YamlString(elementSpecName) -> HtmlElementSpecYamlFormat(htmlTask.id).write(htmlTask.elementSpec),
-      YamlString(xpathQueryName) -> htmlTask.elementSpec.xpathQuery,
-      YamlString(awaitedTagName) -> htmlTask.elementSpec.awaitedTagName,
-      YamlString(textContentName) -> htmlTask.elementSpec.awaitedTextContent.map(YamlString).getOrElse(YamlNull),
-      YamlString(attributesName) -> YamlArray(htmlTask.elementSpec.attributes.map(HtmlAttributeYamlFormat.write).toVector)
+      YamlString(elementSpecName) -> HtmlElementSpecYamlFormat.write(htmlTask.elementSpec),
     )
 
   }
 
-  private final case class HtmlElementSpecYamlFormat(id: Int) extends MyYamlObjectFormat[HtmlElementSpec] {
+  private object HtmlElementSpecYamlFormat extends MyYamlObjectFormat[HtmlElementSpec] {
 
     override protected def readObject(yamlObject: YamlObject): Try[HtmlElementSpec] = for {
+      id <- yamlObject.intField(idName)
       xpathQuery <- yamlObject.stringField(xpathQueryName)
       awaitedTag <- yamlObject.stringField(awaitedTagName)
       awaitedTextContent <- yamlObject.optStringField(awaitedTextContentName)
@@ -141,7 +136,7 @@ object WebToolYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(hes: HtmlElementSpec): YamlValue = YamlObj(
-      idName -> id,
+      idName -> hes.id,
       xpathQueryName -> hes.xpathQuery,
       awaitedTagName -> hes.awaitedTagName,
       awaitedName -> hes.awaitedTextContent.map[YamlValue](YamlString).getOrElse(YamlNull),
@@ -166,9 +161,9 @@ object WebToolYamlProtocol extends MyYamlProtocol {
     override def readObject(yamlObject: YamlObject): Try[JsTask] = for {
       taskId <- yamlObject.intField(idName)
       text <- yamlObject.stringField(textName)
-      preConditionTries <- yamlObject.arrayField(preConditionsName, JsConditionYamlFormat.read)
+      preConditionTries <- yamlObject.arrayField(preConditionsName, HtmlElementSpecYamlFormat.read)
       action <- yamlObject.objField(actionName, JsActionYamlFormat.read)
-      postConditionTries <- yamlObject.arrayField(postConditionsName, JsConditionYamlFormat.read)
+      postConditionTries <- yamlObject.arrayField(postConditionsName, HtmlElementSpecYamlFormat.read)
     } yield {
 
       for (preConditionFailure <- preConditionTries._2)
@@ -186,9 +181,9 @@ object WebToolYamlProtocol extends MyYamlProtocol {
     override def write(jsTask: JsTask): YamlValue = YamlObj(
       idName -> jsTask.id,
       textName -> jsTask.text,
-      preConditionsName -> YamlArray(jsTask.preConditions.map(JsConditionYamlFormat.write).toVector),
+      preConditionsName -> YamlArray(jsTask.preConditions.map(HtmlElementSpecYamlFormat.write).toVector),
       actionName -> JsActionYamlFormat.write(jsTask.action),
-      postConditionsName -> YamlArray(jsTask.postConditions.map(JsConditionYamlFormat.write).toVector)
+      postConditionsName -> YamlArray(jsTask.postConditions.map(HtmlElementSpecYamlFormat.write).toVector)
     )
 
   }
@@ -205,31 +200,6 @@ object WebToolYamlProtocol extends MyYamlProtocol {
       xpathQueryName -> action.xpathQuery,
       actionTypeName -> action.actionType.entryName,
       keysToSendName -> action.keysToSend.map[YamlValue](YamlString).getOrElse(YamlNull)
-    )
-
-  }
-
-  private object JsConditionYamlFormat extends MyYamlObjectFormat[HtmlElementSpec] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[HtmlElementSpec] = for {
-      id <- yamlObject.intField(idName)
-      xpathQuery <- yamlObject.stringField(xpathQueryName)
-      awaitedTag <- yamlObject.stringField(awaitedTagName)
-      awaitedTextContent <- yamlObject.optStringField(awaitedName)
-      attributes <- yamlObject.optArrayField(attributesName, HtmlAttributeYamlFormat.read)
-    } yield {
-      for (attributeFailure <- attributes._2)
-        logger.error("Error while reading html attribute", attributeFailure.exception)
-
-      HtmlElementSpec(id, xpathQuery, awaitedTag, awaitedTextContent, attributes._1)
-    }
-
-    override def write(hes: HtmlElementSpec): YamlValue = YamlObj(
-      idName -> hes.id,
-      xpathQueryName -> hes.xpathQuery,
-      awaitedTagName -> hes.awaitedTagName,
-      awaitedName -> hes.awaitedTextContent.map[YamlValue](YamlString).getOrElse(YamlNull),
-      attributesName -> YamlArray(hes.attributes.map(HtmlAttributeYamlFormat.write).toVector)
     )
 
   }

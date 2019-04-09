@@ -5,7 +5,7 @@ import model.Consts
 object WebConsts extends Consts {
 
   val actionName            : String = "action"
-  val actionTypeName        : String = "actiontype"
+  val actionTypeName        : String = "actionType"
   val attributeResultsName  : String = "attributeResults"
   val awaitedTagName        : String = "awaitedTag"
   val awaitedTextContentName: String = "awaitedTextContent"

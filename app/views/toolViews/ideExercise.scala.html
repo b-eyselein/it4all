@@ -1,13 +1,11 @@
 @import model.toolMains.CollectionToolMain
 @import model._
 
-@(user: User, exerciseText: Html, fileNames: Seq[String], maybeActiveFile: Option[ExerciseFile], toolMain: CollectionToolMain,
-        collection: ExerciseCollection, exercise: Exercise, part: ExPart, solutionPreview: Option[Html] = None,
-        additionalScripts: Html = Html(""))(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
-
-@title = @{
-    "IDE Test"
-}
+@(
+    user: User, title: String, exerciseText: Html, fileNames: Seq[String], maybeActiveFile: Option[ExerciseFile], toolMain: CollectionToolMain,
+    collection: ExerciseCollection, exercise: Exercise, part: ExPart, solutionPreview: Option[Html] = None,
+    additionalScripts: Html = Html("")
+)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>

@@ -18,49 +18,47 @@
       editable: false
 
   htmlTasks:
-    - id: 1
-      text: Erstellen Sie eine passende h1-Überschrift, die das Wort 'Autohersteller' enthält.
-      elementSpec: {xpathQuery: '/html/body//h1', awaitedTag: 'h1', awaitedTextContent: 'Autohersteller'}
+    - text: Erstellen Sie eine passende h1-Überschrift, die das Wort 'Autohersteller' enthält.
+      elementSpec: {id: 1, xpathQuery: '/html/body//h1', awaitedTag: 'h1', awaitedTextContent: 'Autohersteller'}
 
-    - id: 2
-      text: >
+    - text: >
         Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.
         Geben Sie dieser Liste die Klasse 'list-group'.
-      elementSpec: {xpathQuery: '/html/body//ul', awaitedTag: 'ul'}
+      elementSpec: {id: 2, xpathQuery: '/html/body//ul', awaitedTag: 'ul'}
 
-    - id: 3
-      text: Erstellen Sie ein Listenelement mit dem Text 'Audi'.
+    - text: Erstellen Sie ein Listenelement mit dem Text 'Audi'.
       elementSpec:
+        id: 3
         xpathQuery: /html/body//ul/li[contains(text(), 'Audi')]
         awaitedTag: li
         awaitedTextContent: Audi
 
-    - id: 4
-      text: Erstellen Sie ein Listenelement mit dem Text 'BMW'.
+    - text: Erstellen Sie ein Listenelement mit dem Text 'BMW'.
       elementSpec:
+        id: 4
         xpathQuery: /html/body//ul/li[contains(text(), 'BMW')]
         awaitedTag: li
         awaitedTextContent: BMW
 
-    - id: 5
-      text: Erstellen Sie ein Listenelement mit dem Text 'Mercedes'.
+    - text: Erstellen Sie ein Listenelement mit dem Text 'Mercedes'.
       elementSpec:
+        id: 5
         xpathQuery: /html/body//ul/li[contains(text(), 'Mercedes')]
         awaitedTag: li
         awaitedTextContent: Mercedes
 
-    - id: 6
-      text: Erstellen Sie ein Listenelement mit dem Text 'Volkswagen'.
+    - text: Erstellen Sie ein Listenelement mit dem Text 'Volkswagen'.
       elementSpec:
+        id: 6
         xpathQuery: /html/body//ul/li[contains(text(), 'Volkswagen')]
         awaitedTag: li
         awaitedTextContent: Volkswagen
 
-    - id: 7
-      text: >
+    - text: >
         Binden Sie die vorgegebene Style-Datei 'carListStyle.css' ein. Die entsprechende Datei ist unter der URL
         'carListStyle.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'!
       elementSpec:
+        id: 7
         xpathQuery: /html/head/link
         awaitedTag: link
         attributes: [{key: 'href', value: 'carListStyle.css'}, {key: 'rel', value: 'stylesheet'}]
@@ -93,88 +91,84 @@
       editable: false
 
   htmlTasks:
-    - id: 1
-      text: Erstellen Sie das Grundtag für die Tabelle.
+    - text: Erstellen Sie das Grundtag für die Tabelle.
       elementSpec:
+        id: 1
         xpathQuery: /html/body//table
         awaitedTag: table
 
-    - id: 2
-      text: Erstellen Sie die erste Zeile für die Überschriften.
-      elementSpec: {xpathQuery: '/html/body//table//tr[1]', awaitedTag: 'tr'}
+    - text: Erstellen Sie die erste Zeile für die Überschriften.
+      elementSpec: {id: 2, xpathQuery: '/html/body//table//tr[1]', awaitedTag: 'tr'}
 
-    - id: 3
-      text: Erstellen Sie die erste Zelle für die Überschrift. Diese soll als Inhalt 'Jahr' haben.
+    - text: Erstellen Sie die erste Zelle für die Überschrift. Diese soll als Inhalt 'Jahr' haben.
       elementSpec:
+        id: 3
         xpathQuery: html/body//table//tr[1]/th[1]
         awaitedTag: th
         awaitedTextContent: Jahr
 
-    - id: 4
-      text: Erstellen Sie die zweite Zelle für die Überschrift. Diese soll als Inhalt 'Produktion' haben.
+    - text: Erstellen Sie die zweite Zelle für die Überschrift. Diese soll als Inhalt 'Produktion' haben.
       elementSpec:
+        id: 4
         xpathQuery: html/body//table//tr[1]/th[2]
         awaitedTag: th
         awaitedTextContent: Produktion
 
-    - id: 5
-      text: Erstellen Sie die zweite Zeile in der Tabelle
-      elementSpec: {xpathQuery: '/html/body//table//tr[2]', awaitedTag: 'tr'}
+    - text: Erstellen Sie die zweite Zeile in der Tabelle
+      elementSpec: {id: 5, xpathQuery: '/html/body//table//tr[2]', awaitedTag: 'tr'}
 
-    - id: 6
-      text: Erstellen Sie die erste Zelle in der zweiten Zeile. Diese soll als Inhalt '1900' haben.
+    - text: Erstellen Sie die erste Zelle in der zweiten Zeile. Diese soll als Inhalt '1900' haben.
       elementSpec:
+        id: 6
         xpathQuery: html/body//table//tr[2]/td[1]
         awaitedTag: td
         awaitedTextContent: '1900'
 
-    - id: 7
-      text: Erstellen Sie die zweite Zelle in der zweiten Zeile. Diese soll als Inhalt '9504' haben.
+    - text: Erstellen Sie die zweite Zelle in der zweiten Zeile. Diese soll als Inhalt '9504' haben.
       elementSpec:
+        id: 7
         xpathQuery: html/body//table//tr[2]/td[2]
         awaitedTag: td
         awaitedTextContent: '9504'
 
-    - id: 8
-      text: Erstellen Sie die dritte Zeile in der Tabelle
-      elementSpec: {xpathQuery: '/html/body//table//tr[3]', awaitedTag: 'tr'}
+    - text: Erstellen Sie die dritte Zeile in der Tabelle
+      elementSpec: {id: 8, xpathQuery: '/html/body//table//tr[3]', awaitedTag: 'tr'}
 
-    - id: 9
-      text: Erstellen Sie die erste Zelle in der dritten Zeile. Diese soll als Inhalt '1950' haben.
+    - text: Erstellen Sie die erste Zelle in der dritten Zeile. Diese soll als Inhalt '1950' haben.
       elementSpec:
+        id: 9
         xpathQuery: html/body//table//tr[3]/td[1]
         awaitedTag: td
         awaitedTextContent: '1950'
 
-    - id: 10
-      text: Erstellen Sie die zweite Zelle in der dritten Zeile. Diese soll als Inhalt '10577426' haben.
+    - text: Erstellen Sie die zweite Zelle in der dritten Zeile. Diese soll als Inhalt '10577426' haben.
       elementSpec:
+        id: 10
         xpathQuery: html/body//table//tr[3]/td[2]
         awaitedTag: td
         awaitedTextContent: '10577426'
 
-    - id: 11
-      text: Erstellen Sie die vierte Zeile in der Tabelle.
+    - text: Erstellen Sie die vierte Zeile in der Tabelle.
       elementSpec:
+        id: 11
         xpathQuery: /html/body//table//tr[4]
         awaitedTag: td
 
-    - id: 12
-      text: Erstellen Sie die erste Zelle in der vierten Zeile. Diese soll als Inhalt '2000' haben.
+    - text: Erstellen Sie die erste Zelle in der vierten Zeile. Diese soll als Inhalt '2000' haben.
       elementSpec:
+        id: 12
         xpathQuery: html/body//table//tr[4]/td[1]
         awaitedTag: td
         awaitedTextContent: '2000'
 
-    - id: 13
-      text: Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt '58374162' haben
-      elementSpec: {xpathQuery: 'html/body//table//tr[4]/td[2]', awaitedTag: 'td', awaitedTextContent: '58374162'}
+    - text: Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt '58374162' haben
+      elementSpec: {id: 13, xpathQuery: 'html/body//table//tr[4]/td[2]', awaitedTag: 'td', awaitedTextContent: '58374162'}
 
-    - id: 14
-      text: >
+    - text: >
         Binden Sie die vorgegebene CSS-Datei 'productionStyle.css' ein. Die entsprechende Datei ist unter der URL
         'productionStyle.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'.
       elementSpec:
+        id: 14
         xpathQuery: /html/head//link
         awaitedTag: link
         attributes: [{key: href, value: productionStyle.css}, {key: rel, value: stylesheet}]
@@ -207,28 +201,28 @@
       editable: false
 
   htmlTasks:
-    - id: 1
-      text: Erstellen Sie eine passende h1-Überschrift, die 'Ford Mustang' enthält.
+    - text: Erstellen Sie eine passende h1-Überschrift, die 'Ford Mustang' enthält.
       elementSpec:
+        id: 1
         xpathQuery: /html/body//h1
         awaitedTag: h1
         awaitedTextContent: Ford Mustang
 
-    - id: 2
-      text: >
+    - text: >
         Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL
         'https://de.wikipedia.org/wiki/Ford_Mustang' an.
       elementSpec:
+        id: 2
         xpathQuery: /html/body//a
         awaitedTag: a
         attributes: [{key: href, value: 'https://de.wikipedia.org/wiki/Ford_Mustang'}]
 
-    - id: 3
-      text: >
+    - text: >
         Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL
         'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung
         'Ford Mustang' an. Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.
       elementSpec:
+        id: 3
         xpathQuery: /html/body//a//img
         awaitedTag: img
         attributes:
@@ -237,11 +231,11 @@
           - {key: width, value: '250'}
           - {key: height, value: '188'}
 
-    - id: 4
-      text: >
+    - text: >
         Binden Sie die vorgegebene CSS-Datei 'mustangStyle.css' ein. Die entsprechende Datei ist unter der URL
         'mustangStyle.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'.
       elementSpec:
+        id: 4
         xpathQuery: /html/head//link
         awaitedTag: link
         attributes: [{key: rel, value: stylesheet}, {key: href, value: mustangStyle.css}]
@@ -274,59 +268,59 @@
       editable: false
 
   htmlTasks:
-    - id: 1
-      text: >
+    - text: >
         Erstellen Sie das Formular-Tag. Geben Sie für die Attribute 'action' und 'method' jeweils die
         Werte '/test.php' und 'post' an.
       elementSpec:
+        id: 1
         xpathQuery: /html/body//form
         awaitedTag: form
         attributes: [{key: 'action', value: '/test.php'}, {key: 'method', value: 'post'}]
 
-    - id: 2
-      text: Erstellen Sie ein Label mit dem Inhalt 'Email' für das Eingabefeld mit der ID 'email'.
+    - text: Erstellen Sie ein Label mit dem Inhalt 'Email' für das Eingabefeld mit der ID 'email'.
       elementSpec:
+        id: 2
         xpathQuery: /html/body//form//label[@for='email']
         awaitedTag: label
         awaitedTextContent: Email
 
-    - id: 3
-      text: >
+    - text: >
         Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen
         und geben Sie den Attributen 'name' und 'id' jeweils den Wert 'email'. Die Eingabe soll außerdem required sein.
       elementSpec:
+        id: 3
         xpathQuery: /html/body//form//input[@type='email']
         awaitedTag: input
         attributes: [{key: 'name', value: 'email'}, {key: 'id', value: 'email'}, {key: 'required', value: 'true'}]
 
-    - id: 4
-      text: Erstellen Sie ein Label mit dem Inhalt 'Passwort' für das Eingabefeld mit der ID 'passwort'.
+    - text: Erstellen Sie ein Label mit dem Inhalt 'Passwort' für das Eingabefeld mit der ID 'passwort'.
       elementSpec:
+        id: 4
         xpathQuery: /html/body//form//label[@for='passwort']
         awaitedTag: label
         awaitedTextContent: Passwort
 
-    - id: 5
-      text: >
+    - text: >
         Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und
         geben Sie dem Attribut 'name' den Wert 'passwort'. Die Eingabe soll außerdem verpflichtend sein.
       elementSpec:
+        id: 5
         xpathQuery: /html/body//form//input[@type='password']
         awaitedTag: input
         attributes: [{key: 'name', value: 'passwort'}, {key: 'id', value: 'passwort'}, {key: 'required', value: 'true'}]
 
-    - id: 6
-      text: |
+    - text: |
         Erstellen Sie einen Knopf (input) um das Formular abzusenden.
       elementSpec:
+        id: 6
         xpathQuery: /html/body//form//input[@type='submit']
         awaitedTag: input
 
-    - id: 7
-      text: >
+    - text: >
         Binden Sie die vorgegebene CSS-Datei 'loginStyle.css' ein. Die entsprechende Datei ist unter der URL
         'loginStyle.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'.
       elementSpec:
+        id: 7
         xpathQuery: /html/head//link
         awaitedTag: link
         attributes: [{key: 'rel', value: 'stylesheet'}, {key: 'href', value: 'loginStyle.css'}]
@@ -354,24 +348,23 @@
       fileType: htmlmixed
 
   htmlTasks:
-    - id: 1
-      text: Erstellen Sie eine passende h1-Überschrift die 'Deutsche Nationalhymne' enthält.
-      elementSpec: {xpathQuery: '/html/body//h1', awaitedTag: 'h1', awaitedTextContent: 'Deutsche Nationalhymne'}
+    - text: Erstellen Sie eine passende h1-Überschrift die 'Deutsche Nationalhymne' enthält.
+      elementSpec: {id: 1, xpathQuery: '/html/body//h1', awaitedTag: 'h1', awaitedTextContent: 'Deutsche Nationalhymne'}
 
-    - id: 2
-      text: >
+    - text: >
         Erstellen Sie das Grundelement für die Audiodatei. Aktivieren Sie die Kontrollelement. Falls der Browser keine
         Audiodateiene unterstützt soll der Text 'Ihr Browser unterstützt kein Audio!' ausgegeben werden
       elementSpec:
+        id: 2
         xpathQuery: /html/body//audio
         awaitedTag: audio
         awaitedTextContent: Ihr Browser unterstützt kein Audio!
         attributes: [{key: 'controls', value: 'true'}]
 
-    - id: 3
-      text:
+    - text:
         Erstellen Sie das Element für die Quelldatei. Diese ist vom Typ 'audio/ogg' und befindet sich an der URL 'https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg'
       elementSpec:
+        id: 3
         xpathQuery: /html/body//audio/source
         awaitedTag: source
         attributes:
