@@ -26,17 +26,19 @@ function domReady(fn: () => void): void {
 domReady(() => {
     previewChangedDiv = document.querySelector<HTMLDivElement>('#previewChangedDiv');
 
-    setupEditor().then((theEditor: CodeMirror.Editor) => {
+    setupEditor().then((theEditor: void | CodeMirror.Editor) => {
 
-            editor = theEditor;
+            if (theEditor) {
+                editor = theEditor;
 
-            editor.on('change', () => {
-                solutionChanged = true;
-                if (previewIsUpToDate) {
-                    previewIsUpToDate = false;
-                    previewChangedDiv.hidden = false;
-                }
-            });
+                editor.on('change', () => {
+                    solutionChanged = true;
+                    if (previewIsUpToDate) {
+                        previewIsUpToDate = false;
+                        previewChangedDiv.hidden = false;
+                    }
+                });
+            }
         }
     );
 

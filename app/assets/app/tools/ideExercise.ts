@@ -116,7 +116,7 @@ export function uploadFiles<ResultType>(testButton: HTMLButtonElement, onSuccess
         .catch(onError);
 }
 
-export function setupEditor(): Promise<CodeMirror.Editor> {
+export function setupEditor(): Promise<void | CodeMirror.Editor> {
     fileChangeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.fileBtn'));
 
     fileChangeBtns.forEach((fileChangeBtn: HTMLButtonElement) => {
@@ -126,10 +126,9 @@ export function setupEditor(): Promise<CodeMirror.Editor> {
 
     const loadFilesUrl: string = document.getElementById('theContainer').dataset['loadfilesurl'];
 
-    const editorPromise: Promise<void | CodeMirror.Editor> = fetch(loadFilesUrl)
+    return fetch(loadFilesUrl)
         .then(response => response.json())
         .then(onLoadFileSuccess)
         .catch(reason => console.error(reason));
 
-    return editorPromise;
 }
