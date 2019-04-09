@@ -22,7 +22,8 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, ws: WSClient, val repository: Repository,
-                                     progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)(implicit ec: ExecutionContext)
+                                     progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain
+                                    )(implicit ec: ExecutionContext)
   extends AExerciseController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
   private val logger = Logger(classOf[CollectionController])
@@ -327,28 +328,22 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def updateWebSolution(collId: Int, id: Int, part: String): EssentialAction = withUser { user =>
     implicit request =>
-      println("Updating web solution...")
-
       request.body.asJson match {
-        case Some(JsArray(jsonFiles)) =>
+        case Some(jsValue) =>
+          ExerciseFileJsonProtocol.webSolutionJsonReads.reads(jsValue) match {
+            case JsSuccess(ideWorkSpace, _) =>
 
-          val filesToWrite = jsonFiles.map {
-            ExerciseFileJsonProtocol.exerciseFileJsonFormat.reads
-          }.map(_.get)
+              webToolMain.writeWebSolutionFiles(user.username, collId, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), ideWorkSpace.files) match {
+                case Success(_)     => Ok("Solution saved")
+                case Failure(error) =>
+                  logger.error("Error while updating web solution", error)
+                  BadRequest("Solution was not saved!")
+              }
 
-          webToolMain.writeWebSolutionFiles(user.username, collId, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), filesToWrite) match {
-            case Success(_)     => Ok("Solution saved")
-            case Failure(error) =>
-              logger.error("Error while updating web solution", error)
-              BadRequest("Solution was not saved!")
+            case _ => ???
           }
 
-        case Some(otherJs) =>
-          logger.error("Gotten" + otherJs)
-          BadRequest("Wrong json content!")
-
-        case None => BadRequest("No content!")
-
+        case _ => BadRequest("No or wrong content!")
       }
   }
 

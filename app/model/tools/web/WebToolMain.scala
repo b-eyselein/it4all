@@ -162,7 +162,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override protected def readSolution(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart)
                                      (implicit request: Request[AnyContent]): Option[Seq[ExerciseFile]] =
     request.body.asJson.flatMap {
-      case jsValue => ExerciseFileJsonProtocol.webSolutionJsonReads.reads(jsValue).map(_._2).asOpt
+      case jsValue => ExerciseFileJsonProtocol.webSolutionJsonReads.reads(jsValue).map(_.files).asOpt
       case other   =>
         logger.error("Wrong json content: " + other.toString)
         None

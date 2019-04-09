@@ -276,15 +276,6 @@
   htmlTasks:
     - id: 1
       text: >
-        Binden Sie die vorgegebene CSS-Datei 'loginStyle.css' ein. Die entsprechende Datei ist unter der URL
-        'loginStyle.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'.
-      elementSpec:
-        xpathQuery: /html/head//link
-        awaitedTag: link
-        attributes: [{key: 'rel', value: 'stylesheet'}, {key: 'href', value: 'loginStyle.css'}]
-
-    - id: 2
-      text: >
         Erstellen Sie das Formular-Tag. Geben Sie für die Attribute 'action' und 'method' jeweils die
         Werte '/test.php' und 'post' an.
       elementSpec:
@@ -292,39 +283,53 @@
         awaitedTag: form
         attributes: [{key: 'action', value: '/test.php'}, {key: 'method', value: 'post'}]
 
+    - id: 2
+      text: Erstellen Sie ein Label mit dem Inhalt 'Email' für das Eingabefeld mit der ID 'email'.
+      elementSpec:
+        xpathQuery: /html/body//form//label[@for='email']
+        awaitedTag: label
+        awaitedTextContent: Email
+
     - id: 3
       text: >
         Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen
-        und geben Sie dem Attribut 'name' den Wert 'email'. Die Eingabe soll außerdem required sein. Geben Sie dem
-        Feld zur Eingabe der Emailadressedie Klasse 'form-control'.
+        und geben Sie den Attributen 'name' und 'id' jeweils den Wert 'email'. Die Eingabe soll außerdem required sein.
       elementSpec:
         xpathQuery: /html/body//form//input[@type='email']
         awaitedTag: input
-        attributes:
-          - {key: 'name', value: 'email'}
-          - {key: 'required', value: 'true'}
-          - {key: 'class', value: 'form-control'}
+        attributes: [{key: 'name', value: 'email'}, {key: 'id', value: 'email'}, {key: 'required', value: 'true'}]
 
     - id: 4
+      text: Erstellen Sie ein Label mit dem Inhalt 'Passwort' für das Eingabefeld mit der ID 'passwort'.
+      elementSpec:
+        xpathQuery: /html/body//form//label[@for='passwort']
+        awaitedTag: label
+        awaitedTextContent: Passwort
+
+    - id: 5
       text: >
         Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und
-        geben Sie dem Attribut 'name' den Wert 'passwort'. Die Eingabe soll außerdem verpflichtend sein. Geben
-        Sie dem Feld zur Eingabe des Passworts Klasse 'form-control'.
+        geben Sie dem Attribut 'name' den Wert 'passwort'. Die Eingabe soll außerdem verpflichtend sein.
       elementSpec:
         xpathQuery: /html/body//form//input[@type='password']
         awaitedTag: input
-        attributes:
-          - {key: name, value: passwort}
-          - {key: required, value: 'true'}
-          - {key: class, value: form-control}
+        attributes: [{key: 'name', value: 'passwort'}, {key: 'id', value: 'passwort'}, {key: 'required', value: 'true'}]
 
-    - id: 5
+    - id: 6
       text: |
-        Erstellen Sie einen Knopf (input) um das Formular abzusenden. Geben Sie den Knopf zum Absenden des Formular die Klasse 'btn btn-default'
+        Erstellen Sie einen Knopf (input) um das Formular abzusenden.
       elementSpec:
         xpathQuery: /html/body//form//input[@type='submit']
         awaitedTag: input
-        attributes: [{key: class, value: btn btn-default}]
+
+    - id: 7
+      text: >
+        Binden Sie die vorgegebene CSS-Datei 'loginStyle.css' ein. Die entsprechende Datei ist unter der URL
+        'loginStyle.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'.
+      elementSpec:
+        xpathQuery: /html/head//link
+        awaitedTag: link
+        attributes: [{key: 'rel', value: 'stylesheet'}, {key: 'href', value: 'loginStyle.css'}]
 
   jsTasks: []
 
@@ -341,11 +346,11 @@
   author: bje40dc
   text: Erstellen Sie ein Audio-Element in Html5!
   status: APPROVED
-  fileName: hymn.html
+  fileName: audio.html
 
   files:
-    - path: hymn.html
-      resourcePath: web/1-html_elements/5-audio/hyml.html
+    - path: audio.html
+      resourcePath: web/1-html_elements/5-audio/audio.html
       fileType: htmlmixed
 
   htmlTasks:
@@ -378,6 +383,6 @@
   samples:
     - id: 1
       files:
-        - path: hymn.html
+        - path: audio.html
           resourcePath: web/1-html_elements/5-audio/audioSolution.html
           fileType: htmlmixed

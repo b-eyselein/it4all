@@ -1,11 +1,10 @@
-import * as $ from 'jquery';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import {renderWebCompleteResult, WebCompleteResult} from "./webCorrection";
 import {focusOnCorrection} from '../textExercise';
 
-import {setupEditor, uploadFiles} from '../tools/ideExercise';
+import {getIdeWorkspace, IdeWorkspace, setupEditor, uploadFiles} from '../tools/ideExercise';
 
 let uploadBtn: HTMLButtonElement;
 
@@ -16,23 +15,30 @@ let solutionChanged: boolean = false;
 
 let editor: CodeMirror.Editor;
 
-$(() => {
+function domReady(fn: () => void): void {
+    if (document.readyState === 'loading') {
+        document.addEventListener("DOMContentLoaded", fn);
+    } else {
+        fn();
+    }
+}
+
+domReady(() => {
     previewChangedDiv = document.querySelector<HTMLDivElement>('#previewChangedDiv');
 
-    setupEditor()
-        .then(theEditor => {
+    setupEditor().then((theEditor: CodeMirror.Editor) => {
 
-                editor = theEditor;
+            editor = theEditor;
 
-                editor.on('change', () => {
-                    solutionChanged = true;
-                    if (previewIsUpToDate) {
-                        previewIsUpToDate = false;
-                        previewChangedDiv.hidden = false;
-                    }
-                });
-            }
-        );
+            editor.on('change', () => {
+                solutionChanged = true;
+                if (previewIsUpToDate) {
+                    previewIsUpToDate = false;
+                    previewChangedDiv.hidden = false;
+                }
+            });
+        }
+    );
 
     document.getElementById('endSolveBtn').onclick = () => {
         return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
@@ -85,22 +91,20 @@ function unescapeHTML(escapedHTML: string): string {
 function updatePreview(): void {
     const url = document.getElementById('previewTabBtn').dataset['url'];
 
-    console.info(url);
-
     const token: string = document.querySelector<HTMLInputElement>('input[name="csrfToken"]').value;
     const headers: Headers = new Headers({
-        'Content-Type': 'text/plain',
+        'Content-Type': 'application/json',
         'Csrf-Token': token
     });
 
-    fetch(url, {method: 'PUT', headers, body: unescapeHTML(editor.getValue())})
+    const data: IdeWorkspace = getIdeWorkspace();
+
+    fetch(url, {method: 'PUT', headers, body: JSON.stringify(data)})
         .then(() => {
-            $('#preview').attr('src', function (i, val) {
-                // Refresh iFrame
-                return val;
-            });
+            document.querySelector<HTMLIFrameElement>('#preview').contentWindow.location.reload();
             previewIsUpToDate = true;
             previewChangedDiv.hidden = true;
+            console.info("Preview updated?");
         })
         .catch(reason => {
             console.error(reason);

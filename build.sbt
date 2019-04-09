@@ -56,7 +56,7 @@ val webJarDependencies = Seq(
   "org.webjars.npm" % "lodash" % "4.17.11", // "org.webjars.npm" % "types__lodash" % "4.14.123",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
 
-  "org.webjars.npm" % "codemirror" % "5.44.0", "org.webjars.npm" % "types__codemirror" % "0.0.72",
+  "org.webjars.npm" % "codemirror" % "5.45.0", "org.webjars.npm" % "types__codemirror" % "0.0.72",
 
   "org.webjars.npm" % "graphlib" % "2.1.7", "org.webjars.npm" % "types__graphlib" % "2.1.4"
 )
@@ -117,7 +117,7 @@ libraryDependencies ++= Seq(
   "com.github.jsqlparser" % "jsqlparser" % "1.4",
 
   // Docker
-  "com.spotify" % "docker-client" % "8.15.1",
+  "com.spotify" % "docker-client" % "8.15.2",
 
   // DTD Parser
   "de.uniwue" %% "scala_dtd" % "0.4.0",

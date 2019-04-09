@@ -1,11 +1,13 @@
 package model
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Format, Reads, Writes, __}
 import better.files._
 import model.tools.web.WebConsts._
+import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads.traversableReads
+import play.api.libs.json.{Format, Reads, Writes, __}
 
+
+final case class ExerciseFileWorkspace(fileNum: Int, files: Seq[ExerciseFile])
 
 final case class ExerciseFile(name: String, content: String, fileType: String, editable: Boolean)
 
@@ -30,9 +32,9 @@ object ExerciseFileJsonProtocol {
 
   val exerciseFileJsonFormat: Format[ExerciseFile] = Format[ExerciseFile](exerciseFileReads, exerciseFileWrites)
 
-  val webSolutionJsonReads: Reads[(Int, Seq[ExerciseFile])] = (
+  val webSolutionJsonReads: Reads[ExerciseFileWorkspace] = (
     (__ \ "filesNum").read[Int] and
       (__ \ filesName).read[Seq[ExerciseFile]]
-    ) ((_, _))
+    ) (ExerciseFileWorkspace.apply _)
 
 }

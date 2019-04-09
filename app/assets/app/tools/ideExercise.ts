@@ -11,14 +11,14 @@ let files: Map<string, LoadFileSingleResult> = new Map<string, LoadFileSingleRes
 let editor: CodeMirror.Editor;
 
 
-interface LoadFileSingleResult {
+export interface LoadFileSingleResult {
     path: string
     content: string
     fileType: string
     editable: boolean
 }
 
-interface IdeWorkspace {
+export interface IdeWorkspace {
     filesNum: number
     files: LoadFileSingleResult[]
 }
@@ -85,17 +85,22 @@ function changeEditorContent(event: Event): void {
     clickedBtn.classList.add('btn-primary');
 }
 
-
-export function uploadFiles<ResultType>(testButton: HTMLButtonElement, onSuccess: (ResultType) => void, onError): void {
+export function getIdeWorkspace(): IdeWorkspace {
     // Save current changes
     saveEditorContent();
 
-    const url: string = testButton.dataset['href'];
-
-    const fileValues: IdeWorkspace = {
+    return {
         files: [...files.values()],
         filesNum: files.size
     };
+}
+
+
+export function uploadFiles<ResultType>(testButton: HTMLButtonElement, onSuccess: (ResultType) => void, onError): void {
+
+    const url: string = testButton.dataset['href'];
+
+    const fileValues: IdeWorkspace = getIdeWorkspace();
 
     const token: string = document.querySelector<HTMLInputElement>('input[name="csrfToken"]').value as string;
 
