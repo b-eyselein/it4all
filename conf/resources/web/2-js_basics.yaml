@@ -1,10 +1,18 @@
-- id: 6
+- id: 1
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Klickzähler
   author: bje40dc
   text: Erstellen Sie einen Zähler der die Klicks auf einen Button zählt!
   status: APPROVED
   fileName: clickCounter.html
+
+  files:
+    - path: clickCounter.html
+      resourcePath: web/2-js_basics/1-clickCounter/clickCounter.html
+      fileType: htmlmixed
+    - path: clickCounter.js
+      resourcePath: web/2-js_basics/1-clickCounter/clickCounter.js
+      fileType: javascript
 
   htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
   htmlTasks:
@@ -15,9 +23,8 @@
       elementSpec:
         xpathQuery: /html/body//button
         awaitedTag: button
-        attributes:
-          - {key: onclick, value: increment()}
-        textContent: Klick mich!
+        attributes: [{key: 'onclick', value: 'increment()'}]
+        awaitedTextContent: Klick mich!
 
     - id: 2
       text: >
@@ -26,7 +33,7 @@
       elementSpec:
         xpathQuery: /html/body//span[@id='theSpan']
         awaitedTag: span
-        textContent: '0'
+        awaitedTextContent: '0'
 
   jsText: >
     Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
@@ -99,35 +106,13 @@
 
   samples:
     - id: 1
-      htmlSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <title>Klickzähler</title>
-        </head>
-        <body>
-            <button onclick="increment()">Klick mich!</button>
-            <span id="theSpan">0</span>
-        </body>
-        </html>
-      jsSample: |
-        <!doctype html>
-        <html>
-        <head>
-            <title>Klickzähler</title>
-        	<script>
-                function increment() {
-                    let theSpan = document.getElementById('theSpan');
-                    let value = parseInt(theSpan.textContent) + 1;
-                    theSpan.textContent = value;
-                }
-            </script>
-        </head>
-        <body>
-            <button onclick="increment()">Klick mich!</button>
-            <span id="theSpan">0</span>
-        </body>
-        </html>
+      files:
+        - path: clickCounter.html
+          resourcePath: web/2-js_basics/1-clickCounter/clickCounterSolution.html
+          fileType: htmlmixed
+        - path: clickCounter.js
+          resourcePath: web/2-js_basics/1-clickCounter/clickCounterSolution.js
+          fileType: javascript
 
 - id: 7
   semanticVersion: {major: 1, minor: 0, patch: 0}
@@ -136,6 +121,8 @@
   text: Erstellen Sie ein Anmeldeformular, das eine einfache Passwort-Qualitätsprüfung durchführt.
   status: APPROVED
   fileName: pwChecker.html
+
+  files: []
 
   htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
   htmlTasks:
@@ -183,7 +170,7 @@
         - id: 1
           xpathQuery: /html/body//span[@id='errors']
           awaitedTag: span
-          textContent: Zu kurz
+          awaitedTextContent: Zu kurz
 
     - id: 2
       text: Wenn das Passwort 'passwort' enthält, setze den Fehlertext auf 'Zu einfach'
@@ -196,7 +183,7 @@
         - id: 1
           xpathQuery: /html/body//span[@id='errors']
           awaitedTag: span
-          textContent: Zu einfach
+          awaitedTextContent: Zu einfach
 
     - id: 3
       text: Für alle anderen Passwörter soll das Fehlerfeld geleert (auf '' gesetzt) werden
@@ -209,7 +196,7 @@
         - id: 1
           xpathQuery: /html/body//span[@id='errors']
           awaitedTag: span
-          textContent: ''
+          awaitedTextContent: ''
 
   samples:
     - id: 1
@@ -277,6 +264,8 @@
   status: APPROVED
   fileName: factorial.html
 
+  files: []
+
   htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
   htmlTasks:
     - id: 1
@@ -310,7 +299,7 @@
         - id: 1
           xpathQuery: /html/body//span[@id='result']
           awaitedTag: span
-          textContent: 1
+          awaitedTextContent: 1
 
     - id: 2
       text: Fakultät von 3 muss 6 sein
@@ -323,7 +312,7 @@
         - id: 1
           xpathQuery: /html/body//span[@id='result']
           awaitedTag: span
-          textContent: "6"
+          awaitedTextContent: "6"
 
     - id: 3
       text: Fakultät von 6 muss 720 sein
@@ -336,7 +325,7 @@
         - id: 1
           xpathQuery: /html/body//span[@id='result']
           awaitedTag: span
-          textContent: "720"
+          awaitedTextContent: "720"
 
     - id: 4
       text: Fakultät von 10 muss 3628800 sein
@@ -349,7 +338,7 @@
         - id: 1
           xpathQuery: /html/body//span[@id='result']
           awaitedTag: span
-          textContent: "3628800"
+          awaitedTextContent: "3628800"
 
   samples:
     - id: 1
