@@ -42,8 +42,8 @@ final case class XmlDocumentCompleteResult(learnerSolution: String, results: Seq
 
   override def isSuccessful: Boolean = results.isEmpty
 
-  override def points: Points = -1 points
+  override def points: Points = (-1).points
 
-  override def maxPoints: Points = -1 points
+  override def maxPoints: Points = (-1).points
 
 }

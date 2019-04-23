@@ -6,14 +6,14 @@ import model.core.matching.MatchingResult
 import de.uniwue.dtd.model.DocTypeDef
 import org.xml.sax.{ErrorHandler, SAXParseException}
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable
 import scala.language.{implicitConversions, postfixOps}
 import scala.xml.SAXException
 
 
 class CorrectionErrorHandler extends ErrorHandler {
 
-  val errors: ListBuffer[XmlError] = ListBuffer.empty
+  val errors: mutable.ListBuffer[XmlError] = mutable.ListBuffer.empty
 
   override def error(exception: SAXParseException): Unit = errors += XmlError.fromSAXParseException(XmlErrorType.ERROR, exception)
 

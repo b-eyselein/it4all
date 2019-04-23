@@ -3,9 +3,9 @@ package model.persistence
 import model.points.Points
 import model._
 
-trait ADbModels[Exercise, DbExercise] {
+trait ADbModels[ExType, DbExercise] {
 
-  def dbExerciseFromExercise(collId: Int, ex: Exercise): DbExercise
+  def dbExerciseFromExercise(collId: Int, ex: ExType): DbExercise
 
 }
 

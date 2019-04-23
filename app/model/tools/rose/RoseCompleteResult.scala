@@ -10,9 +10,9 @@ final case class RoseCompleteResult(learnerSolution: String, result: RoseEvalRes
 
   override def results: Seq[RoseEvalResult] = Seq(result)
 
-  override def points: Points = -1 points
+  override def points: Points = (-1).points
 
-  override def maxPoints: Points = -1 points
+  override def maxPoints: Points = (-1).points
 
 }
 

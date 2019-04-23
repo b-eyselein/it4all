@@ -3,13 +3,12 @@ package model.tools.xml
 import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.inject._
+import model._
 import model.core._
 import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.xml.persistence.XmlTableDefs
-import model._
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.{Format, JsString}
@@ -24,8 +23,6 @@ import scala.util.{Failure, Success, Try}
 @Singleton
 class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionContext)
   extends CollectionToolMain("Xml", "xml") {
-
-  private val logger = Logger(classOf[XmlToolMain])
 
   // Result types
 

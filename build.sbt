@@ -9,7 +9,7 @@ scalaVersion := "2.12.8"
 scalacOptions ++= CompilerOptions.allOptions
 
 // Wart remover for scalac options
-wartremoverWarnings ++= Warts.allBut(Wart.DefaultArguments, Wart.Equals, Wart.ImplicitParameter, Wart.Nothing)
+wartremoverWarnings ++= Warts.allBut(Wart.DefaultArguments, Wart.Equals, Wart.ImplicitParameter, Wart.Nothing, Wart.Recursion)
 
 wartremoverExcluded ++= routes.in(Compile).value
 wartremoverExcluded += sourceManaged.value

@@ -2,6 +2,8 @@ package model
 
 import play.api.libs.json.{JsNumber, Writes}
 
+import scala.language.implicitConversions
+
 package object points {
 
   implicit def toPointsOps(p: Int): PointsOps = PointsOps(p)

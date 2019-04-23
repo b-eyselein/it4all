@@ -14,9 +14,9 @@ final case class ProgCompleteResult(implementation: String, results: Seq[ProgEva
 
   override def learnerSolution: String = implementation
 
-  override val points: Points = -1 points
+  override val points: Points = (-1).points
 
-  override val maxPoints: Points = -1 points
+  override val maxPoints: Points = (-1).points
 
 }
 

@@ -1,10 +1,10 @@
 package model.tools.sql
 
-import model.{ExerciseState, MyYamlProtocol, SemanticVersion, SemanticVersionHelper}
 import model.MyYamlProtocol._
-import model.core.CoreConsts.{authorName, idName, semanticVersionName, statusName, textName, titleName}
+import model.core.CoreConsts.{authorName, idName, statusName, textName, titleName}
 import model.tools.sql.SqlConsts._
-import model.tools.sql.SqlYamlProtocol.{SqlSampleYamlFormat, logger, readBaseValues}
+import model.tools.sql.SqlYamlProtocol.SqlSampleYamlFormat
+import model.{ExerciseState, MyYamlProtocol}
 import net.jcazevedo.moultingyaml.{YamlObject, YamlValue}
 import play.api.Logger
 

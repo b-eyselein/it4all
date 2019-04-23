@@ -11,6 +11,8 @@ import scala.util.Try
 
 object LearningPathYamlProtocol extends MyYamlProtocol {
 
+  private val logger = Logger(LearningPathYamlProtocol.getClass)
+
   final case class LearningPathYamlFormat(toolUrl: String) extends MyYamlObjectFormat[LearningPath] {
 
     override protected def readObject(yamlObject: YamlObject): Try[LearningPath] = for {
@@ -21,7 +23,7 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
 
       for (sectionError <- sections._2) {
         // TODO: solve!
-        Logger.error(sectionError.toString)
+        logger.error(sectionError.toString)
       }
 
       LearningPath(toolUrl, id, title, sections._1)
@@ -53,7 +55,7 @@ object LearningPathYamlProtocol extends MyYamlProtocol {
     } yield {
 
       for (failure <- questions._2) {
-        Logger.error("Error: ", failure.exception)
+        logger.error("Error: ", failure.exception)
       }
 
       QuestionSection(id, toolUrl, pathId, title, questions._1)

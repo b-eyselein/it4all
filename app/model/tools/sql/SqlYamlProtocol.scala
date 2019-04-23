@@ -10,8 +10,6 @@ import scala.util.Try
 
 object SqlYamlProtocol extends MyYamlProtocol {
 
-  private val logger = Logger("model.tools.sql.SqlYamlProtocol")
-
   //  implicit object SqlScenarioYamlFormat extends MyYamlObjectFormat[SqlCompleteScenario] {
   //
   //    override protected def readObject(yamlObject: YamlObject): Try[SqlCompleteScenario] = for {

@@ -23,8 +23,6 @@ import scala.util.Try
 class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext)
   extends CollectionToolMain("Rose", "rose") {
 
-  private val logger = Logger(classOf[RoseToolMain])
-
   // Abstract types
 
   override type PartType = RoseExPart

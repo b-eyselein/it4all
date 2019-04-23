@@ -44,36 +44,41 @@ object DockerConnector {
   def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Try[Unit]] =
     Future(Try(dockerClient.pull(imageName)))
 
-  private def createContainer(imageName: String, maybeWorkingDir: Option[String], maybeEntryPoint: Option[Seq[String]] = None,
-                              maybeCmd: Option[Seq[String]] = None, maybeBinds: Option[Seq[DockerBind]] = None): Try[ContainerCreation] = Try {
+  private def createHostConfig(binds: Seq[DockerBind]): HostConfig =
+    HostConfig.builder().binds(binds.map(_.toBind.toString).asJava).build()
 
-    // Build host config
-    val hostConfigBuilder = HostConfig.builder()
-
-    maybeBinds map {
-      binds => hostConfigBuilder.binds(binds map (_.toBind.toString) asJava)
-    }
-
-    val hostConfig: HostConfig = hostConfigBuilder.build()
+  private def createContainer(
+    imageName: String,
+    maybeWorkingDir: Option[String],
+    maybeEntryPoint: Option[Seq[String]] = None,
+    maybeCmd: Option[Seq[String]] = None,
+    maybeBinds: Option[Seq[DockerBind]] = None
+  ): Try[ContainerCreation] = Try {
 
     // Build container config
-    val containerConfigBuilder = ContainerConfig.builder()
-      .image(imageName)
-      .hostConfig(hostConfig)
+    val ccb: ContainerConfig.Builder = ContainerConfig.builder().image(imageName)
 
-    maybeWorkingDir map {
-      workDir => containerConfigBuilder.workingDir(workDir)
+    val ccbWithHostConfig = maybeBinds match {
+      case None        => ccb
+      case Some(binds) => ccb.hostConfig(createHostConfig(binds))
     }
 
-    maybeEntryPoint map {
-      entryPoint => containerConfigBuilder.entrypoint(entryPoint asJava)
+    val ccbWithHostConfigWorkDir = maybeWorkingDir match {
+      case None          => ccbWithHostConfig
+      case Some(workDir) => ccbWithHostConfig.workingDir(workDir)
     }
 
-    maybeCmd map {
-      cmd => containerConfigBuilder.cmd(cmd asJava)
+    val ccbWithHostConfigWorkDirEntryPoint = maybeEntryPoint match {
+      case None             => ccbWithHostConfigWorkDir
+      case Some(entryPoint) => ccbWithHostConfigWorkDir.entrypoint(entryPoint asJava)
     }
 
-    val containerConfig: ContainerConfig = containerConfigBuilder.build()
+    val ccbWithHostConfigWorkDirEntryPointCmd = maybeCmd match {
+      case None      => ccbWithHostConfigWorkDirEntryPoint
+      case Some(cmd) => ccbWithHostConfigWorkDirEntryPoint.cmd(cmd asJava)
+    }
+
+    val containerConfig: ContainerConfig = ccbWithHostConfigWorkDirEntryPointCmd.build()
 
     dockerClient.createContainer(containerConfig)
   }
@@ -86,7 +91,8 @@ object DockerConnector {
 
   def runContainer(imageName: String, maybeWorkingDir: Option[Path] = Some(DefaultWorkingDir), maybeEntryPoint: Option[Seq[String]] = None,
                    maybeCmd: Option[Seq[String]] = None, maybeDockerBinds: Option[Seq[DockerBind]] = None,
-                   maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds, deleteContainerAfterRun: Boolean = true)
+                   maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds, deleteContainerAfterRun: Boolean = true
+                  )
                   (implicit ec: ExecutionContext): Future[RunContainerResult] = Future {
 
     createContainer(imageName, maybeWorkingDir map (_.toString), maybeEntryPoint, maybeCmd, maybeDockerBinds) match {
