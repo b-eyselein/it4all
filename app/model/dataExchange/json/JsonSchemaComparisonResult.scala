@@ -35,7 +35,7 @@ final case class SchemaObjectComparisonResult(userArg: SchemaObject, sampleArg: 
   override def toJson: JsValue = Json.obj(
     "userArg" -> userArg.toString(),
     "sampleArg" -> sampleArg.toString(),
-    "propertyMatches" -> ??? //propertyMatchingResult.toJson,
+    "propertyMatches" -> propertyMatchingResult.toJson,
   )
 
   override def isSuccessfull: Boolean = propertyMatchingResult.allMatches.forall(_.subComparison.exists(_.isSuccessfull))

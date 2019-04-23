@@ -36,9 +36,9 @@ resolvers ++= Seq(
 
 
 val webJarDependencies = Seq(
-  "org.webjars.npm" % "jquery" % "3.3.1", "org.webjars.npm" % "types__jquery" % "3.3.29",
+  "org.webjars.npm" % "jquery" % "3.4.0", "org.webjars.npm" % "types__jquery" % "3.3.29",
 
-  "org.webjars" % "popper.js" % "1.14.7",
+  "org.webjars" % "popper.js" % "1.15.0",
 
   "org.webjars" % "octicons" % "4.3.0",
 
@@ -78,7 +78,7 @@ excludeDependencies ++= Seq(
 
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
-  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % "test",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.2" % Test,
 
   // db
   "mysql" % "mysql-connector-java" % "8.0.15",
@@ -101,10 +101,6 @@ libraryDependencies ++= Seq(
 
   // Betterfiles
   "com.github.pathikrit" %% "better-files" % "3.7.1",
-
-  // Selenium and HtmlUnitDriver for Web+Js
-  "org.seleniumhq.selenium" % "selenium-java" % "3.141.59",
-  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.34.0",
 
   // Json Schema Parser/Validator for Json
   "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5-M4",
