@@ -16,6 +16,8 @@ import scala.util.{Failure, Success, Try}
 
 abstract class QueryCorrector(val queryType: String) {
 
+  private val logger = Logger(classOf[QueryCorrector])
+
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
   def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[StringSampleSolution], exercise: SqlExercise, scenario: SqlScenario)
@@ -33,7 +35,7 @@ abstract class QueryCorrector(val queryType: String) {
         val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.samples.map { sqlSample =>
           parseStatement(sqlSample.sample) flatMap checkStatement match {
             case Failure(error)      =>
-              Logger.error("There has been an error parsing a sql sample solution", error)
+              logger.error("There has been an error parsing a sql sample solution", error)
               ???
             case Success(sampleQ: Q) => performStaticComparison(userQ, sampleQ, userColumns, userTables, userJoinExpressions, userExpressions, userTableAliases)
           }

@@ -18,6 +18,8 @@ import scala.util.{Failure, Success}
 
 abstract class AToolMain(val toolname: String, val urlPart: String) {
 
+  private val logger = Logger(classOf[AToolMain])
+
   // Abstract types
 
   type ResultType <: EvaluationResult
@@ -46,7 +48,7 @@ abstract class AToolMain(val toolname: String, val urlPart: String) {
     learningPathsYamlFormat.read(content.parseYaml) match {
       case Success(read)  => Seq(read)
       case Failure(error) =>
-        Logger.error("Fehler: ", error)
+        logger.error("Fehler: ", error)
         Seq[LearningPath]()
     }
   }

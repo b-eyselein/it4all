@@ -12,6 +12,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object RoseCorrector {
 
+  private val logger = Logger(RoseCorrector.getClass)
+
   private val NewLine: String = "\n"
 
   private val actionsFileName = "actions.json"
@@ -67,7 +69,7 @@ object RoseCorrector {
         case RunContainerSuccess => RoseExecutionResult(actionFilePath.contentAsString)
 
         case exc: RunContainerException =>
-          Logger.error("Error running container:", exc.error)
+          logger.error("Error running container:", exc.error)
           RoseEvalFailed
       }
   }
