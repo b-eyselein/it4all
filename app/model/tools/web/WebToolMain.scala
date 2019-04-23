@@ -14,9 +14,9 @@ import model.toolMains._
 import model.tools.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.api.Logger
 import play.api.data._
 import play.api.i18n.MessagesProvider
+import play.api.libs.json.{Format, JsError, JsSuccess}
 import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
@@ -25,8 +25,6 @@ import scala.util.{Failure, Try}
 
 @Singleton
 class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("Web", "web") {
-
-  private val logger = Logger(classOf[WebToolMain])
 
   // Result types
 
@@ -62,6 +60,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override val collectionForm    : Form[WebCollection]     = WebToolForms.collectionFormat
   override val exerciseForm      : Form[WebExercise]       = WebToolForms.exerciseFormat
   override val exerciseReviewForm: Form[WebExerciseReview] = WebToolForms.exerciseReviewForm
+
+  override val sampleSolutionJsonFormat: Format[FilesSampleSolution] = FilesSampleSolutionJsonProtocol.filesSampleSolutionFormat
 
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] = WebCompleteResultJsonProtocol
 
@@ -159,14 +159,14 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override protected def readSolution(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart)
-                                     (implicit request: Request[AnyContent]): Option[Seq[ExerciseFile]] =
-    request.body.asJson.flatMap {
-      case jsValue => ExerciseFileJsonProtocol.webSolutionJsonReads.reads(jsValue).map(_.files).asOpt
-      case other   =>
-        logger.error("Wrong json content: " + other.toString)
-        None
-    }
+  override protected def readSolution(request: Request[AnyContent], part: WebExPart): Either[String, Seq[ExerciseFile]] = request.body.asJson match {
+    case None          => Left("Body did not contain json!")
+    case Some(jsValue) =>
+      ExerciseFileJsonProtocol.webSolutionJsonReads.reads(jsValue) match {
+        case JsSuccess(x, _) => Right(x.files)
+        case JsError(errors) => Left(errors.toString())
+      }
+  }
 
   private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
     case syntaxError: WebDriverException =>

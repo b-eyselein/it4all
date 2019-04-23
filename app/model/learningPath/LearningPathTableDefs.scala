@@ -15,6 +15,8 @@ import scala.concurrent.Future
 trait LearningPathTableDefs extends TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
+  private val logger = Logger(classOf[LearningPathTableDefs])
+
   import profile.api._
 
   // Table queries
@@ -109,7 +111,7 @@ trait LearningPathTableDefs extends TableDefs {
     private def readQuestionsFromJson(string: String): Seq[LPQuestion] = Json.fromJson[Seq[LPQuestion]](Json.parse(string)) match {
       case JsSuccess(res, _) => res
       case JsError(errors)   =>
-        errors.foreach(error => Logger.error(error.toString))
+        errors.foreach(error => logger.error(error.toString))
         Seq[LPQuestion]()
     }
 

@@ -1,16 +1,35 @@
 package model.core.matching
 
 import model.core.CoreConsts._
-import model.core.JsonWriteable
 import model.core.result.SuccessType.{COMPLETE, NONE, PARTIALLY}
 import model.core.result.{EvaluationResult, SuccessType}
 import model.points._
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json._
 
-import scala.language.postfixOps
+//import scala.language.postfixOps
+
+//object MatchingResultJsonProtocol {
+//
+//  private implicit val pointsWrites = pointsJsonWrites
+//
+//  private def unapplyMatchingResult: MatchingResult[Match] => (String, String, SuccessType, Seq[Match], Points, Points) =
+//    mr => (mr.matchName, mr.matchSingularName, mr.success, mr.allMatches, mr.points, mr.maxPoints)
+//
+//  private implicit def matchWrites: Writes[Match] = ???
+//
+//  val matchingResultJsonWrites: Writes[MatchingResult[Match]] = (
+//    (__ \ matchNameName).write[String] and
+//      (__ \ matchSingularNameName).write[String] and
+//      (__ \ successName).write[SuccessType] and
+//      (__ \ matchesName).write[Seq[Match]] and
+//      (__ \ pointsName).write[Points] and
+//      (__ \ maxPointsName).write[Points]
+//    ) (unapplyMatchingResult)
+//
+//}
 
 final case class MatchingResult[M <: Match](matchName: String, matchSingularName: String, allMatches: Seq[M])
-  extends EvaluationResult with JsonWriteable {
+  extends EvaluationResult  {
 
   // FIXME: is it possible to use ... match { case ...} ?!?
   override def success: SuccessType =
@@ -25,7 +44,7 @@ final case class MatchingResult[M <: Match](matchName: String, matchSingularName
 
   val maxPoints: Points = allMatches.map(_.maxPoints).fold(zeroPoints)(_ + _)
 
-  override def toJson: JsObject = Json.obj(
+  def toJson: JsObject = Json.obj(
     matchNameName -> matchName,
     matchSingularNameName -> matchSingularName,
     successName -> allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH),

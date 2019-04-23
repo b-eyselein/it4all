@@ -38,6 +38,8 @@ final case class ResultFileContent(resultType: String, results: Seq[ExecutionRes
 //noinspection ConvertibleToMethodValue
 object ResultsFileJsonFormat {
 
+  private val logger = Logger(ResultsFileJsonFormat.getClass)
+
   private implicit val executionResultJsonReads: Reads[ExecutionResult] = (
     (__ \ "success").read[SuccessType] and
       (__ \ "test_id").read[Int] and
@@ -61,7 +63,7 @@ object ResultsFileJsonFormat {
           result.results)
 
       case JsError(errors) =>
-        errors.foreach(error => Logger.error("There has been an error reading a json programming result file: " + error))
+        errors.foreach(error => logger.error("There has been an error reading a json programming result file: " + error))
         Failure(null)
     }
   }

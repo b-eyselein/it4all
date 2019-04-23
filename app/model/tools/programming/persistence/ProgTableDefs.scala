@@ -91,7 +91,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && classDiagPartSaved
   }
 
-  override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[String]] =
+  override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] =
   //  FIXME:  db.run(sampleSolutions.filter(_.exerciseId === id).map(_.sample).result.map(_.solution))
     ???
 

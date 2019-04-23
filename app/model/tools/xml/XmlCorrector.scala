@@ -15,11 +15,11 @@ class CorrectionErrorHandler extends ErrorHandler {
 
   val errors: ListBuffer[XmlError] = ListBuffer.empty
 
-  override def error(exception: SAXParseException): Unit = errors += new XmlError(XmlErrorType.ERROR, exception)
+  override def error(exception: SAXParseException): Unit = errors += XmlError.fromSAXParseException(XmlErrorType.ERROR, exception)
 
-  override def fatalError(exception: SAXParseException): Unit = errors += new XmlError(XmlErrorType.FATAL, exception)
+  override def fatalError(exception: SAXParseException): Unit = errors += XmlError.fromSAXParseException(XmlErrorType.FATAL, exception)
 
-  override def warning(exception: SAXParseException): Unit = errors += new XmlError(XmlErrorType.WARNING, exception)
+  override def warning(exception: SAXParseException): Unit = errors += XmlError.fromSAXParseException(XmlErrorType.WARNING, exception)
 
 }
 

@@ -83,11 +83,11 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   }
 
 
-  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: RoseExPart): Future[Seq[String]] =
+  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: RoseExPart): Future[Seq[RoseSampleSolution]] =
     db.run(sampleSolutionsTableQuery
       .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
-      .map(_.sample)
       .result)
+      .map(_.map(RoseSolutionDbModels.sampleSolFromDbSampleSol))
 
   def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: RoseExPart): Future[Option[RoseUserSolution]] = ???
 

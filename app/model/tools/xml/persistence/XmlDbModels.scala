@@ -50,7 +50,7 @@ final case class DbXmlExercise(id: Int, semanticVersion: SemanticVersion, collec
 final case class DbXmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, document: String, grammar: String)
   extends ADbSampleSol {
 
-  val sample = XmlSolution(document, grammar)
+  val sample: XmlSolution = XmlSolution(document, grammar)
 
 }
 
@@ -58,7 +58,7 @@ final case class DbXmlUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion
                                    document: String, grammar: String, points: Points, maxPoints: Points)
   extends ADbUserSol[XmlExPart] {
 
-  val solution = XmlSolution(document, grammar)
+  val solution: XmlSolution = XmlSolution(document, grammar)
 
 }
 

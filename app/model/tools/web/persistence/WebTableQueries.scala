@@ -4,10 +4,12 @@ import de.uniwue.webtester.{HtmlTask, JsTask}
 import model.tools.web._
 import model.{ExerciseFile, SemanticVersion}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait WebTableQueries {
   self: WebTableDefs =>
+
+  protected implicit val executionContext: ExecutionContext
 
   import profile.api._
 
@@ -79,16 +81,16 @@ trait WebTableQueries {
       .filter { ca => ca.collectionId === collId && ca.exerciseId === exId && ca.taskId === taskId && ca.condId === condId }
       .result)
 
-  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: WebExPart): Future[Seq[String]] = db.run(
-    sampleSolutionsTableQuery
-      .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
-      //      .map(sample => part match {
-      //        case WebExParts.HtmlPart => sample.htmlSample
-      //        case WebExParts.JsPart   => sample.jsSample.getOrElse("")
-      //      })
-      .map(_ => "" /* FIXME: implement...*/)
-      .result
-  )
+//  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: WebExPart): Future[Seq[FilesSampleSolution]] = db.run(
+//    sampleSolutionsTableQuery
+//      .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
+//      //      .map(sample => part match {
+//      //        case WebExParts.HtmlPart => sample.htmlSample
+//      //        case WebExParts.JsPart   => sample.jsSample.getOrElse("")
+//      //      })
+//      .result
+//      .map(_.map(_ => FilesSolutionDbModels.sampleSolFromDbSampleSol /* FIXME: implement...*/))
+//  )
 
   // Saving
 

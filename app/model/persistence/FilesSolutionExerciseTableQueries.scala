@@ -40,6 +40,16 @@ trait FilesSolutionExerciseTableQueries[PartType <: ExPart, ExType <: Exercise, 
       }
   }
 
+  override def futureSampleSolutionsForExPart(collId: Int, exId: Int, part: PartType): Future[Seq[FilesSampleSolution]] =
+    db.run(
+      sampleSolutionsTableQuery
+        .filter { s => s.collectionId === collId && s.exerciseId === exId }
+        .result
+    )
+      .flatMap { dbSampleSols: Seq[DbFilesSampleSolution] =>
+        Future.sequence(dbSampleSols.map(completeSampleSolForDbDbSampleSol))
+      }
+
   // Reading user solution
 
   private def completeUserSolForDbUserSol(dbUserSol: DbFilesUserSolution[PartType]): Future[FilesUserSolution[PartType]] = for {

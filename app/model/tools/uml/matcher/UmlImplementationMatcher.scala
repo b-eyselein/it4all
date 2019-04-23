@@ -15,13 +15,6 @@ final case class UmlImplementationMatch(userArg: Option[UmlImplementation], samp
   override def analyze(i1: UmlImplementation, i2: UmlImplementation): GenericAnalysisResult =
     GenericAnalysisResult(if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH)
 
-  override def explanations: Seq[String] = matchType match {
-    case MatchType.SUCCESSFUL_MATCH                             => Seq[String]()
-    case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq("Vererbungsrichtung falsch.")
-    case MatchType.ONLY_SAMPLE                                  => Seq("Vererbungsbeziehung nicht erstellt.")
-    case MatchType.ONLY_USER                                    => Seq("Vererbengsbeziehung ist falsch.")
-  }
-
   override def descArg(arg: UmlImplementation): String = describeImplementation(arg)
 
   override protected def descArgForJson(arg: UmlImplementation): JsValue = Json.obj(

@@ -73,7 +73,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override val exerciseForm      : Form[SqlExercise]       = SqlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[SqlExerciseReview] = SqlToolForms.exerciseReviewForm
 
-  override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlCorrResultJsonProtocol
+  override val sampleSolutionJsonFormat: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
+
+  override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlJsonProtocols
 
   // Views
 
@@ -102,10 +104,12 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Correction
 
-  override protected def readSolution(user: User, collection: SqlScenario, exercise: SqlExercise, part: SqlExPart)
-                                     (implicit request: Request[AnyContent]): Option[SolType] = request.body.asJson flatMap {
-    case JsString(value) => Some(value)
-    case _               => None
+  override protected def readSolution(request: Request[AnyContent], part: SqlExPart): Either[String, SolType] = request.body.asJson match {
+    case None          => Left("Body did not contain json!")
+    case Some(jsValue) => jsValue match {
+      case JsString(value) => Right(value)
+      case other           => Left(s"Json was no string but ${other}")
+    }
   }
 
   override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart): Future[Try[SqlCorrResult]] =

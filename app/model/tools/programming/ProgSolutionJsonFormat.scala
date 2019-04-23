@@ -6,7 +6,11 @@ import model.tools.programming.ProgConsts._
 import play.api.libs.functional.syntax._
 
 //noinspection ConvertibleToMethodValue
-final case class ProgSolutionJsonFormat(exercise: ProgExercise, user: User) {
+object ProgSolutionJsonFormat {
+
+  private implicit val progLanguageJsonFormat: Format[ProgLanguage] = ProgLanguages.jsonFormat
+
+  val sampleSolutionJsonFormat: Format[ProgSampleSolution] = Json.format[ProgSampleSolution]
 
   //  def readProgSolutionFromJson(exPart: ProgExPart, solutionJson: JsValue): JsResult[ProgSolution] = exPart match {
   //    case ProgExParts.TestdataCreation => testDataCreationSolutionReads.reads(solutionJson)
@@ -25,11 +29,6 @@ final case class ProgSolutionJsonFormat(exercise: ProgExercise, user: User) {
   //    ) (ProgTestDataSolution.apply(_, _))
 
 
-  val progSolutionReads: Reads[ProgSolution] = (
-    (__ \ implementationName).read[String] and
-      (__ \ testdataName).read[Seq[ProgUserTestData]] and
-      (__ \ extendedUnitTestsName).read[Boolean] and
-      (__ \ languageName).read[ProgLanguage](ProgLanguages.jsonFormat)
-    ) (ProgSolution.apply _)
+  val progSolutionReads: Reads[ProgSolution] = Json.reads[ProgSolution]
 
 }

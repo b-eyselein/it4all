@@ -1,70 +1,42 @@
-import * as $ from 'jquery';
-
-export {focusOnCorrection, testTextExerciseSolution};
-
-let showSampleSolBtn: JQuery;
-
-function focusOnCorrection(): void {
-    $('#showCorrectionTabA').get()[0].click();
-}
-
-function escapeHtml(unescapedHtml: string): string {
-    return unescapedHtml
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function testTextExerciseSolution(testBtn: JQuery, solution: any, success, error): void {
-    testBtn.prop('disabled', true);
-
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json', // return type
-        contentType: 'application/json', // type of message to server
-        url: testBtn.data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token)
-        },
-        success,
-        error,
-    });
+export function focusOnCorrection(): void {
+    document.querySelector<HTMLAnchorElement>('#showCorrectionTabA').click();
 }
 
 
-function onShowSampleSolutionSuccess(solutions: string[]): void {
-    let solutionRenders: string[] = [];
+export function testTextExerciseSolution<SolType, ResType>(testBtn: HTMLButtonElement, solution: SolType, onSuccess: (ResType) => void): void {
+    testBtn.disabled = true;
 
-    for (const solution of solutions) {
-        solutionRenders.push(`<pre>${escapeHtml(solution)}</pre>`);
+    const headers: Headers = new Headers({
+        'Content-Type': 'application/json',
+        'Csrf-Token': document.querySelector<HTMLInputElement>('input[name="csrfToken"]').value
+    })
+
+    fetch(testBtn.dataset['url'], {method: 'PUT', headers, body: JSON.stringify(solution)})
+        .then(response => {
+            if (response.status === 200) {
+                response.json().then(onSuccess);
+            } else {
+                response.text().then(errorText => console.error(errorText));
+            }
+        }).catch(reason => console.error(reason));
+}
+
+export function initShowSampleSolBtn<T>(renderSampleSolResponse: (T) => string): void {
+    const showSampleSolBtn = document.querySelector<HTMLButtonElement>('#showSampleSolBtn');
+
+    showSampleSolBtn.onclick = () => {
+        showSampleSolBtn.disabled = true;
+        fetch(showSampleSolBtn.dataset['url'])
+            .then(response => {
+                if (response.status === 200) {
+                    response.json().then(response => {
+                        document.querySelector<HTMLDivElement>('#sampleSolDiv').innerHTML = renderSampleSolResponse(response);
+                    });
+                    showSampleSolBtn.remove();
+                } else {
+                    response.text().then(error => console.error(error));
+                }
+            })
+            .catch(reason => console.error(reason))
     }
-
-    $('#sampleSolTab').html(`
-<div class="card">
-    <div class="card-body bg-light">
-        ${solutionRenders.join("\n")}
-    </div>
-</div>`.trim());
 }
-
-function onShowSampleSolutionError(jqXHR): void {
-    console.error(jqXHR.responseText);
-}
-
-$(() => {
-    showSampleSolBtn = $('#showSampleSolBtn');
-    showSampleSolBtn.on('click', () => {
-        showSampleSolBtn.prop('disabled', true);
-        $.ajax({
-            url: showSampleSolBtn.data('url'),
-            method: 'GET',
-            success: onShowSampleSolutionSuccess,
-            error: onShowSampleSolutionError
-        });
-    });
-});

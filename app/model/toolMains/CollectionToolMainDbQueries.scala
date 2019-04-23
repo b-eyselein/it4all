@@ -29,7 +29,7 @@ trait CollectionToolMainDbQueries {
   def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: PartType): Future[Option[UserSolType]] =
     tables.futureMaybeOldSolution(username, collId, exId, part)
 
-  def futureSampleSolutions(collId: Int, exId: Int, part: PartType): Future[Seq[String]] = tables.futureSampleSolutionsForExPart(collId, exId, part)
+  def futureSampleSolutions(collId: Int, exId: Int, part: PartType): Future[Seq[SampleSolType]] = tables.futureSampleSolutionsForExPart(collId, exId, part)
 
   def futureSolveStateForExercisePart(user: User, collId: Int, exId: Int, part: PartType): Future[Option[SolvedState]] =
     tables.futureSolveStateForExercisePart(user, collId, exId, part)

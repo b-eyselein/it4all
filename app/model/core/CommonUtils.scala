@@ -1,18 +1,13 @@
 package model.core
 
 import play.api.Logger
-import play.api.libs.json.JsValue
 
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
-trait JsonWriteable {
-
-  def toJson: JsValue
-
-}
-
 object CommonUtils {
+
+  private val logger = Logger(CommonUtils.getClass)
 
   def using[A <: AutoCloseable, B](resource: A)(f: A => B): Try[B] = try {
     Success(f(resource))
@@ -22,7 +17,7 @@ object CommonUtils {
     try {
       if (resource != null) resource.close()
     } catch {
-      case e: Exception => Logger.error("There has been an error: ", e)
+      case e: Exception => logger.error("There has been an error: ", e)
     }
   }
 

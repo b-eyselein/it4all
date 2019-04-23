@@ -19,6 +19,8 @@ import scala.util.{Failure, Success, Try}
 class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionContext)
   extends RandomExerciseToolMain("Boolesche Algebra", "bool") {
 
+  private val logger = Logger(classOf[BoolToolMain])
+
   // Abstract types
 
   override type PartType = BoolExPart
@@ -60,7 +62,7 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
     case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue) match {
       case JsSuccess(boolSolution, _) => correctPart(exPart, boolSolution).toJson
       case JsError(errors)            =>
-        errors.foreach(e => Logger.error("Json Error: " + e.toString))
+        errors.foreach(e => logger.error("Json Error: " + e.toString))
         Json.obj(errorName -> "There has been an error in your json!")
     }
   }

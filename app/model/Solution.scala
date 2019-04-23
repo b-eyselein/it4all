@@ -1,6 +1,7 @@
 package model
 
 import model.points.Points
+import play.api.libs.json.{Format, Json}
 
 trait Solution[SolType] {
 
@@ -27,11 +28,25 @@ trait UserSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
 }
 
 
+object StringSampleSolutionJsonProtocol {
+
+  val stringSampleSolutionJsonFormat: Format[StringSampleSolution] = Json.format[StringSampleSolution]
+
+}
+
 final case class StringSampleSolution(id: Int, sample: String) extends SampleSolution[String]
 
 final case class StringUserSolution[PartType <: ExPart](id: Int, part: PartType, solution: String, points: Points, maxPoints: Points)
   extends UserSolution[PartType, String]
 
+
+object FilesSampleSolutionJsonProtocol {
+
+  private implicit val exerciseFileJsonFormat: Format[ExerciseFile] = Json.format[ExerciseFile]
+
+  val filesSampleSolutionFormat: Format[FilesSampleSolution] = Json.format[FilesSampleSolution]
+
+}
 
 final case class FilesSampleSolution(id: Int, sample: Seq[ExerciseFile]) extends SampleSolution[Seq[ExerciseFile]]
 

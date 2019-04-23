@@ -78,10 +78,7 @@ class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases:
 
   override protected def canMatch(binEx1: BinaryExpression, binEx2: BinaryExpression): Boolean = {
 
-    def maybeTableAlias(col: Column): Option[String] = col.getTable match {
-      case null  => None
-      case table => Some(table.getName)
-    }
+    def maybeTableAlias(col: Column): Option[String] = Option(col.getTable).map(_.getName)
 
     getColToCompare(binEx1) match {
       case None           => ???

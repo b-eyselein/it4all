@@ -1,19 +1,19 @@
-import * as $ from 'jquery';
-
 import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
 
-import {focusOnCorrection, testTextExerciseSolution} from "../textExercise";
+import {focusOnCorrection, initShowSampleSolBtn, testTextExerciseSolution} from "../textExercise";
+import {domReady} from "../otherHelpers";
 
 let editor: CodeMirror.Editor;
 
-let testBtn: JQuery;
-let previewChangedDiv: JQuery;
+let testBtn: HTMLButtonElement;
 
-let testButton: JQuery;
-
-let previewIsUpToDate: boolean = false;
 let solutionChanged: boolean = false;
+
+interface RegexSampleSolution {
+    id: number;
+    sample: string;
+}
 
 interface RegexSingleCorrectionResult {
     testData: string
@@ -29,29 +29,6 @@ interface RegexCorrectionResult {
     results: RegexSingleCorrectionResult[]
 }
 
-$(() => {
-    previewChangedDiv = $('#previewChangedDiv');
-    testBtn = $('#testBtn');
-
-
-    editor = initEditor('htmlmixed', 'textEditor');
-    editor.on('change', () => {
-        solutionChanged = true;
-        if (previewIsUpToDate) {
-            previewIsUpToDate = false;
-            previewChangedDiv.prop('hidden', false);
-        }
-    });
-
-
-    $('#endSolveBtn').on('click', () => {
-        return !solutionChanged || confirm('Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?');
-    });
-
-    testBtn.on('click', testSol);
-});
-
-
 function testSol(): void {
     const solution: string = editor.getValue().trim();
 
@@ -60,13 +37,13 @@ function testSol(): void {
         return;
     }
 
-    testBtn.prop('disabled', true);
+    testBtn.disabled = true;
 
-    testTextExerciseSolution(testBtn, solution, onRegexCorrectionSuccess, onRegexCorrectionError);
+    testTextExerciseSolution<string, RegexCorrectionResult>(testBtn, solution, onRegexCorrectionSuccess);
 }
 
 function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void {
-    testBtn.prop('disabled', false);
+    testBtn.disabled = false;
 
     solutionChanged = false;
 
@@ -106,14 +83,30 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
         html += `<p class="${clazz}"><code>${result.testData}</code> ${toAdd}</p>`;
     }
 
-
-    $('#correctionDiv').html(html);
+    document.querySelector<HTMLDivElement>('#correctionDiv').innerHTML = html;
     focusOnCorrection();
 }
 
-function onRegexCorrectionError(jqXHR): void {
-    testBtn.prop('disabled', false);
-
-    console.error(jqXHR.responseText);
-    focusOnCorrection();
+function displayRegexSampleSolution(s: RegexSampleSolution): string {
+    return `
+<div class="card my-3">
+    <div class="card-body bg-light">
+        <pre>${s.sample.trim()}</pre>
+    </div>
+</div>`.trim();
 }
+
+domReady(() => {
+    initShowSampleSolBtn<RegexSampleSolution[]>((regexSampleSolutions: RegexSampleSolution[]) =>
+        regexSampleSolutions.map(displayRegexSampleSolution).join('\n')
+    );
+
+    editor = initEditor('', 'textEditor');
+
+    document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
+        return !solutionChanged || confirm('Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?');
+    };
+
+    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    testBtn.onclick = testSol;
+});

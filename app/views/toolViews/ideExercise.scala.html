@@ -7,123 +7,123 @@
     additionalScripts: Html = Html("")
 )(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+    @scripts = {
+        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("lib/codemirror/lib/codemirror.css")">
 
-    <style>
-            .CodeMirror {
-                border: 1px solid lightgrey;
-                font-size: 14px;
-                height: 700px;
-            }
-    </style>
+        <style>
+                .CodeMirror {
+                    border: 1px solid lightgrey;
+                    font-size: 14px;
+                    height: 700px;
+                }
+        </style>
 
-@additionalScripts
-}
+    @additionalScripts
+    }
 
-@correctionUrl = @{
-    coll.routes.CollectionController.correctLive(toolMain.urlPart, collection.id, exercise.id, part.urlName)
-}
+    @correctionUrl = @{
+        coll.routes.CollectionController.correctLive(toolMain.urlPart, collection.id, exercise.id, part.urlName)
+    }
 
-@sampleSolUrl = @{
-    coll.routes.CollectionController.sampleSol(toolMain.urlPart, collection.id, exercise.id, part.urlName)
-}
+    @sampleSolUrl = @{
+        coll.routes.CollectionController.sampleSol(toolMain.urlPart, collection.id, exercise.id, part.urlName)
+    }
 
-@main(title, Some(user), scripts) {
-    <div class="container-fluid" id="theContainer" data-loadfilesurl="@coll.routes.CollectionController.loadFiles(toolMain.urlPart, collection.id, exercise.id, part.urlName)">
+    @main(title, Some(user), scripts) {
+        <div class="container-fluid" id="theContainer" data-loadfilesurl="@coll.routes.CollectionController.loadFiles(toolMain.urlPart, collection.id, exercise.id, part.urlName)">
 
-        @helper.CSRF.formField
+            @helper.CSRF.formField
 
-        <div class="row">
-            <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6">
 
-                <div class="form-group">
-                    <div class="btn-group d-flex">
-                    @for(fileName <- fileNames) {
-                        <button class="fileBtn btn @{
-                            if(maybeActiveFile.map(_.name) contains fileName) "btn-primary" else "btn-outline-secondary"
-                        } w-100" data-filename="@fileName"> @fileName
-                        </button>
-                    }
+                    <div class="form-group">
+                        <div class="btn-group d-flex">
+                        @for(fileName <- fileNames) {
+                            <button class="fileBtn btn @{
+                                if(maybeActiveFile.map(_.name) contains fileName) "btn-primary" else "btn-outline-secondary"
+                            } w-100" data-filename="@fileName"> @fileName
+                            </button>
+                        }
+                        </div>
                     </div>
+
+                    <textarea id="myTextEditor" title="Initialized to CodeMirror Editor"></textarea>
+
                 </div>
 
-                <textarea id="myTextEditor" title="Initialized to CodeMirror Editor"></textarea>
-
-            </div>
-
-            <div class="col-md-6">
+                <div class="col-md-6">
 
 
-                <ul class="nav nav-tabs nav-justified">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#exerciseTextTab" id="showExerciseTextA">
-                            Aufgabenstellung</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#correctionTab" id="showCorrectionTabA">
-                            Korrektur</a>
-                    </li>
-                    @if(solutionPreview.isDefined) {
+                    <ul class="nav nav-tabs nav-justified">
                         <li class="nav-item">
-                            <a class="nav-link" data-url="@coll.routes.CollectionController.updateWebSolution(collection.id, exercise.id, part.urlName)"
-                            data-toggle="tab" href="#previewTab" id="previewTabBtn">Live-Vorschau</a>
+                            <a class="nav-link active" data-toggle="tab" href="#exerciseTextTab" id="showExerciseTextA">
+                                Aufgabenstellung</a>
                         </li>
-                    }
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#sampleSolTab">Musterlösung</a>
-                    </li>
-                </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#correctionTab" id="showCorrectionTabA">
+                                Korrektur</a>
+                        </li>
+                        @if(solutionPreview.isDefined) {
+                            <li class="nav-item">
+                                <a class="nav-link" data-url="@coll.routes.CollectionController.updateWebSolution(collection.id, exercise.id, part.urlName)"
+                                data-toggle="tab" href="#previewTab" id="previewTabBtn">Live-Vorschau</a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#sampleSolTab">Musterlösung</a>
+                        </li>
+                    </ul>
 
-                <div class="my-3">
-                    <div class="btn-group d-flex">
-                        <button class="btn btn-success w-100" id="uploadBtn" data-href="@correctionUrl">
-                            Lösung testen</button>
-                        <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMain.urlPart, collection.id, exercise.id, part.urlName)"
-                        id="endSolveBtn" class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                    <div class="my-3">
+                        <div class="btn-group d-flex">
+                            <button class="btn btn-success w-100" id="uploadBtn" data-href="@correctionUrl">
+                                Lösung testen</button>
+                            <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMain.urlPart, collection.id, exercise.id, part.urlName)"
+                            id="endSolveAnchor" class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                        </div>
                     </div>
-                </div>
 
-                <div class="tab-content">
-                    <div id="exerciseTextTab" class="tab-pane fade show active">
+                    <div class="tab-content">
+                        <div id="exerciseTextTab" class="tab-pane fade show active">
 
-                        <div class="card">
-                            <div class="card-body bg-light text-justify">@exerciseText</div>
+                            <div class="card">
+                                <div class="card-body bg-light text-justify">@exerciseText</div>
+                            </div>
+
+                            @* @remainingExDef *@
+
                         </div>
 
-                        @* @remainingExDef *@
-
-                    </div>
-
-                    <div id="correctionTab" class="tab-pane fade">
-                        <div id="correctionDiv">
-                            <div id="correction">
-                                <div class="alert alert-warning">
-                                    Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
+                        <div id="correctionTab" class="tab-pane fade">
+                            <div id="correctionDiv">
+                                <div id="correction">
+                                    <div class="alert alert-warning">
+                                        Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    @solutionPreview match {
-                        case None => {}
-                        case Some(prev) => {
-                            @prev
+                        @solutionPreview match {
+                            case None => {}
+                            case Some(prev) => {
+                                @prev
+                            }
                         }
-                    }
 
-                    <div id="sampleSolTab" class="tab-pane fade">
-                        <button data-url="@sampleSolUrl"
-                        id="showSampleSolBtn" class="btn btn-outline-success btn-block">Musterlösung anzeigen</button>
+                        <div id="sampleSolTab" class="tab-pane fade">
+                            <button data-url="@sampleSolUrl" id="showSampleSolBtn" class="btn btn-outline-success btn-block">
+                                Musterlösung anzeigen</button>
 
-                        <div id="sampleSolDiv"></div>
+                            <div id="sampleSolDiv"></div>
+                        </div>
                     </div>
+
+
                 </div>
-
-
             </div>
         </div>
-    </div>
-}
+    }

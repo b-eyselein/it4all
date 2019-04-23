@@ -58,6 +58,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override val exerciseForm      : Form[RoseExercise]       = RoseToolForms.exerciseFormat
   override val exerciseReviewForm: Form[RoseExerciseReview] = RoseToolForms.exerciseReviewForm
 
+  override val sampleSolutionJsonFormat: Format[RoseSampleSolution] = RoseSampleSolutionJsonProtocol.roseSampleSolutionJsonFormat
+
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[RoseEvalResult, RoseCompleteResult] = RoseCompleteResultJsonProtocol
 
   // Other helper methods
@@ -91,12 +93,12 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Correction
 
-  override protected def readSolution(user: User, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart)
-                                     (implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap {
-    case JsString(solution) => Some(solution)
-    case _                  =>
-      logger.error("Request body is no string!")
-      None
+  override protected def readSolution(request: Request[AnyContent], part: RoseExPart): Either[String, String] = request.body.asJson match {
+    case None          => Left("Body did not contain json!")
+    case Some(jsValue) => jsValue match {
+      case JsString(solution) => Right(solution)
+      case _                  => Left("Request body is no string!")
+    }
   }
 
   override protected def correctEx(user: User, sol: String, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart): Future[Try[RoseCompleteResult]] = {

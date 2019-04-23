@@ -61,6 +61,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override val exerciseForm      : Form[ProgExercise]       = ProgToolForms.exerciseFormat
   override val exerciseReviewForm: Form[ProgExerciseReview] = ProgToolForms.exerciseReviewForm
 
+  override val sampleSolutionJsonFormat: Format[ProgSampleSolution] = ProgSolutionJsonFormat.sampleSolutionJsonFormat
+
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] = ProgCompleteResultJsonProtocol
 
   // Other helper methods
@@ -83,26 +85,29 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   )
 
   override def instantiateSolution(id: Int, exercise: ProgExercise, part: ProgExPart,
-                                   solution: ProgSolution, points: Points, maxPoints: Points): ProgUserSolution =
+                                   solution: ProgSolution, points: Points, maxPoints: Points
+                                  ): ProgUserSolution =
     ProgUserSolution(id, part, solution, solution.language, solution.extendedUnitTests, points, maxPoints)
 
   // Db
 
-  override def futureSampleSolutions(collId: Int, id: Int, part: ProgExPart): Future[Seq[String]] = part match {
+  override def futureSampleSolutions(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] = part match {
     case ProgExParts.Implementation => tables.futureSampleSolutionsForExPart(collId, id, part)
     case _                          => Future(Seq.empty) // TODO!
   }
 
   // Correction
 
-  override protected def readSolution(user: User, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart)
-                                     (implicit request: Request[AnyContent]): Option[ProgSolution] = request.body.asJson flatMap { jsValue =>
-    ProgSolutionJsonFormat(exercise, user).progSolutionReads.reads(jsValue) match {
-      case JsSuccess(solution, _) => Some(solution)
-      case JsError(errors)        =>
-        errors.foreach(jsErr => logger.error(jsErr.toString()))
-        None
-    }
+  override protected def readSolution(request: Request[AnyContent], part: ProgExPart): Either[String, ProgSolution] = request.body.asJson match {
+    case None          => Left("Body did not contain json!")
+    case Some(jsValue) =>
+
+      ProgSolutionJsonFormat.progSolutionReads.reads(jsValue) match {
+        case JsSuccess(solution, _) => Right(solution)
+        case JsError(errors)        =>
+          errors.foreach(jsErr => logger.error(jsErr.toString()))
+          Left(errors.toString())
+      }
   }
 
   override def correctEx(user: User, sol: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart): Future[Try[ProgCompleteResult]] =

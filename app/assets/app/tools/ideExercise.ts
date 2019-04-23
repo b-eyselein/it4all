@@ -1,35 +1,28 @@
 import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
+import {ExerciseFile, IdeWorkspace} from "./ideExerciseHelpers";
 
 let activeFile: string;
 let filenames: string[] = [];
 
 let fileChangeBtns: HTMLButtonElement[] = [];
 
-let files: Map<string, LoadFileSingleResult> = new Map<string, LoadFileSingleResult>();
+let files: Map<string, ExerciseFile> = new Map<string, ExerciseFile>();
 
 let editor: CodeMirror.Editor;
 
 
-export interface LoadFileSingleResult {
-    path: string
-    content: string
-    fileType: string
-    editable: boolean
+export function focusOnCorrection(): void {
+    document.querySelector<HTMLAnchorElement>('#showCorrectionTabA').click();
 }
 
-export interface IdeWorkspace {
-    filesNum: number
-    files: LoadFileSingleResult[]
-}
-
-function onLoadFileSuccess(result: LoadFileSingleResult[]): Promise<CodeMirror.Editor> {
+function onLoadFileSuccess(result: ExerciseFile[]): Promise<CodeMirror.Editor> {
     for (const res of result) {
         // Fill file map
-        files.set(res.path, res);
+        files.set(res.name, res);
     }
 
-    activeFile = result[0].path;
+    activeFile = result[0].name;
 
     // Read all CodeMirror modes from result array
     const allDistinctModes: string[] = Array.from(new Set(result.map(r => r.fileType)));
@@ -38,7 +31,7 @@ function onLoadFileSuccess(result: LoadFileSingleResult[]): Promise<CodeMirror.E
     return Promise.all(allDistinctModes.map(mode => import(`codemirror/mode/${mode}/${mode}`)))
         .then(() => {
             // Init editor (all modes have already been loaded!)
-            const firstFile: LoadFileSingleResult | undefined = files.get(activeFile);
+            const firstFile: ExerciseFile | undefined = files.get(activeFile);
             // FIXME: get => null!
             editor = initEditor(firstFile.fileType, 'myTextEditor');
 
@@ -48,7 +41,7 @@ function onLoadFileSuccess(result: LoadFileSingleResult[]): Promise<CodeMirror.E
         });
 }
 
-function insertContentIntoEditor(nextFile: LoadFileSingleResult) {
+function insertContentIntoEditor(nextFile: ExerciseFile) {
     // Update editor content and mode (language!)
     editor.setValue(nextFile.content);
 
@@ -70,7 +63,7 @@ function changeEditorContent(event: Event): void {
     const clickedBtn: HTMLButtonElement = event.target as HTMLButtonElement;
     activeFile = clickedBtn.dataset['filename'] as string;
 
-    const nextFile: LoadFileSingleResult = files.get(activeFile);
+    const nextFile: ExerciseFile = files.get(activeFile);
 
     insertContentIntoEditor(nextFile);
 

@@ -9,9 +9,10 @@ import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
 import model.persistence.ExerciseTableDefs
 import model.points._
 import net.jcazevedo.moultingyaml._
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Format, JsValue, Json}
 import play.api.mvc.{AnyContent, Call, Request, RequestHeader}
 import play.twirl.api.Html
 
@@ -21,6 +22,8 @@ import scala.util.{Failure, Success, Try}
 
 abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
   extends AToolMain(tn, up) with CollectionToolMainDbQueries {
+
+  private val logger = Logger(classOf[CollectionToolMain])
 
   // Abstract types
 
@@ -59,6 +62,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // TODO: scalarStyle = Folded if fixed...
   def yamlString: Future[String] = ???
+
+  val sampleSolutionJsonFormat: Format[SampleSolType]
 
   protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ResultType, CompResultType]
 
@@ -114,11 +119,12 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def correctAbstract(user: User, collection: CollType, exercise: ExType, part: PartType)
                      (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[(CompResultType, Boolean)]] =
-    readSolution(user, collection, exercise, part) match {
-      case None => Future.successful(Failure(SolutionTransferException))
+    readSolution(request, part) match {
+      case Left(errorMsg) =>
+        logger.error(errorMsg)
+        Future.successful(Failure(SolutionTransferException))
 
-      case Some(solution) =>
-
+      case Right(solution) =>
         correctEx(user, solution, collection, exercise, part) flatMap {
           case Failure(error) => Future.successful(Failure(error))
           case Success(res)   =>
@@ -135,9 +141,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Reading from requests
 
-  def readExerciseFromForm(implicit request: Request[AnyContent]): Form[ExType] = exerciseForm.bindFromRequest()
-
-  protected def readSolution(user: User, collection: CollType, exercise: ExType, part: PartType)(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolution(request: Request[AnyContent], part: PartType): Either[String, SolType]
 
   // Views
 

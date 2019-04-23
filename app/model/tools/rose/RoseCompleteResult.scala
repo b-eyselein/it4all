@@ -43,8 +43,3 @@ case object RoseEvalFailed extends RoseEvalResult {
 
 }
 
-object RoseCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RoseEvalResult, RoseCompleteResult] {
-
-  override def completeResultWrites(solutionSaved: Boolean): Writes[RoseCompleteResult] = ???
-
-}

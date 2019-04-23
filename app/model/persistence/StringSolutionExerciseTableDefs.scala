@@ -38,15 +38,23 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Co
       .result
       .map(_ map StringSolutionDbModels.sampleSolFromDbSampleSol))
 
-  override def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, exPart: PartType): Future[Seq[String]] =
+  override def futureSampleSolutionsForExPart(collId: Int, exId: Int, exPart: PartType): Future[Seq[StringSampleSolution]] =
     db.run(sampleSolutionsTableQuery
-      .filter { e => e.collectionId === scenarioId && e.exerciseId === exerciseId }
-      .map(_.sample)
+      .filter { sample => sample.collectionId === collId && sample.exerciseId === exId }
       .result)
+      .map(_.map(StringSolutionDbModels.sampleSolFromDbSampleSol))
 
-  override def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: PartType): Future[Option[StringUserSolution[PartType]]] = ???
+  override def futureMaybeOldSolution(username: String, collId: Int, exerciseId: Int, part: PartType): Future[Option[StringUserSolution[PartType]]] =
+    db.run(userSolutionsTableQuery
+      .filter { us => us.username === username && us.collectionId === collId && us.exerciseId === exerciseId && us.part === part }
+      .result.headOption)
+      .map(_.map(StringSolutionDbModels.userSolFromDbUserSol))
 
-  override def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: StringUserSolution[PartType]): Future[Boolean] = ???
+  override def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: StringUserSolution[PartType]): Future[Boolean] =
+    nextUserSolutionId(exId, collId, username, sol.part).flatMap { nextUserSolId =>
+      val dbUserSolution = StringSolutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol).copy(id = nextUserSolId)
+      db.run(userSolutionsTableQuery += dbUserSolution).transform(_ == 1, identity)
+    }
 
   // Abstract Tables
 

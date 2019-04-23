@@ -10,7 +10,7 @@ object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise] {
   override def dbExerciseFromExercise(collectionId: Int, ex: UmlExercise): DbUmlExercise =
     DbUmlExercise(ex.id, ex.semanticVersion, collectionId, ex.title, ex.author, ex.text, ex.state, ex.markedText)
 
-  def exerciseFromDbExercise(ex: DbUmlExercise, toIgnore: Seq[String], mappings: Map[String, String], samples: Seq[UmlSampleSolution]) =
+  def exerciseFromDbExercise(ex: DbUmlExercise, toIgnore: Seq[String], mappings: Map[String, String], samples: Seq[UmlSampleSolution]): UmlExercise =
     UmlExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, toIgnore, mappings, samples)
 
 }

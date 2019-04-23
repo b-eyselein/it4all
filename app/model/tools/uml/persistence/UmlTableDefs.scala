@@ -82,7 +82,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     dbModels.exerciseFromDbExercise(ex, toIgnore, mappings, samples)
   }
 
-  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: UmlExPart): Future[Seq[String]] = ???
+  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: UmlExPart): Future[Seq[UmlSampleSolution]] = ???
 
 
   override protected def saveExerciseRest(collId: Int, compEx: UmlExercise): Future[Boolean] = {

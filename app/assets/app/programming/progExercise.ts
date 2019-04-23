@@ -116,7 +116,7 @@ $(() => {
     sampleSolBtn = $('#sampleSolBtn');
     sampleSolBtn.on('click', showSampleSol);
 
-    $('#endSolveBtn').on('click', () => {
+    $('#endSolveAnchor').on('click', () => {
         return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
     });
 });

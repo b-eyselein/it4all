@@ -12,7 +12,7 @@ import model._
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
-import play.api.libs.json.JsString
+import play.api.libs.json.{Format, JsString}
 import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
@@ -63,6 +63,8 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override val exerciseForm      : Form[XmlExercise]       = XmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[XmlExerciseReview] = XmlToolForms.exerciseReviewForm
 
+  override val sampleSolutionJsonFormat: Format[XmlSampleSolution] = XmlSampleSolutionJsonProtocol.xmlSampleSolutionJsonFormat
+
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] = XmlCompleteResultJsonProtocol
 
   // Other helper methods
@@ -89,16 +91,16 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override protected def readSolution(user: User, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart)
-                                     (implicit request: Request[AnyContent]): Option[XmlSolution] = request.body.asJson flatMap {
-    case JsString(solution) =>
-      part match {
-        case XmlExParts.GrammarCreationXmlPart  => Some(XmlSolution(document = "", grammar = solution))
-        case XmlExParts.DocumentCreationXmlPart => Some(XmlSolution(document = solution, grammar = ""))
-      }
-    case other              =>
-      logger.error("Wrong json content: " + other.toString)
-      None
+  override protected def readSolution(request: Request[AnyContent], part: XmlExPart): Either[String, XmlSolution] = request.body.asJson match {
+    case None          => Left("Body did not contain json!")
+    case Some(jsValue) => jsValue match {
+      case JsString(solution) =>
+        part match {
+          case XmlExParts.GrammarCreationXmlPart  => Right(XmlSolution(document = "", grammar = solution))
+          case XmlExParts.DocumentCreationXmlPart => Right(XmlSolution(document = solution, grammar = ""))
+        }
+      case other              => Left(s"Json was no string but ${other}")
+    }
   }
 
   override protected def correctEx(user: User, solution: XmlSolution, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =

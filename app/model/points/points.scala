@@ -1,5 +1,7 @@
 package model
 
+import play.api.libs.json.{JsNumber, Writes}
+
 package object points {
 
   implicit def toPointsOps(p: Int): PointsOps = PointsOps(p)
@@ -14,5 +16,8 @@ package object points {
   def singleHalfPoint: Points = 1.halfPoint
 
   def singleQuarterPoint: Points = 1.quarterPoint
+
+
+  val pointsJsonWrites: Writes[Points] = p => JsNumber(p.asDouble)
 
 }

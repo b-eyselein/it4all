@@ -121,7 +121,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                 case Some(part) =>
 
                   toolMain.futureSampleSolutions(collId, id, part) map {
-                    sampleSolutions => Ok(JsArray(sampleSolutions map JsString.apply))
+                    sampleSolutions => Ok(JsArray(sampleSolutions map toolMain.sampleSolutionJsonFormat.writes))
                   }
               }
           }
@@ -247,7 +247,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                 case Some(part) =>
 
                   toolMain.futureFilesForExercise(user, collId, exercise, part).map {
-                    filesForExercise => Ok(JsArray(filesForExercise.map(ExerciseFileJsonProtocol.exerciseFileJsonFormat.writes)))
+                    filesForExercise => Ok(JsArray(filesForExercise.map(ExerciseFileJsonProtocol.exerciseFileFormat.writes)))
                   }
               }
           }

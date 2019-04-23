@@ -8,7 +8,7 @@ import model.tools.regex.persistence.RegexTableDefs
 import model._
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
-import play.api.libs.json.JsString
+import play.api.libs.json.{Format, JsString}
 import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
@@ -50,6 +50,8 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override val exerciseForm      : Form[RegexExercise]       = RegexToolForm.exerciseFormat
   override val exerciseReviewForm: Form[RegexExerciseReview] = RegexToolForm.exerciseReviewForm
 
+  override val sampleSolutionJsonFormat: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
+
   override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
 
   // Database helpers
@@ -72,10 +74,12 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   // Correction
 
-  override protected def readSolution(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart)
-                                     (implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap {
-    case JsString(regex) => Some(regex)
-    case _               => None
+  override protected def readSolution(request: Request[AnyContent], part: RegexExPart): Either[String, String] = request.body.asJson match {
+    case None          => Left("Body did not contain json!")
+    case Some(jsValue) => jsValue match {
+      case JsString(regex) => Right(regex)
+      case other           => Left(s"Json was no string but ${other}")
+    }
   }
 
   override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] = Future.successful(Try {

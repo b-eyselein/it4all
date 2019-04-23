@@ -1,12 +1,15 @@
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
-import {renderWebCompleteResult, WebCompleteResult} from "./webCorrection";
-import {focusOnCorrection} from '../textExercise';
+import {WebCompleteResult, WebSampleSolution} from "./webInterfaces";
+import {renderWebCompleteResult} from "./webCorrection";
+import {domReady, escapeHtml} from "../otherHelpers";
 
-import {getIdeWorkspace, IdeWorkspace, setupEditor, uploadFiles} from '../tools/ideExercise';
+import {ExerciseFile, IdeWorkspace} from "../tools/ideExerciseHelpers";
+import {focusOnCorrection, getIdeWorkspace, setupEditor, uploadFiles} from '../tools/ideExercise';
 
 let uploadBtn: HTMLButtonElement;
+let showSampleSolBtn: HTMLButtonElement;
 
 let previewChangedDiv: HTMLDivElement;
 
@@ -14,44 +17,6 @@ let previewIsUpToDate: boolean = false;
 let solutionChanged: boolean = false;
 
 let editor: CodeMirror.Editor;
-
-function domReady(fn: () => void): void {
-    if (document.readyState === 'loading') {
-        document.addEventListener("DOMContentLoaded", fn);
-    } else {
-        fn();
-    }
-}
-
-domReady(() => {
-    previewChangedDiv = document.querySelector<HTMLDivElement>('#previewChangedDiv');
-
-    setupEditor().then((theEditor: void | CodeMirror.Editor) => {
-
-            if (theEditor) {
-                editor = theEditor;
-
-                editor.on('change', () => {
-                    solutionChanged = true;
-                    if (previewIsUpToDate) {
-                        previewIsUpToDate = false;
-                        previewChangedDiv.hidden = false;
-                    }
-                });
-            }
-        }
-    );
-
-    document.getElementById('endSolveBtn').onclick = () => {
-        return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
-    };
-
-    document.getElementById('previewTabBtn').onclick = updatePreview;
-
-    uploadBtn = document.getElementById('uploadBtn') as HTMLButtonElement;
-    uploadBtn.onclick = testSol;
-});
-
 
 function testSol(): void {
     uploadBtn.disabled = true;
@@ -80,16 +45,6 @@ function onWebCorrectionError(jqXHR): void {
     focusOnCorrection();
 }
 
-function unescapeHTML(escapedHTML: string): string {
-    return escapedHTML
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, "\"")
-        .replace(/&#039;/g, "'");
-}
-
-
 function updatePreview(): void {
     const url = document.getElementById('previewTabBtn').dataset['url'];
 
@@ -112,3 +67,76 @@ function updatePreview(): void {
             console.error(reason);
         });
 }
+
+function showSampleSolFile(exFile: ExerciseFile): string {
+    return `
+<div class="card my-3">
+    <div class="card-header">${exFile.name}</div>
+    <div class="card-body bg-light">
+        <pre>${escapeHtml(exFile.content)}</pre>
+    </div>
+</div>`;
+}
+
+function showSampleSolution(webSampleSolutions: WebSampleSolution[]): void {
+    console.info(JSON.stringify(webSampleSolutions, null, 2));
+
+    const rendered: string = webSampleSolutions
+        .map<string>(webSampleSol =>
+            webSampleSol.sample
+                .map<string>(showSampleSolFile)
+                .join('\n')
+        )
+        .join('\n');
+
+    console.info(rendered);
+
+    document.querySelector<HTMLDivElement>('#sampleSolDiv').innerHTML = rendered;
+}
+
+domReady(() => {
+    previewChangedDiv = document.querySelector<HTMLDivElement>('#previewChangedDiv');
+
+    setupEditor().then((theEditor: void | CodeMirror.Editor) => {
+
+            if (theEditor) {
+                editor = theEditor;
+
+                editor.on('change', () => {
+                    solutionChanged = true;
+                    if (previewIsUpToDate) {
+                        previewIsUpToDate = false;
+                        previewChangedDiv.hidden = false;
+                    }
+                });
+            }
+        }
+    );
+
+    document.getElementById('endSolveAnchor').onclick = () => {
+        return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
+    };
+
+    document.getElementById('previewTabBtn').onclick = updatePreview;
+
+    uploadBtn = document.getElementById('uploadBtn') as HTMLButtonElement;
+    uploadBtn.onclick = testSol;
+
+    showSampleSolBtn = document.querySelector<HTMLButtonElement>('#showSampleSolBtn');
+    showSampleSolBtn.onclick = () => {
+        const sampleSolUrl: string = showSampleSolBtn.dataset['url'];
+        console.warn('TODO: load sample solution from ' + sampleSolUrl);
+
+        fetch(sampleSolUrl)
+            .then(response => {
+                if (response.status === 200) {
+                    response.json().then(showSampleSolution);
+                    // showSampleSolBtn.remove();
+                } else {
+                    response.text().then(text => console.error(text));
+                }
+            })
+            .catch(reason => console.error(reason));
+    };
+
+});

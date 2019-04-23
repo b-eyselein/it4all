@@ -1,9 +1,8 @@
 package model.core.matching
 
 import model.core.CoreConsts._
-import model.core.JsonWriteable
 import model.points._
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json._
 
 import scala.language.postfixOps
 
@@ -21,7 +20,21 @@ final case class GenericAnalysisResult(matchType: MatchType) extends AnalysisRes
 
 }
 
-trait Match extends JsonWriteable {
+//object MatchJsonProtocol {
+//
+//  private def unapplyMatch: Match => (MatchType, Option[JsValue], Option[JsValue], Option[JsValue]) =
+//    m => (m.matchType, m.analysisResult.map(_.toJson), m.userArg.map(m.descArgForJson(_)), m.sampleArg.map(m.descArgForJson(_)))
+//
+//  val matchJsonWrites: Writes[Match] = (
+//    (__ \ matchTypeName).write[MatchType] and
+//      (__ \ analysisResultName).write[Option[JsValue]] and
+//      (__ \ userArgName).write[Option[JsValue]] and
+//      (__ \ sampleArgName).write[Option[JsValue]]
+//    ) (unapplyMatch)
+//
+//}
+
+trait Match {
 
   type T
   type AR <: AnalysisResult
@@ -29,7 +42,7 @@ trait Match extends JsonWriteable {
   val userArg  : Option[T]
   val sampleArg: Option[T]
 
-  protected val analysisResult: Option[AR] = (userArg, sampleArg) match {
+  val analysisResult: Option[AR] = (userArg, sampleArg) match {
     // FIXME: refactor!
     case (Some(ua), Some(sa)) => Some(analyze(ua, sa))
     case _                    => None
@@ -43,14 +56,6 @@ trait Match extends JsonWriteable {
     }
   }
 
-  protected def explanations: Seq[String] = matchType match {
-    case MatchType.ONLY_USER                                    => Seq("Angabe ist falsch!")
-    case MatchType.ONLY_SAMPLE                                  => Seq("Angabe fehlt!")
-    case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH => Seq(s"Fehler beim Abgleich. Erwartet wurde ${sampleArg map descArg getOrElse ""}")
-    case MatchType.SUCCESSFUL_MATCH                             => Seq[String]()
-    case _                                                      => Seq("FEHLER!")
-  }
-
   protected def analyze(arg1: T, arg2: T): AR
 
   protected def descArg(arg: T): String = arg.toString
@@ -61,12 +66,11 @@ trait Match extends JsonWriteable {
 
   def maxPoints: Points = -1 point
 
-  override def toJson: JsValue = Json.obj(
+  def toJson: JsValue = Json.obj(
     matchTypeName -> matchType.entryName,
     analysisResultName -> analysisResult.map(_.toJson),
     userArgName -> (userArg map descArgForJson),
     sampleArgName -> (sampleArg map descArgForJson),
-    explanationsName -> explanations
   )
 
 }

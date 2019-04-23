@@ -47,6 +47,13 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
   def futureHighestExerciseIdInCollection(collId: Int): Future[Int] =
     db.run(exTable.filter(_.collectionId === collId).map(_.id).max.result) map (_ getOrElse (-1))
 
+  protected def nextUserSolutionId(exId: Int, collId: Int, username: String, part: PartType): Future[Int] =
+    db.run(userSolutionsTableQuery
+      .filter { us => us.username === username && us.collectionId === collId && us.exerciseId === exId && us.part === part }
+      .map(_.id)
+      .max
+      .result).map(_.map(_ + 1).getOrElse(0))
+
   // Reading
 
   def futureAllCollections: Future[Seq[CollType]] = db.run(collTable.result)
@@ -76,7 +83,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
   //      .headOption
   //      .map(_ map solutionDbModels.userSolFromDbUserSol))
 
-  def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, part: PartType): Future[Seq[String]]
+  def futureSampleSolutionsForExPart(scenarioId: Int, exerciseId: Int, part: PartType): Future[Seq[SampleSolType]]
 
   def futureSolveStateForExercisePart(user: User, collId: Int, exId: Int, part: PartType): Future[Option[SolvedState]] = db.run(
     userSolutionsTableQuery

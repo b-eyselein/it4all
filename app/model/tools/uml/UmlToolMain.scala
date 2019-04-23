@@ -57,6 +57,8 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override val exerciseForm      : Form[UmlExercise]       = UmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[UmlExerciseReview] = UmlToolForms.exerciseReviewForm
 
+  override val sampleSolutionJsonFormat: Format[UmlSampleSolution] = UmlSampleSolutionJsonProtocol.umlSampleSolutionFormat
+
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, UmlCompleteResult] = UmlCompleteResultJsonProtocol
 
   // Other helper methods
@@ -99,14 +101,14 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Correction
 
-  override def readSolution(user: User, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart)
-                           (implicit request: Request[AnyContent]): Option[UmlClassDiagram] = request.body.asJson flatMap {
-    case jsValue =>
+  override def readSolution(request: Request[AnyContent], part: UmlExPart): Either[String, UmlClassDiagram] = request.body.asJson match {
+    case None          => Left("Body did not contain json!")
+    case Some(jsValue) =>
       UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(jsValue) match {
-        case JsSuccess(ucd, _) => Some(ucd)
+        case JsSuccess(ucd, _) => Right(ucd)
         case JsError(errors)   =>
           errors.foreach(error => logger.error(s"Json Error: $error"))
-          None
+          Left(errors.toString())
       }
   }
 

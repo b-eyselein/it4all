@@ -1,57 +1,7 @@
 import * as $ from 'jquery';
 
+import {ConditionResult, HtmlResult, JsResult, TextResult, WebCompleteResult, WebResult} from './webInterfaces';
 
-export interface WebCompleteResult {
-    solutionSaved: boolean
-    part: 'html' | 'js'
-
-    htmlResults: HtmlResult[]
-    jsResults: JsResult[]
-
-    success: boolean
-    points: number
-    maxPoints: number
-}
-
-interface WebResult {
-    id: number
-
-    success: boolean
-    points: number
-    maxPoints: number
-}
-
-interface HtmlResult extends WebResult {
-    elementFound: boolean
-    textContentResult: TextResult | null
-    attributeResults: TextResult[]
-}
-
-interface TextResult {
-    keyName: string
-    awaitedContent: string
-    maybeFoundContent: string | null
-    isSuccessful: boolean
-    points: number
-    maxPoints: number
-}
-
-interface JsResult extends WebResult {
-    preResults: ConditionResult[]
-    actionDescription: string
-    actionPerformed: boolean
-    postResults: ConditionResult[]
-}
-
-
-interface ConditionResult {
-    points: number
-    maxPoints: number
-    success: boolean
-    description: string
-    awaited: string
-    gotten: string
-}
 
 function dispPoints(result: WebResult): string {
     return '(' + result.points + " / " + result.maxPoints + ' Punkte)';

@@ -1,10 +1,9 @@
 package model.tools.xml.persistence
 
 import model.SemanticVersion
-import model.tools.xml.{XmlExPart, XmlExParts, XmlExercise, XmlUserSolution}
+import model.tools.xml.{XmlExPart, XmlExercise, XmlSampleSolution, XmlUserSolution}
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 trait XmlTableQueries {
   self: XmlTableDefs =>
@@ -16,16 +15,18 @@ trait XmlTableQueries {
       .map(_ map XmlSolutionDbModels.sampleSolFromDbSampleSol)
   } yield dbModels.exerciseFromDbValues(ex, samples)
 
-  override def futureSampleSolutionsForExPart(collId: Int, exId: Int, part: XmlExPart): Future[Seq[String]] = db.run(
+  override def futureSampleSolutionsForExPart(collId: Int, exId: Int, part: XmlExPart): Future[Seq[XmlSampleSolution]] = db.run(
     sampleSolutionsTableQuery
       .filter { s => s.collectionId === collId && s.exerciseId === exId }
-      .map { sampleSol =>
-        part match {
-          case XmlExParts.GrammarCreationXmlPart  => sampleSol.grammar
-          case XmlExParts.DocumentCreationXmlPart => sampleSol.document
-        }
-      }
       .result)
+    .map(_.map(XmlSolutionDbModels.sampleSolFromDbSampleSol))
+
+  //    .map { sampleSol =>
+  //      part match {
+  //        case XmlExParts.GrammarCreationXmlPart  => sampleSol.grammar
+  //        case XmlExParts.DocumentCreationXmlPart => sampleSol.document
+  //      }
+  //    }
 
   override def saveExerciseRest(collId: Int, compEx: XmlExercise): Future[Boolean] = {
     val dbSamples = compEx.samples map (s => XmlSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
@@ -43,17 +44,10 @@ trait XmlTableQueries {
       .headOption
       .map(_ map XmlSolutionDbModels.userSolFromDbUserSol))
 
-  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: XmlUserSolution): Future[Boolean] = {
-    val dbUserSol = XmlSolutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol)
-
-    val insertQuery = userSolutionsTableQuery returning userSolutionsTableQuery.map(_.id) into ((dbUserSol, id) => copyDbUserSolType(dbUserSol, id))
-
-    db.run(insertQuery += dbUserSol) transform {
-      case Success(_) => Success(true)
-      case Failure(e) =>
-        logger.error("Could not save solution", e)
-        Success(false)
+  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: XmlUserSolution): Future[Boolean] =
+    nextUserSolutionId(exId, collId, username, sol.part).flatMap { nextUserSolId =>
+      val dbUserSol = XmlSolutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol).copy(id = nextUserSolId)
+      db.run(userSolutionsTableQuery += dbUserSol).transform(_ == 1, identity)
     }
-  }
 
 }

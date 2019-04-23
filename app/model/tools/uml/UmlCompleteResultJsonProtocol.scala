@@ -6,6 +6,14 @@ import model.tools.uml.matcher.{UmlAssociationMatch, UmlClassMatch, UmlImplement
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+object UmlSampleSolutionJsonProtocol {
+
+  private implicit val umlClassDiagramJsonFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlSolutionJsonFormat
+
+  val umlSampleSolutionFormat: Format[UmlSampleSolution] = Json.format[UmlSampleSolution]
+
+}
+
 object UmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationResult, UmlCompleteResult] {
 
   override def completeResultWrites(solutionSaved: Boolean): Writes[UmlCompleteResult] = (

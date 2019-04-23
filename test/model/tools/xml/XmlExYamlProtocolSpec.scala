@@ -9,6 +9,7 @@ import scala.util.{Failure, Success}
 
 class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
 
+  behavior of "XmlYamlFrormat"
 
   "A XmlSampleYamlFormat" should "read and write grammars and documents correctly" in {
 
@@ -83,7 +84,7 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
   }
 
 
-  "A XmlExYamlFormat" should "read and write xml exercises correctly" in {
+  it should "read and write xml exercises correctly" in {
 
     val xmlExYamlFormat = XmlExYamlProtocol.XmlExYamlFormat
 

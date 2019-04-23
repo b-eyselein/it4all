@@ -1,11 +1,12 @@
 package model.tools.sql
 
+import model.StringSampleSolution
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.tools.sql.SqlConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-object SqlCorrResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] {
+object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] {
 
   private val sqlQueryCellWrites: Writes[SqlCell] = (
     (__ \ "content").write[String] and
@@ -39,10 +40,13 @@ object SqlCorrResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationRe
       (__ \ whereComparisonsName).write[JsValue] and
       (__ \ additionalComparisonsName).write[Seq[JsValue]] and
       (__ \ executionResultsName).write[SqlExecutionResult]
-    ) (sr =>
-    (sr.columnComparison.toJson, sr.tableComparison.toJson, sr.joinExpressionComparison.toJson, sr.whereComparison.toJson,
-      sr.additionalComparisons.map(_.toJson), sr.executionResult)
-  )
+    ) (unapplySqlResultRest)
+
+  private def unapplySqlResultRest: SqlResult => (JsObject, JsObject, JsObject, JsObject, Seq[JsObject], SqlExecutionResult) = {
+    sr: SqlResult =>
+      (sr.columnComparison.toJson, sr.tableComparison.toJson, sr.joinExpressionComparison.toJson, sr.whereComparison.toJson,
+        sr.additionalComparisons.map(_.toJson), sr.executionResult)
+  }
 
   private implicit val sqlCorrResultRestWrites: Writes[SqlCorrResult] = {
     case SqlParseFailed(_, error, _) => Json.obj(messageName -> error.getMessage)

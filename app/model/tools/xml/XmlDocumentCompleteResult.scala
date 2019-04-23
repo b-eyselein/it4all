@@ -21,19 +21,19 @@ object XmlErrorType extends PlayEnum[XmlErrorType] {
 
 }
 
+object XmlError {
 
-class XmlError(val errorType: XmlErrorType, e: SAXParseException) extends XmlEvaluationResult {
-
-  def errorMessage: String = e.getMessage
-
-  def line: Int = e.getLineNumber
-
-  override val success: SuccessType = errorType match {
-    case XmlErrorType.WARNING => SuccessType.PARTIALLY
-    case _                    => SuccessType.NONE
-  }
+  def fromSAXParseException(errorType: XmlErrorType, e: SAXParseException): XmlError =
+    XmlError(errorType, e.getMessage, e.getLineNumber, errorType match {
+      case XmlErrorType.WARNING => SuccessType.PARTIALLY
+      case _                    => SuccessType.NONE
+    })
 
 }
+
+
+final case class XmlError(errorType: XmlErrorType, errorMessage: String, line: Int, success: SuccessType)
+  extends XmlEvaluationResult
 
 
 final case class XmlDocumentCompleteResult(learnerSolution: String, results: Seq[XmlError]) extends XmlCompleteResult {
