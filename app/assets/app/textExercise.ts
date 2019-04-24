@@ -20,23 +20,3 @@ export function testTextExerciseSolution<SolType, ResType>(testBtn: HTMLButtonEl
             }
         }).catch(reason => console.error(reason));
 }
-
-export function initShowSampleSolBtn<T>(renderSampleSolResponse: (T) => string): void {
-    const showSampleSolBtn = document.querySelector<HTMLButtonElement>('#showSampleSolBtn');
-
-    showSampleSolBtn.onclick = () => {
-        showSampleSolBtn.disabled = true;
-        fetch(showSampleSolBtn.dataset['url'])
-            .then(response => {
-                if (response.status === 200) {
-                    response.json().then(response => {
-                        document.querySelector<HTMLDivElement>('#sampleSolDiv').innerHTML = renderSampleSolResponse(response);
-                    });
-                    showSampleSolBtn.remove();
-                } else {
-                    response.text().then(error => console.error(error));
-                }
-            })
-            .catch(reason => console.error(reason))
-    }
-}

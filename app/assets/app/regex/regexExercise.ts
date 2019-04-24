@@ -1,8 +1,8 @@
 import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
 
-import {focusOnCorrection, initShowSampleSolBtn, testTextExerciseSolution} from "../textExercise";
-import {domReady} from "../otherHelpers";
+import {focusOnCorrection, testTextExerciseSolution} from "../textExercise";
+import {domReady, initShowSampleSolBtn} from "../otherHelpers";
 
 let editor: CodeMirror.Editor;
 

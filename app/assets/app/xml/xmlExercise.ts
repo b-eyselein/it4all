@@ -1,5 +1,3 @@
-import * as $ from 'jquery';
-
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/dtd/dtd';
@@ -8,8 +6,8 @@ import {initEditor} from '../editorHelpers';
 import {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult} from './xmlGrammarCorrection';
 import {renderXmlDocumentCorrection, XmlDocumentCorrectionResult} from './xmlDocumentCorrection';
 
-import {focusOnCorrection, initShowSampleSolBtn, testTextExerciseSolution} from '../textExercise';
-import {domReady, escapeHtml} from "../otherHelpers";
+import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
+import {domReady, escapeHtml, initShowSampleSolBtn} from "../otherHelpers";
 
 let editor: CodeMirror.Editor;
 

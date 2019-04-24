@@ -247,7 +247,7 @@
     - id: 1
       files:
         - path: mustang.html
-          resourcePath: web/1-html_elements/3-links_images/mustang.html
+          resourcePath: web/1-html_elements/3-links_images/mustangSolution.html
           fileType: htmlmixed
 
 - id: 4
