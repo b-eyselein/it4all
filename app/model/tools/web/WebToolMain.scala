@@ -14,6 +14,7 @@ import model.toolMains._
 import model.tools.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import play.api.Logger
 import play.api.data._
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.{Format, JsError, JsSuccess}
@@ -25,6 +26,8 @@ import scala.util.{Failure, Try}
 
 @Singleton
 class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("Web", "web") {
+
+  private val logger = Logger(classOf[WebToolMain])
 
   // Result types
 
@@ -85,7 +88,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     case WebExParts.JsPart   =>
       super.futureMaybeOldSolution(username, collId, exId, WebExParts.JsPart) flatMap {
         case Some(solution) => Future.successful(Some(solution))
-        case None           => super.futureMaybeOldSolution(username, collId, exId, WebExParts.HtmlPart)
+        case None           =>
+          super.futureMaybeOldSolution(username, collId, exId, WebExParts.HtmlPart)
       }
   }
 
@@ -197,11 +201,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     s"http://localhost:9080/${user.username}/${collId}/${exerciseId}/${fileName}"
 
   override def correctEx(user: User, learnerSolution: Seq[ExerciseFile], collection: WebCollection, exercise: WebExercise, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
-    //    val toWrite = part match {
-    //      case WebExParts.HtmlPart => learnerSolution.htmlSolution
-    //      case WebExParts.JsPart   => learnerSolution.jsSolution.getOrElse("")
-    //    }
-
     writeWebSolutionFiles(user.username, collection.id, exercise.id, part, learnerSolution).flatMap { _ =>
 
       val driver = new HtmlUnitDriver(true)
@@ -214,7 +213,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   }
 
   override def futureFilesForExercise(user: User, collId: Int, exercise: WebExercise, part: WebExPart): Future[Seq[ExerciseFile]] =
-    tables.futureMaybeOldSolution(user.username, collId, exercise.id, part).map {
+    futureMaybeOldSolution(user.username, collId, exercise.id, part).map {
       case None           => exercise.files
       case Some(solution) => solution.solution
     }
