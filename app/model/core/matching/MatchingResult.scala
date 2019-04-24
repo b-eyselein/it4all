@@ -6,8 +6,6 @@ import model.core.result.{EvaluationResult, SuccessType}
 import model.points._
 import play.api.libs.json._
 
-//import scala.language.postfixOps
-
 //object MatchingResultJsonProtocol {
 //
 //  private implicit val pointsWrites = pointsJsonWrites

@@ -25,7 +25,7 @@ final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
     val parameters = inputTypes match {
       case Seq() => ""
-      case other => ", " + (other map (it => it.name + ": " + it.inputType.typeName) mkString ", ")
+      case other => ", " + (other .map (it => it.name + ": " + it.inputType.typeName) mkString ", ")
     }
 
     s"""from base.robot import Robot

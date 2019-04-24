@@ -4,8 +4,6 @@ import model.core.CoreConsts._
 import model.points._
 import play.api.libs.json._
 
-import scala.language.postfixOps
-
 trait AnalysisResult {
 
   val matchType: MatchType
@@ -69,8 +67,8 @@ trait Match {
   def toJson: JsValue = Json.obj(
     matchTypeName -> matchType.entryName,
     analysisResultName -> analysisResult.map(_.toJson),
-    userArgName -> (userArg map descArgForJson),
-    sampleArgName -> (sampleArg map descArgForJson),
+    userArgName -> userArg.map(descArgForJson),
+    sampleArgName -> sampleArg.map(descArgForJson),
   )
 
 }

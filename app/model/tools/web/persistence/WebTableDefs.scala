@@ -9,7 +9,6 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.ExecutionContext
-import scala.language.postfixOps
 
 class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]

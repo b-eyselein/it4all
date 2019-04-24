@@ -3,7 +3,6 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
 import model.feedback.{Feedback, FeedbackFormHelper}
-import model.learningPath.LearningPath
 import model.toolMains.{AToolMain, ToolList}
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider

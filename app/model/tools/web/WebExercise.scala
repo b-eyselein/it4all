@@ -4,11 +4,9 @@ import de.uniwue.webtester.{SiteSpec, WebTask}
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.points._
-import model.tools.web.WebExParts.findValues
 import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
-import scala.language.postfixOps
 
 sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 

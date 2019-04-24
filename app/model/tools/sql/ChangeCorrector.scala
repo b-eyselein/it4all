@@ -13,7 +13,6 @@ import net.sf.jsqlparser.statement.select.SubSelect
 import net.sf.jsqlparser.statement.update.Update
 
 import scala.collection.JavaConverters._
-import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
@@ -32,11 +31,11 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
     case _: SubSelect             => ???
   }
 
-  override protected def performAdditionalComparisons(userQuery: Insert, sampleQuery: Insert): Seq[MatchingResult[ _ <: Match]] =
+  override protected def performAdditionalComparisons(userQuery: Insert, sampleQuery: Insert): Seq[MatchingResult[_ <: Match]] =
     Seq(compareInsertedValues(userQuery, sampleQuery))
 
   // FIXME: correct inserted values!
-  private def compareInsertedValues(userQuery: Q, sampleQuery: Q): MatchingResult[ ExpressionListMatch] =
+  private def compareInsertedValues(userQuery: Q, sampleQuery: Q): MatchingResult[ExpressionListMatch] =
     ExpressionListMatcher.doMatch(expressionLists(userQuery), expressionLists(sampleQuery))
 
   override protected def getTables(query: Q): Seq[Table] = Seq(query.getTable)
@@ -64,7 +63,7 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
     case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
 
-  override protected def performAdditionalComparisons(userQuery: Delete, sampleQuery: Delete): Seq[MatchingResult[ _ <: Match]] = Seq.empty
+  override protected def performAdditionalComparisons(userQuery: Delete, sampleQuery: Delete): Seq[MatchingResult[_ <: Match]] = Seq.empty
 
 }
 
@@ -72,7 +71,7 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override type Q = Update
 
-  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getColumns.asScala map wrapColumn
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getColumns.asScala.map(wrapColumn)
 
   override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala
 
@@ -83,6 +82,6 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
     case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
 
-  override protected def performAdditionalComparisons(userQuery: Update, sampleQuery: Update): Seq[MatchingResult[ _ <: Match]] = Seq.empty
+  override protected def performAdditionalComparisons(userQuery: Update, sampleQuery: Update): Seq[MatchingResult[_ <: Match]] = Seq.empty
 
 }

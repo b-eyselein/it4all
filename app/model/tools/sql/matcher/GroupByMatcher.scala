@@ -6,8 +6,6 @@ import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
-import scala.language.postfixOps
-
 
 final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match {
 

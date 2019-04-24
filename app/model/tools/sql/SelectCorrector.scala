@@ -9,7 +9,6 @@ import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select._
 
 import scala.collection.JavaConverters.asScalaBufferConverter
-import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 
@@ -23,7 +22,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   }
 
   override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getSelectBody match {
-    case ps: PlainSelect => ps.getSelectItems.asScala map wrapColumn
+    case ps: PlainSelect => ps.getSelectItems.asScala.map(wrapColumn)
     case _               => Seq[ColumnWrapper]()
   }
 
@@ -35,7 +34,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
         case _        => None
       }
 
-      val joinedTables: Seq[Table] = Option(plain.getJoins) map (_.asScala) match {
+      val joinedTables: Seq[Table] = Option(plain.getJoins).map(_.asScala) match {
         case None                   => Seq[Table]()
         case Some(joins: Seq[Join]) =>
           joins flatMap { join =>
@@ -52,7 +51,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
   override protected def getJoinExpressions(query: Select): Seq[BinaryExpression] = query.getSelectBody match {
     case ps: PlainSelect =>
-      Option(ps.getJoins) map (_.asScala) match {
+      Option(ps.getJoins).map(_.asScala) match {
         case None                   => Seq.empty
         case Some(joins: Seq[Join]) =>
           joins flatMap { join =>
@@ -90,12 +89,12 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   }
 
   private def orderByElements(userQ: Q): Seq[OrderByElement] = userQ.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getOrderByElements) map (_.asScala) getOrElse Seq[OrderByElement]()
+    case ps: PlainSelect => Option(ps.getOrderByElements).map(_.asScala) getOrElse Seq[OrderByElement]()
     case _               => Seq[OrderByElement]()
   }
 
   private def groupByElements(query: Q): Seq[Expression] = query.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getGroupByColumnReferences) map (_.asScala) getOrElse Seq[Expression]()
+    case ps: PlainSelect => Option(ps.getGroupByColumnReferences).map(_.asScala) getOrElse Seq[Expression]()
     case _               => Seq[Expression]()
   }
 

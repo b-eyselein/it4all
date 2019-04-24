@@ -27,7 +27,8 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
   case object PYTHON_3 extends ProgLanguage("Python 3", "python", "py") {
 
     override def activityDiagramDisplay(exercise: ProgExercise): String = exercise.maybeClassDiagramPart match {
-      case None => exercise.functionName + buildParams(exercise)
+      case Some(_) => ???
+      case None     => exercise.functionName + buildParams(exercise)
     }
 
     override def activityDiagramDeclaration(exercise: ProgExercise): String = "def " + exercise.functionName + buildParams(exercise)

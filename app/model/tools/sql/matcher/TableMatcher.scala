@@ -5,8 +5,6 @@ import model.points._
 import net.sf.jsqlparser.schema.Table
 import play.api.libs.json.{JsString, JsValue}
 
-import scala.language.postfixOps
-
 final case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) extends Match {
 
   override type T = Table

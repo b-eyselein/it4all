@@ -4,7 +4,6 @@ import model.core.CoreConsts._
 import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}
 import play.api.data.Form
 import play.api.data.Forms._
-import scala.language.postfixOps
 import scala.util.matching.Regex
 import scala.util.{Failure, Try}
 

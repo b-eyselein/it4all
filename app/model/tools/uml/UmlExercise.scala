@@ -4,8 +4,6 @@ import model._
 import model.points.Points
 import play.twirl.api.Html
 
-import scala.language.postfixOps
-
 final case class UmlCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
   extends ExerciseCollection
 

@@ -22,8 +22,8 @@ object ProgCorrector {
   def correct(user: User, progSolution: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val (implementation: String, completeTestData: Seq[ProgTestData]) = part match {
-      case ProgExParts.TestdataCreation => (exercise.sampleSolutions.headOption.map(_.sample).getOrElse(???), progSolution.testData)
-      case ProgExParts.Implementation   => (progSolution.implementation, exercise.sampleTestData)
+      case ProgExParts.TestdataCreation                             => (exercise.sampleSolutions.headOption.map(_.sample).getOrElse(???), progSolution.testData)
+      case ProgExParts.Implementation | ProgExParts.ActivityDiagram => (progSolution.implementation, exercise.sampleTestData)
     }
 
     val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.folderIdentifier)

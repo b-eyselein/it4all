@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class RandomExerciseAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AToolAdminController(cc, dbcp, tl, repository) {
+  extends AToolAdminController(cc, dbcp, tl) {
 
   override protected type ToolMainType = RandomExerciseToolMain
 

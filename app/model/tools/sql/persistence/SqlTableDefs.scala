@@ -9,7 +9,6 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
@@ -61,7 +60,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Saving
 
   override def saveExerciseRest(collId: Int, compEx: SqlExercise): Future[Boolean] = {
-    val dbSamples = compEx.samples map (s => StringSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+    val dbSamples = compEx.samples.map(s => StringSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
       samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery insertOrUpdate s))

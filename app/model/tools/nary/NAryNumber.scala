@@ -31,7 +31,7 @@ object NAryNumber {
   def parseNaryNumber(input: String, base: NumberBase): Option[NAryNumber] = {
     val decimalValue: Option[Int] = Try(Option(Integer.parseInt(input.trim().replaceAll("\\s", ""), base.base))) getOrElse None
 
-    decimalValue map (NAryNumber(_, base))
+    decimalValue .map (NAryNumber(_, base))
   }
 
   def parseTwoComplement(input: String): Option[NAryNumber] = {
@@ -40,7 +40,7 @@ object NAryNumber {
     val firstBit = trimmedInput(0).asDigit
     val maybeParsedRest = Try(Option(Integer.parseInt(trimmedInput.substring(1), 2))) getOrElse None
 
-    maybeParsedRest map (parsedRest => NAryNumber(if (firstBit == 0) parsedRest else -128 + parsedRest, Binary))
+    maybeParsedRest .map (parsedRest => NAryNumber(if (firstBit == 0) parsedRest else -128 + parsedRest, Binary))
   }
 
   def padBinary(binary: String): String = {

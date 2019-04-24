@@ -1,17 +1,14 @@
 package model
 
 import model.core.CoreConsts._
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.format.Formatter
-import play.api.data.{Form, FormError}
+
+final case class UpdateRoleForm(username: String, newRole: Role)
+
+final case class UserCredentials(username: String, password: String)
 
 object FormMappings {
-
-  // Forms
-
-  final case class UpdateRoleForm(username: String, newRole: Role)
-
-  final case class UserCredentials(username: String, password: String)
 
   // Mappings
 

@@ -19,7 +19,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AToolAdminController(cc, dbcp, tl, repository) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
+  extends AToolAdminController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
   private val logger = Logger(classOf[CollectionAdminController])
 

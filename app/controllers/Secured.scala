@@ -19,7 +19,7 @@ trait Secured {
 
   private def onUnauthorized(request: RequestHeader): Result = Redirect(controllers.routes.LoginController.loginForm()).withNewSession
 
-  private def onInsufficientPrivileges(request: RequestHeader): Result = Redirect(routes.Application.index()).flashing("msg" -> "You do not have sufficient privileges!")
+  private def onInsufficientPrivileges(): Result = Redirect(routes.Application.index()).flashing("msg" -> "You do not have sufficient privileges!")
 
 
   private def withAuth(f: => String => Request[AnyContent] => Future[Result]): EssentialAction =
@@ -28,22 +28,22 @@ trait Secured {
 
   def withUser(f: User => Request[AnyContent] => Result)(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request => {
-      repository.userByName(username) map {
+      repository.userByName(username).map {
+        case None       => onUnauthorized(request)
         case Some(user) =>
           if (!adminRightsRequired || user.isAdmin) f(user)(request)
-          else onInsufficientPrivileges(request)
-        case None       => onUnauthorized(request)
+          else onInsufficientPrivileges()
       }
     }
   }
 
   def futureWithUser(f: User => Request[AnyContent] => Future[Result])(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request =>
-      repository.userByName(username) flatMap {
+      repository.userByName(username).flatMap {
+        case None       => Future.successful(onUnauthorized(request))
         case Some(user) =>
           if (!adminRightsRequired || user.isAdmin) f(user)(request)
-          else Future.successful(onInsufficientPrivileges(request))
-        case None       => Future.successful(onUnauthorized(request))
+          else Future.successful(onInsufficientPrivileges())
       }
 
   }

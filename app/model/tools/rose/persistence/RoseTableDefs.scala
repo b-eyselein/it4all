@@ -67,14 +67,14 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   // Queries
 
   override protected def completeExForEx(collId: Int, ex: DbRoseExercise): Future[RoseExercise] = for {
-    inputTypes <- db.run(roseInputs.filter(_.exerciseId === ex.id).result) map (_ map dbModels.inputTypeFromDbInputType)
-    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result) map (_ map RoseSolutionDbModels.sampleSolFromDbSampleSol)
+    inputTypes <- db.run(roseInputs.filter(_.exerciseId === ex.id).result).map(_.map(dbModels.inputTypeFromDbInputType))
+    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result).map(_.map(RoseSolutionDbModels.sampleSolFromDbSampleSol))
   } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples)
 
 
   override protected def saveExerciseRest(collId: Int, ex: RoseExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions map (s => RoseSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
-    val dbInputs = ex.inputTypes map (it => dbModels.dbInputTypeFromInputType(ex.id, ex.semanticVersion, collId, it))
+    val dbSamples = ex.sampleSolutions.map(s => RoseSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbInputs = ex.inputTypes.map(it => dbModels.dbInputTypeFromInputType(ex.id, ex.semanticVersion, collId, it))
 
     for {
       inputsSaved <- saveSeq[DbRoseInputType](dbInputs, it => db.run(roseInputs insertOrUpdate it))

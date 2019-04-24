@@ -2,10 +2,9 @@ package controllers
 
 import com.github.t3hnar.bcrypt._
 import javax.inject._
-import model.FormMappings.UserCredentials
 import model.core.CoreConsts._
 import model.core.Repository
-import model.{FormMappings, PwHash, RegisteredUser, User}
+import model._
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
@@ -34,7 +33,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
         case false => Future(BadRequest("Could not save user!"))
         case true  =>
           repo.savePwHash(pwHash) map {
-            _ => Ok(views.html.registered.render(credentials.username))
+            _ => Ok(views.html.registered(credentials.username))
           }
       }
     }

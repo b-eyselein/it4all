@@ -5,8 +5,6 @@ import model.points._
 import net.sf.jsqlparser.statement.select.Limit
 import play.api.libs.json.{JsString, JsValue}
 
-import scala.language.postfixOps
-
 final case class LimitMatch(userArg: Option[Limit], sampleArg: Option[Limit]) extends Match {
 
   override type T = Limit

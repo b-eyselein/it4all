@@ -5,8 +5,6 @@ import model.tools.bool.BoolConsts.{LerVariable, SolVariable, _}
 import model.core.result.{EvaluationResult, SuccessType}
 import play.api.libs.json._
 
-import scala.language.postfixOps
-
 sealed trait BooleanQuestionResult extends EvaluationResult {
 
   def isCorrect: Boolean
@@ -53,7 +51,7 @@ final case class CreationQuestionSuccess(learnerSolution: BoolNode, question: Cr
   )
 
   override def restJson: Seq[(String, JsValue)] = Seq[(String, JsValue)](
-    assignmentsName -> JsArray(assignments map assignmentMapping),
+    assignmentsName -> JsArray(assignments.map(assignmentMapping)),
     "knf" -> JsString(disjunktiveNormalForm(assignments).asString),
     "dnf" -> JsString(konjunktiveNormalForm(assignments).asString)
   )
@@ -80,7 +78,7 @@ final case class FilloutQuestionSuccess(formula: BoolNode, assignments: Seq[Bool
 
   val variables: Seq[Variable] = formula.usedVariables toSeq
 
-  override def restJson: Seq[(String, JsValue)] = Seq(assignmentsName -> JsArray(assignments map { a =>
+  override def restJson: Seq[(String, JsValue)] = Seq(assignmentsName -> JsArray(assignments.map { a =>
     Json.obj(
       idName -> a.identifier,
       "learner" -> JsBoolean(a.assignments.getOrElse(LerVariable, false)),

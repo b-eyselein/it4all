@@ -5,8 +5,6 @@ import model.points._
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json.{JsString, JsValue}
 
-import scala.language.postfixOps
-
 final case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match {
 
   override type T = OrderByElement

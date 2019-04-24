@@ -3,9 +3,6 @@ package model.tools.bool
 import model.tools.bool.BoolConsts._
 import model.tools.bool.BoolTableRow.generateAllAssignments
 
-import scala.language.postfixOps
-
-
 object BooleanQuestion {
 
   private def randomBetweenInclBounds(startIncl: Int, endIncl: Int): Int = startIncl + generator.nextInt(endIncl - startIncl + 1)

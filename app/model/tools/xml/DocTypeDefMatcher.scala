@@ -7,8 +7,6 @@ import model.points._
 import model.tools.xml.XmlConsts._
 import play.api.libs.json.{JsValue, Json}
 
-import scala.language.postfixOps
-
 final case class ElementLineAnalysisResult(matchType: MatchType,
                                            contentCorrect: Boolean, correctContent: String,
                                            attributesCorrect: Boolean, correctAttributes: String) extends AnalysisResult {

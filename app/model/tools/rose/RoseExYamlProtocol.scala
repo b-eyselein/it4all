@@ -20,7 +20,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
       shortName <- yamlObject.stringField(shortNameName)
     } yield RoseCollection(id, title, author, text, state, shortName)
 
@@ -71,7 +71,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[RoseSampleSolution] = for {
       id <- yamlObject.intField(idName)
-      language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.StandardLanguage)
+      language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption).map(_ getOrElse ProgLanguages.StandardLanguage)
       sample <- yamlObject.stringField(sampleName)
     } yield RoseSampleSolution(id, language, sample)
 

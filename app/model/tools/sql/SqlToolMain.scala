@@ -91,7 +91,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
     val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
-    val oldOrDefSol = maybeOldSolution map (_.solution) getOrElse ""
+    val oldOrDefSol = maybeOldSolution.map(_.solution).getOrElse("")
 
     views.html.toolViews.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, this)
   }

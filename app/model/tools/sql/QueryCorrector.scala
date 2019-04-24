@@ -11,7 +11,6 @@ import play.api.Logger
 import model.points._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 abstract class QueryCorrector(val queryType: String) {

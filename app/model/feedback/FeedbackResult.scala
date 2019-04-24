@@ -3,8 +3,6 @@ package model.feedback
 import model.{EvaluatedAspect, Mark}
 import model.Mark.NoMark
 
-import scala.language.postfixOps
-
 final case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 
   // FIXME: refactor!

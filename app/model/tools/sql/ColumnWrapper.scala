@@ -6,9 +6,6 @@ import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.create.table.{ColDataType, ColumnDefinition}
 import net.sf.jsqlparser.statement.select.{AllColumns, AllTableColumns, SelectExpressionItem, SelectItem}
 
-import scala.language.postfixOps
-
-
 abstract sealed class ColumnWrapper {
 
   type C
@@ -159,7 +156,7 @@ final case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
 
   override def getRest: String = col match {
     case _: AllColumns | _: AllTableColumns => ""
-    case set: SelectExpressionItem          => Option(set.getAlias) map (_.toString) getOrElse ""
+    case set: SelectExpressionItem          => Option(set.getAlias).map(_.toString).getOrElse("")
   }
 
   def matchOther(that: SelectColumnWrapper): MatchType = (this.col, that.col) match {

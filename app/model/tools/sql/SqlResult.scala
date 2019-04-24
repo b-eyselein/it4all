@@ -5,7 +5,6 @@ import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import model.tools.sql.matcher._
 
-import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 final case class WrongStatementTypeException(awaited: String, gotten: String) extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")

@@ -16,7 +16,6 @@ import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 import scala.util.Try
 
 @Singleton
@@ -79,7 +78,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override def renderExercise(user: User, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
-    val declaration = maybeOldSolution map (_.solution) getOrElse exercise.declaration(forUser = true)
+    val declaration = maybeOldSolution.map(_.solution).getOrElse(exercise.declaration(forUser = true))
     views.html.toolViews.rose.roseExercise(user, collection, exercise, declaration, this)
   }
 

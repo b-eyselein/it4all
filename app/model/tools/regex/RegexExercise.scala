@@ -1,10 +1,7 @@
 package model.tools.regex
 
 import model._
-import model.points.Points
 import play.twirl.api.Html
-
-import scala.language.postfixOps
 
 
 final case class RegexCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)

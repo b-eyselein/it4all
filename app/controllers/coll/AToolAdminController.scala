@@ -1,7 +1,7 @@
 package controllers.coll
 
 import controllers.AExerciseController
-import model.core.{CommonUtils, ReadAndSaveResult, ReadAndSaveSuccess, Repository}
+import model.core.{CommonUtils, ReadAndSaveResult, ReadAndSaveSuccess}
 import model.learningPath.LearningPath
 import model.toolMains.ToolList
 import play.api.Logger
@@ -12,7 +12,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-abstract class AToolAdminController(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, repository: Repository)(implicit ec: ExecutionContext)
+abstract class AToolAdminController(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList)(implicit ec: ExecutionContext)
   extends AExerciseController(cc, dbcp, tl) {
 
   private val logger = Logger(classOf[AToolAdminController])

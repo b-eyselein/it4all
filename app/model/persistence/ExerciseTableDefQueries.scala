@@ -9,7 +9,6 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
   extends HasDatabaseConfigProvider[JdbcProfile] {
@@ -120,7 +119,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
 
     db.run(deleteOldExQuery) flatMap { _ =>
       db.run(insertNewExQuery) flatMap {
-        insertCount: Int => saveExerciseRest(collId, exercise)
+        _ => saveExerciseRest(collId, exercise)
       }
     }
   }
@@ -171,7 +170,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
     val read = (str: String) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
       case JsSuccess(ucd, _) => ucd
       case JsError(errors)   =>
-        errors.foreach(error => logger.error("There has been an error loading a uml class diagram from json" + error))
+        errors.foreach(error => logger.error(s"There has been an error loading a uml class diagram from json: $error"))
         UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]())
     }
 

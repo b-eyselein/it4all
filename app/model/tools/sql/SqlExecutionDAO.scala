@@ -13,7 +13,6 @@ import net.sf.jsqlparser.statement.update.Update
 import slick.jdbc.JdbcBackend.Database
 
 import scala.collection.mutable.ListBuffer
-import scala.language.postfixOps
 import scala.util.{Failure, Try}
 
 abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
@@ -81,7 +80,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
   }.flatten getOrElse Seq[String]()
 
   def tableContents(schemaName: String): Seq[SqlQueryResult] = using(db(Some(schemaName)).source.createConnection()) { connection =>
-    allTableNames(connection) map { tableName =>
+    allTableNames(connection).map { tableName =>
       val selectStatement = connection.prepareStatement(SELECT_ALL_DUMMY + tableName)
       val resultSet = selectStatement.executeQuery()
       SqlQueryResult(resultSet, tableName)

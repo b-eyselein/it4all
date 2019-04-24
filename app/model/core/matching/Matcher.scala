@@ -1,7 +1,5 @@
 package model.core.matching
 
-import scala.language.postfixOps
-
 trait Matcher[M <: Match] {
 
   type T
@@ -35,7 +33,7 @@ trait Matcher[M <: Match] {
     @annotation.tailrec
     def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[M] = firstCollection match {
       case Nil =>
-        val missing = secondCollection map (s => matchInstantiation(None, Some(s)))
+        val missing = secondCollection.map(s => matchInstantiation(None, Some(s)))
         MatchingResult[M](matchName, matchSingularName, matches ++ missing)
 
       case firstHead :: firstTail =>

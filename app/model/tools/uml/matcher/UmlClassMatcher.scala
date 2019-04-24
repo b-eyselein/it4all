@@ -5,8 +5,6 @@ import model.tools.uml.UmlConsts._
 import model.tools.uml.{UmlClass, UmlClassType}
 import play.api.libs.json.{JsValue, Json}
 
-import scala.language.postfixOps
-
 final case class UmlClassMatchAnalysisResult(matchType: MatchType, classTypeCorrect: Boolean, correctClassType: UmlClassType,
                                              maybeAttributeMatchingResult: Option[MatchingResult[UmlAttributeMatch]],
                                              maybeMethodMatchingResult: Option[MatchingResult[UmlMethodMatch]])

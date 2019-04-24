@@ -53,25 +53,27 @@ object RoseCorrector {
 
       //    val entryPoint = Seq("python3", "sp_main.py")
 
-      futureImageExists flatMap { _ =>
-        DockerConnector.runContainer(
-          imageName = DockerPullsStartTask.roseImage,
-          maybeEntryPoint = None /* Some(entryPoint)*/ ,
-          maybeDockerBinds = Some(dockerBinds) /*,
+      futureImageExists
+        .flatMap { _ =>
+          DockerConnector.runContainer(
+            imageName = DockerPullsStartTask.roseImage,
+            maybeEntryPoint = None /* Some(entryPoint)*/ ,
+            maybeDockerBinds = Some(dockerBinds) /*,
           deleteContainerAfterRun = false */)
-      } map {
-        // Error while waiting for container
-        case RunContainerTimeOut(_) => RoseTimeOutResult
+        }
+        .map {
+          // Error while waiting for container
+          case RunContainerTimeOut(_) => RoseTimeOutResult
 
-        // Error while running script with status code other than 0 or 124 (from timeout!)
-        case RunContainerError(_, msg) => RoseSyntaxErrorResult(msg)
+          // Error while running script with status code other than 0 or 124 (from timeout!)
+          case RunContainerError(_, msg) => RoseSyntaxErrorResult(msg)
 
-        case RunContainerSuccess => RoseExecutionResult(actionFilePath.contentAsString)
+          case RunContainerSuccess => RoseExecutionResult(actionFilePath.contentAsString)
 
-        case exc: RunContainerException =>
-          logger.error("Error running container:", exc.error)
-          RoseEvalFailed
-      }
+          case exc: RunContainerException =>
+            logger.error("Error running container:", exc.error)
+            RoseEvalFailed
+        }
   }
 
   private def indent(str: String, depth: Int): String = str.split(NewLine).map(" " * 4 * depth + _).mkString(NewLine)

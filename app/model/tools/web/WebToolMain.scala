@@ -214,7 +214,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   }
 
   override def futureFilesForExercise(user: User, collId: Int, exercise: WebExercise, part: WebExPart): Future[Seq[ExerciseFile]] =
-    tables.futureMaybeOldSolution(user.username, collId, exercise.id, part) map {
+    tables.futureMaybeOldSolution(user.username, collId, exercise.id, part).map {
       case None           => exercise.files
       case Some(solution) => solution.solution
     }

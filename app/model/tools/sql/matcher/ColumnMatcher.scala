@@ -5,9 +5,6 @@ import model.points._
 import model.tools.sql.ColumnWrapper
 import play.api.libs.json.{JsString, JsValue}
 
-import scala.language.postfixOps
-
-
 final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match {
 
   override type T = ColumnWrapper

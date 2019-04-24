@@ -7,7 +7,6 @@ import model.core.matching.MatchingResult
 import model.core.result.SuccessType
 import model.tools.xml.XmlGrammarCompleteResult._
 
-import scala.language.postfixOps
 import scala.util.Success
 
 object XmlGrammarCompleteResult {

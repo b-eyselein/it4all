@@ -6,9 +6,6 @@ import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
-import scala.language.postfixOps
-
-
 final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match {
 
   override type T = BinaryExpression

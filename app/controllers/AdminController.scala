@@ -1,24 +1,19 @@
 package controllers
 
 import javax.inject._
-import model.FormMappings.UpdateRoleForm
 import model.core.Repository
 import model.feedback.{Feedback, FeedbackResult}
 import model.toolMains._
-import model.{FormMappings, Role, User}
+import model.{FormMappings, Role, UpdateRoleForm}
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
-import play.api.libs.ws.WSClient
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
-
-class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider,
-                                val repository: Repository, toolList: ToolList, ws: WSClient)(implicit ec: ExecutionContext)
+class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository, toolList: ToolList)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   override protected val adminRightsRequired: Boolean = true

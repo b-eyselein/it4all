@@ -9,7 +9,6 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.{implicitConversions, postfixOps}
 
 class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
@@ -66,12 +65,12 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   // Queries
 
   override def completeExForEx(collId: Int, ex: DbUmlExercise): Future[UmlExercise] = for {
-    dbToIgnore <- db.run(umlToIgnore filter (i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion) result)
-    dbMappings <- db.run(umlMappings filter (m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion) result)
-    samples <- db.run(sampleSolutionsTableQuery filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result) map (_ map UmlSolutionDbModels.sampleSolFromDbSampleSol)
+    dbToIgnore <- db.run(umlToIgnore.filter { i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion }.result)
+    dbMappings <- db.run(umlMappings.filter { m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion }.result)
+    samples <- db.run(sampleSolutionsTableQuery filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result).map(_.map(UmlSolutionDbModels.sampleSolFromDbSampleSol))
   } yield {
 
-    val toIgnore = dbToIgnore map {
+    val toIgnore = dbToIgnore.map {
       case (_, _, _, toIgnoreWord) => toIgnoreWord
     }
 
@@ -86,7 +85,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
 
   override protected def saveExerciseRest(collId: Int, compEx: UmlExercise): Future[Boolean] = {
-    val dbSamples = compEx.sampleSolutions map (s => UmlSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+    val dbSamples = compEx.sampleSolutions.map(s => UmlSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
       toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.id, compEx.semanticVersion, collId, i))))

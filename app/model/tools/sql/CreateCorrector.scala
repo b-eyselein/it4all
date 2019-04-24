@@ -13,7 +13,7 @@ object CreateCorrector extends QueryCorrector("CREATE TABLE") {
 
   override type Q = CreateTable
 
-  override protected def getColumnWrappers(query: Q): Seq[CreateColumnWrapper] = query.getColumnDefinitions.asScala map ColumnWrapper.wrapColumn
+  override protected def getColumnWrappers(query: Q): Seq[CreateColumnWrapper] = query.getColumnDefinitions.asScala.map(ColumnWrapper.wrapColumn)
 
   override protected def getTables(query: Q): Seq[Table] = Seq(query.getTable)
 

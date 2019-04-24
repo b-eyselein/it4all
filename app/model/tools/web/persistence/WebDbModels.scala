@@ -78,7 +78,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
   // JsConditionAttribute
 
-  def dbJsConditionAttributeFromHtmlAttribute(condId: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, isPrecondition: Boolean, ha: HtmlAttribute) =
+  def dbJsConditionAttributeFromHtmlAttribute(condId: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, isPrecondition: Boolean, ha: HtmlAttribute): DbJsConditionAttribute =
     DbJsConditionAttribute(condId, taskId, exId, exSemVer, collId, isPrecondition, ha.key, ha.value)
 
   def htmlAttributeFromDbJsConditionAttribute(dbAttr: DbJsConditionAttribute): HtmlAttribute = HtmlAttribute(dbAttr.key, dbAttr.value)

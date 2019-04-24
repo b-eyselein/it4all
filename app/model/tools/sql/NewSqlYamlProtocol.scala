@@ -21,7 +21,7 @@ object NewSqlYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
       shortName <- yamlObject.stringField(shortNameName)
     } yield SqlScenario(id, title, author, text, state, shortName)
 
@@ -39,7 +39,7 @@ object NewSqlYamlProtocol extends MyYamlProtocol {
     override protected def readObject(yamlObject: YamlObject): Try[SqlExercise] = for {
       baseValues <- readBaseValues(yamlObject)
 
-      exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.withNameInsensitiveOption) map (_ getOrElse SqlExerciseType.SELECT)
+      exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.withNameInsensitiveOption).map(_ getOrElse SqlExerciseType.SELECT)
       tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExTag.withNameInsensitiveOption(_) getOrElse SqlExTag.SQL_JOIN))
 
       hint <- yamlObject.optStringField(hintName)

@@ -3,8 +3,6 @@ package model.tools.bool
 import model.tools.bool.BoolConsts._
 import model.tools.bool.BoolNode.{constant, not}
 
-import scala.language.postfixOps
-
 final case class BoolTableRow(assignments: Map[Variable, Boolean]) {
 
   def asChar(variable: Variable): Char = if (this (variable)) '1' else '0'

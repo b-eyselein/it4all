@@ -30,7 +30,7 @@ case object Difficulties extends PlayEnum[Difficulty] {
 
 
   def avg(difficulties: Seq[Difficulty]): Double = {
-    val marks = difficulties filter (_ != Difficulties.NOT_SPECIFIED) map (_.value)
+    val marks = difficulties.filter(_ != Difficulties.NOT_SPECIFIED).map(_.value)
 
     // Round to max two decimal places
     math.rint(marks.sum.toDouble / marks.length * 100) / 100

@@ -17,7 +17,6 @@ import play.api.mvc.{AnyContent, Call, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 abstract class CollectionToolMain(tn: String, up: String)(implicit ec: ExecutionContext)
@@ -86,7 +85,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureExesAndSolvedStatesForParts(user: User, collection: CollType, page: Int, step: Int): Future[Seq[SolvedStatesForExerciseParts[PartType]]] =
 
-    futureExercisesInColl(collection.id) flatMap { exercises =>
+    futureExercisesInColl(collection.id).flatMap { exercises =>
 
       val approvedExercises: Seq[ExType] = exercises.filter(_.state == ExerciseState.APPROVED)
 
@@ -97,9 +96,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         val exPartsForExercise = exParts.filter(exerciseHasPart(ex, _))
 
         val futureSolvedStatesForExerciseParts = Future.sequence(exPartsForExercise.map { exPart =>
-          futureUserCanSolveExPart(user.username, collection.id, ex.id, exPart) flatMap {
+          futureUserCanSolveExPart(user.username, collection.id, ex.id, exPart).flatMap {
             case true  =>
-              futureSolveStateForExercisePart(user, collection.id, ex.id, exPart) map {
+              futureSolveStateForExercisePart(user, collection.id, ex.id, exPart).map {
                 // FIXME: query solved state!
                 maybeSolvedState => (exPart, maybeSolvedState getOrElse SolvedStates.NotStarted)
               }
@@ -107,7 +106,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
           }
         }).map(_.toMap)
 
-        futureSolvedStatesForExerciseParts map {
+        futureSolvedStatesForExerciseParts.map {
           solvedStatesForExerciseParts => SolvedStatesForExerciseParts(ex, solvedStatesForExerciseParts)
         }
 
@@ -125,13 +124,13 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
         Future.successful(Failure(SolutionTransferException))
 
       case Right(solution) =>
-        correctEx(user, solution, collection, exercise, part) flatMap {
+        correctEx(user, solution, collection, exercise, part).flatMap {
           case Failure(error) => Future.successful(Failure(error))
           case Success(res)   =>
 
             // FIXME: points != 0? maxPoints != 0?
             val dbSol = instantiateSolution(id = -1, exercise, part, solution, res.points, res.maxPoints)
-            tables.futureSaveUserSolution(exercise.id, exercise.semanticVersion, collection.id, user.username, dbSol) map {
+            tables.futureSaveUserSolution(exercise.id, exercise.semanticVersion, collection.id, user.username, dbSol).map {
               solSaved => Success((res, solSaved))
             }
         }
@@ -149,7 +148,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   override def exercisesOverviewForIndex: Html = ???
 
-  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = tables.futureAllCollections map {
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = tables.futureAllCollections.map {
     collections => views.html.admin.collExes.collectionAdminIndex(admin, collections, this, toolList)
   }
 
@@ -204,8 +203,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     }
   }
 
-  //  futureCompleteColls map {
-  //    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
+  //  futureCompleteColls .map {
+  //    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes .map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   //  }
 
   def instantiateCollection(id: Int, author: String, state: ExerciseState): CollType

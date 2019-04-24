@@ -20,7 +20,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
       shortName <- yamlObject.stringField(shortNameName)
     } yield UmlCollection(id, title, author, text, state, shortName)
 
@@ -64,8 +64,8 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     override def write(exercise: UmlExercise): YamlValue = YamlObject(
       writeBaseValues(exercise.baseValues) ++
         Map(
-          YamlString(mappingsName) -> YamlArr(exercise.mappings.toSeq map UmlMappingYamlFormat.write),
-          YamlString(ignoreWordsName) -> YamlArr(exercise.toIgnore map YamlString),
+          YamlString(mappingsName) -> YamlArr(exercise.mappings.toSeq.map(UmlMappingYamlFormat.write)),
+          YamlString(ignoreWordsName) -> YamlArr(exercise.toIgnore.map(YamlString)),
         )
     )
 
@@ -108,9 +108,9 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override def write(obj: UmlSampleSolution): YamlValue = YamlObj(
       idName -> YamlNumber(obj.id),
-      classesName -> YamlArr(obj.sample.classes map UmlCompleteClassYamlFormat.write),
-      implementationsName -> YamlArr(obj.sample.implementations map UmlImplYamlFormat.write),
-      associationsName -> YamlArr(obj.sample.associations map UmlAssocYamlFormat.write)
+      classesName -> YamlArr(obj.sample.classes.map(UmlCompleteClassYamlFormat.write)),
+      implementationsName -> YamlArr(obj.sample.implementations.map(UmlImplYamlFormat.write)),
+      associationsName -> YamlArr(obj.sample.associations.map(UmlAssocYamlFormat.write))
     )
 
   }
@@ -120,13 +120,13 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     override def write(completeClazz: UmlClass): YamlValue = YamlObj(
       classTypeName -> completeClazz.classType.entryName,
       nameName -> completeClazz.className,
-      attributesName -> YamlArr(completeClazz.attributes map UmlAttributeYamlFormat.write),
-      methodsName -> YamlArr(completeClazz.methods map UmlMethodYamlFormat.write)
+      attributesName -> YamlArr(completeClazz.attributes.map(UmlAttributeYamlFormat.write)),
+      methodsName -> YamlArr(completeClazz.methods.map(UmlMethodYamlFormat.write))
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlClass] = for {
       className <- yamlObject.stringField(nameName)
-      classType <- yamlObject.enumField(classTypeName, UmlClassType.withNameInsensitiveOption) map (_ getOrElse UmlClassType.CLASS)
+      classType <- yamlObject.enumField(classTypeName, UmlClassType.withNameInsensitiveOption).map(_ getOrElse UmlClassType.CLASS)
       attributeTries <- yamlObject.optArrayField(attributesName, UmlAttributeYamlFormat.read)
       methodTries <- yamlObject.optArrayField(methodsName, UmlMethodYamlFormat.read)
     } yield {
@@ -146,12 +146,12 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   private object UmlAttributeYamlFormat extends MyYamlObjectFormat[UmlAttribute] {
 
     override protected def readObject(yamlObject: YamlObject): Try[UmlAttribute] = for {
-      visibility <- yamlObject.enumField(visibilityName, UmlVisibility.withNameInsensitiveOption) map (_ getOrElse UmlVisibility.PUBLIC)
+      visibility <- yamlObject.enumField(visibilityName, UmlVisibility.withNameInsensitiveOption).map(_ getOrElse UmlVisibility.PUBLIC)
       memberName <- yamlObject.stringField(nameName)
       memberType <- yamlObject.stringField(typeName)
-      isAbstract <- yamlObject.optBoolField("isAbstract") map (_ getOrElse false)
-      isDerived <- yamlObject.optBoolField("isDerived") map (_ getOrElse false)
-      isStatic <- yamlObject.optBoolField("isStatic") map (_ getOrElse false)
+      isAbstract <- yamlObject.optBoolField("isAbstract").map(_ getOrElse false)
+      isDerived <- yamlObject.optBoolField("isDerived").map(_ getOrElse false)
+      isStatic <- yamlObject.optBoolField("isStatic").map(_ getOrElse false)
     } yield UmlAttribute(visibility, memberName, memberType, isStatic, isDerived, isAbstract)
 
     override def write(obj: UmlAttribute): YamlValue = ???
@@ -161,12 +161,12 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   private object UmlMethodYamlFormat extends MyYamlObjectFormat[UmlMethod] {
 
     override protected def readObject(yamlObject: YamlObject): Try[UmlMethod] = for {
-      visibility <- yamlObject.enumField(visibilityName, UmlVisibility.withNameInsensitiveOption) map (_ getOrElse UmlVisibility.PUBLIC)
+      visibility <- yamlObject.enumField(visibilityName, UmlVisibility.withNameInsensitiveOption).map(_ getOrElse UmlVisibility.PUBLIC)
       memberName <- yamlObject.stringField(nameName)
       memberType <- yamlObject.stringField(typeName)
       parameters <- yamlObject.stringField("parameters")
-      isAbstract <- yamlObject.optBoolField("isAbstract") map (_ getOrElse false)
-      isStatic <- yamlObject.optBoolField("isStatic") map (_ getOrElse false)
+      isAbstract <- yamlObject.optBoolField("isAbstract").map(_ getOrElse false)
+      isStatic <- yamlObject.optBoolField("isStatic").map(_ getOrElse false)
     } yield UmlMethod(visibility, memberName, memberType, parameters, isAbstract, isStatic)
 
     override def write(obj: UmlMethod): YamlValue = ???
@@ -184,12 +184,12 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     )
 
     override def readObject(yamlObject: YamlObject): Try[UmlAssociation] = for {
-      assocType <- yamlObject.enumField(associationTypeName, UmlAssociationType.withNameInsensitiveOption) map (_ getOrElse UmlAssociationType.ASSOCIATION)
+      assocType <- yamlObject.enumField(associationTypeName, UmlAssociationType.withNameInsensitiveOption).map(_ getOrElse UmlAssociationType.ASSOCIATION)
       maybeAssocName <- yamlObject.optStringField(nameName)
       firstEnd <- yamlObject.stringField(firstEndName)
-      firstMult <- yamlObject.enumField(firstMultName, UmlMultiplicity.withNameInsensitiveOption) map (_ getOrElse UmlMultiplicity.UNBOUND)
+      firstMult <- yamlObject.enumField(firstMultName, UmlMultiplicity.withNameInsensitiveOption).map(_ getOrElse UmlMultiplicity.UNBOUND)
       secondEnd <- yamlObject.stringField(secondEndName)
-      secondMult <- yamlObject.enumField(secondMultName, UmlMultiplicity.withNameInsensitiveOption) map (_ getOrElse UmlMultiplicity.UNBOUND)
+      secondMult <- yamlObject.enumField(secondMultName, UmlMultiplicity.withNameInsensitiveOption).map(_ getOrElse UmlMultiplicity.UNBOUND)
     } yield UmlAssociation(assocType, maybeAssocName, firstEnd, firstMult, secondEnd, secondMult)
 
   }

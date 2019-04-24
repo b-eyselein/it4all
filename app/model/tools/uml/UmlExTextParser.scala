@@ -2,7 +2,6 @@ package model.tools.uml
 
 import java.util.regex.Pattern
 
-import scala.language.postfixOps
 import scala.util.matching.Regex
 
 class UmlExTextParser(rawText: String, val mappings: Map[String, String], val toIgnore: Seq[String]) {

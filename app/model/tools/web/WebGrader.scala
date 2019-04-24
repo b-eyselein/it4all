@@ -52,7 +52,7 @@ object WebGrader {
 
         val allAttributeResultsSuccessful = attributeResults.forall(_.success)
 
-        val successType = if (allAttributeResultsSuccessful) {
+        val successType: SuccessType = if (allAttributeResultsSuccessful) {
           textContentResult match {
             case None             => SuccessType.COMPLETE
             case Some(textResult) => if (textResult.success) SuccessType.COMPLETE else SuccessType.PARTIALLY

@@ -5,8 +5,6 @@ import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import model.tools.uml.matcher._
 
-import scala.language.postfixOps
-
 object UmlCompleteResult {
 
   def describeImplementation(impl: UmlImplementation): String = s"${impl.subClass}  &rarr;  ${impl.superClass}"

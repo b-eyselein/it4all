@@ -16,7 +16,7 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) .map (_ getOrElse ExerciseState.CREATED)
       shortName <- yamlObject.stringField(shortNameName)
     } yield RegexCollection(id, title, author, text, state, shortName)
 
@@ -32,7 +32,7 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) .map (_ getOrElse ExerciseState.CREATED)
       maxPoints <- yamlObject.intField(maxPointsName)
 
       sampleSolutionTries <- yamlObject.arrayField(samplesName, StringSampleSolutionYamlFormat.read)

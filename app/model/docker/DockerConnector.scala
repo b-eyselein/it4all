@@ -11,7 +11,6 @@ import play.api.Logger
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {

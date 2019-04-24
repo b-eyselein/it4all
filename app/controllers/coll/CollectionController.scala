@@ -52,7 +52,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None       => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(coll) =>
 
-          toolMain.futureExesAndSolvedStatesForParts(user, coll, page, step) map {
+          toolMain.futureExesAndSolvedStatesForParts(user, coll, page, step).map {
             exesAndSuccessTypes: Seq[SolvedStatesForExerciseParts[toolMain.PartType]] =>
               Ok(views.html.collectionExercises.userCollectionExercisesOverview(user, coll, exesAndSuccessTypes, toolMain, page, step, exesAndSuccessTypes.size))
           }
@@ -73,7 +73,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                 case None         => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
                 case Some(exPart) =>
 
-                  toolMain.futureMaybeOldSolution(user.username, collId, exId, exPart) map {
+                  toolMain.futureMaybeOldSolution(user.username, collId, exId, exPart).map {
                     maybeOldSolution => Ok(toolMain.renderExercise(user, collection, exercise, exPart, maybeOldSolution))
                   }
               }
@@ -95,7 +95,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                 case None         => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
                 case Some(exPart) =>
 
-                  toolMain.correctAbstract(user, collection, exercise, exPart) map {
+                  toolMain.correctAbstract(user, collection, exercise, exPart).map {
                     case Success(result) => Ok(toolMain.onLiveCorrectionResult(result._1, result._2))
                     case Failure(error)  =>
                       logger.error("There has been an internal correction error:", error)
@@ -120,8 +120,8 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                 case None       => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
                 case Some(part) =>
 
-                  toolMain.futureSampleSolutions(collId, id, part) map {
-                    sampleSolutions => Ok(JsArray(sampleSolutions map toolMain.sampleSolutionJsonFormat.writes))
+                  toolMain.futureSampleSolutions(collId, id, part).map {
+                    sampleSolutions => Ok(JsArray(sampleSolutions.map(toolMain.sampleSolutionJsonFormat.writes)))
                   }
               }
           }
@@ -130,7 +130,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def newExerciseForm(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.futureHighestExerciseIdInCollection(collId) map { highestId =>
+      toolMain.futureHighestExerciseIdInCollection(collId).map { highestId =>
         val newEx = toolMain.instantiateExercise(highestId + 1, user.username, ExerciseState.RESERVED)
         Ok(toolMain.renderExerciseEditForm(user, collId, newEx, isCreation = true, toolList))
       }
@@ -138,7 +138,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def editExerciseForm(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
-      toolMain.futureExerciseById(collId, exId) map {
+      toolMain.futureExerciseById(collId, exId).map {
         case Some(newExercise) => Ok(toolMain.renderExerciseEditForm(user, collId, newExercise, isCreation = false, toolList))
         case None              =>
           val newExercise = toolMain.instantiateExercise(exId, user.username, ExerciseState.RESERVED)
@@ -160,7 +160,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
 
       val onFormRead: toolMain.ExType => Future[Result] = { newExercise: toolMain.ExType =>
-        toolMain.futureInsertExercise(collId, newExercise) map {
+        toolMain.futureInsertExercise(collId, newExercise).map {
           case false =>
             // TODO: make view?
             BadRequest("Your exercise could not be saved...")
@@ -173,7 +173,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def deleteExerciseInCollection(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
     implicit request =>
-      toolMain.futureDeleteExercise(collId, exId) map {
+      toolMain.futureDeleteExercise(collId, exId).map {
         case false => BadRequest("TODO!")
         case true  => Ok(Json.obj("id" -> exId, "collId" -> collId))
       }
@@ -187,7 +187,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None             => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(collection) =>
 
-          toolMain.futureExerciseById(collection.id, id) map {
+          toolMain.futureExerciseById(collection.id, id).map {
             case None           => onNoSuchExercise(toolMain, collection, id)
             case Some(exercise) =>
 
@@ -218,7 +218,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
                   }
 
                   val onFormRead: toolMain.ReviewType => Future[Result] = { currentReview =>
-                    toolMain.futureSaveReview(user.username, collId, exercise.id, part, currentReview) map {
+                    toolMain.futureSaveReview(user.username, collId, exercise.id, part, currentReview).map {
                       case true  => Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
                       case false => ???
                     }
@@ -267,14 +267,14 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
             logger.error(s"Error while loading uml class diagram for uml exercise $exId and part $part")
             Future.successful(emptyClassDiagram)
           case Some(exercise: UmlExercise) =>
-            umlToolMain.futureMaybeOldSolution(user.username, collId, exId, part) map {
+            umlToolMain.futureMaybeOldSolution(user.username, collId, exId, part).map {
               case Some(solution) => solution.solution
               case None           => exercise.getDefaultClassDiagForPart(part)
             }
         }
       }
 
-      futureClassDiagram map { classDiagram =>
+      futureClassDiagram.map { classDiagram =>
         Ok(Json.prettyPrint(UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(classDiagram))).as("text/javascript")
       }
   }
@@ -285,7 +285,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None             => Future.successful(onNoSuchCollection(progToolMain, collId))
         case Some(collection) =>
 
-          progToolMain.futureExerciseById(collection.id, id) map {
+          progToolMain.futureExerciseById(collection.id, id).map {
             case None           => onNoSuchExercise(progToolMain, collection, id)
             case Some(exercise) =>
 
