@@ -9,8 +9,6 @@ import {ExerciseFile, IdeWorkspace} from '../tools/ideExerciseHelpers';
 import {focusOnCorrection, getIdeWorkspace, setupEditor, uploadFiles} from '../tools/ideExercise';
 
 let uploadBtn: HTMLButtonElement;
-let showSampleSolBtn: HTMLButtonElement;
-
 let previewChangedDiv: HTMLDivElement;
 
 let previewIsUpToDate: boolean = false;
@@ -18,13 +16,9 @@ let solutionChanged: boolean = false;
 
 let editor: CodeMirror.Editor;
 
-function testSol(): void {
-    uploadBtn.disabled = true;
-
-    uploadFiles<WebCompleteResult>(uploadBtn, onWebCorrectionSuccess, onWebCorrectionError);
-}
-
 function onWebCorrectionSuccess(result: WebCompleteResult): void {
+    console.warn(JSON.stringify(result, null, 2));
+
     solutionChanged = false;
 
     uploadBtn.disabled = false;
@@ -113,7 +107,10 @@ domReady(() => {
     document.getElementById('previewTabBtn').onclick = updatePreview;
 
     uploadBtn = document.getElementById('uploadBtn') as HTMLButtonElement;
-    uploadBtn.onclick = testSol;
+    uploadBtn.onclick = () => {
+        uploadBtn.disabled = true;
+        uploadFiles<WebCompleteResult>(uploadBtn, onWebCorrectionSuccess, onWebCorrectionError);
+    };
 
     initShowSampleSolBtn<WebSampleSolution[]>(showSampleSolution);
 });

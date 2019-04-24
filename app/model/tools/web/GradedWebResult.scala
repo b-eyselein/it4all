@@ -56,7 +56,7 @@ final case class GradedJsTaskResult(id: Int, gradedPreResults: Seq[GradedElement
                                     gradedJsActionResult: GradedJsActionResult, gradedPostResults: Seq[GradedElementSpecResult],
                                     success: SuccessType, points: Points, maxPoints: Points) extends GradedWebTaskResult
 
-final case class GradedJsActionResult(actionPerformed: Boolean, jsAction: JsAction) {
+final case class GradedJsActionResult(actionPerformed: Boolean, jsAction: JsAction, points: Points, maxPoints: Points) {
 
   def actionDescription: String = jsAction.actionType match {
     case JsActionType.Click   => s"Klicke auf Element mit XPath Query <code>${jsAction.xpathQuery}</code>"

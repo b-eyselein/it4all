@@ -40,11 +40,17 @@ export interface TextResult {
     maxPoints: number
 }
 
-export interface JsResult extends WebResult {
-    preResults: ConditionResult[]
+export interface JsResult {
+    id: number
+
+    preResults: HtmlResult[]
     actionDescription: string
     actionPerformed: boolean
-    postResults: ConditionResult[]
+    postResults: HtmlResult[]
+
+    success: boolean
+    points: number
+    maxPoints: number
 }
 
 export interface ConditionResult {

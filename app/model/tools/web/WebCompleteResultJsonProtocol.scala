@@ -9,20 +9,6 @@ import play.api.libs.json._
 //noinspection ConvertibleToMethodValue
 object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
 
-  // Text Result: HtmlAttributeResult, TextContentResult
-
-  //  private def unapplyGradedTextResult(gtcr: GradedTextResult): (String, String, Option[String], Boolean, Double, Double) =
-  //    (gtcr.keyName, gtcr.awaitedContent, gtcr.maybeFoundContent, gtcr.isSuccessful, gtcr.points.asDouble, gtcr.maxPoints.asDouble)
-  //
-  //  private implicit val gradedTextResultWrites: Writes[GradedTextResult] = (
-  //    (__ \ keyName).write[String] and
-  //      (__ \ awaitedName).write[String] and
-  //      (__ \ foundName).write[Option[String]] and
-  //      (__ \ successName).write[Boolean] and
-  //      (__ \ pointsName).write[Double] and
-  //      (__ \ maxPointsName).write[Double]
-  //    ) (unapplyGradedTextResult(_))
-
   private implicit val pointsWrites: Writes[Points] = { point => JsNumber(point.asDouble) }
 
   private implicit val gradedTextResultWrites: Writes[GradedTextResult] = Json.writes[GradedTextResult]
@@ -68,10 +54,8 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWe
   override def completeResultWrites(solutionSaved: Boolean): Writes[WebCompleteResult] = (
     (__ \ solutionSavedName).write[Boolean] and
       (__ \ partName).write[String] and
-
       (__ \ htmlResultsName).write[Seq[GradedElementSpecResult]] and
       (__ \ jsResultsName).write[Seq[GradedJsTaskResult]] and
-
       (__ \ successName).write[Boolean] and
       (__ \ pointsName).write[Double] and
       (__ \ maxPointsName).write[Double]

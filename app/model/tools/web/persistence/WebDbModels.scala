@@ -41,7 +41,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
   def dbJsTaskFromJsTask(exId: Int, exSemVer: SemanticVersion, collId: Int, jsTask: JsTask): (DbJsTask, Seq[(DbJsCondition, Seq[DbJsConditionAttribute])]) = {
     val dbPreConditions = jsTask.preConditions.map(pc => dbJsConditionFromJsCondition(jsTask.id, exId, exSemVer, collId, pc, isPrecondition = true))
-    val dbPostConditions = jsTask.preConditions.map(pc => dbJsConditionFromJsCondition(jsTask.id, exId, exSemVer, collId, pc, isPrecondition = false))
+    val dbPostConditions = jsTask.postConditions.map(pc => dbJsConditionFromJsCondition(jsTask.id, exId, exSemVer, collId, pc, isPrecondition = false))
 
     (
       DbJsTask(jsTask.id, exId, exSemVer, collId, jsTask.text, jsTask.action.xpathQuery, jsTask.action.actionType, jsTask.action.keysToSend),
@@ -61,8 +61,11 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
   // JsCondition
 
-  def dbJsConditionFromJsCondition(taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, jsCondition: HtmlElementSpec,
-                                   isPrecondition: Boolean): (DbJsCondition, Seq[DbJsConditionAttribute]) = (
+  def dbJsConditionFromJsCondition(
+    taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int,
+    jsCondition: HtmlElementSpec,
+    isPrecondition: Boolean
+  ): (DbJsCondition, Seq[DbJsConditionAttribute]) = (
     DbJsCondition(jsCondition.id, taskId, exId, exSemVer, collId, isPrecondition, jsCondition.xpathQuery, jsCondition.awaitedTagName, jsCondition.awaitedTextContent),
     jsCondition.attributes.map(dbJsConditionAttributeFromHtmlAttribute(jsCondition.id, taskId, exId, exSemVer, collId, isPrecondition, _))
   )
@@ -99,14 +102,18 @@ object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebE
 
 }
 
-final case class DbWebExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-                               htmlText: Option[String], jsText: Option[String], fileName: String) extends ADbExercise
+final case class DbWebExercise(
+  id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
+  htmlText: Option[String], jsText: Option[String], fileName: String
+) extends ADbExercise
 
 final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, htmlSample: String, jsSample: Option[String])
   extends ADbSampleSol
 
-final case class DbWebUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: WebExPart,
-                                   htmlSolution: String, jsSolution: Option[String], points: Points, maxPoints: Points)
+final case class DbWebUserSolution(
+  id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: WebExPart,
+  htmlSolution: String, jsSolution: Option[String], points: Points, maxPoints: Points
+)
   extends ADbUserSol[WebExPart]
 
 
@@ -133,11 +140,15 @@ final case class DbHtmlAttribute(key: String, taskId: Int, exId: Int, exSemVer: 
 final case class DbJsTask(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, text: String, xpathQuery: String, actionType: JsActionType, keysToSend: Option[String])
   extends DbWebTask
 
-final case class DbJsCondition(id: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, isPrecondition: Boolean,
-                               xpathQuery: String, awaitedTag: String, awaitedTextContent: Option[String])
+final case class DbJsCondition(
+  id: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int,
+  isPrecondition: Boolean, xpathQuery: String, awaitedTag: String, awaitedTextContent: Option[String]
+)
 
-final case class DbJsConditionAttribute(condId: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, isPrecondition: Boolean,
-                                        key: String, value: String)
+final case class DbJsConditionAttribute(
+  condId: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int,
+  isPrecondition: Boolean, key: String, value: String
+)
 
 // WebFile
 
@@ -145,5 +156,7 @@ final case class DbWebFile(path: String, exId: Int, exSemVer: SemanticVersion, c
 
 // Exercise review
 
-final case class DbWebExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: WebExPart,
-                                     difficulty: Difficulty, maybeDuration: Option[Int]) extends DbExerciseReview[WebExPart]
+final case class DbWebExerciseReview(
+  username: String, collId: Int, exerciseId: Int, exercisePart: WebExPart,
+  difficulty: Difficulty, maybeDuration: Option[Int]
+) extends DbExerciseReview[WebExPart]

@@ -7,6 +7,7 @@ import model.points._
 object WebGrader {
 
   private val pointForCorrectTextResult: Points = singlePoint
+  private val maxPointsForAction       : Points = singlePoint
 
   private def gradeTextResult(tcr: TextResult): GradedTextResult = {
 
@@ -66,7 +67,10 @@ object WebGrader {
     }
   }
 
-  private def gradeActionResult(result: JsActionResult): GradedJsActionResult = ???
+  private def gradeActionResult(result: JsActionResult): GradedJsActionResult = {
+    val points = if (result.success) maxPointsForAction else zeroPoints
+    GradedJsActionResult(result.success, result.jsAction, points, maxPointsForAction)
+  }
 
   def gradeHtmlTaskResult(htr: HtmlTaskResult): GradedHtmlTaskResult = {
 
@@ -81,13 +85,9 @@ object WebGrader {
     val gradedActionResult = gradeActionResult(jtr.actionResult)
     val gradedPostResults = jtr.postResults.map(gradeElementSpecResult)
 
-    val preResultsPoints = addUp(gradedPreResults.map(_.points))
-    val actionPoints = if (jtr.actionResult.success) singlePoint else zeroPoints
-    val postResultPoints = addUp(gradedPostResults.map(_.points))
+    val points: Points = addUp(gradedPreResults.map(_.points)) + gradedActionResult.points + addUp(gradedPostResults.map(_.points))
 
-    val points: Points = preResultsPoints + actionPoints + postResultPoints
-    val maxPoints = ???
-
+    val maxPoints: Points = addUp(gradedPreResults.map(_.maxPoints)) + gradedActionResult.maxPoints + addUp(gradedPostResults.map(_.maxPoints))
 
     val success: SuccessType = SuccessType.ofBool(
       jtr.preResults.forall(_.success) && jtr.actionResult.success && jtr.postResults.forall(_.success)

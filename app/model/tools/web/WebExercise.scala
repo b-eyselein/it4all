@@ -1,18 +1,36 @@
 package model.tools.web
 
 import de.uniwue.webtester.{SiteSpec, WebTask}
+import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.points._
+import model.tools.web.WebExParts.findValues
 import play.twirl.api.Html
 
+import scala.collection.immutable.IndexedSeq
 import scala.language.postfixOps
+
+sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
+
+
+object WebExParts extends PlayEnum[WebExPart] {
+
+  val values: IndexedSeq[WebExPart] = findValues
+
+  case object HtmlPart extends WebExPart("Html-Teil", "html")
+
+  case object JsPart extends WebExPart("Js-Teil", "js")
+
+}
+
 
 final case class WebCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
   extends ExerciseCollection
 
 final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                              htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec, files: Seq[ExerciseFile],
-                             sampleSolutions: Seq[FilesSampleSolution]) extends Exercise {
+                             sampleSolutions: Seq[FilesSampleSolution]
+                            ) extends Exercise {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.toolViews.web.webPreview(this)

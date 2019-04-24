@@ -1,5 +1,18 @@
 @(ex: model.tools.web.WebExercise)
 
+@showFile(file: model.ExerciseFile) = {
+    <div class="card my-3">
+        <div class="card-header">@file.name (<code>@file.fileType</code>, editable = @file.editable)</div>
+        <div class="card-body">
+            <pre>@file.content</pre>
+        </div>
+    </div>
+}
+
+@displayElementSpec(elSpec: de.uniwue.webtester.HtmlElementSpec) = {
+    ID: @elSpec.id; xpathQuery: <code>@elSpec.xpathQuery</code>; Textinhalt: @elSpec.awaitedTextContent.map(x => Html(s"&quot;$x&quot;")).getOrElse("--")
+}
+
 <div class="row my-3">
     <div class="col-md-3">Dateiname:</div>
     <div class="col-md-9"><code>@ex.siteSpec.fileName</code></div>
@@ -9,8 +22,7 @@
     <div class="col-md-3">Dateien:</div>
     <div class="col-md-9">
     @for(file <- ex.files) {
-        <p>@file.name (@file.fileType, @file.editable)</p>
-        <pre>@file.content</pre>
+        @showFile(file)
     }
     </div>
 </div>
@@ -24,9 +36,16 @@
     <div class="col-md-3">Html Tasks:</div>
     <div class="col-md-9">
     @if(ex.siteSpec.htmlTasks.nonEmpty) {
+        <ul>
         @for(htmlTask <- ex.siteSpec.htmlTasks) {
-            <p>@htmlTask</p>
+            <li>
+                <div><b>Beschreibung:</b>
+                    @htmlTask.text</div>
+                <div><b>Spezifikation:</b>
+                    @displayElementSpec(htmlTask.elementSpec)</div>
+            </li>
         }
+        </ul>
     } else {--}
     </div>
 </div>
@@ -41,7 +60,20 @@
     <div class="col-md-9">
     @if(ex.siteSpec.jsTasks.nonEmpty) {
         @for(jsTask <- ex.siteSpec.jsTasks) {
-            <p>@jsTask</p>
+            <p><b>@jsTask.text</b></p>
+            <p>Vorbedingungen: <ul>
+            @for(preCondition <- jsTask.preConditions) {
+                <li>@displayElementSpec(preCondition)</li>
+            }
+        </ul>
+            </p>
+            <p>@jsTask.action</p >
+            <p>Nachbedingungen: <ul>
+            @for(postCondition <- jsTask.postConditions) {
+                <li>@displayElementSpec(postCondition)</li>
+            }
+        </ul>
+            </p>
         }
     } else {--}
     </div>
@@ -52,7 +84,7 @@
         <div class="col-md-3">Musterlösung @sample.id:</div>
         <div class="col-md-9">
         @for(sampleFile <- sample.sample) {
-            <pre>@sampleFile</pre>
+            @showFile(sampleFile)
         }
         </div>
     </div>

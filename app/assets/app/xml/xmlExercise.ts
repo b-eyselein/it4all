@@ -62,10 +62,8 @@ function renderXmlSample(xmlSample: XmlSampleSolution): string {
 }
 
 function showXmlSampleSolution(xmlSampleSolutions: XmlSampleSolution[]): string {
-    // console.warn(JSON.stringify(xmlSampleSolutions, null, 2));
-
     return xmlSampleSolutions.map(xmlSampleSol => `
-<div class="card">
+<div class="card my-3">
     <div class="card-body bg-light">
         <pre>${renderXmlSample(xmlSampleSol)}</pre>
     </div>

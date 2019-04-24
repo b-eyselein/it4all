@@ -104,8 +104,7 @@ export function uploadFiles<ResultType>(testButton: HTMLButtonElement, onSuccess
     });
 
     fetch(url, {method: 'PUT', body: JSON.stringify(fileValues), headers})
-        .then(response => response.json())
-        .then(onSuccess)
+        .then(response => response.json().then(onSuccess))
         .catch(onError);
 }
 

@@ -35,6 +35,13 @@
         awaitedTag: span
         awaitedTextContent: '0'
 
+    - text: Binden Sie die Javascript-Datei 'clickCounter.js' ein.
+      elementSpec:
+        id: 3
+        xpathQuery: /html/head//script
+        awaitedTag: script
+        attributes: [{key: 'src', value: 'clickCounter.js'}]
+
   jsText: >
     Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
     gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id 'theSpan' auslesen und um 1 erhöhen.
@@ -51,7 +58,7 @@
         xpathQuery: /html/body//button
         actionType: Click
       postConditions:
-        - id: 2
+        - id: 1
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
           awaitedTextContent: '1'
@@ -67,7 +74,7 @@
         xpathQuery: /html/body//button
         actionType: Click
       postConditions:
-        - id: 2
+        - id: 1
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
           awaitedTextContent: '2'
@@ -83,7 +90,7 @@
         xpathQuery: /html/body//button
         actionType: Click
       postConditions:
-        - id: 2
+        - id: 1
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
           awaitedTextContent: '3'
@@ -99,7 +106,7 @@
         xpathQuery: /html/body//button
         actionType: Click
       postConditions:
-        - id: 2
+        - id: 1
           xpathQuery: /html/body//span[@id='theSpan']
           awaitedTag: span
           awaitedTextContent: '4'
@@ -156,6 +163,13 @@
         id: 3
         xpathQuery: /html/body//span[@id='errors']
         awaitedTag: span
+
+    - text: Binden Sie die Javascript-Datei 'pwChecker.js' ein.
+      elementSpec:
+        id: 4
+        xpathQuery: /html/head//script
+        awaitedTag: script
+        attributes: [{key: 'src', value: 'pwChecker.js'}]
 
   jsText: >
     Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen wird. Sie
@@ -244,6 +258,13 @@
         id: 2
         xpathQuery: /html/body//span[@id='result']
         awaitedTag: span
+
+    - text: Binden Sie die Javascript-Datei 'factorial.js' ein.
+      elementSpec:
+        id: 3
+        xpathQuery: /html/head//script
+        awaitedTag: script
+        attributes: [{key: 'src', value: 'factorial.js'}]
 
   jsText: >
     Implementieren Sie nun die Funktion <code>fakultaet()</code>, die bei Änderung des Felds aufgerufen wird. Sie soll

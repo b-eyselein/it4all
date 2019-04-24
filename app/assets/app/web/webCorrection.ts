@@ -77,20 +77,6 @@ function renderHtmlResult(result: HtmlResult): string {
     }
 }
 
-
-function renderConditionResult(condRes: ConditionResult): string {
-    if (condRes.success) {
-        return `<span class="text-success">${condRes.description}</span>`
-    } else {
-        return `
-<span class="text-danger">
-    ${condRes.description}:
-    Gesucht war <code>${condRes.awaited}</code>,
-    gefunden wurde aber <code>${condRes.gotten}</code>
-</span>`.trim();
-    }
-}
-
 function renderJsResult(result: JsResult): string {
     if (result.success) {
         return `<span class="text-success">Test ${result.id} ${dispPoints(result)} war erfolgreich.</span>`;
@@ -106,13 +92,12 @@ function renderJsResult(result: JsResult): string {
         return `
 <span class="text-${result.success ? 'success' : 'danger'}">Test ${dispPoints(result)} war nicht erfolgreich:</span>
 <ul>
-    ${result.preResults.map(r => `<li>${renderConditionResult(r)}</li>`).join("")}
+    ${result.preResults.map(r => `<li>${renderHtmlResult(r)}</li>`).join("")}
     <li>${actionDesc}</li>
-    ${result.postResults.map(r => `<li>${renderConditionResult(r)}</li>`).join("")}
+    ${result.postResults.map(r => `<li>${renderHtmlResult(r)}</li>`).join("")}
 </ul>`.trim();
     }
 }
-
 
 export function renderWebCompleteResult(corr: WebCompleteResult): void {
 
