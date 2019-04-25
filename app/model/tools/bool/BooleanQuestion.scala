@@ -65,9 +65,7 @@ sealed trait BooleanQuestion {
 
 final case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQuestion {
 
-  override val variables: Set[Variable] = solutions.headOption map (_.variables.toList.reverse.toSet) getOrElse Set.empty
-
-  def joinedVariables: String = variables mkString ","
+  override val variables: Set[Variable] = solutions.headOption.map(_.variables.toSet).getOrElse(Set.empty)
 
   override val exPart: BoolExPart = BoolExParts.FormulaCreation
 
@@ -75,7 +73,7 @@ final case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQ
 
 final case class FilloutQuestion(formula: BoolNode) extends BooleanQuestion {
 
-  val assignments: Seq[BoolTableRow] = generateAllAssignments(formula.usedVariables toSeq)
+  val assignments: Seq[BoolTableRow] = generateAllAssignments(variables.toSeq)
 
   override val variables: Set[Variable] = formula.usedVariables
 

@@ -9,7 +9,9 @@ final case class BoolTableRow(assignments: Map[Variable, Boolean]) {
 
   def apply(variable: Variable): Boolean = assignments(variable)
 
-  def variables: Iterable[Variable] = assignments.keys filter (variable => variable != SolVariable && variable != LerVariable)
+  def variables: Seq[Variable] = assignments.keys
+    .filter(variable => variable != SolVariable && variable != LerVariable)
+    .toSeq.sortBy(_.variable)
 
   def isSet(variable: Variable): Boolean = assignments.isDefinedAt(variable)
 
@@ -42,7 +44,7 @@ object BoolTableRow {
       }
     }
 
-    go(variables.sorted.toList, List[BoolTableRow]())
+    go(variables.sortBy(_.variable).reverse.toList, List[BoolTableRow]())
   }
 
   private def getNF(assignments: Seq[BoolTableRow], takeTrues: Boolean, innerF: (BoolNode, BoolNode) => BoolNode, outerF: (BoolNode, BoolNode) => BoolNode): BoolNode =

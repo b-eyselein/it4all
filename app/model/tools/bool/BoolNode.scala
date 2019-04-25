@@ -100,7 +100,7 @@ object TRUE extends Constant(true)
 
 // Variable nodes
 
-final case class Variable(variable: Char) extends BoolNode with Ordered[Variable] {
+final case class Variable(variable: Char) extends BoolNode {
 
   override def apply(assignment: BoolTableRow): Boolean = assignment(this)
 
@@ -109,8 +109,6 @@ final case class Variable(variable: Char) extends BoolNode with Ordered[Variable
   override def getAsString(needsParans: Boolean): String = variable.toString
 
   override def usedVariables: Set[Variable] = Set(this)
-
-  override def compare(that: Variable): Int = variable - that.variable
 
 }
 

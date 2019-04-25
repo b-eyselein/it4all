@@ -1,6 +1,4 @@
-import * as $ from "jquery";
-
-export {BoolSolution,  readBoolSolution}
+export {BoolSolution, readBoolSolution}
 
 interface BoolSolution {
     formula: string
@@ -16,34 +14,32 @@ interface Assignment {
     value: boolean
 }
 
-function readBoolSolution(valueTableBody: JQuery, isFillout: boolean): BoolSolution {
+function readBoolSolution(valueTableBody: HTMLElement, isFillout: boolean): BoolSolution {
 
     let formula: string;
     if (isFillout) {
-        formula = $('#formula').data('formula');
+        formula = document.querySelector<HTMLSpanElement>('#formula').dataset['formula'];
     } else {
-        formula = $('#solution').val() as string;
+        formula = document.querySelector<HTMLInputElement>('#solution').value;
     }
 
-    let tableRows: BoolTableRow[] = [];
+    let tableRows: BoolTableRow[] =
+        Array.from(valueTableBody.querySelectorAll<HTMLTableRowElement>('tr'))
+            .map((row: HTMLElement) => {
 
-    valueTableBody.find('tr').each((index: number, row: HTMLElement) => {
-        let assignments: Assignment[] = [];
+                let assignments: Assignment[] = [];
 
-        $(row).find('[data-variable]').each(function (index, cell: HTMLElement) {
-            assignments.push({
-                variable: cell.dataset.variable,
-                value: cell.dataset.value === 'true'
+                row.querySelectorAll('[data-variable]').forEach((cell: HTMLElement) =>
+                    assignments.push({variable: cell.dataset.variable, value: cell.dataset.value === 'true'})
+                );
+
+                if (isFillout) {
+                    const value = row.querySelector<HTMLButtonElement>('button').innerText === '1';
+                    assignments.push({variable: 'y', value});
+                }
+
+                return {assignments};
             });
-        });
-
-        if (isFillout) {
-            assignments.push({variable: 'y', value: $(row).find('button').text() === '1'});
-        }
-
-        tableRows.push({assignments});
-    });
-
 
     return {formula, tableRows};
 }

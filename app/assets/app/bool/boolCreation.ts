@@ -1,11 +1,12 @@
-import * as $ from 'jquery';
-
 import {BoolSolution, readBoolSolution} from "./boolBase";
+import {domReady, testExerciseSolution} from "../otherHelpers";
 
 let dnf: string = '';
 let knf: string = '';
 
-let testBtn: JQuery, sampleSolBtn: JQuery, valueTableBody: JQuery;
+let testBtn: HTMLButtonElement;
+let sampleSolBtn: HTMLButtonElement;
+let valueTableBody: HTMLElement;
 
 interface AssignmentSolution {
     id: string
@@ -33,34 +34,34 @@ function renderBoolCreationSuccess(response: BoolCreationSuccess): void {
     dnf = response.dnf;
 
     for (const assignment of response.assignments) {
-        let elem = $('#' + assignment.id);
-        elem.html(assignment.learnerVal ? '1' : '0');
-
-        console.info(elem.parent());
+        let elem = document.querySelector<HTMLElement>('#' + assignment.id);
+        elem.innerHTML = assignment.learnerVal ? '1' : '0';
 
         if (assignment.correct) {
-            elem.removeClass('table-danger').addClass('table-success');
-            elem.parent().find('.correctnessHook').html('&check;');
+            elem.classList.remove('table-danger');
+            elem.classList.add('table-success');
+            elem.parentElement.querySelector('.correctnessHook').innerHTML = '&check;';
         } else {
-            elem.removeClass('table-success').addClass('table-danger');
-            elem.parent().find('.correctnessHook').html('');
+            elem.classList.remove('table-success');
+            elem.classList.add('table-danger');
+            elem.parentElement.querySelector('.correctnessHook').innerHTML = '';
         }
     }
 }
 
 function renderBoolCreationError(response: BoolCreationError): void {
-    $('#messageDiv').html(`
+    document.querySelector<HTMLDivElement>('#messageDiv').innerHTML = `
 <hr>
 
 <div class="alert alert-danger">
     <p>Es gab einen Fehler in ihrer Formel:</p>
     <pre>${response.formula}</pre>
     <pre>${response.error}</pre>
-</div>`.trim());
+</div>`.trim();
 }
 
 function onBoolCreationSuccess(response: BoolCreateResult): void {
-    testBtn.prop('disabled', false);
+    testBtn.disabled = false;
 
     if (response.isSuccessful) {
         renderBoolCreationSuccess(response as BoolCreationSuccess);
@@ -68,11 +69,6 @@ function onBoolCreationSuccess(response: BoolCreateResult): void {
         renderBoolCreationError(response as BoolCreationError);
     }
 
-}
-
-function onBoolCreationError(jqXHR): void {
-    testBtn.prop('disabled', false);
-    console.error(jqXHR.responseText);
 }
 
 function testSol(): void {
@@ -83,42 +79,29 @@ function testSol(): void {
         return;
     }
 
-    $('#messageDiv').html('');
-    testBtn.prop('disabled', true);
+    document.querySelector<HTMLDivElement>('#messageDiv').innerHTML = '';
+    testBtn.disabled = true;
 
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json',
-        contentType: 'application/json',
-        url: testBtn.data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onBoolCreationSuccess,
-        error: onBoolCreationError
-    });
+    testExerciseSolution<BoolSolution, BoolCreateResult>(testBtn, solution, onBoolCreationSuccess);
 }
 
 function showSampleSol(): void {
     if (knf.length === 0 && dnf.length === 0) {
         alert('Sample solutions have not yet been loaded!');
     } else {
-        $('#messageDiv').html(`
+        document.querySelector<HTMLDivElement>('#messageDiv').innerHTML = `
 <hr>
 <p>KNF: <code>z = ${knf}</code></p>
-<p>DNF: <code>z = ${dnf}</code></p>`.trim());
+<p>DNF: <code>z = ${dnf}</code></p>`.trim();
     }
 }
 
-$(() => {
-    testBtn = $('#testBtn');
-    testBtn.on('click', testSol);
+domReady(() => {
+    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    testBtn.onclick = testSol;
 
-    sampleSolBtn = $('#sampleSolBtn');
-    sampleSolBtn.on('click', showSampleSol);
+    sampleSolBtn = document.querySelector<HTMLButtonElement>('#sampleSolBtn');
+    sampleSolBtn.onclick = showSampleSol;
 
-    valueTableBody = $('#valueTableBody');
+    valueTableBody = document.querySelector<HTMLElement>('#valueTableBody');
 });

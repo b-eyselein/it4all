@@ -15,6 +15,10 @@
     "Ausfüllen einer Wertetabelle"
 }
 
+@correctionUrl = @{
+    coll.routes.RandomExerciseController.correctLive(toolMain.urlPart, model.tools.bool.BoolExParts.TableFillout.urlName)
+}
+
 @main(title, Some(user), scripts) {
     <div class="container">
 
@@ -59,8 +63,7 @@
                 @helper.CSRF.formField
 
                 <div class="btn-group d-flex">
-                    <button id="testBtn" class="btn btn-primary w-100" data-url="@coll.routes.RandomExerciseController.correctLive(toolMain.urlPart, model.tools.bool.BoolExParts.TableFillout.urlName)">
-                        Testen</button>
+                    <button data-href="@correctionUrl" id="testBtn" class="btn btn-primary w-100">Testen</button>
                     <a class="btn btn-secondary w-100" href="@coll.routes.RandomExerciseController.newExercise(toolMain.urlPart, question.exPart.urlName)">
                         Nächste Aufgabe</a>
                 </div>

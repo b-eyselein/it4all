@@ -3,7 +3,7 @@
 @(user: model.User, question: CreationQuestion, toolMain: BoolToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @variables = @{
-    question.variables.toSeq ++ Option(BoolConsts.SolVariable)
+    question.variables.toSeq :+ BoolConsts.SolVariable
 }
 
 @scripts = {
@@ -15,6 +15,10 @@
 
 @title = @{
     "Erstellen einer Booleschen Funktion"
+}
+
+@correctionUrl = @{
+    coll.routes.RandomExerciseController.correctLive(toolMain.urlPart, BoolExParts.FormulaCreation.urlName)
 }
 
 @main(title, Some(user), scripts) {
@@ -36,7 +40,7 @@
                             @for(variable <- variables) {
                                 <th class="text-center">@variable</th>
                             }
-                            <th class="text-center" id="learnerFormula">@BoolConsts.SolVariable &#39;</th>
+                            <th class="text-center" id="learnerFormula">@BoolConsts.SolVariable&#39;</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -72,8 +76,7 @@
                 <span class="octicon octicon-info"></span>
             </button>
 
-            <button data-url="@coll.routes.RandomExerciseController.correctLive(toolMain.urlPart, BoolExParts.FormulaCreation.urlName)"
-            class="btn btn-primary w-100" id="testBtn">Prüfen</button>
+            <button data-href="@correctionUrl" class="btn btn-primary w-100" id="testBtn">Prüfen</button>
 
             <button class="btn btn-success w-100" id="sampleSolBtn">Zeige Musterlösung</button>
 

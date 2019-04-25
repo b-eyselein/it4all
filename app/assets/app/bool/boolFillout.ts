@@ -1,8 +1,8 @@
-import * as $ from 'jquery';
+import {BoolSolution, readBoolSolution} from "./boolBase";
+import {domReady, testExerciseSolution} from "../otherHelpers";
 
-import {readBoolSolution} from "./boolBase";
-
-let valueTableBody: JQuery, testBtn: JQuery;
+let valueTableBody: HTMLElement;
+let testBtn: HTMLButtonElement;
 
 interface BoolFilloutResult {
     isSuccessful: boolean
@@ -16,63 +16,49 @@ interface BoolFilloutRow {
 }
 
 function changeValue(button: HTMLButtonElement): void {
-    let jButton = $(button);
-    let newValue = (parseInt(jButton.text()) + 1) % 2;
+    let newValue = (parseInt(button.innerText) + 1) % 2;
 
-    jButton.text(newValue);
+    button.innerText = newValue.toString();
     if (newValue === 0) {
-        jButton.removeClass('btn-primary').addClass('btn-outline-primary');
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-outline-primary');
     } else {
-        jButton.removeClass('btn-outline-primary').addClass('btn-primary');
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-primary');
     }
 }
 
-function onFilloutCorrectionError(jqXHR): void {
-    testBtn.prop('disabled', false);
-    console.error(jqXHR.responseText);
-}
-
 function onFilloutCorrectionSuccess(respone: BoolFilloutResult): void {
-    testBtn.prop('disabled', false);
+    testBtn.disabled = false;
 
     for (let row of respone.assignments) {
-        let elem = $('#' + row.id);
+        const elem: HTMLTableRowElement = document.querySelector<HTMLTableRowElement>('#' + row.id);
 
         if (row.learner === row.sample) {
-            elem.removeClass('table-danger').addClass('table-success');
-            elem.find('.correctnessHook').html('&check;');
+            elem.classList.remove('table-danger');
+            elem.classList.add('table-success');
+            elem.querySelector('.correctnessHook').innerHTML = '&check;';
         } else {
-            elem.removeClass('table-success').addClass('table-danger');
-            elem.find('.correctnessHook').html('');
+            elem.classList.remove('table-success');
+            elem.classList.add('table-danger');
+            elem.querySelector('.correctnessHook').innerHTML = '';
         }
     }
 }
 
 function testSol(): void {
-    testBtn.prop('disabled', true);
+    testBtn.disabled = true;
 
     const solution = readBoolSolution(valueTableBody, true);
 
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json',
-        contentType: 'application/json',
-        url: testBtn.data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onFilloutCorrectionSuccess,
-        error: onFilloutCorrectionError
-    });
+    testExerciseSolution<BoolSolution, BoolFilloutResult>(testBtn, solution, onFilloutCorrectionSuccess)
 }
 
-$(() => {
-    valueTableBody = $('#valueTableBody');
-    valueTableBody.find('button').on('click', (event) => changeValue(event.target as HTMLButtonElement));
+domReady(() => {
+    valueTableBody = document.querySelector('#valueTableBody')
+    valueTableBody.querySelectorAll<HTMLButtonElement>('button')
+        .forEach(button => button.onclick = (event) => changeValue(event.target as HTMLButtonElement));
 
-    testBtn = $('#testBtn');
-    testBtn.on('click', testSol);
+    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    testBtn.onclick = testSol;
 });
