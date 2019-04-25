@@ -99,9 +99,11 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   }
 
 
-  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: UmlExPart): Future[Option[UmlUserSolution]] = ???
+  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: UmlExPart): Future[Option[UmlUserSolution]] =
+    Future.successful(None) // ???
 
-  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UmlUserSolution): Future[Boolean] = ???
+  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UmlUserSolution): Future[Boolean] =
+    Future.successful(false) // ???
 
   // Implicit column types
 
