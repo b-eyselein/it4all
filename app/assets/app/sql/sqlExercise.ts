@@ -1,18 +1,18 @@
 import * as $ from 'jquery';
 
+import 'codemirror/mode/sql/sql';
 import * as CodeMirror from 'codemirror';
 import {initEditor} from "../editorHelpers";
 
-import 'codemirror/mode/sql/sql';
+import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
+import {displayStringSampleSolution, domReady, initShowSampleSolBtn, StringSampleSolution} from "../otherHelpers";
+
 import {MatchingResult} from "../matches";
 import {ExecutionResultsObject, renderExecution, renderMatchingResult} from "./sqlRenderCorrection";
 
 let editor: CodeMirror.Editor;
-let testBtn: JQuery;
-let showSampleSolBtn: JQuery;
-let sampleSolTab: JQuery;
-
-let correction: JQuery;
+let testBtn: HTMLButtonElement;
+let correctionDiv: HTMLDivElement;
 
 interface SqlResult {
     solutionSaved: boolean
@@ -36,9 +36,9 @@ interface SqlCorrectionResult {
 }
 
 function onSqlCorrectionSuccess(response: SqlResult): void {
-    testBtn.prop('disabled', false);
+    testBtn.disabled = false;
 
-    correction.html('');
+    correctionDiv.innerHTML = '';
 
     let results: string[] = [];
 
@@ -75,85 +75,41 @@ function onSqlCorrectionSuccess(response: SqlResult): void {
             results.push(`<span class="text-danger">Der Vergleich der Ergebnistabellen war nicht erfolgreich.`);
         }
 
-        $('#executionResultsDiv').html(renderExecution(response.results.executionResults));
+        document.querySelector<HTMLDivElement>('#executionResultsDiv').innerHTML =
+            renderExecution(response.results.executionResults);
     }
 
-    let newHtml = results.map(r => `<p>${r}</p>`).join('\n');
-    correction.html(newHtml);
+    const newHtml: string = results.map(r => `<p>${r}</p>`).join('\n');
+    correctionDiv.innerHTML = newHtml;
 
-    $('#showCorrectionTabA').get()[0].click();
-}
-
-function onSqlCorrectionError(jqXHR): void {
-    testBtn.prop('disabled', false);
-
-    correction.html(`
-<div class="panel panel-danger">
-    <div class="panel-heading"><b>Es gab einen Fehler bei der Korrektur:</b></div>
-    <div class="panel-body">
-        <pre>${jqXHR.responseJSON.msg}</pre>
-    </div>
-</div>`.trim());
-
+    focusOnCorrection();
 }
 
 function testSqlSol(): void {
-    $('#correctionDiv').prop('hidden', false);
+    document.querySelector<HTMLDivElement>('#correctionDiv').hidden = false;
 
     let learnerSolution: string = editor.getValue();
+
     if (learnerSolution === "") {
-        $('#correction').html(`<div class="alert alert-danger">Sie können keine leere Query abgeben!</div>`);
+        alert("Sie können keine leere Query abgeben!");
         return;
     }
 
-    testBtn.prop('disabled', true);
+    testBtn.disabled = true;
 
-    $.ajax({
-        type: 'PUT',
-        url: testBtn.data('url'),
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON.stringify(learnerSolution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onSqlCorrectionSuccess,
-        error: onSqlCorrectionError
-    });
+    testTextExerciseSolution<string, SqlCorrectionResult>(testBtn, learnerSolution, onSqlCorrectionSuccess);
 }
 
-function onShowSampleSol(): void {
-    $.ajax({
-        url: showSampleSolBtn.data('href'),
-        dataType: 'json',
-        success: (sampleSolutions: string[]) => {
-            const renderedSols = sampleSolutions.map(sampleSol => `
-<div class="form-group">
-    <div class="card">
-        <div class="card-body bg-light">
-            <pre id="sampleSolPre">${sampleSol}</pre>
-        </div>
-    </div>
-</div>`.trim());
-
-            sampleSolTab.html(renderedSols.join("\n"));
-            $('#sampleSolTabBtn').get()[0].click();
-        }
-    })
-}
-
-$(() => {
+domReady(() => {
     editor = initEditor('text/x-mysql', 'textEditor');
 
-    testBtn = $('#testBtn');
-    testBtn.on('click', testSqlSol);
+    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    testBtn.onclick = testSqlSol;
 
-    correction = $('#correction');
+    correctionDiv = document.querySelector<HTMLDivElement>('#correction');
 
-    showSampleSolBtn = $('#showSampleSolBtn');
-    showSampleSolBtn.on('click', onShowSampleSol);
+    initShowSampleSolBtn<StringSampleSolution[]>(sqlSamples =>
+        sqlSamples.map(displayStringSampleSolution).join('\n')
+    );
 
-    sampleSolTab = $('#sampleSolTab');
 });

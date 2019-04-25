@@ -89,12 +89,12 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   }
 
   private def orderByElements(userQ: Q): Seq[OrderByElement] = userQ.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getOrderByElements).map(_.asScala) getOrElse Seq[OrderByElement]()
+    case ps: PlainSelect => Option(ps.getOrderByElements).map(_.asScala).getOrElse(Seq[OrderByElement]())
     case _               => Seq[OrderByElement]()
   }
 
   private def groupByElements(query: Q): Seq[Expression] = query.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getGroupByColumnReferences).map(_.asScala) getOrElse Seq[Expression]()
+    case ps: PlainSelect => Option(ps.getGroupBy).map(_.getGroupByExpressions.asScala).getOrElse(Seq[Expression]())
     case _               => Seq[Expression]()
   }
 

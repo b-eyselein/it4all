@@ -52,10 +52,10 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None       => Future.successful(onNoSuchCollection(toolMain, collId))
         case Some(coll) =>
 
-          toolMain.futureExesAndSolvedStatesForParts(user, coll, page, step).map {
-            exesAndSuccessTypes: Seq[SolvedStatesForExerciseParts[toolMain.PartType]] =>
-              Ok(views.html.collectionExercises.userCollectionExercisesOverview(user, coll, exesAndSuccessTypes, toolMain, page, step, exesAndSuccessTypes.size))
-          }
+          for {
+            exesAndSuccessTypes <- toolMain.futureExesAndSolvedStatesForParts(user, coll, page, step)
+            allExesCount <- toolMain.futureNumOfExesInColl(coll)
+          } yield Ok(views.html.collectionExercises.userCollectionExercisesOverview(user, coll, exesAndSuccessTypes, toolMain, page, step, allExesCount))
       }
   }
 

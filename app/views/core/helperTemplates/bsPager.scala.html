@@ -18,11 +18,12 @@
 
         }
 
-        @for(adder <- -2 to 2 if currentSite + adder > 0 && (currentSite + adder) <= numOfSites) {
-            <li @if(adder == 0) {
-                class="active" }><a class="page-link" href="@route(currentSite + adder)">@{
-                currentSite + adder
-            }</a>
+        @for(adder <- (-2 to 2) if currentSite + adder > 0 && (currentSite + adder) <= numOfSites;
+        clazz = if(adder == 0) """ class="active" """ else "") {
+            <li @clazz>
+                <a class="page-link" href="@route(currentSite + adder)">@{
+                    currentSite + adder
+                }</a>
             </li>
         }
 

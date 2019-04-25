@@ -37,8 +37,5 @@
     </div>
 }
 
-@* @toolViews.textExercise(user, exerciseText, collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
-solutionPreview = Some(solutionPreview)) *@
-
 @toolViews.ideExercise(user, title, exerciseText, exercise.files.map(_.name), exercise.files.headOption, toolMainObject,
     collection, exercise, part, solutionPreview = Some(solutionPreview), additionalScripts)

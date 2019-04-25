@@ -81,7 +81,7 @@ function renderExecutionResult(executionTable: ExecutionTable): string {
 
             for (const colName of executionTable.colNames) {
                 const cell = row[colName];
-                cells.push(`<td${cell.different ? '' : ` class="table-danger"`}>${cell.content}</td>`)
+                cells.push(`<td${cell.different ? ` class="table-danger"` : ''}>${cell.content}</td>`)
             }
 
             tableBody += `<tr>${cells.join('')}</tr>`;

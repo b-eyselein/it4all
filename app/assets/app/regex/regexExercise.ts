@@ -2,18 +2,13 @@ import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
 
 import {focusOnCorrection, testTextExerciseSolution} from "../textExercise";
-import {domReady, initShowSampleSolBtn} from "../otherHelpers";
+import {domReady, initShowSampleSolBtn, StringSampleSolution, displayStringSampleSolution} from "../otherHelpers";
 
 let editor: CodeMirror.Editor;
 
 let testBtn: HTMLButtonElement;
 
 let solutionChanged: boolean = false;
-
-interface RegexSampleSolution {
-    id: number;
-    sample: string;
-}
 
 interface RegexSingleCorrectionResult {
     testData: string
@@ -87,18 +82,9 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
     focusOnCorrection();
 }
 
-function displayRegexSampleSolution(s: RegexSampleSolution): string {
-    return `
-<div class="card my-3">
-    <div class="card-body bg-light">
-        <pre>${s.sample.trim()}</pre>
-    </div>
-</div>`.trim();
-}
-
 domReady(() => {
-    initShowSampleSolBtn<RegexSampleSolution[]>((regexSampleSolutions: RegexSampleSolution[]) =>
-        regexSampleSolutions.map(displayRegexSampleSolution).join('\n')
+    initShowSampleSolBtn<StringSampleSolution[]>((regexSampleSolutions: StringSampleSolution[]) =>
+        regexSampleSolutions.map(displayStringSampleSolution).join('\n')
     );
 
     editor = initEditor('', 'textEditor');

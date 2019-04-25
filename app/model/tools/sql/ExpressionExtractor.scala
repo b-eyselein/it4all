@@ -118,11 +118,11 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(hint: OracleHint): Unit = {}
 
   override def visit(orExpression: OrExpression): Unit = {
-    orExpression.getLeftExpression accept this
-    orExpression.getRightExpression accept this
+    orExpression.getLeftExpression.accept(this)
+    orExpression.getRightExpression.accept(this)
   }
 
-  override def visit(parenthesis: Parenthesis): Unit = parenthesis.getExpression accept this
+  override def visit(parenthesis: Parenthesis): Unit = parenthesis.getExpression.accept(this)
 
   override def visit(rexpr: RegExpMatchOperator): Unit = {}
 
@@ -154,4 +154,7 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(valueList: ValueListExpression): Unit = {}
 
+  override def visit(aThis: NextValExpression): Unit = {}
+
+  override def visit(aThis: CollateExpression): Unit = {}
 }

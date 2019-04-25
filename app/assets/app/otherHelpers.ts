@@ -24,6 +24,25 @@ export function unescapeHTML(escapedHTML: string): string {
         .replace(/&#039;/g, "'");
 }
 
+// Sample solutions
+
+export interface SampleSolution<SampleType> {
+    id: number;
+    sample: SampleType;
+}
+
+export interface StringSampleSolution extends SampleSolution<string> {
+}
+
+export function displayStringSampleSolution(s: StringSampleSolution): string {
+    return `
+<div class="card my-3">
+    <div class="card-body bg-light">
+        <pre>${s.sample.trim()}</pre>
+    </div>
+</div>`.trim();
+}
+
 export function initShowSampleSolBtn<T>(renderSampleSolResponse: (T) => string): void {
     const showSampleSolBtn = document.querySelector<HTMLButtonElement>('#showSampleSolBtn');
 

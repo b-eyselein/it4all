@@ -83,6 +83,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureUserCanSolveExPart(username: String, collId: Int, exId: Int, part: PartType): Future[Boolean] = Future.successful(true)
 
+  def futureNumOfExesInColl(collection: CollType): Future[Int] = tables.futureNumOfExesInColl(collection.id)
+
   def futureExesAndSolvedStatesForParts(user: User, collection: CollType, page: Int, step: Int): Future[Seq[SolvedStatesForExerciseParts[PartType]]] =
 
     futureExercisesInColl(collection.id).flatMap { exercises =>
