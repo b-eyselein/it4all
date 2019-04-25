@@ -1,4 +1,5 @@
 import * as $ from 'jquery';
+import {domReady} from "../otherHelpers";
 
 let addSampleSolBtn: JQuery<HTMLButtonElement>;
 let sampleSolsDiv: JQuery<HTMLDivElement>;
@@ -40,7 +41,7 @@ function instantiateDeleteTestDataBtnClickEvents(): void {
     $('.deleteTestDataBtn').unbind('click').on('click', deleteTestData);
 }
 
-$(() => {
+domReady(() => {
     // Sample solution
 
     sampleSolsDiv = $('#sampleSolsDiv');

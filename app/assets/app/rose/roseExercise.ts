@@ -4,6 +4,7 @@ import {CompleteRunResult, instantiateAll} from "./simulator";
 import {initEditor} from "../editorHelpers";
 
 import 'codemirror/mode/python/python';
+import {domReady} from "../otherHelpers";
 
 let testBtn: JQuery;
 let editor: CodeMirror.Editor;
@@ -47,7 +48,7 @@ function onRoseCorrectionError(jqXHR): void {
 function testSol(): void {
     testBtn.prop('disabled', true);
 
-    const solution : string = editor.getValue();
+    const solution: string = editor.getValue();
     // = {
     //     languague: "PYTHON_3",
     //     implementation: editor.getValue()
@@ -71,7 +72,7 @@ function testSol(): void {
 
 }
 
-$(() => {
+domReady(() => {
     editor = initEditor('python', 'textEditor');
 
     testBtn = $('#testBtn');

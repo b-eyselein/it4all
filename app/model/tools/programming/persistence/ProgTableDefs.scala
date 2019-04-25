@@ -218,7 +218,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   }
 
-  class ProgSolutionTable(tag: Tag) extends AUserSolutionsTable(tag, "prog_solutions") {
+  class ProgSolutionTable(tag: Tag) extends AUserSolutionsTable(tag, "prog_user_solutions") {
 
     def implementation: Rep[String] = column[String]("implementation")
 

@@ -1,12 +1,15 @@
-import * as $ from 'jquery';
 import {UmlClass, UmlSolution} from '../umlInterfaces';
 import {displayMatchingResultList, UmlClassDiagCorrectionResult, UmlClassMatch} from "./classDiagCorrection";
 
+import {domReady, testExerciseSolution} from "../../otherHelpers";
+
 let chosenClasses: string[] = [];
 
-let testBtn: JQuery, correctionDiv: JQuery, correction: JQuery, classesList: JQuery;
+let testBtn: HTMLButtonElement;
+let classesList: HTMLUListElement;
 
-const notChosenClass = 'text-muted', chosenClass = 'text-primary';
+const notChosenAsClassClassName = 'text-muted';
+const chosenAsClassClassName = 'text-primary';
 
 function explainClassResult(classResult: UmlClassMatch, alertClass: string, glyphicon: string): string {
     let className = classResult.userArg != null ? classResult.userArg.name : classResult.sampleArg.name;
@@ -47,8 +50,8 @@ function asList(array: string[]): string {
     return array.length === 0 ? '<li>--</li>' : '<li>' + array.join('</li><li>') + '</li>';
 }
 
-function select(span: Element): void {
-    let baseform: string = $(span).data('baseform');
+function select(span: HTMLSpanElement): void {
+    let baseform: string = span.dataset['baseform'];
 
     if (chosenClasses.indexOf(baseform) < 0) {
         chosenClasses.push(baseform);
@@ -56,63 +59,44 @@ function select(span: Element): void {
         chosenClasses.splice(chosenClasses.indexOf(baseform), 1);
     }
 
-    classesList.html(asList(chosenClasses));
+    classesList.innerHTML = asList(chosenClasses);
 
-    $('#exercisetext').find('span').each((index, element: HTMLElement) => {
-        const jElement = $(element);
-        if (chosenClasses.indexOf(jElement.data('baseform')) > -1) {
-            jElement.removeClass(notChosenClass).addClass(chosenClass);
-        } else {
-            jElement.removeClass(chosenClass).addClass(notChosenClass);
-        }
-    });
+    document.getElementById('exercisetext')
+        .querySelectorAll<HTMLSpanElement>('span')
+        .forEach((element: HTMLSpanElement) => {
+            if (chosenClasses.indexOf(element.dataset['baseform']) > -1) {
+                element.classList.remove(notChosenAsClassClassName);
+                element.classList.add(chosenAsClassClassName);
+            } else {
+                element.classList.remove(chosenAsClassClassName);
+                element.classList.add(notChosenAsClassClassName);
+            }
+        });
 }
 
 function onClassSelectionCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
-    testBtn.prop('disabled', false);
+    testBtn.disabled = false;
 
-    correctionDiv.prop('hidden', false);
-    correction.html(displayMatchingResultList(response.classResult, "Klassen", explainClassResult));
-}
-
-function onClassSelectionCorrectionError(jqXHR): void {
-    testBtn.prop('disabled', false);
-    console.error(jqXHR);
+    document.querySelector<HTMLDivElement>('#correctionDiv').innerHTML =
+        displayMatchingResultList(response.classResult, "Klassen", explainClassResult);
 }
 
 function testSol(): void {
-    testBtn.prop('disabled', true);
+    testBtn.disabled = true;
 
     let solution: UmlSolution = {
         classes: chosenClasses.map(readClass), associations: [], implementations: []
     };
 
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json', // return type
-        contentType: 'application/json', // type of message to server
-        url: $('#testBtn').data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onClassSelectionCorrectionSuccess,
-        error: onClassSelectionCorrectionError
-    });
+    testExerciseSolution<UmlSolution, UmlClassDiagCorrectionResult>(testBtn, solution, onClassSelectionCorrectionSuccess);
 }
 
-$(() => {
-    testBtn = $('#testBtn');
-    testBtn.on('click', testSol);
+domReady(() => {
+    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    testBtn.onclick = testSol;
 
-    $('span.' + notChosenClass).each((index: number, span: Element) => {
-        $(span).on('click', () => select(span))
-    });
+    document.querySelectorAll<HTMLSpanElement>('span.' + notChosenAsClassClassName)
+        .forEach((span: HTMLSpanElement) => span.onclick = () => select(span));
 
-    classesList = $('#classesList');
-
-    correction = $('#correction');
-    correctionDiv = $('#correctionDiv');
+    classesList = document.querySelector<HTMLUListElement>('#classesList');
 });

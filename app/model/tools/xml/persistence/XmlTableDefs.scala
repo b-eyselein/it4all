@@ -85,7 +85,7 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class XmlSamplesTable(tag: Tag) extends ASampleSolutionsTable(tag, "xml_samples") {
+  class XmlSamplesTable(tag: Tag) extends ASampleSolutionsTable(tag, "xml_sample_solutions") {
 
     def grammar: Rep[String] = column[String]("grammar")
 
@@ -99,7 +99,7 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class XmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "xml_solutions") {
+  class XmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "xml_user_solutions") {
 
     def grammar: Rep[String] = column[String]("grammar")
 

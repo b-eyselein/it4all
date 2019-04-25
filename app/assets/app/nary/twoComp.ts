@@ -1,4 +1,5 @@
 import * as $ from 'jquery';
+import {domReady} from "../otherHelpers";
 
 let testBtn: JQuery, binaryAbs: JQuery, invertedAbs: JQuery, solutionInput: JQuery;
 
@@ -71,7 +72,7 @@ function testSol(): void {
     });
 }
 
-$(() => {
+domReady(() => {
     binaryAbs = $('#binaryAbs');
     invertedAbs = $('#invertedAbs');
     solutionInput = $('#solution');

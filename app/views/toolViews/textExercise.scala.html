@@ -67,7 +67,7 @@
                         @helper.CSRF.formField
 
                         <div class="btn-group d-flex">
-                            <button class="btn btn-primary w-100" id="testBtn" data-url="@correctionUrl">
+                            <button class="btn btn-primary w-100" id="testBtn" data-href="@correctionUrl">
                                 Lösung testen</button>
                             <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMainObject.urlPart, collection.id, exercise.id, part.urlName)"
                             id="endSolveAnchor" class="btn btn-secondary w-100">Bearbeitung beenden</a>
@@ -114,7 +114,7 @@
                         }
 
                         <div id="sampleSolTab" class="tab-pane fade">
-                            <button data-url="@sampleSolUrl" id="showSampleSolBtn" class="btn btn-outline-success btn-block">
+                            <button data-href="@sampleSolUrl" id="showSampleSolBtn" class="btn btn-outline-success btn-block">
                                 Musterlösung anzeigen</button>
                             <div id="sampleSolDiv"></div>
                         </div>

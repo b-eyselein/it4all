@@ -1,4 +1,5 @@
 import * as $ from 'jquery';
+import {domReady} from "../otherHelpers";
 
 let testBtn: JQuery, moreTestDataBtn: JQuery, testDataBody: JQuery, msgDiv: JQuery;
 let inputCount: number;
@@ -110,7 +111,7 @@ function testSol(): void {
     });
 }
 
-$(() => {
+domReady(() => {
     inputCount = $('#inputCount').val() as number;
 
     msgDiv = $('#messageDiv');

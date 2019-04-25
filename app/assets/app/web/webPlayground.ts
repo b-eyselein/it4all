@@ -1,9 +1,10 @@
-import * as $ from "jquery";
-import {initEditor} from "../editorHelpers";
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/htmlmixed/htmlmixed';
+import {initEditor} from "../editorHelpers";
 
-$(() => {
+import {domReady} from "../otherHelpers";
+
+domReady(() => {
     let editor = initEditor('htmlmixed', 'webEditor');
 
     editor.on('change', (cm: CodeMirror.Editor) => {

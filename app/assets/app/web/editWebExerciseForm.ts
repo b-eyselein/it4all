@@ -3,13 +3,14 @@ import * as $ from 'jquery';
 import * as CodeMirror from 'codemirror';
 import {initEditor} from "../editorHelpers";
 import 'codemirror/mode/htmlmixed/htmlmixed';
+import {domReady} from "../otherHelpers";
 
 let addHtmlTaskBtn: JQuery<HTMLButtonElement>;
 let htmlTasksDiv: JQuery<HTMLDivElement>;
 
 let editor: CodeMirror.Editor;
 
-$(() => {
+domReady(() => {
     editor = initEditor('htmlmixed', 'sampleSolution_editor');
     editor.on('change', () => {
         console.info(editor.getValue());

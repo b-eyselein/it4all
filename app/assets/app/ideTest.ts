@@ -1,6 +1,7 @@
 import * as $ from 'jquery';
 import * as CodeMirror from 'codemirror';
 import {initEditor} from './editorHelpers';
+import {domReady} from "./otherHelpers";
 
 let filenames: string[] = [];
 let activeFile: string;
@@ -95,7 +96,7 @@ function uploadFiles(event: Event): void {
     });
 }
 
-$(() => {
+domReady(() => {
     activeFile = $('.btn-primary').data('filename');
 
     fileBtns = $('.fileBtn');

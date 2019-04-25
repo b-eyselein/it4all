@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-
+import {domReady} from "../otherHelpers";
 
 let addSampleSolBtn: JQuery<HTMLButtonElement>;
 let sampleSolsDiv: JQuery<HTMLDivElement>;
@@ -28,7 +28,7 @@ function deleteSampleSolution(event: Event): void {
 }
 
 
-$(() => {
+domReady(() => {
     sampleSolsDiv = $('#sampleSolsDiv');
     addSampleSolBtn = $('#addSampleSolBtn');
     addSampleSolBtn.on('click', () => {

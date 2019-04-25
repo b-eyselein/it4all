@@ -88,26 +88,6 @@ export function getIdeWorkspace(): IdeWorkspace {
     };
 }
 
-
-export function uploadFiles<ResultType>(testButton: HTMLButtonElement, onSuccess: (ResultType) => void, onError): void {
-
-    const url: string = testButton.dataset['href'];
-
-    const fileValues: IdeWorkspace = getIdeWorkspace();
-
-    const token: string = document.querySelector<HTMLInputElement>('input[name="csrfToken"]').value as string;
-
-    const headers: Headers = new Headers({
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Csrf-Token": token
-    });
-
-    fetch(url, {method: 'PUT', body: JSON.stringify(fileValues), headers})
-        .then(response => response.json().then(onSuccess))
-        .catch(onError);
-}
-
 export function setupEditor(): Promise<void | CodeMirror.Editor> {
     fileChangeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.fileBtn'));
 

@@ -115,7 +115,7 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   class RegexSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "regex_sample_solutions")
 
-  class RegexUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "regex_solutions")
+  class RegexUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "regex_user_solutions")
 
 
   class RegexExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "regex_exercise_reviews") {

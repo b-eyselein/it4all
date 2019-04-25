@@ -1,8 +1,14 @@
 import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
 
-import {focusOnCorrection, testTextExerciseSolution} from "../textExercise";
-import {domReady, initShowSampleSolBtn, StringSampleSolution, displayStringSampleSolution} from "../otherHelpers";
+import {
+    displayStringSampleSolution,
+    domReady,
+    focusOnCorrection,
+    initShowSampleSolBtn,
+    StringSampleSolution,
+    testExerciseSolution
+} from "../otherHelpers";
 
 let editor: CodeMirror.Editor;
 
@@ -79,7 +85,7 @@ function testSol(): void {
 
     testBtn.disabled = true;
 
-    testTextExerciseSolution<string, RegexCorrectionResult>(testBtn, learnerSolution, onRegexCorrectionSuccess);
+    testExerciseSolution<string, RegexCorrectionResult>(testBtn, learnerSolution, onRegexCorrectionSuccess);
 }
 
 domReady(() => {

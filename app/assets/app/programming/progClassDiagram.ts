@@ -11,6 +11,7 @@ import {
 } from '../uml/umlInterfaces';
 
 import {COLORS, PAPER_HEIGHT} from '../uml/umlConsts';
+import {domReady} from "../otherHelpers";
 
 const classDiagGraph = new joint.dia.Graph();
 
@@ -111,7 +112,7 @@ function loadClassDiagram(url: string): void {
     });
 }
 
-$(() => {
+domReady(() => {
     let classDiagDiv = $('#classdiagram');
 
     if (classDiagDiv.length === 1) {

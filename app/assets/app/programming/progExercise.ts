@@ -3,7 +3,8 @@ import {initEditor} from '../editorHelpers';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/python/python';
 
-import {renderProgCorrectionSuccess, ProgCorrectionResult, ProgStringSolution} from "./progCorrectionHandler";
+import {ProgCorrectionResult, ProgStringSolution, renderProgCorrectionSuccess} from "./progCorrectionHandler";
+import {domReady} from "../otherHelpers";
 
 export {onProgCorrectionSuccess};
 
@@ -104,7 +105,7 @@ function showSampleSol(): void {
     });
 }
 
-$(() => {
+domReady(() => {
     editor = initEditor('python', 'textEditor');
     editor.on('change', () => {
         solutionChanged = true;

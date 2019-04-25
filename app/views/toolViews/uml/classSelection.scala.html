@@ -1,7 +1,8 @@
 @import model.tools.uml.{UmlToolMain, UmlExercise, UmlCollection, UmlExParts}
 
 @(user: model.User, collection: UmlCollection, exercise: UmlExercise, toolMainObject: UmlToolMain)(
-        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider
+)
 
 @btnText = @{
     "Klassen verifizieren"
@@ -56,11 +57,7 @@
             </div>
         </div>
 
-        <br>
-
-        @*<input type="hidden" class="form-control" name="@model.tools.uml.UmlConsts.learnerSolutionName" id="@model.tools.uml.UmlConsts.learnerSolutionName" required>*@
-
-        <div class="form-group">
+        <div class="form-group my-3">
 
             @helper.CSRF.formField
 
@@ -68,7 +65,7 @@
                 <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#hintModal">
                     <span class="octicon octicon-info"></span>
                 </button>
-                <button data-url="@coll.routes.CollectionController.correctLive(toolMainObject.urlPart, collection.id, exercise.id, UmlExParts.ClassSelection.urlName)"
+                <button data-href="@coll.routes.CollectionController.correctLive(toolMainObject.urlPart, collection.id, exercise.id, UmlExParts.ClassSelection.urlName)"
                 class="btn btn-primary w-100" id="testBtn">@btnText</button>
                 <a href="@coll.routes.CollectionController.exercise(toolMainObject.urlPart, collection.id, exercise.id, UmlExParts.DiagramDrawingHelp.urlName)"
                 class="btn btn-secondary w-100">Zum nächsten Aufgabenteil</a>
@@ -77,9 +74,9 @@
 
         <hr>
 
-        <div id="correctionDiv" hidden>
+        <div>
             <h2>Korrektur</h2>
-            <div id="correction"></div>
+            <div id="correctionDiv"></div>
         </div>
 
     </div>

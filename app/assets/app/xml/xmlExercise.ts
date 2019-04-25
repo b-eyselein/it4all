@@ -3,8 +3,14 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/dtd/dtd';
 import {initEditor} from '../editorHelpers';
 
-import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
-import {domReady, escapeHtml, initShowSampleSolBtn, SampleSolution} from "../otherHelpers";
+import {
+    domReady,
+    escapeHtml,
+    focusOnCorrection,
+    initShowSampleSolBtn,
+    SampleSolution,
+    testExerciseSolution
+} from "../otherHelpers";
 
 import {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult} from './xmlGrammarCorrection';
 import {renderXmlDocumentCorrection, XmlDocumentCorrectionResult} from './xmlDocumentCorrection';
@@ -45,7 +51,7 @@ function testSol(): void {
 
     testBtn.disabled = true;
 
-    testTextExerciseSolution<string, XmlGrammarCorrectionResult | XmlDocumentCorrectionResult>(
+    testExerciseSolution<string, XmlGrammarCorrectionResult | XmlDocumentCorrectionResult>(
         testBtn, learnerSolution, reponse => onXmlCorrectionSuccess(isDocumentPart, reponse));
 }
 

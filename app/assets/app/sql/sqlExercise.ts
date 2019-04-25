@@ -2,8 +2,14 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/sql/sql';
 import {initEditor} from "../editorHelpers";
 
-import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
-import {displayStringSampleSolution, domReady, initShowSampleSolBtn, StringSampleSolution} from "../otherHelpers";
+import {
+    displayStringSampleSolution,
+    domReady,
+    focusOnCorrection,
+    initShowSampleSolBtn,
+    StringSampleSolution,
+    testExerciseSolution
+} from "../otherHelpers";
 
 import {MatchingResult} from "../matches";
 import {ExecutionResultsObject, renderExecution, renderMatchingResult} from "./sqlRenderCorrection";
@@ -94,7 +100,7 @@ function testSol(): void {
 
     testBtn.disabled = true;
 
-    testTextExerciseSolution<string, SqlCorrectionResult>(testBtn, learnerSolution, onSqlCorrectionSuccess);
+    testExerciseSolution<string, SqlCorrectionResult>(testBtn, learnerSolution, onSqlCorrectionSuccess);
 }
 
 domReady(() => {

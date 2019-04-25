@@ -142,7 +142,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class RoseSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "rose_samples") {
+  class RoseSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "rose_sample_solutions") {
 
     def sample: Rep[String] = column[String](sampleName)
 
@@ -156,7 +156,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  class RoseSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "rose_solutions") {
+  class RoseSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "rose_user_solutions") {
 
     def solution: Rep[String] = column[String](solutionName)
 

@@ -3,6 +3,7 @@ import * as joint from 'jointjs';
 import * as _ from 'lodash';
 
 import {MyPosition, Robot, RobotCell, SimulatorCoordinates, SimulatorThings} from "./simulatorElements";
+import {domReady} from "../otherHelpers";
 
 export {FIELD_SIZE_CELLS, optimalCellSize, instantiateAll, CompleteRunResult}
 
@@ -146,7 +147,7 @@ function moveRobot(robot: Robot, direction: SimulatorCoordinates): void {
 function instantiateField(element: JQuery, start: MyPosition, width: number, height: number, actions: string[]): SimulatorThings {
     let graph = new joint.dia.Graph();
 
-    new joint.dia.Paper({el: element,  model: graph, width, height, interactive: false});
+    new joint.dia.Paper({el: element, model: graph, width, height, interactive: false});
 
     let cells = [];
     for (let w of _.range(FIELD_SIZE_CELLS.x)) {
@@ -206,9 +207,8 @@ function instantiateAll(runResult: CompleteRunResult): void {
     updateHtml();
 }
 
-$(() => {
+domReady(() => {
     stepBackBtn = $('#stepBackBtn');
     stepOnBtn = $('#stepOnBtn');
     playBtn = $('#playBtn');
-
 });

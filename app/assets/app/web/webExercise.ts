@@ -3,10 +3,10 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import {WebCompleteResult, WebSampleSolution} from './webInterfaces';
 import {renderWebCompleteResult} from './webCorrection';
-import {domReady, escapeHtml, initShowSampleSolBtn} from '../otherHelpers';
+import {domReady, escapeHtml, initShowSampleSolBtn, testExerciseSolution} from '../otherHelpers';
 
 import {ExerciseFile, IdeWorkspace} from '../tools/ideExerciseHelpers';
-import {focusOnCorrection, getIdeWorkspace, setupEditor, uploadFiles} from '../tools/ideExercise';
+import {focusOnCorrection, getIdeWorkspace, setupEditor} from '../tools/ideExercise';
 
 let uploadBtn: HTMLButtonElement;
 let previewChangedDiv: HTMLDivElement;
@@ -17,8 +17,6 @@ let solutionChanged: boolean = false;
 let editor: CodeMirror.Editor;
 
 function onWebCorrectionSuccess(result: WebCompleteResult): void {
-    console.warn(JSON.stringify(result, null, 2));
-
     solutionChanged = false;
 
     uploadBtn.disabled = false;
@@ -56,9 +54,7 @@ function updatePreview(): void {
             previewIsUpToDate = true;
             previewChangedDiv.hidden = true;
         })
-        .catch(reason => {
-            console.error(reason);
-        });
+        .catch(reason => console.error(reason));
 }
 
 function showSampleSolFile(exFile: ExerciseFile): string {
@@ -109,7 +105,7 @@ domReady(() => {
     uploadBtn = document.getElementById('uploadBtn') as HTMLButtonElement;
     uploadBtn.onclick = () => {
         uploadBtn.disabled = true;
-        uploadFiles<WebCompleteResult>(uploadBtn, onWebCorrectionSuccess, onWebCorrectionError);
+        testExerciseSolution<IdeWorkspace, WebCompleteResult>(uploadBtn, getIdeWorkspace(), onWebCorrectionSuccess);
     };
 
     initShowSampleSolBtn<WebSampleSolution[]>(showSampleSolution);

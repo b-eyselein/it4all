@@ -1,4 +1,5 @@
 import * as $ from 'jquery';
+import {domReady} from "../otherHelpers";
 
 let testBtn: JQuery, solutionInput: JQuery;
 
@@ -64,7 +65,7 @@ function testSol(): void {
     });
 }
 
-$(() => {
+domReady(() => {
     testBtn = $('#testBtn');
     testBtn.on('click', testSol);
 

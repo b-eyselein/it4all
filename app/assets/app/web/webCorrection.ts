@@ -112,7 +112,6 @@ export function renderWebCompleteResult(corr: WebCompleteResult): void {
         solutionSavedMsg = 'Ihre Lösung konnte nicht gespeichert werden!';
     }
 
-
     let pointMsgClass: string;
     if (corr.success) {
         pointMsgClass = 'success';
@@ -139,8 +138,8 @@ export function renderWebCompleteResult(corr: WebCompleteResult): void {
         html += '</ul>';
     }
 
-    $('#correction').html(html);
-    $('#correctionDiv').prop('hidden', false);
+    document.querySelector<HTMLDivElement>('#correction').innerHTML = html;
+    document.querySelector<HTMLDivElement>('#correctionDiv').hidden = false;
 
 }
 

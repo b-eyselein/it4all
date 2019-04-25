@@ -97,9 +97,9 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   }
 
 
-  class SqlSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "sql_samples")
+  class SqlSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "sql_sample_solutions")
 
-  class SqlUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "sql_solutions")
+  class SqlUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "sql_user_solutions")
 
 
   class SqlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "sql_exercise_reviews") {
