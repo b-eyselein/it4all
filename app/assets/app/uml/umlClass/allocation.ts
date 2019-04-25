@@ -1,14 +1,13 @@
-import * as $ from 'jquery';
 import {UmlClassAttribute, UmlClassMethod, UmlSolution} from "../umlInterfaces";
 import {UmlClassDiagCorrectionResult} from "./classDiagCorrection";
+import {domReady, testExerciseSolution} from "../../otherHelpers";
 
-let testBtn: JQuery;
+let testBtn: HTMLButtonElement;
 
-function readAttributeElement(elem: HTMLInputElement): UmlClassAttribute | null {
-    if (elem.checked) {
-        const jElement = $(elem);
+function readAttributeElement(element: HTMLInputElement): UmlClassAttribute | null {
+    if (element.checked) {
         return {
-            visibility: jElement.data('visibility'), name: jElement.data('value'), type: jElement.data('type'),
+            visibility: element.dataset['visibility'], name: element.dataset['value'], type: element.dataset['type'],
             isDerived: false, isAbstract: false, isStatic: false
         };
     } else {
@@ -17,11 +16,10 @@ function readAttributeElement(elem: HTMLInputElement): UmlClassAttribute | null 
 }
 
 
-function readMethodElement(elem: HTMLInputElement): UmlClassMethod | null {
-    if (elem.checked) {
-        const jElement = $(elem);
+function readMethodElement(element: HTMLInputElement): UmlClassMethod | null {
+    if (element.checked) {
         return {
-            visibility: jElement.data('visibility'), name: jElement.data('value'), type: jElement.data('type'),
+            visibility: element.dataset['visibility'], name: element.dataset['value'], type: element.dataset['type'],
             parameters: '', isAbstract: false, isStatic: false
         };
     } else {
@@ -35,32 +33,37 @@ function readAllocation(): UmlSolution {
     };
 
     try {
-        $('.card[data-classname]').map((index: number, elem: HTMLElement) => {
-            const jElement: JQuery = $(elem);
+        Array.from(document.querySelectorAll<HTMLDivElement>('.card[data-classname]'))
+            .map((element: HTMLDivElement) => {
+                let attributes: UmlClassAttribute[] = [];
 
-            let attributes: UmlClassAttribute[] = [];
-            jElement.find('section.attributeList').find('input').each((index, element: HTMLInputElement) => {
-                const readAttribute: UmlClassAttribute | null = readAttributeElement(element);
-                if (readAttribute != null) {
-                    attributes.push(readAttribute);
-                }
-            });
+                element.querySelector<HTMLDivElement>('section.attributeList')
+                    .querySelectorAll<HTMLInputElement>('input')
+                    .forEach((element: HTMLInputElement) => {
+                        const readAttribute: UmlClassAttribute | null = readAttributeElement(element);
+                        if (readAttribute != null) {
+                            attributes.push(readAttribute);
+                        }
+                    });
 
-            let methods: UmlClassMethod[] = [];
-            jElement.find('section.methodList').find('input').each((index, element: HTMLInputElement) => {
-                const readMethod: UmlClassMethod | null = readMethodElement(element);
-                if (readMethod != null) {
-                    methods.push(readMethod);
-                }
-            });
+                let methods: UmlClassMethod[] = [];
 
-            solution.classes.push({
-                classType: jElement.data('classtype'),
-                name: jElement.data('classname'),
-                attributes,
-                methods
+                element.querySelector<HTMLDivElement>('section.methodList')
+                    .querySelectorAll<HTMLInputElement>('input')
+                    .forEach((element: HTMLInputElement) => {
+                        const readMethod: UmlClassMethod | null = readMethodElement(element);
+                        if (readMethod != null) {
+                            methods.push(readMethod);
+                        }
+                    });
+
+                return {
+                    classType: element.dataset['classtype'],
+                    name: element.dataset['classname'],
+                    attributes,
+                    methods
+                };
             });
-        });
     } catch (err) {
         console.error(err);
     }
@@ -69,48 +72,30 @@ function readAllocation(): UmlSolution {
 }
 
 function onMemberAllocationCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
-    testBtn.prop('disabled', false);
+    testBtn.disabled = false;
 
     // FIXME: implement!
-
     console.warn(JSON.stringify(response, null, 2));
 }
 
 function onMemberAllocationCorrectionError(jqXHR): void {
-    testBtn.prop('disabled', false);
+    testBtn.disabled = false;
     console.error(jqXHR);
 }
 
 function testSol() {
-    testBtn.prop('disabled', true);
+    testBtn.disabled = true;
 
-    let solution: UmlSolution = readAllocation();
-
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json', // return type
-        contentType: 'application/json', // type of message to server
-        url: $('#testBtn').data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onMemberAllocationCorrectionSuccess,
-        error: onMemberAllocationCorrectionError
-    });
+    testExerciseSolution<UmlSolution, UmlClassDiagCorrectionResult>(testBtn, readAllocation(), onMemberAllocationCorrectionSuccess)
 }
 
-$(() => {
-    testBtn = $('#testBtn');
-    testBtn.on('click', testSol);
-
-    $('#allocationForm').on('submit', readAllocation);
+domReady(() => {
+    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    testBtn.onclick = testSol;
 
     let solutionChanged = false; // TODO!
 
-    $('#endSolveAnchor').on('click', () => {
+    document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
         return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
-    });
+    }
 });
