@@ -24,19 +24,6 @@ interface RegexCorrectionResult {
     results: RegexSingleCorrectionResult[]
 }
 
-function testSol(): void {
-    const solution: string = editor.getValue().trim();
-
-    if (solution.length === 0) {
-        alert('Sie können keine leere Lösung abgeben!');
-        return;
-    }
-
-    testBtn.disabled = true;
-
-    testTextExerciseSolution<string, RegexCorrectionResult>(testBtn, solution, onRegexCorrectionSuccess);
-}
-
 function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void {
     testBtn.disabled = false;
 
@@ -82,12 +69,28 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
     focusOnCorrection();
 }
 
+function testSol(): void {
+    const learnerSolution: string = editor.getValue().trim();
+
+    if (learnerSolution.length === 0) {
+        alert('Sie können keine leere Lösung abgeben!');
+        return;
+    }
+
+    testBtn.disabled = true;
+
+    testTextExerciseSolution<string, RegexCorrectionResult>(testBtn, learnerSolution, onRegexCorrectionSuccess);
+}
+
 domReady(() => {
-    initShowSampleSolBtn<StringSampleSolution[]>((regexSampleSolutions: StringSampleSolution[]) =>
+    initShowSampleSolBtn<StringSampleSolution[]>(regexSampleSolutions =>
         regexSampleSolutions.map(displayStringSampleSolution).join('\n')
     );
 
     editor = initEditor('', 'textEditor');
+    editor.on('change', () => {
+        solutionChanged = true;
+    })
 
     document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
         return !solutionChanged || confirm('Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?');

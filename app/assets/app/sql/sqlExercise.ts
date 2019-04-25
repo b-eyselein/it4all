@@ -1,7 +1,5 @@
-import * as $ from 'jquery';
-
-import 'codemirror/mode/sql/sql';
 import * as CodeMirror from 'codemirror';
+import 'codemirror/mode/sql/sql';
 import {initEditor} from "../editorHelpers";
 
 import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
@@ -10,9 +8,10 @@ import {displayStringSampleSolution, domReady, initShowSampleSolBtn, StringSampl
 import {MatchingResult} from "../matches";
 import {ExecutionResultsObject, renderExecution, renderMatchingResult} from "./sqlRenderCorrection";
 
+let solutionChanged: boolean = false;
+
 let editor: CodeMirror.Editor;
 let testBtn: HTMLButtonElement;
-let correctionDiv: HTMLDivElement;
 
 interface SqlResult {
     solutionSaved: boolean
@@ -38,7 +37,7 @@ interface SqlCorrectionResult {
 function onSqlCorrectionSuccess(response: SqlResult): void {
     testBtn.disabled = false;
 
-    correctionDiv.innerHTML = '';
+    solutionChanged = false;
 
     let results: string[] = [];
 
@@ -80,17 +79,15 @@ function onSqlCorrectionSuccess(response: SqlResult): void {
     }
 
     const newHtml: string = results.map(r => `<p>${r}</p>`).join('\n');
-    correctionDiv.innerHTML = newHtml;
+    document.querySelector<HTMLDivElement>('#correction').innerHTML = newHtml;
 
     focusOnCorrection();
 }
 
-function testSqlSol(): void {
-    document.querySelector<HTMLDivElement>('#correctionDiv').hidden = false;
-
+function testSol(): void {
     let learnerSolution: string = editor.getValue();
 
-    if (learnerSolution === "") {
+    if (learnerSolution.length === 0) {
         alert("Sie können keine leere Query abgeben!");
         return;
     }
@@ -101,15 +98,19 @@ function testSqlSol(): void {
 }
 
 domReady(() => {
-    editor = initEditor('text/x-mysql', 'textEditor');
-
-    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
-    testBtn.onclick = testSqlSol;
-
-    correctionDiv = document.querySelector<HTMLDivElement>('#correction');
-
     initShowSampleSolBtn<StringSampleSolution[]>(sqlSamples =>
         sqlSamples.map(displayStringSampleSolution).join('\n')
     );
 
+    editor = initEditor('text/x-mysql', 'textEditor');
+    editor.on('change', () => {
+        solutionChanged = true;
+    })
+
+    document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
+        return !solutionChanged || confirm('Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?');
+    };
+
+    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    testBtn.onclick = testSol;
 });

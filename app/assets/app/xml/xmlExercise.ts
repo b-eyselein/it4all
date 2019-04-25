@@ -3,11 +3,11 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/dtd/dtd';
 import {initEditor} from '../editorHelpers';
 
+import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
+import {domReady, escapeHtml, initShowSampleSolBtn, SampleSolution} from "../otherHelpers";
+
 import {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult} from './xmlGrammarCorrection';
 import {renderXmlDocumentCorrection, XmlDocumentCorrectionResult} from './xmlDocumentCorrection';
-
-import {focusOnCorrection, testTextExerciseSolution} from '../textExercise';
-import {domReady, escapeHtml, initShowSampleSolBtn} from "../otherHelpers";
 
 let editor: CodeMirror.Editor;
 
@@ -17,12 +17,7 @@ let solutionChanged: boolean;
 let isDocumentPart: boolean;
 
 
-interface XmlSampleSolution {
-    id: number;
-    sample: {
-        document: string;
-        grammar: string;
-    };
+interface XmlSampleSolution extends SampleSolution<{ document: string, grammar: string }> {
 }
 
 function onXmlCorrectionSuccess(isDocumentPart: boolean, response: (XmlGrammarCorrectionResult | XmlDocumentCorrectionResult)): void {
@@ -41,16 +36,17 @@ function onXmlCorrectionSuccess(isDocumentPart: boolean, response: (XmlGrammarCo
 }
 
 function testSol(): void {
+    const learnerSolution: string = editor.getValue();
+
+    if (learnerSolution.length === 0) {
+        alert("Sie können keine leere Query abgeben!");
+        return;
+    }
+
     testBtn.disabled = true;
 
-    const solution: string = editor.getValue();
-
     testTextExerciseSolution<string, XmlGrammarCorrectionResult | XmlDocumentCorrectionResult>(
-        testBtn, solution, reponse => onXmlCorrectionSuccess(isDocumentPart, reponse));
-}
-
-function endSolve(): boolean {
-    return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
+        testBtn, learnerSolution, reponse => onXmlCorrectionSuccess(isDocumentPart, reponse));
 }
 
 function renderXmlSample(xmlSample: XmlSampleSolution): string {
@@ -61,16 +57,20 @@ function renderXmlSample(xmlSample: XmlSampleSolution): string {
     }
 }
 
-function showXmlSampleSolution(xmlSampleSolutions: XmlSampleSolution[]): string {
-    return xmlSampleSolutions.map(xmlSampleSol => `
+function displayXmlSampleSolution(xmlSampleSolution: XmlSampleSolution): string {
+    return `
 <div class="card my-3">
     <div class="card-body bg-light">
-        <pre>${renderXmlSample(xmlSampleSol)}</pre>
+        <pre>${renderXmlSample(xmlSampleSolution)}</pre>
     </div>
-</div>`).join('\n');
+</div>`.trim();
 }
 
 domReady(() => {
+    initShowSampleSolBtn<XmlSampleSolution[]>(xmlSamples =>
+        xmlSamples.map(displayXmlSampleSolution).join('\n')
+    );
+
     isDocumentPart = document.querySelector<HTMLInputElement>('#exercisePart').value === 'document';
     const language: string = isDocumentPart ? 'xml' : 'application/xml-dtd';
 
@@ -79,10 +79,10 @@ domReady(() => {
         solutionChanged = true;
     });
 
-    initShowSampleSolBtn<XmlSampleSolution[]>(showXmlSampleSolution);
+    document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
+        return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
+    };
 
     testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
     testBtn.onclick = testSol;
-
-    document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = endSolve;
 });
