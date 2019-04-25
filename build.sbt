@@ -67,49 +67,44 @@ dependencyOverrides ++= Seq(
   "org.webjars.npm" % "types__jquery" % "3.3.29",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
   "org.webjars.npm" % "types__sizzle" % "2.3.2",
-  "org.webjars.npm" % "types__estree" % "0.0.39"
-  //  , "org.webjars.npm" % "types__tern" % "0.22.1"
+  "org.webjars.npm" % "types__estree" % "0.0.39",
 )
 
 excludeDependencies ++= Seq(
-  // exclude tern since it has an compile error
+  // exclude tern since it has an compile error?
   ExclusionRule(organization = "org.webjars.npm", name = "types__tern")
 )
 
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
-  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.2" % Test,
-
-  // db
-  "mysql" % "mysql-connector-java" % "8.0.15",
-
-  "com.typesafe.play" %% "play-slick" % "4.0.0",
-  "com.typesafe.play" %% "play-slick-evolutions" % "4.0.0",
-
-  // Better enums for scala
-  "com.beachape" %% "enumeratum-play" % "1.5.16",
-  "com.beachape" %% "enumeratum-play-json" % "1.5.16",
-
   // Dependency injection
   guice,
 
-  "net.jcazevedo" %% "moultingyaml" % "0.4.0",
-
   ws,
 
-  "com.github.t3hnar" %% "scala-bcrypt" % "4.0",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.2" % Test,
 
-  // Betterfiles
-  "com.github.pathikrit" %% "better-files" % "3.7.1",
+  "mysql" % "mysql-connector-java" % "8.0.15", // GPL 2.0
+
+  "com.typesafe.play" %% "play-slick" % "4.0.0", // Apache 2.0
+  "com.typesafe.play" %% "play-slick-evolutions" % "4.0.0", // Apache 2.0
+
+  "com.beachape" %% "enumeratum-play" % "1.5.16", // MIT
+  "com.beachape" %% "enumeratum-play-json" % "1.5.16", // MIT
+
+  "net.jcazevedo" %% "moultingyaml" % "0.4.0", // MIT
+
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.0", // Apache 2.0
+
+  "com.github.pathikrit" %% "better-files" % "3.7.1", // MIT
+
+  "com.spotify" % "docker-client" % "8.15.2", // Apache 2.0
 
   // Json Schema Parser/Validator for Json
-  "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5-M4",
+  "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5-M4", // Apache 2.0
 
-  // MyBatis and JSqlParser for SQL
-  "com.github.jsqlparser" % "jsqlparser" % "1.4",
-
-  // Docker
-  "com.spotify" % "docker-client" % "8.15.2",
+  // Sql
+  "com.github.jsqlparser" % "jsqlparser" % "1.4", // Apache 2.0
 
   // DTD Parser
   "de.uniwue" %% "scala_dtd" % "0.4.0",
