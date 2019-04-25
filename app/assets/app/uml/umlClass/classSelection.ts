@@ -42,7 +42,7 @@ function explainClassResult(classResult: UmlClassMatch, alertClass: string, glyp
     }
 }
 
-function readClass(name): UmlClass {
+function readClass(name: string): UmlClass {
     return {name, classType: 'CLASS', attributes: [], methods: []};
 }
 

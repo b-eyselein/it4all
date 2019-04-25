@@ -28,10 +28,10 @@ object UmlToolForms extends ToolForms[UmlExercise, UmlCollection, UmlExerciseRev
     "isAbstract" -> boolean
   )(UmlMethod.apply)(UmlMethod.unapply)
 
-  private val positionMapping: Mapping[Position] = mapping(
+  private val positionMapping: Mapping[MyPosition] = mapping(
     xCoordName -> number,
     yCoordName -> number
-  )(Position.apply)(Position.unapply)
+  )(MyPosition.apply)(MyPosition.unapply)
 
   private val classMapping = mapping(
     classTypeName -> UmlClassType.formField,

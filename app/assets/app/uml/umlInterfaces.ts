@@ -1,19 +1,4 @@
-export {
-    UmlClass,
-    UmlClassMember,
-    UmlClassMethod,
-    UmlClassAttribute,
-    UmlImplementation,
-    UmlAssociation,
-    UmlSolution,
-    VISIBILITIES,
-    CLASS_TYPES,
-    ExerciseParameters,
-    buildAttributeString,
-    buildMethodString
-}
-
-const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
+export const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
 
 export enum ASSOC_TYPES {
     ASSOCIATION = 'Assozation',
@@ -21,14 +6,14 @@ export enum ASSOC_TYPES {
     COMPOSITION = 'Komposition',
 }
 
-const VISIBILITIES = ['+', '-', '#', '~'];
+export const VISIBILITIES = ['+', '-', '#', '~'];
 
 export enum CARDINALITIES {
     SINGLE = '1',
     UNBOUND = '*'
 }
 
-function buildMethodString(cm: UmlClassMethod): string {
+export function buildMethodString(cm: UmlClassMethod): string {
     let modifier = [];
 
     if (cm.isAbstract)
@@ -40,7 +25,7 @@ function buildMethodString(cm: UmlClassMethod): string {
     return cm.visibility + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + cm.name + '(' + cm.parameters + '): ' + cm.type;
 }
 
-function buildAttributeString(ca: UmlClassAttribute): string {
+export function buildAttributeString(ca: UmlClassAttribute): string {
     let modifier = [];
 
     if (ca.isAbstract)
@@ -55,18 +40,18 @@ function buildAttributeString(ca: UmlClassAttribute): string {
     return ca.visibility + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + ca.name + ': ' + ca.type;
 }
 
-interface MyPosition {
+export interface MyPosition {
     x: number,
     y: number
 }
 
-interface UmlSolution {
+export interface UmlSolution {
     classes: UmlClass[],
     associations: UmlAssociation[],
     implementations: UmlImplementation[]
 }
 
-interface UmlClass {
+export interface UmlClass {
     name: string
     classType: string
     attributes: UmlClassAttribute[]
@@ -74,7 +59,7 @@ interface UmlClass {
     position?: MyPosition
 }
 
-interface UmlClassMember {
+export interface UmlClassMember {
     visibility: string
     name: string
     type: string
@@ -82,21 +67,23 @@ interface UmlClassMember {
     isAbstract: boolean
 }
 
-interface UmlClassMethod extends UmlClassMember {
+export interface UmlClassMethod extends UmlClassMember {
     parameters: string
 }
 
-interface UmlClassAttribute extends UmlClassMember {
+export interface UmlClassAttribute extends UmlClassMember {
     isDerived: boolean
 }
 
-interface UmlImplementation {
+export interface UmlImplementation {
     subClass: string
     superClass: string
 }
 
-interface UmlAssociation {
-    assocType: string
+export type LinkType = 'COMPOSITION' | 'AGGREGATION' | 'ASSOCIATION';
+
+export interface UmlAssociation {
+    assocType: LinkType
     assocName: string
     firstEnd: string
     firstMult: string
@@ -104,7 +91,7 @@ interface UmlAssociation {
     secondMult: string
 }
 
-interface ExerciseParameters {
+export interface ExerciseParameters {
     methodDisplay: string,
     methodDeclaration: string,
     methodName: string,

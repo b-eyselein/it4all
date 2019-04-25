@@ -31,46 +31,11 @@ object UmlClassDiagramJsonFormat {
 
   private implicit val umlVisibilityWrites: Writes[UmlVisibility] = umlVis => JsString(umlVis.representant)
 
-  private implicit val umlImplementationReads: Reads[UmlImplementation] = (
-    (__ \ subClassName).read[String] and
-      (__ \ superClassName).read[String]
-    ) (UmlImplementation.apply(_, _))
+  private implicit val umlImplementationFormat: Format[UmlImplementation] = Json.format[UmlImplementation]
 
-  private implicit val umlImplementationWrites: Writes[UmlImplementation] = (
-    (__ \ subClassName).write[String] and
-      (__ \ superClassName).write[String]
-    ) (unlift(UmlImplementation.unapply))
+  private implicit val umlAssociationFormat: Format[UmlAssociation] = Json.format[UmlAssociation]
 
-
-  private implicit val umlAssociationReads: Reads[UmlAssociation] = (
-    (__ \ associationTypeName).read[UmlAssociationType] and
-      (__ \ associationNameName).readNullable[String] and
-      (__ \ firstEndName).read[String] and
-      (__ \ firstMultName).read[UmlMultiplicity] and
-      (__ \ secondEndName).read[String] and
-      (__ \ secondMultName).read[UmlMultiplicity]
-    ) (UmlAssociation.apply(_, _, _, _, _, _))
-
-  private implicit val umlAssociationWrites: Writes[UmlAssociation] = (
-    (__ \ associationTypeName).write[UmlAssociationType] and
-      (__ \ associationNameName).writeNullable[String] and
-      (__ \ firstEndName).write[String] and
-      (__ \ firstMultName).write[UmlMultiplicity] and
-      (__ \ secondEndName).write[String] and
-      (__ \ secondMultName).write[UmlMultiplicity]
-    ) (unlift(UmlAssociation.unapply))
-
-
-  private implicit val positionReads: Reads[Position] = (
-    (__ \ "x").read[Int] and
-      (__ \ "y").read[Int]
-    ) (Position.apply(_, _))
-
-  private implicit val positionWrites: Writes[Position] = (
-    (__ \ "x").write[Int] and
-      (__ \ "y").write[Int]
-    ) (unlift(Position.unapply))
-
+  private implicit val positionFormat: Format[MyPosition] = Json.format[MyPosition]
 
   private implicit val umlAttributeReads: Reads[UmlAttribute] = (
     (__ \ "visibility").read[UmlVisibility](umlVisibilityReads) and
@@ -114,7 +79,7 @@ object UmlClassDiagramJsonFormat {
       (__ \ nameName).read[String] and
       (__ \ attributesName).readWithDefault[Seq[UmlAttribute]](Seq[UmlAttribute]()) and
       (__ \ methodsName).readWithDefault[Seq[UmlMethod]](Seq[UmlMethod]()) and
-      (__ \ positionName).readNullable[Position]
+      (__ \ positionName).readNullable[MyPosition]
     ) (UmlClass.apply(_, _, _, _, _))
 
   private implicit val umlClassWrites: Writes[UmlClass] = (
@@ -122,23 +87,9 @@ object UmlClassDiagramJsonFormat {
       (__ \ nameName).write[String] and
       (__ \ attributesName).write[Seq[UmlAttribute]] and
       (__ \ methodsName).write[Seq[UmlMethod]] and
-      (__ \ positionName).writeNullable[Position]
+      (__ \ positionName).writeNullable[MyPosition]
     ) (unlift(UmlClass.unapply))
 
-
-  private implicit val umlSolutionReads: Reads[UmlClassDiagram] = (
-    (__ \ classesName).read[Seq[UmlClass]] and
-      (__ \ associationsName).read[Seq[UmlAssociation]] and
-      (__ \ implementationsName).read[Seq[UmlImplementation]]
-    ) (UmlClassDiagram.apply(_, _, _))
-
-
-  private implicit val umlSolutionWrites: Writes[UmlClassDiagram] = (
-    (__ \ classesName).write[Seq[UmlClass]] and
-      (__ \ associationsName).write[Seq[UmlAssociation]] and
-      (__ \ implementationsName).write[Seq[UmlImplementation]]
-    ) (unlift(UmlClassDiagram.unapply))
-
-  val umlSolutionJsonFormat: Format[UmlClassDiagram] = Format(umlSolutionReads, umlSolutionWrites)
+  val umlSolutionJsonFormat: Format[UmlClassDiagram] = Json.format[UmlClassDiagram]
 
 }

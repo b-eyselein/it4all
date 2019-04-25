@@ -1,17 +1,18 @@
 import * as $ from 'jquery';
 import * as joint from 'jointjs';
-import * as _ from 'lodash';
 
+import 'lodash';
 import 'backbone';
 
 import {DEF_GRID, GRID_SIZE, PAPER_HEIGHT} from "../umlConsts";
 import {
+    LinkType,
     UmlAssociation,
     UmlClass,
     UmlClassAttribute,
     UmlClassMethod,
     UmlImplementation,
-    UmlSolution
+    UmlSolution,
 } from "../umlInterfaces";
 
 import {MyJointClass, MyJointClassView, STD_CLASS_HEIGHT, STD_CLASS_WIDTH} from "./classDiagElements";
@@ -23,6 +24,7 @@ import {
     explainImplResult,
     UmlClassDiagCorrectionResult,
 } from "./classDiagCorrection";
+import {domReady, testExerciseSolution} from "../../otherHelpers";
 
 export {classDiagGraph, classDiagPaper, classDiagTestBtn};
 
@@ -30,11 +32,10 @@ const PADDING = 40;
 
 let chosenCellView = null;
 
-let classDiagTestBtn;
+let classDiagTestBtn: HTMLButtonElement;
 
 const classDiagGraph = new joint.dia.Graph();
 let classDiagPaper;
-
 
 let sel: 'POINTER' | 'CLASS' | 'ABSTRACT' | 'INTERFACE' | 'IMPLEMENTATION' | 'ASSOCIATION' | 'AGGREGATION' | 'COMPOSITION' = 'POINTER';
 
@@ -43,16 +44,11 @@ const SIMPLE_CLASS_PREFIX = 'Klasse_';
 function addUmlClass(umlClass: UmlClass): void {
     classDiagGraph.addCell(new MyJointClass({
         position: umlClass.position,
-
         size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
-
         className: umlClass.name.replace(/ /g, '_'),
-
         classType: umlClass.classType,
-
-        attributes: <UmlClassAttribute[]> umlClass.attributes,
-
-        methods: <UmlClassMethod[]> umlClass.methods,
+        attributes: <UmlClassAttribute[]>umlClass.attributes,
+        methods: <UmlClassMethod[]>umlClass.methods,
     }));
 }
 
@@ -88,9 +84,6 @@ function blankOnPointerDown(evt: Event, x: number, y: number) {
 
 
 function cellOnLeftClick(cellView: joint.dia.CellView, evt): void {
-
-    console.warn('pointer click...');
-
     let model = cellView.model;
 
     switch (model.attributes.type) {
@@ -198,7 +191,7 @@ function addImplementation(sourceId: string, targetId: string): void {
     classDiagGraph.addCell(new joint.shapes.uml.Implementation({source: {id: sourceId}, target: {id: targetId}}));
 }
 
-function addAssociation(sourceId: string, targetId: string, linkType: string, sourceMult: string, targetMult: string): joint.dia.LinkView {
+function addAssociation(sourceId: string, targetId: string, linkType: LinkType, sourceMult: string, targetMult: string): joint.dia.LinkView {
     let members = {
         source: {id: sourceId},
         target: {id: targetId},
@@ -378,8 +371,11 @@ function addDrag(paperJQ: JQuery): void {
 }
 
 function onUmlClassDiagCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
-    classDiagTestBtn.prop('disabled', false);
-    $('#resultDiv').prop('hidden', false);
+    console.warn(JSON.stringify(response, null, 2));
+
+    classDiagTestBtn.disabled = false;
+
+    document.querySelector<HTMLDivElement>('#resultDiv').hidden = false;
 
     let html: string = '';
     if (response.classResult != null) {
@@ -391,12 +387,7 @@ function onUmlClassDiagCorrectionSuccess(response: UmlClassDiagCorrectionResult)
         html += displayMatchingResultList(response.assocAndImplResult.assocResult, 'Assoziationen', explainAssocResult);
     }
 
-    $('#results').html(html);
-}
-
-function onUmlClassDiagCorrectionError(jqXHR): void {
-    classDiagTestBtn.prop('disabled', false);
-    console.error(jqXHR.responseJSON);
+    document.querySelector<HTMLDivElement>('#results').innerHTML = html;
 }
 
 function getClassNameFromCellId(id: string): string {
@@ -432,7 +423,7 @@ function umlImplfromConnection(conn: joint.dia.Link): UmlImplementation {
 
 function umlAssocfromConnection(conn: joint.dia.Link): UmlAssociation {
     return {
-        assocType: getTypeName(conn.attributes.type),
+        assocType: getTypeName(conn.attributes.type) as LinkType,
         assocName: '',        // TODO: name of association!?!
         firstEnd: getClassNameFromCellId(conn.attributes.source.id),
         firstMult: getMultiplicity(conn.attributes.labels[0]),
@@ -443,7 +434,7 @@ function umlAssocfromConnection(conn: joint.dia.Link): UmlAssociation {
 
 
 function testSol(): void {
-    classDiagTestBtn.prop('disabled', true);
+    classDiagTestBtn.disabled = true;
 
     let solution: UmlSolution = {
         classes: classDiagGraph.getCells()
@@ -464,23 +455,10 @@ function testSol(): void {
             .map((conn) => umlImplfromConnection(conn))
     };
 
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json', // return type
-        contentType: 'application/json', // type of message to server
-        url: classDiagTestBtn.data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onUmlClassDiagCorrectionSuccess,
-        error: onUmlClassDiagCorrectionError
-    });
+    testExerciseSolution<UmlSolution, UmlClassDiagCorrectionResult>(classDiagTestBtn, solution, onUmlClassDiagCorrectionSuccess);
 }
 
-$(() => {
+domReady(() => {
     let paperJQ = $('#classDiagPaper');
 
     addHandlersToButtons();
@@ -507,6 +485,6 @@ $(() => {
 
     loadSolution(paperJQ.data('url'));
 
-    classDiagTestBtn = $('#testBtn');
-    classDiagTestBtn.on('click', testSol);
+    classDiagTestBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    classDiagTestBtn.onclick = testSol;
 });

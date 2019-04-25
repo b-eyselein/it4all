@@ -95,7 +95,7 @@
                     @helper.CSRF.formField
 
                     <div class="btn-group d-flex">
-                        <button data-url="@coll.routes.CollectionController.correctLive(toolObject.urlPart, collection.id, exercise.id, curPart.urlName)"
+                        <button data-href="@coll.routes.CollectionController.correctLive(toolObject.urlPart, collection.id, exercise.id, curPart.urlName)"
                         id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>
                         @curPart match {
                             case UmlExParts.DiagramDrawingHelp => {

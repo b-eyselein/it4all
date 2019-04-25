@@ -25,8 +25,8 @@ object UmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[Evaluati
   private implicit def classResultWrites: Writes[MatchingResult[UmlClassMatch]] = _.toJson
 
   private implicit def assocAndImplResultWrites: Writes[(MatchingResult[UmlAssociationMatch], MatchingResult[UmlImplementationMatch])] = (
-    (__ \ "implResult").write[MatchingResult[UmlAssociationMatch]] and
-      (__ \ "assocResult").write[MatchingResult[UmlImplementationMatch]]
+    (__ \ "assocResult").write[MatchingResult[UmlAssociationMatch]] and
+      (__ \ "implResult").write[MatchingResult[UmlImplementationMatch]]
     ) (x => (x._1, x._2))
 
   private implicit def assocResultWrites: Writes[MatchingResult[UmlAssociationMatch]] = _.toJson
