@@ -54,7 +54,11 @@ val webJarDependencies = Seq(
   "org.webjars.npm" % "types__backbone" % "1.3.46", // MIT
 
   "org.webjars.npm" % "codemirror" % "5.46.0", // MIT
-  "org.webjars.npm" % "types__codemirror" % "0.0.74" // MIT
+  "org.webjars.npm" % "types__codemirror" % "0.0.74", // MIT
+
+  //  "org.webjars.npm" % "graphlib" % "2.1.7", // MIT
+  "org.webjars.npm" % "types__graphlib" % "2.1.4" // MIT
+
 )
 
 
