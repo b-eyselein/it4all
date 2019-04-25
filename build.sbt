@@ -36,26 +36,31 @@ resolvers ++= Seq(
 
 
 val webJarDependencies = Seq(
-  "org.webjars.npm" % "jquery" % "3.4.0", "org.webjars.npm" % "types__jquery" % "3.3.29",
+  "org.webjars.npm" % "jquery" % "3.4.0", // MIT
+  "org.webjars.npm" % "types__jquery" % "3.3.29", // MIT
 
-  "org.webjars" % "popper.js" % "1.15.0",
+  "org.webjars" % "popper.js" % "1.15.0", // MIT
 
-  "org.webjars" % "octicons" % "4.3.0",
+  "org.webjars" % "octicons" % "4.3.0", // MIT
 
-  "org.webjars.npm" % "bootstrap" % "4.3.1", "org.webjars.npm" % "types__bootstrap" % "4.2.2",
+  "org.webjars.npm" % "bootstrap" % "4.3.1", // MIT
+  "org.webjars.npm" % "types__bootstrap" % "4.2.2", // MIT, TODO: 4.3.0
 
-  "org.webjars.npm" % "systemjs" % "0.21.6", "org.webjars.npm" % "types__systemjs" % "0.20.6",
+  "org.webjars.npm" % "systemjs" % "0.21.6", // MIT, TODO: 3.1.6
+  "org.webjars.npm" % "types__systemjs" % "0.20.6", // MIT
 
-  "org.webjars.npm" % "jointjs" % "2.2.1",
+  "org.webjars.npm" % "jointjs" % "2.2.1", // MPL-2.0
 
-  "org.webjars.npm" % "types__backbone" % "1.3.45",
+  "org.webjars.npm" % "types__backbone" % "1.3.45", // MIT, Todo: 1.3.46
 
-  "org.webjars.npm" % "lodash" % "4.17.11", // "org.webjars.npm" % "types__lodash" % "4.14.123",
-  "org.webjars.npm" % "types__underscore" % "1.8.9",
+  "org.webjars.npm" % "lodash" % "4.17.11", // MIT
+  "org.webjars.npm" % "types__underscore" % "1.8.9", // MIT, TODO: 1.8.14
 
-  "org.webjars.npm" % "codemirror" % "5.45.0", "org.webjars.npm" % "types__codemirror" % "0.0.72",
+  "org.webjars.npm" % "codemirror" % "5.45.0", // MIT, TODO: 5.46.0
+  "org.webjars.npm" % "types__codemirror" % "0.0.72", // MIT, TODO: 0.0.74
 
-  "org.webjars.npm" % "graphlib" % "2.1.7", "org.webjars.npm" % "types__graphlib" % "2.1.4"
+  "org.webjars.npm" % "graphlib" % "2.1.7", // MIT
+  "org.webjars.npm" % "types__graphlib" % "2.1.4" // MIT
 )
 
 
@@ -66,8 +71,8 @@ resolveFromWebjarsNodeModulesDir := true
 dependencyOverrides ++= Seq(
   "org.webjars.npm" % "types__jquery" % "3.3.29",
   "org.webjars.npm" % "types__underscore" % "1.8.9",
-  "org.webjars.npm" % "types__sizzle" % "2.3.2",
-  "org.webjars.npm" % "types__estree" % "0.0.39",
+  "org.webjars.npm" % "types__sizzle" % "2.3.2", // MIT
+  "org.webjars.npm" % "types__estree" % "0.0.39", // MIT
 )
 
 excludeDependencies ++= Seq(
