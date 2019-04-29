@@ -77,7 +77,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgExercise = ProgExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
-    folderIdentifier = "", functionName = "", outputType = ProgDataTypes.STRING, baseData = None, unitTestType = UnitTestTypes.Simplified,
+    functionName = "", outputType = ProgDataTypes.STRING, baseData = None, unitTestType = UnitTestTypes.Simplified,
     inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[ProgSampleTestData](), maybeClassDiagramPart = None
   )
 
@@ -113,6 +113,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def renderExercise(user: User, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[ProgUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
+
+    println(exercise)
 
     // FIXME: how to get language? ==> GET param?
     val language: ProgLanguage = ProgLanguages.PYTHON_3

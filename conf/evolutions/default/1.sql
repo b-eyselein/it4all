@@ -97,7 +97,6 @@ create table if not exists prog_exercises (
     ex_text           text,
     ex_state          enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    folder_identifier varchar(30),
     function_name     varchar(30),
     indent_level      int,
     output_type       varchar(30),

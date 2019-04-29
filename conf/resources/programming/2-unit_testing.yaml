@@ -1,0 +1,26 @@
+- id: 2
+  semanticVersion: {major: 1, minor: 0, patch: 0}
+  title: Fakultät
+  author: bje40dc
+  text: >
+    Implementieren Sie die Funktion factorial(n: int) -> int, die die Fakultät der Zahl n berechnet.
+  status: APPROVED
+
+  identifier: factorial
+  unitTestType: Normal
+  functionname: factorial
+  outputType: int
+
+  inputTypes: [{id: 1, name: n, type: int}]
+
+  sampleSolutions:
+    - id: 1
+      base: |
+        def factorial(n: int) -> int:
+            pass
+      language: PYTHON_3
+      sample: |
+        def factorial(n: int) -> int:
+            pass
+
+  sampleTestData: []

@@ -52,7 +52,6 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
       authorName -> nonEmptyText,
       textName -> nonEmptyText,
       statusName -> ExerciseState.formField,
-      "folderIdentifier" -> nonEmptyText,
       functionNameName -> nonEmptyText,
       outputTypeName -> ProgDataTypes.formField,
       baseDataName -> optional(jsValueFormMapping),

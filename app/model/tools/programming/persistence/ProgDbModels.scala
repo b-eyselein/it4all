@@ -10,14 +10,14 @@ import play.api.libs.json.{JsArray, JsValue}
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
   def dbExerciseFromExercise(collId: Int, ex: ProgExercise): DbProgExercise =
-    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.folderIdentifier, ex.functionName, ex.outputType, ex.baseData, ex.unitTestType)
+    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.functionName, ex.outputType, ex.baseData, ex.unitTestType)
 
   def exerciseFromDbValues(dbProgEx: DbProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
                            sampleTestData: Seq[ProgSampleTestData], maybeClassDiagramPart: Option[UmlClassDiagram]
                           ): ProgExercise = dbProgEx match {
-    case DbProgExercise(id, semanticVersion, _, title, author, text, state, folderIdentifier, functionname, outputType, baseData, unitTestType) =>
+    case DbProgExercise(id, semanticVersion, _, title, author, text, state, functionname, outputType, baseData, unitTestType) =>
       ProgExercise(
-        id, semanticVersion, title, author, text, state, folderIdentifier, functionname, outputType, baseData, unitTestType,
+        id, semanticVersion, title, author, text, state, functionname, outputType, baseData, unitTestType,
         inputTypes, sampleSolutions, sampleTestData, maybeClassDiagramPart
       )
   }
@@ -93,7 +93,7 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 
 final case class DbProgExercise(
   id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-  folderIdentifier: String, functionname: String, outputType: ProgDataType, baseData: Option[JsValue], unitTestType: UnitTestType)
+  functionname: String, outputType: ProgDataType, baseData: Option[JsValue], unitTestType: UnitTestType)
   extends ADbExercise
 
 final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, base: String, sampleStr: String)
@@ -103,9 +103,9 @@ final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVers
 
 }
 
-final case class DbProgUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: ProgExPart,
-                                    implementation: String, testData: JsValue, points: Points, maxPoints: Points
-                                   )
+final case class DbProgUserSolution(
+  id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: ProgExPart,
+  implementation: String, testData: JsValue, points: Points, maxPoints: Points)
   extends ADbUserSol[ProgExPart] {
 
   val solution: ProgSolution = ProgSolution(implementation, ProgSolutionDbModels.testDataFromJson(testData))
@@ -127,12 +127,15 @@ sealed trait DbProgTestData {
 
 final case class DbProgSampleTestData(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, inputAsJson: JsValue, output: JsValue) extends DbProgTestData
 
-final case class DbProgUserTestData(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, inputAsJson: JsValue, output: JsValue, state: ExerciseState) extends DbProgTestData
+final case class DbProgUserTestData(
+  id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, inputAsJson: JsValue, output: JsValue,
+  state: ExerciseState)
+  extends DbProgTestData
 
 final case class DbProgUmlClassDiagram(exId: Int, exSemVer: SemanticVersion, collId: Int, classDiagram: UmlClassDiagram)
 
 // Exercise Review
 
-final case class DbProgrammingExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: ProgExPart,
-                                             difficulty: Difficulty, maybeDuration: Option[Int]
-                                            ) extends DbExerciseReview[ProgExPart]
+final case class DbProgrammingExerciseReview(
+  username: String, collId: Int, exerciseId: Int, exercisePart: ProgExPart, difficulty: Difficulty, maybeDuration: Option[Int])
+  extends DbExerciseReview[ProgExPart]

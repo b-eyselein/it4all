@@ -79,6 +79,9 @@
                   <Item>
                     <option name="path" value="conf/resources/programming/1-python_basics.yaml" />
                   </Item>
+                  <Item>
+                    <option name="path" value="conf/resources/programming/2-unit_testing.yaml" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>

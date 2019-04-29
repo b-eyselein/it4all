@@ -46,7 +46,7 @@ object ProgCorrector {
     val resultFile = solutionTargetDir / resultFileName
     resultFile.createIfNotExists(createParents = true)
 
-    val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.folderIdentifier)
+    val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / (exercise.id + "-" + exercise.functionName)
 
     /*
      * FIXME: what if image does not exist?

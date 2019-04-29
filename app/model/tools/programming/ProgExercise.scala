@@ -13,7 +13,7 @@ final case class ProgCollection(id: Int, title: String, author: String, text: St
   extends ExerciseCollection
 
 final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                              folderIdentifier: String, functionName: String, outputType: ProgDataType, baseData: Option[JsValue],
+                              functionName: String, outputType: ProgDataType, baseData: Option[JsValue],
                               unitTestType: UnitTestType,
                               inputTypes: Seq[ProgInput],
                               sampleSolutions: Seq[ProgSampleSolution],

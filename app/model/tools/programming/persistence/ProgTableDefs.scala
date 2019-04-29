@@ -70,11 +70,27 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   // Queries
 
+  private def sampleSolutionForExercise(collId: Int, ex: DbProgExercise): Future[Seq[ProgSampleSolution]] =
+    db.run(sampleSolutionsTableQuery.filter { s => s.exerciseId === ex.id && s.collectionId === collId }.result)
+      .map(_.map(ProgSolutionDbModels.sampleSolFromDbSampleSol))
+
+  private def inputTypeForExercise(collId: Int, ex: DbProgExercise): Future[Seq[ProgInput]] =
+    db.run(inputTypesQuery.filter { it => it.exerciseId === ex.id && it.collectionId === collId }.result)
+      .map(_.map(dbModels.progInputFromDbProgInput))
+
+  private def sampleTestDataForExercise(collId: Int, ex: DbProgExercise): Future[Seq[ProgSampleTestData]] =
+    db.run(sampleTestData.filter { st => st.exerciseId === ex.id && st.collectionId === collId }.result)
+      .map(_.map(dbModels.sampleTestDataFromDbSampleTestData))
+
+  private def maybeClassDiagramPartForExercise(collId: Int, ex: DbProgExercise): Future[Option[UmlClassDiagram]] =
+    db.run(umlClassDiagParts.filter { cdp => cdp.exerciseId === ex.id && cdp.collectionId === collId }.result.headOption)
+      .map(_.map(_.classDiagram))
+
   override def completeExForEx(collId: Int, ex: DbProgExercise): Future[ProgExercise] = for {
-    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result) map (_ map ProgSolutionDbModels.sampleSolFromDbSampleSol)
-    inputTypes <- db.run(inputTypesQuery.filter(_.exerciseId === ex.id).result) map (_ map dbModels.progInputFromDbProgInput)
-    sampleTestData <- db.run(sampleTestData.filter(_.exerciseId === ex.id).result) map (_ map dbModels.sampleTestDataFromDbSampleTestData)
-    maybeClassDiagram <- db.run(umlClassDiagParts.filter(_.exerciseId === ex.id).result.headOption).map(_.map(_.classDiagram))
+    samples <- sampleSolutionForExercise(collId, ex)
+    inputTypes <- inputTypeForExercise(collId, ex)
+    sampleTestData <- sampleTestDataForExercise(collId, ex)
+    maybeClassDiagram <- maybeClassDiagramPartForExercise(collId, ex)
   } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, maybeClassDiagram)
 
   override def saveExerciseRest(collId: Int, ex: ProgExercise): Future[Boolean] = {
@@ -92,7 +108,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   }
 
   override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] =
-    db.run(sampleSolutionsTableQuery.filter(_.exerciseId === id).result)
+    db.run(sampleSolutionsTableQuery.filter(sample => sample.exerciseId === id && sample.collectionId === collId).result)
       .map(_.map(ProgSolutionDbModels.sampleSolFromDbSampleSol))
 
 
@@ -140,8 +156,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   class ProgExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "prog_exercises") {
 
-    def folderIdentifier: Rep[String] = column[String]("folder_identifier")
-
     def functionName: Rep[String] = column[String]("function_name")
 
     def outputType: Rep[ProgDataType] = column[ProgDataType]("output_type")
@@ -152,7 +166,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
 
     override def * : ProvenShape[DbProgExercise] = (id, semanticVersion, collectionId, title, author, text, state,
-      folderIdentifier, functionName, outputType, baseDataAsJson.?, unitTestType) <> (DbProgExercise.tupled, DbProgExercise.unapply)
+      functionName, outputType, baseDataAsJson.?, unitTestType) <> (DbProgExercise.tupled, DbProgExercise.unapply)
 
   }
 

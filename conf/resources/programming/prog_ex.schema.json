@@ -1,8 +1,6 @@
 {
   "type": "array",
-  "items": {
-    "$ref": "#/definitions/ProgExercise"
-  },
+  "items": {"$ref": "#/definitions/ProgExercise"},
   "additionalItems": false,
   "definitions": {
     "ProgExercise": {
@@ -14,6 +12,9 @@
         "author": {"type": "string"},
         "text": {"type": "string"},
         "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+        "functionname": {"type": "string"},
+        "inputTypes": {"type": "array", "items": {"$ref": "#/definitions/ProgInputType"}},
+        "outputType": {"type": "string"},
         "unitTestType": {"type": "string", "enum": ["Simplified", "Normal"]},
         "sampleTestData": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleTestData"}},
         "sampleSolutions": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleSolution"}}
@@ -25,20 +26,34 @@
         "author",
         "text",
         "status",
+        "identifier",
+        "functionname",
+        "outputType",
         "sampleTestData",
         "sampleSolutions",
         "unitTestType"
       ],
       "additionalProperties": false
     },
+    "ProgInputType": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "name": {"type": "string"},
+        "type": {"type": "string"}
+      },
+      "required": ["id", "name", "type"],
+      "additionalProperties": false
+    },
     "ProgSampleSolution": {
       "type": "object",
       "properties": {
+        "id": {"type": "number"},
         "base": {"type": "string"},
         "language": {"type": "string", "enum": ["PYTHON_3", "JAVA_8"]},
         "sample": {"type": "string"}
       },
-      "required": ["base", "language", "sample"],
+      "required": ["number", "base", "language", "sample"],
       "additionalProperties": false
     },
     "ProgSampleTestData": {

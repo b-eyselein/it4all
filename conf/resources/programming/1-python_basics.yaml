@@ -6,13 +6,12 @@
     Implementieren Sie die folgende Funktion ggt(a: int, b -> int) -> int, die den größten gemeinsamen Teiler
     zweier Zahlen berechnet!
   status: APPROVED
-  identifier: ggt
+
   functionname: ggt
-  indentLevel: 0
-  inputTypes:
-    - {id: 1, name: a, type: int}
-    - {id: 2, name: b, type: int}
+
+  inputTypes: [{id: 1, name: a, type: int}, {id: 2, name: b, type: int}]
   outputType: int
+
   unitTestType: Simplified
 
   sampleSolutions:
@@ -44,12 +43,12 @@
     Berechnen Sie den Durchschnittswert aller Elemente als Gleitkommazahl in der übergebenen Liste von (Ganz-)Zahlen!
     Bei einer leeren Liste soll '0' zurückgegeben werden.
   status: APPROVED
-  identifier: average
+
   functionname: average
-  indentLevel: 0
-  inputTypes:
-    - {id: 1, name: my_list, type: list<int>}
+
+  inputTypes: [{id: 1, name: my_list, type: list<int>}]
   outputType: float
+
   unitTestType: Simplified
 
   sampleSolutions:
@@ -83,12 +82,12 @@
     Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden.
     Ignorieren Sie dabei Groß- und Kleinschreibung.
   status: APPROVED
-  identifier: longest_string
+
   functionname: longest_string
-  indentLevel: 0
-  inputTypes:
-    - {id: 1, name: my_list, type: list<string>}
+
+  inputTypes: [{id: 1, name: my_list, type: list<string>}]
   outputType: string
+
   unitTestType: Simplified
 
   sampleSolutions:
@@ -121,12 +120,12 @@
     Erstellen Sie ein Skript, das prüft, ob der übergebene String ein Palindrom darstellt! Ein leerer String ist für diese Aufgabe auch ein Palindrom.
     Ihr Programm soll Groß- und Kleinschreibung ignorieren, d. h. 'a' == 'A'.
   status: APPROVED
-  identifier: palindrome
+
   functionname: is_palindrome
-  indentLevel: 0
-  inputTypes:
-    - {id: 1, name: word, type: string}
+
+  inputTypes: [{id: 1, name: word, type: string}]
   outputType: boolean
+
   unitTestType: Simplified
 
   sampleSolutions:

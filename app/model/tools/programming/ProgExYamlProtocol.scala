@@ -36,7 +36,6 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[ProgExercise] = for {
       baseValues <- readBaseValues(yamlObject)
-      folderIdentifier <- yamlObject.stringField(identifierName)
 
       functionName <- yamlObject.stringField(functionNameName)
       outputType <- yamlObject.enumField(outputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
@@ -45,7 +44,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       unitTestType <- yamlObject.enumField(unitTestTypeName, UnitTestTypes.withNameInsensitive)
 
       inputTypes <- yamlObject.arrayField(inputTypesName, ProgInputTypeYamlFormat.read)
-      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(folderIdentifier).read)
+      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(functionName).read)
       sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
 
       maybeClassDiagramPart <- yamlObject.optField(classDiagramName, UmlSampleSolutionYamlFormat.read).map(_.map(_.sample))
@@ -64,13 +63,13 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
       ProgExercise(
         baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        folderIdentifier, functionName, outputType, baseData, unitTestType,
+        functionName, outputType, baseData, unitTestType,
         inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
       )
     }
 
     override def write(exercise: ProgExercise): YamlObject = {
-      val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(exercise.folderIdentifier)
+      val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(exercise.functionName)
       YamlObject(
         writeBaseValues(exercise.baseValues) ++
           Map[YamlValue, YamlValue](
@@ -96,7 +95,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  final case class ProgSampleSolutionYamlFormat(folderIdentifier: String) extends MyYamlObjectFormat[ProgSampleSolution] {
+  final case class ProgSampleSolutionYamlFormat(functionName: String) extends MyYamlObjectFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       id <- yamlObject.intField(idName)
