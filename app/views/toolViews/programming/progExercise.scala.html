@@ -1,7 +1,8 @@
-@import model.tools.programming.{ProgToolMain, ProgExercise, ProgExPart, ProgCollection, ProgLanguages}
+@import model.tools.programming.{ProgCollection, ProgExPart, ProgExercise, ProgLanguages, ProgToolMain}
 
 @(user: model.User, collection: ProgCollection, exercise: ProgExercise, oldSolution: String, part: ProgExPart, toolMainObject: ProgToolMain)(implicit
-        requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+    requestHeader: RequestHeader, messagesProvider: MessagesProvider
+)
 
 @additionalScripts = {
     <script>
@@ -26,34 +27,6 @@
                     <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
                 }
             }
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <label class="input-group-text" for="langSelect">Sprache</label>
-            </div>
-            <select class="form-control" id="langSelect">
-            @for(lang <- ProgLanguages.values) {
-                <option value="@lang.entryName" @{
-                    if(lang == ProgLanguages.StandardLanguage) "selected" else ""
-                }>@lang.languageName</option>
-            }
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <label class="input-group-text" for="extendedUnitTests">Tests</label>
-            </div>
-            <select class="form-control" id="extendedUnitTests">
-                <option value="0" selected>Vereinfacht</option>
-                @* FIXME: reactivate... *@
-                @*<option value="1">Normal</option>*@
-            </select>
         </div>
     </div>
 }

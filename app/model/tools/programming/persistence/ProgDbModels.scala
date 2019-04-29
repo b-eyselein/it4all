@@ -5,7 +5,7 @@ import model.points.Points
 import model.tools.programming._
 import model.tools.uml.UmlClassDiagram
 import model.{Difficulty, ExerciseState, SemanticVersion}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsArray, JsValue}
 
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
@@ -13,7 +13,8 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
     DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.folderIdentifier, ex.functionName, ex.outputType, ex.baseData)
 
   def exerciseFromDbValues(dbProgEx: DbProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
-                           sampleTestData: Seq[ProgSampleTestData], maybeClassDiagramPart: Option[UmlClassDiagram]): ProgExercise =
+                           sampleTestData: Seq[ProgSampleTestData], maybeClassDiagramPart: Option[UmlClassDiagram]
+                          ): ProgExercise =
     ProgExercise(
       dbProgEx.id, dbProgEx.semanticVersion, dbProgEx.title, dbProgEx.author, dbProgEx.text, dbProgEx.state,
       dbProgEx.folderIdentifier, dbProgEx.functionname, dbProgEx.outputType, dbProgEx.baseData,
@@ -54,26 +55,28 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
 object ProgSolutionDbModels extends ASolutionDbModels[ProgSolution, ProgExPart, ProgSampleSolution, DbProgSampleSolution, ProgUserSolution, DbProgUserSolution] {
 
-  def progTestDataToJson(testData: Seq[ProgUserTestData]): JsValue = ???
+  def progTestDataToJson(testData: Seq[ProgUserTestData]): JsValue = JsArray() // FIXME: implement... ???
 
-  def testDataFromJson(jsValue: JsValue): Seq[ProgUserTestData] = ???
+  def testDataFromJson(jsValue: JsValue): Seq[ProgUserTestData] = Seq.empty // FIXME: implement... ???
 
   // Sample solutions
 
   override def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: ProgSampleSolution): DbProgSampleSolution =
-    DbProgSampleSolution(sample.id, exId, exSemVer, collId, sample.language, sample.base, sample.sample.implementation)
+    DbProgSampleSolution(sample.id, exId, exSemVer, collId, sample.base, sample.sample.implementation)
 
   override def sampleSolFromDbSampleSol(dbSample: DbProgSampleSolution): ProgSampleSolution =
-    ProgSampleSolution(dbSample.id, dbSample.language, dbSample.base, dbSample.sample.implementation)
+    ProgSampleSolution(dbSample.id, dbSample.base, dbSample.sample.implementation)
 
   // User solutions
 
   override def dbUserSolFromUserSol(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, solution: ProgUserSolution): DbProgUserSolution =
-    DbProgUserSolution(solution.id, exId, exSemVer, collId, username, solution.part, solution.solution.implementation, progTestDataToJson(solution.solution.testData),
-      solution.language, solution.extendedUnitTests, solution.points, solution.maxPoints)
+    solution match {
+      case ProgUserSolution(id, part, sol, points, maxPoints) =>
+        DbProgUserSolution(id, exId, exSemVer, collId, username, part, sol.implementation, progTestDataToJson(sol.testData), points, maxPoints)
+    }
 
   override def userSolFromDbUserSol(dbSol: DbProgUserSolution): ProgUserSolution =
-    ProgUserSolution(dbSol.id, dbSol.part, dbSol.solution, dbSol.language, dbSol.extendedUnitTests, dbSol.points, dbSol.maxPoints)
+    ProgUserSolution(dbSol.id, dbSol.part, dbSol.solution, dbSol.points, dbSol.maxPoints)
 
 }
 
@@ -88,22 +91,23 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 }
 
 final case class DbProgExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-                                folderIdentifier: String, functionname: String, outputType: ProgDataType, baseData: Option[JsValue]) extends ADbExercise
+                                folderIdentifier: String, functionname: String, outputType: ProgDataType, baseData: Option[JsValue]
+                               ) extends ADbExercise
 
 
-final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, language: ProgLanguage, base: String, sampleStr: String)
+final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, base: String, sampleStr: String)
   extends ADbSampleSol {
 
-  val sample = ProgSolution(sampleStr, testData = Seq[ProgUserTestData](), extendedUnitTests = false, language)
+  val sample = ProgSolution(sampleStr, testData = Seq[ProgUserTestData]())
 
 }
 
 final case class DbProgUserSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: ProgExPart,
-                                    implementation: String, testData: JsValue, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points)
+                                    implementation: String, testData: JsValue, points: Points, maxPoints: Points
+                                   )
   extends ADbUserSol[ProgExPart] {
 
-
-  val solution: ProgSolution = ProgSolution(implementation, ProgSolutionDbModels.testDataFromJson(testData), extendedUnitTests, language)
+  val solution: ProgSolution = ProgSolution(implementation, ProgSolutionDbModels.testDataFromJson(testData))
 
 }
 
@@ -130,4 +134,5 @@ final case class DbProgUmlClassDiagram(exId: Int, exSemVer: SemanticVersion, col
 
 
 final case class DbProgrammingExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: ProgExPart,
-                                             difficulty: Difficulty, maybeDuration: Option[Int]) extends DbExerciseReview[ProgExPart]
+                                             difficulty: Difficulty, maybeDuration: Option[Int]
+                                            ) extends DbExerciseReview[ProgExPart]

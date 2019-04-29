@@ -98,10 +98,10 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       id <- yamlObject.intField(idName)
-      language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)
+      //      language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)
       base <- yamlObject.stringField(baseName)
       sample <- yamlObject.stringField(sampleName)
-    } yield ProgSampleSolution(id, language, base, sample)
+    } yield ProgSampleSolution(id, /* language,*/ base, sample)
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
       languageName -> pss.language.entryName,

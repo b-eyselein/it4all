@@ -19,7 +19,9 @@ object ProgCorrector {
 
   private def buildTestMainFileName(fileEnding: String): String = "test_main." + fileEnding
 
-  def correct(user: User, progSolution: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
+  def correct(user: User, progSolution: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart,
+              toolMain: ProgToolMain
+             )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val (implementation: String, completeTestData: Seq[ProgTestData]) = part match {
       case ProgExParts.TestdataCreation                             => (exercise.sampleSolutions.headOption.map(_.sample).getOrElse(???), progSolution.testData)
@@ -30,7 +32,7 @@ object ProgCorrector {
 
     val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, collection.id, exercise.id)
 
-    val testDataFileContent: JsValue = exercise.buildTestDataFileContent(completeTestData, progSolution.extendedUnitTests)
+    val testDataFileContent: JsValue = exercise.buildTestDataFileContent(completeTestData /*, progSolution.extendedUnitTests*/)
 
     // Write/Create files
     val solFileName = buildSolutionFileName(progSolution.language.fileEnding)
@@ -50,8 +52,8 @@ object ProgCorrector {
      */
     val containerResult: Future[RunContainerResult] = DockerConnector.runContainer(
       imageName = DockerPullsStartTask.pythonProgTesterImage,
-      maybeDockerBinds = Some(mountProgrammingFiles(exerciseResourcesFolder, progSolution.extendedUnitTests, solutionTargetDir, solFileName, fileEnding = "py")),
-      maybeCmd = if (progSolution.extendedUnitTests) Some(Seq("--extended")) else None
+      maybeDockerBinds = Some(mountProgrammingFiles(exerciseResourcesFolder, false /*progSolution.extendedUnitTests*/ , solutionTargetDir, solFileName, fileEnding = "py")),
+      maybeCmd = if (false /*progSolution.extendedUnitTests*/ ) Some(Seq("--extended")) else None
     )
 
     val futureResults = containerResult map {

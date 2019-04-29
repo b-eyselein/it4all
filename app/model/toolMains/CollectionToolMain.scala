@@ -68,7 +68,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Other helper methods
 
-  protected def exerciseHasPart(exercise: ExType, partType: PartType): Boolean
+  protected def exerciseHasPart(exercise: ExType, partType: PartType): Boolean = true
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 

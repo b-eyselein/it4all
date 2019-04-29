@@ -120,8 +120,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Other helper methods
 
-  override protected def exerciseHasPart(exercise: SqlExercise, partType: SqlExPart): Boolean = true
-
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): SqlScenario =
     SqlScenario(id, title = "", author, text = "", state, shortName = "")
 

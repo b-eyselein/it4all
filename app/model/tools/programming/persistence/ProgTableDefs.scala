@@ -92,13 +92,27 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   }
 
   override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] =
-  //  FIXME:  db.run(sampleSolutions.filter(_.exerciseId === id).map(_.sample).result.map(_.solution))
-    ???
+    db.run(sampleSolutionsTableQuery.filter(_.exerciseId === id).result)
+      .map(_.map(ProgSolutionDbModels.sampleSolFromDbSampleSol))
 
 
-  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: ProgExPart): Future[Option[ProgUserSolution]] = ???
+  def futureMaybeOldSolution(username: String, collectionId: Int, exerciseId: Int, part: ProgExPart): Future[Option[ProgUserSolution]] = db.run(
+    userSolutionsTableQuery
+      .filter {
+        sol => sol.username === username && sol.collectionId === collectionId && sol.exerciseId === exerciseId && sol.part === part
+      }
+      .sortBy(_.id.desc) // take last sample sol (with highest id)
+      .result
+      .headOption
+      .map(_ map ProgSolutionDbModels.userSolFromDbUserSol))
 
-  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: ProgUserSolution): Future[Boolean] = ???
+  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: ProgUserSolution): Future[Boolean] =
+    nextUserSolutionId(exId, collId, username, sol.part).flatMap { nextSolId =>
+      val dbUserSol = ProgSolutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol).copy(id = nextSolId)
+
+      db.run(userSolutionsTableQuery += dbUserSol) transform(_ == 1, identity)
+    }
+
 
   // Implicit column types
 
@@ -155,17 +169,17 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   class ProgSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "prog_sample_solutions") {
 
-    def language: Rep[ProgLanguage] = column[ProgLanguage](languageName)
+    //    def language: Rep[ProgLanguage] = column[ProgLanguage](languageName)
 
     def base: Rep[String] = column[String](baseName)
 
     def implementation: Rep[String] = column[String](implementationName)
 
 
-    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer, language))
+    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer /*, language*/ ))
 
 
-    override def * : ProvenShape[DbProgSampleSolution] = (id, exerciseId, exSemVer, collectionId, language, base, implementation) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
+    override def * : ProvenShape[DbProgSampleSolution] = (id, exerciseId, exSemVer, collectionId, base, implementation) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
 
   }
 
@@ -224,13 +238,12 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def testData: Rep[JsValue] = column[JsValue]("test_data")
 
-    def extendedUnitTests: Rep[Boolean] = column[Boolean]("extended_unit_tests")
 
-    def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
+    def pk: PrimaryKey = primaryKey("prog_user_solutions_pk", (id, exerciseId, collectionId, username, part))
 
 
     override def * : ProvenShape[DbProgUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part, implementation, testData,
-      language, extendedUnitTests, points, maxPoints) <> (DbProgUserSolution.tupled, DbProgUserSolution.unapply)
+      points, maxPoints) <> (DbProgUserSolution.tupled, DbProgUserSolution.unapply)
 
   }
 

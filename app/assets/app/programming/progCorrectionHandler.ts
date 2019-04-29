@@ -1,26 +1,11 @@
 import {CorrectionResult} from "../matches";
 
-export {renderProgCorrectionSuccess, ProgCorrectionResult, ProgStringSolution};
+export {renderProgCorrectionSuccess, ProgCorrectionResult, ProgSolution};
 
-
-interface ProgStringSolution {
-    language: string,
-    extendedUnitTests: boolean
-    implementation: string
+interface ProgSolution {
+    implementation: string,
+    testData: any[]
 }
-
-function printValue(value: any): string {
-    if (value == null) {
-        return 'null';
-    } else if (typeof value === 'string') {
-        return `"${value}"`;
-    } else if (Array.isArray(value)) {
-        return '[' + value.map((v) => printValue(v)) + ']';
-    } else {
-        return value;
-    }
-}
-
 
 interface ProgSingleResult {
     id: number
@@ -35,24 +20,34 @@ interface ProgSingleResult {
 interface ProgCorrectionResult extends CorrectionResult<ProgSingleResult> {
 }
 
+function printValue(value: any): string {
+    if (value == null) {
+        return 'null';
+    } else if (typeof value === 'string') {
+        return `"${value}"`;
+    } else if (Array.isArray(value)) {
+        return '[' + value.map((v) => printValue(v)) + ']';
+    } else {
+        return value;
+    }
+}
+
 function renderProgResult(result: ProgSingleResult): string {
     let consoleOut = '';
     if (result.consoleOutput !== null) {
         consoleOut = '<p>Konsolenausgabe: <pre>' + result.consoleOutput + '</pre></p>';
     }
 
-    let gottenResult;
-    switch (result.successType) {
-        case  "ERROR":
-            gottenResult = `<p>Fehlerausgabe: <pre>${result.gotten}</pre></p>`;
-            break;
-        default:
-            gottenResult = `<p>Bekommen: <code>${printValue(result.gotten)}</code></p>`;
+    let gottenResult: string;
+    if (result.successType === "ERROR") {
+        gottenResult = `<p>Fehlerausgabe: <pre>${result.gotten}</pre></p>`;
+    } else {
+        gottenResult = `<p>Bekommen: <code>${printValue(result.gotten)}</code></p>`;
     }
 
     return `
-<div class="card">
-    <div class="card-header bg-${result.correct ? 'success' : 'danger'}">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
+<div class="card my-3">
+    <div class="card-header text-${result.correct ? 'success' : 'danger'}">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
     <div class="card-body">
         <p>Eingabe: <code>${printValue(result.input)}</code></p>
         <p>Erwartet: <code>${printValue(result.awaited)}</code></p>
@@ -65,20 +60,18 @@ function renderProgResult(result: ProgSingleResult): string {
 
 function renderProgCorrectionSuccess(response: ProgCorrectionResult): string {
 
-    let html: string = `<div class="alert alert-${response.solutionSaved ? 'success' : 'danger'}">Ihre Lösung wurde ${response.solutionSaved ? '' : ' nicht'} gespeichert.</div>`;
+    let html: string = `<div class="text-${response.solutionSaved ? 'success' : 'danger'}">Ihre Lösung wurde ${response.solutionSaved ? '' : ' nicht'} gespeichert.</div>`;
 
-    const itemsPerRow = 2;
+    const itemsPerRow = 1;
     const colWidth = 12 / itemsPerRow;
 
     for (let outerCount = 0; outerCount < response.results.length; outerCount = outerCount + itemsPerRow) {
-        let innerHtml: string = '';
 
         for (let innerCount = outerCount; innerCount < outerCount + itemsPerRow && innerCount < response.results.length; innerCount++) {
             const currentResult = response.results[innerCount] || null;
-            innerHtml += `<div class="col-md-${colWidth}">${currentResult != null ? renderProgResult(currentResult) : ''}</div>`
+            html += currentResult != null ? renderProgResult(currentResult) : '';
         }
 
-        html += `<div class="row">${innerHtml}</div>`
     }
 
     return html;

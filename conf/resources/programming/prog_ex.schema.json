@@ -1,19 +1,27 @@
 {
-  "type": "object",
-  "properties": {
-    "id": {"type": "number"},
-    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-    "title": {"type": "string"},
-    "author": {"type": "string"},
-    "text": {"type": "string"},
-    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-    "sampleTestData": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleTestData"}},
-    "sampleSolutions": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleSolution"}}
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/ProgExercise"
   },
-  "required": [
-    "id", "semanticVersion", "title", "author", "text", "status", "sampleTestData", "sampleSolutions"
-  ],
+  "additionalItems": false,
   "definitions": {
+    "ProgExercise": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "semanticVersion": {"$ref": "../semantic_version.schema.json"},
+        "title": {"type": "string"},
+        "author": {"type": "string"},
+        "text": {"type": "string"},
+        "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+        "sampleTestData": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleTestData"}},
+        "sampleSolutions": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleSolution"}}
+      },
+      "required": [
+        "id", "semanticVersion", "title", "author", "text", "status", "sampleTestData", "sampleSolutions"
+      ],
+      "additionalProperties": false
+    },
     "ProgSampleSolution": {
       "type": "object",
       "properties": {
@@ -21,7 +29,8 @@
         "language": {"type": "string", "enum": ["PYTHON_3", "JAVA_8"]},
         "sample": {"type": "string"}
       },
-      "required": ["base", "language", "sample"]
+      "required": ["base", "language", "sample"],
+      "additionalProperties": false
     },
     "ProgSampleTestData": {
       "type": "object",
@@ -30,7 +39,8 @@
         "inputs": {},
         "output": {}
       },
-      "required": ["id", "inputs", "output"]
+      "required": ["id", "inputs", "output"],
+      "additionalProperties": false
     }
   }
 }

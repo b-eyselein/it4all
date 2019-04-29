@@ -126,11 +126,10 @@ create table if not exists prog_sample_solutions (
     exercise_id    int,
     ex_sem_ver     varchar(10),
     collection_id  int,
-    language       enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
     base           text,
     implementation text,
 
-    primary key (id, exercise_id, ex_sem_ver, collection_id, language),
+    primary key (id, exercise_id, ex_sem_ver, collection_id),
     foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
         on update cascade on delete cascade
 );
@@ -187,8 +186,8 @@ create table if not exists prog_user_solutions (
     part                varchar(50),
 
     implementation      text,
-    language            varchar(20),
     extended_unit_tests boolean default false,
+    test_data           text,
     points              double,
     max_points          double,
 

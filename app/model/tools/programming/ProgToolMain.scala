@@ -67,14 +67,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Other helper methods
 
-  override protected def exerciseHasPart(exercise: ProgExercise, partType: ProgExPart): Boolean = partType match {
-    case ProgExParts.Implementation   => true
-    case ProgExParts.ActivityDiagram  => true
-    case ProgExParts.TestdataCreation =>
-      // TODO: Creation of test data is currently disabled
-      false
-  }
-
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): ProgCollection =
     ProgCollection(id, title = "", author, text = "", state, shortName = "")
 
@@ -84,10 +76,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[ProgSampleTestData](), maybeClassDiagramPart = None
   )
 
-  override def instantiateSolution(id: Int, exercise: ProgExercise, part: ProgExPart,
-                                   solution: ProgSolution, points: Points, maxPoints: Points
-                                  ): ProgUserSolution =
-    ProgUserSolution(id, part, solution, solution.language, solution.extendedUnitTests, points, maxPoints)
+  override def instantiateSolution(
+    id: Int, exercise: ProgExercise, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points
+  ): ProgUserSolution = ProgUserSolution(id, part, solution, points, maxPoints)
 
   // Db
 

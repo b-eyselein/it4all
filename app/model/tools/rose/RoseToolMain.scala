@@ -61,8 +61,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Other helper methods
 
-  override protected def exerciseHasPart(exercise: RoseExercise, partType: RoseExPart): Boolean = true
-
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): RoseCollection =
     RoseCollection(id, title = "", author, text = "", state, shortName = "")
 

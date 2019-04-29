@@ -1,5 +1,5 @@
 id: 1
-semanticVersion: 1.0.0
+semanticVersion: {major: 1, minor: 0, patch: 0}
 title: Größter gemeinsamer Teiler
 author: bje40dc
 text: >

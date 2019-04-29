@@ -2,7 +2,7 @@ import * as $ from 'jquery';
 import {
     ProgCorrectionResult,
     renderProgCorrectionSuccess,
-    ProgStringSolution
+    ProgSolution
 } from "../../programming/progCorrectionHandler";
 
 let testBtn: JQuery;
@@ -10,10 +10,9 @@ let testBtn: JQuery;
 function activityCorrection(): void {
     testBtn.prop('disabled', true);
 
-    let dataToSend: ProgStringSolution = {
-        language: "PYTHON_3",
-        extendedUnitTests: false,
-        implementation: $('#preCode').text()
+    let dataToSend: ProgSolution = {
+        implementation: $('#preCode').text(),
+        testData: []
     };
 
     $.ajax({

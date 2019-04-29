@@ -1,6 +1,8 @@
 @import model.tools.programming.{ProgCollection, ProgExParts, ProgExercise, ProgToolMain, ProgUserTestData}
 
-@(user: model.User, collection: ProgCollection, exercise: ProgExercise, oldData: Seq[ProgUserTestData], toolMainObject: ProgToolMain)
+@(user: model.User, collection: ProgCollection, exercise: ProgExercise, oldData: Seq[ProgUserTestData], toolMainObject: ProgToolMain)(
+    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider
+)
 
 @stdTestSize = @{
     ProgToolMain.standardTestCount
@@ -27,6 +29,10 @@
     s"Test ${id + 1}, Output "
 }
 
+@correctionUrl = @{
+    coll.routes.CollectionController.correctLive(toolMainObject.urlPart, collection.id, exercise.id, ProgExParts.TestdataCreation.urlName)
+}
+
 @main("Programmierung: Defintion von Testdaten", Some(user), scripts) {
 
     @core.helperTemplates.modal("Bearbeitungshinweise", "hintsModal", "lg") {
@@ -38,25 +44,21 @@
     }
 
     <div class="container">
-        <div class="row">
-            <div class="page-header">
-                <h1>Definition von Testdaten <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintsModal">
-                    ?</button></h1>
-            </div>
+        <h1>Definition von Testdaten <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintsModal">
+            ?</button></h1>
 
+        <div class="row">
             <div class="col-md-6">
                 <h3>Beschreibung der Funktion</h3>
 
-                <div class="well">@Html(exercise.text)</div>
+                <div >@Html(exercise.text)</div>
 
                 <hr>
 
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button data-url="@coll.routes.CollectionController.correctLive(toolMainObject.urlPart, collection.id, exercise.id, ProgExParts.TestdataCreation.urlName)"
-                        id="testBtn" class="btn btn-primary">Testdaten validieren & speichern</button>
-                    </div>
-                    <a class="btn btn-default" href="@coll.routes.CollectionController.index(toolMainObject.urlPart)">
+                <div class="btn-group d-flex">
+                    <button data-href="@correctionUrl" id="testBtn" class="btn btn-success w-100">
+                        Testdaten validieren & speichern</button>
+                    <a class="btn btn-secondary w-100" href="@coll.routes.CollectionController.index(toolMainObject.urlPart)">
                         Bearbeitung beenden</a>
                 </div>
 
@@ -66,10 +68,9 @@
 
             <div class="col-md-6">
 
+                @helper.CSRF.formField
+
                 <input title="hidden" hidden id="inputCount" value="@exercise.inputCount">
-                <input title="hidden" hidden id="exerciseId" value="@exercise.id">
-                <input title="hidden" hidden id="toolType" value="@toolMainObject.urlPart">
-                <input title="hidden" hidden id="exercisePart" value="@ProgExParts.TestdataCreation.urlName">
 
                 <input title="hidden" hidden type="number" name="inputCount" id="inputCount" value="@exercise.inputCount">
                 <input title="hidden" hidden type="number" name="testCount" id="testCount" value="@Math.max(oldData.size, stdTestSize)">
@@ -115,8 +116,8 @@
 
                 <hr>
 
-                <button type="button" class="btn btn-default btn-block" id="moreTestDataBtn">
-                    <span class="glyphicon glyphicon-plus"></span> Weitere Testdaten erstellen
+                <button class="btn btn-secondary btn-block" id="moreTestDataBtn">
+                    <span class="octicon octicon-plus"></span> Weitere Testdaten erstellen
                 </button>
 
             </div>

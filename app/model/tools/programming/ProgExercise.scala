@@ -14,7 +14,8 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
                               inputTypes: Seq[ProgInput],
                               sampleSolutions: Seq[ProgSampleSolution],
                               sampleTestData: Seq[ProgSampleTestData],
-                              maybeClassDiagramPart: Option[UmlClassDiagram]) extends Exercise {
+                              maybeClassDiagramPart: Option[UmlClassDiagram]
+                             ) extends Exercise {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -25,9 +26,12 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.toolViews.programming.progPreview(this)
 
-  def buildTestDataFileContent(completeTestData: Seq[ProgTestData], extendedUnitTests: Boolean): JsValue =
+  def buildTestDataFileContent(completeTestData: Seq[ProgTestData], extendedUnitTests: Boolean = false): JsValue = {
+    // FIXME: update...
+
     if (extendedUnitTests) ???
     else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
+  }
 
 }
 
@@ -36,14 +40,16 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
 //FIXME: remove exId, exSemVer
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSampleSolution(id: Int, language: ProgLanguage, base: String, solutionStr: String)
+final case class ProgSampleSolution(id: Int, base: String, solutionStr: String)
   extends SampleSolution[ProgSolution] {
+
+  def language: ProgLanguage = ProgLanguages.PYTHON_3
 
   val part: ProgExPart = ProgExParts.Implementation
 
   val sample: ProgSolution = part match {
     case ProgExParts.TestdataCreation => ??? // ProgSolution(solutionStr = "", language)
-    case _                            => ProgSolution(solutionStr, testData = Seq[ProgUserTestData](), extendedUnitTests = false, language)
+    case _                            => ProgSolution(implementation = solutionStr, testData = Seq[ProgUserTestData]())
   }
 
 }
@@ -62,9 +68,13 @@ final case class ProgUserTestData(id: Int, inputAsJson: JsValue, output: JsValue
 
 // Solution types
 
-final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData], extendedUnitTests: Boolean, language: ProgLanguage)
+final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData]) {
 
-//final case class ProgStringSolution(solution: String, extendedUnitTests: Boolean, language: ProgLanguage) extends ProgSolution
+  def language: ProgLanguage = ProgLanguages.PYTHON_3
+
+}
+
+//final case class ProgSolution(solution: String, extendedUnitTests: Boolean, language: ProgLanguage) extends ProgSolution
 //
 //final case class ProgTestDataSolution(testData: Seq[ProgUserTestData], language: ProgLanguage) extends ProgSolution {
 //
@@ -74,8 +84,10 @@ final case class ProgSolution(implementation: String, testData: Seq[ProgUserTest
 //
 //}
 
-final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, language: ProgLanguage, extendedUnitTests: Boolean, points: Points, maxPoints: Points)
+final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points)
   extends UserSolution[ProgExPart, ProgSolution] {
+
+  def language: ProgLanguage = ProgLanguages.PYTHON_3
 
   def commitedTestData: Seq[ProgUserTestData] = solution.testData
 

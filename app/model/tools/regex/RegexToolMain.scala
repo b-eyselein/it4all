@@ -109,10 +109,6 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     RegexCompleteResult(sol, exercise, part, results, points, exercise.maxPoints.points)
   })
 
-  // Other helper methods
-
-  override def exerciseHasPart(exercise: RegexExercise, partType: RegexExPart): Boolean = true
-
   // Views
 
   override def previewExerciseRest(ex: Exercise): Html = ex match {

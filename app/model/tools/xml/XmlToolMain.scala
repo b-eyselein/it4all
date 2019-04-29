@@ -71,8 +71,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     case XmlExParts.DocumentCreationXmlPart => futureMaybeOldSolution(username, collId, exId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
 
-  override def exerciseHasPart(exercise: XmlExercise, partType: XmlExPart): Boolean = true
-
   def instantiateCollection(id: Int, author: String, state: model.ExerciseState): XmlCollection =
     XmlCollection(id, title = "", author, text = "", state, shortName = "")
 

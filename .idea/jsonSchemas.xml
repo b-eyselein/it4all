@@ -68,6 +68,22 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="prog_ex.schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="prog_ex.schema" />
+              <option name="relativePathToSchema" value="conf/resources/programming/prog_ex.schema.json" />
+              <option name="schemaVersion" value="JSON schema version 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="conf/resources/programming/1-python_basics.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="regex_ex.schema">
           <value>
             <SchemaInfo>
