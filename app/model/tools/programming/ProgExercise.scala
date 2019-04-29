@@ -35,24 +35,15 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
 }
 
-// Case classes for tables
 
-//FIXME: remove exId, exSemVer
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSampleSolution(id: Int, base: String, solutionStr: String)
-  extends SampleSolution[ProgSolution] {
+final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData]) {
 
   def language: ProgLanguage = ProgLanguages.PYTHON_3
 
-  val part: ProgExPart = ProgExParts.Implementation
-
-  val sample: ProgSolution = part match {
-    case ProgExParts.TestdataCreation => ??? // ProgSolution(solutionStr = "", language)
-    case _                            => ProgSolution(implementation = solutionStr, testData = Seq[ProgUserTestData]())
-  }
-
 }
+
 
 sealed trait ProgTestData {
 
@@ -68,21 +59,19 @@ final case class ProgUserTestData(id: Int, inputAsJson: JsValue, output: JsValue
 
 // Solution types
 
-final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData]) {
+final case class ProgSampleSolution(id: Int, base: String, solutionStr: String)
+  extends SampleSolution[ProgSolution] {
 
   def language: ProgLanguage = ProgLanguages.PYTHON_3
 
-}
+  val part: ProgExPart = ProgExParts.Implementation
 
-//final case class ProgSolution(solution: String, extendedUnitTests: Boolean, language: ProgLanguage) extends ProgSolution
-//
-//final case class ProgTestDataSolution(testData: Seq[ProgUserTestData], language: ProgLanguage) extends ProgSolution {
-//
-//  override def solution: String = ???
-//
-//  override def extendedUnitTests: Boolean = false
-//
-//}
+  val sample: ProgSolution = part match {
+    case ProgExParts.TestdataCreation => ??? // ProgSolution(solutionStr = "", language)
+    case _                            => ProgSolution(implementation = solutionStr, testData = Seq[ProgUserTestData]())
+  }
+
+}
 
 final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points)
   extends UserSolution[ProgExPart, ProgSolution] {

@@ -9,7 +9,6 @@ import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
 
-
 object TestDataJsonFormat {
 
   def dumpTestDataToJson(exercise: ProgExercise, testData: Seq[ProgTestData]): JsValue = Json.obj(
@@ -33,13 +32,12 @@ object TestDataJsonFormat {
 
 }
 
-final case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], errors: String)
-
 //noinspection ConvertibleToMethodValue
 object ResultsFileJsonFormat {
 
   private val logger = Logger(ResultsFileJsonFormat.getClass)
 
+  // TODO: Json.reads[ExecutionResult]
   private implicit val executionResultJsonReads: Reads[ExecutionResult] = (
     (__ \ "success").read[SuccessType] and
       (__ \ "test_id").read[Int] and
@@ -49,24 +47,20 @@ object ResultsFileJsonFormat {
       (__ \ "stdout").readNullable[String]
     ) (ExecutionResult.apply(_, _, _, _, _, _))
 
+  // TODO: Json.reads[ResultFileContent]
   private val resultsFileJsonReads: Reads[ResultFileContent] = (
     (__ \ "result_type").read[String] and
       (__ \ "results").read[Seq[ExecutionResult]] and
       (__ \ "errors").read[String]
     ) (ResultFileContent.apply(_, _, _))
 
-  def readResultFile(targetFile: File, completeTestData: Seq[ProgTestData]): Try[Seq[ExecutionResult]] = {
-
+  def readResultFile(targetFile: File, completeTestData: Seq[ProgTestData]): Try[Seq[ExecutionResult]] =
     resultsFileJsonReads.reads(Json.parse(targetFile.contentAsString)) match {
-      case JsSuccess(result: ResultFileContent, _) =>
-        Success(
-          result.results)
+      case JsSuccess(result: ResultFileContent, _) => Success(result.results)
 
       case JsError(errors) =>
         errors.foreach(error => logger.error("There has been an error reading a json programming result file: " + error))
         Failure(null)
     }
-  }
-
 
 }

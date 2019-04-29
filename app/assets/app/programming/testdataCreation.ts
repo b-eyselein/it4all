@@ -1,39 +1,18 @@
-import * as $ from 'jquery';
 import {domReady, testExerciseSolution} from "../otherHelpers";
+import {ProgSolution, TestData, TestdataCreationResult, TestDataInput} from "./progCorrectionHandler";
 
 let testBtn: HTMLButtonElement;
 let moreTestDataBtn: HTMLButtonElement;
 
 let testDataBody: HTMLElement;
-let msgDiv: JQuery;
+let msgDiv: HTMLDivElement;
 
 let inputCount: number;
 
-interface TestDataResult {
-    id: number
-    correct: boolean
-}
-
-interface TestdataCreationResult {
-    solutionSaved: boolean
-    results: TestDataResult[]
-}
-
-interface TestDataInput {
-    id: number,
-    input: string
-}
-
-interface TestData {
-    id: number
-    inputs: TestDataInput[]
-    output: string
-}
-
 function moreTestData(): void {
-    const newTestId = testDataBody.querySelectorAll<HTMLTableRowElement>('tr').length;
+    const newTestId: number = testDataBody.querySelectorAll<HTMLTableRowElement>('tr').length;
 
-    let inputs = '';
+    let inputs: string = '';
     for (let ic = 0; ic < inputCount; ic++) {
         inputs += `<td><input class="form-control" name="inp_${ic}_${newTestId}" id="inp_${ic}_${newTestId}" placeholder="Test ${newTestId + 1}, Input ${ic + 1}"></td>`;
     }
@@ -52,61 +31,55 @@ function onValidateTDSuccess(response: TestdataCreationResult): void {
     console.warn(JSON.stringify(response, null, 2));
 
     if (response.solutionSaved) {
-        msgDiv.html(`<hr><div class="alert alert-success">Ihre Testdaten wurden gespeichert.</div>`);
+        msgDiv.innerHTML = `<hr><div class="alert alert-success">Ihre Testdaten wurden gespeichert.</div>`;
     } else {
-        msgDiv.html(`<hr><div class="alert alert-danger">Ihre Testdaten konnten nicht gespeichert werden!</div>`);
+        msgDiv.innerHTML = `<hr><div class="alert alert-danger">Ihre Testdaten konnten nicht gespeichert werden!</div>`;
     }
 
     for (let data of response.results) {
-        let jTableRow = $('#tr_' + data.id);
-        if (data.correct) {
-            jTableRow.removeClass('danger').addClass('success');
-        } else {
-
-            jTableRow.removeClass('success').addClass('danger');
-        }
+        let tableRow = document.querySelector<HTMLTableRowElement>('#tr_' + data.id);
+        tableRow.classList.remove('success', 'danger', 'warning');
+        tableRow.classList.add(data.correct ? 'success' : 'danger');
     }
 }
 
 function testSol(): void {
     testBtn.disabled = true;
 
-    let solution: TestData[] = [];
+    let testData: TestData[] = [];
 
-    const tableRows = testDataBody.querySelectorAll<HTMLTableRowElement>('tr');
+    testDataBody
+        .querySelectorAll<HTMLTableRowElement>('tr')
+        .forEach((elem: HTMLTableRowElement) => {
+            const id: number = parseInt(elem.dataset['testid']);
 
-    tableRows.forEach(tr => tr.classList.remove('success', 'danger', 'warning'));
+            const inputs: TestDataInput[] = Array.from(elem.querySelectorAll<HTMLInputElement>('td > input[name^="inp"'))
+                .map((e: HTMLInputElement, id: number) => ({id, input: e.value}));
 
-    tableRows.forEach((elem: HTMLTableRowElement) => {
-        const id: number = parseInt(elem.dataset['testid']);
+            const output: string = elem
+                .querySelector<HTMLInputElement>('td > input[name^="outp"]')
+                .value as string;
 
-        const inputs: TestDataInput[] = [];
-        $(elem).find('td input').filter((i, e: Element) =>
-            e instanceof HTMLInputElement && e.name.startsWith('inp')
-        ).each((id, e: Element) => {
-            inputs.push({id, input: (e as HTMLInputElement).value});
+            if (output.length === 0) {
+                elem.classList.add('warning');
+                elem.title = 'Output ist leer, Zeile wird ignoriert!';
+            } else {
+                testData.push({id, inputs, output});
+            }
         });
 
-        const output: string = $(elem).find('td input')
-            .filter((i, e: Element) => e instanceof HTMLInputElement && e.name.startsWith('outp')).val() as string;
+    const solution: ProgSolution = {
+        implementation: '',
+        testData
+    };
 
-        if (output.length === 0) {
-            $(elem).addClass('warning');
-            $(elem).attr('title', 'Output ist leer, Zeile wird ignoriert!');
-        } else {
-            solution.push({id, inputs, output});
-        }
-    });
-
-    console.warn(JSON.stringify(solution, null, 2));
-
-    testExerciseSolution<TestData[], TestdataCreationResult>(testBtn, solution, onValidateTDSuccess);
+    testExerciseSolution<ProgSolution, TestdataCreationResult>(testBtn, solution, onValidateTDSuccess);
 }
 
 domReady(() => {
     inputCount = parseInt(document.querySelector<HTMLInputElement>('#inputCount').value);
 
-    msgDiv = $('#messageDiv');
+    msgDiv = document.querySelector<HTMLDivElement>('#messageDiv');
     testDataBody = document.querySelector<HTMLElement>('#testDataBody');
 
     testBtn = document.querySelector<HTMLButtonElement>('#testBtn');

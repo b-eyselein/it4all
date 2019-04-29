@@ -1,10 +1,8 @@
 import {CorrectionResult} from "../matches";
 
-export {renderProgCorrectionSuccess, ProgCorrectionResult, ProgSolution};
-
-interface ProgSolution {
+export interface ProgSolution {
     implementation: string,
-    testData: any[]
+    testData: TestData[]
 }
 
 interface ProgSingleResult {
@@ -15,6 +13,33 @@ interface ProgSingleResult {
     awaited: string
     gotten: string
     consoleOutput: string | null
+}
+
+
+export interface TestDataResult {
+    id: number;
+    successType: 'ERROR' | '';
+    correct: boolean;
+    input: TestDataInput[];
+    output: string;
+    awaited: string;
+    gotten: string;
+}
+
+export interface TestdataCreationResult {
+    solutionSaved: boolean
+    results: TestDataResult[]
+}
+
+export interface TestDataInput {
+    id: number,
+    input: string
+}
+
+export interface TestData {
+    id: number
+    inputs: TestDataInput[]
+    output: string
 }
 
 interface ProgCorrectionResult extends CorrectionResult<ProgSingleResult> {
@@ -58,7 +83,7 @@ function renderProgResult(result: ProgSingleResult): string {
 }
 
 
-function renderProgCorrectionSuccess(response: ProgCorrectionResult): string {
+export function renderProgCorrectionSuccess(response: ProgCorrectionResult): string {
 
     let html: string = `<div class="text-${response.solutionSaved ? 'success' : 'danger'}">Ihre Lösung wurde ${response.solutionSaved ? '' : ' nicht'} gespeichert.</div>`;
 

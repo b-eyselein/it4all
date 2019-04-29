@@ -120,7 +120,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       case ProgExParts.Implementation =>
 
         val declaration: String = maybeOldSolution.map(_.solution.implementation).getOrElse {
-          exercise.sampleSolutions find (_.language == language) map (_.base) getOrElse ""
+          exercise.sampleSolutions.find(_.language == language).map(_.base).getOrElse("")
         }
 
         views.html.toolViews.programming.progExercise(user, collection, exercise, declaration, ProgExParts.Implementation, this)

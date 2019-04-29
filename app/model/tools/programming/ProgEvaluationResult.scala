@@ -30,28 +30,8 @@ final case class SyntaxError(error: String) extends ProgEvalResult {
 
 }
 
+// Written from docker container in result.json:
+
 final case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, result: JsValue, consoleOutput: Option[String]) extends ProgEvalResult
 
-object ProgCompleteResultJsonProtocol extends CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] {
-
-  private val executionResultWrites: Writes[ExecutionResult] = (
-    (__ \ idName).write[Int] and
-      (__ \ successTypeName).write[String] and
-      (__ \ correctName).write[Boolean] and
-      (__ \ inputName).write[JsValue] and
-      (__ \ awaitedName).write[JsValue] and
-      (__ \ gottenName).write[JsValue] and
-      (__ \ consoleOutputName).write[Option[String]]
-    ) (er => (er.id, er.success.entryName, er.isSuccessful, er.input, er.awaited, er.result, er.consoleOutput))
-
-  private implicit val progEvalResultWrites: Writes[ProgEvalResult] = {
-    case er: ExecutionResult   => executionResultWrites.writes(er)
-    case SyntaxError(errorMsg) => JsString(errorMsg)
-  }
-
-  override def completeResultWrites(solutionSaved: Boolean): Writes[ProgCompleteResult] = (
-    (__ \ solutionSavedName).write[Boolean] and
-      (__ \ resultsName).write[Seq[ProgEvalResult]]
-    ) (pcr => (solutionSaved, pcr.results))
-
-}
+final case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], errors: String)
