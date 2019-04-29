@@ -42,7 +42,7 @@ export interface TestData {
     output: string
 }
 
-interface ProgCorrectionResult extends CorrectionResult<ProgSingleResult> {
+export interface ProgCorrectionResult extends CorrectionResult<ProgSingleResult> {
 }
 
 function printValue(value: any): string {

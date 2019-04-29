@@ -42,6 +42,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       outputType <- yamlObject.enumField(outputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
       baseData <- yamlObject.optJsonField(baseDataName)
 
+      unitTestType <- yamlObject.enumField(unitTestTypeName, UnitTestTypes.withNameInsensitive)
+
       inputTypes <- yamlObject.arrayField(inputTypesName, ProgInputTypeYamlFormat.read)
       sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(folderIdentifier).read)
       sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
@@ -62,7 +64,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
       ProgExercise(
         baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        folderIdentifier, functionName, outputType, baseData,
+        folderIdentifier, functionName, outputType, baseData, unitTestType,
         inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
       )
     }

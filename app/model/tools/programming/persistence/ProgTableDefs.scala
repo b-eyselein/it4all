@@ -124,6 +124,9 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
   private implicit val progDataTypesColumnType: BaseColumnType[ProgDataType] =
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
+  private implicit val unitTestTypeColumnType: BaseColumnType[UnitTestType] =
+    MappedColumnType.base[UnitTestType, String](_.entryName, UnitTestTypes.withNameInsensitive)
+
   override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
     MappedColumnType.base[ProgExPart, String](_.entryName, ProgExParts.withNameInsensitive)
 
@@ -145,9 +148,11 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def baseDataAsJson: Rep[JsValue] = column[JsValue]("base_data_json")
 
+    def unitTestType: Rep[UnitTestType] = column[UnitTestType]("unit_test_type")
+
 
     override def * : ProvenShape[DbProgExercise] = (id, semanticVersion, collectionId, title, author, text, state,
-      folderIdentifier, functionName, outputType, baseDataAsJson.?) <> (DbProgExercise.tupled, DbProgExercise.unapply)
+      folderIdentifier, functionName, outputType, baseDataAsJson.?, unitTestType) <> (DbProgExercise.tupled, DbProgExercise.unapply)
 
   }
 

@@ -14,7 +14,7 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
 
   private val programmingSampleSolutionMapping: Mapping[ProgSampleSolution] = mapping(
     idName -> number,
-//    languageName -> ProgLanguages.formField,
+    //    languageName -> ProgLanguages.formField,
     baseName -> nonEmptyText,
     solutionName -> nonEmptyText
   )(ProgSampleSolution.apply)(ProgSampleSolution.unapply)
@@ -56,6 +56,7 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
       functionNameName -> nonEmptyText,
       outputTypeName -> ProgDataTypes.formField,
       baseDataName -> optional(jsValueFormMapping),
+      unitTestTypeName -> UnitTestTypes.formField,
       inputTypesName -> seq(progInputMapping),
       sampleSolutionsName -> seq(programmingSampleSolutionMapping),
       sampleTestDataName -> seq(programmingSampleTestDataMapping),

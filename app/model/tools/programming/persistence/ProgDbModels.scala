@@ -10,16 +10,17 @@ import play.api.libs.json.{JsArray, JsValue}
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
   def dbExerciseFromExercise(collId: Int, ex: ProgExercise): DbProgExercise =
-    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.folderIdentifier, ex.functionName, ex.outputType, ex.baseData)
+    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.folderIdentifier, ex.functionName, ex.outputType, ex.baseData, ex.unitTestType)
 
   def exerciseFromDbValues(dbProgEx: DbProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
                            sampleTestData: Seq[ProgSampleTestData], maybeClassDiagramPart: Option[UmlClassDiagram]
-                          ): ProgExercise =
-    ProgExercise(
-      dbProgEx.id, dbProgEx.semanticVersion, dbProgEx.title, dbProgEx.author, dbProgEx.text, dbProgEx.state,
-      dbProgEx.folderIdentifier, dbProgEx.functionname, dbProgEx.outputType, dbProgEx.baseData,
-      inputTypes, sampleSolutions, sampleTestData, maybeClassDiagramPart
-    )
+                          ): ProgExercise = dbProgEx match {
+    case DbProgExercise(id, semanticVersion, _, title, author, text, state, folderIdentifier, functionname, outputType, baseData, unitTestType) =>
+      ProgExercise(
+        id, semanticVersion, title, author, text, state, folderIdentifier, functionname, outputType, baseData, unitTestType,
+        inputTypes, sampleSolutions, sampleTestData, maybeClassDiagramPart
+      )
+  }
 
   // Inputs
 
@@ -90,10 +91,10 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 
 }
 
-final case class DbProgExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-                                folderIdentifier: String, functionname: String, outputType: ProgDataType, baseData: Option[JsValue]
-                               ) extends ADbExercise
-
+final case class DbProgExercise(
+  id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
+  folderIdentifier: String, functionname: String, outputType: ProgDataType, baseData: Option[JsValue], unitTestType: UnitTestType)
+  extends ADbExercise
 
 final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, base: String, sampleStr: String)
   extends ADbSampleSol {
@@ -131,7 +132,6 @@ final case class DbProgUserTestData(id: Int, exId: Int, exSemVer: SemanticVersio
 final case class DbProgUmlClassDiagram(exId: Int, exSemVer: SemanticVersion, collId: Int, classDiagram: UmlClassDiagram)
 
 // Exercise Review
-
 
 final case class DbProgrammingExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: ProgExPart,
                                              difficulty: Difficulty, maybeDuration: Option[Int]

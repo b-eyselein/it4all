@@ -15,7 +15,6 @@ export {onProgCorrectionSuccess};
 
 let editor: CodeMirror.Editor;
 let testBtn: HTMLButtonElement;
-let sampleSolBtn: JQuery;
 
 let solutionChanged: boolean = false;
 

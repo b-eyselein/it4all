@@ -67,12 +67,17 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Other helper methods
 
+  override def exerciseHasPart(exercise: ProgExercise, part: ProgExPart): Boolean = part match {
+    case ProgExParts.TestdataCreation => exercise.unitTestType == UnitTestTypes.Normal
+    case _                            => true
+  }
+
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): ProgCollection =
     ProgCollection(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgExercise = ProgExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
-    folderIdentifier = "", functionName = "", outputType = ProgDataTypes.STRING, baseData = None,
+    folderIdentifier = "", functionName = "", outputType = ProgDataTypes.STRING, baseData = None, unitTestType = UnitTestTypes.Simplified,
     inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[ProgSampleTestData](), maybeClassDiagramPart = None
   )
 

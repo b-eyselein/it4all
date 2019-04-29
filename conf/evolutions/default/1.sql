@@ -102,6 +102,7 @@ create table if not exists prog_exercises (
     indent_level      int,
     output_type       varchar(30),
     base_data_json    text,
+    unit_test_type    enum ('Simplified', 'Normal'),
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id) references prog_collections (id)

@@ -1,16 +1,20 @@
 package model.tools.programming
 
+import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.points.Points
 import model.tools.uml.UmlClassDiagram
 import play.api.libs.json.JsValue
 import play.twirl.api.Html
 
+import scala.collection.immutable
+
 final case class ProgCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
   extends ExerciseCollection
 
 final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                               folderIdentifier: String, functionName: String, outputType: ProgDataType, baseData: Option[JsValue],
+                              unitTestType: UnitTestType,
                               inputTypes: Seq[ProgInput],
                               sampleSolutions: Seq[ProgSampleSolution],
                               sampleTestData: Seq[ProgSampleTestData],
@@ -32,6 +36,20 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
     if (extendedUnitTests) ???
     else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
   }
+
+}
+
+
+sealed trait UnitTestType extends EnumEntry
+
+case object UnitTestTypes extends PlayEnum[UnitTestType] {
+
+  override val values: immutable.IndexedSeq[UnitTestType] = findValues
+
+
+  case object Simplified extends UnitTestType
+
+  case object Normal extends UnitTestType
 
 }
 

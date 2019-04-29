@@ -13,6 +13,7 @@
     - {id: 1, name: a, type: int}
     - {id: 2, name: b, type: int}
   outputType: int
+  unitTestType: Simplified
 
   sampleSolutions:
     - id: 1
@@ -36,7 +37,7 @@
     - {id: 5, inputs: [15, 25], output: 5}
 
 - id: 2
-  semanticVersion: 1.0.0
+  semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Durchschnitt
   author: bje40dc
   text: >
@@ -49,6 +50,7 @@
   inputTypes:
     - {id: 1, name: my_list, type: list<int>}
   outputType: float
+  unitTestType: Simplified
 
   sampleSolutions:
     - id: 1
@@ -87,6 +89,8 @@
   inputTypes:
     - {id: 1, name: my_list, type: list<string>}
   outputType: string
+  unitTestType: Simplified
+
   sampleSolutions:
     - id: 1
       language: PYTHON_3
@@ -123,6 +127,7 @@
   inputTypes:
     - {id: 1, name: word, type: string}
   outputType: boolean
+  unitTestType: Simplified
 
   sampleSolutions:
     - id: 1

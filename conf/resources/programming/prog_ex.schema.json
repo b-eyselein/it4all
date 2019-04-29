@@ -14,11 +14,20 @@
         "author": {"type": "string"},
         "text": {"type": "string"},
         "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
+        "unitTestType": {"type": "string", "enum": ["Simplified", "Normal"]},
         "sampleTestData": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleTestData"}},
         "sampleSolutions": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleSolution"}}
       },
       "required": [
-        "id", "semanticVersion", "title", "author", "text", "status", "sampleTestData", "sampleSolutions"
+        "id",
+        "semanticVersion",
+        "title",
+        "author",
+        "text",
+        "status",
+        "sampleTestData",
+        "sampleSolutions",
+        "unitTestType"
       ],
       "additionalProperties": false
     },

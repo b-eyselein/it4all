@@ -35,8 +35,9 @@ object ProgConsts extends Consts {
   val stdoutName         : String = "stdout"
 
   val testIdName  : String = "testId"
-  val testdataName         = "testdata"
   val testMainName: String = "testMain"
+
+  val unitTestTypeName: String = "unitTestType"
 
   val variableName: String = "variable"
 
