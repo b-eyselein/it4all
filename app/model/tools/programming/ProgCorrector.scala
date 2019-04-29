@@ -23,13 +23,13 @@ object ProgCorrector {
               toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val completeTestData: Seq[ProgTestData] = part match {
-      case ProgExParts.TestdataCreation => progSolution.testData
-      case _                            => exercise.sampleTestData
+      case ProgExParts.TestCreation => progSolution.testData
+      case _                        => exercise.sampleTestData
     }
 
     val implementation: String = part match {
-      case ProgExParts.TestdataCreation => exercise.sampleSolutions.headOption.map(_.sample.implementation).getOrElse(???)
-      case _                            => progSolution.implementation
+      case ProgExParts.TestCreation => exercise.sampleSolutions.headOption.map(_.sample.implementation).getOrElse(???)
+      case _                        => progSolution.implementation
     }
 
     val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, collection.id, exercise.id)

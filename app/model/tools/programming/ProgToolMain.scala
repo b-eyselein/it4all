@@ -68,8 +68,8 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   // Other helper methods
 
   override def exerciseHasPart(exercise: ProgExercise, part: ProgExPart): Boolean = part match {
-    case ProgExParts.TestdataCreation => exercise.unitTestType == UnitTestTypes.Normal
-    case _                            => true
+    case ProgExParts.TestCreation => exercise.unitTestType == UnitTestTypes.Normal
+    case _                        => true
   }
 
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): ProgCollection =
@@ -118,7 +118,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     val language: ProgLanguage = ProgLanguages.PYTHON_3
 
     part match {
-      case ProgExParts.TestdataCreation =>
+      case ProgExParts.TestCreation =>
         val oldTestData: Seq[ProgUserTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[ProgUserTestData]())
         views.html.toolViews.programming.testDataCreation(user, collection, exercise, oldTestData, this)
 

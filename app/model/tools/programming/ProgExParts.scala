@@ -13,7 +13,7 @@ object ProgExParts extends PlayEnum[ProgExPart] {
 
   val values: IndexedSeq[ProgExPart] = findValues
 
-  case object TestdataCreation extends ProgExPart(partName = "Erstellen der Testdaten", urlName = "testdata")
+  case object TestCreation extends ProgExPart(partName = "Erstellen der Tests", urlName = "testCreation")
 
   case object Implementation extends ProgExPart(partName = "Implementierung", urlName = "implementation")
 

@@ -85,8 +85,8 @@ final case class ProgSampleSolution(id: Int, base: String, solutionStr: String)
   val part: ProgExPart = ProgExParts.Implementation
 
   val sample: ProgSolution = part match {
-    case ProgExParts.TestdataCreation => ??? // ProgSolution(solutionStr = "", language)
-    case _                            => ProgSolution(implementation = solutionStr, testData = Seq[ProgUserTestData]())
+    case ProgExParts.TestCreation => ??? // ProgSolution(solutionStr = "", language)
+    case _                        => ProgSolution(implementation = solutionStr, testData = Seq[ProgUserTestData]())
   }
 
 }
