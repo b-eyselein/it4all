@@ -11,7 +11,7 @@ object XmlConsts extends Consts {
 
   val lineName: String = "line"
 
-  val parsedName     : String = "parsed"
+  val parsedName     : String = "parsedLine"
   val parseErrorsName: String = "parseErrors"
 
   val rootNodeName: String = "rootNode"

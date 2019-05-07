@@ -14,6 +14,9 @@
 
   unitTestType: Simplified
 
+  unitTestsDescription: TODO!
+  unitTestTestConfigs: []
+
   sampleSolutions:
     - id: 1
       language: PYTHON_3
@@ -50,6 +53,9 @@
   outputType: float
 
   unitTestType: Simplified
+
+  unitTestsDescription: TODO!
+  unitTestTestConfigs: []
 
   sampleSolutions:
     - id: 1
@@ -90,6 +96,9 @@
 
   unitTestType: Simplified
 
+  unitTestsDescription: TODO!
+  unitTestTestConfigs: []
+
   sampleSolutions:
     - id: 1
       language: PYTHON_3
@@ -127,6 +136,9 @@
   outputType: boolean
 
   unitTestType: Simplified
+
+  unitTestsDescription: TODO!
+  unitTestTestConfigs: []
 
   sampleSolutions:
     - id: 1

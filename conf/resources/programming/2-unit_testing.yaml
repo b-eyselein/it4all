@@ -1,4 +1,4 @@
-- id: 2
+- id: 1
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Fakultät
   author: bje40dc
@@ -22,5 +22,23 @@
       sample: |
         def factorial(n: int) -> int:
             pass
+
+  unitTestsDescription: >
+    Schreiben Sie Unittests für die Funktion <code>factorial(n: int) -> int</code>. Diese soll die Fakultät der Zahl
+    <code>n</code> berechnen.
+  unitTestTestConfigs:
+    - id: 0
+      shouldFail: false
+      description: Diese Implementierung ist korrekt und sollte alle Tests bestehen.
+
+    - id: 1
+      shouldFail: true
+      cause: IllegalArgument
+      description: TODO!
+
+    - id: 2
+      shouldFail: true
+      cause: WrongResult
+      description: TODO!
 
   sampleTestData: []

@@ -2,9 +2,8 @@ package model.tools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.result.CompleteResultJsonProtocol
+import model.points._
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import model.tools.xml.XmlConsts._
 
 object XmlSampleSolutionJsonProtocol {
 
@@ -16,46 +15,29 @@ object XmlSampleSolutionJsonProtocol {
 
 object XmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] {
 
-  override def completeResultWrites(solutionSaved: Boolean): Writes[XmlCompleteResult] = {
-    case xmlGrammarCompleteResult: XmlGrammarCompleteResult   => xmlGrammarCompleteResultWrites(solutionSaved).writes(xmlGrammarCompleteResult)
-    case xmlDocumentCompleteResult: XmlDocumentCompleteResult => xmlDocumentCompleteResultWrites(solutionSaved).writes(xmlDocumentCompleteResult)
+  val elementLineAnalysisResultWrites: Writes[ElementLineAnalysisResult] = Json.writes[ElementLineAnalysisResult]
+
+  override val completeResultWrites: Writes[XmlCompleteResult] = {
+    case xmlGrammarCompleteResult: XmlGrammarCompleteResult   => xmlGrammarCompleteResultWrites.writes(xmlGrammarCompleteResult)
+    case xmlDocumentCompleteResult: XmlDocumentCompleteResult => xmlDocumentCompleteResultWrites.writes(xmlDocumentCompleteResult)
   }
 
-  // Xml Grammar correction
+  private implicit val pointsWrites: Writes[Points] = pointsJsonWrites
 
-  private def xmlGrammarCompleteResultWrites(solutionSaved: Boolean): Writes[XmlGrammarCompleteResult] = (
-    (__ \ solutionSavedName).write[Boolean] and
-      (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[String] and
-      (__ \ maxPointsName).write[String] and
-      (__ \ resultsName).write[Seq[ElementLineMatch]] and
-      (__ \ parseErrorsName).write[Seq[DTDParseException]]
-    ) (xmlGramCompRes =>
-    (solutionSaved, xmlGramCompRes.isSuccessful, xmlGramCompRes.points.asDoubleString, xmlGramCompRes.maxPoints.asDoubleString,
-      xmlGramCompRes.results, xmlGramCompRes.learnerSolution.parseErrors)
-  )
+  // Xml Grammar correction
 
   private implicit val elementLineMatchWrites: Writes[ElementLineMatch] = _.toJson
 
   private implicit val dtdParseExceptionWrites: Format[DTDParseException] = Json.format[DTDParseException]
 
+  private val xmlGrammarCompleteResultWrites: Writes[XmlGrammarCompleteResult] = Json.writes[XmlGrammarCompleteResult]
+
   // Xml Document correction
 
   private implicit val errorTypeJsonFormat: Format[XmlErrorType] = XmlErrorType.jsonFormat
 
-  private def xmlDocumentCompleteResultWrites(solSaved: Boolean): Writes[XmlDocumentCompleteResult] = (
-    (__ \ solutionSavedName).write[Boolean] and
-      (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[String] and
-      (__ \ maxPointsName).write[String] and
-      (__ \ resultsName).write[Seq[XmlError]]
-    ) (unapplyXmlDocumentCompleteResult(solSaved))
-
-  private def unapplyXmlDocumentCompleteResult(solSaved: Boolean):
-  XmlDocumentCompleteResult => (Boolean, Boolean, String, String, Seq[XmlError]) = xmlDocCompRes =>
-    (solSaved, xmlDocCompRes.isSuccessful, xmlDocCompRes.points.asDoubleString, xmlDocCompRes.maxPoints.asDoubleString, xmlDocCompRes.results)
-
-
   private implicit val xmlErrorWrites: Writes[XmlError] = Json.writes[XmlError]
+
+  private val xmlDocumentCompleteResultWrites: Writes[XmlDocumentCompleteResult] = Json.writes[XmlDocumentCompleteResult]
 
 }

@@ -1,0 +1,20 @@
+@import model.{User, ExerciseCollection}
+@import model.toolMains.CollectionToolMain
+
+@(user: User, toolMain: CollectionToolMain, collection: ExerciseCollection, id: Int)
+
+@title = @{
+    s"Fehler: Keine Aufgabe $id für Sammlung ${collection.title} im Tool ${toolMain.toolname}"
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+        <h2 class="text-danger text-red">
+            Es gibt keine Aufgabe mit der ID '@id' für die Sammlung '@collection.title' im Tool '@toolMain.toolname'</h2>
+        <hr>
+
+        <a href="@coll.routes.CollectionController.collection(toolMain.urlPart, collection.id)"
+        class="btn btn-primary btn-block">Zurück zur Sammlung</a>
+    </div>
+}
+

@@ -42,11 +42,8 @@
 
                     <div class="form-group">
                         <div class="btn-group d-flex">
-                        @for(fileName <- fileNames) {
-                            <button class="fileBtn btn @{
-                                if(maybeActiveFile.map(_.name) contains fileName) "btn-primary" else "btn-outline-secondary"
-                            } w-100" data-filename="@fileName"> @fileName
-                            </button>
+                        @for(fileName <- fileNames; clazzName = if(maybeActiveFile.map(_.name) contains fileName) "btn-primary" else "btn-outline-secondary") {
+                            <button class="fileBtn btn @clazzName w-100" data-filename="@fileName">@fileName</button>
                         }
                         </div>
                     </div>

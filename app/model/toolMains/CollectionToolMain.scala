@@ -72,6 +72,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
+  def updateSolSaved(compResult: CompResultType, solSaved: Boolean): CompResultType
+
   // Db
 
   private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
@@ -119,13 +121,13 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   // Correction
 
   def correctAbstract(user: User, collection: CollType, exercise: ExType, part: PartType)
-                     (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[(CompResultType, Boolean)]] =
+                     (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[CompResultType]] =
     readSolution(request, part) match {
-      case Left(errorMsg) =>
+      case Left(errorMsg)  =>
         logger.error(errorMsg)
         Future.successful(Failure(SolutionTransferException))
-
       case Right(solution) =>
+
         correctEx(user, solution, collection, exercise, part).flatMap {
           case Failure(error) => Future.successful(Failure(error))
           case Success(res)   =>
@@ -133,7 +135,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
             // FIXME: points != 0? maxPoints != 0?
             val dbSol = instantiateSolution(id = -1, exercise, part, solution, res.points, res.maxPoints)
             tables.futureSaveUserSolution(exercise.id, exercise.semanticVersion, collection.id, user.username, dbSol).map {
-              solSaved => Success((res, solSaved))
+              solSaved => Success(updateSolSaved(res, solSaved))
             }
         }
     }
@@ -173,8 +175,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Result handlers
 
-  def onLiveCorrectionResult(result: CompResultType, solutionSaved: Boolean): JsValue =
-    completeResultJsonProtocol.completeResultWrites(solutionSaved).writes(result)
+  def onLiveCorrectionResult(result: CompResultType): JsValue =
+    completeResultJsonProtocol.completeResultWrites.writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
 
@@ -222,6 +224,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   // Files ?!? TODO!
 
   def futureFilesForExercise(user: User, collId: Int, exercise: ExType, part: PartType): Future[Seq[ExerciseFile]] =
-    Future.successful(Seq.empty)
+    ??? // Future.successful(Seq.empty)
 
 }

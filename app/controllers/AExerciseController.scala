@@ -1,7 +1,7 @@
 package controllers
 
 import model.{Exercise, ExerciseCollection, User}
-import model.toolMains.{AToolMain, ToolList}
+import model.toolMains.{AToolMain, CollectionToolMain, ToolList}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
@@ -19,30 +19,31 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
 
   // Helper methods
 
-  private def onNoSuchTool(toolType: String): Result =
-    NotFound(s"Es gibt kein Tool mit dem Kürzel '$toolType'")
+  private def onNoSuchTool(user: User, toolType: String): Result =
+    NotFound(views.html.errorViews.noSuchToolView(user, toolType))
 
-  protected def onNoSuchCollection(tool: ToolMainType, collId: Int): Result =
-    NotFound(s"Es gibt keine Sammlung mit der ID '$collId' für das Tool '${tool.toolname}'")
+  protected def onNoSuchCollection(user: User, tool: CollectionToolMain, collId: Int): Result =
+    NotFound(views.html.errorViews.noSuchCollectionView(user, tool, collId))
 
-  protected def onNoSuchExercise(tool: ToolMainType, collection: ExerciseCollection, id: Int): Result =
-    NotFound(s"Es gibt keine Aufgabe mit der ID '$id' für die Sammlung '${collection.title}' im Tool '${tool.toolname}")
+  protected def onNoSuchExercise(user: User, tool: CollectionToolMain, collection: ExerciseCollection, id: Int): Result =
+    NotFound(views.html.errorViews.noSuchExerciseView(user, tool, collection, id))
 
-  protected def onNoSuchExercisePart(tool: ToolMainType, collection: ExerciseCollection, exercise: Exercise, partStr: String): Result =
-    NotFound(s"Es gibt keine Aufgabenteil '$partStr' für die Aufgabe '${exercise.title}' in der Sammlung Sammlung '${collection.title}' im Tool '${tool.toolname}")
+  protected def onNoSuchExercisePart(user: User, tool: CollectionToolMain, collection: ExerciseCollection, exercise: Exercise, partStr: String): Result =
+    NotFound(views.html.errorViews.noSuchExercisePartView(user, tool, collection, exercise, partStr))
 
 
   protected def withUserWithToolMain(toolType: String)(f: (User, ToolMainType) => Request[AnyContent] => Result): EssentialAction = withUser { user =>
     implicit request =>
       getToolMain(toolType) match {
-        case None           => onNoSuchTool(toolType)
+        case None           => onNoSuchTool(user, toolType)
         case Some(toolMain) => f(user, toolMain)(request)
       }
   }
+
   protected def futureWithUserWithToolMain(toolType: String)(f: (User, ToolMainType) => Request[AnyContent] => Future[Result]): EssentialAction = futureWithUser { user =>
     implicit request =>
       getToolMain(toolType) match {
-        case None           => Future(onNoSuchTool(toolType))
+        case None           => Future(onNoSuchTool(user, toolType))
         case Some(toolMain) => f(user, toolMain)(request)
       }
   }

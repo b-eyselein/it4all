@@ -55,6 +55,7 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "codemirror" % "5.46.0", // MIT
   "org.webjars.npm" % "types__codemirror" % "0.0.74", // MIT
+  // TODO: "org.webjars.npm" % "cm-show-invisibles" % "2.02", // MIT
 
   //  "org.webjars.npm" % "graphlib" % "2.1.7", // MIT
   "org.webjars.npm" % "types__graphlib" % "2.1.4" // MIT
@@ -87,10 +88,10 @@ libraryDependencies ++= Seq(
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.2" % Test,
 
-  "mysql" % "mysql-connector-java" % "8.0.15", // GPL 2.0
+  "mysql" % "mysql-connector-java" % "8.0.16", // GPL 2.0
 
-  "com.typesafe.play" %% "play-slick" % "4.0.0", // Apache 2.0
-  "com.typesafe.play" %% "play-slick-evolutions" % "4.0.0", // Apache 2.0
+  "com.typesafe.play" %% "play-slick" % "4.0.1", // Apache 2.0
+  "com.typesafe.play" %% "play-slick-evolutions" % "4.0.1", // Apache 2.0
 
   "com.beachape" %% "enumeratum-play" % "1.5.16", // MIT
   "com.beachape" %% "enumeratum-play-json" % "1.5.16", // MIT

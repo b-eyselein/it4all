@@ -12,8 +12,6 @@ object WebConsts extends Consts {
 
   val conditionsName: String = "conditions"
 
-  val descriptionName: String = "description"
-
   val elementFoundName: String = "elementFound"
   val elementSpecName : String = "elementSpec"
 

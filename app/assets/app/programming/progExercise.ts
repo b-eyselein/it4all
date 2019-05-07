@@ -25,18 +25,16 @@ interface ProgSampleSolution {
 }
 
 function testSol(): void {
-    testBtn.disabled = true;
-
     const solution: ProgSolution = {
         implementation: editor.getValue(),
-        testData: []
+        testData: [],
+        unitTest: ''
     };
 
     testExerciseSolution<ProgSolution, ProgCorrectionResult>(testBtn, solution, onProgCorrectionSuccess)
 }
 
 function onProgCorrectionSuccess(result: ProgCorrectionResult): void {
-    testBtn.disabled = false;
     solutionChanged = false;
 
     document.querySelector<HTMLDivElement>('#correction').innerHTML = renderProgCorrectionSuccess(result);

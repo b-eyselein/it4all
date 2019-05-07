@@ -98,8 +98,6 @@ function testSol(): void {
         return;
     }
 
-    testBtn.disabled = true;
-
     testExerciseSolution<string, SqlCorrectionResult>(testBtn, learnerSolution, onSqlCorrectionSuccess);
 }
 

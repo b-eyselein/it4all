@@ -1,7 +1,7 @@
 package model.tools.web
 
 import model.core.result.CompleteResultJsonProtocol
-import model.points.Points
+import model.points._
 import model.tools.web.WebConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -9,7 +9,7 @@ import play.api.libs.json._
 //noinspection ConvertibleToMethodValue
 object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
 
-  private implicit val pointsWrites: Writes[Points] = { point => JsNumber(point.asDouble) }
+  private implicit val pointsWrites: Writes[Points] = pointsJsonWrites
 
   private implicit val gradedTextResultWrites: Writes[GradedTextResult] = Json.writes[GradedTextResult]
 
@@ -47,19 +47,20 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWe
 
   // Complete Result
 
-  private def unapplyWebCompleteResult(solutionSaved: Boolean, wcr: WebCompleteResult): (Boolean, String, Seq[GradedElementSpecResult], Seq[GradedJsTaskResult], Boolean, Double, Double) =
-    (solutionSaved, wcr.part.urlName, wcr.gradedHtmlTaskResults.map(_.gradedElementSpecResult), wcr.gradedJsTaskResults,
-      wcr.results.forall(_.isSuccessful), wcr.points.asDouble, wcr.maxPoints.asDouble)
+  private def unapplyWebCompleteResult: WebCompleteResult => (Boolean, Seq[GradedElementSpecResult], Seq[GradedJsTaskResult], Boolean, Points, Points) = {
+    case WebCompleteResult(gradedHtmlTaskResults, gradedJsTaskResults, points, maxPoints, solutionSaved) =>
+      (solutionSaved, gradedHtmlTaskResults.map(_.gradedElementSpecResult), gradedJsTaskResults,
+        (gradedHtmlTaskResults ++ gradedJsTaskResults).forall(_.isSuccessful), points, maxPoints)
+  }
 
-  override def completeResultWrites(solutionSaved: Boolean): Writes[WebCompleteResult] = (
+  override val completeResultWrites: Writes[WebCompleteResult] = (
     (__ \ solutionSavedName).write[Boolean] and
-      (__ \ partName).write[String] and
       (__ \ htmlResultsName).write[Seq[GradedElementSpecResult]] and
       (__ \ jsResultsName).write[Seq[GradedJsTaskResult]] and
       (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[Double] and
-      (__ \ maxPointsName).write[Double]
-    ) (unapplyWebCompleteResult(solutionSaved, _))
+      (__ \ pointsName).write[Points] and
+      (__ \ maxPointsName).write[Points]
+    ) (unapplyWebCompleteResult)
 
 
 }

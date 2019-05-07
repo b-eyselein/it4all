@@ -1,0 +1,17 @@
+@import model.User
+
+@(user: User, toolType: String)
+
+@title = @{
+    s"Fehler: Kein Tool '${toolType}'"
+}
+
+@main(title, Some(user)) {
+    <div class="container">
+        <h2 class="text-danger text-center">Es gibt kein Tool mit dem Kürzel '@toolType'</h2>
+
+        <hr>
+
+        <a href="@routes.Application.index()" class="btn btn-primary btn-block">Zurück zur Startseite</a>
+    </div>
+}

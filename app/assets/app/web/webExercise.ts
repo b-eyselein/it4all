@@ -3,10 +3,10 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import {WebCompleteResult, WebSampleSolution} from './webInterfaces';
 import {renderWebCompleteResult} from './webCorrection';
-import {domReady, escapeHtml, initShowSampleSolBtn, testExerciseSolution} from '../otherHelpers';
+import {domReady, focusOnCorrection, escapeHtml, initShowSampleSolBtn, testExerciseSolution} from '../otherHelpers';
 
 import {ExerciseFile, IdeWorkspace} from '../tools/ideExerciseHelpers';
-import {focusOnCorrection, getIdeWorkspace, setupEditor} from '../tools/ideExercise';
+import {getIdeWorkspace, setupEditor} from '../tools/ideExercise';
 
 let uploadBtn: HTMLButtonElement;
 let previewChangedDiv: HTMLDivElement;
@@ -104,7 +104,6 @@ domReady(() => {
 
     uploadBtn = document.getElementById('uploadBtn') as HTMLButtonElement;
     uploadBtn.onclick = () => {
-        uploadBtn.disabled = true;
         testExerciseSolution<IdeWorkspace, WebCompleteResult>(uploadBtn, getIdeWorkspace(), onWebCorrectionSuccess);
     };
 

@@ -131,4 +131,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override protected def instantiateSolution(id: Int, exercise: SqlExercise, part: SqlExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[SqlExPart] =
     StringUserSolution[SqlExPart](id, part, solution, points, maxPoints)
 
+  override def updateSolSaved(compResult: SqlCorrResult, solSaved: Boolean): SqlCorrResult = compResult match {
+    case sr: SqlResult      => sr.copy(solutionSaved = solSaved)
+    case sf: SqlParseFailed => sf.copy(solutionSaved = solSaved)
+  }
+
 }

@@ -74,6 +74,13 @@ trait Exercise extends HasBaseValues {
 
 }
 
+trait FileExercise[PartType <: ExPart] {
+  self: Exercise =>
+
+  def filesForExercisePart(part: PartType): Seq[ExerciseFile]
+
+}
+
 trait ExerciseCollection {
 
   def id: Int

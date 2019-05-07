@@ -15,7 +15,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionContext)
@@ -83,6 +83,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override def instantiateSolution(id: Int, exercise: UmlExercise, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlUserSolution =
     UmlUserSolution(id, part, solution, points, maxPoints)
 
+  override def updateSolSaved(compResult: UmlCompleteResult, solSaved: Boolean): UmlCompleteResult =
+    compResult.copy(solutionSaved = solSaved)
+
   // Views
 
   override def renderExercise(user: User, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart, maybeOldSolution: Option[UmlUserSolution])
@@ -94,10 +97,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   }
 
   override def renderEditRest(exercise: UmlExercise): Html = views.html.toolViews.uml.editUmlExRest(exercise)
-
-  //  override def renderUserExerciseEditForm(user: User, newExForm: Form[UmlExercise], isCreation: Boolean)
-  //                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-  //    views.html.idExercises.uml.editUmlExerciseForm(user, newExForm, isCreation, this)
 
   // Correction
 
@@ -112,9 +111,13 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
       }
   }
 
-  override def correctEx(user: User, classDiagram: UmlClassDiagram, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart): Future[Try[UmlCompleteResult]] =
+  override def correctEx(user: User, classDiagram: UmlClassDiagram, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart): Future[Try[UmlCompleteResult]] = {
     Future.successful {
-      Try(new UmlCompleteResult(exercise, classDiagram, part))
+      exercise.sampleSolutions.headOption match {
+        case None                 => Failure(new Exception("There is no sample solution!"))
+        case Some(sampleSolution) => Success(UmlCompleteResult(classDiagram, sampleSolution.sample, part))
+      }
     }
+  }
 
 }

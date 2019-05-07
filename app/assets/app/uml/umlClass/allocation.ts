@@ -72,26 +72,15 @@ function readAllocation(): UmlSolution {
 }
 
 function onMemberAllocationCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
-    testBtn.disabled = false;
-
     // FIXME: implement!
     console.warn(JSON.stringify(response, null, 2));
 }
 
-function onMemberAllocationCorrectionError(jqXHR): void {
-    testBtn.disabled = false;
-    console.error(jqXHR);
-}
-
-function testSol() {
-    testBtn.disabled = true;
-
-    testExerciseSolution<UmlSolution, UmlClassDiagCorrectionResult>(testBtn, readAllocation(), onMemberAllocationCorrectionSuccess)
-}
-
 domReady(() => {
     testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
-    testBtn.onclick = testSol;
+    testBtn.onclick = () => {
+        testExerciseSolution<UmlSolution, UmlClassDiagCorrectionResult>(testBtn, readAllocation(), onMemberAllocationCorrectionSuccess)
+    };
 
     let solutionChanged = false; // TODO!
 

@@ -45,7 +45,11 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
       inputTypes <- yamlObject.arrayField(inputTypesName, ProgInputTypeYamlFormat.read)
       sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(functionName).read)
+
       sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
+
+      unitTestsDescription <- yamlObject.stringField(unitTestsDescriptionName)
+      unitTestTestConfigs <- yamlObject.arrayField(unitTestTestConfigsName, UnitTestTestConfigYamlFormat.read)
 
       maybeClassDiagramPart <- yamlObject.optField(classDiagramName, UmlSampleSolutionYamlFormat.read).map(_.map(_.sample))
     } yield {
@@ -61,10 +65,13 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       // FIXME: return ...
         logger.error("Could not read programming sample solution", sampleSolutionFailure.exception)
 
+      for (unitTestTestConfigFailure <- unitTestTestConfigs._2)
+        logger.error("Could not read unit test test config", unitTestTestConfigFailure.exception)
+
       ProgExercise(
         baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         functionName, outputType, baseData, unitTestType,
-        inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
+        inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, unitTestsDescription, unitTestTestConfigs._1, maybeClassDiagramPart
       )
     }
 
@@ -108,6 +115,20 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       languageName -> pss.language.entryName,
       sampleName -> pss.sample.implementation
     )
+
+  }
+
+
+  private object UnitTestTestConfigYamlFormat extends MyYamlObjectFormat[UnitTestTestConfig] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[UnitTestTestConfig] = for {
+      id <- yamlObject.intField(idName)
+      shouldFail <- yamlObject.boolField("shouldFail")
+      description <- yamlObject.stringField(descriptionName)
+      cause <- yamlObject.optStringField("cause")
+    } yield UnitTestTestConfig(id, shouldFail, cause, description)
+
+    override def write(obj: UnitTestTestConfig): YamlValue = ???
 
   }
 

@@ -16,7 +16,7 @@ object UmlSampleSolutionJsonProtocol {
 
 object UmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationResult, UmlCompleteResult] {
 
-  override def completeResultWrites(solutionSaved: Boolean): Writes[UmlCompleteResult] = (
+  override val completeResultWrites: Writes[UmlCompleteResult] = (
     (__ \ "classResult").write[Option[MatchingResult[UmlClassMatch]]] and
       (__ \ "assocAndImplResult").write[Option[(MatchingResult[UmlAssociationMatch], MatchingResult[UmlImplementationMatch])]]
     ) (ucr => (ucr.classResult, ucr.assocAndImplResult)

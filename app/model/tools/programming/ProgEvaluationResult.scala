@@ -1,37 +1,47 @@
 package model.tools.programming
 
-import model.core.result.{CompleteResult, CompleteResultJsonProtocol, EvaluationResult, SuccessType}
-import model.tools.programming.ProgConsts._
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
+import play.api.libs.json.JsValue
 
 // Types of complete results
 
-final case class ProgCompleteResult(implementation: String, results: Seq[ProgEvalResult]) extends CompleteResult[ProgEvalResult] {
 
-  override type SolType = String
+sealed trait ProgEvalResult extends EvaluationResult
 
-  override def learnerSolution: String = implementation
+final case class ProgCompleteResult(implResults: Seq[ExecutionResult], unitTestResults: Seq[UnitTestCorrectionResult], solutionSaved: Boolean = false)
+  extends CompleteResult[ProgEvalResult] {
 
-  override val points: Points = (-1).points
+  //  override type SolType = String
 
-  override val maxPoints: Points = (-1).points
+  override def results: Seq[ProgEvalResult] = implResults
+
+  override val points: Points = results.filter(_.isSuccessful).length.points
+
+  override val maxPoints: Points = results.length.points
 
 }
 
 // Single results
 
-sealed trait ProgEvalResult extends EvaluationResult
-
-final case class SyntaxError(error: String) extends ProgEvalResult {
-
-  override val success: SuccessType = SuccessType.ERROR
-
-}
+final case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, result: JsValue, consoleOutput: Option[String])
+  extends ProgEvalResult
 
 // Written from docker container in result.json:
 
-final case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, result: JsValue, consoleOutput: Option[String]) extends ProgEvalResult
+// Implementation tests
 
 final case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], errors: String)
+
+// Unit Test Correction
+
+final case class UnitTestTestConfig(id: Int, shouldFail: Boolean, cause: Option[String], description: String)
+
+final case class UnitTestCorrectionResult(testConfig: UnitTestTestConfig, successful: Boolean, file: String, status: Int,
+                                          stdout: Seq[String], stderr: Seq[String]) extends ProgEvalResult {
+
+  override def success: SuccessType = ???
+
+}
+
+final case class UnitTestCorrectionResultFileContent(results: Seq[UnitTestCorrectionResult])

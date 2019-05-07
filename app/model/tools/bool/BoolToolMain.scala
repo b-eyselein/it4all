@@ -2,10 +2,10 @@ package model.tools.bool
 
 import javax.inject.{Inject, Singleton}
 import model._
-import model.tools.bool.BoolConsts._
-import model.tools.bool.BooleanQuestion._
 import model.core.result.EvaluationResult
 import model.toolMains.{RandomExerciseToolMain, ToolState}
+import model.tools.bool.BoolConsts._
+import model.tools.bool.BooleanQuestion._
 import play.api.Logger
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
@@ -13,7 +13,6 @@ import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success, Try}
 
 @Singleton
 class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionContext)
@@ -60,26 +59,10 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
   override def checkSolution(exPart: BoolExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
     case None          => Json.obj(errorName -> "There has been an error in your request!")
     case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue) match {
-      case JsSuccess(boolSolution, _) => correctPart(exPart, boolSolution).toJson
+      case JsSuccess(boolSolution, _) => BoolCorrector.correctPart(exPart, boolSolution).toJson
       case JsError(errors)            =>
         errors.foreach(e => logger.error("Json Error: " + e.toString))
         Json.obj(errorName -> "There has been an error in your json!")
-    }
-  }
-
-  private def correctPart(exPart: BoolExPart, boolSolution: BoolSolution): BooleanQuestionResult = {
-    val formulaParseTry: Try[BoolNode] = BoolNodeParser.parseBoolFormula(boolSolution.formula)
-
-    exPart match {
-      case BoolExParts.TableFillout => formulaParseTry match {
-        case Failure(_)       => FilloutQuestionError(boolSolution.formula, "There has been an internal error!")
-        case Success(formula) => FilloutQuestionSuccess(formula, boolSolution.assignments map (as => as + (SolVariable -> formula(as))))
-      }
-
-      case BoolExParts.FormulaCreation => formulaParseTry match {
-        case Failure(error)   => CreationQuestionError(boolSolution.formula, error.getMessage)
-        case Success(formula) => CreationQuestionSuccess(formula, CreationQuestion(boolSolution.assignments))
-      }
     }
   }
 

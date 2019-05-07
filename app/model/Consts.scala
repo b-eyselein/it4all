@@ -10,6 +10,7 @@ trait Consts {
   val contentName: String = "content"
   val correctName: String = "correct"
 
+  val descriptionName: String = "description"
   val difficultyName: String = "difficulty"
   val durationName  : String = "duration"
 
@@ -20,8 +21,6 @@ trait Consts {
   val filesName: String = "files"
 
   val gottenName: String = "gotten"
-
-  val learnerSolutionName: String = "learnerSolution"
 
   val idName        : String = "id"
   val inputTypeName : String = "inputType"

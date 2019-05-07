@@ -43,9 +43,9 @@ object BooleanQuestion {
   }
 
   def generateNewCreationQuestion: CreationQuestion = {
-    val variables = ('a' to 'z') take randomBetweenInclBounds(2, 3) map Variable toSet
+    val variables = ('a' to 'z').take(randomBetweenInclBounds(2, 3)).map(Variable).toSet
 
-    val assignments = generateAllAssignments(variables toSeq) map (as => as + (SolVariable -> generator.nextBoolean))
+    val assignments = generateAllAssignments(variables.toSeq).map(as => as + (SolVariable -> generator.nextBoolean))
 
     CreationQuestion(assignments)
   }
@@ -73,10 +73,10 @@ final case class CreationQuestion(solutions: Seq[BoolTableRow]) extends BooleanQ
 
 final case class FilloutQuestion(formula: BoolNode) extends BooleanQuestion {
 
-  val assignments: Seq[BoolTableRow] = generateAllAssignments(variables.toSeq)
-
   override val variables: Set[Variable] = formula.usedVariables
 
   override val exPart: BoolExPart = BoolExParts.TableFillout
+
+  lazy val assignments: Seq[BoolTableRow] = generateAllAssignments(variables.toSeq)
 
 }

@@ -3,7 +3,6 @@ package controllers.coll
 import controllers.{AExerciseController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.core._
-import model.core.overviewHelpers.SolvedStatesForExerciseParts
 import model.toolMains.{CollectionToolMain, ToolList}
 import model.tools.programming.ProgToolMain
 import model.tools.uml._
@@ -21,10 +20,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, ws: WSClient, val repository: Repository,
-                                     progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain
-                                    )(implicit ec: ExecutionContext)
-  extends AExerciseController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
+class CollectionController @Inject()(
+  cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, ws: WSClient, val repository: Repository,
+  progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)(implicit ec: ExecutionContext)
+  extends AExerciseController(cc, dbcp, tl)
+    with HasDatabaseConfigProvider[JdbcProfile]
+    with Secured
+    with play.api.i18n.I18nSupport {
 
   private val logger = Logger(classOf[CollectionController])
 
@@ -49,7 +51,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       val step = 12
 
       toolMain.futureCollById(collId) flatMap {
-        case None       => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None       => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(coll) =>
 
           for {
@@ -62,15 +64,15 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def exercise(toolType: String, collId: Int, exId: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(collection) =>
 
           toolMain.futureExerciseById(collId, exId) flatMap {
-            case None           => Future.successful(onNoSuchExercise(toolMain, collection, exId))
+            case None           => Future.successful(onNoSuchExercise(user, toolMain, collection, exId))
             case Some(exercise) =>
 
               toolMain.partTypeFromUrl(partStr) match {
-                case None         => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
+                case None         => Future.successful(onNoSuchExercisePart(user, toolMain, collection, exercise, partStr))
                 case Some(exPart) =>
 
                   toolMain.futureMaybeOldSolution(user.username, collId, exId, exPart).map {
@@ -84,19 +86,19 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def correctLive(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(collection) =>
 
           toolMain.futureExerciseById(collection.id, id) flatMap {
-            case None           => Future.successful(onNoSuchExercise(toolMain, collection, id))
+            case None           => Future.successful(onNoSuchExercise(user, toolMain, collection, id))
             case Some(exercise) =>
 
               toolMain.partTypeFromUrl(partStr) match {
-                case None         => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
+                case None         => Future.successful(onNoSuchExercisePart(user, toolMain, collection, exercise, partStr))
                 case Some(exPart) =>
 
                   toolMain.correctAbstract(user, collection, exercise, exPart).map {
-                    case Success(result) => Ok(toolMain.onLiveCorrectionResult(result._1, result._2))
+                    case Success(result) => Ok(toolMain.onLiveCorrectionResult(result))
                     case Failure(error)  =>
                       logger.error("There has been an internal correction error:", error)
                       BadRequest(toolMain.onLiveCorrectionError(error))
@@ -106,18 +108,18 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
   }
 
-  def sampleSol(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
+  def sampleSol(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(collection) =>
 
           toolMain.futureExerciseById(collection.id, id) flatMap {
-            case None           => Future.successful(onNoSuchExercise(toolMain, collection, id))
+            case None           => Future.successful(onNoSuchExercise(user, toolMain, collection, id))
             case Some(exercise) =>
 
               toolMain.partTypeFromUrl(partStr) match {
-                case None       => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
+                case None       => Future.successful(onNoSuchExercisePart(user, toolMain, collection, exercise, partStr))
                 case Some(part) =>
 
                   toolMain.futureSampleSolutions(collId, id, part).map {
@@ -184,15 +186,15 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def reviewExercisePartForm(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(collection) =>
 
           toolMain.futureExerciseById(collection.id, id).map {
-            case None           => onNoSuchExercise(toolMain, collection, id)
+            case None           => onNoSuchExercise(user, toolMain, collection, id)
             case Some(exercise) =>
 
               toolMain.partTypeFromUrl(partStr) match {
-                case None       => onNoSuchExercisePart(toolMain, collection, exercise, partStr)
+                case None       => onNoSuchExercisePart(user, toolMain, collection, exercise, partStr)
                 case Some(part) => Ok(views.html.idExercises.evaluateExerciseForm(user, collId, exercise, part, toolMain))
               }
           }
@@ -202,15 +204,15 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def reviewExercisePart(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(collection) =>
 
           toolMain.futureExerciseById(collection.id, id) flatMap {
-            case None           => Future.successful(onNoSuchExercise(toolMain, collection, id))
+            case None           => Future.successful(onNoSuchExercise(user, toolMain, collection, id))
             case Some(exercise) =>
 
               toolMain.partTypeFromUrl(partStr) match {
-                case None       => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
+                case None       => Future.successful(onNoSuchExercisePart(user, toolMain, collection, exercise, partStr))
                 case Some(part) =>
 
                   val onFormError: Form[toolMain.ReviewType] => Future[Result] = { formWithErrors =>
@@ -234,16 +236,16 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
     implicit request =>
 
       toolMain.futureCollById(collId).flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(collection) =>
 
           toolMain.futureExerciseById(collId, exId).flatMap {
-            case None           => Future.successful(onNoSuchExercise(toolMain, collection, exId))
+            case None           => Future.successful(onNoSuchExercise(user, toolMain, collection, exId))
             case Some(exercise) =>
 
 
               toolMain.partTypeFromUrl(partStr) match {
-                case None       => Future.successful(onNoSuchExercisePart(toolMain, collection, exercise, partStr))
+                case None       => Future.successful(onNoSuchExercisePart(user, toolMain, collection, exercise, partStr))
                 case Some(part) =>
 
                   toolMain.futureFilesForExercise(user, collId, exercise, part).map {
@@ -279,14 +281,14 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       }
   }
 
-  def progClassDiagram(collId: Int, id: Int): EssentialAction = futureWithUser { _ =>
+  def progClassDiagram(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
       progToolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(progToolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, progToolMain, collId))
         case Some(collection) =>
 
           progToolMain.futureExerciseById(collection.id, id).map {
-            case None           => onNoSuchExercise(progToolMain, collection, id)
+            case None           => onNoSuchExercise(user, progToolMain, collection, id)
             case Some(exercise) =>
 
               val jsValue = exercise.maybeClassDiagramPart match {
@@ -301,15 +303,15 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def webSolution(collId: Int, exId: Int, partStr: String, fileName: String): EssentialAction = futureWithUser { user =>
     implicit request =>
       webToolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(webToolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, webToolMain, collId))
         case Some(collection) =>
 
           webToolMain.futureExerciseById(collection.id, exId) flatMap {
-            case None           => Future.successful(onNoSuchExercise(webToolMain, collection, exId))
+            case None           => Future.successful(onNoSuchExercise(user, webToolMain, collection, exId))
             case Some(exercise) =>
 
               webToolMain.partTypeFromUrl(partStr) match {
-                case None    => Future.successful(onNoSuchExercisePart(webToolMain, collection, exercise, partStr))
+                case None    => Future.successful(onNoSuchExercisePart(user, webToolMain, collection, exercise, partStr))
                 case Some(_) =>
 
                   val contentType: String = fileName.split("\\.").last match {
@@ -330,7 +332,7 @@ class CollectionController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
     implicit request =>
       request.body.asJson match {
         case Some(jsValue) =>
-          ExerciseFileJsonProtocol.webSolutionJsonReads.reads(jsValue) match {
+          ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
             case JsSuccess(ideWorkSpace, _) =>
 
               webToolMain.writeWebSolutionFiles(user.username, collId, id, webToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), ideWorkSpace.files) match {

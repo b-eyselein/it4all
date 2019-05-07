@@ -373,8 +373,6 @@ function addDrag(paperJQ: JQuery): void {
 function onUmlClassDiagCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
     console.warn(JSON.stringify(response, null, 2));
 
-    classDiagTestBtn.disabled = false;
-
     document.querySelector<HTMLDivElement>('#resultDiv').hidden = false;
 
     let html: string = '';
@@ -434,8 +432,6 @@ function umlAssocfromConnection(conn: joint.dia.Link): UmlAssociation {
 
 
 function testSol(): void {
-    classDiagTestBtn.disabled = true;
-
     let solution: UmlSolution = {
         classes: classDiagGraph.getCells()
             .map((cell) => {

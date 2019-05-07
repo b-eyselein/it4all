@@ -1,10 +1,7 @@
 package model.tools.xml
 
-import better.files.File
-import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.inject._
 import model._
-import model.core._
 import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
@@ -17,7 +14,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 
 @Singleton
@@ -84,6 +81,11 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override def instantiateSolution(id: Int, exercise: XmlExercise, part: XmlExPart, solution: XmlSolution, points: Points, maxPoints: Points): XmlUserSolution =
     XmlUserSolution(id, part, solution, points, maxPoints)
 
+  override def updateSolSaved(compResult: XmlCompleteResult, solSaved: Boolean): XmlCompleteResult = compResult match {
+    case dr: XmlDocumentCompleteResult => dr.copy(solutionSaved = solSaved)
+    case gr: XmlGrammarCompleteResult  => gr.copy(solutionSaved = solSaved)
+  }
+
   // Correction
 
   override protected def readSolution(request: Request[AnyContent], part: XmlExPart): Either[String, XmlSolution] = request.body.asJson match {
@@ -98,41 +100,15 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     }
   }
 
-  override protected def correctEx(user: User, solution: XmlSolution, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart): Future[Try[XmlCompleteResult]] =
-    Future.successful(part match {
-      case XmlExParts.DocumentCreationXmlPart =>
-        val solutionBaseDir = solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories()
+  override protected def correctEx(user: User, solution: XmlSolution, collection: XmlCollection, exercise: XmlExercise,
+                                   part: XmlExPart): Future[Try[XmlCompleteResult]] = Future.successful(
+    part match {
+      case XmlExParts.GrammarCreationXmlPart  => XmlCorrector.correctGrammar(solution, exercise)
+      case XmlExParts.DocumentCreationXmlPart => XmlCorrector.correctDocument(solution,
+        solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories(), exercise)
+    }
+  )
 
-        exercise.samples.headOption match {
-          case None            => Failure(new Exception("There is no sample solution!"))
-          case Some(xmlSample) =>
-            // Write grammar
-            val grammarPath: File = solutionBaseDir / s"${exercise.rootNode}.dtd"
-            grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sample.grammar)
-
-            // Write document
-            val documentPath: File = solutionBaseDir / s"${exercise.rootNode}.xml"
-            documentPath.createFileIfNotExists(createParents = true).write(solution.document)
-
-            Success(XmlDocumentCompleteResult(solution.document, XmlCorrector.correctAgainstMentionedDTD(documentPath)))
-        }
-
-
-      case XmlExParts.GrammarCreationXmlPart =>
-
-        val maybeSampleGrammar: Option[XmlSampleSolution] = exercise.samples
-          .reduceOption((sampleG1, sampleG2) => {
-            val dist1 = Java_Levenshtein.levenshteinDistance(solution.grammar, sampleG1.sample.grammar)
-            val dist2 = Java_Levenshtein.levenshteinDistance(solution.grammar, sampleG2.sample.grammar)
-
-            if (dist1 < dist2) sampleG1 else sampleG2
-          })
-
-        maybeSampleGrammar match {
-          case None                => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
-          case Some(sampleGrammar) => Success(XmlGrammarCompleteResult(DocTypeDefParser.parseDTD(solution.grammar), sampleGrammar, exercise))
-        }
-    })
 
   // Views
 
@@ -140,14 +116,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     case xe: XmlExercise => views.html.toolViews.xml.previewXmlExerciseRest(xe)
     case _               => ???
   }
-
-  //  override def renderAdminExerciseEditForm(user: User, newEx: XmlExercise, isCreation: Boolean, toolList: ToolList)
-  //                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-  //    views.html.idExercises.xml.adminEditXmlExercise(user, XmlExerciseForm.format.fill(newEx), isCreation, this, toolList)
-
-  //  override def renderUserExerciseEditForm(user: User, newExForm: Form[XmlExercise], isCreation: Boolean)
-  //                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-  //    views.html.idExercises.xml.editXmlExerciseForm(user, newExForm, isCreation, this)
 
   override def renderExercise(user: User, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {

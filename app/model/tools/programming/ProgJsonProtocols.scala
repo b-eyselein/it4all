@@ -4,36 +4,22 @@ import model.ExerciseState
 import model.core.result.CompleteResultJsonProtocol
 import model.tools.programming.ProgConsts._
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Format, JsString, JsValue, Json, Reads, Writes, __}
+import play.api.libs.json._
 
 object ProgCompleteResultJsonProtocol extends CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] {
 
-  private val executionResultWrites: Writes[ExecutionResult] = (
-    (__ \ idName).write[Int] and
-      (__ \ successTypeName).write[String] and
-      (__ \ correctName).write[Boolean] and
-      (__ \ inputName).write[JsValue] and
-      (__ \ awaitedName).write[JsValue] and
-      (__ \ gottenName).write[JsValue] and
-      (__ \ consoleOutputName).write[Option[String]]
-    ) (er => (er.id, er.success.entryName, er.isSuccessful, er.input, er.awaited, er.result, er.consoleOutput))
+  private implicit val executionResultWrites: Writes[ExecutionResult] = Json.writes[ExecutionResult]
 
-  private implicit val progEvalResultWrites: Writes[ProgEvalResult] = {
-    case er: ExecutionResult   => executionResultWrites.writes(er)
-    case SyntaxError(errorMsg) => JsString(errorMsg)
-  }
+  private implicit val unitTestTestConfigWrites: Writes[UnitTestTestConfig] = Json.writes[UnitTestTestConfig]
 
-  override def completeResultWrites(solutionSaved: Boolean): Writes[ProgCompleteResult] = (
-    (__ \ solutionSavedName).write[Boolean] and
-      (__ \ resultsName).write[Seq[ProgEvalResult]]
-    ) (pcr => (solutionSaved, pcr.results))
+  private implicit val unitTestCorrectionResultWrites: Writes[UnitTestCorrectionResult] = Json.writes[UnitTestCorrectionResult]
+
+
+  override val completeResultWrites: Writes[ProgCompleteResult] = Json.writes[ProgCompleteResult]
 
 }
 
-//noinspection ConvertibleToMethodValue
 object ProgSolutionJsonFormat {
-
-  //  private implicit val progLanguageJsonFormat: Format[ProgLanguage] = ProgLanguages.jsonFormat
 
   val sampleSolutionJsonFormat: Format[ProgSampleSolution] = Json.format[ProgSampleSolution]
 

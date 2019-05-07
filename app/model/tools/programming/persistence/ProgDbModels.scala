@@ -10,15 +10,19 @@ import play.api.libs.json.{JsArray, JsValue}
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
   def dbExerciseFromExercise(collId: Int, ex: ProgExercise): DbProgExercise =
-    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.functionName, ex.outputType, ex.baseData, ex.unitTestType)
+    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.functionName, ex.outputType, ex.baseData, ex.unitTestType, ex.unitTestsDescription)
 
-  def exerciseFromDbValues(dbProgEx: DbProgExercise, inputTypes: Seq[ProgInput], sampleSolutions: Seq[ProgSampleSolution],
-                           sampleTestData: Seq[ProgSampleTestData], maybeClassDiagramPart: Option[UmlClassDiagram]
-                          ): ProgExercise = dbProgEx match {
-    case DbProgExercise(id, semanticVersion, _, title, author, text, state, functionname, outputType, baseData, unitTestType) =>
+  def exerciseFromDbValues(
+    dbProgEx: DbProgExercise,
+    inputTypes: Seq[ProgInput],
+    sampleSolutions: Seq[ProgSampleSolution],
+    sampleTestData: Seq[ProgSampleTestData],
+    unitTestTestConfigs: Seq[UnitTestTestConfig],
+    maybeClassDiagramPart: Option[UmlClassDiagram]): ProgExercise = dbProgEx match {
+    case DbProgExercise(id, semanticVersion, _, title, author, text, state, functionname, outputType, baseData, unitTestType, unitTestsDescription) =>
       ProgExercise(
         id, semanticVersion, title, author, text, state, functionname, outputType, baseData, unitTestType,
-        inputTypes, sampleSolutions, sampleTestData, maybeClassDiagramPart
+        inputTypes, sampleSolutions, sampleTestData, unitTestsDescription, unitTestTestConfigs, maybeClassDiagramPart
       )
   }
 
@@ -29,6 +33,15 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
   def progInputFromDbProgInput(dbProgInput: DbProgInput): ProgInput =
     ProgInput(dbProgInput.id, dbProgInput.inputName, dbProgInput.inputType)
+
+  // Unit Test Test Configs
+
+  def dbUnitTestTestConfigFromUnitTestTestConfig(exId: Int, exSemVer: SemanticVersion, collId: Int, utc: UnitTestTestConfig): DbUnitTestTestConfig =
+    DbUnitTestTestConfig(utc.id, exId, exSemVer, collId, utc.shouldFail, utc.cause, utc.description)
+
+  def unitTestTestConfigFromDbUnitTestTestConfig(dbUnitTestTestConfig: DbUnitTestTestConfig): UnitTestTestConfig = dbUnitTestTestConfig match {
+    case DbUnitTestTestConfig(id, _, _, _, shouldFail, cause, description) => UnitTestTestConfig(id, shouldFail, cause, description)
+  }
 
   // Sample Test Data
 
@@ -93,7 +106,7 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 
 final case class DbProgExercise(
   id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-  functionname: String, outputType: ProgDataType, baseData: Option[JsValue], unitTestType: UnitTestType)
+  functionname: String, outputType: ProgDataType, baseData: Option[JsValue], unitTestType: UnitTestType, unitTestsDescription: String)
   extends ADbExercise
 
 final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, base: String, sampleStr: String)
@@ -102,6 +115,9 @@ final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVers
   val sample = ProgSolution(sampleStr, testData = Seq[ProgUserTestData]())
 
 }
+
+
+final case class DbUnitTestTestConfig(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, shouldFail: Boolean, cause: Option[String], description: String)
 
 final case class DbProgUserSolution(
   id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: ProgExPart,

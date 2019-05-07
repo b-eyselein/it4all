@@ -1,32 +1,57 @@
 import {CorrectionResult} from "../matches";
+import {SuccessType} from "../otherHelpers";
+
+type XmlErrorType = 'WARNING' | 'ERROR' | 'FATAL';
 
 interface XmlError {
-    errorType: 'WARNING' | 'ERROR' | 'FATAL',
-    errorMessage: string,
-    line: number,
-    success: string
+    errorType: XmlErrorType;
+    errorMessage: string;
+    line: number;
+    success: string;
 }
 
 export interface XmlDocumentCorrectionResult extends CorrectionResult<XmlError> {
-    results: XmlError[]
+    successType: SuccessType;
+    results: XmlError[];
 }
 
 export function renderXmlDocumentCorrection(response: XmlDocumentCorrectionResult): string {
     let html: string = '';
 
     if (response.solutionSaved) {
-        html += `<div class="alert alert-success">Ihre Lösung wurde gespeichert.</div>`;
+        html += `<p class="text-success">Ihre Lösung wurde gespeichert.</p>`;
     } else {
-        html += `<div class="alert alert-danger">Ihre Lösung konnte nicht gespeichert werden!</div>`;
+        html += `<p class="text-danger">Ihre Lösung konnte nicht gespeichert werden!</p>`;
     }
 
-    if (response.success) {
-        html += `<div class="alert alert-success">Die Korrektur war erfolgreich. Es wurden keine Fehler gefunden.</div>`;
-    } else {
-        html += response.results.map((xmlError: XmlError) => {
-            const cls = xmlError.errorType === 'WARNING' ? 'warning' : 'danger';
-            return `<div class="alert alert-${cls}"><b>Fehler in Zeile ${xmlError.line}</b>: ${xmlError.errorMessage}</div>`;
-        }).join('\n');
+    let successClazz = 'danger';
+    let successWord = 'nicht';
+    let errorWord = '';
+
+    switch (response.successType) {
+        case 'COMPLETE':
+            successClazz = 'success';
+            successWord = 'komplett';
+            break;
+        case 'PARTIALLY':
+            successClazz = 'warning';
+            successWord = 'teilweise';
+            break;
+        case 'NONE':
+            successClazz = 'danger';
+            successWord = 'nicht';
+            break;
+    }
+
+    html += `<p class="text-${successClazz}">Die Korrektur war ${successWord} erfolgreich. Es wurden ${errorWord} Fehler gefunden.</p>`;
+
+    if (response.results.length !== 0) {
+        html += response.results
+            .map((xmlError: XmlError) => {
+                const cls = xmlError.errorType === 'WARNING' ? 'warning' : 'danger';
+                return `<p class="text-${cls}"><b>Fehler in Zeile ${xmlError.line}</b>: ${xmlError.errorMessage}</p>`;
+            })
+            .join('\n')
     }
 
     return html;

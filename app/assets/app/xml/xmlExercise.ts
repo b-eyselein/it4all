@@ -49,8 +49,6 @@ function testSol(): void {
         return;
     }
 
-    testBtn.disabled = true;
-
     testExerciseSolution<string, XmlGrammarCorrectionResult | XmlDocumentCorrectionResult>(
         testBtn, learnerSolution, reponse => onXmlCorrectionSuccess(isDocumentPart, reponse));
 }

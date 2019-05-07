@@ -1,8 +1,9 @@
 import {CorrectionResult} from "../matches";
 
 export interface ProgSolution {
-    implementation: string,
-    testData: TestData[]
+    implementation: string;
+    testData: TestData[];
+    unitTest: string;
 }
 
 interface ProgSingleResult {
@@ -42,7 +43,24 @@ export interface TestData {
     output: string
 }
 
+export interface UnitTestTestConfig {
+    testId: number;
+    shouldFail: boolean;
+    cause: null | string;
+    description: string;
+}
+
+export interface UnitTestCorrectionResult {
+    testConfig: UnitTestTestConfig;
+    successful: boolean;
+    file: string;
+    stdout: string[];
+    stderr: string[];
+}
+
 export interface ProgCorrectionResult extends CorrectionResult<ProgSingleResult> {
+    implResults: ProgSingleResult[];
+    unitTestResults: UnitTestCorrectionResult[];
 }
 
 function printValue(value: any): string {
@@ -85,18 +103,22 @@ function renderProgResult(result: ProgSingleResult): string {
 
 export function renderProgCorrectionSuccess(response: ProgCorrectionResult): string {
 
-    let html: string = `<div class="text-${response.solutionSaved ? 'success' : 'danger'}">Ihre Lösung wurde ${response.solutionSaved ? '' : ' nicht'} gespeichert.</div>`;
+    console.info(JSON.stringify(response, null, 2));
 
-    const itemsPerRow = 1;
-    const colWidth = 12 / itemsPerRow;
+    let html: string = '';
 
-    for (let outerCount = 0; outerCount < response.results.length; outerCount = outerCount + itemsPerRow) {
+    if (response.solutionSaved) {
+        html += `<p class="text-success">Ihre Lösung wurde gespeichert.</p>`;
+    } else {
+        html += `<p class="text-'danger'">Ihre Lösung konnte nicht gespeichert werden.</p>`;
+    }
 
-        for (let innerCount = outerCount; innerCount < outerCount + itemsPerRow && innerCount < response.results.length; innerCount++) {
-            const currentResult = response.results[innerCount] || null;
-            html += currentResult != null ? renderProgResult(currentResult) : '';
-        }
+    // FIXME: send and display points...
+    console.info(response.points, response.maxPoints);
+    // html += `<p>Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
 
+    for (const currentResult of response.implResults) {
+        html += renderProgResult(currentResult);
     }
 
     return html;

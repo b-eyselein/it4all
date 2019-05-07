@@ -1,14 +1,16 @@
 package model.tools.xml
 
 import better.files.File
+import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.xml.parsers.DocumentBuilderFactory
-import model.core.matching.MatchingResult
-import de.uniwue.dtd.model.DocTypeDef
-import org.xml.sax.{ErrorHandler, SAXParseException}
+import model.core.Java_Levenshtein
+import model.core.result.SuccessType
+import model.points._
+import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 
 import scala.collection.mutable
 import scala.language.{implicitConversions, postfixOps}
-import scala.xml.SAXException
+import scala.util.{Failure, Success, Try}
 
 
 class CorrectionErrorHandler extends ErrorHandler {
@@ -24,6 +26,8 @@ class CorrectionErrorHandler extends ErrorHandler {
 }
 
 object XmlCorrector {
+
+  // Document correction
 
   private val DocBuilderFactory = DocumentBuilderFactory.newInstance
   DocBuilderFactory.setValidating(true)
@@ -43,7 +47,57 @@ object XmlCorrector {
     errorHandler.errors
   }
 
-  def correctDTD(userGrammar: DocTypeDef, sampleGrammar: DocTypeDef): MatchingResult[ElementLineMatch] =
-    DocTypeDefMatcher.doMatch(userGrammar.asElementLines, sampleGrammar.asElementLines)
+  def correctDocument(solution: XmlSolution, solutionBaseDir: File, exercise: XmlExercise): Try[XmlDocumentCompleteResult] =
+    exercise.samples.headOption match {
+      case None            => Failure(new Exception("There is no sample solution!"))
+      case Some(xmlSample) =>
+        // Write grammar
+        val grammarPath: File = solutionBaseDir / s"${exercise.rootNode}.dtd"
+        grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sample.grammar)
+
+        // Write document
+        val documentPath: File = solutionBaseDir / s"${exercise.rootNode}.xml"
+        documentPath.createFileIfNotExists(createParents = true).write(solution.document)
+
+        Success(XmlDocumentCompleteResult(XmlCorrector.correctAgainstMentionedDTD(documentPath)))
+    }
+
+  // Grammar correction
+
+  private def findNearestGrammarSample(learnerSolution: String, sampleSolutions: Seq[XmlSampleSolution]): Option[XmlSampleSolution] =
+    sampleSolutions.reduceOption((sampleG1, sampleG2) => {
+      val dist1 = Java_Levenshtein.levenshteinDistance(learnerSolution, sampleG1.sample.grammar)
+      val dist2 = Java_Levenshtein.levenshteinDistance(learnerSolution, sampleG2.sample.grammar)
+
+      if (dist1 < dist2) sampleG1 else sampleG2
+    })
+
+  def correctGrammar(solution: XmlSolution, exercise: XmlExercise): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, exercise.samples) match {
+    case None                                    => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
+    case Some(sampleSolution: XmlSampleSolution) =>
+
+      DocTypeDefParser.tryParseDTD(sampleSolution.sample.grammar) map { sampleGrammar =>
+
+        val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
+
+        val allMatches = DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines).allMatches
+
+        val points = addUp(allMatches.map(_.points))
+
+        val maxPoints = addUp(allMatches.map(_.maxPoints))
+
+        val successType: SuccessType = (points.quarters.toDouble / maxPoints.quarters) match {
+          case it if (0 <= it && it <= 0.5) => SuccessType.NONE
+          case it if (0.5 < it && it < 1)   => SuccessType.PARTIALLY
+          case 1                            => SuccessType.COMPLETE
+          case _                            => SuccessType.ERROR
+        }
+
+        XmlGrammarCompleteResult(successType, dtdParseResult.parseErrors, allMatches, points, maxPoints)
+      }
+  }
+
 
 }
+
+

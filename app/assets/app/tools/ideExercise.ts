@@ -12,10 +12,6 @@ let files: Map<string, ExerciseFile> = new Map<string, ExerciseFile>();
 let editor: CodeMirror.Editor;
 
 
-export function focusOnCorrection(): void {
-    document.querySelector<HTMLAnchorElement>('#showCorrectionTabA').click();
-}
-
 function onLoadFileSuccess(result: ExerciseFile[]): Promise<CodeMirror.Editor> {
     for (const res of result) {
         // Fill file map

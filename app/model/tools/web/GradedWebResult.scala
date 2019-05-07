@@ -6,23 +6,14 @@ import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import org.openqa.selenium.WebElement
 
-final case class WebCompleteResult(learnerSolution: Seq[ExerciseFile], exercise: WebExercise, part: WebExPart,
-                                   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult], gradedJsTaskResults: Seq[GradedJsTaskResult])
-  extends CompleteResult[GradedWebTaskResult] {
-
-  override type SolType = Seq[ExerciseFile]
+final case class WebCompleteResult(
+  gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],
+  gradedJsTaskResults: Seq[GradedJsTaskResult],
+  points: Points,
+  maxPoints: Points,
+  solutionSaved: Boolean = false) extends CompleteResult[GradedWebTaskResult] {
 
   override def results: Seq[GradedWebTaskResult] = gradedHtmlTaskResults ++ gradedJsTaskResults
-
-  override def points: Points = part match {
-    case WebExParts.HtmlPart => addUp(gradedHtmlTaskResults.map(_.points))
-    case WebExParts.JsPart   => addUp(gradedJsTaskResults.map(_.points))
-  }
-
-  override def maxPoints: Points = part match {
-    case WebExParts.HtmlPart => addUp(gradedHtmlTaskResults.map(_.maxPoints))
-    case WebExParts.JsPart   => addUp(gradedJsTaskResults.map(_.maxPoints))
-  }
 
 }
 

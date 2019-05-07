@@ -18,20 +18,6 @@ final case class GenericAnalysisResult(matchType: MatchType) extends AnalysisRes
 
 }
 
-//object MatchJsonProtocol {
-//
-//  private def unapplyMatch: Match => (MatchType, Option[JsValue], Option[JsValue], Option[JsValue]) =
-//    m => (m.matchType, m.analysisResult.map(_.toJson), m.userArg.map(m.descArgForJson(_)), m.sampleArg.map(m.descArgForJson(_)))
-//
-//  val matchJsonWrites: Writes[Match] = (
-//    (__ \ matchTypeName).write[MatchType] and
-//      (__ \ analysisResultName).write[Option[JsValue]] and
-//      (__ \ userArgName).write[Option[JsValue]] and
-//      (__ \ sampleArgName).write[Option[JsValue]]
-//    ) (unapplyMatch)
-//
-//}
-
 trait Match {
 
   type T
@@ -40,11 +26,7 @@ trait Match {
   val userArg  : Option[T]
   val sampleArg: Option[T]
 
-  val analysisResult: Option[AR] = (userArg, sampleArg) match {
-    // FIXME: refactor!
-    case (Some(ua), Some(sa)) => Some(analyze(ua, sa))
-    case _                    => None
-  }
+  val analysisResult: Option[AR] = (userArg zip sampleArg).headOption.map { case (ua, sa) => analyze(ua, sa) }
 
   val matchType: MatchType = analysisResult match {
     case Some(ar) => ar.matchType
@@ -55,8 +37,6 @@ trait Match {
   }
 
   protected def analyze(arg1: T, arg2: T): AR
-
-  protected def descArg(arg: T): String = arg.toString
 
   protected def descArgForJson(arg: T): JsValue
 

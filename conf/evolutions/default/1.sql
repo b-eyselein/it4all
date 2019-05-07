@@ -89,19 +89,19 @@ create table if not exists prog_collections (
 );
 
 create table if not exists prog_exercises (
-    id                int,
-    semantic_version  varchar(10),
-    collection_id     int,
-    title             varchar(50),
-    author            varchar(50),
-    ex_text           text,
-    ex_state          enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    id                     int,
+    semantic_version       varchar(10),
+    collection_id          int,
+    title                  varchar(50),
+    author                 varchar(50),
+    ex_text                text,
+    ex_state               enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    function_name     varchar(30),
-    indent_level      int,
-    output_type       varchar(30),
-    base_data_json    text,
-    unit_test_type    enum ('Simplified', 'Normal'),
+    function_name          varchar(30) not null,
+    output_type            varchar(30),
+    base_data_json         text,
+    unit_test_type         enum ('Simplified', 'Normal'),
+    unit_tests_description text        not null,
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id) references prog_collections (id)
@@ -128,6 +128,20 @@ create table if not exists prog_sample_solutions (
     collection_id  int,
     base           text,
     implementation text,
+
+    primary key (id, exercise_id, ex_sem_ver, collection_id),
+    foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+        on update cascade on delete cascade
+);
+
+create table if not exists prog_unit_test_test_configs (
+    id            int,
+    exercise_id   int,
+    ex_sem_ver    varchar(10),
+    collection_id int,
+    should_fail   boolean not null,
+    cause         varchar(20),
+    description   text,
 
     primary key (id, exercise_id, ex_sem_ver, collection_id),
     foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
@@ -930,6 +944,8 @@ drop table if exists prog_user_solutions;
 drop table if exists prog_uml_cd_parts;
 
 drop table if exists prog_commited_testdata;
+
+drop table if exists prog_unit_test_test_configs;
 
 drop table if exists prog_sample_testdata;
 

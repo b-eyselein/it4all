@@ -1,9 +1,6 @@
 import * as $ from 'jquery';
-import {
-    ProgCorrectionResult,
-    renderProgCorrectionSuccess,
-    ProgSolution
-} from "../../programming/progCorrectionHandler";
+import {ProgCorrectionResult, ProgSolution, renderProgCorrectionSuccess} from "../../programming/progCorrectionHandler";
+import {domReady} from "../../otherHelpers";
 
 let testBtn: JQuery;
 
@@ -12,7 +9,8 @@ function activityCorrection(): void {
 
     let dataToSend: ProgSolution = {
         implementation: $('#preCode').text(),
-        testData: []
+        testData: [],
+        unitTest: ''
     };
 
     $.ajax({
@@ -48,7 +46,7 @@ function onActivityCorrectionError(jqXHR): void {
 }
 
 
-$(() => {
+domReady(() => {
     testBtn = $('#testBtn');
     testBtn.on('click', activityCorrection);
 });

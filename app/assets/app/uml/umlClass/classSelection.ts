@@ -75,8 +75,6 @@ function select(span: HTMLSpanElement): void {
 }
 
 function onClassSelectionCorrectionSuccess(response: UmlClassDiagCorrectionResult): void {
-    testBtn.disabled = false;
-
     document.querySelector<HTMLDivElement>('#correctionDiv').innerHTML =
         displayMatchingResultList(response.classResult, "Klassen", explainClassResult);
 }

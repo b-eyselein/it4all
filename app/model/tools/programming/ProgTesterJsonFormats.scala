@@ -32,6 +32,8 @@ object TestDataJsonFormat {
 
 }
 
+final case class UnitTestTestData(function: String, testConfigs: Seq[UnitTestTestConfig])
+
 //noinspection ConvertibleToMethodValue
 object ResultsFileJsonFormat {
 
@@ -54,13 +56,34 @@ object ResultsFileJsonFormat {
       (__ \ "errors").read[String]
     ) (ResultFileContent.apply(_, _, _))
 
-  def readResultFile(targetFile: File, completeTestData: Seq[ProgTestData]): Try[Seq[ExecutionResult]] =
-    resultsFileJsonReads.reads(Json.parse(targetFile.contentAsString)) match {
-      case JsSuccess(result: ResultFileContent, _) => Success(result.results)
+  def readImplCorrectionResultFile(targetFile: File): Try[Seq[ExecutionResult]] =
+    Try(Json.parse(targetFile.contentAsString)).flatMap { jsValue =>
+      resultsFileJsonReads.reads(jsValue) match {
+        case JsSuccess(result: ResultFileContent, _) => Success(result.results)
+        case JsError(errors)                         =>
+          errors.foreach(error => logger.error(s"There has been an error reading a json programming result file: $error"))
+          Failure(new Exception("There has been an error reading a json programming result file!"))
+      }
+    }
 
-      case JsError(errors) =>
-        errors.foreach(error => logger.error("There has been an error reading a json programming result file: " + error))
-        Failure(null)
+  // Unit test correction
+
+  private implicit val unitTestTestConfigFormat: Format[UnitTestTestConfig] = Json.format[UnitTestTestConfig]
+
+  private implicit val unitTestCorrectionResultReads: Reads[UnitTestCorrectionResult] = Json.reads[UnitTestCorrectionResult]
+
+  private val unitTestCorrectionResultsFileJsonReads: Reads[UnitTestCorrectionResultFileContent] = Json.reads[UnitTestCorrectionResultFileContent]
+
+  val unitTestDataWrites: Writes[UnitTestTestData] = Json.writes[UnitTestTestData]
+
+  def readTestCorrectionResultFile(targetFile: File): Try[Seq[UnitTestCorrectionResult]] =
+    Try(Json.parse(targetFile.contentAsString)).flatMap { jsValue =>
+      unitTestCorrectionResultsFileJsonReads.reads(jsValue) match {
+        case JsSuccess(result, _) => Success(result.results)
+        case JsError(errors)      =>
+          errors.foreach(error => logger.error(s"There has been an error reading a json programming result file: $error"))
+          Failure(new Exception("There has been an error reading a json programming result file!"))
+      }
     }
 
 }

@@ -1,4 +1,5 @@
 import {AnalysisResult, CorrectionResult, Match} from "../matches";
+import {SuccessType} from "../otherHelpers";
 
 export {renderXmlGrammarCorrectionSuccess, XmlGrammarCorrectionResult}
 
@@ -19,12 +20,13 @@ interface XmlElementMatch extends Match<XmlElement, XmlElementAnalysisResult> {
 }
 
 interface ParseError {
-    parsed: string
-    message: string
+    parsedLine: string
+    msg: string
 }
 
 interface XmlGrammarCorrectionResult extends CorrectionResult<XmlElementMatch> {
-    parseErrors: ParseError[]
+    success: SuccessType;
+    parseErrors: ParseError[];
 }
 
 function escapeXML(unescapedXML: string): string {
@@ -69,8 +71,8 @@ function renderElementMatch(em: XmlElementMatch): string {
 
 function renderParseErrors(parseErrors: ParseError[]): string {
     const renderedErrors = parseErrors.map((x) => {
-        const escapedParsed = x.parsed.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return `<p><div>Fehler beim Parsen von &quot;<code>${escapedParsed}</code>&quot;:</div><div class="text-danger">${x.message}</div></p>`;
+        const escapedParsed = x.parsedLine.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `<p><div>Fehler beim Parsen von &quot;<code>${escapedParsed}</code>&quot;:</div><div class="text-danger">${x.msg}</div></p>`;
     }).join("\n");
 
     return `
@@ -83,19 +85,47 @@ function renderParseErrors(parseErrors: ParseError[]): string {
 function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult): string {
     let html: string = '';
 
+    console.info(JSON.stringify(response, null, 2));
+
     if (response.solutionSaved) {
         html += `<p class="text-success">Ihre Lösung wurde gespeichert.</p>`;
     } else {
         html += `<p class="text-danger">Ihre Lösung konnte nicht gespeichert werden!</p>`;
     }
 
-    if (response.success) {
-        html += `<p class="text-success">Die Korrektur war komplett erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
-    } else {
-        html +=
-            '<p class="text-danger">Die Korrektur war nicht erfolgreich. Sie haben ' + response.points + ' von ' + response.maxPoints + ' erreicht.</p>'
-            + (response.parseErrors.length === 0 ? '' : '<hr>' + renderParseErrors(response.parseErrors))
-            + '<hr>' + response.results.map(renderElementMatch).join('\n');
+    let successClazz: string = 'danger';
+    let successWord: string = 'nicht';
+
+    switch (response.success) {
+        case 'COMPLETE':
+            successClazz = 'success';
+            successWord = 'komplett';
+            break;
+        case 'PARTIALLY':
+            successClazz = 'warning';
+            successWord = 'teilweise';
+            break;
+        case 'NONE':
+        default:
+            successClazz = 'danger';
+            successWord = 'nicht';
+            break;
+    }
+
+    const progress: number = Math.round(response.points / response.maxPoints * 100);
+
+    html += `
+<p class="text-${successClazz}">Die Korrektur war ${successWord} erfolgreich. Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>
+<div class="progress">
+    <div class="progress-bar bg-${successClazz}" style="width: ${progress}%">${progress}%</div>
+</div>`.trim();
+
+    if (response.parseErrors.length !== 0) {
+        html += '<hr>' + renderParseErrors(response.parseErrors);
+    }
+
+    if (response.success !== 'COMPLETE') {
+        html += '<hr>' + response.results.map(renderElementMatch).join('\n')
     }
 
     return html;

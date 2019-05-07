@@ -5,7 +5,6 @@ let valueTableBody: HTMLElement;
 let testBtn: HTMLButtonElement;
 
 interface BoolFilloutResult {
-    isSuccessful: boolean
     assignments: BoolFilloutRow[]
 }
 
@@ -29,8 +28,6 @@ function changeValue(button: HTMLButtonElement): void {
 }
 
 function onFilloutCorrectionSuccess(respone: BoolFilloutResult): void {
-    testBtn.disabled = false;
-
     for (let row of respone.assignments) {
         const elem: HTMLTableRowElement = document.querySelector<HTMLTableRowElement>('#' + row.id);
 
@@ -47,8 +44,6 @@ function onFilloutCorrectionSuccess(respone: BoolFilloutResult): void {
 }
 
 function testSol(): void {
-    testBtn.disabled = true;
-
     const solution = readBoolSolution(valueTableBody, true);
 
     testExerciseSolution<BoolSolution, BoolFilloutResult>(testBtn, solution, onFilloutCorrectionSuccess)

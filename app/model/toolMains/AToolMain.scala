@@ -71,7 +71,8 @@ abstract class AToolMain(val toolname: String, val urlPart: String) {
 
   protected lazy val exerciseRootDir: File = Paths.get(rootDir, urlPart)
 
-  def solutionDirForExercise(username: String, collId: Int, exId: Int): File = exerciseRootDir / solutionsSubDir / username / String.valueOf(collId) / String.valueOf(exId)
+  def solutionDirForExercise(username: String, collId: Int, exId: Int): File =
+    exerciseRootDir / solutionsSubDir / username / String.valueOf(collId) / String.valueOf(exId)
 
   // Views
 

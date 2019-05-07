@@ -20,13 +20,11 @@ trait EvaluationResult {
 
 trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
-  type SolType
+  def solutionSaved: Boolean
 
   def points: Points //= -1 point
 
   def maxPoints: Points // = -1 point
-
-  def learnerSolution: SolType
 
   def results: Seq[E]
 
@@ -36,6 +34,6 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
 trait CompleteResultJsonProtocol[E <: EvaluationResult, CR <: CompleteResult[E]] {
 
-  def completeResultWrites(solutionSaved: Boolean): Writes[CR]
+  val completeResultWrites: Writes[CR]
 
 }

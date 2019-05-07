@@ -9,6 +9,7 @@ import play.twirl.api.Html
 
 import scala.collection.immutable
 
+
 final case class ProgCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
   extends ExerciseCollection
 
@@ -18,8 +19,10 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
                               inputTypes: Seq[ProgInput],
                               sampleSolutions: Seq[ProgSampleSolution],
                               sampleTestData: Seq[ProgSampleTestData],
+                              unitTestsDescription: String,
+                              unitTestTestConfigs: Seq[UnitTestTestConfig],
                               maybeClassDiagramPart: Option[UmlClassDiagram]
-                             ) extends Exercise {
+                             ) extends Exercise with FileExercise[ProgExPart] {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -27,8 +30,7 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
   val inputCount: Int = inputTypes.size
 
-  override def preview: Html = // FIXME: move to toolMain!
-    views.html.toolViews.programming.progPreview(this)
+  val unitTestFileName = "test.py" // TODO: s"${functionName}_test.py" ?
 
   def buildTestDataFileContent(completeTestData: Seq[ProgTestData], extendedUnitTests: Boolean = false): JsValue = {
     // FIXME: update...
@@ -36,6 +38,36 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
     if (extendedUnitTests) ???
     else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
   }
+
+  def solutionFileName: String = s"${functionName}.py"
+
+  override def filesForExercisePart(part: ProgExPart): Seq[ExerciseFile] = part match {
+    case ProgExParts.TestCreation =>
+      Seq(
+        ExerciseFile(unitTestFileName, buildUnitTestFile, "python", true),
+        ExerciseFile(solutionFileName, buildSolutionFile, "python", false)
+      )
+    case _                        => Seq.empty
+  }
+
+  def buildUnitTestFile: String =
+    s"""import unittest
+       |from ${functionName} import ${functionName}
+       |
+       |class ${functionName.capitalize}Test(unittest.TestCase):
+       |    def test_${functionName}(self):
+       |        pass""".stripMargin
+
+  def buildSolutionFile: String = {
+    val x = inputTypes.map(it => it.inputName + ": " + it.inputType.typeName).mkString(",")
+
+    s"""def ${functionName}(${x}) -> ${outputType.typeName}:
+       |    # implementation hidden...
+       |    pass""".stripMargin
+  }
+
+  override def preview: Html = // FIXME: move to toolMain!
+    views.html.toolViews.programming.progPreview(this)
 
 }
 
@@ -56,7 +88,7 @@ case object UnitTestTypes extends PlayEnum[UnitTestType] {
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData]) {
+final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData], unitTest: String = "") {
 
   def language: ProgLanguage = ProgLanguages.PYTHON_3
 

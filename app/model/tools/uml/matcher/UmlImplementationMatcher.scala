@@ -15,7 +15,7 @@ final case class UmlImplementationMatch(userArg: Option[UmlImplementation], samp
   override def analyze(i1: UmlImplementation, i2: UmlImplementation): GenericAnalysisResult =
     GenericAnalysisResult(if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH)
 
-  override def descArg(arg: UmlImplementation): String = describeImplementation(arg)
+  //  override def descArg(arg: UmlImplementation): String = describeImplementation(arg)
 
   override protected def descArgForJson(arg: UmlImplementation): JsValue = Json.obj(
     subClassName -> arg.subClass, superClassName -> arg.superClass

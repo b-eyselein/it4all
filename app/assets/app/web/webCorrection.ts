@@ -130,7 +130,7 @@ export function renderWebCompleteResult(corr: WebCompleteResult): void {
 
     if (!corr.success) {
         html += '<ul>';
-        if (corr.part === 'html') {
+        if (corr.htmlResults.length === 0) {
             html += corr.htmlResults.map(r => `<li>${renderHtmlResult(r)}</li>`).join('\n');
         } else {
             html += corr.jsResults.map((r) => `<li>${renderJsResult(r)}</li>`).join('\n');

@@ -31,6 +31,13 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
     inputTypeName -> ProgDataTypes.formField
   )(ProgInput.apply)(ProgInput.unapply)
 
+  private val unitTestTestConfigMapping: Mapping[UnitTestTestConfig] = mapping(
+    idName -> number,
+    "shouldFail" -> boolean,
+    "cause" -> optional(nonEmptyText),
+    descriptionName -> nonEmptyText
+  )(UnitTestTestConfig.apply)(UnitTestTestConfig.unapply)
+
   // Complete exercise
 
   override val collectionFormat: Form[ProgCollection] = Form(
@@ -59,6 +66,8 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
       inputTypesName -> seq(progInputMapping),
       sampleSolutionsName -> seq(programmingSampleSolutionMapping),
       sampleTestDataName -> seq(programmingSampleTestDataMapping),
+      unitTestsDescriptionName -> nonEmptyText,
+      unitTestTestConfigsName -> seq(unitTestTestConfigMapping),
       "maybeClassDiagram" -> optional(classDiagramMapping)
     )(ProgExercise.apply)(ProgExercise.unapply)
   )

@@ -1,7 +1,7 @@
 package model.tools.programming
 
 import javax.inject._
-import model.{ExerciseState, MyYamlFormat, SemanticVersion, User}
+import model.{ExerciseFile, ExerciseFileJsonProtocol, ExerciseState, MyYamlFormat, SemanticVersion, User}
 import model.points.Points
 import model.core.result.CompleteResultJsonProtocol
 import model.tools.programming.persistence.ProgTableDefs
@@ -77,13 +77,22 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgExercise = ProgExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
-    functionName = "", outputType = ProgDataTypes.STRING, baseData = None, unitTestType = UnitTestTypes.Simplified,
-    inputTypes = Seq[ProgInput](), sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[ProgSampleTestData](), maybeClassDiagramPart = None
+    functionName = "",
+    inputTypes = Seq[ProgInput](), outputType = ProgDataTypes.STRING,
+    baseData = None, unitTestType = UnitTestTypes.Simplified,
+    sampleSolutions = Seq[ProgSampleSolution](),
+    sampleTestData = Seq[ProgSampleTestData](),
+    unitTestsDescription = "",
+    unitTestTestConfigs = Seq.empty,
+    maybeClassDiagramPart = None
   )
 
-  override def instantiateSolution(
-    id: Int, exercise: ProgExercise, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points
-  ): ProgUserSolution = ProgUserSolution(id, part, solution, points, maxPoints)
+  override def instantiateSolution(id: Int, exercise: ProgExercise, part: ProgExPart, solution: ProgSolution,
+                                   points: Points, maxPoints: Points): ProgUserSolution =
+    ProgUserSolution(id, part, solution, points, maxPoints)
+
+  override def updateSolSaved(compResult: ProgCompleteResult, solSaved: Boolean): ProgCompleteResult =
+    compResult.copy(solutionSaved = solSaved)
 
   // Db
 
@@ -94,15 +103,36 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Correction
 
+  override def futureFilesForExercise(user: User, collId: Int, exercise: ProgExercise, part: ProgExPart): Future[Seq[ExerciseFile]] =
+    Future.successful(exercise.filesForExercisePart(part))
+
+  private def readUnitTestSolution(jsValue: JsValue): Either[String, ProgSolution] = ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
+    case JsSuccess(solution, _) =>
+      // FIXME: hack for testing / development
+      //      println(solution)
+      solution.files.filter(_.name == "test.py").headOption.map(_.content) match {
+        case None                  => Left("The file could not be found!")
+        case Some(unitTestContent) => Right(ProgSolution("", Seq.empty, unitTestContent))
+      }
+    case JsError(errors)        =>
+      errors.foreach(jsErr => logger.error(jsErr.toString()))
+      Left(errors.toString())
+  }
+
+  private def readImplementationSolution(jsValue: JsValue): Either[String, ProgSolution] = ProgSolutionJsonFormat.progSolutionReads.reads(jsValue) match {
+    case JsSuccess(solution, _) => Right(solution)
+    case JsError(errors)        =>
+      errors.foreach(jsErr => logger.error(jsErr.toString()))
+      Left(errors.toString())
+  }
+
   override protected def readSolution(request: Request[AnyContent], part: ProgExPart): Either[String, ProgSolution] = request.body.asJson match {
     case None          => Left("Body did not contain json!")
     case Some(jsValue) =>
 
-      ProgSolutionJsonFormat.progSolutionReads.reads(jsValue) match {
-        case JsSuccess(solution, _) => Right(solution)
-        case JsError(errors)        =>
-          errors.foreach(jsErr => logger.error(jsErr.toString()))
-          Left(errors.toString())
+      part match {
+        case ProgExParts.TestCreation => readUnitTestSolution(jsValue)
+        case _                        => readImplementationSolution(jsValue)
       }
   }
 
@@ -113,16 +143,18 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def renderExercise(user: User, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[ProgUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
-
-    println(exercise)
-
     // FIXME: how to get language? ==> GET param?
     val language: ProgLanguage = ProgLanguages.PYTHON_3
 
     part match {
       case ProgExParts.TestCreation =>
-        val oldTestData: Seq[ProgUserTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[ProgUserTestData]())
-        views.html.toolViews.programming.testDataCreation(user, collection, exercise, oldTestData, this)
+        exercise.unitTestType match {
+          case UnitTestTypes.Simplified =>
+            val oldTestData: Seq[ProgUserTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[ProgUserTestData]())
+            views.html.toolViews.programming.testDataCreation(user, collection, exercise, oldTestData, this)
+
+          case UnitTestTypes.Normal => views.html.toolViews.programming.unittestCreation(user, collection, exercise, exercise.filesForExercisePart(part).map(_.name), this)
+        }
 
       case ProgExParts.Implementation =>
 
@@ -142,9 +174,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
         views.html.toolViews.umlActivity.activityDrawing(user, collection, exercise, language, definitionRest, this)
     }
   }
-
-  //  override def renderUserExerciseEditForm(user: User, newExForm: Form[ProgExercise], isCreation: Boolean)
-  //                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = ???
 
   override def renderEditRest(exercise: ProgExercise): Html = ???
 

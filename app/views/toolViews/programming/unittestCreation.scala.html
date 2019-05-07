@@ -1,0 +1,25 @@
+@import model.User
+@import model.tools.programming.{ProgCollection, ProgExParts, ProgExercise, ProgToolMain}
+
+@(user: User, collection: ProgCollection, exercise: ProgExercise, fileNames: Seq[String], toolMain: ProgToolMain)(
+    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+
+@title = @{
+    "Erstellen von Unittests"
+}
+
+@exerciseText = {
+    <p>@Html(exercise.unitTestsDescription)</p>
+
+    <p>Es werden @exercise.unitTestTestConfigs.size Tests mit verschiedenen Implementierungen ausgeführt.</p>
+}
+
+@additionalScripts = {
+    <script>SystemJS.import('@routes.Assets.versioned("app/programming/unittestCreation.js")')</script>
+}
+
+@toolViews.ideExercise(
+    user, title, exerciseText,
+    fileNames, None, toolMain,
+    collection, exercise, ProgExParts.TestCreation,
+    solutionPreview = None, additionalScripts)

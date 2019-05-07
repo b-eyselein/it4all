@@ -27,8 +27,6 @@ class SqlStatementException(cause: Throwable) extends Exception(cause) {
 
 abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
-  override type SolType = String
-
   val successType: SuccessType
 
 }
@@ -55,13 +53,14 @@ final case class SqlQueriesStaticComparison[Q](userQ: Q, sampleQ: Q,
 }
 
 // FIXME: use builder?
-final case class SqlResult(learnerSolution: String,
-                           columnComparison: MatchingResult[ColumnMatch],
-                           tableComparison: MatchingResult[TableMatch],
-                           joinExpressionComparison: MatchingResult[BinaryExpressionMatch],
-                           whereComparison: MatchingResult[BinaryExpressionMatch],
-                           additionalComparisons: Seq[MatchingResult[_ <: Match]],
-                           executionResult: SqlExecutionResult) extends SqlCorrResult {
+final case class SqlResult(
+  columnComparison: MatchingResult[ColumnMatch],
+  tableComparison: MatchingResult[TableMatch],
+  joinExpressionComparison: MatchingResult[BinaryExpressionMatch],
+  whereComparison: MatchingResult[BinaryExpressionMatch],
+  additionalComparisons: Seq[MatchingResult[_ <: Match]],
+  executionResult: SqlExecutionResult,
+  solutionSaved: Boolean = false) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons
 
@@ -83,7 +82,7 @@ final case class SqlResult(learnerSolution: String,
 
 }
 
-final case class SqlParseFailed(learnerSolution: String, error: Throwable, maxPoints: Points) extends SqlCorrResult {
+final case class SqlParseFailed(error: Throwable, maxPoints: Points, solutionSaved: Boolean = false) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq[EvaluationResult]()
 

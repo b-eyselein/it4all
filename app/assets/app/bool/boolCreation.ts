@@ -1,5 +1,5 @@
 import {BoolSolution, readBoolSolution} from "./boolBase";
-import {domReady, testExerciseSolution} from "../otherHelpers";
+import {domReady, SuccessType, testExerciseSolution} from "../otherHelpers";
 
 let dnf: string = '';
 let knf: string = '';
@@ -15,7 +15,7 @@ interface AssignmentSolution {
 }
 
 interface BoolCreateResult {
-    isSuccessful: boolean
+    success: SuccessType
 }
 
 interface BoolCreationSuccess extends BoolCreateResult {
@@ -61,14 +61,14 @@ function renderBoolCreationError(response: BoolCreationError): void {
 }
 
 function onBoolCreationSuccess(response: BoolCreateResult): void {
-    testBtn.disabled = false;
+    console.info(JSON.stringify(response, null, 2));
 
-    if (response.isSuccessful) {
-        renderBoolCreationSuccess(response as BoolCreationSuccess);
-    } else {
-        renderBoolCreationError(response as BoolCreationError);
+    switch (response.success) {
+        case 'ERROR':
+            renderBoolCreationError(response as BoolCreationError);
+        default:
+            renderBoolCreationSuccess(response as BoolCreationSuccess);
     }
-
 }
 
 function testSol(): void {
@@ -80,7 +80,6 @@ function testSol(): void {
     }
 
     document.querySelector<HTMLDivElement>('#messageDiv').innerHTML = '';
-    testBtn.disabled = true;
 
     testExerciseSolution<BoolSolution, BoolCreateResult>(testBtn, solution, onBoolCreationSuccess);
 }

@@ -44,8 +44,6 @@ function onValidateTDSuccess(response: TestdataCreationResult): void {
 }
 
 function testSol(): void {
-    testBtn.disabled = true;
-
     let testData: TestData[] = [];
 
     testDataBody
@@ -70,7 +68,8 @@ function testSol(): void {
 
     const solution: ProgSolution = {
         implementation: '',
-        testData
+        testData,
+        unitTest: ''
     };
 
     testExerciseSolution<ProgSolution, TestdataCreationResult>(testBtn, solution, onValidateTDSuccess);

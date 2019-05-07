@@ -13,11 +13,29 @@
         "text": {"type": "string"},
         "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
         "functionname": {"type": "string"},
-        "inputTypes": {"type": "array", "items": {"$ref": "#/definitions/ProgInputType"}},
+        "inputTypes": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/ProgInputType"},
+          "additionalItems": false
+        },
         "outputType": {"type": "string"},
         "unitTestType": {"type": "string", "enum": ["Simplified", "Normal"]},
-        "sampleTestData": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleTestData"}},
-        "sampleSolutions": {"type": "array", "items": {"$ref": "#/definitions/ProgSampleSolution"}}
+        "sampleTestData": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/ProgSampleTestData"},
+          "additionalItems": false
+        },
+        "unitTestsDescription": {"type": "string"},
+        "unitTestTestConfigs": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/UnitTestTestConfig"},
+          "additionalItems": false
+        },
+        "sampleSolutions": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/ProgSampleSolution"},
+          "additionalItems": false
+        }
       },
       "required": [
         "id",
@@ -31,6 +49,8 @@
         "outputType",
         "sampleTestData",
         "sampleSolutions",
+        "unitTestsDescription",
+        "unitTestTestConfigs",
         "unitTestType"
       ],
       "additionalProperties": false
@@ -43,6 +63,16 @@
         "type": {"type": "string"}
       },
       "required": ["id", "name", "type"],
+      "additionalProperties": false
+    },
+    "UnitTestTestConfig": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "number"},
+        "shouldFail": {"type": "boolean"},
+        "cause": {"type": "string"}
+      },
+      "required": ["id", "shouldFail"],
       "additionalProperties": false
     },
     "ProgSampleSolution": {

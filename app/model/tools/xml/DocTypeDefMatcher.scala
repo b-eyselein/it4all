@@ -1,21 +1,19 @@
 package model.tools.xml
 
-import de.uniwue.dtd.model.ElementLine
+import de.uniwue.dtd.model._
 import model.core.matching.{AnalysisResult, Match, MatchType, Matcher}
 import model.core.result.SuccessType
 import model.points._
 import model.tools.xml.XmlConsts._
+import model.tools.xml.XmlGrammarCompleteResult.{pointsForAttribute, pointsForElement}
 import play.api.libs.json.{JsValue, Json}
 
 final case class ElementLineAnalysisResult(matchType: MatchType,
                                            contentCorrect: Boolean, correctContent: String,
                                            attributesCorrect: Boolean, correctAttributes: String) extends AnalysisResult {
 
-  override def toJson: JsValue = Json.obj(
-    successName -> matchType.entryName,
-    "contentCorrect" -> contentCorrect, "correctContent" -> correctContent,
-    "attributesCorrect" -> attributesCorrect, "correctAttributes" -> correctAttributes
-  )
+
+  override def toJson: JsValue = XmlCompleteResultJsonProtocol.elementLineAnalysisResultWrites.writes(this)
 
   def points: Points = addUp(Seq(contentCorrect, attributesCorrect).map {
     case false => zeroPoints
@@ -53,14 +51,53 @@ final case class ElementLineMatch(userArg: Option[ElementLine], sampleArg: Optio
     SuccessType.COMPLETE
   } else SuccessType.NONE
 
+
+  override def maxPoints: Points = sampleArg match {
+    case None     => zeroPoints
+    case Some(sa) => pointsForElement + pointsForElementLine(sa)
+  }
+
   override def points: Points = matchType match {
-    case MatchType.SUCCESSFUL_MATCH                             => sampleArg map XmlGrammarCompleteResult.pointsForElementLine getOrElse zeroPoints
-    case MatchType.ONLY_SAMPLE                                  => zeroPoints
-    case MatchType.ONLY_USER                                    => zeroPoints
+    case MatchType.SUCCESSFUL_MATCH                             => maxPoints
+    case MatchType.ONLY_SAMPLE | MatchType.ONLY_USER            => zeroPoints
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
       // FIXME: calculate...
-      analysisResult.map(_.points) getOrElse zeroPoints
+
+      val pointsForContent = analysisResult match {
+        case None     => zeroPoints
+        case Some(ar) =>
+          val pointsForElemContent = if (ar.contentCorrect) singlePoint else zeroPoints
+          val pointsForAttributes = if (ar.attributesCorrect) singlePoint else zeroPoints
+          pointsForElemContent + pointsForAttributes
+      }
+
+      pointsForElement + pointsForContent
   }
+
+  private def pointsForElementLine(elementLine: ElementLine): Points = {
+    val pointsForElemContent: Points = pointsForElementContent(elementLine.elementDefinition.content)
+    val pointsForAttrs: Points = addUp(elementLine.attributeLists.map(pointsForAttributes))
+
+    pointsForElemContent + pointsForAttrs
+  }
+
+  private def pointsForElementContent(elementContent: ElementContent): Points = elementContent match {
+    case _: StaticElementContent        => pointsForElement
+    case _: ChildElementContent         => pointsForElement
+    case u: UnaryOperatorElementContent => pointsForElement + pointsForElementContent(u.childContent)
+    case m: MultiElementContent         => addUp(m.children map pointsForElementContent)
+  }
+
+  private def pointsForAttributes(attributeList: AttributeList): Points = pointsForAttribute * attributeList.attributeDefinitions.size
+
+
+  //  val maxPoints = {
+  //    val pointsForElements: Points = XmlGrammarCompleteResult.pointsForElement * sampleGrammar.asElementLines.size
+  //
+  //    val pointsForContents: Points = addUp(sampleGrammar.asElementLines.map(XmlGrammarCompleteResult.pointsForElementLine))
+  //
+  //    pointsForElements + pointsForContents
+  //  }
 
 }
 

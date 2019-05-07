@@ -1,6 +1,5 @@
 package model.tools.sql
 
-import model.StringSampleSolution
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.tools.sql.SqlConsts._
 import play.api.libs.functional.syntax._
@@ -49,17 +48,17 @@ object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, Sql
   }
 
   private implicit val sqlCorrResultRestWrites: Writes[SqlCorrResult] = {
-    case SqlParseFailed(_, error, _) => Json.obj(messageName -> error.getMessage)
+    case SqlParseFailed(error, _, _) => Json.obj(messageName -> error.getMessage)
     case sr: SqlResult               => sqlResultRestWrites.writes(sr)
   }
 
-  override def completeResultWrites(solutionSaved: Boolean): Writes[SqlCorrResult] = (
+  override val completeResultWrites: Writes[SqlCorrResult] = (
     (__ \ solutionSavedName).write[Boolean] and
       (__ \ successName).write[String] and
       (__ \ pointsName).write[Double] and
       (__ \ maxPointsName).write[Double] and
       (__ \ resultsName).write[SqlCorrResult](sqlCorrResultRestWrites)
-    ) (scr => (solutionSaved, scr.successType.entryName, scr.points.asDouble, scr.maxPoints.asDouble, scr))
+    ) (scr => (scr.solutionSaved, scr.successType.entryName, scr.points.asDouble, scr.maxPoints.asDouble, scr))
 
 
 }

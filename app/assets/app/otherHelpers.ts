@@ -1,3 +1,5 @@
+export type SuccessType = 'ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE';
+
 export function domReady(fn: () => void): void {
     if (document.readyState === 'loading') {
         document.addEventListener("DOMContentLoaded", fn);
@@ -40,6 +42,7 @@ export function testExerciseSolution<SolType, ResType>(testBtn: HTMLButtonElemen
 
     fetch(testBtn.dataset['href'], {method: 'PUT', headers, body: JSON.stringify(solution)})
         .then(response => {
+            testBtn.disabled = false;
             if (response.status === 200) {
                 response.json().then(onSuccess);
             } else {

@@ -28,7 +28,7 @@ final case class WebCollection(id: Int, title: String, author: String, text: Str
 final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                              htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec, files: Seq[ExerciseFile],
                              sampleSolutions: Seq[FilesSampleSolution]
-                            ) extends Exercise {
+                            ) extends Exercise with FileExercise[WebExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.toolViews.web.webPreview(this)
@@ -37,6 +37,8 @@ final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: S
     case WebExParts.HtmlPart => siteSpec.htmlTasks
     case WebExParts.JsPart   => siteSpec.jsTasks
   }
+
+  override def filesForExercisePart(part: WebExPart): Seq[ExerciseFile] = files
 
 }
 

@@ -33,25 +33,25 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   // Routes
 
-  def adminCollection(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  def adminCollection(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(admin, toolMain, collId))
         case Some(collection) =>
           toolMain.futureExercisesInColl(collId) map {
-            exercises => Ok(views.html.admin.collExes.collectionAdmin(user, collection, exercises, toolMain, toolList))
+            exercises => Ok(views.html.admin.collExes.collectionAdmin(admin, collection, exercises, toolMain, toolList))
           }
       }
   }
 
   // Administrate Collections
 
-  def adminImportCollections(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
+  def adminImportCollections(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
       readSaveAndPreview[toolMain.CollType](
         toolMain.readCollectionsFromYaml,
         toolMain.futureInsertAndDeleteOldCollection,
-        readAndSaveResult => views.html.admin.collExes.readCollectionsPreview(user, readAndSaveResult, toolMain, toolList)
+        readAndSaveResult => views.html.admin.collExes.readCollectionsPreview(admin, readAndSaveResult, toolMain, toolList)
       )
   }
 
@@ -135,7 +135,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
     implicit request =>
 
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(collection) =>
 
           readSaveAndPreview[toolMain.ExType](
@@ -175,10 +175,10 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
   def adminEditExerciseForm(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+        case None             => Future.successful(onNoSuchCollection(admin, toolMain, collId))
         case Some(collection) =>
           toolMain.futureExerciseById(collId, id) map {
-            case None           => onNoSuchExercise(toolMain, collection, id)
+            case None           => onNoSuchExercise(admin, toolMain, collection, id)
             case Some(exercise) => Ok(toolMain.renderExerciseEditForm(admin, collId, exercise, isCreation = false, toolList))
           }
       }

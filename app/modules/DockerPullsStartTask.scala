@@ -12,8 +12,9 @@ object DockerPullsStartTask {
 
   val roseImage             = "beyselein/rose:latest"
   val pythonProgTesterImage = "beyselein/python_prog_tester:extended"
+  val pythonUnitTesterImage = "beyselein/py_unit_test_corrector:0.0.1"
 
-  private val imagesToPull: Seq[String] = Seq(roseImage, pythonProgTesterImage)
+  private val imagesToPull: Seq[String] = Seq(roseImage, pythonProgTesterImage, pythonUnitTesterImage)
 
   def pullImages(): Unit = imagesToPull.filterNot(DockerConnector.imageExists).foreach(image => {
     logger.warn(s"Pulling docker image $image")

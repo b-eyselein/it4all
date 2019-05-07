@@ -2,13 +2,12 @@ package model.tools.rose
 
 
 import javax.inject.{Inject, Singleton}
-import model.{ExerciseState, MyYamlFormat, SemanticVersion, User}
-import model.points.Points
 import model.core.result.CompleteResultJsonProtocol
+import model.points.Points
+import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.programming.ProgLanguages
 import model.tools.rose.persistence.RoseTableDefs
-import model.toolMains.{CollectionToolMain, ToolState}
-import play.api.Logger
+import model.{ExerciseState, MyYamlFormat, SemanticVersion, User}
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
@@ -72,6 +71,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override def instantiateSolution(id: Int, exercise: RoseExercise, part: RoseExPart, solution: String, points: Points, maxPoints: Points): RoseUserSolution =
     RoseUserSolution(id, part, language = ProgLanguages.StandardLanguage, solution, points, maxPoints)
 
+  override def updateSolSaved(compResult: RoseCompleteResult, solSaved: Boolean): RoseCompleteResult =
+    compResult.copy(solutionSaved = solSaved)
+
   // Views
 
   override def renderExercise(user: User, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseUserSolution])
@@ -101,7 +103,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
     for {
       result <- RoseCorrector.correct(user, exercise, sol, ProgLanguages.StandardLanguage, exerciseResourcesFolder, solDir)
-    } yield Try(RoseCompleteResult(sol, result))
+    } yield Try(RoseCompleteResult(result))
   }
 
   // Result handlers

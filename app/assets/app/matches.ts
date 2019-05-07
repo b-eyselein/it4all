@@ -24,7 +24,7 @@ export interface Match<T, AR> {
 
 export interface CorrectionResult<R> {
     solutionSaved: boolean
-    success: boolean
+    isSuccessful: boolean
     results: R[]
 
     points: number

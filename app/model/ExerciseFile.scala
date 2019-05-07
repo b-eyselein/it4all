@@ -12,6 +12,6 @@ object ExerciseFileJsonProtocol {
 
   implicit val exerciseFileFormat: Format[ExerciseFile] = Json.format[ExerciseFile]
 
-  val webSolutionJsonReads: Format[ExerciseFileWorkspace] = Json.format[ExerciseFileWorkspace]
+  val exerciseFileWorkspaceReads: Format[ExerciseFileWorkspace] = Json.format[ExerciseFileWorkspace]
 
 }

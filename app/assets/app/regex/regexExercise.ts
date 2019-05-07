@@ -83,8 +83,6 @@ function testSol(): void {
         return;
     }
 
-    testBtn.disabled = true;
-
     testExerciseSolution<string, RegexCorrectionResult>(testBtn, learnerSolution, onRegexCorrectionSuccess);
 }
 

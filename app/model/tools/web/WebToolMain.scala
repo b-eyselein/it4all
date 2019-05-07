@@ -9,7 +9,7 @@ import de.uniwue.webtester._
 import javax.inject.{Inject, Singleton}
 import model._
 import model.core.result.CompleteResultJsonProtocol
-import model.points.Points
+import model.points.{Points, addUp}
 import model.toolMains._
 import model.tools.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
@@ -26,8 +26,6 @@ import scala.util.{Failure, Try}
 
 @Singleton
 class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext) extends CollectionToolMain("Web", "web") {
-
-  private val logger = Logger(classOf[WebToolMain])
 
   // Result types
 
@@ -126,6 +124,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override def instantiateSolution(id: Int, exercise: WebExercise, part: WebExPart, solution: Seq[ExerciseFile], points: Points, maxPoints: Points): FilesUserSolution[WebExPart] =
     FilesUserSolution[WebExPart](id, part, solution, points, maxPoints)
 
+  override def updateSolSaved(compResult: WebCompleteResult, solSaved: Boolean): WebCompleteResult =
+    compResult.copy(solutionSaved = solSaved)
+
   // Views
 
   override def previewExerciseRest(ex: Exercise): Html = ex match {
@@ -166,7 +167,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override protected def readSolution(request: Request[AnyContent], part: WebExPart): Either[String, Seq[ExerciseFile]] = request.body.asJson match {
     case None          => Left("Body did not contain json!")
     case Some(jsValue) =>
-      ExerciseFileJsonProtocol.webSolutionJsonReads.reads(jsValue) match {
+      ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
         case JsSuccess(x, _) => Right(x.files)
         case JsError(errors) => Left(errors.toString())
       }
@@ -188,12 +189,20 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       case WebExParts.HtmlPart =>
         val htmlTaskResults: Seq[HtmlTaskResult] = exercise.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
         val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = htmlTaskResults.map(WebGrader.gradeHtmlTaskResult)
-        WebCompleteResult(learnerSolution, exercise, part, gradedHtmlTaskResults, Seq[GradedJsTaskResult]())
+
+        val points = addUp(gradedHtmlTaskResults.map(_.points))
+        val maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
+
+        WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints)
 
       case WebExParts.JsPart =>
         val jsTaskResults: Seq[JsTaskResult] = exercise.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
         val gradedJsTaskResults: Seq[GradedJsTaskResult] = jsTaskResults.map(WebGrader.gradeJsTaskResult)
-        WebCompleteResult(learnerSolution, exercise, part, Seq[GradedHtmlTaskResult](), gradedJsTaskResults)
+
+        val points = addUp(gradedJsTaskResults.map(_.points))
+        val maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
+
+        WebCompleteResult(Seq[GradedHtmlTaskResult](), gradedJsTaskResults, points, maxPoints)
     }
   }
 
@@ -208,7 +217,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
       Try {
         driver.get(solutionUrl)
-      }.transform(_ => onDriverGetSuccess(learnerSolution, exercise, part, driver), onDriverGetError)
+      }.fold(onDriverGetError, _ => onDriverGetSuccess(learnerSolution, exercise, part, driver))
     }
   }
 

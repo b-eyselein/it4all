@@ -72,6 +72,9 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override protected def instantiateSolution(id: Int, exercise: RegexExercise, part: RegexExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[RegexExPart] =
     StringUserSolution[RegexExPart](id, part, solution, points, maxPoints)
 
+  override def updateSolSaved(compResult: RegexCompleteResult, solSaved: Boolean): RegexCompleteResult =
+    compResult.copy(solutionSaved = solSaved)
+
   // Correction
 
   override protected def readSolution(request: Request[AnyContent], part: RegexExPart): Either[String, String] = request.body.asJson match {
@@ -100,13 +103,11 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
         RegexEvaluationResult(testData, classificationResultType)
     }
 
-    val correctResultsCount: Int = results.filter {
-      s => s.resultType == TruePositive || s.resultType == TrueNegative
-    }.size
+    val correctResultsCount: Int = results.filter { s => s.resultType == TruePositive || s.resultType == TrueNegative }.size
 
     val points: Points = (correctResultsCount.toDouble / exercise.testData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
 
-    RegexCompleteResult(sol, exercise, part, results, points, exercise.maxPoints.points)
+    RegexCompleteResult(results, points, exercise.maxPoints.points)
   })
 
   // Views
