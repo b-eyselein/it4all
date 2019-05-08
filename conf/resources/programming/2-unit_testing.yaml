@@ -76,10 +76,10 @@
   unitTestType: Normal
 
   unitTestsDescription: >
-    Implementieren Sie die Klasse <code>Circle</code>, die ein Kreis mit einem Mittelpunkt (bestehend aus X- und
-    Y-Koordinate und einem Radius) darstellt. Es sollen ein Konstruktor (<code>def __init__(self, center_x: float,
-    center_y: float, radius: float)</code>) und eine Funktion <code>def area(self) -> float:</code> implementiert
-    werden, die die Fläche des Kreises berechnet.
+    Schreiben Sie Unittests für eine Implementierung der Klasse <code>Circle</code>, die einen Kreis mit einem
+    Mittelpunkt (bestehend aus X- und Y-Koordinate und einem Radius) darstellt. Es sollen ein Konstruktor
+    (<code>def __init__(self, center_x: float, center_y: float, radius: float)</code>) und eine Funktion
+    <code>def area(self) -> float:</code> implementiert werden, die die Fläche des Kreises berechnet.
 
   unitTestFiles:
     - path: test.py
@@ -148,7 +148,15 @@
 
   unitTestType: Normal
 
-  unitTestsDescription: TODO!
+  unitTestsDescription: >
+    Schreiben Sie Unittests für eine Implementierung der Methode <code>insert(self, row: List[str]) -> bool</code> in
+    der Klasse <code>Table</code>. Diese fügt eine neue Zeile mit Werten in die Tabelle ein. Die neu eingefügte
+    Zeile soll dabei die gleiche Anzahl an Einträgen wie die bereits vorhandenen Zeilen (<code>self.length()</code>)
+    haben, ansonsten soll eine Exception geworfen werden. Alle Einträge der Liste, die sich zu Fließkommazahlen
+    konvertieren lassen (Also Ganz- und Fließkommazahlen), sollen auch konvertiert werden. Dann soll überprüft werden,
+    ob die einzelnen Einträge der neuen Liste die gleichen Typen (jeweils <code>str</code> oder <code>float</code>)
+    haben wie die bisherigen Einträge, ansonsten soll auch wieder eine Exception geworfen werden. Zum Schluss soll
+    die Zeile hinzugefügt werden und <code>True</code> zurückgegeben werden.
 
   unitTestFiles:
     - path: test.py
