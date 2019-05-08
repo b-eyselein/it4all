@@ -6,9 +6,9 @@ import better.files.File._
 import better.files._
 import model.User
 import model.docker._
+import model.tools.programming.ResultsFileJsonFormat._
 import modules.DockerPullsStartTask
 import play.api.libs.json.{JsValue, Json}
-import ResultsFileJsonFormat._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -61,8 +61,7 @@ object ProgCorrector {
             case RunContainerSuccess          => readImplCorrectionResultFile(solTargetDir / resultFileName)
             case failure: RunContainerFailure => Failure(failure)
           }
-          .map { resultTries: Try[Seq[ExecutionResult]] => resultTries.map(results => ProgCompleteResult(results, Seq.empty))
-          }
+          .map { resultTries: Try[Seq[ExecutionResult]] => resultTries.map(results => ProgCompleteResult(results, Seq.empty)) }
 
     }
   }
@@ -71,7 +70,7 @@ object ProgCorrector {
                              (implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     // write unit test file
-    val testFileName = s"${exercise.functionName}_test.py"
+    val testFileName = s"${exercise.filename}_test.py"
     val testFile = solTargetDir / testFileName
     testFile.createIfNotExists(createParents = true).write(progSolution.unitTest)
 
@@ -85,17 +84,21 @@ object ProgCorrector {
     // find mounts for implementation files
     val unitTestSolFilesDockerBinds = (resFolder / "unit_test_sols").children
       .filter(f => f.name.matches(""".*_\d\.py"""))
-      .map(f => DockerBind(f, DockerConnector.DefaultWorkingDir / exercise.functionName / f.name))
+      .map(f => DockerBind(f, DockerConnector.DefaultWorkingDir / exercise.foldername / f.name, isReadOnly = true))
       .toSeq
+
+    val exFilesMount = exercise.unitTestFiles
+      .filter(f => f.name != "test.py" && f.name != s"${exercise.filename}.py")
+      .map(f => DockerBind(resFolder / f.name, DockerConnector.DefaultWorkingDir / exercise.foldername / f.name))
 
     val dockerBinds: Seq[DockerBind] = Seq(
       // Mount file with user defined unittests
-      DockerBind(testFile, DockerConnector.DefaultWorkingDir / exercise.functionName / testFileName, isReadOnly = true),
+      DockerBind(testFile, DockerConnector.DefaultWorkingDir / exercise.foldername / testFileName, isReadOnly = true),
       // Mount test config file
       DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
       // Mount results file
       DockerBind(solTargetDir / resultFileName, DockerConnector.DefaultWorkingDir / resultFileName),
-    ) ++ unitTestSolFilesDockerBinds
+    ) ++ unitTestSolFilesDockerBinds ++ exFilesMount
 
     DockerConnector
       .runContainer(
@@ -117,7 +120,7 @@ object ProgCorrector {
 
     val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, collection.id, exercise.id) / part.urlName
 
-    val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / s"${collection.id}-${collection.shortName}" / s"${exercise.id}-${exercise.functionName}"
+    val exerciseResourcesFolder: File = toolMain.exerciseResourcesFolder / s"${collection.id}-${collection.shortName}" / s"${exercise.id}-${exercise.foldername}"
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / resultFileName
