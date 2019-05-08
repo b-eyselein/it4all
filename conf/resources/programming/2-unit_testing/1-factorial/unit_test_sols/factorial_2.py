@@ -2,7 +2,9 @@ def factorial(n: int) -> int:
     if not isinstance(n, int):
         raise Exception("n must be an integer!")
 
-    # Missing: check if n > 0
+    if n <= 0:
+        # raise Exception("n must be positive!")
+        return 0
 
     fac: int = 1
 

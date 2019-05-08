@@ -25,7 +25,7 @@
 
   unitTestsDescription: >
     Schreiben Sie Unittests für die Funktion <code>factorial(n: int) -> int</code>. Diese soll die Fakultät der Zahl
-    <code>n</code> berechnen.
+    <code>n</code> berechnen. Der Funktionsparameter <code>n</code> soll größer als 0 sein.
 
   unitTestFiles:
     - path: test.py
@@ -48,17 +48,17 @@
     - id: 1
       shouldFail: true
       cause: IllegalArgument
-      description: Es soll überprüft werden, ob die Eingabe eine Ganzzahl ist.
+      description: Falls das Funktionsargument 'n' keine Ganzzahl ist, soll eine Exception geworfen werden.
 
     - id: 2
       shouldFail: true
       cause: IllegalArgument
-      description: Es soll überprüft werden, ob die Eingabe größer oder gleich 0 ist.
+      description: Falls das Funktionsargument kleiner oder gleich 0 ist, soll eine Exception geworfen werden.
 
     - id: 3
       shouldFail: true
       cause: WrongResult
-      description: Es soll überprüft werden, ob die Funktion das richtige Resultat liefert.
+      description: Die Funktion soll das richtige Resultat zurückliefern.
 
   sampleTestData: []
 
@@ -75,7 +75,11 @@
 
   unitTestType: Normal
 
-  unitTestsDescription: TODO!
+  unitTestsDescription: >
+    Implementieren Sie die Klasse <code>Circle</code>, die ein Kreis mit einem Mittelpunkt (bestehend aus X- und
+    Y-Koordinate und einem Radius) darstellt. Es sollen ein Konstruktor (<code>def __init__(self, center_x: float,
+    center_y: float, radius: float)</code>) und eine Funktion <code>def area(self) -> float:</code> implementiert
+    werden, die die Fläche des Kreises berechnet.
 
   unitTestFiles:
     - path: test.py

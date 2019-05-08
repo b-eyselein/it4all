@@ -80,6 +80,8 @@ domReady(() => {
             editor.on('change', () => {
                 solutionChanged = true;
             });
+
+            document.querySelector<HTMLButtonElement>('button[data-filename="test.py"]').click();
         }
     })
 

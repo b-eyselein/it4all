@@ -33,6 +33,15 @@ function onLoadFileSuccess(result: ExerciseFile[]): Promise<CodeMirror.Editor> {
 
             insertContentIntoEditor(firstFile);
 
+            // Update buttons
+            fileChangeBtns.forEach((fileChangeBtn) => {
+                fileChangeBtn.classList.remove('btn-primary');
+                fileChangeBtn.classList.add('btn-outline-secondary');
+            });
+
+            fileChangeBtns[0].classList.remove('btn-outline-secondary');
+            fileChangeBtns[0].classList.add('btn-primary');
+
             return editor;
         });
 }
