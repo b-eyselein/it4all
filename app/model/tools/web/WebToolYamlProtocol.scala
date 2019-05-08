@@ -1,11 +1,10 @@
 package model.tools.web
 
-import better.files.File
+import de.uniwue.webtester._
 import model.MyYamlProtocol._
 import model._
 import model.tools.web.WebConsts._
 import net.jcazevedo.moultingyaml._
-import de.uniwue.webtester._
 import play.api.Logger
 
 import scala.language.{implicitConversions, postfixOps}
@@ -14,8 +13,6 @@ import scala.util.{Success, Try}
 object WebToolYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger("model.tools.web.WebExYamlProtocol")
-
-  private val baseResourcesPath = File("conf") / "resources"
 
   object WebCollectionYamlFormat extends MyYamlObjectFormat[WebCollection] {
 
@@ -40,12 +37,12 @@ object WebToolYamlProtocol extends MyYamlProtocol {
       htmlText <- yamlObject.optStringField(htmlTextName)
       jsText <- yamlObject.optStringField(jsTextName)
 
-      fileName <- yamlObject.stringField(fileNameName)
+      fileName <- yamlObject.stringField(filenameName)
 
       htmlTaskTries <- yamlObject.optArrayField(htmlTasksName, HtmlCompleteTaskYamlFormat.read)
       jsTaskTries <- yamlObject.optArrayField(jsTasksName, JsCompleteTaskYamlFormat.read)
 
-      filesName <- yamlObject.arrayField("files", WebFileYamlFormat.read)
+      filesName <- yamlObject.arrayField("files", ExerciseFileYamlFormat.read)
 
       sampleSolutionTries <- yamlObject.arrayField(samplesName, WebSampleSolutionYamlFormat.read)
     } yield {
@@ -87,22 +84,6 @@ object WebToolYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(obj: WebExercise): YamlValue = ???
-
-  }
-
-  private object WebFileYamlFormat extends MyYamlObjectFormat[ExerciseFile] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[ExerciseFile] = for {
-      path <- yamlObject.stringField(pathName)
-      resourcePath <- yamlObject.stringField("resourcePath")
-      fileType <- yamlObject.stringField("fileType")
-      editable <- yamlObject.optBoolField("editable").map(_.getOrElse(true))
-    } yield {
-      val content = (baseResourcesPath / resourcePath).contentAsString
-      ExerciseFile(path, content, fileType, editable)
-    }
-
-    override def write(obj: ExerciseFile): YamlValue = ???
 
   }
 
@@ -208,7 +189,7 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
     override protected def readObject(yamlObject: YamlObject): Try[FilesSampleSolution] = for {
       id <- yamlObject.intField(idName)
-      files <- yamlObject.arrayField(filesName, WebFileYamlFormat.read)
+      files <- yamlObject.arrayField(filesName, ExerciseFileYamlFormat.read)
     } yield {
 
       for (sampleFileReadError <- files._2)

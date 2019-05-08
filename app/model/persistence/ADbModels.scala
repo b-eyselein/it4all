@@ -7,7 +7,16 @@ trait ADbModels[ExType, DbExercise] {
 
   def dbExerciseFromExercise(collId: Int, ex: ExType): DbExercise
 
+  def dbExerciseFileFromExerciseFile(exId: Int, exSemVer: SemanticVersion, collId: Int, webFile: ExerciseFile): DbExerciseFile =
+    DbExerciseFile(webFile.name, exId, exSemVer, collId, webFile.content, webFile.fileType, webFile.editable)
+
+  def exerciseFileFromDbExerciseFile(dbExerciseFile: DbExerciseFile): ExerciseFile = dbExerciseFile match {
+    case DbExerciseFile(path, _, _, _, resourcePath, fileType, editable) => ExerciseFile(path, resourcePath, fileType, editable)
+  }
+
 }
+
+final case class DbExerciseFile(path: String, exId: Int, exSemVer: SemanticVersion, collId: Int, resourcePath: String, fileType: String, editable: Boolean)
 
 trait ASolutionDbModels[SolType, PartType <: ExPart, SampleSolType <: SampleSolution[SolType], DbSampleSolType, UserSolType <: UserSolution[PartType, SolType], DbUserSolType] {
 

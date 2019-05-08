@@ -26,6 +26,13 @@
           "additionalItems": false
         },
         "unitTestsDescription": {"type": "string"},
+        "unitTestFiles": {
+          "type": "array",
+          "items": {"$ref": "../exericse_file.schema.json"},
+          "additionalItems": false
+        },
+        "foldername": {"type": "string"},
+        "filename": {"type": "string"},
         "unitTestTestConfigs": {
           "type": "array",
           "items": {"$ref": "#/definitions/UnitTestTestConfig"},
@@ -50,6 +57,8 @@
         "sampleTestData",
         "sampleSolutions",
         "unitTestsDescription",
+        "foldername",
+        "filename",
         "unitTestTestConfigs",
         "unitTestType"
       ],

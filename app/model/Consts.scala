@@ -11,14 +11,16 @@ trait Consts {
   val correctName: String = "correct"
 
   val descriptionName: String = "description"
-  val difficultyName: String = "difficulty"
-  val durationName  : String = "duration"
+  val difficultyName : String = "difficulty"
+  val durationName   : String = "duration"
 
   val errorName       : String = "error"
   val exerciseTypeName: String = "exerciseType"
   val explanationsName         = "explanations"
 
-  val filesName: String = "files"
+  val filenameName  : String = "filename"
+  val filesName     : String = "files"
+  val foldernameName: String = "foldername"
 
   val gottenName: String = "gotten"
 

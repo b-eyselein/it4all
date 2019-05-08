@@ -6,7 +6,7 @@
     Erstellen Sie eine Liste in HTML, die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält.
     Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!
   status: APPROVED
-  fileName: carList.html
+  filename: carList.html
 
   files:
     - path: carList.html
@@ -79,7 +79,7 @@
   author: bje40dc
   text: Erstellen Sie eine Tabelle in Html!
   status: APPROVED
-  fileName: production.html
+  filename: production.html
 
   files:
     - path: production.html
@@ -189,7 +189,7 @@
   author: bje40dc
   text: Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.
   status: APPROVED
-  fileName: mustang.html
+  filename: mustang.html
 
   files:
     - path: mustang.html
@@ -256,7 +256,7 @@
   author: bje40dc
   text: Erstellen Sie ein Login-Formular in HTML
   status: APPROVED
-  fileName: login.html
+  filename: login.html
 
   files:
     - path: login.html
@@ -340,7 +340,7 @@
   author: bje40dc
   text: Erstellen Sie ein Audio-Element in Html5!
   status: APPROVED
-  fileName: audio.html
+  filename: audio.html
 
   files:
     - path: audio.html

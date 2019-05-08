@@ -1,6 +1,7 @@
 package model.tools.web.persistence
 
 import de.uniwue.webtester.{HtmlTask, JsTask}
+import model.persistence.DbExerciseFile
 import model.tools.web._
 import model.{ExerciseFile, SemanticVersion}
 
@@ -44,7 +45,7 @@ trait WebTableQueries {
   private def webFilesForExercise(collId: Int, exId: Int): Future[Seq[ExerciseFile]] = db.run(
     webFilesTableQuery
       .filter { wf => wf.exerciseId === exId && wf.collectionId === collId }
-      .result).map(_.map(WebDbModels.webFileFromDbWebFile))
+      .result).map(_.map(WebDbModels.exerciseFileFromDbExerciseFile))
 
   private def jsTasksForExercise(collId: Int, exId: Int): Future[Seq[JsTask]] = {
     val jsTasksForExQuery = jsTasksTable
@@ -124,9 +125,9 @@ trait WebTableQueries {
   }
 
   private def saveWebFiles(exId: Int, exSemVer: SemanticVersion, collId: Int, webFiles: Seq[ExerciseFile]): Future[Boolean] = {
-    val dbWebFiles = webFiles.map(WebDbModels.dbWebFileFromWebFile(exId, exSemVer, collId, _))
+    val dbWebFiles = webFiles.map(WebDbModels.dbExerciseFileFromExerciseFile(exId, exSemVer, collId, _))
 
-    saveSeq[DbWebFile](dbWebFiles, dbwf => db.run(webFilesTableQuery += dbwf))
+    saveSeq[DbExerciseFile](dbWebFiles, dbwf => db.run(webFilesTableQuery += dbwf))
   }
 
 }

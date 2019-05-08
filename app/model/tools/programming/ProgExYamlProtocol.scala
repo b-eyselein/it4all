@@ -49,6 +49,9 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
 
       unitTestsDescription <- yamlObject.stringField(unitTestsDescriptionName)
+      unitTestFiles <- yamlObject.arrayField(unitTestFilesName, ExerciseFileYamlFormat.read)
+      foldername <- yamlObject.stringField(foldernameName)
+      filename <- yamlObject.stringField(filenameName)
       unitTestTestConfigs <- yamlObject.arrayField(unitTestTestConfigsName, UnitTestTestConfigYamlFormat.read)
 
       maybeClassDiagramPart <- yamlObject.optField(classDiagramName, UmlSampleSolutionYamlFormat.read).map(_.map(_.sample))
@@ -68,10 +71,13 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       for (unitTestTestConfigFailure <- unitTestTestConfigs._2)
         logger.error("Could not read unit test test config", unitTestTestConfigFailure.exception)
 
+      for (unitTestFileFailure <- unitTestFiles._2)
+        logger.error("Could not read unit test file", unitTestFileFailure.exception)
+
       ProgExercise(
         baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         functionName, outputType, baseData, unitTestType,
-        inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, unitTestsDescription, unitTestTestConfigs._1, maybeClassDiagramPart
+        inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, unitTestsDescription, unitTestFiles._1, foldername, filename, unitTestTestConfigs._1, maybeClassDiagramPart
       )
     }
 

@@ -83,13 +83,6 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
   def htmlAttributeFromDbJsConditionAttribute(dbAttr: DbJsConditionAttribute): HtmlAttribute = HtmlAttribute(dbAttr.key, dbAttr.value)
 
-  // WebFile
-
-  def dbWebFileFromWebFile(exId: Int, exSemVer: SemanticVersion, collId: Int, webFile: ExerciseFile): DbWebFile =
-    DbWebFile(webFile.name, exId, exSemVer, collId, webFile.content, webFile.fileType, webFile.editable)
-
-  def webFileFromDbWebFile(dbWebFile: DbWebFile): ExerciseFile = ExerciseFile(dbWebFile.path, dbWebFile.resourcePath, dbWebFile.fileType, dbWebFile.editable)
-
 }
 
 object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebExerciseReview, DbWebExerciseReview] {
@@ -149,10 +142,6 @@ final case class DbJsConditionAttribute(
   condId: Int, taskId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int,
   isPrecondition: Boolean, key: String, value: String
 )
-
-// WebFile
-
-final case class DbWebFile(path: String, exId: Int, exSemVer: SemanticVersion, collId: Int, resourcePath: String, fileType: String, editable: Boolean)
 
 // Exercise review
 

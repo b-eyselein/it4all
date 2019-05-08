@@ -1,8 +1,9 @@
 package model.tools.programming.persistence
 
-import model.SemanticVersion
-import model.tools.programming.{ProgExPart, ProgExercise, ProgInput, ProgSampleSolution, ProgSampleTestData, ProgUserSolution, UnitTestTestConfig}
+import model.persistence.DbExerciseFile
+import model.tools.programming._
 import model.tools.uml.UmlClassDiagram
+import model.{ExerciseFile, SemanticVersion}
 
 import scala.concurrent.Future
 
@@ -27,6 +28,11 @@ trait ProgTableQueries {
     db.run(unitTestTestConfigsTQ.filter { utc => utc.exerciseId === ex.id && utc.collectionId === collId }.result)
       .map(_.map(dbModels.unitTestTestConfigFromDbUnitTestTestConfig))
 
+  private def unitTestFilesForExercise(collId: Int, ex: DbProgExercise): Future[Seq[ExerciseFile]] = db.run(
+    progUnitTestFilesTQ
+      .filter { wf => wf.exerciseId === ex.id && wf.collectionId === collId }
+      .result).map(_.map(ProgDbModels.exerciseFileFromDbExerciseFile))
+
   private def maybeClassDiagramPartForExercise(collId: Int, ex: DbProgExercise): Future[Option[UmlClassDiagram]] =
     db.run(umlClassDiagParts.filter { cdp => cdp.exerciseId === ex.id && cdp.collectionId === collId }.result.headOption)
       .map(_.map(_.classDiagram))
@@ -36,8 +42,9 @@ trait ProgTableQueries {
     inputTypes <- inputTypeForExercise(collId, ex)
     sampleTestData <- sampleTestDataForExercise(collId, ex)
     unitTestTestConfigs <- unitTestTestConfigsForExercise(collId, ex)
+    unitTestFiles <- unitTestFilesForExercise(collId, ex)
     maybeClassDiagram <- maybeClassDiagramPartForExercise(collId, ex)
-  } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, unitTestTestConfigs, maybeClassDiagram)
+  } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, unitTestTestConfigs, unitTestFiles, maybeClassDiagram)
 
   override def saveExerciseRest(collId: Int, ex: ProgExercise): Future[Boolean] = {
     val dbSamples = ex.sampleSolutions map (s => ProgSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
@@ -45,14 +52,16 @@ trait ProgTableQueries {
     val dbSampleTestData = ex.sampleTestData map (std => dbModels.dbSampleTestDataFromSampleTestData(ex.id, ex.semanticVersion, collId, std))
     val dbProgUmlClassDiagram = ex.maybeClassDiagramPart.map(mcd => dbModels.dbProgUmlClassDiagramFromUmlClassDiagram(ex.id, ex.semanticVersion, collId, mcd)).toList
     val dbUnitTestTestConfigs = ex.unitTestTestConfigs.map(utc => dbModels.dbUnitTestTestConfigFromUnitTestTestConfig(ex.id, ex.semanticVersion, collId, utc))
+    val dbUnitTestFiles = ex.unitTestFiles.map(utf => dbModels.dbExerciseFileFromExerciseFile(ex.id, ex.semanticVersion, collId, utf))
 
     for {
       samplesSaved <- saveSeq[DbProgSampleSolution](dbSamples, i => db.run(sampleSolutionsTableQuery += i))
       inputTypesSaved <- saveSeq[DbProgInput](dbProgInputs, i => db.run(inputTypesQuery += i))
       sampleTestDataSaved <- saveSeq[DbProgSampleTestData](dbSampleTestData, i => db.run(sampleTestData += i))
       unitTestTestConfigsSaved <- saveSeq[DbUnitTestTestConfig](dbUnitTestTestConfigs, i => db.run(unitTestTestConfigsTQ += i))
+      unitTestFilesSaved <- saveSeq[DbExerciseFile](dbUnitTestFiles, i => db.run(progUnitTestFilesTQ += i))
       classDiagPartSaved <- saveSeq[DbProgUmlClassDiagram](dbProgUmlClassDiagram, i => db.run(umlClassDiagParts += i))
-    } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && unitTestTestConfigsSaved && classDiagPartSaved
+    } yield samplesSaved && inputTypesSaved && sampleTestDataSaved && unitTestTestConfigsSaved && unitTestFilesSaved && classDiagPartSaved
   }
 
   override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] =

@@ -4,7 +4,7 @@
   author: bje40dc
   text: Erstellen Sie einen Zähler der die Klicks auf einen Button zählt!
   status: APPROVED
-  fileName: clickCounter.html
+  filename: clickCounter.html
 
   files:
     - path: clickCounter.html
@@ -127,7 +127,7 @@
   author: alg81dm
   text: Erstellen Sie ein Anmeldeformular, das eine einfache Passwort-Qualitätsprüfung durchführt.
   status: APPROVED
-  fileName: pwChecker.html
+  filename: pwChecker.html
 
   files:
     - path: pwChecker.html
@@ -234,7 +234,7 @@
   author: alg81dm
   text: Erstellen Sie ein einfaches Formular zur Berechnung der Fakultät einer Zahl n (alle Zahlen von 1 bis n multipliziert).
   status: APPROVED
-  fileName: factorial.html
+  filename: factorial.html
 
   files:
     - path: factorial.html

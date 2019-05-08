@@ -32,7 +32,7 @@ object TestDataJsonFormat {
 
 }
 
-final case class UnitTestTestData(function: String, testConfigs: Seq[UnitTestTestConfig])
+final case class UnitTestTestData(foldername: String, filename: String, testConfigs: Seq[UnitTestTestConfig])
 
 //noinspection ConvertibleToMethodValue
 object ResultsFileJsonFormat {

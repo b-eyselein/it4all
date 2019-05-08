@@ -83,6 +83,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     sampleSolutions = Seq[ProgSampleSolution](),
     sampleTestData = Seq[ProgSampleTestData](),
     unitTestsDescription = "",
+    unitTestFiles = Seq.empty,
+    foldername = "",
+    filename = "",
     unitTestTestConfigs = Seq.empty,
     maybeClassDiagramPart = None
   )

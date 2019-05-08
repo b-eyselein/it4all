@@ -97,11 +97,13 @@ create table if not exists prog_exercises (
     ex_text                text,
     ex_state               enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    function_name          varchar(30) not null,
-    output_type            varchar(30),
+    function_name          varchar(30)                   not null,
+    output_type            varchar(30)                   not null,
     base_data_json         text,
-    unit_test_type         enum ('Simplified', 'Normal'),
-    unit_tests_description text        not null,
+    unit_test_type         enum ('Simplified', 'Normal') not null,
+    foldername             varchar(50)                   not null,
+    filename               varchar(50)                   not null,
+    unit_tests_description text                          not null,
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id) references prog_collections (id)
@@ -145,6 +147,21 @@ create table if not exists prog_unit_test_test_configs (
 
     primary key (id, exercise_id, ex_sem_ver, collection_id),
     foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
+        on update cascade on delete cascade
+);
+
+create table if not exists prog_unit_test_files (
+    path          varchar(100),
+    exercise_id   int,
+    ex_sem_ver    varchar(10),
+    collection_id int,
+    content       text        not null,
+    file_type     varchar(20) not null,
+    editable      boolean     not null,
+
+    primary key (path, exercise_id, ex_sem_ver, collection_id),
+    foreign key (exercise_id, ex_sem_ver, collection_id)
+        references prog_exercises (id, semantic_version, collection_id)
         on update cascade on delete cascade
 );
 
@@ -201,6 +218,7 @@ create table if not exists prog_user_solutions (
 
     implementation      text,
     extended_unit_tests boolean default false,
+    unittest            text,
     test_data           text,
     points              double,
     max_points          double,
@@ -583,7 +601,7 @@ create table if not exists web_exercises (
 
     html_text        text,
     js_text          text,
-    file_name        varchar(100) not null,
+    filename         varchar(100) not null,
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id) references web_collections (id)
@@ -673,9 +691,9 @@ create table if not exists web_files (
     exercise_id   int,
     ex_sem_ver    varchar(10),
     collection_id int,
-    resource_path varchar(200) not null,
-    file_type     varchar(20)  not null,
-    editable      boolean      not null,
+    content       text        not null,
+    file_type     varchar(20) not null,
+    editable      boolean     not null,
 
     primary key (path, exercise_id, ex_sem_ver, collection_id),
     foreign key (exercise_id, ex_sem_ver, collection_id)
@@ -897,6 +915,8 @@ drop table if exists uml_to_ignore;
 
 drop table if exists uml_exercises;
 
+drop table if exists uml_collections;
+
 # Sql
 
 drop table if exists sql_user_solutions;
@@ -945,6 +965,8 @@ drop table if exists prog_uml_cd_parts;
 
 drop table if exists prog_commited_testdata;
 
+drop table if exists prog_unit_test_files;
+
 drop table if exists prog_unit_test_test_configs;
 
 drop table if exists prog_sample_testdata;
@@ -954,6 +976,8 @@ drop table if exists prog_sample_solutions;
 drop table if exists prog_input_types;
 
 drop table if exists prog_exercises;
+
+drop table if exists prog_collections;
 
 # General
 

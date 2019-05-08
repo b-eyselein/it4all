@@ -4,13 +4,14 @@ import model.persistence._
 import model.points.Points
 import model.tools.programming._
 import model.tools.uml.UmlClassDiagram
-import model.{Difficulty, ExerciseState, SemanticVersion}
+import model.{Difficulty, ExerciseFile, ExerciseState, SemanticVersion}
 import play.api.libs.json.{JsArray, JsValue}
 
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
   def dbExerciseFromExercise(collId: Int, ex: ProgExercise): DbProgExercise =
-    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.functionName, ex.outputType, ex.baseData, ex.unitTestType, ex.unitTestsDescription)
+    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.functionName,
+      ex.outputType, ex.baseData, ex.unitTestType, ex.foldername, ex.filename, ex.unitTestsDescription)
 
   def exerciseFromDbValues(
     dbProgEx: DbProgExercise,
@@ -18,11 +19,12 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
     sampleSolutions: Seq[ProgSampleSolution],
     sampleTestData: Seq[ProgSampleTestData],
     unitTestTestConfigs: Seq[UnitTestTestConfig],
+    unitTestFiles: Seq[ExerciseFile],
     maybeClassDiagramPart: Option[UmlClassDiagram]): ProgExercise = dbProgEx match {
-    case DbProgExercise(id, semanticVersion, _, title, author, text, state, functionname, outputType, baseData, unitTestType, unitTestsDescription) =>
+    case DbProgExercise(id, semanticVersion, _, title, author, text, state, functionname, outputType, baseData, unitTestType, foldername, filename, unitTestsDescription) =>
       ProgExercise(
         id, semanticVersion, title, author, text, state, functionname, outputType, baseData, unitTestType,
-        inputTypes, sampleSolutions, sampleTestData, unitTestsDescription, unitTestTestConfigs, maybeClassDiagramPart
+        inputTypes, sampleSolutions, sampleTestData, unitTestsDescription, unitTestFiles, foldername, filename, unitTestTestConfigs, maybeClassDiagramPart
       )
   }
 
@@ -59,7 +61,6 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
   def userTestDataFromDbUserTestData(dbTestData: DbProgUserTestData): ProgUserTestData =
     ProgUserTestData(dbTestData.id, dbTestData.inputAsJson, dbTestData.output, dbTestData.state)
 
-
   // Uml Class Diagram
 
   def dbProgUmlClassDiagramFromUmlClassDiagram(exId: Int, exSemVer: SemanticVersion, collId: Int, classDiagram: UmlClassDiagram): DbProgUmlClassDiagram =
@@ -86,7 +87,7 @@ object ProgSolutionDbModels extends ASolutionDbModels[ProgSolution, ProgExPart, 
   override def dbUserSolFromUserSol(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, solution: ProgUserSolution): DbProgUserSolution =
     solution match {
       case ProgUserSolution(id, part, sol, points, maxPoints) =>
-        DbProgUserSolution(id, exId, exSemVer, collId, username, part, sol.implementation, progTestDataToJson(sol.testData), points, maxPoints)
+        DbProgUserSolution(id, exId, exSemVer, collId, username, part, sol.implementation, sol.unitTest, progTestDataToJson(sol.testData), points, maxPoints)
     }
 
   override def userSolFromDbUserSol(dbSol: DbProgUserSolution): ProgUserSolution =
@@ -106,7 +107,7 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 
 final case class DbProgExercise(
   id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-  functionname: String, outputType: ProgDataType, baseData: Option[JsValue], unitTestType: UnitTestType, unitTestsDescription: String)
+  functionname: String, outputType: ProgDataType, baseData: Option[JsValue], unitTestType: UnitTestType, foldername: String, filename: String, unitTestsDescription: String)
   extends ADbExercise
 
 final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, base: String, sampleStr: String)
@@ -119,9 +120,10 @@ final case class DbProgSampleSolution(id: Int, exId: Int, exSemVer: SemanticVers
 
 final case class DbUnitTestTestConfig(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, shouldFail: Boolean, cause: Option[String], description: String)
 
+
 final case class DbProgUserSolution(
   id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: ProgExPart,
-  implementation: String, testData: JsValue, points: Points, maxPoints: Points)
+  implementation: String, unitTest: String, testData: JsValue, points: Points, maxPoints: Points)
   extends ADbUserSol[ProgExPart] {
 
   val solution: ProgSolution = ProgSolution(implementation, ProgSolutionDbModels.testDataFromJson(testData))

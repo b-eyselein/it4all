@@ -1,5 +1,6 @@
 package model
 
+import better.files.File
 import model.MyYamlProtocol._
 import model.core.CommonUtils
 import model.core.CoreConsts._
@@ -156,6 +157,8 @@ object MyYamlProtocol {
 
 abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
+  protected val baseResourcesPath = File("conf") / "resources"
+
   protected def writeBaseValues(baseValues: BaseValues): Map[YamlValue, YamlValue] = Map[YamlValue, YamlValue](
     YamlString(idName) -> baseValues.id,
     YamlString(titleName) -> baseValues.title,
@@ -199,5 +202,20 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
   }
 
+  protected object ExerciseFileYamlFormat extends MyYamlObjectFormat[ExerciseFile] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[ExerciseFile] = for {
+      path <- yamlObject.stringField(pathName)
+      resourcePath <- yamlObject.stringField("resourcePath")
+      fileType <- yamlObject.stringField("fileType")
+      editable <- yamlObject.optBoolField("editable").map(_.getOrElse(true))
+    } yield {
+      val content = (baseResourcesPath / resourcePath).contentAsString
+      ExerciseFile(path, content, fileType, editable)
+    }
+
+    override def write(obj: ExerciseFile): YamlValue = ???
+
+  }
 
 }

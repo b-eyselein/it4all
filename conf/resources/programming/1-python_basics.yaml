@@ -15,6 +15,9 @@
   unitTestType: Simplified
 
   unitTestsDescription: TODO!
+  unitTestFiles: []
+  foldername: ggt
+  filename: ggt
   unitTestTestConfigs: []
 
   sampleSolutions:
@@ -55,6 +58,9 @@
   unitTestType: Simplified
 
   unitTestsDescription: TODO!
+  unitTestFiles: []
+  foldername: average
+  filename: average
   unitTestTestConfigs: []
 
   sampleSolutions:
@@ -97,6 +103,9 @@
   unitTestType: Simplified
 
   unitTestsDescription: TODO!
+  unitTestFiles: []
+  foldername: longest_string
+  filename: longest_string
   unitTestTestConfigs: []
 
   sampleSolutions:
@@ -138,6 +147,9 @@
   unitTestType: Simplified
 
   unitTestsDescription: TODO!
+  unitTestFiles: []
+  foldername: palindrome
+  filename: palindrome
   unitTestTestConfigs: []
 
   sampleSolutions:

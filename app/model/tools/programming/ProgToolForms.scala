@@ -67,6 +67,9 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
       sampleSolutionsName -> seq(programmingSampleSolutionMapping),
       sampleTestDataName -> seq(programmingSampleTestDataMapping),
       unitTestsDescriptionName -> nonEmptyText,
+      unitTestFilesName -> seq(exerciseFileMapping),
+      foldernameName -> nonEmptyText,
+      filenameName -> nonEmptyText,
       unitTestTestConfigsName -> seq(unitTestTestConfigMapping),
       "maybeClassDiagram" -> optional(classDiagramMapping)
     )(ProgExercise.apply)(ProgExercise.unapply)

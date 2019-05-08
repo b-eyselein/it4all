@@ -38,6 +38,7 @@ object ProgConsts extends Consts {
   val testMainName: String = "testMain"
 
   val unitTestsDescriptionName: String = "unitTestsDescription"
+  val unitTestFilesName       : String = "unitTestFiles"
   val unitTestTestConfigsName : String = "unitTestTestConfigs"
   val unitTestTypeName        : String = "unitTestType"
 

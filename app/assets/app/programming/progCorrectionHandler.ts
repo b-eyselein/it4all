@@ -44,7 +44,7 @@ export interface TestData {
 }
 
 export interface UnitTestTestConfig {
-    testId: number;
+    id: number;
     shouldFail: boolean;
     cause: null | string;
     description: string;

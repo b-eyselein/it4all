@@ -78,7 +78,7 @@ object ProgCorrector {
     // write test data file
     val testDataFile = solTargetDir / testDataFileName
     val testDataToWrite = Json.prettyPrint(
-      ResultsFileJsonFormat.unitTestDataWrites.writes(UnitTestTestData(exercise.functionName, exercise.unitTestTestConfigs))
+      ResultsFileJsonFormat.unitTestDataWrites.writes(UnitTestTestData(exercise.foldername, exercise.filename, exercise.unitTestTestConfigs))
     )
     testDataFile.createIfNotExists(createParents = true).write(testDataToWrite)
 

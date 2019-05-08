@@ -59,13 +59,15 @@ function onUnitTestCorrectionSuccess(result: ProgCorrectionResult): void {
 
             return `
 <li>
-    <p class="text-${successClass}">Der ${unitTestCorrectionResult.testConfig.testId}. Test war ${successWord} erfolgreich.</p>
+    <p class="text-${successClass}">Der ${unitTestCorrectionResult.testConfig.id}. Test war ${successWord} erfolgreich.</p>
     ${description}
 </li>`.trim();
         })
         .join("\n") + '</ul>';
 
     document.querySelector<HTMLDivElement>('#correction').innerHTML = html;
+
+    solutionChanged = false;
 
     focusOnCorrection();
 }

@@ -13,16 +13,26 @@ import scala.collection.immutable
 final case class ProgCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
   extends ExerciseCollection
 
-final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                              functionName: String, outputType: ProgDataType, baseData: Option[JsValue],
-                              unitTestType: UnitTestType,
-                              inputTypes: Seq[ProgInput],
-                              sampleSolutions: Seq[ProgSampleSolution],
-                              sampleTestData: Seq[ProgSampleTestData],
-                              unitTestsDescription: String,
-                              unitTestTestConfigs: Seq[UnitTestTestConfig],
-                              maybeClassDiagramPart: Option[UmlClassDiagram]
-                             ) extends Exercise with FileExercise[ProgExPart] {
+final case class ProgExercise(
+  id: Int,
+  semanticVersion: SemanticVersion,
+  title: String,
+  author: String,
+  text: String,
+  state: ExerciseState,
+  functionName: String,
+  outputType: ProgDataType,
+  baseData: Option[JsValue],
+  unitTestType: UnitTestType,
+  inputTypes: Seq[ProgInput],
+  sampleSolutions: Seq[ProgSampleSolution],
+  sampleTestData: Seq[ProgSampleTestData],
+  unitTestsDescription: String,
+  unitTestFiles: Seq[ExerciseFile],
+  foldername: String,
+  filename: String,
+  unitTestTestConfigs: Seq[UnitTestTestConfig],
+  maybeClassDiagramPart: Option[UmlClassDiagram]) extends Exercise with FileExercise[ProgExPart] {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -30,40 +40,15 @@ final case class ProgExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
   val inputCount: Int = inputTypes.size
 
-  val unitTestFileName = "test.py" // TODO: s"${functionName}_test.py" ?
-
   def buildTestDataFileContent(completeTestData: Seq[ProgTestData], extendedUnitTests: Boolean = false): JsValue = {
     // FIXME: update...
-
     if (extendedUnitTests) ???
     else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
   }
 
-  def solutionFileName: String = s"${functionName}.py"
-
   override def filesForExercisePart(part: ProgExPart): Seq[ExerciseFile] = part match {
-    case ProgExParts.TestCreation =>
-      Seq(
-        ExerciseFile(unitTestFileName, buildUnitTestFile, "python", true),
-        ExerciseFile(solutionFileName, buildSolutionFile, "python", false)
-      )
+    case ProgExParts.TestCreation => unitTestFiles
     case _                        => Seq.empty
-  }
-
-  def buildUnitTestFile: String =
-    s"""import unittest
-       |from ${functionName} import ${functionName}
-       |
-       |class ${functionName.capitalize}Test(unittest.TestCase):
-       |    def test_${functionName}(self):
-       |        pass""".stripMargin
-
-  def buildSolutionFile: String = {
-    val x = inputTypes.map(it => it.inputName + ": " + it.inputType.typeName).mkString(",")
-
-    s"""def ${functionName}(${x}) -> ${outputType.typeName}:
-       |    # implementation hidden...
-       |    pass""".stripMargin
   }
 
   override def preview: Html = // FIXME: move to toolMain!
@@ -84,7 +69,6 @@ case object UnitTestTypes extends PlayEnum[UnitTestType] {
   case object Normal extends UnitTestType
 
 }
-
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 

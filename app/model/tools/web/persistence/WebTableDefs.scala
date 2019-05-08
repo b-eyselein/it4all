@@ -2,7 +2,8 @@ package model.tools.web.persistence
 
 import de.uniwue.webtester.JsActionType
 import model.SemanticVersion
-import model.persistence.{DbFilesUserSolution, FilesSolutionExerciseTableDefs}
+import model.persistence.{DbExerciseFile, DbFilesUserSolution, FilesSolutionExerciseTableDefs}
+import model.tools.web.WebConsts._
 import model.tools.web._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
@@ -96,7 +97,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
     def jsText: Rep[Option[String]] = column[Option[String]]("js_text")
 
-    def fileName: Rep[String] = column[String]("file_name")
+    def fileName: Rep[String] = column[String](filenameName)
 
 
     override def * : ProvenShape[DbWebExercise] = (id, semanticVersion, collectionId, title, author, text, state, htmlText, jsText, fileName) <> (DbWebExercise.tupled, DbWebExercise.unapply)
@@ -223,18 +224,18 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class WebFilesTable(tag: Tag) extends ExForeignKeyTable[DbWebFile](tag, "web_files") {
+  class WebFilesTable(tag: Tag) extends ExForeignKeyTable[DbExerciseFile](tag, "web_files") {
 
     def path: Rep[String] = column[String]("path")
 
-    def resourcePath: Rep[String] = column[String]("resource_path")
+    def resourcePath: Rep[String] = column[String]("content")
 
     def fileType: Rep[String] = column[String]("file_type")
 
     def editable: Rep[Boolean] = column[Boolean]("editable")
 
 
-    def * : ProvenShape[DbWebFile] = (path, exerciseId, exSemVer, collectionId, resourcePath, fileType, editable) <> (DbWebFile.tupled, DbWebFile.unapply)
+    def * : ProvenShape[DbExerciseFile] = (path, exerciseId, exSemVer, collectionId, resourcePath, fileType, editable) <> (DbExerciseFile.tupled, DbExerciseFile.unapply)
 
   }
 

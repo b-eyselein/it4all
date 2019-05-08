@@ -59,20 +59,11 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
     jsSampleName -> optional(nonEmptyText)
   )(applyWebSampleSolution)(unapplyWebSampleSolution)
 
-  // Web Files
-
-  private val webFileMapping: Mapping[ExerciseFile] = mapping(
-    "path" -> nonEmptyText,
-    "resourcePath" -> nonEmptyText,
-    "fileType" -> nonEmptyText,
-    "editable" -> boolean
-  )(ExerciseFile.apply)(ExerciseFile.unapply)
-
   // Site Spec
 
   private val siteSpecMapping: Mapping[SiteSpec] = mapping(
     idName -> number,
-    fileNameName -> nonEmptyText,
+    filenameName -> nonEmptyText,
     htmlTasksName -> seq(htmlTasksMapping),
     jsTasksName -> seq(jsTasksMapping),
   )(SiteSpec.apply)(SiteSpec.unapply)
@@ -104,7 +95,7 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
 
       siteSpecName -> siteSpecMapping,
 
-      "files" -> seq(webFileMapping),
+      "files" -> seq(exerciseFileMapping),
 
       samplesName -> seq(webSampleSolutionMapping)
     )(WebExercise.apply)(WebExercise.unapply)
