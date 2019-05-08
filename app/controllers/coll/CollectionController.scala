@@ -34,7 +34,7 @@ class CollectionController @Inject()(
 
   override protected def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
 
-  override protected val adminRightsRequired: Boolean = true
+  override protected val adminRightsRequired: Boolean = false
 
   // Routes
 
