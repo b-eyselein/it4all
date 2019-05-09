@@ -34,10 +34,11 @@ resolvers ++= Seq(
   "emueller-bintray" at "http://dl.bintray.com/emueller/maven"
 )
 
+val jqueryTypesVersion = "3.3.29"
 
 val webJarDependencies = Seq(
-  "org.webjars.npm" % "jquery" % "3.4.0", // MIT
-  "org.webjars.npm" % "types__jquery" % "3.3.29", // MIT
+  "org.webjars.npm" % "jquery" % "3.4.1", // MIT
+  "org.webjars.npm" % "types__jquery" % jqueryTypesVersion, // MIT
 
   "org.webjars" % "popper.js" % "1.15.0", // MIT
 
@@ -55,7 +56,7 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "codemirror" % "5.46.0", // MIT
   "org.webjars.npm" % "types__codemirror" % "0.0.74", // MIT
-  // TODO: "org.webjars.npm" % "cm-show-invisibles" % "2.02", // MIT
+  "org.webjars.npm" % "cm-show-invisibles" % "2.0.2", // MIT
 
   //  "org.webjars.npm" % "graphlib" % "2.1.7", // MIT
   "org.webjars.npm" % "types__graphlib" % "2.1.4" // MIT
@@ -68,7 +69,7 @@ libraryDependencies ++= webJarDependencies
 resolveFromWebjarsNodeModulesDir := true
 
 dependencyOverrides ++= Seq(
-  "org.webjars.npm" % "types__jquery" % "3.3.29",
+  "org.webjars.npm" % "types__jquery" % jqueryTypesVersion,
   "org.webjars.npm" % "types__underscore" % "1.8.14",
   "org.webjars.npm" % "types__sizzle" % "2.3.2", // MIT
   "org.webjars.npm" % "types__estree" % "0.0.39", // MIT
@@ -100,9 +101,9 @@ libraryDependencies ++= Seq(
 
   "com.github.t3hnar" %% "scala-bcrypt" % "4.0", // Apache 2.0
 
-  "com.github.pathikrit" %% "better-files" % "3.7.1", // MIT
+  "com.github.pathikrit" %% "better-files" % "3.8.0", // MIT
 
-  "com.spotify" % "docker-client" % "8.15.2", // Apache 2.0
+  "com.spotify" % "docker-client" % "8.15.3", // Apache 2.0
 
   // Json Schema Parser/Validator for Json
   "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5-M4", // Apache 2.0
