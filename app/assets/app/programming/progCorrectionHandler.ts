@@ -1,4 +1,5 @@
 import {CorrectionResult} from "../matches";
+import {SuccessType} from "../otherHelpers";
 
 export interface ProgSolution {
     implementation: string;
@@ -12,7 +13,7 @@ interface ProgSingleResult {
     correct: boolean
     input: object
     awaited: string
-    gotten: string
+    result: string
     consoleOutput: string | null
 }
 
@@ -83,9 +84,9 @@ function renderProgResult(result: ProgSingleResult): string {
 
     let gottenResult: string;
     if (result.successType === "ERROR") {
-        gottenResult = `<p>Fehlerausgabe: <pre>${result.gotten}</pre></p>`;
+        gottenResult = `<p>Fehlerausgabe: <pre>${result.result}</pre></p>`;
     } else {
-        gottenResult = `<p>Bekommen: <code>${printValue(result.gotten)}</code></p>`;
+        gottenResult = `<p>Bekommen: <code>${printValue(result.result)}</code></p>`;
     }
 
     return `
@@ -113,9 +114,16 @@ export function renderProgCorrectionSuccess(response: ProgCorrectionResult): str
         html += `<p class="text-'danger'">Ihre Lösung konnte nicht gespeichert werden.</p>`;
     }
 
+    const numOfSuccessfulTests = response.implResults.filter(r => r.successType === 'COMPLETE').length;
+
+    html += `<p>Sie haben ${numOfSuccessfulTests} von ${response.implResults.length} Tests bestanden.</p>`;
+
+
     // FIXME: send and display points...
     console.info(response.points, response.maxPoints);
     // html += `<p>Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
+
+    html += '<hr>';
 
     for (const currentResult of response.implResults) {
         html += renderProgResult(currentResult);

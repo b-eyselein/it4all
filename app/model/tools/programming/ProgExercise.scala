@@ -48,7 +48,7 @@ final case class ProgExercise(
 
   override def filesForExercisePart(part: ProgExPart): Seq[ExerciseFile] = part match {
     case ProgExParts.TestCreation => unitTestFiles
-    case _                        => Seq.empty
+    case _                        => Seq(ExerciseFile("solution.py", "", "python", true))
   }
 
   override def preview: Html = // FIXME: move to toolMain!

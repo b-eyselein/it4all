@@ -13,8 +13,7 @@ object TestDataJsonFormat {
 
   def dumpTestDataToJson(exercise: ProgExercise, testData: Seq[ProgTestData]): JsValue = Json.obj(
     simplifiedName -> Json.obj(
-      functionNameName -> JsString(exercise.functionName),
-      "test_data" -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.outputType),
+      testDataName -> dumpTestData(testData, exercise.inputTypes sortBy (_.id), exercise.outputType),
       baseDataName -> exercise.baseData
     ),
     extendedName -> JsNull
@@ -42,19 +41,15 @@ object ResultsFileJsonFormat {
   // TODO: Json.reads[ExecutionResult]
   private implicit val executionResultJsonReads: Reads[ExecutionResult] = (
     (__ \ "success").read[SuccessType] and
-      (__ \ "test_id").read[Int] and
-      (__ \ "test_input").read[JsValue] and
+      (__ \ "testId").read[Int] and
+      (__ \ "testInput").read[JsValue] and
       (__ \ "awaited").read[JsValue] and
       (__ \ "gotten").read[JsValue] and
       (__ \ "stdout").readNullable[String]
     ) (ExecutionResult.apply(_, _, _, _, _, _))
 
   // TODO: Json.reads[ResultFileContent]
-  private val resultsFileJsonReads: Reads[ResultFileContent] = (
-    (__ \ "result_type").read[String] and
-      (__ \ "results").read[Seq[ExecutionResult]] and
-      (__ \ "errors").read[String]
-    ) (ResultFileContent.apply(_, _, _))
+  private val resultsFileJsonReads: Reads[ResultFileContent] = Json.reads[ResultFileContent]
 
   def readImplCorrectionResultFile(targetFile: File): Try[Seq[ExecutionResult]] =
     Try(Json.parse(targetFile.contentAsString)).flatMap { jsValue =>

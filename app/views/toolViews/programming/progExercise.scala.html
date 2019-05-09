@@ -4,6 +4,10 @@
     requestHeader: RequestHeader, messagesProvider: MessagesProvider
 )
 
+@title = @{
+    "TODO!"
+}
+
 @additionalScripts = {
     <script>
             const imports = [
@@ -31,5 +35,18 @@
     </div>
 }
 
-@toolViews.textExercise(user, Html(exercise.text), collection, exercise, part, oldSolution, toolMainObject, additionalScripts,
-    remainingExDef = Some(remainingExerciseDef))
+@toolViews.ideExercise(
+    user,
+    title,
+    Html(exercise.text),
+    fileNames = exercise.filesForExercisePart(part).map(_.name),
+    maybeActiveFile = None,
+    toolMain = toolMainObject,
+    collection,
+    exercise,
+    part,
+    solutionPreview = None,
+    additionalScripts,
+    //    oldSolution,
+    //    remainingExDef = Some(remainingExerciseDef )
+)

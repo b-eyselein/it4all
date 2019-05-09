@@ -11,6 +11,9 @@ import {
     testExerciseSolution
 } from "../otherHelpers";
 
+import {ExerciseFile, IdeWorkspace} from '../tools/ideExerciseHelpers';
+import {getIdeWorkspace, setupEditor} from '../tools/ideExercise';
+
 export {onProgCorrectionSuccess};
 
 let editor: CodeMirror.Editor;
@@ -24,15 +27,6 @@ interface ProgSampleSolution {
     solutionStr: string;
 }
 
-function testSol(): void {
-    const solution: ProgSolution = {
-        implementation: editor.getValue(),
-        testData: [],
-        unitTest: ''
-    };
-
-    testExerciseSolution<ProgSolution, ProgCorrectionResult>(testBtn, solution, onProgCorrectionSuccess)
-}
 
 function onProgCorrectionSuccess(result: ProgCorrectionResult): void {
     solutionChanged = false;
@@ -42,24 +36,33 @@ function onProgCorrectionSuccess(result: ProgCorrectionResult): void {
     focusOnCorrection();
 }
 
-domReady(() => {
-    editor = initEditor('python', 'textEditor');
-    editor.on('change', () => {
-        solutionChanged = true;
-    });
-
-    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
-    testBtn.onclick = testSol;
-
-    initShowSampleSolBtn<ProgSampleSolution[]>((samples: ProgSampleSolution[]) => {
-        return samples.map<string>((s: ProgSampleSolution) => {
-            return `
+function showProgSampleSolution(s: ProgSampleSolution): string {
+    return `
 <div class="card">
     <div class="card-body bg-light">
         <pre>${s.solutionStr}</pre>
     </div>
 </div>`.trim();
-        }).join('\n');
+}
+
+domReady(() => {
+    setupEditor().then((theEditor: null | CodeMirror.Editor) => {
+        if (theEditor) {
+            editor = theEditor;
+
+            editor.on('change', () => {
+                solutionChanged = true;
+            });
+        }
+    });
+
+    testBtn = document.querySelector<HTMLButtonElement>('#uploadBtn');
+    testBtn.onclick = () => {
+        testExerciseSolution<IdeWorkspace, ProgCorrectionResult>(testBtn, getIdeWorkspace(), onProgCorrectionSuccess);
+    };
+
+    initShowSampleSolBtn<ProgSampleSolution[]>((samples: ProgSampleSolution[]) => {
+        return samples.map<string>(showProgSampleSolution).join('\n');
     });
 
     document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
