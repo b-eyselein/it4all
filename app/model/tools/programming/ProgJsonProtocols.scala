@@ -1,6 +1,6 @@
 package model.tools.programming
 
-import model.ExerciseState
+import model.{ExerciseFile, ExerciseState, FilesSampleSolutionJsonProtocol}
 import model.core.result.CompleteResultJsonProtocol
 import model.tools.programming.ProgConsts._
 import play.api.libs.functional.syntax._
@@ -20,6 +20,8 @@ object ProgCompleteResultJsonProtocol extends CompleteResultJsonProtocol[ProgEva
 }
 
 object ProgSolutionJsonFormat {
+
+  private implicit val exerciseFileJsonWrites: Format[ExerciseFile] = FilesSampleSolutionJsonProtocol.exerciseFileJsonFormat
 
   val sampleSolutionJsonFormat: Format[ProgSampleSolution] = Json.format[ProgSampleSolution]
 

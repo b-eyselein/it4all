@@ -115,7 +115,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       //      language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)
       base <- yamlObject.stringField(baseName)
       sample <- yamlObject.stringField(sampleName)
-    } yield ProgSampleSolution(id, /* language,*/ base, sample)
+      unitTest <- yamlObject.objField(unitTestName, ExerciseFileYamlFormat.read)
+    } yield ProgSampleSolution(id, /* language,*/ base, sample, unitTest)
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
       languageName -> pss.language.entryName,
@@ -149,7 +150,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     override def write(cstd: ProgSampleTestData): YamlValue = YamlObj(
       idName -> cstd.id,
       outputName -> cstd.output.toString(),
-      inputsName -> cstd.inputAsJson.toString()
+      inputsName -> cstd.input.toString()
     )
 
   }

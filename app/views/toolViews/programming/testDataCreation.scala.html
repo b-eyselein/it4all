@@ -85,7 +85,7 @@
                         @for(old <- oldData) {
                             <tr id="tr_@old.id" data-testid="@old.id">
                                 <td>@old.id</td>
-                                <textarea>@old.inputAsJson</textarea>
+                                <textarea>@old.input</textarea>
                                 <td>
                                     <input class="form-control" value="@old.output" name="outp_@old.id" id="outp_@old.id"
                                     placeholder="@testOutputPlaceholder(old.id)">

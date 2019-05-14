@@ -142,11 +142,20 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def implementation: Rep[String] = column[String](implementationName)
 
+    def unitTestFilename: Rep[String] = column[String]("unit_test_file_name")
+
+    def unitTestFileContent: Rep[String] = column[String]("unit_test_file_content")
+
+    def unitTestFileType: Rep[String] = column[String]("unit_test_file_type")
+
+    def unitTestFileIsEditable: Rep[Boolean] = column[Boolean]("unit_test_file_is_editable")
+
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer /*, language*/ ))
 
 
-    override def * : ProvenShape[DbProgSampleSolution] = (id, exerciseId, exSemVer, collectionId, base, implementation) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
+    override def * : ProvenShape[DbProgSampleSolution] = (id, exerciseId, exSemVer, collectionId, base, implementation,
+      unitTestFilename, unitTestFileContent, unitTestFileType, unitTestFileIsEditable) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
 
   }
 
@@ -238,7 +247,15 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def implementation: Rep[String] = column[String]("implementation")
 
-    def unitTest: Rep[String] = column[String]("unittest")
+
+    def unitTestFilename: Rep[String] = column[String]("unit_test_file_name")
+
+    def unitTestFileContent: Rep[String] = column[String]("unit_test_file_content")
+
+    def unitTestFileType: Rep[String] = column[String]("unit_test_file_type")
+
+    def unitTestFileIsEditable: Rep[Boolean] = column[Boolean]("unit_test_file_is_editable")
+
 
     def testData: Rep[JsValue] = column[JsValue]("test_data")
 
@@ -246,8 +263,8 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     def pk: PrimaryKey = primaryKey("prog_user_solutions_pk", (id, exerciseId, collectionId, username, part))
 
 
-    override def * : ProvenShape[DbProgUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part, implementation, unitTest, testData,
-      points, maxPoints) <> (DbProgUserSolution.tupled, DbProgUserSolution.unapply)
+    override def * : ProvenShape[DbProgUserSolution] = (id, exerciseId, exSemVer, collectionId, username, part, implementation,
+      unitTestFilename, unitTestFileContent, unitTestFileType, unitTestFileIsEditable, testData, points, maxPoints) <> (DbProgUserSolution.tupled, DbProgUserSolution.unapply)
 
   }
 

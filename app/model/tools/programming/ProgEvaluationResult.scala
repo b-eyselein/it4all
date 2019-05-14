@@ -16,7 +16,7 @@ final case class ProgCompleteResult(implResults: Seq[ExecutionResult], unitTestR
 
   override def results: Seq[ProgEvalResult] = implResults
 
-  override val points: Points = results.filter(_.isSuccessful).length.points
+  override val points: Points = results.count(_.isSuccessful).points
 
   override val maxPoints: Points = results.length.points
 
@@ -24,7 +24,7 @@ final case class ProgCompleteResult(implResults: Seq[ExecutionResult], unitTestR
 
 // Single results
 
-final case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, result: JsValue, consoleOutput: Option[String])
+final case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, gotten: JsValue, stdout: Option[String])
   extends ProgEvalResult
 
 // Written from docker container in result.json:

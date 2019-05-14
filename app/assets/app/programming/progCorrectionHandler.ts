@@ -1,4 +1,5 @@
 import {CorrectionResult} from "../matches";
+import {SuccessType} from "../otherHelpers";
 
 export interface ProgSolution {
     implementation: string;
@@ -8,12 +9,12 @@ export interface ProgSolution {
 
 interface ProgSingleResult {
     id: number
-    successType: string
-    correct: boolean
+    success: SuccessType;
+    // correct: boolean
     input: object
     awaited: string
     gotten: string
-    consoleOutput: string | null
+    stdout: string | null
 }
 
 
@@ -77,20 +78,22 @@ function printValue(value: any): string {
 
 function renderProgResult(result: ProgSingleResult): string {
     let consoleOut = '';
-    if (result.consoleOutput !== null) {
-        consoleOut = '<p>Konsolenausgabe: <pre>' + result.consoleOutput + '</pre></p>';
+    if (result.stdout !== null) {
+        consoleOut = '<p>Konsolenausgabe: <pre>' + result.stdout + '</pre></p>';
     }
 
     let gottenResult: string;
-    if (result.successType === "ERROR") {
+    if (result.success === "ERROR") {
         gottenResult = `<p>Fehlerausgabe: <pre>${result.gotten}</pre></p>`;
     } else {
         gottenResult = `<p>Bekommen: <code>${printValue(result.gotten)}</code></p>`;
     }
 
+    const correct = result.success === 'COMPLETE';
+
     return `
 <div class="card my-3">
-    <div class="card-header text-${result.correct ? 'success' : 'danger'}">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
+    <div class="card-header text-${correct ? 'success' : 'danger'}">${result.id}. Test war ${correct ? '' : ' nicht'} erfolgreich.</div>
     <div class="card-body">
         <p>Eingabe: <code>${printValue(result.input)}</code></p>
         <p>Erwartet: <code>${printValue(result.awaited)}</code></p>
@@ -110,12 +113,16 @@ export function renderProgCorrectionSuccess(response: ProgCorrectionResult): str
     if (response.solutionSaved) {
         html += `<p class="text-success">Ihre Lösung wurde gespeichert.</p>`;
     } else {
-        html += `<p class="text-'danger'">Ihre Lösung konnte nicht gespeichert werden.</p>`;
+        html += `<p class="text-danger">Ihre Lösung konnte nicht gespeichert werden.</p>`;
     }
 
     // FIXME: send and display points...
     console.info(response.points, response.maxPoints);
     // html += `<p>Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
+
+    const successfulTests = response.implResults.filter(r => r.success === 'COMPLETE').length;
+
+    html += `<p>Sie haben ${successfulTests} von ${response.implResults.length} Tests bestanden.</p>`;
 
     for (const currentResult of response.implResults) {
         html += renderProgResult(currentResult);

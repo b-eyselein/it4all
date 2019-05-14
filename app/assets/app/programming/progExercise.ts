@@ -3,13 +3,8 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/python/python';
 
 import {ProgCorrectionResult, ProgSolution, renderProgCorrectionSuccess} from "./progCorrectionHandler";
-import {
-    displayStringSampleSolution,
-    domReady, focusOnCorrection,
-    initShowSampleSolBtn,
-    SampleSolution,
-    testExerciseSolution
-} from "../otherHelpers";
+import {domReady, focusOnCorrection, initShowSampleSolBtn, testExerciseSolution} from "../otherHelpers";
+import {ExerciseFile} from "../tools/ideExerciseHelpers";
 
 export {onProgCorrectionSuccess};
 
@@ -18,10 +13,11 @@ let testBtn: HTMLButtonElement;
 
 let solutionChanged: boolean = false;
 
-interface ProgSampleSolution {
+export interface ProgSampleSolution {
     id: number;
     base: string;
     solutionStr: string;
+    unitTest: ExerciseFile
 }
 
 function testSol(): void {

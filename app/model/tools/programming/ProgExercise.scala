@@ -40,11 +40,8 @@ final case class ProgExercise(
 
   val inputCount: Int = inputTypes.size
 
-  def buildTestDataFileContent(completeTestData: Seq[ProgTestData], extendedUnitTests: Boolean = false): JsValue = {
-    // FIXME: update...
-    if (extendedUnitTests) ???
-    else TestDataJsonFormat.dumpTestDataToJson(this, completeTestData)
-  }
+  def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
+    TestDataJsonFormat.dumpCompleteTestDataToJson(this, completeTestData)
 
   override def filesForExercisePart(part: ProgExPart): Seq[ExerciseFile] = part match {
     case ProgExParts.TestCreation => unitTestFiles
@@ -72,7 +69,7 @@ case object UnitTestTypes extends PlayEnum[UnitTestType] {
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData], unitTest: String = "") {
+final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData], unitTest: ExerciseFile) {
 
   def language: ProgLanguage = ProgLanguages.PYTHON_3
 
@@ -81,29 +78,24 @@ final case class ProgSolution(implementation: String, testData: Seq[ProgUserTest
 
 sealed trait ProgTestData {
 
-  val id         : Int
-  val inputAsJson: JsValue
-  val output     : JsValue
+  val id    : Int
+  val input : JsValue
+  val output: JsValue
 
 }
 
-final case class ProgSampleTestData(id: Int, inputAsJson: JsValue, output: JsValue) extends ProgTestData
+final case class ProgSampleTestData(id: Int, input: JsValue, output: JsValue) extends ProgTestData
 
-final case class ProgUserTestData(id: Int, inputAsJson: JsValue, output: JsValue, state: ExerciseState) extends ProgTestData
+final case class ProgUserTestData(id: Int, input: JsValue, output: JsValue, state: ExerciseState) extends ProgTestData
 
 // Solution types
 
-final case class ProgSampleSolution(id: Int, base: String, solutionStr: String)
+final case class ProgSampleSolution(id: Int, base: String, solutionStr: String, unitTest: ExerciseFile)
   extends SampleSolution[ProgSolution] {
 
   def language: ProgLanguage = ProgLanguages.PYTHON_3
 
-  val part: ProgExPart = ProgExParts.Implementation
-
-  val sample: ProgSolution = part match {
-    case ProgExParts.TestCreation => ??? // ProgSolution(solutionStr = "", language)
-    case _                        => ProgSolution(implementation = solutionStr, testData = Seq[ProgUserTestData]())
-  }
+  val sample: ProgSolution = ProgSolution(implementation = solutionStr, testData = Seq[ProgUserTestData](), unitTest)
 
 }
 

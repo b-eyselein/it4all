@@ -74,6 +74,7 @@ trait Consts {
   val titleName: String = "title"
   val typeName : String = "type"
 
+  val unitTestName: String = "unitTest"
   val userArgName : String = "userArg"
   val usernameName: String = "username"
 

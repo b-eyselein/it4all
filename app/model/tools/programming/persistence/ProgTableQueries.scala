@@ -5,7 +5,7 @@ import model.tools.programming._
 import model.tools.uml.UmlClassDiagram
 import model.{ExerciseFile, SemanticVersion}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ProgTableQueries {
   self: ProgTableDefs =>
@@ -28,10 +28,12 @@ trait ProgTableQueries {
     db.run(unitTestTestConfigsTQ.filter { utc => utc.exerciseId === ex.id && utc.collectionId === collId }.result)
       .map(_.map(dbModels.unitTestTestConfigFromDbUnitTestTestConfig))
 
-  private def unitTestFilesForExercise(collId: Int, ex: DbProgExercise): Future[Seq[ExerciseFile]] = db.run(
-    progUnitTestFilesTQ
-      .filter { wf => wf.exerciseId === ex.id && wf.collectionId === collId }
-      .result).map(_.map(ProgDbModels.exerciseFileFromDbExerciseFile))
+  private def unitTestFilesForExercise(collId: Int, ex: DbProgExercise): Future[Seq[ExerciseFile]] =
+    db.run(
+      progUnitTestFilesTQ
+        .filter { wf => wf.exerciseId === ex.id && wf.collectionId === collId }
+        .result
+    ).map(_.map(ProgDbModels.exerciseFileFromDbExerciseFile))
 
   private def maybeClassDiagramPartForExercise(collId: Int, ex: DbProgExercise): Future[Option[UmlClassDiagram]] =
     db.run(umlClassDiagParts.filter { cdp => cdp.exerciseId === ex.id && cdp.collectionId === collId }.result.headOption)
@@ -65,7 +67,11 @@ trait ProgTableQueries {
   }
 
   override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] =
-    db.run(sampleSolutionsTableQuery.filter(sample => sample.exerciseId === id && sample.collectionId === collId).result)
+    db.run(
+      sampleSolutionsTableQuery
+        .filter { sample => sample.exerciseId === id && sample.collectionId === collId }
+        .result
+    )
       .map(_.map(ProgSolutionDbModels.sampleSolFromDbSampleSol))
 
 

@@ -42,7 +42,7 @@ final case class StringUserSolution[PartType <: ExPart](id: Int, part: PartType,
 
 object FilesSampleSolutionJsonProtocol {
 
-  private implicit val exerciseFileJsonFormat: Format[ExerciseFile] = Json.format[ExerciseFile]
+  implicit val exerciseFileJsonFormat: Format[ExerciseFile] = Json.format[ExerciseFile]
 
   val filesSampleSolutionFormat: Format[FilesSampleSolution] = Json.format[FilesSampleSolution]
 

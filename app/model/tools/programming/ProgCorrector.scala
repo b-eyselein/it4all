@@ -18,9 +18,9 @@ object ProgCorrector {
   private val resultFileName  : String = "result.json"
   private val testDataFileName: String = "test_data.json"
 
-  private def buildSolutionFileName(fileEnding: String): String = s"solution.${fileEnding}"
+  private def buildSolutionFileName(fileEnding: String): String = s"solution.$fileEnding"
 
-  private def buildTestMainFileName(fileEnding: String): String = s"test_main.${fileEnding}"
+  private def buildTestMainFileName(fileEnding: String): String = s"test_main.$fileEnding"
 
   private def correctImplementation(solTargetDir: File, resFolder: File, progSolution: ProgSolution, exercise: ProgExercise)
                                    (implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -29,40 +29,42 @@ object ProgCorrector {
     val solutionFile = solTargetDir / solFileName
     solutionFile.createFileIfNotExists(createParents = true).write(progSolution.implementation)
 
-    val testDataFile = solTargetDir / testDataFileName
-    val testDataFileContent: JsValue = exercise.buildTestDataFileContent(exercise.sampleTestData)
-    testDataFile.createFileIfNotExists(createParents = true).write(Json.prettyPrint(testDataFileContent))
+    exercise.unitTestType match {
+      case UnitTestTypes.Simplified =>
 
-    // mounted from resources folder...
-    val testMainFileName = buildTestMainFileName(fileEnding = "py")
-    val testMainFile = resFolder / testMainFileName
+        // mounted from resources folder...
+        val testMainFileName = buildTestMainFileName(fileEnding = "py")
+        val testMainFile = resFolder / testMainFileName
 
-    val dockerBinds = Seq(
-      DockerBind(solutionFile, DockerConnector.DefaultWorkingDir / solFileName, isReadOnly = true),
-      DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
-      DockerBind(testMainFile, DockerConnector.DefaultWorkingDir / testMainFileName, isReadOnly = true),
-      // Mount result file
-      DockerBind(solTargetDir / resultFileName, DockerConnector.DefaultWorkingDir / resultFileName),
-    )
+        if (testMainFile.exists) {
 
-    testMainFile.exists match {
-      case false => Future.successful(Failure(new FileNotFoundException(s"The file $testMainFile does not exist!}")))
-      case true  =>
-        /*
-         * FIXME: what if image does not exist?
-         *  --> val imageExists: Boolean = DockerConnector.imageExists(DockerPullsStartTask.pythonProgTesterImage)
-         */
-        DockerConnector
-          .runContainer(
-            imageName = DockerPullsStartTask.pythonProgTesterImage,
-            maybeDockerBinds = Some(dockerBinds),
+          val testDataFile = solTargetDir / testDataFileName
+          val testDataFileContent: JsValue = exercise.buildSimpleTestDataFileContent(exercise.sampleTestData)
+          testDataFile.createFileIfNotExists(createParents = true).write(Json.prettyPrint(testDataFileContent))
+
+          val dockerBinds = Seq(
+            DockerBind(solutionFile, DockerConnector.DefaultWorkingDir / solFileName, isReadOnly = true),
+            DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
+            DockerBind(testMainFile, DockerConnector.DefaultWorkingDir / testMainFileName, isReadOnly = true),
+            // Mount result file
+            DockerBind(solTargetDir / resultFileName, DockerConnector.DefaultWorkingDir / resultFileName),
           )
-          .map {
-            case RunContainerSuccess          => readImplCorrectionResultFile(solTargetDir / resultFileName)
-            case failure: RunContainerFailure => Failure(failure)
-          }
-          .map { resultTries: Try[Seq[ExecutionResult]] => resultTries.map(results => ProgCompleteResult(results, Seq.empty)) }
 
+          DockerConnector
+            .runContainer(
+              imageName = DockerPullsStartTask.pythonSimplifiedProgTesterImage,
+              maybeDockerBinds = Some(dockerBinds),
+            )
+            .map {
+              case RunContainerSuccess          => readImplCorrectionResultFile(solTargetDir / resultFileName)
+              case failure: RunContainerFailure => Failure(failure)
+            }
+            .map { resultTries: Try[Seq[ExecutionResult]] => resultTries.map(results => ProgCompleteResult(results, Seq.empty)) }
+        } else {
+          Future.successful(Failure(new FileNotFoundException(s"The file $testMainFile does not exist!}")))
+        }
+
+      case UnitTestTypes.Normal => ???
     }
   }
 
@@ -72,7 +74,7 @@ object ProgCorrector {
     // write unit test file
     val testFileName = s"${exercise.filename}_test.py"
     val testFile = solTargetDir / testFileName
-    testFile.createIfNotExists(createParents = true).write(progSolution.unitTest)
+    testFile.createIfNotExists(createParents = true).write(progSolution.unitTest.content)
 
     // write test data file
     val testDataFile = solTargetDir / testDataFileName

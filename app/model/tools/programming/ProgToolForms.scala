@@ -16,7 +16,8 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
     idName -> number,
     //    languageName -> ProgLanguages.formField,
     baseName -> nonEmptyText,
-    solutionName -> nonEmptyText
+    solutionName -> nonEmptyText,
+    unitTestName -> exerciseFileMapping
   )(ProgSampleSolution.apply)(ProgSampleSolution.unapply)
 
   val programmingSampleTestDataMapping: Mapping[ProgSampleTestData] = mapping(

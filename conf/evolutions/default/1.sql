@@ -124,12 +124,17 @@ create table if not exists prog_input_types (
 );
 
 create table if not exists prog_sample_solutions (
-    id             int,
-    exercise_id    int,
-    ex_sem_ver     varchar(10),
-    collection_id  int,
-    base           text,
-    implementation text,
+    id                         int,
+    exercise_id                int,
+    ex_sem_ver                 varchar(10),
+    collection_id              int,
+    base                       text,
+    implementation             text,
+
+    unit_test_file_name        text,
+    unit_test_file_content     text,
+    unit_test_file_type        text,
+    unit_test_file_is_editable boolean,
 
     primary key (id, exercise_id, ex_sem_ver, collection_id),
     foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)
@@ -209,19 +214,22 @@ create table if not exists prog_uml_cd_parts (
 );
 
 create table if not exists prog_user_solutions (
-    id                  int,
-    username            varchar(50),
-    exercise_id         int,
-    ex_sem_ver          varchar(10),
-    collection_id       int,
-    part                varchar(50),
+    id                         int,
+    username                   varchar(50),
+    exercise_id                int,
+    ex_sem_ver                 varchar(10),
+    collection_id              int,
+    part                       varchar(50),
 
-    implementation      text,
-    extended_unit_tests boolean default false,
-    unittest            text,
-    test_data           text,
-    points              double,
-    max_points          double,
+    implementation             text,
+    extended_unit_tests        boolean default false,
+    unit_test_file_name        text,
+    unit_test_file_content     text,
+    unit_test_file_type        text,
+    unit_test_file_is_editable boolean,
+    test_data                  text,
+    points                     double,
+    max_points                 double,
 
     primary key (id, username, exercise_id, collection_id, part),
     foreign key (exercise_id, ex_sem_ver, collection_id) references prog_exercises (id, semantic_version, collection_id)

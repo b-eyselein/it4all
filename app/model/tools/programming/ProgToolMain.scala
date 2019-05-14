@@ -1,11 +1,11 @@
 package model.tools.programming
 
 import javax.inject._
-import model.{ExerciseFile, ExerciseFileJsonProtocol, ExerciseState, MyYamlFormat, SemanticVersion, User}
-import model.points.Points
 import model.core.result.CompleteResultJsonProtocol
-import model.tools.programming.persistence.ProgTableDefs
+import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
+import model.tools.programming.persistence.ProgTableDefs
+import model._
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
@@ -99,23 +99,26 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Db
 
-  override def futureSampleSolutions(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] = part match {
-    case ProgExParts.Implementation => tables.futureSampleSolutionsForExPart(collId, id, part)
-    case _                          => Future(Seq.empty) // TODO!
-  }
+  override def futureSampleSolutions(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] =
+    tables.futureSampleSolutionsForExPart(collId, id, part)
 
   // Correction
 
   override def futureFilesForExercise(user: User, collId: Int, exercise: ProgExercise, part: ProgExPart): Future[Seq[ExerciseFile]] =
-    Future.successful(exercise.filesForExercisePart(part))
+    tables.futureMaybeOldSolution(user.username, collId, exercise.id, part).map {
+      case None         => exercise.filesForExercisePart(part)
+      case Some(oldSol) =>
+        exercise.filesForExercisePart(part)
+          .map { f => if (f.name == "test.py") f.copy(content = oldSol.solution.unitTest.content) else f }
+    }
 
   private def readUnitTestSolution(jsValue: JsValue): Either[String, ProgSolution] = ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
     case JsSuccess(solution, _) =>
       // FIXME: hack for testing / development
       //      println(solution)
-      solution.files.filter(_.name == "test.py").headOption.map(_.content) match {
-        case None                  => Left("The file could not be found!")
-        case Some(unitTestContent) => Right(ProgSolution("", Seq.empty, unitTestContent))
+      solution.files.find(_.name == "test.py") match {
+        case None                       => Left("The file could not be found!")
+        case Some(unitTestExerciseFile) => Right(ProgSolution("", Seq.empty, unitTestExerciseFile))
       }
     case JsError(errors)        =>
       errors.foreach(jsErr => logger.error(jsErr.toString()))
