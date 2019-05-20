@@ -123,6 +123,11 @@ export function renderProgCorrectionSuccess(response: ProgCorrectionResult): str
         html += `<p class="text-danger">Ihre Lösung konnte nicht gespeichert werden.</p>`;
     }
 
+    const numOfSuccessfulTests = response.simplifiedResults.filter(r => r.success === 'COMPLETE').length;
+
+    html += `<p>Sie haben ${numOfSuccessfulTests} von ${response.simplifiedResults.length} Tests bestanden.</p>`;
+
+
     // FIXME: send and display points...
     console.info(response.points, response.maxPoints);
     // html += `<p>Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
