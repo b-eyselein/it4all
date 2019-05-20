@@ -104,7 +104,7 @@ libraryDependencies ++= Seq(
 
   "com.github.pathikrit" %% "better-files" % "3.8.0", // MIT
 
-  "com.spotify" % "docker-client" % "8.15.3", // Apache 2.0
+  "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // Json Schema Parser/Validator for Json
   "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5-M4", // Apache 2.0
