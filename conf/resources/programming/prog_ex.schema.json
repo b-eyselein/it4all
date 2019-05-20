@@ -28,7 +28,7 @@
         "unitTestsDescription": {"type": "string"},
         "unitTestFiles": {
           "type": "array",
-          "items": {"$ref": "../exericse_file.schema.json"},
+          "items": {"$ref": "../exercise_file.schema.json"},
           "additionalItems": false
         },
         "foldername": {"type": "string"},
@@ -51,7 +51,6 @@
         "author",
         "text",
         "status",
-        "identifier",
         "functionname",
         "outputType",
         "sampleTestData",
@@ -79,7 +78,8 @@
       "properties": {
         "id": {"type": "number"},
         "shouldFail": {"type": "boolean"},
-        "cause": {"type": "string"}
+        "cause": {"type": "string"},
+        "description": {"type": "string"}
       },
       "required": ["id", "shouldFail"],
       "additionalProperties": false
@@ -90,9 +90,10 @@
         "id": {"type": "number"},
         "base": {"type": "string"},
         "language": {"type": "string", "enum": ["PYTHON_3", "JAVA_8"]},
-        "sample": {"type": "string"}
+        "sample": {"type": "string"},
+        "unitTest": {"$ref": "../exercise_file.schema.json"}
       },
-      "required": ["number", "base", "language", "sample"],
+      "required": ["id", "base", "language", "sample", "unitTest"],
       "additionalProperties": false
     },
     "ProgSampleTestData": {

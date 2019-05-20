@@ -1,20 +1,21 @@
 import {CorrectionResult} from "../matches";
 import {SuccessType} from "../otherHelpers";
+import {ExerciseFile} from "../tools/ideExerciseHelpers";
 
 export interface ProgSolution {
     implementation: string;
     testData: TestData[];
-    unitTest: string;
+    unitTest: ExerciseFile;
 }
 
 interface ProgSingleResult {
     id: number
-    successType: string
-    correct: boolean
+    success: SuccessType;
+    // correct: boolean
     input: object
     awaited: string
-    result: string
-    consoleOutput: string | null
+    gotten: string
+    stdout: string | null
 }
 
 
@@ -28,7 +29,7 @@ export interface TestDataResult {
     gotten: string;
 }
 
-export interface TestdataCreationResult {
+export interface TestDataCreationResult {
     solutionSaved: boolean
     results: TestDataResult[]
 }
@@ -42,6 +43,11 @@ export interface TestData {
     id: number
     inputs: TestDataInput[]
     output: string
+}
+
+export interface NormalExecutionResult {
+    success: SuccessType;
+    logs: string;
 }
 
 export interface UnitTestTestConfig {
@@ -60,7 +66,8 @@ export interface UnitTestCorrectionResult {
 }
 
 export interface ProgCorrectionResult extends CorrectionResult<ProgSingleResult> {
-    implResults: ProgSingleResult[];
+    simplifiedResults: ProgSingleResult[];
+    normalResult: NormalExecutionResult;
     unitTestResults: UnitTestCorrectionResult[];
 }
 
@@ -78,20 +85,22 @@ function printValue(value: any): string {
 
 function renderProgResult(result: ProgSingleResult): string {
     let consoleOut = '';
-    if (result.consoleOutput !== null) {
-        consoleOut = '<p>Konsolenausgabe: <pre>' + result.consoleOutput + '</pre></p>';
+    if (result.stdout !== null) {
+        consoleOut = '<p>Konsolenausgabe: <pre>' + result.stdout + '</pre></p>';
     }
 
     let gottenResult: string;
-    if (result.successType === "ERROR") {
-        gottenResult = `<p>Fehlerausgabe: <pre>${result.result}</pre></p>`;
+    if (result.success === "ERROR") {
+        gottenResult = `<p>Fehlerausgabe: <pre>${result.gotten}</pre></p>`;
     } else {
-        gottenResult = `<p>Bekommen: <code>${printValue(result.result)}</code></p>`;
+        gottenResult = `<p>Bekommen: <code>${printValue(result.gotten)}</code></p>`;
     }
+
+    const correct = result.success === 'COMPLETE';
 
     return `
 <div class="card my-3">
-    <div class="card-header text-${result.correct ? 'success' : 'danger'}">${result.id}. Test war ${result.correct ? '' : ' nicht'} erfolgreich.</div>
+    <div class="card-header text-${correct ? 'success' : 'danger'}">${result.id}. Test war ${correct ? '' : ' nicht'} erfolgreich.</div>
     <div class="card-body">
         <p>Eingabe: <code>${printValue(result.input)}</code></p>
         <p>Erwartet: <code>${printValue(result.awaited)}</code></p>
@@ -111,22 +120,38 @@ export function renderProgCorrectionSuccess(response: ProgCorrectionResult): str
     if (response.solutionSaved) {
         html += `<p class="text-success">Ihre Lösung wurde gespeichert.</p>`;
     } else {
-        html += `<p class="text-'danger'">Ihre Lösung konnte nicht gespeichert werden.</p>`;
+        html += `<p class="text-danger">Ihre Lösung konnte nicht gespeichert werden.</p>`;
     }
 
-    const numOfSuccessfulTests = response.implResults.filter(r => r.successType === 'COMPLETE').length;
+    const numOfSuccessfulTests = response.simplifiedResults.filter(r => r.success === 'COMPLETE').length;
 
-    html += `<p>Sie haben ${numOfSuccessfulTests} von ${response.implResults.length} Tests bestanden.</p>`;
+    html += `<p>Sie haben ${numOfSuccessfulTests} von ${response.simplifiedResults.length} Tests bestanden.</p>`;
 
 
     // FIXME: send and display points...
     console.info(response.points, response.maxPoints);
     // html += `<p>Sie haben ${response.points} von ${response.maxPoints} erreicht.</p>`;
 
-    html += '<hr>';
+    if (response.simplifiedResults.length !== 0) {
+        const successfulTests = response.simplifiedResults.filter(r => r.success === 'COMPLETE').length;
 
-    for (const currentResult of response.implResults) {
-        html += renderProgResult(currentResult);
+        html += `<p>Sie haben ${successfulTests} von ${response.simplifiedResults.length} Tests bestanden.</p>`;
+
+        for (const currentResult of response.simplifiedResults) {
+            html += renderProgResult(currentResult);
+        }
+    } else {
+        const successful = response.normalResult.success === 'COMPLETE';
+
+        html += `<p class="text-${successful ? 'success' : 'danger'}">Ihre Lösung hat die Tests ${successful ? '' : 'nicht '}bestanden.</p>`;
+
+        html += `
+<div class="card">
+    <div class="card-header">Konsolenausgabe</div>
+    <div class="card-body">
+        <pre class="text-${successful ? 'success' : 'danger'}">${response.normalResult.logs}</pre>
+    </div>
+</div>`.trim();
     }
 
     return html;

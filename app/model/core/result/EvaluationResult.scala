@@ -6,15 +6,13 @@ import play.api.libs.json.Writes
 
 object EvaluationResult {
 
-  def allResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.nonEmpty && results.forall(_.isSuccessful)
+  def allResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.nonEmpty && results.forall(_.success == SuccessType.COMPLETE)
 
 }
 
 trait EvaluationResult {
 
   def success: SuccessType
-
-  def isSuccessful: Boolean = success == SuccessType.COMPLETE
 
 }
 

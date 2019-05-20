@@ -1,17 +1,17 @@
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/python/python';
-
-import {initEditor} from '../editorHelpers';
-import {domReady, focusOnCorrection, testExerciseSolution} from '../otherHelpers';
+import {domReady, focusOnCorrection, initShowSampleSolBtn, testExerciseSolution} from '../otherHelpers';
 import {getIdeWorkspace, setupEditor} from "../tools/ideExercise";
-import {ExerciseFile, IdeWorkspace} from '../tools/ideExerciseHelpers';
+import {IdeWorkspace} from '../tools/ideExerciseHelpers';
 import {ProgCorrectionResult, UnitTestCorrectionResult} from "./progCorrectionHandler";
+import {ProgSampleSolution} from './progExercise';
 
 let editor: CodeMirror.Editor;
 
 let testBtn: HTMLButtonElement;
 
 let solutionChanged: boolean = false;
+
 
 function onUnitTestCorrectionSuccess(result: ProgCorrectionResult): void {
 
@@ -72,6 +72,18 @@ function onUnitTestCorrectionSuccess(result: ProgCorrectionResult): void {
     focusOnCorrection();
 }
 
+function showSampleSolution(sampleSols: ProgSampleSolution[]): string {
+    console.error(JSON.stringify(sampleSols, null, 2));
+
+    return sampleSols.map(sampleSol => `
+<div class="card">
+    <div class="card-body bg-light">
+        <pre>${sampleSol.unitTest.content}</pre>
+    </div>
+</div>`.trim()
+    ).join('\n');
+}
+
 domReady(() => {
 
     setupEditor().then((theEditor: void | CodeMirror.Editor) => {
@@ -83,11 +95,14 @@ domReady(() => {
 
             document.querySelector<HTMLButtonElement>('button[data-filename="test.py"]').click();
         }
-    })
+    });
 
     document.getElementById('endSolveAnchor').onclick = () => {
         return !solutionChanged || confirm('Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?');
     };
+
+    initShowSampleSolBtn<ProgSampleSolution[]>(showSampleSolution);
+
 
     testBtn = document.querySelector<HTMLButtonElement>('#uploadBtn');
     testBtn.onclick = () => {

@@ -4,34 +4,36 @@ import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import play.api.libs.json.JsValue
 
-// Types of complete results
-
 
 sealed trait ProgEvalResult extends EvaluationResult
 
-final case class ProgCompleteResult(implResults: Seq[ExecutionResult], unitTestResults: Seq[UnitTestCorrectionResult], solutionSaved: Boolean = false)
-  extends CompleteResult[ProgEvalResult] {
+final case class ProgCompleteResult(
+  simplifiedResults: Seq[SimplifiedExecutionResult],
+  normalResult: Option[NormalExecutionResult],
+  unitTestResults: Seq[UnitTestCorrectionResult],
+  solutionSaved: Boolean = false
+) extends CompleteResult[ProgEvalResult] {
 
   //  override type SolType = String
 
-  override def results: Seq[ProgEvalResult] = implResults
+  override def results: Seq[ProgEvalResult] = simplifiedResults ++ unitTestResults
 
-  override val points: Points = results.filter(_.isSuccessful).length.points
+  override val points: Points = results.count(_.success == SuccessType.COMPLETE).points
 
   override val maxPoints: Points = results.length.points
 
 }
 
-// Single results
+// Simplified results
 
-final case class ExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, result: JsValue, consoleOutput: Option[String])
+final case class SimplifiedResultFileContent(resultType: String, results: Seq[SimplifiedExecutionResult], errors: String)
+
+final case class SimplifiedExecutionResult(success: SuccessType, id: Int, input: JsValue, awaited: JsValue, gotten: JsValue, stdout: Option[String])
   extends ProgEvalResult
 
-// Written from docker container in result.json:
+// Normal test results
 
-// Implementation tests
-
-final case class ResultFileContent(resultType: String, results: Seq[ExecutionResult], errors: String)
+final case class NormalExecutionResult(success: SuccessType, logs: String) extends ProgEvalResult
 
 // Unit Test Correction
 
@@ -40,7 +42,7 @@ final case class UnitTestTestConfig(id: Int, shouldFail: Boolean, cause: Option[
 final case class UnitTestCorrectionResult(testConfig: UnitTestTestConfig, successful: Boolean, file: String, status: Int,
                                           stdout: Seq[String], stderr: Seq[String]) extends ProgEvalResult {
 
-  override def success: SuccessType = ???
+  override def success: SuccessType = if(successful) SuccessType.COMPLETE else SuccessType.NONE
 
 }
 

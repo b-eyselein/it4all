@@ -1,6 +1,6 @@
 package model.tools.web
 
-import model.core.result.CompleteResultJsonProtocol
+import model.core.result.{CompleteResultJsonProtocol, SuccessType}
 import model.points._
 import model.tools.web.WebConsts._
 import play.api.libs.functional.syntax._
@@ -32,7 +32,7 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWe
 
   private def unapplyGradedJsTaskResult(gjtr: GradedJsTaskResult): (Int, Seq[GradedElementSpecResult], String, Boolean, Seq[GradedElementSpecResult], Boolean, Double, Double) =
     (gjtr.id, gjtr.gradedPreResults, gjtr.gradedJsActionResult.actionDescription, gjtr.gradedJsActionResult.actionPerformed, gjtr.gradedPostResults,
-      gjtr.isSuccessful, gjtr.points.asDouble, gjtr.maxPoints.asDouble)
+      gjtr.success == SuccessType.COMPLETE, gjtr.points.asDouble, gjtr.maxPoints.asDouble)
 
   private implicit val jsWebResultWrites: Writes[GradedJsTaskResult] = (
     (__ \ idName).write[Int] and
@@ -50,7 +50,7 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWe
   private def unapplyWebCompleteResult: WebCompleteResult => (Boolean, Seq[GradedElementSpecResult], Seq[GradedJsTaskResult], Boolean, Points, Points) = {
     case WebCompleteResult(gradedHtmlTaskResults, gradedJsTaskResults, points, maxPoints, solutionSaved) =>
       (solutionSaved, gradedHtmlTaskResults.map(_.gradedElementSpecResult), gradedJsTaskResults,
-        (gradedHtmlTaskResults ++ gradedJsTaskResults).forall(_.isSuccessful), points, maxPoints)
+        (gradedHtmlTaskResults ++ gradedJsTaskResults).forall(_.success == SuccessType.COMPLETE), points, maxPoints)
   }
 
   override val completeResultWrites: Writes[WebCompleteResult] = (

@@ -1,6 +1,7 @@
 package model.tools.uml.matcher
 
 import model.core.matching._
+import model.core.result.SuccessType
 import model.tools.uml.UmlConsts._
 import model.tools.uml.{UmlClass, UmlClassType}
 import play.api.libs.json.{JsValue, Json}
@@ -33,7 +34,7 @@ final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlC
       val attributesResult: MatchingResult[UmlAttributeMatch] = UmlAttributeMatcher.doMatch(c1.attributes, c2.attributes)
       val methodsResult: MatchingResult[UmlMethodMatch] = UmlMethodMatcher.doMatch(c1.methods, c2.methods)
 
-      val membersCorrect: Boolean = attributesResult.isSuccessful && methodsResult.isSuccessful
+      val membersCorrect: Boolean = attributesResult.success == SuccessType.COMPLETE && methodsResult.success == SuccessType.COMPLETE
 
       val matchType: MatchType = (classTypeCorrect, membersCorrect) match {
         case (true, true)  => MatchType.SUCCESSFUL_MATCH

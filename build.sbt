@@ -34,10 +34,11 @@ resolvers ++= Seq(
   "emueller-bintray" at "http://dl.bintray.com/emueller/maven"
 )
 
+val jqueryVersion = "3.4.1"
 val jqueryTypesVersion = "3.3.29"
 
 val webJarDependencies = Seq(
-  "org.webjars.npm" % "jquery" % "3.4.1", // MIT
+  "org.webjars.npm" % "jquery" % jqueryVersion, // MIT
   "org.webjars.npm" % "types__jquery" % jqueryTypesVersion, // MIT
 
   "org.webjars" % "popper.js" % "1.15.0", // MIT
@@ -103,7 +104,7 @@ libraryDependencies ++= Seq(
 
   "com.github.pathikrit" %% "better-files" % "3.8.0", // MIT
 
-  "com.spotify" % "docker-client" % "8.15.3", // Apache 2.0
+  "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // Json Schema Parser/Validator for Json
   "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5-M4", // Apache 2.0

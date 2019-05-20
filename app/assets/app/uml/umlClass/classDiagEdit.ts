@@ -3,10 +3,12 @@ import * as $ from 'jquery';
 import {UmlClassAttribute, UmlClassMethod, VISIBILITIES} from "../umlInterfaces";
 import {MyJointClass} from "./classDiagElements";
 import {classDiagGraph} from "./classDiagDrawing";
+import {domReady} from "../../otherHelpers";
 
 export {editClass, editLink};
 
-let classEditDiv: JQuery, linkEditDiv: JQuery;
+let classEditDiv: HTMLDivElement;
+let linkEditDiv: HTMLDivElement;
 
 let classEditSubmit: JQuery, linkEditSubmit: JQuery;
 
@@ -56,10 +58,6 @@ $('.dropdown-menu a').on('click', function (event) {
 
     return false;
 });
-
-function changeAttr(button: HTMLButtonElement): void {
-    console.warn(button);
-}
 
 function attributeInputLine(umlAttribute: UmlClassAttribute): string {
     let visibilityOptions = VISIBILITIES.map((v) => `<option ${umlAttribute.visibility === v ? 'selected' : ''}>${v}</option>`).join('');
@@ -160,7 +158,7 @@ function umlClassMethodFromHtml(memberGroup: HTMLElement): UmlClassMethod | null
 
     let parameters = $(memberGroup).find('input[data-for="parameters"]').val() as string;
 
-    if (base.name.length === 0 || parameters.length === 0) {
+    if (base.name.length === 0) {
         return null;
     } else {
         return {
@@ -178,7 +176,7 @@ function editClass(model: MyJointClass): void {
     // Clear current edit...
     discardClassEdits();
 
-    classEditDiv.prop('hidden', false);
+    classEditDiv.hidden = false;
 
     $('#classTypeSelect').val(model.getClassType());
     $('#editClassName').val(model.getClassName());
@@ -189,7 +187,7 @@ function editClass(model: MyJointClass): void {
 }
 
 function discardClassEdits(): void {
-    classEditDiv.prop('hidden', true);
+    classEditDiv.hidden = true;
     $('#editAttrsDiv').find('div.form-group').remove();
     $('#editMethodsDiv').find('.form-group').remove();
 }
@@ -240,7 +238,7 @@ function editLink(cellView: joint.dia.CellView): void {
     let targetMult: string = cellModel.prop('labels/1/attrs/text/text');
 
 
-    linkEditDiv.prop('hidden', false);
+    linkEditDiv.hidden = false;
 
     linkEditSubmit.data('id', cellModel.id);
 
@@ -254,7 +252,7 @@ function editLink(cellView: joint.dia.CellView): void {
 }
 
 function discardLinkEdits(): void {
-    linkEditDiv.prop('hidden', true);
+    linkEditDiv.hidden = true;
 }
 
 function updateLink(): void {
@@ -284,9 +282,9 @@ function addMethods(umlMethods: UmlClassMethod[]): void {
     });
 }
 
-$(() => {
-    classEditDiv = $('#classEditDiv');
-    linkEditDiv = $('#linkEditDiv');
+domReady(() => {
+    classEditDiv = document.querySelector<HTMLDivElement>('#classEditDiv');
+    linkEditDiv = document.querySelector<HTMLDivElement>('#linkEditDiv');
 
     classEditSubmit = $('#classEditSubmit');
     linkEditSubmit = $('#linkEditSubmit');

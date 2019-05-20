@@ -6,7 +6,6 @@
     Implementieren Sie die Funktion factorial(n: int) -> int, die die Fakultät der Zahl n berechnet.
   status: APPROVED
 
-  identifier: factorial
   unitTestType: Normal
   functionname: factorial
   outputType: int
@@ -22,6 +21,10 @@
       sample: |
         def factorial(n: int) -> int:
             pass
+      unitTest:
+        path: test.py
+        resourcePath: programming/2-unit_testing/1-factorial/factorial_test.py
+        fileType: python
 
   unitTestsDescription: >
     Schreiben Sie Unittests für die Funktion <code>factorial(n: int) -> int</code>. Diese soll die Fakultät der Zahl
@@ -131,7 +134,26 @@
       cause: wrong_result
       description: Die Fläche des Kreises sollte richtig berechnet werden
 
-  sampleSolutions: []
+  sampleSolutions:
+    - id: 1
+      language: PYTHON_3
+      base: |
+        from math import pi
+
+
+        class Circle:
+            def __init__(self, center_x: float, center_y: float, radius: float):
+                pass
+
+            def area(self) -> float:
+                pass
+
+      sample: |
+      unitTest:
+        path: circle_test.py
+        resourcePath: programming/2-unit_testing/2-circle/circle_test.py
+        fileType: python
+        editable: false
 
   sampleTestData: []
 

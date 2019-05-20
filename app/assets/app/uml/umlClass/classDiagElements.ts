@@ -1,4 +1,5 @@
 import * as joint from 'jointjs';
+import 'backbone';
 
 import {calcRectHeight, COLORS, fontSize, STD_ELEMENT_WIDTH, STD_PADDING} from "../umlConsts";
 import {
@@ -71,7 +72,7 @@ class MyJointClass extends joint.shapes.basic.Generic {
         this.resize(STD_CLASS_WIDTH, offsetY);
     }
 
-    defaults() {
+    defaults(): Backbone.ObjectHash {
         return _.defaultsDeep({
             type: 'MyJointClass',
             size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
@@ -93,10 +94,10 @@ class MyJointClass extends joint.shapes.basic.Generic {
             },
 
 
-            className: <string> '',
+            className: <string>'',
             classType: '',
-            attributes: <UmlClassAttribute[]> [],
-            methods: <UmlClassMethod[]> []
+            attributes: <UmlClassAttribute[]>[],
+            methods: <UmlClassMethod[]>[]
         }, joint.shapes.basic.Generic.prototype.defaults);
     }
 

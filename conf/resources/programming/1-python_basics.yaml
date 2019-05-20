@@ -33,6 +33,10 @@
                 a = b
                 b = h
             return a
+      unitTest:
+        path: ggt_test.py
+        resourcePath: programming/1-python_basics/1-ggt/ggt_test.py
+        fileType: python
 
   sampleTestData:
     - {id: 1, inputs: [12, 4], output: 4}
@@ -80,6 +84,10 @@
                 return 0
             else:
                 return sum(my_list) / length
+      unitTest:
+        path: average_test.py
+        resourcePath: programming/1-python_basics/2-average/average_test.py
+        fileType: python
 
   sampleTestData:
     - {id: 1, inputs: [], output: 0.0}
@@ -125,6 +133,12 @@
                 if len(string) > len(longest):
                     longest = string
             return longest
+      unitTest:
+        path: longest_string_test.py
+        resourcePath: programming/1-python_basics/3-longest_string/longest_string_test.py
+        fileType: python
+
+
   sampleTestData:
     - {id: 1, inputs: [], output: ""}
     - {id: 2, inputs: ["0"], output: "0"}
@@ -162,6 +176,10 @@
         def is_palindrome(word: str) -> bool:
             lower = word.lower()
             return lower == lower[::-1]
+      unitTest:
+        path: palindrome_test.py
+        resourcePath: programming/1-python_basics/4-is_palindrome/palindrome_test.py
+        fileType: python
 
   sampleTestData:
     - {id: 1, inputs: "anna", output: true}

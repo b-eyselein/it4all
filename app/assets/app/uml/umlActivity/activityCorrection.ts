@@ -10,7 +10,7 @@ function activityCorrection(): void {
     let dataToSend: ProgSolution = {
         implementation: $('#preCode').text(),
         testData: [],
-        unitTest: ''
+        unitTest: {name: '', content: '', fileType: '', editable: false}
     };
 
     $.ajax({

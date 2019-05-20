@@ -21,12 +21,22 @@ let testBtn: HTMLButtonElement;
 
 let solutionChanged: boolean = false;
 
-interface ProgSampleSolution {
+export interface ProgSampleSolution {
     id: number;
     base: string;
     solutionStr: string;
+    unitTest: ExerciseFile
 }
 
+function testSol(): void {
+    const solution: ProgSolution = {
+        implementation: editor.getValue(),
+        testData: [],
+        unitTest: {name: '', content: '', fileType: '', editable: false}
+    };
+
+    testExerciseSolution<ProgSolution, ProgCorrectionResult>(testBtn, solution, onProgCorrectionSuccess)
+}
 
 function onProgCorrectionSuccess(result: ProgCorrectionResult): void {
     solutionChanged = false;

@@ -87,20 +87,21 @@ function displayUmlAttributeMatch(umlAttributeMatch: UmlClassAttributeMatch): st
 
             let explanations = [];
 
+
             if (!umlAttributeMatch.analysisResult.visibilityCorrect) {
-                explanations.push('Die Sichtbarkeit des Attributs war falsch.');
+                explanations.push(`Die Sichtbarkeit des Attributs <code>${umlAttributeMatch.userArg.name}</code> war falsch.`);
             }
             if (!umlAttributeMatch.analysisResult.abstractCorrect) {
-                explanations.push('Das Attribut sollte ' + (umlAttributeMatch.analysisResult.correctAbstract ? '' : 'nicht ') + 'abstrakt sein.');
+                explanations.push(`Das Attribut <code>${umlAttributeMatch.userArg.name}</code> sollte ${umlAttributeMatch.analysisResult.correctAbstract ? `` : `nicht `}abstrakt sein.`);
             }
             if (!umlAttributeMatch.analysisResult.typeCorrect) {
-                explanations.push('Das Attribut hat den falschen Typ.');
+                explanations.push(`Das Attribut <code>${umlAttributeMatch.userArg.name}</code> hat den falschen Typ.`);
             }
             if (!umlAttributeMatch.analysisResult.staticCorrect) {
-                explanations.push('Das Attribut sollte ' + (umlAttributeMatch.analysisResult.correctStatic ? '' : 'nicht ') + 'statisch sein.');
+                explanations.push(`Das Attribut <code>${umlAttributeMatch.userArg.name}</code> sollte ${umlAttributeMatch.analysisResult.correctStatic ? `` : `nicht `}statisch sein.`);
             }
             if (!umlAttributeMatch.analysisResult.derivedCorrect) {
-                explanations.push('Das Attribut sollte ' + (umlAttributeMatch.analysisResult.correctDerived ? '' : 'nicht ') + 'abgeleitet sein.');
+                explanations.push(`Das Attribut <code>${umlAttributeMatch.userArg.name}</code> sollte ${umlAttributeMatch.analysisResult.correctDerived ? `` : 'nicht '}abgeleitet sein.`);
             }
 
             explanation = explanations.join(' ');
@@ -188,18 +189,24 @@ function displayMethodMatchingResult(memberResult: MatchingResult<any, any>): st
     }
 }
 
-function explainClassResult(classResult: UmlClassMatch, alertClass, glyphicon, successExplanation): string {
+function explainClassResult(classResult: UmlClassMatch, alertClass: string, octicon: string, successExplanation: string): string {
     let className = classResult.userArg != null ? classResult.userArg.name : classResult.sampleArg.name;
 
     if (classResult.matchType === 'SUCCESSFUL_MATCH') {
         return `
 <p class="text-${alertClass}">
-    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> war korrekt.
+    <span class="octicon octicon-${octicon}"></span> Die Klasse <code>${className}</code> war korrekt.
 </p>`.trim();
     } else if (classResult.userArg === null) {
         return `
 <p class="text-${alertClass}">
-    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> konnte nicht gefunden werden!
+    <span class="octicon octicon-${octicon}"></span> Die Klasse <code>${className}</code> konnte nicht gefunden werden!
+</p>`.trim();
+    } else if (classResult.sampleArg == null) {
+        console.info(classResult.analysisResult);
+        return `
+<p class="text-${alertClass}">
+    <span class="octicon octicon-${octicon}"></span> Die Klasse <code>${className}</code> war falsch!
 </p>`.trim();
     } else {
         let explanationClassType: string = '';
@@ -212,7 +219,7 @@ function explainClassResult(classResult: UmlClassMatch, alertClass, glyphicon, s
 
         return `
 <p class="text-${alertClass}">
-    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Klasse <code>${className}</code> ${successExplanation}
+    <span class="octicon octicon-${octicon}"></span> Die Klasse <code>${className}</code> ${successExplanation}
 </p>
 <ul>
     <li>${explanationClassType}</li>
@@ -222,7 +229,7 @@ function explainClassResult(classResult: UmlClassMatch, alertClass, glyphicon, s
     }
 }
 
-function explainAssocResult(assocRes: Match<UmlAssociation, AnalysisResult>, alertClass: string, glyphicon: string, successExplanation: string): string {
+function explainAssocResult(assocRes: Match<UmlAssociation, AnalysisResult>, alertClass: string, octicon: string, successExplanation: string): string {
     let firstEnd = assocRes.userArg != null ? assocRes.userArg.firstEnd : assocRes.sampleArg.firstEnd;
     let secondEnd = assocRes.userArg != null ? assocRes.userArg.secondEnd : assocRes.sampleArg.secondEnd;
 
@@ -261,14 +268,14 @@ function explainAssocResult(assocRes: Match<UmlAssociation, AnalysisResult>, ale
 
     return `
 <p class="text-${alertClass}">
-    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Assoziation von <code>${firstEnd}</code> nach <code>${secondEnd}</code> ${successExplanation}
+    <span class="octicon octicon-${octicon}"></span> Die Assoziation von <code>${firstEnd}</code> nach <code>${secondEnd}</code> ${successExplanation}
 </p>
 <ul>
     ${explanations.map((e) => `<li>${e}</li>`).join('\n')}
 </ul>`.trim();
 }
 
-function explainImplResult(implRes: Match<UmlImplementation, AnalysisResult>, alertClass: string, glyphicon: string, successExplanation: string): string {
+function explainImplResult(implRes: Match<UmlImplementation, AnalysisResult>, alertClass: string, octicon: string, successExplanation: string): string {
     let subClass = implRes.userArg != null ? implRes.userArg.subClass : implRes.sampleArg.subClass;
     let superClass = implRes.userArg != null ? implRes.userArg.superClass : implRes.sampleArg.superClass;
 
@@ -282,7 +289,7 @@ function explainImplResult(implRes: Match<UmlImplementation, AnalysisResult>, al
 
     return `
 <p class="text-${alertClass}">
-    <span class="glyphicon glyphicon-${glyphicon}"></span> Die Vererbungsbeziehung von <code>${subClass}</code> nach <code>${superClass}</code> ${successExplanation}
+    <span class="octicon octicon-${octicon}"></span> Die Vererbungsbeziehung von <code>${subClass}</code> nach <code>${superClass}</code> ${successExplanation}
 </p>
 <ul>
     ${subExplanations}
@@ -290,48 +297,48 @@ function explainImplResult(implRes: Match<UmlImplementation, AnalysisResult>, al
 }
 
 function displayMatchResult(matchingRes: Match<any, any>, explanationFunc: (m: Match<any, any>, a: string, g: string, s: string) => string): string {
-    let alertClass, glyphicon, successExplanation;
+    let alertClass, octicon, successExplanation;
 
     switch (matchingRes.matchType) {
         case 'SUCCESSFUL_MATCH':
             alertClass = 'success';
-            glyphicon = 'ok';
+            octicon = 'check';
             successExplanation = 'war korrekt.';
             break;
         case 'PARTIAL_MATCH':
             alertClass = 'warning';
-            glyphicon = 'question-sign';
+            octicon = 'unverified';
             successExplanation = 'war nicht korrekt:';
             break;
         case 'UNSUCCESSFUL_MATCH':
             alertClass = 'danger';
-            glyphicon = 'remove';
+            octicon = 'remove';
             successExplanation = 'war nicht korrekt:';
             break;
         case 'ONLY_USER':
             alertClass = 'danger';
-            glyphicon = 'remove';
+            octicon = 'x';
             successExplanation = 'ist falsch!';
             break;
         case 'ONLY_SAMPLE':
             alertClass = 'danger';
-            glyphicon = 'remove';
+            octicon = 'x';
             successExplanation = 'fehlt!';
             break;
         default:
             alertClass = 'info';
-            glyphicon = 'remove';
+            octicon = 'x';
             successExplanation = '';
     }
 
-    return explanationFunc(matchingRes, alertClass, glyphicon, successExplanation);
+    return explanationFunc(matchingRes, alertClass, octicon, successExplanation);
 }
 
 function displayMatchingResultList(matchingResultList: MatchingResult<any, any>, name: string, explainFunc: (m: Match<any, any>, a: string, g: string, s: string) => string): string {
     if (matchingResultList.success) {
         return `
 <div class="alert alert-success">
-    <span class="glyphicon glyphicon-ok"></span> Die ${name} waren korrekt.
+    <span class="octicon octicon-ok"></span> Die ${name} waren korrekt.
 </div>`.trim();
     } else {
         let matchingResults = matchingResultList.matches.map(mr => displayMatchResult(mr, explainFunc)).join('\n');

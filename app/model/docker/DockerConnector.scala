@@ -11,7 +11,7 @@ import play.api.Logger
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {
 
@@ -22,6 +22,8 @@ final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = 
 
 }
 
+final case class RunContainerResult(statusCode: Int, logs: String)
+
 object DockerConnector {
 
   private val logger: Logger = Logger("model.docker.DockerConnector")
@@ -29,7 +31,6 @@ object DockerConnector {
   private val MaxWaitTimeInSeconds: Int = 3
 
   private val SuccessStatusCode: Int = 0
-  private val TimeOutStatusCode: Int = 124
 
   val DefaultWorkingDir: Path = Paths.get("/data")
 
@@ -69,12 +70,12 @@ object DockerConnector {
 
     val ccbWithHostConfigWorkDirEntryPoint = maybeEntryPoint match {
       case None             => ccbWithHostConfigWorkDir
-      case Some(entryPoint) => ccbWithHostConfigWorkDir.entrypoint(entryPoint asJava)
+      case Some(entryPoint) => ccbWithHostConfigWorkDir.entrypoint(entryPoint.asJava)
     }
 
     val ccbWithHostConfigWorkDirEntryPointCmd = maybeCmd match {
       case None      => ccbWithHostConfigWorkDirEntryPoint
-      case Some(cmd) => ccbWithHostConfigWorkDirEntryPoint.cmd(cmd asJava)
+      case Some(cmd) => ccbWithHostConfigWorkDirEntryPoint.cmd(cmd.asJava)
     }
 
     val containerConfig: ContainerConfig = ccbWithHostConfigWorkDirEntryPointCmd.build()
@@ -88,50 +89,44 @@ object DockerConnector {
 
   private def deleteContainer(container: String): Try[Unit] = Try(dockerClient.removeContainer(container))
 
-  def runContainer(imageName: String, maybeWorkingDir: Option[Path] = Some(DefaultWorkingDir), maybeEntryPoint: Option[Seq[String]] = None,
-                   maybeCmd: Option[Seq[String]] = None, maybeDockerBinds: Option[Seq[DockerBind]] = None,
-                   maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds, deleteContainerAfterRun: Boolean = true
-                  )
-                  (implicit ec: ExecutionContext): Future[RunContainerResult] = Future {
+  def runContainer(
+    imageName: String,
+    maybeWorkingDir: Option[Path] = Some(DefaultWorkingDir),
+    maybeEntryPoint: Option[Seq[String]] = None,
+    maybeCmd: Option[Seq[String]] = None,
+    maybeDockerBinds: Option[Seq[DockerBind]] = None,
+    maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds,
+    deleteContainerAfterRun: Boolean = true,
+  )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] = Future {
 
-    createContainer(imageName, maybeWorkingDir map (_.toString), maybeEntryPoint, maybeCmd, maybeDockerBinds) match {
-      case Failure(e)                 => CreateContainerException(e)
-      case Success(containerCreation) =>
+    createContainer(imageName, maybeWorkingDir map (_.toString), maybeEntryPoint, maybeCmd, maybeDockerBinds) flatMap {
+      containerCreation: ContainerCreation =>
 
         val containerId = containerCreation.id
 
-        startContainer(containerId) match {
-          case Failure(e) => StartContainerException(e)
-          case Success(_) =>
+        startContainer(containerId) flatMap { _ =>
 
-            waitForContainer(containerId, maxWaitTimeInSeconds) match {
-              case Failure(e)             => WaitContainerException(e)
-              case Success(containerExit) =>
+          waitForContainer(containerId, maxWaitTimeInSeconds) map { containerExit =>
 
-                val statusCode = containerExit.statusCode toInt
+            val statusCode = containerExit.statusCode.toInt
 
-                val result: RunContainerResult = statusCode match {
-                  case SuccessStatusCode => RunContainerSuccess
-                  case TimeOutStatusCode => RunContainerTimeOut(MaxWaitTimeInSeconds)
-                  case _                 =>
-                    logger.info("Container statusCode: " + statusCode.toString)
-                    RunContainerError(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
-                }
+            val result: RunContainerResult = RunContainerResult(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
 
-                if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
-                  // Do not delete failed containers for now
-                  val containerDeleted = deleteContainer(containerId)
-                  if (containerDeleted.isFailure) logger.error("Could not delete container!")
-                } else {
-                  logger.debug("NOT Deleting container...")
-                }
-
-                result
+            if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
+              // Do not delete failed containers for now
+              val containerDeleted = deleteContainer(containerId)
+              if (containerDeleted.isFailure) logger.error("Could not delete container!")
+            } else {
+              logger.debug("NOT Deleting container...")
             }
+
+            result
+          }
         }
     }
   }
 
   private def getContainerLogs(containerId: String, maxWaitTimeInSeconds: Int): String =
     dockerClient.logs(containerId, LogsParam.stdout(), LogsParam.stderr()).readFully()
+
 }
