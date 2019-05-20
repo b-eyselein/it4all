@@ -20,7 +20,8 @@
       ]
     },
     "typeRoots": [
-      "target/web/node-modules/main/webjars/@types"
+      "target/web/node-modules/main/webjars/@types",
+      "target/web/node-modules/main/webjars/jointjs"
     ]
   },
   "exclude": [
