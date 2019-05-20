@@ -5,13 +5,14 @@ import java.io.FileNotFoundException
 import better.files.File._
 import better.files._
 import model.User
+import model.core.result.SuccessType
 import model.docker._
 import model.tools.programming.ResultsFileJsonFormat._
 import modules.DockerPullsStartTask
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 object ProgCorrector {
 
@@ -25,10 +26,6 @@ object ProgCorrector {
   private def correctImplementation(solTargetDir: File, resFolder: File, progSolution: ProgSolution, exercise: ProgExercise)
                                    (implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
-    val solFileName = buildSolutionFileName(progSolution.language.fileEnding)
-    val solutionFile = solTargetDir / solFileName
-    solutionFile.createFileIfNotExists(createParents = true).write(progSolution.implementation)
-
     exercise.unitTestType match {
       case UnitTestTypes.Simplified =>
 
@@ -37,6 +34,10 @@ object ProgCorrector {
         val testMainFile = resFolder / testMainFileName
 
         if (testMainFile.exists) {
+
+          val solFileName = buildSolutionFileName(progSolution.language.fileEnding)
+          val solutionFile = solTargetDir / solFileName
+          solutionFile.createFileIfNotExists(createParents = true).write(progSolution.implementation)
 
           val testDataFile = solTargetDir / testDataFileName
           val testDataFileContent: JsValue = exercise.buildSimpleTestDataFileContent(exercise.sampleTestData)
@@ -56,15 +57,55 @@ object ProgCorrector {
               maybeDockerBinds = Some(dockerBinds),
             )
             .map {
-              case RunContainerSuccess          => readImplCorrectionResultFile(solTargetDir / resultFileName)
-              case failure: RunContainerFailure => Failure(failure)
+              case Failure(exception)          => Failure(exception)
+              case Success(runContainerResult) =>
+                readImplCorrectionResultFile(solTargetDir / resultFileName).map { results =>
+                  ProgCompleteResult(simplifiedResults = results, normalResult = None, unitTestResults = Seq.empty)
+                }
             }
-            .map { resultTries: Try[Seq[ExecutionResult]] => resultTries.map(results => ProgCompleteResult(results, Seq.empty)) }
         } else {
           Future.successful(Failure(new FileNotFoundException(s"The file $testMainFile does not exist!}")))
         }
 
-      case UnitTestTypes.Normal => ???
+      case UnitTestTypes.Normal =>
+
+        val solFileName = s"${exercise.filename}.py"
+        val solutionFile = solTargetDir / solFileName
+        solutionFile.createFileIfNotExists(createParents = true).write(progSolution.implementation)
+
+        val unitTestFileContent = exercise.sampleSolutions.headOption match {
+          case None                                        => ???
+          case Some(ProgSampleSolution(_, _, _, unitTest)) => unitTest.content
+        }
+
+        val unitTestFileName = s"${exercise.filename}_test.py"
+        val unitTestFile = solTargetDir / unitTestFileName
+        unitTestFile.createIfNotExists(createParents = true).write(unitTestFileContent)
+
+        val dockerBinds = Seq(
+          DockerBind(solutionFile, DockerConnector.DefaultWorkingDir / solFileName, isReadOnly = true),
+          DockerBind(unitTestFile, DockerConnector.DefaultWorkingDir / unitTestFileName, isReadOnly = true),
+        )
+
+        DockerConnector
+          .runContainer(
+            DockerPullsStartTask.pythonNormalProgTesterImage,
+            maybeDockerBinds = Some(dockerBinds),
+            deleteContainerAfterRun = false
+          )
+          .map {
+            case Failure(exception)          => Failure(exception)
+            case Success(runContainerResult) =>
+              println("------------------------")
+              println(runContainerResult)
+              println("------------------------")
+
+              val successType = if (runContainerResult.statusCode == 0) SuccessType.COMPLETE else SuccessType.ERROR
+
+              val normalExecutionResult: NormalExecutionResult = NormalExecutionResult(successType, runContainerResult.logs)
+
+              Success(ProgCompleteResult(simplifiedResults = Seq.empty, normalResult = Some(normalExecutionResult), unitTestResults = Seq.empty))
+          }
     }
   }
 
@@ -105,15 +146,14 @@ object ProgCorrector {
     DockerConnector
       .runContainer(
         imageName = DockerPullsStartTask.pythonUnitTesterImage,
-        maybeDockerBinds = Some(dockerBinds),
-        deleteContainerAfterRun = false
+        maybeDockerBinds = Some(dockerBinds)
       )
       .map {
-        case RunContainerSuccess          => readTestCorrectionResultFile(solTargetDir / resultFileName)
-        case failure: RunContainerFailure => Failure(failure)
-      }
-      .map {
-        resultTry: Try[Seq[UnitTestCorrectionResult]] => resultTry.map(results => ProgCompleteResult(Seq.empty, results))
+        case Failure(exception)          => Failure(exception)
+        case Success(runContainerResult) =>
+          readTestCorrectionResultFile(solTargetDir / resultFileName).map { results =>
+            ProgCompleteResult(simplifiedResults = Seq.empty, normalResult = None, unitTestResults = results)
+          }
       }
   }
 

@@ -1,5 +1,5 @@
 import {domReady, testExerciseSolution} from "../otherHelpers";
-import {ProgSolution, TestData, TestdataCreationResult, TestDataInput} from "./progCorrectionHandler";
+import {ProgSolution, TestData, TestDataCreationResult, TestDataInput} from "./progCorrectionHandler";
 
 let testBtn: HTMLButtonElement;
 let moreTestDataBtn: HTMLButtonElement;
@@ -25,7 +25,7 @@ function moreTestData(): void {
 </tr>`.trim();
 }
 
-function onValidateTDSuccess(response: TestdataCreationResult): void {
+function onValidateTDSuccess(response: TestDataCreationResult): void {
     testBtn.disabled = false;
 
     console.warn(JSON.stringify(response, null, 2));
@@ -69,10 +69,10 @@ function testSol(): void {
     const solution: ProgSolution = {
         implementation: '',
         testData,
-        unitTest: ''
+        unitTest: {name: '', content: '', fileType: 'python', editable: false}
     };
 
-    testExerciseSolution<ProgSolution, TestdataCreationResult>(testBtn, solution, onValidateTDSuccess);
+    testExerciseSolution<ProgSolution, TestDataCreationResult>(testBtn, solution, onValidateTDSuccess);
 }
 
 domReady(() => {

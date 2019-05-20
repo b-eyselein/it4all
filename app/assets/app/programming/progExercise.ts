@@ -24,7 +24,7 @@ function testSol(): void {
     const solution: ProgSolution = {
         implementation: editor.getValue(),
         testData: [],
-        unitTest: ''
+        unitTest: {name: '', content: '', fileType: '', editable: false}
     };
 
     testExerciseSolution<ProgSolution, ProgCorrectionResult>(testBtn, solution, onProgCorrectionSuccess)

@@ -32,7 +32,7 @@ object ResultsFileJsonFormat {
   private val logger = Logger(ResultsFileJsonFormat.getClass)
 
   // TODO: Json.reads[ExecutionResult]
-  private implicit val executionResultJsonReads: Reads[ExecutionResult] = Json.reads[ExecutionResult]
+  private implicit val executionResultJsonReads: Reads[SimplifiedExecutionResult] = Json.reads[SimplifiedExecutionResult]
   //    (
   //    (__ \ "success").read[SuccessType] and
   //      (__ \ "test_id").read[Int] and
@@ -43,18 +43,18 @@ object ResultsFileJsonFormat {
   //    ) (ExecutionResult.apply(_, _, _, _, _, _))
 
   // TODO: Json.reads[ResultFileContent]
-  private val resultsFileJsonReads: Reads[ResultFileContent] = Json.reads[ResultFileContent]
+  private val resultsFileJsonReads: Reads[SimplifiedResultFileContent] = Json.reads[SimplifiedResultFileContent]
   //    (
   //    (__ \ "result_type").read[String] and
   //      (__ \ "results").read[Seq[ExecutionResult]] and
   //      (__ \ "errors").read[String]
   //    ) (ResultFileContent.apply(_, _, _))
 
-  def readImplCorrectionResultFile(targetFile: File): Try[Seq[ExecutionResult]] =
+  def readImplCorrectionResultFile(targetFile: File): Try[Seq[SimplifiedExecutionResult]] =
     Try(Json.parse(targetFile.contentAsString)).flatMap { jsValue =>
       resultsFileJsonReads.reads(jsValue) match {
-        case JsSuccess(result: ResultFileContent, _) => Success(result.results)
-        case JsError(errors)                         =>
+        case JsSuccess(result: SimplifiedResultFileContent, _) => Success(result.results)
+        case JsError(errors)                                   =>
           errors.foreach(error => logger.error(s"There has been an error reading a json programming result file: $error"))
           Failure(new Exception("There has been an error reading a json programming result file!"))
       }

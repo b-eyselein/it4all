@@ -1,11 +1,11 @@
 package model.tools.programming
 
 import javax.inject._
+import model._
 import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.programming.persistence.ProgTableDefs
-import model._
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
@@ -135,7 +135,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override protected def readSolution(request: Request[AnyContent], part: ProgExPart): Either[String, ProgSolution] = request.body.asJson match {
     case None          => Left("Body did not contain json!")
     case Some(jsValue) =>
-
       part match {
         case ProgExParts.TestCreation => readUnitTestSolution(jsValue)
         case _                        => readImplementationSolution(jsValue)

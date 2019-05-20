@@ -9,6 +9,7 @@ import modules.DockerPullsStartTask
 import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 object RoseCorrector {
 
@@ -54,25 +55,25 @@ object RoseCorrector {
       //    val entryPoint = Seq("python3", "sp_main.py")
 
       futureImageExists
-        .flatMap { _ =>
-          DockerConnector.runContainer(
-            imageName = DockerPullsStartTask.roseImage,
-            maybeEntryPoint = None /* Some(entryPoint)*/ ,
-            maybeDockerBinds = Some(dockerBinds) /*,
-          deleteContainerAfterRun = false */)
-        }
-        .map {
-          // Error while waiting for container
-          case RunContainerTimeOut(_) => RoseTimeOutResult
+        .flatMap {
+          case false => ???
+          case true  =>
+            DockerConnector
+              .runContainer(
+                imageName = DockerPullsStartTask.roseImage,
+                maybeEntryPoint = None /* Some(entryPoint)*/ ,
+                maybeDockerBinds = Some(dockerBinds) /*,
+          deleteContainerAfterRun = false */
+              )
+              .map {
+                case Failure(exception)          => ???
+                case Success(runContainerResult) =>
 
-          // Error while running script with status code other than 0 or 124 (from timeout!)
-          case RunContainerError(_, msg) => RoseSyntaxErrorResult(msg)
-
-          case RunContainerSuccess => RoseExecutionResult(actionFilePath.contentAsString)
-
-          case exc: RunContainerException =>
-            logger.error("Error running container:", exc.error)
-            RoseEvalFailed
+                  runContainerResult.statusCode match {
+                    case 0 => RoseExecutionResult(actionFilePath.contentAsString)
+                    case _ => ???
+                  }
+              }
         }
   }
 

@@ -8,7 +8,9 @@ import play.api.libs.json._
 
 object ProgCompleteResultJsonProtocol extends CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] {
 
-  private implicit val executionResultWrites: Writes[ExecutionResult] = Json.writes[ExecutionResult]
+  private implicit val simplifiedExecutionResultWrites: Writes[SimplifiedExecutionResult] = Json.writes[SimplifiedExecutionResult]
+
+  private implicit val normalExecutionResultWrites: Writes[NormalExecutionResult] = Json.writes[NormalExecutionResult]
 
   private implicit val unitTestTestConfigWrites: Writes[UnitTestTestConfig] = Json.writes[UnitTestTestConfig]
 
