@@ -48,12 +48,10 @@ final case class XmlError(errorType: XmlErrorType, errorMessage: String, line: I
   extends XmlEvaluationResult
 
 
-final case class XmlDocumentCompleteResult(results: Seq[XmlError], points: Points = (-1).points, maxPoints: Points = (-1).points, solutionSaved: Boolean = false)
-  extends XmlCompleteResult {
+final case class XmlDocumentCompleteResult(
+  results: Seq[XmlError], points: Points = (-1).points, maxPoints: Points = (-1).points, solutionSaved: Boolean = false
+) extends XmlCompleteResult
 
-  override def isSuccessful: Boolean = results.isEmpty
-
-}
 
 // Grammar result
 

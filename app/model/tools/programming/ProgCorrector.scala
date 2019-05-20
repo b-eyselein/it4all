@@ -59,7 +59,7 @@ object ProgCorrector {
             .map {
               case Failure(exception)          => Failure(exception)
               case Success(runContainerResult) =>
-                readImplCorrectionResultFile(solTargetDir / resultFileName).map { results =>
+                readSimplifiedExecutionResultFile(solTargetDir / resultFileName).map { results =>
                   ProgCompleteResult(simplifiedResults = results, normalResult = None, unitTestResults = Seq.empty)
                 }
             }
@@ -120,7 +120,7 @@ object ProgCorrector {
     // write test data file
     val testDataFile = solTargetDir / testDataFileName
     val testDataToWrite = Json.prettyPrint(
-      ResultsFileJsonFormat.unitTestDataWrites.writes(UnitTestTestData(exercise.foldername, exercise.filename, exercise.unitTestTestConfigs))
+      ProgJsonProtocols.unitTestDataWrites.writes(ProgJsonProtocols.UnitTestTestData(exercise.foldername, exercise.filename, exercise.unitTestTestConfigs))
     )
     testDataFile.createIfNotExists(createParents = true).write(testDataToWrite)
 

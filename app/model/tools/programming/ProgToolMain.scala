@@ -61,9 +61,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override val exerciseForm      : Form[ProgExercise]       = ProgToolForms.exerciseFormat
   override val exerciseReviewForm: Form[ProgExerciseReview] = ProgToolForms.exerciseReviewForm
 
-  override val sampleSolutionJsonFormat: Format[ProgSampleSolution] = ProgSolutionJsonFormat.sampleSolutionJsonFormat
+  override val sampleSolutionJsonFormat: Format[ProgSampleSolution] = ProgJsonProtocols.sampleSolutionJsonFormat
 
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] = ProgCompleteResultJsonProtocol
+  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] = ProgJsonProtocols
 
   // Other helper methods
 
@@ -125,7 +125,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       Left(errors.toString())
   }
 
-  private def readImplementationSolution(jsValue: JsValue): Either[String, ProgSolution] = ProgSolutionJsonFormat.progSolutionReads.reads(jsValue) match {
+  private def readImplementationSolution(jsValue: JsValue): Either[String, ProgSolution] = ProgJsonProtocols.progSolutionReads.reads(jsValue) match {
     case JsSuccess(solution, _) => Right(solution)
     case JsError(errors)        =>
       errors.foreach(jsErr => logger.error(jsErr.toString()))

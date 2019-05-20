@@ -18,7 +18,7 @@ final case class ProgCompleteResult(
 
   override def results: Seq[ProgEvalResult] = simplifiedResults ++ unitTestResults
 
-  override val points: Points = results.count(_.isSuccessful).points
+  override val points: Points = results.count(_.success == SuccessType.COMPLETE).points
 
   override val maxPoints: Points = results.length.points
 
@@ -42,7 +42,7 @@ final case class UnitTestTestConfig(id: Int, shouldFail: Boolean, cause: Option[
 final case class UnitTestCorrectionResult(testConfig: UnitTestTestConfig, successful: Boolean, file: String, status: Int,
                                           stdout: Seq[String], stderr: Seq[String]) extends ProgEvalResult {
 
-  override def success: SuccessType = ???
+  override def success: SuccessType = if(successful) SuccessType.COMPLETE else SuccessType.NONE
 
 }
 

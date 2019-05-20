@@ -41,7 +41,7 @@ final case class ProgExercise(
   val inputCount: Int = inputTypes.size
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
-    TestDataJsonFormat.dumpCompleteTestDataToJson(this, completeTestData)
+    ProgJsonProtocols.dumpCompleteTestDataToJson(this, completeTestData)
 
   override def filesForExercisePart(part: ProgExPart): Seq[ExerciseFile] = part match {
     case ProgExParts.TestCreation => unitTestFiles
