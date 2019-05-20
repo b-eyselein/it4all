@@ -5,15 +5,7 @@ import 'lodash';
 import 'backbone';
 
 import {DEF_GRID, GRID_SIZE, PAPER_HEIGHT} from "../umlConsts";
-import {
-    LinkType,
-    UmlAssociation,
-    UmlClass,
-    UmlClassAttribute,
-    UmlClassMethod,
-    UmlImplementation,
-    UmlSolution,
-} from "../umlInterfaces";
+import {LinkType, UmlAssociation, UmlClass, UmlImplementation, UmlSolution,} from "../umlInterfaces";
 
 import {MyJointClass, MyJointClassView, STD_CLASS_HEIGHT, STD_CLASS_WIDTH} from "./classDiagElements";
 import {editLink} from "./classDiagEdit";
@@ -43,17 +35,14 @@ const SIMPLE_CLASS_PREFIX = 'Klasse_';
 
 function addUmlClass(umlClass: UmlClass): void {
     classDiagGraph.addCell(new MyJointClass({
-        position: umlClass.position,
+        ...umlClass,
         size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
         className: umlClass.name.replace(/ /g, '_'),
-        classType: umlClass.classType,
-        attributes: <UmlClassAttribute[]>umlClass.attributes,
-        methods: <UmlClassMethod[]>umlClass.methods,
     }));
 }
 
 function newClass(posX: number, posY: number): void {
-    let simpleNameInts: number[] = classDiagGraph.getCells()
+    const simpleNameInts: number[] = classDiagGraph.getCells()
         .filter((c) => c instanceof MyJointClass)
         .map((cell: MyJointClass) => cell.getClassName())
         .filter((cn: string) => cn.startsWith(SIMPLE_CLASS_PREFIX))
@@ -291,6 +280,7 @@ function loadClasses(classesToLoad: UmlClass[]): void {
 }
 
 function onSolutionLoadSuccess(response: UmlSolution): void {
+    console.info(JSON.stringify(response, null, 2));
     loadClasses(response.classes);
     response.associations.forEach(loadAssociation);
     response.implementations.forEach(loadImplementation);
@@ -301,6 +291,7 @@ function onSolutionLoadError(jqXHR): void {
 }
 
 function loadSolution(url: string): void {
+    console.info('Loading solution...');
     $.ajax({
         type: 'GET',
         dataType: 'json',
@@ -432,7 +423,7 @@ function umlAssocfromConnection(conn: joint.dia.Link): UmlAssociation {
 
 
 function testSol(): void {
-    let solution: UmlSolution = {
+    const solution: UmlSolution = {
         classes: classDiagGraph.getCells()
             .map((cell) => {
                 if (cell instanceof MyJointClass) {
