@@ -28,6 +28,12 @@ export function renderXmlDocumentCorrection(response: XmlDocumentCorrectionResul
     let successWord = 'nicht';
     let errorWord = '';
 
+    console.info(response.results.length);
+
+    if (response.results.length == 0) {
+        errorWord = 'keine';
+    }
+
     switch (response.successType) {
         case 'COMPLETE':
             successClazz = 'success';
@@ -41,6 +47,8 @@ export function renderXmlDocumentCorrection(response: XmlDocumentCorrectionResul
             successClazz = 'danger';
             successWord = 'nicht';
             break;
+        default:
+            throw response.successType;
     }
 
     html += `<p class="text-${successClazz}">Die Korrektur war ${successWord} erfolgreich. Es wurden ${errorWord} Fehler gefunden.</p>`;

@@ -49,7 +49,11 @@ final case class XmlError(errorType: XmlErrorType, errorMessage: String, line: I
 
 
 final case class XmlDocumentCompleteResult(
-  results: Seq[XmlError], points: Points = (-1).points, maxPoints: Points = (-1).points, solutionSaved: Boolean = false
+  successType: SuccessType,
+  results: Seq[XmlError],
+  points: Points = (-1).points,
+  maxPoints: Points = (-1).points,
+  solutionSaved: Boolean = false
 ) extends XmlCompleteResult
 
 
@@ -63,9 +67,10 @@ object XmlGrammarCompleteResult {
 }
 
 final case class XmlGrammarCompleteResult(
-  override val success: SuccessType,
+  successType: SuccessType,
   parseErrors: Seq[DTDParseException] = Seq.empty,
   results: Seq[ElementLineMatch],
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean = false) extends XmlCompleteResult
+  solutionSaved: Boolean = false
+) extends XmlCompleteResult

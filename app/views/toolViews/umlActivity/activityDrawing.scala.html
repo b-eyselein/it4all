@@ -65,9 +65,9 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group" id="buttonsDiv">
-                    <button class="btn btn-info" data-toggle="modal" data-target="#instructionsModal">
-                        Bearbeitungshinweise
-                    </button>
+@*                    <button class="btn btn-info" data-toggle="modal" data-target="#instructionsModal">*@
+@*                        Bearbeitungshinweise*@
+@*                    </button>*@
 
                     <a class="btn btn-outline-secondary" data-elemname="elementActionInput">@*Einfacher *@Aktion</a>
                     @*<button name="elementActionSelect">Auswahlaktionsknoten</button>*@
@@ -164,27 +164,6 @@
                                     </button>
 
                                 </div>
-
-                                <div class="col-sm-6">
-                                    <h4 class="text-center">Zeichenfläche</h4>
-
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <button class="form-control" id="paperminus">-</button>
-                                            <span class="input-group-text">Größe</span>
-                                            <button class="form-control" id="paperplus">+</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <button class="form-control" id="zoomminus">-</button>
-                                            <span class="input-group-text">Zoom</span>
-                                            <button class="form-control" id="zoomplus">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
@@ -352,10 +331,6 @@
                             <pre id="preCode" hidden></pre>
                         </div>
                     </div>
-
-                    <input hidden id="toolType" value="@toolObject.urlPart" title="hidden">
-                    <input hidden type="number" id="exerciseId" value="@exercise.id" title="hidden">
-                    <input hidden id="exercisePart" value="@ProgExParts.ActivityDiagram.urlName" title="hidden">
 
                     <hr>
                 </section>

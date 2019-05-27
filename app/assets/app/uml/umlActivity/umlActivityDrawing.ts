@@ -361,8 +361,8 @@ $(() => {
         });
 
         connectNodes({
-            sourceId: actionNodeEnd.id  as string, sourcePort: "out",
-            targetId: mainEndNode.id  as string, targetPort: "in"
+            sourceId: actionNodeEnd.id as string, sourcePort: "out",
+            targetId: mainEndNode.id as string, targetPort: "in"
         });
 
         parentChildNodes.push({

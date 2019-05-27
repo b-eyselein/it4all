@@ -25,7 +25,7 @@ interface ParseError {
 }
 
 interface XmlGrammarCorrectionResult extends CorrectionResult<XmlElementMatch> {
-    success: SuccessType;
+    successType: SuccessType;
     parseErrors: ParseError[];
 }
 
@@ -96,7 +96,7 @@ function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult)
     let successClazz: string = 'danger';
     let successWord: string = 'nicht';
 
-    switch (response.success) {
+    switch (response.successType) {
         case 'COMPLETE':
             successClazz = 'success';
             successWord = 'komplett';
@@ -124,7 +124,7 @@ function renderXmlGrammarCorrectionSuccess(response: XmlGrammarCorrectionResult)
         html += '<hr>' + renderParseErrors(response.parseErrors);
     }
 
-    if (response.success !== 'COMPLETE') {
+    if (response.successType !== 'COMPLETE') {
         html += '<hr>' + response.results.map(renderElementMatch).join('\n')
     }
 

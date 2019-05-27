@@ -28,7 +28,7 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
 
     override def activityDiagramDisplay(exercise: ProgExercise): String = exercise.maybeClassDiagramPart match {
       case Some(_) => ???
-      case None     => exercise.functionName + buildParams(exercise)
+      case None    => exercise.functionName + buildParams(exercise)
     }
 
     override def activityDiagramDeclaration(exercise: ProgExercise): String = "def " + exercise.functionName + buildParams(exercise)
@@ -43,15 +43,15 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
 
   }
 
-  case object JAVA_8 extends ProgLanguage("Java 8", "java", "java") {
-
-    override def activityDiagramDisplay(exercise: ProgExercise): String = ???
-
-    override def activityDiagramDeclaration(exercise: ProgExercise): String = ???
-
-    override def buildParams(exercise: ProgExercise): String =
-      exercise.inputTypes sortBy (_.id) map (it => it.inputType.typeName + " " + it.inputName) mkString ", "
-
-  }
+  //  case object JAVA_8 extends ProgLanguage("Java 8", "java", "java") {
+  //
+  //    override def activityDiagramDisplay(exercise: ProgExercise): String = ???
+  //
+  //    override def activityDiagramDeclaration(exercise: ProgExercise): String = ???
+  //
+  //    override def buildParams(exercise: ProgExercise): String =
+  //      exercise.inputTypes sortBy (_.id) map (it => it.inputType.typeName + " " + it.inputName) mkString ", "
+  //
+  //  }
 
 }

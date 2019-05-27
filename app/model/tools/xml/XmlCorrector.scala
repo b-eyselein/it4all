@@ -59,7 +59,12 @@ object XmlCorrector {
         val documentPath: File = solutionBaseDir / s"${exercise.rootNode}.xml"
         documentPath.createFileIfNotExists(createParents = true).write(solution.document)
 
-        Success(XmlDocumentCompleteResult(XmlCorrector.correctAgainstMentionedDTD(documentPath)))
+
+        val xmlErrors = XmlCorrector.correctAgainstMentionedDTD(documentPath)
+
+        val successType = if (xmlErrors.isEmpty) SuccessType.COMPLETE else SuccessType.PARTIALLY
+
+        Success(XmlDocumentCompleteResult(successType, xmlErrors))
     }
 
   // Grammar correction
@@ -86,11 +91,11 @@ object XmlCorrector {
 
         val maxPoints = addUp(allMatches.map(_.maxPoints))
 
-        val successType: SuccessType = (points.quarters.toDouble / maxPoints.quarters) match {
-          case it if (0 <= it && it <= 0.5) => SuccessType.NONE
-          case it if (0.5 < it && it < 1)   => SuccessType.PARTIALLY
-          case 1                            => SuccessType.COMPLETE
-          case _                            => SuccessType.ERROR
+        val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
+          case it if 0 <= it && it <= 0.5 => SuccessType.NONE
+          case it if 0.5 < it && it < 1   => SuccessType.PARTIALLY
+          case 1                          => SuccessType.COMPLETE
+          case _                          => SuccessType.ERROR
         }
 
         XmlGrammarCompleteResult(successType, dtdParseResult.parseErrors, allMatches, points, maxPoints)
