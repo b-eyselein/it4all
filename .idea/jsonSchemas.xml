@@ -3,16 +3,51 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="JSON schema v7">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="JSON schema v7" />
+              <option name="relativePathToSchema" value="http://json-schema.org/draft-07/schema" />
+              <option name="schemaVersion" value="JSON schema version 7" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="conf/resources/web/web_ex.schema.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="prog_ex.schema">
           <value>
             <SchemaInfo>
               <option name="name" value="prog_ex.schema" />
               <option name="relativePathToSchema" value="conf/resources/programming/prog_ex.schema.json" />
+              <option name="schemaVersion" value="JSON schema version 7" />
               <option name="patterns">
                 <list>
                   <Item>
                     <option name="pattern" value="true" />
-                    <option name="path" value="conf/resources/*.yaml" />
+                    <option name="path" value="conf/resources/programming/*.yaml" />
+                    <option name="mappingKind" value="Pattern" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="web_ex.schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="web_ex.schema" />
+              <option name="relativePathToSchema" value="conf/resources/web/web_ex.schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="pattern" value="true" />
+                    <option name="path" value="conf/resources/web/*.yaml" />
                     <option name="mappingKind" value="Pattern" />
                   </Item>
                 </list>

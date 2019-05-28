@@ -10,7 +10,7 @@
       "author": {"type": "string"},
       "text": {"type": "string"},
       "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-      "fileńame": {"type": "string"},
+      "filename": {"type": "string"},
       "htmlText": {"type": "string"},
       "htmlTasks": {
         "type": "array",
@@ -41,7 +41,7 @@
       "author",
       "text",
       "status",
-      "fileName",
+      "filename",
       "htmlTasks",
       "jsTasks",
       "files",
