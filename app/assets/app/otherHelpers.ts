@@ -38,9 +38,9 @@ export function testExerciseSolution<SolType, ResType>(testBtn: HTMLButtonElemen
     const headers: Headers = new Headers({
         'Content-Type': 'application/json',
         'Csrf-Token': document.querySelector<HTMLInputElement>('input[name="csrfToken"]').value
-    })
+    });
 
-    fetch(testBtn.dataset['href'], {method: 'PUT', headers, body: JSON.stringify(solution)})
+    fetch(testBtn.dataset['href'], {method: 'PUT', headers, body: JSON.stringify(solution), credentials: 'same-origin'})
         .then(response => {
             testBtn.disabled = false;
             if (response.status === 200) {

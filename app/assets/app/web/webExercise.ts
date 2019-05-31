@@ -48,7 +48,7 @@ function updatePreview(): void {
 
     const data: IdeWorkspace = getIdeWorkspace();
 
-    fetch(url, {method: 'PUT', headers, body: JSON.stringify(data)})
+    fetch(url, {method: 'PUT', headers, body: JSON.stringify(data), credentials: 'same-origin'})
         .then(() => {
             document.querySelector<HTMLIFrameElement>('#preview').contentWindow.location.reload();
             previewIsUpToDate = true;
