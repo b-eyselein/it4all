@@ -100,7 +100,7 @@ libraryDependencies ++= Seq(
 
   "net.jcazevedo" %% "moultingyaml" % "0.4.0", // MIT
 
-  "com.github.t3hnar" %% "scala-bcrypt" % "4.0", // Apache 2.0
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.1", // Apache 2.0
 
   "com.github.pathikrit" %% "better-files" % "3.8.0", // MIT
 
