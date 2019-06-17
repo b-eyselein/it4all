@@ -93,10 +93,6 @@ object ProgCorrector {
           .map {
             case Failure(exception)          => Failure(exception)
             case Success(runContainerResult) =>
-              println("------------------------")
-              println(runContainerResult)
-              println("------------------------")
-
               val successType = if (runContainerResult.statusCode == 0) SuccessType.COMPLETE else SuccessType.ERROR
 
               val normalExecutionResult: NormalExecutionResult = NormalExecutionResult(successType, runContainerResult.logs)
