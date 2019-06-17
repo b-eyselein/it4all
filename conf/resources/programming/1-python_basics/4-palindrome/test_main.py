@@ -1,6 +1,5 @@
 from typing import Any
-# noinspection PyUnresolvedReferences
-from solution import is_palindrome
+from palindrome import is_palindrome
 
 
 def convert_base_data(json_base_data):

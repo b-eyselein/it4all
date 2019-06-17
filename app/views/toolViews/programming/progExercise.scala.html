@@ -1,8 +1,8 @@
 @import model.tools.programming.{ProgCollection, ProgExPart, ProgExercise, ProgLanguages, ProgToolMain}
 
-@(user: model.User, collection: ProgCollection, exercise: ProgExercise, oldSolution: String, part: ProgExPart, toolMainObject: ProgToolMain)(implicit
-    requestHeader: RequestHeader, messagesProvider: MessagesProvider
-)
+@(user: model.User, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, fileNames: Seq[String], toolMainObject: ProgToolMain)(implicit
+requestHeader: RequestHeader, messagesProvider: MessagesProvider
+    )
 
 @title = @{
     "TODO!"
@@ -39,7 +39,7 @@
     user,
     title,
     Html(exercise.text),
-    fileNames = exercise.filesForExercisePart(part).map(_.name),
+    fileNames,
     maybeActiveFile = None,
     toolMain = toolMainObject,
     collection,
@@ -47,6 +47,4 @@
     part,
     solutionPreview = None,
     additionalScripts,
-    //    oldSolution,
-    //    remainingExDef = Some(remainingExerciseDef )
 )

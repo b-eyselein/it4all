@@ -156,4 +156,18 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
   }
 
 
+  // ExerciseFilesTable
+
+  trait ExerciseFilesTable[EF] extends Table[EF] {
+
+    def name: Rep[String] = column[String](nameName)
+
+    def content: Rep[String] = column[String](contentName)
+
+    def fileType: Rep[String] = column[String]("file_type")
+
+    def editable: Rep[Boolean] = column[Boolean]("editable")
+
+  }
+
 }

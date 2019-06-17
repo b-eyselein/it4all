@@ -26,7 +26,12 @@ object ProgCorrector {
   private def correctImplementation(solTargetDir: File, resFolder: File, progSolution: ProgSolution, exercise: ProgExercise)
                                    (implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
-    exercise.unitTestType match {
+    val solFileName = s"${exercise.filename}.py"
+    val solutionFile = solTargetDir / solFileName
+    val solutionFileContent = progSolution.files.find(_.name == solFileName).map(_.content).getOrElse(???)
+    solutionFile.createFileIfNotExists(createParents = true).write(solutionFileContent)
+
+    exercise.unitTestPart.unitTestType match {
       case UnitTestTypes.Simplified =>
 
         // mounted from resources folder...
@@ -34,10 +39,6 @@ object ProgCorrector {
         val testMainFile = resFolder / testMainFileName
 
         if (testMainFile.exists) {
-
-          val solFileName = buildSolutionFileName(progSolution.language.fileEnding)
-          val solutionFile = solTargetDir / solFileName
-          solutionFile.createFileIfNotExists(createParents = true).write(progSolution.implementation)
 
           val testDataFile = solTargetDir / testDataFileName
           val testDataFileContent: JsValue = exercise.buildSimpleTestDataFileContent(exercise.sampleTestData)
@@ -69,13 +70,9 @@ object ProgCorrector {
 
       case UnitTestTypes.Normal =>
 
-        val solFileName = s"${exercise.filename}.py"
-        val solutionFile = solTargetDir / solFileName
-        solutionFile.createFileIfNotExists(createParents = true).write(progSolution.implementation)
-
-        val unitTestFileContent = exercise.sampleSolutions.headOption match {
-          case None                                        => ???
-          case Some(ProgSampleSolution(_, _, _, unitTest)) => unitTest.content
+        val unitTestFileContent: String = exercise.sampleSolutions.headOption match {
+          case None                                                => ???
+          case Some(ProgSampleSolution(_, ProgSolution(files, _))) => files.find(_.name == "test.py").map(_.content).getOrElse(???) // unitTest.content
         }
 
         val unitTestFileName = s"${exercise.filename}_test.py"
@@ -120,7 +117,7 @@ object ProgCorrector {
     // write test data file
     val testDataFile = solTargetDir / testDataFileName
     val testDataToWrite = Json.prettyPrint(
-      ProgJsonProtocols.unitTestDataWrites.writes(ProgJsonProtocols.UnitTestTestData(exercise.foldername, exercise.filename, exercise.unitTestTestConfigs))
+      ProgJsonProtocols.unitTestDataWrites.writes(ProgJsonProtocols.UnitTestTestData(exercise.foldername, exercise.filename, exercise.unitTestPart.unitTestTestConfigs))
     )
     testDataFile.createIfNotExists(createParents = true).write(testDataToWrite)
 
@@ -130,7 +127,7 @@ object ProgCorrector {
       .map(f => DockerBind(f, DockerConnector.DefaultWorkingDir / exercise.foldername / f.name, isReadOnly = true))
       .toSeq
 
-    val exFilesMount = exercise.unitTestFiles
+    val exFilesMount = exercise.unitTestPart.unitTestFiles
       .filter(f => f.name != "test.py" && f.name != s"${exercise.filename}.py")
       .map(f => DockerBind(resFolder / f.name, DockerConnector.DefaultWorkingDir / exercise.foldername / f.name))
 

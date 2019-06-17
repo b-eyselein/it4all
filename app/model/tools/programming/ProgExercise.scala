@@ -20,19 +20,24 @@ final case class ProgExercise(
   author: String,
   text: String,
   state: ExerciseState,
+
   functionName: String,
-  outputType: ProgDataType,
-  baseData: Option[JsValue],
-  unitTestType: UnitTestType,
-  inputTypes: Seq[ProgInput],
-  sampleSolutions: Seq[ProgSampleSolution],
-  sampleTestData: Seq[ProgSampleTestData],
-  unitTestsDescription: String,
-  unitTestFiles: Seq[ExerciseFile],
   foldername: String,
   filename: String,
-  unitTestTestConfigs: Seq[UnitTestTestConfig],
-  maybeClassDiagramPart: Option[UmlClassDiagram]) extends Exercise with FileExercise[ProgExPart] {
+
+  inputTypes: Seq[ProgInput],
+  outputType: ProgDataType,
+
+  baseData: Option[JsValue],
+
+  unitTestPart: UnitTestPart,
+  implementationPart: ImplementationPart,
+
+  sampleSolutions: Seq[ProgSampleSolution],
+  sampleTestData: Seq[ProgSampleTestData],
+
+  maybeClassDiagramPart: Option[UmlClassDiagram]
+) extends Exercise with FileExercise[ProgExPart] {
 
   override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
 
@@ -43,13 +48,29 @@ final case class ProgExercise(
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgJsonProtocols.dumpCompleteTestDataToJson(this, completeTestData)
 
-  override def filesForExercisePart(part: ProgExPart): Seq[ExerciseFile] = part match {
-    case ProgExParts.TestCreation => unitTestFiles
-    case _                        => Seq(ExerciseFile("solution.py", "", "python", true))
+  override def filesForExercisePart(part: ProgExPart): LoadExerciseFilesMessage = part match {
+    case ProgExParts.TestCreation    => LoadExerciseFilesMessage(unitTestPart.unitTestFiles, Some("test.py"))
+    case ProgExParts.Implementation  => LoadExerciseFilesMessage(implementationPart.files, Some(s"$filename.py"))
+    case ProgExParts.ActivityDiagram => ???
   }
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.toolViews.programming.progPreview(this)
+
+}
+
+
+final case class UnitTestPart(
+  unitTestType: UnitTestType,
+  unitTestsDescription: String,
+  unitTestFiles: Seq[ExerciseFile],
+  unitTestTestConfigs: Seq[UnitTestTestConfig],
+)
+
+final case class ImplementationPart(base: String, files: Seq[ExerciseFile]) {
+
+  // FIXME: remove!
+  //  def files: Seq[ExerciseFile] = Seq(ExerciseFile("solution.py", base, "python", editable = true))
 
 }
 
@@ -69,9 +90,11 @@ case object UnitTestTypes extends PlayEnum[UnitTestType] {
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSolution(implementation: String, testData: Seq[ProgUserTestData], unitTest: ExerciseFile) {
+final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgUserTestData]) {
 
   def language: ProgLanguage = ProgLanguages.PYTHON_3
+
+  def unitTest: ExerciseFile = files.find(_.name == "test.py").getOrElse(???)
 
 }
 
@@ -90,12 +113,10 @@ final case class ProgUserTestData(id: Int, input: JsValue, output: JsValue, stat
 
 // Solution types
 
-final case class ProgSampleSolution(id: Int, base: String, solutionStr: String, unitTest: ExerciseFile)
+final case class ProgSampleSolution(id: Int, sample: ProgSolution)
   extends SampleSolution[ProgSolution] {
 
   def language: ProgLanguage = ProgLanguages.PYTHON_3
-
-  val sample: ProgSolution = ProgSolution(implementation = solutionStr, testData = Seq[ProgUserTestData](), unitTest)
 
 }
 

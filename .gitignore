@@ -18,6 +18,8 @@ data/web/*
 !data/web/.gitkeep
 
 
+conf/resources/.idea/
+
 # IntelliJ IDEA
 .idea/*
 !.idea/jsonSchemas.xml

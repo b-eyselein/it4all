@@ -1,7 +1,6 @@
 from typing import Any, List
 
-# noinspection PyUnresolvedReferences
-from solution import average
+from average import average
 
 epsilon = 1e-3
 
@@ -17,9 +16,9 @@ def convert_test_input(base_data, input_json: List[int]) -> List[int]:
 def test(base_data, my_list: List[int], awaited_output: float) -> (Any, bool):
     gotten_output = average(my_list)
 
-    if isinstance(awaited_output, str) or isinstance(gotten_output, str):
-        correctness = gotten_output == awaited_output
-    else:
+    if isinstance(awaited_output, (float, int)) and isinstance(gotten_output, (float, int)):
         correctness = abs(gotten_output - awaited_output) < epsilon
+    else:
+        correctness = gotten_output == awaited_output
 
     return gotten_output, correctness

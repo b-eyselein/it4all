@@ -1,4 +1,4 @@
-import {ExerciseFile} from "../tools/ideExerciseHelpers";
+import {ExerciseFile} from "../tools/ideExercise";
 
 export interface WebSampleSolution {
     id: number;

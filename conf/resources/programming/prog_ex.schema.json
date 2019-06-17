@@ -13,31 +13,17 @@
         "text": {"type": "string"},
         "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
         "functionname": {"type": "string"},
-        "inputTypes": {
-          "type": "array",
-          "items": {"$ref": "#/definitions/ProgInputType"},
-          "additionalItems": false
-        },
+        "foldername": {"type": "string"},
+        "filename": {"type": "string"},
+        "inputTypes": {"type": "array", "items": {"$ref": "#/definitions/ProgInputType"}, "additionalItems": false},
         "outputType": {"type": "string"},
-        "unitTestType": {"type": "string", "enum": ["Simplified", "Normal"]},
         "sampleTestData": {
           "type": "array",
           "items": {"$ref": "#/definitions/ProgSampleTestData"},
           "additionalItems": false
         },
-        "unitTestsDescription": {"type": "string"},
-        "unitTestFiles": {
-          "type": "array",
-          "items": {"$ref": "../exercise_file.schema.json"},
-          "additionalItems": false
-        },
-        "foldername": {"type": "string"},
-        "filename": {"type": "string"},
-        "unitTestTestConfigs": {
-          "type": "array",
-          "items": {"$ref": "#/definitions/UnitTestTestConfig"},
-          "additionalItems": false
-        },
+        "unitTestPart": {"$ref": "#/definitions/UnitTestPart"},
+        "implementationPart": {"$ref": "#/definitions/ImplementationPart"},
         "sampleSolutions": {
           "type": "array",
           "items": {"$ref": "#/definitions/ProgSampleSolution"},
@@ -45,21 +31,11 @@
         }
       },
       "required": [
-        "id",
-        "semanticVersion",
-        "title",
-        "author",
-        "text",
-        "status",
-        "functionname",
-        "outputType",
-        "sampleTestData",
-        "sampleSolutions",
-        "unitTestsDescription",
-        "foldername",
-        "filename",
-        "unitTestTestConfigs",
-        "unitTestType"
+        "id", "semanticVersion", "title", "author", "text", "status",
+        "functionname", "foldername", "filename",
+        "inputTypes", "outputType",
+        "unitTestPart", "implementationPart",
+        "sampleSolutions", "sampleTestData"
       ],
       "additionalProperties": false
     },
@@ -73,6 +49,24 @@
       "required": ["id", "name", "type"],
       "additionalProperties": false
     },
+    "UnitTestPart": {
+      "type": "object",
+      "properties": {
+        "unitTestType": {"type": "string", "enum": ["Simplified", "Normal"]},
+        "unitTestsDescription": {"type": "string"},
+        "unitTestFiles": {
+          "type": "array",
+          "items": {"$ref": "../exercise_file.schema.json"},
+          "additionalItems": false
+        },
+        "unitTestTestConfigs": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/UnitTestTestConfig"},
+          "additionalItems": false
+        }
+      },
+      "required": ["unitTestType", "unitTestsDescription", "unitTestFiles", "unitTestTestConfigs"]
+    },
     "UnitTestTestConfig": {
       "type": "object",
       "properties": {
@@ -84,16 +78,22 @@
       "required": ["id", "shouldFail"],
       "additionalProperties": false
     },
+    "ImplementationPart": {
+      "type": "object",
+      "properties": {
+        "base": {"type": "string"},
+        "mainFileName": {"type": "string"},
+        "files": {"type": "array", "items": {"$ref": "../exercise_file.schema.json"}, "additionalItems": false}
+      },
+      "required": ["base", "mainFileName", "files"]
+    },
     "ProgSampleSolution": {
       "type": "object",
       "properties": {
         "id": {"type": "number"},
-        "base": {"type": "string"},
-        "language": {"type": "string", "enum": ["PYTHON_3", "JAVA_8"]},
-        "sample": {"type": "string"},
-        "unitTest": {"$ref": "../exercise_file.schema.json"}
+        "files": {"type": "array", "items": {"$ref": "../exercise_file.schema.json"}, "additionalItems": false}
       },
-      "required": ["id", "base", "language", "sample", "unitTest"],
+      "required": ["id", "files"],
       "additionalProperties": false
     },
     "ProgSampleTestData": {

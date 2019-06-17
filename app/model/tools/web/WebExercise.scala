@@ -38,7 +38,7 @@ final case class WebExercise(id: Int, semanticVersion: SemanticVersion, title: S
     case WebExParts.JsPart   => siteSpec.jsTasks
   }
 
-  override def filesForExercisePart(part: WebExPart): Seq[ExerciseFile] = files
+  override def filesForExercisePart(part: WebExPart): LoadExerciseFilesMessage = LoadExerciseFilesMessage(files, None)
 
 }
 

@@ -1,6 +1,6 @@
 import {CorrectionResult} from "../matches";
 import {SuccessType} from "../otherHelpers";
-import {ExerciseFile} from "../tools/ideExerciseHelpers";
+import {ExerciseFile} from "../tools/ideExercise";
 
 export interface ProgSolution {
     implementation: string;
@@ -122,11 +122,6 @@ export function renderProgCorrectionSuccess(response: ProgCorrectionResult): str
     } else {
         html += `<p class="text-danger">Ihre Lösung konnte nicht gespeichert werden.</p>`;
     }
-
-    const numOfSuccessfulTests = response.simplifiedResults.filter(r => r.success === 'COMPLETE').length;
-
-    html += `<p>Sie haben ${numOfSuccessfulTests} von ${response.simplifiedResults.length} Tests bestanden.</p>`;
-
 
     // FIXME: send and display points...
     console.info(response.points, response.maxPoints);

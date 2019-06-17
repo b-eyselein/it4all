@@ -50,5 +50,21 @@ class Table:
     def length(self) -> int:
         return len(self.fields)
 
-    def insert(self, row: List[str]) -> bool:
-        pass
+    def insert(self, row) -> bool:
+        if len(row) != self.length():
+            raise Exception("Length of the row does not match table length!")
+        else:
+            # convert to floats:
+            for i in range(len(row)):
+                if is_number(row[i]):
+                    row[i] = float(row[i])
+
+            # check if data types are the same
+            types_new = [type(a) for a in row]
+            types_old = [type(a) for a in self.data[0]]
+            if types_new != types_old:
+                raise Exception("Data types of new row do not match old ones")
+
+            # append the data
+            self.data.append(row)
+            return True

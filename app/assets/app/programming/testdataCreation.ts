@@ -1,5 +1,5 @@
 import {domReady, testExerciseSolution} from "../otherHelpers";
-import {ProgSolution, TestData, TestDataCreationResult, TestDataInput} from "./progCorrectionHandler";
+import {ProgSolution, TestData, TestDataCreationResult, TestDataInput} from "./progImplementationCorrectionHandler";
 
 let testBtn: HTMLButtonElement;
 let moreTestDataBtn: HTMLButtonElement;

@@ -18,11 +18,12 @@ object ProgConsts extends Consts {
 
   val functionNameName: String = "functionname"
 
-  val identifierName    : String = "identifier"
-  val implementationName: String = "implementation"
-  val indentLevelName   : String = "indentLevel"
-  val inputName         : String = "input"
-  val inputsName        : String = "inputs"
+  val identifierName        : String = "identifier"
+  val implementationName    : String = "implementation"
+  val implementationPartName: String = "implementationPart"
+  val indentLevelName       : String = "indentLevel"
+  val inputName             : String = "input"
+  val inputsName            : String = "inputs"
 
   val outputName    : String = "output"
   val outputTypeName: String = "outputType"
@@ -40,6 +41,7 @@ object ProgConsts extends Consts {
 
   val unitTestsDescriptionName: String = "unitTestsDescription"
   val unitTestFilesName       : String = "unitTestFiles"
+  val unitTestPartName        : String = "unitTestPart"
   val unitTestTestConfigsName : String = "unitTestTestConfigs"
   val unitTestTypeName        : String = "unitTestType"
 

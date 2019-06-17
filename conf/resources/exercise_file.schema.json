@@ -4,8 +4,8 @@
     "path": {"type": "string"},
     "resourcePath": {"type": "string"},
     "fileType": {"type": "string", "enum": ["htmlmixed", "css", "javascript", "python"]},
-    "editable": {"type": "boolean", "default": true}
+    "editable": {"type": "boolean"}
   },
-  "required": ["path", "resourcePath", "fileType"],
+  "required": ["path", "resourcePath", "fileType", "editable"],
   "additionalProperties": false
 }

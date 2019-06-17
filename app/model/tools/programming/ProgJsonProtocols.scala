@@ -8,6 +8,8 @@ import play.api.libs.json._
 
 object ProgJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] {
 
+  private implicit val exerciseFileJsonWrites: Format[ExerciseFile] = FilesSampleSolutionJsonProtocol.exerciseFileJsonFormat
+
   // Simplified execution
 
   private implicit val simplifiedExecutionResultFormat: Format[SimplifiedExecutionResult] = Json.format[SimplifiedExecutionResult]
@@ -35,10 +37,10 @@ object ProgJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResult, Prog
 
   // Sample Solutions
 
+  private implicit val progSolutionJsonFormat: Format[ProgSolution] = Json.format[ProgSolution]
+
   val sampleSolutionJsonFormat: Format[ProgSampleSolution] = Json.format[ProgSampleSolution]
 
-
-  private implicit val exerciseFileJsonWrites: Format[ExerciseFile] = FilesSampleSolutionJsonProtocol.exerciseFileJsonFormat
 
   // Simplified ProgUserTestData
 

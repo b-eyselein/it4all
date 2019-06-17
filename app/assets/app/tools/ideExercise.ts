@@ -1,6 +1,24 @@
 import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
-import {ExerciseFile, IdeWorkspace} from "./ideExerciseHelpers";
+
+
+export interface ExerciseFile {
+    name: string
+    content: string
+    fileType: string
+    editable: boolean
+}
+
+export interface IdeWorkspace {
+    filesNum: number
+    files: ExerciseFile[]
+}
+
+interface LoadFilesMessage {
+    files: ExerciseFile[];
+    activeFileName: undefined | string;
+}
+
 
 let activeFile: string;
 let filenames: string[] = [];
@@ -12,22 +30,29 @@ let files: Map<string, ExerciseFile> = new Map<string, ExerciseFile>();
 let editor: CodeMirror.Editor;
 
 
-function onLoadFileSuccess(result: ExerciseFile[]): Promise<CodeMirror.Editor> {
-    for (const res of result) {
+function onLoadFileSuccess(result: LoadFilesMessage): Promise<CodeMirror.Editor> {
+    // console.info(JSON.stringify(result, null, 2));
+
+    for (const res of result.files) {
         // Fill file map
         files.set(res.name, res);
     }
 
-    activeFile = result[0].name;
+    if (result.activeFileName) {
+        activeFile = result.activeFileName;
+    } else {
+        activeFile = result.files[0].name;
+    }
 
     // Read all CodeMirror modes from result array
-    const allDistinctModes: string[] = Array.from(new Set(result.map(r => r.fileType)));
+    const allDistinctModes: string[] = Array.from(new Set(result.files.map(r => r.fileType)));
 
     // Load all file modes
     return Promise.all(allDistinctModes.map(mode => import(`codemirror/mode/${mode}/${mode}`)))
         .then(() => {
             // Init editor (all modes have already been loaded!)
             const firstFile: ExerciseFile | undefined = files.get(activeFile);
+
             // FIXME: get => null!
             editor = initEditor(firstFile.fileType, 'myTextEditor');
 
@@ -41,6 +66,10 @@ function onLoadFileSuccess(result: ExerciseFile[]): Promise<CodeMirror.Editor> {
 
             fileChangeBtns[0].classList.remove('btn-outline-secondary');
             fileChangeBtns[0].classList.add('btn-primary');
+
+            if (result.activeFileName) {
+                document.querySelector<HTMLButtonElement>(`button[data-filename="${result.activeFileName}"]`).click();
+            }
 
             return editor;
         });
@@ -104,7 +133,13 @@ export function setupEditor(): Promise<void | CodeMirror.Editor> {
     const loadFilesUrl: string = document.getElementById('theContainer').dataset['loadfilesurl'];
 
     return fetch(loadFilesUrl)
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                console.error('There has been an error loading files: ' + response.statusText)
+            }
+        })
         .then(onLoadFileSuccess)
         .catch(reason => console.error(reason));
 

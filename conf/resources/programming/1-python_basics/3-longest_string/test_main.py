@@ -1,6 +1,5 @@
 from typing import List, Any
-# noinspection PyUnresolvedReferences
-from solution import longest_string
+from longest_string import longest_string
 
 
 def convert_base_data(json_base_data):

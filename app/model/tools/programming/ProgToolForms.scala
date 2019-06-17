@@ -12,12 +12,13 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
 
   private val jsValueFormMapping: Mapping[JsValue] = nonEmptyText.transform(Json.parse, Json.prettyPrint)
 
+  private val progSolutionMapping: Mapping[ProgSolution] = mapping(
+    filesName -> seq(exerciseFileMapping)
+  )(ProgSolution.apply(_, Seq.empty))(ProgSolution.unapply(_).map(_._1))
+
   private val programmingSampleSolutionMapping: Mapping[ProgSampleSolution] = mapping(
     idName -> number,
-    //    languageName -> ProgLanguages.formField,
-    baseName -> nonEmptyText,
-    solutionName -> nonEmptyText,
-    unitTestName -> exerciseFileMapping
+    solutionName -> progSolutionMapping
   )(ProgSampleSolution.apply)(ProgSampleSolution.unapply)
 
   val programmingSampleTestDataMapping: Mapping[ProgSampleTestData] = mapping(
@@ -38,6 +39,18 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
     "cause" -> optional(nonEmptyText),
     descriptionName -> nonEmptyText
   )(UnitTestTestConfig.apply)(UnitTestTestConfig.unapply)
+
+  private val unitTestPartMapping: Mapping[UnitTestPart] = mapping(
+    unitTestTypeName -> UnitTestTypes.formField,
+    unitTestsDescriptionName -> nonEmptyText,
+    unitTestFilesName -> seq(exerciseFileMapping),
+    unitTestTestConfigsName -> seq(unitTestTestConfigMapping),
+  )(UnitTestPart.apply)(UnitTestPart.unapply)
+
+  private val implementationPartMapping: Mapping[ImplementationPart] = mapping(
+    baseName -> nonEmptyText,
+    filesName -> seq(exerciseFileMapping)
+  )(ImplementationPart.apply)(ImplementationPart.unapply)
 
   // Complete exercise
 
@@ -60,18 +73,22 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
       authorName -> nonEmptyText,
       textName -> nonEmptyText,
       statusName -> ExerciseState.formField,
+
       functionNameName -> nonEmptyText,
-      outputTypeName -> ProgDataTypes.formField,
-      baseDataName -> optional(jsValueFormMapping),
-      unitTestTypeName -> UnitTestTypes.formField,
-      inputTypesName -> seq(progInputMapping),
-      sampleSolutionsName -> seq(programmingSampleSolutionMapping),
-      sampleTestDataName -> seq(programmingSampleTestDataMapping),
-      unitTestsDescriptionName -> nonEmptyText,
-      unitTestFilesName -> seq(exerciseFileMapping),
       foldernameName -> nonEmptyText,
       filenameName -> nonEmptyText,
-      unitTestTestConfigsName -> seq(unitTestTestConfigMapping),
+
+      inputTypesName -> seq(progInputMapping),
+      outputTypeName -> ProgDataTypes.formField,
+
+      baseDataName -> optional(jsValueFormMapping),
+
+      unitTestPartName -> unitTestPartMapping,
+      implementationPartName -> implementationPartMapping,
+
+      sampleSolutionsName -> seq(programmingSampleSolutionMapping),
+      sampleTestDataName -> seq(programmingSampleTestDataMapping),
+
       "maybeClassDiagram" -> optional(classDiagramMapping)
     )(ProgExercise.apply)(ProgExercise.unapply)
   )

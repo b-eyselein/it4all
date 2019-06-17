@@ -46,12 +46,16 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
   def futureHighestExerciseIdInCollection(collId: Int): Future[Int] =
     db.run(exTable.filter(_.collectionId === collId).map(_.id).max.result) map (_ getOrElse (-1))
 
-  protected def nextUserSolutionId(exId: Int, collId: Int, username: String, part: PartType): Future[Int] =
-    db.run(userSolutionsTableQuery
+  protected def maybeOldLastSolutionId(exId: Int, collId: Int, username: String, part: PartType): Future[Option[Int]] = db.run(
+    userSolutionsTableQuery
       .filter { us => us.username === username && us.collectionId === collId && us.exerciseId === exId && us.part === part }
       .map(_.id)
       .max
-      .result).map(_.map(_ + 1).getOrElse(0))
+      .result
+  )
+
+  protected def nextUserSolutionId(exId: Int, collId: Int, username: String, part: PartType): Future[Int] =
+    maybeOldLastSolutionId(exId, collId, username, part).map(_.map(_ + 1).getOrElse(0))
 
   // Reading
 

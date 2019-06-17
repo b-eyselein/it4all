@@ -249,7 +249,7 @@ class CollectionController @Inject()(
                 case Some(part) =>
 
                   toolMain.futureFilesForExercise(user, collId, exercise, part).map {
-                    filesForExercise => Ok(JsArray(filesForExercise.map(ExerciseFileJsonProtocol.exerciseFileFormat.writes)))
+                    filesForExercise => Ok(ExerciseFileJsonProtocol.loadExerciseFilesMessageFormat.writes(filesForExercise))
                   }
               }
           }

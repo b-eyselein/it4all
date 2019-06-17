@@ -6,64 +6,76 @@
     Implementieren Sie die Funktion factorial(n: int) -> int, die die Fakultät der Zahl n berechnet.
   status: APPROVED
 
-  unitTestType: Normal
   functionname: factorial
-  outputType: int
-
-  inputTypes: [{id: 1, name: n, type: int}]
-
-  sampleSolutions:
-    - id: 1
-      base: |
-        def factorial(n: int) -> int:
-            pass
-      language: PYTHON_3
-      sample: |
-        def factorial(n: int) -> int:
-            pass
-      unitTest:
-        path: test.py
-        resourcePath: programming/2-unit_testing/1-factorial/factorial_test.py
-        fileType: python
-
-  unitTestsDescription: >
-    Schreiben Sie Unittests für die Funktion <code>factorial(n: int) -> int</code>. Diese soll die Fakultät der Zahl
-    <code>n</code> berechnen. Der Funktionsparameter <code>n</code> soll größer als 0 sein.
-
-  unitTestFiles:
-    - path: test.py
-      resourcePath: programming/2-unit_testing/1-factorial/factorial_test_declaration.py
-      fileType: python
-      editable: true
-    - path: factorial.py
-      resourcePath: programming/2-unit_testing/1-factorial/factorial_declaration.py
-      fileType: python
-      editable: false
-
   foldername: factorial
   filename: factorial
 
-  unitTestTestConfigs:
-    - id: 0
-      shouldFail: false
-      description: Diese Implementierung ist korrekt und sollte alle Tests bestehen.
+  inputTypes: [{id: 1, name: n, type: int}]
+  outputType: int
 
-    - id: 1
-      shouldFail: true
-      cause: IllegalArgument
-      description: Falls das Funktionsargument 'n' keine Ganzzahl ist, soll eine Exception geworfen werden.
+  unitTestPart:
+    unitTestType: Normal
 
-    - id: 2
-      shouldFail: true
-      cause: IllegalArgument
-      description: Falls das Funktionsargument kleiner oder gleich 0 ist, soll eine Exception geworfen werden.
+    unitTestsDescription: >
+      Schreiben Sie Unittests für die Funktion <code>factorial(n: int) -> int</code>. Diese soll die Fakultät der Zahl
+      <code>n</code> berechnen. Der Funktionsparameter <code>n</code> soll größer als 0 sein.
 
-    - id: 3
-      shouldFail: true
-      cause: WrongResult
-      description: Die Funktion soll das richtige Resultat zurückliefern.
+    unitTestFiles:
+      - path: test.py
+        resourcePath: programming/2-unit_testing/1-factorial/factorial_test_declaration.py
+        fileType: python
+        editable: true
+      - path: factorial.py
+        resourcePath: programming/2-unit_testing/1-factorial/factorial_declaration.py
+        fileType: python
+        editable: false
+
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Diese Implementierung ist korrekt und sollte alle Tests bestehen.
+
+      - id: 1
+        shouldFail: true
+        cause: IllegalArgument
+        description: Falls das Funktionsargument 'n' keine Ganzzahl ist, soll eine Exception geworfen werden.
+
+      - id: 2
+        shouldFail: true
+        cause: IllegalArgument
+        description: Falls das Funktionsargument kleiner oder gleich 0 ist, soll eine Exception geworfen werden.
+
+      - id: 3
+        shouldFail: true
+        cause: WrongResult
+        description: Die Funktion soll das richtige Resultat zurückliefern.
+
+  implementationPart:
+    base: |
+      def factorial(n: int) -> int:
+          pass
+    files:
+      - path: factorial.py
+        resourcePath: programming/2-unit_testing/1-factorial/factorial_declaration.py
+        fileType: python
+      - path: test.py
+        resourcePath: programming/2-unit_testing/1-factorial/factorial_test.py
+        fileType: python
 
   sampleTestData: []
+
+  sampleSolutions:
+    - id: 1
+      files:
+        - path: factorial.py
+          resourcePath: programming/2-unit_testing/1-factorial/factorial.py
+          fileType: python
+        - path: test.py
+          resourcePath: programming/2-unit_testing/1-factorial/factorial_test.py
+          fileType: python
+
+
 
 - id: 2
   semanticVersion: {major: 0, minor: 0, patch: 1}
@@ -73,87 +85,101 @@
   status: APPROVED
 
   functionname: circle
-  inputTypes: []
-  outputType: None
-
-  unitTestType: Normal
-
-  unitTestsDescription: >
-    Schreiben Sie Unittests für eine Implementierung der Klasse <code>Circle</code>, die einen Kreis mit einem
-    Mittelpunkt (bestehend aus X- und Y-Koordinate und einem Radius) darstellt. Es sollen ein Konstruktor
-    (<code>def __init__(self, center_x: float, center_y: float, radius: float)</code>) und eine Funktion
-    <code>def area(self) -> float:</code> implementiert werden, die die Fläche des Kreises berechnet.
-
-  unitTestFiles:
-    - path: test.py
-      resourcePath: programming/2-unit_testing/2-circle/circle_test_declaration.py
-      fileType: python
-      editable: true
-    - path: circle.py
-      resourcePath: programming/2-unit_testing/2-circle/circle_declaration.py
-      fileType: python
-      editable: false
-
   foldername: circle
   filename: circle
 
-  unitTestTestConfigs:
-    - id: 0
-      shouldFail: false
-      description: Musterlösung...
-    - id: 1
-      shouldFail: true
-      cause: illegal_argument
-      description: Die X-Koordinate sollte eine Ganz- oder Fließkommazahl sein.
-    - id: 2
-      shouldFail: true
-      cause: logic_error
-      description: Der Wert des Konstruktorarguments 'center_x' sollte unter dem selben Namen als Argument zugänglich sein.
-    - id: 3
-      shouldFail: true
-      cause: illegal_argument
-      description: Die Y-Koordinate sollte eine Ganz- oder Fließkommazahl sein.
-    - id: 4
-      shouldFail: true
-      cause: logic_error
-      description: Der Wert des Konstruktorarguments 'center_y' sollte unter dem selben Namen als Argument zugänglich sein.
-    - id: 5
-      shouldFail: true
-      cause: illegal_argument
-      description: Der Radius sollte eine Ganz- oder Fließkommazahl sein.
-    - id: 6
-      shouldFail: true
-      cause: illegal_argument
-      description: Der Radius sollte größer oder gleich 0 sein.
-    - id: 7
-      shouldFail: true
-      cause: logic_error
-      description: Der Wert des Konstruktorarguments 'radius' sollte unter dem selben Namen als Argument zugänglich sein.
-    - id: 8
-      shouldFail: true
-      cause: wrong_result
-      description: Die Fläche des Kreises sollte richtig berechnet werden
+  inputTypes: []
+  outputType: None
 
-  sampleSolutions:
-    - id: 1
-      language: PYTHON_3
-      base: |
-        from math import pi
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+      Schreiben Sie Unittests für eine Implementierung der Klasse <code>Circle</code>, die einen Kreis mit einem
+      Mittelpunkt (bestehend aus X- und Y-Koordinate und einem Radius) darstellt. Es sollen ein Konstruktor
+      (<code>def __init__(self, center_x: float, center_y: float, radius: float)</code>) und eine Funktion
+      <code>def area(self) -> float:</code> implementiert werden, die die Fläche des Kreises berechnet.
+
+    unitTestFiles:
+      - path: test.py
+        resourcePath: programming/2-unit_testing/2-circle/circle_test_declaration.py
+        fileType: python
+        editable: true
+      - path: circle.py
+        resourcePath: programming/2-unit_testing/2-circle/circle_declaration.py
+        fileType: python
+        editable: false
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+      - id: 1
+        shouldFail: true
+        cause: illegal_argument
+        description: Die X-Koordinate sollte eine Ganz- oder Fließkommazahl sein.
+      - id: 2
+        shouldFail: true
+        cause: logic_error
+        description: Der Wert des Konstruktorarguments 'center_x' sollte unter dem selben Namen als Argument zugänglich sein.
+      - id: 3
+        shouldFail: true
+        cause: illegal_argument
+        description: Die Y-Koordinate sollte eine Ganz- oder Fließkommazahl sein.
+      - id: 4
+        shouldFail: true
+        cause: logic_error
+        description: Der Wert des Konstruktorarguments 'center_y' sollte unter dem selben Namen als Argument zugänglich sein.
+      - id: 5
+        shouldFail: true
+        cause: illegal_argument
+        description: Der Radius sollte eine Ganz- oder Fließkommazahl sein.
+      - id: 6
+        shouldFail: true
+        cause: illegal_argument
+        description: Der Radius sollte größer oder gleich 0 sein.
+      - id: 7
+        shouldFail: true
+        cause: logic_error
+        description: Der Wert des Konstruktorarguments 'radius' sollte unter dem selben Namen als Argument zugänglich sein.
+      - id: 8
+        shouldFail: true
+        cause: wrong_result
+        description: Die Fläche des Kreises sollte richtig berechnet werden
+
+  implementationPart:
+    base: |
+      from math import pi
 
 
-        class Circle:
-            def __init__(self, center_x: float, center_y: float, radius: float):
-                pass
+      class Circle:
+          def __init__(self, center_x: float, center_y: float, radius: float):
+              pass
 
-            def area(self) -> float:
-                pass
-
-      sample: |
-      unitTest:
-        path: circle_test.py
+          def area(self) -> float:
+              pass
+    files:
+      - path: circle.py
+        resourcePath: programming/2-unit_testing/2-circle/circle_declaration.py
+        fileType: python
+        editable: true
+      - path: test.py
         resourcePath: programming/2-unit_testing/2-circle/circle_test.py
         fileType: python
         editable: false
+
+  sampleSolutions:
+    - id: 1
+      files:
+        - path: circle.py
+          resourcePath: programming/2-unit_testing/2-circle/circle.py
+          fileType: python
+          editable: false
+        - path: test.py
+          resourcePath: programming/2-unit_testing/2-circle/circle_test.py
+          fileType: python
+          editable: false
 
   sampleTestData: []
 
@@ -165,73 +191,99 @@
   status: APPROVED
 
   functionname: insert
-  inputTypes: []
-  outputType: None
-
-  unitTestType: Normal
-
-  unitTestsDescription: >
-    Schreiben Sie Unittests für eine Implementierung der Methode <code>insert(self, row: List[str]) -> bool</code> in
-    der Klasse <code>Table</code>. Diese fügt eine neue Zeile mit Werten in die Tabelle ein. Die neu eingefügte
-    Zeile soll dabei die gleiche Anzahl an Einträgen wie die bereits vorhandenen Zeilen (<code>self.length()</code>)
-    haben, ansonsten soll eine Exception geworfen werden. Alle Einträge der Liste, die sich zu Fließkommazahlen
-    konvertieren lassen (Also Ganz- und Fließkommazahlen), sollen auch konvertiert werden. Dann soll überprüft werden,
-    ob die einzelnen Einträge der neuen Liste die gleichen Typen (jeweils <code>str</code> oder <code>float</code>)
-    haben wie die bisherigen Einträge, ansonsten soll auch wieder eine Exception geworfen werden. Zum Schluss soll
-    die Zeile hinzugefügt werden und <code>True</code> zurückgegeben werden.
-
-  unitTestFiles:
-    - path: test.py
-      resourcePath: programming/2-unit_testing/3-pysql/table_test_declaration.py
-      fileType: python
-      editable: true
-    - path: table.py
-      resourcePath: programming/2-unit_testing/3-pysql/table_declaration.py
-      fileType: python
-      editable: false
-    - path: raum.csv
-      resourcePath: programming/2-unit_testing/3-pysql/raum.csv
-      fileType: python
-      editable: false
-
   foldername: pysql
   filename: table
 
-  unitTestTestConfigs:
-    - id: 0
-      shouldFail: false
-      description: Musterlösung
+  inputTypes: []
+  outputType: None
 
+  unitTestPart:
+    unitTestType: Normal
+
+    unitTestsDescription: >
+      Schreiben Sie Unittests für eine Implementierung der Methode <code>insert(self, row: List[str]) -> bool</code> in
+      der Klasse <code>Table</code>. Diese fügt eine neue Zeile mit Werten in die Tabelle ein. Die neu eingefügte
+      Zeile soll dabei die gleiche Anzahl an Einträgen wie die bereits vorhandenen Zeilen (<code>self.length()</code>)
+      haben, ansonsten soll eine Exception geworfen werden. Alle Einträge der Liste, die sich zu Fließkommazahlen
+      konvertieren lassen (Also Ganz- und Fließkommazahlen), sollen auch konvertiert werden. Dann soll überprüft werden,
+      ob die einzelnen Einträge der neuen Liste die gleichen Typen (jeweils <code>str</code> oder <code>float</code>)
+      haben wie die bisherigen Einträge, ansonsten soll auch wieder eine Exception geworfen werden. Zum Schluss soll
+      die Zeile hinzugefügt werden und <code>True</code> zurückgegeben werden.
+
+    unitTestFiles:
+      - path: test.py
+        resourcePath: programming/2-unit_testing/3-pysql/table_test_declaration.py
+        fileType: python
+        editable: true
+      - path: table.py
+        resourcePath: programming/2-unit_testing/3-pysql/table_declaration.py
+        fileType: python
+        editable: false
+      - path: raum.csv
+        resourcePath: programming/2-unit_testing/3-pysql/raum.csv
+        fileType: python
+        editable: false
+
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung
+
+      - id: 1
+        shouldFail: true
+        cause: illegal_argument
+        description: Es soll überprüft werden, ob die eingegebene Liste die gleiche Länge wie die Tabellenreihen hat.
+
+      - id: 2
+        shouldFail: true
+        cause: illegal_argument
+        description: Es soll überprüft werden, ob der Inhalt der eingegebenen Liste die gleichen Datentypen hat wie die Anfangsdaten.
+
+      - id: 3
+        shouldFail: true
+        cause: wrong_result
+        description: Die Funktion sollte bei Erfolg True ausgeben.
+
+      - id: 4
+        shouldFail: true
+        cause: wrong_result
+        description: Die letzte Zeile der Tabelle muss der angefügten Zeile entsprechen.
+
+      - id: 5
+        shouldFail: true
+        cause: wrong_result
+        description: Die neue Anzahl an Zeilen muss um genau 1 höher sein.
+
+      - id: 6
+        shouldFail: true
+        cause: wrong_result
+        description: Zahlen in der neuen Zeile sollen automatisch von Strings zu floats konvertiert werden.
+
+  implementationPart:
+    base: ""
+    files:
+      - path: table.py
+        resourcePath: programming/2-unit_testing/3-pysql/table_declaration.py
+        fileType: python
+        editable: true
+      - path: test.py
+        resourcePath: programming/2-unit_testing/3-pysql/table_test_declaration.py
+        fileType: python
+        editable: false
+      - path: raum.csv
+        resourcePath: programming/2-unit_testing/3-pysql/raum.csv
+        fileType: python
+        editable: false
+
+  sampleSolutions:
     - id: 1
-      shouldFail: true
-      cause: illegal_argument
-      description: Es soll überprüft werden, ob die eingegebene Liste die gleiche Länge wie die Tabellenreihen hat.
-
-    - id: 2
-      shouldFail: true
-      cause: illegal_argument
-      description: Es soll überprüft werden, ob der Inhalt der eingegebenen Liste die gleichen Datentypen hat wie die Anfangsdaten.
-
-    - id: 3
-      shouldFail: true
-      cause: wrong_result
-      description: Die Funktion sollte bei Erfolg True ausgeben.
-
-    - id: 4
-      shouldFail: true
-      cause: wrong_result
-      description: Die letzte Zeile der Tabelle muss der angefügten Zeile entsprechen.
-
-    - id: 5
-      shouldFail: true
-      cause: wrong_result
-      description: Die neue Anzahl an Zeilen muss um genau 1 höher sein.
-
-    - id: 6
-      shouldFail: true
-      cause: wrong_result
-      description: Zahlen in der neuen Zeile sollen automatisch von Strings zu floats konvertiert werden.
-
-  sampleSolutions: []
+      files:
+        - path: table.py
+          resourcePath: programming/2-unit_testing/3-pysql/table.py
+          fileType: python
+        - path: test.py
+          resourcePath: programming/2-unit_testing/3-pysql/table_test.py
+          fileType: python
 
   sampleTestData: []

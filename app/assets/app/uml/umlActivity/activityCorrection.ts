@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import {ProgCorrectionResult, ProgSolution, renderProgCorrectionSuccess} from "../../programming/progCorrectionHandler";
+import {ProgCorrectionResult, ProgSolution, renderProgCorrectionSuccess} from "../../programming/progImplementationCorrectionHandler";
 import {domReady} from "../../otherHelpers";
 
 let testBtn: JQuery;

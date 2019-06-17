@@ -223,7 +223,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Files ?!? TODO!
 
-  def futureFilesForExercise(user: User, collId: Int, exercise: ExType, part: PartType): Future[Seq[ExerciseFile]] =
+  def futureFilesForExercise(user: User, collId: Int, exercise: ExType, part: PartType): Future[LoadExerciseFilesMessage] =
     ??? // Future.successful(Seq.empty)
 
 }

@@ -41,9 +41,7 @@ trait FilesSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Col
 
   }
 
-  abstract class AFilesSampleSolutionFilesTable(tag: Tag, tableName: String) extends Table[DbFilesSampleSolutionFile](tag, tableName) {
-
-    def name: Rep[String] = column[String](nameName)
+  abstract class AFilesSampleSolutionFilesTable(tag: Tag, tableName: String) extends Table[DbFilesSampleSolutionFile](tag, tableName) with ExerciseFilesTable[DbFilesSampleSolutionFile] {
 
     def sampleId: Rep[Int] = column[Int]("sample_id")
 
@@ -52,12 +50,6 @@ trait FilesSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Col
     def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def collId: Rep[Int] = column[Int]("collection_id")
-
-    def content: Rep[String] = column[String](contentName)
-
-    def fileType: Rep[String] = column[String]("file_type")
-
-    def editable: Rep[Boolean] = column[Boolean]("editable")
 
 
     def pk: PrimaryKey = primaryKey("pk", (name, sampleId, exId, exSemVer, collId))

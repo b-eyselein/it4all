@@ -9,12 +9,12 @@
 }
 
 @exerciseText = {
-    <p>@Html(exercise.unitTestsDescription)</p>
+    <p>@Html(exercise.unitTestPart.unitTestsDescription)</p>
 
-    <p>Es werden @exercise.unitTestTestConfigs.size Tests mit verschiedenen Implementierungen ausgeführt.
+    <p>Es werden @exercise.unitTestPart.unitTestTestConfigs.size Tests mit verschiedenen Implementierungen ausgeführt.
         Dabei soll unter anderem folgendes geprüft werden:</p>
     <ul>
-    @for(utc <- exercise.unitTestTestConfigs.filter(_.shouldFail)) {
+    @for(utc <- exercise.unitTestPart.unitTestTestConfigs.filter(_.shouldFail)) {
         <li>@utc.description</li>
     }
     </ul>

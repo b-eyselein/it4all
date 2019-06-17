@@ -8,35 +8,35 @@
   status: APPROVED
 
   functionname: ggt
+  foldername: ggt
+  filename: ggt
 
   inputTypes: [{id: 1, name: a, type: int}, {id: 2, name: b, type: int}]
   outputType: int
 
-  unitTestType: Simplified
+  unitTestPart:
+    unitTestType: Simplified
+    unitTestsDescription: TODO!
+    unitTestFiles: []
+    unitTestTestConfigs: []
 
-  unitTestsDescription: TODO!
-  unitTestFiles: []
-  foldername: ggt
-  filename: ggt
-  unitTestTestConfigs: []
+  implementationPart:
+    base: |
+      def ggt(a: int, b: int) -> int:
+          return 0
+    files:
+      - path: ggt.py
+        resourcePath: programming/1-python_basics/1-ggt/ggt_declaration.py
+        fileType: python
+        editable: true
 
   sampleSolutions:
     - id: 1
-      language: PYTHON_3
-      base: |
-        def ggt(a: int, b: int) -> int:
-            return 0
-      sample: |
-        def ggt(a: int, b: int) -> int:
-            while b != 0:
-                h = a % b
-                a = b
-                b = h
-            return a
-      unitTest:
-        path: ggt_test.py
-        resourcePath: programming/1-python_basics/1-ggt/ggt_test.py
-        fileType: python
+      files:
+        - path: ggt.py
+          resourcePath: programming/1-python_basics/1-ggt/ggt.py
+          fileType: python
+          editable: true
 
   sampleTestData:
     - {id: 1, inputs: [12, 4], output: 4}
@@ -51,46 +51,44 @@
   author: bje40dc
   text: >
     Berechnen Sie den Durchschnittswert aller Elemente als Gleitkommazahl in der übergebenen Liste von (Ganz-)Zahlen!
-    Bei einer leeren Liste soll '0' zurückgegeben werden.
+    Bei einer leeren Liste soll 'None' zurückgegeben werden.
   status: APPROVED
 
   functionname: average
+  foldername: average
+  filename: average
 
   inputTypes: [{id: 1, name: my_list, type: list<int>}]
   outputType: float
 
-  unitTestType: Simplified
+  unitTestPart:
+    unitTestType: Simplified
+    unitTestsDescription: TODO!
+    unitTestFiles: []
+    unitTestTestConfigs: []
 
-  unitTestsDescription: TODO!
-  unitTestFiles: []
-  foldername: average
-  filename: average
-  unitTestTestConfigs: []
+  implementationPart:
+    base: |
+      from typing import List
+
+      def average(my_list: List[int]) -> float:
+          return 0
+    files:
+      - path: average.py
+        resourcePath: programming/1-python_basics/2-average/average_declaration.py
+        fileType: python
+        editable: true
 
   sampleSolutions:
     - id: 1
-      language: PYTHON_3
-      base: |
-        from typing import List
-
-        def average(my_list: List[int]) -> float:
-            return 0
-      sample: |
-        from typing import List
-
-        def average(my_list: List[int]) -> float:
-            length = len(my_list)
-            if length == 0:
-                return 0
-            else:
-                return sum(my_list) / length
-      unitTest:
-        path: average_test.py
-        resourcePath: programming/1-python_basics/2-average/average_test.py
-        fileType: python
+      files:
+        - path: average.py
+          resourcePath: programming/1-python_basics/2-average/average.py
+          fileType: python
+          editable: false
 
   sampleTestData:
-    - {id: 1, inputs: [], output: 0.0}
+    - {id: 1, inputs: [], output: null}
     - {id: 2, inputs: [1], output: 1.0}
     - {id: 3, inputs: [3, 5, 7], output: 5.0}
 
@@ -99,50 +97,49 @@
   title: Längste Zeichenkette
   author: bje40dc
   text: >
-    Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden.
+    Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll 'None' zurückgegeben werden.
     Ignorieren Sie dabei Groß- und Kleinschreibung.
   status: APPROVED
 
   functionname: longest_string
+  foldername: longest_string
+  filename: longest_string
 
   inputTypes: [{id: 1, name: my_list, type: list<string>}]
   outputType: string
 
-  unitTestType: Simplified
+  unitTestPart:
+    unitTestType: Simplified
+    unitTestsDescription: TODO!
+    unitTestFiles: []
+    unitTestTestConfigs: []
 
-  unitTestsDescription: TODO!
-  unitTestFiles: []
-  foldername: longest_string
-  filename: longest_string
-  unitTestTestConfigs: []
+  implementationPart:
+    base: |
+      from typing import List
+
+      def longest_string(my_list: List[str]) -> str:
+          return ''
+    mainFileName: longest_string.py
+    files:
+      - path: longest_string.py
+        resourcePath: programming/1-python_basics/3-longest_string/longest_string_declaration.py
+        fileType: python
+        editable: true
 
   sampleSolutions:
     - id: 1
-      language: PYTHON_3
-      base: |
-        from typing import List
-
-        def longest_string(my_list: List[str]) -> str:
-            return ''
-      sample: |
-        from typing import List
-
-        def longest_string(my_list: List[str]) -> str:
-            longest = ""
-            for string in my_list:
-                if len(string) > len(longest):
-                    longest = string
-            return longest
-      unitTest:
-        path: longest_string_test.py
-        resourcePath: programming/1-python_basics/3-longest_string/longest_string_test.py
-        fileType: python
-
+      files:
+        - path: longest_string.py
+          resourcePath: programming/1-python_basics/3-longest_string/longest_string.py
+          fileType: python
+          editable: false
 
   sampleTestData:
-    - {id: 1, inputs: [], output: ""}
+    - {id: 1, inputs: [], output: null}
     - {id: 2, inputs: ["0"], output: "0"}
     - {id: 3, inputs: ["1", "11", "111"], output: "111"}
+    - {id: 4, inputs: ["1", "121", "12321", "232", "3"], output: "12321"}
 
 - id: 4
   semanticVersion: 1.0.0
@@ -154,32 +151,36 @@
   status: APPROVED
 
   functionname: is_palindrome
+  foldername: palindrome
+  filename: palindrome
 
   inputTypes: [{id: 1, name: word, type: string}]
   outputType: boolean
 
-  unitTestType: Simplified
+  unitTestPart:
+    unitTestType: Simplified
+    unitTestsDescription: TODO!
+    unitTestFiles: []
+    unitTestTestConfigs: []
 
-  unitTestsDescription: TODO!
-  unitTestFiles: []
-  foldername: palindrome
-  filename: palindrome
-  unitTestTestConfigs: []
+  implementationPart:
+    base: |
+      def is_palindrome(word: str) -> bool:
+          return False
+    mainFileName: palindrome.py
+    files:
+      - path: palindrome.py
+        resourcePath: programming/1-python_basics/4-palindrome/palindrome_declaration.py
+        fileType: python
+        editable: true
 
   sampleSolutions:
     - id: 1
-      language: PYTHON_3
-      base: |
-        def is_palindrome(word: str) -> bool:
-            return False
-      sample: |
-        def is_palindrome(word: str) -> bool:
-            lower = word.lower()
-            return lower == lower[::-1]
-      unitTest:
-        path: palindrome_test.py
-        resourcePath: programming/1-python_basics/4-is_palindrome/palindrome_test.py
-        fileType: python
+      files:
+        - path: palindrome.py
+          resourcePath: programming/1-python_basics/4-palindrome/palindrome.py
+          fileType: python
+          editable: false
 
   sampleTestData:
     - {id: 1, inputs: "anna", output: true}

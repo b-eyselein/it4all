@@ -30,6 +30,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     } yield ProgCollection(id, title, author, text, state, shortName)
 
     override def write(obj: ProgCollection): YamlValue = ???
+
   }
 
   object ProgExYamlFormat extends MyYamlObjectFormat[ProgExercise] {
@@ -38,21 +39,19 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       baseValues <- readBaseValues(yamlObject)
 
       functionName <- yamlObject.stringField(functionNameName)
-      outputType <- yamlObject.enumField(outputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
-      baseData <- yamlObject.optJsonField(baseDataName)
-
-      unitTestType <- yamlObject.enumField(unitTestTypeName, UnitTestTypes.withNameInsensitive)
-
-      inputTypes <- yamlObject.arrayField(inputTypesName, ProgInputTypeYamlFormat.read)
-      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(functionName).read)
-
-      sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
-
-      unitTestsDescription <- yamlObject.stringField(unitTestsDescriptionName)
-      unitTestFiles <- yamlObject.arrayField(unitTestFilesName, ExerciseFileYamlFormat.read)
       foldername <- yamlObject.stringField(foldernameName)
       filename <- yamlObject.stringField(filenameName)
-      unitTestTestConfigs <- yamlObject.arrayField(unitTestTestConfigsName, UnitTestTestConfigYamlFormat.read)
+
+      inputTypes <- yamlObject.arrayField(inputTypesName, ProgInputTypeYamlFormat.read)
+      outputType <- yamlObject.enumField(outputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+
+      baseData <- yamlObject.optJsonField(baseDataName)
+
+      unitTestPart <- yamlObject.objField(unitTestPartName, UnitTestPartYamlFormat.read)
+      implementationPart <- yamlObject.objField(implementationPartName, ImplementationPartYamlFormat.read)
+
+      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(functionName).read)
+      sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
 
       maybeClassDiagramPart <- yamlObject.optField(classDiagramName, UmlSampleSolutionYamlFormat.read).map(_.map(_.sample))
     } yield {
@@ -68,16 +67,12 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       // FIXME: return ...
         logger.error("Could not read programming sample solution", sampleSolutionFailure.exception)
 
-      for (unitTestTestConfigFailure <- unitTestTestConfigs._2)
-        logger.error("Could not read unit test test config", unitTestTestConfigFailure.exception)
-
-      for (unitTestFileFailure <- unitTestFiles._2)
-        logger.error("Could not read unit test file", unitTestFileFailure.exception)
-
       ProgExercise(
         baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        functionName, outputType, baseData, unitTestType,
-        inputTypes._1, sampleSolutions._1, sampleTestDataTries._1, unitTestsDescription, unitTestFiles._1, foldername, filename, unitTestTestConfigs._1, maybeClassDiagramPart
+        functionName, foldername, filename,
+        inputTypes._1, outputType, baseData,
+        unitTestPart, implementationPart,
+        sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
       )
     }
 
@@ -93,6 +88,38 @@ object ProgExYamlProtocol extends MyYamlProtocol {
           )
       )
     }
+
+  }
+
+  private object UnitTestPartYamlFormat extends MyYamlObjectFormat[UnitTestPart] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[UnitTestPart] = for {
+      unitTestType <- yamlObject.enumField(unitTestTypeName, UnitTestTypes.withNameInsensitive)
+      unitTestsDescription <- yamlObject.stringField(unitTestsDescriptionName)
+      unitTestFiles <- yamlObject.arrayField(unitTestFilesName, ExerciseFileYamlFormat.read)
+      unitTestTestConfigs <- yamlObject.arrayField(unitTestTestConfigsName, UnitTestTestConfigYamlFormat.read)
+    } yield {
+      for (unitTestTestConfigFailure <- unitTestTestConfigs._2)
+        logger.error("Could not read unit test test config", unitTestTestConfigFailure.exception)
+
+      for (unitTestFileFailure <- unitTestFiles._2)
+        logger.error("Could not read unit test file", unitTestFileFailure.exception)
+
+      UnitTestPart(unitTestType, unitTestsDescription, unitTestFiles._1, unitTestTestConfigs._1)
+    }
+
+    override def write(obj: UnitTestPart): YamlValue = ???
+
+  }
+
+  private object ImplementationPartYamlFormat extends MyYamlObjectFormat[ImplementationPart] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[ImplementationPart] = for {
+      base <- yamlObject.stringField(baseName)
+      files <- yamlObject.arrayField(filesName, ExerciseFileYamlFormat.read)
+    } yield ImplementationPart(base, files._1)
+
+    override def write(obj: ImplementationPart): YamlValue = ???
 
   }
 
@@ -112,15 +139,12 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       id <- yamlObject.intField(idName)
-      //      language <- yamlObject.enumField(languageName, ProgLanguages.withNameInsensitiveOption) map (_ getOrElse ProgLanguages.PYTHON_3)
-      base <- yamlObject.stringField(baseName)
-      sample <- yamlObject.stringField(sampleName)
-      unitTest <- yamlObject.objField(unitTestName, ExerciseFileYamlFormat.read)
-    } yield ProgSampleSolution(id, /* language,*/ base, sample, unitTest)
+      files <- yamlObject.arrayField(filesName, ExerciseFileYamlFormat.read)
+    } yield ProgSampleSolution(id, ProgSolution(files._1, testData = Seq.empty))
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObj(
-      languageName -> pss.language.entryName,
-      sampleName -> pss.sample.implementation
+      idName -> pss.id,
+      filesName -> YamlArr(pss.sample.files.map(ExerciseFileYamlFormat.write)),
     )
 
   }

@@ -1,18 +1,12 @@
-import {initEditor} from '../editorHelpers';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/python/python';
 
-import {ProgCorrectionResult, ProgSolution, renderProgCorrectionSuccess} from "./progCorrectionHandler";
-import {
-    displayStringSampleSolution,
-    domReady, focusOnCorrection,
-    initShowSampleSolBtn,
-    SampleSolution,
-    testExerciseSolution
-} from "../otherHelpers";
+import {domReady, focusOnCorrection, initShowSampleSolBtn, testExerciseSolution} from "../otherHelpers";
 
-import {ExerciseFile, IdeWorkspace} from '../tools/ideExerciseHelpers';
-import {getIdeWorkspace, setupEditor} from '../tools/ideExercise';
+import {getIdeWorkspace, IdeWorkspace, setupEditor} from '../tools/ideExercise';
+
+import {ProgCorrectionResult, renderProgCorrectionSuccess} from "./progImplementationCorrectionHandler";
+import {ProgSampleSolution, showProgSampleSolutions} from "./progSampleSolHelper";
 
 export {onProgCorrectionSuccess};
 
@@ -20,23 +14,6 @@ let editor: CodeMirror.Editor;
 let testBtn: HTMLButtonElement;
 
 let solutionChanged: boolean = false;
-
-export interface ProgSampleSolution {
-    id: number;
-    base: string;
-    solutionStr: string;
-    unitTest: ExerciseFile
-}
-
-function testSol(): void {
-    const solution: ProgSolution = {
-        implementation: editor.getValue(),
-        testData: [],
-        unitTest: {name: '', content: '', fileType: '', editable: false}
-    };
-
-    testExerciseSolution<ProgSolution, ProgCorrectionResult>(testBtn, solution, onProgCorrectionSuccess)
-}
 
 function onProgCorrectionSuccess(result: ProgCorrectionResult): void {
     solutionChanged = false;
@@ -46,36 +23,27 @@ function onProgCorrectionSuccess(result: ProgCorrectionResult): void {
     focusOnCorrection();
 }
 
-function showProgSampleSolution(s: ProgSampleSolution): string {
-    return `
-<div class="card">
-    <div class="card-body bg-light">
-        <pre>${s.solutionStr}</pre>
-    </div>
-</div>`.trim();
-}
 
 domReady(() => {
     setupEditor().then((theEditor: null | CodeMirror.Editor) => {
         if (theEditor) {
             editor = theEditor;
-
             editor.on('change', () => {
                 solutionChanged = true;
             });
         }
     });
 
-    testBtn = document.querySelector<HTMLButtonElement>('#uploadBtn');
-    testBtn.onclick = () => {
-        testExerciseSolution<IdeWorkspace, ProgCorrectionResult>(testBtn, getIdeWorkspace(), onProgCorrectionSuccess);
-    };
-
-    initShowSampleSolBtn<ProgSampleSolution[]>((samples: ProgSampleSolution[]) => {
-        return samples.map<string>(showProgSampleSolution).join('\n');
-    });
-
     document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
         return !solutionChanged || confirm("Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?");
+    };
+
+    initShowSampleSolBtn<ProgSampleSolution[]>(showProgSampleSolutions);
+
+    testBtn = document.querySelector<HTMLButtonElement>('#uploadBtn');
+    testBtn.onclick = () => {
+        const solution: IdeWorkspace = getIdeWorkspace();
+
+        testExerciseSolution<IdeWorkspace, ProgCorrectionResult>(testBtn, solution, onProgCorrectionSuccess);
     };
 });

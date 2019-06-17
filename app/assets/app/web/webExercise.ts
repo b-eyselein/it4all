@@ -3,10 +3,9 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import {WebCompleteResult, WebSampleSolution} from './webInterfaces';
 import {renderWebCompleteResult} from './webCorrection';
-import {domReady, focusOnCorrection, escapeHtml, initShowSampleSolBtn, testExerciseSolution} from '../otherHelpers';
+import {domReady, escapeHtml, focusOnCorrection, initShowSampleSolBtn, testExerciseSolution} from '../otherHelpers';
 
-import {ExerciseFile, IdeWorkspace} from '../tools/ideExerciseHelpers';
-import {getIdeWorkspace, setupEditor} from '../tools/ideExercise';
+import {ExerciseFile, getIdeWorkspace, IdeWorkspace, setupEditor} from '../tools/ideExercise';
 
 let uploadBtn: HTMLButtonElement;
 let previewChangedDiv: HTMLDivElement;
@@ -22,18 +21,6 @@ function onWebCorrectionSuccess(result: WebCompleteResult): void {
     uploadBtn.disabled = false;
 
     renderWebCompleteResult(result);
-    focusOnCorrection();
-}
-
-function onWebCorrectionError(jqXHR): void {
-    uploadBtn.disabled = false;
-
-    document.getElementById('correction').innerHTML = `
-<div class="alert alert-danger">Es gab einen Fehler bei der Korrekur:
-    <hr>
-    <pre>${jqXHR.responseJSON.msg}</pre>
-</div>`.trim();
-
     focusOnCorrection();
 }
 

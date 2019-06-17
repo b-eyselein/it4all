@@ -224,18 +224,9 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class WebFilesTable(tag: Tag) extends ExForeignKeyTable[DbExerciseFile](tag, "web_files") {
+  class WebFilesTable(tag: Tag) extends ExForeignKeyTable[DbExerciseFile](tag, "web_files") with ExerciseFilesTable[DbExerciseFile] {
 
-    def path: Rep[String] = column[String]("path")
-
-    def resourcePath: Rep[String] = column[String]("content")
-
-    def fileType: Rep[String] = column[String]("file_type")
-
-    def editable: Rep[Boolean] = column[Boolean]("editable")
-
-
-    def * : ProvenShape[DbExerciseFile] = (path, exerciseId, exSemVer, collectionId, resourcePath, fileType, editable) <> (DbExerciseFile.tupled, DbExerciseFile.unapply)
+    def * : ProvenShape[DbExerciseFile] = (name, exerciseId, collectionId, content, fileType, editable) <> (DbExerciseFile.tupled, DbExerciseFile.unapply)
 
   }
 
