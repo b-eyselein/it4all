@@ -6,7 +6,6 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "mapRoot": "/assets",
     "sourceRoot": "/assets",
     "rootDirs": [
       "app/assets",
