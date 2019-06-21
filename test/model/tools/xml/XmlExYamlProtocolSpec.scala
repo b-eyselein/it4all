@@ -63,7 +63,6 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
           |""".stripMargin)
     )
 
-    val xmlSampleYamlFormat = XmlSampleYamlFormat
 
     for ((docId, toRead, grammarContent, docContent) <- valuesToTest) {
 
@@ -74,11 +73,11 @@ class XmlExYamlProtocolSpec extends FlatSpec with Matchers {
       //        case Success(someDtd) => someDtd
       //      }
 
-      xmlSampleYamlFormat.read(toRead.parseYaml) match {
+      XmlSampleYamlFormat.read(toRead.parseYaml) match {
         case Failure(error)     => fail("Could not read yaml: " + error.getMessage)
         case Success(xmlSample) =>
           xmlSample shouldBe XmlSampleSolution(docId, XmlSolution(docContent, grammarContent))
-          xmlSampleYamlFormat.write(xmlSample).prettyPrint shouldBe toRead
+          XmlSampleYamlFormat.write(xmlSample).prettyPrint shouldBe toRead
       }
     }
   }
