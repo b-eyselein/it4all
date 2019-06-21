@@ -51,11 +51,11 @@ val webJarDependencies = Seq(
   "org.webjars.npm" % "systemjs" % "0.21.6", // MIT, TODO: 3.1.6
   "org.webjars.npm" % "types__systemjs" % "0.20.6", // MIT
 
-  "org.webjars.npm" % "jointjs" % "2.2.1", // MPL-2.0
+  "org.webjars.npm" % "jointjs" % "3.0.1", // MPL-2.0
 
   "org.webjars.npm" % "types__backbone" % "1.3.46", // MIT
 
-  "org.webjars.npm" % "codemirror" % "5.47.0", // MIT
+  "org.webjars.npm" % "codemirror" % "5.48.0", // MIT
   "org.webjars.npm" % "types__codemirror" % "0.0.74", // MIT
   "org.webjars.npm" % "cm-show-invisibles" % "2.0.2", // MIT
 
@@ -73,7 +73,7 @@ dependencyOverrides ++= Seq(
   "org.webjars.npm" % "types__jquery" % jqueryTypesVersion,
   "org.webjars.npm" % "types__underscore" % "1.8.14",
   "org.webjars.npm" % "types__sizzle" % "2.3.2", // MIT
-  "org.webjars.npm" % "types__estree" % "0.0.39", // MIT
+//  "org.webjars.npm" % "types__estree" % "0.0.39", // MIT
 )
 
 excludeDependencies ++= Seq(
