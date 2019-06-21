@@ -9,7 +9,12 @@ object RoseCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RoseEva
 
   private implicit val pointsWrites: Writes[Points] = pointsJsonWrites
 
-  private implicit def roseEvalResultWrites: Writes[RoseEvalResult] = x => JsString(s"TODO: ${x.toString}!")
+  private implicit def roseEvalResultWrites: Writes[RoseEvalResult] = x => {
+
+    // FIXME: implement!
+
+    JsString(s"TODO: ${x.toString}!")
+  }
 
   override val completeResultWrites: Writes[RoseCompleteResult] = Json.writes[RoseCompleteResult]
 
@@ -18,8 +23,10 @@ object RoseCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RoseEva
 
 object RoseSampleSolutionJsonProtocol {
 
-  private implicit val progLanguageJsonFormat: Format[ProgLanguage] = ProgLanguages.jsonFormat
+  val roseSampleSolutionJsonFormat: Format[RoseSampleSolution] = {
+    implicit val progLanguageJsonFormat: Format[ProgLanguage] = ProgLanguages.jsonFormat
 
-  val roseSampleSolutionJsonFormat: Format[RoseSampleSolution] = Json.format[RoseSampleSolution]
+    Json.format[RoseSampleSolution]
+  }
 
 }

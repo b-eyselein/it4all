@@ -36,7 +36,7 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Co
     db.run(sampleSolutionsTableQuery
       .filter { sample => sample.collectionId === collId && sample.exerciseId === exId }
       .result
-      .map(_ map StringSolutionDbModels.sampleSolFromDbSampleSol))
+      .map(_.map(StringSolutionDbModels.sampleSolFromDbSampleSol)))
 
   override def futureSampleSolutionsForExPart(collId: Int, exId: Int, exPart: PartType): Future[Seq[StringSampleSolution]] =
     db.run(sampleSolutionsTableQuery
@@ -47,6 +47,7 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Co
   override def futureMaybeOldSolution(username: String, collId: Int, exerciseId: Int, part: PartType): Future[Option[StringUserSolution[PartType]]] =
     db.run(userSolutionsTableQuery
       .filter { us => us.username === username && us.collectionId === collId && us.exerciseId === exerciseId && us.part === part }
+      .sortBy(_.id.desc)
       .result.headOption)
       .map(_.map(StringSolutionDbModels.userSolFromDbUserSol))
 

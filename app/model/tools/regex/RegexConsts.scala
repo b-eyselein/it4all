@@ -7,13 +7,17 @@ import scala.collection.immutable.IndexedSeq
 
 object RegexConsts extends Consts {
 
+  val correctionTypeName: String = "correctionType"
+
   val dataName: String = "data"
+
+  val extractionTestDataName: String = "extractionTestData"
 
   val includedName: String = "included"
 
   val resultTypeName: String = "resultType"
 
-  val testDataName: String = "testData"
+  val matchTestDataName: String = "matchTestData"
 
 }
 

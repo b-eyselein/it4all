@@ -1,5 +1,7 @@
 export type SuccessType = 'ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE';
 
+export type BinaryClassificationResultType = 'TruePositive' | 'FalsePositive' | 'FalseNegative' | 'TrueNegative';
+
 export function domReady(fn: () => void): void {
     if (document.readyState === 'loading') {
         document.addEventListener("DOMContentLoaded", fn);

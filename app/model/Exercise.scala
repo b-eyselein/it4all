@@ -39,9 +39,6 @@ trait HasBaseValues {
 
   def state: ExerciseState
 
-
-  def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
-
 }
 
 trait ExPart {

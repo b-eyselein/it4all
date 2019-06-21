@@ -16,7 +16,7 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) .map (_ getOrElse ExerciseState.CREATED)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
       shortName <- yamlObject.stringField(shortNameName)
     } yield RegexCollection(id, title, author, text, state, shortName)
 
@@ -32,36 +32,55 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) .map (_ getOrElse ExerciseState.CREATED)
+      state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
       maxPoints <- yamlObject.intField(maxPointsName)
 
+      correctionType <- yamlObject.enumField(correctionTypeName, RegexCorrectionTypes.withNameInsensitive)
       sampleSolutionTries <- yamlObject.arrayField(samplesName, StringSampleSolutionYamlFormat.read)
 
-      testDataTries <- yamlObject.arrayField(testDataName, RegexTestDataYamlFormat.read)
+      matchTestDataTries <- yamlObject.arrayField(matchTestDataName, RegexMatchTestDataYamlFormat.read)
+      extractionTestDataTries <- yamlObject.arrayField(extractionTestDataName, RegexExtractionTestDataYamlFormat.read)
     } yield {
 
       for (sampleSolReadError <- sampleSolutionTries._2)
         println(sampleSolReadError)
 
-      for (testDataReadError <- testDataTries._2)
+      for (testDataReadError <- matchTestDataTries._2)
         println(testDataReadError)
 
-      RegexExercise(id, semanticVersion, title, author, text, state, maxPoints, sampleSolutionTries._1, testDataTries._1)
+      for (extractionTestDataError <- extractionTestDataTries._2)
+        println(extractionTestDataError)
+
+      RegexExercise(
+        id, semanticVersion, title, author, text, state, maxPoints, correctionType,
+        sampleSolutionTries._1, matchTestDataTries._1, extractionTestDataTries._1
+      )
     }
 
     override def write(obj: RegexExercise): YamlValue = ???
 
   }
 
-  private object RegexTestDataYamlFormat extends MyYamlObjectFormat[RegexTestData] {
+  private object RegexMatchTestDataYamlFormat extends MyYamlObjectFormat[RegexMatchTestData] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[RegexTestData] = for {
+    override protected def readObject(yamlObject: YamlObject): Try[RegexMatchTestData] = for {
       id <- yamlObject.intField(idName)
       data <- yamlObject.stringField(dataName)
       isIncluded <- yamlObject.boolField(includedName)
-    } yield RegexTestData(id, data, isIncluded)
+    } yield RegexMatchTestData(id, data, isIncluded)
 
-    override def write(obj: RegexTestData): YamlValue = ???
+    override def write(obj: RegexMatchTestData): YamlValue = ???
+
+  }
+
+  private object RegexExtractionTestDataYamlFormat extends MyYamlObjectFormat[RegexExtractionTestData] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[RegexExtractionTestData] = for {
+      id <- yamlObject.intField(idName)
+      base <- yamlObject.stringField("base")
+    } yield RegexExtractionTestData(id, base)
+
+    override def write(obj: RegexExtractionTestData): YamlValue = ???
 
   }
 

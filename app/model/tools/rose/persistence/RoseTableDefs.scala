@@ -89,9 +89,17 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
       .result)
       .map(_.map(RoseSolutionDbModels.sampleSolFromDbSampleSol))
 
-  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: RoseExPart): Future[Option[RoseUserSolution]] = ???
+  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: RoseExPart): Future[Option[RoseUserSolution]] = {
+    // FIXME: implement?!
+    Future.successful(None)
+    // ???
+  }
 
-  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: RoseUserSolution): Future[Boolean] = ???
+  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: RoseUserSolution): Future[Boolean] = {
+    // FIXME: implement ?!
+    Future.successful(false)
+    // ???
+  }
 
   // Implicit column types
 
@@ -108,7 +116,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   class RoseCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "rose_collections") {
 
-    def * = (id, title, author, text, state, shortName) <> (RoseCollection.tupled, RoseCollection.unapply)
+    def * : ProvenShape[RoseCollection] = (id, title, author, text, state, shortName) <> (RoseCollection.tupled, RoseCollection.unapply)
 
   }
 

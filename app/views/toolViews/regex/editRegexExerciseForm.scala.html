@@ -58,7 +58,7 @@
         </div>
 
         <div id="testDataDiv">
-        @helper.repeat(exerciseForm(RegexConsts.testDataName), min = 1) { testDataField =>
+        @helper.repeat(exerciseForm(RegexConsts.matchTestDataName), min = 1) { testDataField =>
             <div class="form-group row" id="testdata_row_@testDataField(RegexConsts.idName).value">
                 <div class="col-md-2">
                 @myhelpers.input(testDataField(RegexConsts.idName), "number", isReadOnly = true)

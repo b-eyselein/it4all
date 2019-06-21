@@ -10,11 +10,16 @@ object RegexToolForm extends ToolForms[RegexExercise, RegexCollection, RegexExer
 
   // Test data
 
-  private val testDataMapping: Mapping[RegexTestData] = mapping(
+  private val matchTestDataMapping: Mapping[RegexMatchTestData] = mapping(
     idName -> number,
     dataName -> nonEmptyText,
     includedName -> boolean
-  )(RegexTestData.apply)(RegexTestData.unapply)
+  )(RegexMatchTestData.apply)(RegexMatchTestData.unapply)
+
+  private val extractionTestDataMapping: Mapping[RegexExtractionTestData] = mapping(
+    idName -> number,
+    "base" -> nonEmptyText
+  )(RegexExtractionTestData.apply)(RegexExtractionTestData.unapply)
 
   // Complete exercise
 
@@ -39,8 +44,10 @@ object RegexToolForm extends ToolForms[RegexExercise, RegexCollection, RegexExer
       textName -> nonEmptyText,
       statusName -> ExerciseState.formField,
       maxPointsName -> number,
+      correctionTypeName -> RegexCorrectionTypes.formField,
       samplesName -> seq(stringSampleMapping),
-      testDataName -> seq(testDataMapping)
+      matchTestDataName -> seq(matchTestDataMapping),
+      extractionTestDataName -> seq(extractionTestDataMapping)
     )(RegexExercise.apply)(RegexExercise.unapply)
   )
   override val exerciseReviewForm: Form[RegexExerciseReview] = Form(

@@ -1,10 +1,87 @@
 @import model.tools.regex.{RegexExercise, RegexExPart, RegexToolMain, RegexCollection}
 
-@(user: model.User, toolMainObject: RegexToolMain, regexCollection: RegexCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[String])(
-        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@(user: model.User, toolMainObject: RegexToolMain, regexCollection: RegexCollection, exercise: RegexExercise, part: RegexExPart,
+    oldSolution: Option[String])(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@* @toolViews.textExercise(user, Html(exercise.text), regexCollection, exercise, part, oldSolution.getOrElse(""), toolMainObject, additionalScripts) *@
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-@additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/regex/regexExercise.js")');</script>
 }
 
-@toolViews.textExercise(user, Html(exercise.text), regexCollection, exercise, part, oldSolution.getOrElse(""), toolMainObject, additionalScripts)
+@correctionUrl = @{
+    coll.routes.CollectionController.correctLive(toolMainObject.urlPart, regexCollection.id, exercise.id, part.urlName)
+}
+
+@sampleSolUrl = @{
+    coll.routes.CollectionController.sampleSol(toolMainObject.urlPart, regexCollection.id, exercise.id, part.urlName)
+}
+
+@main(toolMainObject.toolname, Some(user), scripts) {
+    <div class="container-fluid" id="fullsc">
+
+        <div class="row">
+
+            <div class="col-xl-4 col-sm-12">
+                <h3 class="text-center">Aufgabenstellung</h3>
+
+                <div class="card">
+                    <div class="card-body bg-light text-justify">@exercise.text</div>
+                </div>
+
+                <div class="form-group my-3">
+                    <input class="form-control" id="solutionInput" value="@oldSolution">
+                </div>
+
+                <div class="form-group">
+
+                    @helper.CSRF.formField
+
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-primary w-100" id="testBtn" data-href="@correctionUrl">
+                            Lösung testen</button>
+                        <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMainObject.urlPart, regexCollection.id, exercise.id, part.urlName)"
+                        id="endSolveAnchor" class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xl-8 col-sm-12">
+
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#correctionTab" id="showCorrectionTabA">
+                            Korrektur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#sampleSolTab">Musterlösung</a>
+                    </li>
+                </ul>
+
+                <br>
+
+                <div class="tab-content">
+                    <div id="correctionTab" class="tab-pane fade show active">
+                        <div id="correctionDiv">
+                            <div id="correction">
+                                <div class="alert alert-warning">
+                                    Starten Sie die Korrektur mit einem Klick auf den Knopf &quot;Lösung testen&quot;</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sampleSolTab" class="tab-pane fade">
+                        <button data-href="@sampleSolUrl" id="showSampleSolBtn" class="btn btn-outline-success btn-block">
+                            Musterlösung anzeigen</button>
+                        <div id="sampleSolDiv"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+}
+

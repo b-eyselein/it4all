@@ -1,6 +1,7 @@
 package model.tools.uml
 
 import model.MyYamlProtocol._
+import model.core.CoreConsts.{authorName, idName, semanticVersionName, statusName, textName, titleName}
 import model.tools.uml.UmlConsts._
 import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
@@ -20,7 +21,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_.getOrElse(ExerciseState.CREATED))
       shortName <- yamlObject.stringField(shortNameName)
     } yield UmlCollection(id, title, author, text, state, shortName)
 
@@ -62,11 +63,14 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(exercise: UmlExercise): YamlValue = YamlObject(
-      writeBaseValues(exercise.baseValues) ++
-        Map(
-          YamlString(mappingsName) -> YamlArr(exercise.mappings.toSeq.map(UmlMappingYamlFormat.write)),
-          YamlString(ignoreWordsName) -> YamlArr(exercise.toIgnore.map(YamlString)),
-        )
+      YamlString(idName) -> exercise.id,
+      YamlString(titleName) -> exercise.title,
+      YamlString(authorName) -> exercise.author,
+      YamlString(textName) -> exercise.text,
+      YamlString(statusName) -> exercise.state.entryName,
+      YamlString(semanticVersionName) -> exercise.semanticVersion.asString,
+      YamlString(mappingsName) -> YamlArr(exercise.mappings.toSeq.map(UmlMappingYamlFormat.write)),
+      YamlString(ignoreWordsName) -> YamlArr(exercise.toIgnore.map(YamlString))
     )
 
   }

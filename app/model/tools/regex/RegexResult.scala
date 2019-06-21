@@ -1,13 +1,16 @@
 package model.tools.regex
 
+import model.core.matching.MatchingResult
 import model.core.result.{CompleteResult, CompleteResultJsonProtocol, EvaluationResult, SuccessType}
 import model.points._
 import model.tools.regex.BinaryClassificationResultTypes._
-import model.tools.regex.RegexConsts._
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-final case class RegexEvaluationResult(testData: RegexTestData, resultType: BinaryClassificationResultType) extends EvaluationResult {
+
+sealed trait RegexEvalutationResult extends EvaluationResult
+
+
+final case class RegexMatchingEvaluationResult(matchData: String, isIncluded: Boolean, resultType: BinaryClassificationResultType) extends RegexEvalutationResult {
 
   override def success: SuccessType = resultType match {
     case TruePositive | TrueNegative   => SuccessType.COMPLETE
@@ -16,20 +19,57 @@ final case class RegexEvaluationResult(testData: RegexTestData, resultType: Bina
 
 }
 
-final case class RegexCompleteResult(results: Seq[RegexEvaluationResult], points: Points, maxPoints: Points, solutionSaved: Boolean = false)
-  extends CompleteResult[RegexEvaluationResult]
+
+final case class RegexExtractionEvaluationResult(base: String, extractionMatchingResult: MatchingResult[RegexMatchMatch], correct: Boolean) extends RegexEvalutationResult {
+
+  override def success: SuccessType = ???
+
+}
 
 
-object RegexCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RegexEvaluationResult, RegexCompleteResult] {
+final case class RegexCompleteResult(
+  correctionType: RegexCorrectionType,
+  matchingResults: Seq[RegexMatchingEvaluationResult],
+  extractionResults: Seq[RegexExtractionEvaluationResult],
+  points: Points, maxPoints: Points, solutionSaved: Boolean = false
+) extends CompleteResult[RegexEvalutationResult] {
 
-  private implicit val pointsWrites = pointsJsonWrites
+  override def results: Seq[RegexEvalutationResult] = matchingResults ++ extractionResults
 
-  private implicit val regexEvaluationResultWrites: Writes[RegexEvaluationResult] = (
-    (__ \ testDataName).write[String] and
-      (__ \ includedName).write[Boolean] and
-      (__ \ resultTypeName).write[String]
-    ) (rer => (rer.testData.data, rer.testData.isIncluded, rer.resultType.entryName))
+}
 
-  override val completeResultWrites: Writes[RegexCompleteResult] = Json.writes[RegexCompleteResult]
+
+object RegexCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RegexEvalutationResult, RegexCompleteResult] {
+
+
+  private val regexMatchingEvaluationResultWrites: Writes[RegexMatchingEvaluationResult] = Json.writes[RegexMatchingEvaluationResult]
+
+
+  private val regexMatchMatchWrites: Writes[RegexMatchMatch] = _.toJson
+
+  private val regexMatchMatchingResultWrites: Writes[MatchingResult[RegexMatchMatch]] = {
+    implicit val rmmw: Writes[RegexMatchMatch] = regexMatchMatchWrites
+
+    Json.writes[MatchingResult[RegexMatchMatch]]
+  }
+
+
+  private val regexExtractionEvaluationResultWrites: Writes[RegexExtractionEvaluationResult] = {
+    implicit val rmmrw: Writes[MatchingResult[RegexMatchMatch]] = regexMatchMatchingResultWrites
+
+    Json.writes[RegexExtractionEvaluationResult]
+  }
+
+  override val completeResultWrites: Writes[RegexCompleteResult] = {
+    implicit val regexCorrectionTypeFormat: Format[RegexCorrectionType] = RegexCorrectionTypes.jsonFormat
+
+    implicit val pointsWrites: Writes[Points] = pointsJsonWrites
+
+    implicit val matchEvalResultWrites: Writes[RegexMatchingEvaluationResult] = regexMatchingEvaluationResultWrites
+
+    implicit val extractionEvalResultWrites: Writes[RegexExtractionEvaluationResult] = regexExtractionEvaluationResultWrites
+
+    Json.writes[RegexCompleteResult]
+  }
 
 }

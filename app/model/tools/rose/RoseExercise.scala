@@ -8,13 +8,10 @@ import play.twirl.api.Html
 final case class RoseCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
   extends ExerciseCollection
 
-final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                              fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution])
-  extends Exercise {
-
-  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
-
-  // other methods
+final case class RoseExercise(
+  id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]
+) extends Exercise {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.toolViews.rose.rosePreview.render(this)
@@ -25,7 +22,7 @@ final case class RoseExercise(id: Int, semanticVersion: SemanticVersion, title: 
 
     val parameters = inputTypes match {
       case Seq() => ""
-      case other => ", " + (other .map (it => it.name + ": " + it.inputType.typeName) mkString ", ")
+      case other => ", " + (other.map(it => it.name + ": " + it.inputType.typeName) mkString ", ")
     }
 
     s"""from base.robot import Robot

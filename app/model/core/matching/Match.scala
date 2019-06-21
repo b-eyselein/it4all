@@ -40,9 +40,9 @@ trait Match {
 
   protected def descArgForJson(arg: T): JsValue
 
-  def points: Points = -1 point
+  def points: Points = (-1).point
 
-  def maxPoints: Points = -1 point
+  def maxPoints: Points = (-1).point
 
   def toJson: JsValue = Json.obj(
     matchTypeName -> matchType.entryName,

@@ -1,10 +1,10 @@
 export type MatchType = 'SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE';
 
 export interface AnalysisResult {
-    success: string
+    success: MatchType
 }
 
-export interface MatchingResult<T, AR> {
+export interface MatchingResult<T, AR extends AnalysisResult> {
     matchName: string
     matchSingularName: string
 
@@ -15,7 +15,7 @@ export interface MatchingResult<T, AR> {
     maxPoints: number
 }
 
-export interface Match<T, AR> {
+export interface Match<T, AR extends AnalysisResult> {
     matchType: MatchType;
     analysisResult: AR | null;
     userArg: T | null

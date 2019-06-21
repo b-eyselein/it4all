@@ -157,16 +157,7 @@ object MyYamlProtocol {
 
 abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
-  protected val baseResourcesPath = File("conf") / "resources"
-
-  protected def writeBaseValues(baseValues: BaseValues): Map[YamlValue, YamlValue] = Map[YamlValue, YamlValue](
-    YamlString(idName) -> baseValues.id,
-    YamlString(titleName) -> baseValues.title,
-    YamlString(authorName) -> baseValues.author,
-    YamlString(textName) -> baseValues.text,
-    YamlString(statusName) -> baseValues.state.entryName,
-    YamlString(semanticVersionName) -> baseValues.semanticVersion.asString
-  )
+  protected val baseResourcesPath: File = File("conf") / "resources"
 
   protected def readBaseValues(yamlObject: YamlObject): Try[BaseValues] = for {
     id <- yamlObject.intField(idName)

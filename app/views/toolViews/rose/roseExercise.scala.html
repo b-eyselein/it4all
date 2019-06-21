@@ -1,7 +1,7 @@
 @import model.tools.rose.{RoseCollection, RoseExercise, RoseToolMain, RoseExParts}
 
 @(user: model.User, collection: RoseCollection, exercise: RoseExercise, oldSolution: String, toolMainObject: RoseToolMain)(
-        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
     <script>SystemJS.import('@routes.Assets.versioned("app/rose/roseExercise.js")');</script>
@@ -50,4 +50,4 @@
 }
 
 @toolViews.textExercise(user, Html(exercise.text), collection, exercise, RoseExParts.RoseSingleExPart, oldSolution,
-    toolMainObject, additionalScripts, Some(remainigExerciseDef), remainingPage = remainingPage)
+    toolMainObject, additionalScripts = additionalScripts, remainingExDef = Some(remainigExerciseDef), remainingPage = remainingPage)

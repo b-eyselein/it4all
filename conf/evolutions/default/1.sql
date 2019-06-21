@@ -323,6 +323,7 @@ create table if not exists regex_exercises (
     ex_text          text,
     ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
     max_points       int,
+    correction_type  enum ('MATCHING', 'EXTRACTION')                      default 'MATCHING',
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id)
@@ -343,7 +344,7 @@ create table if not exists regex_sample_solutions (
         on update cascade on delete cascade
 );
 
-create table if not exists regex_test_data (
+create table if not exists regex_match_test_data (
     id            int,
     exercise_id   int,
     ex_sem_ver    varchar(10),
@@ -352,6 +353,19 @@ create table if not exists regex_test_data (
     is_included   boolean,
 
     primary key (id, exercise_id, ex_sem_ver, collection_id),
+    foreign key (exercise_id, ex_sem_ver, collection_id)
+        references regex_exercises (id, semantic_version, collection_id)
+        on update cascade on delete cascade
+);
+
+create table if not exists regex_extraction_test_data (
+    id            int,
+    exercise_id   int,
+    ex_sem_ver    varchar(10),
+    collection_id int,
+    base          text not null,
+
+    primary key (id, exercise_id, collection_id),
     foreign key (exercise_id, ex_sem_ver, collection_id)
         references regex_exercises (id, semantic_version, collection_id)
         on update cascade on delete cascade
@@ -1041,7 +1055,9 @@ drop table if exists regex_exercise_reviews;
 
 drop table if exists regex_user_solutions;
 
-drop table if exists regex_test_data;
+drop table if exists regex_extraction_test_data;
+
+drop table if exists regex_match_test_data;
 
 drop table if exists regex_sample_solutions;
 

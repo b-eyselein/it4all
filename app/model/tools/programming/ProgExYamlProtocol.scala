@@ -50,7 +50,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       unitTestPart <- yamlObject.objField(unitTestPartName, UnitTestPartYamlFormat.read)
       implementationPart <- yamlObject.objField(implementationPartName, ImplementationPartYamlFormat.read)
 
-      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat(functionName).read)
+      sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat.read)
       sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
 
       maybeClassDiagramPart <- yamlObject.optField(classDiagramName, UmlSampleSolutionYamlFormat.read).map(_.map(_.sample))
@@ -76,18 +76,18 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       )
     }
 
-    override def write(exercise: ProgExercise): YamlObject = {
-      val progSampleSolYamlFormat = ProgSampleSolutionYamlFormat(exercise.functionName)
-      YamlObject(
-        writeBaseValues(exercise.baseValues) ++
-          Map[YamlValue, YamlValue](
-            YamlString(functionNameName) -> YamlString(exercise.functionName),
-            YamlString(inputTypesName) -> YamlArr(exercise.inputTypes.map(it => YamlString(it.inputType.typeName))),
-            YamlString(sampleSolutionsName) -> YamlArr(exercise.sampleSolutions map progSampleSolYamlFormat.write),
-            YamlString(sampleTestDataName) -> YamlArr(exercise.sampleTestData map ProgSampleTestdataYamlFormat.write)
-          )
-      )
-    }
+    override def write(exercise: ProgExercise): YamlObject = YamlObject(
+      YamlString(idName) -> exercise.id,
+      YamlString(titleName) -> exercise.title,
+      YamlString(authorName) -> exercise.author,
+      YamlString(textName) -> exercise.text,
+      YamlString(statusName) -> exercise.state.entryName,
+      YamlString(semanticVersionName) -> exercise.semanticVersion.asString,
+      YamlString(functionNameName) -> YamlString(exercise.functionName),
+      YamlString(inputTypesName) -> YamlArr(exercise.inputTypes.map(it => YamlString(it.inputType.typeName))),
+      YamlString(sampleSolutionsName) -> YamlArr(exercise.sampleSolutions map ProgSampleSolutionYamlFormat.write),
+      YamlString(sampleTestDataName) -> YamlArr(exercise.sampleTestData map ProgSampleTestdataYamlFormat.write)
+    )
 
   }
 
@@ -135,7 +135,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-  final case class ProgSampleSolutionYamlFormat(functionName: String) extends MyYamlObjectFormat[ProgSampleSolution] {
+  case object ProgSampleSolutionYamlFormat extends MyYamlObjectFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
       id <- yamlObject.intField(idName)

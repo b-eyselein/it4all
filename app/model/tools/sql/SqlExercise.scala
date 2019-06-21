@@ -26,12 +26,10 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
 // Classes for use
 
-final case class SqlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             exerciseType: SqlExerciseType, override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[StringSampleSolution]) extends Exercise {
-
-  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
-
-  // other methods
+final case class SqlExercise(
+  id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  exerciseType: SqlExerciseType, override val tags: Seq[SqlExTag], hint: Option[String], samples: Seq[StringSampleSolution]
+) extends Exercise {
 
   override def preview: Html = // FIXME: move to toolMain!
     views.html.toolViews.sql.sqlExPreview(this)

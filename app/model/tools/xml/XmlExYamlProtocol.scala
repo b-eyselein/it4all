@@ -1,7 +1,6 @@
 package model.tools.xml
 
 import model.MyYamlProtocol._
-import model.tools.sql.SqlConsts.{authorName, idName, shortNameName, statusName, textName, titleName}
 import model.tools.xml.XmlConsts._
 import model.{ExerciseState, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
@@ -21,7 +20,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
       text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_.getOrElse(ExerciseState.CREATED))
       shortName <- yamlObject.stringField(shortNameName)
     } yield XmlCollection(id, title, author, text, state, shortName)
 
@@ -47,17 +46,21 @@ object XmlExYamlProtocol extends MyYamlProtocol {
         grammarDescription, rootNode, samples._1)
     }
 
-    override def write(exercise: XmlExercise) = new YamlObject(
-      writeBaseValues(exercise.baseValues) ++
-        Map[YamlValue, YamlValue](
-          YamlString(grammarDescriptionName) -> YamlString(exercise.grammarDescription),
-          YamlString(samplesName) -> YamlArray(exercise.samples map XmlSampleYamlFormat.write toVector),
-          YamlString(rootNodeName) -> YamlString(exercise.rootNode)
-        )
+    override def write(exercise: XmlExercise) = YamlObject(
+      YamlString(idName) -> exercise.id,
+      YamlString(titleName) -> exercise.title,
+      YamlString(authorName) -> exercise.author,
+      YamlString(textName) -> exercise.text,
+      YamlString(statusName) -> exercise.state.entryName,
+      YamlString(semanticVersionName) -> exercise.semanticVersion.asString,
+      YamlString(grammarDescriptionName) -> exercise.grammarDescription,
+      YamlString(samplesName) -> YamlArray(exercise.samples map XmlSampleYamlFormat.write toVector),
+      YamlString(rootNodeName) -> exercise.rootNode
     )
+
   }
 
-  object XmlSampleYamlFormat extends MyYamlObjectFormat[XmlSampleSolution] {
+  private object XmlSampleYamlFormat extends MyYamlObjectFormat[XmlSampleSolution] {
 
     override protected def readObject(yamlObject: YamlObject): Try[XmlSampleSolution] = for {
       id <- yamlObject.intField(idName)
@@ -66,9 +69,9 @@ object XmlExYamlProtocol extends MyYamlProtocol {
     } yield XmlSampleSolution(id, XmlSolution(sampleDocument, sampleGrammar))
 
     override def write(obj: XmlSampleSolution): YamlValue = YamlObject(
-      YamlString(idName) -> YamlNumber(obj.id),
-      YamlString(grammarName) -> YamlString(obj.sample.grammar),
-      YamlString(documentName) -> YamlString(obj.sample.document)
+      YamlString(idName) -> obj.id,
+      YamlString(grammarName) -> obj.sample.grammar,
+      YamlString(documentName) -> obj.sample.document
     )
 
   }

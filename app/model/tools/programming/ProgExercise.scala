@@ -39,10 +39,6 @@ final case class ProgExercise(
   maybeClassDiagramPart: Option[UmlClassDiagram]
 ) extends Exercise with FileExercise[ProgExPart] {
 
-  override def baseValues: BaseValues = BaseValues(id, semanticVersion, title, author, text, state)
-
-  // Other methods
-
   val inputCount: Int = inputTypes.size
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =

@@ -64,9 +64,10 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
   def futureCollById(id: Int): Future[Option[CollType]] = db.run(collTable.filter(_.id === id).result.headOption)
 
   def futureExercisesInColl(collId: Int): Future[Seq[ExType]] =
-    db.run(exTable.filter(_.collectionId === collId).result) flatMap {
-      futureExes: Seq[DbExType] => Future.sequence(futureExes map (ex => completeExForEx(collId, ex)))
-    }
+    db.run(exTable.filter(_.collectionId === collId).result)
+      .flatMap { futureExes: Seq[DbExType] =>
+        Future.sequence(futureExes map (ex => completeExForEx(collId, ex)))
+      }
 
   def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] =
     db.run(exTable.filter { ex => ex.id === id && ex.collectionId === collId }.result.headOption) flatMap {
@@ -90,9 +91,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
 
   def futureSolveStateForExercisePart(user: User, collId: Int, exId: Int, part: PartType): Future[Option[SolvedState]] = db.run(
     userSolutionsTableQuery
-      .filter {
-        sol => sol.username === user.username && sol.collectionId === collId && sol.exerciseId === exId && sol.part === part
-      }
+      .filter { sol => sol.username === user.username && sol.collectionId === collId && sol.exerciseId === exId && sol.part === part }
       .sortBy(_.id.desc)
       .result.headOption
       .map {

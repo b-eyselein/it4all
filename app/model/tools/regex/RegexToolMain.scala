@@ -28,7 +28,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override type ReviewType = RegexExerciseReview
 
-  override type ResultType = RegexEvaluationResult
+  override type ResultType = RegexEvalutationResult
   override type CompResultType = RegexCompleteResult
 
   override type Tables = RegexTableDefs
@@ -61,11 +61,15 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, maxPoints = 0,
+    correctionType = RegexCorrectionTypes.MATCHING,
     sampleSolutions = Seq[StringSampleSolution](
       StringSampleSolution(0, "")
     ),
-    testData = Seq[RegexTestData](
-      RegexTestData(0, "", isIncluded = false)
+    matchTestData = Seq[RegexMatchTestData](
+      RegexMatchTestData(0, "", isIncluded = false)
+    ),
+    extractionTestData = Seq(
+      RegexExtractionTestData(0, "")
     )
   )
 
@@ -81,34 +85,16 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     case None          => Left("Body did not contain json!")
     case Some(jsValue) => jsValue match {
       case JsString(regex) => Right(regex)
-      case other           => Left(s"Json was no string but ${other}")
+      case other           => Left(s"Json was no string but $other")
     }
   }
 
-  override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] = Future.successful(Try {
-
-    val regex = sol.r
-
-    val results: Seq[RegexEvaluationResult] = exercise.testData.map {
-      testData =>
-        val classificationResultType: BinaryClassificationResultType = testData.data match {
-          case regex(_*) =>
-            if (testData.isIncluded) BinaryClassificationResultTypes.TruePositive
-            else BinaryClassificationResultTypes.FalsePositive
-          case _         =>
-            if (testData.isIncluded) BinaryClassificationResultTypes.FalseNegative
-            else BinaryClassificationResultTypes.TrueNegative
-        }
-
-        RegexEvaluationResult(testData, classificationResultType)
-    }
-
-    val correctResultsCount: Int = results.filter { s => s.resultType == TruePositive || s.resultType == TrueNegative }.size
-
-    val points: Points = (correctResultsCount.toDouble / exercise.testData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
-
-    RegexCompleteResult(results, points, exercise.maxPoints.points)
-  })
+  override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] =
+    Future.successful(
+      Try(
+        RegexCorrector.correct(sol, exercise)
+      )
+    )
 
   // Views
 

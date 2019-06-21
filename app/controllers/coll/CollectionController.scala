@@ -50,7 +50,7 @@ class CollectionController @Inject()(
     implicit request =>
       val step = 12
 
-      toolMain.futureCollById(collId) flatMap {
+      toolMain.futureCollById(collId).flatMap {
         case None       => Future.successful(onNoSuchCollection(user, toolMain, collId))
         case Some(coll) =>
 

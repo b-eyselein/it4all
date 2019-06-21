@@ -25,8 +25,10 @@ object XmlExParts extends PlayEnum[XmlExPart] {
 final case class XmlCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
   extends ExerciseCollection
 
-final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-                             grammarDescription: String, rootNode: String, samples: Seq[XmlSampleSolution]) extends Exercise {
+final case class XmlExercise(
+  id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  grammarDescription: String, rootNode: String, samples: Seq[XmlSampleSolution]
+) extends Exercise {
 
   override def preview: Html = //FIXME: move to toolMain!
     views.html.toolViews.xml.xmlPreview(this)
@@ -34,8 +36,8 @@ final case class XmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
   def getTemplate(part: XmlExPart): XmlSolution = XmlSolution(
     document =
       s"""<?xml version="1.0" encoding="UTF-8"?>
-         |<!DOCTYPE ${rootNode} SYSTEM "${rootNode}.dtd">""".stripMargin,
-    grammar = s"<!ELEMENT ${rootNode} (EMPTY)>"
+         |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin,
+    grammar = s"<!ELEMENT $rootNode (EMPTY)>"
   )
 
 }

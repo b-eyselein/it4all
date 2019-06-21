@@ -1,12 +1,11 @@
-import * as $ from 'jquery';
 import * as CodeMirror from 'codemirror';
 import {CompleteRunResult, instantiateAll} from "./simulator";
 import {initEditor} from "../editorHelpers";
 
 import 'codemirror/mode/python/python';
-import {domReady} from "../otherHelpers";
+import {domReady, testExerciseSolution} from "../otherHelpers";
 
-let testBtn: JQuery;
+let testBtn: HTMLButtonElement;
 let editor: CodeMirror.Editor;
 
 
@@ -17,20 +16,22 @@ interface RoseCompleteResult {
 }
 
 function onRoseCorrectionSuccess(completeResult: RoseCompleteResult): void {
-    testBtn.prop('disabled', false);
+    console.warn(JSON.stringify(completeResult, null, 2));
 
-    let correctionDiv = $('#correction');
+    testBtn.disabled = false;
+
+    let correctionDiv = document.querySelector<HTMLDivElement>('#correction');
 
     switch (completeResult.resultType) {
         case 'syntaxError':
-            correctionDiv.html(`<div class="alert alert-danger"><b>Ihre Lösung hat einen Syntaxfehler:</b><hr><pre>${completeResult.cause}</pre></div>`);
+            correctionDiv.innerHTML = (`<div class="alert alert-danger"><b>Ihre Lösung hat einen Syntaxfehler:</b><hr><pre>${completeResult.cause}</pre></div>`);
             break;
         case 'success':
             let runResult = completeResult.result;
             if (runResult.correct) {
-                correctionDiv.html(`<div class="alert alert-success">Ihre Lösung war korrekt.</div>`)
+                correctionDiv.innerHTML = (`<div class="alert alert-success">Ihre Lösung war korrekt.</div>`)
             } else {
-                correctionDiv.html(`<div class="alert alert-danger">Ihre Lösung war nicht korrekt!</div>`)
+                correctionDiv.innerHTML = (`<div class="alert alert-danger">Ihre Lösung war nicht korrekt!</div>`)
             }
             instantiateAll(runResult);
             break;
@@ -40,13 +41,8 @@ function onRoseCorrectionSuccess(completeResult: RoseCompleteResult): void {
     }
 }
 
-function onRoseCorrectionError(jqXHR): void {
-    console.error(jqXHR.responseText);
-    testBtn.prop('disabled', false);
-}
-
 function testSol(): void {
-    testBtn.prop('disabled', true);
+    testBtn.disabled = true;
 
     const solution: string = editor.getValue();
     // = {
@@ -54,27 +50,12 @@ function testSol(): void {
     //     implementation: editor.getValue()
     // };
 
-
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json', // return type
-        contentType: 'application/json', // type of message to server
-        url: testBtn.data('url'),
-        data: JSON.stringify(solution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onRoseCorrectionSuccess,
-        error: onRoseCorrectionError
-    });
-
+    testExerciseSolution<string, RoseCompleteResult>(testBtn, solution, onRoseCorrectionSuccess);
 }
 
 domReady(() => {
     editor = initEditor('python', 'textEditor');
 
-    testBtn = $('#testBtn');
-    testBtn.on('click', testSol);
+    testBtn = document.querySelector<HTMLButtonElement>('#testBtn');
+    testBtn.onclick = testSol;
 });

@@ -2,6 +2,7 @@ import * as CodeMirror from 'codemirror';
 import {initEditor} from '../editorHelpers';
 
 import {
+    BinaryClassificationResultType,
     displayStringSampleSolution,
     domReady,
     focusOnCorrection,
@@ -9,29 +10,53 @@ import {
     StringSampleSolution,
     testExerciseSolution
 } from "../otherHelpers";
+import {AnalysisResult, Match, MatchingResult} from "../matches";
 
-let editor: CodeMirror.Editor;
+let solutionInput: HTMLInputElement;
 
 let testBtn: HTMLButtonElement;
 
 let solutionChanged: boolean = false;
 
-interface RegexSingleCorrectionResult {
-    testData: string
-    included: boolean
-    resultType: 'TruePositive' | 'FalsePositive' | 'FalseNegative' | 'TrueNegative'
+type RegexCorrectionType = 'MATCHING' | 'EXTRACTION';
+
+
+interface RegexMatchingResult {
+    matchData: string;
+    isIncluded: boolean;
+    resultType: BinaryClassificationResultType;
+}
+
+interface RegexExtractionMatch {
+    start: number;
+    end: number;
+    content: string;
+}
+
+interface RegexExtractionMatchingResult extends MatchingResult<RegexExtractionMatch, AnalysisResult> {
+    allMatches: Match<RegexExtractionMatch, AnalysisResult>[];
+}
+
+interface RegexExtractionResult {
+    base: string;
+    extractionMatchingResult: RegexExtractionMatchingResult;
+    correct: boolean;
 }
 
 interface RegexCorrectionResult {
-    solutionSaved: boolean
-    solution: string
-    points: number
-    maxPoints: number
-    results: RegexSingleCorrectionResult[]
+    correctionType: RegexCorrectionType;
+    solutionSaved: boolean;
+    solution: string;
+    points: number;
+    maxPoints: number;
+    matchingResults: RegexMatchingResult[];
+    extractionResults: RegexExtractionResult[];
 }
 
 function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void {
     testBtn.disabled = false;
+
+    //  console.warn(JSON.stringify(correctionResult, null, 2));
 
     solutionChanged = false;
 
@@ -45,10 +70,9 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
     html += `<p>Sie haben ${correctionResult.points} von ${correctionResult.maxPoints} Punkten erreicht.</p>`;
 
     // Single results
-    for (const result of correctionResult.results) {
-
+    for (const result of correctionResult.matchingResults) {
         let toAdd: string;
-        let clazz: string;
+        let clazz: string = 'text-warning';
 
         switch (result.resultType) {
             case 'TruePositive':
@@ -68,7 +92,31 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
                 clazz = 'text-success';
                 break;
         }
-        html += `<p class="${clazz}"><code>${result.testData}</code> ${toAdd}</p>`;
+        html += `<p class="${clazz}"><code>${result.matchData}</code> ${toAdd}</p>`;
+    }
+
+    for (const result of correctionResult.extractionResults) {
+
+        console.info(JSON.stringify(result.extractionMatchingResult.allMatches, null, 2));
+
+        const matches = '<ul>' + result.extractionMatchingResult.allMatches.map(m => {
+            const clazz = (m.analysisResult && m.analysisResult.success == 'SUCCESSFUL_MATCH') ? 'success' : 'danger';
+
+            return `
+<li class="text-${clazz}">
+    <b>Erwartet:</b> <span>${m.sampleArg ? m.sampleArg.content : ''}</span>,
+    <b>Gefunden:</b> <span>${m.userArg ? m.userArg.content : ''}</span>
+</li>`.trim()
+        }).join('\n') + '</ul>';
+
+        html += `
+<div class="card my-3">
+    <div class="card-body">
+        <p>${result.base}</p>
+        ${matches}
+    </div>
+</div>`;
+
     }
 
     document.querySelector<HTMLDivElement>('#correctionDiv').innerHTML = html;
@@ -76,7 +124,7 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
 }
 
 function testSol(): void {
-    const learnerSolution: string = editor.getValue().trim();
+    const learnerSolution: string = solutionInput.value.trim();
 
     if (learnerSolution.length === 0) {
         alert('Sie können keine leere Lösung abgeben!');
@@ -91,10 +139,10 @@ domReady(() => {
         regexSampleSolutions.map(displayStringSampleSolution).join('\n')
     );
 
-    editor = initEditor('', 'textEditor');
-    editor.on('change', () => {
+    solutionInput = document.querySelector<HTMLInputElement>('#solutionInput');
+    solutionInput.onchange = () => {
         solutionChanged = true;
-    })
+    };
 
     document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
         return !solutionChanged || confirm('Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?');

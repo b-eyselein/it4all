@@ -60,5 +60,4 @@ object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, Sql
       (__ \ resultsName).write[SqlCorrResult](sqlCorrResultRestWrites)
     ) (scr => (scr.solutionSaved, scr.successType.entryName, scr.points.asDouble, scr.maxPoints.asDouble, scr))
 
-
 }
