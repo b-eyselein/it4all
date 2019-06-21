@@ -40,60 +40,58 @@ object RegexMatchMatcher extends Matcher[RegexMatchMatch] {
 
 object RegexCorrector {
 
-  def correct(sol: String, exercise: RegexExercise): RegexCompleteResult = Try(sol.r) match {
-    case Failure(exception) => ???
-    case Success(userRegex) =>
+  def correct(sol: String, exercise: RegexExercise): Try[RegexCompleteResult] = Try(sol.r) map { userRegex =>
 
-      exercise.correctionType match {
-        case RegexCorrectionTypes.MATCHING =>
+    exercise.correctionType match {
+      case RegexCorrectionTypes.MATCHING =>
 
-          val matchResults = exercise.matchTestData.map { matchTestData =>
-            val classificationResultType: BinaryClassificationResultType = matchTestData.data match {
-              case userRegex(_*) =>
-                if (matchTestData.isIncluded) BinaryClassificationResultTypes.TruePositive
-                else BinaryClassificationResultTypes.FalsePositive
-              case _             =>
-                if (matchTestData.isIncluded) BinaryClassificationResultTypes.FalseNegative
-                else BinaryClassificationResultTypes.TrueNegative
-            }
-
-            RegexMatchingEvaluationResult(matchTestData.data, matchTestData.isIncluded, classificationResultType)
+        val matchResults = exercise.matchTestData.map { matchTestData =>
+          val classificationResultType: BinaryClassificationResultType = matchTestData.data match {
+            case userRegex(_*) =>
+              if (matchTestData.isIncluded) BinaryClassificationResultTypes.TruePositive
+              else BinaryClassificationResultTypes.FalsePositive
+            case _             =>
+              if (matchTestData.isIncluded) BinaryClassificationResultTypes.FalseNegative
+              else BinaryClassificationResultTypes.TrueNegative
           }
 
-          val correctResultsCount: Int = matchResults.count(_.resultType.correct)
+          RegexMatchingEvaluationResult(matchTestData.data, matchTestData.isIncluded, classificationResultType)
+        }
 
-          val points: Points = (correctResultsCount.toDouble / exercise.matchTestData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
+        val correctResultsCount: Int = matchResults.count(_.resultType.correct)
 
-          RegexCompleteResult(RegexCorrectionTypes.MATCHING, matchResults, Seq.empty, points, exercise.maxPoints.points)
+        val points: Points = (correctResultsCount.toDouble / exercise.matchTestData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
 
-
-        case RegexCorrectionTypes.EXTRACTION =>
-
-          val extractionResults = exercise.extractionTestData.map { extractionTestData =>
-
-            val sampleRegex = exercise.sampleSolutions.headOption.map(_.sample).getOrElse(???).r
-
-            val sampleExtracted: Seq[RegexMatch] = sampleRegex.findAllMatchIn(extractionTestData.base).toList
+        RegexCompleteResult(RegexCorrectionTypes.MATCHING, matchResults, Seq.empty, points, exercise.maxPoints.points)
 
 
-            val userExtracted: Seq[RegexMatch] = userRegex.findAllMatchIn(extractionTestData.base).toList
+      case RegexCorrectionTypes.EXTRACTION =>
+
+        val extractionResults = exercise.extractionTestData.map { extractionTestData =>
+
+          val sampleRegex = exercise.sampleSolutions.headOption.map(_.sample).getOrElse(???).r
+
+          val sampleExtracted: Seq[RegexMatch] = sampleRegex.findAllMatchIn(extractionTestData.base).toList
 
 
-            val regexMatchMatchingResult = RegexMatchMatcher.doMatch(userExtracted, sampleExtracted)
-
-            val correct = regexMatchMatchingResult.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH)
+          val userExtracted: Seq[RegexMatch] = userRegex.findAllMatchIn(extractionTestData.base).toList
 
 
-            RegexExtractionEvaluationResult(extractionTestData.base, regexMatchMatchingResult, correct)
-          }
+          val regexMatchMatchingResult = RegexMatchMatcher.doMatch(userExtracted, sampleExtracted)
 
-          val correctResultsCount: Int = extractionResults.count(_.correct)
+          val correct = regexMatchMatchingResult.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH)
 
-          val points: Points = (correctResultsCount.toDouble / exercise.extractionTestData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
 
-          RegexCompleteResult(RegexCorrectionTypes.MATCHING, Seq.empty, extractionResults, points, exercise.maxPoints.points)
+          RegexExtractionEvaluationResult(extractionTestData.base, regexMatchMatchingResult, correct)
+        }
 
-      }
+        val correctResultsCount: Int = extractionResults.count(_.correct)
+
+        val points: Points = (correctResultsCount.toDouble / exercise.extractionTestData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
+
+        RegexCompleteResult(RegexCorrectionTypes.MATCHING, Seq.empty, extractionResults, points, exercise.maxPoints.points)
+
+    }
 
   }
 

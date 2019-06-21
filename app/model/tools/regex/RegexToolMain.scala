@@ -90,11 +90,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   }
 
   override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] =
-    Future.successful(
-      Try(
-        RegexCorrector.correct(sol, exercise)
-      )
-    )
+    Future.successful(RegexCorrector.correct(sol, exercise))
 
   // Views
 
