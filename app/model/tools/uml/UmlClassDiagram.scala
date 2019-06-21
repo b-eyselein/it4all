@@ -77,12 +77,16 @@ sealed trait UmlClassMember {
 
 }
 
-final case class UmlAttribute(visibility: UmlVisibility, memberName: String, memberType: String, isStatic: Boolean, isDerived: Boolean, isAbstract: Boolean) extends UmlClassMember
+final case class UmlAttribute(
+  visibility: UmlVisibility, memberName: String, memberType: String, isStatic: Boolean = false, isDerived: Boolean = false, isAbstract: Boolean = false
+) extends UmlClassMember
 
-final case class UmlMethod(visibility: UmlVisibility, memberName: String, memberType: String, parameters: String, isStatic: Boolean, isAbstract: Boolean) extends UmlClassMember
+final case class UmlMethod(
+  visibility: UmlVisibility, memberName: String, memberType: String, parameters: String, isStatic: Boolean = false, isAbstract: Boolean = false
+) extends UmlClassMember
 
 
-final case class UmlClass(classType: UmlClassType, className: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod], position: Option[MyPosition]) {
+final case class UmlClass(classType: UmlClassType, name: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod], position: Option[MyPosition]) {
 
   def allMembers: Seq[UmlClassMember] = attributes ++ methods
 

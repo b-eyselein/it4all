@@ -11,11 +11,9 @@ export {
 };
 
 interface UmlClassDiagCorrectionResult {
-    classResult: MatchingResult<UmlClass, UmlClassAnalysisResult> | null
-    assocAndImplResult: {
-        assocResult: MatchingResult<UmlAssociation, AnalysisResult>
-        implResult: MatchingResult<UmlImplementation, AnalysisResult>
-    } | null
+    classResult: null | MatchingResult<UmlClass, UmlClassAnalysisResult>;
+    assocResult: null | MatchingResult<UmlAssociation, AnalysisResult>;
+    implResult: null | MatchingResult<UmlImplementation, AnalysisResult>
 }
 
 interface UmlAttributeAnalysisResult extends AnalysisResult {

@@ -49,7 +49,7 @@ final case class UmlClassMatch(userArg: Option[UmlClass], sampleArg: Option[UmlC
   }
 
   // FIXME: check if correct!
-  override protected def descArgForJson(arg: UmlClass): JsValue = Json.obj(nameName -> arg.className, classTypeName -> arg.classType.entryName)
+  override protected def descArgForJson(arg: UmlClass): JsValue = Json.obj(nameName -> arg.name, classTypeName -> arg.classType.entryName)
 
   val attributesResult: Option[MatchingResult[UmlAttributeMatch]] = analysisResult.flatMap(_.maybeAttributeMatchingResult)
   val methodsResult   : Option[MatchingResult[UmlMethodMatch]]    = analysisResult.flatMap(_.maybeMethodMatchingResult)
@@ -65,7 +65,7 @@ final case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matche
 
   override protected val matchSingularName: String = "der Klasse"
 
-  override protected def canMatch(c1: UmlClass, c2: UmlClass): Boolean = c1.className == c2.className
+  override protected def canMatch(c1: UmlClass, c2: UmlClass): Boolean = c1.name == c2.name
 
   override protected def matchInstantiation(ua: Option[UmlClass], sa: Option[UmlClass]): UmlClassMatch =
     UmlClassMatch(ua, sa, compareAttrsAndMethods)

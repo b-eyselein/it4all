@@ -32,7 +32,7 @@ final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
 
     val classes: Seq[UmlClass] = part match {
       case UmlExParts.DiagramDrawingHelp => sampleSolutions.head.sample.classes.map {
-        oldClass => UmlClass(oldClass.classType, oldClass.className, attributes = Seq[UmlAttribute](), methods = Seq[UmlMethod](), position = oldClass.position)
+        oldClass => UmlClass(oldClass.classType, oldClass.name, attributes = Seq[UmlAttribute](), methods = Seq[UmlMethod](), position = oldClass.position)
       }
       case _                             => Seq[UmlClass]()
     }

@@ -367,13 +367,16 @@ function onUmlClassDiagCorrectionSuccess(response: UmlClassDiagCorrectionResult)
     document.querySelector<HTMLDivElement>('#resultDiv').hidden = false;
 
     let html: string = '';
-    if (response.classResult != null) {
+    if (response.classResult) {
         html += displayMatchingResultList(response.classResult, "Klassen", explainClassResult);
     }
 
-    if (response.assocAndImplResult != null) {
-        html += displayMatchingResultList(response.assocAndImplResult.implResult, 'Vererbungsbeziehungen', explainImplResult);
-        html += displayMatchingResultList(response.assocAndImplResult.assocResult, 'Assoziationen', explainAssocResult);
+    if (response.implResult) {
+        html += displayMatchingResultList(response.implResult, 'Vererbungsbeziehungen', explainImplResult);
+    }
+
+    if (response.assocResult) {
+        html += displayMatchingResultList(response.assocResult, 'Assoziationen', explainAssocResult);
     }
 
     document.querySelector<HTMLDivElement>('#results').innerHTML = html;

@@ -277,7 +277,7 @@ class CollectionController @Inject()(
       }
 
       futureClassDiagram.map { classDiagram =>
-        Ok(Json.prettyPrint(UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(classDiagram))).as("text/javascript")
+        Ok(Json.prettyPrint(UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat.writes(classDiagram))).as("text/javascript")
       }
   }
 
@@ -292,7 +292,7 @@ class CollectionController @Inject()(
             case Some(exercise) =>
 
               val jsValue = exercise.maybeClassDiagramPart match {
-                case Some(cd) => Json.toJson(cd)(UmlClassDiagramJsonFormat.umlSolutionJsonFormat)
+                case Some(cd) => Json.toJson(cd)(UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat)
                 case None     => JsObject.empty
               }
               Ok(jsValue) //.as("text/javascript")

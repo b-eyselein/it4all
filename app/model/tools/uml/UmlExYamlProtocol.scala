@@ -123,7 +123,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override def write(completeClazz: UmlClass): YamlValue = YamlObj(
       classTypeName -> completeClazz.classType.entryName,
-      nameName -> completeClazz.className,
+      nameName -> completeClazz.name,
       attributesName -> YamlArr(completeClazz.attributes.map(UmlAttributeYamlFormat.write)),
       methodsName -> YamlArr(completeClazz.methods.map(UmlMethodYamlFormat.write))
     )

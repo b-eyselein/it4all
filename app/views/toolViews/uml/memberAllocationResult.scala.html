@@ -55,7 +55,7 @@
                     @for(classMatch <- classMatchTuple) {
                         <div class="col-md-6">
                             <div class="panel panel-@classMatch.matchType.bsClass">
-                                <div class="panel-heading">@classMatch.userArg.map(_.className)</div>
+                                <div class="panel-heading">@classMatch.userArg.map(_.name)</div>
                                 <div class="panel-body">
                                     <ul>
                                     @for(attrMatch <- classMatch.attributesResult.map(_.allMatches).getOrElse(Seq.empty)) {

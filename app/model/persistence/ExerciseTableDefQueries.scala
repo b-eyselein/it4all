@@ -168,9 +168,9 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
 
   protected implicit val umlClassDiagramColumnType: BaseColumnType[UmlClassDiagram] = {
 
-    val write = (ucd: UmlClassDiagram) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.writes(ucd).toString
+    val write = (ucd: UmlClassDiagram) => UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat.writes(ucd).toString
 
-    val read = (str: String) => UmlClassDiagramJsonFormat.umlSolutionJsonFormat.reads(Json.parse(str)) match {
+    val read = (str: String) => UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat.reads(Json.parse(str)) match {
       case JsSuccess(ucd, _) => ucd
       case JsError(errors)   =>
         errors.foreach(error => logger.error(s"There has been an error loading a uml class diagram from json: $error"))

@@ -10,8 +10,10 @@ final case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel
                                               multiplicitiesEqual: Boolean)
   extends AnalysisResult {
 
-  override def toJson: JsValue = Json.obj(successName -> matchType.entryName,
-    "assocTypeCorrect" -> assocTypeEqual, "correctAssocType" -> correctAssocType.entryName
+  override def toJson: JsValue = Json.obj(
+    successName -> matchType.entryName,
+    "assocTypeCorrect" -> assocTypeEqual,
+    "correctAssocType" -> correctAssocType.entryName
 
   )
 
