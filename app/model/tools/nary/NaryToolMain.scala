@@ -44,7 +44,7 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
     case NaryExParts.NaryAdditionExPart =>
 
       val requestedBaseStr: String = options.getOrElse("base", Seq(RandomName)).mkString
-      val base = numbaseFromString(requestedBaseStr) getOrElse NumberBase.values(generator.nextInt(3))
+      val base = numbaseFromString(requestedBaseStr).getOrElse(NumberBase.values(generator.nextInt(3)))
 
       val sum = generator.nextInt(255) + 1
       val firstSummand = generator.nextInt(sum)
@@ -62,14 +62,14 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
             val (fromBase, remaining) = randAndRemainingNumberBase(NumberBase.values)
             (fromBase, randAndRemainingNumberBase(remaining)._1)
           case _          =>
-            val toBase = numbaseFromString(toBaseStr) getOrElse NumberBase.Binary
+            val toBase = numbaseFromString(toBaseStr).getOrElse(NumberBase.Binary)
             (randAndRemainingNumberBase(NumberBase.values.filter(_ != toBase))._1, toBase)
         }
         case fromBaseReq =>
-          val fromBase = numbaseFromString(fromBaseReq) getOrElse NumberBase.Binary
+          val fromBase = numbaseFromString(fromBaseReq).getOrElse(NumberBase.Binary)
           val toBase = toBaseStr match {
             case RandomName => randAndRemainingNumberBase(NumberBase.values.filter(_ != fromBase))._1
-            case _          => numbaseFromString(toBaseStr) getOrElse NumberBase.Binary
+            case _          => numbaseFromString(toBaseStr).getOrElse(NumberBase.Binary)
           }
           (fromBase, toBase)
       }
