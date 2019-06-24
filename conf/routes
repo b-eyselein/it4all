@@ -37,7 +37,7 @@ GET           /randomTools/:toolType/admin/learningPaths/read                 co
 
 
 GET           /randomTools/:toolType/:exPart                                  controllers.coll.RandomExerciseController.newExercise(toolType: String, exPart: String)
-PUT           /randomTools/:toolType/:exPart                                  controllers.coll.RandomExerciseController.correctLive(toolType: String, exPart: String)
+PUT           /randomTools/bool/:exPart                                       controllers.coll.RandomExerciseController.correctBoolLive(exPart: String)
 
 # Admin
 

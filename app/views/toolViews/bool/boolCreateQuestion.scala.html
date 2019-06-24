@@ -18,7 +18,7 @@
 }
 
 @correctionUrl = @{
-    coll.routes.RandomExerciseController.correctLive(toolMain.urlPart, BoolExParts.FormulaCreation.urlName)
+    coll.routes.RandomExerciseController.correctBoolLive(BoolExParts.FormulaCreation.urlName)
 }
 
 @main(title, Some(user), scripts) {
@@ -40,7 +40,7 @@
                             @for(variable <- variables) {
                                 <th class="text-center">@variable</th>
                             }
-                            <th class="text-center" id="learnerFormula">@BoolConsts.SolVariable&#39;</th>
+                            <th class="text-center" id="learnerFormula">@BoolConsts.SolVariable &#39;</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>

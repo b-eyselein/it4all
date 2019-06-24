@@ -63,11 +63,10 @@ function renderBoolCreationError(response: BoolCreationError): void {
 function onBoolCreationSuccess(response: BoolCreateResult): void {
     console.info(JSON.stringify(response, null, 2));
 
-    switch (response.success) {
-        case 'ERROR':
-            renderBoolCreationError(response as BoolCreationError);
-        default:
-            renderBoolCreationSuccess(response as BoolCreationSuccess);
+    if (response.success === 'ERROR') {
+        renderBoolCreationError(response as BoolCreationError);
+    } else {
+        renderBoolCreationSuccess(response as BoolCreationSuccess);
     }
 }
 

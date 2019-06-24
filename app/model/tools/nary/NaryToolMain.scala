@@ -22,8 +22,6 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   // Abstract types
 
-  override type SolutionType = Option[NAryResult]
-
   override type PartType = NaryExPart
 
   override type ResultType = EvaluationResult
@@ -90,20 +88,6 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
   private def randAndRemainingNumberBase(remainingBases: Seq[NumberBase]): (NumberBase, Seq[NumberBase]) = {
     val shuffledBases = generator.shuffle(remainingBases)
     (shuffledBases.head, shuffledBases.tail)
-  }
-
-  // Correction
-
-  @deprecated(message = "Correction works offline", since = "24.06.2019")
-  override def readSolution(exPart: NaryExPart, request: Request[AnyContent]): Either[Seq[(JsPath, Seq[JsonValidationError])], Option[NAryResult]] = request.body.asJson match {
-    case None          => Left(???)
-    case Some(jsValue) => NarySolutionJsonFormat.readSolutionFromJson(exPart, jsValue).asEither
-  }
-
-  @deprecated(message = "Correction works offline", since = "24.06.2019")
-  override def checkSolution(exPart: NaryExPart, nAryResult: Option[NAryResult]): JsValue = nAryResult match {
-    case None           => ???
-    case Some(solution) => solution.toJson
   }
 
   // Reading functions

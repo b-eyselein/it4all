@@ -4,6 +4,7 @@ import controllers.{AExerciseController, Secured}
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
 import model.toolMains.{RandomExerciseToolMain, ToolList}
+import model.tools.bool.BoolToolMain
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{ControllerComponents, EssentialAction}
@@ -13,7 +14,7 @@ import scala.concurrent.ExecutionContext
 
 
 @Singleton
-class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
+class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository, boolToolMain: BoolToolMain)(implicit ec: ExecutionContext)
   extends AExerciseController(cc, dbcp, tl) with HasDatabaseConfigProvider[JdbcProfile] with Secured with play.api.i18n.I18nSupport {
 
   private val logger = Logger(classOf[RandomExerciseController])
@@ -40,17 +41,17 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
       }
   }
 
-  def correctLive(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (_, toolMain) =>
+  def correctBoolLive(exType: String): EssentialAction = withUser { _ =>
     implicit request =>
-      toolMain.exTypeFromUrl(exType) match {
+      boolToolMain.exTypeFromUrl(exType) match {
         case None         => BadRequest(s"There is no exercise part >>$exType<<")
         case Some(exPart) =>
 
-          toolMain.readSolution(exPart, request) match {
+          boolToolMain.readSolution(exPart, request) match {
             case Left(errors)    =>
               errors.foreach(e => logger.error(e.toString()))
               ???
-            case Right(solution) => Ok(toolMain.checkSolution(exPart, solution))
+            case Right(solution) => Ok(boolToolMain.checkSolution(exPart, solution))
           }
       }
   }

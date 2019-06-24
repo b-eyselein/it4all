@@ -21,8 +21,6 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   // Abstract types
 
-  override type SolutionType = BoolSolution
-
   override type PartType = BoolExPart
 
   override type ResultType = EvaluationResult
@@ -55,15 +53,15 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   override def playground(user: User): Html = views.html.toolViews.bool.boolDrawing(user)
 
-  // Handlers
+  // Correction
 
-  override def readSolution(exPart: BoolExPart, request: Request[AnyContent]): Either[Seq[(JsPath, Seq[JsonValidationError])], BoolSolution] =
+  def readSolution(exPart: BoolExPart, request: Request[AnyContent]): Either[Seq[(JsPath, Seq[JsonValidationError])], BoolSolution] =
     request.body.asJson match {
       case None          => Left(???)
       case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue).asEither
     }
 
-  override def checkSolution(exPart: BoolExPart, boolSolution: BoolSolution): JsValue =
+  def checkSolution(exPart: BoolExPart, boolSolution: BoolSolution): JsValue =
     BoolCorrector.correctPart(exPart, boolSolution).toJson
 
 }

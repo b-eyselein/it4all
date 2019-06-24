@@ -2,8 +2,7 @@ package model.toolMains
 
 import model.{ExPart, User}
 import play.api.i18n.MessagesProvider
-import play.api.libs.json.{JsPath, JsValue, JsonValidationError}
-import play.api.mvc.{AnyContent, Call, Request, RequestHeader}
+import play.api.mvc.{Call, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -11,8 +10,6 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends AToolMain(tn, up) {
 
   // Abstract types
-
-  type SolutionType
 
   type PartType <: ExPart
 
@@ -29,12 +26,6 @@ abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: Execu
 
   override def adminIndexView(admin: User, toolList: ToolList): Future[Html] =
     Future(views.html.admin.randomExes.randomExerciseAdminIndex(admin, statistics = Html(""), this, toolList))
-
-  // Correction
-
-  def readSolution(exPart: PartType, request: Request[AnyContent]): Either[Seq[(JsPath, Seq[JsonValidationError])], SolutionType]
-
-  def checkSolution(exPart: PartType, solution: SolutionType): JsValue
 
   // Calls
 

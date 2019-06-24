@@ -1,4 +1,6 @@
-@(user: model.User, question: model.tools.bool.FilloutQuestion, toolMain: model.tools.bool.BoolToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@import model.tools.bool.{FilloutQuestion, BoolToolMain, BoolExParts, BoolConsts}
+
+@(user: model.User, question: FilloutQuestion, toolMain: BoolToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @variables = @{
     question.variables.toList.sortBy(_.variable)
@@ -16,15 +18,15 @@
 }
 
 @correctionUrl = @{
-    coll.routes.RandomExerciseController.correctLive(toolMain.urlPart, model.tools.bool.BoolExParts.TableFillout.urlName)
+    coll.routes.RandomExerciseController.correctBoolLive(BoolExParts.TableFillout.urlName)
 }
 
 @main(title, Some(user), scripts) {
     <div class="container">
 
         <h2 class="text-center">
-            <code>@model.tools.bool.BoolConsts.LerVariable
-                = <span id="@model.tools.bool.BoolConsts.formulaName" data-formula="@question.formula.asString">@Html(question.formula.asHtml)</span></code>
+            <code>@BoolConsts.LerVariable
+                = <span id="@BoolConsts.formulaName" data-formula="@question.formula.asString">@Html(question.formula.asHtml)</span></code>
         </h2>
 
         <br>
@@ -39,7 +41,7 @@
                             @for(v <- variables) {
                                 <th class="text-center">@v</th>
                             }
-                            <th class="text-center" id="lerVar">@model.tools.bool.BoolConsts.LerVariable</th>
+                            <th class="text-center" id="lerVar">@BoolConsts.LerVariable</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
