@@ -1,6 +1,3 @@
-import * as CodeMirror from 'codemirror';
-import {initEditor} from '../editorHelpers';
-
 import {
     BinaryClassificationResultType,
     displayStringSampleSolution,
@@ -10,6 +7,7 @@ import {
     StringSampleSolution,
     testExerciseSolution
 } from "../otherHelpers";
+
 import {AnalysisResult, Match, MatchingResult} from "../matches";
 
 let solutionInput: HTMLInputElement;
@@ -62,12 +60,13 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
 
     let html: string = '';
 
-    // Was solution saved?
-    const solSaved = correctionResult.solutionSaved;
-    html += `<p class="${solSaved ? 'text-success' : 'text-danger'}">Ihre Lösung wurde ${solSaved ? '' : 'nicht'}gespeichert.</p>`;
-
-    // How many (max) points?
-    html += `<p>Sie haben ${correctionResult.points} von ${correctionResult.maxPoints} Punkten erreicht.</p>`;
+    html += `
+<p class="${correctionResult.solutionSaved ? 'text-success' : 'text-danger'}">
+    Ihre Lösung wurde ${correctionResult.solutionSaved ? '' : 'nicht '}gespeichert.
+</p>
+<p>
+    Sie haben ${correctionResult.points} von ${correctionResult.maxPoints} Punkten erreicht.
+</p>`;
 
     // Single results
     for (const result of correctionResult.matchingResults) {
@@ -103,9 +102,9 @@ function onRegexCorrectionSuccess(correctionResult: RegexCorrectionResult): void
             const clazz = (m.analysisResult && m.analysisResult.success == 'SUCCESSFUL_MATCH') ? 'success' : 'danger';
 
             return `
-<li class="text-${clazz}">
-    <b>Erwartet:</b> <span>${m.sampleArg ? m.sampleArg.content : ''}</span>,
-    <b>Gefunden:</b> <span>${m.userArg ? m.userArg.content : ''}</span>
+<li>
+    <b>Erwartet:</b> &quot;<span>${m.sampleArg ? m.sampleArg.content : ''}</span>&quot;,
+    <b>Gefunden:</b> &quot;<span class="text-${clazz}">${m.userArg ? m.userArg.content : ''}</span>&quot;
 </li>`.trim()
         }).join('\n') + '</ul>';
 
