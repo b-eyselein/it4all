@@ -4,21 +4,11 @@
     coll.routes.RandomExerciseController.newExercise(toolMain.urlPart, part.urlName)
 }
 
-<script>
-        $(() => {
-            $('#convButton').click(function () {
-                window.location = '@newExUrl(model.tools.nary.NaryExParts.NaryConversionExPart)?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
-            });
 
-            $('#addButton').click(function () {
-                window.location = '@newExUrl(model.tools.nary.NaryExParts.NaryAdditionExPart)?base=' + $('#addBase').val();
-            });
+<script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+<script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-            $('#twoCompButton').click(function () {
-                window.location = '@newExUrl(model.tools.nary.NaryExParts.TwoComplementExPart)?verbose=' + $('#twoComp').val();
-            });
-        });
-</script>
+<script>SystemJS.import('@routes.Assets.versioned("app/nary/naryOverview.js")');</script>
 
     <!-- Conversion -->
 <div class="form-group">
@@ -40,7 +30,8 @@
                 <option value="@base.entryName">@base.systemName</option>
             }
         </select>
-        <button class="form-control btn-primary" id="convButton">Go! </button>
+        <button data-href="@newExUrl(model.tools.nary.NaryExParts.NaryConversionExPart)"
+        class="form-control btn-primary" id="convButton">Go!</button>
     </div>
 
 </div>
@@ -58,7 +49,8 @@
                 <option value="@base.entryName">@base.systemName</option>
             }
         </select>
-        <button class="form-control btn-primary" id="addButton">Go! </button>
+        <button data-href="@newExUrl(model.tools.nary.NaryExParts.NaryAdditionExPart)"
+        class="form-control btn-primary" id="addButton">Go!</button>
     </div>
 
 </div>
@@ -74,7 +66,8 @@
             <option value="true">mit Zwischenschritten</option>
             <option value="false">ohne Zwischenschritte</option>
         </select>
-        <button class="form-control btn-primary" id="twoCompButton">Go! </button>
+        <button data-href="@newExUrl(model.tools.nary.NaryExParts.TwoComplementExPart)"
+        class="form-control btn-primary" id="twoCompButton">Go!</button>
     </div>
 
 </div>

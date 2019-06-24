@@ -17,8 +17,6 @@ sealed abstract class NumberBase(val base: Int, val baseName: String, val mark: 
 
   val systemName: String = baseName + "system"
 
-  val dispBase: Html = new Html("<sub>" + (if (base < 10) "&nbsp; " else "") + base + "</sub>")
-
 }
 
 object NumberBase extends PlayEnum[NumberBase] {

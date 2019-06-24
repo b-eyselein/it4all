@@ -12,7 +12,6 @@ final case class BoolAssignment(variable: Variable, value: Boolean)
 //noinspection ConvertibleToMethodValue
 object BoolSolutionJsonFormat {
 
-
   private implicit val boolAssignmentReads: Reads[BoolAssignment] = (
     (__ \ variableName).read[String] and
       (__ \ valueName).read[Boolean]

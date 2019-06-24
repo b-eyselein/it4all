@@ -1,11 +1,14 @@
 package model.tools.nary
 
 import model.tools.nary.NaryConsts._
+import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 //noinspection ConvertibleToMethodValue
 object NarySolutionJsonFormat {
+
+  private val logger = Logger(NarySolutionJsonFormat.getClass)
 
   // FIXME: Test!
   private implicit val numberBaseReads: Reads[NumberBase] = {
@@ -16,13 +19,15 @@ object NarySolutionJsonFormat {
     case _             => JsError("A Numberbase needs to be a string!")
   }
 
+  def readSolutionFromJson(exPart: NaryExPart, solutionJson: JsValue): JsResult[Option[NAryResult]] = {
+    logger.warn(Json.prettyPrint(solutionJson))
 
-  def readSolutionFromJson(exPart: NaryExPart, solutionJson: JsValue): JsResult[Option[NAryResult]] = exPart match {
-    case NaryExParts.NaryAdditionExPart   => naryAddResultJsonReads.reads(solutionJson)
-    case NaryExParts.NaryConversionExPart => naryConvResultReads.reads(solutionJson)
-    case NaryExParts.TwoComplementExPart  => twoCompResultReads.reads(solutionJson)
+    exPart match {
+      case NaryExParts.NaryAdditionExPart   => naryAddResultJsonReads.reads(solutionJson)
+      case NaryExParts.NaryConversionExPart => naryConvResultReads.reads(solutionJson)
+      case NaryExParts.TwoComplementExPart  => twoCompResultReads.reads(solutionJson)
+    }
   }
-
 
   private def applyNaryAddResult(base: NumberBase, firstSummandStr: String, secondSummandStr: String, solutionNumberStr: String): Option[NAryAddResult] = for {
     firstSummand <- NAryNumber.parseNaryNumber(firstSummandStr, base)

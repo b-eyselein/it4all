@@ -1,74 +1,56 @@
-import * as $ from 'jquery';
 import {domReady} from "../otherHelpers";
 
-let testBtn: JQuery, solutionInput: JQuery;
-
-interface NaryAdditionSolution {
-    base: number,
-    summand1: string,
-    summand2: string,
-    solution: string
-}
-
-interface NaryAdditionResult {
-    correct: boolean
-}
-
-function onNaryAdditionSuccess(response: NaryAdditionResult): void {
-    testBtn.prop('disabled', false);
-
-    if (response.correct) {
-        solutionInput.removeClass('is-invalid').addClass('is-valid');
-        $('#correctnessHook').html('<h1 class="text-center">&check;</h1>');
-    } else {
-        solutionInput.removeClass('is-valid').addClass('is-invalid');
-        $('#correctnessHook').html('');
-    }
-}
-
-function onNaryAdditionError(jqXHR): void {
-    testBtn.prop('disabled', false);
-    console.error(jqXHR);
-}
-
-function testSol(): void {
-
-    const solution = (solutionInput.val() as string).split('').reverse().join('');
-
-    if (solution === '') {
-        alert('Sie können keine leere Lösung abgeben!');
-        return;
-    }
-
-    testBtn.prop('disabled', true);
-
-    const completeSolution: NaryAdditionSolution = {
-        summand1: $('#firstSummand').val() as string,
-        summand2: $('#secondSummand').val() as string,
-        base: $('#base').data('base'),
-        solution
-    };
-
-    $.ajax({
-        type: 'PUT',
-        dataType: 'json',
-        contentType: 'application/json',
-        url: testBtn.data('url'),
-        data: JSON.stringify(completeSolution),
-        async: true,
-        beforeSend: (xhr) => {
-            const token = $('input[name="csrfToken"]').val() as string;
-            xhr.setRequestHeader("Csrf-Token", token);
-        },
-        success: onNaryAdditionSuccess,
-        error: onNaryAdditionError
-    });
-}
+const WHITE_SPACES: RegExp = /\s+/g;
 
 domReady(() => {
-    testBtn = $('#testBtn');
-    testBtn.on('click', testSol);
+    let solved: boolean = false;
 
-    solutionInput = $('#solution');
+    const firstSummandBase: number = parseInt(document.querySelector<HTMLElement>('#firstSummandBaseSub').innerText);
+    const firstSummandInput: HTMLInputElement = document.querySelector<HTMLInputElement>('#firstSummand');
+    const firstSummandValue = parseInt(firstSummandInput.value.replace(WHITE_SPACES, ''), firstSummandBase);
+
+    const secondSummandBase: number = parseInt(document.querySelector<HTMLElement>('#secondSummandBaseSub').innerText);
+    const secondSummandInput: HTMLInputElement = document.querySelector<HTMLInputElement>('#secondSummand');
+    const secondSummandValue = parseInt(secondSummandInput.value.replace(WHITE_SPACES, ''), secondSummandBase);
+
+    const solutionInput: HTMLInputElement = document.querySelector<HTMLInputElement>('#solution');
+    const solutionBase: number = parseInt(document.querySelector<HTMLElement>('#solutionBaseSub').innerText);
+
+    const testBtn: HTMLButtonElement = document.querySelector<HTMLButtonElement>('#testBtn');
+
+    testBtn.onclick = () => {
+        const solutionString: string = (solutionInput.value as string).replace(WHITE_SPACES, '').split('').reverse().join('');
+
+        if (solutionString === '') {
+            alert('Sie können keine leere Lösung abgeben!');
+            return;
+        }
+
+        const solutionValue: number = parseInt(solutionString, solutionBase);
+
+        solved = (firstSummandValue + secondSummandValue) === solutionValue;
+
+        const correctnessHookElement = document.querySelector<HTMLElement>('#correctnessHook');
+
+        solutionInput.classList.remove('is-valid', 'is-invalid');
+
+        if (solved) {
+            solutionInput.classList.add('is-valid');
+            correctnessHookElement.innerHTML = '<h1 class="text-center">&check;</h1>';
+        } else {
+            solutionInput.classList.add('is-invalid');
+            correctnessHookElement.innerHTML = '';
+        }
+    };
+
+    document.onkeypress = (event) => {
+        if (event.key === 'Enter') {
+            if (solved) {
+                document.querySelector<HTMLAnchorElement>('#nextExerciseAnchor').click();
+            } else {
+                testBtn.click();
+            }
+        }
+    };
 });
 

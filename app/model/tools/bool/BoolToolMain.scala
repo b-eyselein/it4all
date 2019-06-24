@@ -4,7 +4,6 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.core.result.EvaluationResult
 import model.toolMains.{RandomExerciseToolMain, ToolState}
-import model.tools.bool.BoolConsts._
 import model.tools.bool.BooleanQuestion._
 import play.api.Logger
 import play.api.i18n.MessagesProvider
@@ -21,6 +20,8 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
   private val logger = Logger(classOf[BoolToolMain])
 
   // Abstract types
+
+  override type SolutionType = BoolSolution
 
   override type PartType = BoolExPart
 
@@ -56,14 +57,13 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   // Handlers
 
-  override def checkSolution(exPart: BoolExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
-    case None          => Json.obj(errorName -> "There has been an error in your request!")
-    case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue) match {
-      case JsSuccess(boolSolution, _) => BoolCorrector.correctPart(exPart, boolSolution).toJson
-      case JsError(errors)            =>
-        errors.foreach(e => logger.error("Json Error: " + e.toString))
-        Json.obj(errorName -> "There has been an error in your json!")
+  override def readSolution(exPart: BoolExPart, request: Request[AnyContent]): Either[Seq[(JsPath, Seq[JsonValidationError])], BoolSolution] =
+    request.body.asJson match {
+      case None          => Left(???)
+      case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue).asEither
     }
-  }
+
+  override def checkSolution(exPart: BoolExPart, boolSolution: BoolSolution): JsValue =
+    BoolCorrector.correctPart(exPart, boolSolution).toJson
 
 }

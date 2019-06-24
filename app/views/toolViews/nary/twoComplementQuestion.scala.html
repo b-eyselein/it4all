@@ -23,7 +23,7 @@
 
 @main(title, Some(user), scripts) {
     <div class="container">
-        <h1>@title von @startingNumber</h1>
+        <h2 class="text-center">@title von @startingNumber</h2>
 
         <div class="row">
             <div class="col-sm-3"></div>
@@ -40,7 +40,7 @@
                         <input value="@startingNumber" type="number" title="Vorgegebene Zahl" readonly class="form-control text-right"
                         name="@NaryConsts.valueName" id="@NaryConsts.valueName">
                         <div class="input-group-append">
-                            <span class="input-group-text">@startingNumber.base.dispBase</span>
+                            <span class="input-group-text"><sub>@startingNumber.base.base</sub></span>
                         </div>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
 
         <em class="text-info">Notizen werden für die Korrektur nicht beachtet.</em>
 
-        <textarea title="Platz für Notizen" placeholder="Platz für Notizen" class="form-control" rows="10"></textarea>
+        <textarea id="noteTextArea" title="Platz für Notizen" placeholder="Platz für Notizen" class="form-control" rows="10"></textarea>
 
     </div>
 }

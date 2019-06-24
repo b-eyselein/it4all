@@ -22,6 +22,8 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   // Abstract types
 
+  override type SolutionType = Option[NAryResult]
+
   override type PartType = NaryExPart
 
   override type ResultType = EvaluationResult
@@ -92,20 +94,16 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
 
   // Correction
 
-  override def checkSolution(exPart: NaryExPart, request: Request[AnyContent]): JsValue = request.body.asJson match {
-    case None          =>
-      logger.error("A solution for an nary exercise needs to be sent in json format!")
-      ???
-    case Some(jsValue) =>
-      NarySolutionJsonFormat.readSolutionFromJson(exPart, jsValue) match {
-        case JsError(jsErrors)                               =>
-          jsErrors.foreach(println)
-          Json.obj(errorName -> "TODO!")
-        case JsSuccess(maybeSolution: Option[NAryResult], _) => maybeSolution match {
-          case None           => ???
-          case Some(solution) => solution.toJson
-        }
-      }
+  @deprecated(message = "Correction works offline", since = "24.06.2019")
+  override def readSolution(exPart: NaryExPart, request: Request[AnyContent]): Either[Seq[(JsPath, Seq[JsonValidationError])], Option[NAryResult]] = request.body.asJson match {
+    case None          => Left(???)
+    case Some(jsValue) => NarySolutionJsonFormat.readSolutionFromJson(exPart, jsValue).asEither
+  }
+
+  @deprecated(message = "Correction works offline", since = "24.06.2019")
+  override def checkSolution(exPart: NaryExPart, nAryResult: Option[NAryResult]): JsValue = nAryResult match {
+    case None           => ???
+    case Some(solution) => solution.toJson
   }
 
   // Reading functions
