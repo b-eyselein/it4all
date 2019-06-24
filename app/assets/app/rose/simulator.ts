@@ -163,23 +163,25 @@ function instantiateField(element: JQuery, start: MyPosition, width: number, hei
 }
 
 interface RunResult {
-    actions: string[]
+    name: string;
+    actions_size: string;
+    actions: string[];
 }
 
 interface CompleteRunResult {
-    correct: boolean
-    start: MyPosition
-    user: RunResult
-    sample: RunResult
+    correct: boolean;
+    start: MyPosition;
+    user: RunResult;
+    sample: RunResult;
 }
 
 function instantiateAll(runResult: CompleteRunResult): void {
 
-    let userField = $('#userField');
-    let sampleField = $('#sampleField');
+    const userField: JQuery = $('#userField');
+    const sampleField: JQuery = $('#sampleField');
 
     if (firstInitiation) {
-        $('#fieldDiv').prop('hidden', false);
+        document.querySelector<HTMLDivElement>('#fieldDiv').hidden = false;
 
         // Round number to next 10
         optimalCellSize = Math.floor(Math.min(userField.width(), sampleField.width()) / FIELD_SIZE_CELLS.x / 10) * 10;

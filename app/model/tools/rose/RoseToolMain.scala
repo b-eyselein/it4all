@@ -15,7 +15,7 @@ import play.api.mvc.{AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 @Singleton
 class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionContext)
@@ -34,7 +34,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override type ReviewType = RoseExerciseReview
 
-  override type ResultType = RoseEvalResult
+  override type ResultType = RoseExecutionResult
+
   override type CompResultType = RoseCompleteResult
 
   override type Tables = RoseTableDefs
@@ -54,9 +55,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override val exerciseForm      : Form[RoseExercise]       = RoseToolForms.exerciseFormat
   override val exerciseReviewForm: Form[RoseExerciseReview] = RoseToolForms.exerciseReviewForm
 
-  override val sampleSolutionJsonFormat: Format[RoseSampleSolution] = RoseSampleSolutionJsonProtocol.roseSampleSolutionJsonFormat
+  override val sampleSolutionJsonFormat: Format[RoseSampleSolution] = RoseCompleteResultJsonProtocol.roseSampleSolutionJsonFormat
 
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[RoseEvalResult, RoseCompleteResult] = RoseCompleteResultJsonProtocol
+  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[RoseExecutionResult, RoseCompleteResult] = RoseCompleteResultJsonProtocol
 
   // Other helper methods
 
@@ -98,24 +99,13 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     }
   }
 
-  override protected def correctEx(user: User, sol: String, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart): Future[Try[RoseCompleteResult]] = {
-    val solDir = solutionDirForExercise(user.username, collection.id, exercise.id)
+  override protected def correctEx(user: User, sol: String, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart): Future[Try[RoseCompleteResult]] =
+    exercise.sampleSolutions.headOption match {
+      case None                 => Future.successful(Failure(new Exception("No sample solution could be found!")))
+      case Some(sampleSolution) =>
 
-    for {
-      result <- RoseCorrector.correct(user, exercise, sol, ProgLanguages.StandardLanguage, exerciseResourcesFolder, solDir)
-    } yield Try(RoseCompleteResult(result))
-  }
-
-  // Result handlers
-
-  //  override def onLiveCorrectionResult(pointsSaved: Boolean, result: RoseCompleteResult): JsValue = {
-  //    val (resultType, resultJson): (String, JsValue) = result.result match {
-  //      case rer: RoseExecutionResult    => ("success", Json.parse(rer.result))
-  //      case rser: RoseSyntaxErrorResult => ("syntaxError", JsString(rser.cause))
-  //      case other                       => (RoseConsts.errorName, JsString(other.toString))
-  //    }
-  //
-  //    Json.obj("resultType" -> resultType, "result" -> resultJson)
-  //  }
-
+        RoseCorrector.correct(
+          user, exercise, sol, sampleSolution.sample, ProgLanguages.StandardLanguage, solutionDirForExercise(user.username, collection.id, exercise.id)
+        )
+    }
 }

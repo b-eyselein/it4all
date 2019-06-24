@@ -10,9 +10,10 @@ let editor: CodeMirror.Editor;
 
 
 interface RoseCompleteResult {
-    resultType: string
-    cause: string
     result: CompleteRunResult
+    points: number;
+    maxPoints: number;
+    solutionSaved: boolean;
 }
 
 function onRoseCorrectionSuccess(completeResult: RoseCompleteResult): void {
@@ -20,25 +21,17 @@ function onRoseCorrectionSuccess(completeResult: RoseCompleteResult): void {
 
     testBtn.disabled = false;
 
-    let correctionDiv = document.querySelector<HTMLDivElement>('#correction');
+    const correctionDiv = document.querySelector<HTMLDivElement>('#correction');
 
-    switch (completeResult.resultType) {
-        case 'syntaxError':
-            correctionDiv.innerHTML = (`<div class="alert alert-danger"><b>Ihre Lösung hat einen Syntaxfehler:</b><hr><pre>${completeResult.cause}</pre></div>`);
-            break;
-        case 'success':
-            let runResult = completeResult.result;
-            if (runResult.correct) {
-                correctionDiv.innerHTML = (`<div class="alert alert-success">Ihre Lösung war korrekt.</div>`)
-            } else {
-                correctionDiv.innerHTML = (`<div class="alert alert-danger">Ihre Lösung war nicht korrekt!</div>`)
-            }
-            instantiateAll(runResult);
-            break;
-        default:
-            console.error('Unknown runresult type: ' + completeResult.resultType);
-            break;
+    const runResult = completeResult.result;
+
+    if (runResult.correct) {
+        correctionDiv.innerHTML = (`<div class="alert alert-success">Ihre Lösung war korrekt.</div>`)
+    } else {
+        correctionDiv.innerHTML = (`<div class="alert alert-danger">Ihre Lösung war nicht korrekt!</div>`)
     }
+
+    instantiateAll(runResult);
 }
 
 function testSol(): void {

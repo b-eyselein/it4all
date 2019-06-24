@@ -4,37 +4,20 @@ import model.core.result.{CompleteResult, CompleteResultJsonProtocol, Evaluation
 import model.points._
 import play.api.libs.json.Writes
 
-final case class RoseCompleteResult(result: RoseEvalResult, points: Points = (-1).points, maxPoints: Points = (-1).points, solutionSaved: Boolean = false)
-  extends CompleteResult[RoseEvalResult] {
+final case class RoseCompleteResult(result: RoseExecutionResult, points: Points = (-1).points, maxPoints: Points = (-1).points, solutionSaved: Boolean = false)
+  extends CompleteResult[RoseExecutionResult] {
 
-  override def results: Seq[RoseEvalResult] = Seq(result)
-
-}
-
-
-sealed trait RoseEvalResult extends EvaluationResult
-
-case object RoseTimeOutResult extends RoseEvalResult {
-
-  override def success: SuccessType = SuccessType.ERROR
+  override def results: Seq[RoseExecutionResult] = Seq(result)
 
 }
 
-final case class RoseSyntaxErrorResult(cause: String) extends RoseEvalResult {
+final case class RoseStart(x: Int, y: Int)
 
-  override def success: SuccessType = SuccessType.NONE
+final case class RobotResult(name: String, actions_size: Int, actions: Seq[String])
 
-}
-
-final case class RoseExecutionResult(result: String) extends RoseEvalResult {
+final case class RoseExecutionResult(correct: Boolean, start: RoseStart, sample: RobotResult, user: RobotResult) extends EvaluationResult {
 
   override def success: SuccessType = ???
-
-}
-
-case object RoseEvalFailed extends RoseEvalResult {
-
-  override def success: SuccessType = SuccessType.ERROR
 
 }
 
