@@ -50,7 +50,7 @@ function testSol(): void {
 }
 
 domReady(() => {
-    valueTableBody = document.querySelector('#valueTableBody')
+    valueTableBody = document.querySelector('#valueTableBody');
     valueTableBody.querySelectorAll<HTMLButtonElement>('button')
         .forEach(button => button.onclick = (event) => changeValue(event.target as HTMLButtonElement));
 

@@ -18,7 +18,7 @@ object BooleanQuestion {
   def generateRandom: BoolNode = if (randomBetweenInclBounds(MinDepth, MaxDepth) < 2)
     generateRandomOperator(Variable('a'), Variable('b'))
   else {
-    val variables = ('a' to 'z') map Variable take randomBetweenInclBounds(MinVars, MaxVars)
+    val variables = ('a' to 'z').map(Variable).take(randomBetweenInclBounds(MinVars, MaxVars))
 
     val leftChild = generateRandomOperator(takeRandom(variables), takeRandom(variables))
     val rightChild = generateRandomOperator(takeRandom(variables), takeRandom(variables))

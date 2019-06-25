@@ -5,6 +5,7 @@ import * as _ from 'underscore';
 import './boolDrawingElements';
 
 import 'jointjs';
+import {domReady} from "../otherHelpers";
 
 export {toggleLive};
 
@@ -224,7 +225,7 @@ function initButtons(): void {
     });
 }
 
-$(() => {
+domReady(() => {
         initButtons();
 
         const paperElem = document.getElementById('paper');
