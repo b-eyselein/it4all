@@ -157,4 +157,7 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(aThis: NextValExpression): Unit = {}
 
   override def visit(aThis: CollateExpression): Unit = {}
+
+  override def visit(aThis: SimilarToExpression): Unit = {}
+
 }
