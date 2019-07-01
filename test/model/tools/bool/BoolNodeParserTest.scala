@@ -46,7 +46,7 @@ class BoolNodeParserTest {
 
     BoolNodeParser.parseBoolFormula("a test b") match {
       case Success(formula) => fail("Parsing of 'a test b' should fail, but succeeded with " + formula.toString)
-      case _                => Unit
+      case _                => ()
     }
 
   }
