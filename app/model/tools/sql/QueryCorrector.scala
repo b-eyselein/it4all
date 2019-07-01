@@ -22,7 +22,7 @@ abstract class QueryCorrector(val queryType: String) {
   def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[StringSampleSolution], exercise: SqlExercise, scenario: SqlScenario)
              (implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
     parseStatement(learnerSolution) flatMap checkStatement match {
-      case Failure(error) => SqlParseFailed(error, -1 points)
+      case Failure(error) => SqlParseFailed(error, (-1).points)
       case Success(userQ) =>
 
         val userColumns = getColumnWrappers(userQ)

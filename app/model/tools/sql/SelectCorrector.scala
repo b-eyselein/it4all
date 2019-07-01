@@ -8,7 +8,7 @@ import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select._
 
-import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
 
@@ -17,12 +17,12 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   override type Q = net.sf.jsqlparser.statement.select.Select
 
   def getColumns(select: Q): Seq[SelectItem] = select.getSelectBody match {
-    case ps: PlainSelect => ps.getSelectItems.asScala
+    case ps: PlainSelect => ps.getSelectItems.asScala.toSeq
     case _               => Seq[SelectItem]()
   }
 
   override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getSelectBody match {
-    case ps: PlainSelect => ps.getSelectItems.asScala.map(wrapColumn)
+    case ps: PlainSelect => ps.getSelectItems.asScala.map(wrapColumn).toSeq
     case _               => Seq[ColumnWrapper]()
   }
 
@@ -37,12 +37,12 @@ object SelectCorrector extends QueryCorrector("SELECT") {
       val joinedTables: Seq[Table] = Option(plain.getJoins).map(_.asScala) match {
         case None                   => Seq[Table]()
         case Some(joins: Seq[Join]) =>
-          joins flatMap { join =>
+          joins.flatMap { join =>
             join.getRightItem match {
               case t: Table => Some(t)
               case _        => None
             }
-          }
+          }.toSeq
       }
 
       mainTable.toSeq ++ joinedTables
@@ -54,12 +54,12 @@ object SelectCorrector extends QueryCorrector("SELECT") {
       Option(ps.getJoins).map(_.asScala) match {
         case None                   => Seq.empty
         case Some(joins: Seq[Join]) =>
-          joins flatMap { join =>
+          joins.flatMap { join =>
             Option(join.getOnExpression) flatMap {
               case be: BinaryExpression => Some(be)
               case _                    => None
             }
-          }
+          }.toSeq
       }
     case _               => Seq.empty
   }
@@ -89,12 +89,12 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   }
 
   private def orderByElements(userQ: Q): Seq[OrderByElement] = userQ.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getOrderByElements).map(_.asScala).getOrElse(Seq[OrderByElement]())
+    case ps: PlainSelect => Option(ps.getOrderByElements).map(_.asScala).getOrElse(Seq[OrderByElement]()).toSeq
     case _               => Seq[OrderByElement]()
   }
 
   private def groupByElements(query: Q): Seq[Expression] = query.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getGroupBy).map(_.getGroupByExpressions.asScala).getOrElse(Seq[Expression]())
+    case ps: PlainSelect => Option(ps.getGroupBy).map(_.getGroupByExpressions.asScala).getOrElse(Seq[Expression]()).toSeq
     case _               => Seq[Expression]()
   }
 

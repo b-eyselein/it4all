@@ -1,7 +1,12 @@
 @(field: Field, rowCount: Int, placeHolder: Option[String] = None, isRequired: Boolean = false, isReadOnly: Boolean = false)
 
-<textarea class="form-control" name="@field.name" id="@field.id" rows="@rowCount" @{
-    if(isRequired) """ required """ else ""
-} @{
+@attributes = {
+@if(isRequired) { required }
+@if(isReadOnly) {readonly }
+
+@{
     placeHolder.map(ph => Html(s""" placeholder="$ph" """)).getOrElse("")
-}>@field.value</textarea>
+}
+}
+
+<textarea class="form-control" name="@field.name" id="@field.id" rows="@rowCount" @attributes>@field.value</textarea>

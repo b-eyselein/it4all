@@ -52,7 +52,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
   }
 
   private def readScript(filePath: File): Seq[String] = {
-    var stringBuilder = StringBuilder.newBuilder
+    var stringBuilder = new StringBuilder()
 
     val queries: ListBuffer[String] = ListBuffer.empty
 
@@ -61,11 +61,11 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
       if (trimmedLine endsWith sqlDelimiter) {
         queries += stringBuilder.toString
-        stringBuilder = StringBuilder.newBuilder
+        stringBuilder = new StringBuilder()
       }
     }
 
-    queries
+    queries.toSeq
   }
 
   private def allTableNames(connection: Connection): Seq[String] = using(connection.prepareStatement("SHOW TABLES;")) { tablesQuery =>
@@ -77,7 +77,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
       tableNames
     }
-  }.flatten getOrElse Seq[String]()
+  }.flatten.map(_.toSeq).getOrElse(Seq[String]())
 
   def tableContents(schemaName: String): Seq[SqlQueryResult] = using(db(Some(schemaName)).source.createConnection()) { connection =>
     allTableNames(connection).map { tableName =>
@@ -95,7 +95,7 @@ object SelectDAO extends SqlExecutionDAO("sqlselect", 3107) {
     case sel: Select =>
       using(db(Some(schemaName)).source.createConnection()) { connection =>
         using(connection.prepareStatement(sel.toString)) { statement => SqlQueryResult(statement.executeQuery()) }
-      } flatten
+      }.flatten
     case _           => Failure(null)
   }
 }
@@ -120,7 +120,7 @@ object ChangeDAO extends SqlExecutionDAO("sqlchange", 3108) {
 
           res
         }
-      } flatten
+      }.flatten
     case _                                          => Failure(null)
   }
 

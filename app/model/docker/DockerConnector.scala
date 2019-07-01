@@ -38,7 +38,10 @@ object DockerConnector {
 
   def imageExists(imageName: String): Boolean = {
     // FIXME: run in future?
-    dockerClient.listImages().asScala map (_.repoTags) filter (_ != null) exists (_ contains imageName)
+    dockerClient.listImages().asScala
+      .map(_.repoTags)
+      .filter(_ != null)
+      .exists(_.contains(imageName))
   }
 
   def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Try[Unit]] =

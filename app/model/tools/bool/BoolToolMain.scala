@@ -55,7 +55,7 @@ class BoolToolMain @Inject()(val tables: BoolTableDefs)(implicit ec: ExecutionCo
 
   // Correction
 
-  def readSolution(exPart: BoolExPart, request: Request[AnyContent]): Either[Seq[(JsPath, Seq[JsonValidationError])], BoolSolution] =
+  def readSolution(exPart: BoolExPart, request: Request[AnyContent]): Either[scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])], BoolSolution] =
     request.body.asJson match {
       case None          => Left(???)
       case Some(jsValue) => BoolSolutionJsonFormat.boolSolutionReads.reads(jsValue).asEither

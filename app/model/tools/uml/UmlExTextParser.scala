@@ -9,8 +9,8 @@ class UmlExTextParser(rawText: String, val mappings: Map[String, String], val to
   private val capWordsRegex: Regex  = """[A-Z][a-zäöüß]*""".r
   private val cssClassName : String = "text-muted"
 
-  private val capitalizedWords  : Set[String] = capWordsRegex findAllIn rawText toSet
-  private val simpleReplacements: Set[String] = capitalizedWords filter (k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))
+  private val capitalizedWords  : Set[String] = capWordsRegex.findAllIn(rawText).toSet
+  private val simpleReplacements: Set[String] = capitalizedWords.filter(k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))
 
   private def replaceWithMappingSpan(text: String, key: String, value: String): String = {
     val matcher = Pattern.compile(key + "\\b").matcher(text)

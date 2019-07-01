@@ -13,7 +13,7 @@ object SemanticVersionHelper {
 
   val DEFAULT: SemanticVersion = SemanticVersion(0, 1, 0)
 
-  def parseFromString(str: String): Option[SemanticVersion] = tryParseFromString(str) toOption
+  def parseFromString(str: String): Option[SemanticVersion] = tryParseFromString(str).toOption
 
 
   val semanticVersionForm: Form[SemanticVersion] = Form(

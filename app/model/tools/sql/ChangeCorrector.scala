@@ -26,7 +26,7 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
   override type Q = Insert
 
   private def expressionLists(query: Q): Seq[ExpressionList] = query.getItemsList match {
-    case mel: MultiExpressionList => mel.getExprList asScala
+    case mel: MultiExpressionList => mel.getExprList.asScala.toSeq
     case el: ExpressionList       => Seq(el)
     case _: SubSelect             => ???
   }
@@ -54,7 +54,7 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
 
   override type Q = Delete
 
-  override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala
+  override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala.toSeq
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 
@@ -71,9 +71,9 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override type Q = Update
 
-  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getColumns.asScala.map(wrapColumn)
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getColumns.asScala.map(wrapColumn).toSeq
 
-  override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala
+  override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala.toSeq
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 

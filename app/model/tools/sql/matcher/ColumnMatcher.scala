@@ -20,7 +20,7 @@ final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[C
 
   override def maxPoints: Points = sampleArg match {
     case None    => zeroPoints
-    case Some(_) => 1 halfPoint
+    case Some(_) => singleHalfPoint
   }
 
 }

@@ -84,7 +84,7 @@ final case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrappe
 
   override def getColName: String = col.getColumnName
 
-  override def getRest: String = col.getColDataType.getDataType toUpperCase
+  override def getRest: String = col.getColDataType.getDataType.toUpperCase
 
   def matchOther(that: CreateColumnWrapper): MatchType = {
     val theArg1 = col
@@ -100,8 +100,8 @@ final case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrappe
   }
 
   def compareDataTypes(userType: ColDataType, sampleType: ColDataType): Boolean = {
-    val firstColType = userType.getDataType toUpperCase
-    val secondColType = sampleType.getDataType toUpperCase
+    val firstColType = userType.getDataType.toUpperCase
+    val secondColType = sampleType.getDataType.toUpperCase
 
     // Comparing datatype
     firstColType equalsIgnoreCase secondColType
@@ -150,8 +150,8 @@ final case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
 
   override def getColName: String = col match {
     case _: AllColumns             => "*"
-    case at: AllTableColumns       => at toString
-    case set: SelectExpressionItem => set.getExpression toString
+    case at: AllTableColumns       => at.toString
+    case set: SelectExpressionItem => set.getExpression.toString
   }
 
   override def getRest: String = col match {
@@ -168,7 +168,7 @@ final case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
     case _ => MatchType.UNSUCCESSFUL_MATCH
   }
 
-  override def toString: String = col toString
+  override def toString: String = col.toString
 
 
 }

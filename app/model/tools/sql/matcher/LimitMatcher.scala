@@ -18,11 +18,11 @@ final case class LimitMatch(userArg: Option[Limit], sampleArg: Option[Limit]) ex
 
   override protected def descArgForJson(arg: Limit): JsValue = JsString(arg.toString)
 
-  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) 1 halfPoint else zeroPoints
+  override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
   override def maxPoints: Points = sampleArg match {
     case None    => zeroPoints
-    case Some(_) => 1 halfPoint
+    case Some(_) => singleHalfPoint
   }
 
 }

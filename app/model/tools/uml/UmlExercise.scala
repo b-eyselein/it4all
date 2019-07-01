@@ -46,7 +46,7 @@ final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
 
   private def allDistinctMembers[M <: UmlClassMember](members: UmlClass => Seq[M]): Seq[M] = sampleSolutions.headOption match {
     case None         => Seq.empty
-    case Some(sample) => sample.sample.classes flatMap members distinct
+    case Some(sample) => sample.sample.classes.flatMap(members).distinct
   }
 
 }

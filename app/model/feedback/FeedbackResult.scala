@@ -7,8 +7,12 @@ final case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 
   // FIXME: refactor!
 
-  def feedbackFor(evaluatedAspect: EvaluatedAspect): Map[Mark, Int] =
-    allFeedback.map(_.marks.getOrElse(evaluatedAspect, NoMark)).groupBy(identity).mapValues(_.size)
+  def feedbackFor(evaluatedAspect: EvaluatedAspect): Map[Mark, Int] = allFeedback
+    .map(_.marks.getOrElse(evaluatedAspect, NoMark))
+    .groupBy(identity)
+    .view
+    .mapValues(_.size)
+    .toMap
 
   val allComments: Seq[String] = allFeedback.map(_.comment).filter(!_.isEmpty)
 
@@ -17,9 +21,9 @@ final case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 object FeedbackResult {
 
   def avgAndCount(feedback: Map[Mark, Int]): (Double, Int) = {
-    val marksWithoutNoMark: Seq[(Mark, Int)] = feedback filter {
-      case (mark, _) => mark != Mark.NoMark
-    } toSeq
+    val marksWithoutNoMark: Seq[(Mark, Int)] = feedback
+      .filter { case (mark, _) => mark != Mark.NoMark }
+      .toSeq
 
     marksWithoutNoMark match {
       case Seq() => (0d, 0)

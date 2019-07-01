@@ -1,8 +1,8 @@
 @import model.tools.programming.{ProgCollection, ProgExPart, ProgExercise, ProgLanguages, ProgToolMain}
 
 @(user: model.User, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, fileNames: Seq[String], toolMainObject: ProgToolMain)(implicit
-requestHeader: RequestHeader, messagesProvider: MessagesProvider
-    )
+    requestHeader: RequestHeader, messagesProvider: MessagesProvider
+)
 
 @title = @{
     "TODO!"
@@ -18,21 +18,6 @@ requestHeader: RequestHeader, messagesProvider: MessagesProvider
                 SystemJS.import(toImport);
             }
     </script>
-}
-
-@remainingExerciseDef = {
-    <div class="form-group">
-        <div class="btn-group d-flex">
-            <button class="btn btn-outline-primary w-100" data-toggle="modal" data-target="#definitionRest">
-                Rest der Definition</button>
-            @exercise.maybeClassDiagramPart match {
-                case None => {}
-                case Some(classDiagPart@_) => {
-                    <button type="button" class="btn btn-info w-100" data-toggle="modal" data-target="#classDiagramModal">Klassendiagramm</button>
-                }
-            }
-        </div>
-    </div>
 }
 
 @toolViews.ideExercise(

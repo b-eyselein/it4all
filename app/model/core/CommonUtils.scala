@@ -32,7 +32,7 @@ object CommonUtils {
 
     }
 
-    go(ts toList, Seq[A](), Seq[Failure[A]]())
+    go(ts.toList, Seq[A](), Seq[Failure[A]]())
   }
 
 }

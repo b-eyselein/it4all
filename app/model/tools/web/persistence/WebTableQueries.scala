@@ -103,7 +103,7 @@ trait WebTableQueries {
   } yield htmlTasksSaved && jsTasksSaved && webFilesSaved && sampleSolutionsSaved
 
   private def saveHtmlTask(exId: Int, exSemVer: SemanticVersion, collId: Int, htmlTask: HtmlTask): Future[Boolean] = {
-    val (dbHtmlTask, dbHtmlAttributes) = dbModels.dbHtmlTaskFromHtmlTask(exId, exSemVer, collId, htmlTask)
+    val (dbHtmlTask, dbHtmlAttributes) = dbModels.dbHtmlTaskFromHtmlTask(exId,  collId, htmlTask)
 
     db.run(htmlTasksTable += dbHtmlTask) flatMap { _ =>
       saveSeq[DbHtmlAttribute](dbHtmlAttributes, a => db.run(attributesTable += a))
@@ -111,7 +111,7 @@ trait WebTableQueries {
   }
 
   private def saveJsTask(exId: Int, exSemVer: SemanticVersion, collId: Int, jsTask: JsTask): Future[Boolean] = {
-    val (dbJsTask, dbJsConditionsAndAttributes) = dbModels.dbJsTaskFromJsTask(exId, exSemVer, collId, jsTask)
+    val (dbJsTask, dbJsConditionsAndAttributes) = dbModels.dbJsTaskFromJsTask(exId,  collId, jsTask)
 
     db.run(jsTasksTable += dbJsTask) flatMap { _ =>
       saveSeq[(DbJsCondition, Seq[DbJsConditionAttribute])](dbJsConditionsAndAttributes, saveJsCondition(dbJsTask.id, exId, exSemVer, collId, _))

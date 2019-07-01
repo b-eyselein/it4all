@@ -44,7 +44,7 @@ object XmlCorrector {
       case _: SAXException => // Ignore...
     }
 
-    errorHandler.errors
+    errorHandler.errors.toSeq
   }
 
   def correctDocument(solution: XmlSolution, solutionBaseDir: File, exercise: XmlExercise): Try[XmlDocumentCompleteResult] =

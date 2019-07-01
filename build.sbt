@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.0"
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -98,7 +98,7 @@ libraryDependencies ++= Seq(
   "com.beachape" %% "enumeratum-play" % "1.5.16", // MIT
   "com.beachape" %% "enumeratum-play-json" % "1.5.16", // MIT
 
-  "net.jcazevedo" %% "moultingyaml" % "0.4.0", // MIT
+  "net.jcazevedo" %% "moultingyaml" % "0.4.1", // MIT
 
   "com.github.t3hnar" %% "scala-bcrypt" % "4.1", // Apache 2.0
 

@@ -24,14 +24,14 @@ object SqlRow {
   def buildFrom(resultSet: ResultSet): (Seq[String], Seq[SqlRow]) = {
     val metaData: ResultSetMetaData = resultSet.getMetaData
 
-    val columnNames: Seq[String] = (1 to metaData.getColumnCount).map(count => Try(metaData getColumnLabel count) getOrElse "")
+    val columnNames: Seq[String] = (1 to metaData.getColumnCount).map(count => Try(metaData.getColumnLabel(count)).getOrElse(""))
 
     val pRows: ListBuffer[SqlRow] = ListBuffer.empty
 
     while (resultSet.next) {
-      val cells: Map[String, SqlCell] = columnNames.map { colName =>
-        (colName, SqlCell(colName, Try(resultSet getString colName) getOrElse ""))
-      } toMap
+      val cells: Map[String, SqlCell] = columnNames
+        .map { colName => (colName, SqlCell(colName, Try(resultSet.getString(colName)).getOrElse(""))) }
+        .toMap
 
       pRows += new SqlRow(cells)
     }

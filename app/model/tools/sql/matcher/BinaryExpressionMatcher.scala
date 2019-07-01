@@ -1,7 +1,7 @@
 package model.tools.sql.matcher
 
-import model.points._
 import model.core.matching._
+import model.points._
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
@@ -29,14 +29,14 @@ final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sample
   override protected def descArgForJson(arg: BinaryExpression): JsValue = JsString(arg.toString)
 
   override def points: Points = matchType match {
-    case MatchType.SUCCESSFUL_MATCH   => 1 point
-    case MatchType.UNSUCCESSFUL_MATCH => 1 halfPoint
+    case MatchType.SUCCESSFUL_MATCH   => singlePoint
+    case MatchType.UNSUCCESSFUL_MATCH => singleHalfPoint
     case _                            => zeroPoints
   }
 
   override def maxPoints: Points = sampleArg match {
     case None    => zeroPoints
-    case Some(_) => 1 point
+    case Some(_) => singlePoint
   }
 
 }

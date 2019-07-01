@@ -1,7 +1,6 @@
 package model.tools.web.persistence
 
 import de.uniwue.webtester.JsActionType
-import model.SemanticVersion
 import model.persistence.{DbExerciseFile, DbFilesUserSolution, FilesSolutionExerciseTableDefs}
 import model.tools.web.WebConsts._
 import model.tools.web._
@@ -113,7 +112,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def xpathQuery: Rep[String] = column[String]("xpath_query")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, collectionId))
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, collectionId))
 
   }
 
@@ -124,7 +123,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def textContent: Rep[Option[String]] = column[Option[String]]("text_content")
 
 
-    override def * : ProvenShape[DbHtmlTask] = (id, exerciseId, exSemVer, collectionId, text, xpathQuery, awaitedTagname, textContent) <> (DbHtmlTask.tupled, DbHtmlTask.unapply)
+    override def * : ProvenShape[DbHtmlTask] = (id, exerciseId, collectionId, text, xpathQuery, awaitedTagname, textContent) <> (DbHtmlTask.tupled, DbHtmlTask.unapply)
 
   }
 
@@ -136,19 +135,17 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
     def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
-
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
     def value: Rep[String] = column[String]("attr_value")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (key, taskId, exerciseId, exSemVer))
+    def pk: PrimaryKey = primaryKey("pk", (key, taskId, exerciseId))
 
-    def taskFk: ForeignKeyQuery[HtmlTasksTable, DbHtmlTask] = foreignKey("task_fk", (taskId, exerciseId, exSemVer), htmlTasksTable)(t => (t.id, t.exerciseId, t.exSemVer))
+    def taskFk: ForeignKeyQuery[HtmlTasksTable, DbHtmlTask] = foreignKey("task_fk", (taskId, exerciseId), htmlTasksTable)(t => (t.id, t.exerciseId))
 
 
-    override def * : ProvenShape[DbHtmlAttribute] = (key, taskId, exerciseId, exSemVer, collectionId, value) <> (DbHtmlAttribute.tupled, DbHtmlAttribute.unapply)
+    override def * : ProvenShape[DbHtmlAttribute] = (key, taskId, exerciseId, collectionId, value) <> (DbHtmlAttribute.tupled, DbHtmlAttribute.unapply)
 
   }
 
@@ -159,7 +156,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def keysToSend: Rep[String] = column[String]("keys_to_send")
 
 
-    override def * : ProvenShape[DbJsTask] = (id, exerciseId, exSemVer, collectionId, text, xpathQuery, actionType, keysToSend.?) <> (DbJsTask.tupled, DbJsTask.unapply)
+    override def * : ProvenShape[DbJsTask] = (id, exerciseId, collectionId, text, xpathQuery, actionType, keysToSend.?) <> (DbJsTask.tupled, DbJsTask.unapply)
 
   }
 
@@ -170,8 +167,6 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def taskId: Rep[Int] = column[Int]("task_id")
 
     def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
@@ -184,13 +179,13 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def awaitedTextContent: Rep[Option[String]] = column[Option[String]]("awaited_value")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, taskId, exerciseId, exSemVer, collectionId, isPrecondition))
+    def pk: PrimaryKey = primaryKey("pk", (id, taskId, exerciseId, collectionId, isPrecondition))
 
-    def taskFk: ForeignKeyQuery[JsTasksTable, DbJsTask] = foreignKey("task_fk", (taskId, exerciseId, exSemVer, collectionId),
-      jsTasksTable)(t => (t.id, t.exerciseId, t.exSemVer, t.collectionId))
+    def taskFk: ForeignKeyQuery[JsTasksTable, DbJsTask] = foreignKey("task_fk", (taskId, exerciseId, collectionId),
+      jsTasksTable)(t => (t.id, t.exerciseId, t.collectionId))
 
 
-    override def * : ProvenShape[DbJsCondition] = (id, taskId, exerciseId, exSemVer, collectionId, isPrecondition, xpathQuery,
+    override def * : ProvenShape[DbJsCondition] = (id, taskId, exerciseId, collectionId, isPrecondition, xpathQuery,
       awaitedTagname, awaitedTextContent) <> (DbJsCondition.tupled, DbJsCondition.unapply)
 
   }
@@ -205,7 +200,6 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
     def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
@@ -214,13 +208,13 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def value: Rep[String] = column[String]("attr_value")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (key, condId, taskId, exerciseId, exSemVer, collectionId, isPrecondition))
+    def pk: PrimaryKey = primaryKey("pk", (key, condId, taskId, exerciseId, collectionId, isPrecondition))
 
-    def condFk: ForeignKeyQuery[ConditionsTable, DbJsCondition] = foreignKey("cond_fk", (condId, taskId, exerciseId, exSemVer, collectionId, isPrecondition),
-      jsConditionsTableQuery)(jc => (jc.id, jc.taskId, jc.exerciseId, jc.exSemVer, jc.collectionId, jc.isPrecondition))
+    def condFk: ForeignKeyQuery[ConditionsTable, DbJsCondition] = foreignKey("cond_fk", (condId, taskId, exerciseId, collectionId, isPrecondition),
+      jsConditionsTableQuery)(jc => (jc.id, jc.taskId, jc.exerciseId, jc.collectionId, jc.isPrecondition))
 
 
-    override def * : ProvenShape[DbJsConditionAttribute] = (condId, taskId, exerciseId, exSemVer, collectionId, isPrecondition, key, value) <> (DbJsConditionAttribute.tupled, DbJsConditionAttribute.unapply)
+    override def * : ProvenShape[DbJsConditionAttribute] = (condId, taskId, exerciseId, collectionId, isPrecondition, key, value) <> (DbJsConditionAttribute.tupled, DbJsConditionAttribute.unapply)
 
   }
 

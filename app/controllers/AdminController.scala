@@ -13,6 +13,7 @@ import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
+
 class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repository: Repository, toolList: ToolList)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
@@ -46,9 +47,12 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     implicit request =>
       repository.futureEvaluationResultsForTools map { evaluationResultsForTools: Seq[Feedback] =>
 
-        val results: Seq[FeedbackResult] = evaluationResultsForTools.groupBy(_.toolUrlPart) map {
-          case (toolUrl, allResults) => FeedbackResult(toolUrl, allResults)
-        } toSeq
+        val results: Seq[FeedbackResult] = evaluationResultsForTools
+          .groupBy(_.toolUrlPart)
+          .toSeq
+          .map {
+            case (toolUrl, allResults) => FeedbackResult(toolUrl, allResults)
+          }
 
         Ok(views.html.evaluation.stats(user, results))
       }

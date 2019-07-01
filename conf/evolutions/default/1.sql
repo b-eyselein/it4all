@@ -698,7 +698,7 @@ create table if not exists web_exercises (
     js_text          text,
     filename         varchar(100) not null,
 
-    primary key (id, semantic_version, collection_id),
+    primary key (id, collection_id),
     foreign key (collection_id)
         references web_collections (id)
         on update cascade on delete cascade
@@ -707,16 +707,16 @@ create table if not exists web_exercises (
 create table if not exists html_tasks (
     task_id         int,
     exercise_id     int,
-    ex_sem_ver      varchar(10),
+    ex_sem_ver      varchar(10), # TODO: remove...
     collection_id   int,
     text            text,
     xpath_query     varchar(50),
     awaited_tagname varchar(50),
     text_content    varchar(100),
 
-    primary key (task_id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references web_exercises (id, semantic_version, collection_id)
+    primary key (task_id, exercise_id, collection_id),
+    foreign key (exercise_id, collection_id)
+        references web_exercises (id, collection_id)
         on update cascade on delete cascade
 );
 
@@ -724,20 +724,20 @@ create table if not exists html_attributes (
     attr_key      varchar(30),
     task_id       int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
+    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
     attr_value    varchar(150),
 
-    primary key (attr_key, task_id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (task_id, exercise_id, ex_sem_ver, collection_id)
-        references html_tasks (task_id, exercise_id, ex_sem_ver, collection_id)
+    primary key (attr_key, task_id, exercise_id, collection_id),
+    foreign key (task_id, exercise_id, collection_id)
+        references html_tasks (task_id, exercise_id, collection_id)
         on update cascade on delete cascade
 );
 
 create table if not exists js_tasks (
     task_id            int,
     exercise_id        int,
-    ex_sem_ver         varchar(10),
+    ex_sem_ver         varchar(10), # TODO: remove...
     collection_id      int,
     text               text,
     xpath_query        varchar(50),
@@ -746,9 +746,9 @@ create table if not exists js_tasks (
     action_xpath_query varchar(50),
     keys_to_send       varchar(100),
 
-    primary key (task_id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references web_exercises (id, semantic_version, collection_id)
+    primary key (task_id, exercise_id, collection_id),
+    foreign key (exercise_id, collection_id)
+        references web_exercises (id, collection_id)
         on update cascade on delete cascade
 );
 
@@ -756,7 +756,7 @@ create table if not exists js_conditions (
     condition_id    int,
     task_id         int,
     exercise_id     int,
-    ex_sem_ver      varchar(10),
+    ex_sem_ver      varchar(10), # TODO: remove...
     collection_id   int,
     is_precondition boolean default true,
 
@@ -764,9 +764,9 @@ create table if not exists js_conditions (
     awaited_tagname varchar(50),
     awaited_value   varchar(50),
 
-    primary key (condition_id, task_id, exercise_id, ex_sem_ver, collection_id, is_precondition),
-    foreign key (task_id, exercise_id, ex_sem_ver, collection_id)
-        references js_tasks (task_id, exercise_id, ex_sem_ver, collection_id)
+    primary key (condition_id, task_id, exercise_id, collection_id, is_precondition),
+    foreign key (task_id, exercise_id, collection_id)
+        references js_tasks (task_id, exercise_id, collection_id)
         on update cascade on delete cascade
 );
 
@@ -775,44 +775,44 @@ create table if not exists web_js_condition_attributes (
     cond_id         int,
     task_id         int,
     exercise_id     int,
-    ex_sem_ver      varchar(10),
+    ex_sem_ver      varchar(10), # TODO: remove...
     collection_id   int,
     is_precondition boolean      not null,
     attr_value      varchar(150) not null,
 
-    primary key (attr_key, cond_id, task_id, exercise_id, ex_sem_ver, collection_id, is_precondition),
-    foreign key (cond_id, task_id, exercise_id, ex_sem_ver, collection_id, is_precondition)
-        references js_conditions (condition_id, task_id, exercise_id, ex_sem_ver, collection_id, is_precondition)
+    primary key (attr_key, cond_id, task_id, exercise_id, collection_id, is_precondition),
+    foreign key (cond_id, task_id, exercise_id, collection_id, is_precondition)
+        references js_conditions (condition_id, task_id, exercise_id, collection_id, is_precondition)
         on update cascade on delete cascade
 );
 
 create table if not exists web_files (
     name          varchar(100),
     exercise_id   int,
-    ex_sem_ver    varchar(10),
+    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
     content       text        not null,
     file_type     varchar(20) not null,
     editable      boolean     not null,
 
-    primary key (name, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references web_exercises (id, semantic_version, collection_id)
+    primary key (name, exercise_id, collection_id),
+    foreign key (exercise_id, collection_id)
+        references web_exercises (id, collection_id)
         on update cascade on delete cascade
 );
 
 create table if not exists web_sample_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
+    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
 
     html_sample   text,
     js_sample     text,
 
-    primary key (id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references web_exercises (id, semantic_version, collection_id)
+    primary key (id, exercise_id, collection_id),
+    foreign key (exercise_id, collection_id)
+        references web_exercises (id, collection_id)
         on update cascade on delete cascade
 );
 
@@ -820,22 +820,22 @@ create table if not exists web_sample_solution_files (
     name          varchar(100),
     sample_id     int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
+    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
     content       text        not null,
     file_type     varchar(50) not null,
     editable      boolean     not null,
 
-    primary key (name, sample_id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (sample_id, exercise_id, ex_sem_ver, collection_id)
-        references web_sample_solutions (id, exercise_id, ex_sem_ver, collection_id)
+    primary key (name, sample_id, exercise_id, collection_id),
+    foreign key (sample_id, exercise_id, collection_id)
+        references web_sample_solutions (id, exercise_id, collection_id)
         on update cascade on delete cascade
 );
 
 create table if not exists web_user_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
+    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
     username      varchar(30),
     part          varchar(50),
@@ -844,8 +844,8 @@ create table if not exists web_user_solutions (
     max_points    double,
 
     primary key (id, exercise_id, collection_id, username, part),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references web_exercises (id, semantic_version, collection_id)
+    foreign key (exercise_id, collection_id)
+        references web_exercises (id, collection_id)
         on update cascade on delete cascade,
     foreign key (username)
         references users (username)
@@ -856,7 +856,7 @@ create table if not exists web_user_solution_files (
     name          varchar(100),
     solution_id   int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
+    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
     username      varchar(30),
     part          varchar(50),
@@ -874,15 +874,15 @@ create table if not exists web_user_solution_files (
 create table if not exists web_exercise_reviews (
     username       varchar(50),
     exercise_id    int,
-    ex_sem_ver     varchar(10),
+    ex_sem_ver     varchar(10), # TODO: remove...
     collection_id  int,
     part           varchar(50),
     difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
     maybe_duration int,
 
-    primary key (username, exercise_id, ex_sem_ver, part, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references web_exercises (id, semantic_version, collection_id)
+    primary key (username, exercise_id, part, collection_id),
+    foreign key (exercise_id, collection_id)
+        references web_exercises (id, collection_id)
         on update cascade on delete cascade
 );
 

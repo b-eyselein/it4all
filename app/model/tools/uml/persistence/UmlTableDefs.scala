@@ -67,7 +67,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   override def completeExForEx(collId: Int, ex: DbUmlExercise): Future[UmlExercise] = for {
     dbToIgnore <- db.run(umlToIgnore.filter { i => i.exerciseId === ex.id && i.exSemVer === ex.semanticVersion }.result)
     dbMappings <- db.run(umlMappings.filter { m => m.exerciseId === ex.id && m.exSemVer === ex.semanticVersion }.result)
-    samples <- db.run(sampleSolutionsTableQuery filter (s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion) result).map(_.map(UmlSolutionDbModels.sampleSolFromDbSampleSol))
+    samples <- db.run(sampleSolutionsTableQuery.filter(s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion).result).map(_.map(UmlSolutionDbModels.sampleSolFromDbSampleSol))
   } yield {
 
     val toIgnore = dbToIgnore.map {
@@ -75,7 +75,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     }
 
     val mappings = dbMappings.map {
-      case (_, _, _, key, value) => (key -> value)
+      case (_, _, _, key, value) => key -> value
     }.toMap
 
     dbModels.exerciseFromDbExercise(ex, toIgnore, mappings, samples)
@@ -90,7 +90,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     for {
       toIngoreSaved <- saveSeq[String](compEx.toIgnore, i => db.run(umlToIgnore += ((compEx.id, compEx.semanticVersion, collId, i))))
 
-      mappingsSaved <- saveSeq[(String, String)](compEx.mappings toSeq, {
+      mappingsSaved <- saveSeq[(String, String)](compEx.mappings.toSeq, {
         case (key, value) => db.run(umlMappings += ((compEx.id, compEx.semanticVersion, collId, key, value)))
       })
 
