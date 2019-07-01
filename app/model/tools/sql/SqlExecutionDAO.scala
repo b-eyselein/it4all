@@ -15,7 +15,9 @@ import slick.jdbc.JdbcBackend.Database
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Try}
 
-abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
+abstract class SqlExecutionDAO(mainDbName: String) {
+
+  protected val port: Int
 
   protected val mainDB = db(None)
 
@@ -89,7 +91,9 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
 }
 
-object SelectDAO extends SqlExecutionDAO("sqlselect", 3107) {
+object SelectDAO extends SqlExecutionDAO("sqlselect") {
+
+  override protected val port = 3107
 
   override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = query match {
     case sel: Select =>
@@ -100,7 +104,9 @@ object SelectDAO extends SqlExecutionDAO("sqlselect", 3107) {
   }
 }
 
-object ChangeDAO extends SqlExecutionDAO("sqlchange", 3108) {
+object ChangeDAO extends SqlExecutionDAO("sqlchange") {
+
+  override protected val port = 3108
 
   override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = query match {
     case change@(_: Update | _: Insert | _: Delete) =>
@@ -126,7 +132,9 @@ object ChangeDAO extends SqlExecutionDAO("sqlchange", 3108) {
 
 }
 
-object CreateDAO extends SqlExecutionDAO("sqlcreate", 3109) {
+object CreateDAO extends SqlExecutionDAO("sqlcreate") {
+
+  override protected val port = 3109
 
   override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = Try(???)
 
