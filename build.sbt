@@ -113,8 +113,8 @@ libraryDependencies ++= Seq(
   "com.github.jsqlparser" % "jsqlparser" % "2.1", // Apache 2.0
 
   // DTD Parser
-  "de.uniwue" %% "scala_dtd" % "0.4.0",
+  "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",
 
   // Web tester
-  "de.uniwue" %% "it4all_webtester" % "0.2.3"
+  "de.uniwue" %% "it4all_webtester" % "0.3.0"
 )
