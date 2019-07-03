@@ -1,14 +1,5 @@
 @(ex: model.tools.web.WebExercise)
 
-@showFile(file: model.ExerciseFile) = {
-    <div class="card my-3">
-        <div class="card-header">@file.name (<code>@file.fileType</code>, editable = @file.editable)</div>
-        <div class="card-body">
-            <pre>@file.content</pre>
-        </div>
-    </div>
-}
-
 @displayElementSpec(elSpec: de.uniwue.webtester.HtmlElementSpec) = {
     ID: @elSpec.id; xpathQuery: <code>@elSpec.xpathQuery</code>; Textinhalt: @elSpec.awaitedTextContent.map(x => Html(s"&quot;$x&quot;")).getOrElse("--")
 }
@@ -22,7 +13,7 @@
     <div class="col-md-3">Dateien:</div>
     <div class="col-md-9">
     @for(file <- ex.files) {
-        @showFile(file)
+        @views.html.toolViews.previewExerciseFile(file)
     }
     </div>
 </div>
@@ -84,7 +75,7 @@
         <div class="col-md-3">Musterlösung @sample.id:</div>
         <div class="col-md-9">
         @for(sampleFile <- sample.sample) {
-            @showFile(sampleFile)
+            @views.html.toolViews.previewExerciseFile(sampleFile)
         }
         </div>
     </div>

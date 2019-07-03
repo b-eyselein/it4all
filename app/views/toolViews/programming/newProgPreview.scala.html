@@ -1,0 +1,76 @@
+@(pe: model.tools.programming.ProgExercise)
+
+<div class="row my-3">
+    <div class="col-md-3">Funktions- / Datei- / Ordnername</div>
+    <div class="col-md-9"><code>@pe.functionName</code>, <code>@pe.filename</code>, <code>@pe.foldername</code></div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">I/O</div>
+    <div class="col-md-9">
+        <code>@pe.inputTypes.map(it => it.inputName + ": " + it.inputType.typeName).mkString(", ")
+            -> @pe.outputType.typeName</code>
+    </div>
+</div>
+
+<hr>
+
+<div class="row my-3">
+    <div class="col-md-3">Typ Unittest</div>
+    <div class="col-md-9">@pe.unitTestPart.unitTestType</div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Beschreibung Unittest</div>
+    <div class="col-md-9">@Html(pe.unitTestPart.unitTestsDescription)</div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Konfigurationen UnitTests</div>
+    <div class="col-md-9">@pe.unitTestPart.unitTestTestConfigs</div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Dateien UnitTest</div>
+    <div class="col-md-9">
+    @for(file <- pe.unitTestPart.unitTestFiles) {
+        @views.html.toolViews.previewExerciseFile(file)
+    }
+    </div>
+</div>
+
+<hr>
+
+<div class="row my-3">
+    <div class="col-md-3">Basis Implementierung</div>
+    <div class="col-md-9"><pre>@pe.implementationPart.base</pre></div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-3">Dateien Implementierung</div>
+    <div class="col-md-9">
+    @for(file <- pe.implementationPart.files) {
+        @views.html.toolViews.previewExerciseFile(file)
+    }
+    </div>
+</div>
+
+<hr>
+
+@for(sampleSolution <- pe.sampleSolutions) {
+    <div class="row my-3">
+        <div class="col-md-3">Dateien Musterlösung @sampleSolution.id</div>
+        <div class="col-md-9">
+        @for(file <- sampleSolution.sample.files) {
+            @views.html.toolViews.previewExerciseFile(file)
+        }
+        </div>
+    </div>
+}
+
+<hr>
+
+<div class="row my-3">
+    <div class="col-md-3">Mustertestdaten</div>
+    <div class="col-md-9">@pe.sampleTestData</div>
+</div>

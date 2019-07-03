@@ -63,12 +63,7 @@ final case class UnitTestPart(
   unitTestTestConfigs: Seq[UnitTestTestConfig],
 )
 
-final case class ImplementationPart(base: String, files: Seq[ExerciseFile]) {
-
-  // FIXME: remove!
-  //  def files: Seq[ExerciseFile] = Seq(ExerciseFile("solution.py", base, "python", editable = true))
-
-}
+final case class ImplementationPart(base: String, files: Seq[ExerciseFile])
 
 
 sealed trait UnitTestType extends EnumEntry

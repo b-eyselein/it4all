@@ -1,10 +1,28 @@
 - id: 1
-  title: Python Basics
+  title: Zahlen
   author: bje40dc
   text: TODO
   status: APPROVED
-  shortName: python_basics
+  shortName: numbers
 - id: 2
+  title: Strings
+  author: bje40dc
+  text: TODO
+  status: APPROVED
+  shortName: strings
+- id: 3
+  title: Listen
+  author: bje40dc
+  text: TODO
+  status: APPROVED
+  shortName: lists
+- id: 4
+  title: Klassen
+  author: bje40dc
+  text: TODO
+  status: APPROVED
+  shortName: classes
+- id: 5
   title: Unit Testing
   author: bje40dc
   text: TODO

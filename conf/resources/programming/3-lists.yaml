@@ -1,0 +1,95 @@
+- id: 1
+  semanticVersion: {major: 1, minor: 0, patch: 0}
+  title: Durchschnitt
+  author: bje40dc
+  text: >
+    Berechnen Sie den Durchschnittswert aller Elemente als Gleitkommazahl in der übergebenen Liste von (Ganz-)Zahlen!
+    Bei einer leeren Liste soll 'None' zurückgegeben werden.
+  status: APPROVED
+
+  functionname: average
+  foldername: average
+  filename: average
+
+  inputTypes: [{id: 1, name: my_list, type: list<int>}]
+  outputType: float
+
+  unitTestPart:
+    unitTestType: Simplified
+    unitTestsDescription: TODO!
+    unitTestFiles: []
+    unitTestTestConfigs: []
+
+  implementationPart:
+    base: |
+      from typing import List
+
+      def average(my_list: List[int]) -> float:
+          return 0
+    files:
+      - path: average.py
+        resourcePath: programming/3-lists/1-average/average_declaration.py
+        fileType: python
+        editable: true
+
+  sampleSolutions:
+    - id: 1
+      files:
+        - path: average.py
+          resourcePath: programming/3-lists/1-average/average.py
+          fileType: python
+          editable: false
+
+  sampleTestData:
+    - {id: 1, inputs: [], output: null}
+    - {id: 2, inputs: [1], output: 1.0}
+    - {id: 3, inputs: [3, 5, 7], output: 5.0}
+
+- id: 2
+  semanticVersion: 1.0.0
+  title: Längste Zeichenkette
+  author: bje40dc
+  text: >
+    Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll 'None' zurückgegeben werden.
+    Ignorieren Sie dabei Groß- und Kleinschreibung.
+  status: APPROVED
+
+  functionname: longest_string
+  foldername: longest_string
+  filename: longest_string
+
+  inputTypes: [{id: 1, name: my_list, type: list<string>}]
+  outputType: string
+
+  unitTestPart:
+    unitTestType: Simplified
+    unitTestsDescription: TODO!
+    unitTestFiles: []
+    unitTestTestConfigs: []
+
+  implementationPart:
+    base: |
+      from typing import List
+
+      def longest_string(my_list: List[str]) -> str:
+          return ''
+    mainFileName: longest_string.py
+    files:
+      - path: longest_string.py
+        resourcePath: programming/3-lists/2-longest_string/longest_string_declaration.py
+        fileType: python
+        editable: true
+
+  sampleSolutions:
+    - id: 1
+      files:
+        - path: longest_string.py
+          resourcePath: programming/3-lists/2-longest_string/longest_string.py
+          fileType: python
+          editable: false
+
+  sampleTestData:
+    - {id: 1, inputs: [], output: null}
+    - {id: 2, inputs: ["0"], output: "0"}
+    - {id: 3, inputs: ["1", "11", "111"], output: "111"}
+    - {id: 4, inputs: ["1", "121", "12321", "232", "3"], output: "12321"}

@@ -1,0 +1,104 @@
+- id: 1
+  semanticVersion: {major: 0, minor: 0, patch: 0}
+  title: PySQL
+  author: amh12ry
+  text: TODO!
+  status: APPROVED
+
+  functionname: insert
+  foldername: pysql
+  filename: table
+
+  inputTypes: []
+  outputType: None
+
+  unitTestPart:
+    unitTestType: Normal
+
+    unitTestsDescription: >
+      Schreiben Sie Unittests für eine Implementierung der Methode <code>insert(self, row: List[str]) -> bool</code> in
+      der Klasse <code>Table</code>. Diese fügt eine neue Zeile mit Werten in die Tabelle ein. Die neu eingefügte
+      Zeile soll dabei die gleiche Anzahl an Einträgen wie die bereits vorhandenen Zeilen (<code>self.length()</code>)
+      haben, ansonsten soll eine Exception geworfen werden. Alle Einträge der Liste, die sich zu Fließkommazahlen
+      konvertieren lassen (Also Ganz- und Fließkommazahlen), sollen auch konvertiert werden. Dann soll überprüft werden,
+      ob die einzelnen Einträge der neuen Liste die gleichen Typen (jeweils <code>str</code> oder <code>float</code>)
+      haben wie die bisherigen Einträge, ansonsten soll auch wieder eine Exception geworfen werden. Zum Schluss soll
+      die Zeile hinzugefügt werden und <code>True</code> zurückgegeben werden.
+
+    unitTestFiles:
+      - path: test.py
+        resourcePath: programming/4-unit_testing/1-pysql/table_test_declaration.py
+        fileType: python
+        editable: true
+      - path: table.py
+        resourcePath: programming/4-unit_testing/1-pysql/table_declaration.py
+        fileType: python
+        editable: false
+      - path: raum.csv
+        resourcePath: programming/4-unit_testing/1-pysql/raum.csv
+        fileType: python
+        editable: false
+
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung
+
+      - id: 1
+        shouldFail: true
+        cause: illegal_argument
+        description: Es soll überprüft werden, ob die eingegebene Liste die gleiche Länge wie die Tabellenreihen hat.
+
+      - id: 2
+        shouldFail: true
+        cause: illegal_argument
+        description: Es soll überprüft werden, ob der Inhalt der eingegebenen Liste die gleichen Datentypen hat wie die Anfangsdaten.
+
+      - id: 3
+        shouldFail: true
+        cause: wrong_result
+        description: Die Funktion sollte bei Erfolg True ausgeben.
+
+      - id: 4
+        shouldFail: true
+        cause: wrong_result
+        description: Die letzte Zeile der Tabelle muss der angefügten Zeile entsprechen.
+
+      - id: 5
+        shouldFail: true
+        cause: wrong_result
+        description: Die neue Anzahl an Zeilen muss um genau 1 höher sein.
+
+      - id: 6
+        shouldFail: true
+        cause: wrong_result
+        description: Zahlen in der neuen Zeile sollen automatisch von Strings zu floats konvertiert werden.
+
+  implementationPart:
+    base: ""
+    files:
+      - path: table.py
+        resourcePath: programming/4-unit_testing/1-pysql/table_declaration.py
+        fileType: python
+        editable: true
+      - path: test.py
+        resourcePath: programming/4-unit_testing/1-pysql/table_test_declaration.py
+        fileType: python
+        editable: false
+      - path: raum.csv
+        resourcePath: programming/4-unit_testing/1-pysql/raum.csv
+        fileType: python
+        editable: false
+
+  sampleSolutions:
+    - id: 1
+      files:
+        - path: table.py
+          resourcePath: programming/4-unit_testing/1-pysql/table.py
+          fileType: python
+        - path: test.py
+          resourcePath: programming/4-unit_testing/1-pysql/table_test.py
+          fileType: python
+
+  sampleTestData: []

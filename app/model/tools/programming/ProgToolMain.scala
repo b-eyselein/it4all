@@ -159,6 +159,10 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       views.html.toolViews.umlActivity.activityDrawing(user, collection, exercise, language, definitionRest, this)
   }
 
+  override def previewExerciseRest(ex: Exercise): Html = ex match {
+    case pe: ProgExercise => views.html.toolViews.programming.newProgPreview(pe)
+    case _                => ???
+  }
 
   override def renderEditRest(exercise: ProgExercise): Html = ???
 

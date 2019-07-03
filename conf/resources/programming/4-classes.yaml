@@ -1,0 +1,105 @@
+- id: 1
+  semanticVersion: {major: 0, minor: 0, patch: 1}
+  title: Kreise
+  author: bje40dc
+  text: TODO!
+  status: APPROVED
+
+  functionname: circle
+  foldername: circle
+  filename: circle
+
+  inputTypes: []
+  outputType: None
+
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+      Schreiben Sie Unittests für eine Implementierung der Klasse <code>Circle</code>, die einen Kreis mit einem
+      Mittelpunkt (bestehend aus X- und Y-Koordinate und einem Radius) darstellt. Es sollen ein Konstruktor
+      (<code>def __init__(self, center_x: float, center_y: float, radius: float)</code>) und eine Funktion
+      <code>def area(self) -> float:</code> implementiert werden, die die Fläche des Kreises berechnet.
+
+    unitTestFiles:
+      - path: test.py
+        resourcePath: programming/4-unit_testing/1-circle/circle_test_declaration.py
+        fileType: python
+        editable: true
+      - path: circle.py
+        resourcePath: programming/4-unit_testing/1-circle/circle_declaration.py
+        fileType: python
+        editable: false
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+      - id: 1
+        shouldFail: true
+        cause: illegal_argument
+        description: Die X-Koordinate sollte eine Ganz- oder Fließkommazahl sein.
+      - id: 2
+        shouldFail: true
+        cause: logic_error
+        description: Der Wert des Konstruktorarguments 'center_x' sollte unter dem selben Namen als Argument zugänglich sein.
+      - id: 3
+        shouldFail: true
+        cause: illegal_argument
+        description: Die Y-Koordinate sollte eine Ganz- oder Fließkommazahl sein.
+      - id: 4
+        shouldFail: true
+        cause: logic_error
+        description: Der Wert des Konstruktorarguments 'center_y' sollte unter dem selben Namen als Argument zugänglich sein.
+      - id: 5
+        shouldFail: true
+        cause: illegal_argument
+        description: Der Radius sollte eine Ganz- oder Fließkommazahl sein.
+      - id: 6
+        shouldFail: true
+        cause: illegal_argument
+        description: Der Radius sollte größer oder gleich 0 sein.
+      - id: 7
+        shouldFail: true
+        cause: logic_error
+        description: Der Wert des Konstruktorarguments 'radius' sollte unter dem selben Namen als Argument zugänglich sein.
+      - id: 8
+        shouldFail: true
+        cause: wrong_result
+        description: Die Fläche des Kreises sollte richtig berechnet werden
+
+  implementationPart:
+    base: |
+      from math import pi
+
+
+      class Circle:
+          def __init__(self, center_x: float, center_y: float, radius: float):
+              pass
+
+          def area(self) -> float:
+              pass
+    files:
+      - path: circle.py
+        resourcePath: programming/4-unit_testing/1-circle/circle_declaration.py
+        fileType: python
+        editable: true
+      - path: test.py
+        resourcePath: programming/4-unit_testing/1-circle/circle_test.py
+        fileType: python
+        editable: false
+
+  sampleSolutions:
+    - id: 1
+      files:
+        - path: circle.py
+          resourcePath: programming/4-unit_testing/1-circle/circle.py
+          fileType: python
+          editable: false
+        - path: test.py
+          resourcePath: programming/4-unit_testing/1-circle/circle_test.py
+          fileType: python
+          editable: false
+
+  sampleTestData: []
