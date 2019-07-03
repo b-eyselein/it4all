@@ -221,3 +221,89 @@
           editable: false
 
   sampleTestData: []
+
+- id: 4
+  semanticVersion: {major: 0, minor: 0, patch: 1}
+  title: Fibonacci
+  author: bje40dc
+  text: >
+    <p>
+      Implementieren Sie die Funktion <code>fibonacci(number: int) -> int</code>, die die n. Zahl der
+      <a href="https://de.wikipedia.org/wiki/Fibonacci-Folge" target="_blank">Fibonacci-Folge</a> berechnet.
+    </p>
+    <p>
+      Die Werte der Fibonacci-Folge ergeben sich mit den Startwerten <code>x<sub>0</sub> = x<sub>1</sub> = 0</code>
+      nach der Formel <code>x<sub>n</sub> = x<sub>n-1</sub> + x<sub>n-2</sub></code>.
+    </p>
+  status: APPROVED
+
+  functionname: fibonacci
+  filename: fibonacci
+  foldername: fibonacci
+
+  inputTypes: [{id: 1, name: number, type: int}]
+  outputType: int
+
+  unitTestPart:
+    unitTestType: Normal
+    unitTestsDescription: ''
+    unitTestFiles:
+      - path: test.py
+        resourcePath: programming/1-numbers/4-fibonacci/fibonacci_test_declaration.py
+        fileType: python
+        editable: true
+      - path: fibonacci.py
+        resourcePath: programming/1-numbers/4-fibonacci/fibonacci_declaration.py
+        fileType: python
+        editable: true
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        cause: ''
+        description: Diese Implementierun ist korrekt und sollte alle Tests bestehen.
+      - id: 1
+        shouldFail: true
+        cause: ''
+        description: Falls das Argument 'number' keine Zahl ist, soll eine Exception geworfen werden.
+      - id: 2
+        shouldFail: true
+        cause: ''
+        description: Falls das Argument 'number' kleiner als 0 ist, soll eine Exception geworfen werden.
+      - id: 3
+        shouldFail: true
+        cause: ''
+        description: Die Funktion sollte den richtigen Startwert für 0 benutzen.
+      - id: 4
+        shouldFail: true
+        cause: ''
+        description: Die Funktion sollte den richtigen Startwert für 1 benutzen.
+      - id: 5
+        shouldFail: true
+        cause: ''
+        description: Die Funktion sollte das richtige Ergebnis berechnen.
+
+  implementationPart:
+    base:  ''
+    files:
+      - path: fibonacci.py
+        resourcePath: programming/1-numbers/4-fibonacci/fibonacci_declaration.py
+        fileType: python
+        editable: true
+      - path: test.py
+        resourcePath: programming/1-numbers/4-fibonacci/fibonacci_test.py
+        fileType: python
+        editable: false
+
+  sampleSolutions:
+    - id: 1
+      files:
+        - path: test.py
+          resourcePath: programming/1-numbers/4-fibonacci/fibonacci_test.py
+          fileType: python
+          editable: false
+        - path: fibonacci.py
+          resourcePath: programming/1-numbers/4-fibonacci/fibonacci.py
+          fileType: python
+          editable: false
+
+  sampleTestData: []
