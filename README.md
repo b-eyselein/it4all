@@ -50,6 +50,10 @@ To develop `it4all`, you need to have installed the following programs (names of
 
   `$ sbt run`
 
+If you forgot to clone the submodules, you can do it with
+
+`$ git submodule update --recursive`
+
 ### Following starts
 
 Since the containers are all built and started, you can just restart the server with
