@@ -1,4 +1,4 @@
-@(user: model.User, toEvaluate: model.feedback.Feedback, toolMain: model.toolMains.AToolMain)
+@(user: model.User, toEvaluate: model.feedback.Feedback, toolMain: model.toolMains.AToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     s"Evaluation des Tools '${toolMain.toolname}'"
@@ -9,6 +9,8 @@
         <h1 class="text-center">@title</h1>
 
         @helper.form(routes.MainExerciseController.submitEvaluation(toolMain.urlPart), 'class -> "form") {
+
+            @helper.CSRF.formField
 
             @for(evaledAspect <- model.EvaluatedAspects.values) {
                 <div class="my-3">

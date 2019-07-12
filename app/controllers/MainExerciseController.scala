@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository)(implicit ec: ExecutionContext)
-  extends AExerciseController(cc, dbcp, tl) {
+  extends AExerciseController(cc, dbcp, tl) with play.api.i18n.I18nSupport {
 
   override protected type ToolMainType = AToolMain
 
