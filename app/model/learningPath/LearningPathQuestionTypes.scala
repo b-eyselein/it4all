@@ -2,8 +2,6 @@ package model.learningPath
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-import scala.collection.immutable.IndexedSeq
-
 
 // Types of questions
 

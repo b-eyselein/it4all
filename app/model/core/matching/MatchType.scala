@@ -2,8 +2,6 @@ package model.core.matching
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-import scala.collection.immutable.IndexedSeq
-
 
 sealed abstract class MatchType(val glyphicon: String, val bsClass: String) extends EnumEntry
 
@@ -11,6 +9,7 @@ sealed abstract class MatchType(val glyphicon: String, val bsClass: String) exte
 object MatchType extends PlayEnum[MatchType] {
 
   override val values: IndexedSeq[MatchType] = findValues
+
 
   case object SUCCESSFUL_MATCH extends MatchType("ok", "success")
 

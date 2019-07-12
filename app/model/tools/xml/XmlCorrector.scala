@@ -3,7 +3,7 @@ package model.tools.xml
 import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.xml.parsers.DocumentBuilderFactory
-import model.core.Java_Levenshtein
+import model.core.Levenshtein
 import model.core.result.SuccessType
 import model.points._
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
@@ -71,8 +71,8 @@ object XmlCorrector {
 
   private def findNearestGrammarSample(learnerSolution: String, sampleSolutions: Seq[XmlSampleSolution]): Option[XmlSampleSolution] =
     sampleSolutions.reduceOption((sampleG1, sampleG2) => {
-      val dist1 = Java_Levenshtein.levenshteinDistance(learnerSolution, sampleG1.sample.grammar)
-      val dist2 = Java_Levenshtein.levenshteinDistance(learnerSolution, sampleG2.sample.grammar)
+      val dist1 = Levenshtein.levenshtein(learnerSolution, sampleG1.sample.grammar)
+      val dist2 = Levenshtein.levenshtein(learnerSolution, sampleG2.sample.grammar)
 
       if (dist1 < dist2) sampleG1 else sampleG2
     })

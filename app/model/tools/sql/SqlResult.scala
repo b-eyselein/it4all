@@ -60,7 +60,8 @@ final case class SqlResult(
   whereComparison: MatchingResult[BinaryExpressionMatch],
   additionalComparisons: Seq[MatchingResult[_ <: Match]],
   executionResult: SqlExecutionResult,
-  solutionSaved: Boolean = false) extends SqlCorrResult {
+  solutionSaved: Boolean = false
+) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons
 

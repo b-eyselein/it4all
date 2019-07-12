@@ -119,24 +119,23 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   // Correction
 
   def correctAbstract(user: User, collection: CollType, exercise: ExType, part: PartType)
-                     (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[CompResultType]] =
-    readSolution(request, part) match {
-      case Left(errorMsg)  =>
-        logger.error(errorMsg)
-        Future.successful(Failure(SolutionTransferException))
-      case Right(solution) =>
+                     (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[CompResultType]] = readSolution(request, part) match {
+    case Left(errorMsg)  =>
+      logger.error(errorMsg)
+      Future.successful(Failure(SolutionTransferException))
+    case Right(solution) =>
 
-        correctEx(user, solution, collection, exercise, part).flatMap {
-          case Failure(error) => Future.successful(Failure(error))
-          case Success(res)   =>
+      correctEx(user, solution, collection, exercise, part).flatMap {
+        case Failure(error) => Future.successful(Failure(error))
+        case Success(res)   =>
 
-            // FIXME: points != 0? maxPoints != 0?
-            val dbSol = instantiateSolution(id = -1, exercise, part, solution, res.points, res.maxPoints)
-            tables.futureSaveUserSolution(exercise.id, exercise.semanticVersion, collection.id, user.username, dbSol).map {
-              solSaved => Success(updateSolSaved(res, solSaved))
-            }
-        }
-    }
+          // FIXME: points != 0? maxPoints != 0?
+          val dbSol = instantiateSolution(id = -1, exercise, part, solution, res.points, res.maxPoints)
+          tables.futureSaveUserSolution(exercise.id, exercise.semanticVersion, collection.id, user.username, dbSol).map {
+            solSaved => Success(updateSolSaved(res, solSaved))
+          }
+      }
+  }
 
   protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType, part: PartType): Future[Try[CompResultType]]
 

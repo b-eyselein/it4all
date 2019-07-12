@@ -2,7 +2,7 @@ package model.core
 
 import scala.math._
 
-object Scala_Levenshtein {
+object Levenshtein {
 
   def levenshtein(s1: String, s2: String): Int = {
     def minimum(i1: Int, i2: Int, i3: Int): Int = min(min(i1, i2), i3)

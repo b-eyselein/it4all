@@ -3,13 +3,13 @@ package model.core.overviewHelpers
 import enumeratum.{EnumEntry, PlayEnum}
 import model.{ExPart, Exercise}
 
-import scala.collection.immutable.IndexedSeq
 
 sealed abstract class SolvedState(val btnOutline: String) extends EnumEntry
 
 object SolvedStates extends PlayEnum[SolvedState] {
 
   override def values: IndexedSeq[SolvedState] = findValues
+
 
   case object Locked extends SolvedState("btn-outline-danger")
 

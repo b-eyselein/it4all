@@ -26,6 +26,7 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
   def results: Seq[E]
 
+
   override def success: SuccessType = SuccessType.ofBool(EvaluationResult.allResultsSuccessful(results))
 
 }
