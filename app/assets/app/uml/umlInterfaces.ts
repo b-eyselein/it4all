@@ -16,11 +16,13 @@ export enum CARDINALITIES {
 export function buildMethodString(cm: UmlClassMethod): string {
     let modifier = [];
 
-    if (cm.isAbstract)
+    if (cm.isAbstract) {
         modifier.push('a');
+    }
 
-    if (cm.isStatic)
+    if (cm.isStatic) {
         modifier.push('s');
+    }
 
     return cm.visibility + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + cm.name + '(' + cm.parameters + '): ' + cm.type;
 }
@@ -28,14 +30,17 @@ export function buildMethodString(cm: UmlClassMethod): string {
 export function buildAttributeString(ca: UmlClassAttribute): string {
     let modifier = [];
 
-    if (ca.isAbstract)
+    if (ca.isAbstract) {
         modifier.push('a');
+    }
 
-    if (ca.isStatic)
+    if (ca.isStatic) {
         modifier.push('s');
+    }
 
-    if (ca.isDerived)
+    if (ca.isDerived) {
         modifier.push('d');
+    }
 
     return ca.visibility + ' ' + (modifier.length === 0 ? '' : '{' + modifier.join(', ') + '} ') + ca.name + ': ' + ca.type;
 }

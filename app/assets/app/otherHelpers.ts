@@ -43,12 +43,12 @@ export function testExerciseSolution<SolType, ResType>(testBtn: HTMLButtonElemen
     });
 
     fetch(testBtn.dataset['href'], {method: 'PUT', headers, body: JSON.stringify(solution), credentials: 'same-origin'})
-        .then(response => {
+        .then((response) => {
             testBtn.disabled = false;
             if (response.status === 200) {
                 response.json().then(onSuccess);
             } else {
-                response.text().then(errorText => console.error(errorText));
+                response.text().then((errorText) => console.error(errorText));
             }
         }).catch(reason => console.error(reason));
 }
@@ -78,14 +78,14 @@ export function initShowSampleSolBtn<T>(renderSampleSolResponse: (T) => string):
     showSampleSolBtn.onclick = () => {
         showSampleSolBtn.disabled = true;
         fetch(showSampleSolBtn.dataset['href'])
-            .then(response => {
+            .then((response) => {
                 if (response.status === 200) {
                     response.json().then(response => {
                         document.querySelector<HTMLDivElement>('#sampleSolDiv').innerHTML = renderSampleSolResponse(response);
                     });
                     showSampleSolBtn.remove();
                 } else {
-                    response.text().then(error => console.error(error));
+                    response.text().then((error) => console.error(error));
                 }
             })
             .catch(reason => console.error(reason))

@@ -41,9 +41,9 @@
                     <div class="col-md-@{
                         12 / exesPerRow
                     }">
-                        <div class="btn btn-primary btn-block">
+                        <a class="btn btn-primary btn-block" href="@coll.routes.CollectionAdminController.adminEditExerciseForm(toolMain.urlPart, collection.id, exercise.id)">
                             @exercise.id: @exercise.title
-                        </div>
+                        </a>
                     </div>
                 }
                 </div>
