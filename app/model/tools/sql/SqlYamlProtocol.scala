@@ -1,81 +1,62 @@
 package model.tools.sql
 
 import model.MyYamlProtocol._
-import model._
 import model.tools.sql.SqlConsts._
-import net.jcazevedo.moultingyaml._
+import model.{ExerciseState, MyYamlProtocol, StringSampleSolution, YamlObj}
+import net.jcazevedo.moultingyaml.{YamlObject, YamlValue}
 import play.api.Logger
 
 import scala.util.Try
 
 object SqlYamlProtocol extends MyYamlProtocol {
 
-  //  implicit object SqlScenarioYamlFormat extends MyYamlObjectFormat[SqlCompleteScenario] {
-  //
-  //    override protected def readObject(yamlObject: YamlObject): Try[SqlCompleteScenario] = for {
-  //      baseValues <- readBaseValues(yamlObject)
-  //
-  //      shortName <- yamlObject.stringField(shortNameName)
-  //      exercises <- yamlObject.arrayField(exercisesName, SqlExYamlFormat(baseValues).read)
-  //    } yield {
-  //      for (exFailure <- exercises._2)
-  //      // FIXME: return...
-  //        logger.error("Could not read sql exercise: ", exFailure.exception)
-  //
-  //      SqlCompleteScenario(SqlScenario(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, shortName), exercises._1)
-  //    }
-  //
-  //    override def write(sqlCompleteScenario: SqlCompleteScenario): YamlObject = YamlObject(
-  //      writeBaseValues(sqlCompleteScenario.coll.baseValues) ++
-  //        Map(
-  //          YamlString(shortNameName) -> YamlString(sqlCompleteScenario.coll.shortName),
-  //          YamlString(exercisesName) -> YamlArr(sqlCompleteScenario.exercises map SqlExYamlFormat(sqlCompleteScenario.coll.baseValues).write)
-  //        )
-  //    )
-  //  }
+  private val logger = Logger(SqlYamlProtocol.getClass)
 
-  //  final case class SqlExYamlFormat(collBaseValues: BaseValues) extends MyYamlObjectFormat[SqlExercise] {
-  //
-  //    override protected def readObject(yamlObject: YamlObject): Try[SqlExercise] = for {
-  //      baseValues <- readBaseValues(yamlObject)
-  //
-  //      exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.withNameInsensitiveOption) map (_ getOrElse SqlExerciseType.SELECT)
-  //      tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExTag.withNameInsensitiveOption(_) getOrElse SqlExTag.SQL_JOIN))
-  //
-  //      hint <- yamlObject.optStringField(hintName)
-  //
-  //      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat(collBaseValues.id, collBaseValues.semanticVersion, baseValues).read)
-  //    } yield {
-  //
-  //      for (tagFailures <- tagTries._2)
-  //      // FIXME: return...
-  //        logger.error("Could not read sql tag", tagFailures.exception)
-  //
-  //      for (sampleFailure <- sampleTries._2)
-  //      // FIXME: return...
-  //        logger.error("Could not read sql sample", sampleFailure.exception)
-  //
-  //      SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-  //        collBaseValues.id, collBaseValues.semanticVersion, exerciseType, tagTries._1, hint, sampleTries._1)
-  //    }
-  //
-  //    override def write(sqlEx: SqlExercise): YamlValue = YamlObject(
-  //      writeBaseValues(sqlEx.baseValues) ++
-  //        Map[YamlValue, YamlValue](
-  //          YamlString(exerciseTypeName) -> YamlString(sqlEx.exerciseType.entryName),
-  //          YamlString(samplesName) -> YamlArr(sqlEx.samples map SqlSampleYamlFormat(collBaseValues.id, collBaseValues.semanticVersion, sqlEx.baseValues).write)
-  //        ) ++ sqlEx.hint.map(h => YamlString(hintName) -> YamlString(h)) ++ writeTags(sqlEx)
-  //    )
-  //
-  //    private def writeTags(sqlEx: SqlExercise): Option[(YamlValue, YamlValue)] = sqlEx.tags match {
-  //      case Nil  => None
-  //      case tags => Some(YamlString(tagsName) -> YamlArr(tags.map(t => YamlString(t.entryName))))
-  //    }
-  //
-  //  }
+  object SqlCollectionYamlFormat extends MyYamlObjectFormat[SqlScenario] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[SqlScenario] = for {
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
+      shortName <- yamlObject.stringField(shortNameName)
+    } yield SqlScenario(id, title, author, text, state, shortName)
+
+    override def write(obj: SqlScenario): YamlValue = ???
+
+  }
+
+  object SqlExerciseYamlFormat extends MyYamlObjectFormat[SqlExercise] {
+
+    override def write(obj: SqlExercise): YamlValue = ???
+
+    override protected def readObject(yamlObject: YamlObject): Try[SqlExercise] = for {
+      baseValues <- readBaseValues(yamlObject)
+
+      exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.withNameInsensitiveOption).map(_ getOrElse SqlExerciseType.SELECT)
+      tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExTag.withNameInsensitiveOption(_) getOrElse SqlExTag.SQL_JOIN))
+
+      hint <- yamlObject.optStringField(hintName)
+
+      sampleTries <- yamlObject.arrayField(samplesName, SqlSampleYamlFormat.read)
+    } yield {
+
+      for (tagFailures <- tagTries._2)
+      // FIXME: return...
+        logger.error("Could not read sql tag", tagFailures.exception)
+
+      //      for (sampleFailure <- sampleTries._2)
+      // // FIXME: return...
+      //        logger.error("Could not read sql sample", sampleFailure.exception)
+
+      SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        exerciseType, tagTries._1, hint, sampleTries._1)
+    }
+  }
 
 
-  final case class SqlSampleYamlFormat(exerciseBaseValues: BaseValues) extends MyYamlObjectFormat[StringSampleSolution] {
+  private object SqlSampleYamlFormat extends MyYamlObjectFormat[StringSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[StringSampleSolution] = for {
       id <- yamlObject.intField(idName)

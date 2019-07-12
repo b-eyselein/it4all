@@ -1,8 +1,8 @@
 package model.persistence
 
-import model.{Mark, _}
 import model.core.CoreConsts._
 import model.feedback.{Feedback, FeedbackTableHelper}
+import model._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -120,9 +120,9 @@ trait TableDefs {
     override def * : ProvenShape[User] = (userType, username, role) <> (tupled, unapplied)
 
 
-    def tupled(values: (Int, String, Role)): User = values._1 match {
-      case 1 => LtiUser(values._2, values._3)
-      case _ => RegisteredUser(values._2, values._3)
+    def tupled(values: (Int, String, Role)): User = values match {
+      case (1, username, role) => LtiUser(username, role)
+      case (_, username, role) => RegisteredUser(username, role)
     }
 
     def unapplied(user: User): Option[(Int, String, Role)] = user match {
@@ -173,24 +173,6 @@ trait TableDefs {
 
 
     override def * : ProvenShape[Feedback] = (username, toolUrlPart, sense, used, usability, feedback, fairness, comment) <> (FeedbackTableHelper.fromTableTupled, FeedbackTableHelper.forTableUnapplied)
-
-  }
-
-  // Base table for exercises and exerciseCollections
-
-  abstract class HasBaseValuesTable[E <: HasBaseValues](tag: Tag, name: String) extends Table[E](tag, name) {
-
-    def id: Rep[Int] = column[Int](idName)
-
-    def title: Rep[String] = column[String]("title")
-
-    def author: Rep[String] = column[String]("author")
-
-    def text: Rep[String] = column[String]("ex_text")
-
-    def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
-
-    def semanticVersion: Rep[SemanticVersion] = column[SemanticVersion]("semantic_version")
 
   }
 

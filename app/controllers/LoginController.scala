@@ -29,7 +29,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       val newUser = RegisteredUser(credentials.username)
       val pwHash = PwHash(credentials.username, credentials.password.bcrypt)
 
-      repo.saveUser(newUser) flatMap {
+      repo.saveUser(newUser).flatMap {
         case false => Future(BadRequest("Could not save user!"))
         case true  =>
           repo.savePwHash(pwHash) map {

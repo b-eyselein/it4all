@@ -2,13 +2,29 @@ package model
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-import scala.collection.immutable
-import scala.collection.immutable.IndexedSeq
+// Exercise State
 
+sealed abstract class ExerciseState(val german: String) extends EnumEntry
+
+
+object ExerciseState extends PlayEnum[ExerciseState] {
+
+  override val values: IndexedSeq[ExerciseState] = findValues
+
+  case object RESERVED extends ExerciseState("Reserviert")
+
+  case object CREATED extends ExerciseState("Erstellt")
+
+  case object ACCEPTED extends ExerciseState("Akzeptiert")
+
+  case object APPROVED extends ExerciseState("Zugelassen")
+
+}
 
 // Difficulty
 
 sealed abstract class Difficulty(val value: Int, val german: String) extends EnumEntry
+
 
 case object Difficulties extends PlayEnum[Difficulty] {
 
@@ -82,7 +98,7 @@ sealed abstract class EvaluatedAspect(val question: String, val positive: String
 
 object EvaluatedAspects extends PlayEnum[EvaluatedAspect] {
 
-  override def values: immutable.IndexedSeq[EvaluatedAspect] = findValues
+  override def values: IndexedSeq[EvaluatedAspect] = findValues
 
 
   case object USED extends EvaluatedAspect("Wie oft haben Sie dieses Tool genutzt?", "Oft", "Manchmal", "Selten")

@@ -104,13 +104,6 @@ GET           /web/solution/:collId/:id/:part/:fileName                       co
 PUT           /web/solution/:collId/:id/:part                                 controllers.coll.CollectionController.updateWebSolution(collId: Int, id: Int, part: String)
 
 
-# Courses
-#GET           /courses/new                                                    controllers.CourseAdminController.newCourseForm
-#POST          /courses/new                                                    controllers.CourseAdminController.newCourse
-
-#GET           /course/:id                                                     controllers.CourseAdminController.course(id: Int)
-#POST          /course/addController/:id                                       controllers.CourseAdminController.addAdmin(id: Int)
-
 # Login && Logout
 GET           /register                                                       controllers.LoginController.registerForm
 POST          /register                                                       controllers.LoginController.register

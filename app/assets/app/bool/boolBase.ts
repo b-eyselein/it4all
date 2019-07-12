@@ -1,6 +1,4 @@
-export {BoolSolution, readBoolSolution}
-
-interface BoolSolution {
+export interface BoolSolution {
     formula: string
     tableRows: BoolTableRow[]
 }
@@ -14,7 +12,7 @@ interface Assignment {
     value: boolean
 }
 
-function readBoolSolution(valueTableBody: HTMLElement, isFillout: boolean): BoolSolution {
+export function readBoolSolution(valueTableBody: HTMLElement, isFillout: boolean): BoolSolution {
 
     let formula: string;
     if (isFillout) {

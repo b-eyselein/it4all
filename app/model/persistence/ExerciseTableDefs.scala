@@ -91,9 +91,21 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
 
   }
 
-  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends HasBaseValuesTable[DbExType](tag, name) {
+  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends Table[DbExType](tag, name) {
+
+    def id: Rep[Int] = column[Int](idName)
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
+
+    def title: Rep[String] = column[String]("title")
+
+    def author: Rep[String] = column[String]("author")
+
+    def text: Rep[String] = column[String]("ex_text")
+
+    def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
+
+    def semanticVersion: Rep[SemanticVersion] = column[SemanticVersion]("semantic_version")
 
 
     def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId))

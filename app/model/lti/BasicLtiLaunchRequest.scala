@@ -2,20 +2,20 @@ package model.lti
 
 
 final case class BasicLtiLaunchRequest(
-                                        ltiContext: LTIContext,
-                                        ltiExt: LTIExt,
-                                        ltiLaunchPresentation: LTILaunchPresentation,
-                                        lisCourseSectionSourcedId: String,
-                                        lisOutcomeServiceUrl: String,
-                                        lisPersonData: LTILisPersonData,
-                                        lisResultSourcedId: String,
-                                        ltiInfo: LTIInfo,
-                                        oAuthCallback: String,
-                                        resourceLink: LTIResourceLink,
-                                        roles: Seq[String],
-                                        ltiToolConsumerInfo: LTIToolConsumerInfo,
-                                        userId: String,
-                                      )
+  ltiContext: LTIContext,
+  ltiExt: LTIExt,
+  ltiLaunchPresentation: LTILaunchPresentation,
+  lisCourseSectionSourcedId: String,
+  lisOutcomeServiceUrl: String,
+  lisPersonData: LTILisPersonData,
+  lisResultSourcedId: String,
+  ltiInfo: LTIInfo,
+  oAuthCallback: String,
+  resourceLink: LTIResourceLink,
+  roles: Seq[String],
+  ltiToolConsumerInfo: LTIToolConsumerInfo,
+  userId: String,
+)
 
 object BasicLtiLaunchRequest {
 

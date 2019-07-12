@@ -32,7 +32,20 @@ trait ASolutionDbModels[SolType, PartType <: ExPart, SampleSolType <: SampleSolu
 
 }
 
-trait ADbExercise extends HasBaseValues {
+trait ADbExercise {
+
+  def id: Int
+
+  // FIXME: remove? semantic version!
+  def semanticVersion: SemanticVersion
+
+  def title: String
+
+  def author: String
+
+  def text: String
+
+  def state: ExerciseState
 
   def collectionId: Int
 

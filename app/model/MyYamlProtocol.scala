@@ -155,7 +155,9 @@ object MyYamlProtocol {
 
 }
 
-abstract class MyYamlProtocol extends DefaultYamlProtocol {
+final case class BaseValues(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState)
+
+trait MyYamlProtocol extends DefaultYamlProtocol {
 
   protected val baseResourcesPath: File = File("conf") / "resources"
 

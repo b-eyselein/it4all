@@ -2,7 +2,6 @@ package model
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-import scala.collection.immutable.IndexedSeq
 
 sealed trait Role extends EnumEntry
 
