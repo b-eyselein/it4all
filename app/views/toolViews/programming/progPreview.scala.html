@@ -46,7 +46,6 @@
         <div class="col-md-10">@Html(exercise.text)</div>
     </div>
 
-
 </section>
 
 <hr>
@@ -54,7 +53,7 @@
 <section>
     <h3>Musterlösungen</h3>
 
-    @for(sampleSolTriple <- exercise.sampleSolutions grouped 2) {
+    @for(sampleSolTriple <- exercise.sampleSolutions.grouped(2)) {
         <div class="row">
         @for(sampleSol <- sampleSolTriple) {
             <div class="col-md-6">
@@ -71,7 +70,7 @@
 <section>
     <h3>Mustertestdaten</h3>
 
-    @for(sampleTestDataTriple <- exercise.sampleTestData grouped 3) {
+    @for(sampleTestDataTriple <- exercise.sampleTestData.grouped(3)) {
         <div class="row">
         @for(sampleTestData <- sampleTestDataTriple) {
             <div class="col-md-4">

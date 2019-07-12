@@ -1,10 +1,9 @@
 # --- !Ups
 
 create table if not exists users (
-    user_type   int,
-    username    varchar(30) primary key,
-    std_role    enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser',
-    showHideAgg enum ('SHOW', 'HIDE', 'AGGREGATE')               default 'SHOW'
+    user_type int,
+    username  varchar(30) primary key,
+    std_role  enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser'
 );
 
 create table if not exists pw_hashes (
@@ -102,17 +101,17 @@ create table if not exists prog_exercises (
     ex_text                text,
     ex_state               enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    function_name          varchar(30)                   not null,
-    foldername             varchar(50)                   not null,
-    filename               varchar(50)                   not null,
+    function_name          varchar(30)                           not null,
+    foldername             varchar(50)                           not null,
+    filename               varchar(50)                           not null,
 
-    output_type            varchar(30)                   not null,
+    output_type            varchar(30)                           not null,
     base_data_json         text,
 
-    unit_test_type         enum ('Simplified', 'Normal') not null,
-    unit_tests_description text                          not null,
+    unit_test_type         enum ('Simplified', 'Normal', 'Both') not null,
+    unit_tests_description text                                  not null,
 
-    implementation_base    text                          not null,
+    implementation_base    text                                  not null,
 
     primary key (id, collection_id),
     foreign key (collection_id)

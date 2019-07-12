@@ -5,8 +5,6 @@ import model.Role
 import model.Role.RoleUser
 import play.twirl.api.Html
 
-import scala.collection.immutable
-
 sealed abstract class ToolState(val german: String, val greek: String, requiredRole: Role) extends EnumEntry {
 
   def badge: Html = Html(s"<sup>$greek</sup>")
@@ -15,7 +13,7 @@ sealed abstract class ToolState(val german: String, val greek: String, requiredR
 
 object ToolState extends PlayEnum[ToolState] {
 
-  override val values: immutable.IndexedSeq[ToolState] = findValues
+  override val values: IndexedSeq[ToolState] = findValues
 
   case object LIVE extends ToolState("Verfügbare Tools", "", RoleUser) {
     override def badge: Html = new Html("")

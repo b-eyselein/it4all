@@ -44,8 +44,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val usersCanCreateExes: Boolean = true
-
   override val exParts: Seq[XmlExPart] = XmlExParts.values
 
   // Yaml, Html forms, Json

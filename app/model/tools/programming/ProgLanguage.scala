@@ -2,8 +2,6 @@ package model.tools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-import scala.collection.immutable.IndexedSeq
-
 
 sealed abstract class ProgLanguage(val languageName: String, val aceName: String, val fileEnding: String) extends EnumEntry {
 

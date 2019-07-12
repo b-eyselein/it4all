@@ -62,16 +62,11 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
     implicit request =>
       for {
         numOfUsers <- repository.numOfUsers
-        numOfCourses <- repository.numOfCourses
-      } yield Ok(views.html.admin.adminIndex(admin, numOfUsers, numOfCourses, toolList))
+      } yield Ok(views.html.admin.adminIndex(admin, numOfUsers, toolList))
   }
 
   def users: EssentialAction = futureWithUser { admin =>
     implicit request => repository.allUsers map (allUsers => Ok(views.html.admin.userOverview(admin, allUsers, toolList)))
-  }
-
-  def courses: EssentialAction = futureWithUser { admin =>
-    implicit request => repository.allCourses map (allCourses => Ok(views.html.admin.coursesOverview(admin, allCourses, toolList)))
   }
 
 }

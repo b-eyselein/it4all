@@ -46,8 +46,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Values
 
-  val usersCanCreateExes: Boolean = false
-
   val exParts: Seq[PartType]
 
   // Yaml, Html forms, Json

@@ -43,7 +43,7 @@ val webJarDependencies = Seq(
 
   "org.webjars" % "popper.js" % "1.15.0", // MIT
 
-  "org.webjars" % "octicons" % "4.3.0", // MIT
+  "org.webjars.npm" % "octicons" % "8.5.0", // MIT
 
   "org.webjars.npm" % "bootstrap" % "4.3.1", // MIT
   "org.webjars.npm" % "types__bootstrap" % "4.3.0", // MIT

@@ -1,7 +1,6 @@
-@import model.User
 @import model.tools.programming.{ProgCollection, ProgExParts, ProgExercise, ProgToolMain}
 
-@(user: User, collection: ProgCollection, exercise: ProgExercise, fileNames: Seq[String], toolMain: ProgToolMain)(
+@(user: model.User, collection: ProgCollection, exercise: ProgExercise, fileNames: Seq[String], toolMain: ProgToolMain)(
     implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{

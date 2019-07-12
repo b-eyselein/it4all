@@ -39,8 +39,6 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override val exParts: Seq[RegexExPart] = RegexExParts.values
 
-  override val usersCanCreateExes: Boolean = false
-
   // Yaml, Html forms, Json
 
   override protected val collectionYamlFormat: MyYamlFormat[RegexCollection] = RegexToolYamlProtocol.RegexCollectionYamlFormat

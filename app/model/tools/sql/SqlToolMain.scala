@@ -60,8 +60,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val toolState: ToolState = ToolState.LIVE
 
-  override val usersCanCreateExes: Boolean = false
-
   override val exParts: IndexedSeq[SqlExPart] = SqlExParts.values
 
   // Yaml, Html forms, Json

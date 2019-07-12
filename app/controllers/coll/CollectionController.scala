@@ -43,7 +43,7 @@ class CollectionController @Inject()(
       for {
         allCollections <- toolMain.futureAllCollections
         allLearningPaths <- toolMain.futureLearningPaths
-      } yield Ok(views.html.collectionExercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
+      } yield Ok(views.html.exercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
   }
 
   def collection(toolType: String, collId: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
@@ -57,7 +57,7 @@ class CollectionController @Inject()(
           for {
             exesAndSuccessTypes <- toolMain.futureExesAndSolvedStatesForParts(user, coll, page, step)
             allExesCount <- toolMain.futureNumOfExesInColl(coll)
-          } yield Ok(views.html.collectionExercises.userCollectionExercisesOverview(user, coll, exesAndSuccessTypes, toolMain, page, step, allExesCount))
+          } yield Ok(views.html.exercises.userCollectionExercisesOverview(user, coll, exesAndSuccessTypes, toolMain, page, step, allExesCount))
       }
   }
 

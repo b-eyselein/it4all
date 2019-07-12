@@ -10,10 +10,14 @@
     3
 }
 
+@colWidth = @{
+    12 / collsPerRow
+}
+
 @main(title, Some(user)) {
     <div class="container">
 
-        @* FIXME: TODO-List, welche Aufgaben noch nicht bearbeitet... *@
+        @* FIXME: TODO-List, welche Aufgaben noch nicht bearbeitet...? *@
 
         @if(learningPaths.nonEmpty) {
             <section>
@@ -33,15 +37,11 @@
 
             @if(collections.nonEmpty) {
                 @for(collGroup <- collections.grouped(collsPerRow)) {
-                    <div class="row">
-                    @for(collection <- collGroup) {
-                        <div class="col-md-@{
-                            12 / collsPerRow
-                        }">
+                    <div class="row my-3">
+                    @for(collection <- collGroup; text = s"${collection.id}. ${collection.title}") {
+                        <div class="col-md-@colWidth">
                             <a href="@coll.routes.CollectionController.collection(toolMain.urlPart, collection.id)"
-                            class="btn btn-primary btn-block">@{
-                                s"${collection.id}. ${collection.title}"
-                            }</a>
+                            class="btn btn-primary btn-block">@text</a>
                         </div>
                     }
                     </div>

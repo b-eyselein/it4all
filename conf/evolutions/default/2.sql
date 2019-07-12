@@ -1,7 +1,7 @@
 # --- !Ups
 
-insert into users (user_type, username, std_role, showHideAgg)
-values (0, 'developer', 'RoleSuperAdmin', 'AGGREGATE')
+insert into users (user_type, username, std_role)
+values (0, 'developer', 'RoleSuperAdmin')
 on duplicate key update std_role = values(std_role);
 
 insert into pw_hashes (username, pw_hash)

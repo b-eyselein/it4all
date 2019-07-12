@@ -5,21 +5,11 @@
 # Home page
 GET           /                                                               controllers.Application.index
 
-# User
-GET           /myCourses                                                      controllers.UserController.myCourses
-
-GET           /preferences                                                    controllers.UserController.preferences
-
-PUT           /preferences/updateOptions                                      controllers.UserController.saveShowHideAgg
-PUT           /preferences/updatePassword                                     controllers.UserController.saveNewPassword
-
 # Controller
 GET           /admin                                                          controllers.AdminController.index
 
 GET           /users                                                          controllers.AdminController.users
 PUT           /users/changeRole                                               controllers.AdminController.changeRole
-
-GET           /courses                                                        controllers.AdminController.courses
 
 # LTI Test
 + nocsrf
@@ -115,11 +105,11 @@ PUT           /web/solution/:collId/:id/:part                                 co
 
 
 # Courses
-GET           /courses/new                                                    controllers.CourseAdminController.newCourseForm
-POST          /courses/new                                                    controllers.CourseAdminController.newCourse
+#GET           /courses/new                                                    controllers.CourseAdminController.newCourseForm
+#POST          /courses/new                                                    controllers.CourseAdminController.newCourse
 
-GET           /course/:id                                                     controllers.CourseAdminController.course(id: Int)
-POST          /course/addController/:id                                       controllers.CourseAdminController.addAdmin(id: Int)
+#GET           /course/:id                                                     controllers.CourseAdminController.course(id: Int)
+#POST          /course/addController/:id                                       controllers.CourseAdminController.addAdmin(id: Int)
 
 # Login && Logout
 GET           /register                                                       controllers.LoginController.registerForm

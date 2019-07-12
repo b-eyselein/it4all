@@ -30,7 +30,10 @@ class RandomExerciseController @Inject()(cc: ControllerComponents, dbcp: Databas
   // Routes
 
   def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request => toolMain.futureLearningPaths map (paths => Ok(views.html.exercises.exerciseIndex(user, toolMain, paths)))
+    implicit request =>
+      toolMain.futureLearningPaths.map { paths =>
+        Ok(views.html.exercises.randomExerciseIndex(user, toolMain, paths))
+      }
   }
 
   def newExercise(toolType: String, exType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
