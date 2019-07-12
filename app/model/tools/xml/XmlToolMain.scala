@@ -55,7 +55,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override val exerciseForm      : Form[XmlExercise]       = XmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[XmlExerciseReview] = XmlToolForms.exerciseReviewForm
 
-  override val sampleSolutionJsonFormat: Format[XmlSampleSolution] = XmlSampleSolutionJsonProtocol.xmlSampleSolutionJsonFormat
+  override val sampleSolutionJsonFormat: Format[XmlSampleSolution] = XmlCompleteResultJsonProtocol.xmlSampleSolutionJsonFormat
 
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] = XmlCompleteResultJsonProtocol
 

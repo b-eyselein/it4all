@@ -50,12 +50,8 @@ object SemanticVersionHelper {
 }
 
 
-final case class SemanticVersion(major: Int, minor: Int, patch: Int) extends Ordered[SemanticVersion] {
+final case class SemanticVersion(major: Int, minor: Int, patch: Int) {
 
   def asString: String = s"$major.$minor.$patch"
-
-  def isCompatibleTo(that: SemanticVersion): Boolean = this.major == that.major && this.minor == that.minor
-
-  override def compare(that: SemanticVersion): Int = (major * 10000 + minor * 100 + patch) - (that.major * 10000 + that.minor * 100 + that.patch)
 
 }

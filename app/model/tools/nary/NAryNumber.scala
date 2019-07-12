@@ -8,7 +8,7 @@ import scala.util.Try
 
 final case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 
-  def +(that: NAryNumber): NAryNumber = new NAryNumber(this.decimalValue + that.decimalValue, this.base)
+//  def +(that: NAryNumber): NAryNumber = new NAryNumber(this.decimalValue + that.decimalValue, this.base)
 
   def toTwoComp: String = {
     val binString = Integer.toBinaryString(decimalValue)

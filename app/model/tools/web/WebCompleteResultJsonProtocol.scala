@@ -9,24 +9,32 @@ import play.api.libs.json._
 //noinspection ConvertibleToMethodValue
 object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
 
-  private implicit val pointsWrites: Writes[Points] = pointsJsonWrites
+  // FIXME: use macro Json.format[...]!
 
-  private implicit val gradedTextResultWrites: Writes[GradedTextResult] = Json.writes[GradedTextResult]
+  private val gradedTextResultWrites: Writes[GradedTextResult] = {
+    implicit val pw: Writes[Points] = pointsJsonWrites
+
+    Json.writes[GradedTextResult]
+  }
 
   // GradedElementSpecResult
 
   private def unapplyGradedHtmlTaskResult(gesr: GradedElementSpecResult): (Int, Boolean, Option[GradedTextResult], Seq[GradedTextResult], Boolean, Double, Double) =
     (gesr.id, gesr.foundElement.isDefined, gesr.textContentResult, gesr.attributeResults, gesr.isSuccessful, gesr.points.asDouble, gesr.maxPoints.asDouble)
 
-  private implicit val elementResultWrites: Writes[GradedElementSpecResult] = (
-    (__ \ idName).write[Int] and
-      (__ \ elementFoundName).write[Boolean] and
-      (__ \ textContentResultName).write[Option[GradedTextResult]] and
-      (__ \ attributeResultsName).write[Seq[GradedTextResult]] and
-      (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[Double] and
-      (__ \ maxPointsName).write[Double]
-    ) (unapplyGradedHtmlTaskResult(_))
+  private val elementResultWrites: Writes[GradedElementSpecResult] = {
+    implicit val gtrw: Writes[GradedTextResult] = gradedTextResultWrites
+
+    (
+      (__ \ idName).write[Int] and
+        (__ \ elementFoundName).write[Boolean] and
+        (__ \ textContentResultName).write[Option[GradedTextResult]] and
+        (__ \ attributeResultsName).write[Seq[GradedTextResult]] and
+        (__ \ successName).write[Boolean] and
+        (__ \ pointsName).write[Double] and
+        (__ \ maxPointsName).write[Double]
+      ) (unapplyGradedHtmlTaskResult(_))
+  }
 
   // Js Result
 
@@ -34,16 +42,20 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWe
     (gjtr.id, gjtr.gradedPreResults, gjtr.gradedJsActionResult.actionDescription, gjtr.gradedJsActionResult.actionPerformed, gjtr.gradedPostResults,
       gjtr.success == SuccessType.COMPLETE, gjtr.points.asDouble, gjtr.maxPoints.asDouble)
 
-  private implicit val jsWebResultWrites: Writes[GradedJsTaskResult] = (
-    (__ \ idName).write[Int] and
-      (__ \ "preResults").write[Seq[GradedElementSpecResult]] and
-      (__ \ "actionDescription").write[String] and
-      (__ \ "actionPerformed").write[Boolean] and
-      (__ \ "postResults").write[Seq[GradedElementSpecResult]] and
-      (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[Double] and
-      (__ \ maxPointsName).write[Double]
-    ) (unapplyGradedJsTaskResult(_))
+  private val jsWebResultWrites: Writes[GradedJsTaskResult] = {
+    implicit val gesrw: Writes[GradedElementSpecResult] = elementResultWrites
+
+    (
+      (__ \ idName).write[Int] and
+        (__ \ "preResults").write[Seq[GradedElementSpecResult]] and
+        (__ \ "actionDescription").write[String] and
+        (__ \ "actionPerformed").write[Boolean] and
+        (__ \ "postResults").write[Seq[GradedElementSpecResult]] and
+        (__ \ successName).write[Boolean] and
+        (__ \ pointsName).write[Double] and
+        (__ \ maxPointsName).write[Double]
+      ) (unapplyGradedJsTaskResult(_))
+  }
 
   // Complete Result
 
@@ -53,14 +65,22 @@ object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWe
         (gradedHtmlTaskResults ++ gradedJsTaskResults).forall(_.success == SuccessType.COMPLETE), points, maxPoints)
   }
 
-  override val completeResultWrites: Writes[WebCompleteResult] = (
-    (__ \ solutionSavedName).write[Boolean] and
-      (__ \ htmlResultsName).write[Seq[GradedElementSpecResult]] and
-      (__ \ jsResultsName).write[Seq[GradedJsTaskResult]] and
-      (__ \ successName).write[Boolean] and
-      (__ \ pointsName).write[Points] and
-      (__ \ maxPointsName).write[Points]
-    ) (unapplyWebCompleteResult)
+  override val completeResultWrites: Writes[WebCompleteResult] = {
+    implicit val gesrw: Writes[GradedElementSpecResult] = elementResultWrites
+
+    implicit val jwrw: Writes[GradedJsTaskResult] = jsWebResultWrites
+
+    implicit val pw: Writes[Points] = pointsJsonWrites
+
+    (
+      (__ \ solutionSavedName).write[Boolean] and
+        (__ \ htmlResultsName).write[Seq[GradedElementSpecResult]] and
+        (__ \ jsResultsName).write[Seq[GradedJsTaskResult]] and
+        (__ \ successName).write[Boolean] and
+        (__ \ pointsName).write[Points] and
+        (__ \ maxPointsName).write[Points]
+      ) (unapplyWebCompleteResult)
+  }
 
 
 }

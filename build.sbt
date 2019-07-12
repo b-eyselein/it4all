@@ -9,7 +9,9 @@ scalaVersion := "2.13.0"
 scalacOptions ++= CompilerOptions.allOptions
 
 // Wart remover for scalac options
-wartremoverWarnings ++= Warts.allBut(Wart.DefaultArguments, Wart.Equals, Wart.ImplicitParameter, Wart.Nothing, Wart.Recursion)
+wartremoverWarnings ++= Warts.allBut(
+  Wart.DefaultArguments, Wart.Equals, Wart.ImplicitParameter, Wart.Nothing, Wart.Recursion, Wart.Any
+)
 
 wartremoverExcluded ++= routes.in(Compile).value
 wartremoverExcluded += sourceManaged.value
@@ -43,7 +45,7 @@ val webJarDependencies = Seq(
 
   "org.webjars" % "popper.js" % "1.15.0", // MIT
 
-  "org.webjars.npm" % "octicons" % "8.5.0", // MIT
+  "org.webjars" % "octicons" % "4.3.0", // MIT
 
   "org.webjars.npm" % "bootstrap" % "4.3.1", // MIT
   "org.webjars.npm" % "types__bootstrap" % "4.3.0", // MIT
@@ -73,7 +75,7 @@ dependencyOverrides ++= Seq(
   "org.webjars.npm" % "types__jquery" % jqueryTypesVersion,
   "org.webjars.npm" % "types__underscore" % "1.8.14",
   "org.webjars.npm" % "types__sizzle" % "2.3.2", // MIT
-//  "org.webjars.npm" % "types__estree" % "0.0.39", // MIT
+  //  "org.webjars.npm" % "types__estree" % "0.0.39", // MIT
 )
 
 excludeDependencies ++= Seq(

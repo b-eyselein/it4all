@@ -1,9 +1,22 @@
 package model.tools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.ExTag
+import model.{ExPart, ExTag}
 
+import scala.collection.immutable
 import scala.collection.immutable.IndexedSeq
+
+
+sealed abstract class SqlExPart(val partName: String, val urlName: String) extends EnumEntry with ExPart
+
+object SqlExParts extends PlayEnum[SqlExPart] {
+
+  val values: immutable.IndexedSeq[SqlExPart] = findValues
+
+  case object SqlSingleExPart extends SqlExPart("Bearbeiten", "solve")
+
+}
+
 
 sealed abstract class SqlExTag(val buttonContent: String, val title: String) extends ExTag with EnumEntry
 

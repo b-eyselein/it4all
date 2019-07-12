@@ -41,8 +41,6 @@ interface SqlCorrectionResult {
 }
 
 function onSqlCorrectionSuccess(response: SqlResult): void {
-    testBtn.disabled = false;
-
     solutionChanged = false;
 
     let results: string[] = [];
@@ -84,8 +82,7 @@ function onSqlCorrectionSuccess(response: SqlResult): void {
             renderExecution(response.results.executionResults);
     }
 
-    const newHtml: string = results.map(r => `<p>${r}</p>`).join('\n');
-    document.querySelector<HTMLDivElement>('#correction').innerHTML = newHtml;
+    document.querySelector<HTMLDivElement>('#correction').innerHTML = results.map(r => `<p>${r}</p>`).join('\n');
 
     focusOnCorrection();
 }
@@ -109,7 +106,7 @@ domReady(() => {
     editor = initEditor('text/x-mysql', 'textEditor');
     editor.on('change', () => {
         solutionChanged = true;
-    })
+    });
 
     document.querySelector<HTMLAnchorElement>('#endSolveAnchor').onclick = () => {
         return !solutionChanged || confirm('Ihre Lösung hat sich seit dem letzten Speichern (Korrektur) geändert. Wollen Sie die Bearbeitung beenden?');

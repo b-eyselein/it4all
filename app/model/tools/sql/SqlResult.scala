@@ -88,7 +88,7 @@ final case class SqlParseFailed(error: Throwable, maxPoints: Points, solutionSav
 
   override val successType: SuccessType = SuccessType.ERROR
 
-  override val points = zeroPoints
+  override val points: Points = zeroPoints
 
 }
 

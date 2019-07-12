@@ -18,28 +18,36 @@ object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, Sql
     })
   }
 
-  private implicit val sqlQueryResultWrites: Writes[SqlQueryResult] = (
+  private val sqlQueryResultWrites: Writes[SqlQueryResult] = (
     (__ \ "colNames").write[Seq[String]] and //-> columnNames,
       (__ \ "content").write[Seq[SqlRow]] // -> JsArray(rows.map(_.toJson))
     ) (sqr => (sqr.columnNames, sqr.rows))
 
-  private implicit val sqlExecutionResultWrites: Writes[SqlExecutionResult] = (
-    (__ \ successName).write[String] and // -> success,
-      (__ \ userResultName).write[Option[SqlQueryResult]] and //  match {
-      //      case Success(result) => userResultName -> result.toJson
-      //      case Failure(error)  => userErrorName -> JsString(error.toString)
-      //    },
-      (__ \ sampleResultName).write[Option[SqlQueryResult]] // -> sampleResultTry.map(_.toJson).toOption
-    ) (ser => (ser.success.entryName, ser.userResultTry.toOption, ser.sampleResultTry.toOption))
+  private val sqlExecutionResultWrites: Writes[SqlExecutionResult] = {
+    implicit val sqrw: Writes[SqlQueryResult] = sqlQueryResultWrites
 
-  private val sqlResultRestWrites: Writes[SqlResult] = (
-    (__ \ columnComparisonsName).write[JsValue] and
-      (__ \ tableComparisonsName).write[JsValue] and
-      (__ \ joinExpressionsComparisonsName).write[JsValue] and
-      (__ \ whereComparisonsName).write[JsValue] and
-      (__ \ additionalComparisonsName).write[Seq[JsValue]] and
-      (__ \ executionResultsName).write[SqlExecutionResult]
-    ) (unapplySqlResultRest)
+    (
+      (__ \ successName).write[String] and // -> success,
+        (__ \ userResultName).write[Option[SqlQueryResult]] and //  match {
+        //      case Success(result) => userResultName -> result.toJson
+        //      case Failure(error)  => userErrorName -> JsString(error.toString)
+        //    },
+        (__ \ sampleResultName).write[Option[SqlQueryResult]] // -> sampleResultTry.map(_.toJson).toOption
+      ) (ser => (ser.success.entryName, ser.userResultTry.toOption, ser.sampleResultTry.toOption))
+  }
+
+  private val sqlResultRestWrites: Writes[SqlResult] = {
+    implicit val serw: Writes[SqlExecutionResult] = sqlExecutionResultWrites
+
+    (
+      (__ \ columnComparisonsName).write[JsValue] and
+        (__ \ tableComparisonsName).write[JsValue] and
+        (__ \ joinExpressionsComparisonsName).write[JsValue] and
+        (__ \ whereComparisonsName).write[JsValue] and
+        (__ \ additionalComparisonsName).write[Seq[JsValue]] and
+        (__ \ executionResultsName).write[SqlExecutionResult]
+      ) (unapplySqlResultRest)
+  }
 
   private def unapplySqlResultRest: SqlResult => (JsObject, JsObject, JsObject, JsObject, Seq[JsObject], SqlExecutionResult) = {
     sr: SqlResult =>
@@ -47,7 +55,7 @@ object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, Sql
         sr.additionalComparisons.map(_.toJson), sr.executionResult)
   }
 
-  private implicit val sqlCorrResultRestWrites: Writes[SqlCorrResult] = {
+  private val sqlCorrResultRestWrites: Writes[SqlCorrResult] = {
     case SqlParseFailed(error, _, _) => Json.obj(messageName -> error.getMessage)
     case sr: SqlResult               => sqlResultRestWrites.writes(sr)
   }
