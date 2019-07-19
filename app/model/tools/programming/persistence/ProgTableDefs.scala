@@ -123,13 +123,21 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     def unitTestsDescription: Rep[String] = column[String]("unit_tests_description")
 
+    def testFileName: Rep[String] = column[String]("test_file_name")
+
+    def unitTestSampleSolFiles: Rep[String] = column[String]("unit_test_sample_sol_file_names")
+
 
     def implementationBase: Rep[String] = column[String]("implementation_base")
 
+    def implFileName: Rep[String] = column[String]("impl_file_name")
+
+    def implementationSampleSolFileNames: Rep[String] = column[String]("implementation_sample_sol_file_names")
+
 
     override def * : ProvenShape[DbProgExercise] = (id, semanticVersion, collectionId, title, author, text, state,
-      functionName, foldername, filename, outputType, baseDataAsJson.?,
-      unitTestType, unitTestsDescription, implementationBase) <> (DbProgExercise.tupled, DbProgExercise.unapply)
+      functionName, foldername, filename, outputType, baseDataAsJson.?, unitTestType, unitTestsDescription, testFileName,
+      unitTestSampleSolFiles, implementationBase, implFileName, implementationSampleSolFileNames) <> (DbProgExercise.tupled, DbProgExercise.unapply)
 
   }
 

@@ -7,6 +7,7 @@ import better.files._
 import model.User
 import model.core.result.SuccessType
 import model.docker._
+import model.tools.programming.ProgJsonProtocols.UnitTestTestData
 import model.tools.programming.ResultsFileJsonFormat._
 import modules.DockerPullsStartTask
 import play.api.libs.json.{JsValue, Json}
@@ -18,8 +19,6 @@ object ProgCorrector {
 
   private val resultFileName  : String = "result.json"
   private val testDataFileName: String = "test_data.json"
-
-  private def buildSolutionFileName(fileEnding: String): String = s"solution.$fileEnding"
 
   private def buildTestMainFileName(fileEnding: String): String = s"test_main.$fileEnding"
 
@@ -72,7 +71,7 @@ object ProgCorrector {
 
         val unitTestFileContent: String = exercise.sampleSolutions.headOption match {
           case None                                                => ???
-          case Some(ProgSampleSolution(_, ProgSolution(files, _))) => files.find(_.name == "test.py").map(_.content).getOrElse(???) // unitTest.content
+          case Some(ProgSampleSolution(_, ProgSolution(files, _))) => files.find(_.name == exercise.unitTestPart.testFileName).map(_.content).getOrElse(???) // unitTest.content
         }
 
         val unitTestFileName = s"${exercise.filename}_test.py"
@@ -106,15 +105,17 @@ object ProgCorrector {
                              (implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     // write unit test file
-    val testFileName = s"${exercise.filename}_test.py"
+    val testFileName = exercise.unitTestPart.testFileName
     val testFile = solTargetDir / testFileName
-    testFile.createIfNotExists(createParents = true).write(progSolution.unitTest.content)
+    val testFileContent = progSolution.files.find(_.name == testFileName).map(_.content).getOrElse(???)
+    testFile.createIfNotExists(createParents = true).write(testFileContent)
 
     // write test data file
     val testDataFile = solTargetDir / testDataFileName
-    val testDataToWrite = Json.prettyPrint(
-      ProgJsonProtocols.unitTestDataWrites.writes(ProgJsonProtocols.UnitTestTestData(exercise.foldername, exercise.filename, exercise.unitTestPart.unitTestTestConfigs))
-    )
+    // remove ending '.py'
+    val testFileNameForTestData = exercise.unitTestPart.testFileName.substring(0, exercise.unitTestPart.testFileName.length - 3)
+    val unitTestTestData = UnitTestTestData(exercise.foldername, exercise.filename, testFileNameForTestData, exercise.unitTestPart.unitTestTestConfigs)
+    val testDataToWrite = Json.prettyPrint(ProgJsonProtocols.unitTestDataWrites.writes(unitTestTestData))
     testDataFile.createIfNotExists(createParents = true).write(testDataToWrite)
 
     // find mounts for implementation files
@@ -124,7 +125,7 @@ object ProgCorrector {
       .toSeq
 
     val exFilesMount = exercise.unitTestPart.unitTestFiles
-      .filter(f => f.name != "test.py" && f.name != s"${exercise.filename}.py")
+      .filter(f => f.name != testFileName && f.name != exercise.implementationPart.implFileName)
       .map(f => DockerBind(resFolder / f.name, DockerConnector.DefaultWorkingDir / exercise.foldername / f.name))
 
     val dockerBinds: Seq[DockerBind] = Seq(

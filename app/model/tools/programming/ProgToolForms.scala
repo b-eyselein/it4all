@@ -2,9 +2,9 @@ package model.tools.programming
 
 import model.core.ToolForms
 import model.tools.programming.ProgConsts._
+import model.tools.uml.UmlToolForms.classDiagramMapping
 import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
-import model.tools.uml.UmlToolForms.classDiagramMapping
 import play.api.data.{Form, Mapping}
 import play.api.libs.json.{JsValue, Json}
 
@@ -45,11 +45,15 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
     unitTestsDescriptionName -> nonEmptyText,
     unitTestFilesName -> seq(exerciseFileMapping),
     unitTestTestConfigsName -> seq(unitTestTestConfigMapping),
+    testFileNameName -> nonEmptyText,
+    sampleSolFilesNamesName -> seq(nonEmptyText)
   )(UnitTestPart.apply)(UnitTestPart.unapply)
 
   private val implementationPartMapping: Mapping[ImplementationPart] = mapping(
     baseName -> nonEmptyText,
-    filesName -> seq(exerciseFileMapping)
+    filesName -> seq(exerciseFileMapping),
+    implFileNameName -> nonEmptyText,
+    sampleSolFilesNamesName -> seq(nonEmptyText)
   )(ImplementationPart.apply)(ImplementationPart.unapply)
 
   // Complete exercise

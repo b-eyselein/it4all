@@ -22,7 +22,7 @@ object ProgJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResult, Prog
 
   private val unitTestTestConfigFormat: Format[UnitTestTestConfig] = Json.format[UnitTestTestConfig]
 
-  final case class UnitTestTestData(foldername: String, filename: String, testConfigs: Seq[UnitTestTestConfig])
+  final case class UnitTestTestData(foldername: String, filename: String, testFilename: String, testConfigs: Seq[UnitTestTestConfig])
 
   val unitTestDataWrites: Writes[UnitTestTestData] = {
     implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat

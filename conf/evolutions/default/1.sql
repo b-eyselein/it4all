@@ -93,25 +93,29 @@ create table if not exists prog_collections (
 );
 
 create table if not exists prog_exercises (
-    id                     int,
-    semantic_version       varchar(10),
-    collection_id          int,
-    title                  varchar(50),
-    author                 varchar(50),
-    ex_text                text,
-    ex_state               enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    id                                   int,
+    semantic_version                     varchar(10),
+    collection_id                        int,
+    title                                varchar(50),
+    author                               varchar(50),
+    ex_text                              text,
+    ex_state                             enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    function_name          varchar(30)                           not null,
-    foldername             varchar(50)                           not null,
-    filename               varchar(50)                           not null,
+    function_name                        varchar(30)                           not null,
+    foldername                           varchar(50)                           not null,
+    filename                             varchar(50)                           not null,
 
-    output_type            varchar(30)                           not null,
-    base_data_json         text,
+    output_type                          varchar(30)                           not null,
+    base_data_json                       text,
 
-    unit_test_type         enum ('Simplified', 'Normal', 'Both') not null,
-    unit_tests_description text                                  not null,
+    unit_test_type                       enum ('Simplified', 'Normal', 'Both') not null,
+    unit_tests_description               text                                  not null,
+    test_file_name                       varchar(100)                          not null,
+    unit_test_sample_sol_file_names      text                                  not null,
 
-    implementation_base    text                                  not null,
+    implementation_base                  text                                  not null,
+    impl_file_name                       varchar(100)                          not null,
+    implementation_sample_sol_file_names text                                  not null,
 
     primary key (id, collection_id),
     foreign key (collection_id)

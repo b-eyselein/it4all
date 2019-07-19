@@ -31,7 +31,7 @@ let editor: CodeMirror.Editor;
 
 
 function onLoadFileSuccess(result: LoadFilesMessage): Promise<CodeMirror.Editor> {
-    // console.info(JSON.stringify(result, null, 2));
+    console.info(JSON.stringify(result, null, 2));
 
     for (const res of result.files) {
         // Fill file map

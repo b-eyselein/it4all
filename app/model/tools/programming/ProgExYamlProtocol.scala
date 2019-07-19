@@ -98,6 +98,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       unitTestsDescription <- yamlObject.stringField(unitTestsDescriptionName)
       unitTestFiles <- yamlObject.arrayField(unitTestFilesName, ExerciseFileYamlFormat.read)
       unitTestTestConfigs <- yamlObject.arrayField(unitTestTestConfigsName, UnitTestTestConfigYamlFormat.read)
+      testFileName <- yamlObject.stringField(testFileNameName)
+      sampleSolFileNames <- yamlObject.arrayField(sampleSolFilesNamesName, _.asStr)
     } yield {
       for (unitTestTestConfigFailure <- unitTestTestConfigs._2)
         logger.error("Could not read unit test test config", unitTestTestConfigFailure.exception)
@@ -105,7 +107,10 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       for (unitTestFileFailure <- unitTestFiles._2)
         logger.error("Could not read unit test file", unitTestFileFailure.exception)
 
-      UnitTestPart(unitTestType, unitTestsDescription, unitTestFiles._1, unitTestTestConfigs._1)
+      for (sampleSolFileNameError <- sampleSolFileNames._2)
+        logger.error("Could not read sample sol file name", sampleSolFileNameError.exception)
+
+      UnitTestPart(unitTestType, unitTestsDescription, unitTestFiles._1, unitTestTestConfigs._1, testFileName, sampleSolFileNames._1)
     }
 
     override def write(obj: UnitTestPart): YamlValue = ???
@@ -117,7 +122,17 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     override protected def readObject(yamlObject: YamlObject): Try[ImplementationPart] = for {
       base <- yamlObject.stringField(baseName)
       files <- yamlObject.arrayField(filesName, ExerciseFileYamlFormat.read)
-    } yield ImplementationPart(base, files._1)
+      implFileName <- yamlObject.stringField(implFileNameName)
+      sampleSolFileNames <- yamlObject.arrayField(sampleSolFilesNamesName, _.asStr)
+    } yield {
+      for (unitTestFileFailure <- files._2)
+        logger.error("Could not read unit test file", unitTestFileFailure.exception)
+
+      for (sampleSolFileNameError <- sampleSolFileNames._2)
+        logger.error("Could not read sample sol file name", sampleSolFileNameError.exception)
+
+      ImplementationPart(base, files._1, implFileName, sampleSolFileNames._1)
+    }
 
     override def write(obj: ImplementationPart): YamlValue = ???
 

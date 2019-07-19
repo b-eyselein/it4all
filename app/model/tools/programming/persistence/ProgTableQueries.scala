@@ -104,29 +104,23 @@ trait ProgTableQueries {
       unitTestFilesSaved <- saveSeq[DbExerciseFile](dbUnitTestFiles, i => db.run(progUnitTestFilesTQ += i))
       implementationFilesSaved <- saveSeq[DbExerciseFile](dbImplementationFiles, i => db.run(implementationFilesTQ += i))
       classDiagPartSaved <- saveSeq[DbProgUmlClassDiagram](dbProgUmlClassDiagram, i => db.run(umlClassDiagParts += i))
-    } yield samplesSaved && sampleFilesSaved && inputTypesSaved && sampleTestDataSaved && unitTestTestConfigsSaved && unitTestFilesSaved && classDiagPartSaved
+    } yield samplesSaved && sampleFilesSaved && inputTypesSaved && sampleTestDataSaved && unitTestTestConfigsSaved && unitTestFilesSaved && implementationFilesSaved && classDiagPartSaved
   }
 
+  def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] = futureExerciseById(collId, id).map {
+    case None           => Seq.empty
+    case Some(exercise) =>
 
-  private def futureSampleSolutionFilesForDbSampleSol(dbSampleSol: DbProgSampleSolution): Future[Seq[DbProgSampleSolutionFile]] =
-    db.run(
-      sampleSolutionFilesTableQuery
-        .filter { sf => sf.solutionId === dbSampleSol.id && sf.exId === dbSampleSol.exId && sf.collId === dbSampleSol.collId }
-        .result
-    )
+      val filesToSendNames = part match {
+        case ProgExParts.TestCreation => exercise.unitTestPart.sampleSolFileNames
+        case _                        => exercise.implementationPart.sampleSolFileNames
+      }
 
-  override def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] =
-    db.run(
-      sampleSolutionsTableQuery
-        .filter { sample => sample.exerciseId === id && sample.collectionId === collId }
-        .result
-    ).flatMap { dbSampleSols: Seq[DbProgSampleSolution] =>
-      Future.sequence(dbSampleSols.map { dbSampleSol =>
-        futureSampleSolutionFilesForDbSampleSol(dbSampleSol).map {
-          sampleSolFiles => ProgSolutionDbModels.sampleSolFromDbSampleSol(dbSampleSol, sampleSolFiles)
-        }
-      })
-    }
+      exercise.sampleSolutions.map { case ProgSampleSolution(sampleId, ProgSolution(files, _)) =>
+        val newFiles = files.filter(f => filesToSendNames.contains(f.name))
+        ProgSampleSolution(sampleId, ProgSolution(newFiles, Seq.empty))
+      }
+  }
 
   private def futureUserSolutionById(id: Int, exId: Int, collId: Int, username: String, part: ProgExPart): Future[Option[ProgUserSolution]] =
     for {

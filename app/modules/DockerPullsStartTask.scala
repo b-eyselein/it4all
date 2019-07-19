@@ -13,7 +13,7 @@ object DockerPullsStartTask {
   val roseImage                       = "beyselein/rose:latest"
   val pythonSimplifiedProgTesterImage = "beyselein/py_simplified_prog_corrector:latest"
   val pythonNormalProgTesterImage     = "beyselein/py_normal_prog_corrector:latest"
-  val pythonUnitTesterImage           = "beyselein/py_unit_test_corrector:0.0.1"
+  val pythonUnitTesterImage           = "beyselein/py_unit_test_corrector:0.2.1"
 
   private val imagesToPull: Seq[String] = Seq(
     roseImage,

@@ -27,7 +27,7 @@ object ProgToolMain {
 class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext)
   extends CollectionToolMain("Programmierung", "programming") {
 
-  private val logger = Logger(classOf[ProgToolMain])
+  //  private val logger = Logger(classOf[ProgToolMain])
 
   // Abstract types
 
@@ -68,8 +68,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   // Other helper methods
 
   override def exerciseHasPart(exercise: ProgExercise, part: ProgExPart): Boolean = part match {
-    case ProgExParts.TestCreation => exercise.unitTestPart.unitTestType == UnitTestTypes.Normal
-    case _                        => true
+    case ProgExParts.ActivityDiagram => false
+    case ProgExParts.TestCreation    => exercise.unitTestPart.unitTestType == UnitTestTypes.Normal
+    case _                           => true
   }
 
   override def instantiateCollection(id: Int, author: String, state: ExerciseState): ProgCollection =
@@ -79,8 +80,11 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
     functionName = "", foldername = "", filename = "",
     inputTypes = Seq[ProgInput](), outputType = ProgDataTypes.STRING, baseData = None,
-    unitTestPart = UnitTestPart(unitTestType = UnitTestTypes.Simplified, unitTestsDescription = "", unitTestFiles = Seq.empty, unitTestTestConfigs = Seq.empty),
-    implementationPart = ImplementationPart(base = "", files = Seq.empty),
+    unitTestPart = UnitTestPart(
+      unitTestType = UnitTestTypes.Simplified, unitTestsDescription = "", unitTestFiles = Seq.empty,
+      unitTestTestConfigs = Seq.empty, testFileName = "", sampleSolFileNames = Seq.empty
+    ),
+    implementationPart = ImplementationPart(base = "", files = Seq.empty, implFileName = "", sampleSolFileNames = Seq.empty),
     sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[ProgSampleTestData](),
     maybeClassDiagramPart = None
   )

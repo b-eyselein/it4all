@@ -42,8 +42,8 @@ final case class ProgExercise(
     ProgJsonProtocols.dumpCompleteTestDataToJson(this, completeTestData)
 
   override def filesForExercisePart(part: ProgExPart): LoadExerciseFilesMessage = part match {
-    case ProgExParts.TestCreation    => LoadExerciseFilesMessage(unitTestPart.unitTestFiles, Some("test.py"))
-    case ProgExParts.Implementation  => LoadExerciseFilesMessage(implementationPart.files, Some(s"$filename.py"))
+    case ProgExParts.TestCreation    => LoadExerciseFilesMessage(unitTestPart.unitTestFiles, Some(unitTestPart.testFileName))
+    case ProgExParts.Implementation  => LoadExerciseFilesMessage(implementationPart.files, Some(implementationPart.implFileName))
     case ProgExParts.ActivityDiagram => ???
   }
 
@@ -58,19 +58,18 @@ final case class UnitTestPart(
   unitTestsDescription: String,
   unitTestFiles: Seq[ExerciseFile],
   unitTestTestConfigs: Seq[UnitTestTestConfig],
+  testFileName: String,
+  sampleSolFileNames: Seq[String]
 )
 
-final case class ImplementationPart(base: String, files: Seq[ExerciseFile])
-
-
+final case class ImplementationPart(base: String, files: Seq[ExerciseFile], implFileName: String, sampleSolFileNames: Seq[String])
 
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
 final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgUserTestData]) {
 
-  def language: ProgLanguage = ProgLanguages.PYTHON_3
-
+  @deprecated(since = "1.0.0")
   def unitTest: ExerciseFile = files.find(_.name == "test.py").getOrElse(???)
 
 }
@@ -90,17 +89,11 @@ final case class ProgUserTestData(id: Int, input: JsValue, output: JsValue, stat
 
 // Solution types
 
-final case class ProgSampleSolution(id: Int, sample: ProgSolution)
-  extends SampleSolution[ProgSolution] {
+final case class ProgSampleSolution(id: Int, sample: ProgSolution) extends SampleSolution[ProgSolution]
 
-  def language: ProgLanguage = ProgLanguages.PYTHON_3
-
-}
 
 final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points)
   extends UserSolution[ProgExPart, ProgSolution] {
-
-  def language: ProgLanguage = ProgLanguages.PYTHON_3
 
   def commitedTestData: Seq[ProgUserTestData] = solution.testData
 

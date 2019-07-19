@@ -1,20 +1,22 @@
 package model.tools.programming.persistence
 
+import model._
 import model.persistence._
 import model.points.Points
 import model.tools.programming._
 import model.tools.uml.UmlClassDiagram
-import model.{Difficulty, ExerciseFile, ExerciseState, SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json.{JsArray, JsValue}
 
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
+
+  private val sampleSolFileNamesJoinChar = "##";
 
   def dbExerciseFromExercise(collId: Int, ex: ProgExercise): DbProgExercise =
     DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state,
       ex.functionName, ex.foldername, ex.filename,
       ex.outputType, ex.baseData,
-      ex.unitTestPart.unitTestType, ex.unitTestPart.unitTestsDescription,
-      ex.implementationPart.base)
+      ex.unitTestPart.unitTestType, ex.unitTestPart.unitTestsDescription, ex.unitTestPart.testFileName, ex.unitTestPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar),
+      ex.implementationPart.base, ex.implementationPart.implFileName, ex.implementationPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar))
 
   def exerciseFromDbValues(
     dbProgEx: DbProgExercise,
@@ -27,13 +29,13 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
     maybeClassDiagramPart: Option[UmlClassDiagram]
   ): ProgExercise = dbProgEx match {
     case DbProgExercise(id, semanticVersion, _, title, author, text, state, functionname, foldername, filename,
-    outputType, baseData, unitTestType, unitTestsDescription, implementationBase) =>
+    outputType, baseData, unitTestType, unitTestsDescription, testFileName, unitTestSampleSolFileNames, implementationBase, implFileName, implementationSampleSolFileNames) =>
       ProgExercise(
         id, semanticVersion, title, author, text, state,
         functionname, foldername, filename,
         inputTypes, outputType, baseData,
-        UnitTestPart(unitTestType, unitTestsDescription, unitTestFiles, unitTestTestConfigs),
-        ImplementationPart(implementationBase, implementationFiles),
+        UnitTestPart(unitTestType, unitTestsDescription, unitTestFiles, unitTestTestConfigs, testFileName, unitTestSampleSolFileNames.split(sampleSolFileNamesJoinChar)),
+        ImplementationPart(implementationBase, implementationFiles, implFileName, implementationSampleSolFileNames.split(sampleSolFileNamesJoinChar)),
         sampleSolutions, sampleTestData,
         maybeClassDiagramPart
       )
@@ -151,8 +153,8 @@ final case class DbProgExercise(
   id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
   functionname: String, foldername: String, filename: String,
   outputType: ProgDataType, baseData: Option[JsValue],
-  unitTestType: UnitTestType, unitTestsDescription: String,
-  implementationBase: String
+  unitTestType: UnitTestType, unitTestsDescription: String, testFileName: String, unitTestSampleSolFileNames: String,
+  implementationBase: String, implFileName: String, implementationSampleSolFileNames: String
 ) extends ADbExercise
 
 
