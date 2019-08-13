@@ -25,6 +25,12 @@ To develop `it4all`, you need to have installed the following programs (names of
 4. Docker (`docker.io`) (Do not forget to add yourself to group "docker" on Linux with
    `sudo usermod -aG docker $(whoami)` and log yourself out and in again)
 5. Docker-compose (`docker-compose`)
+6. MariaDB-Server (`mariadb-server`)
+7. sbt (https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html)
+
+```bash
+sudo apt install git openjdk-11-jdk nodejs docker.io docker-compose mariadb-server
+```
 
 ### MariaDB-Server
 
