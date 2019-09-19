@@ -2,13 +2,11 @@
 <!DOCTYPE html>
 
 <html lang="de">
-
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <title>it4all: @title</title>
-
 
             <!-- Favicons... -->
         @* <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">*@
@@ -53,41 +51,41 @@
                     <a class="nav-link" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/datenschutz/">Datenschutz</a>
                 </li>
 
-
                 @maybeUser match {
-                case Some(user) => {
+                    case Some(user) => {
 
-                    @if(user.isAdmin) {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link" href="@routes.AdminController.index()">
-                                <span class="octicon octicon-mark-github"></span> Administrator <span class="caret"></span>
+                        @if(user.isAdmin) {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@routes.AdminController.index()">
+                                    <span class="octicon octicon-gist-secret"></span>
+                                    Administrator
+                                </a>
+                            </li>
+                        }
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="@routes.LoginController.logout">
+                                <span class="octicon octicon-sign-out"></span>
+                                Logout <code>@user.username</code>
                             </a>
                         </li>
                     }
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">
-                            <span class="octicon octicon-mortar-board"></span>
-                            @user.username <span class="caret"></span>
-                        </a>
-
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="@routes.LoginController.logout">
-                                <span class="glyphicon glyphicon-log-out"></span> Logout
+                    case None => {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@routes.LoginController.loginForm">
+                                <span class="octicon octicon-sign-in"></span>
+                                Login
                             </a>
-                        </div>
-                    </li>
+                        </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@routes.LoginController.register">
+                                        <span class="octicon octicon-person"></span>
+                                        Registrieren
+                                    </a>
+                                </li>
+                    }
                 }
-
-                case None => {
-                    <li class="nav-item">
-                        <a class="nav-link" href="@routes.LoginController.loginForm"><span class="glyphicon glyphicon-log-in"> Login</span> </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@routes.LoginController.register"><span class="glyphicon glyphicon-new-window"> Registrieren</span> </a>
-                    </li>
-                }
-            }
             </ul>
         </nav>
 
