@@ -2,7 +2,7 @@
 @import model.tools.programming.{ProgDataTypes, ProgLanguages}
 
 @(user: model.User, collection: RoseCollection, exerciseForm: Form[RoseExercise], isCreation: Boolean, toolMainObject: RoseToolMain)(
-        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @widthField = @{
     exerciseForm(RoseConsts.fieldWidthName)
@@ -27,12 +27,11 @@
 
         @helper.repeat(exerciseForm(RoseConsts.inputTypesName), min = 1) { inputTypeField =>
             <div class="form-group row">
-                @myhelpers.inputWithLabel(inputTypeField(RoseConsts.idName), "ID", "number", 2, 2, isReadOnly = true)
+                @myhelpers.inputWithLabel(inputTypeField(RoseConsts.idName), "ID", fieldType = "number", 2, 2, otherAttrs = Seq("readOnly"))
 
                 @myhelpers.inputWithLabel(inputTypeField(RoseConsts.nameName), "Name", "text", 1, 2)
 
                 @myhelpers.selectWithLabel(inputTypeField(RoseConsts.inputTypeName), "Typ", ProgDataTypes.values.map(t => (t.entryName, t.entryName)), 1, 4)
-
             </div>
         }
 
@@ -45,17 +44,15 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group row">
-                        @myhelpers.inputWithLabel(sampleField(RoseConsts.idName), "ID", "number", 6, 6, isReadOnly = true)
+                        @myhelpers.inputWithLabel(sampleField(RoseConsts.idName), "ID", "number", 6, 6, otherAttrs = Seq("readOnly"))
                     </div>
                     <div class="form-group row">
-                    @myhelpers.selectWithLabel(sampleField(RoseConsts.languageName), "Sprache", ProgLanguages.values.map(l => (l.entryName, l.languageName)), 6, 6)
+                        @myhelpers.selectWithLabel(sampleField(RoseConsts.languageName), "Sprache", ProgLanguages.values.map(l => (l.entryName, l.languageName)), 6, 6)
                     </div>
-
                 </div>
                 <div class="col-md-8">
-
                     <div class="form-group row">
-                    @myhelpers.textareaWithLabel(sampleField(RoseConsts.sampleSolutionName), "Lösung", rowCount = 10, 2, 10)
+                        @myhelpers.textareaWithLabel(sampleField(RoseConsts.sampleSolutionName), "Lösung", rowCount = 10, 2, 10)
                     </div>
                 </div>
             </div>

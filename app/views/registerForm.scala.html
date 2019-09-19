@@ -1,42 +1,41 @@
 @(userCredForm: Form[model.UserCredentials])(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
-    <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
+    @scripts = {
+        <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
+        <script type='text/javascript' src="@routes.Assets.versioned("systemjs.config.js")"></script>
 
-    <script>SystemJS.import('@routes.Assets.versioned("app/users/register.js")');</script>
-}
+        <script>SystemJS.import('@routes.Assets.versioned("app/users/register.js")');</script>
+    }
 
-@main("Registrierung", None, scripts) {
-    <div class="container">
-        <h1 class="text-center">Registrierung</h1>
+    @main("Registrierung", None, scripts) {
+        <div class="container">
+            <h1 class="text-center">Registrierung</h1>
 
-        @helper.form(routes.LoginController.register, 'role -> "form", 'class -> "form-horizontal", 'id -> "registerForm") {
+            @helper.form(routes.LoginController.register,
+                Symbol("role") -> "form", Symbol("class") -> "form-horizontal", Symbol("id") -> "registerForm"
+            ) {
 
-            @helper.CSRF.formField
+                @helper.CSRF.formField
 
-            <div class="form-group row">
-            @myhelpers.inputWithLabel(userCredForm(model.core.CoreConsts.nameName), "Nutzername", "text", 3, 9,
-                placeHolder = Some("s-Nummer"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.inputWithLabel(userCredForm(model.core.CoreConsts.pwName), "Passwort", "password", 3, 9,
-                placeHolder = Some("Gewünschtes Passwort"))
-            </div>
-
-            <div class="form-group row">
-            @myhelpers.inputWithLabel(userCredForm(model.core.CoreConsts.pw2Name), "Passwort wiederholen", "password", 3, 9,
-                placeHolder = Some("Passwort wiederholen"))
-            </div>
-
-            <hr>
-
-            <div class="form-group row">
-                <div class="offset-sm-3 col-sm-9">
-                    <button type="submit" class="btn btn-primary btn-block">Registrieren</button>
+                <div class="form-group row">
+                @myhelpers.inputWithLabel(userCredForm(model.core.CoreConsts.nameName), "Nutzername", otherAttrs = Seq("autofocus", "required"))
                 </div>
-            </div>
-        }
-    </div>
-}
+
+                <div class="form-group row">
+                @myhelpers.inputWithLabel(userCredForm(model.core.CoreConsts.pwName), "Passwort", "password")
+                </div>
+
+                <div class="form-group row">
+                @myhelpers.inputWithLabel(userCredForm(model.core.CoreConsts.pw2Name), "Passwort wiederholen", "password")
+                </div>
+
+                <hr>
+
+                <div class="form-group row">
+                    <div class="offset-sm-3 col-sm-9">
+                        <button type="submit" class="btn btn-primary btn-block">Registrieren</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }

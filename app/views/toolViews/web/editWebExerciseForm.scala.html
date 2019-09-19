@@ -1,7 +1,7 @@
 @import model.tools.web.{WebConsts, WebExercise, WebToolMain}
 
 @(user: model.User, collId: Int, exerciseForm: Form[WebExercise], isCreation: Boolean, toolMainObject: WebToolMain)(
-        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -54,20 +54,20 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form-group row">
-                            @myhelpers.inputWithLabel(htmlTaskField(WebConsts.idName), "ID", "number", 2, 2, isRequired = true,
-                                isReadOnly = true)
+                            @myhelpers.inputWithLabel(htmlTaskField(WebConsts.idName), "ID", "number", 2, 2,
+                            otherAttrs = Seq("required", "readOnly"))
 
                             @myhelpers.inputWithLabel(htmlTaskField(WebConsts.xpathQueryName), "XPath", "text", 1, 7,
-                                isRequired = true, placeHolder = Some("XPath - Query"))
+                            placeHolder = Some("XPath - Query"), otherAttrs = Seq("required"))
                         </div>
 
                         <div class="form-group row">
-                        @myhelpers.textareaWithLabel(htmlTaskField(WebConsts.textName), "Text", rowCount = 3, 2, 10,
-                            isRequired = true, placeHolder = Some("Teilaufgabentext"))
+                            @myhelpers.textareaWithLabel(htmlTaskField(WebConsts.textName), "Text", rowCount = 3, 2, 10,
+                            placeHolder = Some("Teilaufgabentext"),otherAttrs = Seq("required"))
                         </div>
 
                         <div class="form-group row">
-                        @myhelpers.inputWithLabel(htmlTaskField(WebConsts.textContentName), "Textinhalt", "text", 2, 10,
+                            @myhelpers.inputWithLabel(htmlTaskField(WebConsts.textContentName), "Textinhalt", "text", 2, 10,
                             placeHolder = Some("Textinhalt des Elements, optional"))
                         </div>
                     </div>

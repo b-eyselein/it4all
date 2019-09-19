@@ -5,16 +5,16 @@
 
         <h1 class="text-center">Einloggen</h1>
 
-        @helper.form(routes.LoginController.authenticate(), 'class -> "form-horizontal") {
+        @helper.form(routes.LoginController.authenticate(), Symbol("class") -> "form-horizontal") {
 
             @helper.CSRF.formField
 
             <div class="form-group row">
-            @myhelpers.inputWithLabel(form(model.core.CoreConsts.nameName), "Nutzername", "text", 3, 9, placeHolder = Some("Nutzername"))
+                @myhelpers.inputWithLabel(form(model.core.CoreConsts.nameName), "Nutzername", "text", 3, otherAttrs = Seq("autofocus", "required"))
             </div>
 
             <div class="form-group row">
-            @myhelpers.inputWithLabel(form(model.core.CoreConsts.pwName), "Passwort", "password", 3, 9, placeHolder = Some("Passwort"))
+                @myhelpers.inputWithLabel(form(model.core.CoreConsts.pwName), "Passwort", "password", 3, 9)
             </div>
 
             <div class="form-group row">

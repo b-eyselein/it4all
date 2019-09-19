@@ -22,7 +22,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
   def register: Action[AnyContent] = Action.async { implicit request =>
 
     val onError: Form[UserCredentials] => Future[Result] = { _ =>
-      Future(BadRequest("There has been an error in your form..."))
+      Future(Redirect(routes.LoginController.registerForm()))
     }
 
     val onRead: UserCredentials => Future[Result] = { credentials =>

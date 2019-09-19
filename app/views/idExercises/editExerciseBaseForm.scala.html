@@ -62,9 +62,9 @@
             @helper.CSRF.formField
 
             <div class="form-group row">
-                @myhelpers.inputWithLabel(exerciseForm(CoreConsts.idName), "ID", "number", 2, 2, isRequired = true, isReadOnly = true)
+                @myhelpers.inputWithLabel(exerciseForm(CoreConsts.idName), "ID", "number", 2, 2, otherAttrs = Seq("required", "readOnly"))
 
-                @myhelpers.inputWithLabel(exerciseForm(CoreConsts.authorName), "Autor", "text", 1, 2, isRequired = true, isReadOnly = true)
+                @myhelpers.inputWithLabel(exerciseForm(CoreConsts.authorName), "Autor", "text", 1, 2, otherAttrs = Seq("required", "readOnly"))
 
                 @if(user.isAdmin) {
                     @myhelpers.selectWithLabel(statusField, "Status", model.ExerciseState.values.map(e => (e.entryName, e.german)), 1, 4)
@@ -78,13 +78,13 @@
             <div class="form-group row">
                 <label class="col-form-label col-md-2" for="@CoreConsts.semanticVersionName">Version:</label>
 
-                <div class="col-md-2">@myhelpers.input(majorField, "number", isRequired = true)</div>
+                <div class="col-md-2">@myhelpers.input(majorField, fieldType = "number", otherAttrs = Seq("required"))</div>
                 <label class="col-form-label col-md-1" for="@majorField.id">(Major)</label>
 
-                <div class="col-md-2">@myhelpers.input(minorField, "number", isRequired = true)</div>
+                <div class="col-md-2">@myhelpers.input(minorField, fieldType = "number", otherAttrs = Seq("required"))</div>
                 <label class="col-form-label col-md-1" for="@minorField.id">(Minor)</label>
 
-                <div class="col-md-2"> @myhelpers.input(patchField, "number", isRequired = true)</div>
+                <div class="col-md-2"> @myhelpers.input(patchField, fieldType = "number", otherAttrs = Seq("required"))</div>
                 <label class="col-form-label col-md-1" for="@patchField.id">(Patch)</label>
 
                 <div class="col-md-1">
@@ -97,12 +97,12 @@
 
             <div class="form-group row">
             @myhelpers.inputWithLabel(exerciseForm(CoreConsts.titleName), "Titel", "text", 2, 10,
-                isRequired = true, placeHolder = Some("Titel der Aufgabe"))
+                placeHolder = Some("Titel der Aufgabe"), otherAttrs = Seq("required"))
             </div>
 
             <div class="form-group row">
             @myhelpers.textareaWithLabel(exerciseForm(CoreConsts.textName), "Text", rowCount = 5, 2, 10,
-                isRequired = true, placeHolder = Some("Text der Aufgaben"))
+                placeHolder = Some("Text der Aufgaben"), otherAttrs = Seq("required"))
             </div>
 
         </fieldset>

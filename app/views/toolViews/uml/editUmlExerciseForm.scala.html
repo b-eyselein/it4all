@@ -72,7 +72,7 @@
         @helper.repeat(compExForm(UmlConsts.samplesName), min = 1) { sampleField =>
 
             <div class="form-group row">
-                @myhelpers.inputWithLabel(sampleField(UmlConsts.idName), "ID", "number", 2, 10, isReadOnly = true)
+                @myhelpers.inputWithLabel(sampleField(UmlConsts.idName), "ID", "number", 2, 10, otherAttrs = Seq("readOnly"))
             </div>
 
             <div class="form-group row">

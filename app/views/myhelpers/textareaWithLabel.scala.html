@@ -1,5 +1,5 @@
 @(field: Field, labelContent: String, rowCount: Int, labelWidth: Int, inputWidth: Int, placeHolder: Option[String] = None,
-        isRequired: Boolean = false, isReadOnly: Boolean = false)
+        otherAttrs: Seq[String] = Seq.empty)
 
 <label class="col-form-label col-md-@labelWidth" for="@field.id">@labelContent:</label>
-<div class="col-md-@inputWidth">@myhelpers.textarea(field, rowCount, placeHolder, isRequired, isReadOnly)</div>
+<div class="col-md-@inputWidth">@myhelpers.textarea(field, rowCount, placeHolder, otherAttrs)</div>

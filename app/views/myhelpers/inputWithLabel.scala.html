@@ -1,6 +1,6 @@
-@(field: Field, labelContent: String, fieldType: String, labelWidth: Int, inputWidth: Int, placeHolder: Option[String] = None,
-        isRequired: Boolean = false, isReadOnly: Boolean = false)
+@(field: Field, labelContent: String, fieldType: String = "text", labelWidth: Int = 3, inputWidth: Int = 9,
+    placeHolder: Option[String] = None, otherAttrs: Seq[String] = Seq.empty)
 
 <label class="col-form-label col-md-@labelWidth" for="@field.id">@labelContent:</label>
-    @* Dont remove `isReadOnly = isReadOnly` => collides with `isRequired`! *@
-<div class="col-md-@inputWidth">@myhelpers.input(field, fieldType, placeHolder, isRequired = isRequired, isReadOnly = isReadOnly)</div>
+@* Dont remove `isReadOnly = isReadOnly` => collides with `isRequired`! *@
+<div class="col-md-@inputWidth">@myhelpers.input(field, fieldType, Some(placeHolder.getOrElse(labelContent)), otherAttrs = otherAttrs)</div>

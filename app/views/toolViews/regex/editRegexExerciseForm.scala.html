@@ -1,7 +1,7 @@
 @import model.tools.regex.{RegexExercise, RegexToolMain, RegexConsts}
 
 @(user: model.User, collId: Int, exerciseForm: Form[RegexExercise], isCreation: Boolean, toolMainObject: RegexToolMain)(
-        implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {
     <script src="@routes.Assets.versioned("lib/systemjs/dist/system.js")"></script>
@@ -24,10 +24,10 @@
         @helper.repeat(exerciseForm(RegexConsts.samplesName), min = 1) { sampleField =>
             <div class="form-group row" id="sample_row_@sampleField(RegexConsts.idName).value">
                 <div class="col-md-2">
-                @myhelpers.input(sampleField(RegexConsts.idName), "number", isReadOnly = true)
+                    @myhelpers.input(sampleField(RegexConsts.idName), fieldType = "number", otherAttrs = Seq("readOnly"))
                 </div>
                 <div class="col-md-8">
-                @myhelpers.input(sampleField(RegexConsts.sampleName), placeHolder = Some("Musterlösung"), isRequired = true)
+                    @myhelpers.input(sampleField(RegexConsts.sampleName), placeHolder = Some("Musterlösung"), otherAttrs = Seq("required"))
                 </div>
                 <div class="col-md-2">
                     <button type="button" class="btn btn-danger btn-block deleteSampleSolBtn" title="Musterlösung löschen"
@@ -61,13 +61,13 @@
         @helper.repeat(exerciseForm(RegexConsts.matchTestDataName), min = 1) { testDataField =>
             <div class="form-group row" id="testdata_row_@testDataField(RegexConsts.idName).value">
                 <div class="col-md-2">
-                @myhelpers.input(testDataField(RegexConsts.idName), "number", isReadOnly = true)
+                @myhelpers.input(testDataField(RegexConsts.idName), fieldType = "number", otherAttrs = Seq("readOnly"))
                 </div>
                 <div class="col-md-6">
-                @myhelpers.input(testDataField(RegexConsts.dataName), placeHolder = Some("Testdaten"), isRequired = true)
+                @myhelpers.input(testDataField(RegexConsts.dataName), placeHolder = Some("Testdaten"), otherAttrs = Seq("required"))
                 </div>
                 <div class="col-md-2">
-                @myhelpers.input(testDataField(RegexConsts.includedName), isRequired = true)
+                @myhelpers.input(testDataField(RegexConsts.includedName), otherAttrs = Seq("required"))
                 </div>
                 <div class="col-md-2">
                     <button type="button" class="btn btn-danger btn-block deleteTestDataBtn" title="Testdateneintrag löschen"
