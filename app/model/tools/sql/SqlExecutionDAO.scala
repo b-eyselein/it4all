@@ -115,7 +115,7 @@ object ChangeDAO extends SqlExecutionDAO("sqlchange") {
         using(connection.prepareStatement(change.toString)) { statement => statement.executeUpdate() } flatMap { _ =>
 
           val validationQuery = "SELECT * FROM " + (change match {
-            case upd: Update => upd.getTables.get(0)
+            case upd: Update => upd.getTable
             case ins: Insert => ins.getTable
             case del: Delete => del.getTable
           }).getName

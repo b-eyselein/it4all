@@ -73,7 +73,7 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getColumns.asScala.map(wrapColumn).toSeq
 
-  override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala.toSeq
+  override protected def getTables(query: Q): Seq[Table] = Seq(query.getTable)
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 

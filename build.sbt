@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.13.0"
+scalaVersion := "2.13.0" // TODO: 2.13.1 after https://github.com/scoverage/scalac-scoverage-plugin/pull/279
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -33,11 +33,11 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("webjars", "maven"),
 
   // Repo for play-json-schema-validator
-  "emueller-bintray" at "http://dl.bintray.com/emueller/maven"
+  "emueller-bintray" at "https://dl.bintray.com/emueller/maven"
 )
 
 val jqueryVersion = "3.4.1"
-val jqueryTypesVersion = "3.3.29"
+val jqueryTypesVersion = "3.3.31"
 
 val webJarDependencies = Seq(
   "org.webjars.npm" % "jquery" % jqueryVersion, // MIT
@@ -48,7 +48,7 @@ val webJarDependencies = Seq(
   "org.webjars" % "octicons" % "4.3.0", // MIT
 
   "org.webjars.npm" % "bootstrap" % "4.3.1", // MIT
-  "org.webjars.npm" % "types__bootstrap" % "4.3.0", // MIT
+  "org.webjars.npm" % "types__bootstrap" % "4.3.1", // MIT
 
   "org.webjars.npm" % "systemjs" % "0.21.6", // MIT, TODO: 3.1.6
   "org.webjars.npm" % "types__systemjs" % "0.20.6", // MIT
@@ -57,15 +57,13 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "types__backbone" % "1.3.46", // MIT
 
-  "org.webjars.npm" % "codemirror" % "5.48.0", // MIT
-  "org.webjars.npm" % "types__codemirror" % "0.0.74", // MIT
-  "org.webjars.npm" % "cm-show-invisibles" % "2.0.2", // MIT
+  "org.webjars.npm" % "codemirror" % "5.48.4", // MIT
+  "org.webjars.npm" % "types__codemirror" % "0.0.77", // MIT
 
   //  "org.webjars.npm" % "graphlib" % "2.1.7", // MIT
-  "org.webjars.npm" % "types__graphlib" % "2.1.4" // MIT
+  "org.webjars.npm" % "types__graphlib" % "2.1.5" // MIT
 
 )
-
 
 libraryDependencies ++= webJarDependencies
 
@@ -92,7 +90,7 @@ libraryDependencies ++= Seq(
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test,
 
-  "mysql" % "mysql-connector-java" % "8.0.16", // GPL 2.0
+  "mysql" % "mysql-connector-java" % "8.0.17", // GPL 2.0
 
   "com.typesafe.play" %% "play-slick" % "4.0.2", // Apache 2.0
   "com.typesafe.play" %% "play-slick-evolutions" % "4.0.2", // Apache 2.0
@@ -112,7 +110,7 @@ libraryDependencies ++= Seq(
   "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5", // Apache 2.0
 
   // Sql
-  "com.github.jsqlparser" % "jsqlparser" % "2.1", // Apache 2.0
+  "com.github.jsqlparser" % "jsqlparser" % "3.0", // Apache 2.0
 
   // DTD Parser
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",

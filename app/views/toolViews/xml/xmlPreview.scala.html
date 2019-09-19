@@ -35,9 +35,7 @@
 
 @for(sample <- exercise.samples) {
     <div class="row">
-        <div class="col-md-2">@{
-            sample.id + "."
-        }</div>
+        <div class="col-md-2">@{s"{sample.id}."}</div>
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body bg-light">
