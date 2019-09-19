@@ -120,7 +120,7 @@ object ProgCorrector {
 
     // find mounts for implementation files
     val unitTestSolFilesDockerBinds = (resFolder / "unit_test_sols").children
-      .filter(f => f.name.matches(""".*_\d\.py"""))
+      .filter(f => f.name.matches(""".*_\d*\.py"""))
       .map(f => DockerBind(f, DockerConnector.DefaultWorkingDir / exercise.foldername / f.name, isReadOnly = true))
       .toSeq
 
