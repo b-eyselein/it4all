@@ -6,5 +6,4 @@ stages:
 test:
   stage: test
   script:
-    - which node && which npm
     - sbt test
