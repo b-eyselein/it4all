@@ -1,22 +1,10 @@
 image: beyselein/it4all-play-dockerfile:new
 
-# Try caching...
-
-variables:
-  SBT_OPTS: "-Dsbt.global.base=sbt-cache/.sbtboot -Dsbt.boot.directory=sbt-cache/.boot -Dsbt.ivy.home=sbt-cache/.ivy"
-
-cache:
-  # key: $CI_BUILD_REF_NAME
-  untracked: true
-  paths:
-  - sbt-cache/.ivy.cache
-  - sbt-cache/.boot
-  - sbt-cache/.sbt-boot
-
 stages:
-- test
+  - test
 
 test:
   stage: test
   script:
-  - sbt test
+    - which node && which npm
+    - sbt test
