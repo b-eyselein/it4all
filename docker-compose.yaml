@@ -1,4 +1,4 @@
-version: '3'
+version: "3.6"
 
 volumes:
   select_db_volume: {}
@@ -7,39 +7,56 @@ volumes:
 
 services:
   webtester:
-    image:        php:7-apache
+    image:        httpd:alpine
     restart:      always
     ports:
       - 9080:80
     volumes:
-      - ./data/web/solutions/:/var/www/html/
+      - type:     bind
+        source:   ./data/web/solutions/
+        target:   /usr/local/apache2/htdocs/
+
   sqlselect:
     image:        mariadb
     restart:      always
     ports:
       - 3107:3306
     volumes:
-      - ./conf/inits/init_db_scripts/:/docker-entrypoint-initdb.d/
-      - select_db_volume:/var/lib/mysql
+      - type:     bind
+        source:   ./conf/inits/init_db_scripts/
+        target:   /docker-entrypoint-initdb.d/
+      - type:     volume
+        source:   select_db_volume
+        target:   /var/lib/mysql
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
+
   sqlchange:
     image:        mariadb
     restart:      always
     ports:
       - 3108:3306
     volumes:
-      - ./conf/inits/init_db_scripts/:/docker-entrypoint-initdb.d/
-      - update_db_volume:/var/lib/mysql
+      - type:     bind
+        source:   ./conf/inits/init_db_scripts/
+        target:   /docker-entrypoint-initdb.d/
+      - type:     volume
+        source:   update_db_volume
+        target:   /var/lib/mysql
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
+
   sqlcreate:
     image:        mariadb
     restart:      always
     ports:
       - 3109:3306
     volumes:
-      - ./conf/inits/sql_create_setup.sql:/docker-entrypoint-initdb.d/00_create_user_and_db.sql
-      - create_db_volume:/var/lib/mysql
+      - type:     bind
+        source:   ./conf/inits/sql_create_setup.sql
+        target:   /docker-entrypoint-initdb.d/00_create_user_and_db.sql
+      - type:     volume
+        source:   create_db_volume
+        target:   /var/lib/mysql
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
