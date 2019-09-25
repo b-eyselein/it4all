@@ -6,4 +6,5 @@ stages:
 test:
   stage: test
   script:
+    - rm tsconfig.json # delete tsconfig.json to disable ts compiling
     - sbt test
