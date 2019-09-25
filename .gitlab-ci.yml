@@ -7,4 +7,6 @@ test:
   stage: test
   script:
     - rm tsconfig.json # delete tsconfig.json to disable ts compiling
+    - mv project/plugins_ci.sbt project/plugins.sbt # uncomment ts plugin
+    - mv build_ci.sbt build.sbt # uncomment ts plugin specifics in build.sbt
     - sbt test
