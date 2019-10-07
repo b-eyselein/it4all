@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.13.0" // TODO: 2.13.1 after https://github.com/scoverage/scalac-scoverage-plugin/pull/279
+scalaVersion := "2.13.1"
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -57,7 +57,7 @@ val webJarDependencies = Seq(
 
   "org.webjars.npm" % "types__backbone" % "1.3.46", // MIT
 
-  "org.webjars.npm" % "codemirror" % "5.48.4", // MIT
+  "org.webjars.npm" % "codemirror" % "5.49.0", // MIT
   "org.webjars.npm" % "types__codemirror" % "0.0.77", // MIT
 
   //  "org.webjars.npm" % "graphlib" % "2.1.7", // MIT
