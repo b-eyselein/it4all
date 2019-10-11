@@ -34,7 +34,7 @@ object SemanticVersionHelper {
         minor <- yamlObj.intField(minorName)
         patch <- yamlObj.intField(patchName)
       } yield SemanticVersion(major, minor, patch)
-    case other               => Failure(new Exception(s"Could not parse '$other' as Semantic Version!"))
+    case other               => Failure(new Exception(s"Could not parse '${other.toString}' as Semantic Version!"))
   }
 
   def tryParseFromString(str: String): Try[SemanticVersion] = str match {
@@ -44,7 +44,7 @@ object SemanticVersionHelper {
       patch <- Try(pat.toInt)
     } yield SemanticVersion(major, minor, patch)
 
-    case _ => Failure(new Exception(s"Could not parse String '$str' as Semantic Version!"))
+    case _ => Failure(new Exception(s"Could not parse String '${str.toString}' as Semantic Version!"))
   }
 
 }

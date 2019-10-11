@@ -18,8 +18,4 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
     implicit request => Ok(views.html.index(user, toolList))
   }
 
-  def blocklyTest: EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.blocklyTest(user))
-  }
-
 }

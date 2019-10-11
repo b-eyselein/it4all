@@ -1,14 +1,11 @@
 package model.feedback
 
-import model.{EvaluatedAspect, Mark}
-import model.Mark.NoMark
-
 final case class FeedbackResult(tool: String, allFeedback: Seq[Feedback]) {
 
   // FIXME: refactor!
 
   def feedbackFor(evaluatedAspect: EvaluatedAspect): Map[Mark, Int] = allFeedback
-    .map(_.marks.getOrElse(evaluatedAspect, NoMark))
+    .map(_.marks.getOrElse(evaluatedAspect, Mark.NoMark))
     .groupBy(identity)
     .view
     .mapValues(_.size)
@@ -28,8 +25,12 @@ object FeedbackResult {
     marksWithoutNoMark match {
       case Seq() => (0d, 0)
       case marks =>
-        val markCount: Int = marks.map { case (_, count) => count }.sum
-        val avgMark: Double = math.rint(marks.map { case (mark, count) => mark.value * count }.sum.toDouble / markCount * 100) / 100d
+        val markCount: Int    = marks.map { case (_, count) => count }.sum
+        val avgMark  : Double = math.rint(
+          marks
+            .map { case (mark, count) => mark.value * count }
+            .sum.toDouble / markCount * 100
+        ) / 100d
         (avgMark, markCount)
     }
   }

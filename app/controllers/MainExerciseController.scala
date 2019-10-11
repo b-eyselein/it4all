@@ -25,22 +25,31 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
   def evaluate(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
       repository.futureMaybeFeedback(user, toolType) map { maybeFeedback =>
-        Ok(views.html.evaluation.eval(user, maybeFeedback getOrElse Feedback(user.username, toolMain.urlPart), toolMain))
+
+        val feedbackForm = maybeFeedback match {
+          case None     => FeedbackFormHelper.feedbackFormMapping
+          case Some(fb) => FeedbackFormHelper.feedbackFormMapping.fill(fb)
+        }
+
+        Ok(views.html.evaluation.eval(user, feedbackForm, maybeFeedback.getOrElse(Feedback()), toolMain))
       }
   }
 
   def submitEvaluation(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>
 
-      val onError: Form[Feedback] => Future[Result] = { _ => Future.successful(BadRequest("TODO!")) }
+      val onError: Form[Feedback] => Future[Result] = { formWithErrors =>
+        formWithErrors.errors.foreach(println)
+        Future.successful(BadRequest(views.html.evaluation.eval(user, formWithErrors, Feedback(), toolMain)))
+      }
 
       val onRead: Feedback => Future[Result] = { feedback =>
-        repository.saveFeedback(feedback) map {
+        repository.futureUpsertFeedback(user.username, toolMain.urlPart, feedback) map {
           feedbackSaved => Ok(views.html.evaluation.submitEvaluation(user, feedback, feedbackSaved, toolMain))
         }
       }
 
-      FeedbackFormHelper(user.username, toolMain.urlPart).feedbackFormMapping.bindFromRequest().fold(onError, onRead)
+      FeedbackFormHelper.feedbackFormMapping.bindFromRequest().fold(onError, onRead)
   }
 
   def learningPath(toolType: String, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>

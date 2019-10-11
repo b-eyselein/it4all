@@ -1,4 +1,7 @@
-@(user: model.User, toEvaluate: model.feedback.Feedback, toolMain: model.toolMains.AToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@import model.core.CoreConsts
+@import model.feedback.{EvaluatedAspects, Feedback, Mark}
+
+@(user: model.User, feedbackForm: Form[Feedback], toEvaluate: Feedback, toolMain: model.toolMains.AToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     s"Evaluation des Tools '${toolMain.toolname}'"
@@ -6,18 +9,38 @@
 
 @main(title, Some(user)) {
     <div class="container">
-        <h1 class="text-center">@title</h1>
+        <h1 class="text-center mb-4">@title</h1>
 
-        @helper.form(routes.MainExerciseController.submitEvaluation(toolMain.urlPart), 'class -> "form") {
+        @helper.form(routes.MainExerciseController.submitEvaluation(toolMain.urlPart), Symbol("class") -> "form") {
 
             @helper.CSRF.formField
 
-            @for(evaledAspect <- model.EvaluatedAspects.values) {
+            <h2>Ihr Hintergrund</h2>
+
+            <p class="my-3">Um die Evaluation genauer durchführen zu können, würden wir gerne wissen, ...</p>
+
+            <div class="row my-3">
+            @myhelpers.inputWithLabel(feedbackForm(CoreConsts.subjectName), "... was sie studieren", placeHolder = Some("Studienfach"))
+            </div>
+
+            <div class="row my-3">
+            @myhelpers.inputWithLabel(feedbackForm(CoreConsts.semesterName), "... in welchem Semester Sie sind", fieldType = "number", placeHolder = Some("Semester"))
+            </div>
+
+            <div class="row my-3">
+            @myhelpers.inputWithLabel(feedbackForm(CoreConsts.usageReasonName), "... warum Sie it4all benutzt haben", placeHolder = Some("Nutzungsgrund"))
+            </div>
+
+            <hr>
+
+            <h2>Ihre Einschätzung</h2>
+
+            @for(evaledAspect <- EvaluatedAspects.values) {
                 <div class="my-3">
-                    <h4>@evaledAspect.question</h4>
+                    <h5>@evaledAspect.question</h5>
 
                     <div class="row mt-3">
-                    @for(mark <- model.Mark.values) {
+                    @for(mark <- Mark.values) {
                         <div class="col-md-2">
                             <label for="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase">
                                 <input type="radio" name="@evaledAspect.toString.toLowerCase" id="@evaledAspect.toString.toLowerCase-@mark.toString.toLowerCase"
@@ -31,11 +54,7 @@
                 </div>
             }
 
-            <div class="form-group">
-                <h4><label for="comment">Verbesserungsvorschläge:</label></h4>
-                <textarea class="form-control" rows="5" name="comment" id="comment" placeholder="Verbesserungsvorschläge">@toEvaluate.comment</textarea>
-                <p class="text-info">Bitte beschränken Sie Sich auf 250 Zeichen.</p>
-            </div>
+            @myhelpers.textAreaWithLabelTwoLines(feedbackForm(CoreConsts.commentName), "Verbesserungsvorschläge")
 
             <hr>
 

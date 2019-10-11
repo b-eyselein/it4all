@@ -1,4 +1,6 @@
-@(user: model.User, feedback: model.feedback.Feedback, feedbackSaved: Boolean, toolMain: model.toolMains.AToolMain)
+@import model.feedback.{EvaluatedAspects, Feedback}
+
+@(user: model.User, feedback: Feedback, feedbackSaved: Boolean, toolMain: model.toolMains.AToolMain)
 
 @main("Evaluation: Eintragung", Some(user)) {
     <div class="container">
@@ -25,7 +27,7 @@
             </div>
         </div>
 
-        @for(evaluatedAspect <- model.EvaluatedAspects.values) {
+        @for(evaluatedAspect <- EvaluatedAspects.values) {
 
             <hr>
 

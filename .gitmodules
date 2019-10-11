@@ -1,6 +1,3 @@
-[submodule "public/javascripts/blockly"]
-	path = public/javascripts/blockly
-	url = https://github.com/google/blockly.git
 [submodule "conf/resources/programming"]
 	path = conf/resources/programming
 	url = https://gitlab2.informatik.uni-wuerzburg.de/it4all/prog_exercises.git

@@ -42,6 +42,8 @@ create table if not exists users_in_courses (
 create table if not exists feedback (
     username          varchar(30),
     tool_url          varchar(30),
+    marks_json json not null,
+    -- TODO: remove following columns!
     sense             enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
     used              enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
     usability         enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',

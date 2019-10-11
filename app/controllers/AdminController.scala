@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 import model.core.Repository
-import model.feedback.{Feedback, FeedbackResult}
+import model.feedback.FeedbackResult
 import model.toolMains._
 import model.{FormMappings, Role, UpdateRoleForm}
 import play.api.Logger
@@ -45,16 +45,17 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
   def evaluationResults: EssentialAction = futureWithUser { user =>
     implicit request =>
-      repository.futureEvaluationResultsForTools map { evaluationResultsForTools: Seq[Feedback] =>
+      repository.futureAllEvaluatedTools.flatMap { allEvaluatedTools: Seq[String] =>
 
-        val results: Seq[FeedbackResult] = evaluationResultsForTools
-          .groupBy(_.toolUrlPart)
-          .toSeq
-          .map {
-            case (toolUrl, allResults) => FeedbackResult(toolUrl, allResults)
+        val results = Future.sequence(allEvaluatedTools.map { evaluatedTool =>
+          repository.futureAllEvaluationResultsForTool(evaluatedTool).map {
+            feedbacks => FeedbackResult(evaluatedTool, feedbacks)
           }
+        })
 
-        Ok(views.html.evaluation.stats(user, results))
+        results.map { feedbackResults =>
+          Ok(views.html.evaluation.stats(user, feedbackResults))
+        }
       }
   }
 

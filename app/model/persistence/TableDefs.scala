@@ -1,12 +1,10 @@
 package model.persistence
 
-import model.core.CoreConsts._
-import model.feedback.{Feedback, FeedbackTableHelper}
 import model._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
+import slick.lifted.{ForeignKeyQuery, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -22,12 +20,10 @@ trait TableDefs {
 
   // Table queries
 
-  val users = TableQuery[UsersTable]
+  protected val users = TableQuery[UsersTable]
 
-  val pwHashes = TableQuery[PwHashesTable]
+  private val pwHashes = TableQuery[PwHashesTable]
 
-
-  val feedbacks = TableQuery[FeedbackTable]
 
   // Numbers
 
@@ -41,11 +37,6 @@ trait TableDefs {
 
   def pwHashForUser(username: String): Future[Option[PwHash]] = db.run(pwHashes.filter(_.username === username).result.headOption)
 
-
-  def futureMaybeFeedback(user: User, toolUrlPart: String): Future[Option[Feedback]] =
-    db.run(feedbacks.filter(fb => fb.username === user.username && fb.toolUrlPart === toolUrlPart).result.headOption)
-
-  def futureEvaluationResultsForTools: Future[Seq[Feedback]] = db.run(feedbacks.result)
 
   // Update
 
@@ -68,8 +59,6 @@ trait TableDefs {
       logger.error(s"Could not save pwHash $pwHash", e)
       false
   }
-
-  def saveFeedback(feedback: Feedback): Future[Boolean] = saveSingle(db.run(feedbacks insertOrUpdate feedback))
 
   // Abstract queries
 
@@ -97,9 +86,6 @@ trait TableDefs {
 
   protected implicit val exercisetypeColumnType: BaseColumnType[ExerciseState] =
     MappedColumnType.base[ExerciseState, String](_.entryName, str => ExerciseState.withNameInsensitiveOption(str) getOrElse ExerciseState.CREATED)
-
-  private implicit val markColumnType: BaseColumnType[Mark] =
-    MappedColumnType.base[Mark, String](_.entryName, str => Mark.withNameInsensitiveOption(str) getOrElse Mark.NoMark)
 
   protected implicit val semanticVersionColumnType: BaseColumnType[SemanticVersion] =
     MappedColumnType.base[SemanticVersion, String](_.asString, SemanticVersionHelper.parseFromString(_).getOrElse(SemanticVersionHelper.DEFAULT))
@@ -143,36 +129,6 @@ trait TableDefs {
 
 
     override def * : ProvenShape[PwHash] = (username, pwHash) <> (PwHash.tupled, PwHash.unapply)
-
-  }
-
-  // Feedback
-
-  class FeedbackTable(tag: Tag) extends Table[Feedback](tag, "feedback") {
-
-    def username: Rep[String] = column[String](usernameName)
-
-    def toolUrlPart: Rep[String] = column[String]("tool_url")
-
-    def sense: Rep[Mark] = column[Mark]("sense")
-
-    def used: Rep[Mark] = column[Mark]("used")
-
-    def usability: Rep[Mark] = column[Mark]("usability")
-
-    def feedback: Rep[Mark] = column[Mark]("style_feedback")
-
-    def fairness: Rep[Mark] = column[Mark]("fairness_feedback")
-
-    def comment: Rep[String] = column[String]("comment")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (username, toolUrlPart))
-
-    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
-
-
-    override def * : ProvenShape[Feedback] = (username, toolUrlPart, sense, used, usability, feedback, fairness, comment) <> (FeedbackTableHelper.fromTableTupled, FeedbackTableHelper.forTableUnapplied)
 
   }
 

@@ -122,9 +122,6 @@ GET           /:toolType/playground                                           co
 GET           /:toolType/evaluate                                             controllers.MainExerciseController.evaluate(toolType: String)
 POST          /:toolType/submitEvaluation                                     controllers.MainExerciseController.submitEvaluation(toolType: String)
 
-# Blockly test
-GET           /blockly                                                        controllers.Application.blocklyTest
-
 # Evaluation
 GET           /eval/stats                                                     controllers.AdminController.evaluationResults
 

@@ -36,10 +36,12 @@ resolvers ++= Seq(
   "emueller-bintray" at "https://dl.bintray.com/emueller/maven"
 )
 
-val jqueryVersion = "3.4.1"
+val jqueryVersion      = "3.4.1"
 val jqueryTypesVersion = "3.3.31"
 
 val webJarDependencies = Seq(
+  "org.webjars.npm" % "graceful-fs" % "4.2.2",
+
   "org.webjars.npm" % "jquery" % jqueryVersion, // MIT
   "org.webjars.npm" % "types__jquery" % jqueryTypesVersion, // MIT
 
@@ -62,7 +64,6 @@ val webJarDependencies = Seq(
 
   //  "org.webjars.npm" % "graphlib" % "2.1.7", // MIT
   "org.webjars.npm" % "types__graphlib" % "2.1.5" // MIT
-
 )
 
 libraryDependencies ++= webJarDependencies
@@ -90,7 +91,7 @@ libraryDependencies ++= Seq(
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test,
 
-  "mysql" % "mysql-connector-java" % "8.0.17", // GPL 2.0
+  "mysql" % "mysql-connector-java" % "8.0.17", // GPL 2.0, TODO: org.mariadb.jdbc >> mariadb-java-client >> 2.5.0!
 
   "com.typesafe.play" %% "play-slick" % "4.0.2", // Apache 2.0
   "com.typesafe.play" %% "play-slick-evolutions" % "4.0.2", // Apache 2.0
