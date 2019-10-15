@@ -51,6 +51,9 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override val collectionYamlFormat: MyYamlFormat[RoseCollection] = RoseExYamlProtocol.RoseCollectionYamlFormat
   override val exerciseYamlFormat  : MyYamlFormat[RoseExercise]   = RoseExYamlProtocol.RoseExYamlFormat
 
+  override val collectionJsonFormat: Format[RoseCollection]                                     = RoseCompleteResultJsonProtocol.collectionFormat
+  override val exerciseJsonFormat  : Format[RoseExercise] = RoseCompleteResultJsonProtocol.exerciseFormat
+
   override val collectionForm    : Form[RoseCollection]     = RoseToolForms.collectionFormat
   override val exerciseForm      : Form[RoseExercise]       = RoseToolForms.exerciseFormat
   override val exerciseReviewForm: Form[RoseExerciseReview] = RoseToolForms.exerciseReviewForm

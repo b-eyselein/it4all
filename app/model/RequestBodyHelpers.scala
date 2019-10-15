@@ -3,14 +3,19 @@ package model
 import model.core.CoreConsts._
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.libs.json.{Format, Json}
 
 final case class UpdateRoleForm(username: String, newRole: Role)
 
 final case class UserCredentials(username: String, password: String)
 
-object FormMappings {
+object RequestBodyHelpers {
 
-  // Mappings
+  //Json formats
+
+  val userCredentialsFormat: Format[UserCredentials] = Json.format[UserCredentials]
+
+  // Form Mappings
 
   val saveOptionsForm: Form[String] = Form("showHideAgg" -> nonEmptyText)
 

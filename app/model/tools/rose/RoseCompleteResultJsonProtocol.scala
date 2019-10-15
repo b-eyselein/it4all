@@ -2,20 +2,36 @@ package model.tools.rose
 
 import model.core.result.CompleteResultJsonProtocol
 import model.points._
-import model.tools.programming.{ProgLanguage, ProgLanguages}
-import play.api.libs.json.{Format, JsString, Json, Writes}
+import model.tools.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
+import model.{SemanticVersion, SemanticVersionHelper}
+import play.api.libs.json.{Format, Json, Writes}
 
 object RoseCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RoseExecutionResult, RoseCompleteResult] {
 
-  private val roseStartFormat: Format[RoseStart] = Json.format[RoseStart]
+  // Collection
 
-  private val robotResultFormat: Format[RobotResult] = Json.format[RobotResult]
+  val collectionFormat: Format[RoseCollection] = Json.format[RoseCollection]
 
+  val exerciseFormat: Format[RoseExercise] = {
+    implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
+
+    implicit val ritf: Format[RoseInputType] = {
+      implicit val pdtf: Format[ProgDataType] = ProgDataTypes.jsonFormat
+
+      Json.format[RoseInputType]
+    }
+
+    implicit val rssf: Format[RoseSampleSolution] = roseSampleSolutionJsonFormat
+
+    Json.format[RoseExercise]
+  }
+
+  // Other
 
   val roseExecutionResultWrites: Format[RoseExecutionResult] = {
-    implicit val rsf: Format[RoseStart] = roseStartFormat
+    implicit val rsf: Format[RoseStart] = Json.format[RoseStart]
 
-    implicit val rrf: Format[RobotResult] = robotResultFormat
+    implicit val rrf: Format[RobotResult] = Json.format[RobotResult]
 
     Json.format[RoseExecutionResult]
   }
@@ -27,7 +43,6 @@ object RoseCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RoseExe
 
     Json.writes[RoseCompleteResult]
   }
-
 
   val roseSampleSolutionJsonFormat: Format[RoseSampleSolution] = {
     implicit val progLanguageJsonFormat: Format[ProgLanguage] = ProgLanguages.jsonFormat

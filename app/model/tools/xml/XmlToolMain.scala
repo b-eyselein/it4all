@@ -51,10 +51,14 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   override protected val collectionYamlFormat: MyYamlFormat[XmlCollection] = XmlExYamlProtocol.XmlCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[XmlExercise]   = XmlExYamlProtocol.XmlExYamlFormat
 
+  override val collectionJsonFormat: Format[XmlCollection] = XmlCompleteResultJsonProtocol.collectionFormat
+  override val exerciseJsonFormat: Format[XmlExercise] = XmlCompleteResultJsonProtocol.exerciseFormat
+
   override val collectionForm    : Form[XmlCollection]     = XmlToolForms.collectionFormat
   override val exerciseForm      : Form[XmlExercise]       = XmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[XmlExerciseReview] = XmlToolForms.exerciseReviewForm
 
+  // FIXME: do not use anymore ?!?
   override val sampleSolutionJsonFormat: Format[XmlSampleSolution] = XmlCompleteResultJsonProtocol.xmlSampleSolutionJsonFormat
 
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] = XmlCompleteResultJsonProtocol

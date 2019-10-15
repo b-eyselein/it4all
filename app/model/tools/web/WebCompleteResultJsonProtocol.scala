@@ -1,5 +1,7 @@
 package model.tools.web
 
+import de.uniwue.webtester.{HtmlAttribute, HtmlElementSpec, HtmlTask, JsAction, JsActionType, JsTask, SiteSpec}
+import model.{ExerciseFile, ExerciseFileJsonProtocol, FilesSampleSolution, SemanticVersion, SemanticVersionHelper}
 import model.core.result.{CompleteResultJsonProtocol, SuccessType}
 import model.points._
 import model.tools.web.WebConsts._
@@ -8,6 +10,64 @@ import play.api.libs.json._
 
 //noinspection ConvertibleToMethodValue
 object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
+
+  // Collection
+
+  val collectionFormat: Format[WebCollection] = Json.format[WebCollection]
+
+  private val htmlElementSpecFormat: Format[HtmlElementSpec] = {
+    implicit val haf: Format[HtmlAttribute] = Json.format[HtmlAttribute]
+
+    Json.format[HtmlElementSpec]
+  }
+
+  private val htmlTaskFormat: Format[HtmlTask] = {
+    implicit val hesf: Format[HtmlElementSpec] = htmlElementSpecFormat
+
+    Json.format[HtmlTask]
+  }
+
+  private val jsActionFormat: Format[JsAction] = {
+    implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
+
+    Json.format[JsAction]
+  }
+
+  private val jsTaskFormat: Format[JsTask] = {
+    implicit val hesf: Format[HtmlElementSpec] = htmlElementSpecFormat
+
+    implicit val jsf: Format[JsAction] = jsActionFormat
+
+    Json.format[JsTask]
+  }
+
+  private val siteSpecFormat: Format[SiteSpec] = {
+    implicit val htf: Format[HtmlTask] = htmlTaskFormat
+
+    implicit val jtf: Format[JsTask] = jsTaskFormat
+
+    Json.format[SiteSpec]
+  }
+
+  private val filesSampleSolutionFormat: Format[FilesSampleSolution] = {
+    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
+
+    Json.format[FilesSampleSolution]
+  }
+
+  val exerciseFormat: Format[WebExercise] = {
+    implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
+
+    implicit val ssf: Format[SiteSpec] = siteSpecFormat
+
+    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
+
+    implicit val fssf: Format[FilesSampleSolution] = filesSampleSolutionFormat
+
+    Json.format[WebExercise]
+  }
+
+  // Other
 
   // FIXME: use macro Json.format[...]!
 

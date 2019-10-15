@@ -13,7 +13,7 @@ object ResultsFileJsonFormat {
 
   def readSimplifiedExecutionResultFile(targetFile: File): Try[Seq[SimplifiedExecutionResult]] =
     Try(Json.parse(targetFile.contentAsString)).flatMap { jsValue =>
-      ProgJsonProtocols.simplifiedResultsFileJsonReads.reads(jsValue) match {
+      ProgrammingJsonProtocols.simplifiedResultsFileJsonReads.reads(jsValue) match {
         case JsSuccess(result: SimplifiedResultFileContent, _) => Success(result.results)
         case JsError(errors)                                   =>
           errors.foreach(error => logger.error(s"There has been an error reading a json programming result file: $error"))
@@ -25,7 +25,7 @@ object ResultsFileJsonFormat {
 
   def readTestCorrectionResultFile(targetFile: File): Try[Seq[UnitTestCorrectionResult]] =
     Try(Json.parse(targetFile.contentAsString)).flatMap { jsValue =>
-      ProgJsonProtocols.unitTestCorrectionResultsFileJsonReads.reads(jsValue) match {
+      ProgrammingJsonProtocols.unitTestCorrectionResultsFileJsonReads.reads(jsValue) match {
         case JsSuccess(result, _) => Success(result.results)
         case JsError(errors)      =>
           errors.foreach(error => logger.error(s"There has been an error reading a json programming result file: $error"))

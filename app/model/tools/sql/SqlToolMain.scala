@@ -67,6 +67,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override protected val collectionYamlFormat: MyYamlFormat[SqlScenario] = SqlYamlProtocol.SqlCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[SqlExercise] = SqlYamlProtocol.SqlExerciseYamlFormat
 
+  override val collectionJsonFormat: Format[SqlScenario]                                       =  SqlJsonProtocols.collectionFormat
+  override val exerciseJsonFormat  : Format[SqlExercise] = SqlJsonProtocols.exerciseFormat
+
   override val collectionForm    : Form[SqlScenario]       = SqlToolForms.collectionFormat
   override val exerciseForm      : Form[SqlExercise]       = SqlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[SqlExerciseReview] = SqlToolForms.exerciseReviewForm

@@ -53,6 +53,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   override val collectionYamlFormat: MyYamlFormat[UmlCollection] = UmlExYamlProtocol.UmlCollectionYamlFormat
   override val exerciseYamlFormat  : MyYamlFormat[UmlExercise]   = UmlExYamlProtocol.UmlExYamlFormat
 
+  override val collectionJsonFormat: Format[UmlCollection]                                     = UmlCompleteResultJsonProtocol.collectionFormat
+  override val exerciseJsonFormat  : Format[UmlExercise] = UmlCompleteResultJsonProtocol.exerciseFormat
+
   override val collectionForm    : Form[UmlCollection]     = UmlToolForms.collectionFormat
   override val exerciseForm      : Form[UmlExercise]       = UmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[UmlExerciseReview] = UmlToolForms.exerciseReviewForm

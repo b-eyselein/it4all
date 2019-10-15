@@ -14,7 +14,6 @@ import model.toolMains._
 import model.tools.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.api.Logger
 import play.api.data._
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.{Format, JsError, JsSuccess}
@@ -57,6 +56,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override protected val collectionYamlFormat: MyYamlFormat[WebCollection] = WebToolYamlProtocol.WebCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[WebExercise]   = WebToolYamlProtocol.WebExYamlFormat
+
+  override val collectionJsonFormat: Format[WebCollection] = WebCompleteResultJsonProtocol.collectionFormat
+  override val exerciseJsonFormat  : Format[WebExercise]   = WebCompleteResultJsonProtocol.exerciseFormat
 
   override val collectionForm    : Form[WebCollection]     = WebToolForms.collectionFormat
   override val exerciseForm      : Form[WebExercise]       = WebToolForms.exerciseFormat
@@ -187,19 +189,19 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   private def onDriverGetSuccess(learnerSolution: Seq[ExerciseFile], exercise: WebExercise, part: WebExPart, driver: HtmlUnitDriver): Try[WebCompleteResult] = Try {
     part match {
       case WebExParts.HtmlPart =>
-        val htmlTaskResults: Seq[HtmlTaskResult] = exercise.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
+        val htmlTaskResults      : Seq[HtmlTaskResult]       = exercise.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
         val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = htmlTaskResults.map(WebGrader.gradeHtmlTaskResult)
 
-        val points = addUp(gradedHtmlTaskResults.map(_.points))
+        val points    = addUp(gradedHtmlTaskResults.map(_.points))
         val maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
 
         WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints)
 
       case WebExParts.JsPart =>
-        val jsTaskResults: Seq[JsTaskResult] = exercise.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
+        val jsTaskResults      : Seq[JsTaskResult]       = exercise.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
         val gradedJsTaskResults: Seq[GradedJsTaskResult] = jsTaskResults.map(WebGrader.gradeJsTaskResult)
 
-        val points = addUp(gradedJsTaskResults.map(_.points))
+        val points    = addUp(gradedJsTaskResults.map(_.points))
         val maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
 
         WebCompleteResult(Seq[GradedHtmlTaskResult](), gradedJsTaskResults, points, maxPoints)
@@ -212,7 +214,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override def correctEx(user: User, learnerSolution: Seq[ExerciseFile], collection: WebCollection, exercise: WebExercise, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
     writeWebSolutionFiles(user.username, collection.id, exercise.id, part, learnerSolution).flatMap { _ =>
 
-      val driver = new HtmlUnitDriver(true)
+      val driver              = new HtmlUnitDriver(true)
       val solutionUrl: String = getSolutionUrl(user, collection.id, exercise.id, exercise.siteSpec.fileName)
 
       Try {

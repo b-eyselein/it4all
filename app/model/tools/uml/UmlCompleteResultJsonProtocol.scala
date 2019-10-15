@@ -1,5 +1,6 @@
 package model.tools.uml
 
+import model.{SemanticVersion, SemanticVersionHelper}
 import model.core.matching.MatchingResult
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.points._
@@ -8,6 +9,19 @@ import play.api.libs.json._
 
 object UmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationResult, UmlCompleteResult] {
 
+  // Collection
+
+  val collectionFormat: Format[UmlCollection] = Json.format[UmlCollection]
+
+  val exerciseFormat: Format[UmlExercise] = {
+    implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
+
+    implicit val ussf: Format[UmlSampleSolution] = umlSampleSolutionFormat
+
+    Json.format[UmlExercise]
+  }
+
+  // Other
 
   val umlSampleSolutionFormat: Format[UmlSampleSolution] = {
     implicit val ucdf: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat

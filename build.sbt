@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.0"
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.0" // TODO: 2.13.1 after https://github.com/scoverage/scalac-scoverage-plugin/pull/279
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -40,8 +40,6 @@ val jqueryVersion      = "3.4.1"
 val jqueryTypesVersion = "3.3.31"
 
 val webJarDependencies = Seq(
-  "org.webjars.npm" % "graceful-fs" % "4.2.2",
-
   "org.webjars.npm" % "jquery" % jqueryVersion, // MIT
   "org.webjars.npm" % "types__jquery" % jqueryTypesVersion, // MIT
 
@@ -64,11 +62,12 @@ val webJarDependencies = Seq(
 
   //  "org.webjars.npm" % "graphlib" % "2.1.7", // MIT
   "org.webjars.npm" % "types__graphlib" % "2.1.5" // MIT
+
 )
 
 libraryDependencies ++= webJarDependencies
 
-resolveFromWebjarsNodeModulesDir := true
+// resolveFromWebjarsNodeModulesDir := true
 
 dependencyOverrides ++= Seq(
   "org.webjars.npm" % "types__jquery" % jqueryTypesVersion,
@@ -89,9 +88,11 @@ libraryDependencies ++= Seq(
 
   ws,
 
+  "com.pauldijou" %% "jwt-play" % "4.1.0",
+
   "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test,
 
-  "mysql" % "mysql-connector-java" % "8.0.17", // GPL 2.0, TODO: org.mariadb.jdbc >> mariadb-java-client >> 2.5.0!
+  "mysql" % "mysql-connector-java" % "8.0.18", // GPL 2.0
 
   "com.typesafe.play" %% "play-slick" % "4.0.2", // Apache 2.0
   "com.typesafe.play" %% "play-slick-evolutions" % "4.0.2", // Apache 2.0

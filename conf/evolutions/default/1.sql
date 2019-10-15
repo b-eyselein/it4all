@@ -895,24 +895,24 @@ create table if not exists web_exercise_reviews (
 
 create table if not exists xml_collections (
     id         int primary key,
-    title      varchar(50),
-    author     varchar(50),
-    ex_text    text,
-    ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
-    short_name varchar(50)
+    title      varchar(50) not null ,
+    author     varchar(50) not null ,
+    ex_text    text not null ,
+    ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED' not null ,
+    short_name varchar(50) not null
 );
 
 create table if not exists xml_exercises (
     id                  int,
     semantic_version    varchar(10),
     collection_id       int,
-    title               varchar(50),
-    author              varchar(50),
-    ex_text             text,
-    ex_state            enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    title               varchar(50) not null ,
+    author              varchar(50) not null ,
+    ex_text             text not null ,
+    ex_state            enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED' not null ,
 
-    grammar_description text,
-    root_node           varchar(30),
+    grammar_description text not null ,
+    root_node           varchar(30) not null ,
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id)
@@ -925,8 +925,8 @@ create table if not exists xml_sample_solutions (
     exercise_id   int,
     ex_sem_ver    varchar(10),
     collection_id int,
-    grammar       text,
-    document      text,
+    grammar       text not null ,
+    document      text not null ,
 
     primary key (id, exercise_id, ex_sem_ver, collection_id),
     foreign key (exercise_id, ex_sem_ver, collection_id)

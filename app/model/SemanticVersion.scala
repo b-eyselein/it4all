@@ -4,6 +4,8 @@ import model.core.CoreConsts._
 import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.libs.json.{Format, Json}
+
 import scala.util.matching.Regex
 import scala.util.{Failure, Try}
 
@@ -15,6 +17,7 @@ object SemanticVersionHelper {
 
   def parseFromString(str: String): Option[SemanticVersion] = tryParseFromString(str).toOption
 
+  val format: Format[SemanticVersion] = Json.format[SemanticVersion]
 
   val semanticVersionForm: Form[SemanticVersion] = Form(
     mapping(

@@ -12,7 +12,7 @@ import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
-import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.json.{Format, JsString, JsValue, Json}
 import play.api.mvc.{AnyContent, Call, Request, RequestHeader}
 import play.twirl.api.Html
 
@@ -53,6 +53,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   protected val collectionYamlFormat: MyYamlFormat[CollType]
   protected val exerciseYamlFormat  : MyYamlFormat[ExType]
 
+  val collectionJsonFormat: Format[CollType]
+  val exerciseJsonFormat : Format[ExType]
+
   val collectionForm    : Form[CollType]
   val exerciseForm      : Form[ExType]
   val exerciseReviewForm: Form[ReviewType]
@@ -76,7 +79,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   private def takeSlice[T](collection: Seq[T], page: Int, step: Int = stdStep): Seq[T] = {
     val start = Math.max(0, (page - 1) * step)
-    val end = Math.min(page * step, collection.size)
+    val end   = Math.min(page * step, collection.size)
 
     collection slice(start, end)
   }

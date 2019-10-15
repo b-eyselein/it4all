@@ -4,7 +4,7 @@ import javax.inject._
 import model.core.Repository
 import model.feedback.FeedbackResult
 import model.toolMains._
-import model.{FormMappings, Role, UpdateRoleForm}
+import model.{RequestBodyHelpers, Role, UpdateRoleForm}
 import play.api.Logger
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -40,7 +40,7 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
 
       if (admin.stdRole != Role.RoleSuperAdmin) Future(Forbidden("You do not have sufficient privileges to change roles!"))
-      else FormMappings.updateRoleForm.bindFromRequest().fold(onFormError, onFromValue)
+      else RequestBodyHelpers.updateRoleForm.bindFromRequest().fold(onFormError, onFromValue)
   }
 
   def evaluationResults: EssentialAction = futureWithUser { user =>

@@ -44,6 +44,9 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override protected val collectionYamlFormat: MyYamlFormat[RegexCollection] = RegexToolYamlProtocol.RegexCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[RegexExercise]   = RegexToolYamlProtocol.RegexExYamlFormat
 
+  override val collectionJsonFormat: Format[RegexCollection] = RegexCompleteResultJsonProtocol.collectionFormat
+  override val exerciseJsonFormat  : Format[RegexExercise]   = RegexCompleteResultJsonProtocol.exerciseFormat
+
   override val collectionForm    : Form[RegexCollection]     = RegexToolForm.collectionFormat
   override val exerciseForm      : Form[RegexExercise]       = RegexToolForm.exerciseFormat
   override val exerciseReviewForm: Form[RegexExerciseReview] = RegexToolForm.exerciseReviewForm

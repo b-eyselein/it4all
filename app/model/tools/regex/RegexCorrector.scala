@@ -1,10 +1,10 @@
 package model.tools.regex
 
-import model.core.matching.{AnalysisResult, GenericAnalysisResult, Match, MatchType, Matcher, MatchingResult}
+import model.core.matching._
 import model.points._
 import play.api.libs.json.{JsValue, Json}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 import scala.util.matching.Regex.{Match => RegexMatch}
 
 final case class RegexMatchMatch(userArg: Option[RegexMatch], sampleArg: Option[RegexMatch]) extends Match {
@@ -62,7 +62,7 @@ object RegexCorrector {
 
         val points: Points = (correctResultsCount.toDouble / exercise.matchTestData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
 
-        RegexCompleteResult(RegexCorrectionTypes.MATCHING, matchResults, Seq.empty, points, exercise.maxPoints.points)
+        RegexCompleteResult(exercise.correctionType, matchResults, Seq.empty, points, exercise.maxPoints.points)
 
 
       case RegexCorrectionTypes.EXTRACTION =>
@@ -89,7 +89,7 @@ object RegexCorrector {
 
         val points: Points = (correctResultsCount.toDouble / exercise.extractionTestData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
 
-        RegexCompleteResult(RegexCorrectionTypes.MATCHING, Seq.empty, extractionResults, points, exercise.maxPoints.points)
+        RegexCompleteResult(exercise.correctionType, Seq.empty, extractionResults, points, exercise.maxPoints.points)
 
     }
 

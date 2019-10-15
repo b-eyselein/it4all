@@ -6,7 +6,6 @@ import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.programming.persistence.ProgTableDefs
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
@@ -57,13 +56,16 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
   override protected val collectionYamlFormat: MyYamlFormat[ProgCollection] = ProgExYamlProtocol.ProgCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[ProgExercise]   = ProgExYamlProtocol.ProgExYamlFormat
 
+  override val collectionJsonFormat: Format[ProgCollection] = ProgrammingJsonProtocols.collectionFormat
+  override val exerciseJsonFormat  : Format[ProgExercise]   = ProgrammingJsonProtocols.exerciseFormat
+
   override val collectionForm    : Form[ProgCollection]     = ProgToolForms.collectionFormat
   override val exerciseForm      : Form[ProgExercise]       = ProgToolForms.exerciseFormat
   override val exerciseReviewForm: Form[ProgExerciseReview] = ProgToolForms.exerciseReviewForm
 
-  override val sampleSolutionJsonFormat: Format[ProgSampleSolution] = ProgJsonProtocols.sampleSolutionJsonFormat
+  override val sampleSolutionJsonFormat: Format[ProgSampleSolution] = ProgrammingJsonProtocols.sampleSolutionJsonFormat
 
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] = ProgJsonProtocols
+  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] = ProgrammingJsonProtocols
 
   // Other helper methods
 

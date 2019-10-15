@@ -19,14 +19,26 @@ abstract class AExerciseController(cc: ControllerComponents, val dbConfigProvide
 
   // Helper methods
 
-  private def onNoSuchTool(user: User, toolType: String): Result =
+  protected def onNoSuchTool(toolType: String): Result =
+    NotFound(s"There is no tool with id ${toolType}")
+
+  protected def onNoSuchTool(user: User, toolType: String): Result =
     NotFound(views.html.errorViews.noSuchToolView(user, toolType))
+
+  protected def onNoSuchCollection(tool: CollectionToolMain, collId: Int): Result =
+    NotFound(s"There is no collection $collId for tool ${tool.toolname}")
 
   protected def onNoSuchCollection(user: User, tool: CollectionToolMain, collId: Int): Result =
     NotFound(views.html.errorViews.noSuchCollectionView(user, tool, collId))
 
+  protected def onNoSuchExercise(tool: CollectionToolMain, collection: ExerciseCollection, exId: Int): Result =
+    NotFound(s"There is no exercise with id $exId for collection ${collection.title}")
+
   protected def onNoSuchExercise(user: User, tool: CollectionToolMain, collection: ExerciseCollection, id: Int): Result =
     NotFound(views.html.errorViews.noSuchExerciseView(user, tool, collection, id))
+
+  protected def onNoSuchExercisePart(tool: CollectionToolMain, exercise: Exercise, partStr: String): Result =
+    NotFound(s"There is no part $partStr for exercise ${exercise.title}")
 
   protected def onNoSuchExercisePart(user: User, tool: CollectionToolMain, collection: ExerciseCollection, exercise: Exercise, partStr: String): Result =
     NotFound(views.html.errorViews.noSuchExercisePartView(user, tool, collection, exercise, partStr))

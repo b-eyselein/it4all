@@ -22,7 +22,8 @@ import scala.util.{Failure, Success}
 @Singleton
 class CollectionController @Inject()(
   cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, ws: WSClient, val repository: Repository,
-  progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain)(implicit ec: ExecutionContext)
+  progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain
+)(implicit ec: ExecutionContext)
   extends AExerciseController(cc, dbcp, tl)
     with HasDatabaseConfigProvider[JdbcProfile]
     with Secured
@@ -45,6 +46,7 @@ class CollectionController @Inject()(
         allLearningPaths <- toolMain.futureLearningPaths
       } yield Ok(views.html.exercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
   }
+
 
   def collection(toolType: String, collId: Int, page: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
     implicit request =>

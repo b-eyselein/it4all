@@ -3,10 +3,34 @@ package model.tools.regex
 import model.core.matching.MatchingResult
 import model.core.result.CompleteResultJsonProtocol
 import model.points.{Points, pointsJsonWrites}
+import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
 
 object RegexCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RegexEvalutationResult, RegexCompleteResult] {
 
+  // Collection
+
+  val collectionFormat: Format[RegexCollection] = Json.format[RegexCollection]
+
+ private val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
+
+  private val regexExtractionTestDataFormat = Json.format[RegexExtractionTestData]
+
+  val exerciseFormat: Format[RegexExercise] = {
+    implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
+
+    implicit val rctf: Format[RegexCorrectionType] = RegexCorrectionTypes.jsonFormat
+
+    implicit val sssf: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
+
+    implicit val rmtdf: Format[RegexMatchTestData] = regexMatchTestDataFormat
+
+    implicit val retdf: Format[RegexExtractionTestData] = regexExtractionTestDataFormat
+
+    Json.format[RegexExercise]
+  }
+
+  // Other...
 
   private val regexMatchingEvaluationResultWrites: Writes[RegexMatchingEvaluationResult] = {
     implicit val bcrtw: Writes[BinaryClassificationResultType] = BinaryClassificationResultTypes.jsonFormat

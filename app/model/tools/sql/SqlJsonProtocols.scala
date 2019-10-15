@@ -1,11 +1,26 @@
 package model.tools.sql
 
+import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.tools.sql.SqlConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] {
+
+  // Collection
+
+  val collectionFormat: Format[SqlScenario] = Json.format[SqlScenario]
+
+  val exerciseFormat: Format[SqlExercise] = {
+    implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
+
+    implicit val sssf: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
+
+    Json.format[SqlExercise]
+  }
+
+  // Other
 
   private val sqlQueryCellWrites: Writes[SqlCell] = (
     (__ \ "content").write[String] and
@@ -20,7 +35,7 @@ object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, Sql
 
   private val sqlQueryResultWrites: Writes[SqlQueryResult] = (
     (__ \ "colNames").write[Seq[String]] and //-> columnNames,
-      (__ \ "content").write[Seq[SqlRow]] // -> JsArray(rows.map(_.toJson))
+      (__ \ "content").write[Seq[SqlRow]]
     ) (sqr => (sqr.columnNames, sqr.rows))
 
   private val sqlExecutionResultWrites: Writes[SqlExecutionResult] = {
@@ -32,7 +47,7 @@ object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, Sql
         //      case Success(result) => userResultName -> result.toJson
         //      case Failure(error)  => userErrorName -> JsString(error.toString)
         //    },
-        (__ \ sampleResultName).write[Option[SqlQueryResult]] // -> sampleResultTry.map(_.toJson).toOption
+        (__ \ sampleResultName).write[Option[SqlQueryResult]]
       ) (ser => (ser.success.entryName, ser.userResultTry.toOption, ser.sampleResultTry.toOption))
   }
 

@@ -8,4 +8,4 @@ addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.3")
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.4.2")
 
 // Typescript compiler
-addSbtPlugin("name.de-vries" % "sbt-typescript" % "2.6.2")
+//addSbtPlugin("name.de-vries" % "sbt-typescript" % "2.6.2")
