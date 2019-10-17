@@ -1,6 +1,7 @@
-@import model.tools.programming.{ProgCollection, ProgExParts, ProgExercise, ProgLanguage, ProgLanguages, ProgToolMain}
+@import model.tools.programming.{ProgExercise, ProgLanguage, ProgLanguages, ProgToolMain}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, collection: ProgCollection, exercise: ProgExercise, language: ProgLanguage, definitionRest: String, toolObject: ProgToolMain)(
+@(user: User, collection: ExerciseCollection, exercise: ProgExercise, language: ProgLanguage, definitionRest: String, toolObject: ProgToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {

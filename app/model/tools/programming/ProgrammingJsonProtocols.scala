@@ -8,10 +8,6 @@ import play.api.libs.json._
 
 object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] {
 
-  // Collection
-
-  val collectionFormat: Format[ProgCollection] = Json.format[ProgCollection]
-
   // Exercise
 
   private val unitTestTestConfigFormat: Format[UnitTestTestConfig] = Json.format[UnitTestTestConfig]

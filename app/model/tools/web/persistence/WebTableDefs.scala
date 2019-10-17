@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 
 class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with FilesSolutionExerciseTableDefs[WebExPart, WebExercise, WebCollection, WebExerciseReview]
+    with FilesSolutionExerciseTableDefs[WebExPart, WebExercise, WebExerciseReview]
     with WebTableQueries {
 
   import profile.api._
@@ -84,11 +84,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Table definitions
 
-  class WebCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "web_collections") {
-
-    override def * : ProvenShape[WebCollection] = (id, title, author, text, state, shortName) <> (WebCollection.tupled, WebCollection.unapply)
-
-  }
+  class WebCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "web_collections")
 
   class WebExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "web_exercises") {
 

@@ -8,7 +8,7 @@ import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 import play.api.libs.json.{JsValue, Json}
 
-object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExerciseReview] {
+object ProgToolForms extends ToolForms[ProgExercise, ProgExerciseReview] {
 
   private val jsValueFormMapping: Mapping[JsValue] = nonEmptyText.transform(Json.parse, Json.prettyPrint)
 
@@ -57,17 +57,6 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgCollection, ProgExercis
   )(ImplementationPart.apply)(ImplementationPart.unapply)
 
   // Complete exercise
-
-  override val collectionFormat: Form[ProgCollection] = Form(
-    mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(ProgCollection.apply)(ProgCollection.unapply)
-  )
 
   override val exerciseFormat: Form[ProgExercise] = Form(
     mapping(

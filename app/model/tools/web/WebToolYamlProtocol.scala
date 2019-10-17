@@ -14,20 +14,6 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger("model.tools.web.WebExYamlProtocol")
 
-  object WebCollectionYamlFormat extends MyYamlObjectFormat[WebCollection] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[WebCollection] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
-      shortName <- yamlObject.stringField(shortNameName)
-    } yield WebCollection(id, title, author, text, state, shortName)
-
-    override def write(obj: WebCollection): YamlValue = ???
-
-  }
 
   object WebExYamlFormat extends MyYamlObjectFormat[WebExercise] {
 

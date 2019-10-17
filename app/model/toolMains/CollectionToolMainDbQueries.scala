@@ -1,7 +1,7 @@
 package model.toolMains
 
-import model.{ExerciseState, User}
 import model.core.overviewHelpers.SolvedState
+import model.{ExerciseCollection, ExerciseState, User}
 
 import scala.concurrent.Future
 
@@ -18,9 +18,9 @@ trait CollectionToolMainDbQueries {
 
   // Reading
 
-  def futureCollById(id: Int): Future[Option[CollType]] = tables.futureCollById(id)
+  def futureCollById(id: Int): Future[Option[ExerciseCollection]] = tables.futureCollById(id)
 
-  def futureAllCollections: Future[Seq[CollType]] = tables.futureAllCollections
+  def futureAllCollections: Future[Seq[ExerciseCollection]] = tables.futureAllCollections
 
   def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] = tables.futureExerciseById(collId, id)
 
@@ -38,7 +38,7 @@ trait CollectionToolMainDbQueries {
 
   def futureInsertExercise(collId: Int, exercise: ExType): Future[Boolean] = tables.futureInsertExercise(collId, exercise)
 
-  def futureInsertAndDeleteOldCollection(collection: CollType): Future[Boolean] =
+  def futureInsertAndDeleteOldCollection(collection: ExerciseCollection): Future[Boolean] =
     tables.futureInsertAndDeleteOldCollection(collection)
 
   def futureSaveReview(username: String, collId: Int, exId: Int, part: PartType, review: ReviewType): Future[Boolean] =

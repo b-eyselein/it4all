@@ -99,7 +99,7 @@ GET           /tools/:toolType/:collId/:exId/:partStr/loadFiles                 
 
 PUT           /api/users/authenticate                                                  controllers.ApiController.apiAuthenticate
 
-GET           /api/tools/:toolType/collections                                         controllers.ApiController.apiCollections(toolType: String)
+GET           /api/tools/:toolType/collections                                         controllers.ApiController.apiAllCollections(toolType: String)
 GET           /api/tools/:toolType/collections/:collId                                 controllers.ApiController.apiCollection(toolType: String, collId: Int)
 GET           /api/tools/:toolType/collections/:collId/exercises                       controllers.ApiController.apiExercises(toolType: String, collId: Int)
 GET           /api/tools/:toolType/collections/:collId/exercises/:exId                 controllers.ApiController.apiExercise(toolType: String, collId: Int, exId: Int)

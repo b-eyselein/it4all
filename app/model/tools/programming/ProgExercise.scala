@@ -7,9 +7,6 @@ import play.api.libs.json.JsValue
 import play.twirl.api.Html
 
 
-final case class ProgCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
-  extends ExerciseCollection
-
 final case class ProgExercise(
   id: Int,
   semanticVersion: SemanticVersion,

@@ -4,8 +4,8 @@ import model._
 
 import scala.concurrent.Future
 
-trait FilesSolutionExerciseTableQueries[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, ReviewType <: ExerciseReview] {
-  self: FilesSolutionExerciseTableDefs[PartType, ExType, CollType, ReviewType] =>
+trait FilesSolutionExerciseTableQueries[PartType <: ExPart, ExType <: Exercise, ReviewType <: ExerciseReview] {
+  self: FilesSolutionExerciseTableDefs[PartType, ExType, ReviewType] =>
 
   import profile.api._
 

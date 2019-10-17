@@ -1,19 +1,15 @@
 package model.tools.web
 
-import de.uniwue.webtester.{HtmlAttribute, HtmlElementSpec, HtmlTask, JsAction, JsActionType, JsTask, SiteSpec}
-import model.{ExerciseFile, ExerciseFileJsonProtocol, FilesSampleSolution, SemanticVersion, SemanticVersionHelper}
+import de.uniwue.webtester._
 import model.core.result.{CompleteResultJsonProtocol, SuccessType}
 import model.points._
 import model.tools.web.WebConsts._
+import model._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 //noinspection ConvertibleToMethodValue
 object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
-
-  // Collection
-
-  val collectionFormat: Format[WebCollection] = Json.format[WebCollection]
 
   private val htmlElementSpecFormat: Format[HtmlElementSpec] = {
     implicit val haf: Format[HtmlAttribute] = Json.format[HtmlAttribute]

@@ -3,16 +3,16 @@ package model.tools.sql
 import javax.inject.{Inject, Singleton}
 import model._
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
-import model.tools.sql.SqlToolMain._
+import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolList, ToolState}
+import model.tools.sql.SqlToolMain._
 import model.tools.sql.persistence.SqlTableDefs
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-import model.points.Points
-import play.api.Logger
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override type PartType = SqlExPart
   override type ExType = SqlExercise
-  override type CollType = SqlScenario
 
   override type SolType = String
   override type SampleSolType = StringSampleSolution
@@ -64,13 +63,10 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Yaml, Html forms, Json
 
-  override protected val collectionYamlFormat: MyYamlFormat[SqlScenario] = SqlYamlProtocol.SqlCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[SqlExercise] = SqlYamlProtocol.SqlExerciseYamlFormat
 
-  override val collectionJsonFormat: Format[SqlScenario]                                       =  SqlJsonProtocols.collectionFormat
   override val exerciseJsonFormat  : Format[SqlExercise] = SqlJsonProtocols.exerciseFormat
 
-  override val collectionForm    : Form[SqlScenario]       = SqlToolForms.collectionFormat
   override val exerciseForm      : Form[SqlExercise]       = SqlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[SqlExerciseReview] = SqlToolForms.exerciseReviewForm
 
@@ -87,7 +83,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
       Html("")
   }
 
-  override def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart, maybeOldSolution: Option[UserSolType])
+  override def renderExercise(user: User, sqlScenario: ExerciseCollection, exercise: SqlExercise, part: SqlExPart, maybeOldSolution: Option[UserSolType])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
     val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
@@ -113,16 +109,13 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     }
   }
 
-  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: SqlScenario, exercise: SqlExercise, part: SqlExPart): Future[Try[SqlCorrResult]] =
+  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: ExerciseCollection, exercise: SqlExercise, part: SqlExPart): Future[Try[SqlCorrResult]] =
     correctorsAndDaos.get(exercise.exerciseType) match {
       case None                   => Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}")))
       case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario)
     }
 
   // Other helper methods
-
-  override def instantiateCollection(id: Int, author: String, state: ExerciseState): SqlScenario =
-    SqlScenario(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): SqlExercise = SqlExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,

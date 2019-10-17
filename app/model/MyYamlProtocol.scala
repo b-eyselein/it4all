@@ -4,6 +4,7 @@ import better.files.File
 import model.MyYamlProtocol._
 import model.core.CommonUtils
 import model.core.CoreConsts._
+import model.tools.programming.ProgConsts.{authorName, idName, shortNameName, statusName, textName, titleName}
 import net.jcazevedo.moultingyaml._
 import play.api.libs.json._
 
@@ -208,6 +209,25 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
     }
 
     override def write(obj: ExerciseFile): YamlValue = ???
+
+  }
+
+}
+
+object ExerciseCollectionYamlProtocol extends MyYamlProtocol {
+
+  object ExerciseCollectionYamlFormat extends MyYamlObjectFormat[ExerciseCollection] {
+
+    override protected def readObject(yamlObject: YamlObject): Try[ExerciseCollection] = for {
+      id <- yamlObject.intField(idName)
+      title <- yamlObject.stringField(titleName)
+      author <- yamlObject.stringField(authorName)
+      text <- yamlObject.stringField(textName)
+      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
+      shortName <- yamlObject.stringField(shortNameName)
+    } yield ExerciseCollection(id, title, author, text, state, shortName)
+
+    override def write(obj: ExerciseCollection): YamlValue = ???
 
   }
 

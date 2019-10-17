@@ -3,6 +3,7 @@ package model.tools.sql
 import java.sql.Connection
 
 import better.files.File
+import model.ExerciseCollection
 import model.core.CommonUtils.using
 import model.tools.sql.SqlConsts._
 import net.sf.jsqlparser.statement.Statement
@@ -31,7 +32,7 @@ abstract class SqlExecutionDAO(mainDbName: String) {
   }
 
 
-  def executeQueries(scenario: SqlScenario, exercise: SqlExercise, userStatement: Statement, sampleStatement: Statement): SqlExecutionResult = {
+  def executeQueries(scenario: ExerciseCollection, exercise: SqlExercise, userStatement: Statement, sampleStatement: Statement): SqlExecutionResult = {
     val userExecutionResult: Try[SqlQueryResult] = executeQuery(scenario.shortName, userStatement)
     val sampleExecutionResult: Try[SqlQueryResult] = executeQuery(scenario.shortName, sampleStatement)
     SqlExecutionResult(userExecutionResult, sampleExecutionResult)

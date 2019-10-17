@@ -21,10 +21,6 @@ case object RegexCorrectionTypes extends PlayEnum[RegexCorrectionType] {
 }
 
 
-final case class RegexCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
-  extends ExerciseCollection
-
-
 final case class RegexExercise(
   id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState, maxPoints: Int,
   correctionType: RegexCorrectionType,

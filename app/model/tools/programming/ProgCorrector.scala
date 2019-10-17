@@ -4,11 +4,11 @@ import java.io.FileNotFoundException
 
 import better.files.File._
 import better.files._
-import model.User
 import model.core.result.SuccessType
 import model.docker._
 import model.tools.programming.ProgrammingJsonProtocols.UnitTestTestData
 import model.tools.programming.ResultsFileJsonFormat._
+import model.{ExerciseCollection, User}
 import modules.DockerPullsStartTask
 import play.api.libs.json.{JsValue, Json}
 
@@ -151,7 +151,7 @@ object ProgCorrector {
       }
   }
 
-  def correct(user: User, progSolution: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart,
+  def correct(user: User, progSolution: ProgSolution, collection: ExerciseCollection, exercise: ProgExercise, part: ProgExPart,
               toolMain: ProgToolMain)(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, collection.id, exercise.id) / part.urlName

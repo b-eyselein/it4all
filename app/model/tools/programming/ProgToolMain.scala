@@ -32,7 +32,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override type PartType = ProgExPart
   override type ExType = ProgExercise
-  override type CollType = ProgCollection
 
   override type SolType = ProgSolution
   override type SampleSolType = ProgSampleSolution
@@ -53,13 +52,10 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Yaml, Html Forms, Json
 
-  override protected val collectionYamlFormat: MyYamlFormat[ProgCollection] = ProgExYamlProtocol.ProgCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[ProgExercise]   = ProgExYamlProtocol.ProgExYamlFormat
 
-  override val collectionJsonFormat: Format[ProgCollection] = ProgrammingJsonProtocols.collectionFormat
   override val exerciseJsonFormat  : Format[ProgExercise]   = ProgrammingJsonProtocols.exerciseFormat
 
-  override val collectionForm    : Form[ProgCollection]     = ProgToolForms.collectionFormat
   override val exerciseForm      : Form[ProgExercise]       = ProgToolForms.exerciseFormat
   override val exerciseReviewForm: Form[ProgExerciseReview] = ProgToolForms.exerciseReviewForm
 
@@ -74,9 +70,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     case ProgExParts.TestCreation    => exercise.unitTestPart.unitTestType == UnitTestTypes.Normal
     case _                           => true
   }
-
-  override def instantiateCollection(id: Int, author: String, state: ExerciseState): ProgCollection =
-    ProgCollection(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgExercise = ProgExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
@@ -127,12 +120,12 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       }
   }
 
-  override def correctEx(user: User, sol: ProgSolution, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart): Future[Try[ProgCompleteResult]] =
+  override def correctEx(user: User, sol: ProgSolution, collection: ExerciseCollection, exercise: ProgExercise, part: ProgExPart): Future[Try[ProgCompleteResult]] =
     ProgCorrector.correct(user, sol, collection, exercise, part, toolMain = this)
 
   // Views
 
-  override def renderExercise(user: User, collection: ProgCollection, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[ProgUserSolution])
+  override def renderExercise(user: User, collection: ExerciseCollection, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[ProgUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
     case ProgExParts.TestCreation =>
       exercise.unitTestPart.unitTestType match {

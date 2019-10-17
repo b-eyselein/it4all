@@ -5,8 +5,6 @@ import model.points.Points
 import model.tools.programming.{ProgDataType, ProgLanguage}
 import play.twirl.api.Html
 
-final case class RoseCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
-  extends ExerciseCollection
 
 final case class RoseExercise(
   id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
@@ -17,7 +15,7 @@ final case class RoseExercise(
     views.html.toolViews.rose.rosePreview.render(this)
 
   def declaration(forUser: Boolean): String = {
-    val className = if (forUser) "UserRobot" else "SampleRobot"
+    val className                = if (forUser) "UserRobot" else "SampleRobot"
     val (methodName, returnType) = if (isMultiplayer) ("act", "Action") else ("run", "None")
 
     val parameters = inputTypes match {

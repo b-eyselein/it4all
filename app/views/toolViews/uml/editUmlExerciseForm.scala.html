@@ -1,7 +1,8 @@
-@import model.tools.uml.{UmlConsts, UmlExercise, UmlToolMain, UmlClassType, UmlAssociationType, UmlMultiplicity, UmlVisibility}
+@import model.User
 @import model.tools.programming.ProgDataTypes
+@import model.tools.uml.{UmlAssociationType, UmlClassType, UmlConsts, UmlExercise, UmlMultiplicity, UmlToolMain, UmlVisibility}
 
-@(user: model.User, collId: Int, compExForm: Form[UmlExercise], isCreation: Boolean, toolMainObject: UmlToolMain)(
+@(user: User, collId: Int, compExForm: Form[UmlExercise], isCreation: Boolean, toolMainObject: UmlToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 

@@ -12,10 +12,9 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.ExecutionContext
 
-class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-                                          (override implicit val executionContext: ExecutionContext)
+class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[ProgExPart, ProgExercise, ProgCollection, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgExerciseReview]
+    with ExerciseTableDefs[ProgExPart, ProgExercise, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgExerciseReview]
     with ProgTableQueries {
 
   override protected val executor: ExecutionContext = executionContext
@@ -99,11 +98,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   // Tables
 
-  class ProgCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "prog_collections") {
-
-    def * : ProvenShape[ProgCollection] = (id, title, author, text, state, shortName) <> (ProgCollection.tupled, ProgCollection.unapply)
-
-  }
+  class ProgCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "prog_collections")
 
   class ProgExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "prog_exercises") {
 

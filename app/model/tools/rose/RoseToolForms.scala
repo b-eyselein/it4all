@@ -7,7 +7,7 @@ import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object RoseToolForms extends ToolForms[RoseExercise, RoseCollection, RoseExerciseReview] {
+object RoseToolForms extends ToolForms[RoseExercise, RoseExerciseReview] {
 
   // Input types
 
@@ -26,17 +26,6 @@ object RoseToolForms extends ToolForms[RoseExercise, RoseCollection, RoseExercis
   )(RoseSampleSolution.apply)(RoseSampleSolution.unapply)
 
   // Complete exericse
-
-  override val collectionFormat: Form[RoseCollection] = Form(
-    mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(RoseCollection.apply)(RoseCollection.unapply)
-  )
 
   override val exerciseFormat: Form[RoseExercise] = Form(
     mapping(

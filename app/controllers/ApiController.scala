@@ -6,7 +6,7 @@ import com.github.t3hnar.bcrypt._
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
 import model.toolMains.{CollectionToolMain, ToolList}
-import model.{RequestBodyHelpers, User}
+import model.{ApiExerciseCollection, ApiModelHelpers, RequestBodyHelpers, User}
 import pdi.jwt.JwtSession
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsError, JsSuccess, Json, Writes}
@@ -85,7 +85,10 @@ class ApiController @Inject()(
 
   private def apiWithToolMain(toolType: String)(f: (Request[AnyContent], User, CollectionToolMain) => Future[Result]): Action[AnyContent] = Action.async { implicit request =>
     request.headers.get("Authorization") match {
-      case None                                        => Future.successful(Unauthorized("You are not authorized to access this resource!"))
+      case None =>
+        // No authorization header present
+        Future.successful(Unauthorized("You are not authorized to access this resource!"))
+
       case Some(bearerHeaderRegex(serializedJwtToken)) =>
 
         apiJwtHashes.get(serializedJwtToken) match {
@@ -98,12 +101,18 @@ class ApiController @Inject()(
               case Some(toolMain) => f(request, user, toolMain)
             }
         }
+
+      case Some(_) =>
+        // Authorization header had wrong format...
+        Future.successful(Unauthorized("You are not authorized to access this resource!"))
     }
   }
 
-  def apiCollections(toolType: String): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
+  def apiAllCollections(toolType: String): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     toolMain.futureAllCollections.map { collections =>
-      Ok(Json.toJson(collections)(Writes.seq(toolMain.collectionJsonFormat)))
+      val apiCollections = collections.map(ApiModelHelpers.apiExCollFromExColl(toolMain, _))
+
+      Ok(Json.toJson(apiCollections)(Writes.seq(ApiModelHelpers.apiExCollJsonFormat)))
     }
   }
 

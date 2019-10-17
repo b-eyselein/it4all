@@ -5,7 +5,7 @@ import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.uml.persistence.UmlTableDefs
-import model.{ExerciseState, MyYamlFormat, SemanticVersionHelper, User}
+import model.{ExerciseCollection, ExerciseState, MyYamlFormat, SemanticVersionHelper, User}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
@@ -27,7 +27,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override type PartType = UmlExPart
   override type ExType = UmlExercise
-  override type CollType = UmlCollection
 
 
   override type SolType = UmlClassDiagram
@@ -50,13 +49,10 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override val collectionYamlFormat: MyYamlFormat[UmlCollection] = UmlExYamlProtocol.UmlCollectionYamlFormat
   override val exerciseYamlFormat  : MyYamlFormat[UmlExercise]   = UmlExYamlProtocol.UmlExYamlFormat
 
-  override val collectionJsonFormat: Format[UmlCollection]                                     = UmlCompleteResultJsonProtocol.collectionFormat
   override val exerciseJsonFormat  : Format[UmlExercise] = UmlCompleteResultJsonProtocol.exerciseFormat
 
-  override val collectionForm    : Form[UmlCollection]     = UmlToolForms.collectionFormat
   override val exerciseForm      : Form[UmlExercise]       = UmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[UmlExerciseReview] = UmlToolForms.exerciseReviewForm
 
@@ -70,9 +66,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => true // TODO: Currently deactivated...
     case _                                                     => false
   }
-
-  override def instantiateCollection(id: Int, author: String, state: ExerciseState): UmlCollection =
-    UmlCollection(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): UmlExercise = UmlExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, markedText = "",
@@ -91,7 +84,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def renderExercise(user: User, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart, maybeOldSolution: Option[UmlUserSolution])
+  override def renderExercise(user: User, collection: ExerciseCollection, exercise: UmlExercise, part: UmlExPart, maybeOldSolution: Option[UmlUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
     case UmlExParts.ClassSelection     =>
       views.html.toolViews.uml.classSelection(user, collection, exercise, this)
@@ -120,7 +113,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   }
 
   override def correctEx(
-    user: User, classDiagram: UmlClassDiagram, collection: UmlCollection, exercise: UmlExercise, part: UmlExPart
+    user: User, classDiagram: UmlClassDiagram, collection: ExerciseCollection, exercise: UmlExercise, part: UmlExPart
   ): Future[Try[UmlCompleteResult]] = Future.successful {
     exercise.sampleSolutions.headOption match {
       case None                 => Failure(new Exception("There is no sample solution!"))

@@ -1,8 +1,8 @@
 package model.tools.xml
 
+import model.MyYamlProtocol
 import model.MyYamlProtocol._
 import model.tools.xml.XmlConsts._
-import model.{ExerciseState, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -12,21 +12,6 @@ import scala.util.Try
 object XmlExYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger(XmlExYamlProtocol.getClass)
-
-  object XmlCollectionYamlFormat extends MyYamlObjectFormat[XmlCollection] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[XmlCollection] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_.getOrElse(ExerciseState.CREATED))
-      shortName <- yamlObject.stringField(shortNameName)
-    } yield XmlCollection(id, title, author, text, state, shortName)
-
-    override def write(obj: XmlCollection): YamlValue = ???
-
-  }
 
   object XmlExYamlFormat extends MyYamlObjectFormat[XmlExercise] {
 

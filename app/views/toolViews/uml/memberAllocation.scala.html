@@ -1,6 +1,7 @@
-@import model.tools.uml.{UmlCollection, UmlExercise, UmlToolMain, UmlExParts}
+@import model.tools.uml.{UmlExParts, UmlExercise, UmlToolMain}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, collection: UmlCollection, exercise: UmlExercise, toolMain: UmlToolMain)(implicit
+@(user: User, collection: ExerciseCollection, exercise: UmlExercise, toolMain: UmlToolMain)(implicit
         requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @scripts = {

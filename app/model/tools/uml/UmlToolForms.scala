@@ -6,7 +6,7 @@ import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object UmlToolForms extends ToolForms[UmlExercise, UmlCollection, UmlExerciseReview] {
+object UmlToolForms extends ToolForms[UmlExercise, UmlExerciseReview] {
 
   // UmlClassDiagram
 
@@ -69,17 +69,6 @@ object UmlToolForms extends ToolForms[UmlExercise, UmlCollection, UmlExerciseRev
   )(UmlSampleSolution.apply)(UmlSampleSolution.unapply)
 
   // Complete exercise
-
-  override val collectionFormat: Form[UmlCollection] = Form(
-    mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(UmlCollection.apply)(UmlCollection.unapply)
-  )
 
   override val exerciseFormat: Form[UmlExercise] = Form(
     mapping(

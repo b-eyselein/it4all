@@ -6,8 +6,8 @@ import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.Future
 
-trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, ReviewType <: ExerciseReview]
-  extends ExerciseTableDefs[PartType, ExType, CollType, String, StringSampleSolution, StringUserSolution[PartType], ReviewType] {
+trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, ReviewType <: ExerciseReview]
+  extends ExerciseTableDefs[PartType, ExType, String, StringSampleSolution, StringUserSolution[PartType], ReviewType] {
 
   import profile.api._
 

@@ -22,9 +22,6 @@ object WebExParts extends PlayEnum[WebExPart] {
 }
 
 
-final case class WebCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
-  extends ExerciseCollection
-
 final case class WebExercise(
   id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec, files: Seq[ExerciseFile],

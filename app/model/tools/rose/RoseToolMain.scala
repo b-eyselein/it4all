@@ -2,12 +2,12 @@ package model.tools.rose
 
 
 import javax.inject.{Inject, Singleton}
+import model._
 import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.programming.ProgLanguages
 import model.tools.rose.persistence.RoseTableDefs
-import model.{ExerciseState, MyYamlFormat, SemanticVersion, User}
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json._
@@ -25,8 +25,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override type PartType = RoseExPart
   override type ExType = RoseExercise
-  override type CollType = RoseCollection
-
 
   override type SolType = String
   override type SampleSolType = RoseSampleSolution
@@ -48,13 +46,10 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Yaml, Html forms, Json
 
-  override val collectionYamlFormat: MyYamlFormat[RoseCollection] = RoseExYamlProtocol.RoseCollectionYamlFormat
-  override val exerciseYamlFormat  : MyYamlFormat[RoseExercise]   = RoseExYamlProtocol.RoseExYamlFormat
+  override val exerciseYamlFormat  : MyYamlFormat[RoseExercise]       = RoseExYamlProtocol.RoseExYamlFormat
 
-  override val collectionJsonFormat: Format[RoseCollection]                                     = RoseCompleteResultJsonProtocol.collectionFormat
-  override val exerciseJsonFormat  : Format[RoseExercise] = RoseCompleteResultJsonProtocol.exerciseFormat
+  override val exerciseJsonFormat  : Format[RoseExercise]       = RoseCompleteResultJsonProtocol.exerciseFormat
 
-  override val collectionForm    : Form[RoseCollection]     = RoseToolForms.collectionFormat
   override val exerciseForm      : Form[RoseExercise]       = RoseToolForms.exerciseFormat
   override val exerciseReviewForm: Form[RoseExerciseReview] = RoseToolForms.exerciseReviewForm
 
@@ -63,9 +58,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
   override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[RoseExecutionResult, RoseCompleteResult] = RoseCompleteResultJsonProtocol
 
   // Other helper methods
-
-  override def instantiateCollection(id: Int, author: String, state: ExerciseState): RoseCollection =
-    RoseCollection(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RoseExercise = RoseExercise(
     id, SemanticVersion(0, 1, 0), title = "", author, text = "", state, fieldWidth = 0, fieldHeight = 0, isMultiplayer = false,
@@ -80,10 +72,10 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Views
 
-  override def renderExercise(user: User, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseUserSolution])
+  override def renderExercise(user: User, collection: ExerciseCollection, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     val declaration = maybeOldSolution.map(_.solution).getOrElse(exercise.declaration(forUser = true))
-    views.html.toolViews.rose.roseExercise(user, collection, exercise, declaration, this)
+    views.html.toolViews.rose.roseExercise(user, exercise, collection, declaration, this)
   }
 
   override def renderEditRest(exercise: RoseExercise): Html = ???
@@ -102,7 +94,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     }
   }
 
-  override protected def correctEx(user: User, sol: String, collection: RoseCollection, exercise: RoseExercise, part: RoseExPart): Future[Try[RoseCompleteResult]] =
+  override protected def correctEx(user: User, sol: String, collection: ExerciseCollection, exercise: RoseExercise, part: RoseExPart): Future[Try[RoseCompleteResult]] =
     exercise.sampleSolutions.headOption match {
       case None                 => Future.successful(Failure(new Exception("No sample solution could be found!")))
       case Some(sampleSolution) =>

@@ -1,53 +1,54 @@
-@import model.tools.rose.{RoseCollection, RoseExercise, RoseToolMain, RoseExParts}
+@import model.tools.rose.{RoseExParts, RoseExercise, RoseToolMain}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, collection: RoseCollection, exercise: RoseExercise, oldSolution: String, toolMainObject: RoseToolMain)(
+@(user: User, exercise: RoseExercise, collection: ExerciseCollection, oldSolution: String, toolMainObject: RoseToolMain)(
     implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
-@additionalScripts = {
-    <script>SystemJS.import('@routes.Assets.versioned("app/rose/roseExercise.js")');</script>
-}
+    @additionalScripts = {
+        <script>SystemJS.import('@routes.Assets.versioned("app/rose/roseExercise.js")');</script>
+    }
 
-@remainigExerciseDef = {
+    @remainigExerciseDef = {
 
-@core.helperTemplates.modal("API des Roboters", "robot_api", "lg") {
-    @views.html.toolViews.rose.roseAPI.render()
-}
-
-    <div class="form-group">
-        <div class="btn-group d-flex">
-            <button class="btn btn-outline-info w-100" data-toggle="modal" data-target="#robot_api">
-                Roboter API</button>
-        </div>
-    </div>
-
-}
-
-@remainingPage = {
-    <div class="container" id="fieldDiv" hidden>
+    @core.helperTemplates.modal("API des Roboters", "robot_api", "lg") {
+        @views.html.toolViews.rose.roseAPI.render()
+    }
 
         <div class="form-group">
             <div class="btn-group d-flex">
-                <button class="btn w-100" id="stepBackBtn" disabled>&lt;</button>
-                <button class="btn btn-primary w-100" id="playBtn" disabled>Play</button>
-                <button class="btn btn-secondary w-100" id="pauseBtn" disabled>Pause</button>
-                <button class="btn w-100" id="stepOnBtn" disabled>&gt;</button>
+                <button class="btn btn-outline-info w-100" data-toggle="modal" data-target="#robot_api">
+                    Roboter API</button>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6 text-center">
-                <h2>Lernerroboter (<span id="userCurStepSpan">0</span> / <span id="userMaxStepSpan">0</span>)</h2>
-                <div id="userField"></div>
+    }
+
+    @remainingPage = {
+        <div class="container" id="fieldDiv" hidden>
+
+            <div class="form-group">
+                <div class="btn-group d-flex">
+                    <button class="btn w-100" id="stepBackBtn" disabled>&lt;</button>
+                    <button class="btn btn-primary w-100" id="playBtn" disabled>Play</button>
+                    <button class="btn btn-secondary w-100" id="pauseBtn" disabled>Pause</button>
+                    <button class="btn w-100" id="stepOnBtn" disabled>&gt;</button>
+                </div>
             </div>
 
-            <div class="col-md-6 text-center">
-                <h2>Musterroboter (<span id="sampleCurStepSpan">0</span> / <span id="sampleMaxStepSpan">0</span>)</h2>
-                <div id="sampleField"></div>
+            <div class="row">
+                <div class="col-md-6 text-center">
+                    <h2>Lernerroboter (<span id="userCurStepSpan">0</span> / <span id="userMaxStepSpan">0</span>)</h2>
+                    <div id="userField"></div>
+                </div>
+
+                <div class="col-md-6 text-center">
+                    <h2>Musterroboter (<span id="sampleCurStepSpan">0</span> / <span id="sampleMaxStepSpan">0</span>)</h2>
+                    <div id="sampleField"></div>
+                </div>
             </div>
         </div>
-    </div>
 
-}
+    }
 
-@toolViews.textExercise(user, Html(exercise.text), collection, exercise, RoseExParts.RoseSingleExPart, oldSolution,
-    toolMainObject, additionalScripts = additionalScripts, remainingExDef = Some(remainigExerciseDef), remainingPage = remainingPage)
+    @toolViews.textExercise(user, Html(exercise.text), collection, exercise, RoseExParts.RoseSingleExPart, oldSolution,
+        toolMainObject, additionalScripts = additionalScripts, remainingExDef = Some(remainigExerciseDef), remainingPage = remainingPage)

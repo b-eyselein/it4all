@@ -6,7 +6,7 @@ import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object RegexToolForm extends ToolForms[RegexExercise, RegexCollection, RegexExerciseReview] {
+object RegexToolForm extends ToolForms[RegexExercise, RegexExerciseReview] {
 
   // Test data
 
@@ -22,18 +22,6 @@ object RegexToolForm extends ToolForms[RegexExercise, RegexCollection, RegexExer
   )(RegexExtractionTestData.apply)(RegexExtractionTestData.unapply)
 
   // Complete exercise
-
-  override val collectionFormat: Form[RegexCollection] = Form(
-    mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(RegexCollection.apply)(RegexCollection.unapply)
-  )
-
 
   override val exerciseFormat    : Form[RegexExercise]       = Form(
     mapping(

@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with StringSolutionExerciseTableDefs[SqlExPart, SqlExercise, SqlScenario, SqlExerciseReview] {
+    with StringSolutionExerciseTableDefs[SqlExPart, SqlExercise, SqlExerciseReview] {
 
   import profile.api._
 
@@ -77,11 +77,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Tables
 
-  class SqlScenarioesTable(tag: Tag) extends ExerciseCollectionTable(tag, "sql_scenarioes") {
-
-    override def * : ProvenShape[SqlScenario] = (id, title, author, text, state, shortName) <> (SqlScenario.tupled, SqlScenario.unapply)
-
-  }
+  class SqlScenarioesTable(tag: Tag) extends ExerciseCollectionsTable(tag, "sql_scenarioes")
 
   class SqlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "sql_exercises") {
 

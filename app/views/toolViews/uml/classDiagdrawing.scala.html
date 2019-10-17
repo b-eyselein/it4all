@@ -1,6 +1,7 @@
-@import model.tools.uml.{UmlAssociationType, UmlClassType, UmlCollection, UmlExPart, UmlExParts, UmlExercise, UmlMultiplicity, UmlToolMain}
+@import model.tools.uml.{UmlAssociationType, UmlClassType, UmlExPart, UmlExParts, UmlExercise, UmlMultiplicity, UmlToolMain}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, collection: UmlCollection, exercise: UmlExercise, curPart: UmlExPart, getsHelp: Boolean, toolObject: UmlToolMain)(
+@(user: User, collection: ExerciseCollection, exercise: UmlExercise, curPart: UmlExPart, getsHelp: Boolean, toolObject: UmlToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{

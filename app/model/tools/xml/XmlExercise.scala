@@ -22,9 +22,6 @@ object XmlExParts extends PlayEnum[XmlExPart] {
 }
 
 
-final case class XmlCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
-  extends ExerciseCollection
-
 final case class XmlExercise(
   id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   grammarDescription: String, rootNode: String, samples: Seq[XmlSampleSolution]

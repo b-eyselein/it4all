@@ -3,7 +3,7 @@ package model.tools.rose
 import model.MyYamlProtocol._
 import model.tools.programming.ProgConsts._
 import model.tools.programming.{ProgDataTypes, ProgLanguages}
-import model.{ExerciseState, MyYamlProtocol, YamlObj}
+import model.{ExerciseCollection, ExerciseState, MyYamlProtocol, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -12,21 +12,6 @@ import scala.util.Try
 object RoseExYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger(RoseExYamlProtocol.getClass)
-
-  object RoseCollectionYamlFormat extends MyYamlObjectFormat[RoseCollection] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[RoseCollection] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
-      shortName <- yamlObject.stringField(shortNameName)
-    } yield RoseCollection(id, title, author, text, state, shortName)
-
-    override def write(obj: RoseCollection): YamlValue = ???
-
-  }
 
   object RoseExYamlFormat extends MyYamlObjectFormat[RoseExercise] {
 

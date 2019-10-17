@@ -1,7 +1,8 @@
-@import model.tools.rose.{RoseConsts, RoseExercise, RoseCollection, RoseToolMain}
 @import model.tools.programming.{ProgDataTypes, ProgLanguages}
+@import model.tools.rose.{RoseConsts, RoseExercise, RoseToolMain}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, collection: RoseCollection, exerciseForm: Form[RoseExercise], isCreation: Boolean, toolMainObject: RoseToolMain)(
+@(user: User, collection: ExerciseCollection, exerciseForm: Form[RoseExercise], isCreation: Boolean, toolMainObject: RoseToolMain)(
     implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @widthField = @{
@@ -47,12 +48,12 @@
                         @myhelpers.inputWithLabel(sampleField(RoseConsts.idName), "ID", "number", 6, 6, otherAttrs = Seq("readOnly"))
                     </div>
                     <div class="form-group row">
-                        @myhelpers.selectWithLabel(sampleField(RoseConsts.languageName), "Sprache", ProgLanguages.values.map(l => (l.entryName, l.languageName)), 6, 6)
+                    @myhelpers.selectWithLabel(sampleField(RoseConsts.languageName), "Sprache", ProgLanguages.values.map(l => (l.entryName, l.languageName)), 6, 6)
                     </div>
                 </div>
                 <div class="col-md-8">
                     <div class="form-group row">
-                        @myhelpers.textareaWithLabel(sampleField(RoseConsts.sampleSolutionName), "Lösung", rowCount = 10, 2, 10)
+                    @myhelpers.textareaWithLabel(sampleField(RoseConsts.sampleSolutionName), "Lösung", rowCount = 10, 2, 10)
                     </div>
                 </div>
             </div>

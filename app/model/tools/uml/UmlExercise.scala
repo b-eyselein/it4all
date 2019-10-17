@@ -4,8 +4,6 @@ import model._
 import model.points.Points
 import play.twirl.api.Html
 
-final case class UmlCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
-  extends ExerciseCollection
 
 final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String,
                              state: ExerciseState, markedText: String, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution])
@@ -27,8 +25,8 @@ final case class UmlExercise(id: Int, semanticVersion: SemanticVersion, title: S
   })
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
-    val assocs: Seq[UmlAssociation] = Seq[UmlAssociation]()
-    val impls: Seq[UmlImplementation] = Seq[UmlImplementation]()
+    val assocs: Seq[UmlAssociation]    = Seq[UmlAssociation]()
+    val impls : Seq[UmlImplementation] = Seq[UmlImplementation]()
 
     val classes: Seq[UmlClass] = part match {
       case UmlExParts.DiagramDrawingHelp => sampleSolutions.head.sample.classes.map {

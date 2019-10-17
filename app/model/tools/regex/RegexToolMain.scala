@@ -1,11 +1,10 @@
 package model.tools.regex
 
 import javax.inject.Inject
+import model._
 import model.points._
 import model.toolMains.{CollectionToolMain, ToolState}
-import model.tools.regex.BinaryClassificationResultTypes._
 import model.tools.regex.persistence.RegexTableDefs
-import model._
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
 import play.api.libs.json.{Format, JsString}
@@ -20,7 +19,6 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override type PartType = RegexExPart
   override type ExType = RegexExercise
-  override type CollType = RegexCollection
 
   override type SolType = String
   override type SampleSolType = StringSampleSolution
@@ -41,13 +39,10 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   // Yaml, Html forms, Json
 
-  override protected val collectionYamlFormat: MyYamlFormat[RegexCollection] = RegexToolYamlProtocol.RegexCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[RegexExercise]   = RegexToolYamlProtocol.RegexExYamlFormat
 
-  override val collectionJsonFormat: Format[RegexCollection] = RegexCompleteResultJsonProtocol.collectionFormat
   override val exerciseJsonFormat  : Format[RegexExercise]   = RegexCompleteResultJsonProtocol.exerciseFormat
 
-  override val collectionForm    : Form[RegexCollection]     = RegexToolForm.collectionFormat
   override val exerciseForm      : Form[RegexExercise]       = RegexToolForm.exerciseFormat
   override val exerciseReviewForm: Form[RegexExerciseReview] = RegexToolForm.exerciseReviewForm
 
@@ -56,9 +51,6 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
 
   // Database helpers
-
-  override def instantiateCollection(id: Int, author: String, state: ExerciseState): RegexCollection =
-    RegexCollection(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, maxPoints = 0,
@@ -90,7 +82,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     }
   }
 
-  override protected def correctEx(user: User, sol: String, coll: RegexCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] =
+  override protected def correctEx(user: User, sol: String, coll: ExerciseCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] =
     Future.successful(RegexCorrector.correct(sol, exercise))
 
   // Views
@@ -100,7 +92,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     case _                 => ???
   }
 
-  override def renderExercise(user: User, collection: RegexCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[StringUserSolution[RegexExPart]])
+  override def renderExercise(user: User, collection: ExerciseCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[StringUserSolution[RegexExPart]])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.toolViews.regex.regexExercise(user, this, collection, exercise, part, oldSolution.map(_.solution))
 

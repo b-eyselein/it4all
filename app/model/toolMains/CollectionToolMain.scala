@@ -12,7 +12,7 @@ import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.MessagesProvider
-import play.api.libs.json.{Format, JsString, JsValue, Json}
+import play.api.libs.json.{Format, JsValue, Json}
 import play.api.mvc.{AnyContent, Call, Request, RequestHeader}
 import play.twirl.api.Html
 
@@ -25,8 +25,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   private val logger = Logger(classOf[CollectionToolMain])
 
   // Abstract types
-
-  type CollType <: ExerciseCollection
 
   type ExType <: Exercise
 
@@ -42,7 +40,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   type ReviewType <: ExerciseReview
 
-  override type Tables <: ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType]
+  override type Tables <: ExerciseTableDefs[PartType, ExType, SolType, SampleSolType, UserSolType, ReviewType]
 
   // Values
 
@@ -50,13 +48,12 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Yaml, Html forms, Json
 
-  protected val collectionYamlFormat: MyYamlFormat[CollType]
-  protected val exerciseYamlFormat  : MyYamlFormat[ExType]
+  final protected val collectionYamlFormat: MyYamlFormat[ExerciseCollection] = ExerciseCollectionYamlProtocol.ExerciseCollectionYamlFormat
+  protected val exerciseYamlFormat: MyYamlFormat[ExType]
 
-  val collectionJsonFormat: Format[CollType]
-  val exerciseJsonFormat : Format[ExType]
+  final val collectionJsonFormat: Format[ExerciseCollection] = JsonProtocol.collectionFormat
+  val exerciseJsonFormat: Format[ExType]
 
-  val collectionForm    : Form[CollType]
   val exerciseForm      : Form[ExType]
   val exerciseReviewForm: Form[ReviewType]
 
@@ -86,9 +83,9 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   def futureUserCanSolveExPart(username: String, collId: Int, exId: Int, part: PartType): Future[Boolean] = Future.successful(true)
 
-  def futureNumOfExesInColl(collection: CollType): Future[Int] = tables.futureNumOfExesInColl(collection.id)
+  def futureNumOfExesInColl(collection: ExerciseCollection): Future[Int] = tables.futureNumOfExesInColl(collection.id)
 
-  def futureExesAndSolvedStatesForParts(user: User, collection: CollType, page: Int, step: Int): Future[Seq[SolvedStatesForExerciseParts[PartType]]] =
+  def futureExesAndSolvedStatesForParts(user: User, collection: ExerciseCollection, page: Int, step: Int): Future[Seq[SolvedStatesForExerciseParts[PartType]]] =
 
     futureExercisesInColl(collection.id).flatMap { exercises =>
 
@@ -121,7 +118,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Correction
 
-  def correctAbstract(user: User, collection: CollType, exercise: ExType, part: PartType)
+  def correctAbstract(user: User, collection: ExerciseCollection, exercise: ExType, part: PartType)
                      (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[CompResultType]] = readSolution(request, part) match {
     case Left(errorMsg)  =>
       logger.error(errorMsg)
@@ -140,7 +137,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
       }
   }
 
-  protected def correctEx(user: User, sol: SolType, coll: CollType, exercise: ExType, part: PartType): Future[Try[CompResultType]]
+  protected def correctEx(user: User, sol: SolType, coll: ExerciseCollection, exercise: ExType, part: PartType): Future[Try[CompResultType]]
 
   // Reading from requests
 
@@ -156,10 +153,10 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     collections => views.html.admin.collExes.collectionAdminIndex(admin, collections, this, toolList)
   }
 
-  def renderExercise(user: User, coll: CollType, exercise: ExType, part: PartType, maybeOldSolution: Option[UserSolType])
+  def renderExercise(user: User, coll: ExerciseCollection, exercise: ExType, part: PartType, maybeOldSolution: Option[UserSolType])
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
-  def renderCollectionEditForm(user: User, collection: CollType, isCreation: Boolean, toolList: ToolList)
+  def renderCollectionEditForm(user: User, collection: ExerciseCollection, isCreation: Boolean, toolList: ToolList)
                               (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
     views.html.admin.collExes.collectionEditForm(user, collection, isCreation, new Html(""), this, toolList /*adminRenderEditRest(collection)*/)
 
@@ -182,7 +179,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Helper methods for admin
 
-  def readCollectionsFromYaml: Seq[Try[CollType]] = {
+  def readCollectionsFromYaml: Seq[Try[ExerciseCollection]] = {
     val fileToRead: File = exerciseResourcesFolder / "collections.yaml"
 
     Try(fileToRead.contentAsString.parseYaml) match {
@@ -194,7 +191,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
     }
   }
 
-  def readExercisesFromYaml(collection: CollType): Seq[Try[ExType]] = {
+  def readExercisesFromYaml(collection: ExerciseCollection): Seq[Try[ExType]] = {
 
     val fileToRead: File = exerciseResourcesFolder / s"${collection.id}-${collection.shortName}.yaml"
 
@@ -211,7 +208,8 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   //    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes .map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   //  }
 
-  def instantiateCollection(id: Int, author: String, state: ExerciseState): CollType
+  final def instantiateCollection(id: Int, author: String, state: ExerciseState): ExerciseCollection =
+    ExerciseCollection(id, title = "", author, text = "", state, shortName = "")
 
   def instantiateExercise(id: Int, author: String, state: ExerciseState): ExType
 

@@ -8,11 +8,7 @@ import play.api.libs.json.{Format, Json, Writes}
 
 object RegexCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RegexEvalutationResult, RegexCompleteResult] {
 
-  // Collection
-
-  val collectionFormat: Format[RegexCollection] = Json.format[RegexCollection]
-
- private val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
+  private val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
   private val regexExtractionTestDataFormat = Json.format[RegexExtractionTestData]
 

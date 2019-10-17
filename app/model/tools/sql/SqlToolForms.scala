@@ -6,7 +6,7 @@ import model.{Difficulties, ExerciseState, SemanticVersionHelper, StringSampleSo
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object SqlToolForms extends ToolForms[SqlExercise, SqlScenario, SqlExerciseReview] {
+object SqlToolForms extends ToolForms[SqlExercise, SqlExerciseReview] {
 
   private val sqlSampleMapping: Mapping[StringSampleSolution] = mapping(
     idName -> number,
@@ -14,17 +14,6 @@ object SqlToolForms extends ToolForms[SqlExercise, SqlScenario, SqlExerciseRevie
   )(StringSampleSolution.apply)(StringSampleSolution.unapply)
 
   // Complete exercise
-
-  override val collectionFormat: Form[SqlScenario] = Form(
-    mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(SqlScenario.apply)(SqlScenario.unapply)
-  )
 
   override val exerciseFormat: Form[SqlExercise] = Form(
     mapping(

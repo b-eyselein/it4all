@@ -1,14 +1,22 @@
 package model.core
 
-import model.tools.regex.RegexConsts.{idName, sampleName}
-import model.tools.web.WebConsts.pathName
-import model.{Exercise, ExerciseCollection, ExerciseFile, ExerciseReview, StringSampleSolution}
+import model._
+import model.core.CoreConsts._
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-trait ToolForms[ExType <: Exercise, CollType <: ExerciseCollection, ReviewType <: ExerciseReview] {
+trait ToolForms[ExType <: Exercise, ReviewType <: ExerciseReview] {
 
-  val collectionFormat: Form[CollType]
+  val collectionFormat: Form[ExerciseCollection] = Form(
+    mapping(
+      idName -> number,
+      titleName -> nonEmptyText,
+      authorName -> nonEmptyText,
+      textName -> nonEmptyText,
+      statusName -> ExerciseState.formField,
+      shortNameName -> nonEmptyText
+    )(ExerciseCollection.apply)(ExerciseCollection.unapply)
+  )
 
   val exerciseFormat: Form[ExType]
 

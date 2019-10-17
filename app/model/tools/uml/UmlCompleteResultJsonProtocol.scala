@@ -9,10 +9,6 @@ import play.api.libs.json._
 
 object UmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationResult, UmlCompleteResult] {
 
-  // Collection
-
-  val collectionFormat: Format[UmlCollection] = Json.format[UmlCollection]
-
   val exerciseFormat: Format[UmlExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
 
@@ -29,22 +25,14 @@ object UmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[Evaluati
     Json.format[UmlSampleSolution]
   }
 
-
-  private val classResultWrites: Writes[MatchingResult[UmlClassMatch]] = _.toJson
-
-  private val assocResultWrites: Writes[MatchingResult[UmlAssociationMatch]] = _.toJson
-
-  private val implResultWrites: Writes[MatchingResult[UmlImplementationMatch]] = _.toJson
-
-
   override val completeResultWrites: Writes[UmlCompleteResult] = {
     implicit val pointsWrites: Writes[Points] = pointsJsonWrites
 
-    implicit val crw: Writes[MatchingResult[UmlClassMatch]] = classResultWrites
+    implicit val crw: Writes[MatchingResult[UmlClassMatch]] = _.toJson
 
-    implicit val arw: Writes[MatchingResult[UmlAssociationMatch]] = assocResultWrites
+    implicit val arw: Writes[MatchingResult[UmlAssociationMatch]] = _.toJson
 
-    implicit val irw: Writes[MatchingResult[UmlImplementationMatch]] = implResultWrites
+    implicit val irw: Writes[MatchingResult[UmlImplementationMatch]] = _.toJson
 
     Json.writes[UmlCompleteResult]
   }

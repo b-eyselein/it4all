@@ -1,6 +1,7 @@
-@import model.tools.regex.{RegexExercise, RegexExPart, RegexToolMain, RegexCollection}
+@import model.tools.regex.{RegexExPart, RegexExercise, RegexToolMain}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, toolMainObject: RegexToolMain, regexCollection: RegexCollection, exercise: RegexExercise, part: RegexExPart,
+@(user: User, toolMainObject: RegexToolMain, regexCollection: ExerciseCollection, exercise: RegexExercise, part: RegexExPart,
     oldSolution: Option[String])(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 @* @toolViews.textExercise(user, Html(exercise.text), regexCollection, exercise, part, oldSolution.getOrElse(""), toolMainObject, additionalScripts) *@
 @scripts = {

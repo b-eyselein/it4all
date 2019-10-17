@@ -4,9 +4,9 @@ import model._
 import model.core.CoreConsts._
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
-trait FilesSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, ReviewType <: ExerciseReview]
-  extends ExerciseTableDefs[PartType, ExType, CollType, Seq[ExerciseFile], FilesSampleSolution, FilesUserSolution[PartType], ReviewType]
-    with FilesSolutionExerciseTableQueries[PartType, ExType, CollType, ReviewType] {
+trait FilesSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, ReviewType <: ExerciseReview]
+  extends ExerciseTableDefs[PartType, ExType, Seq[ExerciseFile], FilesSampleSolution, FilesUserSolution[PartType], ReviewType]
+    with FilesSolutionExerciseTableQueries[PartType, ExType, ReviewType] {
 
   import profile.api._
 

@@ -1,11 +1,11 @@
 package model.tools.rose.persistence
 
 import javax.inject.Inject
-import model.SemanticVersion
 import model.core.CoreConsts.{sampleName, solutionName}
 import model.persistence.ExerciseTableDefs
 import model.tools.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
 import model.tools.rose._
+import model.{ExerciseCollection, SemanticVersion}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
@@ -15,7 +15,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[RoseExPart, RoseExercise, RoseCollection, String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
+    with ExerciseTableDefs[RoseExPart, RoseExercise,  String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
 
   import profile.api._
 
@@ -26,7 +26,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected type ExTableDef = RoseExercisesTable
 
 
-  override protected type CollTableDef = RoseCollectionsTable
+  override protected type CollTableDef = RoseExerciseCollectionsTable
 
 
   override protected type DbSampleSolType = DbRoseSampleSolution
@@ -44,8 +44,8 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected type ReviewsTable = RoseExerciseReviewsTable
 
   // Table Queries
-  override protected val exTable  : TableQuery[RoseExercisesTable]   = TableQuery[RoseExercisesTable]
-  override protected val collTable: TableQuery[RoseCollectionsTable] = TableQuery[RoseCollectionsTable]
+  override protected val exTable  : TableQuery[RoseExercisesTable]           = TableQuery[RoseExercisesTable]
+  override protected val collTable: TableQuery[RoseExerciseCollectionsTable] = TableQuery[RoseExerciseCollectionsTable]
 
   override protected val sampleSolutionsTableQuery: TableQuery[RoseSampleSolutionsTable] = TableQuery[RoseSampleSolutionsTable]
   override protected val userSolutionsTableQuery  : TableQuery[RoseSolutionsTable]       = TableQuery[RoseSolutionsTable]
@@ -74,7 +74,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   override protected def saveExerciseRest(collId: Int, ex: RoseExercise): Future[Boolean] = {
     val dbSamples = ex.sampleSolutions.map(s => RoseSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
-    val dbInputs = ex.inputTypes.map(it => dbModels.dbInputTypeFromInputType(ex.id, ex.semanticVersion, collId, it))
+    val dbInputs  = ex.inputTypes.map(it => dbModels.dbInputTypeFromInputType(ex.id, ex.semanticVersion, collId, it))
 
     for {
       inputsSaved <- saveSeq[DbRoseInputType](dbInputs, it => db.run(roseInputs insertOrUpdate it))
@@ -114,11 +114,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Tables
 
-  class RoseCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "rose_collections") {
-
-    def * : ProvenShape[RoseCollection] = (id, title, author, text, state, shortName) <> (RoseCollection.tupled, RoseCollection.unapply)
-
-  }
+  class RoseExerciseCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "rose_collections")
 
   class RoseExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "rose_exercises") {
 

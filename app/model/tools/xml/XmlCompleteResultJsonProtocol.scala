@@ -8,10 +8,6 @@ import play.api.libs.json._
 
 object XmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] {
 
-  //Collection
-
-  val collectionFormat: Format[XmlCollection] = Json.format[XmlCollection]
-
   // Sample solution
 
   val xmlSampleSolutionJsonFormat: Format[XmlSampleSolution] = {

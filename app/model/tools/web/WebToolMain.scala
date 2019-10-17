@@ -30,7 +30,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override type PartType = WebExPart
   override type ExType = WebExercise
-  override type CollType = WebCollection
 
 
   override type SolType = Seq[ExerciseFile]
@@ -54,13 +53,10 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected val collectionYamlFormat: MyYamlFormat[WebCollection] = WebToolYamlProtocol.WebCollectionYamlFormat
   override protected val exerciseYamlFormat  : MyYamlFormat[WebExercise]   = WebToolYamlProtocol.WebExYamlFormat
 
-  override val collectionJsonFormat: Format[WebCollection] = WebCompleteResultJsonProtocol.collectionFormat
   override val exerciseJsonFormat  : Format[WebExercise]   = WebCompleteResultJsonProtocol.exerciseFormat
 
-  override val collectionForm    : Form[WebCollection]     = WebToolForms.collectionFormat
   override val exerciseForm      : Form[WebExercise]       = WebToolForms.exerciseFormat
   override val exerciseReviewForm: Form[WebExerciseReview] = WebToolForms.exerciseReviewForm
 
@@ -105,9 +101,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     case WebExParts.JsPart   => exercise.siteSpec.jsTasks.nonEmpty
   }
 
-  override def instantiateCollection(id: Int, author: String, state: ExerciseState): WebCollection =
-    WebCollection(id, title = "", author, text = "", state, shortName = "")
-
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebExercise = WebExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, htmlText = None, jsText = None,
     SiteSpec(
@@ -147,7 +140,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   override def renderExercisePreview(user: User, collId: Int, newExercise: WebExercise, saved: Boolean): Html =
     views.html.toolViews.web.webPreview(newExercise)
 
-  override def renderExercise(user: User, collection: WebCollection, exercise: WebExercise, part: WebExPart, maybeOldSolution: Option[FilesUserSolution[WebExPart]])
+  override def renderExercise(user: User, collection: ExerciseCollection, exercise: WebExercise, part: WebExPart, maybeOldSolution: Option[FilesUserSolution[WebExPart]])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     //    val oldOrDefaultSolutionString: String = maybeOldSolution.map(oldSol =>
     //      part match {
@@ -211,7 +204,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
   def getSolutionUrl(user: User, collId: Int, exerciseId: Int, fileName: String): String =
     s"http://localhost:9080/${user.username}/${collId}/${exerciseId}/${fileName}"
 
-  override def correctEx(user: User, learnerSolution: Seq[ExerciseFile], collection: WebCollection, exercise: WebExercise, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
+  override def correctEx(user: User, learnerSolution: Seq[ExerciseFile], collection: ExerciseCollection, exercise: WebExercise, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
     writeWebSolutionFiles(user.username, collection.id, exercise.id, part, learnerSolution).flatMap { _ =>
 
       val driver              = new HtmlUnitDriver(true)

@@ -3,10 +3,10 @@ package controllers.coll
 import better.files._
 import controllers.Secured
 import javax.inject.{Inject, Singleton}
-import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.toolMains.{CollectionToolMain, ToolList}
+import model.{ExerciseCollection, ExerciseState}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.single
@@ -38,8 +38,8 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       toolMain.futureCollById(collId) flatMap {
         case None             => Future.successful(onNoSuchCollection(admin, toolMain, collId))
         case Some(collection) =>
-          toolMain.futureExercisesInColl(collId) map {
-            exercises => Ok(views.html.admin.collExes.collectionAdmin(admin, collection, exercises, toolMain, toolList))
+          toolMain.futureExercisesInColl(collId) map { exercises =>
+            Ok(views.html.admin.collExes.collectionAdmin(admin, collection, exercises, toolMain, toolList))
           }
       }
   }
@@ -48,7 +48,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminImportCollections(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
-      readSaveAndPreview[toolMain.CollType](
+      readSaveAndPreview[ExerciseCollection](
         toolMain.readCollectionsFromYaml,
         toolMain.futureInsertAndDeleteOldCollection,
         readAndSaveResult => views.html.admin.collExes.readCollectionsPreview(admin, readAndSaveResult, toolMain, toolList)
@@ -95,8 +95,8 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   def adminEditCollectionForm(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
-      toolMain.futureCollById(id) map { maybeCollection: Option[toolMain.CollType] =>
-        val collection: toolMain.CollType = maybeCollection getOrElse toolMain.instantiateCollection(id, admin.username, ExerciseState.RESERVED)
+      toolMain.futureCollById(id) map { maybeCollection: Option[ExerciseCollection] =>
+        val collection = maybeCollection getOrElse toolMain.instantiateCollection(id, admin.username, ExerciseState.RESERVED)
         Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false, toolList))
       }
   }
@@ -104,7 +104,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
   def adminNewCollectionForm(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureHighestCollectionId map { id =>
-        val collection: toolMain.CollType = toolMain.instantiateCollection(id + 1, admin.username, ExerciseState.RESERVED)
+        val collection = toolMain.instantiateCollection(id + 1, admin.username, ExerciseState.RESERVED)
         Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = true, toolList))
       }
   }

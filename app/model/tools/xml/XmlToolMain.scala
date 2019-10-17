@@ -25,7 +25,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override type PartType = XmlExPart
   override type ExType = XmlExercise
-  override type CollType = XmlCollection
 
   override type SolType = XmlSolution
   override type SampleSolType = XmlSampleSolution
@@ -48,13 +47,10 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected val collectionYamlFormat: MyYamlFormat[XmlCollection] = XmlExYamlProtocol.XmlCollectionYamlFormat
-  override protected val exerciseYamlFormat  : MyYamlFormat[XmlExercise]   = XmlExYamlProtocol.XmlExYamlFormat
+  override protected val exerciseYamlFormat: MyYamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
 
-  override val collectionJsonFormat: Format[XmlCollection] = XmlCompleteResultJsonProtocol.collectionFormat
   override val exerciseJsonFormat: Format[XmlExercise] = XmlCompleteResultJsonProtocol.exerciseFormat
 
-  override val collectionForm    : Form[XmlCollection]     = XmlToolForms.collectionFormat
   override val exerciseForm      : Form[XmlExercise]       = XmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[XmlExerciseReview] = XmlToolForms.exerciseReviewForm
 
@@ -69,9 +65,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     case XmlExParts.GrammarCreationXmlPart  => Future.successful(true)
     case XmlExParts.DocumentCreationXmlPart => futureMaybeOldSolution(username, collId, exId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
-
-  def instantiateCollection(id: Int, author: String, state: model.ExerciseState): XmlCollection =
-    XmlCollection(id, title = "", author, text = "", state, shortName = "")
 
   override def instantiateExercise(id: Int, author: String, state: ExerciseState): XmlExercise = XmlExercise(
     id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, grammarDescription = "", rootNode = "",
@@ -102,7 +95,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     }
   }
 
-  override protected def correctEx(user: User, solution: XmlSolution, collection: XmlCollection, exercise: XmlExercise,
+  override protected def correctEx(user: User, solution: XmlSolution, collection: ExerciseCollection, exercise: XmlExercise,
                                    part: XmlExPart): Future[Try[XmlCompleteResult]] = Future.successful(
     part match {
       case XmlExParts.GrammarCreationXmlPart  => XmlCorrector.correctGrammar(solution, exercise)
@@ -119,9 +112,9 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     case _               => ???
   }
 
-  override def renderExercise(user: User, collection: XmlCollection, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlUserSolution])
+  override def renderExercise(user: User, collection: ExerciseCollection, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
-    val oldSolutionOrTemplate: XmlSolution = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
+    val oldSolutionOrTemplate: XmlSolution = maybeOldSolution.map(_.solution).getOrElse(exercise.getTemplate(part))
 
     views.html.toolViews.xml.xmlExercise(user, collection, exercise, oldSolutionOrTemplate, part, this)
   }

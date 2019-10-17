@@ -1,16 +1,12 @@
 package model.tools.sql
 
-import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.tools.sql.SqlConsts._
+import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 object SqlJsonProtocols extends CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] {
-
-  // Collection
-
-  val collectionFormat: Format[SqlScenario] = Json.format[SqlScenario]
 
   val exerciseFormat: Format[SqlExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format

@@ -1,7 +1,8 @@
 package model.core.result
 
+import model.ExerciseCollection
 import model.points.Points
-import play.api.libs.json.Writes
+import play.api.libs.json.{Format, Json, Writes}
 
 
 object EvaluationResult {

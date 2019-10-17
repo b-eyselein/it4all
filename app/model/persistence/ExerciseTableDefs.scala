@@ -6,13 +6,13 @@ import model.learningPath.LearningPathTableDefs
 import model.points.Points
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey}
+import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
   extends LearningPathTableDefs
-    with ExerciseTableDefQueries[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType] {
+    with ExerciseTableDefQueries[PartType, ExType, SolType, SampleSolType, UserSolType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
@@ -24,7 +24,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
   protected type ExTableDef <: ExerciseInCollectionTable
 
 
-  protected type CollTableDef <: ExerciseCollectionTable
+  protected type CollTableDef <: ExerciseCollectionsTable
 
 
   protected type DbSampleSolType <: ADbSampleSol
@@ -75,7 +75,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
 
   // Abstract table classes
 
-  abstract class ExerciseCollectionTable(tag: Tag, tableName: String) extends Table[CollType](tag, tableName) {
+  abstract class ExerciseCollectionsTable(tag: Tag, tableName: String) extends Table[ExerciseCollection](tag, tableName) {
 
     def id: Rep[Int] = column[Int](idName, O.PrimaryKey)
 
@@ -88,6 +88,9 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
     def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
 
     def shortName: Rep[String] = column[String]("short_name")
+
+
+    override final def * : ProvenShape[ExerciseCollection] = (id, title, author, text, state, shortName) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
 
   }
 
@@ -110,7 +113,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, CollType <: Exer
 
     def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId))
 
-    def scenarioFk: ForeignKeyQuery[CollTableDef, CollType] = foreignKey("scenario_fk", collectionId, collTable)(_.id)
+    def scenarioFk: ForeignKeyQuery[CollTableDef, ExerciseCollection] = foreignKey("scenario_fk", collectionId, collTable)(_.id)
 
   }
 

@@ -1,6 +1,7 @@
-@import model.tools.sql.{SqlExercise, SqlQueryResult, SqlScenario, SqlToolMain, SqlExParts}
+@import model.tools.sql.{SqlExParts, SqlExercise, SqlQueryResult, SqlToolMain}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, exercise: SqlExercise, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: SqlScenario, toolMainObject: SqlToolMain)(
+@(user: User, exercise: SqlExercise, oldOrDefSol: String, tables: Seq[SqlQueryResult], scenario: ExerciseCollection, toolMainObject: SqlToolMain)(
         implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @additionalScripts = {

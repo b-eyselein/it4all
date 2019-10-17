@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[UmlExPart, UmlExercise, UmlCollection, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
+    with ExerciseTableDefs[UmlExPart, UmlExercise, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
 
   import profile.api._
 
@@ -120,11 +120,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Table definitions
 
-  class UmlCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "uml_collections") {
-
-    def * : ProvenShape[UmlCollection] = (id, title, author, text, state, shortName) <> (UmlCollection.tupled, UmlCollection.unapply)
-
-  }
+  class UmlCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "uml_collections")
 
   class UmlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "uml_exercises") {
 

@@ -1,13 +1,13 @@
 package model.tools.web
 
 import de.uniwue.webtester._
+import model._
 import model.core.ToolForms
 import model.tools.web.WebConsts._
-import model._
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseReview] {
+object WebToolForms extends ToolForms[WebExercise, WebExerciseReview] {
 
   // HtmlTask
 
@@ -69,17 +69,6 @@ object WebToolForms extends ToolForms[WebExercise, WebCollection, WebExerciseRev
   )(SiteSpec.apply)(SiteSpec.unapply)
 
   // Complete exercise
-
-  override val collectionFormat: Form[WebCollection] = Form(
-    mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(WebCollection.apply)(WebCollection.unapply)
-  )
 
   override val exerciseFormat: Form[WebExercise] = Form(
     mapping(

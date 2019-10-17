@@ -3,7 +3,7 @@ package model.tools.uml
 import model.MyYamlProtocol._
 import model.core.CoreConsts.{authorName, idName, semanticVersionName, statusName, textName, titleName}
 import model.tools.uml.UmlConsts._
-import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
+import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -13,21 +13,6 @@ import scala.util.Try
 object UmlExYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger("model.tools.uml.UmlExYamlProtocol")
-
-  object UmlCollectionYamlFormat extends MyYamlObjectFormat[UmlCollection] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[UmlCollection] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_.getOrElse(ExerciseState.CREATED))
-      shortName <- yamlObject.stringField(shortNameName)
-    } yield UmlCollection(id, title, author, text, state, shortName)
-
-    override def write(obj: UmlCollection): YamlValue = ???
-
-  }
 
   object UmlExYamlFormat extends MyYamlObjectFormat[UmlExercise] {
 
@@ -50,7 +35,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         logger.error("Could not read uml sample solution", sampleSolFailure.exception)
 
-      val mappings = mappingTries._1 toMap
+      val mappings    = mappingTries._1 toMap
       val ignoreWords = ignoreWordTries._1
 
       //      val mappingsForTextParser: Map[String, String] = mappings map (mapping => (mapping._1, mapping._2)) toMap

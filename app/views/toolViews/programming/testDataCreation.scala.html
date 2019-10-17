@@ -1,6 +1,7 @@
-@import model.tools.programming.{ProgCollection, ProgExParts, ProgExercise, ProgToolMain, ProgUserTestData}
+@import model.tools.programming.{ProgExParts, ProgExercise, ProgToolMain, ProgUserTestData}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, collection: ProgCollection, exercise: ProgExercise, oldData: Seq[ProgUserTestData], toolMainObject: ProgToolMain)(
+@(user: User, collection: ExerciseCollection, exercise: ProgExercise, oldData: Seq[ProgUserTestData], toolMainObject: ProgToolMain)(
     implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider
 )
 

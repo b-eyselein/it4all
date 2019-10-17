@@ -1,6 +1,7 @@
-@import model.tools.web.{WebCollection, WebExPart, WebExParts, WebExercise, WebToolMain}
+@import model.tools.web.{WebExPart, WebExParts, WebExercise, WebToolMain}
+@import model.{ExerciseCollection, User}
 
-@(user: model.User, collection: WebCollection, exercise: WebExercise, part: WebExPart, toolMainObject: WebToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
+@(user: User, collection: ExerciseCollection, exercise: WebExercise, part: WebExPart, toolMainObject: WebToolMain)(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
 
 @title = @{
     s"Tool Web, Sammlung ${collection.id}, Aufgabe ${exercise.id}"

@@ -5,7 +5,7 @@ import java.nio.file.{Path, Paths}
 import model.MyYamlProtocol._
 import model.tools.programming.ProgConsts._
 import model.tools.uml.UmlExYamlProtocol.UmlSampleSolutionYamlFormat
-import model.{ExerciseState, MyYamlProtocol, YamlArr, YamlObj}
+import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -17,21 +17,6 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   private val logger = Logger(ProgExYamlProtocol.getClass)
 
   val basePath: Path = Paths.get("conf", "resources", "programming")
-
-  object ProgCollectionYamlFormat extends MyYamlObjectFormat[ProgCollection] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[ProgCollection] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption) map (_ getOrElse ExerciseState.CREATED)
-      shortName <- yamlObject.stringField(shortNameName)
-    } yield ProgCollection(id, title, author, text, state, shortName)
-
-    override def write(obj: ProgCollection): YamlValue = ???
-
-  }
 
   object ProgExYamlFormat extends MyYamlObjectFormat[ProgExercise] {
 

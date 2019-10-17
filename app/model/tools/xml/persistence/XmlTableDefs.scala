@@ -10,7 +10,7 @@ import slick.lifted.{PrimaryKey, ProvenShape}
 import scala.concurrent.ExecutionContext
 
 class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends ExerciseTableDefs[XmlExPart, XmlExercise, XmlCollection, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview]
+  extends ExerciseTableDefs[XmlExPart, XmlExercise, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview]
     with HasDatabaseConfigProvider[JdbcProfile]
     with XmlTableQueries {
 
@@ -68,11 +68,7 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Actual table defs
 
-  class XmlCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "xml_collections") {
-
-    override def * : ProvenShape[XmlCollection] = (id, title, author, text, state, shortName) <> (XmlCollection.tupled, XmlCollection.unapply)
-
-  }
+  class XmlCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "xml_collections")
 
   class XmlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "xml_exercises") {
 

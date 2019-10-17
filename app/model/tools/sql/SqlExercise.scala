@@ -38,11 +38,4 @@ final case class SqlExercise(
 
 // final case classes for db
 
-final case class SqlScenario(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
-  extends ExerciseCollection {
-
-  val imageUrl: String = shortName + ".png"
-
-}
-
 final case class SqlExerciseReview(difficulty: Difficulty, maybeDuration: Option[Int]) extends ExerciseReview

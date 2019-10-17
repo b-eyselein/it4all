@@ -10,7 +10,7 @@ object RoseCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RoseExe
 
   // Collection
 
-  val collectionFormat: Format[RoseCollection] = Json.format[RoseCollection]
+  //  val collectionFormat: Format[RoseCollection] = Json.format[RoseCollection]
 
   val exerciseFormat: Format[RoseExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format

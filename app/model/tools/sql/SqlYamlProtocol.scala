@@ -12,21 +12,6 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
   private val logger = Logger(SqlYamlProtocol.getClass)
 
-  object SqlCollectionYamlFormat extends MyYamlObjectFormat[SqlScenario] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[SqlScenario] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
-      shortName <- yamlObject.stringField(shortNameName)
-    } yield SqlScenario(id, title, author, text, state, shortName)
-
-    override def write(obj: SqlScenario): YamlValue = ???
-
-  }
-
   object SqlExerciseYamlFormat extends MyYamlObjectFormat[SqlExercise] {
 
     override def write(obj: SqlExercise): YamlValue = ???

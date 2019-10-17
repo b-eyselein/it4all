@@ -10,9 +10,9 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <: ExerciseCollection, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
   extends HasDatabaseConfigProvider[JdbcProfile] {
-  self: ExerciseTableDefs[PartType, ExType, CollType, SolType, SampleSolType, UserSolType, ReviewType] =>
+  self: ExerciseTableDefs[PartType, ExType, SolType, SampleSolType, UserSolType, ReviewType] =>
 
   private val logger = Logger(this.getClass)
 
@@ -59,9 +59,9 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
 
   // Reading
 
-  def futureAllCollections: Future[Seq[CollType]] = db.run(collTable.result)
+  def futureAllCollections: Future[Seq[ExerciseCollection]] = db.run(collTable.result)
 
-  def futureCollById(id: Int): Future[Option[CollType]] = db.run(collTable.filter(_.id === id).result.headOption)
+  def futureCollById(id: Int): Future[Option[ExerciseCollection]] = db.run(collTable.filter(_.id === id).result.headOption)
 
   def futureExercisesInColl(collId: Int): Future[Seq[ExType]] =
     db.run(exTable.filter(_.collectionId === collId).result)
@@ -104,7 +104,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, CollType <
 
   // Saving
 
-  def futureInsertAndDeleteOldCollection(collection: CollType): Future[Boolean] = {
+  def futureInsertAndDeleteOldCollection(collection: ExerciseCollection): Future[Boolean] = {
     val deleteOldQuery = collTable.filter(_.id === collection.id).delete
 
     db.run(deleteOldQuery) flatMap {

@@ -9,21 +9,6 @@ import scala.util.Try
 
 object RegexToolYamlProtocol extends MyYamlProtocol {
 
-  object RegexCollectionYamlFormat extends MyYamlObjectFormat[RegexCollection] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[RegexCollection] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
-      shortName <- yamlObject.stringField(shortNameName)
-    } yield RegexCollection(id, title, author, text, state, shortName)
-
-    override def write(obj: RegexCollection): YamlValue = ???
-
-  }
-
   object RegexExYamlFormat extends MyYamlObjectFormat[RegexExercise] {
 
     override protected def readObject(yamlObject: YamlObject): Try[RegexExercise] = for {

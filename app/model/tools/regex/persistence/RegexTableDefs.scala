@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with StringSolutionExerciseTableDefs[RegexExPart, RegexExercise, RegexCollection, RegexExerciseReview] {
+    with StringSolutionExerciseTableDefs[RegexExPart, RegexExercise, RegexExerciseReview] {
 
   import profile.api._
 
@@ -74,8 +74,8 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   } yield dbModels.exerciseFromDbExercise(ex, sampleSolutions, matchTestData, extractionTestData)
 
   override protected def saveExerciseRest(collId: Int, ex: RegexExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions.map(s => StringSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
-    val dbMatchTestData = ex.matchTestData.map(mtd => dbModels.dbMatchTestDataFromMatchTestData(ex.id, ex.semanticVersion, collId, mtd))
+    val dbSamples            = ex.sampleSolutions.map(s => StringSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
+    val dbMatchTestData      = ex.matchTestData.map(mtd => dbModels.dbMatchTestDataFromMatchTestData(ex.id, ex.semanticVersion, collId, mtd))
     val dbExtractionTestData = ex.extractionTestData.map(etd => DbRegexExtractionTestData(etd.id, ex.id, ex.semanticVersion, collId, etd.base))
 
     for {
@@ -95,11 +95,7 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   // Tables
 
-  class RegexCollectionsTable(tag: Tag) extends ExerciseCollectionTable(tag, "regex_collections") {
-
-    override def * : ProvenShape[RegexCollection] = (id, title, author, text, state, shortName) <> (RegexCollection.tupled, RegexCollection.unapply)
-
-  }
+  class RegexCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "regex_collections")
 
   class RegexExerciseTable(tag: Tag) extends ExerciseInCollectionTable(tag, "regex_exercises") {
 

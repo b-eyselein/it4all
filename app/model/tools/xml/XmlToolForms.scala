@@ -6,7 +6,7 @@ import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object XmlToolForms extends ToolForms[XmlExercise, XmlCollection, XmlExerciseReview] {
+object XmlToolForms extends ToolForms[XmlExercise, XmlExerciseReview] {
 
   // Xml samples
 
@@ -17,17 +17,6 @@ object XmlToolForms extends ToolForms[XmlExercise, XmlCollection, XmlExerciseRev
   )((id, doc, gra) => XmlSampleSolution.apply(id, XmlSolution(doc, gra)))(sample => Some((sample.id, sample.sample.document, sample.sample.grammar)))
 
   // Complete exercise
-
-  override val collectionFormat: Form[XmlCollection] = Form(
-    mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(XmlCollection.apply)(XmlCollection.unapply)
-  )
 
   override val exerciseFormat: Form[XmlExercise] = Form(
     mapping(

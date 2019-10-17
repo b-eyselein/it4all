@@ -54,18 +54,4 @@ trait FileExercise[PartType <: ExPart] {
 
 }
 
-trait ExerciseCollection {
-
-  def id: Int
-
-  def title: String
-
-  def author: String
-
-  def text: String
-
-  def state: ExerciseState
-
-  def shortName: String
-
-}
+final case class ExerciseCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
