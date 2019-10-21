@@ -31,8 +31,6 @@ object BoolTableRow {
 
   def apply(assigns: (Variable, Boolean)*): BoolTableRow = new BoolTableRow(assigns.toMap)
 
-  def fromAssignments(assignments: Seq[BoolAssignment]): BoolTableRow = new BoolTableRow(assignments.map(a => (a.variable, a.value)).toMap)
-
   def generateAllAssignments(variables: Seq[Variable]): Seq[BoolTableRow] = {
 
     @annotation.tailrec

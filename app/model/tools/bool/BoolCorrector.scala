@@ -16,11 +16,12 @@ object BoolCorrector {
   private def correctFilloutQuestion(boolSolution: BoolSolution): BooleanQuestionResult = parseBoolFormula(boolSolution.formula) match {
     case Failure(_)       => FilloutQuestionResult(SuccessType.ERROR, Seq.empty, Some("There has been an internal error!"))
     case Success(formula) =>
-      val allAssignments = boolSolution.assignments.map(as => as + (SolVariable -> formula(as)))
+      val allAssignments = boolSolution.rows.map(as => as + (SolVariable -> formula(as)))
 
-      val successType = allAssignments.forall(as => as.isSet(LerVariable) && as(LerVariable) == as(SolVariable)) match {
-        case true  => SuccessType.COMPLETE
-        case false => SuccessType.PARTIALLY
+      val successType = if (allAssignments.forall(as => as.isSet(LerVariable) && as(LerVariable) == as(SolVariable))) {
+        SuccessType.COMPLETE
+      } else {
+        SuccessType.PARTIALLY
       }
 
       FilloutQuestionResult(successType, allAssignments)
@@ -28,7 +29,7 @@ object BoolCorrector {
 
   private def correctCreateQuestion(boolSolution: BoolSolution): BooleanQuestionResult = parseBoolFormula(boolSolution.formula) match {
     case Failure(error)   => CreationQuestionError(boolSolution.formula, error.getMessage)
-    case Success(formula) => CreationQuestionSuccess(formula, CreationQuestion(boolSolution.assignments))
+    case Success(formula) => CreationQuestionSuccess(formula, CreationQuestion(boolSolution.rows))
   }
 
 }

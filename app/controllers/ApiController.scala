@@ -6,7 +6,7 @@ import com.github.t3hnar.bcrypt._
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
 import model.toolMains.{CollectionToolMain, ToolList}
-import model.{ApiExerciseCollection, ApiModelHelpers, RequestBodyHelpers, User}
+import model.{ApiModelHelpers, RequestBodyHelpers, User}
 import pdi.jwt.JwtSession
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsError, JsSuccess, Json, Writes}
@@ -159,7 +159,6 @@ class ApiController @Inject()(
             }
         }
     }
-
   }
 
 }

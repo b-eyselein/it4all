@@ -1,35 +1,39 @@
 package model.tools.bool
 
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 
-import model.tools.bool.BoolConsts._
+final case class BoolSolution(formula: String, rows: Seq[BoolTableRow])
 
-final case class BoolSolution(formula: String, assignments: Seq[BoolTableRow])
 
-final case class BoolAssignment(variable: Variable, value: Boolean)
+private final case class JsonBoolSolution(formula: String, rows: Seq[JsonBoolTableRow])
+
+private final case class JsonBoolTableRow(assignments: Seq[JsonBoolAssignment])
+
+private final case class JsonBoolAssignment(variable: Variable, value: Boolean)
+
 
 object BoolSolutionJsonFormat {
 
-  private val boolAssignmentReads: Reads[BoolAssignment] = (
-    (__ \ variableName).read[String] and
-      (__ \ valueName).read[Boolean]
-    ) { (varStr, value) => BoolAssignment.apply(Variable(varStr(0)), value) }
+  private def seqToMap(assignments: Seq[JsonBoolAssignment]): Map[Variable, Boolean] = assignments
+    .map { case JsonBoolAssignment(variable, value) => (variable, value) }
+    .toMap
 
-  private val boolTableRowReads: Reads[BoolTableRow] = {
-    implicit val bar: Reads[BoolAssignment] = boolAssignmentReads
+  private def convertSolution(jbs: JsonBoolSolution): BoolSolution =
+    BoolSolution(jbs.formula, jbs.rows.map((jbstr: JsonBoolTableRow) => BoolTableRow(seqToMap(jbstr.assignments))))
 
-    (JsPath \ assignmentsName).read[Seq[BoolAssignment]].map(BoolTableRow.fromAssignments)
+  private val jsonBoolSolutionReads: Reads[JsonBoolSolution] = {
+
+    implicit val vr  : Reads[Variable]           = {
+      case JsString(value) => JsSuccess(Variable(value(0)))
+      case _               => ???
+    }
+    implicit val jvar: Reads[JsonBoolAssignment] = Json.reads[JsonBoolAssignment]
+
+    implicit val jbtrr: Reads[JsonBoolTableRow] = Json.reads[JsonBoolTableRow]
+
+    Json.reads[JsonBoolSolution]
   }
 
-  val boolSolutionReads: Reads[BoolSolution] = {
-    implicit val btrr: Reads[BoolTableRow] = boolTableRowReads
-
-    (
-      (__ \ formulaName).read[String] and
-        (__ \ tableRowsName).read[Seq[BoolTableRow]]
-      ) (BoolSolution.apply(_, _))
-  }
-
+  val boolSolutionReads: Reads[BoolSolution] = jsonBoolSolutionReads.map(convertSolution)
 
 }
