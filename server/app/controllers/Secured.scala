@@ -19,7 +19,7 @@ trait Secured {
 
   private def onUnauthorized(request: RequestHeader): Result = Redirect(controllers.routes.LoginController.loginForm()).withNewSession
 
-  private def onInsufficientPrivileges(): Result = Redirect(routes.Application.index()).flashing("msg" -> "You do not have sufficient privileges!")
+  private def onInsufficientPrivileges(): Result = Redirect(routes.FrontendController.index()).flashing("msg" -> "You do not have sufficient privileges!")
 
 
   private def withAuth(f: => String => Request[AnyContent] => Future[Result]): EssentialAction =

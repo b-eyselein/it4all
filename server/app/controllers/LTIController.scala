@@ -20,7 +20,7 @@ class LTIController @Inject()(cc: ControllerComponents, tables: Repository)(impl
         val username = basicLtiRequest.ltiExt.username
 
         getOrCreateUser(username) map { user =>
-          Redirect(routes.Application.index()).withNewSession.withSession(CoreConsts.sessionIdField -> user.username)
+          Redirect(routes.FrontendController.index()).withNewSession.withSession(CoreConsts.sessionIdField -> user.username)
         }
 
     }

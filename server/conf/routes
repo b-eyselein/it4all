@@ -4,7 +4,6 @@
 
 # Home page
 GET           /                                                                        controllers.FrontendController.index
-GET           /oldIndex                                                                controllers.Application.index
 
 # Controller
 GET           /admin                                                                   controllers.AdminController.index

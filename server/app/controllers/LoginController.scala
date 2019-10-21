@@ -66,7 +66,7 @@ class LoginController @Inject()(
         case (Some(_), None)            => BadRequest("Cannot change password!")
         case (Some(user), Some(pwHash)) =>
           if (credentials.password isBcrypted pwHash.pwHash) {
-            Redirect(controllers.routes.Application.index()).withSession(sessionIdField -> user.username)
+            Redirect(controllers.routes.FrontendController.index()).withSession(sessionIdField -> user.username)
           } else {
             Ok(views.html.loginForm(RequestBodyHelpers.userCredForm.fill(credentials)))
           }
