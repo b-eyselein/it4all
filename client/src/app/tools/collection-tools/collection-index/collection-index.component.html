@@ -1,6 +1,16 @@
 <div class="container">
-  <section *ngIf="collection !== undefined; else collectionNotFoundBlock">
-    <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collection.title}}&quot;</h1>
+  <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collection?.title}}&quot;</h1>
+
+  <div class="buttons">
+    <button class="button is-primary is-fullwidth" [routerLink]="['/tools', tool.id]">Zurück zur Sammlungübersicht
+    </button>
+  </div>
+
+  <br>
+
+  <ng-container *ngIf="collection !== undefined; else collectionNotFoundBlock">
+    <h2 class="subtitle is-3 has-text-centered">Aufgaben</h2>
+
     <div class="columns is-multiline">
       <div *ngFor="let exercise of exercises" class="column is-one-third-desktop is-one-half">
         <div class="card">
@@ -18,7 +28,8 @@
         </div>
       </div>
     </div>
-  </section>
+  </ng-container>
+
   <ng-template #collectionNotFoundBlock>
     <div class="notification is-danger">
       Sammlung mit der ID {{collId}} für das Tool {{tool.name}} konnte nicht gefunden werden!

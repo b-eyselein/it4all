@@ -76,3 +76,12 @@ export interface RegexCorrectionResult {
 //     </div>
 // </div>`;
 
+// TODO: Dexie db defs...
+
+export interface DbRegexSolution {
+  // toolId: string;
+  collId: number;
+  exId: number;
+  // partId: string;
+  solution: string;
+}

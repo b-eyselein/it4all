@@ -7,13 +7,12 @@ import {collectionTools} from '../collection-tools-list';
 @Component({templateUrl: './collection-index.component.html'})
 export class CollectionIndexComponent implements OnInit {
 
-   tool: Tool;
-   collId: number;
+  tool: Tool;
+  collId: number;
 
-   collection: ExerciseCollection;
+  collection: ExerciseCollection;
 
-  // noinspection JSMismatchedCollectionQueryUpdate
-   exercises: Exercise[] = [];
+  exercises: Exercise[] = [];
 
   constructor(private route: ActivatedRoute, private apiService: ApiService) {
     const toolId = this.route.snapshot.paramMap.get('toolId');

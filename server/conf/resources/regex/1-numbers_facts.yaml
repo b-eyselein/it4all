@@ -3,8 +3,7 @@
   title: Postleitzahlen
   author: bje40dc
   text: >
-    Schreiben Sie einen regulären Ausdruck, der (deutsche) Postleitzahlen überprüfen kann. Diese bestehen aus 5 Ziffern
-    ohne führende Nullen.
+    Schreiben Sie einen regulären Ausdruck, der (deutsche) Postleitzahlen überprüfen kann. Diese bestehen aus 5 Ziffern.
   status: APPROVED
   maxPoints: 1
   correctionType: MATCHING
@@ -13,15 +12,17 @@
     - {id: 1, data: '97070', included: true}
     - {id: 2, data: '90210', included: true}
     - {id: 3, data: '10115', included: true}
-    - {id: 4, data: '01234', included: false}
-    - {id: 5, data: '8911', included: false}
-    - {id: 6, data: '654321', included: false}
+    - {id: 4, data: '65432', included: true}
+    - {id: 5, data: '01234', included: true}
+    - {id: 6, data: '8911', included: false}
+    - {id: 7, data: '654321', included: false}
 
   extractionTestData: []
 
   samples:
-    - {id: 1, sample: '[1-9]\d{4}'}
-    - {id: 2, sample: '[1-9][0-9]{4}'}
+    - {id: 1, sample: '\d{5}'}
+    - {id: 2, sample: '[0-9]{5}'}
+    - {id: 3, sample: '\d\d\d\d\d'}
 
 - id: 2
   semanticVersion: {major: 1, minor: 0, patch: 0}

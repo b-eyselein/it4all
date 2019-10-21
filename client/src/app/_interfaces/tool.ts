@@ -9,6 +9,7 @@ export interface ToolPart {
 export interface Tool {
   id: string;
   name: string;
+  // FIXME: empty if only one path ?!?
   parts: ToolPart[];
   status?: ToolStatus;
   hasPlayground?: boolean;

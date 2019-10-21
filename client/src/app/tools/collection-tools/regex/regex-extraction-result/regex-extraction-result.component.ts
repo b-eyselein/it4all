@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {RegexExtractionResult} from '../regex';
+import {RegexExtractionResult} from '../regex-exercise';
 
 @Component({
   selector: 'it4all-regex-extraction-result',

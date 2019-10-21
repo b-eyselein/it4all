@@ -1,0 +1,24 @@
+<div class="container">
+    <h1 class="title is-3 has-text-centered">Tool {{tool?.name}}</h1>
+
+    <div class="buttons">
+        <a class="button is-primary is-fullwidth" [routerLink]="['/']">Zurück zur Toolübersicht</a>
+    </div>
+
+    <br>
+
+    <h2 class="subtitle is-3 has-text-centered">Sammlungen</h2>
+    <div *ngIf="collections?.length > 0; else elseBlock" class="columns is-multiline">
+        <div *ngFor="let collection of collections" class="column is-one-third">
+            <a [routerLink]="['/tools', tool.id, 'collections', collection.id]"
+               class="button is-link is-fullwidth">{{collection.title}}</a>
+        </div>
+    </div>
+    <ng-template #elseBlock>
+        <div class="notification is-danger has-text-centered">
+            Es konnten keine Sammlungen gefunden werden!
+        </div>
+    </ng-template>
+    <!-- FIXME: uncomment evaluation! -->
+    <!-- <h1 class="title is-3 has-text-centered">Evaluation</h1>-->
+</div>

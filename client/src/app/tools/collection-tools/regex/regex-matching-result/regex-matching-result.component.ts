@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, OnChanges, SimpleChanges} from '@angular/core';
-import {RegexMatchingResult} from '../regex';
+import {RegexMatchingResult} from '../regex-exercise';
 
 @Component({
   selector: 'it4all-regex-matching-result',
