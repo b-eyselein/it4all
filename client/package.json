@@ -4,10 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open --proxy-config src/proxy.conf.js --host 0.0.0.0",
-    "build": "ng build --progress --output-path ../server/public",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "build:dev": "ng build --progress --output-path ../server/public",
+    "build:prod": "ng build --progress --prod --output-path ../server/public"
   },
   "private": true,
   "dependencies": {
