@@ -1,12 +1,17 @@
 image: beyselein/it4all-play-dockerfile
 
 stages:
+  - build-client
   - test
+
+build-client:
+  stage: build-client
+  script:
+    - cd client
+    - ng build:prod
 
 test:
   stage: test
   script:
-    - rm tsconfig.json # delete tsconfig.json to disable ts compiling
-    - mv project/plugins_ci.sbt project/plugins.sbt # uncomment ts plugin
-    - mv build_ci.sbt build.sbt # uncomment ts plugin specifics in build.sbt
+    - cd server
     - sbt test
