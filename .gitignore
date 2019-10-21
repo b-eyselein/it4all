@@ -1,36 +1,30 @@
-# Allgemein / SBT
-logs
-target
-RUNNING_PID
-.cache-main
-.cache-tests
-project/project
-tmp
-# Js mapping files
-**/*.js.map
+# Server
+server/logs
+server/target
+
+server/RUNNING_PID
+
+server/.cache-main
+server/.cache-tests
+
+server/project/project
+server/project/target
 
 # Ignore saved files, except folder data/web
-data/*
-!data/.gitkeep
-!data/web/
+server/data/*
+!server/data/.gitkeep
+!server/data/web/
 
-data/web/*
-!data/web/.gitkeep
+server/data/web/*
+!server/data/web/.gitkeep
 
+server/.idea/*
+!server/.idea/jsonSchemas.xml
+!server/.idea/dictionaries
 
-conf/resources/.idea/
+server/conf/resources/.idea/
 
-# IntelliJ IDEA
-.idea/*
-!.idea/jsonSchemas.xml
-!.idea/dictionaries
+# Client folder
+client/.node_modules
+client/.idea
 
-
-venv/
-
-# Eclipse
-.settings
-.cache
-.project
-.classpath
-.scala_dependencies

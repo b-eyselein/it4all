@@ -1,0 +1,37 @@
+<div class="container is-fluid">
+
+  <div class="columns">
+    <div class="column is-half-desktop">
+      <app-exercise-files-editor [exerciseFiles]="exercise?.files" [mode]="'htmlmixed'"></app-exercise-files-editor>
+    </div>
+
+    <div class="column is-half-desktop">
+
+      <it4all-tabs>
+        <it4all-tab [title]="'Aufgabenstellung'">
+          <div class="notification">{{exercise?.text}}</div>
+
+          <div class="columns">
+            <div class="column">
+              <button class="button is-link is-fullwidth" (click)="correct()">Korrektur</button>
+            </div>
+            <div class="column">
+              <button class="button is-primary is-fullwidth" (click)="showSampleSolution()">Musterlösung anzeigen
+              </button>
+            </div>
+            <div class="column">
+              <a [routerLink]="['/tools', 'programming', 'collections', collId]"
+                 class="button is-dark is-fullwidth">Bearbeiten beenden</a>
+            </div>
+          </div>
+        </it4all-tab>
+
+        <it4all-tab [title]="'Korrektur'"></it4all-tab>
+        <it4all-tab [title]="'Live-Vorschau'" *ngIf="tool.hasLivePreview"></it4all-tab>
+        <it4all-tab [title]="'Musterlösung(en)'"></it4all-tab>
+      </it4all-tabs>
+
+    </div>
+  </div>
+
+</div>

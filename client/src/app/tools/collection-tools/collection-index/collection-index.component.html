@@ -1,0 +1,27 @@
+<div class="container">
+  <section *ngIf="collection !== undefined; else collectionNotFoundBlock">
+    <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collection.title}}&quot;</h1>
+    <div class="columns is-multiline">
+      <div *ngFor="let exercise of exercises" class="column is-one-third-desktop is-one-half">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">{{exercise.id}}. {{exercise.title}}</div>
+          </div>
+          <div class="card-content">
+            <div class="buttons">
+              <ng-container *ngFor="let part of tool.parts">
+                <a [routerLink]="['/tools', tool.id, 'collections', collId, 'exercises', exercise.id, 'parts', part.id]"
+                   *ngIf="!part.disabled" class="button is-link">{{part.name}}</a>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <ng-template #collectionNotFoundBlock>
+    <div class="notification is-danger">
+      Sammlung mit der ID {{collId}} für das Tool {{tool.name}} konnte nicht gefunden werden!
+    </div>
+  </ng-template>
+</div>

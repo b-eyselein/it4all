@@ -1,3 +1,3 @@
-[submodule "conf/resources/programming"]
-	path = conf/resources/programming
+[submodule "server/conf/resources/programming"]
+	path = server/conf/resources/programming
 	url = https://gitlab2.informatik.uni-wuerzburg.de/it4all/prog_exercises.git

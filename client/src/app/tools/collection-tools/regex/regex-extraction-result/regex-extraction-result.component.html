@@ -1,0 +1,8 @@
+<div class="notification">
+  <p>Basis: <code>{{extractionResult.base}}</code></p>
+  <ul>
+    <li *ngFor="let match of extractionResult.extractionMatchingResult.allMatches">
+      Erwartet: <code>{{match.sampleArg?.content}}</code>, Bekommen: <code>{{match.userArg?.content}}</code>
+    </li>
+  </ul>
+</div>

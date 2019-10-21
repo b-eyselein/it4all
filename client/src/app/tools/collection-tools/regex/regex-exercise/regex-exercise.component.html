@@ -1,0 +1,69 @@
+<div *ngIf="exercise != undefined" class="container is-fluid">
+
+  <div class="columns">
+    <div class="column is-one-third">
+      <h1 class="title is-3 has-text-centered">Aufgabenstellung</h1>
+      <div class="notification">{{exercise.text}}</div>
+
+      <div class="field">
+        <label class="label has-text-centered" for="solution">Ihre Lösung</label>
+        <input type="text" class="input" id="solution" [(ngModel)]="solution" placeholder="Ihre Lösung">
+      </div>
+
+      <div class="columns">
+        <div class="column">
+          <button class="button is-link is-fullwidth" (click)="correct()">Lösung testen</button>
+        </div>
+        <div class="column">
+          <button class="button is-primary is-fullwidth" (click)="showSampleSolutions()">Musterlösung anzeigen</button>
+        </div>
+        <div class="column">
+          <a [routerLink]="['/tools', tool.id, 'collections', collId]" class="button is-dark is-fullwidth">
+            Bearbeiten beenden
+          </a>
+        </div>
+      </div>
+
+      <ng-container *ngIf="displaySampleSolutions">
+        <br>
+
+        <h2 class="subtitle is-4 has-text-centered">Musterlösungen</h2>
+
+        <div class="notification" *ngFor="let sampleSolution of exercise.sampleSolutions">
+          <code>{{sampleSolution.sample}}</code>
+        </div>
+      </ng-container>
+
+    </div>
+    <div class="column is-two-thirds" *ngIf="corrected && result">
+
+      <app-solution-saved [saved]="result.solutionSaved"></app-solution-saved>
+
+      <br>
+
+      <app-points-notification [points]="result.points" [maxPoints]="result.maxPoints"></app-points-notification>
+
+      <br>
+
+      <ng-container [ngSwitch]="result.correctionType">
+        <ng-container *ngSwitchCase="'MATCHING'">
+          <ng-container *ngFor="let matchingResult of result.matchingResults">
+            <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
+
+            <br>
+          </ng-container>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'EXTRACTION'">
+          <ng-container *ngFor="let extractionResult of result.extractionResults">
+            <it4all-regex-extraction-result [extractionResult]="extractionResult"></it4all-regex-extraction-result>
+
+            <br>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+      <!-- FIXME: sample solutions! -->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="container">
+  <h1 class="title is-3 has-text-centered">{{toolPart.name}}</h1>
+
+  <div class="columns">
+    <div class="column is-half-desktop is-offset-one-quarter-desktop">
+
+      <div class="columns">
+        <div class="column is-half-desktop">
+          <div class="field">
+            <label for="startSystem" class="label has-text-centered">Startsystem</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select [(ngModel)]="startSystem" (change)="update()" id="startSystem">
+                  <option *ngFor="let ns of numberingSystems" [ngValue]="ns">{{ns.radix}} - {{ns.name}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column is-half-desktop">
+          <div class="field">
+            <label for="targetSystem" class="label has-text-centered">Zielsystem</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select [(ngModel)]="targetSystem" (change)="update()" id="targetSystem">
+                  <option *ngFor="let ns of numberingSystems" [ngValue]="ns">{{ns.radix}} - {{ns.name}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <hr>
+
+      <it4all-nary-number-input [naryNumberInput]="toConvertInput"></it4all-nary-number-input>
+
+      <hr>
+
+      <div class="field">
+        <div class="field has-addons">
+          <div class="control">
+            <div class="button is-static">
+              <label for="solution">Lösung:</label>
+            </div>
+          </div>
+          <div class="control is-expanded">
+            <input type="text" class="input has-text-right" id="solution" [(ngModel)]="solutionString"
+                   [ngClass]="{'is-success': checked && correct, 'is-danger': checked && !correct}"
+                   placeholder="Lösung" autofocus>
+          </div>
+          <div class="control">
+            <div class="button is-static">
+              <sub>{{targetSystem.radix}}</sub>
+            </div>
+          </div>
+        </div>
+        <div class="help is-danger" *ngIf="checked && !correct">Die Lösung ist nicht korrekt.</div>
+        <div class="help is-success" *ngIf="checked && correct">Die Lösung ist korrekt.</div>
+      </div>
+
+      <br>
+
+      <div class="columns">
+        <div class="column is-one-third-desktop">
+          <button class="button is-link is-fullwidth" (click)="checkSolution()">Lösung testen</button>
+        </div>
+        <div class="column is-one-third-desktop">
+          <button class="button is-primary is-fullwidth" (click)="update()">Nächste Aufgabe</button>
+        </div>
+        <div class="column is-one-third-desktop">
+          <button class="button is-dark is-fullwidth" [routerLink]="['/randomTools', tool.id]">Beenden</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
