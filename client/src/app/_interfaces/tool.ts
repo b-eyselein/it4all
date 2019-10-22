@@ -6,14 +6,22 @@ export interface ToolPart {
   disabled?: boolean;
 }
 
-export interface Tool {
-  id: string;
-  name: string;
-  // FIXME: empty if only one path ?!?
-  parts: ToolPart[];
-  status?: ToolStatus;
-  hasPlayground?: boolean;
-  hasLivePreview?: boolean;
+export class Tool {
+  constructor(
+    public id: string,
+    public   name: string,
+    // FIXME: empty if only one part ?!?
+    public   parts?: ToolPart[],
+    public   status?: ToolStatus,
+    public   hasPlayground?: boolean,
+    public   hasLivePreview?: boolean
+  ) {
+  }
+
+  exerciseHasPart(exercise: Exercise, part: ToolPart): boolean {
+    return true;
+  }
+
 }
 
 export interface ExerciseCollection {

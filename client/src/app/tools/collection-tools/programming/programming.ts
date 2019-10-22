@@ -13,7 +13,7 @@ interface ProgrammingUnitTestTestConfig {
 }
 
 export interface ProgrammingUnitTestPart {
-  unitTestType: 'SIMPLIFIED' | 'NORMAL';
+  unitTestType: 'Simplified' | 'Normal';
   unitTestTestsDescription: string;
   unitTestFiles: ExerciseFile[];
   unitTestTestConfigs: ProgrammingUnitTestTestConfig[];
@@ -43,4 +43,8 @@ export interface ProgrammingExercise extends Exercise {
   implementationPart: ProgrammingImplementationPart;
 
   sampleSolutions: ProgrammingSampleSolution[];
+}
+
+export function isProgrammingExercise(exercise: Exercise): exercise is ProgrammingExercise {
+  return 'unitTestPart' in exercise;
 }

@@ -25,6 +25,7 @@ server/.idea/*
 server/conf/resources/.idea/
 
 # Client folder
-client/.node_modules
+client/dist
+client/node_modules
 client/.idea
 

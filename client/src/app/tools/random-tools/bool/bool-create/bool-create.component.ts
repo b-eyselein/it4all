@@ -3,7 +3,6 @@ import {Tool, ToolPart} from '../../../../_interfaces/tool';
 import {BoolCreatePart, BoolTool} from '../../random-tools-list';
 import {BooleanFormula, BooleanNode, BooleanVariable, generateBooleanFormula} from '../bool';
 import {parseBooleanFormula} from '../boolean-formula-parser';
-import {stringArraysEqual} from '../../../../helpers';
 import {BoolComponentHelper} from '../bool-component-helper';
 
 @Component({templateUrl: './bool-create.component.html'})

@@ -118,7 +118,7 @@ class ApiController @Inject()(
 
   def apiCollection(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     toolMain.futureCollById(collId).map {
-      case None             => ???
+      case None             => NotFound(s"There is no such collection with id $collId for tool ${toolMain.toolname}")
       case Some(collection) => Ok(Json.toJson(collection)(toolMain.collectionJsonFormat))
     }
   }

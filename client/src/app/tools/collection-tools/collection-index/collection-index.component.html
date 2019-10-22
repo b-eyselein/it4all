@@ -21,7 +21,8 @@
             <div class="buttons">
               <ng-container *ngFor="let part of tool.parts">
                 <a [routerLink]="['/tools', tool.id, 'collections', collId, 'exercises', exercise.id, 'parts', part.id]"
-                   *ngIf="!part.disabled" class="button is-link">{{part.name}}</a>
+                   *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)"
+                   class="button is-link">{{part.name}}</a>
               </ng-container>
             </div>
           </div>

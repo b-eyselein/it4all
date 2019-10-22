@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Exercise, ExerciseCollection} from '../_interfaces/tool';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class ApiService {
@@ -23,7 +24,8 @@ export class ApiService {
   }
 
   getCollection(toolId: string, collId: number): Observable<ExerciseCollection | undefined> {
-    return this.http.get<ExerciseCollection>(`${this.baseUrl}/${toolId}/collections/${collId}`);
+    return this.http.get<ExerciseCollection>(`${this.baseUrl}/${toolId}/collections/${collId}`)
+      .pipe(catchError(() => of(undefined)));
   }
 
   getExercises<E extends Exercise>(toolId: string, collId: number): Observable<E[]> {
@@ -31,7 +33,8 @@ export class ApiService {
   }
 
   getExercise<E extends Exercise>(toolId: string, collId: number, exId: number): Observable<E> {
-    return this.http.get<E>(`${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}`);
+    return this.http.get<E>(`${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}`)
+      .pipe(catchError(() => of(undefined)));
   }
 
   correctSolution<SolType, ResType>(toolId: string, collId: number, exId: number, part: string, solution: SolType): Observable<ResType> {

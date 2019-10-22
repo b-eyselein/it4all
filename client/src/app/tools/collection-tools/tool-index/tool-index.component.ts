@@ -7,29 +7,21 @@ import {collectionTools} from '../collection-tools-list';
 @Component({templateUrl: './tool-index.component.html'})
 export class ToolIndexComponent implements OnInit {
 
-    tool: Tool;
-    collections: ExerciseCollection[] = [];
+  tool: Tool;
+  collections: ExerciseCollection[] = [];
 
-    constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {
-        const toolId = this.route.snapshot.paramMap.get('toolId');
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {
+    const toolId = this.route.snapshot.paramMap.get('toolId');
+    this.tool = collectionTools.find((t) => t.id === toolId);
 
-        if (toolId === undefined) {
-            this.router.navigate(['/']);
-        }
-
-        this.tool = collectionTools.find((t) => t.id === toolId);
-
-        if (!this.tool) {
-            this.router.navigate(['/']);
-        }
+    if (!this.tool) {
+      this.router.navigate(['/']);
     }
+  }
 
-    ngOnInit() {
-        this.apiService.getCollections(this.tool.id)
-            .subscribe(
-                (collections: ExerciseCollection[]) => this.collections = collections,
-                (error) => console.error('X:  ' + error)
-            );
-    }
+  ngOnInit() {
+    this.apiService.getCollections(this.tool.id)
+      .subscribe((collections: ExerciseCollection[]) => this.collections = collections);
+  }
 
 }

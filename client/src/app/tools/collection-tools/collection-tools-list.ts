@@ -1,50 +1,66 @@
-import {Tool, ToolPart} from '../../_interfaces/tool';
+import {Exercise, Tool, ToolPart} from '../../_interfaces/tool';
+import {isProgrammingExercise} from './programming/programming';
 
-export const ProgrammingTool: Tool = {
-  id: 'programming',
-  name: 'Programmierung',
-  parts: [
-    {id: 'testCreation', name: 'Erstellen der Unittests'},
-    {id: 'implementation', name: 'Implementierung', disabled: true}
-  ],
-  status: 'beta'
-};
+// Programming
 
-export const RegexTool: Tool = {
-  id: 'regex',
-  name: 'Reguläre Ausdrücke',
-  parts: [
-    {id: 'regex', name: 'Regulären Ausdruck erstellen'}
-  ],
-};
+const ProgrammingTestCreationPart: ToolPart = {id: 'testCreation', name: 'Erstellen der Unittests'};
+
+const ProgrammingImplementationPart: ToolPart = {id: 'implementation', name: 'Implementierung'};
+
+export const ProgrammingTool: Tool = new (
+  class ProgrammingToolClass extends Tool {
+    constructor() {
+      super('programming', 'Programmierung', [ProgrammingTestCreationPart, ProgrammingImplementationPart], 'beta');
+    }
+
+    exerciseHasPart(exercise: Exercise, part: ToolPart): boolean {
+      if (isProgrammingExercise(exercise)) {
+        if (part === ProgrammingTestCreationPart) {
+          return exercise.unitTestPart.unitTestType === 'Normal';
+        } else if (part === ProgrammingImplementationPart) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+  }
+)();
+
+// Regex
+
+export const RegexTool: Tool = new Tool('regex', 'Reguläre Ausdrücke', [{id: 'regex', name: 'Regulären Ausdruck erstellen'}]);
+
+// Rose
+
+export const RoseTool: Tool = new Tool('rose', 'ROSE', [], 'alpha');
 
 // SQL
 
 export const SqlCreateQueryPart: ToolPart = {id: 'createQuery', name: 'Abfrage erstellen'};
 
-export const SqlTool: Tool = {id: 'sql', name: 'SQL', parts: [SqlCreateQueryPart]};
+export const SqlTool: Tool = new Tool('sql', 'SQL', [SqlCreateQueryPart]);
+
+// Uml
+
+export const UmlTool: Tool = new Tool('uml', 'UML-Klassendiagramme', [], 'beta');
 
 // Web
 
-export const WebTool: Tool = {
-  id: 'web',
-  name: 'Web',
-  parts: [],
-  hasLivePreview: true
-};
+export const WebTool: Tool = new Tool('web', 'Web', [], 'live', true, true);
 
 // XML
 
-export const XmlTool: Tool = {id: 'xml', name: 'XML', parts: []};
+export const XmlTool: Tool = new Tool('xml', 'XML', []);
 
 // All Tools
 
 export const collectionTools: Tool[] = [
   ProgrammingTool,
   RegexTool,
-  {id: 'rose', name: 'ROSE', status: 'alpha', parts: [], hasPlayground: false},
+  RoseTool,
   SqlTool,
-  {id: 'uml', name: 'UML-Klassendiagramme', status: 'beta', parts: [], hasPlayground: false},
+  UmlTool,
   WebTool,
   XmlTool
 ];

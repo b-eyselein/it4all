@@ -5,7 +5,7 @@ import {Tool, ToolPart} from '../../_interfaces/tool';
 export const BoolFillOutPart: ToolPart = {id: 'fillOut', name: 'Wahrheitstabellen ausfüllen'};
 export const BoolCreatePart: ToolPart = {id: 'create', name: 'Boolesche Formel erstellen'};
 
-export const BoolTool: Tool = {id: 'bool', name: 'Boolesche Algebra', parts: [BoolFillOutPart, BoolCreatePart]};
+export const BoolTool: Tool = new Tool('bool', 'Boolesche Algebra', [BoolFillOutPart, BoolCreatePart]);
 
 // Nary
 
@@ -13,11 +13,7 @@ export const NaryAdditionToolPart = {id: 'addition', name: 'Addition'};
 export const NaryConversionToolPart = {id: 'conversion', name: 'Zahlenumwandlung'};
 export const NaryTwoConversionToolPart = {id: 'twoConversion', name: 'Zahlenumwandlung im Zweiersystem'};
 
-export const NaryTool: Tool = {
-  id: 'nary',
-  name: 'Zahlensysteme',
-  parts: [NaryAdditionToolPart, NaryConversionToolPart, NaryTwoConversionToolPart],
-};
+export const NaryTool: Tool = new Tool('nary', 'Zahlensysteme', [NaryAdditionToolPart, NaryConversionToolPart, NaryTwoConversionToolPart]);
 
 // All tools
 
