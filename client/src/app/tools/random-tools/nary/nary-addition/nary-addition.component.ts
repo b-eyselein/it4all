@@ -1,7 +1,7 @@
 import {Component, HostListener} from '@angular/core';
 import {NaryAdditionToolPart, NaryTool} from '../../random-tools-list';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
-import {BINARY_SYSTEM, NaryHelpers, NaryNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
+import {BINARY_SYSTEM, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
 import {randomInt} from '../../../../helpers';
 
 @Component({
@@ -13,33 +13,25 @@ import {randomInt} from '../../../../helpers';
       }`
   ]
 })
-export class NaryAdditionComponent extends NaryHelpers {
+export class NaryAdditionComponent {
 
   tool: Tool = NaryTool;
   toolPart: ToolPart = NaryAdditionToolPart;
 
   // noinspection JSMismatchedCollectionQueryUpdate
-   numberingSystems: NumberingSystem[] = NUMBERING_SYSTEMS;
+  numberingSystems: NumberingSystem[] = NUMBERING_SYSTEMS;
 
-   system: NumberingSystem = BINARY_SYSTEM;
+  system: NumberingSystem = BINARY_SYSTEM;
 
-   target: number;
-   firstSummandInput: NaryNumberInput;
-   secondSummandInput: NaryNumberInput;
-  // FIXME: eventually use
-  // solutionInput: NaryNumberInput;
+  target = 0;
+  firstSummandInput: NaryReadOnlyNumberInput = new NaryReadOnlyNumberInput(0, this.system, 'firstSummand', 'Summand 1:');
+  secondSummandInput: NaryReadOnlyNumberInput = new NaryReadOnlyNumberInput(0, this.system, 'secondSummand', 'Summand 2:');
 
-   checked = false;
-   correct = false;
-   solutionString = '';
+  checked = false;
+  correct = false;
+  solutionString = '';
 
   constructor() {
-    super();
-
-    this.firstSummandInput = new NaryNumberInput(this.system, 'firstSummand', 'Summand 1:', null, 0, true);
-    this.secondSummandInput = new NaryNumberInput(this.system, 'secondSummand', 'Summand 2:', null, 0, true);
-    // this.solutionInput = new NaryNumberInput(this.system, 'solution', 'Lösung:', 'Lösung');
-
     this.update();
   }
 

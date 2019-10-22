@@ -1,30 +1,29 @@
 import {Component, HostListener} from '@angular/core';
 import {NaryConversionToolPart, NaryTool} from '../../random-tools-list';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
-import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryHelpers, NaryNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
+import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
 import {randomInt} from '../../../../helpers';
 
 @Component({templateUrl: './nary-conversion.component.html'})
-export class NaryConversionComponent extends NaryHelpers {
+export class NaryConversionComponent {
 
-   tool: Tool = NaryTool;
-   toolPart: ToolPart = NaryConversionToolPart;
+  tool: Tool = NaryTool;
+  toolPart: ToolPart = NaryConversionToolPart;
 
   // noinspection JSMismatchedCollectionQueryUpdate
-   numberingSystems: NumberingSystem[] = NUMBERING_SYSTEMS;
+  numberingSystems: NumberingSystem[] = NUMBERING_SYSTEMS;
 
-   startSystem: NumberingSystem = BINARY_SYSTEM;
-   targetSystem: NumberingSystem = HEXADECIMAL_SYSTEM;
+  startSystem: NumberingSystem = BINARY_SYSTEM;
+  targetSystem: NumberingSystem = HEXADECIMAL_SYSTEM;
 
-   toConvertInput: NaryNumberInput = new NaryNumberInput(this.startSystem, 'toConvert', 'Startzahl:', null, 0, true);
+  toConvertInput: NaryReadOnlyNumberInput = new NaryReadOnlyNumberInput(0, this.startSystem, 'toConvert', 'Startzahl:');
 
-   solutionString: string;
+  solutionString: string;
 
-   checked = false;
-   correct = false;
+  checked = false;
+  correct = false;
 
   constructor() {
-    super();
     this.update();
   }
 

@@ -54,19 +54,24 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
     }
 
     // TODO: check contained variables!
-    const variablesAwaited: string[] = this.formula.getVariables().map((v) => v.variable);
+    const variablesAllowed: string[] = this.formula.getVariables().map((v) => v.variable);
     const variablesUsed: string[] = booleanFormula.getVariables().map((v) => v.variable);
 
-    if (!stringArraysEqual(variablesAwaited, variablesUsed)) {
-      alert('Sie haben nicht die richtigen Variablen benutzt!');
+    const illegalVariables = variablesUsed.filter((v) => !variablesAllowed.includes(v));
+
+
+    if (illegalVariables.length > 0) {
+      alert('Sie haben die falschen Variablen ' + illegalVariables + ' benutzt!');
       return;
     }
 
-    this.completelyCorrect = this.formula.getAllAssignments().every((assignment) => {
-      const value: boolean = booleanFormula.evaluate(assignment);
-      assignment.set(this.learnerVariable.variable, value);
-      return assignment.get(this.sampleVariable.variable) === value;
-    });
+    this.completelyCorrect = this.formula.getAllAssignments()
+      .map((assignment) => {
+        const value: boolean = booleanFormula.evaluate(assignment);
+        assignment.set(this.learnerVariable.variable, value);
+        return assignment.get(this.sampleVariable.variable) === value;
+      })
+      .every((a) => a);
   }
 
   @HostListener('document:keypress', ['$event'])

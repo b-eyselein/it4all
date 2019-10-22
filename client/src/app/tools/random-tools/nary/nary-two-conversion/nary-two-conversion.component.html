@@ -1,26 +1,101 @@
 <div class="container">
 
-  <h1 class="title is-3 has-text-centered">Zweierkomplement</h1>
+  <h1 class="title is-3 has-text-centered">{{toolPart.name}}</h1>
+
 
   <div class="columns">
     <div class="column is-half-desktop is-offset-one-quarter-desktop">
 
+      <p class="is-italic has-text-info has-text-centered">Geben Sie alle Binärzahlen mit einer Länge von 8 Bit ein!</p>
+
+      <br>
+
       <div class="field">
         <div class="control has-text-centered">
           <label class="checkbox">
-            <input type="checkbox" [(ngModel)]="withIntermediateSteps">
-            Mit Zwischenschritten
+            <input type="checkbox" [(ngModel)]="withIntermediateSteps"> Mit Zwischenschritten
           </label>
         </div>
       </div>
 
       <hr>
 
-      <it4all-nary-number-input [naryNumberInput]="toConvertInput"></it4all-nary-number-input>
+      <it4all-nary-number-read-only-input [naryNumberInput]="toConvertInput"></it4all-nary-number-read-only-input>
 
       <br>
 
-      <it4all-nary-number-input [naryNumberInput]="binaryAbsolute"></it4all-nary-number-input>
+      <div class="field">
+        <div class="field has-addons">
+          <div class="control">
+            <div class="button is-static">
+              <label for="binaryAbsolute">Binärdarstellung von {{toConvertInput.decimalNumber}}:</label>
+            </div>
+          </div>
+          <div class="control is-expanded">
+            <input type="text" class="input has-text-right" id="binaryAbsolute" [(ngModel)]="binaryAbsoluteString"
+                   [class.is-success]="checked && withIntermediateSteps && binaryAbsoluteCorrect"
+                   [class.is-danger]="checked && withIntermediateSteps && !binaryAbsoluteCorrect"
+                   placeholder="Binärdarstellung von {{toConvertInput.decimalNumber}}" autofocus autocomplete="false">
+          </div>
+          <div class="control">
+            <div class="button is-static">
+              <sub>2</sub>
+            </div>
+          </div>
+        </div>
+        <div class="help is-danger" *ngIf="checked && withIntermediateSteps && !binaryAbsoluteCorrect">
+          Diese Eingabe ist nicht korrekt.
+        </div>
+      </div>
+
+      <br>
+
+      <div class="field">
+        <div class="field has-addons">
+          <div class="control">
+            <div class="button is-static">
+              <label for="invertedAbsolute">Invertierung aller Bits:</label>
+            </div>
+          </div>
+          <div class="control is-expanded">
+            <input type="text" class="input has-text-right" id="invertedAbsolute" [(ngModel)]="invertedAbsoluteString"
+                   [class.is-success]="checked && withIntermediateSteps && invertedAbsoluteCorrect"
+                   [class.is-danger]="checked && withIntermediateSteps && !invertedAbsoluteCorrect"
+                   placeholder="Invertierung aller Bits" autofocus autocomplete="false">
+          </div>
+          <div class="control">
+            <div class="button is-static">
+              <sub>2</sub>
+            </div>
+          </div>
+        </div>
+        <div class="help is-danger" *ngIf="checked && withIntermediateSteps && !invertedAbsoluteCorrect">
+          Diese Eingabe ist nicht korrekt.
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="field">
+        <div class="field has-addons">
+          <div class="control">
+            <div class="button is-static">
+              <label for="solution">Zweierkomplement:</label>
+            </div>
+          </div>
+          <div class="control is-expanded">
+            <input type="text" class="input has-text-right" id="solution" [(ngModel)]="solutionString"
+                   [class.is-success]="checked && solutionCorrect" [class.is-danger]="checked && !solutionCorrect"
+                   placeholder="Zweierkomplement" autofocus autocomplete="false">
+          </div>
+          <div class="control">
+            <div class="button is-static">
+              <sub>2</sub>
+            </div>
+          </div>
+        </div>
+        <div class="help is-danger" *ngIf="checked && !solutionCorrect">Die Lösung ist nicht korrekt.</div>
+      </div>
 
       <br>
 
@@ -32,7 +107,7 @@
           <button class="button is-primary is-fullwidth" (click)="update()">Nächste Aufgabe</button>
         </div>
         <div class="column is-one-third-desktop">
-          <button class="button is-dark is-fullwidth" [routerLink]="['/random-tools', tool.id]">Beenden</button>
+          <button class="button is-dark is-fullwidth" [routerLink]="['/randomTools', tool.id]">Beenden</button>
         </div>
       </div>
 

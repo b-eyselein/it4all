@@ -1,40 +1,79 @@
-import {Component, OnInit} from '@angular/core';
-import {BINARY_SYSTEM, DECIMAL_SYSTEM, NaryHelpers, NaryNumberInput} from '../nary';
+import {Component, HostListener} from '@angular/core';
+import {DECIMAL_SYSTEM, NaryReadOnlyNumberInput} from '../nary';
 import {NaryTool, NaryTwoConversionToolPart} from '../../random-tools-list';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
 import {randomInt} from '../../../../helpers';
 
-@Component({
-  // selector: 'app-two-conversion',
-  templateUrl: './nary-two-conversion.component.html'
-})
-export class NaryTwoConversionComponent extends NaryHelpers implements OnInit {
+@Component({templateUrl: './nary-two-conversion.component.html'})
+export class NaryTwoConversionComponent {
 
-   tool: Tool = NaryTool;
-   toolPart: ToolPart = NaryTwoConversionToolPart;
+  tool: Tool = NaryTool;
+  toolPart: ToolPart = NaryTwoConversionToolPart;
 
-   withIntermediateSteps = true;
-   toConvertInput: NaryNumberInput;
+  withIntermediateSteps = true;
 
-   binaryAbsolute: NaryNumberInput;
+  toConvertInput: NaryReadOnlyNumberInput;
+
+  binaryAbsoluteString = '';
+  invertedAbsoluteString = '';
+  solutionString = '';
+
+  checked = false;
+
+  binaryAbsoluteCorrect = false;
+  invertedAbsoluteCorrect = false;
+  solutionCorrect = false;
+
+  completelyCorrect = false;
 
   constructor() {
-    super();
-    this.toConvertInput = new NaryNumberInput(DECIMAL_SYSTEM, 'startNumber', 'Startzahl:', null, 0, true);
-    this.binaryAbsolute = new NaryNumberInput(BINARY_SYSTEM, 'binaryAbsolute', 'Binärdarstellung:', 'Binärdarstellung');
+    this.toConvertInput = new NaryReadOnlyNumberInput(0, DECIMAL_SYSTEM, 'startNumber', 'Startzahl:');
+
+    this.update();
   }
 
-  ngOnInit() {
-    this.update();
+  private static swapOnesAndZeros(str: string): string {
+    return str
+      .replace(/0/g, 'a')
+      .replace(/1/g, '0')
+      .replace(/a/g, '1');
   }
 
   update(): void {
     this.toConvertInput.decimalNumber = randomInt(0, 256);
-    this.binaryAbsolute.decimalNumber = undefined;
+
+    this.binaryAbsoluteString = '';
+    this.invertedAbsoluteString = '';
+    this.solutionString = '';
   }
 
   checkSolution(): void {
+    this.checked = true;
 
+    const absoluteToConvert = Math.abs(this.toConvertInput.decimalNumber);
+
+    const binAbsStr: string = this.binaryAbsoluteString.replace(/\s+/g, '');
+    this.binaryAbsoluteCorrect = binAbsStr.length === 8 && parseInt(binAbsStr, 2) === absoluteToConvert;
+
+    const invAbsStr: string = this.invertedAbsoluteString.replace(/\s+/g, '');
+    const awaitedInvertedAbs: string = NaryTwoConversionComponent.swapOnesAndZeros(absoluteToConvert.toString(2).padStart(8, '0'));
+    this.invertedAbsoluteCorrect = invAbsStr.length === 8 && awaitedInvertedAbs === invAbsStr;
+
+    const solStr: string = this.solutionString.replace(/\s+/g, '');
+    const awaitedSolution: string = (parseInt(awaitedInvertedAbs, 2) + 1).toString(2).padStart(8, '0');
+
+    this.solutionCorrect = solStr.length === 8 && awaitedSolution === solStr;
+  }
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      if (this.completelyCorrect) {
+        this.update();
+      } else {
+        this.checkSolution();
+      }
+    }
   }
 
 }

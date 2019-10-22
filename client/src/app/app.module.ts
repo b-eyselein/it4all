@@ -15,7 +15,7 @@ import {ErrorInterceptor} from './_helpers/error.interceptor';
 import {RandomOverviewComponent} from './tools/random-tools/random-overview/random-overview.component';
 import {NaryAdditionComponent} from './tools/random-tools/nary/nary-addition/nary-addition.component';
 import {NaryConversionComponent} from './tools/random-tools/nary/nary-conversion/nary-conversion.component';
-import {NaryNumberInputComponent} from './tools/random-tools/nary/nary-number-input/nary-number-input.component';
+import {NaryNumberReadOnlyInputComponent} from './tools/random-tools/nary/nary-number-read-only-input/nary-number-read-only-input.component';
 import {NaryTwoConversionComponent} from './tools/random-tools/nary/nary-two-conversion/nary-two-conversion.component';
 import {BoolCreateComponent} from './tools/random-tools/bool/bool-create/bool-create.component';
 import {SolutionSavedComponent} from './tools/collection-tools/tool-helpers/solution-saved/solution-saved.component';
@@ -44,7 +44,7 @@ import { BoolCreateInstructionsComponent } from './tools/random-tools/bool/bool-
     RandomOverviewComponent,
     NaryAdditionComponent,
     NaryConversionComponent,
-    NaryNumberInputComponent,
+    NaryNumberReadOnlyInputComponent,
     NaryTwoConversionComponent,
     BoolCreateComponent,
     SolutionSavedComponent,

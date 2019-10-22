@@ -17,32 +17,17 @@ export const NUMBERING_SYSTEMS: NumberingSystem[] = [
   HEXADECIMAL_SYSTEM
 ];
 
-export class NaryNumberInput {
+export class NaryReadOnlyNumberInput {
+
+  private stringValue?: string;
+
   constructor(
+    public decimalNumber: number,
     public numberingSystem: NumberingSystem,
     public fieldId: string,
     public labelContent: string,
     public fieldPlaceholder: string | null = null,
-    public decimalNumber?: number,
-    // FIXME: use isReadonly from NaryNumberInput!
-    public isReadonly: boolean = false
   ) {
+    this.stringValue = this.decimalNumber ? this.decimalNumber.toString(10) : undefined;
   }
-}
-
-export abstract class NaryHelpers {
-
-  getSummandNary(summand: number, radix: number): string {
-    let naryString: string = summand.toString(radix);
-
-    if (radix === 2) {
-      naryString = naryString
-        .padStart(8, '0')
-        .match(/.{1,4}/g) // split in block of size 4
-        .join(' ');
-    }
-
-    return naryString;
-  }
-
 }
