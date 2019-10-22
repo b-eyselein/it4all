@@ -9,12 +9,12 @@ export interface ToolPart {
 export class Tool {
   constructor(
     public id: string,
-    public   name: string,
+    public name: string,
     // FIXME: empty if only one part ?!?
-    public   parts?: ToolPart[],
-    public   status?: ToolStatus,
-    public   hasPlayground?: boolean,
-    public   hasLivePreview?: boolean
+    public parts?: ToolPart[],
+    public status?: ToolStatus,
+    public hasPlayground?: boolean,
+    public hasLivePreview?: boolean
   ) {
   }
 

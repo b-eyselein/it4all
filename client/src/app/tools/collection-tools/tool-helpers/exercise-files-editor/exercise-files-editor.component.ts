@@ -3,7 +3,7 @@ import {ExerciseFile} from '../../../basics';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 
 @Component({
-  selector: 'app-exercise-files-editor',
+  selector: 'it4all-exercise-files-editor',
   template: `
       <div class="tabs is-centered">
           <ul>
@@ -21,13 +21,28 @@ export class ExerciseFilesEditorComponent implements OnChanges {
   @Input() exerciseFiles: ExerciseFile[];
   @Input() mode: string;
 
-  // noinspection JSUnusedGlobalSymbols
-   editorOptions = getDefaultEditorOptions(this.mode);
+  currentFileName: string | undefined = undefined;
 
-   content = '';
+  // noinspection JSUnusedGlobalSymbols
+  editorOptions = getDefaultEditorOptions(this.mode);
+
+  private theContent = '';
+
+  get content(): string {
+    return this.theContent;
+  }
+
+  set content(val: string) {
+    this.theContent = val;
+    if (this.currentFileName) {
+      this.saveFileContent();
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.exerciseFiles && this.exerciseFiles.length > 0) {
+    if (this.currentFileName) {
+      this.saveFileContent();
+    } else if (this.exerciseFiles && this.exerciseFiles.length > 0) {
       const editableExerciseFiles = this.exerciseFiles.filter((ef) => ef.editable);
 
       if (editableExerciseFiles.length > 0) {
@@ -38,11 +53,13 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     }
   }
 
+  private saveFileContent(): void {
+    this.exerciseFiles.find((f) => f.name === this.currentFileName).content = this.content;
+  }
+
   changeFile($event: MouseEvent): void {
     if ($event.target) {
-      const clickedElement: HTMLElement = ($event.target as HTMLElement);
-
-      const fileName: string = clickedElement.textContent;
+      const fileName: string = ($event.target as HTMLElement).textContent;
 
       // disable other files...
       this.exerciseFiles.forEach((ef) => ef.active = false);
@@ -55,10 +72,11 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     }
   }
 
-   updateEditor(exerciseFile: ExerciseFile): void {
+  updateEditor(exerciseFile: ExerciseFile): void {
     exerciseFile.active = true;
 
     this.content = exerciseFile.content;
+    this.currentFileName = exerciseFile.name;
 
     this.editorOptions.mode = exerciseFile.fileType;
     this.editorOptions.readOnly = !exerciseFile.editable;

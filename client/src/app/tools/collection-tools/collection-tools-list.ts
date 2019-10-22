@@ -5,19 +5,20 @@ import {isProgrammingExercise} from './programming/programming';
 
 const ProgrammingTestCreationPart: ToolPart = {id: 'testCreation', name: 'Erstellen der Unittests'};
 
-const ProgrammingImplementationPart: ToolPart = {id: 'implementation', name: 'Implementierung'};
+export const ProgrammingImplementationToolPart: ToolPart = {id: 'implementation', name: 'Implementierung'};
 
 export const ProgrammingTool: Tool = new (
   class ProgrammingToolClass extends Tool {
     constructor() {
-      super('programming', 'Programmierung', [ProgrammingTestCreationPart, ProgrammingImplementationPart], 'beta');
+      super('programming', 'Programmierung', [ProgrammingTestCreationPart, ProgrammingImplementationToolPart], 'beta');
     }
 
     exerciseHasPart(exercise: Exercise, part: ToolPart): boolean {
       if (isProgrammingExercise(exercise)) {
         if (part === ProgrammingTestCreationPart) {
+          // FIXME: simplified test execution is disabled...
           return exercise.unitTestPart.unitTestType === 'Normal';
-        } else if (part === ProgrammingImplementationPart) {
+        } else if (part === ProgrammingImplementationToolPart) {
           return true;
         }
       }

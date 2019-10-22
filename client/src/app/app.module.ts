@@ -30,6 +30,7 @@ import {TabComponent} from './_component_helpers/tab/tab.component';
 import {TabsComponent} from './_component_helpers/tabs/tabs.component';
 import {SqlExerciseComponent} from './tools/collection-tools/sql/sql-exercise/sql-exercise.component';
 import { BoolCreateInstructionsComponent } from './tools/random-tools/bool/bool-create/bool-create-instructions/bool-create-instructions.component';
+import { ExerciseFileCardComponent } from './tools/collection-tools/tool-helpers/exercise-file-card/exercise-file-card.component';
 
 
 @NgModule({
@@ -58,6 +59,7 @@ import { BoolCreateInstructionsComponent } from './tools/random-tools/bool/bool-
     TabsComponent,
     SqlExerciseComponent,
     BoolCreateInstructionsComponent,
+    ExerciseFileCardComponent,
   ],
   imports: [
     BrowserModule,

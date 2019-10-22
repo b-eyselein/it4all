@@ -2,8 +2,7 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <app-exercise-files-editor [exerciseFiles]="exercise?.unitTestPart.unitTestFiles"
-                                 [mode]="'python'"></app-exercise-files-editor>
+      <it4all-exercise-files-editor [exerciseFiles]="exerciseFiles" [mode]="'python'"></it4all-exercise-files-editor>
     </div>
 
     <div class="column is-half-desktop">
@@ -12,24 +11,78 @@
         <it4all-tab [title]="'Aufgabenstellung'">
           <div class="notification" [innerHTML]="exercise?.text"></div>
 
+          <hr>
+
           <div class="columns">
             <div class="column">
-              <button class="button is-link is-fullwidth" (click)="correct()">Korrektur</button>
+              <button class="button is-link is-fullwidth" [class.is-loading]="correctionRunning" (click)="correct()">
+                Korrektur
+              </button>
             </div>
             <div class="column">
               <button class="button is-primary is-fullwidth" (click)="showSampleSolution()">Musterlösung anzeigen
               </button>
             </div>
             <div class="column">
-              <a [routerLink]="['/tools', 'programming', 'collections', collection.id]"
+              <a *ngIf="collection" [routerLink]="['/tools', tool.id, 'collections', collection.id]"
                  class="button is-dark is-fullwidth">Bearbeiten beenden</a>
+              <a *ngIf="!collection" [routerLink]="['/tools', tool.id]" class="button is-dark is-fullwidth">
+                Bearbeiten beenden
+              </a>
             </div>
           </div>
         </it4all-tab>
 
-        <it4all-tab [title]="'Korrektur'"></it4all-tab>
+        <it4all-tab [title]="correctionTabTitle">
+          <!--          <h2 class="subtitle is-3 has-text-centered">Korrekturresultat</h2>-->
+
+          <div class="notification danger" *ngIf="correctionRunning">
+            Die Korrektur läuft gerade...
+          </div>
+
+          <ng-container *ngIf="result">
+
+            <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
+
+            <br>
+
+            <!--            <it4all-points-notification [result]="result"></it4all-points-notification>-->
+
+            <ng-container *ngIf="result.simplifiedResults">
+              <div *ngFor="let simplifiedResult of result.simplifiedResults">
+                {{simplifiedResult}}
+              </div>
+              <!--            TODO: {{result}}-->
+            </ng-container>
+            <ng-container *ngIf="result.unitTestResults">
+              <div *ngFor="let unitTestResult of result.unitTestResults">
+                {{unitTestResult}}
+              </div>
+            </ng-container>
+            <ng-container *ngIf="result.normalResult">
+              <pre>{{result.normalResult.logs}}</pre>
+            </ng-container>
+
+          </ng-container>
+
+        </it4all-tab>
+
         <it4all-tab [title]="'Live-Vorschau'" *ngIf="tool.hasLivePreview"></it4all-tab>
-        <it4all-tab [title]="'Musterlösung(en)'"></it4all-tab>
+
+        <it4all-tab [title]="sampleSolutionsTabTitle">
+          <div class="sampleSolutionsDiv" *ngIf="displaySampleSolutions">
+            <!-- TODO: tabs for multiple sample solutions? -->
+
+            <div *ngFor="let sampleSolutionFiles of sampleSolutionFilesList">
+              <ng-container *ngFor="let sampleSolFile of sampleSolutionFiles">
+                <it4all-exercise-file-card [exerciseFile]="sampleSolFile"></it4all-exercise-file-card>
+
+                <br>
+              </ng-container>
+            </div>
+
+          </div>
+        </it4all-tab>
       </it4all-tabs>
 
     </div>

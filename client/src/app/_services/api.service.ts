@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Exercise, ExerciseCollection} from '../_interfaces/tool';
 import {Observable, of} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+import {catchError} from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class ApiService {
@@ -37,10 +37,11 @@ export class ApiService {
       .pipe(catchError(() => of(undefined)));
   }
 
-  correctSolution<SolType, ResType>(toolId: string, collId: number, exId: number, part: string, solution: SolType): Observable<ResType> {
+  correctSolution<S, R>(toolId: string, collId: number, exId: number, part: string, solution: S): Observable<R | undefined> {
     const url = `${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}/${part}`;
 
-    return this.http.put<ResType>(url, JSON.stringify(solution), ApiService.putHttpOptions);
+    return this.http.put<R>(url, JSON.stringify(solution), ApiService.putHttpOptions)
+      .pipe(catchError(() => of(undefined)));
   }
 
 }

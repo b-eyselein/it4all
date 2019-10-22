@@ -50,3 +50,8 @@ export interface ExerciseFile {
   editable: boolean;
   active?: boolean;
 }
+
+export interface IdeWorkspace {
+  filesNum: number;
+  files: ExerciseFile[];
+}

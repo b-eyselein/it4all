@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 @Component({
-  selector: 'app-solution-saved',
+  selector: 'it4all-solution-saved',
   template: `
       <div class="notification has-text-success" *ngIf="saved; else notSavedBlock">Ihre Lösung wurde
           gespeichert.
@@ -10,14 +10,11 @@ import {Component, Input, OnInit} from '@angular/core';
           <div class="notification has-text-danger">Ihre Lösung konnte nicht gespeichert werden!</div>
       </ng-template>`,
 })
-export class SolutionSavedComponent implements OnInit {
+export class SolutionSavedComponent {
 
   @Input() saved: boolean;
 
   constructor() {
-  }
-
-  ngOnInit() {
   }
 
 }
