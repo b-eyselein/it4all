@@ -8,7 +8,7 @@ build-client:
   stage: build-client
   script:
     - cd client
-    - ng build:prod
+    - npm run build:prod
 
 test:
   stage: test
