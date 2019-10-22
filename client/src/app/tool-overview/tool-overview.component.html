@@ -1,0 +1,19 @@
+<div class="container">
+  <h1 class="title is-3 has-text-centered">it4all</h1>
+
+  <h2 class="subtitle is-3">Tools mit zufälligen Aufgaben</h2>
+  <div class="columns is-multiline">
+    <div *ngFor="let randomTool of randomTools" class="column is-one-third">
+      <a [routerLink]="['/randomTools', randomTool.id]" class="button is-link is-fullwidth">{{randomTool.name}}</a>
+    </div>
+  </div>
+
+  <h2 class="subtitle is-3">Tools mit Aufgaben in Sammlungen</h2>
+  <div class="columns is-multiline">
+    <div *ngFor="let colTool of collectionTools" class="column is-one-third">
+      <a [routerLink]="['/tools', colTool.id]" class="button is-link is-fullwidth">
+        {{colTool.name}}<sup *ngIf="colTool.status" [innerHTML]="'&nbsp;&' + colTool.status + ';'"></sup>
+      </a>
+    </div>
+  </div>
+</div>
