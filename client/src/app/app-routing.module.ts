@@ -16,6 +16,10 @@ import {AuthGuard} from './_helpers/auth-guard';
 import {ProgrammingExerciseComponent} from './tools/collection-tools/programming/programming-exercise/programming-exercise.component';
 import {SqlExerciseComponent} from './tools/collection-tools/sql/sql-exercise/sql-exercise.component';
 import {LtiComponent} from './lti/lti.component';
+import {AdminIndexComponent} from './admin/admin-index/admin-index.component';
+import {AdminAuthGuard} from './_helpers/admin-auth-guard';
+import {CollToolAdminComponent} from './admin/coll-tool-admin/coll-tool-admin.component';
+import {AdminReadCollectionsComponent} from './admin/admin-read-collections/admin-read-collections.component';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
@@ -23,6 +27,10 @@ const routes: Routes = [
   {path: 'loginForm', component: LoginFormComponent},
 
   {path: 'lti/:uuid', component: LtiComponent},
+
+  {path: 'admin', component: AdminIndexComponent},
+  {path: 'admin/:toolId', component: CollToolAdminComponent, canActivate: [AdminAuthGuard]},
+  {path: 'admin/:toolId/readCollections', component: AdminReadCollectionsComponent, canActivate: [AdminAuthGuard]},
 
   // Random  tools
   {path: 'randomTools/:toolId', component: RandomOverviewComponent, canActivate: [AuthGuard]},

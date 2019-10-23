@@ -1,14 +1,13 @@
 package controllers
 
-import java.time.Clock
 import java.util.UUID
 
 import com.github.t3hnar.bcrypt._
 import javax.inject.{Inject, Singleton}
+import model._
 import model.core.Repository
 import model.lti.BasicLtiLaunchRequest
 import model.toolMains.{CollectionToolMain, ToolList}
-import model.{ApiModelHelpers, LtiUser, RequestBodyHelpers, User}
 import pdi.jwt.JwtSession
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
@@ -18,14 +17,13 @@ import slick.jdbc.JdbcProfile
 
 import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.matching.Regex
 import scala.util.{Failure, Success}
 
 @Singleton
 class ApiController @Inject()(
-  cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository, configuration: Configuration
+  cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, val repository: Repository, val configuration: Configuration
 )(implicit ec: ExecutionContext)
-  extends AExerciseController(cc, dbcp, tl)
+  extends AExerciseController(cc, dbcp, tl) with ApiControllerBasics
     with HasDatabaseConfigProvider[JdbcProfile]
     with play.api.i18n.I18nSupport {
 
@@ -33,23 +31,11 @@ class ApiController @Inject()(
 
   override protected type ToolMainType = CollectionToolMain
 
-  override protected def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
-
   override protected val adminRightsRequired: Boolean = false
 
-
-  private val clock: Clock = Clock.systemDefaultZone()
-
-  private val apiJwtHashes: MutableMap[String, (JwtSession, User)] = MutableMap.empty
+  // Json Web Token session
 
   private val jwtHashesToClaim: MutableMap[UUID, (JwtSession, User)] = MutableMap.empty
-
-  private val bearerHeaderRegex: Regex = "Bearer (.*)".r
-
-
-  private def createJwtSession(username: String, isAdmin: Boolean): JwtSession = {
-    JwtSession()(configuration, clock) ++ (("user", username), ("isAdmin", isAdmin))
-  }
 
   private def getOrCreateUser(username: String): Future[User] = repository.userByName(username).flatMap {
     case Some(u) => Future(u)
@@ -59,8 +45,9 @@ class ApiController @Inject()(
       userSaved.map(_ => newUser)
   }
 
-  private def writeJsonWebToken(username: String, serializedSession: String): JsValue =
-    Json.obj("id" -> username, "token" -> serializedSession)
+  private def writeJsonWebToken(user: User, serializedSession: String): JsValue =
+    JsonProtocol.userFormat.writes(user).as[JsObject].+("token" -> JsString(serializedSession))
+
 
   def ltiHoneypot: Action[AnyContent] = Action.async { request =>
 
@@ -77,7 +64,7 @@ class ApiController @Inject()(
 
           val uuid = UUID.randomUUID()
 
-          jwtHashesToClaim.put(uuid, (createJwtSession(user.username, user.isAdmin), user))
+          jwtHashesToClaim.put(uuid, (createJwtSession(user), user))
 
           val redirectUrl = s"/lti/${uuid.toString}" // routes.FrontendController.index().url
 
@@ -88,17 +75,9 @@ class ApiController @Inject()(
   }
 
   def claimJsonWebToken(uuidStr: String): Action[AnyContent] = Action { implicit request =>
-    val uuid = UUID.fromString(uuidStr)
-
-    jwtHashesToClaim.remove(uuid) match {
+    jwtHashesToClaim.remove(UUID.fromString(uuidStr)) match {
       case None                     => NotFound("")
-      case Some((jwtSession, user)) =>
-
-        val serializedSession = jwtSession.serialize
-
-        apiJwtHashes.put(serializedSession, (jwtSession, user))
-
-        Ok(writeJsonWebToken(user.username, serializedSession))
+      case Some((jwtSession, user)) => Ok(writeJsonWebToken(user, jwtSession.serialize))
     }
   }
 
@@ -122,44 +101,15 @@ class ApiController @Inject()(
                   case None         => BadRequest("No password found!")
                   case Some(pwHash) =>
                     if (credentials.password.isBcrypted(pwHash.pwHash)) {
-                      val session = createJwtSession(credentials.username, user.isAdmin)
+                      val session = createJwtSession(user)
 
-                      val serializedSession = session.serialize
-
-                      apiJwtHashes.put(serializedSession, (session, user))
-
-                      Ok(writeJsonWebToken(credentials.username, serializedSession))
+                      Ok(writeJsonWebToken(user, session.serialize))
                     } else {
                       BadRequest("Password invalid!")
                     }
                 }
             }
         }
-    }
-  }
-
-  private def apiWithToolMain(toolType: String)(f: (Request[AnyContent], User, CollectionToolMain) => Future[Result]): Action[AnyContent] = Action.async { implicit request =>
-    request.headers.get("Authorization") match {
-      case None =>
-        // No authorization header present
-        Future.successful(Unauthorized("You are not authorized to access this resource!"))
-
-      case Some(bearerHeaderRegex(serializedJwtToken)) =>
-
-        apiJwtHashes.get(serializedJwtToken) match {
-          case None            => Future.successful(Unauthorized("You are not authorized to access this resource!"))
-          case Some((_, user)) =>
-
-            // FIXME: verify token?
-            getToolMain(toolType) match {
-              case None           => Future.successful(onNoSuchTool(toolType))
-              case Some(toolMain) => f(request, user, toolMain)
-            }
-        }
-
-      case Some(_) =>
-        // Authorization header had wrong format...
-        Future.successful(Unauthorized("You are not authorized to access this resource!"))
     }
   }
 

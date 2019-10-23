@@ -138,8 +138,8 @@ object MyYamlProtocol {
       case YamlArray(arrayValues) => JsArray(arrayValues.map(mapToJson))
       case YamlSet(content)       => JsArray(content.toSeq.map(mapToJson))
 
-      case YamlObject(yamlFields) => JsObject(yamlFields.map {
-        case (key, value) => key.forgivingStr -> mapToJson(value)
+      case YamlObject(yamlFields) => JsObject.apply(yamlFields.map {
+        case (key, value) => PimpedYamlValue(key).forgivingStr -> mapToJson(value)
       })
 
       case YamlDate(date) => JsString(date.toString)

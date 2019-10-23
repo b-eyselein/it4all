@@ -179,37 +179,24 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Helper methods for admin
 
-  def readCollectionsFromYaml: Seq[Try[ExerciseCollection]] = {
-    val fileToRead: File = exerciseResourcesFolder / "collections.yaml"
-
-    Try(fileToRead.contentAsString.parseYaml) match {
-      case Failure(error)     => Seq(Failure(error))
-      case Success(yamlValue) => yamlValue match {
-        case YamlArray(yamlObjects) => yamlObjects.map(collectionYamlFormat.read)
-        case _                      => ???
-      }
+  private def readYamlFile[T](fileToRead: File, format: MyYamlFormat[T]): Seq[Try[T]] = Try(fileToRead.contentAsString.parseYaml) match {
+    case Failure(error)     => Seq(Failure(error))
+    case Success(yamlValue) => yamlValue match {
+      case YamlArray(yamlObjects) => yamlObjects.map(format.read)
+      case _                      => ???
     }
   }
 
-  def readExercisesFromYaml(collection: ExerciseCollection): Seq[Try[ExType]] = {
+  def readCollectionsFromYaml: Seq[Try[ExerciseCollection]] =
+    readYamlFile(exerciseResourcesFolder / "collections.yaml", collectionYamlFormat)
 
-    val fileToRead: File = exerciseResourcesFolder / s"${collection.id}-${collection.shortName}.yaml"
+  def readExercisesFromYaml(collection: ExerciseCollection): Seq[Try[ExType]] =
+    readYamlFile(exerciseResourcesFolder / s"${collection.id}-${collection.shortName}.yaml", exerciseYamlFormat)
 
-    Try(fileToRead.contentAsString.parseYaml) match {
-      case Failure(error)     => Seq(Failure(error))
-      case Success(yamlValue) => yamlValue match {
-        case YamlArray(yamlObjects) => yamlObjects.map(exerciseYamlFormat.read)
-        case _                      => ???
-      }
-    }
-  }
 
   //  futureCompleteColls .map {
   //    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes .map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   //  }
-
-  final def instantiateCollection(id: Int, author: String, state: ExerciseState): ExerciseCollection =
-    ExerciseCollection(id, title = "", author, text = "", state, shortName = "")
 
   def instantiateExercise(id: Int, author: String, state: ExerciseState): ExType
 

@@ -12,7 +12,8 @@
       <div class="navbar-item">
         <ng-container *ngIf="currentUser; else noUserBlock">
           <div class="buttons">
-            <a (click)="logout()" class="button is-light">Logout {{currentUser.id}}</a>
+            <button (click)="logout()" class="button is-light">Logout {{currentUser.username}}</button>
+            <a [routerLink]="['/admin']" class="button is-primary" *ngIf="currentUser.stdRole !== 'RoleUser'">Administratorenbereich</a>
           </div>
         </ng-container>
         <ng-template #noUserBlock>

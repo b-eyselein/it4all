@@ -104,6 +104,10 @@ GET           /api/tools/:toolType/collections/:collId/exercises/:exId          
 + nocsrf
 PUT           /api/tools/:toolType/collections/:collId/exercises/:exId/:partStr        controllers.ApiController.apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String)
 
+# Admin API
+
+GET           /api/admin/tools/:toolId/readCollections                                 controllers.AdminApiController.readCollections(toolId: String)
+
 # Other routes
 GET           /uml/classDiagram/:id/:part/cd.js                                        controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)
 

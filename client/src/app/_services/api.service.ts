@@ -36,6 +36,8 @@ export class ApiService {
       .pipe(catchError(() => of(undefined)));
   }
 
+  // Correction
+
   correctSolution<S, R>(toolId: string, collId: number, exId: number, part: string, solution: S): Observable<R | undefined> {
     const url = `${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}/${part}`;
 

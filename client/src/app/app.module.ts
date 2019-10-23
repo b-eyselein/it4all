@@ -33,6 +33,9 @@ import {BoolCreateInstructionsComponent} from './tools/random-tools/bool/bool-cr
 import {ExerciseFileCardComponent} from './tools/collection-tools/tool-helpers/exercise-file-card/exercise-file-card.component';
 import {RandomSolveButtonsComponent} from './tools/random-tools/_components/random-solve-buttons/random-solve-buttons.component';
 import {LtiComponent} from './lti/lti.component';
+import { AdminIndexComponent } from './admin/admin-index/admin-index.component';
+import { CollToolAdminComponent } from './admin/coll-tool-admin/coll-tool-admin.component';
+import { AdminReadCollectionsComponent } from './admin/admin-read-collections/admin-read-collections.component';
 
 
 @NgModule({
@@ -64,6 +67,9 @@ import {LtiComponent} from './lti/lti.component';
     ExerciseFileCardComponent,
     RandomSolveButtonsComponent,
     LtiComponent,
+    AdminIndexComponent,
+    CollToolAdminComponent,
+    AdminReadCollectionsComponent,
   ],
   imports: [
     BrowserModule,

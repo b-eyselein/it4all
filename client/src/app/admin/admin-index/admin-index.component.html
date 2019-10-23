@@ -1,0 +1,14 @@
+<div class="container">
+  <h1 class="title is-3 has-text-centered">Administration it4all</h1>
+
+  <br>
+
+  <h2 class="subtitle is-3">Administration Tools mit Sammlungen</h2>
+
+  <div class="columns is-multiline">
+    <div class="column is-one-third-desktop" *ngFor="let collTool of collTools">
+      <a class="button is-link is-fullwidth" [routerLink]="['/admin',collTool.id ]">{{collTool.name}}</a>
+    </div>
+  </div>
+
+</div>

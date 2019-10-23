@@ -32,4 +32,5 @@ final case class LtiUser(username: String, stdRole: Role = Role.RoleUser) extend
 
 final case class RegisteredUser(username: String, stdRole: Role = Role.RoleUser) extends User
 
+
 final case class PwHash(username: String, pwHash: String)
