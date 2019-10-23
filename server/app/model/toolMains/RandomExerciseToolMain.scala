@@ -1,6 +1,7 @@
 package model.toolMains
 
-import model.{ExPart, User}
+import model.User
+import model.core.result.EvaluationResult
 import play.api.mvc.Call
 import play.twirl.api.Html
 
@@ -8,9 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: ExecutionContext) extends AToolMain(tn, up) {
 
-  // Abstract types
-
-  type PartType <: ExPart
+  override type ResultType = EvaluationResult
 
   // Views
 

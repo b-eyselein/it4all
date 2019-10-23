@@ -19,17 +19,17 @@ describe('BooleanVariable', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
     // No assignment, expect false
     expect(booleanVar.evaluate(assignments)).toBeFalsy();
 
     // Assignment to false
-    assignments.set(booleanVar, false);
+    assignments.set(booleanVar.variable, false);
     expect(booleanVar.evaluate(assignments)).toBeFalsy();
 
     // Assignment to true
-    assignments.set(booleanVar, true);
+    assignments.set(booleanVar.variable, true);
     expect(booleanVar.evaluate(assignments)).toBeTruthy();
   });
 
@@ -59,12 +59,12 @@ describe('BooleanNot', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
-    assignments.set(child, false);
+    assignments.set(child.variable, false);
     expect(booleanNot.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(child, true);
+    assignments.set(child.variable, true);
     expect(booleanNot.evaluate(assignments)).toBeFalsy();
   });
 
@@ -84,22 +84,22 @@ describe('BooleanAnd', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
-    assignments.set(left, false);
-    assignments.set(right, false);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, false);
     expect(boolAnd.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, false);
-    assignments.set(right, true);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, true);
     expect(boolAnd.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, true);
-    assignments.set(right, false);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, false);
     expect(boolAnd.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, true);
-    assignments.set(right, true);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, true);
     expect(boolAnd.evaluate(assignments)).toBeTruthy();
   });
 
@@ -119,22 +119,22 @@ describe('BooleanOr', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
-    assignments.set(left, false);
-    assignments.set(right, false);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, false);
     expect(booleanOr.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, false);
-    assignments.set(right, true);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, true);
     expect(booleanOr.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, true);
-    assignments.set(right, false);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, false);
     expect(booleanOr.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, true);
-    assignments.set(right, true);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, true);
     expect(booleanOr.evaluate(assignments)).toBeTruthy();
   });
 
@@ -154,22 +154,22 @@ describe('BooleanNAnd', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
-    assignments.set(left, false);
-    assignments.set(right, false);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, false);
     expect(booleanNAnd.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, false);
-    assignments.set(right, true);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, true);
     expect(booleanNAnd.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, true);
-    assignments.set(right, false);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, false);
     expect(booleanNAnd.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, true);
-    assignments.set(right, true);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, true);
     expect(booleanNAnd.evaluate(assignments)).toBeFalsy();
   });
 
@@ -189,22 +189,22 @@ describe('BooleanNOr', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
-    assignments.set(left, false);
-    assignments.set(right, false);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, false);
     expect(booleanNOr.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, false);
-    assignments.set(right, true);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, true);
     expect(booleanNOr.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, true);
-    assignments.set(right, false);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, false);
     expect(booleanNOr.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, true);
-    assignments.set(right, true);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, true);
     expect(booleanNOr.evaluate(assignments)).toBeFalsy();
   });
 
@@ -224,22 +224,22 @@ describe('BooleanXOr', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
-    assignments.set(left, false);
-    assignments.set(right, false);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, false);
     expect(booleanXOr.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, false);
-    assignments.set(right, true);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, true);
     expect(booleanXOr.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, true);
-    assignments.set(right, false);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, false);
     expect(booleanXOr.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, true);
-    assignments.set(right, true);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, true);
     expect(booleanXOr.evaluate(assignments)).toBeFalsy();
   });
 
@@ -259,22 +259,22 @@ describe('BooleanEquivalency', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
-    assignments.set(left, false);
-    assignments.set(right, false);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, false);
     expect(booleanEquivalency.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, false);
-    assignments.set(right, true);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, true);
     expect(booleanEquivalency.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, true);
-    assignments.set(right, false);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, false);
     expect(booleanEquivalency.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, true);
-    assignments.set(right, true);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, true);
     expect(booleanEquivalency.evaluate(assignments)).toBeTruthy();
   });
 
@@ -295,22 +295,22 @@ describe('BooleanImplication', () => {
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<BooleanVariable, boolean> = new Map<BooleanVariable, boolean>();
+    const assignments: Map<string, boolean> = new Map<string, boolean>();
 
-    assignments.set(left, false);
-    assignments.set(right, false);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, false);
     expect(booleanImplication.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, false);
-    assignments.set(right, true);
+    assignments.set(left.variable, false);
+    assignments.set(right.variable, true);
     expect(booleanImplication.evaluate(assignments)).toBeTruthy();
 
-    assignments.set(left, true);
-    assignments.set(right, false);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, false);
     expect(booleanImplication.evaluate(assignments)).toBeFalsy();
 
-    assignments.set(left, true);
-    assignments.set(right, true);
+    assignments.set(left.variable, true);
+    assignments.set(right.variable, true);
     expect(booleanImplication.evaluate(assignments)).toBeTruthy();
   });
 
