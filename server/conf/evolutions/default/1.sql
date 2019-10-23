@@ -42,8 +42,9 @@ create table if not exists users_in_courses (
 create table if not exists feedback (
     username          varchar(30),
     tool_url          varchar(30),
-    marks_json json not null,
-    -- TODO: remove following columns!
+    # -- FIXME: only possible with newest mariadb version
+    marks_json        text not null,
+    # -- TODO: remove following columns!
     sense             enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
     used              enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
     usability         enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
@@ -895,24 +896,24 @@ create table if not exists web_exercise_reviews (
 
 create table if not exists xml_collections (
     id         int primary key,
-    title      varchar(50) not null ,
-    author     varchar(50) not null ,
-    ex_text    text not null ,
-    ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED' not null ,
-    short_name varchar(50) not null
+    title      varchar(50)                                                             not null,
+    author     varchar(50)                                                             not null,
+    ex_text    text                                                                    not null,
+    ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED' not null,
+    short_name varchar(50)                                                             not null
 );
 
 create table if not exists xml_exercises (
     id                  int,
     semantic_version    varchar(10),
     collection_id       int,
-    title               varchar(50) not null ,
-    author              varchar(50) not null ,
-    ex_text             text not null ,
-    ex_state            enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED' not null ,
+    title               varchar(50)                                                             not null,
+    author              varchar(50)                                                             not null,
+    ex_text             text                                                                    not null,
+    ex_state            enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED' not null,
 
-    grammar_description text not null ,
-    root_node           varchar(30) not null ,
+    grammar_description text                                                                    not null,
+    root_node           varchar(30)                                                             not null,
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id)
@@ -925,8 +926,8 @@ create table if not exists xml_sample_solutions (
     exercise_id   int,
     ex_sem_ver    varchar(10),
     collection_id int,
-    grammar       text not null ,
-    document      text not null ,
+    grammar       text not null,
+    document      text not null,
 
     primary key (id, exercise_id, ex_sem_ver, collection_id),
     foreign key (exercise_id, ex_sem_ver, collection_id)

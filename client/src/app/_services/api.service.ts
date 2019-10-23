@@ -18,7 +18,6 @@ export class ApiService {
 
   private readonly baseUrl = '/api/tools';
 
-
   getCollections(toolId: string): Observable<ExerciseCollection[]> {
     return this.http.get<ExerciseCollection[]>(`${this.baseUrl}/${toolId}/collections`);
   }

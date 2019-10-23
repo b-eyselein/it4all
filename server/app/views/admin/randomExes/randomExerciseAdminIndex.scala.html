@@ -2,32 +2,24 @@
 
 @(user: model.User, statistics: Html, toolMainObject: RandomExerciseToolMain, toolList: ToolList)
 
-@title = @{
-    "Administrator " + toolMainObject.toolname
-}
+    @title = @{
+        "Administrator " + toolMainObject.toolname
+    }
 
-@admin.adminMain(title, user, toolList, Some(toolMainObject)) {
+    @admin.adminMain(title, user, toolList, Some(toolMainObject)) {
+        <section id="statistics">
+            <h2>Statistiken</h2>
+            <ul>@statistics</ul>
+        </section>
 
-    <section id="statistics">
-        <h2>Statistiken</h2>
-        <ul>@statistics</ul>
-    </section>
+        <hr>
 
-    <hr>
+        <section id="administration">
+            <h2>Verwaltung der @toolMainObject.pluralName</h2>
 
-    <section id="administration">
-        <h2>Verwaltung der @toolMainObject.pluralName</h2>
-
-        <div class="form-group">
-            <a class="btn btn-secondary btn-block" href="@coll.routes.RandomExerciseAdminController.readLearningPaths(toolMainObject.urlPart)">
-                Lernpfade einlesen</a>
-        </div>
-    </section>
-
-
-    <hr>
-
-    <a class="btn btn-primary btn-block" href="@coll.routes.RandomExerciseController.index(toolMainObject.urlPart)">
-        Zu den Aufgaben</a>
-
-}
+            <div class="form-group">
+                <a class="btn btn-secondary btn-block" href="@coll.routes.RandomExerciseAdminController.readLearningPaths(toolMainObject.urlPart)">
+                    Lernpfade einlesen</a>
+            </div>
+        </section>
+    }

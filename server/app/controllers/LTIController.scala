@@ -26,10 +26,10 @@ class LTIController @Inject()(cc: ControllerComponents, tables: Repository)(impl
     }
   }
 
-  private def getOrCreateUser(username: String): Future[User] = tables.userByName(username) flatMap {
+  private def getOrCreateUser(username: String): Future[User] = tables.userByName(username).flatMap {
     case Some(u) => Future(u)
     case None    =>
-      val newUser = LtiUser(username)
+      val newUser   = LtiUser(username)
       val userSaved = tables.saveUser(newUser)
       userSaved.map(_ => newUser)
   }

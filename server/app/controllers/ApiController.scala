@@ -1,15 +1,17 @@
 package controllers
 
 import java.time.Clock
+import java.util.UUID
 
 import com.github.t3hnar.bcrypt._
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
+import model.lti.BasicLtiLaunchRequest
 import model.toolMains.{CollectionToolMain, ToolList}
-import model.{ApiModelHelpers, RequestBodyHelpers, User}
+import model.{ApiModelHelpers, LtiUser, RequestBodyHelpers, User}
 import pdi.jwt.JwtSession
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{JsError, JsSuccess, Json, Writes}
+import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 import slick.jdbc.JdbcProfile
@@ -40,11 +42,64 @@ class ApiController @Inject()(
 
   private val apiJwtHashes: MutableMap[String, (JwtSession, User)] = MutableMap.empty
 
+  private val jwtHashesToClaim: MutableMap[UUID, (JwtSession, User)] = MutableMap.empty
+
   private val bearerHeaderRegex: Regex = "Bearer (.*)".r
 
 
-  private def createJwtHash(username: String, isAdmin: Boolean): JwtSession = {
+  private def createJwtSession(username: String, isAdmin: Boolean): JwtSession = {
     JwtSession()(configuration, clock) ++ (("user", username), ("isAdmin", isAdmin))
+  }
+
+  private def getOrCreateUser(username: String): Future[User] = repository.userByName(username).flatMap {
+    case Some(u) => Future(u)
+    case None    =>
+      val newUser   = LtiUser(username)
+      val userSaved = repository.saveUser(newUser)
+      userSaved.map(_ => newUser)
+  }
+
+  private def writeJsonWebToken(username: String, serializedSession: String): JsValue =
+    Json.obj("id" -> username, "token" -> serializedSession)
+
+  def ltiHoneypot: Action[AnyContent] = Action.async { request =>
+
+    request.body.asFormUrlEncoded match {
+      case None       => Future(BadRequest("TODO!"))
+      case Some(data) =>
+
+        val basicLtiRequest = BasicLtiLaunchRequest.fromRequest(data)
+
+        val username = basicLtiRequest.ltiExt.username
+
+        getOrCreateUser(username) map { user =>
+          // FIXME: write jwt to session?
+
+          val uuid = UUID.randomUUID()
+
+          jwtHashesToClaim.put(uuid, (createJwtSession(user.username, user.isAdmin), user))
+
+          val redirectUrl = s"/lti/${uuid.toString}" // routes.FrontendController.index().url
+
+          Redirect(redirectUrl).withNewSession
+        }
+
+    }
+  }
+
+  def claimJsonWebToken(uuidStr: String): Action[AnyContent] = Action { implicit request =>
+    val uuid = UUID.fromString(uuidStr)
+
+    jwtHashesToClaim.remove(uuid) match {
+      case None                     => NotFound("")
+      case Some((jwtSession, user)) =>
+
+        val serializedSession = jwtSession.serialize
+
+        apiJwtHashes.put(serializedSession, (jwtSession, user))
+
+        Ok(writeJsonWebToken(user.username, serializedSession))
+    }
   }
 
   def apiAuthenticate: Action[AnyContent] = Action.async { implicit request =>
@@ -67,13 +122,13 @@ class ApiController @Inject()(
                   case None         => BadRequest("No password found!")
                   case Some(pwHash) =>
                     if (credentials.password.isBcrypted(pwHash.pwHash)) {
-                      val session = createJwtHash(credentials.username, user.isAdmin)
+                      val session = createJwtSession(credentials.username, user.isAdmin)
 
                       val serializedSession = session.serialize
 
                       apiJwtHashes.put(serializedSession, (session, user))
 
-                      Ok(Json.obj("id" -> credentials.username, "token" -> serializedSession))
+                      Ok(writeJsonWebToken(credentials.username, serializedSession))
                     } else {
                       BadRequest("Password invalid!")
                     }

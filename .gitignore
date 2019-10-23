@@ -10,6 +10,8 @@ server/.cache-tests
 server/project/project
 server/project/target
 
+server/public
+
 # Ignore saved files, except folder data/web
 server/data/*
 !server/data/web/solutions/.gitkeep

@@ -32,6 +32,7 @@ import {SqlExerciseComponent} from './tools/collection-tools/sql/sql-exercise/sq
 import {BoolCreateInstructionsComponent} from './tools/random-tools/bool/bool-create/bool-create-instructions/bool-create-instructions.component';
 import {ExerciseFileCardComponent} from './tools/collection-tools/tool-helpers/exercise-file-card/exercise-file-card.component';
 import {RandomSolveButtonsComponent} from './tools/random-tools/_components/random-solve-buttons/random-solve-buttons.component';
+import {LtiComponent} from './lti/lti.component';
 
 
 @NgModule({
@@ -62,6 +63,7 @@ import {RandomSolveButtonsComponent} from './tools/random-tools/_components/rand
     BoolCreateInstructionsComponent,
     ExerciseFileCardComponent,
     RandomSolveButtonsComponent,
+    LtiComponent,
   ],
   imports: [
     BrowserModule,

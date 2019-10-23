@@ -9,7 +9,7 @@ export class NaryNumberReadOnlyInputComponent {
   constructor() {
   }
 
-  private getSummandNary(): string {
+  getSummandNary(): string {
     const radix = this.naryNumberInput.numberingSystem.radix;
 
     let naryString: string = this.naryNumberInput.decimalNumber.toString(radix);

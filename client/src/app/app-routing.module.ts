@@ -15,11 +15,14 @@ import {WebExerciseComponent} from './tools/collection-tools/web/web-exercise/we
 import {AuthGuard} from './_helpers/auth-guard';
 import {ProgrammingExerciseComponent} from './tools/collection-tools/programming/programming-exercise/programming-exercise.component';
 import {SqlExerciseComponent} from './tools/collection-tools/sql/sql-exercise/sql-exercise.component';
+import {LtiComponent} from './lti/lti.component';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
 
   {path: 'loginForm', component: LoginFormComponent},
+
+  {path: 'lti/:uuid', component: LtiComponent},
 
   // Random  tools
   {path: 'randomTools/:toolId', component: RandomOverviewComponent, canActivate: [AuthGuard]},

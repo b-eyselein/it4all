@@ -19,7 +19,12 @@ val isWindows = System.getProperty("os.name").toLowerCase().contains("win")
 
 // Execute on commandline, depending on the operating system. Used to execute npm commands.
 def runOnCommandline(script: String)(implicit dir: File): Int = {
-  if(isWindows){ Process("cmd /c " + script, dir) } else { Process(script, dir) } }!
+  if (isWindows) {
+    Process("cmd /c " + script, dir)
+  } else {
+    Process(script, dir)
+  }
+} !
 
 // Check of node_modules directory exist in given directory.
 def isNodeModulesInstalled(implicit dir: File): Boolean = (dir / "node_modules").exists()
@@ -58,6 +63,7 @@ lazy val `ui-prod-build` = TaskKey[Unit]("run UI build when packaging the applic
 
 // Execute frontend prod build task prior to play dist execution.
 dist := (dist dependsOn `ui-prod-build`).value
+packageZipTarball := ((packageZipTarball in Universal) dependsOn `ui-prod-build`).value
 
 // Execute frontend prod build task prior to play stage execution.
 stage := (stage dependsOn `ui-prod-build`).value

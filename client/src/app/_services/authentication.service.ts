@@ -20,12 +20,19 @@ export class AuthenticationService {
     return this.currentUserSubject.value;
   }
 
+  private activateLogin(user: User): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
   login(username: string, password: string) {
-    return this.http.put<any>(`http://localhost:9000/api/users/authenticate`, {username, password})
-      .pipe(tap((user) => {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(user);
-      }));
+    return this.http.put<User>(`http://localhost:9000/api/users/authenticate`, {username, password})
+      .pipe(tap((user) => this.activateLogin(user)));
+  }
+
+  claimJsonWebToken(uuid: string): Observable<User> {
+    return this.http.get<User | undefined>(`/api/claimWebToken/${uuid}`)
+      .pipe(tap((user) => this.activateLogin(user)));
   }
 
   logout() {
