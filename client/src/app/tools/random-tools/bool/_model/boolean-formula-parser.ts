@@ -14,7 +14,7 @@ import {
   BooleanTrue,
   BooleanVariable,
   BooleanXOr
-} from './bool';
+} from './bool-node';
 
 type RuleType<T> = (idxInCallingRule?: number, ...args: any[]) => T;
 
@@ -86,22 +86,6 @@ export class BooleanFormulaParser extends EmbeddedActionsParser {
   private variableRule: RuleType<BooleanVariable> = this.RULE('variableRule', () => {
     const variableToken: IToken = this.CONSUME(variable);
     return new BooleanVariable(variableToken.image[0]);
-  });
-
-  private value: RuleType<BooleanNode> = this.RULE('value', () =>
-    this.OR([
-      {ALT: () => this.SUBRULE<BooleanNode>(this.variableRule)},
-      {ALT: () => this.SUBRULE<BooleanNode>(this.trueRule)},
-      {ALT: () => this.SUBRULE<BooleanNode>(this.falseRule)}
-    ])
-  );
-
-  private binaryStatement: RuleType<BooleanBinaryNode> = this.RULE('binaryStatement', () => {
-    const leftOp: BooleanNode = this.SUBRULE(this.booleanFormula);
-    const opString: string = this.CONSUME(otherOperators).image;
-    const rightOp: BooleanNode = this.SUBRULE2(this.booleanFormula);
-
-    return instantiateOperator(leftOp, opString, rightOp);
   });
 
   private factor: RuleType<BooleanNode> = this.RULE('factor', () => {

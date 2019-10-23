@@ -1,5 +1,5 @@
 import {parseBooleanFormula} from './boolean-formula-parser';
-import {BooleanAnd, BooleanFalse, BooleanNAnd, BooleanNOr, BooleanOr, BooleanTrue, BooleanVariable, BooleanXOr} from './bool';
+import {BooleanAnd, BooleanFalse, BooleanNAnd, BooleanNOr, BooleanOr, BooleanTrue, BooleanVariable, BooleanXOr} from './bool-node';
 
 describe('BooleanFormulaParser', () => {
   const a: BooleanVariable = new BooleanVariable('a');

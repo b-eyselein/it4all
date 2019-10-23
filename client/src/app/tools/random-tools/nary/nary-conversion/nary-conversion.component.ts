@@ -3,6 +3,7 @@ import {NaryConversionToolPart, NaryTool} from '../../random-tools-list';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
 import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
 import {randomInt} from '../../../../helpers';
+import {Router} from '@angular/router';
 
 @Component({templateUrl: './nary-conversion.component.html'})
 export class NaryConversionComponent {
@@ -23,7 +24,7 @@ export class NaryConversionComponent {
   checked = false;
   correct = false;
 
-  constructor() {
+  constructor(private router: Router) {
     this.update();
   }
 
@@ -42,6 +43,10 @@ export class NaryConversionComponent {
     const solution: number = parseInt(this.solutionString.trim(), this.targetSystem.radix);
 
     this.correct = solution === this.toConvertInput.decimalNumber;
+  }
+
+  end(): void {
+    this.router.navigate(['/randomTools', this.tool.id]);
   }
 
   @HostListener('document:keypress', ['$event'])

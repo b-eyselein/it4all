@@ -8,7 +8,7 @@ import {
   BooleanOr, BooleanTrue,
   BooleanVariable,
   BooleanXOr
-} from './bool';
+} from './bool-node';
 
 describe('BooleanVariable', () => {
   const varStr = 'a';

@@ -1,9 +1,10 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
 import {BoolCreatePart, BoolTool} from '../../random-tools-list';
-import {BooleanFormula, BooleanNode, BooleanVariable, generateBooleanFormula} from '../bool';
-import {parseBooleanFormula} from '../boolean-formula-parser';
-import {BoolComponentHelper} from '../bool-component-helper';
+import {BooleanFormula, BooleanNode, BooleanVariable, generateBooleanFormula} from '../_model/bool-node';
+import {parseBooleanFormula} from '../_model/boolean-formula-parser';
+import {BoolComponentHelper} from '../_model/bool-component-helper';
+import {Router} from '@angular/router';
 
 @Component({templateUrl: './bool-create.component.html'})
 export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
@@ -23,7 +24,7 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
 
   showInstructions = false;
 
-  constructor() {
+  constructor(private router: Router) {
     super();
   }
 
@@ -52,7 +53,7 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
       return;
     }
 
-    // TODO: check contained variables!
+    // check contained variables!
     const variablesAllowed: string[] = this.formula.getVariables().map((v) => v.variable);
     const variablesUsed: string[] = booleanFormula.getVariables().map((v) => v.variable);
 
@@ -71,6 +72,10 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
         return assignment.get(this.sampleVariable.variable) === value;
       })
       .every((a) => a);
+  }
+
+  end(): void {
+    this.router.navigate(['/randomTools', this.tool.id]);
   }
 
   @HostListener('document:keypress', ['$event'])

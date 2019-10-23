@@ -1,5 +1,5 @@
 // Boolean nodes
-import {flatMapArray, randomInt, takeRandom} from '../../../helpers';
+import {flatMapArray, randomInt, takeRandom} from '../../../../helpers';
 
 
 export abstract class BooleanNode {

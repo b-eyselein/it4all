@@ -1,4 +1,4 @@
-import {BooleanVariable} from './bool';
+import {BooleanVariable} from './bool-node';
 
 export abstract class BoolComponentHelper {
 

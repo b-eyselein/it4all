@@ -35,7 +35,7 @@
             <input type="text" class="input has-text-right" id="binaryAbsolute" [(ngModel)]="binaryAbsoluteString"
                    [class.is-success]="checked && withIntermediateSteps && binaryAbsoluteCorrect"
                    [class.is-danger]="checked && withIntermediateSteps && !binaryAbsoluteCorrect"
-                   placeholder="Binärdarstellung von {{toConvertInput.decimalNumber}}" autofocus autocomplete="false">
+                   placeholder="Binärdarstellung von {{toConvertInput.decimalNumber}}" autofocus autocomplete="off">
           </div>
           <div class="control">
             <div class="button is-static">
@@ -61,7 +61,7 @@
             <input type="text" class="input has-text-right" id="invertedAbsolute" [(ngModel)]="invertedAbsoluteString"
                    [class.is-success]="checked && withIntermediateSteps && invertedAbsoluteCorrect"
                    [class.is-danger]="checked && withIntermediateSteps && !invertedAbsoluteCorrect"
-                   placeholder="Invertierung aller Bits" autofocus autocomplete="false">
+                   placeholder="Invertierung aller Bits" autofocus autocomplete="off">
           </div>
           <div class="control">
             <div class="button is-static">
@@ -86,7 +86,7 @@
           <div class="control is-expanded">
             <input type="text" class="input has-text-right" id="solution" [(ngModel)]="solutionString"
                    [class.is-success]="checked && solutionCorrect" [class.is-danger]="checked && !solutionCorrect"
-                   placeholder="Zweierkomplement" autofocus autocomplete="false">
+                   placeholder="Zweierkomplement" autofocus autocomplete="off">
           </div>
           <div class="control">
             <div class="button is-static">
@@ -99,17 +99,8 @@
 
       <br>
 
-      <div class="columns">
-        <div class="column is-one-third-desktop">
-          <button class="button is-link is-fullwidth" (click)="checkSolution()">Lösung testen</button>
-        </div>
-        <div class="column is-one-third-desktop">
-          <button class="button is-primary is-fullwidth" (click)="update()">Nächste Aufgabe</button>
-        </div>
-        <div class="column is-one-third-desktop">
-          <button class="button is-dark is-fullwidth" [routerLink]="['/randomTools', tool.id]">Beenden</button>
-        </div>
-      </div>
+      <it4all-random-solve-buttons (correctEmitter)="checkSolution()" (nextEmitter)="update()"
+                                   (endEmitter)="end()"></it4all-random-solve-buttons>
 
     </div>
   </div>

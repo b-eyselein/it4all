@@ -3,6 +3,7 @@ import {NaryAdditionToolPart, NaryTool} from '../../random-tools-list';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
 import {BINARY_SYSTEM, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
 import {randomInt} from '../../../../helpers';
+import {Router} from '@angular/router';
 
 @Component({
   templateUrl: './nary-addition.component.html',
@@ -31,7 +32,7 @@ export class NaryAdditionComponent {
   correct = false;
   solutionString = '';
 
-  constructor() {
+  constructor(private router: Router) {
     this.update();
   }
 
@@ -61,6 +62,10 @@ export class NaryAdditionComponent {
     this.checked = true;
 
     this.correct = solution === this.target;
+  }
+
+  end(): void {
+    this.router.navigate(['/randomTools', this.tool.id]);
   }
 
   @HostListener('document:keypress', ['$event'])

@@ -6,23 +6,23 @@
 
       <table class="table is-bordered is-fullwidth">
         <thead>
-          <tr>
-            <th class="has-text-centered" *ngFor="let variable of formula.getVariables()">{{variable.variable}}</th>
-            <th class="has-text-centered">{{sampleVariable.variable}}</th>
-            <th class="has-text-centered">{{learnerVariable.variable}}</th>
-          </tr>
+        <tr>
+          <th class="has-text-centered" *ngFor="let variable of formula.getVariables()">{{variable.variable}}</th>
+          <th class="has-text-centered">{{sampleVariable.variable}}</th>
+          <th class="has-text-centered">{{learnerVariable.variable}}</th>
+        </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let assignment of formula.getAllAssignments()"
-              [class.has-text-danger]="corrected && (assignment.get(learnerVariable.variable) !== assignment.get(sampleVariable.variable))"
-              [class.has-text-success]="corrected && (assignment.get(learnerVariable.variable) === assignment.get(sampleVariable.variable))"
-          >
-            <td class="has-text-centered"
-                *ngFor="let variable of formula.getVariables()">{{displayAssignmentValue(assignment, variable)}}</td>
-            <td class="has-text-centered">{{displayAssignmentValue(assignment, sampleVariable)}}</td>
-            <td
-              class="has-text-centered">{{displayAssignmentValue(assignment, learnerVariable)}}</td>
-          </tr>
+        <tr *ngFor="let assignment of formula.getAllAssignments()"
+            [class.has-text-danger]="corrected && (assignment.get(learnerVariable.variable) !== assignment.get(sampleVariable.variable))"
+            [class.has-text-success]="corrected && (assignment.get(learnerVariable.variable) === assignment.get(sampleVariable.variable))"
+        >
+          <td class="has-text-centered"
+              *ngFor="let variable of formula.getVariables()">{{displayAssignmentValue(assignment, variable)}}</td>
+          <td class="has-text-centered">{{displayAssignmentValue(assignment, sampleVariable)}}</td>
+          <td
+            class="has-text-centered">{{displayAssignmentValue(assignment, learnerVariable)}}</td>
+        </tr>
         </tbody>
       </table>
 
@@ -33,22 +33,15 @@
           <label for="solution" class="button is-static">{{sampleVariable.variable}} = </label>
         </div>
         <div class="control is-expanded">
-          <input type="text" class="input" id="solution" autocomplete="false" placeholder="Boolesche Formel"
+          <input type="text" class="input" id="solution" autocomplete="off" placeholder="Boolesche Formel"
                  autofocus [(ngModel)]="solution">
         </div>
       </div>
 
-      <div class="columns">
-        <div class="column is-one-third-desktop">
-          <button class="button is-link is-fullwidth" (click)="correct()">Korrektur</button>
-        </div>
-        <div class="column is-one-third-desktop">
-          <button class="button is-primary is-fullwidth" (click)="update()">Nächste Aufgabe</button>
-        </div>
-        <div class="column is-one-third-desktop">
-          <a class="button is-dark is-fullwidth" [routerLink]="['/randomTools', tool.id]">Bearbeiten beenden</a>
-        </div>
-      </div>
+      <it4all-random-solve-buttons (correctEmitter)="correct()" (nextEmitter)="update()"
+                                   (endEmitter)="end()"></it4all-random-solve-buttons>
+
+      <br>
 
       <div class="buttons">
         <button class="button is-info is-fullwidth" (click)="showInstructions = !showInstructions">

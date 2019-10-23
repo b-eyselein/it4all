@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {NaryReadOnlyNumberInput} from '../nary';
+import {NaryReadOnlyNumberInput} from '../../nary';
 
 @Component({selector: 'it4all-nary-number-read-only-input', templateUrl: './nary-number-read-only-input.component.html'})
 export class NaryNumberReadOnlyInputComponent {

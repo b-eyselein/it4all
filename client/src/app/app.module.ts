@@ -15,7 +15,7 @@ import {ErrorInterceptor} from './_helpers/error.interceptor';
 import {RandomOverviewComponent} from './tools/random-tools/random-overview/random-overview.component';
 import {NaryAdditionComponent} from './tools/random-tools/nary/nary-addition/nary-addition.component';
 import {NaryConversionComponent} from './tools/random-tools/nary/nary-conversion/nary-conversion.component';
-import {NaryNumberReadOnlyInputComponent} from './tools/random-tools/nary/nary-number-read-only-input/nary-number-read-only-input.component';
+import {NaryNumberReadOnlyInputComponent} from './tools/random-tools/nary/_components/nary-number-read-only-input/nary-number-read-only-input.component';
 import {NaryTwoConversionComponent} from './tools/random-tools/nary/nary-two-conversion/nary-two-conversion.component';
 import {BoolCreateComponent} from './tools/random-tools/bool/bool-create/bool-create.component';
 import {SolutionSavedComponent} from './tools/collection-tools/tool-helpers/solution-saved/solution-saved.component';
@@ -29,8 +29,9 @@ import {ExerciseFilesEditorComponent} from './tools/collection-tools/tool-helper
 import {TabComponent} from './_component_helpers/tab/tab.component';
 import {TabsComponent} from './_component_helpers/tabs/tabs.component';
 import {SqlExerciseComponent} from './tools/collection-tools/sql/sql-exercise/sql-exercise.component';
-import { BoolCreateInstructionsComponent } from './tools/random-tools/bool/bool-create/bool-create-instructions/bool-create-instructions.component';
-import { ExerciseFileCardComponent } from './tools/collection-tools/tool-helpers/exercise-file-card/exercise-file-card.component';
+import {BoolCreateInstructionsComponent} from './tools/random-tools/bool/bool-create/bool-create-instructions/bool-create-instructions.component';
+import {ExerciseFileCardComponent} from './tools/collection-tools/tool-helpers/exercise-file-card/exercise-file-card.component';
+import {RandomSolveButtonsComponent} from './tools/random-tools/_components/random-solve-buttons/random-solve-buttons.component';
 
 
 @NgModule({
@@ -60,6 +61,7 @@ import { ExerciseFileCardComponent } from './tools/collection-tools/tool-helpers
     SqlExerciseComponent,
     BoolCreateInstructionsComponent,
     ExerciseFileCardComponent,
+    RandomSolveButtonsComponent,
   ],
   imports: [
     BrowserModule,

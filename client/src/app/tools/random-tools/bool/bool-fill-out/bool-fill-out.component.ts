@@ -1,8 +1,9 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
 import {BoolFillOutPart, BoolTool} from '../../random-tools-list';
-import {BooleanFormula, BooleanVariable, generateBooleanFormula} from '../bool';
-import {BoolComponentHelper} from '../bool-component-helper';
+import {BooleanFormula, BooleanVariable, generateBooleanFormula} from '../_model/bool-node';
+import {BoolComponentHelper} from '../_model/bool-component-helper';
+import {Router} from '@angular/router';
 
 @Component({templateUrl: './bool-fill-out.component.html'})
 export class BoolFillOutComponent extends BoolComponentHelper implements OnInit {
@@ -18,7 +19,7 @@ export class BoolFillOutComponent extends BoolComponentHelper implements OnInit 
   corrected = false;
   completelyCorrect = false;
 
-  constructor() {
+  constructor(private router: Router) {
     super();
   }
 
@@ -44,6 +45,10 @@ export class BoolFillOutComponent extends BoolComponentHelper implements OnInit 
         as.set(this.learnerVariable.variable, newValue);
       }
     }
+  }
+
+  end(): void {
+    this.router.navigate(['/randomTools', this.tool.id]);
   }
 
   @HostListener('document:keypress', ['$event'])

@@ -36,7 +36,7 @@
           <div class="control is-expanded">
             <input type="text" class="input" id="solution" [(ngModel)]="solutionString"
                    [ngClass]="{'is-success': checked && correct, 'is-danger': checked && !correct}"
-                   placeholder="Lösung" autofocus autocomplete="false">
+                   placeholder="Lösung" autofocus autocomplete="off">
           </div>
           <div class="control">
             <div class="button is-static">
@@ -50,17 +50,8 @@
 
       <br>
 
-      <div class="columns">
-        <div class="column is-one-third-desktop">
-          <button class="button is-link is-fullwidth" (click)="checkSolution()">Lösung testen</button>
-        </div>
-        <div class="column is-one-third-desktop">
-          <button class="button is-primary is-fullwidth" (click)="update()">Nächste Aufgabe</button>
-        </div>
-        <div class="column is-one-third-desktop">
-          <button class="button is-dark is-fullwidth" [routerLink]="['/randomTools', tool.id]">Beenden</button>
-        </div>
-      </div>
+      <it4all-random-solve-buttons (correctEmitter)="checkSolution()" (nextEmitter)="update()"
+                                   (endEmitter)="end()"></it4all-random-solve-buttons>
 
     </div>
   </div>
