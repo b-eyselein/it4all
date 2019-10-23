@@ -12,11 +12,7 @@ server/project/target
 
 # Ignore saved files, except folder data/web
 server/data/*
-!server/data/.gitkeep
-!server/data/web/
-
-server/data/web/*
-!server/data/web/.gitkeep
+!server/data/web/solutions/.gitkeep
 
 server/.idea/*
 !server/.idea/jsonSchemas.xml

@@ -61,8 +61,8 @@ services:
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
 
-  evaluator:
-    image:        beyselein/evaluator-it4all
-    restart:      always
-    ports:
-      - 9009:9000
+#  evaluator:
+#    image:        beyselein/evaluator-it4all
+#    restart:      always
+#    ports:
+#      - 9009:9000
