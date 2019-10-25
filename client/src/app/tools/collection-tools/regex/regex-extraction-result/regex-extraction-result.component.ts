@@ -5,14 +5,15 @@ import {RegexExtractionResult} from '../regex-exercise';
   selector: 'it4all-regex-extraction-result',
   templateUrl: './regex-extraction-result.component.html',
 })
-export class RegexExtractionResultComponent implements OnInit {
+export class RegexExtractionResultComponent {
 
   @Input() extractionResult: RegexExtractionResult;
 
   constructor() {
   }
 
-  ngOnInit() {
+  isCompletelyCorrect(): boolean {
+    return this.extractionResult.extractionMatchingResult.allMatches.every((m) => m.matchType === 'SUCCESSFUL_MATCH');
   }
 
 }

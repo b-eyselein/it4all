@@ -1,31 +1,32 @@
-import {Component, Input, OnInit, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {RegexMatchingResult} from '../regex-exercise';
 
 @Component({
   selector: 'it4all-regex-matching-result',
   template: `
-      <div class="notification">
+      <div class="notification" [class.is-success]="isCorrect()" [class.is-danger]="!isCorrect()">
+          <span *ngIf="isCorrect()">&#10004;</span>
+          <span *ngIf="!isCorrect()">&#10008;</span>
+          &nbsp;
           <code>{{matchingResult.matchData}}</code> wurde
           <ng-container [ngSwitch]="matchingResult.resultType">
-              <span class="has-text-success" *ngSwitchCase="'TruePositive'">korrekt</span>
-              <span class="has-text-danger" *ngSwitchCase="'FalsePositive'">fälschlicherweise</span>
-              <span class="has-text-danger" *ngSwitchCase="'FalseNegative'">fälschlicherweise nicht</span>
-              <span class="has-text-success" *ngSwitchCase="'TrueNegative'">korrekt nicht</span>
+              <span *ngSwitchCase="'TruePositive'">korrekt</span>
+              <span *ngSwitchCase="'FalsePositive'">fälschlicherweise</span>
+              <span *ngSwitchCase="'FalseNegative'">fälschlicherweise <b>nicht</b></span>
+              <span *ngSwitchCase="'TrueNegative'">korrekt <b>nicht</b></span>
           </ng-container>
           erkannt.
       </div>`,
 })
-export class RegexMatchingResultComponent implements OnInit, OnChanges {
+export class RegexMatchingResultComponent {
 
   @Input() matchingResult: RegexMatchingResult;
 
   constructor() {
   }
 
-  ngOnInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
+  isCorrect(): boolean {
+    return this.matchingResult.resultType === 'TruePositive' || this.matchingResult.resultType === 'TrueNegative';
   }
 
 }

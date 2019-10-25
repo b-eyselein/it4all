@@ -1,5 +1,5 @@
 import {DbSolution, Exercise} from '../../../_interfaces/tool';
-import {AnalysisResult, BinaryClassificationResultType, Match, MatchingResult, StringSampleSolution} from '../../basics';
+import {AnalysisResult, BinaryClassificationResultType, CorrectionResult, Match, MatchingResult, StringSampleSolution} from '../../basics';
 
 export type RegexCorrectionType = 'MATCHING' | 'EXTRACTION';
 
@@ -45,11 +45,8 @@ export interface RegexExtractionResult {
   correct: boolean;
 }
 
-export interface RegexCorrectionResult {
+export interface RegexCorrectionResult extends CorrectionResult<any> {
   correctionType: RegexCorrectionType;
-  solutionSaved: boolean;
-  points: number;
-  maxPoints: number;
   matchingResults: RegexMatchingResult[];
   extractionResults: RegexExtractionResult[];
 }

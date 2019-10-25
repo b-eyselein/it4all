@@ -1,8 +1,13 @@
 <div class="notification">
-  <p>Basis: <code>{{extractionResult.base}}</code></p>
-  <ul>
-    <li *ngFor="let match of extractionResult.extractionMatchingResult.allMatches">
-      Erwartet: <code>{{match.sampleArg?.content}}</code>, Bekommen: <code>{{match.userArg?.content}}</code>
-    </li>
-  </ul>
+  <p class="has-text-centered">
+    <code>{{extractionResult.base}}</code>
+  </p>
+
+  <br>
+
+  <div class="columns is-multiline">
+    <div class="column is-half-desktop" *ngFor="let match of extractionResult.extractionMatchingResult.allMatches">
+      <it4all-regex-extraction-match [match]="match"></it4all-regex-extraction-match>
+    </div>
+  </div>
 </div>

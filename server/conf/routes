@@ -17,7 +17,7 @@ GET           /lti                                                              
 + nocsrf
 POST          /lti                                                                     controllers.LTIController.honeypot
 
-
++ nocsrf
 PUT           /api/users/authenticate                                                  controllers.ApiLoginController.apiAuthenticate
 
 + nocsrf

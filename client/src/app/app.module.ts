@@ -41,6 +41,7 @@ import { ReadCollectionComponent } from './admin/admin-read-collections/read-col
 import { CollectionAdminComponent } from './admin/collection-admin/collection-admin.component';
 import { AdminReadExercisesComponent } from './admin/admin-read-exercises/admin-read-exercises.component';
 import { ReadExerciseComponent } from './admin/admin-read-exercises/read-exercise/read-exercise.component';
+import { RegexExtractionMatchComponent } from './tools/collection-tools/regex/regex-extraction-result/regex-extraction-match/regex-extraction-match.component';
 
 
 @NgModule({
@@ -80,6 +81,7 @@ import { ReadExerciseComponent } from './admin/admin-read-exercises/read-exercis
     CollectionAdminComponent,
     AdminReadExercisesComponent,
     ReadExerciseComponent,
+    RegexExtractionMatchComponent,
   ],
   imports: [
     BrowserModule,

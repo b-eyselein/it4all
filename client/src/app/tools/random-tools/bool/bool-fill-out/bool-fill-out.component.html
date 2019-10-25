@@ -22,7 +22,7 @@
       <table class="table is-bordered is-fullwidth">
         <thead>
           <tr>
-            <th class="has-text-centered" *ngFor="let variable of formula.variables">{{variable.variable}}</th>
+            <th class="has-text-centered" *ngFor="let variable of formula.getVariables()">{{variable.variable}}</th>
             <ng-container *ngIf="withSubFormulas">
               <th class="has-text-centered" *ngFor="let subFormula of subFormulas"
                   [innerHTML]="subFormula.asHtmlString()"></th>
@@ -33,7 +33,7 @@
         <tbody>
           <tr *ngFor="let assignment of assignments">
             <td class="has-text-centered"
-                *ngFor="let variable of formula.variables">{{displayAssignmentValue(assignment, variable) }}</td>
+                *ngFor="let variable of formula.getVariables()">{{displayAssignmentValue(assignment, variable) }}</td>
             <ng-container *ngIf="withSubFormulas">
               <th *ngFor="let subFormula of subFormulas">
                 <!-- FIXME: button for subFormula... -->

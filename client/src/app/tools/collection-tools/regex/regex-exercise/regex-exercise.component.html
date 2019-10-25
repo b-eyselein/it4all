@@ -38,6 +38,8 @@
     </div>
     <div class="column is-two-thirds" *ngIf="corrected && result">
 
+      <h1 class="title is-3 has-text-centered">Korrektur</h1>
+
       <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
 
       <br>
@@ -47,12 +49,13 @@
       <br>
 
       <ng-container [ngSwitch]="result.correctionType">
-        <ng-container *ngSwitchCase="'MATCHING'">
-          <ng-container *ngFor="let matchingResult of result.matchingResults">
-            <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
 
-            <br>
-          </ng-container>
+        <ng-container *ngSwitchCase="'MATCHING'">
+          <div class="columns is-multiline">
+            <div class="column is-half-desktop" *ngFor="let matchingResult of result.matchingResults">
+              <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
+            </div>
+          </div>
         </ng-container>
 
         <ng-container *ngSwitchCase="'EXTRACTION'">

@@ -7,7 +7,7 @@
       <table class="table is-bordered is-fullwidth">
         <thead>
           <tr>
-            <th class="has-text-centered" *ngFor="let variable of formula.variables">{{variable.variable}}</th>
+            <th class="has-text-centered" *ngFor="let variable of formula.getVariables()">{{variable.variable}}</th>
             <th class="has-text-centered">{{sampleVariable.variable}}</th>
             <th class="has-text-centered">{{learnerVariable.variable}}</th>
           </tr>

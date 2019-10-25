@@ -26,7 +26,7 @@ export class AuthenticationService {
   }
 
   login(username: string, password: string) {
-    return this.http.put<User>(`http://localhost:9000/api/users/authenticate`, {username, password})
+    return this.http.put<User>(`/api/users/authenticate`, {username, password})
       .pipe(tap((user) => this.activateLogin(user)));
   }
 

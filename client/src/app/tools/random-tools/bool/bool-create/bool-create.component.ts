@@ -34,6 +34,8 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
     this.formulaParsed = false;
     this.corrected = false;
 
+    this.oldSolution = undefined;
+
     this.solution = '';
 
     this.formula = generateBooleanFormula();
