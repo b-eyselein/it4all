@@ -23,6 +23,7 @@ import {AdminReadCollectionsComponent} from './admin/admin-read-collections/admi
 import {ToolTutorialsOverviewComponent} from './tutorials/tool-tutorials-overview/tool-tutorials-overview.component';
 import {CollectionAdminComponent} from './admin/collection-admin/collection-admin.component';
 import {AdminReadExercisesComponent} from './admin/admin-read-exercises/admin-read-exercises.component';
+import {AdminEditCollectionComponent} from './admin/admin-edit-collection/admin-edit-collection.component';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
@@ -35,7 +36,8 @@ const routes: Routes = [
   {path: 'admin', component: AdminIndexComponent, canActivate: [AdminAuthGuard]},
   {path: 'admin/:toolId', component: CollectionToolAdminComponent, canActivate: [AdminAuthGuard]},
   {path: 'admin/:toolId/readCollections', component: AdminReadCollectionsComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/collections/:collId', component: CollectionAdminComponent, canActivate: [AdminAuthGuard]},
+  {path: 'admin/:toolId/collections/:collId/editForm', component: AdminEditCollectionComponent, canActivate: [AdminAuthGuard]},
+  {path: 'admin/:toolId/collections/:collId/exercises', component: CollectionAdminComponent, canActivate: [AdminAuthGuard]},
   {path: 'admin/:toolId/collections/:collId/readExercises', component: AdminReadExercisesComponent, canActivate: [AdminAuthGuard]},
 
   // Tutorials

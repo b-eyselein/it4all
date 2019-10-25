@@ -12,8 +12,21 @@
   <ng-container *ngIf="collections && collections.length > 0; else noCollectionsBlock">
     <div class="columns is-multiline">
       <div class="column is-one-third-desktop" *ngFor="let collection of collections">
-        <a [routerLink]="['/admin', tool.id, 'collections', collection.id]"
-           class="button is-link is-fullwidth">{{collection.title}}</a>
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">{{collection.id}}. {{collection.title}}</p>
+          </header>
+          <div class="card-content">
+          </div>
+          <footer class="card-footer">
+            <a [routerLink]="['/admin', tool.id, 'collections', collection.id, 'editForm']" class="card-footer-item">
+              Sammlung editieren
+            </a>
+            <a [routerLink]="['/admin', tool.id, 'collections', collection.id, 'exercises']" class="card-footer-item">
+              Aufgabenadministration
+            </a>
+          </footer>
+        </div>
       </div>
     </div>
   </ng-container>

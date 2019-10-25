@@ -11,16 +11,10 @@ GET           /admin                                                            
 GET           /users                                                                   controllers.AdminController.users
 PUT           /users/changeRole                                                        controllers.AdminController.changeRole
 
-# LTI Test
-+ nocsrf
-GET           /lti                                                                     controllers.LTIController.honeypot
-+ nocsrf
-POST          /lti                                                                     controllers.LTIController.honeypot
-
-#GET           /register                                                                controllers.ApiLoginController.registerForm
-
+# TODO: registration of users ?!?
+#GET           /api/register                                                                controllers.ApiLoginController.registerForm
 #+ nocsrf
-#PUT          /register                                                                controllers.ApiLoginController.register
+#PUT          /api/register                                                                controllers.ApiLoginController.register
 
 + nocsrf
 PUT           /api/users/authenticate                                                  controllers.ApiLoginController.apiAuthenticate

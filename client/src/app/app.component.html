@@ -16,7 +16,7 @@
       <a class="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/datenschutz/">
         Datenschutz
       </a>
-      
+
       <div class="navbar-item">
         <ng-container *ngIf="currentUser; else noUserBlock">
           <button (click)="logout()" class="button is-light">Logout {{currentUser.username}}</button>

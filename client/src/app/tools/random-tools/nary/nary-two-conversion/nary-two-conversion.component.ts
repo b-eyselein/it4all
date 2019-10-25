@@ -43,6 +43,8 @@ export class NaryTwoConversionComponent {
   update(): void {
     this.toConvertInput.decimalNumber = randomInt(0, 256);
 
+    this.checked = false;
+
     this.binaryAbsoluteString = '';
     this.invertedAbsoluteString = '';
     this.solutionString = '';
@@ -67,6 +69,7 @@ export class NaryTwoConversionComponent {
   }
 
   end(): void {
+    // noinspection JSIgnoredPromiseFromCall
     this.router.navigate(['/randomTools', this.tool.id]);
   }
 

@@ -40,7 +40,9 @@ export class NaryConversionComponent {
   checkSolution(): void {
     this.checked = true;
 
-    const solution: number = parseInt(this.solutionString.trim(), this.targetSystem.radix);
+    const processedSolutionString: string = this.solutionString.replace(/\s+/g, '');
+
+    const solution: number = parseInt(processedSolutionString, this.targetSystem.radix);
 
     this.correct = solution === this.toConvertInput.decimalNumber;
   }
