@@ -1,41 +1,68 @@
 <div class="container">
   <h1 class="title is-3 has-text-centered">{{part.name}}</h1>
 
-  <br>
-
   <div class="columns">
     <div class="column is-half-desktop is-offset-one-quarter-desktop">
-      <h2 class="subtitle is-4 has-text-centered">
-        <code [innerHTML]="formula.asHtmlString()"></code><span class="has-text-grey"> = {{formula.asString()}}</span>
-      </h2>
 
-      <h3 class="subtitle is-5 has-text-centered">
+      <!--      <div class="field">-->
+      <!--        <div class="control has-text-centered">-->
+      <!--          <label class="checkbox">-->
+      <!--            <input type="checkbox" [(ngModel)]="withSubFormulas"> Mit Zwischenschritten-->
+      <!--          </label>-->
+      <!--        </div>-->
+      <!--      </div>-->
 
-      </h3>
+      <br>
+
+      <h2 class="subtitle is-4 has-text-centered"><code [innerHTML]="formula.asHtmlString()"></code></h2>
+      <h3 class="subtitle is-4 has-text-centered has-text-grey"> = {{formula.asString()}}</h3>
+
+      <br>
 
       <table class="table is-bordered is-fullwidth">
         <thead>
-        <tr>
-          <th class="has-text-centered" *ngFor="let variable of formula.getVariables()">{{variable.variable}}</th>
-          <th class="has-text-centered">{{learnerVariable.variable}}</th>
-        </tr>
+          <tr>
+            <th class="has-text-centered" *ngFor="let variable of formula.variables">{{variable.variable}}</th>
+            <ng-container *ngIf="withSubFormulas">
+              <th class="has-text-centered" *ngFor="let subFormula of subFormulas"
+                  [innerHTML]="subFormula.asHtmlString()"></th>
+            </ng-container>
+            <th class="has-text-centered">{{learnerVariable.variable}}</th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let assignment of formula.getAllAssignments()"
-            [class.has-text-danger]="corrected && (assignment.get(learnerVariable.variable) !== assignment.get(sampleVariable.variable))"
-            [class.has-text-success]="corrected && (assignment.get(learnerVariable.variable) === assignment.get(sampleVariable.variable))">
-          <td class="has-text-centered"
-              *ngFor="let variable of formula.getVariables()">{{displayAssignmentValue(assignment, variable) }}</td>
-          <td class="has-text-centered">
-            <button (click)="updateAssignment(assignment)" class="button"
-                    [class.is-link]="assignment.get(this.learnerVariable.variable)">{{displayAssignmentValue(assignment, this.learnerVariable)}}</button>
-          </td>
-        </tr>
+          <tr *ngFor="let assignment of assignments">
+            <td class="has-text-centered"
+                *ngFor="let variable of formula.variables">{{displayAssignmentValue(assignment, variable) }}</td>
+            <ng-container *ngIf="withSubFormulas">
+              <th *ngFor="let subFormula of subFormulas">
+                <!-- FIXME: button for subFormula... -->
+              </th>
+            </ng-container>
+            <td [class.has-background-danger]="corrected && !isCorrect(assignment)"
+                [class.has-background-success]="corrected && isCorrect(assignment)"
+                class="has-text-centered">
+              <button (click)="updateAssignment(assignment)" class="button"
+                      [class.is-link]="assignment.get(this.learnerVariable.variable)">
+                {{displayAssignmentValue(assignment, this.learnerVariable)}}
+              </button>
+              &nbsp;
+              <span *ngIf="corrected && isCorrect(assignment)">&#10004;</span>
+              <span *ngIf="corrected && !isCorrect(assignment)">&#10008;</span>
+            </td>
+          </tr>
         </tbody>
       </table>
 
-      <it4all-random-solve-buttons (correctEmitter)="corrected = true;" (nextEmitter)="update()"
-                                   (endEmitter)="end()"></it4all-random-solve-buttons>
+      <div class="notification has-text-centered is-danger" *ngIf="corrected && !completelyCorrect">
+        &#10008; Ihre Lösung ist nicht (komplett) korrekt.
+      </div>
+      <div class="notification has-text-centered is-success" *ngIf="corrected && completelyCorrect">
+        &#10004; Ihre Lösung ist korrekt.
+      </div>
+
+      <it4all-random-solve-buttons (correctEmitter)="correct()" (nextEmitter)="update()" (endEmitter)="end()">
+      </it4all-random-solve-buttons>
     </div>
   </div>
 </div>

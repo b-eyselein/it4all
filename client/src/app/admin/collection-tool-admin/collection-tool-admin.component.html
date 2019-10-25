@@ -1,6 +1,10 @@
 <div class="container">
   <h1 class="title is-3 has-text-centered">Administration Tool {{tool.name}}</h1>
 
+  <div class="buttons">
+    <a href="" class="button is-primary is-fullwidth" [routerLink]="['/admin']">Zurück zur Administrationsstartseite</a>
+  </div>
+
   <br>
 
   <h2 class="subtitle is-3">Vorhandene Sammlungen</h2>
@@ -8,7 +12,7 @@
   <ng-container *ngIf="collections && collections.length > 0; else noCollectionsBlock">
     <div class="columns is-multiline">
       <div class="column is-one-third-desktop" *ngFor="let collection of collections">
-        <a [routerLink]="['admin', tool.id, 'collections', collection.id]"
+        <a [routerLink]="['/admin', tool.id, 'collections', collection.id]"
            class="button is-link is-fullwidth">{{collection.title}}</a>
       </div>
     </div>
@@ -20,7 +24,8 @@
   <hr>
 
   <div class="buttons">
-    <a class="button is-link is-fullwidth" [routerLink]="['/admin', tool.id, 'readCollections']">TODO: Sammlungen
-      einlesen?</a>
+    <a class="button is-warning is-fullwidth" [routerLink]="['/admin', tool.id, 'readCollections']">
+      Sammlungen einlesen
+    </a>
   </div>
 </div>

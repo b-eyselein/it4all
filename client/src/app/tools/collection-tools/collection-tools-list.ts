@@ -48,7 +48,7 @@ export const UmlTool: Tool = new Tool('uml', 'UML-Klassendiagramme', [], 'beta')
 
 // Web
 
-export const WebTool: Tool = new Tool('web', 'Web', [], 'live', true, true);
+export const WebTool: Tool = new Tool('web', 'Web', [], null, true, true);
 
 // XML
 

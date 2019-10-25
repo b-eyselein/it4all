@@ -1,13 +1,70 @@
+import {flatMapArray} from '../../../../helpers';
+
+const HTML_REPLACERS: Map<RegExp, string> = new Map([
+  [/impl/g, '&rArr;'],
+  [/nor/g, '&#x22bd;'],
+  [/nand/g, '&#x22bc;'],
+  [/equiv/g, '&hArr;'],
+  [/not /g, '&not;'],
+  [/and/g, '&and;'],
+  [/xor/g, '&oplus;'],
+  [/or/g, '&or;']
+]);
+
+export function calculateAssignments(variables: BooleanVariable[]): Map<string, boolean>[] {
+  let assignments: Map<string, boolean>[] = [];
+
+  for (const variable of variables) {
+
+    if (assignments.length === 0) {
+      assignments = [
+        new Map([[variable.variable, false]]),
+        new Map([[variable.variable, true]])
+      ];
+    } else {
+      assignments = flatMapArray(
+        assignments,
+        (assignment: Map<string, boolean>) => [
+          new Map([...assignment, [variable.variable, false]]),
+          new Map([...assignment, [variable.variable, true]])
+        ]
+      );
+    }
+  }
+
+  return assignments;
+}
+
 // Boolean nodes
-import {flatMapArray, randomInt, takeRandom} from '../../../../helpers';
-
-
 export abstract class BooleanNode {
+
+  private variables: BooleanVariable[] | undefined;
+
+  getVariables(): BooleanVariable[] {
+    if (!this.variables) {
+      this.variables = this.calculateVariables()
+        .sort((v1, v2) => v1.variable.charCodeAt(0) - v2.variable.charCodeAt(0));
+    }
+
+    return this.variables;
+  }
+
   abstract evaluate(assignments: Map<string, boolean>): boolean | undefined;
 
-  abstract getVariables(): BooleanVariable[];
+  protected abstract calculateVariables(): BooleanVariable[];
 
   abstract asString(): string;
+
+  abstract getSubFormulas(): BooleanNode[];
+
+  asHtmlString(): string {
+    let base: string = this.asString();
+
+    HTML_REPLACERS.forEach((replacer, replaced) => base = base.replace(replaced, replacer));
+
+    return base;
+  }
+
 }
 
 export class BooleanVariable extends BooleanNode {
@@ -23,12 +80,16 @@ export class BooleanVariable extends BooleanNode {
     }
   }
 
-  getVariables(): BooleanVariable[] {
+  protected calculateVariables(): BooleanVariable[] {
     return [this];
   }
 
   asString(): string {
     return this.variable;
+  }
+
+  getSubFormulas(): BooleanNode[] {
+    return [];
   }
 
 }
@@ -42,13 +103,18 @@ export class BooleanConstant extends BooleanNode {
     return this.value;
   }
 
-  getVariables(): BooleanVariable[] {
+  protected calculateVariables(): BooleanVariable[] {
     return [];
   }
 
   asString(): string {
     return this.value ? '1' : '0';
   }
+
+  getSubFormulas(): BooleanNode[] {
+    return [];
+  }
+
 }
 
 export const BooleanTrue: BooleanConstant = new BooleanConstant(true);
@@ -64,7 +130,7 @@ export class BooleanNot extends BooleanNode {
     return !(this.child.evaluate(assignments));
   }
 
-  getVariables(): BooleanVariable[] {
+  protected calculateVariables(): BooleanVariable[] {
     return this.child.getVariables();
   }
 
@@ -72,6 +138,11 @@ export class BooleanNot extends BooleanNode {
     const childString = this.child instanceof BooleanBinaryNode ? '(' + this.child.asString() + ')' : this.child.asString();
     return 'not ' + childString;
   }
+
+  getSubFormulas(): BooleanNode[] {
+    return [this.child];
+  }
+
 }
 
 // Boolean binary nodes
@@ -85,7 +156,7 @@ export abstract class BooleanBinaryNode extends BooleanNode {
     super();
   }
 
-  getVariables(): BooleanVariable[] {
+  protected calculateVariables(): BooleanVariable[] {
     const leftVars: BooleanVariable[] = this.left.getVariables();
     const rightVars: BooleanVariable[] = this.right.getVariables();
 
@@ -103,6 +174,15 @@ export abstract class BooleanBinaryNode extends BooleanNode {
   evaluate(assignments: Map<string, boolean>): boolean | undefined {
     return this.evalFunc(this.left.evaluate(assignments), this.right.evaluate(assignments));
   }
+
+  getSubFormulas(): BooleanNode[] {
+    const maybeLeftSubFormula = (this.left instanceof BooleanVariable) ? [] : [this.left];
+    const maybeRightSubFormula = (this.right instanceof BooleanVariable) ? [] : [this.right];
+
+    return maybeLeftSubFormula.concat(maybeRightSubFormula);
+
+  }
+
 }
 
 export class BooleanAnd extends BooleanBinaryNode {
@@ -139,135 +219,3 @@ export class BooleanImplication extends BooleanBinaryNode {
   protected operator = 'impl';
   protected evalFunc = (a, b) => !a || b;
 }
-
-// Helper functions
-
-export function and(left: BooleanNode, right: BooleanNode): BooleanAnd {
-  return new BooleanAnd(left, right);
-}
-
-// Boolean Formulas
-
-const HTML_REPLACERS: Map<RegExp, string> = new Map([
-  [/impl/g, '&rArr;'],
-  [/nor/g, '&#x22bd;'],
-  [/nand/g, '&#x22bc;'],
-  [/equiv/g, '&hArr;'],
-  [/not /g, '&not;'],
-  [/and/g, '&and;'],
-  [/xor/g, '&oplus;'],
-  [/or/g, '&or;']
-]);
-
-export class BooleanFormula {
-   variables: BooleanVariable[];
-   assignments: Map<string, boolean>[];
-
-  constructor(readonly rootNode: BooleanNode) {
-    this.variables = this.rootNode.getVariables().sort((v1, v2) => v1.variable.charCodeAt(0) - v2.variable.charCodeAt(0));
-    this.assignments = this.calculateAssignments();
-  }
-
-   calculateAssignments(): Map<string, boolean>[] {
-    let assignments: Map<string, boolean>[] = [];
-
-    for (const variable of this.variables) {
-
-      if (assignments.length === 0) {
-        assignments = [
-          new Map([[variable.variable, false]]),
-          new Map([[variable.variable, true]])
-        ];
-      } else {
-        assignments = flatMapArray(
-          assignments,
-          (assignment: Map<string, boolean>) => [
-            new Map([...assignment, [variable.variable, false]]),
-            new Map([...assignment, [variable.variable, true]])
-          ]
-        );
-      }
-    }
-
-    return assignments;
-  }
-
-  getVariables() {
-    return this.variables;
-  }
-
-  getAllAssignments(): Map<string, boolean>[] {
-    return this.assignments;
-  }
-
-  asString(): string {
-    return this.rootNode.asString();
-  }
-
-  asHtmlString(): string {
-    let base: string = this.rootNode.asString();
-
-    HTML_REPLACERS.forEach((replacer, replaced) => base = base.replace(replaced, replacer));
-
-    return base;
-  }
-}
-
-const varA: BooleanVariable = new BooleanVariable('a');
-const varB: BooleanVariable = new BooleanVariable('b');
-const varC: BooleanVariable = new BooleanVariable('c');
-
-
-function generateRandomOperator(left: BooleanNode, right: BooleanNode): BooleanNode {
-  const leftNegated: boolean = randomInt(0, 3) === 2;
-  const rightNegated: boolean = randomInt(0, 3) === 2;
-
-  const leftChild = leftNegated ? new BooleanNot(left) : left;
-  const rightChild = rightNegated ? new BooleanNot(right) : right;
-
-  if (randomInt(0, 2) === 1) {
-    return new BooleanAnd(leftChild, rightChild);
-  } else {
-    return new BooleanOr(leftChild, rightChild);
-  }
-
-}
-
-export function generateBooleanFormula(): BooleanFormula {
-  const depth: number = randomInt(1, 3);
-
-  if (depth === 1) {
-    return new BooleanFormula(generateRandomOperator(varA, varB));
-  } else {
-    const vars: BooleanVariable[] = [varA, varB, varC];
-
-    const leftChild = generateRandomOperator(takeRandom(vars), takeRandom(vars));
-    const rightChild = generateRandomOperator(takeRandom(vars), takeRandom(vars));
-
-    return new BooleanFormula(generateRandomOperator(leftChild, rightChild));
-  }
-}
-
-// Boolean Result
-
-export interface BooleanCreateSolution {
-  formula: string;
-  rows: {
-    assignments: {
-      variable: string;
-      value: boolean;
-    }[];
-  }[];
-}
-
-export interface BooleanCreateResult {
-  success: string;
-  assignments: {
-    id: string;
-    learnerVar: boolean;
-    correct: boolean;
-  }[];
-  knf: string;
-  dnf: string;
-}
-

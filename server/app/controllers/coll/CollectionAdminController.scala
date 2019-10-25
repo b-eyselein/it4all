@@ -50,7 +50,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
     implicit request =>
       readSaveAndPreview[ExerciseCollection](
         toolMain.readCollectionsFromYaml,
-        toolMain.futureInsertAndDeleteOldCollection,
+        toolMain.futureDeleteOldAndInsertNewCollection,
         readAndSaveResult => views.html.admin.collExes.readCollectionsPreview(admin, readAndSaveResult, toolMain, toolList)
       )
   }
@@ -97,7 +97,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
     implicit request =>
       toolMain.futureCollById(id) map { maybeCollection: Option[ExerciseCollection] =>
         val collection = maybeCollection.getOrElse(
-          ExerciseCollection(id, title = "", admin.username, text = "", ExerciseState.RESERVED, shortName = "")
+          ExerciseCollection(id, toolId = toolMain.urlPart, title = "", admin.username, text = "", ExerciseState.RESERVED, shortName = "")
         )
 
         Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false, toolList))
@@ -107,7 +107,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
   def adminNewCollectionForm(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
     implicit request =>
       toolMain.futureHighestCollectionId map { id =>
-        val collection = ExerciseCollection(id + 1, title = "", admin.username, text = "", ExerciseState.RESERVED, shortName = "")
+        val collection = ExerciseCollection(id + 1, toolId = toolMain.urlPart, title = "", admin.username, text = "", ExerciseState.RESERVED, shortName = "")
         Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = true, toolList))
       }
   }
@@ -143,7 +143,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
           readSaveAndPreview[toolMain.ExType](
             toolMain.readExercisesFromYaml(collection),
-            toolMain.futureInsertExercise(collId, _),
+            toolMain.futureDeleteOldAndInsertNewExercise(collId, _),
             readAndSaveResult => views.html.admin.collExes.readExercisesPreview(user, collection, readAndSaveResult, toolMain, toolList, toolMain.previewExerciseRest)
           )
       }

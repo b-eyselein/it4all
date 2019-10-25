@@ -82,8 +82,9 @@ export class ProgrammingExerciseComponent implements OnInit {
       .then((oldSolution: DbProgrammingSolution | undefined) => {
         if (oldSolution) {
           // FIXME: editor does not update...
-          console.info(JSON.stringify(oldSolution.files, null, 2));
-          this.exerciseFiles = oldSolution.files;
+          // tslint:disable-next-line:no-console
+          console.info(JSON.stringify(oldSolution.solution.files, null, 2));
+          this.exerciseFiles = oldSolution.solution.files;
         }
       });
   }
@@ -92,15 +93,17 @@ export class ProgrammingExerciseComponent implements OnInit {
     const solution: DbProgrammingSolution = {
       collId: this.collection.id,
       exId: this.exercise.id,
-      filesNum: this.exerciseFiles.length,
-      files: this.exerciseFiles
+      solution: {
+        filesNum: this.exerciseFiles.length,
+        files: this.exerciseFiles
+      }
     };
 
     this.dexieService.programmingSolutions.put(solution);
 
     this.correctionRunning = true;
 
-    this.apiService.correctSolution<IdeWorkspace, any>(this.tool.id, this.collection.id, this.exercise.id, this.part.id, solution)
+    this.apiService.correctSolution<IdeWorkspace, any>(this.tool.id, this.collection.id, this.exercise.id, this.part.id, solution.solution)
       .subscribe((result: ProgrammingCorrectionResult | undefined) => {
           // tslint:disable-next-line:no-console
           console.info(JSON.stringify(result, null, 2));

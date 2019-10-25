@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CollToolAdminComponent } from './coll-tool-admin.component';
+import { ReadCollectionComponent } from './read-collection.component';
 
-describe('CollToolAdminComponent', () => {
-  let component: CollToolAdminComponent;
-  let fixture: ComponentFixture<CollToolAdminComponent>;
+describe('ReadCollectionComponent', () => {
+  let component: ReadCollectionComponent;
+  let fixture: ComponentFixture<ReadCollectionComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CollToolAdminComponent ]
+      declarations: [ ReadCollectionComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CollToolAdminComponent);
+    fixture = TestBed.createComponent(ReadCollectionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

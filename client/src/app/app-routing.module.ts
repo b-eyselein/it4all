@@ -18,8 +18,11 @@ import {SqlExerciseComponent} from './tools/collection-tools/sql/sql-exercise/sq
 import {LtiComponent} from './lti/lti.component';
 import {AdminIndexComponent} from './admin/admin-index/admin-index.component';
 import {AdminAuthGuard} from './_helpers/admin-auth-guard';
-import {CollToolAdminComponent} from './admin/coll-tool-admin/coll-tool-admin.component';
+import {CollectionToolAdminComponent} from './admin/collection-tool-admin/collection-tool-admin.component';
 import {AdminReadCollectionsComponent} from './admin/admin-read-collections/admin-read-collections.component';
+import {ToolTutorialsOverviewComponent} from './tutorials/tool-tutorials-overview/tool-tutorials-overview.component';
+import {CollectionAdminComponent} from './admin/collection-admin/collection-admin.component';
+import {AdminReadExercisesComponent} from './admin/admin-read-exercises/admin-read-exercises.component';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
@@ -28,9 +31,15 @@ const routes: Routes = [
 
   {path: 'lti/:uuid', component: LtiComponent},
 
-  {path: 'admin', component: AdminIndexComponent},
-  {path: 'admin/:toolId', component: CollToolAdminComponent, canActivate: [AdminAuthGuard]},
+  // Administration
+  {path: 'admin', component: AdminIndexComponent, canActivate: [AdminAuthGuard]},
+  {path: 'admin/:toolId', component: CollectionToolAdminComponent, canActivate: [AdminAuthGuard]},
   {path: 'admin/:toolId/readCollections', component: AdminReadCollectionsComponent, canActivate: [AdminAuthGuard]},
+  {path: 'admin/:toolId/collections/:collId', component: CollectionAdminComponent, canActivate: [AdminAuthGuard]},
+  {path: 'admin/:toolId/collections/:collId/readExercises', component: AdminReadExercisesComponent, canActivate: [AdminAuthGuard]},
+
+  // Tutorials
+  {path: 'tutorials/:toolId', component: ToolTutorialsOverviewComponent, canActivate: [AuthGuard]},
 
   // Random  tools
   {path: 'randomTools/:toolId', component: RandomOverviewComponent, canActivate: [AuthGuard]},

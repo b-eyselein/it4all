@@ -1,0 +1,18 @@
+<div class="container">
+  <h1 class="title is-3 has-text-centered">Lektionen für {{tool.name}}</h1>
+
+  <div class="columns is-multiline">
+    <div class="column is-half-desktop" *ngFor="let lesson of lessons">
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">{{lesson.id}}. {{lesson.title}}</p>
+        </header>
+        <div class="card-content">{{lesson.description}}</div>
+        <div class="card-footer">
+          <a href="" class="card-footer-item" [routerLink]="['/tutorials', tool.id, 'lessons', lesson.id]">
+            Lektion beginnen</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

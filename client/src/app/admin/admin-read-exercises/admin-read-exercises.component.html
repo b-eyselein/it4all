@@ -1,0 +1,11 @@
+<div class="container">
+
+  <ng-container *ngIf="exercises && exercises.length > 0">
+
+    <div class="columns is-multiline">
+      <div class="column is-half-desktop" *ngFor="let exercise of exercises">
+        <it4all-read-exercise [tool]="tool" [collection]="collection" [exercise]="exercise"></it4all-read-exercise>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -36,10 +36,12 @@ trait CollectionToolMainDbQueries {
 
   // Saving
 
-  def futureInsertExercise(collId: Int, exercise: ExType): Future[Boolean] = tables.futureInsertExercise(collId, exercise)
+  def futureDeleteOldAndInsertNewCollection(collection: ExerciseCollection): Future[Boolean] =
+    tables.futureDeleteOldAndInsertNewCollection(collection)
 
-  def futureInsertAndDeleteOldCollection(collection: ExerciseCollection): Future[Boolean] =
-    tables.futureInsertAndDeleteOldCollection(collection)
+  def futureDeleteOldAndInsertNewExercise(collId: Int, exercise: ExType): Future[Boolean] =
+    tables.futureDeleteOldAndInsertNewExercise(collId, exercise)
+
 
   def futureSaveReview(username: String, collId: Int, exId: Int, part: PartType, review: ReviewType): Future[Boolean] =
     tables.futureSaveReview(username, collId, exId, part, review)

@@ -88,6 +88,7 @@ create table if not exists learning_path_sections (
 
 create table if not exists prog_collections (
     id         int primary key,
+    tool_id    varchar(50) not null,
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
@@ -313,6 +314,7 @@ create table if not exists prog_exercise_reviews (
 
 create table if not exists regex_collections (
     id         int primary key,
+    tool_id    varchar(50) not null,
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
@@ -417,6 +419,7 @@ create table if not exists regex_exercise_reviews (
 
 create table if not exists rose_collections (
     id         int primary key,
+    tool_id    varchar(50) not null,
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
@@ -579,6 +582,7 @@ create table if not exists sql_user_solutions (
 
 create table if not exists uml_collections (
     id         int primary key,
+    tool_id    varchar(50) not null,
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
@@ -684,6 +688,7 @@ create table if not exists uml_exercise_reviews (
 
 create table if not exists web_collections (
     id         int primary key,
+    tool_id    varchar(50) not null,
     title      varchar(50),
     author     varchar(50),
     ex_text    varchar(50),
@@ -896,6 +901,7 @@ create table if not exists web_exercise_reviews (
 
 create table if not exists xml_collections (
     id         int primary key,
+    tool_id    varchar(50)                                                             not null,
     title      varchar(50)                                                             not null,
     author     varchar(50)                                                             not null,
     ex_text    text                                                                    not null,

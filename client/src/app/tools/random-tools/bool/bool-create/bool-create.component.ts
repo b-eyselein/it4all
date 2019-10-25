@@ -1,32 +1,29 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {Tool, ToolPart} from '../../../../_interfaces/tool';
-import {BoolCreatePart, BoolTool} from '../../random-tools-list';
-import {BooleanFormula, BooleanNode, BooleanVariable, generateBooleanFormula} from '../_model/bool-node';
+import {ToolPart} from '../../../../_interfaces/tool';
+import {BoolCreatePart} from '../../random-tools-list';
 import {parseBooleanFormula} from '../_model/boolean-formula-parser';
 import {BoolComponentHelper} from '../_model/bool-component-helper';
+import {BooleanNode, calculateAssignments} from '../_model/bool-node';
+import {generateBooleanFormula} from '../_model/bool-formula';
 import {Router} from '@angular/router';
 
 @Component({templateUrl: './bool-create.component.html'})
 export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
 
-  readonly tool: Tool = BoolTool;
   readonly part: ToolPart = BoolCreatePart;
-
-  readonly sampleVariable: BooleanVariable = new BooleanVariable('z');
-  readonly learnerVariable: BooleanVariable = new BooleanVariable('y');
-
-  formula: BooleanFormula;
 
   solution = '';
 
-  corrected = false;
-  completelyCorrect = false;
+  oldSolution: BooleanNode | undefined;
+
+  formulaParsed = false;
 
   showInstructions = false;
 
-  constructor(private router: Router) {
-    super();
+  constructor(protected router: Router) {
+    super(router);
   }
+
 
   ngOnInit(): void {
     this.update();
@@ -34,13 +31,15 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
 
   update(): void {
     this.completelyCorrect = false;
+    this.formulaParsed = false;
     this.corrected = false;
 
     this.solution = '';
 
     this.formula = generateBooleanFormula();
-    this.formula.getAllAssignments().forEach((assignment) =>
-      assignment.set(this.sampleVariable.variable, this.formula.rootNode.evaluate(assignment)));
+
+    this.assignments = calculateAssignments(this.formula.getVariables());
+    this.assignments.forEach((assignment) => assignment.set(this.sampleVariable.variable, this.formula.evaluate(assignment)));
   }
 
   correct(): void {
@@ -52,6 +51,12 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
       alert('Konnte Formel >>' + this.solution + '<< nicht parsen!');
       return;
     }
+
+    this.oldSolution = booleanFormula;
+
+    console.info(booleanFormula);
+
+    this.formulaParsed = true;
 
     // check contained variables!
     const variablesAllowed: string[] = this.formula.getVariables().map((v) => v.variable);
@@ -65,17 +70,13 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
       return;
     }
 
-    this.completelyCorrect = this.formula.getAllAssignments()
+    this.completelyCorrect = this.assignments
       .map((assignment) => {
         const value: boolean = booleanFormula.evaluate(assignment);
         assignment.set(this.learnerVariable.variable, value);
         return assignment.get(this.sampleVariable.variable) === value;
       })
       .every((a) => a);
-  }
-
-  end(): void {
-    this.router.navigate(['/randomTools', this.tool.id]);
   }
 
   @HostListener('document:keypress', ['$event'])

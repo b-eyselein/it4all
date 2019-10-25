@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {ExerciseCollection, Tool} from '../../_interfaces/tool';
-import {AdminApiService} from '../../_services/admin-api.service';
+import {ApiService} from '../../_services/api.service';
 
 @Component({templateUrl: './admin-read-collections.component.html'})
 export class AdminReadCollectionsComponent implements OnInit {
@@ -10,7 +10,7 @@ export class AdminReadCollectionsComponent implements OnInit {
   tool: Tool;
   loadedCollections: ExerciseCollection[];
 
-  constructor(private route: ActivatedRoute, private apiService: AdminApiService, private router: Router) {
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {
     const toolId = this.route.snapshot.paramMap.get('toolId');
 
     this.tool = collectionTools.find((t) => t.id === toolId);
@@ -21,7 +21,7 @@ export class AdminReadCollectionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.apiService.loadCollections(this.tool.id)
+    this.apiService.adminReadCollections(this.tool.id)
       .subscribe((loadedCollections) => this.loadedCollections = loadedCollections);
   }
 

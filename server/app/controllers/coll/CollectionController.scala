@@ -164,7 +164,7 @@ class CollectionController @Inject()(
       }
 
       val onFormRead: toolMain.ExType => Future[Result] = { newExercise: toolMain.ExType =>
-        toolMain.futureInsertExercise(collId, newExercise).map {
+        toolMain.futureDeleteOldAndInsertNewExercise(collId, newExercise).map {
           case false =>
             // TODO: make view?
             BadRequest("Your exercise could not be saved...")

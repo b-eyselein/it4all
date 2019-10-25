@@ -7,16 +7,22 @@ import play.api.data.{Form, Mapping}
 
 trait ToolForms[ExType <: Exercise, ReviewType <: ExerciseReview] {
 
-  val collectionFormat: Form[ExerciseCollection] = Form(
-    mapping(
-      idName -> number,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      shortNameName -> nonEmptyText
-    )(ExerciseCollection.apply)(ExerciseCollection.unapply)
-  )
+  def collectionFormat(toolId: String): Form[ExerciseCollection] = {
+    val unapplied: ExerciseCollection => Option[(Int, String, String, String, ExerciseState, String)] = {
+      case ExerciseCollection(id, _, title, author, text, state, shortName) => Some((id, title, author, text, state, shortName))
+    }
+
+    Form(
+      mapping(
+        idName -> number,
+        titleName -> nonEmptyText,
+        authorName -> nonEmptyText,
+        textName -> nonEmptyText,
+        statusName -> ExerciseState.formField,
+        shortNameName -> nonEmptyText
+      )(ExerciseCollection.apply(_, toolId, _, _, _, _, _))(unapplied)
+    )
+  }
 
   val exerciseFormat: Form[ExType]
 

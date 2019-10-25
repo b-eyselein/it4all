@@ -2,29 +2,39 @@ package controllers
 
 import java.time.Clock
 
-import model.toolMains.CollectionToolMain
-import model.{JsonProtocol, User}
+import model.toolMains.{CollectionToolMain, ToolList}
+import model.{Exercise, ExerciseCollection, JsonProtocol, User}
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.libs.json.Format
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc._
 
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
-trait ApiControllerBasics {
-  self: AExerciseController =>
-
-  override protected def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
-
+abstract class ApiControllerBasics(cc: ControllerComponents, toolList: ToolList, configuration: Configuration) extends AbstractController(cc) {
 
   private val clock: Clock = Clock.systemDefaultZone()
 
-  protected val bearerHeaderRegex: Regex = "Bearer (.*)".r
+  private val bearerHeaderRegex: Regex = "Bearer (.*)".r
+
+  private def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
+
 
   protected val adminRightsRequired: Boolean
 
-  val configuration: Configuration
+
+  protected def onNoSuchTool(toolType: String): Result =
+    NotFound(s"There is no tool with id ${toolType}")
+
+  protected def onNoSuchCollection(tool: CollectionToolMain, collId: Int): Result =
+    NotFound(s"There is no collection $collId for tool ${tool.toolname}")
+
+  protected def onNoSuchExercise(tool: CollectionToolMain, collection: ExerciseCollection, exId: Int): Result =
+    NotFound(s"There is no exercise with id $exId for collection ${collection.title}")
+
+  protected def onNoSuchExercisePart(tool: CollectionToolMain, exercise: Exercise, partStr: String): Result =
+    NotFound(s"There is no part $partStr for exercise ${exercise.title}")
 
 
   protected def createJwtSession(username: User): JwtSession = {
@@ -49,9 +59,13 @@ trait ApiControllerBasics {
           case None          => Future.successful(Unauthorized("You are not authorized to access this resource!"))
           case Some(jwtUser) =>
 
-            getToolMain(toolType) match {
-              case None           => Future.successful(onNoSuchTool(toolType))
-              case Some(toolMain) => f(request, jwtUser, toolMain)
+            if (adminRightsRequired && !jwtUser.isAdmin) {
+              Future.successful(Unauthorized(""))
+            } else {
+              getToolMain(toolType) match {
+                case None           => Future.successful(onNoSuchTool(toolType))
+                case Some(toolMain) => f(request, jwtUser, toolMain)
+              }
             }
         }
 

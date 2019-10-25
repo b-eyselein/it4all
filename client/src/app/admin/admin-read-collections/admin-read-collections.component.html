@@ -1,7 +1,15 @@
 <div class="container">
   <h1 class="title is-3 has-text-centered">Sammlungen für Tool {{tool.name}} einlesen</h1>
 
-  <div *ngFor="let collection of loadedCollections">
-    {{collection.title}}
+  <div class="buttons">
+    <a class="button is-primary is-fullwidth" [routerLink]="['/admin', tool.id]">Zurück zur Tooladministration</a>
+  </div>
+
+  <br>
+
+  <div class="columns is-multiline">
+    <div class="column is-half-desktop" *ngFor="let collection of loadedCollections">
+      <it4all-read-collection [tool]="tool" [collection]="collection"></it4all-read-collection>
+    </div>
   </div>
 </div>

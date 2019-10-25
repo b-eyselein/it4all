@@ -1,4 +1,4 @@
-import {Exercise} from '../../../_interfaces/tool';
+import {DbSolution, Exercise} from '../../../_interfaces/tool';
 import {CorrectionResult, ExerciseFile, IdeWorkspace} from '../../basics';
 
 // tslint:disable-next-line:no-empty-interface
@@ -54,9 +54,7 @@ export function isProgrammingExercise(exercise: Exercise): exercise is Programmi
 
 // Database
 
-export interface DbProgrammingSolution extends IdeWorkspace {
-  collId: number;
-  exId: number;
+export interface DbProgrammingSolution extends DbSolution<IdeWorkspace> {
 }
 
 // Correction

@@ -1,4 +1,4 @@
-import {Exercise} from '../../../_interfaces/tool';
+import {DbSolution, Exercise} from '../../../_interfaces/tool';
 import {AnalysisResult, BinaryClassificationResultType, Match, MatchingResult, StringSampleSolution} from '../../basics';
 
 export type RegexCorrectionType = 'MATCHING' | 'EXTRACTION';
@@ -78,10 +78,6 @@ export interface RegexCorrectionResult {
 
 // TODO: Dexie db defs...
 
-export interface DbRegexSolution {
-  // toolId: string;
-  collId: number;
-  exId: number;
-  // partId: string;
-  solution: string;
+export interface DbRegexSolution extends DbSolution<string> {
+
 }

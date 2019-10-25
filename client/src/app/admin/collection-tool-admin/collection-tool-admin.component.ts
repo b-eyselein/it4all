@@ -4,8 +4,8 @@ import {ExerciseCollection, Tool} from '../../_interfaces/tool';
 import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {ApiService} from '../../_services/api.service';
 
-@Component({templateUrl: './coll-tool-admin.component.html'})
-export class CollToolAdminComponent implements OnInit {
+@Component({templateUrl: './collection-tool-admin.component.html'})
+export class CollectionToolAdminComponent implements OnInit {
 
   tool: Tool;
   collections: ExerciseCollection[] = [];

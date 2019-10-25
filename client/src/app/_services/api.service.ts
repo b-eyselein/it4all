@@ -2,12 +2,13 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Exercise, ExerciseCollection} from '../_interfaces/tool';
 import {Observable, of} from 'rxjs';
-import {catchError} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
+import {DexieService} from './dexie.service';
 
 @Injectable({providedIn: 'root'})
 export class ApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private dexieService: DexieService) {
   }
 
   static putHttpOptions: { headers: HttpHeaders } = {
@@ -16,22 +17,40 @@ export class ApiService {
     })
   };
 
+  private readonly adminBaseUrl = '/api/admin/tools';
+
   private readonly baseUrl = '/api/tools';
 
+  // Loading
+
   getCollections(toolId: string): Observable<ExerciseCollection[]> {
-    return this.http.get<ExerciseCollection[]>(`${this.baseUrl}/${toolId}/collections`);
+    // TODO: send current version of known collections to only get diff!
+    return this.http.get<ExerciseCollection[]>(`${this.baseUrl}/${toolId}/collections`)
+      .pipe(catchError(() => of([])))
+      .pipe(tap((collections) => this.dexieService.collections.bulkPut(collections)));
   }
 
   getCollection(toolId: string, collId: number): Observable<ExerciseCollection | undefined> {
+    // TODO: send current version of exercise if known to only get if different!
     return this.http.get<ExerciseCollection>(`${this.baseUrl}/${toolId}/collections/${collId}`)
-      .pipe(catchError(() => of(undefined)));
+      .pipe(catchError(() => of(undefined)))
+      .pipe(
+        tap((coll: ExerciseCollection | undefined) => {
+          if (coll) {
+            this.dexieService.collections.put(coll);
+          }
+        })
+      );
   }
 
   getExercises<E extends Exercise>(toolId: string, collId: number): Observable<E[]> {
-    return this.http.get<E[]>(`${this.baseUrl}/${toolId}/collections/${collId}/exercises`);
+    // TODO: send current version of known exercises to only get diff!
+    return this.http.get<E[]>(`${this.baseUrl}/${toolId}/collections/${collId}/exercises`)
+      .pipe(catchError(() => of([])));
   }
 
   getExercise<E extends Exercise>(toolId: string, collId: number, exId: number): Observable<E> {
+    // TODO: send current version of exercise if known to only get if different!
     return this.http.get<E>(`${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}`)
       .pipe(catchError(() => of(undefined)));
   }
@@ -45,4 +64,33 @@ export class ApiService {
       .pipe(catchError(() => of(undefined)));
   }
 
+  // Admin
+
+  adminReadCollections(toolId: string): Observable<ExerciseCollection[]> {
+    return this.http.get<ExerciseCollection[]>(`${this.adminBaseUrl}/${toolId}/readCollections`)
+      .pipe(catchError(() => of([])));
+  }
+
+  adminReadExercises(toolId: string, collId: number): Observable<Exercise[]> {
+    return this.http.get<Exercise[]>(`${this.adminBaseUrl}/${toolId}/collections/${collId}/readExercises`)
+      .pipe(catchError(() => of([])));
+  }
+
+  adminUpsertCollection(collection: ExerciseCollection): Observable<boolean> {
+    return this.http.put<boolean>(`${this.adminBaseUrl}/${collection.toolId}/collections/${collection.id}`, collection)
+      .pipe(catchError(() => of(false)))
+      .pipe(tap((saved: boolean) => {
+          if (saved) {
+            this.dexieService.collections.put(collection);
+          }
+        })
+      );
+  }
+
+  adminUpsertExercise(toolId: string, collId: number, exercise: Exercise): Observable<boolean> {
+    const url = `${this.adminBaseUrl}/${toolId}/collections/${collId}/exercises/${exercise.id}`;
+
+    return this.http.put<boolean>(url, exercise)
+      .pipe(catchError(() => of(false)));
+  }
 }

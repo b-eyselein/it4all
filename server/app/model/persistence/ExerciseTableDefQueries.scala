@@ -104,34 +104,33 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, SolType, S
 
   // Saving
 
-  def futureInsertAndDeleteOldCollection(collection: ExerciseCollection): Future[Boolean] = {
-    val deleteOldQuery = collTable.filter(_.id === collection.id).delete
+  /**
+    * Deletes old collection and **all** exercises (if present) and inserts new collection
+    *
+    * @param collection the new ExerciseCollection to insert
+    * @return `true` if new collection could be inserted, `false` if not
+    */
+  def futureDeleteOldAndInsertNewCollection(collection: ExerciseCollection): Future[Boolean] = for {
+    _ <- db.run(collTable.filter(_.id === collection.id).delete)
+    inserted <- db.run(collTable += collection).transform(_ == 1, identity)
+  } yield inserted
 
-    db.run(deleteOldQuery) flatMap {
-      _ => db.run(collTable += collection).transform(_ == 1, identity)
-    }
-  }
-
-  def futureInsertExercise(collId: Int, exercise: ExType): Future[Boolean] = {
-    val deleteOldExQuery = exTable.filter {
-      dbEx: ExTableDef =>
-        dbEx.id === exercise.id && dbEx.semanticVersion === exercise.semanticVersion && dbEx.collectionId === collId
-    }.delete
-
-    val insertNewExQuery = exTable += exDbValuesFromExercise(collId, exercise)
-
-    db.run(deleteOldExQuery) flatMap { _ =>
-      db.run(insertNewExQuery) flatMap {
-        _ => saveExerciseRest(collId, exercise)
-      }
-    }
-  }
+  def futureDeleteOldAndInsertNewExercise(collId: Int, exercise: ExType): Future[Boolean] = for {
+    _oldDeleted <- db.run(
+      exTable
+        .filter { dbEx: ExTableDef =>
+          dbEx.id === exercise.id && dbEx.semanticVersion === exercise.semanticVersion && dbEx.collectionId === collId
+        }
+        .delete
+    )
+    _newInserted <- db.run(exTable += exDbValuesFromExercise(collId, exercise))
+    restSaved <- saveExerciseRest(collId, exercise)
+  } yield restSaved
 
   def futureSaveReview(username: String, collId: Int, exId: Int, part: PartType, review: ReviewType): Future[Boolean] = {
     val dbReview = exerciseReviewDbModels.dbReviewFromReview(username, collId, exId, part, review)
     db.run(reviewsTable insertOrUpdate dbReview).transform(_ == 1, identity)
   }
-
 
   // Update
 

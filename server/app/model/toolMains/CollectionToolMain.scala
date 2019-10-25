@@ -48,10 +48,10 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Yaml, Html forms, Json
 
-  final protected val collectionYamlFormat: MyYamlFormat[ExerciseCollection] = ExerciseCollectionYamlProtocol.ExerciseCollectionYamlFormat
+  final protected val collectionYamlFormat: MyYamlFormat[ExerciseCollection] = ExerciseCollectionYamlProtocol.ExerciseCollectionYamlFormat(urlPart)
+
   protected val exerciseYamlFormat: MyYamlFormat[ExType]
 
-  final val collectionJsonFormat: Format[ExerciseCollection] = JsonProtocol.collectionFormat
   val exerciseJsonFormat: Format[ExType]
 
   val exerciseForm      : Form[ExType]

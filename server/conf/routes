@@ -17,10 +17,12 @@ GET           /lti                                                              
 + nocsrf
 POST          /lti                                                                     controllers.LTIController.honeypot
 
-+ nocsrf
-POST          /api/lti                                                                 controllers.ApiController.ltiHoneypot
 
-GET           /api/claimWebToken/:uuidStr                                              controllers.ApiController.claimJsonWebToken(uuidStr: String)
+PUT           /api/users/authenticate                                                  controllers.ApiLoginController.apiAuthenticate
+
++ nocsrf
+POST          /api/lti                                                                 controllers.ApiLoginController.ltiHoneypot
+GET           /api/claimWebToken/:uuidStr                                              controllers.ApiLoginController.claimJsonWebToken(uuidStr: String)
 
 # Random tools
 GET           /randomTools/:toolType/admin/index                                       controllers.coll.RandomExerciseAdminController.adminIndex(toolType: String)
@@ -94,8 +96,6 @@ GET           /tools/:toolType/:collId/:exId/:partStr/loadFiles                 
 
 # API
 
-PUT           /api/users/authenticate                                                  controllers.ApiController.apiAuthenticate
-
 GET           /api/tools/:toolType/collections                                         controllers.ApiController.apiAllCollections(toolType: String)
 GET           /api/tools/:toolType/collections/:collId                                 controllers.ApiController.apiCollection(toolType: String, collId: Int)
 GET           /api/tools/:toolType/collections/:collId/exercises                       controllers.ApiController.apiExercises(toolType: String, collId: Int)
@@ -106,7 +106,14 @@ PUT           /api/tools/:toolType/collections/:collId/exercises/:exId/:partStr 
 
 # Admin API
 
-GET           /api/admin/tools/:toolId/readCollections                                 controllers.AdminApiController.readCollections(toolId: String)
+GET           /api/admin/tools/:toolId/readCollections                                 controllers.ApiAdminController.readCollections(toolId: String)
+GET           /api/admin/tools/:toolId/collections/:collId/readExercises               controllers.ApiAdminController.readExercises(toolId: String,collId: Int)
+
++ nocsrf
+PUT           /api/admin/tools/:toolId/collections/:collId                             controllers.ApiAdminController.upsertCollection(toolId: String, collId: Int)
+
++ nocsrf
+PUT           /api/admin/tools/:toolId/collections/:collId/exercises/:exId             controllers.ApiAdminController.upsertExercise(toolId: String, collId: Int, exId: Int)
 
 # Other routes
 GET           /uml/classDiagram/:id/:part/cd.js                                        controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)

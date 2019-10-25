@@ -216,7 +216,7 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
 
 object ExerciseCollectionYamlProtocol extends MyYamlProtocol {
 
-  object ExerciseCollectionYamlFormat extends MyYamlObjectFormat[ExerciseCollection] {
+  final case class ExerciseCollectionYamlFormat(toolId: String) extends MyYamlObjectFormat[ExerciseCollection] {
 
     override protected def readObject(yamlObject: YamlObject): Try[ExerciseCollection] = for {
       id <- yamlObject.intField(idName)
@@ -225,7 +225,7 @@ object ExerciseCollectionYamlProtocol extends MyYamlProtocol {
       text <- yamlObject.stringField(textName)
       state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
       shortName <- yamlObject.stringField(shortNameName)
-    } yield ExerciseCollection(id, title, author, text, state, shortName)
+    } yield ExerciseCollection(id, toolId, title, author, text, state, shortName)
 
     override def write(obj: ExerciseCollection): YamlValue = ???
 

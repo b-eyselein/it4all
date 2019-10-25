@@ -43,9 +43,15 @@
             </div>
           </div>
         </div>
-        <div class="help is-danger" *ngIf="checked && withIntermediateSteps && !binaryAbsoluteCorrect">
-          Diese Eingabe ist nicht korrekt.
-        </div>
+      </div>
+
+      <div class="notification has-text-centered is-danger"
+           *ngIf="checked && withIntermediateSteps && !binaryAbsoluteCorrect">
+        &#10008; Diese Eingabe ist nicht korrekt.
+      </div>
+      <div class="notification has-text-centered is-success"
+           *ngIf="checked && withIntermediateSteps && binaryAbsoluteCorrect">
+        &#10004; Diese Eingabe ist korrekt.
       </div>
 
       <br>
@@ -69,9 +75,15 @@
             </div>
           </div>
         </div>
-        <div class="help is-danger" *ngIf="checked && withIntermediateSteps && !invertedAbsoluteCorrect">
-          Diese Eingabe ist nicht korrekt.
-        </div>
+      </div>
+
+      <div class="notification has-text-centered is-danger"
+           *ngIf="checked && withIntermediateSteps && !invertedAbsoluteCorrect">
+        &#10008; Diese Eingabe ist nicht korrekt.
+      </div>
+      <div class="notification has-text-centered is-success"
+           *ngIf="checked && withIntermediateSteps && invertedAbsoluteCorrect">
+        &#10004; Diese Eingabe ist korrekt.
       </div>
 
       <hr>
@@ -94,13 +106,19 @@
             </div>
           </div>
         </div>
-        <div class="help is-danger" *ngIf="checked && !solutionCorrect">Die Lösung ist nicht korrekt.</div>
+      </div>
+
+      <div class="notification has-text-centered is-danger" *ngIf="checked && !solutionCorrect">
+        &#10008; Die Lösung ist nicht korrekt.
+      </div>
+      <div class="notification has-text-centered is-success" *ngIf="checked && solutionCorrect">
+        &#10004; Die Lösung ist korrekt.
       </div>
 
       <br>
 
-      <it4all-random-solve-buttons (correctEmitter)="checkSolution()" (nextEmitter)="update()"
-                                   (endEmitter)="end()"></it4all-random-solve-buttons>
+      <it4all-random-solve-buttons (correctEmitter)="checkSolution()" (nextEmitter)="update()" (endEmitter)="end()">
+      </it4all-random-solve-buttons>
 
     </div>
   </div>

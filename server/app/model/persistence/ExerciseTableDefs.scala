@@ -79,6 +79,8 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
     def id: Rep[Int] = column[Int](idName, O.PrimaryKey)
 
+    def toolId: Rep[String] = column[String]("tool_id")
+
     def title: Rep[String] = column[String]("title")
 
     def author: Rep[String] = column[String]("author")
@@ -90,7 +92,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
     def shortName: Rep[String] = column[String]("short_name")
 
 
-    override final def * : ProvenShape[ExerciseCollection] = (id, title, author, text, state, shortName) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
+    override final def * : ProvenShape[ExerciseCollection] = (id, toolId, title, author, text, state, shortName) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
 
   }
 

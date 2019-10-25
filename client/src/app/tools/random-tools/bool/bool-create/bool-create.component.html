@@ -6,23 +6,26 @@
 
       <table class="table is-bordered is-fullwidth">
         <thead>
-        <tr>
-          <th class="has-text-centered" *ngFor="let variable of formula.getVariables()">{{variable.variable}}</th>
-          <th class="has-text-centered">{{sampleVariable.variable}}</th>
-          <th class="has-text-centered">{{learnerVariable.variable}}</th>
-        </tr>
+          <tr>
+            <th class="has-text-centered" *ngFor="let variable of formula.variables">{{variable.variable}}</th>
+            <th class="has-text-centered">{{sampleVariable.variable}}</th>
+            <th class="has-text-centered">{{learnerVariable.variable}}</th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let assignment of formula.getAllAssignments()"
-            [class.has-text-danger]="corrected && (assignment.get(learnerVariable.variable) !== assignment.get(sampleVariable.variable))"
-            [class.has-text-success]="corrected && (assignment.get(learnerVariable.variable) === assignment.get(sampleVariable.variable))"
-        >
-          <td class="has-text-centered"
-              *ngFor="let variable of formula.getVariables()">{{displayAssignmentValue(assignment, variable)}}</td>
-          <td class="has-text-centered">{{displayAssignmentValue(assignment, sampleVariable)}}</td>
-          <td
-            class="has-text-centered">{{displayAssignmentValue(assignment, learnerVariable)}}</td>
-        </tr>
+          <tr *ngFor="let assignment of assignments">
+            <td class="has-text-centered"
+                *ngFor="let variable of formula.getVariables()">{{displayAssignmentValue(assignment, variable)}}</td>
+            <td class="has-text-centered">{{displayAssignmentValue(assignment, sampleVariable)}}</td>
+            <td [class.has-background-danger]="corrected && !isCorrect(assignment)"
+                [class.has-background-success]="corrected && isCorrect(assignment)"
+                [class.has-text-white]="corrected" class="has-text-centered">
+              {{displayAssignmentValue(assignment, learnerVariable)}}
+              &nbsp;
+              <span class="has-text-white" *ngIf="corrected && !isCorrect(assignment)">&#10008;</span>
+              <span class="has-text-white" *ngIf="corrected && isCorrect(assignment)">&#10004;</span>
+            </td>
+          </tr>
         </tbody>
       </table>
 
@@ -38,8 +41,25 @@
         </div>
       </div>
 
-      <it4all-random-solve-buttons (correctEmitter)="correct()" (nextEmitter)="update()"
-                                   (endEmitter)="end()"></it4all-random-solve-buttons>
+      <!-- FIXME: show current solutions... -->
+      <div class="notification has-text-centered" *ngIf="oldSolution">
+        <code [innerHTML]="'y = ' + oldSolution.asHtmlString()"></code>
+      </div>
+
+      <div class="notification has-text-centered is-danger" *ngIf="corrected && !formulaParsed">
+        &#10071; Ihre Formel konnte nicht geparst werden!
+      </div>
+      <div class="notification has-text-centered is-danger" *ngIf="corrected && formulaParsed && !completelyCorrect">
+        &#10008; Die Formel ist nicht korrekt.
+      </div>
+      <div class="notification has-text-centered is-success" *ngIf="corrected && formulaParsed && completelyCorrect">
+        &#10004; Die Formel ist korrekt.
+      </div>
+
+      <br>
+
+      <it4all-random-solve-buttons (correctEmitter)="correct()" (nextEmitter)="update()" (endEmitter)="end()">
+      </it4all-random-solve-buttons>
 
       <br>
 

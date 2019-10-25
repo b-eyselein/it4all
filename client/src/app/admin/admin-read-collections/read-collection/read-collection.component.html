@@ -1,0 +1,52 @@
+<div class="card" *ngIf="!collectionSaved; else collectionSavedBlock">
+  <header class="card-header">
+    <p class="card-header-title is-centered">{{collection.id}}. {{collection.title}}</p>
+  </header>
+  <div class="card-content">
+    <table class="table is-bordered is-fullwidth">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Alter Wert</th>
+          <th>Neuer Wert</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Titel</th>
+          <td>--</td>
+          <td>{{collection.title}}</td>
+        </tr>
+        <tr>
+          <th>Autor</th>
+          <td>--</td>
+          <td>{{collection.author}}</td>
+        </tr>
+        <tr>
+          <th>Text</th>
+          <td>--</td>
+          <td>{{collection.text}}</td>
+        </tr>
+        <tr>
+          <th>Status</th>
+          <td>--</td>
+          <td>{{collection.state}}</td>
+        </tr>
+        <tr>
+          <th>Kurzname</th>
+          <td>--</td>
+          <td>{{collection.shortName}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <footer class="card-footer">
+    <a class="card-footer-item" (click)="saveCollection()">Sammlung speichern</a>
+  </footer>
+</div>
+
+<ng-template #collectionSavedBlock>
+  <div class="notification is-success has-text-centered">
+    Die Sammlung {{collection.id}}. '{{collection.title}}' wurde gespeichert.
+  </div>
+</ng-template>

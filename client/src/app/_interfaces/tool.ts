@@ -51,3 +51,13 @@ export interface Exercise extends ExerciseBasics {
   text: string;
   state: string;
 }
+
+// Solutions
+
+export interface DbSolution<T> {
+  // toolId: string;
+  collId: number;
+  exId: number;
+  // partId: string;
+  solution: T;
+}

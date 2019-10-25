@@ -54,4 +54,12 @@ trait FileExercise[PartType <: ExPart] {
 
 }
 
-final case class ExerciseCollection(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String)
+final case class ExerciseCollection(
+  id: Int,
+  toolId: String,
+  title: String,
+  author: String,
+  text: String,
+  state: ExerciseState,
+  shortName: String
+)

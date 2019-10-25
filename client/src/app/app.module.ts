@@ -33,9 +33,14 @@ import {BoolCreateInstructionsComponent} from './tools/random-tools/bool/bool-cr
 import {ExerciseFileCardComponent} from './tools/collection-tools/tool-helpers/exercise-file-card/exercise-file-card.component';
 import {RandomSolveButtonsComponent} from './tools/random-tools/_components/random-solve-buttons/random-solve-buttons.component';
 import {LtiComponent} from './lti/lti.component';
-import { AdminIndexComponent } from './admin/admin-index/admin-index.component';
-import { CollToolAdminComponent } from './admin/coll-tool-admin/coll-tool-admin.component';
-import { AdminReadCollectionsComponent } from './admin/admin-read-collections/admin-read-collections.component';
+import {AdminIndexComponent} from './admin/admin-index/admin-index.component';
+import {CollectionToolAdminComponent} from './admin/collection-tool-admin/collection-tool-admin.component';
+import {AdminReadCollectionsComponent} from './admin/admin-read-collections/admin-read-collections.component';
+import {ToolTutorialsOverviewComponent} from './tutorials/tool-tutorials-overview/tool-tutorials-overview.component';
+import { ReadCollectionComponent } from './admin/admin-read-collections/read-collection/read-collection.component';
+import { CollectionAdminComponent } from './admin/collection-admin/collection-admin.component';
+import { AdminReadExercisesComponent } from './admin/admin-read-exercises/admin-read-exercises.component';
+import { ReadExerciseComponent } from './admin/admin-read-exercises/read-exercise/read-exercise.component';
 
 
 @NgModule({
@@ -68,8 +73,13 @@ import { AdminReadCollectionsComponent } from './admin/admin-read-collections/ad
     RandomSolveButtonsComponent,
     LtiComponent,
     AdminIndexComponent,
-    CollToolAdminComponent,
+    CollectionToolAdminComponent,
     AdminReadCollectionsComponent,
+    ToolTutorialsOverviewComponent,
+    ReadCollectionComponent,
+    CollectionAdminComponent,
+    AdminReadExercisesComponent,
+    ReadExerciseComponent,
   ],
   imports: [
     BrowserModule,
