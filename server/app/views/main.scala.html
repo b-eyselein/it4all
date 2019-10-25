@@ -42,42 +42,6 @@
                     <a class="nav-link" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/datenschutz/">
                         Datenschutz</a>
                 </li>
-
-                @maybeUser match {
-                    case Some(user) => {
-
-                        @if(user.isAdmin) {
-                            <li class="nav-item">
-                                <a class="nav-link" href="@routes.AdminController.index()">
-                                    <span class="octicon octicon-gist-secret"></span>
-                                    Administrator
-                                </a>
-                            </li>
-                        }
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="@routes.LoginController.logout">
-                                <span class="octicon octicon-sign-out"></span>
-                                Logout <code>@user.username</code>
-                            </a>
-                        </li>
-                    }
-
-                    case None => {
-                        <li class="nav-item">
-                            <a class="nav-link" href="@routes.LoginController.loginForm">
-                                <span class="octicon octicon-sign-in"></span>
-                                Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="@routes.LoginController.register">
-                                <span class="octicon octicon-person"></span>
-                                Registrieren
-                            </a>
-                        </li>
-                    }
-                }
             </ul>
         </nav>
 

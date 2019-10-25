@@ -17,6 +17,11 @@ GET           /lti                                                              
 + nocsrf
 POST          /lti                                                                     controllers.LTIController.honeypot
 
+#GET           /register                                                                controllers.ApiLoginController.registerForm
+
+#+ nocsrf
+#PUT          /register                                                                controllers.ApiLoginController.register
+
 + nocsrf
 PUT           /api/users/authenticate                                                  controllers.ApiLoginController.apiAuthenticate
 
@@ -122,16 +127,6 @@ GET           /programming/classDiagram/:collId/:id/cd.js                       
 
 GET           /web/solution/:collId/:id/:part/:fileName                                controllers.coll.CollectionController.webSolution(collId: Int, id: Int, part: String, fileName: String)
 PUT           /web/solution/:collId/:id/:part                                          controllers.coll.CollectionController.updateWebSolution(collId: Int, id: Int, part: String)
-
-
-# Login && Logout
-GET           /register                                                                controllers.LoginController.registerForm
-POST          /register                                                                controllers.LoginController.register
-
-GET           /login                                                                   controllers.LoginController.loginForm
-POST          /authenticate                                                            controllers.LoginController.authenticate
-
-GET           /logout                                                                  controllers.LoginController.logout
 
 # Unified routes
 
