@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open --proxy-config src/proxy.conf.js",
-    "test": "ng test",
-    "test:ci": "ng test",
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:dev": "ng build --progress --output-path ../server/public",

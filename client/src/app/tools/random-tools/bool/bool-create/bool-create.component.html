@@ -63,16 +63,30 @@
 
       <br>
 
-      <div class="buttons">
-        <button class="button is-info is-fullwidth" (click)="showInstructions = !showInstructions">
-          Hilfe anzeigen
-        </button>
+      <div class="columns">
+        <div class="column is-half-desktop">
+          <button class="button is-primary is-fullwidth" (click)="showSampleSolutions = !showSampleSolutions">
+            Musterlösungen anzeigen
+          </button>
+        </div>
+        <div class="column is-half-desktop">
+          <button class="button is-info is-fullwidth" (click)="showInstructions = !showInstructions">
+            Hilfe anzeigen
+          </button>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="showSampleSolutions">
+        <header class="card-header">
+          <p class="card-header-title is-centered">Musterlösungen</p>
+        </header>
+        <div class="card-content">
+          <code>{{formula.asString()}}</code>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <ng-container *ngIf="showInstructions">
-    <it4all-bool-create-instructions></it4all-bool-create-instructions>
-  </ng-container>
+  <it4all-bool-create-instructions *ngIf="showInstructions"></it4all-bool-create-instructions>
 </div>

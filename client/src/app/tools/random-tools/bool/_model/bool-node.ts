@@ -1,9 +1,9 @@
 import {flatMapArray} from '../../../../helpers';
 
 const HTML_REPLACERS: Map<RegExp, string> = new Map([
-  [/and/g, '&and;'], [/or/g, '&or;'],
   [/nand/g, '&#x22bc;'], [/nor/g, '&#x22bd;'],
   [/xor/g, '&oplus;'], [/not /g, '&not;'],
+  [/and/g, '&and;'], [/or/g, '&or;'],
   [/impl/g, '&rArr;'], [/equiv/g, '&hArr;']
 ]);
 

@@ -14,3 +14,11 @@
     * Lösungsnummer
     * ... ?
 
+
+## Client
+
+### Bool
+
+#### Create
+
+* Musterlösungen (KNF, DNF) anzeigen

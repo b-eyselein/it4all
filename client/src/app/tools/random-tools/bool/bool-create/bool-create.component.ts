@@ -19,17 +19,20 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
   formulaParsed = false;
 
   showInstructions = false;
+  showSampleSolutions = false;
 
   constructor(protected router: Router) {
     super(router);
   }
-
 
   ngOnInit(): void {
     this.update();
   }
 
   update(): void {
+    this.showSampleSolutions = false;
+    this.showInstructions = false;
+
     this.completelyCorrect = false;
     this.formulaParsed = false;
     this.corrected = false;
