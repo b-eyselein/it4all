@@ -43,6 +43,7 @@ import { AdminReadExercisesComponent } from './admin/admin-read-exercises/admin-
 import { ReadExerciseComponent } from './admin/admin-read-exercises/read-exercise/read-exercise.component';
 import { RegexExtractionMatchComponent } from './tools/collection-tools/regex/regex-extraction-result/regex-extraction-match/regex-extraction-match.component';
 import { AdminEditCollectionComponent } from './admin/admin-edit-collection/admin-edit-collection.component';
+import { RegexCheatsheetComponent } from './tools/collection-tools/regex/regex-cheatsheet/regex-cheatsheet.component';
 
 
 @NgModule({
@@ -84,6 +85,7 @@ import { AdminEditCollectionComponent } from './admin/admin-edit-collection/admi
     ReadExerciseComponent,
     RegexExtractionMatchComponent,
     AdminEditCollectionComponent,
+    RegexCheatsheetComponent,
   ],
   imports: [
     BrowserModule,

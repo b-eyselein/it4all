@@ -1,14 +1,18 @@
 <div *ngIf="exercise != undefined" class="container is-fluid">
 
   <div class="columns">
-    <div class="column is-one-third">
+    <div class="column is-half-desktop">
       <h1 class="title is-3 has-text-centered">Aufgabenstellung</h1>
-      <div class="notification">{{exercise.text}}</div>
+      <div class="notification is-dark">{{exercise.text}}</div>
 
-      <div class="field">
-        <label class="label has-text-centered" for="solution">Ihre Lösung</label>
-        <input type="text" class="input" id="solution" [(ngModel)]="solution" placeholder="Ihre Lösung" autofocus
-               autocomplete="off">
+      <div class="field has-addons">
+        <div class="control">
+          <label class="button is-static" for="solution">Ihre Lösung:</label>
+        </div>
+        <div class="control is-expanded">
+          <input type="text" class="input" id="solution" [(ngModel)]="solution" placeholder="Ihre Lösung" autofocus
+                 autocomplete="off">
+        </div>
       </div>
 
       <div class="columns">
@@ -16,7 +20,10 @@
           <button class="button is-link is-fullwidth" (click)="correct()">Lösung testen</button>
         </div>
         <div class="column">
-          <button class="button is-primary is-fullwidth" (click)="showSampleSolutions()">Musterlösung anzeigen</button>
+          <button class="button is-primary is-fullwidth" (click)="triggerSampleSolutions()">
+            Musterlösungen&nbsp;<span *ngIf="!displaySampleSolutions">anzeigen</span><span
+            *ngIf="displaySampleSolutions">ausblenden</span>
+          </button>
         </div>
         <div class="column">
           <a [routerLink]="['/tools', tool.id, 'collections', collId]" class="button is-dark is-fullwidth">
@@ -26,17 +33,29 @@
       </div>
 
       <ng-container *ngIf="displaySampleSolutions">
-        <br>
-
         <h2 class="subtitle is-4 has-text-centered">Musterlösungen</h2>
 
-        <div class="notification" *ngFor="let sampleSolution of exercise.sampleSolutions">
-          <code>{{sampleSolution.sample}}</code>
+        <div class="columns is-multiline">
+          <div class="column is-half" *ngFor="let sampleSolution of exercise.sampleSolutions">
+            <div class="notification is-dark">
+              <code>{{sampleSolution.sample}}</code>
+            </div>
+          </div>
         </div>
       </ng-container>
 
+      <div class="buttons">
+        <button (click)="showInfo = !showInfo;" class="button is-info is-fullwidth">
+          Hilfe&nbsp;<span *ngIf="!showInfo">anzeigen</span><span *ngIf="showInfo">ausblenden</span>
+        </button>
+      </div>
+
+      <it4all-regex-cheatsheet *ngIf="showInfo"></it4all-regex-cheatsheet>
+
+
     </div>
-    <div class="column is-two-thirds" *ngIf="corrected && result">
+
+    <div class="column is-half-desktop" *ngIf="corrected && result">
 
       <h1 class="title is-3 has-text-centered">Korrektur</h1>
 

@@ -18,8 +18,10 @@ export class RegexExerciseComponent implements OnInit {
   exercise: RegexExercise;
 
   corrected = false;
-  displaySampleSolutions = false;
   result: RegexCorrectionResult;
+
+  displaySampleSolutions = false;
+  showInfo = false;
 
   constructor(private route: ActivatedRoute, private apiService: ApiService, private dexieService: DexieService) {
     this.collId = parseInt(route.snapshot.paramMap.get('collId'), 10);
@@ -54,8 +56,8 @@ export class RegexExerciseComponent implements OnInit {
       });
   }
 
-  showSampleSolutions(): void {
-    this.displaySampleSolutions = true;
+  triggerSampleSolutions(): void {
+    this.displaySampleSolutions = !this.displaySampleSolutions;
   }
 
 // FIXME: make directive?
