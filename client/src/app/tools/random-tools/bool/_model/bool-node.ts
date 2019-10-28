@@ -1,14 +1,10 @@
 import {flatMapArray} from '../../../../helpers';
 
 const HTML_REPLACERS: Map<RegExp, string> = new Map([
-  [/impl/g, '&rArr;'],
-  [/nor/g, '&#x22bd;'],
-  [/nand/g, '&#x22bc;'],
-  [/equiv/g, '&hArr;'],
-  [/not /g, '&not;'],
-  [/and/g, '&and;'],
-  [/xor/g, '&oplus;'],
-  [/or/g, '&or;']
+  [/and/g, '&and;'], [/or/g, '&or;'],
+  [/nand/g, '&#x22bc;'], [/nor/g, '&#x22bd;'],
+  [/xor/g, '&oplus;'], [/not /g, '&not;'],
+  [/impl/g, '&rArr;'], [/equiv/g, '&hArr;']
 ]);
 
 export function calculateAssignments(variables: BooleanVariable[]): Map<string, boolean>[] {
@@ -49,13 +45,13 @@ export abstract class BooleanNode {
     return this.variables;
   }
 
-  abstract evaluate(assignments: Map<string, boolean>): boolean | undefined;
-
   protected abstract calculateVariables(): BooleanVariable[];
 
-  abstract asString(): string;
-
   abstract getSubFormulas(): BooleanNode[];
+
+  abstract evaluate(assignments: Map<string, boolean>): boolean | undefined;
+
+  abstract asString(): string;
 
   asHtmlString(): string {
     let base: string = this.asString();
@@ -150,7 +146,7 @@ export class BooleanNot extends BooleanNode {
 export abstract class BooleanBinaryNode extends BooleanNode {
 
   protected abstract operator: string;
-  protected abstract evalFunc: (a: boolean, b: boolean) => boolean;
+
 
   constructor(readonly left: BooleanNode, readonly right: BooleanNode) {
     super();
@@ -183,39 +179,61 @@ export abstract class BooleanBinaryNode extends BooleanNode {
 
   }
 
+  protected abstract evalFunc(a: boolean, b: boolean): boolean;
 }
 
 export class BooleanAnd extends BooleanBinaryNode {
   protected operator = 'and';
-  protected evalFunc = (a, b) => a && b;
+
+  protected evalFunc(a: boolean, b: boolean): boolean {
+    return a && b;
+  }
 }
 
 export class BooleanOr extends BooleanBinaryNode {
   protected operator = 'or';
-  protected evalFunc = (a, b) => a || b;
+
+  protected evalFunc(a: boolean, b: boolean): boolean {
+    return a || b;
+  }
 }
 
 export class BooleanNAnd extends BooleanBinaryNode {
   protected operator = 'nand';
-  protected evalFunc = (a, b) => !(a && b);
+
+  protected evalFunc(a: boolean, b: boolean): boolean {
+    return !(a && b);
+  }
 }
 
 export class BooleanNOr extends BooleanBinaryNode {
   protected operator = 'nor';
-  protected evalFunc = (a, b) => !(a || b);
+
+  protected evalFunc(a: boolean, b: boolean): boolean {
+    return !(a || b);
+  }
 }
 
 export class BooleanXOr extends BooleanBinaryNode {
   protected operator = 'xor';
-  protected evalFunc = (a, b) => (a && !b) || (!a && b);
+
+  protected evalFunc(a: boolean, b: boolean): boolean {
+    return (a && !b) || (!a && b);
+  }
 }
 
 export class BooleanEquivalency extends BooleanBinaryNode {
   protected operator = 'equiv';
-  protected evalFunc = (a, b) => a === b;
+
+  protected evalFunc(a: boolean, b: boolean) {
+    return a === b;
+  }
 }
 
 export class BooleanImplication extends BooleanBinaryNode {
   protected operator = 'impl';
-  protected evalFunc = (a, b) => !a || b;
+
+  protected evalFunc(a: boolean, b: boolean): boolean {
+    return !a || b;
+  }
 }

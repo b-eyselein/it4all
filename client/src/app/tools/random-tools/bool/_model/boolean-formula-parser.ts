@@ -18,7 +18,10 @@ import {
 
 type RuleType<T> = (idxInCallingRule?: number, ...args: any[]) => T;
 
-type RuleRight = { operator: string, right: BooleanNode } | undefined;
+interface RuleRight {
+  operator: string,
+  right: BooleanNode
+}
 
 // Tokens
 
@@ -90,9 +93,6 @@ export class BooleanFormulaParser extends EmbeddedActionsParser {
 
   private factor: RuleType<BooleanNode> = this.RULE('factor', () => {
     return this.OR([
-      {ALT: () => this.SUBRULE(this.variableRule)},
-      {ALT: () => this.SUBRULE<BooleanNode>(this.trueRule)},
-      {ALT: () => this.SUBRULE<BooleanNode>(this.falseRule)},
       {
         ALT: () => {
           this.CONSUME(leftBracket);
@@ -100,7 +100,10 @@ export class BooleanFormulaParser extends EmbeddedActionsParser {
           this.CONSUME(rightBracket);
           return child;
         }
-      }
+      },
+      {ALT: () => this.SUBRULE(this.variableRule)},
+      {ALT: () => this.SUBRULE<BooleanNode>(this.trueRule)},
+      {ALT: () => this.SUBRULE<BooleanNode>(this.falseRule)},
     ]);
   });
 
@@ -116,33 +119,52 @@ export class BooleanFormulaParser extends EmbeddedActionsParser {
 
   private andTermComponent: RuleType<BooleanNode> = this.RULE('otherTerm', () => {
     const left: BooleanNode = this.SUBRULE(this.notFactor);
-    const right: RuleRight = this.OPTION<RuleRight>(() => {
+
+    const otherOpRights: RuleRight[] = [];
+
+    this.MANY(() => {
       const operator: IToken = this.CONSUME(otherOperators);
       const factor: BooleanNode = this.SUBRULE2(this.notFactor);
-      return {operator: operator.image, right: factor};
+
+      otherOpRights.push({operator: operator.image, right: factor});
     });
 
-    return right ? instantiateOperator(left, right.operator, right.right) : left;
+    if (otherOpRights.length === 0) {
+      return left;
+    } else {
+      return otherOpRights.reduce(
+        (prev: BooleanNode, curr: RuleRight) => instantiateOperator(prev, curr.operator, curr.right),
+        left
+      );
+
+      // return instantiateOperator(left, otherOpRights[0].operator, right);
+    }
   });
 
   private orTermComponent: RuleType<BooleanNode> = this.RULE('orTerm', () => {
     const left: BooleanNode = this.SUBRULE(this.andTermComponent);
-    const right: BooleanNode | undefined = this.OPTION(() => {
+
+    const rightSides: BooleanNode[] = [];
+
+    this.MANY(() => {
       this.CONSUME(andOperator);
-      return this.SUBRULE2(this.andTermComponent);
+      rightSides.push(this.SUBRULE2(this.andTermComponent));
     });
 
-    return right ? new BooleanAnd(left, right) : left;
+    return rightSides.length > 0 ? new BooleanAnd(left, rightSides.reduce((l, r) => new BooleanAnd(l, r))) : left;
   });
 
   public booleanFormula: RuleType<BooleanNode> = this.RULE('booleanFormula', () => {
     const left: BooleanNode = this.SUBRULE(this.orTermComponent);
-    const right: BooleanNode | undefined = this.OPTION(() => {
+
+    const rightSides: BooleanNode[] = [];
+
+    this.MANY(() => {
       this.CONSUME(orOperator);
-      return this.SUBRULE2(this.orTermComponent);
+      rightSides.push(this.SUBRULE2(this.orTermComponent));
     });
 
-    return right ? new BooleanOr(left, right) : left;
+    return rightSides.length > 0 ? new BooleanOr(left, rightSides.reduce((l, r) => new BooleanOr(l, r))) : left;
   });
 
 }
