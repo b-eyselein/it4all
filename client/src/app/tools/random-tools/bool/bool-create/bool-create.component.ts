@@ -56,8 +56,6 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
 
     this.oldSolution = booleanFormula;
 
-    console.info(booleanFormula);
-
     this.formulaParsed = true;
 
     // check contained variables!

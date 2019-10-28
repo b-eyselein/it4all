@@ -31,15 +31,8 @@ function testParse(formula: BooleanNode) {
   testParseString(formula.asString(), formula);
 }
 
-function testParseString(formulaString: string, awaited: BooleanNode, debug: boolean = false) {
+function testParseString(formulaString: string, awaited: BooleanNode) {
   const parsed: BooleanNode = parseBooleanFormula(formulaString);
-
-  if (debug) {
-    console.info('Gotten:  ' + formulaString);
-    console.info('Parsed:  ' + parsed.asString());
-    console.info('Awaited: ' + awaited.asString());
-  }
-
   expect(parsed).toEqual(awaited);
 }
 

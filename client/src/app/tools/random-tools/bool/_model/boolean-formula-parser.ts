@@ -19,8 +19,8 @@ import {
 type RuleType<T> = (idxInCallingRule?: number, ...args: any[]) => T;
 
 interface RuleRight {
-  operator: string,
-  right: BooleanNode
+  operator: string;
+  right: BooleanNode;
 }
 
 // Tokens
