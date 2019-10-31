@@ -24,6 +24,7 @@ import {ToolTutorialsOverviewComponent} from './tutorials/tool-tutorials-overvie
 import {CollectionAdminComponent} from './admin/collection-admin/collection-admin.component';
 import {AdminReadExercisesComponent} from './admin/admin-read-exercises/admin-read-exercises.component';
 import {AdminEditCollectionComponent} from './admin/admin-edit-collection/admin-edit-collection.component';
+import {UmlTestComponent} from './tools/collection-tools/uml/uml-test/uml-test.component';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
@@ -63,7 +64,10 @@ const routes: Routes = [
   },
   {path: 'tools/regex/collections/:collId/exercises/:exId/parts/:partId', component: RegexExerciseComponent, canActivate: [AuthGuard]},
   {path: 'tools/sql/collections/:collId/exercises/:exId/parts/:partId', component: SqlExerciseComponent, canActivate: [AuthGuard]},
-  {path: 'tools/web/collections/:collId/exercises/:exId/parts/:partId', component: WebExerciseComponent, canActivate: [AuthGuard]}
+  {path: 'tools/web/collections/:collId/exercises/:exId/parts/:partId', component: WebExerciseComponent, canActivate: [AuthGuard]},
+
+  // FIXME: remove this route...
+  {path: 'test', component: UmlTestComponent},
 ];
 
 @NgModule({

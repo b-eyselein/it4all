@@ -44,6 +44,7 @@ import { ReadExerciseComponent } from './admin/admin-read-exercises/read-exercis
 import { RegexExtractionMatchComponent } from './tools/collection-tools/regex/regex-extraction-result/regex-extraction-match/regex-extraction-match.component';
 import { AdminEditCollectionComponent } from './admin/admin-edit-collection/admin-edit-collection.component';
 import { RegexCheatsheetComponent } from './tools/collection-tools/regex/regex-cheatsheet/regex-cheatsheet.component';
+import { UmlTestComponent } from './tools/collection-tools/uml/uml-test/uml-test.component';
 
 
 @NgModule({
@@ -86,6 +87,7 @@ import { RegexCheatsheetComponent } from './tools/collection-tools/regex/regex-c
     RegexExtractionMatchComponent,
     AdminEditCollectionComponent,
     RegexCheatsheetComponent,
+    UmlTestComponent,
   ],
   imports: [
     BrowserModule,
