@@ -70,6 +70,22 @@ const routes: Routes = [
   {path: 'test', component: UmlTestComponent},
 ];
 
+export const routingComponents = [
+  ToolOverviewComponent,
+  LoginFormComponent,
+  LtiComponent,
+  // Admin routing components
+  AdminIndexComponent, CollectionToolAdminComponent, AdminReadCollectionsComponent, AdminEditCollectionComponent,
+  CollectionAdminComponent, AdminReadExercisesComponent,
+  // tutorial routing
+  ToolTutorialsOverviewComponent,
+  RandomOverviewComponent, BoolFillOutComponent, BoolCreateComponent,
+  NaryAdditionComponent, NaryConversionComponent, NaryTwoConversionComponent,
+  ToolIndexComponent, CollectionIndexComponent,
+  ProgrammingExerciseComponent, RegexExerciseComponent, SqlExerciseComponent, WebExerciseComponent,
+  UmlTestComponent
+];
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

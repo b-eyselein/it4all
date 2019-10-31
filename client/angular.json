@@ -35,6 +35,8 @@
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/lodash/lodash.js",
+              "node_modules/backbone/backbone-min.js",
               "node_modules/jointjs/dist/joint.js"
             ]
           },
