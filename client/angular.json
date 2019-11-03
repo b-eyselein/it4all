@@ -31,7 +31,8 @@
             ],
             "styles": [
               "src/styles.sass",
-              "node_modules/jointjs/css/layout.css"
+              "node_modules/jointjs/css/layout.css",
+              "node_modules/jointjs/css/themes/default.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

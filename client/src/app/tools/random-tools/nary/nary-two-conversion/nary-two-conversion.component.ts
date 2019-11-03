@@ -41,7 +41,7 @@ export class NaryTwoConversionComponent {
   }
 
   update(): void {
-    this.toConvertInput.decimalNumber = randomInt(0, 256);
+    this.toConvertInput.decimalNumber = randomInt(0, 128);
 
     this.checked = false;
 

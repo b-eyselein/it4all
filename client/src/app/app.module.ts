@@ -23,6 +23,7 @@ import {RegexCheatsheetComponent} from './tools/collection-tools/regex/regex-che
 import {UmlTestComponent} from './tools/collection-tools/uml/uml-test/uml-test.component';
 import {ReadCollectionComponent} from './admin/admin-read-collections/read-collection/read-collection.component';
 import {ReadExerciseComponent} from './admin/admin-read-exercises/read-exercise/read-exercise.component';
+import { BoolDrawingComponent } from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import {ReadExerciseComponent} from './admin/admin-read-exercises/read-exercise/
     RegexExtractionMatchComponent,
     RegexCheatsheetComponent,
     UmlTestComponent,
+    BoolDrawingComponent,
   ],
   imports: [
     BrowserModule,

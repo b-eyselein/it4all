@@ -25,6 +25,7 @@ import {CollectionAdminComponent} from './admin/collection-admin/collection-admi
 import {AdminReadExercisesComponent} from './admin/admin-read-exercises/admin-read-exercises.component';
 import {AdminEditCollectionComponent} from './admin/admin-edit-collection/admin-edit-collection.component';
 import {UmlTestComponent} from './tools/collection-tools/uml/uml-test/uml-test.component';
+import {BoolDrawingComponent} from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
@@ -68,6 +69,7 @@ const routes: Routes = [
 
   // FIXME: remove this route...
   {path: 'test', component: UmlTestComponent},
+  {path: 'boolDrawing', component: BoolDrawingComponent}
 ];
 
 export const routingComponents = [
