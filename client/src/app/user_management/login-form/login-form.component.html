@@ -4,7 +4,7 @@
     <div class="field">
       <label for="username" class="label">Nutzername</label>
       <div class="control">
-        <input type="text" id="username" formControlName="username" class="input" placeholder="Nutzername">
+        <input type="text" id="username" formControlName="username" class="input" placeholder="Nutzername" autofocus>
       </div>
       <p *ngIf="submitted && f.username.errors && f.username.errors.required" class="help is-danger">
         Nutzername darf nicht leer sein!

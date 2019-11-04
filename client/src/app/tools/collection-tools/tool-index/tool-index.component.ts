@@ -3,6 +3,7 @@ import {ExerciseCollection, Tool} from '../../../_interfaces/tool';
 import {ApiService} from '../../../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {collectionTools} from '../collection-tools-list';
+import {DexieService} from '../../../_services/dexie.service';
 
 @Component({templateUrl: './tool-index.component.html'})
 export class ToolIndexComponent implements OnInit {
@@ -30,7 +31,17 @@ export class ToolIndexComponent implements OnInit {
     // this.dexieService.collections.toArray()
     //   .then((collections: ExerciseCollection[]) => this.collections = collections);
     this.apiService.getCollections(this.tool.id)
-      .subscribe((collections: ExerciseCollection[]) => this.collections = collections);
+      .subscribe((collections: ExerciseCollection[]) => {
+        this.collections = collections;
+        this.loadExerciseBasics();
+      });
+  }
+
+  loadExerciseBasics(): void {
+    this.collections.forEach((collection) => {
+      this.apiService.getExerciseBasics(this.tool.id, collection.id)
+        .subscribe((exerciseBasics) => collection.exercisesBasics = exerciseBasics);
+    });
   }
 
 }

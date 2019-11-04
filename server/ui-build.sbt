@@ -24,7 +24,7 @@ def runOnCommandline(script: String)(implicit dir: File): Int = {
   } else {
     Process(script, dir)
   }
-} !
+  }.!
 
 // Check of node_modules directory exist in given directory.
 def isNodeModulesInstalled(implicit dir: File): Boolean = (dir / "node_modules").exists()

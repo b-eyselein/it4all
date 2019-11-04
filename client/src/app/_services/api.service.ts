@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Exercise, ExerciseCollection} from '../_interfaces/tool';
+import {Exercise, ExerciseBasics, ExerciseCollection} from '../_interfaces/tool';
 import {Observable, of} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {DexieService} from './dexie.service';
@@ -41,6 +41,12 @@ export class ApiService {
           }
         })
       );
+  }
+
+  getExerciseBasics(toolId: string, collId: number): Observable<ExerciseBasics[]> {
+    return this.http.get<ExerciseBasics[]>(`${this.baseUrl}/${toolId}/collections/${collId}/exerciseBasics`)
+      .pipe(catchError(() => of([])))
+      .pipe(tap((exerciseBasics) => this.dexieService.exerciseBasics.bulkPut(exerciseBasics)));
   }
 
   getExercises<E extends Exercise>(toolId: string, collId: number): Observable<E[]> {

@@ -12,8 +12,34 @@
   <ng-container *ngIf="collections; else loadingBlock">
     <div *ngIf="collections?.length > 0; else noCollectionsFoundBlock" class="columns is-multiline">
       <div *ngFor="let collection of collections" class="column is-one-third">
-        <a [routerLink]="['/tools', tool.id, 'collections', collection.id]"
-           class="button is-link is-fullwidth">{{collection.title}}</a>
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">{{collection.title}}</p>
+          </header>
+          <div class="card-content">
+            <ng-container *ngIf="collection.exercisesBasics; else loadingExercisesBlock">
+              <ng-container *ngIf="collection.exercisesBasics.length > 0; else noExercisesFoundBlock">
+                <p *ngFor="let exerciseBasics of collection.exercisesBasics">
+                  {{exerciseBasics.id}}. {{exerciseBasics.title}}
+                </p>
+              </ng-container>
+            </ng-container>
+
+            <ng-template #loadingExercisesBlock>
+              Lade Aufgaben...
+            </ng-template>
+
+            <ng-template #noExercisesFoundBlock>
+              Keine Aufgaben gefunden.
+            </ng-template>
+
+          </div>
+          <footer class="card-footer">
+            <a class="card-footer-item" [routerLink]="['/tools', tool.id, 'collections', collection.id]">
+              Zur Sammlung
+            </a>
+          </footer>
+        </div>
       </div>
     </div>
   </ng-container>

@@ -42,7 +42,7 @@ libraryDependencies ++= Seq(
   guice,
   ws,
 
-  "com.pauldijou" %% "jwt-play" % "4.1.0",
+  "com.pauldijou" %% "jwt-play" % "4.2.0",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test,
 

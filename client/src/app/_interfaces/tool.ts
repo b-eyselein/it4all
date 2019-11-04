@@ -34,6 +34,9 @@ export interface ExerciseCollection {
   text: string;
   state: string;
   shortName: string;
+
+  // FIXME: other solution?
+  exercisesBasics: ExerciseBasics[];
 }
 
 export interface SemanticVersion {
@@ -44,6 +47,7 @@ export interface SemanticVersion {
 
 export interface ExerciseBasics {
   id: number;
+  collId: number;
   semanticVersion: SemanticVersion;
   title: string;
 }

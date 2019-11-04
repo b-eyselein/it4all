@@ -29,7 +29,13 @@ class ApiController @Inject()(cc: ControllerComponents, tl: ToolList, configurat
   def apiCollection(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     toolMain.futureCollById(collId).map {
       case None             => NotFound(s"There is no such collection with id $collId for tool ${toolMain.toolname}")
-      case Some(collection) => Ok(Json.toJson(collection)(JsonProtocol.collectionFormat))
+      case Some(collection) => Ok(JsonProtocol.collectionFormat.writes(collection))
+    }
+  }
+
+  def apiExerciseBasics(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
+    toolMain.futureExerciseBasicsInColl(collId).map { exerciseBasics =>
+      Ok(Json.toJson(exerciseBasics)(Writes.seq(JsonProtocol.exerciseBasicsFormat)))
     }
   }
 

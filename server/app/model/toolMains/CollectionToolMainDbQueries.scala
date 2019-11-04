@@ -1,7 +1,7 @@
 package model.toolMains
 
 import model.core.overviewHelpers.SolvedState
-import model.{ExerciseCollection, ExerciseState, User}
+import model.{ApiExerciseBasics, ExerciseCollection, ExerciseState, User}
 
 import scala.concurrent.Future
 
@@ -22,9 +22,15 @@ trait CollectionToolMainDbQueries {
 
   def futureAllCollections: Future[Seq[ExerciseCollection]] = tables.futureAllCollections
 
+
+  def futureExerciseBasicsInColl(collId: Int): Future[Seq[ApiExerciseBasics]] = tables.futureExerciseBasicsInColl(collId)
+
+
   def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] = tables.futureExerciseById(collId, id)
 
   def futureExercisesInColl(collId: Int): Future[Seq[ExType]] = tables.futureExercisesInColl(collId)
+
+
 
   def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: PartType): Future[Option[UserSolType]] =
     tables.futureMaybeOldSolution(username, collId, exId, part)
