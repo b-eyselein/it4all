@@ -47,6 +47,7 @@ export class ProgrammingExerciseComponent implements OnInit {
     this.part = this.tool.parts.find((p) => p.id === partStr);
 
     if (!this.part) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/tools', this.tool.id, 'collections', collId]);
       return;
     }
@@ -57,6 +58,7 @@ export class ProgrammingExerciseComponent implements OnInit {
           this.collection = coll;
           this.updateExercise(exId);
         } else {
+          // noinspection JSIgnoredPromiseFromCall
           this.router.navigate(['/tools', this.tool.id]);
         }
       });
@@ -68,25 +70,24 @@ export class ProgrammingExerciseComponent implements OnInit {
         if (ex) {
           this.exercise = ex;
           this.exerciseFiles = (this.part === ProgrammingImplementationToolPart) ?
-            ex.implementationPart.files :
-            ex.unitTestPart.unitTestFiles;
+            ex.implementationPart.files : ex.unitTestPart.unitTestFiles;
           this.loadOldSolution();
         } else {
+          // noinspection JSIgnoredPromiseFromCall
           this.router.navigate(['/tools', this.tool.id, 'collections', this.collection.id]);
         }
       });
   }
 
   loadOldSolution(): void {
-    this.dexieService.programmingSolutions.get([this.collection.id, this.exercise.id])
-      .then((oldSolution: DbProgrammingSolution | undefined) => {
-        if (oldSolution) {
-          // FIXME: editor does not update...
-          // tslint:disable-next-line:no-console
-          console.info(JSON.stringify(oldSolution.solution.files, null, 2));
-          this.exerciseFiles = oldSolution.solution.files;
-        }
-      });
+    // TODO: deactivated for now...
+    // this.dexieService.programmingSolutions.get([this.collection.id, this.exercise.id])
+    //   .then((oldSolution: DbProgrammingSolution | undefined) => {
+    //     if (oldSolution) {
+    //       // FIXME: editor does not update...
+    //       this.exerciseFiles = oldSolution.solution.files;
+    //     }
+    //   });
   }
 
   correct(): void {
@@ -99,6 +100,7 @@ export class ProgrammingExerciseComponent implements OnInit {
       }
     };
 
+    // noinspection JSIgnoredPromiseFromCall
     this.dexieService.programmingSolutions.put(solution);
 
     this.correctionRunning = true;

@@ -1,4 +1,4 @@
-import {DbSolution, Exercise} from '../../../_interfaces/tool';
+import {DbSolution, Exercise, SuccessType} from '../../../_interfaces/tool';
 import {CorrectionResult, ExerciseFile, IdeWorkspace} from '../../basics';
 
 // tslint:disable-next-line:no-empty-interface
@@ -65,9 +65,9 @@ export interface ProgSolution {
   unitTest: ExerciseFile;
 }
 
-interface ProgSingleResult {
+export interface ProgSingleResult {
   id: number;
-  // success: SuccessType;
+  success: SuccessType;
   // correct: boolean
   input: object;
   awaited: string;
@@ -103,7 +103,7 @@ export interface TestData {
 }
 
 export interface NormalExecutionResult {
-  // success: SuccessType;
+  success: SuccessType;
   logs: string;
 }
 

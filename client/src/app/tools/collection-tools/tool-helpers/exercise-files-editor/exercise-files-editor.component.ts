@@ -4,17 +4,10 @@ import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 
 @Component({
   selector: 'it4all-exercise-files-editor',
-  template: `
-      <div class="tabs is-centered">
-          <ul>
-              <li *ngFor="let file of exerciseFiles" (click)="changeFile($event)" [class.is-active]="file.active">
-                  <a [class.has-text-grey-light]="!file.editable" [title]="file.editable ? '' : 'Nicht editierbar'">{{file.name}}</a>
-              </li>
-          </ul>
-      </div>
-      <ngx-codemirror [options]="editorOptions" [(ngModel)]="content"></ngx-codemirror>`,
-  styleUrls: ['./exercise-files.component.sass'],
-  encapsulation: ViewEncapsulation.None // Style child component with same sass
+  templateUrl: './exercise-files-editor.component.html',
+  styleUrls: ['./exercise-files-editor.component.sass'],
+  // Style child component with same sass
+  encapsulation: ViewEncapsulation.None
 })
 export class ExerciseFilesEditorComponent implements OnChanges {
 
@@ -32,17 +25,22 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     return this.theContent;
   }
 
-  set content(val: string) {
-    this.theContent = val;
+  /**
+   * called only from CordMirror editor
+   */
+  set content(newContent: string) {
+    this.theContent = newContent;
+    this.saveEditorContent();
+  }
+
+  private saveEditorContent(): void {
     if (this.currentFileName) {
-      this.saveFileContent();
+      this.exerciseFiles.find((f) => f.name === this.currentFileName).content = this.content;
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.currentFileName) {
-      this.saveFileContent();
-    } else if (this.exerciseFiles && this.exerciseFiles.length > 0) {
+    if (!this.currentFileName && this.exerciseFiles && this.exerciseFiles.length > 0) {
       const editableExerciseFiles = this.exerciseFiles.filter((ef) => ef.editable);
 
       if (editableExerciseFiles.length > 0) {
@@ -53,33 +51,29 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     }
   }
 
-  private saveFileContent(): void {
-    this.exerciseFiles.find((f) => f.name === this.currentFileName).content = this.content;
-  }
+  private updateEditor(exerciseFile: ExerciseFile): void {
+    this.saveEditorContent();
 
-  changeFile($event: MouseEvent): void {
-    if ($event.target) {
-      const fileName: string = ($event.target as HTMLElement).textContent;
-
-      // disable other files...
-      this.exerciseFiles.forEach((ef) => ef.active = false);
-
-      const exerciseFile: ExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
-
-      if (exerciseFile) {
-        this.updateEditor(exerciseFile);
-      }
-    }
-  }
-
-  updateEditor(exerciseFile: ExerciseFile): void {
     exerciseFile.active = true;
 
-    this.content = exerciseFile.content;
+    this.theContent = exerciseFile.content;
     this.currentFileName = exerciseFile.name;
 
     this.editorOptions.mode = exerciseFile.fileType;
     this.editorOptions.readOnly = !exerciseFile.editable;
+  }
+
+  changeFile($event: MouseEvent): void {
+    const fileName: string = ($event.target as HTMLElement).textContent;
+
+    // disable other files...
+    this.exerciseFiles.forEach((ef) => ef.active = false);
+
+    const exerciseFile: ExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
+
+    if (exerciseFile) {
+      this.updateEditor(exerciseFile);
+    }
   }
 
 }

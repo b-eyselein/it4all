@@ -1,0 +1,9 @@
+<div class="tabs is-centered">
+  <ul>
+    <li *ngFor="let file of exerciseFiles" (click)="changeFile($event)" [class.is-active]="file.active">
+      <a [class.has-text-grey-light]="!file.editable"
+         [title]="file.editable ? '' : 'Nicht editierbar'">{{file.name}}</a>
+    </li>
+  </ul>
+</div>
+<ngx-codemirror [options]="editorOptions" [(ngModel)]="content"></ngx-codemirror>

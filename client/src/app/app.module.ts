@@ -24,6 +24,8 @@ import {UmlTestComponent} from './tools/collection-tools/uml/uml-test/uml-test.c
 import {ReadCollectionComponent} from './admin/admin-read-collections/read-collection/read-collection.component';
 import {ReadExerciseComponent} from './admin/admin-read-exercises/read-exercise/read-exercise.component';
 import { BoolDrawingComponent } from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
+import { ProgrammingSimplifiedResultComponent } from './tools/collection-tools/programming/_results/programming-simplified-result/programming-simplified-result.component';
+import { ProgrammingUnittestResultComponent } from './tools/collection-tools/programming/_results/programming-unittest-result/programming-unittest-result.component';
 
 
 @NgModule({
@@ -47,6 +49,8 @@ import { BoolDrawingComponent } from './tools/random-tools/bool/bool-drawing/boo
     RegexCheatsheetComponent,
     UmlTestComponent,
     BoolDrawingComponent,
+    ProgrammingSimplifiedResultComponent,
+    ProgrammingUnittestResultComponent,
   ],
   imports: [
     BrowserModule,

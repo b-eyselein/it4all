@@ -1,0 +1,8 @@
+<li>
+  <p [class.has-text-danger]="!correct" [class.has-text-success]="correct">
+    Der {{result.testConfig.id}}. Test war
+    <ng-container *ngIf="!correct">nicht</ng-container>
+    erfolgreich.
+  </p>
+  <p *ngIf="!correct">{{result.testConfig.description}}</p>
+</li>

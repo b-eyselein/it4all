@@ -40,7 +40,7 @@
             Die Korrektur läuft gerade...
           </div>
 
-          <ng-container *ngIf="result">
+          <div class="overflowHiddenDiv" *ngIf="result">
 
             <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
 
@@ -49,35 +49,50 @@
             <!--            <it4all-points-notification [result]="result"></it4all-points-notification>-->
 
             <ng-container *ngIf="result.simplifiedResults">
-              <div *ngFor="let simplifiedResult of result.simplifiedResults">
-                {{simplifiedResult}}
-              </div>
-              <!--            TODO: {{result}}-->
-            </ng-container>
-            <ng-container *ngIf="result.unitTestResults">
-              <div *ngFor="let unitTestResult of result.unitTestResults">
-                {{unitTestResult}}
-              </div>
-            </ng-container>
-            <ng-container *ngIf="result.normalResult">
-              <pre>{{result.normalResult.logs}}</pre>
+              <ng-container *ngFor="let simplifiedResult of result.simplifiedResults; let last = last">
+                <it4all-programming-simplified-result [result]="simplifiedResult">
+                </it4all-programming-simplified-result>
+
+                <br *ngIf="!last">
+              </ng-container>
             </ng-container>
 
-          </ng-container>
+            <div class="content" *ngIf="result.unitTestResults">
+              <ul *ngFor="let unitTestResult of result.unitTestResults">
+                <li>
+                  <p [class.has-text-danger]="!unitTestResult.successful"
+                     [class.has-text-success]="unitTestResult.successful">
+                    Der {{unitTestResult.testConfig.id}}. Test war
+                    <ng-container *ngIf="!unitTestResult.successful">nicht</ng-container>
+                    erfolgreich.
+                  </p>
+                  <p *ngIf="!unitTestResult.successful">{{unitTestResult.testConfig.description}}</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="notification" *ngIf="result.normalResult"
+                 [class.is-success]="result.normalResult.success === 'COMPLETE'"
+                 [class.is-danger]="result.normalResult.success !== 'COMPLETE'">
+              <pre>{{result.normalResult.logs}}</pre>
+            </div>
+
+          </div>
 
         </it4all-tab>
 
         <it4all-tab [title]="'Live-Vorschau'" *ngIf="tool.hasLivePreview"></it4all-tab>
 
         <it4all-tab [title]="sampleSolutionsTabTitle">
-          <div class="sampleSolutionsDiv" *ngIf="displaySampleSolutions">
+
+          <div class="overflowHiddenDiv" *ngIf="displaySampleSolutions">
             <!-- TODO: tabs for multiple sample solutions? -->
 
-            <div *ngFor="let sampleSolutionFiles of sampleSolutionFilesList">
+            <div *ngFor="let sampleSolutionFiles of sampleSolutionFilesList; let last = last">
               <ng-container *ngFor="let sampleSolFile of sampleSolutionFiles">
                 <it4all-exercise-file-card [exerciseFile]="sampleSolFile"></it4all-exercise-file-card>
 
-                <br>
+                <br *ngIf="!last">
               </ng-container>
             </div>
 
