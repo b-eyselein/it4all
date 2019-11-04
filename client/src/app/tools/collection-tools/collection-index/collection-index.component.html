@@ -8,39 +8,46 @@
 
   <br>
 
-  <ng-container *ngIf="collection; else collectionNotFoundBlock">
+  <ng-container *ngIf="collection">
     <h2 class="subtitle is-3 has-text-centered">Aufgaben</h2>
 
-    <div class="columns is-multiline" *ngIf="exercises && exercises.length > 0; else noExercisesFoundBlock">
-      <div *ngFor="let exercise of exercises" class="column is-one-third-desktop is-one-half">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title">{{exercise.id}}. {{exercise.title}}</div>
-          </div>
-          <div class="card-content">
-            <div class="buttons">
-              <ng-container *ngFor="let part of tool.parts">
-                <a [routerLink]="['/tools', tool.id, 'collections', collId, 'exercises', exercise.id, 'parts', part.id]"
-                   *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)"
-                   class="button is-link">{{part.name}}</a>
-              </ng-container>
+    <ng-container *ngIf="exercises; else loadingExercisesBlock">
+      <div class="columns is-multiline" *ngIf="exercises.length > 0; else noExercisesFoundBlock">
+        <div *ngFor="let exercise of exercises" class="column is-one-third-desktop is-one-half">
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-title">{{exercise.id}}. {{exercise.title}}</div>
+            </div>
+            <div class="card-content">
+              <div class="buttons">
+                <ng-container *ngFor="let part of tool.parts">
+                  <a *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)" class="button is-link"
+                     [routerLink]="['/tools', tool.id, 'collections', this.collection.id, 'exercises', exercise.id, 'parts', part.id]">
+                    {{part.name}}
+                  </a>
+                </ng-container>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
-    </div>
-
-    <ng-template #noExercisesFoundBlock>
-      <div class="notification is-danger has-text-centered">
-        Es konnten keine Aufgaben für die Sammlung {{collection.title}} gefunden werden!
-      </div>
-    </ng-template>
-
+    </ng-container>
   </ng-container>
 
-  <ng-template #collectionNotFoundBlock>
-    <div class="notification is-danger">
-      Sammlung mit der ID {{collId}} für das Tool {{tool.name}} konnte nicht gefunden werden!
+  <ng-template #noExercisesFoundBlock>
+    <div class="notification is-danger has-text-centered">
+      Es konnten keine Aufgaben für die Sammlung {{collection.title}} gefunden werden!
     </div>
   </ng-template>
+
+  <ng-template #loadingExercisesBlock>
+    <div class="notification">
+      <p class="has-text-centered">Lade Aufgaben...</p>
+      <br>
+      <progress class="progress" max="100">20%</progress>
+    </div>
+  </ng-template>
+
 </div>

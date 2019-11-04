@@ -1,24 +1,37 @@
 <div class="container">
-    <h1 class="title is-3 has-text-centered">Tool {{tool?.name}}</h1>
+  <h1 class="title is-3 has-text-centered">Tool {{tool?.name}}</h1>
 
-    <div class="buttons">
-        <a class="button is-primary is-fullwidth" [routerLink]="['/']">Zurück zur Toolübersicht</a>
+  <div class="buttons">
+    <a class="button is-primary is-fullwidth" [routerLink]="['/']">Zurück zur Toolübersicht</a>
+  </div>
+
+  <br>
+
+  <h2 class="subtitle is-3 has-text-centered">Sammlungen</h2>
+
+  <ng-container *ngIf="collections; else loadingBlock">
+    <div *ngIf="collections?.length > 0; else noCollectionsFoundBlock" class="columns is-multiline">
+      <div *ngFor="let collection of collections" class="column is-one-third">
+        <a [routerLink]="['/tools', tool.id, 'collections', collection.id]"
+           class="button is-link is-fullwidth">{{collection.title}}</a>
+      </div>
     </div>
+  </ng-container>
 
-    <br>
-
-    <h2 class="subtitle is-3 has-text-centered">Sammlungen</h2>
-    <div *ngIf="collections?.length > 0; else elseBlock" class="columns is-multiline">
-        <div *ngFor="let collection of collections" class="column is-one-third">
-            <a [routerLink]="['/tools', tool.id, 'collections', collection.id]"
-               class="button is-link is-fullwidth">{{collection.title}}</a>
-        </div>
+  <ng-template #loadingBlock>
+    <div class="notification">
+      <p class="has-text-centered">Lade Sammlungen...</p>
+      <br>
+      <progress class="progress" max="100">20%</progress>
     </div>
-    <ng-template #elseBlock>
-        <div class="notification is-danger has-text-centered">
-            Es konnten keine Sammlungen gefunden werden!
-        </div>
-    </ng-template>
-    <!-- FIXME: uncomment evaluation! -->
-    <!-- <h1 class="title is-3 has-text-centered">Evaluation</h1>-->
+  </ng-template>
+
+  <ng-template #noCollectionsFoundBlock>
+    <div class="notification is-danger has-text-centered">
+      Es konnten keine Sammlungen gefunden werden!
+    </div>
+  </ng-template>
+
+  <!-- FIXME: uncomment evaluation! -->
+  <!-- <h1 class="title is-3 has-text-centered">Evaluation</h1>-->
 </div>

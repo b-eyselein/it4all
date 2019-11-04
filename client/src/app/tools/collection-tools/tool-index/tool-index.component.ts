@@ -7,11 +7,18 @@ import {collectionTools} from '../collection-tools-list';
 @Component({templateUrl: './tool-index.component.html'})
 export class ToolIndexComponent implements OnInit {
 
-  tool: Tool;
-  collections: ExerciseCollection[] = [];
+  // FIXME: show number of exercise for every collection!
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {
-    const toolId = this.route.snapshot.paramMap.get('toolId');
+  tool: Tool;
+  collections: ExerciseCollection[];
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private apiService: ApiService,
+    // private dexieService: DexieService
+  ) {
+    const toolId: string = this.route.snapshot.paramMap.get('toolId');
     this.tool = collectionTools.find((t) => t.id === toolId);
 
     if (!this.tool) {
@@ -20,6 +27,8 @@ export class ToolIndexComponent implements OnInit {
   }
 
   ngOnInit() {
+    // this.dexieService.collections.toArray()
+    //   .then((collections: ExerciseCollection[]) => this.collections = collections);
     this.apiService.getCollections(this.tool.id)
       .subscribe((collections: ExerciseCollection[]) => this.collections = collections);
   }
