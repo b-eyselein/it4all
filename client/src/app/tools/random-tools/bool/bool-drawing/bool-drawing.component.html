@@ -1,3 +1,17 @@
-<div class="container">
-  <div id="paper"></div>
+<div class="container is-fluid">
+  <div class="columns">
+    <div class="column is-two-thirds-desktop">
+      <div id="paper" (dragover)="paperOnDragover($event)" (drop)="paperOnDrop($event)"></div>
+    </div>
+    <div class="column is-one-third-desktop">
+      <div class="columns is-multiline">
+        <div class="column is-half-desktop" *ngFor="let gateType of gateTypes">
+          <button (click)="toggleGateButton($event, gateType)" draggable="true"
+                  (dragstart)="gateButtonOnDragstart($event, gateType)"
+                  class="button is-fullwidth" [class.is-primary]="elementToCreate === gateType">
+            {{gateType}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

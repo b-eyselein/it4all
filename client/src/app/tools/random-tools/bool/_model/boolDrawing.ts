@@ -4,57 +4,52 @@ import * as _ from 'underscore';
 
 import './boolDrawingElements';
 
-import 'jointjs';
-// import {domReady} from '../otherHelpers';
+export const graph: joint.dia.Graph = new joint.dia.Graph();
+export const STD_ZOOM_LEVEL = 1.4;
 
-export {toggleLive};
+export let paper: joint.dia.Paper;
 
-const graph: joint.dia.Graph = new joint.dia.Graph();
-const STD_ZOOM_LEVEL = 1.4;
+export let dragX; // Postion within div : X
+export let dragY;	// Postion within div : Y
 
-let paper: joint.dia.Paper;
+export const SIGNALS: Map<string, boolean> = new Map([
+  ['a', true],
+  ['b', true],
+  ['c', true],
+  ['d', true]
+]);
 
-let dragX; // Postion within div : X
-let dragY;	// Postion within div : Y
-
-// tslint:disable-next-line:variable-name
-let sel_elementname; // used for select element and click on paper to generate Element
-
-const SIGNALS = {
-  a: true, b: true, c: true, d: true
-};
-
-function createElement(elementName: string, x: number, y: number): void {
+export function createElement(elementName: string, x: number, y: number): void {
   let element: joint.shapes.logic.Gate;
   let svg: string;
   const elementPos = {position: {x, y}};
 
   switch (elementName) {
-    case     'elementAND':
+    case 'elementAND':
       element = new joint.shapes.logic.And(elementPos);
       svg = 'https://upload.wikimedia.org/wikipedia/commons/0/0f/AND_IEC.svg';
       break;
-    case     'elementNAND':
+    case 'elementNAND':
       element = new joint.shapes.logic.Nand(elementPos);
       svg = 'https://upload.wikimedia.org/wikipedia/commons/d/d8/NAND_IEC.svg';
       break;
-    case     'elementOR':
+    case 'elementOR':
       element = new joint.shapes.logic.Or(elementPos);
       svg = 'https://upload.wikimedia.org/wikipedia/commons/4/42/OR_IEC.svg';
       break;
-    case     'elementNOR':
+    case 'elementNOR':
       element = new joint.shapes.logic.Nor(elementPos);
       svg = 'https://upload.wikimedia.org/wikipedia/commons/6/6d/NOR_IEC.svg';
       break;
-    case     'elementXOR':
+    case 'elementXOR':
       element = new joint.shapes.logic.Xor(elementPos);
       svg = 'https://upload.wikimedia.org/wikipedia/commons/4/4e/XOR_IEC.svg';
       break;
-    case     'elementXNOR':
+    case 'elementXNOR':
       element = new joint.shapes.logic.Xnor(elementPos);
       svg = 'https://upload.wikimedia.org/wikipedia/commons/5/56/XNOR_IEC.svg';
       break;
-    case     'elementNOT':
+    case 'elementNOT':
       element = new joint.shapes.logic.Not(elementPos);
       svg = 'https://upload.wikimedia.org/wikipedia/commons/e/ef/NOT_IEC.svg';
       break;
@@ -62,11 +57,7 @@ function createElement(elementName: string, x: number, y: number): void {
 
   element.attr('image/xlink:href', svg);
 
-  unmarkAllElementButtons();
-  sel_elementname = '';
-
   graph.addCell(element);
-
 }
 
 const MODIFICATORS = {
@@ -82,73 +73,60 @@ const MODIFICATORS = {
 
 document.addEventListener('dragover', (e: DragEvent) => {
   const offset = $('#paper').offset();
+  // console.warn(offset);
   dragX = e.pageX - offset.left;
   dragY = e.pageY - offset.top;
 }, false);
 
-
-function drag(dragEvent: DragEvent): void {
-  dragEvent.dataTransfer.setData('text', (dragEvent.target as HTMLButtonElement).name);
-}
-
-function drop(dragEvent: DragEvent): void {
-  dragEvent.preventDefault();
-
-  // scale: Coordinates offset by graph scale, correct with factor
-  const scale = joint.V(paper.viewport).scale();
-
-  createElement(dragEvent.dataTransfer.getData('text'), dragX / scale.sx, dragY / scale.sy);
-}
-
-function setName(button: HTMLButtonElement) {
-  sel_elementname = button.name;
-
-  unmarkAllElementButtons();
-  $(button).removeClass('btn-default').addClass('btn-primary');
-}
-
-function unmarkAllElementButtons() {
-  $('#creationButtonsDiv').find('button').removeClass('btn-primary').addClass('btn-default');
-}
-
-function preparePaper() {
-  const xMaxPos: number = paper.getArea().width / 1.65;
-  const yPos: number = paper.getArea().height / 2;
-
-  const gatesToAdd = [
-    {symbol: 'a', gateType: 'input', position: {x: 20, y: 20}},
-    {symbol: 'b', gateType: 'input', position: {x: 20, y: yPos / 3}},
-    {symbol: 'c', gateType: 'input', position: {x: 20, y: yPos * 2 / 3}},
-    {symbol: 'd', gateType: 'input', position: {x: 20, y: yPos}},
-
-    {symbol: 'y', gateType: 'output', position: {x: xMaxPos, y: yPos / 3}},
-    {symbol: 'z', gateType: 'output', position: {x: xMaxPos, y: yPos * 2 / 3}}
+function initGraph(xMaxPos: number, yPos: number): void {
+  const inputsToAdd = [
+    {symbol: 'a', position: {x: 20, y: 20}},
+    {symbol: 'b', position: {x: 20, y: yPos / 3}},
+    {symbol: 'c', position: {x: 20, y: yPos * 2 / 3}},
+    {symbol: 'd', position: {x: 20, y: yPos}}
   ];
 
-  for (const gateToAdd of gatesToAdd) {
-    let newGate;
 
-    if (gateToAdd.gateType === 'input') {
-      newGate = new joint.shapes.logic.Input(gateToAdd);
-    } else if (gateToAdd.gateType === 'output') {
-      newGate = new joint.shapes.logic.Output(gateToAdd);
-    }
+  for (const inputToAdd of inputsToAdd) {
+    const newGate = new joint.shapes.logic.Input(inputToAdd);
 
-    newGate.attr('logicSymbol', gateToAdd.symbol);
-    newGate.attr('text', {text: gateToAdd.gateType + ' ' + gateToAdd.symbol});
+    newGate.attr('logicSymbol', inputToAdd.symbol);
+    newGate.attr('text', {text: inputToAdd.symbol});
 
     graph.addCell(newGate);
   }
 
+  const outputsToAdd = [
+    {symbol: 'y', position: {x: xMaxPos, y: yPos / 3}},
+    {symbol: 'z', position: {x: xMaxPos, y: yPos * 2 / 3}}
+  ];
+
+  for (const outputToAdd of outputsToAdd) {
+    const newGate = new joint.shapes.logic.Output(outputToAdd);
+
+    newGate.attr('logicSymbol', outputToAdd.symbol);
+    newGate.attr('text', {text: outputToAdd.symbol});
+
+    graph.addCell(newGate);
+  }
+
+}
+
+function preparePaper(): void {
+  const xMaxPos: number = paper.getArea().width / 1.65;
+  const yPos: number = paper.getArea().height / 2;
+
+  initGraph(xMaxPos, yPos);
+
   paper.scale(STD_ZOOM_LEVEL, STD_ZOOM_LEVEL);
 }
 
-function toggleLive(model: joint.dia.Cell, signal: boolean): void {
+export function toggleLive(model: joint.dia.Cell, signal: boolean): void {
   // add 'live' class to the element if there is a positive signal
   joint.V(paper.findViewByModel(model).el).toggleClass('live', signal);
 }
 
-function broadcastSignal(gate: joint.shapes.logic.Gate, signal: boolean): void {
+export function broadcastSignal(gate: joint.shapes.logic.Gate, signal: boolean): void {
   toggleLive(gate, signal);
 
   // broadcast signal to all output ports
@@ -158,7 +136,7 @@ function broadcastSignal(gate: joint.shapes.logic.Gate, signal: boolean): void {
   }
 }
 
-function initializeSignals() {
+function initializeSignals(): void {
   // cancel all signals stores in wires
   for (const wire of graph.getLinks()) {
     wire.set('signal', false);
@@ -187,55 +165,40 @@ function getOutputFormula(gate: joint.shapes.logic.Gate): OutputFormula {
     return {success: true, formula: gate.attr('logicSymbol')};
   }
 
-  const modificator = MODIFICATORS[gate.attributes.type];
+  const modification = MODIFICATORS[gate.attributes.type];
 
   let formula = '';
   let success;
 
   const ingoingWires = graph.getConnectedLinks(gate, {inbound: true});
 
-  if (modificator.neededInputs !== ingoingWires.length) {
+  if (modification.neededInputs !== ingoingWires.length) {
     paper.findViewByModel(gate.id).highlight();
     return {formula: '', success: false};
   }
 
-  if (modificator.neededInputs === 1) {
+  if (modification.neededInputs === 1) {
     const sourceInput = getOutputFormula(graph.getCell(ingoingWires[0].prop('source').id) as joint.shapes.logic.Gate);
     success = sourceInput.success;
     if (success) {
-      formula = (modificator.isNegated ? '&not; ' : '') + sourceInput.formula;
+      formula = (modification.isNegated ? '&not; ' : '') + sourceInput.formula;
     }
-  } else if (modificator.neededInputs === 2) {
+  } else if (modification.neededInputs === 2) {
     const firstInput = getOutputFormula(graph.getCell(ingoingWires[0].prop('source').id) as joint.shapes.logic.Gate);
     const secondInput = getOutputFormula(graph.getCell(ingoingWires[1].prop('source').id) as joint.shapes.logic.Gate);
 
     success = firstInput.success && secondInput.success;
     if (success) {
-      formula = (modificator.isNegated ? '&not;' : '') + (firstInput.formula + ' ' + modificator.infixOperator + ' ' + secondInput.formula);
+      formula = (modification.isNegated ? '&not;' : '') +
+        (firstInput.formula + ' ' + modification.infixOperator + ' ' + secondInput.formula);
     }
   }
 
   return {success, formula};
 }
 
-function initButtons(): void {
-  const elementButtons = $('#creationButtonsDiv').find('button');
-  elementButtons.on('click', (event) => setName(event.target as HTMLButtonElement));
-  elementButtons.each((index, button: HTMLButtonElement) => {
-    button.addEventListener('dragstart', drag);
-    button.draggable = true;
-  });
-}
-
 export function draw(): void {
-  initButtons();
-
-  const paperElem = document.getElementById('paper');
-
-  const paperSelector = $('#paper');
-
-  paperElem.addEventListener('dragover', (event: DragEvent) => event.preventDefault());
-  paperElem.addEventListener('drop', drop);
+  const paperSelector: JQuery<HTMLElement> = $('#paper');
 
   paper = new joint.dia.Paper({
     el: paperSelector,
@@ -280,6 +243,8 @@ export function draw(): void {
 
   preparePaper();
 
+  // Graph events
+
   graph.on('change:source change:target', (model, end) => {
 
     const e: string = 'target' in model.changed ? 'target' : 'source';
@@ -321,32 +286,6 @@ export function draw(): void {
         // TODO!
       }
     }
-  });
-
-  $('#generateFormula').on('click', () => {
-    const target = $('#preCode');
-
-    const allElementsInGraph = graph.getElements();
-
-    for (const element of allElementsInGraph) {
-      paper.findViewByModel(element).unhighlight();
-    }
-
-    let html = '';
-
-    for (const element of allElementsInGraph) {
-      if (element instanceof joint.shapes.logic.Output) {
-        const formulaResult = getOutputFormula(element);
-
-        if (formulaResult.success) {
-          html += `<p><code>${element.attr('logicSymbol')} = ${formulaResult.formula}</code></p>`;
-        } else {
-          html += `<p class="text-danger">${element.attr('logicSymbol')}: ${formulaResult.formula}</p>`;
-        }
-      }
-    }
-
-    target.html(html);
   });
 
   graph.on('change:position', (cell, newPosition, opt) => {
@@ -424,35 +363,31 @@ export function draw(): void {
     }
   });
 
-  /* FIXME uncomment?
-  ((joint, $) => {
-    paper.on('cell:contextmenu', (evt, x, y) => {
-      if (!(evt.model.attributes.type === 'logic.Input' || evt.model.attributes.type === 'logic.Output')) {
-        graph.getCell(evt.model.id).remove();
+  // Generation of formula, TODO!
+
+  $('#generateFormula').on('click', () => {
+    const target = $('#preCode');
+
+    const allElementsInGraph = graph.getElements();
+
+    for (const element of allElementsInGraph) {
+      paper.findViewByModel(element).unhighlight();
+    }
+
+    let html = '';
+
+    for (const element of allElementsInGraph) {
+      if (element instanceof joint.shapes.logic.Output) {
+        const formulaResult = getOutputFormula(element);
+
+        if (formulaResult.success) {
+          html += `<p><code>${element.attr('logicSymbol')} = ${formulaResult.formula}</code></p>`;
+        } else {
+          html += `<p class="text-danger">${element.attr('logicSymbol')}: ${formulaResult.formula}</p>`;
+        }
       }
-    });
+    }
 
-    paper.on('cell:pointerclick', function(cellView, evt, x, y) {
-      if (cellView.model.attributes.type === 'logic.Input') {
-        const logicSymbol = cellView.model.attr('logicSymbol');
-
-        const newSignal = !SIGNALS[logicSymbol];
-        SIGNALS[logicSymbol] = newSignal;
-
-        // toggleLive(cellView.model, newSignal);
-
-        broadcastSignal(cellView.model, newSignal);
-      } else {
-        console.error(typeof cellView);
-      }
-    });
-
-    paper.on('blank:pointerclick', (evt, x, y) => {
-      if (sel_elementname !== '') {
-        createElement(sel_elementname, x, y);
-      }
-    });
-  })(joint, $);
-   */
-
+    target.html(html);
+  });
 }
