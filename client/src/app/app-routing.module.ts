@@ -26,6 +26,8 @@ import {AdminReadExercisesComponent} from './admin/admin-read-exercises/admin-re
 import {AdminEditCollectionComponent} from './admin/admin-edit-collection/admin-edit-collection.component';
 import {UmlTestComponent} from './tools/collection-tools/uml/uml-test/uml-test.component';
 import {BoolDrawingComponent} from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
+import {randomToolRoutes, randomToolRoutingComponents} from './tools/random-tools/random-tools.routing';
+import {adminRoutes, adminRoutingComponents} from './admin/admin.routing';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
@@ -35,24 +37,13 @@ const routes: Routes = [
   {path: 'lti/:uuid', component: LtiComponent},
 
   // Administration
-  {path: 'admin', component: AdminIndexComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId', component: CollectionToolAdminComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/readCollections', component: AdminReadCollectionsComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/collections/:collId/editForm', component: AdminEditCollectionComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/collections/:collId/exercises', component: CollectionAdminComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/collections/:collId/readExercises', component: AdminReadExercisesComponent, canActivate: [AdminAuthGuard]},
+  ...adminRoutes,
 
   // Tutorials
   {path: 'tutorials/:toolId', component: ToolTutorialsOverviewComponent, canActivate: [AuthGuard]},
 
   // Random  tools
-  {path: 'randomTools/:toolId', component: RandomOverviewComponent, canActivate: [AuthGuard]},
-  {path: 'randomTools/bool/fillOut', component: BoolFillOutComponent, canActivate: [AuthGuard]},
-  {path: 'randomTools/bool/create', component: BoolCreateComponent, canActivate: [AuthGuard]},
-
-  {path: 'randomTools/nary/addition', component: NaryAdditionComponent, canActivate: [AuthGuard]},
-  {path: 'randomTools/nary/conversion', component: NaryConversionComponent, canActivate: [AuthGuard]},
-  {path: 'randomTools/nary/twoConversion', component: NaryTwoConversionComponent, canActivate: [AuthGuard]},
+  ...randomToolRoutes,
 
   // Collection tools
   {path: 'tools/:toolId', component: ToolIndexComponent, canActivate: [AuthGuard]},
@@ -72,25 +63,24 @@ const routes: Routes = [
   {path: 'boolDrawing', component: BoolDrawingComponent}
 ];
 
-export const routingComponents = [
-  ToolOverviewComponent,
-  LoginFormComponent,
-  LtiComponent,
-  // Admin routing components
-  AdminIndexComponent, CollectionToolAdminComponent, AdminReadCollectionsComponent, AdminEditCollectionComponent,
-  CollectionAdminComponent, AdminReadExercisesComponent,
-  // tutorial routing
-  ToolTutorialsOverviewComponent,
-  RandomOverviewComponent, BoolFillOutComponent, BoolCreateComponent,
-  NaryAdditionComponent, NaryConversionComponent, NaryTwoConversionComponent,
-  ToolIndexComponent, CollectionIndexComponent,
-  ProgrammingExerciseComponent, RegexExerciseComponent, SqlExerciseComponent, WebExerciseComponent,
-  UmlTestComponent
-];
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
 }
+
+export const routingComponents = [
+  ToolOverviewComponent,
+  LoginFormComponent,
+  LtiComponent,
+  ...adminRoutingComponents,
+  // tutorial routing
+  ToolTutorialsOverviewComponent,
+
+  ...randomToolRoutingComponents,
+
+  ToolIndexComponent, CollectionIndexComponent,
+  ProgrammingExerciseComponent, RegexExerciseComponent, SqlExerciseComponent, WebExerciseComponent,
+  UmlTestComponent
+];

@@ -23,38 +23,42 @@ import {RegexCheatsheetComponent} from './tools/collection-tools/regex/regex-che
 import {UmlTestComponent} from './tools/collection-tools/uml/uml-test/uml-test.component';
 import {ReadCollectionComponent} from './admin/admin-read-collections/read-collection/read-collection.component';
 import {ReadExerciseComponent} from './admin/admin-read-exercises/read-exercise/read-exercise.component';
-import { BoolDrawingComponent } from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
-import { ProgrammingSimplifiedResultComponent } from './tools/collection-tools/programming/_results/programming-simplified-result/programming-simplified-result.component';
-import { ProgrammingUnittestResultComponent } from './tools/collection-tools/programming/_results/programming-unittest-result/programming-unittest-result.component';
-import { SqlResultComponent } from './tools/collection-tools/sql/sql-result/sql-result.component';
-import { SqlMatchingResultComponent } from './tools/collection-tools/sql/sql-matching-result/sql-matching-result.component';
+import {BoolDrawingComponent} from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
+import {ProgrammingSimplifiedResultComponent} from './tools/collection-tools/programming/_results/programming-simplified-result/programming-simplified-result.component';
+import {ProgrammingUnittestResultComponent} from './tools/collection-tools/programming/_results/programming-unittest-result/programming-unittest-result.component';
+import {SqlResultComponent} from './tools/collection-tools/sql/sql-result/sql-result.component';
+import {SqlMatchingResultComponent} from './tools/collection-tools/sql/sql-matching-result/sql-matching-result.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     routingComponents,
-    NaryNumberReadOnlyInputComponent,
-    SolutionSavedComponent,
-    PointsNotificationComponent,
-    RegexMatchingResultComponent,
-    RegexExtractionResultComponent,
-    ExerciseFilesEditorComponent,
-    TabComponent,
-    TabsComponent,
-    BoolCreateInstructionsComponent,
-    ReadCollectionComponent,
-    ReadExerciseComponent,
-    ExerciseFileCardComponent,
+
+    ExerciseFilesEditorComponent, ExerciseFileCardComponent,
+
+    SolutionSavedComponent, PointsNotificationComponent,
+
+    // Tabs
+    TabComponent, TabsComponent,
+
     RandomSolveButtonsComponent,
-    RegexExtractionMatchComponent,
-    RegexCheatsheetComponent,
+
+    // Nary
+    NaryNumberReadOnlyInputComponent,
+    // Bool
+    BoolCreateInstructionsComponent, BoolDrawingComponent,
+    // Regex
+    RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent, RegexCheatsheetComponent,
+    // Uml
     UmlTestComponent,
-    BoolDrawingComponent,
-    ProgrammingSimplifiedResultComponent,
-    ProgrammingUnittestResultComponent,
-    SqlResultComponent,
-    SqlMatchingResultComponent,
+    // Programming
+    ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
+    // Sql
+    SqlResultComponent, SqlMatchingResultComponent,
+
+    // Admin
+    ReadCollectionComponent, ReadExerciseComponent,
   ],
   imports: [
     BrowserModule,
