@@ -13,6 +13,7 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
 
     override protected def readObject(yamlObject: YamlObject): Try[RegexExercise] = for {
       id <- yamlObject.intField(idName)
+      collectionId <- yamlObject.intField(collectionIdName)
       semanticVersion <- yamlObject.someField(semanticVersionName) flatMap SemanticVersionHelper.semanticVersionYamlField
       title <- yamlObject.stringField(titleName)
       author <- yamlObject.stringField(authorName)
@@ -37,7 +38,7 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
         println(extractionTestDataError)
 
       RegexExercise(
-        id, semanticVersion, title, author, text, state, maxPoints, correctionType,
+        id,collectionId, semanticVersion, title, author, text, state, maxPoints, correctionType,
         sampleSolutionTries._1, matchTestDataTries._1, extractionTestDataTries._1
       )
     }

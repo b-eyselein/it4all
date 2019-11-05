@@ -11,30 +11,34 @@
 
       <ngx-codemirror [(ngModel)]="solution" [options]="editorOptions"></ngx-codemirror>
 
+      <br>
+
       <div class="columns">
         <div class="column is-one-third-desktop">
           <button class="button is-link is-fullwidth" (click)="correct()">Lösung testen</button>
         </div>
         <div class="column is-one-third-desktop">
-          <button class="button is-primary is-fullwidth" (click)="showSampleSolutions()">Musterlösungen anzeigen
+          <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
+            Musterlösungen&nbsp;<span *ngIf="!showSampleSolutions">anzeigen</span><span *ngIf="showSampleSolutions">ausblenden</span>
           </button>
         </div>
         <div class="column is-one-third-desktop">
-          <a class="button is-dark is-fullwidth" [routerLink]="['/tools', tool.id, 'collections', collection?.id]">
+          <a class="button is-dark is-fullwidth" *ngIf="tool && collection"
+             [routerLink]="['/tools', tool.id, 'collections', collection.id]">
             Bearbeiten beenden
           </a>
         </div>
       </div>
 
-      <h1 class="title is-4 has-text-centered">Datenbankschema...</h1>
+      <!-- <h2 class="subtitle is-4 has-text-centered">Datenbankschema...</h2> -->
     </div>
 
     <div class="column is-half-desktop">
       <h1 class="title is-4 has-text-centered">Korrektur</h1>
 
-     <ng-container *ngIf="result" >
-
-     </ng-container>
+      <ng-container *ngIf="result">
+        <it4all-sql-result [result]="result"></it4all-sql-result>
+      </ng-container>
 
     </div>
   </div>

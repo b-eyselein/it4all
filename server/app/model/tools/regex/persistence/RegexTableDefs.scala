@@ -52,8 +52,6 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   override protected val dbModels               = RegexDbModels
   override protected val exerciseReviewDbModels = RegexExerciseReviewDbModels
 
-  override protected def exDbValuesFromExercise(collId: Int, compEx: RegexExercise): DbExType = dbModels.dbExerciseFromExercise(collId, compEx)
-
   // Queries
 
   override protected def completeExForEx(collId: Int, ex: DbRegexExercise): Future[RegexExercise] = for {
@@ -104,7 +102,7 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     def correctionType: Rep[RegexCorrectionType] = column[RegexCorrectionType]("correction_type")
 
 
-    override def * : ProvenShape[DbRegexExercise] = (id, semanticVersion, collectionId, title, author, text, state, maxPoints, correctionType) <> (DbRegexExercise.tupled, DbRegexExercise.unapply)
+    override def * : ProvenShape[DbRegexExercise] = (id, collectionId, semanticVersion, title, author, text, state, maxPoints, correctionType) <> (DbRegexExercise.tupled, DbRegexExercise.unapply)
 
   }
 

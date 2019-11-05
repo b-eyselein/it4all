@@ -30,6 +30,7 @@ object RoseToolForms extends ToolForms[RoseExercise, RoseExerciseReview] {
   override val exerciseFormat: Form[RoseExercise] = Form(
     mapping(
       idName -> number,
+      collectionIdName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,

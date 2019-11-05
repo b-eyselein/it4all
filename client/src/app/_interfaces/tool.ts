@@ -16,7 +16,8 @@ export class Tool {
     public parts?: ToolPart[],
     public status?: ToolStatus,
     public hasPlayground?: boolean,
-    public hasLivePreview?: boolean
+    public hasLivePreview?: boolean,
+    public isDisabled?: boolean
   ) {
   }
 
@@ -48,6 +49,7 @@ export interface SemanticVersion {
 export interface ExerciseBasics {
   id: number;
   collId: number;
+  toolId: string;
   semanticVersion: SemanticVersion;
   title: string;
 }

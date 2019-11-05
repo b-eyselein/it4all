@@ -1,11 +1,31 @@
 <div class="container">
+  <h1 class="title is-3 has-text-centered">Eingelesene Aufgaben</h1>
 
-  <ng-container *ngIf="exercises && exercises.length > 0">
+  <div class="buttons">
+    <a class="button is-primary is-fullwidth" *ngIf="tool && collection"
+       [routerLink]="['/admin',  tool.id, 'collections', collection.id, 'exercises']">
+      Zurück zur Sammlungverwaltung
+    </a>
+    <button class="button is-link is-fullwidth" (click)="saveAll()">Alle Aufgaben speichern</button>
+  </div>
 
-    <div class="columns is-multiline">
-      <div class="column is-half-desktop" *ngFor="let exercise of exercises">
-        <it4all-read-exercise [tool]="tool" [collection]="collection" [exercise]="exercise"></it4all-read-exercise>
+  <ng-container *ngIf="exercises; else loadingExercisesBlock">
+    <ng-container *ngIf="exercises.length > 0">
+      <div class="columns is-multiline">
+        <div class="column is-half-desktop" *ngFor="let exercise of exercises">
+          <it4all-read-exercise [tool]="tool" [collection]="collection" [exercise]="exercise"></it4all-read-exercise>
+        </div>
       </div>
-    </div>
+    </ng-container>
   </ng-container>
+
+  <ng-template #loadingExercisesBlock>
+    <div class="notification">
+      <p>Lade Aufgaben...</p>
+      <br>
+      <progress class="progress"></progress>
+    </div>
+  </ng-template>
+
 </div>
+

@@ -8,19 +8,9 @@ import play.twirl.api.Html
 
 
 final case class ProgExercise(
-  id: Int,
-  semanticVersion: SemanticVersion,
-  title: String,
-  author: String,
-  text: String,
-  state: ExerciseState,
-
-  functionName: String,
-  foldername: String,
-  filename: String,
-
-  inputTypes: Seq[ProgInput],
-  outputType: ProgDataType,
+  id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  functionName: String, foldername: String, filename: String,
+  inputTypes: Seq[ProgInput], outputType: ProgDataType,
 
   baseData: Option[JsValue],
 

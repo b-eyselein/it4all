@@ -53,9 +53,9 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected val exerciseYamlFormat  : MyYamlFormat[WebExercise]   = WebToolYamlProtocol.WebExYamlFormat
+  override protected val exerciseYamlFormat: MyYamlFormat[WebExercise] = WebToolYamlProtocol.WebExYamlFormat
 
-  override val exerciseJsonFormat  : Format[WebExercise]   = WebCompleteResultJsonProtocol.exerciseFormat
+  override val exerciseJsonFormat: Format[WebExercise] = WebCompleteResultJsonProtocol.exerciseFormat
 
   override val exerciseForm      : Form[WebExercise]       = WebToolForms.exerciseFormat
   override val exerciseReviewForm: Form[WebExerciseReview] = WebToolForms.exerciseReviewForm
@@ -101,21 +101,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     case WebExParts.JsPart   => exercise.siteSpec.jsTasks.nonEmpty
   }
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): WebExercise = WebExercise(
-    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, htmlText = None, jsText = None,
-    SiteSpec(
-      1, "",
-      htmlTasks = Seq(HtmlTask("", HtmlElementSpec(1, "", "", None, attributes = Seq[HtmlAttribute]()))),
-      jsTasks = Seq(
-        JsTask(1, "", preConditions = Seq[HtmlElementSpec](), JsAction("", JsActionType.FillOut, None), postConditions = Seq[HtmlElementSpec]())
-      )
-    ),
-    files = Seq.empty,
-    sampleSolutions = Seq(
-      //      WebSampleSolution(1, WebSolution(htmlSolution = "", jsSolution = Some(""))),
-    )
-  )
-
   override def instantiateSolution(id: Int, exercise: WebExercise, part: WebExPart, solution: Seq[ExerciseFile], points: Points, maxPoints: Points): FilesUserSolution[WebExPart] =
     FilesUserSolution[WebExPart](id, part, solution, points, maxPoints)
 
@@ -123,22 +108,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
     compResult.copy(solutionSaved = solSaved)
 
   // Views
-
-  override def previewExerciseRest(ex: Exercise): Html = ex match {
-    case we: WebExercise => views.html.toolViews.web.previewWebExerciseRest(we)
-    case _               => ???
-  }
-
-  //  override def renderAdminExerciseEditForm(user: User, newEx: WebExercise, isCreation: Boolean, toolList: ToolList)
-  //                                          (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-  //    views.html.idExercises.web.adminEditWebExercise(user, WebExerciseForm.exerciseFormat.fill(newEx), isCreation, this, toolList)
-
-  //  override def renderUserExerciseEditForm(user: User, newExForm: Form[WebExercise], isCreation: Boolean)
-  //                                         (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-  //    views.html.idExercises.web.editWebExerciseForm(user, newExForm, isCreation, this)
-
-  override def renderExercisePreview(user: User, collId: Int, newExercise: WebExercise, saved: Boolean): Html =
-    views.html.toolViews.web.webPreview(newExercise)
 
   override def renderExercise(user: User, collection: ExerciseCollection, exercise: WebExercise, part: WebExPart, maybeOldSolution: Option[FilesUserSolution[WebExPart]])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
@@ -150,9 +119,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
     views.html.toolViews.web.webExercise(user, collection, exercise, part, /*oldOrDefaultSolutionString,*/ this)
   }
-
-  override def renderEditRest(exercise: WebExercise): Html =
-    views.html.toolViews.web.editWebExRest(exercise)
 
   override def playground(user: User): Html =
     views.html.toolViews.web.webPlayground(user)

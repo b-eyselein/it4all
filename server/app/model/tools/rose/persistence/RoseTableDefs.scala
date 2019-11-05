@@ -1,11 +1,11 @@
 package model.tools.rose.persistence
 
 import javax.inject.Inject
+import model.SemanticVersion
 import model.core.CoreConsts.{sampleName, solutionName}
 import model.persistence.ExerciseTableDefs
 import model.tools.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
 import model.tools.rose._
-import model.{ExerciseCollection, SemanticVersion}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
@@ -15,7 +15,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[RoseExPart, RoseExercise,  String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
+    with ExerciseTableDefs[RoseExPart, RoseExercise, String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
 
   import profile.api._
 
@@ -60,9 +60,6 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected val exerciseReviewDbModels = RoseExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbRoseUserSolution, newId: Int): DbRoseUserSolution = oldSol.copy(id = newId)
-
-  override protected def exDbValuesFromExercise(collId: Int, compEx: RoseExercise): DbRoseExercise =
-    dbModels.dbExerciseFromExercise(collId, compEx)
 
   // Queries
 
@@ -125,7 +122,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def isMultiplayer: Rep[Boolean] = column[Boolean]("is_mp")
 
 
-    override def * : ProvenShape[DbRoseExercise] = (id, semanticVersion, collectionId, title, author, text, state,
+    override def * : ProvenShape[DbRoseExercise] = (id, collectionId, semanticVersion, title, author, text, state,
       fieldWidth, fieldHeight, isMultiplayer) <> (DbRoseExercise.tupled, DbRoseExercise.unapply)
 
   }

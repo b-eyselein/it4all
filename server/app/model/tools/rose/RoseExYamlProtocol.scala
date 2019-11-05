@@ -3,7 +3,7 @@ package model.tools.rose
 import model.MyYamlProtocol._
 import model.tools.programming.ProgConsts._
 import model.tools.programming.{ProgDataTypes, ProgLanguages}
-import model.{ExerciseCollection, ExerciseState, MyYamlProtocol, YamlObj}
+import model.{MyYamlProtocol, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -32,7 +32,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
       //FIXME: return...
         logger.error("Could not read rose sample sol", sampleSolFailure.exception)
 
-      RoseExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+      RoseExercise(baseValues.id, baseValues.collId, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         fieldWidth, fieldHeight, isMp, inputTypes._1, sampleSolutions._1)
     }
 

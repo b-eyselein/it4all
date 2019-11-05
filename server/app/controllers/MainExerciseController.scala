@@ -60,15 +60,4 @@ class MainExerciseController @Inject()(cc: ControllerComponents, dbcp: DatabaseC
       }
   }
 
-  // User
-
-  def playground(toolType: String): EssentialAction = withUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      if (toolMain.hasPlayground) {
-        Ok(toolMain.playground(user))
-      } else {
-        Redirect(toolMain.indexCall)
-      }
-  }
-
 }

@@ -18,7 +18,7 @@ export const ProgrammingTool: Tool = new (
         if (part === ProgrammingTestCreationPart) {
           // FIXME: simplified test execution is disabled...
           return exercise.unitTestPart.unitTestType === 'Normal';
-        } else if (part === ProgrammingImplementationToolPart) {
+        } else {
           return true;
         }
       }

@@ -49,9 +49,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override val exerciseYamlFormat  : MyYamlFormat[UmlExercise]   = UmlExYamlProtocol.UmlExYamlFormat
+  override val exerciseYamlFormat: MyYamlFormat[UmlExercise] = UmlExYamlProtocol.UmlExYamlFormat
 
-  override val exerciseJsonFormat  : Format[UmlExercise] = UmlCompleteResultJsonProtocol.exerciseFormat
+  override val exerciseJsonFormat: Format[UmlExercise] = UmlCompleteResultJsonProtocol.exerciseFormat
 
   override val exerciseForm      : Form[UmlExercise]       = UmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[UmlExerciseReview] = UmlToolForms.exerciseReviewForm
@@ -66,15 +66,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => true // TODO: Currently deactivated...
     case _                                                     => false
   }
-
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): UmlExercise = UmlExercise(
-    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, markedText = "",
-    toIgnore = Seq.empty[String],
-    mappings = Map.empty[String, String],
-    sampleSolutions = Seq[UmlSampleSolution](
-      UmlSampleSolution(1, sample = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]()))
-    )
-  )
 
   override def instantiateSolution(id: Int, exercise: UmlExercise, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlUserSolution =
     UmlUserSolution(id, part, solution, points, maxPoints)
@@ -95,8 +86,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
     case UmlExParts.MemberAllocation   =>
       views.html.toolViews.uml.memberAllocation(user, collection, exercise, this)
   }
-
-  override def renderEditRest(exercise: UmlExercise): Html = views.html.toolViews.uml.editUmlExRest(exercise)
 
   // Correction
 

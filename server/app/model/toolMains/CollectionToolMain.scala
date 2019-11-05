@@ -145,30 +145,19 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Views
 
-  def previewExerciseRest(ex: Exercise): Html = Html(ex.toString)
+  final def previewExerciseRest(ex: Exercise): Html = Html(ex.toString)
 
   override def exercisesOverviewForIndex: Html = ???
-
-  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = tables.futureAllCollections.map {
-    collections => views.html.admin.collExes.collectionAdminIndex(admin, collections, this, toolList)
-  }
 
   def renderExercise(user: User, coll: ExerciseCollection, exercise: ExType, part: PartType, maybeOldSolution: Option[UserSolType])
                     (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
 
-  def renderCollectionEditForm(user: User, collection: ExerciseCollection, isCreation: Boolean, toolList: ToolList)
-                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-    views.html.admin.collExes.collectionEditForm(user, collection, isCreation, new Html(""), this, toolList /*adminRenderEditRest(collection)*/)
+  final def renderCollectionEditForm(user: User, collection: ExerciseCollection, isCreation: Boolean, toolList: ToolList)
+                                    (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = Html("TODO!")
 
-  def renderExerciseEditForm(user: User, collId: Int, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
-    views.html.admin.exerciseEditForm(user, collId, newEx, renderEditRest(newEx), isCreation = true, this, toolList)
+  final def renderExerciseEditForm(user: User, collId: Int, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html = Html("TODO!")
 
-  def renderEditRest(exercise: ExType): Html = Html("")
-
-  def renderExercisePreview(user: User, collId: Int, newExercise: ExType, saved: Boolean): Html = {
-    println(newExercise)
-    ???
-  }
+  final def renderEditRest(exercise: ExType): Html = Html("")
 
   // Result handlers
 
@@ -198,13 +187,11 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   //    exes => ??? // FIXME: "%YAML 1.2\n---\n" + (exes .map (yamlFormat.write(_).print(Auto /*, Folded*/)) mkString "---\n")
   //  }
 
-  def instantiateExercise(id: Int, author: String, state: ExerciseState): ExType
-
   protected def instantiateSolution(id: Int, exercise: ExType, part: PartType, solution: SolType, points: Points, maxPoints: Points): UserSolType
 
   // Calls
 
-  override def indexCall: Call = controllers.coll.routes.CollectionController.index(this.urlPart)
+  override def indexCall: Call = ??? // controllers.coll.routes.CollectionController.index(this.urlPart)
 
   // Files ?!? TODO!
 

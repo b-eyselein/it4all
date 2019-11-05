@@ -34,7 +34,7 @@ class ApiController @Inject()(cc: ControllerComponents, tl: ToolList, configurat
   }
 
   def apiExerciseBasics(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    toolMain.futureExerciseBasicsInColl(collId).map { exerciseBasics =>
+    toolMain.futureExerciseBasicsInColl(toolType, collId).map { exerciseBasics =>
       Ok(Json.toJson(exerciseBasics)(Writes.seq(JsonProtocol.exerciseBasicsFormat)))
     }
   }

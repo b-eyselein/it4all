@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
-import {Exercise, ExerciseCollection} from '../_interfaces/tool';
+import {Exercise, ExerciseBasics, ExerciseCollection} from '../_interfaces/tool';
 import {DbSqlSolution, SqlExercise} from '../tools/collection-tools/sql/sql-exercise';
 import {DbRegexSolution, RegexExercise} from '../tools/collection-tools/regex/regex-exercise';
 import {DbProgrammingSolution, ProgrammingExercise} from '../tools/collection-tools/programming/programming';
@@ -13,7 +13,7 @@ export class DexieService extends Dexie {
 
   // tools: Dexie.Table<Tool, string>;
   collections: Dexie.Table<ExerciseCollection, [string, number]>;
-  exerciseBasics: Dexie.Table<Exercise, [string, number, number]>;
+  exerciseBasics: Dexie.Table<ExerciseBasics, [string, number, number]>;
 
   programmingExercises: Dexie.Table<ProgrammingExercise, [number, number]>;
   programmingSolutions: Dexie.Table<DbProgrammingSolution, [number, number]>;

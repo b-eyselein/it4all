@@ -26,6 +26,8 @@ import {ReadExerciseComponent} from './admin/admin-read-exercises/read-exercise/
 import { BoolDrawingComponent } from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
 import { ProgrammingSimplifiedResultComponent } from './tools/collection-tools/programming/_results/programming-simplified-result/programming-simplified-result.component';
 import { ProgrammingUnittestResultComponent } from './tools/collection-tools/programming/_results/programming-unittest-result/programming-unittest-result.component';
+import { SqlResultComponent } from './tools/collection-tools/sql/sql-result/sql-result.component';
+import { SqlMatchingResultComponent } from './tools/collection-tools/sql/sql-matching-result/sql-matching-result.component';
 
 
 @NgModule({
@@ -51,6 +53,8 @@ import { ProgrammingUnittestResultComponent } from './tools/collection-tools/pro
     BoolDrawingComponent,
     ProgrammingSimplifiedResultComponent,
     ProgrammingUnittestResultComponent,
+    SqlResultComponent,
+    SqlMatchingResultComponent,
   ],
   imports: [
     BrowserModule,

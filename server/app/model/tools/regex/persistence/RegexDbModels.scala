@@ -6,9 +6,9 @@ import model.{Difficulty, ExerciseState, SemanticVersion, StringSampleSolution}
 
 object RegexDbModels extends ADbModels[RegexExercise, DbRegexExercise] {
 
-  override def dbExerciseFromExercise(collId: Int, ex: RegexExercise): DbRegexExercise = ex match {
-    case RegexExercise(id, semanticVersion, title, author, text, state, maxPoints, correctionType, sampleSolutions, matchTestData, extractionTestData) =>
-      DbRegexExercise(id, semanticVersion, collId, title, author, text, state, maxPoints, correctionType)
+  override def dbExerciseFromExercise(ex: RegexExercise): DbRegexExercise = ex match {
+    case RegexExercise(id, collId, semanticVersion, title, author, text, state, maxPoints, correctionType, _, _, _) =>
+      DbRegexExercise(id, collId, semanticVersion, title, author, text, state, maxPoints, correctionType)
   }
 
   def exerciseFromDbExercise(
@@ -17,11 +17,11 @@ object RegexDbModels extends ADbModels[RegexExercise, DbRegexExercise] {
     matchTestData: Seq[RegexMatchTestData],
     dbExtractionTestData: Seq[DbRegexExtractionTestData]
   ): RegexExercise = ex match {
-    case DbRegexExercise(id, semanticVersion, _, title, author, text, state, maxPoints, correctionType) =>
+    case DbRegexExercise(id, collectionId, semanticVersion, title, author, text, state, maxPoints, correctionType) =>
 
       val extractionTestData = dbExtractionTestData.map { x => RegexExtractionTestData(x.id, x.base) }
 
-      RegexExercise(id, semanticVersion, title, author, text, state, maxPoints, correctionType, sampleSolutions, matchTestData, extractionTestData)
+      RegexExercise(id, collectionId, semanticVersion, title, author, text, state, maxPoints, correctionType, sampleSolutions, matchTestData, extractionTestData)
   }
 
   // Match Test data
@@ -45,7 +45,7 @@ object RegexExerciseReviewDbModels extends AExerciseReviewDbModels[RegexExPart, 
 }
 
 final case class DbRegexExercise(
-  id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String,
   author: String, text: String, state: ExerciseState, maxPoints: Int, correctionType: RegexCorrectionType
 ) extends ADbExercise
 

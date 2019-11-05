@@ -1,12 +1,11 @@
 package controllers.coll
 
-import better.files._
 import controllers.Secured
 import javax.inject.{Inject, Singleton}
+import model.ExerciseState
 import model.core.CoreConsts._
 import model.core._
 import model.toolMains.{CollectionToolMain, ToolList}
-import model.{ExerciseCollection, ExerciseState}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.single
@@ -33,28 +32,6 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   // Routes
 
-  def adminCollection(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(admin, toolMain, collId))
-        case Some(collection) =>
-          toolMain.futureExercisesInColl(collId) map { exercises =>
-            Ok(views.html.admin.collExes.collectionAdmin(admin, collection, exercises, toolMain, toolList))
-          }
-      }
-  }
-
-  // Administrate Collections
-
-  def adminImportCollections(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request =>
-      readSaveAndPreview[ExerciseCollection](
-        toolMain.readCollectionsFromYaml,
-        toolMain.futureDeleteOldAndInsertNewCollection,
-        readAndSaveResult => views.html.admin.collExes.readCollectionsPreview(admin, readAndSaveResult, toolMain, toolList)
-      )
-  }
-
   def adminChangeCollectionState(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
 
@@ -74,43 +51,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       stateForm.bindFromRequest().fold(onFormError, onFormRead(toolMain))
   }
 
-
-  def adminExportCollections(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.yamlString map {
-        exportedContent => Ok(views.html.admin.exportedCollection.render(admin, exportedContent, toolMain, toolList))
-      }
-  }
-
-  def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
-    implicit request =>
-      val file = File.newTemporaryFile(s"export_${toolMain.urlPart}", ".yaml")
-
-      toolMain.yamlString map (content => file.write(content)) map { _ =>
-        Ok.sendPath(file.path, fileName = _ => s"export_${toolMain.urlPart}.yaml", onClose = () => file.delete())
-      }
-  }
-
   // Creating, updating and removing collections
-
-  def adminEditCollectionForm(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureCollById(id) map { maybeCollection: Option[ExerciseCollection] =>
-        val collection = maybeCollection.getOrElse(
-          ExerciseCollection(id, toolId = toolMain.urlPart, title = "", admin.username, text = "", ExerciseState.RESERVED, shortName = "")
-        )
-
-        Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = false, toolList))
-      }
-  }
-
-  def adminNewCollectionForm(tool: String): EssentialAction = futureWithUserWithToolMain(tool) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureHighestCollectionId map { id =>
-        val collection = ExerciseCollection(id + 1, toolId = toolMain.urlPart, title = "", admin.username, text = "", ExerciseState.RESERVED, shortName = "")
-        Ok(toolMain.renderCollectionEditForm(admin, collection, isCreation = true, toolList))
-      }
-  }
 
   def adminEditCollection(tool: String, id: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, _) =>
     implicit request =>
@@ -134,21 +75,6 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   // Administrate exercises in collection
 
-  def adminImportExercises(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-
-      toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
-        case Some(collection) =>
-
-          readSaveAndPreview[toolMain.ExType](
-            toolMain.readExercisesFromYaml(collection),
-            toolMain.futureDeleteOldAndInsertNewExercise(collId, _),
-            readAndSaveResult => views.html.admin.collExes.readExercisesPreview(user, collection, readAndSaveResult, toolMain, toolList, toolMain.previewExerciseRest)
-          )
-      }
-  }
-
   def adminChangeExerciseState(tool: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(tool) { (_, toolMain) =>
     implicit request =>
 
@@ -168,32 +94,7 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       stateForm.bindFromRequest().fold(onFormError, onFormRead(toolMain))
   }
 
-  def adminExportExercises(toolType: String, collId: Int): EssentialAction = ???
-
-
-  def adminExportExercisesAsFile(toolType: String, collId: Int): EssentialAction = ???
-
   // Creating, updating and removing exercises
-
-  def adminEditExerciseForm(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(admin, toolMain, collId))
-        case Some(collection) =>
-          toolMain.futureExerciseById(collId, id) map {
-            case None           => onNoSuchExercise(admin, toolMain, collection, id)
-            case Some(exercise) => Ok(toolMain.renderExerciseEditForm(admin, collId, exercise, isCreation = false, toolList))
-          }
-      }
-  }
-
-  def adminNewExerciseForm(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request =>
-      toolMain.futureHighestExerciseIdInCollection(collId) map { id =>
-        val exercise = toolMain.instantiateExercise(id + 1, admin.username, ExerciseState.RESERVED)
-        Ok(toolMain.renderExerciseEditForm(admin, collId, exercise, isCreation = true, toolList))
-      }
-  }
 
   def adminEditExercise(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
@@ -230,14 +131,6 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
 
   // Reviews
 
-  def exerciseReviewsList(toolType: String, collId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request =>
-      ???
-    //      toolMain.futureAllReviews map {
-    //        allReviews => Ok(views.html.admin.idExes.idExerciseReviewsList(admin, allReviews, toolList, toolMain))
-    //      }
-  }
-
   def showReviews(toolType: String, collId: Int, id: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
     implicit request =>
       //      toolMain.futureExerciseById(collId, id) flatMap {
@@ -248,6 +141,5 @@ class CollectionAdminController @Inject()(cc: ControllerComponents, dbcp: Databa
       //      }
       ???
   }
-
 
 }

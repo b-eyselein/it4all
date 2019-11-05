@@ -35,7 +35,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
       // // FIXME: return...
       //        logger.error("Could not read sql sample", sampleFailure.exception)
 
-      SqlExercise(baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+      SqlExercise(baseValues.id, baseValues.collId, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         exerciseType, tagTries._1, hint, sampleTries._1)
     }
   }

@@ -39,9 +39,9 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   // Yaml, Html forms, Json
 
-  override protected val exerciseYamlFormat  : MyYamlFormat[RegexExercise]   = RegexToolYamlProtocol.RegexExYamlFormat
+  override protected val exerciseYamlFormat: MyYamlFormat[RegexExercise] = RegexToolYamlProtocol.RegexExYamlFormat
 
-  override val exerciseJsonFormat  : Format[RegexExercise]   = RegexCompleteResultJsonProtocol.exerciseFormat
+  override val exerciseJsonFormat: Format[RegexExercise] = RegexCompleteResultJsonProtocol.exerciseFormat
 
   override val exerciseForm      : Form[RegexExercise]       = RegexToolForm.exerciseFormat
   override val exerciseReviewForm: Form[RegexExerciseReview] = RegexToolForm.exerciseReviewForm
@@ -51,20 +51,6 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
   override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
 
   // Database helpers
-
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): RegexExercise = RegexExercise(
-    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, maxPoints = 0,
-    correctionType = RegexCorrectionTypes.MATCHING,
-    sampleSolutions = Seq[StringSampleSolution](
-      StringSampleSolution(0, "")
-    ),
-    matchTestData = Seq[RegexMatchTestData](
-      RegexMatchTestData(0, "", isIncluded = false)
-    ),
-    extractionTestData = Seq(
-      RegexExtractionTestData(0, "")
-    )
-  )
 
   override protected def instantiateSolution(id: Int, exercise: RegexExercise, part: RegexExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[RegexExPart] =
     StringUserSolution[RegexExPart](id, part, solution, points, maxPoints)
@@ -86,11 +72,6 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     Future.successful(RegexCorrector.correct(sol, exercise))
 
   // Views
-
-  override def previewExerciseRest(ex: Exercise): Html = ex match {
-    case re: RegexExercise => views.html.toolViews.regex.previewRegexExerciseRest(re)
-    case _                 => ???
-  }
 
   override def renderExercise(user: User, collection: ExerciseCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[StringUserSolution[RegexExPart]])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =

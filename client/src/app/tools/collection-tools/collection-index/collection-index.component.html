@@ -22,7 +22,8 @@
             <div class="card-content">
               <div class="buttons">
                 <ng-container *ngFor="let part of tool.parts">
-                  <a *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)" class="button is-link"
+                  <a *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)"
+                     class="button is-link" [class.is-fullwidth]="tool.parts.length === 1"
                      [routerLink]="['/tools', tool.id, 'collections', this.collection.id, 'exercises', exercise.id, 'parts', part.id]">
                     {{part.name}}
                   </a>

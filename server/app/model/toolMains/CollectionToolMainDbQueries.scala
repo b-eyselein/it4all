@@ -23,13 +23,13 @@ trait CollectionToolMainDbQueries {
   def futureAllCollections: Future[Seq[ExerciseCollection]] = tables.futureAllCollections
 
 
-  def futureExerciseBasicsInColl(collId: Int): Future[Seq[ApiExerciseBasics]] = tables.futureExerciseBasicsInColl(collId)
+  def futureExerciseBasicsInColl(toolId: String, collId: Int): Future[Seq[ApiExerciseBasics]] =
+    tables.futureExerciseBasicsInColl(toolId, collId)
 
 
   def futureExerciseById(collId: Int, id: Int): Future[Option[ExType]] = tables.futureExerciseById(collId, id)
 
   def futureExercisesInColl(collId: Int): Future[Seq[ExType]] = tables.futureExercisesInColl(collId)
-
 
 
   def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: PartType): Future[Option[UserSolType]] =

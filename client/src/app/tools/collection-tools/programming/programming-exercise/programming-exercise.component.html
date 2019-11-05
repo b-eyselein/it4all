@@ -46,16 +46,15 @@
 
             <br>
 
+            <!-- TODO: points nofitication programming! -->
             <!--            <it4all-points-notification [result]="result"></it4all-points-notification>-->
 
-            <ng-container *ngIf="result.simplifiedResults">
-              <ng-container *ngFor="let simplifiedResult of result.simplifiedResults; let last = last">
+            <div class="columns is-multiline" *ngIf="result.simplifiedResults">
+              <div class="column is-half-desktop" *ngFor="let simplifiedResult of result.simplifiedResults">
                 <it4all-programming-simplified-result [result]="simplifiedResult">
                 </it4all-programming-simplified-result>
-
-                <br *ngIf="!last">
-              </ng-container>
-            </ng-container>
+              </div>
+            </div>
 
             <div class="content" *ngIf="result.unitTestResults">
               <ul *ngFor="let unitTestResult of result.unitTestResults">

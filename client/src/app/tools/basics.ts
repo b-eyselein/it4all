@@ -37,7 +37,7 @@ export interface Match<T, AR extends AnalysisResult> {
 export interface CorrectionResult<R> {
   solutionSaved: boolean;
   isSuccessful: boolean;
-  results: R[];
+  // results: R[];
 
   points: number;
   maxPoints: number;

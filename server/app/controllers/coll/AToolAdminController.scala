@@ -19,21 +19,6 @@ abstract class AToolAdminController(cc: ControllerComponents, dbcp: DatabaseConf
 
   override protected val adminRightsRequired: Boolean = true
 
-  // Routes
-
-  def adminIndex(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request => toolMain.adminIndexView(admin, toolList) map (html => Ok(html))
-  }
-
-  def readLearningPaths(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (admin, toolMain) =>
-    implicit request =>
-      val readLearningPaths: Seq[LearningPath] = toolMain.readLearningPaths
-
-      toolMain.futureSaveLearningPaths(readLearningPaths) map {
-        _ => Ok(views.html.admin.learningPathRead(admin, readLearningPaths, toolMain))
-      }
-  }
-
   // Helper methods
 
   protected def readSaveAndPreview[ReadType](readFunc: => Seq[Try[ReadType]], saveFunc: ReadType => Future[Boolean],

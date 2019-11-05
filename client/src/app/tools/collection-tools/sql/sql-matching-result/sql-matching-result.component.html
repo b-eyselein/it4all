@@ -1,0 +1,8 @@
+<span>
+  ({{matchingResult.points}} / {{matchingResult.maxPoints}})
+  Der Vergleich der {{matchingResult.matchName}} war <ng-container *ngIf="!matchingResult.success">nicht</ng-container> erfolgreich.
+</span>
+
+<ul *ngIf="!matchingResult.success">
+  <li *ngFor="let match of matchingResult.matches">{{match | json}}</li>
+</ul>

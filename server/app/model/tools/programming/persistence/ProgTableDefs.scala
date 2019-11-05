@@ -77,9 +77,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   override def copyDbUserSolType(oldSol: DbProgUserSolution, newId: Int): DbProgUserSolution = oldSol.copy(id = newId)
 
-  override protected def exDbValuesFromExercise(collId: Int, compEx: ProgExercise): DbProgExercise =
-    dbModels.dbExerciseFromExercise(collId, compEx)
-
   // Implicit column types
 
   private implicit val jsonColumnType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](_.toString, Json.parse)
@@ -130,7 +127,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     def implementationSampleSolFileNames: Rep[String] = column[String]("implementation_sample_sol_file_names")
 
 
-    override def * : ProvenShape[DbProgExercise] = (id, semanticVersion, collectionId, title, author, text, state,
+    override def * : ProvenShape[DbProgExercise] = (id, collectionId, semanticVersion, title, author, text, state,
       functionName, foldername, filename, outputType, baseDataAsJson.?, unitTestType, unitTestsDescription, testFileName,
       unitTestSampleSolFiles, implementationBase, implFileName, implementationSampleSolFileNames) <> (DbProgExercise.tupled, DbProgExercise.unapply)
 

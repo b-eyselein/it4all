@@ -61,6 +61,7 @@ object ProgToolForms extends ToolForms[ProgExercise, ProgExerciseReview] {
   override val exerciseFormat: Form[ProgExercise] = Form(
     mapping(
       idName -> number,
+      collectionIdName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,

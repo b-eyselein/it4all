@@ -58,9 +58,6 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   override protected def copyDbUserSolType(oldSol: DbXmlUserSolution, newId: Int): DbXmlUserSolution = oldSol.copy(id = newId)
 
-  override protected def exDbValuesFromExercise(collId: Int, compEx: XmlExercise): DbXmlExercise =
-    dbModels.dbExerciseFromExercise(collId, compEx)
-
   // Column Types
 
   override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
@@ -77,7 +74,7 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def grammarDescription: Rep[String] = column[String]("grammar_description")
 
 
-    override def * : ProvenShape[DbXmlExercise] = (id, semanticVersion, collectionId, title, author, text, state, grammarDescription, rootNode) <> (DbXmlExercise.tupled, DbXmlExercise.unapply)
+    override def * : ProvenShape[DbXmlExercise] = (id, collectionId, semanticVersion, title, author, text, state, grammarDescription, rootNode) <> (DbXmlExercise.tupled, DbXmlExercise.unapply)
 
   }
 

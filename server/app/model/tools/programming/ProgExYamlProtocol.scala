@@ -53,7 +53,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
         logger.error("Could not read programming sample solution", sampleSolutionFailure.exception)
 
       ProgExercise(
-        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        baseValues.id, baseValues.collId, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         functionName, foldername, filename,
         inputTypes._1, outputType, baseData,
         unitTestPart, implementationPart,

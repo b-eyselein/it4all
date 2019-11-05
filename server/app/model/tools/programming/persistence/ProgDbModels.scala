@@ -9,10 +9,10 @@ import play.api.libs.json.{JsArray, JsValue}
 
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
-  private val sampleSolFileNamesJoinChar = "##";
+  private val sampleSolFileNamesJoinChar = "##"
 
-  def dbExerciseFromExercise(collId: Int, ex: ProgExercise): DbProgExercise =
-    DbProgExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state,
+  override def dbExerciseFromExercise(ex: ProgExercise): DbProgExercise =
+    DbProgExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state,
       ex.functionName, ex.foldername, ex.filename,
       ex.outputType, ex.baseData,
       ex.unitTestPart.unitTestType, ex.unitTestPart.unitTestsDescription, ex.unitTestPart.testFileName, ex.unitTestPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar),
@@ -28,10 +28,10 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
     implementationFiles: Seq[ExerciseFile],
     maybeClassDiagramPart: Option[UmlClassDiagram]
   ): ProgExercise = dbProgEx match {
-    case DbProgExercise(id, semanticVersion, _, title, author, text, state, functionname, foldername, filename,
+    case DbProgExercise(id, collectionId, semanticVersion, title, author, text, state, functionname, foldername, filename,
     outputType, baseData, unitTestType, unitTestsDescription, testFileName, unitTestSampleSolFileNames, implementationBase, implFileName, implementationSampleSolFileNames) =>
       ProgExercise(
-        id, semanticVersion, title, author, text, state,
+        id, collectionId, semanticVersion, title, author, text, state,
         functionname, foldername, filename,
         inputTypes, outputType, baseData,
         UnitTestPart(unitTestType, unitTestsDescription, unitTestFiles, unitTestTestConfigs, testFileName, unitTestSampleSolFileNames.split(sampleSolFileNamesJoinChar)),
@@ -129,7 +129,7 @@ object ProgSolutionDbModels /* extends ASolutionDbModels[ProgSolution, ProgExPar
 
   /* override */ def userSolFromDbUserSol(dbSol: DbProgUserSolution, dbSolFiles: Seq[DbProgUserSolutionFile]): ProgUserSolution = {
 
-    val files = dbSolFiles.map { case DbProgUserSolutionFile(fileName, _, _, _, _, _, fileContent, fileType, fileIsEditable) =>
+    val files                    = dbSolFiles.map { case DbProgUserSolutionFile(fileName, _, _, _, _, _, fileContent, fileType, fileIsEditable) =>
       ExerciseFile(fileName, fileContent, fileType, fileIsEditable)
     }
     val dbSolution: ProgSolution = ProgSolution(files, testData = Seq.empty) // FIXME: testData?
@@ -150,7 +150,7 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 }
 
 final case class DbProgExercise(
-  id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   functionname: String, foldername: String, filename: String,
   outputType: ProgDataType, baseData: Option[JsValue],
   unitTestType: UnitTestType, unitTestsDescription: String, testFileName: String, unitTestSampleSolFileNames: String,

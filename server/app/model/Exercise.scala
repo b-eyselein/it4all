@@ -27,18 +27,19 @@ trait ExTag {
 
 trait Exercise {
 
-  def id: Int
+  val id: Int
 
-  // FIXME: remove? semantic version!
-  def semanticVersion: SemanticVersion
+  val collId: Int
 
-  def title: String
+  val semanticVersion: SemanticVersion
 
-  def author: String
+  val title: String
 
-  def text: String
+  val author: String
 
-  def state: ExerciseState
+  val text: String
+
+  val state: ExerciseState
 
 
   def preview: Html

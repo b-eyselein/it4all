@@ -56,7 +56,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
   protected val dbModels              : ADbModels[ExType, DbExType]
   protected val exerciseReviewDbModels: AExerciseReviewDbModels[PartType, ReviewType, DbReviewType]
 
-  protected def exDbValuesFromExercise(collId: Int, exercise: ExType): DbExType
+  protected final def exDbValuesFromExercise(exercise: ExType): DbExType = dbModels.dbExerciseFromExercise(exercise)
 
   // Reading
 

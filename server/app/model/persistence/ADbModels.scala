@@ -5,7 +5,7 @@ import model._
 
 trait ADbModels[ExType, DbExercise] {
 
-  def dbExerciseFromExercise(collId: Int, ex: ExType): DbExercise
+  def dbExerciseFromExercise(ex: ExType): DbExercise
 
   def dbExerciseFileFromExerciseFile(exId: Int, exSemVer: SemanticVersion, collId: Int, webFile: ExerciseFile): DbExerciseFile =
     DbExerciseFile(webFile.name, exId, collId, webFile.content, webFile.fileType, webFile.editable)

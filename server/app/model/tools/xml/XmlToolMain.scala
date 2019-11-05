@@ -66,13 +66,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
     case XmlExParts.DocumentCreationXmlPart => futureMaybeOldSolution(username, collId, exId, XmlExParts.GrammarCreationXmlPart).map(_.exists(r => r.points == r.maxPoints))
   }
 
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): XmlExercise = XmlExercise(
-    id, SemanticVersionHelper.DEFAULT, title = "", author, text = "", state, grammarDescription = "", rootNode = "",
-    samples = Seq[XmlSampleSolution](
-      XmlSampleSolution(0, sample = XmlSolution(document = "", grammar = ""))
-    )
-  )
-
   override def instantiateSolution(id: Int, exercise: XmlExercise, part: XmlExPart, solution: XmlSolution, points: Points, maxPoints: Points): XmlUserSolution =
     XmlUserSolution(id, part, solution, points, maxPoints)
 
@@ -107,20 +100,12 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Views
 
-  override def previewExerciseRest(ex: Exercise): Html = ex match {
-    case xe: XmlExercise => views.html.toolViews.xml.previewXmlExerciseRest(xe)
-    case _               => ???
-  }
-
   override def renderExercise(user: User, collection: ExerciseCollection, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlUserSolution])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
     val oldSolutionOrTemplate: XmlSolution = maybeOldSolution.map(_.solution).getOrElse(exercise.getTemplate(part))
 
     views.html.toolViews.xml.xmlExercise(user, collection, exercise, oldSolutionOrTemplate, part, this)
   }
-
-  override def renderExercisePreview(user: User, collId: Int, newExercise: XmlExercise, saved: Boolean): Html =
-    views.html.toolViews.xml.xmlNewExercise(user, collId, newExercise, saved, this)
 
   override def playground(user: User): Html = views.html.toolViews.xml.xmlPlayground(user)
 

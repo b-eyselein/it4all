@@ -51,10 +51,8 @@
                     @helper.CSRF.formField
 
                     <div class="btn-group d-flex">
-                        <button data-href="@coll.routes.CollectionController.correctLive(toolMain.urlPart, collection.id, exercise.id, UmlExParts.MemberAllocation.urlName)"
-                        class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
-                        <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMain.urlPart, collection.id, exercise.id, UmlExParts.MemberAllocation.urlName)"
-                        id="endSolveAnchor" class="btn btn-secondary w-100">Bearbeitung beenden</a>
+                        <button class="btn btn-primary btn-block" id="testBtn">Aufgabenteil korrigieren</button>
+                        <a id="endSolveAnchor" class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
                 </div>
 

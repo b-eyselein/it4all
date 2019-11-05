@@ -73,6 +73,7 @@ object UmlToolForms extends ToolForms[UmlExercise, UmlExerciseReview] {
   override val exerciseFormat: Form[UmlExercise] = Form(
     mapping(
       idName -> number,
+      collectionIdName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,

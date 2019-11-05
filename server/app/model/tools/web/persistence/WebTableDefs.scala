@@ -71,9 +71,6 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   override protected def copyDbUserSolType(oldSol: DbFilesUserSolution[WebExPart], newId: Int): DbFilesUserSolution[WebExPart] = oldSol.copy(id = newId)
 
-  override protected def exDbValuesFromExercise(collId: Int, compEx: WebExercise): DbWebExercise =
-    dbModels.dbExerciseFromExercise(collId, compEx)
-
   // Implicit column types
 
   private implicit val actionTypeColumnType: BaseColumnType[JsActionType] =
@@ -95,7 +92,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def fileName: Rep[String] = column[String](filenameName)
 
 
-    override def * : ProvenShape[DbWebExercise] = (id, semanticVersion, collectionId, title, author, text, state, htmlText, jsText, fileName) <> (DbWebExercise.tupled, DbWebExercise.unapply)
+    override def * : ProvenShape[DbWebExercise] = (id, collectionId, semanticVersion, title, author, text, state, htmlText, jsText, fileName) <> (DbWebExercise.tupled, DbWebExercise.unapply)
 
   }
 

@@ -18,6 +18,7 @@ object SqlToolForms extends ToolForms[SqlExercise, SqlExerciseReview] {
   override val exerciseFormat: Form[SqlExercise] = Form(
     mapping(
       idName -> number,
+      collectionIdName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,

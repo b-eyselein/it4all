@@ -43,8 +43,7 @@ abstract class ApiControllerBasics(cc: ControllerComponents, toolList: ToolList,
     JwtSession()(configuration, clock) + ("user", username)
   }
 
-
-  protected final def apiWithToolMain(toolType: String)(f: (Request[AnyContent], User, CollectionToolMain) => Future[Result]): Action[AnyContent] = Action.async { implicit request =>
+  protected def apiWithUser(f: (Request[AnyContent], User) => Future[Result]): Action[AnyContent] = Action.async { implicit request =>
     request.headers.get("Authorization") match {
 
       // No authorization header present
@@ -62,10 +61,7 @@ abstract class ApiControllerBasics(cc: ControllerComponents, toolList: ToolList,
             if (adminRightsRequired && !jwtUser.isAdmin) {
               Future.successful(Unauthorized(""))
             } else {
-              getToolMain(toolType) match {
-                case None           => Future.successful(onNoSuchTool(toolType))
-                case Some(toolMain) => f(request, jwtUser, toolMain)
-              }
+              f(request, jwtUser)
             }
         }
 
@@ -74,5 +70,13 @@ abstract class ApiControllerBasics(cc: ControllerComponents, toolList: ToolList,
     }
   }
 
+
+  protected final def apiWithToolMain(toolType: String)(f: (Request[AnyContent], User, CollectionToolMain) => Future[Result]): Action[AnyContent] =
+    apiWithUser { (request, user) =>
+      getToolMain(toolType) match {
+        case None           => Future.successful(onNoSuchTool(toolType))
+        case Some(toolMain) => f(request, user, toolMain)
+      }
+    }
 
 }

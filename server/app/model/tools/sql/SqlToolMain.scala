@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.points.Points
-import model.toolMains.{CollectionToolMain, ToolList, ToolState}
+import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.sql.SqlToolMain._
 import model.tools.sql.persistence.SqlTableDefs
 import play.api.Logger
@@ -63,9 +63,9 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Yaml, Html forms, Json
 
-  override protected val exerciseYamlFormat  : MyYamlFormat[SqlExercise] = SqlYamlProtocol.SqlExerciseYamlFormat
+  override protected val exerciseYamlFormat: MyYamlFormat[SqlExercise] = SqlYamlProtocol.SqlExerciseYamlFormat
 
-  override val exerciseJsonFormat  : Format[SqlExercise] = SqlJsonProtocols.exerciseFormat
+  override val exerciseJsonFormat: Format[SqlExercise] = SqlJsonProtocols.exerciseFormat
 
   override val exerciseForm      : Form[SqlExercise]       = SqlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[SqlExerciseReview] = SqlToolForms.exerciseReviewForm
@@ -76,13 +76,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Views
 
-  override def previewExerciseRest(ex: Exercise): Html = ex match {
-    case se: SqlExercise => views.html.toolViews.sql.previewSqlExerciseRest(se)
-    case _               =>
-      logger.error(s"ERROR: Tries to preview a ${ex.getClass} with SqlToolMain")
-      Html("")
-  }
-
   override def renderExercise(user: User, sqlScenario: ExerciseCollection, exercise: SqlExercise, part: SqlExPart, maybeOldSolution: Option[UserSolType])
                              (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
 
@@ -92,12 +85,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
     views.html.toolViews.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, this)
   }
-
-  override def renderExerciseEditForm(user: User, collId: Int, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html =
-    views.html.toolViews.sql.editSqlExercise(user, collId, newEx, isCreation, this, toolList)
-
-  // FIXME: remove this method...
-  override def renderEditRest(exercise: SqlExercise): Html = ???
 
   // Correction
 
@@ -116,11 +103,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     }
 
   // Other helper methods
-
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): SqlExercise = SqlExercise(
-    id, SemanticVersionHelper.DEFAULT, title = "", author = "", text = "", state, exerciseType = SqlExerciseType.SELECT,
-    tags = Seq[SqlExTag](), hint = None, samples = Seq[StringSampleSolution]()
-  )
 
   override protected def instantiateSolution(id: Int, exercise: SqlExercise, part: SqlExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[SqlExPart] =
     StringUserSolution[SqlExPart](id, part, solution, points, maxPoints)

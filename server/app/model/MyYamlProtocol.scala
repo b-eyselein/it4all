@@ -156,7 +156,6 @@ object MyYamlProtocol {
 
 }
 
-final case class BaseValues(id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState)
 
 trait MyYamlProtocol extends DefaultYamlProtocol {
 
@@ -164,12 +163,13 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
 
   protected def readBaseValues(yamlObject: YamlObject): Try[BaseValues] = for {
     id <- yamlObject.intField(idName)
+    collId <- yamlObject.intField(collectionIdName)
     title <- yamlObject.stringField(titleName)
     author <- yamlObject.stringField(authorName)
     text <- yamlObject.stringField(textName)
     state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
     semanticVersion <- yamlObject.someField(semanticVersionName) flatMap SemanticVersionHelper.semanticVersionYamlField
-  } yield BaseValues(id, semanticVersion, title, author, text, state)
+  } yield BaseValues(id, collId, semanticVersion, title, author, text, state)
 
   abstract class MyYamlObjectFormat[T] extends MyYamlFormat[T] {
 

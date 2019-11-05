@@ -23,9 +23,8 @@ object WebExParts extends PlayEnum[WebExPart] {
 
 
 final case class WebExercise(
-  id: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-  htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec, files: Seq[ExerciseFile],
-  sampleSolutions: Seq[FilesSampleSolution]
+  id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec, files: Seq[ExerciseFile], sampleSolutions: Seq[FilesSampleSolution]
 ) extends Exercise with FileExercise[WebExPart] {
 
   override def preview: Html = // FIXME: move to toolMain!

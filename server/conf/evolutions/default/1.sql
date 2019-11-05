@@ -516,6 +516,7 @@ create table if not exists rose_exercise_reviews (
 
 create table if not exists sql_scenarioes (
     id         int primary key,
+    tool_id    varchar(50) not null,
     title      varchar(50),
     author     varchar(50),
     ex_text    text,

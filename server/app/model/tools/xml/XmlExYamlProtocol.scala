@@ -27,8 +27,9 @@ object XmlExYamlProtocol extends MyYamlProtocol {
         logger.error("Could not read xml sample", sampleReadError.exception)
 
       XmlExercise(
-        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        grammarDescription, rootNode, samples._1)
+        baseValues.id, baseValues.collId, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        grammarDescription, rootNode, samples._1
+      )
     }
 
     override def write(exercise: XmlExercise) = YamlObject(

@@ -26,6 +26,7 @@ object RegexToolForm extends ToolForms[RegexExercise, RegexExerciseReview] {
   override val exerciseFormat    : Form[RegexExercise]       = Form(
     mapping(
       idName -> number,
+      collectionIdName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,

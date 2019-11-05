@@ -6,16 +6,16 @@ import model.tools.sql._
 
 object SqlDbModels extends ADbModels[SqlExercise, DbSqlExercise] {
 
-  override def dbExerciseFromExercise(collId: Int, ex: SqlExercise): DbSqlExercise = {
+  override def dbExerciseFromExercise(ex: SqlExercise): DbSqlExercise = {
     val tagsAsString = ex.tags.map(_.entryName).mkString(SqlConsts.tagJoinChar)
 
-    DbSqlExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.exerciseType, tagsAsString, ex.hint)
+    DbSqlExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.exerciseType, tagsAsString, ex.hint)
   }
 
   def exerciseFromDbValues(dbEx: DbSqlExercise, samples: Seq[StringSampleSolution]): SqlExercise = {
     val tagsFromString: Seq[SqlExTag] = dbEx.tags.split(SqlConsts.tagJoinChar).toSeq.flatMap(SqlExTag.withNameInsensitiveOption)
 
-    SqlExercise(dbEx.id, dbEx.semanticVersion, dbEx.title, dbEx.author, dbEx.text, dbEx.state, dbEx.exerciseType, tagsFromString, dbEx.hint, samples)
+    SqlExercise(dbEx.id, dbEx.collectionId, dbEx.semanticVersion, dbEx.title, dbEx.author, dbEx.text, dbEx.state, dbEx.exerciseType, tagsFromString, dbEx.hint, samples)
   }
 
 }
@@ -30,10 +30,14 @@ object SqlExerciseReviewDbModels extends AExerciseReviewDbModels[SqlExPart, SqlE
 
 }
 
-final case class DbSqlExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
-                               exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ADbExercise
+final case class DbSqlExercise(
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  exerciseType: SqlExerciseType, tags: String, hint: Option[String]
+) extends ADbExercise
 
 // Exercise review
 
-final case class DbSqlExerciseReview(username: String, collId: Int, exerciseId: Int, exercisePart: SqlExPart,
-                                     difficulty: Difficulty, maybeDuration: Option[Int]) extends DbExerciseReview[SqlExPart]
+final case class DbSqlExerciseReview(
+  username: String, collId: Int, exerciseId: Int, exercisePart: SqlExPart,
+  difficulty: Difficulty, maybeDuration: Option[Int]
+) extends DbExerciseReview[SqlExPart]

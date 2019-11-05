@@ -13,11 +13,10 @@ abstract class RandomExerciseToolMain(tn: String, up: String)(implicit ec: Execu
 
   // Views
 
-  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] =
-    Future(views.html.admin.randomExes.randomExerciseAdminIndex(admin, statistics = Html(""), this, toolList))
+  override def adminIndexView(admin: User, toolList: ToolList): Future[Html] = Future.successful(Html(""))
 
   // Calls
 
-  override def indexCall: Call = controllers.coll.routes.RandomExerciseAdminController.adminIndex(this.urlPart)
+  override def indexCall: Call = ??? // controllers.coll.routes.RandomExerciseAdminController.adminIndex(this.urlPart)
 
 }

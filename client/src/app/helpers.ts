@@ -11,7 +11,3 @@ export function takeRandom<T>(from: T[]): T {
 export function flatMapArray<T>(ts: T[], f: (T) => T[]): T[] {
   return ts.reduce((acc, t) => acc.concat(f(t)), []);
 }
-
-export function stringArraysEqual(first: string[], second: string[]): boolean {
-  return first.length === second.length && first.every((value, index) => value === second[index]);
-}

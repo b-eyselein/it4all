@@ -59,9 +59,6 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   override protected def copyDbUserSolType(oldSol: DbUmlUserSolution, newId: Int): DbUmlUserSolution = oldSol.copy(id = newId)
 
-  override protected def exDbValuesFromExercise(collId: Int, compEx: UmlExercise): DbUmlExercise =
-    dbModels.dbExerciseFromExercise(collId, compEx)
-
   // Queries
 
   override def completeExForEx(collId: Int, ex: DbUmlExercise): Future[UmlExercise] = for {
@@ -127,7 +124,7 @@ class UmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
     def markedText: Rep[String] = column[String]("marked_text")
 
 
-    override def * : ProvenShape[DbUmlExercise] = (id, semanticVersion, collectionId, title, author, text, state, markedText) <> (DbUmlExercise.tupled, DbUmlExercise.unapply)
+    override def * : ProvenShape[DbUmlExercise] = (id, collectionId, semanticVersion, title, author, text, state, markedText) <> (DbUmlExercise.tupled, DbUmlExercise.unapply)
 
   }
 

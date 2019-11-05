@@ -7,11 +7,11 @@ import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise] {
 
-  override def dbExerciseFromExercise(collectionId: Int, ex: UmlExercise): DbUmlExercise =
-    DbUmlExercise(ex.id, ex.semanticVersion, collectionId, ex.title, ex.author, ex.text, ex.state, ex.markedText)
+  override def dbExerciseFromExercise(ex: UmlExercise): DbUmlExercise =
+    DbUmlExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText)
 
   def exerciseFromDbExercise(ex: DbUmlExercise, toIgnore: Seq[String], mappings: Map[String, String], samples: Seq[UmlSampleSolution]): UmlExercise =
-    UmlExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, toIgnore, mappings, samples)
+    UmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, toIgnore, mappings, samples)
 
 }
 
@@ -41,8 +41,9 @@ object UmlExerciseReviewDbModels extends AExerciseReviewDbModels[UmlExPart, UmlE
 
 }
 
-final case class DbUmlExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String,
-                               state: ExerciseState, markedText: String) extends ADbExercise
+final case class DbUmlExercise(
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState, markedText: String
+) extends ADbExercise
 
 final case class DbUmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, sample: UmlClassDiagram)
   extends ADbSampleSol

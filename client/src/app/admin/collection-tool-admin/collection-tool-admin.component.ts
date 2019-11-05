@@ -21,18 +21,28 @@ export class CollectionToolAdminComponent implements OnInit {
     }
   }
 
+  private fetchExerciseBasics(): void {
+    this.collections.forEach((collection) => {
+      this.apiService.getExerciseBasics(this.tool.id, collection.id)
+        .subscribe((exerciseBasics) => collection.exercisesBasics = exerciseBasics);
+    });
+  }
+
   private fetchCollections(): void {
     this.apiService.getCollections(this.tool.id)
-      .subscribe((collections) => this.collections = collections);
+      .subscribe((collections) => {
+        this.collections = collections;
+        this.fetchExerciseBasics();
+      });
   }
 
   ngOnInit() {
     this.dexieService.collections
-      .filter((ec) => ec.toolId === this.tool.id)
-      .toArray()
+      .filter((ec) => ec.toolId === this.tool.id).toArray()
       .then((collections: ExerciseCollection[]) => {
         if (collections && collections.length > 0) {
           this.collections = collections;
+          this.fetchExerciseBasics();
         } else {
           this.fetchCollections();
         }

@@ -8,26 +8,6 @@
 
             <div class="row">
 
-                <div class="col-sm-2">
-                    <ul class="list-group">
-                        <a class="list-group-item list-group-item-action@{
-                            if(maybeActiveToolMain.isEmpty) " list-group-item-primary"
-                        }" href="@routes.AdminController.index()">Administrator Startseite</a>
-
-                        @for(randomTool <- toolList.randomExToolMains.sortBy(_.toolname)) {
-                            <a class="list-group-item list-group-item-action@{
-                                if(maybeActiveToolMain contains randomTool) " list-group-item-primary" else ""
-                            }" href="@coll.routes.RandomExerciseAdminController.adminIndex(randomTool.urlPart)">@randomTool.toolname</a>
-                        }
-
-                        @for(collTool <- toolList.collectionToolMains.sortBy(_.toolname).toList) {
-                            <a class="list-group-item list-group-item-action@{
-                                if(maybeActiveToolMain contains collTool) " list-group-item-primary" else ""
-                            }" href="@coll.routes.CollectionAdminController.adminIndex(collTool.urlPart)">@collTool.toolname</a>
-                        }
-                    </ul>
-                </div>
-
                 <div class="col-sm-8">@content</div>
 
             </div>

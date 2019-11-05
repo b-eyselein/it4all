@@ -3,7 +3,6 @@ import {ExerciseCollection, Tool} from '../../../_interfaces/tool';
 import {ApiService} from '../../../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {collectionTools} from '../collection-tools-list';
-import {DexieService} from '../../../_services/dexie.service';
 
 @Component({templateUrl: './tool-index.component.html'})
 export class ToolIndexComponent implements OnInit {

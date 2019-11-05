@@ -94,12 +94,10 @@
                     @helper.CSRF.formField
 
                     <div class="btn-group d-flex">
-                        <button data-href="@coll.routes.CollectionController.correctLive(toolObject.urlPart, collection.id, exercise.id, curPart.urlName)"
-                        id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>
+                        <button id="testBtn" class="btn btn-primary w-100">Aufgabe verifizieren</button>
                         @curPart match {
                             case UmlExParts.DiagramDrawingHelp => {
-                                <a href="@coll.routes.CollectionController.exercise(toolObject.urlPart, collection.id, exercise.id, UmlExParts.MemberAllocation.urlName)"
-                                class="btn btn-secondary w-100">Nächster Aufgabenteil</a>
+                                <a class="btn btn-secondary w-100">Nächster Aufgabenteil</a>
                             }
                             case _ => {
                                 <a href="@coll.routes.CollectionController.index(toolObject.urlPart)"

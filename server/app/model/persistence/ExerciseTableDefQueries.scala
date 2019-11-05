@@ -64,10 +64,10 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, SolType, S
   def futureCollById(id: Int): Future[Option[ExerciseCollection]] = db.run(collTable.filter(_.id === id).result.headOption)
 
 
-  def futureExerciseBasicsInColl(collId: Int): Future[Seq[ApiExerciseBasics]] = db.run(
+  def futureExerciseBasicsInColl(toolId: String, collId: Int): Future[Seq[ApiExerciseBasics]] = db.run(
     exTable
       .filter(_.collectionId === collId)
-      .map(ex => (ex.id, ex.collectionId, ex.semanticVersion, ex.title))
+      .map(ex => (ex.id, ex.collectionId, toolId, ex.semanticVersion, ex.title))
       .result
   ).map(_.map(ApiExerciseBasics.tupled))
 
@@ -132,7 +132,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, SolType, S
         }
         .delete
     )
-    _newInserted <- db.run(exTable += exDbValuesFromExercise(collId, exercise))
+    _newInserted <- db.run(exTable += exDbValuesFromExercise(exercise))
     restSaved <- saveExerciseRest(collId, exercise)
   } yield restSaved
 

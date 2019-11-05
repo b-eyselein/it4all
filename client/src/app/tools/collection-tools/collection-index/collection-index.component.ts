@@ -41,7 +41,10 @@ export class CollectionIndexComponent implements OnInit {
 
   private updateExercises(): void {
     this.apiService.getExercises(this.tool.id, this.collection.id)
-      .subscribe((exercises: Exercise[]) => this.exercises = exercises);
+      .subscribe((exercises: Exercise[]) => {
+       console.info(JSON.stringify(exercises[0],null,2));
+        this.exercises = exercises;
+      });
   }
 
   ngOnInit() {

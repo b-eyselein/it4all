@@ -79,12 +79,13 @@ abstract class AToolMain(val toolname: String, val urlPart: String) {
   // FIXME: remove...
   def exercisesOverviewForIndex: Html
 
-  def adminIndexView(admin: User, toolList: ToolList): Future[Html]
+  def adminIndexView(admin: User, toolList: ToolList): Future[Html] = Future.successful(Html("TODO!"))
 
   def playground(user: User): Html = Html("")
 
   // Calls
 
+  @deprecated
   def indexCall: Call
 
 }

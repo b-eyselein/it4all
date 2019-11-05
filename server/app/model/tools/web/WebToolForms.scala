@@ -73,6 +73,7 @@ object WebToolForms extends ToolForms[WebExercise, WebExerciseReview] {
   override val exerciseFormat: Form[WebExercise] = Form(
     mapping(
       idName -> number,
+      collectionIdName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,

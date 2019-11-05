@@ -8,11 +8,11 @@ import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise] {
 
-  override def dbExerciseFromExercise(collId: Int, ex: RoseExercise): DbRoseExercise =
-    DbRoseExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer)
+  override def dbExerciseFromExercise(ex: RoseExercise): DbRoseExercise =
+    DbRoseExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer)
 
   def exerciseFromDbValues(ex: DbRoseExercise, inputTypes: Seq[RoseInputType], samples: Seq[RoseSampleSolution]): RoseExercise =
-    RoseExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer, inputTypes, samples)
+    RoseExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer, inputTypes, samples)
 
   def dbInputTypeFromInputType(exId: Int, exSemVer: SemanticVersion, collId: Int, inputType: RoseInputType): DbRoseInputType =
     DbRoseInputType(inputType.id, exId, exSemVer, collId, inputType.name, inputType.inputType)
@@ -48,7 +48,7 @@ object RoseExerciseReviewDbModels extends AExerciseReviewDbModels[RoseExPart, Ro
 
 }
 
-final case class DbRoseExercise(id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
+final case class DbRoseExercise(id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
                                 fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends ADbExercise
 
 final case class DbRoseSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, language: ProgLanguage, sample: String)

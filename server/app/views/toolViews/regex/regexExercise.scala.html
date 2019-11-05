@@ -11,13 +11,9 @@
     <script>SystemJS.import('@routes.Assets.versioned("app/regex/regexExercise.js")');</script>
 }
 
-@correctionUrl = @{
-    coll.routes.CollectionController.correctLive(toolMainObject.urlPart, regexCollection.id, exercise.id, part.urlName)
-}
+@correctionUrl = @{""}
 
-@sampleSolUrl = @{
-    coll.routes.CollectionController.sampleSol(toolMainObject.urlPart, regexCollection.id, exercise.id, part.urlName)
-}
+@sampleSolUrl = @{""}
 
 @main(toolMainObject.toolname, Some(user), scripts) {
     <div class="container-fluid" id="fullsc">
@@ -42,8 +38,6 @@
                     <div class="btn-group d-flex">
                         <button class="btn btn-primary w-100" id="testBtn" data-href="@correctionUrl">
                             Lösung testen</button>
-                        <a href="@coll.routes.CollectionController.reviewExercisePartForm(toolMainObject.urlPart, regexCollection.id, exercise.id, part.urlName)"
-                        id="endSolveAnchor" class="btn btn-secondary w-100">Bearbeitung beenden</a>
                     </div>
                 </div>
 

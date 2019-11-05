@@ -49,8 +49,6 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override protected val dbModels               = SqlDbModels
   override protected val exerciseReviewDbModels = SqlExerciseReviewDbModels
 
-  override def exDbValuesFromExercise(collId: Int, compEx: SqlExercise): DbSqlExercise = dbModels.dbExerciseFromExercise(collId, compEx)
-
   // Reading
 
   override protected def completeExForEx(collId: Int, ex: DbSqlExercise): Future[SqlExercise] = for {
@@ -88,7 +86,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def tags: Rep[String] = column[String](tagsName)
 
 
-    override def * : ProvenShape[DbSqlExercise] = (id, semanticVersion, collectionId, title, author, text, state, exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)
+    override def * : ProvenShape[DbSqlExercise] = (id, collectionId, semanticVersion, title, author, text, state, exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)
 
   }
 

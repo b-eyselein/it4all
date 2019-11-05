@@ -45,7 +45,7 @@ object WebToolYamlProtocol extends MyYamlProtocol {
         logger.error("Could not read web sample solution", sampleSolFailure.exception)
 
       WebExercise(
-        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
+        baseValues.id, baseValues.collId, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
         htmlText, jsText, SiteSpec(1, fileName, htmlTaskTries._1, jsTaskTries._1), filesName._1, sampleSolutionTries._1
       )
     }

@@ -42,7 +42,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       val textParser = new UmlExTextParser(baseValues.text, mappings, ignoreWords)
 
       UmlExercise(
-        baseValues.id, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, textParser.parseText,
+        baseValues.id, baseValues.collId, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state, textParser.parseText,
         ignoreWords, mappings, sampleSolutions._1
       )
     }

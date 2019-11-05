@@ -7,8 +7,6 @@
     </a>
   </div>
 
-  <br>
-
   <h2 class="subtitle is-3">Vorhandene Aufgaben</h2>
 
   <ng-container *ngIf="exercises && exercises.length > 0; else noExercisesBlock">
@@ -25,7 +23,7 @@
   <br>
 
   <div class="buttons" *ngIf="collection">
-    <a class="button is-warning is-fullwidth"
+    <a class="button is-warning has-text-white is-fullwidth"
        [routerLink]="['/admin',tool.id, 'collections', collection.id, 'readExercises']">
       Aufgaben einlesen
     </a>

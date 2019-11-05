@@ -10,22 +10,23 @@ import {DexieService} from '../../../../_services/dexie.service';
 import 'codemirror/mode/sql/sql';
 
 @Component({
-  // selector: 'app-sql-exercise',
   templateUrl: './sql-exercise.component.html',
   styleUrls: ['./sql-exercise.component.sass'],
   encapsulation: ViewEncapsulation.None // style editor also
 })
 export class SqlExerciseComponent implements OnInit {
 
-   readonly tool: Tool = SqlTool;
-   collection: ExerciseCollection;
-   exercise: SqlExercise;
-   part: ToolPart = SqlCreateQueryPart;
+  readonly tool: Tool = SqlTool;
+  collection: ExerciseCollection;
+  exercise: SqlExercise;
+  part: ToolPart = SqlCreateQueryPart;
 
-   solution = '';
-   result: SqlResult;
+  solution = '';
+  result: SqlResult | undefined;
 
-   editorOptions = getDefaultEditorOptions('sql');
+  readonly editorOptions = getDefaultEditorOptions('sql');
+
+  showSampleSolutions = false;
 
   constructor(private route: ActivatedRoute, private  apiService: ApiService, private dexieService: DexieService, private router: Router) {
   }
@@ -56,7 +57,7 @@ export class SqlExerciseComponent implements OnInit {
       });
   }
 
-  showSampleSolutions(): void {
-
+  toggleSampleSolutions(): void {
+    this.showSampleSolutions = !this.showSampleSolutions;
   }
 }

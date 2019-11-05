@@ -7,8 +7,9 @@ trait Consts {
   val authorName        : String = "author"
   val awaitedName       : String = "awaited"
 
-  val contentName: String = "content"
-  val correctName: String = "correct"
+  val collectionIdName: String = "collectionId"
+  val contentName     : String = "content"
+  val correctName     : String = "correct"
 
   val descriptionName: String = "description"
   val difficultyName : String = "difficulty"

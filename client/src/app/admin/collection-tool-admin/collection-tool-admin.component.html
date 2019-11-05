@@ -5,8 +5,6 @@
     <a href="" class="button is-primary is-fullwidth" [routerLink]="['/admin']">Zurück zur Administrationsstartseite</a>
   </div>
 
-  <br>
-
   <h2 class="subtitle is-3">Vorhandene Sammlungen</h2>
 
   <ng-container *ngIf="collections && collections.length > 0; else noCollectionsBlock">
@@ -17,6 +15,13 @@
             <p class="card-header-title">{{collection.id}}. {{collection.title}}</p>
           </header>
           <div class="card-content">
+            <!-- TODO: Aufgaben anzeigen!?! -->
+            <ng-container *ngIf="collection.exercisesBasics">
+              <div class="has-text-info"
+                   *ngIf="collection.exercisesBasics.length > 0">{{collection.exercisesBasics.length}} Aufgaben
+              </div>
+              <div class="has-text-warning" *ngIf="collection.exercisesBasics.length === 0">Keine Aufgaben!</div>
+            </ng-container>
           </div>
           <footer class="card-footer">
             <a [routerLink]="['/admin', tool.id, 'collections', collection.id, 'editForm']" class="card-footer-item">
@@ -37,7 +42,7 @@
   <hr>
 
   <div class="buttons">
-    <a class="button is-warning is-fullwidth" [routerLink]="['/admin', tool.id, 'readCollections']">
+    <a class="button is-warning has-text-white is-fullwidth" [routerLink]="['/admin', tool.id, 'readCollections']">
       Sammlungen einlesen
     </a>
   </div>

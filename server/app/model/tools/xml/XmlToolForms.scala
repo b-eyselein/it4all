@@ -21,6 +21,7 @@ object XmlToolForms extends ToolForms[XmlExercise, XmlExerciseReview] {
   override val exerciseFormat: Form[XmlExercise] = Form(
     mapping(
       idName -> number,
+      collectionIdName -> number,
       semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
       titleName -> nonEmptyText,
       authorName -> nonEmptyText,

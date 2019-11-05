@@ -52,9 +52,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Yaml, Html Forms, Json
 
-  override protected val exerciseYamlFormat  : MyYamlFormat[ProgExercise]   = ProgExYamlProtocol.ProgExYamlFormat
+  override protected val exerciseYamlFormat: MyYamlFormat[ProgExercise] = ProgExYamlProtocol.ProgExYamlFormat
 
-  override val exerciseJsonFormat  : Format[ProgExercise]   = ProgrammingJsonProtocols.exerciseFormat
+  override val exerciseJsonFormat: Format[ProgExercise] = ProgrammingJsonProtocols.exerciseFormat
 
   override val exerciseForm      : Form[ProgExercise]       = ProgToolForms.exerciseFormat
   override val exerciseReviewForm: Form[ProgExerciseReview] = ProgToolForms.exerciseReviewForm
@@ -70,19 +70,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
     case ProgExParts.TestCreation    => exercise.unitTestPart.unitTestType == UnitTestTypes.Normal
     case _                           => true
   }
-
-  override def instantiateExercise(id: Int, author: String, state: ExerciseState): ProgExercise = ProgExercise(
-    id, SemanticVersion(0, 1, 0), title = "", author, text = "", state,
-    functionName = "", foldername = "", filename = "",
-    inputTypes = Seq[ProgInput](), outputType = ProgDataTypes.STRING, baseData = None,
-    unitTestPart = UnitTestPart(
-      unitTestType = UnitTestTypes.Simplified, unitTestsDescription = "", unitTestFiles = Seq.empty,
-      unitTestTestConfigs = Seq.empty, testFileName = "", sampleSolFileNames = Seq.empty
-    ),
-    implementationPart = ImplementationPart(base = "", files = Seq.empty, implFileName = "", sampleSolFileNames = Seq.empty),
-    sampleSolutions = Seq[ProgSampleSolution](), sampleTestData = Seq[ProgSampleTestData](),
-    maybeClassDiagramPart = None
-  )
 
   override def instantiateSolution(id: Int, exercise: ProgExercise, part: ProgExPart, solution: ProgSolution,
                                    points: Points, maxPoints: Points): ProgUserSolution =
@@ -157,12 +144,5 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
       views.html.toolViews.umlActivity.activityDrawing(user, collection, exercise, language, definitionRest, this)
   }
-
-  override def previewExerciseRest(ex: Exercise): Html = ex match {
-    case pe: ProgExercise => views.html.toolViews.programming.newProgPreview(pe)
-    case _                => ???
-  }
-
-  override def renderEditRest(exercise: ProgExercise): Html = ???
 
 }

@@ -1,20 +1,20 @@
 package model.tools.web.persistence
 
 import de.uniwue.webtester._
+import model._
 import model.persistence._
 import model.points.Points
 import model.tools.web._
-import model._
 
 object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
 
   // Exercise
 
-  override def dbExerciseFromExercise(collId: Int, ex: WebExercise): DbWebExercise =
-    DbWebExercise(ex.id, ex.semanticVersion, collId, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
+  override def dbExerciseFromExercise(ex: WebExercise): DbWebExercise =
+    DbWebExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
 
   def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], files: Seq[ExerciseFile], sampleSolutions: Seq[FilesSampleSolution]): WebExercise =
-    WebExercise(ex.id, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText,
+    WebExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText,
       SiteSpec(1, ex.fileName, htmlTasks, jsTasks), files, sampleSolutions)
 
   // HtmlTask
@@ -40,7 +40,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   // JsTask
 
   def dbJsTaskFromJsTask(exId: Int, collId: Int, jsTask: JsTask): (DbJsTask, Seq[(DbJsCondition, Seq[DbJsConditionAttribute])]) = {
-    val dbPreConditions = jsTask.preConditions.map(pc => dbJsConditionFromJsCondition(jsTask.id, exId, collId, pc, isPrecondition = true))
+    val dbPreConditions  = jsTask.preConditions.map(pc => dbJsConditionFromJsCondition(jsTask.id, exId, collId, pc, isPrecondition = true))
     val dbPostConditions = jsTask.postConditions.map(pc => dbJsConditionFromJsCondition(jsTask.id, exId, collId, pc, isPrecondition = false))
 
     (
@@ -96,7 +96,7 @@ object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebE
 }
 
 final case class DbWebExercise(
-  id: Int, semanticVersion: SemanticVersion, collectionId: Int, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   htmlText: Option[String], jsText: Option[String], fileName: String
 ) extends ADbExercise
 
