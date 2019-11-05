@@ -17,7 +17,7 @@ trait Secured {
 
   private def username(request: RequestHeader): Option[String] = request.session.get(sessionIdField)
 
-  private def onUnauthorized(request: RequestHeader): Result = Redirect(controllers.routes.FrontendController.index()).withNewSession
+  private def onUnauthorized: RequestHeader => Result = _ => Redirect(controllers.routes.FrontendController.index()).withNewSession
 
   private def onInsufficientPrivileges(): Result = Redirect(routes.FrontendController.index()).flashing("msg" -> "You do not have sufficient privileges!")
 

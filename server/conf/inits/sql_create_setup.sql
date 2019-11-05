@@ -1,9 +1,9 @@
-DROP USER IF EXISTS 'it4all';
-CREATE USER 'it4all'@'%';
+DROP USER IF EXISTS it4all;
+
+CREATE USER it4all@'%' IDENTIFIED BY 'sT8aV#k7';
 
 CREATE DATABASE IF NOT EXISTS sqlcreate;
 
-GRANT ALL ON *.* TO 'it4all'@'%'
-IDENTIFIED BY 'sT8aV#k7';
+GRANT ALL ON *.* TO it4all@'%';
 
 FLUSH PRIVILEGES;

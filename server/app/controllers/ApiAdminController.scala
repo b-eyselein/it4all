@@ -51,6 +51,9 @@ class ApiAdminController @Inject()(cc: ControllerComponents, tl: ToolList, confi
             errors.foreach(e => logger.error(e.toString()))
             Future.successful(BadRequest("Json in body could not be interpreted as ExerciseCollection!"))
           case JsSuccess(newCollection, _) =>
+
+            // FIXME: check that toolId and collId fit!
+
             toolMain.futureDeleteOldAndInsertNewCollection(newCollection).map { inserted =>
               Ok(JsBoolean(inserted))
             }
@@ -69,6 +72,9 @@ class ApiAdminController @Inject()(cc: ControllerComponents, tl: ToolList, confi
             errors.foreach(e => logger.error(e.toString()))
             Future.successful(BadRequest("Json in body could not be interpreted as Exercise!"))
           case JsSuccess(newExercise, _) =>
+
+            // FIXME: check that toolId, collId and exId fit!
+
             toolMain.futureDeleteOldAndInsertNewExercise(collId, newExercise).map { inserted =>
               Ok(JsBoolean(inserted))
             }
