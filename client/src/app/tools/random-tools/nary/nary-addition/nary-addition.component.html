@@ -16,6 +16,19 @@
         </div>
       </div>
 
+      <label class="label has-text-centered" for="max">Maximalwert (Summe):</label>
+      <div class="field has-addons">
+        <div class="control">
+          <button class="button" (click)="doubleMax()" [disabled]="max === maximalMax">* 2</button>
+        </div>
+        <div class="control is-expanded">
+          <input class="input has-text-centered" type="number" id="max" value="{{max}}">
+        </div>
+        <div class="control">
+          <button class="button" (click)="halfMax()" [disabled]="max === minimalMax">/ 2</button>
+        </div>
+      </div>
+
       <hr>
 
       <it4all-nary-number-read-only-input [naryNumberInput]="firstSummandInput"></it4all-nary-number-read-only-input>

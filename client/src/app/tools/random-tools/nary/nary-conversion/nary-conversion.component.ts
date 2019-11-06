@@ -1,4 +1,4 @@
-import {Component, HostListener} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {NaryConversionToolPart, NaryTool} from '../../random-tools-list';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
 import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
@@ -6,7 +6,7 @@ import {randomInt} from '../../../../helpers';
 import {Router} from '@angular/router';
 
 @Component({templateUrl: './nary-conversion.component.html'})
-export class NaryConversionComponent {
+export class NaryConversionComponent implements OnInit {
 
   tool: Tool = NaryTool;
   toolPart: ToolPart = NaryConversionToolPart;
@@ -17,7 +17,12 @@ export class NaryConversionComponent {
   startSystem: NumberingSystem = BINARY_SYSTEM;
   targetSystem: NumberingSystem = HEXADECIMAL_SYSTEM;
 
-  toConvertInput: NaryReadOnlyNumberInput = new NaryReadOnlyNumberInput(0, this.startSystem, 'toConvert', 'Startzahl:');
+  toConvertInput: NaryReadOnlyNumberInput = {
+    decimalNumber: 0,
+    numberingSystem: this.startSystem,
+    fieldId: 'toConvert',
+    labelContent: 'Startzahl:'
+  };
 
   solutionString: string;
 
@@ -25,6 +30,9 @@ export class NaryConversionComponent {
   correct = false;
 
   constructor(private router: Router) {
+  }
+
+  ngOnInit(): void {
     this.update();
   }
 

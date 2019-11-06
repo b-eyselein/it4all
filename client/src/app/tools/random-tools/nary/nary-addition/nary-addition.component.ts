@@ -1,4 +1,4 @@
-import {Component, HostListener} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {NaryAdditionToolPart, NaryTool} from '../../random-tools-list';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
 import {BINARY_SYSTEM, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
@@ -14,7 +14,7 @@ import {Router} from '@angular/router';
       }`
   ]
 })
-export class NaryAdditionComponent {
+export class NaryAdditionComponent implements OnInit {
 
   tool: Tool = NaryTool;
   toolPart: ToolPart = NaryAdditionToolPart;
@@ -24,32 +24,53 @@ export class NaryAdditionComponent {
 
   system: NumberingSystem = BINARY_SYSTEM;
 
+  readonly minimalMax = 16;
+  readonly maximalMax = Math.pow(2, 32);
+  max = 256;
+
   target = 0;
-  firstSummandInput: NaryReadOnlyNumberInput = new NaryReadOnlyNumberInput(0, this.system, 'firstSummand', 'Summand 1:');
-  secondSummandInput: NaryReadOnlyNumberInput = new NaryReadOnlyNumberInput(0, this.system, 'secondSummand', 'Summand 2:');
+
+  firstSummandInput: NaryReadOnlyNumberInput = {
+    decimalNumber: 0,
+    numberingSystem: this.system,
+    fieldId: 'firstSummand',
+    labelContent: 'Summand 1:'
+  };
+
+  secondSummandInput: NaryReadOnlyNumberInput = {
+    decimalNumber: 0,
+    numberingSystem: this.system,
+    fieldId: 'secondSummand',
+    labelContent: 'Summand 2:'
+  };
 
   checked = false;
   correct = false;
   solutionString = '';
 
   constructor(private router: Router) {
+  }
+
+  ngOnInit(): void {
     this.update();
   }
 
   update(): void {
-    this.target = randomInt(1, 256);
+    this.checked = false;
+    this.correct = false;
+    this.solutionString = '';
+
+    this.target = randomInt(1, this.max);
 
     const firstSummand = randomInt(1, this.target);
 
     this.firstSummandInput.decimalNumber = firstSummand;
     this.firstSummandInput.numberingSystem = this.system;
+    this.firstSummandInput.maxValueForDigits = this.max;
 
     this.secondSummandInput.decimalNumber = this.target - firstSummand;
     this.secondSummandInput.numberingSystem = this.system;
-
-    this.checked = false;
-    this.correct = false;
-    this.solutionString = '';
+    this.secondSummandInput.maxValueForDigits = this.max;
   }
 
   checkSolution(): void {
@@ -77,6 +98,16 @@ export class NaryAdditionComponent {
         this.checkSolution();
       }
     }
+  }
+
+  halfMax(): void {
+    this.max = Math.max(this.minimalMax, this.max / 2);
+    this.update();
+  }
+
+  doubleMax(): void {
+    this.max = Math.min(this.maximalMax, this.max * 2);
+    this.update();
   }
 
 }

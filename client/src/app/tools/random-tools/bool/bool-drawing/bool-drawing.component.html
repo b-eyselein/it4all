@@ -6,10 +6,11 @@
     <div class="column is-one-third-desktop">
       <div class="columns is-multiline">
         <div class="column is-half-desktop" *ngFor="let gateType of gateTypes">
-          <button (click)="toggleGateButton($event, gateType)" draggable="true"
-                  (dragstart)="gateButtonOnDragstart($event, gateType)"
-                  class="button is-fullwidth" [class.is-primary]="elementToCreate === gateType">
-            {{gateType}}</button>
+          <button (click)="toggleGateButton($event, gateType)"
+            draggable="true" (dragstart)="gateButtonOnDragstart($event, gateType)"
+            class="button is-fullwidth" [class.is-primary]="elementToCreate === gateType">
+            {{gateType}}
+          </button>
         </div>
       </div>
     </div>

@@ -11,21 +11,16 @@ export class NaryNumberReadOnlyInputComponent {
 
   getSummandNary(): string {
     const radix = this.naryNumberInput.numberingSystem.radix;
+    const blockSize = radix === 2 ? 4 : 2;
 
-    let naryString: string = this.naryNumberInput.decimalNumber.toString(radix);
+    const minimalDigits: number = Math.log2(this.naryNumberInput.maxValueForDigits) / Math.log2(radix);
+    const newDigitCount: number = Math.ceil(minimalDigits / blockSize) * blockSize;
 
-    if (radix === 2) {
-      naryString = naryString
-        .padStart(8, '0')
-        .match(/.{1,4}/g) // split in block of size 4
-        .join(' ');
-    }
-
-    return naryString;
-  }
-
-  getPlaceholder(): string {
-    return this.naryNumberInput.fieldPlaceholder || this.naryNumberInput.labelContent;
+    return this.naryNumberInput.decimalNumber
+      .toString(radix)
+      .padStart(newDigitCount, '0')
+      .match(new RegExp(`.{1,${blockSize}}`, 'g')) // split in blocks
+      .join(' ');
   }
 
 }

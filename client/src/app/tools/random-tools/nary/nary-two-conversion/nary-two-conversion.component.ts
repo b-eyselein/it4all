@@ -1,4 +1,4 @@
-import {Component, HostListener} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {DECIMAL_SYSTEM, NaryReadOnlyNumberInput} from '../nary';
 import {NaryTool, NaryTwoConversionToolPart} from '../../random-tools-list';
 import {Tool, ToolPart} from '../../../../_interfaces/tool';
@@ -6,14 +6,19 @@ import {randomInt} from '../../../../helpers';
 import {Router} from '@angular/router';
 
 @Component({templateUrl: './nary-two-conversion.component.html'})
-export class NaryTwoConversionComponent {
+export class NaryTwoConversionComponent implements OnInit {
 
   tool: Tool = NaryTool;
   toolPart: ToolPart = NaryTwoConversionToolPart;
 
   withIntermediateSteps = true;
 
-  toConvertInput: NaryReadOnlyNumberInput;
+  toConvertInput: NaryReadOnlyNumberInput = {
+    decimalNumber: 0,
+    numberingSystem: DECIMAL_SYSTEM,
+    fieldId: 'startNumber',
+    labelContent: 'Startzahl:'
+  };
 
   binaryAbsoluteString = '';
   invertedAbsoluteString = '';
@@ -28,9 +33,6 @@ export class NaryTwoConversionComponent {
   completelyCorrect = false;
 
   constructor(private router: Router) {
-    this.toConvertInput = new NaryReadOnlyNumberInput(0, DECIMAL_SYSTEM, 'startNumber', 'Startzahl:');
-
-    this.update();
   }
 
   private static swapOnesAndZeros(str: string): string {
@@ -38,6 +40,10 @@ export class NaryTwoConversionComponent {
       .replace(/0/g, 'a')
       .replace(/1/g, '0')
       .replace(/a/g, '1');
+  }
+
+  ngOnInit(): void {
+    this.update();
   }
 
   update(): void {

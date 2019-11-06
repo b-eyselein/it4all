@@ -218,7 +218,6 @@ export function draw(): void {
       end: string, linkView: joint.dia.LinkView
     ) {
       if (end === 'target') {
-
         //        target requires an input port to connect
         if (!magnetTarget || !magnetTarget.getAttribute('class') || magnetTarget.getAttribute('class').indexOf('input') < 0) {
           return false;

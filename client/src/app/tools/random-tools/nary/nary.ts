@@ -17,17 +17,10 @@ export const NUMBERING_SYSTEMS: NumberingSystem[] = [
   HEXADECIMAL_SYSTEM
 ];
 
-export class NaryReadOnlyNumberInput {
-
-  private stringValue?: string;
-
-  constructor(
-    public decimalNumber: number,
-    public numberingSystem: NumberingSystem,
-    public fieldId: string,
-    public labelContent: string,
-    public fieldPlaceholder: string | null = null,
-  ) {
-    this.stringValue = this.decimalNumber ? this.decimalNumber.toString(10) : undefined;
-  }
+export interface NaryReadOnlyNumberInput {
+  decimalNumber: number;
+  numberingSystem: NumberingSystem;
+  fieldId: string;
+  labelContent: string;
+  maxValueForDigits?: number;
 }
