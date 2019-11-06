@@ -1,14 +1,13 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {NaryConversionToolPart, NaryTool} from '../../random-tools-list';
-import {Tool, ToolPart} from '../../../../_interfaces/tool';
-import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
+import {NaryConversionToolPart} from '../../random-tools-list';
+import {ToolPart} from '../../../../_interfaces/tool';
+import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryComponentBase, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
 import {randomInt} from '../../../../helpers';
 import {Router} from '@angular/router';
 
 @Component({templateUrl: './nary-conversion.component.html'})
-export class NaryConversionComponent implements OnInit {
+export class NaryConversionComponent extends NaryComponentBase implements OnInit {
 
-  tool: Tool = NaryTool;
   toolPart: ToolPart = NaryConversionToolPart;
 
   // noinspection JSMismatchedCollectionQueryUpdate
@@ -21,7 +20,8 @@ export class NaryConversionComponent implements OnInit {
     decimalNumber: 0,
     numberingSystem: this.startSystem,
     fieldId: 'toConvert',
-    labelContent: 'Startzahl:'
+    labelContent: 'Startzahl:',
+    maxValueForDigits: this.max
   };
 
   solutionString: string;
@@ -30,6 +30,7 @@ export class NaryConversionComponent implements OnInit {
   correct = false;
 
   constructor(private router: Router) {
+    super();
   }
 
   ngOnInit(): void {
@@ -37,8 +38,9 @@ export class NaryConversionComponent implements OnInit {
   }
 
   update(): void {
-    this.toConvertInput.decimalNumber = randomInt(1, 256);
+    this.toConvertInput.decimalNumber = randomInt(1, this.max);
     this.toConvertInput.numberingSystem = this.startSystem;
+    this.toConvertInput.maxValueForDigits = this.max;
 
     this.solutionString = '';
     this.checked = false;

@@ -1,8 +1,22 @@
 <div class="container">
+
   <h1 class="title is-3 has-text-centered">{{toolPart.name}}</h1>
 
   <div class="columns">
     <div class="column is-half-desktop is-offset-one-quarter-desktop">
+
+      <label class="label has-text-centered" for="max">Maximalwert</label>
+      <div class="field has-addons">
+        <div class="control">
+          <button class="button" (click)="doubleMax()" [disabled]="max === maximalMax">* 2</button>
+        </div>
+        <div class="control is-expanded">
+          <input class="input has-text-centered" type="number" id="max" value="{{max}}">
+        </div>
+        <div class="control">
+          <button class="button" (click)="halveMax()" [disabled]="max === minimalMax">/ 2</button>
+        </div>
+      </div>
 
       <div class="columns">
         <div class="column is-half-desktop">

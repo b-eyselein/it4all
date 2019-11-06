@@ -1,7 +1,7 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {NaryAdditionToolPart, NaryTool} from '../../random-tools-list';
-import {Tool, ToolPart} from '../../../../_interfaces/tool';
-import {BINARY_SYSTEM, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
+import {NaryAdditionToolPart} from '../../random-tools-list';
+import {ToolPart} from '../../../../_interfaces/tool';
+import {BINARY_SYSTEM, NaryComponentBase, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
 import {randomInt} from '../../../../helpers';
 import {Router} from '@angular/router';
 
@@ -14,9 +14,8 @@ import {Router} from '@angular/router';
       }`
   ]
 })
-export class NaryAdditionComponent implements OnInit {
+export class NaryAdditionComponent extends NaryComponentBase implements OnInit {
 
-  tool: Tool = NaryTool;
   toolPart: ToolPart = NaryAdditionToolPart;
 
   // noinspection JSMismatchedCollectionQueryUpdate
@@ -24,24 +23,22 @@ export class NaryAdditionComponent implements OnInit {
 
   system: NumberingSystem = BINARY_SYSTEM;
 
-  readonly minimalMax = 16;
-  readonly maximalMax = Math.pow(2, 32);
-  max = 256;
-
   target = 0;
 
   firstSummandInput: NaryReadOnlyNumberInput = {
     decimalNumber: 0,
     numberingSystem: this.system,
     fieldId: 'firstSummand',
-    labelContent: 'Summand 1:'
+    labelContent: 'Summand 1:',
+    maxValueForDigits: this.max
   };
 
   secondSummandInput: NaryReadOnlyNumberInput = {
     decimalNumber: 0,
     numberingSystem: this.system,
     fieldId: 'secondSummand',
-    labelContent: 'Summand 2:'
+    labelContent: 'Summand 2:',
+    maxValueForDigits: this.max
   };
 
   checked = false;
@@ -49,6 +46,7 @@ export class NaryAdditionComponent implements OnInit {
   solutionString = '';
 
   constructor(private router: Router) {
+    super();
   }
 
   ngOnInit(): void {
@@ -98,16 +96,6 @@ export class NaryAdditionComponent implements OnInit {
         this.checkSolution();
       }
     }
-  }
-
-  halfMax(): void {
-    this.max = Math.max(this.minimalMax, this.max / 2);
-    this.update();
-  }
-
-  doubleMax(): void {
-    this.max = Math.min(this.maximalMax, this.max * 2);
-    this.update();
   }
 
 }

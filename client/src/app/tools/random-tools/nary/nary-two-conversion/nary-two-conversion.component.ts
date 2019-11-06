@@ -1,14 +1,13 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {DECIMAL_SYSTEM, NaryReadOnlyNumberInput} from '../nary';
-import {NaryTool, NaryTwoConversionToolPart} from '../../random-tools-list';
-import {Tool, ToolPart} from '../../../../_interfaces/tool';
+import {DECIMAL_SYSTEM, NaryComponentBase, NaryReadOnlyNumberInput} from '../nary';
+import {NaryTwoConversionToolPart} from '../../random-tools-list';
+import {ToolPart} from '../../../../_interfaces/tool';
 import {randomInt} from '../../../../helpers';
 import {Router} from '@angular/router';
 
 @Component({templateUrl: './nary-two-conversion.component.html'})
-export class NaryTwoConversionComponent implements OnInit {
+export class NaryTwoConversionComponent extends NaryComponentBase implements OnInit {
 
-  tool: Tool = NaryTool;
   toolPart: ToolPart = NaryTwoConversionToolPart;
 
   withIntermediateSteps = true;
@@ -17,7 +16,8 @@ export class NaryTwoConversionComponent implements OnInit {
     decimalNumber: 0,
     numberingSystem: DECIMAL_SYSTEM,
     fieldId: 'startNumber',
-    labelContent: 'Startzahl:'
+    labelContent: 'Startzahl:',
+    maxValueForDigits: this.max
   };
 
   binaryAbsoluteString = '';
@@ -33,6 +33,7 @@ export class NaryTwoConversionComponent implements OnInit {
   completelyCorrect = false;
 
   constructor(private router: Router) {
+    super(128);
   }
 
   private static swapOnesAndZeros(str: string): string {
@@ -47,7 +48,8 @@ export class NaryTwoConversionComponent implements OnInit {
   }
 
   update(): void {
-    this.toConvertInput.decimalNumber = randomInt(0, 128);
+    this.toConvertInput.decimalNumber = randomInt(0, this.max);
+    this.toConvertInput.maxValueForDigits = this.max;
 
     this.checked = false;
 

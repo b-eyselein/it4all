@@ -1,3 +1,6 @@
+import {Tool} from '../../../_interfaces/tool';
+import {NaryTool} from '../random-tools-list';
+
 export interface NumberingSystem {
   radix: number;
   name: string;
@@ -22,5 +25,32 @@ export interface NaryReadOnlyNumberInput {
   numberingSystem: NumberingSystem;
   fieldId: string;
   labelContent: string;
-  maxValueForDigits?: number;
+  maxValueForDigits: number;
+}
+
+export abstract class NaryComponentBase {
+
+  tool: Tool = NaryTool;
+
+  readonly minimalMax = 16;
+  readonly maximalMax = Math.pow(2, 32);
+
+  max: number;
+
+  constructor(defaultMax: number = 256) {
+    this.max = defaultMax;
+  }
+
+  abstract update(): void;
+
+  halveMax(): void {
+    this.max = Math.max(this.minimalMax, this.max / 2);
+    this.update();
+  }
+
+  doubleMax(): void {
+    this.max = Math.min(this.maximalMax, this.max * 2);
+    this.update();
+  }
+
 }
