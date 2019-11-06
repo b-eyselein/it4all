@@ -1123,4 +1123,3 @@ drop table if exists courses;
 drop table if exists pw_hashes;
 
 drop table if exists users;
-

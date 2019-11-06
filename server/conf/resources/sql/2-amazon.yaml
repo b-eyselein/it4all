@@ -1,4 +1,5 @@
 - id: 1
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Alles über die Autoren
   author: bje40dc
@@ -16,6 +17,7 @@
           FROM authors;
 
 - id: 2
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Nachnamen aller Autoren
   author: bje40dc
@@ -29,6 +31,7 @@
           FROM authors;
 
 - id: 3
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Verlagsnamen
   author: bje40dc
@@ -42,6 +45,7 @@
           FROM publishers;
 
 - id: 4
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Namen aller Kunden
   author: bje40dc
@@ -55,6 +59,7 @@
           FROM customers;
 
 - id: 5
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Daten über Bücher
   author: bje40dc
@@ -68,6 +73,7 @@
           FROM books;
 
 - id: 6
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Titelsuche
   author: bje40dc
@@ -82,6 +88,7 @@
           WHERE isbn = '978-3551354051';
 
 - id: 7
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Preissuche
   author: bje40dc
@@ -96,6 +103,7 @@
           WHERE isbn = '978-3551354068';
 
 - id: 8
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Autorensuche
   author: bje40dc
@@ -110,6 +118,7 @@
           WHERE id = 3;
 
 - id: 9
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Der kleine Prinz?
   author: bje40dc
@@ -124,6 +133,7 @@
           WHERE title = 'Der kleine Prinz';
 
 - id: 10
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Verlag mit Telefonnummer
   author: bje40dc
@@ -138,6 +148,7 @@
           WHERE phone = '+49 2402 / 806341';
 
 - id: 11
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Wer schrieb was?
   author: bje40dc
@@ -153,6 +164,7 @@
   tags: [SQL_JOIN]
 
 - id: 12
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Bücher von Carlsen
   author: bje40dc
@@ -170,6 +182,7 @@
   hint: Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.
 
 - id: 13
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Harry Potters Leben
   author: bje40dc
@@ -186,6 +199,7 @@
   tags: [SQL_JOIN]
 
 - id: 14
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Wilhards Wertungen
   author: bje40dc
@@ -202,6 +216,7 @@
   tags: [SQL_JOIN]
 
 - id: 15
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Wer hat hier so viel bestellt?
   author: bje40dc
@@ -219,6 +234,7 @@
   tags: [SQL_JOIN]
 
 - id: 16
+  collectionId: 2
   semanticVersion: 1.0.0
   title: GMX-Kunden
   author: bje40dc
@@ -234,6 +250,7 @@
           WHERE email LIKE '%gmx.de';
 
 - id: 17
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Billige Bücher
   author: bje40dc
@@ -249,6 +266,7 @@
           FROM books WHERE price < 10.00
 
 - id: 18
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Was wird gewünscht?
   author: bje40dc
@@ -262,6 +280,7 @@
           FROM wishlists;
 
 - id: 19
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Jahrgang 81
   author: bje40dc
@@ -277,6 +296,7 @@
   hint: Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres.
 
 - id: 20
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Geringer Bestand oder Preis
   author: bje40dc
@@ -298,6 +318,7 @@
              OR price < 14;
 
 - id: 21
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Sterne in der Wüste 1
   author: bje40dc
@@ -314,6 +335,7 @@
   tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
 - id: 22
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Sterne in der Wüste 2
   author: bje40dc
@@ -330,6 +352,7 @@
   tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
 - id: 23
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Harry Potters
   author: bje40dc
@@ -345,6 +368,7 @@
   tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 24
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Fan oder nicht?
   author: bje40dc
@@ -363,6 +387,7 @@
   tags: [SQL_FUNCTION, SQL_ALIAS, SQL_JOIN]
 
 - id: 25
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Durschnittlicher Bestand
   author: bje40dc
@@ -377,6 +402,7 @@
   tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 26
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Wunsch des Phönix
   author: bje40dc
@@ -394,6 +420,7 @@
   tags: [SQL_DOUBLE_JOIN]
 
 - id: 27
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Orwellianisch
   author: bje40dc
@@ -412,6 +439,7 @@
   tags: [SQL_ORDER_BY, SQL_JOIN]
 
 - id: 28
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Teuer, teuer und teuer
   author: bje40dc
@@ -428,6 +456,7 @@
   tags: [SQL_ORDER_BY, SQL_LIMIT]
 
 - id: 29
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Wer will Harry?
   author: bje40dc
@@ -447,6 +476,7 @@
   tags: [SQL_DOUBLE_JOIN]
 
 - id: 30
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Emails mit G
   author: bje40dc
@@ -462,6 +492,7 @@
           OR email LIKE '%gmail.com';
 
 - id: 31
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Tolkien in Billig
   author: bje40dc
@@ -482,6 +513,7 @@
   tags: [SQL_ORDER_BY]
 
 - id: 32
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Billig gekauft
   author: bje40dc
@@ -502,6 +534,7 @@
   tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 33
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Kumulierter Bestand
   author: bje40dc
@@ -521,6 +554,7 @@
   hint: Verwenden Sie den Sum-Operator und das Schlüsselwort AS.
 
 - id: 34
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Februargeburtstag
   author: bje40dc
@@ -536,6 +570,7 @@
   hint: Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.
 
 - id: 35
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Ich bin der jüngste!
   author: bje40dc
@@ -553,6 +588,7 @@
   hint: Achten Sie darauf dass sich die Spaltennamen nicht verändern.
 
 - id: 36
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Passwortupdate!
   author: bje40dc
@@ -574,6 +610,7 @@
     zu 'Passwort' lautet '3e45af4ca27ea2b03fc6183af40ea112'.
 
 - id: 37
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Mit allem zufrieden?
   author: bje40dc
@@ -593,6 +630,7 @@
   tags: [SQL_JOIN, SQL_FUNCTION, SQL_GROUP_BY, SQL_ORDER_BY, SQL_LIMIT]
 
 - id: 38
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Teure Wünsche...
   author: bje40dc
@@ -613,6 +651,7 @@
   tags: [SQL_FUNCTION, SQL_ALIAS, SQL_DOUBLE_JOIN, SQL_GROUP_BY, SQL_ORDER_BY]
 
 - id: 39
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Veröffentlichungsjahre
   author: bje40dc
@@ -626,6 +665,7 @@
           WHERE year IN (1998, 2001, 2011);
 
 - id: 100
+  collectionId: 2
   semanticVersion: 1.0.0
   title: Aufgestockt
   author: bje40dc

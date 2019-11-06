@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {"type": "number"},
+    "collectionId": {"type": "number"},
+    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
+    "title": {"type": "string"},
+    "author": {"type": "string"},
+    "text": {"type": "string"},
+    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]}
+  },
+  "required": [
+    "id", "collectionId", "semanticVersion", "title", "author", "text", "status"
+  ]
+}

@@ -1,55 +1,41 @@
 {
   "type": "array",
-  "items": {
-    "title": "WebExerciseCompleteEx",
-    "type": "object",
-    "properties": {
-      "id": {"type": "number"},
-      "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-      "title": {"type": "string"},
-      "author": {"type": "string"},
-      "text": {"type": "string"},
-      "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-      "filename": {"type": "string"},
-      "htmlText": {"type": "string"},
-      "htmlTasks": {
-        "type": "array",
-        "items": {"$ref": "#/definitions/HtmlTask"},
-        "additionalItems": false
-      },
-      "jsText": {"type": "string"},
-      "jsTasks": {
-        "type": "array",
-        "items": {"$ref": "#/definitions/JsTask"},
-        "additionalItems": false
-      },
-      "files": {
-        "type": "array",
-        "items": {"$ref": "../exericse_file.schema.json"},
-        "additionalItems": false
-      },
-      "samples": {
-        "type": "array",
-        "items": {"$ref": "#/definitions/WebSample"},
-        "additionalItems": false
-      }
-    },
-    "required": [
-      "id",
-      "semanticVersion",
-      "title",
-      "author",
-      "text",
-      "status",
-      "filename",
-      "htmlTasks",
-      "jsTasks",
-      "files",
-      "samples"
-    ],
-    "additionalProperties": false
-  },
+  "items": {"$ref": "#/definitions/WebExercise"},
   "definitions": {
+    "WebExercise": {
+      "allOf": [
+        {"$ref": "../exercise.schema.json"},
+        {
+          "properties": {
+            "filename": {"type": "string"},
+            "htmlText": {"type": "string"},
+            "htmlTasks": {
+              "type": "array",
+              "items": {"$ref": "#/definitions/HtmlTask"},
+              "additionalItems": false
+            },
+            "jsText": {"type": "string"},
+            "jsTasks": {
+              "type": "array",
+              "items": {"$ref": "#/definitions/JsTask"},
+              "additionalItems": false
+            },
+            "files": {
+              "type": "array",
+              "items": {"$ref": "../exercise_file.schema.json"},
+              "additionalItems": false
+            },
+            "samples": {
+              "type": "array",
+              "items": {"$ref": "#/definitions/WebSample"},
+              "additionalItems": false
+            }
+          },
+          "required": ["filename", "htmlTasks", "jsTasks", "files", "samples"],
+          "additionalProperties": false
+        }
+      ]
+    },
     "HtmlTask": {
       "type": "object",
       "properties": {
@@ -109,7 +95,7 @@
         "id": {"type": "number"},
         "files": {
           "type": "array",
-          "items": {"$ref": "../exericse_file.schema.json"},
+          "items": {"$ref": "../exercise_file.schema.json"},
           "additionalItems": false
         }
       },

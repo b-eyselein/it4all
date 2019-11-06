@@ -1,4 +1,5 @@
 - id: 1
+  collectionId: 1
   semanticVersion: 1.0.0
   title: Party
   author: bje40dc
@@ -41,6 +42,7 @@
         </party>
 
 - id: 2
+  collectionId: 1
   title: Vorlesung
   author: bje40dc
   text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
@@ -102,7 +104,9 @@
         <lecture>
           TODO!
         </lecture>
+
 - id: 3
+  collectionId: 1
   title: Krankenhaus
   author: bje40dc
   text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
@@ -136,6 +140,7 @@
         </praxis>
 
 - id: 4
+  collectionId: 1
   title: Frühstück
   author: bje40dc
   text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
@@ -160,7 +165,9 @@
       document: |
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE lecture SYSTEM "lecture.dtd">
+
 - id: 5
+  collectionId: 1
   title: Bibliothek
   author: bje40dc
   text: Erstellen Sie für dieses Xml-Dokument eine passende DTD

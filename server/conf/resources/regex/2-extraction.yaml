@@ -1,4 +1,5 @@
 - id: 1
+  collectionId: 1
   semanticVersion: {major: 0, minor: 0, patch: 1}
   title: Heiße Preise
   author: bje40dc
@@ -22,7 +23,9 @@
     - id: 2
       base: 'Reifenwechsel: 50€, Ölservice: 99€, Lichtcheck: 119,99€'
       toExtract: ['50', '99', '119,99']
+
 - id: 2
+  collectionId: 1
   semanticVersion: {major: 0, minor: 0, patch: 1}
   title: Kilometerstände
   author: bje40dc

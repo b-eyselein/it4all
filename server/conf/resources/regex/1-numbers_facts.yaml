@@ -1,4 +1,5 @@
 - id: 1
+  collectionId: 1
   semanticVersion: {major: 0, minor: 0, patch: 1}
   title: Postleitzahlen
   author: bje40dc
@@ -25,6 +26,7 @@
     - {id: 3, sample: '\d\d\d\d\d'}
 
 - id: 2
+  collectionId: 1
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Einfache Datumsangaben
   author: bje40dc
@@ -59,6 +61,7 @@
     - {id: 3, sample: '[0-9]{2}\.[0-9]{2}\.[0-9]{4}'}
 
 - id: 3
+  collectionId: 1
   semanticVersion: {major: 0, minor: 0, patch: 1}
   title: Komlexe Datumsangaben
   author: bje40dc
@@ -93,6 +96,7 @@
     - {id: 3, sample: '[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4}'}
 
 - id: 4
+  collectionId: 1
   semanticVersion: {major: 0, minor: 0, patch: 1}
   title: Semantische Versionierung
   author: bje40dc
@@ -123,6 +127,7 @@
     - {id: 2, sample: '[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+)?'}
 
 - id: 5
+  collectionId: 1
   semanticVersion: {major: 0, minor: 0, patch: 1}
   title: E-Mail-Adressen
   author: bje40dc

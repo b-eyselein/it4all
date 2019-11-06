@@ -1,21 +1,21 @@
 {
-  "type": "object",
-  "properties": {
-    "id": {"type": "number"},
-    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-    "title": {"type": "string"},
-    "author": {"type": "string"},
-    "text": {"type": "string"},
-    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-    "mappings": {"type": "array", "items": {"$ref": "#/definitions/UmlMapping"}},
-    "ignoreWords": {"type": "array", "items": {"type": "string"}},
-    "samples": {"type": "array", "items": {"$ref": "#/definitions/UmlClassDiagram"}}
-  },
-  "required": [
-    "id", "semanticVersion", "title", "author", "text", "status",
-    "mappings", "ignoreWords", "samples"
-  ],
+  "type": "array",
+  "items": {"$ref": "#/definitions/UmlExercise"},
   "definitions": {
+    "UmlExercise": {
+      "allOf": [
+        {"$ref": "../exercise.schema.json"},
+        {
+          "properties": {
+            "mappings": {"type": "array", "items": {"$ref": "#/definitions/UmlMapping"}},
+            "ignoreWords": {"type": "array", "items": {"type": "string"}},
+            "samples": {"type": "array", "items": {"$ref": "#/definitions/UmlClassDiagram"}}
+          },
+          "required": ["mappings", "ignoreWords", "samples"],
+          "additionalProperties": false
+        }
+      ]
+    },
     "UmlMapping": {
       "type": "object",
       "properties": {

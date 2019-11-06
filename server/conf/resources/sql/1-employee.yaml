@@ -1,4 +1,5 @@
 - id: 1
+  collectionId: 1
   semanticVersion: 1.0.0
   title: Anzahl der Angestellten
   author: bje40dc
@@ -16,6 +17,7 @@
           FROM employee;
 
 - id: 2
+  collectionId: 1
   semanticVersion: 1.0.0
   title: Angestelltennummer
   author: bje40dc
@@ -31,6 +33,7 @@
             AND lastname = 'Becker';
 
 - id: 3
+  collectionId: 1
   semanticVersion: 1.0.0
   title: Emailadresse
   author: bje40dc
@@ -61,6 +64,7 @@
   tags: [SQL_JOIN]
 
 - id: 4
+  collectionId: 1
   semanticVersion: 1.0.0
   title: Nutzernamen
   author: bje40dc
@@ -76,6 +80,7 @@
   tags: [SQL_ORDER_BY]
 
 - id: 5
+  collectionId: 1
   semanticVersion: 1.0.0
   title: Anzahl der Untergebenen
   author: bje40dc
@@ -92,6 +97,7 @@
   tags: [SQL_GROUP_BY]
 
 - id: 6
+  collectionId: 1
   semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
@@ -111,6 +117,7 @@
         );
 
 - id: 7
+  collectionId: 1
   semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
@@ -125,6 +132,7 @@
           WHERE id = 8
 
 - id: 8
+  collectionId: 1
   semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc
@@ -138,6 +146,7 @@
           WHERE id = 7
 
 - id: 9
+  collectionId: 1
   semanticVersion: 1.0.0
   title: TODO!
   author: bje40dc

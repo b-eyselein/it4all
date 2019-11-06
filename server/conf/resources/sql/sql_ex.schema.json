@@ -3,36 +3,31 @@
   "items": {"$ref": "#/definitions/SqlExercise"},
   "definitions": {
     "SqlExercise": {
-      "type": "object",
-      "properties": {
-        "id": {"type": "number"},
-        "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-        "title": {"type": "string"},
-        "author": {"type": "string"},
-        "text": {"type": "string"},
-        "exerciseType": {"type": "string", "enum": ["SELECT", "CREATE", "UPDATE", "INSERT", "DELETE"]},
-        "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-        "samples": {
-          "type": "array",
-          "items": {"$ref": "#/definitions/SqlSample"}
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "SQL_JOIN",
-              "SQL_FUNCTION",
-              "SQL_ALIAS",
-              "SQL_DOUBLE_JOIN",
-              "SQL_ORDER_BY",
-              "SQL_LIMIT",
-              "SQL_GROUP_BY"
-            ]
-          }
+      "allOf": [
+        {"$ref": "../exercise.schema.json"},
+        {
+          "properties": {
+            "exerciseType": {"type": "string", "enum": ["SELECT", "CREATE", "UPDATE", "INSERT", "DELETE"]},
+            "samples": {"type": "array", "items": {"$ref": "#/definitions/SqlSample"}},
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "SQL_JOIN",
+                  "SQL_FUNCTION",
+                  "SQL_ALIAS",
+                  "SQL_DOUBLE_JOIN",
+                  "SQL_ORDER_BY",
+                  "SQL_LIMIT",
+                  "SQL_GROUP_BY"
+                ]
+              }
+            }
+          },
+          "required": ["exerciseType", "samples"]
         }
-      },
-      "required": ["id", "semanticVersion", "title", "author", "text", "exerciseType", "status", "samples"]
+      ]
     },
     "SqlSample": {
       "type": "object",

@@ -1,4 +1,5 @@
 - id: 1
+  collectionId: 1
   semanticVersion: 1.0.0
   title: Tutorial Konto
   author: bje40dc
@@ -52,6 +53,7 @@
         - {subClass: Kreditkonto, superClass: Konto}
 
 - id: 2
+  collectionId: 1
   semanticVersion: 1.0.0
   title: Krankenhaus
   author: bje40dc

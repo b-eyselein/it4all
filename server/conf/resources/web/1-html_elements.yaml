@@ -1,4 +1,5 @@
 - id: 1
+  collectionId: 1
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Listen in Html
   author: bje40dc
@@ -12,6 +13,7 @@
     - path: carList.html
       resourcePath: web/1-html_elements/1-carList/carList.html
       fileType: htmlmixed
+      editable: true
     - path: carListStyle.css
       resourcePath: web/1-html_elements/1-carList/carListStyle.css
       fileType: css
@@ -74,6 +76,7 @@
           editable: false
 
 - id: 2
+  collectionId: 1
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Tabellen in Html
   author: bje40dc
@@ -85,6 +88,7 @@
     - path: production.html
       resourcePath: web/1-html_elements/2-production/production.html
       fileType: htmlmixed
+      editable: true
     - path: productionStyle.css
       resourcePath: web/1-html_elements/2-production/productionStyle.css
       fileType: css
@@ -182,8 +186,10 @@
         - path: production.html
           resourcePath: web/1-html_elements/2-production/productionSolution.html
           fileType: htmlmixed
+          editable: false
 
 - id: 3
+  collectionId: 1
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Hyperlinks und Bilder in HTML
   author: bje40dc
@@ -195,6 +201,7 @@
     - path: mustang.html
       resourcePath: web/1-html_elements/3-links_images/mustang.html
       fileType: htmlmixed
+      editable: true
     - path: mustangStyle.css
       resourcePath: web/1-html_elements/3-links_images/mustangStyle.css
       fileType: css
@@ -249,8 +256,10 @@
         - path: mustang.html
           resourcePath: web/1-html_elements/3-links_images/mustangSolution.html
           fileType: htmlmixed
+          editable: false
 
 - id: 4
+  collectionId: 1
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Login-Formular
   author: bje40dc
@@ -262,6 +271,7 @@
     - path: login.html
       resourcePath: web/1-html_elements/4-login/login.html
       fileType: htmlmixed
+      editable: true
     - path: loginStyle.css
       resourcePath: web/1-html_elements/4-login/loginStyle.css
       fileType: css
@@ -333,8 +343,10 @@
         - path: login.html
           resourcePath: web/1-html_elements/4-login/loginSolution.html
           fileType: htmlmixed
+          editable: false
 
 - id: 5
+  collectionId: 1
   semanticVersion: {major: 1, minor: 0, patch: 0}
   title: Audio in HTML 5
   author: bje40dc
@@ -346,6 +358,7 @@
     - path: audio.html
       resourcePath: web/1-html_elements/5-audio/audio.html
       fileType: htmlmixed
+      editable: true
 
   htmlTasks:
     - text: Erstellen Sie eine passende h1-Überschrift die 'Deutsche Nationalhymne' enthält.
@@ -379,3 +392,4 @@
         - path: audio.html
           resourcePath: web/1-html_elements/5-audio/audioSolution.html
           fileType: htmlmixed
+          editable: false

@@ -1,21 +1,21 @@
 {
-  "type": "object",
-  "properties": {
-    "id": {"type": "number"},
-    "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-    "title": {"type": "string"},
-    "author": {"type": "string"},
-    "text": {"type": "string"},
-    "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-    "rootNode": {"type": "string"},
-    "grammarDescription": {"type": "string"},
-    "samples": {"type": "array", "items": {"$ref": "#/definitions/XmlSample"}}
-  },
-  "required": [
-    "id", "semanticVersion", "title", "author", "text", "status",
-    "rootNode", "grammarDescription", "samples"
-  ],
+  "type": "array",
+  "items": {"$ref": "#/definitions/XmlExercise"},
   "definitions": {
+    "XmlExercise": {
+      "allOf": [
+        {"$ref": "../exercise.schema.json"},
+        {
+          "properties": {
+            "rootNode": {"type": "string"},
+            "grammarDescription": {"type": "string"},
+            "samples": {"type": "array", "items": {"$ref": "#/definitions/XmlSample"}}
+          },
+          "required": ["rootNode", "grammarDescription", "samples"],
+          "additionalProperties": false
+        }
+      ]
+    },
     "XmlSample": {
       "type": "object",
       "properties": {

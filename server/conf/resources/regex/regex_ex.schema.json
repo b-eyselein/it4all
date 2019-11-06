@@ -1,36 +1,25 @@
 {
   "type": "array",
   "items": {
-    "type": "object",
-    "properties": {
-      "id": {"type": "number"},
-      "semanticVersion": {"$ref": "../semantic_version.schema.json"},
-      "title": {"type": "string"},
-      "author": {"type": "string"},
-      "text": {"type": "string"},
-      "status": {"type": "string", "enum": ["RESERVED", "CREATED", "ACCEPTED", "APPROVED"]},
-      "maxPoints": {"type": "number"},
-      "correctionType": {"type": "string", "enum": ["MATCHING", "EXTRACTION"]},
-      "samples": {"type": "array", "items": {"$ref": "#/definitions/RegexSample"}},
-      "matchTestData": {"type": "array", "items": {"$ref": "#/definitions/RegexMatchTestData"}},
-      "extractionTestData": {"type": "array", "items": {"$ref": "#/definitions/RegexExtractionTestData"}}
-    },
-    "required": [
-      "id",
-      "semanticVersion",
-      "title",
-      "author",
-      "text",
-      "maxPoints",
-      "status",
-      "correctionType",
-      "samples",
-      "matchTestData",
-      "extractionTestData"
-    ],
-    "additionalProperties": false
+    "$ref": "#/definitions/RegexExercise"
   },
   "definitions": {
+    "RegexExercise": {
+      "allOf": [
+        {"$ref": "../exercise.schema.json"},
+        {
+          "properties": {
+            "maxPoints": {"type": "number"},
+            "correctionType": {"type": "string", "enum": ["MATCHING", "EXTRACTION"]},
+            "samples": {"type": "array", "items": {"$ref": "#/definitions/RegexSample"}},
+            "matchTestData": {"type": "array", "items": {"$ref": "#/definitions/RegexMatchTestData"}},
+            "extractionTestData": {"type": "array", "items": {"$ref": "#/definitions/RegexExtractionTestData"}}
+          },
+          "required": ["maxPoints", "correctionType", "samples", "matchTestData", "extractionTestData"],
+          "additionalProperties": false
+        }
+      ]
+    },
     "RegexSample": {
       "type": "object",
       "properties": {
