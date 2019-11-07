@@ -8,14 +8,15 @@ export abstract class BoolComponentHelper {
 
   protected readonly tool: Tool = BoolTool;
 
-  constructor(protected router: Router) {
+  protected constructor(protected router: Router) {
   }
 
   readonly sampleVariable: BooleanVariable = new BooleanVariable('z');
   readonly learnerVariable: BooleanVariable = new BooleanVariable('y');
 
   formula: BooleanFormula;
-  assignments: Map<string, boolean>[];
+  // FIXME: remove assignments, get from formula!
+  assignments: Map<string, boolean>[] = [];
 
   corrected = false;
   completelyCorrect = false;

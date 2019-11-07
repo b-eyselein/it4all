@@ -3,10 +3,20 @@ import * as joint from 'jointjs';
 import * as _ from 'underscore';
 
 import './boolDrawingElements';
-import {BooleanNode, BooleanNot, BooleanVariable, instantiateOperator} from '../../_model/bool-node';
 
-export const graph: joint.dia.Graph = new joint.dia.Graph();
-export const STD_ZOOM_LEVEL = 1.4;
+import Cell = joint.dia.Cell;
+import CellView = joint.dia.CellView;
+import Element = joint.dia.Element;
+import Graph = joint.dia.Graph;
+import Link = joint.dia.Link;
+import LinkView = joint.dia.LinkView;
+import {BooleanFormula} from '../../_model/bool-formula';
+import {BooleanVariable} from '../../_model/bool-node';
+
+export const graph: Graph = new Graph();
+
+const elementWidth = 60;
+const gridSize = elementWidth / 2;
 
 export let paper: joint.dia.Paper;
 
@@ -20,7 +30,7 @@ export const SIGNALS: Map<string, boolean> = new Map([
   ['d', true]
 ]);
 
-export function createElement(elementName: string, x: number, y: number): void {
+export function createElementInGraph(elementName: string, x: number, y: number): void {
   let element: joint.shapes.logic.Gate;
   let svg: string;
   const elementPos = {position: {x, y}};
@@ -68,15 +78,7 @@ document.addEventListener('dragover', (e: DragEvent) => {
   dragY = e.pageY - offset.top;
 }, false);
 
-function initGraph(xMaxPos: number, yPos: number): void {
-  const inputsToAdd = [
-    {symbol: 'a', position: {x: 20, y: 20}},
-    {symbol: 'b', position: {x: 20, y: yPos / 3}},
-    {symbol: 'c', position: {x: 20, y: yPos * 2 / 3}},
-    {symbol: 'd', position: {x: 20, y: yPos}}
-  ];
-
-
+function initGraph(inputsToAdd, outputsToAdd): void {
   for (const inputToAdd of inputsToAdd) {
     const newGate = new joint.shapes.logic.Input(inputToAdd);
 
@@ -86,10 +88,6 @@ function initGraph(xMaxPos: number, yPos: number): void {
     graph.addCell(newGate);
   }
 
-  const outputsToAdd = [
-    {symbol: 'y', position: {x: xMaxPos, y: yPos / 3}},
-    {symbol: 'z', position: {x: xMaxPos, y: yPos * 2 / 3}}
-  ];
 
   for (const outputToAdd of outputsToAdd) {
     const newGate = new joint.shapes.logic.Output(outputToAdd);
@@ -102,16 +100,7 @@ function initGraph(xMaxPos: number, yPos: number): void {
 
 }
 
-function preparePaper(): void {
-  const xMaxPos: number = paper.getArea().width / 1.65;
-  const yPos: number = paper.getArea().height / 2;
-
-  initGraph(xMaxPos, yPos);
-
-  paper.scale(STD_ZOOM_LEVEL, STD_ZOOM_LEVEL);
-}
-
-export function toggleLive(model: joint.dia.Cell, signal: boolean): void {
+export function toggleLive(model: Cell, signal: boolean): void {
   // add 'live' class to the element if there is a positive signal
   joint.V(paper.findViewByModel(model).el).toggleClass('live', signal);
 }
@@ -138,59 +127,14 @@ function initializeSignals(): void {
   });
 
   for (const element of graph.getElements()) {
-    const outGoingLinks = graph.getConnectedLinks(element, {outbound: true});
+    const outGoingLinks: Link[] = graph.getConnectedLinks(element, {outbound: true});
     if (element instanceof joint.shapes.logic.Input && outGoingLinks.length > 0) {
       broadcastSignal(element, SIGNALS[element.attr('logicSymbol')]);
     }
   }
 }
 
-export function draw(): void {
-  const paperSelector: JQuery<HTMLElement> = $('#paper');
-
-  paper = new joint.dia.Paper({
-    el: paperSelector,
-    model: graph,
-
-    width: paperSelector.width(), height: 700,
-
-    gridSize: 20, drawGrid: {name: 'dot'},
-
-    defaultLink: (cellView: joint.dia.CellView, magnet: SVGElement) => new joint.shapes.logic.Wire(cellView, magnet),
-
-    snapLinks: true,
-    linkPinning: false,
-
-    validateConnection(
-      cellViewSource: joint.dia.CellView, magnetSource: SVGElement, cellViewTarget: joint.dia.CellView, magnetTarget: SVGElement,
-      end: string, linkView: joint.dia.LinkView
-    ) {
-      if (end === 'target') {
-        //        target requires an input port to connect
-        if (!magnetTarget || !magnetTarget.getAttribute('class') || magnetTarget.getAttribute('class').indexOf('input') < 0) {
-          return false;
-        }
-
-        //  check whether the port is being already used
-        const portUsed = _.find(this.model.getLinks(), (link: joint.dia.Link) => {
-
-          return (link.id !== linkView.model.id &&
-            link.get('target').id === cellViewTarget.model.id &&
-            link.get('target').port === magnetTarget.getAttribute('port'));
-        });
-
-        return !portUsed;
-
-      } else { // e === 'source'
-        //     source requires an output port to connect
-        return magnetSource && magnetSource.getAttribute('class') && magnetSource.getAttribute('class').indexOf('output') >= 0;
-      }
-    }
-  });
-
-  preparePaper();
-
-  // Graph events
+function initGraphEvents(): void {
 
   graph.on('change:source change:target', (model, end) => {
 
@@ -269,7 +213,7 @@ export function draw(): void {
     let newCornerX = originalPosition.x + originalSize.width;
     let newCornerY = originalPosition.y + originalSize.height;
 
-    _.each(parent.getEmbeddedCells(), (child: joint.dia.Element) => {
+    _.each(parent.getEmbeddedCells(), (child: Element) => {
 
       const childBbox: joint.g.Rect = child.getBBox();
 
@@ -306,4 +250,67 @@ export function draw(): void {
       cell.set('originalSize', cell.get('size'));
     }
   });
+}
+
+export function draw(formula: BooleanFormula): void {
+  const paperSelector: JQuery<HTMLElement> = $('#paper');
+
+  paper = new joint.dia.Paper({
+    el: paperSelector,
+    model: graph,
+
+    width: paperSelector.width(), height: 600,
+
+    gridSize, drawGrid: {color: 'grey', thickness: 1, name: 'mesh'},
+
+    snapLinks: true, linkPinning: false,
+    defaultLink: (cellView: CellView, magnet: SVGElement) => new joint.shapes.logic.Wire(cellView, magnet),
+
+    validateConnection(
+      cellViewSource: CellView, magnetSource: SVGElement,
+      cellViewTarget: CellView, magnetTarget: SVGElement,
+      end: string, linkView: LinkView
+    ) {
+      if (end === 'target') {
+        //        target requires an input port to connect
+        if (!magnetTarget || !magnetTarget.getAttribute('class') || magnetTarget.getAttribute('class').indexOf('input') < 0) {
+          return false;
+        }
+
+        //  check whether the port is being already used
+        const portUsed = _.find(this.model.getLinks(), (link: joint.dia.Link) => {
+
+          return (link.id !== linkView.model.id &&
+            link.get('target').id === cellViewTarget.model.id &&
+            link.get('target').port === magnetTarget.getAttribute('port'));
+        });
+
+        return !portUsed;
+
+      } else { // e === 'source'
+        //     source requires an output port to connect
+        return magnetSource && magnetSource.getAttribute('class') && magnetSource.getAttribute('class').indexOf('output') >= 0;
+      }
+    }
+  });
+
+
+  // Graph events
+  initGraphEvents();
+
+  const outputVariables: string[] = ['z'];
+
+  const inputsToAdd = formula.getVariables().map((variable: BooleanVariable, index: number) => {
+    return {symbol: variable.variable, position: {x: gridSize, y: gridSize + index * (2 * elementWidth + gridSize)}};
+  });
+
+  const xMaxPos: number = paper.getArea().width - 60 - gridSize;
+  // const yPos: number = paper.getArea().height;
+
+  const outputsToAdd = outputVariables.map((variable: string, index: number) => {
+    // TODO: calculate if more than one input!
+    return {symbol: variable, position: {x: xMaxPos, y: 3 * elementWidth}};
+  });
+
+  initGraph(inputsToAdd, outputsToAdd);
 }

@@ -1,30 +1,55 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {broadcastSignal, createElement, dragX, dragY, draw, graph, paper, SIGNALS, toggleLive} from './_bool-drawing-model/boolDrawing';
+import {
+  broadcastSignal,
+  createElementInGraph,
+  dragX,
+  dragY,
+  draw,
+  graph,
+  paper,
+  SIGNALS,
+  toggleLive
+} from './_bool-drawing-model/boolDrawing';
 import {extractFormulaFromGraph} from './_bool-drawing-model/formulaExtractor';
-import {BooleanNode, BooleanVariable} from '../_model/bool-node';
+import {BooleanNode, BooleanVariable, calculateAssignments} from '../_model/bool-node';
 import {Event} from 'jquery';
 import * as joint from 'jointjs';
+import {generateBooleanFormula} from '../_model/bool-formula';
+import {BoolComponentHelper} from '../_model/bool-component-helper';
+import {Router} from '@angular/router';
 
 @Component({
   templateUrl: './bool-drawing.component.html',
-  styles: [`.live {
-      background: green;
-  }`],
+  styles: [`
+      #paper {
+          border: 1px solid grey;
+      }
+
+      .live {
+          background: green;
+      }
+  `],
   encapsulation: ViewEncapsulation.None
 })
-export class BoolDrawingComponent implements OnInit {
+export class BoolDrawingComponent extends BoolComponentHelper implements OnInit {
 
-  readonly binaryGateTypes: string[] = ['and', 'nand', 'or', 'nor', 'xor', 'xnor'/*, 'equiv', 'impl'*/];
+  readonly gateTypes: string[] = ['not', 'and', 'nand', 'or', 'nor', 'xor', 'xnor'/*, 'equiv', 'impl'*/];
 
   elementToCreate: string | undefined = undefined;
 
-  constructor() {
+  constructor(protected router: Router) {
+    super(router);
+  }
+
+  private createElement(elementName: string, x: number, y: number) {
+    createElementInGraph(elementName, x, y);
+    this.elementToCreate = undefined;
   }
 
   private initPaperEvents(): void {
     paper.on('blank:pointerclick', (evt: Event, x: number, y: number) => {
       if (this.elementToCreate) {
-        createElement('element' + this.elementToCreate.toUpperCase(), x, y);
+        this.createElement('element' + this.elementToCreate.toUpperCase(), x, y);
       }
     });
 
@@ -56,9 +81,16 @@ export class BoolDrawingComponent implements OnInit {
   }
 
   ngOnInit() {
-    draw();
+    this.update();
+
+    draw(this.formula);
 
     this.initPaperEvents();
+  }
+
+  update() {
+    this.formula = generateBooleanFormula(this.sampleVariable);
+    this.assignments = calculateAssignments(this.formula.getVariables());
   }
 
   toggleGateButton(event: MouseEvent, gateType: string): void {
@@ -83,16 +115,18 @@ export class BoolDrawingComponent implements OnInit {
     // scale: Coordinates offset by graph scale, correct with factor
     const scale = joint.V(paper.viewport).scale();
 
-    createElement('element' + elementToCreate.toUpperCase(), dragX / scale.sx, dragY / scale.sy);
+    this.createElement('element' + elementToCreate.toUpperCase(), dragX / scale.sx, dragY / scale.sy);
   }
 
-  updateFormula(): void {
+  updateCreatedFormula(): void {
     const formulas: [BooleanVariable, (BooleanNode | undefined)][] = extractFormulaFromGraph(graph);
 
     formulas.forEach((outputFormula: [BooleanVariable, (BooleanNode | undefined)]) => {
       if (outputFormula[1]) {
+        // tslint:disable-next-line:no-console
         console.info(outputFormula[0].variable + ' = ' + outputFormula[1].asString());
       } else {
+        // tslint:disable-next-line:no-console
         console.info(outputFormula[0].variable + ' = undefined!');
       }
     });

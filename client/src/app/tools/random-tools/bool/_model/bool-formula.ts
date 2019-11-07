@@ -9,7 +9,7 @@ import {
   BooleanNot,
   BooleanOr,
   BooleanVariable,
-  BooleanXOr
+  BooleanXOr, calculateAssignments
 } from './bool-node';
 
 const varA: BooleanVariable = new BooleanVariable('a');
@@ -44,7 +44,11 @@ function generateRandomOperator(left: BooleanNode, right: BooleanNode): BooleanN
 }
 
 export class BooleanFormula {
+
+  private assignments: Map<string, boolean>[];
+
   constructor(public left: BooleanVariable, public right: BooleanNode) {
+    this.assignments = calculateAssignments(right.getVariables());
   }
 
   getVariables(): BooleanVariable[] {
@@ -53,6 +57,14 @@ export class BooleanFormula {
 
   getSubFormulas(): BooleanNode[] {
     return this.right.getSubFormulas();
+  }
+
+  getAssignments(): Map<string, boolean>[] {
+    return this.assignments;
+  }
+
+  getValueFor(assignment: Map<string, boolean>): boolean {
+    return this.right.evaluate(assignment);
   }
 
   asString() {
