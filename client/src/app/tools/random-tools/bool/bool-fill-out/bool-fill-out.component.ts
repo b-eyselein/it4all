@@ -26,7 +26,7 @@ export class BoolFillOutComponent extends BoolComponentHelper implements OnInit 
     this.completelyCorrect = false;
     this.corrected = false;
 
-    this.formula = generateBooleanFormula();
+    this.formula = generateBooleanFormula(this.sampleVariable);
     this.assignments = calculateAssignments(this.formula.getVariables());
     this.subFormulas = this.formula.getSubFormulas();
 

@@ -1,5 +1,4 @@
 import * as joint from 'jointjs';
-import {toggleLive} from './boolDrawing';
 
 import * as _ from 'lodash';
 
@@ -10,14 +9,6 @@ declare module 'jointjs' {
         signal: number;
 
         onSignal(signal: boolean, handler: (b: boolean) => void): void;
-      }
-
-      interface Gate11 extends Gate {
-        operation(input: any): any;
-      }
-
-      interface Gate21 extends Gate {
-        operation(input1: any, input2: any): any;
       }
     }
   }

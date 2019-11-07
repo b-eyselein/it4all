@@ -43,17 +43,43 @@ function generateRandomOperator(left: BooleanNode, right: BooleanNode): BooleanN
   }
 }
 
-export function generateBooleanFormula(): BooleanNode {
+export class BooleanFormula {
+  constructor(public left: BooleanVariable, public right: BooleanNode) {
+  }
+
+  getVariables(): BooleanVariable[] {
+    return this.right.getVariables();
+  }
+
+  getSubFormulas(): BooleanNode[] {
+    return this.right.getSubFormulas();
+  }
+
+  asString() {
+    return this.left.variable + ' = ' + this.right.asString();
+  }
+
+  asHtmlString() {
+    return this.left.variable + ' = ' + this.right.asHtmlString();
+  }
+
+  evaluate(assignments: Map<string, boolean>): boolean {
+    return this.right.evaluate(assignments);
+  }
+
+}
+
+export function generateBooleanFormula(left: BooleanVariable): BooleanFormula {
   const depth: number = randomInt(1, 3);
 
   if (depth === 1) {
-    return generateRandomOperator(varA, varB);
+    return new BooleanFormula(left, generateRandomOperator(varA, varB));
   } else {
     const vars: BooleanVariable[] = [varA, varB, varC];
 
     const leftChild = generateRandomOperator(takeRandom(vars), takeRandom(vars));
     const rightChild = generateRandomOperator(takeRandom(vars), takeRandom(vars));
 
-    return generateRandomOperator(leftChild, rightChild);
+    return new BooleanFormula(left, generateRandomOperator(leftChild, rightChild));
   }
 }

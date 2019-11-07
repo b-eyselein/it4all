@@ -1,7 +1,8 @@
-import {BooleanNode, BooleanVariable} from './bool-node';
+import {BooleanVariable} from './bool-node';
 import {Router} from '@angular/router';
 import {Tool} from '../../../../_interfaces/tool';
 import {BoolTool} from '../../random-tools-list';
+import {BooleanFormula} from './bool-formula';
 
 export abstract class BoolComponentHelper {
 
@@ -13,7 +14,7 @@ export abstract class BoolComponentHelper {
   readonly sampleVariable: BooleanVariable = new BooleanVariable('z');
   readonly learnerVariable: BooleanVariable = new BooleanVariable('y');
 
-  formula: BooleanNode;
+  formula: BooleanFormula;
   assignments: Map<string, boolean>[];
 
   corrected = false;

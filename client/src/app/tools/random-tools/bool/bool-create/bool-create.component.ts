@@ -41,7 +41,7 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
 
     this.solution = '';
 
-    this.formula = generateBooleanFormula();
+    this.formula = generateBooleanFormula(this.sampleVariable);
 
     this.assignments = calculateAssignments(this.formula.getVariables());
     this.assignments.forEach((assignment) => assignment.set(this.sampleVariable.variable, this.formula.evaluate(assignment)));

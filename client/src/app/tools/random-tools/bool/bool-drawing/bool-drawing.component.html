@@ -4,15 +4,28 @@
       <div id="paper" (dragover)="paperOnDragover($event)" (drop)="paperOnDrop($event)"></div>
     </div>
     <div class="column is-one-third-desktop">
+
+      <div class="buttons">
+        <button (click)="toggleGateButton($event, 'not')"
+                draggable="true" (dragstart)="gateButtonOnDragstart($event, 'not')"
+                class="button is-fullwidth" [class.is-primary]="elementToCreate === 'not'">
+          not
+        </button>
+      </div>
       <div class="columns is-multiline">
-        <div class="column is-half-desktop" *ngFor="let gateType of gateTypes">
+        <div class="column is-half-desktop" *ngFor="let gateType of binaryGateTypes">
           <button (click)="toggleGateButton($event, gateType)"
-            draggable="true" (dragstart)="gateButtonOnDragstart($event, gateType)"
-            class="button is-fullwidth" [class.is-primary]="elementToCreate === gateType">
+                  draggable="true" (dragstart)="gateButtonOnDragstart($event, gateType)"
+                  class="button is-fullwidth" [class.is-primary]="elementToCreate === gateType">
             {{gateType}}
           </button>
         </div>
       </div>
+
+      <hr>
+
+      <button class="button is-link is-fullwidth" (click)="updateFormula()">Formel aktualisieren</button>
+
     </div>
   </div>
 </div>

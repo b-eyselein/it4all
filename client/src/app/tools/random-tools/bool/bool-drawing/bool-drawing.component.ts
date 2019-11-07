@@ -1,5 +1,8 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {broadcastSignal, createElement, dragX, dragY, draw, graph, paper, SIGNALS, toggleLive} from '../_model/boolDrawing';
+import {broadcastSignal, createElement, dragX, dragY, draw, graph, paper, SIGNALS, toggleLive} from './_bool-drawing-model/boolDrawing';
+import {extractFormulaFromGraph} from './_bool-drawing-model/formulaExtractor';
+import {BooleanNode, BooleanVariable} from '../_model/bool-node';
+import {Event} from 'jquery';
 import * as joint from 'jointjs';
 
 @Component({
@@ -11,12 +14,46 @@ import * as joint from 'jointjs';
 })
 export class BoolDrawingComponent implements OnInit {
 
-  readonly gateTypes: string[] = ['and', 'nand', 'or', 'nor', 'xor', 'xnor', 'equiv', 'impl', 'not'];
+  readonly binaryGateTypes: string[] = ['and', 'nand', 'or', 'nor', 'xor', 'xnor'/*, 'equiv', 'impl'*/];
 
   elementToCreate: string | undefined = undefined;
 
-  // constructor() {
-  // }
+  constructor() {
+  }
+
+  private initPaperEvents(): void {
+    paper.on('blank:pointerclick', (evt: Event, x: number, y: number) => {
+      if (this.elementToCreate) {
+        createElement('element' + this.elementToCreate.toUpperCase(), x, y);
+      }
+    });
+
+    paper.on('cell:pointerclick', (cellView: joint.dia.CellView) => {
+      // Left click on cell
+      const inputCell: joint.dia.Cell = cellView.model;
+
+      if (inputCell instanceof joint.shapes.logic.Input) {
+        const logicSymbol: string = inputCell.attr('logicSymbol');
+
+        const newSignal: boolean = !SIGNALS.get(logicSymbol);
+        SIGNALS.set(logicSymbol, newSignal);
+
+        toggleLive(inputCell, newSignal);
+
+        broadcastSignal(inputCell, newSignal);
+      }
+    });
+
+    paper.on('cell:contextmenu', (evt: joint.dia.CellView) => {
+      // Right click on cell
+      if (evt.model instanceof joint.shapes.logic.IO) {
+        alert('You cannot delete in Input or an Output!');
+      } else {
+        graph.getCell(evt.model.id).remove();
+      }
+    });
+
+  }
 
   ngOnInit() {
     draw();
@@ -25,11 +62,7 @@ export class BoolDrawingComponent implements OnInit {
   }
 
   toggleGateButton(event: MouseEvent, gateType: string): void {
-    if (this.elementToCreate === gateType) {
-      this.elementToCreate = undefined;
-    } else {
-      this.elementToCreate = gateType;
-    }
+    this.elementToCreate = this.elementToCreate === gateType ? undefined : gateType;
   }
 
   gateButtonOnDragstart(event: DragEvent, item: string): void {
@@ -53,30 +86,14 @@ export class BoolDrawingComponent implements OnInit {
     createElement('element' + elementToCreate.toUpperCase(), dragX / scale.sx, dragY / scale.sy);
   }
 
-  private initPaperEvents(): void {
-    paper.on('cell:contextmenu', (evt, x, y) => {
-      if (!(evt.model.attributes.type === 'logic.Input' || evt.model.attributes.type === 'logic.Output')) {
-        graph.getCell(evt.model.id).remove();
-      }
-    });
+  updateFormula(): void {
+    const formulas: [BooleanVariable, (BooleanNode | undefined)][] = extractFormulaFromGraph(graph);
 
-    paper.on('cell:pointerclick', (cellView, evt, x, y) => {
-      const inputCell = cellView.model;
-      if (inputCell instanceof joint.shapes.logic.Input) {
-        const logicSymbol: string = inputCell.attr('logicSymbol');
-
-        const newSignal: boolean = !SIGNALS.get(logicSymbol);
-        SIGNALS.set(logicSymbol, newSignal);
-
-        toggleLive(inputCell, newSignal);
-
-        broadcastSignal(inputCell, newSignal);
-      }
-    });
-
-    paper.on('blank:pointerclick', (evt, x, y) => {
-      if (this.elementToCreate !== '') {
-        createElement('element' + this.elementToCreate.toUpperCase(), x, y);
+    formulas.forEach((outputFormula: [BooleanVariable, (BooleanNode | undefined)]) => {
+      if (outputFormula[1]) {
+        console.info(outputFormula[0].variable + ' = ' + outputFormula[1].asString());
+      } else {
+        console.info(outputFormula[0].variable + ' = undefined!');
       }
     });
   }

@@ -3,6 +3,7 @@ import * as joint from 'jointjs';
 import * as _ from 'underscore';
 
 import './boolDrawingElements';
+import {BooleanNode, BooleanNot, BooleanVariable, instantiateOperator} from '../../_model/bool-node';
 
 export const graph: joint.dia.Graph = new joint.dia.Graph();
 export const STD_ZOOM_LEVEL = 1.4;
@@ -59,17 +60,6 @@ export function createElement(elementName: string, x: number, y: number): void {
 
   graph.addCell(element);
 }
-
-const MODIFICATORS = {
-  'logic.Output': {neededInputs: 1, isNegated: false, infixOperator: ''},
-  'logic.Not': {neededInputs: 1, isNegated: true, infixOperator: ''},
-  'logic.And': {neededInputs: 2, isNegated: false, infixOperator: '&and;'},
-  'logic.Nand': {neededInputs: 2, isNegated: true, infixOperator: '&and;'},
-  'logic.Or': {neededInputs: 2, isNegated: false, infixOperator: '&or;'},
-  'logic.Nor': {neededInputs: 2, isNegated: true, infixOperator: '&or;'},
-  'logic.Xor': {neededInputs: 2, isNegated: false, infixOperator: '&oplus;'},
-  'logic.Xnor': {neededInputs: 2, isNegated: true, infixOperator: '&oplus;'},
-};
 
 document.addEventListener('dragover', (e: DragEvent) => {
   const offset = $('#paper').offset();
@@ -155,48 +145,6 @@ function initializeSignals(): void {
   }
 }
 
-interface OutputFormula {
-  formula: string;
-  success: boolean;
-}
-
-function getOutputFormula(gate: joint.shapes.logic.Gate): OutputFormula {
-  if (gate.attributes.type === 'logic.Input') {
-    return {success: true, formula: gate.attr('logicSymbol')};
-  }
-
-  const modification = MODIFICATORS[gate.attributes.type];
-
-  let formula = '';
-  let success;
-
-  const ingoingWires = graph.getConnectedLinks(gate, {inbound: true});
-
-  if (modification.neededInputs !== ingoingWires.length) {
-    paper.findViewByModel(gate.id).highlight();
-    return {formula: '', success: false};
-  }
-
-  if (modification.neededInputs === 1) {
-    const sourceInput = getOutputFormula(graph.getCell(ingoingWires[0].prop('source').id) as joint.shapes.logic.Gate);
-    success = sourceInput.success;
-    if (success) {
-      formula = (modification.isNegated ? '&not; ' : '') + sourceInput.formula;
-    }
-  } else if (modification.neededInputs === 2) {
-    const firstInput = getOutputFormula(graph.getCell(ingoingWires[0].prop('source').id) as joint.shapes.logic.Gate);
-    const secondInput = getOutputFormula(graph.getCell(ingoingWires[1].prop('source').id) as joint.shapes.logic.Gate);
-
-    success = firstInput.success && secondInput.success;
-    if (success) {
-      formula = (modification.isNegated ? '&not;' : '') +
-        (firstInput.formula + ' ' + modification.infixOperator + ' ' + secondInput.formula);
-    }
-  }
-
-  return {success, formula};
-}
-
 export function draw(): void {
   const paperSelector: JQuery<HTMLElement> = $('#paper');
 
@@ -258,18 +206,19 @@ export function draw(): void {
 
     toggleLive(wire, signal);
 
-    const gate = graph.getCell(wire.get('target').id);
+    const gate: joint.shapes.logic.Gate = graph.getCell(wire.get('target').id) as joint.shapes.logic.Gate;
 
-    if (gate) {
+    if (gate && false) {
+      // FIXME: implement!
       if (gate instanceof joint.shapes.logic.Gate11) {
         gate.onSignal(signal, () => {
           const maybeInput = graph.getConnectedLinks(gate, {inbound: true});
           const input: boolean = (maybeInput.length === 1) ? maybeInput[0].get('signal') : false;
 
           // calculate the output signal
-          const output: boolean = gate.operation(input);
-
-          broadcastSignal(gate, output);
+          throw Error('TODO');
+          // const output: boolean = gate.operation(input);
+          // broadcastSignal(gate, output);
         });
       } else if (gate instanceof joint.shapes.logic.Gate21) {
         const maybeInput = graph.getConnectedLinks(gate, {inbound: true});
@@ -278,9 +227,9 @@ export function draw(): void {
         const input2: boolean = (maybeInput.length === 2) ? maybeInput[1].get('signal') : false;
 
         // calculate the output signal
-        const output: boolean = gate.operation(input1, input2);
-
-        broadcastSignal(gate, output);
+        throw Error('TODO');
+        // const output: boolean = gate.operation(input1, input2);
+        // broadcastSignal(gate, output);
       } else {
         // TODO!
       }
@@ -322,7 +271,7 @@ export function draw(): void {
 
     _.each(parent.getEmbeddedCells(), (child: joint.dia.Element) => {
 
-      const childBbox = child.getBBox();
+      const childBbox: joint.g.Rect = child.getBBox();
 
       if (childBbox.x < newX) {
         newX = childBbox.x;
@@ -338,9 +287,8 @@ export function draw(): void {
       }
     });
 
-    // Note that we also pass a flag so that we know we shouldn't adjust the
-    // `originalPosition` and `originalSize` in our handlers as a reaction
-    // on the following `set()` call.
+    // Note that we also pass a flag so that we know we shouldn't adjust the `originalPosition` and `originalSize` in our handlers as a
+    // reaction on the following `set()` call.
     parent.set({
       position: {x: newX, y: newY},
       size: {width: newCornerX - newX, height: newCornerY - newY}
@@ -348,45 +296,14 @@ export function draw(): void {
   });
 
   graph.on('change:size', (cell, newPosition, opt) => {
-
     if (opt.skipParentHandler) {
       return;
     }
 
     if (cell.get('embeds') && cell.get('embeds').length) {
-      // If we're manipulating a parent element, let's store
-      // it's original size to a special property so that
-      // we can shrink the parent element back while manipulating
-      // its children.
+      // If we're manipulating a parent element, let's store it's original size to a special property so that
+      // we can shrink the parent element back while manipulating its children.
       cell.set('originalSize', cell.get('size'));
     }
-  });
-
-  // Generation of formula, TODO!
-
-  $('#generateFormula').on('click', () => {
-    const target = $('#preCode');
-
-    const allElementsInGraph = graph.getElements();
-
-    for (const element of allElementsInGraph) {
-      paper.findViewByModel(element).unhighlight();
-    }
-
-    let html = '';
-
-    for (const element of allElementsInGraph) {
-      if (element instanceof joint.shapes.logic.Output) {
-        const formulaResult = getOutputFormula(element);
-
-        if (formulaResult.success) {
-          html += `<p><code>${element.attr('logicSymbol')} = ${formulaResult.formula}</code></p>`;
-        } else {
-          html += `<p class="text-danger">${element.attr('logicSymbol')}: ${formulaResult.formula}</p>`;
-        }
-      }
-    }
-
-    target.html(html);
   });
 }

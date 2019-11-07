@@ -1,19 +1,14 @@
 import {createToken, EmbeddedActionsParser, ILexingResult, IToken, Lexer, TokenType} from 'chevrotain';
 import {
   BooleanAnd,
-  BooleanBinaryNode,
   BooleanConstant,
-  BooleanEquivalency,
   BooleanFalse,
-  BooleanImplication,
-  BooleanNAnd,
   BooleanNode,
-  BooleanNOr,
   BooleanNot,
   BooleanOr,
   BooleanTrue,
   BooleanVariable,
-  BooleanXOr
+  instantiateOperator
 } from './bool-node';
 
 type RuleType<T> = (idxInCallingRule?: number, ...args: any[]) => T;
@@ -48,26 +43,6 @@ const allTokens: TokenType[] = [
 ];
 
 const BooleanFormulaLexer: Lexer = new Lexer(allTokens);
-
-
-function instantiateOperator(leftOp: BooleanNode, opString: string, rightOp: BooleanNode): BooleanBinaryNode {
-  switch (opString) {
-    case 'and':
-      return new BooleanAnd(leftOp, rightOp);
-    case 'or':
-      return new BooleanOr(leftOp, rightOp);
-    case 'xor':
-      return new BooleanXOr(leftOp, rightOp);
-    case 'nor':
-      return new BooleanNOr(leftOp, rightOp);
-    case 'nand':
-      return new BooleanNAnd(leftOp, rightOp);
-    case 'equiv':
-      return new BooleanEquivalency(leftOp, rightOp);
-    case 'impl':
-      return new BooleanImplication(leftOp, rightOp);
-  }
-}
 
 export class BooleanFormulaParser extends EmbeddedActionsParser {
 
@@ -136,8 +111,6 @@ export class BooleanFormulaParser extends EmbeddedActionsParser {
         (prev: BooleanNode, curr: RuleRight) => instantiateOperator(prev, curr.operator, curr.right),
         left
       );
-
-      // return instantiateOperator(left, otherOpRights[0].operator, right);
     }
   });
 
