@@ -1,2 +1,4 @@
 .idea/*
 !.idea/jsonSchemas.xml
+
+.mypy_cache/
