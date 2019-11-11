@@ -4,12 +4,12 @@ import {ToolOverviewComponent} from './tool-overview/tool-overview.component';
 import {LoginFormComponent} from './user_management/login-form/login-form.component';
 import {AuthGuard} from './_helpers/auth-guard';
 import {LtiComponent} from './lti/lti.component';
-import {ToolTutorialsOverviewComponent} from './tutorials/tool-tutorials-overview/tool-tutorials-overview.component';
 import {UmlTestComponent} from './tools/collection-tools/uml/uml-test/uml-test.component';
 import {BoolDrawingComponent} from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
 import {randomToolRoutes, randomToolRoutingComponents} from './tools/random-tools/random-tools.routing';
 import {adminRoutes, adminRoutingComponents} from './admin/admin.routing';
 import {collectionToolRoutes, collectionToolRoutingComponents} from './tools/collection-tools/collection-tools.routing';
+import {tutorialRoutes, tutorialRoutingComponents} from './tutorials/tutorial.routes';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
@@ -20,8 +20,7 @@ const routes: Routes = [
 
   ...adminRoutes,
 
-  // Tutorials
-  {path: 'tutorials/:toolId', component: ToolTutorialsOverviewComponent, canActivate: [AuthGuard]},
+  ...tutorialRoutes,
 
   ...randomToolRoutes,
   ...collectionToolRoutes,
@@ -43,8 +42,7 @@ export const routingComponents = [
   LoginFormComponent,
   LtiComponent,
   ...adminRoutingComponents,
-  // tutorial routing
-  ToolTutorialsOverviewComponent,
+  ...tutorialRoutingComponents,
   ...randomToolRoutingComponents,
   ...collectionToolRoutingComponents,
   UmlTestComponent

@@ -1,37 +1,27 @@
-import {Tool} from './tool';
-import {BoolTool} from '../tools/random-tools/random-tools-list';
+type TutorialContentType = 'Text' | 'TrueFalseQuestion' | 'Definition';
 
-export interface TutorialContent {
+export interface LessonContentBase {
+  _type: TutorialContentType;
+  priorSolved?: boolean;
+}
+
+export interface LessonTextContent extends LessonContentBase {
+  _type: 'Text';
   content: string;
 }
+
+export interface LessonTrueFalseQuestion extends LessonContentBase {
+  _type: 'TrueFalseQuestion';
+  question: string;
+  isTrue: boolean;
+}
+
+type LessonContent = LessonTextContent | LessonTrueFalseQuestion;
 
 export interface Lesson {
   id: number;
   title: string;
   description: string;
-  content: TutorialContent[];
-  dependsOn: number[];
+  content: LessonContent[];
+  dependsOn?: number[];
 }
-
-export const EXAMPLE_TUTORIALS: Map<Tool, Lesson[]> = new Map<Tool, Lesson[]>([
-  [
-    BoolTool,
-    [
-      {
-        id: 1,
-        title: 'Grundlagen der Boolesche Algebra',
-        description: `In dieser Lektion lernen Sie die Grundlagen der Booleschen Algebra wie Variablen und Operatoren kennen.`,
-        content: [],
-        dependsOn: []
-      },
-      {
-        id: 2,
-        title: 'Weitere Operatoren',
-        description: `Aufbauend auf der Lektion 'Grundlagen der Booleschen Algebra' lernen Sie in dieser Lektion weitere Operatoren wie
-        Nand und Nor kennen.`,
-        content: [],
-        dependsOn: [1]
-      }
-    ]
-  ]
-]);
