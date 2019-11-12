@@ -1,6 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { NaryConversionComponent } from './nary-conversion.component';
+import {NaryConversionComponent} from './nary-conversion.component';
+import {FormsModule} from '@angular/forms';
 
 describe('NaryConversionComponent', () => {
   let component: NaryConversionComponent;
@@ -8,9 +9,10 @@ describe('NaryConversionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NaryConversionComponent ]
+      declarations: [NaryConversionComponent],
+      imports: [FormsModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

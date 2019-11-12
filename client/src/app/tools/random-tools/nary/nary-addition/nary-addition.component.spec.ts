@@ -1,6 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { NaryAdditionComponent } from './nary-addition.component';
+import {NaryAdditionComponent} from './nary-addition.component';
+import {FormsModule} from '@angular/forms';
 
 describe('NaryAdditionComponent', () => {
   let component: NaryAdditionComponent;
@@ -8,9 +9,10 @@ describe('NaryAdditionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NaryAdditionComponent ]
+      declarations: [NaryAdditionComponent],
+      imports: [FormsModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

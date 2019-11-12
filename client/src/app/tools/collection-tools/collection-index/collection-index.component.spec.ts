@@ -1,6 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CollectionIndexComponent } from './collection-index.component';
+import {CollectionIndexComponent} from './collection-index.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {AppRoutingModule} from '../../../app-routing.module';
+import {TagComponent} from '../../_components/tag/tag.component';
 
 describe('CollectionIndexComponent', () => {
   let component: CollectionIndexComponent;
@@ -8,9 +11,10 @@ describe('CollectionIndexComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CollectionIndexComponent ]
+      declarations: [CollectionIndexComponent, TagComponent],
+      imports: [HttpClientTestingModule, AppRoutingModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

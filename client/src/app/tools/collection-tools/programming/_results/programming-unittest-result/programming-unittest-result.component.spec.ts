@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ProgrammingUnittestResultComponent } from './programming-unittest-result.component';
+import {ProgrammingUnittestResultComponent} from './programming-unittest-result.component';
 
 describe('ProgrammingUnittestResultComponent', () => {
   let component: ProgrammingUnittestResultComponent;
@@ -8,14 +8,22 @@ describe('ProgrammingUnittestResultComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ProgrammingUnittestResultComponent ]
+      declarations: [ProgrammingUnittestResultComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgrammingUnittestResultComponent);
     component = fixture.componentInstance;
+    component.result = {
+      successful: true,
+      testConfig: {
+        id: 1, description: '', cause: null, shouldFail: false
+      },
+      file: '',
+      stderr: [], stdout: []
+    };
     fixture.detectChanges();
   });
 

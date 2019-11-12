@@ -30,6 +30,7 @@ import {SqlResultComponent} from './tools/collection-tools/sql/sql-result/sql-re
 import {SqlMatchingResultComponent} from './tools/collection-tools/sql/sql-matching-result/sql-matching-result.component';
 import { LessonTextContentComponent } from './tutorials/lesson-text-content/lesson-text-content.component';
 import { TagComponent } from './tools/_components/tag/tag.component';
+import { UmlExerciseComponent } from './tools/collection-tools/uml/uml-exercise/uml-exercise.component';
 
 
 @NgModule({
@@ -60,7 +61,7 @@ import { TagComponent } from './tools/_components/tag/tag.component';
     SqlResultComponent, SqlMatchingResultComponent,
 
     // Admin
-    ReadCollectionComponent, ReadExerciseComponent, LessonTextContentComponent, TagComponent
+    ReadCollectionComponent, ReadExerciseComponent, LessonTextContentComponent, TagComponent, UmlExerciseComponent
   ],
   imports: [
     BrowserModule,

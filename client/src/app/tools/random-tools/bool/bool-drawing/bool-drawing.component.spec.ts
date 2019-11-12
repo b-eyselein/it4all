@@ -1,6 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { BoolDrawingComponent } from './bool-drawing.component';
+import {BoolDrawingComponent} from './bool-drawing.component';
+import {AppRoutingModule} from '../../../../app-routing.module';
 
 describe('BoolDrawingComponent', () => {
   let component: BoolDrawingComponent;
@@ -8,9 +9,10 @@ describe('BoolDrawingComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BoolDrawingComponent ]
+      declarations: [BoolDrawingComponent],
+      imports: [AppRoutingModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

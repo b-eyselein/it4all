@@ -1,6 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { NaryNumberReadOnlyInputComponent } from './nary-number-read-only-input.component';
+import {NaryNumberReadOnlyInputComponent} from './nary-number-read-only-input.component';
+import {FormsModule} from '@angular/forms';
 
 describe('NaryNumberInputComponent', () => {
   let component: NaryNumberReadOnlyInputComponent;
@@ -8,9 +9,10 @@ describe('NaryNumberInputComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NaryNumberReadOnlyInputComponent ]
+      declarations: [NaryNumberReadOnlyInputComponent],
+      imports: [FormsModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

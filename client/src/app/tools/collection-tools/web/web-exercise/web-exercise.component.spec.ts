@@ -1,6 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { WebExerciseComponent } from './web-exercise.component';
+import {WebExerciseComponent} from './web-exercise.component';
+import {AppRoutingModule} from '../../../../app-routing.module';
+import {TabsComponent} from '../../../../_component_helpers/tabs/tabs.component';
+import {TabComponent} from '../../../../_component_helpers/tab/tab.component';
 
 describe('WebExerciseComponent', () => {
   let component: WebExerciseComponent;
@@ -8,14 +11,16 @@ describe('WebExerciseComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WebExerciseComponent ]
+      declarations: [WebExerciseComponent, TabsComponent, TabComponent],
+      imports: [AppRoutingModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(WebExerciseComponent);
     component = fixture.componentInstance;
+
     fixture.detectChanges();
   });
 
