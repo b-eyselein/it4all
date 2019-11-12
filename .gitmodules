@@ -1,0 +1,3 @@
+[submodule "server/conf/resources"]
+	path = server/conf/resources
+	url = https://gitlab2.informatik.uni-wuerzburg.de/it4all/it4all-resources.git
