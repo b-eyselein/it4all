@@ -57,7 +57,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override val exerciseJsonFormat: Format[WebExercise] = WebCompleteResultJsonProtocol.exerciseFormat
 
-  override val exerciseForm      : Form[WebExercise]       = WebToolForms.exerciseFormat
   override val exerciseReviewForm: Form[WebExerciseReview] = WebToolForms.exerciseReviewForm
 
   override val sampleSolutionJsonFormat: Format[FilesSampleSolution] = FilesSampleSolutionJsonProtocol.filesSampleSolutionFormat

@@ -121,6 +121,8 @@ create table if not exists prog_exercises (
     impl_file_name                       varchar(100)                          not null,
     implementation_sample_sol_file_names text                                  not null,
 
+    tags_string                          varchar(300)                          not null,
+
     primary key (id, collection_id),
     foreign key (collection_id)
         references prog_collections (id)

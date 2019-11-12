@@ -50,7 +50,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override val exerciseJsonFormat: Format[RoseExercise] = RoseCompleteResultJsonProtocol.exerciseFormat
 
-  override val exerciseForm      : Form[RoseExercise]       = RoseToolForms.exerciseFormat
   override val exerciseReviewForm: Form[RoseExerciseReview] = RoseToolForms.exerciseReviewForm
 
   override val sampleSolutionJsonFormat: Format[RoseSampleSolution] = RoseCompleteResultJsonProtocol.roseSampleSolutionJsonFormat

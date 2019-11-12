@@ -53,7 +53,6 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override val exerciseJsonFormat: Format[UmlExercise] = UmlCompleteResultJsonProtocol.exerciseFormat
 
-  override val exerciseForm      : Form[UmlExercise]       = UmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[UmlExerciseReview] = UmlToolForms.exerciseReviewForm
 
   override val sampleSolutionJsonFormat: Format[UmlSampleSolution] = UmlCompleteResultJsonProtocol.umlSampleSolutionFormat

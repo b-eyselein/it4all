@@ -43,7 +43,6 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   override val exerciseJsonFormat: Format[RegexExercise] = RegexCompleteResultJsonProtocol.exerciseFormat
 
-  override val exerciseForm      : Form[RegexExercise]       = RegexToolForm.exerciseFormat
   override val exerciseReviewForm: Form[RegexExerciseReview] = RegexToolForm.exerciseReviewForm
 
   override val sampleSolutionJsonFormat: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat

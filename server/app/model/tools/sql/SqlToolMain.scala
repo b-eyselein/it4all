@@ -67,7 +67,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   override val exerciseJsonFormat: Format[SqlExercise] = SqlJsonProtocols.exerciseFormat
 
-  override val exerciseForm      : Form[SqlExercise]       = SqlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[SqlExerciseReview] = SqlToolForms.exerciseReviewForm
 
   override val sampleSolutionJsonFormat: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat

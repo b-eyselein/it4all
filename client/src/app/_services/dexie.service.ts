@@ -3,10 +3,10 @@ import Dexie from 'dexie';
 import {Exercise, ExerciseBasics, ExerciseCollection} from '../_interfaces/tool';
 import {DbSqlSolution, SqlExercise} from '../tools/collection-tools/sql/sql-exercise';
 import {DbRegexSolution, RegexExercise} from '../tools/collection-tools/regex/regex-exercise';
-import {DbProgrammingSolution, ProgrammingExercise} from '../tools/collection-tools/programming/programming';
-import {DbWebSolution, WebExercise} from '../tools/collection-tools/web/web';
+import {DbProgrammingSolution, ProgrammingExercise} from '../tools/collection-tools/programming/programming-interfaces';
+import {DbWebSolution, WebExercise} from '../tools/collection-tools/web/web-interfaces';
 import {DbUmlSolution, UmlExercise} from '../tools/collection-tools/uml/uml';
-import {DbXmlSolution, XmlExercise} from '../tools/collection-tools/xml/xml';
+import {DbXmlSolution, XmlExercise} from '../tools/collection-tools/xml/xml-interfaces';
 
 @Injectable({providedIn: 'root'})
 export class DexieService extends Dexie {

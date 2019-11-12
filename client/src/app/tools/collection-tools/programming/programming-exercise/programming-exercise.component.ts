@@ -1,8 +1,7 @@
 import {Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ExerciseCollection, Tool, ToolPart} from '../../../../_interfaces/tool';
-import {ProgrammingImplementationToolPart, ProgrammingTool} from '../../collection-tools-list';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DbProgrammingSolution, ProgrammingCorrectionResult, ProgrammingExercise} from '../programming';
+import {DbProgrammingSolution, ProgrammingCorrectionResult, ProgrammingExercise} from '../programming-interfaces';
 import {ApiService} from '../../../../_services/api.service';
 
 import 'codemirror/mode/python/python';
@@ -10,6 +9,7 @@ import {ExerciseFile, IdeWorkspace} from '../../../basics';
 import {DexieService} from '../../../../_services/dexie.service';
 import {TabComponent} from '../../../../_component_helpers/tab/tab.component';
 import {TabsComponent} from '../../../../_component_helpers/tabs/tabs.component';
+import {ProgrammingImplementationToolPart, ProgrammingTool} from '../../programming-tool';
 
 @Component({templateUrl: './programming-exercise.component.html', styleUrls: ['./programming-exercise.component.sass']})
 export class ProgrammingExerciseComponent implements OnInit {

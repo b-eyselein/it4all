@@ -13,12 +13,7 @@ export class CollectionIndexComponent implements OnInit {
 
   exercises: Exercise[];
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private apiService: ApiService,
-    private dexieService: DexieService
-  ) {
+  constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
     const toolId: string = this.route.snapshot.paramMap.get('toolId');
     this.tool = collectionTools.find((t) => t.id === toolId);
 
@@ -41,10 +36,7 @@ export class CollectionIndexComponent implements OnInit {
 
   private updateExercises(): void {
     this.apiService.getExercises(this.tool.id, this.collection.id)
-      .subscribe((exercises: Exercise[]) => {
-       console.info(JSON.stringify(exercises[0],null,2));
-        this.exercises = exercises;
-      });
+      .subscribe((exercises: Exercise[]) => this.exercises = exercises);
   }
 
   ngOnInit() {

@@ -15,13 +15,9 @@ trait ExPart {
 
 trait ExTag {
 
-  def render: Html = new Html(s"""<span class="$cssClass" title="$title">$buttonContent</span>""")
+  val buttonContent: String
 
-  def cssClass: String = "badge badge-primary"
-
-  def buttonContent: String
-
-  def title: String
+  val title: String
 
 }
 

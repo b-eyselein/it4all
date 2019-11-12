@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {UnitTestCorrectionResult} from '../../programming';
+import {UnitTestCorrectionResult} from '../../programming-interfaces';
 
 @Component({
   selector: 'it4all-programming-unittest-result',

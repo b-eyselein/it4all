@@ -2,7 +2,7 @@ package model.tools.sql
 
 import model.MyYamlProtocol._
 import model.tools.sql.SqlConsts._
-import model.{ExerciseState, MyYamlProtocol, StringSampleSolution, YamlObj}
+import model.{MyYamlProtocol, StringSampleSolution, YamlObj}
 import net.jcazevedo.moultingyaml.{YamlObject, YamlValue}
 import play.api.Logger
 
@@ -20,7 +20,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
       baseValues <- readBaseValues(yamlObject)
 
       exerciseType <- yamlObject.enumField(exerciseTypeName, SqlExerciseType.withNameInsensitiveOption).map(_ getOrElse SqlExerciseType.SELECT)
-      tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExTag.withNameInsensitiveOption(_) getOrElse SqlExTag.SQL_JOIN))
+      tagTries <- yamlObject.optArrayField(tagsName, _.asStringEnum(SqlExerciseTag.withNameInsensitive))
 
       hint <- yamlObject.optStringField(hintName)
 

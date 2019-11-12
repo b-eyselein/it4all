@@ -54,7 +54,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   val exerciseJsonFormat: Format[ExType]
 
-  val exerciseForm      : Form[ExType]
   val exerciseReviewForm: Form[ReviewType]
 
   // TODO: scalarStyle = Folded if fixed...

@@ -9,41 +9,6 @@ import play.api.data.{Form, Mapping}
 
 object RoseToolForms extends ToolForms[RoseExercise, RoseExerciseReview] {
 
-  // Input types
-
-  private val roseInputTypeMapping: Mapping[RoseInputType] = mapping(
-    idName -> number,
-    nameName -> nonEmptyText,
-    inputTypeName -> nonEmptyText.transform[ProgDataType](ProgDataTypes.byName(_).getOrElse(???), _.typeName)
-  )(RoseInputType.apply)(RoseInputType.unapply)
-
-  // RoseSampleSolution
-
-  private val roseSampleSolutionMapping: Mapping[RoseSampleSolution] = mapping(
-    idName -> number,
-    languageName -> ProgLanguages.formField,
-    sampleSolutionName -> nonEmptyText
-  )(RoseSampleSolution.apply)(RoseSampleSolution.unapply)
-
-  // Complete exericse
-
-  override val exerciseFormat: Form[RoseExercise] = Form(
-    mapping(
-      idName -> number,
-      collectionIdName -> number,
-      semanticVersionName -> SemanticVersionHelper.semanticVersionForm.mapping,
-      titleName -> nonEmptyText,
-      authorName -> nonEmptyText,
-      textName -> nonEmptyText,
-      statusName -> ExerciseState.formField,
-      fieldWidthName -> number,
-      fieldHeightName -> number,
-      isMultiplayerName -> boolean,
-      inputTypesName -> seq(roseInputTypeMapping),
-      sampleSolutionName -> seq(roseSampleSolutionMapping)
-    )(RoseExercise.apply)(RoseExercise.unapply)
-  )
-
   override val exerciseReviewForm: Form[RoseExerciseReview] = Form(
     mapping(
       difficultyName -> Difficulties.formField,

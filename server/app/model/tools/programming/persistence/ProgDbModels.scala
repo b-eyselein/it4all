@@ -4,6 +4,7 @@ import model._
 import model.persistence._
 import model.points.Points
 import model.tools.programming._
+import model.tools.sql.SqlConsts.tagJoinChar
 import model.tools.uml.UmlClassDiagram
 import play.api.libs.json.{JsArray, JsValue}
 
@@ -11,12 +12,16 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
   private val sampleSolFileNamesJoinChar = "##"
 
-  override def dbExerciseFromExercise(ex: ProgExercise): DbProgExercise =
+  override def dbExerciseFromExercise(ex: ProgExercise): DbProgExercise = {
+    val tagsAsString = ex.tags.map(_.entryName).mkString(tagJoinChar)
+
     DbProgExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state,
       ex.functionName, ex.foldername, ex.filename,
       ex.outputType, ex.baseData,
       ex.unitTestPart.unitTestType, ex.unitTestPart.unitTestsDescription, ex.unitTestPart.testFileName, ex.unitTestPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar),
-      ex.implementationPart.base, ex.implementationPart.implFileName, ex.implementationPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar))
+      ex.implementationPart.base, ex.implementationPart.implFileName, ex.implementationPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar),
+      tagsAsString)
+  }
 
   def exerciseFromDbValues(
     dbProgEx: DbProgExercise,
@@ -29,7 +34,11 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
     maybeClassDiagramPart: Option[UmlClassDiagram]
   ): ProgExercise = dbProgEx match {
     case DbProgExercise(id, collectionId, semanticVersion, title, author, text, state, functionname, foldername, filename,
-    outputType, baseData, unitTestType, unitTestsDescription, testFileName, unitTestSampleSolFileNames, implementationBase, implFileName, implementationSampleSolFileNames) =>
+    outputType, baseData, unitTestType, unitTestsDescription, testFileName, unitTestSampleSolFileNames, implementationBase, implFileName, implementationSampleSolFileNames, tagsString) =>
+
+      val tagsFromString: Seq[ProgrammingExerciseTag] = tagsString.split(tagJoinChar).toSeq.flatMap(ProgrammingExerciseTag.withNameInsensitiveOption)
+
+
       ProgExercise(
         id, collectionId, semanticVersion, title, author, text, state,
         functionname, foldername, filename,
@@ -37,6 +46,7 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
         UnitTestPart(unitTestType, unitTestsDescription, unitTestFiles, unitTestTestConfigs, testFileName, unitTestSampleSolFileNames.split(sampleSolFileNamesJoinChar)),
         ImplementationPart(implementationBase, implementationFiles, implFileName, implementationSampleSolFileNames.split(sampleSolFileNamesJoinChar)),
         sampleSolutions, sampleTestData,
+        tagsFromString,
         maybeClassDiagramPart
       )
   }
@@ -154,7 +164,8 @@ final case class DbProgExercise(
   functionname: String, foldername: String, filename: String,
   outputType: ProgDataType, baseData: Option[JsValue],
   unitTestType: UnitTestType, unitTestsDescription: String, testFileName: String, unitTestSampleSolFileNames: String,
-  implementationBase: String, implFileName: String, implementationSampleSolFileNames: String
+  implementationBase: String, implFileName: String, implementationSampleSolFileNames: String,
+  tagsString: String
 ) extends ADbExercise
 
 

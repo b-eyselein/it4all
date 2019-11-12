@@ -56,7 +56,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override val exerciseJsonFormat: Format[ProgExercise] = ProgrammingJsonProtocols.exerciseFormat
 
-  override val exerciseForm      : Form[ProgExercise]       = ProgToolForms.exerciseFormat
   override val exerciseReviewForm: Form[ProgExerciseReview] = ProgToolForms.exerciseReviewForm
 
   override val sampleSolutionJsonFormat: Format[ProgSampleSolution] = ProgrammingJsonProtocols.sampleSolutionJsonFormat

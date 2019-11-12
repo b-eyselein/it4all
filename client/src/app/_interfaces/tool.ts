@@ -8,7 +8,12 @@ export interface ToolPart {
   disabled?: boolean;
 }
 
-export class Tool {
+export interface ExerciseTag {
+  title: string;
+  label: string;
+}
+
+export abstract class Tool {
   constructor(
     public id: string,
     public name: string,
@@ -25,7 +30,10 @@ export class Tool {
     return true;
   }
 
+  abstract processTagString(tag: string): ExerciseTag;
+
 }
+
 
 export interface ExerciseCollection {
   id: number;
@@ -58,6 +66,7 @@ export interface Exercise extends ExerciseBasics {
   author: string;
   text: string;
   state: string;
+  tags?: string[];
 }
 
 // Solutions

@@ -5,12 +5,12 @@ import java.nio.file.{Path, Paths}
 import model.MyYamlProtocol._
 import model.tools.programming.ProgConsts._
 import model.tools.uml.UmlExYamlProtocol.UmlSampleSolutionYamlFormat
-import model.{MyYamlProtocol, YamlArr, YamlObj}
+import model.{MyYamlProtocol, WrongFieldTypeException, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
 import scala.language.implicitConversions
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 object ProgExYamlProtocol extends MyYamlProtocol {
 
@@ -19,6 +19,11 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   val basePath: Path = Paths.get("conf", "resources", "programming")
 
   object ProgExYamlFormat extends MyYamlObjectFormat[ProgExercise] {
+
+    private def parseExTag: YamlValue => Try[ProgrammingExerciseTag] = {
+      case YamlString(value) => Try(ProgrammingExerciseTag.withNameInsensitive(value))
+      case other             => Failure(WrongFieldTypeException(other.getClass.toString))
+    }
 
     override def readObject(yamlObject: YamlObject): Try[ProgExercise] = for {
       baseValues <- readBaseValues(yamlObject)
@@ -37,6 +42,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
       sampleSolutions <- yamlObject.arrayField(sampleSolutionsName, ProgSampleSolutionYamlFormat.read)
       sampleTestDataTries <- yamlObject.arrayField(sampleTestDataName, ProgSampleTestdataYamlFormat.read)
+
+      tags <- yamlObject.optArrayField(tagsName, parseExTag)
 
       maybeClassDiagramPart <- yamlObject.optField(classDiagramName, UmlSampleSolutionYamlFormat.read).map(_.map(_.sample))
     } yield {
@@ -57,7 +64,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
         functionName, foldername, filename,
         inputTypes._1, outputType, baseData,
         unitTestPart, implementationPart,
-        sampleSolutions._1, sampleTestDataTries._1, maybeClassDiagramPart
+        sampleSolutions._1, sampleTestDataTries._1,
+        tags._1, maybeClassDiagramPart
       )
     }
 

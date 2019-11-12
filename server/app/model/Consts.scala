@@ -70,10 +70,12 @@ trait Consts {
   val solutionsSubDir    : String = "solutions"
   val successName        : String = "success"
 
-  val tagJoinChar       = "#"
-  val textName : String = "text"
-  val titleName: String = "title"
-  val typeName : String = "type"
+
+  val tagJoinChar: String = "#"
+  val tagsName   : String = "tags"
+  val textName   : String = "text"
+  val titleName  : String = "title"
+  val typeName   : String = "type"
 
   val unitTestName: String = "unitTest"
   val userArgName : String = "userArg"

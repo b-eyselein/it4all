@@ -47,38 +47,6 @@ class CollectionController @Inject()(
       } yield Ok("TODO!") // views.html.collectionExercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
   }
 
-  def editExercise(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-
-      val onFormError: Form[toolMain.ExType] => Future[Result] = { formWithErrors =>
-
-        for (formError <- formWithErrors.errors)
-          logger.error(s"The form has had an error for key '${formError.key}': " + formError.message)
-
-        // FIXME: return in form...
-        Future(BadRequest("TODO!"))
-      }
-
-      val onFormRead: toolMain.ExType => Future[Result] = { newExercise: toolMain.ExType =>
-        toolMain.futureDeleteOldAndInsertNewExercise(collId, newExercise).map {
-          case false =>
-            // TODO: make view?
-            BadRequest("Your exercise could not be saved...")
-          case true  => Ok("TODO!") // views.html.admin.collExes.editCollectionExercisePreview(user, newExercise, toolMain))
-        }
-      }
-
-      toolMain.exerciseForm.bindFromRequest().fold(onFormError, onFormRead)
-  }
-
-  def deleteExerciseInCollection(toolType: String, collId: Int, exId: Int): EssentialAction = futureWithUserWithToolMain(toolType) { (_, toolMain) =>
-    implicit request =>
-      toolMain.futureDeleteExercise(collId, exId).map {
-        case false => BadRequest("TODO!")
-        case true  => Ok(Json.obj("id" -> exId, "collId" -> collId))
-      }
-  }
-
   // Exercise review process
 
   def reviewExercisePart(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>

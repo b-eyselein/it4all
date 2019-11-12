@@ -20,6 +20,8 @@ final case class ProgExercise(
   sampleSolutions: Seq[ProgSampleSolution],
   sampleTestData: Seq[ProgSampleTestData],
 
+  override val tags: Seq[ProgrammingExerciseTag],
+
   maybeClassDiagramPart: Option[UmlClassDiagram]
 ) extends Exercise with FileExercise[ProgExPart] {
 

@@ -20,15 +20,24 @@
               <div class="card-header-title">{{exercise.id}}. {{exercise.title}}</div>
             </div>
             <div class="card-content">
-              <div class="buttons">
+              <!-- Tags -->
+              <div class="buttons" *ngIf="exercise.tags">
+                <span *ngIf="exercise.tags.length === 0">&nbsp;</span>
+                <it4all-tag *ngFor="let tag of exercise.tags" [tag]="tool.processTagString(tag)"></it4all-tag>
+              </div>
+
+              <div class="columns">
+                <!-- Links to Parts -->
                 <ng-container *ngFor="let part of tool.parts">
-                  <a *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)"
-                     class="button is-link" [class.is-fullwidth]="tool.parts.length === 1"
-                     [routerLink]="['/tools', tool.id, 'collections', this.collection.id, 'exercises', exercise.id, 'parts', part.id]">
-                    {{part.name}}
-                  </a>
+                  <div class="column" *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)">
+                    <a class="button is-link is-fullwidth"
+                       [routerLink]="['/tools', tool.id, 'collections', this.collection.id, 'exercises', exercise.id, 'parts', part.id]">
+                      {{part.name}}
+                    </a>
+                  </div>
                 </ng-container>
               </div>
+
             </div>
           </div>
 

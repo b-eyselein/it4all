@@ -1,11 +1,11 @@
 package model.tools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.ExPart
+import model.{ExPart, ExTag}
 
+// Exercise Parts
 
 sealed abstract class ProgExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
-
 
 object ProgExParts extends PlayEnum[ProgExPart] {
 
@@ -20,9 +20,44 @@ object ProgExParts extends PlayEnum[ProgExPart] {
 
 }
 
+// Tags
+
+sealed abstract class ProgrammingExerciseTag(val buttonContent: String, val title: String) extends ExTag with EnumEntry
+
+object ProgrammingExerciseTag extends PlayEnum[ProgrammingExerciseTag] {
+
+  val values: IndexedSeq[ProgrammingExerciseTag] = findValues
+
+
+  case object ForLoops extends ProgrammingExerciseTag("FL", "For-Schleifen")
+
+  case object WhileLoops extends ProgrammingExerciseTag("WL", "While-Schleifen")
+
+  case object Conditions extends ProgrammingExerciseTag("C", "Bedingungen")
+
+  case object Lists extends ProgrammingExerciseTag("L", "Listen")
+
+  case object Tuples extends ProgrammingExerciseTag("T", "Tuples")
+
+  case object Dictionaries extends ProgrammingExerciseTag("D", "Dictionaries")
+
+  case object Classes extends ProgrammingExerciseTag("C", "Klassen")
+
+  case object Exceptions extends ProgrammingExerciseTag("E", "Exceptions")
+
+  case object Math extends ProgrammingExerciseTag("M", "Mathematik")
+
+  case object Strings extends ProgrammingExerciseTag("S", "Strings")
+
+  case object Slicing extends ProgrammingExerciseTag("SL", "Slicing")
+
+  case object Recursion extends ProgrammingExerciseTag("R", "Rekursion")
+
+}
+
+// Unit Test Types
 
 sealed trait UnitTestType extends EnumEntry
-
 
 case object UnitTestTypes extends PlayEnum[UnitTestType] {
 
@@ -33,6 +68,6 @@ case object UnitTestTypes extends PlayEnum[UnitTestType] {
 
   case object Normal extends UnitTestType
 
-  case object Both extends UnitTestType
+  //  case object Both extends UnitTestType
 
 }

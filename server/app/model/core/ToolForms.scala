@@ -24,8 +24,6 @@ trait ToolForms[ExType <: Exercise, ReviewType <: ExerciseReview] {
     )
   }
 
-  val exerciseFormat: Form[ExType]
-
   val exerciseReviewForm: Form[ReviewType]
 
   protected val stringSampleMapping: Mapping[StringSampleSolution] = mapping(

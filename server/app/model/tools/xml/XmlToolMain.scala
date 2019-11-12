@@ -51,7 +51,6 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   override val exerciseJsonFormat: Format[XmlExercise] = XmlCompleteResultJsonProtocol.exerciseFormat
 
-  override val exerciseForm      : Form[XmlExercise]       = XmlToolForms.exerciseFormat
   override val exerciseReviewForm: Form[XmlExerciseReview] = XmlToolForms.exerciseReviewForm
 
   // FIXME: do not use anymore ?!?

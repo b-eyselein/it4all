@@ -20,8 +20,6 @@ object SqlConsts extends CollectionConsts {
   val SELECT_ALL_DUMMY         = "SELECT * FROM "
 
   val tableComparisonsName: String = "tableComparisons"
-  val tagsName            : String = "tags"
-  val tagsArrayName       : String = arrayName(tagsName)(None)
 
   val userResultName: String = "userResult"
 
