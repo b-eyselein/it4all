@@ -9,10 +9,8 @@ import model.tools.sql.SqlToolMain._
 import model.tools.sql.persistence.SqlTableDefs
 import play.api.Logger
 import play.api.data.Form
-import play.api.i18n.MessagesProvider
 import play.api.libs.json._
 import play.api.mvc._
-import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
@@ -72,18 +70,6 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override val sampleSolutionJsonFormat: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
 
   override val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, SqlCorrResult] = SqlJsonProtocols
-
-  // Views
-
-  override def renderExercise(user: User, sqlScenario: ExerciseCollection, exercise: SqlExercise, part: SqlExPart, maybeOldSolution: Option[UserSolType])
-                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
-
-    val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
-
-    val oldOrDefSol = maybeOldSolution.map(_.solution).getOrElse("")
-
-    views.html.toolViews.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, this)
-  }
 
   // Correction
 

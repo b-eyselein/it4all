@@ -5,6 +5,7 @@ import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
 import model.points.Points
 import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.libs.json.{Format, Json, Reads, Writes}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
@@ -72,6 +73,15 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
   protected implicit val difficultyColumnType: BaseColumnType[Difficulty] =
     MappedColumnType.base[Difficulty, String](_.entryName, Difficulties.withNameInsensitive)
+
+  protected def jsonSeqColumnType[T](tFormat: Format[T]): BaseColumnType[Seq[T]] = {
+    val tSeqFormat: Format[Seq[T]] = Format(Reads.seq(tFormat), Writes.seq(tFormat))
+
+    MappedColumnType.base[Seq[T], String](
+      ts => Json.stringify(tSeqFormat.writes(ts)),
+      jsonTs => tSeqFormat.reads(Json.parse(jsonTs)).getOrElse(Seq.empty)
+    )
+  }
 
   // Abstract table classes
 
@@ -141,11 +151,14 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
   protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DbUserSolType](tag, name) {
 
+    //    private implicit val ptct: BaseColumnType[PartType] = partTypeColumnType
+
+
     def id: Rep[Int] = column[Int]("id")
 
     def username: Rep[String] = column[String]("username")
 
-    def part: Rep[PartType] = column[PartType]("part")(partTypeColumnType)
+    def part: Rep[PartType] = column[PartType](partName)
 
     def points: Rep[Points] = column[Points](pointsName)
 
@@ -159,6 +172,9 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
   abstract class ExerciseReviewsTable(tag: Tag, tableName: String) extends ExForeignKeyTable[DbReviewType](tag, tableName) {
 
+    //    protected implicit var ptct: BaseColumnType[PartType] = partTypeColumnType
+
+
     def username: Rep[String] = column[String]("username")
 
     def exercisePart: Rep[PartType] = column[PartType](partName)
@@ -171,7 +187,6 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, collectionId, exercisePart))
 
   }
-
 
   // ExerciseFilesTable
 

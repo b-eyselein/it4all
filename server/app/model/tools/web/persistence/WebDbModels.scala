@@ -13,9 +13,20 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   override def dbExerciseFromExercise(ex: WebExercise): DbWebExercise =
     DbWebExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
 
-  def exerciseFromDbExercise(ex: DbWebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask], files: Seq[ExerciseFile], sampleSolutions: Seq[FilesSampleSolution]): WebExercise =
-    WebExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText,
-      SiteSpec(1, ex.fileName, htmlTasks, jsTasks), files, sampleSolutions)
+  def exerciseFromDbExercise(
+    ex: DbWebExercise,
+    htmlTasks: Seq[HtmlTask],
+    jsTasks: Seq[JsTask],
+    files: Seq[ExerciseFile],
+    sampleSolutions: Seq[FilesSampleSolution]
+  ): WebExercise = WebExercise(
+    ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state,
+    ex.htmlText,
+    ex.jsText,
+    SiteSpec(1, ex.fileName, htmlTasks, jsTasks),
+    files,
+    sampleSolutions
+  )
 
   // HtmlTask
 
@@ -90,7 +101,8 @@ trait DbWebTask {
 
 final case class DbHtmlTask(
   id: Int, exId: Int, collId: Int,
-  text: String, xpathQuery: String,
+  text: String,
+  xpathQuery: String,
   awaitedTag: String,
   textContent: Option[String],
   attributes: Seq[HtmlAttribute]

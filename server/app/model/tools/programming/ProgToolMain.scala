@@ -7,10 +7,8 @@ import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.programming.persistence.ProgTableDefs
 import play.api.data.Form
-import play.api.i18n.MessagesProvider
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request, RequestHeader}
-import play.twirl.api.Html
+import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -108,40 +106,5 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   override def correctEx(user: User, sol: ProgSolution, collection: ExerciseCollection, exercise: ProgExercise, part: ProgExPart): Future[Try[ProgCompleteResult]] =
     ProgCorrector.correct(user, sol, collection, exercise, part, toolMain = this)
-
-  // Views
-
-  override def renderExercise(user: User, collection: ExerciseCollection, exercise: ProgExercise, part: ProgExPart, maybeOldSolution: Option[ProgUserSolution])
-                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = part match {
-    case ProgExParts.TestCreation =>
-      exercise.unitTestPart.unitTestType match {
-        case UnitTestTypes.Simplified =>
-          // FIXME: deactivated...
-          val oldTestData: Seq[ProgUserTestData] = maybeOldSolution.map(_.commitedTestData).getOrElse(Seq[ProgUserTestData]())
-          views.html.toolViews.programming.testDataCreation(user, collection, exercise, oldTestData, this)
-
-        case UnitTestTypes.Normal =>
-          val fileNames = exercise.filesForExercisePart(part).files.map(_.name)
-
-          views.html.toolViews.programming.unittestCreation(user, collection, exercise, fileNames, this)
-      }
-
-    case ProgExParts.Implementation =>
-      val fileNames = exercise.filesForExercisePart(part).files.map(_.name)
-      views.html.toolViews.programming.progExercise(user, collection, exercise, ProgExParts.Implementation, fileNames, this)
-
-    case ProgExParts.ActivityDiagram =>
-      // FIXME: how to get language? ==> GET param?
-      val language: ProgLanguage = ProgLanguages.PYTHON_3
-
-      // TODO: use old soluton!
-      val definitionRest: String = exercise.implementationPart.base
-        .split("\n")
-        .zipWithIndex
-        .map(si => (si._2 + 1).toString + "\t" + si._1)
-        .mkString("\n")
-
-      views.html.toolViews.umlActivity.activityDrawing(user, collection, exercise, language, definitionRest, this)
-  }
 
 }

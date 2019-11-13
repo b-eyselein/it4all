@@ -4,7 +4,6 @@ import javax.inject.{Inject, Singleton}
 import model.learningPath.LearningPathTableDefs
 import model.toolMains.{RandomExerciseToolMain, ToolState}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
@@ -23,9 +22,5 @@ class NaryToolMain @Inject()(val tables: NaryTableDefs)(implicit ec: ExecutionCo
   // Other members
 
   override val toolState: ToolState = ToolState.LIVE
-
-  // Views
-
-  override def exercisesOverviewForIndex: Html = Html("")
 
 }

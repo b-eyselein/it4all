@@ -1,12 +1,12 @@
 package model.tools.regex.persistence
 
 import javax.inject.Inject
+import model.StringSampleSolution
 import model.persistence._
-import model.tools.regex.RegexConsts._
 import model.tools.regex._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{PrimaryKey, ProvenShape}
+import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -18,7 +18,7 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   // Abstract types
 
-  override protected type DbExType = DbRegexExercise
+  override protected type DbExType = RegexExercise
 
   override protected type ExTableDef = RegexExerciseTable
 
@@ -44,9 +44,6 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   override protected val reviewsTable: TableQuery[RegexExerciseReviewsTable] = TableQuery[RegexExerciseReviewsTable]
 
-  private val regexMatchTestDataTableQuery     : TableQuery[RegexMatchTestDataTable]      = TableQuery[RegexMatchTestDataTable]
-  private val regexExtractionTestDataTableQuery: TableQuery[RegexExtractionTestDataTable] = TableQuery[RegexExtractionTestDataTable]
-
   // Helper methods
 
   override protected val dbModels               = RegexDbModels
@@ -54,99 +51,69 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   // Queries
 
-  override protected def completeExForEx(collId: Int, ex: DbRegexExercise): Future[RegexExercise] = for {
-    sampleSolutions <- futureSamplesForExercise(collId, ex.id)
+  override protected def completeExForEx(collId: Int, ex: RegexExercise): Future[RegexExercise] =
+    Future.successful(ex)
 
-    matchTestData <- db.run(
-      regexMatchTestDataTableQuery
-        .filter { td => td.exerciseId === ex.id && td.exSemVer === ex.semanticVersion && td.collectionId === collId }
-        .result
-    ).map(_.map(dbModels.matchTestDataFromDbMatchTestData))
-
-    extractionTestData <- db.run(
-      regexExtractionTestDataTableQuery
-        .filter { etd => etd.exerciseId === ex.id && etd.exSemVer === ex.semanticVersion && etd.collectionId === collId }
-        .result
-    )
-
-  } yield dbModels.exerciseFromDbExercise(ex, sampleSolutions, matchTestData, extractionTestData)
-
-  override protected def saveExerciseRest(collId: Int, ex: RegexExercise): Future[Boolean] = {
-    val dbSamples            = ex.sampleSolutions.map(s => StringSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
-    val dbMatchTestData      = ex.matchTestData.map(mtd => dbModels.dbMatchTestDataFromMatchTestData(ex.id, ex.semanticVersion, collId, mtd))
-    val dbExtractionTestData = ex.extractionTestData.map(etd => DbRegexExtractionTestData(etd.id, ex.id, ex.semanticVersion, collId, etd.base))
-
-    for {
-      samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery += s), Some("RegexSampleSolution"))
-      matchTestDataSaved <- saveSeq[DbRegexMatchTestData](dbMatchTestData, mtd => db.run(regexMatchTestDataTableQuery += mtd), Some("RegexMatchTestData"))
-      extractionTestDataSaved <- saveSeq[DbRegexExtractionTestData](dbExtractionTestData, etd => db.run(regexExtractionTestDataTableQuery += etd), Some("RegexExtractionTestData"))
-    } yield samplesSaved && matchTestDataSaved && extractionTestDataSaved
-  }
+  override protected def saveExerciseRest(collId: Int, ex: RegexExercise): Future[Boolean] = Future.successful(true)
 
   // Column types
 
   override protected implicit val partTypeColumnType: BaseColumnType[RegexExPart] =
     MappedColumnType.base[RegexExPart, String](_.entryName, RegexExParts.withNameInsensitive)
 
-  private implicit val regexCorrectionTypeColumnType: BaseColumnType[RegexCorrectionType] =
+  private val regexCorrectionTypeColumnType: BaseColumnType[RegexCorrectionType] =
     MappedColumnType.base[RegexCorrectionType, String](_.entryName, RegexCorrectionTypes.withNameInsensitive)
+
+  private val matchTestDataSeqColumnType: BaseColumnType[Seq[RegexMatchTestData]] =
+    jsonSeqColumnType(RegexCompleteResultJsonProtocol.regexMatchTestDataFormat)
+
+  private val extractionTestDataSeqColumnType: BaseColumnType[Seq[RegexExtractionTestData]] =
+    jsonSeqColumnType(RegexCompleteResultJsonProtocol.regexExtractionTestDataFormat)
 
   // Tables
 
-  class RegexCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "regex_collections")
+  protected class RegexCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "regex_collections")
 
-  class RegexExerciseTable(tag: Tag) extends ExerciseInCollectionTable(tag, "regex_exercises") {
+  protected class RegexExerciseTable(tag: Tag) extends ExerciseInCollectionTable(tag, "regex_exercises") {
+
+    private implicit val rctct: BaseColumnType[RegexCorrectionType] = regexCorrectionTypeColumnType
+
+    private implicit val ssct: BaseColumnType[Seq[StringSampleSolution]] = stringSampleSolutionColumnType
+
+    private implicit val mtdsct: BaseColumnType[Seq[RegexMatchTestData]] = matchTestDataSeqColumnType
+
+    private implicit val etdsct: BaseColumnType[Seq[RegexExtractionTestData]] = extractionTestDataSeqColumnType
+
 
     def maxPoints: Rep[Int] = column[Int]("max_points")
 
     def correctionType: Rep[RegexCorrectionType] = column[RegexCorrectionType]("correction_type")
 
+    def sampleSolutions: Rep[Seq[StringSampleSolution]] = column[Seq[StringSampleSolution]]("samples_json")
 
-    override def * : ProvenShape[DbRegexExercise] = (id, collectionId, semanticVersion, title, author, text, state, maxPoints, correctionType) <> (DbRegexExercise.tupled, DbRegexExercise.unapply)
+    def matchTestData: Rep[Seq[RegexMatchTestData]] = column[Seq[RegexMatchTestData]]("match_test_data_json")
 
-  }
-
-
-  class RegexMatchTestDataTable(tag: Tag) extends ExForeignKeyTable[DbRegexMatchTestData](tag, "regex_match_test_data") {
-
-    def id: Rep[Int] = column[Int](idName)
-
-    def data: Rep[String] = column[String](dataName)
-
-    def isIncluded: Rep[Boolean] = column[Boolean]("is_included")
+    def extractionTestData: Rep[Seq[RegexExtractionTestData]] = column[Seq[RegexExtractionTestData]]("extraction_test_data_json")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, collectionId))
-
-
-    def * : ProvenShape[DbRegexMatchTestData] = (id, exerciseId, exSemVer, collectionId, data, isIncluded) <> (DbRegexMatchTestData.tupled, DbRegexMatchTestData.unapply)
+    override def * : ProvenShape[RegexExercise] = (id, collectionId, semanticVersion, title, author, text, state,
+      maxPoints, correctionType, sampleSolutions, matchTestData, extractionTestData) <> (RegexExercise.tupled, RegexExercise.unapply)
 
   }
 
 
-  class RegexExtractionTestDataTable(tag: Tag) extends ExForeignKeyTable[DbRegexExtractionTestData](tag, "regex_extraction_test_data") {
+  protected class RegexSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "regex_sample_solutions")
 
-    def id: Rep[Int] = column[Int](idName)
-
-    def base: Rep[String] = column[String]("base")
+  protected class RegexUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "regex_user_solutions")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, collectionId))
+  protected class RegexExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "regex_exercise_reviews") {
+
+    //    override protected implicit val ptct: BaseColumnType[RegexExPart] = super.ptct
 
 
-    override def * : ProvenShape[DbRegexExtractionTestData] = (id, exerciseId, exSemVer, collectionId, base) <> (DbRegexExtractionTestData.tupled, DbRegexExtractionTestData.unapply)
-
-  }
-
-
-  class RegexSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "regex_sample_solutions")
-
-  class RegexUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "regex_user_solutions")
-
-
-  class RegexExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "regex_exercise_reviews") {
-
-    override def * : ProvenShape[DbRegexExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbRegexExerciseReview.tupled, DbRegexExerciseReview.unapply)
+    override def * : ProvenShape[DbRegexExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty,
+      maybeDuration.?) <> (DbRegexExerciseReview.tupled, DbRegexExerciseReview.unapply)
 
   }
 

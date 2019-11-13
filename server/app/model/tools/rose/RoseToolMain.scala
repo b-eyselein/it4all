@@ -9,10 +9,8 @@ import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.programming.ProgLanguages
 import model.tools.rose.persistence.RoseTableDefs
 import play.api.data.Form
-import play.api.i18n.MessagesProvider
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request, RequestHeader}
-import play.twirl.api.Html
+import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -63,14 +61,6 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override def updateSolSaved(compResult: RoseCompleteResult, solSaved: Boolean): RoseCompleteResult =
     compResult.copy(solutionSaved = solSaved)
-
-  // Views
-
-  override def renderExercise(user: User, collection: ExerciseCollection, exercise: RoseExercise, part: RoseExPart, maybeOldSolution: Option[RoseUserSolution])
-                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
-    val declaration = maybeOldSolution.map(_.solution).getOrElse(exercise.declaration(forUser = true))
-    views.html.toolViews.rose.roseExercise(user, exercise, collection, declaration, this)
-  }
 
   // Correction
 

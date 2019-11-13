@@ -38,14 +38,11 @@ trait Exercise {
   val state: ExerciseState
 
 
-  def preview: Html
-
   def tags: Seq[ExTag] = Seq[ExTag]()
 
 }
 
-trait FileExercise[PartType <: ExPart] {
-  self: Exercise =>
+trait FileExercise[PartType <: ExPart] extends Exercise {
 
   def filesForExercisePart(part: PartType): LoadExerciseFilesMessage
 

@@ -4,7 +4,6 @@ import model._
 import model.points.Points
 import model.tools.uml.UmlClassDiagram
 import play.api.libs.json.JsValue
-import play.twirl.api.Html
 
 
 final case class ProgExercise(
@@ -23,7 +22,7 @@ final case class ProgExercise(
   override val tags: Seq[ProgrammingExerciseTag],
 
   maybeClassDiagramPart: Option[UmlClassDiagram]
-) extends Exercise with FileExercise[ProgExPart] {
+) extends FileExercise[ProgExPart] {
 
   val inputCount: Int = inputTypes.size
 
@@ -36,11 +35,7 @@ final case class ProgExercise(
     case ProgExParts.ActivityDiagram => ???
   }
 
-  override def preview: Html = // FIXME: move to toolMain!
-    views.html.toolViews.programming.progPreview(this)
-
 }
-
 
 final case class UnitTestPart(
   unitTestType: UnitTestType,
@@ -62,7 +57,6 @@ final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgUserTe
   def unitTest: ExerciseFile = files.find(_.name == "test.py").getOrElse(???)
 
 }
-
 
 sealed trait ProgTestData {
 

@@ -7,10 +7,8 @@ import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.xml.persistence.XmlTableDefs
 import play.api.data.Form
-import play.api.i18n.MessagesProvider
 import play.api.libs.json.{Format, JsString}
-import play.api.mvc.{AnyContent, Request, RequestHeader}
-import play.twirl.api.Html
+import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -95,17 +93,5 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
         solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories(), exercise)
     }
   )
-
-
-  // Views
-
-  override def renderExercise(user: User, collection: ExerciseCollection, exercise: XmlExercise, part: XmlExPart, maybeOldSolution: Option[XmlUserSolution])
-                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
-    val oldSolutionOrTemplate: XmlSolution = maybeOldSolution.map(_.solution).getOrElse(exercise.getTemplate(part))
-
-    views.html.toolViews.xml.xmlExercise(user, collection, exercise, oldSolutionOrTemplate, part, this)
-  }
-
-  override def playground(user: User): Html = views.html.toolViews.xml.xmlPlayground(user)
 
 }

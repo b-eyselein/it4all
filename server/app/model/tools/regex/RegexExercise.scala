@@ -2,7 +2,7 @@ package model.tools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
-import play.twirl.api.Html
+import model.persistence.ADbExercise
 
 import scala.collection.immutable.IndexedSeq
 
@@ -20,7 +20,6 @@ case object RegexCorrectionTypes extends PlayEnum[RegexCorrectionType] {
 
 }
 
-
 final case class RegexExercise(
   id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   maxPoints: Int,
@@ -28,9 +27,9 @@ final case class RegexExercise(
   sampleSolutions: Seq[StringSampleSolution],
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
-) extends Exercise {
+) extends Exercise with ADbExercise {
 
-  override def preview: Html = Html(toString) // FIXME: implement!
+  override def collectionId: Int = collId
 
 }
 

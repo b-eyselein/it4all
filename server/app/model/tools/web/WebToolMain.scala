@@ -15,10 +15,8 @@ import model.tools.web.persistence.WebTableDefs
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data._
-import play.api.i18n.MessagesProvider
 import play.api.libs.json.{Format, JsError, JsSuccess}
-import play.api.mvc.{AnyContent, Request, RequestHeader}
-import play.twirl.api.Html
+import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -105,22 +103,6 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   override def updateSolSaved(compResult: WebCompleteResult, solSaved: Boolean): WebCompleteResult =
     compResult.copy(solutionSaved = solSaved)
-
-  // Views
-
-  override def renderExercise(user: User, collection: ExerciseCollection, exercise: WebExercise, part: WebExPart, maybeOldSolution: Option[FilesUserSolution[WebExPart]])
-                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = {
-    //    val oldOrDefaultSolutionString: String = maybeOldSolution.map(oldSol =>
-    //      part match {
-    //        case WebExParts.HtmlPart => oldSol.solution.htmlSolution
-    //        case WebExParts.JsPart   => oldSol.solution.jsSolution.getOrElse(oldSol.solution.htmlSolution)
-    //      }).getOrElse(WebConsts.STANDARD_HTML)
-
-    views.html.toolViews.web.webExercise(user, collection, exercise, part, /*oldOrDefaultSolutionString,*/ this)
-  }
-
-  override def playground(user: User): Html =
-    views.html.toolViews.web.webPlayground(user)
 
   // Correction
 

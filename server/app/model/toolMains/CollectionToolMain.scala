@@ -11,10 +11,8 @@ import model.points._
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.data.Form
-import play.api.i18n.MessagesProvider
 import play.api.libs.json.{Format, JsValue, Json}
-import play.api.mvc.{AnyContent, Call, Request, RequestHeader}
-import play.twirl.api.Html
+import play.api.mvc.{AnyContent, Call, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -141,22 +139,6 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   // Reading from requests
 
   protected def readSolution(request: Request[AnyContent], part: PartType): Either[String, SolType]
-
-  // Views
-
-  final def previewExerciseRest(ex: Exercise): Html = Html(ex.toString)
-
-  override def exercisesOverviewForIndex: Html = ???
-
-  def renderExercise(user: User, coll: ExerciseCollection, exercise: ExType, part: PartType, maybeOldSolution: Option[UserSolType])
-                    (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html
-
-  final def renderCollectionEditForm(user: User, collection: ExerciseCollection, isCreation: Boolean, toolList: ToolList)
-                                    (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html = Html("TODO!")
-
-  final def renderExerciseEditForm(user: User, collId: Int, newEx: ExType, isCreation: Boolean, toolList: ToolList): Html = Html("TODO!")
-
-  final def renderEditRest(exercise: ExType): Html = Html("")
 
   // Result handlers
 

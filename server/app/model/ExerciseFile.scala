@@ -21,10 +21,10 @@ object ExerciseFileJsonProtocol {
     Json.format[ExerciseFileWorkspace]
   }
 
-  val loadExerciseFilesMessageFormat: Format[LoadExerciseFilesMessage] = {
-    implicit val exFileFormat: Format[ExerciseFile] = exerciseFileFormat
-
-    Json.format[LoadExerciseFilesMessage]
-  }
+  //  val loadExerciseFilesMessageFormat: Format[LoadExerciseFilesMessage] = {
+  //    implicit val exFileFormat: Format[ExerciseFile] = exerciseFileFormat
+  //
+  //    Json.format[LoadExerciseFilesMessage]
+  //  }
 
 }

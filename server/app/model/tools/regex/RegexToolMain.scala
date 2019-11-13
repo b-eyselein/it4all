@@ -6,10 +6,8 @@ import model.points._
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.regex.persistence.RegexTableDefs
 import play.api.data.Form
-import play.api.i18n.MessagesProvider
 import play.api.libs.json.{Format, JsString}
-import play.api.mvc.{AnyContent, Request, RequestHeader}
-import play.twirl.api.Html
+import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -71,13 +69,5 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     Future.successful(RegexCorrector.correct(sol, exercise))
 
   // Views
-
-  override def renderExercise(user: User, collection: ExerciseCollection, exercise: RegexExercise, part: RegexExPart, oldSolution: Option[StringUserSolution[RegexExPart]])
-                             (implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-    views.html.toolViews.regex.regexExercise(user, this, collection, exercise, part, oldSolution.map(_.solution))
-
-  //  override def renderUserExerciseEditForm(user: User, newExForm: Form[RegexExercise], isCreation: Boolean)(
-  //    implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider): Html =
-  //    views.html.idExercises.regex.editRegexExerciseForm(user, newExForm, isCreation, this)
 
 }

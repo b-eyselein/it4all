@@ -28,14 +28,6 @@ trait ProgTableQueries {
 
   }
 
-  private def inputTypeForExercise(collId: Int, ex: DbProgExercise): Future[Seq[ProgInput]] =
-    db.run(inputTypesQuery.filter { it => it.exerciseId === ex.id && it.collectionId === collId }.result)
-      .map(_.map(dbModels.progInputFromDbProgInput))
-
-  private def sampleTestDataForExercise(collId: Int, ex: DbProgExercise): Future[Seq[ProgSampleTestData]] =
-    db.run(sampleTestData.filter { st => st.exerciseId === ex.id && st.collectionId === collId }.result)
-      .map(_.map(dbModels.sampleTestDataFromDbSampleTestData))
-
   private def unitTestTestConfigsForExercise(collId: Int, ex: DbProgExercise): Future[Seq[UnitTestTestConfig]] =
     db.run(unitTestTestConfigsTQ.filter { utc => utc.exerciseId === ex.id && utc.collectionId === collId }.result)
       .map(_.map(dbModels.unitTestTestConfigFromDbUnitTestTestConfig))
@@ -61,27 +53,19 @@ trait ProgTableQueries {
 
   override def completeExForEx(collId: Int, ex: DbProgExercise): Future[ProgExercise] = for {
     samples <- sampleSolutionsForExercise(ex)
-    inputTypes <- inputTypeForExercise(collId, ex)
-    sampleTestData <- sampleTestDataForExercise(collId, ex)
     unitTestTestConfigs <- unitTestTestConfigsForExercise(collId, ex)
     unitTestFiles <- unitTestFilesForExercise(collId, ex)
     implementationFiles <- implementationFilesForExercise(ex)
     maybeClassDiagram <- maybeClassDiagramPartForExercise(collId, ex)
-  } yield dbModels.exerciseFromDbValues(ex, inputTypes, samples, sampleTestData, unitTestTestConfigs, unitTestFiles, implementationFiles, maybeClassDiagram)
+  } yield dbModels.exerciseFromDbValues(ex, samples, unitTestTestConfigs, unitTestFiles, implementationFiles, maybeClassDiagram)
 
   override def saveExerciseRest(collId: Int, ex: ProgExercise): Future[Boolean] = {
     val dbSamplesWithFiles: (Seq[DbProgSampleSolution], Seq[Seq[DbProgSampleSolutionFile]]) = ex.sampleSolutions
       .map(s => ProgSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
       .unzip
 
-    val dbSamples = dbSamplesWithFiles._1
+    val dbSamples     = dbSamplesWithFiles._1
     val dbSampleFiles = dbSamplesWithFiles._2.flatten
-
-    val dbProgInputs = ex.inputTypes
-      .map(it => dbModels.dbProgInputFromProgInput(ex.id, ex.semanticVersion, collId, it))
-
-    val dbSampleTestData = ex.sampleTestData
-      .map(std => dbModels.dbSampleTestDataFromSampleTestData(ex.id, ex.semanticVersion, collId, std))
 
     val dbProgUmlClassDiagram = ex.maybeClassDiagramPart
       .map(mcd => dbModels.dbProgUmlClassDiagramFromUmlClassDiagram(ex.id, ex.semanticVersion, collId, mcd)).toList
@@ -98,13 +82,11 @@ trait ProgTableQueries {
     for {
       samplesSaved <- saveSeq[DbProgSampleSolution](dbSamples, i => db.run(sampleSolutionsTableQuery += i))
       sampleFilesSaved <- saveSeq[DbProgSampleSolutionFile](dbSampleFiles, i => db.run(sampleSolutionFilesTableQuery += i))
-      inputTypesSaved <- saveSeq[DbProgInput](dbProgInputs, i => db.run(inputTypesQuery += i))
-      sampleTestDataSaved <- saveSeq[DbProgSampleTestData](dbSampleTestData, i => db.run(sampleTestData += i))
       unitTestTestConfigsSaved <- saveSeq[DbUnitTestTestConfig](dbUnitTestTestConfigs, i => db.run(unitTestTestConfigsTQ += i))
       unitTestFilesSaved <- saveSeq[DbExerciseFile](dbUnitTestFiles, i => db.run(progUnitTestFilesTQ += i))
       implementationFilesSaved <- saveSeq[DbExerciseFile](dbImplementationFiles, i => db.run(implementationFilesTQ += i))
       classDiagPartSaved <- saveSeq[DbProgUmlClassDiagram](dbProgUmlClassDiagram, i => db.run(umlClassDiagParts += i))
-    } yield samplesSaved && sampleFilesSaved && inputTypesSaved && sampleTestDataSaved && unitTestTestConfigsSaved && unitTestFilesSaved && implementationFilesSaved && classDiagPartSaved
+    } yield samplesSaved && sampleFilesSaved && unitTestTestConfigsSaved && unitTestFilesSaved && implementationFilesSaved && classDiagPartSaved
   }
 
   def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] = futureExerciseById(collId, id).map {
@@ -148,7 +130,7 @@ trait ProgTableQueries {
     nextUserSolutionId(exId, collId, username, sol.part).flatMap { nextSolId =>
       val dbUserSolWithFiles = ProgSolutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol)
 
-      val dbUserSol = dbUserSolWithFiles._1.copy(id = nextSolId)
+      val dbUserSol      = dbUserSolWithFiles._1.copy(id = nextSolId)
       val dbUserSolFiles = dbUserSolWithFiles._2.map(_.copy(solId = nextSolId))
 
       for {

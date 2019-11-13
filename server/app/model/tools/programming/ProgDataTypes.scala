@@ -12,8 +12,6 @@ import scala.util.matching.Regex
 
 sealed trait ProgDataType extends EnumEntry {
 
-  def toJson(str: String): JsValue
-
   def typeName: String
 
   def defaultValue: ProgLanguage => String
@@ -32,11 +30,7 @@ object ProgDataTypes extends PlayEnum[ProgDataType] {
   private def string2FloatBigDecimal(str: String): BigDecimal = BigDecimal(Try(str.toDouble) getOrElse 0d)
 
 
-  sealed abstract class NonGenericProgDataType(val typeName: String, val convertToJson: String => JsValue, val defaultValue: ProgLanguage => String) extends ProgDataType {
-
-    override def toJson(str: String): JsValue = convertToJson(str)
-
-  }
+  sealed abstract class NonGenericProgDataType(val typeName: String, val convertToJson: String => JsValue, val defaultValue: ProgLanguage => String) extends ProgDataType
 
   sealed abstract class GenericProgDataType extends ProgDataType
 
@@ -55,8 +49,6 @@ object ProgDataTypes extends PlayEnum[ProgDataType] {
   case object STRING extends NonGenericProgDataType("string", str => JsString(str), _ => "\"\"")
 
   final case class LIST(subtype: ProgDataType) extends GenericProgDataType {
-
-    override def toJson(str: String): JsValue = JsArray(str.split(", ") map subtype.toJson)
 
     override val typeName: String = s"list<${subtype.typeName}>"
 

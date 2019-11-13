@@ -109,6 +109,7 @@ create table if not exists prog_exercises (
     foldername                           varchar(50)                           not null,
     filename                             varchar(50)                           not null,
 
+    inputs_json                          longtext                              not null, # TODO: json!
     output_type                          varchar(30)                           not null,
     base_data_json                       text,
 
@@ -121,24 +122,13 @@ create table if not exists prog_exercises (
     impl_file_name                       varchar(100)                          not null,
     implementation_sample_sol_file_names text                                  not null,
 
-    tags_string                          varchar(300)                          not null,
+    tags_json                            longtext                              not null, # TODO: json!
+
+    prog_sample_test_data_json           longtext                              not null, # TODO: json!
 
     primary key (id, collection_id),
     foreign key (collection_id)
         references prog_collections (id)
-        on update cascade on delete cascade
-);
-
-create table if not exists prog_input_types (
-    id            int,
-    exercise_id   int,
-    collection_id int,
-    input_name    varchar(20),
-    input_type    varchar(20),
-
-    primary key (id, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
         on update cascade on delete cascade
 );
 
@@ -325,59 +315,22 @@ create table if not exists regex_collections (
 );
 
 create table if not exists regex_exercises (
-    id               int,
-    semantic_version varchar(10),
-    collection_id    int,
-    title            varchar(50),
-    author           varchar(50),
-    ex_text          text,
-    ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
-    max_points       int,
-    correction_type  enum ('MATCHING', 'EXTRACTION')                      default 'MATCHING',
+    id                        int,
+    semantic_version          varchar(10),
+    collection_id             int,
+    title                     varchar(50),
+    author                    varchar(50),
+    ex_text                   text,
+    ex_state                  enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    max_points                int,
+    correction_type           enum ('MATCHING', 'EXTRACTION')                      default 'MATCHING',
+    samples_json              longtext not null, # TODO: json
+    match_test_data_json      longtext not null, # TODO: json
+    extraction_test_data_json longtext not null, # TODO: json
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id)
         references regex_collections (id)
-        on update cascade on delete cascade
-);
-
-create table if not exists regex_sample_solutions (
-    id            int,
-    exercise_id   int,
-    ex_sem_ver    varchar(10),
-    collection_id int,
-
-    sample        varchar(100),
-    primary key (id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references regex_exercises (id, semantic_version, collection_id)
-        on update cascade on delete cascade
-);
-
-create table if not exists regex_match_test_data (
-    id            int,
-    exercise_id   int,
-    ex_sem_ver    varchar(10),
-    collection_id int,
-    data          varchar(100),
-    is_included   boolean,
-
-    primary key (id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references regex_exercises (id, semantic_version, collection_id)
-        on update cascade on delete cascade
-);
-
-create table if not exists regex_extraction_test_data (
-    id            int,
-    exercise_id   int,
-    ex_sem_ver    varchar(10),
-    collection_id int,
-    base          text not null,
-
-    primary key (id, exercise_id, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references regex_exercises (id, semantic_version, collection_id)
         on update cascade on delete cascade
 );
 
@@ -718,7 +671,7 @@ create table if not exists web_exercises (
         on update cascade on delete cascade
 );
 
-create table if not exists html_tasks (
+create table if not exists web_html_tasks (
     task_id         int,
     exercise_id     int,
     ex_sem_ver      varchar(10),          # TODO: remove...
@@ -736,7 +689,7 @@ create table if not exists html_tasks (
         on update cascade on delete cascade
 );
 
-create table if not exists js_tasks (
+create table if not exists web_js_tasks (
     task_id              int,
     exercise_id          int,
     ex_sem_ver           varchar(10),          # TODO: remove...
@@ -966,9 +919,9 @@ drop table if exists web_sample_solutions;
 
 drop table if exists web_files;
 
-drop table if exists js_tasks;
+drop table if exists web_js_tasks;
 
-drop table if exists html_tasks;
+drop table if exists web_html_tasks;
 
 drop table if exists web_exercises;
 
@@ -1020,12 +973,6 @@ drop table if exists regex_exercise_reviews;
 
 drop table if exists regex_user_solutions;
 
-drop table if exists regex_extraction_test_data;
-
-drop table if exists regex_match_test_data;
-
-drop table if exists regex_sample_solutions;
-
 drop table if exists regex_exercises;
 
 drop table if exists regex_collections;
@@ -1053,8 +1000,6 @@ drop table if exists prog_unit_test_test_configs;
 drop table if exists prog_impl_files;
 
 drop table if exists prog_sample_testdata;
-
-drop table if exists prog_input_types;
 
 drop table if exists prog_exercises;
 

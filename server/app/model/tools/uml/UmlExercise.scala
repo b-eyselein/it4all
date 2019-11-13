@@ -10,9 +10,6 @@ final case class UmlExercise(
   markedText: String, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution]
 ) extends Exercise {
 
-  override def preview: Html = // FIXME: move to toolMain!
-    views.html.toolViews.uml.umlPreview(this)
-
   def titleForPart(part: UmlExPart): String = part match {
     case UmlExParts.ClassSelection     => "Auswahl der Klassen"
     case UmlExParts.DiagramDrawing     => "Freies Zeichnen"

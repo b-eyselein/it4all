@@ -37,16 +37,16 @@ export class CollectionToolAdminComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dexieService.collections
-      .filter((ec) => ec.toolId === this.tool.id).toArray()
-      .then((collections: ExerciseCollection[]) => {
-        if (collections && collections.length > 0) {
-          this.collections = collections;
-          this.fetchExerciseBasics();
-        } else {
-          this.fetchCollections();
-        }
-      });
+    // this.dexieService.collections
+    //   .filter((ec) => ec.toolId === this.tool.id).toArray()
+    //   .then((collections: ExerciseCollection[]) => {
+    //     if (collections && collections.length > 0) {
+    //       this.collections = collections;
+    //       this.fetchExerciseBasics();
+    //     } else {
+    this.fetchCollections();
+    // }
+    // });
   }
 
 }

@@ -26,16 +26,18 @@ object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResul
     Json.format[ProgSampleSolution]
   }
 
-  private val progSampleTestDataFormat: Format[ProgSampleTestData] = Json.format[ProgSampleTestData]
+  val progSampleTestDataFormat: Format[ProgSampleTestData] = Json.format[ProgSampleTestData]
+
+  val progInputFormat: Format[ProgInput] = {
+    implicit val pdtf: Format[ProgDataType] = ProgDataTypes.jsonFormat
+
+    Json.format[ProgInput]
+  }
 
   val exerciseFormat: Format[ProgExercise] = {
     implicit val semVerFormat: Format[SemanticVersion] = SemanticVersionHelper.format
 
-    implicit val pif: Format[ProgInput] = {
-      implicit val pdtf: Format[ProgDataType] = ProgDataTypes.jsonFormat
-
-      Json.format[ProgInput]
-    }
+    implicit val pif: Format[ProgInput] = progInputFormat
 
     implicit val pdtf: Format[ProgDataType] = ProgDataTypes.jsonFormat
 

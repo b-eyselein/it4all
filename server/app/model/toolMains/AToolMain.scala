@@ -11,7 +11,6 @@ import model.learningPath.{LearningPath, LearningPathTableDefs, LearningPathYaml
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.mvc.Call
-import play.twirl.api.Html
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -42,8 +41,8 @@ abstract class AToolMain(val toolname: String, val urlPart: String) {
   // Helper methods
 
   def readLearningPaths: Seq[LearningPath] = {
-    val learningPathFile: File = exerciseResourcesFolder / "learningPath.yaml"
-    val content: String = learningPathFile.contentAsString
+    val learningPathFile: File   = exerciseResourcesFolder / "learningPath.yaml"
+    val content         : String = learningPathFile.contentAsString
 
     learningPathsYamlFormat.read(content.parseYaml) match {
       case Success(read)  => Seq(read)
@@ -74,17 +73,9 @@ abstract class AToolMain(val toolname: String, val urlPart: String) {
   def solutionDirForExercise(username: String, collId: Int, exId: Int): File =
     exerciseRootDir / solutionsSubDir / username / String.valueOf(collId) / String.valueOf(exId)
 
-  // Views
-
-  // FIXME: remove...
-  def exercisesOverviewForIndex: Html
-
-  def adminIndexView(admin: User, toolList: ToolList): Future[Html] = Future.successful(Html("TODO!"))
-
-  def playground(user: User): Html = Html("")
-
   // Calls
 
+  // FIXME: remove!
   @deprecated
   def indexCall: Call
 

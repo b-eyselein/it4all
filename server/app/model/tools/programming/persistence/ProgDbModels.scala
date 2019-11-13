@@ -4,7 +4,6 @@ import model._
 import model.persistence._
 import model.points.Points
 import model.tools.programming._
-import model.tools.sql.SqlConsts.tagJoinChar
 import model.tools.uml.UmlClassDiagram
 import play.api.libs.json.{JsArray, JsValue}
 
@@ -12,32 +11,35 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
   private val sampleSolFileNamesJoinChar = "##"
 
-  override def dbExerciseFromExercise(ex: ProgExercise): DbProgExercise = {
-    val tagsAsString = ex.tags.map(_.entryName).mkString(tagJoinChar)
-
-    DbProgExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state,
-      ex.functionName, ex.foldername, ex.filename,
-      ex.outputType, ex.baseData,
-      ex.unitTestPart.unitTestType, ex.unitTestPart.unitTestsDescription, ex.unitTestPart.testFileName, ex.unitTestPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar),
-      ex.implementationPart.base, ex.implementationPart.implFileName, ex.implementationPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar),
-      tagsAsString)
-  }
+  override def dbExerciseFromExercise(ex: ProgExercise): DbProgExercise = DbProgExercise(
+    ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state,
+    ex.functionName, ex.foldername, ex.filename,
+    ex.inputTypes, ex.outputType,
+    ex.baseData,
+    ex.unitTestPart.unitTestType, ex.unitTestPart.unitTestsDescription, ex.unitTestPart.testFileName, ex.unitTestPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar),
+    ex.implementationPart.base, ex.implementationPart.implFileName, ex.implementationPart.sampleSolFileNames.mkString(sampleSolFileNamesJoinChar),
+    ex.tags,
+    ex.sampleTestData
+  )
 
   def exerciseFromDbValues(
     dbProgEx: DbProgExercise,
-    inputTypes: Seq[ProgInput],
     sampleSolutions: Seq[ProgSampleSolution],
-    sampleTestData: Seq[ProgSampleTestData],
     unitTestTestConfigs: Seq[UnitTestTestConfig],
     unitTestFiles: Seq[ExerciseFile],
     implementationFiles: Seq[ExerciseFile],
     maybeClassDiagramPart: Option[UmlClassDiagram]
   ): ProgExercise = dbProgEx match {
-    case DbProgExercise(id, collectionId, semanticVersion, title, author, text, state, functionname, foldername, filename,
-    outputType, baseData, unitTestType, unitTestsDescription, testFileName, unitTestSampleSolFileNames, implementationBase, implFileName, implementationSampleSolFileNames, tagsString) =>
-
-      val tagsFromString: Seq[ProgrammingExerciseTag] = tagsString.split(tagJoinChar).toSeq.flatMap(ProgrammingExerciseTag.withNameInsensitiveOption)
-
+    case DbProgExercise(
+    id, collectionId, semanticVersion, title, author, text, state,
+    functionname, foldername, filename,
+    inputTypes, outputType,
+    baseData,
+    unitTestType, unitTestsDescription, testFileName, unitTestSampleSolFileNames,
+    implementationBase, implFileName, implementationSampleSolFileNames,
+    tags,
+    sampleTestData
+    ) =>
 
       ProgExercise(
         id, collectionId, semanticVersion, title, author, text, state,
@@ -46,18 +48,10 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
         UnitTestPart(unitTestType, unitTestsDescription, unitTestFiles, unitTestTestConfigs, testFileName, unitTestSampleSolFileNames.split(sampleSolFileNamesJoinChar)),
         ImplementationPart(implementationBase, implementationFiles, implFileName, implementationSampleSolFileNames.split(sampleSolFileNamesJoinChar)),
         sampleSolutions, sampleTestData,
-        tagsFromString,
+        tags,
         maybeClassDiagramPart
       )
   }
-
-  // Inputs
-
-  def dbProgInputFromProgInput(exId: Int, exSemVer: SemanticVersion, collId: Int, progInput: ProgInput): DbProgInput =
-    DbProgInput(progInput.id, exId, collId, progInput.inputName, progInput.inputType)
-
-  def progInputFromDbProgInput(dbProgInput: DbProgInput): ProgInput =
-    ProgInput(dbProgInput.id, dbProgInput.inputName, dbProgInput.inputType)
 
   // Unit Test Test Configs
 
@@ -67,14 +61,6 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
   def unitTestTestConfigFromDbUnitTestTestConfig(dbUnitTestTestConfig: DbUnitTestTestConfig): UnitTestTestConfig = dbUnitTestTestConfig match {
     case DbUnitTestTestConfig(id, _, _, shouldFail, cause, description) => UnitTestTestConfig(id, shouldFail, cause, description)
   }
-
-  // Sample Test Data
-
-  def dbSampleTestDataFromSampleTestData(exId: Int, exSemVer: SemanticVersion, collId: Int, testData: ProgSampleTestData): DbProgSampleTestData =
-    DbProgSampleTestData(testData.id, exId, collId, testData.input, testData.output)
-
-  def sampleTestDataFromDbSampleTestData(dbTestData: DbProgSampleTestData): ProgSampleTestData =
-    ProgSampleTestData(dbTestData.id, dbTestData.inputAsJson, dbTestData.output)
 
   // User Test Data
 
@@ -162,10 +148,12 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 final case class DbProgExercise(
   id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   functionname: String, foldername: String, filename: String,
-  outputType: ProgDataType, baseData: Option[JsValue],
+  inputType: Seq[ProgInput], outputType: ProgDataType,
+  baseData: Option[JsValue],
   unitTestType: UnitTestType, unitTestsDescription: String, testFileName: String, unitTestSampleSolFileNames: String,
   implementationBase: String, implFileName: String, implementationSampleSolFileNames: String,
-  tagsString: String
+  tags: Seq[ProgrammingExerciseTag],
+  sampleTestData: Seq[ProgSampleTestData]
 ) extends ADbExercise
 
 
@@ -214,21 +202,7 @@ final case class DbProgUserSolutionFile(
   fileContent: String, fileType: String, fileIsEditable: Boolean
 )
 
-
-final case class DbProgInput(id: Int, exId: Int, collId: Int, inputName: String, inputType: ProgDataType)
-
-
-sealed trait DbProgTestData {
-  val id         : Int
-  val exId       : Int
-  val collId     : Int
-  val inputAsJson: JsValue
-  val output     : JsValue
-}
-
-final case class DbProgSampleTestData(id: Int, exId: Int, collId: Int, inputAsJson: JsValue, output: JsValue) extends DbProgTestData
-
-final case class DbProgUserTestData(id: Int, exId: Int, collId: Int, username: String, inputAsJson: JsValue, output: JsValue, state: ExerciseState) extends DbProgTestData
+final case class DbProgUserTestData(id: Int, exId: Int, collId: Int, username: String, inputAsJson: JsValue, output: JsValue, state: ExerciseState)
 
 final case class DbProgUmlClassDiagram(exId: Int, collId: Int, classDiagram: UmlClassDiagram)
 

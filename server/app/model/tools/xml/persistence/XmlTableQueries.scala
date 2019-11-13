@@ -13,7 +13,7 @@ trait XmlTableQueries {
   override protected def completeExForEx(collId: Int, ex: DbXmlExercise): Future[XmlExercise] = for {
     samples <- db.run(sampleSolutionsTableQuery.filter { e => e.exerciseId === ex.id && e.collectionId === collId && e.exSemVer === ex.semanticVersion }.result)
       .map(_ map XmlSolutionDbModels.sampleSolFromDbSampleSol)
-  } yield dbModels.exerciseFromDbValues(ex, samples)
+  } yield XmlDbModels.exerciseFromDbValues(ex, samples)
 
   override def futureSampleSolutionsForExPart(collId: Int, exId: Int, part: XmlExPart): Future[Seq[XmlSampleSolution]] = db.run(
     sampleSolutionsTableQuery

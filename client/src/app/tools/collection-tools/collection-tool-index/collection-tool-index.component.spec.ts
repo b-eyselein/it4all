@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ToolIndexComponent } from './tool-index.component';
+import { CollectionToolIndexComponent } from './collection-tool-index.component';
 
 describe('ToolOverviewComponent', () => {
-  let component: ToolIndexComponent;
-  let fixture: ComponentFixture<ToolIndexComponent>;
+  let component: CollectionToolIndexComponent;
+  let fixture: ComponentFixture<CollectionToolIndexComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ToolIndexComponent ]
+      declarations: [ CollectionToolIndexComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ToolIndexComponent);
+    fixture = TestBed.createComponent(CollectionToolIndexComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

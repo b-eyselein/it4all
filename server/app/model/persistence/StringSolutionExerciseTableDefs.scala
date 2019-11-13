@@ -2,6 +2,7 @@ package model.persistence
 
 import model._
 import model.core.CoreConsts.{sampleName, solutionName}
+import play.api.libs.json.{Format, Json, Reads, Writes}
 import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.Future
@@ -56,6 +57,20 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Re
       val dbUserSolution = StringSolutionDbModels.dbUserSolFromUserSol(exId, exSemVer, collId, username, sol).copy(id = nextUserSolId)
       db.run(userSolutionsTableQuery += dbUserSolution).transform(_ == 1, identity)
     }
+
+  // Column Types
+
+  protected val stringSampleSolutionColumnType: BaseColumnType[Seq[StringSampleSolution]] = {
+    val stringSampleSolutionSeqFormat: Format[Seq[StringSampleSolution]] = Format(
+      Reads.seq(StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat),
+      Writes.seq(StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat)
+    )
+
+    MappedColumnType.base[Seq[StringSampleSolution], String](
+      samples => Json.stringify(stringSampleSolutionSeqFormat.writes(samples)),
+      jsonSamples => stringSampleSolutionSeqFormat.reads(Json.parse(jsonSamples)).getOrElse(Seq.empty)
+    )
+  }
 
   // Abstract Tables
 

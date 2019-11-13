@@ -4,8 +4,8 @@ import {ApiService} from '../../../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {collectionTools} from '../collection-tools-list';
 
-@Component({templateUrl: './tool-index.component.html'})
-export class ToolIndexComponent implements OnInit {
+@Component({templateUrl: './collection-tool-index.component.html'})
+export class CollectionToolIndexComponent implements OnInit {
 
   // FIXME: show number of exercise for every collection!
 

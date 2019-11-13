@@ -3,16 +3,12 @@ package model.tools.rose
 import model._
 import model.points.Points
 import model.tools.programming.{ProgDataType, ProgLanguage}
-import play.twirl.api.Html
 
 
 final case class RoseExercise(
   id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]
 ) extends Exercise {
-
-  override def preview: Html = // FIXME: move to toolMain!
-    views.html.toolViews.rose.rosePreview.render(this)
 
   def declaration(forUser: Boolean): String = {
     val className                = if (forUser) "UserRobot" else "SampleRobot"

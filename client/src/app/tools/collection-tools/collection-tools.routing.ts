@@ -1,4 +1,4 @@
-import {ToolIndexComponent} from './tool-index/tool-index.component';
+import {CollectionToolIndexComponent} from './collection-tool-index/collection-tool-index.component';
 import {AuthGuard} from '../../_helpers/auth-guard';
 import {CollectionIndexComponent} from './collection-index/collection-index.component';
 import {ProgrammingExerciseComponent} from './programming/programming-exercise/programming-exercise.component';
@@ -8,7 +8,7 @@ import {WebExerciseComponent} from './web/web-exercise/web-exercise.component';
 import {UmlExerciseComponent} from './uml/uml-exercise/uml-exercise.component';
 
 export const collectionToolRoutes = [
-  {path: 'tools/:toolId', component: ToolIndexComponent, canActivate: [AuthGuard]},
+  {path: 'tools/:toolId', component: CollectionToolIndexComponent, canActivate: [AuthGuard]},
   {path: 'tools/:toolId/collections/:collId', component: CollectionIndexComponent, canActivate: [AuthGuard]},
 
   {
@@ -23,7 +23,7 @@ export const collectionToolRoutes = [
 ];
 
 export const collectionToolRoutingComponents = [
-  ToolIndexComponent,
+  CollectionToolIndexComponent,
   CollectionIndexComponent,
   ProgrammingExerciseComponent,
   RegexExerciseComponent,

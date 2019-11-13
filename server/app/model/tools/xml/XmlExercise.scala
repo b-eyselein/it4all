@@ -3,17 +3,16 @@ package model.tools.xml
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.points.Points
-import play.twirl.api.Html
 
 import scala.collection.immutable.IndexedSeq
 
 
 sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
 
-
 object XmlExParts extends PlayEnum[XmlExPart] {
 
   val values: IndexedSeq[XmlExPart] = findValues
+
 
   case object GrammarCreationXmlPart extends XmlExPart("Grammatik", "grammar")
 
@@ -26,9 +25,6 @@ final case class XmlExercise(
   id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   grammarDescription: String, rootNode: String, samples: Seq[XmlSampleSolution]
 ) extends Exercise {
-
-  override def preview: Html = //FIXME: move to toolMain!
-    views.html.toolViews.xml.xmlPreview(this)
 
   def getTemplate(part: XmlExPart): XmlSolution = XmlSolution(
     document =

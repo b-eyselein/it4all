@@ -8,9 +8,9 @@ import play.api.libs.json.{Format, Json, Writes}
 
 object RegexCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RegexEvalutationResult, RegexCompleteResult] {
 
-  private val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
+  val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
-  private val regexExtractionTestDataFormat = Json.format[RegexExtractionTestData]
+  val regexExtractionTestDataFormat: Format[RegexExtractionTestData] = Json.format[RegexExtractionTestData]
 
   val exerciseFormat: Format[RegexExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format

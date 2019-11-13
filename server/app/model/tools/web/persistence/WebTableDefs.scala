@@ -57,7 +57,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   protected val htmlTasksTable: TableQuery[HtmlTasksTable] = TableQuery[HtmlTasksTable]
 
-  protected val jsTasksTable          : TableQuery[JsTasksTable]    = TableQuery[JsTasksTable]
+  protected val jsTasksTable: TableQuery[JsTasksTable] = TableQuery[JsTasksTable]
 
   protected val webFilesTableQuery: TableQuery[WebFilesTable] = TableQuery[WebFilesTable]
 
@@ -77,29 +77,11 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
   private val actionTypeColumnType: BaseColumnType[JsActionType] =
     MappedColumnType.base[JsActionType, String](_.entryName, JsActionType.withNameInsensitive)
 
-  private val htmlAttributesColumnType: BaseColumnType[Seq[HtmlAttribute]] = {
-    val attrsFormat = Format(
-      Reads.seq(WebCompleteResultJsonProtocol.htmlAttributeFormat),
-      Writes.seq(WebCompleteResultJsonProtocol.htmlAttributeFormat)
-    )
+  private val htmlAttributeSeqColumnType: BaseColumnType[Seq[HtmlAttribute]] =
+    jsonSeqColumnType(WebCompleteResultJsonProtocol.htmlAttributeFormat)
 
-    MappedColumnType.base[Seq[HtmlAttribute], String](
-      attrs => Json.stringify(attrsFormat.writes(attrs)),
-      jsAttrs => attrsFormat.reads(Json.parse(jsAttrs)).getOrElse(Seq.empty)
-    )
-  }
-
-  private val htmlElementSpecsColumnType: BaseColumnType[Seq[HtmlElementSpec]] = {
-    val elementSpecsFormat = Format(
-      Reads.seq(WebCompleteResultJsonProtocol.htmlElementSpecFormat),
-      Writes.seq(WebCompleteResultJsonProtocol.htmlElementSpecFormat)
-    )
-
-    MappedColumnType.base[Seq[HtmlElementSpec], String](
-      specs => Json.stringify(elementSpecsFormat.writes(specs)),
-      jsSpecs => elementSpecsFormat.reads(Json.parse(jsSpecs)).getOrElse(Seq.empty)
-    )
-  }
+  private val htmlElementSpecSeqColumnType: BaseColumnType[Seq[HtmlElementSpec]] =
+    jsonSeqColumnType(WebCompleteResultJsonProtocol.htmlElementSpecFormat)
 
   // Table definitions
 
@@ -133,7 +115,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   protected class HtmlTasksTable(tag: Tag) extends WebTasksTable[DbHtmlTask](tag, "html_tasks") {
 
-    private implicit val hact: BaseColumnType[Seq[HtmlAttribute]] = htmlAttributesColumnType
+    private implicit val hact: BaseColumnType[Seq[HtmlAttribute]] = htmlAttributeSeqColumnType
 
 
     def awaitedTagname: Rep[String] = column[String]("awaited_tagname")
@@ -151,7 +133,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
     private implicit val atct: BaseColumnType[JsActionType] = actionTypeColumnType
 
-    private implicit val essf: BaseColumnType[Seq[HtmlElementSpec]] = htmlElementSpecsColumnType
+    private implicit val essf: BaseColumnType[Seq[HtmlElementSpec]] = htmlElementSpecSeqColumnType
 
 
     def actionType: Rep[JsActionType] = column[JsActionType]("action_type")
