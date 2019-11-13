@@ -42,7 +42,7 @@ create table if not exists users_in_courses (
 create table if not exists feedback (
     username          varchar(30),
     tool_url          varchar(30),
-    # -- FIXME: only possible with newest mariadb version
+    # -- FIXME: json only possible with newest mariadb version
     marks_json        text not null,
     # -- TODO: remove following columns!
     sense             enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
@@ -721,82 +721,38 @@ create table if not exists web_exercises (
 create table if not exists html_tasks (
     task_id         int,
     exercise_id     int,
-    ex_sem_ver      varchar(10), # TODO: remove...
+    ex_sem_ver      varchar(10),          # TODO: remove...
     collection_id   int,
-    text            text,
-    xpath_query     varchar(50),
-    awaited_tagname varchar(50),
+
+    text            text        not null,
+    xpath_query     varchar(50) not null,
+    awaited_tagname varchar(50) not null,
     text_content    varchar(100),
+    attributes_json longtext    not null, # TODO: json
 
     primary key (task_id, exercise_id, collection_id),
     foreign key (exercise_id, collection_id)
         references web_exercises (id, collection_id)
-        on update cascade on delete cascade
-);
-
-create table if not exists html_attributes (
-    attr_key      varchar(30),
-    task_id       int,
-    exercise_id   int,
-    ex_sem_ver    varchar(10), # TODO: remove...
-    collection_id int,
-    attr_value    varchar(150),
-
-    primary key (attr_key, task_id, exercise_id, collection_id),
-    foreign key (task_id, exercise_id, collection_id)
-        references html_tasks (task_id, exercise_id, collection_id)
         on update cascade on delete cascade
 );
 
 create table if not exists js_tasks (
-    task_id            int,
-    exercise_id        int,
-    ex_sem_ver         varchar(10), # TODO: remove...
-    collection_id      int,
-    text               text,
-    xpath_query        varchar(50),
+    task_id              int,
+    exercise_id          int,
+    ex_sem_ver           varchar(10),          # TODO: remove...
+    collection_id        int,
+    text                 text        not null,
+    xpath_query          varchar(50) not null,
 
-    action_type        enum ('CLICK', 'FILLOUT') default 'CLICK',
-    action_xpath_query varchar(50),
-    keys_to_send       varchar(100),
+    action_type          enum ('CLICK', 'FILLOUT') default 'CLICK',
+    keys_to_send         varchar(100),
+
+    pre_conditions_json  longtext    not null, # TODO: json
+    post_conditions_json longtext    not null, # TODO: json
 
     primary key (task_id, exercise_id, collection_id),
     foreign key (exercise_id, collection_id)
         references web_exercises (id, collection_id)
-        on update cascade on delete cascade
-);
-
-create table if not exists js_conditions (
-    condition_id    int,
-    task_id         int,
-    exercise_id     int,
-    ex_sem_ver      varchar(10), # TODO: remove...
-    collection_id   int,
-    is_precondition boolean default true,
-
-    xpath_query     varchar(50),
-    awaited_tagname varchar(50),
-    awaited_value   varchar(50),
-
-    primary key (condition_id, task_id, exercise_id, collection_id, is_precondition),
-    foreign key (task_id, exercise_id, collection_id)
-        references js_tasks (task_id, exercise_id, collection_id)
-        on update cascade on delete cascade
-);
-
-create table if not exists web_js_condition_attributes (
-    attr_key        varchar(30),
-    cond_id         int,
-    task_id         int,
-    exercise_id     int,
-    ex_sem_ver      varchar(10), # TODO: remove...
-    collection_id   int,
-    is_precondition boolean      not null,
-    attr_value      varchar(150) not null,
-
-    primary key (attr_key, cond_id, task_id, exercise_id, collection_id, is_precondition),
-    foreign key (cond_id, task_id, exercise_id, collection_id, is_precondition)
-        references js_conditions (condition_id, task_id, exercise_id, collection_id, is_precondition)
         on update cascade on delete cascade
 );
 
@@ -1010,13 +966,7 @@ drop table if exists web_sample_solutions;
 
 drop table if exists web_files;
 
-drop table if exists web_js_condition_attributes;
-
-drop table if exists js_conditions;
-
 drop table if exists js_tasks;
-
-drop table if exists html_attributes;
 
 drop table if exists html_tasks;
 

@@ -18,7 +18,7 @@ const sqlExerciseTags: Map<string, ExerciseTag> = new Map<string, ExerciseTag>([
 export const SqlTool: Tool = new (
   class SqlToolClass extends Tool {
     constructor() {
-      super('sql', 'SQL', [SqlCreateQueryPart]);
+      super('sql', 'SQL', [SqlCreateQueryPart], 'live', false, false, true);
     }
 
     processTagString(tag: string): ExerciseTag {

@@ -1,12 +1,13 @@
 package model.tools.web.persistence
 
-import de.uniwue.webtester.JsActionType
+import de.uniwue.webtester.{HtmlAttribute, HtmlElementSpec, JsActionType}
 import model.persistence.{DbExerciseFile, DbFilesUserSolution, FilesSolutionExerciseTableDefs}
 import model.tools.web.WebConsts._
 import model.tools.web._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.libs.json.{Format, Json, Reads, Writes}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
+import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.ExecutionContext
 
@@ -54,12 +55,9 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   override protected val reviewsTable: TableQuery[WebExerciseReviewsTable] = TableQuery[WebExerciseReviewsTable]
 
-  protected val htmlTasksTable : TableQuery[HtmlTasksTable]  = TableQuery[HtmlTasksTable]
-  protected val attributesTable: TableQuery[AttributesTable] = TableQuery[AttributesTable]
+  protected val htmlTasksTable: TableQuery[HtmlTasksTable] = TableQuery[HtmlTasksTable]
 
-  protected val jsTasksTable                   : TableQuery[JsTasksTable]               = TableQuery[JsTasksTable]
-  protected val jsConditionsTableQuery         : TableQuery[ConditionsTable]            = TableQuery[ConditionsTable]
-  protected val jsConditionAttributesTableQuery: TableQuery[JsConditionAttributesTable] = TableQuery[JsConditionAttributesTable]
+  protected val jsTasksTable          : TableQuery[JsTasksTable]    = TableQuery[JsTasksTable]
 
   protected val webFilesTableQuery: TableQuery[WebFilesTable] = TableQuery[WebFilesTable]
 
@@ -73,17 +71,41 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Implicit column types
 
-  private implicit val actionTypeColumnType: BaseColumnType[JsActionType] =
-    MappedColumnType.base[JsActionType, String](_.entryName, JsActionType.withNameInsensitive)
-
   override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =
     MappedColumnType.base[WebExPart, String](_.entryName, WebExParts.withNameInsensitive)
 
+  private val actionTypeColumnType: BaseColumnType[JsActionType] =
+    MappedColumnType.base[JsActionType, String](_.entryName, JsActionType.withNameInsensitive)
+
+  private val htmlAttributesColumnType: BaseColumnType[Seq[HtmlAttribute]] = {
+    val attrsFormat = Format(
+      Reads.seq(WebCompleteResultJsonProtocol.htmlAttributeFormat),
+      Writes.seq(WebCompleteResultJsonProtocol.htmlAttributeFormat)
+    )
+
+    MappedColumnType.base[Seq[HtmlAttribute], String](
+      attrs => Json.stringify(attrsFormat.writes(attrs)),
+      jsAttrs => attrsFormat.reads(Json.parse(jsAttrs)).getOrElse(Seq.empty)
+    )
+  }
+
+  private val htmlElementSpecsColumnType: BaseColumnType[Seq[HtmlElementSpec]] = {
+    val elementSpecsFormat = Format(
+      Reads.seq(WebCompleteResultJsonProtocol.htmlElementSpecFormat),
+      Writes.seq(WebCompleteResultJsonProtocol.htmlElementSpecFormat)
+    )
+
+    MappedColumnType.base[Seq[HtmlElementSpec], String](
+      specs => Json.stringify(elementSpecsFormat.writes(specs)),
+      jsSpecs => elementSpecsFormat.reads(Json.parse(jsSpecs)).getOrElse(Seq.empty)
+    )
+  }
+
   // Table definitions
 
-  class WebCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "web_collections")
+  protected class WebCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "web_collections")
 
-  class WebExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "web_exercises") {
+  protected class WebExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "web_exercises") {
 
     def htmlText: Rep[Option[String]] = column[Option[String]]("html_text")
 
@@ -96,7 +118,7 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  abstract class WebTasksTable[T <: DbWebTask](tag: Tag, name: String) extends ExForeignKeyTable[T](tag, name) {
+  protected abstract class WebTasksTable[T <: DbWebTask](tag: Tag, name: String) extends ExForeignKeyTable[T](tag, name) {
 
     def id: Rep[Int] = column[Int]("task_id")
 
@@ -109,126 +131,60 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  class HtmlTasksTable(tag: Tag) extends WebTasksTable[DbHtmlTask](tag, "html_tasks") {
+  protected class HtmlTasksTable(tag: Tag) extends WebTasksTable[DbHtmlTask](tag, "html_tasks") {
+
+    private implicit val hact: BaseColumnType[Seq[HtmlAttribute]] = htmlAttributesColumnType
+
 
     def awaitedTagname: Rep[String] = column[String]("awaited_tagname")
 
     def textContent: Rep[Option[String]] = column[Option[String]]("text_content")
 
-
-    override def * : ProvenShape[DbHtmlTask] = (id, exerciseId, collectionId, text, xpathQuery, awaitedTagname, textContent) <> (DbHtmlTask.tupled, DbHtmlTask.unapply)
-
-  }
-
-  class AttributesTable(tag: Tag) extends Table[DbHtmlAttribute](tag, "html_attributes") {
-
-    def key: Rep[String] = column[String]("attr_key")
-
-    def taskId: Rep[Int] = column[Int]("task_id")
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
-    def value: Rep[String] = column[String]("attr_value")
+    def attributes: Rep[Seq[HtmlAttribute]] = column[Seq[HtmlAttribute]]("attributes_json")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (key, taskId, exerciseId))
-
-    def taskFk: ForeignKeyQuery[HtmlTasksTable, DbHtmlTask] = foreignKey("task_fk", (taskId, exerciseId), htmlTasksTable)(t => (t.id, t.exerciseId))
-
-
-    override def * : ProvenShape[DbHtmlAttribute] = (key, taskId, exerciseId, collectionId, value) <> (DbHtmlAttribute.tupled, DbHtmlAttribute.unapply)
+    override def * : ProvenShape[DbHtmlTask] = (id, exerciseId, collectionId, text, xpathQuery, awaitedTagname, textContent, attributes) <> (DbHtmlTask.tupled, DbHtmlTask.unapply)
 
   }
 
-  class JsTasksTable(tag: Tag) extends WebTasksTable[DbJsTask](tag, "js_tasks") {
+  protected class JsTasksTable(tag: Tag) extends WebTasksTable[DbJsTask](tag, "js_tasks") {
+
+    private implicit val atct: BaseColumnType[JsActionType] = actionTypeColumnType
+
+    private implicit val essf: BaseColumnType[Seq[HtmlElementSpec]] = htmlElementSpecsColumnType
+
 
     def actionType: Rep[JsActionType] = column[JsActionType]("action_type")
 
     def keysToSend: Rep[String] = column[String]("keys_to_send")
 
+    def preConditions: Rep[Seq[HtmlElementSpec]] = column[Seq[HtmlElementSpec]]("pre_conditions_json")
 
-    override def * : ProvenShape[DbJsTask] = (id, exerciseId, collectionId, text, xpathQuery, actionType, keysToSend.?) <> (DbJsTask.tupled, DbJsTask.unapply)
-
-  }
-
-  class ConditionsTable(tag: Tag) extends Table[DbJsCondition](tag, "js_conditions") {
-
-    def id: Rep[Int] = column[Int]("condition_id")
-
-    def taskId: Rep[Int] = column[Int]("task_id")
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
-    def isPrecondition: Rep[Boolean] = column[Boolean]("is_precondition")
-
-    def awaitedTagname: Rep[String] = column[String]("awaited_tagname")
-
-    def xpathQuery: Rep[String] = column[String]("xpath_query")
-
-    def awaitedTextContent: Rep[Option[String]] = column[Option[String]]("awaited_value")
+    def postConditions: Rep[Seq[HtmlElementSpec]] = column[Seq[HtmlElementSpec]]("post_conditions_json")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, taskId, exerciseId, collectionId, isPrecondition))
-
-    def taskFk: ForeignKeyQuery[JsTasksTable, DbJsTask] = foreignKey("task_fk", (taskId, exerciseId, collectionId),
-      jsTasksTable)(t => (t.id, t.exerciseId, t.collectionId))
-
-
-    override def * : ProvenShape[DbJsCondition] = (id, taskId, exerciseId, collectionId, isPrecondition, xpathQuery,
-      awaitedTagname, awaitedTextContent) <> (DbJsCondition.tupled, DbJsCondition.unapply)
+    override def * : ProvenShape[DbJsTask] = (id, exerciseId, collectionId, text, xpathQuery, actionType, keysToSend.?, preConditions, postConditions) <> (DbJsTask.tupled, DbJsTask.unapply)
 
   }
 
-  class JsConditionAttributesTable(tag: Tag) extends Table[DbJsConditionAttribute](tag, "web_js_condition_attributes") {
-
-    def key: Rep[String] = column[String]("attr_key")
-
-    def condId: Rep[Int] = column[Int]("cond_id")
-
-    def taskId: Rep[Int] = column[Int]("task_id")
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
-    def isPrecondition: Rep[Boolean] = column[Boolean]("is_precondition")
-
-    def value: Rep[String] = column[String]("attr_value")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (key, condId, taskId, exerciseId, collectionId, isPrecondition))
-
-    def condFk: ForeignKeyQuery[ConditionsTable, DbJsCondition] = foreignKey("cond_fk", (condId, taskId, exerciseId, collectionId, isPrecondition),
-      jsConditionsTableQuery)(jc => (jc.id, jc.taskId, jc.exerciseId, jc.collectionId, jc.isPrecondition))
-
-
-    override def * : ProvenShape[DbJsConditionAttribute] = (condId, taskId, exerciseId, collectionId, isPrecondition, key, value) <> (DbJsConditionAttribute.tupled, DbJsConditionAttribute.unapply)
-
-  }
-
-  class WebFilesTable(tag: Tag) extends ExForeignKeyTable[DbExerciseFile](tag, "web_files") with ExerciseFilesTable[DbExerciseFile] {
+  protected class WebFilesTable(tag: Tag) extends ExForeignKeyTable[DbExerciseFile](tag, "web_files") with ExerciseFilesTable[DbExerciseFile] {
 
     def * : ProvenShape[DbExerciseFile] = (name, exerciseId, collectionId, content, fileType, editable) <> (DbExerciseFile.tupled, DbExerciseFile.unapply)
 
   }
 
 
-  class WebSampleSolutionsTable(tag: Tag) extends AFilesSampleSolutionsTable(tag, "web_sample_solutions")
+  protected class WebSampleSolutionsTable(tag: Tag) extends AFilesSampleSolutionsTable(tag, "web_sample_solutions")
 
-  class WebSampleSolutionFilesTable(tag: Tag) extends AFilesSampleSolutionFilesTable(tag, "web_sample_solution_files")
-
-
-  class WebUserSolutionsTable(tag: Tag) extends AFilesUserSolutionsTable(tag, "web_user_solutions")
-
-  class WebUserSolutionFilesTable(tag: Tag) extends AFilesUserSolutionFilesTable(tag, "web_user_solution_files")
+  protected class WebSampleSolutionFilesTable(tag: Tag) extends AFilesSampleSolutionFilesTable(tag, "web_sample_solution_files")
 
 
-  class WebExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "web_exercise_reviews") {
+  protected class WebUserSolutionsTable(tag: Tag) extends AFilesUserSolutionsTable(tag, "web_user_solutions")
+
+  protected class WebUserSolutionFilesTable(tag: Tag) extends AFilesUserSolutionFilesTable(tag, "web_user_solution_files")
+
+
+  protected class WebExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "web_exercise_reviews") {
 
     override def * : ProvenShape[DbWebExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbWebExerciseReview.tupled, DbWebExerciseReview.unapply)
 
