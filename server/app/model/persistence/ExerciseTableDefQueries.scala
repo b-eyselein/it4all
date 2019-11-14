@@ -174,7 +174,7 @@ trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, SolType, S
 
   // For programming and uml!
 
-  protected implicit val umlClassDiagramColumnType: BaseColumnType[UmlClassDiagram] = {
+  protected val umlClassDiagramColumnType: BaseColumnType[UmlClassDiagram] = {
 
     val write = (ucd: UmlClassDiagram) => UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat.writes(ucd).toString
 

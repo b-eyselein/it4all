@@ -1,17 +1,19 @@
 package model.tools.web.persistence
 
-import de.uniwue.webtester.{HtmlAttribute, HtmlElementSpec, JsActionType}
+import de.uniwue.webtester.{HtmlElementSpec, JsActionType}
+import javax.inject.Inject
+import model.ExParts
 import model.persistence.{DbExerciseFile, DbFilesUserSolution, FilesSolutionExerciseTableDefs}
 import model.tools.web.WebConsts._
 import model.tools.web._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{Format, Json, Reads, Writes}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.ExecutionContext
+import scala.reflect.ClassTag
 
-class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+class WebTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
     with FilesSolutionExerciseTableDefs[WebExPart, WebExercise, WebExerciseReview]
     with WebTableQueries {
@@ -63,6 +65,8 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Helper methods
 
+  override protected val exParts: ExParts[WebExPart] = WebExParts
+
   override protected val dbModels               = WebDbModels
   override protected val exerciseReviewDbModels = WebExerciseReviewDbModels
 
@@ -71,17 +75,13 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Implicit column types
 
-  override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] =
-    MappedColumnType.base[WebExPart, String](_.entryName, WebExParts.withNameInsensitive)
-
   private val actionTypeColumnType: BaseColumnType[JsActionType] =
     MappedColumnType.base[JsActionType, String](_.entryName, JsActionType.withNameInsensitive)
 
-  private val htmlAttributeSeqColumnType: BaseColumnType[Seq[HtmlAttribute]] =
-    jsonSeqColumnType(WebCompleteResultJsonProtocol.htmlAttributeFormat)
-
   private val htmlElementSpecSeqColumnType: BaseColumnType[Seq[HtmlElementSpec]] =
     jsonSeqColumnType(WebCompleteResultJsonProtocol.htmlElementSpecFormat)
+
+  override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] = jsonColumnType(exParts.jsonFormat)
 
   // Table definitions
 
@@ -113,23 +113,23 @@ class WebTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   }
 
-  protected class HtmlTasksTable(tag: Tag) extends WebTasksTable[DbHtmlTask](tag, "html_tasks") {
+  protected class HtmlTasksTable(tag: Tag) extends WebTasksTable[DbHtmlTask](tag, "web_html_tasks") {
 
-    private implicit val hact: BaseColumnType[Seq[HtmlAttribute]] = htmlAttributeSeqColumnType
+    private implicit val hact: BaseColumnType[Map[String, String]] = stringMapColumnType
 
 
     def awaitedTagname: Rep[String] = column[String]("awaited_tagname")
 
     def textContent: Rep[Option[String]] = column[Option[String]]("text_content")
 
-    def attributes: Rep[Seq[HtmlAttribute]] = column[Seq[HtmlAttribute]]("attributes_json")
+    def attributes: Rep[Map[String, String]] = column[Map[String, String]]("attributes_json")
 
 
     override def * : ProvenShape[DbHtmlTask] = (id, exerciseId, collectionId, text, xpathQuery, awaitedTagname, textContent, attributes) <> (DbHtmlTask.tupled, DbHtmlTask.unapply)
 
   }
 
-  protected class JsTasksTable(tag: Tag) extends WebTasksTable[DbJsTask](tag, "js_tasks") {
+  protected class JsTasksTable(tag: Tag) extends WebTasksTable[DbJsTask](tag, "web_js_tasks") {
 
     private implicit val atct: BaseColumnType[JsActionType] = actionTypeColumnType
 

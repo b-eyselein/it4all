@@ -34,6 +34,16 @@ object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResul
     Json.format[ProgInput]
   }
 
+  val unitTestPartFormat: Format[UnitTestPart] = {
+    implicit val uttf: Format[UnitTestType] = UnitTestTypes.jsonFormat
+
+    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
+
+    implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
+
+    Json.format[UnitTestPart]
+  }
+
   val exerciseFormat: Format[ProgExercise] = {
     implicit val semVerFormat: Format[SemanticVersion] = SemanticVersionHelper.format
 
@@ -41,15 +51,7 @@ object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResul
 
     implicit val pdtf: Format[ProgDataType] = ProgDataTypes.jsonFormat
 
-    implicit val utf: Format[UnitTestPart] = {
-      implicit val uttf: Format[UnitTestType] = UnitTestTypes.jsonFormat
-
-      implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
-
-      implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
-
-      Json.format[UnitTestPart]
-    }
+    implicit val utf: Format[UnitTestPart] = unitTestPartFormat
 
     implicit val ipf: Format[ImplementationPart] = {
       implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat

@@ -1,5 +1,7 @@
 package model.tools.xml.persistence
 
+import javax.inject.Inject
+import model.ExParts
 import model.persistence.ExerciseTableDefs
 import model.tools.xml._
 import play.api.Logger
@@ -8,8 +10,9 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.ExecutionContext
+import scala.reflect.ClassTag
 
-class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+class XmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends ExerciseTableDefs[XmlExPart, XmlExercise, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview]
     with HasDatabaseConfigProvider[JdbcProfile]
     with XmlTableQueries {
@@ -53,15 +56,16 @@ class XmlTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Databa
 
   // Helper methods
 
+  override protected val exParts: ExParts[XmlExPart] = XmlExParts
+
   override protected val dbModels               = XmlDbModels
   override protected val exerciseReviewDbModels = XmlExerciseReviewDbModels
 
   override protected def copyDbUserSolType(oldSol: DbXmlUserSolution, newId: Int): DbXmlUserSolution = oldSol.copy(id = newId)
 
-  // Column Types
+  // Column types
 
-  override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
-    MappedColumnType.base[XmlExPart, String](_.entryName, XmlExParts.withNameInsensitive)
+  override protected implicit val partTypeColumnType: BaseColumnType[XmlExPart] = jsonColumnType(exParts.jsonFormat)
 
   // Actual table defs
 

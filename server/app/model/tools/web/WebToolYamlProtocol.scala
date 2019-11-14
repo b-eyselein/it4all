@@ -46,7 +46,7 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
       WebExercise(
         baseValues.id, baseValues.collId, baseValues.semanticVersion, baseValues.title, baseValues.author, baseValues.text, baseValues.state,
-        htmlText, jsText, SiteSpec(1, fileName, htmlTaskTries._1, jsTaskTries._1), filesName._1, sampleSolutionTries._1
+        htmlText, jsText, SiteSpec(fileName, htmlTaskTries._1, jsTaskTries._1), filesName._1, sampleSolutionTries._1
       )
     }
 
@@ -99,7 +99,7 @@ object WebToolYamlProtocol extends MyYamlProtocol {
       for (attributeFailure <- attributes._2)
         logger.error("Error while reading html attribute", attributeFailure.exception)
 
-      HtmlElementSpec(id, xpathQuery, awaitedTag, awaitedTextContent, attributes._1)
+      HtmlElementSpec(id, xpathQuery, awaitedTag, awaitedTextContent, attributes._1.toMap)
     }
 
     override def write(hes: HtmlElementSpec): YamlValue = YamlObj(
@@ -112,14 +112,16 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
   }
 
-  private object HtmlAttributeYamlFormat extends MyYamlObjectFormat[HtmlAttribute] {
+  private object HtmlAttributeYamlFormat extends MyYamlObjectFormat[(String, String)] {
 
-    override def readObject(yamlObject: YamlObject): Try[HtmlAttribute] = for {
+    override def readObject(yamlObject: YamlObject): Try[(String, String)] = for {
       key <- yamlObject.stringField(keyName)
       value <- yamlObject.stringField(valueName)
-    } yield HtmlAttribute(key, value)
+    } yield (key, value)
 
-    override def write(attr: HtmlAttribute): YamlValue = YamlObj(keyName -> attr.key, valueName -> attr.value)
+    override def write(attr: (String, String)): YamlValue = attr match {
+      case (key, value) => YamlObj(keyName -> key, valueName -> value)
+    }
 
   }
 

@@ -1,7 +1,6 @@
 package model.tools.regex
 
-import enumeratum.{EnumEntry, PlayEnum}
-import model.{Consts, ExPart}
+import model.{Consts, ExPart, ExParts}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -22,9 +21,9 @@ object RegexConsts extends Consts {
 }
 
 
-sealed abstract class RegexExPart(val partName: String, val urlName: String) extends EnumEntry with ExPart
+sealed abstract class RegexExPart(val partName: String, val urlName: String) extends ExPart
 
-object RegexExParts extends PlayEnum[RegexExPart] {
+object RegexExParts extends ExParts[RegexExPart] {
 
   val values: IndexedSeq[RegexExPart] = findValues
 

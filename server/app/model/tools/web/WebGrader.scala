@@ -12,8 +12,8 @@ object WebGrader {
   private def gradeTextResult(tcr: TextResult): GradedTextResult = {
 
     val keyName = tcr match {
-      case AttributeResult(HtmlAttribute(key, _), _) => key
-      case TextContentResult(_, _)                   => "TextContent"
+      case AttributeResult(key, _, _) => key
+      case TextContentResult(_, _)    => "TextContent"
     }
 
     val points = if (tcr.success) pointForCorrectTextResult else zeroPoints
@@ -29,7 +29,7 @@ object WebGrader {
       case Some(_) => pointForCorrectTextResult
     }
 
-    val pointsForAttributes: Seq[Points] = element.attributes.map(_ => pointForCorrectTextResult)
+    val pointsForAttributes: Seq[Points] = element.attributes.map(_ => pointForCorrectTextResult).toSeq
 
     pointsForElement + pointsForTextContentResult + addUp(pointsForAttributes)
   }
@@ -44,9 +44,9 @@ object WebGrader {
 
         val gradedAttributeResults: Seq[GradedTextResult] = attributeResults.map(gradeTextResult)
 
-        val pointsForElement = singlePoint
+        val pointsForElement           = singlePoint
         val pointsForTextContentResult = maybeGradedTextContentResult.map(_.points).getOrElse(zeroPoints)
-        val pointsForAttributeResults = addUp(gradedAttributeResults.map(_.points))
+        val pointsForAttributeResults  = addUp(gradedAttributeResults.map(_.points))
 
         val points = pointsForElement + pointsForTextContentResult + pointsForAttributeResults
 
@@ -81,9 +81,9 @@ object WebGrader {
 
   def gradeJsTaskResult(jtr: JsTaskResult): GradedJsTaskResult = {
 
-    val gradedPreResults = jtr.preResults.map(gradeElementSpecResult)
+    val gradedPreResults   = jtr.preResults.map(gradeElementSpecResult)
     val gradedActionResult = gradeActionResult(jtr.actionResult)
-    val gradedPostResults = jtr.postResults.map(gradeElementSpecResult)
+    val gradedPostResults  = jtr.postResults.map(gradeElementSpecResult)
 
     val points: Points = addUp(gradedPreResults.map(_.points)) + gradedActionResult.points + addUp(gradedPostResults.map(_.points))
 

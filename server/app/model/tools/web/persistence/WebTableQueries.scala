@@ -21,7 +21,7 @@ trait WebTableQueries {
     jsTasks <- jsTasksForExercise(collId, ex.id)
     files <- webFilesForExercise(collId, ex.id)
     sampleSolutions <- futureSampleSolutionsForExercise(collId, ex.id)
-  } yield dbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), files, sampleSolutions)
+  } yield WebDbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), files, sampleSolutions)
 
   private def htmlTasksForExercise(collId: Int, exId: Int): Future[Seq[HtmlTask]] = db.run(
     htmlTasksTable
@@ -50,10 +50,10 @@ trait WebTableQueries {
   } yield htmlTasksSaved && jsTasksSaved && webFilesSaved && sampleSolutionsSaved
 
   private def saveHtmlTask(exId: Int, exSemVer: SemanticVersion, collId: Int, htmlTask: HtmlTask): Future[Boolean] =
-    db.run(htmlTasksTable += dbModels.dbHtmlTaskFromHtmlTask(exId, collId, htmlTask)).transform(_ == 1, identity)
+    db.run(htmlTasksTable += WebDbModels.dbHtmlTaskFromHtmlTask(exId, collId, htmlTask)).transform(_ == 1, identity)
 
   private def saveJsTask(exId: Int, exSemVer: SemanticVersion, collId: Int, jsTask: JsTask): Future[Boolean] =
-    db.run(jsTasksTable += dbModels.dbJsTaskFromJsTask(exId, collId, jsTask)).transform(_ == 1, identity)
+    db.run(jsTasksTable += WebDbModels.dbJsTaskFromJsTask(exId, collId, jsTask)).transform(_ == 1, identity)
 
   private def saveWebFiles(exId: Int, exSemVer: SemanticVersion, collId: Int, webFiles: Seq[ExerciseFile]): Future[Boolean] = {
     val dbWebFiles = webFiles.map(WebDbModels.dbExerciseFileFromExerciseFile(exId, exSemVer, collId, _))

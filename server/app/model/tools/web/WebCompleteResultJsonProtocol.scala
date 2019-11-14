@@ -11,10 +11,10 @@ import play.api.libs.json._
 //noinspection ConvertibleToMethodValue
 object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
 
-  val htmlAttributeFormat: Format[HtmlAttribute] = Json.format[HtmlAttribute]
+//  val htmlAttributeFormat: Format[HtmlAttribute] = Json.format[HtmlAttribute]
 
   val htmlElementSpecFormat: Format[HtmlElementSpec] = {
-    implicit val haf: Format[HtmlAttribute] = htmlAttributeFormat
+//    implicit val haf: Format[HtmlAttribute] = htmlAttributeFormat
 
     Json.format[HtmlElementSpec]
   }

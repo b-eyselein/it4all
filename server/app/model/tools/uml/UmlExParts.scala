@@ -1,17 +1,17 @@
 package model.tools.uml
 
-import enumeratum.{EnumEntry, PlayEnum}
-import model.ExPart
+import model.{ExPart, ExParts}
 
 import scala.collection.immutable.IndexedSeq
 
 
-sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
+sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart
 
 
-object UmlExParts extends PlayEnum[UmlExPart] {
+object UmlExParts extends ExParts[UmlExPart] {
 
   val values: IndexedSeq[UmlExPart] = findValues
+
 
   case object ClassSelection extends UmlExPart(partName = "Klassenwahl", urlName = "class_selection")
 

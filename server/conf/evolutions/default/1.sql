@@ -27,14 +27,10 @@ create table if not exists users_in_courses (
     role      enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser',
 
     primary key (username, course_id),
-    foreign key (username)
-        references users (username)
-        on update cascade
-        on delete cascade,
-    foreign key (course_id)
-        references courses (id)
-        on update cascade
-        on delete cascade
+    foreign key (username) references users (username)
+        on update cascade on delete cascade,
+    foreign key (course_id) references courses (id)
+        on update cascade on delete cascade
 );
 
 # Feedback
@@ -42,8 +38,7 @@ create table if not exists users_in_courses (
 create table if not exists feedback (
     username          varchar(30),
     tool_url          varchar(30),
-    # -- FIXME: json only possible with newest mariadb version
-    marks_json        text not null,
+    marks_json        longtext not null, # TODO: json
     # -- TODO: remove following columns!
     sense             enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
     used              enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
@@ -53,10 +48,8 @@ create table if not exists feedback (
     comment           text,
 
     primary key (username, tool_url),
-    foreign key (username)
-        references users (username)
-        on update cascade
-        on delete cascade
+    foreign key (username) references users (username)
+        on update cascade on delete cascade
 );
 
 # Learning paths
@@ -78,10 +71,8 @@ create table if not exists learning_path_sections (
     content      text,
 
     primary key (id, tool_url, path_id),
-    foreign key (tool_url, path_id)
-        references learning_paths (tool_url, id)
-        on update cascade
-        on delete cascade
+    foreign key (tool_url, path_id) references learning_paths (tool_url, id)
+        on update cascade on delete cascade
 );
 
 # Programming
@@ -105,30 +96,28 @@ create table if not exists prog_exercises (
     ex_text                              text,
     ex_state                             enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    function_name                        varchar(30)                           not null,
-    foldername                           varchar(50)                           not null,
-    filename                             varchar(50)                           not null,
+    function_name                        varchar(30)  not null,
+    foldername                           varchar(50)  not null,
+    filename                             varchar(50)  not null,
 
-    inputs_json                          longtext                              not null, # TODO: json!
-    output_type                          varchar(30)                           not null,
+    inputs_json                          longtext     not null, # TODO: json!
+    output_type                          varchar(30)  not null,
     base_data_json                       text,
 
-    unit_test_type                       enum ('Simplified', 'Normal', 'Both') not null,
-    unit_tests_description               text                                  not null,
-    test_file_name                       varchar(100)                          not null,
-    unit_test_sample_sol_file_names      text                                  not null,
+    unit_test_part_json                  longtext     not null, # TODO: json!
 
-    implementation_base                  text                                  not null,
-    impl_file_name                       varchar(100)                          not null,
-    implementation_sample_sol_file_names text                                  not null,
+    implementation_base                  text         not null,
+    impl_file_name                       varchar(100) not null,
+    implementation_sample_sol_file_names longtext     not null, # TODO: json!
 
-    tags_json                            longtext                              not null, # TODO: json!
+    tags_json                            longtext     not null, # TODO: json!
 
-    prog_sample_test_data_json           longtext                              not null, # TODO: json!
+    prog_sample_test_data_json           longtext     not null, # TODO: json!
+
+    class_diagram_json                   longtext,              # TODO: json!
 
     primary key (id, collection_id),
-    foreign key (collection_id)
-        references prog_collections (id)
+    foreign key (collection_id) references prog_collections (id)
         on update cascade on delete cascade
 );
 
@@ -141,36 +130,7 @@ create table if not exists prog_impl_files (
     editable      boolean     not null,
 
     primary key (name, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
-        on update cascade on delete cascade
-);
-
-create table if not exists prog_unit_test_test_configs (
-    id            int,
-    exercise_id   int,
-    collection_id int,
-    should_fail   boolean not null,
-    cause         varchar(20),
-    description   text,
-
-    primary key (id, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
-        on update cascade on delete cascade
-);
-
-create table if not exists prog_unit_test_files (
-    name          varchar(100),
-    exercise_id   int,
-    collection_id int,
-    content       text        not null,
-    file_type     varchar(20) not null,
-    editable      boolean     not null,
-
-    primary key (name, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
+    foreign key (exercise_id, collection_id) references prog_exercises (id, collection_id)
         on update cascade on delete cascade
 );
 
@@ -205,19 +165,6 @@ create table if not exists prog_commited_testdata (
         references users (username)
         on update cascade on delete cascade
 );
-
-create table if not exists prog_uml_cd_parts (
-    exercise_id   int,
-    collection_id int,
-    class_name    varchar(30),
-    class_diagram text,
-
-    primary key (exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
-        on update cascade on delete cascade
-);
-
 
 create table if not exists prog_sample_solutions (
     id            int,
@@ -487,11 +434,11 @@ create table if not exists sql_exercises (
     title            varchar(50),
     author           varchar(50),
     ex_text          text,
-    ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    default 'RESERVED',
+    ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
     collection_id    int,
-    tags             text,
-    exercise_type    enum ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') default 'SELECT',
+    tags             longtext not null, # TODO: json!
+    exercise_type    longtext not null, # TODO: json!
     hint             text,
 
     primary key (id, semantic_version, collection_id),
@@ -555,36 +502,13 @@ create table if not exists uml_exercises (
     ex_text          text,
     ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    marked_text      text,
+    marked_text      text     not null,
+    to_ignore_json   longtext not null, # TODO: json
+    mappings_json    longtext not null, # TODO: json
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id)
         references uml_collections (id)
-        on update cascade on delete cascade
-);
-
-create table if not exists uml_to_ignore (
-    exercise_id   int,
-    ex_sem_ver    varchar(10),
-    collection_id int,
-    to_ignore     varchar(50),
-
-    primary key (exercise_id, ex_sem_ver, collection_id, to_ignore),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references uml_exercises (id, semantic_version, collection_id)
-        on update cascade on delete cascade
-);
-
-create table if not exists uml_mappings (
-    exercise_id   int,
-    ex_sem_ver    varchar(10),
-    collection_id int,
-    mapping_key   varchar(50),
-    mapping_value varchar(50),
-
-    primary key (exercise_id, ex_sem_ver, collection_id, mapping_key),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references uml_exercises (id, semantic_version, collection_id)
         on update cascade on delete cascade
 );
 
@@ -935,10 +859,6 @@ drop table if exists uml_user_solutions;
 
 drop table if exists uml_sample_solutions;
 
-drop table if exists uml_mappings;
-
-drop table if exists uml_to_ignore;
-
 drop table if exists uml_exercises;
 
 drop table if exists uml_collections;
@@ -989,13 +909,7 @@ drop table if exists prog_sample_solution_files;
 
 drop table if exists prog_sample_solutions;
 
-drop table if exists prog_uml_cd_parts;
-
 drop table if exists prog_commited_testdata;
-
-drop table if exists prog_unit_test_files;
-
-drop table if exists prog_unit_test_test_configs;
 
 drop table if exists prog_impl_files;
 

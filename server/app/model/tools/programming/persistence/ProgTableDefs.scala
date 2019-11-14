@@ -1,10 +1,11 @@
 package model.tools.programming.persistence
 
+import javax.inject.Inject
 import model.persistence.{DbExerciseFile, ExerciseTableDefs}
 import model.tools.programming.ProgConsts._
 import model.tools.programming._
 import model.tools.uml.UmlClassDiagram
-import model.{ExerciseState, User}
+import model.{ExParts, ExerciseState, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsValue, Json}
 import slick.jdbc.JdbcProfile
@@ -12,12 +13,10 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.ExecutionContext
 
-class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
     with ExerciseTableDefs[ProgExPart, ProgExercise, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgExerciseReview]
     with ProgTableQueries {
-
-  override protected val executor: ExecutionContext = executionContext
 
   import profile.api._
 
@@ -60,15 +59,11 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   // TODO:  private val commitedTestData = TableQuery[CommitedTestDataTable]
 
-  protected val unitTestTestConfigsTQ: TableQuery[UnitTestTestConfigsTable] = TableQuery[UnitTestTestConfigsTable]
-  protected val progUnitTestFilesTQ  : TableQuery[UnitTestFilesTable]       = TableQuery[UnitTestFilesTable]
-
   protected val implementationFilesTQ: TableQuery[ImplementationFilesTable] = TableQuery[ImplementationFilesTable]
 
-  protected val umlClassDiagParts = TableQuery[UmlClassDiagPartsTable]
-
-
   // Helper methods
+
+  override protected val exParts: ExParts[ProgExPart] = ProgExParts
 
   override protected val dbModels               = ProgDbModels
   override protected val exerciseReviewDbModels = ProgExerciseReviewDbModels
@@ -77,19 +72,12 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   // Implicit column types
 
-  private val jsonColumnType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](_.toString, Json.parse)
-
-  //  private val progLanguageColumnType: BaseColumnType[ProgLanguage] =
-  //    MappedColumnType.base[ProgLanguage, String](_.entryName, ProgLanguages.withNameInsensitive)
+  private val jsonValueColumnType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](_.toString, Json.parse)
 
   private val progDataTypesColumnType: BaseColumnType[ProgDataType] =
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
-  private val unitTestTypeColumnType: BaseColumnType[UnitTestType] =
-    MappedColumnType.base[UnitTestType, String](_.entryName, UnitTestTypes.withNameInsensitive)
-
-  override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
-    MappedColumnType.base[ProgExPart, String](_.entryName, ProgExParts.withNameInsensitive)
+  override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] = jsonColumnType(exParts.jsonFormat)
 
   // Tables
 
@@ -102,15 +90,20 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
     private implicit val pdtct: BaseColumnType[ProgDataType] = progDataTypesColumnType
 
-    private implicit val jvct: BaseColumnType[JsValue] = jsonColumnType
+    private implicit val jvct: BaseColumnType[JsValue] = jsonValueColumnType
 
-    private implicit val uttct: BaseColumnType[UnitTestType] = unitTestTypeColumnType
+    private implicit val utpct: BaseColumnType[UnitTestPart] =
+      jsonColumnType(ProgrammingJsonProtocols.unitTestPartFormat)
+
+    private implicit val ssct: BaseColumnType[Seq[String]] = stringSeqColumnType
 
     private implicit val tct: BaseColumnType[Seq[ProgrammingExerciseTag]] =
       jsonSeqColumnType(ProgrammingExerciseTag.jsonFormat)
 
     private implicit val pstdct: BaseColumnType[Seq[ProgSampleTestData]] =
       jsonSeqColumnType(ProgrammingJsonProtocols.progSampleTestDataFormat)
+
+    private implicit val ucdct: BaseColumnType[UmlClassDiagram] = umlClassDiagramColumnType
 
 
     def functionName: Rep[String] = column[String]("function_name")
@@ -127,26 +120,22 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
     def baseDataAsJson: Rep[JsValue] = column[JsValue]("base_data_json")
 
 
-    def unitTestType: Rep[UnitTestType] = column[UnitTestType]("unit_test_type")
-
-    def unitTestsDescription: Rep[String] = column[String]("unit_tests_description")
-
-    def testFileName: Rep[String] = column[String]("test_file_name")
-
-    def unitTestSampleSolFiles: Rep[String] = column[String]("unit_test_sample_sol_file_names")
+    def unitTestPart: Rep[UnitTestPart] = column[UnitTestPart]("unit_test_part_json")
 
 
     def implementationBase: Rep[String] = column[String]("implementation_base")
 
     def implFileName: Rep[String] = column[String]("impl_file_name")
 
-    def implementationSampleSolFileNames: Rep[String] = column[String]("implementation_sample_sol_file_names")
+    def implementationSampleSolFileNames: Rep[Seq[String]] = column[Seq[String]]("implementation_sample_sol_file_names")
 
 
-    def tagsString: Rep[Seq[ProgrammingExerciseTag]] = column[Seq[ProgrammingExerciseTag]]("tags_json")
+    def tags: Rep[Seq[ProgrammingExerciseTag]] = column[Seq[ProgrammingExerciseTag]]("tags_json")
 
 
     def sampleTestData: Rep[Seq[ProgSampleTestData]] = column[Seq[ProgSampleTestData]]("prog_sample_test_data_json")
+
+    def maybeClassDiagram: Rep[Option[UmlClassDiagram]] = column[Option[UmlClassDiagram]]("class_diagram_json")
 
 
     override def * : ProvenShape[DbProgExercise] = (
@@ -154,37 +143,12 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
       functionName, foldername, filename,
       inputTypes, outputType,
       baseDataAsJson.?,
-      unitTestType, unitTestsDescription, testFileName, unitTestSampleSolFiles,
+      unitTestPart,
       implementationBase, implFileName, implementationSampleSolFileNames,
-      tagsString,
-      sampleTestData
+      tags,
+      sampleTestData,
+      maybeClassDiagram
     ) <> (DbProgExercise.tupled, DbProgExercise.unapply)
-
-  }
-
-  // Unit Test Test Configs
-
-  protected class UnitTestTestConfigsTable(tag: Tag) extends ExForeignKeyTable[DbUnitTestTestConfig](tag, "prog_unit_test_test_configs") {
-
-    def id: Rep[Int] = column[Int](idName)
-
-    def shouldFail: Rep[Boolean] = column[Boolean]("should_fail")
-
-    def cause: Rep[Option[String]] = column[Option[String]]("cause")
-
-    def description: Rep[String] = column[String](descriptionName)
-
-
-    def pk: PrimaryKey = primaryKey("prog_unit_test_test_configs_pk", (id, exerciseId, collectionId))
-
-
-    override def * : ProvenShape[DbUnitTestTestConfig] = (id, exerciseId, collectionId, shouldFail, cause, description) <> (DbUnitTestTestConfig.tupled, DbUnitTestTestConfig.unapply)
-
-  }
-
-  protected class UnitTestFilesTable(tag: Tag) extends ExForeignKeyTable[DbExerciseFile](tag, "prog_unit_test_files") with ExerciseFilesTable[DbExerciseFile] {
-
-    def * : ProvenShape[DbExerciseFile] = (name, exerciseId, collectionId, content, fileType, editable) <> (DbExerciseFile.tupled, DbExerciseFile.unapply)
 
   }
 
@@ -198,7 +162,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   protected class ProgUserTestDataTable(tag: Tag) extends ExForeignKeyTable[DbProgUserTestData](tag, "prog_commited_testdata") {
 
-    protected implicit val jvct: BaseColumnType[JsValue] = jsonColumnType
+    protected implicit val jvct: BaseColumnType[JsValue] = jsonValueColumnType
 
 
     def id: Rep[Int] = column[Int]("id")
@@ -218,18 +182,6 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
 
     override def * : ProvenShape[DbProgUserTestData] = (id, exerciseId, collectionId, username, inputAsJson, output, state) <> (DbProgUserTestData.tupled, DbProgUserTestData.unapply)
-
-  }
-
-  protected class UmlClassDiagPartsTable(tag: Tag) extends ExForeignKeyTable[DbProgUmlClassDiagram](tag, "prog_uml_cd_parts") {
-
-    def classDiagram: Rep[UmlClassDiagram] = column[UmlClassDiagram]("class_diagram")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer))
-
-
-    override def * : ProvenShape[DbProgUmlClassDiagram] = (exerciseId, collectionId, classDiagram) <> (DbProgUmlClassDiagram.tupled, DbProgUmlClassDiagram.unapply)
 
   }
 
@@ -266,7 +218,7 @@ class ProgTableDefs @javax.inject.Inject()(protected val dbConfigProvider: Datab
 
   protected class ProgUserSolutionTable(tag: Tag) extends AUserSolutionsTable(tag, "prog_user_solutions") {
 
-    private implicit val jvct: BaseColumnType[JsValue] = jsonColumnType
+    private implicit val jvct: BaseColumnType[JsValue] = jsonValueColumnType
 
 
     def testData: Rep[JsValue] = column[JsValue]("test_data")

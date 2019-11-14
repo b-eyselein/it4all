@@ -1,14 +1,15 @@
 package model.tools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, ExTag}
+import model.{ExPart, ExParts, ExTag}
 
 
-sealed abstract class SqlExPart(val partName: String, val urlName: String) extends EnumEntry with ExPart
+sealed abstract class SqlExPart(val partName: String, val urlName: String) extends ExPart
 
-object SqlExParts extends PlayEnum[SqlExPart] {
+object SqlExParts extends ExParts[SqlExPart] {
 
   val values: IndexedSeq[SqlExPart] = findValues
+
 
   case object SqlSingleExPart extends SqlExPart("Bearbeiten", "solve")
 

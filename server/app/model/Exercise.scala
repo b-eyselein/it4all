@@ -1,10 +1,8 @@
 package model
 
-import play.twirl.api.Html
+import enumeratum.{EnumEntry, PlayEnum}
 
-
-trait ExPart {
-
+trait ExPart extends EnumEntry {
   // FIXME: use enumeratum =?=
 
   def urlName: String
@@ -12,6 +10,9 @@ trait ExPart {
   def partName: String
 
 }
+
+trait ExParts[EP <: ExPart] extends PlayEnum[EP]
+
 
 trait ExTag {
 

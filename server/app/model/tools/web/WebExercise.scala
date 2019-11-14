@@ -1,18 +1,18 @@
 package model.tools.web
 
 import de.uniwue.webtester.{SiteSpec, WebTask}
-import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.points._
 
 import scala.collection.immutable.IndexedSeq
 
-sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
+sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart
 
 
-object WebExParts extends PlayEnum[WebExPart] {
+object WebExParts extends ExParts[WebExPart] {
 
   val values: IndexedSeq[WebExPart] = findValues
+
 
   case object HtmlPart extends WebExPart("Html-Teil", "html")
 

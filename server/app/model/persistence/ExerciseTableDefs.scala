@@ -5,11 +5,12 @@ import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
 import model.points.Points
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.json.{Format, Json, Reads, Writes}
+import play.api.libs.json._
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.Future
+import scala.reflect.ClassTag
 
 trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
   extends LearningPathTableDefs
@@ -59,6 +60,8 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
   protected final def exDbValuesFromExercise(exercise: ExType): DbExType = dbModels.dbExerciseFromExercise(exercise)
 
+  protected val exParts: ExParts[PartType]
+
   // Reading
 
   protected def completeExForEx(collId: Int, ex: DbExType): Future[ExType]
@@ -69,18 +72,43 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
   // Implicit column types
 
-  protected implicit val partTypeColumnType: BaseColumnType[PartType]
-
-  protected implicit val difficultyColumnType: BaseColumnType[Difficulty] =
-    MappedColumnType.base[Difficulty, String](_.entryName, Difficulties.withNameInsensitive)
+  protected def jsonColumnType[T: ClassTag](tFormat: Format[T], default: => T = ???): BaseColumnType[T] = {
+    MappedColumnType.base[T, String](
+      t => Json.stringify(tFormat.writes(t)),
+      jsonT => tFormat.reads(Json.parse(jsonT)).getOrElse(default)
+    )
+  }
 
   protected def jsonSeqColumnType[T](tFormat: Format[T]): BaseColumnType[Seq[T]] = {
     val tSeqFormat: Format[Seq[T]] = Format(Reads.seq(tFormat), Writes.seq(tFormat))
 
-    MappedColumnType.base[Seq[T], String](
-      ts => Json.stringify(tSeqFormat.writes(ts)),
-      jsonTs => tSeqFormat.reads(Json.parse(jsonTs)).getOrElse(Seq.empty)
+    jsonColumnType(tSeqFormat, Seq.empty)
+  }
+
+  protected implicit val partTypeColumnType: BaseColumnType[PartType]
+  // = {
+  //    implicit val ptct: ClassTag[PartType] = exParts.ct
+  //
+  //    jsonColumnType(exParts.jsonFormat)
+  //  }
+
+  protected implicit val difficultyColumnType: BaseColumnType[Difficulty] = jsonColumnType(Difficulties.jsonFormat)
+
+  protected def stringSeqColumnType: BaseColumnType[Seq[String]] = {
+    val stringReads: Reads[String] = jsValue => JsSuccess(jsValue.asInstanceOf[JsString].value)
+
+    val stringWrites: Writes[String] = (x: String) => JsString(x)
+
+    jsonSeqColumnType[String](Format(stringReads, stringWrites))
+  }
+
+  protected def stringMapColumnType: BaseColumnType[Map[String, String]] = {
+    val stringMapFormat: Format[Map[String, String]] = Format(
+      Reads.mapReads[String, String](x => JsSuccess(x)),
+      MapWrites.mapWrites(x => JsString(x))
     )
+
+    jsonColumnType(stringMapFormat)
   }
 
   // Abstract table classes

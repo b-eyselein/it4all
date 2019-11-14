@@ -1,6 +1,7 @@
 package model.tools.sql.persistence
 
 import javax.inject.Inject
+import model.ExParts
 import model.persistence._
 import model.tools.sql.SqlConsts._
 import model.tools.sql._
@@ -10,7 +11,7 @@ import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+class SqlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
     with StringSolutionExerciseTableDefs[SqlExPart, SqlExercise, SqlExerciseReview] {
 
@@ -46,6 +47,8 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Helper methods
 
+  override protected val exParts: ExParts[SqlExPart] = SqlExParts
+
   override protected val dbModels               = SqlDbModels
   override protected val exerciseReviewDbModels = SqlExerciseReviewDbModels
 
@@ -53,7 +56,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override protected def completeExForEx(collId: Int, ex: DbSqlExercise): Future[SqlExercise] = for {
     samples <- futureSamplesForExercise(collId, ex.id)
-  } yield dbModels.exerciseFromDbValues(ex, samples)
+  } yield SqlDbModels.exerciseFromDbValues(ex, samples)
 
   // Saving
 
@@ -67,11 +70,11 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Column types
 
-  override protected implicit val partTypeColumnType: BaseColumnType[SqlExPart] =
-    MappedColumnType.base[SqlExPart, String](_.entryName, SqlExParts.withNameInsensitive)
+  private val sqlExerciseTypeColumnType: BaseColumnType[SqlExerciseType] = jsonColumnType(SqlExerciseType.jsonFormat)
 
-  private implicit val sqlExTypeColumnType: BaseColumnType[SqlExerciseType] =
-    MappedColumnType.base[SqlExerciseType, String](_.entryName, str => SqlExerciseType.withNameInsensitiveOption(str) getOrElse SqlExerciseType.SELECT)
+  private val sqlExerciseTagSeqColumnType: BaseColumnType[Seq[SqlExerciseTag]] = jsonSeqColumnType(SqlExerciseTag.jsonFormat)
+
+  override protected implicit val partTypeColumnType: BaseColumnType[SqlExPart] = jsonColumnType(exParts.jsonFormat)
 
   // Tables
 
@@ -79,11 +82,16 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   class SqlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "sql_exercises") {
 
+    implicit val setct:BaseColumnType[SqlExerciseType] = sqlExerciseTypeColumnType
+
+    implicit val setsct: BaseColumnType[Seq[SqlExerciseTag]] = sqlExerciseTagSeqColumnType
+
+
     def exerciseType: Rep[SqlExerciseType] = column[SqlExerciseType]("exercise_type")
 
     def hint: Rep[String] = column[String](hintName)
 
-    def tags: Rep[String] = column[String](tagsName)
+    def tags: Rep[Seq[SqlExerciseTag]] = column[Seq[SqlExerciseTag]](tagsName)
 
 
     override def * : ProvenShape[DbSqlExercise] = (id, collectionId, semanticVersion, title, author, text, state, exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)

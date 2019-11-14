@@ -1,15 +1,14 @@
 package model.tools.xml
 
-import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.points.Points
 
 import scala.collection.immutable.IndexedSeq
 
 
-sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
+sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart
 
-object XmlExParts extends PlayEnum[XmlExPart] {
+object XmlExParts extends ExParts[XmlExPart] {
 
   val values: IndexedSeq[XmlExPart] = findValues
 

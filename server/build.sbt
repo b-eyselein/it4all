@@ -25,14 +25,12 @@ lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(packageName in Universal := s"${name.value}")
 
+val artifactoryUrl = "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory"
+
 resolvers ++= Seq(
   // LS 6 Uni Wue Artifactory
-  ("Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-release")
-    .withAllowInsecureProtocol(true),
-  ("Snapshot Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-snapshot/")
-    .withAllowInsecureProtocol(true),
-
-  Resolver.bintrayRepo("webjars", "maven"),
+  ("Artifactory" at s"$artifactoryUrl/libs-release").withAllowInsecureProtocol(true),
+  ("Snapshot Artifactory" at s"$artifactoryUrl/libs-snapshot/").withAllowInsecureProtocol(true),
 
   // Repo for play-json-schema-validator
   "emueller-bintray" at "https://dl.bintray.com/emueller/maven"
@@ -72,5 +70,5 @@ libraryDependencies ++= Seq(
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",
 
   // Web tester
-  "de.uniwue" %% "it4all_webtester" % "0.3.0"
+  "de.uniwue" %% "it4all_webtester" % "0.3.2"
 )

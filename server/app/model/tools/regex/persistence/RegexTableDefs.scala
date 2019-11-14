@@ -1,16 +1,16 @@
 package model.tools.regex.persistence
 
 import javax.inject.Inject
-import model.StringSampleSolution
 import model.persistence._
 import model.tools.regex._
+import model.{ExParts, StringSampleSolution}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
+class RegexTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
     with StringSolutionExerciseTableDefs[RegexExPart, RegexExercise, RegexExerciseReview] {
 
@@ -46,6 +46,8 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   // Helper methods
 
+  override protected val exParts: ExParts[RegexExPart] = RegexExParts
+
   override protected val dbModels               = RegexDbModels
   override protected val exerciseReviewDbModels = RegexExerciseReviewDbModels
 
@@ -58,9 +60,6 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   // Column types
 
-  override protected implicit val partTypeColumnType: BaseColumnType[RegexExPart] =
-    MappedColumnType.base[RegexExPart, String](_.entryName, RegexExParts.withNameInsensitive)
-
   private val regexCorrectionTypeColumnType: BaseColumnType[RegexCorrectionType] =
     MappedColumnType.base[RegexCorrectionType, String](_.entryName, RegexCorrectionTypes.withNameInsensitive)
 
@@ -69,6 +68,8 @@ class RegexTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   private val extractionTestDataSeqColumnType: BaseColumnType[Seq[RegexExtractionTestData]] =
     jsonSeqColumnType(RegexCompleteResultJsonProtocol.regexExtractionTestDataFormat)
+
+  override protected implicit val partTypeColumnType: BaseColumnType[RegexExPart] = jsonColumnType(exParts.jsonFormat)
 
   // Tables
 

@@ -23,7 +23,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
     ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state,
     ex.htmlText,
     ex.jsText,
-    SiteSpec(1, ex.fileName, htmlTasks, jsTasks),
+    SiteSpec(ex.fileName, htmlTasks, jsTasks),
     files,
     sampleSolutions
   )
@@ -105,7 +105,7 @@ final case class DbHtmlTask(
   xpathQuery: String,
   awaitedTag: String,
   textContent: Option[String],
-  attributes: Seq[HtmlAttribute]
+  attributes: Map[String, String]
 ) extends DbWebTask
 
 // JsTask, JsCondition
@@ -124,7 +124,7 @@ final case class DbJsCondition(
   id: Int, taskId: Int, exId: Int, collId: Int,
   isPrecondition: Boolean, xpathQuery: String,
   awaitedTag: String, awaitedTextContent: Option[String],
-  attributes: Seq[HtmlAttribute]
+  attributes: Map[String, String]
 )
 
 // Exercise review

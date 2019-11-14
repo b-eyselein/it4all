@@ -1,13 +1,13 @@
 package model.tools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, ExTag}
+import model.{ExPart, ExParts, ExTag}
 
 // Exercise Parts
 
-sealed abstract class ProgExPart(val partName: String, val urlName: String) extends ExPart with EnumEntry
+sealed abstract class ProgExPart(val partName: String, val urlName: String) extends ExPart
 
-object ProgExParts extends PlayEnum[ProgExPart] {
+object ProgExParts extends ExParts[ProgExPart] {
 
   override def values: IndexedSeq[ProgExPart] = findValues
 
