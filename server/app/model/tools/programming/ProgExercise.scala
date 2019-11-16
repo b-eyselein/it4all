@@ -7,7 +7,7 @@ import play.api.libs.json.JsValue
 
 
 final case class ProgExercise(
-  id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   functionName: String, foldername: String, filename: String,
   inputTypes: Seq[ProgInput], outputType: ProgDataType,
 

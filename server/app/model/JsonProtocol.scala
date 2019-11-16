@@ -20,4 +20,5 @@ object JsonProtocol {
 
     Json.format[User]
   }
+
 }

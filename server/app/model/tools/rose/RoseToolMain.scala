@@ -8,6 +8,7 @@ import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.programming.ProgLanguages
 import model.tools.rose.persistence.RoseTableDefs
+import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
@@ -44,7 +45,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Yaml, Html forms, Json
 
-  override val exerciseYamlFormat: MyYamlFormat[RoseExercise] = RoseExYamlProtocol.RoseExYamlFormat
+  override def exerciseYamlFormat: YamlFormat[RoseExercise] = RoseExYamlProtocol.roseExerciseYamlFormat
 
   override val exerciseJsonFormat: Format[RoseExercise] = RoseCompleteResultJsonProtocol.exerciseFormat
 

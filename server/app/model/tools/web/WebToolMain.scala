@@ -12,6 +12,7 @@ import model.core.result.CompleteResultJsonProtocol
 import model.points.{Points, addUp}
 import model.toolMains._
 import model.tools.web.persistence.WebTableDefs
+import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data._
@@ -51,7 +52,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected val exerciseYamlFormat: MyYamlFormat[WebExercise] = WebToolYamlProtocol.WebExYamlFormat
+  override protected def exerciseYamlFormat: YamlFormat[WebExercise] = WebToolYamlProtocol.webExerciseYamlFormat
 
   override val exerciseJsonFormat: Format[WebExercise] = WebCompleteResultJsonProtocol.exerciseFormat
 

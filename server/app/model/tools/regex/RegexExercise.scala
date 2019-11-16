@@ -1,8 +1,8 @@
 package model.tools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model._
 import model.persistence.ADbExercise
+import model._
 
 import scala.collection.immutable.IndexedSeq
 
@@ -21,17 +21,13 @@ case object RegexCorrectionTypes extends PlayEnum[RegexCorrectionType] {
 }
 
 final case class RegexExercise(
-  id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   maxPoints: Int,
   correctionType: RegexCorrectionType,
   sampleSolutions: Seq[StringSampleSolution],
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
-) extends Exercise with ADbExercise {
-
-  override def collectionId: Int = collId
-
-}
+) extends Exercise with ADbExercise
 
 
 final case class RegexMatchTestData(id: Int, data: String, isIncluded: Boolean)

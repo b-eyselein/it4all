@@ -3,10 +3,49 @@ package model.tools.programming
 import model._
 import model.core.result.CompleteResultJsonProtocol
 import model.tools.programming.ProgConsts._
+import model.tools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
 import play.api.libs.json._
 
 object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] {
+
+  lazy val progDataTypeFormat: Format[ProgDataType] = {
+
+    val genericProgDataTypeFormat: Format[GenericProgDataType] = {
+      implicit lazy val lf: Format[ProgDataTypes.LIST] = {
+        implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
+
+        Json.format[ProgDataTypes.LIST]
+      }
+
+      implicit lazy val tf: Format[ProgDataTypes.TUPLE] = {
+        implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
+
+        Json.format[ProgDataTypes.TUPLE]
+      }
+
+      implicit lazy val df: Format[ProgDataTypes.DICTIONARY] = {
+        implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
+
+        Json.format[ProgDataTypes.DICTIONARY]
+      }
+
+      Json.format[GenericProgDataType]
+    }
+
+    val reads: Reads[ProgDataType] = {
+      case jsString: JsString => NonGenericProgDataType.jsonFormat.reads(jsString)
+      case jsObject: JsObject => genericProgDataTypeFormat.reads(jsObject)
+      case other              => JsError(s"Wrong json type: ${other.getClass}")
+    }
+
+    val writes: Writes[ProgDataType] = {
+      case nonGenericProgDataType: NonGenericProgDataType => NonGenericProgDataType.jsonFormat.writes(nonGenericProgDataType)
+      case genericProgDataType: GenericProgDataType       => genericProgDataTypeFormat.writes(genericProgDataType)
+    }
+
+    Format(reads, writes)
+  }
 
   // Exercise
 
@@ -29,7 +68,7 @@ object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResul
   val progSampleTestDataFormat: Format[ProgSampleTestData] = Json.format[ProgSampleTestData]
 
   val progInputFormat: Format[ProgInput] = {
-    implicit val pdtf: Format[ProgDataType] = ProgDataTypes.jsonFormat
+    implicit val pdtf: Format[ProgDataType] = progDataTypeFormat
 
     Json.format[ProgInput]
   }
@@ -49,7 +88,7 @@ object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResul
 
     implicit val pif: Format[ProgInput] = progInputFormat
 
-    implicit val pdtf: Format[ProgDataType] = ProgDataTypes.jsonFormat
+    implicit val pdtf: Format[ProgDataType] = progDataTypeFormat
 
     implicit val utf: Format[UnitTestPart] = unitTestPartFormat
 

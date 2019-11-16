@@ -1,11 +1,14 @@
 package model
 
 import better.files.File
+import enumeratum.{EnumEntry, PlayEnum}
 import model.MyYamlProtocol._
 import model.core.CommonUtils
 import model.core.CoreConsts._
-import model.tools.programming.ProgConsts.{authorName, idName, shortNameName, statusName, textName, titleName}
+import model.tools.programming.ProgConsts.{authorName, idName, statusName, textName, titleName}
+import model.tools.web.WebToolYamlProtocol.{exerciseFileYamlFormat, yamlFormat2}
 import net.jcazevedo.moultingyaml._
+import play.api.Logger
 import play.api.libs.json._
 
 import scala.language.{implicitConversions, postfixOps}
@@ -13,22 +16,14 @@ import scala.util.{Failure, Success, Try}
 
 final case class WrongFieldTypeException(fieldtype: String) extends Exception
 
-trait MyYamlReader[A] {
+@deprecated
+trait MyYamlFormat[A] extends YamlWriter[A] {
 
   def read(yaml: YamlValue): Try[A]
 
 }
 
-
-trait MyYamlWriter[A] {
-
-  def write(obj: A): YamlValue
-
-}
-
-trait MyYamlFormat[A] extends MyYamlReader[A] with MyYamlWriter[A]
-
-
+@deprecated
 object YamlObj {
 
   // FIXME: remove cast ...
@@ -36,6 +31,7 @@ object YamlObj {
 
 }
 
+@deprecated
 object YamlArr {
 
   def apply(objects: Seq[YamlValue]): YamlArray = YamlArray(objects toVector)
@@ -110,8 +106,6 @@ object MyYamlProtocol {
 
     def stringField(fieldName: String): Try[String] = someField(fieldName).flatMap(_.asStr)
 
-    def forgivingStringField(fieldName: String): Try[String] = someField(fieldName).map(_.forgivingStr)
-
     def optStringField(fieldName: String): Try[Option[String]] = someField(fieldName) match {
       case Failure(_)     => Success(None)
       case Success(field) => field.asStr.map(Some.apply)
@@ -128,30 +122,53 @@ object MyYamlProtocol {
 
     def enumField[T](fieldName: String, valueOf: String => T): Try[T] = stringField(fieldName).map(valueOf)
 
-    def enumFieldOption[T](fieldName: String, valueOf: String => Option[T]): Try[Option[T]] = stringField(fieldName).map(valueOf)
-
     def jsonField(fieldName: String): Try[JsValue] = someField(fieldName).map(mapToJson)
 
     def optJsonField(fieldName: String): Try[Option[JsValue]] = optField(fieldName, yamlValue => Try(mapToJson(yamlValue)))
 
-    def mapToJson(yamlValue: YamlValue): JsValue = yamlValue match {
-      case YamlArray(arrayValues) => JsArray(arrayValues.map(mapToJson))
-      case YamlSet(content)       => JsArray(content.toSeq.map(mapToJson))
+  }
 
-      case YamlObject(yamlFields) => JsObject.apply(yamlFields.map {
-        case (key, value) => PimpedYamlValue(key).forgivingStr -> mapToJson(value)
-      })
+  def mapToJson(yamlValue: YamlValue): JsValue = yamlValue match {
+    case YamlArray(arrayValues) => JsArray(arrayValues.map(mapToJson))
+    case YamlSet(content)       => JsArray(content.toSeq.map(mapToJson))
 
-      case YamlDate(date) => JsString(date.toString)
+    case YamlObject(yamlFields) => JsObject.apply(yamlFields.map {
+      case (key, value) => PimpedYamlValue(key).forgivingStr -> mapToJson(value)
+    })
 
-      case YamlNaN | YamlNegativeInf | YamlPositiveInf => JsNull
+    case YamlDate(date) => JsString(date.toString)
 
-      case YamlString(str)        => JsString(str)
-      case YamlBoolean(bool)      => JsBoolean(bool)
-      case YamlNull               => JsNull
-      case YamlNumber(bigDecimal) => JsNumber(bigDecimal)
+    case YamlNaN | YamlNegativeInf | YamlPositiveInf => JsNull
 
-    }
+    case YamlString(str)        => JsString(str)
+    case YamlBoolean(bool)      => JsBoolean(bool)
+    case YamlNull               => JsNull
+    case YamlNumber(bigDecimal) => JsNumber(bigDecimal)
+
+  }
+}
+
+
+// FIXME: delete (most of) above!
+
+
+final case class MapYamlHelperClass[K, V](key: K, value: V)
+
+object MapYamlHelper extends DefaultYamlProtocol {
+
+  def stringMapYamlFormat[K: YamlFormat, V: YamlFormat]: YamlFormat[Map[K, V]] = new YamlFormat[Map[K, V]] {
+
+    private val mapYamlHelperYamlFormat: YamlFormat[List[MapYamlHelperClass[K, V]]] =
+      DefaultYamlProtocol.listFormat(yamlFormat2(MapYamlHelperClass[K, V]))
+
+    override def read(yaml: YamlValue): Map[K, V] = mapYamlHelperYamlFormat.read(yaml)
+      .map { case MapYamlHelperClass(key, value) => (key, value) }
+      .toMap
+
+    override def write(obj: Map[K, V]): YamlValue = mapYamlHelperYamlFormat.write(
+      obj.toList.map { case (key, value) => MapYamlHelperClass(key, value) }
+    )
+
   }
 
 }
@@ -159,8 +176,43 @@ object MyYamlProtocol {
 
 trait MyYamlProtocol extends DefaultYamlProtocol {
 
-  protected val baseResourcesPath: File = File("conf") / "resources"
+  private val logger = Logger(classOf[MyYamlProtocol])
 
+  protected class EnumYamlFormat[E <: EnumEntry](protected val enum: PlayEnum[E]) extends YamlFormat[E] {
+
+    override def read(yaml: YamlValue): E = yaml match {
+      case YamlString(str) => enum.withNameInsensitive(str)
+      case other           =>
+        logger.error(s"Could not read yaml type ${other.getClass} as enum!")
+        ???
+    }
+
+    override def write(obj: E): YamlValue = obj.entryName
+
+  }
+
+  val exerciseStateYamlFormat: EnumYamlFormat[ExerciseState] = new EnumYamlFormat(ExerciseState)
+
+
+  protected val jsonValueYamlFormat: YamlFormat[JsValue] = new YamlFormat[JsValue] {
+
+    override def read(yaml: YamlValue): JsValue = MyYamlProtocol.mapToJson(yaml)
+
+    override def write(obj: JsValue): YamlValue = {
+      logger.error("TODO: implement yaml printing of json values!")
+      ???
+    }
+
+  }
+
+  protected val semanticVersionYamlFormat: YamlFormat[SemanticVersion] = yamlFormat3(SemanticVersion)
+
+  protected val stringSampleSolutionYamlFormat: YamlFormat[StringSampleSolution] = yamlFormat2(StringSampleSolution)
+
+
+  protected val baseResourcesPath: File = File.currentWorkingDirectory / "conf" / "resources"
+
+  @deprecated
   protected def readBaseValues(yamlObject: YamlObject): Try[BaseValues] = for {
     id <- yamlObject.intField(idName)
     collId <- yamlObject.intField(collectionIdName)
@@ -171,6 +223,7 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
     semanticVersion <- yamlObject.someField(semanticVersionName) flatMap SemanticVersionHelper.semanticVersionYamlField
   } yield BaseValues(id, collId, semanticVersion, title, author, text, state)
 
+  @deprecated
   abstract class MyYamlObjectFormat[T] extends MyYamlFormat[T] {
 
     override def read(yaml: YamlValue): Try[T] = yaml match {
@@ -182,53 +235,43 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
 
   }
 
-  protected object StringSampleSolutionYamlFormat extends MyYamlObjectFormat[StringSampleSolution] {
+  val exerciseFileYamlFormat: YamlFormat[ExerciseFile] = new YamlFormat[ExerciseFile] {
 
-    override protected def readObject(yamlObject: YamlObject): Try[StringSampleSolution] = for {
-      id <- yamlObject.intField(idName)
-      sample <- yamlObject.stringField(sampleName)
-    } yield StringSampleSolution(id, sample)
+    // FIXME: use yamlFormat4 for ExerciseFile!
+    //     val exerciseFileYamlFormat: YamlFormat[ExerciseFile] = yamlFormat4(ExerciseFile)
 
-    override def write(obj: StringSampleSolution): YamlValue = YamlObject(
-      YamlString(idName) -> YamlNumber(obj.id),
-      YamlString(sampleName) -> YamlString(obj.sample)
-    )
-
-  }
-
-  protected object ExerciseFileYamlFormat extends MyYamlObjectFormat[ExerciseFile] {
-
-    override protected def readObject(yamlObject: YamlObject): Try[ExerciseFile] = for {
-      path <- yamlObject.stringField(pathName)
-      resourcePath <- yamlObject.stringField("resourcePath")
-      fileType <- yamlObject.stringField("fileType")
-      editable <- yamlObject.optBoolField("editable").map(_.getOrElse(true))
-    } yield {
-      val content = (baseResourcesPath / resourcePath).contentAsString
-      ExerciseFile(path, content, fileType, editable)
+    override def read(yamlValue: YamlValue): ExerciseFile = yamlValue match {
+      case yamlObject: YamlObject =>
+        val x = for {
+          path <- yamlObject.stringField(pathName)
+          resourcePath <- yamlObject.stringField("resourcePath")
+          fileType <- yamlObject.stringField("fileType")
+          editable <- yamlObject.optBoolField("editable").map(_.getOrElse(true))
+        } yield {
+          val content = (baseResourcesPath / resourcePath).contentAsString
+          ExerciseFile(path, content, fileType, editable)
+        }
+        x.getOrElse(???)
+      case _                      => ???
     }
 
     override def write(obj: ExerciseFile): YamlValue = ???
 
   }
 
+  protected val filesSampleSolutionYamlFormat: YamlFormat[FilesSampleSolution] = {
+    implicit val efyf: YamlFormat[ExerciseFile] = exerciseFileYamlFormat
+
+    yamlFormat2(FilesSampleSolution)
+  }
 }
 
 object ExerciseCollectionYamlProtocol extends MyYamlProtocol {
 
-  final case class ExerciseCollectionYamlFormat(toolId: String) extends MyYamlObjectFormat[ExerciseCollection] {
+  val exerciseCollectionYamlFormat: YamlFormat[ExerciseCollection] = {
+    implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
 
-    override protected def readObject(yamlObject: YamlObject): Try[ExerciseCollection] = for {
-      id <- yamlObject.intField(idName)
-      title <- yamlObject.stringField(titleName)
-      author <- yamlObject.stringField(authorName)
-      text <- yamlObject.stringField(textName)
-      state <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
-      shortName <- yamlObject.stringField(shortNameName)
-    } yield ExerciseCollection(id, toolId, title, author, text, state, shortName)
-
-    override def write(obj: ExerciseCollection): YamlValue = ???
-
+    yamlFormat7(ExerciseCollection)
   }
 
 }

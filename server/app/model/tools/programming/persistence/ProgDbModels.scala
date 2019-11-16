@@ -10,7 +10,7 @@ import play.api.libs.json.{JsArray, JsValue}
 object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 
   override def dbExerciseFromExercise(ex: ProgExercise): DbProgExercise = DbProgExercise(
-    ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state,
+    ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state,
     ex.functionName, ex.foldername, ex.filename,
     ex.inputTypes, ex.outputType,
     ex.baseData,

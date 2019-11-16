@@ -6,6 +6,7 @@ import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.xml.persistence.XmlTableDefs
+import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.libs.json.{Format, JsString}
 import play.api.mvc.{AnyContent, Request}
@@ -45,7 +46,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected val exerciseYamlFormat: MyYamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
+  override protected val exerciseYamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.xmlExerciseYamlFormat
 
   override val exerciseJsonFormat: Format[XmlExercise] = XmlCompleteResultJsonProtocol.exerciseFormat
 

@@ -5,6 +5,7 @@ import model._
 import model.points._
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.regex.persistence.RegexTableDefs
+import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.libs.json.{Format, JsString}
 import play.api.mvc.{AnyContent, Request}
@@ -37,7 +38,7 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   // Yaml, Html forms, Json
 
-  override protected val exerciseYamlFormat: MyYamlFormat[RegexExercise] = RegexToolYamlProtocol.RegexExYamlFormat
+  override protected val exerciseYamlFormat: YamlFormat[RegexExercise] = RegexToolYamlProtocol.regexExerciseYamlFormat
 
   override val exerciseJsonFormat: Format[RegexExercise] = RegexCompleteResultJsonProtocol.exerciseFormat
 

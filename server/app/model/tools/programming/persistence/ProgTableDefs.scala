@@ -74,8 +74,8 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   private val jsonValueColumnType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](_.toString, Json.parse)
 
-  private val progDataTypesColumnType: BaseColumnType[ProgDataType] =
-    MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+  private val progDataTypesColumnType: BaseColumnType[ProgDataType] = jsonColumnType(ProgrammingJsonProtocols.progDataTypeFormat)
+  //    MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.NonGenericProgDataType.STRING)
 
   override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] = jsonColumnType(exParts.jsonFormat)
 

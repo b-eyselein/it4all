@@ -21,7 +21,7 @@ object XmlExParts extends ExParts[XmlExPart] {
 
 
 final case class XmlExercise(
-  id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   grammarDescription: String, rootNode: String, samples: Seq[XmlSampleSolution]
 ) extends Exercise {
 

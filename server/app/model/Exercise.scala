@@ -26,7 +26,7 @@ trait Exercise {
 
   val id: Int
 
-  val collId: Int
+  val collectionId: Int
 
   val semanticVersion: SemanticVersion
 

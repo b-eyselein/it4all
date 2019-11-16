@@ -8,7 +8,7 @@ import model.{Difficulty, ExerciseState, SemanticVersion}
 object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise] {
 
   override def dbExerciseFromExercise(ex: XmlExercise): DbXmlExercise =
-    DbXmlExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.grammarDescription, ex.rootNode)
+    DbXmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.grammarDescription, ex.rootNode)
 
   def exerciseFromDbValues(dbXmlEx: DbXmlExercise, samples: Seq[XmlSampleSolution]): XmlExercise =
     XmlExercise(

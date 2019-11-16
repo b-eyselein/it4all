@@ -3,7 +3,7 @@ package model.tools.rose.persistence
 import javax.inject.Inject
 import model.core.CoreConsts.{sampleName, solutionName}
 import model.persistence.ExerciseTableDefs
-import model.tools.programming.{ProgDataType, ProgDataTypes, ProgLanguage, ProgLanguages}
+import model.tools.programming.{ProgDataType, ProgLanguage, ProgLanguages, ProgrammingJsonProtocols}
 import model.tools.rose._
 import model.{ExParts, SemanticVersion}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -102,19 +102,19 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
   // Implicit column types
 
-  implicit val ProgLanguageColumnType: BaseColumnType[ProgLanguage] =
+  private val progLanguageColumnType: BaseColumnType[ProgLanguage] =
     MappedColumnType.base[ProgLanguage, String](_.entryName, ProgLanguages.withNameInsensitive)
 
-  implicit val ProgDataTypesColumnType: BaseColumnType[ProgDataType] =
-    MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+  private val progDataTypeColumnType: BaseColumnType[ProgDataType] =
+    jsonColumnType(ProgrammingJsonProtocols.progDataTypeFormat)
 
   override protected implicit val partTypeColumnType: BaseColumnType[RoseExPart] = jsonColumnType(exParts.jsonFormat)
 
   // Tables
 
-  class RoseExerciseCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "rose_collections")
+  protected class RoseExerciseCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "rose_collections")
 
-  class RoseExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "rose_exercises") {
+  protected class RoseExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "rose_exercises") {
 
     def fieldWidth: Rep[Int] = column[Int]("field_width")
 
@@ -128,7 +128,10 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
   }
 
-  class RoseInputTypesTable(tag: Tag) extends ExForeignKeyTable[DbRoseInputType](tag, "rose_inputs") {
+  protected class RoseInputTypesTable(tag: Tag) extends ExForeignKeyTable[DbRoseInputType](tag, "rose_inputs") {
+
+    private implicit val pdtct: BaseColumnType[ProgDataType] = progDataTypeColumnType
+
 
     def id: Rep[Int] = column[Int]("id")
 
@@ -144,7 +147,10 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
   }
 
-  class RoseSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "rose_sample_solutions") {
+  protected class RoseSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "rose_sample_solutions") {
+
+    private implicit val plct: BaseColumnType[ProgLanguage] = progLanguageColumnType
+
 
     def sample: Rep[String] = column[String](sampleName)
 
@@ -158,7 +164,10 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
   }
 
-  class RoseSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "rose_user_solutions") {
+  protected class RoseSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "rose_user_solutions") {
+
+    private implicit val plct: BaseColumnType[ProgLanguage] = progLanguageColumnType
+
 
     def solution: Rep[String] = column[String](solutionName)
 
@@ -170,7 +179,7 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
   }
 
-  class RoseExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "rose_exercise_reviews") {
+  protected class RoseExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "rose_exercise_reviews") {
 
     override def * : ProvenShape[DbRoseExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbRoseExerciseReview.tupled, DbRoseExerciseReview.unapply)
 

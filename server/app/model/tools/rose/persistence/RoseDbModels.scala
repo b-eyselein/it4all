@@ -9,7 +9,7 @@ import model.{Difficulty, ExerciseState, SemanticVersion}
 object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise] {
 
   override def dbExerciseFromExercise(ex: RoseExercise): DbRoseExercise =
-    DbRoseExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer)
+    DbRoseExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer)
 
   def exerciseFromDbValues(ex: DbRoseExercise, inputTypes: Seq[RoseInputType], samples: Seq[RoseSampleSolution]): RoseExercise =
     RoseExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer, inputTypes, samples)

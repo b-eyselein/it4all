@@ -8,6 +8,7 @@ import play.api.mvc._
 import play.api.{Configuration, Logger}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 @Singleton
 class ApiAdminController @Inject()(cc: ControllerComponents, tl: ToolList, configuration: Configuration)(implicit ec: ExecutionContext)
@@ -22,6 +23,10 @@ class ApiAdminController @Inject()(cc: ControllerComponents, tl: ToolList, confi
   def readCollections(toolId: String): Action[AnyContent] = apiWithToolMain(toolId) { (_, _, toolMain) =>
 
     val successfulReadCollections: Seq[ExerciseCollection] = toolMain.readCollectionsFromYaml
+      .tapEach {
+        case Success(_)         => ()
+        case Failure(exception) => logger.error("Error while reading yaml", exception)
+      }
       .flatMap(_.toOption) // filter out Failures
 
     Future.successful(Ok(Json.toJson(successfulReadCollections)(Writes.seq(JsonProtocol.collectionFormat))))
@@ -34,6 +39,10 @@ class ApiAdminController @Inject()(cc: ControllerComponents, tl: ToolList, confi
       case Some(collection) =>
 
         val successfulReadExercises: Seq[toolMain.ExType] = toolMain.readExercisesFromYaml(collection)
+          .tapEach {
+            case Success(_)         => ()
+            case Failure(exception) => logger.error("Error while reading yaml", exception)
+          }
           .flatMap(_.toOption) // filter out Failures
 
         Ok(Json.toJson(successfulReadExercises)(Writes.seq(toolMain.exerciseJsonFormat)))

@@ -11,7 +11,7 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   // Exercise
 
   override def dbExerciseFromExercise(ex: WebExercise): DbWebExercise =
-    DbWebExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
+    DbWebExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
 
   def exerciseFromDbExercise(
     ex: DbWebExercise,

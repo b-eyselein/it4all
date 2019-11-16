@@ -6,6 +6,7 @@ import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.programming.persistence.ProgTableDefs
+import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
@@ -50,7 +51,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Yaml, Html Forms, Json
 
-  override protected val exerciseYamlFormat: MyYamlFormat[ProgExercise] = ProgExYamlProtocol.ProgExYamlFormat
+  override protected def exerciseYamlFormat: YamlFormat[ProgExercise] = ProgExYamlProtocol.programmingExerciseYamlFormat
 
   override val exerciseJsonFormat: Format[ProgExercise] = ProgrammingJsonProtocols.exerciseFormat
 

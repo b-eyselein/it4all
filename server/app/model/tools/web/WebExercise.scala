@@ -22,7 +22,7 @@ object WebExParts extends ExParts[WebExPart] {
 
 
 final case class WebExercise(
-  id: Int, collId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
   htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec, files: Seq[ExerciseFile], sampleSolutions: Seq[FilesSampleSolution]
 ) extends FileExercise[WebExPart] {
 
@@ -37,9 +37,6 @@ final case class WebExercise(
 
 
 final case class WebSolution(htmlSolution: String, jsSolution: Option[String])
-
-final case class WebSampleSolution(id: Int, sample: Seq[ExerciseFile])
-  extends SampleSolution[Seq[ExerciseFile]]
 
 final case class WebUserSolution(id: Int, part: WebExPart, solution: Seq[ExerciseFile], points: Points, maxPoints: Points)
   extends UserSolution[WebExPart, Seq[ExerciseFile]]

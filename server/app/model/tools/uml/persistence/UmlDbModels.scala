@@ -8,7 +8,7 @@ import model.{Difficulty, ExerciseState, SemanticVersion}
 object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise] {
 
   override def dbExerciseFromExercise(ex: UmlExercise): DbUmlExercise =
-    DbUmlExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, ex.toIgnore, ex.mappings)
+    DbUmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, ex.toIgnore, ex.mappings)
 
   def exerciseFromDbExercise(ex: DbUmlExercise, samples: Seq[UmlSampleSolution]): UmlExercise =
     UmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, ex.toIgnore, ex.mappings, samples)

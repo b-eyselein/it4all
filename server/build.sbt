@@ -52,7 +52,7 @@ libraryDependencies ++= Seq(
   "com.beachape" %% "enumeratum-play" % "1.5.16", // MIT
   "com.beachape" %% "enumeratum-play-json" % "1.5.16", // MIT
 
-  "net.jcazevedo" %% "moultingyaml" % "0.4.1", // MIT
+  "net.jcazevedo" %% "moultingyaml" % "0.4.3-WUE-SNAPSHOT", // MIT
 
   "com.github.t3hnar" %% "scala-bcrypt" % "4.1", // Apache 2.0
 

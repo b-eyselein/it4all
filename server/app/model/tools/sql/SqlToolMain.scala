@@ -7,6 +7,7 @@ import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.sql.SqlToolMain._
 import model.tools.sql.persistence.SqlTableDefs
+import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json._
@@ -61,7 +62,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
 
   // Yaml, Html forms, Json
 
-  override protected val exerciseYamlFormat: MyYamlFormat[SqlExercise] = SqlYamlProtocol.SqlExerciseYamlFormat
+  override protected val exerciseYamlFormat: YamlFormat[SqlExercise] = SqlYamlProtocol.sqlExerciseYamlFormat
 
   override val exerciseJsonFormat: Format[SqlExercise] = SqlJsonProtocols.exerciseFormat
 

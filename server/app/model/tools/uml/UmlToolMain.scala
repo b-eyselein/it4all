@@ -5,7 +5,8 @@ import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.uml.persistence.UmlTableDefs
-import model.{ExerciseCollection, MyYamlFormat, User}
+import model.{ExerciseCollection, User}
+import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json.{Format, JsError, JsSuccess}
@@ -47,7 +48,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override val exerciseYamlFormat: MyYamlFormat[UmlExercise] = UmlExYamlProtocol.UmlExYamlFormat
+  override protected def exerciseYamlFormat: YamlFormat[UmlExercise] = UmlExYamlProtocol.umlExerciseYamlFormat
 
   override val exerciseJsonFormat: Format[UmlExercise] = UmlCompleteResultJsonProtocol.exerciseFormat
 

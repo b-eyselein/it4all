@@ -10,7 +10,7 @@ object SqlDbModels extends ADbModels[SqlExercise, DbSqlExercise] {
   override def dbExerciseFromExercise(ex: SqlExercise): DbSqlExercise = {
 //    val tagsAsString = ex.tags.map(_.entryName).mkString(tagJoinChar)
 
-    DbSqlExercise(ex.id, ex.collId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.exerciseType, ex.tags, ex.hint)
+    DbSqlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.exerciseType, ex.tags, ex.hint)
   }
 
   def exerciseFromDbValues(dbEx: DbSqlExercise, samples: Seq[StringSampleSolution]): SqlExercise = {

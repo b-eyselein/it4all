@@ -46,9 +46,10 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Yaml, Html forms, Json
 
-  final protected val collectionYamlFormat: MyYamlFormat[ExerciseCollection] = ExerciseCollectionYamlProtocol.ExerciseCollectionYamlFormat(urlPart)
+  protected val collectionYamlFormat: YamlFormat[ExerciseCollection] =
+    ExerciseCollectionYamlProtocol.exerciseCollectionYamlFormat
 
-  protected val exerciseYamlFormat: MyYamlFormat[ExType]
+  protected def exerciseYamlFormat: YamlFormat[ExType]
 
   val exerciseJsonFormat: Format[ExType]
 
@@ -149,10 +150,10 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Helper methods for admin
 
-  private def readYamlFile[T](fileToRead: File, format: MyYamlFormat[T]): Seq[Try[T]] = Try(fileToRead.contentAsString.parseYaml) match {
+  private def readYamlFile[T](fileToRead: File, format: YamlFormat[T]): Seq[Try[T]] = Try(fileToRead.contentAsString.parseYaml) match {
     case Failure(error)     => Seq(Failure(error))
     case Success(yamlValue) => yamlValue match {
-      case YamlArray(yamlObjects) => yamlObjects.map(format.read)
+      case YamlArray(yamlObjects) => yamlObjects.map(x => Try(format.read(x)))
       case _                      => ???
     }
   }
