@@ -1,8 +1,8 @@
 package model.tools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.persistence.ADbExercise
 import model._
+import model.persistence.ADbExercise
 
 import scala.collection.immutable.IndexedSeq
 

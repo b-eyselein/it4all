@@ -1,23 +1,26 @@
 package model.tools.regex
 
 import model.core.matching.MatchingResult
-import model.core.result.CompleteResultJsonProtocol
 import model.points.{Points, pointsJsonWrites}
+import model.tools.ToolJsonProtocol
 import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
 
-object RegexCompleteResultJsonProtocol extends CompleteResultJsonProtocol[RegexEvalutationResult, RegexCompleteResult] {
+object RegexToolJsonProtocol extends ToolJsonProtocol[RegexExercise, StringSampleSolution, RegexCompleteResult] {
+
+  override val sampleSolutionFormat: Format[StringSampleSolution] =
+    StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
 
   val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
   val regexExtractionTestDataFormat: Format[RegexExtractionTestData] = Json.format[RegexExtractionTestData]
 
-  val exerciseFormat: Format[RegexExercise] = {
+  override val exerciseFormat: Format[RegexExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
 
     implicit val rctf: Format[RegexCorrectionType] = RegexCorrectionTypes.jsonFormat
 
-    implicit val sssf: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
+    implicit val sssf: Format[StringSampleSolution] = sampleSolutionFormat
 
     implicit val rmtdf: Format[RegexMatchTestData] = regexMatchTestDataFormat
 

@@ -8,15 +8,15 @@ import com.gargoylesoftware.htmlunit.ScriptException
 import de.uniwue.webtester._
 import javax.inject.{Inject, Singleton}
 import model._
-import model.core.result.CompleteResultJsonProtocol
 import model.points.{Points, addUp}
 import model.toolMains._
+import model.tools.ToolJsonProtocol
 import model.tools.web.persistence.WebTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.data._
-import play.api.libs.json.{Format, JsError, JsSuccess}
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,15 +52,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected def exerciseYamlFormat: YamlFormat[WebExercise] = WebToolYamlProtocol.webExerciseYamlFormat
+  override protected val toolJsonProtocol: ToolJsonProtocol[WebExercise, FilesSampleSolution, WebCompleteResult] =
+    WebToolJsonProtocol
 
-  override val exerciseJsonFormat: Format[WebExercise] = WebCompleteResultJsonProtocol.exerciseFormat
+  override protected val exerciseYamlFormat: YamlFormat[WebExercise] = WebToolYamlProtocol.webExerciseYamlFormat
 
   override val exerciseReviewForm: Form[WebExerciseReview] = WebToolForms.exerciseReviewForm
-
-  override val sampleSolutionJsonFormat: Format[FilesSampleSolution] = FilesSampleSolutionJsonProtocol.filesSampleSolutionFormat
-
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] = WebCompleteResultJsonProtocol
 
   // DB
 

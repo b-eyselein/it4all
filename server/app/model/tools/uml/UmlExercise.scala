@@ -36,9 +36,9 @@ final case class UmlExercise(
     UmlClassDiagram(classes, assocs, impls)
   }
 
-  val allAttributes: Seq[UmlAttribute] = allDistinctMembers(_.attributes)
+  def allAttributes: Seq[UmlAttribute] = allDistinctMembers(_.attributes)
 
-  val allMethods: Seq[UmlMethod] = allDistinctMembers(_.methods)
+  def allMethods: Seq[UmlMethod] = allDistinctMembers(_.methods)
 
   private def allDistinctMembers[M <: UmlClassMember](members: UmlClass => Seq[M]): Seq[M] = sampleSolutions.headOption match {
     case None         => Seq.empty

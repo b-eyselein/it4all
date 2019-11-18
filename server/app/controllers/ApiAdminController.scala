@@ -12,7 +12,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class ApiAdminController @Inject()(cc: ControllerComponents, tl: ToolList, configuration: Configuration)(implicit ec: ExecutionContext)
-  extends ApiControllerBasics(cc, tl, configuration) {
+  extends AbstractApiExerciseController(cc, tl, configuration) {
 
   private val logger = Logger(classOf[ApiController])
 

@@ -64,10 +64,10 @@ class RegexTableDefs @Inject()(override protected val dbConfigProvider: Database
     MappedColumnType.base[RegexCorrectionType, String](_.entryName, RegexCorrectionTypes.withNameInsensitive)
 
   private val matchTestDataSeqColumnType: BaseColumnType[Seq[RegexMatchTestData]] =
-    jsonSeqColumnType(RegexCompleteResultJsonProtocol.regexMatchTestDataFormat)
+    jsonSeqColumnType(RegexToolJsonProtocol.regexMatchTestDataFormat)
 
   private val extractionTestDataSeqColumnType: BaseColumnType[Seq[RegexExtractionTestData]] =
-    jsonSeqColumnType(RegexCompleteResultJsonProtocol.regexExtractionTestDataFormat)
+    jsonSeqColumnType(RegexToolJsonProtocol.regexExtractionTestDataFormat)
 
   override protected implicit val partTypeColumnType: BaseColumnType[RegexExPart] = jsonColumnType(exParts.jsonFormat)
 
@@ -109,9 +109,6 @@ class RegexTableDefs @Inject()(override protected val dbConfigProvider: Database
 
 
   protected class RegexExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "regex_exercise_reviews") {
-
-    //    override protected implicit val ptct: BaseColumnType[RegexExPart] = super.ptct
-
 
     override def * : ProvenShape[DbRegexExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty,
       maybeDuration.?) <> (DbRegexExerciseReview.tupled, DbRegexExerciseReview.unapply)

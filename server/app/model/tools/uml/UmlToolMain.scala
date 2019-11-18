@@ -1,15 +1,16 @@
 package model.tools.uml
 
 import javax.inject.{Inject, Singleton}
-import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
+import model.core.result.EvaluationResult
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
+import model.tools.ToolJsonProtocol
 import model.tools.uml.persistence.UmlTableDefs
 import model.{ExerciseCollection, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
 import play.api.data.Form
-import play.api.libs.json.{Format, JsError, JsSuccess}
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,15 +49,12 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected def exerciseYamlFormat: YamlFormat[UmlExercise] = UmlExYamlProtocol.umlExerciseYamlFormat
+  override protected val toolJsonProtocol: ToolJsonProtocol[UmlExercise, UmlSampleSolution, UmlCompleteResult] =
+    UmlToolJsonProtocol
 
-  override val exerciseJsonFormat: Format[UmlExercise] = UmlCompleteResultJsonProtocol.exerciseFormat
+  override protected val exerciseYamlFormat: YamlFormat[UmlExercise] = UmlExYamlProtocol.umlExerciseYamlFormat
 
   override val exerciseReviewForm: Form[UmlExerciseReview] = UmlToolForms.exerciseReviewForm
-
-  override val sampleSolutionJsonFormat: Format[UmlSampleSolution] = UmlCompleteResultJsonProtocol.umlSampleSolutionFormat
-
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[EvaluationResult, UmlCompleteResult] = UmlCompleteResultJsonProtocol
 
   // Other helper methods
 

@@ -31,11 +31,11 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   // HtmlTask
 
   def dbHtmlTaskFromHtmlTask(exId: Int, collId: Int, htmlTask: HtmlTask): DbHtmlTask = DbHtmlTask(
-    htmlTask.id, exId, collId, htmlTask.text, htmlTask.elementSpec.xpathQuery,
-    htmlTask.elementSpec.awaitedTagName, htmlTask.elementSpec.awaitedTextContent, htmlTask.elementSpec.attributes)
+    htmlTask.id, exId, collId, htmlTask.text, htmlTask.xpathQuery,
+    htmlTask.awaitedTagName, htmlTask.awaitedTextContent, htmlTask.attributes)
 
   def htmlTaskFromDbHtmlTask(dbHtmlTask: DbHtmlTask): HtmlTask = HtmlTask(
-    dbHtmlTask.text, HtmlElementSpec(dbHtmlTask.id, dbHtmlTask.xpathQuery, dbHtmlTask.awaitedTag, dbHtmlTask.textContent, dbHtmlTask.attributes)
+    dbHtmlTask.id, dbHtmlTask.text, dbHtmlTask.xpathQuery, dbHtmlTask.awaitedTag, dbHtmlTask.textContent, dbHtmlTask.attributes
   )
 
   // JsTask
@@ -116,8 +116,8 @@ final case class DbJsTask(
   xpathQuery: String,
   actionType: JsActionType,
   keysToSend: Option[String],
-  preConditions: Seq[HtmlElementSpec],
-  postConditions: Seq[HtmlElementSpec]
+  preConditions: Seq[JsHtmlElementSpec],
+  postConditions: Seq[JsHtmlElementSpec]
 ) extends DbWebTask
 
 final case class DbJsCondition(

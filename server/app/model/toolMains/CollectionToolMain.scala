@@ -5,9 +5,10 @@ import model._
 import model.core.CoreConsts.stdStep
 import model.core._
 import model.core.overviewHelpers.{SolvedStates, SolvedStatesForExerciseParts}
-import model.core.result.{CompleteResult, CompleteResultJsonProtocol}
+import model.core.result.CompleteResult
 import model.persistence.ExerciseTableDefs
 import model.points._
+import model.tools.ToolJsonProtocol
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.data.Form
@@ -46,21 +47,18 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Yaml, Html forms, Json
 
+  protected val toolJsonProtocol: ToolJsonProtocol[ExType, SampleSolType, CompResultType]
+
   protected val collectionYamlFormat: YamlFormat[ExerciseCollection] =
     ExerciseCollectionYamlProtocol.exerciseCollectionYamlFormat
 
-  protected def exerciseYamlFormat: YamlFormat[ExType]
+  protected val exerciseYamlFormat: YamlFormat[ExType]
 
-  val exerciseJsonFormat: Format[ExType]
+  def exerciseJsonFormat: Format[ExType] = toolJsonProtocol.exerciseFormat
+
+  def sampleSolutionJsonFormat: Format[SampleSolType] = toolJsonProtocol.sampleSolutionFormat
 
   val exerciseReviewForm: Form[ReviewType]
-
-  // TODO: scalarStyle = Folded if fixed...
-  def yamlString: Future[String] = ???
-
-  val sampleSolutionJsonFormat: Format[SampleSolType]
-
-  protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ResultType, CompResultType]
 
   // Other helper methods
 
@@ -144,7 +142,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   // Result handlers
 
   def onLiveCorrectionResult(result: CompResultType): JsValue =
-    completeResultJsonProtocol.completeResultWrites.writes(result)
+    toolJsonProtocol.completeResultWrites.writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
 
@@ -159,7 +157,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
   }
 
   def readCollectionsFromYaml: Seq[Try[ExerciseCollection]] =
-    readYamlFile(exerciseResourcesFolder / "collections.yaml", collectionYamlFormat)
+    readYamlFile(exerciseResourcesFolder / "collections.yaml", ExerciseCollectionYamlProtocol.exerciseCollectionYamlFormat)
 
   def readExercisesFromYaml(collection: ExerciseCollection): Seq[Try[ExType]] =
     readYamlFile(exerciseResourcesFolder / s"${collection.id}-${collection.shortName}.yaml", exerciseYamlFormat)

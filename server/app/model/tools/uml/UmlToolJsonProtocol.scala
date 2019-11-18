@@ -1,26 +1,26 @@
 package model.tools.uml
 
 import model.core.matching.MatchingResult
-import model.core.result.{CompleteResultJsonProtocol, EvaluationResult}
 import model.points._
+import model.tools.ToolJsonProtocol
 import model.tools.uml.matcher.{UmlAssociationMatch, UmlClassMatch, UmlImplementationMatch}
 import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json._
 
-object UmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[EvaluationResult, UmlCompleteResult] {
+object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExercise, UmlSampleSolution, UmlCompleteResult] {
 
   // Other
 
-  val umlSampleSolutionFormat: Format[UmlSampleSolution] = {
+  override val sampleSolutionFormat: Format[UmlSampleSolution] = {
     implicit val ucdf: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
 
     Json.format[UmlSampleSolution]
   }
 
-  val exerciseFormat: Format[UmlExercise] = {
+  override val exerciseFormat: Format[UmlExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
 
-    implicit val ussf: Format[UmlSampleSolution] = umlSampleSolutionFormat
+    implicit val ussf: Format[UmlSampleSolution] = sampleSolutionFormat
 
     Json.format[UmlExercise]
   }

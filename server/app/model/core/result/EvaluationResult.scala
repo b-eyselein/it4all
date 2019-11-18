@@ -1,8 +1,6 @@
 package model.core.result
 
-import model.ExerciseCollection
 import model.points.Points
-import play.api.libs.json.{Format, Json, Writes}
 
 
 object EvaluationResult {
@@ -29,11 +27,5 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
 
   override def success: SuccessType = SuccessType.ofBool(EvaluationResult.allResultsSuccessful(results))
-
-}
-
-trait CompleteResultJsonProtocol[E <: EvaluationResult, CR <: CompleteResult[E]] {
-
-  val completeResultWrites: Writes[CR]
 
 }

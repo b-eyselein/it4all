@@ -1,6 +1,6 @@
 package model.tools.web.persistence
 
-import de.uniwue.webtester.{HtmlElementSpec, JsActionType}
+import de.uniwue.webtester.{JsActionType, JsHtmlElementSpec}
 import javax.inject.Inject
 import model.ExParts
 import model.persistence.{DbExerciseFile, DbFilesUserSolution, FilesSolutionExerciseTableDefs}
@@ -11,7 +11,6 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.ExecutionContext
-import scala.reflect.ClassTag
 
 class WebTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
@@ -78,8 +77,8 @@ class WebTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
   private val actionTypeColumnType: BaseColumnType[JsActionType] =
     MappedColumnType.base[JsActionType, String](_.entryName, JsActionType.withNameInsensitive)
 
-  private val htmlElementSpecSeqColumnType: BaseColumnType[Seq[HtmlElementSpec]] =
-    jsonSeqColumnType(WebCompleteResultJsonProtocol.htmlElementSpecFormat)
+  private val jsHmlElementSpecSeqColumnType: BaseColumnType[Seq[JsHtmlElementSpec]] =
+    jsonSeqColumnType(WebToolJsonProtocol.jsHtmlElementSpecFormat)
 
   override protected implicit val partTypeColumnType: BaseColumnType[WebExPart] = jsonColumnType(exParts.jsonFormat)
 
@@ -133,16 +132,16 @@ class WebTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
     private implicit val atct: BaseColumnType[JsActionType] = actionTypeColumnType
 
-    private implicit val essf: BaseColumnType[Seq[HtmlElementSpec]] = htmlElementSpecSeqColumnType
+    private implicit val essf: BaseColumnType[Seq[JsHtmlElementSpec]] = jsHmlElementSpecSeqColumnType
 
 
     def actionType: Rep[JsActionType] = column[JsActionType]("action_type")
 
     def keysToSend: Rep[String] = column[String]("keys_to_send")
 
-    def preConditions: Rep[Seq[HtmlElementSpec]] = column[Seq[HtmlElementSpec]]("pre_conditions_json")
+    def preConditions: Rep[Seq[JsHtmlElementSpec]] = column[Seq[JsHtmlElementSpec]]("pre_conditions_json")
 
-    def postConditions: Rep[Seq[HtmlElementSpec]] = column[Seq[HtmlElementSpec]]("post_conditions_json")
+    def postConditions: Rep[Seq[JsHtmlElementSpec]] = column[Seq[JsHtmlElementSpec]]("post_conditions_json")
 
 
     override def * : ProvenShape[DbJsTask] = (id, exerciseId, collectionId, text, xpathQuery, actionType, keysToSend.?, preConditions, postConditions) <> (DbJsTask.tupled, DbJsTask.unapply)

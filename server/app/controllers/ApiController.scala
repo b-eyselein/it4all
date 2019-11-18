@@ -3,6 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model._
 import model.toolMains.ToolList
+import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
@@ -12,10 +13,9 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class ApiController @Inject()(cc: ControllerComponents, tl: ToolList, configuration: Configuration)(implicit ec: ExecutionContext)
-  extends ApiControllerBasics(cc, tl, configuration) {
+  extends AbstractApiExerciseController(cc, tl, configuration) {
 
   private val logger = Logger(classOf[ApiController])
-
 
   override protected val adminRightsRequired: Boolean = false
 
@@ -76,5 +76,39 @@ class ApiController @Inject()(cc: ControllerComponents, tl: ToolList, configurat
         }
     }
   }
+
+
+  // Exercise review process
+
+  def reviewExercisePart(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = apiWithToolMain(toolType) { (request, user, toolMain) =>
+    toolMain.futureCollById(collId) flatMap {
+      case None             => Future.successful(onNoSuchCollection(toolMain, collId))
+      case Some(collection) =>
+
+        toolMain.futureExerciseById(collection.id, id) flatMap {
+          case None           => Future.successful(onNoSuchExercise(toolMain, collection, id))
+          case Some(exercise) =>
+
+            toolMain.partTypeFromUrl(partStr) match {
+              case None       => Future.successful(onNoSuchExercisePart(toolMain,  exercise, partStr))
+              case Some(part) =>
+
+                val onFormError: Form[toolMain.ReviewType] => Future[Result] = { formWithErrors =>
+                  ???
+                }
+
+                val onFormRead: toolMain.ReviewType => Future[Result] = { currentReview =>
+                  toolMain.futureSaveReview(user.username, collId, exercise.id, part, currentReview).map {
+                    case true  => ??? // Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
+                    case false => ???
+                  }
+                }
+
+                toolMain.exerciseReviewForm.bindFromRequest()(request).fold(onFormError, onFormRead)
+            }
+        }
+    }
+  }
+
 
 }

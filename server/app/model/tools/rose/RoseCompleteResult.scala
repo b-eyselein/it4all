@@ -1,8 +1,7 @@
 package model.tools.rose
 
-import model.core.result.{CompleteResult, CompleteResultJsonProtocol, EvaluationResult, SuccessType}
+import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
-import play.api.libs.json.Writes
 
 final case class RoseCompleteResult(result: RoseExecutionResult, points: Points = (-1).points, maxPoints: Points = (-1).points, solutionSaved: Boolean = false)
   extends CompleteResult[RoseExecutionResult] {

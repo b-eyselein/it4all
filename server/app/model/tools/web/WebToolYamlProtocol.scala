@@ -6,10 +6,10 @@ import net.jcazevedo.moultingyaml._
 
 object WebToolYamlProtocol extends MyYamlProtocol {
 
-  private val htmlElementSpecYamlFormat: YamlFormat[HtmlElementSpec] = yamlFormat5(HtmlElementSpec)
+  // FIXME: make super trait and reference it in ToolMain! ???
 
   private val jsTaskYamlFormat: YamlFormat[JsTask] = {
-    implicit val hesyf: YamlFormat[HtmlElementSpec] = htmlElementSpecYamlFormat
+    implicit val hesyf: YamlFormat[JsHtmlElementSpec] = yamlFormat5(JsHtmlElementSpec)
 
     implicit val jayf: YamlFormat[JsAction] = {
       implicit val jatyf: YamlFormat[JsActionType] = new EnumYamlFormat(JsActionType)
@@ -22,11 +22,7 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
 
   private val siteSpecYamlFormat: YamlFormat[SiteSpec] = {
-    implicit val htyf: YamlFormat[HtmlTask] = {
-      implicit val hesyf: YamlFormat[HtmlElementSpec] = htmlElementSpecYamlFormat
-
-      yamlFormat2(HtmlTask)
-    }
+    implicit val htyf: YamlFormat[HtmlTask] = yamlFormat6(HtmlTask)
 
     implicit val jtyf: YamlFormat[JsTask] = jsTaskYamlFormat
 

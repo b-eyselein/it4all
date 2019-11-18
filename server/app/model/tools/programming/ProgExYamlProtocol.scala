@@ -3,6 +3,7 @@ package model.tools.programming
 import java.nio.file.{Path, Paths}
 
 import model._
+import model.tools.programming.ProgDataTypes.NonGenericProgDataType
 import model.tools.uml.UmlClassDiagram
 import net.jcazevedo.moultingyaml._
 import play.api.libs.json.JsValue
@@ -13,9 +14,24 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   private val basePath: Path = Paths.get("conf", "resources", "programming")
 
-  val progDataTypeYamlFormat = new YamlFormat[ProgDataType] {
+  val progDataTypeYamlFormat: YamlFormat[ProgDataType] = new YamlFormat[ProgDataType] {
 
-    override def read(yaml: YamlValue): ProgDataType = ???
+    override def read(yaml: YamlValue): ProgDataType = yaml match {
+      case YamlString(value)  => NonGenericProgDataType.withNameInsensitive(value)
+      case YamlObject(fields) =>
+        fields.get(YamlString("genericType")) match {
+          case Some(YamlString(value)) =>
+            val subType: ProgDataType = progDataTypeYamlFormat.read(fields.getOrElse(YamlString("subType"), ???))
+
+            value match {
+              case "LIST"  => ProgDataTypes.LIST(subType)
+              case "TUPLE" => ProgDataTypes.TUPLE(??? /*Seq(subType)*/)
+              case "DICT"  => ProgDataTypes.DICTIONARY(???, ??? /*subType*/)
+            }
+          case _                       => ???
+        }
+      case _                  => deserializationError("Expected YamlObject or YamlString!")
+    }
 
     override def write(obj: ProgDataType): YamlValue = ???
 

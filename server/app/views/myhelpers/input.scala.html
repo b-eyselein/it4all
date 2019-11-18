@@ -1,8 +1,0 @@
-@(field: Field, fieldType: String = "text", placeHolder: Option[String] = None, otherAttrs: Seq[String] = Seq.empty)
-
-    @attributes = {
-        @field.value.map(v => Html(s""" value="$v" """)).getOrElse("")
-        @otherAttrs.mkString(" ")
-    }
-
-    <input type="@fieldType" class="form-control" placeholder="@placeHolder" name="@field.name" id="@field.id" @attributes>

@@ -24,10 +24,10 @@ final case class ProgExercise(
   maybeClassDiagramPart: Option[UmlClassDiagram]
 ) extends FileExercise[ProgExPart] {
 
-  val inputCount: Int = inputTypes.size
+//  def inputCount: Int = inputTypes.size
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
-    ProgrammingJsonProtocols.dumpCompleteTestDataToJson(this, completeTestData)
+    ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this, completeTestData)
 
   override def filesForExercisePart(part: ProgExPart): LoadExerciseFilesMessage = part match {
     case ProgExParts.TestCreation    => LoadExerciseFilesMessage(unitTestPart.unitTestFiles, Some(unitTestPart.testFileName))

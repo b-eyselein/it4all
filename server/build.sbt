@@ -70,5 +70,5 @@ libraryDependencies ++= Seq(
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",
 
   // Web tester
-  "de.uniwue" %% "it4all_webtester" % "0.3.2"
+  "de.uniwue" %% "it4all_webtester" % "0.4.0"
 )

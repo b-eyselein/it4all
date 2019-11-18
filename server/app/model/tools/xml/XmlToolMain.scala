@@ -2,13 +2,13 @@ package model.tools.xml
 
 import javax.inject._
 import model._
-import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
+import model.tools.ToolJsonProtocol
 import model.tools.xml.persistence.XmlTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
-import play.api.libs.json.{Format, JsString}
+import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,16 +46,13 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected val exerciseYamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.xmlExerciseYamlFormat
+  override protected val toolJsonProtocol: ToolJsonProtocol[XmlExercise, XmlSampleSolution, XmlCompleteResult] =
+    XmlCompleteResultJsonProtocol
 
-  override val exerciseJsonFormat: Format[XmlExercise] = XmlCompleteResultJsonProtocol.exerciseFormat
+  override protected val exerciseYamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.xmlExerciseYamlFormat
 
   override val exerciseReviewForm: Form[XmlExerciseReview] = XmlToolForms.exerciseReviewForm
 
-  // FIXME: do not use anymore ?!?
-  override val sampleSolutionJsonFormat: Format[XmlSampleSolution] = XmlCompleteResultJsonProtocol.xmlSampleSolutionJsonFormat
-
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] = XmlCompleteResultJsonProtocol
 
   // Other helper methods
 
@@ -82,7 +79,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
           case XmlExParts.GrammarCreationXmlPart  => Right(XmlSolution(document = "", grammar = solution))
           case XmlExParts.DocumentCreationXmlPart => Right(XmlSolution(document = solution, grammar = ""))
         }
-      case other              => Left(s"Json was no string but ${other}")
+      case other              => Left(s"Json was no string but $other")
     }
   }
 

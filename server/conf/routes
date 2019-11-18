@@ -14,23 +14,23 @@ GET           /api/claimWebToken/:uuidStr                                       
 
 # Collection management
 
-PUT           /tools/:toolType/admin/collections                                       controllers.coll.CollectionAdminController.adminCreateCollection(toolType: String)
-PUT           /tools/:toolType/admin/collections/:collId                               controllers.coll.CollectionAdminController.adminEditCollection(toolType: String, collId: Int)
-DELETE        /tools/:toolType/admin/collections/:collId                               controllers.coll.CollectionAdminController.adminDeleteCollection(toolType: String, collId: Int)
+#PUT           /tools/:toolType/admin/collections                                       controllers.coll.CollectionAdminController.adminCreateCollection(toolType: String)
+#PUT           /tools/:toolType/admin/collections/:collId                               controllers.coll.CollectionAdminController.adminEditCollection(toolType: String, collId: Int)
+#DELETE        /tools/:toolType/admin/collections/:collId                               controllers.coll.CollectionAdminController.adminDeleteCollection(toolType: String, collId: Int)
 
 # Exercise management
 
-PUT           /tools/:toolType/admin/:collId/exercises                                 controllers.coll.CollectionAdminController.adminCreateExercise(toolType: String, collId: Int)
-PUT           /tools/:toolType/admin/:collId/exercises/:exId                           controllers.coll.CollectionAdminController.adminEditExercise(toolType: String, collId: Int, exId:Int)
-DELETE        /tools/:toolType/admin/:collId/exercises/:exId                           controllers.coll.CollectionAdminController.adminDeleteExercise(toolType: String, collId: Int, exId: Int)
+#PUT           /tools/:toolType/admin/:collId/exercises                                 controllers.coll.CollectionAdminController.adminCreateExercise(toolType: String, collId: Int)
+#PUT           /tools/:toolType/admin/:collId/exercises/:exId                           controllers.coll.CollectionAdminController.adminEditExercise(toolType: String, collId: Int, exId:Int)
+#DELETE        /tools/:toolType/admin/:collId/exercises/:exId                           controllers.coll.CollectionAdminController.adminDeleteExercise(toolType: String, collId: Int, exId: Int)
 
 # reviews
-PUT           /tools/:toolType/:collId/:id/:partStr/evaluatePart                       controllers.coll.CollectionController.reviewExercisePart(toolType: String,collId: Int, id: Int, partStr: String)
-GET           /tools/:toolType/:collId/:id/reviews                                     controllers.coll.CollectionAdminController.showReviews(toolType: String, collId:Int, id: Int)
+#PUT           /tools/:toolType/:collId/:id/:partStr/evaluatePart                       controllers.coll.CollectionController.reviewExercisePart(toolType: String,collId: Int, id: Int, partStr: String)
+#GET           /tools/:toolType/:collId/:id/reviews                                     controllers.coll.CollectionAdminController.showReviews(toolType: String, collId:Int, id: Int)
 
-# User
-
-GET           /tools/:toolType/index                                                   controllers.coll.CollectionController.index(toolType: String)
+# tool evaluation
+#POST          /:toolType/submitEvaluation                                              controllers.MainExerciseController.submitEvaluation(toolType: String)
+# GET           /eval/stats                                                              controllers.AdminController.evaluationResults
 
 # API
 
@@ -52,18 +52,13 @@ PUT           /api/admin/tools/:toolId/collections/:collId                      
 PUT           /api/admin/tools/:toolId/collections/:collId/exercises/:exId             controllers.ApiAdminController.upsertExercise(toolId: String, collId: Int, exId: Int)
 
 # Other routes
-GET           /uml/classDiagram/:id/:part/cd.js                                        controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)
-
-GET           /programming/classDiagram/:collId/:id/cd.js                              controllers.coll.CollectionController.progClassDiagram(collId: Int, id: Int)
-
-GET           /web/solution/:collId/:id/:part/:fileName                                controllers.coll.CollectionController.webSolution(collId: Int, id: Int, part: String, fileName: String)
-PUT           /web/solution/:collId/:id/:part                                          controllers.coll.CollectionController.updateWebSolution(collId: Int, id: Int, part: String)
-
-# Tool evaluation
-POST          /:toolType/submitEvaluation                                              controllers.MainExerciseController.submitEvaluation(toolType: String)
+#GET           /uml/classDiagram/:id/:part/cd.js                                        controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)
+#GET           /programming/classDiagram/:collId/:id/cd.js                              controllers.coll.CollectionController.progClassDiagram(collId: Int, id: Int)
+#GET           /web/solution/:collId/:id/:part/:fileName                                controllers.coll.CollectionController.webSolution(collId: Int, id: Int, part: String, fileName: String)
+#PUT           /web/solution/:collId/:id/:part                                          controllers.coll.CollectionController.updateWebSolution(collId: Int, id: Int, part: String)
 
 # Evaluation
-# GET           /eval/stats                                                              controllers.AdminController.evaluationResults
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /*file                                                                   controllers.FrontendController.assetOrDefault(file)

@@ -2,8 +2,7 @@ package controllers
 
 import java.time.Clock
 
-import model.toolMains.{CollectionToolMain, ToolList}
-import model.{Exercise, ExerciseCollection, JsonProtocol, User}
+import model.{JsonProtocol, User}
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.libs.json.Format
@@ -12,30 +11,13 @@ import play.api.mvc._
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
-abstract class ApiControllerBasics(cc: ControllerComponents, toolList: ToolList, configuration: Configuration) extends AbstractController(cc) {
+abstract class AbstractApiController(cc: ControllerComponents, configuration: Configuration)
+  extends AbstractController(cc) {
 
   private val clock: Clock = Clock.systemDefaultZone()
-
   private val bearerHeaderRegex: Regex = "Bearer (.*)".r
 
-  private def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
-
-
   protected val adminRightsRequired: Boolean
-
-
-  protected def onNoSuchTool(toolType: String): Result =
-    NotFound(s"There is no tool with id ${toolType}")
-
-  protected def onNoSuchCollection(tool: CollectionToolMain, collId: Int): Result =
-    NotFound(s"There is no collection $collId for tool ${tool.toolname}")
-
-  protected def onNoSuchExercise(tool: CollectionToolMain, collection: ExerciseCollection, exId: Int): Result =
-    NotFound(s"There is no exercise with id $exId for collection ${collection.title}")
-
-  protected def onNoSuchExercisePart(tool: CollectionToolMain, exercise: Exercise, partStr: String): Result =
-    NotFound(s"There is no part $partStr for exercise ${exercise.title}")
-
 
   protected def createJwtSession(username: User): JwtSession = {
     implicit val uf: Format[User] = JsonProtocol.userFormat
@@ -69,14 +51,5 @@ abstract class ApiControllerBasics(cc: ControllerComponents, toolList: ToolList,
       case Some(_) => Future.successful(Unauthorized("You are not authorized to access this resource!"))
     }
   }
-
-
-  protected final def apiWithToolMain(toolType: String)(f: (Request[AnyContent], User, CollectionToolMain) => Future[Result]): Action[AnyContent] =
-    apiWithUser { (request, user) =>
-      getToolMain(toolType) match {
-        case None           => Future.successful(onNoSuchTool(toolType))
-        case Some(toolMain) => f(request, user, toolMain)
-      }
-    }
 
 }

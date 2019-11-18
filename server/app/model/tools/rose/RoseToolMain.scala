@@ -3,9 +3,9 @@ package model.tools.rose
 
 import javax.inject.{Inject, Singleton}
 import model._
-import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
+import model.tools.ToolJsonProtocol
 import model.tools.programming.ProgLanguages
 import model.tools.rose.persistence.RoseTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -45,15 +45,13 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   // Yaml, Html forms, Json
 
-  override def exerciseYamlFormat: YamlFormat[RoseExercise] = RoseExYamlProtocol.roseExerciseYamlFormat
+  override protected val toolJsonProtocol: ToolJsonProtocol[RoseExercise, RoseSampleSolution, RoseCompleteResult] =
+    RoseToolJsonProtocol
 
-  override val exerciseJsonFormat: Format[RoseExercise] = RoseCompleteResultJsonProtocol.exerciseFormat
+  override protected val exerciseYamlFormat: YamlFormat[RoseExercise] = RoseExYamlProtocol.roseExerciseYamlFormat
 
   override val exerciseReviewForm: Form[RoseExerciseReview] = RoseToolForms.exerciseReviewForm
 
-  override val sampleSolutionJsonFormat: Format[RoseSampleSolution] = RoseCompleteResultJsonProtocol.roseSampleSolutionJsonFormat
-
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[RoseExecutionResult, RoseCompleteResult] = RoseCompleteResultJsonProtocol
 
   // Other helper methods
 

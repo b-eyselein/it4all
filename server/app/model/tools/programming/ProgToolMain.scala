@@ -2,9 +2,9 @@ package model.tools.programming
 
 import javax.inject._
 import model._
-import model.core.result.CompleteResultJsonProtocol
 import model.points.Points
 import model.toolMains.{CollectionToolMain, ToolState}
+import model.tools.ToolJsonProtocol
 import model.tools.programming.persistence.ProgTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
@@ -51,15 +51,12 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Yaml, Html Forms, Json
 
-  override protected def exerciseYamlFormat: YamlFormat[ProgExercise] = ProgExYamlProtocol.programmingExerciseYamlFormat
+  override protected val toolJsonProtocol: ToolJsonProtocol[ProgExercise, ProgSampleSolution, ProgCompleteResult] =
+    ProgrammingToolJsonProtocol
 
-  override val exerciseJsonFormat: Format[ProgExercise] = ProgrammingJsonProtocols.exerciseFormat
+  override protected val exerciseYamlFormat: YamlFormat[ProgExercise] = ProgExYamlProtocol.programmingExerciseYamlFormat
 
   override val exerciseReviewForm: Form[ProgExerciseReview] = ProgToolForms.exerciseReviewForm
-
-  override val sampleSolutionJsonFormat: Format[ProgSampleSolution] = ProgrammingJsonProtocols.sampleSolutionJsonFormat
-
-  override protected val completeResultJsonProtocol: CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] = ProgrammingJsonProtocols
 
   // Other helper methods
 
@@ -78,11 +75,6 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
   // Db
 
-  override def futureSampleSolutions(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] =
-    tables.futureSampleSolutionsForExPart(collId, id, part)
-
-  // Correction
-
   override def futureFilesForExercise(user: User, collId: Int, exercise: ProgExercise, part: ProgExPart): Future[LoadExerciseFilesMessage] =
     tables.futureMaybeOldSolution(user.username, collId, exercise.id, part).map {
       case None         => exercise.filesForExercisePart(part)
@@ -90,7 +82,7 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
 
         val oldMessages = exercise.filesForExercisePart(part)
 
-        val newFiles = oldMessages.files.map { f => if (f.name == "test.py") f.copy(content = oldSol.solution.unitTest.content) else f }
+        val newFiles = ??? // oldMessages.files.map { f => if (f.name == "test.py") f.copy(content = oldSol.solution.unitTest.content) else f }
 
         LoadExerciseFilesMessage(newFiles, oldMessages.activeFileName)
     }

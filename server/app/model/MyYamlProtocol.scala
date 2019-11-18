@@ -1,12 +1,8 @@
 package model
 
-import better.files.File
 import enumeratum.{EnumEntry, PlayEnum}
 import model.MyYamlProtocol._
 import model.core.CommonUtils
-import model.core.CoreConsts._
-import model.tools.programming.ProgConsts.{authorName, idName, statusName, textName, titleName}
-import model.tools.web.WebToolYamlProtocol.{exerciseFileYamlFormat, yamlFormat2}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.libs.json._
@@ -209,20 +205,6 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
 
   protected val stringSampleSolutionYamlFormat: YamlFormat[StringSampleSolution] = yamlFormat2(StringSampleSolution)
 
-
-  protected val baseResourcesPath: File = File.currentWorkingDirectory / "conf" / "resources"
-
-  @deprecated
-  protected def readBaseValues(yamlObject: YamlObject): Try[BaseValues] = for {
-    id <- yamlObject.intField(idName)
-    collId <- yamlObject.intField(collectionIdName)
-    title <- yamlObject.stringField(titleName)
-    author <- yamlObject.stringField(authorName)
-    text <- yamlObject.stringField(textName)
-    state: ExerciseState <- yamlObject.enumField(statusName, ExerciseState.withNameInsensitiveOption).map(_ getOrElse ExerciseState.CREATED)
-    semanticVersion <- yamlObject.someField(semanticVersionName) flatMap SemanticVersionHelper.semanticVersionYamlField
-  } yield BaseValues(id, collId, semanticVersion, title, author, text, state)
-
   @deprecated
   abstract class MyYamlObjectFormat[T] extends MyYamlFormat[T] {
 
@@ -235,29 +217,7 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
 
   }
 
-  val exerciseFileYamlFormat: YamlFormat[ExerciseFile] = new YamlFormat[ExerciseFile] {
-
-    // FIXME: use yamlFormat4 for ExerciseFile!
-    //     val exerciseFileYamlFormat: YamlFormat[ExerciseFile] = yamlFormat4(ExerciseFile)
-
-    override def read(yamlValue: YamlValue): ExerciseFile = yamlValue match {
-      case yamlObject: YamlObject =>
-        val x = for {
-          path <- yamlObject.stringField(pathName)
-          resourcePath <- yamlObject.stringField("resourcePath")
-          fileType <- yamlObject.stringField("fileType")
-          editable <- yamlObject.optBoolField("editable").map(_.getOrElse(true))
-        } yield {
-          val content = (baseResourcesPath / resourcePath).contentAsString
-          ExerciseFile(path, content, fileType, editable)
-        }
-        x.getOrElse(???)
-      case _                      => ???
-    }
-
-    override def write(obj: ExerciseFile): YamlValue = ???
-
-  }
+  protected val exerciseFileYamlFormat: YamlFormat[ExerciseFile] = yamlFormat4(ExerciseFile)
 
   protected val filesSampleSolutionYamlFormat: YamlFormat[FilesSampleSolution] = {
     implicit val efyf: YamlFormat[ExerciseFile] = exerciseFileYamlFormat

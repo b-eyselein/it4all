@@ -44,7 +44,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     yamlFormat2(UmlSampleSolution)
   }
 
-  override implicit def mapFormat[K: YamlFormat, V: YamlFormat] = new YamlFormat[Map[K, V]] {
+  override implicit def mapFormat[K: YamlFormat, V: YamlFormat]: YamlFormat[Map[K, V]] = new YamlFormat[Map[K, V]] {
 
     override def write(obj: Map[K, V]): YamlValue = ???
 

@@ -7,7 +7,6 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.core.Repository
 import model.lti.BasicLtiLaunchRequest
-import model.toolMains.ToolList
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.data.Form
@@ -21,12 +20,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApiLoginController @Inject()(
-  cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, tl: ToolList, val repository: Repository, val configuration: Configuration
+  cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, repository: Repository, configuration: Configuration
 )(implicit ec: ExecutionContext)
-  extends ApiControllerBasics(cc, tl, configuration) with HasDatabaseConfigProvider[JdbcProfile] {
+  extends AbstractApiController(cc, configuration) with HasDatabaseConfigProvider[JdbcProfile] {
 
   override protected val adminRightsRequired: Boolean = true
-
 
   def changeRole: EssentialAction = apiWithUser { (request, admin) =>
 

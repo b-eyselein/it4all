@@ -1,15 +1,14 @@
 package controllers.coll
 
-import controllers.{AExerciseController, Secured}
+import controllers.Secured
 import javax.inject.{Inject, Singleton}
 import model.ExerciseFileJsonProtocol
 import model.core._
-import model.toolMains.{CollectionToolMain, ToolList}
+import model.toolMains.ToolList
 import model.tools.programming.ProgToolMain
 import model.tools.uml._
 import model.tools.web.{WebExParts, WebToolMain}
 import play.api.Logger
-import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
@@ -21,66 +20,25 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class CollectionController @Inject()(
-  cc: ControllerComponents, dbcp: DatabaseConfigProvider, tl: ToolList, ws: WSClient, val repository: Repository,
-  progToolMain: ProgToolMain, umlToolMain: UmlToolMain, webToolMain: WebToolMain
+  cc: ControllerComponents,
+  val dbConfigProvider: DatabaseConfigProvider,
+  toolList: ToolList,
+  ws: WSClient,
+  val repository: Repository,
+  progToolMain: ProgToolMain,
+  umlToolMain: UmlToolMain,
+  webToolMain: WebToolMain
 )(implicit ec: ExecutionContext)
-  extends AExerciseController(cc, dbcp, tl)
+  extends AbstractController(cc)
     with HasDatabaseConfigProvider[JdbcProfile]
     with Secured
     with play.api.i18n.I18nSupport {
 
   private val logger = Logger(classOf[CollectionController])
 
-  override protected type ToolMainType = CollectionToolMain
-
-  override protected def getToolMain(toolType: String): Option[CollectionToolMain] = toolList.getExCollToolMainOption(toolType)
-
   override protected val adminRightsRequired: Boolean = false
 
   // Routes
-
-  def index(toolType: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      for {
-        allCollections <- toolMain.futureAllCollections
-        allLearningPaths <- toolMain.futureLearningPaths
-      } yield Ok("TODO!") // views.html.collectionExercises.collectionExercisesIndex(user, allCollections, toolMain, allLearningPaths))
-  }
-
-  // Exercise review process
-
-  def reviewExercisePart(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = futureWithUserWithToolMain(toolType) { (user, toolMain) =>
-    implicit request =>
-      toolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(user, toolMain, collId))
-        case Some(collection) =>
-
-          toolMain.futureExerciseById(collection.id, id) flatMap {
-            case None           => Future.successful(onNoSuchExercise(user, toolMain, collection, id))
-            case Some(exercise) =>
-
-              toolMain.partTypeFromUrl(partStr) match {
-                case None       => Future.successful(onNoSuchExercisePart(user, toolMain, collection, exercise, partStr))
-                case Some(part) =>
-
-                  val onFormError: Form[toolMain.ReviewType] => Future[Result] = { formWithErrors =>
-                    ???
-                  }
-
-                  val onFormRead: toolMain.ReviewType => Future[Result] = { currentReview =>
-                    toolMain.futureSaveReview(user.username, collId, exercise.id, part, currentReview).map {
-                      case true  => ??? // Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
-                      case false => ???
-                    }
-                  }
-
-                  toolMain.exerciseReviewForm.bindFromRequest().fold(onFormError, onFormRead)
-              }
-          }
-      }
-  }
-
-  // Other routes
 
   def umlClassDiag(collId: Int, exId: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
@@ -108,11 +66,11 @@ class CollectionController @Inject()(
   def progClassDiagram(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
       progToolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(user, progToolMain, collId))
+        case None             => ??? //Future.successful(onNoSuchCollection(user, progToolMain, collId))
         case Some(collection) =>
 
           progToolMain.futureExerciseById(collection.id, id).map {
-            case None           => onNoSuchExercise(user, progToolMain, collection, id)
+            case None           => ??? // onNoSuchExercise(user, progToolMain, collection, id)
             case Some(exercise) =>
 
               val jsValue = exercise.maybeClassDiagramPart match {
@@ -127,15 +85,15 @@ class CollectionController @Inject()(
   def webSolution(collId: Int, exId: Int, partStr: String, fileName: String): EssentialAction = futureWithUser { user =>
     implicit request =>
       webToolMain.futureCollById(collId) flatMap {
-        case None             => Future.successful(onNoSuchCollection(user, webToolMain, collId))
+        case None             => ??? //Future.successful(onNoSuchCollection(user, webToolMain, collId))
         case Some(collection) =>
 
           webToolMain.futureExerciseById(collection.id, exId) flatMap {
-            case None           => Future.successful(onNoSuchExercise(user, webToolMain, collection, exId))
+            case None           => ??? // Future.successful(onNoSuchExercise(user, webToolMain, collection, exId))
             case Some(exercise) =>
 
               webToolMain.partTypeFromUrl(partStr) match {
-                case None    => Future.successful(onNoSuchExercisePart(user, webToolMain, collection, exercise, partStr))
+                case None    => ??? // Future.successful(onNoSuchExercisePart(user, webToolMain, collection, exercise, partStr))
                 case Some(_) =>
 
                   val contentType: String = fileName.split("\\.").last match {

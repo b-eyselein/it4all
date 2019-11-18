@@ -1,5 +1,6 @@
 package model
 
+import better.files.File
 import play.api.libs.json.{Format, Json}
 
 
@@ -8,10 +9,19 @@ final case class LoadExerciseFilesMessage(files: Seq[ExerciseFile], activeFileNa
 
 final case class ExerciseFileWorkspace(filesNum: Int, files: Seq[ExerciseFile])
 
-final case class ExerciseFile(name: String, content: String, fileType: String, editable: Boolean)
+final case class ExerciseFile(name: String, resourcePath: String, fileType: String, editable: Boolean) {
+
+  import ExerciseFileJsonProtocol.baseResourcesPath
+
+  def content: String = (baseResourcesPath / resourcePath).contentAsString
+
+}
 
 
 object ExerciseFileJsonProtocol {
+
+  val baseResourcesPath: File = File.currentWorkingDirectory / "conf" / "resources"
+
 
   val exerciseFileFormat: Format[ExerciseFile] = Json.format[ExerciseFile]
 

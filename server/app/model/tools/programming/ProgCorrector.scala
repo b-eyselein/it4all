@@ -6,7 +6,7 @@ import better.files.File._
 import better.files._
 import model.core.result.SuccessType
 import model.docker._
-import model.tools.programming.ProgrammingJsonProtocols.UnitTestTestData
+import model.tools.programming.ProgrammingToolJsonProtocol.UnitTestTestData
 import model.tools.programming.ResultsFileJsonFormat._
 import model.{ExerciseCollection, User}
 import modules.DockerPullsStartTask
@@ -115,7 +115,7 @@ object ProgCorrector {
     // remove ending '.py'
     val testFileNameForTestData = exercise.unitTestPart.testFileName.substring(0, exercise.unitTestPart.testFileName.length - 3)
     val unitTestTestData = UnitTestTestData(exercise.foldername, exercise.filename, testFileNameForTestData, exercise.unitTestPart.unitTestTestConfigs)
-    val testDataToWrite = Json.prettyPrint(ProgrammingJsonProtocols.unitTestDataWrites.writes(unitTestTestData))
+    val testDataToWrite = Json.prettyPrint(ProgrammingToolJsonProtocol.unitTestDataWrites.writes(unitTestTestData))
     testDataFile.createIfNotExists(createParents = true).write(testDataToWrite)
 
     // find mounts for implementation files

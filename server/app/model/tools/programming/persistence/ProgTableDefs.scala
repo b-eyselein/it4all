@@ -74,7 +74,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   private val jsonValueColumnType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](_.toString, Json.parse)
 
-  private val progDataTypesColumnType: BaseColumnType[ProgDataType] = jsonColumnType(ProgrammingJsonProtocols.progDataTypeFormat)
+  private val progDataTypesColumnType: BaseColumnType[ProgDataType] = jsonColumnType(ProgrammingToolJsonProtocol.progDataTypeFormat)
   //    MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.NonGenericProgDataType.STRING)
 
   override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] = jsonColumnType(exParts.jsonFormat)
@@ -86,14 +86,14 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   protected class ProgExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "prog_exercises") {
 
     private implicit val pict: BaseColumnType[Seq[ProgInput]] =
-      jsonSeqColumnType(ProgrammingJsonProtocols.progInputFormat)
+      jsonSeqColumnType(ProgrammingToolJsonProtocol.progInputFormat)
 
     private implicit val pdtct: BaseColumnType[ProgDataType] = progDataTypesColumnType
 
     private implicit val jvct: BaseColumnType[JsValue] = jsonValueColumnType
 
     private implicit val utpct: BaseColumnType[UnitTestPart] =
-      jsonColumnType(ProgrammingJsonProtocols.unitTestPartFormat)
+      jsonColumnType(ProgrammingToolJsonProtocol.unitTestPartFormat)
 
     private implicit val ssct: BaseColumnType[Seq[String]] = stringSeqColumnType
 
@@ -101,7 +101,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
       jsonSeqColumnType(ProgrammingExerciseTag.jsonFormat)
 
     private implicit val pstdct: BaseColumnType[Seq[ProgSampleTestData]] =
-      jsonSeqColumnType(ProgrammingJsonProtocols.progSampleTestDataFormat)
+      jsonSeqColumnType(ProgrammingToolJsonProtocol.progSampleTestDataFormat)
 
     private implicit val ucdct: BaseColumnType[UmlClassDiagram] = umlClassDiagramColumnType
 

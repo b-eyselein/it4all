@@ -2,65 +2,45 @@ package model.tools.web
 
 import de.uniwue.webtester._
 import model._
-import model.core.result.{CompleteResultJsonProtocol, SuccessType}
+import model.core.result.SuccessType
 import model.points._
+import model.tools.{FilesSampleSolutionToolJsonProtocol, ToolJsonProtocol}
 import model.tools.web.WebConsts._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-//noinspection ConvertibleToMethodValue
-object WebCompleteResultJsonProtocol extends CompleteResultJsonProtocol[GradedWebTaskResult, WebCompleteResult] {
+object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExercise, WebCompleteResult] {
 
-//  val htmlAttributeFormat: Format[HtmlAttribute] = Json.format[HtmlAttribute]
-
-  val htmlElementSpecFormat: Format[HtmlElementSpec] = {
-//    implicit val haf: Format[HtmlAttribute] = htmlAttributeFormat
-
-    Json.format[HtmlElementSpec]
-  }
-
-  private val htmlTaskFormat: Format[HtmlTask] = {
-    implicit val hesf: Format[HtmlElementSpec] = htmlElementSpecFormat
-
-    Json.format[HtmlTask]
-  }
-
-  private val jsActionFormat: Format[JsAction] = {
-    implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
-
-    Json.format[JsAction]
-  }
+  val jsHtmlElementSpecFormat: Format[JsHtmlElementSpec] = Json.format[JsHtmlElementSpec]
 
   private val jsTaskFormat: Format[JsTask] = {
-    implicit val hesf: Format[HtmlElementSpec] = htmlElementSpecFormat
+    implicit val hesf: Format[JsHtmlElementSpec] = jsHtmlElementSpecFormat
 
-    implicit val jsf: Format[JsAction] = jsActionFormat
+    implicit val jsf: Format[JsAction] = {
+      implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
+
+      Json.format[JsAction]
+    }
 
     Json.format[JsTask]
   }
 
   private val siteSpecFormat: Format[SiteSpec] = {
-    implicit val htf: Format[HtmlTask] = htmlTaskFormat
+    implicit val htf: Format[HtmlTask] = Json.format[HtmlTask]
 
     implicit val jtf: Format[JsTask] = jsTaskFormat
 
     Json.format[SiteSpec]
   }
 
-  private val filesSampleSolutionFormat: Format[FilesSampleSolution] = {
-    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
-
-    Json.format[FilesSampleSolution]
-  }
-
-  val exerciseFormat: Format[WebExercise] = {
+  override val exerciseFormat: Format[WebExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
 
     implicit val ssf: Format[SiteSpec] = siteSpecFormat
 
     implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
 
-    implicit val fssf: Format[FilesSampleSolution] = filesSampleSolutionFormat
+    implicit val fssf: Format[FilesSampleSolution] = sampleSolutionFormat
 
     Json.format[WebExercise]
   }

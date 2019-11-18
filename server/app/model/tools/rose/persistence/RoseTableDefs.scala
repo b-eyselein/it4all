@@ -3,7 +3,7 @@ package model.tools.rose.persistence
 import javax.inject.Inject
 import model.core.CoreConsts.{sampleName, solutionName}
 import model.persistence.ExerciseTableDefs
-import model.tools.programming.{ProgDataType, ProgLanguage, ProgLanguages, ProgrammingJsonProtocols}
+import model.tools.programming.{ProgDataType, ProgLanguage, ProgLanguages, ProgrammingToolJsonProtocol}
 import model.tools.rose._
 import model.{ExParts, SemanticVersion}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -106,7 +106,7 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
     MappedColumnType.base[ProgLanguage, String](_.entryName, ProgLanguages.withNameInsensitive)
 
   private val progDataTypeColumnType: BaseColumnType[ProgDataType] =
-    jsonColumnType(ProgrammingJsonProtocols.progDataTypeFormat)
+    jsonColumnType(ProgrammingToolJsonProtocol.progDataTypeFormat)
 
   override protected implicit val partTypeColumnType: BaseColumnType[RoseExPart] = jsonColumnType(exParts.jsonFormat)
 

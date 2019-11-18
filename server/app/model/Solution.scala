@@ -40,18 +40,6 @@ final case class StringUserSolution[PartType <: ExPart](id: Int, part: PartType,
   extends UserSolution[PartType, String]
 
 
-object FilesSampleSolutionJsonProtocol {
-
-  val exerciseFileJsonFormat: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
-
-  val filesSampleSolutionFormat: Format[FilesSampleSolution] = {
-    implicit val eff: Format[ExerciseFile] = exerciseFileJsonFormat
-
-    Json.format[FilesSampleSolution]
-  }
-
-}
-
 final case class FilesSampleSolution(id: Int, sample: Seq[ExerciseFile]) extends SampleSolution[Seq[ExerciseFile]]
 
 final case class FilesUserSolution[PartType <: ExPart](id: Int, part: PartType, solution: Seq[ExerciseFile], points: Points, maxPoints: Points)

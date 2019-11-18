@@ -4,10 +4,11 @@ import javax.inject.Inject
 import model._
 import model.points._
 import model.toolMains.{CollectionToolMain, ToolState}
+import model.tools.ToolJsonProtocol
 import model.tools.regex.persistence.RegexTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
-import play.api.libs.json.{Format, JsString}
+import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,15 +39,12 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
 
   // Yaml, Html forms, Json
 
+  override protected val toolJsonProtocol: ToolJsonProtocol[RegexExercise, StringSampleSolution, RegexCompleteResult] =
+    RegexToolJsonProtocol
+
   override protected val exerciseYamlFormat: YamlFormat[RegexExercise] = RegexToolYamlProtocol.regexExerciseYamlFormat
 
-  override val exerciseJsonFormat: Format[RegexExercise] = RegexCompleteResultJsonProtocol.exerciseFormat
-
   override val exerciseReviewForm: Form[RegexExerciseReview] = RegexToolForm.exerciseReviewForm
-
-  override val sampleSolutionJsonFormat: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
-
-  override protected val completeResultJsonProtocol: RegexCompleteResultJsonProtocol.type = RegexCompleteResultJsonProtocol
 
   // Database helpers
 

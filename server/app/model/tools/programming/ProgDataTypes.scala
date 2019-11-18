@@ -26,11 +26,11 @@ object ProgDataTypes {
 
     case object VOID extends NonGenericProgDataType("void")
 
+    case object BOOLEAN extends NonGenericProgDataType("boolean")
+
     case object INTEGER extends NonGenericProgDataType("int")
 
     case object FLOAT extends NonGenericProgDataType("float")
-
-    case object BOOLEAN extends NonGenericProgDataType("boolean")
 
     case object STRING extends NonGenericProgDataType("string")
 

@@ -1,13 +1,13 @@
 package model.tools.programming
 
 import model._
-import model.core.result.CompleteResultJsonProtocol
+import model.tools.ToolJsonProtocol
 import model.tools.programming.ProgConsts._
 import model.tools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
 import play.api.libs.json._
 
-object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResult, ProgCompleteResult] {
+object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExercise, ProgSampleSolution, ProgCompleteResult] {
 
   lazy val progDataTypeFormat: Format[ProgDataType] = {
 
@@ -55,7 +55,7 @@ object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResul
 
   val sampleSolutionJsonFormat: Format[ProgSampleSolution] = {
     implicit val psf: Format[ProgSolution] = {
-      implicit val eff: Format[ExerciseFile] = FilesSampleSolutionJsonProtocol.exerciseFileJsonFormat
+      implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
 
       implicit val putdf: Format[ProgUserTestData] = progUserTestDataFormat
 
@@ -83,7 +83,7 @@ object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResul
     Json.format[UnitTestPart]
   }
 
-  val exerciseFormat: Format[ProgExercise] = {
+ override val exerciseFormat: Format[ProgExercise] = {
     implicit val semVerFormat: Format[SemanticVersion] = SemanticVersionHelper.format
 
     implicit val pif: Format[ProgInput] = progInputFormat
@@ -106,6 +106,11 @@ object ProgrammingJsonProtocols extends CompleteResultJsonProtocol[ProgEvalResul
 
     Json.format[ProgExercise]
   }
+
+  override val sampleSolutionFormat: Format[ProgSampleSolution] = sampleSolutionFormat
+
+
+  // Result
 
   // Simplified execution
 

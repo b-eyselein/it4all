@@ -71,7 +71,7 @@ object RoseCorrector {
                 case 0 =>
                   Try(Json.parse(actionFilePath.contentAsString)).map { jsValue =>
 
-                    RoseCompleteResultJsonProtocol.roseExecutionResultWrites.reads(jsValue) match {
+                    RoseToolJsonProtocol.roseExecutionResultFormat.reads(jsValue) match {
                       case JsError(errors)     => ???
                       case JsSuccess(value, _) => RoseCompleteResult(value)
                     }

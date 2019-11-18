@@ -1,16 +1,16 @@
 package model.tools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
-import model.core.result.CompleteResultJsonProtocol
 import model.points._
+import model.tools.ToolJsonProtocol
 import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json._
 
-object XmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[XmlEvaluationResult, XmlCompleteResult] {
+object XmlCompleteResultJsonProtocol extends ToolJsonProtocol[XmlExercise, XmlSampleSolution, XmlCompleteResult] {
 
   // Sample solution
 
-  val xmlSampleSolutionJsonFormat: Format[XmlSampleSolution] = {
+  override val sampleSolutionFormat: Format[XmlSampleSolution] = {
     implicit val xsf: Format[XmlSolution] = Json.format[XmlSolution]
 
     Json.format[XmlSampleSolution]
@@ -21,7 +21,7 @@ object XmlCompleteResultJsonProtocol extends CompleteResultJsonProtocol[XmlEvalu
   val exerciseFormat: Format[XmlExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
 
-    implicit val xssf: Format[XmlSampleSolution] = xmlSampleSolutionJsonFormat
+    implicit val xssf: Format[XmlSampleSolution] = sampleSolutionFormat
 
     Json.format[XmlExercise]
   }

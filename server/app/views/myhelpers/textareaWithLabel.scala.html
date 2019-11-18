@@ -1,5 +1,0 @@
-@(field: Field, labelContent: String, rowCount: Int, labelWidth: Int, inputWidth: Int, placeHolder: Option[String] = None,
-        otherAttrs: Seq[String] = Seq.empty)
-
-<label class="col-form-label col-md-@labelWidth" for="@field.id">@labelContent:</label>
-<div class="col-md-@inputWidth">@myhelpers.textarea(field, rowCount, placeHolder, otherAttrs)</div>
