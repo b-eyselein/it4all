@@ -1,7 +1,10 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {NaryConversionComponent} from './nary-conversion.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {NaryNumberReadOnlyInputComponent} from '../_components/nary-number-read-only-input/nary-number-read-only-input.component';
+import {AppRoutingModule, routingComponents} from '../../../../app-routing.module';
+import {RandomSolveButtonsComponent} from '../../_components/random-solve-buttons/random-solve-buttons.component';
 
 describe('NaryConversionComponent', () => {
   let component: NaryConversionComponent;
@@ -9,10 +12,9 @@ describe('NaryConversionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [NaryConversionComponent],
-      imports: [FormsModule]
-    })
-      .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
+      declarations: [NaryConversionComponent, NaryNumberReadOnlyInputComponent, RandomSolveButtonsComponent,...routingComponents]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

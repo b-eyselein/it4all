@@ -1,7 +1,8 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {RandomOverviewComponent} from './random-overview.component';
-import {AppRoutingModule} from '../../../app-routing.module';
+import {AppRoutingModule, routingComponents} from '../../../app-routing.module';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 describe('RandomOverviewComponent', () => {
   let component: RandomOverviewComponent;
@@ -9,10 +10,9 @@ describe('RandomOverviewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [RandomOverviewComponent],
-      imports: [AppRoutingModule]
-    })
-      .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
+      declarations: [RandomOverviewComponent, ...routingComponents]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

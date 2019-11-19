@@ -1,6 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AdminIndexComponent } from './admin-index.component';
+import {AdminIndexComponent} from './admin-index.component';
+import {AppRoutingModule, routingComponents} from '../../app-routing.module';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 describe('AdminIndexComponent', () => {
   let component: AdminIndexComponent;
@@ -8,9 +10,9 @@ describe('AdminIndexComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AdminIndexComponent ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
+      declarations: [AdminIndexComponent, ...routingComponents]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

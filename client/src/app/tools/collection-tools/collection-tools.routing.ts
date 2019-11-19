@@ -28,5 +28,6 @@ export const collectionToolRoutingComponents = [
   ProgrammingExerciseComponent,
   RegexExerciseComponent,
   SqlExerciseComponent,
+  UmlExerciseComponent,
   WebExerciseComponent
 ];

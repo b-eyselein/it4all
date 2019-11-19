@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ProgrammingSimplifiedResultComponent } from './programming-simplified-result.component';
+import {ProgrammingSimplifiedResultComponent} from './programming-simplified-result.component';
 
 describe('ProgrammingSimplifiedResultComponent', () => {
   let component: ProgrammingSimplifiedResultComponent;
@@ -8,14 +8,22 @@ describe('ProgrammingSimplifiedResultComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ProgrammingSimplifiedResultComponent ]
+      declarations: [ProgrammingSimplifiedResultComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgrammingSimplifiedResultComponent);
     component = fixture.componentInstance;
+    component.result = {
+      id: 1,
+      success: 'COMPLETE',
+      gotten: '',
+      awaited: '',
+      input: {},
+      stdout: null
+    };
     fixture.detectChanges();
   });
 

@@ -1,6 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ToolTutorialsOverviewComponent } from './tool-tutorials-overview.component';
+import {ToolTutorialsOverviewComponent} from './tool-tutorials-overview.component';
+import {AppRoutingModule, routingComponents} from '../../app-routing.module';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 describe('ToolTutorialsOverviewComponent', () => {
   let component: ToolTutorialsOverviewComponent;
@@ -8,9 +10,9 @@ describe('ToolTutorialsOverviewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ToolTutorialsOverviewComponent ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
+      declarations: [ToolTutorialsOverviewComponent, ...routingComponents]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -64,7 +64,7 @@ libraryDependencies ++= Seq(
   "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5", // Apache 2.0
 
   // Sql
-  "com.github.jsqlparser" % "jsqlparser" % "3.0", // Apache 2.0
+  "com.github.jsqlparser" % "jsqlparser" % "3.1", // Apache 2.0
 
   // DTD Parser
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",

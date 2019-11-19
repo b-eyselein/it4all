@@ -1,6 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SqlResultComponent } from './sql-result.component';
+import {SqlResultComponent} from './sql-result.component';
+import {SolutionSavedComponent} from '../../tool-helpers/solution-saved/solution-saved.component';
+import {PointsNotificationComponent} from '../../tool-helpers/points-notification/points-notification.component';
 
 describe('SqlResultComponent', () => {
   let component: SqlResultComponent;
@@ -8,9 +10,8 @@ describe('SqlResultComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SqlResultComponent ]
-    })
-    .compileComponents();
+      declarations: [SqlResultComponent, SolutionSavedComponent, PointsNotificationComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

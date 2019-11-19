@@ -28,9 +28,9 @@ import {ProgrammingSimplifiedResultComponent} from './tools/collection-tools/pro
 import {ProgrammingUnittestResultComponent} from './tools/collection-tools/programming/_results/programming-unittest-result/programming-unittest-result.component';
 import {SqlResultComponent} from './tools/collection-tools/sql/sql-result/sql-result.component';
 import {SqlMatchingResultComponent} from './tools/collection-tools/sql/sql-matching-result/sql-matching-result.component';
-import { LessonTextContentComponent } from './tutorials/lesson-text-content/lesson-text-content.component';
-import { TagComponent } from './tools/_components/tag/tag.component';
-import { UmlExerciseComponent } from './tools/collection-tools/uml/uml-exercise/uml-exercise.component';
+import {LessonTextContentComponent} from './tutorials/lesson-text-content/lesson-text-content.component';
+import {TagComponent} from './tools/_components/tag/tag.component';
+import {UmlExerciseComponent} from './tools/collection-tools/uml/uml-exercise/uml-exercise.component';
 
 
 @NgModule({

@@ -2,6 +2,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {NaryTwoConversionComponent} from './nary-two-conversion.component';
 import {FormsModule} from '@angular/forms';
+import {NaryNumberReadOnlyInputComponent} from '../_components/nary-number-read-only-input/nary-number-read-only-input.component';
+import {RandomSolveButtonsComponent} from '../../_components/random-solve-buttons/random-solve-buttons.component';
 
 describe('TwoConversionComponent', () => {
   let component: NaryTwoConversionComponent;
@@ -9,10 +11,9 @@ describe('TwoConversionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [NaryTwoConversionComponent],
-      imports: [FormsModule]
-    })
-      .compileComponents();
+      imports: [FormsModule],
+      declarations: [NaryTwoConversionComponent, NaryNumberReadOnlyInputComponent, RandomSolveButtonsComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,6 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ExerciseFilesEditorComponent } from './exercise-files-editor.component';
+import {ExerciseFilesEditorComponent} from './exercise-files-editor.component';
+import {CodemirrorModule} from '@ctrl/ngx-codemirror';
+import {FormsModule} from '@angular/forms';
 
 describe('ExerciseFilesEditorComponent', () => {
   let component: ExerciseFilesEditorComponent;
@@ -8,9 +10,9 @@ describe('ExerciseFilesEditorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseFilesEditorComponent ]
-    })
-    .compileComponents();
+      imports: [FormsModule, CodemirrorModule],
+      declarations: [ExerciseFilesEditorComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

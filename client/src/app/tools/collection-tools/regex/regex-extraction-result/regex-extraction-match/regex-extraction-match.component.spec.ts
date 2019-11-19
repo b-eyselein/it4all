@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { RegexExtractionMatchComponent } from './regex-extraction-match.component';
+import {RegexExtractionMatchComponent} from './regex-extraction-match.component';
 
 describe('RegexExtractionMatchComponent', () => {
   let component: RegexExtractionMatchComponent;
@@ -8,14 +8,20 @@ describe('RegexExtractionMatchComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RegexExtractionMatchComponent ]
+      declarations: [RegexExtractionMatchComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RegexExtractionMatchComponent);
     component = fixture.componentInstance;
+    component.match = {
+      matchType: 'ONLY_SAMPLE',
+      userArg: null,
+      sampleArg: {content: '', start: 0, end: 0},
+      analysisResult: null
+    };
     fixture.detectChanges();
   });
 

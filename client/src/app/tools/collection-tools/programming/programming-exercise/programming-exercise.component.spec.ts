@@ -1,6 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ProgrammingExerciseComponent } from './programming-exercise.component';
+import {ProgrammingExerciseComponent} from './programming-exercise.component';
+import {ExerciseFilesEditorComponent} from '../../tool-helpers/exercise-files-editor/exercise-files-editor.component';
 
 describe('ProgrammingExerciseComponent', () => {
   let component: ProgrammingExerciseComponent;
@@ -8,14 +9,14 @@ describe('ProgrammingExerciseComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ProgrammingExerciseComponent ]
-    })
-    .compileComponents();
+      declarations: [ProgrammingExerciseComponent, ExerciseFilesEditorComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgrammingExerciseComponent);
     component = fixture.componentInstance;
+    component.exerciseFiles = [];
     fixture.detectChanges();
   });
 

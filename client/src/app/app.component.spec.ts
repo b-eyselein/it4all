@@ -1,12 +1,13 @@
-import { TestBed, async } from '@angular/core/testing';
-import { AppComponent } from './app.component';
+import {async, TestBed} from '@angular/core/testing';
+import {AppComponent} from './app.component';
+import {AppRoutingModule, routingComponents} from './app-routing.module';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
+      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
+      declarations: [AppComponent, ...routingComponents],
     }).compileComponents();
   }));
 

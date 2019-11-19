@@ -2,6 +2,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {NaryAdditionComponent} from './nary-addition.component';
 import {FormsModule} from '@angular/forms';
+import {NaryNumberReadOnlyInputComponent} from '../_components/nary-number-read-only-input/nary-number-read-only-input.component';
+import {routingComponents} from '../../../../app-routing.module';
 
 describe('NaryAdditionComponent', () => {
   let component: NaryAdditionComponent;
@@ -9,8 +11,8 @@ describe('NaryAdditionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [NaryAdditionComponent],
-      imports: [FormsModule]
+      imports: [FormsModule],
+      declarations: [NaryAdditionComponent, NaryNumberReadOnlyInputComponent, ...routingComponents],
     })
       .compileComponents();
   }));

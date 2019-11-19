@@ -1,6 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { RegexExerciseComponent } from './regex-exercise.component';
+import {RegexExerciseComponent} from './regex-exercise.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AppRoutingModule, routingComponents} from '../../../../app-routing.module';
 
 describe('RegexExerciseComponent', () => {
   let component: RegexExerciseComponent;
@@ -8,9 +10,9 @@ describe('RegexExerciseComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RegexExerciseComponent ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
+      declarations: [RegexExerciseComponent, ...routingComponents]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

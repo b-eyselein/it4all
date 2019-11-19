@@ -1,6 +1,9 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SqlExerciseComponent} from './sql-exercise.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {CodemirrorModule} from '@ctrl/ngx-codemirror';
+import {AppRoutingModule, routingComponents} from '../../../../app-routing.module';
 
 describe('SqlExerciseComponent', () => {
   let component: SqlExerciseComponent;
@@ -8,9 +11,9 @@ describe('SqlExerciseComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SqlExerciseComponent ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule, CodemirrorModule],
+      declarations: [SqlExerciseComponent, ...routingComponents]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

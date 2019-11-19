@@ -1,6 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AdminReadExercisesComponent } from './admin-read-exercises.component';
+import {AdminReadExercisesComponent} from './admin-read-exercises.component';
+import {AppRoutingModule, routingComponents} from '../../app-routing.module';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 describe('AdminReadExercisesComponent', () => {
   let component: AdminReadExercisesComponent;
@@ -8,9 +10,9 @@ describe('AdminReadExercisesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AdminReadExercisesComponent ]
-    })
-    .compileComponents();
+      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
+      declarations: [AdminReadExercisesComponent, ...routingComponents]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

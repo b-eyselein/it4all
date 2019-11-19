@@ -2,6 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {NaryNumberReadOnlyInputComponent} from './nary-number-read-only-input.component';
 import {FormsModule} from '@angular/forms';
+import {BINARY_SYSTEM} from '../../nary';
 
 describe('NaryNumberInputComponent', () => {
   let component: NaryNumberReadOnlyInputComponent;
@@ -9,15 +10,21 @@ describe('NaryNumberInputComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [FormsModule],
       declarations: [NaryNumberReadOnlyInputComponent],
-      imports: [FormsModule]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NaryNumberReadOnlyInputComponent);
     component = fixture.componentInstance;
+    component.naryNumberInput = {
+      fieldId: '',
+      maxValueForDigits: 256,
+      numberingSystem: BINARY_SYSTEM,
+      labelContent: '',
+      decimalNumber: 5
+    };
     fixture.detectChanges();
   });
 

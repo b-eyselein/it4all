@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { LessonTextContentComponent } from './lesson-text-content.component';
+import {LessonTextContentComponent} from './lesson-text-content.component';
 
 describe('LessonTextContentComponent', () => {
   let component: LessonTextContentComponent;
@@ -8,14 +8,14 @@ describe('LessonTextContentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LessonTextContentComponent ]
-    })
-    .compileComponents();
+      declarations: [LessonTextContentComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LessonTextContentComponent);
     component = fixture.componentInstance;
+    component.content = {_type: 'Text', content: '', priorSolved: true};
     fixture.detectChanges();
   });
 

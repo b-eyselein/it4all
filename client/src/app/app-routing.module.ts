@@ -5,7 +5,6 @@ import {LoginFormComponent} from './user_management/login-form/login-form.compon
 import {AuthGuard} from './_helpers/auth-guard';
 import {LtiComponent} from './lti/lti.component';
 import {UmlTestComponent} from './tools/collection-tools/uml/uml-test/uml-test.component';
-import {BoolDrawingComponent} from './tools/random-tools/bool/bool-drawing/bool-drawing.component';
 import {randomToolRoutes, randomToolRoutingComponents} from './tools/random-tools/random-tools.routing';
 import {adminRoutes, adminRoutingComponents} from './admin/admin.routing';
 import {collectionToolRoutes, collectionToolRoutingComponents} from './tools/collection-tools/collection-tools.routing';
@@ -26,8 +25,7 @@ const routes: Routes = [
   ...collectionToolRoutes,
 
   // FIXME: remove this route...
-  {path: 'test', component: UmlTestComponent},
-  {path: 'boolDrawing', component: BoolDrawingComponent}
+  {path: 'test', component: UmlTestComponent}
 ];
 
 @NgModule({
