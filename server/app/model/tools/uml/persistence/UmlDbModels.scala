@@ -3,15 +3,15 @@ package model.tools.uml.persistence
 import model.persistence._
 import model.points.Points
 import model.tools.uml._
-import model.{Difficulty, ExerciseState, SemanticVersion}
+import model.{Difficulty, ExerciseState, LongText, SemanticVersion}
 
 object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise] {
 
   override def dbExerciseFromExercise(ex: UmlExercise): DbUmlExercise =
-    DbUmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, ex.toIgnore, ex.mappings)
+    DbUmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.toIgnore, ex.mappings)
 
   def exerciseFromDbExercise(ex: DbUmlExercise, samples: Seq[UmlSampleSolution]): UmlExercise =
-    UmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.markedText, ex.toIgnore, ex.mappings, samples)
+    UmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.toIgnore, ex.mappings, samples)
 
 }
 
@@ -42,8 +42,8 @@ object UmlExerciseReviewDbModels extends AExerciseReviewDbModels[UmlExPart, UmlE
 }
 
 final case class DbUmlExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-  markedText: String, toIgnore: Seq[String], mappings: Map[String, String]
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
+  toIgnore: Seq[String], mappings: Map[String, String]
 ) extends ADbExercise
 
 final case class DbUmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, sample: UmlClassDiagram)

@@ -22,8 +22,12 @@ object WebExParts extends ExParts[WebExPart] {
 
 
 final case class WebExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-  htmlText: Option[String], jsText: Option[String], siteSpec: SiteSpec, files: Seq[ExerciseFile], sampleSolutions: Seq[FilesSampleSolution]
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
+  htmlText: Option[String],
+  jsText: Option[String],
+  siteSpec: SiteSpec,
+  files: Seq[ExerciseFile],
+  sampleSolutions: Seq[FilesSampleSolution]
 ) extends FileExercise[WebExPart] {
 
   def tasksForPart(part: WebExPart): Seq[WebTask] = part match {

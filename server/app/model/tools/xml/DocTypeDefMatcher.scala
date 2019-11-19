@@ -13,7 +13,7 @@ final case class ElementLineAnalysisResult(matchType: MatchType,
                                            attributesCorrect: Boolean, correctAttributes: String) extends AnalysisResult {
 
 
-  override def toJson: JsValue = XmlCompleteResultJsonProtocol.elementLineAnalysisResultWrites.writes(this)
+  override def toJson: JsValue = XmlToolJsonProtocol.elementLineAnalysisResultWrites.writes(this)
 
   def points: Points = addUp(Seq(contentCorrect, attributesCorrect).map {
     case false => zeroPoints

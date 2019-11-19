@@ -21,13 +21,18 @@ case object RegexCorrectionTypes extends PlayEnum[RegexCorrectionType] {
 }
 
 final case class RegexExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
   maxPoints: Int,
   correctionType: RegexCorrectionType,
   sampleSolutions: Seq[StringSampleSolution],
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
-) extends Exercise with ADbExercise
+) extends Exercise with ADbExercise {
+
+  override protected type SolutionType = String
+  override protected type SampleSolutionType = StringSampleSolution
+
+}
 
 
 final case class RegexMatchTestData(id: Int, data: String, isIncluded: Boolean)

@@ -31,7 +31,7 @@ abstract class QueryCorrector(val queryType: String) {
         val userExpressions = getExpressions(userQ)
         val userTableAliases = resolveAliases(userTables)
 
-        val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.samples.map { sqlSample =>
+        val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.sampleSolutions.map { sqlSample =>
           parseStatement(sqlSample.sample) flatMap checkStatement match {
             case Failure(error)      =>
               logger.error("There has been an error parsing a sql sample solution", error)

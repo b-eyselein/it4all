@@ -429,17 +429,18 @@ create table if not exists sql_scenarioes (
 );
 
 create table if not exists sql_exercises (
-    id               int,
-    semantic_version varchar(10),
-    title            varchar(50),
-    author           varchar(50),
-    ex_text          text,
-    ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    id                    int,
+    semantic_version      varchar(10),
+    title                 varchar(50),
+    author                varchar(50),
+    ex_text               text,
+    ex_state              enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    collection_id    int,
-    tags             longtext not null, # TODO: json!
-    exercise_type    longtext not null, # TODO: json!
-    hint             text,
+    collection_id         int,
+    tags_json             longtext not null, # TODO: json!
+    exercise_type_json    longtext not null, # TODO: json!
+    hint                  text,
+    sample_solutions_json longtext not null, # TODO: sjon!
 
     primary key (id, semantic_version, collection_id),
     foreign key (collection_id)
@@ -502,7 +503,6 @@ create table if not exists uml_exercises (
     ex_text          text,
     ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    marked_text      text     not null,
     to_ignore_json   longtext not null, # TODO: json
     mappings_json    longtext not null, # TODO: json
 

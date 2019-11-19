@@ -43,7 +43,7 @@ trait ADbExercise {
 
   def author: String
 
-  def text: String
+  def text: LongText
 
   def state: ExerciseState
 

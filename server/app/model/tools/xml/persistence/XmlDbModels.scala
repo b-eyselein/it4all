@@ -3,17 +3,17 @@ package model.tools.xml.persistence
 import model.persistence._
 import model.points.Points
 import model.tools.xml._
-import model.{Difficulty, ExerciseState, SemanticVersion}
+import model.{Difficulty, ExerciseState, LongText, SemanticVersion}
 
 object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise] {
 
   override def dbExerciseFromExercise(ex: XmlExercise): DbXmlExercise =
-    DbXmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.grammarDescription, ex.rootNode)
+    DbXmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.grammarDescription.wrapped, ex.rootNode)
 
   def exerciseFromDbValues(dbXmlEx: DbXmlExercise, samples: Seq[XmlSampleSolution]): XmlExercise =
     XmlExercise(
       dbXmlEx.id, dbXmlEx.collectionId, dbXmlEx.semanticVersion, dbXmlEx.title, dbXmlEx.author, dbXmlEx.text, dbXmlEx.state,
-      dbXmlEx.grammarDescription, dbXmlEx.rootNode, samples
+      LongText(dbXmlEx.grammarDescription), dbXmlEx.rootNode, samples
     )
 
 }
@@ -44,7 +44,7 @@ object XmlExerciseReviewDbModels extends AExerciseReviewDbModels[XmlExPart, XmlE
 
 }
 
-final case class DbXmlExercise(id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+final case class DbXmlExercise(id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
                                grammarDescription: String, rootNode: String) extends ADbExercise
 
 final case class DbXmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, document: String, grammar: String)

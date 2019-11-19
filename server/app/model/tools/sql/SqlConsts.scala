@@ -25,6 +25,4 @@ object SqlConsts extends CollectionConsts {
 
   val whereComparisonsName: String = "whereComparisons"
 
-  def samplesArrayName(count: Int = -1): String = arrayName(samplesName)(if (count > 0) Some(count) else None)
-
 }

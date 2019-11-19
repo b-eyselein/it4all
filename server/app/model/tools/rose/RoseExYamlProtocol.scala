@@ -1,7 +1,7 @@
 package model.tools.rose
 
 import model.tools.programming.{ProgDataType, ProgExYamlProtocol, ProgLanguage, ProgLanguages}
-import model.{ExerciseState, MyYamlProtocol, SemanticVersion}
+import model.{ExerciseState, LongText, LongTextYamlProtocol, MyYamlProtocol, SemanticVersion}
 import net.jcazevedo.moultingyaml._
 
 object RoseExYamlProtocol extends MyYamlProtocol {
@@ -19,14 +19,11 @@ object RoseExYamlProtocol extends MyYamlProtocol {
   }
 
   val roseExerciseYamlFormat: YamlFormat[RoseExercise] = {
-    implicit val svyf: YamlFormat[SemanticVersion] = semanticVersionYamlFormat
-
-    implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
-
-    implicit val rityf: YamlFormat[RoseInputType] = roseInputTypeYamlFormat
-
+    implicit val svyf : YamlFormat[SemanticVersion]    = semanticVersionYamlFormat
+    implicit val ltyf : YamlFormat[LongText]           = LongTextYamlProtocol.longTextYamlFormat
+    implicit val esyf : YamlFormat[ExerciseState]      = exerciseStateYamlFormat
+    implicit val rityf: YamlFormat[RoseInputType]      = roseInputTypeYamlFormat
     implicit val rssyf: YamlFormat[RoseSampleSolution] = roseSampleSolutionYamlFormat
-
 
     yamlFormat12(RoseExercise)
   }

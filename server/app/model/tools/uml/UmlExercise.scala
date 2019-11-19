@@ -2,13 +2,18 @@ package model.tools.uml
 
 import model._
 import model.points.Points
-import play.twirl.api.Html
 
 
 final case class UmlExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-  markedText: String, toIgnore: Seq[String], mappings: Map[String, String], sampleSolutions: Seq[UmlSampleSolution]
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
+  toIgnore: Seq[String],
+  mappings: Map[String, String],
+  sampleSolutions: Seq[UmlSampleSolution]
 ) extends Exercise {
+
+  override protected type SolutionType = UmlClassDiagram
+  override protected type SampleSolutionType = UmlSampleSolution
+
 
   def titleForPart(part: UmlExPart): String = part match {
     case UmlExParts.ClassSelection     => "Auswahl der Klassen"
@@ -17,10 +22,7 @@ final case class UmlExercise(
     case UmlExParts.MemberAllocation   => "Zuordnung der Member"
   }
 
-  def textForPart(part: UmlExPart): Html = Html(part match {
-    case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => markedText
-    case _                                                     => text
-  })
+  def markedText: String = UmlExTextProcessor.parseText(text.wrapped, mappings, toIgnore)
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
     val assocs: Seq[UmlAssociation]    = Seq[UmlAssociation]()
@@ -28,7 +30,7 @@ final case class UmlExercise(
 
     val classes: Seq[UmlClass] = part match {
       case UmlExParts.DiagramDrawingHelp => sampleSolutions.head.sample.classes.map {
-        oldClass => UmlClass(oldClass.classType, oldClass.name, attributes = Seq[UmlAttribute](), methods = Seq[UmlMethod](), position = oldClass.position)
+        oldClass => UmlClass(oldClass.classType, oldClass.name, attributes = Seq[UmlAttribute](), methods = Seq[UmlMethod]())
       }
       case _                             => Seq[UmlClass]()
     }

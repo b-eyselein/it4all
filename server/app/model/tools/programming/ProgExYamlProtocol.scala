@@ -89,6 +89,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   val programmingExerciseYamlFormat: YamlFormat[ProgExercise] = {
     implicit val svyf: YamlFormat[SemanticVersion] = semanticVersionYamlFormat
 
+    implicit val ltyf: YamlFormat[LongText] = LongTextYamlProtocol.longTextYamlFormat
+
     implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
 
     implicit val piyf: YamlFormat[ProgInput] = progInputYamlFormat

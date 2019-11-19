@@ -21,16 +21,14 @@ object XmlExParts extends ExParts[XmlExPart] {
 
 
 final case class XmlExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-  grammarDescription: String, rootNode: String, samples: Seq[XmlSampleSolution]
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
+  grammarDescription: LongText,
+  rootNode: String,
+  sampleSolutions: Seq[XmlSampleSolution]
 ) extends Exercise {
 
-  def getTemplate(part: XmlExPart): XmlSolution = XmlSolution(
-    document =
-      s"""<?xml version="1.0" encoding="UTF-8"?>
-         |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin,
-    grammar = s"<!ELEMENT $rootNode (EMPTY)>"
-  )
+  override protected type SolutionType = XmlSolution
+  override protected type SampleSolutionType = XmlSampleSolution
 
 }
 

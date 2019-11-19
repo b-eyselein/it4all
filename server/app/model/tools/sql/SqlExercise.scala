@@ -2,6 +2,7 @@ package model.tools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
+import model.persistence.ADbExercise
 
 import scala.collection.immutable.IndexedSeq
 
@@ -26,9 +27,18 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 // Classes for use
 
 final case class SqlExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-  exerciseType: SqlExerciseType, override val tags: Seq[SqlExerciseTag], hint: Option[String], samples: Seq[StringSampleSolution]
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
+  exerciseType: SqlExerciseType,
+  override val tags: Seq[SqlExerciseTag],
+  hint: Option[String],
+  sampleSolutions: Seq[StringSampleSolution]
 ) extends Exercise
+  with ADbExercise {
+
+  override protected type SolutionType = String
+  override protected type SampleSolutionType = StringSampleSolution
+
+}
 
 // final case classes for db
 

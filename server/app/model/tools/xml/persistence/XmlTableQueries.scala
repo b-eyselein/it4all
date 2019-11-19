@@ -29,7 +29,7 @@ trait XmlTableQueries {
   //    }
 
   override def saveExerciseRest(collId: Int, compEx: XmlExercise): Future[Boolean] = {
-    val dbSamples = compEx.samples map (s => XmlSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+    val dbSamples = compEx.sampleSolutions map (s => XmlSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
       samplesSaved <- saveSeq[DbXmlSampleSolution](dbSamples, i => db.run(sampleSolutionsTableQuery += i), Some("XmlSample"))

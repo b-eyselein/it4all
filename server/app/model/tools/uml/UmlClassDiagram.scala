@@ -64,8 +64,6 @@ object UmlAssociationType extends PlayEnum[UmlAssociationType] {
 
 }
 
-final case class MyPosition(x: Int, y: Int)
-
 sealed trait UmlClassMember {
 
   val visibility: UmlVisibility
@@ -86,7 +84,7 @@ final case class UmlMethod(
 ) extends UmlClassMember
 
 
-final case class UmlClass(classType: UmlClassType, name: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod], position: Option[MyPosition]) {
+final case class UmlClass(classType: UmlClassType, name: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod]) {
 
   def allMembers: Seq[UmlClassMember] = attributes ++ methods
 

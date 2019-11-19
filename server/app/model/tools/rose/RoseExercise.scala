@@ -6,9 +6,12 @@ import model.tools.programming.{ProgDataType, ProgLanguage}
 
 
 final case class RoseExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
   fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]
 ) extends Exercise {
+
+  override protected type SolutionType = String
+  override protected type SampleSolutionType = RoseSampleSolution
 
   def declaration(forUser: Boolean): String = {
     val className                = if (forUser) "UserRobot" else "SampleRobot"

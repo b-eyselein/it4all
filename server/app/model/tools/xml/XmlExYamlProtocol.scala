@@ -1,12 +1,14 @@
 package model.tools.xml
 
-import model.{ExerciseState, MyYamlProtocol, SemanticVersion}
+import model.{ExerciseState, LongText, LongTextYamlProtocol, MyYamlProtocol, SemanticVersion}
 import net.jcazevedo.moultingyaml._
 
 object XmlExYamlProtocol extends MyYamlProtocol {
 
     val xmlExerciseYamlFormat: YamlFormat[XmlExercise] = {
       implicit val svyf: YamlFormat[SemanticVersion] = semanticVersionYamlFormat
+
+      implicit val ltyf: YamlFormat[ LongText] = LongTextYamlProtocol.longTextYamlFormat
 
       implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
 

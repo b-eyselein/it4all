@@ -3,7 +3,7 @@ package model.tools.regex
 import model.core.matching.MatchingResult
 import model.points.{Points, pointsJsonWrites}
 import model.tools.ToolJsonProtocol
-import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
+import model.{LongText, LongTextJsonProtocol, SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
 
 object RegexToolJsonProtocol extends ToolJsonProtocol[RegexExercise, StringSampleSolution, RegexCompleteResult] {
@@ -16,14 +16,11 @@ object RegexToolJsonProtocol extends ToolJsonProtocol[RegexExercise, StringSampl
   val regexExtractionTestDataFormat: Format[RegexExtractionTestData] = Json.format[RegexExtractionTestData]
 
   override val exerciseFormat: Format[RegexExercise] = {
-    implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
-
-    implicit val rctf: Format[RegexCorrectionType] = RegexCorrectionTypes.jsonFormat
-
-    implicit val sssf: Format[StringSampleSolution] = sampleSolutionFormat
-
-    implicit val rmtdf: Format[RegexMatchTestData] = regexMatchTestDataFormat
-
+    implicit val svf  : Format[SemanticVersion]         = SemanticVersionHelper.format
+    implicit val ltf  : Format[LongText]                = LongTextJsonProtocol.format
+    implicit val rctf : Format[RegexCorrectionType]     = RegexCorrectionTypes.jsonFormat
+    implicit val sssf : Format[StringSampleSolution]    = sampleSolutionFormat
+    implicit val rmtdf: Format[RegexMatchTestData]      = regexMatchTestDataFormat
     implicit val retdf: Format[RegexExtractionTestData] = regexExtractionTestDataFormat
 
     Json.format[RegexExercise]

@@ -7,7 +7,7 @@ import play.api.libs.json.JsValue
 
 
 final case class ProgExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
   functionName: String, foldername: String, filename: String,
   inputTypes: Seq[ProgInput], outputType: ProgDataType,
 
@@ -22,14 +22,19 @@ final case class ProgExercise(
   override val tags: Seq[ProgrammingExerciseTag],
 
   maybeClassDiagramPart: Option[UmlClassDiagram]
-) extends FileExercise[ProgExPart] {
+) extends Exercise {
 
-//  def inputCount: Int = inputTypes.size
+  override protected type SolutionType = ProgSolution
+
+  override protected type SampleSolutionType = ProgSampleSolution
+
+
+  //  def inputCount: Int = inputTypes.size
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this, completeTestData)
 
-  override def filesForExercisePart(part: ProgExPart): LoadExerciseFilesMessage = part match {
+  def filesForExercisePart(part: ProgExPart): LoadExerciseFilesMessage = part match {
     case ProgExParts.TestCreation    => LoadExerciseFilesMessage(unitTestPart.unitTestFiles, Some(unitTestPart.testFileName))
     case ProgExParts.Implementation  => LoadExerciseFilesMessage(implementationPart.files, Some(implementationPart.implFileName))
     case ProgExParts.ActivityDiagram => ???

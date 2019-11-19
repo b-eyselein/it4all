@@ -141,8 +141,7 @@ abstract class CollectionToolMain(tn: String, up: String)(implicit ec: Execution
 
   // Result handlers
 
-  def onLiveCorrectionResult(result: CompResultType): JsValue =
-    toolJsonProtocol.completeResultWrites.writes(result)
+  def onLiveCorrectionResult(result: CompResultType): JsValue = toolJsonProtocol.completeResultWrites.writes(result)
 
   def onLiveCorrectionError(error: Throwable): JsValue = Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
 

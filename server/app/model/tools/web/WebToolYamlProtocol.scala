@@ -23,23 +23,20 @@ object WebToolYamlProtocol extends MyYamlProtocol {
 
   private val siteSpecYamlFormat: YamlFormat[SiteSpec] = {
     implicit val htyf: YamlFormat[HtmlTask] = yamlFormat6(HtmlTask)
-
-    implicit val jtyf: YamlFormat[JsTask] = jsTaskYamlFormat
+    implicit val jtyf: YamlFormat[JsTask]   = jsTaskYamlFormat
 
     yamlFormat3(SiteSpec)
   }
 
+  override implicit def mapFormat[K: YamlFormat, Y: YamlFormat]: YamlFormat[Map[K, Y]] = myMapFormat
+
   val webExerciseYamlFormat: YamlFormat[WebExercise] = {
-    implicit val svyf: YamlFormat[SemanticVersion] = semanticVersionYamlFormat
-
-    implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
-
-    implicit val ssyf: YamlFormat[SiteSpec] = siteSpecYamlFormat
-
+    implicit val svyf : YamlFormat[SemanticVersion]     = semanticVersionYamlFormat
+    implicit val ltyf : YamlFormat[LongText]            = LongTextYamlProtocol.longTextYamlFormat
+    implicit val esyf : YamlFormat[ExerciseState]       = exerciseStateYamlFormat
+    implicit val ssyf : YamlFormat[SiteSpec]            = siteSpecYamlFormat
     implicit val fssyf: YamlFormat[FilesSampleSolution] = filesSampleSolutionYamlFormat
-
-    implicit val efyf: YamlFormat[ExerciseFile] = exerciseFileYamlFormat
-
+    implicit val efyf : YamlFormat[ExerciseFile]        = exerciseFileYamlFormat
 
     yamlFormat12(WebExercise)
   }

@@ -7,10 +7,9 @@ import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.libs.json._
 
-import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Success, Try}
 
-final case class WrongFieldTypeException(fieldtype: String) extends Exception
+private final case class WrongFieldTypeException(fieldtype: String) extends Exception
 
 @deprecated
 trait MyYamlFormat[A] extends YamlWriter[A] {
@@ -19,21 +18,8 @@ trait MyYamlFormat[A] extends YamlWriter[A] {
 
 }
 
-@deprecated
-object YamlObj {
-
-  // FIXME: remove cast ...
-  def apply(fields: (String, YamlValue)*): YamlObject = YamlObject(fields.map(f => (YamlString(f._1).asInstanceOf[YamlValue], f._2)) toMap)
-
-}
 
 @deprecated
-object YamlArr {
-
-  def apply(objects: Seq[YamlValue]): YamlArray = YamlArray(objects toVector)
-
-}
-
 object MyYamlProtocol {
 
   implicit def string2YamlString(str: String): YamlString = YamlString(str)
@@ -81,46 +67,21 @@ object MyYamlProtocol {
 
   implicit class PimpedYamlObject(yamlObject: YamlObject) {
 
-    def someField(fieldName: String): Try[YamlValue] = yamlObject.fields get fieldName match {
+    private def someField(fieldName: String): Try[YamlValue] = yamlObject.fields get fieldName match {
       case Some(field) => Try(field)
       case None        => Failure(new NoSuchFieldException(fieldName))
-    }
-
-    def optField[T](fieldName: String, f: YamlValue => Try[T]): Try[Option[T]] = yamlObject.fields get fieldName match {
-      case None            => Success(None)
-      case Some(yamlValue) => f(yamlValue).map(Some.apply)
-    }
-
-    def boolField(fieldName: String): Try[Boolean] = someField(fieldName) flatMap (_.asBool)
-
-    def optBoolField(fieldName: String): Try[Option[Boolean]] = yamlObject.fields get fieldName match {
-      case None        => Success(None)
-      case Some(field) => field.asBool.map(Some.apply)
     }
 
     def intField(fieldName: String): Try[Int] = someField(fieldName).flatMap(_.asInt)
 
     def stringField(fieldName: String): Try[String] = someField(fieldName).flatMap(_.asStr)
 
-    def optStringField(fieldName: String): Try[Option[String]] = someField(fieldName) match {
-      case Failure(_)     => Success(None)
-      case Success(field) => field.asStr.map(Some.apply)
-    }
-
-    def objField[A](fieldName: String, f: YamlObject => Try[A]): Try[A] = someField(fieldName).map(_.asYamlObject).flatMap(f)
-
     def arrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = someField(fieldName).flatMap(_.asArray(mapping))
-
-    def optArrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = yamlObject.fields get fieldName match {
-      case None        => Success((Seq[T](), Seq[Failure[T]]()))
-      case Some(field) => field.asArray(mapping)
-    }
 
     def enumField[T](fieldName: String, valueOf: String => T): Try[T] = stringField(fieldName).map(valueOf)
 
     def jsonField(fieldName: String): Try[JsValue] = someField(fieldName).map(mapToJson)
 
-    def optJsonField(fieldName: String): Try[Option[JsValue]] = optField(fieldName, yamlValue => Try(mapToJson(yamlValue)))
 
   }
 
@@ -224,6 +185,24 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
 
     yamlFormat2(FilesSampleSolution)
   }
+
+  protected def myMapFormat[K: YamlFormat, V: YamlFormat]: YamlFormat[Map[K, V]] = new YamlFormat[Map[K, V]] {
+
+    final case class KeyValueMapEntry(key: K, value: V)
+
+    implicit val keyValueMapEntryYamlFormat: YamlFormat[Seq[KeyValueMapEntry]] = immSeqFormat(yamlFormat2(KeyValueMapEntry))
+
+    override def write(obj: Map[K, V]): YamlValue = keyValueMapEntryYamlFormat.write(
+      obj.toSeq.map { case (key, value) => KeyValueMapEntry(key, value) }
+    )
+
+    override def read(yaml: YamlValue): Map[K, V] = keyValueMapEntryYamlFormat
+      .read(yaml)
+      .map { case KeyValueMapEntry(key, value) => (key, value) }
+      .toMap
+
+  }
+
 }
 
 object ExerciseCollectionYamlProtocol extends MyYamlProtocol {

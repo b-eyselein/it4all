@@ -27,19 +27,16 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
 
   private val siteSpecFormat: Format[SiteSpec] = {
     implicit val htf: Format[HtmlTask] = Json.format[HtmlTask]
-
-    implicit val jtf: Format[JsTask] = jsTaskFormat
+    implicit val jtf: Format[JsTask]   = jsTaskFormat
 
     Json.format[SiteSpec]
   }
 
   override val exerciseFormat: Format[WebExercise] = {
-    implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
-
-    implicit val ssf: Format[SiteSpec] = siteSpecFormat
-
-    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
-
+    implicit val svf : Format[SemanticVersion]     = SemanticVersionHelper.format
+    implicit val ltf : Format[LongText]            = LongTextJsonProtocol.format
+    implicit val ssf : Format[SiteSpec]            = siteSpecFormat
+    implicit val eff : Format[ExerciseFile]        = ExerciseFileJsonProtocol.exerciseFileFormat
     implicit val fssf: Format[FilesSampleSolution] = sampleSolutionFormat
 
     Json.format[WebExercise]
@@ -105,10 +102,8 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
 
   override val completeResultWrites: Writes[WebCompleteResult] = {
     implicit val gesrw: Writes[GradedElementSpecResult] = elementResultWrites
-
-    implicit val jwrw: Writes[GradedJsTaskResult] = jsWebResultWrites
-
-    implicit val pw: Writes[Points] = pointsJsonWrites
+    implicit val jwrw : Writes[GradedJsTaskResult]      = jsWebResultWrites
+    implicit val pw   : Writes[Points]                  = pointsJsonWrites
 
     (
       (__ \ solutionSavedName).write[Boolean] and

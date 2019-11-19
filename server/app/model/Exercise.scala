@@ -38,9 +38,16 @@ trait Exercise {
 
   val author: String
 
-  val text: String
+  val text: LongText
 
   val state: ExerciseState
+
+
+  protected type SolutionType
+
+  protected type SampleSolutionType <: SampleSolution[SolutionType]
+
+  val sampleSolutions: Seq[SampleSolutionType]
 
 
   def tags: Seq[ExTag] = Seq[ExTag]()
@@ -48,6 +55,11 @@ trait Exercise {
 }
 
 trait FileExercise[PartType <: ExPart] extends Exercise {
+
+  override protected type SolutionType = Seq[ExerciseFile]
+
+  override protected type SampleSolutionType = FilesSampleSolution
+
 
   def filesForExercisePart(part: PartType): LoadExerciseFilesMessage
 

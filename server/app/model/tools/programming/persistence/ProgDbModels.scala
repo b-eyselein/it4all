@@ -126,7 +126,7 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 }
 
 final case class DbProgExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
   functionname: String, foldername: String, filename: String,
   inputType: Seq[ProgInput], outputType: ProgDataType,
   baseData: Option[JsValue],

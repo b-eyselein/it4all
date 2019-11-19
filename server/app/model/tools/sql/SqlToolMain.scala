@@ -80,7 +80,7 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
   override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: ExerciseCollection, exercise: SqlExercise, part: SqlExPart): Future[Try[SqlCorrResult]] =
     correctorsAndDaos.get(exercise.exerciseType) match {
       case None                   => Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}")))
-      case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, exercise.samples, exercise, sqlScenario)
+      case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, exercise.sampleSolutions, exercise, sqlScenario)
     }
 
   // Other helper methods

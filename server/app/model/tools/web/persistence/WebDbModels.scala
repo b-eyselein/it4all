@@ -73,7 +73,7 @@ object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebE
 }
 
 final case class DbWebExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
   htmlText: Option[String], jsText: Option[String], fileName: String
 ) extends ADbExercise
 

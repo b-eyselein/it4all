@@ -2,22 +2,11 @@ package model.tools.sql.persistence
 
 import model._
 import model.persistence._
-import model.tools.sql.SqlConsts.tagJoinChar
 import model.tools.sql._
 
-object SqlDbModels extends ADbModels[SqlExercise, DbSqlExercise] {
+object SqlDbModels extends ADbModels[SqlExercise, SqlExercise] {
 
-  override def dbExerciseFromExercise(ex: SqlExercise): DbSqlExercise = {
-//    val tagsAsString = ex.tags.map(_.entryName).mkString(tagJoinChar)
-
-    DbSqlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.exerciseType, ex.tags, ex.hint)
-  }
-
-  def exerciseFromDbValues(dbEx: DbSqlExercise, samples: Seq[StringSampleSolution]): SqlExercise = {
-    //    val tagsFromString: Seq[SqlExerciseTag] = dbEx.tags.split(tagJoinChar).toSeq.flatMap(SqlExerciseTag.withNameInsensitiveOption)
-
-    SqlExercise(dbEx.id, dbEx.collectionId, dbEx.semanticVersion, dbEx.title, dbEx.author, dbEx.text, dbEx.state, dbEx.exerciseType, dbEx.tags, dbEx.hint, samples)
-  }
+  override def dbExerciseFromExercise(ex: SqlExercise): SqlExercise = ex
 
 }
 
@@ -30,11 +19,6 @@ object SqlExerciseReviewDbModels extends AExerciseReviewDbModels[SqlExPart, SqlE
     SqlExerciseReview(dbReview.difficulty, dbReview.maybeDuration)
 
 }
-
-final case class DbSqlExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
-  exerciseType: SqlExerciseType, tags: Seq[SqlExerciseTag], hint: Option[String]
-) extends ADbExercise
 
 // Exercise review
 

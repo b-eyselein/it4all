@@ -1,7 +1,7 @@
 package model.tools.sql.persistence
 
 import javax.inject.Inject
-import model.ExParts
+import model.{ExParts, StringSampleSolution}
 import model.persistence._
 import model.tools.sql.SqlConsts._
 import model.tools.sql._
@@ -19,7 +19,7 @@ class SqlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   // Table types
 
-  override protected type DbExType = DbSqlExercise
+  override protected type DbExType = SqlExercise
 
   override protected type ExTableDef = SqlExercisesTable
 
@@ -54,14 +54,12 @@ class SqlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   // Reading
 
-  override protected def completeExForEx(collId: Int, ex: DbSqlExercise): Future[SqlExercise] = for {
-    samples <- futureSamplesForExercise(collId, ex.id)
-  } yield SqlDbModels.exerciseFromDbValues(ex, samples)
+  override protected def completeExForEx(collId: Int, ex: SqlExercise): Future[SqlExercise] = Future.successful(ex)
 
   // Saving
 
   override def saveExerciseRest(collId: Int, compEx: SqlExercise): Future[Boolean] = {
-    val dbSamples = compEx.samples.map(s => StringSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
+    val dbSamples = compEx.sampleSolutions.map(s => StringSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
 
     for {
       samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery insertOrUpdate s))
@@ -82,19 +80,24 @@ class SqlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   class SqlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "sql_exercises") {
 
-    implicit val setct:BaseColumnType[SqlExerciseType] = sqlExerciseTypeColumnType
+    implicit val setct: BaseColumnType[SqlExerciseType] = sqlExerciseTypeColumnType
 
     implicit val setsct: BaseColumnType[Seq[SqlExerciseTag]] = sqlExerciseTagSeqColumnType
 
+    implicit val sssct: BaseColumnType[Seq[StringSampleSolution]] = stringSampleSolutionColumnType
 
-    def exerciseType: Rep[SqlExerciseType] = column[SqlExerciseType]("exercise_type")
+
+    def exerciseType: Rep[SqlExerciseType] = column[SqlExerciseType]("exercise_type_json")
 
     def hint: Rep[String] = column[String](hintName)
 
-    def tags: Rep[Seq[SqlExerciseTag]] = column[Seq[SqlExerciseTag]](tagsName)
+    def tags: Rep[Seq[SqlExerciseTag]] = column[Seq[SqlExerciseTag]]("tags_json")
+
+    def sampleSolutions: Rep[Seq[StringSampleSolution]] = column[Seq[StringSampleSolution]]("sample_solutions_json")
 
 
-    override def * : ProvenShape[DbSqlExercise] = (id, collectionId, semanticVersion, title, author, text, state, exerciseType, tags, hint.?) <> (DbSqlExercise.tupled, DbSqlExercise.unapply)
+    override def * : ProvenShape[SqlExercise] = (id, collectionId, semanticVersion, title, author, text, state,
+      exerciseType, tags, hint.?, sampleSolutions) <> (SqlExercise.tupled, SqlExercise.unapply)
 
   }
 

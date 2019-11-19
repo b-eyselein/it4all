@@ -106,15 +106,13 @@ class UmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
     private implicit val mct: BaseColumnType[Map[String, String]] = stringMapColumnType
 
 
-    def markedText: Rep[String] = column[String]("marked_text")
-
     def toIgnore: Rep[Seq[String]] = column[Seq[String]]("to_ignore_json")
 
     def mappings: Rep[Map[String, String]] = column[Map[String, String]]("mappings_json")
 
 
     override def * : ProvenShape[DbUmlExercise] = (id, collectionId, semanticVersion, title, author, text, state,
-      markedText, toIgnore, mappings) <> (DbUmlExercise.tupled, DbUmlExercise.unapply)
+      toIgnore, mappings) <> (DbUmlExercise.tupled, DbUmlExercise.unapply)
 
   }
 

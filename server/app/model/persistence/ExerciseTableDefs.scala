@@ -111,6 +111,8 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
     jsonColumnType(stringMapFormat)
   }
 
+  protected val longTextColumnType: BaseColumnType[LongText] = jsonColumnType(LongTextJsonProtocol.format)
+
   // Abstract table classes
 
   abstract class ExerciseCollectionsTable(tag: Tag, tableName: String) extends Table[ExerciseCollection](tag, tableName) {
@@ -136,6 +138,9 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
   abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends Table[DbExType](tag, name) {
 
+    protected implicit val ltct: BaseColumnType[LongText] = longTextColumnType
+
+
     def id: Rep[Int] = column[Int](idName)
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
@@ -144,7 +149,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
     def author: Rep[String] = column[String]("author")
 
-    def text: Rep[String] = column[String]("ex_text")
+    def text: Rep[LongText] = column[LongText]("ex_text")
 
     def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
 

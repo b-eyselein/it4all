@@ -47,7 +47,7 @@ class XmlToolMain @Inject()(val tables: XmlTableDefs)(implicit ec: ExecutionCont
   // Yaml, Html forms, Json
 
   override protected val toolJsonProtocol: ToolJsonProtocol[XmlExercise, XmlSampleSolution, XmlCompleteResult] =
-    XmlCompleteResultJsonProtocol
+    XmlToolJsonProtocol
 
   override protected val exerciseYamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.xmlExerciseYamlFormat
 

@@ -48,7 +48,7 @@ object XmlCorrector {
   }
 
   def correctDocument(solution: XmlSolution, solutionBaseDir: File, exercise: XmlExercise): Try[XmlDocumentCompleteResult] =
-    exercise.samples.headOption match {
+    exercise.sampleSolutions.headOption match {
       case None            => Failure(new Exception("There is no sample solution!"))
       case Some(xmlSample) =>
         // Write grammar
@@ -77,7 +77,7 @@ object XmlCorrector {
       if (dist1 < dist2) sampleG1 else sampleG2
     })
 
-  def correctGrammar(solution: XmlSolution, exercise: XmlExercise): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, exercise.samples) match {
+  def correctGrammar(solution: XmlSolution, exercise: XmlExercise): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, exercise.sampleSolutions) match {
     case None                                    => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
     case Some(sampleSolution: XmlSampleSolution) =>
 

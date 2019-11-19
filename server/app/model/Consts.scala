@@ -1,11 +1,15 @@
 package model
 
+import better.files.File
+
 trait Consts {
 
   val analysisResultName: String = "analysisResult"
   val attributesName    : String = "attributes"
   val authorName        : String = "author"
   val awaitedName       : String = "awaited"
+
+  val resourcesBasePath: File = File.currentWorkingDirectory / "conf" / "resources"
 
   val collectionIdName: String = "collectionId"
   val contentName     : String = "content"
@@ -53,13 +57,14 @@ trait Consts {
 
   val questionsName: String = "questions"
 
-  val resultsName: String = "results"
-  val roleName   : String = "role"
+  val relativePathName: String = "relativePath"
+  val resultsName     : String = "results"
+  val roleName        : String = "role"
 
   val sampleName         : String = "sample"
   val sampleArgName      : String = "sampleArg"
   val sampleSolutionName : String = "sampleSolution"
-  val samplesName        : String = "samples"
+  val sampleSolutionsName: String = "sampleSolutions"
   val semanticVersionName: String = "semanticVersion"
   val shortNameName      : String = "shortName"
   val statusName         : String = "status"
@@ -70,18 +75,13 @@ trait Consts {
   val solutionsSubDir    : String = "solutions"
   val successName        : String = "success"
 
-
-  val tagJoinChar: String = "#"
-  val tagsName   : String = "tags"
   val textName   : String = "text"
   val titleName  : String = "title"
   val typeName   : String = "type"
 
-  val unitTestName: String = "unitTest"
   val userArgName : String = "userArg"
   val usernameName: String = "username"
 
-  val valueName: String = "value"
 
 }
 

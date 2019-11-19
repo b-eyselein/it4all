@@ -3,10 +3,10 @@ package model.tools.xml
 import de.uniwue.dtd.parser.DTDParseException
 import model.points._
 import model.tools.ToolJsonProtocol
-import model.{SemanticVersion, SemanticVersionHelper}
+import model.{LongText, LongTextJsonProtocol, SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json._
 
-object XmlCompleteResultJsonProtocol extends ToolJsonProtocol[XmlExercise, XmlSampleSolution, XmlCompleteResult] {
+object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExercise, XmlSampleSolution, XmlCompleteResult] {
 
   // Sample solution
 
@@ -20,6 +20,8 @@ object XmlCompleteResultJsonProtocol extends ToolJsonProtocol[XmlExercise, XmlSa
 
   val exerciseFormat: Format[XmlExercise] = {
     implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
+
+    implicit val ltf: Format[LongText] = LongTextJsonProtocol.format
 
     implicit val xssf: Format[XmlSampleSolution] = sampleSolutionFormat
 

@@ -4,7 +4,7 @@ import model.persistence._
 import model.points.Points
 import model.tools.programming.{ProgDataType, ProgLanguage}
 import model.tools.rose._
-import model.{Difficulty, ExerciseState, SemanticVersion}
+import model.{Difficulty, ExerciseState, LongText, SemanticVersion}
 
 object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise] {
 
@@ -48,7 +48,7 @@ object RoseExerciseReviewDbModels extends AExerciseReviewDbModels[RoseExPart, Ro
 
 }
 
-final case class DbRoseExercise(id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: String, state: ExerciseState,
+final case class DbRoseExercise(id: Int, collectionId: Int, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
                                 fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean) extends ADbExercise
 
 final case class DbRoseSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, language: ProgLanguage, sample: String)
