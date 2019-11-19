@@ -5,37 +5,18 @@ import better.files.File
 trait Consts {
 
   val analysisResultName: String = "analysisResult"
-  val attributesName    : String = "attributes"
   val authorName        : String = "author"
-  val awaitedName       : String = "awaited"
 
   val resourcesBasePath: File = File.currentWorkingDirectory / "conf" / "resources"
 
-  val collectionIdName: String = "collectionId"
-  val contentName     : String = "content"
-  val correctName     : String = "correct"
+  val contentName: String = "content"
 
-  val descriptionName: String = "description"
-  val difficultyName : String = "difficulty"
-  val durationName   : String = "duration"
+  val difficultyName: String = "difficulty"
+  val durationName  : String = "duration"
 
-  val errorName       : String = "error"
-  val exerciseTypeName: String = "exerciseType"
-  val explanationsName         = "explanations"
+  val filenameName: String = "filename"
 
-  val filenameName  : String = "filename"
-  val filesName     : String = "files"
-  val foldernameName: String = "foldername"
-
-  val gottenName: String = "gotten"
-
-  val idName        : String = "id"
-  val inputTypeName : String = "inputType"
-  val inputTypesName: String = "inputTypes"
-
-  val keyName: String = "key"
-
-  val languageName: String = "language"
+  val idName: String = "id"
 
   val majorName            : String = "major"
   val matchesName          : String = "matches"
@@ -50,10 +31,8 @@ trait Consts {
 
   val partName  : String = "part"
   val patchName : String = "patch"
-  val pathName  : String = "path"
   val pointsName: String = "points"
   val pwName    : String = "passwort"
-  val pw2Name   : String = "passwort_wieder"
 
   val questionsName: String = "questions"
 
@@ -61,27 +40,21 @@ trait Consts {
   val resultsName     : String = "results"
   val roleName        : String = "role"
 
-  val sampleName         : String = "sample"
-  val sampleArgName      : String = "sampleArg"
-  val sampleSolutionName : String = "sampleSolution"
-  val sampleSolutionsName: String = "sampleSolutions"
-  val semanticVersionName: String = "semanticVersion"
-  val shortNameName      : String = "shortName"
-  val statusName         : String = "status"
-  val stdStep            : Int    = 10
-  val successTypeName    : String = "successType"
-  val solutionName       : String = "solution"
-  val solutionSavedName  : String = "solutionSaved"
-  val solutionsSubDir    : String = "solutions"
-  val successName        : String = "success"
+  val sampleName       : String = "sample"
+  val sampleArgName    : String = "sampleArg"
+  val shortNameName    : String = "shortName"
+  val statusName       : String = "status"
+  val solutionName     : String = "solution"
+  val solutionSavedName: String = "solutionSaved"
+  val solutionsSubDir  : String = "solutions"
+  val successName      : String = "success"
 
-  val textName   : String = "text"
-  val titleName  : String = "title"
-  val typeName   : String = "type"
+  val textName : String = "text"
+  val titleName: String = "title"
+  val typeName : String = "type"
 
   val userArgName : String = "userArg"
   val usernameName: String = "username"
-
 
 }
 

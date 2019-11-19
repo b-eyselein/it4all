@@ -108,7 +108,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def functionName: Rep[String] = column[String]("function_name")
 
-    def foldername: Rep[String] = column[String](foldernameName)
+    def foldername: Rep[String] = column[String]("foldername")
 
     def filename: Rep[String] = column[String](filenameName)
 

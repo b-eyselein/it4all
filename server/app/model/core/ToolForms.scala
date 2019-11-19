@@ -32,7 +32,7 @@ trait ToolForms[ExType <: Exercise, ReviewType <: ExerciseReview] {
   )(StringSampleSolution.apply)(StringSampleSolution.unapply)
 
   protected val exerciseFileMapping: Mapping[ExerciseFile] = mapping(
-    pathName -> nonEmptyText,
+    "path" -> nonEmptyText,
     "resourcePath" -> nonEmptyText,
     "fileType" -> nonEmptyText,
     "editable" -> boolean

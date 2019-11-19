@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 import model.toolMains.AToolMain
 import play.api.{ConfigLoader, Configuration, Environment}
 
-final case class ToolConfig(toolName: String, toolMainClass: String, isEnabled: Boolean = true)
+private final case class ToolConfig(toolName: String, toolMainClass: String, isEnabled: Boolean = true)
 
 class ToolModules(environment: Environment, configuration: Configuration) extends AbstractModule {
 
@@ -26,7 +26,6 @@ class ToolModules(environment: Environment, configuration: Configuration) extend
 
     val multiBinder: Multibinder[AToolMain] = Multibinder.newSetBinder(binder(), classOf[AToolMain])
 
-    // TODO: get by annotation...
     modulesConfig.subKeys
       .map(modulesConfig.get[ToolConfig]) // Load configuration for tool
       .filter(_.isEnabled)

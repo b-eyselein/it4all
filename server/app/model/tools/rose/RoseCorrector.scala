@@ -2,19 +2,17 @@ package model.tools.rose
 
 import better.files.File._
 import better.files._
-import model.User
-import model.docker._
 import model.tools.programming.ProgLanguage
+import model.{DockerBind, DockerConnector, User}
 import modules.DockerPullsStartTask
-import play.api.Logger
-import play.api.libs.json.{JsError, JsResult, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 object RoseCorrector {
 
-  private val logger = Logger(RoseCorrector.getClass)
+  val roseCorrectionDockerImageName = "beyselein/rose:latest"
 
   private val NewLine: String = "\n"
 
@@ -25,15 +23,15 @@ object RoseCorrector {
              (implicit ec: ExecutionContext): Future[Try[RoseCompleteResult]] = {
 
     // Check if image exists
-    val futureImageExists = Future(DockerConnector.imageExists(DockerPullsStartTask.roseImage))
+    val futureImageExists = Future(DockerConnector.imageExists(roseCorrectionDockerImageName))
 
     val solutionFileName = s"solution_robot.${language.fileEnding}"
-    val sampleFileName = s"sample_robot.${language.fileEnding}"
+    val sampleFileName   = s"sample_robot.${language.fileEnding}"
 
     val solutionFilePath: File = solutionTargetDir / solutionFileName
-    val sampleFilePath: File = solutionTargetDir / sampleFileName
+    val sampleFilePath  : File = solutionTargetDir / sampleFileName
 
-    val actionFilePath: File = solutionTargetDir / actionsFileName
+    val actionFilePath : File = solutionTargetDir / actionsFileName
     val optionsFilePath: File = solutionTargetDir / optionsFileName
 
     // FIXME: write exercise options file...
@@ -58,7 +56,7 @@ object RoseCorrector {
       case true  =>
         DockerConnector
           .runContainer(
-            imageName = DockerPullsStartTask.roseImage,
+            imageName = roseCorrectionDockerImageName,
             maybeEntryPoint = None /* Some(entryPoint)*/ ,
             maybeDockerBinds = Some(dockerBinds) /*,
           deleteContainerAfterRun = false */

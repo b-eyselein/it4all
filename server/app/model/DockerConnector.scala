@@ -1,4 +1,4 @@
-package model.docker
+package model
 
 import java.nio.file.{Path, Paths}
 
@@ -9,8 +9,8 @@ import com.spotify.docker.client.messages.{ContainerConfig, ContainerCreation, C
 import com.spotify.docker.client.{DefaultDockerClient, DockerClient}
 import play.api.Logger
 
-import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {
@@ -26,7 +26,7 @@ final case class RunContainerResult(statusCode: Int, logs: String)
 
 object DockerConnector {
 
-  private val logger: Logger = Logger("model.docker.DockerConnector")
+  private val logger: Logger = Logger("model.DockerConnector")
 
   private val MaxWaitTimeInSeconds: Int = 3
 

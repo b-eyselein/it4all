@@ -2,12 +2,7 @@ package model
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-final case class LongString(str: String) {
-  // TODO: use and read / write from and to file!
-}
-
 trait ExPart extends EnumEntry {
-  // FIXME: use enumeratum =?=
 
   def urlName: String
 

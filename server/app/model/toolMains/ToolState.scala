@@ -2,22 +2,15 @@ package model.toolMains
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model.Role
-import model.Role.RoleUser
-import play.twirl.api.Html
 
-sealed abstract class ToolState(val german: String, val greek: String, requiredRole: Role) extends EnumEntry {
-
-  def badge: Html = Html(s"<sup>$greek</sup>")
-
-}
+sealed abstract class ToolState(val german: String, val greek: String, requiredRole: Role) extends EnumEntry
 
 object ToolState extends PlayEnum[ToolState] {
 
   override val values: IndexedSeq[ToolState] = findValues
 
-  case object LIVE extends ToolState("Verfügbare Tools", "", RoleUser) {
-    override def badge: Html = new Html("")
-  }
+
+  case object LIVE extends ToolState("Verfügbare Tools", "", Role.RoleUser)
 
   case object ALPHA extends ToolState("Tools in Alpha-Status", "&alpha;", Role.RoleAdmin)
 

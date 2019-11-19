@@ -40,25 +40,22 @@ trait TableDefs {
 
   // Update
 
-  def updateUserRole(userToChangeName: String, newRole: Role): Future[Boolean] =
-    db.run(users.filter(_.username === userToChangeName).map(_.role).update(newRole)) map (_ => true) recover { case e: Throwable =>
-      logger.error(s"Could not update std role of user $userToChangeName to ${newRole.entryName}", e)
-      false
-    }
+  def updateUserRole(userToChangeName: String, newRole: Role): Future[Boolean] = {
+    implicit val rct: BaseColumnType[Role] = roleColumnType
+
+    db.run(users.filter(_.username === userToChangeName).map(_.role).update(newRole))
+      .map(_ => true)
+      .recover { case e: Throwable =>
+        logger.error(s"Could not update std role of user $userToChangeName to ${newRole.entryName}", e)
+        false
+      }
+  }
 
   // Insert
 
-  def saveUser(user: User): Future[Boolean] = db.run(users += user) map (_ => true) recover {
-    case e: Throwable =>
-      logger.error(s"Could not save user $user", e)
-      false
-  }
+  def saveUser(user: User): Future[Boolean] = db.run(users += user).transform(_ == 1, identity)
 
-  def savePwHash(pwHash: PwHash): Future[Boolean] = db.run(pwHashes += pwHash) map (_ => true) recover {
-    case e: Throwable =>
-      logger.error(s"Could not save pwHash $pwHash", e)
-      false
-  }
+  //  def savePwHash(pwHash: PwHash): Future[Boolean] = db.run(pwHashes += pwHash).transform(_ == 1, identity)
 
   // Abstract queries
 
@@ -81,10 +78,10 @@ trait TableDefs {
 
   // Column types
 
-  private implicit val roleColumnType: BaseColumnType[Role] =
+  private val roleColumnType: BaseColumnType[Role] =
     MappedColumnType.base[Role, String](_.entryName, str => Role.withNameInsensitiveOption(str) getOrElse Role.RoleUser)
 
-  protected implicit val exercisetypeColumnType: BaseColumnType[ExerciseState] =
+  protected implicit val exerciseStateColumnType: BaseColumnType[ExerciseState] =
     MappedColumnType.base[ExerciseState, String](_.entryName, str => ExerciseState.withNameInsensitiveOption(str) getOrElse ExerciseState.CREATED)
 
   protected implicit val semanticVersionColumnType: BaseColumnType[SemanticVersion] =
@@ -92,9 +89,10 @@ trait TableDefs {
 
   // Tables
 
-  // Users
+  protected class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 
-  class UsersTable(tag: Tag) extends Table[User](tag, "users") {
+    private implicit val rct: BaseColumnType[Role] = roleColumnType
+
 
     def userType: Rep[Int] = column[Int]("user_type")
 
@@ -118,7 +116,7 @@ trait TableDefs {
 
   }
 
-  class PwHashesTable(tag: Tag) extends Table[PwHash](tag, "pw_hashes") {
+  protected class PwHashesTable(tag: Tag) extends Table[PwHash](tag, "pw_hashes") {
 
     def username: Rep[String] = column[String]("username", O.PrimaryKey)
 

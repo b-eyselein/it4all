@@ -27,20 +27,7 @@ object SemanticVersionHelper {
     )(SemanticVersion.apply)(SemanticVersion.unapply)
   )
 
-  def semanticVersionYamlField(yamlValue: YamlValue): Try[SemanticVersion] = yamlValue match {
-    case YamlString(str)     => tryParseFromString(str)
-    case yamlObj: YamlObject =>
-      import MyYamlProtocol._
-
-      for {
-        major <- yamlObj.intField(majorName)
-        minor <- yamlObj.intField(minorName)
-        patch <- yamlObj.intField(patchName)
-      } yield SemanticVersion(major, minor, patch)
-    case other               => Failure(new Exception(s"Could not parse '${other.toString}' as Semantic Version!"))
-  }
-
-  def tryParseFromString(str: String): Try[SemanticVersion] = str match {
+  private def tryParseFromString(str: String): Try[SemanticVersion] = str match {
     case semanticVersionRegex(maj, min, pat) => for {
       major <- Try(maj.toInt)
       minor <- Try(min.toInt)
