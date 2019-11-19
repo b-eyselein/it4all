@@ -2,7 +2,7 @@ import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {ExerciseCollection, Tool} from '../../_interfaces/tool';
-import {ApiService} from '../../_services/api.service';
+import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {ReadCollectionComponent} from './read-collection/read-collection.component';
 
 @Component({templateUrl: './admin-read-collections.component.html'})

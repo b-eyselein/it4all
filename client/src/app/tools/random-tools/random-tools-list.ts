@@ -8,7 +8,7 @@ export const BoolCreatePart: ToolPart = {id: 'create', name: 'Boolesche Formel e
 export const BoolTool: Tool = new (
   class BoolToolClass extends Tool {
     constructor() {
-      super('bool', 'Boolesche Algebra', [BoolFillOutPart, BoolCreatePart]);
+      super('bool', 'Boolesche Algebra', [BoolFillOutPart, BoolCreatePart], 'live');
     }
 
     processTagString(tag: string): ExerciseTag {
@@ -26,7 +26,7 @@ export const NaryTwoConversionToolPart = {id: 'twoConversion', name: 'Zahlenumwa
 export const NaryTool: Tool = new (
   class NaryToolClass extends Tool {
     constructor() {
-      super('nary', 'Zahlensysteme', [NaryAdditionToolPart, NaryConversionToolPart, NaryTwoConversionToolPart]);
+      super('nary', 'Zahlensysteme', [NaryAdditionToolPart, NaryConversionToolPart, NaryTwoConversionToolPart], 'live');
     }
 
     processTagString(tag: string): ExerciseTag {

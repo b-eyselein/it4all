@@ -6,8 +6,10 @@ import {RegexExerciseComponent} from './regex/regex-exercise/regex-exercise.comp
 import {SqlExerciseComponent} from './sql/sql-exercise/sql-exercise.component';
 import {WebExerciseComponent} from './web/web-exercise/web-exercise.component';
 import {UmlExerciseComponent} from './uml/uml-exercise/uml-exercise.component';
+import {NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
 
-export const collectionToolRoutes = [
+const collectionToolRoutes = [
   {path: 'tools/:toolId', component: CollectionToolIndexComponent, canActivate: [AuthGuard]},
   {path: 'tools/:toolId/collections/:collId', component: CollectionIndexComponent, canActivate: [AuthGuard]},
 
@@ -21,6 +23,13 @@ export const collectionToolRoutes = [
   {path: 'tools/uml/collections/:collId/exercises/:exId/parts/:partId', component: UmlExerciseComponent, canActivate: [AuthGuard]},
   {path: 'tools/web/collections/:collId/exercises/:exId/parts/:partId', component: WebExerciseComponent, canActivate: [AuthGuard]},
 ];
+
+@NgModule({
+  imports: [RouterModule.forChild(collectionToolRoutes)],
+  exports: [RouterModule]
+})
+export class CollectionToolRoutingModule {
+}
 
 export const collectionToolRoutingComponents = [
   CollectionToolIndexComponent,

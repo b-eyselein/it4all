@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ProgrammingExerciseComponent} from './programming-exercise.component';
-import {ExerciseFilesEditorComponent} from '../../tool-helpers/exercise-files-editor/exercise-files-editor.component';
+import {ExerciseFilesEditorComponent} from '../../_components/exercise-files-editor/exercise-files-editor.component';
 
 describe('ProgrammingExerciseComponent', () => {
   let component: ProgrammingExerciseComponent;

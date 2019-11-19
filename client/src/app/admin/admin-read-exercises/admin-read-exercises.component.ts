@@ -1,7 +1,7 @@
 import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {Exercise, ExerciseCollection, Tool} from '../../_interfaces/tool';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../../_services/api.service';
+import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {DexieService} from '../../_services/dexie.service';
 import {ReadExerciseComponent} from './read-exercise/read-exercise.component';

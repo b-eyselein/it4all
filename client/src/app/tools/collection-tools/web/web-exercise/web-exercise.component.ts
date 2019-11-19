@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Tool} from '../../../../_interfaces/tool';
 import {WebTool} from '../web-tool';
 import {ActivatedRoute} from '@angular/router';
-import {ApiService} from '../../../../_services/api.service';
+import {ApiService} from '../../_services/api.service';
 import {WebExercise} from '../web-interfaces';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';

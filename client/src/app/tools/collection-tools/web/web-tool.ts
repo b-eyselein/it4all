@@ -8,7 +8,7 @@ const JsPart: ToolPart = {id: 'js', name: 'JS-Teil'};
 export const WebTool: Tool = new (
   class WebToolClass extends Tool {
     constructor() {
-      super('web', 'Web', [HtmlPart, JsPart], null, true, true, true);
+      super('web', 'Web', [HtmlPart, JsPart], 'live', true, true);
     }
 
     processTagString(tag: string): ExerciseTag {

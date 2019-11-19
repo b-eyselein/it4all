@@ -6,8 +6,10 @@ import {NaryAdditionComponent} from './nary/nary-addition/nary-addition.componen
 import {NaryConversionComponent} from './nary/nary-conversion/nary-conversion.component';
 import {NaryTwoConversionComponent} from './nary/nary-two-conversion/nary-two-conversion.component';
 import {BoolDrawingComponent} from './bool/bool-drawing/bool-drawing.component';
+import {NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
 
-export const randomToolRoutes = [
+const randomToolRoutes = [
   {path: 'randomTools/:toolId', component: RandomOverviewComponent, canActivate: [AuthGuard]},
 
   {path: 'randomTools/bool/fillOut', component: BoolFillOutComponent, canActivate: [AuthGuard]},
@@ -18,6 +20,14 @@ export const randomToolRoutes = [
   {path: 'randomTools/nary/conversion', component: NaryConversionComponent, canActivate: [AuthGuard]},
   {path: 'randomTools/nary/twoConversion', component: NaryTwoConversionComponent, canActivate: [AuthGuard]},
 ];
+
+@NgModule({
+  imports: [RouterModule.forChild(randomToolRoutes)],
+  exports: [RouterModule]
+})
+export class RandomToolsRoutingModule {
+}
+
 
 export const randomToolRoutingComponents = [
   RandomOverviewComponent,

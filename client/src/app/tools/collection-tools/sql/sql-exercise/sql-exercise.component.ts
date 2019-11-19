@@ -3,7 +3,7 @@ import {SqlCreateQueryPart, SqlTool} from '../sql-tool';
 import {ExerciseCollection, Tool, ToolPart} from '../../../../_interfaces/tool';
 import {DbSqlSolution, SqlExercise, SqlResult} from '../sql-exercise';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../../../../_services/api.service';
+import {ApiService} from '../../_services/api.service';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
 

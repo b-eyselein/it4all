@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ExerciseTag} from '../../../_interfaces/tool';
+import {ExerciseTag} from '../../../../_interfaces/tool';
 
 @Component({
   selector: 'it4all-tag',

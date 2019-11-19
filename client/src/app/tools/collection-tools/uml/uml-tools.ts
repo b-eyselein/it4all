@@ -5,7 +5,7 @@ const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSel
 export const UmlTool: Tool = new (
   class UmlToolClass extends Tool {
     constructor() {
-      super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart], 'beta', false, false, true);
+      super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart], 'beta');
     }
 
     processTagString(tag: string): ExerciseTag {

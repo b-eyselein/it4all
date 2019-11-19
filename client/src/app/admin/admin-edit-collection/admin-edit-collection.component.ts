@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../../_services/api.service';
+import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
 import {ExerciseCollection, Tool} from '../../_interfaces/tool';
 import {collectionTools} from '../../tools/collection-tools/collection-tools-list';

@@ -2,8 +2,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {CollectionIndexComponent} from './collection-index.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {AppRoutingModule, routingComponents} from '../../../app-routing.module';
-import {TagComponent} from '../../_components/tag/tag.component';
+import {collectionToolRoutingComponents, CollectionToolRoutingModule} from '../collection-tools.routing';
+import {ExerciseFilesEditorComponent} from '../_components/exercise-files-editor/exercise-files-editor.component';
 
 describe('CollectionIndexComponent', () => {
   let component: CollectionIndexComponent;
@@ -11,8 +11,8 @@ describe('CollectionIndexComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, AppRoutingModule],
-      declarations: [CollectionIndexComponent, TagComponent, ...routingComponents]
+      imports: [HttpClientTestingModule, CollectionToolRoutingModule],
+      declarations: [CollectionIndexComponent,  ...collectionToolRoutingComponents, ExerciseFilesEditorComponent]
     }).compileComponents();
   }));
 

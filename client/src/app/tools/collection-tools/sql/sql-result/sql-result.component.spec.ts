@@ -1,8 +1,8 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SqlResultComponent} from './sql-result.component';
-import {SolutionSavedComponent} from '../../tool-helpers/solution-saved/solution-saved.component';
-import {PointsNotificationComponent} from '../../tool-helpers/points-notification/points-notification.component';
+import {SolutionSavedComponent} from '../../../../shared/solution-saved/solution-saved.component';
+import {PointsNotificationComponent} from '../../../../shared/points-notification/points-notification.component';
 
 describe('SqlResultComponent', () => {
   let component: SqlResultComponent;

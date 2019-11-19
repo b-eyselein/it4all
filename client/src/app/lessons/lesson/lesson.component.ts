@@ -4,7 +4,7 @@ import {Tool} from '../../_interfaces/tool';
 import {ActivatedRoute, Router} from '@angular/router';
 import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {randomTools} from '../../tools/random-tools/random-tools-list';
-import {LessonApiService} from '../../_services/lesson-api.service';
+import {LessonApiService} from '../_services/lesson-api.service';
 
 @Component({templateUrl: './lesson.component.html'})
 export class LessonComponent implements OnInit {
@@ -32,7 +32,7 @@ export class LessonComponent implements OnInit {
 
 
         if (!this.lesson) {
-          this.router.navigate(['/tutorials', this.tool.id]);
+          this.router.navigate(['/lessons', this.tool.id]);
         }
 
         this.update();

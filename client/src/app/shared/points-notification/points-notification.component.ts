@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {CorrectionResult} from '../../../basics';
+import {CorrectionResult} from '../../tools/basics';
 
 @Component({
   selector: 'it4all-points-notification',

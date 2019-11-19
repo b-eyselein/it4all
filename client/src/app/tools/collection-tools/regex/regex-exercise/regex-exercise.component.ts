@@ -1,6 +1,6 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ApiService} from '../../../../_services/api.service';
+import {ApiService} from '../../_services/api.service';
 import {RegexCorrectionResult, RegexExercise} from '../regex-exercise';
 import {RegexTool} from '../regex-tool';
 import {Tool} from '../../../../_interfaces/tool';

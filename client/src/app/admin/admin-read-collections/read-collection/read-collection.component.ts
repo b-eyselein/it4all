@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {ExerciseCollection, Tool} from '../../../_interfaces/tool';
-import {ApiService} from '../../../_services/api.service';
+import {ApiService} from '../../../tools/collection-tools/_services/api.service';
 
 @Component({selector: 'it4all-read-collection', templateUrl: './read-collection.component.html'})
 export class ReadCollectionComponent {

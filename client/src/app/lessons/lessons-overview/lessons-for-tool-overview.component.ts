@@ -4,10 +4,10 @@ import {Tool} from '../../_interfaces/tool';
 import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {randomTools} from '../../tools/random-tools/random-tools-list';
 import {Lesson} from '../../_interfaces/lesson';
-import {LessonApiService} from '../../_services/lesson-api.service';
+import {LessonApiService} from '../_services/lesson-api.service';
 
-@Component({templateUrl: './tool-tutorials-overview.component.html'})
-export class ToolTutorialsOverviewComponent implements OnInit {
+@Component({templateUrl: './lessons-for-tool-overview.component.html'})
+export class LessonsForToolOverviewComponent implements OnInit {
 
   tool: Tool;
   lessons: Lesson[];

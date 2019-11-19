@@ -11,9 +11,9 @@
   <h2 class="subtitle is-3">Tools mit Aufgaben in Sammlungen</h2>
   <div class="columns is-multiline">
     <ng-container *ngFor="let colTool of collectionTools">
-      <div *ngIf="!colTool.isDisabled" class="column is-one-third">
+      <div class="column is-one-third">
         <a [routerLink]="['/tools', colTool.id]" class="button is-link is-fullwidth">
-          {{colTool.name}}<sup *ngIf="colTool.status" [innerHTML]="'&nbsp;&' + colTool.status + ';'"></sup>
+          {{colTool.name}}<sup *ngIf="colTool.status !== 'live'" [innerHTML]="'&nbsp;&' + colTool.status + ';'"></sup>
         </a>
       </div>
     </ng-container>

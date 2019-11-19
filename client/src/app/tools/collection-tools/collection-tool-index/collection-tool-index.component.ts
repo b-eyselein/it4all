@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ExerciseCollection, Tool} from '../../../_interfaces/tool';
-import {ApiService} from '../../../_services/api.service';
+import {ApiService} from '../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {collectionTools} from '../collection-tools-list';
 
