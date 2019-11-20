@@ -23,7 +23,7 @@ abstract class CollectionToolMain(consts: ToolConsts)
 
   // Abstract types
 
-  type ExType <: Exercise
+  type ExType <: Exercise[SampleSolType]
 
   type PartType <: ExPart
 
@@ -39,7 +39,7 @@ abstract class CollectionToolMain(consts: ToolConsts)
 
   type ReviewType <: ExerciseReview
 
-  override type Tables <: ExerciseTableDefs[PartType, ExType, SolType, SampleSolType, UserSolType, ReviewType]
+  override type Tables <: ExerciseTableDefs[PartType, ExType, SampleSolType, UserSolType, ReviewType]
 
   // Values
 

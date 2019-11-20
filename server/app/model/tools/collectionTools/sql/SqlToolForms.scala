@@ -6,7 +6,7 @@ import model.tools.collectionTools.sql.SqlConsts._
 import play.api.data.Form
 import play.api.data.Forms._
 
-object SqlToolForms extends ToolForms[SqlExercise, SqlExerciseReview] {
+object SqlToolForms extends ToolForms[ SqlExerciseReview] {
 
   override val exerciseReviewForm: Form[SqlExerciseReview] = Form(
     mapping(

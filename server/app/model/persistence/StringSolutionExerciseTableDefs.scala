@@ -2,13 +2,13 @@ package model.persistence
 
 import model._
 import model.core.CoreConsts.solutionName
-import model.tools.collectionTools.{ExPart, Exercise}
+import model.tools.collectionTools.{ExPart, Exercise, StringExercise}
 import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.Future
 
-trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, ReviewType <: ExerciseReview]
-  extends ExerciseTableDefs[PartType, ExType, String, StringSampleSolution, StringUserSolution[PartType], ReviewType] {
+trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: StringExercise, ReviewType <: ExerciseReview]
+  extends ExerciseTableDefs[PartType, ExType, StringSampleSolution, StringUserSolution[PartType], ReviewType] {
 
   import profile.api._
 

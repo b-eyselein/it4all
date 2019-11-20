@@ -14,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[UmlExPart, UmlExercise, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
+    with ExerciseTableDefs[UmlExPart, UmlExercise, UmlSampleSolution, UmlUserSolution, UmlExerciseReview] {
 
   import profile.api._
 

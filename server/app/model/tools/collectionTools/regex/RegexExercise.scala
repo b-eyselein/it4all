@@ -4,7 +4,7 @@ import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.core.LongText
 import model.persistence.ADbExercise
-import model.tools.collectionTools.Exercise
+import model.tools.collectionTools.{Exercise, StringExercise}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -30,10 +30,10 @@ final case class RegexExercise(
   sampleSolutions: Seq[StringSampleSolution],
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
-) extends Exercise with ADbExercise {
+) extends StringExercise with ADbExercise {
 
-  override protected type SolutionType = String
-  override protected type SampleSolutionType = StringSampleSolution
+//  override protected type SolutionType = String
+//  override protected type SampleSolutionType = StringSampleSolution
 
 }
 

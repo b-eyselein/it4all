@@ -1,11 +1,11 @@
 package model.persistence
 
 import model._
-import model.tools.collectionTools.{ExPart, Exercise}
+import model.tools.collectionTools.{ExPart, FileExercise}
 
 import scala.concurrent.Future
 
-trait FilesSolutionExerciseTableQueries[PartType <: ExPart, ExType <: Exercise, ReviewType <: ExerciseReview] {
+trait FilesSolutionExerciseTableQueries[PartType <: ExPart, ExType <: FileExercise, ReviewType <: ExerciseReview] {
   self: FilesSolutionExerciseTableDefs[PartType, ExType, ReviewType] =>
 
   import profile.api._

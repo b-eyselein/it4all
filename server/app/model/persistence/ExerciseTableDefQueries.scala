@@ -1,9 +1,8 @@
 package model.persistence
 
 import model._
-import model.core.overviewHelpers.{SolvedState, SolvedStates}
-import model.tools.collectionTools.{ApiExerciseBasics, ExPart, Exercise, ExerciseCollection}
 import model.tools.collectionTools.uml._
+import model.tools.collectionTools.{ApiExerciseBasics, ExPart, Exercise, ExerciseCollection}
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -11,9 +10,9 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+trait ExerciseTableDefQueries[PartType <: ExPart, ExType <: Exercise[SampleSolType], SampleSolType <: SampleSolution[_], UserSolType <: UserSolution[PartType, _], ReviewType <: ExerciseReview]
   extends HasDatabaseConfigProvider[JdbcProfile] {
-  self: ExerciseTableDefs[PartType, ExType, SolType, SampleSolType, UserSolType, ReviewType] =>
+  self: ExerciseTableDefs[PartType, ExType, SampleSolType, UserSolType, ReviewType] =>
 
   private val logger = Logger(this.getClass)
 

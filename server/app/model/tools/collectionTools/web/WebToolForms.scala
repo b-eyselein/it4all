@@ -6,7 +6,7 @@ import model.tools.collectionTools.web.WebConsts._
 import play.api.data.Form
 import play.api.data.Forms._
 
-object WebToolForms extends ToolForms[WebExercise, WebExerciseReview] {
+object WebToolForms extends ToolForms[ WebExerciseReview] {
 
   override val exerciseReviewForm: Form[WebExerciseReview] = Form(
     mapping(

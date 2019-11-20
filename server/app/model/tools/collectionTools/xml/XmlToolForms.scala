@@ -6,7 +6,7 @@ import model.tools.collectionTools.xml.XmlConsts._
 import play.api.data.Form
 import play.api.data.Forms._
 
-object XmlToolForms extends ToolForms[XmlExercise, XmlExerciseReview] {
+object XmlToolForms extends ToolForms[XmlExerciseReview] {
 
   override val exerciseReviewForm: Form[XmlExerciseReview] = Form(
     mapping(

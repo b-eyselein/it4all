@@ -14,9 +14,9 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 
-trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleSolType <: SampleSolution[SolType], UserSolType <: UserSolution[PartType, SolType], ReviewType <: ExerciseReview]
+trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise[SampleSolType], SampleSolType <: SampleSolution[_], UserSolType <: UserSolution[PartType, _], ReviewType <: ExerciseReview]
   extends LearningPathTableDefs
-    with ExerciseTableDefQueries[PartType, ExType, SolType, SampleSolType, UserSolType, ReviewType] {
+    with ExerciseTableDefQueries[PartType, ExType, SampleSolType, UserSolType, ReviewType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._

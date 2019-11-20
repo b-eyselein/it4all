@@ -12,10 +12,10 @@ final case class RoseExercise(
   id: Int, collectionId: Int, toolId: String = RoseConsts.toolId, semanticVersion: SemanticVersion,
   title: String, author: String, text: LongText, state: ExerciseState,
   fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]
-) extends Exercise with ADbExercise {
+) extends Exercise[RoseSampleSolution] with ADbExercise {
 
-  override protected type SolutionType = String
-  override protected type SampleSolutionType = RoseSampleSolution
+  //  override protected type SolutionType = String
+  //  override protected type SampleSolutionType = RoseSampleSolution
 
   def declaration(forUser: Boolean): String = {
     val className                = if (forUser) "UserRobot" else "SampleRobot"

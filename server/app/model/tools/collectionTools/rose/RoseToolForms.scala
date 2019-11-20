@@ -7,7 +7,7 @@ import model.{Difficulties, ExerciseState, SemanticVersionHelper}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-object RoseToolForms extends ToolForms[RoseExercise, RoseExerciseReview] {
+object RoseToolForms extends ToolForms[RoseExerciseReview] {
 
   override val exerciseReviewForm: Form[RoseExerciseReview] = Form(
     mapping(

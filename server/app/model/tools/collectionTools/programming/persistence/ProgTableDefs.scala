@@ -1,22 +1,21 @@
 package model.tools.collectionTools.programming.persistence
 
 import javax.inject.Inject
-import model.persistence.{DbExerciseFile, ExerciseTableDefs}
+import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools.ExParts
 import model.tools.collectionTools.programming.ProgConsts._
 import model.tools.collectionTools.programming._
 import model.tools.collectionTools.uml.UmlClassDiagram
-import model.{ExerciseState, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsValue, Json}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
+import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.ExecutionContext
 
 class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[ProgExPart, ProgExercise, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgExerciseReview]
+    with ExerciseTableDefs[ProgExPart, ProgExercise, ProgSampleSolution, ProgUserSolution, ProgExerciseReview]
     with ProgTableQueries {
 
   import profile.api._
@@ -51,8 +50,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override protected val reviewsTable: TableQuery[ProgExerciseReviewsTable] = TableQuery[ProgExerciseReviewsTable]
 
   // TODO:  private val commitedTestData = TableQuery[CommitedTestDataTable]
-
-  protected val implementationFilesTQ: TableQuery[ImplementationFilesTable] = TableQuery[ImplementationFilesTable]
 
   // Helper methods
 
@@ -143,39 +140,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  protected class ImplementationFilesTable(tag: Tag) extends ExForeignKeyTable[DbExerciseFile](tag, "prog_impl_files") with ExerciseFilesTable[DbExerciseFile] {
-
-    override def * : ProvenShape[DbExerciseFile] = (name, exerciseId, collectionId, content, fileType, editable) <> (DbExerciseFile.tupled, DbExerciseFile.unapply)
-
-  }
-
-  // Test data
-
-  protected class ProgUserTestDataTable(tag: Tag) extends ExForeignKeyTable[DbProgUserTestData](tag, "prog_commited_testdata") {
-
-    protected implicit val jvct: BaseColumnType[JsValue] = jsonValueColumnType
-
-
-    def id: Rep[Int] = column[Int]("id")
-
-    def inputAsJson: Rep[JsValue] = column[JsValue]("input_json")
-
-    def output: Rep[JsValue] = column[JsValue]("output")
-
-    def username: Rep[String] = column[String]("username")
-
-    def state: Rep[ExerciseState] = column[ExerciseState]("approval_state")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, toolId, collectionId, exSemVer, username))
-
-    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
-
-
-    override def * : ProvenShape[DbProgUserTestData] = (id, exerciseId, collectionId, username, inputAsJson, output, state) <> (DbProgUserTestData.tupled, DbProgUserTestData.unapply)
-
-  }
-
   // Solutions
 
   protected class ProgUserSolutionTable(tag: Tag) extends AUserSolutionsTable(tag, "prog_user_solutions") {
@@ -189,8 +153,10 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def pk: PrimaryKey = primaryKey("prog_user_solutions_pk", (id, exerciseId, collectionId, username, part))
 
 
-    override def * : ProvenShape[DbProgUserSolution] = (id, exerciseId, collectionId, username, part,
-      testData, points, maxPoints) <> (DbProgUserSolution.tupled, DbProgUserSolution.unapply)
+    override def * : ProvenShape[DbProgUserSolution] = (
+      id, exerciseId, collectionId, username, part,
+      testData, points, maxPoints
+    ) <> (DbProgUserSolution.tupled, DbProgUserSolution.unapply)
 
   }
 

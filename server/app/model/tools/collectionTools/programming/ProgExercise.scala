@@ -26,12 +26,7 @@ final case class ProgExercise(
   override val tags: Seq[ProgrammingExerciseTag],
 
   maybeClassDiagramPart: Option[UmlClassDiagram]
-) extends Exercise with ADbExercise {
-
-  override protected type SolutionType = ProgSolution
-
-  override protected type SampleSolutionType = ProgSampleSolution
-
+) extends Exercise[ProgSampleSolution] with ADbExercise {
 
   //  def inputCount: Int = inputTypes.size
 

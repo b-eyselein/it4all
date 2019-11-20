@@ -13,11 +13,7 @@ final case class UmlExercise(
   toIgnore: Seq[String],
   mappings: Map[String, String],
   sampleSolutions: Seq[UmlSampleSolution]
-) extends Exercise with ADbExercise {
-
-  override protected type SolutionType = UmlClassDiagram
-  override protected type SampleSolutionType = UmlSampleSolution
-
+) extends Exercise[UmlSampleSolution] with ADbExercise {
 
   def titleForPart(part: UmlExPart): String = part match {
     case UmlExParts.ClassSelection     => "Auswahl der Klassen"

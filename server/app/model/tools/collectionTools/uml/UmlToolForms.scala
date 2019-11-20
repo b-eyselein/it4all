@@ -6,7 +6,7 @@ import model.tools.collectionTools.uml.UmlConsts._
 import play.api.data.Form
 import play.api.data.Forms._
 
-object UmlToolForms extends ToolForms[UmlExercise, UmlExerciseReview] {
+object UmlToolForms extends ToolForms[UmlExerciseReview] {
 
   override val exerciseReviewForm: Form[UmlExerciseReview] = Form(
     mapping(

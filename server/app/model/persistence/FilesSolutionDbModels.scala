@@ -15,12 +15,6 @@ trait DbFile {
 }
 
 
-final case class DbFilesSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int) extends ADbSampleSol
-
-final case class DbFilesSampleSolutionFile(name: String, sampleId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int,
-                                           content: String, fileType: String, editable: Boolean) extends DbFile
-
-
 final case class DbFilesUserSolution[PartType <: ExPart](id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, part: PartType,
                                                          username: String, points: Points, maxPoints: Points)
   extends ADbUserSol[PartType]
@@ -56,21 +50,6 @@ object DbFilesUserSolutionFile {
 
 object FilesSolutionDbModels {
 
-  // Sample solution
-
-  private def dbFilesSampleSolutionFileFromExerciseFile(sampleId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, exFile: ExerciseFile): DbFilesSampleSolutionFile =
-    DbFilesSampleSolutionFile(exFile.name, sampleId, exId, exSemVer, collId, exFile.content, exFile.fileType, exFile.editable)
-
-  def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: FilesSampleSolution): (DbFilesSampleSolution, Seq[DbFilesSampleSolutionFile]) = {
-    val dbFilesSampleSolution = DbFilesSampleSolution(sample.id, exId, exSemVer, collId)
-    val dbFilesSampleSolutionFiles = sample.sample.map(dbFilesSampleSolutionFileFromExerciseFile(sample.id, exId, exSemVer, collId, _))
-
-    (dbFilesSampleSolution, dbFilesSampleSolutionFiles)
-  }
-
-  def sampleSolFromDbSampleSol(dbSample: DbFilesSampleSolution, files: Seq[DbFilesSampleSolutionFile]): FilesSampleSolution =
-    FilesSampleSolution(dbSample.id, files.map(_.toExerciseFile))
-
   // User solution
 
   private def dbFilesUserSolutionFileFromExerciseFile[PartType <: ExPart](solId: Int, exId: Int, exSemVer: SemanticVersion, collId: Int,
@@ -79,7 +58,7 @@ object FilesSolutionDbModels {
 
   def dbUserSolFromUserSol[PartType <: ExPart](exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, solution: FilesUserSolution[PartType]):
   (DbFilesUserSolution[PartType], Seq[DbFilesUserSolutionFile[PartType]]) = {
-    val dbSolution = DbFilesUserSolution(solution.id, exId, exSemVer, collId, solution.part, username, solution.points, solution.maxPoints)
+    val dbSolution      = DbFilesUserSolution(solution.id, exId, exSemVer, collId, solution.part, username, solution.points, solution.maxPoints)
     val dbSolutionFiles = solution.solution.map(dbFilesUserSolutionFileFromExerciseFile(solution.id, exId, exSemVer, collId, username, solution.part, _))
 
     (dbSolution, dbSolutionFiles)

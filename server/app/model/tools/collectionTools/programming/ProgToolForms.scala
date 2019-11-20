@@ -6,7 +6,7 @@ import model.tools.collectionTools.programming.ProgConsts._
 import play.api.data.Form
 import play.api.data.Forms._
 
-object ProgToolForms extends ToolForms[ProgExercise, ProgExerciseReview] {
+object ProgToolForms extends ToolForms[ProgExerciseReview] {
 
   override val exerciseReviewForm: Form[ProgExerciseReview] = Form(
     mapping(

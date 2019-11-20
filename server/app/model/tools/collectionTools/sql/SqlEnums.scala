@@ -16,7 +16,7 @@ object SqlExParts extends ExParts[SqlExPart] {
 }
 
 
-sealed abstract class SqlExerciseTag(val buttonContent: String, val title: String) extends ExTag with EnumEntry
+sealed abstract class SqlExerciseTag(val buttonContent: String, val title: String) extends ExTag
 
 object SqlExerciseTag extends PlayEnum[SqlExerciseTag] {
 

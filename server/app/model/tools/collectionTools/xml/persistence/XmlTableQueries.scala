@@ -1,7 +1,7 @@
 package model.tools.collectionTools.xml.persistence
 
 import model.SemanticVersion
-import model.tools.collectionTools.xml.{XmlExPart, XmlExercise, XmlSampleSolution, XmlUserSolution}
+import model.tools.collectionTools.xml.{XmlExPart, XmlExercise, XmlUserSolution}
 
 import scala.concurrent.Future
 

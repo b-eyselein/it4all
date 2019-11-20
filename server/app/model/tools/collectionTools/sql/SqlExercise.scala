@@ -4,7 +4,7 @@ import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.core.LongText
 import model.persistence.ADbExercise
-import model.tools.collectionTools.Exercise
+import model.tools.collectionTools.StringExercise
 
 import scala.collection.immutable.IndexedSeq
 
@@ -35,13 +35,7 @@ final case class SqlExercise(
   override val tags: Seq[SqlExerciseTag],
   hint: Option[String],
   sampleSolutions: Seq[StringSampleSolution]
-) extends Exercise
-  with ADbExercise {
-
-  override protected type SolutionType = String
-  override protected type SampleSolutionType = StringSampleSolution
-
-}
+) extends StringExercise with ADbExercise
 
 // final case classes for db
 

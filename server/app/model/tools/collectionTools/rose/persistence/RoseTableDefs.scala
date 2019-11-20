@@ -16,7 +16,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with ExerciseTableDefs[RoseExPart, RoseExercise, String, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
+    with ExerciseTableDefs[RoseExPart, RoseExercise, RoseSampleSolution, RoseUserSolution, RoseExerciseReview] {
 
   import profile.api._
 
@@ -42,7 +42,7 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
   override protected val exTable  : TableQuery[RoseExercisesTable]           = TableQuery[RoseExercisesTable]
   override protected val collTable: TableQuery[RoseExerciseCollectionsTable] = TableQuery[RoseExerciseCollectionsTable]
 
-  override protected val userSolutionsTableQuery  : TableQuery[RoseSolutionsTable]       = TableQuery[RoseSolutionsTable]
+  override protected val userSolutionsTableQuery: TableQuery[RoseSolutionsTable] = TableQuery[RoseSolutionsTable]
 
   override protected val reviewsTable: TableQuery[RoseExerciseReviewsTable] = TableQuery[RoseExerciseReviewsTable]
 

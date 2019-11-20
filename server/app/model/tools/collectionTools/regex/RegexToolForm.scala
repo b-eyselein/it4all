@@ -6,7 +6,7 @@ import model.tools.collectionTools.regex.RegexConsts._
 import play.api.data.Form
 import play.api.data.Forms._
 
-object RegexToolForm extends ToolForms[RegexExercise, RegexExerciseReview] {
+object RegexToolForm extends ToolForms[ RegexExerciseReview] {
 
   override val exerciseReviewForm: Form[RegexExerciseReview] = Form(
     mapping(

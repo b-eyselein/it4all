@@ -22,7 +22,7 @@ object ProgExParts extends ExParts[ProgExPart] {
 
 // Tags
 
-sealed abstract class ProgrammingExerciseTag(val buttonContent: String, val title: String) extends ExTag with EnumEntry
+sealed abstract class ProgrammingExerciseTag(val buttonContent: String, val title: String) extends ExTag
 
 object ProgrammingExerciseTag extends PlayEnum[ProgrammingExerciseTag] {
 

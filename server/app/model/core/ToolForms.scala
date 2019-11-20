@@ -6,7 +6,7 @@ import model.tools.collectionTools.{Exercise, ExerciseCollection, ExerciseFile}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 
-trait ToolForms[ExType <: Exercise, ReviewType <: ExerciseReview] {
+trait ToolForms[ReviewType <: ExerciseReview] {
 
   def collectionFormat(toolId: String): Form[ExerciseCollection] = {
     val unapplied: ExerciseCollection => Option[(Int, String, String, String, ExerciseState, String)] = {

@@ -2,11 +2,11 @@ package model.persistence
 
 import model._
 import model.core.CoreConsts._
-import model.tools.collectionTools.{ExPart, Exercise, ExerciseFile}
+import model.tools.collectionTools.{ExPart, FileExercise}
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
-trait FilesSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, ReviewType <: ExerciseReview]
-  extends ExerciseTableDefs[PartType, ExType, Seq[ExerciseFile], FilesSampleSolution, FilesUserSolution[PartType], ReviewType]
+trait FilesSolutionExerciseTableDefs[PartType <: ExPart, ExType <: FileExercise, ReviewType <: ExerciseReview]
+  extends ExerciseTableDefs[PartType, ExType, FilesSampleSolution, FilesUserSolution[PartType], ReviewType]
     with FilesSolutionExerciseTableQueries[PartType, ExType, ReviewType] {
 
   import profile.api._

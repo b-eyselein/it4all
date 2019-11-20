@@ -1,21 +1,10 @@
 package model.tools.collectionTools
 
-import enumeratum.{EnumEntry, PlayEnum}
 import model._
 import model.core.LongText
 
-trait ExPart extends EnumEntry {
 
-  def urlName: String
-
-  def partName: String
-
-}
-
-trait ExParts[EP <: ExPart] extends PlayEnum[EP]
-
-
-trait ExTag {
+trait ExTag extends enumeratum.EnumEntry {
 
   val buttonContent: String
 
@@ -23,7 +12,7 @@ trait ExTag {
 
 }
 
-trait Exercise {
+trait Exercise[SampleSolutionType <: SampleSolution[_]] {
 
   val id: Int
 
@@ -42,10 +31,6 @@ trait Exercise {
   val state: ExerciseState
 
 
-  protected type SolutionType
-
-  protected type SampleSolutionType <: SampleSolution[SolutionType]
-
   val sampleSolutions: Seq[SampleSolutionType]
 
 
@@ -53,23 +38,6 @@ trait Exercise {
 
 }
 
-trait FileExercise[PartType <: ExPart] extends Exercise {
+trait FileExercise extends Exercise[FilesSampleSolution]
 
-  override protected type SolutionType = Seq[ExerciseFile]
-
-  override protected type SampleSolutionType = FilesSampleSolution
-
-
-  def filesForExercisePart(part: PartType): LoadExerciseFilesMessage
-
-}
-
-final case class ExerciseCollection(
-  id: Int,
-  toolId: String,
-  title: String,
-  author: String,
-  text: String,
-  state: ExerciseState,
-  shortName: String
-)
+trait StringExercise extends Exercise[StringSampleSolution]

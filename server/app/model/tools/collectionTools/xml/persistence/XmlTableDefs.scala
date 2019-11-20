@@ -13,7 +13,7 @@ import slick.lifted.ProvenShape
 import scala.concurrent.ExecutionContext
 
 class XmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends ExerciseTableDefs[XmlExPart, XmlExercise, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview]
+  extends ExerciseTableDefs[XmlExPart, XmlExercise, XmlSampleSolution, XmlUserSolution, XmlExerciseReview]
     with HasDatabaseConfigProvider[JdbcProfile]
     with XmlTableQueries {
 

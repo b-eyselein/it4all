@@ -6,7 +6,7 @@ import model.tools.collectionTools.{Exercise, ExerciseFile, ExerciseFileJsonProt
 import play.api.libs.json.{Format, Json, Writes}
 
 
-trait ToolJsonProtocol[E <: Exercise, SS <: SampleSolution[_], CR <: CompleteResult[_ <: EvaluationResult]] {
+trait ToolJsonProtocol[E <: Exercise[SS], SS <: SampleSolution[_], CR <: CompleteResult[_ <: EvaluationResult]] {
 
   val exerciseFormat: Format[E]
 
@@ -17,7 +17,7 @@ trait ToolJsonProtocol[E <: Exercise, SS <: SampleSolution[_], CR <: CompleteRes
 
 }
 
-trait StringSampleSolutionToolJsonProtocol[E <: Exercise, CR <: CompleteResult[_ <: EvaluationResult]]
+trait StringSampleSolutionToolJsonProtocol[E <: Exercise[StringSampleSolution], CR <: CompleteResult[_ <: EvaluationResult]]
   extends ToolJsonProtocol[E, StringSampleSolution, CR] {
 
   override val sampleSolutionFormat: Format[StringSampleSolution] =
@@ -26,7 +26,7 @@ trait StringSampleSolutionToolJsonProtocol[E <: Exercise, CR <: CompleteResult[_
 }
 
 
-trait FilesSampleSolutionToolJsonProtocol[E <: Exercise, CR <: CompleteResult[_ <: EvaluationResult]]
+trait FilesSampleSolutionToolJsonProtocol[E <: Exercise[FilesSampleSolution], CR <: CompleteResult[_ <: EvaluationResult]]
   extends ToolJsonProtocol[E, FilesSampleSolution, CR] {
 
   override final val sampleSolutionFormat: Format[FilesSampleSolution] =

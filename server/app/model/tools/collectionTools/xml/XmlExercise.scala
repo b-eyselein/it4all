@@ -29,12 +29,7 @@ final case class XmlExercise(
   grammarDescription: LongText,
   rootNode: String,
   sampleSolutions: Seq[XmlSampleSolution]
-) extends Exercise with ADbExercise {
-
-  override protected type SolutionType = XmlSolution
-  override protected type SampleSolutionType = XmlSampleSolution
-
-}
+) extends Exercise[XmlSampleSolution] with ADbExercise
 
 final case class XmlSolution(document: String, grammar: String)
 

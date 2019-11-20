@@ -31,14 +31,12 @@ final case class WebExercise(
   siteSpec: SiteSpec,
   files: Seq[ExerciseFile],
   sampleSolutions: Seq[FilesSampleSolution]
-) extends FileExercise[WebExPart] {
+) extends FileExercise {
 
   def tasksForPart(part: WebExPart): Seq[WebTask] = part match {
     case WebExParts.HtmlPart => siteSpec.htmlTasks
     case WebExParts.JsPart   => siteSpec.jsTasks
   }
-
-  override def filesForExercisePart(part: WebExPart): LoadExerciseFilesMessage = LoadExerciseFilesMessage(files, None)
 
 }
 

@@ -23,7 +23,7 @@ abstract class AbstractApiExerciseController(cc: ControllerComponents, toolList:
   protected def onNoSuchExercise(tool: CollectionToolMain, collection: ExerciseCollection, exId: Int): Result =
     NotFound(s"There is no exercise with id $exId for collection ${collection.title}")
 
-  protected def onNoSuchExercisePart(tool: CollectionToolMain, exercise: Exercise, partStr: String): Result =
+  protected def onNoSuchExercisePart(tool: CollectionToolMain, exercise: Exercise[_], partStr: String): Result =
     NotFound(s"There is no part $partStr for exercise ${exercise.title}")
 
 

@@ -1,7 +1,6 @@
 package model.tools.collectionTools
 
-import model.core.overviewHelpers.SolvedState
-import model.{ExerciseState, User}
+import model.ExerciseState
 
 import scala.concurrent.Future
 
