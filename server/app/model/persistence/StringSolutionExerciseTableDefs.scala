@@ -1,9 +1,8 @@
 package model.persistence
 
 import model._
-import model.core.CoreConsts.{sampleName, solutionName}
+import model.core.CoreConsts.solutionName
 import model.tools.collectionTools.{ExPart, Exercise}
-import play.api.libs.json.{Format, Json, Reads, Writes}
 import slick.lifted.{PrimaryKey, ProvenShape}
 
 import scala.concurrent.Future
@@ -14,11 +13,6 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Re
   import profile.api._
 
   // Abstract types
-
-  override protected type DbSampleSolType = DbStringSampleSolution
-
-  override protected type DbSampleSolTable <: AStringSampleSolutionsTable
-
 
   override protected type DbUserSolType = DbStringUserSolution[PartType]
 
@@ -33,18 +27,6 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Re
   override protected def copyDbUserSolType(oldSol: DbStringUserSolution[PartType], newId: Int): DbStringUserSolution[PartType] = oldSol.copy(id = newId)
 
   // Queries
-
-  protected def futureSamplesForExercise(collId: Int, exId: Int): Future[Seq[StringSampleSolution]] =
-    db.run(sampleSolutionsTableQuery
-      .filter { sample => sample.collectionId === collId && sample.exerciseId === exId }
-      .result
-      .map(_.map(StringSolutionDbModels.sampleSolFromDbSampleSol)))
-
-  override def futureSampleSolutionsForExPart(collId: Int, exId: Int, exPart: PartType): Future[Seq[StringSampleSolution]] =
-    db.run(sampleSolutionsTableQuery
-      .filter { sample => sample.collectionId === collId && sample.exerciseId === exId }
-      .result)
-      .map(_.map(StringSolutionDbModels.sampleSolFromDbSampleSol))
 
   override def futureMaybeOldSolution(username: String, collId: Int, exerciseId: Int, part: PartType): Future[Option[StringUserSolution[PartType]]] =
     db.run(userSolutionsTableQuery
@@ -61,28 +43,10 @@ trait StringSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, Re
 
   // Column Types
 
-  protected val stringSampleSolutionColumnType: BaseColumnType[Seq[StringSampleSolution]] = {
-    val stringSampleSolutionSeqFormat: Format[Seq[StringSampleSolution]] = Format(
-      Reads.seq(StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat),
-      Writes.seq(StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat)
-    )
-
-    MappedColumnType.base[Seq[StringSampleSolution], String](
-      samples => Json.stringify(stringSampleSolutionSeqFormat.writes(samples)),
-      jsonSamples => stringSampleSolutionSeqFormat.reads(Json.parse(jsonSamples)).getOrElse(Seq.empty)
-    )
-  }
+  protected val stringSampleSolutionColumnType: BaseColumnType[Seq[StringSampleSolution]] =
+    jsonSeqColumnType(StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat)
 
   // Abstract Tables
-
-  abstract class AStringSampleSolutionsTable(tag: Tag, tableName: String) extends ASampleSolutionsTable(tag, tableName) {
-
-    def sample: Rep[String] = column[String](sampleName)
-
-
-    override def * : ProvenShape[DbStringSampleSolution] = (id, exerciseId, exSemVer, collectionId, sample) <> (DbStringSampleSolution.tupled, DbStringSampleSolution.unapply)
-
-  }
 
   abstract class AStringUserSolutionsTable(tag: Tag, tableName: String) extends AUserSolutionsTable(tag, tableName) {
 

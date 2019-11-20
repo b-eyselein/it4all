@@ -13,22 +13,26 @@ object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {
   // Exercise
 
   override def dbExerciseFromExercise(ex: WebExercise): DbWebExercise =
-    DbWebExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.htmlText, ex.jsText, ex.siteSpec.fileName)
+    DbWebExercise(
+      ex.id, ex.collectionId, ex.toolId, ex.semanticVersion,
+      ex.title, ex.author, ex.text, ex.state,
+      ex.htmlText, ex.jsText, ex.siteSpec.fileName,
+      ex.sampleSolutions
+    )
 
   def exerciseFromDbExercise(
     ex: DbWebExercise,
     htmlTasks: Seq[HtmlTask],
     jsTasks: Seq[JsTask],
-    files: Seq[ExerciseFile],
-    sampleSolutions: Seq[FilesSampleSolution]
+    files: Seq[ExerciseFile]
   ): WebExercise = WebExercise(
-    ex.id, ex.collectionId, WebConsts.toolId, ex.semanticVersion,
+    ex.id, ex.collectionId, ex.toolId, ex.semanticVersion,
     ex.title, ex.author, ex.text, ex.state,
     ex.htmlText,
     ex.jsText,
     SiteSpec(ex.fileName, htmlTasks, jsTasks),
     files,
-    sampleSolutions
+    ex.sampleSolutions
   )
 
   // HtmlTask
@@ -76,23 +80,17 @@ object WebExerciseReviewDbModels extends AExerciseReviewDbModels[WebExPart, WebE
 }
 
 final case class DbWebExercise(
-  id: Int, collectionId: Int, /* toolId: String, */ semanticVersion: SemanticVersion,
+  id: Int, collectionId: Int, toolId: String, semanticVersion: SemanticVersion,
   title: String, author: String, text: LongText, state: ExerciseState,
-  htmlText: Option[String], jsText: Option[String], fileName: String
-) extends ADbExercise {
+  htmlText: Option[String], jsText: Option[String], fileName: String,
+  sampleSolutions: Seq[FilesSampleSolution]
+) extends ADbExercise
 
-  override val toolId: String = WebConsts.toolId
-
-}
-
-final case class DbWebSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, htmlSample: String, jsSample: Option[String])
-  extends ADbSampleSol
 
 final case class DbWebUserSolution(
   id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, part: WebExPart,
   htmlSolution: String, jsSolution: Option[String], points: Points, maxPoints: Points
-)
-  extends ADbUserSol[WebExPart]
+) extends ADbUserSol[WebExPart]
 
 
 // Tasks

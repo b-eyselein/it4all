@@ -2,15 +2,17 @@ package model.tools.collectionTools.rose
 
 import model._
 import model.core.LongText
+import model.persistence.ADbExercise
 import model.points.Points
 import model.tools.collectionTools.Exercise
 import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage}
 
 
 final case class RoseExercise(
-  id: Int, collectionId: Int, toolId: String = RoseConsts.toolId, semanticVersion: SemanticVersion, title: String, author: String, text: LongText, state: ExerciseState,
+  id: Int, collectionId: Int, toolId: String = RoseConsts.toolId, semanticVersion: SemanticVersion,
+  title: String, author: String, text: LongText, state: ExerciseState,
   fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean, inputTypes: Seq[RoseInputType], sampleSolutions: Seq[RoseSampleSolution]
-) extends Exercise {
+) extends Exercise with ADbExercise {
 
   override protected type SolutionType = String
   override protected type SampleSolutionType = RoseSampleSolution

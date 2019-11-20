@@ -2,6 +2,7 @@ package model.tools.collectionTools.programming
 
 import model._
 import model.core.LongText
+import model.persistence.ADbExercise
 import model.points.Points
 import model.tools.collectionTools.{Exercise, ExerciseFile, LoadExerciseFilesMessage}
 import model.tools.collectionTools.uml.UmlClassDiagram
@@ -25,7 +26,7 @@ final case class ProgExercise(
   override val tags: Seq[ProgrammingExerciseTag],
 
   maybeClassDiagramPart: Option[UmlClassDiagram]
-) extends Exercise {
+) extends Exercise with ADbExercise {
 
   override protected type SolutionType = ProgSolution
 

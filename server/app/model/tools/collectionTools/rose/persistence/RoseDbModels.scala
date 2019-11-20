@@ -7,13 +7,12 @@ import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage}
 import model.tools.collectionTools.rose._
 import model.{Difficulty, ExerciseState, SemanticVersion}
 
-object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise] {
+object RoseDbModels extends ADbModels[RoseExercise, RoseExercise] {
 
-  override def dbExerciseFromExercise(ex: RoseExercise): DbRoseExercise =
-    DbRoseExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer)
+  override def dbExerciseFromExercise(ex: RoseExercise): RoseExercise = ex
 
   def exerciseFromDbValues(ex: DbRoseExercise, inputTypes: Seq[RoseInputType], samples: Seq[RoseSampleSolution]): RoseExercise =
-    RoseExercise(ex.id, ex.collectionId, RoseConsts.toolId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer, inputTypes, samples)
+    RoseExercise(ex.id, ex.collectionId, ex.toolId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.fieldWidth, ex.fieldHeight, ex.isMultiplayer, inputTypes, samples)
 
   def dbInputTypeFromInputType(exId: Int, exSemVer: SemanticVersion, collId: Int, inputType: RoseInputType): DbRoseInputType =
     DbRoseInputType(inputType.id, exId, exSemVer, collId, inputType.name, inputType.inputType)
@@ -50,14 +49,10 @@ object RoseExerciseReviewDbModels extends AExerciseReviewDbModels[RoseExPart, Ro
 }
 
 final case class DbRoseExercise(
-  id: Int, collectionId: Int, /* toolId: String,*/ semanticVersion: SemanticVersion,
+  id: Int, collectionId: Int, toolId: String, semanticVersion: SemanticVersion,
   title: String, author: String, text: LongText, state: ExerciseState,
   fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean
-) extends ADbExercise {
-
-  override def toolId: String = RoseConsts.toolId
-
-}
+) extends ADbExercise
 
 final case class DbRoseSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, language: ProgLanguage, sample: String)
   extends ADbSampleSol

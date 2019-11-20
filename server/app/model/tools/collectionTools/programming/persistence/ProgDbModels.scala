@@ -1,57 +1,15 @@
 package model.tools.collectionTools.programming.persistence
 
 import model._
-import model.core.LongText
 import model.persistence._
 import model.points.Points
 import model.tools.collectionTools.ExerciseFile
 import model.tools.collectionTools.programming._
-import model.tools.collectionTools.uml.UmlClassDiagram
 import play.api.libs.json.{JsArray, JsValue}
 
-object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
+object ProgDbModels extends ADbModels[ProgExercise, ProgExercise] {
 
-  override def dbExerciseFromExercise(ex: ProgExercise): DbProgExercise = DbProgExercise(
-    ex.id, ex.collectionId, /* ex.toolId, */ ex.semanticVersion,
-    ex.title, ex.author, ex.text, ex.state,
-    ex.functionName, ex.foldername, ex.filename,
-    ex.inputTypes, ex.outputType,
-    ex.baseData,
-    ex.unitTestPart,
-    ex.implementationPart.base, ex.implementationPart.implFileName, ex.implementationPart.sampleSolFileNames,
-    ex.tags,
-    ex.sampleTestData,
-    ex.maybeClassDiagramPart
-  )
-
-  def exerciseFromDbValues(dbProgEx: DbProgExercise, sampleSolutions: Seq[ProgSampleSolution], implementationFiles: Seq[ExerciseFile]): ProgExercise = dbProgEx match {
-    case DbProgExercise(
-    id, collectionId, /* toolId, */ semanticVersion,
-    title, author, text, state,
-    functionname, foldername, filename,
-    inputTypes, outputType,
-    baseData,
-    unitTestPart,
-    implementationBase, implFileName, implementationSampleSolFileNames,
-    tags,
-    sampleTestData,
-    maybeClassDiagramPart
-    ) =>
-
-      ProgExercise(
-        id, collectionId, ProgConsts.toolId, semanticVersion,
-        title, author, text, state,
-        functionname, foldername, filename,
-        inputTypes, outputType,
-        baseData,
-        unitTestPart,
-        ImplementationPart(implementationBase, implementationFiles, implFileName, implementationSampleSolFileNames),
-        sampleSolutions, sampleTestData,
-        tags,
-        /* sampleTestData , */
-        maybeClassDiagramPart
-      )
-  }
+  override def dbExerciseFromExercise(ex: ProgExercise): ProgExercise = ex
 
   // User Test Data
 
@@ -66,33 +24,6 @@ object ProgDbModels extends ADbModels[ProgExercise, DbProgExercise] {
 object ProgSolutionDbModels /* extends ASolutionDbModels[ProgSolution, ProgExPart, ProgSampleSolution, DbProgSampleSolution, ProgUserSolution, DbProgUserSolution] */ {
 
   def progTestDataToJson(testData: Seq[ProgUserTestData]): JsValue = JsArray() // FIXME: implement... ???
-
-  def testDataFromJson(jsValue: JsValue): Seq[ProgUserTestData] = Seq.empty // FIXME: implement... ???
-
-  // Sample solutions
-
-  /* override */ def dbSampleSolFromSampleSol(exId: Int, exSemVer: SemanticVersion, collId: Int, sample: ProgSampleSolution): (DbProgSampleSolution, Seq[DbProgSampleSolutionFile]) = sample match {
-    case ProgSampleSolution(id, ProgSolution(files, _)) =>
-
-      // FIXME: save testData?
-
-      val dbProgSampleSolutionFiles = files.map { case ExerciseFile(name, content, fileType, editable) =>
-        DbProgSampleSolutionFile(name, id, exId, collId, content, fileType, editable)
-      }
-
-      (DbProgSampleSolution(id, exId, collId), dbProgSampleSolutionFiles)
-  }
-
-  /* override */ def sampleSolFromDbSampleSol(dbSample: DbProgSampleSolution, dbSampleFiles: Seq[DbProgSampleSolutionFile]): ProgSampleSolution = {
-
-    val files: Seq[ExerciseFile] = dbSampleFiles.map { case DbProgSampleSolutionFile(fileName, _, _, _, fileContent, fileType, fileIsEditable) =>
-      ExerciseFile(fileName, fileContent, fileType, fileIsEditable)
-    }
-
-    val testData: Seq[ProgUserTestData] = Seq.empty // ???
-
-    ProgSampleSolution(dbSample.id, ProgSolution(files, testData))
-  }
 
   // User solutions
 
@@ -128,23 +59,6 @@ object ProgExerciseReviewDbModels extends AExerciseReviewDbModels[ProgExPart, Pr
 
   override def reviewFromDbReview(dbReview: DbProgrammingExerciseReview): ProgExerciseReview =
     ProgExerciseReview(dbReview.difficulty, dbReview.maybeDuration)
-
-}
-
-final case class DbProgExercise(
-  id: Int, collectionId: Int, semanticVersion: SemanticVersion,
-  title: String, author: String, text: LongText, state: ExerciseState,
-  functionname: String, foldername: String, filename: String,
-  inputType: Seq[ProgInput], outputType: ProgDataType,
-  baseData: Option[JsValue],
-  unitTestPart: UnitTestPart,
-  implementationBase: String, implFileName: String, implementationSampleSolFileNames: Seq[String],
-  tags: Seq[ProgrammingExerciseTag],
-  sampleTestData: Seq[ProgSampleTestData],
-  maybeClassDiagramPart: Option[UmlClassDiagram]
-) extends ADbExercise {
-
-  val toolId: String = ProgConsts.toolId
 
 }
 

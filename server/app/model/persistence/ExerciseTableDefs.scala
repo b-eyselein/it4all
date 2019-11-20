@@ -31,11 +31,6 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
   protected type CollTableDef <: ExerciseCollectionsTable
 
 
-  protected type DbSampleSolType <: ADbSampleSol
-
-  protected type DbSampleSolTable <: ASampleSolutionsTable
-
-
   protected type DbUserSolType <: ADbUserSol[PartType]
 
   protected type DbUserSolTable <: AUserSolutionsTable
@@ -50,8 +45,7 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
   protected val collTable: TableQuery[CollTableDef]
   protected val exTable  : TableQuery[ExTableDef]
 
-  protected val sampleSolutionsTableQuery: TableQuery[DbSampleSolTable]
-  protected val userSolutionsTableQuery  : TableQuery[DbUserSolTable]
+  protected val userSolutionsTableQuery: TableQuery[DbUserSolTable]
 
   protected val reviewsTable: TableQuery[ReviewsTable]
 
@@ -87,14 +81,6 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
     jsonColumnType(tSeqFormat, Seq.empty)
   }
 
-  protected implicit val partTypeColumnType: BaseColumnType[PartType]
-  // = {
-  //    implicit val ptct: ClassTag[PartType] = exParts.ct
-  //
-  //    jsonColumnType(exParts.jsonFormat)
-  //  }
-
-  protected implicit val difficultyColumnType: BaseColumnType[Difficulty] = jsonColumnType(Difficulties.jsonFormat)
 
   protected def stringSeqColumnType: BaseColumnType[Seq[String]] = {
     val stringReads: Reads[String] = jsValue => JsSuccess(jsValue.asInstanceOf[JsString].value)
@@ -112,6 +98,11 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
     jsonColumnType(stringMapFormat)
   }
+
+
+  protected implicit val partTypeColumnType: BaseColumnType[PartType]
+
+  protected implicit val difficultyColumnType: BaseColumnType[Difficulty] = jsonColumnType(Difficulties.jsonFormat)
 
   protected val longTextColumnType: BaseColumnType[LongText] = jsonColumnType(LongTextJsonProtocol.format)
 
@@ -175,19 +166,18 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
     def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+    def toolId: Rep[String] = column[String]("tool_id")
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
-
-    def exerciseFk: ForeignKeyQuery[ExTableDef, DbExType] = foreignKey("exercise_fk", (exerciseId, exSemVer, collectionId), exTable)(ex => (ex.id, ex.semanticVersion, ex.collectionId))
-
-  }
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
 
 
-  protected abstract class ASampleSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DbSampleSolType](tag, name) {
-
-    def id: Rep[Int] = column[Int]("id", O.PrimaryKey)
+    def exerciseFk: ForeignKeyQuery[ExTableDef, DbExType] = foreignKey(
+      "exercise_fk",
+      (exerciseId, collectionId, toolId, exSemVer),
+      exTable
+    )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
 
   }
 

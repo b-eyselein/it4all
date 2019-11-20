@@ -1,15 +1,13 @@
 package model.tools.collectionTools.sql
 
 import model.core.{LongText, LongTextJsonProtocol}
-import model.tools.ToolJsonProtocol
+import model.tools.StringSampleSolutionToolJsonProtocol
 import model.tools.collectionTools.sql.SqlConsts._
-import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
+import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-object SqlJsonProtocols extends ToolJsonProtocol[SqlExercise, StringSampleSolution, SqlCorrResult] {
-
-  override val sampleSolutionFormat: Format[StringSampleSolution] = StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
+object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise,  SqlCorrResult] {
 
   override val exerciseFormat: Format[SqlExercise] = {
     implicit val svf : Format[SemanticVersion]      = SemanticVersionHelper.format

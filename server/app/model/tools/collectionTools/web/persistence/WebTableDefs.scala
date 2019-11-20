@@ -2,6 +2,7 @@ package model.tools.collectionTools.web.persistence
 
 import de.uniwue.webtester.{JsActionType, JsHtmlElementSpec}
 import javax.inject.Inject
+import model.{FilesSampleSolution, FilesSampleSolutionJsonProtocol}
 import model.persistence.{DbExerciseFile, DbFilesUserSolution, FilesSolutionExerciseTableDefs}
 import model.tools.collectionTools.ExParts
 import model.tools.collectionTools.web.WebConsts._
@@ -29,11 +30,6 @@ class WebTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
   override protected type ExTableDef = WebExercisesTable
 
 
-  override protected type DbSampleSolTable = WebSampleSolutionsTable
-
-  override protected type DbFilesSampleSolutionFilesTable = WebSampleSolutionFilesTable
-
-
   override protected type DbUserSolTable = WebUserSolutionsTable
 
   override protected type DbFilesUserSolutionFilesTable = WebUserSolutionFilesTable
@@ -47,9 +43,6 @@ class WebTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   override protected val exTable  : TableQuery[WebExercisesTable]   = TableQuery[WebExercisesTable]
   override protected val collTable: TableQuery[WebCollectionsTable] = TableQuery[WebCollectionsTable]
-
-  override protected val sampleSolutionsTableQuery    : TableQuery[WebSampleSolutionsTable]     = TableQuery[WebSampleSolutionsTable]
-  override protected val sampleSolutionFilesTableQuery: TableQuery[WebSampleSolutionFilesTable] = TableQuery[WebSampleSolutionFilesTable]
 
   override protected val userSolutionsTableQuery    : TableQuery[WebUserSolutionsTable]     = TableQuery[WebUserSolutionsTable]
   override protected val userSolutionFilesTableQuery: TableQuery[WebUserSolutionFilesTable] = TableQuery[WebUserSolutionFilesTable]
@@ -88,14 +81,24 @@ class WebTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   protected class WebExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "web_exercises") {
 
+    private implicit val fssct: BaseColumnType[Seq[FilesSampleSolution]] =
+      jsonSeqColumnType(FilesSampleSolutionJsonProtocol.filesSampleSolutionFormat)
+
+
     def htmlText: Rep[Option[String]] = column[Option[String]]("html_text")
 
     def jsText: Rep[Option[String]] = column[Option[String]]("js_text")
 
     def fileName: Rep[String] = column[String](filenameName)
 
+    def sampleSolutions: Rep[Seq[FilesSampleSolution]] = column[Seq[FilesSampleSolution]]("sample_solutions_json")
 
-    override def * : ProvenShape[DbWebExercise] = (id, collectionId, semanticVersion, title, author, text, state, htmlText, jsText, fileName) <> (DbWebExercise.tupled, DbWebExercise.unapply)
+
+    override def * : ProvenShape[DbWebExercise] = (
+      id, collectionId, toolId, semanticVersion,
+      title, author, text, state,
+      htmlText, jsText, fileName, sampleSolutions
+    ) <> (DbWebExercise.tupled, DbWebExercise.unapply)
 
   }
 
@@ -153,12 +156,6 @@ class WebTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
     def * : ProvenShape[DbExerciseFile] = (name, exerciseId, collectionId, content, fileType, editable) <> (DbExerciseFile.tupled, DbExerciseFile.unapply)
 
   }
-
-
-  protected class WebSampleSolutionsTable(tag: Tag) extends AFilesSampleSolutionsTable(tag, "web_sample_solutions")
-
-  protected class WebSampleSolutionFilesTable(tag: Tag) extends AFilesSampleSolutionFilesTable(tag, "web_sample_solution_files")
-
 
   protected class WebUserSolutionsTable(tag: Tag) extends AFilesUserSolutionsTable(tag, "web_user_solutions")
 

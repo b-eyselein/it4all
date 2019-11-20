@@ -1,9 +1,7 @@
 package model.tools.collectionTools.programming.persistence
 
-import model.persistence.DbExerciseFile
-import model.tools.collectionTools.programming._
 import model.SemanticVersion
-import model.tools.collectionTools.ExerciseFile
+import model.tools.collectionTools.programming._
 
 import scala.concurrent.Future
 
@@ -12,64 +10,10 @@ trait ProgTableQueries {
 
   import profile.api._
 
-  private def sampleSolutionsForExercise(ex: DbProgExercise): Future[Seq[ProgSampleSolution]] = for {
-    dbSampleSols <- db.run(sampleSolutionsTableQuery.filter { s => s.exerciseId === ex.id && s.collectionId === ex.collectionId }.result)
-    dbSampleSolFiles <- db.run(sampleSolutionFilesTableQuery.filter { sf => sf.exId === ex.id && sf.collId === ex.collectionId }.result)
-  } yield {
 
-    val groupedDbSampleSolFiles = dbSampleSolFiles.groupBy(_.solId)
+  override def completeExForEx(collId: Int, ex: ProgExercise): Future[ProgExercise] = Future.successful(ex)
 
-    dbSampleSols.map { dbSampleSol: DbProgSampleSolution =>
-      val filesForDbSampleSol = groupedDbSampleSolFiles.getOrElse(dbSampleSol.id, Seq.empty)
-      ProgSolutionDbModels.sampleSolFromDbSampleSol(dbSampleSol, filesForDbSampleSol)
-    }
-
-  }
-
-  private def implementationFilesForExercise(exercise: DbProgExercise): Future[Seq[ExerciseFile]] =
-    db.run(
-      implementationFilesTQ
-        .filter { ipf => ipf.exerciseId === exercise.id && ipf.collectionId === exercise.collectionId }
-        .result
-    ).map(_.map(ProgDbModels.exerciseFileFromDbExerciseFile))
-
-  override def completeExForEx(collId: Int, ex: DbProgExercise): Future[ProgExercise] = for {
-    samples <- sampleSolutionsForExercise(ex)
-    implementationFiles <- implementationFilesForExercise(ex)
-  } yield ProgDbModels.exerciseFromDbValues(ex, samples, implementationFiles)
-
-  override def saveExerciseRest(collId: Int, ex: ProgExercise): Future[Boolean] = {
-    val dbSamplesWithFiles: (Seq[DbProgSampleSolution], Seq[Seq[DbProgSampleSolutionFile]]) = ex.sampleSolutions
-      .map(s => ProgSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
-      .unzip
-
-    val dbSamples     = dbSamplesWithFiles._1
-    val dbSampleFiles = dbSamplesWithFiles._2.flatten
-
-    val dbImplementationFiles = ex.implementationPart.files
-      .map(ipf => ProgDbModels.dbExerciseFileFromExerciseFile(ex.id, ex.semanticVersion, collId, ipf))
-
-    for {
-      samplesSaved <- saveSeq[DbProgSampleSolution](dbSamples, i => db.run(sampleSolutionsTableQuery += i))
-      sampleFilesSaved <- saveSeq[DbProgSampleSolutionFile](dbSampleFiles, i => db.run(sampleSolutionFilesTableQuery += i))
-      implementationFilesSaved <- saveSeq[DbExerciseFile](dbImplementationFiles, i => db.run(implementationFilesTQ += i))
-    } yield samplesSaved && sampleFilesSaved && implementationFilesSaved
-  }
-
-  def futureSampleSolutionsForExPart(collId: Int, id: Int, part: ProgExPart): Future[Seq[ProgSampleSolution]] = futureExerciseById(collId, id).map {
-    case None           => Seq.empty
-    case Some(exercise) =>
-
-      val filesToSendNames = part match {
-        case ProgExParts.TestCreation => exercise.unitTestPart.sampleSolFileNames
-        case _                        => exercise.implementationPart.sampleSolFileNames
-      }
-
-      exercise.sampleSolutions.map { case ProgSampleSolution(sampleId, ProgSolution(files, _)) =>
-        val newFiles = files.filter(f => filesToSendNames.contains(f.name))
-        ProgSampleSolution(sampleId, ProgSolution(newFiles, Seq.empty))
-      }
-  }
+  override def saveExerciseRest(collId: Int, ex: ProgExercise): Future[Boolean] = Future.successful(true)
 
   private def futureUserSolutionById(id: Int, exId: Int, collId: Int, username: String, part: ProgExPart): Future[Option[ProgUserSolution]] =
     for {

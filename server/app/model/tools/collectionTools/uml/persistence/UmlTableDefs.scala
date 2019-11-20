@@ -1,14 +1,14 @@
 package model.tools.collectionTools.uml.persistence
 
 import javax.inject.Inject
-import model.core.CoreConsts.{sampleName, solutionName}
-import model.persistence.ExerciseTableDefs
-import model.tools.collectionTools.uml._
 import model.SemanticVersion
+import model.core.CoreConsts.solutionName
+import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools.ExParts
+import model.tools.collectionTools.uml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{PrimaryKey, ProvenShape}
+import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,16 +20,11 @@ class UmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   // Abstract types
 
-  override protected type DbExType = DbUmlExercise
+  override protected type DbExType = UmlExercise
 
   override protected type ExTableDef = UmlExercisesTable
 
   override protected type CollTableDef = UmlCollectionsTable
-
-
-  override protected type DbSampleSolType = DbUmlSampleSolution
-
-  override protected type DbSampleSolTable = UmlSampleSolutionsTable
 
 
   override protected type DbUserSolType = DbUmlUserSolution
@@ -46,8 +41,7 @@ class UmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
   override protected val collTable: TableQuery[UmlCollectionsTable] = TableQuery[UmlCollectionsTable]
   override protected val exTable  : TableQuery[UmlExercisesTable]   = TableQuery[UmlExercisesTable]
 
-  override protected val sampleSolutionsTableQuery: TableQuery[UmlSampleSolutionsTable] = TableQuery[UmlSampleSolutionsTable]
-  override protected val userSolutionsTableQuery  : TableQuery[UmlSolutionsTable]       = TableQuery[UmlSolutionsTable]
+  override protected val userSolutionsTableQuery: TableQuery[UmlSolutionsTable] = TableQuery[UmlSolutionsTable]
 
   override protected val reviewsTable: TableQuery[UmlExerciseReviewsTable] = TableQuery[UmlExerciseReviewsTable]
 
@@ -62,26 +56,15 @@ class UmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   // Queries
 
-  override def completeExForEx(collId: Int, ex: DbUmlExercise): Future[UmlExercise] = for {
-    samples <- db.run(sampleSolutionsTableQuery.filter(s => s.exerciseId === ex.id && s.exSemVer === ex.semanticVersion).result).map(_.map(UmlSolutionDbModels.sampleSolFromDbSampleSol))
-  } yield UmlDbModels.exerciseFromDbExercise(ex, samples)
+  override def completeExForEx(collId: Int, ex: UmlExercise): Future[UmlExercise] = Future.successful(ex)
 
-  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: UmlExPart): Future[Seq[UmlSampleSolution]] = ???
+  override protected def saveExerciseRest(collId: Int, compEx: UmlExercise): Future[Boolean] = Future.successful(true)
 
 
-  override protected def saveExerciseRest(collId: Int, compEx: UmlExercise): Future[Boolean] = {
-    val dbSamples = compEx.sampleSolutions.map(s => UmlSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
-
-    for {
-      sampleSolutionsSaved <- saveSeq[DbUmlSampleSolution](dbSamples, sample => db.run(sampleSolutionsTableQuery += sample))
-    } yield sampleSolutionsSaved
-  }
-
-
-  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: UmlExPart): Future[Option[UmlUserSolution]] =
+  override def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: UmlExPart): Future[Option[UmlUserSolution]] =
     Future.successful(None) // ???
 
-  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UmlUserSolution): Future[Boolean] =
+  override def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: UmlUserSolution): Future[Boolean] =
     Future.successful(false) // ???
 
   // Implicit column types
@@ -106,31 +89,25 @@ class UmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
     private implicit val mct: BaseColumnType[Map[String, String]] = stringMapColumnType
 
+    private implicit val ssct: BaseColumnType[Seq[UmlSampleSolution]] =
+      jsonSeqColumnType(UmlToolJsonProtocol.sampleSolutionFormat)
+
 
     def toIgnore: Rep[Seq[String]] = column[Seq[String]]("to_ignore_json")
 
     def mappings: Rep[Map[String, String]] = column[Map[String, String]]("mappings_json")
 
-
-    override def * : ProvenShape[DbUmlExercise] = (id, collectionId, semanticVersion, title, author, text, state,
-      toIgnore, mappings) <> (DbUmlExercise.tupled, DbUmlExercise.unapply)
-
-  }
-
-  protected class UmlSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "uml_sample_solutions") {
-
-    private implicit val ucdct: BaseColumnType[UmlClassDiagram] = umlClassDiagramColumnType
+    def sampleSolutions: Rep[Seq[UmlSampleSolution]] = column[Seq[UmlSampleSolution]]("sample_solutions_json")
 
 
-    def sample: Rep[UmlClassDiagram] = column[UmlClassDiagram](sampleName)
-
-
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
-
-
-    def * : ProvenShape[DbUmlSampleSolution] = (id, exerciseId, exSemVer, collectionId, sample) <> (DbUmlSampleSolution.tupled, DbUmlSampleSolution.unapply)
+    override def * : ProvenShape[UmlExercise] = (
+      id, collectionId, toolId, semanticVersion,
+      title, author, text, state,
+      toIgnore, mappings, sampleSolutions
+    ) <> (UmlExercise.tupled, UmlExercise.unapply)
 
   }
+
 
   protected class UmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "uml_user_solutions") {
 

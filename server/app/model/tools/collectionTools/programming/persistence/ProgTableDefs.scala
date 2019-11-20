@@ -23,17 +23,12 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Abstract types
 
-  override protected type DbExType = DbProgExercise
+  override protected type DbExType = ProgExercise
 
   override protected type ExTableDef = ProgExercisesTable
 
 
   override protected type CollTableDef = ProgCollectionsTable
-
-
-  override protected type DbSampleSolType = DbProgSampleSolution
-
-  override protected type DbSampleSolTable = ProgSampleSolutionsTable
 
 
   override protected type DbUserSolType = DbProgUserSolution
@@ -49,9 +44,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   override protected val exTable  : TableQuery[ProgExercisesTable]   = TableQuery[ProgExercisesTable]
   override protected val collTable: TableQuery[ProgCollectionsTable] = TableQuery[ProgCollectionsTable]
-
-  override protected val sampleSolutionsTableQuery    : TableQuery[ProgSampleSolutionsTable]     = TableQuery[ProgSampleSolutionsTable]
-  protected          val sampleSolutionFilesTableQuery: TableQuery[ProgSampleSolutionFilesTable] = TableQuery[ProgSampleSolutionFilesTable]
 
   override protected val userSolutionsTableQuery    : TableQuery[ProgUserSolutionTable]      = TableQuery[ProgUserSolutionTable]
   protected          val userSolutionFilesTableQuery: TableQuery[ProgUserSolutionFilesTable] = TableQuery[ProgUserSolutionFilesTable]
@@ -75,8 +67,8 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   private val jsonValueColumnType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](_.toString, Json.parse)
 
-  private val progDataTypesColumnType: BaseColumnType[ProgDataType] = jsonColumnType(ProgrammingToolJsonProtocol.progDataTypeFormat)
-  //    MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.NonGenericProgDataType.STRING)
+  private val progDataTypesColumnType: BaseColumnType[ProgDataType] =
+    jsonColumnType(ProgrammingToolJsonProtocol.progDataTypeFormat)
 
   override protected implicit val partTypeColumnType: BaseColumnType[ProgExPart] = jsonColumnType(exParts.jsonFormat)
 
@@ -86,21 +78,22 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   protected class ProgExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "prog_exercises") {
 
-    private implicit val pict: BaseColumnType[Seq[ProgInput]] =
+    private implicit val pict : BaseColumnType[Seq[ProgInput]] =
       jsonSeqColumnType(ProgrammingToolJsonProtocol.progInputFormat)
+    private implicit val pdtct: BaseColumnType[ProgDataType]   = progDataTypesColumnType
+    private implicit val jvct : BaseColumnType[JsValue]        = jsonValueColumnType
 
-    private implicit val pdtct: BaseColumnType[ProgDataType] = progDataTypesColumnType
-
-    private implicit val jvct: BaseColumnType[JsValue] = jsonValueColumnType
-
-    private implicit val utpct: BaseColumnType[UnitTestPart] =
+    private implicit val utpct: BaseColumnType[UnitTestPart]       =
       jsonColumnType(ProgrammingToolJsonProtocol.unitTestPartFormat)
+    private implicit val ipct : BaseColumnType[ImplementationPart] =
+      jsonColumnType(ProgrammingToolJsonProtocol.implementationPartFormat)
 
-    private implicit val ssct: BaseColumnType[Seq[String]] = stringSeqColumnType
 
     private implicit val tct: BaseColumnType[Seq[ProgrammingExerciseTag]] =
       jsonSeqColumnType(ProgrammingExerciseTag.jsonFormat)
 
+    private implicit val pssct : BaseColumnType[Seq[ProgSampleSolution]] =
+      jsonSeqColumnType(ProgrammingToolJsonProtocol.sampleSolutionFormat)
     private implicit val pstdct: BaseColumnType[Seq[ProgSampleTestData]] =
       jsonSeqColumnType(ProgrammingToolJsonProtocol.progSampleTestDataFormat)
 
@@ -116,40 +109,37 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def inputTypes: Rep[Seq[ProgInput]] = column[Seq[ProgInput]]("inputs_json")
 
-    def outputType: Rep[ProgDataType] = column[ProgDataType]("output_type")
+    def outputType: Rep[ProgDataType] = column[ProgDataType]("output_type_json")
 
     def baseDataAsJson: Rep[JsValue] = column[JsValue]("base_data_json")
 
 
     def unitTestPart: Rep[UnitTestPart] = column[UnitTestPart]("unit_test_part_json")
 
-
-    def implementationBase: Rep[String] = column[String]("implementation_base")
-
-    def implFileName: Rep[String] = column[String]("impl_file_name")
-
-    def implementationSampleSolFileNames: Rep[Seq[String]] = column[Seq[String]]("implementation_sample_sol_file_names")
+    def implementationPart: Rep[ImplementationPart] = column[ImplementationPart]("implementation_part_json")
 
 
     def tags: Rep[Seq[ProgrammingExerciseTag]] = column[Seq[ProgrammingExerciseTag]]("tags_json")
 
 
-    def sampleTestData: Rep[Seq[ProgSampleTestData]] = column[Seq[ProgSampleTestData]]("prog_sample_test_data_json")
+    def sampleSolutions: Rep[Seq[ProgSampleSolution]] = column[Seq[ProgSampleSolution]]("sample_solutions_json")
+
+    def sampleTestData: Rep[Seq[ProgSampleTestData]] = column[Seq[ProgSampleTestData]]("sample_test_data_json")
 
     def maybeClassDiagram: Rep[Option[UmlClassDiagram]] = column[Option[UmlClassDiagram]]("class_diagram_json")
 
 
-    override def * : ProvenShape[DbProgExercise] = (
-      id, collectionId, semanticVersion, title, author, text, state,
+    override def * : ProvenShape[ProgExercise] = (
+      id, collectionId, toolId, semanticVersion,
+      title, author, text, state,
       functionName, foldername, filename,
       inputTypes, outputType,
       baseDataAsJson.?,
-      unitTestPart,
-      implementationBase, implFileName, implementationSampleSolFileNames,
+      unitTestPart, implementationPart,
+      sampleSolutions, sampleTestData,
       tags,
-      sampleTestData,
       maybeClassDiagram
-    ) <> (DbProgExercise.tupled, DbProgExercise.unapply)
+    ) <> (ProgExercise.tupled, ProgExercise.unapply)
 
   }
 
@@ -177,7 +167,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def state: Rep[ExerciseState] = column[ExerciseState]("approval_state")
 
 
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, username))
+    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, toolId, collectionId, exSemVer, username))
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
@@ -187,35 +177,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   }
 
   // Solutions
-
-  protected class ProgSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "prog_sample_solutions") {
-
-    //    def language: Rep[ProgLanguage] = column[ProgLanguage](languageName)
-
-    def pk: PrimaryKey = primaryKey("pk", (exerciseId, exSemVer /*, language*/ ))
-
-
-    override def * : ProvenShape[DbProgSampleSolution] = (id, exerciseId, collectionId) <> (DbProgSampleSolution.tupled, DbProgSampleSolution.unapply)
-
-  }
-
-  protected class ProgSampleSolutionFilesTable(tag: Tag) extends Table[DbProgSampleSolutionFile](tag, "prog_sample_solution_files") with ExerciseFilesTable[DbProgSampleSolutionFile] {
-
-    def solutionId: Rep[Int] = column[Int]("sol_id")
-
-    def exId: Rep[Int] = column[Int]("exercise_id")
-
-    def collId: Rep[Int] = column[Int]("collection_id")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (name, solutionId, exId, collId))
-
-
-    override def * : ProvenShape[DbProgSampleSolutionFile] = (name, solutionId, exId, collId, content, fileType,
-      editable) <> (DbProgSampleSolutionFile.tupled, DbProgSampleSolutionFile.unapply)
-
-  }
-
 
   protected class ProgUserSolutionTable(tag: Tag) extends AUserSolutionsTable(tag, "prog_user_solutions") {
 

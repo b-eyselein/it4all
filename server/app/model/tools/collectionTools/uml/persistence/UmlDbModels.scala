@@ -6,13 +6,9 @@ import model.points.Points
 import model.tools.collectionTools.uml._
 import model.{Difficulty, ExerciseState, SemanticVersion}
 
-object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise] {
+object UmlDbModels extends ADbModels[UmlExercise, UmlExercise] {
 
-  override def dbExerciseFromExercise(ex: UmlExercise): DbUmlExercise =
-    DbUmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.toIgnore, ex.mappings)
-
-  def exerciseFromDbExercise(ex: DbUmlExercise, samples: Seq[UmlSampleSolution]): UmlExercise =
-    UmlExercise(ex.id, ex.collectionId, ex.toolId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.toIgnore, ex.mappings, samples)
+  override def dbExerciseFromExercise(ex: UmlExercise): UmlExercise = ex
 
 }
 
@@ -43,14 +39,11 @@ object UmlExerciseReviewDbModels extends AExerciseReviewDbModels[UmlExPart, UmlE
 }
 
 final case class DbUmlExercise(
-  id: Int, collectionId: Int, /* toolId: String , */ semanticVersion: SemanticVersion,
+  id: Int, collectionId: Int, toolId: String, semanticVersion: SemanticVersion,
   title: String, author: String, text: LongText, state: ExerciseState,
-  toIgnore: Seq[String], mappings: Map[String, String]
-) extends ADbExercise {
-
-  override val toolId: String = UmlConsts.toolId
-
-}
+  toIgnore: Seq[String], mappings: Map[String, String],
+  sampleSolutions: Seq[UmlSampleSolution]
+) extends ADbExercise
 
 final case class DbUmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, sample: UmlClassDiagram)
   extends ADbSampleSol

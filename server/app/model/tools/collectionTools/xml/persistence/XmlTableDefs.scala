@@ -1,16 +1,16 @@
 package model.tools.collectionTools.xml.persistence
 
 import javax.inject.Inject
+import model.core.LongText
 import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools.ExParts
 import model.tools.collectionTools.xml._
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-import slick.lifted.{PrimaryKey, ProvenShape}
+import slick.lifted.ProvenShape
 
 import scala.concurrent.ExecutionContext
-import scala.reflect.ClassTag
 
 class XmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends ExerciseTableDefs[XmlExPart, XmlExercise, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlExerciseReview]
@@ -23,16 +23,11 @@ class XmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   // Abstract types
 
-  override protected type DbExType = DbXmlExercise
+  override protected type DbExType = XmlExercise
 
   override protected type ExTableDef = XmlExercisesTable
 
   override protected type CollTableDef = XmlCollectionsTable
-
-
-  override protected type DbSampleSolType = DbXmlSampleSolution
-
-  override protected type DbSampleSolTable = XmlSamplesTable
 
 
   override protected type DbUserSolType = DbXmlUserSolution
@@ -49,8 +44,7 @@ class XmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
   override protected val exTable  : TableQuery[XmlExercisesTable]   = TableQuery[XmlExercisesTable]
   override protected val collTable: TableQuery[XmlCollectionsTable] = TableQuery[XmlCollectionsTable]
 
-  override protected val sampleSolutionsTableQuery: TableQuery[XmlSamplesTable]   = TableQuery[XmlSamplesTable]
-  override protected val userSolutionsTableQuery  : TableQuery[XmlSolutionsTable] = TableQuery[XmlSolutionsTable]
+  override protected val userSolutionsTableQuery: TableQuery[XmlSolutionsTable] = TableQuery[XmlSolutionsTable]
 
   override protected val reviewsTable: TableQuery[XmlExerciseReviewsTable] = TableQuery[XmlExerciseReviewsTable]
 
@@ -69,34 +63,31 @@ class XmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   // Actual table defs
 
-  class XmlCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "xml_collections")
+  protected class XmlCollectionsTable(tag: Tag) extends ExerciseCollectionsTable(tag, "xml_collections")
 
-  class XmlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "xml_exercises") {
+  protected class XmlExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "xml_exercises") {
+
+    private implicit val ltct2: BaseColumnType[LongText] = longTextColumnType
+
+    private implicit val xssct: BaseColumnType[Seq[XmlSampleSolution]] = jsonSeqColumnType(XmlToolJsonProtocol.sampleSolutionFormat)
+
 
     def rootNode: Rep[String] = column[String]("root_node")
 
-    def grammarDescription: Rep[String] = column[String]("grammar_description")
+    def grammarDescription: Rep[LongText] = column[LongText]("grammar_description")
+
+    def sampleSolutions: Rep[Seq[XmlSampleSolution]] = column[Seq[XmlSampleSolution]]("samples_json")
 
 
-    override def * : ProvenShape[DbXmlExercise] = (id, collectionId, semanticVersion, title, author, text, state, grammarDescription, rootNode) <> (DbXmlExercise.tupled, DbXmlExercise.unapply)
-
-  }
-
-  class XmlSamplesTable(tag: Tag) extends ASampleSolutionsTable(tag, "xml_sample_solutions") {
-
-    def grammar: Rep[String] = column[String]("grammar")
-
-    def document: Rep[String] = column[String]("document")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer))
-
-
-    override def * : ProvenShape[DbXmlSampleSolution] = (id, exerciseId, exSemVer, collectionId, document, grammar) <> (DbXmlSampleSolution.tupled, DbXmlSampleSolution.unapply)
+    override def * : ProvenShape[XmlExercise] = (
+      id, collectionId, toolId, semanticVersion,
+      title, author, text, state,
+      grammarDescription, rootNode, sampleSolutions,
+    ) <> (XmlExercise.tupled, XmlExercise.unapply)
 
   }
 
-  class XmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "xml_user_solutions") {
+  protected class XmlSolutionsTable(tag: Tag) extends AUserSolutionsTable(tag, "xml_user_solutions") {
 
     def grammar: Rep[String] = column[String]("grammar")
 
@@ -108,7 +99,7 @@ class XmlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   }
 
-  class XmlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "xml_exercise_reviews") {
+  protected class XmlExerciseReviewsTable(tag: Tag) extends ExerciseReviewsTable(tag, "xml_exercise_reviews") {
 
     override def * : ProvenShape[DbXmlExerciseReview] = (username, collectionId, exerciseId, exercisePart, difficulty, maybeDuration.?) <> (DbXmlExerciseReview.tupled, DbXmlExerciseReview.unapply)
 

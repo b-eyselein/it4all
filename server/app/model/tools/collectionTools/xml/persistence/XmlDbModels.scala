@@ -1,22 +1,13 @@
 package model.tools.collectionTools.xml.persistence
 
-import model.core.LongText
 import model.persistence._
 import model.points.Points
 import model.tools.collectionTools.xml._
-import model.{Difficulty, ExerciseState, SemanticVersion}
+import model.{Difficulty, SemanticVersion}
 
-object XmlDbModels extends ADbModels[XmlExercise, DbXmlExercise] {
+object XmlDbModels extends ADbModels[XmlExercise, XmlExercise] {
 
-  override def dbExerciseFromExercise(ex: XmlExercise): DbXmlExercise =
-    DbXmlExercise(ex.id, ex.collectionId, ex.semanticVersion, ex.title, ex.author, ex.text, ex.state, ex.grammarDescription.wrapped, ex.rootNode)
-
-  def exerciseFromDbValues(dbXmlEx: DbXmlExercise, samples: Seq[XmlSampleSolution]): XmlExercise =
-    XmlExercise(
-      dbXmlEx.id, dbXmlEx.collectionId, dbXmlEx.toolId, dbXmlEx.semanticVersion,
-      dbXmlEx.title, dbXmlEx.author, dbXmlEx.text, dbXmlEx.state,
-      LongText(dbXmlEx.grammarDescription), dbXmlEx.rootNode, samples
-    )
+  override def dbExerciseFromExercise(ex: XmlExercise): XmlExercise = ex
 
 }
 
@@ -46,15 +37,6 @@ object XmlExerciseReviewDbModels extends AExerciseReviewDbModels[XmlExPart, XmlE
 
 }
 
-final case class DbXmlExercise(
-  id: Int, collectionId: Int, /* toolId: String , */  semanticVersion: SemanticVersion,
-  title: String, author: String, text: LongText, state: ExerciseState,
-  grammarDescription: String, rootNode: String
-) extends ADbExercise {
-
-  override def toolId: String = XmlConsts.toolId
-
-}
 
 final case class DbXmlSampleSolution(id: Int, exId: Int, exSemVer: SemanticVersion, collId: Int, document: String, grammar: String)
   extends ADbSampleSol {

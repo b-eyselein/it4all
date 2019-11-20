@@ -26,8 +26,6 @@ class RegexTableDefs @Inject()(override protected val dbConfigProvider: Database
   override protected type CollTableDef = RegexCollectionsTable
 
 
-  override protected type DbSampleSolTable = RegexSampleSolutionsTable
-
   override protected type DbUserSolTable = RegexUserSolutionsTable
 
 
@@ -40,8 +38,7 @@ class RegexTableDefs @Inject()(override protected val dbConfigProvider: Database
   override protected val exTable  : TableQuery[RegexExerciseTable]    = TableQuery[RegexExerciseTable]
   override protected val collTable: TableQuery[RegexCollectionsTable] = TableQuery[RegexCollectionsTable]
 
-  override protected val sampleSolutionsTableQuery: TableQuery[RegexSampleSolutionsTable] = TableQuery[RegexSampleSolutionsTable]
-  override protected val userSolutionsTableQuery  : TableQuery[RegexUserSolutionsTable]   = TableQuery[RegexUserSolutionsTable]
+  override protected val userSolutionsTableQuery: TableQuery[RegexUserSolutionsTable] = TableQuery[RegexUserSolutionsTable]
 
   override protected val reviewsTable: TableQuery[RegexExerciseReviewsTable] = TableQuery[RegexExerciseReviewsTable]
 
@@ -105,8 +102,6 @@ class RegexTableDefs @Inject()(override protected val dbConfigProvider: Database
 
   }
 
-
-  protected class RegexSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "regex_sample_solutions")
 
   protected class RegexUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "regex_user_solutions")
 

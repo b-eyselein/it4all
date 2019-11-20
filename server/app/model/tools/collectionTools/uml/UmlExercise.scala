@@ -2,6 +2,7 @@ package model.tools.collectionTools.uml
 
 import model._
 import model.core.LongText
+import model.persistence.ADbExercise
 import model.points.Points
 import model.tools.collectionTools.Exercise
 
@@ -12,7 +13,7 @@ final case class UmlExercise(
   toIgnore: Seq[String],
   mappings: Map[String, String],
   sampleSolutions: Seq[UmlSampleSolution]
-) extends Exercise {
+) extends Exercise with ADbExercise {
 
   override protected type SolutionType = UmlClassDiagram
   override protected type SampleSolutionType = UmlSampleSolution

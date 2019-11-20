@@ -1,12 +1,12 @@
 package model.tools.collectionTools.rose.persistence
 
 import javax.inject.Inject
-import model.core.CoreConsts.{sampleName, solutionName}
+import model.SemanticVersion
+import model.core.CoreConsts.solutionName
 import model.persistence.ExerciseTableDefs
+import model.tools.collectionTools.ExParts
 import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage, ProgLanguages, ProgrammingToolJsonProtocol}
 import model.tools.collectionTools.rose._
-import model.SemanticVersion
-import model.tools.collectionTools.ExParts
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}
@@ -22,17 +22,11 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
   // Abstract types
 
-  override protected type DbExType = DbRoseExercise
+  override protected type DbExType = RoseExercise
 
   override protected type ExTableDef = RoseExercisesTable
 
-
   override protected type CollTableDef = RoseExerciseCollectionsTable
-
-
-  override protected type DbSampleSolType = DbRoseSampleSolution
-
-  override protected type DbSampleSolTable = RoseSampleSolutionsTable
 
 
   override protected type DbUserSolType = DbRoseUserSolution
@@ -48,12 +42,9 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
   override protected val exTable  : TableQuery[RoseExercisesTable]           = TableQuery[RoseExercisesTable]
   override protected val collTable: TableQuery[RoseExerciseCollectionsTable] = TableQuery[RoseExerciseCollectionsTable]
 
-  override protected val sampleSolutionsTableQuery: TableQuery[RoseSampleSolutionsTable] = TableQuery[RoseSampleSolutionsTable]
   override protected val userSolutionsTableQuery  : TableQuery[RoseSolutionsTable]       = TableQuery[RoseSolutionsTable]
 
   override protected val reviewsTable: TableQuery[RoseExerciseReviewsTable] = TableQuery[RoseExerciseReviewsTable]
-
-  private val roseInputs = TableQuery[RoseInputTypesTable]
 
   // Helper methods
 
@@ -66,36 +57,19 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
   // Queries
 
-  override protected def completeExForEx(collId: Int, ex: DbRoseExercise): Future[RoseExercise] = for {
-    inputTypes <- db.run(roseInputs.filter(_.exerciseId === ex.id).result).map(_.map(RoseDbModels.inputTypeFromDbInputType))
-    samples <- db.run(sampleSolutionsTableQuery.filter(_.exerciseId === ex.id).result).map(_.map(RoseSolutionDbModels.sampleSolFromDbSampleSol))
-  } yield RoseDbModels.exerciseFromDbValues(ex, inputTypes, samples)
+  override protected def completeExForEx(collId: Int, ex: RoseExercise): Future[RoseExercise] = Future.successful(ex)
+
+  override protected def saveExerciseRest(collId: Int, ex: RoseExercise): Future[Boolean] =
+    Future.successful(true)
 
 
-  override protected def saveExerciseRest(collId: Int, ex: RoseExercise): Future[Boolean] = {
-    val dbSamples = ex.sampleSolutions.map(s => RoseSolutionDbModels.dbSampleSolFromSampleSol(ex.id, ex.semanticVersion, collId, s))
-    val dbInputs  = ex.inputTypes.map(it => RoseDbModels.dbInputTypeFromInputType(ex.id, ex.semanticVersion, collId, it))
-
-    for {
-      inputsSaved <- saveSeq[DbRoseInputType](dbInputs, it => db.run(roseInputs insertOrUpdate it))
-      samplesSaved <- saveSeq[DbRoseSampleSolution](dbSamples, rss => db.run(sampleSolutionsTableQuery insertOrUpdate rss))
-    } yield inputsSaved && samplesSaved
-  }
-
-
-  override def futureSampleSolutionsForExPart(collId: Int, exerciseId: Int, part: RoseExPart): Future[Seq[RoseSampleSolution]] =
-    db.run(sampleSolutionsTableQuery
-      .filter { s => s.exerciseId === exerciseId && s.collectionId === collId }
-      .result)
-      .map(_.map(RoseSolutionDbModels.sampleSolFromDbSampleSol))
-
-  def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: RoseExPart): Future[Option[RoseUserSolution]] = {
+  override def futureMaybeOldSolution(username: String, scenarioId: Int, exerciseId: Int, part: RoseExPart): Future[Option[RoseUserSolution]] = {
     // FIXME: implement?!
     Future.successful(None)
     // ???
   }
 
-  def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: RoseUserSolution): Future[Boolean] = {
+  override def futureSaveUserSolution(exId: Int, exSemVer: SemanticVersion, collId: Int, username: String, sol: RoseUserSolution): Future[Boolean] = {
     // FIXME: implement ?!
     Future.successful(false)
     // ???
@@ -117,15 +91,28 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
   protected class RoseExercisesTable(tag: Tag) extends ExerciseInCollectionTable(tag, "rose_exercises") {
 
+    private implicit val ritct: BaseColumnType[Seq[RoseInputType]] = jsonSeqColumnType(RoseToolJsonProtocol.roseInputTypeFormat)
+
+    private implicit val ssct: BaseColumnType[Seq[RoseSampleSolution]] = jsonSeqColumnType(RoseToolJsonProtocol.sampleSolutionFormat)
+
+
     def fieldWidth: Rep[Int] = column[Int]("field_width")
 
     def fieldHeight: Rep[Int] = column[Int]("field_height")
 
     def isMultiplayer: Rep[Boolean] = column[Boolean]("is_mp")
 
+    def inputTypes: Rep[Seq[RoseInputType]] = column[Seq[RoseInputType]]("input_types_json")
 
-    override def * : ProvenShape[DbRoseExercise] = (id, collectionId, semanticVersion, title, author, text, state,
-      fieldWidth, fieldHeight, isMultiplayer) <> (DbRoseExercise.tupled, DbRoseExercise.unapply)
+    def sampleSolutions: Rep[Seq[RoseSampleSolution]] = column[Seq[RoseSampleSolution]]("sample_solutions_json")
+
+
+    override def * : ProvenShape[RoseExercise] = (
+      id, collectionId, toolId, semanticVersion,
+      title, author, text, state,
+      fieldWidth, fieldHeight, isMultiplayer,
+      inputTypes, sampleSolutions
+    ) <> (RoseExercise.tupled, RoseExercise.unapply)
 
   }
 
@@ -145,23 +132,6 @@ class RoseTableDefs @Inject()(override protected val dbConfigProvider: DatabaseC
 
 
     override def * : ProvenShape[DbRoseInputType] = (id, exerciseId, exSemVer, collectionId, name, inputType) <> (DbRoseInputType.tupled, DbRoseInputType.unapply)
-
-  }
-
-  protected class RoseSampleSolutionsTable(tag: Tag) extends ASampleSolutionsTable(tag, "rose_sample_solutions") {
-
-    private implicit val plct: BaseColumnType[ProgLanguage] = progLanguageColumnType
-
-
-    def sample: Rep[String] = column[String](sampleName)
-
-    def language: Rep[ProgLanguage] = column[ProgLanguage]("language")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (id, exerciseId, exSemVer, language))
-
-
-    override def * : ProvenShape[DbRoseSampleSolution] = (id, exerciseId, exSemVer, collectionId, language, sample) <> (DbRoseSampleSolution.tupled, DbRoseSampleSolution.unapply)
 
   }
 

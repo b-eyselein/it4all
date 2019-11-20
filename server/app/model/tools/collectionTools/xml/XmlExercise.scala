@@ -2,6 +2,7 @@ package model.tools.collectionTools.xml
 
 import model._
 import model.core.LongText
+import model.persistence.ADbExercise
 import model.points.Points
 import model.tools.collectionTools.{ExPart, ExParts, Exercise}
 
@@ -28,7 +29,7 @@ final case class XmlExercise(
   grammarDescription: LongText,
   rootNode: String,
   sampleSolutions: Seq[XmlSampleSolution]
-) extends Exercise {
+) extends Exercise with ADbExercise {
 
   override protected type SolutionType = XmlSolution
   override protected type SampleSolutionType = XmlSampleSolution

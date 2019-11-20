@@ -21,8 +21,7 @@ trait WebTableQueries {
     htmlTasks <- htmlTasksForExercise(collId, ex.id)
     jsTasks <- jsTasksForExercise(collId, ex.id)
     files <- webFilesForExercise(collId, ex.id)
-    sampleSolutions <- futureSampleSolutionsForExercise(collId, ex.id)
-  } yield WebDbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), files, sampleSolutions)
+  } yield WebDbModels.exerciseFromDbExercise(ex, htmlTasks sortBy (_.id), jsTasks sortBy (_.id), files)
 
   private def htmlTasksForExercise(collId: Int, exId: Int): Future[Seq[HtmlTask]] = db.run(
     htmlTasksTable
@@ -47,8 +46,7 @@ trait WebTableQueries {
     htmlTasksSaved <- saveSeq[HtmlTask](ex.siteSpec.htmlTasks, t => saveHtmlTask(ex.id, ex.semanticVersion, collId, t))
     jsTasksSaved <- saveSeq[JsTask](ex.siteSpec.jsTasks, t => saveJsTask(ex.id, ex.semanticVersion, collId, t))
     webFilesSaved <- saveWebFiles(ex.id, ex.semanticVersion, collId, ex.files)
-    sampleSolutionsSaved <- futureSaveSampleSolutions(ex.id, ex.semanticVersion, collId, ex.sampleSolutions)
-  } yield htmlTasksSaved && jsTasksSaved && webFilesSaved && sampleSolutionsSaved
+  } yield htmlTasksSaved && jsTasksSaved && webFilesSaved
 
   private def saveHtmlTask(exId: Int, exSemVer: SemanticVersion, collId: Int, htmlTask: HtmlTask): Future[Boolean] =
     db.run(htmlTasksTable += WebDbModels.dbHtmlTaskFromHtmlTask(exId, collId, htmlTask)).transform(_ == 1, identity)

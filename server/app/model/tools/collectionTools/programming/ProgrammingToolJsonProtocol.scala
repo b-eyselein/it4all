@@ -3,13 +3,25 @@ package model.tools.collectionTools.programming
 import model._
 import model.core.{LongText, LongTextJsonProtocol}
 import model.tools.ToolJsonProtocol
-import model.tools.collectionTools.{ExerciseFile, ExerciseFileJsonProtocol}
 import model.tools.collectionTools.programming.ProgConsts._
 import model.tools.collectionTools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.collectionTools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileJsonProtocol}
 import play.api.libs.json._
 
 object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExercise, ProgSampleSolution, ProgCompleteResult] {
+
+  override val sampleSolutionFormat: Format[ProgSampleSolution] = {
+    implicit val psf: Format[ProgSolution] = {
+      implicit val eff  : Format[ExerciseFile]     = ExerciseFileJsonProtocol.exerciseFileFormat
+      implicit val putdf: Format[ProgUserTestData] = progUserTestDataFormat
+
+      Json.format[ProgSolution]
+    }
+
+    Json.format[ProgSampleSolution]
+  }
+
 
   lazy val progDataTypeFormat: Format[ProgDataType] = {
 
@@ -55,16 +67,6 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExercise, ProgSa
 
   private val progUserTestDataFormat: Format[ProgUserTestData] = Json.format[ProgUserTestData]
 
-  val sampleSolutionJsonFormat: Format[ProgSampleSolution] = {
-    implicit val psf: Format[ProgSolution] = {
-      implicit val eff  : Format[ExerciseFile]     = ExerciseFileJsonProtocol.exerciseFileFormat
-      implicit val putdf: Format[ProgUserTestData] = progUserTestDataFormat
-
-      Json.format[ProgSolution]
-    }
-
-    Json.format[ProgSampleSolution]
-  }
 
   val progSampleTestDataFormat: Format[ProgSampleTestData] = Json.format[ProgSampleTestData]
 
@@ -84,25 +86,25 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExercise, ProgSa
     Json.format[UnitTestPart]
   }
 
+  val implementationPartFormat: Format[ImplementationPart] = {
+    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
+
+    Json.format[ImplementationPart]
+  }
+
   override val exerciseFormat: Format[ProgExercise] = {
     implicit val svf  : Format[SemanticVersion]    = SemanticVersionHelper.format
     implicit val ltf  : Format[LongText]           = LongTextJsonProtocol.format
     implicit val pif  : Format[ProgInput]          = progInputFormat
     implicit val pdtf : Format[ProgDataType]       = progDataTypeFormat
     implicit val utf  : Format[UnitTestPart]       = unitTestPartFormat
-    implicit val pssf : Format[ProgSampleSolution] = sampleSolutionJsonFormat
+    implicit val ipf  : Format[ImplementationPart] = implementationPartFormat
+    implicit val pssf : Format[ProgSampleSolution] = sampleSolutionFormat
     implicit val pstdf: Format[ProgSampleTestData] = progSampleTestDataFormat
     implicit val ucdf : Format[UmlClassDiagram]    = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
 
-    implicit val ipf  : Format[ImplementationPart] = {
-      implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
-      Json.format[ImplementationPart]
-    }
-
     Json.format[ProgExercise]
   }
-
-  override val sampleSolutionFormat: Format[ProgSampleSolution] = sampleSolutionFormat
 
 
   // Result

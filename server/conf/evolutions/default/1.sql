@@ -78,88 +78,86 @@ create table if not exists learning_path_sections (
 # Programming
 
 create table if not exists prog_collections (
-    id         int primary key,
-    tool_id    varchar(50) not null,
+    id         int,
+    tool_id    varchar(20),
+
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
     ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
-    short_name varchar(50)
+    short_name varchar(50),
+
+    primary key (id, tool_id)
 );
 
 create table if not exists prog_exercises (
-    id                                   int,
-    semantic_version                     varchar(10),
-    collection_id                        int,
-    title                                varchar(50),
-    author                               varchar(50),
-    ex_text                              text,
-    ex_state                             enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    id                       int,
+    collection_id            int,
+    tool_id                  varchar(20),
+    semantic_version         varchar(10),
 
-    function_name                        varchar(30)  not null,
-    foldername                           varchar(50)  not null,
-    filename                             varchar(50)  not null,
+    title                    varchar(50),
+    author                   varchar(50),
+    ex_text                  text,
+    ex_state                 enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    inputs_json                          longtext     not null, # TODO: json!
-    output_type                          varchar(30)  not null,
-    base_data_json                       text,
+    function_name            varchar(30) not null,
+    foldername               varchar(50) not null,
+    filename                 varchar(50) not null,
 
-    unit_test_part_json                  longtext     not null, # TODO: json!
+    inputs_json              longtext    not null, # TODO: json!
+    output_type_json         longtext    not null, # TODO: json!
+    base_data_json           text,
 
-    implementation_base                  text         not null,
-    impl_file_name                       varchar(100) not null,
-    implementation_sample_sol_file_names longtext     not null, # TODO: json!
+    unit_test_part_json      longtext    not null, # TODO: json!
+    implementation_part_json longtext    not null, # TODO: json!
 
-    tags_json                            longtext     not null, # TODO: json!
+    tags_json                longtext    not null, # TODO: json!
 
-    prog_sample_test_data_json           longtext     not null, # TODO: json!
+    sample_solutions_json    longtext    not null, # TODO: json!
+    sample_test_data_json    longtext    not null, # TODO: json!
 
-    class_diagram_json                   longtext,              # TODO: json!
+    class_diagram_json       longtext,             # TODO: json!
 
-    primary key (id, collection_id),
-    foreign key (collection_id) references prog_collections (id)
+    primary key (id, collection_id, tool_id, semantic_version),
+    foreign key (collection_id, tool_id) references prog_collections (id, tool_id)
         on update cascade on delete cascade
 );
 
 create table if not exists prog_impl_files (
-    name          varchar(100),
-    exercise_id   int,
-    collection_id int,
-    content       text        not null,
-    file_type     varchar(20) not null,
-    editable      boolean     not null,
+    name             varchar(100),
+    exercise_id      int,
+    collection_id    int,
+    tool_id          varchar(20),
+    semantic_version varchar(10),
 
-    primary key (name, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id) references prog_exercises (id, collection_id)
-        on update cascade on delete cascade
-);
+    content          text        not null,
+    file_type        varchar(20) not null,
+    editable         boolean     not null,
 
-create table if not exists prog_sample_testdata (
-    id            int,
-    exercise_id   int,
-    collection_id int,
-    input_json    text,
-    output        varchar(50),
-
-    primary key (id, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
+    primary key (name, exercise_id, collection_id, tool_id, semantic_version),
+    foreign key (exercise_id, collection_id, tool_id, semantic_version)
+        references prog_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists prog_commited_testdata (
-    id             int,
-    exercise_id    int,
-    collection_id  int,
-    input_json     text,
-    output         varchar(50),
+    id               int,
+    exercise_id      int,
+    collection_id    int,
+    tool_id          varchar(20),
+    semantic_version varchar(10),
+    username         varchar(50),
 
-    username       varchar(50),
-    approval_state enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    input_json       text,
+    output           varchar(50),
 
-    primary key (id, exercise_id, collection_id, username),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
+
+    approval_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+
+    primary key (id, exercise_id, collection_id, tool_id, semantic_version, username),
+    foreign key (exercise_id, collection_id, tool_id, semantic_version)
+        references prog_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade,
     foreign key (username)
         references users (username)
@@ -167,47 +165,53 @@ create table if not exists prog_commited_testdata (
 );
 
 create table if not exists prog_sample_solutions (
-    id            int,
-    exercise_id   int,
-    collection_id int,
+    id               int,
+    exercise_id      int,
+    collection_id    int,
+    tool_id          varchar(20),
+    semantic_version varchar(10),
 
-    primary key (id, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, semantic_version),
+    foreign key (exercise_id, collection_id, tool_id, semantic_version)
+        references prog_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists prog_sample_solution_files (
-    name          varchar(100),
-    sol_id        int,
-    exercise_id   int,
-    collection_id int,
+    name             varchar(100),
+    sol_id           int,
+    exercise_id      int,
+    collection_id    int,
+    tool_id          varchar(20),
+    semantic_version varchar(10),
 
-    content       text,
-    file_type     varchar(10),
-    editable      boolean default false,
+    content          text,
+    file_type        varchar(10),
+    editable         boolean default false,
 
-    primary key (name, sol_id, exercise_id, collection_id),
-    foreign key (sol_id, exercise_id, collection_id)
-        references prog_sample_solutions (id, exercise_id, collection_id)
+    primary key (name, sol_id, exercise_id, collection_id, tool_id, semantic_version),
+    foreign key (sol_id, exercise_id, collection_id, tool_id, semantic_version)
+        references prog_sample_solutions (id, exercise_id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists prog_user_solutions (
     id                  int,
-    username            varchar(50),
     exercise_id         int,
     collection_id       int,
+    tool_id             varchar(20),
+    semantic_version    varchar(10),
     part                varchar(50),
+    username            varchar(50),
 
     extended_unit_tests boolean default false,
     test_data           text,
     points              double,
     max_points          double,
 
-    primary key (id, username, exercise_id, collection_id, part),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, semantic_version, part, username),
+    foreign key (exercise_id, collection_id, tool_id, semantic_version)
+        references prog_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade,
     foreign key (username)
         references users (username)
@@ -215,34 +219,39 @@ create table if not exists prog_user_solutions (
 );
 
 create table if not exists prog_user_solution_files (
-    name          varchar(100),
-    sol_id        int,
-    username      varchar(50),
-    exercise_id   int,
-    collection_id int,
-    part          varchar(50),
+    name             varchar(100),
+    sol_id           int,
+    exercise_id      int,
+    collection_id    int,
+    tool_id          varchar(20),
+    semantic_version varchar(10),
+    part             varchar(50),
+    username         varchar(50),
 
-    content       text,
-    file_type     varchar(10),
-    editable      boolean default false,
+    content          text,
+    file_type        varchar(10),
+    editable         boolean default false,
 
-    primary key (name, sol_id, username, exercise_id, collection_id, part),
-    foreign key (sol_id, username, exercise_id, collection_id, part)
-        references prog_user_solutions (id, username, exercise_id, collection_id, part)
+    primary key (name, sol_id, exercise_id, collection_id, tool_id, semantic_version, part, username),
+    foreign key (sol_id, exercise_id, collection_id, tool_id, semantic_version, part, username)
+        references prog_user_solutions (id, exercise_id, collection_id, tool_id, semantic_version, part, username)
         on update cascade on delete cascade
 );
 
 create table if not exists prog_exercise_reviews (
-    username       varchar(50),
-    exercise_id    int,
-    collection_id  int,
-    part           varchar(50),
-    difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
-    maybe_duration int,
+    username         varchar(50),
+    exercise_id      int,
+    collection_id    int,
+    tool_id          varchar(20),
+    semantic_version varchar(10),
+    part             varchar(50),
 
-    primary key (username, exercise_id, collection_id, part),
-    foreign key (exercise_id, collection_id)
-        references prog_exercises (id, collection_id)
+    difficulty       enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+    maybe_duration   int,
+
+    primary key (username, exercise_id, collection_id, tool_id, semantic_version, part),
+    foreign key (exercise_id, collection_id, tool_id, semantic_version)
+        references prog_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade,
     foreign key (username)
         references users (username)
@@ -252,19 +261,23 @@ create table if not exists prog_exercise_reviews (
 # Regex
 
 create table if not exists regex_collections (
-    id         int primary key,
-    tool_id    varchar(50) not null,
+    id         int,
+    tool_id    varchar(20),
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
     ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
-    short_name varchar(50)
+    short_name varchar(50),
+
+    primary key (id, tool_id)
 );
 
 create table if not exists regex_exercises (
     id                        int,
-    semantic_version          varchar(10),
     collection_id             int,
+    tool_id                   varchar(20),
+    semantic_version          varchar(10),
+
     title                     varchar(50),
     author                    varchar(50),
     ex_text                   text,
@@ -275,114 +288,128 @@ create table if not exists regex_exercises (
     match_test_data_json      longtext not null, # TODO: json
     extraction_test_data_json longtext not null, # TODO: json
 
-    primary key (id, semantic_version, collection_id),
-    foreign key (collection_id)
-        references regex_collections (id)
+    primary key (id, collection_id, tool_id, semantic_version),
+    foreign key (collection_id, tool_id)
+        references regex_collections (id, tool_id)
         on update cascade on delete cascade
 );
 
 create table if not exists regex_user_solutions (
     id            int,
-    username      varchar(50),
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
     part          varchar(50),
+    username      varchar(50),
 
     points        double,
     max_points    double,
     solution      varchar(100),
 
-    primary key (id, username, exercise_id, collection_id, part),
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username),
     foreign key (username)
         references users (username)
         on update cascade on delete cascade,
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references regex_exercises (id, semantic_version, collection_id)
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references regex_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists regex_exercise_reviews (
     username       varchar(50),
     exercise_id    int,
-    ex_sem_ver     varchar(10),
     collection_id  int,
+    tool_id        varchar(20),
+    ex_sem_ver     varchar(10),
     part           varchar(50),
     difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
     maybe_duration int,
 
-    primary key (username, exercise_id, ex_sem_ver, collection_id, part),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references regex_exercises (id, semantic_version, collection_id)
+    primary key (username, exercise_id, collection_id, tool_id, ex_sem_ver, part),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references regex_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 # Rose
 
 create table if not exists rose_collections (
-    id         int primary key,
-    tool_id    varchar(50) not null,
+    id         int,
+    tool_id    varchar(50),
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
     ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
-    short_name varchar(50)
+    short_name varchar(50),
+
+    primary key (id, tool_id)
 );
 
 create table if not exists rose_exercises (
-    id               int,
-    semantic_version varchar(10),
-    collection_id    int,
-    title            varchar(50),
-    author           varchar(50),
-    ex_text          text,
-    ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    id                    int,
+    collection_id         int,
+    tool_id               varchar(20),
+    semantic_version      varchar(10),
 
-    field_width      int,
-    field_height     int,
-    is_mp            boolean,
+    title                 varchar(50),
+    author                varchar(50),
+    ex_text               text,
+    ex_state              enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    primary key (id, semantic_version, collection_id),
-    foreign key (collection_id)
-        references rose_collections (id)
+    field_width           int,
+    field_height          int,
+    is_mp                 boolean,
+
+    input_types_json      longtext not null, # TODO: json!
+    sample_solutions_json longtext not null, # TODO: json!
+
+    primary key (id, collection_id, tool_id, semantic_version),
+    foreign key (collection_id, tool_id)
+        references rose_collections (id, tool_id)
         on update cascade on delete cascade
 );
 
 create table if not exists rose_inputs (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
+
     input_name    varchar(20),
     input_type    varchar(20),
 
-    primary key (id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references rose_exercises (id, semantic_version, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references rose_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists rose_sample_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
+
     language      enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
     sample        text,
 
-    primary key (id, exercise_id, ex_sem_ver, collection_id, language),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references rose_exercises (id, semantic_version, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver, language),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references rose_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists rose_user_solutions (
     id            int,
-    username      varchar(50),
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
     part          varchar(50),
+    username      varchar(50),
 
     language      enum ('PYTHON_3', 'JAVA_8') default 'PYTHON_3',
 
@@ -390,114 +417,128 @@ create table if not exists rose_user_solutions (
     points        double,
     max_points    double,
 
-    primary key (id, username, exercise_id, collection_id, part, language),
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username, language),
     foreign key (username)
         references users (username)
         on update cascade on delete cascade,
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references rose_exercises (id, semantic_version, collection_id)
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references rose_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists rose_exercise_reviews (
     username       varchar(50),
     exercise_id    int,
-    ex_sem_ver     varchar(10),
     collection_id  int,
+    tool_id        varchar(20),
+    ex_sem_ver     varchar(10),
     part           varchar(50),
+
     difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
     maybe_duration int,
 
-    primary key (username, exercise_id, ex_sem_ver, collection_id, part),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references rose_exercises (id, semantic_version, collection_id)
+    primary key (username, exercise_id, collection_id, tool_id, ex_sem_ver, part),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references rose_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 # Sql
 
-create table if not exists sql_scenarioes (
-    id         int primary key,
-    tool_id    varchar(50) not null,
+create table if not exists sql_collections (
+    id         int,
+    tool_id    varchar(20),
+
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
     ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
-
     short_name varchar(50),
-    scriptFile varchar(50)
+
+    primary key (id, tool_id)
 );
 
 create table if not exists sql_exercises (
     id                    int,
+    collection_id         int,
+    tool_id               varchar(20),
     semantic_version      varchar(10),
+
     title                 varchar(50),
     author                varchar(50),
     ex_text               text,
     ex_state              enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    collection_id         int,
+
     tags_json             longtext not null, # TODO: json!
     exercise_type_json    longtext not null, # TODO: json!
     hint                  text,
     sample_solutions_json longtext not null, # TODO: sjon!
 
-    primary key (id, semantic_version, collection_id),
-    foreign key (collection_id)
-        references sql_scenarioes (id)
+    primary key (id, collection_id, tool_id, semantic_version),
+    foreign key (collection_id, tool_id)
+        references sql_collections (id, tool_id)
         on update cascade on delete cascade
 );
 
 create table if not exists sql_sample_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
+
     sample        text,
 
-    primary key (id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references sql_exercises (id, semantic_version, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references sql_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists sql_user_solutions (
     id            int,
-    username      varchar(50),
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
     part          varchar(50),
+    username      varchar(50),
 
     points        double,
     max_points    double,
     solution      text,
 
-    primary key (id, username, exercise_id, collection_id, part),
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username),
     foreign key (username)
         references users (username)
         on update cascade on delete cascade,
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references sql_exercises (id, semantic_version, collection_id)
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references sql_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 # Uml
 
 create table if not exists uml_collections (
-    id         int primary key,
-    tool_id    varchar(50) not null,
+    id         int,
+    tool_id    varchar(20),
+
     title      varchar(50),
     author     varchar(50),
     ex_text    text,
     ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
-    short_name varchar(50)
+    short_name varchar(50),
+
+    primary key (id, tool_id)
 );
 
 create table if not exists uml_exercises (
     id               int,
-    semantic_version varchar(10),
     collection_id    int,
+    tool_id          varchar(20),
+    semantic_version varchar(10),
+
     title            varchar(50),
     author           varchar(50),
     ex_text          text,
@@ -506,100 +547,112 @@ create table if not exists uml_exercises (
     to_ignore_json   longtext not null, # TODO: json
     mappings_json    longtext not null, # TODO: json
 
-    primary key (id, semantic_version, collection_id),
-    foreign key (collection_id)
-        references uml_collections (id)
+    primary key (id, collection_id, tool_id, semantic_version),
+    foreign key (collection_id, tool_id)
+        references uml_collections (id, tool_id)
         on update cascade on delete cascade
 );
 
 create table if not exists uml_sample_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
+
     sample        text,
 
-    primary key (id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references uml_exercises (id, semantic_version, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references uml_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists uml_user_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
-    username      varchar(30),
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
     part          varchar(50),
+    username      varchar(30),
 
     points        double,
     max_points    double,
     solution      text,
 
-    primary key (id, exercise_id, collection_id, username, part),
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username),
     foreign key (username)
         references users (username)
         on update cascade on delete cascade,
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references uml_exercises (id, semantic_version, collection_id)
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references uml_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists uml_exercise_reviews (
     username       varchar(50),
     exercise_id    int,
-    ex_sem_ver     varchar(10),
     collection_id  int,
+    tool_id        varchar(20),
+    ex_sem_ver     varchar(10),
     part           varchar(50),
+
     difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
     maybe_duration int,
 
-    primary key (username, exercise_id, ex_sem_ver, collection_id, part),
+    primary key (username, exercise_id, collection_id, tool_id, ex_sem_ver, part),
     foreign key (username)
         references users (username)
         on update cascade on delete cascade,
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references uml_exercises (id, semantic_version, collection_id)
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references uml_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 # Web
 
 create table if not exists web_collections (
-    id         int primary key,
-    tool_id    varchar(50) not null,
+    id         int,
+    tool_id    varchar(20),
+
     title      varchar(50),
     author     varchar(50),
     ex_text    varchar(50),
     ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
-    short_name varchar(50)
+    short_name varchar(50),
+
+    primary key (id, tool_id)
 );
 
 create table if not exists web_exercises (
-    id               int,
-    semantic_version varchar(10),
-    collection_id    int,
-    title            varchar(50)  not null,
-    author           varchar(50)  not null,
-    ex_text          text,
-    ex_state         enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
+    id                    int,
+    collection_id         int,
+    tool_id               varchar(20),
+    semantic_version      varchar(10),
 
-    html_text        text,
-    js_text          text,
-    filename         varchar(100) not null,
+    title                 varchar(50)  not null,
+    author                varchar(50)  not null,
+    ex_text               text,
+    ex_state              enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED',
 
-    primary key (id, collection_id),
-    foreign key (collection_id)
-        references web_collections (id)
+    html_text             text,
+    js_text               text,
+    filename              varchar(100) not null,
+    sample_solutions_json longtext     not null, # TODO: json!
+
+    primary key (id, collection_id, tool_id, semantic_version),
+    foreign key (collection_id, tool_id)
+        references web_collections (id, tool_id)
         on update cascade on delete cascade
 );
 
 create table if not exists web_html_tasks (
     task_id         int,
     exercise_id     int,
-    ex_sem_ver      varchar(10),          # TODO: remove...
     collection_id   int,
+    tool_id         varchar(20),
+    ex_sem_ver      varchar(10),
 
     text            text        not null,
     xpath_query     varchar(50) not null,
@@ -607,17 +660,19 @@ create table if not exists web_html_tasks (
     text_content    varchar(100),
     attributes_json longtext    not null, # TODO: json
 
-    primary key (task_id, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references web_exercises (id, collection_id)
+    primary key (task_id, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references web_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists web_js_tasks (
     task_id              int,
     exercise_id          int,
-    ex_sem_ver           varchar(10),          # TODO: remove...
     collection_id        int,
+    tool_id              varchar(20),
+    ex_sem_ver           varchar(10),
+
     text                 text        not null,
     xpath_query          varchar(50) not null,
 
@@ -627,39 +682,42 @@ create table if not exists web_js_tasks (
     pre_conditions_json  longtext    not null, # TODO: json
     post_conditions_json longtext    not null, # TODO: json
 
-    primary key (task_id, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references web_exercises (id, collection_id)
+    primary key (task_id, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references web_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists web_files (
     name          varchar(100),
     exercise_id   int,
-    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
+
     content       text        not null,
     file_type     varchar(20) not null,
     editable      boolean     not null,
 
-    primary key (name, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references web_exercises (id, collection_id)
+    primary key (name, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references web_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists web_sample_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
 
     html_sample   text,
     js_sample     text,
 
-    primary key (id, exercise_id, collection_id),
-    foreign key (exercise_id, collection_id)
-        references web_exercises (id, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references web_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
@@ -667,32 +725,35 @@ create table if not exists web_sample_solution_files (
     name          varchar(100),
     sample_id     int,
     exercise_id   int,
-    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
+
     content       text        not null,
     file_type     varchar(50) not null,
     editable      boolean     not null,
 
-    primary key (name, sample_id, exercise_id, collection_id),
-    foreign key (sample_id, exercise_id, collection_id)
-        references web_sample_solutions (id, exercise_id, collection_id)
+    primary key (name, sample_id, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (sample_id, exercise_id, collection_id, tool_id, ex_sem_ver)
+        references web_sample_solutions (id, exercise_id, collection_id, tool_id, ex_sem_ver)
         on update cascade on delete cascade
 );
 
 create table if not exists web_user_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
-    username      varchar(30),
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
     part          varchar(50),
+    username      varchar(30),
 
     points        double,
     max_points    double,
 
-    primary key (id, exercise_id, collection_id, username, part),
-    foreign key (exercise_id, collection_id)
-        references web_exercises (id, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references web_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade,
     foreign key (username)
         references users (username)
@@ -703,52 +764,62 @@ create table if not exists web_user_solution_files (
     name          varchar(100),
     solution_id   int,
     exercise_id   int,
-    ex_sem_ver    varchar(10), # TODO: remove...
     collection_id int,
-    username      varchar(30),
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
     part          varchar(50),
+    username      varchar(30),
 
     content       text        not null,
     file_type     varchar(50) not null,
     editable      boolean     not null,
 
-    primary key (name, solution_id, exercise_id, collection_id, username, part),
-    foreign key (solution_id, exercise_id, collection_id, username, part)
-        references web_user_solutions (id, exercise_id, collection_id, username, part)
+    primary key (name, solution_id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username),
+    foreign key (solution_id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username)
+        references web_user_solutions (id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username)
         on update cascade on delete cascade
 );
 
 create table if not exists web_exercise_reviews (
     username       varchar(50),
     exercise_id    int,
-    ex_sem_ver     varchar(10), # TODO: remove...
     collection_id  int,
+    tool_id        varchar(20),
+    ex_sem_ver     varchar(10),
     part           varchar(50),
+
     difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
     maybe_duration int,
 
-    primary key (username, exercise_id, part, collection_id),
-    foreign key (exercise_id, collection_id)
-        references web_exercises (id, collection_id)
+    primary key (username, exercise_id, collection_id, tool_id, ex_sem_ver, part),
+    foreign key (username)
+        references users (username)
+        on update cascade on delete cascade,
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references web_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 # Xml
 
 create table if not exists xml_collections (
-    id         int primary key,
-    tool_id    varchar(50)                                                             not null,
+    id         int,
+    tool_id    varchar(50),
     title      varchar(50)                                                             not null,
     author     varchar(50)                                                             not null,
     ex_text    text                                                                    not null,
     ex_state   enum ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') default 'RESERVED' not null,
-    short_name varchar(50)                                                             not null
+    short_name varchar(50)                                                             not null,
+
+    primary key (id, tool_id)
 );
 
 create table if not exists xml_exercises (
     id                  int,
-    semantic_version    varchar(10),
     collection_id       int,
+    tool_id             varchar(20),
+    semantic_version    varchar(10),
+
     title               varchar(50)                                                             not null,
     author              varchar(50)                                                             not null,
     ex_text             text                                                                    not null,
@@ -757,43 +828,45 @@ create table if not exists xml_exercises (
     grammar_description text                                                                    not null,
     root_node           varchar(30)                                                             not null,
 
-    primary key (id, semantic_version, collection_id),
-    foreign key (collection_id)
-        references xml_collections (id)
+    primary key (id, collection_id, tool_id, semantic_version),
+    foreign key (collection_id, tool_id)
+        references xml_collections (id, tool_id)
         on update cascade on delete cascade
 );
 
 create table if not exists xml_sample_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
+
     grammar       text not null,
     document      text not null,
 
-    primary key (id, exercise_id, ex_sem_ver, collection_id),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references xml_exercises (id, semantic_version, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references xml_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists xml_user_solutions (
     id            int,
     exercise_id   int,
-    ex_sem_ver    varchar(10),
     collection_id int,
-    username      varchar(50),
+    tool_id       varchar(20),
+    ex_sem_ver    varchar(10),
     part          varchar(50),
+    username      varchar(50),
 
     points        double,
     max_points    double,
     grammar       text,
     document      text,
 
-
-    primary key (id, exercise_id, collection_id, username, part),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references xml_exercises (id, semantic_version, collection_id)
+    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references xml_exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade,
     foreign key (username)
         references users (username)
@@ -803,15 +876,19 @@ create table if not exists xml_user_solutions (
 create table if not exists xml_exercise_reviews (
     username       varchar(50),
     exercise_id    int,
-    ex_sem_ver     varchar(10),
     collection_id  int,
+    tool_id        varchar(20),
+    ex_sem_ver     varchar(10),
     part           varchar(50),
+
     difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
     maybe_duration int,
 
-    primary key (username, exercise_id, ex_sem_ver, collection_id, part),
-    foreign key (exercise_id, ex_sem_ver, collection_id)
-        references xml_exercises (id, semantic_version, collection_id)
+    primary key (username, exercise_id, collection_id, tool_id, ex_sem_ver, part),
+    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+        references xml_exercises (id, collection_id, tool_id, semantic_version)
+        on update cascade on delete cascade,
+    foreign key (username) references users (username)
         on update cascade on delete cascade
 );
 
@@ -871,7 +948,7 @@ drop table if exists sql_sample_solutions;
 
 drop table if exists sql_exercises;
 
-drop table if exists sql_scenarioes;
+drop table if exists sql_collections;
 
 # Rose
 
@@ -912,8 +989,6 @@ drop table if exists prog_sample_solutions;
 drop table if exists prog_commited_testdata;
 
 drop table if exists prog_impl_files;
-
-drop table if exists prog_sample_testdata;
 
 drop table if exists prog_exercises;
 

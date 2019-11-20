@@ -15,16 +15,18 @@ object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExercise, RoseSampleSol
     Json.format[RoseSampleSolution]
   }
 
+  val roseInputTypeFormat: Format[RoseInputType] = {
+    implicit val pdtf: Format[ProgDataType] = ProgrammingToolJsonProtocol.progDataTypeFormat
+
+    Json.format[RoseInputType]
+  }
+
   override val exerciseFormat: Format[RoseExercise] = {
     implicit val svf : Format[SemanticVersion]    = SemanticVersionHelper.format
     implicit val ltf : Format[LongText]           = LongTextJsonProtocol.format
     implicit val rssf: Format[RoseSampleSolution] = sampleSolutionFormat
 
-    implicit val ritf: Format[RoseInputType] = {
-      implicit val pdtf: Format[ProgDataType] = ProgrammingToolJsonProtocol.progDataTypeFormat
-
-      Json.format[RoseInputType]
-    }
+    implicit val ritf: Format[RoseInputType] = roseInputTypeFormat
 
     Json.format[RoseExercise]
   }

@@ -17,14 +17,19 @@ trait ToolJsonProtocol[E <: Exercise, SS <: SampleSolution[_], CR <: CompleteRes
 
 }
 
+trait StringSampleSolutionToolJsonProtocol[E <: Exercise, CR <: CompleteResult[_ <: EvaluationResult]]
+  extends ToolJsonProtocol[E, StringSampleSolution, CR] {
+
+  override val sampleSolutionFormat: Format[StringSampleSolution] =
+    StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
+
+}
+
 
 trait FilesSampleSolutionToolJsonProtocol[E <: Exercise, CR <: CompleteResult[_ <: EvaluationResult]]
   extends ToolJsonProtocol[E, FilesSampleSolution, CR] {
 
-  override final val sampleSolutionFormat: Format[FilesSampleSolution] = {
-    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
-
-    Json.format[FilesSampleSolution]
-  }
+  override final val sampleSolutionFormat: Format[FilesSampleSolution] =
+    FilesSampleSolutionJsonProtocol.filesSampleSolutionFormat
 
 }

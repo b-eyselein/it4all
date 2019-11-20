@@ -3,14 +3,11 @@ package model.tools.collectionTools.regex
 import model.core.matching.MatchingResult
 import model.core.{LongText, LongTextJsonProtocol}
 import model.points.{Points, pointsJsonWrites}
-import model.tools.ToolJsonProtocol
-import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
+import model.tools.StringSampleSolutionToolJsonProtocol
+import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution}
 import play.api.libs.json.{Format, Json, Writes}
 
-object RegexToolJsonProtocol extends ToolJsonProtocol[RegexExercise, StringSampleSolution, RegexCompleteResult] {
-
-  override val sampleSolutionFormat: Format[StringSampleSolution] =
-    StringSampleSolutionJsonProtocol.stringSampleSolutionJsonFormat
+object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExercise,  RegexCompleteResult] {
 
   val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 

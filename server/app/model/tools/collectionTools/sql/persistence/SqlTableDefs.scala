@@ -4,7 +4,6 @@ import javax.inject.Inject
 import model.StringSampleSolution
 import model.persistence._
 import model.tools.collectionTools.ExParts
-import model.tools.collectionTools.sql.SqlConsts._
 import model.tools.collectionTools.sql._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
@@ -27,8 +26,6 @@ class SqlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
   override protected type CollTableDef = SqlScenarioesTable
 
 
-  override protected type DbSampleSolTable = SqlSampleSolutionsTable
-
   override protected type DbUserSolTable = SqlUserSolutionsTable
 
 
@@ -41,7 +38,6 @@ class SqlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
   override protected val exTable  : TableQuery[SqlExercisesTable]  = TableQuery[SqlExercisesTable]
   override protected val collTable: TableQuery[SqlScenarioesTable] = TableQuery[SqlScenarioesTable]
 
-  override protected val sampleSolutionsTableQuery                                  = TableQuery[SqlSampleSolutionsTable]
   override protected val userSolutionsTableQuery: TableQuery[SqlUserSolutionsTable] = TableQuery[SqlUserSolutionsTable]
 
   override protected val reviewsTable: TableQuery[SqlExerciseReviewsTable] = TableQuery[SqlExerciseReviewsTable]
@@ -59,13 +55,7 @@ class SqlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
 
   // Saving
 
-  override def saveExerciseRest(collId: Int, compEx: SqlExercise): Future[Boolean] = {
-    val dbSamples = compEx.sampleSolutions.map(s => StringSolutionDbModels.dbSampleSolFromSampleSol(compEx.id, compEx.semanticVersion, collId, s))
-
-    for {
-      samplesSaved <- saveSeq[DbStringSampleSolution](dbSamples, s => db.run(sampleSolutionsTableQuery insertOrUpdate s))
-    } yield samplesSaved
-  }
+  override def saveExerciseRest(collId: Int, compEx: SqlExercise): Future[Boolean] = Future.successful(true)
 
   // Column types
 
@@ -104,9 +94,6 @@ class SqlTableDefs @Inject()(override protected val dbConfigProvider: DatabaseCo
     ) <> (SqlExercise.tupled, SqlExercise.unapply)
 
   }
-
-
-  class SqlSampleSolutionsTable(tag: Tag) extends AStringSampleSolutionsTable(tag, "sql_sample_solutions")
 
   class SqlUserSolutionsTable(tag: Tag) extends AStringUserSolutionsTable(tag, "sql_user_solutions")
 
