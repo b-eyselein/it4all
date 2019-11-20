@@ -1,4 +1,4 @@
-package model
+package model.tools.collectionTools
 
 import better.files.File
 import play.api.libs.json.{Format, Json}

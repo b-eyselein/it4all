@@ -1,7 +1,9 @@
 package model.tools.collectionTools.programming
 
 import model._
+import model.core.{LongText, LongTextJsonProtocol}
 import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileJsonProtocol}
 import model.tools.collectionTools.programming.ProgConsts._
 import model.tools.collectionTools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.collectionTools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}

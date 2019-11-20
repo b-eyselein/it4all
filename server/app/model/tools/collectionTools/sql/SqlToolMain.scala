@@ -4,8 +4,8 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.core.result.EvaluationResult
 import model.points.Points
-import model.toolMains.CollectionToolMain
 import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection}
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.persistence.SqlTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat

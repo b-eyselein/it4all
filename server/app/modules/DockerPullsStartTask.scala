@@ -1,8 +1,8 @@
 package modules
 
-import model.DockerConnector
-import model.tools.programming.ProgCorrector
-import model.tools.rose.RoseCorrector
+import model.core.DockerConnector
+import model.tools.collectionTools.programming.ProgCorrector
+import model.tools.collectionTools.rose.RoseCorrector
 import play.api.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global

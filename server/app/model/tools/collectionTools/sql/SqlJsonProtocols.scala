@@ -1,8 +1,9 @@
 package model.tools.collectionTools.sql
 
+import model.core.{LongText, LongTextJsonProtocol}
 import model.tools.ToolJsonProtocol
 import model.tools.collectionTools.sql.SqlConsts._
-import model.{LongText, LongTextJsonProtocol, SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
+import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution, StringSampleSolutionJsonProtocol}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 

@@ -3,10 +3,10 @@ package model.tools.collectionTools.uml
 import javax.inject.{Inject, Singleton}
 import model.core.result.EvaluationResult
 import model.points.Points
-import model.toolMains.CollectionToolMain
 import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection}
 import model.tools.collectionTools.uml.persistence.UmlTableDefs
-import model.{ExerciseCollection, User}
+import model.User
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
 import play.api.data.Form

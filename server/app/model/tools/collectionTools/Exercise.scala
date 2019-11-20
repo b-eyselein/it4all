@@ -1,6 +1,8 @@
-package model
+package model.tools.collectionTools
 
 import enumeratum.{EnumEntry, PlayEnum}
+import model._
+import model.core.LongText
 
 trait ExPart extends EnumEntry {
 

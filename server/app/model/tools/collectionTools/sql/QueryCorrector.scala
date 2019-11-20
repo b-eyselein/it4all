@@ -3,7 +3,8 @@ package model.tools.collectionTools.sql
 import model.core.matching.{Match, MatchingResult}
 import model.points._
 import model.tools.collectionTools.sql.matcher._
-import model.{ExerciseCollection, StringSampleSolution}
+import model.StringSampleSolution
+import model.tools.collectionTools.ExerciseCollection
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table

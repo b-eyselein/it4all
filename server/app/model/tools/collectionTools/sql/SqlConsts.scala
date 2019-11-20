@@ -1,6 +1,6 @@
 package model.tools.collectionTools.sql
 
-import model.toolMains.{ToolConsts, ToolState}
+import model.tools.{ToolConsts, ToolState}
 
 object SqlConsts extends ToolConsts {
 

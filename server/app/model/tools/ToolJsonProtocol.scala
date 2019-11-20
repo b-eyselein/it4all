@@ -2,6 +2,7 @@ package model.tools
 
 import model.core.result.{CompleteResult, EvaluationResult}
 import model._
+import model.tools.collectionTools.{Exercise, ExerciseFile, ExerciseFileJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
 
 

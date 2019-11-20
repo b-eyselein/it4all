@@ -1,7 +1,9 @@
 package model.tools.collectionTools.uml
 
 import model._
+import model.core.LongText
 import model.points.Points
+import model.tools.collectionTools.Exercise
 
 
 final case class UmlExercise(

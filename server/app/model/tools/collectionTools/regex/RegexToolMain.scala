@@ -3,8 +3,8 @@ package model.tools.collectionTools.regex
 import javax.inject.Inject
 import model._
 import model.points._
-import model.toolMains.CollectionToolMain
 import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection}
 import model.tools.collectionTools.regex.persistence.RegexTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form

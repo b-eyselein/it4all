@@ -2,10 +2,11 @@ package model.tools.collectionTools.programming.persistence
 
 import javax.inject.Inject
 import model.persistence.{DbExerciseFile, ExerciseTableDefs}
+import model.tools.collectionTools.ExParts
 import model.tools.collectionTools.programming.ProgConsts._
 import model.tools.collectionTools.programming._
 import model.tools.collectionTools.uml.UmlClassDiagram
-import model.{ExParts, ExerciseState, User}
+import model.{ExerciseState, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{JsValue, Json}
 import slick.jdbc.JdbcProfile

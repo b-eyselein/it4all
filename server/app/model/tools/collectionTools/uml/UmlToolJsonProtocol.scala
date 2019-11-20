@@ -1,10 +1,11 @@
 package model.tools.collectionTools.uml
 
 import model.core.matching.MatchingResult
+import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
 import model.tools.ToolJsonProtocol
 import model.tools.collectionTools.uml.matcher.{UmlAssociationMatch, UmlClassMatch, UmlImplementationMatch}
-import model.{LongText, LongTextJsonProtocol, SemanticVersion, SemanticVersionHelper}
+import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json._
 
 object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExercise, UmlSampleSolution, UmlCompleteResult] {

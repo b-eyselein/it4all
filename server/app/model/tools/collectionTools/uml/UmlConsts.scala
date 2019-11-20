@@ -1,6 +1,6 @@
 package model.tools.collectionTools.uml
 
-import model.toolMains.{ToolConsts, ToolState}
+import model.tools.{ToolConsts, ToolState}
 
 object UmlConsts extends ToolConsts {
 

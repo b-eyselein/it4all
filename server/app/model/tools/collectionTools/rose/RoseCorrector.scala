@@ -2,9 +2,9 @@ package model.tools.collectionTools.rose
 
 import better.files.File._
 import better.files._
+import model.User
+import model.core.{DockerBind, DockerConnector}
 import model.tools.collectionTools.programming.ProgLanguage
-import model.{DockerBind, DockerConnector, User}
-import modules.DockerPullsStartTask
 import play.api.libs.json.{JsError, JsSuccess, Json}
 
 import scala.concurrent.{ExecutionContext, Future}

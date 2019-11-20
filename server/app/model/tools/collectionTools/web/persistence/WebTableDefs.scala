@@ -2,8 +2,8 @@ package model.tools.collectionTools.web.persistence
 
 import de.uniwue.webtester.{JsActionType, JsHtmlElementSpec}
 import javax.inject.Inject
-import model.ExParts
 import model.persistence.{DbExerciseFile, DbFilesUserSolution, FilesSolutionExerciseTableDefs}
+import model.tools.collectionTools.ExParts
 import model.tools.collectionTools.web.WebConsts._
 import model.tools.collectionTools.web._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}

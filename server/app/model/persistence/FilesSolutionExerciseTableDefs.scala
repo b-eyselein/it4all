@@ -2,6 +2,7 @@ package model.persistence
 
 import model._
 import model.core.CoreConsts._
+import model.tools.collectionTools.{ExPart, Exercise, ExerciseFile}
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 trait FilesSolutionExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, ReviewType <: ExerciseReview]

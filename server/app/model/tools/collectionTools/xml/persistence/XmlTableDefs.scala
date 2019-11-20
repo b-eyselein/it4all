@@ -1,8 +1,8 @@
 package model.tools.collectionTools.xml.persistence
 
 import javax.inject.Inject
-import model.ExParts
 import model.persistence.ExerciseTableDefs
+import model.tools.collectionTools.ExParts
 import model.tools.collectionTools.xml._
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}

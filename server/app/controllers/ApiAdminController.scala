@@ -1,8 +1,9 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.toolMains.ToolList
-import model.{ExerciseCollection, JsonProtocol}
+import model.tools.ToolList
+import model.JsonProtocol
+import model.tools.collectionTools.ExerciseCollection
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}

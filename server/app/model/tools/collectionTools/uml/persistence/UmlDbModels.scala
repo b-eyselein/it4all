@@ -1,9 +1,10 @@
 package model.tools.collectionTools.uml.persistence
 
+import model.core.LongText
 import model.persistence._
 import model.points.Points
 import model.tools.collectionTools.uml._
-import model.{Difficulty, ExerciseState, LongText, SemanticVersion}
+import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object UmlDbModels extends ADbModels[UmlExercise, DbUmlExercise] {
 

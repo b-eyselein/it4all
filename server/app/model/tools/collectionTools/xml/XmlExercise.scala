@@ -1,7 +1,9 @@
 package model.tools.collectionTools.xml
 
 import model._
+import model.core.LongText
 import model.points.Points
+import model.tools.collectionTools.{ExPart, ExParts, Exercise}
 
 import scala.collection.immutable.IndexedSeq
 

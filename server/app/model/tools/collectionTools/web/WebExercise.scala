@@ -2,7 +2,9 @@ package model.tools.collectionTools.web
 
 import de.uniwue.webtester.{SiteSpec, WebTask}
 import model._
+import model.core.LongText
 import model.points._
+import model.tools.collectionTools.{ExPart, ExParts, ExerciseFile, FileExercise, LoadExerciseFilesMessage}
 
 import scala.collection.immutable.IndexedSeq
 

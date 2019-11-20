@@ -1,6 +1,7 @@
 package model.tools.collectionTools.sql
 
-import model.{ExerciseState, LongText, LongTextYamlProtocol, MyYamlProtocol, SemanticVersion, StringSampleSolution}
+import model.core.{LongText, LongTextYamlProtocol}
+import model.{ExerciseState, MyYamlProtocol, SemanticVersion, StringSampleSolution}
 import net.jcazevedo.moultingyaml.YamlFormat
 
 object SqlYamlProtocol extends MyYamlProtocol {

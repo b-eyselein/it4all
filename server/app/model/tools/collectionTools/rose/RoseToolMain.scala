@@ -4,8 +4,8 @@ package model.tools.collectionTools.rose
 import javax.inject.{Inject, Singleton}
 import model._
 import model.points.Points
-import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection}
 import model.tools.collectionTools.programming.ProgLanguages
 import model.tools.collectionTools.rose.persistence.RoseTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat

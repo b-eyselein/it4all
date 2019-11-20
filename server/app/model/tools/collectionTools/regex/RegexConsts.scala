@@ -1,7 +1,7 @@
 package model.tools.collectionTools.regex
 
-import model.toolMains.{ToolConsts, ToolState}
-import model.{ExPart, ExParts}
+import model.tools.collectionTools.{ExPart, ExParts}
+import model.tools.{ToolConsts, ToolState}
 
 import scala.collection.immutable.IndexedSeq
 

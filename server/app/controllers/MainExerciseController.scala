@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
-import model.toolMains.ToolList
+import model.tools.ToolList
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc._
 

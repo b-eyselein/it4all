@@ -4,11 +4,12 @@ import java.io.FileNotFoundException
 
 import better.files.File._
 import better.files._
+import model.User
 import model.core.result.SuccessType
+import model.core.{DockerBind, DockerConnector}
+import model.tools.collectionTools.ExerciseCollection
 import model.tools.collectionTools.programming.ProgrammingToolJsonProtocol.UnitTestTestData
 import model.tools.collectionTools.programming.ResultsFileJsonFormat._
-import model.{DockerBind, DockerConnector, ExerciseCollection, User}
-import modules.DockerPullsStartTask
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.{ExecutionContext, Future}

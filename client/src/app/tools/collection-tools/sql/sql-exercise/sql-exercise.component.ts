@@ -28,7 +28,7 @@ export class SqlExerciseComponent implements OnInit {
 
   showSampleSolutions = false;
 
-  constructor(private route: ActivatedRoute, private  apiService: ApiService, private dexieService: DexieService, private router: Router) {
+  constructor(private route: ActivatedRoute, private  apiService: ApiService, private dexieService: DexieService) {
   }
 
   ngOnInit() {
@@ -46,9 +46,15 @@ export class SqlExerciseComponent implements OnInit {
   }
 
   correct(): void {
-    this.dexieService.sqlSolutions.put({collId: this.collection.id, exId: this.exercise.id, solution: this.solution});
-
     const partId = 'solve';
+
+    this.dexieService.sqlSolutions.put({
+      toolId: this.tool.id,
+      collId: this.collection.id,
+      exId: this.exercise.id,
+      partId,
+      solution: this.solution
+    });
 
     this.apiService.correctSolution<string, any>(this.tool.id, this.collection.id, this.exercise.id, partId, this.solution)
       .subscribe((result) => {

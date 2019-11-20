@@ -1,6 +1,8 @@
-package model.toolMains
+package model.tools
 
 import javax.inject.{Inject, Singleton}
+import model.tools.collectionTools.CollectionToolMain
+import model.tools.randomTools.RandomExerciseToolMain
 
 import scala.jdk.CollectionConverters._
 

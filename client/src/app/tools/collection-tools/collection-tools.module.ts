@@ -16,6 +16,7 @@ import {SharedModule} from '../../shared/shared.module';
 import {TagComponent} from './_components/tag/tag.component';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {ApiService} from './_services/api.service';
+import {ExerciseOverviewComponent} from './exercise-overview/exercise-overview.component';
 
 
 @NgModule({
@@ -28,7 +29,9 @@ import {ApiService} from './_services/api.service';
     ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
     SqlResultComponent, SqlMatchingResultComponent,
 
-    ...collectionToolRoutingComponents
+    ...collectionToolRoutingComponents,
+
+    ExerciseOverviewComponent
   ],
   providers: [ApiService],
   imports: [

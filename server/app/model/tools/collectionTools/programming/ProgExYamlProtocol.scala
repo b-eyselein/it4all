@@ -3,6 +3,8 @@ package model.tools.collectionTools.programming
 import java.nio.file.{Path, Paths}
 
 import model._
+import model.core.{LongText, LongTextYamlProtocol}
+import model.tools.collectionTools.ExerciseFile
 import model.tools.collectionTools.programming.ProgDataTypes.NonGenericProgDataType
 import model.tools.collectionTools.uml.UmlClassDiagram
 import net.jcazevedo.moultingyaml._

@@ -3,6 +3,7 @@ package model
 import enumeratum.{EnumEntry, PlayEnum}
 import model.MyYamlProtocol._
 import model.core.CommonUtils
+import model.tools.collectionTools.{ExerciseCollection, ExerciseFile}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.libs.json._

@@ -1,6 +1,6 @@
 package model.tools.collectionTools.programming
 
-import model.toolMains.{ToolConsts, ToolState}
+import model.tools.{ToolConsts, ToolState}
 
 object ProgConsts extends ToolConsts {
 

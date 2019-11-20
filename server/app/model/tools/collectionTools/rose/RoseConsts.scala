@@ -1,6 +1,6 @@
 package model.tools.collectionTools.rose
 
-import model.toolMains.{ToolConsts, ToolState}
+import model.tools.{ToolConsts, ToolState}
 
 object RoseConsts extends ToolConsts {
 

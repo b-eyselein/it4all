@@ -2,8 +2,10 @@ package model.persistence
 
 import model._
 import model.core.CoreConsts._
+import model.core.{LongText, LongTextJsonProtocol}
 import model.learningPath.LearningPathTableDefs
 import model.points.Points
+import model.tools.collectionTools.{ExPart, ExParts, Exercise, ExerciseCollection}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json._
 import slick.jdbc.JdbcProfile
@@ -117,7 +119,8 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
   abstract class ExerciseCollectionsTable(tag: Tag, tableName: String) extends Table[ExerciseCollection](tag, tableName) {
 
-    def id: Rep[Int] = column[Int](idName, O.PrimaryKey)
+    def id: Rep[Int] = column[Int](idName)
+
 
     def toolId: Rep[String] = column[String]("tool_id")
 
@@ -130,6 +133,9 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
     def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
 
     def shortName: Rep[String] = column[String]("short_name")
+
+
+    def pk = primaryKey("ex_coll_pk", (id, toolId))
 
 
     override final def * : ProvenShape[ExerciseCollection] = (id, toolId, title, author, text, state, shortName) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
@@ -145,6 +151,11 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
+    def toolId: Rep[String] = column[String]("tool_id")
+
+    def semanticVersion: Rep[SemanticVersion] = column[SemanticVersion]("semantic_version")
+
+
     def title: Rep[String] = column[String]("title")
 
     def author: Rep[String] = column[String]("author")
@@ -153,12 +164,10 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise, SolType, SampleS
 
     def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
 
-    def semanticVersion: Rep[SemanticVersion] = column[SemanticVersion]("semantic_version")
 
+    def pk: PrimaryKey = primaryKey("pk", (id, collectionId, toolId, semanticVersion))
 
-    def pk: PrimaryKey = primaryKey("pk", (id, semanticVersion, collectionId))
-
-    def scenarioFk: ForeignKeyQuery[CollTableDef, ExerciseCollection] = foreignKey("scenario_fk", collectionId, collTable)(_.id)
+    def collectionFk: ForeignKeyQuery[CollTableDef, ExerciseCollection] = foreignKey("scenario_fk", (collectionId, toolId), collTable)(c => (c.id, c.toolId))
 
   }
 

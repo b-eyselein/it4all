@@ -1,4 +1,4 @@
-package model
+package model.core
 
 import model.core.CoreConsts.{relativePathName, resourcesBasePath}
 import net.jcazevedo.moultingyaml.{YamlFormat, YamlObject, YamlString, YamlValue}

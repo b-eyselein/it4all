@@ -43,7 +43,7 @@ export class RegexExerciseComponent implements OnInit {
     }
 
     this.dexieService.regexSolutions.put({
-      collId: this.collId, exId: this.exercise.id, solution: this.solution
+      toolId: this.tool.id, collId: this.collId, exId: this.exercise.id, partId: 'regex', solution: this.solution
     });
 
     this.apiService

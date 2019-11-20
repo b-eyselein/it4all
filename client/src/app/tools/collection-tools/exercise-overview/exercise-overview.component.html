@@ -1,0 +1,23 @@
+<div class="container">
+  <h1 class="title is-3 has-text-centered">Aufgabe &quot;{{exercise?.title}}&quot;</h1>
+
+  <div class="buttons">
+    <a class="button is-primary is-fullwidth" [routerLink]="['../..']">Zurück zur Sammlung</a>
+  </div>
+
+  <br>
+
+  <div class="notification">
+    {{exercise?.text}}
+  </div>
+
+  <ng-container *ngFor="let part of tool.parts">
+    <div class="column" *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)">
+      <a class="button is-link is-fullwidth"
+         [routerLink]="['/tools', tool.id, 'collections', exercise.collId, 'exercises', exercise.id, 'parts', part.id]">
+        {{part.name}}
+      </a>
+    </div>
+  </ng-container>
+
+</div>

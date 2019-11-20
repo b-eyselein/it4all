@@ -3,8 +3,8 @@ package model.tools.collectionTools.xml
 import javax.inject._
 import model._
 import model.points.Points
-import model.toolMains.{CollectionToolMain, ToolState}
 import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection}
 import model.tools.collectionTools.xml.persistence.XmlTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form

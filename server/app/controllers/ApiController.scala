@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import model._
-import model.toolMains.ToolList
+import model.tools.ToolList
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
@@ -28,7 +28,7 @@ class ApiController @Inject()(cc: ControllerComponents, tl: ToolList, configurat
 
   def apiCollection(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     toolMain.futureCollById(collId).map {
-      case None             => NotFound(s"There is no such collection with id $collId for tool ${toolMain.toolname}")
+      case None             => NotFound(s"There is no such collection with id $collId for tool ${toolMain.toolName}")
       case Some(collection) => Ok(JsonProtocol.collectionFormat.writes(collection))
     }
   }

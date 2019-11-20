@@ -1,8 +1,6 @@
 package model.tools.collectionTools.rose
 
-import model.{ExPart, ExParts}
-
-import scala.collection.immutable.IndexedSeq
+import model.tools.collectionTools.{ExPart, ExParts}
 
 
 abstract sealed class RoseExPart(val partName: String, val urlName: String) extends ExPart

@@ -1,7 +1,9 @@
 package model.tools.collectionTools.programming
 
 import model._
+import model.core.LongText
 import model.points.Points
+import model.tools.collectionTools.{Exercise, ExerciseFile, LoadExerciseFilesMessage}
 import model.tools.collectionTools.uml.UmlClassDiagram
 import play.api.libs.json.JsValue
 

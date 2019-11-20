@@ -2,6 +2,7 @@ package model.persistence
 
 import model._
 import model.core.CoreConsts.{sampleName, solutionName}
+import model.tools.collectionTools.{ExPart, Exercise}
 import play.api.libs.json.{Format, Json, Reads, Writes}
 import slick.lifted.{PrimaryKey, ProvenShape}
 

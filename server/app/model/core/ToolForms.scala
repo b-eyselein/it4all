@@ -2,6 +2,7 @@ package model.core
 
 import model._
 import model.core.CoreConsts._
+import model.tools.collectionTools.{Exercise, ExerciseCollection, ExerciseFile}
 import play.api.data.Forms._
 import play.api.data.{Form, Mapping}
 

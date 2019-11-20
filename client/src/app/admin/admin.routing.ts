@@ -5,8 +5,9 @@ import {AdminReadCollectionsComponent} from './admin-read-collections/admin-read
 import {AdminEditCollectionComponent} from './admin-edit-collection/admin-edit-collection.component';
 import {CollectionAdminComponent} from './collection-admin/collection-admin.component';
 import {AdminReadExercisesComponent} from './admin-read-exercises/admin-read-exercises.component';
+import {Routes} from '@angular/router';
 
-export const adminRoutes = [
+export const adminRoutes: Routes = [
   {path: 'admin', component: AdminIndexComponent, canActivate: [AdminAuthGuard]},
   {path: 'admin/:toolId', component: CollectionToolAdminComponent, canActivate: [AdminAuthGuard]},
   {path: 'admin/:toolId/readCollections', component: AdminReadCollectionsComponent, canActivate: [AdminAuthGuard]},

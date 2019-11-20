@@ -2,12 +2,12 @@ package controllers.coll
 
 import controllers.Secured
 import javax.inject.{Inject, Singleton}
-import model.ExerciseFileJsonProtocol
 import model.core._
-import model.toolMains.ToolList
-import model.tools.programming.ProgToolMain
-import model.tools.uml._
-import model.tools.web.{WebExParts, WebToolMain}
+import model.tools.ToolList
+import model.tools.collectionTools.ExerciseFileJsonProtocol
+import model.tools.collectionTools.programming.ProgToolMain
+import model.tools.collectionTools.uml._
+import model.tools.collectionTools.web.{WebExParts, WebToolMain}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._

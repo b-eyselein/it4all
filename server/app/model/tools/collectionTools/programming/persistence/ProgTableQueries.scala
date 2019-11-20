@@ -2,7 +2,8 @@ package model.tools.collectionTools.programming.persistence
 
 import model.persistence.DbExerciseFile
 import model.tools.collectionTools.programming._
-import model.{ExerciseFile, SemanticVersion}
+import model.SemanticVersion
+import model.tools.collectionTools.ExerciseFile
 
 import scala.concurrent.Future
 

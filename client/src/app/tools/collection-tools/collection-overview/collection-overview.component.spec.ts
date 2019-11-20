@@ -5,7 +5,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {collectionToolRoutingComponents, CollectionToolRoutingModule} from '../collection-tools.routing';
 import {ExerciseFilesEditorComponent} from '../_components/exercise-files-editor/exercise-files-editor.component';
 
-describe('CollectionIndexComponent', () => {
+describe('CollectionOverviewComponent', () => {
   let component: CollectionOverviewComponent;
   let fixture: ComponentFixture<CollectionOverviewComponent>;
 

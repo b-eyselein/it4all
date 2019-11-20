@@ -18,6 +18,7 @@ export class ProgrammingExerciseComponent implements OnInit {
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
   readonly tool: Tool = ProgrammingTool;
+  collectionId: number;
   collection: ExerciseCollection;
   exercise: ProgrammingExercise;
   part: ToolPart;
@@ -33,6 +34,7 @@ export class ProgrammingExerciseComponent implements OnInit {
   sampleSolutionsTabTitle = 'Musterlösungen';
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
+    this.collectionId = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
   }
 
   get sampleSolutionFilesList(): ExerciseFile[][] {
@@ -40,7 +42,6 @@ export class ProgrammingExerciseComponent implements OnInit {
   }
 
   ngOnInit() {
-    const collId: number = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
     const exId: number = parseInt(this.route.snapshot.paramMap.get('exId'), 10);
     const partStr: string = this.route.snapshot.paramMap.get('partId');
 
@@ -48,11 +49,11 @@ export class ProgrammingExerciseComponent implements OnInit {
 
     if (!this.part) {
       // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate(['/tools', this.tool.id, 'collections', collId]);
+      this.router.navigate(['/tools', this.tool.id, 'collections', this.collectionId]);
       return;
     }
 
-    this.apiService.getCollection(this.tool.id, collId)
+    this.apiService.getCollection(this.tool.id, this.collectionId)
       .subscribe((coll: ExerciseCollection | undefined) => {
         if (coll) {
           this.collection = coll;
@@ -65,7 +66,7 @@ export class ProgrammingExerciseComponent implements OnInit {
   }
 
   updateExercise(exId: number) {
-    this.apiService.getExercise<ProgrammingExercise | undefined>(this.tool.id, this.collection.id, exId)
+    this.apiService.getExercise<ProgrammingExercise | undefined>(this.tool.id, this.collectionId, exId)
       .subscribe((ex: ProgrammingExercise | undefined) => {
         if (ex) {
           this.exercise = ex;
@@ -74,7 +75,7 @@ export class ProgrammingExerciseComponent implements OnInit {
           this.loadOldSolution();
         } else {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate(['/tools', this.tool.id, 'collections', this.collection.id]);
+          this.router.navigate(['/tools', this.tool.id, 'collections', this.collectionId]);
         }
       });
   }
@@ -92,8 +93,10 @@ export class ProgrammingExerciseComponent implements OnInit {
 
   correct(): void {
     const solution: DbProgrammingSolution = {
-      collId: this.collection.id,
+      toolId: this.tool.id,
+      collId: this.collectionId,
       exId: this.exercise.id,
+      partId: this.part.id,
       solution: {
         filesNum: this.exerciseFiles.length,
         files: this.exerciseFiles
@@ -105,7 +108,7 @@ export class ProgrammingExerciseComponent implements OnInit {
 
     this.correctionRunning = true;
 
-    this.apiService.correctSolution<IdeWorkspace, any>(this.tool.id, this.collection.id, this.exercise.id, this.part.id, solution.solution)
+    this.apiService.correctSolution<IdeWorkspace, any>(this.tool.id, this.collectionId, this.exercise.id, this.part.id, solution.solution)
       .subscribe((result: ProgrammingCorrectionResult | undefined) => {
           // tslint:disable-next-line:no-console
           console.info(JSON.stringify(result, null, 2));

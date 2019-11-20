@@ -1,9 +1,10 @@
 package model.tools.collectionTools.rose
 
+import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
 import model.tools.ToolJsonProtocol
 import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage, ProgLanguages, ProgrammingToolJsonProtocol}
-import model.{LongText, LongTextJsonProtocol, SemanticVersion, SemanticVersionHelper}
+import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json.{Format, Json, Writes}
 
 object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExercise, RoseSampleSolution, RoseCompleteResult] {

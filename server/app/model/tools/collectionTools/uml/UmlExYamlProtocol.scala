@@ -1,6 +1,7 @@
 package model.tools.collectionTools.uml
 
-import model.{ExerciseState, LongText, LongTextYamlProtocol, MyYamlProtocol, SemanticVersion}
+import model.core.{LongText, LongTextYamlProtocol}
+import model.{ExerciseState, MyYamlProtocol, SemanticVersion}
 import net.jcazevedo.moultingyaml._
 
 import scala.language.{implicitConversions, postfixOps}

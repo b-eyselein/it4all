@@ -3,7 +3,8 @@ package model.tools.collectionTools.regex.persistence
 import javax.inject.Inject
 import model.persistence._
 import model.tools.collectionTools.regex._
-import model.{ExParts, StringSampleSolution}
+import model.StringSampleSolution
+import model.tools.collectionTools.ExParts
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape

@@ -1,9 +1,9 @@
 package model.tools.collectionTools.web
 
 import de.uniwue.webtester.{JsAction, JsActionType}
-import model.ExerciseFile
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
+import model.tools.collectionTools.ExerciseFile
 import org.openqa.selenium.WebElement
 
 final case class WebCompleteResult(

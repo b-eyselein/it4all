@@ -1,10 +1,11 @@
 package model.tools.collectionTools.rose.persistence
 
+import model.core.LongText
 import model.persistence._
 import model.points.Points
 import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage}
 import model.tools.collectionTools.rose._
-import model.{Difficulty, ExerciseState, LongText, SemanticVersion}
+import model.{Difficulty, ExerciseState, SemanticVersion}
 
 object RoseDbModels extends ADbModels[RoseExercise, DbRoseExercise] {
 

@@ -2,8 +2,10 @@ package model.tools.collectionTools.web.persistence
 
 import de.uniwue.webtester._
 import model._
+import model.core.LongText
 import model.persistence._
 import model.points.Points
+import model.tools.collectionTools.ExerciseFile
 import model.tools.collectionTools.web._
 
 object WebDbModels extends ADbModels[WebExercise, DbWebExercise] {

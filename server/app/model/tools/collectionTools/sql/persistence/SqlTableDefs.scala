@@ -1,8 +1,9 @@
 package model.tools.collectionTools.sql.persistence
 
 import javax.inject.Inject
-import model.{ExParts, StringSampleSolution}
+import model.StringSampleSolution
 import model.persistence._
+import model.tools.collectionTools.ExParts
 import model.tools.collectionTools.sql.SqlConsts._
 import model.tools.collectionTools.sql._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}

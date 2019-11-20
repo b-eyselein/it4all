@@ -2,6 +2,8 @@ package model.tools.collectionTools.web
 
 import de.uniwue.webtester._
 import model._
+import model.core.{LongText, LongTextYamlProtocol}
+import model.tools.collectionTools.ExerciseFile
 import net.jcazevedo.moultingyaml._
 
 object WebToolYamlProtocol extends MyYamlProtocol {

@@ -1,7 +1,7 @@
 package model.core.overviewHelpers
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, Exercise}
+import model.tools.collectionTools.{ExPart, Exercise}
 
 
 sealed abstract class SolvedState(val btnOutline: String) extends EnumEntry

@@ -1,7 +1,7 @@
 package model.tools.collectionTools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, ExParts, ExTag}
+import model.tools.collectionTools.{ExPart, ExParts, ExTag}
 
 
 sealed abstract class SqlExPart(val partName: String, val urlName: String) extends ExPart

@@ -1,6 +1,7 @@
 package model
 
 import model.points.Points
+import model.tools.collectionTools.{ExPart, ExerciseFile}
 import play.api.libs.json.{Format, Json}
 
 trait Solution[SolType] {

@@ -1,7 +1,8 @@
 package model.tools.collectionTools.rose
 
+import model.core.{LongText, LongTextYamlProtocol}
 import model.tools.collectionTools.programming.{ProgDataType, ProgExYamlProtocol, ProgLanguage, ProgLanguages}
-import model.{ExerciseState, LongText, LongTextYamlProtocol, MyYamlProtocol, SemanticVersion}
+import model.{ExerciseState, MyYamlProtocol, SemanticVersion}
 import net.jcazevedo.moultingyaml._
 
 object RoseExYamlProtocol extends MyYamlProtocol {

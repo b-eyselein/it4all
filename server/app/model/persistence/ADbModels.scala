@@ -1,7 +1,9 @@
 package model.persistence
 
-import model.points.Points
 import model._
+import model.core.LongText
+import model.points.Points
+import model.tools.collectionTools.{ExPart, ExerciseFile}
 
 trait ADbModels[ExType, DbExercise] {
 
@@ -34,20 +36,22 @@ trait ASolutionDbModels[SolType, PartType <: ExPart, SampleSolType <: SampleSolu
 
 trait ADbExercise {
 
-  def id: Int
+  val id: Int
 
-  // FIXME: remove? semantic version!
-  def semanticVersion: SemanticVersion
+  val collectionId: Int
 
-  def title: String
+  def toolId: String
 
-  def author: String
+  val semanticVersion: SemanticVersion
 
-  def text: LongText
 
-  def state: ExerciseState
+  val title: String
 
-  def collectionId: Int
+  val author: String
+
+  val text: LongText
+
+  val state: ExerciseState
 
 }
 

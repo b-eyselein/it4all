@@ -1,7 +1,8 @@
 package model.persistence
 
 import model.points.Points
-import model.{ExPart, SemanticVersion, StringSampleSolution, StringUserSolution}
+import model.tools.collectionTools.ExPart
+import model.{SemanticVersion, StringSampleSolution, StringUserSolution}
 
 object StringSolutionDbModels
 /* extends ASolutionDbModels[String, PartType, StringSampleSolution, DbStringSampleSolution, StringUserSolution[PartType], DbStringUserSolution[PartType]] */ {

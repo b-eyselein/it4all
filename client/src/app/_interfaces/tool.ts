@@ -54,7 +54,7 @@ export interface SemanticVersion {
 
 export interface ExerciseBasics {
   id: number;
-  collId: number;
+  collectionId: number;
   toolId: string;
   semanticVersion: SemanticVersion;
   title: string;
@@ -70,9 +70,9 @@ export interface Exercise extends ExerciseBasics {
 // Solutions
 
 export interface DbSolution<T> {
-  // toolId: string;
+  toolId: string;
   collId: number;
   exId: number;
-  // partId: string;
+  partId: string;
   solution: T;
 }

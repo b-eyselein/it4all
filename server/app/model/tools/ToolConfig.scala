@@ -1,4 +1,4 @@
-package model.toolMains
+package model.tools
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model.{Consts, Role}

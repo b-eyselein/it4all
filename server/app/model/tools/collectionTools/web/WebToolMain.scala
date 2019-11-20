@@ -9,8 +9,8 @@ import de.uniwue.webtester._
 import javax.inject.{Inject, Singleton}
 import model._
 import model.points.{Points, addUp}
-import model.toolMains._
 import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection, ExerciseFile, ExerciseFileJsonProtocol, LoadExerciseFilesMessage}
 import model.tools.collectionTools.web.persistence.WebTableDefs
 import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.WebDriverException

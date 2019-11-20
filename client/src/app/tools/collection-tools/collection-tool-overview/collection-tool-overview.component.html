@@ -14,7 +14,7 @@
       <div *ngFor="let collection of collections" class="column is-one-third">
         <div class="card">
           <header class="card-header">
-            <p class="card-header-title">{{collection.title}}</p>
+            <p class="card-header-title">{{collection.id}}. {{collection.title}}</p>
           </header>
           <div class="card-content">
             <ng-container *ngIf="collection.exercisesBasics; else loadingExercisesBlock">

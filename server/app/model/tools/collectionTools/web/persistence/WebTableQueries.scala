@@ -1,9 +1,10 @@
 package model.tools.collectionTools.web.persistence
 
 import de.uniwue.webtester.{HtmlTask, JsTask}
+import model.SemanticVersion
 import model.persistence.DbExerciseFile
+import model.tools.collectionTools.ExerciseFile
 import model.tools.collectionTools.web._
-import model.{ExerciseFile, SemanticVersion}
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -1,7 +1,9 @@
 package model.tools.collectionTools.rose
 
 import model._
+import model.core.LongText
 import model.points.Points
+import model.tools.collectionTools.Exercise
 import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage}
 
 

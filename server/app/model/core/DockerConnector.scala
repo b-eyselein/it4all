@@ -1,4 +1,4 @@
-package model
+package model.core
 
 import java.nio.file.{Path, Paths}
 
@@ -26,7 +26,7 @@ final case class RunContainerResult(statusCode: Int, logs: String)
 
 object DockerConnector {
 
-  private val logger: Logger = Logger("model.DockerConnector")
+  private val logger: Logger = Logger("model.core.DockerConnector")
 
   private val MaxWaitTimeInSeconds: Int = 3
 

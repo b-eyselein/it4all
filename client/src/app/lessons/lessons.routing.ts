@@ -2,11 +2,15 @@ import {LessonsForToolOverviewComponent} from './lessons-overview/lessons-for-to
 import {AuthGuard} from '../_helpers/auth-guard';
 import {LessonComponent} from './lesson/lesson.component';
 import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 
-const lessonsRoutes = [
-  {path: ':toolId', component: LessonsForToolOverviewComponent, canActivate: [AuthGuard]},
-  {path: ':toolId/lessons/:lessonId', component: LessonComponent, canActivate: [AuthGuard]},
+const lessonsRoutes: Routes = [
+  {
+    path: '', canActivate: [AuthGuard], children: [
+      {path: ':toolId', component: LessonsForToolOverviewComponent},
+      {path: ':toolId/lessons/:lessonId', component: LessonComponent},
+    ]
+  }
 ];
 
 @NgModule({

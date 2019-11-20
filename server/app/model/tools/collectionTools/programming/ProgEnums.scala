@@ -1,7 +1,7 @@
 package model.tools.collectionTools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, ExParts, ExTag}
+import model.tools.collectionTools.{ExPart, ExParts, ExTag}
 
 // Exercise Parts
 

@@ -2,6 +2,7 @@ package model.persistence
 
 import model._
 import model.points.Points
+import model.tools.collectionTools.{ExPart, ExerciseFile}
 
 
 trait DbFile {

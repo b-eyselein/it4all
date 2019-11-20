@@ -1,4 +1,4 @@
-package model.toolMains
+package model.tools
 
 import better.files._
 import model._

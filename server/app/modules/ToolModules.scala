@@ -3,7 +3,7 @@ package modules
 import com.google.inject.AbstractModule
 import com.google.inject.multibindings.Multibinder
 import com.typesafe.config.Config
-import model.toolMains.AToolMain
+import model.tools.AToolMain
 import play.api.{ConfigLoader, Configuration, Environment}
 
 private final case class ToolConfig(toolName: String, toolMainClass: String, isEnabled: Boolean = true)

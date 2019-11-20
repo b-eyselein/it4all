@@ -4,7 +4,8 @@ import javax.inject.Inject
 import model.core.CoreConsts.{sampleName, solutionName}
 import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools.uml._
-import model.{ExParts, SemanticVersion}
+import model.SemanticVersion
+import model.tools.collectionTools.ExParts
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.{PrimaryKey, ProvenShape}

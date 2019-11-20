@@ -1,6 +1,7 @@
 package model.persistence
 
 import model._
+import model.tools.collectionTools.{ExPart, Exercise}
 
 import scala.concurrent.Future
 

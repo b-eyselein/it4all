@@ -1,6 +1,6 @@
 package model.tools.collectionTools.web
 
-import model.toolMains.{ToolConsts, ToolState}
+import model.tools.{ToolConsts, ToolState}
 
 object WebConsts extends ToolConsts {
 

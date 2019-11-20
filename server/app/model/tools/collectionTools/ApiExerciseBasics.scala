@@ -1,4 +1,6 @@
-package model
+package model.tools.collectionTools
+
+import model.{ExerciseState, SemanticVersion}
 
 final case class BaseValues(
   id: Int,

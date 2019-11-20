@@ -3,8 +3,8 @@ package model.tools.collectionTools.sql
 import java.sql.Connection
 
 import better.files.File
-import model.ExerciseCollection
 import model.core.CommonUtils.using
+import model.tools.collectionTools.ExerciseCollection
 import model.tools.collectionTools.sql.SqlConsts._
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.delete.Delete

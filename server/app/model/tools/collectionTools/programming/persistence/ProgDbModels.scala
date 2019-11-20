@@ -1,8 +1,10 @@
 package model.tools.collectionTools.programming.persistence
 
 import model._
+import model.core.LongText
 import model.persistence._
 import model.points.Points
+import model.tools.collectionTools.ExerciseFile
 import model.tools.collectionTools.programming._
 import model.tools.collectionTools.uml.UmlClassDiagram
 import play.api.libs.json.{JsArray, JsValue}

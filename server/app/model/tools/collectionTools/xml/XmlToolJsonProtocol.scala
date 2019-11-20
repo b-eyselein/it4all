@@ -1,9 +1,10 @@
 package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
+import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
 import model.tools.ToolJsonProtocol
-import model.{LongText, LongTextJsonProtocol, SemanticVersion, SemanticVersionHelper}
+import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json._
 
 object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExercise, XmlSampleSolution, XmlCompleteResult] {

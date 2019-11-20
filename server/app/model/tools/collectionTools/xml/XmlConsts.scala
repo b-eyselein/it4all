@@ -1,6 +1,6 @@
 package model.tools.collectionTools.xml
 
-import model.toolMains.{ToolConsts, ToolState}
+import model.tools.{ToolConsts, ToolState}
 
 object XmlConsts extends ToolConsts {
 

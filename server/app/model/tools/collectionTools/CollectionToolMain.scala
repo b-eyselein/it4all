@@ -1,11 +1,11 @@
-package model.toolMains
+package model.tools.collectionTools
 
 import better.files.File
 import model._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.persistence.ExerciseTableDefs
 import model.points._
-import model.tools.ToolJsonProtocol
+import model.tools.{AToolMain, ToolConsts, ToolJsonProtocol}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.data.Form

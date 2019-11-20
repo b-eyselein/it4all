@@ -2,8 +2,10 @@ package model.tools.collectionTools.web
 
 import de.uniwue.webtester._
 import model._
+import model.core.{LongText, LongTextJsonProtocol}
 import model.core.result.SuccessType
 import model.points._
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileJsonProtocol}
 import model.tools.{FilesSampleSolutionToolJsonProtocol, ToolJsonProtocol}
 import model.tools.collectionTools.web.WebConsts._
 import play.api.libs.functional.syntax._

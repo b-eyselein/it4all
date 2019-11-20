@@ -2,7 +2,9 @@ package model.tools.collectionTools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
+import model.core.LongText
 import model.persistence.ADbExercise
+import model.tools.collectionTools.Exercise
 
 import scala.collection.immutable.IndexedSeq
 
