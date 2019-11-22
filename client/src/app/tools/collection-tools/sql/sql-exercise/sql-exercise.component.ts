@@ -1,24 +1,25 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {SqlCreateQueryPart, SqlTool} from '../sql-tool';
-import {ExerciseCollection, Tool, ToolPart} from '../../../../_interfaces/tool';
-import {DbSqlSolution, SqlExercise, SqlResult} from '../sql-exercise';
-import {ActivatedRoute, Router} from '@angular/router';
+import {SqlCreateQueryPart} from '../sql-tool';
+import {DbSqlSolution, SqlExerciseContent, SqlResult} from '../sql-interfaces';
+import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
 
 import 'codemirror/mode/sql/sql';
+import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
+import {Exercise, ExerciseCollection} from '../../../../_interfaces/exercise';
+import {ToolPart} from '../../../../_interfaces/tool';
 
 @Component({
   templateUrl: './sql-exercise.component.html',
   styleUrls: ['./sql-exercise.component.sass'],
   encapsulation: ViewEncapsulation.None // style editor also
 })
-export class SqlExerciseComponent implements OnInit {
+export class SqlExerciseComponent extends ExerciseComponentHelpers<SqlExerciseContent> implements OnInit {
 
-  readonly tool: Tool = SqlTool;
   collection: ExerciseCollection;
-  exercise: SqlExercise;
+  exercise: Exercise<SqlExerciseContent>;
   part: ToolPart = SqlCreateQueryPart;
 
   solution = '';
@@ -29,6 +30,7 @@ export class SqlExerciseComponent implements OnInit {
   showSampleSolutions = false;
 
   constructor(private route: ActivatedRoute, private  apiService: ApiService, private dexieService: DexieService) {
+    super(route);
   }
 
   ngOnInit() {
@@ -38,7 +40,7 @@ export class SqlExerciseComponent implements OnInit {
     this.apiService.getCollection(this.tool.id, collId)
       .subscribe((coll) => this.collection = coll);
 
-    this.apiService.getExercise<SqlExercise>(this.tool.id, collId, exId)
+    this.apiService.getExercise<SqlExerciseContent>(this.tool.id, collId, exId)
       .subscribe((ex) => this.exercise = ex);
 
     this.dexieService.sqlSolutions.get([collId, exId])

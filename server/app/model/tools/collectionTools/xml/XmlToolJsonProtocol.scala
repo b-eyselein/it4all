@@ -3,30 +3,37 @@ package model.tools.collectionTools.xml
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
-import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.ToolJsonProtocol
 import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json._
 
-object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExercise, XmlSampleSolution, XmlCompleteResult] {
+object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExPart, XmlExerciseContent, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlCompleteResult] {
 
   // Sample solution
 
+  private val solutionFormat = Json.format[XmlSolution]
+
   override val sampleSolutionFormat: Format[XmlSampleSolution] = {
-    implicit val xsf: Format[XmlSolution] = Json.format[XmlSolution]
+    implicit val xsf: Format[XmlSolution] = solutionFormat
 
     Json.format[XmlSampleSolution]
   }
 
+  override val userSolutionFormat: Format[XmlUserSolution] = {
+    implicit val xepf: Format[XmlExPart]   = XmlExParts.jsonFormat
+    implicit val pf  : Format[Points]      = ToolJsonProtocol.pointsFormat
+    implicit val xsf : Format[XmlSolution] = solutionFormat
+
+    Json.format[XmlUserSolution]
+  }
+
   // Exercise
 
-  val exerciseFormat: Format[XmlExercise] = {
-    implicit val svf: Format[SemanticVersion] = SemanticVersionHelper.format
-
-    implicit val ltf: Format[LongText] = LongTextJsonProtocol.format
-
+  override val exerciseContentFormat: Format[XmlExerciseContent] = {
+    implicit val ltf : Format[LongText]          = LongTextJsonProtocol.format
     implicit val xssf: Format[XmlSampleSolution] = sampleSolutionFormat
 
-    Json.format[XmlExercise]
+    Json.format[XmlExerciseContent]
   }
 
   // Results

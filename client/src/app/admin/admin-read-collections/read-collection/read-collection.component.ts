@@ -1,11 +1,12 @@
 import {Component, Input} from '@angular/core';
-import {ExerciseCollection, Tool} from '../../../_interfaces/tool';
+import {CollectionTool} from '../../../_interfaces/tool';
 import {ApiService} from '../../../tools/collection-tools/_services/api.service';
+import {ExerciseCollection} from '../../../_interfaces/exercise';
 
 @Component({selector: 'it4all-read-collection', templateUrl: './read-collection.component.html'})
 export class ReadCollectionComponent {
 
-  @Input() tool: Tool;
+  @Input() tool: CollectionTool<any>;
   @Input() collection: ExerciseCollection;
 
   collectionSaved = false;

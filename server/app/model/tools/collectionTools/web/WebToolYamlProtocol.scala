@@ -1,12 +1,13 @@
 package model.tools.collectionTools.web
 
 import de.uniwue.webtester._
-import model._
-import model.core.{LongText, LongTextYamlProtocol}
-import model.tools.collectionTools.ExerciseFile
-import net.jcazevedo.moultingyaml._
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol}
+import model.{FilesSampleSolution, MyYamlProtocol}
+import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 object WebToolYamlProtocol extends MyYamlProtocol {
+
+  import DefaultYamlProtocol._
 
   // FIXME: make super trait and reference it in ToolMain! ???
 
@@ -30,17 +31,14 @@ object WebToolYamlProtocol extends MyYamlProtocol {
     yamlFormat3(SiteSpec)
   }
 
-  override implicit def mapFormat[K: YamlFormat, Y: YamlFormat]: YamlFormat[Map[K, Y]] = myMapFormat
-
-  val webExerciseYamlFormat: YamlFormat[WebExercise] = {
-    implicit val svyf : YamlFormat[SemanticVersion]     = semanticVersionYamlFormat
-    implicit val ltyf : YamlFormat[LongText]            = LongTextYamlProtocol.longTextYamlFormat
-    implicit val esyf : YamlFormat[ExerciseState]       = exerciseStateYamlFormat
+  val webExerciseYamlFormat: YamlFormat[WebExerciseContent] = {
     implicit val ssyf : YamlFormat[SiteSpec]            = siteSpecYamlFormat
     implicit val fssyf: YamlFormat[FilesSampleSolution] = filesSampleSolutionYamlFormat
-    implicit val efyf : YamlFormat[ExerciseFile]        = exerciseFileYamlFormat
+    implicit val efyf : YamlFormat[ExerciseFile]        = ExerciseFileYamlProtocol.exerciseFileYamlFormat
 
-    yamlFormat13(WebExercise)
+    implicit def mapFormat[K: YamlFormat, Y: YamlFormat]: YamlFormat[Map[K, Y]] = myMapFormat
+
+    yamlFormat5(WebExerciseContent)
   }
 
 }

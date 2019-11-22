@@ -1,9 +1,10 @@
-import {ExerciseTag, Tool, ToolPart} from '../../../_interfaces/tool';
+import {CollectionTool, ExerciseTag, ToolPart} from '../../../_interfaces/tool';
+import {UmlExerciseContent} from './uml-interfaces';
 
 const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
 
-export const UmlTool: Tool = new (
-  class UmlToolClass extends Tool {
+export const UmlTool: CollectionTool<UmlExerciseContent> = new (
+  class UmlToolClass extends CollectionTool<UmlExerciseContent> {
     constructor() {
       super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart], 'beta');
     }

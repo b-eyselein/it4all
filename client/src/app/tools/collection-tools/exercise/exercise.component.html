@@ -1,0 +1,13 @@
+<ng-container *ngIf="exercise; else loadingExerciseBlock">
+  <ng-container [ngSwitch]="tool.id">
+
+    <it4all-programming-exercise *ngSwitchCase="'programming'" [collection]="collection" [exercise]="exercise">
+    </it4all-programming-exercise>
+
+    <div *ngSwitchDefault>{{tool.id}}</div>
+  </ng-container>
+</ng-container>
+
+<ng-template #loadingExerciseBlock>
+  <div class="notification">Lade Aufgabe...</div>
+</ng-template>

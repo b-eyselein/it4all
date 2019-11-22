@@ -1,25 +1,28 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Exercise, ExerciseCollection, Tool} from '../../../_interfaces/tool';
-import {collectionTools} from '../collection-tools-list';
 import {DexieService} from '../../../_services/dexie.service';
+import {ExerciseComponentHelpers} from '../_helpers/ExerciseComponentHelpers';
+import {Exercise, ExerciseCollection, ExerciseContent} from '../../../_interfaces/exercise';
 
 @Component({templateUrl: './collection-overview.component.html'})
-export class CollectionOverviewComponent implements OnInit {
+export class CollectionOverviewComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
 
-  tool: Tool;
   collection: ExerciseCollection;
-
-  exercises: Exercise[];
+  exercises: Exercise<ExerciseContent>[];
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
-    const toolId: string = this.route.snapshot.paramMap.get('toolId');
-    this.tool = collectionTools.find((t) => t.id === toolId);
+    super(route);
 
     if (!this.tool) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/']);
     }
+  }
+
+  private updateExercises(): void {
+    this.apiService.getExercises(this.tool.id, this.collection.id)
+      .subscribe((exercises: Exercise<any>[]) => this.exercises = exercises);
   }
 
   private fetchCollection(collId: number): void {
@@ -29,14 +32,10 @@ export class CollectionOverviewComponent implements OnInit {
           this.collection = collection;
           this.updateExercises();
         } else {
-          this.router.navigate(['/tools', this.tool.id]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate(['../..']);
         }
       });
-  }
-
-  private updateExercises(): void {
-    this.apiService.getExercises(this.tool.id, this.collection.id)
-      .subscribe((exercises: Exercise[]) => this.exercises = exercises);
   }
 
   ngOnInit() {

@@ -3,20 +3,30 @@ package model.persistence
 import model._
 import model.core.LongText
 import model.points.Points
-import model.tools.collectionTools.{ExPart, ExerciseFile}
+import model.tools.collectionTools.ExPart
+import play.api.libs.json.JsValue
 
-trait ADbModels[ExType, DbExercise] {
+final case class DbExercise(
+  id: Int, collectionId: Int, toolId: String, semanticVersion: SemanticVersion,
+  title: String, author: String, text: LongText, state: ExerciseState, content: JsValue
+)
 
-  def dbExerciseFromExercise(ex: ExType): DbExercise
+final case class DbUserSolution(
+  id: Int, exerciseId: Int, collectionId: Int, toolId: String, semanticVersion: SemanticVersion, part: ExPart,
+  username: String, solution: JsValue
+)
 
-  def dbExerciseFileFromExerciseFile(exId: Int, exSemVer: SemanticVersion, collId: Int, webFile: ExerciseFile): DbExerciseFile =
-    DbExerciseFile(webFile.name, exId, collId, webFile.content, webFile.fileType, webFile.editable)
+final case class DbExerciseReview(
+  exerciseId: Int,
+  collectionId: Int,
+  toolId: String,
+  semanticVersion: SemanticVersion,
+  part: ExPart,
+  username: String,
+  difficulty: Difficulty,
+  maybeDuration: Option[Int]
+)
 
-  def exerciseFileFromDbExerciseFile(dbExerciseFile: DbExerciseFile): ExerciseFile = dbExerciseFile match {
-    case DbExerciseFile(path, _, _, resourcePath, fileType, editable) => ExerciseFile(path, resourcePath, fileType, editable)
-  }
-
-}
 
 final case class DbExerciseFile(path: String, exId: Int, collId: Int, resourcePath: String, fileType: String, editable: Boolean)
 
@@ -34,32 +44,12 @@ trait ASolutionDbModels[SolType, PartType <: ExPart, SampleSolType <: SampleSolu
 
 }
 
-trait ADbExercise {
 
-  val id: Int
+object AExerciseReviewDbModels {
 
-  val collectionId: Int
+  def dbReviewFromReview(username: String, collId: Int, exId: Int, part: ExPart, review: ExerciseReview): DbExerciseReview = ???
 
-  def toolId: String
-
-  val semanticVersion: SemanticVersion
-
-
-  val title: String
-
-  val author: String
-
-  val text: LongText
-
-  val state: ExerciseState
-
-}
-
-trait AExerciseReviewDbModels[PartType <: ExPart, ReviewType <: ExerciseReview, DbReviewType <: DbExerciseReview[PartType]] {
-
-  def dbReviewFromReview(username: String, collId: Int, exId: Int, part: PartType, review: ReviewType): DbReviewType
-
-  def reviewFromDbReview(dbReview: DbReviewType): ReviewType
+  def reviewFromDbReview(dbReview: DbExerciseReview): ExerciseReview = ???
 
 }
 
@@ -86,22 +76,5 @@ trait ADbUserSol[PartType <: ExPart] extends ADbSolution {
   val points: Points
 
   val maxPoints: Points
-
-}
-
-trait DbExerciseReview[PartType <: ExPart] {
-
-  val username: String
-
-  val exerciseId: Int
-
-  val collId: Int
-
-  val exercisePart: PartType
-
-  val difficulty: Difficulty
-
-  val maybeDuration: Option[Int]
-
 
 }

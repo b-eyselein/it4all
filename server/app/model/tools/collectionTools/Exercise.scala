@@ -2,6 +2,7 @@ package model.tools.collectionTools
 
 import model._
 import model.core.LongText
+import play.api.libs.json.JsValue
 
 
 trait ExTag extends enumeratum.EnumEntry {
@@ -12,32 +13,38 @@ trait ExTag extends enumeratum.EnumEntry {
 
 }
 
-trait Exercise[SampleSolutionType <: SampleSolution[_]] {
+final case class Exercise(
+  id: Int,
+  collectionId: Int,
+  toolId: String,
+  semanticVersion: SemanticVersion,
+  title: String,
+  author: String,
+  text: LongText,
+  state: ExerciseState,
 
-  val id: Int
+  // FIXME: make ContentType => JsValue!
+  content: JsValue,
+)
 
-  val collectionId: Int
+trait ExerciseContent {
 
-  val toolId: String
+  type SampleSolType <: SampleSolution[_]
 
-  val semanticVersion: SemanticVersion
-
-  val title: String
-
-  val author: String
-
-  val text: LongText
-
-  val state: ExerciseState
-
-
-  val sampleSolutions: Seq[SampleSolutionType]
-
+  val sampleSolutions: Seq[SampleSolType]
 
   def tags: Seq[ExTag] = Seq[ExTag]()
 
 }
 
-trait FileExercise extends Exercise[FilesSampleSolution]
+trait FileExerciseContent extends ExerciseContent {
 
-trait StringExercise extends Exercise[StringSampleSolution]
+  override type SampleSolType = FilesSampleSolution
+
+}
+
+trait StringExerciseContent extends ExerciseContent {
+
+  override type SampleSolType = StringSampleSolution
+
+}

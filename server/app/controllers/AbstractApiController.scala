@@ -2,19 +2,20 @@ package controllers
 
 import java.time.Clock
 
+import javax.inject.Inject
 import model.{JsonProtocol, User}
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.libs.json.Format
 import play.api.mvc._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
 
 abstract class AbstractApiController(cc: ControllerComponents, configuration: Configuration)
   extends AbstractController(cc) {
 
-  private val clock: Clock = Clock.systemDefaultZone()
+  private val clock            : Clock = Clock.systemDefaultZone()
   private val bearerHeaderRegex: Regex = "Bearer (.*)".r
 
   protected val adminRightsRequired: Boolean

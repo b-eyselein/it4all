@@ -1,21 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
-import {Exercise, ExerciseCollection, Tool} from '../../_interfaces/tool';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
+import {Exercise, ExerciseCollection, ExerciseContent} from '../../_interfaces/exercise';
+import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
 
 @Component({templateUrl: './collection-admin.component.html'})
-export class CollectionAdminComponent implements OnInit {
+export class CollectionAdminComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
 
-  tool: Tool;
   collection: ExerciseCollection;
-  exercises: Exercise[];
+  exercises: Exercise<any>[];
 
   constructor(private route: ActivatedRoute, private router: Router, private dexieService: DexieService, private apiService: ApiService) {
-    const toolId = this.route.snapshot.paramMap.get('toolId');
-
-    this.tool = collectionTools.find((t) => t.id === toolId);
+    super(route);
   }
 
   ngOnInit() {
@@ -46,7 +43,7 @@ export class CollectionAdminComponent implements OnInit {
 
   private loadExercises(): void {
     this.apiService.getExercises(this.tool.id, this.collection.id)
-      .subscribe((exercises: Exercise[]) => this.exercises = exercises);
+      .subscribe((exercises: Exercise<any>[]) => this.exercises = exercises);
   }
 
 }

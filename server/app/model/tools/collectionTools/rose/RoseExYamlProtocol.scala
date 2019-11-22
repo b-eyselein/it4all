@@ -1,11 +1,12 @@
 package model.tools.collectionTools.rose
 
-import model.core.{LongText, LongTextYamlProtocol}
+import model.MyYamlProtocol
 import model.tools.collectionTools.programming.{ProgDataType, ProgExYamlProtocol, ProgLanguage, ProgLanguages}
-import model.{ExerciseState, MyYamlProtocol, SemanticVersion}
-import net.jcazevedo.moultingyaml._
+import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 object RoseExYamlProtocol extends MyYamlProtocol {
+
+  import DefaultYamlProtocol._
 
   private val roseInputTypeYamlFormat: YamlFormat[RoseInputType] = {
     implicit val pdtyf: YamlFormat[ProgDataType] = ProgExYamlProtocol.progDataTypeYamlFormat
@@ -19,14 +20,11 @@ object RoseExYamlProtocol extends MyYamlProtocol {
     yamlFormat3(RoseSampleSolution)
   }
 
-  val roseExerciseYamlFormat: YamlFormat[RoseExercise] = {
-    implicit val svyf : YamlFormat[SemanticVersion]    = semanticVersionYamlFormat
-    implicit val ltyf : YamlFormat[LongText]           = LongTextYamlProtocol.longTextYamlFormat
-    implicit val esyf : YamlFormat[ExerciseState]      = exerciseStateYamlFormat
+  val roseExerciseYamlFormat: YamlFormat[RoseExerciseContent] = {
     implicit val rityf: YamlFormat[RoseInputType]      = roseInputTypeYamlFormat
     implicit val rssyf: YamlFormat[RoseSampleSolution] = roseSampleSolutionYamlFormat
 
-    yamlFormat13(RoseExercise)
+    yamlFormat5(RoseExerciseContent)
   }
 
 }

@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Exercise, ExerciseBasics, ExerciseCollection} from '../../../_interfaces/tool';
 import {Observable, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
+import {Exercise, ExerciseCollection, ExerciseContent} from '../../../_interfaces/exercise';
 
 @Injectable()
 export class ApiService {
@@ -37,26 +37,19 @@ export class ApiService {
       .pipe(catchError(() => of(undefined)));
   }
 
-  getExerciseBasics(toolId: string, collId: number): Observable<ExerciseBasics[]> {
-    const url = `${this.baseUrl}/${toolId}/collections/${collId}/exerciseBasics`;
-
-    return this.http.get<ExerciseBasics[]>(url)
-      .pipe(catchError(() => of([])));
-  }
-
-  getExercises<E extends Exercise>(toolId: string, collId: number): Observable<E[]> {
+  getExercises<EC extends ExerciseContent>(toolId: string, collId: number): Observable<Exercise<EC>[]> {
     const url = `${this.baseUrl}/${toolId}/collections/${collId}/exercises`;
 
     // TODO: send current version of known exercises to only get diff!
-    return this.http.get<E[]>(url)
+    return this.http.get<Exercise<EC>[]>(url)
       .pipe(catchError(() => of([])));
   }
 
-  getExercise<E extends Exercise>(toolId: string, collId: number, exId: number): Observable<E> {
+  getExercise<EC extends ExerciseContent>(toolId: string, collId: number, exId: number): Observable<Exercise<EC> | undefined> {
     const url = `${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}`;
 
     // TODO: send current version of exercise if known to only get if different!
-    return this.http.get<E>(url)
+    return this.http.get<Exercise<EC>>(url)
       .pipe(catchError(() => of(undefined)));
   }
 
@@ -78,10 +71,10 @@ export class ApiService {
       .pipe(catchError(() => of([])));
   }
 
-  adminReadExercises(toolId: string, collId: number): Observable<Exercise[]> {
+  adminReadExercises<EC extends ExerciseContent>(toolId: string, collId: number): Observable<Exercise<EC>[]> {
     const url = `${this.adminBaseUrl}/${toolId}/collections/${collId}/readExercises`;
 
-    return this.http.get<Exercise[]>(url)
+    return this.http.get<Exercise<EC>[]>(url)
       .pipe(catchError(() => of([])));
   }
 
@@ -92,7 +85,7 @@ export class ApiService {
       .pipe(catchError(() => of(false)));
   }
 
-  adminUpsertExercise(toolId: string, collId: number, exercise: Exercise): Observable<boolean> {
+  adminUpsertExercise(toolId: string, collId: number, exercise: Exercise<any>): Observable<boolean> {
     const url = `${this.adminBaseUrl}/${toolId}/collections/${collId}/exercises/${exercise.id}`;
 
     return this.http.put<boolean>(url, exercise)

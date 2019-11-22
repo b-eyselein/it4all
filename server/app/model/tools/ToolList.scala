@@ -1,15 +1,21 @@
 package model.tools
 
-import javax.inject.{Inject, Singleton}
 import model.tools.collectionTools.CollectionToolMain
-import model.tools.randomTools.RandomExerciseToolMain
+import model.tools.collectionTools.programming.ProgToolMain
+import model.tools.collectionTools.regex.RegexToolMain
+import model.tools.collectionTools.rose.RoseToolMain
+import model.tools.collectionTools.sql.SqlToolMain
+import model.tools.collectionTools.uml.UmlToolMain
+import model.tools.collectionTools.web.WebToolMain
+import model.tools.collectionTools.xml.XmlToolMain
+import model.tools.randomTools.{BoolToolMain, NaryToolMain, RandomExerciseToolMain}
 
-import scala.jdk.CollectionConverters._
+object ToolList {
 
-@Singleton
-class ToolList @Inject()(javaToolMains: java.util.Set[AToolMain]) {
-
-  val toolMains: Seq[AToolMain] = javaToolMains.asScala.toSeq
+  val toolMains: Seq[AToolMain] = Seq(
+    BoolToolMain, NaryToolMain,
+    ProgToolMain, RegexToolMain, RoseToolMain, SqlToolMain, UmlToolMain, WebToolMain, XmlToolMain
+  )
 
 
   def getExCollToolMainOption(urlPart: String): Option[CollectionToolMain] = toolMains.collectFirst {

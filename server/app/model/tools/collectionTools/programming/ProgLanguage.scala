@@ -5,11 +5,11 @@ import enumeratum.{EnumEntry, PlayEnum}
 
 sealed abstract class ProgLanguage(val languageName: String, val aceName: String, val fileEnding: String) extends EnumEntry {
 
-  def activityDiagramDisplay(exercise: ProgExercise): String
+  def activityDiagramDisplay(exercise: ProgExerciseContent): String
 
-  def activityDiagramDeclaration(exercise: ProgExercise): String
+  def activityDiagramDeclaration(exercise: ProgExerciseContent): String
 
-  def buildParams(exercise: ProgExercise): String
+  def buildParams(exercise: ProgExerciseContent): String
 
 }
 
@@ -24,14 +24,14 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
 
   case object PYTHON_3 extends ProgLanguage("Python 3", "python", "py") {
 
-    override def activityDiagramDisplay(exercise: ProgExercise): String = exercise.maybeClassDiagramPart match {
+    override def activityDiagramDisplay(exercise: ProgExerciseContent): String = exercise.maybeClassDiagramPart match {
       case Some(_) => ???
       case None    => exercise.functionName + buildParams(exercise)
     }
 
-    override def activityDiagramDeclaration(exercise: ProgExercise): String = "def " + exercise.functionName + buildParams(exercise)
+    override def activityDiagramDeclaration(exercise: ProgExerciseContent): String = "def " + exercise.functionName + buildParams(exercise)
 
-    override def buildParams(exercise: ProgExercise): String = {
+    override def buildParams(exercise: ProgExerciseContent): String = {
       val inputs = exercise.inputTypes map (it => it.inputName)
 
       val allInputs: Seq[String] = if (exercise.maybeClassDiagramPart.isEmpty) inputs else "self" +: inputs

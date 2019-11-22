@@ -2,16 +2,15 @@ package model.tools.collectionTools.web
 
 import de.uniwue.webtester._
 import model._
-import model.core.{LongText, LongTextJsonProtocol}
 import model.core.result.SuccessType
+import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
-import model.tools.collectionTools.{ExerciseFile, ExerciseFileJsonProtocol}
-import model.tools.{FilesSampleSolutionToolJsonProtocol, ToolJsonProtocol}
 import model.tools.collectionTools.web.WebConsts._
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileJsonProtocol, FilesSampleSolutionToolJsonProtocol}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExercise, WebCompleteResult] {
+object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExPart, WebExerciseContent, WebCompleteResult](WebExParts.jsonFormat) {
 
   val jsHtmlElementSpecFormat: Format[JsHtmlElementSpec] = Json.format[JsHtmlElementSpec]
 
@@ -34,14 +33,13 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
     Json.format[SiteSpec]
   }
 
-  override val exerciseFormat: Format[WebExercise] = {
-    implicit val svf : Format[SemanticVersion]     = SemanticVersionHelper.format
+  override val exerciseContentFormat: Format[WebExerciseContent] = {
     implicit val ltf : Format[LongText]            = LongTextJsonProtocol.format
     implicit val ssf : Format[SiteSpec]            = siteSpecFormat
     implicit val eff : Format[ExerciseFile]        = ExerciseFileJsonProtocol.exerciseFileFormat
     implicit val fssf: Format[FilesSampleSolution] = sampleSolutionFormat
 
-    Json.format[WebExercise]
+    Json.format[WebExerciseContent]
   }
 
   // Other

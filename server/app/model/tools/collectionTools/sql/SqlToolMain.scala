@@ -1,15 +1,10 @@
 package model.tools.collectionTools.sql
 
-import javax.inject.{Inject, Singleton}
 import model._
 import model.core.result.EvaluationResult
 import model.points.Points
-import model.tools.ToolJsonProtocol
-import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection}
-import model.tools.collectionTools.sql.SqlToolMain._
-import model.tools.collectionTools.sql.persistence.SqlTableDefs
+import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
 
@@ -18,7 +13,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
-object SqlToolMain {
+
+object SqlToolMain extends CollectionToolMain(SqlConsts) {
 
   val correctorsAndDaos: Map[SqlExerciseType, (QueryCorrector, SqlExecutionDAO)] = Map(
     SqlExerciseType.SELECT -> ((SelectCorrector, SelectDAO)),
@@ -30,40 +26,29 @@ object SqlToolMain {
 
   def allDaos: Seq[SqlExecutionDAO] = correctorsAndDaos.values.map(_._2).toSet.toSeq
 
-}
-
-@Singleton
-class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: ExecutionContext)
-  extends CollectionToolMain(SqlConsts) {
-
   // Abstract types
 
   override type PartType = SqlExPart
-  override type ExType = SqlExercise
+  override type ExContentType = SqlExerciseContent
 
   override type SolType = String
   override type SampleSolType = StringSampleSolution
   override type UserSolType = StringUserSolution[SqlExPart]
 
-  override type ReviewType = SqlExerciseReview
-
   override type ResultType = EvaluationResult
   override type CompResultType = SqlCorrResult
 
-  override type Tables = SqlTableDefs
 
   // Members
 
-  override val exParts  : IndexedSeq[SqlExPart] = SqlExParts.values
+  override val exParts: IndexedSeq[SqlExPart] = SqlExParts.values
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[SqlExercise, StringSampleSolution, SqlCorrResult] = SqlJsonProtocols
+  override protected val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExPart, SqlExerciseContent, SqlCorrResult] =
+    SqlJsonProtocols
 
-  override protected val exerciseYamlFormat: YamlFormat[SqlExercise] = SqlYamlProtocol.sqlExerciseYamlFormat
-
-  override val exerciseReviewForm: Form[SqlExerciseReview] = SqlToolForms.exerciseReviewForm
-
+  override protected val exerciseContentYamlFormat: YamlFormat[SqlExerciseContent] = SqlYamlProtocol.sqlExerciseYamlFormat
 
   // Correction
 
@@ -75,15 +60,16 @@ class SqlToolMain @Inject()(override val tables: SqlTableDefs)(implicit ec: Exec
     }
   }
 
-  override protected def correctEx(user: User, learnerSolution: SolType, sqlScenario: ExerciseCollection, exercise: SqlExercise, part: SqlExPart): Future[Try[SqlCorrResult]] =
-    correctorsAndDaos.get(exercise.exerciseType) match {
-      case None                   => Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}")))
-      case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, exercise.sampleSolutions, exercise, sqlScenario)
-    }
+  override protected def correctEx(
+    user: User, learnerSolution: SolType, sqlScenario: ExerciseCollection, exercise: Exercise, content: SqlExerciseContent, part: SqlExPart
+  )(implicit executionContext: ExecutionContext): Future[Try[SqlCorrResult]] = correctorsAndDaos.get(content.exerciseType) match {
+    case None                   => Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${content.exerciseType}")))
+    case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, content.sampleSolutions, content, sqlScenario)
+  }
 
   // Other helper methods
 
-  override protected def instantiateSolution(id: Int, exercise: SqlExercise, part: SqlExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[SqlExPart] =
+  override protected def instantiateSolution(id: Int, exercise: Exercise, part: SqlExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[SqlExPart] =
     StringUserSolution[SqlExPart](id, part, solution, points, maxPoints)
 
   override def updateSolSaved(compResult: SqlCorrResult, solSaved: Boolean): SqlCorrResult = compResult match {

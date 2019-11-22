@@ -1,22 +1,14 @@
 package model.tools
 
 import better.files._
-import model._
 import model.core.CoreConsts._
-import model.learningPath.{LearningPath, LearningPathTableDefs, LearningPathYamlProtocol}
+import model.learningPath.{LearningPath, LearningPathYamlProtocol}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
-
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 abstract class AToolMain(consts: ToolConsts) {
 
   private val logger = Logger(classOf[AToolMain])
-
-  // Abstract types
-
-  type Tables <: LearningPathTableDefs
 
   // Other members
 
@@ -27,9 +19,7 @@ abstract class AToolMain(consts: ToolConsts) {
   val hasTags      : Boolean = false
   val hasPlayground: Boolean = false
 
-  protected val tables: Tables
-
-  private val learningPathsYamlFormat: MyYamlFormat[LearningPath] = LearningPathYamlProtocol.LearningPathYamlFormat(urlPart)
+  private val learningPathsYamlFormat: YamlFormat[LearningPath] = LearningPathYamlProtocol.learningPathYamlFormat
 
   // Folders
 
@@ -40,11 +30,11 @@ abstract class AToolMain(consts: ToolConsts) {
 
   // DB
 
-  def futureLearningPaths: Future[Seq[LearningPath]] = tables.futureLearningPaths(urlPart)
+  //  def futureLearningPaths: Future[Seq[LearningPath]] = tables.futureLearningPaths(urlPart)
 
-  def futureLearningPathById(id: Int): Future[Option[LearningPath]] = tables.futureLearningPathById(urlPart, id)
+  //  def futureLearningPathById(id: Int): Future[Option[LearningPath]] = tables.futureLearningPathById(urlPart, id)
 
-  def futureSaveLearningPaths(readLearningPaths: Seq[LearningPath]): Future[Boolean] = tables.futureSaveLearningPaths(readLearningPaths)
+  //  def futureSaveLearningPaths(readLearningPaths: Seq[LearningPath]): Future[Boolean] = tables.futureSaveLearningPaths(readLearningPaths)
 
   // Helper methods
 
@@ -52,12 +42,9 @@ abstract class AToolMain(consts: ToolConsts) {
     val learningPathFile: File   = exerciseResourcesFolder / "learningPath.yaml"
     val content         : String = learningPathFile.contentAsString
 
-    learningPathsYamlFormat.read(content.parseYaml) match {
-      case Success(read)  => Seq(read)
-      case Failure(error) =>
-        logger.error("Fehler: ", error)
-        Seq[LearningPath]()
-    }
+    learningPathsYamlFormat.read(content.parseYaml)
+
+    ???
   }
 
 

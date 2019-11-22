@@ -16,11 +16,11 @@
           </header>
           <div class="card-content">
             <!-- TODO: Aufgaben anzeigen!?! -->
-            <ng-container *ngIf="collection.exercisesBasics">
+            <ng-container *ngIf="collection.exercises">
               <div class="has-text-info"
-                   *ngIf="collection.exercisesBasics.length > 0">{{collection.exercisesBasics.length}} Aufgaben
+                   *ngIf="collection.exercises.length > 0">{{collection.exercises.length}} Aufgaben
               </div>
-              <div class="has-text-warning" *ngIf="collection.exercisesBasics.length === 0">Keine Aufgaben!</div>
+              <div class="has-text-warning" *ngIf="collection.exercises.length === 0">Keine Aufgaben!</div>
             </ng-container>
           </div>
           <footer class="card-footer">

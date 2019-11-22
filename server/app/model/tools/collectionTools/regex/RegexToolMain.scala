@@ -1,52 +1,41 @@
 package model.tools.collectionTools.regex
 
-import javax.inject.Inject
 import model._
 import model.points._
-import model.tools.ToolJsonProtocol
-import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection}
-import model.tools.collectionTools.regex.persistence.RegexTableDefs
+import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.libs.json.JsString
 import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: ExecutionContext)
-  extends CollectionToolMain(RegexConsts) {
+object RegexToolMain extends CollectionToolMain(RegexConsts) {
 
   override type PartType = RegexExPart
-  override type ExType = RegexExercise
+  override type ExContentType = RegexExerciseContent
 
   override type SolType = String
   override type SampleSolType = StringSampleSolution
   override type UserSolType = StringUserSolution[RegexExPart]
 
-  override type ReviewType = RegexExerciseReview
-
   override type ResultType = RegexEvalutationResult
   override type CompResultType = RegexCompleteResult
 
-  override type Tables = RegexTableDefs
-
   // Members
 
-  override val exParts  : Seq[RegexExPart] = RegexExParts.values
+  override val exParts: Seq[RegexExPart] = RegexExParts.values
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[RegexExercise, StringSampleSolution, RegexCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[RegexExPart, RegexExerciseContent, String, StringSampleSolution, StringUserSolution[RegexExPart], RegexCompleteResult] =
     RegexToolJsonProtocol
 
-  override protected val exerciseYamlFormat: YamlFormat[RegexExercise] = RegexToolYamlProtocol.regexExerciseYamlFormat
-
-  override val exerciseReviewForm: Form[RegexExerciseReview] = RegexToolForm.exerciseReviewForm
+  override protected val exerciseContentYamlFormat: YamlFormat[RegexExerciseContent] = RegexToolYamlProtocol.regexExerciseYamlFormat
 
   // Database helpers
 
-  override protected def instantiateSolution(id: Int, exercise: RegexExercise, part: RegexExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[RegexExPart] =
+  override protected def instantiateSolution(id: Int, exercise: Exercise, part: RegexExPart, solution: String, points: Points, maxPoints: Points): StringUserSolution[RegexExPart] =
     StringUserSolution[RegexExPart](id, part, solution, points, maxPoints)
 
   override def updateSolSaved(compResult: RegexCompleteResult, solSaved: Boolean): RegexCompleteResult =
@@ -62,9 +51,8 @@ class RegexToolMain @Inject()(override val tables: RegexTableDefs)(implicit ec: 
     }
   }
 
-  override protected def correctEx(user: User, sol: String, coll: ExerciseCollection, exercise: RegexExercise, part: RegexExPart): Future[Try[RegexCompleteResult]] =
-    Future.successful(RegexCorrector.correct(sol, exercise))
-
-  // Views
+  override protected def correctEx(
+    user: User, sol: String, coll: ExerciseCollection, exercise: Exercise, content: RegexExerciseContent, part: RegexExPart
+  )(implicit executionContext: ExecutionContext): Future[Try[RegexCompleteResult]] = Future.successful(RegexCorrector.correct(sol, content))
 
 }

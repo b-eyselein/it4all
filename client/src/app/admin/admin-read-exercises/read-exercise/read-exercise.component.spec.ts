@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ReadExerciseComponent} from './read-exercise.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {ProgrammingTool} from '../../../tools/collection-tools/programming-tool';
+import {ProgrammingTool} from '../../../tools/collection-tools/programming/programming-tool';
 
 describe('ReadExerciseComponent', () => {
   let component: ReadExerciseComponent;

@@ -1,7 +1,7 @@
-import {DbSolution, Exercise} from '../../../_interfaces/tool';
+import {DbSolution, ExerciseContent} from '../../../_interfaces/exercise';
 
 // tslint:disable-next-line:no-empty-interface
-export interface XmlExercise extends Exercise {
+export interface XmlExerciseContent extends ExerciseContent {
 
 }
 

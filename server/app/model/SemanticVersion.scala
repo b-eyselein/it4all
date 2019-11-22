@@ -1,11 +1,5 @@
 package model
 
-import model.core.CoreConsts._
-import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}
-import play.api.data.Form
-import play.api.data.Forms._
-import play.api.libs.json.{Format, Json}
-
 import scala.util.matching.Regex
 import scala.util.{Failure, Try}
 
@@ -16,16 +10,6 @@ object SemanticVersionHelper {
   val DEFAULT: SemanticVersion = SemanticVersion(0, 1, 0)
 
   def parseFromString(str: String): Option[SemanticVersion] = tryParseFromString(str).toOption
-
-  val format: Format[SemanticVersion] = Json.format[SemanticVersion]
-
-  val semanticVersionForm: Form[SemanticVersion] = Form(
-    mapping(
-      majorName -> number,
-      minorName -> number,
-      patchName -> number
-    )(SemanticVersion.apply)(SemanticVersion.unapply)
-  )
 
   private def tryParseFromString(str: String): Try[SemanticVersion] = str match {
     case semanticVersionRegex(maj, min, pat) => for {

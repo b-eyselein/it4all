@@ -1,7 +1,8 @@
-import {ExerciseTag, Tool} from '../../../_interfaces/tool';
+import {CollectionTool, ExerciseTag} from '../../../_interfaces/tool';
+import {RegexExerciseContent} from './regex-interfaces';
 
-export const RegexTool: Tool = new (
-  class RegexToolClass extends Tool {
+export const RegexTool: CollectionTool<RegexExerciseContent> = new (
+  class RegexToolClass extends CollectionTool<RegexExerciseContent> {
     constructor() {
       super('regex', 'Reguläre Ausdrücke', [{id: 'regex', name: 'Regulären Ausdruck erstellen'}], 'live');
     }

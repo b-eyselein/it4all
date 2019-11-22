@@ -20,7 +20,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[StringSampleSolution], exercise: SqlExercise, scenario: ExerciseCollection)
+  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[StringSampleSolution], exercise: SqlExerciseContent, scenario: ExerciseCollection)
              (implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
     parseStatement(learnerSolution) flatMap checkStatement match {
       case Failure(error) => SqlParseFailed(error, (-1).points)

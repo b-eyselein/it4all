@@ -1,21 +1,20 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
-import {RegexCorrectionResult, RegexExercise} from '../regex-exercise';
-import {RegexTool} from '../regex-tool';
-import {Tool} from '../../../../_interfaces/tool';
+import {RegexCorrectionResult, RegexExerciseContent} from '../regex-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
+import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
+import {Exercise} from '../../../../_interfaces/exercise';
 
 @Component({templateUrl: './regex-exercise.component.html'})
-export class RegexExerciseComponent implements OnInit {
+export class RegexExerciseComponent extends ExerciseComponentHelpers<RegexExerciseContent> implements OnInit {
 
-  tool: Tool = RegexTool;
   solution = '';
 
   collId: number;
   exId: number;
 
-  exercise: RegexExercise;
+  exercise: Exercise<RegexExerciseContent>;
 
   corrected = false;
   result: RegexCorrectionResult;
@@ -24,13 +23,15 @@ export class RegexExerciseComponent implements OnInit {
   showInfo = false;
 
   constructor(private route: ActivatedRoute, private apiService: ApiService, private dexieService: DexieService) {
+    super(route);
+
     this.collId = parseInt(route.snapshot.paramMap.get('collId'), 10);
     this.exId = parseInt(route.snapshot.paramMap.get('exId'), 10);
   }
 
   ngOnInit(): void {
-    this.apiService.getExercise<RegexExercise>(this.tool.id, this.collId, this.exId)
-      .subscribe((exercise: RegexExercise) => this.exercise = exercise);
+    this.apiService.getExercise<RegexExerciseContent>(this.tool.id, this.collId, this.exId)
+      .subscribe((exercise: Exercise<RegexExerciseContent>) => this.exercise = exercise);
 
     this.dexieService.regexSolutions.get([this.collId, this.exId])
       .then((oldSolution) => this.solution = oldSolution ? oldSolution.solution : '');

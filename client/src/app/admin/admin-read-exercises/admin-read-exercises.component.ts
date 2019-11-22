@@ -1,24 +1,21 @@
 import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
-import {Exercise, ExerciseCollection, Tool} from '../../_interfaces/tool';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
-import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {DexieService} from '../../_services/dexie.service';
 import {ReadExerciseComponent} from './read-exercise/read-exercise.component';
+import {Exercise, ExerciseCollection, ExerciseContent} from '../../_interfaces/exercise';
+import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
 
 @Component({templateUrl: './admin-read-exercises.component.html'})
-export class AdminReadExercisesComponent implements OnInit {
+export class AdminReadExercisesComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
 
-  tool: Tool;
   collection: ExerciseCollection;
-  exercises: Exercise[];
+  exercises: Exercise<any>[];
 
   @ViewChildren(ReadExerciseComponent) readExercises: QueryList<ReadExerciseComponent>;
 
   constructor(private route: ActivatedRoute, private router: Router, private dexieService: DexieService, private apiService: ApiService) {
-    const toolId: string = this.route.snapshot.paramMap.get('toolId');
-
-    this.tool = collectionTools.find((t) => t.id === toolId);
+    super(route);
 
     if (!this.tool) {
       this.router.navigate(['/admin']);

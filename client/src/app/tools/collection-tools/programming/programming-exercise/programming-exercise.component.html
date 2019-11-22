@@ -24,11 +24,7 @@
               </button>
             </div>
             <div class="column">
-              <a *ngIf="collection" [routerLink]="['/tools', tool.id, 'collections', collection.id]"
-                 class="button is-dark is-fullwidth">Bearbeiten beenden</a>
-              <a *ngIf="!collection" [routerLink]="['/tools', tool.id]" class="button is-dark is-fullwidth">
-                Bearbeiten beenden
-              </a>
+              <a *ngIf="collection" routerLink="../.." class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
           </div>
         </it4all-tab>
@@ -79,8 +75,6 @@
           </div>
 
         </it4all-tab>
-
-        <it4all-tab [title]="'Live-Vorschau'" *ngIf="tool.hasLivePreview"></it4all-tab>
 
         <it4all-tab [title]="sampleSolutionsTabTitle">
 

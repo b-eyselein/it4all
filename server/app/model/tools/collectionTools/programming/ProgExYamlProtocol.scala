@@ -3,16 +3,15 @@ package model.tools.collectionTools.programming
 import java.nio.file.{Path, Paths}
 
 import model._
-import model.core.{LongText, LongTextYamlProtocol}
-import model.tools.collectionTools.ExerciseFile
 import model.tools.collectionTools.programming.ProgDataTypes.NonGenericProgDataType
 import model.tools.collectionTools.uml.UmlClassDiagram
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol, ToolYamlProtocol}
 import net.jcazevedo.moultingyaml._
 import play.api.libs.json.JsValue
 
-import scala.language.implicitConversions
-
 object ProgExYamlProtocol extends MyYamlProtocol {
+
+  import DefaultYamlProtocol._
 
   private val basePath: Path = Paths.get("conf", "resources", "programming")
 
@@ -47,7 +46,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   }
 
   private val unitTestPartYamlFormat: YamlFormat[UnitTestPart] = {
-    implicit val efyf: YamlFormat[ExerciseFile] = exerciseFileYamlFormat
+    implicit val efyf: YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
 
     implicit val uttyf: YamlFormat[UnitTestType] = new EnumYamlFormat(UnitTestTypes)
 
@@ -57,7 +56,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   }
 
   private val implementationPartYamlFormat: YamlFormat[ImplementationPart] = {
-    implicit val efyf: YamlFormat[ExerciseFile] = exerciseFileYamlFormat
+    implicit val efyf: YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
 
     yamlFormat4(ImplementationPart)
   }
@@ -65,12 +64,12 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   private val progSampleSolutionYamlFormat: YamlFormat[ProgSampleSolution] = {
 
     implicit val progSolutionYamlFormat: YamlFormat[ProgSolution] = {
-      implicit val efyf: YamlFormat[ExerciseFile] = exerciseFileYamlFormat
+      implicit val efyf: YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
 
       implicit val putdyf: YamlFormat[ProgUserTestData] = {
         implicit val jyf: YamlFormat[JsValue] = jsonValueYamlFormat
 
-        implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
+        implicit val esyf: YamlFormat[ExerciseState] = ToolYamlProtocol.exerciseStateYamlFormat
 
         yamlFormat4(ProgUserTestData)
       }
@@ -88,17 +87,13 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     yamlFormat3(ProgSampleTestData)
   }
 
-  val programmingExerciseYamlFormat: YamlFormat[ProgExercise] = {
-    implicit val svyf: YamlFormat[SemanticVersion] = semanticVersionYamlFormat
-    implicit val ltyf: YamlFormat[LongText] = LongTextYamlProtocol.longTextYamlFormat
-    implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
-
-    implicit val piyf: YamlFormat[ProgInput] = progInputYamlFormat
-    implicit val pdtyf: YamlFormat[ProgDataType] = progDataTypeYamlFormat
-    implicit val jvyf: YamlFormat[JsValue] = jsonValueYamlFormat
-    implicit val utpyf: YamlFormat[UnitTestPart] = unitTestPartYamlFormat
-    implicit val ipyf: YamlFormat[ImplementationPart] = implementationPartYamlFormat
-    implicit val pssyf: YamlFormat[ProgSampleSolution] = progSampleSolutionYamlFormat
+  val programmingExerciseYamlFormat: YamlFormat[ProgExerciseContent] = {
+    implicit val piyf  : YamlFormat[ProgInput]          = progInputYamlFormat
+    implicit val pdtyf : YamlFormat[ProgDataType]       = progDataTypeYamlFormat
+    implicit val jvyf  : YamlFormat[JsValue]            = jsonValueYamlFormat
+    implicit val utpyf : YamlFormat[UnitTestPart]       = unitTestPartYamlFormat
+    implicit val ipyf  : YamlFormat[ImplementationPart] = implementationPartYamlFormat
+    implicit val pssyf : YamlFormat[ProgSampleSolution] = progSampleSolutionYamlFormat
     implicit val pstdyf: YamlFormat[ProgSampleTestData] = progSampleTestDataYamlFormat
 
     implicit val ucdyf: YamlFormat[UmlClassDiagram] = new YamlFormat[UmlClassDiagram] {
@@ -111,7 +106,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     implicit val petyf: YamlFormat[ProgrammingExerciseTag] = new EnumYamlFormat(ProgrammingExerciseTag)
 
-    yamlFormat20(ProgExercise)
+    yamlFormat12(ProgExerciseContent)
   }
 
 }

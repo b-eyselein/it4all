@@ -1,8 +1,7 @@
 package model
 
 import model.points.Points
-import model.tools.collectionTools.{ExPart, ExerciseFile, ExerciseFileJsonProtocol}
-import play.api.libs.json.{Format, Json}
+import model.tools.collectionTools.{ExPart, ExerciseFile}
 
 trait Solution[SolType] {
 
@@ -28,30 +27,30 @@ trait UserSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
 
 }
 
+final case class StringSampleSolution(
+  id: Int,
+  sample: String
+) extends SampleSolution[String]
 
-object StringSampleSolutionJsonProtocol {
-
-  val stringSampleSolutionJsonFormat: Format[StringSampleSolution] = Json.format[StringSampleSolution]
-
-}
-
-final case class StringSampleSolution(id: Int, sample: String) extends SampleSolution[String]
-
-final case class StringUserSolution[PartType <: ExPart](id: Int, part: PartType, solution: String, points: Points, maxPoints: Points)
-  extends UserSolution[PartType, String]
+final case class StringUserSolution[PartType <: ExPart](
+  id: Int,
+  part: PartType,
+  solution: String,
+  points: Points,
+  maxPoints: Points
+) extends UserSolution[PartType, String]
 
 
-final case class FilesSampleSolution(id: Int, sample: Seq[ExerciseFile]) extends SampleSolution[Seq[ExerciseFile]]
+final case class FilesSampleSolution(
+  id: Int,
+  sample: Seq[ExerciseFile]
+) extends SampleSolution[Seq[ExerciseFile]]
 
-final case class FilesUserSolution[PartType <: ExPart](id: Int, part: PartType, solution: Seq[ExerciseFile], points: Points, maxPoints: Points)
-  extends UserSolution[PartType, Seq[ExerciseFile]]
+final case class FilesUserSolution[PartType <: ExPart](
+  id: Int,
+  part: PartType,
+  solution: Seq[ExerciseFile],
+  points: Points,
+  maxPoints: Points
+) extends UserSolution[PartType, Seq[ExerciseFile]]
 
-object FilesSampleSolutionJsonProtocol {
-
-  val filesSampleSolutionFormat: Format[FilesSampleSolution] = {
-    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
-
-    Json.format[FilesSampleSolution]
-  }
-
-}

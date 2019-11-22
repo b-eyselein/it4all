@@ -17,6 +17,12 @@ import {TagComponent} from './_components/tag/tag.component';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {ApiService} from './_services/api.service';
 import {ExerciseOverviewComponent} from './exercise-overview/exercise-overview.component';
+import {ExerciseComponent} from './exercise/exercise.component';
+import {RegexExerciseComponent} from './regex/regex-exercise/regex-exercise.component';
+import {ProgrammingExerciseComponent} from './programming/programming-exercise/programming-exercise.component';
+import {SqlExerciseComponent} from './sql/sql-exercise/sql-exercise.component';
+import {UmlExerciseComponent} from './uml/uml-exercise/uml-exercise.component';
+import {WebExerciseComponent} from './web/web-exercise/web-exercise.component';
 
 
 @NgModule({
@@ -25,13 +31,22 @@ import {ExerciseOverviewComponent} from './exercise-overview/exercise-overview.c
     ExerciseFileCardComponent,
     TagComponent,
 
-    RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent, RegexCheatsheetComponent,
-    ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
-    SqlResultComponent, SqlMatchingResultComponent,
+    RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent,
+    RegexExtractionMatchComponent, RegexCheatsheetComponent,
+
+    ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
+
+    SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent,
+
+    UmlExerciseComponent,
+
+    WebExerciseComponent,
 
     ...collectionToolRoutingComponents,
 
-    ExerciseOverviewComponent
+    ExerciseOverviewComponent,
+
+    ExerciseComponent
   ],
   providers: [ApiService],
   imports: [

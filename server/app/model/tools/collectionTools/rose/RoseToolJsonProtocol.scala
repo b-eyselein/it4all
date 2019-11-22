@@ -2,17 +2,24 @@ package model.tools.collectionTools.rose
 
 import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
-import model.tools.ToolJsonProtocol
+import model.tools.collectionTools.ToolJsonProtocol
 import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage, ProgLanguages, ProgrammingToolJsonProtocol}
-import model.{SemanticVersion, SemanticVersionHelper}
 import play.api.libs.json.{Format, Json, Writes}
 
-object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExercise, RoseSampleSolution, RoseCompleteResult] {
+object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExPart, RoseExerciseContent, String, RoseSampleSolution, RoseUserSolution, RoseCompleteResult] {
 
   override val sampleSolutionFormat: Format[RoseSampleSolution] = {
-    implicit val progLanguageJsonFormat: Format[ProgLanguage] = ProgLanguages.jsonFormat
+    implicit val plf: Format[ProgLanguage] = ProgLanguages.jsonFormat
 
     Json.format[RoseSampleSolution]
+  }
+
+  override val userSolutionFormat: Format[RoseUserSolution] = {
+    implicit val repf: Format[RoseExPart]   = RoseExParts.jsonFormat
+    implicit val plf : Format[ProgLanguage] = ProgLanguages.jsonFormat
+    implicit val pf  : Format[Points]       = ToolJsonProtocol.pointsFormat
+
+    Json.format[RoseUserSolution]
   }
 
   val roseInputTypeFormat: Format[RoseInputType] = {
@@ -21,14 +28,12 @@ object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExercise, RoseSampleSol
     Json.format[RoseInputType]
   }
 
-  override val exerciseFormat: Format[RoseExercise] = {
-    implicit val svf : Format[SemanticVersion]    = SemanticVersionHelper.format
+  override val exerciseContentFormat: Format[RoseExerciseContent] = {
     implicit val ltf : Format[LongText]           = LongTextJsonProtocol.format
     implicit val rssf: Format[RoseSampleSolution] = sampleSolutionFormat
+    implicit val ritf: Format[RoseInputType]      = roseInputTypeFormat
 
-    implicit val ritf: Format[RoseInputType] = roseInputTypeFormat
-
-    Json.format[RoseExercise]
+    Json.format[RoseExerciseContent]
   }
 
   // Other

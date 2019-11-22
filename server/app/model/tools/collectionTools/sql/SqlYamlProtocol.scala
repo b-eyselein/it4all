@@ -1,20 +1,18 @@
 package model.tools.collectionTools.sql
 
-import model.core.{LongText, LongTextYamlProtocol}
-import model.{ExerciseState, MyYamlProtocol, SemanticVersion, StringSampleSolution}
-import net.jcazevedo.moultingyaml.YamlFormat
+import model.{MyYamlProtocol, StringSampleSolution}
+import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 object SqlYamlProtocol extends MyYamlProtocol {
 
-  val sqlExerciseYamlFormat: YamlFormat[SqlExercise] = {
-    implicit val svyf   : YamlFormat[SemanticVersion]      = semanticVersionYamlFormat
-    implicit val ltyf   : YamlFormat[LongText]             = LongTextYamlProtocol.longTextYamlFormat
-    implicit val esyf   : YamlFormat[ExerciseState]        = exerciseStateYamlFormat
+  import DefaultYamlProtocol._
+
+  val sqlExerciseYamlFormat: YamlFormat[SqlExerciseContent] = {
     implicit val eTypeYf: YamlFormat[SqlExerciseType]      = new EnumYamlFormat(SqlExerciseType)
     implicit val eTagYf : YamlFormat[SqlExerciseTag]       = new EnumYamlFormat(SqlExerciseTag)
     implicit val sssyf  : YamlFormat[StringSampleSolution] = stringSampleSolutionYamlFormat
 
-    yamlFormat12(SqlExercise)
+    yamlFormat4(SqlExerciseContent)
   }
 
 }

@@ -40,7 +40,7 @@ object RegexMatchMatcher extends Matcher[RegexMatchMatch] {
 
 object RegexCorrector {
 
-  def correct(sol: String, exercise: RegexExercise): Try[RegexCompleteResult] = Try(sol.r) map { userRegex =>
+  def correct(sol: String, exercise: RegexExerciseContent): Try[RegexCompleteResult] = Try(sol.r) map { userRegex =>
 
     exercise.correctionType match {
       case RegexCorrectionTypes.MATCHING =>

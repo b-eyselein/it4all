@@ -1,9 +1,8 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.tools.ToolList
-import model.JsonProtocol
-import model.tools.collectionTools.ExerciseCollection
+import model.persistence.ExerciseTableDefs
+import model.tools.collectionTools.{Exercise, ExerciseCollection, ToolJsonProtocol}
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
@@ -12,10 +11,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class ApiAdminController @Inject()(cc: ControllerComponents, tl: ToolList, configuration: Configuration)(implicit ec: ExecutionContext)
-  extends AbstractApiExerciseController(cc, tl, configuration) {
+class ApiAdminController @Inject()(cc: ControllerComponents, tables: ExerciseTableDefs, configuration: Configuration)(implicit ec: ExecutionContext)
+  extends AbstractApiExerciseController(cc, configuration) {
 
   private val logger = Logger(classOf[ApiController])
+
+
+  private type JsErrorsType = scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])]
 
 
   override protected val adminRightsRequired: Boolean = true
@@ -30,65 +32,62 @@ class ApiAdminController @Inject()(cc: ControllerComponents, tl: ToolList, confi
       }
       .flatMap(_.toOption) // filter out Failures
 
-    Future.successful(Ok(Json.toJson(successfulReadCollections)(Writes.seq(JsonProtocol.collectionFormat))))
+    Future.successful(Ok(Json.toJson(successfulReadCollections)(Writes.seq(ToolJsonProtocol.collectionFormat))))
   }
 
   def readExercises(toolId: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolId) { (_, _, toolMain) =>
 
-    toolMain.futureCollById(collId).map {
+    tables.futureCollById(toolMain.urlPart, collId).map {
       case None             => NotFound(s"There is no such collection $collId")
       case Some(collection) =>
 
-        val successfulReadExercises: Seq[toolMain.ExType] = toolMain.readExercisesFromYaml(collection)
+        val successfulReadExercises: Seq[Exercise] = toolMain.readExercisesFromYaml(collection)
           .tapEach {
             case Success(_)         => ()
             case Failure(exception) => logger.error("Error while reading yaml", exception)
           }
           .flatMap(_.toOption) // filter out Failures
 
-        Ok(Json.toJson(successfulReadExercises)(Writes.seq(toolMain.exerciseJsonFormat)))
+        Ok(Json.toJson(successfulReadExercises)(Writes.seq(toolMain.exerciseFormat)))
     }
   }
 
-  def upsertCollection(toolId: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolId) { (request, _, toolMain) =>
+  def upsertCollection(toolId: String, collectionId: Int): Action[AnyContent] = apiWithToolMain(toolId) { (request, _, toolMain) =>
+
+    val onError: JsErrorsType => Future[Result] = { errors =>
+      errors.foreach(e => logger.error(e.toString()))
+      Future.successful(BadRequest("Json in body could not be interpreted as ExerciseCollection!"))
+    }
+
+    val onRead: ExerciseCollection => Future[Result] = { newCollection =>
+      val collectionToInsert: ExerciseCollection = newCollection.copy(toolId = toolMain.urlPart, id = collectionId)
+
+      tables.futureUpsertCollection(collectionToInsert).map { inserted => Ok(JsBoolean(inserted)) }
+    }
+
 
     request.body.asJson match {
       case None          => Future.successful(BadRequest("No json was provided in body!"))
-      case Some(jsValue) =>
-
-        JsonProtocol.collectionFormat.reads(jsValue) match {
-          case JsError(errors)             =>
-            errors.foreach(e => logger.error(e.toString()))
-            Future.successful(BadRequest("Json in body could not be interpreted as ExerciseCollection!"))
-          case JsSuccess(newCollection, _) =>
-
-            // FIXME: check that toolId and collId fit!
-
-            toolMain.futureDeleteOldAndInsertNewCollection(newCollection).map { inserted =>
-              Ok(JsBoolean(inserted))
-            }
-        }
+      case Some(jsValue) => ToolJsonProtocol.collectionFormat.reads(jsValue).fold(onError, onRead)
     }
   }
 
   def upsertExercise(toolId: String, collId: Int, exId: Int): Action[AnyContent] = apiWithToolMain(toolId) { (request, _, toolMain) =>
 
+    val onRead: Exercise => Future[Result] = { readExercise =>
+      val toInsert: Exercise = readExercise.copy(toolId = toolMain.urlPart, collectionId = collId, id = exId)
+
+      tables.futureUpsertExercise(toInsert).map { inserted => Ok(JsBoolean(inserted)) }
+    }
+
+    def onError: JsErrorsType => Future[Result] = { errors =>
+      errors.foreach(e => logger.error(e.toString()))
+      Future.successful(BadRequest("Json in body could not be interpreted as Exercise!"))
+    }
+
     request.body.asJson match {
       case None          => Future.successful(BadRequest("No json was provided in body!"))
-      case Some(jsValue) =>
-
-        toolMain.exerciseJsonFormat.reads(jsValue) match {
-          case JsError(errors)           =>
-            errors.foreach(e => logger.error(e.toString()))
-            Future.successful(BadRequest("Json in body could not be interpreted as Exercise!"))
-          case JsSuccess(newExercise, _) =>
-
-            // FIXME: check that toolId, collId and exId fit!
-
-            toolMain.futureDeleteOldAndInsertNewExercise(collId, newExercise).map { inserted =>
-              Ok(JsBoolean(inserted))
-            }
-        }
+      case Some(jsValue) => toolMain.exerciseFormat.reads(jsValue).fold(errors => onError(errors), onRead)
     }
   }
 

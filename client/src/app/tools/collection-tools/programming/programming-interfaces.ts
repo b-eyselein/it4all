@@ -1,5 +1,6 @@
-import {DbSolution, Exercise, SuccessType} from '../../../_interfaces/tool';
+import { SuccessType} from '../../../_interfaces/tool';
 import {CorrectionResult, ExerciseFile, IdeWorkspace} from '../../basics';
+import {DbSolution, ExerciseContent} from '../../../_interfaces/exercise';
 
 // tslint:disable-next-line:no-empty-interface
 interface ProgrammingUnitTestTestConfig {
@@ -30,7 +31,7 @@ export interface ProgrammingSampleSolution {
   };
 }
 
-export interface ProgrammingExercise extends Exercise {
+export interface ProgrammingExerciseContent extends ExerciseContent {
   functionName: string;
   foldername: string;
   filename: string;
@@ -46,10 +47,6 @@ export interface ProgrammingExercise extends Exercise {
   implementationPart: ProgrammingImplementationPart;
 
   sampleSolutions: ProgrammingSampleSolution[];
-}
-
-export function isProgrammingExercise(exercise: Exercise): exercise is ProgrammingExercise {
-  return 'unitTestPart' in exercise;
 }
 
 // Database

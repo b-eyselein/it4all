@@ -1,25 +1,23 @@
 package model.tools.collectionTools.xml
 
+import model.MyYamlProtocol
 import model.core.{LongText, LongTextYamlProtocol}
-import model.{ExerciseState, MyYamlProtocol, SemanticVersion}
-import net.jcazevedo.moultingyaml._
+import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 object XmlExYamlProtocol extends MyYamlProtocol {
 
-    val xmlExerciseYamlFormat: YamlFormat[XmlExercise] = {
-      implicit val svyf: YamlFormat[SemanticVersion] = semanticVersionYamlFormat
+  import DefaultYamlProtocol._
 
-      implicit val ltyf: YamlFormat[ LongText] = LongTextYamlProtocol.longTextYamlFormat
+  val xmlExerciseYamlFormat: YamlFormat[XmlExerciseContent] = {
+    implicit val ltyf: YamlFormat[LongText] = LongTextYamlProtocol.longTextYamlFormat
 
-      implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
+    implicit val xssyf: YamlFormat[XmlSampleSolution] = {
+      implicit val xsyf: YamlFormat[XmlSolution] = yamlFormat2(XmlSolution)
 
-      implicit val xssyf: YamlFormat[XmlSampleSolution] = {
-        implicit val xsyf: YamlFormat[XmlSolution] = yamlFormat2(XmlSolution)
-
-        yamlFormat2(XmlSampleSolution)
-      }
-
-      yamlFormat11(XmlExercise)
+      yamlFormat2(XmlSampleSolution)
     }
+
+    yamlFormat3(XmlExerciseContent)
+  }
 
 }

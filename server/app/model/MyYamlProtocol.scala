@@ -1,118 +1,14 @@
 package model
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.MyYamlProtocol._
-import model.core.CommonUtils
-import model.tools.collectionTools.{ExerciseCollection, ExerciseFile}
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.libs.json._
 
-import scala.util.{Failure, Success, Try}
-
-private final case class WrongFieldTypeException(fieldtype: String) extends Exception
-
-@deprecated
-trait MyYamlFormat[A] extends YamlWriter[A] {
-
-  def read(yaml: YamlValue): Try[A]
-
-}
-
-
-@deprecated
-object MyYamlProtocol {
-
-  implicit def string2YamlString(str: String): YamlString = YamlString(str)
-
-  implicit def int2YamlNumber(num: Int): YamlNumber = YamlNumber(num)
-
-  implicit def bool2YamlBoolean(bool: Boolean): YamlBoolean = YamlBoolean(bool)
-
-  implicit class PimpedYamlValue(yaml: YamlValue) {
-
-    def asBool: Try[Boolean] = yaml match {
-      case YamlBoolean(bool) => Success(bool)
-      case other             => Failure(WrongFieldTypeException(other.getClass.toString))
-    }
-
-    def asInt: Try[Int] = yaml match {
-      case YamlNumber(bigDec) => Success(bigDec.intValue)
-      case other              => Failure(WrongFieldTypeException(other.getClass.toString))
-    }
-
-    def asStringEnum[T](func: String => T): Try[T] = yaml match {
-      case YamlString(str) => Try(func(str))
-      case other           => Failure(WrongFieldTypeException(other.getClass.toString))
-    }
-
-    def asStr: Try[String] = yaml match {
-      case YamlString(str) => Success(str)
-      case other           => Failure(WrongFieldTypeException(other.getClass.toString))
-    }
-
-    def forgivingStr: String = yaml match {
-      case YamlString(str)   => str
-      case YamlNumber(num)   => num.toString
-      case YamlBoolean(bool) => bool.toString
-      case YamlNull          => "null"
-      case other             => other.toString
-    }
-
-    def asArray[T](mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = yaml match {
-      case YamlArray(vector) => Success(CommonUtils.splitTriesNew(vector.map(mapping)))
-      case other             => Failure(WrongFieldTypeException(other.getClass.toString))
-    }
-
-  }
-
-  implicit class PimpedYamlObject(yamlObject: YamlObject) {
-
-    private def someField(fieldName: String): Try[YamlValue] = yamlObject.fields get fieldName match {
-      case Some(field) => Try(field)
-      case None        => Failure(new NoSuchFieldException(fieldName))
-    }
-
-    def intField(fieldName: String): Try[Int] = someField(fieldName).flatMap(_.asInt)
-
-    def stringField(fieldName: String): Try[String] = someField(fieldName).flatMap(_.asStr)
-
-    def arrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = someField(fieldName).flatMap(_.asArray(mapping))
-
-    def enumField[T](fieldName: String, valueOf: String => T): Try[T] = stringField(fieldName).map(valueOf)
-
-    def jsonField(fieldName: String): Try[JsValue] = someField(fieldName).map(mapToJson)
-
-
-  }
-
-  def mapToJson(yamlValue: YamlValue): JsValue = yamlValue match {
-    case YamlArray(arrayValues) => JsArray(arrayValues.map(mapToJson))
-    case YamlSet(content)       => JsArray(content.toSeq.map(mapToJson))
-
-    case YamlObject(yamlFields) => JsObject.apply(yamlFields.map {
-      case (key, value) => PimpedYamlValue(key).forgivingStr -> mapToJson(value)
-    })
-
-    case YamlDate(date) => JsString(date.toString)
-
-    case YamlNaN | YamlNegativeInf | YamlPositiveInf => JsNull
-
-    case YamlString(str)        => JsString(str)
-    case YamlBoolean(bool)      => JsBoolean(bool)
-    case YamlNull               => JsNull
-    case YamlNumber(bigDecimal) => JsNumber(bigDecimal)
-
-  }
-}
-
-
-// FIXME: delete (most of) above!
-
-
-final case class MapYamlHelperClass[K, V](key: K, value: V)
-
 object MapYamlHelper extends DefaultYamlProtocol {
+
+  final case class MapYamlHelperClass[K, V](key: K, value: V)
 
   def stringMapYamlFormat[K: YamlFormat, V: YamlFormat]: YamlFormat[Map[K, V]] = new YamlFormat[Map[K, V]] {
 
@@ -129,10 +25,31 @@ object MapYamlHelper extends DefaultYamlProtocol {
 
   }
 
+  def mapToJson(yamlValue: YamlValue): JsValue = yamlValue match {
+    case YamlArray(arrayValues) => JsArray(arrayValues.map(mapToJson))
+    case YamlSet(content)       => JsArray(content.toSeq.map(mapToJson))
+
+    case YamlObject(yamlFields) => JsObject(yamlFields.map {
+      case (key, value) => key.toString -> mapToJson(value)
+    })
+
+    case YamlDate(date) => JsString(date.toString)
+
+    case YamlNaN | YamlNegativeInf | YamlPositiveInf => JsNull
+
+    case YamlString(str)        => JsString(str)
+    case YamlBoolean(bool)      => JsBoolean(bool)
+    case YamlNull               => JsNull
+    case YamlNumber(bigDecimal) => JsNumber(bigDecimal)
+
+  }
+
 }
 
 
-trait MyYamlProtocol extends DefaultYamlProtocol {
+trait MyYamlProtocol {
+
+  import DefaultYamlProtocol._
 
   private val logger = Logger(classOf[MyYamlProtocol])
 
@@ -145,16 +62,13 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
         ???
     }
 
-    override def write(obj: E): YamlValue = obj.entryName
+    override def write(obj: E): YamlValue = YamlString(obj.entryName)
 
   }
 
-  val exerciseStateYamlFormat: EnumYamlFormat[ExerciseState] = new EnumYamlFormat(ExerciseState)
-
-
   protected val jsonValueYamlFormat: YamlFormat[JsValue] = new YamlFormat[JsValue] {
 
-    override def read(yaml: YamlValue): JsValue = MyYamlProtocol.mapToJson(yaml)
+    override def read(yaml: YamlValue): JsValue = MapYamlHelper.mapToJson(yaml)
 
     override def write(obj: JsValue): YamlValue = {
       logger.error("TODO: implement yaml printing of json values!")
@@ -167,22 +81,8 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
 
   protected val stringSampleSolutionYamlFormat: YamlFormat[StringSampleSolution] = yamlFormat2(StringSampleSolution)
 
-  @deprecated
-  abstract class MyYamlObjectFormat[T] extends MyYamlFormat[T] {
-
-    override def read(yaml: YamlValue): Try[T] = yaml match {
-      case yamlObj: YamlObject => readObject(yamlObj)
-      case other               => deserializationError(s"Awaited an yaml object, instead got ${other.getClass}")
-    }
-
-    protected def readObject(yamlObject: YamlObject): Try[T]
-
-  }
-
-  protected val exerciseFileYamlFormat: YamlFormat[ExerciseFile] = yamlFormat4(ExerciseFile)
-
   protected val filesSampleSolutionYamlFormat: YamlFormat[FilesSampleSolution] = {
-    implicit val efyf: YamlFormat[ExerciseFile] = exerciseFileYamlFormat
+    implicit val efyf: YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
 
     yamlFormat2(FilesSampleSolution)
   }
@@ -202,16 +102,6 @@ trait MyYamlProtocol extends DefaultYamlProtocol {
       .map { case KeyValueMapEntry(key, value) => (key, value) }
       .toMap
 
-  }
-
-}
-
-object ExerciseCollectionYamlProtocol extends MyYamlProtocol {
-
-  val exerciseCollectionYamlFormat: YamlFormat[ExerciseCollection] = {
-    implicit val esyf: YamlFormat[ExerciseState] = exerciseStateYamlFormat
-
-    yamlFormat7(ExerciseCollection)
   }
 
 }

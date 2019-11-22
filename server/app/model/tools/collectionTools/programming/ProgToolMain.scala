@@ -1,13 +1,9 @@
 package model.tools.collectionTools.programming
 
-import javax.inject._
 import model._
 import model.points.Points
-import model.tools.ToolJsonProtocol
-import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection, ExerciseFileJsonProtocol, LoadExerciseFilesMessage}
-import model.tools.collectionTools.programming.persistence.ProgTableDefs
+import model.tools.collectionTools._
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 
@@ -15,67 +11,47 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
 
-@Singleton
-class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends CollectionToolMain(ProgConsts) {
+object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
   // Abstract types
 
   override type PartType = ProgExPart
-  override type ExType = ProgExercise
+  override type ExContentType = ProgExerciseContent
 
   override type SolType = ProgSolution
   override type SampleSolType = ProgSampleSolution
   override type UserSolType = ProgUserSolution
 
-  override type ReviewType = ProgExerciseReview
-
   override type ResultType = ProgEvalResult
   override type CompResultType = ProgCompleteResult
 
-  override type Tables = ProgTableDefs
-
   // Other members
 
-  override val exParts  : Seq[ProgExPart] = ProgExParts.values
+  override val exParts: Seq[ProgExPart] = ProgExParts.values
 
   // Yaml, Html Forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[ProgExercise, ProgSampleSolution, ProgCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[ProgExPart, ProgExerciseContent, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgCompleteResult] =
     ProgrammingToolJsonProtocol
 
-  override protected val exerciseYamlFormat: YamlFormat[ProgExercise] = ProgExYamlProtocol.programmingExerciseYamlFormat
-
-  override val exerciseReviewForm: Form[ProgExerciseReview] = ProgToolForms.exerciseReviewForm
+  override protected val exerciseContentYamlFormat: YamlFormat[ProgExerciseContent] = ProgExYamlProtocol.programmingExerciseYamlFormat
 
   // Other helper methods
 
-  override def exerciseHasPart(exercise: ProgExercise, part: ProgExPart): Boolean = part match {
+  override def exerciseHasPart(exercise: ProgExerciseContent, part: ProgExPart): Boolean = part match {
     case ProgExParts.ActivityDiagram => false
     case ProgExParts.TestCreation    => exercise.unitTestPart.unitTestType == UnitTestTypes.Normal
     case _                           => true
   }
 
-  override def instantiateSolution(id: Int, exercise: ProgExercise, part: ProgExPart, solution: ProgSolution,
-                                   points: Points, maxPoints: Points): ProgUserSolution =
-    ProgUserSolution(id, part, solution, points, maxPoints)
+  override def instantiateSolution(
+    id: Int, exercise: Exercise, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points
+  ): ProgUserSolution = ProgUserSolution(id, part, solution, points, maxPoints)
 
   override def updateSolSaved(compResult: ProgCompleteResult, solSaved: Boolean): ProgCompleteResult =
     compResult.copy(solutionSaved = solSaved)
 
   // Db
-
-  override def futureFilesForExercise(user: User, collId: Int, exercise: ProgExercise, part: ProgExPart): Future[LoadExerciseFilesMessage] =
-    tables.futureMaybeOldSolution(user.username, collId, exercise.id, part).map {
-      case None         => exercise.filesForExercisePart(part)
-      case Some(oldSol) =>
-
-        val oldMessages = exercise.filesForExercisePart(part)
-
-        val newFiles = ??? // oldMessages.files.map { f => if (f.name == "test.py") f.copy(content = oldSol.solution.unitTest.content) else f }
-
-        LoadExerciseFilesMessage(newFiles, oldMessages.activeFileName)
-    }
 
   override protected def readSolution(request: Request[AnyContent], part: ProgExPart): Either[String, ProgSolution] = request.body.asJson match {
     case None          => Left("Body did not contain json!")
@@ -87,7 +63,9 @@ class ProgToolMain @Inject()(override val tables: ProgTableDefs)(implicit ec: Ex
       }
   }
 
-  override def correctEx(user: User, sol: ProgSolution, collection: ExerciseCollection, exercise: ProgExercise, part: ProgExPart): Future[Try[ProgCompleteResult]] =
-    ProgCorrector.correct(user, sol, collection, exercise, part, toolMain = this, exerciseResourcesFolder)
+  override protected def correctEx(
+    user: User, sol: ProgSolution, collection: ExerciseCollection, exercise: Exercise, content: ProgExerciseContent, part: ProgExPart
+  )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] =
+    ProgCorrector.correct(user, sol, collection, exercise, content, part, exerciseResourcesFolder)
 
 }

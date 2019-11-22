@@ -1,12 +1,13 @@
 package model.tools.collectionTools.uml
 
-import model.core.{LongText, LongTextYamlProtocol}
-import model.{ExerciseState, MyYamlProtocol, SemanticVersion}
-import net.jcazevedo.moultingyaml._
+import model.MyYamlProtocol
+import net.jcazevedo.moultingyaml.{YamlFormat, DefaultYamlProtocol}
 
 import scala.language.{implicitConversions, postfixOps}
 
 object UmlExYamlProtocol extends MyYamlProtocol {
+
+  import DefaultYamlProtocol._
 
   private val umlClassYamlFormat: YamlFormat[UmlClass] = {
     implicit val uctyf: YamlFormat[UmlClassType]  = new EnumYamlFormat(UmlClassType)
@@ -36,15 +37,13 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     yamlFormat2(UmlSampleSolution)
   }
 
-  override implicit def mapFormat[K: YamlFormat, V: YamlFormat]: YamlFormat[Map[K, V]] = myMapFormat
 
-  val umlExerciseYamlFormat: YamlFormat[UmlExercise] = {
-    implicit val svyf : YamlFormat[SemanticVersion]   = semanticVersionYamlFormat
-    implicit val ltyf : YamlFormat[LongText]          = LongTextYamlProtocol.longTextYamlFormat
-    implicit val esyf : YamlFormat[ExerciseState]     = exerciseStateYamlFormat
+  val umlExerciseYamlFormat: YamlFormat[UmlExerciseContent] = {
     implicit val ussyf: YamlFormat[UmlSampleSolution] = umlSampleSolutionYamlFormat
 
-    yamlFormat11(UmlExercise)
+    implicit def mapFormat[K: YamlFormat, V: YamlFormat]: YamlFormat[Map[K, V]] = myMapFormat
+
+    yamlFormat3(UmlExerciseContent)
   }
 
 }

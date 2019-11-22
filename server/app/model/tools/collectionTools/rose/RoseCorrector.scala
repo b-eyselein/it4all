@@ -19,7 +19,7 @@ object RoseCorrector {
   private val actionsFileName = "actions.json"
   private val optionsFileName = "options.json"
 
-  def correct(user: User, exercise: RoseExercise, learnerSolution: String, sampleSolution: String, language: ProgLanguage, solutionTargetDir: File)
+  def correct(user: User, exercise: RoseExerciseContent, learnerSolution: String, sampleSolution: String, language: ProgLanguage, solutionTargetDir: File)
              (implicit ec: ExecutionContext): Future[Try[RoseCompleteResult]] = {
 
     // Check if image exists
@@ -95,7 +95,7 @@ object RoseCorrector {
     baseDeclaration + indent(sampleSolution, 2)
   }
 
-  private def buildOptionFileContent(exercise: RoseExercise): String =
+  private def buildOptionFileContent(exercise: RoseExerciseContent): String =
     """|{
        |  "start": {
        |    "x": 0,

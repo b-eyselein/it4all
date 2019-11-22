@@ -28,4 +28,3 @@ trait ToolConsts extends Consts {
   val toolState: ToolState
 
 }
-

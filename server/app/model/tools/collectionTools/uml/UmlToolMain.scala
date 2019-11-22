@@ -1,15 +1,11 @@
 package model.tools.collectionTools.uml
 
-import javax.inject.{Inject, Singleton}
+import model.User
 import model.core.result.EvaluationResult
 import model.points.Points
-import model.tools.ToolJsonProtocol
-import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection}
-import model.tools.collectionTools.uml.persistence.UmlTableDefs
-import model.User
+import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
-import play.api.data.Form
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc._
 
@@ -17,50 +13,42 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 
-@Singleton
-class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionContext)
-  extends CollectionToolMain(UmlConsts) {
+object UmlToolMain extends CollectionToolMain(UmlConsts) {
 
-  private val logger = Logger(classOf[UmlToolMain])
+  private val logger = Logger(UmlToolMain.getClass)
 
   // Result types
 
   override type PartType = UmlExPart
-  override type ExType = UmlExercise
+  override type ExContentType = UmlExerciseContent
 
 
   override type SolType = UmlClassDiagram
   override type SampleSolType = UmlSampleSolution
   override type UserSolType = UmlUserSolution
 
-  override type ReviewType = UmlExerciseReview
-
   override type ResultType = EvaluationResult
   override type CompResultType = UmlCompleteResult
 
-  override type Tables = UmlTableDefs
-
   // Other members
 
-  override val exParts  : Seq[UmlExPart] = UmlExParts.values
+  override val exParts: Seq[UmlExPart] = UmlExParts.values
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[UmlExercise, UmlSampleSolution, UmlCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[UmlExPart, UmlExerciseContent, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlCompleteResult] =
     UmlToolJsonProtocol
 
-  override protected val exerciseYamlFormat: YamlFormat[UmlExercise] = UmlExYamlProtocol.umlExerciseYamlFormat
-
-  override val exerciseReviewForm: Form[UmlExerciseReview] = UmlToolForms.exerciseReviewForm
+  override protected val exerciseContentYamlFormat: YamlFormat[UmlExerciseContent] = UmlExYamlProtocol.umlExerciseYamlFormat
 
   // Other helper methods
 
-  override protected def exerciseHasPart(exercise: UmlExercise, partType: UmlExPart): Boolean = partType match {
+  override protected def exerciseHasPart(exercise: UmlExerciseContent, partType: UmlExPart): Boolean = partType match {
     case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => true // TODO: Currently deactivated...
     case _                                                     => false
   }
 
-  override def instantiateSolution(id: Int, exercise: UmlExercise, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlUserSolution =
+  override def instantiateSolution(id: Int, exercise: Exercise, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points): UmlUserSolution =
     UmlUserSolution(id, part, solution, points, maxPoints)
 
   override def updateSolSaved(compResult: UmlCompleteResult, solSaved: Boolean): UmlCompleteResult =
@@ -81,9 +69,9 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
   }
 
   override def correctEx(
-    user: User, classDiagram: UmlClassDiagram, collection: ExerciseCollection, exercise: UmlExercise, part: UmlExPart
-  ): Future[Try[UmlCompleteResult]] = Future.successful {
-    exercise.sampleSolutions.headOption match {
+    user: User, classDiagram: UmlClassDiagram, collection: ExerciseCollection, exercise: Exercise, content: UmlExerciseContent, part: UmlExPart
+  )(implicit executionContext: ExecutionContext): Future[Try[UmlCompleteResult]] = Future.successful {
+    content.sampleSolutions.headOption match {
       case None                 => Failure(new Exception("There is no sample solution!"))
       case Some(sampleSolution) => Success(UmlCorrector.correct(classDiagram, sampleSolution.sample, part))
     }

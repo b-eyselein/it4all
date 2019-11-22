@@ -1,4 +1,5 @@
-import {ExerciseTag, Tool, ToolPart} from '../../../_interfaces/tool';
+import {CollectionTool, ExerciseTag, Tool, ToolPart} from '../../../_interfaces/tool';
+import {SqlExerciseContent} from './sql-interfaces';
 
 export const SqlCreateQueryPart: ToolPart = {id: 'createQuery', name: 'Abfrage erstellen'};
 
@@ -15,8 +16,8 @@ const sqlExerciseTags: Map<string, ExerciseTag> = new Map<string, ExerciseTag>([
   ['SQL_SUBSELECT', {label: 'S', title: 'Zweites Select innerhalb'}]
 ]);
 
-export const SqlTool: Tool = new (
-  class SqlToolClass extends Tool {
+export const SqlTool: CollectionTool<SqlExerciseContent> = new (
+  class SqlToolClass extends CollectionTool<SqlExerciseContent> {
     constructor() {
       super('sql', 'SQL', [SqlCreateQueryPart], 'live');
     }
