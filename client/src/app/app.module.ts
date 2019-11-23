@@ -7,21 +7,17 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {JwtInterceptor} from './_helpers/jwt.interceptor';
 import {ErrorInterceptor} from './_helpers/error.interceptor';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
-import {ReadCollectionComponent} from './admin/admin-read-collections/read-collection/read-collection.component';
-import {ReadExerciseComponent} from './admin/admin-read-exercises/read-exercise/read-exercise.component';
 import {RandomToolsModule} from './tools/random-tools/random-tools.module';
 import {SharedModule} from './shared/shared.module';
 import {CollectionToolsModule} from './tools/collection-tools/collection-tools.module';
 import {LessonsModule} from './lessons/lessons.module';
+import {AdminModule} from './admin/admin.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     routingComponents,
-
-    // Admin
-    ReadCollectionComponent, ReadExerciseComponent
   ],
   imports: [
     BrowserModule, HttpClientModule, AppRoutingModule, FormsModule, ReactiveFormsModule,
@@ -31,7 +27,8 @@ import {LessonsModule} from './lessons/lessons.module';
     SharedModule,
     CollectionToolsModule,
     RandomToolsModule,
-    LessonsModule
+    LessonsModule,
+    AdminModule
   ],
   providers: [
     Title,

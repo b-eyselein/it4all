@@ -5,16 +5,29 @@ import {AdminReadCollectionsComponent} from './admin-read-collections/admin-read
 import {AdminEditCollectionComponent} from './admin-edit-collection/admin-edit-collection.component';
 import {CollectionAdminComponent} from './collection-admin/collection-admin.component';
 import {AdminReadExercisesComponent} from './admin-read-exercises/admin-read-exercises.component';
-import {Routes} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
+import {NgModule} from '@angular/core';
 
-export const adminRoutes: Routes = [
-  {path: 'admin', component: AdminIndexComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId', component: CollectionToolAdminComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/readCollections', component: AdminReadCollectionsComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/collections/:collId/editForm', component: AdminEditCollectionComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/collections/:collId/exercises', component: CollectionAdminComponent, canActivate: [AdminAuthGuard]},
-  {path: 'admin/:toolId/collections/:collId/readExercises', component: AdminReadExercisesComponent, canActivate: [AdminAuthGuard]},
+const adminRoutes: Routes = [
+  {
+    path: 'admin', canActivate: [AdminAuthGuard],
+    children: [
+      {path: '', component: AdminIndexComponent},
+      {path: ':toolId', component: CollectionToolAdminComponent},
+      {path: ':toolId/readCollections', component: AdminReadCollectionsComponent},
+      {path: ':toolId/collections/:collId/editForm', component: AdminEditCollectionComponent},
+      {path: ':toolId/collections/:collId/exercises', component: CollectionAdminComponent},
+      {path: ':toolId/collections/:collId/readExercises', component: AdminReadExercisesComponent},
+    ]
+  }
 ];
+
+@NgModule({
+  imports: [RouterModule.forChild(adminRoutes)],
+  exports: [RouterModule]
+})
+export class AdminRoutingModule {
+}
 
 export const adminRoutingComponents = [
   AdminIndexComponent,
