@@ -3,13 +3,13 @@ import {ApiService} from '../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DexieService} from '../../../_services/dexie.service';
 import {ExerciseComponentHelpers} from '../_helpers/ExerciseComponentHelpers';
-import {Exercise, ExerciseCollection, ExerciseContent} from '../../../_interfaces/exercise';
+import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
 
 @Component({templateUrl: './collection-overview.component.html'})
-export class CollectionOverviewComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
+export class CollectionOverviewComponent extends ExerciseComponentHelpers implements OnInit {
 
-  collection: ExerciseCollection;
-  exercises: Exercise<ExerciseContent>[];
+  collection: IExerciseCollection;
+  exercises: IExercise[];
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
     super(route);
@@ -22,12 +22,12 @@ export class CollectionOverviewComponent extends ExerciseComponentHelpers<Exerci
 
   private updateExercises(): void {
     this.apiService.getExercises(this.tool.id, this.collection.id)
-      .subscribe((exercises: Exercise<any>[]) => this.exercises = exercises);
+      .subscribe((exercises: IExercise[]) => this.exercises = exercises);
   }
 
   private fetchCollection(collId: number): void {
     this.apiService.getCollection(this.tool.id, collId)
-      .subscribe((collection: ExerciseCollection | undefined) => {
+      .subscribe((collection: IExerciseCollection | undefined) => {
         if (collection) {
           this.collection = collection;
           this.updateExercises();
@@ -42,7 +42,7 @@ export class CollectionOverviewComponent extends ExerciseComponentHelpers<Exerci
     const collId: number = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
 
     this.dexieService.collections.get([this.tool.id, collId])
-      .then((maybeCollection: ExerciseCollection | undefined) => {
+      .then((maybeCollection: IExerciseCollection | undefined) => {
         if (maybeCollection) {
           this.collection = maybeCollection;
           this.updateExercises();

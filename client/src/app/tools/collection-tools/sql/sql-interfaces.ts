@@ -1,10 +1,6 @@
 import {AnalysisResult, CorrectionResult, MatchingResult} from '../../basics';
-import {DbSolution, ExerciseContent} from '../../../_interfaces/exercise';
+import {DbSolution} from '../../../_interfaces/exercise';
 import {SuccessType} from '../../../_interfaces/tool';
-
-// tslint:disable-next-line:no-empty-interface
-export interface SqlExerciseContent extends ExerciseContent {
-}
 
 interface ExecutionResultsObject {
   success: SuccessType;

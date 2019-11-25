@@ -2,13 +2,13 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../_services/api.service';
 import {ExerciseComponentHelpers} from '../_helpers/ExerciseComponentHelpers';
-import {Exercise, ExerciseContent} from '../../../_interfaces/exercise';
+import {IExercise} from '../../../_interfaces/models';
 
 @Component({templateUrl: './exercise-overview.component.html'})
-export class ExerciseOverviewComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
+export class ExerciseOverviewComponent extends ExerciseComponentHelpers implements OnInit {
 
   collectionId: number;
-  exercise: Exercise<any>;
+  exercise: IExercise;
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService) {
     super(route);
@@ -23,9 +23,9 @@ export class ExerciseOverviewComponent extends ExerciseComponentHelpers<Exercise
   ngOnInit() {
     const exerciseId = parseInt(this.route.snapshot.paramMap.get('exId'), 10);
 
-    this.apiService.getExercise<any>(this.tool.id, this.collectionId, exerciseId)
+    this.apiService.getExercise(this.tool.id, this.collectionId, exerciseId)
       .subscribe((exercise) => {
-        console.info(JSON.stringify(exercise.content, null, 2));
+        // console.info(JSON.stringify(exercise.content, null, 2));
 
         this.exercise = exercise;
       });

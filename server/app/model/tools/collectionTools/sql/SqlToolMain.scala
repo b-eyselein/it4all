@@ -1,16 +1,13 @@
 package model.tools.collectionTools.sql
 
-import model._
-import model.core.result.EvaluationResult
 import model.points.Points
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
+import model.{StringUserSolution, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.libs.json._
-import play.api.mvc._
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
 
@@ -32,10 +29,8 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
   override type ExContentType = SqlExerciseContent
 
   override type SolType = String
-  override type SampleSolType = StringSampleSolution
   override type UserSolType = StringUserSolution[SqlExPart]
 
-  override type ResultType = EvaluationResult
   override type CompResultType = SqlCorrResult
 
 
@@ -52,19 +47,16 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
 
   // Correction
 
-  override protected def readSolution(request: Request[AnyContent], part: SqlExPart): Either[String, SolType] = request.body.asJson match {
-    case None          => Left("Body did not contain json!")
-    case Some(jsValue) => jsValue match {
-      case JsString(value) => Right(value)
-      case other           => Left(s"Json was no string but ${other}")
-    }
+  override protected def readSolution(jsValue: JsValue, part: SqlExPart): Either[String, SolType] = jsValue match {
+    case JsString(value) => Right(value)
+    case other           => Left(s"Json was no string but ${other}")
   }
 
   override protected def correctEx(
     user: User, learnerSolution: SolType, sqlScenario: ExerciseCollection, exercise: Exercise, content: SqlExerciseContent, part: SqlExPart
   )(implicit executionContext: ExecutionContext): Future[Try[SqlCorrResult]] = correctorsAndDaos.get(content.exerciseType) match {
     case None                   => Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${content.exerciseType}")))
-    case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, content.sampleSolutions, content, sqlScenario)
+    case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, content, sqlScenario)
   }
 
   // Other helper methods

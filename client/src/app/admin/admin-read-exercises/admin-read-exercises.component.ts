@@ -3,14 +3,14 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
 import {ReadExerciseComponent} from './read-exercise/read-exercise.component';
-import {Exercise, ExerciseCollection, ExerciseContent} from '../../_interfaces/exercise';
 import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
+import {IExercise, IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './admin-read-exercises.component.html'})
-export class AdminReadExercisesComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
+export class AdminReadExercisesComponent extends ExerciseComponentHelpers implements OnInit {
 
-  collection: ExerciseCollection;
-  exercises: Exercise<any>[];
+  collection: IExerciseCollection;
+  exercises: IExercise[];
 
   @ViewChildren(ReadExerciseComponent) readExercises: QueryList<ReadExerciseComponent>;
 
@@ -24,7 +24,7 @@ export class AdminReadExercisesComponent extends ExerciseComponentHelpers<Exerci
 
   private getCollectionFromServer(collId: number): void {
     this.apiService.getCollection(this.tool.id, collId)
-      .subscribe((maybeServerCollection: ExerciseCollection | undefined) => {
+      .subscribe((maybeServerCollection: IExerciseCollection | undefined) => {
         if (maybeServerCollection) {
           this.collection = maybeServerCollection;
           this.loadExercises();

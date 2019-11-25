@@ -1,19 +1,18 @@
 import {Component, OnInit} from '@angular/core';
-import {UmlExerciseContent} from '../uml-interfaces';
 import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
 import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
-import {Exercise, ExerciseCollection} from '../../../../_interfaces/exercise';
 
 import * as $ from 'jquery';
 import * as joint from 'jointjs';
+import {IExercise, IExerciseCollection} from '../../../../_interfaces/models';
 
 
 @Component({templateUrl: './uml-exercise.component.html'})
-export class UmlExerciseComponent extends ExerciseComponentHelpers<UmlExerciseContent> implements OnInit {
+export class UmlExerciseComponent extends ExerciseComponentHelpers implements OnInit {
 
-  collection: ExerciseCollection;
-  exercise: Exercise<UmlExerciseContent>;
+  collection: IExerciseCollection;
+  exercise: IExercise;
 
   model: joint.dia.Graph = new joint.dia.Graph();
   paper: joint.dia.Paper;

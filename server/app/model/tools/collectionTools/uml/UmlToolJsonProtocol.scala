@@ -6,32 +6,7 @@ import model.tools.collectionTools.ToolJsonProtocol
 import model.tools.collectionTools.uml.matcher.{UmlAssociationMatch, UmlClassMatch, UmlImplementationMatch}
 import play.api.libs.json._
 
-object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExPart, UmlExerciseContent, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlCompleteResult] {
-
-  val umlClassDiagramJsonFormat: Format[UmlClassDiagram] = {
-
-    implicit val ucf: Format[UmlClass] = {
-      implicit val uaf: Format[UmlAttribute] = Json.format[UmlAttribute]
-
-      implicit val umf: Format[UmlMethod] = Json.format[UmlMethod]
-
-      Json.format[UmlClass]
-    }
-
-    implicit val uif: Format[UmlImplementation] = Json.format[UmlImplementation]
-
-    implicit val uaf: Format[UmlAssociation] = Json.format[UmlAssociation]
-
-    Json.format[UmlClassDiagram]
-  }
-
-  // Other
-
-  override val sampleSolutionFormat: Format[UmlSampleSolution] = {
-    implicit val ucdf: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
-
-    Json.format[UmlSampleSolution]
-  }
+object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExPart, UmlExerciseContent, UmlClassDiagram, UmlUserSolution, UmlCompleteResult] {
 
   override val userSolutionFormat: Format[UmlUserSolution] = {
     implicit val uepf: Format[UmlExPart]       = UmlExParts.jsonFormat
@@ -42,7 +17,11 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExPart, UmlExerciseConten
   }
 
   override val exerciseContentFormat: Format[UmlExerciseContent] = {
-    implicit val ussf: Format[UmlSampleSolution] = sampleSolutionFormat
+    implicit val ussf: Format[UmlSampleSolution] = {
+      implicit val ucdf: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
+
+      Json.format[UmlSampleSolution]
+    }
 
     Json.format[UmlExerciseContent]
   }

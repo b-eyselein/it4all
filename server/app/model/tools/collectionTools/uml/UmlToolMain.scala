@@ -6,11 +6,9 @@ import model.points.Points
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
-import play.api.libs.json.{JsError, JsSuccess}
-import play.api.mvc._
+import play.api.libs.json.{JsError, JsSuccess, JsValue}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 
 object UmlToolMain extends CollectionToolMain(UmlConsts) {
@@ -22,12 +20,9 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
   override type PartType = UmlExPart
   override type ExContentType = UmlExerciseContent
 
-
   override type SolType = UmlClassDiagram
-  override type SampleSolType = UmlSampleSolution
   override type UserSolType = UmlUserSolution
 
-  override type ResultType = EvaluationResult
   override type CompResultType = UmlCompleteResult
 
   // Other members
@@ -36,7 +31,7 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[UmlExPart, UmlExerciseContent, UmlClassDiagram, UmlSampleSolution, UmlUserSolution, UmlCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[UmlExPart, UmlExerciseContent, UmlClassDiagram, UmlUserSolution, UmlCompleteResult] =
     UmlToolJsonProtocol
 
   override protected val exerciseContentYamlFormat: YamlFormat[UmlExerciseContent] = UmlExYamlProtocol.umlExerciseYamlFormat
@@ -56,17 +51,13 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
 
   // Correction
 
-  override def readSolution(request: Request[AnyContent], part: UmlExPart): Either[String, UmlClassDiagram] = request.body.asJson match {
-    case None          => Left("Body did not contain json!")
-    case Some(jsValue) =>
-
-      UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat.reads(jsValue) match {
-        case JsSuccess(ucd, _) => Right(ucd)
-        case JsError(errors)   =>
-          errors.foreach(error => logger.error(s"Json Error: $error"))
-          Left(errors.toString())
-      }
-  }
+  override def readSolution(jsValue: JsValue, part: UmlExPart): Either[String, UmlClassDiagram] =
+    UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat.reads(jsValue) match {
+      case JsSuccess(ucd, _) => Right(ucd)
+      case JsError(errors)   =>
+        errors.foreach(error => logger.error(s"Json Error: $error"))
+        Left(errors.toString())
+    }
 
   override def correctEx(
     user: User, classDiagram: UmlClassDiagram, collection: ExerciseCollection, exercise: Exercise, content: UmlExerciseContent, part: UmlExPart

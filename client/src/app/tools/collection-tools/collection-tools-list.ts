@@ -1,4 +1,4 @@
-import {CollectionTool, Tool} from '../../_interfaces/tool';
+import {CollectionTool} from '../../_interfaces/tool';
 import {ProgrammingTool} from './programming/programming-tool';
 import {XmlTool} from './xml/xml-tool';
 import {WebTool} from './web/web-tool';
@@ -9,7 +9,7 @@ import {UmlTool} from './uml/uml-tools';
 
 // All Tools
 
-export const collectionTools: CollectionTool<any>[] = [
+export const collectionTools: CollectionTool[] = [
   ProgrammingTool,
   RegexTool,
   RoseTool,

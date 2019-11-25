@@ -1,6 +1,6 @@
 package model.tools.collectionTools
 
-import model.{ExerciseState, SemanticVersion}
+import model.SemanticVersion
 
 final case class BaseValues(
   id: Int,
@@ -10,7 +10,6 @@ final case class BaseValues(
 
   author: String,
   text: String,
-  state: ExerciseState
 )
 
 final case class ApiExerciseBasics(

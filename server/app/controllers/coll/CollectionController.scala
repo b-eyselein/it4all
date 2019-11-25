@@ -57,7 +57,7 @@ class CollectionController @Inject()(
       }
 
       futureClassDiagram.map { classDiagram =>
-        Ok(Json.prettyPrint(UmlToolJsonProtocol.umlClassDiagramJsonFormat.writes(classDiagram))).as("text/javascript")
+        Ok(Json.prettyPrint(UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat.writes(classDiagram))).as("text/javascript")
       }
   }
 

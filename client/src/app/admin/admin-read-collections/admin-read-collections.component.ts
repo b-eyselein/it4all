@@ -3,12 +3,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {ReadCollectionComponent} from './read-collection/read-collection.component';
 import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
-import {ExerciseCollection, ExerciseContent} from '../../_interfaces/exercise';
+import {IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './admin-read-collections.component.html'})
-export class AdminReadCollectionsComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
+export class AdminReadCollectionsComponent extends ExerciseComponentHelpers implements OnInit {
 
-  loadedCollections: ExerciseCollection[];
+  loadedCollections: IExerciseCollection[];
 
   @ViewChildren(ReadCollectionComponent) readCollectionComponents: QueryList<ReadCollectionComponent>;
 

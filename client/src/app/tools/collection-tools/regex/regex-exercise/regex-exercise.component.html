@@ -26,9 +26,7 @@
           </button>
         </div>
         <div class="column">
-          <a [routerLink]="['/tools', tool.id, 'collections', collId]" class="button is-dark is-fullwidth">
-            Bearbeiten beenden
-          </a>
+          <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
         </div>
       </div>
 
@@ -36,7 +34,7 @@
         <h2 class="subtitle is-4 has-text-centered">Musterlösungen</h2>
 
         <div class="columns is-multiline">
-          <div class="column is-half" *ngFor="let sampleSolution of exercise.sampleSolutions">
+          <div class="column is-half" *ngFor="let sampleSolution of exerciseContent.sampleSolutions">
             <div class="notification is-dark">
               <code>{{sampleSolution.sample}}</code>
             </div>

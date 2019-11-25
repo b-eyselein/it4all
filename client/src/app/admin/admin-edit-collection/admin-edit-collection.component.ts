@@ -3,12 +3,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
 import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
-import {ExerciseCollection, ExerciseContent} from '../../_interfaces/exercise';
+import {IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './admin-edit-collection.component.html'})
-export class AdminEditCollectionComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
+export class AdminEditCollectionComponent extends ExerciseComponentHelpers implements OnInit {
 
-  collection: ExerciseCollection;
+  collection: IExerciseCollection;
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
     super(route);
@@ -20,7 +20,7 @@ export class AdminEditCollectionComponent extends ExerciseComponentHelpers<Exerc
 
   private fetchCollection(collId: number): void {
     this.apiService.getCollection(this.tool.id, collId)
-      .subscribe((collection: ExerciseCollection | undefined) => {
+      .subscribe((collection: IExerciseCollection | undefined) => {
         if (this.collection) {
           this.collection = collection;
         } else {

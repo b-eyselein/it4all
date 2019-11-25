@@ -1,6 +1,5 @@
 package model
 
-import model.tools.collectionTools.{ApiExerciseBasics, ExerciseCollection}
 import play.api.libs.json.{Format, Json}
 
 object JsonProtocol {

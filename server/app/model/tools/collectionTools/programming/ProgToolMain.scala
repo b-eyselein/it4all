@@ -5,7 +5,6 @@ import model.points.Points
 import model.tools.collectionTools._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -19,10 +18,8 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
   override type ExContentType = ProgExerciseContent
 
   override type SolType = ProgSolution
-  override type SampleSolType = ProgSampleSolution
   override type UserSolType = ProgUserSolution
 
-  override type ResultType = ProgEvalResult
   override type CompResultType = ProgCompleteResult
 
   // Other members
@@ -31,7 +28,7 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
   // Yaml, Html Forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[ProgExPart, ProgExerciseContent, ProgSolution, ProgSampleSolution, ProgUserSolution, ProgCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[ProgExPart, ProgExerciseContent, ProgSolution, ProgUserSolution, ProgCompleteResult] =
     ProgrammingToolJsonProtocol
 
   override protected val exerciseContentYamlFormat: YamlFormat[ProgExerciseContent] = ProgExYamlProtocol.programmingExerciseYamlFormat
@@ -53,15 +50,11 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
   // Db
 
-  override protected def readSolution(request: Request[AnyContent], part: ProgExPart): Either[String, ProgSolution] = request.body.asJson match {
-    case None          => Left("Body did not contain json!")
-    case Some(jsValue) =>
-
-      ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
-        case JsError(errors)        => Left(errors.toString())
-        case JsSuccess(solution, _) => Right(ProgSolution(solution.files, Seq.empty))
-      }
-  }
+  override protected def readSolution(jsValue: JsValue, part: ProgExPart): Either[String, ProgSolution] =
+    ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
+      case JsError(errors)        => Left(errors.toString())
+      case JsSuccess(solution, _) => Right(ProgSolution(solution.files, Seq.empty))
+    }
 
   override protected def correctEx(
     user: User, sol: ProgSolution, collection: ExerciseCollection, exercise: Exercise, content: ProgExerciseContent, part: ProgExPart

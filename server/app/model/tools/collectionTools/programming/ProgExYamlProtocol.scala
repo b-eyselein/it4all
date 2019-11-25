@@ -1,11 +1,9 @@
 package model.tools.collectionTools.programming
 
-import java.nio.file.{Path, Paths}
-
 import model._
 import model.tools.collectionTools.programming.ProgDataTypes.NonGenericProgDataType
 import model.tools.collectionTools.uml.UmlClassDiagram
-import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol, ToolYamlProtocol}
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol}
 import net.jcazevedo.moultingyaml._
 import play.api.libs.json.JsValue
 
@@ -13,7 +11,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   import DefaultYamlProtocol._
 
-  private val basePath: Path = Paths.get("conf", "resources", "programming")
+  //  private val basePath: Path = Paths.get("conf", "resources", "programming")
 
   val progDataTypeYamlFormat: YamlFormat[ProgDataType] = new YamlFormat[ProgDataType] {
 
@@ -38,7 +36,6 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   }
 
-
   private val progInputYamlFormat: YamlFormat[ProgInput] = {
     implicit val pdtyf: YamlFormat[ProgDataType] = progDataTypeYamlFormat
 
@@ -46,10 +43,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   }
 
   private val unitTestPartYamlFormat: YamlFormat[UnitTestPart] = {
-    implicit val efyf: YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
-
-    implicit val uttyf: YamlFormat[UnitTestType] = new EnumYamlFormat(UnitTestTypes)
-
+    implicit val efyf  : YamlFormat[ExerciseFile]       = ExerciseFileYamlProtocol.exerciseFileYamlFormat
+    implicit val uttyf : YamlFormat[UnitTestType]       = new EnumYamlFormat(UnitTestTypes)
     implicit val uttcyf: YamlFormat[UnitTestTestConfig] = yamlFormat4(UnitTestTestConfig)
 
     yamlFormat6(UnitTestPart)
@@ -61,30 +56,24 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     yamlFormat4(ImplementationPart)
   }
 
+  private val progTestDataYamlFormat: YamlFormat[ProgTestData] = {
+    implicit val jyf: YamlFormat[JsValue] = jsonValueYamlFormat
+
+    yamlFormat3(ProgTestData)
+  }
+
+
   private val progSampleSolutionYamlFormat: YamlFormat[ProgSampleSolution] = {
 
     implicit val progSolutionYamlFormat: YamlFormat[ProgSolution] = {
-      implicit val efyf: YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
-
-      implicit val putdyf: YamlFormat[ProgUserTestData] = {
-        implicit val jyf: YamlFormat[JsValue] = jsonValueYamlFormat
-
-        implicit val esyf: YamlFormat[ExerciseState] = ToolYamlProtocol.exerciseStateYamlFormat
-
-        yamlFormat4(ProgUserTestData)
-      }
+      implicit val efyf  : YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
+      implicit val putdyf: YamlFormat[ProgTestData] = progTestDataYamlFormat
 
       yamlFormat2(ProgSolution)
     }
 
     yamlFormat2(ProgSampleSolution)
 
-  }
-
-  private val progSampleTestDataYamlFormat: YamlFormat[ProgSampleTestData] = {
-    implicit val jyf: YamlFormat[JsValue] = jsonValueYamlFormat
-
-    yamlFormat3(ProgSampleTestData)
   }
 
   val programmingExerciseYamlFormat: YamlFormat[ProgExerciseContent] = {
@@ -94,7 +83,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     implicit val utpyf : YamlFormat[UnitTestPart]       = unitTestPartYamlFormat
     implicit val ipyf  : YamlFormat[ImplementationPart] = implementationPartYamlFormat
     implicit val pssyf : YamlFormat[ProgSampleSolution] = progSampleSolutionYamlFormat
-    implicit val pstdyf: YamlFormat[ProgSampleTestData] = progSampleTestDataYamlFormat
+    implicit val pstdyf: YamlFormat[ProgTestData] = progTestDataYamlFormat
 
     implicit val ucdyf: YamlFormat[UmlClassDiagram] = new YamlFormat[UmlClassDiagram] {
 

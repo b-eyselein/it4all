@@ -1,16 +1,16 @@
 import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DbProgrammingSolution, ProgrammingCorrectionResult, ProgrammingExerciseContent} from '../programming-interfaces';
+import {DbProgrammingSolution, ProgrammingCorrectionResult} from '../programming-interfaces';
 import {ApiService} from '../../_services/api.service';
 import {ExerciseFile, IdeWorkspace} from '../../../basics';
 import {DexieService} from '../../../../_services/dexie.service';
 import {TabComponent} from '../../../../shared/tab/tab.component';
 import {TabsComponent} from '../../../../shared/tabs/tabs.component';
 import {ProgrammingImplementationToolPart, ProgrammingTool} from '../programming-tool';
-import {Exercise, ExerciseCollection} from '../../../../_interfaces/exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
 
 import 'codemirror/mode/python/python';
+import {IExercise, IExerciseCollection} from '../../../../_interfaces/models';
 
 @Component({
   selector: 'it4all-programming-exercise',
@@ -19,8 +19,8 @@ import 'codemirror/mode/python/python';
 })
 export class ProgrammingExerciseComponent implements OnInit {
 
-  @Input() collection: ExerciseCollection;
-  @Input() exercise: Exercise<ProgrammingExerciseContent>;
+  @Input() collection: IExerciseCollection;
+  @Input() exercise: IExercise;
 
   @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;

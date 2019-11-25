@@ -2,9 +2,8 @@ package model.tools.collectionTools.sql
 
 import model.core.matching.{Match, MatchingResult}
 import model.points._
-import model.tools.collectionTools.sql.matcher._
-import model.StringSampleSolution
 import model.tools.collectionTools.ExerciseCollection
+import model.tools.collectionTools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
@@ -20,17 +19,18 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, allSampleSolutions: Seq[StringSampleSolution], exercise: SqlExerciseContent, scenario: ExerciseCollection)
+  def correct(database: SqlExecutionDAO, learnerSolution: String, exercise: SqlExerciseContent, scenario: ExerciseCollection)
              (implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
-    parseStatement(learnerSolution) flatMap checkStatement match {
+    parseStatement(learnerSolution)
+      .flatMap(checkStatement) match {
       case Failure(error) => SqlParseFailed(error, (-1).points)
       case Success(userQ) =>
 
-        val userColumns = getColumnWrappers(userQ)
-        val userTables = getTables(userQ)
+        val userColumns         = getColumnWrappers(userQ)
+        val userTables          = getTables(userQ)
         val userJoinExpressions = getJoinExpressions(userQ)
-        val userExpressions = getExpressions(userQ)
-        val userTableAliases = resolveAliases(userTables)
+        val userExpressions     = getExpressions(userQ)
+        val userTableAliases    = resolveAliases(userTables)
 
         val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.sampleSolutions.map { sqlSample =>
           parseStatement(sqlSample.sample) flatMap checkStatement match {
@@ -60,10 +60,10 @@ abstract class QueryCorrector(val queryType: String) {
                                       userJoinExpressions: Seq[BinaryExpression], userExpressions: Seq[BinaryExpression],
                                       userTableAliases: Map[String, String]): SqlQueriesStaticComparison[Q] = {
 
-    val sampleColumns = getColumnWrappers(sampleQ)
-    val sampleTables = getTables(sampleQ)
-    val sampleJoinExpressions = getJoinExpressions(sampleQ)
-    val sampleExpressions = getExpressions(sampleQ)
+    val sampleColumns                       = getColumnWrappers(sampleQ)
+    val sampleTables                        = getTables(sampleQ)
+    val sampleJoinExpressions               = getJoinExpressions(sampleQ)
+    val sampleExpressions                   = getExpressions(sampleQ)
     val sampleTAliases: Map[String, String] = resolveAliases(sampleTables)
 
     SqlQueriesStaticComparison(userQ, sampleQ,

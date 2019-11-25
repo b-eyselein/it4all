@@ -6,7 +6,7 @@ import model.core.CoreConsts._
 import model.core.{LongText, LongTextJsonProtocol}
 import model.learningPath.LearningPathTableDefs
 import model.tools.collectionTools._
-import model.tools.collectionTools.uml.{UmlClassDiagram, UmlToolJsonProtocol}
+import model.tools.collectionTools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
 import slick.jdbc.JdbcProfile
@@ -62,10 +62,6 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
   }
 
 
-  //  protected implicit val partTypeColumnType: BaseColumnType[ExPart]
-
-  protected val exerciseStateColumnType: BaseColumnType[ExerciseState] = jsonColumnType(ExerciseState.jsonFormat)
-
   protected val semanticVersionColumnType: BaseColumnType[SemanticVersion] = jsonColumnType(ToolJsonProtocol.semanticVersionFormat)
 
   protected val difficultyColumnType: BaseColumnType[Difficulty] = jsonColumnType(Difficulties.jsonFormat)
@@ -74,17 +70,11 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
   protected val jsonValueColumnType: BaseColumnType[JsValue] = jsonColumnType(Format[JsValue](x => JsSuccess(x), identity))
 
-  protected val umlClassDiagramColumnType: BaseColumnType[UmlClassDiagram] = jsonColumnType(UmlToolJsonProtocol.umlClassDiagramJsonFormat)
-
   // Abstract table classes
 
   protected final class ExerciseCollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
 
-    private implicit val esct: BaseColumnType[ExerciseState] = exerciseStateColumnType
-
-
     def id: Rep[Int] = column[Int](idName)
-
 
     def toolId: Rep[String] = column[String]("tool_id")
 
@@ -94,21 +84,18 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def text: Rep[String] = column[String]("ex_text")
 
-    def state: Rep[ExerciseState] = column[ExerciseState]("state_json")
-
     def shortName: Rep[String] = column[String]("short_name")
 
 
     def pk = primaryKey("ex_coll_pk", (id, toolId))
 
 
-    override def * : ProvenShape[ExerciseCollection] = (id, toolId, title, author, text, state, shortName) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
+    override def * : ProvenShape[ExerciseCollection] = (id, toolId, title, author, text, shortName) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
 
   }
 
   protected final class ExercisesTable(tag: Tag) extends Table[Exercise](tag, "exercises") {
 
-    private implicit val esct: BaseColumnType[ExerciseState]   = exerciseStateColumnType
     private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
     private implicit val ltct: BaseColumnType[LongText]        = longTextColumnType
     private implicit val jvct: BaseColumnType[JsValue]         = jsonValueColumnType
@@ -129,8 +116,6 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def text: Rep[LongText] = column[LongText]("ex_text")
 
-    def state: Rep[ExerciseState] = column[ExerciseState]("state_json")
-
 
     def content: Rep[JsValue] = column[JsValue]("content_json")
 
@@ -140,7 +125,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
     def collectionFk: ForeignKeyQuery[ExerciseCollectionsTable, ExerciseCollection] = foreignKey("scenario_fk", (collectionId, toolId), collTable)(c => (c.id, c.toolId))
 
 
-    override def * : ProvenShape[Exercise] = (id, collectionId, toolId, semanticVersion, title, author, text, state, content) <> (Exercise.tupled, Exercise.unapply)
+    override def * : ProvenShape[Exercise] = (id, collectionId, toolId, semanticVersion, title, author, text, content) <> (Exercise.tupled, Exercise.unapply)
 
   }
 

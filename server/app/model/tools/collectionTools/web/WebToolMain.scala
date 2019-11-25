@@ -12,8 +12,7 @@ import model.tools.collectionTools._
 import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.api.libs.json.{JsError, JsSuccess}
-import play.api.mvc.{AnyContent, Request}
+import play.api.libs.json.{JsError, JsSuccess, JsValue}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -24,10 +23,8 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
   override type ExContentType = WebExerciseContent
 
   override type SolType = Seq[ExerciseFile]
-  override type SampleSolType = FilesSampleSolution
   override type UserSolType = FilesUserSolution[WebExPart]
 
-  override type ResultType = GradedWebTaskResult
   override type CompResultType = WebCompleteResult
 
   // Other members
@@ -82,14 +79,11 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
   override def instantiateSolution(id: Int, exercise: Exercise, part: WebExPart, solution: Seq[ExerciseFile], points: Points, maxPoints: Points): FilesUserSolution[WebExPart] =
     FilesUserSolution[WebExPart](id, part, solution, points, maxPoints)
 
-  override protected def readSolution(request: Request[AnyContent], part: WebExPart): Either[String, Seq[ExerciseFile]] = request.body.asJson match {
-    case None          => Left("Body did not contain json!")
-    case Some(jsValue) =>
-      ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
-        case JsSuccess(x, _) => Right(x.files)
-        case JsError(errors) => Left(errors.toString())
-      }
-  }
+  override protected def readSolution(jsValue: JsValue, part: WebExPart): Either[String, Seq[ExerciseFile]] =
+    ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
+      case JsSuccess(x, _) => Right(x.files)
+      case JsError(errors) => Left(errors.toString())
+    }
 
   private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
     case syntaxError: WebDriverException =>

@@ -1,7 +1,5 @@
 package model.tools.collectionTools
 
-import model.ExerciseState
-
 
 final case class ExerciseCollection(
   id: Int,
@@ -9,6 +7,5 @@ final case class ExerciseCollection(
   title: String,
   author: String,
   text: String,
-  state: ExerciseState,
   shortName: String
 )

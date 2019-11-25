@@ -1,9 +1,9 @@
 package model.tools.collectionTools
 
+import model._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.{LongText, LongTextJsonProtocol}
 import model.points.Points
-import model.{SampleSolution, _}
 import play.api.libs.json.{Format, Json, Writes}
 
 object ToolJsonProtocol {
@@ -32,13 +32,11 @@ object ToolJsonProtocol {
 
 trait ToolJsonProtocol[
   PartType <: ExPart, EC <: ExerciseContent,
-  ST, SST <: SampleSolution[ST], UST <: UserSolution[PartType, ST],
+  ST, UST <: UserSolution[PartType, ST],
   CR <: CompleteResult[_ <: EvaluationResult]
 ] {
 
   val exerciseContentFormat: Format[EC]
-
-  val sampleSolutionFormat: Format[SST]
 
   val userSolutionFormat: Format[UST]
 
@@ -49,9 +47,9 @@ trait ToolJsonProtocol[
 abstract class StringSampleSolutionToolJsonProtocol[
   PartType <: ExPart, E <: StringExerciseContent, CR <: CompleteResult[_ <: EvaluationResult]
 ](partTypeFormat: Format[PartType])
-  extends ToolJsonProtocol[PartType, E, String, StringSampleSolution, StringUserSolution[PartType], CR] {
+  extends ToolJsonProtocol[PartType, E, String, StringUserSolution[PartType], CR] {
 
-  override val sampleSolutionFormat: Format[StringSampleSolution] = Json.format[StringSampleSolution]
+  protected val sampleSolutionFormat: Format[StringSampleSolution] = Json.format[StringSampleSolution]
 
   override val userSolutionFormat: Format[StringUserSolution[PartType]] = {
     implicit val ptf: Format[PartType] = partTypeFormat
@@ -66,9 +64,9 @@ abstract class StringSampleSolutionToolJsonProtocol[
 abstract class FilesSampleSolutionToolJsonProtocol[
   PartType <: ExPart, E <: FileExerciseContent, CR <: CompleteResult[_ <: EvaluationResult]
 ](partTypeFormat: Format[PartType])
-  extends ToolJsonProtocol[PartType, E, Seq[ExerciseFile], FilesSampleSolution, FilesUserSolution[PartType], CR] {
+  extends ToolJsonProtocol[PartType, E, Seq[ExerciseFile], FilesUserSolution[PartType], CR] {
 
-  override final val sampleSolutionFormat: Format[FilesSampleSolution] = {
+  protected val sampleSolutionFormat: Format[FilesSampleSolution] = {
     implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
 
     Json.format[FilesSampleSolution]

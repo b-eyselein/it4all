@@ -1,4 +1,4 @@
-import {Exercise, ExerciseContent} from './exercise';
+import {IExercise} from './models';
 
 export type ToolStatus = 'live' | 'alpha' | 'beta';
 
@@ -31,9 +31,9 @@ export abstract class RandomTool extends Tool {
 
 }
 
-export abstract class CollectionTool<EC extends ExerciseContent> extends Tool {
+export abstract class CollectionTool extends Tool {
 
-  exerciseHasPart(exercise: Exercise<EC>, part: ToolPart): boolean {
+  exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {
     return true;
   }
 

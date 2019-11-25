@@ -21,9 +21,27 @@ updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
+val tsiClasses = Seq(
+  "ExerciseCollection",
+  "Exercise",
+  "RegexExerciseContent",
+  "SqlExerciseContent"
+)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
-  .settings(packageName in Universal := s"${name.value}")
+  .settings(
+    packageName in Universal := s"${name.value}",
+
+    typescriptClassesToGenerateFor := tsiClasses,
+    typescriptOutputFile := baseDirectory.value.getParentFile / "client" / "src" / "app" / "_interfaces" / "models.ts",
+    typescriptGenerationImports := Seq(
+      "model.tools.collectionTools._",
+      "model.tools.collectionTools.regex._",
+      "model.tools.collectionTools.sql._",
+      "model.MyTSInterfaceTypes._"
+    )
+  )
 
 val artifactoryUrl = "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory"
 
@@ -33,7 +51,10 @@ resolvers ++= Seq(
   ("Snapshot Artifactory" at s"$artifactoryUrl/libs-snapshot/").withAllowInsecureProtocol(true),
 
   // Repo for play-json-schema-validator
-  "emueller-bintray" at "https://dl.bintray.com/emueller/maven"
+  Resolver.bintrayRepo("emueller", "maven"),
+
+  // Typescript Interfaces Plugin
+  Resolver.sonatypeRepo("snapshots")
 )
 
 libraryDependencies ++= Seq(

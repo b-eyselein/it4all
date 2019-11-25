@@ -1,19 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
-import {WebExerciseContent} from '../web-interfaces';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
-import {Exercise} from '../../../../_interfaces/exercise';
+import {IExercise} from '../../../../_interfaces/models';
 
 @Component({templateUrl: './web-exercise.component.html'})
-export class WebExerciseComponent extends ExerciseComponentHelpers<WebExerciseContent> implements OnInit {
+export class WebExerciseComponent extends ExerciseComponentHelpers implements OnInit {
 
   collId: number;
   exId: number;
 
-  exercise: Exercise<WebExerciseContent>;
+  exercise: IExercise;
 
   constructor(private route: ActivatedRoute, private apiService: ApiService) {
     super(route);
@@ -23,8 +22,8 @@ export class WebExerciseComponent extends ExerciseComponentHelpers<WebExerciseCo
   }
 
   ngOnInit(): void {
-    this.apiService.getExercise<WebExerciseContent>(this.tool.id, this.collId, this.exId)
-      .subscribe((ex: Exercise<WebExerciseContent>) => this.exercise = ex);
+    this.apiService.getExercise(this.tool.id, this.collId, this.exId)
+      .subscribe((ex: IExercise) => this.exercise = ex);
   }
 
   correct(): void {

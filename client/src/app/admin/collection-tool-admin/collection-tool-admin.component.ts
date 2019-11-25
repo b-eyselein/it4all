@@ -3,12 +3,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
 import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
-import {ExerciseCollection, ExerciseContent} from '../../_interfaces/exercise';
+import {IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './collection-tool-admin.component.html'})
-export class CollectionToolAdminComponent extends ExerciseComponentHelpers<ExerciseContent> implements OnInit {
+export class CollectionToolAdminComponent extends ExerciseComponentHelpers implements OnInit {
 
-  collections: ExerciseCollection[] = [];
+  collections: IExerciseCollection[] = [];
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
     super(route);
@@ -20,7 +20,7 @@ export class CollectionToolAdminComponent extends ExerciseComponentHelpers<Exerc
 
   private fetchExerciseBasics(): void {
     this.collections.forEach((collection) => {
-      this.apiService.getExercises<any>(this.tool.id, collection.id)
+      this.apiService.getExercises(this.tool.id, collection.id)
         .subscribe((exerciseBasics) => collection.exercises = exerciseBasics);
     });
   }

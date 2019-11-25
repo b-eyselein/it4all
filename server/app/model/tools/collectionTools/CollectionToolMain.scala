@@ -7,7 +7,7 @@ import model.points._
 import model.tools.{AToolMain, ToolConsts}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
-import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,6 +17,8 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   private val logger = Logger(classOf[CollectionToolMain])
 
+  protected type JsErrorType = scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])]
+
   // Abstract types
 
   type ExContentType <: ExerciseContent
@@ -25,13 +27,9 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   type SolType
 
-  type SampleSolType <: SampleSolution[SolType]
-
   type UserSolType <: UserSolution[PartType, SolType]
 
-  type ResultType <: EvaluationResult
-
-  type CompResultType <: CompleteResult[ResultType]
+  type CompResultType <: CompleteResult[_ <: EvaluationResult]
 
   // Values
 
@@ -39,15 +37,13 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Yaml, Html forms, Json
 
-  protected val toolJsonProtocol: ToolJsonProtocol[PartType, ExContentType, SolType, SampleSolType, UserSolType, CompResultType]
+  protected val toolJsonProtocol: ToolJsonProtocol[PartType, ExContentType, SolType, UserSolType, CompResultType]
 
   protected val exerciseContentYamlFormat: YamlFormat[ExContentType]
 
   def exerciseContentFormat: Format[ExContentType] = toolJsonProtocol.exerciseContentFormat
 
   def exerciseFormat: Format[Exercise] = ToolJsonProtocol.exerciseFormat
-
-  def sampleSolutionJsonFormat: Format[SampleSolType] = toolJsonProtocol.sampleSolutionFormat
 
   // Other helper methods
 
@@ -59,36 +55,33 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Correction
 
-  def correctAbstract(user: User, collection: ExerciseCollection, exercise: Exercise, part: PartType)
-                     (implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[CompResultType]] = {
+  def correctAbstract(
+    user: User,
+    collection: ExerciseCollection,
+    exercise: Exercise,
+    part: PartType
+  )(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[CompResultType]] = request.body.asJson match {
+    case None          => ???
+    case Some(jsValue) =>
 
-    val onError: String => Future[Try[CompResultType]] = { errorMsg =>
-      logger.error(errorMsg)
-      Future.successful(Failure(new Exception("Es gab einen Fehler bei der Übertragung ihrer Lösung!")))
-    }
-
-    val onRead: SolType => Future[Try[CompResultType]] = { solution =>
-
-      val content: ExContentType = ???
-
-      correctEx(user, solution, collection, exercise, content, part).flatMap {
-        case Failure(error) => Future.successful(Failure(error))
-        case Success(res)   =>
-
-          // FIXME: points != 0? maxPoints != 0?
-          val dbSol = instantiateSolution(id = -1, exercise, part, solution, res.points, res.maxPoints)
-
-          //FIXME: save solution!
-
-          //          tables.futureSaveUserSolution(exercise.id, exercise.semanticVersion, collection.id, user.username, dbSol).map {
-          //            solSaved => Success(updateSolSaved(res, solSaved))
-          //          }
-          Future.successful(dbSol)
-          ???
-      }
-    }
-
-    readSolution(request, part).fold(onError, onRead)
+      exerciseContentFormat.reads(exercise.content).fold(
+        {
+          errorMsgs: JsErrorType =>
+            errorMsgs.foreach(errorMsg => logger.error(errorMsg.toString()))
+            Future.successful(Failure(new Exception("TODO: internal error...")))
+        },
+        {
+          content: ExContentType =>
+            readSolution(jsValue, part)
+              .fold(
+                { errorMsg =>
+                  logger.error(errorMsg)
+                  Future.successful(Failure(new Exception("Es gab einen Fehler bei der Übertragung ihrer Lösung!")))
+                },
+                solution => correctEx(user, solution, collection, exercise, content, part)
+              )
+        }
+      )
   }
 
   protected def correctEx(
@@ -102,7 +95,7 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Reading from requests
 
-  protected def readSolution(request: Request[AnyContent], part: PartType): Either[String, SolType]
+  protected def readSolution(jsValue: JsValue, part: PartType): Either[String, SolType]
 
   // Result handlers
 
@@ -132,10 +125,5 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
   }
 
   protected def instantiateSolution(id: Int, exercise: Exercise, part: PartType, solution: SolType, points: Points, maxPoints: Points): UserSolType
-
-  // Files ?!? TODO!
-
-  def futureFilesForExercise(user: User, collId: Int, exercise: ExContentType, part: PartType): Future[LoadExerciseFilesMessage] =
-    ??? // Future.successful(Seq.empty)
 
 }

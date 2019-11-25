@@ -1,11 +1,10 @@
 import {ActivatedRoute} from '@angular/router';
 import {CollectionTool} from '../../../_interfaces/tool';
 import {collectionTools} from '../collection-tools-list';
-import {ExerciseContent} from '../../../_interfaces/exercise';
 
-export abstract class ExerciseComponentHelpers<EC extends ExerciseContent> {
+export abstract class ExerciseComponentHelpers {
 
-  readonly tool: CollectionTool<EC>;
+  readonly tool: CollectionTool;
 
   protected constructor(route: ActivatedRoute) {
     const toolId = route.snapshot.paramMap.get('toolId');

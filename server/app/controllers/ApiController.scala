@@ -69,10 +69,14 @@ class ApiController @Inject()(cc: ControllerComponents, tables: ExerciseTableDef
               case Some(exPart) =>
 
                 toolMain.correctAbstract(user, collection, exercise, exPart)(request, ec).map {
-                  case Success(result) => Ok(toolMain.onLiveCorrectionResult(result))
                   case Failure(error)  =>
                     logger.error("There has been an internal correction error:", error)
                     BadRequest(toolMain.onLiveCorrectionError(error))
+                  case Success(result) =>
+
+                    ??? // tables.futureInsertSolution()
+
+                    Ok(toolMain.onLiveCorrectionResult(result))
                 }
             }
         }

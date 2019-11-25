@@ -17,7 +17,7 @@ final case class ProgExerciseContent(
   implementationPart: ImplementationPart,
 
   sampleSolutions: Seq[ProgSampleSolution],
-  sampleTestData: Seq[ProgSampleTestData],
+  sampleTestData: Seq[ProgTestData],
 
   override val tags: Seq[ProgrammingExerciseTag],
 
@@ -52,24 +52,14 @@ final case class ImplementationPart(
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgUserTestData]) {
+final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgTestData]) {
 
   @deprecated(since = "1.0.0")
   def unitTest: ExerciseFile = files.find(_.name == "test.py").getOrElse(???)
 
 }
 
-sealed trait ProgTestData {
-
-  val id    : Int
-  val input : JsValue
-  val output: JsValue
-
-}
-
-final case class ProgSampleTestData(id: Int, input: JsValue, output: JsValue) extends ProgTestData
-
-final case class ProgUserTestData(id: Int, input: JsValue, output: JsValue, state: ExerciseState) extends ProgTestData
+final case class ProgTestData(id: Int, input: JsValue, output: JsValue)
 
 // Solution types
 
@@ -79,6 +69,6 @@ final case class ProgSampleSolution(id: Int, sample: ProgSolution) extends Sampl
 final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points)
   extends UserSolution[ProgExPart, ProgSolution] {
 
-  def commitedTestData: Seq[ProgUserTestData] = solution.testData
+  def commitedTestData: Seq[ProgTestData] = solution.testData
 
 }

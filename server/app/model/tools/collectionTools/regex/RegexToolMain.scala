@@ -1,11 +1,10 @@
 package model.tools.collectionTools.regex
 
-import model._
 import model.points._
-import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
+import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
+import model.{StringUserSolution, User}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.libs.json.JsString
-import play.api.mvc.{AnyContent, Request}
+import play.api.libs.json.{JsString, JsValue}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -16,10 +15,8 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
   override type ExContentType = RegexExerciseContent
 
   override type SolType = String
-  override type SampleSolType = StringSampleSolution
   override type UserSolType = StringUserSolution[RegexExPart]
 
-  override type ResultType = RegexEvalutationResult
   override type CompResultType = RegexCompleteResult
 
   // Members
@@ -28,7 +25,7 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[RegexExPart, RegexExerciseContent, String, StringSampleSolution, StringUserSolution[RegexExPart], RegexCompleteResult] =
+  override protected val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExPart, RegexExerciseContent, RegexCompleteResult] =
     RegexToolJsonProtocol
 
   override protected val exerciseContentYamlFormat: YamlFormat[RegexExerciseContent] = RegexToolYamlProtocol.regexExerciseYamlFormat
@@ -43,12 +40,9 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
 
   // Correction
 
-  override protected def readSolution(request: Request[AnyContent], part: RegexExPart): Either[String, String] = request.body.asJson match {
-    case None          => Left("Body did not contain json!")
-    case Some(jsValue) => jsValue match {
-      case JsString(regex) => Right(regex)
-      case other           => Left(s"Json was no string but $other")
-    }
+  override protected def readSolution(jsValue: JsValue, part: RegexExPart): Either[String, String] = jsValue match {
+    case JsString(regex) => Right(regex)
+    case other           => Left(s"Json was no string but $other")
   }
 
   override protected def correctEx(

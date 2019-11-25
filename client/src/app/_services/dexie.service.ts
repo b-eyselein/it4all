@@ -6,13 +6,14 @@ import {DbProgrammingSolution} from '../tools/collection-tools/programming/progr
 import {DbWebSolution} from '../tools/collection-tools/web/web-interfaces';
 import {DbUmlSolution} from '../tools/collection-tools/uml/uml-interfaces';
 import {DbXmlSolution} from '../tools/collection-tools/xml/xml-interfaces';
-import {DbSolution, Exercise, ExerciseCollection} from '../_interfaces/exercise';
+import {DbSolution} from '../_interfaces/exercise';
+import {IExercise, IExerciseCollection} from '../_interfaces/models';
 
 @Injectable({providedIn: 'root'})
 export class DexieService extends Dexie {
 
-  collections: Dexie.Table<ExerciseCollection, [string, number]>;
-  exercises: Dexie.Table<Exercise<any>, [string, number, number]>;
+  collections: Dexie.Table<IExerciseCollection, [string, number]>;
+  exercises: Dexie.Table<IExercise, [string, number, number]>;
   solutions: Dexie.Table<DbSolution<any>, []>;
 
   programmingSolutions: Dexie.Table<DbProgrammingSolution, [number, number]>;

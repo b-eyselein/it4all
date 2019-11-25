@@ -1,27 +1,8 @@
-import {AnalysisResult, BinaryClassificationResultType, CorrectionResult, Match, MatchingResult, StringSampleSolution} from '../../basics';
-import {DbSolution, ExerciseContent} from '../../../_interfaces/exercise';
+import {AnalysisResult, BinaryClassificationResultType, CorrectionResult, Match, MatchingResult} from '../../basics';
+import {DbSolution} from '../../../_interfaces/exercise';
 
 export type RegexCorrectionType = 'MATCHING' | 'EXTRACTION';
 
-
-export interface RegexMatchTestData {
-  id: number;
-  data: string;
-  isIncluded: boolean;
-}
-
-// tslint:disable-next-line:no-empty-interface
-export interface RegexExtractionTestData {
-
-}
-
-export interface RegexExerciseContent extends ExerciseContent {
-  maxPoints: number;
-  correctionType: RegexCorrectionType;
-  sampleSolutions: StringSampleSolution[];
-  matchTestData: RegexMatchTestData[];
-  extractionTestData: RegexExtractionTestData[];
-}
 
 export interface RegexMatchingResult {
   matchData: string;

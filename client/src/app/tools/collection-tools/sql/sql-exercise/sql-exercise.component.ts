@@ -1,25 +1,26 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {SqlCreateQueryPart} from '../sql-tool';
-import {DbSqlSolution, SqlExerciseContent, SqlResult} from '../sql-interfaces';
+import {DbSqlSolution, SqlResult} from '../sql-interfaces';
 import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
+import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
+import {ToolPart} from '../../../../_interfaces/tool';
+import {IExercise, IExerciseCollection, ISqlExerciseContent} from '../../../../_interfaces/models';
 
 import 'codemirror/mode/sql/sql';
-import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
-import {Exercise, ExerciseCollection} from '../../../../_interfaces/exercise';
-import {ToolPart} from '../../../../_interfaces/tool';
 
 @Component({
   templateUrl: './sql-exercise.component.html',
   styleUrls: ['./sql-exercise.component.sass'],
   encapsulation: ViewEncapsulation.None // style editor also
 })
-export class SqlExerciseComponent extends ExerciseComponentHelpers<SqlExerciseContent> implements OnInit {
+export class SqlExerciseComponent extends ExerciseComponentHelpers implements OnInit {
 
-  collection: ExerciseCollection;
-  exercise: Exercise<SqlExerciseContent>;
+  collection: IExerciseCollection;
+  exercise: IExercise;
+  content: ISqlExerciseContent;
   part: ToolPart = SqlCreateQueryPart;
 
   solution = '';
@@ -40,8 +41,11 @@ export class SqlExerciseComponent extends ExerciseComponentHelpers<SqlExerciseCo
     this.apiService.getCollection(this.tool.id, collId)
       .subscribe((coll) => this.collection = coll);
 
-    this.apiService.getExercise<SqlExerciseContent>(this.tool.id, collId, exId)
-      .subscribe((ex) => this.exercise = ex);
+    this.apiService.getExercise(this.tool.id, collId, exId)
+      .subscribe((ex) => {
+        this.exercise = ex;
+        this.content = ex.content as ISqlExerciseContent;
+      });
 
     this.dexieService.sqlSolutions.get([collId, exId])
       .then((solution: DbSqlSolution | undefined) => this.solution = solution ? solution.solution : '');
@@ -50,6 +54,7 @@ export class SqlExerciseComponent extends ExerciseComponentHelpers<SqlExerciseCo
   correct(): void {
     const partId = 'solve';
 
+    // noinspection JSIgnoredPromiseFromCall
     this.dexieService.sqlSolutions.put({
       toolId: this.tool.id,
       collId: this.collection.id,

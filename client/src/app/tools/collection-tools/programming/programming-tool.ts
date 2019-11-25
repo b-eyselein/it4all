@@ -1,6 +1,5 @@
 import {CollectionTool, ExerciseTag, ToolPart} from '../../../_interfaces/tool';
-import {ProgrammingExerciseContent} from './programming-interfaces';
-import {Exercise} from '../../../_interfaces/exercise';
+import {IExercise} from '../../../_interfaces/models';
 
 // Exercise Parts
 
@@ -27,13 +26,13 @@ const programmingExerciseTags: Map<string, ExerciseTag> = new Map([
 
 // Tool
 
-export const ProgrammingTool: CollectionTool<ProgrammingExerciseContent> = new (
-  class ProgrammingToolClass extends CollectionTool<ProgrammingExerciseContent> {
+export const ProgrammingTool: CollectionTool = new (
+  class ProgrammingToolClass extends CollectionTool {
     constructor() {
       super('programming', 'Programmierung', [ProgrammingTestCreationPart, ProgrammingImplementationToolPart], 'beta');
     }
 
-    exerciseHasPart(exercise: Exercise<ProgrammingExerciseContent>, part: ToolPart): boolean {
+    exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {
       if (part === ProgrammingTestCreationPart) {
         // FIXME: simplified test execution is disabled...
         return exercise.content.unitTestPart.unitTestType === 'Normal';

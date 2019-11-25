@@ -7,7 +7,6 @@ import model.tools.collectionTools.programming.ProgLanguages
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -20,10 +19,7 @@ object RoseToolMain extends CollectionToolMain(RoseConsts) {
   override type ExContentType = RoseExerciseContent
 
   override type SolType = String
-  override type SampleSolType = RoseSampleSolution
   override type UserSolType = RoseUserSolution
-
-  override type ResultType = RoseExecutionResult
 
   override type CompResultType = RoseCompleteResult
 
@@ -33,7 +29,7 @@ object RoseToolMain extends CollectionToolMain(RoseConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[RoseExPart, RoseExerciseContent, String, RoseSampleSolution, RoseUserSolution, RoseCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[RoseExPart, RoseExerciseContent, String, RoseUserSolution, RoseCompleteResult] =
     RoseToolJsonProtocol
 
   override protected val exerciseContentYamlFormat: YamlFormat[RoseExerciseContent] =
@@ -49,12 +45,9 @@ object RoseToolMain extends CollectionToolMain(RoseConsts) {
 
   // Correction
 
-  override protected def readSolution(request: Request[AnyContent], part: RoseExPart): Either[String, String] = request.body.asJson match {
-    case None          => Left("Body did not contain json!")
-    case Some(jsValue) => jsValue match {
-      case JsString(solution) => Right(solution)
-      case _                  => Left("Request body is no string!")
-    }
+  override protected def readSolution(jsValue: JsValue, part: RoseExPart): Either[String, String] = jsValue match {
+    case JsString(solution) => Right(solution)
+    case _                  => Left("Request body is no string!")
   }
 
   override protected def correctEx(

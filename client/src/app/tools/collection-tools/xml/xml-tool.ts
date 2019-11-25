@@ -1,8 +1,7 @@
 import {CollectionTool, ExerciseTag} from '../../../_interfaces/tool';
-import {XmlExerciseContent} from './xml-interfaces';
 
-export const XmlTool: CollectionTool<XmlExerciseContent> = new (
-  class XmlToolClass extends CollectionTool<XmlExerciseContent> {
+export const XmlTool: CollectionTool = new (
+  class XmlToolClass extends CollectionTool {
     constructor() {
       super('xml', 'XML', [], 'live');
     }

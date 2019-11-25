@@ -2,26 +2,6 @@ package model
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-// Exercise State
-
-sealed abstract class ExerciseState(val german: String) extends EnumEntry
-
-
-object ExerciseState extends PlayEnum[ExerciseState] {
-
-  override val values: IndexedSeq[ExerciseState] = findValues
-
-  case object RESERVED extends ExerciseState("Reserviert")
-
-  case object CREATED extends ExerciseState("Erstellt")
-
-  case object ACCEPTED extends ExerciseState("Akzeptiert")
-
-  case object APPROVED extends ExerciseState("Zugelassen")
-
-}
-
-// Difficulty
 
 sealed abstract class Difficulty(val value: Int, val german: String) extends EnumEntry
 

@@ -21,9 +21,8 @@ final case class Exercise(
   title: String,
   author: String,
   text: LongText,
-  state: ExerciseState,
 
-  // FIXME: make ContentType => JsValue!
+  // FIXME: use generic ExerciseContent?
   content: JsValue,
 )
 

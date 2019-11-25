@@ -4,8 +4,7 @@ import model._
 import model.points.Points
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.libs.json.JsString
-import play.api.mvc.{AnyContent, Request}
+import play.api.libs.json.{JsString, JsValue}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -19,10 +18,8 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
   override type ExContentType = XmlExerciseContent
 
   override type SolType = XmlSolution
-  override type SampleSolType = XmlSampleSolution
   override type UserSolType = XmlUserSolution
 
-  override type ResultType = XmlEvaluationResult
   override type CompResultType = XmlCompleteResult
 
 
@@ -33,7 +30,7 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[XmlExPart, XmlExerciseContent, XmlSolution, XmlSampleSolution, XmlUserSolution, XmlCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[XmlExPart, XmlExerciseContent, XmlSolution, XmlUserSolution, XmlCompleteResult] =
     XmlToolJsonProtocol
 
   override protected val exerciseContentYamlFormat: YamlFormat[XmlExerciseContent] = XmlExYamlProtocol.xmlExerciseYamlFormat
@@ -50,16 +47,13 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
 
   // Correction
 
-  override protected def readSolution(request: Request[AnyContent], part: XmlExPart): Either[String, XmlSolution] = request.body.asJson match {
-    case None          => Left("Body did not contain json!")
-    case Some(jsValue) => jsValue match {
-      case JsString(solution) =>
-        part match {
-          case XmlExParts.GrammarCreationXmlPart  => Right(XmlSolution(document = "", grammar = solution))
-          case XmlExParts.DocumentCreationXmlPart => Right(XmlSolution(document = solution, grammar = ""))
-        }
-      case other              => Left(s"Json was no string but $other")
-    }
+  override protected def readSolution(jsValue: JsValue, part: XmlExPart): Either[String, XmlSolution] = jsValue match {
+    case JsString(solution) =>
+      part match {
+        case XmlExParts.GrammarCreationXmlPart  => Right(XmlSolution(document = "", grammar = solution))
+        case XmlExParts.DocumentCreationXmlPart => Right(XmlSolution(document = solution, grammar = ""))
+      }
+    case other              => Left(s"Json was no string but $other")
   }
 
   override protected def correctEx(
