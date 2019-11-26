@@ -6,7 +6,7 @@
   <div class="navbar-menu">
     <div class="navbar-end">
 
-      <a [routerLink]="['/admin']" class="navbar-item" *ngIf="currentUser && currentUser.stdRole !== 'RoleUser'">
+      <a routerLink="/admin/index" class="navbar-item" *ngIf="currentUser && currentUser.stdRole !== 'RoleUser'">
         Administratorenbereich
       </a>
 

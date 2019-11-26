@@ -3,6 +3,8 @@ package model
 import model.core.LongText
 import model.tools.collectionTools.regex._
 import model.tools.collectionTools.sql.{SqlExerciseContent, SqlExerciseTag, SqlExerciseType}
+import model.tools.collectionTools.uml.{UmlAssociation, UmlAssociationType, UmlAttribute, UmlClass, UmlClassDiagram, UmlClassType, UmlExerciseContent, UmlImplementation, UmlMethod, UmlMultiplicity, UmlSampleSolution, UmlVisibility}
+import model.tools.collectionTools.xml.{XmlExerciseContent, XmlSampleSolution}
 import model.tools.collectionTools.{Exercise, ExerciseCollection}
 import nl.codestar.scalatsi.TypescriptType.{TSArray, TSUnion}
 import nl.codestar.scalatsi.{DefaultTSTypes, TSIType, TSType}
@@ -51,6 +53,41 @@ object MyTSInterfaceTypes extends DefaultTSTypes {
     implicit val ssst   : TSIType[StringSampleSolution] = stringSampleSolutionTSI
 
     TSType.fromCaseClass[SqlExerciseContent]
+  }
+
+  implicit val umlClassDiagramTSI: TSIType[UmlClassDiagram] = {
+    implicit val uct: TSIType[UmlClass] = {
+      implicit val uctt: TSType[UmlClassType]  = enumTsType(UmlClassType)
+      implicit val uvt : TSType[UmlVisibility] = enumTsType(UmlVisibility)
+
+      implicit val uat: TSIType[UmlAttribute] = TSType.fromCaseClass[UmlAttribute]
+      implicit val umt: TSIType[UmlMethod]    = TSType.fromCaseClass[UmlMethod]
+
+      TSType.fromCaseClass[UmlClass]
+    }
+
+    implicit val uat: TSIType[UmlAssociation] = {
+      implicit val uatt: TSType[UmlAssociationType] = enumTsType(UmlAssociationType)
+      implicit val umt : TSType[UmlMultiplicity]    = enumTsType(UmlMultiplicity)
+
+      TSType.fromCaseClass[UmlAssociation]
+    }
+
+    implicit val uit: TSIType[UmlImplementation] = TSType.fromCaseClass[UmlImplementation]
+
+    TSType.fromCaseClass[UmlClassDiagram]
+  }
+
+  implicit val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
+    implicit val usst: TSIType[UmlSampleSolution] = TSType.fromCaseClass[UmlSampleSolution]
+
+    TSType.fromCaseClass[UmlExerciseContent]
+  }
+
+  implicit val xmlExerciseContent: TSIType[XmlExerciseContent] = {
+    implicit val xsst: TSIType[XmlSampleSolution] = TSType.fromCaseClass[XmlSampleSolution]
+
+    TSType.fromCaseClass[XmlExerciseContent]
   }
 
 }

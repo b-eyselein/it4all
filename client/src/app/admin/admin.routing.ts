@@ -12,7 +12,7 @@ const adminRoutes: Routes = [
   {
     path: 'admin', canActivate: [AdminAuthGuard],
     children: [
-      {path: '', component: AdminIndexComponent},
+      {path: 'index', component: AdminIndexComponent},
       {path: ':toolId', component: CollectionToolAdminComponent},
       {path: ':toolId/readCollections', component: AdminReadCollectionsComponent},
       {path: ':toolId/collections/:collId/editForm', component: AdminEditCollectionComponent},

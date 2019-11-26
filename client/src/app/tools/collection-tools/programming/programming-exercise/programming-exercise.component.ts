@@ -21,11 +21,11 @@ export class ProgrammingExerciseComponent implements OnInit {
 
   @Input() collection: IExerciseCollection;
   @Input() exercise: IExercise;
+  @Input() part: ToolPart;
 
   @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
-  part: ToolPart;
 
   exerciseFiles: ExerciseFile[] = [];
 

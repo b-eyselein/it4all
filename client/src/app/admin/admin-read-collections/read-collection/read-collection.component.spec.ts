@@ -17,7 +17,7 @@ describe('ReadCollectionComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ReadCollectionComponent);
     component = fixture.componentInstance;
-    component.collection = {id: 1, toolId: '', title: '', author: '', text: '', state: '', shortName: '', exercises: []};
+    component.collection = {id: 1, toolId: '', title: '', author: '', text: '', shortName: '', exercises: []};
     fixture.detectChanges();
   });
 

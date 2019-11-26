@@ -18,7 +18,7 @@ describe('AdminEditCollectionComponent', () => {
     fixture = TestBed.createComponent(AdminEditCollectionComponent);
     component = fixture.componentInstance;
     component.collection = {
-      id: 1, toolId: '', title: '', author: '', text: '', state: '', shortName: '', exercises: []
+      id: 1, toolId: '', title: '', author: '', text: '', shortName: '', exercises: []
     };
     fixture.detectChanges();
   });

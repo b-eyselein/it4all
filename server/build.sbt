@@ -25,7 +25,9 @@ val tsiClasses = Seq(
   "ExerciseCollection",
   "Exercise",
   "RegexExerciseContent",
-  "SqlExerciseContent"
+  "SqlExerciseContent",
+  "UmlExerciseContent",
+  "XmlExerciseContent"
 )
 
 lazy val root = (project in file("."))
@@ -39,6 +41,8 @@ lazy val root = (project in file("."))
       "model.tools.collectionTools._",
       "model.tools.collectionTools.regex._",
       "model.tools.collectionTools.sql._",
+      "model.tools.collectionTools.uml._",
+      "model.tools.collectionTools.xml._",
       "model.MyTSInterfaceTypes._"
     )
   )

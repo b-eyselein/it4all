@@ -7,7 +7,9 @@ import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 object WebToolYamlProtocol extends MyYamlProtocol {
 
-  import DefaultYamlProtocol._
+  import DefaultYamlProtocol.{IntYamlFormat, StringYamlFormat, optionFormat, yamlFormat3, yamlFormat5, yamlFormat6, immSeqFormat}
+
+  implicit def mapFormat[K: YamlFormat, Y: YamlFormat]: YamlFormat[Map[K, Y]] = myMapFormat
 
   // FIXME: make super trait and reference it in ToolMain! ???
 
@@ -35,8 +37,6 @@ object WebToolYamlProtocol extends MyYamlProtocol {
     implicit val ssyf : YamlFormat[SiteSpec]            = siteSpecYamlFormat
     implicit val fssyf: YamlFormat[FilesSampleSolution] = filesSampleSolutionYamlFormat
     implicit val efyf : YamlFormat[ExerciseFile]        = ExerciseFileYamlProtocol.exerciseFileYamlFormat
-
-    implicit def mapFormat[K: YamlFormat, Y: YamlFormat]: YamlFormat[Map[K, Y]] = myMapFormat
 
     yamlFormat5(WebExerciseContent)
   }

@@ -3,15 +3,19 @@ import {ExerciseComponentHelpers} from '../_helpers/ExerciseComponentHelpers';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../_services/api.service';
 import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
+import {ToolPart} from '../../../_interfaces/tool';
 
 @Component({templateUrl: './exercise.component.html'})
 export class ExerciseComponent extends ExerciseComponentHelpers implements OnInit {
 
   collection: IExerciseCollection;
   exercise: IExercise;
+  part: ToolPart;
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService) {
     super(route);
+
+    this.part = this.tool.parts.find((p) => p.id === this.route.snapshot.paramMap.get('partId'));
   }
 
   private updateExercise(): void {

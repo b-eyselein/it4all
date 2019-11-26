@@ -1,0 +1,24 @@
+<div class="container">
+  <h1 class="title is-3 has-text-centered">Klassenselektion</h1>
+
+  <div class="notification is-light-grey has-text-black">
+    <ng-container *ngFor="let textPart of classSelectionText">
+        <span *ngIf="textPart.isSelectable" (click)="selectClass(textPart)"
+              [class.has-text-link]="classIsSelected(textPart)">{{textPart.text}}</span>
+      <ng-container *ngIf="!textPart.isSelectable">{{textPart.text}}</ng-container>
+    </ng-container>
+  </div>
+
+  <div class="buttons">
+    <button class="button is-link is-fullwidth" (click)="correct()">Korrektur</button>
+  </div>
+
+  <hr>
+
+  <h2 class="subtitle is-3 has-text-centered">Gewählte Klassen</h2>
+  <div class="buttons">
+    <button class="button is-static" *ngFor="let selectedClass of selectedClasses">{{selectedClass}}</button>
+  </div>
+
+</div>
+

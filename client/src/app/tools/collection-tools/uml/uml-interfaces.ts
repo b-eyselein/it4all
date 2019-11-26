@@ -1,8 +1,9 @@
-import {DbSolution, ExerciseContent} from '../../../_interfaces/exercise';
+import {DbSolution} from '../../../_interfaces/exercise';
 
-// tslint:disable-next-line:no-empty-interface
-export interface UmlExerciseContent extends ExerciseContent {
-
+export interface UmlClassSelectionTextPart {
+  text: string;
+  isSelectable: boolean;
+  baseForm?: string;
 }
 
 export interface DbUmlSolution extends DbSolution<any> {

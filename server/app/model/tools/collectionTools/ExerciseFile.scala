@@ -43,8 +43,6 @@ object ExerciseFileYamlProtocol {
       val completePath    = FilesExerciseConsts.baseResourcesPath / resourcePath
       val content: String = completePath.contentAsString
 
-      println(content)
-
       ExerciseFile(name, resourcePath, fileType, editable, content)
     }
 
@@ -59,15 +57,7 @@ object ExerciseFileYamlProtocol {
       ???
     }
 
-    override def read(yaml: YamlValue): ExerciseFile = {
-      println("Reading...")
-
-      val exWithPath = exerciseFileWithPathYamlFormat.read(yaml)
-
-      println("loading content...")
-
-      exWithPath.loadContent
-    }
+    override def read(yaml: YamlValue): ExerciseFile = exerciseFileWithPathYamlFormat.read(yaml).loadContent
 
   }
 

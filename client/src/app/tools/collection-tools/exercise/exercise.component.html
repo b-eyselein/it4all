@@ -1,8 +1,17 @@
 <ng-container *ngIf="exercise; else loadingExerciseBlock">
   <ng-container [ngSwitch]="tool.id">
 
-    <it4all-programming-exercise *ngSwitchCase="'programming'" [collection]="collection" [exercise]="exercise">
-    </it4all-programming-exercise>
+    <it4all-programming-exercise
+      *ngSwitchCase="'programming'"
+      [collection]="collection"
+      [exercise]="exercise"
+      [part]="part"></it4all-programming-exercise>
+
+    <it4all-uml-exercise
+      *ngSwitchCase="'uml'"
+      [collection]="collection"
+      [exercise]="exercise"
+      [part]="part"></it4all-uml-exercise>
 
     <div *ngSwitchDefault>{{tool.id}}</div>
   </ng-container>
