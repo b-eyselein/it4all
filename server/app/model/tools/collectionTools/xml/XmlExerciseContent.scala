@@ -1,9 +1,7 @@
 package model.tools.collectionTools.xml
 
 import model.core.LongText
-import model.points.Points
-import model.tools.collectionTools.{ExPart, ExParts, ExerciseContent}
-import model.{SampleSolution, UserSolution}
+import model.tools.collectionTools.{ExPart, ExParts, ExerciseContent, SampleSolution}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -22,21 +20,24 @@ object XmlExParts extends ExParts[XmlExPart] {
 }
 
 
+final case class XmlSolution(document: String, grammar: String)
+
+
 final case class XmlExerciseContent(
   grammarDescription: LongText,
   rootNode: String,
-  sampleSolutions: Seq[XmlSampleSolution]
+  sampleSolutions: Seq[SampleSolution[XmlSolution]]
 ) extends ExerciseContent {
 
-  override type SampleSolType = XmlSampleSolution
+  override type SolType = XmlSolution
 
 }
 
-final case class XmlSolution(document: String, grammar: String)
 
-final case class XmlSampleSolution(id: Int, sample: XmlSolution)
-  extends SampleSolution[XmlSolution]
 
-final case class XmlUserSolution(id: Int, part: XmlExPart, solution: XmlSolution, points: Points, maxPoints: Points)
-  extends UserSolution[XmlExPart, XmlSolution]
+//final case class XmlSampleSolution(id: Int, sample: XmlSolution)
+//  extends SampleSolution[XmlSolution]
+
+//final case class XmlUserSolution(id: Int, part: XmlExPart, solution: XmlSolution, points: Points, maxPoints: Points)
+//  extends UserSolution[XmlSolution]
 

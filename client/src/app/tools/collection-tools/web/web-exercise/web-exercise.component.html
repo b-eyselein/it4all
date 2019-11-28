@@ -2,8 +2,10 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <it4all-exercise-files-editor [exerciseFiles]="exercise?.content.files"
-                                    [mode]="'htmlmixed'"></it4all-exercise-files-editor>
+      <it4all-exercise-files-editor
+        [exerciseFiles]="exerciseContent.files"
+        [mode]="'htmlmixed'">
+      </it4all-exercise-files-editor>
     </div>
 
     <div class="column is-half-desktop">
@@ -21,14 +23,13 @@
               </button>
             </div>
             <div class="column">
-              <a [routerLink]="['/tools', 'programming', 'collections', collId]"
-                 class="button is-dark is-fullwidth">Bearbeiten beenden</a>
+              <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
           </div>
         </it4all-tab>
 
         <it4all-tab [title]="'Korrektur'"></it4all-tab>
-        <it4all-tab [title]="'Live-Vorschau'" *ngIf="tool.hasLivePreview"></it4all-tab>
+        <it4all-tab [title]="'Live-Vorschau'"></it4all-tab>
         <it4all-tab [title]="'Musterlösung(en)'"></it4all-tab>
       </it4all-tabs>
 

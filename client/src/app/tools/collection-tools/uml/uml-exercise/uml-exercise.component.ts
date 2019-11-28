@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
-import {IExercise, IExerciseCollection, IUmlExerciseContent} from '../../../../_interfaces/models';
+import {IExercise, IUmlExerciseContent} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
 
 // import * as $ from 'jquery';
@@ -13,8 +13,6 @@ import {ToolPart} from '../../../../_interfaces/tool';
 })
 export class UmlExerciseComponent extends ExerciseComponentHelpers implements OnInit {
 
-
-  @Input() collection: IExerciseCollection;
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
 

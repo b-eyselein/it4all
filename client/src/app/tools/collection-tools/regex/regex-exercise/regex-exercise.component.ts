@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
 import {RegexCorrectionResult} from '../regex-interfaces';
@@ -6,12 +6,15 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
 import {IExercise, IRegexExerciseContent} from '../../../../_interfaces/models';
 
-@Component({templateUrl: './regex-exercise.component.html'})
+@Component({
+  selector: 'it4all-regex-exercise',
+  templateUrl: './regex-exercise.component.html'
+})
 export class RegexExerciseComponent extends ExerciseComponentHelpers implements OnInit {
 
   solution = '';
 
-  exercise: IExercise;
+  @Input() exercise: IExercise;
   exerciseContent: IRegexExerciseContent;
 
   corrected = false;
@@ -25,16 +28,9 @@ export class RegexExerciseComponent extends ExerciseComponentHelpers implements 
   }
 
   ngOnInit(): void {
-    const collId: number = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
-    const exId: number = parseInt(this.route.snapshot.paramMap.get('exId'), 10);
+    this.exerciseContent = this.exercise.content as IRegexExerciseContent;
 
-    this.apiService.getExercise(this.tool.id, collId, exId)
-      .subscribe((exercise: IExercise) => {
-        this.exercise = exercise;
-        this.exerciseContent = exercise.content as IRegexExerciseContent;
-      });
-
-    this.dexieService.regexSolutions.get([collId, exId])
+    this.dexieService.regexSolutions.get([this.exercise.collectionId, this.exercise.id])
       .then((oldSolution) => this.solution = oldSolution ? oldSolution.solution : '');
   }
 
@@ -48,8 +44,7 @@ export class RegexExerciseComponent extends ExerciseComponentHelpers implements 
       toolId: this.tool.id, collId: this.exercise.collectionId, exId: this.exercise.id, partId: 'regex', solution: this.solution
     });
 
-    this.apiService
-      .correctSolution<string, RegexCorrectionResult>(this.tool.id, this.exercise.collectionId, this.exercise.id, 'regex', this.solution)
+    this.apiService.correctSolution<string, RegexCorrectionResult>(this.exercise, 'regex', this.solution)
       .subscribe((result: RegexCorrectionResult) => {
         this.corrected = true;
         this.result = result;

@@ -11,5 +11,6 @@ export class TabComponent {
 
   @Input() title: string;
   @Input() active = false;
+  @Input() selectable = true;
 
 }

@@ -48,7 +48,7 @@ class ApiAdminController @Inject()(cc: ControllerComponents, tables: ExerciseTab
           }
           .flatMap(_.toOption) // filter out Failures
 
-        Ok(Json.toJson(successfulReadExercises)(Writes.seq(toolMain.exerciseFormat)))
+        Ok(Json.toJson(successfulReadExercises)(Writes.seq(ToolJsonProtocol.exerciseFormat)))
     }
   }
 
@@ -87,7 +87,7 @@ class ApiAdminController @Inject()(cc: ControllerComponents, tables: ExerciseTab
 
     request.body.asJson match {
       case None          => Future.successful(BadRequest("No json was provided in body!"))
-      case Some(jsValue) => toolMain.exerciseFormat.reads(jsValue).fold(errors => onError(errors), onRead)
+      case Some(jsValue) => ToolJsonProtocol.exerciseFormat.reads(jsValue).fold(errors => onError(errors), onRead)
     }
   }
 

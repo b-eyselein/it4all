@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise, IUmlExerciseContent} from '../../../../_interfaces/models';
+import {IExercise, ISampleSolution, IUmlExerciseContent} from '../../../../_interfaces/models';
 import {UmlClassSelectionTextPart} from '../uml-interfaces';
 import {MatchResult, StringMatcher} from '../../../../matcher';
 
@@ -48,7 +48,9 @@ export class UmlClassSelectionComponent implements OnInit {
   }
 
   correct(): void {
-    const classesToSelect: string[] = this.exerciseContent.sampleSolutions[0].sample.classes.map((c) => c.name);
+    const sampleSolution: ISampleSolution = this.exerciseContent.sampleSolutions[0];
+
+    const classesToSelect: string[] = (sampleSolution.sample as any).classes.map((c) => c.name);
 
     const matchResult: MatchResult<string> = StringMatcher.match(this.selectedClasses, classesToSelect);
 

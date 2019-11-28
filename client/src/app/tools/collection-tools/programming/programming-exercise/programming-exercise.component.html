@@ -9,7 +9,7 @@
 
       <it4all-tabs>
         <it4all-tab [title]="'Aufgabenstellung'">
-          <div class="notification" [innerHTML]="exercise?.text"></div>
+          <div class="notification is-light-grey" [innerHTML]="exercise?.text"></div>
 
           <hr>
 
@@ -24,14 +24,12 @@
               </button>
             </div>
             <div class="column">
-              <a *ngIf="collection" routerLink="../.." class="button is-dark is-fullwidth">Bearbeiten beenden</a>
+              <a routerLink="../.." class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
           </div>
         </it4all-tab>
 
-        <it4all-tab [title]="correctionTabTitle">
-          <!--          <h2 class="subtitle is-3 has-text-centered">Korrekturresultat</h2>-->
-
+        <it4all-tab  [title]="correctionTabTitle">
           <div class="notification danger" *ngIf="correctionRunning">
             Die Korrektur läuft gerade...
           </div>
@@ -73,10 +71,9 @@
             </div>
 
           </div>
-
         </it4all-tab>
 
-        <it4all-tab [title]="sampleSolutionsTabTitle">
+        <it4all-tab [title]="sampleSolutionsTabTitle" [selectable]="displaySampleSolutions">
 
           <div class="overflowHiddenDiv" *ngIf="displaySampleSolutions">
             <!-- TODO: tabs for multiple sample solutions? -->

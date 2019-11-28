@@ -3,12 +3,10 @@ package model.tools.collectionTools
 import better.files.File
 import model._
 import model.core.result.{CompleteResult, EvaluationResult}
-import model.points._
 import model.tools.{AToolMain, ToolConsts}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
-import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request}
+import play.api.libs.json.{JsPath, JsResult, JsValue, JsonValidationError}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -17,7 +15,7 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   private val logger = Logger(classOf[CollectionToolMain])
 
-  protected type JsErrorType = scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])]
+  protected type JsErrorType = (JsPath, scala.collection.Seq[JsonValidationError])
 
   // Abstract types
 
@@ -27,8 +25,6 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   type SolType
 
-  type UserSolType <: UserSolution[PartType, SolType]
-
   type CompResultType <: CompleteResult[_ <: EvaluationResult]
 
   // Values
@@ -37,13 +33,9 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Yaml, Html forms, Json
 
-  protected val toolJsonProtocol: ToolJsonProtocol[PartType, ExContentType, SolType, UserSolType, CompResultType]
+  protected val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType, CompResultType]
 
   protected val exerciseContentYamlFormat: YamlFormat[ExContentType]
-
-  def exerciseContentFormat: Format[ExContentType] = toolJsonProtocol.exerciseContentFormat
-
-  def exerciseFormat: Format[Exercise] = ToolJsonProtocol.exerciseFormat
 
   // Other helper methods
 
@@ -51,38 +43,27 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
-  def updateSolSaved(compResult: CompResultType, solSaved: Boolean): CompResultType
-
   // Correction
+
+  private def logErrors(errors: scala.collection.Seq[JsErrorType], exceptionMsg: String): Future[Try[CompResultType]] = {
+    errors.foreach(errorMsg => logger.error(errorMsg.toString))
+
+    Future.successful(Failure(new Exception(exceptionMsg)))
+  }
+
+  def readSolution(jsValue: JsValue): JsResult[SolType] = toolJsonProtocol.solutionFormat.reads(jsValue)
 
   def correctAbstract(
     user: User,
+    solution: SolType,
     collection: ExerciseCollection,
     exercise: Exercise,
-    part: PartType
-  )(implicit request: Request[AnyContent], ec: ExecutionContext): Future[Try[CompResultType]] = request.body.asJson match {
-    case None          => ???
-    case Some(jsValue) =>
-
-      exerciseContentFormat.reads(exercise.content).fold(
-        {
-          errorMsgs: JsErrorType =>
-            errorMsgs.foreach(errorMsg => logger.error(errorMsg.toString()))
-            Future.successful(Failure(new Exception("TODO: internal error...")))
-        },
-        {
-          content: ExContentType =>
-            readSolution(jsValue, part)
-              .fold(
-                { errorMsg =>
-                  logger.error(errorMsg)
-                  Future.successful(Failure(new Exception("Es gab einen Fehler bei der Übertragung ihrer Lösung!")))
-                },
-                solution => correctEx(user, solution, collection, exercise, content, part)
-              )
-        }
-      )
-  }
+    part: PartType,
+    solutionSaved: Boolean
+  )(implicit ec: ExecutionContext): Future[Try[CompResultType]] = toolJsonProtocol.exerciseContentFormat.reads(exercise.content).fold(
+    errorMsgs => logErrors(errorMsgs, "internal error..."),
+    exerciseContent => correctEx(user, solution, collection, exercise, exerciseContent, part, solutionSaved)
+  )
 
   protected def correctEx(
     user: User,
@@ -90,18 +71,13 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
     coll: ExerciseCollection,
     exercise: Exercise,
     content: ExContentType,
-    part: PartType
+    part: PartType,
+    solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[CompResultType]]
-
-  // Reading from requests
-
-  protected def readSolution(jsValue: JsValue, part: PartType): Either[String, SolType]
 
   // Result handlers
 
   def onLiveCorrectionResult(result: CompResultType): JsValue = toolJsonProtocol.completeResultWrites.writes(result)
-
-  def onLiveCorrectionError(error: Throwable): JsValue = Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!")
 
   // Helper methods for admin
 
@@ -119,11 +95,12 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
   def readExercisesFromYaml(collection: ExerciseCollection): Seq[Try[Exercise]] = {
     val filePath = exerciseResourcesFolder / s"${collection.id}-${collection.shortName}.yaml"
 
-    val exerciseYamlFormat = ToolYamlProtocol.exerciseYamlFormat(exerciseContentYamlFormat, exerciseContentFormat)
+    val exerciseYamlFormat = ToolYamlProtocol.exerciseYamlFormat(
+      exerciseContentYamlFormat,
+      toolJsonProtocol.exerciseContentFormat
+    )
 
     readYamlFile(filePath, exerciseYamlFormat)
   }
-
-  protected def instantiateSolution(id: Int, exercise: Exercise, part: PartType, solution: SolType, points: Points, maxPoints: Points): UserSolType
 
 }

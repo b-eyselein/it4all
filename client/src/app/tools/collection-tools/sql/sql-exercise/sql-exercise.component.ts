@@ -63,7 +63,7 @@ export class SqlExerciseComponent extends ExerciseComponentHelpers implements On
       solution: this.solution
     });
 
-    this.apiService.correctSolution<string, any>(this.tool.id, this.collection.id, this.exercise.id, partId, this.solution)
+    this.apiService.correctSolution<string, any>(this.exercise, partId, this.solution)
       .subscribe((result) => {
         this.result = result;
         console.warn(JSON.stringify(this.result, null, 2));

@@ -1,7 +1,8 @@
 package model.tools.collectionTools.uml
 
 import model.MyYamlProtocol
-import net.jcazevedo.moultingyaml.{YamlFormat, DefaultYamlProtocol}
+import model.tools.collectionTools.SampleSolution
+import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 import scala.language.{implicitConversions, postfixOps}
 
@@ -25,7 +26,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
     yamlFormat6(UmlAssociation)
   }
 
-  private val umlSampleSolutionYamlFormat = {
+  private val umlSampleSolutionYamlFormat: YamlFormat[SampleSolution[UmlClassDiagram]] = {
     implicit val ucdyf: YamlFormat[UmlClassDiagram] = {
       implicit val ucyf: YamlFormat[UmlClass]          = umlClassYamlFormat
       implicit val uayf: YamlFormat[UmlAssociation]    = umlAssociationYamlFormat
@@ -34,12 +35,12 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       yamlFormat3(UmlClassDiagram)
     }
 
-    yamlFormat2(UmlSampleSolution)
+    yamlFormat2(SampleSolution[UmlClassDiagram])
   }
 
 
   val umlExerciseYamlFormat: YamlFormat[UmlExerciseContent] = {
-    implicit val ussyf: YamlFormat[UmlSampleSolution] = umlSampleSolutionYamlFormat
+    implicit val ussyf: YamlFormat[SampleSolution[UmlClassDiagram]] = umlSampleSolutionYamlFormat
 
     implicit def mapFormat[K: YamlFormat, V: YamlFormat]: YamlFormat[Map[K, V]] = myMapFormat
 

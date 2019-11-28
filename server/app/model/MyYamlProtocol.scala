@@ -1,7 +1,7 @@
 package model
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol}
+import model.tools.collectionTools.SampleSolution
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.libs.json._
@@ -79,12 +79,10 @@ trait MyYamlProtocol {
 
   protected val semanticVersionYamlFormat: YamlFormat[SemanticVersion] = yamlFormat3(SemanticVersion)
 
-  protected val stringSampleSolutionYamlFormat: YamlFormat[StringSampleSolution] = yamlFormat2(StringSampleSolution)
+  protected def sampleSolutionYamlFormat[SolType](solTypeFormat: YamlFormat[SolType]): YamlFormat[SampleSolution[SolType]] = {
+    implicit val stf: YamlFormat[SolType] = solTypeFormat
 
-  protected val filesSampleSolutionYamlFormat: YamlFormat[FilesSampleSolution] = {
-    implicit val efyf: YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
-
-    yamlFormat2(FilesSampleSolution)
+    yamlFormat2(SampleSolution[SolType])
   }
 
   protected def myMapFormat[K: YamlFormat, V: YamlFormat]: YamlFormat[Map[K, V]] = new YamlFormat[Map[K, V]] {

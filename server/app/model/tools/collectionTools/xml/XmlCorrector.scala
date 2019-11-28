@@ -6,6 +6,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 import model.core.Levenshtein
 import model.core.result.SuccessType
 import model.points._
+import model.tools.collectionTools.SampleSolution
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 
 import scala.collection.mutable
@@ -47,7 +48,7 @@ object XmlCorrector {
     errorHandler.errors.toSeq
   }
 
-  def correctDocument(solution: XmlSolution, solutionBaseDir: File, exercise: XmlExerciseContent): Try[XmlDocumentCompleteResult] =
+  def correctDocument(solution: XmlSolution, solutionBaseDir: File, exercise: XmlExerciseContent, solutionSaved: Boolean): Try[XmlDocumentCompleteResult] =
     exercise.sampleSolutions.headOption match {
       case None            => Failure(new Exception("There is no sample solution!"))
       case Some(xmlSample) =>
@@ -64,12 +65,12 @@ object XmlCorrector {
 
         val successType = if (xmlErrors.isEmpty) SuccessType.COMPLETE else SuccessType.PARTIALLY
 
-        Success(XmlDocumentCompleteResult(successType, xmlErrors))
+        Success(XmlDocumentCompleteResult(successType, xmlErrors, (-1).points, (-1).points, solutionSaved))
     }
 
   // Grammar correction
 
-  private def findNearestGrammarSample(learnerSolution: String, sampleSolutions: Seq[XmlSampleSolution]): Option[XmlSampleSolution] =
+  private def findNearestGrammarSample(learnerSolution: String, sampleSolutions: Seq[SampleSolution[XmlSolution]]): Option[SampleSolution[XmlSolution]] =
     sampleSolutions.reduceOption((sampleG1, sampleG2) => {
       val dist1 = Levenshtein.levenshtein(learnerSolution, sampleG1.sample.grammar)
       val dist2 = Levenshtein.levenshtein(learnerSolution, sampleG2.sample.grammar)
@@ -77,30 +78,31 @@ object XmlCorrector {
       if (dist1 < dist2) sampleG1 else sampleG2
     })
 
-  def correctGrammar(solution: XmlSolution, exercise: XmlExerciseContent): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, exercise.sampleSolutions) match {
-    case None                                    => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
-    case Some(sampleSolution: XmlSampleSolution) =>
+  def correctGrammar(solution: XmlSolution, exercise: XmlExerciseContent, solutionSaved: Boolean): Try[XmlCompleteResult] =
+    findNearestGrammarSample(solution.grammar, exercise.sampleSolutions) match {
+      case None                 => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
+      case Some(sampleSolution) =>
 
-      DocTypeDefParser.tryParseDTD(sampleSolution.sample.grammar) map { sampleGrammar =>
+        DocTypeDefParser.tryParseDTD(sampleSolution.sample.grammar) map { sampleGrammar =>
 
-        val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
+          val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
 
-        val allMatches = DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines).allMatches
+          val allMatches = DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines).allMatches
 
-        val points = addUp(allMatches.map(_.points))
+          val points = addUp(allMatches.map(_.points))
 
-        val maxPoints = addUp(allMatches.map(_.maxPoints))
+          val maxPoints = addUp(allMatches.map(_.maxPoints))
 
-        val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
-          case it if 0 <= it && it <= 0.5 => SuccessType.NONE
-          case it if 0.5 < it && it < 1   => SuccessType.PARTIALLY
-          case 1                          => SuccessType.COMPLETE
-          case _                          => SuccessType.ERROR
+          val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
+            case it if 0 <= it && it <= 0.5 => SuccessType.NONE
+            case it if 0.5 < it && it < 1   => SuccessType.PARTIALLY
+            case 1                          => SuccessType.COMPLETE
+            case _                          => SuccessType.ERROR
+          }
+
+          XmlGrammarCompleteResult(successType, dtdParseResult.parseErrors, allMatches, points, maxPoints, solutionSaved)
         }
-
-        XmlGrammarCompleteResult(successType, dtdParseResult.parseErrors, allMatches, points, maxPoints)
-      }
-  }
+    }
 
 
 }

@@ -1,56 +1,40 @@
 package model
 
-import model.points.Points
 import model.tools.collectionTools.{ExPart, ExerciseFile}
 
-trait Solution[SolType] {
+@deprecated
+trait UserSolution[SolType] {
+
+  // FIXME: make case class!
 
   val id: Int
 
-}
-
-trait SampleSolution[SolType] extends Solution[SolType] {
-
-  def sample: SolType
-
-}
-
-trait UserSolution[PartType <: ExPart, SolType] extends Solution[SolType] {
-
-  val part: PartType
-
-  val points: Points
-
-  val maxPoints: Points
+  val part: ExPart
 
   val solution: SolType
 
 }
 
-final case class StringSampleSolution(
-  id: Int,
-  sample: String
-) extends SampleSolution[String]
+//final case class StringSampleSolution(
+//  id: Int,
+//  sample: String
+//) extends SampleSolution[String]
 
-final case class StringUserSolution[PartType <: ExPart](
+final case class StringUserSolution(
   id: Int,
-  part: PartType,
+  part: ExPart,
   solution: String,
-  points: Points,
-  maxPoints: Points
-) extends UserSolution[PartType, String]
+) extends UserSolution[String]
 
 
-final case class FilesSampleSolution(
+//final case class FilesSampleSolution(
+//  id: Int,
+//  sample: Seq[ExerciseFile]
+//) extends SampleSolution[Seq[ExerciseFile]]
+
+final case class FilesUserSolution(
   id: Int,
-  sample: Seq[ExerciseFile]
-) extends SampleSolution[Seq[ExerciseFile]]
-
-final case class FilesUserSolution[PartType <: ExPart](
-  id: Int,
-  part: PartType,
+  part: ExPart,
   solution: Seq[ExerciseFile],
-  points: Points,
-  maxPoints: Points
-) extends UserSolution[PartType, Seq[ExerciseFile]]
+) extends UserSolution[Seq[ExerciseFile]]
 

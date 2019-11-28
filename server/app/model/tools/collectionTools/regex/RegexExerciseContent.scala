@@ -1,8 +1,7 @@
 package model.tools.collectionTools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.StringSampleSolution
-import model.tools.collectionTools.StringExerciseContent
+import model.tools.collectionTools.{SampleSolution, StringExerciseContent}
 
 sealed trait RegexCorrectionType extends EnumEntry
 
@@ -20,7 +19,7 @@ case object RegexCorrectionTypes extends PlayEnum[RegexCorrectionType] {
 final case class RegexExerciseContent(
   maxPoints: Int,
   correctionType: RegexCorrectionType,
-  sampleSolutions: Seq[StringSampleSolution],
+  sampleSolutions: Seq[SampleSolution[String]],
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
 ) extends StringExerciseContent

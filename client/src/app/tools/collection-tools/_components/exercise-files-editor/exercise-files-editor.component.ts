@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
-import {ExerciseFile} from '../../../basics';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
+import {IExerciseFile} from '../../../../_interfaces/models';
 
 @Component({
   selector: 'it4all-exercise-files-editor',
@@ -11,7 +11,7 @@ import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 })
 export class ExerciseFilesEditorComponent implements OnChanges {
 
-  @Input() exerciseFiles: ExerciseFile[];
+  @Input() exerciseFiles: IExerciseFile[];
   @Input() mode: string;
 
   currentFileName: string | undefined = undefined;
@@ -51,7 +51,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     }
   }
 
-  private updateEditor(exerciseFile: ExerciseFile): void {
+  private updateEditor(exerciseFile: IExerciseFile): void {
     this.saveEditorContent();
 
     exerciseFile.active = true;
@@ -69,7 +69,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     // disable other files...
     this.exerciseFiles.forEach((ef) => ef.active = false);
 
-    const exerciseFile: ExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
+    const exerciseFile: IExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
 
     if (exerciseFile) {
       this.updateEditor(exerciseFile);

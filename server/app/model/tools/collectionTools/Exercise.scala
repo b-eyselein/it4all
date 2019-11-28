@@ -26,11 +26,14 @@ final case class Exercise(
   content: JsValue,
 )
 
+
+final case class SampleSolution[SolType](id: Int, sample: SolType)
+
 trait ExerciseContent {
 
-  type SampleSolType <: SampleSolution[_]
+  type SolType
 
-  val sampleSolutions: Seq[SampleSolType]
+  val sampleSolutions: Seq[SampleSolution[SolType]]
 
   def tags: Seq[ExTag] = Seq[ExTag]()
 
@@ -38,12 +41,12 @@ trait ExerciseContent {
 
 trait FileExerciseContent extends ExerciseContent {
 
-  override type SampleSolType = FilesSampleSolution
+  override type SolType = Seq[ExerciseFile]
 
 }
 
 trait StringExerciseContent extends ExerciseContent {
 
-  override type SampleSolType = StringSampleSolution
+  override type SolType = String
 
 }

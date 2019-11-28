@@ -4,19 +4,13 @@ import model._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.{LongText, LongTextJsonProtocol}
 import model.points.Points
-import play.api.libs.json.{Format, Json, Writes}
+import play.api.libs.json.{Format, Json, Reads, Writes}
 
 object ToolJsonProtocol {
 
   val semanticVersionFormat: Format[SemanticVersion] = Json.format[SemanticVersion]
 
   val collectionFormat: Format[ExerciseCollection] = Json.format[ExerciseCollection]
-
-  val exerciseBasicsFormat: Format[ApiExerciseBasics] = {
-    implicit val svf: Format[SemanticVersion] = semanticVersionFormat
-
-    Json.format[ApiExerciseBasics]
-  }
 
   val exerciseFormat: Format[Exercise] = {
     implicit val scf: Format[SemanticVersion] = semanticVersionFormat
@@ -27,57 +21,47 @@ object ToolJsonProtocol {
 
   val pointsFormat: Format[Points] = Json.format[Points]
 
+  val exerciseFileFormat: Format[ExerciseFile] = Json.format[ExerciseFile]
+
 }
 
 
 trait ToolJsonProtocol[
-  PartType <: ExPart, EC <: ExerciseContent,
-  ST, UST <: UserSolution[PartType, ST],
-  CR <: CompleteResult[_ <: EvaluationResult]
+  EC <: ExerciseContent, ST, CR <: CompleteResult[_ <: EvaluationResult]
 ] {
 
   val exerciseContentFormat: Format[EC]
 
-  val userSolutionFormat: Format[UST]
+  val solutionFormat: Format[ST]
 
   val completeResultWrites: Writes[CR]
 
 }
 
 abstract class StringSampleSolutionToolJsonProtocol[
-  PartType <: ExPart, E <: StringExerciseContent, CR <: CompleteResult[_ <: EvaluationResult]
-](partTypeFormat: Format[PartType])
-  extends ToolJsonProtocol[PartType, E, String, StringUserSolution[PartType], CR] {
+  E <: StringExerciseContent, CR <: CompleteResult[_ <: EvaluationResult]
+] extends ToolJsonProtocol[E, String, CR] {
 
-  protected val sampleSolutionFormat: Format[StringSampleSolution] = Json.format[StringSampleSolution]
+  override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 
-  override val userSolutionFormat: Format[StringUserSolution[PartType]] = {
-    implicit val ptf: Format[PartType] = partTypeFormat
-    implicit val pf : Format[Points]   = ToolJsonProtocol.pointsFormat
-
-    Json.format[StringUserSolution[PartType]]
-  }
+  protected val sampleSolutionFormat: Format[SampleSolution[String]] = Json.format[SampleSolution[String]]
 
 }
 
 
 abstract class FilesSampleSolutionToolJsonProtocol[
-  PartType <: ExPart, E <: FileExerciseContent, CR <: CompleteResult[_ <: EvaluationResult]
-](partTypeFormat: Format[PartType])
-  extends ToolJsonProtocol[PartType, E, Seq[ExerciseFile], FilesUserSolution[PartType], CR] {
+  E <: FileExerciseContent, CR <: CompleteResult[_ <: EvaluationResult]
+] extends ToolJsonProtocol[E, Seq[ExerciseFile], CR] {
 
-  protected val sampleSolutionFormat: Format[FilesSampleSolution] = {
-    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
+  override val solutionFormat: Format[Seq[ExerciseFile]] = Format(
+    Reads.seq(ToolJsonProtocol.exerciseFileFormat),
+    Writes.seq(ToolJsonProtocol.exerciseFileFormat)
+  )
 
-    Json.format[FilesSampleSolution]
-  }
+  protected val sampleSolutionFormat: Format[SampleSolution[Seq[ExerciseFile]]] = {
+    implicit val eff: Format[Seq[ExerciseFile]] = solutionFormat
 
-  override val userSolutionFormat: Format[FilesUserSolution[PartType]] = {
-    implicit val ptf: Format[PartType]     = partTypeFormat
-    implicit val pf : Format[Points]       = ToolJsonProtocol.pointsFormat
-    implicit val eff: Format[ExerciseFile] = ExerciseFileJsonProtocol.exerciseFileFormat
-
-    Json.format[FilesUserSolution[PartType]]
+    Json.format[SampleSolution[Seq[ExerciseFile]]]
   }
 
 }

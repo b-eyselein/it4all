@@ -1,8 +1,7 @@
 package model.tools.collectionTools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.StringSampleSolution
-import model.tools.collectionTools.StringExerciseContent
+import model.tools.collectionTools.{SampleSolution, StringExerciseContent}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -30,5 +29,5 @@ final case class SqlExerciseContent(
   exerciseType: SqlExerciseType,
   override val tags: Seq[SqlExerciseTag],
   hint: Option[String],
-  sampleSolutions: Seq[StringSampleSolution]
+  sampleSolutions: Seq[SampleSolution[String]]
 ) extends StringExerciseContent

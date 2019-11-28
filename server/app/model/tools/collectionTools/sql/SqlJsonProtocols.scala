@@ -1,15 +1,14 @@
 package model.tools.collectionTools.sql
 
-import model.StringSampleSolution
-import model.tools.collectionTools.StringSampleSolutionToolJsonProtocol
 import model.tools.collectionTools.sql.SqlConsts._
+import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExPart, SqlExerciseContent, SqlCorrResult](SqlExParts.jsonFormat) {
+object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlCorrResult] {
 
   override val exerciseContentFormat: Format[SqlExerciseContent] = {
-    implicit val sssf: Format[StringSampleSolution] = sampleSolutionFormat
+    implicit val sssf: Format[SampleSolution[String]] = sampleSolutionFormat
 
     Json.format[SqlExerciseContent]
   }

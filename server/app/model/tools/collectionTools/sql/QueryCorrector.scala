@@ -19,11 +19,16 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, exercise: SqlExerciseContent, scenario: ExerciseCollection)
-             (implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
+  def correct(
+    database: SqlExecutionDAO,
+    learnerSolution: String,
+    exercise: SqlExerciseContent,
+    scenario: ExerciseCollection,
+    solutionSaved: Boolean
+  )(implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
     parseStatement(learnerSolution)
       .flatMap(checkStatement) match {
-      case Failure(error) => SqlParseFailed(error, (-1).points)
+      case Failure(error) => SqlParseFailed(error, (-1).points, solutionSaved)
       case Success(userQ) =>
 
         val userColumns         = getColumnWrappers(userQ)
@@ -32,33 +37,48 @@ abstract class QueryCorrector(val queryType: String) {
         val userExpressions     = getExpressions(userQ)
         val userTableAliases    = resolveAliases(userTables)
 
-        val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.sampleSolutions.map { sqlSample =>
-          parseStatement(sqlSample.sample) flatMap checkStatement match {
-            case Failure(error)      =>
-              logger.error("There has been an error parsing a sql sample solution", error)
-              ???
-            case Success(sampleQ: Q) => performStaticComparison(userQ, sampleQ, userColumns, userTables, userJoinExpressions, userExpressions, userTableAliases)
+        val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.sampleSolutions
+          .map { sqlSample =>
+            parseStatement(sqlSample.sample)
+              .flatMap(checkStatement) match {
+              case Failure(error)      =>
+                logger.error("There has been an error parsing a sql sample solution", error)
+                ???
+              case Success(sampleQ: Q) => performStaticComparison(userQ, sampleQ, userColumns, userTables, userJoinExpressions, userExpressions, userTableAliases)
+            }
           }
-        } reduceOption { (comp1, comp2) =>
-          // FIXME: minByOption with Scala 2.13...
-          if (comp1.points > comp2.points) comp1
-          else if (comp1.points == comp2.points) {
-            if (comp1.maxPoints > comp2.maxPoints) comp2
-            else comp1
-          } else comp2
-        }
+          .reduceOption { (comp1, comp2) =>
+            // FIXME: minByOption with Scala 2.13...
+            if (comp1.points > comp2.points) comp1
+            else if (comp1.points == comp2.points) {
+              if (comp1.maxPoints > comp2.maxPoints) comp2
+              else comp1
+            } else comp2
+          }
 
         maybeStaticComparison match {
           case None     => ???
-          case Some(sc) => SqlResult(sc.columnComparison, sc.tableComparison, sc.joinExpressionComparison,
-            sc.whereComparison, sc.additionalComparisons, database.executeQueries(scenario, exercise, sc.userQ, sc.sampleQ))
+          case Some(sc) => SqlResult(
+            sc.columnComparison,
+            sc.tableComparison,
+            sc.joinExpressionComparison,
+            sc.whereComparison,
+            sc.additionalComparisons,
+            database.executeQueries(scenario, exercise, sc.userQ, sc.sampleQ),
+            solutionSaved
+          )
         }
     }
   })
 
-  private def performStaticComparison(userQ: Q, sampleQ: Q, userColumns: Seq[ColumnWrapper], userTables: Seq[Table],
-                                      userJoinExpressions: Seq[BinaryExpression], userExpressions: Seq[BinaryExpression],
-                                      userTableAliases: Map[String, String]): SqlQueriesStaticComparison[Q] = {
+  private def performStaticComparison(
+    userQ: Q, sampleQ: Q,
+    userColumns: Seq[ColumnWrapper],
+    userTables: Seq[Table],
+    userJoinExpressions: Seq[BinaryExpression],
+    userExpressions: Seq[BinaryExpression],
+    userTableAliases: Map[String, String]
+  ): SqlQueriesStaticComparison[Q] = {
 
     val sampleColumns                       = getColumnWrappers(sampleQ)
     val sampleTables                        = getTables(sampleQ)

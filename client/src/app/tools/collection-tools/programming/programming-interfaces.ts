@@ -1,6 +1,7 @@
-import { SuccessType} from '../../../_interfaces/tool';
-import {CorrectionResult, ExerciseFile, IdeWorkspace} from '../../basics';
+import {SuccessType} from '../../../_interfaces/tool';
+import {CorrectionResult} from '../../basics';
 import {DbSolution, ExerciseContent} from '../../../_interfaces/exercise';
+import {IExerciseFile, IProgSolution} from '../../../_interfaces/models';
 
 // tslint:disable-next-line:no-empty-interface
 interface ProgrammingUnitTestTestConfig {
@@ -10,7 +11,7 @@ interface ProgrammingUnitTestTestConfig {
 export interface ProgrammingUnitTestPart {
   unitTestType: 'Simplified' | 'Normal';
   unitTestTestsDescription: string;
-  unitTestFiles: ExerciseFile[];
+  unitTestFiles: IExerciseFile[];
   unitTestTestConfigs: ProgrammingUnitTestTestConfig[];
   testFileName: string;
   sampleSolFileNames: string[];
@@ -18,7 +19,7 @@ export interface ProgrammingUnitTestPart {
 
 export interface ProgrammingImplementationPart {
   base: string;
-  files: ExerciseFile[];
+  files: IExerciseFile[];
   implFileName: string;
   sampleSolFileNames: string[];
 }
@@ -26,7 +27,7 @@ export interface ProgrammingImplementationPart {
 export interface ProgrammingSampleSolution {
   id: number;
   sample: {
-    files: ExerciseFile[];
+    files: IExerciseFile[];
     testData: any[];
   };
 }
@@ -51,16 +52,11 @@ export interface ProgrammingExerciseContent extends ExerciseContent {
 
 // Database
 
-export interface DbProgrammingSolution extends DbSolution<IdeWorkspace> {
+export interface DbProgrammingSolution extends DbSolution<IProgSolution> {
 }
 
 // Correction
 
-export interface ProgSolution {
-  implementation: string;
-  testData: TestData[];
-  unitTest: ExerciseFile;
-}
 
 export interface ProgSingleResult {
   id: number;
@@ -91,12 +87,6 @@ export interface TestDataCreationResult {
 export interface TestDataInput {
   id: number;
   input: string;
-}
-
-export interface TestData {
-  id: number;
-  inputs: TestDataInput[];
-  output: string;
 }
 
 export interface NormalExecutionResult {

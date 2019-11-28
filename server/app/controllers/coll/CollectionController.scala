@@ -4,10 +4,9 @@ import controllers.Secured
 import javax.inject.{Inject, Singleton}
 import model.core._
 import model.persistence.ExerciseTableDefs
-import model.tools.collectionTools.ExerciseFileJsonProtocol
 import model.tools.collectionTools.programming.ProgToolMain
 import model.tools.collectionTools.uml._
-import model.tools.collectionTools.web.{WebExParts, WebToolMain}
+import model.tools.collectionTools.web.{WebExParts, WebToolJsonProtocol, WebToolMain}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
@@ -102,7 +101,7 @@ class CollectionController @Inject()(
                     case _      => "text/plain"
                   }
 
-                  ws.url(WebToolMain.getSolutionUrl(user, collId, exId, fileName)).get()
+                  ws.url(WebToolMain.getSolutionUrl(user, exercise, fileName)).get()
                     .map(wsRequest => Ok(wsRequest.body).as(contentType))
               }
           }
@@ -113,10 +112,10 @@ class CollectionController @Inject()(
     implicit request =>
       request.body.asJson match {
         case Some(jsValue) =>
-          ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
+          WebToolJsonProtocol.solutionFormat.reads(jsValue) match {
             case JsSuccess(ideWorkSpace, _) =>
 
-              WebToolMain.writeWebSolutionFiles(user.username, collId, id, WebToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), ideWorkSpace.files) match {
+              WebToolMain.writeWebSolutionFiles(user.username, collId, id, WebToolMain.partTypeFromUrl(part).getOrElse(WebExParts.HtmlPart), ideWorkSpace) match {
                 case Success(_)     => Ok("Solution saved")
                 case Failure(error) =>
                   logger.error("Error while updating web solution", error)

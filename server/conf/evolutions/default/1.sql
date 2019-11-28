@@ -110,40 +110,43 @@ create table if not exists exercises (
 );
 
 create table if not exists user_solutions (
-    id            int,
-    exercise_id   int,
-    collection_id int,
-    tool_id       varchar(20),
-    ex_sem_ver    varchar(10),
-    part          varchar(50),
-    username      varchar(50),
+    id                        int,
+    exercise_id               int,
+    collection_id             int,
+    tool_id                   varchar(20),
+    exercise_semantic_version varchar(100),
+    part                      varchar(50),
+    username                  varchar(50),
 
-    solution_json longtext not null, # TODO: json!
-    points        double,
-    max_points    double,
+    solution_json             longtext not null, # TODO: json!
+    points                    double,
+    max_points                double,
 
-    primary key (id, exercise_id, collection_id, tool_id, ex_sem_ver, part, username),
+    primary key (id, exercise_id, collection_id, tool_id, exercise_semantic_version, part, username),
     foreign key (username)
         references users (username)
         on update cascade on delete cascade,
-    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+    foreign key (exercise_id, collection_id, tool_id, exercise_semantic_version)
         references exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );
 
 create table if not exists exercise_reviews (
-    username       varchar(50),
-    exercise_id    int,
-    collection_id  int,
-    tool_id        varchar(20),
-    ex_sem_ver     varchar(10),
-    part           varchar(50),
+    username                  varchar(50),
+    exercise_id               int,
+    collection_id             int,
+    tool_id                   varchar(20),
+    exercise_semantic_version varchar(10),
+    part                      varchar(50),
 
-    difficulty     enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
-    maybe_duration int,
+    difficulty                enum ('NOT_SPECIFIED', 'VERY_EASY', 'EASY', 'MEDIUM', 'HARD', 'VERY_HARD'),
+    maybe_duration            int,
 
-    primary key (username, exercise_id, collection_id, tool_id, ex_sem_ver, part),
-    foreign key (exercise_id, collection_id, tool_id, ex_sem_ver)
+    primary key (username, exercise_id, collection_id, tool_id, exercise_semantic_version, part),
+    foreign key (username)
+        references users (username)
+        on update cascade on delete cascade,
+    foreign key (exercise_id, collection_id, tool_id, exercise_semantic_version)
         references exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
 );

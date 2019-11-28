@@ -1,18 +1,18 @@
 package model.tools.collectionTools.rose
 
+import model.UserSolution
 import model.points.Points
-import model.tools.collectionTools.ExerciseContent
 import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage}
-import model.{SampleSolution, UserSolution}
+import model.tools.collectionTools.{ExerciseContent, SampleSolution}
 
 
 final case class RoseExerciseContent(
   fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean,
   inputTypes: Seq[RoseInputType],
-  sampleSolutions: Seq[RoseSampleSolution]
+  sampleSolutions: Seq[SampleSolution[String]]
 ) extends ExerciseContent {
 
-  override type SampleSolType = RoseSampleSolution
+  override type SolType = String
 
   def declaration(forUser: Boolean): String = {
     val className                = if (forUser) "UserRobot" else "SampleRobot"
@@ -34,8 +34,6 @@ final case class RoseExerciseContent(
 
 final case class RoseInputType(id: Int, name: String, inputType: ProgDataType)
 
-final case class RoseSampleSolution(id: Int, language: ProgLanguage, sample: String)
-  extends SampleSolution[String]
 
 final case class RoseUserSolution(id: Int, part: RoseExPart, language: ProgLanguage, solution: String, points: Points, maxPoints: Points)
-  extends UserSolution[RoseExPart, String]
+  extends UserSolution[ String]

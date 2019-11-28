@@ -3,7 +3,6 @@ package model.tools.collectionTools.web
 import de.uniwue.webtester.{JsAction, JsActionType}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
-import model.tools.collectionTools.ExerciseFile
 import org.openqa.selenium.WebElement
 
 final case class WebCompleteResult(
@@ -11,7 +10,8 @@ final case class WebCompleteResult(
   gradedJsTaskResults: Seq[GradedJsTaskResult],
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean = false) extends CompleteResult[GradedWebTaskResult] {
+  solutionSaved: Boolean)
+  extends CompleteResult[GradedWebTaskResult] {
 
   override def results: Seq[GradedWebTaskResult] = gradedHtmlTaskResults ++ gradedJsTaskResults
 
@@ -30,16 +30,28 @@ final case class GradedHtmlTaskResult(gradedElementSpecResult: GradedElementSpec
 
 }
 
-final case class GradedElementSpecResult(id: Int, successType: SuccessType, foundElement: Option[WebElement],
-                                         textContentResult: Option[GradedTextResult],
-                                         attributeResults: Seq[GradedTextResult],
-                                         isSuccessful: Boolean, points: Points, maxPoints: Points)
+final case class GradedElementSpecResult(
+  id: Int,
+  successType: SuccessType,
+  foundElement: Option[WebElement],
+  textContentResult: Option[GradedTextResult],
+  attributeResults: Seq[GradedTextResult],
+  isSuccessful: Boolean,
+  points: Points,
+  maxPoints: Points
+)
 
 
 // Text Results: TextContent, AttributeResult
 
-final case class GradedTextResult(keyName: String, awaitedContent: String, maybeFoundContent: Option[String],
-                                  isSuccessful: Boolean, points: Points, maxPoints: Points)
+final case class GradedTextResult(
+  keyName: String,
+  awaitedContent: String,
+  maybeFoundContent: Option[String],
+  isSuccessful: Boolean,
+  points: Points,
+  maxPoints: Points
+)
 
 // Javascript Results
 

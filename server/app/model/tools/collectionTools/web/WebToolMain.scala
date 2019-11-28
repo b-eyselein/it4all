@@ -6,13 +6,12 @@ import better.files.File
 import better.files.File.OpenOptions
 import com.gargoylesoftware.htmlunit.ScriptException
 import de.uniwue.webtester._
-import model._
-import model.points.{Points, addUp}
+import model.User
+import model.points.addUp
 import model.tools.collectionTools._
 import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.api.libs.json.{JsError, JsSuccess, JsValue}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -21,10 +20,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   override type PartType = WebExPart
   override type ExContentType = WebExerciseContent
-
   override type SolType = Seq[ExerciseFile]
-  override type UserSolType = FilesUserSolution[WebExPart]
-
   override type CompResultType = WebCompleteResult
 
   // Other members
@@ -34,7 +30,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: FilesSampleSolutionToolJsonProtocol[WebExPart, WebExerciseContent, WebCompleteResult] =
+  override protected val toolJsonProtocol: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult] =
     WebToolJsonProtocol
 
   override protected val exerciseContentYamlFormat: YamlFormat[WebExerciseContent] = WebToolYamlProtocol.webExerciseYamlFormat
@@ -71,20 +67,6 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
     case WebExParts.JsPart   => exercise.siteSpec.jsTasks.nonEmpty
   }
 
-  override def updateSolSaved(compResult: WebCompleteResult, solSaved: Boolean): WebCompleteResult =
-    compResult.copy(solutionSaved = solSaved)
-
-  // Correction
-
-  override def instantiateSolution(id: Int, exercise: Exercise, part: WebExPart, solution: Seq[ExerciseFile], points: Points, maxPoints: Points): FilesUserSolution[WebExPart] =
-    FilesUserSolution[WebExPart](id, part, solution, points, maxPoints)
-
-  override protected def readSolution(jsValue: JsValue, part: WebExPart): Either[String, Seq[ExerciseFile]] =
-    ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
-      case JsSuccess(x, _) => Right(x.files)
-      case JsError(errors) => Left(errors.toString())
-    }
-
   private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
     case syntaxError: WebDriverException =>
       Option(syntaxError.getCause) match {
@@ -96,7 +78,12 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
       ???
   }
 
-  private def onDriverGetSuccess(learnerSolution: Seq[ExerciseFile], exercise: WebExerciseContent, part: WebExPart, driver: HtmlUnitDriver): Try[WebCompleteResult] = Try {
+  private def onDriverGetSuccess(
+    exercise: WebExerciseContent,
+    part: WebExPart,
+    driver: HtmlUnitDriver,
+    solutionSaved: Boolean
+  ): Try[WebCompleteResult] = Try {
     part match {
       case WebExParts.HtmlPart =>
         val htmlTaskResults      : Seq[HtmlTaskResult]       = exercise.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
@@ -105,7 +92,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
         val points    = addUp(gradedHtmlTaskResults.map(_.points))
         val maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
 
-        WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints)
+        WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints, solutionSaved)
 
       case WebExParts.JsPart =>
         val jsTaskResults      : Seq[JsTaskResult]       = exercise.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
@@ -114,25 +101,34 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
         val points    = addUp(gradedJsTaskResults.map(_.points))
         val maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
 
-        WebCompleteResult(Seq[GradedHtmlTaskResult](), gradedJsTaskResults, points, maxPoints)
+        WebCompleteResult(Seq[GradedHtmlTaskResult](), gradedJsTaskResults, points, maxPoints, solutionSaved)
     }
   }
 
-  def getSolutionUrl(user: User, collId: Int, exerciseId: Int, fileName: String): String =
-    s"http://localhost:9080/${user.username}/${collId}/${exerciseId}/${fileName}"
+  def getSolutionUrl(user: User, exercise: Exercise, fileName: String): String =
+    s"http://localhost:9080/${user.username}/${String.valueOf(exercise.collectionId)}/${String.valueOf(exercise.id)}/${fileName}"
 
   override def correctEx(
-    user: User, learnerSolution: Seq[ExerciseFile], collection: ExerciseCollection, exercise: Exercise, content: WebExerciseContent, part: WebExPart
+    user: User,
+    learnerSolution: Seq[ExerciseFile],
+    collection: ExerciseCollection,
+    exercise: Exercise,
+    content: WebExerciseContent,
+    part: WebExPart,
+    solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {
-    writeWebSolutionFiles(user.username, collection.id, exercise.id, part, learnerSolution).flatMap { _ =>
+    writeWebSolutionFiles(user.username, collection.id, exercise.id, part, learnerSolution)
+      .flatMap { _ =>
 
-      val driver              = new HtmlUnitDriver(true)
-      val solutionUrl: String = getSolutionUrl(user, collection.id, exercise.id, content.siteSpec.fileName)
+        val driver              = new HtmlUnitDriver(true)
+        val solutionUrl: String = getSolutionUrl(user, exercise, content.siteSpec.fileName)
 
-      Try {
-        driver.get(solutionUrl)
-      }.fold(onDriverGetError, _ => onDriverGetSuccess(learnerSolution, content, part, driver))
-    }
+        Try(driver.get(solutionUrl))
+          .fold(
+            onDriverGetError,
+            (_: Unit) => onDriverGetSuccess(content, part, driver, solutionSaved)
+          )
+      }
   }
 
 }

@@ -35,82 +35,75 @@ class ApiController @Inject()(cc: ControllerComponents, tables: ExerciseTableDef
     }
   }
 
-  def apiExerciseBasics(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    tables.futureExerciseBasicsInColl(toolMain, collId).map { exerciseBasics =>
-      Ok(Json.toJson(exerciseBasics)(Writes.seq(ToolJsonProtocol.exerciseBasicsFormat)))
-    }
-  }
-
   def apiExercises(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    // FIXME: send only id, title, ...
+    // FIXME: send only id, title, ... ?
     tables.futureExercisesInColl(toolMain, collId).map { exercises: Seq[Exercise] =>
-      Ok(Json.toJson(exercises)(Writes.seq(toolMain.exerciseFormat)))
+      Ok(Json.toJson(exercises)(Writes.seq(ToolJsonProtocol.exerciseFormat)))
     }
   }
 
   def apiExercise(toolType: String, collId: Int, exId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     tables.futureExerciseById(toolMain.urlPart, collId, exId).map {
       case None           => NotFound(s"There is no such exercise with id $exId for collection $collId")
-      case Some(exercise) => Ok(Json.toJson(exercise)(toolMain.exerciseFormat))
+      case Some(exercise) => Ok(Json.toJson(exercise)(ToolJsonProtocol.exerciseFormat))
     }
   }
 
-  def apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String): Action[AnyContent] = apiWithToolMain(toolType) { (request, user, toolMain) =>
-    tables.futureCollById(toolMain.urlPart, collId) flatMap {
-      case None             => Future.successful(onNoSuchCollection(toolMain.urlPart, collId))
-      case Some(collection) =>
+  def apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String): Action[JsValue] = apiWithToolMain(toolType, parse.json) { (request, user, toolMain) =>
+    tables.futureCollectionAndExercise(toolMain.urlPart, collId, exId).flatMap {
+      case None                         => Future.successful(onNoSuchExercise(collId, exId))
+      case Some((collection, exercise)) =>
 
-        tables.futureExerciseById(toolMain.urlPart, collection.id, exId) flatMap {
-          case None           => Future.successful(onNoSuchExercise(collection, exId))
-          case Some(exercise) =>
+        toolMain.partTypeFromUrl(partStr) match {
+          case None         => Future.successful(onNoSuchExercisePart(exercise, partStr))
+          case Some(exPart) =>
 
-            toolMain.partTypeFromUrl(partStr) match {
-              case None         => Future.successful(onNoSuchExercisePart(exercise, partStr))
-              case Some(exPart) =>
+            toolMain.readSolution(request.body).fold(
+              errors => {
+                errors.foreach(e => logger.error(e.toString()))
+                ???
+              },
+              solution => {
 
-                toolMain.correctAbstract(user, collection, exercise, exPart)(request, ec).map {
-                  case Failure(error)  =>
-                    logger.error("There has been an internal correction error:", error)
-                    BadRequest(toolMain.onLiveCorrectionError(error))
-                  case Success(result) =>
+                tables.futureInsertSolution(user, exercise, exPart, request.body)
+                  .flatMap { inserted =>
 
-                    ??? // tables.futureInsertSolution()
+                    toolMain.correctAbstract(user, solution, collection, exercise, exPart, inserted).map {
+                      case Failure(error) =>
+                        logger.error("There has been an internal correction error:", error)
+                        BadRequest(Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!"))
 
-                    Ok(toolMain.onLiveCorrectionResult(result))
-                }
-            }
+                      case Success(result) => Ok(toolMain.onLiveCorrectionResult(result))
+                    }
+                  }
+              }
+            )
         }
     }
   }
 
-
   // Exercise review process
 
   def reviewExercisePart(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = apiWithToolMain(toolType) { (request, user, toolMain) =>
-    tables.futureCollById(toolMain.urlPart, collId) flatMap {
-      case None             => Future.successful(onNoSuchCollection(toolMain.urlPart, collId))
-      case Some(collection) =>
+    tables.futureExerciseById(toolMain.urlPart, collId, id).flatMap {
+      case None           => Future.successful(onNoSuchExercise(collId, id))
+      case Some(exercise) =>
 
-        tables.futureExerciseById(toolMain.urlPart, collection.id, id) flatMap {
-          case None           => Future.successful(onNoSuchExercise(collection, id))
-          case Some(exercise) =>
+        toolMain.partTypeFromUrl(partStr) match {
+          case None       => Future.successful(onNoSuchExercisePart(exercise, partStr))
+          case Some(part) =>
 
-            toolMain.partTypeFromUrl(partStr) match {
-              case None       => Future.successful(onNoSuchExercisePart(exercise, partStr))
-              case Some(part) =>
-
-                val onFormError: Form[ExerciseReview] => Future[Result] = { formWithErrors =>
-                  ???
-                }
-
-                val onFormRead: ExerciseReview => Future[Result] = { currentReview =>
-                  tables.futureSaveReview(toolMain, user.username, collId, exercise.id, part, currentReview).map {
-                    case true  => ??? // Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
-                    case false => ???
-                  }
-                }
-                ToolForms.exerciseReviewForm.bindFromRequest()(request).fold(onFormError, onFormRead)
+            val onFormError: Form[ExerciseReview] => Future[Result] = { formWithErrors =>
+              ???
             }
+
+            val onFormRead: ExerciseReview => Future[Result] = { currentReview =>
+              tables.futureSaveReview(toolMain, user.username, collId, exercise.id, part, currentReview).map {
+                case true  => ??? // Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
+                case false => ???
+              }
+            }
+            ToolForms.exerciseReviewForm.bindFromRequest()(request).fold(onFormError, onFormRead)
         }
     }
   }

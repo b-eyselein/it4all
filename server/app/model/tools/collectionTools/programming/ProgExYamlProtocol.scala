@@ -3,7 +3,7 @@ package model.tools.collectionTools.programming
 import model._
 import model.tools.collectionTools.programming.ProgDataTypes.NonGenericProgDataType
 import model.tools.collectionTools.uml.UmlClassDiagram
-import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol}
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol, SampleSolution}
 import net.jcazevedo.moultingyaml._
 import play.api.libs.json.JsValue
 
@@ -62,28 +62,21 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     yamlFormat3(ProgTestData)
   }
 
+  private val progSolutionYamlFormat: YamlFormat[ProgSolution] = {
+    implicit val efyf  : YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
+    implicit val putdyf: YamlFormat[ProgTestData] = progTestDataYamlFormat
 
-  private val progSampleSolutionYamlFormat: YamlFormat[ProgSampleSolution] = {
-
-    implicit val progSolutionYamlFormat: YamlFormat[ProgSolution] = {
-      implicit val efyf  : YamlFormat[ExerciseFile] = ExerciseFileYamlProtocol.exerciseFileYamlFormat
-      implicit val putdyf: YamlFormat[ProgTestData] = progTestDataYamlFormat
-
-      yamlFormat2(ProgSolution)
-    }
-
-    yamlFormat2(ProgSampleSolution)
-
+    yamlFormat2(ProgSolution)
   }
 
   val programmingExerciseYamlFormat: YamlFormat[ProgExerciseContent] = {
-    implicit val piyf  : YamlFormat[ProgInput]          = progInputYamlFormat
-    implicit val pdtyf : YamlFormat[ProgDataType]       = progDataTypeYamlFormat
-    implicit val jvyf  : YamlFormat[JsValue]            = jsonValueYamlFormat
-    implicit val utpyf : YamlFormat[UnitTestPart]       = unitTestPartYamlFormat
-    implicit val ipyf  : YamlFormat[ImplementationPart] = implementationPartYamlFormat
-    implicit val pssyf : YamlFormat[ProgSampleSolution] = progSampleSolutionYamlFormat
-    implicit val pstdyf: YamlFormat[ProgTestData] = progTestDataYamlFormat
+    implicit val piyf  : YamlFormat[ProgInput]                    = progInputYamlFormat
+    implicit val pdtyf : YamlFormat[ProgDataType]                 = progDataTypeYamlFormat
+    implicit val jvyf  : YamlFormat[JsValue]                      = jsonValueYamlFormat
+    implicit val utpyf : YamlFormat[UnitTestPart]                 = unitTestPartYamlFormat
+    implicit val ipyf  : YamlFormat[ImplementationPart]           = implementationPartYamlFormat
+    implicit val pssyf : YamlFormat[SampleSolution[ProgSolution]] = sampleSolutionYamlFormat[ProgSolution](progSolutionYamlFormat)
+    implicit val pstdyf: YamlFormat[ProgTestData]                 = progTestDataYamlFormat
 
     implicit val ucdyf: YamlFormat[UmlClassDiagram] = new YamlFormat[UmlClassDiagram] {
 

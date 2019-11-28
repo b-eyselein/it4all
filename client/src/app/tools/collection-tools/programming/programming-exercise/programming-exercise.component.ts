@@ -2,15 +2,15 @@ import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@ang
 import {ActivatedRoute, Router} from '@angular/router';
 import {DbProgrammingSolution, ProgrammingCorrectionResult} from '../programming-interfaces';
 import {ApiService} from '../../_services/api.service';
-import {ExerciseFile, IdeWorkspace} from '../../../basics';
 import {DexieService} from '../../../../_services/dexie.service';
 import {TabComponent} from '../../../../shared/tab/tab.component';
 import {TabsComponent} from '../../../../shared/tabs/tabs.component';
 import {ProgrammingImplementationToolPart, ProgrammingTool} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
+import {IExercise, IExerciseFile, IProgSolution} from '../../../../_interfaces/models';
 
 import 'codemirror/mode/python/python';
-import {IExercise, IExerciseCollection} from '../../../../_interfaces/models';
+import {sample} from 'rxjs/operators';
 
 @Component({
   selector: 'it4all-programming-exercise',
@@ -19,15 +19,13 @@ import {IExercise, IExerciseCollection} from '../../../../_interfaces/models';
 })
 export class ProgrammingExerciseComponent implements OnInit {
 
-  @Input() collection: IExerciseCollection;
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
 
   @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
-
-  exerciseFiles: ExerciseFile[] = [];
+  exerciseFiles: IExerciseFile[] = [];
 
   correctionRunning = false;
   result: ProgrammingCorrectionResult;
@@ -40,21 +38,11 @@ export class ProgrammingExerciseComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
   }
 
-  get sampleSolutionFilesList(): ExerciseFile[][] {
+  get sampleSolutionFilesList(): IExerciseFile[][] {
     return this.exercise ? this.exercise.content.sampleSolutions.map((s) => s.sample.files) : [];
   }
 
   ngOnInit(): void {
-    console.info(JSON.stringify(this.exercise, null, 2));
-
-    this.part = ProgrammingTool.parts.find((p) => p.id === this.route.snapshot.paramMap.get('partId'));
-
-    if (!this.part) {
-      // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate(['../..']);
-      return;
-    }
-
     this.exerciseFiles = (this.part === ProgrammingImplementationToolPart) ?
       this.exercise.content.implementationPart.files :
       this.exercise.content.unitTestPart.unitTestFiles;
@@ -77,12 +65,11 @@ export class ProgrammingExerciseComponent implements OnInit {
   correct(): void {
     const solution: DbProgrammingSolution = {
       toolId: ProgrammingTool.id,
-      collId: this.collection.id,
+      collId: this.exercise.collectionId,
       exId: this.exercise.id,
       partId: this.part.id,
       solution: {
-        filesNum: this.exerciseFiles.length,
-        files: this.exerciseFiles
+        files: this.exerciseFiles, testData: []
       }
     };
 
@@ -91,8 +78,7 @@ export class ProgrammingExerciseComponent implements OnInit {
 
     this.correctionRunning = true;
 
-    this.apiService.correctSolution<IdeWorkspace, any>(
-      ProgrammingTool.id, this.collection.id, this.exercise.id, this.part.id, solution.solution)
+    this.apiService.correctSolution<IProgSolution, any>(this.exercise, this.part.id, solution.solution)
       .subscribe((result: ProgrammingCorrectionResult | undefined) => {
           // tslint:disable-next-line:no-console
           console.info(JSON.stringify(result, null, 2));
@@ -118,6 +104,7 @@ export class ProgrammingExerciseComponent implements OnInit {
     if (this.tabsComponent) {
       const sampleSolutionsTab = this.tabComponents.toArray().find((t) => t.title === this.sampleSolutionsTabTitle);
       if (sampleSolutionsTab) {
+        sampleSolutionsTab.selectable = true;
         this.tabsComponent.selectTab(sampleSolutionsTab);
       }
     }

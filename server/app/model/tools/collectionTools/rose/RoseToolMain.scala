@@ -1,26 +1,18 @@
 package model.tools.collectionTools.rose
 
-
-import model._
-import model.points.Points
+import model.User
 import model.tools.collectionTools.programming.ProgLanguages
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
 object RoseToolMain extends CollectionToolMain(RoseConsts) {
 
-  // Abstract types
-
   override type PartType = RoseExPart
   override type ExContentType = RoseExerciseContent
-
   override type SolType = String
-  override type UserSolType = RoseUserSolution
-
   override type CompResultType = RoseCompleteResult
 
   // Other members
@@ -29,35 +21,34 @@ object RoseToolMain extends CollectionToolMain(RoseConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[RoseExPart, RoseExerciseContent, String, RoseUserSolution, RoseCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[RoseExerciseContent, String, RoseCompleteResult] =
     RoseToolJsonProtocol
 
   override protected val exerciseContentYamlFormat: YamlFormat[RoseExerciseContent] =
     RoseExYamlProtocol.roseExerciseYamlFormat
 
-  // Other helper methods
-
-  override def instantiateSolution(id: Int, exercise: Exercise, part: RoseExPart, solution: String, points: Points, maxPoints: Points): RoseUserSolution =
-    RoseUserSolution(id, part, language = ProgLanguages.StandardLanguage, solution, points, maxPoints)
-
-  override def updateSolSaved(compResult: RoseCompleteResult, solSaved: Boolean): RoseCompleteResult =
-    compResult.copy(solutionSaved = solSaved)
-
   // Correction
 
-  override protected def readSolution(jsValue: JsValue, part: RoseExPart): Either[String, String] = jsValue match {
-    case JsString(solution) => Right(solution)
-    case _                  => Left("Request body is no string!")
-  }
-
   override protected def correctEx(
-    user: User, sol: String, collection: ExerciseCollection, exercise: Exercise, content: RoseExerciseContent, part: RoseExPart
+    user: User,
+    sol: String,
+    collection: ExerciseCollection,
+    exercise: Exercise,
+    content: RoseExerciseContent,
+    part: RoseExPart,
+    solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[RoseCompleteResult]] = content.sampleSolutions.headOption match {
     case None                 => Future.successful(Failure(new Exception("No sample solution could be found!")))
     case Some(sampleSolution) =>
 
       RoseCorrector.correct(
-        user, content, sol, sampleSolution.sample, ProgLanguages.StandardLanguage, solutionDirForExercise(user.username, collection.id, exercise.id)
+        user,
+        content,
+        sol,
+        sampleSolution.sample,
+        ProgLanguages.StandardLanguage,
+        solutionDirForExercise(user.username, collection.id, exercise.id),
+        solutionSaved
       )
   }
 }

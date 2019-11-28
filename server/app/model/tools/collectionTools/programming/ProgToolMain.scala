@@ -1,25 +1,17 @@
 package model.tools.collectionTools.programming
 
-import model._
-import model.points.Points
+import model.User
 import model.tools.collectionTools._
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
 import scala.util.Try
 
 object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
-  // Abstract types
-
   override type PartType = ProgExPart
   override type ExContentType = ProgExerciseContent
-
   override type SolType = ProgSolution
-  override type UserSolType = ProgUserSolution
-
   override type CompResultType = ProgCompleteResult
 
   // Other members
@@ -28,7 +20,7 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
   // Yaml, Html Forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[ProgExPart, ProgExerciseContent, ProgSolution, ProgUserSolution, ProgCompleteResult] =
+  override protected val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
     ProgrammingToolJsonProtocol
 
   override protected val exerciseContentYamlFormat: YamlFormat[ProgExerciseContent] = ProgExYamlProtocol.programmingExerciseYamlFormat
@@ -41,24 +33,21 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
     case _                           => true
   }
 
-  override def instantiateSolution(
-    id: Int, exercise: Exercise, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points
-  ): ProgUserSolution = ProgUserSolution(id, part, solution, points, maxPoints)
-
-  override def updateSolSaved(compResult: ProgCompleteResult, solSaved: Boolean): ProgCompleteResult =
-    compResult.copy(solutionSaved = solSaved)
-
-  // Db
-
-  override protected def readSolution(jsValue: JsValue, part: ProgExPart): Either[String, ProgSolution] =
-    ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
-      case JsError(errors)        => Left(errors.toString())
-      case JsSuccess(solution, _) => Right(ProgSolution(solution.files, Seq.empty))
-    }
+  //  override protected def readSolution(jsValue: JsValue, part: ProgExPart): JsResult[ProgSolution] = ???
+  //    ToolJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
+  //      case JsError(errors)        => Left(errors.toString())
+  //      case JsSuccess(solution, _) => Right(ProgSolution(solution.files, Seq.empty))
+  //    }
 
   override protected def correctEx(
-    user: User, sol: ProgSolution, collection: ExerciseCollection, exercise: Exercise, content: ProgExerciseContent, part: ProgExPart
+    user: User,
+    sol: ProgSolution,
+    collection: ExerciseCollection,
+    exercise: Exercise,
+    content: ProgExerciseContent,
+    part: ProgExPart,
+    solutionSaved:Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] =
-    ProgCorrector.correct(user, sol, collection, exercise, content, part, exerciseResourcesFolder)
+    ProgCorrector.correct(user, sol, collection, exercise, content, part, exerciseResourcesFolder,solutionSaved)
 
 }

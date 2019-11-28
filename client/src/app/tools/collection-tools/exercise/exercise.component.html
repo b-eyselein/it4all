@@ -3,15 +3,26 @@
 
     <it4all-programming-exercise
       *ngSwitchCase="'programming'"
-      [collection]="collection"
       [exercise]="exercise"
-      [part]="part"></it4all-programming-exercise>
+      [part]="part">
+    </it4all-programming-exercise>
+
+    <it4all-regex-exercise
+      *ngSwitchCase="'regex'"
+      [exercise]="exercise">
+    </it4all-regex-exercise>
 
     <it4all-uml-exercise
       *ngSwitchCase="'uml'"
-      [collection]="collection"
       [exercise]="exercise"
-      [part]="part"></it4all-uml-exercise>
+      [part]="part">
+    </it4all-uml-exercise>
+
+    <it4all-web-exercise
+      *ngSwitchCase="'web'"
+      [exercise]="exercise"
+      [part]="part">
+    </it4all-web-exercise>
 
     <div *ngSwitchDefault>{{tool.id}}</div>
   </ng-container>

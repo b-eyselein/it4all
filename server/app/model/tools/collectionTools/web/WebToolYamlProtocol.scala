@@ -1,13 +1,13 @@
 package model.tools.collectionTools.web
 
 import de.uniwue.webtester._
-import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol}
-import model.{FilesSampleSolution, MyYamlProtocol}
+import model.MyYamlProtocol
+import model.tools.collectionTools.{ExerciseFile, ExerciseFileYamlProtocol, SampleSolution}
 import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 object WebToolYamlProtocol extends MyYamlProtocol {
 
-  import DefaultYamlProtocol.{IntYamlFormat, StringYamlFormat, optionFormat, yamlFormat3, yamlFormat5, yamlFormat6, immSeqFormat}
+  import DefaultYamlProtocol.{IntYamlFormat, StringYamlFormat, immSeqFormat, optionFormat, yamlFormat3, yamlFormat5, yamlFormat6}
 
   implicit def mapFormat[K: YamlFormat, Y: YamlFormat]: YamlFormat[Map[K, Y]] = myMapFormat
 
@@ -34,9 +34,10 @@ object WebToolYamlProtocol extends MyYamlProtocol {
   }
 
   val webExerciseYamlFormat: YamlFormat[WebExerciseContent] = {
-    implicit val ssyf : YamlFormat[SiteSpec]            = siteSpecYamlFormat
-    implicit val fssyf: YamlFormat[FilesSampleSolution] = filesSampleSolutionYamlFormat
-    implicit val efyf : YamlFormat[ExerciseFile]        = ExerciseFileYamlProtocol.exerciseFileYamlFormat
+    implicit val ssyf : YamlFormat[SiteSpec]                          = siteSpecYamlFormat
+    implicit val efyf : YamlFormat[ExerciseFile]                      = ExerciseFileYamlProtocol.exerciseFileYamlFormat
+    implicit val fssyf: YamlFormat[SampleSolution[Seq[ExerciseFile]]] =
+      sampleSolutionYamlFormat(DefaultYamlProtocol.immSeqFormat(ExerciseFileYamlProtocol.exerciseFileYamlFormat))
 
     yamlFormat5(WebExerciseContent)
   }

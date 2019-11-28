@@ -24,9 +24,11 @@ JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 val tsiClasses = Seq(
   "ExerciseCollection",
   "Exercise",
+  "ProgSolution",
   "RegexExerciseContent",
   "SqlExerciseContent",
   "UmlExerciseContent",
+  "WebExerciseContent",
   "XmlExerciseContent"
 )
 
@@ -39,9 +41,11 @@ lazy val root = (project in file("."))
     typescriptOutputFile := baseDirectory.value.getParentFile / "client" / "src" / "app" / "_interfaces" / "models.ts",
     typescriptGenerationImports := Seq(
       "model.tools.collectionTools._",
+      "model.tools.collectionTools.programming._",
       "model.tools.collectionTools.regex._",
       "model.tools.collectionTools.sql._",
       "model.tools.collectionTools.uml._",
+      "model.tools.collectionTools.web._",
       "model.tools.collectionTools.xml._",
       "model.MyTSInterfaceTypes._"
     )

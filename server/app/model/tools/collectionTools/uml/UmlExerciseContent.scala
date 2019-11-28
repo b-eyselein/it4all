@@ -1,17 +1,17 @@
 package model.tools.collectionTools.uml
 
-import model._
+import model.UserSolution
 import model.points.Points
-import model.tools.collectionTools.ExerciseContent
+import model.tools.collectionTools.{ExerciseContent, SampleSolution}
 
 
 final case class UmlExerciseContent(
   toIgnore: Seq[String],
   mappings: Map[String, String],
-  sampleSolutions: Seq[UmlSampleSolution]
+  sampleSolutions: Seq[SampleSolution[UmlClassDiagram]]
 ) extends ExerciseContent {
 
-  override type SampleSolType = UmlSampleSolution
+  override type SolType = UmlClassDiagram
 
   def titleForPart(part: UmlExPart): String = part match {
     case UmlExParts.ClassSelection     => "Auswahl der Klassen"
@@ -20,7 +20,7 @@ final case class UmlExerciseContent(
     case UmlExParts.MemberAllocation   => "Zuordnung der Member"
   }
 
-//  def markedText: String = UmlExTextProcessor.parseText(text.wrapped, mappings, toIgnore)
+  //  def markedText: String = UmlExTextProcessor.parseText(text.wrapped, mappings, toIgnore)
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
     val assocs: Seq[UmlAssociation]    = Seq[UmlAssociation]()
@@ -48,10 +48,5 @@ final case class UmlExerciseContent(
 }
 
 
-// Table classes
-
-final case class UmlSampleSolution(id: Int, sample: UmlClassDiagram)
-  extends SampleSolution[UmlClassDiagram]
-
 final case class UmlUserSolution(id: Int, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points)
-  extends UserSolution[UmlExPart, UmlClassDiagram]
+  extends UserSolution[UmlClassDiagram]

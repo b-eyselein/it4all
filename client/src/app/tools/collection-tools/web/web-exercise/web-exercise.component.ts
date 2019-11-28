@@ -1,33 +1,46 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {IExercise, IExerciseFile, IWebExerciseContent} from '../../../../_interfaces/models';
+import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
+import {ExerciseFilesEditorComponent} from '../../_components/exercise-files-editor/exercise-files-editor.component';
+import {IdeWorkspace} from '../../../basics';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
-import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
-import {IExercise} from '../../../../_interfaces/models';
 
-@Component({templateUrl: './web-exercise.component.html'})
-export class WebExerciseComponent extends ExerciseComponentHelpers implements OnInit {
 
-  collId: number;
-  exId: number;
+type SolType = IExerciseFile[];
 
-  exercise: IExercise;
+@Component({
+  selector: 'it4all-web-exercise',
+  templateUrl: './web-exercise.component.html'
+})
+export class WebExerciseComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService) {
-    super(route);
+  @Input() exercise: IExercise;
+  @Input() part: ToolPart;
 
-    this.collId = parseInt(route.snapshot.paramMap.get('collId'), 10);
-    this.exId = parseInt(route.snapshot.paramMap.get('exId'), 10);
+  exerciseContent: IWebExerciseContent;
+
+  result: any;
+
+  @ViewChild(ExerciseFilesEditorComponent, {static: true}) editor: ExerciseFilesEditorComponent;
+
+  constructor(private apiService: ApiService) {
   }
 
   ngOnInit(): void {
-    this.apiService.getExercise(this.tool.id, this.collId, this.exId)
-      .subscribe((ex: IExercise) => this.exercise = ex);
+    this.exerciseContent = this.exercise.content as IWebExerciseContent;
   }
 
   correct(): void {
-    console.error('TODO: correct!');
+    const files = this.editor.exerciseFiles;
+
+    const solution: IdeWorkspace = {
+      filesNum: files.length, files
+    };
+
+    this.apiService.correctSolution<IdeWorkspace, SolType>(this.exercise, this.part.id, solution)
+      .subscribe((result) => this.result = result);
   }
 
   showSampleSolution(): void {

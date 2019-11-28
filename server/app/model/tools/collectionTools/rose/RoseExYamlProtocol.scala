@@ -1,7 +1,8 @@
 package model.tools.collectionTools.rose
 
 import model.MyYamlProtocol
-import model.tools.collectionTools.programming.{ProgDataType, ProgExYamlProtocol, ProgLanguage, ProgLanguages}
+import model.tools.collectionTools.SampleSolution
+import model.tools.collectionTools.programming.{ProgDataType, ProgExYamlProtocol}
 import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 object RoseExYamlProtocol extends MyYamlProtocol {
@@ -14,15 +15,9 @@ object RoseExYamlProtocol extends MyYamlProtocol {
     yamlFormat3(RoseInputType)
   }
 
-  private val roseSampleSolutionYamlFormat: YamlFormat[RoseSampleSolution] = {
-    implicit val plyf: YamlFormat[ProgLanguage] = new EnumYamlFormat(ProgLanguages)
-
-    yamlFormat3(RoseSampleSolution)
-  }
-
   val roseExerciseYamlFormat: YamlFormat[RoseExerciseContent] = {
-    implicit val rityf: YamlFormat[RoseInputType]      = roseInputTypeYamlFormat
-    implicit val rssyf: YamlFormat[RoseSampleSolution] = roseSampleSolutionYamlFormat
+    implicit val rityf: YamlFormat[RoseInputType]          = roseInputTypeYamlFormat
+    implicit val rssyf: YamlFormat[SampleSolution[String]] = sampleSolutionYamlFormat(DefaultYamlProtocol.StringYamlFormat)
 
     yamlFormat5(RoseExerciseContent)
   }

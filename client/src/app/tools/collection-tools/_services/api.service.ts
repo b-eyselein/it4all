@@ -55,8 +55,8 @@ export class ApiService {
 
   // Correction
 
-  correctSolution<S, R>(toolId: string, collId: number, exId: number, part: string, solution: S): Observable<R | undefined> {
-    const url = `${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}/${part}`;
+  correctSolution<S, R>(exercise: IExercise, part: string, solution: S): Observable<R | undefined> {
+    const url = `${this.baseUrl}/${exercise.toolId}/collections/${exercise.collectionId}/exercises/${exercise.id}/${part}`;
 
     return this.http.put<R>(url, JSON.stringify(solution), ApiService.putHttpOptions)
       .pipe(catchError(() => of(undefined)));

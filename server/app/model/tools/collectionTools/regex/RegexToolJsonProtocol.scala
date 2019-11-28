@@ -1,12 +1,11 @@
 package model.tools.collectionTools.regex
 
-import model.StringSampleSolution
 import model.core.matching.MatchingResult
-import model.points.{Points, pointsJsonWrites}
-import model.tools.collectionTools.StringSampleSolutionToolJsonProtocol
+import model.points.Points
+import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol, ToolJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
 
-object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExPart, RegexExerciseContent, RegexCompleteResult](RegexExParts.jsonFormat) {
+object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] {
 
   val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
@@ -14,7 +13,7 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
 
   override val exerciseContentFormat: Format[RegexExerciseContent] = {
     implicit val rctf : Format[RegexCorrectionType]     = RegexCorrectionTypes.jsonFormat
-    implicit val sssf : Format[StringSampleSolution]    = sampleSolutionFormat
+    implicit val sssf : Format[SampleSolution[String]]    = sampleSolutionFormat
     implicit val rmtdf: Format[RegexMatchTestData]      = regexMatchTestDataFormat
     implicit val retdf: Format[RegexExtractionTestData] = regexExtractionTestDataFormat
 
@@ -48,7 +47,7 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
   override val completeResultWrites: Writes[RegexCompleteResult] = {
     implicit val regexCorrectionTypeFormat: Format[RegexCorrectionType] = RegexCorrectionTypes.jsonFormat
 
-    implicit val pointsWrites: Writes[Points] = pointsJsonWrites
+    implicit val pointsWrites: Writes[Points] = ToolJsonProtocol.pointsFormat
 
     implicit val matchEvalResultWrites: Writes[RegexMatchingEvaluationResult] = regexMatchingEvaluationResultWrites
 

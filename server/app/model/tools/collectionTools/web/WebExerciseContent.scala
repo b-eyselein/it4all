@@ -1,8 +1,7 @@
 package model.tools.collectionTools.web
 
 import de.uniwue.webtester.SiteSpec
-import model.FilesSampleSolution
-import model.tools.collectionTools.{ExPart, ExParts, ExerciseFile, FileExerciseContent}
+import model.tools.collectionTools._
 
 sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart
 
@@ -24,6 +23,6 @@ final case class WebExerciseContent(
   jsText: Option[String],
   siteSpec: SiteSpec,
   files: Seq[ExerciseFile],
-  sampleSolutions: Seq[FilesSampleSolution]
+  sampleSolutions: Seq[SampleSolution[Seq[ExerciseFile]]]
 ) extends FileExerciseContent
 

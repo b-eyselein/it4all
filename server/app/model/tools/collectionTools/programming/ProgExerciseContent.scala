@@ -3,7 +3,7 @@ package model.tools.collectionTools.programming
 import model._
 import model.points.Points
 import model.tools.collectionTools.uml.UmlClassDiagram
-import model.tools.collectionTools.{ExerciseContent, ExerciseFile}
+import model.tools.collectionTools.{ExerciseContent, ExerciseFile, SampleSolution}
 import play.api.libs.json.JsValue
 
 
@@ -16,7 +16,7 @@ final case class ProgExerciseContent(
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
 
-  sampleSolutions: Seq[ProgSampleSolution],
+  sampleSolutions: Seq[SampleSolution[ProgSolution]],
   sampleTestData: Seq[ProgTestData],
 
   override val tags: Seq[ProgrammingExerciseTag],
@@ -24,7 +24,7 @@ final case class ProgExerciseContent(
   maybeClassDiagramPart: Option[UmlClassDiagram]
 ) extends ExerciseContent {
 
-  override type SampleSolType = ProgSampleSolution
+  override type SolType = ProgSolution
 
   //  def inputCount: Int = inputTypes.size
 
@@ -63,12 +63,8 @@ final case class ProgTestData(id: Int, input: JsValue, output: JsValue)
 
 // Solution types
 
-final case class ProgSampleSolution(id: Int, sample: ProgSolution) extends SampleSolution[ProgSolution]
+//final case class ProgSampleSolution(id: Int, sample: ProgSolution) extends SampleSolution[ProgSolution]
 
 
 final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points)
-  extends UserSolution[ProgExPart, ProgSolution] {
-
-  def commitedTestData: Seq[ProgTestData] = solution.testData
-
-}
+  extends UserSolution[ProgSolution]

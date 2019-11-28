@@ -8,8 +8,6 @@ import play.api.libs.json._
 
 //object MatchingResultJsonProtocol {
 //
-//  private implicit val pointsWrites = pointsJsonWrites
-//
 //  private def unapplyMatchingResult: MatchingResult[Match] => (String, String, SuccessType, Seq[Match], Points, Points) =
 //    mr => (mr.matchName, mr.matchSingularName, mr.success, mr.allMatches, mr.points, mr.maxPoints)
 //

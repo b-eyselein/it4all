@@ -1,6 +1,7 @@
 package model.tools.collectionTools.regex
 
-import model.{MyYamlProtocol, StringSampleSolution}
+import model.MyYamlProtocol
+import model.tools.collectionTools.SampleSolution
 import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlFormat}
 
 object RegexToolYamlProtocol extends MyYamlProtocol {
@@ -11,7 +12,7 @@ object RegexToolYamlProtocol extends MyYamlProtocol {
     implicit val rctyf : YamlFormat[RegexCorrectionType]     = new EnumYamlFormat(RegexCorrectionTypes)
     implicit val rmtdyf: YamlFormat[RegexMatchTestData]      = yamlFormat3(RegexMatchTestData)
     implicit val retdyf: YamlFormat[RegexExtractionTestData] = yamlFormat2(RegexExtractionTestData)
-    implicit val sssyf : YamlFormat[StringSampleSolution]    = stringSampleSolutionYamlFormat
+    implicit val sssyf : YamlFormat[SampleSolution[String]]  = sampleSolutionYamlFormat(DefaultYamlProtocol.StringYamlFormat)
 
     yamlFormat5(RegexExerciseContent)
   }

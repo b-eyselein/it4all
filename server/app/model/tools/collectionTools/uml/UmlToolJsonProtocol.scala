@@ -2,32 +2,26 @@ package model.tools.collectionTools.uml
 
 import model.core.matching.MatchingResult
 import model.points._
-import model.tools.collectionTools.ToolJsonProtocol
 import model.tools.collectionTools.uml.matcher.{UmlAssociationMatch, UmlClassMatch, UmlImplementationMatch}
+import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
-object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExPart, UmlExerciseContent, UmlClassDiagram, UmlUserSolution, UmlCompleteResult] {
+object UmlToolJsonProtocol extends ToolJsonProtocol[ UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] {
 
-  override val userSolutionFormat: Format[UmlUserSolution] = {
-    implicit val uepf: Format[UmlExPart]       = UmlExParts.jsonFormat
-    implicit val ucdf: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
-    implicit val pf  : Format[Points]          = ToolJsonProtocol.pointsFormat
-
-    Json.format[UmlUserSolution]
-  }
+  override val solutionFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
 
   override val exerciseContentFormat: Format[UmlExerciseContent] = {
-    implicit val ussf: Format[UmlSampleSolution] = {
-      implicit val ucdf: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
+    implicit val ussf: Format[SampleSolution[UmlClassDiagram]] = {
+      implicit val ucdf: Format[UmlClassDiagram] = solutionFormat
 
-      Json.format[UmlSampleSolution]
+      Json.format[SampleSolution[UmlClassDiagram]]
     }
 
     Json.format[UmlExerciseContent]
   }
 
   override val completeResultWrites: Writes[UmlCompleteResult] = {
-    implicit val pointsWrites: Writes[Points]                                 = pointsJsonWrites
+    implicit val pointsWrites: Writes[Points]                                 = ToolJsonProtocol.pointsFormat
     implicit val crw         : Writes[MatchingResult[UmlClassMatch]]          = _.toJson
     implicit val arw         : Writes[MatchingResult[UmlAssociationMatch]]    = _.toJson
     implicit val irw         : Writes[MatchingResult[UmlImplementationMatch]] = _.toJson

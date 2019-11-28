@@ -1,53 +1,25 @@
-export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT")
-export type UmlMultiplicity = ("SINGLE" | "UNBOUND")
 
-export interface IUmlClass {
-  classType: UmlClassType
-  name: string
-  attributes: IUmlAttribute[]
-  methods: IUmlMethod[]
-}
-       
-
-export interface IUmlAssociation {
-  assocType: UmlAssociationType
-  assocName?: string
-  firstEnd: string
-  firstMult: UmlMultiplicity
-  secondEnd: string
-  secondMult: UmlMultiplicity
-}
-       
-export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE")
-export type SqlExerciseTag = ("SQL_JOIN" | "SQL_DOUBLE_JOIN" | "SQL_TRIPLE_JOIN" | "SQL_ORDER_BY" | "SQL_GROUP_BY" | "SQL_FUNCTION" | "SQL_ALIAS" | "SQL_LIMIT" | "SQL_SUBSELECT")
-
-export interface IRegexExtractionTestData {
+export interface ISampleSolution {
   id: number
-  base: string
+  sample: object
 }
        
 
-export interface ILongText {
-  wrapped: string
-}
-       
-export type SqlExerciseType = ("SELECT" | "CREATE" | "UPDATE" | "INSERT" | "DELETE")
-export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION")
-
-export interface IUmlMethod {
-  visibility: UmlVisibility
-  memberName: string
-  memberType: string
-  parameters: string
-  isStatic: boolean
-  isAbstract: boolean
+export interface IWebExerciseContent {
+  htmlText?: string
+  jsText?: string
+  siteSpec: ISiteSpec
+  files: IExerciseFile[]
+  sampleSolutions: ISampleSolution[]
 }
        
 
-export interface IUmlExerciseContent {
-  toIgnore: string[]
-  mappings: { [ key: string ]: string }
-  sampleSolutions: IUmlSampleSolution[]
+export interface IJsHtmlElementSpec {
+  id: number
+  xpathQuery: string
+  awaitedTagName: string
+  awaitedTextContent?: string
+  attributes: { [ key: string ]: string }
 }
        
 
@@ -58,9 +30,68 @@ export interface IRegexMatchTestData {
 }
        
 
-export interface IXmlSolution {
-  document: string
-  grammar: string
+export interface ISiteSpec {
+  fileName: string
+  htmlTasks: IHtmlTask[]
+  jsTasks: IJsTask[]
+}
+       
+
+export interface ISqlExerciseContent {
+  exerciseType: SqlExerciseType
+  tags: SqlExerciseTag[]
+  hint?: string
+  sampleSolutions: ISampleSolution[]
+}
+       
+
+export interface IExerciseFile {
+  name: string
+  resourcePath: string
+  fileType: string
+  editable: boolean
+  content: string
+  active?: boolean
+}
+       
+
+export interface IUmlExerciseContent {
+  toIgnore: string[]
+  mappings: { [ key: string ]: string }
+  sampleSolutions: ISampleSolution[]
+}
+       
+export type SqlExerciseTag = ("SQL_JOIN" | "SQL_DOUBLE_JOIN" | "SQL_TRIPLE_JOIN" | "SQL_ORDER_BY" | "SQL_GROUP_BY" | "SQL_FUNCTION" | "SQL_ALIAS" | "SQL_LIMIT" | "SQL_SUBSELECT")
+
+export interface IHtmlTask {
+  id: number
+  text: string
+  xpathQuery: string
+  awaitedTagName: string
+  awaitedTextContent?: string
+  attributes: { [ key: string ]: string }
+}
+       
+
+export interface IProgSolution {
+  files: IExerciseFile[]
+  testData: IProgTestData[]
+}
+       
+export type SqlExerciseType = ("SELECT" | "CREATE" | "UPDATE" | "INSERT" | "DELETE")
+
+export interface ISemanticVersion {
+  major: number
+  minor: number
+  patch: number
+}
+       
+export type JsActionType = ("Click" | "FillOut")
+
+export interface IJsAction {
+  xpathQuery: string
+  actionType: JsActionType
+  keysToSend?: string
 }
        
 export type RegexCorrectionTypes = ("MATCHING" | "EXTRACTION")
@@ -76,12 +107,6 @@ export interface IExerciseCollection {
 }
        
 
-export interface IXmlSampleSolution {
-  id: number
-  sample: IXmlSolution
-}
-       
-
 export interface IExercise {
   id: number
   collectionId: number
@@ -94,68 +119,45 @@ export interface IExercise {
 }
        
 
-export interface IRegexExerciseContent {
-  maxPoints: number
-  correctionType: RegexCorrectionTypes
-  sampleSolutions: IStringSampleSolution[]
-  matchTestData: IRegexMatchTestData[]
-  extractionTestData: IRegexExtractionTestData[]
-}
-       
-
-export interface IStringSampleSolution {
+export interface IJsTask {
   id: number
-  sample: string
+  text: string
+  preConditions: IJsHtmlElementSpec[]
+  action: IJsAction
+  postConditions: IJsHtmlElementSpec[]
 }
        
 
-export interface ISqlExerciseContent {
-  exerciseType: SqlExerciseType
-  tags: SqlExerciseTag[]
-  hint?: string
-  sampleSolutions: IStringSampleSolution[]
-}
-       
-
-export interface IUmlSampleSolution {
+export interface IRegexExtractionTestData {
   id: number
-  sample: IUmlClassDiagram
+  base: string
 }
        
 
-export interface IUmlAttribute {
-  visibility: UmlVisibility
-  memberName: string
-  memberType: string
-  isStatic: boolean
-  isDerived: boolean
-  isAbstract: boolean
-}
-       
-
-export interface ISemanticVersion {
-  major: number
-  minor: number
-  patch: number
-}
-       
-
-export interface IUmlClassDiagram {
-  classes: IUmlClass[]
-  associations: IUmlAssociation[]
-  implementations: IUmlImplementation[]
+export interface IProgTestData {
+  id: number
+  input: any
+  output: any
 }
        
 
 export interface IXmlExerciseContent {
   grammarDescription: ILongText
   rootNode: string
-  sampleSolutions: IXmlSampleSolution[]
+  sampleSolutions: ISampleSolution[]
 }
        
 
-export interface IUmlImplementation {
-  subClass: string
-  superClass: string
+export interface IRegexExerciseContent {
+  maxPoints: number
+  correctionType: RegexCorrectionTypes
+  sampleSolutions: ISampleSolution[]
+  matchTestData: IRegexMatchTestData[]
+  extractionTestData: IRegexExtractionTestData[]
+}
+       
+
+export interface ILongText {
+  wrapped: string
 }
        

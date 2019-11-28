@@ -1,16 +1,14 @@
 package model.tools.collectionTools.web
 
 import de.uniwue.webtester._
-import model._
 import model.core.result.SuccessType
-import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
 import model.tools.collectionTools.web.WebConsts._
-import model.tools.collectionTools.{ExerciseFile, ExerciseFileJsonProtocol, FilesSampleSolutionToolJsonProtocol}
+import model.tools.collectionTools.{ExerciseFile, FilesSampleSolutionToolJsonProtocol, SampleSolution, ToolJsonProtocol}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExPart, WebExerciseContent, WebCompleteResult](WebExParts.jsonFormat) {
+object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult] {
 
   val jsHtmlElementSpecFormat: Format[JsHtmlElementSpec] = Json.format[JsHtmlElementSpec]
 
@@ -34,10 +32,9 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExPart
   }
 
   override val exerciseContentFormat: Format[WebExerciseContent] = {
-    implicit val ltf : Format[LongText]            = LongTextJsonProtocol.format
     implicit val ssf : Format[SiteSpec]            = siteSpecFormat
-    implicit val eff : Format[ExerciseFile]        = ExerciseFileJsonProtocol.exerciseFileFormat
-    implicit val fssf: Format[FilesSampleSolution] = sampleSolutionFormat
+    implicit val eff : Format[Seq[ExerciseFile]]   = solutionFormat
+    implicit val fssf: Format[SampleSolution[Seq[ExerciseFile]]] = sampleSolutionFormat
 
     Json.format[WebExerciseContent]
   }
@@ -47,7 +44,7 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExPart
   // FIXME: use macro Json.format[...]!
 
   private val gradedTextResultWrites: Writes[GradedTextResult] = {
-    implicit val pw: Writes[Points] = pointsJsonWrites
+    implicit val pw: Writes[Points] = ToolJsonProtocol.pointsFormat
 
     Json.writes[GradedTextResult]
   }
@@ -103,7 +100,7 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExPart
   override val completeResultWrites: Writes[WebCompleteResult] = {
     implicit val gesrw: Writes[GradedElementSpecResult] = elementResultWrites
     implicit val jwrw : Writes[GradedJsTaskResult]      = jsWebResultWrites
-    implicit val pw   : Writes[Points]                  = pointsJsonWrites
+    implicit val pw   : Writes[Points]                  = ToolJsonProtocol.pointsFormat
 
     (
       (__ \ solutionSavedName).write[Boolean] and

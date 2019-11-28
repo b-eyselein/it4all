@@ -1,7 +1,6 @@
 package model
 
-import play.api.libs.json.{JsNumber, Writes}
-
+import scala.language.implicitConversions
 import scala.math.Integral.Implicits._
 
 package object points {
@@ -56,9 +55,5 @@ package object points {
   def singleHalfPoint: Points = 1.halfPoint
 
   def singleQuarterPoint: Points = 1.quarterPoint
-
-
-  @deprecated
-  val pointsJsonWrites: Writes[Points] = p => JsNumber(p.asDouble)
 
 }

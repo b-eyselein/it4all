@@ -6,7 +6,7 @@ import model.tools.collectionTools.uml.matcher.{UmlAssociationMatcher, UmlClassM
 
 object UmlCorrector {
 
-  def correct(userClassDiagram: UmlClassDiagram, sampleClassDiagram: UmlClassDiagram, part: UmlExPart): UmlCompleteResult = {
+  def correct(userClassDiagram: UmlClassDiagram, sampleClassDiagram: UmlClassDiagram, part: UmlExPart, solutionSaved: Boolean): UmlCompleteResult = {
 
     val classResult: Option[MatchingResult[UmlClassMatch]] = part match {
       case UmlExParts.DiagramDrawingHelp                           => None
@@ -29,7 +29,7 @@ object UmlCorrector {
 
     val maxPoints: Points = (-1).points
 
-    UmlCompleteResult(classResult, assocResult, implResult, points, maxPoints)
+    UmlCompleteResult(classResult, assocResult, implResult, points, maxPoints, solutionSaved)
   }
 
 }

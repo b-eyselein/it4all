@@ -3,31 +3,19 @@ package model.tools.collectionTools.xml
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
-import model.tools.collectionTools.ToolJsonProtocol
+import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
-object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExPart, XmlExerciseContent, XmlSolution, XmlUserSolution, XmlCompleteResult] {
+object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult] {
 
-  // Sample solution
-
-  private val solutionFormat = Json.format[XmlSolution]
-
-  override val userSolutionFormat: Format[XmlUserSolution] = {
-    implicit val xepf: Format[XmlExPart]   = XmlExParts.jsonFormat
-    implicit val pf  : Format[Points]      = ToolJsonProtocol.pointsFormat
-    implicit val xsf : Format[XmlSolution] = solutionFormat
-
-    Json.format[XmlUserSolution]
-  }
-
-  // Exercise
+  override val solutionFormat: Format[XmlSolution] = Json.format[XmlSolution]
 
   override val exerciseContentFormat: Format[XmlExerciseContent] = {
-    implicit val ltf : Format[LongText]          = LongTextJsonProtocol.format
-    implicit val xssf: Format[XmlSampleSolution] = {
+    implicit val ltf : Format[LongText]                    = LongTextJsonProtocol.format
+    implicit val xssf: Format[SampleSolution[XmlSolution]] = {
       implicit val xsf: Format[XmlSolution] = solutionFormat
 
-      Json.format[XmlSampleSolution]
+      Json.format[SampleSolution[XmlSolution]]
     }
 
     Json.format[XmlExerciseContent]
@@ -44,7 +32,7 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExPart, XmlExerciseConten
 
     implicit val elmw: Writes[ElementLineMatch] = _.toJson
 
-    implicit val pw: Writes[Points] = pointsJsonWrites
+    implicit val pw: Writes[Points] = ToolJsonProtocol.pointsFormat
 
     Json.writes[XmlGrammarCompleteResult]
   }
@@ -56,7 +44,7 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExPart, XmlExerciseConten
 
     implicit val xew: Writes[XmlError] = Json.writes[XmlError]
 
-    implicit val pw: Writes[Points] = pointsJsonWrites
+    implicit val pw: Writes[Points] = ToolJsonProtocol.pointsFormat
 
     Json.writes[XmlDocumentCompleteResult]
   }
