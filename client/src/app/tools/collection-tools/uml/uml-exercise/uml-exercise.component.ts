@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
+import {ComponentWithCollectionTool} from '../../_helpers/ComponentWithCollectionTool';
 import {IExercise, IUmlExerciseContent} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
 
@@ -11,7 +11,7 @@ import {ToolPart} from '../../../../_interfaces/tool';
   selector: 'it4all-uml-exercise',
   templateUrl: './uml-exercise.component.html'
 })
-export class UmlExerciseComponent extends ExerciseComponentHelpers implements OnInit {
+export class UmlExerciseComponent extends ComponentWithCollectionTool implements OnInit {
 
   @Input() exercise: IExercise;
   @Input() part: ToolPart;

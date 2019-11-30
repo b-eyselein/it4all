@@ -1,46 +1,68 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {IExercise, IExerciseFile, IWebExerciseContent} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
-import {ExerciseFilesEditorComponent} from '../../_components/exercise-files-editor/exercise-files-editor.component';
-import {IdeWorkspace} from '../../../basics';
+import {WebCompleteResult} from '../web-interfaces';
+import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
+import {TabsComponent} from '../../../../shared/tabs/tabs.component';
+import {TabComponent} from '../../../../shared/tab/tab.component';
+import {DexieService} from '../../../../_services/dexie.service';
+import {DbSolution} from '../../../../_interfaces/exercise';
 
-
-type SolType = IExerciseFile[];
 
 @Component({
   selector: 'it4all-web-exercise',
   templateUrl: './web-exercise.component.html'
 })
-export class WebExerciseComponent implements OnInit {
+export class WebExerciseComponent extends ComponentWithExercise<WebCompleteResult> implements OnInit {
 
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
 
   exerciseContent: IWebExerciseContent;
+  exerciseFiles: IExerciseFile[] = [];
 
-  result: any;
+  @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
+  @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
-  @ViewChild(ExerciseFilesEditorComponent, {static: true}) editor: ExerciseFilesEditorComponent;
-
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private dexieService: DexieService) {
+    super();
   }
 
   ngOnInit(): void {
     this.exerciseContent = this.exercise.content as IWebExerciseContent;
+    this.exerciseFiles = this.exerciseContent.files;
+
+    this.dexieService.solutions.get([this.exercise.toolId, this.exercise.collectionId, this.exercise.id, this.part.id])
+      .then((oldSolution: DbSolution<IExerciseFile[]> | undefined) => {
+        if (oldSolution) {
+          this.exerciseFiles = oldSolution.solution;
+        }
+      });
   }
 
   correct(): void {
-    const files = this.editor.exerciseFiles;
+    const solution: IExerciseFile[] = this.exerciseFiles;
 
-    const solution: IdeWorkspace = {
-      filesNum: files.length, files
-    };
+    this.isCorrecting = true;
 
-    this.apiService.correctSolution<IdeWorkspace, SolType>(this.exercise, this.part.id, solution)
-      .subscribe((result) => this.result = result);
+    this.dexieService.solutions.put({
+      toolId: this.exercise.toolId, collId: this.exercise.collectionId, exId: this.exercise.id, solution, partId: this.part.id
+    });
+
+    this.apiService.correctSolution<IExerciseFile[], WebCompleteResult>(this.exercise, this.part.id, solution)
+      .subscribe((result: WebCompleteResult | undefined) => {
+        this.result = result;
+
+        console.info(JSON.stringify(this.result, null, 2));
+
+        this.isCorrecting = false;
+
+        this.activateCorrectionTab(this.tabsComponent, this.tabComponents);
+      });
   }
 
   showSampleSolution(): void {

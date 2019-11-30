@@ -2,7 +2,7 @@ import {ActivatedRoute} from '@angular/router';
 import {CollectionTool} from '../../../_interfaces/tool';
 import {collectionTools} from '../collection-tools-list';
 
-export abstract class ExerciseComponentHelpers {
+export abstract class ComponentWithCollectionTool {
 
   readonly tool: CollectionTool;
 

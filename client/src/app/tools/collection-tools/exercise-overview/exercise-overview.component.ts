@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../_services/api.service';
-import {ExerciseComponentHelpers} from '../_helpers/ExerciseComponentHelpers';
+import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
 import {IExercise} from '../../../_interfaces/models';
 
 @Component({templateUrl: './exercise-overview.component.html'})
-export class ExerciseOverviewComponent extends ExerciseComponentHelpers implements OnInit {
+export class ExerciseOverviewComponent extends ComponentWithCollectionTool implements OnInit {
 
   collectionId: number;
   exercise: IExercise;

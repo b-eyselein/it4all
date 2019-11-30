@@ -32,8 +32,8 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
   }
 
   override val exerciseContentFormat: Format[WebExerciseContent] = {
-    implicit val ssf : Format[SiteSpec]            = siteSpecFormat
-    implicit val eff : Format[Seq[ExerciseFile]]   = solutionFormat
+    implicit val ssf : Format[SiteSpec]                          = siteSpecFormat
+    implicit val eff : Format[Seq[ExerciseFile]]                 = solutionFormat
     implicit val fssf: Format[SampleSolution[Seq[ExerciseFile]]] = sampleSolutionFormat
 
     Json.format[WebExerciseContent]
@@ -98,14 +98,14 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
   }
 
   override val completeResultWrites: Writes[WebCompleteResult] = {
-    implicit val gesrw: Writes[GradedElementSpecResult] = elementResultWrites
-    implicit val jwrw : Writes[GradedJsTaskResult]      = jsWebResultWrites
-    implicit val pw   : Writes[Points]                  = ToolJsonProtocol.pointsFormat
+    //    implicit val gesrw: Writes[GradedElementSpecResult] = elementResultWrites
+    //    implicit val jwrw : Writes[GradedJsTaskResult]      = jsWebResultWrites
+    implicit val pw: Writes[Points] = ToolJsonProtocol.pointsFormat
 
     (
       (__ \ solutionSavedName).write[Boolean] and
-        (__ \ htmlResultsName).write[Seq[GradedElementSpecResult]] and
-        (__ \ jsResultsName).write[Seq[GradedJsTaskResult]] and
+        (__ \ htmlResultsName).write[Seq[GradedElementSpecResult]](Writes.seq(elementResultWrites)) and
+        (__ \ jsResultsName).write[Seq[GradedJsTaskResult]](Writes.seq(jsWebResultWrites)) and
         (__ \ successName).write[Boolean] and
         (__ \ pointsName).write[Points] and
         (__ \ maxPointsName).write[Points]

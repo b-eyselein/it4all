@@ -1,5 +1,4 @@
 import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
 import {DbProgrammingSolution, ProgrammingCorrectionResult} from '../programming-interfaces';
 import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
@@ -8,34 +7,28 @@ import {TabsComponent} from '../../../../shared/tabs/tabs.component';
 import {ProgrammingImplementationToolPart, ProgrammingTool} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {IExercise, IExerciseFile, IProgSolution} from '../../../../_interfaces/models';
+import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 
 import 'codemirror/mode/python/python';
-import {sample} from 'rxjs/operators';
 
 @Component({
   selector: 'it4all-programming-exercise',
   templateUrl: './programming-exercise.component.html',
   styleUrls: ['./programming-exercise.component.sass']
 })
-export class ProgrammingExerciseComponent implements OnInit {
+export class ProgrammingExerciseComponent extends ComponentWithExercise<ProgrammingCorrectionResult> implements OnInit {
 
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
 
+  // exerciseContent: IProgExerciseContent ;
+  exerciseFiles: IExerciseFile[] = [];
+
   @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
-  exerciseFiles: IExerciseFile[] = [];
-
-  correctionRunning = false;
-  result: ProgrammingCorrectionResult;
-
-  displaySampleSolutions = false;
-
-  correctionTabTitle = 'Korrektur';
-  sampleSolutionsTabTitle = 'Musterlösungen';
-
-  constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
+  constructor(private apiService: ApiService, private dexieService: DexieService) {
+    super();
   }
 
   get sampleSolutionFilesList(): IExerciseFile[][] {
@@ -74,29 +67,22 @@ export class ProgrammingExerciseComponent implements OnInit {
     };
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.programmingSolutions.put(solution);
+    this.dexieService.solutions.put(solution);
 
-    this.correctionRunning = true;
+    this.isCorrecting = true;
 
     this.apiService.correctSolution<IProgSolution, any>(this.exercise, this.part.id, solution.solution)
       .subscribe((result: ProgrammingCorrectionResult | undefined) => {
-          // tslint:disable-next-line:no-console
-          console.info(JSON.stringify(result, null, 2));
+        // console.info(JSON.stringify(result, null, 2));
 
-          this.result = result;
+        this.result = result;
 
-          this.correctionRunning = false;
+        this.isCorrecting = false;
 
-          // Activate correction tab
-          if (this.tabsComponent) {
-            const correctionTab = this.tabComponents.toArray().find((v) => v.title === this.correctionTabTitle);
-            if (correctionTab) {
-              this.tabsComponent.selectTab(correctionTab);
-            }
-          }
-        }
-      );
+        this.activateCorrectionTab(this.tabsComponent, this.tabComponents);
+      });
   }
+
 
   showSampleSolution(): void {
     this.displaySampleSolutions = true;

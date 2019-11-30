@@ -4,7 +4,7 @@ import model._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.{LongText, LongTextJsonProtocol}
 import model.points.Points
-import play.api.libs.json.{Format, Json, Reads, Writes}
+import play.api.libs.json._
 
 object ToolJsonProtocol {
 
@@ -19,7 +19,10 @@ object ToolJsonProtocol {
     Json.format[Exercise]
   }
 
-  val pointsFormat: Format[Points] = Json.format[Points]
+  val pointsFormat: Format[Points] = Format(
+    (jsValue: JsValue) => Reads.DoubleReads.reads(jsValue).map(p => Points((p * 4).floor.toInt)),
+    (points: Points) => Writes.DoubleWrites.writes(points.asDouble)
+  )
 
   val exerciseFileFormat: Format[ExerciseFile] = Json.format[ExerciseFile]
 

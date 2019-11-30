@@ -1,5 +1,4 @@
 import {AnalysisResult, CorrectionResult, MatchingResult} from '../../basics';
-import {DbSolution} from '../../../_interfaces/exercise';
 import {SuccessType} from '../../../_interfaces/tool';
 
 interface ExecutionResultsObject {
@@ -40,7 +39,4 @@ interface SqlCorrectionResult {
 export interface SqlResult extends CorrectionResult<SqlCorrectionResult> {
   success: string;
   results: SqlCorrectionResult;
-}
-
-export interface DbSqlSolution extends DbSolution<string> {
 }

@@ -2,11 +2,11 @@ import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {ReadCollectionComponent} from './read-collection/read-collection.component';
-import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
+import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './admin-read-collections.component.html'})
-export class AdminReadCollectionsComponent extends ExerciseComponentHelpers implements OnInit {
+export class AdminReadCollectionsComponent extends ComponentWithCollectionTool implements OnInit {
 
   loadedCollections: IExerciseCollection[];
 

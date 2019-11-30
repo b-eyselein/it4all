@@ -6,8 +6,7 @@ import {IExerciseFile} from '../../../../_interfaces/models';
   selector: 'it4all-exercise-files-editor',
   templateUrl: './exercise-files-editor.component.html',
   styleUrls: ['./exercise-files-editor.component.sass'],
-  // Style child component with same sass
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None // Style child component with same sass
 })
 export class ExerciseFilesEditorComponent implements OnChanges {
 
@@ -16,7 +15,6 @@ export class ExerciseFilesEditorComponent implements OnChanges {
 
   currentFileName: string | undefined = undefined;
 
-  // noinspection JSUnusedGlobalSymbols
   editorOptions = getDefaultEditorOptions(this.mode);
 
   private theContent = '';
@@ -40,19 +38,26 @@ export class ExerciseFilesEditorComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!this.currentFileName && this.exerciseFiles && this.exerciseFiles.length > 0) {
-      const editableExerciseFiles = this.exerciseFiles.filter((ef) => ef.editable);
+    if (this.exerciseFiles && this.exerciseFiles.length > 0) {
+      if (!this.currentFileName) {
+        const editableExerciseFiles = this.exerciseFiles.filter((ef) => ef.editable);
 
-      if (editableExerciseFiles.length > 0) {
-        this.updateEditor(editableExerciseFiles[0]);
+        if (editableExerciseFiles.length > 0) {
+          this.updateEditor(editableExerciseFiles[0]);
+        } else {
+          this.updateEditor(this.exerciseFiles[0]);
+        }
       } else {
-        this.updateEditor(this.exerciseFiles[0]);
+        const currentFile: IExerciseFile = this.exerciseFiles.find((f) => f.name === this.currentFileName);
+        this.updateEditor(currentFile, false);
       }
     }
   }
 
-  private updateEditor(exerciseFile: IExerciseFile): void {
-    this.saveEditorContent();
+  private updateEditor(exerciseFile: IExerciseFile, saveContent: boolean = true): void {
+    if (saveContent) {
+      this.saveEditorContent();
+    }
 
     exerciseFile.active = true;
 

@@ -1,16 +1,19 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
 import {RegexCorrectionResult} from '../regex-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
-import {ExerciseComponentHelpers} from '../../_helpers/ExerciseComponentHelpers';
 import {IExercise, IRegexExerciseContent} from '../../../../_interfaces/models';
+import {RegexExercisePart, RegexTool} from '../regex-tool';
+import {CollectionTool, ToolPart} from '../../../../_interfaces/tool';
 
 @Component({
   selector: 'it4all-regex-exercise',
   templateUrl: './regex-exercise.component.html'
 })
-export class RegexExerciseComponent extends ExerciseComponentHelpers implements OnInit {
+export class RegexExerciseComponent implements OnInit {
+
+  tool: CollectionTool = RegexTool;
+  part: ToolPart = RegexExercisePart;
 
   solution = '';
 
@@ -23,14 +26,13 @@ export class RegexExerciseComponent extends ExerciseComponentHelpers implements 
   displaySampleSolutions = false;
   showInfo = false;
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private dexieService: DexieService) {
-    super(route);
+  constructor(private apiService: ApiService, private dexieService: DexieService) {
   }
 
   ngOnInit(): void {
     this.exerciseContent = this.exercise.content as IRegexExerciseContent;
 
-    this.dexieService.regexSolutions.get([this.exercise.collectionId, this.exercise.id])
+    this.dexieService.solutions.get([this.tool.id, this.exercise.collectionId, this.exercise.id, this.part.id])
       .then((oldSolution) => this.solution = oldSolution ? oldSolution.solution : '');
   }
 
@@ -40,8 +42,9 @@ export class RegexExerciseComponent extends ExerciseComponentHelpers implements 
       return;
     }
 
-    this.dexieService.regexSolutions.put({
-      toolId: this.tool.id, collId: this.exercise.collectionId, exId: this.exercise.id, partId: 'regex', solution: this.solution
+    // noinspection JSIgnoredPromiseFromCall
+    this.dexieService.solutions.put({
+      toolId: this.tool.id, collId: this.exercise.collectionId, exId: this.exercise.id, partId: this.part.id, solution: this.solution
     });
 
     this.apiService.correctSolution<string, RegexCorrectionResult>(this.exercise, 'regex', this.solution)

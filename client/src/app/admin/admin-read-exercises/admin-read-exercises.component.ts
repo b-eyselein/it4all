@@ -3,11 +3,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
 import {ReadExerciseComponent} from './read-exercise/read-exercise.component';
-import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
+import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {IExercise, IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './admin-read-exercises.component.html'})
-export class AdminReadExercisesComponent extends ExerciseComponentHelpers implements OnInit {
+export class AdminReadExercisesComponent extends ComponentWithCollectionTool implements OnInit {
 
   collection: IExerciseCollection;
   exercises: IExercise[];

@@ -3,7 +3,7 @@
   <div class="columns">
     <div class="column is-half-desktop">
       <it4all-exercise-files-editor
-        [exerciseFiles]="exerciseContent.files"
+        [exerciseFiles]="exerciseFiles"
         [mode]="'htmlmixed'">
       </it4all-exercise-files-editor>
     </div>
@@ -12,11 +12,25 @@
 
       <it4all-tabs>
         <it4all-tab [title]="'Aufgabenstellung'">
-          <div class="notification">{{exercise?.text}}</div>
+          <div class="notification is-light-grey">
+            <div class="content">
+              <p>{{exercise?.text}}</p>
+              <ol *ngIf="part.id === 'html'">
+                <li *ngFor="let task of exerciseContent.siteSpec.htmlTasks">
+                  {{task.text}}
+                </li>
+              </ol>
+              <p *ngIf="part.id === 'js'">
+                Es gibt insgesamt {{exerciseContent.siteSpec.jsTasks.length}} Testfälle.
+              </p>
+            </div>
+          </div>
 
           <div class="columns">
             <div class="column">
-              <button class="button is-link is-fullwidth" (click)="correct()">Korrektur</button>
+              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting" (click)="correct()">
+                Korrektur
+              </button>
             </div>
             <div class="column">
               <button class="button is-primary is-fullwidth" (click)="showSampleSolution()">Musterlösung anzeigen
@@ -28,7 +42,45 @@
           </div>
         </it4all-tab>
 
-        <it4all-tab [title]="'Korrektur'"></it4all-tab>
+        <it4all-tab [title]="'Korrektur'">
+
+          <ng-container *ngIf="result">
+
+            <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
+
+            <it4all-points-notification [result]="result"></it4all-points-notification>
+
+            <div class="content">
+              <ul>
+                <li *ngFor="let htmlResult of result.htmlResults">
+                  <span class="has-text-success" *ngIf="htmlResult.success; else notCorrectBlock">
+                    Teilaufgabe {{htmlResult.id}} ist korrekt.
+                  </span>
+
+                  <ng-template #notCorrectBlock>
+                    <span class="has-text-danger">Teilaufgabe {{result.id}}</span>
+                    <ul>
+                      <li [class.has-text-danger]="!htmlResult.elementFound"
+                          [class.has-text-success]="htmlResult.elementFound">
+                        Das Element konnte {{htmlResult.elementFound ? '' : 'nicht'}} gefunden werden!
+                      </li>
+                    </ul>
+
+
+                    {{htmlResult | json}}
+                  </ng-template>
+                </li>
+
+                <li *ngFor="let jsResult of result.jsResults">
+                  {{jsResult | json}}
+                </li>
+              </ul>
+            </div>
+
+          </ng-container>
+
+        </it4all-tab>
+
         <it4all-tab [title]="'Live-Vorschau'"></it4all-tab>
         <it4all-tab [title]="'Musterlösung(en)'"></it4all-tab>
       </it4all-tabs>

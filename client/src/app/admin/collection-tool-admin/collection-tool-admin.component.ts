@@ -2,11 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
-import {ExerciseComponentHelpers} from '../../tools/collection-tools/_helpers/ExerciseComponentHelpers';
+import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './collection-tool-admin.component.html'})
-export class CollectionToolAdminComponent extends ExerciseComponentHelpers implements OnInit {
+export class CollectionToolAdminComponent extends ComponentWithCollectionTool implements OnInit {
 
   collections: IExerciseCollection[] = [];
 
