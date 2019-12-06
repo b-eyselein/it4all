@@ -1,11 +1,8 @@
 package model.tools.collectionTools.programming
 
-import model._
-import model.points.Points
 import model.tools.collectionTools.uml.UmlClassDiagram
 import model.tools.collectionTools.{ExerciseContent, ExerciseFile, SampleSolution}
 import play.api.libs.json.JsValue
-
 
 final case class ProgExerciseContent(
   functionName: String, foldername: String, filename: String,
@@ -19,7 +16,7 @@ final case class ProgExerciseContent(
   sampleSolutions: Seq[SampleSolution[ProgSolution]],
   sampleTestData: Seq[ProgTestData],
 
-  override val tags: Seq[ProgrammingExerciseTag],
+  //  override val tags: Seq[ProgrammingExerciseTag],
 
   maybeClassDiagramPart: Option[UmlClassDiagram]
 ) extends ExerciseContent {
@@ -60,11 +57,3 @@ final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgTestDa
 }
 
 final case class ProgTestData(id: Int, input: JsValue, output: JsValue)
-
-// Solution types
-
-//final case class ProgSampleSolution(id: Int, sample: ProgSolution) extends SampleSolution[ProgSolution]
-
-
-final case class ProgUserSolution(id: Int, part: ProgExPart, solution: ProgSolution, points: Points, maxPoints: Points)
-  extends UserSolution[ProgSolution]

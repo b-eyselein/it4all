@@ -4,8 +4,6 @@ import controllers.Secured
 import javax.inject.{Inject, Singleton}
 import model.core._
 import model.persistence.ExerciseTableDefs
-import model.tools.collectionTools.programming.ProgToolMain
-import model.tools.collectionTools.uml._
 import model.tools.collectionTools.web.{WebExParts, WebToolJsonProtocol, WebToolMain}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -14,7 +12,7 @@ import play.api.libs.ws.WSClient
 import play.api.mvc._
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
 @deprecated
@@ -36,49 +34,6 @@ class CollectionController @Inject()(
   override protected val adminRightsRequired: Boolean = false
 
   // Routes
-
-  def umlClassDiag(collId: Int, exId: Int, partStr: String): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      def emptyClassDiagram: UmlClassDiagram = UmlClassDiagram(Seq[UmlClass](), Seq[UmlAssociation](), Seq[UmlImplementation]())
-
-      val futureClassDiagram: Future[UmlClassDiagram] = UmlToolMain.partTypeFromUrl(partStr) match {
-        case None       => Future(emptyClassDiagram)
-        case Some(part) => tables.futureExerciseById(UmlToolMain.urlPart, collId, exId) flatMap {
-          case None           =>
-            logger.error(s"Error while loading uml class diagram for uml exercise $exId and part $part")
-            Future.successful(emptyClassDiagram)
-          case Some(exercise) =>
-            tables.futureMaybeOldSolution(UmlToolMain, user.username, collId, exId, part).map {
-              case Some(solution) => solution.solution
-              case None           => ??? // exercise.content.getDefaultClassDiagForPart(part)
-            }
-        }
-      }
-
-      futureClassDiagram.map { classDiagram =>
-        Ok(Json.prettyPrint(UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat.writes(classDiagram))).as("text/javascript")
-      }
-  }
-
-  def progClassDiagram(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      tables.futureCollById(ProgToolMain.urlPart, collId) flatMap {
-        case None             => ??? //Future.successful(onNoSuchCollection(user, progToolMain, collId))
-        case Some(collection) =>
-
-          tables.futureExerciseById(ProgToolMain.urlPart, collection.id, id).map {
-            case None           => ??? // onNoSuchExercise(user, progToolMain, collection, id)
-            case Some(exercise) =>
-
-              val jsValue: JsValue = ???
-              //                exercise.content.maybeClassDiagramPart match {
-              //                case Some(cd) => Json.toJson(cd)(UmlToolJsonProtocol.umlClassDiagramJsonFormat)
-              //                case None     => JsObject.empty
-              //              }
-              Ok(jsValue) //.as("text/javascript")
-          }
-      }
-  }
 
   def webSolution(collId: Int, exId: Int, partStr: String, fileName: String): EssentialAction = futureWithUser { user =>
     implicit request =>

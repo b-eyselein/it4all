@@ -1,17 +1,12 @@
 package model.tools.collectionTools
 
-import model._
-import model.core.LongText
 import play.api.libs.json.JsValue
 
 
-trait ExTag extends enumeratum.EnumEntry {
+final case class SemanticVersion(major: Int, minor: Int, patch: Int)
 
-  val buttonContent: String
+final case class ExTag(abbreviation: String, title: String)
 
-  val title: String
-
-}
 
 final case class Exercise(
   id: Int,
@@ -19,8 +14,9 @@ final case class Exercise(
   toolId: String,
   semanticVersion: SemanticVersion,
   title: String,
-  author: String,
-  text: LongText,
+  authors: Seq[String],
+  text: String,
+  tags: Seq[ExTag],
 
   // FIXME: use generic ExerciseContent?
   content: JsValue,
@@ -35,9 +31,9 @@ trait ExerciseContent {
 
   val sampleSolutions: Seq[SampleSolution[SolType]]
 
-  def tags: Seq[ExTag] = Seq[ExTag]()
-
 }
+
+final case class ExerciseFile(name: String, resourcePath: String, fileType: String, editable: Boolean, content: String)
 
 trait FileExerciseContent extends ExerciseContent {
 

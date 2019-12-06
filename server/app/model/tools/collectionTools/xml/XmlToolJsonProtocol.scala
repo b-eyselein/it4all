@@ -1,7 +1,6 @@
 package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
-import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
@@ -11,7 +10,6 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
   override val solutionFormat: Format[XmlSolution] = Json.format[XmlSolution]
 
   override val exerciseContentFormat: Format[XmlExerciseContent] = {
-    implicit val ltf : Format[LongText]                    = LongTextJsonProtocol.format
     implicit val xssf: Format[SampleSolution[XmlSolution]] = {
       implicit val xsf: Format[XmlSolution] = solutionFormat
 

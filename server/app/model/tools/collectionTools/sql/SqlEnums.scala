@@ -1,7 +1,7 @@
 package model.tools.collectionTools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.tools.collectionTools.{ExPart, ExParts, ExTag}
+import model.tools.collectionTools.{ExPart, ExParts}
 
 
 sealed abstract class SqlExPart(val partName: String, val urlName: String) extends ExPart
@@ -16,7 +16,7 @@ object SqlExParts extends ExParts[SqlExPart] {
 }
 
 
-sealed abstract class SqlExerciseTag(val buttonContent: String, val title: String) extends ExTag
+sealed abstract class SqlExerciseTag(val buttonContent: String, val title: String) extends EnumEntry
 
 object SqlExerciseTag extends PlayEnum[SqlExerciseTag] {
 

@@ -5,11 +5,11 @@ import java.nio.file.StandardOpenOption
 import better.files.File
 import better.files.File.OpenOptions
 import com.gargoylesoftware.htmlunit.ScriptException
-import de.uniwue.webtester._
+import de.uniwue.webtester.WebCorrector
+import de.uniwue.webtester.result._
 import model.User
 import model.points.addUp
 import model.tools.collectionTools._
-import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
@@ -32,8 +32,6 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   override protected val toolJsonProtocol: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult] =
     WebToolJsonProtocol
-
-  override protected val exerciseContentYamlFormat: YamlFormat[WebExerciseContent] = WebToolYamlProtocol.webExerciseYamlFormat
 
   // DB
 

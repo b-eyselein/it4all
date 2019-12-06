@@ -2,7 +2,6 @@ package model.tools.collectionTools.programming
 
 import model.User
 import model.tools.collectionTools._
-import net.jcazevedo.moultingyaml.YamlFormat
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -22,8 +21,6 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
   override protected val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
     ProgrammingToolJsonProtocol
-
-  override protected val exerciseContentYamlFormat: YamlFormat[ProgExerciseContent] = ProgExYamlProtocol.programmingExerciseYamlFormat
 
   // Other helper methods
 

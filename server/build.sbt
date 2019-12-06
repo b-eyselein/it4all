@@ -28,7 +28,7 @@ val tsiClasses = Seq(
   "RegexExerciseContent",
   "SqlExerciseContent",
   "UmlExerciseContent",
-  "WebExerciseContent",
+  "WebExerciseContent", "WebCompleteResult",
   "XmlExerciseContent"
 )
 
@@ -81,8 +81,6 @@ libraryDependencies ++= Seq(
   "com.beachape" %% "enumeratum-play" % "1.5.16", // MIT
   "com.beachape" %% "enumeratum-play-json" % "1.5.16", // MIT
 
-  "net.jcazevedo" %% "moultingyaml" % "0.4.3-WUE-SNAPSHOT", // MIT
-
   "com.github.t3hnar" %% "scala-bcrypt" % "4.1", // Apache 2.0
 
   "com.github.pathikrit" %% "better-files" % "3.8.0", // MIT
@@ -99,5 +97,5 @@ libraryDependencies ++= Seq(
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",
 
   // Web tester
-  "de.uniwue" %% "it4all_webtester" % "0.4.0"
+  "de.uniwue" %% "it4all_webtester" % "0.5.0"
 )

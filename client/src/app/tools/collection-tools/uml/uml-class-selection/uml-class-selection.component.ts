@@ -9,7 +9,7 @@ import {MatchResult, StringMatcher} from '../../../../matcher';
 })
 export class UmlClassSelectionComponent implements OnInit {
 
-  private readonly exTextSplitRegex = /([A-Z][\wäöü?&;]*)/g;
+  private readonly capWordTextSplitRegex: RegExp = /([A-Z][\wäöü?&;]*)/g;
 
   @Input() exercise: IExercise;
   @Input() exerciseContent: IUmlExerciseContent;
@@ -19,17 +19,32 @@ export class UmlClassSelectionComponent implements OnInit {
   selectedClasses: string[] = [];
 
   private getClassSelectionText(): UmlClassSelectionTextPart[] {
-    return this.exercise.text
+    const splitText: string[] = this.exercise.text
       .replace('\n', ' ')
-      .split(this.exTextSplitRegex)
-      .filter((s) => s.length > 0)
-      .map((s) => {
-        if (s.match(this.exTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s)) {
-          return {text: s, isSelectable: true, baseForm: this.exerciseContent.mappings[s]};
-        } else {
-          return {text: s, isSelectable: false};
-        }
-      });
+      .split(this.capWordTextSplitRegex)
+      .filter((s) => s.length > 0);
+
+    const allSelectableClassBaseForms: string[] = [
+      ...new Set(
+        splitText
+          .filter((s) => s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s))
+          .map((s) => this.exerciseContent.mappings[s] || s)
+      )
+    ];
+
+    console.info(allSelectableClassBaseForms);
+
+    return splitText.map((s) => {
+      if (s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s)) {
+        return {text: s, isSelectable: true, baseForm: this.exerciseContent.mappings[s]};
+      } else {
+        return {text: s, isSelectable: false};
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.classSelectionText = this.getClassSelectionText();
   }
 
   selectClass(clazz: UmlClassSelectionTextPart): void {
@@ -57,8 +72,5 @@ export class UmlClassSelectionComponent implements OnInit {
     console.error(JSON.stringify(matchResult, null, 2));
   }
 
-  ngOnInit() {
-    this.classSelectionText = this.getClassSelectionText();
-  }
 
 }

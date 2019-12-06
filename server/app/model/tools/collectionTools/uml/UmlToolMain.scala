@@ -2,7 +2,6 @@ package model.tools.collectionTools.uml
 
 import model.User
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
-import net.jcazevedo.moultingyaml.YamlFormat
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -22,8 +21,6 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
 
   override protected val toolJsonProtocol: ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] =
     UmlToolJsonProtocol
-
-  override protected val exerciseContentYamlFormat: YamlFormat[UmlExerciseContent] = UmlExYamlProtocol.umlExerciseYamlFormat
 
   // Other helper methods
 

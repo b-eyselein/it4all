@@ -1,6 +1,6 @@
 package model.tools.collectionTools.web
 
-import de.uniwue.webtester.SiteSpec
+import de.uniwue.webtester.sitespec.SiteSpec
 import model.tools.collectionTools._
 
 sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart

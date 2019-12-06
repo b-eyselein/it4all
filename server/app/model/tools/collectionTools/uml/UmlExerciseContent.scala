@@ -1,7 +1,5 @@
 package model.tools.collectionTools.uml
 
-import model.UserSolution
-import model.points.Points
 import model.tools.collectionTools.{ExerciseContent, SampleSolution}
 
 
@@ -46,7 +44,3 @@ final case class UmlExerciseContent(
   }
 
 }
-
-
-final case class UmlUserSolution(id: Int, part: UmlExPart, solution: UmlClassDiagram, points: Points, maxPoints: Points)
-  extends UserSolution[UmlClassDiagram]

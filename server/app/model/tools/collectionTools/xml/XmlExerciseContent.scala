@@ -1,6 +1,5 @@
 package model.tools.collectionTools.xml
 
-import model.core.LongText
 import model.tools.collectionTools.{ExPart, ExParts, ExerciseContent, SampleSolution}
 
 import scala.collection.immutable.IndexedSeq
@@ -24,7 +23,7 @@ final case class XmlSolution(document: String, grammar: String)
 
 
 final case class XmlExerciseContent(
-  grammarDescription: LongText,
+  grammarDescription: String,
   rootNode: String,
   sampleSolutions: Seq[SampleSolution[XmlSolution]]
 ) extends ExerciseContent {

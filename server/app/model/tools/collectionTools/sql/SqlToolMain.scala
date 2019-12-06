@@ -2,7 +2,6 @@ package model.tools.collectionTools.sql
 
 import model.User
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
-import net.jcazevedo.moultingyaml.YamlFormat
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,8 +33,6 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
 
   override protected val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlCorrResult] =
     SqlJsonProtocols
-
-  override protected val exerciseContentYamlFormat: YamlFormat[SqlExerciseContent] = SqlYamlProtocol.sqlExerciseYamlFormat
 
   // Correction
 

@@ -1,23 +1,20 @@
 import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {IExercise, IExerciseFile, IWebExerciseContent} from '../../../../_interfaces/models';
+import {IExercise, IExerciseFile, IWebCompleteResult, IWebExerciseContent} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
-import {WebCompleteResult} from '../web-interfaces';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-
-
-import 'codemirror/mode/htmlmixed/htmlmixed';
 import {TabsComponent} from '../../../../shared/tabs/tabs.component';
 import {TabComponent} from '../../../../shared/tab/tab.component';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 
+import 'codemirror/mode/htmlmixed/htmlmixed';
 
 @Component({
   selector: 'it4all-web-exercise',
   templateUrl: './web-exercise.component.html'
 })
-export class WebExerciseComponent extends ComponentWithExercise<WebCompleteResult> implements OnInit {
+export class WebExerciseComponent extends ComponentWithExercise<IWebCompleteResult> implements OnInit {
 
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
@@ -49,12 +46,13 @@ export class WebExerciseComponent extends ComponentWithExercise<WebCompleteResul
 
     this.isCorrecting = true;
 
+    // noinspection JSIgnoredPromiseFromCall
     this.dexieService.solutions.put({
       toolId: this.exercise.toolId, collId: this.exercise.collectionId, exId: this.exercise.id, solution, partId: this.part.id
     });
 
-    this.apiService.correctSolution<IExerciseFile[], WebCompleteResult>(this.exercise, this.part.id, solution)
-      .subscribe((result: WebCompleteResult | undefined) => {
+    this.apiService.correctSolution<IExerciseFile[], IWebCompleteResult>(this.exercise, this.part.id, solution)
+      .subscribe((result: IWebCompleteResult | undefined) => {
         this.result = result;
 
         console.info(JSON.stringify(this.result, null, 2));

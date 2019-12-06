@@ -27,7 +27,7 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
 final case class SqlExerciseContent(
   exerciseType: SqlExerciseType,
-  override val tags: Seq[SqlExerciseTag],
+  //  override val tags: Seq[SqlExerciseTag],
   hint: Option[String],
   sampleSolutions: Seq[SampleSolution[String]]
 ) extends StringExerciseContent

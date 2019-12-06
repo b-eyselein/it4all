@@ -90,7 +90,7 @@ trait LearningPathTableDefs extends TableDefs {
 
     def title: Rep[String] = column[String](titleName)
 
-    def content: Rep[String] = column[String](contentName)
+    def content: Rep[String] = column[String]("content")
 
 
     def pk: PrimaryKey = primaryKey("pk", (id, toolUrl, pathId))

@@ -3,9 +3,8 @@ package model.persistence
 import javax.inject.Inject
 import model._
 import model.core.CoreConsts._
-import model.core.{LongText, LongTextJsonProtocol}
 import model.learningPath.LearningPathTableDefs
-import model.tools.collectionTools.{ExPart, Exercise, ExerciseCollection, ToolJsonProtocol}
+import model.tools.collectionTools._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
 import slick.jdbc.JdbcProfile
@@ -35,13 +34,24 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
     jsonT => tFormat.reads(Json.parse(jsonT)).getOrElse(default)
   )
 
-  private   val semanticVersionColumnType: BaseColumnType[SemanticVersion] = jsonColumnType(ToolJsonProtocol.semanticVersionFormat)
-  private   val jsonValueColumnType      : BaseColumnType[JsValue]         = jsonColumnType(Format[JsValue](x => JsSuccess(x), identity))
-  protected val exPartColumnType         : BaseColumnType[ExPart]          = MappedColumnType.base[ExPart, String](_.entryName, _ => ???)
+  private def jsonSeqColumnType[T: ClassTag](tFormat: Format[T]): BaseColumnType[Seq[T]] =
+    jsonColumnType(Format(Reads.seq(tFormat), Writes.seq(tFormat)))
+
+  private val stringSeqColumnType: BaseColumnType[Seq[String]] =
+    jsonSeqColumnType(Format(Reads.StringReads, Writes.StringWrites))
+
+  private val semanticVersionColumnType: BaseColumnType[SemanticVersion] = jsonColumnType(ToolJsonProtocol.semanticVersionFormat)
+  private val jsonValueColumnType      : BaseColumnType[JsValue]         = jsonColumnType(Format[JsValue](x => JsSuccess(x), identity))
+
+  protected val exTagsColumnType: BaseColumnType[Seq[ExTag]] = jsonSeqColumnType(ToolJsonProtocol.exTagFormat)
+  protected val exPartColumnType: BaseColumnType[ExPart]     = MappedColumnType.base[ExPart, String](_.entryName, _ => ???)
 
   // Abstract table classes
 
   protected final class ExerciseCollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
+
+    private implicit val ssct: BaseColumnType[Seq[String]] = stringSeqColumnType
+
 
     def id: Rep[Int] = column[Int](idName)
 
@@ -49,7 +59,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def title: Rep[String] = column[String]("title")
 
-    def author: Rep[String] = column[String]("author")
+    def authors: Rep[Seq[String]] = column[Seq[String]]("authors")
 
     def text: Rep[String] = column[String]("ex_text")
 
@@ -60,7 +70,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
 
     override def * : ProvenShape[ExerciseCollection] = (
-      id, toolId, title, author, text, shortName
+      id, toolId, title, authors, text, shortName
     ) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
 
   }
@@ -68,8 +78,9 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
   protected final class ExercisesTable(tag: Tag) extends Table[Exercise](tag, "exercises") {
 
     private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
-    private implicit val ltct: BaseColumnType[LongText]        = jsonColumnType(LongTextJsonProtocol.format)
     private implicit val jvct: BaseColumnType[JsValue]         = jsonValueColumnType
+    private implicit val ssct: BaseColumnType[Seq[String]]     = stringSeqColumnType
+    private implicit val etct: BaseColumnType[Seq[ExTag]]      = exTagsColumnType
 
 
     def id: Rep[Int] = column[Int](idName)
@@ -83,9 +94,11 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def title: Rep[String] = column[String]("title")
 
-    def author: Rep[String] = column[String]("author")
+    def authors: Rep[Seq[String]] = column[Seq[String]]("authors")
 
-    def text: Rep[LongText] = column[LongText]("ex_text")
+    def text: Rep[String] = column[String]("ex_text")
+
+    def tags: Rep[Seq[ExTag]] = column[Seq[ExTag]]("tags")
 
 
     def content: Rep[JsValue] = column[JsValue]("content_json")
@@ -99,7 +112,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
 
     override def * : ProvenShape[Exercise] = (
-      id, collectionId, toolId, semanticVersion, title, author, text, content
+      id, collectionId, toolId, semanticVersion, title, authors, text, tags, content
     ) <> (Exercise.tupled, Exercise.unapply)
 
   }
@@ -181,7 +194,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def username: Rep[String] = column[String]("username")
 
-    def exercisePart: Rep[ExPart] = column[ExPart](partName)
+    def exercisePart: Rep[ExPart] = column[ExPart]("part")
 
     def difficulty: Rep[Difficulty] = column[Difficulty](difficultyName)
 
@@ -191,7 +204,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, collectionId, exercisePart))
 
 
-    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", (username), users)(_.username)
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
     def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] = foreignKey(
       "exercise_fk", (exerciseId, collectionId, toolId, exSemVer), exercisesTQ

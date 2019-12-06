@@ -2,7 +2,6 @@ package model.tools.collectionTools.regex
 
 import model.User
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
-import net.jcazevedo.moultingyaml.YamlFormat
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -22,8 +21,6 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
 
   override protected val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] =
     RegexToolJsonProtocol
-
-  override protected val exerciseContentYamlFormat: YamlFormat[RegexExerciseContent] = RegexToolYamlProtocol.regexExerciseYamlFormat
 
   // Correction
 

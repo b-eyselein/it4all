@@ -3,52 +3,78 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools.{Exercise, ExerciseCollection, ToolJsonProtocol}
-import play.api.libs.json._
+import play.api.libs.json.{Writes, _}
+import play.api.libs.ws.WSClient
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 @Singleton
-class ApiAdminController @Inject()(cc: ControllerComponents, tables: ExerciseTableDefs, configuration: Configuration)(implicit ec: ExecutionContext)
-  extends AbstractApiExerciseController(cc, configuration) {
+class ApiAdminController @Inject()(
+  cc: ControllerComponents,
+  tables: ExerciseTableDefs,
+  configuration: Configuration,
+  ws: WSClient
+)(implicit ec: ExecutionContext) extends AbstractApiExerciseController(cc, configuration) {
 
   private val logger = Logger(classOf[ApiController])
 
-
-  private type JsErrorsType = scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])]
-
+  private val resourcesServerBaseUrl = "http://localhost:5050/tools"
 
   override protected val adminRightsRequired: Boolean = true
 
 
   def readCollections(toolId: String): Action[AnyContent] = apiWithToolMain(toolId) { (_, _, toolMain) =>
+    implicit val exerciseCollectionFormat: Format[Seq[ExerciseCollection]] = Format(
+      Reads.seq(ToolJsonProtocol.collectionFormat),
+      Writes.seq(ToolJsonProtocol.collectionFormat)
+    )
 
-    val successfulReadCollections: Seq[ExerciseCollection] = toolMain.readCollectionsFromYaml
-      .tapEach {
-        case Success(_)         => ()
-        case Failure(exception) => logger.error("Error while reading yaml", exception)
+    ws.url(s"$resourcesServerBaseUrl/${toolMain.urlPart}/collections")
+      .get()
+      .map { request => (request.json \ "collections").validate[Seq[ExerciseCollection]] }
+      .map {
+        case JsSuccess(collections, _) => Ok(Json.toJson(collections))
+        case JsError(errors)           =>
+          errors.foreach(e => logger.error(e.toString))
+          BadRequest("Could not read collections...")
       }
-      .flatMap(_.toOption) // filter out Failures
-
-    Future.successful(Ok(Json.toJson(successfulReadCollections)(Writes.seq(ToolJsonProtocol.collectionFormat))))
   }
 
   def readExercises(toolId: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolId) { (_, _, toolMain) =>
 
-    tables.futureCollById(toolMain.urlPart, collId).map {
-      case None             => NotFound(s"There is no such collection $collId")
+    implicit val exerciseSeqFormat: Format[Seq[Exercise]] = Format(
+      Reads.seq(ToolJsonProtocol.exerciseFormat),
+      Writes.seq(ToolJsonProtocol.exerciseFormat)
+    )
+
+    tables.futureCollById(toolMain.urlPart, collId).flatMap {
+      case None             => Future(NotFound(s"There is no such collection $collId"))
       case Some(collection) =>
 
-        val successfulReadExercises: Seq[Exercise] = toolMain.readExercisesFromYaml(collection)
-          .tapEach {
-            case Success(_)         => ()
-            case Failure(exception) => logger.error("Error while reading yaml", exception)
-          }
-          .flatMap(_.toOption) // filter out Failures
+        ws.url(s"$resourcesServerBaseUrl/${toolMain.urlPart}/collections/${collection.id}/exercises")
+          .get()
+          .map { request => (request.json \ "exercises").validate[Seq[Exercise]] }
+          .map {
+            case JsSuccess(exercises, _) =>
 
-        Ok(Json.toJson(successfulReadExercises)(Writes.seq(ToolJsonProtocol.exerciseFormat)))
+              exercises.foreach { exercise =>
+                toolMain.readExerciseContent(exercise).fold(
+                  errors => {
+                    errors.foreach(e => logger.error(e.toString))
+                    ???
+                  },
+                  _ => ()
+                )
+              }
+
+              // FIXME: validate ExerciseContent !?!
+              Ok(Json.toJson(exercises))
+            case JsError(errors)         =>
+              errors.foreach(e => logger.error(e.toString))
+              BadRequest("Could not read exercises...")
+          }
     }
   }
 
@@ -76,6 +102,8 @@ class ApiAdminController @Inject()(cc: ControllerComponents, tables: ExerciseTab
 
     val onRead: Exercise => Future[Result] = { readExercise =>
       val toInsert: Exercise = readExercise.copy(toolId = toolMain.urlPart, collectionId = collId, id = exId)
+
+      // FIXME: validate content!
 
       tables.futureUpsertExercise(toInsert).map { inserted => Ok(JsBoolean(inserted)) }
     }

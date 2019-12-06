@@ -1,15 +1,13 @@
 package model.tools.collectionTools
 
-import better.files.File
 import model._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.tools.{AToolMain, ToolConsts}
-import net.jcazevedo.moultingyaml._
 import play.api.Logger
 import play.api.libs.json.{JsPath, JsResult, JsValue, JsonValidationError}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Try}
 
 abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) {
 
@@ -35,8 +33,6 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   protected val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType, CompResultType]
 
-  protected val exerciseContentYamlFormat: YamlFormat[ExContentType]
-
   // Other helper methods
 
   protected def exerciseHasPart(exercise: ExContentType, partType: PartType): Boolean = true
@@ -51,6 +47,8 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
     Future.successful(Failure(new Exception(exceptionMsg)))
   }
 
+  def readExerciseContent(exercise: Exercise): JsResult[ExContentType] = toolJsonProtocol.exerciseContentFormat.reads(exercise.content)
+
   def readSolution(jsValue: JsValue): JsResult[SolType] = toolJsonProtocol.solutionFormat.reads(jsValue)
 
   def correctAbstract(
@@ -60,8 +58,8 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
     exercise: Exercise,
     part: PartType,
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Future[Try[CompResultType]] = toolJsonProtocol.exerciseContentFormat.reads(exercise.content).fold(
-    errorMsgs => logErrors(errorMsgs, "internal error..."),
+  )(implicit ec: ExecutionContext): Future[Try[CompResultType]] = readExerciseContent(exercise).fold(
+    errorMsgs => logErrors(errorMsgs, "Internal error: Could not read exercise content..."),
     exerciseContent => correctEx(user, solution, collection, exercise, exerciseContent, part, solutionSaved)
   )
 
@@ -78,29 +76,5 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
   // Result handlers
 
   def onLiveCorrectionResult(result: CompResultType): JsValue = toolJsonProtocol.completeResultWrites.writes(result)
-
-  // Helper methods for admin
-
-  private def readYamlFile[T](fileToRead: File, format: YamlFormat[T]): Seq[Try[T]] = Try(fileToRead.contentAsString.parseYaml) match {
-    case Failure(error)     => Seq(Failure(error))
-    case Success(yamlValue) => yamlValue match {
-      case YamlArray(yamlObjects) => yamlObjects.map(x => Try(format.read(x)))
-      case _                      => ???
-    }
-  }
-
-  def readCollectionsFromYaml: Seq[Try[ExerciseCollection]] =
-    readYamlFile(exerciseResourcesFolder / "collections.yaml", ToolYamlProtocol.exerciseCollectionYamlFormat)
-
-  def readExercisesFromYaml(collection: ExerciseCollection): Seq[Try[Exercise]] = {
-    val filePath = exerciseResourcesFolder / s"${collection.id}-${collection.shortName}.yaml"
-
-    val exerciseYamlFormat = ToolYamlProtocol.exerciseYamlFormat(
-      exerciseContentYamlFormat,
-      toolJsonProtocol.exerciseContentFormat
-    )
-
-    readYamlFile(filePath, exerciseYamlFormat)
-  }
 
 }

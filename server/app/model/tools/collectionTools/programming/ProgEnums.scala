@@ -1,7 +1,7 @@
 package model.tools.collectionTools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.tools.collectionTools.{ExPart, ExParts, ExTag}
+import model.tools.collectionTools.{ExPart, ExParts}
 
 // Exercise Parts
 
@@ -22,7 +22,7 @@ object ProgExParts extends ExParts[ProgExPart] {
 
 // Tags
 
-sealed abstract class ProgrammingExerciseTag(val buttonContent: String, val title: String) extends ExTag
+sealed abstract class ProgrammingExerciseTag(val buttonContent: String, val title: String) extends EnumEntry
 
 object ProgrammingExerciseTag extends PlayEnum[ProgrammingExerciseTag] {
 

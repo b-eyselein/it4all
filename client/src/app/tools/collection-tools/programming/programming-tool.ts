@@ -33,6 +33,9 @@ export const ProgrammingTool: CollectionTool = new (
     }
 
     exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {
+      // const      exerciseContent = exercise.content as IProgrammingExerciseContent;
+      console.info(exercise.content);
+
       if (part === ProgrammingTestCreationPart) {
         // FIXME: simplified test execution is disabled...
         return exercise.content.unitTestPart.unitTestType === 'Normal';

@@ -2,7 +2,6 @@ package model.tools.collectionTools.xml
 
 import model.User
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
-import net.jcazevedo.moultingyaml.YamlFormat
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -24,8 +23,6 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
 
   override protected val toolJsonProtocol: ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult] =
     XmlToolJsonProtocol
-
-  override protected val exerciseContentYamlFormat: YamlFormat[XmlExerciseContent] = XmlExYamlProtocol.xmlExerciseYamlFormat
 
   // Correction
 

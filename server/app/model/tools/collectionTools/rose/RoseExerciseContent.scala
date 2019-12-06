@@ -1,8 +1,6 @@
 package model.tools.collectionTools.rose
 
-import model.UserSolution
-import model.points.Points
-import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage}
+import model.tools.collectionTools.programming.ProgDataType
 import model.tools.collectionTools.{ExerciseContent, SampleSolution}
 
 
@@ -33,7 +31,3 @@ final case class RoseExerciseContent(
 }
 
 final case class RoseInputType(id: Int, name: String, inputType: ProgDataType)
-
-
-final case class RoseUserSolution(id: Int, part: RoseExPart, language: ProgLanguage, solution: String, points: Points, maxPoints: Points)
-  extends UserSolution[ String]

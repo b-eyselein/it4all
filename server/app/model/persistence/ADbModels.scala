@@ -1,7 +1,7 @@
 package model.persistence
 
-import model.tools.collectionTools.ExPart
-import model.{Difficulty, ExerciseReview, SemanticVersion}
+import model.tools.collectionTools.{ExPart, SemanticVersion}
+import model.{Difficulty, ExerciseReview}
 import play.api.libs.json.JsValue
 
 

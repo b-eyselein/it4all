@@ -5,7 +5,7 @@ import java.time.Clock
 import model.{JsonProtocol, User}
 import pdi.jwt.JwtSession
 import play.api.Configuration
-import play.api.libs.json.Format
+import play.api.libs.json.{Format, JsPath, JsonValidationError}
 import play.api.mvc._
 
 import scala.concurrent.Future
@@ -13,6 +13,8 @@ import scala.util.matching.Regex
 
 abstract class AbstractApiController(cc: ControllerComponents, configuration: Configuration)
   extends AbstractController(cc) {
+
+  protected type JsErrorsType = scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])]
 
   private val clock            : Clock = Clock.systemDefaultZone()
   private val bearerHeaderRegex: Regex = "Bearer (.*)".r

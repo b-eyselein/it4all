@@ -67,7 +67,7 @@ final case class SqlResult(
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons
 
-  override val successType: SuccessType = if (EvaluationResult.allResultsSuccessful(results)) SuccessType.COMPLETE else SuccessType.PARTIALLY
+  override val successType: SuccessType = if (results.nonEmpty && results.forall(_.success == SuccessType.COMPLETE)) SuccessType.COMPLETE else SuccessType.PARTIALLY
 
   override val points: Points = columnComparison.points +
     tableComparison.points +

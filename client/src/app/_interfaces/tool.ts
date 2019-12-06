@@ -22,7 +22,6 @@ export abstract class Tool {
     public parts: ToolPart[],
     public status: ToolStatus,
     public hasPlayground?: boolean,
-    public hasLivePreview?: boolean,
   ) {
   }
 }

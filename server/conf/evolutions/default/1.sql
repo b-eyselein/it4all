@@ -82,7 +82,7 @@ create table if not exists collections (
     tool_id    varchar(20),
 
     title      varchar(50)  not null,
-    author     varchar(50)  not null,
+    authors    longtext     not null, # TODO: json!
     ex_text    text         not null,
     state_json varchar(100) not null,
     short_name varchar(50)  not null,
@@ -97,9 +97,10 @@ create table if not exists exercises (
     semantic_version varchar(100),
 
     title            varchar(50)  not null,
-    author           varchar(50)  not null,
+    authors          longtext     not null, # TODO: json!
     ex_text          text         not null,
     state_json       varchar(100) not null,
+    tags             longtext     not null, # TODO: json!
 
     content_json     longtext     not null, # TODO: json!
 

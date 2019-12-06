@@ -48,30 +48,46 @@
 
             <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
 
+            <br>
+
             <it4all-points-notification [result]="result"></it4all-points-notification>
+
+            <br>
 
             <div class="content">
               <ul>
-                <li *ngFor="let htmlResult of result.htmlResults">
-                  <span class="has-text-success" *ngIf="htmlResult.success; else notCorrectBlock">
-                    Teilaufgabe {{htmlResult.id}} ist korrekt.
+                <li *ngFor="let htmlResult of result.gradedHtmlTaskResults">
+                  <span [ngClass]="htmlResult.isSuccessful ? 'has-text-success' : 'has-text-danger'">
+                    ({{htmlResult.points}} / {{htmlResult.maxPoints}})
+                    Teilaufgabe {{htmlResult.id}} ist {{htmlResult.isSuccessful ? '' : 'nicht'}} korrekt:
                   </span>
+                  <ul>
+                    <li [ngClass]="htmlResult.elementFound ? 'has-text-success' : 'has-text-danger'">
+                      Das Element konnte {{htmlResult.elementFound ? '' : 'nicht'}} gefunden werden!
+                    </li>
 
-                  <ng-template #notCorrectBlock>
-                    <span class="has-text-danger">Teilaufgabe {{result.id}}</span>
-                    <ul>
-                      <li [class.has-text-danger]="!htmlResult.elementFound"
-                          [class.has-text-success]="htmlResult.elementFound">
-                        Das Element konnte {{htmlResult.elementFound ? '' : 'nicht'}} gefunden werden!
-                      </li>
-                    </ul>
+                    <li *ngFor="let attributeResult of htmlResult.attributeResults"
+                        [ngClass]="attributeResult.isSuccessful ? 'has-text-success' : 'has-text-danger'">
+                      Das Attribut <code>{{attributeResult.keyName}}</code>
+                      <ng-container *ngIf="attributeResult.maybeFoundContent">
+                        sollte den Wert <code>{{attributeResult.awaitedContent}}</code> haben.
+                        Gefunden wurde <code>{{attributeResult.maybeFoundContent}}</code>.
+                      </ng-container>
+                      <ng-container *ngIf="!attributeResult.maybeFoundContent">
+                        wurde nicht gefunden!
+                      </ng-container>
+                    </li>
 
-
-                    {{htmlResult | json}}
-                  </ng-template>
+                    <li *ngIf="htmlResult.textContentResult"
+                        [ngClass]="htmlResult.textContentResult.isSuccessful ? 'has-text-success' : 'has-text-danger'">
+                      Das Element sollte den Textinhalt <code>{{htmlResult.textContentResult.awaitedContent}}</code>
+                      haben.
+                      Gefunden wurde <code>{{htmlResult.textContentResult.maybeFoundContent}}</code>.
+                    </li>
+                  </ul>
                 </li>
 
-                <li *ngFor="let jsResult of result.jsResults">
+                <li *ngFor="let jsResult of result.gradedJsTaskResults">
                   {{jsResult | json}}
                 </li>
               </ul>

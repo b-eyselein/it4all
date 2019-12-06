@@ -24,11 +24,7 @@ export class ExerciseOverviewComponent extends ComponentWithCollectionTool imple
     const exerciseId = parseInt(this.route.snapshot.paramMap.get('exId'), 10);
 
     this.apiService.getExercise(this.tool.id, this.collectionId, exerciseId)
-      .subscribe((exercise) => {
-        // console.info(JSON.stringify(exercise.content, null, 2));
-
-        this.exercise = exercise;
-      });
+      .subscribe((exercise) => this.exercise = exercise);
   }
 
 }

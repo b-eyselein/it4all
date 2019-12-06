@@ -70,18 +70,6 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     exercise <- futureExerciseById(toolId, collectionId, exerciseId)
   } yield collection zip exercise
 
-  def futureMaybeOldSolution(toolMain: CollectionToolMain, username: String, collId: Int, exId: Int, part: ExPart): Future[Option[UserSolution[toolMain.SolType]]] = ???
-
-  //  = db.run(
-  //    userSolutionsTableQuery
-  //      .filter {
-  //        sol => sol.username === username && sol.collectionId === scenarioId && sol.exerciseId === exerciseId && sol.part === part
-  //      }
-  //      .sortBy(_.id.desc) // take last sample sol (with highest id)
-  //      .result
-  //      .headOption
-  //      .map(_ map solutionDbModels.userSolFromDbUserSol))
-
   // Saving
 
   def futureUpsertCollection(collection: ExerciseCollection): Future[Boolean] =
