@@ -46,10 +46,7 @@ object WebGrader {
     val maxPoints = calculateMaxPointsForElementSpec(elementSpecResult.elementSpec)
 
     elementSpecResult match {
-      case ElementFoundElementSpecResult(es, _, textContentResult, attributeResults) =>
-
-
-        println(es.attributes.size + " :: " + attributeResults.size)
+      case ElementFoundElementSpecResult(_, _, textContentResult, attributeResults) =>
 
         val maybeGradedTextContentResult: Option[GradedTextResult] = textContentResult.map(gradeTextResult)
 
