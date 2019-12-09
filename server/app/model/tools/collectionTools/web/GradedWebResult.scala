@@ -1,17 +1,16 @@
 package model.tools.collectionTools.web
 
-import de.uniwue.webtester.{JsAction, JsActionType}
+import de.uniwue.webtester.sitespec.{JsAction, JsActionType}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
-import model.tools.collectionTools.ExerciseFile
-import org.openqa.selenium.WebElement
 
 final case class WebCompleteResult(
   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],
   gradedJsTaskResults: Seq[GradedJsTaskResult],
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean = false) extends CompleteResult[GradedWebTaskResult] {
+  solutionSaved: Boolean
+) extends CompleteResult[GradedWebTaskResult] {
 
   override def results: Seq[GradedWebTaskResult] = gradedHtmlTaskResults ++ gradedJsTaskResults
 
@@ -20,32 +19,40 @@ final case class WebCompleteResult(
 sealed trait GradedWebTaskResult extends EvaluationResult
 
 
-// Html & CSS Results
+final case class GradedTextResult(
+  keyName: String,
+  awaitedContent: String,
+  maybeFoundContent: Option[String],
+  isSuccessful: Boolean,
+  points: Points,
+  maxPoints: Points
+)
 
-final case class GradedHtmlTaskResult(gradedElementSpecResult: GradedElementSpecResult, success: SuccessType) extends GradedWebTaskResult {
-
-  def points: Points = gradedElementSpecResult.points
-
-  def maxPoints: Points = gradedElementSpecResult.maxPoints
-
+sealed trait GradedElementSpecResult {
+  val id               : Int
+  val success          : SuccessType
+  val elementFound     : Boolean
+  val textContentResult: Option[GradedTextResult]
+  val attributeResults : Seq[GradedTextResult]
+  val isSuccessful     : Boolean
+  val points           : Points
+  val maxPoints        : Points
 }
 
-final case class GradedElementSpecResult(id: Int, successType: SuccessType, foundElement: Option[WebElement],
-                                         textContentResult: Option[GradedTextResult],
-                                         attributeResults: Seq[GradedTextResult],
-                                         isSuccessful: Boolean, points: Points, maxPoints: Points)
+// Html & CSS Results
 
-
-// Text Results: TextContent, AttributeResult
-
-final case class GradedTextResult(keyName: String, awaitedContent: String, maybeFoundContent: Option[String],
-                                  isSuccessful: Boolean, points: Points, maxPoints: Points)
+final case class GradedHtmlTaskResult(
+  id: Int,
+  success: SuccessType,
+  elementFound: Boolean,
+  textContentResult: Option[GradedTextResult],
+  attributeResults: Seq[GradedTextResult],
+  isSuccessful: Boolean,
+  points: Points,
+  maxPoints: Points,
+) extends GradedWebTaskResult with GradedElementSpecResult
 
 // Javascript Results
-
-final case class GradedJsTaskResult(id: Int, gradedPreResults: Seq[GradedElementSpecResult],
-                                    gradedJsActionResult: GradedJsActionResult, gradedPostResults: Seq[GradedElementSpecResult],
-                                    success: SuccessType, points: Points, maxPoints: Points) extends GradedWebTaskResult
 
 final case class GradedJsActionResult(actionPerformed: Boolean, jsAction: JsAction, points: Points, maxPoints: Points) {
 
@@ -55,3 +62,26 @@ final case class GradedJsActionResult(actionPerformed: Boolean, jsAction: JsActi
   }
 
 }
+
+final case class GradedJsHtmlElementSpecResult(
+  id: Int,
+  success: SuccessType,
+  elementFound: Boolean,
+  textContentResult: Option[GradedTextResult],
+  attributeResults: Seq[GradedTextResult],
+  isSuccessful: Boolean,
+  points: Points,
+  maxPoints: Points,
+) extends GradedElementSpecResult
+
+final case class GradedJsTaskResult(
+  id: Int,
+  gradedPreResults: Seq[GradedJsHtmlElementSpecResult],
+  gradedJsActionResult: GradedJsActionResult,
+  gradedPostResults: Seq[GradedJsHtmlElementSpecResult],
+  success: SuccessType,
+  points: Points,
+  maxPoints: Points
+) extends GradedWebTaskResult
+
+

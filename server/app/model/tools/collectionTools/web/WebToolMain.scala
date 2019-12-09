@@ -5,41 +5,23 @@ import java.nio.file.StandardOpenOption
 import better.files.File
 import better.files.File.OpenOptions
 import com.gargoylesoftware.htmlunit.ScriptException
-import de.uniwue.webtester._
-import javax.inject.{Inject, Singleton}
-import model._
-import model.points.{Points, addUp}
-import model.tools.ToolJsonProtocol
-import model.tools.collectionTools.{CollectionToolMain, ExerciseCollection, ExerciseFile, ExerciseFileJsonProtocol, LoadExerciseFilesMessage}
-import model.tools.collectionTools.web.persistence.WebTableDefs
-import net.jcazevedo.moultingyaml.YamlFormat
+import de.uniwue.webtester.WebCorrector
+import de.uniwue.webtester.result._
+import model.User
+import model.points.addUp
+import model.tools.collectionTools._
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.api.data._
-import play.api.libs.json.{JsError, JsSuccess}
-import play.api.mvc.{AnyContent, Request}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-@Singleton
-class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionContext)
-  extends CollectionToolMain(WebConsts) {
+object WebToolMain extends CollectionToolMain(WebConsts) {
 
   override type PartType = WebExPart
-  override type ExType = WebExercise
-
-
+  override type ExContentType = WebExerciseContent
   override type SolType = Seq[ExerciseFile]
-  override type SampleSolType = FilesSampleSolution
-  override type UserSolType = FilesUserSolution[WebExPart]
-
-  override type ReviewType = WebExerciseReview
-
-  override type ResultType = GradedWebTaskResult
   override type CompResultType = WebCompleteResult
-
-  override type Tables = WebTableDefs
 
   // Other members
 
@@ -48,12 +30,8 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[WebExercise, FilesSampleSolution, WebCompleteResult] =
+  override protected val toolJsonProtocol: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult] =
     WebToolJsonProtocol
-
-  override protected val exerciseYamlFormat: YamlFormat[WebExercise] = WebToolYamlProtocol.webExerciseYamlFormat
-
-  override val exerciseReviewForm: Form[WebExerciseReview] = WebToolForms.exerciseReviewForm
 
   // DB
 
@@ -63,50 +41,28 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
 
     val openOptions: OpenOptions = Seq(StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
 
-    exerciseFiles.map { exerciseFile: ExerciseFile =>
+    exerciseFiles.map { exerciseFile =>
       val fileTargetPath = targetDir / exerciseFile.name
 
       fileTargetPath.createFileIfNotExists(createParents = true).write(exerciseFile.content)(openOptions)
     }
   }
 
-  override def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: WebExPart): Future[Option[UserSolType]] = part match {
-    case WebExParts.HtmlPart => super.futureMaybeOldSolution(username, collId, exId, part)
-    case WebExParts.JsPart   =>
-      super.futureMaybeOldSolution(username, collId, exId, WebExParts.JsPart) flatMap {
-        case Some(solution) => Future.successful(Some(solution))
-        case None           =>
-          super.futureMaybeOldSolution(username, collId, exId, WebExParts.HtmlPart)
-      }
-  }
-
-  override def futureUserCanSolveExPart(username: String, collId: Int, exId: Int, part: WebExPart): Future[Boolean] = part match {
-    case WebExParts.HtmlPart => Future.successful(true)
-    case WebExParts.JsPart   => futureMaybeOldSolution(username, collId, exId, WebExParts.HtmlPart).map(_.exists(r => r.points == r.maxPoints))
-  }
+  //  override def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: WebExPart): Future[Option[UserSolType]] = part match {
+  //    case WebExParts.HtmlPart => super.futureMaybeOldSolution(username, collId, exId, part)
+  //    case WebExParts.JsPart   =>
+  //      super.futureMaybeOldSolution(username, collId, exId, WebExParts.JsPart) flatMap {
+  //        case Some(solution) => Future.successful(Some(solution))
+  //        case None           =>
+  //          super.futureMaybeOldSolution(username, collId, exId, WebExParts.HtmlPart)
+  //      }
+  //  }
 
   // Other helper methods
 
-  override protected def exerciseHasPart(exercise: WebExercise, partType: WebExPart): Boolean = partType match {
+  override protected def exerciseHasPart(exercise: WebExerciseContent, partType: WebExPart): Boolean = partType match {
     case WebExParts.HtmlPart => exercise.siteSpec.htmlTasks.nonEmpty
     case WebExParts.JsPart   => exercise.siteSpec.jsTasks.nonEmpty
-  }
-
-  override def instantiateSolution(id: Int, exercise: WebExercise, part: WebExPart, solution: Seq[ExerciseFile], points: Points, maxPoints: Points): FilesUserSolution[WebExPart] =
-    FilesUserSolution[WebExPart](id, part, solution, points, maxPoints)
-
-  override def updateSolSaved(compResult: WebCompleteResult, solSaved: Boolean): WebCompleteResult =
-    compResult.copy(solutionSaved = solSaved)
-
-  // Correction
-
-  override protected def readSolution(request: Request[AnyContent], part: WebExPart): Either[String, Seq[ExerciseFile]] = request.body.asJson match {
-    case None          => Left("Body did not contain json!")
-    case Some(jsValue) =>
-      ExerciseFileJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
-        case JsSuccess(x, _) => Right(x.files)
-        case JsError(errors) => Left(errors.toString())
-      }
   }
 
   private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
@@ -120,7 +76,12 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
       ???
   }
 
-  private def onDriverGetSuccess(learnerSolution: Seq[ExerciseFile], exercise: WebExercise, part: WebExPart, driver: HtmlUnitDriver): Try[WebCompleteResult] = Try {
+  private def onDriverGetSuccess(
+    exercise: WebExerciseContent,
+    part: WebExPart,
+    driver: HtmlUnitDriver,
+    solutionSaved: Boolean
+  ): Try[WebCompleteResult] = Try {
     part match {
       case WebExParts.HtmlPart =>
         val htmlTaskResults      : Seq[HtmlTaskResult]       = exercise.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
@@ -129,7 +90,7 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
         val points    = addUp(gradedHtmlTaskResults.map(_.points))
         val maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
 
-        WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints)
+        WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints, solutionSaved)
 
       case WebExParts.JsPart =>
         val jsTaskResults      : Seq[JsTaskResult]       = exercise.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
@@ -138,23 +99,34 @@ class WebToolMain @Inject()(val tables: WebTableDefs)(implicit ec: ExecutionCont
         val points    = addUp(gradedJsTaskResults.map(_.points))
         val maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
 
-        WebCompleteResult(Seq[GradedHtmlTaskResult](), gradedJsTaskResults, points, maxPoints)
+        WebCompleteResult(Seq[GradedHtmlTaskResult](), gradedJsTaskResults, points, maxPoints, solutionSaved)
     }
   }
 
-  def getSolutionUrl(user: User, collId: Int, exerciseId: Int, fileName: String): String =
-    s"http://localhost:9080/${user.username}/${collId}/${exerciseId}/${fileName}"
+  def getSolutionUrl(user: User, exercise: Exercise, fileName: String): String =
+    s"http://localhost:9080/${user.username}/${String.valueOf(exercise.collectionId)}/${String.valueOf(exercise.id)}/${fileName}"
 
-  override def correctEx(user: User, learnerSolution: Seq[ExerciseFile], collection: ExerciseCollection, exercise: WebExercise, part: WebExPart): Future[Try[WebCompleteResult]] = Future {
-    writeWebSolutionFiles(user.username, collection.id, exercise.id, part, learnerSolution).flatMap { _ =>
+  override def correctEx(
+    user: User,
+    learnerSolution: Seq[ExerciseFile],
+    collection: ExerciseCollection,
+    exercise: Exercise,
+    content: WebExerciseContent,
+    part: WebExPart,
+    solutionSaved: Boolean
+  )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {
+    writeWebSolutionFiles(user.username, collection.id, exercise.id, part, learnerSolution)
+      .flatMap { _ =>
 
-      val driver              = new HtmlUnitDriver(true)
-      val solutionUrl: String = getSolutionUrl(user, collection.id, exercise.id, exercise.siteSpec.fileName)
+        val driver              = new HtmlUnitDriver(true)
+        val solutionUrl: String = getSolutionUrl(user, exercise, content.siteSpec.fileName)
 
-      Try {
-        driver.get(solutionUrl)
-      }.fold(onDriverGetError, _ => onDriverGetSuccess(learnerSolution, exercise, part, driver))
-    }
+        Try(driver.get(solutionUrl))
+          .fold(
+            onDriverGetError,
+            (_: Unit) => onDriverGetSuccess(content, part, driver, solutionSaved)
+          )
+      }
   }
 
 }

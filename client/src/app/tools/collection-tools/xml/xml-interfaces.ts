@@ -1,9 +1,4 @@
-import {DbSolution, Exercise} from '../../../_interfaces/tool';
-
-// tslint:disable-next-line:no-empty-interface
-export interface XmlExercise extends Exercise {
-
-}
+import {DbSolution} from '../../../_interfaces/exercise';
 
 export interface DbXmlSolution extends DbSolution<any> {
 

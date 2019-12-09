@@ -1,21 +1,24 @@
-import {Component, HostListener, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {ApiService} from '../../_services/api.service';
-import {RegexCorrectionResult, RegexExercise} from '../regex-exercise';
-import {RegexTool} from '../regex-tool';
-import {Tool} from '../../../../_interfaces/tool';
+import {RegexCorrectionResult} from '../regex-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
+import {IExercise, IRegexExerciseContent} from '../../../../_interfaces/models';
+import {RegexExercisePart, RegexTool} from '../regex-tool';
+import {CollectionTool, ToolPart} from '../../../../_interfaces/tool';
 
-@Component({templateUrl: './regex-exercise.component.html'})
+@Component({
+  selector: 'it4all-regex-exercise',
+  templateUrl: './regex-exercise.component.html'
+})
 export class RegexExerciseComponent implements OnInit {
 
-  tool: Tool = RegexTool;
+  tool: CollectionTool = RegexTool;
+  part: ToolPart = RegexExercisePart;
+
   solution = '';
 
-  collId: number;
-  exId: number;
-
-  exercise: RegexExercise;
+  @Input() exercise: IExercise;
+  exerciseContent: IRegexExerciseContent;
 
   corrected = false;
   result: RegexCorrectionResult;
@@ -23,16 +26,13 @@ export class RegexExerciseComponent implements OnInit {
   displaySampleSolutions = false;
   showInfo = false;
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private dexieService: DexieService) {
-    this.collId = parseInt(route.snapshot.paramMap.get('collId'), 10);
-    this.exId = parseInt(route.snapshot.paramMap.get('exId'), 10);
+  constructor(private apiService: ApiService, private dexieService: DexieService) {
   }
 
   ngOnInit(): void {
-    this.apiService.getExercise<RegexExercise>(this.tool.id, this.collId, this.exId)
-      .subscribe((exercise: RegexExercise) => this.exercise = exercise);
+    this.exerciseContent = this.exercise.content as IRegexExerciseContent;
 
-    this.dexieService.regexSolutions.get([this.collId, this.exId])
+    this.dexieService.solutions.get([this.tool.id, this.exercise.collectionId, this.exercise.id, this.part.id])
       .then((oldSolution) => this.solution = oldSolution ? oldSolution.solution : '');
   }
 
@@ -42,12 +42,12 @@ export class RegexExerciseComponent implements OnInit {
       return;
     }
 
-    this.dexieService.regexSolutions.put({
-      toolId: this.tool.id, collId: this.collId, exId: this.exercise.id, partId: 'regex', solution: this.solution
+    // noinspection JSIgnoredPromiseFromCall
+    this.dexieService.solutions.put({
+      toolId: this.tool.id, collId: this.exercise.collectionId, exId: this.exercise.id, partId: this.part.id, solution: this.solution
     });
 
-    this.apiService
-      .correctSolution<string, RegexCorrectionResult>(this.tool.id, this.collId, this.exId, 'regex', this.solution)
+    this.apiService.correctSolution<string, RegexCorrectionResult>(this.exercise, 'regex', this.solution)
       .subscribe((result: RegexCorrectionResult) => {
         this.corrected = true;
         this.result = result;

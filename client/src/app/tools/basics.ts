@@ -1,14 +1,4 @@
-export interface SampleSolution<SolutionType> {
-  id: number;
-  sample: SolutionType;
-}
-
-export interface StringSampleSolution extends SampleSolution<string> {
-}
-
 export type BinaryClassificationResultType = 'TruePositive' | 'FalsePositive' | 'FalseNegative' | 'TrueNegative';
-
-// Matches
 
 export type MatchType = 'SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE';
 
@@ -49,9 +39,4 @@ export interface ExerciseFile {
   fileType: string;
   editable: boolean;
   active?: boolean;
-}
-
-export interface IdeWorkspace {
-  filesNum: number;
-  files: ExerciseFile[];
 }

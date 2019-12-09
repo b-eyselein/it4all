@@ -2,7 +2,7 @@
   <h1 class="title is-3 has-text-centered">Administration Tool {{tool.name}}</h1>
 
   <div class="buttons">
-    <a href="" class="button is-primary is-fullwidth" [routerLink]="['/admin']">Zurück zur Administrationsstartseite</a>
+    <a href="" class="button is-primary is-fullwidth" routerLink="/admin/index">Zurück zur Administrationsstartseite</a>
   </div>
 
   <h2 class="subtitle is-3">Vorhandene Sammlungen</h2>
@@ -16,11 +16,11 @@
           </header>
           <div class="card-content">
             <!-- TODO: Aufgaben anzeigen!?! -->
-            <ng-container *ngIf="collection.exercisesBasics">
+            <ng-container *ngIf="collection.exercises">
               <div class="has-text-info"
-                   *ngIf="collection.exercisesBasics.length > 0">{{collection.exercisesBasics.length}} Aufgaben
+                   *ngIf="collection.exercises.length > 0">{{collection.exercises.length}} Aufgaben
               </div>
-              <div class="has-text-warning" *ngIf="collection.exercisesBasics.length === 0">Keine Aufgaben!</div>
+              <div class="has-text-warning" *ngIf="collection.exercises.length === 0">Keine Aufgaben!</div>
             </ng-container>
           </div>
           <footer class="card-footer">

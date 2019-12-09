@@ -1,23 +1,36 @@
-import {Component, OnInit} from '@angular/core';
-import * as $ from 'jquery';
-import * as joint from 'jointjs';
+import {Component, Input, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {ComponentWithCollectionTool} from '../../_helpers/ComponentWithCollectionTool';
+import {IExercise, IUmlExerciseContent} from '../../../../_interfaces/models';
+import {ToolPart} from '../../../../_interfaces/tool';
+
+// import * as $ from 'jquery';
+// import * as joint from 'jointjs';
 
 @Component({
   selector: 'it4all-uml-exercise',
-  templateUrl: './uml-exercise.component.html',
+  templateUrl: './uml-exercise.component.html'
 })
-export class UmlExerciseComponent implements OnInit {
+export class UmlExerciseComponent extends ComponentWithCollectionTool implements OnInit {
 
-  model: joint.dia.Graph = new joint.dia.Graph();
-  paper: joint.dia.Paper;
+  @Input() exercise: IExercise;
+  @Input() part: ToolPart;
 
-  constructor() {
+  exerciseContent: IUmlExerciseContent;
+
+  // model: joint.dia.Graph = new joint.dia.Graph();
+  // paper: joint.dia.Paper;
+
+  constructor(private route: ActivatedRoute) {
+    super(route);
   }
 
   ngOnInit() {
-    this.paper = new joint.dia.Paper({
-      el: $('#myPaper')
-    });
+    this.exerciseContent = this.exercise.content as IUmlExerciseContent;
+
+    // this.paper = new joint.dia.Paper({
+    //   el: $('#myPaper')
+    // });
   }
 
 }

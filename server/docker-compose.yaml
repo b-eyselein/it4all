@@ -6,6 +6,12 @@ volumes:
   create_db_volume: {}
 
 services:
+  resources:
+    image:        ls6uniwue/it4all-resources:0.4.2
+    restart:      always
+    ports:
+      - 5050:5000
+
   webtester:
     image:        httpd:alpine
     restart:      always
@@ -60,9 +66,3 @@ services:
         target:   /var/lib/mysql
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
-
-#  evaluator:
-#    image:        beyselein/evaluator-it4all
-#    restart:      always
-#    ports:
-#      - 9009:9000

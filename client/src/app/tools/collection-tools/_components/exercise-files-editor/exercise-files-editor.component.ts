@@ -1,22 +1,20 @@
 import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
-import {ExerciseFile} from '../../../basics';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
+import {IExerciseFile} from '../../../../_interfaces/models';
 
 @Component({
   selector: 'it4all-exercise-files-editor',
   templateUrl: './exercise-files-editor.component.html',
   styleUrls: ['./exercise-files-editor.component.sass'],
-  // Style child component with same sass
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None // Style child component with same sass
 })
 export class ExerciseFilesEditorComponent implements OnChanges {
 
-  @Input() exerciseFiles: ExerciseFile[];
+  @Input() exerciseFiles: IExerciseFile[];
   @Input() mode: string;
 
   currentFileName: string | undefined = undefined;
 
-  // noinspection JSUnusedGlobalSymbols
   editorOptions = getDefaultEditorOptions(this.mode);
 
   private theContent = '';
@@ -40,19 +38,26 @@ export class ExerciseFilesEditorComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!this.currentFileName && this.exerciseFiles && this.exerciseFiles.length > 0) {
-      const editableExerciseFiles = this.exerciseFiles.filter((ef) => ef.editable);
+    if (this.exerciseFiles && this.exerciseFiles.length > 0) {
+      if (!this.currentFileName) {
+        const editableExerciseFiles = this.exerciseFiles.filter((ef) => ef.editable);
 
-      if (editableExerciseFiles.length > 0) {
-        this.updateEditor(editableExerciseFiles[0]);
+        if (editableExerciseFiles.length > 0) {
+          this.updateEditor(editableExerciseFiles[0]);
+        } else {
+          this.updateEditor(this.exerciseFiles[0]);
+        }
       } else {
-        this.updateEditor(this.exerciseFiles[0]);
+        const currentFile: IExerciseFile = this.exerciseFiles.find((f) => f.name === this.currentFileName);
+        this.updateEditor(currentFile, false);
       }
     }
   }
 
-  private updateEditor(exerciseFile: ExerciseFile): void {
-    this.saveEditorContent();
+  private updateEditor(exerciseFile: IExerciseFile, saveContent: boolean = true): void {
+    if (saveContent) {
+      this.saveEditorContent();
+    }
 
     exerciseFile.active = true;
 
@@ -69,7 +74,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     // disable other files...
     this.exerciseFiles.forEach((ef) => ef.active = false);
 
-    const exerciseFile: ExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
+    const exerciseFile: IExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
 
     if (exerciseFile) {
       this.updateEditor(exerciseFile);

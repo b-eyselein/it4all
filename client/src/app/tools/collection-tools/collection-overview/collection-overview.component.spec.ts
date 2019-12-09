@@ -2,8 +2,9 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {CollectionOverviewComponent} from './collection-overview.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {collectionToolRoutingComponents, CollectionToolRoutingModule} from '../collection-tools.routing';
-import {ExerciseFilesEditorComponent} from '../_components/exercise-files-editor/exercise-files-editor.component';
+import {CollectionToolRoutingModule} from '../collection-tools.routing';
+import {CodemirrorModule} from '@ctrl/ngx-codemirror';
+import {CollectionToolOverviewComponent} from '../collection-tool-overview/collection-tool-overview.component';
 
 describe('CollectionOverviewComponent', () => {
   let component: CollectionOverviewComponent;
@@ -11,8 +12,8 @@ describe('CollectionOverviewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CollectionToolRoutingModule],
-      declarations: [CollectionOverviewComponent,  ...collectionToolRoutingComponents, ExerciseFilesEditorComponent]
+      imports: [HttpClientTestingModule, CollectionToolRoutingModule, CodemirrorModule],
+      declarations: [CollectionOverviewComponent, CollectionToolOverviewComponent]
     }).compileComponents();
   }));
 

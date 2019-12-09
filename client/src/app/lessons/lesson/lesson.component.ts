@@ -15,7 +15,7 @@ export class LessonComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router, private lessonApiService: LessonApiService) {
     const toolId = this.route.snapshot.paramMap.get('toolId');
-    this.tool = collectionTools.concat(randomTools).find((t) => t.id === toolId);
+    this.tool = [...collectionTools, ...randomTools].find((t) => t.id === toolId);
 
     if (!this.tool) {
       // noinspection JSIgnoredPromiseFromCall

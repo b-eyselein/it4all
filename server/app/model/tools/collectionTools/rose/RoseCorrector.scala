@@ -4,6 +4,7 @@ import better.files.File._
 import better.files._
 import model.User
 import model.core.{DockerBind, DockerConnector}
+import model.points._
 import model.tools.collectionTools.programming.ProgLanguage
 import play.api.libs.json.{JsError, JsSuccess, Json}
 
@@ -19,8 +20,15 @@ object RoseCorrector {
   private val actionsFileName = "actions.json"
   private val optionsFileName = "options.json"
 
-  def correct(user: User, exercise: RoseExercise, learnerSolution: String, sampleSolution: String, language: ProgLanguage, solutionTargetDir: File)
-             (implicit ec: ExecutionContext): Future[Try[RoseCompleteResult]] = {
+  def correct(
+    user: User,
+    exercise: RoseExerciseContent,
+    learnerSolution: String,
+    sampleSolution: String,
+    language: ProgLanguage,
+    solutionTargetDir: File,
+    solutionSaved: Boolean
+  )(implicit ec: ExecutionContext): Future[Try[RoseCompleteResult]] = {
 
     // Check if image exists
     val futureImageExists = Future(DockerConnector.imageExists(roseCorrectionDockerImageName))
@@ -71,7 +79,7 @@ object RoseCorrector {
 
                     RoseToolJsonProtocol.roseExecutionResultFormat.reads(jsValue) match {
                       case JsError(errors)     => ???
-                      case JsSuccess(value, _) => RoseCompleteResult(value)
+                      case JsSuccess(value, _) => RoseCompleteResult(value, (-1).points, (-1).points, solutionSaved)
                     }
 
                   }
@@ -95,7 +103,7 @@ object RoseCorrector {
     baseDeclaration + indent(sampleSolution, 2)
   }
 
-  private def buildOptionFileContent(exercise: RoseExercise): String =
+  private def buildOptionFileContent(exercise: RoseExerciseContent): String =
     """|{
        |  "start": {
        |    "x": 0,

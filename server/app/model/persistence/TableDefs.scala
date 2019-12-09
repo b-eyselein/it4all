@@ -81,12 +81,6 @@ trait TableDefs {
   private val roleColumnType: BaseColumnType[Role] =
     MappedColumnType.base[Role, String](_.entryName, str => Role.withNameInsensitiveOption(str) getOrElse Role.RoleUser)
 
-  protected implicit val exerciseStateColumnType: BaseColumnType[ExerciseState] =
-    MappedColumnType.base[ExerciseState, String](_.entryName, str => ExerciseState.withNameInsensitiveOption(str) getOrElse ExerciseState.CREATED)
-
-  protected implicit val semanticVersionColumnType: BaseColumnType[SemanticVersion] =
-    MappedColumnType.base[SemanticVersion, String](_.asString, SemanticVersionHelper.parseFromString(_).getOrElse(SemanticVersionHelper.DEFAULT))
-
   // Tables
 
   protected class UsersTable(tag: Tag) extends Table[User](tag, "users") {

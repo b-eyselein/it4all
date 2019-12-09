@@ -11,7 +11,7 @@ final case class ProgCompleteResult(
   simplifiedResults: Seq[SimplifiedExecutionResult],
   normalResult: Option[NormalExecutionResult],
   unitTestResults: Seq[UnitTestCorrectionResult],
-  solutionSaved: Boolean = false
+  solutionSaved: Boolean
 ) extends CompleteResult[ProgEvalResult] {
 
   //  override type SolType = String
@@ -42,7 +42,7 @@ final case class UnitTestTestConfig(id: Int, shouldFail: Boolean, cause: Option[
 final case class UnitTestCorrectionResult(testConfig: UnitTestTestConfig, successful: Boolean, file: String, status: Int,
                                           stdout: Seq[String], stderr: Seq[String]) extends ProgEvalResult {
 
-  override def success: SuccessType = if(successful) SuccessType.COMPLETE else SuccessType.NONE
+  override def success: SuccessType = if (successful) SuccessType.COMPLETE else SuccessType.NONE
 
 }
 

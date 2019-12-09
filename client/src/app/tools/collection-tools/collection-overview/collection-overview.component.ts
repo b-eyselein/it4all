@@ -1,49 +1,48 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Exercise, ExerciseCollection, Tool} from '../../../_interfaces/tool';
-import {collectionTools} from '../collection-tools-list';
 import {DexieService} from '../../../_services/dexie.service';
+import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
+import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
 
 @Component({templateUrl: './collection-overview.component.html'})
-export class CollectionOverviewComponent implements OnInit {
+export class CollectionOverviewComponent extends ComponentWithCollectionTool implements OnInit {
 
-  tool: Tool;
-  collection: ExerciseCollection;
-
-  exercises: Exercise[];
+  collection: IExerciseCollection;
+  exercises: IExercise[];
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
-    const toolId: string = this.route.snapshot.paramMap.get('toolId');
-    this.tool = collectionTools.find((t) => t.id === toolId);
+    super(route);
 
     if (!this.tool) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/']);
     }
   }
 
+  private updateExercises(): void {
+    this.apiService.getExercises(this.tool.id, this.collection.id)
+      .subscribe((exercises: IExercise[]) => this.exercises = exercises);
+  }
+
   private fetchCollection(collId: number): void {
     this.apiService.getCollection(this.tool.id, collId)
-      .subscribe((collection: ExerciseCollection | undefined) => {
+      .subscribe((collection: IExerciseCollection | undefined) => {
         if (collection) {
           this.collection = collection;
           this.updateExercises();
         } else {
-          this.router.navigate(['/tools', this.tool.id]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate(['../..']);
         }
       });
-  }
-
-  private updateExercises(): void {
-    this.apiService.getExercises(this.tool.id, this.collection.id)
-      .subscribe((exercises: Exercise[]) => this.exercises = exercises);
   }
 
   ngOnInit() {
     const collId: number = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
 
     this.dexieService.collections.get([this.tool.id, collId])
-      .then((maybeCollection: ExerciseCollection | undefined) => {
+      .then((maybeCollection: IExerciseCollection | undefined) => {
         if (maybeCollection) {
           this.collection = maybeCollection;
           this.updateExercises();

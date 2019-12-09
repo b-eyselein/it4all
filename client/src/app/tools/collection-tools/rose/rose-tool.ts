@@ -1,7 +1,7 @@
-import {ExerciseTag, Tool} from '../../../_interfaces/tool';
+import {CollectionTool, ExerciseTag} from '../../../_interfaces/tool';
 
-export const RoseTool: Tool = new (
-  class RoseToolClass extends Tool {
+export const RoseTool: CollectionTool = new (
+  class RoseToolClass extends CollectionTool {
     constructor() {
       super('rose', 'ROSE', [], 'alpha');
     }

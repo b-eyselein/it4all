@@ -3,7 +3,7 @@
   <div class="columns">
     <div class="column is-half-desktop">
       <h1 class="title is-3 has-text-centered">Aufgabenstellung</h1>
-      <div class="notification is-dark">{{exercise.text}}</div>
+      <div class="notification is-light-grey">{{exercise.text}}</div>
 
       <div class="field has-addons">
         <div class="control">
@@ -26,9 +26,7 @@
           </button>
         </div>
         <div class="column">
-          <a [routerLink]="['/tools', tool.id, 'collections', collId]" class="button is-dark is-fullwidth">
-            Bearbeiten beenden
-          </a>
+          <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
         </div>
       </div>
 
@@ -36,7 +34,7 @@
         <h2 class="subtitle is-4 has-text-centered">Musterlösungen</h2>
 
         <div class="columns is-multiline">
-          <div class="column is-half" *ngFor="let sampleSolution of exercise.sampleSolutions">
+          <div class="column is-half" *ngFor="let sampleSolution of exerciseContent.sampleSolutions">
             <div class="notification is-dark">
               <code>{{sampleSolution.sample}}</code>
             </div>
@@ -61,9 +59,9 @@
 
       <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
 
-      <br>
+      <!--        <br> -->
 
-      <it4all-points-notification [result]="result"></it4all-points-notification>
+      <!--     <it4all-points-notification [result]="result"></it4all-points-notification> -->
 
       <br>
 

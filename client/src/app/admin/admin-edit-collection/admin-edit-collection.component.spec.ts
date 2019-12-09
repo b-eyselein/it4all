@@ -1,8 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {AdminEditCollectionComponent} from './admin-edit-collection.component';
-import {AppRoutingModule, routingComponents} from '../../app-routing.module';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AdminRoutingModule} from '../admin.routing';
 
 describe('AdminEditCollectionComponent', () => {
   let component: AdminEditCollectionComponent;
@@ -10,8 +9,8 @@ describe('AdminEditCollectionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
-      declarations: [AdminEditCollectionComponent, ...routingComponents]
+      imports: [AdminRoutingModule],
+      declarations: [AdminEditCollectionComponent]
     }).compileComponents();
   }));
 
@@ -19,7 +18,7 @@ describe('AdminEditCollectionComponent', () => {
     fixture = TestBed.createComponent(AdminEditCollectionComponent);
     component = fixture.componentInstance;
     component.collection = {
-      id: 1, toolId: '', title: '', author: '', text: '', state: '', shortName: '', exercisesBasics: []
+      id: 1, toolId: '', title: '', author: '', text: '', shortName: '', exercises: []
     };
     fixture.detectChanges();
   });

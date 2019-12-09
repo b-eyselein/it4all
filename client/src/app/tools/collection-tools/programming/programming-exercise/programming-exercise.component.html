@@ -2,20 +2,23 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <it4all-exercise-files-editor [exerciseFiles]="exerciseFiles" [mode]="'python'"></it4all-exercise-files-editor>
+      <it4all-exercise-files-editor
+        [exerciseFiles]="exerciseFiles"
+        [mode]="'python'">
+      </it4all-exercise-files-editor>
     </div>
 
     <div class="column is-half-desktop">
 
       <it4all-tabs>
         <it4all-tab [title]="'Aufgabenstellung'">
-          <div class="notification" [innerHTML]="exercise?.text"></div>
+          <div class="notification is-light-grey" [innerHTML]="exercise?.text"></div>
 
           <hr>
 
           <div class="columns">
             <div class="column">
-              <button class="button is-link is-fullwidth" [class.is-loading]="correctionRunning" (click)="correct()">
+              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting" (click)="correct()">
                 Korrektur
               </button>
             </div>
@@ -24,19 +27,13 @@
               </button>
             </div>
             <div class="column">
-              <a *ngIf="collection" [routerLink]="['/tools', tool.id, 'collections', collection.id]"
-                 class="button is-dark is-fullwidth">Bearbeiten beenden</a>
-              <a *ngIf="!collection" [routerLink]="['/tools', tool.id]" class="button is-dark is-fullwidth">
-                Bearbeiten beenden
-              </a>
+              <a routerLink="../.." class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
           </div>
         </it4all-tab>
 
         <it4all-tab [title]="correctionTabTitle">
-          <!--          <h2 class="subtitle is-3 has-text-centered">Korrekturresultat</h2>-->
-
-          <div class="notification danger" *ngIf="correctionRunning">
+          <div class="notification danger" *ngIf="isCorrecting">
             Die Korrektur läuft gerade...
           </div>
 
@@ -77,12 +74,9 @@
             </div>
 
           </div>
-
         </it4all-tab>
 
-        <it4all-tab [title]="'Live-Vorschau'" *ngIf="tool.hasLivePreview"></it4all-tab>
-
-        <it4all-tab [title]="sampleSolutionsTabTitle">
+        <it4all-tab [title]="sampleSolutionsTabTitle" [selectable]="displaySampleSolutions">
 
           <div class="overflowHiddenDiv" *ngIf="displaySampleSolutions">
             <!-- TODO: tabs for multiple sample solutions? -->

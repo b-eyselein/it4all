@@ -1,14 +1,11 @@
 package model.tools.collectionTools
 
-import model.ExerciseState
-
 
 final case class ExerciseCollection(
   id: Int,
   toolId: String,
   title: String,
-  author: String,
+  authors: Seq[String],
   text: String,
-  state: ExerciseState,
   shortName: String
 )

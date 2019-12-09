@@ -1,43 +1,19 @@
 import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
-import {ExerciseBasics, ExerciseCollection} from '../_interfaces/tool';
-import {DbSqlSolution, SqlExercise} from '../tools/collection-tools/sql/sql-exercise';
-import {DbRegexSolution, RegexExercise} from '../tools/collection-tools/regex/regex-exercise';
-import {DbProgrammingSolution, ProgrammingExercise} from '../tools/collection-tools/programming/programming-interfaces';
-import {DbWebSolution, WebExercise} from '../tools/collection-tools/web/web-interfaces';
-import {DbUmlSolution, UmlExercise} from '../tools/collection-tools/uml/uml';
-import {DbXmlSolution, XmlExercise} from '../tools/collection-tools/xml/xml-interfaces';
+import {DbSolution} from '../_interfaces/exercise';
+import {IExercise, IExerciseCollection} from '../_interfaces/models';
 
 @Injectable({providedIn: 'root'})
 export class DexieService extends Dexie {
 
-  // tools: Dexie.Table<Tool, string>;
-  collections: Dexie.Table<ExerciseCollection, [string, number]>;
-  exerciseBasics: Dexie.Table<ExerciseBasics, [string, number, number]>;
-
-  programmingExercises: Dexie.Table<ProgrammingExercise, [number, number]>;
-  programmingSolutions: Dexie.Table<DbProgrammingSolution, [number, number]>;
-
-  regexExercises: Dexie.Table<RegexExercise, [number, number]>;
-  regexSolutions: Dexie.Table<DbRegexSolution, [number, number]>;
-
-  sqlExercises: Dexie.Table<SqlExercise, [number, number]>;
-  sqlSolutions: Dexie.Table<DbSqlSolution, [number, number]>;
-
-  umlExercises: Dexie.Table<UmlExercise, [number, number]>;
-  umlSolutions: Dexie.Table<DbUmlSolution, [number, number]>;
-
-  webExercises: Dexie.Table<WebExercise, [number, number]>;
-  webSolutions: Dexie.Table<DbWebSolution, [number, number]>;
-
-  xmlExercises: Dexie.Table<XmlExercise, [number, number]>;
-  xmlSolutions: Dexie.Table<DbXmlSolution, [number, number]>;
+  collections: Dexie.Table<IExerciseCollection, [string, number]>;
+  exercises: Dexie.Table<IExercise, [string, number, number]>;
+  solutions: Dexie.Table<DbSolution<any>, [string, number, number, string]>;
 
   constructor() {
     super('it4all-client');
 
     this.version(1).stores({
-      // tools: 'id',
       collections: '[toolId+id]',
       exerciseBasics: '[toolId+collId+id]',
 
@@ -59,28 +35,35 @@ export class DexieService extends Dexie {
       xmlExercises: '[collId+id]',
       xmlSolutions: '[collId+exId]',
     });
+    this.version(2)
+      .stores({
+        exercises: '[toolId+collId+id+semanticVersion]',
+        solutions: '[toolId+collId+exId+partId]',
 
-    // this.tools = this.table('tools');
+        exerciseBasics: null,
+        programmingExercises: null,
+        programmingSolutions: null,
+
+        regexExercises: null,
+        regexSolutions: null,
+
+        sqlExercises: null,
+        sqlSolutions: null,
+
+        umlExercises: null,
+        umlSolutions: null,
+
+        webExercises: null,
+        webSolutions: null,
+
+        xmlExercises: null,
+        xmlSolutions: null,
+      });
+
     this.collections = this.table('collections');
-    this.exerciseBasics = this.table('exerciseBasics');
-
-    this.programmingExercises = this.table('programmingExercises');
-    this.programmingSolutions = this.table('programmingSolutions');
-
-    this.regexExercises = this.table('regexExercises');
-    this.regexSolutions = this.table('regexSolutions');
-
-    this.sqlExercises = this.table('sqlExercises');
-    this.sqlSolutions = this.table('sqlSolutions');
-
-    this.umlExercises = this.table('umlExercises');
-    this.umlSolutions = this.table('umlSolutions');
-
-    this.webExercises = this.table('webExercises');
-    this.webSolutions = this.table('webSolutions');
-
-    this.xmlExercises = this.table('xmlExercises');
-    this.xmlSolutions = this.table('xmlSolutions');
+    this.exercises = this.table('exercises');
+    this.solutions = this.table('solutions');
   }
+
 
 }

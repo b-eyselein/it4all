@@ -6,3 +6,8 @@ addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.3")
 
 // Sbt Updates
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.4.2")
+
+// Typescript Interfaces Plugin
+resolvers += Resolver.sonatypeRepo("snapshots")
+
+addSbtPlugin("nl.codestar" % "sbt-scala-tsi" % "0.2.0-SNAPSHOT")

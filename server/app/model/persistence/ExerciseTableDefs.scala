@@ -1,127 +1,67 @@
 package model.persistence
 
+import javax.inject.Inject
 import model._
 import model.core.CoreConsts._
-import model.core.{LongText, LongTextJsonProtocol}
 import model.learningPath.LearningPathTableDefs
-import model.points.Points
-import model.tools.collectionTools.{ExPart, ExParts, Exercise, ExerciseCollection}
-import play.api.db.slick.HasDatabaseConfigProvider
+import model.tools.collectionTools._
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 import scala.reflect.ClassTag
 
-trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise[SampleSolType], SampleSolType <: SampleSolution[_], UserSolType <: UserSolution[PartType, _], ReviewType <: ExerciseReview]
+class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
   extends LearningPathTableDefs
-    with ExerciseTableDefQueries[PartType, ExType, SampleSolType, UserSolType, ReviewType] {
+    with ExerciseTableDefQueries {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
 
-  // Abstract types
-
-  protected type DbExType <: ADbExercise
-
-  protected type ExTableDef <: ExerciseInCollectionTable
-
-
-  protected type CollTableDef <: ExerciseCollectionsTable
-
-
-  protected type DbUserSolType <: ADbUserSol[PartType]
-
-  protected type DbUserSolTable <: AUserSolutionsTable
-
-
-  protected type DbReviewType <: DbExerciseReview[PartType]
-
-  protected type ReviewsTable <: ExerciseReviewsTable
-
   // Table Queries
 
-  protected val collTable: TableQuery[CollTableDef]
-  protected val exTable  : TableQuery[ExTableDef]
-
-  protected val userSolutionsTableQuery: TableQuery[DbUserSolTable]
-
-  protected val reviewsTable: TableQuery[ReviewsTable]
-
-  // Helper methods
-
-  protected val dbModels              : ADbModels[ExType, DbExType]
-  protected val exerciseReviewDbModels: AExerciseReviewDbModels[PartType, ReviewType, DbReviewType]
-
-  protected final def exDbValuesFromExercise(exercise: ExType): DbExType = dbModels.dbExerciseFromExercise(exercise)
-
-  protected val exParts: ExParts[PartType]
-
-  // Reading
-
-  protected def completeExForEx(collId: Int, ex: DbExType): Future[ExType]
-
-  // Saving
-
-  protected def saveExerciseRest(collId: Int, ex: ExType): Future[Boolean]
+  protected final val collectionsTQ  : TableQuery[ExerciseCollectionsTable] = TableQuery[ExerciseCollectionsTable]
+  protected final val exercisesTQ    : TableQuery[ExercisesTable]           = TableQuery[ExercisesTable]
+  protected final val reviewsTQ      : TableQuery[ExerciseReviewsTable]     = TableQuery[ExerciseReviewsTable]
+  protected final val userSolutionsTQ: TableQuery[UserSolutionsTable]       = TableQuery[UserSolutionsTable]
 
   // Implicit column types
 
-  protected def jsonColumnType[T: ClassTag](tFormat: Format[T], default: => T = ???): BaseColumnType[T] = {
-    MappedColumnType.base[T, String](
-      t => Json.stringify(tFormat.writes(t)),
-      jsonT => tFormat.reads(Json.parse(jsonT)).getOrElse(default)
-    )
-  }
+  private def jsonColumnType[T: ClassTag](tFormat: Format[T], default: => T = ???): BaseColumnType[T] = MappedColumnType.base[T, String](
+    t => Json.stringify(tFormat.writes(t)),
+    jsonT => tFormat.reads(Json.parse(jsonT)).getOrElse(default)
+  )
 
-  protected def jsonSeqColumnType[T](tFormat: Format[T]): BaseColumnType[Seq[T]] = {
-    val tSeqFormat: Format[Seq[T]] = Format(Reads.seq(tFormat), Writes.seq(tFormat))
+  private def jsonSeqColumnType[T: ClassTag](tFormat: Format[T]): BaseColumnType[Seq[T]] =
+    jsonColumnType(Format(Reads.seq(tFormat), Writes.seq(tFormat)))
 
-    jsonColumnType(tSeqFormat, Seq.empty)
-  }
+  private val stringSeqColumnType: BaseColumnType[Seq[String]] =
+    jsonSeqColumnType(Format(Reads.StringReads, Writes.StringWrites))
 
+  private val semanticVersionColumnType: BaseColumnType[SemanticVersion] = jsonColumnType(ToolJsonProtocol.semanticVersionFormat)
+  private val jsonValueColumnType      : BaseColumnType[JsValue]         = jsonColumnType(Format[JsValue](x => JsSuccess(x), identity))
 
-  protected def stringSeqColumnType: BaseColumnType[Seq[String]] = {
-    val stringReads: Reads[String] = jsValue => JsSuccess(jsValue.asInstanceOf[JsString].value)
-
-    val stringWrites: Writes[String] = (x: String) => JsString(x)
-
-    jsonSeqColumnType[String](Format(stringReads, stringWrites))
-  }
-
-  protected def stringMapColumnType: BaseColumnType[Map[String, String]] = {
-    val stringMapFormat: Format[Map[String, String]] = Format(
-      Reads.mapReads[String, String](x => JsSuccess(x)),
-      MapWrites.mapWrites(x => JsString(x))
-    )
-
-    jsonColumnType(stringMapFormat)
-  }
-
-
-  protected implicit val partTypeColumnType: BaseColumnType[PartType]
-
-  protected implicit val difficultyColumnType: BaseColumnType[Difficulty] = jsonColumnType(Difficulties.jsonFormat)
-
-  protected val longTextColumnType: BaseColumnType[LongText] = jsonColumnType(LongTextJsonProtocol.format)
+  protected val exTagsColumnType: BaseColumnType[Seq[ExTag]] = jsonSeqColumnType(ToolJsonProtocol.exTagFormat)
+  protected val exPartColumnType: BaseColumnType[ExPart]     = MappedColumnType.base[ExPart, String](_.entryName, _ => ???)
 
   // Abstract table classes
 
-  abstract class ExerciseCollectionsTable(tag: Tag, tableName: String) extends Table[ExerciseCollection](tag, tableName) {
+  protected final class ExerciseCollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
+
+    private implicit val ssct: BaseColumnType[Seq[String]] = stringSeqColumnType
+
 
     def id: Rep[Int] = column[Int](idName)
-
 
     def toolId: Rep[String] = column[String]("tool_id")
 
     def title: Rep[String] = column[String]("title")
 
-    def author: Rep[String] = column[String]("author")
+    def authors: Rep[Seq[String]] = column[Seq[String]]("authors")
 
     def text: Rep[String] = column[String]("ex_text")
-
-    def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
 
     def shortName: Rep[String] = column[String]("short_name")
 
@@ -129,13 +69,18 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise[SampleSolType], S
     def pk = primaryKey("ex_coll_pk", (id, toolId))
 
 
-    override final def * : ProvenShape[ExerciseCollection] = (id, toolId, title, author, text, state, shortName) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
+    override def * : ProvenShape[ExerciseCollection] = (
+      id, toolId, title, authors, text, shortName
+    ) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
 
   }
 
-  abstract class ExerciseInCollectionTable(tag: Tag, name: String) extends Table[DbExType](tag, name) {
+  protected final class ExercisesTable(tag: Tag) extends Table[Exercise](tag, "exercises") {
 
-    protected implicit val ltct: BaseColumnType[LongText] = longTextColumnType
+    private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
+    private implicit val jvct: BaseColumnType[JsValue]         = jsonValueColumnType
+    private implicit val ssct: BaseColumnType[Seq[String]]     = stringSeqColumnType
+    private implicit val etct: BaseColumnType[Seq[ExTag]]      = exTagsColumnType
 
 
     def id: Rep[Int] = column[Int](idName)
@@ -149,88 +94,125 @@ trait ExerciseTableDefs[PartType <: ExPart, ExType <: Exercise[SampleSolType], S
 
     def title: Rep[String] = column[String]("title")
 
-    def author: Rep[String] = column[String]("author")
+    def authors: Rep[Seq[String]] = column[Seq[String]]("authors")
 
-    def text: Rep[LongText] = column[LongText]("ex_text")
+    def text: Rep[String] = column[String]("ex_text")
 
-    def state: Rep[ExerciseState] = column[ExerciseState]("ex_state")
+    def tags: Rep[Seq[ExTag]] = column[Seq[ExTag]]("tags")
+
+
+    def content: Rep[JsValue] = column[JsValue]("content_json")
 
 
     def pk: PrimaryKey = primaryKey("pk", (id, collectionId, toolId, semanticVersion))
 
-    def collectionFk: ForeignKeyQuery[CollTableDef, ExerciseCollection] = foreignKey("scenario_fk", (collectionId, toolId), collTable)(c => (c.id, c.toolId))
+    def collectionFk: ForeignKeyQuery[ExerciseCollectionsTable, ExerciseCollection] = foreignKey(
+      "scenario_fk", (collectionId, toolId), collectionsTQ
+    )(c => (c.id, c.toolId))
+
+
+    override def * : ProvenShape[Exercise] = (
+      id, collectionId, toolId, semanticVersion, title, authors, text, tags, content
+    ) <> (Exercise.tupled, Exercise.unapply)
 
   }
 
-  abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
+  protected abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
+
+    private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
+
 
     def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
-    def toolId: Rep[String] = column[String]("tool_id")
-
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("ex_sem_ver")
+    def toolId: Rep[String] = column[String]("tool_id")
+
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("exercise_semantic_version")
 
 
-    def exerciseFk: ForeignKeyQuery[ExTableDef, DbExType] = foreignKey(
-      "exercise_fk",
-      (exerciseId, collectionId, toolId, exSemVer),
-      exTable
+    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] = foreignKey(
+      "exercise_fk", (exerciseId, collectionId, toolId, exSemVer), exercisesTQ
     )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
 
   }
 
-  protected abstract class AUserSolutionsTable(tag: Tag, name: String) extends ExForeignKeyTable[DbUserSolType](tag, name) {
+  protected final class UserSolutionsTable(tag: Tag) extends Table[DbUserSolution](tag, "user_solutions") {
 
-    //    private implicit val ptct: BaseColumnType[PartType] = partTypeColumnType
-
+    private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
+    private implicit val jvct: BaseColumnType[JsValue]         = jsonValueColumnType
+    private implicit val epct: BaseColumnType[ExPart]          = exPartColumnType
 
     def id: Rep[Int] = column[Int]("id")
 
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
+
+    def collectionId: Rep[Int] = column[Int]("collection_id")
+
+    def toolId: Rep[String] = column[String]("tool_id")
+
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("exercise_semantic_version")
+
     def username: Rep[String] = column[String]("username")
 
-    def part: Rep[PartType] = column[PartType](partName)
+    def part: Rep[ExPart] = column[ExPart]("part")
 
-    def points: Rep[Points] = column[Points](pointsName)
+    def solutionJson: Rep[JsValue] = column[JsValue]("solution_json")
 
-    def maxPoints: Rep[Points] = column[Points]("max_points")
 
+    def pk = primaryKey("user_solutions_fk", (id, exerciseId, collectionId, toolId, exSemVer, part, username))
+
+
+    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] = foreignKey(
+      "exercise_fk", (exerciseId, collectionId, toolId, exSemVer), exercisesTQ
+    )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
+
+
+    override def * : ProvenShape[DbUserSolution] = (
+      id, exerciseId, collectionId, toolId, exSemVer, part, username, solutionJson
+    ) <> (DbUserSolution.tupled, DbUserSolution.unapply)
 
   }
 
 
-  abstract class ExerciseReviewsTable(tag: Tag, tableName: String) extends ExForeignKeyTable[DbReviewType](tag, tableName) {
+  final class ExerciseReviewsTable(tag: Tag) extends Table[DbExerciseReview](tag, "exercise_reviews") {
 
-    //    protected implicit var ptct: BaseColumnType[PartType] = partTypeColumnType
+    private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
+    private implicit val epct: BaseColumnType[ExPart]          = exPartColumnType
+    private implicit val dct : BaseColumnType[Difficulty]      = jsonColumnType(Difficulties.jsonFormat)
 
+
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
+
+    def collectionId: Rep[Int] = column[Int]("collection_id")
+
+    def toolId: Rep[String] = column[String]("tool_id")
+
+    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("exercise_semantic_version")
 
     def username: Rep[String] = column[String]("username")
 
-    def exercisePart: Rep[PartType] = column[PartType](partName)
+    def exercisePart: Rep[ExPart] = column[ExPart]("part")
 
     def difficulty: Rep[Difficulty] = column[Difficulty](difficultyName)
 
-    def maybeDuration: Rep[Int] = column[Int]("maybe_duration")
+    def maybeDuration: Rep[Option[Int]] = column[Option[Int]]("maybe_duration")
 
 
     def pk: PrimaryKey = primaryKey("pk", (exerciseId, collectionId, exercisePart))
 
-  }
 
-  // ExerciseFilesTable
+    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
-  trait ExerciseFilesTable[EF] extends Table[EF] {
+    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] = foreignKey(
+      "exercise_fk", (exerciseId, collectionId, toolId, exSemVer), exercisesTQ
+    )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
 
-    def name: Rep[String] = column[String](nameName)
-
-    def content: Rep[String] = column[String](contentName)
-
-    def fileType: Rep[String] = column[String]("file_type")
-
-    def editable: Rep[Boolean] = column[Boolean]("editable")
+    def * : ProvenShape[DbExerciseReview] = (
+      exerciseId, collectionId, toolId, exSemVer, exercisePart, username, difficulty, maybeDuration
+    ) <> (DbExerciseReview.tupled, DbExerciseReview.unapply)
 
   }
 

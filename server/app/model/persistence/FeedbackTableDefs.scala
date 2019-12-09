@@ -70,7 +70,7 @@ trait FeedbackTableDefs extends TableDefs {
 
   class FeedbackTable(tag: Tag) extends Table[(String, String, Option[String], Option[String], Option[Int], JsValue, String)](tag, "feedback") {
 
-    def username: Rep[String] = column[String](usernameName)
+    def username: Rep[String] = column[String]("username")
 
     def toolUrlPart: Rep[String] = column[String]("tool_url")
 

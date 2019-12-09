@@ -1,43 +1,48 @@
 package model.tools.collectionTools
 
-import model._
-import model.core.LongText
+import play.api.libs.json.JsValue
 
 
-trait ExTag extends enumeratum.EnumEntry {
+final case class SemanticVersion(major: Int, minor: Int, patch: Int)
 
-  val buttonContent: String
-
-  val title: String
-
-}
-
-trait Exercise[SampleSolutionType <: SampleSolution[_]] {
-
-  val id: Int
-
-  val collectionId: Int
-
-  val toolId: String
-
-  val semanticVersion: SemanticVersion
-
-  val title: String
-
-  val author: String
-
-  val text: LongText
-
-  val state: ExerciseState
+final case class ExTag(abbreviation: String, title: String)
 
 
-  val sampleSolutions: Seq[SampleSolutionType]
+final case class Exercise(
+  id: Int,
+  collectionId: Int,
+  toolId: String,
+  semanticVersion: SemanticVersion,
+  title: String,
+  authors: Seq[String],
+  text: String,
+  tags: Seq[ExTag],
+
+  // FIXME: use generic ExerciseContent?
+  content: JsValue,
+)
 
 
-  def tags: Seq[ExTag] = Seq[ExTag]()
+final case class SampleSolution[SolType](id: Int, sample: SolType)
+
+trait ExerciseContent {
+
+  type SolType
+
+  val sampleSolutions: Seq[SampleSolution[SolType]]
 
 }
 
-trait FileExercise extends Exercise[FilesSampleSolution]
+final case class ExerciseFile(name: String, resourcePath: String, fileType: String, editable: Boolean, content: String)
 
-trait StringExercise extends Exercise[StringSampleSolution]
+trait FileExerciseContent extends ExerciseContent {
+
+  override type SolType = Seq[ExerciseFile]
+
+}
+
+trait StringExerciseContent extends ExerciseContent {
+
+  override type SolType = String
+
+}

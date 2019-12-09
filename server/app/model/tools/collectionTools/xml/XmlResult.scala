@@ -11,11 +11,7 @@ import scala.collection.immutable.IndexedSeq
 
 trait XmlEvaluationResult extends EvaluationResult
 
-trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult] {
-
-  def solutionSaved: Boolean
-
-}
+trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult]
 
 // Document result
 
@@ -53,7 +49,7 @@ final case class XmlDocumentCompleteResult(
   results: Seq[XmlError],
   points: Points = (-1).points,
   maxPoints: Points = (-1).points,
-  solutionSaved: Boolean = false
+  solutionSaved: Boolean
 ) extends XmlCompleteResult
 
 
@@ -72,5 +68,5 @@ final case class XmlGrammarCompleteResult(
   results: Seq[ElementLineMatch],
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean = false
+  solutionSaved: Boolean
 ) extends XmlCompleteResult

@@ -31,12 +31,14 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
 }
 
-final case class SqlQueriesStaticComparison[Q](userQ: Q, sampleQ: Q,
-                                               columnComparison: MatchingResult[ColumnMatch],
-                                               tableComparison: MatchingResult[TableMatch],
-                                               joinExpressionComparison: MatchingResult[BinaryExpressionMatch],
-                                               whereComparison: MatchingResult[BinaryExpressionMatch],
-                                               additionalComparisons: Seq[MatchingResult[_ <: Match]]) {
+final case class SqlQueriesStaticComparison[Q](
+  userQ: Q, sampleQ: Q,
+  columnComparison: MatchingResult[ColumnMatch],
+  tableComparison: MatchingResult[TableMatch],
+  joinExpressionComparison: MatchingResult[BinaryExpressionMatch],
+  whereComparison: MatchingResult[BinaryExpressionMatch],
+  additionalComparisons: Seq[MatchingResult[_ <: Match]],
+) {
 
   val points: Points = columnComparison.points +
     tableComparison.points +
@@ -60,12 +62,12 @@ final case class SqlResult(
   whereComparison: MatchingResult[BinaryExpressionMatch],
   additionalComparisons: Seq[MatchingResult[_ <: Match]],
   executionResult: SqlExecutionResult,
-  solutionSaved: Boolean = false
+  solutionSaved: Boolean
 ) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons
 
-  override val successType: SuccessType = if (EvaluationResult.allResultsSuccessful(results)) SuccessType.COMPLETE else SuccessType.PARTIALLY
+  override val successType: SuccessType = if (results.nonEmpty && results.forall(_.success == SuccessType.COMPLETE)) SuccessType.COMPLETE else SuccessType.PARTIALLY
 
   override val points: Points = columnComparison.points +
     tableComparison.points +
@@ -83,7 +85,7 @@ final case class SqlResult(
 
 }
 
-final case class SqlParseFailed(error: Throwable, maxPoints: Points, solutionSaved: Boolean = false) extends SqlCorrResult {
+final case class SqlParseFailed(error: Throwable, maxPoints: Points, solutionSaved: Boolean) extends SqlCorrResult {
 
   override def results: Seq[EvaluationResult] = Seq[EvaluationResult]()
 

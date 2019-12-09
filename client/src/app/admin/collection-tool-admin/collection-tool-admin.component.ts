@@ -1,20 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ExerciseCollection, Tool} from '../../_interfaces/tool';
-import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
+import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
+import {IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './collection-tool-admin.component.html'})
-export class CollectionToolAdminComponent implements OnInit {
+export class CollectionToolAdminComponent extends ComponentWithCollectionTool implements OnInit {
 
-  tool: Tool;
-  collections: ExerciseCollection[] = [];
+  collections: IExerciseCollection[] = [];
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
-    const toolId = this.route.snapshot.paramMap.get('toolId');
-
-    this.tool = collectionTools.find((t) => t.id === toolId);
+    super(route);
 
     if (!this.tool) {
       this.router.navigate(['/admin']);
@@ -23,8 +20,8 @@ export class CollectionToolAdminComponent implements OnInit {
 
   private fetchExerciseBasics(): void {
     this.collections.forEach((collection) => {
-      this.apiService.getExerciseBasics(this.tool.id, collection.id)
-        .subscribe((exerciseBasics) => collection.exercisesBasics = exerciseBasics);
+      this.apiService.getExercises(this.tool.id, collection.id)
+        .subscribe((exerciseBasics) => collection.exercises = exerciseBasics);
     });
   }
 

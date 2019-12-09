@@ -1,11 +1,13 @@
 package model.tools.collectionTools.web
 
-import de.uniwue.webtester._
+import de.uniwue.webtester.result._
+import de.uniwue.webtester.sitespec.HtmlElementSpec
 import model.core.result.SuccessType
 import model.points._
 
 object WebGrader {
 
+  private val pointsForElement         : Points = singlePoint
   private val pointForCorrectTextResult: Points = singlePoint
   private val maxPointsForAction       : Points = singlePoint
 
@@ -16,82 +18,98 @@ object WebGrader {
       case TextContentResult(_, _)    => "TextContent"
     }
 
-    val points = if (tcr.success) pointForCorrectTextResult else zeroPoints
+    val success = tcr.maybeFoundContent match {
+      case None               => false
+      case Some(foundContent) => foundContent.contains(tcr.awaitedContent)
+    }
 
-    GradedTextResult(keyName, tcr.awaitedContent, tcr.maybeFoundContent, tcr.success, points, maxPoints = singlePoint)
+    val points = if (success) pointForCorrectTextResult else zeroPoints
+
+    GradedTextResult(keyName, tcr.awaitedContent, tcr.maybeFoundContent, success, points, maxPoints = singlePoint)
   }
 
-  private def calculateMaxPointsForElementSpec(element: HtmlElementSpec): Points = {
-    val pointsForElement = singlePoint
-
-    val pointsForTextContentResult = element.awaitedTextContent match {
+  private def calculateMaxPointsForElementSpec[ES <: HtmlElementSpec](elementSpec: ES): Points = {
+    val pointsForTextContentResult: Points = elementSpec.awaitedTextContent match {
       case None    => zeroPoints
       case Some(_) => pointForCorrectTextResult
     }
 
-    val pointsForAttributes: Seq[Points] = element.attributes.map(_ => pointForCorrectTextResult).toSeq
+    val pointsForAttributes: Points = pointForCorrectTextResult * elementSpec.attributes.size
 
-    pointsForElement + pointsForTextContentResult + addUp(pointsForAttributes)
+    pointsForElement + pointsForTextContentResult + pointsForAttributes
   }
 
-  private def gradeElementSpecResult(elementSpecResult: ElementSpecResult): GradedElementSpecResult = {
+  private def gradeElementSpecResult[GESR <: GradedElementSpecResult](
+    elementSpecResult: ElementSpecResult[_ <: HtmlElementSpec],
+    applyGradedResult: (SuccessType, Boolean, Option[GradedTextResult], Seq[GradedTextResult], Boolean, Points, Points) => GESR
+  ): GESR = {
     val maxPoints = calculateMaxPointsForElementSpec(elementSpecResult.elementSpec)
 
     elementSpecResult match {
-      case ElementFoundElementSpecResult(_, foundElement, textContentResult, attributeResults) =>
+      case ElementFoundElementSpecResult(_, _, textContentResult, attributeResults) =>
 
         val maybeGradedTextContentResult: Option[GradedTextResult] = textContentResult.map(gradeTextResult)
 
         val gradedAttributeResults: Seq[GradedTextResult] = attributeResults.map(gradeTextResult)
 
-        val pointsForElement           = singlePoint
         val pointsForTextContentResult = maybeGradedTextContentResult.map(_.points).getOrElse(zeroPoints)
         val pointsForAttributeResults  = addUp(gradedAttributeResults.map(_.points))
 
         val points = pointsForElement + pointsForTextContentResult + pointsForAttributeResults
 
-        val allAttributeResultsSuccessful = attributeResults.forall(_.success)
+        val allAttributeResultsSuccessful = gradedAttributeResults.forall(_.isSuccessful)
 
         val successType: SuccessType = if (allAttributeResultsSuccessful) {
-          textContentResult match {
+          maybeGradedTextContentResult match {
             case None             => SuccessType.COMPLETE
-            case Some(textResult) => if (textResult.success) SuccessType.COMPLETE else SuccessType.PARTIALLY
+            case Some(textResult) => if (textResult.isSuccessful) SuccessType.COMPLETE else SuccessType.PARTIALLY
           }
         } else SuccessType.PARTIALLY
 
         val isSuccessful = successType == SuccessType.COMPLETE
 
-        GradedElementSpecResult(elementSpecResult.elementSpec.id, successType, Some(foundElement), maybeGradedTextContentResult, gradedAttributeResults, isSuccessful, points, maxPoints)
+        applyGradedResult(successType, true, maybeGradedTextContentResult, gradedAttributeResults, isSuccessful, points, maxPoints)
 
-      case _ => GradedElementSpecResult(elementSpecResult.elementSpec.id, SuccessType.NONE, None, None, Seq[GradedTextResult](), isSuccessful = false, zeroPoints, maxPoints)
+      case _ => applyGradedResult(SuccessType.NONE, false, None, Seq[GradedTextResult](), false, zeroPoints, maxPoints)
     }
   }
 
   private def gradeActionResult(result: JsActionResult): GradedJsActionResult = {
-    val points = if (result.success) maxPointsForAction else zeroPoints
-    GradedJsActionResult(result.success, result.jsAction, points, maxPointsForAction)
+    val success = result match {
+      case ElementFoundJsActionResult(_, _, actionPerformed) => actionPerformed
+      case _                                                 => false
+    }
+
+    val points = if (success) maxPointsForAction else zeroPoints
+
+    GradedJsActionResult(success, result.jsAction, points, maxPointsForAction)
   }
 
-  def gradeHtmlTaskResult(htr: HtmlTaskResult): GradedHtmlTaskResult = {
-
-    val gradedElementSpecResult = gradeElementSpecResult(htr.elementSpecResult)
-
-    GradedHtmlTaskResult(gradedElementSpecResult, gradedElementSpecResult.successType)
-  }
+  def gradeHtmlTaskResult(htr: HtmlTaskResult): GradedHtmlTaskResult = gradeElementSpecResult(
+    htr.elementSpecResult,
+    GradedHtmlTaskResult(htr.elementSpecResult.elementSpec.id, _, _, _, _, _, _, _)
+  )
 
   def gradeJsTaskResult(jtr: JsTaskResult): GradedJsTaskResult = {
 
-    val gradedPreResults   = jtr.preResults.map(gradeElementSpecResult)
+    val gradedPreResults     = jtr.preResults.map { esr =>
+      gradeElementSpecResult(esr, GradedJsHtmlElementSpecResult(esr.elementSpec.id, _, _, _, _, _, _, _))
+    }
+    val preResultsSuccessful = gradedPreResults.nonEmpty && gradedPreResults.forall(_.isSuccessful)
+
     val gradedActionResult = gradeActionResult(jtr.actionResult)
-    val gradedPostResults  = jtr.postResults.map(gradeElementSpecResult)
+    val actionSuccessful   = gradedActionResult.actionPerformed
+
+    val gradedPostResults     = jtr.postResults.map { esr =>
+      gradeElementSpecResult(esr, GradedJsHtmlElementSpecResult(esr.elementSpec.id, _, _, _, _, _, _, _))
+    }
+    val postResultsSuccessful = gradedPostResults.nonEmpty && gradedPostResults.forall(_.isSuccessful)
 
     val points: Points = addUp(gradedPreResults.map(_.points)) + gradedActionResult.points + addUp(gradedPostResults.map(_.points))
 
     val maxPoints: Points = addUp(gradedPreResults.map(_.maxPoints)) + gradedActionResult.maxPoints + addUp(gradedPostResults.map(_.maxPoints))
 
-    val success: SuccessType = SuccessType.ofBool(
-      jtr.preResults.forall(_.success) && jtr.actionResult.success && jtr.postResults.forall(_.success)
-    )
+    val success: SuccessType = SuccessType.ofBool(preResultsSuccessful && actionSuccessful && postResultsSuccessful)
 
     GradedJsTaskResult(jtr.jsTask.id, gradedPreResults, gradedActionResult, gradedPostResults, success, points, maxPoints)
   }

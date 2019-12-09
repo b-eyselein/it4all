@@ -4,7 +4,7 @@ import {TabComponent} from '../tab/tab.component';
 @Component({
   selector: 'it4all-tabs',
   template: `
-      <div class="tabs is-centered">
+      <div class="tabs is-centered is-boxed is-fullwidth">
           <ul>
               <li *ngFor="let tab of tabs" (click)="selectTab(tab)" [class.is-active]="tab.active">
                   <a>{{tab.title}}</a>
@@ -29,9 +29,13 @@ export class TabsComponent implements AfterContentInit {
   }
 
   selectTab(tab: TabComponent): void {
-    this.tabs.toArray().forEach((t) => t.active = false);
+    if (tab.selectable) {
+      this.tabs.toArray().forEach((t) => t.active = false);
 
-    tab.active = true;
+      tab.active = true;
+    } else {
+      alert('Sie können diesen Tab momentan nicht aktivieren!');
+    }
   }
 
 }

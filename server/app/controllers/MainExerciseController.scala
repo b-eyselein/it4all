@@ -2,17 +2,16 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import model.core.Repository
-import model.tools.ToolList
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext
 
+@deprecated
 @Singleton
 class MainExerciseController @Inject()(
   cc: ControllerComponents,
   val dbConfigProvider: DatabaseConfigProvider,
-  toolList: ToolList,
   val repository: Repository
 )(implicit ec: ExecutionContext)
   extends AbstractController(cc)

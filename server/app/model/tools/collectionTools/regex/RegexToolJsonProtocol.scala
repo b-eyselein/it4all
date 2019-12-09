@@ -1,27 +1,23 @@
 package model.tools.collectionTools.regex
 
 import model.core.matching.MatchingResult
-import model.core.{LongText, LongTextJsonProtocol}
-import model.points.{Points, pointsJsonWrites}
-import model.tools.StringSampleSolutionToolJsonProtocol
-import model.{SemanticVersion, SemanticVersionHelper, StringSampleSolution}
+import model.points.Points
+import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol, ToolJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
 
-object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExercise,  RegexCompleteResult] {
+object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] {
 
   val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
   val regexExtractionTestDataFormat: Format[RegexExtractionTestData] = Json.format[RegexExtractionTestData]
 
-  override val exerciseFormat: Format[RegexExercise] = {
-    implicit val svf  : Format[SemanticVersion]         = SemanticVersionHelper.format
-    implicit val ltf  : Format[LongText]                = LongTextJsonProtocol.format
+  override val exerciseContentFormat: Format[RegexExerciseContent] = {
     implicit val rctf : Format[RegexCorrectionType]     = RegexCorrectionTypes.jsonFormat
-    implicit val sssf : Format[StringSampleSolution]    = sampleSolutionFormat
+    implicit val sssf : Format[SampleSolution[String]]    = sampleSolutionFormat
     implicit val rmtdf: Format[RegexMatchTestData]      = regexMatchTestDataFormat
     implicit val retdf: Format[RegexExtractionTestData] = regexExtractionTestDataFormat
 
-    Json.format[RegexExercise]
+    Json.format[RegexExerciseContent]
   }
 
   // Other...
@@ -51,7 +47,7 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
   override val completeResultWrites: Writes[RegexCompleteResult] = {
     implicit val regexCorrectionTypeFormat: Format[RegexCorrectionType] = RegexCorrectionTypes.jsonFormat
 
-    implicit val pointsWrites: Writes[Points] = pointsJsonWrites
+    implicit val pointsWrites: Writes[Points] = ToolJsonProtocol.pointsFormat
 
     implicit val matchEvalResultWrites: Writes[RegexMatchingEvaluationResult] = regexMatchingEvaluationResultWrites
 

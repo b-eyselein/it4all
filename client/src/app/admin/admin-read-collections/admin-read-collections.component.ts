@@ -1,22 +1,19 @@
 import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
-import {ExerciseCollection, Tool} from '../../_interfaces/tool';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {ReadCollectionComponent} from './read-collection/read-collection.component';
+import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
+import {IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './admin-read-collections.component.html'})
-export class AdminReadCollectionsComponent implements OnInit {
+export class AdminReadCollectionsComponent extends ComponentWithCollectionTool implements OnInit {
 
-  tool: Tool;
-  loadedCollections: ExerciseCollection[];
+  loadedCollections: IExerciseCollection[];
 
   @ViewChildren(ReadCollectionComponent) readCollectionComponents: QueryList<ReadCollectionComponent>;
 
   constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {
-    const toolId = this.route.snapshot.paramMap.get('toolId');
-
-    this.tool = collectionTools.find((t) => t.id === toolId);
+    super(route);
 
     if (!this.tool) {
       this.router.navigate(['/admin']);

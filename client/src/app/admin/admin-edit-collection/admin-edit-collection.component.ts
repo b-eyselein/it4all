@@ -2,20 +2,16 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
-import {ExerciseCollection, Tool} from '../../_interfaces/tool';
-import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
+import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
+import {IExerciseCollection} from '../../_interfaces/models';
 
 @Component({templateUrl: './admin-edit-collection.component.html'})
-export class AdminEditCollectionComponent implements OnInit {
+export class AdminEditCollectionComponent extends ComponentWithCollectionTool implements OnInit {
 
-  tool: Tool;
-  collection: ExerciseCollection;
+  collection: IExerciseCollection;
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
-    const toolId: string = this.route.snapshot.paramMap.get('toolId');
-
-
-    this.tool = collectionTools.find((t) => t.id === toolId);
+    super(route);
 
     if (!this.tool) {
       this.router.navigate(['/admin']);
@@ -24,7 +20,7 @@ export class AdminEditCollectionComponent implements OnInit {
 
   private fetchCollection(collId: number): void {
     this.apiService.getCollection(this.tool.id, collId)
-      .subscribe((collection: ExerciseCollection | undefined) => {
+      .subscribe((collection: IExerciseCollection | undefined) => {
         if (this.collection) {
           this.collection = collection;
         } else {

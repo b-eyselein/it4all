@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AnalysisResult, Match} from '../../../../basics';
-import {RegexExtractionMatch} from '../../regex-exercise';
+import {RegexExtractionMatch} from '../../regex-interfaces';
 
 @Component({
   selector: 'it4all-regex-extraction-match',

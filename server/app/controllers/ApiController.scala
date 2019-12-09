@@ -1,8 +1,10 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model._
-import model.tools.ToolList
+import model.ExerciseReview
+import model.core.ToolForms
+import model.persistence.ExerciseTableDefs
+import model.tools.collectionTools.{Exercise, ToolJsonProtocol}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
@@ -12,8 +14,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class ApiController @Inject()(cc: ControllerComponents, tl: ToolList, configuration: Configuration)(implicit ec: ExecutionContext)
-  extends AbstractApiExerciseController(cc, tl, configuration) {
+class ApiController @Inject()(cc: ControllerComponents, tables: ExerciseTableDefs, configuration: Configuration)(implicit ec: ExecutionContext)
+  extends AbstractApiExerciseController(cc, configuration) {
 
   private val logger = Logger(classOf[ApiController])
 
@@ -21,94 +23,89 @@ class ApiController @Inject()(cc: ControllerComponents, tl: ToolList, configurat
 
 
   def apiAllCollections(toolType: String): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    toolMain.futureAllCollections.map { collections =>
-      Ok(Json.toJson(collections)(Writes.seq(JsonProtocol.collectionFormat)))
+    tables.futureAllCollections(toolMain.urlPart).map { collections =>
+      Ok(Json.toJson(collections)(Writes.seq(ToolJsonProtocol.collectionFormat)))
     }
   }
 
   def apiCollection(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    toolMain.futureCollById(collId).map {
+    tables.futureCollById(toolMain.urlPart, collId).map {
       case None             => NotFound(s"There is no such collection with id $collId for tool ${toolMain.toolName}")
-      case Some(collection) => Ok(JsonProtocol.collectionFormat.writes(collection))
-    }
-  }
-
-  def apiExerciseBasics(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    toolMain.futureExerciseBasicsInColl(toolType, collId).map { exerciseBasics =>
-      Ok(Json.toJson(exerciseBasics)(Writes.seq(JsonProtocol.exerciseBasicsFormat)))
+      case Some(collection) => Ok(ToolJsonProtocol.collectionFormat.writes(collection))
     }
   }
 
   def apiExercises(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    // FIXME: send only id, title, ...
-    toolMain.futureExercisesInColl(collId).map { exercises =>
-      Ok(Json.toJson(exercises)(Writes.seq(toolMain.exerciseJsonFormat)))
+    // FIXME: send only id, title, ... ?
+    tables.futureExercisesInColl(toolMain, collId).map { exercises: Seq[Exercise] =>
+      Ok(Json.toJson(exercises)(Writes.seq(ToolJsonProtocol.exerciseFormat)))
     }
   }
 
   def apiExercise(toolType: String, collId: Int, exId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    toolMain.futureExerciseById(collId, exId).map {
+    tables.futureExerciseById(toolMain.urlPart, collId, exId).map {
       case None           => NotFound(s"There is no such exercise with id $exId for collection $collId")
-      case Some(exercise) => Ok(Json.toJson(exercise)(toolMain.exerciseJsonFormat))
+      case Some(exercise) => Ok(Json.toJson(exercise)(ToolJsonProtocol.exerciseFormat))
     }
   }
 
-  def apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String): Action[AnyContent] = apiWithToolMain(toolType) { (request, user, toolMain) =>
-    toolMain.futureCollById(collId) flatMap {
-      case None             => Future.successful(onNoSuchCollection(toolMain, collId))
-      case Some(collection) =>
+  def apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String): Action[JsValue] = apiWithToolMain(toolType, parse.json) { (request, user, toolMain) =>
+    tables.futureCollectionAndExercise(toolMain.urlPart, collId, exId).flatMap {
+      case None                         => Future.successful(onNoSuchExercise(collId, exId))
+      case Some((collection, exercise)) =>
 
-        toolMain.futureExerciseById(collection.id, exId) flatMap {
-          case None           => Future.successful(onNoSuchExercise(toolMain, collection, exId))
-          case Some(exercise) =>
+        toolMain.partTypeFromUrl(partStr) match {
+          case None         => Future.successful(onNoSuchExercisePart(exercise, partStr))
+          case Some(exPart) =>
 
-            toolMain.partTypeFromUrl(partStr) match {
-              case None         => Future.successful(onNoSuchExercisePart(toolMain, exercise, partStr))
-              case Some(exPart) =>
+            toolMain.readSolution(request.body).fold(
+              errors => {
+                errors.foreach(e => logger.error(e.toString()))
+                ???
+              },
+              solution => {
 
-                toolMain.correctAbstract(user, collection, exercise, exPart)(request, ec).map {
-                  case Success(result) => Ok(toolMain.onLiveCorrectionResult(result))
-                  case Failure(error)  =>
-                    logger.error("There has been an internal correction error:", error)
-                    BadRequest(toolMain.onLiveCorrectionError(error))
-                }
-            }
+                tables.futureInsertSolution(user, exercise, exPart, request.body)
+                  .flatMap { inserted =>
+
+                    toolMain.correctAbstract(user, solution, collection, exercise, exPart, inserted).map {
+                      case Failure(error) =>
+                        logger.error("There has been an internal correction error:", error)
+                        BadRequest(Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!"))
+
+                      case Success(result) => Ok(toolMain.onLiveCorrectionResult(result))
+                    }
+                  }
+              }
+            )
         }
     }
   }
-
 
   // Exercise review process
 
   def reviewExercisePart(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = apiWithToolMain(toolType) { (request, user, toolMain) =>
-    toolMain.futureCollById(collId) flatMap {
-      case None             => Future.successful(onNoSuchCollection(toolMain, collId))
-      case Some(collection) =>
+    tables.futureExerciseById(toolMain.urlPart, collId, id).flatMap {
+      case None           => Future.successful(onNoSuchExercise(collId, id))
+      case Some(exercise) =>
 
-        toolMain.futureExerciseById(collection.id, id) flatMap {
-          case None           => Future.successful(onNoSuchExercise(toolMain, collection, id))
-          case Some(exercise) =>
+        toolMain.partTypeFromUrl(partStr) match {
+          case None       => Future.successful(onNoSuchExercisePart(exercise, partStr))
+          case Some(part) =>
 
-            toolMain.partTypeFromUrl(partStr) match {
-              case None       => Future.successful(onNoSuchExercisePart(toolMain,  exercise, partStr))
-              case Some(part) =>
-
-                val onFormError: Form[toolMain.ReviewType] => Future[Result] = { formWithErrors =>
-                  ???
-                }
-
-                val onFormRead: toolMain.ReviewType => Future[Result] = { currentReview =>
-                  toolMain.futureSaveReview(user.username, collId, exercise.id, part, currentReview).map {
-                    case true  => ??? // Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
-                    case false => ???
-                  }
-                }
-
-                toolMain.exerciseReviewForm.bindFromRequest()(request).fold(onFormError, onFormRead)
+            val onFormError: Form[ExerciseReview] => Future[Result] = { formWithErrors =>
+              ???
             }
+
+            val onFormRead: ExerciseReview => Future[Result] = { currentReview =>
+              tables.futureSaveReview(toolMain, user.username, collId, exercise.id, part, currentReview).map {
+                case true  => ??? // Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
+                case false => ???
+              }
+            }
+            ToolForms.exerciseReviewForm.bindFromRequest()(request).fold(onFormError, onFormRead)
         }
     }
   }
-
 
 }

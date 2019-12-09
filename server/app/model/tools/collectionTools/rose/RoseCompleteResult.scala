@@ -3,8 +3,12 @@ package model.tools.collectionTools.rose
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 
-final case class RoseCompleteResult(result: RoseExecutionResult, points: Points = (-1).points, maxPoints: Points = (-1).points, solutionSaved: Boolean = false)
-  extends CompleteResult[RoseExecutionResult] {
+final case class RoseCompleteResult(
+  result: RoseExecutionResult,
+  points: Points = (-1).points,
+  maxPoints: Points = (-1).points,
+  solutionSaved: Boolean
+) extends CompleteResult[RoseExecutionResult] {
 
   override def results: Seq[RoseExecutionResult] = Seq(result)
 

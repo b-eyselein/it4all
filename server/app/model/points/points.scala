@@ -1,6 +1,6 @@
 package model
-import play.api.libs.json.{JsNumber, Writes}
 
+import scala.language.implicitConversions
 import scala.math.Integral.Implicits._
 
 package object points {
@@ -12,14 +12,6 @@ package object points {
     def *(multiplier: Int): Points = Points(multiplier * this.quarters)
 
     def asDouble: Double = quarters / 4d
-
-    def asDoubleString: String = quarters /% 4 match {
-      case (quotient, 0) => quotient.toString
-      case (quotient, 1) => s"$quotient.25"
-      case (quotient, 2) => s"$quotient.50"
-      case (quotient, 3) => s"$quotient.75"
-      case _             => "FEHLER!"
-    }
 
     override def compare(that: Points): Int = this.quarters - that.quarters
 
@@ -55,8 +47,5 @@ package object points {
   def singleHalfPoint: Points = 1.halfPoint
 
   def singleQuarterPoint: Points = 1.quarterPoint
-
-
-  val pointsJsonWrites: Writes[Points] = p => JsNumber(p.asDouble)
 
 }

@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {Exercise, ExerciseCollection, Tool} from '../../../_interfaces/tool';
+import {CollectionTool} from '../../../_interfaces/tool';
 import {ApiService} from '../../../tools/collection-tools/_services/api.service';
+import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
 
 @Component({
   selector: 'it4all-read-exercise',
@@ -13,9 +14,9 @@ import {ApiService} from '../../../tools/collection-tools/_services/api.service'
 })
 export class ReadExerciseComponent {
 
-  @Input() tool: Tool;
-  @Input() collection: ExerciseCollection;
-  @Input() exercise: Exercise;
+  @Input() tool: CollectionTool;
+  @Input() collection: IExerciseCollection;
+  @Input() exercise: IExercise;
 
   saved = false;
 

@@ -1,13 +1,16 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {SqlCreateQueryPart, SqlTool} from '../sql-tool';
-import {ExerciseCollection, Tool, ToolPart} from '../../../../_interfaces/tool';
-import {DbSqlSolution, SqlExercise, SqlResult} from '../sql-exercise';
-import {ActivatedRoute, Router} from '@angular/router';
+import {SqlResult} from '../sql-interfaces';
+import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
+import {ToolPart} from '../../../../_interfaces/tool';
+import {IExercise, ISqlExerciseContent} from '../../../../_interfaces/models';
+import {DbSolution} from '../../../../_interfaces/exercise';
 
 import 'codemirror/mode/sql/sql';
+
 
 @Component({
   templateUrl: './sql-exercise.component.html',
@@ -16,10 +19,11 @@ import 'codemirror/mode/sql/sql';
 })
 export class SqlExerciseComponent implements OnInit {
 
-  readonly tool: Tool = SqlTool;
-  collection: ExerciseCollection;
-  exercise: SqlExercise;
+  tool = SqlTool;
   part: ToolPart = SqlCreateQueryPart;
+
+  @Input() exercise: IExercise;
+  exerciseContent: ISqlExerciseContent;
 
   solution = '';
   result: SqlResult | undefined;
@@ -32,31 +36,25 @@ export class SqlExerciseComponent implements OnInit {
   }
 
   ngOnInit() {
-    const collId: number = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
-    const exId: number = parseInt(this.route.snapshot.paramMap.get('exId'), 10);
+    this.exerciseContent = this.exercise.content as ISqlExerciseContent;
 
-    this.apiService.getCollection(this.tool.id, collId)
-      .subscribe((coll) => this.collection = coll);
-
-    this.apiService.getExercise<SqlExercise>(this.tool.id, collId, exId)
-      .subscribe((ex) => this.exercise = ex);
-
-    this.dexieService.sqlSolutions.get([collId, exId])
-      .then((solution: DbSqlSolution | undefined) => this.solution = solution ? solution.solution : '');
+    this.dexieService.solutions.get([this.tool.id, this.exercise.collectionId, this.exercise.id, this.part.id])
+      .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
   }
 
   correct(): void {
     const partId = 'solve';
 
-    this.dexieService.sqlSolutions.put({
+    // noinspection JSIgnoredPromiseFromCall
+    this.dexieService.solutions.put({
       toolId: this.tool.id,
-      collId: this.collection.id,
+      collId: this.exercise.collectionId,
       exId: this.exercise.id,
       partId,
       solution: this.solution
     });
 
-    this.apiService.correctSolution<string, any>(this.tool.id, this.collection.id, this.exercise.id, partId, this.solution)
+    this.apiService.correctSolution<string, any>(this.exercise, partId, this.solution)
       .subscribe((result) => {
         this.result = result;
         console.warn(JSON.stringify(this.result, null, 2));

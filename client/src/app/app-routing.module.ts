@@ -4,7 +4,6 @@ import {ToolOverviewComponent} from './tool-overview/tool-overview.component';
 import {LoginFormComponent} from './user_management/login-form/login-form.component';
 import {AuthGuard} from './_helpers/auth-guard';
 import {LtiComponent} from './lti/lti.component';
-import {adminRoutes, adminRoutingComponents} from './admin/admin.routing';
 
 const routes: Routes = [
   {path: '', component: ToolOverviewComponent, canActivate: [AuthGuard]},
@@ -13,9 +12,7 @@ const routes: Routes = [
 
   {path: 'lti/:uuid', component: LtiComponent},
 
-  {path: 'lessons', loadChildren: () => import('./lessons/lessons.module').then(m => m.LessonsModule)},
-
-  ...adminRoutes,
+  {path: 'lessons', loadChildren: () => import('./lessons/lessons.module').then(m => m.LessonsModule)}
 ];
 
 @NgModule({
@@ -29,5 +26,4 @@ export const routingComponents = [
   ToolOverviewComponent,
   LoginFormComponent,
   LtiComponent,
-  ...adminRoutingComponents,
 ];

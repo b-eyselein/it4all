@@ -1,1 +1,17 @@
-<div id="myPaper"></div>
+<ng-container [ngSwitch]="part.id">
+
+  <it4all-uml-class-selection
+    *ngSwitchCase="'classSelection'"
+    [exercise]="exercise"
+    [exerciseContent]="exerciseContent">
+  </it4all-uml-class-selection>
+
+  <div class="container is-fluid" *ngSwitchCase="'diagramDrawing'">
+    <div id="myPaper"></div>
+  </div>
+
+  <p *ngSwitchDefault>{{part}}</p>
+
+</ng-container>
+
+

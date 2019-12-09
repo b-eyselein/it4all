@@ -1,19 +1,13 @@
 package model.tools.collectionTools.rose
 
-import model.core.{LongText, LongTextJsonProtocol}
 import model.points._
-import model.tools.ToolJsonProtocol
-import model.tools.collectionTools.programming.{ProgDataType, ProgLanguage, ProgLanguages, ProgrammingToolJsonProtocol}
-import model.{SemanticVersion, SemanticVersionHelper}
-import play.api.libs.json.{Format, Json, Writes}
+import model.tools.collectionTools.programming.{ProgDataType, ProgrammingToolJsonProtocol}
+import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
+import play.api.libs.json.{Format, Json, Reads, Writes}
 
-object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExercise, RoseSampleSolution, RoseCompleteResult] {
+object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExerciseContent, String, RoseCompleteResult] {
 
-  override val sampleSolutionFormat: Format[RoseSampleSolution] = {
-    implicit val progLanguageJsonFormat: Format[ProgLanguage] = ProgLanguages.jsonFormat
-
-    Json.format[RoseSampleSolution]
-  }
+  override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 
   val roseInputTypeFormat: Format[RoseInputType] = {
     implicit val pdtf: Format[ProgDataType] = ProgrammingToolJsonProtocol.progDataTypeFormat
@@ -21,14 +15,12 @@ object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExercise, RoseSampleSol
     Json.format[RoseInputType]
   }
 
-  override val exerciseFormat: Format[RoseExercise] = {
-    implicit val svf : Format[SemanticVersion]    = SemanticVersionHelper.format
-    implicit val ltf : Format[LongText]           = LongTextJsonProtocol.format
-    implicit val rssf: Format[RoseSampleSolution] = sampleSolutionFormat
+  override val exerciseContentFormat: Format[RoseExerciseContent] = {
+    implicit val ritf: Format[RoseInputType]          = roseInputTypeFormat
+    implicit val rssf: Format[SampleSolution[String]] = Json.format[SampleSolution[String]]
 
-    implicit val ritf: Format[RoseInputType] = roseInputTypeFormat
 
-    Json.format[RoseExercise]
+    Json.format[RoseExerciseContent]
   }
 
   // Other
@@ -41,7 +33,7 @@ object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExercise, RoseSampleSol
   }
 
   override val completeResultWrites: Writes[RoseCompleteResult] = {
-    implicit val pointsWrites: Writes[Points]              = pointsJsonWrites
+    implicit val pointsWrites: Writes[Points]              = ToolJsonProtocol.pointsFormat
     implicit val rerw        : Writes[RoseExecutionResult] = roseExecutionResultFormat
 
     Json.writes[RoseCompleteResult]

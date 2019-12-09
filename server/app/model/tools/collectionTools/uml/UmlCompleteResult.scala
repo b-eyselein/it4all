@@ -18,8 +18,9 @@ final case class UmlCompleteResult(
   classResult: Option[MatchingResult[UmlClassMatch]],
   assocResult: Option[MatchingResult[UmlAssociationMatch]],
   implResult: Option[MatchingResult[UmlImplementationMatch]],
-  points: Points, maxPoints: Points,
-  solutionSaved: Boolean = false
+  points: Points,
+  maxPoints: Points,
+  solutionSaved: Boolean
 ) extends CompleteResult[EvaluationResult] {
 
   override val success: SuccessType = SuccessType.NONE

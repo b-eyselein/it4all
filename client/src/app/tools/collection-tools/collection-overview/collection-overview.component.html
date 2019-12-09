@@ -21,9 +21,9 @@
             <div class="card-content">
 
               <!-- Tags -->
-              <div class="buttons" *ngIf="exercise.tags">
-                <span *ngIf="exercise.tags.length === 0">&nbsp;</span>
-                <it4all-tag *ngFor="let tag of exercise.tags" [tag]="tool.processTagString(tag)"></it4all-tag>
+              <div class="buttons" *ngIf="exercise.content.tags">
+                <span *ngIf="exercise.content.tags.length === 0">&nbsp;</span>
+                <it4all-tag *ngFor="let tag of exercise.content.tags" [tag]="tool.processTagString(tag)"></it4all-tag>
               </div>
 
             </div>

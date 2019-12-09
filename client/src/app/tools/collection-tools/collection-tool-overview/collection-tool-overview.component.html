@@ -17,8 +17,8 @@
             <p class="card-header-title">{{collection.id}}. {{collection.title}}</p>
           </header>
           <div class="card-content">
-            <ng-container *ngIf="collection.exercisesBasics; else loadingExercisesBlock">
-              <p>{{collection.exercisesBasics.length}} Aufgaben gefunden.</p>
+            <ng-container *ngIf="collection.exercises; else loadingExercisesBlock">
+              <p>{{collection.exercises.length}} Aufgaben gefunden.</p>
             </ng-container>
 
             <ng-template #loadingExercisesBlock>

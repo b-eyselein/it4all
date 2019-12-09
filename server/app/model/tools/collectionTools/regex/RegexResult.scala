@@ -30,7 +30,9 @@ final case class RegexCompleteResult(
   correctionType: RegexCorrectionType,
   matchingResults: Seq[RegexMatchingEvaluationResult],
   extractionResults: Seq[RegexExtractionEvaluationResult],
-  points: Points, maxPoints: Points, solutionSaved: Boolean = false
+  points: Points,
+  maxPoints: Points,
+  solutionSaved: Boolean
 ) extends CompleteResult[RegexEvalutationResult] {
 
   override def results: Seq[RegexEvalutationResult] = matchingResults ++ extractionResults

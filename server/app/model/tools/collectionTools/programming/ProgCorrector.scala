@@ -7,9 +7,9 @@ import better.files._
 import model.User
 import model.core.result.SuccessType
 import model.core.{DockerBind, DockerConnector}
-import model.tools.collectionTools.ExerciseCollection
 import model.tools.collectionTools.programming.ProgrammingToolJsonProtocol.UnitTestTestData
 import model.tools.collectionTools.programming.ResultsFileJsonFormat._
+import model.tools.collectionTools.{Exercise, ExerciseCollection, SampleSolution}
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,7 +27,7 @@ object ProgCorrector {
 
   private def buildTestMainFileName(fileEnding: String): String = s"test_main.$fileEnding"
 
-  private def correctImplementation(solTargetDir: File, resFolder: File, progSolution: ProgSolution, exercise: ProgExercise)
+  private def correctImplementation(solTargetDir: File, resFolder: File, progSolution: ProgSolution, exercise: ProgExerciseContent, solutionSaved: Boolean)
                                    (implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val solFileName         = s"${exercise.filename}.py"
@@ -65,7 +65,7 @@ object ProgCorrector {
               case Failure(exception)          => Failure(exception)
               case Success(runContainerResult) =>
                 readSimplifiedExecutionResultFile(solTargetDir / resultFileName).map { results =>
-                  ProgCompleteResult(simplifiedResults = results, normalResult = None, unitTestResults = Seq.empty)
+                  ProgCompleteResult(simplifiedResults = results, normalResult = None, unitTestResults = Seq.empty, solutionSaved)
                 }
             }
         } else {
@@ -75,8 +75,8 @@ object ProgCorrector {
       case UnitTestTypes.Normal =>
 
         val unitTestFileContent: String = exercise.sampleSolutions.headOption match {
-          case None                                                => ???
-          case Some(ProgSampleSolution(_, ProgSolution(files, _))) => files.find(_.name == exercise.unitTestPart.testFileName).map(_.content).getOrElse(???) // unitTest.content
+          case None                                            => ???
+          case Some(SampleSolution(_, ProgSolution(files, _))) => files.find(_.name == exercise.unitTestPart.testFileName).map(_.content).getOrElse(???) // unitTest.content
         }
 
         val unitTestFileName = s"${exercise.filename}_test.py"
@@ -101,12 +101,12 @@ object ProgCorrector {
 
               val normalExecutionResult: NormalExecutionResult = NormalExecutionResult(successType, runContainerResult.logs)
 
-              Success(ProgCompleteResult(simplifiedResults = Seq.empty, normalResult = Some(normalExecutionResult), unitTestResults = Seq.empty))
+              Success(ProgCompleteResult(simplifiedResults = Seq.empty, normalResult = Some(normalExecutionResult), unitTestResults = Seq.empty, solutionSaved))
           }
     }
   }
 
-  private def correctUnittest(solTargetDir: File, resFolder: File, progSolution: ProgSolution, exercise: ProgExercise)
+  private def correctUnittest(solTargetDir: File, resFolder: File, progSolution: ProgSolution, exercise: ProgExerciseContent, solutionSaved: Boolean)
                              (implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     // write unit test file
@@ -151,7 +151,7 @@ object ProgCorrector {
         case Failure(exception)          => Failure(exception)
         case Success(runContainerResult) =>
           readTestCorrectionResultFile(solTargetDir / resultFileName).map { results =>
-            ProgCompleteResult(simplifiedResults = Seq.empty, normalResult = None, unitTestResults = results)
+            ProgCompleteResult(simplifiedResults = Seq.empty, normalResult = None, unitTestResults = results, solutionSaved)
           }
       }
   }
@@ -160,23 +160,24 @@ object ProgCorrector {
     user: User,
     progSolution: ProgSolution,
     collection: ExerciseCollection,
-    exercise: ProgExercise,
+    exercise: Exercise,
+    content: ProgExerciseContent,
     part: ProgExPart,
-    toolMain: ProgToolMain,
-    exerciseResourcesFolder: File
+    exerciseResourcesFolder: File,
+    solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
-    val solutionTargetDir: File = toolMain.solutionDirForExercise(user.username, collection.id, exercise.id) / part.urlName
+    val solutionTargetDir: File = ProgToolMain.solutionDirForExercise(user.username, collection.id, exercise.id) / part.urlName
 
-    val exerciseResourcesForExerciseFolder: File = exerciseResourcesFolder / s"${collection.id}-${collection.shortName}" / s"${exercise.id}-${exercise.foldername}"
+    val exerciseResourcesForExerciseFolder: File = exerciseResourcesFolder / s"${collection.id}-${collection.shortName}" / s"${exercise.id}-${content.foldername}"
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / resultFileName
     resultFile.createIfNotExists(createParents = true).clear()
 
     part match {
-      case ProgExParts.TestCreation => correctUnittest(solutionTargetDir, exerciseResourcesForExerciseFolder, progSolution, exercise)
-      case _                        => correctImplementation(solutionTargetDir, exerciseResourcesForExerciseFolder, progSolution, exercise)
+      case ProgExParts.TestCreation => correctUnittest(solutionTargetDir, exerciseResourcesForExerciseFolder, progSolution, content, solutionSaved)
+      case _                        => correctImplementation(solutionTargetDir, exerciseResourcesForExerciseFolder, progSolution, content, solutionSaved)
     }
   }
 

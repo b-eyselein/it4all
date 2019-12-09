@@ -1,25 +1,20 @@
 import {Component, OnInit} from '@angular/core';
-import {ExerciseCollection, Tool} from '../../../_interfaces/tool';
 import {ApiService} from '../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {collectionTools} from '../collection-tools-list';
+import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
+import {IExerciseCollection} from '../../../_interfaces/models';
 
 @Component({templateUrl: './collection-tool-overview.component.html'})
-export class CollectionToolOverviewComponent implements OnInit {
+export class CollectionToolOverviewComponent extends ComponentWithCollectionTool implements OnInit {
 
-  // FIXME: show number of exercise for every collection!
-
-  tool: Tool;
-  collections: ExerciseCollection[];
+  collections: IExerciseCollection[];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
-    // private dexieService: DexieService
   ) {
-    const toolId: string = this.route.snapshot.paramMap.get('toolId');
-    this.tool = collectionTools.find((t) => t.id === toolId);
+    super(route);
 
     if (!this.tool) {
       this.router.navigate(['/']);
@@ -27,20 +22,18 @@ export class CollectionToolOverviewComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.dexieService.collections.toArray()
-    //   .then((collections: ExerciseCollection[]) => this.collections = collections);
     this.apiService.getCollections(this.tool.id)
-      .subscribe((collections: ExerciseCollection[]) => {
+      .subscribe((collections: IExerciseCollection[]) => {
         this.collections = collections;
-        this.loadExerciseBasics();
+        this.loadExercises();
       });
   }
 
-  loadExerciseBasics(): void {
-    this.collections.forEach((collection) => {
-      this.apiService.getExerciseBasics(this.tool.id, collection.id)
-        .subscribe((exerciseBasics) => collection.exercisesBasics = exerciseBasics);
-    });
+  loadExercises(): void {
+    this.collections.forEach((collection) =>
+      this.apiService.getExercises(this.tool.id, collection.id)
+        .subscribe((exerciseBasics) => collection.exercises = exerciseBasics)
+    );
   }
 
 }
