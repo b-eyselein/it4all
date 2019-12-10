@@ -7,7 +7,7 @@ volumes:
 
 services:
   resources:
-    image:        ls6uniwue/it4all-resources:0.4.2
+    image:        ls6uniwue/it4all-resources:0.4.3
     restart:      always
     ports:
       - 5050:5000

@@ -42,7 +42,7 @@ class ApiAdminController @Inject()(
   }
 
   def readExercises(toolId: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolId) { (_, _, toolMain) =>
-    ws.url(s"$resourcesServerBaseUrl/${toolMain.urlPart}/collections/$collId/exercises")
+    ws.url(s"$resourcesServerBaseUrl/${toolMain.urlPart}/collections/${String.valueOf(collId)}/exercises")
       .get()
       .map { request => (request.json \ "exercises").validate[Seq[Exercise]](Reads.seq(ef)) }
       .map {
@@ -63,8 +63,6 @@ class ApiAdminController @Inject()(
                 _ => true
               )
           }
-
-          println(exercises.size + " :: " + validExercises.size)
 
           Ok(Json.toJson(validExercises))
       }
