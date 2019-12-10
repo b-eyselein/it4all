@@ -48,22 +48,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
     }
   }
 
-  //  override def futureMaybeOldSolution(username: String, collId: Int, exId: Int, part: WebExPart): Future[Option[UserSolType]] = part match {
-  //    case WebExParts.HtmlPart => super.futureMaybeOldSolution(username, collId, exId, part)
-  //    case WebExParts.JsPart   =>
-  //      super.futureMaybeOldSolution(username, collId, exId, WebExParts.JsPart) flatMap {
-  //        case Some(solution) => Future.successful(Some(solution))
-  //        case None           =>
-  //          super.futureMaybeOldSolution(username, collId, exId, WebExParts.HtmlPart)
-  //      }
-  //  }
-
-  // Other helper methods
-
-  override protected def exerciseHasPart(exercise: WebExerciseContent, partType: WebExPart): Boolean = partType match {
-    case WebExParts.HtmlPart => exercise.siteSpec.htmlTasks.nonEmpty
-    case WebExParts.JsPart   => exercise.siteSpec.jsTasks.nonEmpty
-  }
+  // Correction
 
   private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
     case syntaxError: WebDriverException =>

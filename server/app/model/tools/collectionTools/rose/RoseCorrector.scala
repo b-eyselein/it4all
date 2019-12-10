@@ -3,7 +3,7 @@ package model.tools.collectionTools.rose
 import better.files.File._
 import better.files._
 import model.User
-import model.core.{DockerBind, DockerConnector}
+import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.points._
 import model.tools.collectionTools.programming.ProgLanguage
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 
 object RoseCorrector {
 
-  val roseCorrectionDockerImageName = "beyselein/rose:latest"
+  val roseCorrectionDockerImageName: ScalaDockerImage = ScalaDockerImage("beyselein", "rose")
 
   private val NewLine: String = "\n"
 
@@ -31,7 +31,7 @@ object RoseCorrector {
   )(implicit ec: ExecutionContext): Future[Try[RoseCompleteResult]] = {
 
     // Check if image exists
-    val futureImageExists = Future(DockerConnector.imageExists(roseCorrectionDockerImageName))
+    val futureImageExists = Future(DockerConnector.imageExists(roseCorrectionDockerImageName.name))
 
     val solutionFileName = s"solution_robot.${language.fileEnding}"
     val sampleFileName   = s"sample_robot.${language.fileEnding}"
@@ -64,9 +64,9 @@ object RoseCorrector {
       case true  =>
         DockerConnector
           .runContainer(
-            imageName = roseCorrectionDockerImageName,
+            roseCorrectionDockerImageName.name,
             maybeEntryPoint = None /* Some(entryPoint)*/ ,
-            maybeDockerBinds = Some(dockerBinds) /*,
+            maybeDockerBinds = dockerBinds /*,
           deleteContainerAfterRun = false */
           )
           .map {

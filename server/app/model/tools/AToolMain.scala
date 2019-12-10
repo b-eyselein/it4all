@@ -14,7 +14,6 @@ abstract class AToolMain(consts: ToolConsts) {
   val hasTags      : Boolean = false
   val hasPlayground: Boolean = false
 
-
   // Folders
 
   protected val exerciseResourcesFolder: File = File.currentWorkingDirectory / "conf" / "resources" / urlPart

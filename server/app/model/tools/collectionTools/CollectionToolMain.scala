@@ -4,7 +4,7 @@ import model._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.tools.{AToolMain, ToolConsts}
 import play.api.Logger
-import play.api.libs.json.{JsPath, JsResult, JsValue, JsonValidationError}
+import play.api.libs.json.{Format, JsPath, JsResult, JsValue, JsonValidationError}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -35,11 +35,11 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Other helper methods
 
-  protected def exerciseHasPart(exercise: ExContentType, partType: PartType): Boolean = true
-
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
   // Correction
+
+  def solutionFormat: Format[SolType] = toolJsonProtocol.solutionFormat
 
   private def logErrors(errors: scala.collection.Seq[JsErrorType], exceptionMsg: String): Future[Try[CompResultType]] = {
     errors.foreach(errorMsg => logger.error(errorMsg.toString))
@@ -49,6 +49,7 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   def readExerciseContent(exercise: Exercise): JsResult[ExContentType] = toolJsonProtocol.exerciseContentFormat.reads(exercise.content)
 
+  @deprecated
   def readSolution(jsValue: JsValue): JsResult[SolType] = toolJsonProtocol.solutionFormat.reads(jsValue)
 
   def correctAbstract(

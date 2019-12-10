@@ -16,14 +16,10 @@ final case class ProgExerciseContent(
   sampleSolutions: Seq[SampleSolution[ProgSolution]],
   sampleTestData: Seq[ProgTestData],
 
-  //  override val tags: Seq[ProgrammingExerciseTag],
-
   maybeClassDiagramPart: Option[UmlClassDiagram]
 ) extends ExerciseContent {
 
   override type SolType = ProgSolution
-
-  //  def inputCount: Int = inputTypes.size
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this, completeTestData)
@@ -35,9 +31,13 @@ final case class UnitTestPart(
   unitTestsDescription: String,
   unitTestFiles: Seq[ExerciseFile],
   unitTestTestConfigs: Seq[UnitTestTestConfig],
+  simplifiedTestMainFile: Option[ExerciseFile],
   testFileName: String,
   sampleSolFileNames: Seq[String]
 )
+
+final case class UnitTestTestConfig(id: Int, shouldFail: Boolean, description: String, file: ExerciseFile)
+
 
 final case class ImplementationPart(
   base: String,

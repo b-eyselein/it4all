@@ -26,7 +26,7 @@ trait Match {
   val userArg  : Option[T]
   val sampleArg: Option[T]
 
-  val analysisResult: Option[AR] = (userArg zip sampleArg).headOption.map { case (ua, sa) => analyze(ua, sa) }
+  val analysisResult: Option[AR] = (userArg zip sampleArg).map { case (ua, sa) => analyze(ua, sa) }
 
   val matchType: MatchType = analysisResult match {
     case Some(ar) => ar.matchType

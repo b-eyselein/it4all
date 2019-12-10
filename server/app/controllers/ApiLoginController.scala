@@ -87,35 +87,27 @@ class ApiLoginController @Inject()(
     }
   }
 
-  def apiAuthenticate: Action[AnyContent] = Action.async { implicit request =>
+  def apiAuthenticate: Action[UserCredentials] = {
+    implicit val userCredentialsFormat: Format[UserCredentials] = Json.format
 
-    request.body.asJson match {
-      case None          => Future.successful(BadRequest("Body did not contain json!"))
-      case Some(jsValue) =>
+    Action.async(parse.json[UserCredentials]) { implicit request =>
 
-        RequestBodyHelpers.userCredentialsFormat.reads(jsValue) match {
-          case JsError(errors)           =>
-            errors.foreach(println)
-            Future.successful(BadRequest("Body did contain invalid json!"))
-          case JsSuccess(credentials, _) =>
+      repository.userByName(request.body.username).flatMap {
+        case None       => Future.successful(BadRequest("Invalid username!"))
+        case Some(user) =>
 
-            repository.userByName(credentials.username).flatMap {
-              case None       => Future.successful(BadRequest("Invalid username!"))
-              case Some(user) =>
+          repository.pwHashForUser(user.username).map {
+            case None         => BadRequest("No password found!")
+            case Some(pwHash) =>
+              if (request.body.password.isBcrypted(pwHash.pwHash)) {
+                val session = createJwtSession(user)
 
-                repository.pwHashForUser(credentials.username).map {
-                  case None         => BadRequest("No password found!")
-                  case Some(pwHash) =>
-                    if (credentials.password.isBcrypted(pwHash.pwHash)) {
-                      val session = createJwtSession(user)
-
-                      Ok(writeJsonWebToken(user, session.serialize))
-                    } else {
-                      BadRequest("Password invalid!")
-                    }
-                }
-            }
-        }
+                Ok(writeJsonWebToken(user, session.serialize))
+              } else {
+                BadRequest("Password invalid!")
+              }
+          }
+      }
     }
   }
 

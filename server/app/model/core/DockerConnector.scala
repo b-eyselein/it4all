@@ -18,7 +18,14 @@ final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = 
   def toBind: Bind = Bind
     .from(fromPath.path.toAbsolutePath.toString)
     .to(toPath.path.toAbsolutePath.toString)
-    .readOnly(isReadOnly).build()
+    .readOnly(isReadOnly)
+    .build()
+
+}
+
+final case class ScalaDockerImage(repo: String, image: String, version: String = "latest") {
+
+  def name: String = s"$repo/$image:$version"
 
 }
 
@@ -26,7 +33,7 @@ final case class RunContainerResult(statusCode: Int, logs: String)
 
 object DockerConnector {
 
-  private val logger: Logger = Logger("model.core.DockerConnector")
+  private val logger: Logger = Logger(DockerConnector.getClass)
 
   private val MaxWaitTimeInSeconds: Int = 3
 
@@ -36,6 +43,9 @@ object DockerConnector {
 
   private val dockerClient: DockerClient = DefaultDockerClient.fromEnv().build()
 
+  def imageExists(scalaDockerImage: ScalaDockerImage): Boolean =
+    imageExists(scalaDockerImage.name)
+
   def imageExists(imageName: String): Boolean = {
     // FIXME: run in future?
     dockerClient.listImages().asScala
@@ -43,6 +53,9 @@ object DockerConnector {
       .filter(_ != null)
       .exists(_.contains(imageName))
   }
+
+  def pullImage(scalaDockerImage: ScalaDockerImage)(implicit ec: ExecutionContext): Future[Try[Unit]] =
+    Future(Try(dockerClient.pull(scalaDockerImage.name)))
 
   def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Try[Unit]] =
     Future(Try(dockerClient.pull(imageName)))
@@ -55,15 +68,13 @@ object DockerConnector {
     maybeWorkingDir: Option[String],
     maybeEntryPoint: Option[Seq[String]] = None,
     maybeCmd: Option[Seq[String]] = None,
-    maybeBinds: Option[Seq[DockerBind]] = None
-  ): Try[ContainerCreation] = Try {
-
-    // Build container config
+    maybeBinds: Seq[DockerBind] = Seq.empty
+  ): Try[ContainerCreation] = {
     val ccb: ContainerConfig.Builder = ContainerConfig.builder().image(imageName)
 
-    val ccbWithHostConfig = maybeBinds match {
-      case None        => ccb
-      case Some(binds) => ccb.hostConfig(createHostConfig(binds))
+    val ccbWithHostConfig = maybeBinds.toList match {
+      case Nil   => ccb
+      case binds => ccb.hostConfig(createHostConfig(binds))
     }
 
     val ccbWithHostConfigWorkDir = maybeWorkingDir match {
@@ -81,9 +92,11 @@ object DockerConnector {
       case Some(cmd) => ccbWithHostConfigWorkDirEntryPoint.cmd(cmd.asJava)
     }
 
-    val containerConfig: ContainerConfig = ccbWithHostConfigWorkDirEntryPointCmd.build()
+    Try {
+      val containerConfig: ContainerConfig = ccbWithHostConfigWorkDirEntryPointCmd.build()
 
-    dockerClient.createContainer(containerConfig)
+      dockerClient.createContainer(containerConfig)
+    }
   }
 
   private def startContainer(container: String): Try[Unit] = Try(dockerClient.startContainer(container))
@@ -97,19 +110,19 @@ object DockerConnector {
     maybeWorkingDir: Option[Path] = Some(DefaultWorkingDir),
     maybeEntryPoint: Option[Seq[String]] = None,
     maybeCmd: Option[Seq[String]] = None,
-    maybeDockerBinds: Option[Seq[DockerBind]] = None,
+    maybeDockerBinds: Seq[DockerBind] = Seq.empty,
     maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds,
     deleteContainerAfterRun: Boolean = true,
   )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] = Future {
 
-    createContainer(imageName, maybeWorkingDir map (_.toString), maybeEntryPoint, maybeCmd, maybeDockerBinds) flatMap {
+    createContainer(imageName, maybeWorkingDir map (_.toString), maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap {
       containerCreation: ContainerCreation =>
 
         val containerId = containerCreation.id
 
-        startContainer(containerId) flatMap { _ =>
+        startContainer(containerId).flatMap { _ =>
 
-          waitForContainer(containerId, maxWaitTimeInSeconds) map { containerExit =>
+          waitForContainer(containerId, maxWaitTimeInSeconds).map { containerExit =>
 
             val statusCode = containerExit.statusCode.toInt
 

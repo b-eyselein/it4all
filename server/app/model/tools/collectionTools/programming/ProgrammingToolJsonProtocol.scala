@@ -63,7 +63,11 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
 
   // Exercise
 
-  private val unitTestTestConfigFormat: Format[UnitTestTestConfig] = Json.format[UnitTestTestConfig]
+  private val unitTestTestConfigFormat: Format[UnitTestTestConfig] = {
+    implicit val eff: Format[ExerciseFile] = ToolJsonProtocol.exerciseFileFormat
+
+    Json.format[UnitTestTestConfig]
+  }
 
 
   val progInputFormat: Format[ProgInput] = {
@@ -105,18 +109,17 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
 
   // Simplified execution
 
-  private val simplifiedExecutionResultFormat: Format[SimplifiedExecutionResult] = Json.format[SimplifiedExecutionResult]
-
-  val simplifiedResultsFileJsonReads: Reads[SimplifiedResultFileContent] = {
-    implicit val serf: Format[SimplifiedExecutionResult] = simplifiedExecutionResultFormat
-
-    Json.reads[SimplifiedResultFileContent]
-  }
+  val simplifiedExecutionResultFormat: Format[SimplifiedExecutionResult] = Json.format[SimplifiedExecutionResult]
 
   // Normal execution
 
 
-  final case class UnitTestTestData(foldername: String, filename: String, testFilename: String, testConfigs: Seq[UnitTestTestConfig])
+  final case class UnitTestTestData(
+    folderName: String,
+    filename: String,
+    testFilename: String,
+    testConfigs: Seq[UnitTestTestConfig]
+  )
 
   val unitTestDataWrites: Writes[UnitTestTestData] = {
     implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat

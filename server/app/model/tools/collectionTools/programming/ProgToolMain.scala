@@ -22,19 +22,7 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
   override protected val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
     ProgrammingToolJsonProtocol
 
-  // Other helper methods
-
-  override def exerciseHasPart(exercise: ProgExerciseContent, part: ProgExPart): Boolean = part match {
-    case ProgExParts.ActivityDiagram => false
-    case ProgExParts.TestCreation    => exercise.unitTestPart.unitTestType == UnitTestTypes.Normal
-    case _                           => true
-  }
-
-  //  override protected def readSolution(jsValue: JsValue, part: ProgExPart): JsResult[ProgSolution] = ???
-  //    ToolJsonProtocol.exerciseFileWorkspaceReads.reads(jsValue) match {
-  //      case JsError(errors)        => Left(errors.toString())
-  //      case JsSuccess(solution, _) => Right(ProgSolution(solution.files, Seq.empty))
-  //    }
+  // Correction
 
   override protected def correctEx(
     user: User,
@@ -43,8 +31,8 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
     exercise: Exercise,
     content: ProgExerciseContent,
     part: ProgExPart,
-    solutionSaved:Boolean
+    solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] =
-    ProgCorrector.correct(user, sol, collection, exercise, content, part, exerciseResourcesFolder,solutionSaved)
+    ProgCorrector.correct(user, sol, collection, exercise, content, part, solutionSaved)
 
 }

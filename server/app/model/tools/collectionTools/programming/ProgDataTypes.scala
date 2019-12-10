@@ -2,8 +2,6 @@ package model.tools.collectionTools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-import scala.util.matching.Regex
-
 
 sealed trait ProgDataType {
 
@@ -57,26 +55,6 @@ object ProgDataTypes {
 
     override def typeName: String = s"Dict[${keyType.typeName}, ${valueType.typeName}]"
 
-  }
-
-  // Yaml helpers
-
-  def byName(str: String): Option[ProgDataType] = {
-    val ListPattern: Regex = "list<(.*?)>".r
-
-    str match {
-      case "void"    => Some(NonGenericProgDataType.VOID)
-      case "int"     => Some(NonGenericProgDataType.INTEGER)
-      case "float"   => Some(NonGenericProgDataType.FLOAT)
-      case "boolean" => Some(NonGenericProgDataType.BOOLEAN)
-      case "string"  => Some(NonGenericProgDataType.STRING)
-
-      case ListPattern(c) =>
-        val subType: Option[ProgDataType] = ProgDataTypes.byName(c)
-        subType map LIST
-
-      case _ => None
-    }
   }
 
 }

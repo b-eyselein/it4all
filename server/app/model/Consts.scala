@@ -1,12 +1,8 @@
 package model
 
-import better.files.File
-
 trait Consts {
 
   val analysisResultName: String = "analysisResult"
-
-  val resourcesBasePath: File = File.currentWorkingDirectory / "conf" / "resources"
 
   val difficultyName: String = "difficulty"
   val durationName  : String = "duration"
@@ -26,7 +22,6 @@ trait Consts {
   val pwName    : String = "passwort"
 
 
-  val relativePathName: String = "relativePath"
   val resultsName     : String = "results"
   val roleName        : String = "role"
 

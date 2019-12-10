@@ -11,15 +11,12 @@ import scala.concurrent.Future
 abstract class AbstractApiExerciseController(cc: ControllerComponents, configuration: Configuration)
   extends AbstractApiController(cc, configuration) {
 
-  private def getToolMain(toolType: String): Option[CollectionToolMain] =
+  protected def getToolMain(toolType: String): Option[CollectionToolMain] =
     ToolList.getExCollToolMainOption(toolType)
 
 
   protected def onNoSuchTool(toolType: String): Result =
     NotFound(s"There is no tool with id ${toolType}")
-
-  protected def onNoSuchCollection(toolName: String, collId: Int): Result =
-    NotFound(s"There is no collection $collId for tool ${toolName}")
 
   protected def onNoSuchExercise(collectionId: Int, exId: Int): Result =
     NotFound(s"There is no exercise with id $exId for collection $collectionId")

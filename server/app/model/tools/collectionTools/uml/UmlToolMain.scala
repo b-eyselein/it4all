@@ -22,12 +22,7 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
   override protected val toolJsonProtocol: ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] =
     UmlToolJsonProtocol
 
-  // Other helper methods
-
-  override protected def exerciseHasPart(exercise: UmlExerciseContent, partType: UmlExPart): Boolean = partType match {
-    case UmlExParts.ClassSelection | UmlExParts.DiagramDrawing => true // TODO: Currently deactivated...
-    case _                                                     => false
-  }
+  // Correction
 
   override def correctEx(
     user: User,
