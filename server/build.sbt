@@ -58,9 +58,6 @@ resolvers ++= Seq(
   ("Artifactory" at s"$artifactoryUrl/libs-release").withAllowInsecureProtocol(true),
   ("Snapshot Artifactory" at s"$artifactoryUrl/libs-snapshot/").withAllowInsecureProtocol(true),
 
-  // Repo for play-json-schema-validator
-  Resolver.bintrayRepo("emueller", "maven"),
-
   // Typescript Interfaces Plugin
   Resolver.sonatypeRepo("snapshots")
 )
@@ -86,9 +83,6 @@ libraryDependencies ++= Seq(
   "com.github.pathikrit" %% "better-files" % "3.8.0", // MIT
 
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
-
-  // Json Schema Parser/Validator for Json
-  "com.eclipsesource" %% "play-json-schema-validator" % "0.9.5", // Apache 2.0
 
   // Sql
   "com.github.jsqlparser" % "jsqlparser" % "3.1", // Apache 2.0

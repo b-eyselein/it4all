@@ -19,6 +19,9 @@ object Role extends PlayEnum[Role] {
 
 // Users
 
+final case class UserCredentials(username: String, password: String)
+
+
 sealed trait User {
 
   val username: String
