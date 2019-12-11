@@ -17,10 +17,7 @@ server/data/*
 !server/data/web/solutions/.gitkeep
 
 server/.idea/*
-!server/.idea/jsonSchemas.xml
 !server/.idea/dictionaries
-
-server/conf/resources/.idea/
 
 # Client folder
 client/coverage
