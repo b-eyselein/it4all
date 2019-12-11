@@ -1,5 +1,5 @@
 // The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.3")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.4")
 
 // Wart remover for scalac
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.3")

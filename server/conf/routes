@@ -1,16 +1,13 @@
-GET           /                                                                        controllers.FrontendController.index
-
-# User administration
-PUT           /api/users/changeRole                                                    controllers.ApiLoginController.changeRole
+GET         /                                                                        controllers.FrontendController.index
 
 # User managemente
 # TODO: registration of users ?!?
 #PUT          /api/register                                                                controllers.ApiLoginController.register
 
-PUT           /api/users/authenticate                                                  controllers.ApiLoginController.apiAuthenticate
+PUT         /api/users/authenticate                                                  controllers.ApiLoginController.apiAuthenticate
 
-POST          /api/lti                                                                 controllers.ApiLoginController.ltiHoneypot
-GET           /api/claimWebToken/:uuidStr                                              controllers.ApiLoginController.claimJsonWebToken(uuidStr: String)
+POST        /api/lti                                                                 controllers.ApiLoginController.ltiHoneypot
+GET         /api/claimWebToken/:uuidStr                                              controllers.ApiLoginController.claimJsonWebToken(uuidStr: String)
 
 # Collection management
 
@@ -34,21 +31,21 @@ GET           /api/claimWebToken/:uuidStr                                       
 
 # API
 
-GET           /api/tools/:toolType/collections                                         controllers.ApiController.apiAllCollections(toolType: String)
-GET           /api/tools/:toolType/collections/:collId                                 controllers.ApiController.apiCollection(toolType: String, collId: Int)
-GET           /api/tools/:toolType/collections/:collId/exercises                       controllers.ApiController.apiExercises(toolType: String, collId: Int)
-GET           /api/tools/:toolType/collections/:collId/exercises/:exId                 controllers.ApiController.apiExercise(toolType: String, collId: Int, exId: Int)
+GET         /api/tools/:toolType/collections                                         controllers.ApiController.apiAllCollections(toolType: String)
+GET         /api/tools/:toolType/collections/:collId                                 controllers.ApiController.apiCollection(toolType: String, collId: Int)
+GET         /api/tools/:toolType/collections/:collId/exercises                       controllers.ApiController.apiExercises(toolType: String, collId: Int)
+GET         /api/tools/:toolType/collections/:collId/exercises/:exId                 controllers.ApiController.apiExercise(toolType: String, collId: Int, exId: Int)
 
-PUT           /api/tools/:toolType/collections/:collId/exercises/:exId/:partStr        controllers.ApiController.apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String)
+PUT         /api/tools/:toolType/collections/:collId/exercises/:exId/:partStr        controllers.ApiController.apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String)
 
 # Admin API
 
-GET           /api/admin/tools/:toolId/readCollections                                 controllers.ApiAdminController.readCollections(toolId: String)
-GET           /api/admin/tools/:toolId/collections/:collId/readExercises               controllers.ApiAdminController.readExercises(toolId: String,collId: Int)
+GET         /api/admin/tools/:toolId/readCollections                                 controllers.ApiAdminController.readCollections(toolId: String)
+GET         /api/admin/tools/:toolId/collections/:collId/readExercises               controllers.ApiAdminController.readExercises(toolId: String,collId: Int)
 
-PUT           /api/admin/tools/:toolId/collections/:collId                             controllers.ApiAdminController.upsertCollection(toolId: String, collId: Int)
+PUT         /api/admin/tools/:toolId/collections/:collId                             controllers.ApiAdminController.upsertCollection(toolId: String, collId: Int)
 
-PUT           /api/admin/tools/:toolId/collections/:collId/exercises/:exId             controllers.ApiAdminController.upsertExercise(toolId: String, collId: Int, exId: Int)
+PUT         /api/admin/tools/:toolId/collections/:collId/exercises/:exId             controllers.ApiAdminController.upsertExercise(toolId: String, collId: Int, exId: Int)
 
 # Other routes
 #GET           /uml/classDiagram/:id/:part/cd.js                                        controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)
@@ -60,5 +57,5 @@ PUT           /api/admin/tools/:toolId/collections/:collId/exercises/:exId      
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /*file                                                                   controllers.FrontendController.assetOrDefault(file)
-GET           /assets/*file                                                            controllers.Assets.versioned(path="/public", file: Asset)
+GET         /*file                                                                   controllers.FrontendController.assetOrDefault(file)
+GET         /assets/*file                                                            controllers.Assets.versioned(path="/public", file: Asset)

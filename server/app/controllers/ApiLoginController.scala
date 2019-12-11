@@ -9,7 +9,6 @@ import model.core.Repository
 import model.lti.BasicLtiLaunchRequest
 import pdi.jwt.JwtSession
 import play.api.Configuration
-import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
 import play.api.mvc._
@@ -25,24 +24,6 @@ class ApiLoginController @Inject()(
   extends AbstractApiController(cc, configuration) with HasDatabaseConfigProvider[JdbcProfile] {
 
   override protected val adminRightsRequired: Boolean = true
-
-  def changeRole: EssentialAction = apiWithUser { (request, admin) =>
-
-    val onFormError: Form[UpdateRoleForm] => Future[Result] = { _ =>
-      Future(BadRequest("TODO!"))
-    }
-
-    val onFromValue: UpdateRoleForm => Future[Result] = { updateRoleForm =>
-      repository.updateUserRole(updateRoleForm.username, updateRoleForm.newRole) map { roleChanged =>
-        if (roleChanged) Ok(Json.obj("name" -> updateRoleForm.username, "stdRole" -> updateRoleForm.newRole.entryName))
-        else BadRequest("TODO!")
-      }
-    }
-
-    if (admin.stdRole != Role.RoleSuperAdmin) Future(Forbidden("You do not have sufficient privileges to change roles!"))
-    else RequestBodyHelpers.updateRoleForm.bindFromRequest()(request).fold(onFormError, onFromValue)
-  }
-
 
   // Json Web Token session
 
