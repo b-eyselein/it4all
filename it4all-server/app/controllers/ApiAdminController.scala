@@ -21,7 +21,7 @@ class ApiAdminController @Inject()(
   private val logger = Logger(classOf[ApiController])
 
   // FIXME: port 5050 in prod mode!
-  private val resourcesServerBaseUrl = "http://localhost:5000/tools"
+  private val resourcesServerBaseUrl = "http://localhost:5050/tools"
 
   override protected val adminRightsRequired: Boolean = true
 
