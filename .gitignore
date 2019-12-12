@@ -1,27 +1,25 @@
 # Server
-server/logs
-server/target
+it4all-server/logs
+it4all-server/target
 
-server/RUNNING_PID
+it4all-server/RUNNING_PID
 
-server/.cache-main
-server/.cache-tests
+it4all-server/.cache-main
+it4all-server/.cache-tests
 
-server/project/project
-server/project/target
+it4all-server/project/project
+it4all-server/project/target
 
-server/public
+it4all-server/public
 
-# Ignore saved files, except folder data/web
-server/data/*
-!server/data/web/solutions/.gitkeep
+it4all-server/data/
 
-server/.idea/*
-!server/.idea/dictionaries
+it4all-server/.idea/*
+!it4all-server/.idea/dictionaries
 
 # Client folder
-client/coverage
-client/dist
-client/node_modules
-client/.idea
+it4all-client/coverage
+it4all-client/dist
+it4all-client/node_modules
+it4all-client/.idea
 
