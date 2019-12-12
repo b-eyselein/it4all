@@ -1,53 +1,62 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collection?.title}}&quot;</h1>
 
-  <div class="buttons">
-    <a class="button is-primary is-fullwidth" [routerLink]="['../..']">Zurück zur Sammlungübersicht</a>
-  </div>
+  <ng-container *ngIf="collection; else loadingCollectionBlock">
+    <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collection.title}}&quot;</h1>
 
-  <br>
-
-  <ng-container *ngIf="collection">
-    <h2 class="subtitle is-3 has-text-centered">Aufgaben</h2>
-
-    <ng-container *ngIf="exercises; else loadingExercisesBlock">
-      <div class="columns is-multiline" *ngIf="exercises.length > 0; else noExercisesFoundBlock">
-        <div *ngFor="let exercise of exercises" class="column is-one-third-desktop is-one-half">
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-header-title">{{exercise.id}}. {{exercise.title}}</div>
-            </div>
-            <div class="card-content">
-
-              <!-- Tags -->
-              <div class="buttons" *ngIf="exercise.content.tags">
-                <span *ngIf="exercise.content.tags.length === 0">&nbsp;</span>
-                <it4all-tag *ngFor="let tag of exercise.content.tags" [tag]="tool.processTagString(tag)"></it4all-tag>
-              </div>
-
-            </div>
-            <footer class="card-footer">
-              <a class="card-footer-item" [routerLink]="['exercises', exercise.id]">Zur Aufgabe</a>
-            </footer>
-          </div>
-
-        </div>
-      </div>
-    </ng-container>
-  </ng-container>
-
-  <ng-template #noExercisesFoundBlock>
-    <div class="notification is-danger has-text-centered">
-      Es konnten keine Aufgaben für die Sammlung {{collection.title}} gefunden werden!
+    <div class="buttons">
+      <a class="button is-primary is-fullwidth" [routerLink]="['../..']">Zurück zur Sammlungübersicht</a>
     </div>
-  </ng-template>
 
-  <ng-template #loadingExercisesBlock>
-    <div class="notification">
-      <p class="has-text-centered">Lade Aufgaben...</p>
-      <br>
-      <progress class="progress" max="100">20%</progress>
+    <br>
+
+    <ng-container *ngIf="collection">
+      <h2 class="subtitle is-3 has-text-centered">Aufgaben</h2>
+
+      <ng-container *ngIf="collection.exercises; else loadingExercisesBlock">
+        <div class="columns is-multiline" *ngIf="collection.exercises.length > 0; else noExercisesFoundBlock">
+          <div *ngFor="let exercise of collection.exercises" class="column is-one-quarter-desktop is-half">
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">{{exercise.id}}. {{exercise.title}}</div>
+              </div>
+              <div class="card-content">
+
+                <!-- Tags -->
+                <div class="buttons" *ngIf="exercise.tags">
+                  <span *ngIf="exercise.tags.length === 0">&nbsp;</span>
+                  <it4all-tag *ngFor="let tag of exercise.tags" [tag]="tag"></it4all-tag>
+                </div>
+
+              </div>
+              <footer class="card-footer">
+                <a class="card-footer-item" [routerLink]="['exercises', exercise.id]">Zur Aufgabe</a>
+              </footer>
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noExercisesFoundBlock>
+      <div class="notification is-danger has-text-centered">
+        Es konnten keine Aufgaben für die Sammlung {{collection.title}} gefunden werden!
+      </div>
+    </ng-template>
+
+    <ng-template #loadingExercisesBlock>
+      <div class="notification">
+        <p class="has-text-centered">Lade Aufgaben...</p>
+        <br>
+        <progress class="progress" max="100">20%</progress>
+      </div>
+    </ng-template>
+
+  </ng-container>
+  <ng-template #loadingCollectionBlock>
+    <div class="notification is-danger has-text-centered">
+      Lade Sammlung...
     </div>
   </ng-template>
 

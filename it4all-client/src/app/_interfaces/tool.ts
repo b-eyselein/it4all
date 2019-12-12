@@ -10,11 +10,6 @@ export interface ToolPart {
   disabled?: boolean;
 }
 
-export interface ExerciseTag {
-  title: string;
-  label: string;
-}
-
 export abstract class Tool {
   constructor(
     public id: string,
@@ -35,7 +30,5 @@ export abstract class CollectionTool extends Tool {
   exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {
     return true;
   }
-
-  abstract processTagString(tag: string): ExerciseTag;
 
 }

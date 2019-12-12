@@ -21,34 +21,10 @@ updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
-val tsiClasses = Seq(
-  "ExerciseCollection",
-  "Exercise",
-  "ProgSolution",
-  "RegexExerciseContent",
-  "SqlExerciseContent",
-  "UmlExerciseContent",
-  "WebExerciseContent", "WebCompleteResult",
-  "XmlExerciseContent"
-)
-
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
-    packageName in Universal := s"${name.value}",
-
-    typescriptClassesToGenerateFor := tsiClasses,
-    typescriptOutputFile := baseDirectory.value.getParentFile / "client" / "src" / "app" / "_interfaces" / "models.ts",
-    typescriptGenerationImports := Seq(
-      "model.tools.collectionTools._",
-      "model.tools.collectionTools.programming._",
-      "model.tools.collectionTools.regex._",
-      "model.tools.collectionTools.sql._",
-      "model.tools.collectionTools.uml._",
-      "model.tools.collectionTools.web._",
-      "model.tools.collectionTools.xml._",
-      "model.MyTSInterfaceTypes._"
-    )
+    packageName in Universal := s"${name.value}"
   )
 
 val artifactoryUrl = "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory"
@@ -59,7 +35,7 @@ resolvers ++= Seq(
   ("Snapshot Artifactory" at s"$artifactoryUrl/libs-snapshot/").withAllowInsecureProtocol(true),
 
   // Typescript Interfaces Plugin
-  Resolver.sonatypeRepo("snapshots")
+  // Resolver.sonatypeRepo("snapshots")
 )
 
 libraryDependencies ++= Seq(
@@ -83,6 +59,9 @@ libraryDependencies ++= Seq(
   "com.github.pathikrit" %% "better-files" % "3.8.0", // MIT
 
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
+
+  // Typescript interface generation
+  "nl.codestar" %% "scala-tsi" % "0.2.1-SNAPSHOT",
 
   // Sql
   "com.github.jsqlparser" % "jsqlparser" % "3.1", // Apache 2.0

@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 import model.ExerciseReview
 import model.core.ToolForms
 import model.persistence.ExerciseTableDefs
-import model.tools.collectionTools.{Exercise, ToolJsonProtocol}
+import model.tools.collectionTools.{Exercise, ExerciseCollection, ExerciseMetaData, ToolJsonProtocol}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
@@ -21,31 +21,40 @@ class ApiController @Inject()(cc: ControllerComponents, tables: ExerciseTableDef
 
   override protected val adminRightsRequired: Boolean = false
 
+  private implicit val collectionFormat      : Format[ExerciseCollection] = ToolJsonProtocol.collectionFormat
+  private implicit val exerciseMetaDataFormat: Format[ExerciseMetaData]   = ToolJsonProtocol.exerciseMetaDataFormat
+  private implicit val exerciseFormat        : Format[Exercise]           = ToolJsonProtocol.exerciseFormat
 
   def apiAllCollections(toolType: String): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     tables.futureAllCollections(toolMain.urlPart).map { collections =>
-      Ok(Json.toJson(collections)(Writes.seq(ToolJsonProtocol.collectionFormat)))
+      Ok(Json.toJson(collections))
     }
   }
 
   def apiCollection(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     tables.futureCollById(toolMain.urlPart, collId).map {
       case None             => NotFound(s"There is no such collection with id $collId for tool ${toolMain.toolName}")
-      case Some(collection) => Ok(ToolJsonProtocol.collectionFormat.writes(collection))
+      case Some(collection) => Ok(Json.toJson(collection))
+    }
+  }
+
+  def apiExerciseMetaData(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
+    tables.futureExerciseMetaData(toolMain.urlPart, collId).map { exerciseMetaData =>
+      Ok(Json.toJson(exerciseMetaData))
     }
   }
 
   def apiExercises(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     // FIXME: send only id, title, ... ?
     tables.futureExercisesInColl(toolMain, collId).map { exercises: Seq[Exercise] =>
-      Ok(Json.toJson(exercises)(Writes.seq(ToolJsonProtocol.exerciseFormat)))
+      Ok(Json.toJson(exercises))
     }
   }
 
   def apiExercise(toolType: String, collId: Int, exId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
     tables.futureExerciseById(toolMain.urlPart, collId, exId).map {
       case None           => NotFound(s"There is no such exercise with id $exId for collection $collId")
-      case Some(exercise) => Ok(Json.toJson(exercise)(ToolJsonProtocol.exerciseFormat))
+      case Some(exercise) => Ok(Json.toJson(exercise))
     }
   }
 

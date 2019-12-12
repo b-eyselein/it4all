@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
+import {IExercise, IExerciseCollection, IExerciseMetaData} from '../../../_interfaces/models';
 
 @Injectable()
 export class ApiService {
@@ -35,6 +35,13 @@ export class ApiService {
     // TODO: send current version of exercise if known to only get if different!
     return this.http.get<IExerciseCollection | undefined>(url)
       .pipe(catchError(() => of(undefined)));
+  }
+
+  getExerciseMetaData(toolId: string, collId: number): Observable<IExerciseMetaData[]> {
+    const url = `${this.baseUrl}/${toolId}/collections/${collId}/exerciseMetaData`;
+
+    return this.http.get<IExerciseMetaData[]>(url)
+      .pipe(catchError(() => of([])));
   }
 
   getExercises(toolId: string, collId: number): Observable<IExercise[]> {

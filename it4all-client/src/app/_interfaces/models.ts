@@ -1,12 +1,3 @@
-export interface IWebExerciseContent {
-  htmlText?: string;
-  jsText?: string;
-  siteSpec: ISiteSpec;
-  files: IExerciseFile[];
-  sampleSolutions: ISampleSolution[];
-}
-
-
 export interface IJsHtmlElementSpec {
   id: number;
   xpathQuery: string;
@@ -22,29 +13,16 @@ export interface IRegexMatchTestData {
   isIncluded: boolean;
 }
 
-
-export interface IGradedHtmlTaskResult {
-  id: number;
-  success: SuccessType;
-  elementFound: boolean;
-  textContentResult?: IGradedTextResult;
-  attributeResults: IGradedTextResult[];
-  isSuccessful: boolean;
-  points: IPoints;
-  maxPoints: IPoints;
-}
-
 export type SuccessType = ('ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE');
 
-export interface IExerciseFile {
+export interface IUmlClass {
+  classType: UmlClassType;
   name: string;
-  resourcePath: string;
-  fileType: string;
-  editable: boolean;
-  content: string;
-  active?: boolean;
+  attributes: IUmlAttribute[];
+  methods: IUmlMethod[];
 }
 
+export type UmlVisibility = ('PUBLIC' | 'PACKAGE' | 'PROTECTED' | 'PRIVATE');
 
 export interface IUmlExerciseContent {
   toIgnore: string[];
@@ -75,28 +53,16 @@ export interface ISqlExerciseContent {
 }
 
 
-export interface IExerciseCollection {
-  id: number;
-  toolId: string;
-  title: string;
-  authors: string[];
-  text: string;
-  shortName: string;
-  exercises: IExercise[];
+export interface IUmlAttribute {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  isStatic: boolean;
+  isDerived: boolean;
+  isAbstract: boolean;
 }
 
-
-export interface ISemanticVersion {
-  major: number;
-  minor: number;
-  patch: number;
-}
-
-
-export interface IPoints {
-  quarters: number;
-}
-
+export type UmlAssociationType = ('ASSOCIATION' | 'AGGREGATION' | 'COMPOSITION');
 
 export interface IGradedTextResult {
   keyName: string;
@@ -121,6 +87,25 @@ export interface IGradedJsActionResult {
   maxPoints: IPoints;
 }
 
+
+export interface IWebExerciseContent {
+  htmlText?: string;
+  jsText?: string;
+  siteSpec: ISiteSpec;
+  files: IExerciseFile[];
+  sampleSolutions: ISampleSolution[];
+}
+
+
+export interface IUmlMethod {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  parameters: string;
+  isStatic: boolean;
+  isAbstract: boolean;
+}
+
 export type JsActionType = ('Click' | 'FillOut');
 
 export interface IExercise {
@@ -143,6 +128,30 @@ export interface IJsAction {
 }
 
 
+export interface IExerciseCollection {
+  id: number;
+  toolId: string;
+  title: string;
+  authors: string[];
+  text: string;
+  shortName: string;
+  exercises: IExerciseMetaData[];
+}
+
+
+export interface IGradedHtmlTaskResult {
+  id: number;
+  success: SuccessType;
+  elementFound: boolean;
+  textContentResult?: IGradedTextResult;
+  attributeResults: IGradedTextResult[];
+  isSuccessful: boolean;
+  points: IPoints;
+  maxPoints: IPoints;
+}
+
+export type UmlClassType = ('CLASS' | 'INTERFACE' | 'ABSTRACT');
+
 export interface IExTag {
   abbreviation: string;
   title: string;
@@ -155,6 +164,7 @@ export interface ISiteSpec {
   jsTasks: IJsTask[];
 }
 
+export type UmlMultiplicity = ('SINGLE' | 'UNBOUND');
 
 export interface IWebCompleteResult {
   gradedHtmlTaskResults: IGradedHtmlTaskResult[];
@@ -165,6 +175,26 @@ export interface IWebCompleteResult {
 }
 
 export type RegexCorrectionTypes = ('MATCHING' | 'EXTRACTION');
+
+export interface IUmlAssociation {
+  assocType: UmlAssociationType;
+  assocName?: string;
+  firstEnd: string;
+  firstMult: UmlMultiplicity;
+  secondEnd: string;
+  secondMult: UmlMultiplicity;
+}
+
+
+export interface IExerciseFile {
+  name: string;
+  resourcePath: string;
+  fileType: string;
+  editable: boolean;
+  content: string;
+  active?: boolean;
+}
+
 
 export interface IRegexExtractionTestData {
   id: number;
@@ -228,3 +258,39 @@ export interface IGradedJsHtmlElementSpecResult {
 }
 
 export type SqlExerciseType = ('SELECT' | 'CREATE' | 'UPDATE' | 'INSERT' | 'DELETE');
+
+export interface ISemanticVersion {
+  major: number;
+  minor: number;
+  patch: number;
+}
+
+
+export interface IUmlClassDiagram {
+  classes: IUmlClass[];
+  associations: IUmlAssociation[];
+  implementations: IUmlImplementation[];
+}
+
+
+export interface IUmlImplementation {
+  subClass: string;
+  superClass: string;
+}
+
+
+export interface IPoints {
+  quarters: number;
+}
+
+
+export interface IExerciseMetaData {
+  id: number;
+  collectionId: number;
+  toolId: string;
+  semanticVersion: ISemanticVersion;
+  title: string;
+  authors: string[];
+  text: string;
+  tags: IExTag[];
+}

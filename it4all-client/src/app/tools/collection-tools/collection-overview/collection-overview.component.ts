@@ -3,13 +3,12 @@ import {ApiService} from '../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DexieService} from '../../../_services/dexie.service';
 import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
-import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
+import {IExerciseCollection, IExerciseMetaData} from '../../../_interfaces/models';
 
 @Component({templateUrl: './collection-overview.component.html'})
 export class CollectionOverviewComponent extends ComponentWithCollectionTool implements OnInit {
 
   collection: IExerciseCollection;
-  exercises: IExercise[];
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
     super(route);
@@ -21,8 +20,8 @@ export class CollectionOverviewComponent extends ComponentWithCollectionTool imp
   }
 
   private updateExercises(): void {
-    this.apiService.getExercises(this.tool.id, this.collection.id)
-      .subscribe((exercises: IExercise[]) => this.exercises = exercises);
+    this.apiService.getExerciseMetaData(this.tool.id, this.collection.id)
+      .subscribe((exercises: IExerciseMetaData[]) => this.collection.exercises = exercises);
   }
 
   private fetchCollection(collId: number): void {

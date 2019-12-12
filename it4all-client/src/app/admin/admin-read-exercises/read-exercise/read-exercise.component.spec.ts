@@ -19,15 +19,16 @@ describe('ReadExerciseComponent', () => {
     fixture = TestBed.createComponent(ReadExerciseComponent);
     component = fixture.componentInstance;
     component.tool = ProgrammingTool;
-    component.collection = {id: 1, toolId: 'programming', title: '', author: '', text: '', shortName: '', exercises: []};
+    component.collection = {id: 1, toolId: 'programming', title: '', authors: [], text: '', shortName: '', exercises: []};
     component.exercise = {
       id: 1,
       collectionId: 1,
       toolId: 'programming',
       semanticVersion: {major: 1, minor: 0, patch: 0},
       title: '',
-      author: '',
+      authors: [],
       text: '',
+      tags: [],
       content: {}
     };
     fixture.detectChanges();

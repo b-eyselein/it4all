@@ -1,4 +1,4 @@
-import {ExerciseTag, RandomTool, ToolPart} from '../../_interfaces/tool';
+import {RandomTool, ToolPart} from '../../_interfaces/tool';
 
 // Boolean Algebra
 
@@ -9,10 +9,6 @@ export const BoolTool: RandomTool = new (
   class BoolToolClass extends RandomTool {
     constructor() {
       super('bool', 'Boolesche Algebra', [BoolFillOutPart, BoolCreatePart], 'live');
-    }
-
-    processTagString(tag: string): ExerciseTag {
-      return undefined;
     }
   }
 )();
@@ -27,10 +23,6 @@ export const NaryTool: RandomTool = new (
   class NaryToolClass extends RandomTool {
     constructor() {
       super('nary', 'Zahlensysteme', [NaryAdditionToolPart, NaryConversionToolPart, NaryTwoConversionToolPart], 'live');
-    }
-
-    processTagString(tag: string): ExerciseTag {
-      return undefined;
     }
   }
 )();

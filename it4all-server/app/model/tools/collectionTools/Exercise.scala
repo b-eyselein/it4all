@@ -7,6 +7,25 @@ final case class SemanticVersion(major: Int, minor: Int, patch: Int)
 
 final case class ExTag(abbreviation: String, title: String)
 
+object ExerciseMetaData {
+
+  def forExercise(ex: Exercise): ExerciseMetaData = ExerciseMetaData(
+    ex.id, ex.collectionId, ex.toolId, ex.semanticVersion, ex.title, ex.authors, ex.text, ex.tags
+  )
+
+}
+
+final case class ExerciseMetaData(
+  id: Int,
+  collectionId: Int,
+  toolId: String,
+  semanticVersion: SemanticVersion,
+  title: String,
+  authors: Seq[String],
+  text: String,
+  tags: Seq[ExTag]
+)
+
 
 final case class Exercise(
   id: Int,
@@ -19,7 +38,7 @@ final case class Exercise(
   tags: Seq[ExTag],
 
   // FIXME: use generic ExerciseContent?
-  content: JsValue,
+  content: JsValue
 )
 
 

@@ -5,13 +5,11 @@
     <a class="button is-primary is-fullwidth" [routerLink]="['/']">Zurück zur Toolübersicht</a>
   </div>
 
-  <br>
-
   <h2 class="subtitle is-3 has-text-centered">Sammlungen</h2>
 
   <ng-container *ngIf="collections; else loadingBlock">
     <div *ngIf="collections?.length > 0; else noCollectionsFoundBlock" class="columns is-multiline">
-      <div *ngFor="let collection of collections" class="column is-one-third">
+      <div *ngFor="let collection of collections" class="column is-one-quarter-desktop is-half">
         <div class="card">
           <header class="card-header">
             <p class="card-header-title">{{collection.id}}. {{collection.title}}</p>

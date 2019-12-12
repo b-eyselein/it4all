@@ -1,4 +1,4 @@
-import {CollectionTool, ExerciseTag, ToolPart} from '../../../_interfaces/tool';
+import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 import {IExercise, IWebExerciseContent} from '../../../_interfaces/models';
 
 
@@ -22,9 +22,5 @@ export const WebTool: CollectionTool = new class WebToolClass extends Collection
     }
 
     return super.exerciseHasPart(exercise, part);
-  }
-
-  processTagString(tag: string): ExerciseTag {
-    return undefined;
   }
 }();

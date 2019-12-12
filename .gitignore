@@ -22,4 +22,5 @@ it4all-client/coverage
 it4all-client/dist
 it4all-client/node_modules
 it4all-client/.idea
+it4all-client/out-tsc
 

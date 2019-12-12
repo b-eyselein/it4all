@@ -11,7 +11,7 @@ object FrontendRunHook {
   def apply(base: File): PlayRunHook = {
     object UIBuildHook extends PlayRunHook {
 
-      private val clientFile = base.getParentFile / "client"
+      private val clientFile = base.getParentFile / "it4all-client"
 
       var process: Option[Process] = None
 
