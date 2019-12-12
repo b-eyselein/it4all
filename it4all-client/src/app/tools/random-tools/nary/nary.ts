@@ -37,7 +37,7 @@ export abstract class NaryComponentBase {
 
   max: number;
 
-  constructor(defaultMax: number = 256) {
+  protected constructor(defaultMax: number = 256) {
     this.max = defaultMax;
   }
 

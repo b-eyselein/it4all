@@ -1,7 +1,6 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {SqlCreateQueryPart, SqlTool} from '../sql-tool';
 import {SqlResult} from '../sql-interfaces';
-import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../_services/api.service';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
@@ -32,7 +31,7 @@ export class SqlExerciseComponent implements OnInit {
 
   showSampleSolutions = false;
 
-  constructor(private route: ActivatedRoute, private  apiService: ApiService, private dexieService: DexieService) {
+  constructor(private  apiService: ApiService, private dexieService: DexieService) {
   }
 
   ngOnInit() {

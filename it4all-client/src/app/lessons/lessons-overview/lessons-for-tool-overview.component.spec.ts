@@ -2,16 +2,15 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LessonsForToolOverviewComponent} from './lessons-for-tool-overview.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {lessonsRoutingComponents, LessonsRoutingModule} from '../lessons.routing';
 
-describe('LessonsOverviewComponent', () => {
+describe('LessonsForToolOverviewComponent', () => {
   let component: LessonsForToolOverviewComponent;
   let fixture: ComponentFixture<LessonsForToolOverviewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, ReactiveFormsModule, LessonsRoutingModule],
-      declarations: [LessonsForToolOverviewComponent, ...lessonsRoutingComponents]
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [LessonsForToolOverviewComponent]
     }).compileComponents();
   }));
 

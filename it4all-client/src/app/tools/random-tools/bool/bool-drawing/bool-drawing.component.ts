@@ -16,7 +16,6 @@ import {Event} from 'jquery';
 import * as joint from 'jointjs';
 import {generateBooleanFormula} from '../_model/bool-formula';
 import {BoolComponentHelper} from '../_model/bool-component-helper';
-import {Router} from '@angular/router';
 
 @Component({
   templateUrl: './bool-drawing.component.html',
@@ -36,10 +35,6 @@ export class BoolDrawingComponent extends BoolComponentHelper implements OnInit 
   readonly gateTypes: string[] = ['not', 'and', 'nand', 'or', 'nor', 'xor', 'xnor'/*, 'equiv', 'impl'*/];
 
   elementToCreate: string | undefined = undefined;
-
-  constructor(protected router: Router) {
-    super(router);
-  }
 
   private createElement(elementName: string, x: number, y: number) {
     createElementInGraph(elementName, x, y);

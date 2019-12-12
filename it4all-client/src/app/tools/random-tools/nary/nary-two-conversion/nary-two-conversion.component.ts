@@ -3,7 +3,6 @@ import {DECIMAL_SYSTEM, NaryComponentBase, NaryReadOnlyNumberInput} from '../nar
 import {NaryTwoConversionToolPart} from '../../random-tools-list';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {randomInt} from '../../../../helpers';
-import {Router} from '@angular/router';
 
 @Component({templateUrl: './nary-two-conversion.component.html'})
 export class NaryTwoConversionComponent extends NaryComponentBase implements OnInit {
@@ -32,7 +31,7 @@ export class NaryTwoConversionComponent extends NaryComponentBase implements OnI
 
   completelyCorrect = false;
 
-  constructor(private router: Router) {
+  constructor() {
     super(128);
   }
 
@@ -74,11 +73,6 @@ export class NaryTwoConversionComponent extends NaryComponentBase implements OnI
     const awaitedSolution: string = (parseInt(awaitedInvertedAbs, 2) + 1).toString(2).padStart(8, '0');
 
     this.solutionCorrect = solStr.length === 8 && awaitedSolution === solStr;
-  }
-
-  end(): void {
-    // noinspection JSIgnoredPromiseFromCall
-    this.router.navigate(['/randomTools', this.tool.id]);
   }
 
   @HostListener('document:keypress', ['$event'])

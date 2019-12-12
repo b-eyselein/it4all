@@ -5,7 +5,6 @@ import {parseBooleanFormula} from '../_model/boolean-formula-parser';
 import {BoolComponentHelper} from '../_model/bool-component-helper';
 import {BooleanNode, calculateAssignments} from '../_model/bool-node';
 import {generateBooleanFormula} from '../_model/bool-formula';
-import {Router} from '@angular/router';
 
 @Component({templateUrl: './bool-create.component.html'})
 export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
@@ -20,10 +19,6 @@ export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
 
   showInstructions = false;
   showSampleSolutions = false;
-
-  constructor(protected router: Router) {
-    super(router);
-  }
 
   ngOnInit(): void {
     this.update();

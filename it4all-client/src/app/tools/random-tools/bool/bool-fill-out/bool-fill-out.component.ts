@@ -4,7 +4,6 @@ import {BoolFillOutPart} from '../../random-tools-list';
 import {BoolComponentHelper} from '../_model/bool-component-helper';
 import {BooleanNode, calculateAssignments} from '../_model/bool-node';
 import {generateBooleanFormula} from '../_model/bool-formula';
-import {Router} from '@angular/router';
 
 @Component({templateUrl: './bool-fill-out.component.html'})
 export class BoolFillOutComponent extends BoolComponentHelper implements OnInit {
@@ -14,9 +13,6 @@ export class BoolFillOutComponent extends BoolComponentHelper implements OnInit 
   withSubFormulas = false;
   subFormulas: BooleanNode[] = [];
 
-  constructor(protected router: Router) {
-    super(router);
-  }
 
   ngOnInit(): void {
     this.update();
