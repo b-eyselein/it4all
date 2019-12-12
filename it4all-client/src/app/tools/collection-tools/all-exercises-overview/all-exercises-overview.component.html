@@ -1,1 +1,45 @@
-<p>all-exercises-overview works!</p>
+<div class="container">
+
+  <h1 class="title is-3 has-text-centered">Alle Aufgaben</h1>
+
+  <ng-container *ngIf="filteredExerciseMetaData; else loadingExercisesBlock">
+
+    <h2 class="subtitle is-3 has-text-centered">Filter</h2>
+
+    <div class="columns is-multiline">
+      <div class="column is-one-quarter-desktop" *ngFor="let tag of distinctTags">
+        <label class="checkbox">
+          <input type="checkbox" [checked]="filtersActivated.get(tag)" (change)="updateFilters(tag)">
+          {{tag.title}}
+        </label>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="columns is-multiline">
+      <div class="column is-one-quarter-desktop" *ngFor="let metaData of filteredExerciseMetaData">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">Sammlung {{metaData.collectionId}}, Aufgabe {{metaData.id}}</p>
+          </header>
+          <div class="card-content">
+            <it4all-tag [tag]="tag" *ngFor="let tag of metaData.tags"></it4all-tag>
+          </div>
+          <footer class="card-footer">
+            <a [routerLink]="['..', 'collections', metaData.collectionId, 'exercises', metaData.id]"
+               class="card-footer-item">Zur Aufgabe</a>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <ng-template #loadingExercisesBlock>
+    <div class="notification is-danger has-text-centered">
+      Lade Aufgaben...
+    </div>
+  </ng-template>
+
+</div>

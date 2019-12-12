@@ -20,7 +20,7 @@ export class CollectionOverviewComponent extends ComponentWithCollectionTool imp
   }
 
   private updateExercises(): void {
-    this.apiService.getExerciseMetaData(this.tool.id, this.collection.id)
+    this.apiService.getExerciseMetaDataForCollection(this.tool.id, this.collection.id)
       .subscribe((exercises: IExerciseMetaData[]) => this.collection.exercises = exercises);
   }
 

@@ -37,7 +37,12 @@ export class ApiService {
       .pipe(catchError(() => of(undefined)));
   }
 
-  getExerciseMetaData(toolId: string, collId: number): Observable<IExerciseMetaData[]> {
+  getExerciseMetaDataForTool(toolId: string): Observable<IExerciseMetaData[]> {
+    return this.http.get<IExerciseMetaData[]>(`${this.baseUrl}/${toolId}/exerciseMetaData`)
+      .pipe(catchError(() => of([])));
+  }
+
+  getExerciseMetaDataForCollection(toolId: string, collId: number): Observable<IExerciseMetaData[]> {
     const url = `${this.baseUrl}/${toolId}/collections/${collId}/exerciseMetaData`;
 
     return this.http.get<IExerciseMetaData[]>(url)
