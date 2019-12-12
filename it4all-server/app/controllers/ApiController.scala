@@ -38,8 +38,14 @@ class ApiController @Inject()(cc: ControllerComponents, tables: ExerciseTableDef
     }
   }
 
-  def apiExerciseMetaData(toolType: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolType) { (_, _, toolMain) =>
-    tables.futureExerciseMetaData(toolMain.urlPart, collId).map { exerciseMetaData =>
+  def apiExerciseMetaDataForTool(toolType: String): Action[AnyContent] = Action.async { implicit request =>
+    tables.futureExerciseMetaDataForTool(toolType).map { exerciseMetaData =>
+      Ok(Json.toJson(exerciseMetaData))
+    }
+  }
+
+  def apiExerciseMetaDataForCollection(toolType: String, collId: Int): Action[AnyContent] = Action.async { implicit request =>
+    tables.futureExerciseMetaDataForCollection(toolType, collId).map { exerciseMetaData =>
       Ok(Json.toJson(exerciseMetaData))
     }
   }

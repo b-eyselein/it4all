@@ -52,7 +52,14 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .headOption
   )
 
-  def futureExerciseMetaData(toolId: String, collId: Int): Future[Seq[ExerciseMetaData]] = db.run(
+  def futureExerciseMetaDataForTool(toolId: String): Future[Seq[ExerciseMetaData]] = db.run(
+    exercisesTQ
+      .filter { ex => ex.toolId === toolId }
+      .result
+      .map { exes => exes.map(ExerciseMetaData.forExercise) }
+  )
+
+  def futureExerciseMetaDataForCollection(toolId: String, collId: Int): Future[Seq[ExerciseMetaData]] = db.run(
     exercisesTQ
       .filter { ex => ex.toolId === toolId && ex.collectionId === collId }
       .result

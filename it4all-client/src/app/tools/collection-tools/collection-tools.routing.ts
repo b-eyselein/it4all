@@ -5,12 +5,14 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {ExerciseOverviewComponent} from './exercise-overview/exercise-overview.component';
 import {ExerciseComponent} from './exercise/exercise.component';
+import {AllExercisesOverviewComponent} from './all-exercises-overview/all-exercises-overview.component';
 
 const collectionToolRoutes: Routes = [
   {
     path: '', canActivate: [AuthGuard],
     children: [
       {path: 'tools/:toolId', component: CollectionToolOverviewComponent},
+      {path: 'tools/:toolId/allExercises', component: AllExercisesOverviewComponent},
       {path: 'tools/:toolId/collections/:collId', component: CollectionOverviewComponent},
       {path: 'tools/:toolId/collections/:collId/exercises/:exId', component: ExerciseOverviewComponent},
       {path: 'tools/:toolId/collections/:collId/exercises/:exId/parts/:partId', component: ExerciseComponent},

@@ -33,8 +33,11 @@ GET         /api/claimWebToken/:uuidStr                                         
 
 GET         /api/tools/:toolType/collections                                         controllers.ApiController.apiAllCollections(toolType: String)
 GET         /api/tools/:toolType/collections/:collId                                 controllers.ApiController.apiCollection(toolType: String, collId: Int)
+
+GET         /api/tools/:toolType/collection/exerciseMetaData                         controllers.ApiController.apiExerciseMetaDataForTool(toolType: String)
+GET         /api/tools/:toolType/collections/:collId/exerciseMetaData                controllers.ApiController.apiExerciseMetaDataForCollection(toolType: String, collId: Int)
+
 GET         /api/tools/:toolType/collections/:collId/exercises                       controllers.ApiController.apiExercises(toolType: String, collId: Int)
-GET         /api/tools/:toolType/collections/:collId/exerciseMetaData                controllers.ApiController.apiExerciseMetaData(toolType: String, collId: Int)
 GET         /api/tools/:toolType/collections/:collId/exercises/:exId                 controllers.ApiController.apiExercise(toolType: String, collId: Int, exId: Int)
 
 PUT         /api/tools/:toolType/collections/:collId/exercises/:exId/:partStr        controllers.ApiController.apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String)
