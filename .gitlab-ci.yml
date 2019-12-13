@@ -7,12 +7,12 @@ stages:
 build-client:
   stage: build-client
   script:
-    - cd client
+    - cd it4all-client
     - npm install
     - npm run build:prod
 
 test:
   stage: test
   script:
-    - cd server
+    - cd it4all-server
     - sbt test
