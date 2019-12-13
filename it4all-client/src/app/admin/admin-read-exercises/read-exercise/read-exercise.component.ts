@@ -1,21 +1,18 @@
 import {Component, Input} from '@angular/core';
-import {CollectionTool} from '../../../_interfaces/tool';
 import {ApiService} from '../../../tools/collection-tools/_services/api.service';
-import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
+import {IExercise} from '../../../_interfaces/models';
 
 @Component({
   selector: 'it4all-read-exercise',
   templateUrl: './read-exercise.component.html',
   styles: [`
-      .exerciseJson {
-          max-height: 400px;
-          overflow: auto;
-      }`]
+    .exerciseJson {
+      max-height: 400px;
+      overflow: auto;
+    }`]
 })
 export class ReadExerciseComponent {
 
-  @Input() tool: CollectionTool;
-  @Input() collection: IExerciseCollection;
   @Input() exercise: IExercise;
 
   saved = false;
@@ -28,7 +25,7 @@ export class ReadExerciseComponent {
   }
 
   saveExercise(): void {
-    this.apiService.adminUpsertExercise(this.tool.id, this.collection.id, this.exercise)
+    this.apiService.adminUpsertExercise(this.exercise.toolId, this.exercise.collectionId, this.exercise)
       .subscribe((saved) => this.saved = saved);
   }
 

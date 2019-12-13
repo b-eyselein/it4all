@@ -1,6 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ExerciseOverviewComponent } from './exercise-overview.component';
+import {ExerciseOverviewComponent} from './exercise-overview.component';
+import {RouterTestingModule} from '@angular/router/testing';
+import {ApiService} from '../_services/api.service';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {ActivatedRoute} from '@angular/router';
 
 describe('ExerciseOverviewComponent', () => {
   let component: ExerciseOverviewComponent;
@@ -8,9 +12,16 @@ describe('ExerciseOverviewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseOverviewComponent ]
-    })
-    .compileComponents();
+      imports: [RouterTestingModule, HttpClientTestingModule],
+      declarations: [ExerciseOverviewComponent],
+      providers: [
+        ApiService,
+        {
+          provide: ActivatedRoute,
+          useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}
+        }
+      ]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -5,6 +5,7 @@ import {TagComponent} from '../_components/tag/tag.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {ApiService} from '../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {ActivatedRoute} from '@angular/router';
 
 describe('AllExercisesOverviewComponent', () => {
   let component: AllExercisesOverviewComponent;
@@ -14,7 +15,13 @@ describe('AllExercisesOverviewComponent', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       declarations: [AllExercisesOverviewComponent, TagComponent],
-      providers: [ApiService]
+      providers: [
+        ApiService,
+        {
+          provide: ActivatedRoute,
+          useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}
+        }
+      ]
     }).compileComponents();
   }));
 

@@ -2,10 +2,7 @@
   <h1 class="title is-3 has-text-centered">Eingelesene Aufgaben</h1>
 
   <div class="buttons">
-    <a class="button is-primary is-fullwidth" *ngIf="tool && collection"
-       [routerLink]="['/admin',  tool.id, 'collections', collection.id, 'exercises']">
-      Zurück zur Sammlungverwaltung
-    </a>
+    <a class="button is-primary is-fullwidth" [routerLink]="['./exercises']">Zurück zur Sammlungverwaltung</a>
     <button class="button is-link is-fullwidth" (click)="saveAll()">Alle Aufgaben speichern</button>
   </div>
 
@@ -13,7 +10,7 @@
     <ng-container *ngIf="exercises.length > 0">
       <div class="columns is-multiline">
         <div class="column is-half-desktop" *ngFor="let exercise of exercises">
-          <it4all-read-exercise [tool]="tool" [collection]="collection" [exercise]="exercise"></it4all-read-exercise>
+          <it4all-read-exercise [exercise]="exercise"></it4all-read-exercise>
         </div>
       </div>
     </ng-container>

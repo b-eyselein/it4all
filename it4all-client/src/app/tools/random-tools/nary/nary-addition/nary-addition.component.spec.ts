@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {NaryAdditionComponent} from './nary-addition.component';
 import {FormsModule} from '@angular/forms';
 import {NaryNumberReadOnlyInputComponent} from '../_components/nary-number-read-only-input/nary-number-read-only-input.component';
-import {routingComponents} from '../../../../app-routing.module';
+import {RandomSolveButtonsComponent} from '../../_components/random-solve-buttons/random-solve-buttons.component';
 
 describe('NaryAdditionComponent', () => {
   let component: NaryAdditionComponent;
@@ -12,7 +12,7 @@ describe('NaryAdditionComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule],
-      declarations: [NaryAdditionComponent, NaryNumberReadOnlyInputComponent, ...routingComponents],
+      declarations: [NaryAdditionComponent, NaryNumberReadOnlyInputComponent, RandomSolveButtonsComponent],
     })
       .compileComponents();
   }));

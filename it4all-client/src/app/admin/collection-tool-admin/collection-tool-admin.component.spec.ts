@@ -1,9 +1,11 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {CollectionToolAdminComponent} from './collection-tool-admin.component';
-import {AppRoutingModule} from '../../app-routing.module';
-import {ToolOverviewComponent} from '../../tool-overview/tool-overview.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {RouterTestingModule} from '@angular/router/testing';
+import {ApiService} from '../../tools/collection-tools/_services/api.service';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {ActivatedRoute} from '@angular/router';
 
 describe('CollectionToolAdminComponent', () => {
   let component: CollectionToolAdminComponent;
@@ -11,8 +13,15 @@ describe('CollectionToolAdminComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
-      declarations: [CollectionToolAdminComponent, ToolOverviewComponent]
+      imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
+      declarations: [CollectionToolAdminComponent],
+      providers: [
+        ApiService,
+        {
+          provide: ActivatedRoute,
+          useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}
+        }
+      ]
     })
       .compileComponents();
   }));

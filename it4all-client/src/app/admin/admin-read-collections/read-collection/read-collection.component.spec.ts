@@ -2,6 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ReadCollectionComponent} from './read-collection.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {ApiService} from '../../../tools/collection-tools/_services/api.service';
 
 describe('ReadCollectionComponent', () => {
   let component: ReadCollectionComponent;
@@ -10,7 +11,8 @@ describe('ReadCollectionComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      declarations: [ReadCollectionComponent]
+      declarations: [ReadCollectionComponent],
+      providers: [ApiService]
     }).compileComponents();
   }));
 

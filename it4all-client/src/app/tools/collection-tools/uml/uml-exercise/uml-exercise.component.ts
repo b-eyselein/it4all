@@ -1,8 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {ComponentWithCollectionTool} from '../../_helpers/ComponentWithCollectionTool';
 import {IExercise, IUmlExerciseContent} from '../../../../_interfaces/models';
-import {ToolPart} from '../../../../_interfaces/tool';
+import {CollectionTool, ToolPart} from '../../../../_interfaces/tool';
+import {UmlTool} from '../uml-tools';
 
 // import * as $ from 'jquery';
 // import * as joint from 'jointjs';
@@ -11,7 +10,7 @@ import {ToolPart} from '../../../../_interfaces/tool';
   selector: 'it4all-uml-exercise',
   templateUrl: './uml-exercise.component.html'
 })
-export class UmlExerciseComponent extends ComponentWithCollectionTool implements OnInit {
+export class UmlExerciseComponent implements OnInit {
 
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
@@ -21,8 +20,7 @@ export class UmlExerciseComponent extends ComponentWithCollectionTool implements
   // model: joint.dia.Graph = new joint.dia.Graph();
   // paper: joint.dia.Paper;
 
-  constructor(private route: ActivatedRoute) {
-    super(route);
+  constructor() {
   }
 
   ngOnInit() {

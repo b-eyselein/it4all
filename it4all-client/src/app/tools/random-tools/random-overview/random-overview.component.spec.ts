@@ -3,6 +3,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RandomOverviewComponent} from './random-overview.component';
 import {AppRoutingModule, routingComponents} from '../../../app-routing.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {RouterTestingModule} from '@angular/router/testing';
+import {ActivatedRoute} from '@angular/router';
 
 describe('RandomOverviewComponent', () => {
   let component: RandomOverviewComponent;
@@ -10,8 +12,14 @@ describe('RandomOverviewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
-      declarations: [RandomOverviewComponent, ...routingComponents]
+      imports: [FormsModule, ReactiveFormsModule, RouterTestingModule],
+      declarations: [RandomOverviewComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'nary']])}}
+        }
+      ]
     }).compileComponents();
   }));
 

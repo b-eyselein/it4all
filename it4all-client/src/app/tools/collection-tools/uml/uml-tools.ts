@@ -1,6 +1,6 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 
-const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
+export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
 
 export const UmlTool: CollectionTool = new class UmlToolClass extends CollectionTool {
   constructor() {

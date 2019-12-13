@@ -5,7 +5,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('LessonApiService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule]
+    imports: [HttpClientTestingModule],
+    providers: [LessonApiService]
   }));
 
   it('should be created', () => {

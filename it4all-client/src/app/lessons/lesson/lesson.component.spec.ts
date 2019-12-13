@@ -6,6 +6,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LessonApiService} from '../_services/lesson-api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {ActivatedRoute} from '@angular/router';
 
 describe('LessonComponent', () => {
   let component: LessonComponent;
@@ -15,13 +16,26 @@ describe('LessonComponent', () => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
       declarations: [LessonComponent, LessonTextContentComponent],
-      providers: [LessonApiService]
+      providers: [
+        LessonApiService,
+        {
+          provide: ActivatedRoute,
+          useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}
+        }
+      ]
     }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LessonComponent);
     component = fixture.componentInstance;
+    component.lesson = {
+      dependsOn: [],
+      description: '',
+      id: 1,
+      title: '',
+      content: []
+    };
     fixture.detectChanges();
   });
 
