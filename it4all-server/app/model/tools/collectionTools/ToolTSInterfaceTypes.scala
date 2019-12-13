@@ -14,7 +14,7 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
   def enumTsType[E <: enumeratum.EnumEntry, P <: enumeratum.Enum[E]](companion: P): TSType[E] =
     TSType.alias(companion.getClass.getSimpleName.replace("$", ""), TSUnion(companion.values.map(_.entryName)))
 
-  val jsValueTsType: TSType[JsValue] = TSType.sameAs[JsValue, Any]
+  val jsValueTsType: TSType[JsValue] = TSType.sameAs[JsValue, Any](anyTSType)
 
   val exerciseFileTSI: TSIType[ExerciseFile] = TSType.fromCaseClass[ExerciseFile] + ("active?" -> TSBoolean.get)
 
@@ -33,14 +33,14 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
 
   // Collections, Exercises and ExerciseContents
 
-  implicit val exerciseMetaDataTSI: TSIType[ExerciseMetaData] = {
+  val exerciseMetaDataTSI: TSIType[ExerciseMetaData] = {
     implicit val svt: TSIType[SemanticVersion] = TSType.fromCaseClass[SemanticVersion]
     implicit val ett: TSIType[ExTag]           = TSType.fromCaseClass[ExTag]
 
     TSType.fromCaseClass
   }
 
-  implicit val exerciseTSI: TSIType[Exercise] = {
+  val exerciseTSI: TSIType[Exercise] = {
     implicit val svt : TSIType[SemanticVersion] = TSType.fromCaseClass[SemanticVersion]
     implicit val ett : TSIType[ExTag]           = TSType.fromCaseClass[ExTag]
     implicit val jvtt: TSType[JsValue]          = jsValueTsType
@@ -48,7 +48,7 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
     TSType.fromCaseClass[Exercise]
   }
 
-  implicit val exerciseCollectionTSI: TSIType[ExerciseCollection] =
+  val exerciseCollectionTSI: TSIType[ExerciseCollection] =
     TSType.fromCaseClass[ExerciseCollection] + ("exercises" -> TSArray(exerciseMetaDataTSI.get))
 
 

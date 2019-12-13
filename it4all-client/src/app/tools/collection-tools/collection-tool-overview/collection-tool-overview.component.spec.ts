@@ -1,16 +1,17 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CollectionToolOverviewComponent } from './collection-tool-overview.component';
+import {CollectionToolOverviewComponent} from './collection-tool-overview.component';
+import {RouterTestingModule} from '@angular/router/testing';
 
-describe('ToolOverviewComponent', () => {
+describe('CollectionToolOverviewComponent', () => {
   let component: CollectionToolOverviewComponent;
   let fixture: ComponentFixture<CollectionToolOverviewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CollectionToolOverviewComponent ]
-    })
-    .compileComponents();
+      imports: [RouterTestingModule],
+      declarations: [CollectionToolOverviewComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

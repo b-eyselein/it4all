@@ -6,7 +6,7 @@ import nl.codestar.scalatsi.TypescriptType.TSInterface
 
 trait XmlTSTypes extends ToolTSInterfaceTypes {
 
-  implicit val xmlExerciseContentTSI: TSIType[XmlExerciseContent] = {
+  val xmlExerciseContentTSI: TSIType[XmlExerciseContent] = {
     implicit val xsst: TSIType[SampleSolution[XmlSolution]] = sampleSolutionTSI[XmlSolution](TSType.fromCaseClass[XmlSolution])
 
     TSType.fromCaseClass[XmlExerciseContent]

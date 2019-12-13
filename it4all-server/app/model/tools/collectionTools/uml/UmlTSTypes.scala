@@ -6,7 +6,7 @@ import nl.codestar.scalatsi.TypescriptType.TSInterface
 
 trait UmlTSTypes extends ToolTSInterfaceTypes {
 
-  implicit val umlClassDiagramTSI: TSIType[UmlClassDiagram] = {
+  val umlClassDiagramTSI: TSIType[UmlClassDiagram] = {
     implicit val uct: TSIType[UmlClass] = {
       implicit val uctt: TSType[UmlClassType]  = enumTsType(UmlClassType)
       implicit val uvt : TSType[UmlVisibility] = enumTsType(UmlVisibility)
@@ -29,7 +29,7 @@ trait UmlTSTypes extends ToolTSInterfaceTypes {
     TSType.fromCaseClass[UmlClassDiagram]
   }
 
-  implicit val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
+  val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
     implicit val usst: TSIType[SampleSolution[UmlClassDiagram]] = sampleSolutionTSI[UmlClassDiagram](umlClassDiagramTSI)
 
     TSType.fromCaseClass[UmlExerciseContent]

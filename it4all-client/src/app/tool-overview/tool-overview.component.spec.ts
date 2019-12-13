@@ -1,8 +1,8 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ToolOverviewComponent} from './tool-overview.component';
-import {AppRoutingModule, routingComponents} from '../app-routing.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('ToolOverviewComponent', () => {
   let component: ToolOverviewComponent;
@@ -10,8 +10,8 @@ describe('ToolOverviewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
-      declarations: [ToolOverviewComponent, ...routingComponents]
+      imports: [FormsModule, ReactiveFormsModule, RouterTestingModule],
+      declarations: [ToolOverviewComponent]
     }).compileComponents();
   }));
 

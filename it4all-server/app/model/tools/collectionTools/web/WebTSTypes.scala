@@ -20,7 +20,7 @@ trait WebTSTypes extends ToolTSInterfaceTypes {
     TSType.fromCaseClass[JsTask]
   }
 
-  implicit val webExerciseContentTSI: TSIType[WebExerciseContent] = {
+  val webExerciseContentTSI: TSIType[WebExerciseContent] = {
     implicit val eft : TSIType[ExerciseFile]                      = exerciseFileTSI
     implicit val htt : TSIType[HtmlTask]                          = TSType.fromCaseClass[HtmlTask]
     implicit val jtt : TSIType[JsTask]                            = jsTaskTSType
@@ -54,7 +54,7 @@ trait WebTSTypes extends ToolTSInterfaceTypes {
     TSType.fromCaseClass[GradedJsTaskResult]
   }
 
-  implicit val webCompleteResultTSI: TSIType[WebCompleteResult] = {
+  val webCompleteResultTSI: TSIType[WebCompleteResult] = {
     implicit val ghtt: TSIType[GradedHtmlTaskResult] = gradedHtmlTaskResult
     implicit val gjtt: TSIType[GradedJsTaskResult]   = gradedJsTaskResultTSI
 

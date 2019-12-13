@@ -10,8 +10,8 @@ describe('AdminReadExercisesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
-      declarations: [AdminReadExercisesComponent, ...routingComponents]
+      imports: [FormsModule, ReactiveFormsModule],
+      declarations: [AdminReadExercisesComponent]
     }).compileComponents();
   }));
 

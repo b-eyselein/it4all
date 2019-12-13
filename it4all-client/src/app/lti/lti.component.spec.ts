@@ -1,9 +1,9 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LtiComponent} from './lti.component';
-import {AppRoutingModule} from '../app-routing.module';
-import {ToolOverviewComponent} from '../tool-overview/tool-overview.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('LtiComponent', () => {
   let component: LtiComponent;
@@ -11,8 +11,8 @@ describe('LtiComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
-      declarations: [LtiComponent, ToolOverviewComponent],
+      imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
+      declarations: [LtiComponent],
     }).compileComponents();
   }));
 

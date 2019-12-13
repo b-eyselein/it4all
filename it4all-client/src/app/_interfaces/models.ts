@@ -15,6 +15,14 @@ export interface IRegexMatchTestData {
 
 export type SuccessType = ('ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE');
 
+export interface IImplementationPart {
+  base: string;
+  files: IExerciseFile[];
+  implFileName: string;
+  sampleSolFileNames: string[];
+}
+
+
 export interface IUmlClass {
   classType: UmlClassType;
   name: string;
@@ -23,28 +31,6 @@ export interface IUmlClass {
 }
 
 export type UmlVisibility = ('PUBLIC' | 'PACKAGE' | 'PROTECTED' | 'PRIVATE');
-
-export interface IUmlExerciseContent {
-  toIgnore: string[];
-  mappings: { [key: string]: string };
-  sampleSolutions: ISampleSolution[];
-}
-
-
-export interface IJsTask {
-  id: number;
-  text: string;
-  preConditions: IJsHtmlElementSpec[];
-  action: IJsAction;
-  postConditions: IJsHtmlElementSpec[];
-}
-
-
-export interface IProgSolution {
-  files: IExerciseFile[];
-  testData: IProgTestData[];
-}
-
 
 export interface ISqlExerciseContent {
   exerciseType: SqlExerciseType;
@@ -196,6 +182,56 @@ export interface IExerciseFile {
 }
 
 
+export interface IProgExerciseContent {
+  functionName: string;
+  foldername: string;
+  filename: string;
+  inputTypes: IProgInput[];
+  outputType: any;
+  baseData?: any;
+  unitTestPart: IUnitTestPart;
+  implementationPart: IImplementationPart;
+  sampleSolutions: ISampleSolution[];
+  sampleTestData: IProgTestData[];
+  maybeClassDiagramPart?: IUmlClassDiagram;
+}
+
+
+export interface IUnitTestPart {
+  unitTestType: UnitTestTypes;
+  unitTestsDescription: string;
+  unitTestFiles: IExerciseFile[];
+  unitTestTestConfigs: IUnitTestTestConfig[];
+  simplifiedTestMainFile?: IExerciseFile;
+  testFileName: string;
+  sampleSolFileNames: string[];
+}
+
+
+export interface IUmlExerciseContent {
+  toIgnore: string[];
+  mappings: { [key: string]: string };
+  sampleSolutions: ISampleSolution[];
+}
+
+
+export interface IUnitTestTestConfig {
+  id: number;
+  shouldFail: boolean;
+  description: string;
+  file: IExerciseFile;
+}
+
+
+export interface IJsTask {
+  id: number;
+  text: string;
+  preConditions: IJsHtmlElementSpec[];
+  action: IJsAction;
+  postConditions: IJsHtmlElementSpec[];
+}
+
+
 export interface IRegexExtractionTestData {
   id: number;
   base: string;
@@ -245,6 +281,13 @@ export interface IHtmlTask {
   attributes: { [key: string]: string };
 }
 
+export type UnitTestTypes = ('Simplified' | 'Normal');
+
+export interface IProgSolution {
+  files: IExerciseFile[];
+  testData: IProgTestData[];
+}
+
 
 export interface IGradedJsHtmlElementSpecResult {
   id: number;
@@ -258,6 +301,13 @@ export interface IGradedJsHtmlElementSpecResult {
 }
 
 export type SqlExerciseType = ('SELECT' | 'CREATE' | 'UPDATE' | 'INSERT' | 'DELETE');
+
+export interface IProgInput {
+  id: number;
+  inputName: string;
+  inputType: any;
+}
+
 
 export interface ISemanticVersion {
   major: number;
@@ -294,3 +344,4 @@ export interface IExerciseMetaData {
   text: string;
   tags: IExTag[];
 }
+

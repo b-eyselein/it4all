@@ -1,6 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ExerciseComponent } from './exercise.component';
+import {ExerciseComponent} from './exercise.component';
+import {ProgrammingExerciseComponent} from '../programming/programming-exercise/programming-exercise.component';
+import {WebExerciseComponent} from '../web/web-exercise/web-exercise.component';
+import {RegexExerciseComponent} from '../regex/regex-exercise/regex-exercise.component';
+import {UmlExerciseComponent} from '../uml/uml-exercise/uml-exercise.component';
 
 describe('ExerciseComponent', () => {
   let component: ExerciseComponent;
@@ -8,9 +12,11 @@ describe('ExerciseComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseComponent ]
-    })
-    .compileComponents();
+      declarations: [
+        ExerciseComponent,
+        ProgrammingExerciseComponent, WebExerciseComponent, RegexExerciseComponent, UmlExerciseComponent
+      ]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

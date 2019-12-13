@@ -35,7 +35,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   // DB
 
-  def writeWebSolutionFiles(username: String, collId: Int, exerciseId: Int, part: WebExPart, exerciseFiles: Seq[ExerciseFile]): Try[Seq[File]] = Try {
+  def writeWebSolutionFiles(username: String, collId: Int, exerciseId: Int, exerciseFiles: Seq[ExerciseFile]): Try[Seq[File]] = Try {
 
     val targetDir: File = solutionDirForExercise(username, collId, exerciseId)
 
@@ -100,7 +100,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
     part: WebExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {
-    writeWebSolutionFiles(user.username, collection.id, exercise.id, part, learnerSolution)
+    writeWebSolutionFiles(user.username, collection.id, exercise.id, learnerSolution)
       .flatMap { _ =>
 
         val driver              = new HtmlUnitDriver(true)

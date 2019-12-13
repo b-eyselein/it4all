@@ -6,7 +6,7 @@ import nl.codestar.scalatsi.{TSIType, TSType}
 
 trait SqlTSTypes extends ToolTSInterfaceTypes {
 
-  implicit val sqlExerciseContentTSI: TSIType[SqlExerciseContent] = {
+  val sqlExerciseContentTSI: TSIType[SqlExerciseContent] = {
     implicit val seTypeT: TSType[SqlExerciseType]         = enumTsType(SqlExerciseType)
     implicit val seTagT : TSType[SqlExerciseTag]          = enumTsType(SqlExerciseTag)
     implicit val ssst   : TSIType[SampleSolution[String]] = sampleSolutionTSI[String](TSType(TSString))

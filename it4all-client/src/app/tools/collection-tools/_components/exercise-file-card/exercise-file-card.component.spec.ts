@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ExerciseFileCardComponent } from './exercise-file-card.component';
+import {ExerciseFileCardComponent} from './exercise-file-card.component';
 
 describe('ExerciseFileCardComponent', () => {
   let component: ExerciseFileCardComponent;
@@ -8,14 +8,20 @@ describe('ExerciseFileCardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseFileCardComponent ]
+      declarations: [ExerciseFileCardComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseFileCardComponent);
     component = fixture.componentInstance;
+    component.exerciseFile = {
+      name: '',
+      fileType: 'python',
+      content: '',
+      editable: false
+    };
     fixture.detectChanges();
   });
 

@@ -16,6 +16,7 @@ object TsInterfaceGenerator extends DefaultTSTypes {
 
     MyTSInterfaceTypes.exerciseTSI.get,
 
+    MyTSInterfaceTypes.progExerciseContentTSI.get,
     MyTSInterfaceTypes.progSolutionTSI.get,
 
     MyTSInterfaceTypes.regexExerciseContentTSI.get,
