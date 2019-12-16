@@ -114,17 +114,6 @@ export interface IJsAction {
 }
 
 
-export interface IExerciseCollection {
-  id: number;
-  toolId: string;
-  title: string;
-  authors: string[];
-  text: string;
-  shortName: string;
-  exercises: IExerciseMetaData[];
-}
-
-
 export interface IGradedHtmlTaskResult {
   id: number;
   success: SuccessType;
@@ -261,6 +250,16 @@ export interface IXmlExerciseContent {
 }
 
 
+export interface IExerciseCollection {
+  id: number;
+  toolId: string;
+  title: string;
+  authors: string[];
+  text: string;
+  shortName: string;
+}
+
+
 export interface IGradedJsTaskResult {
   id: number;
   gradedPreResults: IGradedJsHtmlElementSpecResult[];
@@ -344,4 +343,3 @@ export interface IExerciseMetaData {
   text: string;
   tags: IExTag[];
 }
-

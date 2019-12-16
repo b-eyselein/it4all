@@ -4,11 +4,12 @@ import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
 import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {IExerciseCollection} from '../../_interfaces/models';
+import {IExerciseCollectionWithExerciseMetaData} from '../../_interfaces/exercise';
 
 @Component({templateUrl: './admin-edit-collection.component.html'})
 export class AdminEditCollectionComponent extends ComponentWithCollectionTool implements OnInit {
 
-  collection: IExerciseCollection;
+  collection: IExerciseCollectionWithExerciseMetaData;
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
     super(route);

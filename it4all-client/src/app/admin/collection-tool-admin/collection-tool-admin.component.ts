@@ -1,19 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
-import {DexieService} from '../../_services/dexie.service';
 import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
-import {IExerciseCollection} from '../../_interfaces/models';
+import {IExerciseCollectionWithExerciseMetaData} from '../../_interfaces/exercise';
 
 @Component({templateUrl: './collection-tool-admin.component.html'})
 export class CollectionToolAdminComponent extends ComponentWithCollectionTool implements OnInit {
 
-  collections: IExerciseCollection[] = [];
+  collections: IExerciseCollectionWithExerciseMetaData[] = [];
 
-  constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
+  constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService) {
     super(route);
 
     if (!this.tool) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/admin']);
     }
   }
@@ -34,16 +34,7 @@ export class CollectionToolAdminComponent extends ComponentWithCollectionTool im
   }
 
   ngOnInit() {
-    // this.dexieService.collections
-    //   .filter((ec) => ec.toolId === this.tool.id).toArray()
-    //   .then((collections: ExerciseCollection[]) => {
-    //     if (collections && collections.length > 0) {
-    //       this.collections = collections;
-    //       this.fetchExerciseBasics();
-    //     } else {
     this.fetchCollections();
-    // }
-    // });
   }
 
 }

@@ -3,11 +3,12 @@ import {ApiService} from '../_services/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
 import {IExerciseCollection} from '../../../_interfaces/models';
+import {IExerciseCollectionWithExerciseMetaData} from '../../../_interfaces/exercise';
 
 @Component({templateUrl: './collection-tool-overview.component.html'})
 export class CollectionToolOverviewComponent extends ComponentWithCollectionTool implements OnInit {
 
-  collections: IExerciseCollection[];
+  collections: IExerciseCollectionWithExerciseMetaData[];
 
   constructor(
     private route: ActivatedRoute,

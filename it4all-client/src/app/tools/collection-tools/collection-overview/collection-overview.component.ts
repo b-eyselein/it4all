@@ -4,11 +4,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {DexieService} from '../../../_services/dexie.service';
 import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
 import {IExerciseCollection, IExerciseMetaData} from '../../../_interfaces/models';
+import {IExerciseCollectionWithExerciseMetaData} from '../../../_interfaces/exercise';
 
 @Component({templateUrl: './collection-overview.component.html'})
 export class CollectionOverviewComponent extends ComponentWithCollectionTool implements OnInit {
 
-  collection: IExerciseCollection;
+  collection: IExerciseCollectionWithExerciseMetaData;
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
     super(route);

@@ -1,5 +1,11 @@
+import {IExerciseCollection, IExerciseMetaData} from './models';
+
 export interface ExerciseContent {
   tags?: string[];
+}
+
+export interface IExerciseCollectionWithExerciseMetaData extends IExerciseCollection {
+  exercises?: IExerciseMetaData[];
 }
 
 // Solutions
