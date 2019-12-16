@@ -14,5 +14,7 @@ build-client:
 test:
   stage: test
   script:
+    - echo $CHROME_BIN
+    - ls -al
     - cd it4all-server
     - sbt test

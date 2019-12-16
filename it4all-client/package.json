@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",
-    "test": "ng test --watch=false --browsers=ChromeHeadless",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "test": "ng test --watch=false --browsers=MyChromeHeadless",
+    "test:ci": "ng test --watch=false --browsers=MyChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:dev": "ng build --progress --output-path ../server/public",

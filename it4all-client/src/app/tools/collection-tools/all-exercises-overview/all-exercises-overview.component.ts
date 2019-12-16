@@ -21,7 +21,7 @@ export class AllExercisesOverviewComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private apiService: ApiService) {
     const toolId = this.route.snapshot.paramMap.get('toolId');
-    this.tool = collectionTools.find((t) => t.name === toolId);
+    this.tool = collectionTools.find((t) => t.id === toolId);
   }
 
   ngOnInit() {
