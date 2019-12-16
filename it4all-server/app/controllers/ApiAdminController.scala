@@ -14,9 +14,9 @@ import scala.concurrent.ExecutionContext
 class ApiAdminController @Inject()(
   cc: ControllerComponents,
   tables: ExerciseTableDefs,
-  configuration: Configuration,
+  override protected val configuration: Configuration,
   ws: WSClient
-)(implicit ec: ExecutionContext) extends AbstractApiExerciseController(cc, configuration) {
+)(implicit val ec: ExecutionContext) extends AbstractController(cc) with AbstractApiExerciseController {
 
   private val logger = Logger(classOf[ApiController])
 
@@ -29,8 +29,8 @@ class ApiAdminController @Inject()(
   private implicit val ef: Format[Exercise]           = ToolJsonProtocol.exerciseFormat
 
 
-  def readCollections(toolId: String): Action[AnyContent] = apiWithToolMain(toolId) { (_, _, toolMain) =>
-    ws.url(s"$resourcesServerBaseUrl/${toolMain.urlPart}/collections")
+  def readCollections(toolId: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolId).async { implicit request =>
+    ws.url(s"$resourcesServerBaseUrl/${request.toolMain.urlPart}/collections")
       .get()
       .map { request => (request.json \ "collections").validate[Seq[ExerciseCollection]](Reads.seq(cf)) }
       .map {
@@ -41,8 +41,8 @@ class ApiAdminController @Inject()(
       }
   }
 
-  def readExercises(toolId: String, collId: Int): Action[AnyContent] = apiWithToolMain(toolId) { (_, _, toolMain) =>
-    ws.url(s"$resourcesServerBaseUrl/${toolMain.urlPart}/collections/${String.valueOf(collId)}/exercises")
+  def readExercises(toolId: String, collId: Int): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolId).async { request =>
+    ws.url(s"$resourcesServerBaseUrl/${request.toolMain.urlPart}/collections/${String.valueOf(collId)}/exercises")
       .get()
       .map { request => (request.json \ "exercises").validate[Seq[Exercise]](Reads.seq(ef)) }
       .map {
@@ -54,7 +54,7 @@ class ApiAdminController @Inject()(
 
           // FIXME: validate ExerciseContent !?!
           val validExercises = exercises.filter { exercise =>
-            toolMain.readExerciseContent(exercise)
+            request.toolMain.readExerciseContent(exercise)
               .fold(
                 errors => {
                   errors.foreach(e => logger.error(e.toString))
@@ -69,16 +69,15 @@ class ApiAdminController @Inject()(
   }
 
   def upsertCollection(toolId: String, collectionId: Int): Action[ExerciseCollection] =
-    apiWithToolMain(toolId, parse.json[ExerciseCollection]) { (request, _, _) =>
+    JwtAuthenticatedToolMainAction(toolId)(parse.json[ExerciseCollection]).async { implicit request =>
       tables
         .futureUpsertCollection(request.body.copy(toolId = toolId, id = collectionId))
         .map { inserted => Ok(JsBoolean(inserted)) }
     }
 
   def upsertExercise(toolId: String, collId: Int, exId: Int): Action[Exercise] =
-    apiWithToolMain(toolId, parse.json[Exercise]) { (request, _, _) =>
+    JwtAuthenticatedToolMainAction(toolId)(parse.json[Exercise]).async { implicit request =>
       // FIXME: validate content!
-
       tables
         .futureUpsertExercise(request.body.copy(toolId = toolId, collectionId = collId, id = exId))
         .map { inserted => Ok(JsBoolean(inserted)) }

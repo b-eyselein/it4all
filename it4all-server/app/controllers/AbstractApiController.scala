@@ -6,54 +6,41 @@ import model.{JsonProtocol, User}
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.libs.json.Format
+import play.api.mvc.Security.AuthenticatedBuilder
 import play.api.mvc._
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 import scala.util.matching.Regex
 
-abstract class AbstractApiController(cc: ControllerComponents, configuration: Configuration)
-  extends AbstractController(cc) {
+trait AbstractApiController {
+  self: AbstractController =>
 
-  private val clock            : Clock = Clock.systemDefaultZone()
   private val bearerHeaderRegex: Regex = "Bearer (.*)".r
+
+  private implicit val clock     : Clock            = Clock.systemDefaultZone()
+  private implicit val ec        : ExecutionContext = self.defaultExecutionContext
+  private implicit val userFormat: Format[User]     = JsonProtocol.userFormat
+
+  protected implicit val configuration: Configuration
 
   protected val adminRightsRequired: Boolean
 
-  protected def createJwtSession(username: User): JwtSession = {
-    implicit val uf: Format[User] = JsonProtocol.userFormat
-
-    JwtSession()(configuration, clock) + ("user", username)
+  protected def createJwtSession(user: User): JwtSession = {
+    JwtSession() + ("user", user)
   }
 
-  protected def apiWithUser[B](bodyParser: BodyParser[B])
-                              (f: (Request[B], User) => Future[Result]): Action[B] = Action.async(bodyParser) { implicit request =>
-    request.headers.get("Authorization") match {
-
-      // No authorization header present
-      case None => Future.successful(Unauthorized("You are not authorized to access this resource!"))
-
-      // Authorization header present and correct
-      case Some(bearerHeaderRegex(serializedJwtToken)) =>
-
-        val jwtSession = JwtSession.deserialize(serializedJwtToken)(configuration, clock)
-
-        jwtSession.getAs("user")(JsonProtocol.userFormat) match {
-          case None          => Future.successful(Unauthorized("You are not authorized to access this resource!"))
-          case Some(jwtUser) =>
-
-            if (adminRightsRequired && !jwtUser.isAdmin) {
-              Future.successful(Unauthorized(""))
-            } else {
-              f(request, jwtUser)
-            }
+  private def userFromHeader(request: RequestHeader): Option[User] = request.headers.get("Authorization").flatMap {
+    case bearerHeaderRegex(serializedJwtToken) =>
+      JwtSession.deserialize(serializedJwtToken).getAs[User]("user").flatMap { user =>
+        if (adminRightsRequired && !user.isAdmin) {
+          None
+        } else {
+          Some(user)
         }
-
-      // Authorization header had wrong format...
-      case Some(_) => Future.successful(Unauthorized("You are not authorized to access this resource!"))
-    }
+      }
+    case _                                     => None
   }
 
-  protected def apiWithUser(f: (Request[AnyContent], User) => Future[Result]): Action[AnyContent] =
-    apiWithUser(parse.default)(f)
+  object JwtAuthenticatedAction extends AuthenticatedBuilder[User](userFromHeader, self.parse.default)
 
 }

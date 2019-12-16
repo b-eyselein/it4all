@@ -3,20 +3,19 @@ package controllers
 import model.User
 import model.tools.ToolList
 import model.tools.collectionTools.{CollectionToolMain, Exercise}
-import play.api.Configuration
+import play.api.mvc.Security.AuthenticatedRequest
 import play.api.mvc._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-abstract class AbstractApiExerciseController(cc: ControllerComponents, configuration: Configuration)
-  extends AbstractApiController(cc, configuration) {
+trait AbstractApiExerciseController extends AbstractApiController {
+  self: AbstractController =>
 
   protected def getToolMain(toolType: String): Option[CollectionToolMain] =
     ToolList.getExCollToolMainOption(toolType)
 
-
   protected def onNoSuchTool(toolType: String): Result =
-    NotFound(s"There is no tool with id ${toolType}")
+    NotFound(s"There is no tool with id $toolType")
 
   protected def onNoSuchExercise(collectionId: Int, exId: Int): Result =
     NotFound(s"There is no exercise with id $exId for collection $collectionId")
@@ -25,16 +24,24 @@ abstract class AbstractApiExerciseController(cc: ControllerComponents, configura
     NotFound(s"There is no part $partStr for exercise ${exercise.title}")
 
 
-  protected final def apiWithToolMain[B](toolType: String, bodyParser: BodyParser[B])
-                                        (f: (Request[B], User, CollectionToolMain) => Future[Result]): Action[B] =
-    apiWithUser(bodyParser) { (request, user) =>
-      getToolMain(toolType) match {
-        case None           => Future.successful(onNoSuchTool(toolType))
-        case Some(toolMain) => f(request, user, toolMain)
-      }
+  protected case class ToolMainRequest[B](toolMain: CollectionToolMain, user: User, request: AuthenticatedRequest[B, User]) extends WrappedRequest[B](request)
+
+
+  protected def ToolMainAction(toolId: String): ActionRefiner[AuthenticatedRequest[*, User], ToolMainRequest] =
+    new ActionRefiner[AuthenticatedRequest[*, User], ToolMainRequest] {
+
+      override protected def executionContext: ExecutionContext = self.defaultExecutionContext
+
+      override protected def refine[A](request: AuthenticatedRequest[A, User]): Future[Either[Result, ToolMainRequest[A]]] =
+        Future.successful {
+          getToolMain(toolId)
+            .map(ToolMainRequest(_, request.user, request))
+            .toRight(onNoSuchTool(toolId))
+        }
+
     }
 
-  protected def apiWithToolMain(toolType: String)(f: (Request[AnyContent], User, CollectionToolMain) => Future[Result]): Action[AnyContent] =
-    apiWithToolMain(toolType, parse.default)(f)
+  protected def JwtAuthenticatedToolMainAction(toolId: String): ActionBuilder[ToolMainRequest, AnyContent] =
+    JwtAuthenticatedAction.andThen(ToolMainAction(toolId))
 
 }

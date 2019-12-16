@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.1"
 
-scalaVersion := "2.13.0" // TODO: 2.13.1 after https://github.com/scoverage/scalac-scoverage-plugin/pull/279
+scalaVersion := "2.13.1"
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -27,6 +27,10 @@ lazy val root = (project in file("."))
     packageName in Universal := s"${name.value}"
   )
 
+// TODO: For ActionRefiner ToolMainAction
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+
+
 val artifactoryUrl = "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory"
 
 resolvers ++= Seq(
@@ -44,12 +48,12 @@ libraryDependencies ++= Seq(
 
   "com.pauldijou" %% "jwt-play" % "4.2.0",
 
-  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
 
   "mysql" % "mysql-connector-java" % "8.0.18", // GPL 2.0
 
-  "com.typesafe.play" %% "play-slick" % "4.0.2", // Apache 2.0
-  "com.typesafe.play" %% "play-slick-evolutions" % "4.0.2", // Apache 2.0
+  "com.typesafe.play" %% "play-slick" % "5.0.0", // Apache 2.0
+  "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0", // Apache 2.0
 
   "com.beachape" %% "enumeratum-play" % "1.5.16", // MIT
   "com.beachape" %% "enumeratum-play-json" % "1.5.16", // MIT

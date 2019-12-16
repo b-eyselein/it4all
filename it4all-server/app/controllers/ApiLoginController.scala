@@ -5,23 +5,22 @@ import java.util.UUID
 import com.github.t3hnar.bcrypt._
 import javax.inject.{Inject, Singleton}
 import model._
-import model.core.Repository
 import model.lti.BasicLtiLaunchRequest
+import model.persistence.ExerciseTableDefs
 import pdi.jwt.JwtSession
 import play.api.Configuration
-import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
 import play.api.mvc._
-import slick.jdbc.JdbcProfile
 
 import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApiLoginController @Inject()(
-  cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, repository: Repository, configuration: Configuration
-)(implicit ec: ExecutionContext)
-  extends AbstractApiController(cc, configuration) with HasDatabaseConfigProvider[JdbcProfile] {
+  cc: ControllerComponents,
+  tables: ExerciseTableDefs,
+  override protected val configuration: Configuration
+)(implicit val ec: ExecutionContext) extends AbstractController(cc) with AbstractApiController {
 
   override protected val adminRightsRequired: Boolean = true
 
@@ -29,11 +28,11 @@ class ApiLoginController @Inject()(
 
   private val jwtHashesToClaim: MutableMap[UUID, (JwtSession, User)] = MutableMap.empty
 
-  private def getOrCreateUser(username: String): Future[User] = repository.userByName(username).flatMap {
+  private def getOrCreateUser(username: String): Future[User] = tables.userByName(username).flatMap {
     case Some(u) => Future(u)
     case None    =>
       val newUser   = LtiUser(username)
-      val userSaved = repository.saveUser(newUser)
+      val userSaved = tables.saveUser(newUser)
       userSaved.map(_ => newUser)
   }
 
@@ -73,11 +72,11 @@ class ApiLoginController @Inject()(
 
     Action.async(parse.json[UserCredentials]) { implicit request =>
 
-      repository.userByName(request.body.username).flatMap {
+      tables.userByName(request.body.username).flatMap {
         case None       => Future.successful(BadRequest("Invalid username!"))
         case Some(user) =>
 
-          repository.pwHashForUser(user.username).map {
+          tables.pwHashForUser(user.username).map {
             case None         => BadRequest("No password found!")
             case Some(pwHash) =>
               if (request.body.password.isBcrypted(pwHash.pwHash)) {

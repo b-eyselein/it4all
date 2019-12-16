@@ -33,6 +33,6 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
     part: ProgExPart,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] =
-    ProgCorrector.correct(user, sol, collection, exercise, content, part, solutionSaved)
+    ProgCorrector.correct(user, sol, exercise, content, part, solutionSaved)
 
 }
