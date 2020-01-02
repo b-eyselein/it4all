@@ -7,18 +7,6 @@ import play.api.libs.json.{Format, Json, Reads, Writes}
 
 object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult] {
 
-  private final case class KeyValueObject(key: String, value: String)
-
-  private val attributesFormat: Format[Map[String, String]] = {
-
-    val keyValueObjectFormat: Format[KeyValueObject] = Json.format[KeyValueObject]
-
-    Format(
-      Reads.seq(keyValueObjectFormat).map(_.map { case KeyValueObject(key, value) => (key, value) }.toMap),
-      Writes.seq(keyValueObjectFormat).contramap(_.toSeq.map { case (key, value) => KeyValueObject(key, value) })
-    )
-  }
-
   private val jsActionFormat: Format[JsAction] = {
     implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
 
@@ -26,7 +14,7 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
   }
 
   private val jsHtmlElementSpecFormat = {
-    implicit val af: Format[Map[String, String]] = attributesFormat
+    implicit val af: Format[Map[String, String]] = keyValueObjectMapFormat
 
     Json.format[JsHtmlElementSpec]
   }
@@ -39,7 +27,7 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
   }
 
   private val htmlTaskFormat: Format[HtmlTask] = {
-    implicit val af: Format[Map[String, String]] = attributesFormat
+    implicit val af: Format[Map[String, String]] = keyValueObjectMapFormat
 
     Json.format[HtmlTask]
   }

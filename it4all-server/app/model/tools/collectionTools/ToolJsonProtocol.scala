@@ -46,6 +46,20 @@ trait ToolJsonProtocol[
 
   val completeResultWrites: Writes[CR]
 
+
+  private final case class KeyValueObject(key: String, value: String)
+
+  protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
+
+    val keyValueObjectFormat: Format[KeyValueObject] = Json.format[KeyValueObject]
+
+    Format(
+      Reads.seq(keyValueObjectFormat).map(_.map { case KeyValueObject(key, value) => (key, value) }.toMap),
+      Writes.seq(keyValueObjectFormat).contramap(_.toSeq.map { case (key, value) => KeyValueObject(key, value) })
+    )
+  }
+
+
 }
 
 abstract class StringSampleSolutionToolJsonProtocol[

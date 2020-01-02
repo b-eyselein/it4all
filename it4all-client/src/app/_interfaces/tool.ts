@@ -16,8 +16,12 @@ export abstract class Tool {
     public name: string,
     public parts: ToolPart[],
     public status: ToolStatus,
-    public hasPlayground?: boolean,
+    public hasLessons: boolean = false
   ) {
+  }
+
+  hasPlayground(): boolean {
+    return false;
   }
 }
 

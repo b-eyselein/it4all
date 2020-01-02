@@ -5,6 +5,8 @@ import {Tool} from '../_interfaces/tool';
 
 @Component({templateUrl: './tool-overview.component.html'})
 export class ToolOverviewComponent {
+
   randomTools: Tool[] = randomTools;
   collectionTools: Tool[] = collectionTools;
+
 }

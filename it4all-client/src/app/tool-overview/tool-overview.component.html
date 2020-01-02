@@ -4,18 +4,43 @@
   <h2 class="subtitle is-3">Tools mit zufälligen Aufgaben</h2>
   <div class="columns is-multiline">
     <div *ngFor="let randomTool of randomTools" class="column is-one-third">
-      <a [routerLink]="['/randomTools', randomTool.id]" class="button is-link is-fullwidth">{{randomTool.name}}</a>
+
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">
+            {{randomTool.name}}<sup *ngIf="randomTool.status !== 'live'"
+                                    [innerHTML]="'&nbsp;&' + randomTool.status + ';'"></sup>
+          </p>
+        </header>
+        <div class="card-content"></div>
+        <footer class="card-footer">
+          <a [routerLink]="['/randomTools', randomTool.id]" class="card-footer-item">Zum Tool</a>
+          <a [routerLink]="['/lessons', randomTool.id]" class="card-footer-item" *ngIf="randomTool.hasLessons">Zu den
+            Lektionen</a>
+        </footer>
+      </div>
+
     </div>
   </div>
 
   <h2 class="subtitle is-3">Tools mit Aufgaben in Sammlungen</h2>
   <div class="columns is-multiline">
-    <ng-container *ngFor="let colTool of collectionTools">
-      <div class="column is-one-third">
-        <a [routerLink]="['/tools', colTool.id]" class="button is-link is-fullwidth">
-          {{colTool.name}}<sup *ngIf="colTool.status !== 'live'" [innerHTML]="'&nbsp;&' + colTool.status + ';'"></sup>
-        </a>
+    <div class="column is-one-quarter-desktop is-half-tablet" *ngFor="let colTool of collectionTools">
+
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">
+            {{colTool.name}}<sup *ngIf="colTool.status !== 'live'" [innerHTML]="'&nbsp;&' + colTool.status + ';'"></sup>
+          </p>
+        </header>
+        <div class="card-content"></div>
+        <footer class="card-footer">
+          <a [routerLink]="['/tools', colTool.id]" class="card-footer-item">Zum Tool</a>
+          <a [routerLink]="['/lessons', colTool.id]" class="card-footer-item" *ngIf="colTool.hasLessons">Zu den
+            Lektionen</a>
+        </footer>
       </div>
-    </ng-container>
+
+    </div>
   </div>
 </div>

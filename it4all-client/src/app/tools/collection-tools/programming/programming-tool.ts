@@ -11,7 +11,7 @@ export const ProgrammingImplementationToolPart: ToolPart = {id: 'implementation'
 
 export const ProgrammingTool: CollectionTool = new class ProgrammingToolClass extends CollectionTool {
   constructor() {
-    super('programming', 'Programmierung', [ProgrammingTestCreationPart, ProgrammingImplementationToolPart], 'beta');
+    super('programming', 'Programmierung', [ProgrammingTestCreationPart, ProgrammingImplementationToolPart], 'beta', true);
   }
 
   exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {

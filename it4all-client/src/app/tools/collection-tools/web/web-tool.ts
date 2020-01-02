@@ -8,7 +8,7 @@ const JsPart: ToolPart = {id: 'js', name: 'JS-Teil'};
 
 export const WebTool: CollectionTool = new class WebToolClass extends CollectionTool {
   constructor() {
-    super('web', 'Web', [HtmlPart, JsPart], 'live', true);
+    super('web', 'Web', [HtmlPart, JsPart], 'live', false);
   }
 
   exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {
@@ -23,4 +23,9 @@ export const WebTool: CollectionTool = new class WebToolClass extends Collection
 
     return super.exerciseHasPart(exercise, part);
   }
+
+  hasPlayground(): boolean {
+    return true;
+  }
+
 }();
