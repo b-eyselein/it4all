@@ -17,7 +17,13 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
 
   val exerciseFileTSI: TSIType[ExerciseFile] = TSType.fromCaseClass[ExerciseFile] + ("active?" -> TSBoolean.get)
 
-  val successTypeTS: TSType[SuccessType] = enumTsType(SuccessType)
+  protected val successTypeTS: TSType[SuccessType] = enumTsType(SuccessType)
+
+
+  protected val stringMapTsType: TSType[Map[String, String]] = TSType.alias("KeyValueObjectMap", TSArray(
+    TSType.interface[KeyValueObject]("key" -> TSString, "value" -> TSString).get
+  ))
+
 
   def sampleSolutionTSI[SolType](solTypeTSI: TSType[SolType])(implicit x: Manifest[SampleSolution[SolType]]): TSIType[SampleSolution[SolType]] = {
     //    implicit val eft: TSIType[ExerciseFile] = exerciseFileTSI

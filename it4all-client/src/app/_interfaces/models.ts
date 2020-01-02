@@ -32,10 +32,27 @@ export interface IUmlClass {
 
 export type UmlVisibility = ('PUBLIC' | 'PACKAGE' | 'PROTECTED' | 'PRIVATE');
 
+export interface IUnitTestPart {
+  unitTestType: UnitTestTypes;
+  unitTestsDescription: string;
+  unitTestFiles: IExerciseFile[];
+  unitTestTestConfigs: IUnitTestTestConfig[];
+  simplifiedTestMainFile?: IExerciseFile;
+  testFileName: string;
+  sampleSolFileNames: string[];
+}
+
+
 export interface ISqlExerciseContent {
   exerciseType: SqlExerciseType;
   hint?: string;
   sampleSolutions: ISampleSolution[];
+}
+
+
+export interface IKeyValueObject {
+  key: string;
+  value: string;
 }
 
 
@@ -73,6 +90,7 @@ export interface IGradedJsActionResult {
   maxPoints: IPoints;
 }
 
+export type KeyValueObjectMap = IKeyValueObject[];
 
 export interface IWebExerciseContent {
   htmlText?: string;
@@ -186,20 +204,9 @@ export interface IProgExerciseContent {
 }
 
 
-export interface IUnitTestPart {
-  unitTestType: UnitTestTypes;
-  unitTestsDescription: string;
-  unitTestFiles: IExerciseFile[];
-  unitTestTestConfigs: IUnitTestTestConfig[];
-  simplifiedTestMainFile?: IExerciseFile;
-  testFileName: string;
-  sampleSolFileNames: string[];
-}
-
-
 export interface IUmlExerciseContent {
   toIgnore: string[];
-  mappings: { [key: string]: string };
+  mappings: KeyValueObjectMap;
   sampleSolutions: ISampleSolution[];
 }
 

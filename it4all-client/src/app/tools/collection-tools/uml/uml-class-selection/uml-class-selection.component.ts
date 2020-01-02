@@ -1,7 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise, ISampleSolution, IUmlExerciseContent} from '../../../../_interfaces/models';
+import {IExercise, ISampleSolution, IUmlClassDiagram, IUmlExerciseContent} from '../../../../_interfaces/models';
 import {UmlClassSelectionTextPart} from '../uml-interfaces';
 import {MatchResult, StringMatcher} from '../../../../matcher';
+import {distinctStringArray} from '../../../../helpers';
+
+interface SelectableClass {
+  name: string;
+  selected: boolean;
+  isCorrect: boolean;
+}
 
 @Component({
   selector: 'it4all-uml-class-selection',
@@ -14,11 +21,18 @@ export class UmlClassSelectionComponent implements OnInit {
   @Input() exercise: IExercise;
   @Input() exerciseContent: IUmlExerciseContent;
 
-  allSelectableClassBaseForms: string[];
+  selectableClasses: SelectableClass[];
 
   classSelectionText: UmlClassSelectionTextPart[];
 
   selectedClasses: string[] = [];
+
+  corrected = false;
+
+  private getMapping(str: string): string | undefined {
+    const maybeMapping = this.exerciseContent.mappings.find((m) => m.key === str);
+    return maybeMapping ? maybeMapping.value : undefined;
+  }
 
   private getClassSelectionText(): UmlClassSelectionTextPart[] {
     const splitText: string[] = this.exercise.text
@@ -26,19 +40,22 @@ export class UmlClassSelectionComponent implements OnInit {
       .split(this.capWordTextSplitRegex)
       .filter((s) => s.length > 0);
 
-    this.allSelectableClassBaseForms = [
-      ...new Set(
-        splitText
-          .filter((s) => s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s))
-          .map((s) => this.exerciseContent.mappings[s] || s)
-      )
-    ];
+    const sampleSolution = this.exerciseContent.sampleSolutions[0].sample as IUmlClassDiagram;
 
-    console.info(this.allSelectableClassBaseForms.join(' - '));
+    this.selectableClasses = distinctStringArray(
+      splitText
+        .filter((s) => s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s))
+        .map((s) => this.getMapping(s) || s)
+    ).map((name) => {
+        const isCorrect = sampleSolution.classes.find((c) => c.name === name) !== undefined;
+
+        return {name, selected: false, isCorrect};
+      }
+    );
 
     return splitText.map((s) => {
       if (s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s)) {
-        return {text: s, isSelectable: true, baseForm: this.exerciseContent.mappings[s]};
+        return {text: s, isSelectable: true, baseForm: this.getMapping(s)};
       } else {
         return {text: s, isSelectable: false};
       }
@@ -51,6 +68,9 @@ export class UmlClassSelectionComponent implements OnInit {
 
   selectClass(clazz: UmlClassSelectionTextPart): void {
     const className = clazz.baseForm || clazz.text;
+
+    const selectableClass = this.selectableClasses.find((sc) => sc.name === (clazz.baseForm || clazz.text));
+    selectableClass.selected = !selectableClass.selected;
 
     if (this.selectedClasses.includes(className)) {
       this.selectedClasses = this.selectedClasses.filter((cn) => cn !== className);
@@ -65,6 +85,8 @@ export class UmlClassSelectionComponent implements OnInit {
   }
 
   correct(): void {
+    this.corrected = true;
+
     const sampleSolution: ISampleSolution = this.exerciseContent.sampleSolutions[0];
 
     const classesToSelect: string[] = (sampleSolution.sample as any).classes.map((c) => c.name);
@@ -73,6 +95,5 @@ export class UmlClassSelectionComponent implements OnInit {
 
     console.error(JSON.stringify(matchResult, null, 2));
   }
-
 
 }

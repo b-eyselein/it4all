@@ -4,6 +4,7 @@ import model.core.result.{CompleteResult, EvaluationResult}
 import model.points.Points
 import play.api.libs.json._
 
+
 object ToolJsonProtocol {
 
   val semanticVersionFormat: Format[SemanticVersion] = Json.format
@@ -35,6 +36,7 @@ object ToolJsonProtocol {
 
 }
 
+final case class KeyValueObject(key: String, value: String)
 
 trait ToolJsonProtocol[
   EC <: ExerciseContent, ST, CR <: CompleteResult[_ <: EvaluationResult]
@@ -45,9 +47,6 @@ trait ToolJsonProtocol[
   val solutionFormat: Format[ST]
 
   val completeResultWrites: Writes[CR]
-
-
-  private final case class KeyValueObject(key: String, value: String)
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 

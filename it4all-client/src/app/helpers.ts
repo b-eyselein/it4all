@@ -12,6 +12,10 @@ export function flatMapArray<T, U>(ts: T[], f: (t: T) => U[]): U[] {
   return ts.reduce((acc, t) => acc.concat(f(t)), []);
 }
 
+export function distinctStringArray(ts: string[]): string[] {
+  return [...new Set(ts)];
+}
+
 export function distinctObjectArray<T, K>(ts: T[], key: (t: T) => K): T[] {
   const helperMap: Map<K, T> = new Map<K, T>();
 

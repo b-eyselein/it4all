@@ -49,10 +49,8 @@ export abstract class Matcher<T> {
 
 }
 
-export const StringMatcher: Matcher<string> = new (
-  class StringMatcherClass extends Matcher<string> {
-    canMatch(first: string, second: string): boolean {
-      return first === second;
-    }
+export const StringMatcher: Matcher<string> = new class StringMatcherClass extends Matcher<string> {
+  canMatch(first: string, second: string): boolean {
+    return first === second;
   }
-)();
+}();

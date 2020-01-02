@@ -17,7 +17,13 @@
 
   <h2 class="subtitle is-3 has-text-centered">Gewählte Klassen</h2>
   <div class="buttons">
-    <button class="button is-static" *ngFor="let selectedClass of selectedClasses">{{selectedClass}}</button>
+    <ng-container *ngFor="let selectableClass of selectableClasses">
+      <button class="button is-static is-outlined" *ngIf="selectableClass.selected"
+              [ngClass]="{
+              'is-success': corrected && selectableClass.isCorrect, 'is-danger': corrected && !selectableClass.isCorrect
+              }"
+      >{{selectableClass.name}}</button>
+    </ng-container>
   </div>
 
 </div>

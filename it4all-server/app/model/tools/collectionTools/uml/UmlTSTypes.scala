@@ -31,6 +31,7 @@ trait UmlTSTypes extends ToolTSInterfaceTypes {
 
   val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
     implicit val usst: TSIType[SampleSolution[UmlClassDiagram]] = sampleSolutionTSI[UmlClassDiagram](umlClassDiagramTSI)
+    implicit val mt  : TSType[Map[String, String]]              = stringMapTsType
 
     TSType.fromCaseClass[UmlExerciseContent]
   }
