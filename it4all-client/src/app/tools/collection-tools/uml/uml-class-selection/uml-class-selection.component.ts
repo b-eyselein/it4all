@@ -14,6 +14,8 @@ export class UmlClassSelectionComponent implements OnInit {
   @Input() exercise: IExercise;
   @Input() exerciseContent: IUmlExerciseContent;
 
+  allSelectableClassBaseForms: string[];
+
   classSelectionText: UmlClassSelectionTextPart[];
 
   selectedClasses: string[] = [];
@@ -24,7 +26,7 @@ export class UmlClassSelectionComponent implements OnInit {
       .split(this.capWordTextSplitRegex)
       .filter((s) => s.length > 0);
 
-    const allSelectableClassBaseForms: string[] = [
+    this.allSelectableClassBaseForms = [
       ...new Set(
         splitText
           .filter((s) => s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s))
@@ -32,7 +34,7 @@ export class UmlClassSelectionComponent implements OnInit {
       )
     ];
 
-    console.info(allSelectableClassBaseForms);
+    console.info(this.allSelectableClassBaseForms.join(' - '));
 
     return splitText.map((s) => {
       if (s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s)) {
