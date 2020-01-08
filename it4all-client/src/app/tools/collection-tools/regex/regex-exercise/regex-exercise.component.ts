@@ -32,7 +32,7 @@ export class RegexExerciseComponent implements OnInit {
   ngOnInit(): void {
     this.exerciseContent = this.exercise.content as IRegexExerciseContent;
 
-    this.dexieService.solutions.get([this.tool.id, this.exercise.collectionId, this.exercise.id, this.part.id])
+    this.dexieService.getSolution<string>(this.exercise, this.part.id)
       .then((oldSolution) => this.solution = oldSolution ? oldSolution.solution : '');
   }
 
@@ -43,9 +43,7 @@ export class RegexExerciseComponent implements OnInit {
     }
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.solutions.put({
-      toolId: this.tool.id, collId: this.exercise.collectionId, exId: this.exercise.id, partId: this.part.id, solution: this.solution
-    });
+    this.dexieService.upsertSolution(this.exercise, this.part.id, this.solution);
 
     this.apiService.correctSolution<string, RegexCorrectionResult>(this.exercise, 'regex', this.solution)
       .subscribe((result: RegexCorrectionResult) => {

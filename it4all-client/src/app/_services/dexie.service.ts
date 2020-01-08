@@ -8,7 +8,7 @@ export class DexieService extends Dexie {
 
   collections: Dexie.Table<IExerciseCollection, [string, number]>;
   exercises: Dexie.Table<IExercise, [string, number, number]>;
-  solutions: Dexie.Table<DbSolution<any>, [string, number, number, string]>;
+  private solutions: Dexie.Table<DbSolution<any>, [string, number, number, string]>;
 
   constructor() {
     super('it4all-client');
@@ -65,5 +65,14 @@ export class DexieService extends Dexie {
     this.solutions = this.table('solutions');
   }
 
+  getSolution<T>(exercise: IExercise, partId: string): Dexie.Promise<DbSolution<T> | undefined> {
+    return this.solutions.get([exercise.toolId, exercise.collectionId, exercise.id, partId]);
+  }
+
+  upsertSolution<T>(exercise: IExercise, partId: string, solution: T): Dexie.Promise<[string, number, number, string]> {
+    return this.solutions.put({
+      exId: exercise.id, collId: exercise.collectionId, toolId: exercise.toolId, partId, solution
+    });
+  }
 
 }

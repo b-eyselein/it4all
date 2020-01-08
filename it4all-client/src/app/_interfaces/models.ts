@@ -30,7 +30,6 @@ export interface IUmlClass {
   methods: IUmlMethod[];
 }
 
-export type UmlVisibility = ('PUBLIC' | 'PACKAGE' | 'PROTECTED' | 'PRIVATE');
 
 export interface IUnitTestPart {
   unitTestType: UnitTestTypes;
@@ -204,6 +203,20 @@ export interface IProgExerciseContent {
 }
 
 
+export interface ISqlCell {
+  colName: string;
+  content: string;
+}
+
+export type UmlVisibility = ('PUBLIC' | 'PACKAGE' | 'PROTECTED' | 'PRIVATE');
+
+export interface ISqlQueryResult {
+  columnNames: string[];
+  rows: ISqlRow[];
+  tableName: string;
+}
+
+
 export interface IUmlExerciseContent {
   toIgnore: string[];
   mappings: KeyValueObjectMap;
@@ -238,6 +251,11 @@ export interface IProgTestData {
   id: number;
   input: any;
   output: any;
+}
+
+
+export interface ISqlRow {
+  cells: { [key: string]: ISqlCell };
 }
 
 

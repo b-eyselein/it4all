@@ -1,0 +1,48 @@
+<div class="container">
+  <h1 class="title is-3 has-text-centered">Administration Tool {{tool.name}}: Sammlungen</h1>
+
+  <div class="buttons">
+    <a href="" class="button is-primary is-fullwidth" routerLink="..">Zurück zur Administrationsstartseite</a>
+  </div>
+
+  <h2 class="subtitle is-3">Vorhandene Sammlungen</h2>
+
+  <ng-container *ngIf="collections && collections.length > 0; else noCollectionsBlock">
+    <div class="columns is-multiline">
+      <div class="column is-one-third-desktop" *ngFor="let collection of collections">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">{{collection.id}}. {{collection.title}}</p>
+          </header>
+          <div class="card-content">
+            <ng-container *ngIf="collection.exercises">
+              <div class="has-text-info"
+                   *ngIf="collection.exercises.length > 0">{{collection.exercises.length}} Aufgaben
+              </div>
+              <div class="has-text-warning" *ngIf="collection.exercises.length === 0">Keine Aufgaben!</div>
+            </ng-container>
+          </div>
+          <footer class="card-footer">
+            <a [routerLink]="['/admin', tool.id, 'collections', collection.id, 'editForm']" class="card-footer-item">
+              Sammlung editieren
+            </a>
+            <a [routerLink]="['/admin', tool.id, 'collections', collection.id, 'exercises']" class="card-footer-item">
+              Aufgabenadministration
+            </a>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #noCollectionsBlock>
+    <p class="notification is-danger has-text-centered">Es konnten keine Sammlungen gefunden werden.</p>
+  </ng-template>
+
+  <hr>
+
+  <div class="buttons">
+    <a class="button is-warning has-text-white is-fullwidth" routerLink="read">
+      Sammlungen einlesen
+    </a>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import javax.inject.Inject
 import model._
 import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
+import model.lesson.Lesson
 import model.tools.collectionTools._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
@@ -26,6 +27,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
   protected final val exercisesTQ    : TableQuery[ExercisesTable]           = TableQuery[ExercisesTable]
   protected final val reviewsTQ      : TableQuery[ExerciseReviewsTable]     = TableQuery[ExerciseReviewsTable]
   protected final val userSolutionsTQ: TableQuery[UserSolutionsTable]       = TableQuery[UserSolutionsTable]
+  protected final val lessonsTQ      : TableQuery[LessonsTable]             = TableQuery[LessonsTable]
 
   // Implicit column types
 
@@ -177,7 +179,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
   }
 
 
-  final class ExerciseReviewsTable(tag: Tag) extends Table[DbExerciseReview](tag, "exercise_reviews") {
+  protected class ExerciseReviewsTable(tag: Tag) extends Table[DbExerciseReview](tag, "exercise_reviews") {
 
     private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
     private implicit val epct: BaseColumnType[ExPart]          = exPartColumnType
@@ -213,6 +215,27 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
     def * : ProvenShape[DbExerciseReview] = (
       exerciseId, collectionId, toolId, exSemVer, exercisePart, username, difficulty, maybeDuration
     ) <> (DbExerciseReview.tupled, DbExerciseReview.unapply)
+
+  }
+
+  protected class LessonsTable(tag: Tag) extends Table[DbLesson](tag, "lessons") {
+
+    private implicit val jct: BaseColumnType[JsValue] = jsonValueColumnType
+
+
+    def id: Rep[Int] = column[Int]("id")
+
+    def toolId: Rep[String] = column("tool_id")
+
+    def title: Rep[String] = column[String]("title")
+
+    def contentJson: Rep[JsValue] = column[JsValue]("content_json")
+
+
+    def pk = primaryKey("lesson_pk", (id, toolId))
+
+
+    override def * : ProvenShape[DbLesson] = (id, toolId, title, contentJson) <> (DbLesson.tupled, DbLesson.unapply)
 
   }
 

@@ -5,12 +5,6 @@ import java.sql.{ResultSet, ResultSetMetaData}
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
-object SqlQueryResult {
-
-  def apply(resultSet: ResultSet, tableName: String = ""): SqlQueryResult = new SqlQueryResult(resultSet, tableName)
-
-}
-
 
 final case class SqlCell(colName: String, content: String) {
 
@@ -45,17 +39,21 @@ final case class SqlRow(cells: Map[String, SqlCell]) {
 
   def columnNames: Seq[String] = cells.keys.toSeq
 
-  def getCells(columnNames: Seq[String]): Seq[SqlCell] = columnNames flatMap cells.get
-
-  val size: Int = cells.size
-
-  def apply(colName: String): Option[SqlCell] = cells get colName
+  def apply(colName: String): Option[SqlCell] = cells.get(colName)
 
 }
 
-final case class SqlQueryResult(resultSet: ResultSet, tableName: String = "") extends Iterable[SqlRow] {
+object SqlQueryResult {
 
-  val (columnNames, rows): (Seq[String], Seq[SqlRow]) = SqlRow.buildFrom(resultSet)
+  def fromResultSet(resultSet: ResultSet, tableName: String = ""): SqlQueryResult = {
+    val (columnNames, rows): (Seq[String], Seq[SqlRow]) = SqlRow.buildFrom(resultSet)
+
+    SqlQueryResult(columnNames, rows, tableName)
+  }
+
+}
+
+final case class SqlQueryResult(columnNames: Seq[String], rows: Seq[SqlRow], tableName: String = "") extends Iterable[SqlRow] {
 
   override def iterator: Iterator[SqlRow] = rows.iterator
 
@@ -82,6 +80,5 @@ final case class SqlQueryResult(resultSet: ResultSet, tableName: String = "") ex
 
     correct
   }
-
 
 }

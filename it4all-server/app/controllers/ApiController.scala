@@ -3,7 +3,9 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model.ExerciseReview
 import model.core.ToolForms
+import model.lesson.Lesson
 import model.persistence.ExerciseTableDefs
+import model.tools.collectionTools.sql.{SelectDAO, SqlCell, SqlQueryResult, SqlRow, SqlToolMain}
 import model.tools.collectionTools.{Exercise, ExerciseCollection, ExerciseMetaData, ToolJsonProtocol}
 import play.api.data.Form
 import play.api.libs.json._
@@ -25,8 +27,17 @@ class ApiController @Inject()(
   override protected val adminRightsRequired: Boolean = false
 
   private implicit val collectionFormat      : Format[ExerciseCollection] = ToolJsonProtocol.collectionFormat
+  private implicit val lessonFormat          : Format[Lesson]             = ToolJsonProtocol.lessonFormat
   private implicit val exerciseMetaDataFormat: Format[ExerciseMetaData]   = ToolJsonProtocol.exerciseMetaDataFormat
   private implicit val exerciseFormat        : Format[Exercise]           = ToolJsonProtocol.exerciseFormat
+
+  // Collections
+
+  def apiCollectionCount(toolType: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async { implicit request =>
+    tables.futureCollectionCount(request.toolMain.urlPart).map { collectionCount =>
+      Ok(Json.toJson(collectionCount))
+    }
+  }
 
   def apiAllCollections(toolType: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async { implicit request =>
     tables.futureAllCollections(request.toolMain.urlPart).map { collections =>
@@ -40,6 +51,29 @@ class ApiController @Inject()(
       case Some(collection) => Ok(Json.toJson(collection))
     }
   }
+
+  // Lessons
+
+  def apiLessonCount(toolType: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async { implicit request =>
+    tables.futureLessonCount(request.toolMain.urlPart).map { lessonCount =>
+      Ok(Json.toJson(lessonCount))
+    }
+  }
+
+  def apiAllLessons(toolType: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async { implicit request =>
+    tables.futureAllLessons(request.toolMain.urlPart).map { lessons =>
+      Ok(Json.toJson(lessons))
+    }
+  }
+
+  def apiLesson(toolType: String, lessonId: Int): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async { implicit request =>
+    tables.futureLessonById(request.toolMain.urlPart, lessonId).map {
+      case None         => NotFound("No such lesson found!")
+      case Some(lesson) => Ok(Json.toJson(lesson))
+    }
+  }
+
+  // Exercises
 
   def apiExerciseMetaDataForTool(toolType: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async { implicit request =>
     tables.futureExerciseMetaDataForTool(request.toolMain.urlPart).map { exerciseMetaData =>
@@ -55,7 +89,7 @@ class ApiController @Inject()(
 
   def apiExercises(toolType: String, collId: Int): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async { implicit request =>
     // FIXME: send only id, title, ... ?
-    tables.futureExercisesInColl(request.toolMain, collId).map { exercises: Seq[Exercise] =>
+    tables.futureExercisesInColl(request.toolMain.urlPart, collId).map { exercises: Seq[Exercise] =>
       Ok(Json.toJson(exercises))
     }
   }
@@ -124,6 +158,24 @@ class ApiController @Inject()(
             }
             ToolForms.exerciseReviewForm.bindFromRequest()(request).fold(onFormError, onFormRead)
         }
+    }
+  }
+
+  // Special routes for tools
+
+  def sqlDbContent(collId: Int): Action[AnyContent] = JwtAuthenticatedAction.async { implicit request =>
+
+    implicit val sqlQueryResultWrites: Writes[SqlQueryResult] = {
+      implicit val sqlCellWrites: Writes[SqlCell] = Json.writes
+
+      implicit val sqlRowWrites: Writes[SqlRow] = Json.writes
+
+      Json.writes
+    }
+
+    tables.futureCollById(SqlToolMain.urlPart, collId).map {
+      case None             => ???
+      case Some(collection) => Ok(Json.toJson(SelectDAO.tableContents(collection.shortName)))
     }
   }
 

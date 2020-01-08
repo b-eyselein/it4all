@@ -5,8 +5,12 @@ import {AdminReadCollectionsComponent} from './admin-read-collections/admin-read
 import {AdminEditCollectionComponent} from './admin-edit-collection/admin-edit-collection.component';
 import {CollectionAdminComponent} from './collection-admin/collection-admin.component';
 import {AdminReadExercisesComponent} from './admin-read-exercises/admin-read-exercises.component';
-import {RouterModule, Routes} from '@angular/router';
+import {AdminCollectionsIndexComponent} from './admin-collections-index/admin-collections-index.component';
+import {AdminLessonsIndexComponent} from './admin-lessons-index/admin-lessons-index.component';
+
 import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {AdminReadLessonsComponent} from './admin-read-lessons/admin-read-lessons.component';
 
 const adminRoutes: Routes = [
   {
@@ -14,10 +18,16 @@ const adminRoutes: Routes = [
     children: [
       {path: 'index', component: AdminIndexComponent},
       {path: ':toolId', component: CollectionToolAdminComponent},
-      {path: ':toolId/readCollections', component: AdminReadCollectionsComponent},
+
+      {path: ':toolId/collections', component: AdminCollectionsIndexComponent},
+      {path: ':toolId/collections/read', component: AdminReadCollectionsComponent},
       {path: ':toolId/collections/:collId/editForm', component: AdminEditCollectionComponent},
+
       {path: ':toolId/collections/:collId/exercises', component: CollectionAdminComponent},
-      {path: ':toolId/collections/:collId/readExercises', component: AdminReadExercisesComponent},
+      {path: ':toolId/collections/:collId/exercises/read', component: AdminReadExercisesComponent},
+
+      {path: ':toolId/lessons', component: AdminLessonsIndexComponent},
+      {path: ':toolId/lessons/read', component: AdminReadLessonsComponent}
     ]
   }
 ];
@@ -31,8 +41,14 @@ export class AdminRoutingModule {
 
 export const adminRoutingComponents = [
   AdminIndexComponent,
+
   CollectionToolAdminComponent,
-  AdminReadCollectionsComponent, AdminEditCollectionComponent,
+
+  AdminCollectionsIndexComponent,
+  AdminReadCollectionsComponent,
+  AdminEditCollectionComponent,
   CollectionAdminComponent,
-  AdminReadExercisesComponent
+  AdminReadExercisesComponent,
+
+  AdminLessonsIndexComponent
 ];

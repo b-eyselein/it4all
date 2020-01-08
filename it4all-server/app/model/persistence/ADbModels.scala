@@ -2,7 +2,7 @@ package model.persistence
 
 import model.tools.collectionTools.{ExPart, SemanticVersion}
 import model.{Difficulty, ExerciseReview}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsArray, JsValue}
 
 
 final case class DbUserSolution(
@@ -16,6 +16,7 @@ final case class DbUserSolution(
   solution: JsValue
 )
 
+
 final case class DbExerciseReview(
   exerciseId: Int,
   collectionId: Int,
@@ -25,6 +26,14 @@ final case class DbExerciseReview(
   username: String,
   difficulty: Difficulty,
   maybeDuration: Option[Int]
+)
+
+
+final case class DbLesson(
+  id: Int,
+  toolId: String,
+  title: String,
+  contentJson: JsValue
 )
 
 

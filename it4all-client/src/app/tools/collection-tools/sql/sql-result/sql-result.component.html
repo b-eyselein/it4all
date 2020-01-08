@@ -7,17 +7,46 @@
 <br>
 
 <p>
-  <it4all-sql-matching-result [matchingResult]="result.results.columnComparisons"></it4all-sql-matching-result>
+  <it4all-sql-matching-result [matchingResult]="result.results.columnComparisons">
+  </it4all-sql-matching-result>
 </p>
 
-<p>
-  <it4all-sql-matching-result [matchingResult]="result.results.tableComparisons"></it4all-sql-matching-result>
-</p>
+<br>
 
 <p>
-  <it4all-sql-matching-result [matchingResult]="result.results.joinExpressionComparisons"></it4all-sql-matching-result>
+  <it4all-sql-matching-result [matchingResult]="result.results.tableComparisons">
+  </it4all-sql-matching-result>
 </p>
 
+<br>
+
 <p>
-  <it4all-sql-matching-result [matchingResult]="result.results.whereComparisons"></it4all-sql-matching-result>
+  <it4all-sql-matching-result [matchingResult]="result.results.joinExpressionComparisons">
+  </it4all-sql-matching-result>
 </p>
+
+<br>
+
+<p>
+  <it4all-sql-matching-result [matchingResult]="result.results.whereComparisons">
+  </it4all-sql-matching-result>
+</p>
+
+<br>
+
+<ng-container *ngFor="let additionalResult of result.results.additionalComparisons">
+  <p>
+    <it4all-sql-matching-result [matchingResult]="additionalResult"></it4all-sql-matching-result>
+  </p>
+
+  <br>
+</ng-container>
+
+<!-- TODO: check!
+<p>
+  <span [ngClass]="result.results.executionResults.success ? 'has-text-success' : 'has-text-danger'">
+  Der Vergleich der Ergebnistabellen war <ng-container
+    *ngIf="!result.results.executionResults.success">nicht</ng-container> erfolgreich.
+</span>
+</p>
+-->

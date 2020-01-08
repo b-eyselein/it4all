@@ -1,6 +1,7 @@
 package model.tools.collectionTools
 
 import model.core.result.{CompleteResult, EvaluationResult}
+import model.lesson.{Lesson, LessonContent, LessonQuestionsContent, LessonTextContent, Question, QuestionAnswer}
 import model.points.Points
 import play.api.libs.json._
 
@@ -10,6 +11,36 @@ object ToolJsonProtocol {
   val semanticVersionFormat: Format[SemanticVersion] = Json.format
 
   val collectionFormat: Format[ExerciseCollection] = Json.format
+
+  val lessonContentFormat: Format[LessonContent] = {
+
+    implicit val cfg: JsonConfiguration = JsonConfiguration(
+      typeNaming = JsonNaming { fullName =>
+        // FIXME: match complete string!?!
+        fullName.split("\\.").lastOption match {
+          case Some("LessonTextContent")     => "Text"
+          case Some("LessonQuestionsContent") => "Questions"
+          case _                             => fullName
+        }
+      }
+    )
+
+    implicit val ltcf: Format[LessonTextContent]      = Json.format
+    implicit val lqcf: Format[LessonQuestionsContent] = {
+      implicit val quf: Format[QuestionAnswer] = Json.format
+      implicit val qf : Format[Question]       = Json.format
+
+      Json.format
+    }
+
+    Json.format
+  }
+
+  val lessonFormat: Format[Lesson] = {
+    implicit val lcf: Format[LessonContent] = lessonContentFormat
+
+    Json.format
+  }
 
   val exTagFormat: Format[ExTag] = Json.format
 

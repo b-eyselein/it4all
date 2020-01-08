@@ -67,7 +67,7 @@ export class ProgrammingExerciseComponent extends ComponentWithExercise<Programm
     };
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.solutions.put(solution);
+    this.dexieService.upsertSolution<IProgSolution>(this.exercise, this.part.id, solution.solution);
 
     this.isCorrecting = true;
 

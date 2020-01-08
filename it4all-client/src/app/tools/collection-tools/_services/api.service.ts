@@ -2,7 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {IExercise, IExerciseCollection, IExerciseMetaData} from '../../../_interfaces/models';
+import {IExercise, IExerciseCollection, IExerciseMetaData, ISqlQueryResult} from '../../../_interfaces/models';
+import {Lesson} from '../../../_interfaces/lesson';
+
+type ILesson = Lesson;
+
 
 @Injectable()
 export class ApiService {
@@ -21,6 +25,13 @@ export class ApiService {
   private readonly baseUrl = '/api/tools';
 
   // Loading
+
+  getCollectionCount(toolId: string): Observable<number> {
+    const url = `${this.baseUrl}/${toolId}/collectionCount`;
+
+    return this.http.get<number>(url)
+      .pipe(catchError(() => of(0)));
+  }
 
   getCollections(toolId: string): Observable<IExerciseCollection[]> {
     const url = `${this.baseUrl}/${toolId}/collections`;
@@ -65,6 +76,27 @@ export class ApiService {
       .pipe(catchError(() => of(undefined)));
   }
 
+  getLessonCount(toolId: string): Observable<number> {
+    const url = `${this.baseUrl}/${toolId}/lessonCount`;
+
+    return this.http.get<number>(url)
+      .pipe(catchError(() => of(0)));
+  }
+
+  getLessons(toolId: string): Observable<ILesson[]> {
+    const url = `${this.baseUrl}/${toolId}/lessons`;
+
+    return this.http.get<ILesson[]>(url)
+      .pipe(catchError(() => of([])));
+  }
+
+  getLesson(toolId: string, lessonId: number): Observable<ILesson | undefined> {
+    const url = `${this.baseUrl}/${toolId}/lessons/${lessonId}`;
+
+    return this.http.get<ILesson | undefined>(url)
+      .pipe(catchError(() => of(undefined)));
+  }
+
   // Correction
 
   correctSolution<S, R>(exercise: IExercise, part: string, solution: S): Observable<R | undefined> {
@@ -83,6 +115,13 @@ export class ApiService {
       .pipe(catchError(() => of([])));
   }
 
+  adminReadLessons(toolId: string): Observable<ILesson[]> {
+    const url = `${this.adminBaseUrl}/${toolId}/readLessons`;
+
+    return this.http.get<ILesson[]>(url)
+      .pipe(catchError(() => of([])));
+  }
+
   adminReadExercises(toolId: string, collId: number): Observable<IExercise[]> {
     const url = `${this.adminBaseUrl}/${toolId}/collections/${collId}/readExercises`;
 
@@ -97,10 +136,27 @@ export class ApiService {
       .pipe(catchError(() => of(false)));
   }
 
-  adminUpsertExercise(toolId: string, collId: number, exercise: IExercise): Observable<boolean> {
-    const url = `${this.adminBaseUrl}/${toolId}/collections/${collId}/exercises/${exercise.id}`;
+  adminUpsertExercise(exercise: IExercise): Observable<boolean> {
+    const url = `${this.adminBaseUrl}/${exercise.toolId}/collections/${exercise.collectionId}/exercises/${exercise.id}`;
 
     return this.http.put<boolean>(url, exercise)
       .pipe(catchError(() => of(false)));
   }
+
+  adminUpsertLesson(lesson: ILesson): Observable<boolean> {
+    const url = `${this.adminBaseUrl}/${lesson.toolId}/lessons/${lesson.id}`;
+
+    return this.http.put<boolean>(url, lesson)
+      .pipe(catchError(() => of(false)));
+  }
+
+  // Special methods for certain tools
+
+  getSqlDbSchema(collId: number): Observable<ISqlQueryResult[]> {
+    const url = `${this.baseUrl}/sql/${collId}/dbContent`;
+
+    return this.http.get<ISqlQueryResult[]>(url)
+      .pipe(catchError(() => of([])));
+  }
+
 }

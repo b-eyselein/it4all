@@ -3,9 +3,7 @@
   <div class="columns">
     <div class="column is-half-desktop">
       <h1 class="title is-4 has-text-centered">Aufgabenstellung</h1>
-      <div class="notification">
-        {{exercise?.text}}
-      </div>
+      <div class="notification">{{exercise?.text}}</div>
 
       <h1 class="title is-4 has-text-centered">Anfrage</h1>
 
@@ -27,6 +25,40 @@
         </div>
       </div>
 
+      <br>
+
+      <div class="columns is-multiline">
+        <div class="column is-one-quarter-desktop" *ngFor="let dbContent of dbContents">
+          <button class="button is-info is-fullwidth"
+                  (click)="activateModal(dbContent)">{{dbContent.tableName}}</button>
+
+          <div class="modal" [ngClass]="dbContent.active ? 'is-active': ''">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">{{dbContent.tableName}}</p>
+                <button class="delete" aria-label="close" (click)="dbContent.active = false;"></button>
+              </header>
+              <section class="modal-card-body">
+                <table class="table is-bordered is-fullwidth">
+                  <thead>
+                    <tr>
+                      <th *ngFor="let colName of dbContent.columnNames">{{colName}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of dbContent.rows">
+                      <td *ngFor="let colName of dbContent.columnNames">{{row.cells[colName].content}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       <!-- <h2 class="subtitle is-4 has-text-centered">Datenbankschema...</h2> -->
     </div>
 
@@ -39,5 +71,9 @@
 
     </div>
   </div>
+
+  <ng-container *ngIf="result">
+    <it4all-sql-execution-result [result]="result.results.executionResults"></it4all-sql-execution-result>
+  </ng-container>
 
 </div>

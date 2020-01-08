@@ -12,6 +12,11 @@
       [exercise]="exercise">
     </it4all-regex-exercise>
 
+    <it4all-sql-exercise
+      *ngSwitchCase="'sql'"
+      [exercise]="exercise">
+    </it4all-sql-exercise>
+
     <it4all-uml-exercise
       *ngSwitchCase="'uml'"
       [exercise]="exercise"
@@ -23,6 +28,11 @@
       [exercise]="exercise"
       [part]="part">
     </it4all-web-exercise>
+
+    <it4all-xml-exercise
+      *ngSwitchCase="'xml'"
+      [exercise]="exercise">
+    </it4all-xml-exercise>
 
     <div *ngSwitchDefault>{{tool.id}}</div>
   </ng-container>

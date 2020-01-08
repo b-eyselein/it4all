@@ -2,9 +2,7 @@
   <h1 class="title is-3 has-text-centered">Administration Sammlung {{collection?.title}}</h1>
 
   <div class="buttons" *ngIf="collection">
-    <a class="button is-primary is-fullwidth" [routerLink]="['/admin', tool.id]">
-      Zurück zur Tool-Administration
-    </a>
+    <a class="button is-primary is-fullwidth" routerLink="../..">Zurück zur Tool-Administration</a>
   </div>
 
   <h2 class="subtitle is-3">Vorhandene Aufgaben</h2>
@@ -23,10 +21,7 @@
   <br>
 
   <div class="buttons" *ngIf="collection">
-    <a class="button is-warning has-text-white is-fullwidth"
-       [routerLink]="['/admin',tool.id, 'collections', collection.id, 'readExercises']">
-      Aufgaben einlesen
-    </a>
+    <a class="button is-warning has-text-white is-fullwidth" routerLink="read">Aufgaben einlesen</a>
   </div>
 
 </div>

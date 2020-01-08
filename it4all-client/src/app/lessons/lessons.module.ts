@@ -2,20 +2,20 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {lessonsRoutingComponents, LessonsRoutingModule} from './lessons.routing';
 import {LessonTextContentComponent} from './lesson-text-content/lesson-text-content.component';
-import {LessonApiService} from './_services/lesson-api.service';
+import {LessonQuestionsContentComponent} from './_content-types/lesson-questions/lesson-questions-content.component';
 
 
 @NgModule({
   declarations: [
-    LessonTextContentComponent,
+    ...lessonsRoutingComponents,
 
-    ...lessonsRoutingComponents
+    LessonTextContentComponent,
+    LessonQuestionsContentComponent
   ],
   imports: [
     CommonModule,
     LessonsRoutingModule
   ],
-  providers: [LessonApiService],
   exports: [
     LessonTextContentComponent
   ]

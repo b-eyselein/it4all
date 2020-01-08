@@ -16,12 +16,19 @@ object TsInterfaceGenerator extends DefaultTSTypes {
 
     MyTSInterfaceTypes.exerciseTSI.get,
 
+    /*
+    MyTSInterfaceTypes.lessonTextContentTSI.get,
+    MyTSInterfaceTypes.lessonQuestionsContentTSI.get,
+    MyTSInterfaceTypes.lessonTSI.get,
+     */
+
     MyTSInterfaceTypes.progExerciseContentTSI.get,
     MyTSInterfaceTypes.progSolutionTSI.get,
 
     MyTSInterfaceTypes.regexExerciseContentTSI.get,
 
     MyTSInterfaceTypes.sqlExerciseContentTSI.get,
+    MyTSInterfaceTypes.sqlQueryResultTSI.get,
 
     MyTSInterfaceTypes.umlExerciseContentTSI.get,
     MyTSInterfaceTypes.umlClassDiagramTSI.get,

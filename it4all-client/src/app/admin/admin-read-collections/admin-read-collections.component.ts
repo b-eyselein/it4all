@@ -1,16 +1,20 @@
 import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
-import {ReadCollectionComponent} from './read-collection/read-collection.component';
 import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {IExerciseCollection} from '../../_interfaces/models';
+import {Saveable} from '../../_interfaces/saveable';
+import {ReadObjectComponent} from '../_components/read-object/read-object.component';
+
+interface SaveableExerciseCollection extends IExerciseCollection, Saveable {
+}
 
 @Component({templateUrl: './admin-read-collections.component.html'})
 export class AdminReadCollectionsComponent extends ComponentWithCollectionTool implements OnInit {
 
-  loadedCollections: IExerciseCollection[];
+  loadedCollections: SaveableExerciseCollection[];
 
-  @ViewChildren(ReadCollectionComponent) readCollectionComponents: QueryList<ReadCollectionComponent>;
+  @ViewChildren(ReadObjectComponent) readCollectionComponents: QueryList<ReadObjectComponent<SaveableExerciseCollection>>;
 
   constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {
     super(route);
@@ -25,8 +29,13 @@ export class AdminReadCollectionsComponent extends ComponentWithCollectionTool i
       .subscribe((loadedCollections) => this.loadedCollections = loadedCollections);
   }
 
+  save(collection: SaveableExerciseCollection): void {
+    this.apiService.adminUpsertCollection(collection)
+      .subscribe((wasUpserted) => collection.saved = wasUpserted);
+  }
+
   saveAll(): void {
-    this.readCollectionComponents.forEach((readCollectionComponent) => readCollectionComponent.saveCollection());
+    this.readCollectionComponents.forEach((readCollectionComponent) => readCollectionComponent.save.emit());
   }
 
 }

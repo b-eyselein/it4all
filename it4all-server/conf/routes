@@ -31,6 +31,7 @@ GET         /api/claimWebToken/:uuidStr                                         
 
 # API
 
+GET         /api/tools/:toolType/collectionCount                                     controllers.ApiController.apiCollectionCount(toolType: String)
 GET         /api/tools/:toolType/collections                                         controllers.ApiController.apiAllCollections(toolType: String)
 GET         /api/tools/:toolType/collections/:collId                                 controllers.ApiController.apiCollection(toolType: String, collId: Int)
 
@@ -40,18 +41,24 @@ GET         /api/tools/:toolType/collections/:collId/exerciseMetaData           
 GET         /api/tools/:toolType/collections/:collId/exercises                       controllers.ApiController.apiExercises(toolType: String, collId: Int)
 GET         /api/tools/:toolType/collections/:collId/exercises/:exId                 controllers.ApiController.apiExercise(toolType: String, collId: Int, exId: Int)
 
+GET         /api/tools/:toolType/lessonCount                                         controllers.ApiController.apiLessonCount(toolType: String)
+GET         /api/tools/:toolType/lessons                                             controllers.ApiController.apiAllLessons(toolType: String)
+GET         /api/tools/:toolType/lessons/:lessonId                                   controllers.ApiController.apiLesson(toolType: String, lessonId: Int)
+
 PUT         /api/tools/:toolType/collections/:collId/exercises/:exId/:partStr        controllers.ApiController.apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String)
 
 # Admin API
 
 GET         /api/admin/tools/:toolId/readCollections                                 controllers.ApiAdminController.readCollections(toolId: String)
-GET         /api/admin/tools/:toolId/collections/:collId/readExercises               controllers.ApiAdminController.readExercises(toolId: String,collId: Int)
+GET         /api/admin/tools/:toolId/collections/:collId/readExercises               controllers.ApiAdminController.readExercises(toolId: String, collId: Int)
+GET         /api/admin/tools/:toolId/readLessons                                     controllers.ApiAdminController.readLessons(toolId: String)
 
 PUT         /api/admin/tools/:toolId/collections/:collId                             controllers.ApiAdminController.upsertCollection(toolId: String, collId: Int)
-
 PUT         /api/admin/tools/:toolId/collections/:collId/exercises/:exId             controllers.ApiAdminController.upsertExercise(toolId: String, collId: Int, exId: Int)
+PUT         /api/admin/tools/:toolId/lessons/:lessonId                               controllers.ApiAdminController.upsertLesson(toolId: String, lessonId: Int)
 
 # Other routes
+GET         /api/tools/sql/:collId/dbContent                                         controllers.ApiController.sqlDbContent(collId: Int)
 #GET           /uml/classDiagram/:id/:part/cd.js                                        controllers.coll.CollectionController.umlClassDiag(collId: Int, id: Int, part: String)
 #GET           /programming/classDiagram/:collId/:id/cd.js                              controllers.coll.CollectionController.progClassDiagram(collId: Int, id: Int)
 #GET           /web/solution/:collId/:id/:part/:fileName                                controllers.coll.CollectionController.webSolution(collId: Int, id: Int, part: String, fileName: String)

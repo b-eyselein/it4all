@@ -33,12 +33,8 @@ export class WebExerciseComponent extends ComponentWithExercise<IWebCompleteResu
     this.exerciseContent = this.exercise.content as IWebExerciseContent;
     this.exerciseFiles = this.exerciseContent.files;
 
-    this.dexieService.solutions.get([this.exercise.toolId, this.exercise.collectionId, this.exercise.id, this.part.id])
-      .then((oldSolution: DbSolution<IExerciseFile[]> | undefined) => {
-        if (oldSolution) {
-          this.exerciseFiles = oldSolution.solution;
-        }
-      });
+    this.dexieService.getSolution<IExerciseFile[]>(this.exercise, this.part.id)
+      .then((oldSolution: DbSolution<IExerciseFile[]> | undefined) => this.exerciseFiles = oldSolution ? oldSolution.solution : []);
   }
 
   correct(): void {
@@ -47,9 +43,7 @@ export class WebExerciseComponent extends ComponentWithExercise<IWebCompleteResu
     this.isCorrecting = true;
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.solutions.put({
-      toolId: this.exercise.toolId, collId: this.exercise.collectionId, exId: this.exercise.id, solution, partId: this.part.id
-    });
+    this.dexieService.upsertSolution<IExerciseFile[]>(this.exercise, this.part.id, solution);
 
     this.apiService.correctSolution<IExerciseFile[], IWebCompleteResult>(this.exercise, this.part.id, solution)
       .subscribe((result: IWebCompleteResult | undefined) => {

@@ -25,6 +25,8 @@ import {UmlExerciseComponent} from './uml/uml-exercise/uml-exercise.component';
 import {WebExerciseComponent} from './web/web-exercise/web-exercise.component';
 import { UmlClassSelectionComponent } from './uml/uml-class-selection/uml-class-selection.component';
 import { AllExercisesOverviewComponent } from './all-exercises-overview/all-exercises-overview.component';
+import { XmlExerciseComponent } from './xml/xml-exercise/xml-exercise.component';
+import { SqlExecutionResultComponent } from './sql/sql-execution-result/sql-execution-result.component';
 
 
 @NgModule({
@@ -52,7 +54,11 @@ import { AllExercisesOverviewComponent } from './all-exercises-overview/all-exer
 
     UmlClassSelectionComponent,
 
-    AllExercisesOverviewComponent
+    AllExercisesOverviewComponent,
+
+    XmlExerciseComponent,
+
+    SqlExecutionResultComponent
   ],
   providers: [ApiService],
   imports: [

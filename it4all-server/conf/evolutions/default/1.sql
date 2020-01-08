@@ -152,7 +152,19 @@ create table if not exists exercise_reviews (
         on update cascade on delete cascade
 );
 
+create table if not exists lessons (
+    id           int,
+    tool_id      varchar(20),
+    title        varchar(200) not null,
+    content_json longtext     not null, # TODO: json!
+
+    primary key (id, tool_id)
+);
+
 # --- !Downs
+
+drop table if exists lessons;
+
 
 drop table if exists exercise_reviews;
 

@@ -1,28 +1,28 @@
 import {AnalysisResult, CorrectionResult, MatchingResult} from '../../basics';
 import {SuccessType} from '../../../_interfaces/tool';
 
-interface ExecutionResultsObject {
+export interface ExecutionResultsObject {
   success: SuccessType;
   userResult: ExecutionTable | null;
   sampleResult: ExecutionTable | null;
 }
 
-interface ExecTableCell {
+export interface ExecTableCell {
   content: string;
   different: boolean;
 }
 
-interface ExecTableRow {
+export interface ExecTableRow {
   [name: string]: ExecTableCell;
 }
 
-interface ExecutionTable {
+export interface ExecutionTable {
   colNames: string[];
   content: ExecTableRow[];
 }
 
 
-interface SqlCorrectionResult {
+export interface SqlCorrectionResult {
   message: string;
 
   columnComparisons: MatchingResult<string, AnalysisResult>;

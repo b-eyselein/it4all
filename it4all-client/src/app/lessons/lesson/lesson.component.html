@@ -1,27 +1,38 @@
 <div class="container">
 
-  <h1 class="title is-3 has-text-centered">Lektion: {{lesson.title}}</h1>
+  <ng-container *ngIf="lesson">
 
-  <ng-container *ngFor="let content of lesson.content; let last = last">
+    <h1 class="title is-3 has-text-centered">Lektion: {{lesson.title}}</h1>
 
-    <ng-container *ngIf="content.priorSolved">
+    <ng-container *ngFor="let content of contents">
 
-      <ng-container [ngSwitch]="content._type">
-        <it4all-lesson-text-content *ngSwitchCase="'Text'" [content]="content"></it4all-lesson-text-content>
+      <ng-container *ngIf="content.priorSolved">
 
-        <div *ngSwitchDefault class="notification is-danger">{{content | json}}</div>
+        <ng-container [ngSwitch]="content._type">
+          <it4all-lesson-text-content
+            *ngSwitchCase="'Text'"
+            [content]="content">
+
+          </it4all-lesson-text-content>
+
+          <it4all-lesson-questions-content
+            *ngSwitchCase="'Questions'"
+            [content]="content">
+          </it4all-lesson-questions-content>
+
+          <div *ngSwitchDefault class="notification is-danger">{{content | json}}</div>
+        </ng-container>
+
+        <br>
+
       </ng-container>
-
-      <br *ngIf="!last">
 
     </ng-container>
 
+    <div class="buttons">
+      <button class="button is-link is-fullwidth" (click)="update()">Nächster Inhalt</button>
+    </div>
+
   </ng-container>
-
-  <hr>
-
-  <div class="buttons">
-    <button class="button is-link is-fullwidth" (click)="update()">Nächster Inhalt</button>
-  </div>
 
 </div>

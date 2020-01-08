@@ -1,9 +1,10 @@
 package model.persistence
 
 import model._
+import model.lesson.{Lesson, LessonContent}
 import model.tools.collectionTools._
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Reads, Writes}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
@@ -36,13 +37,25 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     )
   } yield maybeCurrentHighestId.fold(0)(_ + 1)
 
+  private def lessonFromDbLesson(dbLesson: DbLesson): Lesson = {
+    val lessonContentSeqReads = Reads.seq(ToolJsonProtocol.lessonContentFormat)
+
+    dbLesson match {
+      case DbLesson(id, toolId, title, contentJson) =>
+        lessonContentSeqReads.reads(contentJson)
+          .map(content => Lesson(id, toolId, title, content))
+          .getOrElse(???)
+    }
+  }
 
   // Reading
 
+  def futureCollectionCount(toolId: String): Future[Int] = db.run(
+    collectionsTQ.filter(_.toolId === toolId).size.result
+  )
+
   def futureAllCollections(toolId: String): Future[Seq[ExerciseCollection]] = db.run(
-    collectionsTQ
-      .filter { coll => coll.toolId === toolId }
-      .result
+    collectionsTQ.filter(_.toolId === toolId).result
   )
 
   def futureCollById(toolId: String, collId: Int): Future[Option[ExerciseCollection]] = db.run(
@@ -51,6 +64,21 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .result
       .headOption
   )
+
+  def futureLessonCount(toolId: String): Future[Int] = db.run(
+    lessonsTQ.filter(_.toolId === toolId).size.result
+  )
+
+  def futureAllLessons(toolId: String): Future[Seq[Lesson]] =
+    db.run(lessonsTQ.filter(_.toolId === toolId).result)
+      .map { dbLessons: Seq[DbLesson] => dbLessons.map(lessonFromDbLesson) }
+
+  def futureLessonById(toolId: String, lessonId: Int): Future[Option[Lesson]] = db.run(
+    lessonsTQ
+      .filter(l => l.toolId === toolId && l.id === lessonId)
+      .result
+      .headOption
+  ).map(maybeDbLesson => maybeDbLesson.map(lessonFromDbLesson))
 
   def futureExerciseMetaDataForTool(toolId: String): Future[Seq[ExerciseMetaData]] = db.run(
     exercisesTQ
@@ -66,9 +94,9 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .map { exes => exes.map(ExerciseMetaData.forExercise) }
   )
 
-  def futureExercisesInColl(toolMain: CollectionToolMain, collId: Int): Future[Seq[Exercise]] = db.run(
+  def futureExercisesInColl(toolId: String, collId: Int): Future[Seq[Exercise]] = db.run(
     exercisesTQ
-      .filter { ex => ex.toolId === toolMain.urlPart && ex.collectionId === collId }
+      .filter { ex => ex.toolId === toolId && ex.collectionId === collId }
       .result
   )
 
@@ -91,6 +119,14 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
 
   def futureUpsertExercise(exercise: Exercise): Future[Boolean] =
     db.run(exercisesTQ.insertOrUpdate(exercise)).transform(_ == 1, identity)
+
+  def futureUpsertLesson(lesson: Lesson): Future[Boolean] = {
+    val lessonContentWrites: Writes[Seq[LessonContent]] = Writes.seq(ToolJsonProtocol.lessonContentFormat)
+
+    val dbLesson = DbLesson(lesson.id, lesson.toolId, lesson.title, lessonContentWrites.writes(lesson.content))
+
+    db.run(lessonsTQ.insertOrUpdate(dbLesson)).transform(_ == 1, identity)
+  }
 
   def futureInsertSolution(user: User, exercise: Exercise, part: ExPart, solution: JsValue): Future[Boolean] = for {
     nextSolutionId <- futureNextUserSolutionId(exercise, user, part)

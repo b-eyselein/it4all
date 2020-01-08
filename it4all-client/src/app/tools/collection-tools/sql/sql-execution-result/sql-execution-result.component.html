@@ -1,0 +1,43 @@
+<h3 class="subtitle is-4 has-text-centered">Vergleich der Ergebnistabellen</h3>
+
+<div class="columns">
+
+  <div class="column">
+    <h4 class="subtitle is-4 has-text-centered">Nutzer</h4>
+    <div class="table-container">
+      <table class="table is-bordered is-fullwidth">
+        <thead>
+          <tr>
+            <th *ngFor="let colName of result.userResult.colNames">{{colName}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of result.userResult.content">
+            <td *ngFor="let colName of result.userResult.colNames"
+                [ngClass]="row[colName].different ? 'is-light-danger' : ''">{{row[colName].content}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="column">
+    <h4 class="subtitle is-4 has-text-centered">Muster</h4>
+    <div class="table-container">
+      <table class="table is-bordered is-fullwidth">
+        <thead>
+          <tr>
+            <th *ngFor="let colName of result.sampleResult.colNames">{{colName}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of result.sampleResult.content">
+            <td *ngFor="let colName of result.sampleResult.colNames">{{row[colName].content}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+

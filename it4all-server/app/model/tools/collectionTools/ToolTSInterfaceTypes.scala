@@ -1,8 +1,9 @@
 package model.tools.collectionTools
 
 import model.core.result.SuccessType
+import model.lesson.{Lesson, LessonContent, LessonQuestionsContent, LessonTextContent, Question, QuestionAnswer}
 import nl.codestar.scalatsi.TypescriptType._
-import nl.codestar.scalatsi.{DefaultTSTypes, TSIType, TSType}
+import nl.codestar.scalatsi.{DefaultTSTypes, TSIType, TSNamedType, TSType}
 import play.api.libs.json.JsValue
 
 
@@ -38,16 +39,33 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
 
   // Collections, Exercises and ExerciseContents
 
+  val lessonTextContentTSI: TSIType[LessonTextContent] = TSType.fromCaseClass
+  implicit val lessonQuestionsContentTSI: TSIType[LessonQuestionsContent] = {
+    implicit val questionAnswerTSI: TSIType[QuestionAnswer] = TSType.fromCaseClass
+    implicit val questionTSI      : TSIType[Question]       = TSType.fromCaseClass
+
+    TSType.fromCaseClass
+  }
+
+  val lessonTSI: TSIType[Lesson] = {
+    implicit val lessonContent: TSNamedType[LessonContent] = TSType.fromSealed
+
+    TSType.fromCaseClass[Lesson]
+  }
+
+  private val semanticVersionTSI: TSIType[SemanticVersion] = TSType.fromCaseClass
+  private val exTagTSI          : TSIType[ExTag]           = TSType.fromCaseClass
+
   val exerciseMetaDataTSI: TSIType[ExerciseMetaData] = {
-    implicit val svt: TSIType[SemanticVersion] = TSType.fromCaseClass[SemanticVersion]
-    implicit val ett: TSIType[ExTag]           = TSType.fromCaseClass[ExTag]
+    implicit val svt: TSIType[SemanticVersion] = semanticVersionTSI
+    implicit val ett: TSIType[ExTag]           = exTagTSI
 
     TSType.fromCaseClass
   }
 
   val exerciseTSI: TSIType[Exercise] = {
-    implicit val svt : TSIType[SemanticVersion] = TSType.fromCaseClass[SemanticVersion]
-    implicit val ett : TSIType[ExTag]           = TSType.fromCaseClass[ExTag]
+    implicit val svt : TSIType[SemanticVersion] = semanticVersionTSI
+    implicit val ett : TSIType[ExTag]           = exTagTSI
     implicit val jvtt: TSType[JsValue]          = jsValueTsType
 
     TSType.fromCaseClass[Exercise]

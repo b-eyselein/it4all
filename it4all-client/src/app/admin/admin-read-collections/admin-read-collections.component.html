@@ -2,7 +2,7 @@
   <h1 class="title is-3 has-text-centered">Sammlungen für Tool {{tool.name}} einlesen</h1>
 
   <div class="buttons">
-    <a class="button is-primary is-fullwidth" [routerLink]="['/admin', tool.id]">Zurück zur Tooladministration</a>
+    <a class="button is-primary is-fullwidth" routerLink="..">Zurück zur Tooladministration</a>
     <button class="button is-link is-fullwidth" (click)="saveAll()">Alle Sammlungen speichern</button>
   </div>
 
@@ -10,7 +10,7 @@
 
   <div class="columns is-multiline">
     <div class="column is-half-desktop" *ngFor="let collection of loadedCollections">
-      <it4all-read-collection [collection]="collection"></it4all-read-collection>
+      <it4all-read-object [loaded]="collection" name="Die Sammlung" (save)="save(collection)"></it4all-read-object>
     </div>
   </div>
 </div>

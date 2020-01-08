@@ -2,17 +2,21 @@ import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {DexieService} from '../../_services/dexie.service';
-import {ReadExerciseComponent} from './read-exercise/read-exercise.component';
 import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {IExercise, IExerciseCollection} from '../../_interfaces/models';
+import {Saveable} from '../../_interfaces/saveable';
+import {ReadObjectComponent} from '../_components/read-object/read-object.component';
+
+interface LoadedExercise extends IExercise, Saveable {
+}
 
 @Component({templateUrl: './admin-read-exercises.component.html'})
 export class AdminReadExercisesComponent extends ComponentWithCollectionTool implements OnInit {
 
   collection: IExerciseCollection;
-  exercises: IExercise[];
+  exercises: LoadedExercise[];
 
-  @ViewChildren(ReadExerciseComponent) readExercises: QueryList<ReadExerciseComponent>;
+  @ViewChildren(ReadObjectComponent) readExercises: QueryList<ReadObjectComponent<LoadedExercise>>;
 
   constructor(private route: ActivatedRoute, private router: Router, private dexieService: DexieService, private apiService: ApiService) {
     super(route);
@@ -53,8 +57,13 @@ export class AdminReadExercisesComponent extends ComponentWithCollectionTool imp
       });
   }
 
+  save(exercise: LoadedExercise): void {
+    this.apiService.adminUpsertExercise(exercise)
+      .subscribe((saved) => exercise.saved = saved);
+  }
+
   saveAll(): void {
-    this.readExercises.forEach((readExerciseComponent) => readExerciseComponent.saveExercise());
+    this.readExercises.forEach((readExerciseComponent) => readExerciseComponent.save.emit());
   }
 
 }
