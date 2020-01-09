@@ -3,26 +3,35 @@
 
   <div class="notification is-light-grey has-text-black">
     <ng-container *ngFor="let textPart of classSelectionText">
-        <span *ngIf="textPart.isSelectable" (click)="selectClass(textPart)"
-              [class.has-text-link]="classIsSelected(textPart)">{{textPart.text}}</span>
-      <ng-container *ngIf="!textPart.isSelectable">{{textPart.text}}</ng-container>
+      <span *ngIf="textPart.selectableClass"
+            (click)="textPart.selectableClass.selected = !textPart.selectableClass.selected"
+            [class.has-text-link]="textPart.selectableClass.selected">
+        {{textPart.text}}</span>
+
+      <span *ngIf="!textPart.selectableClass">{{textPart.text}}</span>
     </ng-container>
   </div>
 
-  <div class="buttons">
-    <button class="button is-link is-fullwidth" (click)="correct()">Korrektur</button>
+  <div class="columns">
+    <div class="column">
+      <button class="button is-link is-fullwidth" (click)="correct()">Korrektur</button>
+    </div>
+    <div class="column">
+      <a class="button is-dark is-fullwidth" routerLink="../diagramDrawing">Zum nächsten Aufgabenteil</a>
+    </div>
   </div>
 
   <hr>
 
   <h2 class="subtitle is-3 has-text-centered">Gewählte Klassen</h2>
+
   <div class="buttons">
     <ng-container *ngFor="let selectableClass of selectableClasses">
-      <button class="button is-static is-outlined" *ngIf="selectableClass.selected"
-              [ngClass]="{
-              'is-success': corrected && selectableClass.isCorrect, 'is-danger': corrected && !selectableClass.isCorrect
-              }"
-      >{{selectableClass.name}}</button>
+      <button class="button is-outlined" *ngIf="selectableClass.selected"
+              [ngClass]="{'is-success': corrected && selectableClass.isCorrect, 'is-danger': corrected && !selectableClass.isCorrect}"
+              (click)="selectableClass.selected = false">
+        {{selectableClass.name}}
+      </button>
     </ng-container>
   </div>
 

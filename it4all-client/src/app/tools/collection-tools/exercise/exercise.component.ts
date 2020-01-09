@@ -1,21 +1,23 @@
 import {Component, OnInit} from '@angular/core';
-import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../_services/api.service';
 import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
-import {ToolPart} from '../../../_interfaces/tool';
+import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
+import {collectionTools} from '../collection-tools-list';
 
 @Component({templateUrl: './exercise.component.html'})
-export class ExerciseComponent extends ComponentWithCollectionTool implements OnInit {
+export class ExerciseComponent implements OnInit {
 
+  tool: CollectionTool;
   collection: IExerciseCollection;
   exercise: IExercise;
   part: ToolPart;
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService) {
-    super(route);
-
-    this.part = this.tool.parts.find((p) => p.id === this.route.snapshot.paramMap.get('partId'));
+    this.route.paramMap.subscribe((paramMap) => {
+      this.tool = collectionTools.find((t) => t.id === paramMap.get('toolId'));
+      this.part = this.tool.parts.find((p) => p.id === paramMap.get('partId'));
+    });
   }
 
   private updateExercise(): void {

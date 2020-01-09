@@ -23,42 +23,40 @@ import {ProgrammingExerciseComponent} from './programming/programming-exercise/p
 import {SqlExerciseComponent} from './sql/sql-exercise/sql-exercise.component';
 import {UmlExerciseComponent} from './uml/uml-exercise/uml-exercise.component';
 import {WebExerciseComponent} from './web/web-exercise/web-exercise.component';
-import { UmlClassSelectionComponent } from './uml/uml-class-selection/uml-class-selection.component';
-import { AllExercisesOverviewComponent } from './all-exercises-overview/all-exercises-overview.component';
-import { XmlExerciseComponent } from './xml/xml-exercise/xml-exercise.component';
-import { SqlExecutionResultComponent } from './sql/sql-execution-result/sql-execution-result.component';
+import {UmlClassSelectionComponent} from './uml/uml-class-selection/uml-class-selection.component';
+import {AllExercisesOverviewComponent} from './all-exercises-overview/all-exercises-overview.component';
+import {XmlExerciseComponent} from './xml/xml-exercise/xml-exercise.component';
+import {SqlExecutionResultComponent} from './sql/sql-execution-result/sql-execution-result.component';
+import { UmlDiagramDrawingComponent } from './uml/uml-diagram-drawing/uml-diagram-drawing.component';
 
 
 @NgModule({
   declarations: [
-    ExerciseFilesEditorComponent,
-    ExerciseFileCardComponent,
+    ...collectionToolRoutingComponents,
+
+    ExerciseFilesEditorComponent, ExerciseFileCardComponent,
+
     TagComponent,
+
+    AllExercisesOverviewComponent,
+    ExerciseOverviewComponent,
+
+    ExerciseComponent,
 
     RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent,
     RegexExtractionMatchComponent, RegexCheatsheetComponent,
 
     ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
 
-    SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent,
+    SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent,
 
-    UmlExerciseComponent,
+    UmlExerciseComponent, UmlClassSelectionComponent,
 
     WebExerciseComponent,
 
-    ...collectionToolRoutingComponents,
-
-    ExerciseOverviewComponent,
-
-    ExerciseComponent,
-
-    UmlClassSelectionComponent,
-
-    AllExercisesOverviewComponent,
-
     XmlExerciseComponent,
 
-    SqlExecutionResultComponent
+    UmlDiagramDrawingComponent
   ],
   providers: [ApiService],
   imports: [

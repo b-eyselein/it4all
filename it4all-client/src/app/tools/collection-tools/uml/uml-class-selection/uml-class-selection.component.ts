@@ -1,7 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise, ISampleSolution, IUmlClassDiagram, IUmlExerciseContent} from '../../../../_interfaces/models';
-import {UmlClassSelectionTextPart} from '../uml-interfaces';
-import {MatchResult, StringMatcher} from '../../../../matcher';
+import {IExercise, IUmlClassDiagram, IUmlExerciseContent} from '../../../../_interfaces/models';
 import {distinctStringArray} from '../../../../helpers';
 
 interface SelectableClass {
@@ -10,90 +8,73 @@ interface SelectableClass {
   isCorrect: boolean;
 }
 
+export interface UmlClassSelectionTextPart {
+  text: string;
+  selectableClass?: SelectableClass;
+}
+
+const capWordTextSplitRegex: RegExp = /([A-Z][\wäöü?&;]*)/g;
+
 @Component({
   selector: 'it4all-uml-class-selection',
   templateUrl: './uml-class-selection.component.html'
 })
 export class UmlClassSelectionComponent implements OnInit {
 
-  private readonly capWordTextSplitRegex: RegExp = /([A-Z][\wäöü?&;]*)/g;
 
   @Input() exercise: IExercise;
-  @Input() exerciseContent: IUmlExerciseContent;
+
+  exerciseContent: IUmlExerciseContent;
 
   selectableClasses: SelectableClass[];
-
   classSelectionText: UmlClassSelectionTextPart[];
-
-  selectedClasses: string[] = [];
 
   corrected = false;
 
-  private getMapping(str: string): string | undefined {
+  private replaceWithMapping(str: string): string {
     const maybeMapping = this.exerciseContent.mappings.find((m) => m.key === str);
-    return maybeMapping ? maybeMapping.value : undefined;
+    return maybeMapping ? maybeMapping.value : str;
+  }
+
+  private isSelectable(s: string): boolean {
+    return s.match(capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s);
   }
 
   private getClassSelectionText(): UmlClassSelectionTextPart[] {
     const splitText: string[] = this.exercise.text
       .replace('\n', ' ')
-      .split(this.capWordTextSplitRegex)
+      .split(capWordTextSplitRegex)
       .filter((s) => s.length > 0);
 
     const sampleSolution = this.exerciseContent.sampleSolutions[0].sample as IUmlClassDiagram;
 
-    this.selectableClasses = distinctStringArray(
-      splitText
-        .filter((s) => s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s))
-        .map((s) => this.getMapping(s) || s)
-    ).map((name) => {
+    this.selectableClasses = distinctStringArray(splitText.filter((s) => this.isSelectable(s))
+      .map((s) => this.replaceWithMapping(s))).map((name) => {
         const isCorrect = sampleSolution.classes.find((c) => c.name === name) !== undefined;
 
         return {name, selected: false, isCorrect};
       }
     );
 
-    return splitText.map((s) => {
-      if (s.match(this.capWordTextSplitRegex) && !this.exerciseContent.toIgnore.includes(s)) {
-        return {text: s, isSelectable: true, baseForm: this.getMapping(s)};
+    return splitText.map<UmlClassSelectionTextPart>((text) => {
+      if (this.isSelectable(text)) {
+        const selectableClass = this.selectableClasses.find((c) => c.name === this.replaceWithMapping(text));
+        return {text, selectableClass};
       } else {
-        return {text: s, isSelectable: false};
+        return {text};
       }
     });
   }
 
   ngOnInit() {
+    this.exerciseContent = this.exercise.content as IUmlExerciseContent;
     this.classSelectionText = this.getClassSelectionText();
   }
 
-  selectClass(clazz: UmlClassSelectionTextPart): void {
-    const className = clazz.baseForm || clazz.text;
-
-    const selectableClass = this.selectableClasses.find((sc) => sc.name === (clazz.baseForm || clazz.text));
-    selectableClass.selected = !selectableClass.selected;
-
-    if (this.selectedClasses.includes(className)) {
-      this.selectedClasses = this.selectedClasses.filter((cn) => cn !== className);
-    } else {
-      this.selectedClasses.push(className);
-      this.selectedClasses.sort();
-    }
-  }
-
-  classIsSelected(clazz: UmlClassSelectionTextPart): boolean {
-    return this.selectedClasses.includes(clazz.baseForm || clazz.text);
-  }
-
   correct(): void {
+    console.info('TODO: implement!');
+
     this.corrected = true;
-
-    const sampleSolution: ISampleSolution = this.exerciseContent.sampleSolutions[0];
-
-    const classesToSelect: string[] = (sampleSolution.sample as any).classes.map((c) => c.name);
-
-    const matchResult: MatchResult<string> = StringMatcher.match(this.selectedClasses, classesToSelect);
-
-    console.error(JSON.stringify(matchResult, null, 2));
   }
 
 }
