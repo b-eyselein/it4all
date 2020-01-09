@@ -5,6 +5,23 @@
     </div>
     <div class="column">
 
+      <div class="notification is-light-grey">
+        <ng-container *ngFor="let textPart of umlExerciseTextParts">
+          <span *ngIf="textPart.selectableClass"
+                (click)="addClassToGraph(textPart.selectableClass)"
+                [class.has-text-link]="textPart.selectableClass.selected">{{textPart.text}}</span>
+
+          <span *ngIf="!textPart.selectableClass">{{textPart.text}}</span>
+        </ng-container>
+      </div>
+
+      <div class="columns">
+        <div class="column" *ngFor="let x of creatableClassDiagramObjects">
+          <button class="button is-fullwidth" (click)="toggle(x)"
+                  [ngClass]="x.selected ? 'is-link': ''">{{x.name}}</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

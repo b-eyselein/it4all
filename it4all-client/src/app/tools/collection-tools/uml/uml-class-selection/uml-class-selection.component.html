@@ -1,12 +1,11 @@
 <div class="container">
   <h1 class="title is-3 has-text-centered">Klassenselektion</h1>
 
-  <div class="notification is-light-grey has-text-black">
-    <ng-container *ngFor="let textPart of classSelectionText">
+  <div class="notification is-light-grey">
+    <ng-container *ngFor="let textPart of umlExerciseTextParts">
       <span *ngIf="textPart.selectableClass"
-            (click)="textPart.selectableClass.selected = !textPart.selectableClass.selected"
-            [class.has-text-link]="textPart.selectableClass.selected">
-        {{textPart.text}}</span>
+            (click)="toggleClassSelected(textPart.selectableClass)"
+            [class.has-text-link]="textPart.selectableClass.selected">{{textPart.text}}</span>
 
       <span *ngIf="!textPart.selectableClass">{{textPart.text}}</span>
     </ng-container>
