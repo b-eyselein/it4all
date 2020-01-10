@@ -7,14 +7,6 @@ export interface IJsHtmlElementSpec {
 }
 
 
-export interface IRegexMatchTestData {
-  id: number;
-  data: string;
-  isIncluded: boolean;
-}
-
-export type SuccessType = ('ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE');
-
 export interface IImplementationPart {
   base: string;
   files: IExerciseFile[];
@@ -28,24 +20,6 @@ export interface IUmlClass {
   name: string;
   attributes: IUmlAttribute[];
   methods: IUmlMethod[];
-}
-
-
-export interface IUnitTestPart {
-  unitTestType: UnitTestTypes;
-  unitTestsDescription: string;
-  unitTestFiles: IExerciseFile[];
-  unitTestTestConfigs: IUnitTestTestConfig[];
-  simplifiedTestMainFile?: IExerciseFile;
-  testFileName: string;
-  sampleSolFileNames: string[];
-}
-
-
-export interface ISqlExerciseContent {
-  exerciseType: SqlExerciseType;
-  hint?: string;
-  sampleSolutions: ISampleSolution[];
 }
 
 
@@ -109,6 +83,7 @@ export interface IUmlMethod {
   isAbstract: boolean;
 }
 
+export type ElementLine = any;
 export type JsActionType = ('Click' | 'FillOut');
 
 export interface IExercise {
@@ -131,6 +106,19 @@ export interface IJsAction {
 }
 
 
+export interface IRegexMatchTestData {
+  id: number;
+  data: string;
+  isIncluded: boolean;
+}
+
+
+export interface IXmlSolution {
+  document: string;
+  grammar: string;
+}
+
+
 export interface IGradedHtmlTaskResult {
   id: number;
   success: SuccessType;
@@ -150,6 +138,12 @@ export interface IExTag {
 }
 
 
+export interface IElementLineMatch {
+  userArg?: ElementLine;
+  sampleArg?: ElementLine;
+}
+
+
 export interface ISiteSpec {
   fileName: string;
   htmlTasks: IHtmlTask[];
@@ -157,6 +151,13 @@ export interface ISiteSpec {
 }
 
 export type UmlMultiplicity = ('SINGLE' | 'UNBOUND');
+export type XmlErrorType = ('FATAL' | 'ERROR' | 'WARNING');
+export type SuccessType = ('ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE');
+
+export interface IXmlDocumentResult {
+  results: IXmlError[];
+}
+
 
 export interface IWebCompleteResult {
   gradedHtmlTaskResults: IGradedHtmlTaskResult[];
@@ -217,6 +218,23 @@ export interface ISqlQueryResult {
 }
 
 
+export interface IUnitTestPart {
+  unitTestType: UnitTestTypes;
+  unitTestsDescription: string;
+  unitTestFiles: IExerciseFile[];
+  unitTestTestConfigs: IUnitTestTestConfig[];
+  simplifiedTestMainFile?: IExerciseFile;
+  testFileName: string;
+  sampleSolFileNames: string[];
+}
+
+
+export interface IXmlGrammarResult {
+  parseErrors: IDTDParseException[];
+  results: IElementLineMatch[];
+}
+
+
 export interface IUmlExerciseContent {
   toIgnore: string[];
   mappings: KeyValueObjectMap;
@@ -238,6 +256,15 @@ export interface IJsTask {
   preConditions: IJsHtmlElementSpec[];
   action: IJsAction;
   postConditions: IJsHtmlElementSpec[];
+}
+
+
+export interface IXmlCompleteResult {
+  successType: SuccessType;
+  result: (IXmlDocumentResult | IXmlGrammarResult);
+  points: IPoints;
+  maxPoints: IPoints;
+  solutionSaved: boolean;
 }
 
 
@@ -310,6 +337,27 @@ export type UnitTestTypes = ('Simplified' | 'Normal');
 export interface IProgSolution {
   files: IExerciseFile[];
   testData: IProgTestData[];
+}
+
+
+export interface ISqlExerciseContent {
+  exerciseType: SqlExerciseType;
+  hint?: string;
+  sampleSolutions: ISampleSolution[];
+}
+
+
+export interface IDTDParseException {
+  msg: string;
+  parsedLine: string;
+}
+
+
+export interface IXmlError {
+  errorType: XmlErrorType;
+  errorMessage: string;
+  line: number;
+  success: SuccessType;
 }
 
 

@@ -36,7 +36,9 @@ object TsInterfaceGenerator extends DefaultTSTypes {
     MyTSInterfaceTypes.webExerciseContentTSI.get,
     MyTSInterfaceTypes.webCompleteResultTSI.get,
 
-    MyTSInterfaceTypes.xmlExerciseContentTSI.get
+    MyTSInterfaceTypes.xmlExerciseContentTSI.get,
+    MyTSInterfaceTypes.xmlSolutionTSI.get,
+    MyTSInterfaceTypes.xmlCompleteResultTSI.get
   )
 
   val options: OutputOptions = OutputOptions(

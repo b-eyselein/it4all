@@ -1,7 +1,7 @@
 package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
-import model.points._
+import model.points.Points
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
@@ -10,48 +10,46 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
   override val solutionFormat: Format[XmlSolution] = Json.format[XmlSolution]
 
   override val exerciseContentFormat: Format[XmlExerciseContent] = {
-    implicit val xssf: Format[SampleSolution[XmlSolution]] = {
-      implicit val xsf: Format[XmlSolution] = solutionFormat
+    implicit val xsf: Format[XmlSolution] = solutionFormat
 
-      Json.format[SampleSolution[XmlSolution]]
-    }
+    implicit val xssf: Format[SampleSolution[XmlSolution]] = Json.format
 
-    Json.format[XmlExerciseContent]
+    Json.format
   }
 
   // Results
 
-  val elementLineAnalysisResultWrites: Writes[ElementLineAnalysisResult] = Json.writes[ElementLineAnalysisResult]
+  val elementLineAnalysisResultWrites: Writes[ElementLineAnalysisResult] = Json.writes
 
   // Xml Grammar correction
 
-  private val xmlGrammarCompleteResultWrites: Writes[XmlGrammarCompleteResult] = {
-    implicit val dpew: Writes[DTDParseException] = Json.format[DTDParseException]
+  private val xmlGrammarResultWrites: Writes[XmlGrammarResult] = {
+    implicit val dpew: Writes[DTDParseException] = Json.writes
+    implicit val elmw: Writes[ElementLineMatch]  = _.toJson
 
-    implicit val elmw: Writes[ElementLineMatch] = _.toJson
-
-    implicit val pw: Writes[Points] = ToolJsonProtocol.pointsFormat
-
-    Json.writes[XmlGrammarCompleteResult]
+    Json.writes
   }
 
   // Xml Document correction
 
-  private val xmlDocumentCompleteResultWrites: Writes[XmlDocumentCompleteResult] = {
+  private val xmlDocumentResultWrites: Writes[XmlDocumentResult] = {
     implicit val etf: Format[XmlErrorType] = XmlErrorType.jsonFormat
+    implicit val xew: Writes[XmlError]     = Json.writes
 
-    implicit val xew: Writes[XmlError] = Json.writes[XmlError]
-
-    implicit val pw: Writes[Points] = ToolJsonProtocol.pointsFormat
-
-    Json.writes[XmlDocumentCompleteResult]
+    Json.writes
   }
 
   // Complete Result
 
   override val completeResultWrites: Writes[XmlCompleteResult] = {
-    case xmlGrammarCompleteResult: XmlGrammarCompleteResult   => xmlGrammarCompleteResultWrites.writes(xmlGrammarCompleteResult)
-    case xmlDocumentCompleteResult: XmlDocumentCompleteResult => xmlDocumentCompleteResultWrites.writes(xmlDocumentCompleteResult)
+    implicit val xw: Writes[Either[XmlDocumentResult, XmlGrammarResult]] = {
+      case Left(value)  => xmlDocumentResultWrites.writes(value)
+      case Right(value) => xmlGrammarResultWrites.writes(value)
+    }
+
+    implicit val pw: Writes[Points] = ToolJsonProtocol.pointsFormat
+
+    Json.writes
   }
 
 }

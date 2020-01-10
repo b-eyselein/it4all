@@ -18,9 +18,9 @@ object ToolJsonProtocol {
       typeNaming = JsonNaming { fullName =>
         // FIXME: match complete string!?!
         fullName.split("\\.").lastOption match {
-          case Some("LessonTextContent")     => "Text"
+          case Some("LessonTextContent")      => "Text"
           case Some("LessonQuestionsContent") => "Questions"
-          case _                             => fullName
+          case _                              => fullName
         }
       }
     )
@@ -69,9 +69,7 @@ object ToolJsonProtocol {
 
 final case class KeyValueObject(key: String, value: String)
 
-trait ToolJsonProtocol[
-  EC <: ExerciseContent, ST, CR <: CompleteResult[_ <: EvaluationResult]
-] {
+trait ToolJsonProtocol[EC <: ExerciseContent, ST, CR <: CompleteResult[_ <: EvaluationResult]] {
 
   val exerciseContentFormat: Format[EC]
 

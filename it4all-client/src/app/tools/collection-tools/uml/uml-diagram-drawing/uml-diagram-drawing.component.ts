@@ -67,7 +67,7 @@ export class UmlDiagramDrawingComponent implements OnInit {
         }
       }),
     });
-    
+
     this.paper.on('blank:pointerclick', (evt: joint.dia.Event, x: number, y: number) => {
 
         const selectedObjectToCreate: SelectableClassDiagramObject =

@@ -1,72 +1,32 @@
 package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
-import enumeratum.{EnumEntry, PlayEnum}
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.core.result.{CompleteResult, SuccessType}
 import model.points._
-import org.xml.sax.SAXParseException
-
-import scala.collection.immutable.IndexedSeq
 
 
-trait XmlEvaluationResult extends EvaluationResult
-
-trait XmlCompleteResult extends CompleteResult[XmlEvaluationResult]
-
-// Document result
-
-sealed abstract class XmlErrorType(val german: String) extends EnumEntry
-
-object XmlErrorType extends PlayEnum[XmlErrorType] {
-
-  val values: IndexedSeq[XmlErrorType] = findValues
-
-  case object FATAL extends XmlErrorType("Fataler Fehler")
-
-  case object ERROR extends XmlErrorType("Fehler")
-
-  case object WARNING extends XmlErrorType("Warnung")
-
-}
-
-object XmlError {
-
-  def fromSAXParseException(errorType: XmlErrorType, e: SAXParseException): XmlError =
-    XmlError(errorType, e.getMessage, e.getLineNumber, errorType match {
-      case XmlErrorType.WARNING => SuccessType.PARTIALLY
-      case _                    => SuccessType.NONE
-    })
-
-}
-
-
-final case class XmlError(errorType: XmlErrorType, errorMessage: String, line: Int, success: SuccessType)
-  extends XmlEvaluationResult
-
-
-final case class XmlDocumentCompleteResult(
+final case class XmlCompleteResult(
   successType: SuccessType,
-  results: Seq[XmlError],
-  points: Points = (-1).points,
-  maxPoints: Points = (-1).points,
-  solutionSaved: Boolean
-) extends XmlCompleteResult
-
-
-// Grammar result
-
-object XmlGrammarCompleteResult {
-
-  val pointsForElement  : Points = 1.halfPoints
-  val pointsForAttribute: Points = 3.halfPoints
-
-}
-
-final case class XmlGrammarCompleteResult(
-  successType: SuccessType,
-  parseErrors: Seq[DTDParseException] = Seq.empty,
-  results: Seq[ElementLineMatch],
+  result: Either[XmlDocumentResult, XmlGrammarResult],
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends XmlCompleteResult
+) extends CompleteResult[XmlEvaluationResult] {
+
+  override def results: Seq[XmlEvaluationResult] = result match {
+    case Left(documentResult) => documentResult.results
+    case Right(grammarResult) => grammarResult.results
+  }
+
+}
+
+// Document result
+
+final case class XmlDocumentResult(results: Seq[XmlError])
+
+// Grammar result
+
+final case class XmlGrammarResult(
+  parseErrors: Seq[DTDParseException] = Seq.empty,
+  results: Seq[ElementLineMatch],
+)

@@ -31,12 +31,3 @@ final case class XmlExerciseContent(
   override type SolType = XmlSolution
 
 }
-
-
-
-//final case class XmlSampleSolution(id: Int, sample: XmlSolution)
-//  extends SampleSolution[XmlSolution]
-
-//final case class XmlUserSolution(id: Int, part: XmlExPart, solution: XmlSolution, points: Points, maxPoints: Points)
-//  extends UserSolution[XmlSolution]
-

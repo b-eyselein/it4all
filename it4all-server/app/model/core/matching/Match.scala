@@ -20,8 +20,8 @@ final case class GenericAnalysisResult(matchType: MatchType) extends AnalysisRes
 
 trait Match {
 
-  type T
-  type AR <: AnalysisResult
+  protected type T
+  protected type AR <: AnalysisResult
 
   val userArg  : Option[T]
   val sampleArg: Option[T]
@@ -44,6 +44,7 @@ trait Match {
 
   def maxPoints: Points = (-1).point
 
+  @deprecated
   def toJson: JsValue = Json.obj(
     matchTypeName -> matchType.entryName,
     analysisResultName -> analysisResult.map(_.toJson),
