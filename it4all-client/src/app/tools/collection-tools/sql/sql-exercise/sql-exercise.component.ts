@@ -29,7 +29,6 @@ export class SqlExerciseComponent extends ComponentWithExercise<string, SqlResul
   dbContents: ActivatableSqlQueryResult[] = [];
 
   solution = '';
-  result: SqlResult | undefined;
 
   readonly editorOptions = getDefaultEditorOptions('sql');
 
@@ -45,7 +44,7 @@ export class SqlExerciseComponent extends ComponentWithExercise<string, SqlResul
     // FIXME: load db schema!
     this.apiService.getSqlDbSchema(this.exercise.collectionId)
       .subscribe((dbContents) => {
-        dbContents.forEach((dbc) => console.info(JSON.stringify(dbc, null, 2)));
+        // dbContents.forEach((dbc) => console.info(JSON.stringify(dbc, null, 2)));
         this.dbContents = dbContents;
       });
 

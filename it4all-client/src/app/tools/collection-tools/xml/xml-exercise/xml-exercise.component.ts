@@ -1,13 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {IExercise, IExerciseFile, IXmlCompleteResult, IXmlExerciseContent, IXmlSolution} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
-
-import 'codemirror/mode/dtd/dtd';
-import 'codemirror/mode/xml/xml';
 import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 
+import 'codemirror/mode/dtd/dtd';
+import 'codemirror/mode/xml/xml';
 
 @Component({
   selector: 'it4all-xml-exercise',
@@ -26,7 +25,6 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
   documentFile: IExerciseFile;
 
   exerciseFiles: IExerciseFile[] = [];
-
 
   constructor(apiService: ApiService, dexieService: DexieService) {
     super(apiService, dexieService);

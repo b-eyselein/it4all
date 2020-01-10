@@ -7,7 +7,7 @@ import {ApiService} from '../_services/api.service';
 import {ToolPart} from '../../../_interfaces/tool';
 
 export abstract class ComponentWithExercise<SolutionType, ResultType> {
-  
+
   // FIXME: Use?
   //  exercise: IExercise;
   //  part: ToolPart;
