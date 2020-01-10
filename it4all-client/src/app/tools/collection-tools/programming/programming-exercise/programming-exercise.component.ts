@@ -1,10 +1,10 @@
 import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {DbProgrammingSolution, ProgrammingCorrectionResult} from '../programming-interfaces';
+import {ProgrammingCorrectionResult} from '../programming-interfaces';
 import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {TabComponent} from '../../../../shared/tab/tab.component';
 import {TabsComponent} from '../../../../shared/tabs/tabs.component';
-import {ProgrammingImplementationToolPart, ProgrammingTool} from '../programming-tool';
+import {ProgrammingImplementationToolPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {IExercise, IExerciseFile, IProgSolution} from '../../../../_interfaces/models';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
@@ -16,7 +16,7 @@ import 'codemirror/mode/python/python';
   templateUrl: './programming-exercise.component.html',
   styleUrls: ['./programming-exercise.component.sass']
 })
-export class ProgrammingExerciseComponent extends ComponentWithExercise<ProgrammingCorrectionResult> implements OnInit {
+export class ProgrammingExerciseComponent extends ComponentWithExercise<IProgSolution, ProgrammingCorrectionResult> implements OnInit {
 
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
@@ -27,8 +27,8 @@ export class ProgrammingExerciseComponent extends ComponentWithExercise<Programm
   @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
-  constructor(private apiService: ApiService, private dexieService: DexieService) {
-    super();
+  constructor(apiService: ApiService, dexieService: DexieService) {
+    super(apiService, dexieService);
   }
 
   get sampleSolutionFilesList(): IExerciseFile[][] {
@@ -43,8 +43,9 @@ export class ProgrammingExerciseComponent extends ComponentWithExercise<Programm
     this.loadOldSolution();
   }
 
-
   loadOldSolution(): void {
+    const maybeOldSol: Promise<IProgSolution | undefined> = this.loadOldSolutionAbstract(this.exercise, this.part);
+
     // TODO: deactivated for now...
     // this.dexieService.programmingSolutions.get([this.collection.id, this.exercise.id])
     //   .then((oldSolution: DbProgrammingSolution | undefined) => {
@@ -55,32 +56,15 @@ export class ProgrammingExerciseComponent extends ComponentWithExercise<Programm
     //   });
   }
 
-  correct(): void {
-    const solution: DbProgrammingSolution = {
-      toolId: ProgrammingTool.id,
-      collId: this.exercise.collectionId,
-      exId: this.exercise.id,
-      partId: this.part.id,
-      solution: {
-        files: this.exerciseFiles, testData: []
-      }
+  protected getSolution(): IProgSolution {
+    return {
+      files: this.exerciseFiles,
+      testData: []
     };
+  }
 
-    // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.upsertSolution<IProgSolution>(this.exercise, this.part.id, solution.solution);
-
-    this.isCorrecting = true;
-
-    this.apiService.correctSolution<IProgSolution, any>(this.exercise, this.part.id, solution.solution)
-      .subscribe((result: ProgrammingCorrectionResult | undefined) => {
-        // console.info(JSON.stringify(result, null, 2));
-
-        this.result = result;
-
-        this.isCorrecting = false;
-
-        this.activateCorrectionTab(this.tabsComponent, this.tabComponents);
-      });
+  correct(): void {
+    this.correctAbstract(this.exercise, this.part);
   }
 
 

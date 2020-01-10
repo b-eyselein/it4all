@@ -7,6 +7,7 @@ import {IExercise, ISqlExerciseContent, ISqlQueryResult} from '../../../../_inte
 import {DbSolution} from '../../../../_interfaces/exercise';
 
 import 'codemirror/mode/sql/sql';
+import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 
 interface ActivatableSqlQueryResult extends ISqlQueryResult {
   active?: boolean;
@@ -18,7 +19,7 @@ interface ActivatableSqlQueryResult extends ISqlQueryResult {
   styleUrls: ['./sql-exercise.component.sass'],
   encapsulation: ViewEncapsulation.None // style editor also
 })
-export class SqlExerciseComponent implements OnInit {
+export class SqlExerciseComponent extends ComponentWithExercise<string, SqlResult> implements OnInit {
 
   readonly partId = 'solve';
 
@@ -34,7 +35,8 @@ export class SqlExerciseComponent implements OnInit {
 
   showSampleSolutions = false;
 
-  constructor(private  apiService: ApiService, private dexieService: DexieService) {
+  constructor(apiService: ApiService, dexieService: DexieService) {
+    super(apiService, dexieService);
   }
 
   ngOnInit() {
@@ -51,12 +53,12 @@ export class SqlExerciseComponent implements OnInit {
       .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
   }
 
-  correct(): void {
-    // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.upsertSolution(this.exercise, this.partId, this.solution);
+  protected getSolution(): string {
+    return this.solution;
+  }
 
-    this.apiService.correctSolution<string, any>(this.exercise, this.partId, this.solution)
-      .subscribe((result) => this.result = result);
+  correct(): void {
+    this.correctAbstract(this.exercise, {id: this.partId, name: ''});
   }
 
   toggleSampleSolutions(): void {
