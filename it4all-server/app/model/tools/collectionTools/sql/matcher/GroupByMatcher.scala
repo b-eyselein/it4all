@@ -1,17 +1,16 @@
 package model.tools.collectionTools.sql.matcher
 
-import model.points._
 import model.core.matching._
+import model.points._
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
 
-final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match {
-
-  override type T = Expression
-
-  override type AR = GenericAnalysisResult
+final case class GroupByMatch(
+  userArg: Option[Expression],
+  sampleArg: Option[Expression]
+) extends Match[Expression, GenericAnalysisResult] {
 
   override def analyze(ua: Expression, sa: Expression): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
 
@@ -27,9 +26,7 @@ final case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Exp
 }
 
 
-object GroupByMatcher extends Matcher[GroupByMatch] {
-
-  override type T = Expression
+object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupByMatch] {
 
   override protected val matchName: String = "Group Bys"
 

@@ -1,9 +1,11 @@
 package model.tools.collectionTools.regex
 
-import model.core.matching.MatchingResult
+import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.points.Points
 import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol, ToolJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
+
+import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] {
 
@@ -13,7 +15,7 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
 
   override val exerciseContentFormat: Format[RegexExerciseContent] = {
     implicit val rctf : Format[RegexCorrectionType]     = RegexCorrectionTypes.jsonFormat
-    implicit val sssf : Format[SampleSolution[String]]    = sampleSolutionFormat
+    implicit val sssf : Format[SampleSolution[String]]  = sampleSolutionFormat
     implicit val rmtdf: Format[RegexMatchTestData]      = regexMatchTestDataFormat
     implicit val retdf: Format[RegexExtractionTestData] = regexExtractionTestDataFormat
 
@@ -31,15 +33,15 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
 
   private val regexMatchMatchWrites: Writes[RegexMatchMatch] = _.toJson
 
-  private val regexMatchMatchingResultWrites: Writes[MatchingResult[RegexMatchMatch]] = {
+  private val regexMatchMatchingResultWrites: Writes[MatchingResult[RegexMatch, GenericAnalysisResult, RegexMatchMatch]] = {
     implicit val rmmw: Writes[RegexMatchMatch] = regexMatchMatchWrites
 
-    Json.writes[MatchingResult[RegexMatchMatch]]
+    Json.writes[MatchingResult[RegexMatch, GenericAnalysisResult, RegexMatchMatch]]
   }
 
 
   private val regexExtractionEvaluationResultWrites: Writes[RegexExtractionEvaluationResult] = {
-    implicit val rmmrw: Writes[MatchingResult[RegexMatchMatch]] = regexMatchMatchingResultWrites
+    implicit val rmmrw: Writes[MatchingResult[RegexMatch, GenericAnalysisResult, RegexMatchMatch]] = regexMatchMatchingResultWrites
 
     Json.writes[RegexExtractionEvaluationResult]
   }

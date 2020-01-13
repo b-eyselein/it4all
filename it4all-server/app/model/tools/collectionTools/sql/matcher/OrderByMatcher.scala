@@ -5,11 +5,10 @@ import model.points._
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.api.libs.json.{JsString, JsValue}
 
-final case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match {
-
-  override type T = OrderByElement
-
-  override type AR = GenericAnalysisResult
+final case class OrderByMatch(
+  userArg: Option[OrderByElement],
+  sampleArg: Option[OrderByElement]
+) extends Match[OrderByElement, GenericAnalysisResult] {
 
   override def analyze(ua: OrderByElement, sa: OrderByElement): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
 
@@ -24,9 +23,7 @@ final case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option
 
 }
 
-object OrderByMatcher extends Matcher[OrderByMatch] {
-
-  override type T = OrderByElement
+object OrderByMatcher extends Matcher[OrderByElement, GenericAnalysisResult, OrderByMatch] {
 
   override protected val matchName: String = "Order Bys"
 

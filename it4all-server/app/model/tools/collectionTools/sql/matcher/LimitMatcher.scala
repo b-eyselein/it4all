@@ -5,11 +5,10 @@ import model.points._
 import net.sf.jsqlparser.statement.select.Limit
 import play.api.libs.json.{JsString, JsValue}
 
-final case class LimitMatch(userArg: Option[Limit], sampleArg: Option[Limit]) extends Match {
-
-  override type T = Limit
-
-  override type AR = GenericAnalysisResult
+final case class LimitMatch(
+  userArg: Option[Limit],
+  sampleArg: Option[Limit]
+) extends Match[Limit, GenericAnalysisResult] {
 
   override protected def analyze(arg1: Limit, arg2: Limit): GenericAnalysisResult = GenericAnalysisResult(
     if (arg1.toString == arg2.toString) MatchType.SUCCESSFUL_MATCH
@@ -27,9 +26,7 @@ final case class LimitMatch(userArg: Option[Limit], sampleArg: Option[Limit]) ex
 
 }
 
-object LimitMatcher extends Matcher[LimitMatch] {
-
-  override type T = Limit
+object LimitMatcher extends Matcher[Limit, GenericAnalysisResult, LimitMatch] {
 
   override protected val matchName: String = "Limits"
 

@@ -18,10 +18,7 @@ final case class GenericAnalysisResult(matchType: MatchType) extends AnalysisRes
 
 }
 
-trait Match {
-
-  protected type T
-  protected type AR <: AnalysisResult
+trait Match[T, AR <: AnalysisResult] {
 
   val userArg  : Option[T]
   val sampleArg: Option[T]

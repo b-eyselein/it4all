@@ -1,14 +1,18 @@
 package model.tools.collectionTools.uml
 
-import model.core.matching.MatchingResult
 import model.points._
-import model.tools.collectionTools.uml.matcher.{UmlAssociationMatcher, UmlClassMatch, UmlClassMatcher, UmlImplementationMatcher}
+import model.tools.collectionTools.uml.matcher.{UmlAssociationMatcher, UmlClassMatcher, UmlImplementationMatcher}
 
 object UmlCorrector {
 
-  def correct(userClassDiagram: UmlClassDiagram, sampleClassDiagram: UmlClassDiagram, part: UmlExPart, solutionSaved: Boolean): UmlCompleteResult = {
+  def correct(
+    userClassDiagram: UmlClassDiagram,
+    sampleClassDiagram: UmlClassDiagram,
+    part: UmlExPart,
+    solutionSaved: Boolean
+  ): UmlCompleteResult = {
 
-    val classResult: Option[MatchingResult[UmlClassMatch]] = part match {
+    val classResult = part match {
       case UmlExParts.DiagramDrawingHelp                           => None
       case UmlExParts.ClassSelection                               => Some(UmlClassMatcher(false).doMatch(userClassDiagram.classes, sampleClassDiagram.classes))
       case UmlExParts.DiagramDrawing | UmlExParts.MemberAllocation => Some(UmlClassMatcher(true).doMatch(userClassDiagram.classes, sampleClassDiagram.classes))

@@ -1,16 +1,14 @@
 package model.tools.collectionTools.uml.matcher
 
 import model.core.matching._
-import model.tools.collectionTools.uml.UmlCompleteResult.describeImplementation
 import model.tools.collectionTools.uml.UmlConsts._
 import model.tools.collectionTools.uml.UmlImplementation
 import play.api.libs.json.{JsValue, Json}
 
-final case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match {
-
-  override type T = UmlImplementation
-
-  override type AR = GenericAnalysisResult
+final case class UmlImplementationMatch(
+  userArg: Option[UmlImplementation],
+  sampleArg: Option[UmlImplementation]
+) extends Match[UmlImplementation, GenericAnalysisResult] {
 
   override def analyze(i1: UmlImplementation, i2: UmlImplementation): GenericAnalysisResult =
     GenericAnalysisResult(if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH)
@@ -24,9 +22,7 @@ final case class UmlImplementationMatch(userArg: Option[UmlImplementation], samp
 }
 
 
-object UmlImplementationMatcher extends Matcher[UmlImplementationMatch] {
-
-  override type T = UmlImplementation
+object UmlImplementationMatcher extends Matcher[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch] {
 
   override protected val matchName: String = "Vererbungen"
 

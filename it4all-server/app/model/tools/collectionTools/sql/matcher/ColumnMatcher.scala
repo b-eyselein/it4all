@@ -5,11 +5,10 @@ import model.points._
 import model.tools.collectionTools.sql.ColumnWrapper
 import play.api.libs.json.{JsString, JsValue}
 
-final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper]) extends Match {
-
-  override type T = ColumnWrapper
-
-  override type AR = GenericAnalysisResult
+final case class ColumnMatch(
+  userArg: Option[ColumnWrapper],
+  sampleArg: Option[ColumnWrapper]
+) extends Match[ColumnWrapper, GenericAnalysisResult] {
 
   override protected def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): GenericAnalysisResult =
     GenericAnalysisResult(userArg doMatch sampleArg)
@@ -25,9 +24,7 @@ final case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[C
 
 }
 
-object ColumnMatcher extends Matcher[ColumnMatch] {
-
-  override type T = ColumnWrapper
+object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, ColumnMatch] {
 
   override protected val matchName: String = "Spalten"
 

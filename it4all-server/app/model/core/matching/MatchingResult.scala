@@ -24,8 +24,11 @@ import play.api.libs.json._
 //
 //}
 
-final case class MatchingResult[M <: Match](matchName: String, matchSingularName: String, allMatches: Seq[M])
-  extends EvaluationResult  {
+final case class MatchingResult[T, AR <: AnalysisResult, M <: Match[T, AR]](
+  matchName: String,
+  matchSingularName: String,
+  allMatches: Seq[M]
+) extends EvaluationResult {
 
   // FIXME: is it possible to use ... match { case ...} ?!?
   override def success: SuccessType =

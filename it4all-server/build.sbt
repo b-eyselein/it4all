@@ -65,7 +65,7 @@ libraryDependencies ++= Seq(
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // Typescript interface generation
-  "nl.codestar" %% "scala-tsi" % "0.2.1-SNAPSHOT",
+  "nl.codestar" %% "scala-tsi" % "0.2.2-SNAPSHOT",
 
   // Sql
   "com.github.jsqlparser" % "jsqlparser" % "3.1", // Apache 2.0

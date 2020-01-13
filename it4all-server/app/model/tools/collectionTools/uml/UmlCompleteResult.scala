@@ -1,6 +1,6 @@
 package model.tools.collectionTools.uml
 
-import model.core.matching.MatchingResult
+import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import model.tools.collectionTools.uml.matcher._
@@ -15,9 +15,9 @@ object UmlCompleteResult {
 }
 
 final case class UmlCompleteResult(
-  classResult: Option[MatchingResult[UmlClassMatch]],
-  assocResult: Option[MatchingResult[UmlAssociationMatch]],
-  implResult: Option[MatchingResult[UmlImplementationMatch]],
+  classResult: Option[MatchingResult[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch]],
+  assocResult: Option[MatchingResult[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch]],
+  implResult: Option[MatchingResult[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch]],
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean

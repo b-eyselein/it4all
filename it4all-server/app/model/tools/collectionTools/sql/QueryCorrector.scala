@@ -113,7 +113,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected def getWhere(query: Q): Option[Expression]
 
-  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): Seq[MatchingResult[_ <: Match]]
+  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): Seq[MatchingResult[_, _, _ <: Match[_, _]]]
 
   // Parsing
 

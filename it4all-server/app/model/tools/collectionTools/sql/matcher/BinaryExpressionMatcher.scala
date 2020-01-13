@@ -6,11 +6,10 @@ import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 import play.api.libs.json.{JsString, JsValue}
 
-final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match {
-
-  override type T = BinaryExpression
-
-  override type AR = GenericAnalysisResult
+final case class BinaryExpressionMatch(
+  userArg: Option[BinaryExpression],
+  sampleArg: Option[BinaryExpression]
+) extends Match[BinaryExpression, GenericAnalysisResult] {
 
   override def analyze(a1: BinaryExpression, a2: BinaryExpression): GenericAnalysisResult = {
 
@@ -18,7 +17,7 @@ final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sample
     val (a2Left, a2Right) = (a2.getLeftExpression.toString, a2.getRightExpression.toString)
 
     val parallelEqual = (a1Left == a2Left) && (a1Right == a2Right)
-    val crossedEqual = (a1Left == a2Right) && (a1Right == a2Left)
+    val crossedEqual  = (a1Left == a2Right) && (a1Right == a2Left)
 
     val matchType: MatchType = if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
     else MatchType.UNSUCCESSFUL_MATCH
@@ -41,18 +40,20 @@ final case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sample
 
 }
 
-class JoinExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
-  extends BinaryExpressionMatcher(userTAliases, sampleTAliases) {
+class JoinExpressionMatcher(
+  userTAliases: Map[String, String],
+  sampleTAliases: Map[String, String]
+) extends BinaryExpressionMatcher(userTAliases, sampleTAliases) {
 
   override protected val matchName        : String = "Join-Bedingungen"
   override protected val matchSingularName: String = "der Join-Bedingung"
 
 }
 
-class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
-  extends Matcher[BinaryExpressionMatch] {
-
-  override type T = BinaryExpression
+class BinaryExpressionMatcher(
+  userTAliases: Map[String, String],
+  sampleTAliases: Map[String, String]
+) extends Matcher[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch] {
 
   override protected val matchName: String = "Bedingungen"
 

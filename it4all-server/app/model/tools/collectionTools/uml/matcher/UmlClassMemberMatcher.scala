@@ -6,13 +6,8 @@ import model.tools.collectionTools.uml.{UmlAttribute, UmlClassMember, UmlMethod,
 import play.api.libs.json.{JsValue, Json}
 
 
-sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match {
+sealed trait UmlClassMemberMatch[Mem <: UmlClassMember, AR <: UmlClassMemberAnalysisResult] extends Match[Mem, AR]
 
-  override type T = Mem
-
-  override type AR <: UmlClassMemberAnalysisResult
-
-}
 
 sealed trait UmlClassMemberAnalysisResult extends AnalysisResult {
 
@@ -25,12 +20,14 @@ sealed trait UmlClassMemberAnalysisResult extends AnalysisResult {
 }
 
 
-final case class UmlAttributeAnalysisResult(matchType: MatchType,
-                                            visibilityComparison: Boolean, correctVisibility: UmlVisibility,
-                                            typeComparison: Boolean, correctType: String,
-                                            staticCorrect: Boolean, correctStatic: Boolean,
-                                            derivedCorrect: Boolean, correctDerived: Boolean,
-                                            abstractCorrect: Boolean, correctAbstract: Boolean) extends UmlClassMemberAnalysisResult {
+final case class UmlAttributeAnalysisResult(
+  matchType: MatchType,
+  visibilityComparison: Boolean, correctVisibility: UmlVisibility,
+  typeComparison: Boolean, correctType: String,
+  staticCorrect: Boolean, correctStatic: Boolean,
+  derivedCorrect: Boolean, correctDerived: Boolean,
+  abstractCorrect: Boolean, correctAbstract: Boolean
+) extends UmlClassMemberAnalysisResult {
 
   override def toJson: JsValue = Json.obj(
     successName -> matchType.entryName,
@@ -43,9 +40,10 @@ final case class UmlAttributeAnalysisResult(matchType: MatchType,
 
 }
 
-final case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Option[UmlAttribute]) extends UmlClassMemberMatch[UmlAttribute] {
-
-  override type AR = UmlAttributeAnalysisResult
+final case class UmlAttributeMatch(
+  userArg: Option[UmlAttribute],
+  sampleArg: Option[UmlAttribute]
+) extends UmlClassMemberMatch[UmlAttribute, UmlAttributeAnalysisResult] {
 
   override def analyze(arg1: UmlAttribute, arg2: UmlAttribute): UmlAttributeAnalysisResult = {
 
@@ -56,8 +54,8 @@ final case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Opt
     val returnTypeComparison = arg1.memberType == arg2.memberType
 
     // Modificator comparison
-    val isStaticComparison = arg1.isStatic == arg2.isStatic
-    val isDerivedComparison = arg1.isDerived == arg2.isDerived
+    val isStaticComparison   = arg1.isStatic == arg2.isStatic
+    val isDerivedComparison  = arg1.isDerived == arg2.isDerived
     val isAbstractComparison = arg1.isAbstract == arg2.isAbstract
 
     val matchType: MatchType = if (returnTypeComparison) {
@@ -70,27 +68,30 @@ final case class UmlAttributeMatch(userArg: Option[UmlAttribute], sampleArg: Opt
       MatchType.UNSUCCESSFUL_MATCH
     }
 
-    UmlAttributeAnalysisResult(matchType,
+    UmlAttributeAnalysisResult(
+      matchType,
       visibilityComparison, arg2.visibility,
       returnTypeComparison, arg2.memberType,
       isStaticComparison, arg2.isStatic,
       isDerivedComparison, arg2.isDerived,
-      isAbstractComparison, arg2.isAbstract)
+      isAbstractComparison, arg2.isAbstract
+    )
   }
 
+  /*
   val visibilityComparison: Boolean = analysisResult.exists(_.visibilityComparison)
   val returnTypeComparison: Boolean = analysisResult.exists(_.typeComparison)
   val isStaticComparison  : Boolean = analysisResult.exists(_.staticCorrect)
   val isDerivedComparison : Boolean = analysisResult.exists(_.derivedCorrect)
   val isAbstractComparison: Boolean = analysisResult.exists(_.abstractCorrect)
+   */
 
   override protected def descArgForJson(arg: UmlAttribute): JsValue = Json.obj(nameName -> arg.memberName, typeName -> arg.memberType)
 
 }
 
-object UmlAttributeMatcher extends Matcher[UmlAttributeMatch] {
 
-  override type T = UmlAttribute
+object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisResult, UmlAttributeMatch] {
 
   override protected val matchName: String = "Attribute"
 
@@ -104,13 +105,14 @@ object UmlAttributeMatcher extends Matcher[UmlAttributeMatch] {
 }
 
 
-final case class UmlMethodAnalysisResult(matchType: MatchType,
-                                         visibilityComparison: Boolean, correctVisibility: UmlVisibility,
-                                         typeComparison: Boolean, correctType: String,
-                                         parameterComparison: Boolean, correctParameters: String,
-                                         staticCorrect: Boolean, correctStatic: Boolean,
-                                         abstractCorrect: Boolean, correctAbstract: Boolean)
-  extends UmlClassMemberAnalysisResult {
+final case class UmlMethodAnalysisResult(
+  matchType: MatchType,
+  visibilityComparison: Boolean, correctVisibility: UmlVisibility,
+  typeComparison: Boolean, correctType: String,
+  parameterComparison: Boolean, correctParameters: String,
+  staticCorrect: Boolean, correctStatic: Boolean,
+  abstractCorrect: Boolean, correctAbstract: Boolean
+) extends UmlClassMemberAnalysisResult {
 
   override def toJson: JsValue = Json.obj(
     successName -> matchType.entryName,
@@ -123,9 +125,10 @@ final case class UmlMethodAnalysisResult(matchType: MatchType,
 
 }
 
-final case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[UmlMethod]) extends UmlClassMemberMatch[UmlMethod] {
-
-  override type AR = UmlMethodAnalysisResult
+final case class UmlMethodMatch(
+  userArg: Option[UmlMethod],
+  sampleArg: Option[UmlMethod]
+) extends UmlClassMemberMatch[UmlMethod, UmlMethodAnalysisResult] {
 
   override protected def descArgForJson(arg: UmlMethod): JsValue = Json.obj(nameName -> arg.memberName, typeName -> arg.memberType)
 
@@ -140,7 +143,7 @@ final case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[Um
     val parameterComparison = arg1.parameters == arg2.parameters
 
     // Modificator comparison
-    val isStaticComparison = arg1.isStatic == arg2.isStatic
+    val isStaticComparison   = arg1.isStatic == arg2.isStatic
     val isAbstractComparison = arg1.isAbstract == arg2.isAbstract
 
     val matchType: MatchType = if (returnTypeComparison) {
@@ -153,19 +156,19 @@ final case class UmlMethodMatch(userArg: Option[UmlMethod], sampleArg: Option[Um
       MatchType.UNSUCCESSFUL_MATCH
     }
 
-    UmlMethodAnalysisResult(matchType,
+    UmlMethodAnalysisResult(
+      matchType,
       visibilityComparison, arg2.visibility,
       returnTypeComparison, arg2.memberType,
       parameterComparison, arg2.parameters,
       isStaticComparison, arg2.isStatic,
-      isAbstractComparison, arg2.isAbstract)
+      isAbstractComparison, arg2.isAbstract
+    )
   }
 
 }
 
-object UmlMethodMatcher extends Matcher[UmlMethodMatch] {
-
-  override type T = UmlMethod
+object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlMethodMatch] {
 
   override protected val matchName: String = "Methoden"
 

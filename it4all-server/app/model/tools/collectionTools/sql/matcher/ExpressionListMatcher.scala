@@ -5,11 +5,10 @@ import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import play.api.libs.json.{JsString, JsValue}
 
 
-final case class ExpressionListMatch(userArg: Option[ExpressionList], sampleArg: Option[ExpressionList]) extends Match {
-
-  override type T = ExpressionList
-
-  override type AR = GenericAnalysisResult
+final case class ExpressionListMatch(
+  userArg: Option[ExpressionList],
+  sampleArg: Option[ExpressionList]
+) extends Match[ExpressionList, GenericAnalysisResult] {
 
   override protected def analyze(arg1: ExpressionList, arg2: ExpressionList): GenericAnalysisResult = {
     // TODO: implement?
@@ -20,9 +19,7 @@ final case class ExpressionListMatch(userArg: Option[ExpressionList], sampleArg:
 
 }
 
-object ExpressionListMatcher extends Matcher[ExpressionListMatch] {
-
-  override type T = ExpressionList
+object ExpressionListMatcher extends Matcher[ExpressionList, GenericAnalysisResult, ExpressionListMatch] {
 
   override protected val matchName: String = "Bedingungen"
 

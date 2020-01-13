@@ -19,11 +19,10 @@ final case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel
 
 }
 
-final case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match {
-
-  override type T = UmlAssociation
-
-  override type AR = UmlAssociationAnalysisResult
+final case class UmlAssociationMatch(
+  userArg: Option[UmlAssociation],
+  sampleArg: Option[UmlAssociation]
+) extends Match[UmlAssociation, UmlAssociationAnalysisResult] {
 
   override def analyze(assoc1: UmlAssociation, assoc2: UmlAssociation): UmlAssociationAnalysisResult = {
     val endsParallel = UmlAssociationMatcher.endsParallelEqual(assoc1, assoc2)
@@ -52,9 +51,7 @@ final case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg:
 }
 
 
-object UmlAssociationMatcher extends Matcher[UmlAssociationMatch] {
-
-  override type T = UmlAssociation
+object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch] {
 
   override protected val matchName: String = "Assoziationen"
 

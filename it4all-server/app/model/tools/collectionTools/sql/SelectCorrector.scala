@@ -69,21 +69,21 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     case _               => None
   }
 
-  override def performAdditionalComparisons(userQuery: Select, sampleQuery: Select): Seq[MatchingResult[_ <: Match]] = Seq(
+  override def performAdditionalComparisons(userQuery: Select, sampleQuery: Select): Seq[MatchingResult[_, _, _ <: Match[_, _]]] = Seq(
     compareGroupByElements(userQuery, sampleQuery),
     compareOrderByElements(userQuery, sampleQuery),
     compareLimitElement(userQuery, sampleQuery)
   )
 
-  private def compareGroupByElements(userQ: Q, sampleQ: Q): MatchingResult[GroupByMatch] =
+  private def compareGroupByElements(userQ: Q, sampleQ: Q) =
     GroupByMatcher.doMatch(groupByElements(userQ), groupByElements(sampleQ))
 
-  private def compareOrderByElements(userQ: Q, sampleQ: Q): MatchingResult[OrderByMatch] =
+  private def compareOrderByElements(userQ: Q, sampleQ: Q) =
     OrderByMatcher.doMatch(orderByElements(userQ), orderByElements(sampleQ))
 
-  private def compareLimitElement(userQ: Q, sampleQ: Q): MatchingResult[LimitMatch] = {
+  private def compareLimitElement(userQ: Q, sampleQ: Q) = {
     val maybeUserLimit: Option[Limit] = limitElement(userQ)
-    val maybeSampleLimit = limitElement(sampleQ)
+    val maybeSampleLimit              = limitElement(sampleQ)
 
     LimitMatcher.doMatch(maybeUserLimit.toSeq, maybeSampleLimit.toSeq)
   }

@@ -8,13 +8,12 @@ import scala.util.Try
 import scala.util.matching.Regex
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-final case class RegexMatchMatch(userArg: Option[RegexMatch], sampleArg: Option[RegexMatch]) extends Match {
+final case class RegexMatchMatch(
+  userArg: Option[RegexMatch],
+  sampleArg: Option[RegexMatch]
+) extends Match[RegexMatch, GenericAnalysisResult] {
 
-  override type T = RegexMatch
-
-  override type AR = AnalysisResult
-
-  override protected def analyze(arg1: RegexMatch, arg2: RegexMatch): AnalysisResult =
+  override protected def analyze(arg1: RegexMatch, arg2: RegexMatch): GenericAnalysisResult =
     GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
 
   override protected def descArgForJson(arg: RegexMatch): JsValue = Json.obj(
@@ -25,9 +24,7 @@ final case class RegexMatchMatch(userArg: Option[RegexMatch], sampleArg: Option[
 
 }
 
-object RegexMatchMatcher extends Matcher[RegexMatchMatch] {
-
-  override type T = RegexMatch
+object RegexMatchMatcher extends Matcher[RegexMatch, GenericAnalysisResult, RegexMatchMatch] {
 
   override protected val matchName        : String = "RegexMatches"
   override protected val matchSingularName: String = "RegexMatch"
@@ -35,7 +32,8 @@ object RegexMatchMatcher extends Matcher[RegexMatchMatch] {
   override protected def canMatch(t1: RegexMatch, t2: RegexMatch): Boolean =
     t1.source == t2.source && t1.start == t2.start && t1.end == t2.end
 
-  override protected def matchInstantiation(ua: Option[RegexMatch], sa: Option[RegexMatch]): RegexMatchMatch = RegexMatchMatch(ua, sa)
+  override protected def matchInstantiation(ua: Option[RegexMatch], sa: Option[RegexMatch]): RegexMatchMatch =
+    RegexMatchMatch(ua, sa)
 
 }
 
@@ -45,11 +43,11 @@ object RegexCorrector {
 
     exercise.correctionType match {
       case RegexCorrectionTypes.MATCHING   => correctMatching(exercise, userRegex, solutionSaved)
-      case RegexCorrectionTypes.EXTRACTION => corectExtraction(exercise, userRegex, solutionSaved)
+      case RegexCorrectionTypes.EXTRACTION => correctExtraction(exercise, userRegex, solutionSaved)
     }
   }
 
-  private def corectExtraction(exercise: RegexExerciseContent, userRegex: Regex, solutionSaved: Boolean): RegexCompleteResult = {
+  private def correctExtraction(exercise: RegexExerciseContent, userRegex: Regex, solutionSaved: Boolean): RegexCompleteResult = {
 
     val extractionResults = exercise.extractionTestData.map { extractionTestData =>
 

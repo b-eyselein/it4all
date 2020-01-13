@@ -22,9 +22,7 @@ final case class ElementLineAnalysisResult(
 
 }
 
-object DocTypeDefMatcher extends Matcher[ElementLineMatch] {
-
-  override type T = ElementLine
+object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult, ElementLineMatch] {
 
   override protected val matchName: String = "DTD-Zeilen"
 

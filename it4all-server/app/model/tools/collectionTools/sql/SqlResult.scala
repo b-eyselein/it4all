@@ -1,9 +1,11 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.{Match, MatchingResult}
+import model.core.matching.{GenericAnalysisResult, Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import model.tools.collectionTools.sql.matcher._
+import net.sf.jsqlparser.expression.BinaryExpression
+import net.sf.jsqlparser.schema.Table
 
 import scala.util.{Failure, Success, Try}
 
@@ -31,13 +33,14 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
 }
 
+@deprecated
 final case class SqlQueriesStaticComparison[Q](
   userQ: Q, sampleQ: Q,
-  columnComparison: MatchingResult[ColumnMatch],
-  tableComparison: MatchingResult[TableMatch],
-  joinExpressionComparison: MatchingResult[BinaryExpressionMatch],
-  whereComparison: MatchingResult[BinaryExpressionMatch],
-  additionalComparisons: Seq[MatchingResult[_ <: Match]],
+  columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
+  tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
+  joinExpressionComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
+  whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
+  additionalComparisons: Seq[MatchingResult[_, _, _ <: Match[_, _]]],
 ) {
 
   val points: Points = columnComparison.points +
@@ -56,11 +59,11 @@ final case class SqlQueriesStaticComparison[Q](
 
 // FIXME: use builder?
 final case class SqlResult(
-  columnComparison: MatchingResult[ColumnMatch],
-  tableComparison: MatchingResult[TableMatch],
-  joinExpressionComparison: MatchingResult[BinaryExpressionMatch],
-  whereComparison: MatchingResult[BinaryExpressionMatch],
-  additionalComparisons: Seq[MatchingResult[_ <: Match]],
+  columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
+  tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
+  joinExpressionComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
+  whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
+  additionalComparisons: Seq[MatchingResult[_, _, _ <: Match[_, _]]],
   executionResult: SqlExecutionResult,
   solutionSaved: Boolean
 ) extends SqlCorrResult {

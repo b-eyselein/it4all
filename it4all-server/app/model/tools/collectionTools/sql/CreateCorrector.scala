@@ -24,6 +24,7 @@ object CreateCorrector extends QueryCorrector("CREATE TABLE") {
     case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
 
-  override protected def performAdditionalComparisons(userQuery: CreateTable, sampleQuery: CreateTable): Seq[MatchingResult[_ <: Match]] = Seq.empty
+  override protected def performAdditionalComparisons(userQuery: CreateTable, sampleQuery: CreateTable): Seq[MatchingResult[_, _, _ <: Match[_, _]]] =
+    Seq.empty
 
 }
