@@ -32,9 +32,8 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
 
   // Xml Document correction
 
-  private val xmlDocumentResultWrites: Writes[XmlDocumentResult] = {
+  private val xmlErrorWrites: Writes[XmlError] = {
     implicit val etf: Format[XmlErrorType] = XmlErrorType.jsonFormat
-    implicit val xew: Writes[XmlError]     = Json.writes
 
     Json.writes
   }
@@ -42,12 +41,9 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
   // Complete Result
 
   override val completeResultWrites: Writes[XmlCompleteResult] = {
-    implicit val xw: Writes[Either[XmlDocumentResult, XmlGrammarResult]] = {
-      case Left(value)  => xmlDocumentResultWrites.writes(value)
-      case Right(value) => xmlGrammarResultWrites.writes(value)
-    }
-
-    implicit val pw: Writes[Points] = ToolJsonProtocol.pointsFormat
+    implicit val xew : Writes[XmlError]         = xmlErrorWrites
+    implicit val xgrw: Writes[XmlGrammarResult] = xmlGrammarResultWrites
+    implicit val pw  : Writes[Points]           = ToolJsonProtocol.pointsFormat
 
     Json.writes
   }

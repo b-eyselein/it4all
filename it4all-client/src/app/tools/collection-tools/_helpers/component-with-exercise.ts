@@ -36,7 +36,7 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
     }
   }
 
-  protected correctAbstract(exercise: IExercise, part: ToolPart): void {
+  protected correctAbstract(exercise: IExercise, part: ToolPart, logResult: boolean = false): void {
     this.isCorrecting = true;
 
     const solution: SolutionType = this.getSolution();
@@ -49,6 +49,10 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
         this.isCorrecting = false;
         this.result = result;
         this.activateCorrectionTab();
+
+        if (logResult) {
+          console.log(JSON.stringify(result, null, 2));
+        }
       });
   }
 

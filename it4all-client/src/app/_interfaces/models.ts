@@ -38,6 +38,16 @@ export interface IUmlAttribute {
   isAbstract: boolean;
 }
 
+
+export interface IXmlCompleteResult {
+  successType: SuccessType;
+  documentResult: IXmlError[];
+  grammarResult?: IXmlGrammarResult;
+  points: IPoints;
+  maxPoints: IPoints;
+  solutionSaved: boolean;
+}
+
 export type UmlAssociationType = ('ASSOCIATION' | 'AGGREGATION' | 'COMPOSITION');
 
 export interface IGradedTextResult {
@@ -154,11 +164,6 @@ export type UmlMultiplicity = ('SINGLE' | 'UNBOUND');
 export type XmlErrorType = ('FATAL' | 'ERROR' | 'WARNING');
 export type SuccessType = ('ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE');
 
-export interface IXmlDocumentResult {
-  results: IXmlError[];
-}
-
-
 export interface IWebCompleteResult {
   gradedHtmlTaskResults: IGradedHtmlTaskResult[];
   gradedJsTaskResults: IGradedJsTaskResult[];
@@ -256,15 +261,6 @@ export interface IJsTask {
   preConditions: IJsHtmlElementSpec[];
   action: IJsAction;
   postConditions: IJsHtmlElementSpec[];
-}
-
-
-export interface IXmlCompleteResult {
-  successType: SuccessType;
-  result: (IXmlDocumentResult | IXmlGrammarResult);
-  points: IPoints;
-  maxPoints: IPoints;
-  solutionSaved: boolean;
 }
 
 

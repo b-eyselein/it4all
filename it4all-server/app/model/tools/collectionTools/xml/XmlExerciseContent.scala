@@ -2,8 +2,6 @@ package model.tools.collectionTools.xml
 
 import model.tools.collectionTools.{ExPart, ExParts, ExerciseContent, SampleSolution}
 
-import scala.collection.immutable.IndexedSeq
-
 
 sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart
 

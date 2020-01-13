@@ -19,11 +19,9 @@ trait XmlTSTypes extends ToolTSInterfaceTypes {
 
   val xmlSolutionTSI: TSIType[XmlSolution] = TSType.fromCaseClass
 
-  private val xmlDocumentResultTSI: TSIType[XmlDocumentResult] = {
+  private val xmlErrorTSI: TSIType[XmlError] = {
+    implicit val sts               : TSType[SuccessType]  = successTypeTS
     implicit val xmlErrorTypeTSType: TSType[XmlErrorType] = enumTsType(XmlErrorType)
-    implicit val successTypeTSType : TSType[SuccessType]  = enumTsType(SuccessType)
-
-    implicit val xet: TSIType[XmlError] = TSType.fromCaseClass
 
     TSType.fromCaseClass
   }
@@ -42,10 +40,9 @@ trait XmlTSTypes extends ToolTSInterfaceTypes {
   }
 
   val xmlCompleteResultTSI: TSIType[XmlCompleteResult] = {
-    implicit val sts: TSType[SuccessType] = successTypeTS
-
-    implicit val xdrt: TSIType[XmlDocumentResult] = xmlDocumentResultTSI
-    implicit val xgrt: TSIType[XmlGrammarResult]  = xmlGrammarResultTSI
+    implicit val sts : TSType[SuccessType]       = successTypeTS
+    implicit val xdrt: TSIType[XmlError]         = xmlErrorTSI
+    implicit val xgrt: TSIType[XmlGrammarResult] = xmlGrammarResultTSI
 
     TSType.fromCaseClass
   }

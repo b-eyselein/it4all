@@ -7,22 +7,16 @@ import model.points._
 
 final case class XmlCompleteResult(
   successType: SuccessType,
-  result: Either[XmlDocumentResult, XmlGrammarResult],
+  documentResult: Seq[XmlError],
+  grammarResult: Option[XmlGrammarResult],
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
 ) extends CompleteResult[XmlEvaluationResult] {
 
-  override def results: Seq[XmlEvaluationResult] = result match {
-    case Left(documentResult) => documentResult.results
-    case Right(grammarResult) => grammarResult.results
-  }
+  override def results: Seq[XmlEvaluationResult] = documentResult ++ grammarResult.map(_.results).getOrElse(Seq.empty)
 
 }
-
-// Document result
-
-final case class XmlDocumentResult(results: Seq[XmlError])
 
 // Grammar result
 

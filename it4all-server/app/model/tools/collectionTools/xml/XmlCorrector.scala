@@ -68,7 +68,17 @@ object XmlCorrector {
 
       val successType = if (xmlErrors.isEmpty) SuccessType.COMPLETE else SuccessType.PARTIALLY
 
-      Success(XmlCompleteResult(successType, Left(XmlDocumentResult(xmlErrors)), (-1).points, (-1).points, solutionSaved))
+      val points    = (-1).points
+      val maxPoints = (-1).points
+
+      Success(
+        XmlCompleteResult(
+          successType,
+          documentResult = xmlErrors,
+          grammarResult = None,
+          points, maxPoints, solutionSaved
+        )
+      )
   }
 
   // Grammar correction
@@ -108,7 +118,12 @@ object XmlCorrector {
           case _                          => SuccessType.ERROR
         }
 
-        XmlCompleteResult(successType, Right(XmlGrammarResult(dtdParseResult.parseErrors, allMatches)), points, maxPoints, solutionSaved)
+        XmlCompleteResult(
+          successType,
+          documentResult = Seq.empty,
+          grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, allMatches)),
+          points, maxPoints, solutionSaved
+        )
       }
   }
 
