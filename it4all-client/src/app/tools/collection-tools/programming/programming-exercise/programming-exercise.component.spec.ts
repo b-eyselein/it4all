@@ -12,7 +12,7 @@ import {FormsModule} from '@angular/forms';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {ApiService} from '../../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {IProgExerciseContent} from '../../../../_interfaces/models';
+import {IProgExerciseContent} from '../programming-interfaces';
 
 
 describe('ProgrammingExerciseComponent', () => {

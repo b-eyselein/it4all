@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
-import {IExerciseFile} from '../../../../_interfaces/models';
+import {IExerciseFile} from '../../web/web-interfaces';
 
 @Component({
   selector: 'it4all-exercise-files-editor',

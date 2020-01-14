@@ -1,6 +1,5 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.{Match, MatchingResult}
 import model.points._
 import model.tools.collectionTools.ExerciseCollection
 import model.tools.collectionTools.sql.matcher._
@@ -113,7 +112,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected def getWhere(query: Q): Option[Expression]
 
-  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): Seq[MatchingResult[_, _, _ <: Match[_, _]]]
+  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): AdditionalComparison
 
   // Parsing
 

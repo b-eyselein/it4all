@@ -8,12 +8,12 @@
       <table class="table is-bordered is-fullwidth">
         <thead>
           <tr>
-            <th *ngFor="let colName of result.userResult.colNames">{{colName}}</th>
+            <th *ngFor="let colName of result.userResultTry.colNames">{{colName}}</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let row of result.userResult.content">
-            <td *ngFor="let colName of result.userResult.colNames"
+          <tr *ngFor="let row of result.userResultTry.content">
+            <td *ngFor="let colName of result.userResultTry.colNames"
                 [ngClass]="row[colName].different ? 'is-light-danger' : ''">{{row[colName].content}}</td>
           </tr>
         </tbody>
@@ -27,12 +27,12 @@
       <table class="table is-bordered is-fullwidth">
         <thead>
           <tr>
-            <th *ngFor="let colName of result.sampleResult.colNames">{{colName}}</th>
+            <th *ngFor="let colName of result.sampleResultTry.colNames">{{colName}}</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let row of result.sampleResult.content">
-            <td *ngFor="let colName of result.sampleResult.colNames">{{row[colName].content}}</td>
+          <tr *ngFor="let row of result.sampleResultTry.content">
+            <td *ngFor="let colName of result.sampleResultTry.colNames">{{row[colName].content}}</td>
           </tr>
         </tbody>
       </table>

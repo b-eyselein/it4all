@@ -9,10 +9,13 @@ import play.api.libs.json.{JsString, JsValue}
 
 final case class GroupByMatch(
   userArg: Option[Expression],
-  sampleArg: Option[Expression]
+  sampleArg: Option[Expression],
+  analysisResult: Option[GenericAnalysisResult]
 ) extends Match[Expression, GenericAnalysisResult] {
 
+  /*
   override def analyze(ua: Expression, sa: Expression): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
+   */
 
   override protected def descArgForJson(arg: Expression): JsValue = JsString(arg.toString)
 
@@ -41,7 +44,9 @@ object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupBy
   }
 
 
-  override protected def matchInstantiation(ua: Option[Expression], sa: Option[Expression]): GroupByMatch =
-    GroupByMatch(ua, sa)
+  override protected def instantiatePartMatch(ua: Option[Expression], sa: Option[Expression]): GroupByMatch =
+    GroupByMatch(ua, sa, None)
 
+  override protected def instantiateCompleteMatch(ua: Expression, sa: Expression): GroupByMatch =
+    GroupByMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)))
 }

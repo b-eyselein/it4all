@@ -1,3 +1,4 @@
+
 export interface IExercise {
   id: number;
   collectionId: number;
@@ -17,6 +18,21 @@ export interface IExTag {
 }
 
 
+export interface IQuestion {
+  id: number;
+  question: string;
+  answers: IQuestionAnswer[];
+}
+
+
+export interface ILessonQuestionsContent {
+  id: number;
+  lessonId: number;
+  toolId: string;
+  questions: IQuestion[];
+}
+
+
 export interface IExerciseCollection {
   id: number;
   toolId: string;
@@ -24,6 +40,22 @@ export interface IExerciseCollection {
   authors: string[];
   text: string;
   shortName: string;
+}
+
+
+export interface ILessonTextContent {
+  id: number;
+  lessonId: number;
+  toolId: string;
+  content: string;
+}
+
+
+export interface ILesson {
+  id: number;
+  toolId: string;
+  title: string;
+  content: LessonContent[];
 }
 
 
@@ -44,3 +76,13 @@ export interface IExerciseMetaData {
   text: string;
   tags: IExTag[];
 }
+
+
+export interface IQuestionAnswer {
+  answer: string;
+  isCorrect: boolean;
+}
+
+
+
+export type LessonContent = (ILessonTextContent | ILessonQuestionsContent);

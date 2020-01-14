@@ -8,9 +8,10 @@ import play.api.libs.json.{JsString, JsValue}
 
 final case class BinaryExpressionMatch(
   userArg: Option[BinaryExpression],
-  sampleArg: Option[BinaryExpression]
+  sampleArg: Option[BinaryExpression],
+  analysisResult: Option[GenericAnalysisResult]
 ) extends Match[BinaryExpression, GenericAnalysisResult] {
-
+  /*
   override def analyze(a1: BinaryExpression, a2: BinaryExpression): GenericAnalysisResult = {
 
     val (a1Left, a1Right) = (a1.getLeftExpression.toString, a1.getRightExpression.toString)
@@ -24,6 +25,8 @@ final case class BinaryExpressionMatch(
 
     GenericAnalysisResult(matchType)
   }
+
+   */
 
   override protected def descArgForJson(arg: BinaryExpression): JsValue = JsString(arg.toString)
 
@@ -93,7 +96,21 @@ class BinaryExpressionMatcher(
     }
   }
 
-  override protected def matchInstantiation(ua: Option[BinaryExpression], sa: Option[BinaryExpression]): BinaryExpressionMatch =
-    BinaryExpressionMatch(ua, sa)
+  override protected def instantiatePartMatch(ua: Option[BinaryExpression], sa: Option[BinaryExpression]): BinaryExpressionMatch =
+    BinaryExpressionMatch(ua, sa, None)
 
+  override protected def instantiateCompleteMatch(ua: BinaryExpression, sa: BinaryExpression): BinaryExpressionMatch = {
+    val (a1Left, a1Right) = (ua.getLeftExpression.toString, ua.getRightExpression.toString)
+    val (a2Left, a2Right) = (sa.getLeftExpression.toString, sa.getRightExpression.toString)
+
+    val parallelEqual = (a1Left == a2Left) && (a1Right == a2Right)
+    val crossedEqual  = (a1Left == a2Right) && (a1Right == a2Left)
+
+    val matchType: MatchType = if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
+    else MatchType.UNSUCCESSFUL_MATCH
+
+    val ar = GenericAnalysisResult(matchType)
+
+    BinaryExpressionMatch(Some(ua), Some(sa), Some(ar))
+  }
 }

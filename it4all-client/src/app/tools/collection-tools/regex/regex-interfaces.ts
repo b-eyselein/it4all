@@ -1,61 +1,80 @@
-import {AnalysisResult, BinaryClassificationResultType, CorrectionResult, Match, MatchingResult} from '../../basics';
-import {DbSolution} from '../../../_interfaces/exercise';
 
-export type RegexCorrectionType = 'MATCHING' | 'EXTRACTION';
+export interface IRegexMatchMatch {
+  userArg?: string;
+  sampleArg?: string;
+  analysisResult?: IGenericAnalysisResult;
+}
 
 
-export interface RegexMatchingResult {
-  matchData: string;
+export interface IRegexMatchTestData {
+  id: number;
+  data: string;
   isIncluded: boolean;
-  resultType: BinaryClassificationResultType;
 }
 
-export interface RegexExtractionMatch {
-  start: number;
-  end: number;
-  content: string;
-}
 
-export interface RegexExtractionMatchingResult extends MatchingResult<RegexExtractionMatch, AnalysisResult> {
-  allMatches: Match<RegexExtractionMatch, AnalysisResult>[];
-}
-
-export interface RegexExtractionResult {
+export interface IRegexExtractionTestData {
+  id: number;
   base: string;
-  extractionMatchingResult: RegexExtractionMatchingResult;
+}
+
+
+export interface IRegexCompleteResult {
+  correctionType: RegexCorrectionTypes;
+  matchingResults: IRegexMatchingEvaluationResult[];
+  extractionResults: IRegexExtractionEvaluationResult[];
+  points: IPoints;
+  maxPoints: IPoints;
+  solutionSaved: boolean;
+}
+
+
+export interface IRegexExtractionEvaluationResult {
+  base: string;
+  extractionMatchingResult: IRegexExtractionMatchingResult;
   correct: boolean;
 }
 
-export interface RegexCorrectionResult extends CorrectionResult<any> {
-  correctionType: RegexCorrectionType;
-  matchingResults: RegexMatchingResult[];
-  extractionResults: RegexExtractionResult[];
+
+export interface IPoints {
+  quarters: number;
 }
 
-//   for (const result of correctionResult.extractionResults) {
-//
-//     console.info(JSON.stringify(result.extractionMatchingResult.allMatches, null, 2));
-//
-//     const matches = '<ul>' + result.extractionMatchingResult.allMatches.map(m => {
-//       const clazz = (m.analysisResult && m.analysisResult.success == 'SUCCESSFUL_MATCH') ? 'success' : 'danger';
-//
-//       return `
-// <li>
-//     <b>Erwartet:</b> &quot;<span>${m.sampleArg ? m.sampleArg.content : ''}</span>&quot;,
-//     <b>Gefunden:</b> &quot;<span class="text-${clazz}">${m.userArg ? m.userArg.content : ''}</span>&quot;
-// </li>`.trim()
-//     }).join('\n') + '</ul>';
-//
-//     html += `
-// <div class="card my-3">
-//     <div class="card-body">
-//         <p>${result.base}</p>
-//         ${matches}
-//     </div>
-// </div>`;
 
-// TODO: Dexie db defs...
+export interface IRegexMatchingEvaluationResult {
+  matchData: string;
+  isIncluded: boolean;
+  resultType: BinaryClassificationResultTypes;
+}
 
-export interface DbRegexSolution extends DbSolution<string> {
 
+export interface ISampleSolution {
+  id: number;
+  sample: object;
+}
+
+export type RegexCorrectionTypes = ("MATCHING" | "EXTRACTION");
+
+export interface IGenericAnalysisResult {
+  matchType: MatchType;
+}
+
+export type BinaryClassificationResultTypes = ("TruePositive" | "FalsePositive" | "FalseNegative" | "TrueNegative");
+export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
+
+export interface IRegexExerciseContent {
+  maxPoints: number;
+  correctionType: RegexCorrectionTypes;
+  sampleSolutions: ISampleSolution[];
+  matchTestData: IRegexMatchTestData[];
+  extractionTestData: IRegexExtractionTestData[];
+}
+
+
+export interface IRegexExtractionMatchingResult {
+  matchName: string;
+  matchSingularName: string;
+  allMatches: IRegexMatchMatch[];
+  points: number;
+  maxPoints: number;
 }

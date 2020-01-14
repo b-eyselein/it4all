@@ -1,17 +1,19 @@
 package model.tools.collectionTools.regex
 
-import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import model.tools.collectionTools.regex.BinaryClassificationResultTypes._
-
-import scala.util.matching.Regex.{Match => RegexMatch}
+import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
 
 
 sealed trait RegexEvaluationResult extends EvaluationResult
 
 
-final case class RegexMatchingEvaluationResult(matchData: String, isIncluded: Boolean, resultType: BinaryClassificationResultType) extends RegexEvaluationResult {
+final case class RegexMatchingEvaluationResult(
+  matchData: String,
+  isIncluded: Boolean,
+  resultType: BinaryClassificationResultType
+) extends RegexEvaluationResult {
 
   override def success: SuccessType = resultType match {
     case TruePositive | TrueNegative   => SuccessType.COMPLETE
@@ -23,7 +25,7 @@ final case class RegexMatchingEvaluationResult(matchData: String, isIncluded: Bo
 
 final case class RegexExtractionEvaluationResult(
   base: String,
-  extractionMatchingResult: MatchingResult[RegexMatch, GenericAnalysisResult, RegexMatchMatch],
+  extractionMatchingResult: ExtractedValuesComparison,
   correct: Boolean
 ) extends RegexEvaluationResult {
 

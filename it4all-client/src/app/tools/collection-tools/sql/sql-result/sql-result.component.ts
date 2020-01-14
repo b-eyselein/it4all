@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {SqlResult} from '../sql-interfaces';
+import {ISqlResult} from '../sql-interfaces';
 
 @Component({
   selector: 'it4all-sql-result',
@@ -7,6 +7,6 @@ import {SqlResult} from '../sql-interfaces';
 })
 export class SqlResultComponent {
 
-  @Input() result: SqlResult;
+  @Input() result: ISqlResult;
 
 }

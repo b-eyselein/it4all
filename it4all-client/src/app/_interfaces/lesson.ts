@@ -4,7 +4,7 @@ export interface LessonContentBase {
   _type: TutorialContentType;
   id: number;
   lessonId: number;
-  toolId: number;
+  toolId: string;
   priorSolved?: boolean;
 }
 

@@ -1,7 +1,6 @@
 package model.tools.collectionTools.uml.matcher
 
 import model.core.matching._
-import model.core.result.SuccessType
 import model.tools.collectionTools.uml.UmlConsts._
 import model.tools.collectionTools.uml.{UmlAttribute, UmlClass, UmlClassType, UmlMethod}
 import play.api.libs.json.{JsValue, Json}
@@ -26,10 +25,12 @@ final case class UmlClassMatchAnalysisResult(
 final case class UmlClassMatch(
   userArg: Option[UmlClass],
   sampleArg: Option[UmlClass],
-  compAM: Boolean
+  compAM: Boolean,
+  analysisResult: Option[UmlClassMatchAnalysisResult]
 ) extends Match[UmlClass, UmlClassMatchAnalysisResult] {
 
-  def analyze(c1: UmlClass, c2: UmlClass): UmlClassMatchAnalysisResult = {
+  /*
+override  def analyze(c1: UmlClass, c2: UmlClass): UmlClassMatchAnalysisResult = {
     val classTypeCorrect = c1.classType == c2.classType
 
     if (compAM) {
@@ -50,6 +51,7 @@ final case class UmlClassMatch(
       UmlClassMatchAnalysisResult(MatchType.SUCCESSFUL_MATCH, classTypeCorrect, c2.classType, None, None)
     }
   }
+   */
 
   // FIXME: check if correct!
   override protected def descArgForJson(arg: UmlClass): JsValue = Json.obj(nameName -> arg.name, classTypeName -> arg.classType.entryName)
@@ -72,7 +74,27 @@ final case class UmlClassMatcher(
 
   override protected def canMatch(c1: UmlClass, c2: UmlClass): Boolean = c1.name == c2.name
 
-  override protected def matchInstantiation(ua: Option[UmlClass], sa: Option[UmlClass]): UmlClassMatch =
-    UmlClassMatch(ua, sa, compareAttrsAndMethods)
+  override protected def instantiatePartMatch(ua: Option[UmlClass], sa: Option[UmlClass]): UmlClassMatch =
+    UmlClassMatch(ua, sa, compareAttrsAndMethods, None)
 
+  override protected def instantiateCompleteMatch(ua: UmlClass, sa: UmlClass): UmlClassMatch = {
+    val classTypeCorrect = ua.classType == sa.classType
+
+    val attributesResult = UmlAttributeMatcher.doMatch(ua.attributes, sa.attributes)
+
+    val methodsResult = UmlMethodMatcher.doMatch(ua.methods, sa.methods)
+
+    val membersCorrect: Boolean = false // TODO: attributesResult.success == SuccessType.COMPLETE && methodsResult.success == SuccessType.COMPLETE
+
+    val matchType: MatchType = (classTypeCorrect, membersCorrect) match {
+      case (true, true)  => MatchType.SUCCESSFUL_MATCH
+      case (false, true) => MatchType.PARTIAL_MATCH
+      case _             => MatchType.UNSUCCESSFUL_MATCH
+    }
+
+    val ar = UmlClassMatchAnalysisResult(matchType, classTypeCorrect, ua.classType, Some(attributesResult), Some(methodsResult))
+
+    UmlClassMatch(Some(ua), Some(sa), compareAttrsAndMethods, Some(ar))
+
+  }
 }

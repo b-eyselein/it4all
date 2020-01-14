@@ -1,11 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise, IUmlExerciseContent} from '../../../../_interfaces/models';
+import {IExercise} from '../../../../_interfaces/models';
 import {MyJointClass, STD_CLASS_HEIGHT, STD_CLASS_WIDTH} from '../_model/joint-class-diag-elements';
 import {getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
 import {findFreePositionForNextClass} from '../_model/class-diag-helpers';
 
 import * as joint from 'jointjs';
+import {IUmlExerciseContent} from '../uml-interfaces';
 
 enum CreatableClassDiagramObject {
   Class,

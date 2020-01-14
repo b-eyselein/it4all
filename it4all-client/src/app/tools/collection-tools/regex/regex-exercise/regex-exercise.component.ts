@@ -1,8 +1,8 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {ApiService} from '../../_services/api.service';
-import {RegexCorrectionResult} from '../regex-interfaces';
+import {IRegexCompleteResult, IRegexExerciseContent} from '../regex-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
-import {IExercise, IRegexExerciseContent} from '../../../../_interfaces/models';
+import {IExercise} from '../../../../_interfaces/models';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 
@@ -10,7 +10,7 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
   selector: 'it4all-regex-exercise',
   templateUrl: './regex-exercise.component.html'
 })
-export class RegexExerciseComponent extends ComponentWithExercise<string, RegexCorrectionResult> implements OnInit {
+export class RegexExerciseComponent extends ComponentWithExercise<string, IRegexCompleteResult> implements OnInit {
 
   @Input() exercise: IExercise;
 
@@ -19,9 +19,7 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, RegexC
   solution = '';
 
   corrected = false;
-  result: RegexCorrectionResult;
 
-  displaySampleSolutions = false;
   showInfo = false;
 
   constructor(apiService: ApiService, dexieService: DexieService) {

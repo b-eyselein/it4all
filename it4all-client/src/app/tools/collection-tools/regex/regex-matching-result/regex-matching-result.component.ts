@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {RegexMatchingResult} from '../regex-interfaces';
+import {IRegexMatchingEvaluationResult} from '../regex-interfaces';
 
 @Component({
   selector: 'it4all-regex-matching-result',
@@ -7,7 +7,7 @@ import {RegexMatchingResult} from '../regex-interfaces';
 })
 export class RegexMatchingResultComponent {
 
-  @Input() matchingResult: RegexMatchingResult;
+  @Input() matchingResult: IRegexMatchingEvaluationResult;
 
   constructor() {
   }

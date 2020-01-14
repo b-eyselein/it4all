@@ -11,8 +11,8 @@ import {PointsNotificationComponent} from '../../../../shared/points-notificatio
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {ApiService} from '../../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {IWebExerciseContent} from '../../../../_interfaces/models';
 import {HtmlPart} from '../web-tool';
+import {IWebExerciseContent} from '../web-interfaces';
 
 describe('WebExerciseComponent', () => {
 

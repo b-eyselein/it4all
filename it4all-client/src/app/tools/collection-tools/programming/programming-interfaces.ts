@@ -1,118 +1,133 @@
-import {SuccessType} from '../../../_interfaces/tool';
-import {CorrectionResult} from '../../basics';
-import {DbSolution, ExerciseContent} from '../../../_interfaces/exercise';
-import {IExerciseFile, IProgSolution} from '../../../_interfaces/models';
 
-// tslint:disable-next-line:no-empty-interface
-interface ProgrammingUnitTestTestConfig {
-
+export interface ISampleSolution {
+  id: number;
+  sample: object;
 }
 
-export interface ProgrammingUnitTestPart {
-  unitTestType: 'Simplified' | 'Normal';
-  unitTestTestsDescription: string;
-  unitTestFiles: IExerciseFile[];
-  unitTestTestConfigs: ProgrammingUnitTestTestConfig[];
-  testFileName: string;
-  sampleSolFileNames: string[];
+
+export interface IUmlMethod {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  parameters: string;
+  isStatic: boolean;
+  isAbstract: boolean;
 }
 
-export interface ProgrammingImplementationPart {
+export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT");
+export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
+
+export interface IImplementationPart {
   base: string;
   files: IExerciseFile[];
   implFileName: string;
   sampleSolFileNames: string[];
 }
 
-export interface ProgrammingSampleSolution {
-  id: number;
-  sample: {
-    files: IExerciseFile[];
-    testData: any[];
-  };
+
+export interface IUmlClass {
+  classType: UmlClassType;
+  name: string;
+  attributes: IUmlAttribute[];
+  methods: IUmlMethod[];
 }
 
-export interface ProgrammingExerciseContent extends ExerciseContent {
+export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
+
+export interface IUnitTestPart {
+  unitTestType: UnitTestTypes;
+  unitTestsDescription: string;
+  unitTestFiles: IExerciseFile[];
+  unitTestTestConfigs: IUnitTestTestConfig[];
+  simplifiedTestMainFile?: IExerciseFile;
+  testFileName: string;
+  sampleSolFileNames: string[];
+}
+
+
+export interface IUnitTestTestConfig {
+  id: number;
+  shouldFail: boolean;
+  description: string;
+  file: IExerciseFile;
+}
+
+
+export interface IProgTestData {
+  id: number;
+  input: any;
+  output: any;
+}
+
+
+export interface IUmlAttribute {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  isStatic: boolean;
+  isDerived: boolean;
+  isAbstract: boolean;
+}
+
+export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");
+
+export interface IUmlImplementation {
+  subClass: string;
+  superClass: string;
+}
+
+
+export interface IUmlAssociation {
+  assocType: UmlAssociationType;
+  assocName?: string;
+  firstEnd: string;
+  firstMult: UmlMultiplicity;
+  secondEnd: string;
+  secondMult: UmlMultiplicity;
+}
+
+
+export interface IExerciseFile {
+  name: string;
+  resourcePath: string;
+  fileType: string;
+  editable: boolean;
+  content: string;
+  active?: boolean;
+}
+
+
+export interface IProgExerciseContent {
   functionName: string;
   foldername: string;
   filename: string;
-
-  inputTypes: {
-    id: number;
-    inputName: string;
-    inputType: string;
-  }[];
-  outputType: string;
-
-  unitTestPart: ProgrammingUnitTestPart;
-  implementationPart: ProgrammingImplementationPart;
-
-  sampleSolutions: ProgrammingSampleSolution[];
+  inputTypes: IProgInput[];
+  outputType: any;
+  baseData?: any;
+  unitTestPart: IUnitTestPart;
+  implementationPart: IImplementationPart;
+  sampleSolutions: ISampleSolution[];
+  sampleTestData: IProgTestData[];
+  maybeClassDiagramPart?: IUmlClassDiagram;
 }
 
-// Database
+export type UnitTestTypes = ("Simplified" | "Normal");
 
-export interface DbProgrammingSolution extends DbSolution<IProgSolution> {
+export interface IProgSolution {
+  files: IExerciseFile[];
+  testData: IProgTestData[];
 }
 
-// Correction
 
-
-export interface ProgSingleResult {
+export interface IProgInput {
   id: number;
-  success: SuccessType;
-  // correct: boolean
-  input: object;
-  awaited: string;
-  gotten: string;
-  stdout: string | null;
+  inputName: string;
+  inputType: any;
 }
 
 
-export interface TestDataResult {
-  id: number;
-  successType: 'ERROR' | '';
-  correct: boolean;
-  input: TestDataInput[];
-  output: string;
-  awaited: string;
-  gotten: string;
+export interface IUmlClassDiagram {
+  classes: IUmlClass[];
+  associations: IUmlAssociation[];
+  implementations: IUmlImplementation[];
 }
-
-export interface TestDataCreationResult {
-  solutionSaved: boolean;
-  results: TestDataResult[];
-}
-
-export interface TestDataInput {
-  id: number;
-  input: string;
-}
-
-export interface NormalExecutionResult {
-  success: SuccessType;
-  logs: string;
-}
-
-export interface UnitTestTestConfig {
-  id: number;
-  shouldFail: boolean;
-  cause: null | string;
-  description: string;
-}
-
-export interface UnitTestCorrectionResult {
-  testConfig: UnitTestTestConfig;
-  successful: boolean;
-  file: string;
-  stdout: string[];
-  stderr: string[];
-}
-
-export interface ProgrammingCorrectionResult extends CorrectionResult<ProgSingleResult> {
-  simplifiedResults: ProgSingleResult[];
-  normalResult: NormalExecutionResult;
-  unitTestResults: UnitTestCorrectionResult[];
-}
-
-

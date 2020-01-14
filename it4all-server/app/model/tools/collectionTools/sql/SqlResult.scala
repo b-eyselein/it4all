@@ -1,13 +1,8 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.{GenericAnalysisResult, Match, MatchingResult}
 import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
-import model.tools.collectionTools.sql.matcher._
-import net.sf.jsqlparser.expression.BinaryExpression
-import net.sf.jsqlparser.schema.Table
-
-import scala.util.{Failure, Success, Try}
+import model.tools.collectionTools.sql.SqlToolMain._
 
 final case class WrongStatementTypeException(awaited: String, gotten: String) extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")
 
@@ -33,42 +28,63 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
 }
 
+
+final case class SelectAdditionalComparisons(
+  groupByComparison: GroupByComparison,
+  orderByComparison: OrderByComparison,
+  limitComparison: LimitComparison
+)
+
+final case class AdditionalComparison(
+  selectComparisons: Option[SelectAdditionalComparisons],
+  insertComparison: Option[InsertComparison]
+) {
+
+  def points: Points = ???
+
+  def maxPoints: Points = ???
+
+  def results: Seq[EvaluationResult] = selectComparisons.map(_ => ???).getOrElse[Seq[EvaluationResult]](???) ++ insertComparison
+
+}
+
+
 @deprecated
 final case class SqlQueriesStaticComparison[Q](
   userQ: Q, sampleQ: Q,
-  columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
-  tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
-  joinExpressionComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
-  whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
-  additionalComparisons: Seq[MatchingResult[_, _, _ <: Match[_, _]]],
+  columnComparison: ColumnComparison,
+  tableComparison: TableComparison,
+  joinExpressionComparison: BinaryExpressionComparison,
+  whereComparison: BinaryExpressionComparison,
+  additionalComparisons: AdditionalComparison
 ) {
 
   val points: Points = columnComparison.points +
     tableComparison.points +
     joinExpressionComparison.points +
     whereComparison.points +
-    additionalComparisons.map(_.points).fold(zeroPoints)(_ + _)
+    additionalComparisons.points
 
   val maxPoints: Points = columnComparison.maxPoints +
     tableComparison.maxPoints +
     joinExpressionComparison.maxPoints +
     whereComparison.maxPoints +
-    additionalComparisons.map(_.maxPoints).fold(zeroPoints)(_ + _)
+    additionalComparisons.maxPoints
 
 }
 
 // FIXME: use builder?
 final case class SqlResult(
-  columnComparison: MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch],
-  tableComparison: MatchingResult[Table, GenericAnalysisResult, TableMatch],
-  joinExpressionComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
-  whereComparison: MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch],
-  additionalComparisons: Seq[MatchingResult[_, _, _ <: Match[_, _]]],
+  columnComparison: ColumnComparison,
+  tableComparison: TableComparison,
+  joinExpressionComparison: BinaryExpressionComparison,
+  whereComparison: BinaryExpressionComparison,
+  additionalComparisons: AdditionalComparison,
   executionResult: SqlExecutionResult,
   solutionSaved: Boolean
 ) extends SqlCorrResult {
 
-  override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons
+  override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons.results
 
   override val successType: SuccessType = if (results.nonEmpty && results.forall(_.success == SuccessType.COMPLETE)) SuccessType.COMPLETE else SuccessType.PARTIALLY
 
@@ -76,7 +92,7 @@ final case class SqlResult(
     tableComparison.points +
     joinExpressionComparison.points +
     whereComparison.points +
-    additionalComparisons.map(_.points).fold(zeroPoints)(_ + _)
+    additionalComparisons.points
 
   // FIXME: points for executionResult?
 
@@ -84,7 +100,7 @@ final case class SqlResult(
     tableComparison.maxPoints +
     joinExpressionComparison.maxPoints +
     whereComparison.maxPoints +
-    additionalComparisons.map(_.maxPoints).fold(zeroPoints)(_ + _)
+    additionalComparisons.maxPoints
 
 }
 
@@ -98,13 +114,16 @@ final case class SqlParseFailed(error: Throwable, maxPoints: Points, solutionSav
 
 }
 
-final case class SqlExecutionResult(userResultTry: Try[SqlQueryResult], sampleResultTry: Try[SqlQueryResult]) extends EvaluationResult {
+final case class SqlExecutionResult(
+  userResultTry: Option[SqlQueryResult],
+  sampleResultTry: Option[SqlQueryResult]
+) extends EvaluationResult {
 
   override val success: SuccessType = userResultTry match {
-    case Failure(_)          => SuccessType.ERROR
-    case Success(userResult) => sampleResultTry match {
-      case Failure(_)            => SuccessType.PARTIALLY
-      case Success(sampleResult) => SuccessType.ofBool(userResult isIdentic sampleResult)
+    case None             => SuccessType.ERROR
+    case Some(userResult) => sampleResultTry match {
+      case None               => SuccessType.PARTIALLY
+      case Some(sampleResult) => SuccessType.ofBool(userResult isIdentic sampleResult)
     }
   }
 

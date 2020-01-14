@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ReadObjectComponent } from './read-object.component';
+import {ReadObjectComponent} from './read-object.component';
 
 describe('ReadObjectComponent', () => {
-  let component: ReadObjectComponent;
-  let fixture: ComponentFixture<ReadObjectComponent>;
+  let component: ReadObjectComponent<any>;
+  let fixture: ComponentFixture<ReadObjectComponent<any>>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ReadObjectComponent ]
-    })
-    .compileComponents();
+      declarations: [ReadObjectComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

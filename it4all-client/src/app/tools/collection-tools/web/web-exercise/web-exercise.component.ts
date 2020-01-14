@@ -1,10 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise, IExerciseFile, IWebCompleteResult, IWebExerciseContent} from '../../../../_interfaces/models';
+import {IExercise} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
+import {IExerciseFile, IWebCompleteResult, IWebExerciseContent} from '../web-interfaces';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
 

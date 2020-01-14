@@ -8,6 +8,7 @@ trait AnalysisResult {
 
   val matchType: MatchType
 
+  @deprecated
   def toJson: JsValue
 
 }
@@ -20,10 +21,9 @@ final case class GenericAnalysisResult(matchType: MatchType) extends AnalysisRes
 
 trait Match[T, AR <: AnalysisResult] {
 
-  val userArg  : Option[T]
-  val sampleArg: Option[T]
-
-  val analysisResult: Option[AR] = (userArg zip sampleArg).map { case (ua, sa) => analyze(ua, sa) }
+  val userArg       : Option[T]
+  val sampleArg     : Option[T]
+  val analysisResult: Option[AR] //= (userArg zip sampleArg).map { case (ua, sa) => analyze(ua, sa) }
 
   val matchType: MatchType = analysisResult match {
     case Some(ar) => ar.matchType
@@ -33,7 +33,7 @@ trait Match[T, AR <: AnalysisResult] {
     }
   }
 
-  protected def analyze(arg1: T, arg2: T): AR
+  //  protected def analyze(arg1: T, arg2: T): AR
 
   protected def descArgForJson(arg: T): JsValue
 

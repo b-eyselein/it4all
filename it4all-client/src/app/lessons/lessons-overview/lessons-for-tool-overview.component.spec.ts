@@ -3,9 +3,9 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {LessonsForToolOverviewComponent} from './lessons-for-tool-overview.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
-import {LessonApiService} from '../_services/lesson-api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
+import {ApiService} from '../../tools/collection-tools/_services/api.service';
 
 describe('LessonsForToolOverviewComponent', () => {
   let component: LessonsForToolOverviewComponent;
@@ -16,7 +16,7 @@ describe('LessonsForToolOverviewComponent', () => {
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
       declarations: [LessonsForToolOverviewComponent],
       providers: [
-        LessonApiService,
+        ApiService,
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}

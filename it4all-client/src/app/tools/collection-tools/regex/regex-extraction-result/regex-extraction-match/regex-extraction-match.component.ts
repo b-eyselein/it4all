@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {AnalysisResult, Match} from '../../../../basics';
-import {RegexExtractionMatch} from '../../regex-interfaces';
+import {IRegexMatchMatch} from '../../regex-interfaces';
 
 @Component({
   selector: 'it4all-regex-extraction-match',
@@ -14,7 +13,7 @@ import {RegexExtractionMatch} from '../../regex-interfaces';
 })
 export class RegexExtractionMatchComponent implements OnInit {
 
-  @Input() match: Match<RegexExtractionMatch, AnalysisResult>;
+  @Input() match: IRegexMatchMatch;
 
   constructor() {
   }
@@ -23,7 +22,7 @@ export class RegexExtractionMatchComponent implements OnInit {
   }
 
   isCorrect(): boolean {
-    return this.match.matchType === 'SUCCESSFUL_MATCH';
+    return this.match.analysisResult.matchType === 'SUCCESSFUL_MATCH';
   }
 
 }

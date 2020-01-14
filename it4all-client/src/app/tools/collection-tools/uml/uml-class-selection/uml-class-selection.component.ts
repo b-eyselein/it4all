@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise, IUmlExerciseContent} from '../../../../_interfaces/models';
+import {IExercise} from '../../../../_interfaces/models';
 import {getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
+import {IUmlExerciseContent} from '../uml-interfaces';
 
 @Component({
   selector: 'it4all-uml-class-selection',

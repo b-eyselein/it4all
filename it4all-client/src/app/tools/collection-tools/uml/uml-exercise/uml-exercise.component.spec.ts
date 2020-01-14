@@ -3,8 +3,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {UmlExerciseComponent} from './uml-exercise.component';
 import {UmlClassSelectionComponent} from '../uml-class-selection/uml-class-selection.component';
 import {RouterTestingModule} from '@angular/router/testing';
-import {IUmlExerciseContent} from '../../../../_interfaces/models';
 import {UmlClassSelectionPart} from '../uml-tools';
+import {IUmlExerciseContent} from '../uml-interfaces';
 
 describe('UmlExerciseComponent', () => {
 
@@ -12,7 +12,7 @@ describe('UmlExerciseComponent', () => {
   let fixture: ComponentFixture<UmlExerciseComponent>;
 
   const exerciseContent: IUmlExerciseContent = {
-    mappings: {},
+    mappings: [],
     sampleSolutions: [],
     toIgnore: []
   };

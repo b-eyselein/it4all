@@ -1,5 +1,6 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
-import {IExercise, IWebExerciseContent} from '../../../_interfaces/models';
+import {IExercise} from '../../../_interfaces/models';
+import {IWebExerciseContent} from './web-interfaces';
 
 
 export const HtmlPart: ToolPart = {id: 'html', name: 'Html-Teil'};

@@ -10,7 +10,7 @@ import {RegexExtractionMatchComponent} from '../regex-extraction-result/regex-ex
 import {RegexExtractionResultComponent} from '../regex-extraction-result/regex-extraction-result.component';
 import {ApiService} from '../../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {IRegexExerciseContent} from '../../../../_interfaces/models';
+import {IRegexExerciseContent} from '../regex-interfaces';
 
 describe('RegexExerciseComponent', () => {
 

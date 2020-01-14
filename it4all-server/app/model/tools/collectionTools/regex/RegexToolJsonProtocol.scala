@@ -34,9 +34,10 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
   private val regexMatchMatchWrites: Writes[RegexMatchMatch] = _.toJson
 
   private val regexMatchMatchingResultWrites: Writes[MatchingResult[RegexMatch, GenericAnalysisResult, RegexMatchMatch]] = {
+    implicit val pw  : Writes[Points]          = ToolJsonProtocol.pointsFormat
     implicit val rmmw: Writes[RegexMatchMatch] = regexMatchMatchWrites
 
-    Json.writes[MatchingResult[RegexMatch, GenericAnalysisResult, RegexMatchMatch]]
+    Json.writes
   }
 
 

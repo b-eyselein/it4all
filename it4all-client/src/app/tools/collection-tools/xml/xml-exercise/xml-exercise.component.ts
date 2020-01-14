@@ -1,9 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise, IExerciseFile, IXmlCompleteResult, IXmlExerciseContent, IXmlSolution} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
+import {IXmlCompleteResult, IXmlExerciseContent, IXmlSolution} from '../xml-interfaces';
+import {IExercise} from '../../../../_interfaces/models';
+import {IExerciseFile} from '../../web/web-interfaces';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';

@@ -2,22 +2,24 @@ package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.model.ElementLine
 import de.uniwue.dtd.parser.DTDParseException
+import model.core.matching.MatchType
 import model.core.result.SuccessType
 import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
+import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
 
 
-trait XmlTSTypes extends ToolTSInterfaceTypes {
+object XmlTSTypes extends ToolTSInterfaceTypes {
 
   import nl.codestar.scalatsi.TypescriptType.TSInterface
 
-  val xmlExerciseContentTSI: TSIType[XmlExerciseContent] = {
+  private val xmlExerciseContentTSI: TSIType[XmlExerciseContent] = {
     implicit val xsst: TSIType[SampleSolution[XmlSolution]] = sampleSolutionTSI[XmlSolution](TSType.fromCaseClass[XmlSolution])
 
     TSType.fromCaseClass
   }
 
-  val xmlSolutionTSI: TSIType[XmlSolution] = TSType.fromCaseClass
+  private val xmlSolutionTSI: TSIType[XmlSolution] = TSType.fromCaseClass
 
   private val xmlErrorTSI: TSIType[XmlError] = {
     implicit val sts               : TSType[SuccessType]  = successTypeTS
@@ -27,7 +29,8 @@ trait XmlTSTypes extends ToolTSInterfaceTypes {
   }
 
   private val elementLineMatchTSIType: TSIType[ElementLineMatch] = {
-    implicit val elementLineTSI: TSNamedType[ElementLine] = TSType.alias[ElementLine, Any]
+    implicit val mtt           : TSType[MatchType]        = matchTypeTS
+    implicit val elementLineTSI: TSNamedType[ElementLine] = TSType.alias[ElementLine, Object]
 
     TSType.fromCaseClass
   }
@@ -39,12 +42,18 @@ trait XmlTSTypes extends ToolTSInterfaceTypes {
     TSType.fromCaseClass
   }
 
-  val xmlCompleteResultTSI: TSIType[XmlCompleteResult] = {
+  private val xmlCompleteResultTSI: TSIType[XmlCompleteResult] = {
     implicit val sts : TSType[SuccessType]       = successTypeTS
     implicit val xdrt: TSIType[XmlError]         = xmlErrorTSI
     implicit val xgrt: TSIType[XmlGrammarResult] = xmlGrammarResultTSI
 
     TSType.fromCaseClass
   }
+
+  val exported: Seq[TypescriptNamedType] = Seq(
+    xmlExerciseContentTSI.get,
+    xmlSolutionTSI.get,
+    xmlCompleteResultTSI.get
+  )
 
 }

@@ -2,6 +2,13 @@ package model
 
 
 import better.files.File
+import model.tools.collectionTools.BasicTSTypes
+import model.tools.collectionTools.programming.ProgrammingTSTypes
+import model.tools.collectionTools.regex.RegexTSTypes
+import model.tools.collectionTools.sql.SqlTSTypes
+import model.tools.collectionTools.uml.UmlTSTypes
+import model.tools.collectionTools.web.WebTSTypes
+import model.tools.collectionTools.xml.XmlTSTypes
 import nl.codestar.scalatsi.DefaultTSTypes
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.output.{OutputOptions, WriteTSToFiles}
@@ -17,66 +24,17 @@ object TsInterfaceGenerator extends DefaultTSTypes {
   private val clientBaseDir: File = File.currentWorkingDirectory.parent / "it4all-client" / "src" / "app"
 
   private def collToolInterfacesFile(toolId: String): File =
-    clientBaseDir / "tools" / "collection-tools" / toolId / s"${toolId}_interfaces.ts"
+    clientBaseDir / "tools" / "collection-tools" / toolId / s"$toolId-interfaces.ts"
 
   private val tsTypesFiles = Seq(
-    TsTypesFile(
-      Seq(
-        MyTSInterfaceTypes.exerciseCollectionTSI.get,
-        MyTSInterfaceTypes.exerciseMetaDataTSI.get,
-        MyTSInterfaceTypes.exerciseTSI.get,
+    TsTypesFile(BasicTSTypes.exported, clientBaseDir / "_interfaces" / "models.ts"),
 
-        /*
-        MyTSInterfaceTypes.lessonTextContentTSI.get,
-        MyTSInterfaceTypes.lessonQuestionsContentTSI.get,
-        MyTSInterfaceTypes.lessonTSI.get,
-         */
-      ),
-      clientBaseDir / "_interfaces" / "models.ts"
-    ),
-
-    TsTypesFile(
-      Seq(
-        MyTSInterfaceTypes.regexExerciseContentTSI.get,
-      ),
-      collToolInterfacesFile("regex")
-    ),
-    TsTypesFile(
-      Seq(
-        MyTSInterfaceTypes.progExerciseContentTSI.get,
-        MyTSInterfaceTypes.progSolutionTSI.get,
-      ),
-      collToolInterfacesFile("programming")
-    ),
-    TsTypesFile(
-      Seq(
-        MyTSInterfaceTypes.sqlExerciseContentTSI.get,
-        MyTSInterfaceTypes.sqlQueryResultTSI.get,
-      ),
-      collToolInterfacesFile("sql")
-    ),
-    TsTypesFile(
-      Seq(
-        MyTSInterfaceTypes.umlExerciseContentTSI.get,
-        MyTSInterfaceTypes.umlClassDiagramTSI.get,
-      ),
-      collToolInterfacesFile("uml")
-    ),
-    TsTypesFile(
-      Seq(
-        MyTSInterfaceTypes.xmlExerciseContentTSI.get,
-        MyTSInterfaceTypes.xmlSolutionTSI.get,
-        MyTSInterfaceTypes.xmlCompleteResultTSI.get
-      ),
-      collToolInterfacesFile("xml")
-    ),
-    TsTypesFile(
-      Seq(
-        MyTSInterfaceTypes.webExerciseContentTSI.get,
-        MyTSInterfaceTypes.webCompleteResultTSI.get
-      ),
-      collToolInterfacesFile("web")
-    )
+    TsTypesFile(RegexTSTypes.exported, collToolInterfacesFile("regex")),
+    TsTypesFile(ProgrammingTSTypes.exported, collToolInterfacesFile("programming")),
+    TsTypesFile(SqlTSTypes.exported, collToolInterfacesFile("sql")),
+    TsTypesFile(UmlTSTypes.exported, collToolInterfacesFile("uml")),
+    TsTypesFile(WebTSTypes.exported, collToolInterfacesFile("web")),
+    TsTypesFile(XmlTSTypes.exported, collToolInterfacesFile("xml"))
   )
 
   def main(args: Array[String]): Unit = tsTypesFiles.foreach {

@@ -15,7 +15,9 @@ describe('LessonTextContentComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LessonTextContentComponent);
     component = fixture.componentInstance;
-    component.content = {_type: 'Text', content: '', priorSolved: true};
+    component.content = {
+      id: 1, lessonId: 1, toolId: 'web', _type: 'Text', content: '', priorSolved: true
+    };
     fixture.detectChanges();
   });
 

@@ -7,11 +7,15 @@ import play.api.libs.json.{JsString, JsValue}
 
 final case class ColumnMatch(
   userArg: Option[ColumnWrapper],
-  sampleArg: Option[ColumnWrapper]
+  sampleArg: Option[ColumnWrapper],
+  analysisResult: Option[GenericAnalysisResult]
 ) extends Match[ColumnWrapper, GenericAnalysisResult] {
 
+  /*
   override protected def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): GenericAnalysisResult =
     GenericAnalysisResult(userArg doMatch sampleArg)
+
+   */
 
   override protected def descArgForJson(arg: ColumnWrapper): JsValue = JsString(arg.toString)
 
@@ -32,7 +36,10 @@ object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, Colum
 
   override protected def canMatch(cw1: ColumnWrapper, cw2: ColumnWrapper): Boolean = cw1 canMatch cw2
 
-  override protected def matchInstantiation(ua: Option[ColumnWrapper], sa: Option[ColumnWrapper]): ColumnMatch =
-    ColumnMatch(ua, sa)
+  override protected def instantiatePartMatch(ua: Option[ColumnWrapper], sa: Option[ColumnWrapper]): ColumnMatch =
+    ColumnMatch(ua, sa, None)
 
+  override protected def instantiateCompleteMatch(ua: ColumnWrapper, sa: ColumnWrapper): ColumnMatch = {
+    ColumnMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(ua doMatch sa)))
+  }
 }

@@ -6,14 +6,17 @@ import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.create.table.{ColDataType, ColumnDefinition}
 import net.sf.jsqlparser.statement.select.{AllColumns, AllTableColumns, SelectExpressionItem, SelectItem}
 
+@deprecated
 abstract sealed class ColumnWrapper {
 
   type C
 
   def getColName: String
 
+  @deprecated
   def getRest: String
 
+  @deprecated
   def hasAlias: Boolean
 
   def canMatch(that: ColumnWrapper): Boolean = (this, that) match {
@@ -34,11 +37,11 @@ abstract sealed class ColumnWrapper {
 
 object ColumnWrapper {
 
-  def wrapColumn(col: Column) = ChangeColumnWrapper(col)
+  def wrapColumn(col: Column): ChangeColumnWrapper = ChangeColumnWrapper(col)
 
-  def wrapColumn(colDef: ColumnDefinition) = CreateColumnWrapper(colDef)
+  def wrapColumn(colDef: ColumnDefinition): CreateColumnWrapper = CreateColumnWrapper(colDef)
 
-  def wrapColumn(selItem: SelectItem) = SelectColumnWrapper(selItem)
+  def wrapColumn(selItem: SelectItem): SelectColumnWrapper = SelectColumnWrapper(selItem)
 
 }
 
@@ -100,7 +103,7 @@ final case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrappe
   }
 
   def compareDataTypes(userType: ColDataType, sampleType: ColDataType): Boolean = {
-    val firstColType = userType.getDataType.toUpperCase
+    val firstColType  = userType.getDataType.toUpperCase
     val secondColType = sampleType.getDataType.toUpperCase
 
     // Comparing datatype

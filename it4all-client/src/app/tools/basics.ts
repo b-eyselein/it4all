@@ -1,6 +1,6 @@
 export type BinaryClassificationResultType = 'TruePositive' | 'FalsePositive' | 'FalseNegative' | 'TrueNegative';
 
-export type MatchType = 'SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE';
+type MatchType = 'SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE';
 
 export interface AnalysisResult {
   success: MatchType;

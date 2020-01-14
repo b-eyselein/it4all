@@ -19,7 +19,7 @@ describe('RegexExtractionMatchComponent', () => {
     component.match = {
       matchType: 'ONLY_SAMPLE',
       userArg: null,
-      sampleArg: {content: '', start: 0, end: 0},
+      sampleArg: '' /*{content: '', start: 0, end: 0}*/,
       analysisResult: null
     };
     fixture.detectChanges();

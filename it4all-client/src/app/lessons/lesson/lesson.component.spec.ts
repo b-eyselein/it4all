@@ -4,9 +4,9 @@ import {LessonComponent} from './lesson.component';
 import {LessonTextContentComponent} from '../lesson-text-content/lesson-text-content.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
-import {LessonApiService} from '../_services/lesson-api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
+import {ApiService} from '../../tools/collection-tools/_services/api.service';
 
 describe('LessonComponent', () => {
   let component: LessonComponent;
@@ -17,7 +17,7 @@ describe('LessonComponent', () => {
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
       declarations: [LessonComponent, LessonTextContentComponent],
       providers: [
-        LessonApiService,
+        ApiService,
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}
@@ -30,11 +30,12 @@ describe('LessonComponent', () => {
     fixture = TestBed.createComponent(LessonComponent);
     component = fixture.componentInstance;
     component.lesson = {
-      dependsOn: [],
-      description: '',
       id: 1,
+      toolId: 'web',
       title: '',
-      content: []
+      content: [],
+      description: '',
+      dependsOn: []
     };
     fixture.detectChanges();
   });

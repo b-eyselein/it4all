@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ProgSingleResult} from '../../programming-interfaces';
+import {ProgSingleResult} from '../../my-programming-interfaces';
 
 @Component({
   selector: 'it4all-programming-simplified-result',

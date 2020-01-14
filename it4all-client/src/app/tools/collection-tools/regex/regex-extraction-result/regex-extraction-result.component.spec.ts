@@ -19,13 +19,11 @@ describe('RegexExtractionResultComponent', () => {
     component = fixture.componentInstance;
     component.extractionResult = {
       extractionMatchingResult: {
-        success: true,
         matchName: 'matchname',
-        maxPoints: -1,
-        matches: [],
-        points: -1,
+        matchSingularName: 'matchsingular',
         allMatches: [],
-        matchSingularName: 'matchsingular'
+        points: -1,
+        maxPoints: -1,
       },
       base: 'base',
       correct: true

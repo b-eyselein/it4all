@@ -1,7 +1,14 @@
 package model.tools.collectionTools.sql
 
+import model.core.matching.GenericAnalysisResult
 import model.tools.collectionTools.sql.SqlConsts._
-import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol}
+import model.tools.collectionTools.sql.SqlToolMain._
+import model.tools.collectionTools.sql.matcher._
+import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol, ToolJsonProtocol}
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList
+import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
+import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -41,26 +48,80 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
         //      case Failure(error)  => userErrorName -> JsString(error.toString)
         //    },
         (__ \ sampleResultName).write[Option[SqlQueryResult]]
-      ) (ser => (ser.success.entryName, ser.userResultTry.toOption, ser.sampleResultTry.toOption))
+      ) (ser => (ser.success.entryName, ser.userResultTry, ser.sampleResultTry))
+  }
+
+  private val columnMatchingResultWrites: Writes[ColumnComparison] = matchingResultWrites({
+    implicit val columnWrapperWrites: Writes[ColumnWrapper]         = cw => JsString(cw.getColName)
+    implicit val garw               : Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+
+    Json.writes[ColumnMatch]
+  })
+
+  private val tableMatchingResultWrites: Writes[TableComparison] = matchingResultWrites({
+    implicit val tr  : Writes[Table]                 = t => JsString(t.getName)
+    implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+
+    Json.writes[TableMatch]
+  })
+
+  private val binaryExpressionResultWrites: Writes[BinaryExpressionComparison] = matchingResultWrites({
+    implicit val binaryExpressionWrites: Writes[BinaryExpression]      = be => JsString(be.toString)
+    implicit val garw                  : Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+
+    Json.writes[BinaryExpressionMatch]
+  })
+
+  private val selectAdditionalComparisonsWrites: Writes[SelectAdditionalComparisons] = {
+    implicit val groupByComparisonWrites: Writes[GroupByComparison] = matchingResultWrites({
+      implicit val ew  : Writes[Expression]            = e => JsString(e.toString)
+      implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+
+      Json.writes[GroupByMatch]
+    })
+
+    implicit val orderByComparisonWrites: Writes[OrderByComparison] = matchingResultWrites({
+      implicit val obew: Writes[OrderByElement]        = obe => JsString(obe.toString)
+      implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+
+      Json.writes[OrderByMatch]
+    })
+
+    implicit val limitComparisonWrites: Writes[LimitComparison] = matchingResultWrites({
+      implicit val lew : Writes[Limit]                 = l => JsString(l.toString)
+      implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+
+      Json.writes[LimitMatch]
+    })
+
+    Json.writes
+  }
+
+  private val additionalComparisonWrites: Writes[AdditionalComparison] = {
+    implicit val sacw: Writes[SelectAdditionalComparisons] = selectAdditionalComparisonsWrites
+
+    implicit val ivcw: Writes[InsertComparison] = matchingResultWrites({
+      implicit val elw : Writes[ExpressionList]        = el => JsString(el.toString)
+      implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+
+      Json.writes[ExpressionListMatch]
+    })
+
+    Json.writes
   }
 
   private val sqlResultRestWrites: Writes[SqlResult] = {
-    implicit val serw: Writes[SqlExecutionResult] = sqlExecutionResultWrites
+    implicit val cmrw: Writes[ColumnComparison] = columnMatchingResultWrites
 
-    (
-      (__ \ columnComparisonsName).write[JsValue] and
-        (__ \ tableComparisonsName).write[JsValue] and
-        (__ \ joinExpressionsComparisonsName).write[JsValue] and
-        (__ \ whereComparisonsName).write[JsValue] and
-        (__ \ additionalComparisonsName).write[Seq[JsValue]] and
-        (__ \ executionResultsName).write[SqlExecutionResult]
-      ) (unapplySqlResultRest)
-  }
+    implicit val tmrw: Writes[TableComparison] = tableMatchingResultWrites
 
-  private def unapplySqlResultRest: SqlResult => (JsObject, JsObject, JsObject, JsObject, Seq[JsObject], SqlExecutionResult) = {
-    sr: SqlResult =>
-      (sr.columnComparison.toJson, sr.tableComparison.toJson, sr.joinExpressionComparison.toJson, sr.whereComparison.toJson,
-        sr.additionalComparisons.map(_.toJson), sr.executionResult)
+    implicit val berw: Writes[BinaryExpressionComparison] = binaryExpressionResultWrites
+
+    implicit val acw: Writes[AdditionalComparison] = additionalComparisonWrites
+
+    implicit val erw: Writes[SqlExecutionResult] = sqlExecutionResultWrites
+
+    Json.writes
   }
 
   private val sqlCorrResultRestWrites: Writes[SqlCorrResult] = {

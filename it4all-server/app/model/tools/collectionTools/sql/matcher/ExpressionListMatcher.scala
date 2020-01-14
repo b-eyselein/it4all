@@ -7,13 +7,15 @@ import play.api.libs.json.{JsString, JsValue}
 
 final case class ExpressionListMatch(
   userArg: Option[ExpressionList],
-  sampleArg: Option[ExpressionList]
+  sampleArg: Option[ExpressionList],
+  analysisResult: Option[GenericAnalysisResult]
 ) extends Match[ExpressionList, GenericAnalysisResult] {
-
-  override protected def analyze(arg1: ExpressionList, arg2: ExpressionList): GenericAnalysisResult = {
-    // TODO: implement?
-    GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
-  }
+  /*
+    override protected def analyze(arg1: ExpressionList, arg2: ExpressionList): GenericAnalysisResult = {
+      // TODO: implement?
+      GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
+    }
+   */
 
   override protected def descArgForJson(arg: ExpressionList): JsValue = JsString(arg.toString)
 
@@ -27,7 +29,9 @@ object ExpressionListMatcher extends Matcher[ExpressionList, GenericAnalysisResu
 
   override protected def canMatch(el1: ExpressionList, el2: ExpressionList): Boolean = el1.toString == el2.toString
 
-  override protected def matchInstantiation(ua: Option[ExpressionList], sa: Option[ExpressionList]): ExpressionListMatch =
-    ExpressionListMatch(ua, sa)
+  override protected def instantiatePartMatch(ua: Option[ExpressionList], sa: Option[ExpressionList]): ExpressionListMatch =
+    ExpressionListMatch(ua, sa, None)
 
+  override protected def instantiateCompleteMatch(ua: ExpressionList, sa: ExpressionList): ExpressionListMatch =
+    ExpressionListMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)))
 }

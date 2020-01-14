@@ -1,15 +1,17 @@
 import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {ProgrammingCorrectionResult} from '../programming-interfaces';
+import {ProgrammingCorrectionResult} from '../my-programming-interfaces';
 import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {TabComponent} from '../../../../shared/tab/tab.component';
 import {TabsComponent} from '../../../../shared/tabs/tabs.component';
 import {ProgrammingImplementationToolPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {IExercise, IExerciseFile, IProgSolution} from '../../../../_interfaces/models';
+import {IExercise} from '../../../../_interfaces/models';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {IExerciseFile, IProgSolution} from '../programming-interfaces';
 
 import 'codemirror/mode/python/python';
+
 
 @Component({
   selector: 'it4all-programming-exercise',

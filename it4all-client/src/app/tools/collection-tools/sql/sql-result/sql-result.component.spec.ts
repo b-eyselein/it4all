@@ -20,28 +20,23 @@ describe('SqlResultComponent', () => {
     component = fixture.componentInstance;
     component.result = {
       solutionSaved: true,
-      maxPoints: -1,
-      points: -1,
-      isSuccessful: true,
-      results: {
-        whereComparisons: {
-          maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
-        },
-        joinExpressionComparisons: {
-          maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
-        },
-        tableComparisons: {
-          maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
-        },
-        columnComparisons: {
-          maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
-        },
-        additionalComparisons: [],
-        executionResults: {
-          sampleResult: null, success: 'ERROR', userResult: null
-        },
-        message: ''
+      whereComparisons: {
+        maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
       },
+      joinExpressionComparisons: {
+        maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
+      },
+      tableComparisons: {
+        maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
+      },
+      columnComparisons: {
+        maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
+      },
+      additionalComparisons: [],
+      executionResults: {
+        sampleResult: null, success: 'ERROR', userResult: null
+      },
+      message: '',
       success: ''
     };
     fixture.detectChanges();

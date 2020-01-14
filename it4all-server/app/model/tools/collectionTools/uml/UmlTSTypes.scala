@@ -1,10 +1,13 @@
 package model.tools.collectionTools.uml
 
 import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
+import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.{TSIType, TSType}
-import nl.codestar.scalatsi.TypescriptType.TSInterface
 
-trait UmlTSTypes extends ToolTSInterfaceTypes {
+
+object UmlTSTypes extends ToolTSInterfaceTypes {
+
+  import nl.codestar.scalatsi.TypescriptType.TSInterface
 
   val umlClassDiagramTSI: TSIType[UmlClassDiagram] = {
     implicit val uct: TSIType[UmlClass] = {
@@ -29,11 +32,16 @@ trait UmlTSTypes extends ToolTSInterfaceTypes {
     TSType.fromCaseClass[UmlClassDiagram]
   }
 
-  val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
+  private val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
     implicit val usst: TSIType[SampleSolution[UmlClassDiagram]] = sampleSolutionTSI[UmlClassDiagram](umlClassDiagramTSI)
     implicit val mt  : TSType[Map[String, String]]              = stringMapTsType
 
     TSType.fromCaseClass[UmlExerciseContent]
   }
+
+  val exported: Seq[TypescriptNamedType] = Seq(
+    umlClassDiagramTSI.get,
+    umlExerciseContentTSI.get
+  )
 
 }

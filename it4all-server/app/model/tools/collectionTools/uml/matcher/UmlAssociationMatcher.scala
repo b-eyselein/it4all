@@ -5,10 +5,13 @@ import model.tools.collectionTools.uml.UmlConsts._
 import model.tools.collectionTools.uml.{UmlAssociation, UmlAssociationType}
 import play.api.libs.json.{JsValue, Json}
 
-final case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel: Boolean,
-                                              assocTypeEqual: Boolean, correctAssocType: UmlAssociationType,
-                                              multiplicitiesEqual: Boolean)
-  extends AnalysisResult {
+final case class UmlAssociationAnalysisResult(
+  matchType: MatchType,
+  endsParallel: Boolean,
+  assocTypeEqual: Boolean,
+  correctAssocType: UmlAssociationType,
+  multiplicitiesEqual: Boolean
+) extends AnalysisResult {
 
   override def toJson: JsValue = Json.obj(
     successName -> matchType.entryName,
@@ -21,9 +24,11 @@ final case class UmlAssociationAnalysisResult(matchType: MatchType, endsParallel
 
 final case class UmlAssociationMatch(
   userArg: Option[UmlAssociation],
-  sampleArg: Option[UmlAssociation]
+  sampleArg: Option[UmlAssociation],
+  analysisResult: Option[UmlAssociationAnalysisResult]
 ) extends Match[UmlAssociation, UmlAssociationAnalysisResult] {
 
+  /*
   override def analyze(assoc1: UmlAssociation, assoc2: UmlAssociation): UmlAssociationAnalysisResult = {
     val endsParallel = UmlAssociationMatcher.endsParallelEqual(assoc1, assoc2)
 
@@ -41,6 +46,7 @@ final case class UmlAssociationMatch(
 
     UmlAssociationAnalysisResult(matchType, endsParallel, assocTypeEqual, assoc2.assocType, multiplicitiesEqual)
   }
+   */
 
   override protected def descArgForJson(arg: UmlAssociation): JsValue = Json.obj(
     associationTypeName -> arg.assocType.german,
@@ -66,7 +72,32 @@ object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationAnaly
   override protected def canMatch(a1: UmlAssociation, a2: UmlAssociation): Boolean =
     endsParallelEqual(a1, a2) || endsCrossedEqual(a1, a2)
 
-  override protected def matchInstantiation(ua: Option[UmlAssociation], sa: Option[UmlAssociation]): UmlAssociationMatch =
-    UmlAssociationMatch(ua, sa)
+  override protected def instantiatePartMatch(ua: Option[UmlAssociation], sa: Option[UmlAssociation]): UmlAssociationMatch =
+    UmlAssociationMatch(ua, sa, None)
 
+  override protected def instantiateCompleteMatch(ua: UmlAssociation, sa: UmlAssociation): UmlAssociationMatch = {
+    val ar: UmlAssociationAnalysisResult = {
+      val endsParallel = UmlAssociationMatcher.endsParallelEqual(ua, sa)
+
+      val assocTypeEqual = ua.assocType == sa.assocType
+
+      val multiplicitiesEqual = if (endsParallel) {
+        ua.firstMult == sa.firstMult && ua.secondMult == sa.secondMult
+      } else {
+        ua.firstMult == sa.secondMult && ua.secondMult == sa.firstMult
+      }
+
+
+      val matchType: MatchType = (assocTypeEqual, multiplicitiesEqual) match {
+        case (true, true)  => MatchType.SUCCESSFUL_MATCH
+        case (false, true) => MatchType.PARTIAL_MATCH
+        case _             => MatchType.UNSUCCESSFUL_MATCH
+      }
+
+      UmlAssociationAnalysisResult(matchType, endsParallel, assocTypeEqual, sa.assocType, multiplicitiesEqual)
+    }
+
+
+    UmlAssociationMatch(Some(ua), Some(sa), Some(ar))
+  }
 }

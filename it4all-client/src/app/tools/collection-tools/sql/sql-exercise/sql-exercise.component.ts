@@ -1,13 +1,13 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {SqlResult} from '../sql-interfaces';
 import {ApiService} from '../../_services/api.service';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
-import {IExercise, ISqlExerciseContent, ISqlQueryResult} from '../../../../_interfaces/models';
+import {IExercise} from '../../../../_interfaces/models';
 import {DbSolution} from '../../../../_interfaces/exercise';
 
 import 'codemirror/mode/sql/sql';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {ISqlExerciseContent, ISqlQueryResult, ISqlResult} from '../sql-interfaces';
 
 interface ActivatableSqlQueryResult extends ISqlQueryResult {
   active?: boolean;
@@ -19,7 +19,7 @@ interface ActivatableSqlQueryResult extends ISqlQueryResult {
   styleUrls: ['./sql-exercise.component.sass'],
   encapsulation: ViewEncapsulation.None // style editor also
 })
-export class SqlExerciseComponent extends ComponentWithExercise<string, SqlResult> implements OnInit {
+export class SqlExerciseComponent extends ComponentWithExercise<string, ISqlResult> implements OnInit {
 
   readonly partId = 'solve';
 

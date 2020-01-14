@@ -2,12 +2,11 @@ package model.tools.collectionTools.programming
 
 import model.tools.collectionTools.uml.{UmlClassDiagram, UmlTSTypes}
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolTSInterfaceTypes}
+import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.{TSIType, TSType}
 import play.api.libs.json.JsValue
 
-trait ProgrammingTSTypes extends ToolTSInterfaceTypes {
-  // Needs UmlClassDiagramTypes...
-  self: UmlTSTypes =>
+object ProgrammingTSTypes extends ToolTSInterfaceTypes {
 
   import nl.codestar.scalatsi.TypescriptType.TSInterface
 
@@ -29,7 +28,7 @@ trait ProgrammingTSTypes extends ToolTSInterfaceTypes {
     implicit val jvt           : TSType[JsValue]                       = jsValueTsType
     implicit val eft           : TSIType[ExerciseFile]                 = exerciseFileTSI
     implicit val sst           : TSIType[SampleSolution[ProgSolution]] = sampleSolutionTSI(progSolutionTSI)
-    implicit val ucdt          : TSIType[UmlClassDiagram]              = umlClassDiagramTSI
+    implicit val ucdt          : TSIType[UmlClassDiagram]              = UmlTSTypes.umlClassDiagramTSI
     implicit val ptdt          : TSIType[ProgTestData]                 = progTestDataTSI
     implicit val uttt          : TSType[UnitTestType]                  = enumTsType(UnitTestTypes)
     implicit val uttct         : TSIType[UnitTestTestConfig]           = TSType.fromCaseClass
@@ -37,5 +36,9 @@ trait ProgrammingTSTypes extends ToolTSInterfaceTypes {
     TSType.fromCaseClass[ProgExerciseContent]
   }
 
+  val exported: Seq[TypescriptNamedType] = Seq(
+    progSolutionTSI.get,
+    progExerciseContentTSI.get
+  )
 
 }

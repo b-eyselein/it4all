@@ -7,10 +7,14 @@ import play.api.libs.json.{JsString, JsValue}
 
 final case class OrderByMatch(
   userArg: Option[OrderByElement],
-  sampleArg: Option[OrderByElement]
+  sampleArg: Option[OrderByElement],
+  analysisResult: Option[GenericAnalysisResult]
 ) extends Match[OrderByElement, GenericAnalysisResult] {
 
+  /*
   override def analyze(ua: OrderByElement, sa: OrderByElement): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
+
+   */
 
   override protected def descArgForJson(arg: OrderByElement): JsValue = JsString(arg.toString)
 
@@ -32,7 +36,9 @@ object OrderByMatcher extends Matcher[OrderByElement, GenericAnalysisResult, Ord
   override protected def canMatch(o1: OrderByElement, o2: OrderByElement): Boolean =
     o1.getExpression.toString == o2.getExpression.toString
 
-  override protected def matchInstantiation(ua: Option[OrderByElement], sa: Option[OrderByElement]): OrderByMatch =
-    OrderByMatch(ua, sa)
+  override protected def instantiatePartMatch(ua: Option[OrderByElement], sa: Option[OrderByElement]): OrderByMatch =
+    OrderByMatch(ua, sa, None)
 
+  override protected def instantiateCompleteMatch(ua: OrderByElement, sa: OrderByElement): OrderByMatch =
+    OrderByMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)))
 }

@@ -1,6 +1,7 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
-import {IExercise, IKeyValueObject, IUmlClassDiagram, IUmlExerciseContent} from '../../../_interfaces/models';
+import {IExercise} from '../../../_interfaces/models';
 import {distinctStringArray} from '../../../helpers';
+import {IKeyValueObject, IUmlClassDiagram, IUmlExerciseContent} from './uml-interfaces';
 
 export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
 

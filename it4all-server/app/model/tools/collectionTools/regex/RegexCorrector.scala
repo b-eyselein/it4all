@@ -10,11 +10,13 @@ import scala.util.matching.Regex.{Match => RegexMatch}
 
 final case class RegexMatchMatch(
   userArg: Option[RegexMatch],
-  sampleArg: Option[RegexMatch]
+  sampleArg: Option[RegexMatch],
+  analysisResult: Option[GenericAnalysisResult]
 ) extends Match[RegexMatch, GenericAnalysisResult] {
-
-  override protected def analyze(arg1: RegexMatch, arg2: RegexMatch): GenericAnalysisResult =
-    GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
+  /*
+    override protected def analyze(arg1: RegexMatch, arg2: RegexMatch): GenericAnalysisResult =
+      GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
+   */
 
   override protected def descArgForJson(arg: RegexMatch): JsValue = Json.obj(
     "start" -> arg.start,
@@ -32,9 +34,11 @@ object RegexMatchMatcher extends Matcher[RegexMatch, GenericAnalysisResult, Rege
   override protected def canMatch(t1: RegexMatch, t2: RegexMatch): Boolean =
     t1.source == t2.source && t1.start == t2.start && t1.end == t2.end
 
-  override protected def matchInstantiation(ua: Option[RegexMatch], sa: Option[RegexMatch]): RegexMatchMatch =
-    RegexMatchMatch(ua, sa)
+  override protected def instantiatePartMatch(ua: Option[RegexMatch], sa: Option[RegexMatch]): RegexMatchMatch =
+    RegexMatchMatch(ua, sa, None)
 
+  override protected def instantiateCompleteMatch(ua: RegexMatch, sa: RegexMatch): RegexMatchMatch =
+    RegexMatchMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)))
 }
 
 object RegexCorrector {

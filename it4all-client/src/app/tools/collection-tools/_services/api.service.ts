@@ -2,8 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {IExercise, IExerciseCollection, IExerciseMetaData, ISqlQueryResult} from '../../../_interfaces/models';
+import {IExercise, IExerciseCollection, IExerciseMetaData} from '../../../_interfaces/models';
 import {Lesson} from '../../../_interfaces/lesson';
+import {ISqlQueryResult} from '../sql/sql-interfaces';
 
 type ILesson = Lesson;
 

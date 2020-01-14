@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {RegexExtractionResult} from '../regex-interfaces';
+import {IRegexExtractionEvaluationResult} from '../regex-interfaces';
 
 @Component({
   selector: 'it4all-regex-extraction-result',
@@ -7,13 +7,14 @@ import {RegexExtractionResult} from '../regex-interfaces';
 })
 export class RegexExtractionResultComponent {
 
-  @Input() extractionResult: RegexExtractionResult;
+  @Input() extractionResult: IRegexExtractionEvaluationResult;
 
   constructor() {
   }
 
   isCompletelyCorrect(): boolean {
-    return this.extractionResult.extractionMatchingResult.allMatches.every((m) => m.matchType === 'SUCCESSFUL_MATCH');
+    return this.extractionResult.extractionMatchingResult.allMatches
+      .every((m) => m.analysisResult.matchType === 'SUCCESSFUL_MATCH');
   }
 
 }

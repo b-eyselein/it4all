@@ -50,7 +50,7 @@ libraryDependencies ++= Seq(
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
 
-  "mysql" % "mysql-connector-java" % "8.0.18", // GPL 2.0
+  "mysql" % "mysql-connector-java" % "8.0.19", // GPL 2.0
 
   "com.typesafe.play" %% "play-slick" % "5.0.0", // Apache 2.0
   "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0", // Apache 2.0

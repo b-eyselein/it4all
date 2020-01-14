@@ -59,11 +59,13 @@ object ElementLineMatch {
 
 final case class ElementLineMatch(
   userArg: Option[ElementLine],
-  sampleArg: Option[ElementLine]
+  sampleArg: Option[ElementLine],
+  analysisResult: Option[ElementLineAnalysisResult]
 ) extends Match[ElementLine, ElementLineAnalysisResult] with XmlEvaluationResult {
 
   import ElementLineMatch._
 
+  /*
   override protected def analyze(arg1: ElementLine, arg2: ElementLine): ElementLineAnalysisResult = {
     val contentCorrect = arg1.elementDefinition.contentAsString == arg2.elementDefinition.contentAsString
 
@@ -85,6 +87,7 @@ final case class ElementLineMatch(
       contentCorrect, arg2.elementDefinition.contentAsString,
       attributesCorrect, arg2Def.getOrElse("FEHLER!"))
   }
+*/
 
   override protected def descArgForJson(arg: ElementLine): JsValue = Json.obj(nameName -> arg.elementName)
 
