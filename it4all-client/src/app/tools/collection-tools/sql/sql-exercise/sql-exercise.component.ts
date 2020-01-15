@@ -4,10 +4,10 @@ import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
 import {IExercise} from '../../../../_interfaces/models';
 import {DbSolution} from '../../../../_interfaces/exercise';
-
-import 'codemirror/mode/sql/sql';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ISqlExerciseContent, ISqlQueryResult, ISqlResult} from '../sql-interfaces';
+
+import 'codemirror/mode/sql/sql';
 
 interface ActivatableSqlQueryResult extends ISqlQueryResult {
   active?: boolean;
@@ -22,6 +22,7 @@ interface ActivatableSqlQueryResult extends ISqlQueryResult {
 export class SqlExerciseComponent extends ComponentWithExercise<string, ISqlResult> implements OnInit {
 
   readonly partId = 'solve';
+  readonly editorOptions = getDefaultEditorOptions('sql');
 
   @Input() exercise: IExercise;
   exerciseContent: ISqlExerciseContent;
@@ -29,8 +30,6 @@ export class SqlExerciseComponent extends ComponentWithExercise<string, ISqlResu
   dbContents: ActivatableSqlQueryResult[] = [];
 
   solution = '';
-
-  readonly editorOptions = getDefaultEditorOptions('sql');
 
   showSampleSolutions = false;
 
@@ -57,7 +56,7 @@ export class SqlExerciseComponent extends ComponentWithExercise<string, ISqlResu
   }
 
   correct(): void {
-    this.correctAbstract(this.exercise, {id: this.partId, name: ''});
+    this.correctAbstract(this.exercise, {id: this.partId, name: ''}, true);
   }
 
   toggleSampleSolutions(): void {

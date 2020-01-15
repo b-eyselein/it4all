@@ -12,11 +12,9 @@ final case class ProgCompleteResult(
   simplifiedResults: Seq[SimplifiedExecutionResult] = Seq.empty,
   normalResult: Option[NormalExecutionResult] = None,
   unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty,
-) extends CompleteResult[ProgEvalResult] {
+) extends CompleteResult {
 
-  //  override type SolType = String
-
-  override def results: Seq[ProgEvalResult] = simplifiedResults ++ unitTestResults
+  private def results: Seq[ProgEvalResult] = simplifiedResults ++ unitTestResults
 
   override val points: Points = results.count(_.success == SuccessType.COMPLETE).points
 

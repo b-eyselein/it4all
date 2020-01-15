@@ -4,20 +4,15 @@ import model.core.matching._
 import model.points._
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Column
-import play.api.libs.json.{JsString, JsValue}
 
 
 final case class GroupByMatch(
   userArg: Option[Expression],
   sampleArg: Option[Expression],
-  analysisResult: Option[GenericAnalysisResult]
+  analysisResult: GenericAnalysisResult
 ) extends Match[Expression, GenericAnalysisResult] {
 
-  /*
-  override def analyze(ua: Expression, sa: Expression): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
-   */
-
-  override protected def descArgForJson(arg: Expression): JsValue = JsString(arg.toString)
+  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -44,9 +39,12 @@ object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupBy
   }
 
 
-  override protected def instantiatePartMatch(ua: Option[Expression], sa: Option[Expression]): GroupByMatch =
-    GroupByMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: Expression): GroupByMatch =
+    GroupByMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+
+  override protected def instantiateOnlyUserMatch(ua: Expression): GroupByMatch =
+    GroupByMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
 
   override protected def instantiateCompleteMatch(ua: Expression, sa: Expression): GroupByMatch =
-    GroupByMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)))
+    GroupByMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
 }

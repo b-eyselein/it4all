@@ -1,55 +1,8 @@
 
-export interface ISampleSolution {
-  id: number;
-  sample: object;
-}
-
-
-export interface IUmlMethod {
-  visibility: UmlVisibility;
-  memberName: string;
-  memberType: string;
-  parameters: string;
-  isStatic: boolean;
-  isAbstract: boolean;
-}
-
-export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT");
-export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
-
-export interface IImplementationPart {
-  base: string;
-  files: IExerciseFile[];
-  implFileName: string;
-  sampleSolFileNames: string[];
-}
-
-
-export interface IUmlClass {
-  classType: UmlClassType;
-  name: string;
-  attributes: IUmlAttribute[];
-  methods: IUmlMethod[];
-}
-
-export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
-
-export interface IUnitTestPart {
-  unitTestType: UnitTestTypes;
-  unitTestsDescription: string;
-  unitTestFiles: IExerciseFile[];
-  unitTestTestConfigs: IUnitTestTestConfig[];
-  simplifiedTestMainFile?: IExerciseFile;
-  testFileName: string;
-  sampleSolFileNames: string[];
-}
-
-
-export interface IUnitTestTestConfig {
-  id: number;
-  shouldFail: boolean;
-  description: string;
-  file: IExerciseFile;
+export interface IUmlClassDiagram {
+  classes: IUmlClass[];
+  associations: IUmlAssociation[];
+  implementations: IUmlImplementation[];
 }
 
 
@@ -57,23 +10,6 @@ export interface IProgTestData {
   id: number;
   input: any;
   output: any;
-}
-
-
-export interface IUmlAttribute {
-  visibility: UmlVisibility;
-  memberName: string;
-  memberType: string;
-  isStatic: boolean;
-  isDerived: boolean;
-  isAbstract: boolean;
-}
-
-export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");
-
-export interface IUmlImplementation {
-  subClass: string;
-  superClass: string;
 }
 
 
@@ -87,6 +23,33 @@ export interface IUmlAssociation {
 }
 
 
+export interface IProgInput {
+  id: number;
+  inputName: string;
+  inputType: any;
+}
+
+export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT");
+
+export interface IUmlClass {
+  classType: UmlClassType;
+  name: string;
+  attributes: IUmlAttribute[];
+  methods: IUmlMethod[];
+}
+
+export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
+
+export interface IUmlMethod {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  parameters: string;
+  isStatic: boolean;
+  isAbstract: boolean;
+}
+
+
 export interface IExerciseFile {
   name: string;
   resourcePath: string;
@@ -94,6 +57,27 @@ export interface IExerciseFile {
   editable: boolean;
   content: string;
   active?: boolean;
+}
+
+
+export interface IImplementationPart {
+  base: string;
+  files: IExerciseFile[];
+  implFileName: string;
+  sampleSolFileNames: string[];
+}
+
+export type UnitTestTypes = ("Simplified" | "Normal");
+
+export interface IProgSolution {
+  files: IExerciseFile[];
+  testData: IProgTestData[];
+}
+
+
+export interface ISampleSolution {
+  id: number;
+  sample: object;
 }
 
 
@@ -111,23 +95,39 @@ export interface IProgExerciseContent {
   maybeClassDiagramPart?: IUmlClassDiagram;
 }
 
-export type UnitTestTypes = ("Simplified" | "Normal");
 
-export interface IProgSolution {
-  files: IExerciseFile[];
-  testData: IProgTestData[];
+export interface IUmlImplementation {
+  subClass: string;
+  superClass: string;
 }
 
+export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");
 
-export interface IProgInput {
+export interface IUnitTestTestConfig {
   id: number;
-  inputName: string;
-  inputType: any;
+  shouldFail: boolean;
+  description: string;
+  file: IExerciseFile;
+}
+
+export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
+
+export interface IUnitTestPart {
+  unitTestType: UnitTestTypes;
+  unitTestsDescription: string;
+  unitTestFiles: IExerciseFile[];
+  unitTestTestConfigs: IUnitTestTestConfig[];
+  simplifiedTestMainFile?: IExerciseFile;
+  testFileName: string;
+  sampleSolFileNames: string[];
 }
 
 
-export interface IUmlClassDiagram {
-  classes: IUmlClass[];
-  associations: IUmlAssociation[];
-  implementations: IUmlImplementation[];
+export interface IUmlAttribute {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  isStatic: boolean;
+  isDerived: boolean;
+  isAbstract: boolean;
 }

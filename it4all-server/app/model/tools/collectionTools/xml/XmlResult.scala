@@ -12,11 +12,7 @@ final case class XmlCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends CompleteResult[XmlEvaluationResult] {
-
-  override def results: Seq[XmlEvaluationResult] = documentResult ++ grammarResult.map(_.results).getOrElse(Seq.empty)
-
-}
+) extends CompleteResult
 
 // Grammar result
 

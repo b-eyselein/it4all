@@ -1,7 +1,7 @@
 package model.tools.collectionTools.uml
 
 import model.core.matching.{GenericAnalysisResult, MatchingResult}
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.core.result.CompleteResult
 import model.points._
 import model.tools.collectionTools.uml.matcher._
 
@@ -21,10 +21,4 @@ final case class UmlCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends CompleteResult[EvaluationResult] {
-
-  override val success: SuccessType = SuccessType.NONE
-
-  override def results: Seq[EvaluationResult] = Seq[EvaluationResult]() ++ classResult ++ assocResult ++ implResult
-
-}
+) extends CompleteResult

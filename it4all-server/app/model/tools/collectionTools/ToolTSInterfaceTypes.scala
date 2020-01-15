@@ -1,8 +1,7 @@
 package model.tools.collectionTools
 
-import model.core.matching.{AnalysisResult, Match, MatchType, MatchingResult}
+import model.core.matching._
 import model.core.result.SuccessType
-import model.tools.collectionTools.xml.XmlTSTypes.enumTsType
 import nl.codestar.scalatsi.TypescriptType._
 import nl.codestar.scalatsi.{DefaultTSTypes, TSIType, TSType}
 import play.api.libs.json.JsValue
@@ -31,6 +30,29 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
     )
   )
 
+  protected val baseMatchTSI: TSIType[Match[_, _]] = {
+    val analysisResultTsInterface = TSType.interface("IAnalysisResult",
+      "matchType" -> matchTypeTS.get
+    )
+
+    TSType.interface("IMatch",
+      "userArg" -> TSUnion(Seq(TSAny, TSUndefined)),
+      "sampleArg" -> TSUnion(Seq(TSAny, TSUndefined)),
+      "analysisResult" -> TSUnion(Seq(analysisResultTsInterface.get, TSUndefined))
+    )
+  }
+
+  protected val baseMatchingResultTSI: TSIType[MatchingResult[Object, GenericAnalysisResult, Match[Object, GenericAnalysisResult]]] = {
+
+    TSType.interface(
+      s"IMatchingResult",
+      "matchName" -> TSString,
+      "matchSingularName" -> TSString,
+      "allMatches" -> TSArray(baseMatchTSI.get),
+      "points" -> TSNumber,
+      "maxPoints" -> TSNumber
+    )
+  }
 
   protected def matchingResultTSI[T, AR <: AnalysisResult, X <: Match[T, AR]](matchName: String, matchTSI: TSType[X]): TSIType[MatchingResult[T, AR, X]] = {
     // FIXME: implement!

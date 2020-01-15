@@ -12,7 +12,9 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T, AR]] {
 
   protected def canMatch(t1: T, t2: T): Boolean
 
-  protected def instantiatePartMatch(ua: Option[T], sa: Option[T]): M
+  protected def instantiateOnlyUserMatch(ua: T): M
+
+  protected def instantiateOnlySampleMatch(sa: T): M
 
   protected def instantiateCompleteMatch(ua: T, sa: T): M
 
@@ -25,11 +27,7 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T, AR]] {
 
     @annotation.tailrec
     def go(firstHead: T, secondCollection: List[T], notMatched: List[T]): (M, List[T]) = secondCollection match {
-      case Nil =>
-        val m = instantiatePartMatch(Some(firstHead), None)
-
-        (m, notMatched)
-
+      case Nil                      => (instantiateOnlyUserMatch(firstHead), notMatched)
       case secondHead :: secondTail =>
 
         if (canMatch(firstHead, secondHead)) {
@@ -51,7 +49,7 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T, AR]] {
     @annotation.tailrec
     def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[T, AR, M] = firstCollection match {
       case Nil =>
-        val allMatches = matches ++ secondCollection.map(s => instantiatePartMatch(None, Some(s)))
+        val allMatches = matches ++ secondCollection.map(instantiateOnlySampleMatch)
 
         val points   : Points = addUp(allMatches.map(_.points))
         val maxPoints: Points = addUp(allMatches.map(_.maxPoints))

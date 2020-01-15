@@ -22,42 +22,56 @@ class SqlStatementException(cause: Throwable) extends Exception(cause) {
 
 }
 
-abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
-
-  val successType: SuccessType
-
-}
-
 
 final case class SelectAdditionalComparisons(
   groupByComparison: GroupByComparison,
   orderByComparison: OrderByComparison,
   limitComparison: LimitComparison
-)
+) {
+
+  def points: Points = groupByComparison.points + orderByComparison.points + limitComparison.points
+
+  def maxPoints: Points = groupByComparison.maxPoints + orderByComparison.maxPoints + limitComparison.maxPoints
+
+  def results: Seq[EvaluationResult] = Seq(groupByComparison, orderByComparison, limitComparison)
+
+}
 
 final case class AdditionalComparison(
   selectComparisons: Option[SelectAdditionalComparisons],
   insertComparison: Option[InsertComparison]
 ) {
 
-  def points: Points = ???
+  def points: Points = {
+    val selPoints = selectComparisons.map(_.points).getOrElse(zeroPoints)
+    val insPoints = insertComparison.map(_.points).getOrElse(zeroPoints)
 
-  def maxPoints: Points = ???
+    selPoints + insPoints
+  }
 
-  def results: Seq[EvaluationResult] = selectComparisons.map(_ => ???).getOrElse[Seq[EvaluationResult]](???) ++ insertComparison
+  def maxPoints: Points = {
+    val selPoints = selectComparisons.map(_.maxPoints).getOrElse(zeroPoints)
+    val insPoints = insertComparison.map(_.maxPoints).getOrElse(zeroPoints)
+
+    selPoints + insPoints
+  }
+
+  def results: Seq[EvaluationResult] = selectComparisons.map(_.results).getOrElse(Seq.empty) ++ insertComparison
 
 }
 
 
-@deprecated
-final case class SqlQueriesStaticComparison[Q](
-  userQ: Q, sampleQ: Q,
+final case class SqlQueriesStaticComparison(
   columnComparison: ColumnComparison,
   tableComparison: TableComparison,
   joinExpressionComparison: BinaryExpressionComparison,
   whereComparison: BinaryExpressionComparison,
   additionalComparisons: AdditionalComparison
 ) {
+
+  def results: Seq[EvaluationResult] = Seq(
+    columnComparison, tableComparison, joinExpressionComparison, whereComparison
+  ) ++ additionalComparisons.results
 
   val points: Points = columnComparison.points +
     tableComparison.points +
@@ -73,44 +87,17 @@ final case class SqlQueriesStaticComparison[Q](
 
 }
 
-// FIXME: use builder?
+// Complete result
+
 final case class SqlResult(
-  columnComparison: ColumnComparison,
-  tableComparison: TableComparison,
-  joinExpressionComparison: BinaryExpressionComparison,
-  whereComparison: BinaryExpressionComparison,
-  additionalComparisons: AdditionalComparison,
+  staticComparison: SqlQueriesStaticComparison,
   executionResult: SqlExecutionResult,
   solutionSaved: Boolean
-) extends SqlCorrResult {
+) extends CompleteResult {
 
-  override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ additionalComparisons.results
+  override def points: Points = staticComparison.points
 
-  override val successType: SuccessType = if (results.nonEmpty && results.forall(_.success == SuccessType.COMPLETE)) SuccessType.COMPLETE else SuccessType.PARTIALLY
-
-  override val points: Points = columnComparison.points +
-    tableComparison.points +
-    joinExpressionComparison.points +
-    whereComparison.points +
-    additionalComparisons.points
-
-  // FIXME: points for executionResult?
-
-  override val maxPoints: Points = columnComparison.maxPoints +
-    tableComparison.maxPoints +
-    joinExpressionComparison.maxPoints +
-    whereComparison.maxPoints +
-    additionalComparisons.maxPoints
-
-}
-
-final case class SqlParseFailed(error: Throwable, maxPoints: Points, solutionSaved: Boolean) extends SqlCorrResult {
-
-  override def results: Seq[EvaluationResult] = Seq[EvaluationResult]()
-
-  override val successType: SuccessType = SuccessType.ERROR
-
-  override val points: Points = zeroPoints
+  override def maxPoints: Points = staticComparison.maxPoints
 
 }
 

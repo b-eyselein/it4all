@@ -29,7 +29,7 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
   override type PartType = SqlExPart
   override type ExContentType = SqlExerciseContent
   override type SolType = String
-  override type CompResultType = SqlCorrResult
+  override type CompResultType = SqlResult
 
   type ColumnComparison = MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch]
   type TableComparison = MatchingResult[Table, GenericAnalysisResult, TableMatch]
@@ -47,7 +47,7 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlCorrResult] =
+  override protected val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult] =
     SqlJsonProtocols
 
   // Correction
@@ -60,10 +60,12 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
     content: SqlExerciseContent,
     part: SqlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[SqlCorrResult]] =
-    correctorsAndDaos.get(content.exerciseType) match {
-      case None                   => Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${content.exerciseType}")))
-      case Some((corrector, dao)) => corrector.correct(dao, learnerSolution, content, sqlScenario, solutionSaved)
-    }
+  )(implicit executionContext: ExecutionContext): Future[Try[SqlResult]] = correctorsAndDaos.get(content.exerciseType) match {
+    case None                   => Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${content.exerciseType}")))
+    case Some((corrector, dao)) =>
+      Future {
+        corrector.correct(dao, learnerSolution, content, sqlScenario, solutionSaved)
+      }
+  }
 
 }

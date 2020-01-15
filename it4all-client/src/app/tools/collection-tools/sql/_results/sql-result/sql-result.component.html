@@ -1,0 +1,72 @@
+<it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
+
+<br>
+
+<it4all-points-notification [points]="getPoints()" [maxPoints]="getMaxPoints()"></it4all-points-notification>
+
+<br>
+
+<p>
+  <it4all-sql-matching-result [matchingResult]="result.staticComparison.columnComparison">
+  </it4all-sql-matching-result>
+</p>
+
+<br>
+
+<p>
+  <it4all-sql-matching-result [matchingResult]="result.staticComparison.tableComparison">
+  </it4all-sql-matching-result>
+</p>
+
+<br>
+
+<p>
+  <it4all-sql-matching-result [matchingResult]="result.staticComparison.joinExpressionComparison">
+  </it4all-sql-matching-result>
+</p>
+
+<br>
+
+<p>
+  <it4all-sql-matching-result [matchingResult]="result.staticComparison.whereComparison">
+  </it4all-sql-matching-result>
+</p>
+
+<br>
+
+<ng-container *ngIf="result.staticComparison.additionalComparisons.selectComparisons">
+  <p>
+    <it4all-sql-matching-result
+      [matchingResult]="result.staticComparison.additionalComparisons.selectComparisons.orderByComparison">
+    </it4all-sql-matching-result>
+  </p>
+  <br>
+  <p>
+    <it4all-sql-matching-result
+      [matchingResult]="result.staticComparison.additionalComparisons.selectComparisons.groupByComparison">
+    </it4all-sql-matching-result>
+  </p>
+  <br>
+  <p>
+    <it4all-sql-matching-result
+      [matchingResult]="result.staticComparison.additionalComparisons.selectComparisons.limitComparison">
+    </it4all-sql-matching-result>
+  </p>
+  <br>
+</ng-container>
+
+<ng-container *ngIf="result.staticComparison.additionalComparisons.insertComparison">
+  <it4all-sql-matching-result [matchingResult]="result.staticComparison.additionalComparisons.insertComparison">
+  </it4all-sql-matching-result>
+
+  <br>
+</ng-container>
+
+<!-- TODO: check!
+<p>
+  <span [ngClass]="result.results.executionResults.success ? 'has-text-success' : 'has-text-danger'">
+  Der Vergleich der Ergebnistabellen war <ng-container
+    *ngIf="!result.results.executionResults.success">nicht</ng-container> erfolgreich.
+</span>
+</p>
+-->

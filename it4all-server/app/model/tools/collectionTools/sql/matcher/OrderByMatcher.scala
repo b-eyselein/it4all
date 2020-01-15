@@ -3,20 +3,14 @@ package model.tools.collectionTools.sql.matcher
 import model.core.matching._
 import model.points._
 import net.sf.jsqlparser.statement.select.OrderByElement
-import play.api.libs.json.{JsString, JsValue}
 
 final case class OrderByMatch(
   userArg: Option[OrderByElement],
   sampleArg: Option[OrderByElement],
-  analysisResult: Option[GenericAnalysisResult]
+  analysisResult: GenericAnalysisResult
 ) extends Match[OrderByElement, GenericAnalysisResult] {
 
-  /*
-  override def analyze(ua: OrderByElement, sa: OrderByElement): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
-
-   */
-
-  override protected def descArgForJson(arg: OrderByElement): JsValue = JsString(arg.toString)
+  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -36,9 +30,12 @@ object OrderByMatcher extends Matcher[OrderByElement, GenericAnalysisResult, Ord
   override protected def canMatch(o1: OrderByElement, o2: OrderByElement): Boolean =
     o1.getExpression.toString == o2.getExpression.toString
 
-  override protected def instantiatePartMatch(ua: Option[OrderByElement], sa: Option[OrderByElement]): OrderByMatch =
-    OrderByMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: OrderByElement): OrderByMatch =
+    OrderByMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+
+  override protected def instantiateOnlyUserMatch(ua: OrderByElement): OrderByMatch =
+    OrderByMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
 
   override protected def instantiateCompleteMatch(ua: OrderByElement, sa: OrderByElement): OrderByMatch =
-    OrderByMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)))
+    OrderByMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
 }

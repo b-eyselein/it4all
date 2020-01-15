@@ -1,9 +1,7 @@
 package model.core.matching
 
-import model.core.CoreConsts._
 import model.core.result.{EvaluationResult, SuccessType}
 import model.points._
-import play.api.libs.json._
 
 
 final case class MatchingResult[T, AR <: AnalysisResult, M <: Match[T, AR]](
@@ -23,23 +21,5 @@ final case class MatchingResult[T, AR <: AnalysisResult, M <: Match[T, AR]](
     } else {
       SuccessType.COMPLETE
     }
-
-
-  /*
-  val points: Points = allMatches.map(_.points).fold(zeroPoints)(_ + _)
-
-  val maxPoints: Points = allMatches.map(_.maxPoints).fold(zeroPoints)(_ + _)
-   */
-
-  @deprecated
-  def toJson: JsObject = Json.obj(
-    matchNameName -> matchName,
-    matchSingularNameName -> matchSingularName,
-    successName -> allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH),
-    matchesName -> allMatches.map(_.toJson),
-    pointsName -> points.asDouble,
-    maxPointsName -> maxPoints.asDouble
-  )
-
 
 }

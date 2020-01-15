@@ -2,7 +2,6 @@ package model.tools.collectionTools.regex
 
 import model.core.matching._
 import model.points._
-import play.api.libs.json.{JsValue, Json}
 
 import scala.util.Try
 import scala.util.matching.Regex
@@ -11,18 +10,10 @@ import scala.util.matching.Regex.{Match => RegexMatch}
 final case class RegexMatchMatch(
   userArg: Option[RegexMatch],
   sampleArg: Option[RegexMatch],
-  analysisResult: Option[GenericAnalysisResult]
+  analysisResult: GenericAnalysisResult
 ) extends Match[RegexMatch, GenericAnalysisResult] {
-  /*
-    override protected def analyze(arg1: RegexMatch, arg2: RegexMatch): GenericAnalysisResult =
-      GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
-   */
 
-  override protected def descArgForJson(arg: RegexMatch): JsValue = Json.obj(
-    "start" -> arg.start,
-    "end" -> arg.end,
-    "content" -> arg.group(0)
-  )
+  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
 }
 
@@ -34,11 +25,14 @@ object RegexMatchMatcher extends Matcher[RegexMatch, GenericAnalysisResult, Rege
   override protected def canMatch(t1: RegexMatch, t2: RegexMatch): Boolean =
     t1.source == t2.source && t1.start == t2.start && t1.end == t2.end
 
-  override protected def instantiatePartMatch(ua: Option[RegexMatch], sa: Option[RegexMatch]): RegexMatchMatch =
-    RegexMatchMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: RegexMatch): RegexMatchMatch =
+    RegexMatchMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+
+  override protected def instantiateOnlyUserMatch(ua: RegexMatch): RegexMatchMatch =
+    RegexMatchMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
 
   override protected def instantiateCompleteMatch(ua: RegexMatch, sa: RegexMatch): RegexMatchMatch =
-    RegexMatchMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)))
+    RegexMatchMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
 }
 
 object RegexCorrector {

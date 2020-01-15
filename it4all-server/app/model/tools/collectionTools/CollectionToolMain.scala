@@ -1,10 +1,10 @@
 package model.tools.collectionTools
 
 import model._
-import model.core.result.{CompleteResult, EvaluationResult}
+import model.core.result.CompleteResult
 import model.tools.{AToolMain, ToolConsts}
 import play.api.Logger
-import play.api.libs.json.{Format, JsPath, JsResult, JsValue, JsonValidationError}
+import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -23,7 +23,7 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   type SolType
 
-  type CompResultType <: CompleteResult[_ <: EvaluationResult]
+  type CompResultType <: CompleteResult
 
   // Values
 

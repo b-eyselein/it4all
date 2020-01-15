@@ -1,27 +1,15 @@
 package model.tools.collectionTools.uml.matcher
 
 import model.core.matching._
-import model.tools.collectionTools.uml.UmlConsts._
 import model.tools.collectionTools.uml.UmlImplementation
-import play.api.libs.json.{JsValue, Json}
 
 final case class UmlImplementationMatch(
   userArg: Option[UmlImplementation],
   sampleArg: Option[UmlImplementation],
-  analysisResult: Option[GenericAnalysisResult]
+  analysisResult: GenericAnalysisResult
 ) extends Match[UmlImplementation, GenericAnalysisResult] {
 
-  /*
-  override def analyze(i1: UmlImplementation, i2: UmlImplementation): GenericAnalysisResult =
-    GenericAnalysisResult(if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) MatchType.SUCCESSFUL_MATCH else MatchType.PARTIAL_MATCH)
-
-   */
-
-  //  override def descArg(arg: UmlImplementation): String = describeImplementation(arg)
-
-  override protected def descArgForJson(arg: UmlImplementation): JsValue = Json.obj(
-    subClassName -> arg.subClass, superClassName -> arg.superClass
-  )
+  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
 }
 
@@ -35,8 +23,11 @@ object UmlImplementationMatcher extends Matcher[UmlImplementation, GenericAnalys
   override protected def canMatch(i1: UmlImplementation, i2: UmlImplementation): Boolean =
     (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)
 
-  override protected def instantiatePartMatch(ua: Option[UmlImplementation], sa: Option[UmlImplementation]): UmlImplementationMatch =
-    UmlImplementationMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: UmlImplementation): UmlImplementationMatch =
+    UmlImplementationMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+
+  override protected def instantiateOnlyUserMatch(ua: UmlImplementation): UmlImplementationMatch =
+    UmlImplementationMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
 
   override protected def instantiateCompleteMatch(ua: UmlImplementation, sa: UmlImplementation): UmlImplementationMatch = {
     val ar = GenericAnalysisResult(
@@ -47,6 +38,6 @@ object UmlImplementationMatcher extends Matcher[UmlImplementation, GenericAnalys
       }
     )
 
-    UmlImplementationMatch(Some(ua), Some(sa), Some(ar))
+    UmlImplementationMatch(Some(ua), Some(sa), ar)
   }
 }

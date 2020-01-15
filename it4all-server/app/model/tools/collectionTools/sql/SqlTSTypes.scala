@@ -1,6 +1,6 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.MatchType
+import model.core.matching.{GenericAnalysisResult, MatchType}
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
@@ -12,8 +12,6 @@ import nl.codestar.scalatsi.TypescriptType.{TSString, TypescriptNamedType}
 import nl.codestar.scalatsi.{TSIType, TSType}
 
 object SqlTSTypes extends ToolTSInterfaceTypes {
-
-  import nl.codestar.scalatsi.TypescriptType.TSInterface
 
   private val sqlExerciseContentTSI: TSIType[SqlExerciseContent] = {
     implicit val seTypeT: TSType[SqlExerciseType]         = enumTsType(SqlExerciseType)
@@ -44,11 +42,18 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
     TSType.fromCaseClass[TableMatch]
   })
 
-  private val binaryExpressionComparisonTSI: TSIType[BinaryExpressionComparison] = matchingResultTSI("BinaryExpression", {
-    implicit val mtt: TSType[MatchType]        = matchTypeTS
-    implicit val bet: TSType[BinaryExpression] = TSType(TSString)
+  private val binaryExpressionComparisonTSI: TSIType[BinaryExpressionComparison] = TSIType({
 
-    TSType.fromCaseClass[BinaryExpressionMatch]
+    val binExMatchTSI: TSIType[BinaryExpressionMatch] = TSIType({
+      implicit val mtt: TSType[MatchType]        = matchTypeTS
+      implicit val bet: TSType[BinaryExpression] = TSType(TSString)
+
+      TSType.fromCaseClass[BinaryExpressionMatch]
+      }.get.copy(extending = Some(baseMatchTSI.get))
+    )
+
+    matchingResultTSI[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch]("BinaryExpression", binExMatchTSI)
+      .get.copy(extending = Some(baseMatchingResultTSI.get))
   })
 
   private val additionalComparisonsTSI: TSIType[AdditionalComparison] = {
@@ -94,7 +99,7 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
     TSType.fromCaseClass
   }
 
-  private val sqlCompleteResultTSI: TSIType[SqlResult] = {
+  private val sqlResultTSI: TSIType[SqlResult] = {
     implicit val cct: TSIType[ColumnComparison] = columnComparisonTSI
 
     implicit val tct: TSIType[TableComparison] = tableComparisonTSI
@@ -111,7 +116,7 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
   val exported: Seq[TypescriptNamedType] = Seq(
     sqlExerciseContentTSI.get,
     sqlQueryResultTSI.get,
-    sqlCompleteResultTSI.get
+    sqlResultTSI.get,
   )
 
 }

@@ -41,8 +41,4 @@ final case class RegexCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends CompleteResult[RegexEvaluationResult] {
-
-  override def results: Seq[RegexEvaluationResult] = matchingResults ++ extractionResults
-
-}
+) extends CompleteResult

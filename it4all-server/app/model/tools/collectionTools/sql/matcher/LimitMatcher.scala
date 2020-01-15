@@ -3,23 +3,14 @@ package model.tools.collectionTools.sql.matcher
 import model.core.matching.{GenericAnalysisResult, Match, MatchType, Matcher}
 import model.points._
 import net.sf.jsqlparser.statement.select.Limit
-import play.api.libs.json.{JsString, JsValue}
 
 final case class LimitMatch(
   userArg: Option[Limit],
   sampleArg: Option[Limit],
-  analysisResult: Option[GenericAnalysisResult]
+  analysisResult: GenericAnalysisResult
 ) extends Match[Limit, GenericAnalysisResult] {
 
-  /*
-  override protected def analyze(arg1: Limit, arg2: Limit): GenericAnalysisResult = GenericAnalysisResult(
-    if (arg1.toString == arg2.toString) MatchType.SUCCESSFUL_MATCH
-    else MatchType.PARTIAL_MATCH
-  )
-
-   */
-
-  override protected def descArgForJson(arg: Limit): JsValue = JsString(arg.toString)
+  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -38,7 +29,11 @@ object LimitMatcher extends Matcher[Limit, GenericAnalysisResult, LimitMatch] {
 
   override protected def canMatch(l1: Limit, l2: Limit): Boolean = true
 
-  override protected def instantiatePartMatch(ua: Option[Limit], sa: Option[Limit]): LimitMatch = LimitMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: Limit): LimitMatch =
+    LimitMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+
+  override protected def instantiateOnlyUserMatch(ua: Limit): LimitMatch =
+    LimitMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
 
   override protected def instantiateCompleteMatch(ua: Limit, sa: Limit): LimitMatch = {
 
@@ -50,6 +45,6 @@ object LimitMatcher extends Matcher[Limit, GenericAnalysisResult, LimitMatch] {
       }
     )
 
-    LimitMatch(Some(ua), Some(sa), Some(ar))
+    LimitMatch(Some(ua), Some(sa), ar)
   }
 }

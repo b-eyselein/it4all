@@ -3,21 +3,14 @@ package model.tools.collectionTools.sql.matcher
 import model.core.matching._
 import model.points._
 import model.tools.collectionTools.sql.ColumnWrapper
-import play.api.libs.json.{JsString, JsValue}
 
 final case class ColumnMatch(
   userArg: Option[ColumnWrapper],
   sampleArg: Option[ColumnWrapper],
-  analysisResult: Option[GenericAnalysisResult]
+  analysisResult: GenericAnalysisResult
 ) extends Match[ColumnWrapper, GenericAnalysisResult] {
 
-  /*
-  override protected def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): GenericAnalysisResult =
-    GenericAnalysisResult(userArg doMatch sampleArg)
-
-   */
-
-  override protected def descArgForJson(arg: ColumnWrapper): JsValue = JsString(arg.toString)
+  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -36,10 +29,21 @@ object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, Colum
 
   override protected def canMatch(cw1: ColumnWrapper, cw2: ColumnWrapper): Boolean = cw1 canMatch cw2
 
-  override protected def instantiatePartMatch(ua: Option[ColumnWrapper], sa: Option[ColumnWrapper]): ColumnMatch =
-    ColumnMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: ColumnWrapper): ColumnMatch =
+    ColumnMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+
+  override protected def instantiateOnlyUserMatch(ua: ColumnWrapper): ColumnMatch =
+    ColumnMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
 
   override protected def instantiateCompleteMatch(ua: ColumnWrapper, sa: ColumnWrapper): ColumnMatch = {
-    ColumnMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(ua doMatch sa)))
+
+    println(ua)
+    println(sa)
+
+    val mt: MatchType = ua doMatch sa
+
+    println(mt)
+
+    ColumnMatch(Some(ua), Some(sa), GenericAnalysisResult(mt))
   }
 }

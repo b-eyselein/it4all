@@ -1,7 +1,6 @@
 package model.tools.collectionTools.sql
 
 import model.core.matching.GenericAnalysisResult
-import model.tools.collectionTools.sql.SqlConsts._
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol, ToolJsonProtocol}
@@ -12,7 +11,7 @@ import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlCorrResult] {
+object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult] {
 
   override val exerciseContentFormat: Format[SqlExerciseContent] = {
     implicit val sssf: Format[SampleSolution[String]] = sampleSolutionFormat
@@ -27,28 +26,22 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
       (__ \ "different").write[Boolean]
     ) (sc => (sc.content, sc.different))
 
-  private implicit val sqlQueryRowWrites: Writes[SqlRow] = row => {
+  private val sqlQueryRowWrites: Writes[SqlRow] = row => {
     JsObject(row.cells.map {
       case (colName, sqlCell) => colName -> sqlQueryCellWrites.writes(sqlCell)
     })
   }
 
-  private val sqlQueryResultWrites: Writes[SqlQueryResult] = (
-    (__ \ "colNames").write[Seq[String]] and //-> columnNames,
-      (__ \ "content").write[Seq[SqlRow]]
-    ) (sqr => (sqr.columnNames, sqr.rows))
+  private val sqlQueryResultWrites: Writes[SqlQueryResult] = {
+    implicit val sqlRowWrites: Writes[SqlRow] = sqlQueryRowWrites
+
+    Json.writes
+  }
 
   private val sqlExecutionResultWrites: Writes[SqlExecutionResult] = {
     implicit val sqrw: Writes[SqlQueryResult] = sqlQueryResultWrites
 
-    (
-      (__ \ successName).write[String] and // -> success,
-        (__ \ userResultName).write[Option[SqlQueryResult]] and //  match {
-        //      case Success(result) => userResultName -> result.toJson
-        //      case Failure(error)  => userErrorName -> JsString(error.toString)
-        //    },
-        (__ \ sampleResultName).write[Option[SqlQueryResult]]
-      ) (ser => (ser.success.entryName, ser.userResultTry, ser.sampleResultTry))
+    Json.writes
   }
 
   private val columnMatchingResultWrites: Writes[ColumnComparison] = matchingResultWrites({
@@ -110,31 +103,19 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
     Json.writes
   }
 
-  private val sqlResultRestWrites: Writes[SqlResult] = {
-    implicit val cmrw: Writes[ColumnComparison] = columnMatchingResultWrites
-
-    implicit val tmrw: Writes[TableComparison] = tableMatchingResultWrites
-
+  private val sqlQueriesStaticComparisonWrites: Writes[SqlQueriesStaticComparison] = {
+    implicit val cmrw: Writes[ColumnComparison]           = columnMatchingResultWrites
+    implicit val tmrw: Writes[TableComparison]            = tableMatchingResultWrites
     implicit val berw: Writes[BinaryExpressionComparison] = binaryExpressionResultWrites
-
-    implicit val acw: Writes[AdditionalComparison] = additionalComparisonWrites
-
-    implicit val erw: Writes[SqlExecutionResult] = sqlExecutionResultWrites
+    implicit val acw : Writes[AdditionalComparison]       = additionalComparisonWrites
 
     Json.writes
   }
 
-  private val sqlCorrResultRestWrites: Writes[SqlCorrResult] = {
-    case SqlParseFailed(error, _, _) => Json.obj(messageName -> error.getMessage)
-    case sr: SqlResult               => sqlResultRestWrites.writes(sr)
+  override val completeResultWrites: Writes[SqlResult] = {
+    implicit val sqscw: Writes[SqlQueriesStaticComparison] = sqlQueriesStaticComparisonWrites
+    implicit val erw  : Writes[SqlExecutionResult]         = sqlExecutionResultWrites
+
+    Json.writes
   }
-
-  override val completeResultWrites: Writes[SqlCorrResult] = (
-    (__ \ solutionSavedName).write[Boolean] and
-      (__ \ successName).write[String] and
-      (__ \ pointsName).write[Double] and
-      (__ \ maxPointsName).write[Double] and
-      (__ \ resultsName).write[SqlCorrResult](sqlCorrResultRestWrites)
-    ) (scr => (scr.solutionSaved, scr.successType.entryName, scr.points.asDouble, scr.maxPoints.asDouble, scr))
-
 }

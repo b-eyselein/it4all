@@ -1,9 +1,7 @@
-import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ProgrammingCorrectionResult} from '../my-programming-interfaces';
 import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
-import {TabComponent} from '../../../../shared/tab/tab.component';
-import {TabsComponent} from '../../../../shared/tabs/tabs.component';
 import {ProgrammingImplementationToolPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {IExercise} from '../../../../_interfaces/models';
@@ -23,11 +21,12 @@ export class ProgrammingExerciseComponent extends ComponentWithExercise<IProgSol
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
 
-  // exerciseContent: IProgExerciseContent ;
   exerciseFiles: IExerciseFile[] = [];
 
+  /*
   @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
+   */
 
   constructor(apiService: ApiService, dexieService: DexieService) {
     super(apiService, dexieService);

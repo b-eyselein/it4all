@@ -8,17 +8,20 @@ final case class RoseCompleteResult(
   points: Points = (-1).points,
   maxPoints: Points = (-1).points,
   solutionSaved: Boolean
-) extends CompleteResult[RoseExecutionResult] {
+) extends CompleteResult
 
-  override def results: Seq[RoseExecutionResult] = Seq(result)
-
-}
 
 final case class RoseStart(x: Int, y: Int)
 
 final case class RobotResult(name: String, actions_size: Int, actions: Seq[String])
 
-final case class RoseExecutionResult(correct: Boolean, start: RoseStart, sample: RobotResult, user: RobotResult) extends EvaluationResult {
+
+final case class RoseExecutionResult(
+  correct: Boolean,
+  start: RoseStart,
+  sample: RobotResult,
+  user: RobotResult
+) extends EvaluationResult {
 
   override def success: SuccessType = ???
 

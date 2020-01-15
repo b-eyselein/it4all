@@ -18,8 +18,6 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
 
   solution = '';
 
-  corrected = false;
-
   showInfo = false;
 
   constructor(apiService: ApiService, dexieService: DexieService) {

@@ -1,15 +1,14 @@
 package model.tools.collectionTools.sql
 
-import model.points._
-import model.tools.collectionTools.ExerciseCollection
 import model.tools.collectionTools.sql.matcher._
+import model.tools.collectionTools.{ExerciseCollection, SampleSolution}
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import play.api.Logger
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 
 abstract class QueryCorrector(val queryType: String) {
@@ -18,57 +17,57 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
+
+  private final case class QueryAndStaticComp[Q](query: Q, comp: SqlQueriesStaticComparison)
+
+  private val queryAndStaticCompOrdering = new Ordering[QueryAndStaticComp[Q]] {
+
+    override def compare(x: QueryAndStaticComp[Q], y: QueryAndStaticComp[Q]): Int =
+      y.comp.points.quarters - x.comp.points.quarters
+
+  }
+
+
+  private def parseSampleAndMakeStaticComparison(
+    userQ: Q, sqlSample: SampleSolution[String], userColumns: Seq[ColumnWrapper], userTables: Seq[Table],
+    userJoinExpressions: Seq[BinaryExpression], userExpressions: Seq[BinaryExpression], userTableAliases: Map[String, String]
+  ): Option[QueryAndStaticComp[Q]] = parseStatement(sqlSample.sample).flatMap(checkStatement) match {
+    case Failure(error) =>
+      logger.error("There has been an error parsing a sql sample solution", error)
+      None
+
+    case Success(sampleQ: Q) =>
+      val staticComp = performStaticComparison(userQ, sampleQ, userColumns, userTables, userJoinExpressions, userExpressions, userTableAliases)
+      Some(QueryAndStaticComp(sampleQ, staticComp))
+  }
+
+
   def correct(
     database: SqlExecutionDAO,
     learnerSolution: String,
     exercise: SqlExerciseContent,
     scenario: ExerciseCollection,
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Future[Try[SqlCorrResult]] = Future(Try {
-    parseStatement(learnerSolution)
-      .flatMap(checkStatement) match {
-      case Failure(error) => SqlParseFailed(error, (-1).points, solutionSaved)
-      case Success(userQ) =>
+  )(implicit ec: ExecutionContext): Try[SqlResult] = parseStatement(learnerSolution).flatMap(checkStatement).map { userQ =>
 
-        val userColumns         = getColumnWrappers(userQ)
-        val userTables          = getTables(userQ)
-        val userJoinExpressions = getJoinExpressions(userQ)
-        val userExpressions     = getExpressions(userQ)
-        val userTableAliases    = resolveAliases(userTables)
+    val userColumns         = getColumnWrappers(userQ)
+    val userTables          = getTables(userQ)
+    val userJoinExpressions = getJoinExpressions(userQ)
+    val userExpressions     = getExpressions(userQ)
+    val userTableAliases    = resolveAliases(userTables)
 
-        val maybeStaticComparison: Option[SqlQueriesStaticComparison[Q]] = exercise.sampleSolutions
-          .map { sqlSample =>
-            parseStatement(sqlSample.sample)
-              .flatMap(checkStatement) match {
-              case Failure(error)      =>
-                logger.error("There has been an error parsing a sql sample solution", error)
-                ???
-              case Success(sampleQ: Q) => performStaticComparison(userQ, sampleQ, userColumns, userTables, userJoinExpressions, userExpressions, userTableAliases)
-            }
-          }
-          .reduceOption { (comp1, comp2) =>
-            // FIXME: minByOption with Scala 2.13...
-            if (comp1.points > comp2.points) comp1
-            else if (comp1.points == comp2.points) {
-              if (comp1.maxPoints > comp2.maxPoints) comp2
-              else comp1
-            } else comp2
-          }
+    val maybeStaticComparison: Option[QueryAndStaticComp[Q]] =
+      exercise.sampleSolutions
+        .flatMap { sqlSample => parseSampleAndMakeStaticComparison(userQ, sqlSample, userColumns, userTables, userJoinExpressions, userExpressions, userTableAliases) }
+        .minOption(queryAndStaticCompOrdering)
 
-        maybeStaticComparison match {
-          case None     => ???
-          case Some(sc) => SqlResult(
-            sc.columnComparison,
-            sc.tableComparison,
-            sc.joinExpressionComparison,
-            sc.whereComparison,
-            sc.additionalComparisons,
-            database.executeQueries(scenario, exercise, sc.userQ, sc.sampleQ),
-            solutionSaved
-          )
-        }
+    maybeStaticComparison match {
+      case None                                  => ???
+      case Some(QueryAndStaticComp(sampleQ, sc)) => SqlResult(sc, database.executeQueries(scenario, exercise, userQ, sampleQ), solutionSaved)
     }
-  })
+
+  }
+
 
   private def performStaticComparison(
     userQ: Q, sampleQ: Q,
@@ -77,19 +76,16 @@ abstract class QueryCorrector(val queryType: String) {
     userJoinExpressions: Seq[BinaryExpression],
     userExpressions: Seq[BinaryExpression],
     userTableAliases: Map[String, String]
-  ): SqlQueriesStaticComparison[Q] = {
+  ): SqlQueriesStaticComparison = {
 
-    val sampleColumns                       = getColumnWrappers(sampleQ)
     val sampleTables                        = getTables(sampleQ)
-    val sampleJoinExpressions               = getJoinExpressions(sampleQ)
-    val sampleExpressions                   = getExpressions(sampleQ)
     val sampleTAliases: Map[String, String] = resolveAliases(sampleTables)
 
-    SqlQueriesStaticComparison(userQ, sampleQ,
-      ColumnMatcher.doMatch(userColumns, sampleColumns),
+    SqlQueriesStaticComparison(
+      ColumnMatcher.doMatch(userColumns, getColumnWrappers(sampleQ)),
       TableMatcher.doMatch(userTables, sampleTables),
-      new JoinExpressionMatcher(userTableAliases, sampleTAliases).doMatch(userJoinExpressions, sampleJoinExpressions),
-      new BinaryExpressionMatcher(userTableAliases, sampleTAliases).doMatch(userExpressions, sampleExpressions),
+      new JoinExpressionMatcher(userTableAliases, sampleTAliases).doMatch(userJoinExpressions, getJoinExpressions(sampleQ)),
+      new BinaryExpressionMatcher(userTableAliases, sampleTAliases).doMatch(userExpressions, getExpressions(sampleQ)),
       performAdditionalComparisons(userQ, sampleQ)
     )
   }

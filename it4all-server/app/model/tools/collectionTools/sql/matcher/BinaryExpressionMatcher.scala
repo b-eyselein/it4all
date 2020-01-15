@@ -4,31 +4,14 @@ import model.core.matching._
 import model.points._
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
-import play.api.libs.json.{JsString, JsValue}
 
 final case class BinaryExpressionMatch(
   userArg: Option[BinaryExpression],
   sampleArg: Option[BinaryExpression],
-  analysisResult: Option[GenericAnalysisResult]
+  analysisResult: GenericAnalysisResult
 ) extends Match[BinaryExpression, GenericAnalysisResult] {
-  /*
-  override def analyze(a1: BinaryExpression, a2: BinaryExpression): GenericAnalysisResult = {
 
-    val (a1Left, a1Right) = (a1.getLeftExpression.toString, a1.getRightExpression.toString)
-    val (a2Left, a2Right) = (a2.getLeftExpression.toString, a2.getRightExpression.toString)
-
-    val parallelEqual = (a1Left == a2Left) && (a1Right == a2Right)
-    val crossedEqual  = (a1Left == a2Right) && (a1Right == a2Left)
-
-    val matchType: MatchType = if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
-    else MatchType.UNSUCCESSFUL_MATCH
-
-    GenericAnalysisResult(matchType)
-  }
-
-   */
-
-  override protected def descArgForJson(arg: BinaryExpression): JsValue = JsString(arg.toString)
+  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
   override def points: Points = matchType match {
     case MatchType.SUCCESSFUL_MATCH   => singlePoint
@@ -96,8 +79,11 @@ class BinaryExpressionMatcher(
     }
   }
 
-  override protected def instantiatePartMatch(ua: Option[BinaryExpression], sa: Option[BinaryExpression]): BinaryExpressionMatch =
-    BinaryExpressionMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: BinaryExpression): BinaryExpressionMatch =
+    BinaryExpressionMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+
+  override protected def instantiateOnlyUserMatch(ua: BinaryExpression): BinaryExpressionMatch =
+    BinaryExpressionMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
 
   override protected def instantiateCompleteMatch(ua: BinaryExpression, sa: BinaryExpression): BinaryExpressionMatch = {
     val (a1Left, a1Right) = (ua.getLeftExpression.toString, ua.getRightExpression.toString)
@@ -111,6 +97,6 @@ class BinaryExpressionMatcher(
 
     val ar = GenericAnalysisResult(matchType)
 
-    BinaryExpressionMatch(Some(ua), Some(sa), Some(ar))
+    BinaryExpressionMatch(Some(ua), Some(sa), ar)
   }
 }

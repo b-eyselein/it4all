@@ -1,21 +1,8 @@
 
-export interface IUmlMethod {
-  visibility: UmlVisibility;
-  memberName: string;
-  memberType: string;
-  parameters: string;
-  isStatic: boolean;
-  isAbstract: boolean;
-}
-
-export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT");
-export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
-
-export interface IUmlClass {
-  classType: UmlClassType;
-  name: string;
-  attributes: IUmlAttribute[];
-  methods: IUmlMethod[];
+export interface IUmlClassDiagram {
+  classes: IUmlClass[];
+  associations: IUmlAssociation[];
+  implementations: IUmlImplementation[];
 }
 
 
@@ -28,20 +15,7 @@ export interface IUmlAssociation {
   secondMult: UmlMultiplicity;
 }
 
-export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
-
-export interface IUmlExerciseContent {
-  toIgnore: string[];
-  mappings: KeyValueObjectMap;
-  sampleSolutions: ISampleSolution[];
-}
-
-
-export interface IKeyValueObject {
-  key: string;
-  value: string;
-}
-
+export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT");
 
 export interface IUmlAttribute {
   visibility: UmlVisibility;
@@ -53,13 +27,31 @@ export interface IUmlAttribute {
 }
 
 
-export interface IUmlClassDiagram {
-  classes: IUmlClass[];
-  associations: IUmlAssociation[];
-  implementations: IUmlImplementation[];
+export interface IUmlClass {
+  classType: UmlClassType;
+  name: string;
+  attributes: IUmlAttribute[];
+  methods: IUmlMethod[];
 }
 
-export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");
+export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
+
+export interface IUmlMethod {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  parameters: string;
+  isStatic: boolean;
+  isAbstract: boolean;
+}
+
+export type KeyValueObjectMap = IKeyValueObject[];
+
+export interface ISampleSolution {
+  id: number;
+  sample: object;
+}
+
 
 export interface IUmlImplementation {
   subClass: string;
@@ -67,9 +59,17 @@ export interface IUmlImplementation {
 }
 
 
-export interface ISampleSolution {
-  id: number;
-  sample: object;
+export interface IKeyValueObject {
+  key: string;
+  value: string;
 }
 
-export type KeyValueObjectMap = IKeyValueObject[];
+export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
+
+export interface IUmlExerciseContent {
+  toIgnore: string[];
+  mappings: KeyValueObjectMap;
+  sampleSolutions: ISampleSolution[];
+}
+
+export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");

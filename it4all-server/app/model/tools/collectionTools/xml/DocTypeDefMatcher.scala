@@ -3,7 +3,6 @@ package model.tools.collectionTools.xml
 import de.uniwue.dtd.model.ElementLine
 import model.core.matching.{AnalysisResult, MatchType, Matcher}
 import model.points._
-import play.api.libs.json.JsValue
 
 final case class ElementLineAnalysisResult(
   matchType: MatchType,
@@ -13,7 +12,7 @@ final case class ElementLineAnalysisResult(
   correctAttributes: String
 ) extends AnalysisResult {
 
-  override def toJson: JsValue = XmlToolJsonProtocol.elementLineAnalysisResultWrites.writes(this)
+  //  override def toJson: JsValue = XmlToolJsonProtocol.elementLineAnalysisResultWrites.writes(this)
 
   def points: Points = addUp(Seq(contentCorrect, attributesCorrect).map {
     case false => zeroPoints
@@ -30,8 +29,11 @@ object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult,
 
   override protected def canMatch(el1: ElementLine, el2: ElementLine): Boolean = el1.elementName == el2.elementName
 
-  override protected def instantiatePartMatch(ua: Option[ElementLine], sa: Option[ElementLine]): ElementLineMatch =
-    ElementLineMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: ElementLine): ElementLineMatch =
+    ElementLineMatch(None, Some(sa), None)
+
+  override protected def instantiateOnlyUserMatch(ua: ElementLine): ElementLineMatch =
+    ElementLineMatch(Some(ua), None, None)
 
   override protected def instantiateCompleteMatch(ua: ElementLine, sa: ElementLine): ElementLineMatch = {
 

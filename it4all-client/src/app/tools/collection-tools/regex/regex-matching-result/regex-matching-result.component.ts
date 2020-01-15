@@ -1,19 +1,25 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {IRegexMatchingEvaluationResult} from '../regex-interfaces';
 
 @Component({
   selector: 'it4all-regex-matching-result',
-  templateUrl: './regex-matching-result.component.html',
+  template: `
+    <div class="notification is-light-grey" [ngClass]="correct ? 'has-text-dark-success' : 'has-text-danger'">
+      {{correct ? '&#10004;' : '&#10008;'}} &nbsp;
+      <code>{{matchingResult.matchData}}</code> wurde {{correct ? 'korrekt' : 'fälschlicherweise'}}
+      <span [innerHTML]="wasMatched ? '' : '<b>nicht</b>'"></span> erkannt.
+    </div>`
 })
-export class RegexMatchingResultComponent {
+export class RegexMatchingResultComponent implements OnInit {
 
   @Input() matchingResult: IRegexMatchingEvaluationResult;
 
-  constructor() {
-  }
+  correct: boolean;
+  wasMatched: boolean;
 
-  isCorrect(): boolean {
-    return this.matchingResult.resultType === 'TruePositive' || this.matchingResult.resultType === 'TrueNegative';
+  ngOnInit(): void {
+    this.correct = ['TruePositive', 'TrueNegative'].includes(this.matchingResult.resultType);
+    this.wasMatched = ['FalsePositive' || 'TruePositive'].includes(this.matchingResult.resultType);
   }
 
 }

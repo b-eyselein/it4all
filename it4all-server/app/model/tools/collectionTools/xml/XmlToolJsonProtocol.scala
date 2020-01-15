@@ -1,5 +1,6 @@
 package model.tools.collectionTools.xml
 
+import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
 import model.points.Points
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
@@ -25,7 +26,17 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
 
   private val xmlGrammarResultWrites: Writes[XmlGrammarResult] = {
     implicit val dpew: Writes[DTDParseException] = Json.writes
-    implicit val elmw: Writes[ElementLineMatch]  = _.toJson
+    implicit val elmw: Writes[ElementLineMatch]  = {
+      implicit val elw  : Writes[ElementLine]               = {
+        implicit val edw: Writes[ElementDefinition] = l => JsString(l.asString)
+        implicit val alw: Writes[AttributeList]     = l => JsString(l.asString)
+
+        Json.writes
+      }
+      implicit val elarw: Writes[ElementLineAnalysisResult] = Json.writes
+
+      Json.writes
+    }
 
     Json.writes
   }

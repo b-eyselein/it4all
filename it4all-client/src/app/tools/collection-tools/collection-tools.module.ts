@@ -6,8 +6,8 @@ import {RegexExtractionMatchComponent} from './regex/regex-extraction-result/reg
 import {RegexCheatsheetComponent} from './regex/regex-cheatsheet/regex-cheatsheet.component';
 import {ProgrammingSimplifiedResultComponent} from './programming/_results/programming-simplified-result/programming-simplified-result.component';
 import {ProgrammingUnittestResultComponent} from './programming/_results/programming-unittest-result/programming-unittest-result.component';
-import {SqlResultComponent} from './sql/sql-result/sql-result.component';
-import {SqlMatchingResultComponent} from './sql/sql-matching-result/sql-matching-result.component';
+import {SqlResultComponent} from './sql/_results/sql-result/sql-result.component';
+import {SqlMatchingResultComponent} from './sql/_results/sql-matching-result/sql-matching-result.component';
 import {collectionToolRoutingComponents, CollectionToolRoutingModule} from './collection-tools.routing';
 import {FormsModule} from '@angular/forms';
 import {ExerciseFilesEditorComponent} from './_components/exercise-files-editor/exercise-files-editor.component';
@@ -26,7 +26,7 @@ import {WebExerciseComponent} from './web/web-exercise/web-exercise.component';
 import {UmlClassSelectionComponent} from './uml/uml-class-selection/uml-class-selection.component';
 import {AllExercisesOverviewComponent} from './all-exercises-overview/all-exercises-overview.component';
 import {XmlExerciseComponent} from './xml/xml-exercise/xml-exercise.component';
-import {SqlExecutionResultComponent} from './sql/sql-execution-result/sql-execution-result.component';
+import {SqlExecutionResultComponent} from './sql/_results/sql-execution-result/sql-execution-result.component';
 import { UmlDiagramDrawingComponent } from './uml/uml-diagram-drawing/uml-diagram-drawing.component';
 
 

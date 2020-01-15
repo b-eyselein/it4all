@@ -10,11 +10,7 @@ final case class WebCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends CompleteResult[GradedWebTaskResult] {
-
-  override def results: Seq[GradedWebTaskResult] = gradedHtmlTaskResults ++ gradedJsTaskResults
-
-}
+) extends CompleteResult
 
 sealed trait GradedWebTaskResult extends EvaluationResult
 

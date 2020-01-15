@@ -1,20 +1,20 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {CorrectionResult} from '../../tools/basics';
 
 @Component({
   selector: 'it4all-points-notification',
   template: `
-      <div class="notification has-text-{{textColor}}">
-          <p class="has-text-centered">Sie haben {{result.points}} von maximal {{result.maxPoints}} Punkten erreicht.</p>
+    <div class="notification has-text-{{textColor}}">
+      <p class="has-text-centered">Sie haben {{points}} von maximal {{maxPoints}} Punkten erreicht.</p>
 
-          <br>
+      <br>
 
-          <progress class="progress is-{{textColor}}" value="{{percentage}}" max="100">{{percentage}}%</progress>
-      </div>`,
+      <progress class="progress is-{{textColor}}" value="{{percentage}}" max="100">{{percentage}}%</progress>
+    </div>`,
 })
 export class PointsNotificationComponent implements OnInit, OnChanges {
 
-  @Input() result: CorrectionResult<any>;
+  @Input() points: number;
+  @Input() maxPoints: number;
 
   percentage: number;
   textColor = 'danger';
@@ -31,7 +31,7 @@ export class PointsNotificationComponent implements OnInit, OnChanges {
   }
 
   updatePercentage(): void {
-    this.percentage = this.result.points / this.result.maxPoints * 100;
+    this.percentage = this.points / this.maxPoints * 100;
 
     if (this.percentage >= 90) {
       this.textColor = 'success';

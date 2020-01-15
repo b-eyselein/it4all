@@ -3,19 +3,14 @@ package model.tools.collectionTools.sql.matcher
 import model.core.matching._
 import model.points._
 import net.sf.jsqlparser.schema.Table
-import play.api.libs.json.{JsString, JsValue}
 
 final case class TableMatch(
   userArg: Option[Table],
   sampleArg: Option[Table],
-  analysisResult: Option[GenericAnalysisResult]
+  analysisResult: GenericAnalysisResult
 ) extends Match[Table, GenericAnalysisResult] {
 
-  override protected def descArgForJson(arg: Table): JsValue = JsString(arg.toString)
-
-  /*
-  override protected def analyze(arg1: Table, arg2: Table): GenericAnalysisResult = GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)
-   */
+  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -34,9 +29,12 @@ object TableMatcher extends Matcher[Table, GenericAnalysisResult, TableMatch] {
 
   override protected def canMatch(t1: Table, t2: Table): Boolean = t1.getName == t2.getName
 
-  override protected def instantiatePartMatch(ua: Option[Table], sa: Option[Table]): TableMatch =
-    TableMatch(ua, sa, None)
+  override protected def instantiateOnlySampleMatch(sa: Table): TableMatch =
+    TableMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+
+  override protected def instantiateOnlyUserMatch(ua: Table): TableMatch =
+    TableMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
 
   override protected def instantiateCompleteMatch(ua: Table, sa: Table): TableMatch =
-    TableMatch(Some(ua), Some(sa), Some(GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH)))
+    TableMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
 }

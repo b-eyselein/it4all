@@ -1,12 +1,12 @@
-<span [ngClass]="matchingResult.success ? 'has-text-success' : 'has-text-danger'">
+<span [ngClass]="successful ? 'has-text-success' : 'has-text-danger'">
   ({{matchingResult.points.toFixed(1)}} / {{matchingResult.maxPoints.toFixed(1)}} P)
-  Der Vergleich der {{matchingResult.matchName}} war <ng-container *ngIf="!matchingResult.success">nicht</ng-container> erfolgreich.
+  Der Vergleich der {{matchingResult.matchName}} war <ng-container *ngIf="!successful">nicht</ng-container> erfolgreich.
 </span>
 
 <div class="content">
-  <ul *ngIf="!matchingResult.success">
-    <li *ngFor="let match of matchingResult.matches">
-      <ng-container [ngSwitch]="match.matchType">
+  <ul *ngIf="!successful">
+    <li *ngFor="let match of matchingResult.allMatches">
+      <ng-container [ngSwitch]="match.analysisResult.matchType">
 
         <span *ngSwitchCase="'SUCCESSFUL_MATCH'" class="has-text-success">
           Die Angabe {{matchingResult.matchSingularName}} <code>{{match.userArg}}</code> war korrekt.

@@ -1,30 +1,28 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">it4all</h1>
+  <h1 class="title is-3 has-text-centered">Tools <code>it4all</code></h1>
 
-  <h2 class="subtitle is-3">Tools mit zufälligen Aufgaben</h2>
+  <br>
+
   <div class="columns is-multiline">
-    <div *ngFor="let randomTool of randomTools" class="column is-one-third">
+    <div class="column is-one-quarter-desktop is-half-tablet" *ngFor="let ranTool of randomTools">
 
       <div class="card">
         <header class="card-header">
           <p class="card-header-title">
-            {{randomTool.name}}<sup *ngIf="randomTool.status !== 'live'"
-                                    [innerHTML]="'&nbsp;&' + randomTool.status + ';'"></sup>
+            {{ranTool.name}}<sup *ngIf="ranTool.status !== 'live'" [innerHTML]="'&nbsp;&' + ranTool.status + ';'"></sup>
           </p>
         </header>
         <div class="card-content"></div>
         <footer class="card-footer">
-          <a [routerLink]="['/randomTools', randomTool.id]" class="card-footer-item">Zum Tool</a>
-          <a [routerLink]="['/lessons', randomTool.id]" class="card-footer-item" *ngIf="randomTool.hasLessons">Zu den
-            Lektionen</a>
+          <a [routerLink]="['/randomTools', ranTool.id]" class="card-footer-item">Zum Tool</a>
+          <a [routerLink]="['/lessons', ranTool.id]" class="card-footer-item" *ngIf="ranTool.hasLessons">
+            Zu den Lektionen
+          </a>
         </footer>
       </div>
 
     </div>
-  </div>
 
-  <h2 class="subtitle is-3">Tools mit Aufgaben in Sammlungen</h2>
-  <div class="columns is-multiline">
     <div class="column is-one-quarter-desktop is-half-tablet" *ngFor="let colTool of collectionTools">
 
       <div class="card">
@@ -36,8 +34,9 @@
         <div class="card-content"></div>
         <footer class="card-footer">
           <a [routerLink]="['/tools', colTool.id]" class="card-footer-item">Zum Tool</a>
-          <a [routerLink]="['/lessons', colTool.id]" class="card-footer-item" *ngIf="colTool.hasLessons">Zu den
-            Lektionen</a>
+          <a [routerLink]="['/lessons', colTool.id]" class="card-footer-item" *ngIf="colTool.hasLessons">
+            Zu den Lektionen
+          </a>
         </footer>
       </div>
 
