@@ -1,4 +1,3 @@
-
 export interface IRegexExerciseContent {
   maxPoints: number;
   correctionType: RegexCorrectionTypes;
@@ -63,9 +62,9 @@ export interface IRegexExtractionMatchingResult {
   maxPoints: number;
 }
 
-export type RegexCorrectionTypes = ("MATCHING" | "EXTRACTION");
-export type BinaryClassificationResultTypes = ("TruePositive" | "FalsePositive" | "FalseNegative" | "TrueNegative");
-export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
+export type RegexCorrectionTypes = ('MATCHING' | 'EXTRACTION');
+export type BinaryClassificationResultTypes = ('TruePositive' | 'FalsePositive' | 'FalseNegative' | 'TrueNegative');
+export type MatchType = ('SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE');
 
 export interface ISampleSolution {
   id: number;

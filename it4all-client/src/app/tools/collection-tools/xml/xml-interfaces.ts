@@ -1,4 +1,3 @@
-
 export interface IXmlError {
   errorType: XmlErrorType;
   errorMessage: string;
@@ -20,7 +19,7 @@ export interface IXmlSolution {
 }
 
 export type ElementLine = object;
-export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
+export type MatchType = ('SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE');
 
 export interface IXmlExerciseContent {
   grammarDescription: string;
@@ -70,5 +69,5 @@ export interface IXmlCompleteResult {
   solutionSaved: boolean;
 }
 
-export type XmlErrorType = ("FATAL" | "ERROR" | "WARNING");
-export type SuccessType = ("ERROR" | "NONE" | "PARTIALLY" | "COMPLETE");
+export type XmlErrorType = ('FATAL' | 'ERROR' | 'WARNING');
+export type SuccessType = ('ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE');

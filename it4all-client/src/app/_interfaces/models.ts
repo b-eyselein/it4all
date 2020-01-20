@@ -1,9 +1,7 @@
-
 export interface IExTag {
   abbreviation: string;
   title: string;
 }
-
 
 
 export interface IExerciseMetaData {
