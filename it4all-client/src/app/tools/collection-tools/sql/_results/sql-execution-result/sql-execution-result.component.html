@@ -4,7 +4,7 @@
 
   <div class="column">
     <h4 class="subtitle is-4 has-text-centered">Nutzer</h4>
-    <div class="table-container">
+    <div class="table-container" *ngIf="result.userResultTry; else noUserResultBlock">
       <table class="table is-bordered is-fullwidth">
         <thead>
           <tr>
@@ -19,6 +19,11 @@
         </tbody>
       </table>
     </div>
+    <ng-template #noUserResultBlock>
+      <div class="notification is-danger">
+        Es gab einen Fehler beim Ausführen ihrer Query!
+      </div>
+    </ng-template>
   </div>
 
   <div class="column">

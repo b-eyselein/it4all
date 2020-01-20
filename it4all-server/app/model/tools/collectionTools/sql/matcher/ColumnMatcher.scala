@@ -37,12 +37,7 @@ object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, Colum
 
   override protected def instantiateCompleteMatch(ua: ColumnWrapper, sa: ColumnWrapper): ColumnMatch = {
 
-    println(ua)
-    println(sa)
-
     val mt: MatchType = ua doMatch sa
-
-    println(mt)
 
     ColumnMatch(Some(ua), Some(sa), GenericAnalysisResult(mt))
   }

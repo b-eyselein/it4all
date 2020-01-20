@@ -1,6 +1,7 @@
 package model.tools.collectionTools.sql
 
 import model.tools.collectionTools.sql.ColumnWrapper.wrapColumn
+import model.tools.collectionTools.sql.SqlToolMain.LimitComparison
 import model.tools.collectionTools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -34,8 +35,8 @@ object SelectCorrector extends QueryCorrector("SELECT") {
       }
 
       val joinedTables: Seq[Table] = Option(plain.getJoins).map(_.asScala) match {
-        case None                   => Seq[Table]()
-        case Some(joins: Seq[Join]) =>
+        case None        => Seq[Table]()
+        case Some(joins) =>
           joins.flatMap { join =>
             join.getRightItem match {
               case t: Table => Some(t)
@@ -51,8 +52,8 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   override protected def getJoinExpressions(query: Select): Seq[BinaryExpression] = query.getSelectBody match {
     case ps: PlainSelect =>
       Option(ps.getJoins).map(_.asScala) match {
-        case None                   => Seq.empty
-        case Some(joins: Seq[Join]) =>
+        case None        => Seq.empty
+        case Some(joins) =>
           joins.flatMap { join =>
             Option(join.getOnExpression) flatMap {
               case be: BinaryExpression => Some(be)
@@ -79,7 +80,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   )
 
 
-  private def compareLimitElement(userQ: Q, sampleQ: Q) = {
+  private def compareLimitElement(userQ: Q, sampleQ: Q): LimitComparison = {
     val maybeUserLimit: Option[Limit] = limitElement(userQ)
     val maybeSampleLimit              = limitElement(sampleQ)
 

@@ -19,7 +19,7 @@ object ProgCorrector {
     ScalaDockerImage("ls6uniwue", "py_simplified_prog_corrector", "0.2.0")
 
   val programmingNormalCorrectionDockerImageName: ScalaDockerImage =
-    ScalaDockerImage("ls6uniwue", "py_normal_prog_corrector", "0.1.0")
+    ScalaDockerImage("ls6uniwue", "py_normal_prog_corrector", "0.2.0")
 
   val programmingUnitTestCorrectionDockerImageName: ScalaDockerImage =
     ScalaDockerImage("ls6uniwue", "py_unit_test_corrector", "0.3.1")
