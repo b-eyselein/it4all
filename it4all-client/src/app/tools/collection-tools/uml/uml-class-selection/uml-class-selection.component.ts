@@ -27,14 +27,28 @@ export class UmlClassSelectionComponent implements OnInit {
     this.umlExerciseTextParts = textParts;
   }
 
+  getSelectedClasses(): SelectableClass[] {
+    return this.selectableClasses.filter((sc) => sc.selected);
+  }
+
   toggleClassSelected(selectableClass: SelectableClass): void {
     selectableClass.selected = !selectableClass.selected;
   }
 
   correct(): void {
-    console.info('TODO: implement!');
-
     this.corrected = true;
+  }
+
+  getCorrectClasses(): SelectableClass[] {
+    return this.selectableClasses.filter((sc) => sc.selected && sc.isCorrect);
+  }
+
+  getMissingClasses(): SelectableClass[] {
+    return this.selectableClasses.filter((sc) => !sc.selected && sc.isCorrect);
+  }
+
+  getWrongClasses(): SelectableClass[] {
+    return this.selectableClasses.filter((sc) => sc.selected && !sc.isCorrect);
   }
 
 }

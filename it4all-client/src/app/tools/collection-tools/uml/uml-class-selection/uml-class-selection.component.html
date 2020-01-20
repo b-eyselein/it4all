@@ -1,37 +1,67 @@
 <div class="container">
   <h1 class="title is-3 has-text-centered">Klassenselektion</h1>
 
-  <div class="notification is-light-grey">
-    <ng-container *ngFor="let textPart of umlExerciseTextParts">
-      <span *ngIf="textPart.selectableClass"
-            (click)="toggleClassSelected(textPart.selectableClass)"
-            [class.has-text-link]="textPart.selectableClass.selected">{{textPart.text}}</span>
+  <div class="columns">
+    <div class="column is-two-thirds-desktop">
 
-      <span *ngIf="!textPart.selectableClass">{{textPart.text}}</span>
-    </ng-container>
+      <h2 class="subtitle is-3 has-text-centered">Aufgabentext</h2>
+      <div class="notification is-light-grey">
+        <ng-container *ngFor="let textPart of umlExerciseTextParts">
+          <span *ngIf="textPart.selectableClass"
+                (click)="toggleClassSelected(textPart.selectableClass)"
+                [class.has-text-link]="textPart.selectableClass.selected">{{textPart.text}}</span>
+
+          <span *ngIf="!textPart.selectableClass">{{textPart.text}}</span>
+        </ng-container>
+      </div>
+    </div>
+    <div class="column is-one-third-desktop">
+      <h2 class="subtitle is-3 has-text-centered">Gewählte Klassen</h2>
+
+      <div class="content">
+        <ul>
+          <li *ngFor="let selectableClass of getSelectedClasses()">{{selectableClass.name}}</li>
+        </ul>
+      </div>
+    </div>
   </div>
 
   <div class="columns">
     <div class="column">
-      <button class="button is-link is-fullwidth" (click)="correct()">Korrektur</button>
+      <button class="button is-link is-fullwidth" (click)="correct()" [disabled]="corrected">Korrektur</button>
     </div>
     <div class="column">
       <a class="button is-dark is-fullwidth" routerLink="../diagramDrawing">Zum nächsten Aufgabenteil</a>
     </div>
   </div>
 
-  <hr>
+  <ng-container *ngIf="corrected">
+    <hr>
 
-  <h2 class="subtitle is-3 has-text-centered">Gewählte Klassen</h2>
+    <h2 class="subtitle is-3 has-text-centered">Korrektur</h2>
 
-  <div class="buttons">
-    <ng-container *ngFor="let selectableClass of selectableClasses">
-      <button class="button is-outlined" *ngIf="selectableClass.selected"
-              [ngClass]="{'is-success': corrected && selectableClass.isCorrect, 'is-danger': corrected && !selectableClass.isCorrect}"
-              (click)="selectableClass.selected = false">
-        {{selectableClass.name}}
-      </button>
-    </ng-container>
-  </div>
+    <div class="columns">
+      <div class="column">
+        <h3 class="subtitle is-4 has-text-centered">Korrekte Klassen:</h3>
+        <ul>
+          <li *ngFor="let correctClass of getCorrectClasses()">&#10004;&nbsp;<code class="has-text-dark-success">{{correctClass.name}}</code></li>
+        </ul>
+      </div>
+
+      <div class="column">
+        <h3 class="subtitle is-4 has-text-centered">Fehlende Klassen:</h3>
+        <ul>
+          <li *ngFor="let missingClass of getMissingClasses()">&#10008;&nbsp;<code>{{missingClass.name}}</code></li>
+        </ul>
+      </div>
+
+      <div class="column">
+        <h3 class="subtitle is-4 has-text-centered">Falsche Klassen</h3>
+        <ul>
+          <li *ngFor="let wrongClass of getWrongClasses()">&#10067;&nbsp;<code>{{wrongClass.name}}</code></li>
+        </ul>
+      </div>
+    </div>
+  </ng-container>
 
 </div>
