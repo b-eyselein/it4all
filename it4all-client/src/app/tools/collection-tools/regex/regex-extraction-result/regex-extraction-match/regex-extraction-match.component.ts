@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {IRegexMatchMatch} from '../../regex-interfaces';
 
 @Component({
@@ -11,15 +11,9 @@ import {IRegexMatchMatch} from '../../regex-interfaces';
     </div>
   `
 })
-export class RegexExtractionMatchComponent implements OnInit {
+export class RegexExtractionMatchComponent {
 
   @Input() match: IRegexMatchMatch;
-
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
 
   isCorrect(): boolean {
     return this.match.analysisResult.matchType === 'SUCCESSFUL_MATCH';

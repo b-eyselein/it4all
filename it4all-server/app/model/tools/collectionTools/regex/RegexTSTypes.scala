@@ -4,13 +4,13 @@ import model.core.matching.MatchType
 import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
 import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
 import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
-import nl.codestar.scalatsi.TypescriptType.{TSString, TypescriptNamedType}
+import nl.codestar.scalatsi.TypescriptType.{TSNumber, TSString, TypescriptNamedType}
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexTSTypes extends ToolTSInterfaceTypes {
 
-  import nl.codestar.scalatsi.TypescriptType.TSInterface
+  import nl.codestar.scalatsi.dsl._
 
   private val regexCorrectionTypeTsType: TSType[RegexCorrectionType] = enumTsType(RegexCorrectionTypes)
 
@@ -32,7 +32,11 @@ object RegexTSTypes extends ToolTSInterfaceTypes {
   private val regexExtractionEvaluationResultTSI: TSIType[RegexExtractionEvaluationResult] = {
     implicit val todo: TSNamedType[ExtractedValuesComparison] = matchingResultTSI("RegexExtraction", {
       implicit val mtt: TSType[MatchType]  = enumTsType(MatchType)
-      implicit val rmt: TSType[RegexMatch] = TSType(TSString)
+      implicit val rmt: TSType[RegexMatch] = TSType.interface(
+        "start" -> TSNumber,
+        "end" -> TSNumber,
+        "content" -> TSString
+      )
 
       TSType.fromCaseClass[RegexMatchMatch]
     })

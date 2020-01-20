@@ -8,8 +8,8 @@
     "test:ci": "ng test --watch=false --browsers=MyChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:dev": "ng build --progress --output-path ../server/public",
-    "build:prod": "ng build --progress --prod --output-path ../server/public"
+    "build:dev": "ng build --progress --output-path ../it4all-server/public",
+    "build:prod": "ng build --progress --prod --output-path ../it4all-server/public"
   },
   "private": true,
   "dependencies": {

@@ -1,3 +1,11 @@
+
+export interface IMatch {
+  start: number;
+  end: number;
+  content: string;
+}
+
+
 export interface IRegexExerciseContent {
   maxPoints: number;
   correctionType: RegexCorrectionTypes;
@@ -7,6 +15,14 @@ export interface IRegexExerciseContent {
 }
 
 
+export interface IRegexMatchMatch {
+  userArg?: IMatch;
+  sampleArg?: IMatch;
+  analysisResult: IGenericAnalysisResult;
+}
+
+export type RegexCorrectionTypes = ("MATCHING" | "EXTRACTION");
+
 export interface IRegexCompleteResult {
   correctionType: RegexCorrectionTypes;
   matchingResults: IRegexMatchingEvaluationResult[];
@@ -14,20 +30,6 @@ export interface IRegexCompleteResult {
   points: IPoints;
   maxPoints: IPoints;
   solutionSaved: boolean;
-}
-
-
-export interface IRegexMatchMatch {
-  userArg?: string;
-  sampleArg?: string;
-  analysisResult: IGenericAnalysisResult;
-}
-
-
-export interface IRegexExtractionEvaluationResult {
-  base: string;
-  extractionMatchingResult: IRegexExtractionMatchingResult;
-  correct: boolean;
 }
 
 
@@ -53,6 +55,8 @@ export interface IRegexExtractionTestData {
   base: string;
 }
 
+export type BinaryClassificationResultTypes = ("TruePositive" | "FalsePositive" | "FalseNegative" | "TrueNegative");
+export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
 
 export interface IRegexExtractionMatchingResult {
   matchName: string;
@@ -62,9 +66,13 @@ export interface IRegexExtractionMatchingResult {
   maxPoints: number;
 }
 
-export type RegexCorrectionTypes = ('MATCHING' | 'EXTRACTION');
-export type BinaryClassificationResultTypes = ('TruePositive' | 'FalsePositive' | 'FalseNegative' | 'TrueNegative');
-export type MatchType = ('SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE');
+
+export interface IRegexExtractionEvaluationResult {
+  base: string;
+  extractionMatchingResult: IRegexExtractionMatchingResult;
+  correct: boolean;
+}
+
 
 export interface ISampleSolution {
   id: number;
