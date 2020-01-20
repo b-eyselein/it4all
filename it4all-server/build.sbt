@@ -55,8 +55,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "5.0.0", // Apache 2.0
   "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0", // Apache 2.0
 
-  "com.beachape" %% "enumeratum-play" % "1.5.16", // MIT
-  "com.beachape" %% "enumeratum-play-json" % "1.5.16", // MIT
+  "com.beachape" %% "enumeratum-play" % "1.5.17", // MIT
+  "com.beachape" %% "enumeratum-play-json" % "1.5.17", // MIT
 
   "com.github.t3hnar" %% "scala-bcrypt" % "4.1", // Apache 2.0
 

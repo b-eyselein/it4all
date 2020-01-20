@@ -3,14 +3,12 @@ package model.tools.collectionTools.regex
 import model.core.matching.MatchType
 import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
 import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
-import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
 import nl.codestar.scalatsi.TypescriptType.{TSNumber, TSString, TypescriptNamedType}
+import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexTSTypes extends ToolTSInterfaceTypes {
-
-  import nl.codestar.scalatsi.dsl._
 
   private val regexCorrectionTypeTsType: TSType[RegexCorrectionType] = enumTsType(RegexCorrectionTypes)
 
