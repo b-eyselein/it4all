@@ -48,9 +48,11 @@
               <select title="Datentyp" [value]="attr.type">
                 <option *ngFor="let umlType of umlTypes" [selected]="umlType === attr.type">{{umlType}}</option>
               </select>
+              &nbsp;
+              <button title="Attribut löschen" (click)="removeAttribute(attr)">-</button>
             </ng-container>
 
-           <hr>
+            <hr>
 
             <div>
               <select title="Sichtbarkeit">

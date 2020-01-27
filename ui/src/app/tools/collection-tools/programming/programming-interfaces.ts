@@ -1,3 +1,4 @@
+
 export interface IUmlClassDiagram {
   classes: IUmlClass[];
   associations: IUmlAssociation[];
@@ -28,7 +29,7 @@ export interface IProgInput {
   inputType: any;
 }
 
-export type UmlClassType = ('CLASS' | 'INTERFACE' | 'ABSTRACT');
+export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT");
 
 export interface IUmlClass {
   classType: UmlClassType;
@@ -37,7 +38,7 @@ export interface IUmlClass {
   methods: IUmlMethod[];
 }
 
-export type UmlVisibility = ('PUBLIC' | 'PACKAGE' | 'PROTECTED' | 'PRIVATE');
+export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
 
 export interface IUmlMethod {
   visibility: UmlVisibility;
@@ -66,7 +67,7 @@ export interface IImplementationPart {
   sampleSolFileNames: string[];
 }
 
-export type UnitTestTypes = ('Simplified' | 'Normal');
+export type UnitTestTypes = ("Simplified" | "Normal");
 
 export interface IProgSolution {
   files: IExerciseFile[];
@@ -100,7 +101,7 @@ export interface IUmlImplementation {
   superClass: string;
 }
 
-export type UmlAssociationType = ('ASSOCIATION' | 'AGGREGATION' | 'COMPOSITION');
+export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");
 
 export interface IUnitTestTestConfig {
   id: number;
@@ -109,7 +110,7 @@ export interface IUnitTestTestConfig {
   file: IExerciseFile;
 }
 
-export type UmlMultiplicity = ('SINGLE' | 'UNBOUND');
+export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
 
 export interface IUnitTestPart {
   unitTestType: UnitTestTypes;

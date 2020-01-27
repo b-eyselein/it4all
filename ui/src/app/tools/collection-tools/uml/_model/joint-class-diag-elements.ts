@@ -15,7 +15,6 @@ const CLASS_MARKUP = `
   <text class="uml-class-name-text"/><text class="uml-class-attrs-text"/><text class="uml-class-methods-text"/>
 </g>`.trim();
 
-
 export class MyJointClass extends joint.shapes.basic.Generic {
 
   constructor(attributes?: joint.dia.Element.Attributes, options?: joint.dia.Graph.Options) {
@@ -26,8 +25,8 @@ export class MyJointClass extends joint.shapes.basic.Generic {
   initialize(): void {
 
     this.on('change:classType change:className change:attributes change:methods', () => {
+      console.info('Update...');
       this.updateRectangles();
-      this.trigger('uml-update');
     });
 
     this.updateRectangles();
@@ -48,10 +47,9 @@ export class MyJointClass extends joint.shapes.basic.Generic {
 
     rects.forEach((rect) => {
 
-      const lines = Array.isArray(rect.text) ? rect.text : [rect.text];
-      const rectHeight = calcRectHeight(lines);
+      const rectHeight: number = calcRectHeight(rect.text);
 
-      attrs['.uml-class-' + rect.type + '-text'].text = lines.join('\n');
+      attrs['.uml-class-' + rect.type + '-text'].text = rect.text.join('\n');
       attrs['.uml-class-' + rect.type + '-rect'].height = rectHeight;
       attrs['.uml-class-' + rect.type + '-rect'].transform = 'translate(0,' + offsetY + ')';
 
@@ -81,7 +79,6 @@ export class MyJointClass extends joint.shapes.basic.Generic {
         '.uml-class-attrs-text': {ref: '.uml-class-attrs-rect', refY: STD_PADDING, refX: STD_PADDING},
         '.uml-class-methods-text': {ref: '.uml-class-methods-rect', refY: STD_PADDING, refX: STD_PADDING}
       },
-
 
       className: '' as string,
       classType: '',

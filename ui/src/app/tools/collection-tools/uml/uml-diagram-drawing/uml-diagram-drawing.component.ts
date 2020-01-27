@@ -7,7 +7,7 @@ import {IUmlExerciseContent} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 
 import * as joint from 'jointjs';
-import {ExportedUmlClassDiagram} from '../_model/my-uml-interfaces';
+import {ExportedUmlClassDiagram, UmlClassAttribute} from '../_model/my-uml-interfaces';
 
 enum CreatableClassDiagramObject {
   Class,
@@ -69,13 +69,6 @@ export class UmlDiagramDrawingComponent implements OnInit {
       el: paperJQueryElement, model: this.graph,
       width: Math.floor(paperJQueryElement.width()), height: PAPER_HEIGHT,
       gridSize: GRID_SIZE, drawGrid: {name: 'dot'}
-      /*,
-      elementView: joint.dia.ElementView.extend({
-        pointerdblclick: (event: joint.dia.Event, x: number, y: number) => {
-          event.preventDefault();
-        }
-      })
-  */
     });
 
     this.createPaperEvents(this.paper);
@@ -86,7 +79,7 @@ export class UmlDiagramDrawingComponent implements OnInit {
         const selectedObjectToCreate: SelectableClassDiagramObject =
           this.creatableClassDiagramObjects.find((scdo) => scdo.selected);
 
-        if (selectedObjectToCreate.key === CreatableClassDiagramObject.Class) {
+        if (CreatableClassDiagramObject.Class === selectedObjectToCreate.key) {
           addClassToGraph('Klasse 1', paper, {x, y});
         }
       }
@@ -118,6 +111,8 @@ export class UmlDiagramDrawingComponent implements OnInit {
     paper.on('cell:pointerdblclick', (cellView: joint.dia.CellView/*, event: joint.dia.Event, x: number, y: number*/) => {
       if (!this.editedClass) {
         this.editedClass = cellView.model as MyJointClass;
+      } else {
+        this.editedClass = undefined;
       }
     });
   }
@@ -161,6 +156,13 @@ export class UmlDiagramDrawingComponent implements OnInit {
     });
 
     fileReader.readAsText(files.item(0));
+  }
+
+  removeAttribute(attr: UmlClassAttribute): void {
+    const newAttributes = this.editedClass.getAttributes().filter((a) => a !== attr);
+    this.editedClass.setAttributes(newAttributes);
+
+    console.info(this.editedClass.getAttributes());
   }
 
 }

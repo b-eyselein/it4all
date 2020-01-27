@@ -1,3 +1,4 @@
+
 export interface IUmlClassDiagram {
   classes: IUmlClass[];
   associations: IUmlAssociation[];
@@ -14,7 +15,7 @@ export interface IUmlAssociation {
   secondMult: UmlMultiplicity;
 }
 
-export type UmlClassType = ('CLASS' | 'INTERFACE' | 'ABSTRACT');
+export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT");
 
 export interface IUmlAttribute {
   visibility: UmlVisibility;
@@ -33,7 +34,7 @@ export interface IUmlClass {
   methods: IUmlMethod[];
 }
 
-export type UmlVisibility = ('PUBLIC' | 'PACKAGE' | 'PROTECTED' | 'PRIVATE');
+export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
 
 export interface IUmlMethod {
   visibility: UmlVisibility;
@@ -63,7 +64,7 @@ export interface IKeyValueObject {
   value: string;
 }
 
-export type UmlMultiplicity = ('SINGLE' | 'UNBOUND');
+export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
 
 export interface IUmlExerciseContent {
   toIgnore: string[];
@@ -71,4 +72,4 @@ export interface IUmlExerciseContent {
   sampleSolutions: ISampleSolution[];
 }
 
-export type UmlAssociationType = ('ASSOCIATION' | 'AGGREGATION' | 'COMPOSITION');
+export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");
