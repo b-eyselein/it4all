@@ -8,11 +8,16 @@
       <div class="notification is-light-grey">
         <ng-container *ngFor="let textPart of umlExerciseTextParts">
           <span *ngIf="textPart.selectableClass"
-                (click)="addClassToGraph(textPart.selectableClass)"
-                [class.has-text-link]="textPart.selectableClass.selected">{{textPart.text}}</span>
+                (click)="createClass(textPart.selectableClass)">{{textPart.text}}</span>
 
           <span *ngIf="!textPart.selectableClass">{{textPart.text}}</span>
         </ng-container>
+      </div>
+
+
+      <h2 class="subtitle is-4 has-text-centered">Alte Lösung importieren</h2>
+      <div class="buttons">
+        <input type="file" class="button is-light-danger is-fullwidth" (change)="readFile($event.target.files)">
       </div>
 
       <div class="columns">
@@ -21,6 +26,58 @@
                   [ngClass]="x.selected ? 'is-link': ''">{{x.name}}</button>
         </div>
       </div>
+
+      <ng-container *ngIf="editedClass">
+
+        <hr>
+
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">{{editedClass.getClassName()}}</p>
+          </header>
+          <div class="card-content">
+            <ng-container *ngFor="let attr of editedClass.getAttributes()">
+              <select title="Sichtbarkeit" [value]="attr.visibility">
+                <option *ngFor="let visibility of visibilities" [selected]="visibility === attr.visibility">
+                  {{visibility}}
+                </option>
+              </select>
+              &nbsp;
+              <input type="text" title="Attributname" placeholder="Attributname" [value]="attr.name">
+              :
+              <select title="Datentyp" [value]="attr.type">
+                <option *ngFor="let umlType of umlTypes" [selected]="umlType === attr.type">{{umlType}}</option>
+              </select>
+            </ng-container>
+
+           <hr>
+
+            <div>
+              <select title="Sichtbarkeit">
+                <option *ngFor="let visibility of visibilities">{{visibility}}</option>
+              </select>
+              &nbsp;
+              <input type="text" title="Attributname" placeholder="Attributname">
+              :
+              <select title="Datentyp">
+                <option *ngFor="let umlType of umlTypes">{{umlType}}</option>
+              </select>
+            </div>
+
+            <hr>
+
+            <ng-container *ngFor="let method of editedClass.getMethods()">
+              {{method | json}}
+            </ng-container>
+
+          </div>
+          <footer class="card-footer">
+            <a class="card-footer-item">Verwerfen</a>
+            <a class="card-footer-item">Anwenden</a>
+          </footer>
+        </div>
+
+      </ng-container>
 
     </div>
   </div>

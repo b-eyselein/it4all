@@ -1,4 +1,3 @@
-
 export interface ISiteSpec {
   fileName: string;
   htmlTasks: IHtmlTask[];
@@ -42,7 +41,7 @@ export interface IJsHtmlElementSpec {
   xpathQuery: string;
   awaitedTagName: string;
   awaitedTextContent?: string;
-  attributes: { [ key: string ]: string };
+  attributes: { [key: string]: string };
 }
 
 
@@ -61,7 +60,7 @@ export interface IHtmlTask {
   xpathQuery: string;
   awaitedTagName: string;
   awaitedTextContent?: string;
-  attributes: { [ key: string ]: string };
+  attributes: { [key: string]: string };
 }
 
 
@@ -114,7 +113,7 @@ export interface IGradedHtmlTaskResult {
   maxPoints: IPoints;
 }
 
-export type JsActionType = ("Click" | "FillOut");
+export type JsActionType = ('Click' | 'FillOut');
 
 export interface IGradedJsTaskResult {
   id: number;
@@ -133,4 +132,4 @@ export interface IJsAction {
   keysToSend?: string;
 }
 
-export type SuccessType = ("ERROR" | "NONE" | "PARTIALLY" | "COMPLETE");
+export type SuccessType = ('ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE');

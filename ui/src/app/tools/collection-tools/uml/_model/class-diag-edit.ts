@@ -1,18 +1,12 @@
 import * as $ from 'jquery';
 
-import {UmlClassAttribute, UmlClassMethod, VISIBILITIES} from './uml-interfaces';
+import {UmlClassAttribute, UmlClassMethod, VISIBILITIES} from './my-uml-interfaces';
 import {MyJointClass} from './joint-class-diag-elements';
-
-// import {classDiagGraph} from './classDiagDrawing';
-// import {domReady} from '../../otherHelpers';
 
 export {editClass, editLink};
 
 let classEditDiv: HTMLDivElement;
 let linkEditDiv: HTMLDivElement;
-
-let classEditSubmit: JQuery;
-let linkEditSubmit: JQuery;
 
 const UmlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
 

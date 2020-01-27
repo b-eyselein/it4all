@@ -1,4 +1,3 @@
-
 export interface IGroupByMatch {
   userArg?: string;
   sampleArg?: string;
@@ -54,7 +53,7 @@ export interface IOrderByMatchingResult {
 
 
 export interface ISqlRow {
-  cells: { [ key: string ]: ISqlCell };
+  cells: { [key: string]: ISqlCell };
 }
 
 
@@ -113,7 +112,7 @@ export interface ISqlExecutionResult {
   sampleResultTry?: ISqlQueryResult;
 }
 
-export type SqlExerciseType = ("SELECT" | "CREATE" | "UPDATE" | "INSERT" | "DELETE");
+export type SqlExerciseType = ('SELECT' | 'CREATE' | 'UPDATE' | 'INSERT' | 'DELETE');
 
 export interface IExpressionListMatch {
   userArg?: string;
@@ -121,7 +120,7 @@ export interface IExpressionListMatch {
   analysisResult: IGenericAnalysisResult;
 }
 
-export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
+export type MatchType = ('SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE');
 
 export interface ISqlQueryResult {
   columnNames: string[];

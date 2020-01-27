@@ -1,12 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {IExercise} from '../../../../_interfaces/models';
-import {MyJointClass, STD_CLASS_HEIGHT, STD_CLASS_WIDTH} from '../_model/joint-class-diag-elements';
+import {MyJointClass} from '../_model/joint-class-diag-elements';
 import {getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
-import {findFreePositionForNextClass} from '../_model/class-diag-helpers';
+import {IUmlExerciseContent} from '../uml-interfaces';
+import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 
 import * as joint from 'jointjs';
-import {IUmlExerciseContent} from '../uml-interfaces';
+import {ExportedUmlClassDiagram} from '../_model/my-uml-interfaces';
 
 enum CreatableClassDiagramObject {
   Class,
@@ -32,6 +33,9 @@ interface SelectableClassDiagramObject {
 })
 export class UmlDiagramDrawingComponent implements OnInit {
 
+  readonly visibilities = ['+', '-', '#', '~'];
+  readonly umlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
+
   @Input() exercise: IExercise;
 
   exerciseContent: IUmlExerciseContent;
@@ -41,6 +45,9 @@ export class UmlDiagramDrawingComponent implements OnInit {
 
   selectableClasses: SelectableClass[];
   umlExerciseTextParts: UmlExerciseTextPart[];
+
+  markedClass: MyJointClass | undefined;
+  editedClass: MyJointClass | undefined;
 
   readonly creatableClassDiagramObjects: SelectableClassDiagramObject[] = [
     {name: 'Klasse', key: CreatableClassDiagramObject.Class, selected: false},
@@ -61,37 +68,61 @@ export class UmlDiagramDrawingComponent implements OnInit {
     this.paper = new joint.dia.Paper({
       el: paperJQueryElement, model: this.graph,
       width: Math.floor(paperJQueryElement.width()), height: PAPER_HEIGHT,
-      gridSize: GRID_SIZE, drawGrid: {name: 'dot'},
+      gridSize: GRID_SIZE, drawGrid: {name: 'dot'}
+      /*,
       elementView: joint.dia.ElementView.extend({
-        pointerdblclick: (event: joint.dia.Event, x, y) => {
-          console.info(event);
+        pointerdblclick: (event: joint.dia.Event, x: number, y: number) => {
+          event.preventDefault();
         }
-      }),
+      })
+  */
     });
 
-    this.paper.on('blank:pointerclick', (evt: joint.dia.Event, x: number, y: number) => {
+    this.createPaperEvents(this.paper);
+  }
 
+  createPaperEvents(paper: joint.dia.Paper): void {
+    paper.on('blank:pointerclick', (evt: joint.dia.Event, x: number, y: number) => {
         const selectedObjectToCreate: SelectableClassDiagramObject =
-          this.creatableClassDiagramObjects.find((ccdo) => ccdo.selected);
+          this.creatableClassDiagramObjects.find((scdo) => scdo.selected);
 
-        switch (selectedObjectToCreate.key) {
-          case CreatableClassDiagramObject.Association:
-            break;
-          case CreatableClassDiagramObject.Implementation:
-            break;
-          case CreatableClassDiagramObject.Class:
-            this.addClassToGraph({name: 'Klasse 1', selected: false, isCorrect: false});
-            break;
+        if (selectedObjectToCreate.key === CreatableClassDiagramObject.Class) {
+          addClassToGraph('Klasse 1', paper, {x, y});
         }
       }
     );
+
+    paper.on('cell:pointerclick', (cellView: joint.dia.CellView/*, event: joint.dia.Event, x: number, y: number*/) => {
+
+      const selectedObjectToCreate: SelectableClassDiagramObject =
+        this.creatableClassDiagramObjects.find((scdo) => scdo.selected);
+
+      if (!this.markedClass) {
+        this.markedClass = cellView.model as MyJointClass;
+        cellView.highlight();
+      } else if (this.markedClass === cellView.model) {
+        this.markedClass = undefined;
+        cellView.unhighlight();
+      } else if (selectedObjectToCreate) {
+        if (selectedObjectToCreate.key === CreatableClassDiagramObject.Association) {
+          addAssociationToGraph(this.markedClass, '*', cellView.model as MyJointClass, '*', this.graph);
+        } else if (selectedObjectToCreate.key === CreatableClassDiagramObject.Implementation) {
+          addImplementationToGraph(this.markedClass, cellView.model as MyJointClass, this.graph);
+        }
+
+        this.markedClass.findView(paper).unhighlight();
+        this.markedClass = undefined;
+      }
+    });
+
+    paper.on('cell:pointerdblclick', (cellView: joint.dia.CellView/*, event: joint.dia.Event, x: number, y: number*/) => {
+      if (!this.editedClass) {
+        this.editedClass = cellView.model as MyJointClass;
+      }
+    });
   }
 
-  toggle(toCreate: SelectableClassDiagramObject): void {
-    this.creatableClassDiagramObjects.forEach((cdo) => cdo.selected = (cdo.key === toCreate.key) ? !cdo.selected : false);
-  }
-
-  addClassToGraph(selectableClass: SelectableClass): void {
+  createClass(selectableClass: SelectableClass): void {
     if (selectableClass.selected) {
       // Class is already in graph!
       return;
@@ -99,13 +130,37 @@ export class UmlDiagramDrawingComponent implements OnInit {
 
     selectableClass.selected = true;
 
-    this.graph.addCell(
-      new MyJointClass({
-        className: selectableClass.name,
-        size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
-        position: findFreePositionForNextClass(this.paper)
-      })
-    );
+    addClassToGraph(selectableClass.name, this.paper);
+  }
+
+  toggle(toCreate: SelectableClassDiagramObject): void {
+    this.creatableClassDiagramObjects.forEach((scdo) => scdo.selected = (scdo.key === toCreate.key) ? !scdo.selected : false);
+  }
+
+  readFile(files: FileList): void {
+    const fileReader = new FileReader();
+
+    fileReader.onload = ((pe) => {
+      const read: string = pe.target['result'];
+
+      const loaded: ExportedUmlClassDiagram = JSON.parse(read);
+
+      for (const clazz of loaded.classes) {
+        addClassToGraph(clazz.name, this.paper, clazz.position, clazz.attributes || []);
+      }
+
+      for (const impl of loaded.implementations) {
+        const allCells = this.graph.getCells();
+
+        addImplementationToGraph(
+          allCells.find((c) => (c instanceof MyJointClass) && c.getClassName() === impl.subClass) as MyJointClass,
+          allCells.find((c) => (c instanceof MyJointClass) && c.getClassName() === impl.superClass) as MyJointClass,
+          this.graph
+        );
+      }
+    });
+
+    fileReader.readAsText(files.item(0));
   }
 
 }
