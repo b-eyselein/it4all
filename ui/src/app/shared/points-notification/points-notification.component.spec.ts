@@ -15,12 +15,8 @@ describe('PointsNotificationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PointsNotificationComponent);
     component = fixture.componentInstance;
-    component.result = {
-      solutionSaved: true,
-      isSuccessful: false,
-      points: 1,
-      maxPoints: 5
-    };
+    component.points = 1;
+    component.maxPoints = 5;
     fixture.detectChanges();
   });
 

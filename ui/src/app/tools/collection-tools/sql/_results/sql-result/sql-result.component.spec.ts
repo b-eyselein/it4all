@@ -20,24 +20,25 @@ describe('SqlResultComponent', () => {
     component = fixture.componentInstance;
     component.result = {
       solutionSaved: true,
-      whereComparisons: {
-        maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
+      staticComparison: {
+        whereComparison: {
+          maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''
+        },
+        joinExpressionComparison: {
+          maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''
+        },
+        tableComparison: {
+          maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''
+        },
+        columnComparison: {
+          maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''
+        },
+        additionalComparisons: {}
       },
-      joinExpressionComparisons: {
-        maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
-      },
-      tableComparisons: {
-        maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
-      },
-      columnComparisons: {
-        maxPoints: -1, points: -1, matches: [], matchSingularName: '', success: true, matchName: ''
-      },
-      additionalComparisons: [],
-      executionResults: {
-        sampleResult: null, success: 'ERROR', userResult: null
-      },
-      message: '',
-      success: ''
+      executionResult: {
+        sampleResultTry: null,
+        userResultTry: null
+      }
     };
     fixture.detectChanges();
   });

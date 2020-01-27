@@ -16,10 +16,11 @@ describe('SqlMatchingResultComponent', () => {
     fixture = TestBed.createComponent(SqlMatchingResultComponent);
     component = fixture.componentInstance;
     component.matchingResult = {
-      success: false,
-      matchName: '', matchSingularName: '',
-      points: -1, maxPoints: -1,
-      matches: [],
+      matchName: '',
+      matchSingularName: '',
+      points: -1,
+      maxPoints: -1,
+      allMatches: [],
     };
     fixture.detectChanges();
   });
