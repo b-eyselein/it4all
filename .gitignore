@@ -21,6 +21,5 @@ data/
 ui/coverage
 ui/dist
 ui/node_modules
-ui/.idea
 ui/out-tsc
 
