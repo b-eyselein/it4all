@@ -1,26 +1,26 @@
 # Server
-it4all-server/logs
-it4all-server/target
+logs
+target
 
-it4all-server/RUNNING_PID
+RUNNING_PID
 
-it4all-server/.cache-main
-it4all-server/.cache-tests
+.cache-main
+.cache-tests
 
-it4all-server/project/project
-it4all-server/project/target
+project/project
+project/target
 
-it4all-server/public
+public
 
-it4all-server/data/
+data/
 
-it4all-server/.idea/*
-!it4all-server/.idea/dictionaries
+.idea/*
+!.idea/dictionaries
 
 # Client folder
-it4all-client/coverage
-it4all-client/dist
-it4all-client/node_modules
-it4all-client/.idea
-it4all-client/out-tsc
+ui/coverage
+ui/dist
+ui/node_modules
+ui/.idea
+ui/out-tsc
 

@@ -21,7 +21,7 @@ object TsInterfaceGenerator extends DefaultTSTypes {
     targetFile: File
   )
 
-  private val clientBaseDir: File = File.currentWorkingDirectory.parent / "it4all-client" / "src" / "app"
+  private val clientBaseDir: File = File.currentWorkingDirectory / "ui" / "src" / "app"
 
   private def collToolInterfacesFile(toolId: String): File =
     clientBaseDir / "tools" / "collection-tools" / toolId / s"$toolId-interfaces.ts"
