@@ -1,8 +1,7 @@
 
-export interface IQuestion {
-  id: number;
-  question: string;
-  answers: IQuestionAnswer[];
+export interface IExTag {
+  abbreviation: string;
+  title: string;
 }
 
 
@@ -63,11 +62,10 @@ export interface ILesson {
 }
 
 
-export type LessonContent = (ILessonQuestionsContent | ILessonTextContent);
-
-export interface IExTag {
-  abbreviation: string;
-  title: string;
+export interface IQuestion {
+  id: number;
+  question: string;
+  answers: IQuestionAnswer[];
 }
 
 
@@ -87,3 +85,6 @@ export interface ILessonQuestionsContent {
   toolId: string;
   questions: IQuestion[];
 }
+
+
+export type LessonContent = (ILessonTextContent | ILessonQuestionsContent);

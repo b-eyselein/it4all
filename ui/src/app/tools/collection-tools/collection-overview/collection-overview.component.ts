@@ -9,6 +9,8 @@ import {IExerciseCollectionWithExerciseMetaData} from '../../../_interfaces/exer
 @Component({templateUrl: './collection-overview.component.html'})
 export class CollectionOverviewComponent extends ComponentWithCollectionTool implements OnInit {
 
+  readonly Arr = Array;
+
   collection: IExerciseCollectionWithExerciseMetaData;
 
   constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService, private dexieService: DexieService) {
