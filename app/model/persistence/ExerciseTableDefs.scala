@@ -4,7 +4,6 @@ import javax.inject.Inject
 import model._
 import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
-import model.lesson.Lesson
 import model.tools.collectionTools._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
@@ -25,7 +24,6 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
   protected final val collectionsTQ  : TableQuery[ExerciseCollectionsTable] = TableQuery[ExerciseCollectionsTable]
   protected final val exercisesTQ    : TableQuery[ExercisesTable]           = TableQuery[ExercisesTable]
-  protected final val reviewsTQ      : TableQuery[ExerciseReviewsTable]     = TableQuery[ExerciseReviewsTable]
   protected final val userSolutionsTQ: TableQuery[UserSolutionsTable]       = TableQuery[UserSolutionsTable]
   protected final val lessonsTQ      : TableQuery[LessonsTable]             = TableQuery[LessonsTable]
 
@@ -102,6 +100,8 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def tags: Rep[Seq[ExTag]] = column[Seq[ExTag]]("tags")
 
+    def difficulty: Rep[Option[Int]] = column[Option[Int]]("difficulty")
+
 
     def content: Rep[JsValue] = column[JsValue]("content_json")
 
@@ -114,7 +114,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
 
     override def * : ProvenShape[Exercise] = (
-      id, collectionId, toolId, semanticVersion, title, authors, text, tags, content
+      id, collectionId, toolId, semanticVersion, title, authors, text, tags, difficulty, content
     ) <> (Exercise.tupled, Exercise.unapply)
 
   }
@@ -175,46 +175,6 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
     override def * : ProvenShape[DbUserSolution] = (
       id, exerciseId, collectionId, toolId, exSemVer, part, username, solutionJson
     ) <> (DbUserSolution.tupled, DbUserSolution.unapply)
-
-  }
-
-
-  protected class ExerciseReviewsTable(tag: Tag) extends Table[DbExerciseReview](tag, "exercise_reviews") {
-
-    private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
-    private implicit val epct: BaseColumnType[ExPart]          = exPartColumnType
-    private implicit val dct : BaseColumnType[Difficulty]      = jsonColumnType(Difficulties.jsonFormat)
-
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
-    def toolId: Rep[String] = column[String]("tool_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("exercise_semantic_version")
-
-    def username: Rep[String] = column[String]("username")
-
-    def exercisePart: Rep[ExPart] = column[ExPart]("part")
-
-    def difficulty: Rep[Difficulty] = column[Difficulty](difficultyName)
-
-    def maybeDuration: Rep[Option[Int]] = column[Option[Int]]("maybe_duration")
-
-
-    def pk: PrimaryKey = primaryKey("pk", (exerciseId, collectionId, exercisePart))
-
-
-    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
-
-    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] = foreignKey(
-      "exercise_fk", (exerciseId, collectionId, toolId, exSemVer), exercisesTQ
-    )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
-
-    def * : ProvenShape[DbExerciseReview] = (
-      exerciseId, collectionId, toolId, exSemVer, exercisePart, username, difficulty, maybeDuration
-    ) <> (DbExerciseReview.tupled, DbExerciseReview.unapply)
 
   }
 

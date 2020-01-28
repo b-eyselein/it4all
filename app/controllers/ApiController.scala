@@ -1,13 +1,10 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.ExerciseReview
-import model.core.ToolForms
 import model.lesson.Lesson
 import model.persistence.ExerciseTableDefs
-import model.tools.collectionTools.sql.{SelectDAO, SqlCell, SqlQueryResult, SqlRow, SqlToolMain}
+import model.tools.collectionTools.sql._
 import model.tools.collectionTools.{Exercise, ExerciseCollection, ExerciseMetaData, ToolJsonProtocol}
-import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
@@ -131,32 +128,6 @@ class ApiController @Inject()(
                   }
               }
             )
-        }
-    }
-  }
-
-  // Exercise review process
-
-  def reviewExercisePart(toolType: String, collId: Int, id: Int, partStr: String): EssentialAction = JwtAuthenticatedToolMainAction(toolType).async { request =>
-    tables.futureExerciseById(request.toolMain.urlPart, collId, id).flatMap {
-      case None           => Future.successful(onNoSuchExercise(collId, id))
-      case Some(exercise) =>
-
-        request.toolMain.partTypeFromUrl(partStr) match {
-          case None       => Future.successful(onNoSuchExercisePart(exercise, partStr))
-          case Some(part) =>
-
-            val onFormError: Form[ExerciseReview] => Future[Result] = { formWithErrors =>
-              ???
-            }
-
-            val onFormRead: ExerciseReview => Future[Result] = { currentReview =>
-              tables.futureSaveReview(request.toolMain, request.user.username, collId, exercise.id, part, currentReview).map {
-                case true  => ??? // Redirect(controllers.coll.routes.CollectionController.index(toolMain.urlPart))
-                case false => ???
-              }
-            }
-            ToolForms.exerciseReviewForm.bindFromRequest()(request).fold(onFormError, onFormRead)
         }
     }
   }

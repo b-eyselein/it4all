@@ -1,3 +1,4 @@
+
 export interface IMatch {
   start: number;
   end: number;
@@ -20,7 +21,7 @@ export interface IRegexMatchMatch {
   analysisResult: IGenericAnalysisResult;
 }
 
-export type RegexCorrectionTypes = ('MATCHING' | 'EXTRACTION');
+export type RegexCorrectionTypes = ("MATCHING" | "EXTRACTION");
 
 export interface IRegexCompleteResult {
   correctionType: RegexCorrectionTypes;
@@ -54,8 +55,8 @@ export interface IRegexExtractionTestData {
   base: string;
 }
 
-export type BinaryClassificationResultTypes = ('TruePositive' | 'FalsePositive' | 'FalseNegative' | 'TrueNegative');
-export type MatchType = ('SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE');
+export type BinaryClassificationResultTypes = ("TruePositive" | "FalsePositive" | "FalseNegative" | "TrueNegative");
+export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
 
 export interface IRegexExtractionMatchingResult {
   matchName: string;

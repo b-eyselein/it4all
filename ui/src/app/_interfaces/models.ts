@@ -32,13 +32,6 @@ export interface ILessonTextContent {
 }
 
 
-export interface ISemanticVersion {
-  major: number;
-  minor: number;
-  patch: number;
-}
-
-
 export interface IExercise {
   id: number;
   collectionId: number;
@@ -48,7 +41,15 @@ export interface IExercise {
   authors: string[];
   text: string;
   tags: IExTag[];
+  difficulty: number;
   content: any;
+}
+
+
+export interface ISemanticVersion {
+  major: number;
+  minor: number;
+  patch: number;
 }
 
 

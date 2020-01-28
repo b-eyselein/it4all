@@ -139,12 +139,6 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     inserted <- db.run(userSolutionsTQ += dbUserSolution).transform(_ == 1, identity)
   } yield inserted
 
-  def futureSaveReview(toolMain: CollectionToolMain, username: String, collId: Int, exId: Int, part: ExPart, review: ExerciseReview): Future[Boolean] = {
-    val toInsert: DbExerciseReview = AExerciseReviewDbModels.dbReviewFromReview(username, collId, exId, part, review)
-
-    db.run(reviewsTQ.insertOrUpdate(toInsert)).transform(_ == 1, identity)
-  }
-
   // Deletion
 
   def futureDeleteCollection(collId: Int): Future[Boolean] =

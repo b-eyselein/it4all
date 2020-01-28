@@ -36,6 +36,7 @@ final case class Exercise(
   authors: Seq[String],
   text: String,
   tags: Seq[ExTag],
+  difficulty: Option[Int],
 
   // FIXME: use generic ExerciseContent?
   content: JsValue
