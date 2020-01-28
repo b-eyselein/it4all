@@ -1,13 +1,11 @@
 package model.tools.collectionTools
 
-import model.lesson.{Lesson, LessonContent, LessonQuestionsContent, LessonTextContent, Question, QuestionAnswer}
+import model.lesson._
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
 import play.api.libs.json.JsValue
 
 object BasicTSTypes extends ToolTSInterfaceTypes {
-
-  import nl.codestar.scalatsi.TypescriptType.TSInterface
 
   private val lessonTextContentTSI: TSIType[LessonTextContent] = TSType.fromCaseClass
 
@@ -44,7 +42,7 @@ object BasicTSTypes extends ToolTSInterfaceTypes {
     implicit val ett : TSIType[ExTag]           = exTagTSI
     implicit val jvtt: TSType[JsValue]          = jsValueTsType
 
-    TSType.fromCaseClass[Exercise]
+    TSIType(TSType.fromCaseClass[Exercise].get.copy(extending = Some(exerciseMetaDataTSI.get)))
   }
 
   private val exerciseCollectionTSI: TSIType[ExerciseCollection] = TSType.fromCaseClass[ExerciseCollection]

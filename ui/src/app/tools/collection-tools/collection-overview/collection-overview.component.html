@@ -15,32 +15,7 @@
       <ng-container *ngIf="collection.exercises; else loadingExercisesBlock">
         <div class="columns is-multiline" *ngIf="collection.exercises.length > 0; else noExercisesFoundBlock">
           <div *ngFor="let exercise of collection.exercises" class="column is-one-quarter-desktop is-half">
-
-            <div class="card">
-              <div class="card-header">
-                <div class="card-header-title">{{exercise.id}}. {{exercise.title}}</div>
-              </div>
-              <div class="card-content">
-
-                <div *ngIf="exercise.difficulty">
-                  Schwierigkeit: {{exercise.difficulty}}
-                  &nbsp;
-                  <span *ngFor="let x of Arr(exercise.difficulty).fill(0)">&#9899;</span>
-                  <span *ngFor="let x of Arr(5 - exercise.difficulty).fill(0)">&#9898;</span>
-                </div>
-
-                <!-- Tags -->
-                <div class="buttons" *ngIf="exercise.tags">
-                  <span *ngIf="exercise.tags.length === 0">&nbsp;</span>
-                  <it4all-tag *ngFor="let tag of exercise.tags" [tag]="tag"></it4all-tag>
-                </div>
-
-              </div>
-              <footer class="card-footer">
-                <a class="card-footer-item" [routerLink]="['exercises', exercise.id]">Zur Aufgabe</a>
-              </footer>
-            </div>
-
+            <it4all-exercise-link-card [exercise]="exercise"></it4all-exercise-link-card>
           </div>
         </div>
       </ng-container>

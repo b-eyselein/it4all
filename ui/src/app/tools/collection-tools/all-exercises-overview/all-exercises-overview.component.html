@@ -1,40 +1,35 @@
-<div class="container">
+<div class="container is-fluid">
 
-  <h1 class="title is-3 has-text-centered">Alle Aufgaben</h1>
+  <div class="columns">
 
-  <ng-container *ngIf="filteredExerciseMetaData; else loadingExercisesBlock">
+    <div class="column is-one-quarter-desktop">
+      <h2 class="title is-3 has-text-centered">Filter</h2>
 
-    <h2 class="subtitle is-3 has-text-centered">Filter</h2>
+      <ul class="content">
+        <li *ngFor="let tag of distinctTags">
+          <label class="checkbox">
+            <input type="checkbox" [checked]="filtersActivated.get(tag)" (change)="updateFilters(tag)">
+            {{tag.title}}
+          </label>
+        </li>
+      </ul>
 
-    <div class="columns is-multiline">
-      <div class="column is-one-quarter-desktop" *ngFor="let tag of distinctTags">
-        <label class="checkbox">
-          <input type="checkbox" [checked]="filtersActivated.get(tag)" (change)="updateFilters(tag)">
-          {{tag.title}}
-        </label>
-      </div>
     </div>
 
-    <hr>
+    <div class="column">
+      <h1 class="title is-3 has-text-centered">Alle Aufgaben</h1>
 
-    <div class="columns is-multiline">
-      <div class="column is-one-quarter-desktop" *ngFor="let metaData of filteredExerciseMetaData">
-        <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">Sammlung {{metaData.collectionId}}, Aufgabe {{metaData.id}}</p>
-          </header>
-          <div class="card-content">
-            <it4all-tag [tag]="tag" *ngFor="let tag of metaData.tags"></it4all-tag>
+      <ng-container *ngIf="filteredExerciseMetaData; else loadingExercisesBlock">
+
+        <div class="columns is-multiline">
+          <div class="column is-one-quarter-desktop" *ngFor="let metaData of filteredExerciseMetaData">
+            <it4all-exercise-link-card [exercise]="metaData"></it4all-exercise-link-card>
           </div>
-          <footer class="card-footer">
-            <a [routerLink]="['..', 'collections', metaData.collectionId, 'exercises', metaData.id]"
-               class="card-footer-item">Zur Aufgabe</a>
-          </footer>
         </div>
-      </div>
-    </div>
 
-  </ng-container>
+      </ng-container>
+    </div>
+  </div>
 
   <ng-template #loadingExercisesBlock>
     <div class="notification is-danger has-text-centered">

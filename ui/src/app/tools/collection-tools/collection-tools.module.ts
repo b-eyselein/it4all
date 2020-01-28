@@ -30,6 +30,7 @@ import {SqlExecutionResultComponent} from './sql/_results/sql-execution-result/s
 import { UmlDiagramDrawingComponent } from './uml/uml-diagram-drawing/uml-diagram-drawing.component';
 import { UmlClassEditComponent } from './uml/_components/uml-class-edit/uml-class-edit.component';
 import { UmlAssocEditComponent } from './uml/_components/uml-assoc-edit/uml-assoc-edit.component';
+import { ExerciseLinkCardComponent } from './_components/exercise-link-card/exercise-link-card.component';
 
 
 @NgModule({
@@ -62,7 +63,9 @@ import { UmlAssocEditComponent } from './uml/_components/uml-assoc-edit/uml-asso
 
     UmlClassEditComponent,
 
-    UmlAssocEditComponent
+    UmlAssocEditComponent,
+
+    ExerciseLinkCardComponent
   ],
   providers: [ApiService],
   imports: [

@@ -33,27 +33,6 @@ export interface ILessonTextContent {
 }
 
 
-export interface ISemanticVersion {
-  major: number;
-  minor: number;
-  patch: number;
-}
-
-
-export interface IExercise {
-  id: number;
-  collectionId: number;
-  toolId: string;
-  semanticVersion: ISemanticVersion;
-  title: string;
-  authors: string[];
-  text: string;
-  tags: IExTag[];
-  difficulty?: number;
-  content: any;
-}
-
-
 export interface ILesson {
   id: number;
   toolId: string;
@@ -84,6 +63,27 @@ export interface ILessonQuestionsContent {
   lessonId: number;
   toolId: string;
   questions: IQuestion[];
+}
+
+
+export interface ISemanticVersion {
+  major: number;
+  minor: number;
+  patch: number;
+}
+
+
+export interface IExercise extends IExerciseMetaData {
+  id: number;
+  collectionId: number;
+  toolId: string;
+  semanticVersion: ISemanticVersion;
+  title: string;
+  authors: string[];
+  text: string;
+  tags: IExTag[];
+  difficulty?: number;
+  content: any;
 }
 
 
