@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {IExercise} from '../../../../_interfaces/models';
-import {getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
+import {getUmlExerciseTextParts, SelectableClass, UmlDiagramDrawingHelpPart, UmlExerciseTextPart} from '../uml-tools';
 import {IUmlExerciseContent} from '../uml-interfaces';
 
 @Component({
@@ -8,6 +8,8 @@ import {IUmlExerciseContent} from '../uml-interfaces';
   templateUrl: './uml-class-selection.component.html'
 })
 export class UmlClassSelectionComponent implements OnInit {
+
+  readonly nextPart = UmlDiagramDrawingHelpPart;
 
   @Input() exercise: IExercise;
 

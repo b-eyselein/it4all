@@ -5,11 +5,13 @@ import {IKeyValueObject, IUmlClassDiagram, IUmlExerciseContent} from './uml-inte
 
 export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
 
-const UmlDiagramDrawingPart: ToolPart = {name: 'Diagramm zeichnen', id: 'diagramDrawing'};
+export const UmlDiagramDrawingHelpPart: ToolPart = {name: 'Diagramm zeichnen mit Hilfe', id: 'diagramDrawingHelp', disabled: true};
+
+const UmlDiagramDrawingPart: ToolPart = {name: 'Diagramm zeichnen', id: 'diagramDrawing', disabled: true};
 
 export const UmlTool: CollectionTool = new class UmlToolClass extends CollectionTool {
   constructor() {
-    super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart, UmlDiagramDrawingPart], 'beta');
+    super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart, UmlDiagramDrawingPart, UmlDiagramDrawingHelpPart], 'beta');
   }
 }();
 
@@ -26,7 +28,7 @@ export interface UmlExerciseTextPart {
   selectableClass?: SelectableClass;
 }
 
-export const capWordTextSplitRegex: RegExp = /([A-Z][\wäöü?&;]*)/g;
+const capWordTextSplitRegex: RegExp = /([A-Z][\wäöü?&;]*)/g;
 
 export function splitExerciseText(exerciseText: string): string[] {
   return exerciseText

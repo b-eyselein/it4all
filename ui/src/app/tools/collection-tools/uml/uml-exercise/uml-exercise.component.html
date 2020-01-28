@@ -3,11 +3,12 @@
   <it4all-uml-class-selection *ngSwitchCase="'classSelection'" [exercise]="exercise">
   </it4all-uml-class-selection>
 
-  <it4all-uml-diagram-drawing *ngSwitchCase="'diagramDrawing'" [exercise]="exercise">
+  <it4all-uml-diagram-drawing *ngSwitchCase="'diagramDrawing'" [exercise]="exercise" [withHelp]="false">
+  </it4all-uml-diagram-drawing>
+
+  <it4all-uml-diagram-drawing *ngSwitchCase="'diagramDrawingHelp'" [exercise]="exercise" [withHelp]="true">
   </it4all-uml-diagram-drawing>
 
   <p *ngSwitchDefault>{{part}}</p>
 
 </ng-container>
-
-

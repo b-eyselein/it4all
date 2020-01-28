@@ -22,8 +22,9 @@
 
       <div class="columns">
         <div class="column" *ngFor="let x of creatableClassDiagramObjects">
-          <button class="button is-fullwidth" (click)="toggle(x)"
-                  [ngClass]="x.selected ? 'is-link': ''">{{x.name}}</button>
+          <button class="button is-fullwidth" (click)="toggle(x)" [ngClass]="x.selected ? 'is-link': ''" [disabled]="x.disabled">
+            {{x.name}}
+          </button>
         </div>
       </div>
 
@@ -31,53 +32,15 @@
 
         <hr>
 
-        <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">{{editedClass.getClassName()}}</p>
-          </header>
-          <div class="card-content">
-            <ng-container *ngFor="let attr of editedClass.getAttributes()">
-              <select title="Sichtbarkeit" [value]="attr.visibility">
-                <option *ngFor="let visibility of visibilities" [selected]="visibility === attr.visibility">
-                  {{visibility}}
-                </option>
-              </select>
-              &nbsp;
-              <input type="text" title="Attributname" placeholder="Attributname" [value]="attr.name">
-              :
-              <select title="Datentyp" [value]="attr.type">
-                <option *ngFor="let umlType of umlTypes" [selected]="umlType === attr.type">{{umlType}}</option>
-              </select>
-              &nbsp;
-              <button title="Attribut löschen" (click)="removeAttribute(attr)">-</button>
-            </ng-container>
+        <it4all-uml-class-edit [editedClass]="editedClass"></it4all-uml-class-edit>
 
-            <hr>
+      </ng-container>
 
-            <div>
-              <select title="Sichtbarkeit">
-                <option *ngFor="let visibility of visibilities">{{visibility}}</option>
-              </select>
-              &nbsp;
-              <input type="text" title="Attributname" placeholder="Attributname">
-              :
-              <select title="Datentyp">
-                <option *ngFor="let umlType of umlTypes">{{umlType}}</option>
-              </select>
-            </div>
+      <ng-container *ngIf="editedAssociation">
 
-            <hr>
+        <hr>
 
-            <ng-container *ngFor="let method of editedClass.getMethods()">
-              {{method | json}}
-            </ng-container>
-
-          </div>
-          <footer class="card-footer">
-            <a class="card-footer-item">Verwerfen</a>
-            <a class="card-footer-item">Anwenden</a>
-          </footer>
-        </div>
+        <it4all-uml-assoc-edit [editedAssociation]="editedAssociation"></it4all-uml-assoc-edit>
 
       </ng-container>
 

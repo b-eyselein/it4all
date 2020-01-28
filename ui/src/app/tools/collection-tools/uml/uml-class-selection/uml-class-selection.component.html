@@ -31,7 +31,7 @@
       <button class="button is-link is-fullwidth" (click)="correct()" [disabled]="corrected">Korrektur</button>
     </div>
     <div class="column">
-      <a class="button is-dark is-fullwidth" routerLink="../diagramDrawing">Zum nächsten Aufgabenteil</a>
+      <button class="button is-dark is-fullwidth" [routerLink]="['..', nextPart.id]" [disabled]="!corrected">Zum nächsten Aufgabenteil</button>
     </div>
   </div>
 
@@ -44,7 +44,8 @@
       <div class="column">
         <h3 class="subtitle is-4 has-text-centered">Korrekte Klassen:</h3>
         <ul>
-          <li *ngFor="let correctClass of getCorrectClasses()">&#10004;&nbsp;<code class="has-text-dark-success">{{correctClass.name}}</code></li>
+          <li *ngFor="let correctClass of getCorrectClasses()">&#10004;&nbsp;<code
+            class="has-text-dark-success">{{correctClass.name}}</code></li>
         </ul>
       </div>
 

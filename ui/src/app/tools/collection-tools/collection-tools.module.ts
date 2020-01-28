@@ -28,6 +28,8 @@ import {AllExercisesOverviewComponent} from './all-exercises-overview/all-exerci
 import {XmlExerciseComponent} from './xml/xml-exercise/xml-exercise.component';
 import {SqlExecutionResultComponent} from './sql/_results/sql-execution-result/sql-execution-result.component';
 import { UmlDiagramDrawingComponent } from './uml/uml-diagram-drawing/uml-diagram-drawing.component';
+import { UmlClassEditComponent } from './uml/_components/uml-class-edit/uml-class-edit.component';
+import { UmlAssocEditComponent } from './uml/_components/uml-assoc-edit/uml-assoc-edit.component';
 
 
 @NgModule({
@@ -56,7 +58,11 @@ import { UmlDiagramDrawingComponent } from './uml/uml-diagram-drawing/uml-diagra
 
     XmlExerciseComponent,
 
-    UmlDiagramDrawingComponent
+    UmlDiagramDrawingComponent,
+
+    UmlClassEditComponent,
+
+    UmlAssocEditComponent
   ],
   providers: [ApiService],
   imports: [

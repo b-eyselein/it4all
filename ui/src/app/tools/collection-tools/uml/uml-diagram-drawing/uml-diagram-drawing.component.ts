@@ -3,11 +3,11 @@ import {IExercise} from '../../../../_interfaces/models';
 import {MyJointClass} from '../_model/joint-class-diag-elements';
 import {getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
-import {IUmlExerciseContent} from '../uml-interfaces';
+import {IUmlClassDiagram, IUmlExerciseContent} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
+import {ExportedUmlClassDiagram, UmlClassAttribute} from '../_model/my-uml-interfaces';
 
 import * as joint from 'jointjs';
-import {ExportedUmlClassDiagram, UmlClassAttribute} from '../_model/my-uml-interfaces';
 
 enum CreatableClassDiagramObject {
   Class,
@@ -19,6 +19,7 @@ interface SelectableClassDiagramObject {
   name: string;
   key: CreatableClassDiagramObject;
   selected: boolean;
+  disabled?: boolean;
 }
 
 @Component({
@@ -33,10 +34,8 @@ interface SelectableClassDiagramObject {
 })
 export class UmlDiagramDrawingComponent implements OnInit {
 
-  readonly visibilities = ['+', '-', '#', '~'];
-  readonly umlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
-
   @Input() exercise: IExercise;
+  @Input() withHelp: boolean;
 
   exerciseContent: IUmlExerciseContent;
 
@@ -48,14 +47,17 @@ export class UmlDiagramDrawingComponent implements OnInit {
 
   markedClass: MyJointClass | undefined;
   editedClass: MyJointClass | undefined;
+  editedAssociation: joint.shapes.uml.Association | undefined;
 
-  readonly creatableClassDiagramObjects: SelectableClassDiagramObject[] = [
-    {name: 'Klasse', key: CreatableClassDiagramObject.Class, selected: false},
-    {name: 'Assoziation', key: CreatableClassDiagramObject.Association, selected: false},
-    {name: 'Vererbung', key: CreatableClassDiagramObject.Implementation, selected: false}
-  ];
+  creatableClassDiagramObjects: SelectableClassDiagramObject[];
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.creatableClassDiagramObjects = [
+      {name: 'Klasse', key: CreatableClassDiagramObject.Class, selected: false, disabled: this.withHelp},
+      {name: 'Assoziation', key: CreatableClassDiagramObject.Association, selected: false},
+      {name: 'Vererbung', key: CreatableClassDiagramObject.Implementation, selected: false}
+    ];
+
     this.exerciseContent = this.exercise.content as IUmlExerciseContent;
 
     const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exercise);
@@ -72,6 +74,13 @@ export class UmlDiagramDrawingComponent implements OnInit {
     });
 
     this.createPaperEvents(this.paper);
+
+    // load classes
+    const sample: IUmlClassDiagram = this.exerciseContent.sampleSolutions[0].sample as IUmlClassDiagram;
+    for (const clazz of sample.classes) {
+      addClassToGraph(clazz.name, this.paper);
+    }
+
   }
 
   createPaperEvents(paper: joint.dia.Paper): void {
@@ -85,34 +94,53 @@ export class UmlDiagramDrawingComponent implements OnInit {
       }
     );
 
-    paper.on('cell:pointerclick', (cellView: joint.dia.CellView/*, event: joint.dia.Event, x: number, y: number*/) => {
+    paper.on('cell:pointerclick', (cellView: joint.dia.CellView, event: joint.dia.Event /*, x: number, y: number*/) => {
 
-      const selectedObjectToCreate: SelectableClassDiagramObject =
-        this.creatableClassDiagramObjects.find((scdo) => scdo.selected);
+      if (cellView.model instanceof MyJointClass) {
+        const selectedObjectToCreate: SelectableClassDiagramObject =
+          this.creatableClassDiagramObjects.find((scdo) => scdo.selected);
 
-      if (!this.markedClass) {
-        this.markedClass = cellView.model as MyJointClass;
-        cellView.highlight();
-      } else if (this.markedClass === cellView.model) {
-        this.markedClass = undefined;
-        cellView.unhighlight();
-      } else if (selectedObjectToCreate) {
-        if (selectedObjectToCreate.key === CreatableClassDiagramObject.Association) {
-          addAssociationToGraph(this.markedClass, '*', cellView.model as MyJointClass, '*', this.graph);
-        } else if (selectedObjectToCreate.key === CreatableClassDiagramObject.Implementation) {
-          addImplementationToGraph(this.markedClass, cellView.model as MyJointClass, this.graph);
+        if (!this.markedClass) {
+          this.markedClass = cellView.model as MyJointClass;
+          cellView.highlight();
+        } else if (this.markedClass === cellView.model) {
+          this.markedClass = undefined;
+          cellView.unhighlight();
+        } else if (selectedObjectToCreate) {
+          if (selectedObjectToCreate.key === CreatableClassDiagramObject.Association) {
+            addAssociationToGraph(this.markedClass, '*', cellView.model as MyJointClass, '*', this.graph);
+          } else if (selectedObjectToCreate.key === CreatableClassDiagramObject.Implementation) {
+            addImplementationToGraph(this.markedClass, cellView.model as MyJointClass, this.graph);
+          }
+
+          this.markedClass.findView(paper).unhighlight();
+          this.markedClass = undefined;
         }
-
-        this.markedClass.findView(paper).unhighlight();
-        this.markedClass = undefined;
+      } else {
+        console.info(cellView.model);
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        event.stopPropagation();
       }
     });
 
     paper.on('cell:pointerdblclick', (cellView: joint.dia.CellView/*, event: joint.dia.Event, x: number, y: number*/) => {
-      if (!this.editedClass) {
-        this.editedClass = cellView.model as MyJointClass;
+      if (this.withHelp) {
+        if (cellView.model instanceof MyJointClass) {
+          // Cannot change classes
+          return;
+        } else if (cellView.model instanceof joint.shapes.uml.Association) {
+          // Change association...
+          this.editedAssociation = cellView.model;
+        }
+      } else if (cellView.model instanceof MyJointClass) {
+        if (!this.editedClass) {
+          this.editedClass = cellView.model as MyJointClass;
+        } else {
+          this.editedClass = undefined;
+        }
       } else {
-        this.editedClass = undefined;
+        console.info(cellView.model);
       }
     });
   }
@@ -156,13 +184,6 @@ export class UmlDiagramDrawingComponent implements OnInit {
     });
 
     fileReader.readAsText(files.item(0));
-  }
-
-  removeAttribute(attr: UmlClassAttribute): void {
-    const newAttributes = this.editedClass.getAttributes().filter((a) => a !== attr);
-    this.editedClass.setAttributes(newAttributes);
-
-    console.info(this.editedClass.getAttributes());
   }
 
 }
