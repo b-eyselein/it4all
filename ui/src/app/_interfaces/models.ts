@@ -1,7 +1,8 @@
 
-export interface IExTag {
-  abbreviation: string;
-  title: string;
+export interface IQuestion {
+  id: number;
+  question: string;
+  answers: IQuestionAnswer[];
 }
 
 
@@ -15,6 +16,7 @@ export interface IExerciseMetaData {
   authors: string[];
   text: string;
   tags: IExTag[];
+  difficulty?: number;
 }
 
 
@@ -32,6 +34,13 @@ export interface ILessonTextContent {
 }
 
 
+export interface ISemanticVersion {
+  major: number;
+  minor: number;
+  patch: number;
+}
+
+
 export interface IExercise {
   id: number;
   collectionId: number;
@@ -41,15 +50,8 @@ export interface IExercise {
   authors: string[];
   text: string;
   tags: IExTag[];
-  difficulty: number;
+  difficulty?: number;
   content: any;
-}
-
-
-export interface ISemanticVersion {
-  major: number;
-  minor: number;
-  patch: number;
 }
 
 
@@ -61,10 +63,11 @@ export interface ILesson {
 }
 
 
-export interface IQuestion {
-  id: number;
-  question: string;
-  answers: IQuestionAnswer[];
+export type LessonContent = (ILessonQuestionsContent | ILessonTextContent);
+
+export interface IExTag {
+  abbreviation: string;
+  title: string;
 }
 
 
@@ -84,6 +87,3 @@ export interface ILessonQuestionsContent {
   toolId: string;
   questions: IQuestion[];
 }
-
-
-export type LessonContent = (ILessonTextContent | ILessonQuestionsContent);

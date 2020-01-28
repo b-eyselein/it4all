@@ -10,7 +10,7 @@ final case class ExTag(abbreviation: String, title: String)
 object ExerciseMetaData {
 
   def forExercise(ex: Exercise): ExerciseMetaData = ExerciseMetaData(
-    ex.id, ex.collectionId, ex.toolId, ex.semanticVersion, ex.title, ex.authors, ex.text, ex.tags
+    ex.id, ex.collectionId, ex.toolId, ex.semanticVersion, ex.title, ex.authors, ex.text, ex.tags, ex.difficulty
   )
 
 }
@@ -23,7 +23,8 @@ final case class ExerciseMetaData(
   title: String,
   authors: Seq[String],
   text: String,
-  tags: Seq[ExTag]
+  tags: Seq[ExTag],
+  difficulty: Option[Int]
 )
 
 

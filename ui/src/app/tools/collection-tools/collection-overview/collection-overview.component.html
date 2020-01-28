@@ -22,6 +22,11 @@
               </div>
               <div class="card-content">
 
+                <p *ngIf="exercise.difficulty">
+                  Schwierigkeit: {{exercise.difficulty}}
+                  <i class="fa fa-star"></i>
+                </p>
+
                 <!-- Tags -->
                 <div class="buttons" *ngIf="exercise.tags">
                   <span *ngIf="exercise.tags.length === 0">&nbsp;</span>
