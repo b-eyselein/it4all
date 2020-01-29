@@ -11,12 +11,12 @@ object UmlExParts extends ExParts[UmlExPart] {
   val values: IndexedSeq[UmlExPart] = findValues
 
 
-  case object ClassSelection extends UmlExPart(partName = "Klassenwahl", urlName = "class_selection")
+  case object ClassSelection extends UmlExPart(partName = "Klassenwahl", urlName = "classSelection")
 
-  case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagram_drawing_help")
+  case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagramDrawingHelp")
 
-  case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagram_drawing")
+  case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagramDrawing")
 
-  case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", urlName = "member_allocation")
+  case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", urlName = "memberAllocation")
 
 }

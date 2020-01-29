@@ -28,10 +28,19 @@
 
   <div class="columns">
     <div class="column">
-      <button class="button is-link is-fullwidth" (click)="correct()" [disabled]="corrected">Korrektur</button>
+      <button class="button is-fullwidth" (click)="correct()" [disabled]="corrected"
+              [ngClass]="corrected ? 'is-dark' : 'is-link'">
+        Korrektur
+      </button>
     </div>
     <div class="column">
-      <button class="button is-dark is-fullwidth" [routerLink]="['..', nextPart.id]" [disabled]="!corrected">Zum nächsten Aufgabenteil</button>
+      <button class="button is-fullwidth" [routerLink]="['..', nextPart.id]" [disabled]="!corrected"
+              [ngClass]="corrected ? 'is-link': 'is-dark'">
+        Zum nächsten Aufgabenteil
+      </button>
+    </div>
+    <div class="column">
+      <a [routerLink]="['../..']" class="button is-dark-warning is-fullwidth">Bearbeiten beenden</a>
     </div>
   </div>
 

@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {MyJointClass} from '../../_model/joint-class-diag-elements';
-import {UmlClassAttribute} from '../../_model/my-uml-interfaces';
+import {IUmlAttribute} from '../../uml-interfaces';
 
 @Component({
   selector: 'it4all-uml-class-edit',
@@ -13,7 +13,7 @@ export class UmlClassEditComponent {
 
   @Input() editedClass: MyJointClass;
 
-  removeAttribute(attr: UmlClassAttribute): void {
+  removeAttribute(attr: IUmlAttribute): void {
     const newAttributes = this.editedClass.getAttributes().filter((a) => a !== attr);
     this.editedClass.setAttributes(newAttributes);
 

@@ -1,6 +1,8 @@
 package model.tools.collectionTools.uml
 
 import model.User
+import model.core.matching.{GenericAnalysisResult, MatchingResult}
+import model.tools.collectionTools.uml.matcher._
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -12,6 +14,12 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
   override type ExContentType = UmlExerciseContent
   override type SolType = UmlClassDiagram
   override type CompResultType = UmlCompleteResult
+
+  type ClassComparison = MatchingResult[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch]
+  type AttributeComparison = MatchingResult[UmlAttribute, UmlAttributeAnalysisResult, UmlAttributeMatch]
+  type MethodComparison = MatchingResult[UmlMethod, UmlMethodAnalysisResult, UmlMethodMatch]
+  type AssociationComparison = MatchingResult[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch]
+  type ImplementationComparison = MatchingResult[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch]
 
   // Other members
 

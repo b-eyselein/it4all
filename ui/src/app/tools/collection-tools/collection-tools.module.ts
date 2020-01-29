@@ -27,10 +27,11 @@ import {UmlClassSelectionComponent} from './uml/uml-class-selection/uml-class-se
 import {AllExercisesOverviewComponent} from './all-exercises-overview/all-exercises-overview.component';
 import {XmlExerciseComponent} from './xml/xml-exercise/xml-exercise.component';
 import {SqlExecutionResultComponent} from './sql/_results/sql-execution-result/sql-execution-result.component';
-import { UmlDiagramDrawingComponent } from './uml/uml-diagram-drawing/uml-diagram-drawing.component';
-import { UmlClassEditComponent } from './uml/_components/uml-class-edit/uml-class-edit.component';
-import { UmlAssocEditComponent } from './uml/_components/uml-assoc-edit/uml-assoc-edit.component';
-import { ExerciseLinkCardComponent } from './_components/exercise-link-card/exercise-link-card.component';
+import {UmlDiagramDrawingComponent} from './uml/uml-diagram-drawing/uml-diagram-drawing.component';
+import {UmlClassEditComponent} from './uml/_components/uml-class-edit/uml-class-edit.component';
+import {UmlAssocEditComponent} from './uml/_components/uml-assoc-edit/uml-assoc-edit.component';
+import {ExerciseLinkCardComponent} from './_components/exercise-link-card/exercise-link-card.component';
+import {UmlDiagDrawingCorrectionComponent} from './uml/_components/uml-diag-drawing-correction/uml-diag-drawing-correction.component';
 
 
 @NgModule({
@@ -43,29 +44,23 @@ import { ExerciseLinkCardComponent } from './_components/exercise-link-card/exer
 
     AllExercisesOverviewComponent,
     ExerciseOverviewComponent,
+    ExerciseLinkCardComponent,
 
     ExerciseComponent,
 
-    RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent,
-    RegexExtractionMatchComponent, RegexCheatsheetComponent,
+    RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent,
+    RegexCheatsheetComponent,
 
     ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
 
     SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent,
 
-    UmlExerciseComponent, UmlClassSelectionComponent,
+    UmlDiagramDrawingComponent, UmlClassEditComponent, UmlAssocEditComponent, UmlExerciseComponent, UmlClassSelectionComponent,
+    UmlDiagDrawingCorrectionComponent,
 
     WebExerciseComponent,
 
-    XmlExerciseComponent,
-
-    UmlDiagramDrawingComponent,
-
-    UmlClassEditComponent,
-
-    UmlAssocEditComponent,
-
-    ExerciseLinkCardComponent
+    XmlExerciseComponent
   ],
   providers: [ApiService],
   imports: [

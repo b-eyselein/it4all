@@ -1,23 +1,14 @@
 package model.tools.collectionTools.uml
 
-import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.core.result.CompleteResult
 import model.points._
-import model.tools.collectionTools.uml.matcher._
+import model.tools.collectionTools.uml.UmlToolMain.{AssociationComparison, ClassComparison, ImplementationComparison}
 
-object UmlCompleteResult {
-
-  def describeImplementation(impl: UmlImplementation): String = s"${impl.subClass}  &rarr;  ${impl.superClass}"
-
-  def describeAssociation(assoc: UmlAssociation): String =
-    s"${assoc.assocType.german}: ${assoc.firstEnd} &harr; ${assoc.secondEnd} (${assoc.displayMult(turn = false)})"
-
-}
 
 final case class UmlCompleteResult(
-  classResult: Option[MatchingResult[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch]],
-  assocResult: Option[MatchingResult[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch]],
-  implResult: Option[MatchingResult[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch]],
+  classResult: Option[ClassComparison],
+  assocResult: Option[AssociationComparison],
+  implResult: Option[ImplementationComparison],
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean

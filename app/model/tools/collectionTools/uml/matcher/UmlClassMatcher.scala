@@ -1,25 +1,15 @@
 package model.tools.collectionTools.uml.matcher
 
 import model.core.matching._
-import model.tools.collectionTools.uml.{UmlAttribute, UmlClass, UmlClassType, UmlMethod}
+import model.tools.collectionTools.uml.UmlToolMain.{AttributeComparison, MethodComparison}
+import model.tools.collectionTools.uml.{UmlClass, UmlClassType}
 
 final case class UmlClassMatchAnalysisResult(
   matchType: MatchType,
   classTypeCorrect: Boolean, correctClassType: UmlClassType,
-  maybeAttributeMatchingResult: Option[MatchingResult[UmlAttribute, UmlAttributeAnalysisResult, UmlAttributeMatch]],
-  maybeMethodMatchingResult: Option[MatchingResult[UmlMethod, UmlMethodAnalysisResult, UmlMethodMatch]]
-) extends AnalysisResult {
-
-  /*
-  def toJson: JsValue = Json.obj(
-    successName -> matchType.entryName,
-    "classTypeCorrect" -> classTypeCorrect, "correctClassType" -> correctClassType.german,
-    attributesResultName -> maybeAttributeMatchingResult.map(_.toJson),
-    methodsResultName -> maybeMethodMatchingResult.map(_.toJson)
-  )
-   */
-
-}
+  maybeAttributeMatchingResult: Option[AttributeComparison],
+  maybeMethodMatchingResult: Option[MethodComparison]
+) extends AnalysisResult
 
 
 final case class UmlClassMatch(

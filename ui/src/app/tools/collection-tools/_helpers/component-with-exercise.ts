@@ -22,6 +22,7 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
 
+  readonly exerciseTextTabTitle = 'Aufgabenstellung';
   readonly correctionTabTitle = 'Korrektur';
   readonly sampleSolutionsTabTitle = 'Musterlösungen';
 

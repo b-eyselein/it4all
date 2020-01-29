@@ -1,13 +1,30 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {IExercise} from '../../../../_interfaces/models';
 import {MyJointClass} from '../_model/joint-class-diag-elements';
-import {getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
+import {
+  getUmlExerciseTextParts,
+  SelectableClass,
+  UmlDiagramDrawingHelpPart,
+  UmlExerciseTextPart,
+  UmlMemberAllocationPart
+} from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
 import {IUmlClassDiagram, IUmlExerciseContent} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
-import {ExportedUmlClassDiagram, UmlClassAttribute} from '../_model/my-uml-interfaces';
+import {
+  ExportedUmlClassDiagram,
+  isAssociation,
+  isImplementation,
+  umlAssocfromConnection,
+  umlImplfromConnection
+} from '../_model/my-uml-interfaces';
 
 import * as joint from 'jointjs';
+import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {ToolPart} from '../../../../_interfaces/tool';
+import {ApiService} from '../../_services/api.service';
+import {DexieService} from '../../../../_services/dexie.service';
+import {environment} from '../../../../../environments/environment';
 
 enum CreatableClassDiagramObject {
   Class,
@@ -15,6 +32,10 @@ enum CreatableClassDiagramObject {
   Implementation
 }
 
+
+/**
+ * @deprecated
+ */
 interface SelectableClassDiagramObject {
   name: string;
   key: CreatableClassDiagramObject;
@@ -32,12 +53,14 @@ interface SelectableClassDiagramObject {
     }
   `]
 })
-export class UmlDiagramDrawingComponent implements OnInit {
+export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassDiagram, any> implements OnInit {
+
+  readonly nextPart = UmlMemberAllocationPart;
 
   @Input() exercise: IExercise;
-  @Input() withHelp: boolean;
+  @Input() part: ToolPart;
 
-  exerciseContent: IUmlExerciseContent;
+  withHelp: boolean;
 
   graph: joint.dia.Graph = new joint.dia.Graph();
   paper: joint.dia.Paper;
@@ -51,14 +74,24 @@ export class UmlDiagramDrawingComponent implements OnInit {
 
   creatableClassDiagramObjects: SelectableClassDiagramObject[];
 
+  corrected = false;
+
+  model: IUmlClassDiagram;
+
+  readonly debug = !environment.production;
+
+  constructor(apiService: ApiService, dexieService: DexieService) {
+    super(apiService, dexieService);
+  }
+
   ngOnInit(): void {
+    this.withHelp = this.part == UmlDiagramDrawingHelpPart;
+
     this.creatableClassDiagramObjects = [
       {name: 'Klasse', key: CreatableClassDiagramObject.Class, selected: false, disabled: this.withHelp},
       {name: 'Assoziation', key: CreatableClassDiagramObject.Association, selected: false},
       {name: 'Vererbung', key: CreatableClassDiagramObject.Implementation, selected: false}
     ];
-
-    this.exerciseContent = this.exercise.content as IUmlExerciseContent;
 
     const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exercise);
 
@@ -76,10 +109,12 @@ export class UmlDiagramDrawingComponent implements OnInit {
     this.createPaperEvents(this.paper);
 
     // load classes
-    const sample: IUmlClassDiagram = this.exerciseContent.sampleSolutions[0].sample as IUmlClassDiagram;
+    const sample: IUmlClassDiagram = (this.exercise.content as IUmlExerciseContent).sampleSolutions[0].sample as IUmlClassDiagram;
     for (const clazz of sample.classes) {
       addClassToGraph(clazz.name, this.paper);
     }
+
+    this.model = sample;
 
   }
 
@@ -184,6 +219,29 @@ export class UmlDiagramDrawingComponent implements OnInit {
     });
 
     fileReader.readAsText(files.item(0));
+  }
+
+  protected getSolution(): IUmlClassDiagram {
+    return {
+      classes: this.graph.getCells()
+        .map((cell) => (cell instanceof MyJointClass) ? cell.getAsUmlClass() : null)
+        .filter((c) => c !== null),
+      associations: this.graph.getLinks()
+        .filter(isAssociation)
+        .map((link) => umlAssocfromConnection(this.graph, link)),
+      implementations: this.graph.getLinks()
+        .filter(isImplementation)
+        .map((link) => umlImplfromConnection(this.graph, link))
+    };
+  }
+
+
+  correct(): void {
+    super.correctAbstract(this.exercise, this.part);
+  }
+
+  showSampleSolution(): void {
+    console.info('TODO: show sample solution...');
   }
 
 }

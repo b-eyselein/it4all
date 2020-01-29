@@ -1,7 +1,7 @@
 import * as joint from 'jointjs';
 import {GRID_SIZE} from './uml-consts';
 import {MyJointClass, STD_CLASS_HEIGHT, STD_CLASS_WIDTH} from './joint-class-diag-elements';
-import {UmlClassAttribute} from './my-uml-interfaces';
+import {IUmlAttribute, IUmlMethod} from '../uml-interfaces';
 
 
 function findFreePositionForNextClass(paper: joint.dia.Paper): joint.dia.Point {
@@ -29,7 +29,8 @@ export function addClassToGraph(
   name: string,
   paper: joint.dia.Paper,
   maybePosition: joint.dia.Point | undefined = undefined,
-  attributes: UmlClassAttribute[] = []
+  attributes: IUmlAttribute[] = [],
+  methods: IUmlMethod[] = []
 ): void {
   if (paper.model.getCells().find((c) => c instanceof MyJointClass && c.getClassName() === name)) {
     // graph already contains class with that name!
@@ -41,7 +42,7 @@ export function addClassToGraph(
       className: name,
       size: {width: STD_CLASS_WIDTH, height: STD_CLASS_HEIGHT},
       position: maybePosition || findFreePositionForNextClass(paper),
-      attributes
+      attributes, methods
     })
   );
 }

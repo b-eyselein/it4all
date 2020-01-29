@@ -2,7 +2,8 @@ import * as joint from 'jointjs';
 import * as _ from 'lodash';
 
 import {calcRectHeight, COLORS, fontSize, STD_ELEMENT_WIDTH, STD_PADDING} from './uml-consts';
-import {buildAttributeString, buildMethodString, CLASS_TYPES, UmlClassAttribute, UmlClassMethod} from './my-uml-interfaces';
+import {buildAttributeString, buildMethodString, CLASS_TYPES} from './my-uml-interfaces';
+import {IUmlAttribute, IUmlClass, IUmlMethod, UmlClassType} from '../uml-interfaces';
 
 export const STD_CLASS_HEIGHT = 160;
 export const STD_CLASS_WIDTH = 200;
@@ -82,16 +83,16 @@ export class MyJointClass extends joint.shapes.basic.Generic {
 
       className: '' as string,
       classType: '',
-      attributes: [] as UmlClassAttribute[],
-      methods: [] as UmlClassMethod[]
+      attributes: [] as IUmlAttribute[],
+      methods: [] as IUmlMethod[]
     }, joint.shapes.basic.Generic.prototype.defaults);
   }
 
-  getClassType(): string {
-    return this.get('classType');
+  getClassType(): UmlClassType {
+    return this.get('classType') || 'CLASS';
   }
 
-  setClassType(classType: string): void {
+  setClassType(classType: UmlClassType): void {
     if (CLASS_TYPES.indexOf(classType) >= 0) {
       this.prop('classType', classType);
     } else {
@@ -125,15 +126,15 @@ export class MyJointClass extends joint.shapes.basic.Generic {
     return this.get('attributes').map(buildAttributeString);
   }
 
-  getAttributes(): UmlClassAttribute[] {
+  getAttributes(): IUmlAttribute[] {
     return this.get('attributes');
   }
 
-  setAttributes(attributes: UmlClassAttribute[]): void {
+  setAttributes(attributes: IUmlAttribute[]): void {
     this.set('attributes', attributes);
   }
 
-  getMethods(): UmlClassMethod[] {
+  getMethods(): IUmlMethod[] {
     return this.get('methods');
   }
 
@@ -141,8 +142,17 @@ export class MyJointClass extends joint.shapes.basic.Generic {
     return this.get('methods').map(buildMethodString);
   }
 
-  setMethods(methods: UmlClassMethod[]): void {
+  setMethods(methods: IUmlMethod[]): void {
     this.set('methods', methods);
+  }
+
+  getAsUmlClass(): IUmlClass {
+    return {
+      name: this.getClassName(),
+      classType: this.getClassType(),
+      attributes: this.getAttributes(),
+      methods: this.getMethods()
+    };
   }
 
 }

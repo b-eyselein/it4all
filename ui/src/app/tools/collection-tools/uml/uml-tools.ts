@@ -9,6 +9,8 @@ export const UmlDiagramDrawingHelpPart: ToolPart = {name: 'Diagramm zeichnen mit
 
 const UmlDiagramDrawingPart: ToolPart = {name: 'Diagramm zeichnen', id: 'diagramDrawing', disabled: true};
 
+export const UmlMemberAllocationPart: ToolPart = {name: 'TODO!', id: 'todo', disabled: true};
+
 export const UmlTool: CollectionTool = new class UmlToolClass extends CollectionTool {
   constructor() {
     super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart, UmlDiagramDrawingPart, UmlDiagramDrawingHelpPart], 'beta');

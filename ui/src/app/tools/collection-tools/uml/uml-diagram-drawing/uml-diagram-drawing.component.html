@@ -2,31 +2,72 @@
   <div class="columns">
     <div class="column is-three-fifths">
       <div id="myPaper"></div>
+
+
+      <ng-container *ngIf="debug">
+        <br>
+
+        <div class="columns">
+          <div class="column is-one-quarter-desktop">
+            <label class="label" for="importFile">Alte Lösung importieren:</label>
+          </div>
+          <div class="column">
+            <input type="file" id="importFile" class="input is-fullwidth" (change)="readFile($event.target.files)">
+          </div>
+        </div>
+      </ng-container>
+
+
     </div>
     <div class="column">
 
-      <div class="notification is-light-grey">
-        <ng-container *ngFor="let textPart of umlExerciseTextParts">
-          <span *ngIf="textPart.selectableClass"
-                (click)="createClass(textPart.selectableClass)">{{textPart.text}}</span>
+      <it4all-tabs>
+        <it4all-tab [title]="exerciseTextTabTitle">
+          <div class="notification is-light-grey">
+            <ng-container *ngFor="let tp of umlExerciseTextParts">
+              <span *ngIf="tp.selectableClass" (click)="createClass(tp.selectableClass)">{{tp.text}}</span>
+              <span *ngIf="!tp.selectableClass">{{tp.text}}</span>
+            </ng-container>
+          </div>
 
-          <span *ngIf="!textPart.selectableClass">{{textPart.text}}</span>
-        </ng-container>
-      </div>
+          <div class="columns">
+            <div class="column" *ngFor="let x of creatableClassDiagramObjects">
+              <button class="button is-fullwidth" (click)="toggle(x)"
+                      [ngClass]="x.selected ? 'is-link': ''" [disabled]="x.disabled">
+                {{x.name}}
+              </button>
+            </div>
+          </div>
 
+          <div class="columns">
+            <div class="column">
+              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting" (click)="correct()">
+                Korrektur
+              </button>
+            </div>
+            <!--
+            <div class="column">
+              <button class="button is-primary is-fullwidth" (click)="showSampleSolution()" disabled>Musterlösung
+                anzeigen
+              </button>
+            </div>
+            -->
+            <div class="column">
+              <button class="button is-fullwidth" [routerLink]="['..', nextPart.id]" [disabled]="!corrected"
+                      [ngClass]="corrected ? 'is-link': 'is-dark'">
+                Zum nächsten Aufgabenteil
+              </button>
+            </div>
+            <div class="column">
+              <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
+            </div>
+          </div>
+        </it4all-tab>
+        <it4all-tab [title]="correctionTabTitle">
+          <it4all-uml-diag-drawing-correction [result]="result" *ngIf="result"></it4all-uml-diag-drawing-correction>
+        </it4all-tab>
+      </it4all-tabs>
 
-      <h2 class="subtitle is-4 has-text-centered">Alte Lösung importieren</h2>
-      <div class="buttons">
-        <input type="file" class="button is-light-danger is-fullwidth" (change)="readFile($event.target.files)">
-      </div>
-
-      <div class="columns">
-        <div class="column" *ngFor="let x of creatableClassDiagramObjects">
-          <button class="button is-fullwidth" (click)="toggle(x)" [ngClass]="x.selected ? 'is-link': ''" [disabled]="x.disabled">
-            {{x.name}}
-          </button>
-        </div>
-      </div>
 
       <ng-container *ngIf="editedClass">
 
