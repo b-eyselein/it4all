@@ -20,13 +20,9 @@ import {BoolComponentHelper} from '../_model/bool-component-helper';
 @Component({
   templateUrl: './bool-drawing.component.html',
   styles: [`
-      #paper {
-          border: 1px solid grey;
-      }
-
-      .live {
-          background: green;
-      }
+    #paper {
+      border: 1px solid grey;
+    }
   `],
   encapsulation: ViewEncapsulation.None
 })

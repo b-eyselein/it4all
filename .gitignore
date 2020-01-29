@@ -7,6 +7,8 @@ RUNNING_PID
 .cache-main
 .cache-tests
 
+helper_scripts/__pycache__/
+
 project/project
 project/target
 
