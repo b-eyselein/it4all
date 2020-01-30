@@ -9,7 +9,7 @@ import {
   UmlMemberAllocationPart
 } from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
-import {IUmlClassDiagram, IUmlExerciseContent} from '../uml-interfaces';
+import {IUmlClassDiagram, IUmlCompleteResult, IUmlExerciseContent} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 import {
   ExportedUmlClassDiagram,
@@ -53,7 +53,7 @@ interface SelectableClassDiagramObject {
     }
   `]
 })
-export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassDiagram, any> implements OnInit {
+export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassDiagram, IUmlCompleteResult> implements OnInit {
 
   readonly nextPart = UmlMemberAllocationPart;
 
@@ -181,7 +181,7 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassD
   }
 
   createClass(selectableClass: SelectableClass): void {
-    if (selectableClass.selected) {
+    if (this.withHelp || selectableClass.selected) {
       // Class is already in graph!
       return;
     }

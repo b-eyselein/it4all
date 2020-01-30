@@ -1,20 +1,17 @@
 package model.tools.collectionTools.sql.matcher
 
-import model.core.matching.{GenericAnalysisResult, Match, MatchType, Matcher}
+import model.core.matching.{Match, MatchType, Matcher}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 
 
 final case class ExpressionListMatch(
+  matchType: MatchType,
   userArg: Option[ExpressionList],
-  sampleArg: Option[ExpressionList],
-  analysisResult: GenericAnalysisResult
-) extends Match[ExpressionList, GenericAnalysisResult] {
+  sampleArg: Option[ExpressionList]
+) extends Match[ExpressionList]
 
-  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
-}
-
-object ExpressionListMatcher extends Matcher[ExpressionList, GenericAnalysisResult, ExpressionListMatch] {
+object ExpressionListMatcher extends Matcher[ExpressionList, ExpressionListMatch] {
 
   override protected val matchName: String = "Bedingungen"
 
@@ -23,11 +20,11 @@ object ExpressionListMatcher extends Matcher[ExpressionList, GenericAnalysisResu
   override protected def canMatch(el1: ExpressionList, el2: ExpressionList): Boolean = el1.toString == el2.toString
 
   override protected def instantiateOnlySampleMatch(sa: ExpressionList): ExpressionListMatch =
-    ExpressionListMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+    ExpressionListMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
 
   override protected def instantiateOnlyUserMatch(ua: ExpressionList): ExpressionListMatch =
-    ExpressionListMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
+    ExpressionListMatch(MatchType.ONLY_USER, Some(ua), None)
 
   override protected def instantiateCompleteMatch(ua: ExpressionList, sa: ExpressionList): ExpressionListMatch =
-    ExpressionListMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
+    ExpressionListMatch(MatchType.SUCCESSFUL_MATCH, Some(ua), Some(sa))
 }

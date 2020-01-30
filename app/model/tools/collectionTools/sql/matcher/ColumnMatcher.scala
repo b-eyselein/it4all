@@ -5,12 +5,11 @@ import model.points._
 import model.tools.collectionTools.sql.ColumnWrapper
 
 final case class ColumnMatch(
+  matchType: MatchType,
   userArg: Option[ColumnWrapper],
-  sampleArg: Option[ColumnWrapper],
-  analysisResult: GenericAnalysisResult
-) extends Match[ColumnWrapper, GenericAnalysisResult] {
+  sampleArg: Option[ColumnWrapper]
+) extends Match[ColumnWrapper] {
 
-  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -21,7 +20,7 @@ final case class ColumnMatch(
 
 }
 
-object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, ColumnMatch] {
+object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch] {
 
   override protected val matchName: String = "Spalten"
 
@@ -30,15 +29,14 @@ object ColumnMatcher extends Matcher[ColumnWrapper, GenericAnalysisResult, Colum
   override protected def canMatch(cw1: ColumnWrapper, cw2: ColumnWrapper): Boolean = cw1 canMatch cw2
 
   override protected def instantiateOnlySampleMatch(sa: ColumnWrapper): ColumnMatch =
-    ColumnMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+    ColumnMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
 
   override protected def instantiateOnlyUserMatch(ua: ColumnWrapper): ColumnMatch =
-    ColumnMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
+    ColumnMatch(MatchType.ONLY_USER, Some(ua), None)
 
   override protected def instantiateCompleteMatch(ua: ColumnWrapper, sa: ColumnWrapper): ColumnMatch = {
-
     val mt: MatchType = ua doMatch sa
 
-    ColumnMatch(Some(ua), Some(sa), GenericAnalysisResult(mt))
+    ColumnMatch(mt, Some(ua), Some(sa))
   }
 }

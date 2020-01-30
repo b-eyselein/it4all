@@ -4,10 +4,10 @@ import model.core.matching._
 import model.tools.collectionTools.uml.{UmlAttribute, UmlClassMember, UmlMethod, UmlVisibility}
 
 
-sealed trait UmlClassMemberMatch[Mem <: UmlClassMember, AR <: UmlClassMemberAnalysisResult] extends Match[Mem, AR]
+sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match[Mem]
 
 
-sealed trait UmlClassMemberAnalysisResult extends AnalysisResult {
+sealed trait UmlClassMemberAnalysisResult {
 
   val visibilityComparison: Boolean
   val correctVisibility   : UmlVisibility
@@ -19,7 +19,6 @@ sealed trait UmlClassMemberAnalysisResult extends AnalysisResult {
 
 
 final case class UmlAttributeAnalysisResult(
-  matchType: MatchType,
   visibilityComparison: Boolean, correctVisibility: UmlVisibility,
   typeComparison: Boolean, correctType: String,
   staticCorrect: Boolean, correctStatic: Boolean,
@@ -29,13 +28,14 @@ final case class UmlAttributeAnalysisResult(
 
 
 final case class UmlAttributeMatch(
+  matchType: MatchType,
   userArg: Option[UmlAttribute],
   sampleArg: Option[UmlAttribute],
   maybeAnalysisResult: Option[UmlAttributeAnalysisResult]
-) extends UmlClassMemberMatch[UmlAttribute, UmlAttributeAnalysisResult]
+) extends UmlClassMemberMatch[UmlAttribute]
 
 
-object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisResult, UmlAttributeMatch] {
+object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeMatch] {
 
   override protected val matchName: String = "Attribute"
 
@@ -44,10 +44,10 @@ object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisRes
   override protected def canMatch(a1: UmlAttribute, a2: UmlAttribute): Boolean = a1.memberName == a2.memberName
 
   override protected def instantiateOnlySampleMatch(sa: UmlAttribute): UmlAttributeMatch =
-    UmlAttributeMatch(None, Some(sa), None)
+    UmlAttributeMatch(MatchType.ONLY_SAMPLE, None, Some(sa), None)
 
   override protected def instantiateOnlyUserMatch(ua: UmlAttribute): UmlAttributeMatch =
-    UmlAttributeMatch(Some(ua), None, None)
+    UmlAttributeMatch(MatchType.ONLY_USER, Some(ua), None, None)
 
   override protected def instantiateCompleteMatch(ua: UmlAttribute, sa: UmlAttribute): UmlAttributeMatch = {
 
@@ -73,7 +73,6 @@ object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisRes
     }
 
     val ar = UmlAttributeAnalysisResult(
-      matchType,
       visibilityComparison, sa.visibility,
       returnTypeComparison, sa.memberType,
       isStaticComparison, sa.isStatic,
@@ -81,13 +80,12 @@ object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeAnalysisRes
       isAbstractComparison, sa.isAbstract
     )
 
-    UmlAttributeMatch(Some(ua), Some(sa), Some(ar))
+    UmlAttributeMatch(matchType, Some(ua), Some(sa), Some(ar))
   }
 }
 
 
 final case class UmlMethodAnalysisResult(
-  matchType: MatchType,
   visibilityComparison: Boolean, correctVisibility: UmlVisibility,
   typeComparison: Boolean, correctType: String,
   parameterComparison: Boolean, correctParameters: String,
@@ -97,13 +95,14 @@ final case class UmlMethodAnalysisResult(
 
 
 final case class UmlMethodMatch(
+  matchType: MatchType,
   userArg: Option[UmlMethod],
   sampleArg: Option[UmlMethod],
   maybeAnalysisResult: Option[UmlMethodAnalysisResult]
-) extends UmlClassMemberMatch[UmlMethod, UmlMethodAnalysisResult]
+) extends UmlClassMemberMatch[UmlMethod]
 
 
-object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlMethodMatch] {
+object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodMatch] {
 
   override protected val matchName: String = "Methoden"
 
@@ -112,10 +111,10 @@ object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlM
   override protected def canMatch(m1: UmlMethod, m2: UmlMethod): Boolean = m1.memberName == m2.memberName
 
   override protected def instantiateOnlySampleMatch(sa: UmlMethod): UmlMethodMatch =
-    UmlMethodMatch(None, Some(sa), None)
+    UmlMethodMatch(MatchType.ONLY_SAMPLE, None, Some(sa), None)
 
   override protected def instantiateOnlyUserMatch(ua: UmlMethod): UmlMethodMatch =
-    UmlMethodMatch(Some(ua), None, None)
+    UmlMethodMatch(MatchType.ONLY_USER, Some(ua), None, None)
 
   override protected def instantiateCompleteMatch(ua: UmlMethod, sa: UmlMethod): UmlMethodMatch = {
 
@@ -142,7 +141,6 @@ object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlM
     }
 
     val ar = UmlMethodAnalysisResult(
-      matchType,
       visibilityComparison, sa.visibility,
       returnTypeComparison, sa.memberType,
       parameterComparison, sa.parameters,
@@ -150,7 +148,7 @@ object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodAnalysisResult, UmlM
       isAbstractComparison, sa.isAbstract
     )
 
-    UmlMethodMatch(Some(ua), Some(sa), Some(ar))
+    UmlMethodMatch(matchType, Some(ua), Some(sa), Some(ar))
   }
 
 }

@@ -5,12 +5,10 @@ import model.points._
 import net.sf.jsqlparser.statement.select.OrderByElement
 
 final case class OrderByMatch(
+  matchType: MatchType,
   userArg: Option[OrderByElement],
-  sampleArg: Option[OrderByElement],
-  analysisResult: GenericAnalysisResult
-) extends Match[OrderByElement, GenericAnalysisResult] {
-
-  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
+  sampleArg: Option[OrderByElement]
+) extends Match[OrderByElement] {
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -21,7 +19,7 @@ final case class OrderByMatch(
 
 }
 
-object OrderByMatcher extends Matcher[OrderByElement, GenericAnalysisResult, OrderByMatch] {
+object OrderByMatcher extends Matcher[OrderByElement, OrderByMatch] {
 
   override protected val matchName: String = "Order Bys"
 
@@ -31,11 +29,11 @@ object OrderByMatcher extends Matcher[OrderByElement, GenericAnalysisResult, Ord
     o1.getExpression.toString == o2.getExpression.toString
 
   override protected def instantiateOnlySampleMatch(sa: OrderByElement): OrderByMatch =
-    OrderByMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+    OrderByMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
 
   override protected def instantiateOnlyUserMatch(ua: OrderByElement): OrderByMatch =
-    OrderByMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
+    OrderByMatch(MatchType.ONLY_USER, Some(ua), None)
 
   override protected def instantiateCompleteMatch(ua: OrderByElement, sa: OrderByElement): OrderByMatch =
-    OrderByMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
+    OrderByMatch(MatchType.SUCCESSFUL_MATCH, Some(ua), Some(sa))
 }

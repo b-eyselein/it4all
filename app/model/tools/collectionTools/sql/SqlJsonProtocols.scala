@@ -1,9 +1,8 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.GenericAnalysisResult
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.matcher._
-import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol, ToolJsonProtocol}
+import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -45,44 +44,38 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
   }
 
   private val columnMatchingResultWrites: Writes[ColumnComparison] = matchingResultWrites({
-    implicit val columnWrapperWrites: Writes[ColumnWrapper]         = cw => JsString(cw.getColName)
-    implicit val garw               : Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+    implicit val columnWrapperWrites: Writes[ColumnWrapper] = cw => JsString(cw.getColName)
 
     Json.writes[ColumnMatch]
   })
 
   private val tableMatchingResultWrites: Writes[TableComparison] = matchingResultWrites({
-    implicit val tr  : Writes[Table]                 = t => JsString(t.getName)
-    implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+    implicit val tr: Writes[Table] = t => JsString(t.getName)
 
     Json.writes[TableMatch]
   })
 
   private val binaryExpressionResultWrites: Writes[BinaryExpressionComparison] = matchingResultWrites({
-    implicit val binaryExpressionWrites: Writes[BinaryExpression]      = be => JsString(be.toString)
-    implicit val garw                  : Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+    implicit val binaryExpressionWrites: Writes[BinaryExpression] = be => JsString(be.toString)
 
     Json.writes[BinaryExpressionMatch]
   })
 
   private val selectAdditionalComparisonsWrites: Writes[SelectAdditionalComparisons] = {
     implicit val groupByComparisonWrites: Writes[GroupByComparison] = matchingResultWrites({
-      implicit val ew  : Writes[Expression]            = e => JsString(e.toString)
-      implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+      implicit val ew: Writes[Expression] = e => JsString(e.toString)
 
       Json.writes[GroupByMatch]
     })
 
     implicit val orderByComparisonWrites: Writes[OrderByComparison] = matchingResultWrites({
-      implicit val obew: Writes[OrderByElement]        = obe => JsString(obe.toString)
-      implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+      implicit val obew: Writes[OrderByElement] = obe => JsString(obe.toString)
 
       Json.writes[OrderByMatch]
     })
 
     implicit val limitComparisonWrites: Writes[LimitComparison] = matchingResultWrites({
-      implicit val lew : Writes[Limit]                 = l => JsString(l.toString)
-      implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+      implicit val lew: Writes[Limit] = l => JsString(l.toString)
 
       Json.writes[LimitMatch]
     })
@@ -94,8 +87,7 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
     implicit val sacw: Writes[SelectAdditionalComparisons] = selectAdditionalComparisonsWrites
 
     implicit val ivcw: Writes[InsertComparison] = matchingResultWrites({
-      implicit val elw : Writes[ExpressionList]        = el => JsString(el.toString)
-      implicit val garw: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+      implicit val elw: Writes[ExpressionList] = el => JsString(el.toString)
 
       Json.writes[ExpressionListMatch]
     })

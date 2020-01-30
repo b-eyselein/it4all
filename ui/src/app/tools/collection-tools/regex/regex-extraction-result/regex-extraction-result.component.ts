@@ -9,12 +9,4 @@ export class RegexExtractionResultComponent {
 
   @Input() extractionResult: IRegexExtractionEvaluationResult;
 
-  constructor() {
-  }
-
-  isCompletelyCorrect(): boolean {
-    return this.extractionResult.extractionMatchingResult.allMatches
-      .every((m) => m.analysisResult.matchType === 'SUCCESSFUL_MATCH');
-  }
-
 }

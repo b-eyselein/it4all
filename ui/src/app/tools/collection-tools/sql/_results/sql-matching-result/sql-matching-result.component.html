@@ -6,7 +6,7 @@
 <div class="content">
   <ul *ngIf="!successful">
     <li *ngFor="let match of matchingResult.allMatches">
-      <ng-container [ngSwitch]="match.analysisResult.matchType">
+      <ng-container [ngSwitch]="match.matchType">
 
         <span *ngSwitchCase="'SUCCESSFUL_MATCH'" class="has-text-success">
           Die Angabe {{matchingResult.matchSingularName}} <code>{{match.userArg}}</code> war korrekt.

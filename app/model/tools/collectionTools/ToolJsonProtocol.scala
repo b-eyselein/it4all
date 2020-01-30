@@ -1,6 +1,6 @@
 package model.tools.collectionTools
 
-import model.core.matching.{AnalysisResult, GenericAnalysisResult, Match, MatchingResult}
+import model.core.matching.{Match, MatchingResult}
 import model.core.result.CompleteResult
 import model.lesson._
 import model.points.Points
@@ -66,8 +66,6 @@ object ToolJsonProtocol {
 
   val exerciseFileFormat: Format[ExerciseFile] = Json.format
 
-  val genericAnalysisResultWrites: Writes[GenericAnalysisResult] = Json.writes
-
 }
 
 final case class KeyValueObject(key: String, value: String)
@@ -90,7 +88,7 @@ trait ToolJsonProtocol[EC <: ExerciseContent, ST, CR <: CompleteResult] {
     )
   }
 
-  protected def matchingResultWrites[T, AR <: AnalysisResult, M <: Match[T, AR]](matchWrites: Writes[M]): Writes[MatchingResult[T, AR, M]] = {
+  protected def matchingResultWrites[T, M <: Match[T]](matchWrites: Writes[M]): Writes[MatchingResult[T, M]] = {
     implicit val pointsWrites: Writes[Points] = ToolJsonProtocol.pointsFormat
     implicit val mw          : Writes[M]      = matchWrites
 

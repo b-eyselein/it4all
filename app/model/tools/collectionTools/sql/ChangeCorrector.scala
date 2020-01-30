@@ -1,6 +1,6 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.{GenericAnalysisResult, MatchingResult}
+import model.core.matching.MatchingResult
 import model.tools.collectionTools.sql.ColumnWrapper.wrapColumn
 import model.tools.collectionTools.sql.matcher.{ExpressionListMatch, ExpressionListMatcher}
 import net.sf.jsqlparser.expression.Expression
@@ -34,7 +34,7 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
   override protected def performAdditionalComparisons(userQuery: Insert, sampleQuery: Insert): AdditionalComparison = {
 
     // FIXME: correct inserted values!
-    val insertedValuesComparison: MatchingResult[ExpressionList, GenericAnalysisResult, ExpressionListMatch] =
+    val insertedValuesComparison: MatchingResult[ExpressionList, ExpressionListMatch] =
       ExpressionListMatcher.doMatch(expressionLists(userQuery), expressionLists(sampleQuery))
 
     AdditionalComparison(None, Some(insertedValuesComparison))

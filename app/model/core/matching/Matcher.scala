@@ -3,7 +3,7 @@ package model.core.matching
 import model.points._
 
 
-trait Matcher[T, AR <: AnalysisResult, M <: Match[T, AR]] {
+trait Matcher[T, M <: Match[T]] {
 
   protected val matchName: String
 
@@ -17,10 +17,6 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T, AR]] {
   protected def instantiateOnlySampleMatch(sa: T): M
 
   protected def instantiateCompleteMatch(ua: T, sa: T): M
-
-  //  protected def pointsForMatch(m: M, maxPoints: Points): Points = (-1).points
-
-  //  protected def maxPointsForMatch(m: M): Points = (-1).points
 
 
   private def findMatchInSecondCollection(firstHead: T, secondCollection: List[T]): (M, List[T]) = {
@@ -44,10 +40,10 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T, AR]] {
   }
 
 
-  def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): MatchingResult[T, AR, M] = {
+  def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): MatchingResult[T, M] = {
 
     @annotation.tailrec
-    def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[T, AR, M] = firstCollection match {
+    def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[T, M] = firstCollection match {
       case Nil =>
         val allMatches = matches ++ secondCollection.map(instantiateOnlySampleMatch)
 
@@ -63,6 +59,5 @@ trait Matcher[T, AR <: AnalysisResult, M <: Match[T, AR]] {
 
     go(firstCollection.toList, secondCollection.toList, matches = List.empty)
   }
-
 
 }

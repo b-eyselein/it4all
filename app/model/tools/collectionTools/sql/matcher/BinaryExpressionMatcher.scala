@@ -6,12 +6,10 @@ import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 
 final case class BinaryExpressionMatch(
+  matchType: MatchType,
   userArg: Option[BinaryExpression],
   sampleArg: Option[BinaryExpression],
-  analysisResult: GenericAnalysisResult
-) extends Match[BinaryExpression, GenericAnalysisResult] {
-
-  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
+) extends Match[BinaryExpression] {
 
   override def points: Points = matchType match {
     case MatchType.SUCCESSFUL_MATCH   => singlePoint
@@ -39,7 +37,7 @@ class JoinExpressionMatcher(
 class BinaryExpressionMatcher(
   userTAliases: Map[String, String],
   sampleTAliases: Map[String, String]
-) extends Matcher[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch] {
+) extends Matcher[BinaryExpression, BinaryExpressionMatch] {
 
   override protected val matchName: String = "Bedingungen"
 
@@ -80,10 +78,10 @@ class BinaryExpressionMatcher(
   }
 
   override protected def instantiateOnlySampleMatch(sa: BinaryExpression): BinaryExpressionMatch =
-    BinaryExpressionMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+    BinaryExpressionMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
 
   override protected def instantiateOnlyUserMatch(ua: BinaryExpression): BinaryExpressionMatch =
-    BinaryExpressionMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
+    BinaryExpressionMatch(MatchType.ONLY_USER, Some(ua), None)
 
   override protected def instantiateCompleteMatch(ua: BinaryExpression, sa: BinaryExpression): BinaryExpressionMatch = {
     val (a1Left, a1Right) = (ua.getLeftExpression.toString, ua.getRightExpression.toString)
@@ -92,11 +90,12 @@ class BinaryExpressionMatcher(
     val parallelEqual = (a1Left == a2Left) && (a1Right == a2Right)
     val crossedEqual  = (a1Left == a2Right) && (a1Right == a2Left)
 
-    val matchType: MatchType = if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
-    else MatchType.UNSUCCESSFUL_MATCH
+    val matchType: MatchType = if (parallelEqual || crossedEqual) {
+      MatchType.SUCCESSFUL_MATCH
+    } else {
+      MatchType.UNSUCCESSFUL_MATCH
+    }
 
-    val ar = GenericAnalysisResult(matchType)
-
-    BinaryExpressionMatch(Some(ua), Some(sa), ar)
+    BinaryExpressionMatch(matchType, Some(ua), Some(sa))
   }
 }

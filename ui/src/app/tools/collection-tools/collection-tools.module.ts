@@ -32,6 +32,8 @@ import {UmlClassEditComponent} from './uml/_components/uml-class-edit/uml-class-
 import {UmlAssocEditComponent} from './uml/_components/uml-assoc-edit/uml-assoc-edit.component';
 import {ExerciseLinkCardComponent} from './_components/exercise-link-card/exercise-link-card.component';
 import {UmlDiagDrawingCorrectionComponent} from './uml/_components/uml-diag-drawing-correction/uml-diag-drawing-correction.component';
+import { UmlAssocMatchComponent } from './uml/_components/uml-assoc-match/uml-assoc-match.component';
+import { UmlImplMatchComponent } from './uml/_components/uml-impl-match/uml-impl-match.component';
 
 
 @NgModule({
@@ -60,7 +62,11 @@ import {UmlDiagDrawingCorrectionComponent} from './uml/_components/uml-diag-draw
 
     WebExerciseComponent,
 
-    XmlExerciseComponent
+    XmlExerciseComponent,
+
+    UmlAssocMatchComponent,
+
+    UmlImplMatchComponent
   ],
   providers: [ApiService],
   imports: [

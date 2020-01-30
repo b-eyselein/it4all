@@ -1,7 +1,7 @@
 package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.model.ElementLine
-import model.core.matching.{AnalysisResult, MatchType, Matcher}
+import model.core.matching.{MatchType, Matcher}
 import model.points._
 
 final case class ElementLineAnalysisResult(
@@ -10,7 +10,7 @@ final case class ElementLineAnalysisResult(
   correctContent: String,
   attributesCorrect: Boolean,
   correctAttributes: String
-) extends AnalysisResult {
+) {
 
   //  override def toJson: JsValue = XmlToolJsonProtocol.elementLineAnalysisResultWrites.writes(this)
 
@@ -21,7 +21,7 @@ final case class ElementLineAnalysisResult(
 
 }
 
-object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult, ElementLineMatch] {
+object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineMatch] {
 
   override protected val matchName: String = "DTD-Zeilen"
 
@@ -30,10 +30,10 @@ object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult,
   override protected def canMatch(el1: ElementLine, el2: ElementLine): Boolean = el1.elementName == el2.elementName
 
   override protected def instantiateOnlySampleMatch(sa: ElementLine): ElementLineMatch =
-    ElementLineMatch(None, Some(sa), None)
+    ElementLineMatch(MatchType.ONLY_SAMPLE, None, Some(sa), None)
 
   override protected def instantiateOnlyUserMatch(ua: ElementLine): ElementLineMatch =
-    ElementLineMatch(Some(ua), None, None)
+    ElementLineMatch(MatchType.ONLY_USER, Some(ua), None, None)
 
   override protected def instantiateCompleteMatch(ua: ElementLine, sa: ElementLine): ElementLineMatch = {
 
@@ -55,6 +55,6 @@ object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineAnalysisResult,
 
     val ar = ElementLineAnalysisResult(matchType, contentCorrect, sa.elementDefinition.contentAsString, attributesCorrect, arg2Def.getOrElse("FEHLER!"))
 
-    ElementLineMatch(Some(ua), Some(sa), Some(ar))
+    ElementLineMatch(matchType, Some(ua), Some(sa), Some(ar))
   }
 }

@@ -1,6 +1,6 @@
 package model.tools.collectionTools.regex
 
-import model.core.matching.{GenericAnalysisResult, MatchingResult}
+import model.core.matching.MatchingResult
 import model.points.Points
 import model.tools.collectionTools.{SampleSolution, StringSampleSolutionToolJsonProtocol, ToolJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
@@ -32,8 +32,7 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
 
 
   private val regexMatchMatchWrites: Writes[RegexMatchMatch] = {
-    implicit val garw            : Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
-    implicit val regexMatchWrites: Writes[RegexMatch]            = m => Json.obj(
+    implicit val regexMatchWrites: Writes[RegexMatch] = m => Json.obj(
       "start" -> m.start,
       "end" -> m.end,
       "content" -> m.group(0)
@@ -42,7 +41,7 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
     Json.writes
   }
 
-  private val regexMatchMatchingResultWrites: Writes[MatchingResult[RegexMatch, GenericAnalysisResult, RegexMatchMatch]] = {
+  private val regexMatchMatchingResultWrites: Writes[MatchingResult[RegexMatch, RegexMatchMatch]] = {
     implicit val pw  : Writes[Points]          = ToolJsonProtocol.pointsFormat
     implicit val rmmw: Writes[RegexMatchMatch] = regexMatchMatchWrites
 
@@ -51,7 +50,7 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
 
 
   private val regexExtractionEvaluationResultWrites: Writes[RegexExtractionEvaluationResult] = {
-    implicit val rmmrw: Writes[MatchingResult[RegexMatch, GenericAnalysisResult, RegexMatchMatch]] = regexMatchMatchingResultWrites
+    implicit val rmmrw: Writes[MatchingResult[RegexMatch, RegexMatchMatch]] = regexMatchMatchingResultWrites
 
     Json.writes[RegexExtractionEvaluationResult]
   }

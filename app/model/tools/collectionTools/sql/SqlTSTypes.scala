@@ -1,6 +1,6 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.{GenericAnalysisResult, MatchType}
+import model.core.matching.MatchType
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
@@ -12,6 +12,8 @@ import nl.codestar.scalatsi.TypescriptType.{TSString, TypescriptNamedType}
 import nl.codestar.scalatsi.{TSIType, TSType}
 
 object SqlTSTypes extends ToolTSInterfaceTypes {
+
+  private implicit val matchTypeTsType: TSType[MatchType] = matchTypeTS
 
   private val sqlExerciseContentTSI: TSIType[SqlExerciseContent] = {
     implicit val seTypeT: TSType[SqlExerciseType]         = enumTsType(SqlExerciseType)
@@ -29,15 +31,13 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
   }
 
   private val columnComparisonTSI: TSIType[ColumnComparison] = matchingResultTSI("Column", {
-    implicit val mtt: TSType[MatchType]     = matchTypeTS
-    implicit val ct : TSType[ColumnWrapper] = TSType(TSString)
+    implicit val ct: TSType[ColumnWrapper] = TSType(TSString)
 
     TSType.fromCaseClass[ColumnMatch]
   })
 
   private val tableComparisonTSI: TSIType[TableComparison] = matchingResultTSI("Table", {
-    implicit val mtt: TSType[MatchType] = matchTypeTS
-    implicit val tt : TSType[Table]     = TSType(TSString)
+    implicit val tt: TSType[Table] = TSType(TSString)
 
     TSType.fromCaseClass[TableMatch]
   })
@@ -45,41 +45,37 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
   private val binaryExpressionComparisonTSI: TSIType[BinaryExpressionComparison] = TSIType({
 
     val binExMatchTSI: TSIType[BinaryExpressionMatch] = TSIType({
-      implicit val mtt: TSType[MatchType]        = matchTypeTS
       implicit val bet: TSType[BinaryExpression] = TSType(TSString)
 
       TSType.fromCaseClass[BinaryExpressionMatch]
       }.get.copy(extending = Some(baseMatchTSI.get))
     )
 
-    matchingResultTSI[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch]("BinaryExpression", binExMatchTSI)
+    matchingResultTSI[BinaryExpression, BinaryExpressionMatch]("BinaryExpression", binExMatchTSI)
       .get.copy(extending = Some(baseMatchingResultTSI.get))
   })
 
   private val additionalComparisonsTSI: TSIType[AdditionalComparison] = {
     implicit val groupByComparisonTSI: TSIType[GroupByComparison] = matchingResultTSI("GroupBy", {
-      implicit val mtt: TSType[MatchType]  = matchTypeTS
+
       implicit val gbt: TSType[Expression] = TSType(TSString)
 
       TSType.fromCaseClass[GroupByMatch]
     })
 
     implicit val orderByComparisonTSI: TSIType[OrderByComparison] = matchingResultTSI("OrderBy", {
-      implicit val mtt: TSType[MatchType]      = matchTypeTS
       implicit val obt: TSType[OrderByElement] = TSType(TSString)
 
       TSType.fromCaseClass[OrderByMatch]
     })
 
     implicit val limitComparisonTSI: TSIType[LimitComparison] = matchingResultTSI("Limit", {
-      implicit val mtt: TSType[MatchType] = matchTypeTS
-      implicit val lt : TSType[Limit]     = TSType(TSString)
+      implicit val lt: TSType[Limit] = TSType(TSString)
 
       TSType.fromCaseClass[LimitMatch]
     })
 
     implicit val insertComparisonTSI: TSIType[InsertComparison] = matchingResultTSI("ExpressionList", {
-      implicit val mtt: TSType[MatchType]      = matchTypeTS
       implicit val elt: TSType[ExpressionList] = TSType(TSString)
 
       TSType.fromCaseClass[ExpressionListMatch]

@@ -1,8 +1,8 @@
 package model.tools.collectionTools.sql
 
 import model.User
-import model.core.matching.{GenericAnalysisResult, MatchingResult}
-import model.tools.collectionTools.sql.matcher.{BinaryExpressionMatch, ColumnMatch, ExpressionListMatch, GroupByMatch, LimitMatch, OrderByMatch, TableMatch}
+import model.core.matching.MatchingResult
+import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
@@ -31,15 +31,15 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
   override type SolType = String
   override type CompResultType = SqlResult
 
-  type ColumnComparison = MatchingResult[ColumnWrapper, GenericAnalysisResult, ColumnMatch]
-  type TableComparison = MatchingResult[Table, GenericAnalysisResult, TableMatch]
-  type BinaryExpressionComparison = MatchingResult[BinaryExpression, GenericAnalysisResult, BinaryExpressionMatch]
+  type ColumnComparison = MatchingResult[ColumnWrapper, ColumnMatch]
+  type TableComparison = MatchingResult[Table, TableMatch]
+  type BinaryExpressionComparison = MatchingResult[BinaryExpression, BinaryExpressionMatch]
 
-  type GroupByComparison = MatchingResult[Expression, GenericAnalysisResult, GroupByMatch]
-  type OrderByComparison = MatchingResult[OrderByElement, GenericAnalysisResult, OrderByMatch]
-  type LimitComparison = MatchingResult[Limit, GenericAnalysisResult, LimitMatch]
+  type GroupByComparison = MatchingResult[Expression, GroupByMatch]
+  type OrderByComparison = MatchingResult[OrderByElement, OrderByMatch]
+  type LimitComparison = MatchingResult[Limit, LimitMatch]
 
-  type InsertComparison = MatchingResult[ExpressionList, GenericAnalysisResult, ExpressionListMatch]
+  type InsertComparison = MatchingResult[ExpressionList, ExpressionListMatch]
 
   // Members
 

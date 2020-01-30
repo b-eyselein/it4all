@@ -8,6 +8,7 @@ export interface IXmlError {
 
 
 export interface IElementLineMatch {
+  matchType: MatchType;
   userArg?: ElementLine;
   sampleArg?: ElementLine;
   maybeAnalysisResult?: IElementLineAnalysisResult;
@@ -35,12 +36,6 @@ export interface IDTDParseException {
 }
 
 
-export interface IXmlGrammarResult {
-  parseErrors: IDTDParseException[];
-  results: IElementLineMatch[];
-}
-
-
 export interface IElementLineAnalysisResult {
   matchType: MatchType;
   contentCorrect: boolean;
@@ -60,6 +55,14 @@ export interface IPoints {
   quarters: number;
 }
 
+export type XmlErrorType = ("FATAL" | "ERROR" | "WARNING");
+
+export interface IXmlGrammarResult {
+  parseErrors: IDTDParseException[];
+  results: IElementLineMatch[];
+}
+
+export type SuccessType = ("ERROR" | "NONE" | "PARTIALLY" | "COMPLETE");
 
 export interface IXmlCompleteResult {
   successType: SuccessType;
@@ -69,6 +72,3 @@ export interface IXmlCompleteResult {
   maxPoints: IPoints;
   solutionSaved: boolean;
 }
-
-export type XmlErrorType = ("FATAL" | "ERROR" | "WARNING");
-export type SuccessType = ("ERROR" | "NONE" | "PARTIALLY" | "COMPLETE");

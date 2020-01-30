@@ -30,19 +30,15 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
     )
   )
 
-  protected val baseMatchTSI: TSIType[Match[_, _]] = {
-    val analysisResultTsInterface = TSType.interface("IAnalysisResult",
-      "matchType" -> matchTypeTS.get
-    )
-
+  protected val baseMatchTSI: TSIType[Match[_]] = {
     TSType.interface("IMatch",
+      "matchType" -> matchTypeTS.get,
       "userArg" -> TSUnion(Seq(TSAny, TSUndefined)),
       "sampleArg" -> TSUnion(Seq(TSAny, TSUndefined)),
-      "analysisResult" -> TSUnion(Seq(analysisResultTsInterface.get, TSUndefined))
     )
   }
 
-  protected val baseMatchingResultTSI: TSIType[MatchingResult[Object, GenericAnalysisResult, Match[Object, GenericAnalysisResult]]] = {
+  protected val baseMatchingResultTSI: TSIType[MatchingResult[Object, Match[Object]]] = {
 
     TSType.interface(
       s"IMatchingResult",
@@ -54,18 +50,23 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
     )
   }
 
-  protected def matchingResultTSI[T, AR <: AnalysisResult, X <: Match[T, AR]](matchName: String, matchTSI: TSType[X]): TSIType[MatchingResult[T, AR, X]] = {
-    // FIXME: implement!
-
-    TSType.interface(
-      s"I${matchName}MatchingResult",
-      "matchName" -> TSString,
-      "matchSingularName" -> TSString,
-      "allMatches" -> TSArray(matchTSI.get),
-      "points" -> TSNumber,
-      "maxPoints" -> TSNumber
-    )
-  }
+  /**
+    * FIXME: implement!
+    *
+    * @param matchName
+    * @param matchTSI
+    * @tparam T
+    * @tparam M
+    * @return
+    */
+  protected def matchingResultTSI[T, M <: Match[T]](matchName: String, matchTSI: TSType[M]): TSIType[MatchingResult[T, M]] = TSType.interface(
+    s"I${matchName}MatchingResult",
+    "matchName" -> TSString,
+    "matchSingularName" -> TSString,
+    "allMatches" -> TSArray(matchTSI.get),
+    "points" -> TSNumber,
+    "maxPoints" -> TSNumber
+  )
 
   protected def sampleSolutionTSI[SolType](solTypeTSI: TSType[SolType])(implicit x: Manifest[SampleSolution[SolType]]): TSIType[SampleSolution[SolType]] = {
     //    implicit val eft: TSIType[ExerciseFile] = exerciseFileTSI

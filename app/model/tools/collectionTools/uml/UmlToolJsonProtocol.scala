@@ -1,7 +1,7 @@
 package model.tools.collectionTools.uml
 
-import model.core.matching.{GenericAnalysisResult, MatchingResult}
 import model.points._
+import model.tools.collectionTools.uml.UmlToolMain._
 import model.tools.collectionTools.uml.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
@@ -40,10 +40,10 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClass
   }
 
   private val umlClassMatchAnalysisResultWrites: Writes[UmlClassMatchAnalysisResult] = {
-    implicit val uamrw: Writes[MatchingResult[UmlAttribute, UmlAttributeAnalysisResult, UmlAttributeMatch]] =
+    implicit val uamrw: Writes[AttributeComparison] =
       matchingResultWrites(umlAttributeMatchWrites)
 
-    implicit val ummrw: Writes[MatchingResult[UmlMethod, UmlMethodAnalysisResult, UmlMethodMatch]] =
+    implicit val ummrw: Writes[MethodComparison] =
       matchingResultWrites(umlMethodMatchWrites)
 
     Json.writes
@@ -64,8 +64,7 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClass
   }
 
   private val umlImplementationMatchWrites: Writes[UmlImplementationMatch] = {
-    implicit val umlImplementationWrites    : Writes[UmlImplementation]     = UmlClassDiagramJsonFormat.umlImplementationFormat
-    implicit val genericAnalysisResultWrites: Writes[GenericAnalysisResult] = ToolJsonProtocol.genericAnalysisResultWrites
+    implicit val umlImplementationWrites: Writes[UmlImplementation] = UmlClassDiagramJsonFormat.umlImplementationFormat
 
     Json.writes
   }
@@ -73,14 +72,9 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClass
   override val completeResultWrites: Writes[UmlCompleteResult] = {
     implicit val pointsWrites: Writes[Points] = ToolJsonProtocol.pointsFormat
 
-    implicit val crw: Writes[MatchingResult[UmlClass, UmlClassMatchAnalysisResult, UmlClassMatch]] =
-      matchingResultWrites(classMatchWrites)
-
-    implicit val arw: Writes[MatchingResult[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch]] =
-      matchingResultWrites(umlAssociationMatchWrites)
-
-    implicit val irw: Writes[MatchingResult[UmlImplementation, GenericAnalysisResult, UmlImplementationMatch]] =
-      matchingResultWrites(umlImplementationMatchWrites)
+    implicit val crw: Writes[ClassComparison]          = matchingResultWrites(classMatchWrites)
+    implicit val arw: Writes[AssociationComparison]    = matchingResultWrites(umlAssociationMatchWrites)
+    implicit val irw: Writes[ImplementationComparison] = matchingResultWrites(umlImplementationMatchWrites)
 
     Json.writes[UmlCompleteResult]
   }

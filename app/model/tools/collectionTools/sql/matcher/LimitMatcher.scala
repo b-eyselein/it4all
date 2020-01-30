@@ -1,16 +1,14 @@
 package model.tools.collectionTools.sql.matcher
 
-import model.core.matching.{GenericAnalysisResult, Match, MatchType, Matcher}
+import model.core.matching.{Match, MatchType, Matcher}
 import model.points._
 import net.sf.jsqlparser.statement.select.Limit
 
 final case class LimitMatch(
+  matchType: MatchType,
   userArg: Option[Limit],
-  sampleArg: Option[Limit],
-  analysisResult: GenericAnalysisResult
-) extends Match[Limit, GenericAnalysisResult] {
-
-  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
+  sampleArg: Option[Limit]
+) extends Match[Limit] {
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -21,7 +19,7 @@ final case class LimitMatch(
 
 }
 
-object LimitMatcher extends Matcher[Limit, GenericAnalysisResult, LimitMatch] {
+object LimitMatcher extends Matcher[Limit, LimitMatch] {
 
   override protected val matchName: String = "Limits"
 
@@ -30,21 +28,19 @@ object LimitMatcher extends Matcher[Limit, GenericAnalysisResult, LimitMatch] {
   override protected def canMatch(l1: Limit, l2: Limit): Boolean = true
 
   override protected def instantiateOnlySampleMatch(sa: Limit): LimitMatch =
-    LimitMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+    LimitMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
 
   override protected def instantiateOnlyUserMatch(ua: Limit): LimitMatch =
-    LimitMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
+    LimitMatch(MatchType.ONLY_USER, Some(ua), None)
 
   override protected def instantiateCompleteMatch(ua: Limit, sa: Limit): LimitMatch = {
 
-    val ar = GenericAnalysisResult(
-      if (ua.toString == sa.toString) {
-        MatchType.SUCCESSFUL_MATCH
-      } else {
-        MatchType.PARTIAL_MATCH
-      }
-    )
+    val matchType = if (ua.toString == sa.toString) {
+      MatchType.SUCCESSFUL_MATCH
+    } else {
+      MatchType.PARTIAL_MATCH
+    }
 
-    LimitMatch(Some(ua), Some(sa), ar)
+    LimitMatch(matchType, Some(ua), Some(sa))
   }
 }

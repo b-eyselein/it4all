@@ -12,9 +12,7 @@ export class SqlMatchingResultComponent implements OnChanges {
   successful: boolean;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.successful = this.matchingResult.allMatches.every(
-      (m) => m.analysisResult.matchType === 'SUCCESSFUL_MATCH'
-    );
+    this.successful = this.matchingResult.allMatches.every((m) => m.matchType === 'SUCCESSFUL_MATCH');
   }
 
 }

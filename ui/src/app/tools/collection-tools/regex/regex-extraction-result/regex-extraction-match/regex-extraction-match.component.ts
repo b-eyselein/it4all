@@ -16,7 +16,7 @@ export class RegexExtractionMatchComponent {
   @Input() match: IRegexMatchMatch;
 
   isCorrect(): boolean {
-    return this.match.analysisResult.matchType === 'SUCCESSFUL_MATCH';
+    return this.match.matchType === 'SUCCESSFUL_MATCH';
   }
 
 }

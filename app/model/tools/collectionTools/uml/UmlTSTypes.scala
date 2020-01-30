@@ -10,19 +10,11 @@ import nl.codestar.scalatsi.{TSIType, TSType}
 
 object UmlTSTypes extends ToolTSInterfaceTypes {
 
-  private val umlVisibilityTS: TSType[UmlVisibility] = enumTsType(UmlVisibility)
+  private implicit val matchTypeTsType: TSType[MatchType]     = matchTypeTS
+  private implicit val umlVisibilityTS: TSType[UmlVisibility] = enumTsType(UmlVisibility)
 
-  private val umlAttributeTSI: TSIType[UmlAttribute] = {
-    implicit val uvt: TSType[UmlVisibility] = umlVisibilityTS
-
-    TSType.fromCaseClass
-  }
-
-  private val umlMethodTSI: TSIType[UmlMethod] = {
-    implicit val uvt: TSType[UmlVisibility] = umlVisibilityTS
-
-    TSType.fromCaseClass
-  }
+  private val umlAttributeTSI: TSIType[UmlAttribute] = TSType.fromCaseClass
+  private val umlMethodTSI   : TSIType[UmlMethod]    = TSType.fromCaseClass
 
   private val umlClassTypeTSType: TSType[UmlClassType] = enumTsType(UmlClassType)
 
@@ -55,30 +47,25 @@ object UmlTSTypes extends ToolTSInterfaceTypes {
 
     implicit val uit: TSIType[UmlImplementation] = umlImplementationTSI
 
-    TSType.fromCaseClass[UmlClassDiagram]
+    TSType.fromCaseClass
   }
 
   private val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
     implicit val usst: TSIType[SampleSolution[UmlClassDiagram]] = sampleSolutionTSI[UmlClassDiagram](umlClassDiagramTSI)
     implicit val mt  : TSType[Map[String, String]]              = stringMapTsType
 
-    TSType.fromCaseClass[UmlExerciseContent]
+    TSType.fromCaseClass
   }
 
   private val umlClassMatchAnalysisResultTSI: TSIType[UmlClassMatchAnalysisResult] = {
-    implicit val art: TSType[AttributeComparison] = matchingResultTSI("Attribute", {
-      implicit val uvt: TSType[UmlVisibility] = umlVisibilityTS
 
-      implicit val mtt: TSType[MatchType]     = matchTypeTS
+    implicit val art: TSType[AttributeComparison] = matchingResultTSI("Attribute", {
       implicit val uat: TSIType[UmlAttribute] = umlAttributeTSI
 
       TSType.fromCaseClass[UmlAttributeMatch]
     })
 
     implicit val mrt: TSType[MethodComparison] = matchingResultTSI("Method", {
-      implicit val uvt: TSType[UmlVisibility] = umlVisibilityTS
-
-      implicit val mtt: TSType[MatchType]  = matchTypeTS
       implicit val umt: TSIType[UmlMethod] = umlMethodTSI
 
       TSType.fromCaseClass[UmlMethodMatch]
@@ -97,16 +84,14 @@ object UmlTSTypes extends ToolTSInterfaceTypes {
       TSType.fromCaseClass[UmlClassMatch]
     })
 
-    implicit val art: TSIType[AssociationComparison]    = matchingResultTSI("Association", {
+    implicit val art: TSIType[AssociationComparison] = matchingResultTSI("Association", {
       implicit val uatt: TSType[UmlAssociationType] = umlAssociationTypeTSI
-
-      implicit val mtt: TSType[MatchType]       = matchTypeTS
-      implicit val uat: TSIType[UmlAssociation] = umlAssociationTSI
+      implicit val uat : TSIType[UmlAssociation]    = umlAssociationTSI
 
       TSType.fromCaseClass[UmlAssociationMatch]
     })
+
     implicit val irt: TSIType[ImplementationComparison] = matchingResultTSI("Implementation", {
-      implicit val mtt: TSType[MatchType]          = matchTypeTS
       implicit val uit: TSIType[UmlImplementation] = umlImplementationTSI
 
       TSType.fromCaseClass[UmlImplementationMatch]

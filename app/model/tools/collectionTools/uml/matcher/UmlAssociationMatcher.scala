@@ -4,22 +4,22 @@ import model.core.matching._
 import model.tools.collectionTools.uml.{UmlAssociation, UmlAssociationType}
 
 final case class UmlAssociationAnalysisResult(
-  matchType: MatchType,
   endsParallel: Boolean,
   assocTypeEqual: Boolean,
   correctAssocType: UmlAssociationType,
   multiplicitiesEqual: Boolean
-) extends AnalysisResult
+)
 
 
 final case class UmlAssociationMatch(
+  matchType: MatchType,
   userArg: Option[UmlAssociation],
   sampleArg: Option[UmlAssociation],
   maybeAnalysisResult: Option[UmlAssociationAnalysisResult]
-) extends Match[UmlAssociation, UmlAssociationAnalysisResult]
+) extends Match[UmlAssociation]
 
 
-object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationAnalysisResult, UmlAssociationMatch] {
+object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch] {
 
   override protected val matchName: String = "Assoziationen"
 
@@ -35,34 +35,33 @@ object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationAnaly
     endsParallelEqual(a1, a2) || endsCrossedEqual(a1, a2)
 
   override protected def instantiateOnlySampleMatch(sa: UmlAssociation): UmlAssociationMatch =
-    UmlAssociationMatch(None, Some(sa), None)
+    UmlAssociationMatch(MatchType.ONLY_SAMPLE, None, Some(sa), None)
 
   override protected def instantiateOnlyUserMatch(ua: UmlAssociation): UmlAssociationMatch =
-    UmlAssociationMatch(Some(ua), None, None)
+    UmlAssociationMatch(MatchType.ONLY_USER, Some(ua), None, None)
 
   override protected def instantiateCompleteMatch(ua: UmlAssociation, sa: UmlAssociation): UmlAssociationMatch = {
-    val ar: UmlAssociationAnalysisResult = {
-      val endsParallel = UmlAssociationMatcher.endsParallelEqual(ua, sa)
 
-      val assocTypeEqual = ua.assocType == sa.assocType
+    val endsParallel = UmlAssociationMatcher.endsParallelEqual(ua, sa)
 
-      val multiplicitiesEqual = if (endsParallel) {
-        ua.firstMult == sa.firstMult && ua.secondMult == sa.secondMult
-      } else {
-        ua.firstMult == sa.secondMult && ua.secondMult == sa.firstMult
-      }
+    val assocTypeEqual = ua.assocType == sa.assocType
 
-
-      val matchType: MatchType = (assocTypeEqual, multiplicitiesEqual) match {
-        case (true, true)  => MatchType.SUCCESSFUL_MATCH
-        case (false, true) => MatchType.PARTIAL_MATCH
-        case _             => MatchType.UNSUCCESSFUL_MATCH
-      }
-
-      UmlAssociationAnalysisResult(matchType, endsParallel, assocTypeEqual, sa.assocType, multiplicitiesEqual)
+    val multiplicitiesEqual = if (endsParallel) {
+      ua.firstMult == sa.firstMult && ua.secondMult == sa.secondMult
+    } else {
+      ua.firstMult == sa.secondMult && ua.secondMult == sa.firstMult
     }
 
 
-    UmlAssociationMatch(Some(ua), Some(sa), Some(ar))
+    val ar: UmlAssociationAnalysisResult = UmlAssociationAnalysisResult(endsParallel, assocTypeEqual, sa.assocType, multiplicitiesEqual)
+
+
+    val matchType: MatchType = (assocTypeEqual, multiplicitiesEqual) match {
+      case (true, true)  => MatchType.SUCCESSFUL_MATCH
+      case (false, true) => MatchType.PARTIAL_MATCH
+      case _             => MatchType.UNSUCCESSFUL_MATCH
+    }
+
+    UmlAssociationMatch(matchType, Some(ua), Some(sa), Some(ar))
   }
 }

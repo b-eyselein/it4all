@@ -5,12 +5,10 @@ import model.points._
 import net.sf.jsqlparser.schema.Table
 
 final case class TableMatch(
+  matchType: MatchType,
   userArg: Option[Table],
-  sampleArg: Option[Table],
-  analysisResult: GenericAnalysisResult
-) extends Match[Table, GenericAnalysisResult] {
-
-  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
+  sampleArg: Option[Table]
+) extends Match[Table] {
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -21,7 +19,7 @@ final case class TableMatch(
 
 }
 
-object TableMatcher extends Matcher[Table, GenericAnalysisResult, TableMatch] {
+object TableMatcher extends Matcher[Table, TableMatch] {
 
   override protected val matchName: String = "Tabellen"
 
@@ -30,11 +28,11 @@ object TableMatcher extends Matcher[Table, GenericAnalysisResult, TableMatch] {
   override protected def canMatch(t1: Table, t2: Table): Boolean = t1.getName == t2.getName
 
   override protected def instantiateOnlySampleMatch(sa: Table): TableMatch =
-    TableMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+    TableMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
 
   override protected def instantiateOnlyUserMatch(ua: Table): TableMatch =
-    TableMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
+    TableMatch(MatchType.ONLY_USER, Some(ua), None)
 
   override protected def instantiateCompleteMatch(ua: Table, sa: Table): TableMatch =
-    TableMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
+    TableMatch(MatchType.SUCCESSFUL_MATCH, Some(ua), Some(sa))
 }

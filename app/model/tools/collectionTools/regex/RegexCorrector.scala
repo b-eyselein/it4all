@@ -8,16 +8,12 @@ import scala.util.matching.Regex
 import scala.util.matching.Regex.{Match => RegexMatch}
 
 final case class RegexMatchMatch(
+  matchType: MatchType,
   userArg: Option[RegexMatch],
-  sampleArg: Option[RegexMatch],
-  analysisResult: GenericAnalysisResult
-) extends Match[RegexMatch, GenericAnalysisResult] {
+  sampleArg: Option[RegexMatch]
+) extends Match[RegexMatch]
 
-  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
-
-}
-
-object RegexMatchMatcher extends Matcher[RegexMatch, GenericAnalysisResult, RegexMatchMatch] {
+object RegexMatchMatcher extends Matcher[RegexMatch,  RegexMatchMatch] {
 
   override protected val matchName        : String = "RegexMatches"
   override protected val matchSingularName: String = "RegexMatch"
@@ -26,13 +22,13 @@ object RegexMatchMatcher extends Matcher[RegexMatch, GenericAnalysisResult, Rege
     t1.source == t2.source && t1.start == t2.start && t1.end == t2.end
 
   override protected def instantiateOnlySampleMatch(sa: RegexMatch): RegexMatchMatch =
-    RegexMatchMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+    RegexMatchMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
 
   override protected def instantiateOnlyUserMatch(ua: RegexMatch): RegexMatchMatch =
-    RegexMatchMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
+    RegexMatchMatch(MatchType.ONLY_USER, Some(ua), None)
 
   override protected def instantiateCompleteMatch(ua: RegexMatch, sa: RegexMatch): RegexMatchMatch =
-    RegexMatchMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
+    RegexMatchMatch(MatchType.SUCCESSFUL_MATCH, Some(ua), Some(sa))
 }
 
 object RegexCorrector {

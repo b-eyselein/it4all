@@ -7,12 +7,10 @@ import net.sf.jsqlparser.schema.Column
 
 
 final case class GroupByMatch(
+  matchType: MatchType,
   userArg: Option[Expression],
-  sampleArg: Option[Expression],
-  analysisResult: GenericAnalysisResult
-) extends Match[Expression, GenericAnalysisResult] {
-
-  override val maybeAnalysisResult: Option[GenericAnalysisResult] = Some(analysisResult)
+  sampleArg: Option[Expression]
+) extends Match[Expression] {
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
@@ -24,7 +22,7 @@ final case class GroupByMatch(
 }
 
 
-object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupByMatch] {
+object GroupByMatcher extends Matcher[Expression, GroupByMatch] {
 
   override protected val matchName: String = "Group Bys"
 
@@ -40,11 +38,11 @@ object GroupByMatcher extends Matcher[Expression, GenericAnalysisResult, GroupBy
 
 
   override protected def instantiateOnlySampleMatch(sa: Expression): GroupByMatch =
-    GroupByMatch(None, Some(sa), GenericAnalysisResult(MatchType.ONLY_SAMPLE))
+    GroupByMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
 
   override protected def instantiateOnlyUserMatch(ua: Expression): GroupByMatch =
-    GroupByMatch(Some(ua), None, GenericAnalysisResult(MatchType.ONLY_USER))
+    GroupByMatch(MatchType.ONLY_USER, Some(ua), None)
 
   override protected def instantiateCompleteMatch(ua: Expression, sa: Expression): GroupByMatch =
-    GroupByMatch(Some(ua), Some(sa), GenericAnalysisResult(MatchType.SUCCESSFUL_MATCH))
+    GroupByMatch(MatchType.SUCCESSFUL_MATCH, Some(ua), Some(sa))
 }

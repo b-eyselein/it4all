@@ -4,7 +4,7 @@ import model.core.result.{EvaluationResult, SuccessType}
 import model.points._
 
 
-final case class MatchingResult[T, AR <: AnalysisResult, M <: Match[T, AR]](
+final case class MatchingResult[T, M <: Match[T]](
   matchName: String,
   matchSingularName: String,
   allMatches: Seq[M],

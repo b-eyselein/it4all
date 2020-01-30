@@ -56,10 +56,11 @@ object ElementLineMatch {
 }
 
 final case class ElementLineMatch(
+  matchType: MatchType,
   userArg: Option[ElementLine],
   sampleArg: Option[ElementLine],
   maybeAnalysisResult: Option[ElementLineAnalysisResult]
-) extends Match[ElementLine, ElementLineAnalysisResult] with XmlEvaluationResult {
+) extends Match[ElementLine] with XmlEvaluationResult {
 
   import ElementLineMatch._
 
