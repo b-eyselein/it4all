@@ -1,15 +1,22 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {IUmlAssociation, IUmlAssociationMatch, MatchType, UmlMultiplicity} from '../../uml-interfaces';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {IUmlAssociation, IUmlAssociationMatch, UmlMultiplicity} from '../../uml-interfaces';
 
 function printCardinality(c: UmlMultiplicity): string {
-  return c === 'UNBOUND' ? '*' : '1';
+  switch (c) {
+    case 'UNBOUND':
+      return '*';
+    case 'SINGLE':
+      return '1';
+    default:
+      return 'ERROR!';
+  }
 }
 
 @Component({
   selector: 'it4all-uml-assoc-match',
   templateUrl: './uml-assoc-match.component.html'
 })
-export class UmlAssocMatchComponent implements OnInit {
+export class UmlAssocMatchComponent implements OnChanges {
 
   @Input() assocMatch: IUmlAssociationMatch;
 
@@ -20,12 +27,17 @@ export class UmlAssocMatchComponent implements OnInit {
 
   gottenCardinalities = '';
 
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges): void {
     this.isCorrect = this.assocMatch.matchType === 'SUCCESSFUL_MATCH';
 
     if (this.assocMatch.userArg && this.assocMatch.sampleArg) {
-      this.gottenCardinalities = printCardinality(this.assocMatch.userArg.firstMult) + ' : ' + printCardinality(this.assocMatch.sampleArg.secondMult);
-      this.assocTypeCorrect = this.assocMatch.userArg.assocType === this.assocMatch.sampleArg.assocType;
+      const firstMult = printCardinality(this.assocMatch.userArg.firstMult);
+      const secondMult = printCardinality(this.assocMatch.userArg.secondMult);
+
+      this.gottenCardinalities = firstMult + ' : ' + secondMult;
+
+      this.assocTypeCorrect = this.assocMatch.maybeAnalysisResult.assocTypeEqual;
+
       this.cardsCorrect = this.cardinalitiesCorrect(this.assocMatch.userArg, this.assocMatch.sampleArg);
     }
   }
@@ -54,11 +66,7 @@ export class UmlAssocMatchComponent implements OnInit {
 
 
   cardinalitiesCorrect(userAssoc: IUmlAssociation, sampleAssoc: IUmlAssociation): boolean {
-    if (userAssoc.firstEnd === sampleAssoc.firstEnd) {
-      return userAssoc.firstMult === sampleAssoc.firstMult && userAssoc.secondMult === sampleAssoc.secondMult;
-    } else {
-      return userAssoc.firstMult === sampleAssoc.secondMult && userAssoc.secondMult === sampleAssoc.firstMult;
-    }
+    return this.assocMatch.maybeAnalysisResult.multiplicitiesEqual;
   }
 
   get correctCardinalities(): string {

@@ -1,18 +1,18 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {IUmlImplementationMatch} from '../../uml-interfaces';
 
 @Component({
   selector: 'it4all-uml-impl-match',
   templateUrl: './uml-impl-match.component.html'
 })
-export class UmlImplMatchComponent implements OnInit {
+export class UmlImplMatchComponent implements OnChanges {
 
   @Input() implMatch: IUmlImplementationMatch;
 
   isCorrect = false;
   directionCorrect = false;
 
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges): void {
     this.isCorrect = this.implMatch.matchType === 'SUCCESSFUL_MATCH';
 
     if (this.implMatch.userArg && this.implMatch.sampleArg) {

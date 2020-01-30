@@ -37,10 +37,14 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
     }
   }
 
-  protected correctAbstract(exercise: IExercise, part: ToolPart, logResult: boolean = false): void {
+  protected correctAbstract(exercise: IExercise, part: ToolPart, logResult: boolean = false, logSolution: boolean = false): void {
     this.isCorrecting = true;
 
     const solution: SolutionType = this.getSolution();
+
+    if (logSolution) {
+      console.info(JSON.stringify(solution, null, 2));
+    }
 
     // noinspection JSIgnoredPromiseFromCall
     this.dexieService.upsertSolution<SolutionType>(exercise, part.id, solution);

@@ -3,7 +3,6 @@
     <div class="column is-three-fifths">
       <div id="myPaper"></div>
 
-
       <ng-container *ngIf="debug">
         <br>
 
@@ -16,7 +15,6 @@
           </div>
         </div>
       </ng-container>
-
 
     </div>
     <div class="column">
@@ -68,17 +66,17 @@
         </it4all-tab>
       </it4all-tabs>
 
-
       <ng-container *ngIf="editedClass">
         <hr>
 
-        <it4all-uml-class-edit [editedClass]="editedClass"></it4all-uml-class-edit>
+        <it4all-uml-class-edit [editedClass]="editedClass" (cancel)="editedClass = undefined"></it4all-uml-class-edit>
       </ng-container>
 
       <ng-container *ngIf="editedAssociation">
         <hr>
 
-        <it4all-uml-assoc-edit [editedAssociation]="editedAssociation"></it4all-uml-assoc-edit>
+        <it4all-uml-assoc-edit [editedAssociation]="editedAssociation"
+                               (cancel)="editedAssociation = undefined"></it4all-uml-assoc-edit>
       </ng-container>
 
     </div>

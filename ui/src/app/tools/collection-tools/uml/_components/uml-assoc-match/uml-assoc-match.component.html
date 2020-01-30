@@ -11,7 +11,7 @@
       </li>
       <li
         [ngClass]="cardsCorrect ? 'has-text-dark-success' : 'has-text-danger'">
-        Die Kardinalitäten der Assoziationen <code>{{gottenCardinalities}}</code> waren {{cardsCorrect ? '' : 'nicht'}}
+        Die Kardinalitäten der Assoziation <code>{{gottenCardinalities}}</code> waren {{cardsCorrect ? '' : 'nicht'}}
         korrekt.
         <ng-container *ngIf="!cardsCorrect">Erwartet wurde {{correctCardinalities}}</ng-container>
       </li>

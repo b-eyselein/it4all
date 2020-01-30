@@ -57,10 +57,8 @@ export function addImplementationToGraph(subClass: MyJointClass, superClass: MyJ
 }
 
 export function addAssociationToGraph(
-  firstEnd: MyJointClass,
-  firstMult: string,
-  secondEnd: MyJointClass,
-  secondMult: string,
+  firstEnd: MyJointClass, firstMult: string,
+  secondEnd: MyJointClass, secondMult: string,
   graph: joint.dia.Graph
 ): void {
   const config = {
@@ -72,7 +70,5 @@ export function addAssociationToGraph(
     ]
   };
 
-  graph.addCell(
-    new joint.shapes.uml.Association(config)
-  );
+  graph.addCell(new joint.shapes.uml.Association(config));
 }

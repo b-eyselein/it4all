@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MyJointClass} from '../../_model/joint-class-diag-elements';
 import {IUmlAttribute} from '../../uml-interfaces';
 
@@ -12,12 +12,12 @@ export class UmlClassEditComponent {
   readonly umlTypes = ['String', 'int', 'double', 'char', 'boolean', 'void'];
 
   @Input() editedClass: MyJointClass;
+  @Output() cancel = new EventEmitter<void>();
 
   removeAttribute(attr: IUmlAttribute): void {
     const newAttributes = this.editedClass.getAttributes().filter((a) => a !== attr);
-    this.editedClass.setAttributes(newAttributes);
 
-    console.info(this.editedClass.getAttributes());
+    this.editedClass.setAttributes(newAttributes);
   }
 
 }

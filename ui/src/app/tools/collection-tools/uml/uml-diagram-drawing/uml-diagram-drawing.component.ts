@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {IExercise} from '../../../../_interfaces/models';
-import {MyJointClass} from '../_model/joint-class-diag-elements';
+import {isAssociation, isImplementation, isMyJointClass, MyJointClass} from '../_model/joint-class-diag-elements';
 import {
   getUmlExerciseTextParts,
   SelectableClass,
@@ -9,15 +9,9 @@ import {
   UmlMemberAllocationPart
 } from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
-import {IUmlClassDiagram, IUmlCompleteResult, IUmlExerciseContent} from '../uml-interfaces';
+import {IUmlCompleteResult, IUmlExerciseContent} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
-import {
-  ExportedUmlClassDiagram,
-  isAssociation,
-  isImplementation,
-  umlAssocfromConnection,
-  umlImplfromConnection
-} from '../_model/my-uml-interfaces';
+import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
 
 import * as joint from 'jointjs';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
@@ -25,6 +19,7 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
+
 
 enum CreatableClassDiagramObject {
   Class,
@@ -53,7 +48,7 @@ interface SelectableClassDiagramObject {
     }
   `]
 })
-export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassDiagram, IUmlCompleteResult> implements OnInit {
+export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUmlClassDiagram, IUmlCompleteResult> implements OnInit {
 
   readonly nextPart = UmlMemberAllocationPart;
 
@@ -75,8 +70,6 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassD
   creatableClassDiagramObjects: SelectableClassDiagramObject[];
 
   corrected = false;
-
-  model: IUmlClassDiagram;
 
   readonly debug = !environment.production;
 
@@ -109,13 +102,42 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassD
     this.createPaperEvents(this.paper);
 
     // load classes
-    const sample: IUmlClassDiagram = (this.exercise.content as IUmlExerciseContent).sampleSolutions[0].sample as IUmlClassDiagram;
-    for (const clazz of sample.classes) {
-      addClassToGraph(clazz.name, this.paper);
+
+    this.loadOldSolutionAbstract(this.exercise, this.part)
+      .then((oldSol) => {
+        if (oldSol) {
+          this.loadClassDiagram(oldSol);
+        } else {
+          const exContent = this.exercise.content as IUmlExerciseContent;
+          this.loadClassDiagram(exContent.sampleSolutions[0].sample as ExportedUmlClassDiagram);
+        }
+      });
+  }
+
+  loadClassDiagram(cd: ExportedUmlClassDiagram): void {
+    for (const clazz of cd.classes) {
+      addClassToGraph(clazz.name, this.paper, clazz.position, clazz.attributes, clazz.methods);
     }
 
-    this.model = sample;
+    const allCells: MyJointClass[] = this.graph.getCells().filter(isMyJointClass);
 
+    for (const assoc of cd.associations) {
+      addAssociationToGraph(
+        allCells.find((c) => c.getClassName() === assoc.firstEnd),
+        assoc.firstMult === 'UNBOUND' ? '*' : '1',
+        allCells.find((c) => c.getClassName() === assoc.secondEnd),
+        assoc.secondMult === 'UNBOUND' ? '*' : '1',
+        this.graph
+      );
+    }
+
+    for (const impl of cd.implementations) {
+      addImplementationToGraph(
+        allCells.find((c) => c.getClassName() === impl.subClass),
+        allCells.find((c) => c.getClassName() === impl.superClass),
+        this.graph
+      );
+    }
   }
 
   createPaperEvents(paper: joint.dia.Paper): void {
@@ -123,14 +145,13 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassD
         const selectedObjectToCreate: SelectableClassDiagramObject =
           this.creatableClassDiagramObjects.find((scdo) => scdo.selected);
 
-        if (CreatableClassDiagramObject.Class === selectedObjectToCreate.key) {
+        if (selectedObjectToCreate && CreatableClassDiagramObject.Class === selectedObjectToCreate.key) {
           addClassToGraph('Klasse 1', paper, {x, y});
         }
       }
     );
 
     paper.on('cell:pointerclick', (cellView: joint.dia.CellView, event: joint.dia.Event /*, x: number, y: number*/) => {
-
       if (cellView.model instanceof MyJointClass) {
         const selectedObjectToCreate: SelectableClassDiagramObject =
           this.creatableClassDiagramObjects.find((scdo) => scdo.selected);
@@ -159,7 +180,7 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassD
       }
     });
 
-    paper.on('cell:pointerdblclick', (cellView: joint.dia.CellView/*, event: joint.dia.Event, x: number, y: number*/) => {
+    paper.on('cell:contextmenu', (cellView: joint.dia.CellView/*, event: joint.dia.Event, x: number, y: number*/) => {
       if (this.withHelp) {
         if (cellView.model instanceof MyJointClass) {
           // Cannot change classes
@@ -207,12 +228,12 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassD
         addClassToGraph(clazz.name, this.paper, clazz.position, clazz.attributes || []);
       }
 
-      for (const impl of loaded.implementations) {
-        const allCells = this.graph.getCells();
+      const allCells = this.graph.getCells().filter(isMyJointClass);
 
+      for (const impl of loaded.implementations) {
         addImplementationToGraph(
-          allCells.find((c) => (c instanceof MyJointClass) && c.getClassName() === impl.subClass) as MyJointClass,
-          allCells.find((c) => (c instanceof MyJointClass) && c.getClassName() === impl.superClass) as MyJointClass,
+          allCells.find((c) => c.getClassName() === impl.subClass),
+          allCells.find((c) => c.getClassName() === impl.superClass),
           this.graph
         );
       }
@@ -221,23 +242,19 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<IUmlClassD
     fileReader.readAsText(files.item(0));
   }
 
-  protected getSolution(): IUmlClassDiagram {
+  protected getSolution(): ExportedUmlClassDiagram {
     return {
       classes: this.graph.getCells()
-        .map((cell) => (cell instanceof MyJointClass) ? cell.getAsUmlClass() : null)
-        .filter((c) => c !== null),
-      associations: this.graph.getLinks()
-        .filter(isAssociation)
-        .map((link) => umlAssocfromConnection(this.graph, link)),
-      implementations: this.graph.getLinks()
-        .filter(isImplementation)
-        .map((link) => umlImplfromConnection(this.graph, link))
+        .filter(isMyJointClass)
+        .map((cell) => cell.getAsUmlClass()),
+      associations: this.graph.getLinks().filter(isAssociation).map(umlAssocfromConnection),
+      implementations: this.graph.getLinks().filter(isImplementation).map(umlImplfromConnection)
     };
   }
 
-
   correct(): void {
     super.correctAbstract(this.exercise, this.part);
+    this.corrected = true;
   }
 
   showSampleSolution(): void {

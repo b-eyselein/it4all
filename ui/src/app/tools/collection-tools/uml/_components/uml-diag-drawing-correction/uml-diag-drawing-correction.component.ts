@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {
   IAssociationMatchingResult,
   IImplementationMatchingResult,
@@ -11,24 +11,20 @@ import {
   selector: 'it4all-uml-diag-drawing-correction',
   templateUrl: './uml-diag-drawing-correction.component.html'
 })
-export class UmlDiagDrawingCorrectionComponent implements OnInit {
+export class UmlDiagDrawingCorrectionComponent implements OnChanges {
 
   @Input() result: IUmlCompleteResult;
 
   assocResultSuccessful = false;
   implResultSuccessful = false;
 
-  ngOnInit() {
-    console.info(JSON.stringify(this.result, null, 2));
-
+  ngOnChanges(changes: SimpleChanges): void {
     if (this.result.assocResult) {
       this.assocResultSuccessful = this.associationResultSuccessful(this.result.assocResult);
-      console.info(this.assocResultSuccessful);
     }
 
     if (this.result.implResult) {
       this.implResultSuccessful = this.implementationResultSuccessful(this.result.implResult);
-      console.info(this.implResultSuccessful);
     }
   }
 

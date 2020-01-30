@@ -1,4 +1,12 @@
-import {IUmlAssociation, IUmlAttribute, IUmlClass, IUmlImplementation, IUmlMethod, UmlAssociationType} from '../uml-interfaces';
+import {
+  IUmlAssociation,
+  IUmlAttribute,
+  IUmlClass,
+  IUmlImplementation,
+  IUmlMethod,
+  UmlAssociationType,
+  UmlMultiplicity
+} from '../uml-interfaces';
 import * as joint from 'jointjs';
 import {MyJointClass} from './joint-class-diag-elements';
 
@@ -11,10 +19,7 @@ export interface ExportedUmlClassDiagram {
 }
 
 export interface ExportedUmlClass extends IUmlClass {
-  position: { x: number, y: number };
-
-  attributes: IUmlAttribute[];
-  methods: IUmlMethod[];
+  position?: { x: number, y: number };
 }
 
 export function buildMethodString(cm: IUmlMethod): string {
@@ -66,40 +71,25 @@ function getTypeName(type: string): string {
   }
 }
 
-
-function getClassNameFromCellId(graph: joint.dia.Graph, id: string): string {
-  return (graph.getCell(id) as MyJointClass).getClassName();
-}
-
-function getMultiplicity(label): 'SINGLE' | 'UNBOUND' {
+export function getMultiplicity(label): UmlMultiplicity {
   return label.attrs.text.text === '1' ? 'SINGLE' : 'UNBOUND';
 }
 
 
-export function umlImplfromConnection(graph: joint.dia.Graph, conn: joint.dia.Link): IUmlImplementation {
+export function umlImplfromConnection(conn: joint.dia.Link): IUmlImplementation {
   return {
-    subClass: getClassNameFromCellId(graph, conn.attributes.source.id),
-    superClass: getClassNameFromCellId(graph, conn.attributes.target.id)
+    subClass: (conn.getSourceCell() as MyJointClass).getClassName(),
+    superClass: (conn.getTargetCell() as MyJointClass).getClassName()
   };
 }
 
-export function umlAssocfromConnection(graph: joint.dia.Graph, conn: joint.dia.Link): IUmlAssociation {
+export function umlAssocfromConnection(conn: joint.dia.Link): IUmlAssociation {
   return {
     assocType: getTypeName(conn.attributes.type) as UmlAssociationType,
     assocName: '',        // TODO: name of association!?!
-    firstEnd: getClassNameFromCellId(graph, conn.attributes.source.id),
+    firstEnd: (conn.getSourceCell() as MyJointClass).getClassName(),
     firstMult: getMultiplicity(conn.attributes.labels[0]),
-    secondEnd: getClassNameFromCellId(graph, conn.attributes.target.id),
+    secondEnd: (conn.getTargetCell() as MyJointClass).getClassName(),
     secondMult: getMultiplicity(conn.attributes.labels[1])
   };
 }
-
-
-export function isAssociation(link: joint.dia.Link): link is joint.shapes.uml.Association {
-  return link instanceof joint.shapes.uml.Association;
-}
-
-export function isImplementation(link: joint.dia.Link): link is joint.shapes.uml.Implementation {
-  return link instanceof joint.shapes.uml.Implementation;
-}
-
