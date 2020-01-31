@@ -6,7 +6,7 @@ import {ToolPart} from '../../../../_interfaces/tool';
   selector: 'it4all-uml-exercise',
   templateUrl: './uml-exercise.component.html'
 })
-export class UmlExerciseComponent  {
+export class UmlExerciseComponent {
 
   @Input() exercise: IExercise;
   @Input() part: ToolPart;

@@ -9,6 +9,9 @@
   <it4all-uml-diagram-drawing *ngSwitchCase="'diagramDrawingHelp'" [exercise]="exercise" [part]="part">
   </it4all-uml-diagram-drawing>
 
+  <it4all-uml-member-allocation *ngSwitchCase="'memberAllocation'" [exercise]="exercise">
+  </it4all-uml-member-allocation>
+
   <p *ngSwitchDefault>{{part}}</p>
 
 </ng-container>

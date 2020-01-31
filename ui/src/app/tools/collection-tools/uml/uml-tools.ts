@@ -9,11 +9,11 @@ export const UmlDiagramDrawingHelpPart: ToolPart = {name: 'Diagramm zeichnen mit
 
 const UmlDiagramDrawingPart: ToolPart = {name: 'Diagramm zeichnen', id: 'diagramDrawing', disabled: true};
 
-export const UmlMemberAllocationPart: ToolPart = {name: 'TODO!', id: 'todo', disabled: true};
+export const UmlMemberAllocationPart: ToolPart = {name: 'Zuordnung der Attribute und Methoden', id: 'memberAllocation', disabled: true};
 
 export const UmlTool: CollectionTool = new class UmlToolClass extends CollectionTool {
   constructor() {
-    super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart, UmlDiagramDrawingPart, UmlDiagramDrawingHelpPart], 'beta');
+    super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart, UmlDiagramDrawingPart, UmlDiagramDrawingHelpPart, UmlMemberAllocationPart], 'beta');
   }
 }();
 
