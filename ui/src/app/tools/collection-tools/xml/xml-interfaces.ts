@@ -1,27 +1,35 @@
 
-export interface IXmlError {
-  errorType: XmlErrorType;
-  errorMessage: string;
-  line: number;
-  success: SuccessType;
-}
-
-
-export interface IElementLineMatch {
-  matchType: MatchType;
-  userArg?: ElementLine;
-  sampleArg?: ElementLine;
-  maybeAnalysisResult?: IElementLineAnalysisResult;
-}
-
-
 export interface IXmlSolution {
   document: string;
   grammar: string;
 }
 
-export type ElementLine = object;
-export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
+
+export interface IXmlCompleteResult {
+  successType: SuccessType;
+  documentResult: IXmlError[];
+  grammarResult?: IXmlGrammarResult;
+  points: IPoints;
+  maxPoints: IPoints;
+  solutionSaved: boolean;
+}
+
+
+export interface IElementLineAnalysisResult {
+  contentCorrect: boolean;
+  correctContent: string;
+  attributesCorrect: boolean;
+  correctAttributes: string;
+}
+
+
+export interface IElementLineMatch {
+  matchType: MatchType;
+  userArg?: IElementLine;
+  sampleArg?: IElementLine;
+  maybeAnalysisResult?: IElementLineAnalysisResult;
+}
+
 
 export interface IXmlExerciseContent {
   grammarDescription: string;
@@ -36,15 +44,6 @@ export interface IDTDParseException {
 }
 
 
-export interface IElementLineAnalysisResult {
-  matchType: MatchType;
-  contentCorrect: boolean;
-  correctContent: string;
-  attributesCorrect: boolean;
-  correctAttributes: string;
-}
-
-
 export interface ISampleSolution {
   id: number;
   sample: object;
@@ -55,20 +54,36 @@ export interface IPoints {
   quarters: number;
 }
 
+
+export interface IXmlError {
+  errorType: XmlErrorType;
+  errorMessage: string;
+  line: number;
+  success: SuccessType;
+}
+
+
+export interface IElementLineMatchingResult {
+  matchName: string;
+  matchSingularName: string;
+  allMatches: IElementLineMatch[];
+  points: number;
+  maxPoints: number;
+}
+
 export type XmlErrorType = ("FATAL" | "ERROR" | "WARNING");
 
 export interface IXmlGrammarResult {
   parseErrors: IDTDParseException[];
-  results: IElementLineMatch[];
+  results: IElementLineMatchingResult;
 }
 
 export type SuccessType = ("ERROR" | "NONE" | "PARTIALLY" | "COMPLETE");
 
-export interface IXmlCompleteResult {
-  successType: SuccessType;
-  documentResult: IXmlError[];
-  grammarResult?: IXmlGrammarResult;
-  points: IPoints;
-  maxPoints: IPoints;
-  solutionSaved: boolean;
+export interface IElementLine {
+  elementName: string;
+  elementDefinition: string;
+  attributeLists: object[];
 }
+
+export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");

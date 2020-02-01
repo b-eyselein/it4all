@@ -2,10 +2,8 @@ package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.model.ElementLine
 import model.core.matching.{MatchType, Matcher}
-import model.points._
 
 final case class ElementLineAnalysisResult(
-  matchType: MatchType,
   contentCorrect: Boolean,
   correctContent: String,
   attributesCorrect: Boolean,
@@ -13,11 +11,12 @@ final case class ElementLineAnalysisResult(
 ) {
 
   //  override def toJson: JsValue = XmlToolJsonProtocol.elementLineAnalysisResultWrites.writes(this)
-
-  def points: Points = addUp(Seq(contentCorrect, attributesCorrect).map {
-    case false => zeroPoints
-    case true  => singlePoint
-  })
+  /*
+    def points: Points = addUp(Seq(contentCorrect, attributesCorrect).map {
+      case false => zeroPoints
+      case true  => singlePoint
+    })
+   */
 
 }
 
@@ -53,7 +52,7 @@ object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineMatch] {
       MatchType.UNSUCCESSFUL_MATCH
     }
 
-    val ar = ElementLineAnalysisResult(matchType, contentCorrect, sa.elementDefinition.contentAsString, attributesCorrect, arg2Def.getOrElse("FEHLER!"))
+    val ar = ElementLineAnalysisResult(contentCorrect, sa.elementDefinition.contentAsString, attributesCorrect, arg2Def.getOrElse("FEHLER!"))
 
     ElementLineMatch(matchType, Some(ua), Some(sa), Some(ar))
   }

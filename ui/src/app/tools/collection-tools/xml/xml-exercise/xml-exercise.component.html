@@ -22,7 +22,7 @@
               </p>
             </ng-container>
             <ng-template #documentTextBlock>
-              TODO!
+              {{exercise.text}}
             </ng-template>
           </div>
 
@@ -63,42 +63,13 @@
               <!-- Grammar correction -->
 
               <div *ngFor="let parseError of result.grammarResult.parseErrors">
-                <div>Fehler beim Parse von &quot;<code>{{parseError.parsedLine}}</code>&quot;:</div>
+                <div>Fehler beim Parse von &quot;<code>{{parseError.parsedLine}}</code>&quot;:
+                </div>
                 <div class="has-text-danger">{{parseError.msg}}</div>
               </div>
 
-              <div *ngFor="let gr of result.grammarResult.results" class="content">
-
-                <ng-container [ngSwitch]="gr.matchType">
-                  <p *ngSwitchCase="'ONLY_SAMPLE'" class="has-text-danger">
-                    Die Definition des Elements <code>{{gr.sampleArg.name}}</code> fehlt!
-                  </p>
-                  <p *ngSwitchCase="'ONLY_USER'" class="has-text-danger">
-                    Die Definition des Elements <code>{{gr.userArg.name}}</code> ist falsch!
-                  </p>
-                  <p *ngSwitchCase="'SUCCESSFUL_MATCH'">
-                    Das Element <code>{{gr.userArg.name}} ist korrekt.</code>
-                  </p>
-                  <div *ngSwitchDefault class="has-text-danger">
-                    <p>Der Vergleich des Elements <code>{{gr.userArg.name}}</code> war nicht erfolgreich:</p>
-                    <ul>
-                      <li [ngClass]="gr.analysisResult.contentCorrect ? 'has-text-success': 'has-text-danger'">
-                        Der Inhalt des Elements war {{gr.analysisResult.contentCorrect ? '' : 'nicht'}} korrekt.
-                        <ng-container *ngIf="!gr.analysisResult.contentCorrect">
-                          Erwartet wurde <code>{{gr.analysisResult.correctContent}}</code>
-                        </ng-container>
-                      </li>
-                      <li [ngClass]="gr.analysisResult.attributesCorrect ? 'has-text-success' : 'has-text-danger'">
-                        Die Attribute des Elements waren {{gr.analysisResult.attributesCorrect ? '' : 'nicht'}} korrekt.
-                        <ng-container *ngIf="!gr.analysisResult.attributesCorrect">
-                          Erwartet wurde <code>{{gr.analysisResult.correctAttributes}}</code>
-                        </ng-container>
-                      </li>
-                    </ul>
-                  </div>
-
-                </ng-container>
-
+              <div *ngFor="let gr of result.grammarResult.results.allMatches" class="content">
+                <it4all-xml-element-line-match [match]="gr"></it4all-xml-element-line-match>
               </div>
 
             </ng-container>

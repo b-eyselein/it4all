@@ -39,17 +39,40 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
 
     const grammarFileName = `${this.exerciseContent.rootNode}.dtd`;
     this.grammarFile = {
-      name: grammarFileName, content: `<!ELEMENT ${this.exerciseContent.rootNode} (EMPTY)>`,
-      fileType: 'dtd', editable: this.isGrammarPart, resourcePath: grammarFileName
+      name: grammarFileName,
+      content: this.isGrammarPart ?
+        `<!ELEMENT ${this.exerciseContent.rootNode} (EMPTY)>`
+        : (this.exerciseContent.sampleSolutions[0].sample as IXmlSolution).grammar,
+      fileType: 'dtd',
+      editable: this.isGrammarPart,
+      resourcePath: grammarFileName
     };
 
     const documentFileName = `${this.exerciseContent.rootNode}.xml`;
     this.documentFile = {
-      name: documentFileName, content: '', fileType: 'xml',
-      editable: !this.isGrammarPart, resourcePath: documentFileName
+      name: documentFileName,
+      content: `
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ${this.exerciseContent.rootNode} SYSTEM "${this.exerciseContent.rootNode}.dtd">
+<${this.exerciseContent.rootNode}>
+</${this.exerciseContent.rootNode}>`.trim(),
+      fileType: 'xml',
+      editable: !this.isGrammarPart,
+      resourcePath: documentFileName
     };
 
     this.exerciseFiles = [this.grammarFile, this.documentFile];
+
+    this.loadOldSolutionAbstract(this.exercise, this.part)
+      .then((oldSol) => {
+        if (oldSol) {
+          this.grammarFile.content = oldSol.grammar;
+          this.documentFile.content = oldSol.document;
+
+          // do not delete or else editor does not get updated...
+          this.exerciseFiles = [this.grammarFile, this.documentFile];
+        }
+      });
   }
 
   showSampleSolution(): void {
@@ -57,7 +80,7 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
   }
 
   correct(): void {
-    this.correctAbstract(this.exercise, this.part, true);
+    this.correctAbstract(this.exercise, this.part, true, true);
   }
 
   protected getSolution(): IXmlSolution {

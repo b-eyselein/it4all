@@ -66,10 +66,11 @@ final case class ElementLineMatch(
 
   //  override protected def descArgForJson(arg: ElementLine): JsValue = Json.obj(nameName -> arg.elementName)
 
-  override def success: SuccessType = if (maybeAnalysisResult.exists(_.matchType == MatchType.SUCCESSFUL_MATCH)) {
+  override def success: SuccessType = if (matchType == MatchType.SUCCESSFUL_MATCH) {
     SuccessType.COMPLETE
-  } else SuccessType.NONE
-
+  } else {
+    SuccessType.NONE
+  }
 
   override def maxPoints: Points = sampleArg match {
     case None     => zeroPoints

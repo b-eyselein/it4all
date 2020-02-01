@@ -3,6 +3,7 @@ package model.tools.collectionTools.xml
 import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
 import model.points.Points
+import model.tools.collectionTools.xml.XmlToolMain.ElementLineComparison
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
@@ -24,19 +25,24 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
 
   // Xml Grammar correction
 
-  private val xmlGrammarResultWrites: Writes[XmlGrammarResult] = {
-    implicit val dpew: Writes[DTDParseException] = Json.writes
-    implicit val elmw: Writes[ElementLineMatch]  = {
-      implicit val elw  : Writes[ElementLine]               = {
-        implicit val edw: Writes[ElementDefinition] = l => JsString(l.asString)
-        implicit val alw: Writes[AttributeList]     = l => JsString(l.asString)
-
-        Json.writes
-      }
-      implicit val elarw: Writes[ElementLineAnalysisResult] = Json.writes
+  private val elementLineMatchWrites: Writes[ElementLineMatch] = {
+    implicit val elw  : Writes[ElementLine]               = {
+      implicit val edw: Writes[ElementDefinition] = l => JsString(l.asString)
+      implicit val alw: Writes[AttributeList]     = l => JsString(l.asString)
 
       Json.writes
     }
+    implicit val elarw: Writes[ElementLineAnalysisResult] = Json.writes
+
+    Json.writes
+  }
+
+  private val xmlGrammarResultWrites: Writes[XmlGrammarResult] = {
+    implicit val dpew: Writes[DTDParseException] = Json.writes
+
+    implicit val elementLineComparisonWrites: Writes[ElementLineComparison] =
+      matchingResultWrites(elementLineMatchWrites)
+
 
     Json.writes
   }

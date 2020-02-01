@@ -1,3 +1,4 @@
+
 export interface IUmlClassDiagram {
   classes: IUmlClass[];
   associations: IUmlAssociation[];
@@ -101,7 +102,7 @@ export interface IUmlCompleteResult {
   solutionSaved: boolean;
 }
 
-export type UmlClassType = ('CLASS' | 'INTERFACE' | 'ABSTRACT');
+export type UmlClassType = ("CLASS" | "INTERFACE" | "ABSTRACT");
 
 export interface IAttributeMatchingResult {
   matchName: string;
@@ -117,7 +118,7 @@ export interface IKeyValueObject {
   value: string;
 }
 
-export type UmlMultiplicity = ('SINGLE' | 'UNBOUND');
+export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
 
 export interface IUmlMethodMatch {
   matchType: MatchType;
@@ -170,8 +171,8 @@ export interface IUmlAttributeMatch {
   maybeAnalysisResult?: IUmlAttributeAnalysisResult;
 }
 
-export type UmlVisibility = ('PUBLIC' | 'PACKAGE' | 'PROTECTED' | 'PRIVATE');
-export type MatchType = ('SUCCESSFUL_MATCH' | 'PARTIAL_MATCH' | 'UNSUCCESSFUL_MATCH' | 'ONLY_USER' | 'ONLY_SAMPLE');
+export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
+export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
 
 export interface IUmlClassMatchAnalysisResult {
   classTypeCorrect: boolean;
@@ -207,7 +208,7 @@ export interface IUmlExerciseContent {
   sampleSolutions: ISampleSolution[];
 }
 
-export type UmlAssociationType = ('ASSOCIATION' | 'AGGREGATION' | 'COMPOSITION');
+export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");
 
 export interface IMethodMatchingResult {
   matchName: string;

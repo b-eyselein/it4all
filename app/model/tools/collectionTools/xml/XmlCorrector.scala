@@ -1,12 +1,15 @@
 package model.tools.collectionTools.xml
 
 import better.files.File
+import de.uniwue.dtd.model.ElementLine
 import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.xml.parsers.DocumentBuilderFactory
 import model.core.Levenshtein
+import model.core.matching.MatchingResult
 import model.core.result.SuccessType
 import model.points._
 import model.tools.collectionTools.SampleSolution
+import model.tools.collectionTools.xml.XmlToolMain.ElementLineComparison
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 
 import scala.collection.mutable
@@ -105,11 +108,11 @@ object XmlCorrector {
 
         val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
 
-        val allMatches = DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines).allMatches
+        val matchingResult: ElementLineComparison = DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines)
 
-        val points = addUp(allMatches.map(_.points))
+        val points = addUp(matchingResult.allMatches.map(_.points))
 
-        val maxPoints = addUp(allMatches.map(_.maxPoints))
+        val maxPoints = addUp(matchingResult.allMatches.map(_.maxPoints))
 
         val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
           case it if 0 <= it && it <= 0.5 => SuccessType.NONE
@@ -121,7 +124,7 @@ object XmlCorrector {
         XmlCompleteResult(
           successType,
           documentResult = Seq.empty,
-          grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, allMatches)),
+          grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult)),
           points, maxPoints, solutionSaved
         )
       }

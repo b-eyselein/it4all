@@ -1,6 +1,8 @@
 package model.tools.collectionTools.xml
 
+import de.uniwue.dtd.model.ElementLine
 import model.User
+import model.core.matching.MatchingResult
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -13,6 +15,8 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
   override type ExContentType = XmlExerciseContent
   override type SolType = XmlSolution
   override type CompResultType = XmlCompleteResult
+
+  type ElementLineComparison = MatchingResult[ElementLine, ElementLineMatch]
 
   // Other members
 
