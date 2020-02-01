@@ -32,11 +32,14 @@
                 Korrektur
               </button>
             </div>
+            <!--
+            FIXME: show sample solution for xml exercise!
             <div class="column">
               <button class="button is-primary is-fullwidth" (click)="showSampleSolution()" disabled>
                 Musterlösung anzeigen
               </button>
             </div>
+            -->
             <div class="column">
               <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
@@ -50,14 +53,14 @@
 
             <br>
 
-            <it4all-points-notification [points]="result.points" [maxPoints]="result.maxPoints">
+            <it4all-points-notification [points]="result.points" [maxPoints]="result.maxPoints" *ngIf="isGrammarPart">
             </it4all-points-notification>
 
             <br>
 
             <ng-container *ngIf="result.documentResult.length > 0">
               <!-- Document correction! -->
-
+              <it4all-xml-document-correction [result]="result.documentResult"></it4all-xml-document-correction>
             </ng-container>
             <ng-container *ngIf="result.grammarResult">
               <!-- Grammar correction -->

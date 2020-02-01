@@ -80,7 +80,7 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
   }
 
   correct(): void {
-    this.correctAbstract(this.exercise, this.part, true, true);
+    this.correctAbstract(this.exercise, this.part);
   }
 
   protected getSolution(): IXmlSolution {

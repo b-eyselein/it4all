@@ -36,6 +36,7 @@ import { UmlAssocMatchComponent } from './uml/_components/uml-assoc-match/uml-as
 import { UmlImplMatchComponent } from './uml/_components/uml-impl-match/uml-impl-match.component';
 import { UmlMemberAllocationComponent } from './uml/uml-member-allocation/uml-member-allocation.component';
 import { XmlElementLineMatchComponent } from './xml/_components/xml-element-line-match/xml-element-line-match.component';
+import { XmlDocumentCorrectionComponent } from './xml/_components/xml-document-correction/xml-document-correction.component';
 
 
 @NgModule({
@@ -72,7 +73,9 @@ import { XmlElementLineMatchComponent } from './xml/_components/xml-element-line
 
     UmlMemberAllocationComponent,
 
-    XmlElementLineMatchComponent
+    XmlElementLineMatchComponent,
+
+    XmlDocumentCorrectionComponent
   ],
   providers: [ApiService],
   imports: [
