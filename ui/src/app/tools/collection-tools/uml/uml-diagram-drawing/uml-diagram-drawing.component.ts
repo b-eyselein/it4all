@@ -9,7 +9,7 @@ import {
   UmlMemberAllocationPart
 } from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
-import {IUmlCompleteResult, IUmlExerciseContent} from '../uml-interfaces';
+import {IUmlClassDiagram, IUmlCompleteResult, IUmlExerciseContent} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
 
@@ -244,21 +244,20 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUm
 
   protected getSolution(): ExportedUmlClassDiagram {
     return {
-      classes: this.graph.getCells()
-        .filter(isMyJointClass)
-        .map((cell) => cell.getAsUmlClass()),
+      classes: this.graph.getCells().filter(isMyJointClass).map((cell) => cell.getAsUmlClass()),
       associations: this.graph.getLinks().filter(isAssociation).map(umlAssocfromConnection),
       implementations: this.graph.getLinks().filter(isImplementation).map(umlImplfromConnection)
     };
   }
 
+  get sampleSolutions(): IUmlClassDiagram[] {
+    const exContent = this.exercise.content as IUmlExerciseContent;
+    return exContent.sampleSolutions.map((sample) => sample.sample);
+  }
+
   correct(): void {
     super.correctAbstract(this.exercise, this.part);
     this.corrected = true;
-  }
-
-  showSampleSolution(): void {
-    console.info('TODO: show sample solution...');
   }
 
 }

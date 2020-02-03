@@ -14,8 +14,6 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
 
   @Input() exercise: IExercise;
 
-  exerciseContent: IRegexExerciseContent;
-
   solution = '';
 
   showInfo = false;
@@ -25,14 +23,17 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
   }
 
   ngOnInit(): void {
-    this.exerciseContent = this.exercise.content as IRegexExerciseContent;
-
     this.loadOldSolutionAbstract(this.exercise, RegexExercisePart)
       .then((oldSol) => this.solution = oldSol ? oldSol : '');
   }
 
   protected getSolution(): string {
     return this.solution;
+  }
+
+  get sampleSolutions(): string[] {
+    const exContent = this.exercise.content as IRegexExerciseContent;
+    return exContent.sampleSolutions.map((sample) => sample.sample);
   }
 
   correct(): void {
@@ -42,10 +43,6 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
     }
 
     this.correctAbstract(this.exercise, RegexExercisePart);
-  }
-
-  triggerSampleSolutions(): void {
-    this.displaySampleSolutions = !this.displaySampleSolutions;
   }
 
   // FIXME: make directive?

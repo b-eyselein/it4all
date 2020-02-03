@@ -51,7 +51,7 @@ object UmlTSTypes extends ToolTSInterfaceTypes {
   }
 
   private val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
-    implicit val usst: TSIType[SampleSolution[UmlClassDiagram]] = sampleSolutionTSI[UmlClassDiagram](umlClassDiagramTSI)
+    implicit val usst: TSIType[SampleSolution[UmlClassDiagram]] = sampleSolutionTSI("Uml", umlClassDiagramTSI)
     implicit val mt  : TSType[Map[String, String]]              = stringMapTsType
 
     TSType.fromCaseClass

@@ -13,7 +13,7 @@ object RegexTSTypes extends ToolTSInterfaceTypes {
   private val regexCorrectionTypeTsType: TSType[RegexCorrectionType] = enumTsType(RegexCorrectionTypes)
 
   private val regexExerciseContentTSI: TSIType[RegexExerciseContent] = {
-    implicit val ssst : TSIType[SampleSolution[String]]  = sampleSolutionTSI[String](TSType(TSString))
+    implicit val ssst : TSIType[SampleSolution[String]]  = sampleSolutionTSI("Regex", TSType(TSString))
     implicit val rmtdt: TSIType[RegexMatchTestData]      = TSType.fromCaseClass
     implicit val retdt: TSIType[RegexExtractionTestData] = TSType.fromCaseClass
     implicit val rctt : TSType[RegexCorrectionType]      = regexCorrectionTypeTsType

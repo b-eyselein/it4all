@@ -8,10 +8,6 @@ import {ToolPart} from '../../../_interfaces/tool';
 
 export abstract class ComponentWithExercise<SolutionType, ResultType> {
 
-  // FIXME: Use?
-  //  exercise: IExercise;
-  //  part: ToolPart;
-
   isCorrecting = false;
 
   result: ResultType | undefined;
@@ -21,7 +17,6 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
   @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
-
   readonly exerciseTextTabTitle = 'Aufgabenstellung';
   readonly correctionTabTitle = 'Korrektur';
   readonly sampleSolutionsTabTitle = 'Musterlösungen';
@@ -29,8 +24,12 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
   protected constructor(protected apiService: ApiService, protected dexieService: DexieService) {
   }
 
+  toggleSampleSolutions(): void {
+    this.displaySampleSolutions = !this.displaySampleSolutions;
+  }
+
   protected activateCorrectionTab(): void {
-    const correctionTab = this.tabComponents.toArray().find((v) => v.title === this.correctionTabTitle);
+    const correctionTab = this.tabComponents.toArray().find((tab) => tab.title === this.correctionTabTitle);
 
     if (correctionTab) {
       this.tabsComponent.selectTab(correctionTab);
@@ -67,5 +66,7 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
   }
 
   protected abstract getSolution(): SolutionType;
+
+  abstract get sampleSolutions(): SolutionType[];
 
 }

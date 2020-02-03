@@ -6,6 +6,12 @@ export interface ISiteSpec {
 }
 
 
+export interface IWebSampleSolution {
+  id: number;
+  sample: IExerciseFile[];
+}
+
+
 export interface IGradedJsHtmlElementSpecResult {
   id: number;
   success: SuccessType;
@@ -46,15 +52,6 @@ export interface IJsHtmlElementSpec {
 }
 
 
-export interface IWebCompleteResult {
-  gradedHtmlTaskResults: IGradedHtmlTaskResult[];
-  gradedJsTaskResults: IGradedJsTaskResult[];
-  points: IPoints;
-  maxPoints: IPoints;
-  solutionSaved: boolean;
-}
-
-
 export interface IHtmlTask {
   id: number;
   text: string;
@@ -83,23 +80,8 @@ export interface IGradedJsActionResult {
 }
 
 
-export interface ISampleSolution {
-  id: number;
-  sample: object;
-}
-
-
 export interface IPoints {
   quarters: number;
-}
-
-
-export interface IWebExerciseContent {
-  htmlText?: string;
-  jsText?: string;
-  siteSpec: ISiteSpec;
-  files: IExerciseFile[];
-  sampleSolutions: ISampleSolution[];
 }
 
 
@@ -134,3 +116,20 @@ export interface IJsAction {
 }
 
 export type SuccessType = ("ERROR" | "NONE" | "PARTIALLY" | "COMPLETE");
+
+export interface IWebCompleteResult {
+  gradedHtmlTaskResults: IGradedHtmlTaskResult[];
+  gradedJsTaskResults: IGradedJsTaskResult[];
+  points: IPoints;
+  maxPoints: IPoints;
+  solutionSaved: boolean;
+}
+
+
+export interface IWebExerciseContent {
+  htmlText?: string;
+  jsText?: string;
+  siteSpec: ISiteSpec;
+  files: IExerciseFile[];
+  sampleSolutions: IWebSampleSolution[];
+}

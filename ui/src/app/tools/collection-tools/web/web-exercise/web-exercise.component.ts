@@ -37,12 +37,13 @@ export class WebExerciseComponent extends ComponentWithExercise<IExerciseFile[],
     this.correctAbstract(this.exercise, this.part);
   }
 
-  showSampleSolution(): void {
-    console.error('TODO: show sample solution...');
-  }
-
   protected getSolution(): IExerciseFile[] {
     return this.exerciseFiles;
+  }
+
+  get sampleSolutions(): IExerciseFile[][] {
+    const exContent = this.exercise.content as IWebExerciseContent;
+    return exContent.sampleSolutions.map((sample) => sample.sample);
   }
 
 }

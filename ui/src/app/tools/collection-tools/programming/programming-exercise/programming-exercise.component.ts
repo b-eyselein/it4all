@@ -23,11 +23,6 @@ export class ProgrammingExerciseComponent extends ComponentWithExercise<IProgSol
 
   exerciseFiles: IExerciseFile[] = [];
 
-  /*
-  @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
-  @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
-   */
-
   constructor(apiService: ApiService, dexieService: DexieService) {
     super(apiService, dexieService);
   }
@@ -64,21 +59,12 @@ export class ProgrammingExerciseComponent extends ComponentWithExercise<IProgSol
     };
   }
 
-  correct(): void {
-    this.correctAbstract(this.exercise, this.part);
+  get sampleSolutions(): IProgSolution[] {
+    return [];
   }
 
-
-  showSampleSolution(): void {
-    this.displaySampleSolutions = true;
-
-    if (this.tabsComponent) {
-      const sampleSolutionsTab = this.tabComponents.toArray().find((t) => t.title === this.sampleSolutionsTabTitle);
-      if (sampleSolutionsTab) {
-        sampleSolutionsTab.selectable = true;
-        this.tabsComponent.selectTab(sampleSolutionsTab);
-      }
-    }
+  correct(): void {
+    this.correctAbstract(this.exercise, this.part);
   }
 
 }

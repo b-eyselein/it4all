@@ -44,7 +44,10 @@ final case class Exercise(
 )
 
 
-final case class SampleSolution[SolType](id: Int, sample: SolType)
+final case class SampleSolution[SolType](
+  id: Int,
+  sample: SolType
+)
 
 trait ExerciseContent {
 
@@ -54,7 +57,13 @@ trait ExerciseContent {
 
 }
 
-final case class ExerciseFile(name: String, resourcePath: String, fileType: String, editable: Boolean, content: String)
+final case class ExerciseFile(
+  name: String,
+  resourcePath: String,
+  fileType: String,
+  editable: Boolean,
+  content: String
+)
 
 trait FileExerciseContent extends ExerciseContent {
 

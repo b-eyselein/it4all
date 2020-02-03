@@ -15,7 +15,7 @@
           <div class="notification is-light-grey">
             <ng-container *ngIf="part.id === 'grammar'; else documentTextBlock">
               <p class="has-text-weight-bold">Erstellen Sie eine DTD zu folgender Beschreibung:</p>
-              <p>{{exerciseContent.grammarDescription}}</p>
+              <p>{{grammarDescription}}</p>
               <p class="is-italic has-text-info">
                 Hinweis: Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen. Falls nichts anderes
                 angegeben ist, sollen die Elemente nur Text enthalten.
@@ -34,12 +34,7 @@
             </div>
             <!--
             FIXME: show sample solution for xml exercise!
-            <div class="column">
-              <button class="button is-primary is-fullwidth" (click)="showSampleSolution()" disabled>
-                Musterlösung anzeigen
-              </button>
-            </div>
-            -->
+           -->
             <div class="column">
               <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
@@ -78,6 +73,14 @@
             </ng-container>
 
           </ng-container>
+
+        </it4all-tab>
+        <it4all-tab [title]="sampleSolutionsTabTitle">
+          <div class="buttons">
+            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()" disabled>
+              Musterlösung {{displaySampleSolutions ? 'ausblenden' : 'anzeigen'}}
+            </button>
+          </div>
 
         </it4all-tab>
       </it4all-tabs>

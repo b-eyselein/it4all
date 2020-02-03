@@ -24,7 +24,7 @@ object WebTSTypes extends ToolTSInterfaceTypes {
     implicit val eft : TSIType[ExerciseFile]                      = exerciseFileTSI
     implicit val htt : TSIType[HtmlTask]                          = TSType.fromCaseClass[HtmlTask]
     implicit val jtt : TSIType[JsTask]                            = jsTaskTSType
-    implicit val fsst: TSIType[SampleSolution[Seq[ExerciseFile]]] = sampleSolutionTSI(TSType(TSArray(exerciseFileTSI.get)))
+    implicit val fsst: TSIType[SampleSolution[Seq[ExerciseFile]]] = sampleSolutionTSI("Web", TSType(TSArray(exerciseFileTSI.get)))
 
 
     TSType.fromCaseClass[WebExerciseContent]

@@ -1,10 +1,4 @@
 
-export interface IXmlSolution {
-  document: string;
-  grammar: string;
-}
-
-
 export interface IXmlCompleteResult {
   successType: SuccessType;
   documentResult: IXmlError[];
@@ -31,27 +25,21 @@ export interface IElementLineMatch {
 }
 
 
-export interface IXmlExerciseContent {
-  grammarDescription: string;
-  rootNode: string;
-  sampleSolutions: ISampleSolution[];
-}
-
-
 export interface IDTDParseException {
   msg: string;
   parsedLine: string;
 }
 
 
-export interface ISampleSolution {
-  id: number;
-  sample: object;
+export interface IPoints {
+  quarters: number;
 }
 
 
-export interface IPoints {
-  quarters: number;
+export interface IXmlExerciseContent {
+  grammarDescription: string;
+  rootNode: string;
+  sampleSolutions: IXmlSampleSolution[];
 }
 
 
@@ -69,6 +57,18 @@ export interface IElementLineMatchingResult {
   allMatches: IElementLineMatch[];
   points: number;
   maxPoints: number;
+}
+
+
+export interface IXmlSolution {
+  document: string;
+  grammar: string;
+}
+
+
+export interface IXmlSampleSolution {
+  id: number;
+  sample: IXmlSolution;
 }
 
 export type XmlErrorType = ("FATAL" | "ERROR" | "WARNING");

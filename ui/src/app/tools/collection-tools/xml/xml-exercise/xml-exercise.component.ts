@@ -10,6 +10,18 @@ import {IExerciseFile} from '../../web/web-interfaces';
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
 
+function getXmlGrammarContent(rootNode: string): string {
+  return `<!ELEMENT ${rootNode} (EMPTY)>`;
+}
+
+function getXmlDocumentContent(rootNode: string): string {
+  return `
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ${rootNode} SYSTEM "${rootNode}.dtd">
+<${rootNode}>
+</${rootNode}>`.trim();
+}
+
 @Component({
   selector: 'it4all-xml-exercise',
   templateUrl: './xml-exercise.component.html'
@@ -21,8 +33,6 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
 
   isGrammarPart: boolean;
 
-  exerciseContent: IXmlExerciseContent;
-
   grammarFile: IExerciseFile;
   documentFile: IExerciseFile;
 
@@ -33,29 +43,24 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
   }
 
   ngOnInit() {
-    this.exerciseContent = this.exercise.content as IXmlExerciseContent;
+    const exerciseContent = this.exercise.content as IXmlExerciseContent;
 
     this.isGrammarPart = this.part.id === 'grammar';
 
-    const grammarFileName = `${this.exerciseContent.rootNode}.dtd`;
+    const grammarFileName = `${exerciseContent.rootNode}.dtd`;
     this.grammarFile = {
       name: grammarFileName,
       content: this.isGrammarPart ?
-        `<!ELEMENT ${this.exerciseContent.rootNode} (EMPTY)>`
-        : (this.exerciseContent.sampleSolutions[0].sample as IXmlSolution).grammar,
+        getXmlGrammarContent(exerciseContent.rootNode) : (exerciseContent.sampleSolutions[0].sample as IXmlSolution).grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
       resourcePath: grammarFileName
     };
 
-    const documentFileName = `${this.exerciseContent.rootNode}.xml`;
+    const documentFileName = `${exerciseContent.rootNode}.xml`;
     this.documentFile = {
       name: documentFileName,
-      content: `
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE ${this.exerciseContent.rootNode} SYSTEM "${this.exerciseContent.rootNode}.dtd">
-<${this.exerciseContent.rootNode}>
-</${this.exerciseContent.rootNode}>`.trim(),
+      content: getXmlDocumentContent(exerciseContent.rootNode),
       fileType: 'xml',
       editable: !this.isGrammarPart,
       resourcePath: documentFileName
@@ -75,10 +80,6 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
       });
   }
 
-  showSampleSolution(): void {
-    console.error('TODO: show sample sol...');
-  }
-
   correct(): void {
     this.correctAbstract(this.exercise, this.part);
   }
@@ -88,6 +89,15 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
       grammar: this.grammarFile.content,
       document: this.documentFile.content
     };
+  }
+
+  get sampleSolutions(): IXmlSolution[] {
+    const exContent = this.exercise.content as IXmlExerciseContent;
+    return exContent.sampleSolutions.map((sample) => sample.sample);
+  }
+
+  get grammarDescription(): string {
+    return (this.exercise.content as IXmlExerciseContent).grammarDescription;
   }
 
 }

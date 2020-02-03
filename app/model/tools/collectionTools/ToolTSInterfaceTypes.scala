@@ -50,15 +50,6 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
     )
   }
 
-  /**
-    * FIXME: implement!
-    *
-    * @param matchName
-    * @param matchTSI
-    * @tparam T
-    * @tparam M
-    * @return
-    */
   protected def matchingResultTSI[T, M <: Match[T]](matchName: String, matchTSI: TSType[M]): TSIType[MatchingResult[T, M]] = TSType.interface(
     s"I${matchName}MatchingResult",
     "matchName" -> TSString,
@@ -68,15 +59,12 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
     "maxPoints" -> TSNumber
   )
 
-  protected def sampleSolutionTSI[SolType](solTypeTSI: TSType[SolType])(implicit x: Manifest[SampleSolution[SolType]]): TSIType[SampleSolution[SolType]] = {
-    //    implicit val eft: TSIType[ExerciseFile] = exerciseFileTSI
-    //    implicit val stt: TSType[SolType]       = solTypeTSI
-
+  protected def sampleSolutionTSI[SolType](name: String, solTypeTSI: TSType[SolType])(implicit x: Manifest[SampleSolution[SolType]]): TSIType[SampleSolution[SolType]] = {
     TSType.interface[SampleSolution[SolType]](
+      s"I${name}SampleSolution",
       "id" -> TSNumber,
-      "sample" -> TSObject // solTypeTSI.get
+      "sample" -> solTypeTSI.get
     )
-    //    TSType.fromCaseClass[SampleSolution[SolType]]
   }
 }
 

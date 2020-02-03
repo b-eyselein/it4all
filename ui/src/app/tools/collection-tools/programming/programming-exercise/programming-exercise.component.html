@@ -23,10 +23,6 @@
               </button>
             </div>
             <div class="column">
-              <button class="button is-primary is-fullwidth" (click)="showSampleSolution()">Musterlösung anzeigen
-              </button>
-            </div>
-            <div class="column">
               <a routerLink="../.." class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
           </div>
@@ -76,7 +72,12 @@
           </div>
         </it4all-tab>
 
-        <it4all-tab [title]="sampleSolutionsTabTitle" [selectable]="displaySampleSolutions">
+        <it4all-tab [title]="sampleSolutionsTabTitle">
+          <div class="buttons">
+            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
+              Musterlösung {{ displaySampleSolutions ? 'ausblenden' : 'anzeigen'}}
+            </button>
+          </div>
 
           <div class="overflowHiddenDiv" *ngIf="displaySampleSolutions">
             <!-- TODO: tabs for multiple sample solutions? -->

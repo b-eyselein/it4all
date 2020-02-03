@@ -32,6 +32,13 @@ export interface ISqlQueriesStaticComparison {
 }
 
 
+export interface IGroupByMatch {
+  matchType: MatchType;
+  userArg?: string;
+  sampleArg?: string;
+}
+
+
 export interface IBinaryExpressionMatch extends IMatch {
   matchType: MatchType;
   userArg?: string;
@@ -56,12 +63,28 @@ export interface ITableMatchingResult {
   maxPoints: number;
 }
 
+
+export interface IColumnMatchingResult {
+  matchName: string;
+  matchSingularName: string;
+  allMatches: IColumnMatch[];
+  points: number;
+  maxPoints: number;
+}
+
 export type SqlExerciseType = ("SELECT" | "CREATE" | "UPDATE" | "INSERT" | "DELETE");
 
 export interface ISelectAdditionalComparisons {
   groupByComparison: IGroupByMatchingResult;
   orderByComparison: IOrderByMatchingResult;
   limitComparison: ILimitMatchingResult;
+}
+
+
+export interface ISqlExerciseContent {
+  exerciseType: SqlExerciseType;
+  hint?: string;
+  sampleSolutions: ISqlSampleSolution[];
 }
 
 
@@ -135,20 +158,6 @@ export interface ILimitMatch {
 }
 
 
-export interface IGroupByMatch {
-  matchType: MatchType;
-  userArg?: string;
-  sampleArg?: string;
-}
-
-
-export interface ISqlExerciseContent {
-  exerciseType: SqlExerciseType;
-  hint?: string;
-  sampleSolutions: ISampleSolution[];
-}
-
-
 export interface IMatch {
   matchType: MatchType;
   userArg?: any;
@@ -165,18 +174,9 @@ export interface IMatchingResult {
 }
 
 
-export interface ISampleSolution {
+export interface ISqlSampleSolution {
   id: number;
-  sample: object;
-}
-
-
-export interface IColumnMatchingResult {
-  matchName: string;
-  matchSingularName: string;
-  allMatches: IColumnMatch[];
-  points: number;
-  maxPoints: number;
+  sample: string;
 }
 
 

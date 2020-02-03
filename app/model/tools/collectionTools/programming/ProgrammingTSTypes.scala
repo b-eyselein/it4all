@@ -8,8 +8,6 @@ import play.api.libs.json.JsValue
 
 object ProgrammingTSTypes extends ToolTSInterfaceTypes {
 
-  import nl.codestar.scalatsi.TypescriptType.TSInterface
-
   private val progTestDataTSI: TSIType[ProgTestData] = {
     implicit val jvt: TSType[JsValue] = jsValueTsType
     TSType.fromCaseClass
@@ -27,7 +25,7 @@ object ProgrammingTSTypes extends ToolTSInterfaceTypes {
     implicit val pit           : TSIType[ProgInput]                    = TSType.fromCaseClass
     implicit val jvt           : TSType[JsValue]                       = jsValueTsType
     implicit val eft           : TSIType[ExerciseFile]                 = exerciseFileTSI
-    implicit val sst           : TSIType[SampleSolution[ProgSolution]] = sampleSolutionTSI(progSolutionTSI)
+    implicit val sst           : TSIType[SampleSolution[ProgSolution]] = sampleSolutionTSI("Prog", progSolutionTSI)
     implicit val ucdt          : TSIType[UmlClassDiagram]              = UmlTSTypes.umlClassDiagramTSI
     implicit val ptdt          : TSIType[ProgTestData]                 = progTestDataTSI
     implicit val uttt          : TSType[UnitTestType]                  = enumTsType(UnitTestTypes)

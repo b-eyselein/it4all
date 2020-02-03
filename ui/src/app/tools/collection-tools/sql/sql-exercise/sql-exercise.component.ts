@@ -9,9 +9,6 @@ import {ISqlExerciseContent, ISqlQueryResult, ISqlResult} from '../sql-interface
 
 import 'codemirror/mode/sql/sql';
 
-interface ActivatableSqlQueryResult extends ISqlQueryResult {
-  active?: boolean;
-}
 
 @Component({
   selector: 'it4all-sql-exercise',
@@ -25,27 +22,18 @@ export class SqlExerciseComponent extends ComponentWithExercise<string, ISqlResu
   readonly editorOptions = getDefaultEditorOptions('sql');
 
   @Input() exercise: IExercise;
-  exerciseContent: ISqlExerciseContent;
 
-  dbContents: ActivatableSqlQueryResult[] = [];
+  dbContents: ISqlQueryResult[] = [];
 
   solution = '';
-
-  showSampleSolutions = false;
 
   constructor(apiService: ApiService, dexieService: DexieService) {
     super(apiService, dexieService);
   }
 
   ngOnInit() {
-    this.exerciseContent = this.exercise.content as ISqlExerciseContent;
-
-    // FIXME: load db schema!
     this.apiService.getSqlDbSchema(this.exercise.collectionId)
-      .subscribe((dbContents) => {
-        // dbContents.forEach((dbc) => console.info(JSON.stringify(dbc, null, 2)));
-        this.dbContents = dbContents;
-      });
+      .subscribe((dbContents) => this.dbContents = dbContents);
 
     this.dexieService.getSolution(this.exercise, this.partId)
       .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
@@ -55,18 +43,14 @@ export class SqlExerciseComponent extends ComponentWithExercise<string, ISqlResu
     return this.solution;
   }
 
+  get sampleSolutions(): string[] {
+    const exContent = this.exercise.content as ISqlExerciseContent;
+
+    return exContent.sampleSolutions.map((sample) => sample.sample);
+  }
+
   correct(): void {
     this.correctAbstract(this.exercise, {id: this.partId, name: ''}, true);
-  }
-
-  toggleSampleSolutions(): void {
-    this.showSampleSolutions = !this.showSampleSolutions;
-  }
-
-  activateModal(sqlQueryResult: ActivatableSqlQueryResult): void {
-    this.dbContents.forEach((sqr) => sqr.active = false);
-
-    sqlQueryResult.active = true;
   }
 
 }

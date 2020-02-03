@@ -1,10 +1,7 @@
 
-export interface IRegexExerciseContent {
-  maxPoints: number;
-  correctionType: RegexCorrectionTypes;
-  sampleSolutions: ISampleSolution[];
-  matchTestData: IRegexMatchTestData[];
-  extractionTestData: IRegexExtractionTestData[];
+export interface IRegexSampleSolution {
+  id: number;
+  sample: string;
 }
 
 
@@ -54,9 +51,12 @@ export interface IRegexExtractionTestData {
 export type BinaryClassificationResultTypes = ("TruePositive" | "FalsePositive" | "FalseNegative" | "TrueNegative");
 export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
 
-export interface ISampleSolution {
-  id: number;
-  sample: object;
+export interface IRegexExerciseContent {
+  maxPoints: number;
+  correctionType: RegexCorrectionTypes;
+  sampleSolutions: IRegexSampleSolution[];
+  matchTestData: IRegexMatchTestData[];
+  extractionTestData: IRegexExtractionTestData[];
 }
 
 

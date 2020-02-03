@@ -32,11 +32,13 @@ import {UmlClassEditComponent} from './uml/_components/uml-class-edit/uml-class-
 import {UmlAssocEditComponent} from './uml/_components/uml-assoc-edit/uml-assoc-edit.component';
 import {ExerciseLinkCardComponent} from './_components/exercise-link-card/exercise-link-card.component';
 import {UmlDiagDrawingCorrectionComponent} from './uml/_components/uml-diag-drawing-correction/uml-diag-drawing-correction.component';
-import { UmlAssocMatchComponent } from './uml/_components/uml-assoc-match/uml-assoc-match.component';
-import { UmlImplMatchComponent } from './uml/_components/uml-impl-match/uml-impl-match.component';
-import { UmlMemberAllocationComponent } from './uml/uml-member-allocation/uml-member-allocation.component';
-import { XmlElementLineMatchComponent } from './xml/_components/xml-element-line-match/xml-element-line-match.component';
-import { XmlDocumentCorrectionComponent } from './xml/_components/xml-document-correction/xml-document-correction.component';
+import {UmlAssocMatchComponent} from './uml/_components/uml-assoc-match/uml-assoc-match.component';
+import {UmlImplMatchComponent} from './uml/_components/uml-impl-match/uml-impl-match.component';
+import {UmlMemberAllocationComponent} from './uml/uml-member-allocation/uml-member-allocation.component';
+import {XmlElementLineMatchComponent} from './xml/_components/xml-element-line-match/xml-element-line-match.component';
+import {XmlDocumentCorrectionComponent} from './xml/_components/xml-document-correction/xml-document-correction.component';
+import {SqlTableContentsComponent} from './sql/_components/sql-table-contents/sql-table-contents.component';
+import {StringSampleSolComponent} from './_components/string-sample-sol/string-sample-sol.component';
 
 
 @NgModule({
@@ -53,29 +55,21 @@ import { XmlDocumentCorrectionComponent } from './xml/_components/xml-document-c
 
     ExerciseComponent,
 
+    StringSampleSolComponent,
+
     RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent,
     RegexCheatsheetComponent,
 
     ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
 
-    SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent,
+    SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent, SqlTableContentsComponent,
 
     UmlDiagramDrawingComponent, UmlClassEditComponent, UmlAssocEditComponent, UmlExerciseComponent, UmlClassSelectionComponent,
-    UmlDiagDrawingCorrectionComponent,
+    UmlDiagDrawingCorrectionComponent, UmlAssocMatchComponent, UmlImplMatchComponent, UmlMemberAllocationComponent,
 
     WebExerciseComponent,
 
-    XmlExerciseComponent,
-
-    UmlAssocMatchComponent,
-
-    UmlImplMatchComponent,
-
-    UmlMemberAllocationComponent,
-
-    XmlElementLineMatchComponent,
-
-    XmlDocumentCorrectionComponent
+    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent
   ],
   providers: [ApiService],
   imports: [

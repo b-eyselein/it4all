@@ -1,9 +1,9 @@
 <div class="container is-fluid">
 
   <div class="columns">
-    <div class="column is-half-desktop">
-      <h1 class="title is-4 has-text-centered">Aufgabenstellung</h1>
-      <div class="notification">{{exercise?.text}}</div>
+    <div class="column is-two-fifths-desktop">
+      <h1 class="title is-3 has-text-centered">Aufgabenstellung</h1>
+      <div class="notification is-light-grey">{{exercise?.text}}</div>
 
       <h1 class="title is-4 has-text-centered">Anfrage</h1>
 
@@ -12,63 +12,41 @@
       <br>
 
       <div class="columns">
-        <div class="column is-one-third-desktop">
+        <div class="column">
           <button class="button is-link is-fullwidth" (click)="correct()">Lösung testen</button>
         </div>
-        <div class="column is-one-third-desktop">
-          <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
-            Musterlösungen&nbsp;<span *ngIf="!showSampleSolutions">anzeigen</span><span *ngIf="showSampleSolutions">ausblenden</span>
-          </button>
-        </div>
-        <div class="column is-one-third-desktop">
+        <div class="column">
           <a class="button is-dark is-fullwidth" routerLink="../..">Bearbeiten beenden</a>
         </div>
       </div>
-
-      <br>
-
-      <div class="columns is-multiline">
-        <div class="column is-one-quarter-desktop" *ngFor="let dbContent of dbContents">
-          <button class="button is-info is-fullwidth"
-                  (click)="activateModal(dbContent)">{{dbContent.tableName}}</button>
-
-          <div class="modal" [ngClass]="dbContent.active ? 'is-active': ''">
-            <div class="modal-background"></div>
-            <div class="modal-card">
-              <header class="modal-card-head">
-                <p class="modal-card-title">{{dbContent.tableName}}</p>
-                <button class="delete" aria-label="close" (click)="dbContent.active = false;"></button>
-              </header>
-              <section class="modal-card-body">
-                <table class="table is-bordered is-fullwidth">
-                  <thead>
-                    <tr>
-                      <th *ngFor="let colName of dbContent.columnNames">{{colName}}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let row of dbContent.rows">
-                      <td *ngFor="let colName of dbContent.columnNames">{{row.cells[colName].content}}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </section>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- <h2 class="subtitle is-4 has-text-centered">Datenbankschema...</h2> -->
     </div>
 
-    <div class="column is-half-desktop">
-      <h1 class="title is-4 has-text-centered">Korrektur</h1>
+    <div class="column">
+      <it4all-tabs>
+        <it4all-tab [title]="'Datenbankinhalt'">
+          <it4all-sql-table-contents [dbContents]="dbContents"></it4all-sql-table-contents>
+        </it4all-tab>
+        <it4all-tab [title]="correctionTabTitle">
+          <ng-container *ngIf="result">
+            <it4all-sql-result [result]="result"></it4all-sql-result>
+          </ng-container>
+        </it4all-tab>
+        <it4all-tab [title]="sampleSolutionsTabTitle">
+          <div class="buttons">
+            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
+              Musterlösungen {{displaySampleSolutions ? 'anzeigen' : 'ausblenden'}}
+            </button>
+          </div>
 
-      <ng-container *ngIf="result">
-        <it4all-sql-result [result]="result"></it4all-sql-result>
-      </ng-container>
+          <ng-container *ngIf="displaySampleSolutions">
+            <ng-container *ngFor="let sample of sampleSolutions; let last = last">
+              <it4all-string-sample-sol [sample]="sample"></it4all-string-sample-sol>
 
+              <br *ngIf="!last">
+            </ng-container>
+          </ng-container>
+        </it4all-tab>
+      </it4all-tabs>
     </div>
   </div>
 

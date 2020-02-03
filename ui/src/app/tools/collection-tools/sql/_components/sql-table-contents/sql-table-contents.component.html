@@ -1,0 +1,30 @@
+<div class="columns is-multiline">
+  <div class="column is-one-quarter-desktop" *ngFor="let dbContent of dbContents">
+    <button class="button is-fullwidth" (click)="activateModal(dbContent)"
+            [ngClass]="shownDbContent === dbContent ? '' : 'is-info'">
+      {{dbContent.tableName}}
+    </button>
+  </div>
+</div>
+
+<div class="card" *ngIf="shownDbContent">
+  <header class="card-header">
+    <p class="card-header-title">{{shownDbContent.tableName}}</p>
+  </header>
+  <section class="card-content">
+    <div class="table-container">
+      <table class="table is-bordered is-fullwidth">
+        <thead>
+          <tr>
+            <th *ngFor="let colName of shownDbContent.columnNames">{{colName}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of shownDbContent.rows">
+            <td *ngFor="let colName of shownDbContent.columnNames">{{row.cells[colName].content}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

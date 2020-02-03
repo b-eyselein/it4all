@@ -38,7 +38,6 @@ export interface IUmlClass {
   methods: IUmlMethod[];
 }
 
-export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
 
 export interface IUmlMethod {
   visibility: UmlVisibility;
@@ -74,33 +73,6 @@ export interface IProgSolution {
   testData: IProgTestData[];
 }
 
-
-export interface ISampleSolution {
-  id: number;
-  sample: object;
-}
-
-
-export interface IProgExerciseContent {
-  functionName: string;
-  foldername: string;
-  filename: string;
-  inputTypes: IProgInput[];
-  outputType: any;
-  baseData?: any;
-  unitTestPart: IUnitTestPart;
-  implementationPart: IImplementationPart;
-  sampleSolutions: ISampleSolution[];
-  sampleTestData: IProgTestData[];
-  maybeClassDiagramPart?: IUmlClassDiagram;
-}
-
-
-export interface IUmlImplementation {
-  subClass: string;
-  superClass: string;
-}
-
 export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");
 
 export interface IUnitTestTestConfig {
@@ -130,4 +102,32 @@ export interface IUmlAttribute {
   isStatic: boolean;
   isDerived: boolean;
   isAbstract: boolean;
+}
+
+
+export interface IProgSampleSolution {
+  id: number;
+  sample: IProgSolution;
+}
+
+export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
+
+export interface IUmlImplementation {
+  subClass: string;
+  superClass: string;
+}
+
+
+export interface IProgExerciseContent {
+  functionName: string;
+  foldername: string;
+  filename: string;
+  inputTypes: IProgInput[];
+  outputType: any;
+  baseData?: any;
+  unitTestPart: IUnitTestPart;
+  implementationPart: IImplementationPart;
+  sampleSolutions: IProgSampleSolution[];
+  sampleTestData: IProgTestData[];
+  maybeClassDiagramPart?: IUmlClassDiagram;
 }

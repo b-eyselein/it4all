@@ -6,15 +6,6 @@ export interface IUmlClassDiagram {
 }
 
 
-export interface IAssociationMatchingResult {
-  matchName: string;
-  matchSingularName: string;
-  allMatches: IUmlAssociationMatch[];
-  points: number;
-  maxPoints: number;
-}
-
-
 export interface IUmlImplementationMatch {
   matchType: MatchType;
   userArg?: IUmlImplementation;
@@ -37,16 +28,6 @@ export interface IUmlAssociationMatch {
   userArg?: IUmlAssociation;
   sampleArg?: IUmlAssociation;
   maybeAnalysisResult?: IUmlAssociationAnalysisResult;
-}
-
-
-export interface IUmlMethod {
-  visibility: UmlVisibility;
-  memberName: string;
-  memberType: string;
-  parameters: string;
-  isStatic: boolean;
-  isAbstract: boolean;
 }
 
 export type KeyValueObjectMap = IKeyValueObject[];
@@ -73,9 +54,18 @@ export interface IUmlAttributeAnalysisResult {
 }
 
 
-export interface ISampleSolution {
+export interface IAssociationMatchingResult {
+  matchName: string;
+  matchSingularName: string;
+  allMatches: IUmlAssociationMatch[];
+  points: number;
+  maxPoints: number;
+}
+
+
+export interface IUmlSampleSolution {
   id: number;
-  sample: object;
+  sample: IUmlClassDiagram;
 }
 
 
@@ -174,6 +164,23 @@ export interface IUmlAttributeMatch {
 export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
 export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
 
+export interface IUmlExerciseContent {
+  toIgnore: string[];
+  mappings: KeyValueObjectMap;
+  sampleSolutions: IUmlSampleSolution[];
+}
+
+
+export interface IUmlMethod {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  parameters: string;
+  isStatic: boolean;
+  isAbstract: boolean;
+}
+
+
 export interface IUmlClassMatchAnalysisResult {
   classTypeCorrect: boolean;
   correctClassType: UmlClassType;
@@ -199,13 +206,6 @@ export interface IClassMatchingResult {
 export interface IUmlImplementation {
   subClass: string;
   superClass: string;
-}
-
-
-export interface IUmlExerciseContent {
-  toIgnore: string[];
-  mappings: KeyValueObjectMap;
-  sampleSolutions: ISampleSolution[];
 }
 
 export type UmlAssociationType = ("ASSOCIATION" | "AGGREGATION" | "COMPOSITION");

@@ -33,11 +33,6 @@
               </button>
             </div>
             <div class="column">
-              <button class="button is-primary is-fullwidth" (click)="showSampleSolution()" disabled>Musterlösung
-                anzeigen
-              </button>
-            </div>
-            <div class="column">
               <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
           </div>
@@ -105,7 +100,24 @@
         </it4all-tab>
 
         <it4all-tab [title]="'Live-Vorschau'"></it4all-tab>
-        <it4all-tab [title]="'Musterlösung(en)'"></it4all-tab>
+        <it4all-tab [title]="sampleSolutionsTabTitle">
+          <div class="buttons">
+            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
+              Musterlösung {{displaySampleSolutions ? 'ausblenden' : 'anzeigen'}}
+            </button>
+          </div>
+
+          <ng-container *ngIf="displaySampleSolutions">
+            <ng-container *ngFor="let sample of sampleSolutions">
+              <ng-container *ngFor="let exFile of sample; let last = last">
+                <it4all-exercise-file-card [exerciseFile]="exFile"></it4all-exercise-file-card>
+
+                <br *ngIf="!last">
+              </ng-container>
+            </ng-container>
+
+          </ng-container>
+        </it4all-tab>
       </it4all-tabs>
 
     </div>

@@ -18,7 +18,7 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
   private val sqlExerciseContentTSI: TSIType[SqlExerciseContent] = {
     implicit val seTypeT: TSType[SqlExerciseType]         = enumTsType(SqlExerciseType)
     implicit val seTagT : TSType[SqlExerciseTag]          = enumTsType(SqlExerciseTag)
-    implicit val ssst   : TSIType[SampleSolution[String]] = sampleSolutionTSI[String](TSType(TSString))
+    implicit val ssst   : TSIType[SampleSolution[String]] = sampleSolutionTSI("Sql", TSType(TSString))
 
     TSType.fromCaseClass
   }

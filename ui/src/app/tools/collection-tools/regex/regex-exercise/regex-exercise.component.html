@@ -1,7 +1,7 @@
-<div *ngIf="exercise != undefined" class="container is-fluid">
+<div class="container is-fluid">
 
   <div class="columns">
-    <div class="column is-half-desktop">
+    <div class="column is-two-fifths-desktop">
       <h1 class="title is-3 has-text-centered">Aufgabenstellung</h1>
       <div class="notification is-light-grey">{{exercise.text}}</div>
 
@@ -20,28 +20,9 @@
           <button class="button is-link is-fullwidth" (click)="correct()">Lösung testen</button>
         </div>
         <div class="column">
-          <button class="button is-primary is-fullwidth" (click)="triggerSampleSolutions()">
-            Musterlösungen&nbsp;<span *ngIf="!displaySampleSolutions">anzeigen</span><span
-            *ngIf="displaySampleSolutions">ausblenden</span>
-          </button>
-        </div>
-        <div class="column">
           <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
         </div>
       </div>
-
-      <ng-container *ngIf="displaySampleSolutions">
-        <h2 class="subtitle is-4 has-text-centered">Musterlösungen</h2>
-
-        <div class="columns is-multiline">
-          <div class="column is-half" *ngFor="let sampleSolution of exerciseContent.sampleSolutions">
-            <div class="notification is-dark">
-              <code>{{sampleSolution.sample}}</code>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-
       <div class="buttons">
         <button (click)="showInfo = !showInfo;" class="button is-info is-fullwidth">
           Hilfe&nbsp;<span *ngIf="!showInfo">anzeigen</span><span *ngIf="showInfo">ausblenden</span>
@@ -49,42 +30,56 @@
       </div>
 
       <it4all-regex-cheatsheet *ngIf="showInfo"></it4all-regex-cheatsheet>
-
-
     </div>
 
-    <div class="column is-half-desktop" *ngIf="result">
+    <div class="column">
+      <it4all-tabs>
+        <it4all-tab [title]="correctionTabTitle">
+          <ng-container *ngIf="result">
 
-      <h1 class="title is-3 has-text-centered">Korrektur</h1>
+            <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
 
-      <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
-
-      <!--        <br> -->
-
-      <!--     <it4all-points-notification [result]="result"></it4all-points-notification> -->
-
-      <br>
-
-      <ng-container [ngSwitch]="result.correctionType">
-
-        <ng-container *ngSwitchCase="'MATCHING'">
-          <div class="columns is-multiline">
-            <div class="column is-half-desktop" *ngFor="let matchingResult of result.matchingResults">
-              <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
-            </div>
-          </div>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'EXTRACTION'">
-          <ng-container *ngFor="let extractionResult of result.extractionResults">
-            <it4all-regex-extraction-result [extractionResult]="extractionResult"></it4all-regex-extraction-result>
+            <!--     <it4all-points-notification [result]="result"></it4all-points-notification> -->
 
             <br>
-          </ng-container>
-        </ng-container>
-      </ng-container>
 
-      <!-- FIXME: sample solutions! -->
+            <ng-container [ngSwitch]="result.correctionType">
+
+              <ng-container *ngSwitchCase="'MATCHING'">
+                <div class="columns is-multiline">
+                  <div class="column is-half-desktop" *ngFor="let matchingResult of result.matchingResults">
+                    <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'EXTRACTION'">
+                <ng-container *ngFor="let extractionResult of result.extractionResults">
+                  <it4all-regex-extraction-result
+                    [extractionResult]="extractionResult"></it4all-regex-extraction-result>
+
+                  <br>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </it4all-tab>
+        <it4all-tab [title]="sampleSolutionsTabTitle">
+          <div class="buttons">
+            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
+              Musterlösungen {{displaySampleSolutions ? 'anzeigen' : 'ausblenden'}}
+            </button>
+          </div>
+
+          <ng-container *ngIf="displaySampleSolutions">
+            <ng-container *ngFor="let sample of sampleSolutions; let last = last">
+              <it4all-string-sample-sol [sample]="sample"></it4all-string-sample-sol>
+
+              <br *ngIf="!last">
+            </ng-container>
+          </ng-container>
+        </it4all-tab>
+      </it4all-tabs>
     </div>
   </div>
 </div>
