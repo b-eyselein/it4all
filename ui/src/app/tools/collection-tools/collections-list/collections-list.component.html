@@ -1,0 +1,26 @@
+<div class="container">
+  <h1 class="title is-3 has-text-centered">Tool &quot;{{tool.name}}&quot;: Sammlungen</h1>
+
+  <div class="buttons">
+    <a class="button is-primary is-fullwidth" routerLink="..">Zurück zum Tool</a>
+  </div>
+
+  <br>
+
+  <div class="columns is-multiline" *ngIf="collections">
+    <div class="column is-one-quarter" *ngFor="let coll of collections">
+
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title is-centered">{{coll.id}}. {{coll.title}}</p>
+        </header>
+        <div class="card-content"></div>
+        <footer class="card-footer">
+          <a class="card-footer-item" [routerLink]="[coll.id]">Zur Sammlung</a>
+        </footer>
+      </div>
+
+    </div>
+  </div>
+
+</div>

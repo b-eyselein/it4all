@@ -3,51 +3,46 @@
 
   <div class="buttons">
     <a class="button is-primary is-fullwidth" routerLink="/">Zurück zur Toolübersicht</a>
-    <a class="button is-link is-fullwidth" routerLink="allExercises">Übersicht über alle Aufgaben</a>
   </div>
 
-  <h2 class="subtitle is-3 has-text-centered">Sammlungen</h2>
+  <br>
 
-  <ng-container *ngIf="collections; else loadingBlock">
-    <div *ngIf="collections?.length > 0; else noCollectionsFoundBlock" class="columns is-multiline">
-      <div *ngFor="let collection of collections" class="column is-one-quarter-desktop is-half">
-        <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">{{collection.id}}. {{collection.title}}</p>
-          </header>
-          <div class="card-content">
-            <ng-container *ngIf="collection.exercises; else loadingExercisesBlock">
-              <p>{{collection.exercises.length}} Aufgaben gefunden.</p>
-            </ng-container>
-
-            <ng-template #loadingExercisesBlock>
-              Lade Aufgaben...
-            </ng-template>
-          </div>
-          <footer class="card-footer">
-            <a class="card-footer-item" [routerLink]="['/tools', tool.id, 'collections', collection.id]">
-              Zur Sammlung
-            </a>
-          </footer>
-        </div>
+  <div class="columns">
+    <div class="column is-one-third-desktop is-full-mobile">
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">Alle Aufgaben</p>
+        </header>
+        <div class="card-content"></div>
+        <footer class="card-footer">
+          <a class="card-footer-item" routerLink="allExercises">Zur Übersicht</a>
+        </footer>
       </div>
     </div>
-  </ng-container>
 
-  <ng-template #loadingBlock>
-    <div class="notification">
-      <p class="has-text-centered">Lade Sammlungen...</p>
-      <br>
-      <progress class="progress" max="100">20%</progress>
+    <div class="column">
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">Sammlungen</p>
+        </header>
+        <div class="card-content"></div>
+        <footer class="card-footer">
+          <a class="card-footer-item" routerLink="./collections">Zu den Sammlungen</a>
+        </footer>
+      </div>
     </div>
-  </ng-template>
 
-  <ng-template #noCollectionsFoundBlock>
-    <div class="notification is-danger has-text-centered">
-      Es konnten keine Sammlungen gefunden werden!
+    <div class="column">
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title is-centered">Lektionen</p>
+        </header>
+        <div class="card-content"></div>
+        <footer class="card-footer">
+          <a class="card-footer-item" [routerLink]="['/lessons', tool.id]">Zu den Lektionen</a>
+        </footer>
+      </div>
     </div>
-  </ng-template>
+  </div>
 
-  <!-- FIXME: uncomment evaluation! -->
-  <!-- <h1 class="title is-3 has-text-centered">Evaluation</h1>-->
 </div>

@@ -34,9 +34,6 @@
         <div class="card-content"></div>
         <footer class="card-footer">
           <a [routerLink]="['/tools', colTool.id]" class="card-footer-item">Zum Tool</a>
-          <a [routerLink]="['/lessons', colTool.id]" class="card-footer-item" *ngIf="colTool.hasLessons">
-            Zu den Lektionen
-          </a>
         </footer>
       </div>
 
