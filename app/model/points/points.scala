@@ -1,7 +1,6 @@
 package model
 
 import scala.language.implicitConversions
-import scala.math.Integral.Implicits._
 
 package object points {
 

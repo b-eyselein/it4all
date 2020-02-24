@@ -17,7 +17,6 @@ public
 data/
 
 .idea/*
-!.idea/dictionaries
 
 # Client folder
 ui/coverage

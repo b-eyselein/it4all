@@ -1,7 +1,6 @@
 package model.tools
 
 import better.files._
-import model.core.CoreConsts._
 
 abstract class AToolMain(consts: ToolConsts) {
 

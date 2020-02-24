@@ -2,7 +2,6 @@ package model.tools.collectionTools.sql
 
 import java.sql.Connection
 
-import model.core.CommonUtils.using
 import model.tools.collectionTools.ExerciseCollection
 import model.tools.collectionTools.sql.SqlConsts._
 import net.sf.jsqlparser.statement.Statement
@@ -10,16 +9,32 @@ import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.insert.Insert
 import net.sf.jsqlparser.statement.select.Select
 import net.sf.jsqlparser.statement.update.Update
+import play.api.Logger
 import slick.jdbc.JdbcBackend.Database
 
 import scala.collection.mutable.ListBuffer
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 abstract class SqlExecutionDAO(mainDbName: String) {
+
+  private val logger = Logger(classOf[SqlExecutionDAO])
 
   protected val port: Int
 
   protected val mainDB = db(None)
+
+  protected def using[A <: AutoCloseable, B](resource: A)(f: A => B): Try[B] =
+    try {
+      Success(f(resource))
+    } catch {
+      case e: Exception => Failure(e)
+    } finally {
+      try {
+        if (resource != null) resource.close()
+      } catch {
+        case e: Exception => logger.error("There has been an error: ", e)
+      }
+    }
 
   protected def db(maybeSchemaName: Option[String]): Database = {
     val url = maybeSchemaName match {
