@@ -4,7 +4,6 @@ import enumeratum.{EnumEntry, PlayEnum}
 
 import scala.collection.immutable.IndexedSeq
 
-
 sealed abstract class UmlVisibility(val representant: String) extends EnumEntry
 
 object UmlVisibility extends PlayEnum[UmlVisibility] {
@@ -21,7 +20,6 @@ object UmlVisibility extends PlayEnum[UmlVisibility] {
 
 }
 
-
 sealed abstract class UmlClassType(val german: String) extends EnumEntry
 
 object UmlClassType extends PlayEnum[UmlClassType] {
@@ -36,7 +34,6 @@ object UmlClassType extends PlayEnum[UmlClassType] {
 
 }
 
-
 sealed abstract class UmlMultiplicity(val representant: String) extends EnumEntry
 
 object UmlMultiplicity extends PlayEnum[UmlMultiplicity] {
@@ -48,7 +45,6 @@ object UmlMultiplicity extends PlayEnum[UmlMultiplicity] {
   case object UNBOUND extends UmlMultiplicity("*")
 
 }
-
 
 sealed abstract class UmlAssociationType(val german: String) extends EnumEntry
 
@@ -70,28 +66,48 @@ sealed trait UmlClassMember {
   val memberName: String
   val memberType: String
 
-  val isStatic  : Boolean
+  val isStatic: Boolean
   val isAbstract: Boolean
 
 }
 
 final case class UmlAttribute(
-  visibility: UmlVisibility, memberName: String, memberType: String, isStatic: Boolean = false, isDerived: Boolean = false, isAbstract: Boolean = false
+  visibility: UmlVisibility,
+  memberName: String,
+  memberType: String,
+  isStatic: Boolean = false,
+  isDerived: Boolean = false,
+  isAbstract: Boolean = false
 ) extends UmlClassMember
 
 final case class UmlMethod(
-  visibility: UmlVisibility, memberName: String, memberType: String, parameters: String, isStatic: Boolean = false, isAbstract: Boolean = false
+  visibility: UmlVisibility,
+  memberName: String,
+  memberType: String,
+  parameters: String,
+  isStatic: Boolean = false,
+  isAbstract: Boolean = false
 ) extends UmlClassMember
 
-
-final case class UmlClass(classType: UmlClassType, name: String, attributes: Seq[UmlAttribute], methods: Seq[UmlMethod]) {
+final case class UmlClass(
+  classType: UmlClassType,
+  name: String,
+  attributes: Seq[UmlAttribute],
+  methods: Seq[UmlMethod]
+) {
 
   def allMembers: Seq[UmlClassMember] = attributes ++ methods
 
 }
 
-
-final case class UmlAssociation(assocType: UmlAssociationType, assocName: Option[String], firstEnd: String, firstMult: UmlMultiplicity, secondEnd: String, secondMult: UmlMultiplicity) {
+final case class UmlAssociation(
+  assocType: UmlAssociationType,
+  assocName: Option[String],
+  firstEnd: String,
+  firstMult: UmlMultiplicity,
+  secondEnd: String,
+  secondMult: UmlMultiplicity
+) {
 
   def displayMult(turn: Boolean): String =
     if (turn) secondMult.representant + ":" + firstMult.representant
@@ -99,8 +115,10 @@ final case class UmlAssociation(assocType: UmlAssociationType, assocName: Option
 
 }
 
-
 final case class UmlImplementation(subClass: String, superClass: String)
 
-
-final case class UmlClassDiagram(classes: Seq[UmlClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation])
+final case class UmlClassDiagram(
+  classes: Seq[UmlClass],
+  associations: Seq[UmlAssociation],
+  implementations: Seq[UmlImplementation]
+)

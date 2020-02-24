@@ -8,12 +8,11 @@ import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-
 object XmlToolMain extends CollectionToolMain(XmlConsts) {
 
-  override type PartType = XmlExPart
-  override type ExContentType = XmlExerciseContent
-  override type SolType = XmlSolution
+  override type PartType       = XmlExPart
+  override type ExContentType  = XmlExerciseContent
+  override type SolType        = XmlSolution
   override type CompResultType = XmlCompleteResult
 
   type ElementLineComparison = MatchingResult[ElementLine, ElementLineMatch]
@@ -40,9 +39,14 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[XmlCompleteResult]] = Future.successful(
     part match {
-      case XmlExParts.GrammarCreationXmlPart  => XmlCorrector.correctGrammar(solution, content, solutionSaved)
-      case XmlExParts.DocumentCreationXmlPart => XmlCorrector.correctDocument(solution,
-        solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories(), content, solutionSaved)
+      case XmlExParts.GrammarCreationXmlPart => XmlCorrector.correctGrammar(solution, content, solutionSaved)
+      case XmlExParts.DocumentCreationXmlPart =>
+        XmlCorrector.correctDocument(
+          solution,
+          solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories(),
+          content,
+          solutionSaved
+        )
     }
   )
 

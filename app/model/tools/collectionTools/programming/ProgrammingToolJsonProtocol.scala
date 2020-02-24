@@ -11,7 +11,7 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
   private val progTestDataFormat: Format[ProgTestData] = Json.format[ProgTestData]
 
   override val solutionFormat: Format[ProgSolution] = {
-    implicit val eff  : Format[ExerciseFile] = ToolJsonProtocol.exerciseFileFormat
+    implicit val eff: Format[ExerciseFile]   = ToolJsonProtocol.exerciseFileFormat
     implicit val putdf: Format[ProgTestData] = progTestDataFormat
 
     Json.format[ProgSolution]
@@ -54,8 +54,9 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
     }
 
     val writes: Writes[ProgDataType] = {
-      case nonGenericProgDataType: NonGenericProgDataType => NonGenericProgDataType.jsonFormat.writes(nonGenericProgDataType)
-      case genericProgDataType: GenericProgDataType       => genericProgDataTypeFormat.writes(genericProgDataType)
+      case nonGenericProgDataType: NonGenericProgDataType =>
+        NonGenericProgDataType.jsonFormat.writes(nonGenericProgDataType)
+      case genericProgDataType: GenericProgDataType => genericProgDataTypeFormat.writes(genericProgDataType)
     }
 
     Format(reads, writes)
@@ -68,7 +69,6 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
 
     Json.format[UnitTestTestConfig]
   }
-
 
   val progInputFormat: Format[ProgInput] = {
     implicit val pdtf: Format[ProgDataType] = progDataTypeFormat
@@ -93,17 +93,16 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
   }
 
   override val exerciseContentFormat: Format[ProgExerciseContent] = {
-    implicit val pif  : Format[ProgInput]                    = progInputFormat
-    implicit val pdtf : Format[ProgDataType]                 = progDataTypeFormat
-    implicit val utf  : Format[UnitTestPart]                 = unitTestPartFormat
-    implicit val ipf  : Format[ImplementationPart]           = implementationPartFormat
-    implicit val pssf : Format[SampleSolution[ProgSolution]] = sampleSolutionFormat
-    implicit val pstdf: Format[ProgTestData]                 = progTestDataFormat
-    implicit val ucdf : Format[UmlClassDiagram]              = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
+    implicit val pif: Format[ProgInput]                     = progInputFormat
+    implicit val pdtf: Format[ProgDataType]                 = progDataTypeFormat
+    implicit val utf: Format[UnitTestPart]                  = unitTestPartFormat
+    implicit val ipf: Format[ImplementationPart]            = implementationPartFormat
+    implicit val pssf: Format[SampleSolution[ProgSolution]] = sampleSolutionFormat
+    implicit val pstdf: Format[ProgTestData]                = progTestDataFormat
+    implicit val ucdf: Format[UmlClassDiagram]              = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
 
     Json.format[ProgExerciseContent]
   }
-
 
   // Result
 
@@ -112,7 +111,6 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
   val simplifiedExecutionResultFormat: Format[SimplifiedExecutionResult] = Json.format[SimplifiedExecutionResult]
 
   // Normal execution
-
 
   final case class UnitTestTestData(
     folderName: String,
@@ -127,7 +125,6 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
     Json.writes[UnitTestTestData]
   }
 
-
   private val unitTestCorrectionResultFormat: Format[UnitTestCorrectionResult] = {
     implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
 
@@ -141,9 +138,9 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
   }
 
   override val completeResultWrites: Writes[ProgCompleteResult] = {
-    implicit val serw  : Writes[SimplifiedExecutionResult] = simplifiedExecutionResultFormat
-    implicit val uttcrf: Writes[UnitTestCorrectionResult]  = unitTestCorrectionResultFormat
-    implicit val nerw  : Writes[NormalExecutionResult]     = Json.format[NormalExecutionResult]
+    implicit val serw: Writes[SimplifiedExecutionResult]  = simplifiedExecutionResultFormat
+    implicit val uttcrf: Writes[UnitTestCorrectionResult] = unitTestCorrectionResultFormat
+    implicit val nerw: Writes[NormalExecutionResult]      = Json.format[NormalExecutionResult]
 
     Json.writes[ProgCompleteResult]
   }

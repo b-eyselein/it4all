@@ -3,16 +3,13 @@ package model.lti
 import enumeratum.{EnumEntry, PlayEnum}
 import scala.collection.immutable.IndexedSeq
 
-
 sealed abstract class Role(val urn: String) extends EnumEntry
-
 
 sealed abstract class SystemRole(urn: String) extends Role(urn)
 
 case object SystemRoles extends PlayEnum[SystemRole] {
 
   val values: IndexedSeq[SystemRole] = findValues
-
 
   case object SysAdmin extends SystemRole("urn:lti:sysrole:ims/lis/SysAdmin")
 
@@ -30,13 +27,11 @@ case object SystemRoles extends PlayEnum[SystemRole] {
 
 }
 
-
 sealed abstract class InstitutionRole(urn: String) extends Role(urn)
 
 case object InstitutionRoles extends PlayEnum[InstitutionRole] {
 
   val values: IndexedSeq[InstitutionRole] = findValues
-
 
   case object Student extends InstitutionRole("urn:lti:instrole:ims/lis/Student")
 

@@ -23,7 +23,7 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
   private val sqlQueryCellWrites: Writes[SqlCell] = (
     (__ \ "content").write[String] and
       (__ \ "different").write[Boolean]
-    ) (sc => (sc.content, sc.different))
+  )(sc => (sc.content, sc.different))
 
   private val sqlQueryRowWrites: Writes[SqlRow] = row => {
     JsObject(row.cells.map {
@@ -99,14 +99,14 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
     implicit val cmrw: Writes[ColumnComparison]           = columnMatchingResultWrites
     implicit val tmrw: Writes[TableComparison]            = tableMatchingResultWrites
     implicit val berw: Writes[BinaryExpressionComparison] = binaryExpressionResultWrites
-    implicit val acw : Writes[AdditionalComparison]       = additionalComparisonWrites
+    implicit val acw: Writes[AdditionalComparison]        = additionalComparisonWrites
 
     Json.writes
   }
 
   override val completeResultWrites: Writes[SqlResult] = {
     implicit val sqscw: Writes[SqlQueriesStaticComparison] = sqlQueriesStaticComparisonWrites
-    implicit val erw  : Writes[SqlExecutionResult]         = sqlExecutionResultWrites
+    implicit val erw: Writes[SqlExecutionResult]           = sqlExecutionResultWrites
 
     Json.writes
   }

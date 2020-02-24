@@ -13,10 +13,16 @@ import model.tools.randomTools.{BoolToolMain, NaryToolMain, RandomExerciseToolMa
 object ToolList {
 
   val toolMains: Seq[AToolMain] = Seq(
-    BoolToolMain, NaryToolMain,
-    ProgToolMain, RegexToolMain, RoseToolMain, SqlToolMain, UmlToolMain, WebToolMain, XmlToolMain
+    BoolToolMain,
+    NaryToolMain,
+    ProgToolMain,
+    RegexToolMain,
+    RoseToolMain,
+    SqlToolMain,
+    UmlToolMain,
+    WebToolMain,
+    XmlToolMain
   )
-
 
   def getExCollToolMainOption(urlPart: String): Option[CollectionToolMain] = toolMains.collectFirst {
     case ctm: CollectionToolMain if ctm.urlPart == urlPart => ctm

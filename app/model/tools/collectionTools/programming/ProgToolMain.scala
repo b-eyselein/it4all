@@ -8,9 +8,9 @@ import scala.util.Try
 
 object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
-  override type PartType = ProgExPart
-  override type ExContentType = ProgExerciseContent
-  override type SolType = ProgSolution
+  override type PartType       = ProgExPart
+  override type ExContentType  = ProgExerciseContent
+  override type SolType        = ProgSolution
   override type CompResultType = ProgCompleteResult
 
   // Other members

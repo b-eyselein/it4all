@@ -12,5 +12,10 @@ object LTILisPersonData {
 
 }
 
-class LTILisPersonData(val sourcedId: String, val primaryContactEmail: String,
-                       val givenName: String, val familyName: String, val fullName: String)
+class LTILisPersonData(
+  val sourcedId: String,
+  val primaryContactEmail: String,
+  val givenName: String,
+  val familyName: String,
+  val fullName: String
+)

@@ -12,18 +12,17 @@ object ResultsFileJsonFormat {
 
   def readSimplifiedExecutionResultFile(targetFile: File): Try[Seq[SimplifiedExecutionResult]] =
     Try(targetFile.contentAsString).flatMap { fileContent =>
-      Try(Json.parse(fileContent)).map {
-        jsValue =>
+      Try(Json.parse(fileContent)).map { jsValue =>
+        val onError: scala.collection.Seq[Any] => Seq[SimplifiedExecutionResult] = errors => {
+          logger.error("There has been an error reading a json programming result file: $error")
+          errors.foreach(error => logger.error(error.toString))
+          Seq.empty
+        }
 
-          val onError: scala.collection.Seq[Any] => Seq[SimplifiedExecutionResult] = errors => {
-            logger.error("There has been an error reading a json programming result file: $error")
-            errors.foreach(error => logger.error(error.toString))
-            Seq.empty
-          }
-
-          Reads.seq(ProgrammingToolJsonProtocol.simplifiedExecutionResultFormat)
-            .reads(jsValue)
-            .fold(onError, identity)
+        Reads
+          .seq(ProgrammingToolJsonProtocol.simplifiedExecutionResultFormat)
+          .reads(jsValue)
+          .fold(onError, identity)
       }
     }
 
@@ -33,8 +32,10 @@ object ResultsFileJsonFormat {
     Try(Json.parse(targetFile.contentAsString)).flatMap { jsValue =>
       ProgrammingToolJsonProtocol.unitTestCorrectionResultsFileJsonReads.reads(jsValue) match {
         case JsSuccess(result, _) => Success(result.results)
-        case JsError(errors)      =>
-          errors.foreach(error => logger.error(s"There has been an error reading a json programming result file: $error"))
+        case JsError(errors) =>
+          errors.foreach(
+            error => logger.error(s"There has been an error reading a json programming result file: $error")
+          )
           Failure(new Exception("There has been an error reading a json programming result file!"))
       }
     }

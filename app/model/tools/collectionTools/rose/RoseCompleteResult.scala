@@ -10,11 +10,9 @@ final case class RoseCompleteResult(
   solutionSaved: Boolean
 ) extends CompleteResult
 
-
 final case class RoseStart(x: Int, y: Int)
 
 final case class RobotResult(name: String, actions_size: Int, actions: Seq[String])
-
 
 final case class RoseExecutionResult(
   correct: Boolean,
@@ -26,4 +24,3 @@ final case class RoseExecutionResult(
   override def success: SuccessType = ???
 
 }
-

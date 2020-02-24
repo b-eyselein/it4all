@@ -41,13 +41,17 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   def solutionFormat: Format[SolType] = toolJsonProtocol.solutionFormat
 
-  private def logErrors(errors: scala.collection.Seq[JsErrorType], exceptionMsg: String): Future[Try[CompResultType]] = {
+  private def logErrors(
+    errors: scala.collection.Seq[JsErrorType],
+    exceptionMsg: String
+  ): Future[Try[CompResultType]] = {
     errors.foreach(errorMsg => logger.error(errorMsg.toString))
 
     Future.successful(Failure(new Exception(exceptionMsg)))
   }
 
-  def readExerciseContent(exercise: Exercise): JsResult[ExContentType] = toolJsonProtocol.exerciseContentFormat.reads(exercise.content)
+  def readExerciseContent(exercise: Exercise): JsResult[ExContentType] =
+    toolJsonProtocol.exerciseContentFormat.reads(exercise.content)
 
   @deprecated
   def readSolution(jsValue: JsValue): JsResult[SolType] = toolJsonProtocol.solutionFormat.reads(jsValue)

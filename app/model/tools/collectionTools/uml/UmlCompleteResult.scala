@@ -4,7 +4,6 @@ import model.core.result.CompleteResult
 import model.points._
 import model.tools.collectionTools.uml.UmlToolMain.{AssociationComparison, ClassComparison, ImplementationComparison}
 
-
 final case class UmlCompleteResult(
   classResult: Option[ClassComparison],
   assocResult: Option[AssociationComparison],

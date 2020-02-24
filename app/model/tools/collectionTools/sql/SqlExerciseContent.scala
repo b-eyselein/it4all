@@ -3,13 +3,11 @@ package model.tools.collectionTools.sql
 import enumeratum.{EnumEntry, PlayEnum}
 import model.tools.collectionTools.{SampleSolution, StringExerciseContent}
 
-
 sealed trait SqlExerciseType extends EnumEntry
 
 object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
   override def values: IndexedSeq[SqlExerciseType] = findValues
-
 
   case object SELECT extends SqlExerciseType
 
@@ -22,7 +20,6 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
   case object DELETE extends SqlExerciseType
 
 }
-
 
 final case class SqlExerciseContent(
   exerciseType: SqlExerciseType,

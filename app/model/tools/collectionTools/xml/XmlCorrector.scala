@@ -15,16 +15,18 @@ import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
-
 class CorrectionErrorHandler extends ErrorHandler {
 
   val errors: mutable.ListBuffer[XmlError] = mutable.ListBuffer.empty
 
-  override def error(exception: SAXParseException): Unit = errors += XmlError.fromSAXParseException(XmlErrorType.ERROR, exception)
+  override def error(exception: SAXParseException): Unit =
+    errors += XmlError.fromSAXParseException(XmlErrorType.ERROR, exception)
 
-  override def fatalError(exception: SAXParseException): Unit = errors += XmlError.fromSAXParseException(XmlErrorType.FATAL, exception)
+  override def fatalError(exception: SAXParseException): Unit =
+    errors += XmlError.fromSAXParseException(XmlErrorType.FATAL, exception)
 
-  override def warning(exception: SAXParseException): Unit = errors += XmlError.fromSAXParseException(XmlErrorType.WARNING, exception)
+  override def warning(exception: SAXParseException): Unit =
+    errors += XmlError.fromSAXParseException(XmlErrorType.WARNING, exception)
 
 }
 
@@ -66,7 +68,6 @@ object XmlCorrector {
       val documentPath: File = solutionBaseDir / s"${exercise.rootNode}.xml"
       documentPath.createFileIfNotExists(createParents = true).write(solution.document)
 
-
       val xmlErrors = XmlCorrector.correctAgainstMentionedDTD(documentPath)
 
       val successType = if (xmlErrors.isEmpty) SuccessType.COMPLETE else SuccessType.PARTIALLY
@@ -79,7 +80,9 @@ object XmlCorrector {
           successType,
           documentResult = xmlErrors,
           grammarResult = None,
-          points, maxPoints, solutionSaved
+          points,
+          maxPoints,
+          solutionSaved
         )
       )
   }
@@ -89,26 +92,26 @@ object XmlCorrector {
   private def findNearestGrammarSample(
     learnerSolution: String,
     sampleSolutions: Seq[SampleSolution[XmlSolution]]
-  ): Option[SampleSolution[XmlSolution]] = sampleSolutions.reduceOption((sampleG1, sampleG2) => {
-    val dist1 = Levenshtein.levenshtein(learnerSolution, sampleG1.sample.grammar)
-    val dist2 = Levenshtein.levenshtein(learnerSolution, sampleG2.sample.grammar)
+  ): Option[SampleSolution[XmlSolution]] =
+    sampleSolutions.reduceOption((sampleG1, sampleG2) => {
+      val dist1 = Levenshtein.levenshtein(learnerSolution, sampleG1.sample.grammar)
+      val dist2 = Levenshtein.levenshtein(learnerSolution, sampleG2.sample.grammar)
 
-    if (dist1 < dist2) sampleG1 else sampleG2
-  })
+      if (dist1 < dist2) sampleG1 else sampleG2
+    })
 
   def correctGrammar(
     solution: XmlSolution,
     exercise: XmlExerciseContent,
     solutionSaved: Boolean
   ): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, exercise.sampleSolutions) match {
-    case None                 => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
+    case None => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
     case Some(sampleSolution) =>
-
       DocTypeDefParser.tryParseDTD(sampleSolution.sample.grammar) map { sampleGrammar =>
-
         val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
 
-        val matchingResult: ElementLineComparison = DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines)
+        val matchingResult: ElementLineComparison =
+          DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines)
 
         val points = addUp(matchingResult.allMatches.map(_.points))
 
@@ -125,12 +128,11 @@ object XmlCorrector {
           successType,
           documentResult = Seq.empty,
           grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult)),
-          points, maxPoints, solutionSaved
+          points,
+          maxPoints,
+          solutionSaved
         )
       }
   }
 
-
 }
-
-

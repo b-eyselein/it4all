@@ -1,0 +1,17 @@
+.idea/
+
+data/
+helper_scripts/
+logs/
+old_public/
+
+project/project/
+target/
+
+.gitignore
+.gitlab-ci.yml
+
+docker-compose.yaml
+ideas_todo.md
+
+ui/node_modules/

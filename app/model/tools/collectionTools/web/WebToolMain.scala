@@ -18,15 +18,15 @@ import scala.util.{Failure, Try}
 
 object WebToolMain extends CollectionToolMain(WebConsts) {
 
-  override type PartType = WebExPart
-  override type ExContentType = WebExerciseContent
-  override type SolType = Seq[ExerciseFile]
+  override type PartType       = WebExPart
+  override type ExContentType  = WebExerciseContent
+  override type SolType        = Seq[ExerciseFile]
   override type CompResultType = WebCompleteResult
 
   // Other members
 
-  override val hasPlayground: Boolean        = true
-  override val exParts      : Seq[WebExPart] = WebExParts.values
+  override val hasPlayground: Boolean  = true
+  override val exParts: Seq[WebExPart] = WebExParts.values
 
   // Yaml, Html forms, Json
 
@@ -35,11 +35,17 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   // DB
 
-  def writeWebSolutionFiles(username: String, collId: Int, exerciseId: Int, exerciseFiles: Seq[ExerciseFile]): Try[Seq[File]] = Try {
+  def writeWebSolutionFiles(
+    username: String,
+    collId: Int,
+    exerciseId: Int,
+    exerciseFiles: Seq[ExerciseFile]
+  ): Try[Seq[File]] = Try {
 
     val targetDir: File = solutionDirForExercise(username, collId, exerciseId)
 
-    val openOptions: OpenOptions = Seq(StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+    val openOptions: OpenOptions =
+      Seq(StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
 
     exerciseFiles.map { exerciseFile =>
       val fileTargetPath = targetDir / exerciseFile.name
@@ -56,7 +62,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
         case Some(scriptException: ScriptException) => Failure(scriptException)
         case _                                      => ???
       }
-    case otherError                      =>
+    case otherError =>
       print(otherError)
       ???
   }
@@ -69,7 +75,8 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
   ): Try[WebCompleteResult] = Try {
     part match {
       case WebExParts.HtmlPart =>
-        val htmlTaskResults      : Seq[HtmlTaskResult]       = exercise.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
+        val htmlTaskResults: Seq[HtmlTaskResult] =
+          exercise.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
         val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = htmlTaskResults.map(WebGrader.gradeHtmlTaskResult)
 
         val points    = addUp(gradedHtmlTaskResults.map(_.points))
@@ -78,7 +85,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
         WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints, solutionSaved)
 
       case WebExParts.JsPart =>
-        val jsTaskResults      : Seq[JsTaskResult]       = exercise.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
+        val jsTaskResults: Seq[JsTaskResult]             = exercise.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
         val gradedJsTaskResults: Seq[GradedJsTaskResult] = jsTaskResults.map(WebGrader.gradeJsTaskResult)
 
         val points    = addUp(gradedJsTaskResults.map(_.points))
@@ -102,7 +109,6 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
   )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {
     writeWebSolutionFiles(user.username, collection.id, exercise.id, learnerSolution)
       .flatMap { _ =>
-
         val driver              = new HtmlUnitDriver(true)
         val solutionUrl: String = getSolutionUrl(user, exercise, content.siteSpec.fileName)
 

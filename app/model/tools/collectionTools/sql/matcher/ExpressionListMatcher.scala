@@ -3,13 +3,11 @@ package model.tools.collectionTools.sql.matcher
 import model.core.matching.{Match, MatchType, Matcher}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 
-
 final case class ExpressionListMatch(
   matchType: MatchType,
   userArg: Option[ExpressionList],
   sampleArg: Option[ExpressionList]
 ) extends Match[ExpressionList]
-
 
 object ExpressionListMatcher extends Matcher[ExpressionList, ExpressionListMatch] {
 

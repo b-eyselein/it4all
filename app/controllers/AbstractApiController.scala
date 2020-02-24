@@ -17,9 +17,9 @@ trait AbstractApiController {
 
   private val bearerHeaderRegex: Regex = "Bearer (.*)".r
 
-  private implicit val clock     : Clock            = Clock.systemDefaultZone()
-  private implicit val ec        : ExecutionContext = self.defaultExecutionContext
-  private implicit val userFormat: Format[User]     = JsonProtocol.userFormat
+  private implicit val clock: Clock             = Clock.systemDefaultZone()
+  private implicit val ec: ExecutionContext     = self.defaultExecutionContext
+  private implicit val userFormat: Format[User] = JsonProtocol.userFormat
 
   protected implicit val configuration: Configuration
 
@@ -38,7 +38,7 @@ trait AbstractApiController {
           Some(user)
         }
       }
-    case _                                     => None
+    case _ => None
   }
 
   object JwtAuthenticatedAction extends AuthenticatedBuilder[User](userFromHeader, self.parse.default)

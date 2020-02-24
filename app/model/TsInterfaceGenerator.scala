@@ -1,6 +1,5 @@
 package model
 
-
 import better.files.File
 import model.tools.collectionTools.BasicTSTypes
 import model.tools.collectionTools.programming.ProgrammingTSTypes
@@ -12,7 +11,6 @@ import model.tools.collectionTools.xml.XmlTSTypes
 import nl.codestar.scalatsi.DefaultTSTypes
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.output.{OutputOptions, WriteTSToFiles}
-
 
 object TsInterfaceGenerator extends DefaultTSTypes {
 
@@ -28,7 +26,6 @@ object TsInterfaceGenerator extends DefaultTSTypes {
 
   private val tsTypesFiles = Seq(
     TsTypesFile(BasicTSTypes.exported, clientBaseDir / "_interfaces" / "models.ts"),
-
     TsTypesFile(RegexTSTypes.exported, collToolInterfacesFile("regex")),
     TsTypesFile(ProgrammingTSTypes.exported, collToolInterfacesFile("programming")),
     TsTypesFile(SqlTSTypes.exported, collToolInterfacesFile("sql")),
@@ -39,7 +36,6 @@ object TsInterfaceGenerator extends DefaultTSTypes {
 
   def main(args: Array[String]): Unit = tsTypesFiles.foreach {
     case TsTypesFile(toOutput, targetFile) =>
-
       val options = OutputOptions(targetFile.toJava, withSemicolon = true)
 
       WriteTSToFiles.write(options)(toOutput)

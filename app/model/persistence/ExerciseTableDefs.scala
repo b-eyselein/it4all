@@ -13,8 +13,9 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 import scala.concurrent.ExecutionContext
 import scala.reflect.ClassTag
 
-class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigProvider)(override implicit val executionContext: ExecutionContext)
-  extends LearningPathTableDefs
+class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfigProvider)(
+  override implicit val executionContext: ExecutionContext
+) extends LearningPathTableDefs
     with ExerciseTableDefQueries {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
@@ -22,17 +23,18 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
   // Table Queries
 
-  protected final val collectionsTQ  : TableQuery[ExerciseCollectionsTable] = TableQuery[ExerciseCollectionsTable]
-  protected final val exercisesTQ    : TableQuery[ExercisesTable]           = TableQuery[ExercisesTable]
-  protected final val userSolutionsTQ: TableQuery[UserSolutionsTable]       = TableQuery[UserSolutionsTable]
-  protected final val lessonsTQ      : TableQuery[LessonsTable]             = TableQuery[LessonsTable]
+  protected final val collectionsTQ: TableQuery[ExerciseCollectionsTable] = TableQuery[ExerciseCollectionsTable]
+  protected final val exercisesTQ: TableQuery[ExercisesTable]             = TableQuery[ExercisesTable]
+  protected final val userSolutionsTQ: TableQuery[UserSolutionsTable]     = TableQuery[UserSolutionsTable]
+  protected final val lessonsTQ: TableQuery[LessonsTable]                 = TableQuery[LessonsTable]
 
   // Implicit column types
 
-  private def jsonColumnType[T: ClassTag](tFormat: Format[T], default: => T = ???): BaseColumnType[T] = MappedColumnType.base[T, String](
-    t => Json.stringify(tFormat.writes(t)),
-    jsonT => tFormat.reads(Json.parse(jsonT)).getOrElse(default)
-  )
+  private def jsonColumnType[T: ClassTag](tFormat: Format[T], default: => T = ???): BaseColumnType[T] =
+    MappedColumnType.base[T, String](
+      t => Json.stringify(tFormat.writes(t)),
+      jsonT => tFormat.reads(Json.parse(jsonT)).getOrElse(default)
+    )
 
   private def jsonSeqColumnType[T: ClassTag](tFormat: Format[T]): BaseColumnType[Seq[T]] =
     jsonColumnType(Format(Reads.seq(tFormat), Writes.seq(tFormat)))
@@ -40,8 +42,12 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
   private val stringSeqColumnType: BaseColumnType[Seq[String]] =
     jsonSeqColumnType(Format(Reads.StringReads, Writes.StringWrites))
 
-  private val semanticVersionColumnType: BaseColumnType[SemanticVersion] = jsonColumnType(ToolJsonProtocol.semanticVersionFormat)
-  private val jsonValueColumnType      : BaseColumnType[JsValue]         = jsonColumnType(Format[JsValue](x => JsSuccess(x), identity))
+  private val semanticVersionColumnType: BaseColumnType[SemanticVersion] = jsonColumnType(
+    ToolJsonProtocol.semanticVersionFormat
+  )
+  private val jsonValueColumnType: BaseColumnType[JsValue] = jsonColumnType(
+    Format[JsValue](x => JsSuccess(x), identity)
+  )
 
   protected val exTagsColumnType: BaseColumnType[Seq[ExTag]] = jsonSeqColumnType(ToolJsonProtocol.exTagFormat)
   protected val exPartColumnType: BaseColumnType[ExPart]     = MappedColumnType.base[ExPart, String](_.entryName, _ => ???)
@@ -52,8 +58,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     private implicit val ssct: BaseColumnType[Seq[String]] = stringSeqColumnType
 
-
-    def id: Rep[Int] = column[Int](idName)
+    def id: Rep[Int] = column[Int]("id")
 
     def toolId: Rep[String] = column[String]("tool_id")
 
@@ -65,13 +70,17 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def shortName: Rep[String] = column[String]("short_name")
 
-
     def pk = primaryKey("ex_coll_pk", (id, toolId))
 
-
-    override def * : ProvenShape[ExerciseCollection] = (
-      id, toolId, title, authors, text, shortName
-    ) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
+    override def * : ProvenShape[ExerciseCollection] =
+      (
+        id,
+        toolId,
+        title,
+        authors,
+        text,
+        shortName
+      ) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
 
   }
 
@@ -82,15 +91,13 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
     private implicit val ssct: BaseColumnType[Seq[String]]     = stringSeqColumnType
     private implicit val etct: BaseColumnType[Seq[ExTag]]      = exTagsColumnType
 
-
-    def id: Rep[Int] = column[Int](idName)
+    def id: Rep[Int] = column[Int]("id")
 
     def collectionId: Rep[Int] = column[Int]("collection_id")
 
     def toolId: Rep[String] = column[String]("tool_id")
 
     def semanticVersion: Rep[SemanticVersion] = column[SemanticVersion]("semantic_version")
-
 
     def title: Rep[String] = column[String]("title")
 
@@ -102,27 +109,36 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def difficulty: Rep[Option[Int]] = column[Option[Int]]("difficulty")
 
-
     def content: Rep[JsValue] = column[JsValue]("content_json")
-
 
     def pk: PrimaryKey = primaryKey("pk", (id, collectionId, toolId, semanticVersion))
 
-    def collectionFk: ForeignKeyQuery[ExerciseCollectionsTable, ExerciseCollection] = foreignKey(
-      "scenario_fk", (collectionId, toolId), collectionsTQ
-    )(c => (c.id, c.toolId))
+    def collectionFk: ForeignKeyQuery[ExerciseCollectionsTable, ExerciseCollection] =
+      foreignKey(
+        "scenario_fk",
+        (collectionId, toolId),
+        collectionsTQ
+      )(c => (c.id, c.toolId))
 
-
-    override def * : ProvenShape[Exercise] = (
-      id, collectionId, toolId, semanticVersion, title, authors, text, tags, difficulty, content
-    ) <> (Exercise.tupled, Exercise.unapply)
+    override def * : ProvenShape[Exercise] =
+      (
+        id,
+        collectionId,
+        toolId,
+        semanticVersion,
+        title,
+        authors,
+        text,
+        tags,
+        difficulty,
+        content
+      ) <> (Exercise.tupled, Exercise.unapply)
 
   }
 
   protected abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
 
     private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
-
 
     def exerciseId: Rep[Int] = column[Int]("exercise_id")
 
@@ -132,10 +148,12 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("exercise_semantic_version")
 
-
-    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] = foreignKey(
-      "exercise_fk", (exerciseId, collectionId, toolId, exSemVer), exercisesTQ
-    )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
+    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] =
+      foreignKey(
+        "exercise_fk",
+        (exerciseId, collectionId, toolId, exSemVer),
+        exercisesTQ
+      )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
 
   }
 
@@ -161,27 +179,34 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def solutionJson: Rep[JsValue] = column[JsValue]("solution_json")
 
-
     def pk = primaryKey("user_solutions_fk", (id, exerciseId, collectionId, toolId, exSemVer, part, username))
 
-
-    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] = foreignKey(
-      "exercise_fk", (exerciseId, collectionId, toolId, exSemVer), exercisesTQ
-    )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
+    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] =
+      foreignKey(
+        "exercise_fk",
+        (exerciseId, collectionId, toolId, exSemVer),
+        exercisesTQ
+      )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
 
-
-    override def * : ProvenShape[DbUserSolution] = (
-      id, exerciseId, collectionId, toolId, exSemVer, part, username, solutionJson
-    ) <> (DbUserSolution.tupled, DbUserSolution.unapply)
+    override def * : ProvenShape[DbUserSolution] =
+      (
+        id,
+        exerciseId,
+        collectionId,
+        toolId,
+        exSemVer,
+        part,
+        username,
+        solutionJson
+      ) <> (DbUserSolution.tupled, DbUserSolution.unapply)
 
   }
 
   protected class LessonsTable(tag: Tag) extends Table[DbLesson](tag, "lessons") {
 
     private implicit val jct: BaseColumnType[JsValue] = jsonValueColumnType
-
 
     def id: Rep[Int] = column[Int]("id")
 
@@ -191,9 +216,7 @@ class ExerciseTableDefs @Inject()(override val dbConfigProvider: DatabaseConfigP
 
     def contentJson: Rep[JsValue] = column[JsValue]("content_json")
 
-
     def pk = primaryKey("lesson_pk", (id, toolId))
-
 
     override def * : ProvenShape[DbLesson] = (id, toolId, title, contentJson) <> (DbLesson.tupled, DbLesson.unapply)
 

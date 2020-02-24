@@ -6,11 +6,12 @@ import scala.util.matching.Regex
 
 object UmlExTextProcessor {
 
-  private val capWordsRegex: Regex  = """[A-Z][a-zäöüß]*""".r
-  private val cssClassName : String = "text-muted"
+  private val capWordsRegex: Regex = """[A-Z][a-zäöüß]*""".r
+  private val cssClassName: String = "text-muted"
 
   private def replaceWithMappingSpan(text: String, key: String, value: String): String =
-    Pattern.compile(key + "\\b")
+    Pattern
+      .compile(key + "\\b")
       .matcher(text)
       .replaceAll(s"""<span class="$cssClassName" data-baseform="$value">$key</span>""")
 
@@ -21,8 +22,6 @@ object UmlExTextProcessor {
       .toSet
       .filter(k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))
       .map(str => (str, str))
-
-
     @annotation.tailrec
     def go(currentText: String, remainingReplacers: List[(String, String)]): String = remainingReplacers match {
       case Nil                          => currentText

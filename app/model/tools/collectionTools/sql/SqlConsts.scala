@@ -4,8 +4,8 @@ import model.tools.{ToolConsts, ToolState}
 
 object SqlConsts extends ToolConsts {
 
-  override val toolName : String    = "Sql"
-  override val toolId   : String    = "sql"
+  override val toolName: String     = "Sql"
+  override val toolId: String       = "sql"
   override val toolState: ToolState = ToolState.LIVE
 
   val additionalComparisonsName: String = "additionalComparisons"

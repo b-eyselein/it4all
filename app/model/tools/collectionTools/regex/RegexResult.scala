@@ -5,9 +5,7 @@ import model.points._
 import model.tools.collectionTools.regex.BinaryClassificationResultTypes._
 import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
 
-
 sealed trait RegexEvaluationResult extends EvaluationResult
-
 
 final case class RegexMatchingEvaluationResult(
   matchData: String,
@@ -22,7 +20,6 @@ final case class RegexMatchingEvaluationResult(
 
 }
 
-
 final case class RegexExtractionEvaluationResult(
   base: String,
   extractionMatchingResult: ExtractedValuesComparison,
@@ -32,7 +29,6 @@ final case class RegexExtractionEvaluationResult(
   override def success: SuccessType = ???
 
 }
-
 
 final case class RegexCompleteResult(
   correctionType: RegexCorrectionType,

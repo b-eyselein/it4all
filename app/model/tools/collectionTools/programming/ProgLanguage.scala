@@ -2,8 +2,8 @@ package model.tools.collectionTools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-
-sealed abstract class ProgLanguage(val languageName: String, val aceName: String, val fileEnding: String) extends EnumEntry {
+sealed abstract class ProgLanguage(val languageName: String, val aceName: String, val fileEnding: String)
+    extends EnumEntry {
 
   def activityDiagramDisplay(exercise: ProgExerciseContent): String
 
@@ -19,8 +19,8 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
 
   val values: IndexedSeq[ProgLanguage] = findValues
 
-  def buildToEvaluate(functionname: String, inputs: Seq[String]): String = functionname + "(" + (inputs mkString ", ") + ")"
-
+  def buildToEvaluate(functionname: String, inputs: Seq[String]): String =
+    functionname + "(" + (inputs mkString ", ") + ")"
 
   case object PYTHON_3 extends ProgLanguage("Python 3", "python", "py") {
 
@@ -29,7 +29,8 @@ object ProgLanguages extends PlayEnum[ProgLanguage] {
       case None    => exercise.functionName + buildParams(exercise)
     }
 
-    override def activityDiagramDeclaration(exercise: ProgExerciseContent): String = "def " + exercise.functionName + buildParams(exercise)
+    override def activityDiagramDeclaration(exercise: ProgExerciseContent): String =
+      "def " + exercise.functionName + buildParams(exercise)
 
     override def buildParams(exercise: ProgExerciseContent): String = {
       val inputs = exercise.inputTypes map (it => it.inputName)

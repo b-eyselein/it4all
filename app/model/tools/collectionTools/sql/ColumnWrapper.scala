@@ -137,18 +137,21 @@ final case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
     case _                         => false
   }
 
-  private def compareAliases(maybeAlias1: Option[Alias], maybeAlias2: Option[Alias]): Boolean = (maybeAlias1, maybeAlias2) match {
-    case (Some(alias1), Some(alias2)) => alias1.getName == alias2.getName
-    case (Some(_), None)              => false
-    case (None, Some(_))              => false
-    case (None, None)                 => true
-  }
+  private def compareAliases(maybeAlias1: Option[Alias], maybeAlias2: Option[Alias]): Boolean =
+    (maybeAlias1, maybeAlias2) match {
+      case (Some(alias1), Some(alias2)) => alias1.getName == alias2.getName
+      case (Some(_), None)              => false
+      case (None, Some(_))              => false
+      case (None, None)                 => true
+    }
 
   def canMatchOther(that: SelectColumnWrapper): Boolean = (this.col, that.col) match {
-    case (_: AllColumns, _: AllColumns)                       => true
-    case (at1: AllTableColumns, at2: AllTableColumns)         => at1.getTable.getFullyQualifiedName == at2.getTable.getFullyQualifiedName
-    case (s1: SelectExpressionItem, s2: SelectExpressionItem) => s1.getExpression.toString equalsIgnoreCase s2.getExpression.toString
-    case _                                                    => false
+    case (_: AllColumns, _: AllColumns) => true
+    case (at1: AllTableColumns, at2: AllTableColumns) =>
+      at1.getTable.getFullyQualifiedName == at2.getTable.getFullyQualifiedName
+    case (s1: SelectExpressionItem, s2: SelectExpressionItem) =>
+      s1.getExpression.toString equalsIgnoreCase s2.getExpression.toString
+    case _ => false
   }
 
   override def getColName: String = col match {
@@ -166,12 +169,12 @@ final case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
     case (_: AllColumns, _: AllColumns) | (_: AllTableColumns, _: AllTableColumns) => MatchType.SUCCESSFUL_MATCH
 
     case (selExpr1: SelectExpressionItem, selExpr2: SelectExpressionItem) =>
-      if (compareAliases(Option(selExpr1.getAlias), Option(selExpr2.getAlias))) MatchType.SUCCESSFUL_MATCH else MatchType.UNSUCCESSFUL_MATCH
+      if (compareAliases(Option(selExpr1.getAlias), Option(selExpr2.getAlias))) MatchType.SUCCESSFUL_MATCH
+      else MatchType.UNSUCCESSFUL_MATCH
 
     case _ => MatchType.UNSUCCESSFUL_MATCH
   }
 
   override def toString: String = col.toString
-
 
 }

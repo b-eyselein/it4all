@@ -14,8 +14,8 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
   val regexExtractionTestDataFormat: Format[RegexExtractionTestData] = Json.format[RegexExtractionTestData]
 
   override val exerciseContentFormat: Format[RegexExerciseContent] = {
-    implicit val rctf : Format[RegexCorrectionType]     = RegexCorrectionTypes.jsonFormat
-    implicit val sssf : Format[SampleSolution[String]]  = sampleSolutionFormat
+    implicit val rctf: Format[RegexCorrectionType]      = RegexCorrectionTypes.jsonFormat
+    implicit val sssf: Format[SampleSolution[String]]   = sampleSolutionFormat
     implicit val rmtdf: Format[RegexMatchTestData]      = regexMatchTestDataFormat
     implicit val retdf: Format[RegexExtractionTestData] = regexExtractionTestDataFormat
 
@@ -30,24 +30,23 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
     Json.writes[RegexMatchingEvaluationResult]
   }
 
-
   private val regexMatchMatchWrites: Writes[RegexMatchMatch] = {
-    implicit val regexMatchWrites: Writes[RegexMatch] = m => Json.obj(
-      "start" -> m.start,
-      "end" -> m.end,
-      "content" -> m.group(0)
-    )
+    implicit val regexMatchWrites: Writes[RegexMatch] = m =>
+      Json.obj(
+        "start"   -> m.start,
+        "end"     -> m.end,
+        "content" -> m.group(0)
+      )
 
     Json.writes
   }
 
   private val regexMatchMatchingResultWrites: Writes[MatchingResult[RegexMatch, RegexMatchMatch]] = {
-    implicit val pw  : Writes[Points]          = ToolJsonProtocol.pointsFormat
+    implicit val pw: Writes[Points]            = ToolJsonProtocol.pointsFormat
     implicit val rmmw: Writes[RegexMatchMatch] = regexMatchMatchWrites
 
     Json.writes
   }
-
 
   private val regexExtractionEvaluationResultWrites: Writes[RegexExtractionEvaluationResult] = {
     implicit val rmmrw: Writes[MatchingResult[RegexMatch, RegexMatchMatch]] = regexMatchMatchingResultWrites
@@ -62,7 +61,8 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
 
     implicit val matchEvalResultWrites: Writes[RegexMatchingEvaluationResult] = regexMatchingEvaluationResultWrites
 
-    implicit val extractionEvalResultWrites: Writes[RegexExtractionEvaluationResult] = regexExtractionEvaluationResultWrites
+    implicit val extractionEvalResultWrites: Writes[RegexExtractionEvaluationResult] =
+      regexExtractionEvaluationResultWrites
 
     Json.writes[RegexCompleteResult]
   }

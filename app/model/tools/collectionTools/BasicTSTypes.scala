@@ -11,7 +11,7 @@ object BasicTSTypes extends ToolTSInterfaceTypes {
 
   private val lessonQuestionsContentTSI: TSIType[LessonQuestionsContent] = {
     implicit val questionAnswerTSI: TSIType[QuestionAnswer] = TSType.fromCaseClass
-    implicit val questionTSI      : TSIType[Question]       = TSType.fromCaseClass
+    implicit val questionTSI: TSIType[Question]             = TSType.fromCaseClass
 
     TSType.fromCaseClass
   }
@@ -28,7 +28,7 @@ object BasicTSTypes extends ToolTSInterfaceTypes {
   }
 
   private val semanticVersionTSI: TSIType[SemanticVersion] = TSType.fromCaseClass
-  private val exTagTSI          : TSIType[ExTag]           = TSType.fromCaseClass
+  private val exTagTSI: TSIType[ExTag]                     = TSType.fromCaseClass
 
   private val exerciseMetaDataTSI: TSIType[ExerciseMetaData] = {
     implicit val svt: TSIType[SemanticVersion] = semanticVersionTSI
@@ -38,21 +38,19 @@ object BasicTSTypes extends ToolTSInterfaceTypes {
   }
 
   private val exerciseTSI: TSIType[Exercise] = {
-    implicit val svt : TSIType[SemanticVersion] = semanticVersionTSI
-    implicit val ett : TSIType[ExTag]           = exTagTSI
-    implicit val jvtt: TSType[JsValue]          = jsValueTsType
+    implicit val svt: TSIType[SemanticVersion] = semanticVersionTSI
+    implicit val ett: TSIType[ExTag]           = exTagTSI
+    implicit val jvtt: TSType[JsValue]         = jsValueTsType
 
     TSIType(TSType.fromCaseClass[Exercise].get.copy(extending = Some(exerciseMetaDataTSI.get)))
   }
 
   private val exerciseCollectionTSI: TSIType[ExerciseCollection] = TSType.fromCaseClass[ExerciseCollection]
 
-
   val exported: Seq[TypescriptNamedType] = Seq(
     lessonTSI.get,
     lessonTextContentTSI.get,
     lessonQuestionsContentTSI.get,
-
     exerciseTSI.get,
     exerciseMetaDataTSI.get,
     exerciseCollectionTSI.get

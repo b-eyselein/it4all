@@ -1,14 +1,13 @@
 package model.tools
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{Consts, Role}
+import model.Role
 
 sealed abstract class ToolState(val german: String, val greek: String, requiredRole: Role) extends EnumEntry
 
 object ToolState extends PlayEnum[ToolState] {
 
   override val values: IndexedSeq[ToolState] = findValues
-
 
   case object LIVE extends ToolState("Verfügbare Tools", "", Role.RoleUser)
 
@@ -18,12 +17,10 @@ object ToolState extends PlayEnum[ToolState] {
 
 }
 
-
-
-trait ToolConsts extends Consts {
+trait ToolConsts {
 
   val toolName: String
-  val toolId  : String
+  val toolId: String
 
   val toolState: ToolState
 

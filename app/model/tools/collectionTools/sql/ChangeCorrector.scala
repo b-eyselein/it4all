@@ -51,7 +51,6 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
 }
 
-
 object DeleteCorrector extends ChangeCorrector("DELETE") {
 
   override type Q = Delete
@@ -74,7 +73,8 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override type Q = Update
 
-  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getColumns.asScala.map(wrapColumn).toSeq
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] =
+    query.getColumns.asScala.map(wrapColumn).toSeq
 
   override protected def getTables(query: Q): Seq[Table] = Seq(query.getTable)
 

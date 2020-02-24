@@ -16,7 +16,7 @@ final case class ElementLineAnalysisResult(
       case false => zeroPoints
       case true  => singlePoint
     })
-   */
+ */
 
 }
 
@@ -52,7 +52,12 @@ object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineMatch] {
       MatchType.UNSUCCESSFUL_MATCH
     }
 
-    val ar = ElementLineAnalysisResult(contentCorrect, sa.elementDefinition.contentAsString, attributesCorrect, arg2Def.getOrElse("FEHLER!"))
+    val ar = ElementLineAnalysisResult(
+      contentCorrect,
+      sa.elementDefinition.contentAsString,
+      attributesCorrect,
+      arg2Def.getOrElse("FEHLER!")
+    )
 
     ElementLineMatch(matchType, Some(ua), Some(sa), Some(ar))
   }

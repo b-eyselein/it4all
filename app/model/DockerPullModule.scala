@@ -11,9 +11,8 @@ import scala.util.{Failure, Success}
 
 class DockerPullModule extends AbstractModule {
 
-  private          val logger: Logger           = Logger(classOf[DockerPullModule])
-  private implicit val ec    : ExecutionContext = scala.concurrent.ExecutionContext.global
-
+  private val logger: Logger                = Logger(classOf[DockerPullModule])
+  private implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
   private val imagesToPull: Seq[ScalaDockerImage] = Seq(
     RoseCorrector.roseCorrectionDockerImageName,

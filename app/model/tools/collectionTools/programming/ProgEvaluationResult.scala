@@ -4,14 +4,13 @@ import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import play.api.libs.json.JsValue
 
-
 sealed trait ProgEvalResult extends EvaluationResult
 
 final case class ProgCompleteResult(
   solutionSaved: Boolean,
   simplifiedResults: Seq[SimplifiedExecutionResult] = Seq.empty,
   normalResult: Option[NormalExecutionResult] = None,
-  unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty,
+  unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty
 ) extends CompleteResult {
 
   private def results: Seq[ProgEvalResult] = simplifiedResults ++ unitTestResults

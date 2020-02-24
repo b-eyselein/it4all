@@ -30,19 +30,20 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
         userSolution.part === part
   }
 
-
-  private def futureNextUserSolutionId(exercise: Exercise, user: User, part: ExPart): Future[Int] = for {
-    maybeCurrentHighestId <- db.run(
-      userSolutionsTQ.filter(solutionFilter(exercise, user, part)).map(_.id).max.result
-    )
-  } yield maybeCurrentHighestId.fold(0)(_ + 1)
+  private def futureNextUserSolutionId(exercise: Exercise, user: User, part: ExPart): Future[Int] =
+    for {
+      maybeCurrentHighestId <- db.run(
+        userSolutionsTQ.filter(solutionFilter(exercise, user, part)).map(_.id).max.result
+      )
+    } yield maybeCurrentHighestId.fold(0)(_ + 1)
 
   private def lessonFromDbLesson(dbLesson: DbLesson): Lesson = {
     val lessonContentSeqReads = Reads.seq(ToolJsonProtocol.lessonContentFormat)
 
     dbLesson match {
       case DbLesson(id, toolId, title, contentJson) =>
-        lessonContentSeqReads.reads(contentJson)
+        lessonContentSeqReads
+          .reads(contentJson)
           .map(content => Lesson(id, toolId, title, content))
           .getOrElse(???)
     }
@@ -71,46 +72,65 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
 
   def futureAllLessons(toolId: String): Future[Seq[Lesson]] =
     db.run(lessonsTQ.filter(_.toolId === toolId).result)
-      .map { dbLessons: Seq[DbLesson] => dbLessons.map(lessonFromDbLesson) }
+      .map { dbLessons: Seq[DbLesson] =>
+        dbLessons.map(lessonFromDbLesson)
+      }
 
-  def futureLessonById(toolId: String, lessonId: Int): Future[Option[Lesson]] = db.run(
-    lessonsTQ
-      .filter(l => l.toolId === toolId && l.id === lessonId)
-      .result
-      .headOption
-  ).map(maybeDbLesson => maybeDbLesson.map(lessonFromDbLesson))
+  def futureLessonById(toolId: String, lessonId: Int): Future[Option[Lesson]] =
+    db.run(
+        lessonsTQ
+          .filter(l => l.toolId === toolId && l.id === lessonId)
+          .result
+          .headOption
+      )
+      .map(maybeDbLesson => maybeDbLesson.map(lessonFromDbLesson))
 
   def futureExerciseMetaDataForTool(toolId: String): Future[Seq[ExerciseMetaData]] = db.run(
     exercisesTQ
-      .filter { ex => ex.toolId === toolId }
+      .filter { ex =>
+        ex.toolId === toolId
+      }
       .result
-      .map { exes => exes.map(ExerciseMetaData.forExercise) }
+      .map { exes =>
+        exes.map(ExerciseMetaData.forExercise)
+      }
   )
 
   def futureExerciseMetaDataForCollection(toolId: String, collId: Int): Future[Seq[ExerciseMetaData]] = db.run(
     exercisesTQ
-      .filter { ex => ex.toolId === toolId && ex.collectionId === collId }
+      .filter { ex =>
+        ex.toolId === toolId && ex.collectionId === collId
+      }
       .result
-      .map { exes => exes.map(ExerciseMetaData.forExercise) }
+      .map { exes =>
+        exes.map(ExerciseMetaData.forExercise)
+      }
   )
 
   def futureExercisesInColl(toolId: String, collId: Int): Future[Seq[Exercise]] = db.run(
-    exercisesTQ
-      .filter { ex => ex.toolId === toolId && ex.collectionId === collId }
-      .result
+    exercisesTQ.filter { ex =>
+      ex.toolId === toolId && ex.collectionId === collId
+    }.result
   )
 
   def futureExerciseById(toolId: String, collId: Int, id: Int): Future[Option[Exercise]] = db.run(
     exercisesTQ
-      .filter { ex => ex.toolId === toolId && ex.collectionId === collId && ex.id === id }
+      .filter { ex =>
+        ex.toolId === toolId && ex.collectionId === collId && ex.id === id
+      }
       .result
       .headOption
   )
 
-  def futureCollectionAndExercise(toolId: String, collectionId: Int, exerciseId: Int): Future[Option[(ExerciseCollection, Exercise)]] = for {
-    collection <- futureCollById(toolId, collectionId)
-    exercise <- futureExerciseById(toolId, collectionId, exerciseId)
-  } yield collection zip exercise
+  def futureCollectionAndExercise(
+    toolId: String,
+    collectionId: Int,
+    exerciseId: Int
+  ): Future[Option[(ExerciseCollection, Exercise)]] =
+    for {
+      collection <- futureCollById(toolId, collectionId)
+      exercise   <- futureExerciseById(toolId, collectionId, exerciseId)
+    } yield collection zip exercise
 
   // Saving
 
@@ -128,16 +148,23 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     db.run(lessonsTQ.insertOrUpdate(dbLesson)).transform(_ == 1, identity)
   }
 
-  def futureInsertSolution(user: User, exercise: Exercise, part: ExPart, solution: JsValue): Future[Boolean] = for {
-    nextSolutionId <- futureNextUserSolutionId(exercise, user, part)
+  def futureInsertSolution(user: User, exercise: Exercise, part: ExPart, solution: JsValue): Future[Boolean] =
+    for {
+      nextSolutionId <- futureNextUserSolutionId(exercise, user, part)
 
-    dbUserSolution = DbUserSolution(
-      nextSolutionId, exercise.id, exercise.collectionId, exercise.toolId, exercise.semanticVersion,
-      part, user.username, solution
-    )
+      dbUserSolution = DbUserSolution(
+        nextSolutionId,
+        exercise.id,
+        exercise.collectionId,
+        exercise.toolId,
+        exercise.semanticVersion,
+        part,
+        user.username,
+        solution
+      )
 
-    inserted <- db.run(userSolutionsTQ += dbUserSolution).transform(_ == 1, identity)
-  } yield inserted
+      inserted <- db.run(userSolutionsTQ += dbUserSolution).transform(_ == 1, identity)
+    } yield inserted
 
   // Deletion
 

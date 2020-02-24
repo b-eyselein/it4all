@@ -26,7 +26,7 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
   // Xml Grammar correction
 
   private val elementLineMatchWrites: Writes[ElementLineMatch] = {
-    implicit val elw  : Writes[ElementLine]               = {
+    implicit val elw: Writes[ElementLine] = {
       implicit val edw: Writes[ElementDefinition] = l => JsString(l.asString)
       implicit val alw: Writes[AttributeList]     = l => JsString(l.asString)
 
@@ -43,7 +43,6 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
     implicit val elementLineComparisonWrites: Writes[ElementLineComparison] =
       matchingResultWrites(elementLineMatchWrites)
 
-
     Json.writes
   }
 
@@ -58,9 +57,9 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
   // Complete Result
 
   override val completeResultWrites: Writes[XmlCompleteResult] = {
-    implicit val xew : Writes[XmlError]         = xmlErrorWrites
+    implicit val xew: Writes[XmlError]          = xmlErrorWrites
     implicit val xgrw: Writes[XmlGrammarResult] = xmlGrammarResultWrites
-    implicit val pw  : Writes[Points]           = ToolJsonProtocol.pointsFormat
+    implicit val pw: Writes[Points]             = ToolJsonProtocol.pointsFormat
 
     Json.writes
   }

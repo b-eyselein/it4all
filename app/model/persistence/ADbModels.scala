@@ -3,7 +3,6 @@ package model.persistence
 import model.tools.collectionTools.{ExPart, SemanticVersion}
 import play.api.libs.json.JsValue
 
-
 final case class DbUserSolution(
   id: Int,
   exerciseId: Int,
@@ -14,7 +13,6 @@ final case class DbUserSolution(
   username: String,
   solution: JsValue
 )
-
 
 final case class DbLesson(
   id: Int,

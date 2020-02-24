@@ -2,13 +2,11 @@ package model.core.result
 
 import model.points.Points
 
-
 trait EvaluationResult {
 
   def success: SuccessType
 
 }
-
 
 trait CompleteResult {
 

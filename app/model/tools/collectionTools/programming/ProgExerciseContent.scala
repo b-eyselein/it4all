@@ -5,17 +5,16 @@ import model.tools.collectionTools.{ExerciseContent, ExerciseFile, SampleSolutio
 import play.api.libs.json.JsValue
 
 final case class ProgExerciseContent(
-  functionName: String, foldername: String, filename: String,
-  inputTypes: Seq[ProgInput], outputType: ProgDataType,
-
+  functionName: String,
+  foldername: String,
+  filename: String,
+  inputTypes: Seq[ProgInput],
+  outputType: ProgDataType,
   baseData: Option[JsValue],
-
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
-
   sampleSolutions: Seq[SampleSolution[ProgSolution]],
   sampleTestData: Seq[ProgTestData],
-
   maybeClassDiagramPart: Option[UmlClassDiagram]
 ) extends ExerciseContent {
 
@@ -38,14 +37,12 @@ final case class UnitTestPart(
 
 final case class UnitTestTestConfig(id: Int, shouldFail: Boolean, description: String, file: ExerciseFile)
 
-
 final case class ImplementationPart(
   base: String,
   files: Seq[ExerciseFile],
   implFileName: String,
   sampleSolFileNames: Seq[String]
 )
-
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 

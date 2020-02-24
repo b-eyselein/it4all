@@ -36,7 +36,7 @@ trait FeedbackTableDefs extends TableDefs {
       .result
       .headOption
       .map {
-        case None                                                              => None
+        case None => None
         case Some((_, _, targetDegree, subject, semester, marksJson, comment)) =>
           Some(Feedback(targetDegree, subject, semester, ???, comment))
       }
@@ -46,19 +46,34 @@ trait FeedbackTableDefs extends TableDefs {
     feedbackTQ
       .filter(_.toolUrlPart === toolUrlPart)
       .result
-      .map(dbFeedbacks => dbFeedbacks.map {
-        case (_, _, targetDegree, subject, semester, marksJson, comment) => Feedback(targetDegree, subject, semester, ???, comment)
-      })
+      .map(
+        dbFeedbacks =>
+          dbFeedbacks.map {
+            case (_, _, targetDegree, subject, semester, marksJson, comment) =>
+              Feedback(targetDegree, subject, semester, ???, comment)
+          }
+      )
   )
 
   def futureUpsertFeedback(username: String, toolUrl: String, feedback: Feedback): Future[Boolean] = {
     saveSingle(
-      db.run(feedbackTQ.insertOrUpdate((username, toolUrl, feedback.targetDegree, feedback.subject, feedback.semester, feedback.marksJson, feedback.comment)))
+      db.run(
+        feedbackTQ.insertOrUpdate(
+          (
+            username,
+            toolUrl,
+            feedback.targetDegree,
+            feedback.subject,
+            feedback.semester,
+            feedback.marksJson,
+            feedback.comment
+          )
+        )
+      )
     )
   }
 
   // Column types
-
 
   private implicit val jsValueColumnType: BaseColumnType[JsValue] =
     MappedColumnType.base[JsValue, String](Json.stringify, Json.parse)
@@ -68,12 +83,12 @@ trait FeedbackTableDefs extends TableDefs {
 
   // Tables
 
-  class FeedbackTable(tag: Tag) extends Table[(String, String, Option[String], Option[String], Option[Int], JsValue, String)](tag, "feedback") {
+  class FeedbackTable(tag: Tag)
+      extends Table[(String, String, Option[String], Option[String], Option[Int], JsValue, String)](tag, "feedback") {
 
     def username: Rep[String] = column[String]("username")
 
     def toolUrlPart: Rep[String] = column[String]("tool_url")
-
 
     def targetDegree: Rep[Option[String]] = column[Option[String]](targetDegreeName)
 
@@ -85,11 +100,9 @@ trait FeedbackTableDefs extends TableDefs {
 
     def comment: Rep[String] = column[String]("comment")
 
-
     def pk: PrimaryKey = primaryKey("pk", (username, toolUrlPart))
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
-
 
     override def * : ProvenShape[(String, String, Option[String], Option[String], Option[Int], JsValue, String)] =
       (username, toolUrlPart, targetDegree, subject, semester, marks, comment)

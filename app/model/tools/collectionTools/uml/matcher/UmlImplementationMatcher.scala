@@ -9,7 +9,6 @@ final case class UmlImplementationMatch(
   sampleArg: Option[UmlImplementation]
 ) extends Match[UmlImplementation]
 
-
 object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch] {
 
   override protected val matchName: String = "Vererbungen"
@@ -25,8 +24,10 @@ object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementa
   override protected def instantiateOnlyUserMatch(ua: UmlImplementation): UmlImplementationMatch =
     UmlImplementationMatch(MatchType.ONLY_USER, Some(ua), None)
 
-
-  override protected def instantiateCompleteMatch(ua: UmlImplementation, sa: UmlImplementation): UmlImplementationMatch = {
+  override protected def instantiateCompleteMatch(
+    ua: UmlImplementation,
+    sa: UmlImplementation
+  ): UmlImplementationMatch = {
     val matchType = if (ua.subClass == sa.subClass && ua.superClass == sa.superClass) {
       MatchType.SUCCESSFUL_MATCH
     } else {

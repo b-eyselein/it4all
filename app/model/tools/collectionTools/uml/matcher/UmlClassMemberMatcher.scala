@@ -3,29 +3,30 @@ package model.tools.collectionTools.uml.matcher
 import model.core.matching._
 import model.tools.collectionTools.uml.{UmlAttribute, UmlClassMember, UmlMethod, UmlVisibility}
 
-
 sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match[Mem]
-
 
 sealed trait UmlClassMemberAnalysisResult {
 
   val visibilityComparison: Boolean
-  val correctVisibility   : UmlVisibility
+  val correctVisibility: UmlVisibility
 
   val typeComparison: Boolean
-  val correctType   : String
+  val correctType: String
 
 }
 
-
 final case class UmlAttributeAnalysisResult(
-  visibilityComparison: Boolean, correctVisibility: UmlVisibility,
-  typeComparison: Boolean, correctType: String,
-  staticCorrect: Boolean, correctStatic: Boolean,
-  derivedCorrect: Boolean, correctDerived: Boolean,
-  abstractCorrect: Boolean, correctAbstract: Boolean
+  visibilityComparison: Boolean,
+  correctVisibility: UmlVisibility,
+  typeComparison: Boolean,
+  correctType: String,
+  staticCorrect: Boolean,
+  correctStatic: Boolean,
+  derivedCorrect: Boolean,
+  correctDerived: Boolean,
+  abstractCorrect: Boolean,
+  correctAbstract: Boolean
 ) extends UmlClassMemberAnalysisResult
-
 
 final case class UmlAttributeMatch(
   matchType: MatchType,
@@ -33,7 +34,6 @@ final case class UmlAttributeMatch(
   sampleArg: Option[UmlAttribute],
   maybeAnalysisResult: Option[UmlAttributeAnalysisResult]
 ) extends UmlClassMemberMatch[UmlAttribute]
-
 
 object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeMatch] {
 
@@ -73,26 +73,34 @@ object UmlAttributeMatcher extends Matcher[UmlAttribute, UmlAttributeMatch] {
     }
 
     val ar = UmlAttributeAnalysisResult(
-      visibilityComparison, sa.visibility,
-      returnTypeComparison, sa.memberType,
-      isStaticComparison, sa.isStatic,
-      isDerivedComparison, sa.isDerived,
-      isAbstractComparison, sa.isAbstract
+      visibilityComparison,
+      sa.visibility,
+      returnTypeComparison,
+      sa.memberType,
+      isStaticComparison,
+      sa.isStatic,
+      isDerivedComparison,
+      sa.isDerived,
+      isAbstractComparison,
+      sa.isAbstract
     )
 
     UmlAttributeMatch(matchType, Some(ua), Some(sa), Some(ar))
   }
 }
 
-
 final case class UmlMethodAnalysisResult(
-  visibilityComparison: Boolean, correctVisibility: UmlVisibility,
-  typeComparison: Boolean, correctType: String,
-  parameterComparison: Boolean, correctParameters: String,
-  staticCorrect: Boolean, correctStatic: Boolean,
-  abstractCorrect: Boolean, correctAbstract: Boolean
+  visibilityComparison: Boolean,
+  correctVisibility: UmlVisibility,
+  typeComparison: Boolean,
+  correctType: String,
+  parameterComparison: Boolean,
+  correctParameters: String,
+  staticCorrect: Boolean,
+  correctStatic: Boolean,
+  abstractCorrect: Boolean,
+  correctAbstract: Boolean
 ) extends UmlClassMemberAnalysisResult
-
 
 final case class UmlMethodMatch(
   matchType: MatchType,
@@ -100,7 +108,6 @@ final case class UmlMethodMatch(
   sampleArg: Option[UmlMethod],
   maybeAnalysisResult: Option[UmlMethodAnalysisResult]
 ) extends UmlClassMemberMatch[UmlMethod]
-
 
 object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodMatch] {
 
@@ -141,11 +148,16 @@ object UmlMethodMatcher extends Matcher[UmlMethod, UmlMethodMatch] {
     }
 
     val ar = UmlMethodAnalysisResult(
-      visibilityComparison, sa.visibility,
-      returnTypeComparison, sa.memberType,
-      parameterComparison, sa.parameters,
-      isStaticComparison, sa.isStatic,
-      isAbstractComparison, sa.isAbstract
+      visibilityComparison,
+      sa.visibility,
+      returnTypeComparison,
+      sa.memberType,
+      parameterComparison,
+      sa.parameters,
+      isStaticComparison,
+      sa.isStatic,
+      isAbstractComparison,
+      sa.isAbstract
     )
 
     UmlMethodMatch(matchType, Some(ua), Some(sa), Some(ar))

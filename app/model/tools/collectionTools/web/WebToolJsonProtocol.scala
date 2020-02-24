@@ -21,7 +21,7 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
 
   private val jsTaskFormat: Format[JsTask] = {
     implicit val hesf: Format[JsHtmlElementSpec] = jsHtmlElementSpecFormat
-    implicit val jsf : Format[JsAction]          = jsActionFormat
+    implicit val jsf: Format[JsAction]           = jsActionFormat
 
     Json.format[JsTask]
   }
@@ -40,8 +40,8 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
   }
 
   override val exerciseContentFormat: Format[WebExerciseContent] = {
-    implicit val ssf : Format[SiteSpec]                          = siteSpecFormat
-    implicit val eff : Format[Seq[ExerciseFile]]                 = solutionFormat
+    implicit val ssf: Format[SiteSpec]                           = siteSpecFormat
+    implicit val eff: Format[Seq[ExerciseFile]]                  = solutionFormat
     implicit val fssf: Format[SampleSolution[Seq[ExerciseFile]]] = sampleSolutionFormat
 
     Json.format[WebExerciseContent]
@@ -57,27 +57,27 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
 
   private val gradedHtmlTaskResultWrites: Writes[GradedHtmlTaskResult] = {
     implicit val gtrw: Writes[GradedTextResult] = gradedTextResultWrites
-    implicit val pw  : Writes[Points]           = ToolJsonProtocol.pointsFormat
+    implicit val pw: Writes[Points]             = ToolJsonProtocol.pointsFormat
 
     Json.writes[GradedHtmlTaskResult]
   }
 
   private val gradedJsTaskResultWrites: Writes[GradedJsHtmlElementSpecResult] = {
     implicit val gtrw: Writes[GradedTextResult] = gradedTextResultWrites
-    implicit val pw  : Writes[Points]           = ToolJsonProtocol.pointsFormat
+    implicit val pw: Writes[Points]             = ToolJsonProtocol.pointsFormat
 
     Json.writes[GradedJsHtmlElementSpecResult]
   }
 
   private val gradedJsActionResultWrites = {
     implicit val jaf: Format[JsAction] = jsActionFormat
-    implicit val pw : Writes[Points]   = ToolJsonProtocol.pointsFormat
+    implicit val pw: Writes[Points]    = ToolJsonProtocol.pointsFormat
 
     Json.writes[GradedJsActionResult]
   }
 
   private val jsWebResultWrites: Writes[GradedJsTaskResult] = {
-    implicit val pw   : Writes[Points]                        = ToolJsonProtocol.pointsFormat
+    implicit val pw: Writes[Points]                           = ToolJsonProtocol.pointsFormat
     implicit val gesrw: Writes[GradedJsHtmlElementSpecResult] = gradedJsTaskResultWrites
     implicit val gjarw: Writes[GradedJsActionResult]          = gradedJsActionResultWrites
 
@@ -87,7 +87,7 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
   override val completeResultWrites: Writes[WebCompleteResult] = {
     implicit val gesrw: Writes[GradedHtmlTaskResult] = gradedHtmlTaskResultWrites
     implicit val gjtrw: Writes[GradedJsTaskResult]   = jsWebResultWrites
-    implicit val pw   : Writes[Points]               = ToolJsonProtocol.pointsFormat
+    implicit val pw: Writes[Points]                  = ToolJsonProtocol.pointsFormat
 
     Json.writes[WebCompleteResult]
   }

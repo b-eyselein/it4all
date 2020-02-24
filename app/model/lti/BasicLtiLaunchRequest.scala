@@ -1,6 +1,5 @@
 package model.lti
 
-
 final case class BasicLtiLaunchRequest(
   ltiContext: LTIContext,
   ltiExt: LTIExt,
@@ -14,7 +13,7 @@ final case class BasicLtiLaunchRequest(
   resourceLink: LTIResourceLink,
   roles: Seq[String],
   ltiToolConsumerInfo: LTIToolConsumerInfo,
-  userId: String,
+  userId: String
 )
 
 object BasicLtiLaunchRequest {

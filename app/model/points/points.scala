@@ -23,11 +23,9 @@ package object points {
 
     def points: Points = Points(value * 4)
 
-
     def halfPoint: Points = halfPoints
 
     def halfPoints: Points = Points(value * 2)
-
 
     def quarterPoint: Points = quarterPoints
 
@@ -38,7 +36,6 @@ package object points {
   implicit def toPointsOps(p: Int): PointsOps = PointsOps(p)
 
   def addUp(points: Seq[Points]): Points = Points(points.map(_.quarters).sum)
-
 
   def zeroPoints: Points = 0.points
 

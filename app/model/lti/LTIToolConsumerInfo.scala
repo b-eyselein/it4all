@@ -16,4 +16,8 @@ object LTIToolConsumerInfo {
 
 final case class LTIToolConsumerInstanceInfo(description: String, guid: String, name: String)
 
-final case class LTIToolConsumerInfo(productFamilyCode: String, version: String, instanceInfo: LTIToolConsumerInstanceInfo)
+final case class LTIToolConsumerInfo(
+  productFamilyCode: String,
+  version: String,
+  instanceInfo: LTIToolConsumerInstanceInfo
+)

@@ -10,14 +10,12 @@ final case class UmlAssociationAnalysisResult(
   multiplicitiesEqual: Boolean
 )
 
-
 final case class UmlAssociationMatch(
   matchType: MatchType,
   userArg: Option[UmlAssociation],
   sampleArg: Option[UmlAssociation],
   maybeAnalysisResult: Option[UmlAssociationAnalysisResult]
 ) extends Match[UmlAssociation]
-
 
 object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch] {
 
@@ -52,9 +50,8 @@ object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch
       ua.firstMult == sa.secondMult && ua.secondMult == sa.firstMult
     }
 
-
-    val ar: UmlAssociationAnalysisResult = UmlAssociationAnalysisResult(endsParallel, assocTypeEqual, sa.assocType, multiplicitiesEqual)
-
+    val ar: UmlAssociationAnalysisResult =
+      UmlAssociationAnalysisResult(endsParallel, assocTypeEqual, sa.assocType, multiplicitiesEqual)
 
     val matchType: MatchType = (assocTypeEqual, multiplicitiesEqual) match {
       case (true, true)  => MatchType.SUCCESSFUL_MATCH

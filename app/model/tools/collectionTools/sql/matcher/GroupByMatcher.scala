@@ -5,7 +5,6 @@ import model.points._
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Column
 
-
 final case class GroupByMatch(
   matchType: MatchType,
   userArg: Option[Expression],
@@ -21,7 +20,6 @@ final case class GroupByMatch(
 
 }
 
-
 object GroupByMatcher extends Matcher[Expression, GroupByMatch] {
 
   override protected val matchName: String = "Group Bys"
@@ -29,13 +27,13 @@ object GroupByMatcher extends Matcher[Expression, GroupByMatch] {
   override protected val matchSingularName: String = "des Group By-Statement"
 
   override protected def canMatch(e1: Expression, e2: Expression): Boolean = e1 match {
-    case column1: Column => e2 match {
-      case column2: Column => column1.getColumnName == column2.getColumnName
-      case _               => false
-    }
-    case _               => false
+    case column1: Column =>
+      e2 match {
+        case column2: Column => column1.getColumnName == column2.getColumnName
+        case _               => false
+      }
+    case _ => false
   }
-
 
   override protected def instantiateOnlySampleMatch(sa: Expression): GroupByMatch =
     GroupByMatch(MatchType.ONLY_SAMPLE, None, Some(sa))

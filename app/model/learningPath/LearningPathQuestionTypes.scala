@@ -2,7 +2,6 @@ package model.learningPath
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-
 // Types of questions
 
 sealed trait LearningPathQuestionTypes extends EnumEntry

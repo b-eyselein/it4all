@@ -2,7 +2,12 @@ package model.tools.collectionTools.regex
 
 import model.User
 import model.core.matching.MatchingResult
-import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
+import model.tools.collectionTools.{
+  CollectionToolMain,
+  Exercise,
+  ExerciseCollection,
+  StringSampleSolutionToolJsonProtocol
+}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -10,9 +15,9 @@ import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexToolMain extends CollectionToolMain(RegexConsts) {
 
-  override type PartType = RegexExPart
-  override type ExContentType = RegexExerciseContent
-  override type SolType = String
+  override type PartType       = RegexExPart
+  override type ExContentType  = RegexExerciseContent
+  override type SolType        = String
   override type CompResultType = RegexCompleteResult
 
   type ExtractedValuesComparison = MatchingResult[RegexMatch, RegexMatchMatch]
@@ -23,7 +28,8 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] =
+  override protected val toolJsonProtocol
+    : StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] =
     RegexToolJsonProtocol
 
   // Correction

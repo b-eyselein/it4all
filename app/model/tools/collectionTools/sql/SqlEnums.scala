@@ -3,25 +3,21 @@ package model.tools.collectionTools.sql
 import enumeratum.{EnumEntry, PlayEnum}
 import model.tools.collectionTools.{ExPart, ExParts}
 
-
 sealed abstract class SqlExPart(val partName: String, val urlName: String) extends ExPart
 
 object SqlExParts extends ExParts[SqlExPart] {
 
   val values: IndexedSeq[SqlExPart] = findValues
 
-
   case object SqlSingleExPart extends SqlExPart("Bearbeiten", "solve")
 
 }
-
 
 sealed abstract class SqlExerciseTag(val buttonContent: String, val title: String) extends EnumEntry
 
 object SqlExerciseTag extends PlayEnum[SqlExerciseTag] {
 
   override def values: IndexedSeq[SqlExerciseTag] = findValues
-
 
   case object SQL_JOIN extends SqlExerciseTag("J", "Join")
 

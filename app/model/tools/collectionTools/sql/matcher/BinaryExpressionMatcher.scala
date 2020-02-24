@@ -8,7 +8,7 @@ import net.sf.jsqlparser.schema.Column
 final case class BinaryExpressionMatch(
   matchType: MatchType,
   userArg: Option[BinaryExpression],
-  sampleArg: Option[BinaryExpression],
+  sampleArg: Option[BinaryExpression]
 ) extends Match[BinaryExpression] {
 
   override def points: Points = matchType match {
@@ -29,7 +29,7 @@ class JoinExpressionMatcher(
   sampleTAliases: Map[String, String]
 ) extends BinaryExpressionMatcher(userTAliases, sampleTAliases) {
 
-  override protected val matchName        : String = "Join-Bedingungen"
+  override protected val matchName: String         = "Join-Bedingungen"
   override protected val matchSingularName: String = "der Join-Bedingung"
 
 }
@@ -45,30 +45,27 @@ class BinaryExpressionMatcher(
 
   private def getColToCompare(expression: BinaryExpression): Option[Column] = expression.getLeftExpression match {
     case left: Column =>
-      Some(
-        expression.getRightExpression match {
-          case right: Column => if (left.toString < right.toString) left else right
-          case _             => left
-        })
-    case _            =>
+      Some(expression.getRightExpression match {
+        case right: Column => if (left.toString < right.toString) left else right
+        case _             => left
+      })
+    case _ =>
       expression.getRightExpression match {
         case right: Column => Some(right)
         case _             => None
       }
   }
 
-
   override protected def canMatch(binEx1: BinaryExpression, binEx2: BinaryExpression): Boolean = {
 
     def maybeTableAlias(col: Column): Option[String] = Option(col.getTable).map(_.getName)
 
     getColToCompare(binEx1) match {
-      case None           => ???
+      case None => ???
       case Some(colComp1) =>
         getColToCompare(binEx2) match {
-          case None           => ???
+          case None => ???
           case Some(colComp2) =>
-
             val table1 = maybeTableAlias(colComp1).map(a => userTAliases.getOrElse(a, a)).getOrElse("")
             val table2 = maybeTableAlias(colComp2).map(a => sampleTAliases.getOrElse(a, a)).getOrElse("")
 

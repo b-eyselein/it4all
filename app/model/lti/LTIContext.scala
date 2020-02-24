@@ -6,7 +6,7 @@ object LTIContext {
     id = data.getOrElse("context_id", Seq[String]()).mkString,
     label = data.getOrElse("context_label", Seq[String]()).mkString,
     title = data.getOrElse("context_title", Seq[String]()).mkString,
-    aType = data.getOrElse("context_type", Seq[String]()).mkString,
+    aType = data.getOrElse("context_type", Seq[String]()).mkString
   )
 
 }

@@ -9,7 +9,6 @@ import org.xml.sax.SAXParseException
 
 import scala.collection.immutable.IndexedSeq
 
-
 sealed trait XmlEvaluationResult extends EvaluationResult
 
 // Document
@@ -27,7 +26,6 @@ object XmlErrorType extends PlayEnum[XmlErrorType] {
   case object WARNING extends XmlErrorType("Warnung")
 
 }
-
 
 object XmlError {
 
@@ -50,7 +48,7 @@ final case class XmlError(
 
 object ElementLineMatch {
 
-  val pointsForElement  : Points = 1.halfPoints
+  val pointsForElement: Points   = 1.halfPoints
   val pointsForAttribute: Points = 3.halfPoints
 
 }
@@ -60,17 +58,19 @@ final case class ElementLineMatch(
   userArg: Option[ElementLine],
   sampleArg: Option[ElementLine],
   maybeAnalysisResult: Option[ElementLineAnalysisResult]
-) extends Match[ElementLine] with XmlEvaluationResult {
+) extends Match[ElementLine]
+    with XmlEvaluationResult {
 
   import ElementLineMatch._
 
   //  override protected def descArgForJson(arg: ElementLine): JsValue = Json.obj(nameName -> arg.elementName)
 
-  override def success: SuccessType = if (matchType == MatchType.SUCCESSFUL_MATCH) {
-    SuccessType.COMPLETE
-  } else {
-    SuccessType.NONE
-  }
+  override def success: SuccessType =
+    if (matchType == MatchType.SUCCESSFUL_MATCH) {
+      SuccessType.COMPLETE
+    } else {
+      SuccessType.NONE
+    }
 
   override def maxPoints: Points = sampleArg match {
     case None     => zeroPoints
@@ -84,7 +84,7 @@ final case class ElementLineMatch(
       // FIXME: calculate...
 
       val pointsForContent = maybeAnalysisResult match {
-        case None     => zeroPoints
+        case None => zeroPoints
         case Some(ar) =>
           val pointsForElemContent = if (ar.contentCorrect) singlePoint else zeroPoints
           val pointsForAttributes  = if (ar.attributesCorrect) singlePoint else zeroPoints
@@ -96,7 +96,7 @@ final case class ElementLineMatch(
 
   private def pointsForElementLine(elementLine: ElementLine): Points = {
     val pointsForElemContent: Points = pointsForElementContent(elementLine.elementDefinition.content)
-    val pointsForAttrs      : Points = addUp(elementLine.attributeLists.map(pointsForAttributes))
+    val pointsForAttrs: Points       = addUp(elementLine.attributeLists.map(pointsForAttributes))
 
     pointsForElemContent + pointsForAttrs
   }
@@ -108,9 +108,8 @@ final case class ElementLineMatch(
     case m: MultiElementContent         => addUp(m.children.map(pointsForElementContent))
   }
 
-  private def pointsForAttributes(attributeList: AttributeList): Points = pointsForAttribute * attributeList.attributeDefinitions.size
-
-
+  private def pointsForAttributes(attributeList: AttributeList): Points =
+    pointsForAttribute * attributeList.attributeDefinitions.size
   //  val maxPoints = {
   //    val pointsForElements: Points = XmlGrammarCompleteResult.pointsForElement * sampleGrammar.asElementLines.size
   //
@@ -120,4 +119,3 @@ final case class ElementLineMatch(
   //  }
 
 }
-

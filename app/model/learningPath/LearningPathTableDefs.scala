@@ -21,36 +21,39 @@ trait LearningPathTableDefs extends TableDefs {
 
   // Table queries
 
-
   protected val learningPaths = TableQuery[LearningPathsTable]
 
   protected val learningPathSections = TableQuery[LearningPathSectionsTable]
 
   // Queries
 
-  def futureLearningPaths(toolUrl: String): Future[Seq[LearningPath]] = for {
-    pathBases <- db.run(learningPaths.filter(_.toolUrl === toolUrl).result)
-    paths <- Future.sequence(pathBases map { case (_, id, title) =>
-      futureSectionsForPath(toolUrl, id) map (sections => LearningPath(toolUrl, id, title, sections))
-    })
-  } yield paths
+  def futureLearningPaths(toolUrl: String): Future[Seq[LearningPath]] =
+    for {
+      pathBases <- db.run(learningPaths.filter(_.toolUrl === toolUrl).result)
+      paths <- Future.sequence(pathBases map {
+        case (_, id, title) =>
+          futureSectionsForPath(toolUrl, id) map (sections => LearningPath(toolUrl, id, title, sections))
+      })
+    } yield paths
 
-  def futureLearningPathById(toolUrl: String, pathId: Int): Future[Option[LearningPath]] = for {
-    maybeLpBase <- db.run(learningPaths.filter(lp => lp.toolUrl === toolUrl && lp.id === pathId).result.headOption)
-    lpSections <- futureSectionsForPath(toolUrl, pathId)
-  } yield maybeLpBase map (lpBase => LearningPath(lpBase._1, lpBase._2, lpBase._3, lpSections))
+  def futureLearningPathById(toolUrl: String, pathId: Int): Future[Option[LearningPath]] =
+    for {
+      maybeLpBase <- db.run(learningPaths.filter(lp => lp.toolUrl === toolUrl && lp.id === pathId).result.headOption)
+      lpSections  <- futureSectionsForPath(toolUrl, pathId)
+    } yield maybeLpBase map (lpBase => LearningPath(lpBase._1, lpBase._2, lpBase._3, lpSections))
 
   private def futureSectionsForPath(toolUrl: String, pathId: Int): Future[Seq[LearningPathSection]] =
     db.run(learningPathSections.filter(lps => lps.toolUrl === toolUrl && lps.pathId === pathId).result)
 
-  def futureSaveLearningPaths(learningPathsToSave: Seq[LearningPath]): Future[Boolean] = Future.sequence(learningPathsToSave map { lp =>
-    for {
-      // Delete old entry first
-      _ <- db.run(learningPaths.filter(x => x.id === lp.id && x.toolUrl === lp.toolUrl).delete)
-      _ <- db.run(learningPaths += ((lp.toolUrl, lp.id, lp.title)))
-      sectionsSaved <- saveSeq[LearningPathSection](lp.sections, lps => db.run(learningPathSections += lps))
-    } yield sectionsSaved
-  }) map (_ forall identity)
+  def futureSaveLearningPaths(learningPathsToSave: Seq[LearningPath]): Future[Boolean] =
+    Future.sequence(learningPathsToSave map { lp =>
+      for {
+        // Delete old entry first
+        _             <- db.run(learningPaths.filter(x => x.id === lp.id && x.toolUrl === lp.toolUrl).delete)
+        _             <- db.run(learningPaths += ((lp.toolUrl, lp.id, lp.title)))
+        sectionsSaved <- saveSeq[LearningPathSection](lp.sections, lps => db.run(learningPathSections += lps))
+      } yield sectionsSaved
+    }) map (_ forall identity)
 
   // Column types
 
@@ -58,7 +61,10 @@ trait LearningPathTableDefs extends TableDefs {
     MappedColumnType.base[Points, Int](_.quarters, Points.apply)
 
   private implicit val learningPathSectionTypeColumnType: BaseColumnType[LearningPathSectionType] =
-    MappedColumnType.base[LearningPathSectionType, String](_.entryName, str => LearningPathSectionType.withNameOption(str) getOrElse LearningPathSectionType.TextSectionType)
+    MappedColumnType.base[LearningPathSectionType, String](
+      _.entryName,
+      str => LearningPathSectionType.withNameOption(str) getOrElse LearningPathSectionType.TextSectionType
+    )
 
   // Learning paths
 
@@ -66,13 +72,11 @@ trait LearningPathTableDefs extends TableDefs {
 
     def toolUrl: Rep[String] = column[String]("tool_url")
 
-    def id: Rep[Int] = column[Int](idName)
+    def id: Rep[Int] = column[Int]("id")
 
-    def title: Rep[String] = column[String](titleName)
-
+    def title: Rep[String] = column[String]("title")
 
     def pk: PrimaryKey = primaryKey("pk", (toolUrl, id))
-
 
     override def * : ProvenShape[(String, Int, String)] = (toolUrl, id, title)
 
@@ -82,42 +86,47 @@ trait LearningPathTableDefs extends TableDefs {
 
     def toolUrl: Rep[String] = column[String]("tool_url")
 
-    def id: Rep[Int] = column[Int](idName)
+    def id: Rep[Int] = column[Int]("id")
 
     def pathId: Rep[Int] = column[Int]("path_id")
 
     def sectionType: Rep[LearningPathSectionType] = column[LearningPathSectionType]("section_type")
 
-    def title: Rep[String] = column[String](titleName)
+    def title: Rep[String] = column[String]("title")
 
     def content: Rep[String] = column[String]("content")
 
-
     def pk: PrimaryKey = primaryKey("pk", (id, toolUrl, pathId))
 
-    def pathFk: ForeignKeyQuery[LearningPathsTable, (String, Int, String)] = foreignKey("path_fk", (toolUrl, pathId), learningPaths)(p => (p.toolUrl, p.id))
+    def pathFk: ForeignKeyQuery[LearningPathsTable, (String, Int, String)] =
+      foreignKey("path_fk", (toolUrl, pathId), learningPaths)(p => (p.toolUrl, p.id))
 
-
-    override def * : ProvenShape[LearningPathSection] = (id, toolUrl, pathId, title, content, sectionType) <> (tupled, unapplied)
-
+    override def * : ProvenShape[LearningPathSection] =
+      (id, toolUrl, pathId, title, content, sectionType) <> (tupled, unapplied)
 
     private implicit val lPQuestionJsonFormat: Format[LPQuestion] = LPQuestionJsonFormat.lpQuestionJsonFormat
 
-    private def tupled(values: (Int, String, Int, String, String, LearningPathSectionType)): LearningPathSection = values._6 match {
-      case TextSectionType     => TextSection(values._1, values._2, values._3, values._4, values._5)
-      case QuestionSectionType => QuestionSection(values._1, values._2, values._3, values._4, readQuestionsFromJson(values._5))
-    }
+    private def tupled(values: (Int, String, Int, String, String, LearningPathSectionType)): LearningPathSection =
+      values._6 match {
+        case TextSectionType => TextSection(values._1, values._2, values._3, values._4, values._5)
+        case QuestionSectionType =>
+          QuestionSection(values._1, values._2, values._3, values._4, readQuestionsFromJson(values._5))
+      }
 
-    private def readQuestionsFromJson(string: String): Seq[LPQuestion] = Json.fromJson[Seq[LPQuestion]](Json.parse(string)) match {
-      case JsSuccess(res, _) => res
-      case JsError(errors)   =>
-        errors.foreach(error => logger.error(error.toString))
-        Seq[LPQuestion]()
-    }
+    private def readQuestionsFromJson(string: String): Seq[LPQuestion] =
+      Json.fromJson[Seq[LPQuestion]](Json.parse(string)) match {
+        case JsSuccess(res, _) => res
+        case JsError(errors) =>
+          errors.foreach(error => logger.error(error.toString))
+          Seq[LPQuestion]()
+      }
 
-    private def unapplied(lps: LearningPathSection): Option[(Int, String, Int, String, String, LearningPathSectionType)] = lps match {
-      case TextSection(id, toolUrl, pathId, title, text)          => Some((id, toolUrl, pathId, title, text, TextSectionType))
-      case QuestionSection(id, toolUrl, pathId, title, questions) => Some((id, toolUrl, pathId, title, Json.toJson(questions).toString, QuestionSectionType))
+    private def unapplied(
+      lps: LearningPathSection
+    ): Option[(Int, String, Int, String, String, LearningPathSectionType)] = lps match {
+      case TextSection(id, toolUrl, pathId, title, text) => Some((id, toolUrl, pathId, title, text, TextSectionType))
+      case QuestionSection(id, toolUrl, pathId, title, questions) =>
+        Some((id, toolUrl, pathId, title, Json.toJson(questions).toString, QuestionSectionType))
     }
 
   }

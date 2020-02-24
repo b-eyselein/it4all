@@ -24,7 +24,6 @@ trait TableDefs {
 
   private val pwHashes = TableQuery[PwHashesTable]
 
-
   // Numbers
 
   def numOfUsers: Future[Int] = db.run(users.size.result)
@@ -33,10 +32,11 @@ trait TableDefs {
 
   def allUsers: Future[Seq[User]] = db.run(users.result)
 
-  def userByName(username: String): Future[Option[User]] = db.run(users.filter(_.username === username).result.headOption)
+  def userByName(username: String): Future[Option[User]] =
+    db.run(users.filter(_.username === username).result.headOption)
 
-  def pwHashForUser(username: String): Future[Option[PwHash]] = db.run(pwHashes.filter(_.username === username).result.headOption)
-
+  def pwHashForUser(username: String): Future[Option[PwHash]] =
+    db.run(pwHashes.filter(_.username === username).result.headOption)
 
   // Update
 
@@ -45,9 +45,10 @@ trait TableDefs {
 
     db.run(users.filter(_.username === userToChangeName).map(_.role).update(newRole))
       .map(_ => true)
-      .recover { case e: Throwable =>
-        logger.error(s"Could not update std role of user $userToChangeName to ${newRole.entryName}", e)
-        false
+      .recover {
+        case e: Throwable =>
+          logger.error(s"Could not update std role of user $userToChangeName to ${newRole.entryName}", e)
+          false
       }
   }
 
@@ -59,15 +60,21 @@ trait TableDefs {
 
   // Abstract queries
 
-  protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any], saveType: Option[String] = None): Future[Boolean] = Future.sequence(
-    seqToSave.map {
-      save(_).transform {
-        case Success(_) => Success(true)
-        case Failure(e) =>
-          logger.error("Could not perform save option" + saveType.map(st => s" on $st").getOrElse(""), e)
-          Success(false)
-      }
-    }).map(_.forall(identity))
+  protected def saveSeq[T](
+    seqToSave: Seq[T],
+    save: T => Future[Any],
+    saveType: Option[String] = None
+  ): Future[Boolean] =
+    Future
+      .sequence(seqToSave.map {
+        save(_).transform {
+          case Success(_) => Success(true)
+          case Failure(e) =>
+            logger.error("Could not perform save option" + saveType.map(st => s" on $st").getOrElse(""), e)
+            Success(false)
+        }
+      })
+      .map(_.forall(identity))
 
   protected def saveSingle(performSave: => Future[Any]): Future[Boolean] = performSave.transform {
     case Success(_) => Success(true)
@@ -87,16 +94,13 @@ trait TableDefs {
 
     private implicit val rct: BaseColumnType[Role] = roleColumnType
 
-
     def userType: Rep[Int] = column[Int]("user_type")
 
     def username: Rep[String] = column[String]("username", O.PrimaryKey)
 
     def role: Rep[Role] = column[Role]("std_role")
 
-
     override def * : ProvenShape[User] = (userType, username, role) <> (tupled, unapplied)
-
 
     def tupled(values: (Int, String, Role)): User = values match {
       case (1, username, role) => LtiUser(username, role)
@@ -116,9 +120,7 @@ trait TableDefs {
 
     def pwHash: Rep[String] = column[String]("pw_hash")
 
-
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
-
 
     override def * : ProvenShape[PwHash] = (username, pwHash) <> (PwHash.tupled, PwHash.unapply)
 

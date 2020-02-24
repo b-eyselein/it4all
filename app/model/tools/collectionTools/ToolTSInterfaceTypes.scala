@@ -6,7 +6,6 @@ import nl.codestar.scalatsi.TypescriptType._
 import nl.codestar.scalatsi.{DefaultTSTypes, TSIType, TSType}
 import play.api.libs.json.JsValue
 
-
 trait ToolTSInterfaceTypes extends DefaultTSTypes {
 
   import nl.codestar.scalatsi.dsl._
@@ -16,12 +15,12 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
 
   protected val jsValueTsType: TSType[JsValue] = TSType.sameAs[JsValue, Any](anyTSType)
 
-  protected val exerciseFileTSI: TSIType[ExerciseFile] = TSType.fromCaseClass[ExerciseFile] + ("active?" -> TSBoolean.get)
+  protected val exerciseFileTSI: TSIType[ExerciseFile] = TSType
+    .fromCaseClass[ExerciseFile] + ("active?" -> TSBoolean.get)
 
   protected val successTypeTS: TSType[SuccessType] = enumTsType(SuccessType)
 
   protected val matchTypeTS: TSType[MatchType] = enumTsType(MatchType)
-
 
   protected val stringMapTsType: TSType[Map[String, String]] = TSType.alias(
     "KeyValueObjectMap",
@@ -31,10 +30,11 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
   )
 
   protected val baseMatchTSI: TSIType[Match[_]] = {
-    TSType.interface("IMatch",
+    TSType.interface(
+      "IMatch",
       "matchType" -> matchTypeTS.get,
-      "userArg" -> TSUnion(Seq(TSAny, TSUndefined)),
-      "sampleArg" -> TSUnion(Seq(TSAny, TSUndefined)),
+      "userArg"   -> TSUnion(Seq(TSAny, TSUndefined)),
+      "sampleArg" -> TSUnion(Seq(TSAny, TSUndefined))
     )
   }
 
@@ -42,29 +42,33 @@ trait ToolTSInterfaceTypes extends DefaultTSTypes {
 
     TSType.interface(
       s"IMatchingResult",
-      "matchName" -> TSString,
+      "matchName"         -> TSString,
       "matchSingularName" -> TSString,
-      "allMatches" -> TSArray(baseMatchTSI.get),
-      "points" -> TSNumber,
-      "maxPoints" -> TSNumber
+      "allMatches"        -> TSArray(baseMatchTSI.get),
+      "points"            -> TSNumber,
+      "maxPoints"         -> TSNumber
     )
   }
 
-  protected def matchingResultTSI[T, M <: Match[T]](matchName: String, matchTSI: TSType[M]): TSIType[MatchingResult[T, M]] = TSType.interface(
+  protected def matchingResultTSI[T, M <: Match[T]](
+    matchName: String,
+    matchTSI: TSType[M]
+  ): TSIType[MatchingResult[T, M]] = TSType.interface(
     s"I${matchName}MatchingResult",
-    "matchName" -> TSString,
+    "matchName"         -> TSString,
     "matchSingularName" -> TSString,
-    "allMatches" -> TSArray(matchTSI.get),
-    "points" -> TSNumber,
-    "maxPoints" -> TSNumber
+    "allMatches"        -> TSArray(matchTSI.get),
+    "points"            -> TSNumber,
+    "maxPoints"         -> TSNumber
   )
 
-  protected def sampleSolutionTSI[SolType](name: String, solTypeTSI: TSType[SolType])(implicit x: Manifest[SampleSolution[SolType]]): TSIType[SampleSolution[SolType]] = {
+  protected def sampleSolutionTSI[SolType](name: String, solTypeTSI: TSType[SolType])(
+    implicit x: Manifest[SampleSolution[SolType]]
+  ): TSIType[SampleSolution[SolType]] = {
     TSType.interface[SampleSolution[SolType]](
       s"I${name}SampleSolution",
-      "id" -> TSNumber,
+      "id"     -> TSNumber,
       "sample" -> solTypeTSI.get
     )
   }
 }
-

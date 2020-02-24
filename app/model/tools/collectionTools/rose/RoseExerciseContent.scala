@@ -3,9 +3,10 @@ package model.tools.collectionTools.rose
 import model.tools.collectionTools.programming.ProgDataType
 import model.tools.collectionTools.{ExerciseContent, SampleSolution}
 
-
 final case class RoseExerciseContent(
-  fieldWidth: Int, fieldHeight: Int, isMultiplayer: Boolean,
+  fieldWidth: Int,
+  fieldHeight: Int,
+  isMultiplayer: Boolean,
   inputTypes: Seq[RoseInputType],
   sampleSolutions: Seq[SampleSolution[String]]
 ) extends ExerciseContent {

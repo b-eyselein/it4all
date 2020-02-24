@@ -6,7 +6,6 @@ import model.tools.collectionTools.uml.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
-
 object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] {
 
   override val solutionFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
@@ -26,14 +25,14 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClass
   // Correction result writes
 
   private val umlAttributeMatchWrites: Writes[UmlAttributeMatch] = {
-    implicit val umlAttributeWrites              : Writes[UmlAttribute]               = Json.writes
+    implicit val umlAttributeWrites: Writes[UmlAttribute]                             = Json.writes
     implicit val umlAttributeAnalysisResultWrites: Writes[UmlAttributeAnalysisResult] = Json.writes
 
     Json.writes
   }
 
   private val umlMethodMatchWrites: Writes[UmlMethodMatch] = {
-    implicit val umlMethodWrites              : Writes[UmlMethod]               = Json.writes
+    implicit val umlMethodWrites: Writes[UmlMethod]                             = Json.writes
     implicit val umlMethodAnalysisResultWrites: Writes[UmlMethodAnalysisResult] = Json.writes
 
     Json.writes
@@ -50,15 +49,15 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClass
   }
 
   private val classMatchWrites: Writes[UmlClassMatch] = {
-    implicit val classWrites: Format[UmlClass]                    = UmlClassDiagramJsonFormat.umlClassFormat
-    implicit val ucmarw     : Writes[UmlClassMatchAnalysisResult] = umlClassMatchAnalysisResultWrites
+    implicit val classWrites: Format[UmlClass]               = UmlClassDiagramJsonFormat.umlClassFormat
+    implicit val ucmarw: Writes[UmlClassMatchAnalysisResult] = umlClassMatchAnalysisResultWrites
 
     Json.writes
   }
 
   private val umlAssociationMatchWrites: Writes[UmlAssociationMatch] = {
-    implicit val umlAssociationWrites: Writes[UmlAssociation]               = UmlClassDiagramJsonFormat.umlAssocationFormat
-    implicit val uamrw               : Writes[UmlAssociationAnalysisResult] = Json.writes
+    implicit val umlAssociationWrites: Writes[UmlAssociation] = UmlClassDiagramJsonFormat.umlAssocationFormat
+    implicit val uamrw: Writes[UmlAssociationAnalysisResult]  = Json.writes
 
     Json.writes
   }

@@ -160,7 +160,7 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(aThis: SimilarToExpression): Unit = {}
 
-  override def visit(division: IntegerDivision): Unit =  {}
+  override def visit(division: IntegerDivision): Unit = {}
 
   override def visit(fullTextSearch: FullTextSearch): Unit = {}
 

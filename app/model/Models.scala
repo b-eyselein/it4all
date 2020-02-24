@@ -2,7 +2,6 @@ package model
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-
 sealed trait Role extends EnumEntry
 
 object Role extends PlayEnum[Role] {
@@ -21,11 +20,10 @@ object Role extends PlayEnum[Role] {
 
 final case class UserCredentials(username: String, password: String)
 
-
 sealed trait User {
 
   val username: String
-  val stdRole : Role
+  val stdRole: Role
 
   def isAdmin: Boolean = stdRole ne Role.RoleUser
 
@@ -34,6 +32,5 @@ sealed trait User {
 final case class LtiUser(username: String, stdRole: Role = Role.RoleUser) extends User
 
 final case class RegisteredUser(username: String, stdRole: Role = Role.RoleUser) extends User
-
 
 final case class PwHash(username: String, pwHash: String)

@@ -1,12 +1,10 @@
 package model.lesson
 
-
 sealed trait LessonContent {
-  val id      : Int
+  val id: Int
   val lessonId: Int
-  val toolId  : String
+  val toolId: String
 }
-
 
 final case class LessonTextContent(
   id: Int,
@@ -14,7 +12,6 @@ final case class LessonTextContent(
   toolId: String,
   content: String
 ) extends LessonContent
-
 
 final case class QuestionAnswer(
   answer: String,
@@ -33,7 +30,6 @@ final case class LessonQuestionsContent(
   toolId: String,
   questions: Seq[Question]
 ) extends LessonContent
-
 
 final case class Lesson(
   id: Int,

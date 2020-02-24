@@ -16,9 +16,9 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
   private implicit val matchTypeTsType: TSType[MatchType] = matchTypeTS
 
   private val sqlExerciseContentTSI: TSIType[SqlExerciseContent] = {
-    implicit val seTypeT: TSType[SqlExerciseType]         = enumTsType(SqlExerciseType)
-    implicit val seTagT : TSType[SqlExerciseTag]          = enumTsType(SqlExerciseTag)
-    implicit val ssst   : TSIType[SampleSolution[String]] = sampleSolutionTSI("Sql", TSType(TSString))
+    implicit val seTypeT: TSType[SqlExerciseType]      = enumTsType(SqlExerciseType)
+    implicit val seTagT: TSType[SqlExerciseTag]        = enumTsType(SqlExerciseTag)
+    implicit val ssst: TSIType[SampleSolution[String]] = sampleSolutionTSI("Sql", TSType(TSString))
 
     TSType.fromCaseClass
   }
@@ -48,11 +48,10 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
       implicit val bet: TSType[BinaryExpression] = TSType(TSString)
 
       TSType.fromCaseClass[BinaryExpressionMatch]
-      }.get.copy(extending = Some(baseMatchTSI.get))
-    )
+    }.get.copy(extending = Some(baseMatchTSI.get)))
 
-    matchingResultTSI[BinaryExpression, BinaryExpressionMatch]("BinaryExpression", binExMatchTSI)
-      .get.copy(extending = Some(baseMatchingResultTSI.get))
+    matchingResultTSI[BinaryExpression, BinaryExpressionMatch]("BinaryExpression", binExMatchTSI).get
+      .copy(extending = Some(baseMatchingResultTSI.get))
   })
 
   private val additionalComparisonsTSI: TSIType[AdditionalComparison] = {
@@ -112,7 +111,7 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
   val exported: Seq[TypescriptNamedType] = Seq(
     sqlExerciseContentTSI.get,
     sqlQueryResultTSI.get,
-    sqlResultTSI.get,
+    sqlResultTSI.get
   )
 
 }

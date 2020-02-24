@@ -11,7 +11,6 @@ final case class UmlClassMatchAnalysisResult(
   maybeMethodMatchingResult: Option[MethodComparison]
 )
 
-
 final case class UmlClassMatch(
   matchType: MatchType,
   userArg: Option[UmlClass],
@@ -19,7 +18,6 @@ final case class UmlClassMatch(
   compAM: Boolean,
   analysisResult: Option[UmlClassMatchAnalysisResult]
 ) extends Match[UmlClass]
-
 
 final case class UmlClassMatcher(
   compareAttrsAndMethods: Boolean
@@ -44,7 +42,8 @@ final case class UmlClassMatcher(
 
     val methodsResult = UmlMethodMatcher.doMatch(ua.methods, sa.methods)
 
-    val membersCorrect: Boolean = false // TODO: attributesResult.success == SuccessType.COMPLETE && methodsResult.success == SuccessType.COMPLETE
+    val membersCorrect
+      : Boolean = false // TODO: attributesResult.success == SuccessType.COMPLETE && methodsResult.success == SuccessType.COMPLETE
 
     val matchType: MatchType = (classTypeCorrect, membersCorrect) match {
       case (true, true)  => MatchType.SUCCESSFUL_MATCH

@@ -9,9 +9,9 @@ import scala.util.{Failure, Try}
 
 object RoseToolMain extends CollectionToolMain(RoseConsts) {
 
-  override type PartType = RoseExPart
-  override type ExContentType = RoseExerciseContent
-  override type SolType = String
+  override type PartType       = RoseExPart
+  override type ExContentType  = RoseExerciseContent
+  override type SolType        = String
   override type CompResultType = RoseCompleteResult
 
   // Other members
@@ -33,18 +33,18 @@ object RoseToolMain extends CollectionToolMain(RoseConsts) {
     content: RoseExerciseContent,
     part: RoseExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[RoseCompleteResult]] = content.sampleSolutions.headOption match {
-    case None                 => Future.successful(Failure(new Exception("No sample solution could be found!")))
-    case Some(sampleSolution) =>
-
-      RoseCorrector.correct(
-        user,
-        content,
-        sol,
-        sampleSolution.sample,
-        ProgLanguages.StandardLanguage,
-        solutionDirForExercise(user.username, collection.id, exercise.id),
-        solutionSaved
-      )
-  }
+  )(implicit executionContext: ExecutionContext): Future[Try[RoseCompleteResult]] =
+    content.sampleSolutions.headOption match {
+      case None => Future.successful(Failure(new Exception("No sample solution could be found!")))
+      case Some(sampleSolution) =>
+        RoseCorrector.correct(
+          user,
+          content,
+          sol,
+          sampleSolution.sample,
+          ProgLanguages.StandardLanguage,
+          solutionDirForExercise(user.username, collection.id, exercise.id),
+          solutionSaved
+        )
+    }
 }

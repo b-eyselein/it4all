@@ -10,7 +10,6 @@ object BinaryClassificationResultTypes extends PlayEnum[BinaryClassificationResu
 
   val values: IndexedSeq[BinaryClassificationResultType] = findValues
 
-
   case object TruePositive extends BinaryClassificationResultType(correct = true)
 
   case object FalsePositive extends BinaryClassificationResultType(correct = false)

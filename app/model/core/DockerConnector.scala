@@ -15,11 +15,12 @@ import scala.util.Try
 
 final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {
 
-  def toBind: Bind = Bind
-    .from(fromPath.path.toAbsolutePath.toString)
-    .to(toPath.path.toAbsolutePath.toString)
-    .readOnly(isReadOnly)
-    .build()
+  def toBind: Bind =
+    Bind
+      .from(fromPath.path.toAbsolutePath.toString)
+      .to(toPath.path.toAbsolutePath.toString)
+      .readOnly(isReadOnly)
+      .build()
 
 }
 
@@ -48,7 +49,9 @@ object DockerConnector {
 
   def imageExists(imageName: String): Boolean = {
     // FIXME: run in future?
-    dockerClient.listImages().asScala
+    dockerClient
+      .listImages()
+      .asScala
       .map(_.repoTags)
       .filter(_ != null)
       .exists(_.contains(imageName))
@@ -101,7 +104,8 @@ object DockerConnector {
 
   private def startContainer(container: String): Try[Unit] = Try(dockerClient.startContainer(container))
 
-  private def waitForContainer(container: String, waitTimeInSeconds: Int): Try[ContainerExit] = Try(dockerClient.waitContainer(container))
+  private def waitForContainer(container: String, waitTimeInSeconds: Int): Try[ContainerExit] =
+    Try(dockerClient.waitContainer(container))
 
   private def deleteContainer(container: String): Try[Unit] = Try(dockerClient.removeContainer(container))
 
@@ -112,21 +116,19 @@ object DockerConnector {
     maybeCmd: Option[Seq[String]] = None,
     maybeDockerBinds: Seq[DockerBind] = Seq.empty,
     maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds,
-    deleteContainerAfterRun: Boolean = true,
+    deleteContainerAfterRun: Boolean = true
   )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] = Future {
 
     createContainer(imageName, maybeWorkingDir map (_.toString), maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap {
       containerCreation: ContainerCreation =>
-
         val containerId = containerCreation.id
 
         startContainer(containerId).flatMap { _ =>
-
           waitForContainer(containerId, maxWaitTimeInSeconds).map { containerExit =>
-
             val statusCode = containerExit.statusCode.toInt
 
-            val result: RunContainerResult = RunContainerResult(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
+            val result: RunContainerResult =
+              RunContainerResult(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
 
             if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
               // Do not delete failed containers for now

@@ -11,7 +11,6 @@ object ProgExParts extends ExParts[ProgExPart] {
 
   override def values: IndexedSeq[ProgExPart] = findValues
 
-
   case object TestCreation extends ProgExPart(partName = "Erstellen der Tests", urlName = "testCreation")
 
   case object Implementation extends ProgExPart(partName = "Implementierung", urlName = "implementation")
@@ -27,7 +26,6 @@ sealed abstract class ProgrammingExerciseTag(val buttonContent: String, val titl
 object ProgrammingExerciseTag extends PlayEnum[ProgrammingExerciseTag] {
 
   val values: IndexedSeq[ProgrammingExerciseTag] = findValues
-
 
   case object ForLoops extends ProgrammingExerciseTag("FL", "For-Schleifen")
 
@@ -62,7 +60,6 @@ sealed trait UnitTestType extends EnumEntry
 case object UnitTestTypes extends PlayEnum[UnitTestType] {
 
   override val values: IndexedSeq[UnitTestType] = findValues
-
 
   case object Simplified extends UnitTestType
 

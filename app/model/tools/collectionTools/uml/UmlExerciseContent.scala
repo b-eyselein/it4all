@@ -2,7 +2,6 @@ package model.tools.collectionTools.uml
 
 import model.tools.collectionTools.{ExerciseContent, SampleSolution}
 
-
 final case class UmlExerciseContent(
   toIgnore: Seq[String],
   mappings: Map[String, String],
@@ -21,14 +20,15 @@ final case class UmlExerciseContent(
   //  def markedText: String = UmlExTextProcessor.parseText(text.wrapped, mappings, toIgnore)
 
   def getDefaultClassDiagForPart(part: UmlExPart): UmlClassDiagram = {
-    val assocs: Seq[UmlAssociation]    = Seq[UmlAssociation]()
-    val impls : Seq[UmlImplementation] = Seq[UmlImplementation]()
+    val assocs: Seq[UmlAssociation]   = Seq[UmlAssociation]()
+    val impls: Seq[UmlImplementation] = Seq[UmlImplementation]()
 
     val classes: Seq[UmlClass] = part match {
-      case UmlExParts.DiagramDrawingHelp => sampleSolutions.head.sample.classes.map {
-        oldClass => UmlClass(oldClass.classType, oldClass.name, attributes = Seq[UmlAttribute](), methods = Seq[UmlMethod]())
-      }
-      case _                             => Seq[UmlClass]()
+      case UmlExParts.DiagramDrawingHelp =>
+        sampleSolutions.head.sample.classes.map { oldClass =>
+          UmlClass(oldClass.classType, oldClass.name, attributes = Seq[UmlAttribute](), methods = Seq[UmlMethod]())
+        }
+      case _ => Seq[UmlClass]()
     }
 
     UmlClassDiagram(classes, assocs, impls)
@@ -38,9 +38,10 @@ final case class UmlExerciseContent(
 
   def allMethods: Seq[UmlMethod] = allDistinctMembers(_.methods)
 
-  private def allDistinctMembers[M <: UmlClassMember](members: UmlClass => Seq[M]): Seq[M] = sampleSolutions.headOption match {
-    case None         => Seq.empty
-    case Some(sample) => sample.sample.classes.flatMap(members).distinct
-  }
+  private def allDistinctMembers[M <: UmlClassMember](members: UmlClass => Seq[M]): Seq[M] =
+    sampleSolutions.headOption match {
+      case None         => Seq.empty
+      case Some(sample) => sample.sample.classes.flatMap(members).distinct
+    }
 
 }

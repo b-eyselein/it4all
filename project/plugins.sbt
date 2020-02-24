@@ -6,3 +6,6 @@ addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.4")
 
 // Sbt Updates
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.4.2")
+
+// Scala formatter
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.2.1")

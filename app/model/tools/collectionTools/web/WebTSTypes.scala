@@ -15,17 +15,17 @@ object WebTSTypes extends ToolTSInterfaceTypes {
   private val jsActionTypeTSType: TSType[JsActionType] = enumTsType(JsActionType)
 
   private val jsTaskTSType: TSIType[JsTask] = {
-    implicit val jatt : TSType[JsActionType]       = jsActionTypeTSType
+    implicit val jatt: TSType[JsActionType]        = jsActionTypeTSType
     implicit val jhest: TSIType[JsHtmlElementSpec] = TSType.fromCaseClass[JsHtmlElementSpec]
     TSType.fromCaseClass[JsTask]
   }
 
   private val webExerciseContentTSI: TSIType[WebExerciseContent] = {
-    implicit val eft : TSIType[ExerciseFile]                      = exerciseFileTSI
-    implicit val htt : TSIType[HtmlTask]                          = TSType.fromCaseClass[HtmlTask]
-    implicit val jtt : TSIType[JsTask]                            = jsTaskTSType
-    implicit val fsst: TSIType[SampleSolution[Seq[ExerciseFile]]] = sampleSolutionTSI("Web", TSType(TSArray(exerciseFileTSI.get)))
-
+    implicit val eft: TSIType[ExerciseFile] = exerciseFileTSI
+    implicit val htt: TSIType[HtmlTask]     = TSType.fromCaseClass[HtmlTask]
+    implicit val jtt: TSIType[JsTask]       = jsTaskTSType
+    implicit val fsst: TSIType[SampleSolution[Seq[ExerciseFile]]] =
+      sampleSolutionTSI("Web", TSType(TSArray(exerciseFileTSI.get)))
 
     TSType.fromCaseClass[WebExerciseContent]
   }
@@ -33,21 +33,21 @@ object WebTSTypes extends ToolTSInterfaceTypes {
   private val gradedTextResultTSType = TSType.fromCaseClass[GradedTextResult]
 
   private val gradedHtmlTaskResult = {
-    implicit val stt : TSType[SuccessType]           = successTypeTS
+    implicit val stt: TSType[SuccessType]            = successTypeTS
     implicit val grst: TSNamedType[GradedTextResult] = gradedTextResultTSType
 
     TSType.fromCaseClass[GradedHtmlTaskResult]
   }
 
   private val gradedJsHtmlElementSpecResultTSI: TSIType[GradedJsHtmlElementSpecResult] = {
-    implicit val stt : TSType[SuccessType]           = successTypeTS
+    implicit val stt: TSType[SuccessType]            = successTypeTS
     implicit val grst: TSNamedType[GradedTextResult] = gradedTextResultTSType
 
     TSType.fromCaseClass[GradedJsHtmlElementSpecResult]
   }
 
   private val gradedJsTaskResultTSI: TSIType[GradedJsTaskResult] = {
-    implicit val stt : TSType[SuccessType]                    = successTypeTS
+    implicit val stt: TSType[SuccessType]                     = successTypeTS
     implicit val jatt: TSType[JsActionType]                   = jsActionTypeTSType
     implicit val gest: TSIType[GradedJsHtmlElementSpecResult] = gradedJsHtmlElementSpecResultTSI
 

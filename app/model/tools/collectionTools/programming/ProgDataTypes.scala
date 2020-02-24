@@ -2,13 +2,11 @@ package model.tools.collectionTools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-
 sealed trait ProgDataType {
 
   def typeName: String
 
 }
-
 
 object ProgDataTypes {
 
@@ -16,11 +14,9 @@ object ProgDataTypes {
 
   sealed abstract class NonGenericProgDataType(val typeName: String) extends ProgDataType with EnumEntry
 
-
   object NonGenericProgDataType extends PlayEnum[NonGenericProgDataType] {
 
     val values: IndexedSeq[NonGenericProgDataType] = findValues
-
 
     case object VOID extends NonGenericProgDataType("void")
 
@@ -37,7 +33,6 @@ object ProgDataTypes {
   // Generic Data Types
 
   sealed abstract class GenericProgDataType extends ProgDataType
-
 
   final case class LIST(subtype: ProgDataType) extends GenericProgDataType {
 

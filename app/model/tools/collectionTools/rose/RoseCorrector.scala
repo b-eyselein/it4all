@@ -37,9 +37,9 @@ object RoseCorrector {
     val sampleFileName   = s"sample_robot.${language.fileEnding}"
 
     val solutionFilePath: File = solutionTargetDir / solutionFileName
-    val sampleFilePath  : File = solutionTargetDir / sampleFileName
+    val sampleFilePath: File   = solutionTargetDir / sampleFileName
 
-    val actionFilePath : File = solutionTargetDir / actionsFileName
+    val actionFilePath: File  = solutionTargetDir / actionsFileName
     val optionsFilePath: File = solutionTargetDir / optionsFileName
 
     // FIXME: write exercise options file...
@@ -52,7 +52,6 @@ object RoseCorrector {
     val dockerBinds: Seq[DockerBind] = Seq(
       DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir / solutionFileName),
       DockerBind(sampleFilePath, DockerConnector.DefaultWorkingDir / sampleFileName),
-
       DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir / actionsFileName),
       DockerBind(optionsFilePath, DockerConnector.DefaultWorkingDir / optionsFileName)
     )
@@ -61,22 +60,20 @@ object RoseCorrector {
 
     futureImageExists.flatMap {
       case false => Future.successful(Failure(new Exception("The docker image does not exist!")))
-      case true  =>
+      case true =>
         DockerConnector
           .runContainer(
             roseCorrectionDockerImageName.name,
-            maybeEntryPoint = None /* Some(entryPoint)*/ ,
+            maybeEntryPoint = None /* Some(entryPoint)*/,
             maybeDockerBinds = dockerBinds /*,
           deleteContainerAfterRun = false */
           )
           .map {
-            case Failure(exception)          => Failure(exception)
+            case Failure(exception) => Failure(exception)
             case Success(runContainerResult) =>
-
               runContainerResult.statusCode match {
                 case 0 =>
                   Try(Json.parse(actionFilePath.contentAsString)).map { jsValue =>
-
                     RoseToolJsonProtocol.roseExecutionResultFormat.reads(jsValue) match {
                       case JsError(errors)     => ???
                       case JsSuccess(value, _) => RoseCompleteResult(value, (-1).points, (-1).points, solutionSaved)

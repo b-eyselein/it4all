@@ -4,7 +4,8 @@ import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
 import model.points._
 import model.tools.collectionTools.sql.SqlToolMain._
 
-final case class WrongStatementTypeException(awaited: String, gotten: String) extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")
+final case class WrongStatementTypeException(awaited: String, gotten: String)
+    extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")
 
 class SqlStatementException(cause: Throwable) extends Exception(cause) {
 
@@ -21,7 +22,6 @@ class SqlStatementException(cause: Throwable) extends Exception(cause) {
   }
 
 }
-
 
 final case class SelectAdditionalComparisons(
   groupByComparison: GroupByComparison,
@@ -60,7 +60,6 @@ final case class AdditionalComparison(
 
 }
 
-
 final case class SqlQueriesStaticComparison(
   columnComparison: ColumnComparison,
   tableComparison: TableComparison,
@@ -69,9 +68,13 @@ final case class SqlQueriesStaticComparison(
   additionalComparisons: AdditionalComparison
 ) {
 
-  def results: Seq[EvaluationResult] = Seq(
-    columnComparison, tableComparison, joinExpressionComparison, whereComparison
-  ) ++ additionalComparisons.results
+  def results: Seq[EvaluationResult] =
+    Seq(
+      columnComparison,
+      tableComparison,
+      joinExpressionComparison,
+      whereComparison
+    ) ++ additionalComparisons.results
 
   val points: Points = columnComparison.points +
     tableComparison.points +
@@ -107,11 +110,12 @@ final case class SqlExecutionResult(
 ) extends EvaluationResult {
 
   override val success: SuccessType = userResultTry match {
-    case None             => SuccessType.ERROR
-    case Some(userResult) => sampleResultTry match {
-      case None               => SuccessType.PARTIALLY
-      case Some(sampleResult) => SuccessType.ofBool(userResult isIdentic sampleResult)
-    }
+    case None => SuccessType.ERROR
+    case Some(userResult) =>
+      sampleResultTry match {
+        case None               => SuccessType.PARTIALLY
+        case Some(sampleResult) => SuccessType.ofBool(userResult isIdentic sampleResult)
+      }
   }
 
 }

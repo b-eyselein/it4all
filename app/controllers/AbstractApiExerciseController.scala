@@ -23,16 +23,20 @@ trait AbstractApiExerciseController extends AbstractApiController {
   protected def onNoSuchExercisePart(exercise: Exercise, partStr: String): Result =
     NotFound(s"There is no part $partStr for exercise ${exercise.title}")
 
-
-  protected case class ToolMainRequest[B](toolMain: CollectionToolMain, user: User, request: AuthenticatedRequest[B, User]) extends WrappedRequest[B](request)
-
+  protected case class ToolMainRequest[B](
+    toolMain: CollectionToolMain,
+    user: User,
+    request: AuthenticatedRequest[B, User]
+  ) extends WrappedRequest[B](request)
 
   protected def ToolMainAction(toolId: String): ActionRefiner[AuthenticatedRequest[*, User], ToolMainRequest] =
     new ActionRefiner[AuthenticatedRequest[*, User], ToolMainRequest] {
 
       override protected def executionContext: ExecutionContext = self.defaultExecutionContext
 
-      override protected def refine[A](request: AuthenticatedRequest[A, User]): Future[Either[Result, ToolMainRequest[A]]] =
+      override protected def refine[A](
+        request: AuthenticatedRequest[A, User]
+      ): Future[Either[Result, ToolMainRequest[A]]] =
         Future.successful {
           getToolMain(toolId)
             .map(ToolMainRequest(_, request.user, request))

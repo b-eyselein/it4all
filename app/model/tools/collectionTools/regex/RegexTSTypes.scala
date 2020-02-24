@@ -13,10 +13,10 @@ object RegexTSTypes extends ToolTSInterfaceTypes {
   private val regexCorrectionTypeTsType: TSType[RegexCorrectionType] = enumTsType(RegexCorrectionTypes)
 
   private val regexExerciseContentTSI: TSIType[RegexExerciseContent] = {
-    implicit val ssst : TSIType[SampleSolution[String]]  = sampleSolutionTSI("Regex", TSType(TSString))
+    implicit val ssst: TSIType[SampleSolution[String]]   = sampleSolutionTSI("Regex", TSType(TSString))
     implicit val rmtdt: TSIType[RegexMatchTestData]      = TSType.fromCaseClass
     implicit val retdt: TSIType[RegexExtractionTestData] = TSType.fromCaseClass
-    implicit val rctt : TSType[RegexCorrectionType]      = regexCorrectionTypeTsType
+    implicit val rctt: TSType[RegexCorrectionType]       = regexCorrectionTypeTsType
 
     TSType.fromCaseClass
   }
@@ -28,24 +28,26 @@ object RegexTSTypes extends ToolTSInterfaceTypes {
   }
 
   private val regexExtractionEvaluationResultTSI: TSIType[RegexExtractionEvaluationResult] = {
-    implicit val todo: TSNamedType[ExtractedValuesComparison] = matchingResultTSI("RegexExtraction", {
-      implicit val mtt: TSType[MatchType]  = enumTsType(MatchType)
-      implicit val rmt: TSType[RegexMatch] = TSType.interface(
-        "start" -> TSNumber,
-        "end" -> TSNumber,
-        "content" -> TSString
-      )
+    implicit val todo: TSNamedType[ExtractedValuesComparison] = matchingResultTSI(
+      "RegexExtraction", {
+        implicit val mtt: TSType[MatchType] = enumTsType(MatchType)
+        implicit val rmt: TSType[RegexMatch] = TSType.interface(
+          "start"   -> TSNumber,
+          "end"     -> TSNumber,
+          "content" -> TSString
+        )
 
-      TSType.fromCaseClass[RegexMatchMatch]
-    })
+        TSType.fromCaseClass[RegexMatchMatch]
+      }
+    )
 
     TSType.fromCaseClass
   }
 
   private val regexCompleteResultTSI: TSIType[RegexCompleteResult] = {
-    implicit val rctt : TSType[RegexCorrectionType]              = regexCorrectionTypeTsType
+    implicit val rctt: TSType[RegexCorrectionType]               = regexCorrectionTypeTsType
     implicit val reert: TSIType[RegexExtractionEvaluationResult] = regexExtractionEvaluationResultTSI
-    implicit val rmrt : TSIType[RegexMatchingEvaluationResult]   = regexMatchingEvaluationResultTSI
+    implicit val rmrt: TSIType[RegexMatchingEvaluationResult]    = regexMatchingEvaluationResultTSI
 
     TSType.fromCaseClass
   }

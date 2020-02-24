@@ -2,14 +2,11 @@ package model.tools.collectionTools.uml
 
 import model.tools.collectionTools.{ExPart, ExParts}
 
-
 sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart
-
 
 object UmlExParts extends ExParts[UmlExPart] {
 
   val values: IndexedSeq[UmlExPart] = findValues
-
 
   case object ClassSelection extends UmlExPart(partName = "Klassenwahl", urlName = "classSelection")
 

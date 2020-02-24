@@ -11,7 +11,6 @@ import net.sf.jsqlparser.statement.select._
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
-
 object SelectCorrector extends QueryCorrector("SELECT") {
 
   override type Q = net.sf.jsqlparser.statement.select.Select
@@ -28,14 +27,13 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
   override protected def getTables(query: Q): Seq[Table] = query.getSelectBody match {
     case plain: PlainSelect =>
-
       val mainTable: Option[Table] = plain.getFromItem match {
         case t: Table => Some(t)
         case _        => None
       }
 
       val joinedTables: Seq[Table] = Option(plain.getJoins).map(_.asScala) match {
-        case None        => Seq[Table]()
+        case None => Seq[Table]()
         case Some(joins) =>
           joins.flatMap { join =>
             join.getRightItem match {
@@ -46,13 +44,13 @@ object SelectCorrector extends QueryCorrector("SELECT") {
       }
 
       mainTable.toSeq ++ joinedTables
-    case _                  => Seq[Table]()
+    case _ => Seq[Table]()
   }
 
   override protected def getJoinExpressions(query: Select): Seq[BinaryExpression] = query.getSelectBody match {
     case ps: PlainSelect =>
       Option(ps.getJoins).map(_.asScala) match {
-        case None        => Seq.empty
+        case None => Seq.empty
         case Some(joins) =>
           joins.flatMap { join =>
             Option(join.getOnExpression) flatMap {
@@ -61,7 +59,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
             }
           }.toSeq
       }
-    case _               => Seq.empty
+    case _ => Seq.empty
   }
 
   override protected def getWhere(select: Q): Option[Expression] = select.getSelectBody match {
@@ -69,16 +67,17 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     case _               => None
   }
 
-  override def performAdditionalComparisons(userQuery: Select, sampleQuery: Select): AdditionalComparison = AdditionalComparison(
-    Some(
-      SelectAdditionalComparisons(
-        GroupByMatcher.doMatch(groupByElements(userQuery), groupByElements(sampleQuery)),
-        OrderByMatcher.doMatch(orderByElements(userQuery), orderByElements(sampleQuery)),
-        compareLimitElement(userQuery, sampleQuery),
-      )
-    ), None
-  )
-
+  override def performAdditionalComparisons(userQuery: Select, sampleQuery: Select): AdditionalComparison =
+    AdditionalComparison(
+      Some(
+        SelectAdditionalComparisons(
+          GroupByMatcher.doMatch(groupByElements(userQuery), groupByElements(sampleQuery)),
+          OrderByMatcher.doMatch(orderByElements(userQuery), orderByElements(sampleQuery)),
+          compareLimitElement(userQuery, sampleQuery)
+        )
+      ),
+      None
+    )
 
   private def compareLimitElement(userQ: Q, sampleQ: Q): LimitComparison = {
     val maybeUserLimit: Option[Limit] = limitElement(userQ)
@@ -93,8 +92,9 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   }
 
   private def groupByElements(query: Q): Seq[Expression] = query.getSelectBody match {
-    case ps: PlainSelect => Option(ps.getGroupBy).map(_.getGroupByExpressions.asScala).getOrElse(Seq[Expression]()).toSeq
-    case _               => Seq[Expression]()
+    case ps: PlainSelect =>
+      Option(ps.getGroupBy).map(_.getGroupByExpressions.asScala).getOrElse(Seq[Expression]()).toSeq
+    case _ => Seq[Expression]()
   }
 
   private def limitElement(query: Q): Option[Limit] = query.getSelectBody match {

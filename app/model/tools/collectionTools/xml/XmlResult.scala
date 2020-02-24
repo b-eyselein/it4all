@@ -5,7 +5,6 @@ import model.core.result.{CompleteResult, SuccessType}
 import model.points._
 import model.tools.collectionTools.xml.XmlToolMain.ElementLineComparison
 
-
 final case class XmlCompleteResult(
   successType: SuccessType,
   documentResult: Seq[XmlError],
@@ -19,5 +18,5 @@ final case class XmlCompleteResult(
 
 final case class XmlGrammarResult(
   parseErrors: Seq[DTDParseException] = Seq.empty,
-  results: ElementLineComparison,
+  results: ElementLineComparison
 )

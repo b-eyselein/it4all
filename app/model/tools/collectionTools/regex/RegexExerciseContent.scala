@@ -9,7 +9,6 @@ case object RegexCorrectionTypes extends PlayEnum[RegexCorrectionType] {
 
   override val values: IndexedSeq[RegexCorrectionType] = findValues
 
-
   case object MATCHING extends RegexCorrectionType
 
   case object EXTRACTION extends RegexCorrectionType
@@ -23,7 +22,6 @@ final case class RegexExerciseContent(
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
 ) extends StringExerciseContent
-
 
 final case class RegexMatchTestData(id: Int, data: String, isIncluded: Boolean)
 

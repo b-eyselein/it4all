@@ -19,7 +19,6 @@ object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExerciseContent, String
     implicit val ritf: Format[RoseInputType]          = roseInputTypeFormat
     implicit val rssf: Format[SampleSolution[String]] = Json.format[SampleSolution[String]]
 
-
     Json.format[RoseExerciseContent]
   }
 
@@ -33,12 +32,10 @@ object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExerciseContent, String
   }
 
   override val completeResultWrites: Writes[RoseCompleteResult] = {
-    implicit val pointsWrites: Writes[Points]              = ToolJsonProtocol.pointsFormat
-    implicit val rerw        : Writes[RoseExecutionResult] = roseExecutionResultFormat
+    implicit val pointsWrites: Writes[Points]      = ToolJsonProtocol.pointsFormat
+    implicit val rerw: Writes[RoseExecutionResult] = roseExecutionResultFormat
 
     Json.writes[RoseCompleteResult]
   }
 
 }
-
-

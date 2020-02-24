@@ -2,13 +2,11 @@ package model.tools.collectionTools.xml
 
 import model.tools.collectionTools.{ExPart, ExParts, ExerciseContent, SampleSolution}
 
-
 sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart
 
 object XmlExParts extends ExParts[XmlExPart] {
 
   val values: IndexedSeq[XmlExPart] = findValues
-
 
   case object GrammarCreationXmlPart extends XmlExPart("Grammatik", "grammar")
 
@@ -16,9 +14,7 @@ object XmlExParts extends ExParts[XmlExPart] {
 
 }
 
-
 final case class XmlSolution(document: String, grammar: String)
-
 
 final case class XmlExerciseContent(
   grammarDescription: String,
