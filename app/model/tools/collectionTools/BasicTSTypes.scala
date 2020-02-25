@@ -1,6 +1,7 @@
 package model.tools.collectionTools
 
 import model.lesson._
+import model.typescriptTypes.ProficiencyTsTypes
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
 import play.api.libs.json.JsValue
@@ -48,6 +49,7 @@ object BasicTSTypes extends ToolTSInterfaceTypes {
   private val exerciseCollectionTSI: TSIType[ExerciseCollection] = TSType.fromCaseClass[ExerciseCollection]
 
   val exported: Seq[TypescriptNamedType] = Seq(
+    ProficiencyTsTypes.proficienciesTSI.get,
     lessonTSI.get,
     lessonTextContentTSI.get,
     lessonQuestionsContentTSI.get,

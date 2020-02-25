@@ -4,13 +4,12 @@ import model._
 import play.api.Logger
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import slick.lifted.{ForeignKeyQuery, ProvenShape}
+import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-trait TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+trait TableDefs extends HasDatabaseConfigProvider[JdbcProfile] {
 
   private val logger = Logger(classOf[TableDefs])
 
@@ -21,8 +20,6 @@ trait TableDefs {
   // Table queries
 
   protected val users = TableQuery[UsersTable]
-
-  private val pwHashes = TableQuery[PwHashesTable]
 
   // Numbers
 
@@ -35,21 +32,14 @@ trait TableDefs {
   def userByName(username: String): Future[Option[User]] =
     db.run(users.filter(_.username === username).result.headOption)
 
-  def pwHashForUser(username: String): Future[Option[PwHash]] =
-    db.run(pwHashes.filter(_.username === username).result.headOption)
-
   // Update
 
   def updateUserRole(userToChangeName: String, newRole: Role): Future[Boolean] = {
     implicit val rct: BaseColumnType[Role] = roleColumnType
 
-    db.run(users.filter(_.username === userToChangeName).map(_.role).update(newRole))
-      .map(_ => true)
-      .recover {
-        case e: Throwable =>
-          logger.error(s"Could not update std role of user $userToChangeName to ${newRole.entryName}", e)
-          false
-      }
+    val query = users.filter(_.username === userToChangeName).map(_.role).update(newRole)
+
+    db.run(query).transform(_ == 1, identity)
   }
 
   // Insert
@@ -76,17 +66,10 @@ trait TableDefs {
       })
       .map(_.forall(identity))
 
-  protected def saveSingle(performSave: => Future[Any]): Future[Boolean] = performSave.transform {
-    case Success(_) => Success(true)
-    case Failure(e) =>
-      logger.error("Could not perform save option", e)
-      Success(false)
-  }
-
   // Column types
 
   private val roleColumnType: BaseColumnType[Role] =
-    MappedColumnType.base[Role, String](_.entryName, str => Role.withNameInsensitiveOption(str) getOrElse Role.RoleUser)
+    MappedColumnType.base[Role, String](_.entryName, Role.withNameInsensitive)
 
   // Tables
 
@@ -94,35 +77,13 @@ trait TableDefs {
 
     private implicit val rct: BaseColumnType[Role] = roleColumnType
 
-    def userType: Rep[Int] = column[Int]("user_type")
-
     def username: Rep[String] = column[String]("username", O.PrimaryKey)
+
+    def pwHash: Rep[Option[String]] = column[Option[String]]("pw_hash")
 
     def role: Rep[Role] = column[Role]("std_role")
 
-    override def * : ProvenShape[User] = (userType, username, role) <> (tupled, unapplied)
-
-    def tupled(values: (Int, String, Role)): User = values match {
-      case (1, username, role) => LtiUser(username, role)
-      case (_, username, role) => RegisteredUser(username, role)
-    }
-
-    def unapplied(user: User): Option[(Int, String, Role)] = user match {
-      case LtiUser(username, role)        => Some((1, username, role))
-      case RegisteredUser(username, role) => Some((0, username, role))
-    }
-
-  }
-
-  protected class PwHashesTable(tag: Tag) extends Table[PwHash](tag, "pw_hashes") {
-
-    def username: Rep[String] = column[String]("username", O.PrimaryKey)
-
-    def pwHash: Rep[String] = column[String]("pw_hash")
-
-    def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)
-
-    override def * : ProvenShape[PwHash] = (username, pwHash) <> (PwHash.tupled, PwHash.unapply)
+    override def * : ProvenShape[User] = (username, pwHash, role) <> (User.tupled, User.unapply)
 
   }
 

@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import model.adaption.Proficiencies
 import model.lesson.Lesson
 import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools.sql._
@@ -29,6 +30,17 @@ class ApiController @Inject() (
   private implicit val lessonFormat: Format[Lesson]                     = ToolJsonProtocol.lessonFormat
   private implicit val exerciseMetaDataFormat: Format[ExerciseMetaData] = ToolJsonProtocol.exerciseMetaDataFormat
   private implicit val exerciseFormat: Format[Exercise]                 = ToolJsonProtocol.exerciseFormat
+
+  // Proficiency
+
+  def apiProficiency(toolType: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async {
+    implicit request =>
+      implicit val proficienciesFormat: Format[Proficiencies] = ToolJsonProtocol.proficienciesFormat
+
+      tables.futureProficiencies(request.user.username, request.toolMain.urlPart).map { proficiencies =>
+        Ok(Json.toJson(proficiencies))
+      }
+  }
 
   // Collections
 

@@ -1,36 +1,9 @@
 # --- !Ups
 
 create table if not exists users (
-    user_type int,
-    username  varchar(30) primary key,
-    std_role  enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser'
-);
-
-create table if not exists pw_hashes (
-    username varchar(30) primary key,
+    username varchar(30)                                      not null primary key,
     pw_hash  varchar(60),
-
-    foreign key (username)
-        references users (username)
-        on update cascade
-        on delete cascade
-);
-
-create table if not exists courses (
-    id          varchar(30) primary key,
-    course_name varchar(100)
-);
-
-create table if not exists users_in_courses (
-    username  varchar(30),
-    course_id varchar(30),
-    role      enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') default 'RoleUser',
-
-    primary key (username, course_id),
-    foreign key (username) references users (username)
-        on update cascade on delete cascade,
-    foreign key (course_id) references courses (id)
-        on update cascade on delete cascade
+    std_role enum ('RoleUser', 'RoleAdmin', 'RoleSuperAdmin') not null default 'RoleUser'
 );
 
 # Feedback
@@ -48,8 +21,7 @@ create table if not exists feedback (
     comment           text,
 
     primary key (username, tool_url),
-    foreign key (username) references users (username)
-        on update cascade on delete cascade
+    foreign key (username) references users (username) on update cascade on delete cascade
 );
 
 # Learning paths
@@ -71,8 +43,37 @@ create table if not exists learning_path_sections (
     content      text,
 
     primary key (id, tool_url, path_id),
-    foreign key (tool_url, path_id) references learning_paths (tool_url, id)
-        on update cascade on delete cascade
+    foreign key (tool_url, path_id) references learning_paths (tool_url, id) on update cascade on delete cascade
+);
+
+# Proficiencies
+
+create table if not exists topics (
+    id      int,
+    tool_id varchar(10),
+    name    varchar(100),
+
+    primary key (id, tool_id)
+);
+
+create table if not exists tool_proficiencies (
+    username varchar(30),
+    tool_id  varchar(10),
+    points   int not null,
+
+    primary key (username, tool_id),
+    foreign key (username) references users (username) on update cascade on delete cascade
+);
+
+create table if not exists topic_proficiencies (
+    username varchar(30),
+    topic_id int,
+    tool_id  varchar(10),
+    points   int not null,
+
+    primary key (username, topic_id, tool_id),
+    foreign key (username) references users (username) on update cascade on delete cascade,
+    foreign key (topic_id, tool_id) references topics (id, tool_id) on update cascade on delete cascade
 );
 
 # Collections and Exercises
@@ -103,11 +104,10 @@ create table if not exists exercises (
     tags             longtext     not null, # TODO: json!
 
     content_json     longtext     not null, # TODO: json!
+    difficulty       integer default null,
 
     primary key (id, collection_id, tool_id, semantic_version),
-    foreign key (collection_id, tool_id)
-        references collections (id, tool_id)
-        on update cascade on delete cascade
+    foreign key (collection_id, tool_id) references collections (id, tool_id) on update cascade on delete cascade
 );
 
 create table if not exists user_solutions (
@@ -124,12 +124,9 @@ create table if not exists user_solutions (
     max_points                double,
 
     primary key (id, exercise_id, collection_id, tool_id, exercise_semantic_version, part, username),
-    foreign key (username)
-        references users (username)
-        on update cascade on delete cascade,
+    foreign key (username) references users (username) on update cascade on delete cascade,
     foreign key (exercise_id, collection_id, tool_id, exercise_semantic_version)
-        references exercises (id, collection_id, tool_id, semantic_version)
-        on update cascade on delete cascade
+        references exercises (id, collection_id, tool_id, semantic_version) on update cascade on delete cascade
 );
 
 create table if not exists exercise_reviews (
@@ -175,6 +172,13 @@ drop table if exists exercises;
 drop table if exists collections;
 
 
+drop table if exists topic_proficiencies;
+
+drop table if exists tool_proficiencies;
+
+drop table if exists topics;
+
+
 drop table if exists learning_path_sections;
 
 drop table if exists learning_paths;
@@ -182,11 +186,5 @@ drop table if exists learning_paths;
 
 drop table if exists feedback;
 
-
-drop table if exists users_in_courses;
-
-drop table if exists courses;
-
-drop table if exists pw_hashes;
 
 drop table if exists users;

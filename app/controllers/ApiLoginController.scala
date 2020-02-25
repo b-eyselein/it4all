@@ -33,7 +33,7 @@ class ApiLoginController @Inject() (
   private def getOrCreateUser(username: String): Future[User] = tables.userByName(username).flatMap {
     case Some(u) => Future(u)
     case None =>
-      val newUser   = LtiUser(username)
+      val newUser   = User(username, None)
       val userSaved = tables.saveUser(newUser)
       userSaved.map(_ => newUser)
   }
@@ -70,13 +70,13 @@ class ApiLoginController @Inject() (
     implicit val userCredentialsFormat: Format[UserCredentials] = Json.format
 
     Action.async(parse.json[UserCredentials]) { implicit request =>
-      tables.userByName(request.body.username).flatMap {
-        case None => Future.successful(BadRequest("Invalid username!"))
+      tables.userByName(request.body.username).map {
+        case None => BadRequest("Invalid username!")
         case Some(user) =>
-          tables.pwHashForUser(user.username).map {
+          user.pwHash match {
             case None => BadRequest("No password found!")
             case Some(pwHash) =>
-              if (request.body.password.isBcrypted(pwHash.pwHash)) {
+              if (request.body.password.isBcrypted(pwHash)) {
                 val session = createJwtSession(user)
 
                 Ok(writeJsonWebToken(user, session.serialize))

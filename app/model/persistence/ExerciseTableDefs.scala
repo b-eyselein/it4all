@@ -2,7 +2,6 @@ package model.persistence
 
 import javax.inject.Inject
 import model._
-import model.core.CoreConsts._
 import model.learningPath.LearningPathTableDefs
 import model.tools.collectionTools._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -16,6 +15,7 @@ import scala.reflect.ClassTag
 class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfigProvider)(
   override implicit val executionContext: ExecutionContext
 ) extends LearningPathTableDefs
+    with ProficiencyTableDefs
     with ExerciseTableDefQueries {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
@@ -52,9 +52,9 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
   protected val exTagsColumnType: BaseColumnType[Seq[ExTag]] = jsonSeqColumnType(ToolJsonProtocol.exTagFormat)
   protected val exPartColumnType: BaseColumnType[ExPart]     = MappedColumnType.base[ExPart, String](_.entryName, _ => ???)
 
-  // Abstract table classes
+  // Table classes
 
-  protected final class ExerciseCollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
+  protected class ExerciseCollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
 
     private implicit val ssct: BaseColumnType[Seq[String]] = stringSeqColumnType
 
@@ -133,27 +133,6 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
         difficulty,
         content
       ) <> (Exercise.tupled, Exercise.unapply)
-
-  }
-
-  protected abstract class ExForeignKeyTable[T](tag: Tag, tableName: String) extends Table[T](tag, tableName) {
-
-    private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
-    def toolId: Rep[String] = column[String]("tool_id")
-
-    def exSemVer: Rep[SemanticVersion] = column[SemanticVersion]("exercise_semantic_version")
-
-    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] =
-      foreignKey(
-        "exercise_fk",
-        (exerciseId, collectionId, toolId, exSemVer),
-        exercisesTQ
-      )(ex => (ex.id, ex.collectionId, ex.toolId, ex.semanticVersion))
 
   }
 

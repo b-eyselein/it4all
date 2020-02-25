@@ -1,4 +1,4 @@
-package model
+package model.adaption
 
 import enumeratum.{Enum, EnumEntry}
 

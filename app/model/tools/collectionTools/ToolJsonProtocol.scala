@@ -1,5 +1,6 @@
 package model.tools.collectionTools
 
+import model.adaption.{Proficiencies, ToolProficiency, TopicProficiency}
 import model.core.matching.{Match, MatchingResult}
 import model.core.result.CompleteResult
 import model.lesson._
@@ -7,6 +8,13 @@ import model.points.Points
 import play.api.libs.json._
 
 object ToolJsonProtocol {
+
+  val proficienciesFormat: Format[Proficiencies] = {
+    implicit val toolProficiencyFormat: Format[ToolProficiency]   = Json.format
+    implicit val topicProficiencyFormat: Format[TopicProficiency] = Json.format
+
+    Json.format
+  }
 
   val semanticVersionFormat: Format[SemanticVersion] = Json.format
 

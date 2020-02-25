@@ -10,8 +10,7 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FeedbackTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+trait FeedbackTableDefs extends TableDefs with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
@@ -55,9 +54,8 @@ trait FeedbackTableDefs extends TableDefs {
       )
   )
 
-  def futureUpsertFeedback(username: String, toolUrl: String, feedback: Feedback): Future[Boolean] = {
-    saveSingle(
-      db.run(
+  def futureUpsertFeedback(username: String, toolUrl: String, feedback: Feedback): Future[Boolean] =
+    db.run(
         feedbackTQ.insertOrUpdate(
           (
             username,
@@ -70,8 +68,7 @@ trait FeedbackTableDefs extends TableDefs {
           )
         )
       )
-    )
-  }
+      .transform(_ == 1, identity)
 
   // Column types
 

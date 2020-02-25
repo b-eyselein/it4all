@@ -31,6 +31,8 @@ GET         /api/claimWebToken/:uuidStr                                         
 
 # API
 
+GET         /api/tools/:toolType/proficiencies                                        controllers.ApiController.apiProficiency(toolType: String)
+
 GET         /api/tools/:toolType/collectionCount                                     controllers.ApiController.apiCollectionCount(toolType: String)
 GET         /api/tools/:toolType/collections                                         controllers.ApiController.apiAllCollections(toolType: String)
 GET         /api/tools/:toolType/collections/:collId                                 controllers.ApiController.apiCollection(toolType: String, collId: Int)

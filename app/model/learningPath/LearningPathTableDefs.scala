@@ -1,6 +1,5 @@
 package model.learningPath
 
-import model.core.CoreConsts._
 import model.learningPath.LearningPathSectionType.{QuestionSectionType, TextSectionType}
 import model.persistence.TableDefs
 import model.points.Points
@@ -12,8 +11,7 @@ import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
 
 import scala.concurrent.Future
 
-trait LearningPathTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+trait LearningPathTableDefs extends TableDefs with HasDatabaseConfigProvider[JdbcProfile] {
 
   private val logger = Logger(classOf[LearningPathTableDefs])
 

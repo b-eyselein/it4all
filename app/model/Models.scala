@@ -20,17 +20,8 @@ object Role extends PlayEnum[Role] {
 
 final case class UserCredentials(username: String, password: String)
 
-sealed trait User {
-
-  val username: String
-  val stdRole: Role
+final case class User(username: String, pwHash: Option[String], stdRole: Role = Role.RoleUser) {
 
   def isAdmin: Boolean = stdRole ne Role.RoleUser
 
 }
-
-final case class LtiUser(username: String, stdRole: Role = Role.RoleUser) extends User
-
-final case class RegisteredUser(username: String, stdRole: Role = Role.RoleUser) extends User
-
-final case class PwHash(username: String, pwHash: String)

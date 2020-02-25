@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {IExercise, IExerciseCollection, IExerciseMetaData} from '../../../_interfaces/models';
+import {IExercise, IExerciseCollection, IExerciseMetaData, IProficiencies} from '../../../_interfaces/models';
 import {Lesson} from '../../../_interfaces/lesson';
 import {ISqlQueryResult} from '../sql/sql-interfaces';
 
@@ -26,6 +26,13 @@ export class ApiService {
   private readonly baseUrl = '/api/tools';
 
   // Loading
+
+  getProficiencies(toolId: string): Observable<IProficiencies | undefined> {
+    const url = `${this.baseUrl}/${toolId}/proficiencies`;
+
+    return this.http.get<IProficiencies | undefined>(url)
+      .pipe(catchError(() => of(undefined)));
+  }
 
   getCollectionCount(toolId: string): Observable<number> {
     const url = `${this.baseUrl}/${toolId}/collectionCount`;
