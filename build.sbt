@@ -48,7 +48,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   guice,
   ws,
-  "com.pauldijou"          %% "jwt-play"              % "4.2.0",
+  "com.pauldijou"          %% "jwt-play"              % "4.3.0",
   "org.scalatestplus.play" %% "scalatestplus-play"    % "5.0.0" % Test,
   "mysql"                  % "mysql-connector-java"   % "8.0.19", // GPL 2.0
   "com.typesafe.play"      %% "play-slick"            % "5.0.0", // Apache 2.0

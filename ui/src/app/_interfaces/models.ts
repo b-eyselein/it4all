@@ -1,8 +1,15 @@
 
-export interface IQuestion {
-  id: number;
-  question: string;
-  answers: IQuestionAnswer[];
+export interface IExTag {
+  abbreviation: string;
+  title: string;
+}
+
+
+export interface ITopicProficiency {
+  username: string;
+  toolId: string;
+  topicId: number;
+  points: number;
 }
 
 
@@ -21,12 +28,6 @@ export interface ILessonTextContent {
 }
 
 
-export interface IProficiencies {
-  toolProf: IToolProficiency;
-  topicProfs: ITopicProficiency[];
-}
-
-
 export interface ILesson {
   id: number;
   toolId: string;
@@ -35,19 +36,16 @@ export interface ILesson {
 }
 
 
-
-export interface ITopicProficiency {
-  username: string;
-  toolId: string;
-  topic: string;
-  points: number;
+export interface IQuestion {
+  id: number;
+  question: string;
+  answers: IQuestionAnswer[];
 }
 
-export type LessonContent = (ILessonQuestionsContent | ILessonTextContent);
 
-export interface IExTag {
-  abbreviation: string;
-  title: string;
+export interface IProficiencies {
+  toolProf: IToolProficiency;
+  topicProfs: ITopicProficiency[];
 }
 
 
@@ -108,3 +106,6 @@ export interface IExercise extends IExerciseMetaData {
   difficulty?: number;
   content: any;
 }
+
+
+export type LessonContent = (ILessonTextContent | ILessonQuestionsContent);
