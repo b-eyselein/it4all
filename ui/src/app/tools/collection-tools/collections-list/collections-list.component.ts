@@ -1,21 +1,24 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
-import {ApiService} from '../_services/api.service';
-import {IExerciseCollection} from '../../../_interfaces/models';
+import {CollectionsGQL, CollectionsQuery} from "../../../_services/apollo_services";
 
 @Component({templateUrl: './collections-list.component.html'})
 export class CollectionsListComponent extends ComponentWithCollectionTool implements OnInit {
 
-  collections: IExerciseCollection[];
+  collectionsQuery: CollectionsQuery;
 
-  constructor(protected route: ActivatedRoute, private apiService: ApiService) {
+  constructor(protected route: ActivatedRoute, private collectionsGQL: CollectionsGQL) {
     super(route);
   }
 
   ngOnInit() {
-    this.apiService.getCollections(this.tool.id)
-      .subscribe((collections) => this.collections = collections);
+    console.info(this.tool.id);
+
+    this.collectionsGQL
+      .watch({toolId: this.tool.id})
+      .valueChanges
+      .subscribe(({data}) => this.collectionsQuery = data);
   }
 
 }

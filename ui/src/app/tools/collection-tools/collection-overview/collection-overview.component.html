@@ -1,7 +1,6 @@
 <div class="container">
-
-  <ng-container *ngIf="collection; else loadingCollectionBlock">
-    <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collection.title}}&quot;</h1>
+  <ng-container *ngIf="collectionOverviewQuery; else loadingCollectionBlock">
+    <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collectionOverviewQuery.tool.collection.title}}&quot;</h1>
 
     <div class="buttons">
       <a class="button is-primary is-fullwidth" routerLink="..">Zurück zur Sammlungübersicht</a>
@@ -9,37 +8,40 @@
 
     <br>
 
-    <ng-container *ngIf="collection">
+    <ng-container *ngIf="collectionOverviewQuery.tool.collection">
       <h2 class="subtitle is-3 has-text-centered">Aufgaben</h2>
 
-      <ng-container *ngIf="collection.exercises; else loadingExercisesBlock">
-        <div class="columns is-multiline" *ngIf="collection.exercises.length > 0; else noExercisesFoundBlock">
-          <div *ngFor="let exercise of collection.exercises" class="column is-one-quarter-desktop is-half">
+      <ng-container *ngIf="collectionOverviewQuery.tool.collection.exercises; else loadingExercisesBlock">
+        <div class="columns is-multiline"
+             *ngIf="collectionOverviewQuery.tool.collection.exercises.length > 0; else noExercisesFoundBlock">
+          <div *ngFor="let exercise of collectionOverviewQuery.tool.collection.exercises"
+               class="column is-one-quarter-desktop is-half">
             <it4all-exercise-link-card [exercise]="exercise"></it4all-exercise-link-card>
           </div>
         </div>
       </ng-container>
     </ng-container>
 
-    <ng-template #noExercisesFoundBlock>
-      <div class="notification is-danger has-text-centered">
-        Es konnten keine Aufgaben für die Sammlung {{collection.title}} gefunden werden!
-      </div>
-    </ng-template>
-
-    <ng-template #loadingExercisesBlock>
-      <div class="notification">
-        <p class="has-text-centered">Lade Aufgaben...</p>
-        <br>
-        <progress class="progress" max="100">20%</progress>
-      </div>
-    </ng-template>
-
   </ng-container>
-  <ng-template #loadingCollectionBlock>
-    <div class="notification is-danger has-text-centered">
-      Lade Sammlung...
-    </div>
-  </ng-template>
-
 </div>
+
+<ng-template #loadingCollectionBlock>
+  <div class="notification is-danger has-text-centered">
+    Lade Sammlung...
+  </div>
+</ng-template>
+
+<ng-template #loadingExercisesBlock>
+  <div class="notification">
+    <p class="has-text-centered">Lade Aufgaben...</p>
+    <br>
+    <progress class="progress" max="100">20%</progress>
+  </div>
+</ng-template>
+
+<ng-template #noExercisesFoundBlock>
+  <div class="notification is-danger has-text-centered">
+    Es konnten keine Aufgaben für diese Sammlung gefunden werden!
+  </div>
+</ng-template>
+

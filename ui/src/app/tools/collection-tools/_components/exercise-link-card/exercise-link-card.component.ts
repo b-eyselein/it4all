@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {IExerciseMetaData} from '../../../../_interfaces/models';
+import {FieldsForLinkFragment} from "../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-exercise-link-card',
@@ -7,8 +7,14 @@ import {IExerciseMetaData} from '../../../../_interfaces/models';
 })
 export class ExerciseLinkCardComponent {
 
-  readonly Arr = Array;
+  @Input() exercise: FieldsForLinkFragment;
 
-  @Input() exercise: IExerciseMetaData;
+  get filledDifficultyStars(): number[] {
+    return Array(this.exercise.difficulty).fill(0);
+  }
+
+  get nonFilledDifficultyStars(): number[] {
+    return Array(5 - this.exercise.difficulty).fill(0)
+  }
 
 }

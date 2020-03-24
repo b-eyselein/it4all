@@ -12,8 +12,8 @@ import play.api.mvc._
 import play.api.{Configuration, Logger}
 import sangria.ast.Document
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
-import sangria.parser.QueryParser
 import sangria.marshalling.playJson._
+import sangria.parser.QueryParser
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -36,27 +36,22 @@ class ApiController @Inject() (
   private implicit val exerciseMetaDataFormat: Format[ExerciseMetaData] = ToolJsonProtocol.exerciseMetaDataFormat
   private implicit val exerciseFormat: Format[Exercise]                 = ToolJsonProtocol.exerciseFormat
 
-  /*
- final case class GraphQLRequest(query: String, operationName: Option[String])
-  private implicit val graphQlRequest: Format[GraphQLRequest] = Json.format
-   */
+  final case class GraphQLRequest(query: String, operationName: Option[String], variables: Option[JsObject])
 
-  private def executeGraphQLQuery(query: Document, operationName: Option[String]): Future[Result] =
+  private implicit val graphQlRequest: Format[GraphQLRequest] = Json.format
+
+  private def executeGraphQLQuery(query: Document, operationName: Option[String], variables: JsObject): Future[Result] =
     Executor
-      .execute(GraphQLModel.schema, query, operationName = operationName)
+      .execute(GraphQLModel.schema, query, userContext = tables, operationName = operationName, variables = variables)
       .map(Ok(_))
       .recover {
         case error: QueryAnalysisError => BadRequest(error.resolveError)
         case error: ErrorWithResolver  => InternalServerError(error.resolveError)
       }
 
-  def graphql: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    val query = (request.body \ "query").as[String]
-
-    val operation = (request.body \ "operationName").asOpt[String]
-
-    QueryParser.parse(query) match {
-      case Success(queryAst) => executeGraphQLQuery(queryAst, operation)
+  def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest]) { implicit request =>
+    QueryParser.parse(request.body.query) match {
+      case Success(queryAst) => executeGraphQLQuery(queryAst, request.body.operationName, request.body.variables.getOrElse(Json.obj()))
       case Failure(error)    => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
     }
   }

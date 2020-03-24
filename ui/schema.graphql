@@ -1,6 +1,0 @@
-# source: http://localhost:9000/api/graphql
-# timestamp: Mon Mar 23 2020 16:11:37 GMT+0100 (Mitteleuropäische Normalzeit)
-
-type Query {
-  test: [String!]!
-}

@@ -1,0 +1,67 @@
+# source: http://localhost:9000/api/graphql
+# timestamp: Tue Mar 24 2020 15:05:21 GMT+0100 (Mitteleuropäische Normalzeit)
+
+type Collection {
+  id: Int!
+  title: String!
+  authors: [String!]!
+  text: String!
+  shortName: String!
+  exercises: [ExerciseMetaData!]!
+  exercise(id: Int!): Exercise
+}
+
+type Exercise {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
+  title: String!
+  authors: [String!]!
+  text: String!
+  tags: [ExTag!]!
+  difficulty: Int
+}
+
+type ExerciseMetaData {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
+  title: String!
+  authors: [String!]!
+  text: String!
+  tags: [ExTag!]!
+  difficulty: Int
+}
+
+type ExTag {
+  abbreviation: String!
+  title: String!
+}
+
+type Query {
+  tools: [Tool!]!
+  tool(toolId: String!): Tool
+}
+
+type SemanticVersion {
+  major: Int!
+  minor: Int!
+  patch: Int!
+}
+
+type Tool {
+  id: String!
+  name: String!
+  state: ToolState!
+  collections: [Collection!]!
+  collection(id: Int!): Collection
+  allExerciseMetaData: [ExerciseMetaData!]!
+}
+
+enum ToolState {
+  ALPHA
+  BETA
+  LIVE
+}

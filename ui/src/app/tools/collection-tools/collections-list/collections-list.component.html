@@ -7,8 +7,8 @@
 
   <br>
 
-  <div class="columns is-multiline" *ngIf="collections">
-    <div class="column is-one-quarter" *ngFor="let coll of collections">
+  <div class="columns is-multiline" *ngIf="collectionsQuery">
+    <div class="column is-one-quarter" *ngFor="let coll of collectionsQuery.tool.collections">
 
       <div class="card">
         <header class="card-header">

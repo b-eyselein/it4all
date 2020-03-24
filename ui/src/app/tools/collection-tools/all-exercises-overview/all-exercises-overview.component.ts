@@ -5,6 +5,7 @@ import {IExerciseMetaData, IExTag} from '../../../_interfaces/models';
 import {Tool} from '../../../_interfaces/tool';
 import {collectionTools} from '../collection-tools-list';
 import {distinctObjectArray, flatMapArray} from '../../../helpers';
+import {AllExercisesOverviewGQL, AllExercisesOverviewQuery} from "../../../_services/apollo_services";
 
 @Component({templateUrl: './all-exercises-overview.component.html'})
 export class AllExercisesOverviewComponent implements OnInit {
@@ -13,18 +14,29 @@ export class AllExercisesOverviewComponent implements OnInit {
 
   distinctTags: IExTag[];
 
+  allExercisesOverviewQuery: AllExercisesOverviewQuery;
+
   private exerciseMetaData: IExerciseMetaData[];
 
   filteredExerciseMetaData: IExerciseMetaData[];
 
   filtersActivated: Map<IExTag, boolean> = new Map<IExTag, boolean>();
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService) {
+  constructor(
+    private route: ActivatedRoute,
+    private allExercisesOverviewGQL: AllExercisesOverviewGQL,
+    private apiService: ApiService
+  ) {
     const toolId = this.route.snapshot.paramMap.get('toolId');
     this.tool = collectionTools.find((t) => t.id === toolId);
   }
 
   ngOnInit() {
+    this.allExercisesOverviewGQL
+      .watch({toolId: this.tool.id})
+      .valueChanges
+      .subscribe(({data}) => this.allExercisesOverviewQuery = data);
+
     this.apiService.getExerciseMetaDataForTool(this.tool.id)
       .subscribe((exerciseMetaData) => {
         this.distinctTags = distinctObjectArray(
@@ -40,6 +52,7 @@ export class AllExercisesOverviewComponent implements OnInit {
         this.filteredExerciseMetaData = this.exerciseMetaData;
       });
   }
+
 
   updateFilters(tag: IExTag): void {
     this.filtersActivated.set(tag, !this.filtersActivated.get(tag));

@@ -1,0 +1,49 @@
+query Collections($toolId: String!) {
+  tool(toolId: $toolId) {
+    collections {
+      id
+      title
+    }
+  }
+}
+
+query Exercises($toolId: String!, $collId: Int!) {
+  tool(toolId: $toolId) {
+    collection(id: $collId) {
+      exercises {
+        id
+        title
+      }
+    }
+  }
+}
+
+query CollectionOverview($toolId: String!, $collId: Int!) {
+  tool(toolId: $toolId) {
+    collection(id: $collId) {
+      title
+      exercises {
+        ...fieldsForLink
+      }
+    }
+  }
+}
+
+query AllExercisesOverview($toolId: String!) {
+  tool(toolId: $toolId) {
+    allExerciseMetaData {
+      ...fieldsForLink
+    }
+  }
+}
+
+
+fragment fieldsForLink on ExerciseMetaData {
+  id
+  title
+  difficulty
+  tags {
+    abbreviation
+    title
+  }
+}

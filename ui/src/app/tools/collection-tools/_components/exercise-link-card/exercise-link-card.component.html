@@ -6,8 +6,8 @@
     <div *ngIf="exercise.difficulty">
       Schwierigkeit: {{exercise.difficulty}}
       &nbsp;
-      <span *ngFor="let x of Arr(exercise.difficulty).fill(0)">&#9899;</span>
-      <span *ngFor="let x of Arr(5 - exercise.difficulty).fill(0)">&#9898;</span>
+      <span *ngFor="let x of filledDifficultyStars">&#9899;</span>
+      <span *ngFor="let x of nonFilledDifficultyStars">&#9898;</span>
     </div>
 
     <!-- Tags -->
