@@ -12,7 +12,7 @@ val Error = 1
 
 // Run angular serve task when Play runs in dev mode, that is, when using 'sbt run'
 // https://www.playframework.com/documentation/2.7.x/SBTCookbook
-PlayKeys.playRunHooks += baseDirectory.map(FrontendRunHook.apply).value
+// TODO: PlayKeys.playRunHooks += baseDirectory.map(FrontendRunHook.apply).value
 
 // True if build running operating system is windows.
 val isWindows = System.getProperty("os.name").toLowerCase().contains("win")

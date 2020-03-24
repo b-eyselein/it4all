@@ -1,11 +1,12 @@
 import {TabsComponent} from '../../../shared/tabs/tabs.component';
-import {QueryList, ViewChild, ViewChildren} from '@angular/core';
+import { QueryList, ViewChild, ViewChildren, Directive } from '@angular/core';
 import {TabComponent} from '../../../shared/tab/tab.component';
 import {IExercise} from '../../../_interfaces/models';
 import {DexieService} from '../../../_services/dexie.service';
 import {ApiService} from '../_services/api.service';
 import {ToolPart} from '../../../_interfaces/tool';
 
+@Directive()
 export abstract class ComponentWithExercise<SolutionType, ResultType> {
 
   isCorrecting = false;
@@ -14,7 +15,7 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
 
   displaySampleSolutions = false;
 
-  @ViewChild(TabsComponent, {static: false}) tabsComponent: TabsComponent;
+  @ViewChild(TabsComponent) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
   readonly exerciseTextTabTitle = 'Aufgabenstellung';

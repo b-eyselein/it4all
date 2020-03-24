@@ -12,6 +12,8 @@ object GraphQLModel {
     ToolState.values.map(v => EnumValue(v.entryName, value = v)).toList
   )
 
+  private val x = deriveEnumType[ToolState]()
+
   private val ToolValuesType: ObjectType[Unit, ToolValues] = deriveObjectType[Unit, ToolValues](
     ObjectTypeDescription("A tool")
   )
@@ -20,11 +22,16 @@ object GraphQLModel {
 
   private val toolValues = ToolList.toolMains.map(_.toolValues)
 
-  val QueryType: ObjectType[Unit, Unit] = ObjectType(
+  private val QueryType: ObjectType[Unit, Unit] = ObjectType(
     "Query",
     fields[Unit, Unit](
       Field("tools", ListType(ToolValuesType), resolve = _ => toolValues),
-      Field("tool", OptionType(ToolValuesType), arguments = toolId :: Nil, resolve = _ => None)
+      Field(
+        "tool",
+        OptionType(ToolValuesType),
+        arguments = toolId :: Nil,
+        resolve = ctx => toolValues.find(_.id == ctx.arg(toolId))
+      )
     )
   )
 
