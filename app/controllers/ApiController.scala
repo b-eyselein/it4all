@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import model.GraphQLModel
 import model.adaption.Proficiencies
 import model.lesson.Lesson
 import model.persistence.ExerciseTableDefs
@@ -9,6 +10,10 @@ import model.tools.collectionTools.{Exercise, ExerciseCollection, ExerciseMetaDa
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
+import sangria.ast.Document
+import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
+import sangria.parser.QueryParser
+import sangria.marshalling.playJson._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -30,6 +35,31 @@ class ApiController @Inject() (
   private implicit val lessonFormat: Format[Lesson]                     = ToolJsonProtocol.lessonFormat
   private implicit val exerciseMetaDataFormat: Format[ExerciseMetaData] = ToolJsonProtocol.exerciseMetaDataFormat
   private implicit val exerciseFormat: Format[Exercise]                 = ToolJsonProtocol.exerciseFormat
+
+  /*
+ final case class GraphQLRequest(query: String, operationName: Option[String])
+  private implicit val graphQlRequest: Format[GraphQLRequest] = Json.format
+   */
+
+  private def executeGraphQLQuery(query: Document, operationName: Option[String]): Future[Result] =
+    Executor
+      .execute(GraphQLModel.schema, query, operationName = operationName)
+      .map(Ok(_))
+      .recover {
+        case error: QueryAnalysisError => BadRequest(error.resolveError)
+        case error: ErrorWithResolver  => InternalServerError(error.resolveError)
+      }
+
+  def graphql: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    val query = (request.body \ "query").as[String]
+
+    val operation = (request.body \ "operationName").asOpt[String]
+
+    QueryParser.parse(query) match {
+      case Success(queryAst) => executeGraphQLQuery(queryAst, operation)
+      case Failure(error)    => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+    }
+  }
 
   // Proficiency
 

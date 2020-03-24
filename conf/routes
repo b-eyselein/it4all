@@ -29,9 +29,15 @@ GET         /api/claimWebToken/:uuidStr                                         
 #POST          /:toolType/submitEvaluation                                              controllers.MainExerciseController.submitEvaluation(toolType: String)
 # GET           /eval/stats                                                              controllers.AdminController.evaluationResults
 
+# GraphQL
+
+GET         /graphiql                                                                controllers.FrontendController.graphiql
+
+POST        /api/graphql                                                             controllers.ApiController.graphql
+
 # API
 
-GET         /api/tools/:toolType/proficiencies                                        controllers.ApiController.apiProficiency(toolType: String)
+GET         /api/tools/:toolType/proficiencies                                       controllers.ApiController.apiProficiency(toolType: String)
 
 GET         /api/tools/:toolType/collectionCount                                     controllers.ApiController.apiCollectionCount(toolType: String)
 GET         /api/tools/:toolType/collections                                         controllers.ApiController.apiAllCollections(toolType: String)

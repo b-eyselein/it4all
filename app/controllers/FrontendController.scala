@@ -15,6 +15,10 @@ class FrontendController @Inject() (
 
   def index: Action[AnyContent] = assets.at("index.html")
 
+  def graphiql: Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.graphiql())
+  }
+
   def assetOrDefault(resource: String): Action[AnyContent] =
     if (resource.startsWith(config.get[String]("apiPrefix"))) {
       Action.async(r => errorHandler.onClientError(r, NOT_FOUND, "Not found"))

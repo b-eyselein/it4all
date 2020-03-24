@@ -2,6 +2,12 @@ package model.tools
 
 import better.files._
 
+final case class ToolValues(
+  id: String,
+  name: String,
+  state: ToolState
+)
+
 abstract class AToolMain(consts: ToolConsts) {
 
   // Other members
@@ -13,9 +19,11 @@ abstract class AToolMain(consts: ToolConsts) {
   val hasTags: Boolean       = false
   val hasPlayground: Boolean = false
 
+  def toolValues: ToolValues = ToolValues(urlPart, toolName, toolState)
+
   // Folders
 
-  protected val exerciseResourcesFolder: File = File.currentWorkingDirectory / "conf" / "resources" / urlPart
+//  protected val exerciseResourcesFolder: File = File.currentWorkingDirectory / "conf" / "resources" / urlPart
 
   def solutionDirForExercise(username: String, collId: Int, exId: Int): File =
     File.currentWorkingDirectory / "data" / urlPart / "solutions" / username / String.valueOf(collId) / String.valueOf(
