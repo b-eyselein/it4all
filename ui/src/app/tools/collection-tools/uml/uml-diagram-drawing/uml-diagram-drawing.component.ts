@@ -220,7 +220,7 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUm
     const fileReader = new FileReader();
 
     fileReader.onload = ((pe) => {
-      const read: string = pe.target['result'];
+      const read: string = pe.target['result'] as string;
 
       const loaded: ExportedUmlClassDiagram = JSON.parse(read);
 
