@@ -30,6 +30,8 @@ export type CollectionExerciseArgs = {
   exId: Scalars['Int'];
 };
 
+export type ExContent = ProgExerciseContent | RegexExerciseContent | RoseExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent;
+
 export type Exercise = {
    __typename?: 'Exercise';
   id: Scalars['Int'];
@@ -41,6 +43,7 @@ export type Exercise = {
   text: Scalars['String'];
   tags: Array<ExTag>;
   difficulty?: Maybe<Scalars['Int']>;
+  content: Array<ExContent>;
 };
 
 export type ExerciseFile = {

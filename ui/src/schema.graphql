@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Mar 25 2020 14:08:41 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Wed Mar 25 2020 14:14:01 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -12,6 +12,8 @@ type Collection {
   exercise(exId: Int!): Exercise
 }
 
+union ExContent = ProgExerciseContent | RegexExerciseContent | RoseExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
+
 type Exercise {
   id: Int!
   collectionId: Int!
@@ -22,6 +24,7 @@ type Exercise {
   text: String!
   tags: [ExTag!]!
   difficulty: Int
+  content: [ExContent!]!
 }
 
 type ExerciseFile {

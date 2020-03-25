@@ -11,11 +11,10 @@ object GraphQLModel {
 
   // Values
 
-  private val toolValues: Seq[CollectionToolMain] = ToolList.toolMains
-    .flatMap {
-      case _: RandomExerciseToolMain => None
-      case x: CollectionToolMain     => Some(x)
-    }
+  private val toolValues: List[CollectionToolMain] = ToolList.toolMains.flatMap {
+    case _: RandomExerciseToolMain => None
+    case x: CollectionToolMain     => Some(x)
+  }.toList
 
   // Arguments
 
@@ -33,7 +32,21 @@ object GraphQLModel {
 
   private implicit val ExTagType: ObjectType[Unit, ExTag] = deriveObjectType()
 
-  private val ExerciseType: ObjectType[Unit, Exercise] = deriveObjectType(ExcludeFields("content"))
+  private val ExContentType = UnionType(
+    "ExContent",
+    types = toolValues.map(_.ExContentTypeType)
+  )
+
+  private val ExerciseType: ObjectType[Unit, Exercise] = deriveObjectType(
+    ReplaceField(
+      "content",
+      Field(
+        "content",
+        OptionType(ExContentType),
+        resolve = _ => None
+      )
+    )
+  )
 
   private val CollectionType = ObjectType(
     "Collection",
