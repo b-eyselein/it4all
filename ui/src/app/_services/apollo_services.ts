@@ -152,6 +152,8 @@ export type SemanticVersion = {
 export type SiteSpec = {
    __typename?: 'SiteSpec';
   fileName: Scalars['String'];
+  htmlTaskCount: Scalars['Int'];
+  jsTaskCount: Scalars['Int'];
 };
 
 export type SqlExerciseContent = {
@@ -335,7 +337,19 @@ export type ExerciseOverviewQuery = (
         { __typename?: 'Exercise' }
         & Pick<Exercise, 'id' | 'title' | 'text'>
       )> }
-    )> }
+    )>, exerciseContent?: Maybe<(
+      { __typename: 'ProgExerciseContent' }
+      & { unitTestPart: (
+        { __typename?: 'UnitTestPart' }
+        & Pick<UnitTestPart, 'unitTestType'>
+      ) }
+    ) | { __typename: 'RegexExerciseContent' } | { __typename: 'RoseExerciseContent' } | { __typename: 'SqlExerciseContent' } | { __typename: 'UmlExerciseContent' } | (
+      { __typename: 'WebExerciseContent' }
+      & { siteSpec: (
+        { __typename?: 'SiteSpec' }
+        & Pick<SiteSpec, 'htmlTaskCount' | 'jsTaskCount'>
+      ) }
+    ) | { __typename: 'XmlExerciseContent' }> }
   )> }
 );
 
@@ -354,9 +368,15 @@ export type ExerciseQuery = (
       { __typename?: 'Collection' }
       & { exercise?: Maybe<(
         { __typename?: 'Exercise' }
-        & Pick<Exercise, 'title'>
+        & ExerciseSolveFieldsFragment
       )> }
-    )> }
+    )>, exerciseContent?: Maybe<(
+      { __typename?: 'ProgExerciseContent' }
+      & ProgExerciseContentSolveFieldsFragment
+    ) | { __typename?: 'RegexExerciseContent' } | { __typename?: 'RoseExerciseContent' } | { __typename?: 'SqlExerciseContent' } | { __typename?: 'UmlExerciseContent' } | (
+      { __typename?: 'WebExerciseContent' }
+      & WebExerciseContentSolveFieldsFragment
+    ) | { __typename?: 'XmlExerciseContent' }> }
   )> }
 );
 
@@ -430,16 +450,59 @@ export type AdminEditCollectionQuery = (
 
 export type FieldsForLinkFragment = (
   { __typename?: 'Exercise' }
-  & Pick<Exercise, 'id' | 'title' | 'difficulty'>
+  & Pick<Exercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
   & { tags: Array<(
     { __typename?: 'ExTag' }
     & Pick<ExTag, 'abbreviation' | 'title'>
   )> }
 );
 
+export type ExerciseSolveFieldsFragment = (
+  { __typename?: 'Exercise' }
+  & Pick<Exercise, 'title' | 'text'>
+);
+
+export type WebExerciseContentSolveFieldsFragment = (
+  { __typename?: 'WebExerciseContent' }
+  & { siteSpec: { __typename: 'SiteSpec' } }
+);
+
+export type ProgExerciseContentSolveFieldsFragment = (
+  { __typename: 'ProgExerciseContent' }
+  & { unitTestPart: (
+    { __typename?: 'UnitTestPart' }
+    & { unitTestFiles: Array<(
+      { __typename?: 'ExerciseFile' }
+      & ExFileAllFragment
+    )> }
+  ), implementationPart: (
+    { __typename?: 'ImplementationPart' }
+    & { files: Array<(
+      { __typename?: 'ExerciseFile' }
+      & ExFileAllFragment
+    )> }
+  ), sampleSolutions: Array<(
+    { __typename?: 'SampleSolution' }
+    & { sample: (
+      { __typename?: 'ProgSolution' }
+      & { files: Array<(
+        { __typename?: 'ExerciseFile' }
+        & ExFileAllFragment
+      )> }
+    ) }
+  )> }
+);
+
+export type ExFileAllFragment = (
+  { __typename?: 'ExerciseFile' }
+  & Pick<ExerciseFile, 'name' | 'resourcePath' | 'fileType' | 'content' | 'editable'>
+);
+
 export const FieldsForLinkFragmentDoc = gql`
     fragment fieldsForLink on Exercise {
   id
+  collectionId
+  toolId
   title
   difficulty
   tags {
@@ -448,6 +511,50 @@ export const FieldsForLinkFragmentDoc = gql`
   }
 }
     `;
+export const ExerciseSolveFieldsFragmentDoc = gql`
+    fragment ExerciseSolveFields on Exercise {
+  title
+  text
+}
+    `;
+export const WebExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment WebExerciseContentSolveFields on WebExerciseContent {
+  siteSpec {
+    __typename
+  }
+}
+    `;
+export const ExFileAllFragmentDoc = gql`
+    fragment ExFileAll on ExerciseFile {
+  name
+  resourcePath
+  fileType
+  content
+  editable
+}
+    `;
+export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment ProgExerciseContentSolveFields on ProgExerciseContent {
+  __typename
+  unitTestPart {
+    unitTestFiles {
+      ...ExFileAll
+    }
+  }
+  implementationPart {
+    files {
+      ...ExFileAll
+    }
+  }
+  sampleSolutions {
+    sample {
+      files {
+        ...ExFileAll
+      }
+    }
+  }
+}
+    ${ExFileAllFragmentDoc}`;
 export const CollectionsDocument = gql`
     query Collections($toolId: String!) {
   tool(toolId: $toolId) {
@@ -533,6 +640,20 @@ export const ExerciseOverviewDocument = gql`
         text
       }
     }
+    exerciseContent(collId: $collId, exId: $exId) {
+      __typename
+      ... on ProgExerciseContent {
+        unitTestPart {
+          unitTestType
+        }
+      }
+      ... on WebExerciseContent {
+        siteSpec {
+          htmlTaskCount
+          jsTaskCount
+        }
+      }
+    }
   }
 }
     `;
@@ -549,12 +670,18 @@ export const ExerciseDocument = gql`
   tool(toolId: $toolId) {
     collection(collId: $collId) {
       exercise(exId: $exId) {
-        title
+        ...ExerciseSolveFields
       }
+    }
+    exerciseContent(collId: $collId, exId: $exId) {
+      ...WebExerciseContentSolveFields
+      ...ProgExerciseContentSolveFields
     }
   }
 }
-    `;
+    ${ExerciseSolveFieldsFragmentDoc}
+${WebExerciseContentSolveFieldsFragmentDoc}
+${ProgExerciseContentSolveFieldsFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

@@ -12,7 +12,7 @@
 
     <div class="columns">
       <ng-container *ngFor="let part of tool.parts">
-        <div class="column" *ngIf="!part.disabled && tool.exerciseHasPart(exercise.content, part)">
+        <div class="column" *ngIf="!part.disabled && tool.exerciseHasPart(exerciseOverviewQuery.tool.exerciseContent, part)">
           <a class="button is-link is-fullwidth"
              [routerLink]="['/tools', tool.id, 'collections', collectionId, 'exercises', exerciseId, 'parts', part.id]">
             {{part.name}}

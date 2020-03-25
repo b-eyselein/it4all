@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../_services/api.service';
-import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
+import {IExercise} from '../../../_interfaces/models';
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 import {collectionTools} from '../collection-tools-list';
 import {ExerciseGQL, ExerciseQuery} from "../../../_services/apollo_services";
@@ -15,7 +15,6 @@ export class ExerciseComponent implements OnInit {
 
   exerciseQuery: ExerciseQuery;
 
-  collection: IExerciseCollection;
   exercise: IExercise;
 
   part: ToolPart;

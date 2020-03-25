@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Mar 25 2020 14:25:05 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Wed Mar 25 2020 14:54:53 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -114,6 +114,8 @@ type SemanticVersion {
 
 type SiteSpec {
   fileName: String!
+  htmlTaskCount: Int!
+  jsTaskCount: Int!
 }
 
 type SqlExerciseContent {

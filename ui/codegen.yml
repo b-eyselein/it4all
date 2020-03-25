@@ -9,3 +9,9 @@ generates:
       - typescript
       - typescript-operations
       - typescript-apollo-angular
+
+  src/introspection-result.ts:
+    plugins:
+      - fragment-matcher
+    config:
+      apolloClientVersion: 2

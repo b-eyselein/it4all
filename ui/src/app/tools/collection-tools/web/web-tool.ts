@@ -1,5 +1,4 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
-import {IWebExerciseContent} from "./web-interfaces";
 
 
 export const HtmlPart: ToolPart = {id: 'html', name: 'Html-Teil'};
@@ -11,12 +10,12 @@ export const WebTool: CollectionTool = new class WebToolClass extends Collection
     super('web', 'Web', [HtmlPart, JsPart], 'live', false);
   }
 
-  exerciseHasPart(exerciseContent: IWebExerciseContent, part: ToolPart): boolean {
+  exerciseHasPart(exerciseContent: any, part: ToolPart): boolean {
     if (part === HtmlPart) {
-      return exerciseContent.siteSpec.htmlTasks.length > 0;
+      return exerciseContent.siteSpec.htmlTaskCount > 0;
     }
     if (part === JsPart) {
-      return exerciseContent.siteSpec.jsTasks.length > 0;
+      return exerciseContent.siteSpec.jsTaskCount > 0;
     }
 
     return super.exerciseHasPart(exerciseContent, part);

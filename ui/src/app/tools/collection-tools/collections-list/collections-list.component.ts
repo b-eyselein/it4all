@@ -13,8 +13,6 @@ export class CollectionsListComponent extends ComponentWithCollectionTool implem
   }
 
   ngOnInit() {
-    console.info(this.tool.id);
-
     this.collectionsGQL
       .watch({toolId: this.tool.id})
       .valueChanges

@@ -2,15 +2,19 @@ package model.tools.collectionTools.web
 
 import de.uniwue.webtester.sitespec.SiteSpec
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, deriveObjectType}
-import sangria.schema.{ListType, ObjectType}
+import sangria.macros.derive.{AddFields, ExcludeFields, deriveObjectType}
+import sangria.schema.{Field, IntType, ListType, ObjectType}
 
 object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent] {
 
   private val siteSpecType: ObjectType[Unit, SiteSpec] = {
     deriveObjectType(
       // TODO: include fields!?!
-      ExcludeFields("htmlTasks", "jsTasks")
+      ExcludeFields("htmlTasks", "jsTasks"),
+      AddFields(
+        Field("htmlTaskCount", IntType, resolve = _.value.htmlTasks.size),
+        Field("jsTaskCount", IntType, resolve = _.value.jsTasks.size)
+      )
     )
   }
 

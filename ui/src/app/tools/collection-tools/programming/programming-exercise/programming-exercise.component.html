@@ -2,9 +2,7 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <it4all-exercise-files-editor
-        [exerciseFiles]="exerciseFiles"
-        [mode]="'python'">
+      <it4all-exercise-files-editor [exerciseFiles]="exerciseFiles" [mode]="'python'">
       </it4all-exercise-files-editor>
     </div>
 
@@ -12,7 +10,7 @@
 
       <it4all-tabs>
         <it4all-tab [title]="'Aufgabenstellung'">
-          <div class="notification is-light-grey" [innerHTML]="exercise?.text"></div>
+          <div class="notification is-light-grey" [innerHTML]="exerciseFragment.text"></div>
 
           <hr>
 

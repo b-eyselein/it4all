@@ -124,19 +124,6 @@ object GraphQLModel {
         resolve = ctx => toolValues.find(_.id == ctx.arg(toolIdArgument))
       )
     )
-    /*
-      ++
-        toolValues.map[Field[ExerciseTableDefs, Unit]] { toolMain =>
-          Field(
-            s"${toolMain.id}ExerciseContent",
-            OptionType(toolMain.ExContentTypeType),
-            arguments = collIdArgument :: exIdArgument :: Nil,
-            // FIXME: implement resolve!
-            resolve =
-              context => toolMain.futureExerciseContentById(context.arg(collIdArgument), context.arg(exIdArgument))
-          )
-        }
-   */
   )
 
   val schema: Schema[ExerciseTableDefs, Unit] = Schema(QueryType)

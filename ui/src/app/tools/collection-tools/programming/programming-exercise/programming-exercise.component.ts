@@ -7,9 +7,12 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {IExercise} from '../../../../_interfaces/models';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {IExerciseFile, IProgSolution} from '../programming-interfaces';
+import {
+  ExerciseSolveFieldsFragment,
+  ProgExerciseContentSolveFieldsFragment
+} from "../../../../_services/apollo_services";
 
 import 'codemirror/mode/python/python';
-
 
 @Component({
   selector: 'it4all-programming-exercise',
@@ -17,6 +20,9 @@ import 'codemirror/mode/python/python';
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent extends ComponentWithExercise<IProgSolution, ProgrammingCorrectionResult> implements OnInit {
+
+  @Input() exerciseFragment: ExerciseSolveFieldsFragment;
+  @Input() contentFragment: ProgExerciseContentSolveFieldsFragment;
 
   @Input() exercise: IExercise;
   @Input() part: ToolPart;
@@ -40,8 +46,7 @@ export class ProgrammingExerciseComponent extends ComponentWithExercise<IProgSol
   }
 
   loadOldSolution(): void {
-    const maybeOldSol: Promise<IProgSolution | undefined> = this.loadOldSolutionAbstract(this.exercise, this.part);
-
+    //    const maybeOldSol: Promise<IProgSolution | undefined> = this.loadOldSolutionAbstract(this.exercise, this.part);
     // TODO: deactivated for now...
     // this.dexieService.programmingSolutions.get([this.collection.id, this.exercise.id])
     //   .then((oldSolution: DbProgrammingSolution | undefined) => {

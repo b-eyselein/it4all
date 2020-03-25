@@ -18,6 +18,9 @@
 
   </div>
   <footer class="card-footer">
-    <a class="card-footer-item" [routerLink]="['exercises', exercise.id]">Zur Aufgabe</a>
+    <a class="card-footer-item"
+       [routerLink]="['/tools', exercise.toolId, 'collections',exercise.collectionId, 'exercises', exercise.id]">
+      Zur Aufgabe
+    </a>
   </footer>
 </div>

@@ -46,6 +46,20 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
         text
       }
     }
+    exerciseContent(collId: $collId, exId: $exId) {
+      __typename
+      ... on ProgExerciseContent {
+        unitTestPart {
+          unitTestType
+        }
+      }
+      ... on WebExerciseContent{
+        siteSpec {
+          htmlTaskCount
+          jsTaskCount
+        }
+      }
+    }
   }
 }
 
@@ -53,8 +67,12 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId){
       exercise(exId: $exId){
-        title
+        ...ExerciseSolveFields
       }
+    }
+    exerciseContent(collId: $collId,exId: $exId) {
+      ...WebExerciseContentSolveFields
+      ...ProgExerciseContentSolveFields
     }
   }
 }
@@ -105,10 +123,52 @@ query AdminEditCollection($toolId: String!, $collId: Int!) {
 
 fragment fieldsForLink on Exercise {
   id
+  collectionId
+  toolId
   title
   difficulty
   tags {
     abbreviation
     title
   }
+}
+
+fragment ExerciseSolveFields on Exercise {
+  title
+  text
+}
+
+fragment WebExerciseContentSolveFields on WebExerciseContent {
+  siteSpec {
+    __typename
+  }
+}
+
+fragment ProgExerciseContentSolveFields on ProgExerciseContent {
+  __typename
+  unitTestPart {
+    unitTestFiles {
+      ...ExFileAll
+    }
+  }
+  implementationPart{
+    files {
+      ...ExFileAll
+    }
+  }
+  sampleSolutions {
+    sample {
+      files {
+        ...ExFileAll
+      }
+    }
+  }
+}
+
+fragment ExFileAll on ExerciseFile {
+  name
+  resourcePath
+  fileType
+  content
+  editable
 }
