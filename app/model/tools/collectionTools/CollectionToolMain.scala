@@ -5,6 +5,7 @@ import model.core.result.CompleteResult
 import model.tools.{AToolMain, ToolConsts}
 import play.api.Logger
 import play.api.libs.json._
+import sangria.schema.ObjectType
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -29,9 +30,11 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   val exParts: Seq[PartType]
 
-  // Yaml, Html forms, Json
+  // Yaml, Html forms, Json, GraphQL
 
   protected val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType, CompResultType]
+
+  val ExContentTypeType: ObjectType[Unit, ExContentType]
 
   // Other helper methods
 

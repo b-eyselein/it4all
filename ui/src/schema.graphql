@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Mar 24 2020 15:05:21 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Wed Mar 25 2020 09:57:37 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -8,7 +8,7 @@ type Collection {
   text: String!
   shortName: String!
   exercises: [ExerciseMetaData!]!
-  exercise(id: Int!): Exercise
+  exercise(exId: Int!): Exercise
 }
 
 type Exercise {
@@ -21,6 +21,14 @@ type Exercise {
   text: String!
   tags: [ExTag!]!
   difficulty: Int
+}
+
+type ExerciseFile {
+  name: String!
+  resourcePath: String!
+  fileType: String!
+  editable: Boolean!
+  content: String!
 }
 
 type ExerciseMetaData {
@@ -40,9 +48,72 @@ type ExTag {
   title: String!
 }
 
+type ImplementationPart {
+  base: String!
+  files: [ExerciseFile!]!
+  implFileName: String!
+  sampleSolFileNames: [String!]!
+}
+
+type ProgExerciseContent {
+  functionName: String!
+  foldername: String!
+  filename: String!
+  unitTestPart: UnitTestPart!
+  implementationPart: ImplementationPart!
+  sampleSolutions: [SampleSolution!]!
+}
+
+type ProgSolution {
+  files: [ExerciseFile!]!
+}
+
 type Query {
   tools: [Tool!]!
   tool(toolId: String!): Tool
+  programmingExerciseContent(toolId: String!, collId: Int!, exId: Int!): ProgExerciseContent
+  regexExerciseContent(toolId: String!, collId: Int!, exId: Int!): RegexExerciseContent
+  roseExerciseContent(toolId: String!, collId: Int!, exId: Int!): RoseExerciseContent
+  sqlExerciseContent(toolId: String!, collId: Int!, exId: Int!): SqlExerciseContent
+  umlExerciseContent(toolId: String!, collId: Int!, exId: Int!): UmlExerciseContent
+  webExerciseContent(toolId: String!, collId: Int!, exId: Int!): WebExerciseContent
+  xmlExerciseContent(toolId: String!, collId: Int!, exId: Int!): XmlExerciseContent
+}
+
+enum RegexCorrectionType {
+  EXTRACTION
+  MATCHING
+}
+
+type RegexExerciseContent {
+  maxPoints: Int!
+  correctionType: RegexCorrectionType!
+  sampleSolutions: [SampleSolution!]!
+  matchTestData: [RegexMatchTestData!]!
+  extractionTestData: [RegexExtractionTestData!]!
+}
+
+type RegexExtractionTestData {
+  id: Int!
+  base: String!
+}
+
+type RegexMatchTestData {
+  id: Int!
+  data: String!
+  isIncluded: Boolean!
+}
+
+type RoseExerciseContent {
+  fieldWidth: Int!
+  fieldHeight: Int!
+  isMultiplayer: Boolean!
+  sampleSolutions: [SampleSolution!]!
+}
+
+type SampleSolution {
+  id: Int!
+  sample: ProgSolution!
 }
 
 type SemanticVersion {
@@ -51,12 +122,30 @@ type SemanticVersion {
   patch: Int!
 }
 
+type SiteSpec {
+  fileName: String!
+}
+
+type SqlExerciseContent {
+  exerciseType: SqlExerciseType!
+  hint: String
+  sampleSolutions: [SampleSolution!]!
+}
+
+enum SqlExerciseType {
+  CREATE
+  INSERT
+  SELECT
+  DELETE
+  UPDATE
+}
+
 type Tool {
   id: String!
   name: String!
   state: ToolState!
   collections: [Collection!]!
-  collection(id: Int!): Collection
+  collection(collId: Int!): Collection
   allExerciseMetaData: [ExerciseMetaData!]!
 }
 
@@ -64,4 +153,44 @@ enum ToolState {
   ALPHA
   BETA
   LIVE
+}
+
+type UmlExerciseContent {
+  sampleSolutions: [SampleSolution!]!
+}
+
+type UnitTestPart {
+  unitTestType: UnitTestType!
+  unitTestsDescription: String!
+  unitTestFiles: [ExerciseFile!]!
+  unitTestTestConfigs: [UnitTestTestConfig!]!
+  simplifiedTestMainFile: ExerciseFile
+  testFileName: String!
+  sampleSolFileNames: [String!]!
+}
+
+type UnitTestTestConfig {
+  id: Int!
+  shouldFail: Boolean!
+  description: String!
+  file: ExerciseFile!
+}
+
+enum UnitTestType {
+  Normal
+  Simplified
+}
+
+type WebExerciseContent {
+  htmlText: String
+  jsText: String
+  siteSpec: SiteSpec!
+  files: [ExerciseFile!]!
+  sampleSolutions: [SampleSolution!]!
+}
+
+type XmlExerciseContent {
+  grammarDescription: String!
+  rootNode: String!
+  sampleSolutions: [SampleSolution!]!
 }

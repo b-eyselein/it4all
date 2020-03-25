@@ -4,6 +4,8 @@ import model.User
 import model.core.matching.MatchingResult
 import model.tools.collectionTools.uml.matcher._
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
+import sangria.macros.derive.deriveObjectType
+import sangria.schema.ObjectType
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -29,6 +31,8 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
 
   override protected val toolJsonProtocol: ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] =
     UmlToolJsonProtocol
+
+  override val ExContentTypeType: ObjectType[Unit, UmlExerciseContent] = UmlGraphQLModels.ExContentTypeType
 
   // Correction
 

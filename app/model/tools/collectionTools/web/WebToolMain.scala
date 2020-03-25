@@ -12,6 +12,8 @@ import model.points.addUp
 import model.tools.collectionTools._
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import sangria.macros.derive.deriveObjectType
+import sangria.schema.ObjectType
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -32,6 +34,8 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   override protected val toolJsonProtocol: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult] =
     WebToolJsonProtocol
+
+  override val ExContentTypeType: ObjectType[Unit, WebExerciseContent] = WebGraphQLModels.ExContentTypeType
 
   // DB
 

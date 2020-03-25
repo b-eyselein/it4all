@@ -4,6 +4,7 @@ import de.uniwue.dtd.model.ElementLine
 import model.User
 import model.core.matching.MatchingResult
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
+import sangria.schema.ObjectType
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -26,6 +27,8 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
 
   override protected val toolJsonProtocol: ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult] =
     XmlToolJsonProtocol
+
+  override val ExContentTypeType: ObjectType[Unit, XmlExerciseContent] = XmlGraphQLModels.ExContentTypeType
 
   // Correction
 

@@ -2,6 +2,7 @@ package model.tools.collectionTools.programming
 
 import model.User
 import model.tools.collectionTools._
+import sangria.schema.ObjectType
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -21,6 +22,8 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
   override protected val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
     ProgrammingToolJsonProtocol
+
+  override val ExContentTypeType: ObjectType[Unit, ProgExerciseContent] = ProgrammingGraphQLModels.ExContentTypeType
 
   // Correction
 

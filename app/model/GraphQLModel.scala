@@ -19,9 +19,11 @@ object GraphQLModel {
 
   // Arguments
 
-  private val toolId = Argument("toolId", StringType)
+  private val toolIdArgument = Argument("toolId", StringType)
 
-  private val IdArgument = Argument("id", IntType)
+  private val collIdArgument = Argument("collId", IntType)
+
+  private val exIdArgument = Argument("exId", IntType)
 
   // Types
 
@@ -53,9 +55,9 @@ object GraphQLModel {
       Field(
         "exercise",
         OptionType(ExerciseType),
-        arguments = IdArgument :: Nil,
+        arguments = exIdArgument :: Nil,
         resolve =
-          context => context.ctx.futureExerciseById(context.value.toolId, context.value.id, context.arg(IdArgument))
+          context => context.ctx.futureExerciseById(context.value.toolId, context.value.id, context.arg(exIdArgument))
       )
     )
   )
@@ -74,8 +76,8 @@ object GraphQLModel {
       Field(
         "collection",
         OptionType(CollectionType),
-        arguments = IdArgument :: Nil,
-        resolve = context => context.ctx.futureCollById(context.value.id, context.arg(IdArgument))
+        arguments = collIdArgument :: Nil,
+        resolve = context => context.ctx.futureCollById(context.value.id, context.arg(collIdArgument))
       ),
       Field(
         "allExerciseMetaData",
@@ -92,10 +94,19 @@ object GraphQLModel {
       Field(
         "tool",
         OptionType(ToolType),
-        arguments = toolId :: Nil,
-        resolve = ctx => toolValues.find(_.id == ctx.arg(toolId))
+        arguments = toolIdArgument :: Nil,
+        resolve = ctx => toolValues.find(_.id == ctx.arg(toolIdArgument))
       )
     )
+      ++
+        toolValues.map[Field[ExerciseTableDefs, Unit]] { toolMain =>
+          Field(
+            s"${toolMain.id}ExerciseContent",
+            OptionType(toolMain.ExContentTypeType),
+            arguments = toolIdArgument :: collIdArgument :: exIdArgument :: Nil,
+            resolve = _ => None
+          )
+        }
   )
 
   val schema: Schema[ExerciseTableDefs, Unit] = Schema(QueryType)
