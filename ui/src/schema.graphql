@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Mar 25 2020 13:35:16 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Wed Mar 25 2020 14:08:41 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -42,6 +42,12 @@ type ImplementationPart {
   files: [ExerciseFile!]!
   implFileName: String!
   sampleSolFileNames: [String!]!
+}
+
+type Lesson {
+  id: Int!
+  toolId: String!
+  title: String!
 }
 
 type ProgExerciseContent {
@@ -134,6 +140,7 @@ type Tool {
   name: String!
   state: ToolState!
   lessonCount: Int!
+  lessons: [Lesson!]!
   collectionCount: Int!
   collections: [Collection!]!
   collection(collId: Int!): Collection

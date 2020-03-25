@@ -66,6 +66,13 @@ export type ImplementationPart = {
   sampleSolFileNames: Array<Scalars['String']>;
 };
 
+export type Lesson = {
+   __typename?: 'Lesson';
+  id: Scalars['Int'];
+  toolId: Scalars['String'];
+  title: Scalars['String'];
+};
+
 export type ProgExerciseContent = {
    __typename?: 'ProgExerciseContent';
   functionName: Scalars['String'];
@@ -215,6 +222,7 @@ export type Tool = {
   name: Scalars['String'];
   state: ToolState;
   lessonCount: Scalars['Int'];
+  lessons: Array<Lesson>;
   collectionCount: Scalars['Int'];
   collections: Array<Collection>;
   collection?: Maybe<Collection>;

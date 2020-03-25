@@ -71,6 +71,7 @@ object GraphQLModel {
       Field("state", ToolStateType, resolve = _.value.toolState),
       // Fields for lessons
       Field("lessonCount", IntType, resolve = context => context.ctx.futureLessonCount(context.value.id)),
+      Field("lessons", ListType(LessonGraphQLModel.LessonType), resolve = _ => List()),
       // Fields for collections
       Field("collectionCount", IntType, resolve = context => context.ctx.futureCollectionCount(context.value.id)),
       Field(
