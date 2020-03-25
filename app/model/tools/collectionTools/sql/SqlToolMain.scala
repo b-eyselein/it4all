@@ -47,7 +47,7 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult] =
+  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult] =
     SqlJsonProtocols
 
   override val ExContentTypeType: ObjectType[Unit, SqlExerciseContent] = SqlGraphQLModels.ExContentTypeType

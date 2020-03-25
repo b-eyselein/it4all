@@ -54,7 +54,6 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
     collection(collId: $collId){
       exercise(exId: $exId){
         title
-
       }
     }
   }

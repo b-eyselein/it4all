@@ -25,7 +25,7 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult] =
+  override val toolJsonProtocol: ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult] =
     XmlToolJsonProtocol
 
   override val ExContentTypeType: ObjectType[Unit, XmlExerciseContent] = XmlGraphQLModels.ExContentTypeType

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Mar 25 2020 14:14:01 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Wed Mar 25 2020 14:25:05 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -24,7 +24,6 @@ type Exercise {
   text: String!
   tags: [ExTag!]!
   difficulty: Int
-  content: [ExContent!]!
 }
 
 type ExerciseFile {
@@ -69,13 +68,6 @@ type ProgSolution {
 type Query {
   tools: [Tool!]!
   tool(toolId: String!): Tool
-  programmingExerciseContent(collId: Int!, exId: Int!): ProgExerciseContent
-  regexExerciseContent(collId: Int!, exId: Int!): RegexExerciseContent
-  roseExerciseContent(collId: Int!, exId: Int!): RoseExerciseContent
-  sqlExerciseContent(collId: Int!, exId: Int!): SqlExerciseContent
-  umlExerciseContent(collId: Int!, exId: Int!): UmlExerciseContent
-  webExerciseContent(collId: Int!, exId: Int!): WebExerciseContent
-  xmlExerciseContent(collId: Int!, exId: Int!): XmlExerciseContent
 }
 
 enum RegexCorrectionType {
@@ -148,6 +140,7 @@ type Tool {
   collections: [Collection!]!
   collection(collId: Int!): Collection
   allExerciseMetaData: [Exercise!]!
+  exerciseContent(collId: Int!, exId: Int!): ExContent
 }
 
 enum ToolState {

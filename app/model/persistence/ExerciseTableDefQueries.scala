@@ -4,7 +4,7 @@ import model._
 import model.lesson.{Lesson, LessonContent}
 import model.tools.collectionTools._
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.json.{JsValue, Reads, Writes}
+import play.api.libs.json.{Format, JsValue, Reads, Writes}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
@@ -136,6 +136,15 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       }
       .result
       .headOption
+  )
+
+  def futureExerciseContentById[EC <: ExerciseContent](
+    toolId: String,
+    collId: Int,
+    exId: Int,
+    exerciseContentFormat: Format[EC]
+  ): Future[Option[EC]] = futureExerciseById(toolId, collId, exId).map(
+    _.flatMap(ex => exerciseContentFormat.reads(ex.content).asOpt)
   )
 
   def futureCollectionAndExercise(

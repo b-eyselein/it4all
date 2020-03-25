@@ -43,7 +43,6 @@ export type Exercise = {
   text: Scalars['String'];
   tags: Array<ExTag>;
   difficulty?: Maybe<Scalars['Int']>;
-  content: Array<ExContent>;
 };
 
 export type ExerciseFile = {
@@ -95,60 +94,11 @@ export type Query = {
    __typename?: 'Query';
   tools: Array<Tool>;
   tool?: Maybe<Tool>;
-  programmingExerciseContent?: Maybe<ProgExerciseContent>;
-  regexExerciseContent?: Maybe<RegexExerciseContent>;
-  roseExerciseContent?: Maybe<RoseExerciseContent>;
-  sqlExerciseContent?: Maybe<SqlExerciseContent>;
-  umlExerciseContent?: Maybe<UmlExerciseContent>;
-  webExerciseContent?: Maybe<WebExerciseContent>;
-  xmlExerciseContent?: Maybe<XmlExerciseContent>;
 };
 
 
 export type QueryToolArgs = {
   toolId: Scalars['String'];
-};
-
-
-export type QueryProgrammingExerciseContentArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type QueryRegexExerciseContentArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type QueryRoseExerciseContentArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type QuerySqlExerciseContentArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type QueryUmlExerciseContentArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type QueryWebExerciseContentArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type QueryXmlExerciseContentArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
 };
 
 export enum RegexCorrectionType {
@@ -230,11 +180,18 @@ export type Tool = {
   collections: Array<Collection>;
   collection?: Maybe<Collection>;
   allExerciseMetaData: Array<Exercise>;
+  exerciseContent?: Maybe<ExContent>;
 };
 
 
 export type ToolCollectionArgs = {
   collId: Scalars['Int'];
+};
+
+
+export type ToolExerciseContentArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
 };
 
 export enum ToolState {

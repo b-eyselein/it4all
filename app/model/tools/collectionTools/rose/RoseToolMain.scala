@@ -3,7 +3,6 @@ package model.tools.collectionTools.rose
 import model.User
 import model.tools.collectionTools.programming.ProgLanguages
 import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, ToolJsonProtocol}
-import sangria.macros.derive.deriveObjectType
 import sangria.schema.ObjectType
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -22,7 +21,7 @@ object RoseToolMain extends CollectionToolMain(RoseConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[RoseExerciseContent, String, RoseCompleteResult] =
+  override val toolJsonProtocol: ToolJsonProtocol[RoseExerciseContent, String, RoseCompleteResult] =
     RoseToolJsonProtocol
 
   override val ExContentTypeType: ObjectType[Unit, RoseExerciseContent] = RoseGraphQLModels.ExContentTypeType

@@ -32,17 +32,13 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Yaml, Html forms, Json, GraphQL
 
-  protected val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType, CompResultType]
+  val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType, CompResultType]
 
   val ExContentTypeType: ObjectType[Unit, ExContentType]
 
   // Other helper methods
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
-
-  // TODO: implement
-
-  def futureExerciseContentById(collId: Int, exId: Int): Future[Option[ExContentType]] = ???
 
   // Correction
 

@@ -101,7 +101,14 @@ object GraphQLModel {
         "exerciseContent",
         OptionType(ExContentType),
         arguments = collIdArgument :: exIdArgument :: Nil,
-        resolve = _ => None
+        resolve = context =>
+          context.ctx
+            .futureExerciseContentById(
+              context.value.id,
+              context.arg(collIdArgument),
+              context.arg(exIdArgument),
+              context.value.toolJsonProtocol.exerciseContentFormat
+            )
       )
     )
   )
@@ -117,6 +124,7 @@ object GraphQLModel {
         resolve = ctx => toolValues.find(_.id == ctx.arg(toolIdArgument))
       )
     )
+    /*
       ++
         toolValues.map[Field[ExerciseTableDefs, Unit]] { toolMain =>
           Field(
@@ -128,6 +136,7 @@ object GraphQLModel {
               context => toolMain.futureExerciseContentById(context.arg(collIdArgument), context.arg(exIdArgument))
           )
         }
+   */
   )
 
   val schema: Schema[ExerciseTableDefs, Unit] = Schema(QueryType)

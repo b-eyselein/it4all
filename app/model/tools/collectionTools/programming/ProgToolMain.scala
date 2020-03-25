@@ -20,7 +20,7 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
   // Yaml, Html Forms, Json
 
-  override protected val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
+  override val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
     ProgrammingToolJsonProtocol
 
   override val ExContentTypeType: ObjectType[Unit, ProgExerciseContent] = ProgrammingGraphQLModels.ExContentTypeType

@@ -24,8 +24,7 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
 
   // Yaml, Html forms, Json
 
-  override protected val toolJsonProtocol
-    : StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] =
+  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] =
     RegexToolJsonProtocol
 
   override val ExContentTypeType: ObjectType[Unit, RegexExerciseContent] = RegexGraphQLModels.ExContentTypeType
