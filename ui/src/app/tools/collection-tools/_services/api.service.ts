@@ -34,45 +34,8 @@ export class ApiService {
       .pipe(catchError(() => of(undefined)));
   }
 
-  getCollectionCount(toolId: string): Observable<number> {
-    const url = `${this.baseUrl}/${toolId}/collectionCount`;
-
-    return this.http.get<number>(url)
-      .pipe(catchError(() => of(0)));
-  }
-
-  getCollections(toolId: string): Observable<IExerciseCollection[]> {
-    const url = `${this.baseUrl}/${toolId}/collections`;
-
-    return this.http.get<IExerciseCollection[]>(url)
-      .pipe(catchError(() => of([])));
-  }
-
-  getCollection(toolId: string, collId: number): Observable<IExerciseCollection | undefined> {
-    const url = `${this.baseUrl}/${toolId}/collections/${collId}`;
-
-    // TODO: send current version of exercise if known to only get if different!
-    return this.http.get<IExerciseCollection | undefined>(url)
-      .pipe(catchError(() => of(undefined)));
-  }
-
   getExerciseMetaDataForTool(toolId: string): Observable<IExerciseMetaData[]> {
     return this.http.get<IExerciseMetaData[]>(`${this.baseUrl}/${toolId}/exerciseMetaData`)
-      .pipe(catchError(() => of([])));
-  }
-
-  getExerciseMetaDataForCollection(toolId: string, collId: number): Observable<IExerciseMetaData[]> {
-    const url = `${this.baseUrl}/${toolId}/collections/${collId}/exerciseMetaData`;
-
-    return this.http.get<IExerciseMetaData[]>(url)
-      .pipe(catchError(() => of([])));
-  }
-
-  getExercises(toolId: string, collId: number): Observable<IExercise[]> {
-    const url = `${this.baseUrl}/${toolId}/collections/${collId}/exercises`;
-
-    // TODO: send current version of known exercises to only get diff!
-    return this.http.get<IExercise[]>(url)
       .pipe(catchError(() => of([])));
   }
 
@@ -82,13 +45,6 @@ export class ApiService {
     // TODO: send current version of exercise if known to only get if different!
     return this.http.get<IExercise>(url)
       .pipe(catchError(() => of(undefined)));
-  }
-
-  getLessonCount(toolId: string): Observable<number> {
-    const url = `${this.baseUrl}/${toolId}/lessonCount`;
-
-    return this.http.get<number>(url)
-      .pipe(catchError(() => of(0)));
   }
 
   getLessons(toolId: string): Observable<ILesson[]> {

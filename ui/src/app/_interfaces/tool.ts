@@ -1,5 +1,3 @@
-import {IExercise} from './models';
-
 export type ToolStatus = 'live' | 'alpha' | 'beta';
 
 export type SuccessType = 'ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE';
@@ -31,7 +29,7 @@ export abstract class RandomTool extends Tool {
 
 export abstract class CollectionTool extends Tool {
 
-  exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {
+  exerciseHasPart(exerciseContent: any, part: ToolPart): boolean {
     return true;
   }
 

@@ -47,8 +47,9 @@ final case class Exercise(
   // FIXME: use generic ExerciseContent?
   content: JsValue
 ) {
-  def metaData: ExerciseMetaData =
-    ExerciseMetaData(id, collectionId, toolId, semanticVersion, title, authors, text, tags, difficulty)
+
+  def parts: Seq[ExPart] = Seq()
+
 }
 
 final case class SampleSolution[SolType](

@@ -1,6 +1,5 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
-import {IExercise} from '../../../_interfaces/models';
-import {IWebExerciseContent} from './web-interfaces';
+import {IWebExerciseContent} from "./web-interfaces";
 
 
 export const HtmlPart: ToolPart = {id: 'html', name: 'Html-Teil'};
@@ -12,9 +11,7 @@ export const WebTool: CollectionTool = new class WebToolClass extends Collection
     super('web', 'Web', [HtmlPart, JsPart], 'live', false);
   }
 
-  exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {
-    const exerciseContent = exercise.content as IWebExerciseContent;
-
+  exerciseHasPart(exerciseContent: IWebExerciseContent, part: ToolPart): boolean {
     if (part === HtmlPart) {
       return exerciseContent.siteSpec.htmlTasks.length > 0;
     }
@@ -22,7 +19,7 @@ export const WebTool: CollectionTool = new class WebToolClass extends Collection
       return exerciseContent.siteSpec.jsTasks.length > 0;
     }
 
-    return super.exerciseHasPart(exercise, part);
+    return super.exerciseHasPart(exerciseContent, part);
   }
 
   hasPlayground(): boolean {

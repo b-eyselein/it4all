@@ -40,6 +40,10 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   def partTypeFromUrl(urlName: String): Option[PartType] = exParts.find(_.urlName == urlName)
 
+  // TODO: implement
+
+  def futureExerciseContentById(collId: Int, exId: Int): Future[Option[ExContentType]] = ???
+
   // Correction
 
   def solutionFormat: Format[SolType] = toolJsonProtocol.solutionFormat

@@ -33,11 +33,7 @@ object GraphQLModel {
 
   private implicit val ExTagType: ObjectType[Unit, ExTag] = deriveObjectType()
 
-  private val ExerciseType: ObjectType[Unit, Exercise] = deriveObjectType(
-    ExcludeFields("content")
-  )
-
-  private val ExerciseMetaDataType: ObjectType[Unit, ExerciseMetaData] = deriveObjectType()
+  private val ExerciseType: ObjectType[Unit, Exercise] = deriveObjectType(ExcludeFields("content"))
 
   private val CollectionType = ObjectType(
     "Collection",
@@ -48,9 +44,14 @@ object GraphQLModel {
       Field("text", StringType, resolve = _.value.text),
       Field("shortName", StringType, resolve = _.value.shortName),
       Field(
+        "exerciseCount",
+        IntType,
+        resolve = context => context.ctx.futureExerciseCountInColl(context.value.toolId, context.value.id)
+      ),
+      Field(
         "exercises",
-        ListType(ExerciseMetaDataType),
-        resolve = context => context.ctx.futureExerciseMetaDataForCollection(context.value.toolId, context.value.id)
+        ListType(ExerciseType),
+        resolve = context => context.ctx.futureExercisesInColl(context.value.toolId, context.value.id)
       ),
       Field(
         "exercise",
@@ -68,6 +69,10 @@ object GraphQLModel {
       Field("id", StringType, resolve = _.value.id),
       Field("name", StringType, resolve = _.value.toolName),
       Field("state", ToolStateType, resolve = _.value.toolState),
+      // Fields for lessons
+      Field("lessonCount", IntType, resolve = context => context.ctx.futureLessonCount(context.value.id)),
+      // Fields for collections
+      Field("collectionCount", IntType, resolve = context => context.ctx.futureCollectionCount(context.value.id)),
       Field(
         "collections",
         ListType(CollectionType),
@@ -81,8 +86,8 @@ object GraphQLModel {
       ),
       Field(
         "allExerciseMetaData",
-        ListType(ExerciseMetaDataType),
-        resolve = context => context.ctx.futureExerciseMetaDataForTool(context.value.id)
+        ListType(ExerciseType),
+        resolve = context => context.ctx.futureExercisesForTool(context.value.id)
       )
     )
   )
@@ -103,8 +108,10 @@ object GraphQLModel {
           Field(
             s"${toolMain.id}ExerciseContent",
             OptionType(toolMain.ExContentTypeType),
-            arguments = toolIdArgument :: collIdArgument :: exIdArgument :: Nil,
-            resolve = _ => None
+            arguments = collIdArgument :: exIdArgument :: Nil,
+            // FIXME: implement resolve!
+            resolve =
+              context => toolMain.futureExerciseContentById(context.arg(collIdArgument), context.arg(exIdArgument))
           )
         }
   )

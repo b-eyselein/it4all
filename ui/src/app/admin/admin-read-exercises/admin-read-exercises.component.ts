@@ -13,48 +13,38 @@ interface LoadedExercise extends IExercise, Saveable {
 @Component({templateUrl: './admin-read-exercises.component.html'})
 export class AdminReadExercisesComponent extends ComponentWithCollectionTool implements OnInit {
 
+  collectionId: number;
+
   collection: IExerciseCollection;
   exercises: LoadedExercise[];
 
   @ViewChildren(ReadObjectComponent) readExercises: QueryList<ReadObjectComponent<LoadedExercise>>;
 
-  constructor(private route: ActivatedRoute, private router: Router, private dexieService: DexieService, private apiService: ApiService) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private dexieService: DexieService,
+    private apiService: ApiService
+  ) {
     super(route);
 
     if (!this.tool) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/admin']);
     }
-  }
 
-  private getCollectionFromServer(collId: number): void {
-    this.apiService.getCollection(this.tool.id, collId)
-      .subscribe((maybeServerCollection: IExerciseCollection | undefined) => {
-        if (maybeServerCollection) {
-          this.collection = maybeServerCollection;
-          this.loadExercises();
-        } else {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate(['/admin', this.tool.id]);
-        }
-      });
+    this.route.paramMap.subscribe((paramMap) => {
+      this.collectionId = parseInt(paramMap.get('collId'), 10);
+    })
   }
 
   private loadExercises(): void {
-    this.apiService.adminReadExercises(this.tool.id, this.collection.id)
+    this.apiService.adminReadExercises(this.tool.id, this.collectionId)
       .subscribe((exercises) => this.exercises = exercises);
   }
 
   ngOnInit() {
-    const collId = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
-    this.dexieService.collections.get([this.tool.id, collId])
-      .then((maybeCollection) => {
-        if (maybeCollection) {
-          this.collection = maybeCollection;
-          this.loadExercises();
-        } else {
-          this.getCollectionFromServer(collId);
-        }
-      });
+    this.loadExercises();
   }
 
   save(exercise: LoadedExercise): void {

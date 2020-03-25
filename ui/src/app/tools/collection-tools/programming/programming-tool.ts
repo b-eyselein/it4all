@@ -1,5 +1,5 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
-import {IExercise} from '../../../_interfaces/models';
+import {IProgExerciseContent} from "./programming-interfaces";
 
 // Exercise Parts
 
@@ -14,11 +14,10 @@ export const ProgrammingTool: CollectionTool = new class ProgrammingToolClass ex
     super('programming', 'Programmierung', [ProgrammingTestCreationPart, ProgrammingImplementationToolPart], 'beta', true);
   }
 
-  exerciseHasPart(exercise: IExercise, part: ToolPart): boolean {
-
+  exerciseHasPart(exerciseContent: IProgExerciseContent, part: ToolPart): boolean {
     if (part === ProgrammingTestCreationPart) {
       // FIXME: simplified test execution is disabled...
-      return exercise.content.unitTestPart.unitTestType === 'Normal';
+      return exerciseContent.unitTestPart.unitTestType === 'Normal';
     } else {
       return true;
     }

@@ -1,15 +1,18 @@
 import {Component, OnInit} from '@angular/core';
-import {IExerciseCollectionWithExerciseMetaData} from '../../_interfaces/exercise';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
+import {AdminCollectionsIndexGQL, AdminCollectionsIndexQuery} from "../../_services/apollo_services";
 
 @Component({templateUrl: './admin-collections-index.component.html'})
 export class AdminCollectionsIndexComponent extends ComponentWithCollectionTool implements OnInit {
 
-  collections: IExerciseCollectionWithExerciseMetaData[] = [];
+  adminCollectionsIndexQuery: AdminCollectionsIndexQuery;
 
-  constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private adminCollectionsIndexGQL: AdminCollectionsIndexGQL,
+  ) {
     super(route);
 
     if (!this.tool) {
@@ -18,24 +21,11 @@ export class AdminCollectionsIndexComponent extends ComponentWithCollectionTool 
     }
   }
 
-  private fetchExerciseBasics(): void {
-    this.collections.forEach((collection) => {
-      this.apiService.getExercises(this.tool.id, collection.id)
-        .subscribe((exerciseBasics) => collection.exercises = exerciseBasics);
-    });
-  }
-
-  private fetchCollections(): void {
-    this.apiService.getCollections(this.tool.id)
-      .subscribe((collections) => {
-        this.collections = collections;
-        this.fetchExerciseBasics();
-      });
-  }
-
   ngOnInit() {
-    this.fetchCollections();
+    this.adminCollectionsIndexGQL
+      .watch({toolId: this.tool.id})
+      .valueChanges
+      .subscribe(({data}) => this.adminCollectionsIndexQuery = data);
   }
-
 
 }

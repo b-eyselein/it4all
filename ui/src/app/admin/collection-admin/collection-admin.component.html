@@ -1,27 +1,33 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">Administration Sammlung {{collection?.title}}</h1>
+  <ng-container *ngIf="collectionAdminQuery">
 
-  <div class="buttons" *ngIf="collection">
-    <a class="button is-primary is-fullwidth" routerLink="../..">Zurück zur Tool-Administration</a>
-  </div>
+    <h1 class="title is-3 has-text-centered">Administration Sammlung {{collectionAdminQuery.tool.collection.title}}</h1>
 
-  <h2 class="subtitle is-3">Vorhandene Aufgaben</h2>
-
-  <ng-container *ngIf="exercises && exercises.length > 0; else noExercisesBlock">
-    <div class="columns is-multiline">
-      <div class="column is-half-desktop" *ngFor="let exercise of exercises">
-        <a class="button is-link is-fullwidth">{{exercise.title}}</a>
-      </div>
+    <div class="buttons">
+      <a class="button is-primary is-fullwidth" routerLink="../..">Zurück zur Tool-Administration</a>
     </div>
+
+    <h2 class="subtitle is-3">Vorhandene Aufgaben</h2>
+
+    <ng-container *ngIf="queryExercises && queryExercises.length > 0; else noExercisesBlock">
+      <div class="columns is-multiline">
+        <div class="column is-half-desktop" *ngFor="let exercise of queryExercises">
+          <a class="button is-link is-fullwidth">{{exercise.title}}</a>
+        </div>
+      </div>
+    </ng-container>
+
+    <br>
+
+    <div class="buttons">
+      <a class="button is-warning has-text-white is-fullwidth" routerLink="read">Aufgaben einlesen</a>
+    </div>
+
   </ng-container>
-  <ng-template #noExercisesBlock>
-    <div class="notification is-danger has-text-centered">Es konnten keine Aufgaben gefunden werden!</div>
-  </ng-template>
-
-  <br>
-
-  <div class="buttons" *ngIf="collection">
-    <a class="button is-warning has-text-white is-fullwidth" routerLink="read">Aufgaben einlesen</a>
-  </div>
 
 </div>
+
+<ng-template #noExercisesBlock>
+  <div class="notification is-danger has-text-centered">Es konnten keine Aufgaben gefunden werden!</div>
+</ng-template>
+

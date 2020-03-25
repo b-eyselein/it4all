@@ -9,7 +9,7 @@ query Collections($toolId: String!) {
 
 query Exercises($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
-    collection(id: $collId) {
+    collection(collId: $collId) {
       exercises {
         id
         title
@@ -20,7 +20,7 @@ query Exercises($toolId: String!, $collId: Int!) {
 
 query CollectionOverview($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
-    collection(id: $collId) {
+    collection(collId: $collId) {
       title
       exercises {
         ...fieldsForLink
@@ -37,8 +37,74 @@ query AllExercisesOverview($toolId: String!) {
   }
 }
 
+query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      exercise(exId: $exId) {
+        id
+        title
+        text
+      }
+    }
+  }
+}
 
-fragment fieldsForLink on ExerciseMetaData {
+query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId){
+      exercise(exId: $exId){
+        title
+
+      }
+    }
+  }
+}
+
+# Admin queries
+
+query CollectionToolAdmin($toolId: String!) {
+  tool(toolId: $toolId) {
+    collectionCount
+    lessonCount
+  }
+}
+
+query CollectionAdmin($toolId: String!, $collId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      title
+      exercises {
+        id
+        title
+      }
+    }
+  }
+}
+
+query AdminCollectionsIndex($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    collections {
+      id
+      title
+      exerciseCount
+    }
+  }
+}
+
+query AdminEditCollection($toolId: String!, $collId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      id
+      title
+      # TODO: all fields...
+    }
+  }
+}
+
+# Fragments
+
+fragment fieldsForLink on Exercise {
   id
   title
   difficulty

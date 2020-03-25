@@ -16,7 +16,11 @@ export class AdminReadCollectionsComponent extends ComponentWithCollectionTool i
 
   @ViewChildren(ReadObjectComponent) readCollectionComponents: QueryList<ReadObjectComponent<SaveableExerciseCollection>>;
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    private apiService: ApiService,
+    private router: Router
+  ) {
     super(route);
 
     if (!this.tool) {

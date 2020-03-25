@@ -1,6 +1,6 @@
-<ng-container *ngIf="exercise">
+<ng-container *ngIf="exerciseOverviewQuery">
   <div class="container">
-    <h1 class="title is-3 has-text-centered">Aufgabe &quot;{{exercise.title}}&quot;</h1>
+    <h1 class="title is-3 has-text-centered">Aufgabe &quot;{{exerciseOverviewQuery.tool.collection.exercise.title}}&quot;</h1>
 
     <div class="buttons">
       <a class="button is-primary is-fullwidth" [routerLink]="['../..']">Zurück zur Sammlung</a>
@@ -8,13 +8,13 @@
 
     <br>
 
-    <div class="notification is-light-grey" [innerHTML]="exercise.text"></div>
+    <div class="notification is-light-grey" [innerHTML]="exerciseOverviewQuery.tool.collection.exercise.text"></div>
 
     <div class="columns">
       <ng-container *ngFor="let part of tool.parts">
-        <div class="column" *ngIf="!part.disabled && tool.exerciseHasPart(exercise, part)">
+        <div class="column" *ngIf="!part.disabled && tool.exerciseHasPart(exercise.content, part)">
           <a class="button is-link is-fullwidth"
-             [routerLink]="['/tools', tool.id, 'collections', exercise.collectionId, 'exercises', exercise.id, 'parts', part.id]">
+             [routerLink]="['/tools', tool.id, 'collections', collectionId, 'exercises', exerciseId, 'parts', part.id]">
             {{part.name}}
           </a>
         </div>

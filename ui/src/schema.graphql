@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Mar 25 2020 09:57:37 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Wed Mar 25 2020 13:35:16 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -7,7 +7,8 @@ type Collection {
   authors: [String!]!
   text: String!
   shortName: String!
-  exercises: [ExerciseMetaData!]!
+  exerciseCount: Int!
+  exercises: [Exercise!]!
   exercise(exId: Int!): Exercise
 }
 
@@ -29,18 +30,6 @@ type ExerciseFile {
   fileType: String!
   editable: Boolean!
   content: String!
-}
-
-type ExerciseMetaData {
-  id: Int!
-  collectionId: Int!
-  toolId: String!
-  semanticVersion: SemanticVersion!
-  title: String!
-  authors: [String!]!
-  text: String!
-  tags: [ExTag!]!
-  difficulty: Int
 }
 
 type ExTag {
@@ -71,13 +60,13 @@ type ProgSolution {
 type Query {
   tools: [Tool!]!
   tool(toolId: String!): Tool
-  programmingExerciseContent(toolId: String!, collId: Int!, exId: Int!): ProgExerciseContent
-  regexExerciseContent(toolId: String!, collId: Int!, exId: Int!): RegexExerciseContent
-  roseExerciseContent(toolId: String!, collId: Int!, exId: Int!): RoseExerciseContent
-  sqlExerciseContent(toolId: String!, collId: Int!, exId: Int!): SqlExerciseContent
-  umlExerciseContent(toolId: String!, collId: Int!, exId: Int!): UmlExerciseContent
-  webExerciseContent(toolId: String!, collId: Int!, exId: Int!): WebExerciseContent
-  xmlExerciseContent(toolId: String!, collId: Int!, exId: Int!): XmlExerciseContent
+  programmingExerciseContent(collId: Int!, exId: Int!): ProgExerciseContent
+  regexExerciseContent(collId: Int!, exId: Int!): RegexExerciseContent
+  roseExerciseContent(collId: Int!, exId: Int!): RoseExerciseContent
+  sqlExerciseContent(collId: Int!, exId: Int!): SqlExerciseContent
+  umlExerciseContent(collId: Int!, exId: Int!): UmlExerciseContent
+  webExerciseContent(collId: Int!, exId: Int!): WebExerciseContent
+  xmlExerciseContent(collId: Int!, exId: Int!): XmlExerciseContent
 }
 
 enum RegexCorrectionType {
@@ -144,9 +133,11 @@ type Tool {
   id: String!
   name: String!
   state: ToolState!
+  lessonCount: Int!
+  collectionCount: Int!
   collections: [Collection!]!
   collection(collId: Int!): Collection
-  allExerciseMetaData: [ExerciseMetaData!]!
+  allExerciseMetaData: [Exercise!]!
 }
 
 enum ToolState {

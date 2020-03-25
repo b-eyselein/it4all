@@ -1,4 +1,4 @@
-<ng-container *ngIf="exercise; else loadingExerciseBlock">
+<ng-container *ngIf="exercise && exerciseQuery; else loadingDataBlock">
   <ng-container [ngSwitch]="tool.id">
 
     <it4all-programming-exercise
@@ -39,6 +39,6 @@
   </ng-container>
 </ng-container>
 
-<ng-template #loadingExerciseBlock>
-  <div class="notification">Lade Aufgabe...</div>
+<ng-template #loadingDataBlock>
+  <div class="notification is-primary has-text-centered">Lade Aufgabe...</div>
 </ng-template>
