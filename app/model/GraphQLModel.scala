@@ -38,14 +38,7 @@ object GraphQLModel {
   )
 
   private val ExerciseType: ObjectType[Unit, Exercise] = deriveObjectType(
-    ReplaceField(
-      "content",
-      Field(
-        "content",
-        OptionType(ExContentType),
-        resolve = _ => None
-      )
-    )
+    ExcludeFields("content")
   )
 
   private val CollectionType = ObjectType(
@@ -98,10 +91,17 @@ object GraphQLModel {
         arguments = collIdArgument :: Nil,
         resolve = context => context.ctx.futureCollById(context.value.id, context.arg(collIdArgument))
       ),
+      // Special fields for exercises
       Field(
         "allExerciseMetaData",
         ListType(ExerciseType),
         resolve = context => context.ctx.futureExercisesForTool(context.value.id)
+      ),
+      Field(
+        "exerciseContent",
+        OptionType(ExContentType),
+        arguments = collIdArgument :: exIdArgument :: Nil,
+        resolve = _ => None
       )
     )
   )
