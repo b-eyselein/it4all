@@ -1,14 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {Lesson} from '../../_interfaces/lesson';
 import {AdminLessonIndexGQL, AdminLessonIndexQuery} from "../../_services/apollo_services";
+import {Subscription} from "rxjs";
 
 @Component({templateUrl: './admin-lessons-index.component.html'})
-export class AdminLessonsIndexComponent extends ComponentWithCollectionTool implements OnInit {
+export class AdminLessonsIndexComponent extends ComponentWithCollectionTool implements OnInit, OnDestroy {
 
   lessons: Lesson[];
+
+  sub: Subscription;
 
   adminLessonIndexQuery: AdminLessonIndexQuery;
 
@@ -17,7 +20,7 @@ export class AdminLessonsIndexComponent extends ComponentWithCollectionTool impl
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe((paramMap) => {
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
 
       this.adminLessonIndexGQL
@@ -28,6 +31,10 @@ export class AdminLessonsIndexComponent extends ComponentWithCollectionTool impl
 
     this.apiService.getLessons(this.tool.id)
       .subscribe((lessons) => this.lessons = lessons);
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
 }
