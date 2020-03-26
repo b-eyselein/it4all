@@ -35,20 +35,6 @@ export class ApiService {
       .pipe(catchError(() => of(undefined)));
   }
 
-  getLessons(toolId: string): Observable<ILesson[]> {
-    const url = `${this.baseUrl}/${toolId}/lessons`;
-
-    return this.http.get<ILesson[]>(url)
-      .pipe(catchError(() => of([])));
-  }
-
-  getLesson(toolId: string, lessonId: number): Observable<ILesson | undefined> {
-    const url = `${this.baseUrl}/${toolId}/lessons/${lessonId}`;
-
-    return this.http.get<ILesson | undefined>(url)
-      .pipe(catchError(() => of(undefined)));
-  }
-
   // Correction
 
   correctSolution<S, R>(exercise: IExercise, part: string, solution: S): Observable<R | undefined> {

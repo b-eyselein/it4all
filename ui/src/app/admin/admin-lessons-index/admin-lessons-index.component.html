@@ -1,30 +1,37 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">Administration Tool {{tool.name}}: Lektionen</h1>
+  <ng-container *ngIf="adminLessonIndexQuery; else loadingDataBlock">
 
-  <div class="buttons">
-    <a href="" class="button is-primary is-fullwidth" routerLink="..">Zurück zur Administrationsstartseite</a>
-  </div>
+    <h1 class="title is-3 has-text-centered">Administration Tool {{adminLessonIndexQuery.tool.name}}: Lektionen</h1>
 
-  <h2 class="subtitle is-3">Vorhandene Lektionen</h2>
+    <div class="buttons">
+      <a href="" class="button is-primary is-fullwidth" routerLink="..">Zurück zur Administrationsstartseite</a>
+    </div>
 
-  <div class="columns is-multiline">
-    <div class="column is-one-third-desktop" *ngFor="let lesson of lessons">
-      <div class="card">
-        <header class="card-header">
-          <p class="card-header-title">{{lesson.id}}: {{lesson.title}}</p>
-        </header>
-        <div class="card-content"></div>
-        <footer class="card-footer">
-          <a class="card-footer-item">Lektion editieren</a>
-        </footer>
+    <h2 class="subtitle is-3">Vorhandene Lektionen</h2>
+
+    <div class="columns is-multiline">
+      <div class="column is-one-third-desktop" *ngFor="let lesson of adminLessonIndexQuery.tool.lessons">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">{{lesson.id}}: {{lesson.title}}</p>
+          </header>
+          <div class="card-content"></div>
+          <footer class="card-footer">
+            <a class="card-footer-item">Lektion editieren</a>
+          </footer>
+        </div>
       </div>
     </div>
-  </div>
 
-  <hr>
+    <hr>
 
-  <div class="buttons">
-    <a class="button is-warning has-text-white is-fullwidth" routerLink="read">Lektionen einlesen</a>
-  </div>
+    <div class="buttons">
+      <a class="button is-warning has-text-white is-fullwidth" routerLink="read">Lektionen einlesen</a>
+    </div>
 
+  </ng-container>
 </div>
+
+<ng-template #loadingDataBlock>
+  <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>

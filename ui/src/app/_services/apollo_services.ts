@@ -179,12 +179,18 @@ export type Tool = {
   state: ToolState;
   lessonCount: Scalars['Int'];
   lessons: Array<Lesson>;
+  lesson?: Maybe<Lesson>;
   collectionCount: Scalars['Int'];
   collections: Array<Collection>;
   collection?: Maybe<Collection>;
   exerciseCount: Scalars['Int'];
   allExerciseMetaData: Array<Exercise>;
   exerciseContent?: Maybe<ExContent>;
+};
+
+
+export type ToolLessonArgs = {
+  lessonId: Scalars['Int'];
 };
 
 
@@ -416,6 +422,24 @@ export type LessonsForToolQuery = (
   )> }
 );
 
+export type LessonQueryVariables = {
+  toolId: Scalars['String'];
+  lessonId: Scalars['Int'];
+};
+
+
+export type LessonQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Maybe<(
+    { __typename?: 'Tool' }
+    & Pick<Tool, 'name'>
+    & { lesson?: Maybe<(
+      { __typename?: 'Lesson' }
+      & Pick<Lesson, 'id' | 'title' | 'description'>
+    )> }
+  )> }
+);
+
 export type CollectionToolAdminQueryVariables = {
   toolId: Scalars['String'];
 };
@@ -438,6 +462,7 @@ export type AdminLessonIndexQuery = (
   { __typename?: 'Query' }
   & { tool?: Maybe<(
     { __typename?: 'Tool' }
+    & Pick<Tool, 'name'>
     & { lessons: Array<(
       { __typename?: 'Lesson' }
       & LessonFragmentFragment
@@ -806,6 +831,26 @@ export const LessonsForToolDocument = gql`
     document = LessonsForToolDocument;
     
   }
+export const LessonDocument = gql`
+    query Lesson($toolId: String!, $lessonId: Int!) {
+  tool(toolId: $toolId) {
+    name
+    lesson(lessonId: $lessonId) {
+      id
+      title
+      description
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LessonGQL extends Apollo.Query<LessonQuery, LessonQueryVariables> {
+    document = LessonDocument;
+    
+  }
 export const CollectionToolAdminDocument = gql`
     query CollectionToolAdmin($toolId: String!) {
   tool(toolId: $toolId) {
@@ -826,6 +871,7 @@ export const CollectionToolAdminDocument = gql`
 export const AdminLessonIndexDocument = gql`
     query AdminLessonIndex($toolId: String!) {
   tool(toolId: $toolId) {
+    name
     lessons {
       ...LessonFragment
     }

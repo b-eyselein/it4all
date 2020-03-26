@@ -1,8 +1,8 @@
 <div class="container">
 
-  <ng-container *ngIf="lesson">
+  <ng-container *ngIf="lessonQuery; else loadingDataBlock">
 
-    <h1 class="title is-3 has-text-centered">Lektion: {{lesson.title}}</h1>
+    <h1 class="title is-3 has-text-centered">Lektion: {{lessonQuery.tool.lesson.title}}</h1>
 
     <ng-container *ngFor="let content of contents">
 
@@ -36,3 +36,7 @@
   </ng-container>
 
 </div>
+
+<ng-template #loadingDataBlock>
+  <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Mar 26 2020 15:00:36 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Thu Mar 26 2020 15:22:57 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -139,6 +139,7 @@ type Tool {
   state: ToolState!
   lessonCount: Int!
   lessons: [Lesson!]!
+  lesson(lessonId: Int!): Lesson
   collectionCount: Int!
   collections: [Collection!]!
   collection(collId: Int!): Collection

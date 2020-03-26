@@ -20,6 +20,8 @@ object GraphQLModel {
 
   private val toolIdArgument = Argument("toolId", StringType)
 
+  private val lessonIdArgument = Argument("lessonId", IntType)
+
   private val collIdArgument = Argument("collId", IntType)
 
   private val exIdArgument = Argument("exId", IntType)
@@ -77,7 +79,17 @@ object GraphQLModel {
       Field("state", ToolStateType, resolve = _.value.toolState),
       // Fields for lessons
       Field("lessonCount", IntType, resolve = context => context.ctx.futureLessonCount(context.value.id)),
-      Field("lessons", ListType(LessonGraphQLModel.LessonType), resolve = _ => List()),
+      Field(
+        "lessons",
+        ListType(LessonGraphQLModel.LessonType),
+        resolve = context => context.ctx.futureAllLessons(context.value.id)
+      ),
+      Field(
+        "lesson",
+        OptionType(LessonGraphQLModel.LessonType),
+        arguments = lessonIdArgument :: Nil,
+        resolve = context => context.ctx.futureLessonById(context.value.id, context.arg(lessonIdArgument))
+      ),
       // Fields for collections
       Field("collectionCount", IntType, resolve = context => context.ctx.futureCollectionCount(context.value.id)),
       Field(

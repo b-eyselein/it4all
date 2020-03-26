@@ -100,6 +100,17 @@ query LessonsForTool($toolId: String!) {
   }
 }
 
+query Lesson ($toolId: String!, $lessonId: Int!) {
+  tool(toolId: $toolId) {
+    name
+    lesson(lessonId: $lessonId){
+      id
+      title
+      description
+    }
+  }
+}
+
 # Admin queries
 
 query CollectionToolAdmin($toolId: String!) {

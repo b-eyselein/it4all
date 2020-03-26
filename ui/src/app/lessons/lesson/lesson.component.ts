@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Tool} from '../../_interfaces/tool';
-import {ActivatedRoute, Router} from '@angular/router';
-import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
-import {randomTools} from '../../tools/random-tools/random-tools-list';
+import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
-import {isLessonTextContent, Lesson, LessonContentBase, LessonTextContent} from '../../_interfaces/lesson';
+import {Lesson, LessonContentBase} from '../../_interfaces/lesson';
+import {LessonGQL, LessonQuery} from "../../_services/apollo_services";
 
 interface SolvableLessonContent extends LessonContentBase {
   priorSolved?: boolean;
@@ -14,36 +13,30 @@ interface SolvableLessonContent extends LessonContentBase {
 export class LessonComponent implements OnInit {
 
   tool: Tool;
+
   lesson: Lesson;
   contents: SolvableLessonContent[];
+
+  lessonQuery: LessonQuery;
+
   currentIndex = 0;
 
-  constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService) {
-    const toolId = this.route.snapshot.paramMap.get('toolId');
-    this.tool = [...collectionTools, ...randomTools].find((t) => t.id === toolId);
-
-    if (!this.tool) {
-      // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate(['/']);
-    }
+  constructor(private route: ActivatedRoute, private lessonGQL: LessonGQL, private apiService: ApiService) {
   }
 
   ngOnInit() {
-    const lessonId: number = parseInt(this.route.snapshot.paramMap.get('lessonId'), 10);
+    this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
+      const lessonId = parseInt(paramMap.get('lessonId'), 10);
 
-    this.apiService.getLesson(this.tool.id, lessonId)
-      .subscribe((lesson) => {
-
-        this.lesson = lesson;
-        this.contents = lesson.content;
-
-        if (!this.lesson) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate(['/lessons', this.tool.id]);
-        }
-
-        this.update();
-      });
+      this.lessonGQL
+        .watch({toolId, lessonId})
+        .valueChanges
+        .subscribe(({data}) => {
+          this.lessonQuery = data;
+          this.contents = [];
+        });
+    })
   }
 
   update(): void {
@@ -55,6 +48,7 @@ export class LessonComponent implements OnInit {
     }
   }
 
+  /*
   asTextContent(content: LessonContentBase): LessonTextContent | undefined {
     if (isLessonTextContent(content)) {
       return content;
@@ -62,5 +56,6 @@ export class LessonComponent implements OnInit {
       return undefined;
     }
   }
+   */
 
 }
