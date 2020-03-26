@@ -85,6 +85,13 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       )
       .map(maybeDbLesson => maybeDbLesson.map(lessonFromDbLesson))
 
+  def futureExerciseCountForTool(toolId: String): Future[Int] = db.run(
+    exercisesTQ
+      .filter(_.toolId === toolId)
+      .size
+      .result
+  )
+
   def futureExercisesForTool(toolId: String): Future[Seq[Exercise]] = db.run(
     exercisesTQ
       .filter(_.toolId === toolId)

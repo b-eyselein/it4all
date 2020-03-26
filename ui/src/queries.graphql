@@ -18,6 +18,15 @@ query Exercises($toolId: String!, $collId: Int!) {
   }
 }
 
+query CollectionToolOverview($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    exerciseCount
+    collectionCount
+    lessonCount
+  }
+}
+
 query CollectionOverview($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {

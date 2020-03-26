@@ -1,48 +1,60 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">Tool {{tool?.name}}</h1>
+  <ng-container *ngIf="collectionToolOverviewQuery; else loadingDataBlock">
+    <h1 class="title is-3 has-text-centered">Tool {{tool?.name}}</h1>
 
-  <div class="buttons">
-    <a class="button is-primary is-fullwidth" routerLink="/">Zurück zur Toolübersicht</a>
-  </div>
-
-  <br>
-
-  <div class="columns">
-    <div class="column is-one-third-desktop is-full-mobile">
-      <div class="card">
-        <header class="card-header">
-          <p class="card-header-title">Alle Aufgaben</p>
-        </header>
-        <div class="card-content"></div>
-        <footer class="card-footer">
-          <a class="card-footer-item" routerLink="allExercises">Zur Übersicht</a>
-        </footer>
-      </div>
+    <div class="buttons">
+      <a class="button is-primary is-fullwidth" routerLink="/">Zurück zur Toolübersicht</a>
     </div>
 
-    <div class="column">
-      <div class="card">
-        <header class="card-header">
-          <p class="card-header-title">Sammlungen</p>
-        </header>
-        <div class="card-content"></div>
-        <footer class="card-footer">
-          <a class="card-footer-item" routerLink="./collections">Zu den Sammlungen</a>
-        </footer>
-      </div>
-    </div>
+    <br>
 
-    <div class="column">
-      <div class="card">
-        <header class="card-header">
-          <p class="card-header-title is-centered">Lektionen</p>
-        </header>
-        <div class="card-content"></div>
-        <footer class="card-footer">
-          <a class="card-footer-item" [routerLink]="['/lessons', tool.id]">Zu den Lektionen</a>
-        </footer>
+    <div class="columns">
+      <div class="column is-one-third-desktop is-full-mobile">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">Alle Aufgaben</p>
+          </header>
+          <div class="card-content">
+            {{collectionToolOverviewQuery.tool.exerciseCount}} Aufgaben
+          </div>
+          <footer class="card-footer">
+            <a class="card-footer-item" routerLink="allExercises">Zur Übersicht</a>
+          </footer>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">Sammlungen</p>
+          </header>
+          <div class="card-content">
+            {{collectionToolOverviewQuery.tool.collectionCount}} Sammlungen
+          </div>
+          <footer class="card-footer">
+            <a class="card-footer-item" routerLink="./collections">Zu den Sammlungen</a>
+          </footer>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title is-centered">Lektionen</p>
+          </header>
+          <div class="card-content">
+            {{collectionToolOverviewQuery.tool.lessonCount}} Lektionen
+          </div>
+          <footer class="card-footer">
+            <a class="card-footer-item" [routerLink]="['/lessons', tool.id]">Zu den Lektionen</a>
+          </footer>
+        </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 
 </div>
+
+<ng-template #loadingDataBlock>
+  <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>

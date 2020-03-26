@@ -181,6 +181,7 @@ export type Tool = {
   collectionCount: Scalars['Int'];
   collections: Array<Collection>;
   collection?: Maybe<Collection>;
+  exerciseCount: Scalars['Int'];
   allExerciseMetaData: Array<Exercise>;
   exerciseContent?: Maybe<ExContent>;
 };
@@ -280,6 +281,19 @@ export type ExercisesQuery = (
         & Pick<Exercise, 'id' | 'title'>
       )> }
     )> }
+  )> }
+);
+
+export type CollectionToolOverviewQueryVariables = {
+  toolId: Scalars['String'];
+};
+
+
+export type CollectionToolOverviewQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Maybe<(
+    { __typename?: 'Tool' }
+    & Pick<Tool, 'name' | 'exerciseCount' | 'collectionCount' | 'lessonCount'>
   )> }
 );
 
@@ -591,6 +605,24 @@ export const ExercisesDocument = gql`
   })
   export class ExercisesGQL extends Apollo.Query<ExercisesQuery, ExercisesQueryVariables> {
     document = ExercisesDocument;
+    
+  }
+export const CollectionToolOverviewDocument = gql`
+    query CollectionToolOverview($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    exerciseCount
+    collectionCount
+    lessonCount
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CollectionToolOverviewGQL extends Apollo.Query<CollectionToolOverviewQuery, CollectionToolOverviewQueryVariables> {
+    document = CollectionToolOverviewDocument;
     
   }
 export const CollectionOverviewDocument = gql`

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Mar 25 2020 14:54:53 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Thu Mar 26 2020 13:59:59 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -141,6 +141,7 @@ type Tool {
   collectionCount: Int!
   collections: [Collection!]!
   collection(collId: Int!): Collection
+  exerciseCount: Int!
   allExerciseMetaData: [Exercise!]!
   exerciseContent(collId: Int!, exId: Int!): ExContent
 }

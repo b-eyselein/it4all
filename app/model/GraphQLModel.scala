@@ -92,6 +92,7 @@ object GraphQLModel {
         resolve = context => context.ctx.futureCollById(context.value.id, context.arg(collIdArgument))
       ),
       // Special fields for exercises
+      Field("exerciseCount", IntType, resolve = context => context.ctx.futureExerciseCountForTool(context.value.id)),
       Field(
         "allExerciseMetaData",
         ListType(ExerciseType),
@@ -102,13 +103,12 @@ object GraphQLModel {
         OptionType(ExContentType),
         arguments = collIdArgument :: exIdArgument :: Nil,
         resolve = context =>
-          context.ctx
-            .futureExerciseContentById(
-              context.value.id,
-              context.arg(collIdArgument),
-              context.arg(exIdArgument),
-              context.value.toolJsonProtocol.exerciseContentFormat
-            )
+          context.ctx.futureExerciseContentById(
+            context.value.id,
+            context.arg(collIdArgument),
+            context.arg(exIdArgument),
+            context.value.toolJsonProtocol.exerciseContentFormat
+          )
       )
     )
   )

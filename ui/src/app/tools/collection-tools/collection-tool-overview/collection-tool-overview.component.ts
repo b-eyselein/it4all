@@ -1,28 +1,24 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
-import {ApiService} from '../_services/api.service';
-import {IProficiencies} from '../../../_interfaces/models';
+import {CollectionToolOverviewGQL, CollectionToolOverviewQuery} from "../../../_services/apollo_services";
 
 @Component({templateUrl: './collection-tool-overview.component.html'})
 export class CollectionToolOverviewComponent extends ComponentWithCollectionTool implements OnInit {
 
-  private proficiencies: IProficiencies;
+  collectionToolOverviewQuery: CollectionToolOverviewQuery;
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService) {
+  constructor(private route: ActivatedRoute, private collectionToolOverviewGQL: CollectionToolOverviewGQL) {
     super(route);
   }
 
   ngOnInit(): void {
     console.info('TODO!');
 
-    this.apiService.getProficiencies(this.tool.id)
-      .subscribe((proficiencies) => {
-        if (proficiencies) {
-          this.proficiencies = proficiencies;
-          console.info(JSON.stringify(this.proficiencies, null, 2));
-        }
-      });
+    this.collectionToolOverviewGQL
+      .watch({toolId: this.tool.id})
+      .valueChanges
+      .subscribe(({data}) => this.collectionToolOverviewQuery = data);
   }
 
 }
