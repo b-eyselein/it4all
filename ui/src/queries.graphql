@@ -41,6 +41,9 @@ query CollectionOverview($toolId: String!, $collId: Int!) {
 query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
     allExerciseMetaData {
+      tags{
+        ...Tag
+      }
       ...fieldsForLink
     }
   }
@@ -86,12 +89,32 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
   }
 }
 
+query LessonsForTool($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    lessons {
+      id
+      title
+      description
+    }
+  }
+}
+
 # Admin queries
 
 query CollectionToolAdmin($toolId: String!) {
   tool(toolId: $toolId) {
+    name
     collectionCount
     lessonCount
+  }
+}
+
+query AdminLessonIndex($toolId: String!) {
+  tool(toolId: $toolId) {
+    lessons {
+      ...LessonFragment
+    }
   }
 }
 
@@ -129,6 +152,11 @@ query AdminEditCollection($toolId: String!, $collId: Int!) {
 }
 
 # Fragments
+
+fragment Tag on ExTag {
+  abbreviation
+  title
+}
 
 fragment fieldsForLink on Exercise {
   id
@@ -180,4 +208,9 @@ fragment ExFileAll on ExerciseFile {
   fileType
   content
   editable
+}
+
+fragment LessonFragment on Lesson {
+  id
+  title
 }

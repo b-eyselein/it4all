@@ -1,20 +1,44 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">Administration Tool {{tool.name}}</h1>
+  <ng-container *ngIf="collectionToolAdminQuery; else loadingDataTemplate">
 
-  <div class="buttons">
-    <a href="" class="button is-primary is-fullwidth" routerLink="../index">Zurück zur Administrationsstartseite</a>
-  </div>
+    <h1 class="title is-3 has-text-centered">Administration Tool {{collectionToolAdminQuery.tool.name}}</h1>
 
-  <h2 class="subtitle is-3">Vorhandene Sammlungen: {{collectionToolAdminQuery.tool.collectionCount}}</h2>
+    <div class="buttons">
+      <a href="" class="button is-primary is-fullwidth" routerLink="../index">Zurück zur Administrationsstartseite</a>
+    </div>
 
-  <div class="buttons">
-    <a routerLink="collections" class="button is-link is-fullwidth">Zur Administration der Sammlungen</a>
-  </div>
+    <br>
 
-  <h2 class="subtitle is-3">Vorhandene Lektionen: {{collectionToolAdminQuery.tool.lessonCount}}</h2>
+    <div class="columns">
+      <div class="column">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">Sammlungen</p>
+          </header>
+          <div class="card-content">{{collectionToolAdminQuery.tool.collectionCount}} Sammlungen</div>
+          <footer class="card-footer">
+            <a routerLink="collections" class="card-footer-item">Administration der Sammlungen</a>
+          </footer>
+        </div>
+      </div>
 
-  <div class="buttons">
-    <a routerLink="lessons" class="button is-link is-fullwidth">Zur Administration der Lektionen</a>
-  </div>
+      <div class="column">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">Lektionen</p>
+          </header>
+          <div class="card-content">{{collectionToolAdminQuery.tool.lessonCount}} Lektionen</div>
+          <footer class="card-footer">
+            <a routerLink="lessons" class="card-footer-item">Administration der Lektionen</a>
+          </footer>
+        </div>
+      </div>
+    </div>
 
+
+  </ng-container>
 </div>
+
+<ng-template #loadingDataTemplate>
+  <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>

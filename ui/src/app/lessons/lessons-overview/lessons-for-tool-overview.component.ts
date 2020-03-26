@@ -1,30 +1,30 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Tool} from '../../_interfaces/tool';
 import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
 import {randomTools} from '../../tools/random-tools/random-tools-list';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
-import {Lesson} from '../../_interfaces/lesson';
+import {LessonsForToolGQL, LessonsForToolQuery} from "../../_services/apollo_services";
 
 @Component({templateUrl: './lessons-for-tool-overview.component.html'})
 export class LessonsForToolOverviewComponent implements OnInit {
 
   tool: Tool;
-  lessons: Lesson[];
 
-  constructor(private route: ActivatedRoute, private router: Router, private apiService: ApiService) {
-    const toolId = this.route.snapshot.paramMap.get('toolId');
+  lessonsForToolQuery: LessonsForToolQuery;
 
-    this.tool = [...collectionTools, ...randomTools].find((t) => t.id === toolId);
+  constructor(private route: ActivatedRoute, private lessonsForToolGQL: LessonsForToolGQL) {
+    this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
 
-    if (!this.tool) {
-      this.router.navigate(['/']);
-    }
+      this.tool = [...collectionTools, ...randomTools].find((t) => t.id === toolId);
+    });
   }
 
   ngOnInit() {
-    this.apiService.getLessons(this.tool.id)
-      .subscribe((lessons) => this.lessons = lessons);
+    this.lessonsForToolGQL
+      .watch({toolId: this.tool.id})
+      .valueChanges
+      .subscribe(({data}) => this.lessonsForToolQuery = data);
   }
 
 }

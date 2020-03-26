@@ -1,78 +1,68 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ApiService} from '../_services/api.service';
-import {IExerciseMetaData, IExTag} from '../../../_interfaces/models';
 import {Tool} from '../../../_interfaces/tool';
 import {collectionTools} from '../collection-tools-list';
 import {distinctObjectArray, flatMapArray} from '../../../helpers';
-import {AllExercisesOverviewGQL, AllExercisesOverviewQuery} from "../../../_services/apollo_services";
+import {
+  AllExercisesOverviewGQL,
+  AllExercisesOverviewQuery,
+  FieldsForLinkFragment,
+  TagFragment
+} from "../../../_services/apollo_services";
 
 @Component({templateUrl: './all-exercises-overview.component.html'})
 export class AllExercisesOverviewComponent implements OnInit {
 
   tool: Tool;
 
-  distinctTags: IExTag[];
-
   allExercisesOverviewQuery: AllExercisesOverviewQuery;
 
-  private exerciseMetaData: IExerciseMetaData[];
+  distinctTags: TagFragment[];
+  filteredExerciseMetaData: FieldsForLinkFragment[];
+  filtersActivated: Map<TagFragment, boolean> = new Map();
 
-  filteredExerciseMetaData: IExerciseMetaData[];
-
-  filtersActivated: Map<IExTag, boolean> = new Map<IExTag, boolean>();
-
-  constructor(
-    private route: ActivatedRoute,
-    private allExercisesOverviewGQL: AllExercisesOverviewGQL,
-    private apiService: ApiService
-  ) {
-    const toolId = this.route.snapshot.paramMap.get('toolId');
-    this.tool = collectionTools.find((t) => t.id === toolId);
+  constructor(private route: ActivatedRoute, private allExercisesOverviewGQL: AllExercisesOverviewGQL) {
   }
 
   ngOnInit() {
-    this.allExercisesOverviewGQL
-      .watch({toolId: this.tool.id})
-      .valueChanges
-      .subscribe(({data}) => this.allExercisesOverviewQuery = data);
+    this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
 
-    this.apiService.getExerciseMetaDataForTool(this.tool.id)
-      .subscribe((exerciseMetaData) => {
-        this.distinctTags = distinctObjectArray(
-          flatMapArray(exerciseMetaData, (md) => md.tags),
-          (tag) => tag.abbreviation
-        );
+      this.tool = collectionTools.find((t) => t.id === toolId);
 
-        for (const tag of this.distinctTags) {
-          this.filtersActivated.set(tag, false);
-        }
+      this.allExercisesOverviewGQL
+        .watch({toolId: this.tool.id})
+        .valueChanges
+        .subscribe(({data}) => {
+          this.allExercisesOverviewQuery = data;
 
-        this.exerciseMetaData = exerciseMetaData.sort((ex1, ex2) => ex1.collectionId - ex2.collectionId);
-        this.filteredExerciseMetaData = this.exerciseMetaData;
-      });
+          this.filteredExerciseMetaData = this.allExercisesOverviewQuery.tool.allExerciseMetaData;
+
+          this.distinctTags = distinctObjectArray(
+            flatMapArray(this.allExercisesOverviewQuery.tool.allExerciseMetaData, (exerciseMetaData) => exerciseMetaData.tags),
+            (t) => t.abbreviation
+          );
+        });
+    });
   }
 
 
-  updateFilters(tag: IExTag): void {
+  toggleFilter(tag: TagFragment): void {
     this.filtersActivated.set(tag, !this.filtersActivated.get(tag));
 
-    const activatedFilters: IExTag[] = Array.from(this.filtersActivated.entries())
+    const activatedFilters: TagFragment[] = Array.from(this.filtersActivated.entries())
       .filter(([_, activated]) => activated)
       .map(([t, _]) => t);
 
     if (activatedFilters.length > 0) {
-      this.filteredExerciseMetaData = this.exerciseMetaData
-        .filter((metaData) =>
-          activatedFilters.every((t) => this.exerciseHasTag(metaData, t))
-        );
+      this.filteredExerciseMetaData = this.allExercisesOverviewQuery.tool.allExerciseMetaData
+        .filter((metaData) => activatedFilters.every((t) => this.exerciseHasTag(metaData, t)));
     } else {
-      this.filteredExerciseMetaData = this.exerciseMetaData;
+      this.filteredExerciseMetaData = this.allExercisesOverviewQuery.tool.allExerciseMetaData;
     }
-
   }
 
-  exerciseHasTag(exercise: IExerciseMetaData, tag: IExTag): boolean {
+  exerciseHasTag(exercise: FieldsForLinkFragment, tag: TagFragment): boolean {
     return exercise.tags
       .map((t) => t.abbreviation)
       .includes(tag.abbreviation);

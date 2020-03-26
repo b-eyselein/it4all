@@ -18,5 +18,6 @@ final case class DbLesson(
   id: Int,
   toolId: String,
   title: String,
+  description: String,
   contentJson: JsValue
 )

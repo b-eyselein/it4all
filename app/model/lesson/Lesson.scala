@@ -35,5 +35,6 @@ final case class Lesson(
   id: Int,
   toolId: String,
   title: String,
+  description: String,
   content: Seq[LessonContent]
 )

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Mar 26 2020 13:59:59 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Thu Mar 26 2020 15:00:36 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -50,6 +50,7 @@ type Lesson {
   id: Int!
   toolId: String!
   title: String!
+  description: String!
 }
 
 type ProgExerciseContent {

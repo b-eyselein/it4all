@@ -41,10 +41,10 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     val lessonContentSeqReads = Reads.seq(ToolJsonProtocol.lessonContentFormat)
 
     dbLesson match {
-      case DbLesson(id, toolId, title, contentJson) =>
+      case DbLesson(id, toolId, title, description, contentJson) =>
         lessonContentSeqReads
           .reads(contentJson)
-          .map(content => Lesson(id, toolId, title, content))
+          .map(content => Lesson(id, toolId, title, description, content))
           .getOrElse(???)
     }
   }
@@ -175,7 +175,13 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
   def futureUpsertLesson(lesson: Lesson): Future[Boolean] = {
     val lessonContentWrites: Writes[Seq[LessonContent]] = Writes.seq(ToolJsonProtocol.lessonContentFormat)
 
-    val dbLesson = DbLesson(lesson.id, lesson.toolId, lesson.title, lessonContentWrites.writes(lesson.content))
+    val dbLesson = DbLesson(
+      lesson.id,
+      lesson.toolId,
+      lesson.title,
+      lesson.description,
+      lessonContentWrites.writes(lesson.content)
+    )
 
     db.run(lessonsTQ.insertOrUpdate(dbLesson)).transform(_ == 1, identity)
   }

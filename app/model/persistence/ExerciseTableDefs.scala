@@ -193,11 +193,14 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
     def title: Rep[String] = column[String]("title")
 
+    def description: Rep[String] = column[String]("description")
+
     def contentJson: Rep[JsValue] = column[JsValue]("content_json")
 
     def pk = primaryKey("lesson_pk", (id, toolId))
 
-    override def * : ProvenShape[DbLesson] = (id, toolId, title, contentJson) <> (DbLesson.tupled, DbLesson.unapply)
+    override def * : ProvenShape[DbLesson] =
+      (id, toolId, title, description, contentJson) <> (DbLesson.tupled, DbLesson.unapply)
 
   }
 

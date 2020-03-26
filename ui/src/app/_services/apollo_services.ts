@@ -73,6 +73,7 @@ export type Lesson = {
   id: Scalars['Int'];
   toolId: Scalars['String'];
   title: Scalars['String'];
+  description: Scalars['String'];
 };
 
 export type ProgExerciseContent = {
@@ -329,6 +330,10 @@ export type AllExercisesOverviewQuery = (
     { __typename?: 'Tool' }
     & { allExerciseMetaData: Array<(
       { __typename?: 'Exercise' }
+      & { tags: Array<(
+        { __typename?: 'ExTag' }
+        & TagFragment
+      )> }
       & FieldsForLinkFragment
     )> }
   )> }
@@ -394,6 +399,23 @@ export type ExerciseQuery = (
   )> }
 );
 
+export type LessonsForToolQueryVariables = {
+  toolId: Scalars['String'];
+};
+
+
+export type LessonsForToolQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Maybe<(
+    { __typename?: 'Tool' }
+    & Pick<Tool, 'name'>
+    & { lessons: Array<(
+      { __typename?: 'Lesson' }
+      & Pick<Lesson, 'id' | 'title' | 'description'>
+    )> }
+  )> }
+);
+
 export type CollectionToolAdminQueryVariables = {
   toolId: Scalars['String'];
 };
@@ -403,7 +425,23 @@ export type CollectionToolAdminQuery = (
   { __typename?: 'Query' }
   & { tool?: Maybe<(
     { __typename?: 'Tool' }
-    & Pick<Tool, 'collectionCount' | 'lessonCount'>
+    & Pick<Tool, 'name' | 'collectionCount' | 'lessonCount'>
+  )> }
+);
+
+export type AdminLessonIndexQueryVariables = {
+  toolId: Scalars['String'];
+};
+
+
+export type AdminLessonIndexQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Maybe<(
+    { __typename?: 'Tool' }
+    & { lessons: Array<(
+      { __typename?: 'Lesson' }
+      & LessonFragmentFragment
+    )> }
   )> }
 );
 
@@ -462,6 +500,11 @@ export type AdminEditCollectionQuery = (
   )> }
 );
 
+export type TagFragment = (
+  { __typename?: 'ExTag' }
+  & Pick<ExTag, 'abbreviation' | 'title'>
+);
+
 export type FieldsForLinkFragment = (
   { __typename?: 'Exercise' }
   & Pick<Exercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
@@ -512,6 +555,17 @@ export type ExFileAllFragment = (
   & Pick<ExerciseFile, 'name' | 'resourcePath' | 'fileType' | 'content' | 'editable'>
 );
 
+export type LessonFragmentFragment = (
+  { __typename?: 'Lesson' }
+  & Pick<Lesson, 'id' | 'title'>
+);
+
+export const TagFragmentDoc = gql`
+    fragment Tag on ExTag {
+  abbreviation
+  title
+}
+    `;
 export const FieldsForLinkFragmentDoc = gql`
     fragment fieldsForLink on Exercise {
   id
@@ -569,6 +623,12 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
   }
 }
     ${ExFileAllFragmentDoc}`;
+export const LessonFragmentFragmentDoc = gql`
+    fragment LessonFragment on Lesson {
+  id
+  title
+}
+    `;
 export const CollectionsDocument = gql`
     query Collections($toolId: String!) {
   tool(toolId: $toolId) {
@@ -649,11 +709,15 @@ export const AllExercisesOverviewDocument = gql`
     query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
     allExerciseMetaData {
+      tags {
+        ...Tag
+      }
       ...fieldsForLink
     }
   }
 }
-    ${FieldsForLinkFragmentDoc}`;
+    ${TagFragmentDoc}
+${FieldsForLinkFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -722,9 +786,30 @@ ${ProgExerciseContentSolveFieldsFragmentDoc}`;
     document = ExerciseDocument;
     
   }
+export const LessonsForToolDocument = gql`
+    query LessonsForTool($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    lessons {
+      id
+      title
+      description
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LessonsForToolGQL extends Apollo.Query<LessonsForToolQuery, LessonsForToolQueryVariables> {
+    document = LessonsForToolDocument;
+    
+  }
 export const CollectionToolAdminDocument = gql`
     query CollectionToolAdmin($toolId: String!) {
   tool(toolId: $toolId) {
+    name
     collectionCount
     lessonCount
   }
@@ -736,6 +821,23 @@ export const CollectionToolAdminDocument = gql`
   })
   export class CollectionToolAdminGQL extends Apollo.Query<CollectionToolAdminQuery, CollectionToolAdminQueryVariables> {
     document = CollectionToolAdminDocument;
+    
+  }
+export const AdminLessonIndexDocument = gql`
+    query AdminLessonIndex($toolId: String!) {
+  tool(toolId: $toolId) {
+    lessons {
+      ...LessonFragment
+    }
+  }
+}
+    ${LessonFragmentFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AdminLessonIndexGQL extends Apollo.Query<AdminLessonIndexQuery, AdminLessonIndexQueryVariables> {
+    document = AdminLessonIndexDocument;
     
   }
 export const CollectionAdminDocument = gql`

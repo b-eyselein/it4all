@@ -9,7 +9,7 @@ create table if not exists users (
 # Feedback
 
 create table if not exists feedback (
-    username          varchar(30),
+    username          varchar(30) references users (username) on update cascade on delete cascade,
     tool_url          varchar(30),
     marks_json        longtext not null, # TODO: json
     # -- TODO: remove following columns?!
@@ -20,8 +20,7 @@ create table if not exists feedback (
     fairness_feedback enum ('VeryGood', 'Good', 'Neutral', 'Bad', 'VeryBad', 'NoMark') default 'NoMark',
     comment           text,
 
-    primary key (username, tool_url),
-    foreign key (username) references users (username) on update cascade on delete cascade
+    primary key (username, tool_url)
 );
 
 # Learning paths
@@ -57,22 +56,20 @@ create table if not exists topics (
 );
 
 create table if not exists tool_proficiencies (
-    username varchar(30),
+    username varchar(30) references users (username) on update cascade on delete cascade,
     tool_id  varchar(10),
     points   int not null,
 
-    primary key (username, tool_id),
-    foreign key (username) references users (username) on update cascade on delete cascade
+    primary key (username, tool_id)
 );
 
 create table if not exists topic_proficiencies (
-    username varchar(30),
+    username varchar(30) references users (username) on update cascade on delete cascade,
     topic_id int,
     tool_id  varchar(10),
     points   int not null,
 
     primary key (username, topic_id, tool_id),
-    foreign key (username) references users (username) on update cascade on delete cascade,
     foreign key (topic_id, tool_id) references topics (id, tool_id) on update cascade on delete cascade
 );
 
@@ -117,20 +114,19 @@ create table if not exists user_solutions (
     tool_id                   varchar(20),
     exercise_semantic_version varchar(100),
     part                      varchar(50),
-    username                  varchar(50),
+    username                  varchar(50) references users (username) on update cascade on delete cascade,
 
     solution_json             longtext not null, # TODO: json!
     points                    double,
     max_points                double,
 
     primary key (id, exercise_id, collection_id, tool_id, exercise_semantic_version, part, username),
-    foreign key (username) references users (username) on update cascade on delete cascade,
     foreign key (exercise_id, collection_id, tool_id, exercise_semantic_version)
         references exercises (id, collection_id, tool_id, semantic_version) on update cascade on delete cascade
 );
 
 create table if not exists exercise_reviews (
-    username                  varchar(50),
+    username                  varchar(50) references users (username) on update cascade on delete cascade,
     exercise_id               int,
     collection_id             int,
     tool_id                   varchar(20),
@@ -141,9 +137,6 @@ create table if not exists exercise_reviews (
     maybe_duration            int,
 
     primary key (username, exercise_id, collection_id, tool_id, exercise_semantic_version, part),
-    foreign key (username)
-        references users (username)
-        on update cascade on delete cascade,
     foreign key (exercise_id, collection_id, tool_id, exercise_semantic_version)
         references exercises (id, collection_id, tool_id, semantic_version)
         on update cascade on delete cascade
@@ -152,7 +145,8 @@ create table if not exists exercise_reviews (
 create table if not exists lessons (
     id           int,
     tool_id      varchar(20),
-    title        varchar(200) not null,
+    title        varchar(100) not null,
+    description  varchar(300) not null,
     content_json longtext     not null, # TODO: json!
 
     primary key (id, tool_id)

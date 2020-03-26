@@ -1,31 +1,31 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {CollectionToolAdminGQL, CollectionToolAdminQuery} from "../../_services/apollo_services";
+import {Subscription} from "rxjs";
 
 @Component({templateUrl: './collection-tool-admin.component.html'})
-export class CollectionToolAdminComponent extends ComponentWithCollectionTool implements OnInit {
+export class CollectionToolAdminComponent implements OnInit, OnDestroy {
+
+  private sub: Subscription;
 
   collectionToolAdminQuery: CollectionToolAdminQuery;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private collectionToolAdminGQL: CollectionToolAdminGQL,
-  ) {
-    super(route);
-
-    if (!this.tool) {
-      // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate(['/admin']);
-    }
+  constructor(private route: ActivatedRoute, private collectionToolAdminGQL: CollectionToolAdminGQL) {
   }
 
   ngOnInit() {
-   this.collectionToolAdminGQL
-     .watch({toolId:this.tool.id})
-     .valueChanges
-     .subscribe(({data}) => this.collectionToolAdminQuery = data);
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
+
+      this.collectionToolAdminGQL
+        .watch({toolId})
+        .valueChanges
+        .subscribe(({data}) => this.collectionToolAdminQuery = data);
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
 }
