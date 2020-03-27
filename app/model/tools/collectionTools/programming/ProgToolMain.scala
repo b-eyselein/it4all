@@ -22,7 +22,8 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
   override val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
     ProgrammingToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution] = ProgrammingGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
+    ProgrammingGraphQLModels
 
   // Correction
 

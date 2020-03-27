@@ -1,10 +1,11 @@
 package model.tools.collectionTools.programming
 
+import model.core.result.SuccessType
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema.{EnumType, InputObjectType, ObjectType}
 
-object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution] {
+object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgCompleteResult] {
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = ExerciseFileType
@@ -54,12 +55,38 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseConte
     )
   }
 
+  // Solution types
+
   override val SolTypeInputType: InputObjectType[ProgSolution] = {
     implicit val efit: InputObjectType[ExerciseFile] = ExerciseFileInputType
 
     deriveInputObjectType(
       InputObjectTypeName("ProgSolutionInput"),
       ExcludeInputFields("testData")
+    )
+  }
+
+  // Result types
+
+  private val NormalExecutionResultType: ObjectType[Unit, NormalExecutionResult] = {
+    implicit val stt: EnumType[SuccessType] = successTypeType
+
+    deriveObjectType()
+  }
+
+  private val unitTestCorrectionResultType: ObjectType[Unit, UnitTestCorrectionResult] = {
+    implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
+
+    deriveObjectType()
+  }
+
+  override val CompResultTypeType: ObjectType[Unit, ProgCompleteResult] = {
+    implicit val nert: ObjectType[Unit, NormalExecutionResult]     = NormalExecutionResultType
+    implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = unitTestCorrectionResultType
+
+    deriveObjectType(
+      // FIXME: do not exclude fields anymore...
+      ExcludeFields("simplifiedResults")
     )
   }
 

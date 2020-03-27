@@ -2,8 +2,8 @@ package model.tools.collectionTools.sql
 
 import model.User
 import model.core.matching.MatchingResult
-import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools._
+import model.tools.collectionTools.sql.matcher._
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -49,7 +49,7 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
   override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult] =
     SqlJsonProtocols
 
-  override val graphQlModels: ToolGraphQLModelBasics[SqlExerciseContent, String] = SqlGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[SqlExerciseContent, String, SqlResult] = SqlGraphQLModels
 
   // Correction
 

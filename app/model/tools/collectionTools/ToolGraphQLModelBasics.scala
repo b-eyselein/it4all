@@ -1,8 +1,9 @@
 package model.tools.collectionTools
 
-import model.core.result.CompleteResult
-import sangria.macros.derive.{InputObjectTypeName, deriveInputObjectType, deriveObjectType}
-import sangria.schema.{Field, InputObjectType, InputType, IntType, ObjectType, OutputType, StringType, fields}
+import model.core.result.{CompleteResult, SuccessType}
+import model.points.Points
+import sangria.macros.derive.{InputObjectTypeName, deriveEnumType, deriveInputObjectType, deriveObjectType}
+import sangria.schema.{EnumType, Field, InputObjectType, InputType, IntType, ObjectType, OutputType, StringType, fields}
 
 trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent, SolType, CompResultType <: CompleteResult] {
 
@@ -13,6 +14,10 @@ trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent, SolType, CompResu
   )
 
   protected val KeyValueObjectType: ObjectType[Unit, KeyValueObject] = deriveObjectType()
+
+  protected val successTypeType: EnumType[SuccessType] = deriveEnumType()
+
+  protected val pointsType: ObjectType[Unit, Points] = deriveObjectType()
 
   protected def sampleSolutionType[ASolType](
     name: String,

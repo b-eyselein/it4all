@@ -1,8 +1,8 @@
 package model.tools.collectionTools.rose
 
 import model.User
-import model.tools.collectionTools.programming.ProgLanguages
 import model.tools.collectionTools._
+import model.tools.collectionTools.programming.ProgLanguages
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -23,7 +23,8 @@ object RoseToolMain extends CollectionToolMain(RoseConsts) {
   override val toolJsonProtocol: ToolJsonProtocol[RoseExerciseContent, String, RoseCompleteResult] =
     RoseToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[RoseExerciseContent, String] = RoseGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[RoseExerciseContent, String, RoseCompleteResult] =
+    RoseGraphQLModels
 
   // Correction
 

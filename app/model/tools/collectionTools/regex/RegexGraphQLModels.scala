@@ -1,25 +1,54 @@
 package model.tools.collectionTools.regex
 
+import model.points.Points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{deriveEnumType, deriveObjectType}
+import sangria.macros.derive.{ExcludeFields, deriveEnumType, deriveObjectType}
 import sangria.schema.{EnumType, InputType, ObjectType, StringType}
 
 object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, String, RegexCompleteResult] {
 
+  private val regexCorrectionTypeType: EnumType[RegexCorrectionType] = deriveEnumType()
+
   override val ExContentTypeType: ObjectType[Unit, RegexExerciseContent] = {
-    implicit val regeexCorrectionTypeType: EnumType[RegexCorrectionType] = deriveEnumType()
-
+    implicit val rctt: EnumType[RegexCorrectionType]                          = regexCorrectionTypeType
     implicit val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
-
-    implicit val rmtdt: ObjectType[Unit, RegexMatchTestData] = deriveObjectType()
-
-    implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
+    implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]                  = deriveObjectType()
+    implicit val retdt: ObjectType[Unit, RegexExtractionTestData]             = deriveObjectType()
 
     deriveObjectType()
   }
 
-  override val SolTypeInputType : InputType[String] = StringType
+  // Solution types
 
-  override val CompResultTypeType: ObjectType[Unit, RegexCompleteResult] = deriveObjectType()
+  override val SolTypeInputType: InputType[String] = StringType
+
+  // Result types
+
+  private val binaryClassificationResultTypeType: EnumType[BinaryClassificationResultType] = deriveEnumType()
+
+  private val regexMatchingEvaluationResultType: ObjectType[Unit, RegexMatchingEvaluationResult] = {
+    implicit val bcrtt: EnumType[BinaryClassificationResultType] = binaryClassificationResultTypeType
+
+    deriveObjectType()
+  }
+
+  private val regexExtractionEvaluationResultType: ObjectType[Unit, RegexExtractionEvaluationResult] = {
+
+    deriveObjectType(
+      // FIXME: do not exclude fields anymore!
+      ExcludeFields(
+        "extractionMatchingResult"
+      )
+    )
+  }
+
+  override val CompResultTypeType: ObjectType[Unit, RegexCompleteResult] = {
+    implicit val rctt: EnumType[RegexCorrectionType]                      = regexCorrectionTypeType
+    implicit val rmert: ObjectType[Unit, RegexMatchingEvaluationResult]   = regexMatchingEvaluationResultType
+    implicit val reert: ObjectType[Unit, RegexExtractionEvaluationResult] = regexExtractionEvaluationResultType
+    implicit val pt: ObjectType[Unit, Points]                             = pointsType
+
+    deriveObjectType()
+  }
 
 }
