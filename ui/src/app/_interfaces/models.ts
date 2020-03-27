@@ -13,6 +13,13 @@ export interface ITopicProficiency {
 }
 
 
+export interface IQuestion {
+  id: number;
+  question: string;
+  answers: IQuestionAnswer[];
+}
+
+
 
 export interface IQuestionAnswer {
   answer: string;
@@ -32,14 +39,8 @@ export interface ILesson {
   id: number;
   toolId: string;
   title: string;
+  description: string;
   content: LessonContent[];
-}
-
-
-export interface IQuestion {
-  id: number;
-  question: string;
-  answers: IQuestionAnswer[];
 }
 
 

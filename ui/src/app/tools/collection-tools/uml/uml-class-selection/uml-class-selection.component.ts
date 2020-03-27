@@ -1,7 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise} from '../../../../_interfaces/models';
 import {getUmlExerciseTextParts, SelectableClass, UmlDiagramDrawingHelpPart, UmlExerciseTextPart} from '../uml-tools';
-import {IUmlExerciseContent} from '../uml-interfaces';
+import {
+  ExerciseSolveFieldsFragment,
+  UmlExerciseContentSolveFieldsFragment
+} from "../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-uml-class-selection',
@@ -11,9 +13,8 @@ export class UmlClassSelectionComponent implements OnInit {
 
   readonly nextPart = UmlDiagramDrawingHelpPart;
 
-  @Input() exercise: IExercise;
-
-  exerciseContent: IUmlExerciseContent;
+  @Input() exerciseFragment: ExerciseSolveFieldsFragment;
+  @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
 
   selectableClasses: SelectableClass[];
   umlExerciseTextParts: UmlExerciseTextPart[];
@@ -21,9 +22,7 @@ export class UmlClassSelectionComponent implements OnInit {
   corrected = false;
 
   ngOnInit() {
-    this.exerciseContent = this.exercise.content as IUmlExerciseContent;
-
-    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exercise);
+    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exerciseFragment, this.exerciseContent);
 
     this.selectableClasses = selectableClasses;
     this.umlExerciseTextParts = textParts;

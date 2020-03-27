@@ -109,7 +109,6 @@ object SqlTSTypes extends ToolTSInterfaceTypes {
   }
 
   val exported: Seq[TypescriptNamedType] = Seq(
-    sqlExerciseContentTSI.get,
     sqlQueryResultTSI.get,
     sqlResultTSI.get
   )

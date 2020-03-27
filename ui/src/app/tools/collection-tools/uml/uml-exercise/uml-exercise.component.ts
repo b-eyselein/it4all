@@ -1,7 +1,9 @@
 import {Component, Input} from '@angular/core';
-import {IExercise} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {UmlExerciseContentSolveFieldsFragment} from "../../../../_services/apollo_services";
+import {
+  ExerciseSolveFieldsFragment,
+  UmlExerciseContentSolveFieldsFragment
+} from "../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-uml-exercise',
@@ -9,9 +11,8 @@ import {UmlExerciseContentSolveFieldsFragment} from "../../../../_services/apoll
 })
 export class UmlExerciseComponent {
 
-  @Input() exercise: IExercise;
   @Input() part: ToolPart;
-
+  @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() umlExerciseContent: UmlExerciseContentSolveFieldsFragment;
 
 }

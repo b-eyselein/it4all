@@ -1,10 +1,15 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {ApiService} from '../../_services/api.service';
-import {IRegexCompleteResult, IRegexExerciseContent} from '../regex-interfaces';
+import {IRegexCompleteResult} from '../regex-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
 import {IExercise} from '../../../../_interfaces/models';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {
+  ExerciseSolveFieldsFragment,
+  RegexExerciseContentSolveFieldsFragment
+} from "../../../../_services/apollo_services";
+import {ToolPart} from "../../../../_interfaces/tool";
 
 @Component({
   selector: 'it4all-regex-exercise',
@@ -12,9 +17,9 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 })
 export class RegexExerciseComponent extends ComponentWithExercise<string, IRegexCompleteResult> implements OnInit {
 
-  readonly part = RegexExercisePart;
-
-  @Input() exercise: IExercise;
+  @Input() part: ToolPart;
+  @Input() exerciseFragment: ExerciseSolveFieldsFragment;
+  @Input() regexExerciseContent: RegexExerciseContentSolveFieldsFragment;
 
   solution = '';
 
@@ -25,7 +30,7 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
   }
 
   ngOnInit(): void {
-    this.loadOldSolutionAbstract(this.exercise, RegexExercisePart)
+    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, RegexExercisePart)
       .then((oldSol) => this.solution = oldSol ? oldSol : '');
   }
 
@@ -34,8 +39,7 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
   }
 
   get sampleSolutions(): string[] {
-    const exContent = this.exercise.content as IRegexExerciseContent;
-    return exContent.sampleSolutions.map((sample) => sample.sample);
+    return this.regexExerciseContent.regexSampleSolutions.map((s) => s.sample);
   }
 
   correct(): void {
@@ -44,7 +48,7 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
       return;
     }
 
-    this.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, this.part);
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part);
   }
 
   // FIXME: make directive?

@@ -1,4 +1,10 @@
 
+export interface IXmlSolution {
+  document: string;
+  grammar: string;
+}
+
+
 export interface IXmlCompleteResult {
   successType: SuccessType;
   documentResult: IXmlError[];
@@ -36,13 +42,6 @@ export interface IPoints {
 }
 
 
-export interface IXmlExerciseContent {
-  grammarDescription: string;
-  rootNode: string;
-  sampleSolutions: IXmlSampleSolution[];
-}
-
-
 export interface IXmlError {
   errorType: XmlErrorType;
   errorMessage: string;
@@ -57,18 +56,6 @@ export interface IElementLineMatchingResult {
   allMatches: IElementLineMatch[];
   points: number;
   maxPoints: number;
-}
-
-
-export interface IXmlSolution {
-  document: string;
-  grammar: string;
-}
-
-
-export interface IXmlSampleSolution {
-  id: number;
-  sample: IXmlSolution;
 }
 
 export type XmlErrorType = ("FATAL" | "ERROR" | "WARNING");

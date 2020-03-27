@@ -3,12 +3,15 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
-import {IXmlCompleteResult, IXmlExerciseContent, IXmlSolution} from '../xml-interfaces';
-import {IExercise} from '../../../../_interfaces/models';
+import {IXmlCompleteResult, IXmlSolution} from '../xml-interfaces';
 import {IExerciseFile} from '../../web/web-interfaces';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
+import {
+  ExerciseSolveFieldsFragment,
+  XmlExerciseContentSolveFieldsFragment
+} from "../../../../_services/apollo_services";
 
 function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -28,8 +31,10 @@ function getXmlDocumentContent(rootNode: string): string {
 })
 export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IXmlCompleteResult> implements OnInit {
 
-  @Input() exercise: IExercise;
+
   @Input() part: ToolPart;
+  @Input() exerciseFragment: ExerciseSolveFieldsFragment;
+  @Input() xmlExerciseContent: XmlExerciseContentSolveFieldsFragment;
 
   isGrammarPart: boolean;
 
@@ -43,24 +48,23 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
   }
 
   ngOnInit() {
-    const exerciseContent = this.exercise.content as IXmlExerciseContent;
+    const rootNode = this.xmlExerciseContent.rootNode;
 
     this.isGrammarPart = this.part.id === 'grammar';
 
-    const grammarFileName = `${exerciseContent.rootNode}.dtd`;
+    const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
       name: grammarFileName,
-      content: this.isGrammarPart ?
-        getXmlGrammarContent(exerciseContent.rootNode) : (exerciseContent.sampleSolutions[0].sample as IXmlSolution).grammar,
+      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : (this.xmlExerciseContent.xmlSampleSolutions[0].sample as IXmlSolution).grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
       resourcePath: grammarFileName
     };
 
-    const documentFileName = `${exerciseContent.rootNode}.xml`;
+    const documentFileName = `${rootNode}.xml`;
     this.documentFile = {
       name: documentFileName,
-      content: getXmlDocumentContent(exerciseContent.rootNode),
+      content: getXmlDocumentContent(rootNode),
       fileType: 'xml',
       editable: !this.isGrammarPart,
       resourcePath: documentFileName
@@ -68,7 +72,7 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
 
     this.exerciseFiles = [this.grammarFile, this.documentFile];
 
-    this.loadOldSolutionAbstract(this.exercise, this.part)
+    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part)
       .then((oldSol) => {
         if (oldSol) {
           this.grammarFile.content = oldSol.grammar;
@@ -81,7 +85,7 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
   }
 
   correct(): void {
-    this.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, this.part);
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part);
   }
 
   protected getSolution(): IXmlSolution {
@@ -92,12 +96,11 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
   }
 
   get sampleSolutions(): IXmlSolution[] {
-    const exContent = this.exercise.content as IXmlExerciseContent;
-    return exContent.sampleSolutions.map((sample) => sample.sample);
+    return this.xmlExerciseContent.xmlSampleSolutions.map((sample) => sample.sample);
   }
 
   get grammarDescription(): string {
-    return (this.exercise.content as IXmlExerciseContent).grammarDescription;
+    return this.xmlExerciseContent.grammarDescription;
   }
 
 }

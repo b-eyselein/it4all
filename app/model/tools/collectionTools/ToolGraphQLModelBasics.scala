@@ -7,6 +7,8 @@ trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent] {
 
   protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
 
+  protected val KeyValueObjectType: ObjectType[Unit, KeyValueObject] = deriveObjectType()
+
   protected def sampleSolutionType[SolType](
     name: String,
     SolTypeType: OutputType[SolType]

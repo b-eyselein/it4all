@@ -105,7 +105,6 @@ object UmlTSTypes extends ToolTSInterfaceTypes {
 
   val exported: Seq[TypescriptNamedType] = Seq(
     umlClassDiagramTSI.get,
-    umlExerciseContentTSI.get,
     umlCompleteResultTSI.get
   )
 

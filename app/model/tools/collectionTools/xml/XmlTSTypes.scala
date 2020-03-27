@@ -11,12 +11,14 @@ import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
 
 object XmlTSTypes extends ToolTSInterfaceTypes {
 
+  /*
   private val xmlExerciseContentTSI: TSIType[XmlExerciseContent] = {
     implicit val xsst: TSIType[SampleSolution[XmlSolution]] =
       sampleSolutionTSI("Xml", TSType.fromCaseClass[XmlSolution])
 
     TSType.fromCaseClass
   }
+   */
 
   private val xmlSolutionTSI: TSIType[XmlSolution] = TSType.fromCaseClass
 
@@ -56,7 +58,6 @@ object XmlTSTypes extends ToolTSInterfaceTypes {
   }
 
   val exported: Seq[TypescriptNamedType] = Seq(
-    xmlExerciseContentTSI.get,
     xmlSolutionTSI.get,
     xmlCompleteResultTSI.get
   )

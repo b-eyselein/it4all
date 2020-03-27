@@ -1,8 +1,8 @@
 package model.tools.collectionTools.uml
 
-import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, deriveEnumType, deriveObjectType}
-import sangria.schema.{EnumType, ObjectType}
+import model.tools.collectionTools.{KeyValueObject, SampleSolution, ToolGraphQLModelBasics}
+import sangria.macros.derive.{ReplaceField, deriveEnumType, deriveObjectType}
+import sangria.schema.{EnumType, ListType, ObjectType, Field}
 
 object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent] {
 
@@ -52,7 +52,16 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent] {
     implicit val sampleSolType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
       sampleSolutionType("Uml", umlClassDiagramType)
 
-    deriveObjectType(ExcludeFields("toIgnore", "mappings"))
+    deriveObjectType(
+      ReplaceField(
+        "mappings",
+        Field(
+          "mappings",
+          ListType(KeyValueObjectType),
+          resolve = context => context.value.mappings.map { case (key, value) => KeyValueObject(key, value) }.toList
+        )
+      )
+    )
   }
 
 }

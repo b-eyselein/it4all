@@ -1,15 +1,26 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
-import {IExercise} from '../../../_interfaces/models';
 import {distinctStringArray} from '../../../helpers';
-import {IKeyValueObject, IUmlClassDiagram, IUmlExerciseContent} from './uml-interfaces';
+import {
+  ExerciseSolveFieldsFragment,
+  KeyValueObject,
+  UmlExerciseContentSolveFieldsFragment
+} from "../../../_services/apollo_services";
 
 export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
 
-export const UmlDiagramDrawingHelpPart: ToolPart = {name: 'Diagramm zeichnen mit Hilfe', id: 'diagramDrawingHelp', disabled: true};
+export const UmlDiagramDrawingHelpPart: ToolPart = {
+  name: 'Diagramm zeichnen mit Hilfe',
+  id: 'diagramDrawingHelp',
+  disabled: true
+};
 
 const UmlDiagramDrawingPart: ToolPart = {name: 'Diagramm zeichnen', id: 'diagramDrawing', disabled: true};
 
-export const UmlMemberAllocationPart: ToolPart = {name: 'Zuordnung der Attribute und Methoden', id: 'memberAllocation', disabled: true};
+export const UmlMemberAllocationPart: ToolPart = {
+  name: 'Zuordnung der Attribute und Methoden',
+  id: 'memberAllocation',
+  disabled: true
+};
 
 export const UmlTool: CollectionTool = new class UmlToolClass extends CollectionTool {
   constructor() {
@@ -39,7 +50,7 @@ export function splitExerciseText(exerciseText: string): string[] {
     .filter((s) => s.length > 0);
 }
 
-export function replaceWithMapping(mappings: IKeyValueObject[], str: string): string {
+export function replaceWithMapping(mappings: KeyValueObject[], str: string): string {
   const maybeMapping = mappings.find((m) => m.key === str);
   return maybeMapping ? maybeMapping.value : str;
 }
@@ -48,9 +59,10 @@ export function isSelectable(toIgnore: string[], s: string): boolean {
   return s.match(capWordTextSplitRegex) && !toIgnore.includes(s);
 }
 
-export function getUmlExerciseTextParts(exercise: IExercise): { selectableClasses: SelectableClass[], textParts: UmlExerciseTextPart[] } {
-
-  const exerciseContent = exercise.content as IUmlExerciseContent;
+export function getUmlExerciseTextParts(
+  exercise: ExerciseSolveFieldsFragment,
+  exerciseContent: UmlExerciseContentSolveFieldsFragment
+): { selectableClasses: SelectableClass[], textParts: UmlExerciseTextPart[] } {
 
   const splitText = splitExerciseText(exercise.text);
 
@@ -60,7 +72,7 @@ export function getUmlExerciseTextParts(exercise: IExercise): { selectableClasse
       .map((s) => replaceWithMapping(exerciseContent.mappings, s))
   );
 
-  const sampleSolution = exerciseContent.sampleSolutions[0].sample as IUmlClassDiagram;
+  const sampleSolution = exerciseContent.umlSampleSolutions[0].sample;
 
   const selectableClasses = allBaseForms.map<SelectableClass>((name) => {
       return {

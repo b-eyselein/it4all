@@ -10,8 +10,6 @@ object WebTSTypes extends ToolTSInterfaceTypes {
 
   // TODO: do not remove this import: import nl.codestar.scalatsi.TypescriptType.TSInterface
 
-  import nl.codestar.scalatsi.TypescriptType.TSInterface
-
   private val jsActionTypeTSType: TSType[JsActionType] = enumTsType(JsActionType)
 
   private val jsTaskTSType: TSIType[JsTask] = {
@@ -62,7 +60,6 @@ object WebTSTypes extends ToolTSInterfaceTypes {
   }
 
   val exported: Seq[TypescriptNamedType] = Seq(
-    webExerciseContentTSI.get,
     webCompleteResultTSI.get
   )
 

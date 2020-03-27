@@ -1,17 +1,4 @@
 
-export interface ISiteSpec {
-  fileName: string;
-  htmlTasks: IHtmlTask[];
-  jsTasks: IJsTask[];
-}
-
-
-export interface IWebSampleSolution {
-  id: number;
-  sample: IExerciseFile[];
-}
-
-
 export interface IGradedJsHtmlElementSpecResult {
   id: number;
   success: SuccessType;
@@ -34,41 +21,12 @@ export interface IGradedTextResult {
 }
 
 
-export interface IJsTask {
-  id: number;
-  text: string;
-  preConditions: IJsHtmlElementSpec[];
-  action: IJsAction;
-  postConditions: IJsHtmlElementSpec[];
-}
-
-
-export interface IJsHtmlElementSpec {
-  id: number;
-  xpathQuery: string;
-  awaitedTagName: string;
-  awaitedTextContent?: string;
-  attributes: { [ key: string ]: string };
-}
-
-
-export interface IHtmlTask {
-  id: number;
-  text: string;
-  xpathQuery: string;
-  awaitedTagName: string;
-  awaitedTextContent?: string;
-  attributes: { [ key: string ]: string };
-}
-
-
-export interface IExerciseFile {
-  name: string;
-  resourcePath: string;
-  fileType: string;
-  editable: boolean;
-  content: string;
-  active?: boolean;
+export interface IWebCompleteResult {
+  gradedHtmlTaskResults: IGradedHtmlTaskResult[];
+  gradedJsTaskResults: IGradedJsTaskResult[];
+  points: IPoints;
+  maxPoints: IPoints;
+  solutionSaved: boolean;
 }
 
 
@@ -116,20 +74,3 @@ export interface IJsAction {
 }
 
 export type SuccessType = ("ERROR" | "NONE" | "PARTIALLY" | "COMPLETE");
-
-export interface IWebCompleteResult {
-  gradedHtmlTaskResults: IGradedHtmlTaskResult[];
-  gradedJsTaskResults: IGradedJsTaskResult[];
-  points: IPoints;
-  maxPoints: IPoints;
-  solutionSaved: boolean;
-}
-
-
-export interface IWebExerciseContent {
-  htmlText?: string;
-  jsText?: string;
-  siteSpec: ISiteSpec;
-  files: IExerciseFile[];
-  sampleSolutions: IWebSampleSolution[];
-}

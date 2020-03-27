@@ -1,8 +1,8 @@
 package model.tools.collectionTools.regex
 
 import model.core.matching.MatchType
+import model.tools.collectionTools.ToolTSInterfaceTypes
 import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
-import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
 import nl.codestar.scalatsi.TypescriptType.{TSNumber, TSString, TypescriptNamedType}
 import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
 
@@ -11,15 +11,6 @@ import scala.util.matching.Regex.{Match => RegexMatch}
 object RegexTSTypes extends ToolTSInterfaceTypes {
 
   private val regexCorrectionTypeTsType: TSType[RegexCorrectionType] = enumTsType(RegexCorrectionTypes)
-
-  private val regexExerciseContentTSI: TSIType[RegexExerciseContent] = {
-    implicit val ssst: TSIType[SampleSolution[String]]   = sampleSolutionTSI("Regex", TSType(TSString))
-    implicit val rmtdt: TSIType[RegexMatchTestData]      = TSType.fromCaseClass
-    implicit val retdt: TSIType[RegexExtractionTestData] = TSType.fromCaseClass
-    implicit val rctt: TSType[RegexCorrectionType]       = regexCorrectionTypeTsType
-
-    TSType.fromCaseClass
-  }
 
   private val regexMatchingEvaluationResultTSI: TSIType[RegexMatchingEvaluationResult] = {
     implicit val bcrt: TSType[BinaryClassificationResultType] = enumTsType(BinaryClassificationResultTypes)
@@ -53,7 +44,6 @@ object RegexTSTypes extends ToolTSInterfaceTypes {
   }
 
   val exported: Seq[TypescriptNamedType] = Seq(
-    regexExerciseContentTSI.get,
     regexCompleteResultTSI.get
   )
 

@@ -1,7 +1,6 @@
 import {TabsComponent} from '../../../shared/tabs/tabs.component';
 import {Directive, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {TabComponent} from '../../../shared/tab/tab.component';
-import {IExercise} from '../../../_interfaces/models';
 import {DexieService} from '../../../_services/dexie.service';
 import {ApiService} from '../_services/api.service';
 import {ToolPart} from '../../../_interfaces/tool';
@@ -61,8 +60,8 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
       });
   }
 
-  protected loadOldSolutionAbstract(exercise: IExercise, part: ToolPart): Promise<SolutionType | undefined> {
-    return this.dexieService.getSolution<SolutionType>(exercise.id, exercise.collectionId, exercise.toolId, part.id)
+  protected loadOldSolutionAbstract(exId: number, collId: number, toolId: string, part: ToolPart): Promise<SolutionType | undefined> {
+    return this.dexieService.getSolution<SolutionType>(exId, collId, toolId, part.id)
       .then((dbSol) => dbSol ? dbSol.solution : undefined);
   }
 

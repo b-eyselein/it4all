@@ -73,6 +73,12 @@ export type ImplementationPart = {
   sampleSolFileNames: Array<Scalars['String']>;
 };
 
+export type KeyValueObject = {
+   __typename?: 'KeyValueObject';
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type Lesson = {
    __typename?: 'Lesson';
   id: Scalars['Int'];
@@ -172,10 +178,10 @@ export type SqlExerciseContent = {
 
 export enum SqlExerciseType {
   Select = 'SELECT',
-  Create = 'CREATE',
   Update = 'UPDATE',
   Insert = 'INSERT',
-  Delete = 'DELETE'
+  Delete = 'DELETE',
+  Create = 'CREATE'
 }
 
 export type StringSampleSolution = {
@@ -217,9 +223,9 @@ export type ToolExerciseContentArgs = {
 };
 
 export enum ToolState {
+  Live = 'LIVE',
   Alpha = 'ALPHA',
-  Beta = 'BETA',
-  Live = 'LIVE'
+  Beta = 'BETA'
 }
 
 export type UmlAssociation = {
@@ -271,7 +277,9 @@ export enum UmlClassType {
 
 export type UmlExerciseContent = {
    __typename?: 'UmlExerciseContent';
+  toIgnore: Array<Scalars['String']>;
   sampleSolutions: Array<UmlSampleSolution>;
+  mappings: Array<KeyValueObject>;
 };
 
 export type UmlImplementation = {
@@ -696,15 +704,81 @@ export type ProgExerciseContentSolveFieldsFragment = (
 
 export type RegexExerciseContentSolveFieldsFragment = (
   { __typename?: 'RegexExerciseContent' }
-  & Pick<RegexExerciseContent, 'correctionType'>
+  & { regexSampleSolutions: Array<(
+    { __typename?: 'StringSampleSolution' }
+    & Pick<StringSampleSolution, 'sample'>
+  )> }
 );
 
 export type SqlExerciseContentSolveFieldsFragment = (
   { __typename?: 'SqlExerciseContent' }
   & Pick<SqlExerciseContent, 'hint'>
+  & { sqlSampleSolutions: Array<(
+    { __typename?: 'StringSampleSolution' }
+    & Pick<StringSampleSolution, 'sample'>
+  )> }
 );
 
-export type UmlExerciseContentSolveFieldsFragment = { __typename: 'UmlExerciseContent' };
+export type UmlExerciseContentSolveFieldsFragment = (
+  { __typename?: 'UmlExerciseContent' }
+  & Pick<UmlExerciseContent, 'toIgnore'>
+  & { mappings: Array<(
+    { __typename?: 'KeyValueObject' }
+    & Pick<KeyValueObject, 'key' | 'value'>
+  )>, umlSampleSolutions: Array<(
+    { __typename?: 'UmlSampleSolution' }
+    & { sample: (
+      { __typename?: 'UmlClassDiagram' }
+      & UmlClassDiagramFragment
+    ) }
+  )> }
+);
+
+export type UmlClassDiagramFragment = (
+  { __typename?: 'UmlClassDiagram' }
+  & { classes: Array<(
+    { __typename?: 'UmlClass' }
+    & UmlClassFragment
+  )>, associations: Array<(
+    { __typename?: 'UmlAssociation' }
+    & UmlAssociationFragment
+  )>, implementations: Array<(
+    { __typename?: 'UmlImplementation' }
+    & UmlImplementationFragment
+  )> }
+);
+
+export type UmlClassFragment = (
+  { __typename?: 'UmlClass' }
+  & Pick<UmlClass, 'classType' | 'name'>
+  & { attributes: Array<(
+    { __typename?: 'UmlAttribute' }
+    & UmlAttributeFragment
+  )>, methods: Array<(
+    { __typename?: 'UmlMethod' }
+    & UmlMethodFragment
+  )> }
+);
+
+export type UmlAttributeFragment = (
+  { __typename?: 'UmlAttribute' }
+  & Pick<UmlAttribute, 'isAbstract' | 'isDerived' | 'isStatic' | 'visibility' | 'memberName' | 'memberType'>
+);
+
+export type UmlMethodFragment = (
+  { __typename?: 'UmlMethod' }
+  & Pick<UmlMethod, 'isAbstract' | 'isStatic' | 'visibility' | 'memberName' | 'parameters' | 'memberType'>
+);
+
+export type UmlAssociationFragment = (
+  { __typename?: 'UmlAssociation' }
+  & Pick<UmlAssociation, 'assocType' | 'assocName' | 'firstEnd' | 'firstMult' | 'secondEnd' | 'secondMult'>
+);
+
+export type UmlImplementationFragment = (
+  { __typename?: 'UmlImplementation' }
+  & Pick<UmlImplementation, 'subClass' | 'superClass'>
+);
 
 export type WebExerciseContentSolveFieldsFragment = (
   { __typename?: 'WebExerciseContent' }
@@ -729,7 +803,14 @@ export type WebExerciseContentSolveFieldsFragment = (
 
 export type XmlExerciseContentSolveFieldsFragment = (
   { __typename?: 'XmlExerciseContent' }
-  & Pick<XmlExerciseContent, 'rootNode'>
+  & Pick<XmlExerciseContent, 'rootNode' | 'grammarDescription'>
+  & { xmlSampleSolutions: Array<(
+    { __typename?: 'XmlSampleSolution' }
+    & { sample: (
+      { __typename?: 'XmlSolution' }
+      & Pick<XmlSolution, 'document' | 'grammar'>
+    ) }
+  )> }
 );
 
 export type ExFileAllFragment = (
@@ -802,19 +883,97 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
     ${ExFileAllFragmentDoc}`;
 export const RegexExerciseContentSolveFieldsFragmentDoc = gql`
     fragment RegexExerciseContentSolveFields on RegexExerciseContent {
-  correctionType
+  regexSampleSolutions: sampleSolutions {
+    sample
+  }
 }
     `;
 export const SqlExerciseContentSolveFieldsFragmentDoc = gql`
     fragment SqlExerciseContentSolveFields on SqlExerciseContent {
   hint
+  sqlSampleSolutions: sampleSolutions {
+    sample
+  }
 }
     `;
+export const UmlAttributeFragmentDoc = gql`
+    fragment UmlAttribute on UmlAttribute {
+  isAbstract
+  isDerived
+  isStatic
+  visibility
+  memberName
+  memberType
+}
+    `;
+export const UmlMethodFragmentDoc = gql`
+    fragment UmlMethod on UmlMethod {
+  isAbstract
+  isStatic
+  visibility
+  memberName
+  parameters
+  memberType
+}
+    `;
+export const UmlClassFragmentDoc = gql`
+    fragment UmlClass on UmlClass {
+  classType
+  name
+  attributes {
+    ...UmlAttribute
+  }
+  methods {
+    ...UmlMethod
+  }
+}
+    ${UmlAttributeFragmentDoc}
+${UmlMethodFragmentDoc}`;
+export const UmlAssociationFragmentDoc = gql`
+    fragment UmlAssociation on UmlAssociation {
+  assocType
+  assocName
+  firstEnd
+  firstMult
+  secondEnd
+  secondMult
+}
+    `;
+export const UmlImplementationFragmentDoc = gql`
+    fragment UmlImplementation on UmlImplementation {
+  subClass
+  superClass
+}
+    `;
+export const UmlClassDiagramFragmentDoc = gql`
+    fragment UmlClassDiagram on UmlClassDiagram {
+  classes {
+    ...UmlClass
+  }
+  associations {
+    ...UmlAssociation
+  }
+  implementations {
+    ...UmlImplementation
+  }
+}
+    ${UmlClassFragmentDoc}
+${UmlAssociationFragmentDoc}
+${UmlImplementationFragmentDoc}`;
 export const UmlExerciseContentSolveFieldsFragmentDoc = gql`
     fragment UmlExerciseContentSolveFields on UmlExerciseContent {
-  __typename
+  toIgnore
+  mappings {
+    key
+    value
+  }
+  umlSampleSolutions: sampleSolutions {
+    sample {
+      ...UmlClassDiagram
+    }
+  }
 }
-    `;
+    ${UmlClassDiagramFragmentDoc}`;
 export const WebExerciseContentSolveFieldsFragmentDoc = gql`
     fragment WebExerciseContentSolveFields on WebExerciseContent {
   files {
@@ -836,6 +995,13 @@ export const WebExerciseContentSolveFieldsFragmentDoc = gql`
 export const XmlExerciseContentSolveFieldsFragmentDoc = gql`
     fragment XmlExerciseContentSolveFields on XmlExerciseContent {
   rootNode
+  grammarDescription
+  xmlSampleSolutions: sampleSolutions {
+    sample {
+      document
+      grammar
+    }
+  }
 }
     `;
 export const LessonFragmentFragmentDoc = gql`

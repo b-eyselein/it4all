@@ -12,22 +12,12 @@ import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {ApiService} from '../../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {HtmlPart} from '../web-tool';
-import {IWebExerciseContent} from '../web-interfaces';
 
 describe('WebExerciseComponent', () => {
 
   let component: WebExerciseComponent;
   let fixture: ComponentFixture<WebExerciseComponent>;
 
-  const exerciseContent: IWebExerciseContent = {
-    siteSpec: {
-      jsTasks: [],
-      htmlTasks: [],
-      fileName: ''
-    },
-    files: [],
-    sampleSolutions: []
-  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -45,10 +35,6 @@ describe('WebExerciseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WebExerciseComponent);
     component = fixture.componentInstance;
-    component.exercise = {
-      id: 0, collectionId: 0, toolId: 'web', semanticVersion: {major: 0, minor: 1, patch: 0}, title: '', authors: [], text: '', tags: [],
-      content: exerciseContent
-    };
     component.part = HtmlPart;
     fixture.detectChanges();
   });

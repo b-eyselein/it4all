@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Mar 27 2020 09:32:42 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Fri Mar 27 2020 10:41:45 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -48,6 +48,11 @@ type ImplementationPart {
   files: [ExerciseFile!]!
   implFileName: String!
   sampleSolFileNames: [String!]!
+}
+
+type KeyValueObject {
+  key: String!
+  value: String!
 }
 
 type Lesson {
@@ -132,10 +137,10 @@ type SqlExerciseContent {
 
 enum SqlExerciseType {
   SELECT
-  CREATE
   UPDATE
   INSERT
   DELETE
+  CREATE
 }
 
 type StringSampleSolution {
@@ -159,9 +164,9 @@ type Tool {
 }
 
 enum ToolState {
+  LIVE
   ALPHA
   BETA
-  LIVE
 }
 
 type UmlAssociation {
@@ -208,7 +213,9 @@ enum UmlClassType {
 }
 
 type UmlExerciseContent {
+  toIgnore: [String!]!
   sampleSolutions: [UmlSampleSolution!]!
+  mappings: [KeyValueObject!]!
 }
 
 type UmlImplementation {

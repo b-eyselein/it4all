@@ -6,6 +6,15 @@ export interface IUmlClassDiagram {
 }
 
 
+export interface IAssociationMatchingResult {
+  matchName: string;
+  matchSingularName: string;
+  allMatches: IUmlAssociationMatch[];
+  points: number;
+  maxPoints: number;
+}
+
+
 export interface IUmlImplementationMatch {
   matchType: MatchType;
   userArg?: IUmlImplementation;
@@ -22,6 +31,7 @@ export interface IUmlAssociation {
   secondMult: UmlMultiplicity;
 }
 
+export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
 
 export interface IUmlAssociationMatch {
   matchType: MatchType;
@@ -30,7 +40,16 @@ export interface IUmlAssociationMatch {
   maybeAnalysisResult?: IUmlAssociationAnalysisResult;
 }
 
-export type KeyValueObjectMap = IKeyValueObject[];
+
+export interface IUmlMethod {
+  visibility: UmlVisibility;
+  memberName: string;
+  memberType: string;
+  parameters: string;
+  isStatic: boolean;
+  isAbstract: boolean;
+}
+
 
 export interface IUmlAssociationAnalysisResult {
   endsParallel: boolean;
@@ -51,21 +70,6 @@ export interface IUmlAttributeAnalysisResult {
   correctDerived: boolean;
   abstractCorrect: boolean;
   correctAbstract: boolean;
-}
-
-
-export interface IAssociationMatchingResult {
-  matchName: string;
-  matchSingularName: string;
-  allMatches: IUmlAssociationMatch[];
-  points: number;
-  maxPoints: number;
-}
-
-
-export interface IUmlSampleSolution {
-  id: number;
-  sample: IUmlClassDiagram;
 }
 
 
@@ -102,13 +106,6 @@ export interface IAttributeMatchingResult {
   maxPoints: number;
 }
 
-
-export interface IKeyValueObject {
-  key: string;
-  value: string;
-}
-
-export type UmlMultiplicity = ("SINGLE" | "UNBOUND");
 
 export interface IUmlMethodMatch {
   matchType: MatchType;
@@ -163,23 +160,6 @@ export interface IUmlAttributeMatch {
 
 export type UmlVisibility = ("PUBLIC" | "PACKAGE" | "PROTECTED" | "PRIVATE");
 export type MatchType = ("SUCCESSFUL_MATCH" | "PARTIAL_MATCH" | "UNSUCCESSFUL_MATCH" | "ONLY_USER" | "ONLY_SAMPLE");
-
-export interface IUmlExerciseContent {
-  toIgnore: string[];
-  mappings: KeyValueObjectMap;
-  sampleSolutions: IUmlSampleSolution[];
-}
-
-
-export interface IUmlMethod {
-  visibility: UmlVisibility;
-  memberName: string;
-  memberType: string;
-  parameters: string;
-  isStatic: boolean;
-  isAbstract: boolean;
-}
-
 
 export interface IUmlClassMatchAnalysisResult {
   classTypeCorrect: boolean;

@@ -72,19 +72,11 @@ export interface IColumnMatchingResult {
   maxPoints: number;
 }
 
-export type SqlExerciseType = ("SELECT" | "CREATE" | "UPDATE" | "INSERT" | "DELETE");
 
 export interface ISelectAdditionalComparisons {
   groupByComparison: IGroupByMatchingResult;
   orderByComparison: IOrderByMatchingResult;
   limitComparison: ILimitMatchingResult;
-}
-
-
-export interface ISqlExerciseContent {
-  exerciseType: SqlExerciseType;
-  hint?: string;
-  sampleSolutions: ISqlSampleSolution[];
 }
 
 
@@ -171,12 +163,6 @@ export interface IMatchingResult {
   allMatches: IMatch[];
   points: number;
   maxPoints: number;
-}
-
-
-export interface ISqlSampleSolution {
-  id: number;
-  sample: string;
 }
 
 

@@ -218,15 +218,84 @@ fragment ProgExerciseContentSolveFields on ProgExerciseContent {
 }
 
 fragment RegexExerciseContentSolveFields on RegexExerciseContent {
-  correctionType
+  regexSampleSolutions: sampleSolutions {
+    sample
+  }
 }
 
 fragment SqlExerciseContentSolveFields on SqlExerciseContent {
   hint
+  sqlSampleSolutions: sampleSolutions{
+    sample
+  }
 }
 
 fragment UmlExerciseContentSolveFields on UmlExerciseContent {
-  __typename
+  toIgnore
+  mappings {
+    key
+    value
+  }
+  umlSampleSolutions: sampleSolutions {
+    sample {
+      ...UmlClassDiagram
+    }
+  }
+}
+
+fragment UmlClassDiagram on UmlClassDiagram {
+  classes {
+    ...UmlClass
+  }
+  associations {
+    ...UmlAssociation
+  }
+  implementations{
+    ...UmlImplementation
+  }
+}
+
+fragment UmlClass on UmlClass {
+  classType
+  name
+  attributes {
+    ... UmlAttribute
+  }
+  methods {
+    ...UmlMethod
+  }
+}
+
+fragment UmlAttribute on UmlAttribute{
+  isAbstract
+  isDerived
+  isStatic
+  visibility
+  memberName
+  memberType
+}
+
+fragment UmlMethod on UmlMethod {
+  isAbstract
+  isStatic
+  visibility
+  memberName
+  parameters
+  memberType
+}
+
+fragment UmlAssociation on UmlAssociation {
+  assocType
+  assocName
+  firstEnd
+  firstMult
+  secondEnd
+  secondMult
+}
+
+fragment UmlImplementation on UmlImplementation {
+  subClass
+  superClass
 }
 
 fragment WebExerciseContentSolveFields on WebExerciseContent {
@@ -248,6 +317,13 @@ fragment WebExerciseContentSolveFields on WebExerciseContent {
 
 fragment XmlExerciseContentSolveFields on XmlExerciseContent {
   rootNode
+  grammarDescription
+  xmlSampleSolutions: sampleSolutions {
+    sample {
+      document
+      grammar
+    }
+  }
 }
 
 

@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise} from '../../../../_interfaces/models';
 import {isAssociation, isImplementation, isMyJointClass, MyJointClass} from '../_model/joint-class-diag-elements';
 import {
   getUmlExerciseTextParts,
@@ -9,7 +8,7 @@ import {
   UmlMemberAllocationPart
 } from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
-import {IUmlClassDiagram, IUmlCompleteResult, IUmlExerciseContent} from '../uml-interfaces';
+import {IUmlClassDiagram, IUmlCompleteResult} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
 
@@ -19,6 +18,10 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
+import {
+  ExerciseSolveFieldsFragment,
+  UmlExerciseContentSolveFieldsFragment
+} from "../../../../_services/apollo_services";
 
 
 enum CreatableClassDiagramObject {
@@ -52,8 +55,9 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUm
 
   readonly nextPart = UmlMemberAllocationPart;
 
-  @Input() exercise: IExercise;
   @Input() part: ToolPart;
+  @Input() exerciseFragment: ExerciseSolveFieldsFragment;
+  @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
 
   withHelp: boolean;
 
@@ -86,7 +90,7 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUm
       {name: 'Vererbung', key: CreatableClassDiagramObject.Implementation, selected: false}
     ];
 
-    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exercise);
+    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exerciseFragment, this.exerciseContent);
 
     this.selectableClasses = selectableClasses;
     this.umlExerciseTextParts = textParts;
@@ -103,13 +107,12 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUm
 
     // load classes
 
-    this.loadOldSolutionAbstract(this.exercise, this.part)
+    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part)
       .then((oldSol) => {
         if (oldSol) {
           this.loadClassDiagram(oldSol);
         } else {
-          const exContent = this.exercise.content as IUmlExerciseContent;
-          this.loadClassDiagram(exContent.sampleSolutions[0].sample as ExportedUmlClassDiagram);
+          this.loadClassDiagram(this.exerciseContent.umlSampleSolutions[0].sample as ExportedUmlClassDiagram);
         }
       });
   }
@@ -251,12 +254,11 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUm
   }
 
   get sampleSolutions(): IUmlClassDiagram[] {
-    const exContent = this.exercise.content as IUmlExerciseContent;
-    return exContent.sampleSolutions.map((sample) => sample.sample);
+    return this.exerciseContent.umlSampleSolutions.map((sample) => sample.sample);
   }
 
   correct(): void {
-    super.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, this.part);
+    super.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part);
     this.corrected = true;
   }
 
