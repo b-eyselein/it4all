@@ -1,22 +1,24 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
-import {CollectionsGQL, CollectionsQuery} from "../../../_services/apollo_services";
+import {CollectionListGQL, CollectionListQuery} from "../../../_services/apollo_services";
 
 @Component({templateUrl: './collections-list.component.html'})
-export class CollectionsListComponent extends ComponentWithCollectionTool implements OnInit {
+export class CollectionsListComponent implements OnInit {
 
-  collectionsQuery: CollectionsQuery;
+  collectionListQuery: CollectionListQuery;
 
-  constructor(protected route: ActivatedRoute, private collectionsGQL: CollectionsGQL) {
-    super(route);
+  constructor(protected route: ActivatedRoute, private collectionsGQL: CollectionListGQL) {
   }
 
   ngOnInit() {
-    this.collectionsGQL
-      .watch({toolId: this.tool.id})
-      .valueChanges
-      .subscribe(({data}) => this.collectionsQuery = data);
+    this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
+
+      this.collectionsGQL
+        .watch({toolId})
+        .valueChanges
+        .subscribe(({data}) => this.collectionListQuery = data);
+    });
   }
 
 }

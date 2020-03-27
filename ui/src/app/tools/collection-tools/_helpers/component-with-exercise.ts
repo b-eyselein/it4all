@@ -1,5 +1,5 @@
 import {TabsComponent} from '../../../shared/tabs/tabs.component';
-import { QueryList, ViewChild, ViewChildren, Directive } from '@angular/core';
+import {Directive, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {TabComponent} from '../../../shared/tab/tab.component';
 import {IExercise} from '../../../_interfaces/models';
 import {DexieService} from '../../../_services/dexie.service';
@@ -37,7 +37,7 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
     }
   }
 
-  protected correctAbstract(exercise: IExercise, part: ToolPart, logResult: boolean = false, logSolution: boolean = false): void {
+  protected correctAbstract(exId: number, collId: number, toolId: string, part: ToolPart, logResult: boolean = false, logSolution: boolean = false): void {
     this.isCorrecting = true;
 
     const solution: SolutionType = this.getSolution();
@@ -47,9 +47,9 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
     }
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.upsertSolution<SolutionType>(exercise, part.id, solution);
+    this.dexieService.upsertSolution<SolutionType>(exId, collId, toolId, part.id, solution);
 
-    this.apiService.correctSolution<SolutionType, ResultType>(exercise, part.id, solution)
+    this.apiService.correctSolution<SolutionType, ResultType>(exId, collId, toolId, part.id, solution)
       .subscribe((result: ResultType | undefined) => {
         this.isCorrecting = false;
         this.result = result;
@@ -62,7 +62,7 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
   }
 
   protected loadOldSolutionAbstract(exercise: IExercise, part: ToolPart): Promise<SolutionType | undefined> {
-    return this.dexieService.getSolution<SolutionType>(exercise, part.id)
+    return this.dexieService.getSolution<SolutionType>(exercise.id, exercise.collectionId, exercise.toolId, part.id)
       .then((dbSol) => dbSol ? dbSol.solution : undefined);
   }
 

@@ -14,14 +14,14 @@
         <it4all-tab [title]="'Aufgabenstellung'">
           <div class="notification is-light-grey">
             <div class="content">
-              <p>{{exercise?.text}}</p>
+              <p>{{exerciseFragment.text}}</p>
               <ol *ngIf="part.id === 'html'">
-                <li *ngFor="let task of exerciseContent.siteSpec.htmlTasks">
+                <li *ngFor="let task of webExerciseContent.siteSpec.htmlTasks">
                   {{task.text}}
                 </li>
               </ol>
               <p *ngIf="part.id === 'js'">
-                Es gibt insgesamt {{exerciseContent.siteSpec.jsTasks.length}} Testfälle.
+                Es gibt insgesamt {{webExerciseContent.siteSpec.jsTaskCount}} Testfälle.
               </p>
             </div>
           </div>

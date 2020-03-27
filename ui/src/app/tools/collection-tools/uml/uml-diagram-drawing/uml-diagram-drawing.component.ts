@@ -256,7 +256,7 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUm
   }
 
   correct(): void {
-    super.correctAbstract(this.exercise, this.part);
+    super.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, this.part);
     this.corrected = true;
   }
 

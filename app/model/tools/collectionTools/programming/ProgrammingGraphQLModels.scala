@@ -46,7 +46,7 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseConte
 
     implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
 
-    implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType(progSolutionType)
+    implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType("Prog", progSolutionType)
 
     deriveObjectType(
       ExcludeFields("inputTypes", "outputType", "baseData", "sampleTestData", "maybeClassDiagramPart")

@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {AdminLessonIndexGQL, AdminLessonIndexQuery} from "../../_services/apollo_services";
 import {Subscription} from "rxjs";
 
@@ -12,7 +11,7 @@ export class AdminLessonsIndexComponent extends ComponentWithCollectionTool impl
 
   adminLessonIndexQuery: AdminLessonIndexQuery;
 
-  constructor(private route: ActivatedRoute, private adminLessonIndexGQL: AdminLessonIndexGQL, private apiService: ApiService) {
+  constructor(private route: ActivatedRoute, private adminLessonIndexGQL: AdminLessonIndexGQL) {
     super(route);
   }
 

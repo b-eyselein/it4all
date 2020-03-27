@@ -19,7 +19,8 @@
             <p class="card-header-title">{{collection.id}}. {{collection.title}}</p>
           </header>
           <div class="card-content">
-            <div class="has-text-info" *ngIf="collection.exerciseCount > 0">{{collection.exerciseCount}}Aufgaben
+            <div class="has-text-info" *ngIf="collection.exerciseCount > 0">
+              {{collection.exerciseCount}} Aufgaben
             </div>
             <div class="has-text-warning" *ngIf="collection.exerciseCount === 0">Keine Aufgaben!</div>
           </div>

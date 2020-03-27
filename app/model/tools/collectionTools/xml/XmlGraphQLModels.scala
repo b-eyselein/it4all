@@ -9,7 +9,7 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent] {
   private val xmlSolutionType: ObjectType[Unit, XmlSolution] = deriveObjectType()
 
   override val ExContentTypeType: ObjectType[Unit, XmlExerciseContent] = {
-    implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType(xmlSolutionType)
+    implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType("Xml", xmlSolutionType)
 
     deriveObjectType()
   }

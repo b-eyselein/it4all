@@ -1,8 +1,10 @@
-query Collections($toolId: String!) {
+query CollectionList($toolId: String!) {
   tool(toolId: $toolId) {
+    name
     collections {
       id
       title
+      exerciseCount
     }
   }
 }
@@ -83,8 +85,13 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
       }
     }
     exerciseContent(collId: $collId,exId: $exId) {
-      ...WebExerciseContentSolveFields
+      __typename
       ...ProgExerciseContentSolveFields
+      ...RegexExerciseContentSolveFields
+      ...SqlExerciseContentSolveFields
+      ...UmlExerciseContentSolveFields
+      ...WebExerciseContentSolveFields
+      ...XmlExerciseContentSolveFields
     }
   }
 }
@@ -123,6 +130,7 @@ query CollectionToolAdmin($toolId: String!) {
 
 query AdminLessonIndex($toolId: String!) {
   tool(toolId: $toolId) {
+    name
     lessons {
       ...LessonFragment
     }
@@ -182,18 +190,14 @@ fragment fieldsForLink on Exercise {
 }
 
 fragment ExerciseSolveFields on Exercise {
+  id
+  collectionId
+  toolId
   title
   text
 }
 
-fragment WebExerciseContentSolveFields on WebExerciseContent {
-  siteSpec {
-    __typename
-  }
-}
-
 fragment ProgExerciseContentSolveFields on ProgExerciseContent {
-  __typename
   unitTestPart {
     unitTestFiles {
       ...ExFileAll
@@ -204,7 +208,7 @@ fragment ProgExerciseContentSolveFields on ProgExerciseContent {
       ...ExFileAll
     }
   }
-  sampleSolutions {
+  progSampleSolutions: sampleSolutions {
     sample {
       files {
         ...ExFileAll
@@ -212,6 +216,40 @@ fragment ProgExerciseContentSolveFields on ProgExerciseContent {
     }
   }
 }
+
+fragment RegexExerciseContentSolveFields on RegexExerciseContent {
+  correctionType
+}
+
+fragment SqlExerciseContentSolveFields on SqlExerciseContent {
+  hint
+}
+
+fragment UmlExerciseContentSolveFields on UmlExerciseContent {
+  __typename
+}
+
+fragment WebExerciseContentSolveFields on WebExerciseContent {
+  files {
+    ...ExFileAll
+  }
+  siteSpec {
+    htmlTasks {
+      text
+    }
+    jsTaskCount
+  }
+  webSampleSolutions: sampleSolutions {
+    sample {
+      ...ExFileAll
+    }
+  }
+}
+
+fragment XmlExerciseContentSolveFields on XmlExerciseContent {
+  rootNode
+}
+
 
 fragment ExFileAll on ExerciseFile {
   name

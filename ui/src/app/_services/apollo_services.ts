@@ -60,6 +60,11 @@ export type ExTag = {
   title: Scalars['String'];
 };
 
+export type HtmlTask = {
+   __typename?: 'HtmlTask';
+  text: Scalars['String'];
+};
+
 export type ImplementationPart = {
    __typename?: 'ImplementationPart';
   base: Scalars['String'];
@@ -83,7 +88,13 @@ export type ProgExerciseContent = {
   filename: Scalars['String'];
   unitTestPart: UnitTestPart;
   implementationPart: ImplementationPart;
-  sampleSolutions: Array<SampleSolution>;
+  sampleSolutions: Array<ProgSampleSolution>;
+};
+
+export type ProgSampleSolution = {
+   __typename?: 'ProgSampleSolution';
+  id: Scalars['Int'];
+  sample: ProgSolution;
 };
 
 export type ProgSolution = {
@@ -111,7 +122,7 @@ export type RegexExerciseContent = {
    __typename?: 'RegexExerciseContent';
   maxPoints: Scalars['Int'];
   correctionType: RegexCorrectionType;
-  sampleSolutions: Array<SampleSolution>;
+  sampleSolutions: Array<StringSampleSolution>;
   matchTestData: Array<RegexMatchTestData>;
   extractionTestData: Array<RegexExtractionTestData>;
 };
@@ -134,13 +145,7 @@ export type RoseExerciseContent = {
   fieldWidth: Scalars['Int'];
   fieldHeight: Scalars['Int'];
   isMultiplayer: Scalars['Boolean'];
-  sampleSolutions: Array<SampleSolution>;
-};
-
-export type SampleSolution = {
-   __typename?: 'SampleSolution';
-  id: Scalars['Int'];
-  sample: ProgSolution;
+  sampleSolutions: Array<StringSampleSolution>;
 };
 
 export type SemanticVersion = {
@@ -153,6 +158,7 @@ export type SemanticVersion = {
 export type SiteSpec = {
    __typename?: 'SiteSpec';
   fileName: Scalars['String'];
+  htmlTasks: Array<HtmlTask>;
   htmlTaskCount: Scalars['Int'];
   jsTaskCount: Scalars['Int'];
 };
@@ -161,16 +167,22 @@ export type SqlExerciseContent = {
    __typename?: 'SqlExerciseContent';
   exerciseType: SqlExerciseType;
   hint?: Maybe<Scalars['String']>;
-  sampleSolutions: Array<SampleSolution>;
+  sampleSolutions: Array<StringSampleSolution>;
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
-  Insert = 'INSERT',
   Select = 'SELECT',
-  Delete = 'DELETE',
-  Update = 'UPDATE'
+  Create = 'CREATE',
+  Update = 'UPDATE',
+  Insert = 'INSERT',
+  Delete = 'DELETE'
 }
+
+export type StringSampleSolution = {
+   __typename?: 'StringSampleSolution';
+  id: Scalars['Int'];
+  sample: Scalars['String'];
+};
 
 export type Tool = {
    __typename?: 'Tool';
@@ -210,10 +222,91 @@ export enum ToolState {
   Live = 'LIVE'
 }
 
+export type UmlAssociation = {
+   __typename?: 'UmlAssociation';
+  assocType: UmlAssociationType;
+  assocName?: Maybe<Scalars['String']>;
+  firstEnd: Scalars['String'];
+  firstMult: UmlMultiplicity;
+  secondEnd: Scalars['String'];
+  secondMult: UmlMultiplicity;
+};
+
+export enum UmlAssociationType {
+  Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
+  Composition = 'COMPOSITION'
+}
+
+export type UmlAttribute = {
+   __typename?: 'UmlAttribute';
+  visibility: UmlVisibility;
+  memberName: Scalars['String'];
+  memberType: Scalars['String'];
+  isStatic: Scalars['Boolean'];
+  isDerived: Scalars['Boolean'];
+  isAbstract: Scalars['Boolean'];
+};
+
+export type UmlClass = {
+   __typename?: 'UmlClass';
+  classType: UmlClassType;
+  name: Scalars['String'];
+  attributes: Array<UmlAttribute>;
+  methods: Array<UmlMethod>;
+};
+
+export type UmlClassDiagram = {
+   __typename?: 'UmlClassDiagram';
+  classes: Array<UmlClass>;
+  associations: Array<UmlAssociation>;
+  implementations: Array<UmlImplementation>;
+};
+
+export enum UmlClassType {
+  Abstract = 'ABSTRACT',
+  Class = 'CLASS',
+  Interface = 'INTERFACE'
+}
+
 export type UmlExerciseContent = {
    __typename?: 'UmlExerciseContent';
-  sampleSolutions: Array<SampleSolution>;
+  sampleSolutions: Array<UmlSampleSolution>;
 };
+
+export type UmlImplementation = {
+   __typename?: 'UmlImplementation';
+  subClass: Scalars['String'];
+  superClass: Scalars['String'];
+};
+
+export type UmlMethod = {
+   __typename?: 'UmlMethod';
+  visibility: UmlVisibility;
+  memberName: Scalars['String'];
+  memberType: Scalars['String'];
+  parameters: Scalars['String'];
+  isStatic: Scalars['Boolean'];
+  isAbstract: Scalars['Boolean'];
+};
+
+export enum UmlMultiplicity {
+  Single = 'SINGLE',
+  Unbound = 'UNBOUND'
+}
+
+export type UmlSampleSolution = {
+   __typename?: 'UmlSampleSolution';
+  id: Scalars['Int'];
+  sample: UmlClassDiagram;
+};
+
+export enum UmlVisibility {
+  Package = 'PACKAGE',
+  Private = 'PRIVATE',
+  Protected = 'PROTECTED',
+  Public = 'PUBLIC'
+}
 
 export type UnitTestPart = {
    __typename?: 'UnitTestPart';
@@ -245,28 +338,47 @@ export type WebExerciseContent = {
   jsText?: Maybe<Scalars['String']>;
   siteSpec: SiteSpec;
   files: Array<ExerciseFile>;
-  sampleSolutions: Array<SampleSolution>;
+  sampleSolutions: Array<WebSampleSolution>;
+};
+
+export type WebSampleSolution = {
+   __typename?: 'WebSampleSolution';
+  id: Scalars['Int'];
+  sample: Array<ExerciseFile>;
 };
 
 export type XmlExerciseContent = {
    __typename?: 'XmlExerciseContent';
   grammarDescription: Scalars['String'];
   rootNode: Scalars['String'];
-  sampleSolutions: Array<SampleSolution>;
+  sampleSolutions: Array<XmlSampleSolution>;
 };
 
-export type CollectionsQueryVariables = {
+export type XmlSampleSolution = {
+   __typename?: 'XmlSampleSolution';
+  id: Scalars['Int'];
+  sample: XmlSolution;
+};
+
+export type XmlSolution = {
+   __typename?: 'XmlSolution';
+  document: Scalars['String'];
+  grammar: Scalars['String'];
+};
+
+export type CollectionListQueryVariables = {
   toolId: Scalars['String'];
 };
 
 
-export type CollectionsQuery = (
+export type CollectionListQuery = (
   { __typename?: 'Query' }
   & { tool?: Maybe<(
     { __typename?: 'Tool' }
+    & Pick<Tool, 'name'>
     & { collections: Array<(
       { __typename?: 'Collection' }
-      & Pick<Collection, 'id' | 'title'>
+      & Pick<Collection, 'id' | 'title' | 'exerciseCount'>
     )> }
   )> }
 );
@@ -396,12 +508,24 @@ export type ExerciseQuery = (
         & ExerciseSolveFieldsFragment
       )> }
     )>, exerciseContent?: Maybe<(
-      { __typename?: 'ProgExerciseContent' }
+      { __typename: 'ProgExerciseContent' }
       & ProgExerciseContentSolveFieldsFragment
-    ) | { __typename?: 'RegexExerciseContent' } | { __typename?: 'RoseExerciseContent' } | { __typename?: 'SqlExerciseContent' } | { __typename?: 'UmlExerciseContent' } | (
-      { __typename?: 'WebExerciseContent' }
+    ) | (
+      { __typename: 'RegexExerciseContent' }
+      & RegexExerciseContentSolveFieldsFragment
+    ) | { __typename: 'RoseExerciseContent' } | (
+      { __typename: 'SqlExerciseContent' }
+      & SqlExerciseContentSolveFieldsFragment
+    ) | (
+      { __typename: 'UmlExerciseContent' }
+      & UmlExerciseContentSolveFieldsFragment
+    ) | (
+      { __typename: 'WebExerciseContent' }
       & WebExerciseContentSolveFieldsFragment
-    ) | { __typename?: 'XmlExerciseContent' }> }
+    ) | (
+      { __typename: 'XmlExerciseContent' }
+      & XmlExerciseContentSolveFieldsFragment
+    )> }
   )> }
 );
 
@@ -541,16 +665,11 @@ export type FieldsForLinkFragment = (
 
 export type ExerciseSolveFieldsFragment = (
   { __typename?: 'Exercise' }
-  & Pick<Exercise, 'title' | 'text'>
-);
-
-export type WebExerciseContentSolveFieldsFragment = (
-  { __typename?: 'WebExerciseContent' }
-  & { siteSpec: { __typename: 'SiteSpec' } }
+  & Pick<Exercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
 );
 
 export type ProgExerciseContentSolveFieldsFragment = (
-  { __typename: 'ProgExerciseContent' }
+  { __typename?: 'ProgExerciseContent' }
   & { unitTestPart: (
     { __typename?: 'UnitTestPart' }
     & { unitTestFiles: Array<(
@@ -563,8 +682,8 @@ export type ProgExerciseContentSolveFieldsFragment = (
       { __typename?: 'ExerciseFile' }
       & ExFileAllFragment
     )> }
-  ), sampleSolutions: Array<(
-    { __typename?: 'SampleSolution' }
+  ), progSampleSolutions: Array<(
+    { __typename?: 'ProgSampleSolution' }
     & { sample: (
       { __typename?: 'ProgSolution' }
       & { files: Array<(
@@ -573,6 +692,44 @@ export type ProgExerciseContentSolveFieldsFragment = (
       )> }
     ) }
   )> }
+);
+
+export type RegexExerciseContentSolveFieldsFragment = (
+  { __typename?: 'RegexExerciseContent' }
+  & Pick<RegexExerciseContent, 'correctionType'>
+);
+
+export type SqlExerciseContentSolveFieldsFragment = (
+  { __typename?: 'SqlExerciseContent' }
+  & Pick<SqlExerciseContent, 'hint'>
+);
+
+export type UmlExerciseContentSolveFieldsFragment = { __typename: 'UmlExerciseContent' };
+
+export type WebExerciseContentSolveFieldsFragment = (
+  { __typename?: 'WebExerciseContent' }
+  & { files: Array<(
+    { __typename?: 'ExerciseFile' }
+    & ExFileAllFragment
+  )>, siteSpec: (
+    { __typename?: 'SiteSpec' }
+    & Pick<SiteSpec, 'jsTaskCount'>
+    & { htmlTasks: Array<(
+      { __typename?: 'HtmlTask' }
+      & Pick<HtmlTask, 'text'>
+    )> }
+  ), webSampleSolutions: Array<(
+    { __typename?: 'WebSampleSolution' }
+    & { sample: Array<(
+      { __typename?: 'ExerciseFile' }
+      & ExFileAllFragment
+    )> }
+  )> }
+);
+
+export type XmlExerciseContentSolveFieldsFragment = (
+  { __typename?: 'XmlExerciseContent' }
+  & Pick<XmlExerciseContent, 'rootNode'>
 );
 
 export type ExFileAllFragment = (
@@ -606,15 +763,11 @@ export const FieldsForLinkFragmentDoc = gql`
     `;
 export const ExerciseSolveFieldsFragmentDoc = gql`
     fragment ExerciseSolveFields on Exercise {
+  id
+  collectionId
+  toolId
   title
   text
-}
-    `;
-export const WebExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment WebExerciseContentSolveFields on WebExerciseContent {
-  siteSpec {
-    __typename
-  }
 }
     `;
 export const ExFileAllFragmentDoc = gql`
@@ -628,7 +781,6 @@ export const ExFileAllFragmentDoc = gql`
     `;
 export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
     fragment ProgExerciseContentSolveFields on ProgExerciseContent {
-  __typename
   unitTestPart {
     unitTestFiles {
       ...ExFileAll
@@ -639,7 +791,7 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
       ...ExFileAll
     }
   }
-  sampleSolutions {
+  progSampleSolutions: sampleSolutions {
     sample {
       files {
         ...ExFileAll
@@ -648,18 +800,58 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
   }
 }
     ${ExFileAllFragmentDoc}`;
+export const RegexExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment RegexExerciseContentSolveFields on RegexExerciseContent {
+  correctionType
+}
+    `;
+export const SqlExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment SqlExerciseContentSolveFields on SqlExerciseContent {
+  hint
+}
+    `;
+export const UmlExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment UmlExerciseContentSolveFields on UmlExerciseContent {
+  __typename
+}
+    `;
+export const WebExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment WebExerciseContentSolveFields on WebExerciseContent {
+  files {
+    ...ExFileAll
+  }
+  siteSpec {
+    htmlTasks {
+      text
+    }
+    jsTaskCount
+  }
+  webSampleSolutions: sampleSolutions {
+    sample {
+      ...ExFileAll
+    }
+  }
+}
+    ${ExFileAllFragmentDoc}`;
+export const XmlExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment XmlExerciseContentSolveFields on XmlExerciseContent {
+  rootNode
+}
+    `;
 export const LessonFragmentFragmentDoc = gql`
     fragment LessonFragment on Lesson {
   id
   title
 }
     `;
-export const CollectionsDocument = gql`
-    query Collections($toolId: String!) {
+export const CollectionListDocument = gql`
+    query CollectionList($toolId: String!) {
   tool(toolId: $toolId) {
+    name
     collections {
       id
       title
+      exerciseCount
     }
   }
 }
@@ -668,8 +860,8 @@ export const CollectionsDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class CollectionsGQL extends Apollo.Query<CollectionsQuery, CollectionsQueryVariables> {
-    document = CollectionsDocument;
+  export class CollectionListGQL extends Apollo.Query<CollectionListQuery, CollectionListQueryVariables> {
+    document = CollectionListDocument;
     
   }
 export const ExercisesDocument = gql`
@@ -795,14 +987,23 @@ export const ExerciseDocument = gql`
       }
     }
     exerciseContent(collId: $collId, exId: $exId) {
-      ...WebExerciseContentSolveFields
+      __typename
       ...ProgExerciseContentSolveFields
+      ...RegexExerciseContentSolveFields
+      ...SqlExerciseContentSolveFields
+      ...UmlExerciseContentSolveFields
+      ...WebExerciseContentSolveFields
+      ...XmlExerciseContentSolveFields
     }
   }
 }
     ${ExerciseSolveFieldsFragmentDoc}
+${ProgExerciseContentSolveFieldsFragmentDoc}
+${RegexExerciseContentSolveFieldsFragmentDoc}
+${SqlExerciseContentSolveFieldsFragmentDoc}
+${UmlExerciseContentSolveFieldsFragmentDoc}
 ${WebExerciseContentSolveFieldsFragmentDoc}
-${ProgExerciseContentSolveFieldsFragmentDoc}`;
+${XmlExerciseContentSolveFieldsFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

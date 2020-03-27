@@ -4,7 +4,16 @@ import {ApiService} from '../_services/api.service';
 import {IExercise} from '../../../_interfaces/models';
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 import {collectionTools} from '../collection-tools-list';
-import {ExerciseGQL, ExerciseQuery} from "../../../_services/apollo_services";
+import {
+  ExerciseGQL,
+  ExerciseQuery,
+  ProgExerciseContentSolveFieldsFragment,
+  RegexExerciseContentSolveFieldsFragment,
+  SqlExerciseContentSolveFieldsFragment,
+  UmlExerciseContentSolveFieldsFragment,
+  WebExerciseContentSolveFieldsFragment,
+  XmlExerciseContentSolveFieldsFragment
+} from "../../../_services/apollo_services";
 
 @Component({templateUrl: './exercise.component.html'})
 export class ExerciseComponent implements OnInit {
@@ -53,6 +62,34 @@ export class ExerciseComponent implements OnInit {
       .subscribe(({data}) => this.exerciseQuery = data);
 
     this.updateExercise();
+  }
+
+  private get exContent() {
+    return this.exerciseQuery.tool.exerciseContent;
+  }
+
+  get progExerciseContent(): ProgExerciseContentSolveFieldsFragment | undefined {
+    return (this.exContent.__typename === "ProgExerciseContent") ? this.exContent : undefined;
+  }
+
+  get regexExerciseContent(): RegexExerciseContentSolveFieldsFragment | undefined {
+    return (this.exContent.__typename === 'RegexExerciseContent') ? this.exContent : undefined;
+  }
+
+  get sqlExerciseContent(): SqlExerciseContentSolveFieldsFragment | undefined {
+    return (this.exContent.__typename === 'SqlExerciseContent') ? this.exContent : undefined;
+  }
+
+  get umlExerciseContent(): UmlExerciseContentSolveFieldsFragment | undefined {
+    return (this.exContent.__typename === 'UmlExerciseContent') ? this.exContent : undefined;
+  }
+
+  get webExerciseContent(): WebExerciseContentSolveFieldsFragment | undefined {
+    return (this.exContent.__typename === "WebExerciseContent") ? this.exContent : undefined;
+  }
+
+  get xmlExerciseContent(): XmlExerciseContentSolveFieldsFragment | undefined {
+    return (this.exContent.__typename === 'XmlExerciseContent') ? this.exContent : undefined;
   }
 
 }

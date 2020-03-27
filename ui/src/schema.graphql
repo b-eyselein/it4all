@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Mar 26 2020 15:22:57 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Fri Mar 27 2020 09:32:42 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -39,6 +39,10 @@ type ExTag {
   title: String!
 }
 
+type HtmlTask {
+  text: String!
+}
+
 type ImplementationPart {
   base: String!
   files: [ExerciseFile!]!
@@ -59,7 +63,12 @@ type ProgExerciseContent {
   filename: String!
   unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
-  sampleSolutions: [SampleSolution!]!
+  sampleSolutions: [ProgSampleSolution!]!
+}
+
+type ProgSampleSolution {
+  id: Int!
+  sample: ProgSolution!
 }
 
 type ProgSolution {
@@ -79,7 +88,7 @@ enum RegexCorrectionType {
 type RegexExerciseContent {
   maxPoints: Int!
   correctionType: RegexCorrectionType!
-  sampleSolutions: [SampleSolution!]!
+  sampleSolutions: [StringSampleSolution!]!
   matchTestData: [RegexMatchTestData!]!
   extractionTestData: [RegexExtractionTestData!]!
 }
@@ -99,12 +108,7 @@ type RoseExerciseContent {
   fieldWidth: Int!
   fieldHeight: Int!
   isMultiplayer: Boolean!
-  sampleSolutions: [SampleSolution!]!
-}
-
-type SampleSolution {
-  id: Int!
-  sample: ProgSolution!
+  sampleSolutions: [StringSampleSolution!]!
 }
 
 type SemanticVersion {
@@ -115,6 +119,7 @@ type SemanticVersion {
 
 type SiteSpec {
   fileName: String!
+  htmlTasks: [HtmlTask!]!
   htmlTaskCount: Int!
   jsTaskCount: Int!
 }
@@ -122,15 +127,20 @@ type SiteSpec {
 type SqlExerciseContent {
   exerciseType: SqlExerciseType!
   hint: String
-  sampleSolutions: [SampleSolution!]!
+  sampleSolutions: [StringSampleSolution!]!
 }
 
 enum SqlExerciseType {
-  CREATE
-  INSERT
   SELECT
-  DELETE
+  CREATE
   UPDATE
+  INSERT
+  DELETE
+}
+
+type StringSampleSolution {
+  id: Int!
+  sample: String!
 }
 
 type Tool {
@@ -154,8 +164,82 @@ enum ToolState {
   LIVE
 }
 
+type UmlAssociation {
+  assocType: UmlAssociationType!
+  assocName: String
+  firstEnd: String!
+  firstMult: UmlMultiplicity!
+  secondEnd: String!
+  secondMult: UmlMultiplicity!
+}
+
+enum UmlAssociationType {
+  AGGREGATION
+  ASSOCIATION
+  COMPOSITION
+}
+
+type UmlAttribute {
+  visibility: UmlVisibility!
+  memberName: String!
+  memberType: String!
+  isStatic: Boolean!
+  isDerived: Boolean!
+  isAbstract: Boolean!
+}
+
+type UmlClass {
+  classType: UmlClassType!
+  name: String!
+  attributes: [UmlAttribute!]!
+  methods: [UmlMethod!]!
+}
+
+type UmlClassDiagram {
+  classes: [UmlClass!]!
+  associations: [UmlAssociation!]!
+  implementations: [UmlImplementation!]!
+}
+
+enum UmlClassType {
+  ABSTRACT
+  CLASS
+  INTERFACE
+}
+
 type UmlExerciseContent {
-  sampleSolutions: [SampleSolution!]!
+  sampleSolutions: [UmlSampleSolution!]!
+}
+
+type UmlImplementation {
+  subClass: String!
+  superClass: String!
+}
+
+type UmlMethod {
+  visibility: UmlVisibility!
+  memberName: String!
+  memberType: String!
+  parameters: String!
+  isStatic: Boolean!
+  isAbstract: Boolean!
+}
+
+enum UmlMultiplicity {
+  SINGLE
+  UNBOUND
+}
+
+type UmlSampleSolution {
+  id: Int!
+  sample: UmlClassDiagram!
+}
+
+enum UmlVisibility {
+  PACKAGE
+  PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestPart {
@@ -185,11 +269,26 @@ type WebExerciseContent {
   jsText: String
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
-  sampleSolutions: [SampleSolution!]!
+  sampleSolutions: [WebSampleSolution!]!
+}
+
+type WebSampleSolution {
+  id: Int!
+  sample: [ExerciseFile!]!
 }
 
 type XmlExerciseContent {
   grammarDescription: String!
   rootNode: String!
-  sampleSolutions: [SampleSolution!]!
+  sampleSolutions: [XmlSampleSolution!]!
+}
+
+type XmlSampleSolution {
+  id: Int!
+  sample: XmlSolution!
+}
+
+type XmlSolution {
+  document: String!
+  grammar: String!
 }

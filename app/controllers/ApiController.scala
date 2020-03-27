@@ -45,14 +45,19 @@ class ApiController @Inject() (
       .execute(GraphQLModel.schema, query, userContext = tables, operationName = operationName, variables = variables)
       .map(Ok(_))
       .recover {
-        case error: QueryAnalysisError => BadRequest(error.resolveError)
-        case error: ErrorWithResolver  => InternalServerError(error.resolveError)
+        case error: QueryAnalysisError =>
+          println(error)
+          BadRequest(error.resolveError)
+        case error: ErrorWithResolver =>
+          println(error)
+          InternalServerError(error.resolveError)
       }
 
   def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest]) { implicit request =>
     QueryParser.parse(request.body.query) match {
-      case Success(queryAst) => executeGraphQLQuery(queryAst, request.body.operationName, request.body.variables.getOrElse(Json.obj()))
-      case Failure(error)    => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+      case Success(queryAst) =>
+        executeGraphQLQuery(queryAst, request.body.operationName, request.body.variables.getOrElse(Json.obj()))
+      case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
     }
   }
 

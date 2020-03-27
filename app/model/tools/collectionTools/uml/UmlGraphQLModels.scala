@@ -49,9 +49,8 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent] {
   }
 
   override val ExContentTypeType: ObjectType[Unit, UmlExerciseContent] = {
-    implicit val sampleSolType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] = sampleSolutionType(
-      umlClassDiagramType
-    )
+    implicit val sampleSolType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
+      sampleSolutionType("Uml", umlClassDiagramType)
 
     deriveObjectType(ExcludeFields("toIgnore", "mappings"))
   }

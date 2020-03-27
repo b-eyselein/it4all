@@ -81,7 +81,7 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
   }
 
   correct(): void {
-    this.correctAbstract(this.exercise, this.part);
+    this.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, this.part);
   }
 
   protected getSolution(): IXmlSolution {

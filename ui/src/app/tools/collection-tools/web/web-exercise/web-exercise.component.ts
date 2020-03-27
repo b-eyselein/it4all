@@ -1,11 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExercise} from '../../../../_interfaces/models';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
-import {IExerciseFile, IWebCompleteResult, IWebExerciseContent} from '../web-interfaces';
+import {IExerciseFile, IWebCompleteResult} from '../web-interfaces';
+import {
+  ExerciseSolveFieldsFragment,
+  WebExerciseContentSolveFieldsFragment
+} from "../../../../_services/apollo_services";
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
@@ -15,10 +18,10 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 })
 export class WebExerciseComponent extends ComponentWithExercise<IExerciseFile[], IWebCompleteResult> implements OnInit {
 
-  @Input() exercise: IExercise;
+  @Input() exerciseFragment: ExerciseSolveFieldsFragment;
+  @Input() webExerciseContent: WebExerciseContentSolveFieldsFragment;
   @Input() part: ToolPart;
 
-  exerciseContent: IWebExerciseContent;
   exerciseFiles: IExerciseFile[] = [];
 
   constructor(apiService: ApiService, dexieService: DexieService) {
@@ -26,15 +29,14 @@ export class WebExerciseComponent extends ComponentWithExercise<IExerciseFile[],
   }
 
   ngOnInit(): void {
-    this.exerciseContent = this.exercise.content as IWebExerciseContent;
-    this.exerciseFiles = this.exerciseContent.files;
+    this.exerciseFiles = this.webExerciseContent.files;
 
-    this.dexieService.getSolution<IExerciseFile[]>(this.exercise, this.part.id)
+    this.dexieService.getSolution<IExerciseFile[]>(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part.id)
       .then((oldSolution: DbSolution<IExerciseFile[]> | undefined) => this.exerciseFiles = oldSolution ? oldSolution.solution : []);
   }
 
   correct(): void {
-    this.correctAbstract(this.exercise, this.part);
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part);
   }
 
   protected getSolution(): IExerciseFile[] {
@@ -42,8 +44,7 @@ export class WebExerciseComponent extends ComponentWithExercise<IExerciseFile[],
   }
 
   get sampleSolutions(): IExerciseFile[][] {
-    const exContent = this.exercise.content as IWebExerciseContent;
-    return exContent.sampleSolutions.map((sample) => sample.sample);
+    return this.webExerciseContent.webSampleSolutions.map((s) => s.sample);
   }
 
 }

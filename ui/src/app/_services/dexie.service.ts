@@ -65,13 +65,13 @@ export class DexieService extends Dexie {
     this.solutions = this.table('solutions');
   }
 
-  getSolution<T>(exercise: IExercise, partId: string): Dexie.Promise<DbSolution<T> | undefined> {
-    return this.solutions.get([exercise.toolId, exercise.collectionId, exercise.id, partId]);
+  getSolution<T>(exId: number, collId: number, toolId: string, partId: string): Dexie.Promise<DbSolution<T> | undefined> {
+    return this.solutions.get([toolId, collId, exId, partId]);
   }
 
-  upsertSolution<T>(exercise: IExercise, partId: string, solution: T): Dexie.Promise<[string, number, number, string]> {
+  upsertSolution<T>(exId: number, collId: number, toolId: string, partId: string, solution: T): Dexie.Promise<[string, number, number, string]> {
     return this.solutions.put({
-      exId: exercise.id, collId: exercise.collectionId, toolId: exercise.toolId, partId, solution
+      exId, collId, toolId, partId, solution
     });
   }
 

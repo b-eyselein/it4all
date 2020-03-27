@@ -1,26 +1,33 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">Tool &quot;{{tool.name}}&quot;: Sammlungen</h1>
+  <ng-container *ngIf="collectionListQuery; else loadingDataBlock">
 
-  <div class="buttons">
-    <a class="button is-primary is-fullwidth" routerLink="..">Zurück zum Tool</a>
-  </div>
+    <h1 class="title is-3 has-text-centered">Tool &quot;{{collectionListQuery.tool.name}}&quot;: Sammlungen</h1>
 
-  <br>
-
-  <div class="columns is-multiline" *ngIf="collectionsQuery">
-    <div class="column is-one-quarter" *ngFor="let coll of collectionsQuery.tool.collections">
-
-      <div class="card">
-        <header class="card-header">
-          <p class="card-header-title is-centered">{{coll.id}}. {{coll.title}}</p>
-        </header>
-        <div class="card-content"></div>
-        <footer class="card-footer">
-          <a class="card-footer-item" [routerLink]="[coll.id]">Zur Sammlung</a>
-        </footer>
-      </div>
-
+    <div class="buttons">
+      <a class="button is-primary is-fullwidth" routerLink="..">Zurück zum Tool</a>
     </div>
-  </div>
 
+    <br>
+
+    <div class="columns is-multiline">
+      <div class="column is-one-quarter" *ngFor="let coll of collectionListQuery.tool.collections">
+
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title is-centered">{{coll.id}}. {{coll.title}}</p>
+          </header>
+          <div class="card-content">{{coll.exerciseCount}} Aufgaben</div>
+          <footer class="card-footer">
+            <a class="card-footer-item" [routerLink]="[coll.id]">Zur Sammlung</a>
+          </footer>
+        </div>
+
+      </div>
+    </div>
+
+  </ng-container>
 </div>
+
+<ng-template #loadingDataBlock>
+  <div class="nofitication is-primary has-text-centered">Lade Daten...</div>
+</ng-template>

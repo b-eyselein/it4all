@@ -12,6 +12,8 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 })
 export class RegexExerciseComponent extends ComponentWithExercise<string, IRegexCompleteResult> implements OnInit {
 
+  readonly part = RegexExercisePart;
+
   @Input() exercise: IExercise;
 
   solution = '';
@@ -42,7 +44,7 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
       return;
     }
 
-    this.correctAbstract(this.exercise, RegexExercisePart);
+    this.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, this.part);
   }
 
   // FIXME: make directive?
