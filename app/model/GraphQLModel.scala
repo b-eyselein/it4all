@@ -4,8 +4,10 @@ import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools._
 import model.tools.randomTools.RandomExerciseToolMain
 import model.tools.{ToolList, ToolState}
+import play.api.libs.json.Format
 import sangria.macros.derive._
 import sangria.schema._
+import sangria.marshalling.playJson._
 
 object GraphQLModel {
 
@@ -36,7 +38,7 @@ object GraphQLModel {
 
   private val ExContentType = UnionType(
     "ExContent",
-    types = toolValues.map(_.ExContentTypeType)
+    types = toolValues.map(_.graphQlModels.ExContentTypeType)
   )
 
   private val ExerciseType: ObjectType[Unit, Exercise] = deriveObjectType(
@@ -138,6 +140,27 @@ object GraphQLModel {
     )
   )
 
-  val schema: Schema[ExerciseTableDefs, Unit] = Schema(QueryType)
+  private val MutationType = ObjectType(
+    "Mutation",
+    fields = toolValues.map[Field[Unit, Unit]](
+      toolMain => {
+
+        val capitalisedId = toolMain.id.capitalize
+
+        implicit val solTypeFormat: Format[toolMain.SolType] = toolMain.toolJsonProtocol.solutionFormat
+
+        val SolTypeInputArg = Argument(s"solution", toolMain.graphQlModels.SolTypeInputType)
+
+        Field(
+          s"correct$capitalisedId",
+          OptionType(toolMain.graphQlModels.CompResultTypeType),
+          arguments = collIdArgument :: exIdArgument :: SolTypeInputArg :: Nil,
+          resolve = _ => None
+        )
+      }
+    )
+  )
+
+  val schema: Schema[ExerciseTableDefs, Unit] = Schema(QueryType, mutation = Some(MutationType))
 
 }

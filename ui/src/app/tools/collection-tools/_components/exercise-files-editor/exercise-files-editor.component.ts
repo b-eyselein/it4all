@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
-import {IExerciseFile} from '../../web/web-interfaces';
+import {ExerciseFile} from "../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-exercise-files-editor',
@@ -10,7 +10,7 @@ import {IExerciseFile} from '../../web/web-interfaces';
 })
 export class ExerciseFilesEditorComponent implements OnChanges {
 
-  @Input() exerciseFiles: IExerciseFile[];
+  @Input() exerciseFiles: ExerciseFile[];
   @Input() mode: string;
 
   currentFileName: string | undefined = undefined;
@@ -48,13 +48,13 @@ export class ExerciseFilesEditorComponent implements OnChanges {
           this.updateEditor(this.exerciseFiles[0]);
         }
       } else {
-        const currentFile: IExerciseFile = this.exerciseFiles.find((f) => f.name === this.currentFileName);
+        const currentFile: ExerciseFile = this.exerciseFiles.find((f) => f.name === this.currentFileName);
         this.updateEditor(currentFile, false);
       }
     }
   }
 
-  private updateEditor(exerciseFile: IExerciseFile, saveContent: boolean = true): void {
+  private updateEditor(exerciseFile: ExerciseFile, saveContent: boolean = true): void {
     if (saveContent) {
       this.saveEditorContent();
     }
@@ -74,7 +74,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     // disable other files...
     this.exerciseFiles.forEach((ef) => ef.active = false);
 
-    const exerciseFile: IExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
+    const exerciseFile: ExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
 
     if (exerciseFile) {
       this.updateEditor(exerciseFile);

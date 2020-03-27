@@ -34,7 +34,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
   override val toolJsonProtocol: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult] =
     WebToolJsonProtocol
 
-  override val ExContentTypeType: ObjectType[Unit, WebExerciseContent] = WebGraphQLModels.ExContentTypeType
+  override val graphQlModels: ToolGraphQLModelBasics[WebExerciseContent, Seq[ExerciseFile]] = WebGraphQLModels
 
   // DB
 

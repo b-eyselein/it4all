@@ -1,10 +1,10 @@
 package model.tools.collectionTools.xml
 
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.deriveObjectType
-import sangria.schema.ObjectType
+import sangria.macros.derive.{InputObjectTypeName, deriveInputObjectType, deriveObjectType}
+import sangria.schema.{InputType, ObjectType}
 
-object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent] {
+object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSolution] {
 
   private val xmlSolutionType: ObjectType[Unit, XmlSolution] = deriveObjectType()
 
@@ -13,5 +13,8 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent] {
 
     deriveObjectType()
   }
+
+  override val SolTypeInputType: InputType[XmlSolution] =
+    deriveInputObjectType[XmlSolution](InputObjectTypeName("XmlSolutionInput"))
 
 }

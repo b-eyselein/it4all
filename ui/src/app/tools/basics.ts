@@ -7,10 +7,3 @@ export interface CorrectionResult<R> {
   maxPoints: number;
 }
 
-export interface ExerciseFile {
-  name: string;
-  content: string;
-  fileType: string;
-  editable: boolean;
-  active?: boolean;
-}

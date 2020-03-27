@@ -4,14 +4,19 @@ schema: src/schema.graphql
 documents: src/**/*.graphql
 
 generates:
+  src/introspection-result.ts:
+    plugins:
+      - fragment-matcher
+    config:
+      apolloClientVersion: 2
+
   src/app/_services/apollo_services.ts:
     plugins:
       - typescript
       - typescript-operations
       - typescript-apollo-angular
 
-  src/introspection-result.ts:
+  src/app/_services/apollo-mutation.service.ts:
     plugins:
-      - fragment-matcher
-    config:
-      apolloClientVersion: 2
+      - typescript-operations
+      - typescript-apollo-angular

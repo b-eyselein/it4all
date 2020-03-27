@@ -1,49 +1,71 @@
 package model.tools.collectionTools.uml
 
 import model.tools.collectionTools.{KeyValueObject, SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ReplaceField, deriveEnumType, deriveObjectType}
-import sangria.schema.{EnumType, ListType, ObjectType, Field}
+import sangria.macros.derive._
+import sangria.schema.{EnumType, Field, InputObjectType, InputType, ListType, ObjectType}
 
-object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent] {
+object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram] {
 
   private val umlVisibilityType: EnumType[UmlVisibility] = deriveEnumType()
+  private val umlClassTypeType: EnumType[UmlClassType]   = deriveEnumType()
+
+  private val umlAssociationTypeType: EnumType[UmlAssociationType] = deriveEnumType()
+  private val umlMultiplicityType: EnumType[UmlMultiplicity]       = deriveEnumType()
 
   private val umlAttributeType: ObjectType[Unit, UmlAttribute] = {
     implicit val uvt: EnumType[UmlVisibility] = umlVisibilityType
-
     deriveObjectType()
+  }
+
+  private val umlAttributeInputType: InputObjectType[UmlAttribute] = {
+    implicit val uvt: EnumType[UmlVisibility] = umlVisibilityType
+    deriveInputObjectType(InputObjectTypeName("UmlAttributeInput"))
   }
 
   private val umlMethodType: ObjectType[Unit, UmlMethod] = {
     implicit val uvt: EnumType[UmlVisibility] = umlVisibilityType
-
     deriveObjectType()
+  }
+
+  private val umlMethodInputType: InputObjectType[UmlMethod] = {
+    implicit val uvt: EnumType[UmlVisibility] = umlVisibilityType
+    deriveInputObjectType(InputObjectTypeName("UmlMethodInput"))
   }
 
   private val umlClassType: ObjectType[Unit, UmlClass] = {
-    implicit val umlClassTypeType: EnumType[UmlClassType] = deriveEnumType()
-
+    implicit val uctt: EnumType[UmlClassType]        = umlClassTypeType
     implicit val uat: ObjectType[Unit, UmlAttribute] = umlAttributeType
-
-    implicit val umt: ObjectType[Unit, UmlMethod] = umlMethodType
+    implicit val umt: ObjectType[Unit, UmlMethod]    = umlMethodType
 
     deriveObjectType()
+  }
+
+  private val umlClassInputType: InputObjectType[UmlClass] = {
+    implicit val uctt: EnumType[UmlClassType]       = umlClassTypeType
+    implicit val uat: InputObjectType[UmlAttribute] = umlAttributeInputType
+    implicit val umt: InputObjectType[UmlMethod]    = umlMethodInputType
+
+    deriveInputObjectType(InputObjectTypeName("UmlClassInput"))
   }
 
   private val umlAssociationType: ObjectType[Unit, UmlAssociation] = {
-    implicit val umlAssociationTypeType: EnumType[UmlAssociationType] = deriveEnumType()
-
-    implicit val umlMultiplicityType: EnumType[UmlMultiplicity] = deriveEnumType()
+    implicit val uatt: EnumType[UmlAssociationType] = umlAssociationTypeType
+    implicit val umt: EnumType[UmlMultiplicity]     = umlMultiplicityType
 
     deriveObjectType()
   }
 
+  private val umlAssociationInputType: InputObjectType[UmlAssociation] = {
+    implicit val uatt: EnumType[UmlAssociationType] = umlAssociationTypeType
+    implicit val umt: EnumType[UmlMultiplicity]     = umlMultiplicityType
+
+    deriveInputObjectType(InputObjectTypeName("UmlAssociationInput"))
+  }
+
   private val umlClassDiagramType: ObjectType[Unit, UmlClassDiagram] = {
-    implicit val uct: ObjectType[Unit, UmlClass] = umlClassType
-
+    implicit val uct: ObjectType[Unit, UmlClass]                            = umlClassType
+    implicit val uat: ObjectType[Unit, UmlAssociation]                      = umlAssociationType
     implicit val umlImplementationType: ObjectType[Unit, UmlImplementation] = deriveObjectType()
-
-    implicit val uat: ObjectType[Unit, UmlAssociation] = umlAssociationType
 
     deriveObjectType()
   }
@@ -62,6 +84,16 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent] {
         )
       )
     )
+  }
+
+  override val SolTypeInputType: InputType[UmlClassDiagram] = {
+    implicit val ucit: InputObjectType[UmlClass]       = umlClassInputType
+    implicit val uait: InputObjectType[UmlAssociation] = umlAssociationInputType
+    implicit val uiit: InputObjectType[UmlImplementation] = deriveInputObjectType(
+      InputObjectTypeName("UmlImplementationInput")
+    )
+
+    deriveInputObjectType[UmlClassDiagram](InputObjectTypeName("UmlClassDiagramInput"))
   }
 
 }

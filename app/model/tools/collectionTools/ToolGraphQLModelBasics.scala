@@ -1,21 +1,26 @@
 package model.tools.collectionTools
 
-import sangria.macros.derive.deriveObjectType
-import sangria.schema.{Field, IntType, ObjectType, OutputType, StringType, fields}
+import model.core.result.CompleteResult
+import sangria.macros.derive.{InputObjectTypeName, deriveInputObjectType, deriveObjectType}
+import sangria.schema.{Field, InputObjectType, InputType, IntType, ObjectType, OutputType, StringType, fields}
 
-trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent] {
+trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent, SolType, CompResultType <: CompleteResult] {
 
-  protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
+  protected val ExerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
+
+  protected val ExerciseFileInputType: InputObjectType[ExerciseFile] = deriveInputObjectType(
+    InputObjectTypeName("ExerciseFileInput")
+  )
 
   protected val KeyValueObjectType: ObjectType[Unit, KeyValueObject] = deriveObjectType()
 
-  protected def sampleSolutionType[SolType](
+  protected def sampleSolutionType[ASolType](
     name: String,
-    SolTypeType: OutputType[SolType]
-  ): ObjectType[Unit, SampleSolution[SolType]] =
+    SolTypeType: OutputType[ASolType]
+  ): ObjectType[Unit, SampleSolution[ASolType]] =
     ObjectType(
       s"${name}SampleSolution",
-      fields[Unit, SampleSolution[SolType]](
+      fields[Unit, SampleSolution[ASolType]](
         Field("id", IntType, resolve = _.value.id),
         Field("sample", SolTypeType, resolve = _.value.sample)
       )
@@ -25,5 +30,9 @@ trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent] {
     sampleSolutionType("String", StringType)
 
   val ExContentTypeType: ObjectType[Unit, ExContentType]
+
+  val SolTypeInputType: InputType[SolType]
+
+  val CompResultTypeType: ObjectType[Unit, CompResultType]
 
 }

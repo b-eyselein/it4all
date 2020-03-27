@@ -1,0 +1,3 @@
+mutation RegexCorrection( $collId: Int!, $exId: Int!, $solution: String!) {
+  correctRegex(collId: $collId, exId: $exId, solution: $solution)
+}

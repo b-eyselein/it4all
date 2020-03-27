@@ -2,8 +2,7 @@ package model.tools.collectionTools.regex
 
 import model.User
 import model.core.matching.MatchingResult
-import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
-import sangria.schema.ObjectType
+import model.tools.collectionTools._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -27,7 +26,7 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
   override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] =
     RegexToolJsonProtocol
 
-  override val ExContentTypeType: ObjectType[Unit, RegexExerciseContent] = RegexGraphQLModels.ExContentTypeType
+  override val graphQlModels: ToolGraphQLModelBasics[RegexExerciseContent, String] = RegexGraphQLModels
 
   // Correction
 

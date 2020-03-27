@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Mar 27 2020 10:41:45 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Fri Mar 27 2020 15:04:02 GMT+0100 (Mitteleuropäische Normalzeit)
 
 type Collection {
   id: Int!
@@ -27,6 +27,14 @@ type Exercise {
 }
 
 type ExerciseFile {
+  name: String!
+  resourcePath: String!
+  fileType: String!
+  editable: Boolean!
+  content: String!
+}
+
+input ExerciseFileInput {
   name: String!
   resourcePath: String!
   fileType: String!
@@ -62,6 +70,16 @@ type Lesson {
   description: String!
 }
 
+type Mutation {
+  correctProgramming(collId: Int!, exId: Int!, solution: ProgSolutionInput!): Int
+  correctRegex(collId: Int!, exId: Int!, solution: String!): Int
+  correctRose(collId: Int!, exId: Int!, solution: String!): Int
+  correctSql(collId: Int!, exId: Int!, solution: String!): Int
+  correctUml(collId: Int!, exId: Int!, solution: UmlClassDiagramInput!): Int
+  correctWeb(collId: Int!, exId: Int!, solution: [ExerciseFileInput!]!): Int
+  correctXml(collId: Int!, exId: Int!, solution: XmlSolutionInput!): Int
+}
+
 type ProgExerciseContent {
   functionName: String!
   foldername: String!
@@ -78,6 +96,10 @@ type ProgSampleSolution {
 
 type ProgSolution {
   files: [ExerciseFile!]!
+}
+
+input ProgSolutionInput {
+  files: [ExerciseFileInput!]!
 }
 
 type Query {
@@ -137,10 +159,10 @@ type SqlExerciseContent {
 
 enum SqlExerciseType {
   SELECT
-  UPDATE
-  INSERT
-  DELETE
   CREATE
+  DELETE
+  INSERT
+  UPDATE
 }
 
 type StringSampleSolution {
@@ -164,12 +186,21 @@ type Tool {
 }
 
 enum ToolState {
-  LIVE
   ALPHA
   BETA
+  LIVE
 }
 
 type UmlAssociation {
+  assocType: UmlAssociationType!
+  assocName: String
+  firstEnd: String!
+  firstMult: UmlMultiplicity!
+  secondEnd: String!
+  secondMult: UmlMultiplicity!
+}
+
+input UmlAssociationInput {
   assocType: UmlAssociationType!
   assocName: String
   firstEnd: String!
@@ -193,6 +224,15 @@ type UmlAttribute {
   isAbstract: Boolean!
 }
 
+input UmlAttributeInput {
+  visibility: UmlVisibility!
+  memberName: String!
+  memberType: String!
+  isStatic: Boolean = false
+  isDerived: Boolean = false
+  isAbstract: Boolean = false
+}
+
 type UmlClass {
   classType: UmlClassType!
   name: String!
@@ -204,6 +244,19 @@ type UmlClassDiagram {
   classes: [UmlClass!]!
   associations: [UmlAssociation!]!
   implementations: [UmlImplementation!]!
+}
+
+input UmlClassDiagramInput {
+  classes: [UmlClassInput!]!
+  associations: [UmlAssociationInput!]!
+  implementations: [UmlImplementationInput!]!
+}
+
+input UmlClassInput {
+  classType: UmlClassType!
+  name: String!
+  attributes: [UmlAttributeInput!]!
+  methods: [UmlMethodInput!]!
 }
 
 enum UmlClassType {
@@ -223,6 +276,11 @@ type UmlImplementation {
   superClass: String!
 }
 
+input UmlImplementationInput {
+  subClass: String!
+  superClass: String!
+}
+
 type UmlMethod {
   visibility: UmlVisibility!
   memberName: String!
@@ -230,6 +288,15 @@ type UmlMethod {
   parameters: String!
   isStatic: Boolean!
   isAbstract: Boolean!
+}
+
+input UmlMethodInput {
+  visibility: UmlVisibility!
+  memberName: String!
+  memberType: String!
+  parameters: String!
+  isStatic: Boolean = false
+  isAbstract: Boolean = false
 }
 
 enum UmlMultiplicity {
@@ -296,6 +363,11 @@ type XmlSampleSolution {
 }
 
 type XmlSolution {
+  document: String!
+  grammar: String!
+}
+
+input XmlSolutionInput {
   document: String!
   grammar: String!
 }

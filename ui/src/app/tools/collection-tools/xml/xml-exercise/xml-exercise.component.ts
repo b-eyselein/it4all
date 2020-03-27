@@ -4,11 +4,11 @@ import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {IXmlCompleteResult, IXmlSolution} from '../xml-interfaces';
-import {IExerciseFile} from '../../web/web-interfaces';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
 import {
+  ExerciseFile,
   ExerciseSolveFieldsFragment,
   XmlExerciseContentSolveFieldsFragment
 } from "../../../../_services/apollo_services";
@@ -38,10 +38,10 @@ export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IX
 
   isGrammarPart: boolean;
 
-  grammarFile: IExerciseFile;
-  documentFile: IExerciseFile;
+  grammarFile: ExerciseFile;
+  documentFile: ExerciseFile;
 
-  exerciseFiles: IExerciseFile[] = [];
+  exerciseFiles: ExerciseFile[] = [];
 
   constructor(apiService: ApiService, dexieService: DexieService) {
     super(apiService, dexieService);

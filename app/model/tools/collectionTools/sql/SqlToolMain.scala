@@ -3,12 +3,11 @@ package model.tools.collectionTools.sql
 import model.User
 import model.core.matching.MatchingResult
 import model.tools.collectionTools.sql.matcher._
-import model.tools.collectionTools.{CollectionToolMain, Exercise, ExerciseCollection, StringSampleSolutionToolJsonProtocol}
+import model.tools.collectionTools._
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
-import sangria.schema.ObjectType
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +49,7 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
   override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult] =
     SqlJsonProtocols
 
-  override val ExContentTypeType: ObjectType[Unit, SqlExerciseContent] = SqlGraphQLModels.ExContentTypeType
+  override val graphQlModels: ToolGraphQLModelBasics[SqlExerciseContent, String] = SqlGraphQLModels
 
   // Correction
 

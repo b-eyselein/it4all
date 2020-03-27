@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ExerciseFile} from '../../../basics';
+import {ExerciseFile} from '../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-exercise-file-card',

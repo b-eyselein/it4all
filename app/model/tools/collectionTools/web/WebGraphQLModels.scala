@@ -3,9 +3,9 @@ package model.tools.collectionTools.web
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{AddFields, ExcludeFields, deriveObjectType}
-import sangria.schema.{Field, IntType, ListType, ObjectType, StringType, fields}
+import sangria.schema.{Field, InputType, IntType, ListInputType, ListType, ObjectType, StringType, fields}
 
-object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent] {
+object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[ExerciseFile]] {
 
   private val HtmlTaskType: ObjectType[Unit, HtmlTask] = ObjectType(
     "HtmlTask",
@@ -30,12 +30,14 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent] {
   override val ExContentTypeType: ObjectType[Unit, WebExerciseContent] = {
     implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
 
-    implicit val eft: ObjectType[Unit, ExerciseFile] = exerciseFileType
+    implicit val eft: ObjectType[Unit, ExerciseFile] = ExerciseFileType
 
     implicit val sampleSolType: ObjectType[Unit, SampleSolution[Seq[ExerciseFile]]] =
-      sampleSolutionType("Web", ListType(exerciseFileType))
+      sampleSolutionType("Web", ListType(ExerciseFileType))
 
     deriveObjectType()
   }
+
+  override val SolTypeInputType: InputType[Seq[ExerciseFile]] = ListInputType(ExerciseFileInputType)
 
 }
