@@ -8,7 +8,7 @@
     "test:ci": "ng test --watch=false --browsers=MyChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:dev": "ng build --progress --output-path ../public",
+    "build:dev": "ng build --progress --watch --output-path ../public",
     "build:prod": "ng build --progress --prod --output-path ../public",
     "generate": "graphql-codegen --config codegen.yml"
   },

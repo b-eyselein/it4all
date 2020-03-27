@@ -7,7 +7,7 @@ stages:
 build-client:
   stage: build-client
   script:
-    - cd it4all-client
+    - cd ui
     - npm install
     - npm run build:prod
 
@@ -16,5 +16,5 @@ test:
   script:
     - echo $CHROME_BIN
     - ls -al
-    - cd it4all-server
+    - cd ..
     - sbt test
