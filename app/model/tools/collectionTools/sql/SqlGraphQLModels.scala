@@ -35,8 +35,11 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
   }
 
   private val sqlExecutionResultType: ObjectType[Unit, SqlExecutionResult] = {
-
-    deriveObjectType()
+    deriveObjectType(
+      // TODO: do not exclude fields...
+      AddFields(Field("X", OptionType(IntType), resolve = _ => None)),
+      ExcludeFields("userResultTry", "sampleResultTry")
+    )
   }
 
   override val CompResultTypeType: ObjectType[Unit, SqlResult] = {

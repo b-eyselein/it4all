@@ -1,24 +1,27 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
 import {CollectionToolOverviewGQL, CollectionToolOverviewQuery} from "../../../_services/apollo_services";
 
 @Component({templateUrl: './collection-tool-overview.component.html'})
-export class CollectionToolOverviewComponent extends ComponentWithCollectionTool implements OnInit {
+export class CollectionToolOverviewComponent implements OnInit {
 
   collectionToolOverviewQuery: CollectionToolOverviewQuery;
 
-  constructor(private route: ActivatedRoute, private collectionToolOverviewGQL: CollectionToolOverviewGQL) {
-    super(route);
+  constructor(
+    private route: ActivatedRoute,
+    private collectionToolOverviewGQL: CollectionToolOverviewGQL
+  ) {
   }
 
   ngOnInit(): void {
-    console.info('TODO!');
+    this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
 
-    this.collectionToolOverviewGQL
-      .watch({toolId: this.tool.id})
-      .valueChanges
-      .subscribe(({data}) => this.collectionToolOverviewQuery = data);
+      this.collectionToolOverviewGQL
+        .watch({toolId})
+        .valueChanges
+        .subscribe(({data}) => this.collectionToolOverviewQuery = data);
+    });
   }
 
 }

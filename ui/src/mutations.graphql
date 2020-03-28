@@ -1,3 +1,31 @@
 mutation RegexCorrection( $collId: Int!, $exId: Int!, $solution: String!) {
-  correctRegex(collId: $collId, exId: $exId, solution: $solution)
+  correctRegex(collId: $collId, exId: $exId, solution: $solution) {
+    ...RegexCompleteResult
+  }
+}
+
+fragment RegexCompleteResult on RegexCompleteResult {
+  solutionSaved
+  correctionType
+  extractionResults {
+    base
+    correct
+  }
+  matchingResults {
+    resultType
+    matchData
+    isIncluded
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# general fragments
+
+fragment Points on Points {
+  quarters
 }

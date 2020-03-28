@@ -1,5 +1,12 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Mar 27 2020 15:04:02 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Sat Mar 28 2020 08:42:41 GMT+0100 (Mitteleuropäische Normalzeit)
+
+enum BinaryClassificationResultType {
+  FalseNegative
+  FalsePositive
+  TrueNegative
+  TruePositive
+}
 
 type Collection {
   id: Int!
@@ -10,6 +17,11 @@ type Collection {
   exerciseCount: Int!
   exercises: [Exercise!]!
   exercise(exId: Int!): Exercise
+}
+
+type DTDParseException {
+  msg: String!
+  parsedLine: String!
 }
 
 union ExContent = ProgExerciseContent | RegexExerciseContent | RoseExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
@@ -71,13 +83,28 @@ type Lesson {
 }
 
 type Mutation {
-  correctProgramming(collId: Int!, exId: Int!, solution: ProgSolutionInput!): Int
-  correctRegex(collId: Int!, exId: Int!, solution: String!): Int
-  correctRose(collId: Int!, exId: Int!, solution: String!): Int
-  correctSql(collId: Int!, exId: Int!, solution: String!): Int
-  correctUml(collId: Int!, exId: Int!, solution: UmlClassDiagramInput!): Int
-  correctWeb(collId: Int!, exId: Int!, solution: [ExerciseFileInput!]!): Int
-  correctXml(collId: Int!, exId: Int!, solution: XmlSolutionInput!): Int
+  correctProgramming(collId: Int!, exId: Int!, solution: ProgSolutionInput!): ProgCompleteResult
+  correctRegex(collId: Int!, exId: Int!, solution: String!): RegexCompleteResult
+  correctRose(collId: Int!, exId: Int!, solution: String!): RoseCompleteResult
+  correctSql(collId: Int!, exId: Int!, solution: String!): SqlResult
+  correctUml(collId: Int!, exId: Int!, solution: UmlClassDiagramInput!): UmlCompleteResult
+  correctWeb(collId: Int!, exId: Int!, solution: [ExerciseFileInput!]!): WebCompleteResult
+  correctXml(collId: Int!, exId: Int!, solution: XmlSolutionInput!): XmlCompleteResult
+}
+
+type NormalExecutionResult {
+  success: SuccessType!
+  logs: String!
+}
+
+type Points {
+  quarters: Int!
+}
+
+type ProgCompleteResult {
+  solutionSaved: Boolean!
+  normalResult: NormalExecutionResult
+  unitTestResults: [UnitTestCorrectionResult!]!
 }
 
 type ProgExerciseContent {
@@ -107,6 +134,15 @@ type Query {
   tool(toolId: String!): Tool
 }
 
+type RegexCompleteResult {
+  correctionType: RegexCorrectionType!
+  matchingResults: [RegexMatchingEvaluationResult!]!
+  extractionResults: [RegexExtractionEvaluationResult!]!
+  points: Points!
+  maxPoints: Points!
+  solutionSaved: Boolean!
+}
+
 enum RegexCorrectionType {
   EXTRACTION
   MATCHING
@@ -120,15 +156,32 @@ type RegexExerciseContent {
   extractionTestData: [RegexExtractionTestData!]!
 }
 
+type RegexExtractionEvaluationResult {
+  base: String!
+  correct: Boolean!
+}
+
 type RegexExtractionTestData {
   id: Int!
   base: String!
+}
+
+type RegexMatchingEvaluationResult {
+  matchData: String!
+  isIncluded: Boolean!
+  resultType: BinaryClassificationResultType!
 }
 
 type RegexMatchTestData {
   id: Int!
   data: String!
   isIncluded: Boolean!
+}
+
+type RoseCompleteResult {
+  points: Points!
+  maxPoints: Points!
+  solutionSaved: Boolean!
 }
 
 type RoseExerciseContent {
@@ -151,6 +204,10 @@ type SiteSpec {
   jsTaskCount: Int!
 }
 
+type SqlExecutionResult {
+  X: Int
+}
+
 type SqlExerciseContent {
   exerciseType: SqlExerciseType!
   hint: String
@@ -160,14 +217,31 @@ type SqlExerciseContent {
 enum SqlExerciseType {
   SELECT
   CREATE
+  UPDATE
   DELETE
   INSERT
-  UPDATE
+}
+
+type SqlQueriesStaticComparison {
+  X: Int
+}
+
+type SqlResult {
+  staticComparison: SqlQueriesStaticComparison!
+  executionResult: SqlExecutionResult!
+  solutionSaved: Boolean!
 }
 
 type StringSampleSolution {
   id: Int!
   sample: String!
+}
+
+enum SuccessType {
+  COMPLETE
+  ERROR
+  NONE
+  PARTIALLY
 }
 
 type Tool {
@@ -265,6 +339,12 @@ enum UmlClassType {
   INTERFACE
 }
 
+type UmlCompleteResult {
+  points: Points!
+  maxPoints: Points!
+  solutionSaved: Boolean!
+}
+
 type UmlExerciseContent {
   toIgnore: [String!]!
   sampleSolutions: [UmlSampleSolution!]!
@@ -316,6 +396,15 @@ enum UmlVisibility {
   PUBLIC
 }
 
+type UnitTestCorrectionResult {
+  testConfig: UnitTestTestConfig!
+  successful: Boolean!
+  file: String!
+  status: Int!
+  stdout: [String!]!
+  stderr: [String!]!
+}
+
 type UnitTestPart {
   unitTestType: UnitTestType!
   unitTestsDescription: String!
@@ -338,6 +427,12 @@ enum UnitTestType {
   Simplified
 }
 
+type WebCompleteResult {
+  points: Points!
+  maxPoints: Points!
+  solutionSaved: Boolean!
+}
+
 type WebExerciseContent {
   htmlText: String
   jsText: String
@@ -351,10 +446,36 @@ type WebSampleSolution {
   sample: [ExerciseFile!]!
 }
 
+type XmlCompleteResult {
+  successType: SuccessType!
+  documentResult: [XmlError!]!
+  grammarResult: XmlGrammarResult
+  points: Points!
+  maxPoints: Points!
+  solutionSaved: Boolean!
+}
+
+type XmlError {
+  errorType: XmlErrorType!
+  errorMessage: String!
+  line: Int!
+  success: SuccessType!
+}
+
+enum XmlErrorType {
+  ERROR
+  FATAL
+  WARNING
+}
+
 type XmlExerciseContent {
   grammarDescription: String!
   rootNode: String!
   sampleSolutions: [XmlSampleSolution!]!
+}
+
+type XmlGrammarResult {
+  parseErrors: [DTDParseException!]!
 }
 
 type XmlSampleSolution {

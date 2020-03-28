@@ -1,10 +1,11 @@
 package model.tools.collectionTools.uml
 
+import model.points
 import model.tools.collectionTools.{KeyValueObject, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema.{EnumType, Field, InputObjectType, InputType, ListType, ObjectType}
 
-object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram] {
+object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] {
 
   private val umlVisibilityType: EnumType[UmlVisibility] = deriveEnumType()
   private val umlClassTypeType: EnumType[UmlClassType]   = deriveEnumType()
@@ -86,6 +87,8 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlCl
     )
   }
 
+  // Solution types
+
   override val SolTypeInputType: InputType[UmlClassDiagram] = {
     implicit val ucit: InputObjectType[UmlClass]       = umlClassInputType
     implicit val uait: InputObjectType[UmlAssociation] = umlAssociationInputType
@@ -94,6 +97,17 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlCl
     )
 
     deriveInputObjectType[UmlClassDiagram](InputObjectTypeName("UmlClassDiagramInput"))
+  }
+
+  // Result types
+
+  override val CompResultTypeType: ObjectType[Unit, UmlCompleteResult] = {
+    implicit val pt: ObjectType[Unit, points.Points] = pointsType
+
+    deriveObjectType(
+      // TODO: include fields...
+      ExcludeFields("classResult", "assocResult", "implResult")
+    )
   }
 
 }

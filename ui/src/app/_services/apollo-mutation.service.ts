@@ -1,6 +1,44 @@
 import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
+export type RegexCorrectionMutationVariables = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  solution: Scalars['String'];
+};
+
+
+export type RegexCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { correctRegex?: Maybe<(
+    { __typename?: 'RegexCompleteResult' }
+    & RegexCompleteResultFragment
+  )> }
+);
+
+export type RegexCompleteResultFragment = (
+  { __typename?: 'RegexCompleteResult' }
+  & Pick<RegexCompleteResult, 'solutionSaved' | 'correctionType'>
+  & { extractionResults: Array<(
+    { __typename?: 'RegexExtractionEvaluationResult' }
+    & Pick<RegexExtractionEvaluationResult, 'base' | 'correct'>
+  )>, matchingResults: Array<(
+    { __typename?: 'RegexMatchingEvaluationResult' }
+    & Pick<RegexMatchingEvaluationResult, 'resultType' | 'matchData' | 'isIncluded'>
+  )>, points: (
+    { __typename?: 'Points' }
+    & PointsFragment
+  ), maxPoints: (
+    { __typename?: 'Points' }
+    & PointsFragment
+  ) }
+);
+
+export type PointsFragment = (
+  { __typename?: 'Points' }
+  & Pick<Points, 'quarters'>
+);
+
 export type CollectionListQueryVariables = {
   toolId: Scalars['String'];
 };
@@ -450,6 +488,32 @@ export type LessonFragmentFragment = (
   & Pick<Lesson, 'id' | 'title'>
 );
 
+export const PointsFragmentDoc = gql`
+    fragment Points on Points {
+  quarters
+}
+    `;
+export const RegexCompleteResultFragmentDoc = gql`
+    fragment RegexCompleteResult on RegexCompleteResult {
+  solutionSaved
+  correctionType
+  extractionResults {
+    base
+    correct
+  }
+  matchingResults {
+    resultType
+    matchData
+    isIncluded
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+    ${PointsFragmentDoc}`;
 export const TagFragmentDoc = gql`
     fragment Tag on ExTag {
   abbreviation
@@ -637,6 +701,21 @@ export const LessonFragmentFragmentDoc = gql`
   title
 }
     `;
+export const RegexCorrectionDocument = gql`
+    mutation RegexCorrection($collId: Int!, $exId: Int!, $solution: String!) {
+  correctRegex(collId: $collId, exId: $exId, solution: $solution) {
+    ...RegexCompleteResult
+  }
+}
+    ${RegexCompleteResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RegexCorrectionGQL extends Apollo.Mutation<RegexCorrectionMutation, RegexCorrectionMutationVariables> {
+    document = RegexCorrectionDocument;
+    
+  }
 export const CollectionListDocument = gql`
     query CollectionList($toolId: String!) {
   tool(toolId: $toolId) {

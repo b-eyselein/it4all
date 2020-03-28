@@ -1,11 +1,12 @@
 package model.tools.collectionTools.web
 
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
+import model.points
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{AddFields, ExcludeFields, deriveObjectType}
 import sangria.schema.{Field, InputType, IntType, ListInputType, ListType, ObjectType, StringType, fields}
 
-object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[ExerciseFile]] {
+object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[ExerciseFile], WebCompleteResult] {
 
   private val HtmlTaskType: ObjectType[Unit, HtmlTask] = ObjectType(
     "HtmlTask",
@@ -38,6 +39,18 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[E
     deriveObjectType()
   }
 
+  // Solution types
+
   override val SolTypeInputType: InputType[Seq[ExerciseFile]] = ListInputType(ExerciseFileInputType)
 
+  // Result types
+
+  override val CompResultTypeType: ObjectType[Unit, WebCompleteResult] = {
+    implicit val pt: ObjectType[Unit, points.Points] = pointsType
+
+    deriveObjectType(
+      // TODO: include fields!
+      ExcludeFields("gradedHtmlTaskResults", "gradedJsTaskResults")
+    )
+  }
 }

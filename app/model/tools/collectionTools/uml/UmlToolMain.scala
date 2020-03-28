@@ -2,8 +2,8 @@ package model.tools.collectionTools.uml
 
 import model.User
 import model.core.matching.MatchingResult
-import model.tools.collectionTools.uml.matcher._
 import model.tools.collectionTools._
+import model.tools.collectionTools.uml.matcher._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -30,7 +30,8 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
   override val toolJsonProtocol: ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] =
     UmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram] = UmlGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] =
+    UmlGraphQLModels
 
   // Correction
 
