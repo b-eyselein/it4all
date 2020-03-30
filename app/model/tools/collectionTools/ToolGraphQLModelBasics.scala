@@ -1,11 +1,17 @@
 package model.tools.collectionTools
 
-import model.core.result.{CompleteResult, SuccessType}
+import jnr.ffi.provider.ResultType
+import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points.Points
 import sangria.macros.derive.{InputObjectTypeName, deriveEnumType, deriveInputObjectType, deriveObjectType}
-import sangria.schema.{EnumType, Field, InputObjectType, InputType, IntType, ObjectType, OutputType, StringType, fields}
+import sangria.schema.{EnumType, Field, InputObjectType, InputType, IntType, ObjectType, OutputType, StringType, UnionType, fields}
 
-trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent, SolType, CompResultType <: CompleteResult, PartType <: ExPart] {
+trait ToolGraphQLModelBasics[
+  ExContentType <: ExerciseContent,
+  SolType,
+  CompResultType <: AbstractCorrectionResult,
+  PartType <: ExPart
+] {
 
   protected val ExerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
 
@@ -34,11 +40,24 @@ trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent, SolType, CompResu
   protected val stringSampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
     sampleSolutionType("String", StringType)
 
+  /*
+  protected val abstractResultTypeType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
+    "AbstractCorrectionResult",
+    fields[Unit, AbstractCorrectionResult](
+      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+      Field("points", pointsType, resolve = _.value.points),
+      Field("maxPoints", pointsType, resolve = _.value.maxPoints)
+    )
+  )
+   */
+
   val ExContentTypeType: ObjectType[Unit, ExContentType]
 
-  val SolTypeInputType: InputType[SolType]
+  val AbstractResultTypeType: OutputType[CompResultType]
 
-  val CompResultTypeType: ObjectType[Unit, CompResultType]
+  val ResultType: UnionType[ResultType]
+
+  val SolTypeInputType: InputType[SolType]
 
   val PartTypeInputType: EnumType[PartType]
 

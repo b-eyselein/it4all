@@ -102,7 +102,7 @@ object UmlGraphQLModels
 
   // Result types
 
-  override val CompResultTypeType: ObjectType[Unit, UmlCompleteResult] = {
+  override val AbstractResultTypeType: ObjectType[Unit, UmlCompleteResult] = {
     implicit val pt: ObjectType[Unit, points.Points] = pointsType
 
     deriveObjectType(

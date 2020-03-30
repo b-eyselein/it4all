@@ -3,13 +3,13 @@ package model.tools.collectionTools.xml
 import de.uniwue.dtd.model._
 import enumeratum.{EnumEntry, PlayEnum}
 import model.core.matching.{Match, MatchType}
-import model.core.result.{EvaluationResult, SuccessType}
+import model.core.result.SuccessType
 import model.points.{Points, addUp, singlePoint, zeroPoints, _}
 import org.xml.sax.SAXParseException
 
 import scala.collection.immutable.IndexedSeq
 
-sealed trait XmlEvaluationResult extends EvaluationResult
+sealed trait XmlEvaluationResult
 
 // Document
 
@@ -65,7 +65,8 @@ final case class ElementLineMatch(
 
   //  override protected def descArgForJson(arg: ElementLine): JsValue = Json.obj(nameName -> arg.elementName)
 
-  override def success: SuccessType =
+  // override
+  def success: SuccessType =
     if (matchType == MatchType.SUCCESSFUL_MATCH) {
       SuccessType.COMPLETE
     } else {

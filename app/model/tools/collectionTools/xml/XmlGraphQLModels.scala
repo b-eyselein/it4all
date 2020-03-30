@@ -44,7 +44,7 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSo
     )
   }
 
-  override val CompResultTypeType: ObjectType[Unit, XmlCompleteResult] = {
+  override val AbstractResultTypeType: ObjectType[Unit, XmlCompleteResult] = {
     implicit val st: EnumType[SuccessType]                = successTypeType
     implicit val xet: ObjectType[Unit, XmlError]          = xmlErrorType
     implicit val xgrt: ObjectType[Unit, XmlGrammarResult] = xmlGrammarResultType

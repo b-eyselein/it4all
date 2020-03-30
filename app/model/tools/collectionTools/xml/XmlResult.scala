@@ -1,7 +1,7 @@
 package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
-import model.core.result.{CompleteResult, SuccessType}
+import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points._
 import model.tools.collectionTools.xml.XmlToolMain.ElementLineComparison
 
@@ -12,7 +12,7 @@ final case class XmlCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends CompleteResult
+) extends AbstractCorrectionResult
 
 // Grammar result
 

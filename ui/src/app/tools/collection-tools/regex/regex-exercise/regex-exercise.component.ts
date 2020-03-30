@@ -21,8 +21,6 @@ export class RegexExerciseComponent
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() regexExerciseContent: RegexExerciseContentSolveFieldsFragment;
 
-  regexCorrectionMutation: RegexCorrectionMutation;
-
   solution = '';
 
   showInfo = false;

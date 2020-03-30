@@ -1,6 +1,6 @@
 package model.tools.collectionTools.sql
 
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.core.result.AbstractCorrectionResult
 import model.points._
 import model.tools.collectionTools.sql.SqlToolMain._
 
@@ -33,8 +33,6 @@ final case class SelectAdditionalComparisons(
 
   def maxPoints: Points = groupByComparison.maxPoints + orderByComparison.maxPoints + limitComparison.maxPoints
 
-  def results: Seq[EvaluationResult] = Seq(groupByComparison, orderByComparison, limitComparison)
-
 }
 
 final case class AdditionalComparison(
@@ -56,8 +54,6 @@ final case class AdditionalComparison(
     selPoints + insPoints
   }
 
-  def results: Seq[EvaluationResult] = selectComparisons.map(_.results).getOrElse(Seq.empty) ++ insertComparison
-
 }
 
 final case class SqlQueriesStaticComparison(
@@ -67,14 +63,6 @@ final case class SqlQueriesStaticComparison(
   whereComparison: BinaryExpressionComparison,
   additionalComparisons: AdditionalComparison
 ) {
-
-  def results: Seq[EvaluationResult] =
-    Seq(
-      columnComparison,
-      tableComparison,
-      joinExpressionComparison,
-      whereComparison
-    ) ++ additionalComparisons.results
 
   val points: Points = columnComparison.points +
     tableComparison.points +
@@ -96,7 +84,7 @@ final case class SqlResult(
   staticComparison: SqlQueriesStaticComparison,
   executionResult: SqlExecutionResult,
   solutionSaved: Boolean
-) extends CompleteResult {
+) extends AbstractCorrectionResult {
 
   override def points: Points = staticComparison.points
 
@@ -107,15 +95,4 @@ final case class SqlResult(
 final case class SqlExecutionResult(
   userResultTry: Option[SqlQueryResult],
   sampleResultTry: Option[SqlQueryResult]
-) extends EvaluationResult {
-
-  override val success: SuccessType = userResultTry match {
-    case None => SuccessType.ERROR
-    case Some(userResult) =>
-      sampleResultTry match {
-        case None               => SuccessType.PARTIALLY
-        case Some(sampleResult) => SuccessType.ofBool(userResult isIdentic sampleResult)
-      }
-  }
-
-}
+)

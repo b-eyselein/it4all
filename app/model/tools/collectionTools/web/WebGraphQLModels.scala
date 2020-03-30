@@ -46,7 +46,7 @@ object WebGraphQLModels
 
   // Result types
 
-  override val CompResultTypeType: ObjectType[Unit, WebCompleteResult] = {
+  override val AbstractResultTypeType: ObjectType[Unit, WebCompleteResult] = {
     implicit val pt: ObjectType[Unit, points.Points] = pointsType
 
     deriveObjectType(

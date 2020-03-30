@@ -20,11 +20,12 @@ fragment ProgCompleteResult on ProgCompleteResult {
 
 mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
   correctRegex(collId: $collId, exId: $exId,part:$part, solution: $solution) {
+    solutionSaved
     ...RegexCompleteResult
   }
 }
 
-fragment RegexCompleteResult on RegexCompleteResult {
+fragment RegexCompleteResult on AbstractRegexResult {
   solutionSaved
   correctionType
   extractionResults {

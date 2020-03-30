@@ -44,7 +44,7 @@ object GraphQLModel {
 
   private implicit val ExTagType: ObjectType[Unit, ExTag] = deriveObjectType()
 
-  private val ExContentType = UnionType(
+  private val ExContentType: UnionType[Unit] = UnionType(
     "ExContent",
     types = toolValues.map(_.graphQlModels.ExContentTypeType)
   )
@@ -167,7 +167,7 @@ object GraphQLModel {
 
       Field(
         s"correct${toolMain.id.capitalize}",
-        OptionType(toolMain.graphQlModels.CompResultTypeType),
+        OptionType(toolMain.graphQlModels.AbstractResultTypeType),
         arguments = collIdArgument :: exIdArgument :: PartTypeInputArg :: SolTypeInputArg :: Nil,
         resolve = context =>
           context.ctx.user match {

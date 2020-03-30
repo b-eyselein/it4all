@@ -6,8 +6,7 @@ import model.tools.collectionTools.uml.{UmlClassDiagram, UmlClassDiagramJsonForm
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
-object ProgrammingToolJsonProtocol
-    extends ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult, ProgExPart] {
+object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgExPart] {
 
   private val progTestDataFormat: Format[ProgTestData] = Json.format[ProgTestData]
 
@@ -138,6 +137,7 @@ object ProgrammingToolJsonProtocol
     Json.reads[UnitTestCorrectionResultFileContent]
   }
 
+  /*
   override val completeResultWrites: Writes[ProgCompleteResult] = {
     implicit val serw: Writes[SimplifiedExecutionResult]  = simplifiedExecutionResultFormat
     implicit val uttcrf: Writes[UnitTestCorrectionResult] = unitTestCorrectionResultFormat
@@ -145,6 +145,7 @@ object ProgrammingToolJsonProtocol
 
     Json.writes[ProgCompleteResult]
   }
+   */
 
   // Simplified ProgUserTestData
 

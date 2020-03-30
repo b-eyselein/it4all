@@ -1,11 +1,10 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Mar 30 2020 12:43:44 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Mar 30 2020 15:58:59 GMT+0200 (Mitteleuropäische Sommerzeit)
 
-enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
-  TruePositive
+interface AbstractRegexResult {
+  solutionSaved: Boolean!
+  points: Points!
+  maxPoints: Points!
 }
 
 type Collection {
@@ -63,6 +62,11 @@ type HtmlTask {
   text: String!
 }
 
+type IllegalRegexResult {
+  solutionSaved: Boolean!
+  maxPoints: Points!
+}
+
 type ImplementationPart {
   base: String!
   files: [ExerciseFile!]!
@@ -84,7 +88,7 @@ type Lesson {
 
 type Mutation {
   correctProgramming(collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgCompleteResult
-  correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): RegexCompleteResult
+  correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): AbstractRegexResult
   correctRose(collId: Int!, exId: Int!, part: RoseExPart!, solution: String!): RoseCompleteResult
   correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlResult
   correctUml(collId: Int!, exId: Int!, part: UmlExPart!, solution: UmlClassDiagramInput!): UmlCompleteResult
@@ -140,15 +144,6 @@ type Query {
   tool(toolId: String!): Tool
 }
 
-type RegexCompleteResult {
-  correctionType: RegexCorrectionType!
-  matchingResults: [RegexMatchingEvaluationResult!]!
-  extractionResults: [RegexExtractionEvaluationResult!]!
-  points: Points!
-  maxPoints: Points!
-  solutionSaved: Boolean!
-}
-
 enum RegexCorrectionType {
   EXTRACTION
   MATCHING
@@ -166,20 +161,9 @@ enum RegexExPart {
   RegexSingleExPart
 }
 
-type RegexExtractionEvaluationResult {
-  base: String!
-  correct: Boolean!
-}
-
 type RegexExtractionTestData {
   id: Int!
   base: String!
-}
-
-type RegexMatchingEvaluationResult {
-  matchData: String!
-  isIncluded: Boolean!
-  resultType: BinaryClassificationResultType!
 }
 
 type RegexMatchTestData {
@@ -230,10 +214,10 @@ type SqlExerciseContent {
 
 enum SqlExerciseType {
   UPDATE
-  SELECT
   CREATE
-  DELETE
   INSERT
+  DELETE
+  SELECT
 }
 
 enum SqlExPart {

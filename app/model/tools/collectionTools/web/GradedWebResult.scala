@@ -1,7 +1,7 @@
 package model.tools.collectionTools.web
 
 import de.uniwue.webtester.sitespec.{JsAction, JsActionType}
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points._
 
 final case class WebCompleteResult(
@@ -10,9 +10,9 @@ final case class WebCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends CompleteResult
+) extends AbstractCorrectionResult
 
-sealed trait GradedWebTaskResult extends EvaluationResult
+sealed trait GradedWebTaskResult
 
 final case class GradedTextResult(
   keyName: String,

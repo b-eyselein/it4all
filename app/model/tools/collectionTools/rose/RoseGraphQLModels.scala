@@ -15,7 +15,7 @@ object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExerciseContent, Str
 
   override val SolTypeInputType: InputType[String] = StringType
 
-  override val CompResultTypeType: ObjectType[Unit, RoseCompleteResult] = {
+  override val AbstractResultTypeType: ObjectType[Unit, RoseCompleteResult] = {
     implicit val pt: ObjectType[Unit, points.Points] = pointsType
 
     deriveObjectType(

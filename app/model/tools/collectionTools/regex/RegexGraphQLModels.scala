@@ -1,12 +1,12 @@
 package model.tools.collectionTools.regex
 
-import model.points.Points
+import model.points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, deriveEnumType, deriveObjectType}
-import sangria.schema.{EnumType, EnumValue, InputType, ObjectType, StringType}
+import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
+import sangria.schema._
 
 object RegexGraphQLModels
-    extends ToolGraphQLModelBasics[RegexExerciseContent, String, RegexCompleteResult, RegexExPart] {
+    extends ToolGraphQLModelBasics[RegexExerciseContent, String, AbstractRegexResult, RegexExPart] {
 
   private val regexCorrectionTypeType: EnumType[RegexCorrectionType] = deriveEnumType()
 
@@ -43,6 +43,7 @@ object RegexGraphQLModels
     )
   }
 
+  /*
   override val CompResultTypeType: ObjectType[Unit, RegexCompleteResult] = {
     implicit val rctt: EnumType[RegexCorrectionType]                      = regexCorrectionTypeType
     implicit val rmert: ObjectType[Unit, RegexMatchingEvaluationResult]   = regexMatchingEvaluationResultType
@@ -51,6 +52,25 @@ object RegexGraphQLModels
 
     deriveObjectType()
   }
+   */
+
+  private val IllegalRegexResultType: ObjectType[Unit, IllegalRegexResult] = {
+    implicit val pt: ObjectType[Unit, points.Points] = pointsType
+
+    deriveObjectType(
+      Interfaces[Unit, IllegalRegexResult](AbstractResultTypeType)
+    )
+  }
+
+  override val AbstractResultTypeType: OutputType[AbstractRegexResult] = InterfaceType[Unit, AbstractRegexResult](
+    "AbstractRegexResult",
+    () =>
+      fields[Unit, AbstractRegexResult](
+        Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+        Field("points", pointsType, resolve = _.value.points),
+        Field("maxPoints", pointsType, resolve = _.value.maxPoints)
+      )
+  )
 
   // Part type
 

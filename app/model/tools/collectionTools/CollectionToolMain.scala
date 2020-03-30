@@ -1,7 +1,7 @@
 package model.tools.collectionTools
 
 import model._
-import model.core.result.CompleteResult
+import model.core.result.AbstractCorrectionResult
 import model.tools.{AToolMain, ToolConsts}
 import play.api.Logger
 import play.api.libs.json._
@@ -23,7 +23,7 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   type SolType
 
-  type CompResultType <: CompleteResult
+  type CompResultType <: AbstractCorrectionResult
 
   // Values
 
@@ -31,7 +31,7 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Yaml, Html forms, Json, GraphQL
 
-  val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType, CompResultType, PartType]
+  val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType,  PartType]
 
   val graphQlModels: ToolGraphQLModelBasics[ExContentType, SolType, CompResultType, PartType]
 
@@ -82,6 +82,6 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Result handlers
 
-  def onLiveCorrectionResult(result: CompResultType): JsValue = toolJsonProtocol.completeResultWrites.writes(result)
+//  def onLiveCorrectionResult(result: CompResultType): JsValue = toolJsonProtocol.completeResultWrites.writes(result)
 
 }

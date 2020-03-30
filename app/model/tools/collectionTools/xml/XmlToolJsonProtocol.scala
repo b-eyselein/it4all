@@ -2,12 +2,11 @@ package model.tools.collectionTools.xml
 
 import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
-import model.points.Points
 import model.tools.collectionTools.xml.XmlToolMain.ElementLineComparison
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
-object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult, XmlExPart] {
+object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlExPart] {
 
   override val solutionFormat: Format[XmlSolution] = Json.format[XmlSolution]
 
@@ -56,6 +55,7 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
 
   // Complete Result
 
+  /*
   override val completeResultWrites: Writes[XmlCompleteResult] = {
     implicit val xew: Writes[XmlError]          = xmlErrorWrites
     implicit val xgrw: Writes[XmlGrammarResult] = xmlGrammarResultWrites
@@ -63,6 +63,7 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
 
     Json.writes
   }
+   */
 
   override val partTypeFormat: Format[XmlExPart] = XmlExParts.jsonFormat
 

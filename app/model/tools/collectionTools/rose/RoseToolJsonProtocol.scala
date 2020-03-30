@@ -1,11 +1,10 @@
 package model.tools.collectionTools.rose
 
-import model.points._
 import model.tools.collectionTools.programming.{ProgDataType, ProgrammingToolJsonProtocol}
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
-object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExerciseContent, String, RoseCompleteResult, RoseExPart] {
+object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExerciseContent, String, RoseExPart] {
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 
@@ -31,13 +30,15 @@ object RoseToolJsonProtocol extends ToolJsonProtocol[RoseExerciseContent, String
     Json.format[RoseExecutionResult]
   }
 
+  /*
   override val completeResultWrites: Writes[RoseCompleteResult] = {
     implicit val pointsWrites: Writes[Points]      = ToolJsonProtocol.pointsFormat
     implicit val rerw: Writes[RoseExecutionResult] = roseExecutionResultFormat
 
     Json.writes[RoseCompleteResult]
   }
+   */
 
-  override val partTypeFormat      : Format[RoseExPart] = RoseExParts.jsonFormat
+  override val partTypeFormat: Format[RoseExPart] = RoseExParts.jsonFormat
 
 }

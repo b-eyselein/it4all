@@ -1,6 +1,6 @@
 package model.tools.collectionTools.uml
 
-import model.core.result.CompleteResult
+import model.core.result.AbstractCorrectionResult
 import model.points._
 import model.tools.collectionTools.uml.UmlToolMain.{AssociationComparison, ClassComparison, ImplementationComparison}
 
@@ -11,4 +11,4 @@ final case class UmlCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends CompleteResult
+) extends AbstractCorrectionResult

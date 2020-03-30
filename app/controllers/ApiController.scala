@@ -168,6 +168,7 @@ class ApiController @Inject() (
       }
     }
 
+  /*
   def apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String): Action[JsValue] =
     JwtAuthenticatedToolMainAction(toolType).async(parse.json) { implicit request =>
       tables.futureCollectionAndExercise(request.toolMain.urlPart, collId, exId).flatMap {
@@ -211,6 +212,7 @@ class ApiController @Inject() (
           }
       }
     }
+   */
 
   // Special routes for tools
 

@@ -6,7 +6,7 @@ import model.tools.collectionTools.uml.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
-object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult, UmlExPart] {
+object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlExPart] {
 
   override val solutionFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
 
@@ -68,6 +68,7 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClass
     Json.writes
   }
 
+  /*
   override val completeResultWrites: Writes[UmlCompleteResult] = {
     implicit val pointsWrites: Writes[Points] = ToolJsonProtocol.pointsFormat
 
@@ -77,6 +78,7 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlExerciseContent, UmlClass
 
     Json.writes[UmlCompleteResult]
   }
+   */
 
   override val partTypeFormat: Format[UmlExPart] = UmlExParts.jsonFormat
 

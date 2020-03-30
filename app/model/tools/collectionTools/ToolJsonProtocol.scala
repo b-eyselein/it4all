@@ -2,7 +2,6 @@ package model.tools.collectionTools
 
 import model.adaption.{Proficiencies, ToolProficiency, TopicProficiency}
 import model.core.matching.{Match, MatchingResult}
-import model.core.result.CompleteResult
 import model.lesson._
 import model.points.Points
 import play.api.libs.json._
@@ -77,13 +76,13 @@ object ToolJsonProtocol {
 
 final case class KeyValueObject(key: String, value: String)
 
-trait ToolJsonProtocol[EC <: ExerciseContent, ST, CR <: CompleteResult, PartType <: ExPart] {
+trait ToolJsonProtocol[EC <: ExerciseContent, ST, PartType <: ExPart] {
 
   val exerciseContentFormat: Format[EC]
 
   val solutionFormat: Format[ST]
 
-  val completeResultWrites: Writes[CR]
+//  val completeResultWrites: Writes[CR]
 
   val partTypeFormat: Format[PartType]
 
@@ -106,11 +105,8 @@ trait ToolJsonProtocol[EC <: ExerciseContent, ST, CR <: CompleteResult, PartType
 
 }
 
-abstract class StringSampleSolutionToolJsonProtocol[
-  E <: StringExerciseContent,
-  CR <: CompleteResult,
-  PartType <: ExPart
-] extends ToolJsonProtocol[E, String, CR, PartType] {
+abstract class StringSampleSolutionToolJsonProtocol[E <: StringExerciseContent, PartType <: ExPart]
+    extends ToolJsonProtocol[E, String, PartType] {
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 
@@ -118,11 +114,8 @@ abstract class StringSampleSolutionToolJsonProtocol[
 
 }
 
-abstract class FilesSampleSolutionToolJsonProtocol[
-  E <: FileExerciseContent,
-  CR <: CompleteResult,
-  PartType <: ExPart
-] extends ToolJsonProtocol[E, Seq[ExerciseFile], CR, PartType] {
+abstract class FilesSampleSolutionToolJsonProtocol[E <: FileExerciseContent, PartType <: ExPart]
+    extends ToolJsonProtocol[E, Seq[ExerciseFile], PartType] {
 
   override val solutionFormat: Format[Seq[ExerciseFile]] = Format(
     Reads.seq(ToolJsonProtocol.exerciseFileFormat),

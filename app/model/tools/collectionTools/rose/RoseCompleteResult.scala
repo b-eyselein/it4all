@@ -1,6 +1,6 @@
 package model.tools.collectionTools.rose
 
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.core.result.AbstractCorrectionResult
 import model.points._
 
 final case class RoseCompleteResult(
@@ -8,7 +8,7 @@ final case class RoseCompleteResult(
   points: Points = (-1).points,
   maxPoints: Points = (-1).points,
   solutionSaved: Boolean
-) extends CompleteResult
+) extends AbstractCorrectionResult
 
 final case class RoseStart(x: Int, y: Int)
 
@@ -19,8 +19,4 @@ final case class RoseExecutionResult(
   start: RoseStart,
   sample: RobotResult,
   user: RobotResult
-) extends EvaluationResult {
-
-  override def success: SuccessType = ???
-
-}
+)

@@ -5,8 +5,7 @@ import model.points._
 import model.tools.collectionTools.{ExerciseFile, FilesSampleSolutionToolJsonProtocol, SampleSolution, ToolJsonProtocol}
 import play.api.libs.json.{Format, Json, Writes}
 
-object WebToolJsonProtocol
-    extends FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult, WebExPart] {
+object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebExPart] {
 
   private val jsActionFormat: Format[JsAction] = {
     implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
@@ -85,6 +84,7 @@ object WebToolJsonProtocol
     Json.writes[GradedJsTaskResult]
   }
 
+  /*
   override val completeResultWrites: Writes[WebCompleteResult] = {
     implicit val gesrw: Writes[GradedHtmlTaskResult] = gradedHtmlTaskResultWrites
     implicit val gjtrw: Writes[GradedJsTaskResult]   = jsWebResultWrites
@@ -92,6 +92,7 @@ object WebToolJsonProtocol
 
     Json.writes[WebCompleteResult]
   }
+   */
 
   override val partTypeFormat: Format[WebExPart] = WebExParts.jsonFormat
 

@@ -53,7 +53,7 @@ GET         /api/tools/:toolType/lessonCount                                    
 GET         /api/tools/:toolType/lessons                                             controllers.ApiController.apiAllLessons(toolType: String)
 GET         /api/tools/:toolType/lessons/:lessonId                                   controllers.ApiController.apiLesson(toolType: String, lessonId: Int)
 
-PUT         /api/tools/:toolType/collections/:collId/exercises/:exId/:partStr        controllers.ApiController.apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String)
+# PUT         /api/tools/:toolType/collections/:collId/exercises/:exId/:partStr        controllers.ApiController.apiCorrect(toolType: String, collId: Int, exId: Int, partStr: String)
 
 # Admin API
 

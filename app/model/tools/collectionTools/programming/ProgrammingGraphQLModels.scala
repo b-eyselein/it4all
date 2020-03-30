@@ -81,7 +81,7 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
-  override val CompResultTypeType: ObjectType[Unit, ProgCompleteResult] = {
+  override val AbstractResultTypeType: ObjectType[Unit, ProgCompleteResult] = {
     implicit val nert: ObjectType[Unit, NormalExecutionResult]     = NormalExecutionResultType
     implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = unitTestCorrectionResultType
 

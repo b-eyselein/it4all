@@ -1,17 +1,21 @@
 package model.tools.collectionTools.programming
 
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points._
 import play.api.libs.json.JsValue
 
-sealed trait ProgEvalResult extends EvaluationResult
+sealed trait ProgEvalResult {
+
+  def success: SuccessType
+
+}
 
 final case class ProgCompleteResult(
   solutionSaved: Boolean,
   simplifiedResults: Seq[SimplifiedExecutionResult] = Seq.empty,
   normalResult: Option[NormalExecutionResult] = None,
   unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty
-) extends CompleteResult {
+) extends AbstractCorrectionResult {
 
   private def results: Seq[ProgEvalResult] = simplifiedResults ++ unitTestResults
 

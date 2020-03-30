@@ -1,32 +1,35 @@
 package model.tools.collectionTools.regex
 
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.core.result.AbstractCorrectionResult
 import model.points._
-import model.tools.collectionTools.regex.BinaryClassificationResultTypes._
 import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
 
-sealed trait RegexEvaluationResult extends EvaluationResult
+// single matching result
 
 final case class RegexMatchingEvaluationResult(
   matchData: String,
   isIncluded: Boolean,
   resultType: BinaryClassificationResultType
-) extends RegexEvaluationResult {
+)
 
-  override def success: SuccessType = resultType match {
-    case TruePositive | TrueNegative   => SuccessType.COMPLETE
-    case FalsePositive | FalseNegative => SuccessType.NONE
-  }
-
-}
+// single extraction result
 
 final case class RegexExtractionEvaluationResult(
   base: String,
   extractionMatchingResult: ExtractedValuesComparison,
   correct: Boolean
-) extends RegexEvaluationResult {
+)
 
-  override def success: SuccessType = ???
+// complete result
+
+sealed trait AbstractRegexResult extends AbstractCorrectionResult
+
+final case class IllegalRegexResult(
+  solutionSaved: Boolean,
+  maxPoints: Points
+) extends AbstractRegexResult {
+
+  override def points: Points = zeroPoints
 
 }
 
@@ -37,4 +40,4 @@ final case class RegexCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends CompleteResult
+) extends AbstractRegexResult

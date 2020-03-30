@@ -42,7 +42,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
     )
   }
 
-  override val CompResultTypeType: ObjectType[Unit, SqlResult] = {
+  override val AbstractResultTypeType: ObjectType[Unit, SqlResult] = {
     implicit val sqsct: ObjectType[Unit, SqlQueriesStaticComparison] = sqlQueriesStaticComparisonType
     implicit val sert: ObjectType[Unit, SqlExecutionResult]          = sqlExecutionResultType
 
