@@ -4,14 +4,19 @@ import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {IXmlCompleteResult, IXmlSolution} from '../xml-interfaces';
-
-import 'codemirror/mode/dtd/dtd';
-import 'codemirror/mode/xml/xml';
 import {
   ExerciseFile,
   ExerciseSolveFieldsFragment,
   XmlExerciseContentSolveFieldsFragment
 } from "../../../../_services/apollo_services";
+import {
+  XmlCorrectionGQL,
+  XmlCorrectionMutation,
+  XmlCorrectionMutationVariables
+} from '../../../../_services/apollo-mutation.service';
+
+import 'codemirror/mode/dtd/dtd';
+import 'codemirror/mode/xml/xml';
 
 function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -29,7 +34,9 @@ function getXmlDocumentContent(rootNode: string): string {
   selector: 'it4all-xml-exercise',
   templateUrl: './xml-exercise.component.html'
 })
-export class XmlExerciseComponent extends ComponentWithExercise<IXmlSolution, IXmlCompleteResult> implements OnInit {
+export class XmlExerciseComponent
+  extends ComponentWithExercise<IXmlSolution, XmlCorrectionMutation, XmlCorrectionMutationVariables, XmlCorrectionGQL, IXmlCompleteResult>
+  implements OnInit {
 
 
   @Input() part: ToolPart;

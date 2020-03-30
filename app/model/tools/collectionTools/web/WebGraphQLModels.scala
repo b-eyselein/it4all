@@ -4,9 +4,10 @@ import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
 import model.points
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{AddFields, ExcludeFields, deriveObjectType}
-import sangria.schema.{Field, InputType, IntType, ListInputType, ListType, ObjectType, StringType, fields}
+import sangria.schema.{EnumType, EnumValue, Field, InputType, IntType, ListInputType, ListType, ObjectType, StringType, fields}
 
-object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[ExerciseFile], WebCompleteResult] {
+object WebGraphQLModels
+    extends ToolGraphQLModelBasics[WebExerciseContent, Seq[ExerciseFile], WebCompleteResult, WebExPart] {
 
   private val HtmlTaskType: ObjectType[Unit, HtmlTask] = ObjectType(
     "HtmlTask",
@@ -53,4 +54,10 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[E
       ExcludeFields("gradedHtmlTaskResults", "gradedJsTaskResults")
     )
   }
+
+  override val PartTypeInputType: EnumType[WebExPart] = EnumType(
+    "WebExPart",
+    values = WebExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
+
 }

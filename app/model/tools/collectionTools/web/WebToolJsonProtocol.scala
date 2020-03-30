@@ -3,9 +3,10 @@ package model.tools.collectionTools.web
 import de.uniwue.webtester.sitespec._
 import model.points._
 import model.tools.collectionTools.{ExerciseFile, FilesSampleSolutionToolJsonProtocol, SampleSolution, ToolJsonProtocol}
-import play.api.libs.json.{Format, Json, Reads, Writes}
+import play.api.libs.json.{Format, Json, Writes}
 
-object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult] {
+object WebToolJsonProtocol
+    extends FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebCompleteResult, WebExPart] {
 
   private val jsActionFormat: Format[JsAction] = {
     implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
@@ -91,5 +92,7 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
 
     Json.writes[WebCompleteResult]
   }
+
+  override val partTypeFormat: Format[WebExPart] = WebExParts.jsonFormat
 
 }

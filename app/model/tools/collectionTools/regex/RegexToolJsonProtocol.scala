@@ -7,7 +7,8 @@ import play.api.libs.json.{Format, Json, Writes}
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] {
+object RegexToolJsonProtocol
+    extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult, RegexExPart] {
 
   val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
@@ -67,4 +68,5 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
     Json.writes[RegexCompleteResult]
   }
 
+  override val partTypeFormat: Format[RegexExPart] = RegexExParts.jsonFormat
 }

@@ -1,9 +1,9 @@
 package model.tools.collectionTools.sql
 
 import model.core.matching.MatchType
+import model.tools.collectionTools.ToolTSInterfaceTypes
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.matcher._
-import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -14,14 +14,6 @@ import nl.codestar.scalatsi.{TSIType, TSType}
 object SqlTSTypes extends ToolTSInterfaceTypes {
 
   private implicit val matchTypeTsType: TSType[MatchType] = matchTypeTS
-
-  private val sqlExerciseContentTSI: TSIType[SqlExerciseContent] = {
-    implicit val seTypeT: TSType[SqlExerciseType]      = enumTsType(SqlExerciseType)
-    implicit val seTagT: TSType[SqlExerciseTag]        = enumTsType(SqlExerciseTag)
-    implicit val ssst: TSIType[SampleSolution[String]] = sampleSolutionTSI("Sql", TSType(TSString))
-
-    TSType.fromCaseClass
-  }
 
   private val sqlQueryResultTSI: TSIType[SqlQueryResult] = {
     implicit val sct: TSType[SqlCell] = TSType.fromCaseClass

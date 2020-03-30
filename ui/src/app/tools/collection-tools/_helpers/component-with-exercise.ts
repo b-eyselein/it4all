@@ -4,24 +4,28 @@ import {TabComponent} from '../../../shared/tab/tab.component';
 import {DexieService} from '../../../_services/dexie.service';
 import {ApiService} from '../_services/api.service';
 import {ToolPart} from '../../../_interfaces/tool';
+import * as Apollo from 'apollo-angular';
 
 @Directive()
-export abstract class ComponentWithExercise<SolutionType, ResultType> {
+export abstract class ComponentWithExercise<SolutionType, MutationQueryType, PartType, MutationGQL extends Apollo.Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionType }>, ResultType> {
+
+  readonly exerciseTextTabTitle = 'Aufgabenstellung';
+  readonly correctionTabTitle = 'Korrektur';
+  readonly sampleSolutionsTabTitle = 'Musterlösungen';
+
 
   isCorrecting = false;
 
   result: ResultType | undefined;
+  resultQuery: MutationQueryType;
 
   displaySampleSolutions = false;
 
   @ViewChild(TabsComponent) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
-  readonly exerciseTextTabTitle = 'Aufgabenstellung';
-  readonly correctionTabTitle = 'Korrektur';
-  readonly sampleSolutionsTabTitle = 'Musterlösungen';
 
-  protected constructor(protected apiService: ApiService, protected dexieService: DexieService) {
+  protected constructor(protected mutationGQL: MutationGQL, protected apiService: ApiService, protected dexieService: DexieService) {
   }
 
   toggleSampleSolutions(): void {
@@ -36,27 +40,23 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
     }
   }
 
-  protected correctAbstract(exId: number, collId: number, toolId: string, part: ToolPart, logResult: boolean = false, logSolution: boolean = false): void {
+  protected correctAbstract(exId: number, collId: number, toolId: string, part: PartType, oldPart: ToolPart): void {
     this.isCorrecting = true;
 
     const solution: SolutionType = this.getSolution();
 
-    if (logSolution) {
-      console.info(JSON.stringify(solution, null, 2));
-    }
+    const mutationQueryVars = {exId, collId, part, solution};
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.upsertSolution<SolutionType>(exId, collId, toolId, part.id, solution);
+    this.dexieService.upsertSolution<SolutionType>(exId, collId, toolId, oldPart.id, solution);
 
-    this.apiService.correctSolution<SolutionType, ResultType>(exId, collId, toolId, part.id, solution)
-      .subscribe((result: ResultType | undefined) => {
-        this.isCorrecting = false;
-        this.result = result;
-        this.activateCorrectionTab();
 
-        if (logResult) {
-          console.log(JSON.stringify(result, null, 2));
-        }
+    this.mutationGQL
+      .mutate(mutationQueryVars)
+      .subscribe(({data}) => {
+        this.resultQuery = data;
+
+        console.info(JSON.stringify(this.resultQuery, null, 2));
       });
   }
 
@@ -67,6 +67,6 @@ export abstract class ComponentWithExercise<SolutionType, ResultType> {
 
   protected abstract getSolution(): SolutionType;
 
-  abstract get sampleSolutions(): SolutionType[];
+  protected abstract get sampleSolutions(): SolutionType[];
 
 }

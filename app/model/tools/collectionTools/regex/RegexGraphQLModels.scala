@@ -3,9 +3,10 @@ package model.tools.collectionTools.regex
 import model.points.Points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, deriveEnumType, deriveObjectType}
-import sangria.schema.{EnumType, InputType, ObjectType, StringType}
+import sangria.schema.{EnumType, EnumValue, InputType, ObjectType, StringType}
 
-object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, String, RegexCompleteResult] {
+object RegexGraphQLModels
+    extends ToolGraphQLModelBasics[RegexExerciseContent, String, RegexCompleteResult, RegexExPart] {
 
   private val regexCorrectionTypeType: EnumType[RegexCorrectionType] = deriveEnumType()
 
@@ -50,5 +51,12 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
 
     deriveObjectType()
   }
+
+  // Part type
+
+  override val PartTypeInputType: EnumType[RegexExPart] = EnumType(
+    "RegexExPart",
+    values = RegexExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
 }

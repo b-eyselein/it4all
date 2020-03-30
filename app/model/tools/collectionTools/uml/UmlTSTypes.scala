@@ -1,9 +1,9 @@
 package model.tools.collectionTools.uml
 
 import model.core.matching.MatchType
+import model.tools.collectionTools.ToolTSInterfaceTypes
 import model.tools.collectionTools.uml.UmlToolMain._
 import model.tools.collectionTools.uml.matcher._
-import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.{TSIType, TSType}
 
@@ -45,13 +45,6 @@ object UmlTSTypes extends ToolTSInterfaceTypes {
     implicit val uat: TSIType[UmlAssociation] = umlAssociationTSI
 
     implicit val uit: TSIType[UmlImplementation] = umlImplementationTSI
-
-    TSType.fromCaseClass
-  }
-
-  private val umlExerciseContentTSI: TSIType[UmlExerciseContent] = {
-    implicit val usst: TSIType[SampleSolution[UmlClassDiagram]] = sampleSolutionTSI("Uml", umlClassDiagramTSI)
-    implicit val mt: TSType[Map[String, String]]                = stringMapTsType
 
     TSType.fromCaseClass
   }

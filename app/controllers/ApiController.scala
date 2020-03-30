@@ -1,12 +1,12 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.GraphQLModel
 import model.adaption.Proficiencies
 import model.lesson.Lesson
 import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools.sql._
 import model.tools.collectionTools.{Exercise, ExerciseCollection, ExerciseMetaData, ToolJsonProtocol}
+import model.{GraphQLContext, GraphQLModel, User}
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
@@ -40,9 +40,20 @@ class ApiController @Inject() (
 
   private implicit val graphQlRequest: Format[GraphQLRequest] = Json.format
 
-  private def executeGraphQLQuery(query: Document, operationName: Option[String], variables: JsObject): Future[Result] =
+  private def executeGraphQLQuery(
+    query: Document,
+    user: Option[User],
+    operationName: Option[String],
+    variables: JsObject
+  ): Future[Result] =
     Executor
-      .execute(GraphQLModel.schema, query, userContext = tables, operationName = operationName, variables = variables)
+      .execute(
+        GraphQLModel.schema,
+        query,
+        userContext = GraphQLContext(tables, ec, user),
+        operationName = operationName,
+        variables = variables
+      )
       .map(Ok(_))
       .recover {
         case error: QueryAnalysisError =>
@@ -56,7 +67,12 @@ class ApiController @Inject() (
   def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest]) { implicit request =>
     QueryParser.parse(request.body.query) match {
       case Success(queryAst) =>
-        executeGraphQLQuery(queryAst, request.body.operationName, request.body.variables.getOrElse(Json.obj()))
+        executeGraphQLQuery(
+          queryAst,
+          userFromHeader(request),
+          request.body.operationName,
+          request.body.variables.getOrElse(Json.obj())
+        )
       case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
     }
   }
@@ -170,7 +186,15 @@ class ApiController @Inject() (
                   solution => {
 
                     tables
-                      .futureInsertSolution(request.request.user, exercise, exPart, request.body)
+                      .futureInsertSolution(
+                        request.request.user.username,
+                        exercise.id,
+                        exercise.semanticVersion,
+                        exercise.collectionId,
+                        request.toolMain.id,
+                        exPart,
+                        request.body
+                      )
                       .flatMap { inserted =>
                         request.toolMain
                           .correctAbstract(request.request.user, solution, collection, exercise, exPart, inserted)

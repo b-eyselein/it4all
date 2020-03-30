@@ -24,10 +24,10 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult] =
+  override val toolJsonProtocol: ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult, XmlExPart] =
     XmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[XmlExerciseContent, XmlSolution, XmlCompleteResult] =
+  override val graphQlModels: ToolGraphQLModelBasics[XmlExerciseContent, XmlSolution, XmlCompleteResult, XmlExPart] =
     XmlGraphQLModels
 
   // Correction

@@ -230,9 +230,9 @@ object ProgCorrector {
     resultFile.createIfNotExists(createParents = true).clear()
 
     part match {
-      case ProgExParts.TestCreation =>
+      case ProgExPart.TestCreation =>
         correctUnittest(solutionTargetDir, progSolution, content, resultFile, solutionSaved)
-      case _ => correctImplementation(solutionTargetDir, progSolution, content, resultFile, solutionSaved)
+      case _                       => correctImplementation(solutionTargetDir, progSolution, content, resultFile, solutionSaved)
     }
   }
 

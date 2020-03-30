@@ -7,7 +7,7 @@ import model.tools.collectionTools.{ExPart, ExParts}
 
 sealed abstract class ProgExPart(val partName: String, val urlName: String) extends ExPart
 
-object ProgExParts extends ExParts[ProgExPart] {
+object ProgExPart extends ExParts[ProgExPart] {
 
   override def values: IndexedSeq[ProgExPart] = findValues
 

@@ -3,9 +3,10 @@ package model.tools.collectionTools.programming
 import model.core.result.SuccessType
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
-import sangria.schema.{EnumType, InputObjectType, ObjectType}
+import sangria.schema.{EnumType, EnumValue, InputObjectType, InputType, ObjectType}
 
-object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgCompleteResult] {
+object ProgrammingGraphQLModels
+    extends ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgCompleteResult, ProgExPart] {
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = ExerciseFileType
@@ -89,5 +90,12 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseConte
       ExcludeFields("simplifiedResults")
     )
   }
+
+  // Parts
+
+  override val PartTypeInputType: EnumType[ProgExPart] = EnumType(
+    "ProgExPart",
+    values = ProgExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
 }

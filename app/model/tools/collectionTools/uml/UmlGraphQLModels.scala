@@ -3,9 +3,10 @@ package model.tools.collectionTools.uml
 import model.points
 import model.tools.collectionTools.{KeyValueObject, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
-import sangria.schema.{EnumType, Field, InputObjectType, InputType, ListType, ObjectType}
+import sangria.schema.{EnumType, EnumValue, Field, InputObjectType, InputType, ListType, ObjectType}
 
-object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] {
+object UmlGraphQLModels
+    extends ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult, UmlExPart] {
 
   private val umlVisibilityType: EnumType[UmlVisibility] = deriveEnumType()
   private val umlClassTypeType: EnumType[UmlClassType]   = deriveEnumType()
@@ -109,5 +110,10 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlCl
       ExcludeFields("classResult", "assocResult", "implResult")
     )
   }
+
+  override val PartTypeInputType: EnumType[UmlExPart] = EnumType(
+    "UmlExPart",
+    values = UmlExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
 }

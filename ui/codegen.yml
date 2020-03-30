@@ -1,22 +1,26 @@
 overwrite: true
 
 schema: src/schema.graphql
-documents: src/**/*.graphql
+
 
 generates:
   src/introspection-result.ts:
+    documents: src/**/*.graphql
     plugins:
       - fragment-matcher
     config:
       apolloClientVersion: 2
 
   src/app/_services/apollo_services.ts:
+    documents: src/queries.graphql
     plugins:
       - typescript
       - typescript-operations
       - typescript-apollo-angular
 
   src/app/_services/apollo-mutation.service.ts:
+    documents: src/mutations.graphql
     plugins:
+      - typescript
       - typescript-operations
       - typescript-apollo-angular

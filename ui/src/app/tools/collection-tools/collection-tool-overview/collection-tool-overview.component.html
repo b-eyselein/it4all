@@ -1,6 +1,6 @@
 <div class="container">
   <ng-container *ngIf="collectionToolOverviewQuery; else loadingDataBlock">
-    <h1 class="title is-3 has-text-centered">Tool {{tool?.name}}</h1>
+    <h1 class="title is-3 has-text-centered">Tool {{collectionToolOverviewQuery.tool.name}}</h1>
 
     <div class="buttons">
       <a class="button is-primary is-fullwidth" routerLink="/">Zurück zur Toolübersicht</a>
@@ -9,20 +9,6 @@
     <br>
 
     <div class="columns">
-      <div class="column">
-        <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">Alle Aufgaben</p>
-          </header>
-          <div class="card-content">
-            {{collectionToolOverviewQuery.tool.exerciseCount}} Aufgaben
-          </div>
-          <footer class="card-footer">
-            <a class="card-footer-item" routerLink="allExercises">Zur Übersicht</a>
-          </footer>
-        </div>
-      </div>
-
       <div class="column">
         <div class="card">
           <header class="card-header">
@@ -37,6 +23,20 @@
         </div>
       </div>
 
+      <div class="column">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">Alle Aufgaben</p>
+          </header>
+          <div class="card-content">
+            {{collectionToolOverviewQuery.tool.exerciseCount}} Aufgaben
+          </div>
+          <footer class="card-footer">
+            <a class="card-footer-item" routerLink="allExercises">Zur Übersicht</a>
+          </footer>
+        </div>
+      </div>
+
       <div class="column" *ngIf="collectionToolOverviewQuery.tool.lessonCount > 0">
         <div class="card">
           <header class="card-header">
@@ -46,7 +46,7 @@
             {{collectionToolOverviewQuery.tool.lessonCount}} Lektionen
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item" [routerLink]="['/lessons', tool.id]">Zu den Lektionen</a>
+            <a class="card-footer-item" [routerLink]="['/lessons', toolId]">Zu den Lektionen</a>
           </footer>
         </div>
       </div>

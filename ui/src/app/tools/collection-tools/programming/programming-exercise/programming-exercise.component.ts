@@ -11,6 +11,11 @@ import {
   ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment
 } from "../../../../_services/apollo_services";
+import {
+  ProgCorrectionGQL,
+  ProgCorrectionMutation,
+  ProgCorrectionMutationVariables
+} from '../../../../_services/apollo-mutation.service';
 
 import 'codemirror/mode/python/python';
 
@@ -19,7 +24,9 @@ import 'codemirror/mode/python/python';
   templateUrl: './programming-exercise.component.html',
   styleUrls: ['./programming-exercise.component.sass']
 })
-export class ProgrammingExerciseComponent extends ComponentWithExercise<IProgSolution, ProgrammingCorrectionResult> implements OnInit {
+export class ProgrammingExerciseComponent
+  extends ComponentWithExercise<IProgSolution, ProgCorrectionMutation, ProgCorrectionMutationVariables, ProgCorrectionGQL, ProgrammingCorrectionResult>
+  implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: ProgExerciseContentSolveFieldsFragment;

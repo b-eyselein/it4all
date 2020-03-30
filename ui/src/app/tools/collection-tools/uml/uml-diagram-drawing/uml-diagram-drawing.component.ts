@@ -11,17 +11,15 @@ import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
 import {IUmlClassDiagram, IUmlCompleteResult} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
-
-import * as joint from 'jointjs';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
-import {
-  ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment
-} from "../../../../_services/apollo_services";
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment, UmlExPart} from '../../../../_services/apollo_services';
+import {UmlCorrectionGQL, UmlCorrectionMutation, UmlCorrectionMutationVariables} from '../../../../_services/apollo-mutation.service';
+
+import * as joint from 'jointjs';
 
 
 enum CreatableClassDiagramObject {
@@ -51,11 +49,14 @@ interface SelectableClassDiagramObject {
     }
   `]
 })
-export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUmlClassDiagram, IUmlCompleteResult> implements OnInit {
+export class UmlDiagramDrawingComponent
+  extends ComponentWithExercise<ExportedUmlClassDiagram, UmlCorrectionMutation, UmlExPart, UmlCorrectionGQL, IUmlCompleteResult>
+  implements OnInit {
 
   readonly nextPart = UmlMemberAllocationPart;
 
   @Input() part: ToolPart;
+  @Input() exPart: UmlExPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
 
@@ -77,8 +78,8 @@ export class UmlDiagramDrawingComponent extends ComponentWithExercise<ExportedUm
 
   readonly debug = !environment.production;
 
-  constructor(apiService: ApiService, dexieService: DexieService) {
-    super(apiService, dexieService);
+  constructor(umlCorrectionGQL: UmlCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
+    super(umlCorrectionGQL, apiService, dexieService);
   }
 
   ngOnInit(): void {

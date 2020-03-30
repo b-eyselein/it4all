@@ -4,21 +4,12 @@ import de.uniwue.dtd.model.ElementLine
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.matching.MatchType
 import model.core.result.SuccessType
+import model.tools.collectionTools.ToolTSInterfaceTypes
 import model.tools.collectionTools.xml.XmlToolMain.ElementLineComparison
-import model.tools.collectionTools.{SampleSolution, ToolTSInterfaceTypes}
 import nl.codestar.scalatsi.TypescriptType.{TSArray, TSObject, TSString, TypescriptNamedType}
 import nl.codestar.scalatsi.{TSIType, TSNamedType, TSType}
 
 object XmlTSTypes extends ToolTSInterfaceTypes {
-
-  /*
-  private val xmlExerciseContentTSI: TSIType[XmlExerciseContent] = {
-    implicit val xsst: TSIType[SampleSolution[XmlSolution]] =
-      sampleSolutionTSI("Xml", TSType.fromCaseClass[XmlSolution])
-
-    TSType.fromCaseClass
-  }
-   */
 
   private val xmlSolutionTSI: TSIType[XmlSolution] = TSType.fromCaseClass
 

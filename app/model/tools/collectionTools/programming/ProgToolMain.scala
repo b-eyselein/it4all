@@ -15,14 +15,15 @@ object ProgToolMain extends CollectionToolMain(ProgConsts) {
 
   // Other members
 
-  override val exParts: Seq[ProgExPart] = ProgExParts.values
+  override val exParts: Seq[ProgExPart] = ProgExPart.values
 
   // Yaml, Html Forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
+  override val toolJsonProtocol: ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgCompleteResult, ProgExPart] =
     ProgrammingToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgCompleteResult] =
+  override val graphQlModels
+    : ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgCompleteResult, ProgExPart] =
     ProgrammingGraphQLModels
 
   // Correction

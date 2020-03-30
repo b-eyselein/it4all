@@ -5,6 +5,7 @@ import {CollectionToolOverviewGQL, CollectionToolOverviewQuery} from "../../../_
 @Component({templateUrl: './collection-tool-overview.component.html'})
 export class CollectionToolOverviewComponent implements OnInit {
 
+  toolId: string;
   collectionToolOverviewQuery: CollectionToolOverviewQuery;
 
   constructor(
@@ -15,10 +16,10 @@ export class CollectionToolOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((paramMap) => {
-      const toolId = paramMap.get('toolId');
+      this.toolId = paramMap.get('toolId');
 
       this.collectionToolOverviewGQL
-        .watch({toolId})
+        .watch({toolId: this.toolId})
         .valueChanges
         .subscribe(({data}) => this.collectionToolOverviewQuery = data);
     });

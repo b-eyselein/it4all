@@ -23,10 +23,11 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult] =
+  override val toolJsonProtocol
+    : StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexCompleteResult, RegexExPart] =
     RegexToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[RegexExerciseContent, String, RegexCompleteResult] =
+  override val graphQlModels: ToolGraphQLModelBasics[RegexExerciseContent, String, RegexCompleteResult, RegexExPart] =
     RegexGraphQLModels
 
   // Correction

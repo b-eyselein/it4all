@@ -10,7 +10,7 @@ import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult] {
+object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult, SqlExPart] {
 
   override val exerciseContentFormat: Format[SqlExerciseContent] = {
     implicit val sssf: Format[SampleSolution[String]] = sampleSolutionFormat
@@ -110,4 +110,7 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
 
     Json.writes
   }
+
+  override val partTypeFormat: Format[SqlExPart] = SqlExParts.jsonFormat
+
 }

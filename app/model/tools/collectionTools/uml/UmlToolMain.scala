@@ -27,10 +27,10 @@ object UmlToolMain extends CollectionToolMain(UmlConsts) {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] =
+  override val toolJsonProtocol: ToolJsonProtocol[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult,UmlExPart] =
     UmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult] =
+  override val graphQlModels: ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult,UmlExPart] =
     UmlGraphQLModels
 
   // Correction

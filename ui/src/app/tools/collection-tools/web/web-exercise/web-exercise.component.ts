@@ -8,8 +8,10 @@ import {IWebCompleteResult} from '../web-interfaces';
 import {
   ExerciseFile,
   ExerciseSolveFieldsFragment,
-  WebExerciseContentSolveFieldsFragment
-} from "../../../../_services/apollo_services";
+  WebExerciseContentSolveFieldsFragment,
+  WebExPart
+} from '../../../../_services/apollo_services';
+import {WebCorrectionGQL, WebCorrectionMutation} from '../../../../_services/apollo-mutation.service';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
@@ -17,16 +19,21 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
   selector: 'it4all-web-exercise',
   templateUrl: './web-exercise.component.html'
 })
-export class WebExerciseComponent extends ComponentWithExercise<ExerciseFile[], IWebCompleteResult> implements OnInit {
+export class WebExerciseComponent
+  extends ComponentWithExercise<ExerciseFile[], WebCorrectionMutation, WebExPart, WebCorrectionGQL, IWebCompleteResult>
+  implements OnInit {
 
+
+  @Input() part: ToolPart;
+  @Input() exPart: WebExPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() webExerciseContent: WebExerciseContentSolveFieldsFragment;
-  @Input() part: ToolPart;
+
 
   exerciseFiles: ExerciseFile[] = [];
 
-  constructor(apiService: ApiService, dexieService: DexieService) {
-    super(apiService, dexieService);
+  constructor(webCorrectionGQL: WebCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
+    super(webCorrectionGQL, apiService, dexieService);
   }
 
   ngOnInit(): void {
@@ -37,7 +44,7 @@ export class WebExerciseComponent extends ComponentWithExercise<ExerciseFile[], 
   }
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part);
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.exPart, this.part);
   }
 
   protected getSolution(): ExerciseFile[] {

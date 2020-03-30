@@ -5,20 +5,25 @@ export interface IExTag {
 }
 
 
-export interface ITopicProficiency {
-  username: string;
-  toolId: string;
-  topicId: number;
-  points: number;
-}
-
-
 export interface IQuestion {
   id: number;
   question: string;
   answers: IQuestionAnswer[];
 }
 
+
+
+export interface IExerciseMetaData {
+  id: number;
+  collectionId: number;
+  toolId: string;
+  semanticVersion: ISemanticVersion;
+  title: string;
+  authors: string[];
+  text: string;
+  tags: IExTag[];
+  difficulty?: number;
+}
 
 
 export interface IQuestionAnswer {
@@ -41,32 +46,6 @@ export interface ILesson {
   title: string;
   description: string;
   content: LessonContent[];
-}
-
-
-export interface IProficiencies {
-  toolProf: IToolProficiency;
-  topicProfs: ITopicProficiency[];
-}
-
-
-export interface IExerciseMetaData {
-  id: number;
-  collectionId: number;
-  toolId: string;
-  semanticVersion: ISemanticVersion;
-  title: string;
-  authors: string[];
-  text: string;
-  tags: IExTag[];
-  difficulty?: number;
-}
-
-
-export interface IToolProficiency {
-  username: string;
-  toolId: string;
-  points: number;
 }
 
 

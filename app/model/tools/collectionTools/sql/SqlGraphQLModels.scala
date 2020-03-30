@@ -2,9 +2,9 @@ package model.tools.collectionTools.sql
 
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{AddFields, ExcludeFields, deriveEnumType, deriveObjectType}
-import sangria.schema.{EnumType, Field, InputType, IntType, ObjectType, OptionType, StringType}
+import sangria.schema.{EnumType, EnumValue, Field, InputType, IntType, ObjectType, OptionType, StringType}
 
-object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, String, SqlResult] {
+object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, String, SqlResult, SqlExPart] {
 
   override val ExContentTypeType: ObjectType[Unit, SqlExerciseContent] = {
     implicit val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
@@ -48,5 +48,10 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
 
     deriveObjectType()
   }
+
+  override val PartTypeInputType: EnumType[SqlExPart] = EnumType(
+    "SqlExPart",
+    values = SqlExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
 }

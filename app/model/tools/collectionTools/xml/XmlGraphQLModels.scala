@@ -5,9 +5,9 @@ import model.core.result.SuccessType
 import model.points.Points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
-import sangria.schema.{EnumType, InputType, ObjectType}
+import sangria.schema.{EnumType, EnumValue, InputType, ObjectType}
 
-object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSolution, XmlCompleteResult] {
+object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSolution, XmlCompleteResult, XmlExPart] {
 
   private val xmlSolutionType: ObjectType[Unit, XmlSolution] = deriveObjectType()
 
@@ -52,5 +52,10 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSo
 
     deriveObjectType()
   }
+
+  override val PartTypeInputType: EnumType[XmlExPart] = EnumType(
+    "XmlExPart",
+    values = XmlExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
 }

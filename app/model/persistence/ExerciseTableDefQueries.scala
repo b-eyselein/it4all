@@ -1,6 +1,5 @@
 package model.persistence
 
-import model._
 import model.lesson.{Lesson, LessonContent}
 import model.tools.collectionTools._
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -19,23 +18,31 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
   private def collectionFilter(toolId: String, collId: Int): ExerciseCollectionsTable => Rep[Boolean] =
     coll => coll.toolId === toolId && coll.id === collId
 
-  private def solutionFilter(exercise: Exercise, user: User, part: ExPart): UserSolutionsTable => Rep[Boolean] = {
+  private def futureNextUserSolutionId(
+    exerciseId: Int,
+    collectionId: Int,
+    toolId: String,
+    username: String,
+    part: ExPart
+  ): Future[Int] = {
     implicit val ptct: profile.api.BaseColumnType[ExPart] = exPartColumnType
 
-    userSolution =>
-      userSolution.username === user.username &&
-        userSolution.exerciseId === exercise.id &&
-        userSolution.collectionId === exercise.collectionId &&
-        userSolution.toolId === exercise.toolId &&
-        userSolution.part === part
-  }
-
-  private def futureNextUserSolutionId(exercise: Exercise, user: User, part: ExPart): Future[Int] =
     for {
       maybeCurrentHighestId <- db.run(
-        userSolutionsTQ.filter(solutionFilter(exercise, user, part)).map(_.id).max.result
+        userSolutionsTQ
+          .filter { userSolution =>
+            userSolution.username === username &&
+            userSolution.exerciseId === exerciseId &&
+            userSolution.collectionId === collectionId &&
+            userSolution.toolId === toolId &&
+            userSolution.part === part
+          }
+          .map(_.id)
+          .max
+          .result
       )
     } yield maybeCurrentHighestId.fold(0)(_ + 1)
+  }
 
   private def lessonFromDbLesson(dbLesson: DbLesson): Lesson = {
     val lessonContentSeqReads = Reads.seq(ToolJsonProtocol.lessonContentFormat)
@@ -186,18 +193,26 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     db.run(lessonsTQ.insertOrUpdate(dbLesson)).transform(_ == 1, identity)
   }
 
-  def futureInsertSolution(user: User, exercise: Exercise, part: ExPart, solution: JsValue): Future[Boolean] =
+  def futureInsertSolution(
+    username: String,
+    exerciseId: Int,
+    semanticVersion: SemanticVersion,
+    collectionId: Int,
+    toolId: String,
+    part: ExPart,
+    solution: JsValue
+  ): Future[Boolean] =
     for {
-      nextSolutionId <- futureNextUserSolutionId(exercise, user, part)
+      nextSolutionId <- futureNextUserSolutionId(exerciseId, collectionId, toolId, username, part)
 
       dbUserSolution = DbUserSolution(
         nextSolutionId,
-        exercise.id,
-        exercise.collectionId,
-        exercise.toolId,
-        exercise.semanticVersion,
+        exerciseId,
+        collectionId,
+        toolId,
+        semanticVersion,
         part,
-        user.username,
+        username,
         solution
       )
 

@@ -5,7 +5,7 @@ import model.points.Points
 import sangria.macros.derive.{InputObjectTypeName, deriveEnumType, deriveInputObjectType, deriveObjectType}
 import sangria.schema.{EnumType, Field, InputObjectType, InputType, IntType, ObjectType, OutputType, StringType, fields}
 
-trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent, SolType, CompResultType <: CompleteResult] {
+trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent, SolType, CompResultType <: CompleteResult, PartType <: ExPart] {
 
   protected val ExerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
 
@@ -39,5 +39,7 @@ trait ToolGraphQLModelBasics[ExContentType <: ExerciseContent, SolType, CompResu
   val SolTypeInputType: InputType[SolType]
 
   val CompResultTypeType: ObjectType[Unit, CompResultType]
+
+  val PartTypeInputType: EnumType[PartType]
 
 }

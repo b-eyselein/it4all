@@ -29,7 +29,7 @@ trait AbstractApiController {
     JwtSession() + ("user", user)
   }
 
-  private def userFromHeader(request: RequestHeader): Option[User] = request.headers.get("Authorization").flatMap {
+  def userFromHeader(request: RequestHeader): Option[User] = request.headers.get("Authorization").flatMap {
     case bearerHeaderRegex(serializedJwtToken) =>
       JwtSession.deserialize(serializedJwtToken).getAs[User]("user").flatMap { user =>
         if (adminRightsRequired && !user.isAdmin) {

@@ -59,6 +59,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
       this.saveEditorContent();
     }
 
+    // @ts-ignore
     exerciseFile.active = true;
 
     this.theContent = exerciseFile.content;
@@ -72,7 +73,10 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     const fileName: string = ($event.target as HTMLElement).textContent;
 
     // disable other files...
-    this.exerciseFiles.forEach((ef) => ef.active = false);
+    this.exerciseFiles.forEach((ef) =>  {
+      // @ts-ignore
+      ef.active = false;
+    });
 
     const exerciseFile: ExerciseFile | null = this.exerciseFiles.find((ef) => ef.name === fileName);
 

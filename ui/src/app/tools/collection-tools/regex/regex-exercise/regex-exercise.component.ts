@@ -2,31 +2,33 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {ApiService} from '../../_services/api.service';
 import {IRegexCompleteResult} from '../regex-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
-import {IExercise} from '../../../../_interfaces/models';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {
-  ExerciseSolveFieldsFragment,
-  RegexExerciseContentSolveFieldsFragment
-} from "../../../../_services/apollo_services";
-import {ToolPart} from "../../../../_interfaces/tool";
+import {ExerciseSolveFieldsFragment, RegexExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {ToolPart} from '../../../../_interfaces/tool';
+import {RegexCorrectionGQL, RegexCorrectionMutation, RegexExPart} from '../../../../_services/apollo-mutation.service';
+
 
 @Component({
   selector: 'it4all-regex-exercise',
   templateUrl: './regex-exercise.component.html'
 })
-export class RegexExerciseComponent extends ComponentWithExercise<string, IRegexCompleteResult> implements OnInit {
+export class RegexExerciseComponent
+  extends ComponentWithExercise<string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL, IRegexCompleteResult>
+  implements OnInit {
 
   @Input() part: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() regexExerciseContent: RegexExerciseContentSolveFieldsFragment;
 
+  regexCorrectionMutation: RegexCorrectionMutation;
+
   solution = '';
 
   showInfo = false;
 
-  constructor(apiService: ApiService, dexieService: DexieService) {
-    super(apiService, dexieService);
+  constructor(regexCorrectionGQL: RegexCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
+    super(regexCorrectionGQL, apiService, dexieService);
   }
 
   ngOnInit(): void {
@@ -48,7 +50,7 @@ export class RegexExerciseComponent extends ComponentWithExercise<string, IRegex
       return;
     }
 
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part);
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, RegexExPart.RegexSingleExPart, this.part);
   }
 
   // FIXME: make directive?

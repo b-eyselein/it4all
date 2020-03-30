@@ -12,6 +12,11 @@ import {
   ExerciseSolveFieldsFragment,
   SqlExerciseContentSolveFieldsFragment
 } from "../../../../_services/apollo_services";
+import {
+  SqlCorrectionGQL,
+  SqlCorrectionMutation,
+  SqlCorrectionMutationVariables
+} from "../../../../_services/apollo-mutation.service";
 
 
 @Component({
@@ -20,7 +25,7 @@ import {
   styleUrls: ['./sql-exercise.component.sass'],
   encapsulation: ViewEncapsulation.None // style editor also
 })
-export class SqlExerciseComponent extends ComponentWithExercise<string, ISqlResult> implements OnInit {
+export class SqlExerciseComponent extends ComponentWithExercise<string, SqlCorrectionMutation, SqlCorrectionMutationVariables, SqlCorrectionGQL, ISqlResult> implements OnInit {
 
   readonly editorOptions = getDefaultEditorOptions('sql');
 

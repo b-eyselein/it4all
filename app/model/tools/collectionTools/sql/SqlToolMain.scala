@@ -46,10 +46,11 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult] =
+  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlResult, SqlExPart] =
     SqlJsonProtocols
 
-  override val graphQlModels: ToolGraphQLModelBasics[SqlExerciseContent, String, SqlResult] = SqlGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[SqlExerciseContent, String, SqlResult, SqlExPart] =
+    SqlGraphQLModels
 
   // Correction
 

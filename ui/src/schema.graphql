@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Sat Mar 28 2020 08:42:41 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Mon Mar 30 2020 12:43:44 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 enum BinaryClassificationResultType {
   FalseNegative
@@ -83,13 +83,13 @@ type Lesson {
 }
 
 type Mutation {
-  correctProgramming(collId: Int!, exId: Int!, solution: ProgSolutionInput!): ProgCompleteResult
-  correctRegex(collId: Int!, exId: Int!, solution: String!): RegexCompleteResult
-  correctRose(collId: Int!, exId: Int!, solution: String!): RoseCompleteResult
-  correctSql(collId: Int!, exId: Int!, solution: String!): SqlResult
-  correctUml(collId: Int!, exId: Int!, solution: UmlClassDiagramInput!): UmlCompleteResult
-  correctWeb(collId: Int!, exId: Int!, solution: [ExerciseFileInput!]!): WebCompleteResult
-  correctXml(collId: Int!, exId: Int!, solution: XmlSolutionInput!): XmlCompleteResult
+  correctProgramming(collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgCompleteResult
+  correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): RegexCompleteResult
+  correctRose(collId: Int!, exId: Int!, part: RoseExPart!, solution: String!): RoseCompleteResult
+  correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlResult
+  correctUml(collId: Int!, exId: Int!, part: UmlExPart!, solution: UmlClassDiagramInput!): UmlCompleteResult
+  correctWeb(collId: Int!, exId: Int!, part: WebExPart!, solution: [ExerciseFileInput!]!): WebCompleteResult
+  correctXml(collId: Int!, exId: Int!, part: XmlExPart!, solution: XmlSolutionInput!): XmlCompleteResult
 }
 
 type NormalExecutionResult {
@@ -114,6 +114,12 @@ type ProgExerciseContent {
   unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
   sampleSolutions: [ProgSampleSolution!]!
+}
+
+enum ProgExPart {
+  TestCreation
+  Implementation
+  ActivityDiagram
 }
 
 type ProgSampleSolution {
@@ -156,6 +162,10 @@ type RegexExerciseContent {
   extractionTestData: [RegexExtractionTestData!]!
 }
 
+enum RegexExPart {
+  RegexSingleExPart
+}
+
 type RegexExtractionEvaluationResult {
   base: String!
   correct: Boolean!
@@ -191,6 +201,10 @@ type RoseExerciseContent {
   sampleSolutions: [StringSampleSolution!]!
 }
 
+enum RoseExPart {
+  RoseSingleExPart
+}
+
 type SemanticVersion {
   major: Int!
   minor: Int!
@@ -215,11 +229,15 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
+  UPDATE
   SELECT
   CREATE
-  UPDATE
   DELETE
   INSERT
+}
+
+enum SqlExPart {
+  SqlSingleExPart
 }
 
 type SqlQueriesStaticComparison {
@@ -351,6 +369,13 @@ type UmlExerciseContent {
   mappings: [KeyValueObject!]!
 }
 
+enum UmlExPart {
+  ClassSelection
+  DiagramDrawingHelp
+  DiagramDrawing
+  MemberAllocation
+}
+
 type UmlImplementation {
   subClass: String!
   superClass: String!
@@ -441,6 +466,11 @@ type WebExerciseContent {
   sampleSolutions: [WebSampleSolution!]!
 }
 
+enum WebExPart {
+  HtmlPart
+  JsPart
+}
+
 type WebSampleSolution {
   id: Int!
   sample: [ExerciseFile!]!
@@ -472,6 +502,11 @@ type XmlExerciseContent {
   grammarDescription: String!
   rootNode: String!
   sampleSolutions: [XmlSampleSolution!]!
+}
+
+enum XmlExPart {
+  GrammarCreationXmlPart
+  DocumentCreationXmlPart
 }
 
 type XmlGrammarResult {

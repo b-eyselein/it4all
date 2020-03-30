@@ -7,7 +7,7 @@ import model.tools.collectionTools.xml.XmlToolMain.ElementLineComparison
 import model.tools.collectionTools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
-object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult] {
+object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlCompleteResult, XmlExPart] {
 
   override val solutionFormat: Format[XmlSolution] = Json.format[XmlSolution]
 
@@ -63,5 +63,7 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolut
 
     Json.writes
   }
+
+  override val partTypeFormat: Format[XmlExPart] = XmlExParts.jsonFormat
 
 }

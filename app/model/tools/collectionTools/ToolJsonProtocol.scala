@@ -77,13 +77,15 @@ object ToolJsonProtocol {
 
 final case class KeyValueObject(key: String, value: String)
 
-trait ToolJsonProtocol[EC <: ExerciseContent, ST, CR <: CompleteResult] {
+trait ToolJsonProtocol[EC <: ExerciseContent, ST, CR <: CompleteResult, PartType <: ExPart] {
 
   val exerciseContentFormat: Format[EC]
 
   val solutionFormat: Format[ST]
 
   val completeResultWrites: Writes[CR]
+
+  val partTypeFormat: Format[PartType]
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 
@@ -104,8 +106,11 @@ trait ToolJsonProtocol[EC <: ExerciseContent, ST, CR <: CompleteResult] {
 
 }
 
-abstract class StringSampleSolutionToolJsonProtocol[E <: StringExerciseContent, CR <: CompleteResult]
-    extends ToolJsonProtocol[E, String, CR] {
+abstract class StringSampleSolutionToolJsonProtocol[
+  E <: StringExerciseContent,
+  CR <: CompleteResult,
+  PartType <: ExPart
+] extends ToolJsonProtocol[E, String, CR, PartType] {
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 
@@ -113,8 +118,11 @@ abstract class StringSampleSolutionToolJsonProtocol[E <: StringExerciseContent, 
 
 }
 
-abstract class FilesSampleSolutionToolJsonProtocol[E <: FileExerciseContent, CR <: CompleteResult]
-    extends ToolJsonProtocol[E, Seq[ExerciseFile], CR] {
+abstract class FilesSampleSolutionToolJsonProtocol[
+  E <: FileExerciseContent,
+  CR <: CompleteResult,
+  PartType <: ExPart
+] extends ToolJsonProtocol[E, Seq[ExerciseFile], CR, PartType] {
 
   override val solutionFormat: Format[Seq[ExerciseFile]] = Format(
     Reads.seq(ToolJsonProtocol.exerciseFileFormat),
