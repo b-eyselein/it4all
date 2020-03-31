@@ -18,29 +18,58 @@ fragment ProgCompleteResult on ProgCompleteResult {
 
 # Regex
 
+
 mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
   correctRegex(collId: $collId, exId: $exId,part:$part, solution: $solution) {
-    solutionSaved
-    ...RegexCompleteResult
+    ...RegexIllegalRegexResult
+    ...RegexMatchingResult
+    ...RegexExtractionResult
   }
 }
 
-fragment RegexCompleteResult on AbstractRegexResult {
+fragment RegexIllegalRegexResult on RegexIllegalRegexResult {
   solutionSaved
-  correctionType
-  extractionResults {
-    base
-    correct
+  message
+  points {
+    ...Points
   }
+  maxPoints {
+    ...Points
+  }
+}
+
+fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
+  resultType
+  matchData
+}
+
+fragment RegexMatchingResult on RegexMatchingResult {
+  solutionSaved
   matchingResults {
-    resultType
-    matchData
-    isIncluded
+    ...RegexMatchingSingleResult
   }
   points {
     ...Points
   }
   maxPoints {
+    ...Points
+  }
+}
+
+fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
+  base
+  correct
+}
+
+fragment RegexExtractionResult on RegexExtractionResult {
+  solutionSaved
+  extractionResults {
+    ...RegexExtractionSingleResult
+  }
+  points {
+    ...Points
+  }
+  maxPoints{
     ...Points
   }
 }

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IRegexMatchingEvaluationResult} from '../regex-interfaces';
+import {RegexMatchingSingleResultFragment} from '../../../../_services/apollo-mutation.service';
 
 @Component({
   selector: 'it4all-regex-matching-result',
@@ -12,7 +12,7 @@ import {IRegexMatchingEvaluationResult} from '../regex-interfaces';
 })
 export class RegexMatchingResultComponent implements OnInit {
 
-  @Input() matchingResult: IRegexMatchingEvaluationResult;
+  @Input() matchingResult: RegexMatchingSingleResultFragment;
 
   correct: boolean;
   wasMatched: boolean;

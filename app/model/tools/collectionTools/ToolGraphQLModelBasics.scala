@@ -1,10 +1,9 @@
 package model.tools.collectionTools
 
-import jnr.ffi.provider.ResultType
 import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points.Points
 import sangria.macros.derive.{InputObjectTypeName, deriveEnumType, deriveInputObjectType, deriveObjectType}
-import sangria.schema.{EnumType, Field, InputObjectType, InputType, IntType, ObjectType, OutputType, StringType, UnionType, fields}
+import sangria.schema._
 
 trait ToolGraphQLModelBasics[
   ExContentType <: ExerciseContent,
@@ -40,7 +39,6 @@ trait ToolGraphQLModelBasics[
   protected val stringSampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
     sampleSolutionType("String", StringType)
 
-  /*
   protected val abstractResultTypeType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
     "AbstractCorrectionResult",
     fields[Unit, AbstractCorrectionResult](
@@ -49,13 +47,10 @@ trait ToolGraphQLModelBasics[
       Field("maxPoints", pointsType, resolve = _.value.maxPoints)
     )
   )
-   */
 
   val ExContentTypeType: ObjectType[Unit, ExContentType]
 
-  val AbstractResultTypeType: OutputType[CompResultType]
-
-  val ResultType: UnionType[ResultType]
+  val AbstractResultTypeType: OutputType[Any]
 
   val SolTypeInputType: InputType[SolType]
 

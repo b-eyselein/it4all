@@ -1,10 +1,19 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Mar 30 2020 15:58:59 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue Mar 31 2020 10:32:55 GMT+0200 (Mitteleuropäische Sommerzeit)
 
-interface AbstractRegexResult {
+interface AbstractCorrectionResult {
   solutionSaved: Boolean!
   points: Points!
   maxPoints: Points!
+}
+
+union AbstractRegexResult = RegexIllegalRegexResult | RegexMatchingResult | RegexExtractionResult
+
+enum BinaryClassificationResultType {
+  FalseNegative
+  FalsePositive
+  TrueNegative
+  TruePositive
 }
 
 type Collection {
@@ -60,11 +69,6 @@ type ExTag {
 
 type HtmlTask {
   text: String!
-}
-
-type IllegalRegexResult {
-  solutionSaved: Boolean!
-  maxPoints: Points!
 }
 
 type ImplementationPart {
@@ -161,9 +165,41 @@ enum RegexExPart {
   RegexSingleExPart
 }
 
+type RegexExtractionResult implements AbstractCorrectionResult {
+  solutionSaved: Boolean!
+  extractionResults: [RegexExtractionSingleResult!]!
+  points: Points!
+  maxPoints: Points!
+}
+
+type RegexExtractionSingleResult {
+  base: String!
+  correct: Boolean!
+}
+
 type RegexExtractionTestData {
   id: Int!
   base: String!
+}
+
+type RegexIllegalRegexResult implements AbstractCorrectionResult {
+  solutionSaved: Boolean!
+  message: String!
+  maxPoints: Points!
+  points: Points!
+}
+
+type RegexMatchingResult implements AbstractCorrectionResult {
+  solutionSaved: Boolean!
+  matchingResults: [RegexMatchingSingleResult!]!
+  points: Points!
+  maxPoints: Points!
+}
+
+type RegexMatchingSingleResult {
+  matchData: String!
+  isIncluded: Boolean!
+  resultType: BinaryClassificationResultType!
 }
 
 type RegexMatchTestData {
@@ -213,11 +249,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
+  INSERT
   UPDATE
   CREATE
-  INSERT
-  DELETE
   SELECT
+  DELETE
 }
 
 enum SqlExPart {
@@ -240,10 +276,10 @@ type StringSampleSolution {
 }
 
 enum SuccessType {
-  COMPLETE
   ERROR
   NONE
   PARTIALLY
+  COMPLETE
 }
 
 type Tool {
@@ -262,9 +298,9 @@ type Tool {
 }
 
 enum ToolState {
+  LIVE
   ALPHA
   BETA
-  LIVE
 }
 
 type UmlAssociation {
@@ -286,8 +322,8 @@ input UmlAssociationInput {
 }
 
 enum UmlAssociationType {
-  AGGREGATION
   ASSOCIATION
+  AGGREGATION
   COMPOSITION
 }
 
@@ -336,9 +372,9 @@ input UmlClassInput {
 }
 
 enum UmlClassType {
-  ABSTRACT
   CLASS
   INTERFACE
+  ABSTRACT
 }
 
 type UmlCompleteResult {
@@ -399,10 +435,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PACKAGE
-  PRIVATE
-  PROTECTED
   PUBLIC
+  PACKAGE
+  PROTECTED
+  PRIVATE
 }
 
 type UnitTestCorrectionResult {
@@ -432,8 +468,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Normal
   Simplified
+  Normal
 }
 
 type WebCompleteResult {

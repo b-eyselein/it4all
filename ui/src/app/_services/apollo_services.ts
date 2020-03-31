@@ -13,6 +13,14 @@ export type Scalars = {
 
 
 
+export type AbstractCorrectionResult = {
+  solutionSaved: Scalars['Boolean'];
+  points: Points;
+  maxPoints: Points;
+};
+
+export type AbstractRegexResult = RegexIllegalRegexResult | RegexMatchingResult | RegexExtractionResult;
+
 export enum BinaryClassificationResultType {
   FalseNegative = 'FalseNegative',
   FalsePositive = 'FalsePositive',
@@ -111,7 +119,7 @@ export type Lesson = {
 export type Mutation = {
    __typename?: 'Mutation';
   correctProgramming?: Maybe<ProgCompleteResult>;
-  correctRegex?: Maybe<RegexCompleteResult>;
+  correctRegex?: Maybe<AbstractRegexResult>;
   correctRose?: Maybe<RoseCompleteResult>;
   correctSql?: Maybe<SqlResult>;
   correctUml?: Maybe<UmlCompleteResult>;
@@ -235,16 +243,6 @@ export type QueryToolArgs = {
   toolId: Scalars['String'];
 };
 
-export type RegexCompleteResult = {
-   __typename?: 'RegexCompleteResult';
-  correctionType: RegexCorrectionType;
-  matchingResults: Array<RegexMatchingEvaluationResult>;
-  extractionResults: Array<RegexExtractionEvaluationResult>;
-  points: Points;
-  maxPoints: Points;
-  solutionSaved: Scalars['Boolean'];
-};
-
 export enum RegexCorrectionType {
   Extraction = 'EXTRACTION',
   Matching = 'MATCHING'
@@ -263,8 +261,16 @@ export enum RegexExPart {
   RegexSingleExPart = 'RegexSingleExPart'
 }
 
-export type RegexExtractionEvaluationResult = {
-   __typename?: 'RegexExtractionEvaluationResult';
+export type RegexExtractionResult = AbstractCorrectionResult & {
+   __typename?: 'RegexExtractionResult';
+  solutionSaved: Scalars['Boolean'];
+  extractionResults: Array<RegexExtractionSingleResult>;
+  points: Points;
+  maxPoints: Points;
+};
+
+export type RegexExtractionSingleResult = {
+   __typename?: 'RegexExtractionSingleResult';
   base: Scalars['String'];
   correct: Scalars['Boolean'];
 };
@@ -275,8 +281,24 @@ export type RegexExtractionTestData = {
   base: Scalars['String'];
 };
 
-export type RegexMatchingEvaluationResult = {
-   __typename?: 'RegexMatchingEvaluationResult';
+export type RegexIllegalRegexResult = AbstractCorrectionResult & {
+   __typename?: 'RegexIllegalRegexResult';
+  solutionSaved: Scalars['Boolean'];
+  message: Scalars['String'];
+  maxPoints: Points;
+  points: Points;
+};
+
+export type RegexMatchingResult = AbstractCorrectionResult & {
+   __typename?: 'RegexMatchingResult';
+  solutionSaved: Scalars['Boolean'];
+  matchingResults: Array<RegexMatchingSingleResult>;
+  points: Points;
+  maxPoints: Points;
+};
+
+export type RegexMatchingSingleResult = {
+   __typename?: 'RegexMatchingSingleResult';
   matchData: Scalars['String'];
   isIncluded: Scalars['Boolean'];
   resultType: BinaryClassificationResultType;
@@ -336,11 +358,11 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
+  Insert = 'INSERT',
   Update = 'UPDATE',
-  Select = 'SELECT',
   Create = 'CREATE',
-  Delete = 'DELETE',
-  Insert = 'INSERT'
+  Select = 'SELECT',
+  Delete = 'DELETE'
 }
 
 export enum SqlExPart {
@@ -366,10 +388,10 @@ export type StringSampleSolution = {
 };
 
 export enum SuccessType {
-  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY'
+  Partially = 'PARTIALLY',
+  Complete = 'COMPLETE'
 }
 
 export type Tool = {
@@ -405,9 +427,9 @@ export type ToolExerciseContentArgs = {
 };
 
 export enum ToolState {
+  Live = 'LIVE',
   Alpha = 'ALPHA',
-  Beta = 'BETA',
-  Live = 'LIVE'
+  Beta = 'BETA'
 }
 
 export type UmlAssociation = {
@@ -430,8 +452,8 @@ export type UmlAssociationInput = {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -483,9 +505,9 @@ export type UmlClassInput = {
 };
 
 export enum UmlClassType {
-  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE'
+  Interface = 'INTERFACE',
+  Abstract = 'ABSTRACT'
 }
 
 export type UmlCompleteResult = {
@@ -551,10 +573,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestCorrectionResult = {
@@ -587,8 +609,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Normal = 'Normal',
-  Simplified = 'Simplified'
+  Simplified = 'Simplified',
+  Normal = 'Normal'
 }
 
 export type WebCompleteResult = {

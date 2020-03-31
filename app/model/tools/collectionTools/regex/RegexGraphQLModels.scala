@@ -1,6 +1,6 @@
 package model.tools.collectionTools.regex
 
-import model.points
+import model.points.Points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
 import sangria.schema._
@@ -8,7 +8,13 @@ import sangria.schema._
 object RegexGraphQLModels
     extends ToolGraphQLModelBasics[RegexExerciseContent, String, AbstractRegexResult, RegexExPart] {
 
+  // Enum types
+
   private val regexCorrectionTypeType: EnumType[RegexCorrectionType] = deriveEnumType()
+
+  private val binaryClassificationResultTypeType: EnumType[BinaryClassificationResultType] = deriveEnumType()
+
+  // Exercise content types
 
   override val ExContentTypeType: ObjectType[Unit, RegexExerciseContent] = {
     implicit val rctt: EnumType[RegexCorrectionType]                          = regexCorrectionTypeType
@@ -25,15 +31,13 @@ object RegexGraphQLModels
 
   // Result types
 
-  private val binaryClassificationResultTypeType: EnumType[BinaryClassificationResultType] = deriveEnumType()
-
-  private val regexMatchingEvaluationResultType: ObjectType[Unit, RegexMatchingEvaluationResult] = {
+  private val regexMatchingEvaluationResultType: ObjectType[Unit, RegexMatchingSingleResult] = {
     implicit val bcrtt: EnumType[BinaryClassificationResultType] = binaryClassificationResultTypeType
 
     deriveObjectType()
   }
 
-  private val regexExtractionEvaluationResultType: ObjectType[Unit, RegexExtractionEvaluationResult] = {
+  private val regexExtractionEvaluationResultType: ObjectType[Unit, RegexExtractionSingleResult] = {
 
     deriveObjectType(
       // FIXME: do not exclude fields anymore!
@@ -43,34 +47,38 @@ object RegexGraphQLModels
     )
   }
 
-  /*
-  override val CompResultTypeType: ObjectType[Unit, RegexCompleteResult] = {
-    implicit val rctt: EnumType[RegexCorrectionType]                      = regexCorrectionTypeType
-    implicit val rmert: ObjectType[Unit, RegexMatchingEvaluationResult]   = regexMatchingEvaluationResultType
-    implicit val reert: ObjectType[Unit, RegexExtractionEvaluationResult] = regexExtractionEvaluationResultType
-    implicit val pt: ObjectType[Unit, Points]                             = pointsType
-
-    deriveObjectType()
-  }
-   */
-
-  private val IllegalRegexResultType: ObjectType[Unit, IllegalRegexResult] = {
-    implicit val pt: ObjectType[Unit, points.Points] = pointsType
+  private val regexIllegalRegexResultType: ObjectType[Unit, RegexIllegalRegexResult] = {
+    implicit val pt: ObjectType[Unit, Points] = pointsType
 
     deriveObjectType(
-      Interfaces[Unit, IllegalRegexResult](AbstractResultTypeType)
+      Interfaces(abstractResultTypeType)
     )
   }
 
-  override val AbstractResultTypeType: OutputType[AbstractRegexResult] = InterfaceType[Unit, AbstractRegexResult](
+  private val regexMatchingResultType: ObjectType[Unit, RegexMatchingResult] = {
+    implicit val rmert: ObjectType[Unit, RegexMatchingSingleResult] = regexMatchingEvaluationResultType
+    implicit val pt: ObjectType[Unit, Points]                       = pointsType
+
+    deriveObjectType(
+      Interfaces(abstractResultTypeType)
+    )
+  }
+
+  private val regexExtractionResultType: ObjectType[Unit, RegexExtractionResult] = {
+    implicit val reert: ObjectType[Unit, RegexExtractionSingleResult] = regexExtractionEvaluationResultType
+    implicit val pt: ObjectType[Unit, Points]                         = pointsType
+
+    deriveObjectType(
+      Interfaces(abstractResultTypeType)
+    )
+  }
+
+  val abstractRegexResultType: UnionType[Unit] = UnionType(
     "AbstractRegexResult",
-    () =>
-      fields[Unit, AbstractRegexResult](
-        Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
-        Field("points", pointsType, resolve = _.value.points),
-        Field("maxPoints", pointsType, resolve = _.value.maxPoints)
-      )
+    types = regexIllegalRegexResultType :: regexMatchingResultType :: regexExtractionResultType :: Nil
   )
+
+  override val AbstractResultTypeType: OutputType[Any] = abstractRegexResultType
 
   // Part type
 

@@ -32,11 +32,11 @@ object RegexMatchMatcher extends Matcher[RegexMatch, RegexMatchMatch] {
 
 object RegexMatchingCorrector {
 
-   def correctMatching(
+  def correctMatching(
     exercise: RegexExerciseContent,
     userRegex: Regex,
     solutionSaved: Boolean
-  ): RegexCompleteResult = {
+  ): RegexMatchingResult = {
 
     val matchResults = exercise.matchTestData.map { matchTestData =>
       val classificationResultType: BinaryClassificationResultType = matchTestData.data match {
@@ -48,7 +48,7 @@ object RegexMatchingCorrector {
           else BinaryClassificationResultTypes.TrueNegative
       }
 
-      RegexMatchingEvaluationResult(matchTestData.data, matchTestData.isIncluded, classificationResultType)
+      RegexMatchingSingleResult(matchTestData.data, matchTestData.isIncluded, classificationResultType)
     }
 
     val correctResultsCount: Int = matchResults.count(_.resultType.correct)
@@ -56,13 +56,11 @@ object RegexMatchingCorrector {
     val points: Points =
       (correctResultsCount.toDouble / exercise.matchTestData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
 
-    RegexCompleteResult(
-      exercise.correctionType,
+    RegexMatchingResult(
+      solutionSaved,
       matchResults,
-      Seq.empty,
       points,
-      exercise.maxPoints.points,
-      solutionSaved
+      exercise.maxPoints.points
     )
   }
 }

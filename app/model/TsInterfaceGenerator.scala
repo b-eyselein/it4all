@@ -3,7 +3,6 @@ package model
 import better.files.File
 import model.tools.collectionTools.BasicTSTypes
 import model.tools.collectionTools.programming.ProgrammingTSTypes
-import model.tools.collectionTools.regex.RegexTSTypes
 import model.tools.collectionTools.sql.SqlTSTypes
 import model.tools.collectionTools.uml.UmlTSTypes
 import model.tools.collectionTools.web.WebTSTypes
@@ -26,7 +25,6 @@ object TsInterfaceGenerator extends DefaultTSTypes {
 
   private val tsTypesFiles = Seq(
     TsTypesFile(BasicTSTypes.exported, clientBaseDir / "_interfaces" / "models.ts"),
-    TsTypesFile(RegexTSTypes.exported, collToolInterfacesFile("regex")),
     TsTypesFile(ProgrammingTSTypes.exported, collToolInterfacesFile("programming")),
     TsTypesFile(SqlTSTypes.exported, collToolInterfacesFile("sql")),
     TsTypesFile(UmlTSTypes.exported, collToolInterfacesFile("uml")),

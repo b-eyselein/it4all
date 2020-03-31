@@ -43,7 +43,7 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractRegexResult]] = Future.successful {
 
     Try(sol.r) match {
-      case Failure(_) => Success(IllegalRegexResult(solutionSaved, content.maxPoints.points))
+      case Failure(error) => Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, content.maxPoints.points))
 
       case Success(userRegex) =>
         content.correctionType match {

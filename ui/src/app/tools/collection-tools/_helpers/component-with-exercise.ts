@@ -16,7 +16,11 @@ export abstract class ComponentWithExercise<SolutionType, MutationQueryType, Par
 
   isCorrecting = false;
 
+  /**
+   * @deprecated
+   */
   result: ResultType | undefined;
+
   resultQuery: MutationQueryType;
 
   displaySampleSolutions = false;

@@ -12,9 +12,10 @@ object RegexExtractionCorrector {
     regexExerciseContent: RegexExerciseContent,
     userRegex: Regex,
     solutionSaved: Boolean
-  ): RegexCompleteResult = {
+  ): RegexExtractionResult = {
 
     val extractionResults = regexExerciseContent.extractionTestData.map { extractionTestData =>
+      // FIXME: build sample regex in calling function!
       val sampleRegex = regexExerciseContent.sampleSolutions.headOption.map(_.sample).getOrElse(???).r
 
       val sampleExtracted: Seq[RegexMatch] = sampleRegex.findAllMatchIn(extractionTestData.base).toList
@@ -25,7 +26,7 @@ object RegexExtractionCorrector {
 
       val correct = regexMatchMatchingResult.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH)
 
-      RegexExtractionEvaluationResult(extractionTestData.base, regexMatchMatchingResult, correct)
+      RegexExtractionSingleResult(extractionTestData.base, regexMatchMatchingResult, correct)
     }
 
     val correctResultsCount: Int = extractionResults.count(_.correct)
@@ -33,13 +34,11 @@ object RegexExtractionCorrector {
     val points: Points =
       (correctResultsCount.toDouble / regexExerciseContent.extractionTestData.size.toDouble * regexExerciseContent.maxPoints * 4).toInt.quarterPoints
 
-    RegexCompleteResult(
-      regexExerciseContent.correctionType,
-      Seq.empty,
+    RegexExtractionResult(
+      solutionSaved,
       extractionResults,
       points,
-      regexExerciseContent.maxPoints.points,
-      solutionSaved
+      regexExerciseContent.maxPoints.points
     )
   }
 

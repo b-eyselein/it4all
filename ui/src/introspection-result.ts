@@ -39,6 +39,36 @@
             "name": "XmlExerciseContent"
           }
         ]
+      },
+      {
+        "kind": "UNION",
+        "name": "AbstractRegexResult",
+        "possibleTypes": [
+          {
+            "name": "RegexIllegalRegexResult"
+          },
+          {
+            "name": "RegexMatchingResult"
+          },
+          {
+            "name": "RegexExtractionResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "AbstractCorrectionResult",
+        "possibleTypes": [
+          {
+            "name": "RegexIllegalRegexResult"
+          },
+          {
+            "name": "RegexMatchingResult"
+          },
+          {
+            "name": "RegexExtractionResult"
+          }
+        ]
       }
     ]
   }

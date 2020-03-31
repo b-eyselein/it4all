@@ -1,12 +1,18 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {ApiService} from '../../_services/api.service';
-import {IRegexCompleteResult} from '../regex-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ExerciseSolveFieldsFragment, RegexExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {RegexCorrectionGQL, RegexCorrectionMutation, RegexExPart} from '../../../../_services/apollo-mutation.service';
+import {
+  RegexCorrectionGQL,
+  RegexCorrectionMutation,
+  RegexExPart,
+  RegexExtractionResultFragment,
+  RegexIllegalRegexResultFragment,
+  RegexMatchingResultFragment
+} from '../../../../_services/apollo-mutation.service';
 
 
 @Component({
@@ -14,7 +20,7 @@ import {RegexCorrectionGQL, RegexCorrectionMutation, RegexExPart} from '../../..
   templateUrl: './regex-exercise.component.html'
 })
 export class RegexExerciseComponent
-  extends ComponentWithExercise<string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL, IRegexCompleteResult>
+  extends ComponentWithExercise<string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL, any>
   implements OnInit {
 
   @Input() part: ToolPart;
@@ -40,6 +46,18 @@ export class RegexExerciseComponent
 
   get sampleSolutions(): string[] {
     return this.regexExerciseContent.regexSampleSolutions.map((s) => s.sample);
+  }
+
+  get regexIllegalRegexResult(): RegexIllegalRegexResultFragment | undefined {
+    return this.resultQuery?.correctRegex.__typename === 'RegexIllegalRegexResult' ? this.resultQuery.correctRegex : undefined;
+  }
+
+  get regexMatchingResult(): RegexMatchingResultFragment | undefined {
+    return this.resultQuery?.correctRegex.__typename === 'RegexMatchingResult' ? this.resultQuery.correctRegex : undefined;
+  }
+
+  get regexExtractionResult(): RegexExtractionResultFragment | undefined {
+    return this.resultQuery?.correctRegex.__typename === 'RegexExtractionResult' ? this.resultQuery.correctRegex : undefined;
   }
 
   correct(): void {

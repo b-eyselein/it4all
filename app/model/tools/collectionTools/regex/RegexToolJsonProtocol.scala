@@ -24,10 +24,10 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
 
   // Other...
 
-  private val regexMatchingEvaluationResultWrites: Writes[RegexMatchingEvaluationResult] = {
+  private val regexMatchingEvaluationResultWrites: Writes[RegexMatchingSingleResult] = {
     implicit val bcrtw: Writes[BinaryClassificationResultType] = BinaryClassificationResultTypes.jsonFormat
 
-    Json.writes[RegexMatchingEvaluationResult]
+    Json.writes[RegexMatchingSingleResult]
   }
 
   private val regexMatchMatchWrites: Writes[RegexMatchMatch] = {
@@ -48,10 +48,10 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
     Json.writes
   }
 
-  private val regexExtractionEvaluationResultWrites: Writes[RegexExtractionEvaluationResult] = {
+  private val regexExtractionEvaluationResultWrites: Writes[RegexExtractionSingleResult] = {
     implicit val rmmrw: Writes[MatchingResult[RegexMatch, RegexMatchMatch]] = regexMatchMatchingResultWrites
 
-    Json.writes[RegexExtractionEvaluationResult]
+    Json.writes[RegexExtractionSingleResult]
   }
 
   /*

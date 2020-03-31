@@ -35,35 +35,42 @@
     <div class="column">
       <it4all-tabs>
         <it4all-tab [title]="correctionTabTitle">
-          <ng-container *ngIf="result">
+          <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
+            <it4all-solution-saved [saved]="resultQuery.correctRegex.solutionSaved"></it4all-solution-saved>
 
             <!--     <it4all-points-notification [result]="result"></it4all-points-notification> -->
 
             <br>
 
-            <ng-container [ngSwitch]="result.correctionType">
-
-              <ng-container *ngSwitchCase="'MATCHING'">
-                <div class="columns is-multiline">
-                  <div class="column is-half-desktop" *ngFor="let matchingResult of result.matchingResults">
-                    <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
-                  </div>
+            <ng-container *ngIf="regexIllegalRegexResult">
+              <div class="message is-danger">
+                <div class="message-header">Fehler beim Parsen des regulären Ausdrucks:</div>
+                <div class="message-body">
+                  <pre>{{regexIllegalRegexResult.message}}</pre>
                 </div>
-              </ng-container>
+              </div>
+            </ng-container>
 
-              <ng-container *ngSwitchCase="'EXTRACTION'">
-                <ng-container *ngFor="let extractionResult of result.extractionResults">
-                  <it4all-regex-extraction-result
-                    [extractionResult]="extractionResult"></it4all-regex-extraction-result>
+            <ng-container *ngIf="regexMatchingResult">
+              <div class="columns is-multiline">
+                <div class="column is-half-desktop" *ngFor="let matchingResult of regexMatchingResult.matchingResults">
+                  <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
+                </div>
+              </div>
+            </ng-container>
 
-                  <br>
-                </ng-container>
+            <ng-container *ngIf="regexExtractionResult">
+              <ng-container *ngFor="let extractionResult of regexExtractionResult.extractionResults">
+                <it4all-regex-extraction-result [extractionResult]="extractionResult"></it4all-regex-extraction-result>
+
+                <br>
               </ng-container>
             </ng-container>
+
           </ng-container>
         </it4all-tab>
+
         <it4all-tab [title]="sampleSolutionsTabTitle">
           <div class="buttons">
             <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">

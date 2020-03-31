@@ -17,7 +17,7 @@ import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
 import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment, UmlExPart} from '../../../../_services/apollo_services';
-import {UmlCorrectionGQL, UmlCorrectionMutation, UmlCorrectionMutationVariables} from '../../../../_services/apollo-mutation.service';
+import {UmlCorrectionGQL, UmlCorrectionMutation} from '../../../../_services/apollo-mutation.service';
 
 import * as joint from 'jointjs';
 
@@ -259,7 +259,7 @@ export class UmlDiagramDrawingComponent
   }
 
   correct(): void {
-    super.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part);
+    super.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, null, this.part);
     this.corrected = true;
   }
 

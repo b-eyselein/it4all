@@ -6,7 +6,7 @@ import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
 
 // single matching result
 
-final case class RegexMatchingEvaluationResult(
+final case class RegexMatchingSingleResult(
   matchData: String,
   isIncluded: Boolean,
   resultType: BinaryClassificationResultType
@@ -14,7 +14,7 @@ final case class RegexMatchingEvaluationResult(
 
 // single extraction result
 
-final case class RegexExtractionEvaluationResult(
+final case class RegexExtractionSingleResult(
   base: String,
   extractionMatchingResult: ExtractedValuesComparison,
   correct: Boolean
@@ -24,8 +24,9 @@ final case class RegexExtractionEvaluationResult(
 
 sealed trait AbstractRegexResult extends AbstractCorrectionResult
 
-final case class IllegalRegexResult(
+final case class RegexIllegalRegexResult(
   solutionSaved: Boolean,
+  message: String,
   maxPoints: Points
 ) extends AbstractRegexResult {
 
@@ -33,11 +34,16 @@ final case class IllegalRegexResult(
 
 }
 
-final case class RegexCompleteResult(
-  correctionType: RegexCorrectionType,
-  matchingResults: Seq[RegexMatchingEvaluationResult],
-  extractionResults: Seq[RegexExtractionEvaluationResult],
+final case class RegexMatchingResult(
+  solutionSaved: Boolean,
+  matchingResults: Seq[RegexMatchingSingleResult],
   points: Points,
-  maxPoints: Points,
-  solutionSaved: Boolean
+  maxPoints: Points
+) extends AbstractRegexResult
+
+final case class RegexExtractionResult(
+  solutionSaved: Boolean,
+  extractionResults: Seq[RegexExtractionSingleResult],
+  points: Points,
+  maxPoints: Points
 ) extends AbstractRegexResult
