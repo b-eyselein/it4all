@@ -80,11 +80,33 @@ final case class SqlQueriesStaticComparison(
 
 // Complete result
 
+sealed trait AbstractSqlResult extends AbstractCorrectionResult
+
+final case class SqlIllegalQueryResult(
+  solutionSaved: Boolean,
+  message: String,
+  maxPoints: Points
+) extends AbstractSqlResult {
+
+  override def points: Points = zeroPoints
+
+}
+
+final case class SqlWrongQueryTypeResult(
+  solutionSaved: Boolean,
+  message: String,
+  maxPoints: Points
+) extends AbstractSqlResult {
+
+  override def points: Points = zeroPoints
+
+}
+
 final case class SqlResult(
   staticComparison: SqlQueriesStaticComparison,
   executionResult: SqlExecutionResult,
   solutionSaved: Boolean
-) extends AbstractCorrectionResult {
+) extends AbstractSqlResult {
 
   override def points: Points = staticComparison.points
 

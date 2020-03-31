@@ -23,7 +23,7 @@ object RoseToolMain extends CollectionToolMain(RoseConsts) {
   override val toolJsonProtocol: ToolJsonProtocol[RoseExerciseContent, String, RoseExPart] =
     RoseToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[RoseExerciseContent, String, RoseCompleteResult, RoseExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[RoseExerciseContent, String, RoseExPart] =
     RoseGraphQLModels
 
   // Correction

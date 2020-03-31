@@ -45,6 +45,18 @@ export type CollectionExerciseArgs = {
   exId: Scalars['Int'];
 };
 
+export type ColumnMatch = {
+   __typename?: 'ColumnMatch';
+  matchType: MatchType;
+  userArg?: Maybe<ColumnWrapper>;
+  sampleArg?: Maybe<ColumnWrapper>;
+};
+
+export type ColumnWrapper = {
+   __typename?: 'ColumnWrapper';
+  name: Scalars['String'];
+};
+
 export type DtdParseException = {
    __typename?: 'DTDParseException';
   msg: Scalars['String'];
@@ -116,12 +128,20 @@ export type Lesson = {
   description: Scalars['String'];
 };
 
+export enum MatchType {
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
+  OnlyUser = 'ONLY_USER',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE'
+}
+
 export type Mutation = {
    __typename?: 'Mutation';
   correctProgramming?: Maybe<ProgCompleteResult>;
   correctRegex?: Maybe<AbstractRegexResult>;
   correctRose?: Maybe<RoseCompleteResult>;
-  correctSql?: Maybe<SqlResult>;
+  correctSql?: Maybe<SqlAbstractResult>;
   correctUml?: Maybe<UmlCompleteResult>;
   correctWeb?: Maybe<WebCompleteResult>;
   correctXml?: Maybe<XmlCompleteResult>;
@@ -345,6 +365,17 @@ export type SiteSpec = {
   jsTaskCount: Scalars['Int'];
 };
 
+export type SqlAbstractResult = SqlIllegalQueryResult | SqlWrongQueryTypeResult | SqlResult;
+
+export type SqlColumnComparisonMatchingResult = {
+   __typename?: 'SqlColumnComparisonMatchingResult';
+  matchName: Scalars['String'];
+  matchSingularName: Scalars['String'];
+  points: Points;
+  maxPoints: Points;
+  allMatches: Array<ColumnMatch>;
+};
+
 export type SqlExecutionResult = {
    __typename?: 'SqlExecutionResult';
   X?: Maybe<Scalars['Int']>;
@@ -358,27 +389,55 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
+  Select = 'SELECT',
+  Delete = 'DELETE',
   Insert = 'INSERT',
   Update = 'UPDATE',
-  Create = 'CREATE',
-  Select = 'SELECT',
-  Delete = 'DELETE'
+  Create = 'CREATE'
 }
 
 export enum SqlExPart {
   SqlSingleExPart = 'SqlSingleExPart'
 }
 
-export type SqlQueriesStaticComparison = {
-   __typename?: 'SqlQueriesStaticComparison';
-  X?: Maybe<Scalars['Int']>;
+export type SqlIllegalQueryResult = AbstractCorrectionResult & {
+   __typename?: 'SqlIllegalQueryResult';
+  solutionSaved: Scalars['Boolean'];
+  message: Scalars['String'];
+  maxPoints: Points;
+  points: Points;
 };
 
-export type SqlResult = {
+export type SqlQueriesStaticComparison = {
+   __typename?: 'SqlQueriesStaticComparison';
+  columnComparison: SqlColumnComparisonMatchingResult;
+  tableComparison: SqlTableComparisonMatchingResult;
+};
+
+export type SqlResult = AbstractCorrectionResult & {
    __typename?: 'SqlResult';
   staticComparison: SqlQueriesStaticComparison;
   executionResult: SqlExecutionResult;
   solutionSaved: Scalars['Boolean'];
+  points: Points;
+  maxPoints: Points;
+};
+
+export type SqlTableComparisonMatchingResult = {
+   __typename?: 'SqlTableComparisonMatchingResult';
+  matchName: Scalars['String'];
+  matchSingularName: Scalars['String'];
+  points: Points;
+  maxPoints: Points;
+  allMatches: Array<TableMatch>;
+};
+
+export type SqlWrongQueryTypeResult = AbstractCorrectionResult & {
+   __typename?: 'SqlWrongQueryTypeResult';
+  solutionSaved: Scalars['Boolean'];
+  message: Scalars['String'];
+  maxPoints: Points;
+  points: Points;
 };
 
 export type StringSampleSolution = {
@@ -388,11 +447,23 @@ export type StringSampleSolution = {
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY',
-  Complete = 'COMPLETE'
+  Partially = 'PARTIALLY'
 }
+
+export type Table = {
+   __typename?: 'Table';
+  name: Scalars['String'];
+};
+
+export type TableMatch = {
+   __typename?: 'TableMatch';
+  matchType: MatchType;
+  userArg?: Maybe<Table>;
+  sampleArg?: Maybe<Table>;
+};
 
 export type Tool = {
    __typename?: 'Tool';
@@ -427,9 +498,9 @@ export type ToolExerciseContentArgs = {
 };
 
 export enum ToolState {
-  Live = 'LIVE',
   Alpha = 'ALPHA',
-  Beta = 'BETA'
+  Beta = 'BETA',
+  Live = 'LIVE'
 }
 
 export type UmlAssociation = {
@@ -452,8 +523,8 @@ export type UmlAssociationInput = {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -505,9 +576,9 @@ export type UmlClassInput = {
 };
 
 export enum UmlClassType {
+  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE',
-  Abstract = 'ABSTRACT'
+  Interface = 'INTERFACE'
 }
 
 export type UmlCompleteResult = {
@@ -573,10 +644,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = {
@@ -609,8 +680,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Simplified = 'Simplified',
-  Normal = 'Normal'
+  Normal = 'Normal',
+  Simplified = 'Simplified'
 }
 
 export type WebCompleteResult = {

@@ -43,22 +43,18 @@
 
             <br>
 
-            <ng-container *ngIf="regexIllegalRegexResult">
-              <div class="message is-danger">
-                <div class="message-header">Fehler beim Parsen des regulären Ausdrucks:</div>
-                <div class="message-body">
-                  <pre>{{regexIllegalRegexResult.message}}</pre>
-                </div>
+            <div class="message is-danger" *ngIf="regexIllegalRegexResult">
+              <div class="message-header">Fehler beim Parsen des regulären Ausdrucks:</div>
+              <div class="message-body">
+                <pre>{{regexIllegalRegexResult.message}}</pre>
               </div>
-            </ng-container>
+            </div>
 
-            <ng-container *ngIf="regexMatchingResult">
-              <div class="columns is-multiline">
-                <div class="column is-half-desktop" *ngFor="let matchingResult of regexMatchingResult.matchingResults">
-                  <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
-                </div>
+            <div class="columns is-multiline" *ngIf="regexMatchingResult">
+              <div class="column is-half-desktop" *ngFor="let matchingResult of regexMatchingResult.matchingResults">
+                <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
               </div>
-            </ng-container>
+            </div>
 
             <ng-container *ngIf="regexExtractionResult">
               <ng-container *ngFor="let extractionResult of regexExtractionResult.extractionResults">

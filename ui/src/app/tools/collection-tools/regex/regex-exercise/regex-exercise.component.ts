@@ -23,7 +23,7 @@ export class RegexExerciseComponent
   extends ComponentWithExercise<string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL, any>
   implements OnInit {
 
-  @Input() part: ToolPart;
+  @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() regexExerciseContent: RegexExerciseContentSolveFieldsFragment;
 
@@ -66,7 +66,7 @@ export class RegexExerciseComponent
       return;
     }
 
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, RegexExPart.RegexSingleExPart, this.part);
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, RegexExPart.RegexSingleExPart, this.oldPart);
   }
 
   // FIXME: make directive?

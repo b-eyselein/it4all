@@ -31,9 +31,9 @@ abstract class CollectionToolMain(consts: ToolConsts) extends AToolMain(consts) 
 
   // Yaml, Html forms, Json, GraphQL
 
-  val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType,  PartType]
+  val toolJsonProtocol: ToolJsonProtocol[ExContentType, SolType, PartType]
 
-  val graphQlModels: ToolGraphQLModelBasics[ExContentType, SolType, CompResultType, PartType]
+  val graphQlModels: ToolGraphQLModelBasics[ExContentType, SolType, PartType]
 
   // Other helper methods
 

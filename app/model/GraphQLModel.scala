@@ -183,7 +183,6 @@ object GraphQLModel {
               val correctionDbValues: Future[Option[(ExerciseCollection, Exercise)]] = for {
                 maybeCollection <- context.ctx.tables.futureCollById(toolMain.id, collId)
                 maybeExercise   <- context.ctx.tables.futureExerciseById(toolMain.id, collId, exId)
-
               } yield maybeCollection zip maybeExercise
 
               correctionDbValues.flatMap {

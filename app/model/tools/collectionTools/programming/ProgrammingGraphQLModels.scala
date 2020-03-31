@@ -3,10 +3,9 @@ package model.tools.collectionTools.programming
 import model.core.result.SuccessType
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
-import sangria.schema.{EnumType, EnumValue, InputObjectType, InputType, ObjectType}
+import sangria.schema._
 
-object ProgrammingGraphQLModels
-    extends ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgCompleteResult, ProgExPart] {
+object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgExPart] {
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = ExerciseFileType
@@ -81,11 +80,11 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
-  override val AbstractResultTypeType: ObjectType[Unit, ProgCompleteResult] = {
+  override val AbstractResultTypeType: OutputType[Any] = {
     implicit val nert: ObjectType[Unit, NormalExecutionResult]     = NormalExecutionResultType
     implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = unitTestCorrectionResultType
 
-    deriveObjectType(
+    deriveObjectType[Unit, ProgCompleteResult](
       // FIXME: do not exclude fields anymore...
       ExcludeFields("simplifiedResults")
     )

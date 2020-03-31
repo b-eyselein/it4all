@@ -3,9 +3,9 @@ package model.tools.collectionTools.rose
 import model.points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, deriveObjectType}
-import sangria.schema.{EnumType, EnumValue, InputType, ObjectType, StringType}
+import sangria.schema._
 
-object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExerciseContent, String, RoseCompleteResult, RoseExPart] {
+object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExerciseContent, String, RoseExPart] {
 
   override val ExContentTypeType: ObjectType[Unit, RoseExerciseContent] = {
     implicit val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
@@ -15,10 +15,10 @@ object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExerciseContent, Str
 
   override val SolTypeInputType: InputType[String] = StringType
 
-  override val AbstractResultTypeType: ObjectType[Unit, RoseCompleteResult] = {
+  override val AbstractResultTypeType: OutputType[Any] = {
     implicit val pt: ObjectType[Unit, points.Points] = pointsType
 
-    deriveObjectType(
+    deriveObjectType[Unit, RoseCompleteResult](
       ExcludeFields("result")
     )
   }

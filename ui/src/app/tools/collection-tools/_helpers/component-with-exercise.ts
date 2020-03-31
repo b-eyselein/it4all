@@ -7,7 +7,11 @@ import {ToolPart} from '../../../_interfaces/tool';
 import * as Apollo from 'apollo-angular';
 
 @Directive()
-export abstract class ComponentWithExercise<SolutionType, MutationQueryType, PartType, MutationGQL extends Apollo.Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionType }>, ResultType> {
+export abstract class ComponentWithExercise<SolutionType,
+  MutationQueryType,
+  PartType,
+  MutationGQL extends Apollo.Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionType }>,
+  ResultType> {
 
   readonly exerciseTextTabTitle = 'Aufgabenstellung';
   readonly correctionTabTitle = 'Korrektur';
@@ -59,8 +63,7 @@ export abstract class ComponentWithExercise<SolutionType, MutationQueryType, Par
       .mutate(mutationQueryVars)
       .subscribe(({data}) => {
         this.resultQuery = data;
-
-        console.info(JSON.stringify(this.resultQuery, null, 2));
+        this.activateCorrectionTab();
       });
   }
 

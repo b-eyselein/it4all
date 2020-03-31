@@ -4,19 +4,20 @@ import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {ISqlQueryResult, ISqlResult} from '../sql-interfaces';
-
-import 'codemirror/mode/sql/sql';
-import {ToolPart} from "../../../../_interfaces/tool";
-import {
-  ExerciseSolveFieldsFragment,
-  SqlExerciseContentSolveFieldsFragment
-} from "../../../../_services/apollo_services";
+import {ISqlQueryResult} from '../sql-interfaces';
+import {ToolPart} from '../../../../_interfaces/tool';
+import {ExerciseSolveFieldsFragment, SqlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {SqlExPart} from '../../../../_services/apollo-mutation.service';
 import {
   SqlCorrectionGQL,
   SqlCorrectionMutation,
-  SqlCorrectionMutationVariables
-} from "../../../../_services/apollo-mutation.service";
+  SqlIllegalQueryResultFragment,
+  SqlResultFragment,
+  SqlWrongQueryTypeResultFragment
+} from '../sql-apollo-service';
+
+
+import 'codemirror/mode/sql/sql';
 
 
 @Component({
@@ -25,11 +26,13 @@ import {
   styleUrls: ['./sql-exercise.component.sass'],
   encapsulation: ViewEncapsulation.None // style editor also
 })
-export class SqlExerciseComponent extends ComponentWithExercise<string, SqlCorrectionMutation, SqlCorrectionMutationVariables, SqlCorrectionGQL, ISqlResult> implements OnInit {
+export class SqlExerciseComponent
+  extends ComponentWithExercise<string, SqlCorrectionMutation, SqlExPart, SqlCorrectionGQL, any>
+  implements OnInit {
 
   readonly editorOptions = getDefaultEditorOptions('sql');
 
-  @Input() part: ToolPart;
+  @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() sqlExerciseContent: SqlExerciseContentSolveFieldsFragment;
 
@@ -37,15 +40,15 @@ export class SqlExerciseComponent extends ComponentWithExercise<string, SqlCorre
 
   solution = '';
 
-  constructor(apiService: ApiService, dexieService: DexieService) {
-    super(apiService, dexieService);
+  constructor(sqlCorrectionGQL: SqlCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
+    super(sqlCorrectionGQL, apiService, dexieService);
   }
 
   ngOnInit() {
     this.apiService.getSqlDbSchema(this.exerciseFragment.collectionId)
       .subscribe((dbContents) => this.dbContents = dbContents);
 
-    this.dexieService.getSolution(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part.id)
+    this.dexieService.getSolution(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart.id)
       .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
   }
 
@@ -57,8 +60,24 @@ export class SqlExerciseComponent extends ComponentWithExercise<string, SqlCorre
     return this.sqlExerciseContent.sqlSampleSolutions.map((s) => s.sample);
   }
 
+  // Result types
+
+  get sqlIllegalQueryResult(): SqlIllegalQueryResultFragment | undefined {
+    return this.resultQuery?.correctSql.__typename === 'SqlIllegalQueryResult' ? this.resultQuery.correctSql : undefined;
+  }
+
+  get sqlWrongQueryTypeResult(): SqlWrongQueryTypeResultFragment | undefined {
+    return this.resultQuery?.correctSql.__typename === 'SqlWrongQueryTypeResult' ? this.resultQuery.correctSql : undefined;
+  }
+
+  get sqlResult(): SqlResultFragment | undefined {
+    return this.resultQuery?.correctSql.__typename === 'SqlResult' ? this.resultQuery.correctSql : undefined;
+  }
+
+  // Correction
+
   correct(): void {
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part, true);
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, SqlExPart.SqlSingleExPart, this.oldPart);
   }
 
 }

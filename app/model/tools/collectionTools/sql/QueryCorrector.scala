@@ -1,5 +1,6 @@
 package model.tools.collectionTools.sql
 
+import model.points._
 import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{ExerciseCollection, SampleSolution}
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
@@ -58,35 +59,41 @@ abstract class QueryCorrector(val queryType: String) {
     exercise: SqlExerciseContent,
     scenario: ExerciseCollection,
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Try[SqlResult] = parseStatement(learnerSolution).flatMap(checkStatement).map {
-    userQ =>
-      val userColumns         = getColumnWrappers(userQ)
-      val userTables          = getTables(userQ)
-      val userJoinExpressions = getJoinExpressions(userQ)
-      val userExpressions     = getExpressions(userQ)
-      val userTableAliases    = resolveAliases(userTables)
+  )(implicit ec: ExecutionContext): Try[AbstractSqlResult] = parseStatement(learnerSolution) match {
+    case Failure(exception) => Success(SqlIllegalQueryResult(solutionSaved, exception.getMessage, (-1).points))
+    case Success(userQ) =>
+      checkStatement(userQ) match {
+        case Failure(exception) => ???
+        case Success(userQ) =>
 
-      val maybeStaticComparison: Option[QueryAndStaticComp[Q]] =
-        exercise.sampleSolutions
-          .flatMap { sqlSample =>
-            parseSampleAndMakeStaticComparison(
-              userQ,
-              sqlSample,
-              userColumns,
-              userTables,
-              userJoinExpressions,
-              userExpressions,
-              userTableAliases
-            )
+          val userColumns         = getColumnWrappers(userQ)
+          val userTables          = getTables(userQ)
+          val userJoinExpressions = getJoinExpressions(userQ)
+          val userExpressions     = getExpressions(userQ)
+          val userTableAliases    = resolveAliases(userTables)
+
+          val maybeStaticComparison: Option[QueryAndStaticComp[Q]] =
+            exercise.sampleSolutions
+              .flatMap { sqlSample =>
+                parseSampleAndMakeStaticComparison(
+                  userQ,
+                  sqlSample,
+                  userColumns,
+                  userTables,
+                  userJoinExpressions,
+                  userExpressions,
+                  userTableAliases
+                )
+              }
+              .minOption(queryAndStaticCompOrdering)
+
+          maybeStaticComparison match {
+            case None => ???
+            case Some(QueryAndStaticComp(sampleQ, sc)) =>
+              Success(SqlResult(sc, database.executeQueries(scenario, exercise, userQ, sampleQ), solutionSaved))
           }
-          .minOption(queryAndStaticCompOrdering)
 
-      maybeStaticComparison match {
-        case None => ???
-        case Some(QueryAndStaticComp(sampleQ, sc)) =>
-          SqlResult(sc, database.executeQueries(scenario, exercise, userQ, sampleQ), solutionSaved)
       }
-
   }
 
   private def performStaticComparison(

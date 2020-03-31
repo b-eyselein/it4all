@@ -2,7 +2,6 @@ overwrite: true
 
 schema: src/schema.graphql
 
-
 generates:
   src/introspection-result.ts:
     documents: src/**/*.graphql
@@ -13,6 +12,13 @@ generates:
 
   src/app/_services/apollo_services.ts:
     documents: src/queries.graphql
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-apollo-angular
+
+  src/app/tools/collection-tools/sql/sql-apollo-service.ts:
+    documents: src/app/tools/collection-tools/sql/sql-mutations.graphql
     plugins:
       - typescript
       - typescript-operations

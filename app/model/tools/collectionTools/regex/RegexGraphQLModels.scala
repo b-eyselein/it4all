@@ -5,8 +5,7 @@ import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
 import sangria.schema._
 
-object RegexGraphQLModels
-    extends ToolGraphQLModelBasics[RegexExerciseContent, String, AbstractRegexResult, RegexExPart] {
+object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, String, RegexExPart] {
 
   // Enum types
 

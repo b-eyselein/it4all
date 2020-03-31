@@ -27,8 +27,21 @@
           <it4all-sql-table-contents [dbContents]="dbContents"></it4all-sql-table-contents>
         </it4all-tab>
         <it4all-tab [title]="correctionTabTitle">
-          <ng-container *ngIf="result">
-            <it4all-sql-result [result]="result"></it4all-sql-result>
+          <ng-container *ngIf="resultQuery">
+
+            <div class="message is-danger" *ngIf="sqlIllegalQueryResult">
+              <div class="message-header">Es gab einen Fehler beim Parsen ihrer Query:</div>
+              <div class="message-body">
+                <pre>{{sqlIllegalQueryResult.message}}</pre>
+              </div>
+            </div>
+
+            <ng-container *ngIf="sqlWrongQueryTypeResult">
+              {{sqlWrongQueryTypeResult | json}}
+            </ng-container>
+
+            <it4all-sql-result *ngIf="sqlResult" [result]="sqlResult"></it4all-sql-result>
+
           </ng-container>
         </it4all-tab>
         <it4all-tab [title]="sampleSolutionsTabTitle">

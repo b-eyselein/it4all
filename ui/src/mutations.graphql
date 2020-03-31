@@ -74,24 +74,6 @@ fragment RegexExtractionResult on RegexExtractionResult {
   }
 }
 
-# Sql
-
-mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
-  correctSql(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    ...SqlResult
-  }
-}
-
-fragment SqlResult on SqlResult {
-  solutionSaved
-  staticComparison {
-    __typename
-  }
-  executionResult {
-    __typename
-  }
-}
-
 # Uml
 
 mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {

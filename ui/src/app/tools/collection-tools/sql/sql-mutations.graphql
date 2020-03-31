@@ -1,0 +1,108 @@
+mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
+  correctSql(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+    ...SqlIllegalQueryResult
+    ...SqlWrongQueryTypeResult
+    ...SqlResult
+  }
+}
+
+fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
+  solutionSaved
+  message
+  points {
+    ... Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
+  solutionSaved
+  message
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# Column comparison
+
+fragment ColumnMatch on ColumnMatch {
+  matchType
+  userArg {
+    name
+  }
+  sampleArg {
+    name
+  }
+}
+
+fragment ColumnComparison on SqlColumnComparisonMatchingResult {
+  matchSingularName
+  matchName
+  allMatches {
+    ...ColumnMatch
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# Table comparison
+
+fragment TableMatch on TableMatch {
+  matchType
+  userArg {
+    name
+  }
+  sampleArg {
+    name
+  }
+}
+
+fragment TableComparison on SqlTableComparisonMatchingResult {
+  matchSingularName
+  matchName
+  allMatches {
+    ...TableMatch
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# Complete result
+
+fragment SqlResult on SqlResult {
+  solutionSaved
+  staticComparison {
+    columnComparison {
+      ...ColumnComparison
+    }
+    tableComparison {
+      ...TableComparison
+    }
+  }
+  executionResult {
+    __typename
+  }
+  points {
+    ...Points
+  }
+  maxPoints{
+    ...Points
+  }
+}
+
+fragment Points on Points {
+  quarters
+}

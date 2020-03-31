@@ -3,10 +3,9 @@ package model.tools.collectionTools.uml
 import model.points
 import model.tools.collectionTools.{KeyValueObject, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
-import sangria.schema.{EnumType, EnumValue, Field, InputObjectType, InputType, ListType, ObjectType}
+import sangria.schema._
 
-object UmlGraphQLModels
-    extends ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlCompleteResult, UmlExPart] {
+object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlExPart] {
 
   private val umlVisibilityType: EnumType[UmlVisibility] = deriveEnumType()
   private val umlClassTypeType: EnumType[UmlClassType]   = deriveEnumType()
@@ -102,10 +101,10 @@ object UmlGraphQLModels
 
   // Result types
 
-  override val AbstractResultTypeType: ObjectType[Unit, UmlCompleteResult] = {
+  override val AbstractResultTypeType: OutputType[Any] = {
     implicit val pt: ObjectType[Unit, points.Points] = pointsType
 
-    deriveObjectType(
+    deriveObjectType[Unit, UmlCompleteResult](
       // TODO: include fields...
       ExcludeFields("classResult", "assocResult", "implResult")
     )

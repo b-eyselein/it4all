@@ -1,14 +1,14 @@
 package model.tools.collectionTools
 
+import model.core.matching.{Match, MatchType, MatchingResult}
 import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points.Points
-import sangria.macros.derive.{InputObjectTypeName, deriveEnumType, deriveInputObjectType, deriveObjectType}
+import sangria.macros.derive._
 import sangria.schema._
 
 trait ToolGraphQLModelBasics[
   ExContentType <: ExerciseContent,
   SolType,
-  CompResultType <: AbstractCorrectionResult,
   PartType <: ExPart
 ] {
 
@@ -24,6 +24,8 @@ trait ToolGraphQLModelBasics[
 
   protected val pointsType: ObjectType[Unit, Points] = deriveObjectType()
 
+  // Sample solution types
+
   protected def sampleSolutionType[ASolType](
     name: String,
     SolTypeType: OutputType[ASolType]
@@ -38,6 +40,22 @@ trait ToolGraphQLModelBasics[
 
   protected val stringSampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
     sampleSolutionType("String", StringType)
+
+  // Matching types
+
+  protected val matchTypeType: EnumType[MatchType] = deriveEnumType()
+
+  protected def matchingResultType[T, M <: Match[T]](
+    name: String,
+    mType: OutputType[M]
+  ): ObjectType[Unit, MatchingResult[T, M]] = {
+    implicit val pt: ObjectType[Unit, Points] = pointsType
+
+    deriveObjectType(
+      ObjectTypeName(s"${name}MatchingResult"),
+      ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
+    )
+  }
 
   protected val abstractResultTypeType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
     "AbstractCorrectionResult",

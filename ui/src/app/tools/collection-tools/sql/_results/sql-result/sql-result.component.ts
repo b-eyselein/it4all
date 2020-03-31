@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {IExpressionListMatchingResult, ISelectAdditionalComparisons, ISqlResult} from '../../sql-interfaces';
+import {IExpressionListMatchingResult, ISelectAdditionalComparisons} from '../../sql-interfaces';
+import {SqlResultFragment} from '../../../../../_services/apollo-mutation.service';
 
 @Component({
   selector: 'it4all-sql-result',
@@ -7,7 +8,7 @@ import {IExpressionListMatchingResult, ISelectAdditionalComparisons, ISqlResult}
 })
 export class SqlResultComponent {
 
-  @Input() result: ISqlResult;
+  @Input() result: SqlResultFragment;
 
   getPoints(): number {
     const staticComp = this.result.staticComparison;

@@ -769,53 +769,31 @@ export type XmlSolutionInput = {
   grammar: Scalars['String'];
 };
 
-export type ProgCorrectionMutationVariables = {
+export type SqlCorrectionMutationVariables = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: ProgExPart;
-  solution: ProgSolutionInput;
-};
-
-
-export type ProgCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { correctProgramming?: Maybe<(
-    { __typename?: 'ProgCompleteResult' }
-    & ProgCompleteResultFragment
-  )> }
-);
-
-export type ProgCompleteResultFragment = (
-  { __typename?: 'ProgCompleteResult' }
-  & Pick<ProgCompleteResult, 'solutionSaved'>
-  & { normalResult?: Maybe<{ __typename: 'NormalExecutionResult' }>, unitTestResults: Array<{ __typename: 'UnitTestCorrectionResult' }> }
-);
-
-export type RegexCorrectionMutationVariables = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: RegexExPart;
+  part: SqlExPart;
   solution: Scalars['String'];
 };
 
 
-export type RegexCorrectionMutation = (
+export type SqlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctRegex?: Maybe<(
-    { __typename?: 'RegexIllegalRegexResult' }
-    & RegexIllegalRegexResultFragment
+  & { correctSql?: Maybe<(
+    { __typename?: 'SqlIllegalQueryResult' }
+    & SqlIllegalQueryResultFragment
   ) | (
-    { __typename?: 'RegexMatchingResult' }
-    & RegexMatchingResultFragment
+    { __typename?: 'SqlWrongQueryTypeResult' }
+    & SqlWrongQueryTypeResultFragment
   ) | (
-    { __typename?: 'RegexExtractionResult' }
-    & RegexExtractionResultFragment
+    { __typename?: 'SqlResult' }
+    & SqlResultFragment
   )> }
 );
 
-export type RegexIllegalRegexResultFragment = (
-  { __typename?: 'RegexIllegalRegexResult' }
-  & Pick<RegexIllegalRegexResult, 'solutionSaved' | 'message'>
+export type SqlIllegalQueryResultFragment = (
+  { __typename?: 'SqlIllegalQueryResult' }
+  & Pick<SqlIllegalQueryResult, 'solutionSaved' | 'message'>
   & { points: (
     { __typename?: 'Points' }
     & PointsFragment
@@ -825,17 +803,36 @@ export type RegexIllegalRegexResultFragment = (
   ) }
 );
 
-export type RegexMatchingSingleResultFragment = (
-  { __typename?: 'RegexMatchingSingleResult' }
-  & Pick<RegexMatchingSingleResult, 'resultType' | 'matchData'>
+export type SqlWrongQueryTypeResultFragment = (
+  { __typename?: 'SqlWrongQueryTypeResult' }
+  & Pick<SqlWrongQueryTypeResult, 'solutionSaved' | 'message'>
+  & { points: (
+    { __typename?: 'Points' }
+    & PointsFragment
+  ), maxPoints: (
+    { __typename?: 'Points' }
+    & PointsFragment
+  ) }
 );
 
-export type RegexMatchingResultFragment = (
-  { __typename?: 'RegexMatchingResult' }
-  & Pick<RegexMatchingResult, 'solutionSaved'>
-  & { matchingResults: Array<(
-    { __typename?: 'RegexMatchingSingleResult' }
-    & RegexMatchingSingleResultFragment
+export type ColumnMatchFragment = (
+  { __typename?: 'ColumnMatch' }
+  & Pick<ColumnMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'ColumnWrapper' }
+    & Pick<ColumnWrapper, 'name'>
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'ColumnWrapper' }
+    & Pick<ColumnWrapper, 'name'>
+  )> }
+);
+
+export type ColumnComparisonFragment = (
+  { __typename?: 'SqlColumnComparisonMatchingResult' }
+  & Pick<SqlColumnComparisonMatchingResult, 'matchSingularName' | 'matchName'>
+  & { allMatches: Array<(
+    { __typename?: 'ColumnMatch' }
+    & ColumnMatchFragment
   )>, points: (
     { __typename?: 'Points' }
     & PointsFragment
@@ -845,17 +842,24 @@ export type RegexMatchingResultFragment = (
   ) }
 );
 
-export type RegexExtractionSingleResultFragment = (
-  { __typename?: 'RegexExtractionSingleResult' }
-  & Pick<RegexExtractionSingleResult, 'base' | 'correct'>
+export type TableMatchFragment = (
+  { __typename?: 'TableMatch' }
+  & Pick<TableMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'Table' }
+    & Pick<Table, 'name'>
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'Table' }
+    & Pick<Table, 'name'>
+  )> }
 );
 
-export type RegexExtractionResultFragment = (
-  { __typename?: 'RegexExtractionResult' }
-  & Pick<RegexExtractionResult, 'solutionSaved'>
-  & { extractionResults: Array<(
-    { __typename?: 'RegexExtractionSingleResult' }
-    & RegexExtractionSingleResultFragment
+export type TableComparisonFragment = (
+  { __typename?: 'SqlTableComparisonMatchingResult' }
+  & Pick<SqlTableComparisonMatchingResult, 'matchSingularName' | 'matchName'>
+  & { allMatches: Array<(
+    { __typename?: 'TableMatch' }
+    & TableMatchFragment
   )>, points: (
     { __typename?: 'Points' }
     & PointsFragment
@@ -865,88 +869,25 @@ export type RegexExtractionResultFragment = (
   ) }
 );
 
-export type UmlCorrectionMutationVariables = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: UmlExPart;
-  solution: UmlClassDiagramInput;
-};
-
-
-export type UmlCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { correctUml?: Maybe<(
-    { __typename?: 'UmlCompleteResult' }
-    & UmlCompleteResultFragment
-  )> }
-);
-
-export type UmlCompleteResultFragment = (
-  { __typename?: 'UmlCompleteResult' }
-  & Pick<UmlCompleteResult, 'solutionSaved'>
-  & { points: (
+export type SqlResultFragment = (
+  { __typename?: 'SqlResult' }
+  & Pick<SqlResult, 'solutionSaved'>
+  & { staticComparison: (
+    { __typename?: 'SqlQueriesStaticComparison' }
+    & { columnComparison: (
+      { __typename?: 'SqlColumnComparisonMatchingResult' }
+      & ColumnComparisonFragment
+    ), tableComparison: (
+      { __typename?: 'SqlTableComparisonMatchingResult' }
+      & TableComparisonFragment
+    ) }
+  ), executionResult: { __typename: 'SqlExecutionResult' }, points: (
     { __typename?: 'Points' }
     & PointsFragment
   ), maxPoints: (
     { __typename?: 'Points' }
     & PointsFragment
   ) }
-);
-
-export type WebCorrectionMutationVariables = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: WebExPart;
-  solution: Array<ExerciseFileInput>;
-};
-
-
-export type WebCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { correctWeb?: Maybe<(
-    { __typename?: 'WebCompleteResult' }
-    & WebCompleteResultFragment
-  )> }
-);
-
-export type WebCompleteResultFragment = (
-  { __typename?: 'WebCompleteResult' }
-  & Pick<WebCompleteResult, 'solutionSaved'>
-  & { points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
-);
-
-export type XmlCorrectionMutationVariables = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: XmlExPart;
-  solution: XmlSolutionInput;
-};
-
-
-export type XmlCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { correctXml?: Maybe<(
-    { __typename?: 'XmlCompleteResult' }
-    & XmlCompleteResultFragment
-  )> }
-);
-
-export type XmlCompleteResultFragment = (
-  { __typename?: 'XmlCompleteResult' }
-  & Pick<XmlCompleteResult, 'solutionSaved' | 'successType'>
-  & { points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), grammarResult?: Maybe<{ __typename: 'XmlGrammarResult' }>, documentResult: Array<{ __typename: 'XmlError' }> }
 );
 
 export type PointsFragment = (
@@ -954,24 +895,13 @@ export type PointsFragment = (
   & Pick<Points, 'quarters'>
 );
 
-export const ProgCompleteResultFragmentDoc = gql`
-    fragment ProgCompleteResult on ProgCompleteResult {
-  solutionSaved
-  normalResult {
-    __typename
-  }
-  unitTestResults {
-    __typename
-  }
-}
-    `;
 export const PointsFragmentDoc = gql`
     fragment Points on Points {
   quarters
 }
     `;
-export const RegexIllegalRegexResultFragmentDoc = gql`
-    fragment RegexIllegalRegexResult on RegexIllegalRegexResult {
+export const SqlIllegalQueryResultFragmentDoc = gql`
+    fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
   solutionSaved
   message
   points {
@@ -982,17 +912,35 @@ export const RegexIllegalRegexResultFragmentDoc = gql`
   }
 }
     ${PointsFragmentDoc}`;
-export const RegexMatchingSingleResultFragmentDoc = gql`
-    fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
-  resultType
-  matchData
+export const SqlWrongQueryTypeResultFragmentDoc = gql`
+    fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
+  solutionSaved
+  message
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+    ${PointsFragmentDoc}`;
+export const ColumnMatchFragmentDoc = gql`
+    fragment ColumnMatch on ColumnMatch {
+  matchType
+  userArg {
+    name
+  }
+  sampleArg {
+    name
+  }
 }
     `;
-export const RegexMatchingResultFragmentDoc = gql`
-    fragment RegexMatchingResult on RegexMatchingResult {
-  solutionSaved
-  matchingResults {
-    ...RegexMatchingSingleResult
+export const ColumnComparisonFragmentDoc = gql`
+    fragment ColumnComparison on SqlColumnComparisonMatchingResult {
+  matchSingularName
+  matchName
+  allMatches {
+    ...ColumnMatch
   }
   points {
     ...Points
@@ -1001,19 +949,25 @@ export const RegexMatchingResultFragmentDoc = gql`
     ...Points
   }
 }
-    ${RegexMatchingSingleResultFragmentDoc}
+    ${ColumnMatchFragmentDoc}
 ${PointsFragmentDoc}`;
-export const RegexExtractionSingleResultFragmentDoc = gql`
-    fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
-  base
-  correct
+export const TableMatchFragmentDoc = gql`
+    fragment TableMatch on TableMatch {
+  matchType
+  userArg {
+    name
+  }
+  sampleArg {
+    name
+  }
 }
     `;
-export const RegexExtractionResultFragmentDoc = gql`
-    fragment RegexExtractionResult on RegexExtractionResult {
-  solutionSaved
-  extractionResults {
-    ...RegexExtractionSingleResult
+export const TableComparisonFragmentDoc = gql`
+    fragment TableComparison on SqlTableComparisonMatchingResult {
+  matchSingularName
+  matchName
+  allMatches {
+    ...TableMatch
   }
   points {
     ...Points
@@ -1022,124 +976,48 @@ export const RegexExtractionResultFragmentDoc = gql`
     ...Points
   }
 }
-    ${RegexExtractionSingleResultFragmentDoc}
+    ${TableMatchFragmentDoc}
 ${PointsFragmentDoc}`;
-export const UmlCompleteResultFragmentDoc = gql`
-    fragment UmlCompleteResult on UmlCompleteResult {
+export const SqlResultFragmentDoc = gql`
+    fragment SqlResult on SqlResult {
   solutionSaved
-  points {
-    ...Points
+  staticComparison {
+    columnComparison {
+      ...ColumnComparison
+    }
+    tableComparison {
+      ...TableComparison
+    }
   }
-  maxPoints {
-    ...Points
-  }
-}
-    ${PointsFragmentDoc}`;
-export const WebCompleteResultFragmentDoc = gql`
-    fragment WebCompleteResult on WebCompleteResult {
-  solutionSaved
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-    ${PointsFragmentDoc}`;
-export const XmlCompleteResultFragmentDoc = gql`
-    fragment XmlCompleteResult on XmlCompleteResult {
-  solutionSaved
-  successType
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-  grammarResult {
+  executionResult {
     __typename
   }
-  documentResult {
-    __typename
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
   }
 }
-    ${PointsFragmentDoc}`;
-export const ProgCorrectionDocument = gql`
-    mutation ProgCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
-  correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...ProgCompleteResult
+    ${ColumnComparisonFragmentDoc}
+${TableComparisonFragmentDoc}
+${PointsFragmentDoc}`;
+export const SqlCorrectionDocument = gql`
+    mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
+  correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    ...SqlIllegalQueryResult
+    ...SqlWrongQueryTypeResult
+    ...SqlResult
   }
 }
-    ${ProgCompleteResultFragmentDoc}`;
+    ${SqlIllegalQueryResultFragmentDoc}
+${SqlWrongQueryTypeResultFragmentDoc}
+${SqlResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class ProgCorrectionGQL extends Apollo.Mutation<ProgCorrectionMutation, ProgCorrectionMutationVariables> {
-    document = ProgCorrectionDocument;
-    
-  }
-export const RegexCorrectionDocument = gql`
-    mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
-  correctRegex(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...RegexIllegalRegexResult
-    ...RegexMatchingResult
-    ...RegexExtractionResult
-  }
-}
-    ${RegexIllegalRegexResultFragmentDoc}
-${RegexMatchingResultFragmentDoc}
-${RegexExtractionResultFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class RegexCorrectionGQL extends Apollo.Mutation<RegexCorrectionMutation, RegexCorrectionMutationVariables> {
-    document = RegexCorrectionDocument;
-    
-  }
-export const UmlCorrectionDocument = gql`
-    mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
-  correctUml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...UmlCompleteResult
-  }
-}
-    ${UmlCompleteResultFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UmlCorrectionGQL extends Apollo.Mutation<UmlCorrectionMutation, UmlCorrectionMutationVariables> {
-    document = UmlCorrectionDocument;
-    
-  }
-export const WebCorrectionDocument = gql`
-    mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: [ExerciseFileInput!]!) {
-  correctWeb(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...WebCompleteResult
-  }
-}
-    ${WebCompleteResultFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class WebCorrectionGQL extends Apollo.Mutation<WebCorrectionMutation, WebCorrectionMutationVariables> {
-    document = WebCorrectionDocument;
-    
-  }
-export const XmlCorrectionDocument = gql`
-    mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
-  correctXml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...XmlCompleteResult
-  }
-}
-    ${XmlCompleteResultFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class XmlCorrectionGQL extends Apollo.Mutation<XmlCorrectionMutation, XmlCorrectionMutationVariables> {
-    document = XmlCorrectionDocument;
+  export class SqlCorrectionGQL extends Apollo.Mutation<SqlCorrectionMutation, SqlCorrectionMutationVariables> {
+    document = SqlCorrectionDocument;
     
   }

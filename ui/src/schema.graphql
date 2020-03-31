@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Mar 31 2020 10:32:55 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue Mar 31 2020 12:00:23 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -25,6 +25,16 @@ type Collection {
   exerciseCount: Int!
   exercises: [Exercise!]!
   exercise(exId: Int!): Exercise
+}
+
+type ColumnMatch {
+  matchType: MatchType!
+  userArg: ColumnWrapper
+  sampleArg: ColumnWrapper
+}
+
+type ColumnWrapper {
+  name: String!
 }
 
 type DTDParseException {
@@ -90,11 +100,19 @@ type Lesson {
   description: String!
 }
 
+enum MatchType {
+  SUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  ONLY_USER
+  UNSUCCESSFUL_MATCH
+  ONLY_SAMPLE
+}
+
 type Mutation {
   correctProgramming(collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgCompleteResult
   correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): AbstractRegexResult
   correctRose(collId: Int!, exId: Int!, part: RoseExPart!, solution: String!): RoseCompleteResult
-  correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlResult
+  correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult
   correctUml(collId: Int!, exId: Int!, part: UmlExPart!, solution: UmlClassDiagramInput!): UmlCompleteResult
   correctWeb(collId: Int!, exId: Int!, part: WebExPart!, solution: [ExerciseFileInput!]!): WebCompleteResult
   correctXml(collId: Int!, exId: Int!, part: XmlExPart!, solution: XmlSolutionInput!): XmlCompleteResult
@@ -238,6 +256,16 @@ type SiteSpec {
   jsTaskCount: Int!
 }
 
+union SqlAbstractResult = SqlIllegalQueryResult | SqlWrongQueryTypeResult | SqlResult
+
+type SqlColumnComparisonMatchingResult {
+  matchName: String!
+  matchSingularName: String!
+  points: Points!
+  maxPoints: Points!
+  allMatches: [ColumnMatch!]!
+}
+
 type SqlExecutionResult {
   X: Int
 }
@@ -249,25 +277,50 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
+  SELECT
+  DELETE
   INSERT
   UPDATE
   CREATE
-  SELECT
-  DELETE
 }
 
 enum SqlExPart {
   SqlSingleExPart
 }
 
-type SqlQueriesStaticComparison {
-  X: Int
+type SqlIllegalQueryResult implements AbstractCorrectionResult {
+  solutionSaved: Boolean!
+  message: String!
+  maxPoints: Points!
+  points: Points!
 }
 
-type SqlResult {
+type SqlQueriesStaticComparison {
+  columnComparison: SqlColumnComparisonMatchingResult!
+  tableComparison: SqlTableComparisonMatchingResult!
+}
+
+type SqlResult implements AbstractCorrectionResult {
   staticComparison: SqlQueriesStaticComparison!
   executionResult: SqlExecutionResult!
   solutionSaved: Boolean!
+  points: Points!
+  maxPoints: Points!
+}
+
+type SqlTableComparisonMatchingResult {
+  matchName: String!
+  matchSingularName: String!
+  points: Points!
+  maxPoints: Points!
+  allMatches: [TableMatch!]!
+}
+
+type SqlWrongQueryTypeResult implements AbstractCorrectionResult {
+  solutionSaved: Boolean!
+  message: String!
+  maxPoints: Points!
+  points: Points!
 }
 
 type StringSampleSolution {
@@ -276,10 +329,20 @@ type StringSampleSolution {
 }
 
 enum SuccessType {
+  COMPLETE
   ERROR
   NONE
   PARTIALLY
-  COMPLETE
+}
+
+type Table {
+  name: String!
+}
+
+type TableMatch {
+  matchType: MatchType!
+  userArg: Table
+  sampleArg: Table
 }
 
 type Tool {
@@ -298,9 +361,9 @@ type Tool {
 }
 
 enum ToolState {
-  LIVE
   ALPHA
   BETA
+  LIVE
 }
 
 type UmlAssociation {
@@ -322,8 +385,8 @@ input UmlAssociationInput {
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -372,9 +435,9 @@ input UmlClassInput {
 }
 
 enum UmlClassType {
+  ABSTRACT
   CLASS
   INTERFACE
-  ABSTRACT
 }
 
 type UmlCompleteResult {
@@ -435,10 +498,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestCorrectionResult {
@@ -468,8 +531,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Simplified
   Normal
+  Simplified
 }
 
 type WebCompleteResult {

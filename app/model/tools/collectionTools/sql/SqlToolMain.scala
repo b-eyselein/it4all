@@ -28,7 +28,7 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
   override type PartType       = SqlExPart
   override type ExContentType  = SqlExerciseContent
   override type SolType        = String
-  override type CompResultType = SqlResult
+  override type CompResultType = AbstractSqlResult
 
   type ColumnComparison           = MatchingResult[ColumnWrapper, ColumnMatch]
   type TableComparison            = MatchingResult[Table, TableMatch]
@@ -49,7 +49,7 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
   override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] =
     SqlJsonProtocols
 
-  override val graphQlModels: ToolGraphQLModelBasics[SqlExerciseContent, String, SqlResult, SqlExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[SqlExerciseContent, String,  SqlExPart] =
     SqlGraphQLModels
 
   // Correction
@@ -62,7 +62,7 @@ object SqlToolMain extends CollectionToolMain(SqlConsts) {
     content: SqlExerciseContent,
     part: SqlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[SqlResult]] =
+  )(implicit executionContext: ExecutionContext): Future[Try[AbstractSqlResult]] =
     correctorsAndDaos.get(content.exerciseType) match {
       case None =>
         Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${content.exerciseType}")))

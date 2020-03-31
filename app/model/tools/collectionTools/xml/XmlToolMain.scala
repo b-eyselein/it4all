@@ -27,7 +27,7 @@ object XmlToolMain extends CollectionToolMain(XmlConsts) {
   override val toolJsonProtocol: ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlExPart] =
     XmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[XmlExerciseContent, XmlSolution, XmlCompleteResult, XmlExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[XmlExerciseContent, XmlSolution, XmlExPart] =
     XmlGraphQLModels
 
   // Correction

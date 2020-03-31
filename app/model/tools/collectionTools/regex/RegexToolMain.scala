@@ -27,8 +27,7 @@ object RegexToolMain extends CollectionToolMain(RegexConsts) {
   override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] =
     RegexToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[RegexExerciseContent, String, AbstractRegexResult, RegexExPart] =
-    RegexGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[RegexExerciseContent, String, RegexExPart] = RegexGraphQLModels
 
   // Correction
 

@@ -25,7 +25,7 @@ class ApiAdminController @Inject() (
   private val logger = Logger(classOf[ApiController])
 
   private val resourcesServerBaseUrl = {
-    val port = if (environment.mode == Mode.Dev) 5000 else 5050
+    val port = /* if (environment.mode == Mode.Dev) 5000 else */ 5050
 
     s"http://localhost:$port/tools"
   }

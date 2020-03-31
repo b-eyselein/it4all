@@ -67,6 +67,30 @@
           },
           {
             "name": "RegexExtractionResult"
+          },
+          {
+            "name": "SqlIllegalQueryResult"
+          },
+          {
+            "name": "SqlWrongQueryTypeResult"
+          },
+          {
+            "name": "SqlResult"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
+        "name": "SqlAbstractResult",
+        "possibleTypes": [
+          {
+            "name": "SqlIllegalQueryResult"
+          },
+          {
+            "name": "SqlWrongQueryTypeResult"
+          },
+          {
+            "name": "SqlResult"
           }
         ]
       }
