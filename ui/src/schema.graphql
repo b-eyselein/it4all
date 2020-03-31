@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Mar 31 2020 12:00:23 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue Mar 31 2020 15:09:39 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -9,11 +9,22 @@ interface AbstractCorrectionResult {
 
 union AbstractRegexResult = RegexIllegalRegexResult | RegexMatchingResult | RegexExtractionResult
 
+type AdditionalComparison {
+  selectComparisons: SelectAdditionalComparisons
+  insertComparison: SqlInsertComparisonMatchingResult
+}
+
 enum BinaryClassificationResultType {
   FalseNegative
   FalsePositive
   TrueNegative
   TruePositive
+}
+
+type BinaryExpressionMatch {
+  matchType: MatchType!
+  userArg: String
+  sampleArg: String
 }
 
 type Collection {
@@ -29,12 +40,8 @@ type Collection {
 
 type ColumnMatch {
   matchType: MatchType!
-  userArg: ColumnWrapper
-  sampleArg: ColumnWrapper
-}
-
-type ColumnWrapper {
-  name: String!
+  userArg: String
+  sampleArg: String
 }
 
 type DTDParseException {
@@ -72,9 +79,21 @@ input ExerciseFileInput {
   content: String!
 }
 
+type ExpressionListMatch {
+  matchType: MatchType!
+  userArg: String
+  sampleArg: String
+}
+
 type ExTag {
   abbreviation: String!
   title: String!
+}
+
+type GroupByMatch {
+  matchType: MatchType!
+  userArg: String
+  sampleArg: String
 }
 
 type HtmlTask {
@@ -100,12 +119,23 @@ type Lesson {
   description: String!
 }
 
+type LimitMatch {
+  matchType: MatchType!
+  userArg: String
+  sampleArg: String
+}
+
+interface MatchingResult {
+  points: Points!
+  maxPoints: Points!
+}
+
 enum MatchType {
-  SUCCESSFUL_MATCH
+  ONLY_SAMPLE
   PARTIAL_MATCH
   ONLY_USER
   UNSUCCESSFUL_MATCH
-  ONLY_SAMPLE
+  SUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -121,6 +151,12 @@ type Mutation {
 type NormalExecutionResult {
   success: SuccessType!
   logs: String!
+}
+
+type OrderByMatch {
+  matchType: MatchType!
+  userArg: String
+  sampleArg: String
 }
 
 type Points {
@@ -243,6 +279,12 @@ enum RoseExPart {
   RoseSingleExPart
 }
 
+type SelectAdditionalComparisons {
+  groupByComparison: SqlGroupByComparisonMatchingResult!
+  orderByComparison: SqlOrderByComparisonMatchingResult!
+  limitComparison: SqlLimitComparisonMatchingResult!
+}
+
 type SemanticVersion {
   major: Int!
   minor: Int!
@@ -258,9 +300,17 @@ type SiteSpec {
 
 union SqlAbstractResult = SqlIllegalQueryResult | SqlWrongQueryTypeResult | SqlResult
 
-type SqlColumnComparisonMatchingResult {
-  matchName: String!
-  matchSingularName: String!
+type SqlBinaryExpressionComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  points: Points!
+  maxPoints: Points!
+  allMatches: [BinaryExpressionMatch!]!
+}
+
+type SqlColumnComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
   allMatches: [ColumnMatch!]!
@@ -277,15 +327,23 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  SELECT
-  DELETE
-  INSERT
-  UPDATE
   CREATE
+  DELETE
+  UPDATE
+  INSERT
+  SELECT
 }
 
 enum SqlExPart {
   SqlSingleExPart
+}
+
+type SqlGroupByComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  points: Points!
+  maxPoints: Points!
+  allMatches: [GroupByMatch!]!
 }
 
 type SqlIllegalQueryResult implements AbstractCorrectionResult {
@@ -295,9 +353,36 @@ type SqlIllegalQueryResult implements AbstractCorrectionResult {
   points: Points!
 }
 
+type SqlInsertComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  points: Points!
+  maxPoints: Points!
+  allMatches: [ExpressionListMatch!]!
+}
+
+type SqlLimitComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  points: Points!
+  maxPoints: Points!
+  allMatches: [LimitMatch!]!
+}
+
+type SqlOrderByComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  points: Points!
+  maxPoints: Points!
+  allMatches: [OrderByMatch!]!
+}
+
 type SqlQueriesStaticComparison {
   columnComparison: SqlColumnComparisonMatchingResult!
   tableComparison: SqlTableComparisonMatchingResult!
+  joinExpressionComparison: SqlBinaryExpressionComparisonMatchingResult!
+  whereComparison: SqlBinaryExpressionComparisonMatchingResult!
+  additionalComparisons: AdditionalComparison!
 }
 
 type SqlResult implements AbstractCorrectionResult {
@@ -308,9 +393,9 @@ type SqlResult implements AbstractCorrectionResult {
   maxPoints: Points!
 }
 
-type SqlTableComparisonMatchingResult {
-  matchName: String!
-  matchSingularName: String!
+type SqlTableComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
   allMatches: [TableMatch!]!
@@ -335,14 +420,10 @@ enum SuccessType {
   PARTIALLY
 }
 
-type Table {
-  name: String!
-}
-
 type TableMatch {
   matchType: MatchType!
-  userArg: Table
-  sampleArg: Table
+  userArg: String
+  sampleArg: String
 }
 
 type Tool {

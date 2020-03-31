@@ -45,6 +45,26 @@ trait ToolGraphQLModelBasics[
 
   protected val matchTypeType: EnumType[MatchType] = deriveEnumType()
 
+  private def matchingResultInterface[T, M <: Match[T]]: InterfaceType[Unit, MatchingResult[T, M]] = InterfaceType(
+    "MatchingResult",
+    () =>
+      fields(
+        Field("allMatches", ListType(matchInterface[T, M]), resolve = _.value.allMatches),
+        Field("points", pointsType, resolve = _.value.points),
+        Field("maxPoints", pointsType, resolve = _.value.maxPoints)
+      )
+  )
+
+  protected def matchInterface[T, M <: Match[T]]: InterfaceType[Unit, M] = InterfaceType(
+    "Match",
+    () =>
+      fields(
+        Field("matchType", OptionType(matchTypeType), resolve = _.value.matchType),
+        Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArgDescription),
+        Field("userArg", OptionType(StringType), resolve = _.value.userArgDescription)
+      )
+  )
+
   protected def matchingResultType[T, M <: Match[T]](
     name: String,
     mType: OutputType[M]
@@ -53,6 +73,7 @@ trait ToolGraphQLModelBasics[
 
     deriveObjectType(
       ObjectTypeName(s"${name}MatchingResult"),
+      Interfaces(matchingResultInterface[T, M]),
       ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
     )
   }

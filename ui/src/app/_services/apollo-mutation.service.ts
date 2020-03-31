@@ -21,12 +21,25 @@ export type AbstractCorrectionResult = {
 
 export type AbstractRegexResult = RegexIllegalRegexResult | RegexMatchingResult | RegexExtractionResult;
 
+export type AdditionalComparison = {
+   __typename?: 'AdditionalComparison';
+  selectComparisons?: Maybe<SelectAdditionalComparisons>;
+  insertComparison?: Maybe<SqlInsertComparisonMatchingResult>;
+};
+
 export enum BinaryClassificationResultType {
   FalseNegative = 'FalseNegative',
   FalsePositive = 'FalsePositive',
   TrueNegative = 'TrueNegative',
   TruePositive = 'TruePositive'
 }
+
+export type BinaryExpressionMatch = {
+   __typename?: 'BinaryExpressionMatch';
+  matchType: MatchType;
+  userArg?: Maybe<Scalars['String']>;
+  sampleArg?: Maybe<Scalars['String']>;
+};
 
 export type Collection = {
    __typename?: 'Collection';
@@ -48,13 +61,8 @@ export type CollectionExerciseArgs = {
 export type ColumnMatch = {
    __typename?: 'ColumnMatch';
   matchType: MatchType;
-  userArg?: Maybe<ColumnWrapper>;
-  sampleArg?: Maybe<ColumnWrapper>;
-};
-
-export type ColumnWrapper = {
-   __typename?: 'ColumnWrapper';
-  name: Scalars['String'];
+  userArg?: Maybe<Scalars['String']>;
+  sampleArg?: Maybe<Scalars['String']>;
 };
 
 export type DtdParseException = {
@@ -95,10 +103,24 @@ export type ExerciseFileInput = {
   content: Scalars['String'];
 };
 
+export type ExpressionListMatch = {
+   __typename?: 'ExpressionListMatch';
+  matchType: MatchType;
+  userArg?: Maybe<Scalars['String']>;
+  sampleArg?: Maybe<Scalars['String']>;
+};
+
 export type ExTag = {
    __typename?: 'ExTag';
   abbreviation: Scalars['String'];
   title: Scalars['String'];
+};
+
+export type GroupByMatch = {
+   __typename?: 'GroupByMatch';
+  matchType: MatchType;
+  userArg?: Maybe<Scalars['String']>;
+  sampleArg?: Maybe<Scalars['String']>;
 };
 
 export type HtmlTask = {
@@ -128,12 +150,24 @@ export type Lesson = {
   description: Scalars['String'];
 };
 
+export type LimitMatch = {
+   __typename?: 'LimitMatch';
+  matchType: MatchType;
+  userArg?: Maybe<Scalars['String']>;
+  sampleArg?: Maybe<Scalars['String']>;
+};
+
+export type MatchingResult = {
+  points: Points;
+  maxPoints: Points;
+};
+
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
   PartialMatch = 'PARTIAL_MATCH',
   OnlyUser = 'ONLY_USER',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -207,6 +241,13 @@ export type NormalExecutionResult = {
    __typename?: 'NormalExecutionResult';
   success: SuccessType;
   logs: Scalars['String'];
+};
+
+export type OrderByMatch = {
+   __typename?: 'OrderByMatch';
+  matchType: MatchType;
+  userArg?: Maybe<Scalars['String']>;
+  sampleArg?: Maybe<Scalars['String']>;
 };
 
 export type Points = {
@@ -350,6 +391,13 @@ export enum RoseExPart {
   RoseSingleExPart = 'RoseSingleExPart'
 }
 
+export type SelectAdditionalComparisons = {
+   __typename?: 'SelectAdditionalComparisons';
+  groupByComparison: SqlGroupByComparisonMatchingResult;
+  orderByComparison: SqlOrderByComparisonMatchingResult;
+  limitComparison: SqlLimitComparisonMatchingResult;
+};
+
 export type SemanticVersion = {
    __typename?: 'SemanticVersion';
   major: Scalars['Int'];
@@ -367,9 +415,22 @@ export type SiteSpec = {
 
 export type SqlAbstractResult = SqlIllegalQueryResult | SqlWrongQueryTypeResult | SqlResult;
 
-export type SqlColumnComparisonMatchingResult = {
-   __typename?: 'SqlColumnComparisonMatchingResult';
+export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
+   __typename?: 'SqlBinaryExpressionComparisonMatchingResult';
+  /** @deprecated Will be deleted */
   matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  points: Points;
+  maxPoints: Points;
+  allMatches: Array<BinaryExpressionMatch>;
+};
+
+export type SqlColumnComparisonMatchingResult = MatchingResult & {
+   __typename?: 'SqlColumnComparisonMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
   points: Points;
   maxPoints: Points;
@@ -389,16 +450,27 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
+  Create = 'CREATE',
   Delete = 'DELETE',
-  Insert = 'INSERT',
   Update = 'UPDATE',
-  Create = 'CREATE'
+  Insert = 'INSERT',
+  Select = 'SELECT'
 }
 
 export enum SqlExPart {
   SqlSingleExPart = 'SqlSingleExPart'
 }
+
+export type SqlGroupByComparisonMatchingResult = MatchingResult & {
+   __typename?: 'SqlGroupByComparisonMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  points: Points;
+  maxPoints: Points;
+  allMatches: Array<GroupByMatch>;
+};
 
 export type SqlIllegalQueryResult = AbstractCorrectionResult & {
    __typename?: 'SqlIllegalQueryResult';
@@ -408,10 +480,46 @@ export type SqlIllegalQueryResult = AbstractCorrectionResult & {
   points: Points;
 };
 
+export type SqlInsertComparisonMatchingResult = MatchingResult & {
+   __typename?: 'SqlInsertComparisonMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  points: Points;
+  maxPoints: Points;
+  allMatches: Array<ExpressionListMatch>;
+};
+
+export type SqlLimitComparisonMatchingResult = MatchingResult & {
+   __typename?: 'SqlLimitComparisonMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  points: Points;
+  maxPoints: Points;
+  allMatches: Array<LimitMatch>;
+};
+
+export type SqlOrderByComparisonMatchingResult = MatchingResult & {
+   __typename?: 'SqlOrderByComparisonMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  points: Points;
+  maxPoints: Points;
+  allMatches: Array<OrderByMatch>;
+};
+
 export type SqlQueriesStaticComparison = {
    __typename?: 'SqlQueriesStaticComparison';
   columnComparison: SqlColumnComparisonMatchingResult;
   tableComparison: SqlTableComparisonMatchingResult;
+  joinExpressionComparison: SqlBinaryExpressionComparisonMatchingResult;
+  whereComparison: SqlBinaryExpressionComparisonMatchingResult;
+  additionalComparisons: AdditionalComparison;
 };
 
 export type SqlResult = AbstractCorrectionResult & {
@@ -423,9 +531,11 @@ export type SqlResult = AbstractCorrectionResult & {
   maxPoints: Points;
 };
 
-export type SqlTableComparisonMatchingResult = {
+export type SqlTableComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlTableComparisonMatchingResult';
+  /** @deprecated Will be deleted */
   matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
   points: Points;
   maxPoints: Points;
@@ -453,16 +563,11 @@ export enum SuccessType {
   Partially = 'PARTIALLY'
 }
 
-export type Table = {
-   __typename?: 'Table';
-  name: Scalars['String'];
-};
-
 export type TableMatch = {
    __typename?: 'TableMatch';
   matchType: MatchType;
-  userArg?: Maybe<Table>;
-  sampleArg?: Maybe<Table>;
+  userArg?: Maybe<Scalars['String']>;
+  sampleArg?: Maybe<Scalars['String']>;
 };
 
 export type Tool = {

@@ -93,6 +93,33 @@
             "name": "SqlResult"
           }
         ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "MatchingResult",
+        "possibleTypes": [
+          {
+            "name": "SqlColumnComparisonMatchingResult"
+          },
+          {
+            "name": "SqlTableComparisonMatchingResult"
+          },
+          {
+            "name": "SqlBinaryExpressionComparisonMatchingResult"
+          },
+          {
+            "name": "SqlGroupByComparisonMatchingResult"
+          },
+          {
+            "name": "SqlOrderByComparisonMatchingResult"
+          },
+          {
+            "name": "SqlLimitComparisonMatchingResult"
+          },
+          {
+            "name": "SqlInsertComparisonMatchingResult"
+          }
+        ]
       }
     ]
   }

@@ -32,17 +32,11 @@ fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
 
 fragment ColumnMatch on ColumnMatch {
   matchType
-  userArg {
-    name
-  }
-  sampleArg {
-    name
-  }
+  userArg
+  sampleArg
 }
 
 fragment ColumnComparison on SqlColumnComparisonMatchingResult {
-  matchSingularName
-  matchName
   allMatches {
     ...ColumnMatch
   }
@@ -58,17 +52,11 @@ fragment ColumnComparison on SqlColumnComparisonMatchingResult {
 
 fragment TableMatch on TableMatch {
   matchType
-  userArg {
-    name
-  }
-  sampleArg {
-    name
-  }
+  userArg
+  sampleArg
 }
 
 fragment TableComparison on SqlTableComparisonMatchingResult {
-  matchSingularName
-  matchName
   allMatches {
     ...TableMatch
   }
@@ -77,6 +65,120 @@ fragment TableComparison on SqlTableComparisonMatchingResult {
   }
   maxPoints {
     ...Points
+  }
+}
+
+# JoinExpression / Where Comparison
+
+fragment BinaryExpressionMatch on BinaryExpressionMatch {
+  matchType
+  userArg
+  sampleArg
+}
+
+fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
+  allMatches {
+    ...BinaryExpressionMatch
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# Insert comparison
+
+fragment InsertMatch on ExpressionListMatch {
+  matchType
+  userArg
+  sampleArg
+}
+
+fragment InsertComparison on SqlInsertComparisonMatchingResult {
+  allMatches {
+    ...InsertMatch
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# Group by comparison
+
+fragment GroupByMatch on GroupByMatch {
+  matchType
+  sampleArg
+  userArg
+}
+
+fragment  GroupByComparison on SqlGroupByComparisonMatchingResult {
+  allMatches  {
+    ...GroupByMatch
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# Order By comparison
+
+fragment OrderByMatch on OrderByMatch {
+  matchType
+  sampleArg
+  userArg
+}
+
+fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
+  allMatches {
+    ...OrderByMatch
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# Limit comparison
+
+fragment LimitMatch on LimitMatch {
+  matchType
+  sampleArg
+  userArg
+}
+
+fragment LimitComparison on SqlLimitComparisonMatchingResult {
+  allMatches {
+    ...LimitMatch
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
+# Select additional comparisons
+
+fragment SelectAdditionalComparison on SelectAdditionalComparisons {
+  groupByComparison {
+    ...GroupByComparison
+  }
+  orderByComparison {
+    ...OrderByComparison
+  }
+  limitComparison {
+    ...LimitComparison
   }
 }
 
@@ -90,6 +192,20 @@ fragment SqlResult on SqlResult {
     }
     tableComparison {
       ...TableComparison
+    }
+    joinExpressionComparison {
+      ...BinaryExpressionComparison
+    }
+    whereComparison {
+      ...BinaryExpressionComparison
+    }
+    additionalComparisons {
+      selectComparisons {
+        ...SelectAdditionalComparison
+      }
+      insertComparison {
+        ...InsertComparison
+      }
     }
   }
   executionResult {

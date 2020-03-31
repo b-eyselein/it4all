@@ -1,15 +1,15 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.MatchType
 import model.points.Points
-import model.tools.collectionTools.sql.SqlToolMain.{ColumnComparison, TableComparison}
-import model.tools.collectionTools.sql.matcher.{ColumnMatch, TableMatch}
+import model.tools.collectionTools.sql.SqlToolMain._
+import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
-import net.sf.jsqlparser.schema.Table
 import sangria.macros.derive._
 import sangria.schema._
 
 object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, String, SqlExPart] {
+
+  private implicit val mtt = matchTypeType
 
   override val ExContentTypeType: ObjectType[Unit, SqlExerciseContent] = {
     implicit val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
@@ -25,26 +25,54 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
 
   // Result types
 
-  private val columnMatchType: ObjectType[Unit, ColumnMatch] = {
-    implicit val mtt: EnumType[MatchType] = matchTypeType
-    implicit val columnWrapperType: ObjectType[Unit, ColumnWrapper] = ObjectType(
-      "ColumnWrapper",
-      fields[Unit, ColumnWrapper](
-        Field("name", StringType, resolve = _.value.getColName)
-      )
-    )
+  private val columnMatchType: ObjectType[Unit, ColumnMatch] = deriveObjectType(
+    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.getColName))),
+    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.getColName)))
+  )
+
+  private val tableMatchType: ObjectType[Unit, TableMatch] = deriveObjectType(
+    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.getName))),
+    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.getName)))
+  )
+
+  private val binaryExpressionMatchType: ObjectType[Unit, BinaryExpressionMatch] = deriveObjectType(
+    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
+    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
+  )
+
+  private val groupByMatchType: ObjectType[Unit, GroupByMatch] = deriveObjectType(
+    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
+    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
+  )
+
+  private val orderByMatchType: ObjectType[Unit, OrderByMatch] = deriveObjectType(
+    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
+    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
+  )
+
+  private val limitMatchType: ObjectType[Unit, LimitMatch] = deriveObjectType(
+    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
+    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
+  )
+
+  private val insertMatchType: ObjectType[Unit, ExpressionListMatch] = deriveObjectType(
+    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
+    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
+  )
+
+  private val sqlSelectAdditionalComparisons: ObjectType[Unit, SelectAdditionalComparisons] = {
+    implicit val gbmt: ObjectType[Unit, GroupByComparison] =
+      matchingResultType("SqlGroupByComparison", groupByMatchType)
+    implicit val obct: ObjectType[Unit, OrderByComparison] =
+      matchingResultType("SqlOrderByComparison", orderByMatchType)
+    implicit val lct: ObjectType[Unit, LimitComparison] = matchingResultType("SqlLimitComparison", limitMatchType)
 
     deriveObjectType()
   }
 
-  private val tableMatchType: ObjectType[Unit, TableMatch] = {
-    implicit val mtt: EnumType[MatchType] = matchTypeType
-    implicit val tableType: ObjectType[Unit, Table] = ObjectType(
-      "Table",
-      fields[Unit, Table](
-        Field("name", StringType, resolve = _.value.getName)
-      )
-    )
+  private val additionalComparisonsType: ObjectType[Unit, AdditionalComparison] = {
+    implicit val ssac: ObjectType[Unit, SelectAdditionalComparisons] = sqlSelectAdditionalComparisons
+    implicit val sqct: ObjectType[Unit, InsertComparison]            = matchingResultType("SqlInsertComparison", insertMatchType)
 
     deriveObjectType()
   }
@@ -53,15 +81,11 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
 
     implicit val cct: ObjectType[Unit, ColumnComparison] = matchingResultType("SqlColumnComparison", columnMatchType)
     implicit val tct: ObjectType[Unit, TableComparison]  = matchingResultType("SqlTableComparison", tableMatchType)
+    implicit val jct: ObjectType[Unit, BinaryExpressionComparison] =
+      matchingResultType("SqlBinaryExpressionComparison", binaryExpressionMatchType)
+    implicit val act: ObjectType[Unit, AdditionalComparison] = additionalComparisonsType
 
-    deriveObjectType(
-      // TODO: do not exclude fields...
-      ExcludeFields(
-        "joinExpressionComparison",
-        "whereComparison",
-        "additionalComparisons"
-      )
-    )
+    deriveObjectType()
   }
 
   private val sqlExecutionResultType: ObjectType[Unit, SqlExecutionResult] = {

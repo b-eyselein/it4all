@@ -1,5 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {IMatchingResult} from '../../sql-interfaces';
+import {MatchingResult} from '../../../../../_services/apollo-mutation.service';
 
 @Component({
   selector: 'it4all-sql-matching-result',
@@ -7,7 +8,7 @@ import {IMatchingResult} from '../../sql-interfaces';
 })
 export class SqlMatchingResultComponent implements OnChanges {
 
-  @Input() matchingResult: IMatchingResult;
+  @Input() matchingResult: MatchingResult;
 
   successful: boolean;
 
