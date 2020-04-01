@@ -49,7 +49,7 @@ trait ToolGraphQLModelBasics[
     "MatchingResult",
     () =>
       fields(
-        Field("allMatches", ListType(matchInterface[T, M]), resolve = _.value.allMatches),
+//        Field("allMatches", ListType(matchInterface[T, M]), resolve = _.value.allMatches),
         Field("points", pointsType, resolve = _.value.points),
         Field("maxPoints", pointsType, resolve = _.value.maxPoints)
       )
@@ -60,8 +60,8 @@ trait ToolGraphQLModelBasics[
     () =>
       fields(
         Field("matchType", OptionType(matchTypeType), resolve = _.value.matchType),
-        Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArgDescription),
-        Field("userArg", OptionType(StringType), resolve = _.value.userArgDescription)
+        // Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArgDescription),
+        // Field("userArg", OptionType(StringType), resolve = _.value.userArgDescription)
       )
   )
 

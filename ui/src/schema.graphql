@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Mar 31 2020 15:09:39 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Apr 01 2020 11:48:06 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -15,10 +15,10 @@ type AdditionalComparison {
 }
 
 enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
   TruePositive
+  FalsePositive
+  FalseNegative
+  TrueNegative
 }
 
 type BinaryExpressionMatch {
@@ -131,10 +131,10 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
-  PARTIAL_MATCH
-  ONLY_USER
   UNSUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  ONLY_SAMPLE
+  ONLY_USER
   SUCCESSFUL_MATCH
 }
 
@@ -203,8 +203,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 type RegexExerciseContent {
@@ -327,11 +327,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  CREATE
+  SELECT
   DELETE
   UPDATE
   INSERT
-  SELECT
+  CREATE
 }
 
 enum SqlExPart {
@@ -442,9 +442,9 @@ type Tool {
 }
 
 enum ToolState {
+  LIVE
   ALPHA
   BETA
-  LIVE
 }
 
 type UmlAssociation {
@@ -466,8 +466,8 @@ input UmlAssociationInput {
 }
 
 enum UmlAssociationType {
-  AGGREGATION
   ASSOCIATION
+  AGGREGATION
   COMPOSITION
 }
 
@@ -516,9 +516,9 @@ input UmlClassInput {
 }
 
 enum UmlClassType {
-  ABSTRACT
   CLASS
   INTERFACE
+  ABSTRACT
 }
 
 type UmlCompleteResult {
@@ -579,10 +579,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PACKAGE
-  PRIVATE
-  PROTECTED
   PUBLIC
+  PACKAGE
+  PROTECTED
+  PRIVATE
 }
 
 type UnitTestCorrectionResult {
@@ -612,8 +612,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Normal
   Simplified
+  Normal
 }
 
 type WebCompleteResult {

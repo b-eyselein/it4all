@@ -28,10 +28,10 @@ export type AdditionalComparison = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type BinaryExpressionMatch = {
@@ -163,10 +163,10 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
-  PartialMatch = 'PARTIAL_MATCH',
-  OnlyUser = 'ONLY_USER',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
+  OnlyUser = 'ONLY_USER',
   SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
@@ -305,8 +305,8 @@ export type QueryToolArgs = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export type RegexExerciseContent = {
@@ -450,11 +450,11 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
+  Select = 'SELECT',
   Delete = 'DELETE',
   Update = 'UPDATE',
   Insert = 'INSERT',
-  Select = 'SELECT'
+  Create = 'CREATE'
 }
 
 export enum SqlExPart {
@@ -603,9 +603,9 @@ export type ToolExerciseContentArgs = {
 };
 
 export enum ToolState {
+  Live = 'LIVE',
   Alpha = 'ALPHA',
-  Beta = 'BETA',
-  Live = 'LIVE'
+  Beta = 'BETA'
 }
 
 export type UmlAssociation = {
@@ -628,8 +628,8 @@ export type UmlAssociationInput = {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -681,9 +681,9 @@ export type UmlClassInput = {
 };
 
 export enum UmlClassType {
-  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE'
+  Interface = 'INTERFACE',
+  Abstract = 'ABSTRACT'
 }
 
 export type UmlCompleteResult = {
@@ -749,10 +749,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestCorrectionResult = {
@@ -785,8 +785,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Normal = 'Normal',
-  Simplified = 'Simplified'
+  Simplified = 'Simplified',
+  Normal = 'Normal'
 }
 
 export type WebCompleteResult = {
