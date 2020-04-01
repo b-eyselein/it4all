@@ -38,7 +38,6 @@ export class XmlExerciseComponent
   extends ComponentWithExercise<IXmlSolution, XmlCorrectionMutation, XmlCorrectionMutationVariables, XmlCorrectionGQL, IXmlCompleteResult>
   implements OnInit {
 
-
   @Input() part: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() xmlExerciseContent: XmlExerciseContentSolveFieldsFragment;
