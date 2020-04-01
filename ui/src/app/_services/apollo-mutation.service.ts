@@ -163,11 +163,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH',
   OnlySample = 'ONLY_SAMPLE',
   OnlyUser = 'ONLY_USER',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH'
 }
 
 export type Mutation = {
@@ -450,10 +450,10 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
   Delete = 'DELETE',
-  Update = 'UPDATE',
   Insert = 'INSERT',
+  Select = 'SELECT',
+  Update = 'UPDATE',
   Create = 'CREATE'
 }
 
@@ -557,10 +557,10 @@ export type StringSampleSolution = {
 };
 
 export enum SuccessType {
-  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY'
+  Partially = 'PARTIALLY',
+  Complete = 'COMPLETE'
 }
 
 export type TableMatch = {

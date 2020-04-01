@@ -32,7 +32,7 @@ services:
       - type:     bind
         source:   ./conf/inits/db_main_init.sql
         target:   /docker-entrypoint-initdb.d/db_init_main.sql
-      - type:     bind
+      - type:     volume
         source:   sql_main_volume
         target:   /var/lib/mysql
     environment:
