@@ -1,6 +1,7 @@
 version: "3.3"
 
 volumes:
+  sql_main_volume: {}
   select_db_volume: {}
   update_db_volume: {}
   create_db_volume: {}
@@ -21,6 +22,21 @@ services:
       - type:     bind
         source:   ./data/web/solutions/
         target:   /usr/local/apache2/htdocs/
+
+  sqlmain:
+    image:        mariadb
+    restart:      always
+    ports:
+      - 3106:3306
+    volumes:
+      - type:     bind
+        source:   ./conf/inits/db_main_init.sql
+        target:   /docker-entrypoint-initdb.d/db_init_main.sql
+      - type:     bind
+        source:   sql_main_volume
+        target:   /var/lib/mysql
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
 
   sqlselect:
     image:        mariadb
